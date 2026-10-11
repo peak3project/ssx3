@@ -425,7 +425,36 @@ extern "C" void func_0014B560(void* self, int a1, int a2, int key, int flag)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014B700);
+#ifdef SKIP_ASM
+extern char D_0045A418[];
+extern char D_0045A440[];
+extern char D_0045A468[];
+extern char D_0045A498[];
+extern char D_0045A4C0[];
+extern char D_0045A4E8[];
+extern char D_0045A518[];
+extern char D_0045A540[];
+extern char D_0045A568[];
+extern char D_0045A590[];
+extern "C" char* func_0014B700(void* self, unsigned int x)
+{
+    switch (x) {
+    case 0: return D_0045A418;
+    case 1: return D_0045A440;
+    case 2: return D_0045A468;
+    case 3: return D_0045A498;
+    case 4: return D_0045A4C0;
+    case 5: return D_0045A4E8;
+    case 6: return D_0045A518;
+    case 7: return D_0045A540;
+    case 8: return D_0045A568;
+    case 9: return D_0045A590;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014B988);
