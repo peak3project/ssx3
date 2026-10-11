@@ -3061,7 +3061,16 @@ void func_003E4D68(void) {
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4DB8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4E98);
+#ifdef SKIP_ASM
+extern int D_00450DCC;
+
+int func_003E4E98(void)
+{
+    return *(volatile int*)&D_00450DCC;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4EA8);
