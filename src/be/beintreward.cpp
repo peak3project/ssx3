@@ -438,9 +438,53 @@ extern "C" int func_00157430(void* self, int bit, char* bits)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00157468);
+#ifdef SKIP_ASM
+extern "C" int func_00157D60(void* self, int a1, int a2, int bit);
+extern "C" int func_00157DA0(void* self, int a1, int a2, int bit);
+extern "C" int func_00157DE0(void* self, int a1, int a2, int bit);
+extern "C" int func_00157E60(void* self, int a1, int a2, int bit);
+extern "C" int func_00157E20(void* self, int a1, int a2, int bit);
+extern "C" int func_00157EE0(void* self, int a1, int a2, int bit);
 
+extern "C" int func_00157468(void* self, int a1, int a2, int kind, int bit)
+{
+    switch (kind) {
+    case 3: return func_00157D60(self, a1, a2, bit);
+    case 4: return func_00157DA0(self, a1, a2, bit);
+    case 5: return func_00157DE0(self, a1, a2, bit);
+    case 6: return func_00157E60(self, a1, a2, bit);
+    case 7: return func_00157E20(self, a1, a2, bit);
+    case 8: return func_00157EE0(self, a1, a2, bit + 10);
+    }
+    return 0;
+}
+#endif
+
+//100%
 INCLUDE_ASM("be/beintreward", func_00157518);
+#ifdef SKIP_ASM
+extern "C" int func_001575C0(void* self, int a1, int a2);
+extern "C" int func_00157620(void* self, int a1, int a2);
+extern "C" int func_00157680(void* self, int a1, int a2);
+extern "C" int func_00157740(void* self, int a1, int a2);
+extern "C" int func_001576E0(void* self, int a1, int a2);
+extern "C" int func_001577A0(void* self, int a1, int a2);
+
+extern "C" int func_00157518(void* self, int a1, int a2, int kind)
+{
+    switch (kind) {
+    case 3: return func_001575C0(self, a1, a2);
+    case 4: return func_00157620(self, a1, a2);
+    case 5: return func_00157680(self, a1, a2);
+    case 6: return func_00157740(self, a1, a2);
+    case 7: return func_001576E0(self, a1, a2);
+    case 8: return func_001577A0(self, a1, a2);
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintreward", func_001575C0);
@@ -807,7 +851,30 @@ extern "C" int func_00157EE0(void* self, int a1, int a2, int bit)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00157F20);
+#ifdef SKIP_ASM
+// The award handlers are declared void elsewhere in this unit; their results are returned here.
+int func_00157FD0_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00157FD0");
+int func_001580F8_r(void* self, int a1, int a2, int bit, int give) __asm__("func_001580F8");
+int func_00158220_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158220");
+int func_00158470_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158470");
+int func_00158348_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158348");
+int func_00158618_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158618");
+
+extern "C" int func_00157F20(void* self, int a1, int a2, int kind, int bit, int give)
+{
+    switch (kind) {
+    case 3: return func_00157FD0_r(self, a1, a2, bit, give);
+    case 4: return func_001580F8_r(self, a1, a2, bit, give);
+    case 5: return func_00158220_r(self, a1, a2, bit, give);
+    case 6: return func_00158470_r(self, a1, a2, bit, give);
+    case 7: return func_00158348_r(self, a1, a2, bit, give);
+    case 8: return func_00158618_r(self, a1, a2, bit + 10, give);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintreward", func_00157FD0);
