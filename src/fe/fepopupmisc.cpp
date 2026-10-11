@@ -2348,7 +2348,26 @@ extern "C" void func_001E1550(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E1A30);
+#ifdef SKIP_ASM
+extern "C" int func_001E1A30(int x, int y)
+{
+    switch (x) {
+    case 0: return y == 0;
+    case 1: return y == 1;
+    case 2: return y == 2;
+    case 3: return y == 3;
+    case 4: return y == 4;
+    case 5: return y == 5;
+    case 6: return y == 6;
+    case 7: return y == 7;
+    case 8: return y == 8;
+    case 9: return y == 9;
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/fepopupmisc", func_001E1AD0);
