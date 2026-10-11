@@ -39,4 +39,25 @@ extern "C" int readBoundObj(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_6D428", readAction);
+#ifdef SKIP_ASM
+extern "C" int get_camaction(int, char**, int);
+extern "C" void get_camspline(int, char*);
+extern "C" int readBoundObj_C510(int, char*, int) __asm__("readBoundObj");
+
+extern "C" int readAction(int arg0, char** arg1, int arg2) {
+    if (get_camaction(arg0, arg1, arg2) == 0) {
+        return 6;
+    }
+    char* p = *arg1;
+    if (*(int*)p == 1) {
+        return readBoundObj_C510(arg0, p + 8, arg2);
+    }
+    if (*(int*)p == 2) {
+        get_camspline(arg0, p + 8);
+        return 0;
+    }
+    return 0;
+}
+#endif
