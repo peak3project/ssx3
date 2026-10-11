@@ -1388,7 +1388,46 @@ extern "C" void func_0028F000(void* self)
 
 INCLUDE_ASM("sound/bankmanager", func_0028F108);
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028F140);
+#ifdef SKIP_ASM
+struct sBmVtF140 {
+    short delta;
+    short index;
+    void* fn;
+};
+typedef int (*tBmSetF140)(void*, int);
+
+// Switches the bank monitor to the sound bank for a new mode (0..9).
+extern "C" void func_0028F140(void* self, int mode)
+{
+    int bank;
+    if (mode == *(int*)((char*)self + 0x6290)) {
+        return;
+    }
+    *(int*)((char*)self + 0x6290) = mode;
+    switch (mode) {
+    case 0:
+        bank = (*(int*)((char*)self + 0x534) == -1) ? 0 : 9;
+        break;
+    case 1: bank = 1; break;
+    case 3: bank = 3; break;
+    case 4: bank = 4; break;
+    case 5: bank = 5; break;
+    case 6: bank = 6; break;
+    case 7: bank = 7; break;
+    case 8: bank = 8; break;
+    case 2:
+    case 9: bank = 2; break;
+    default: bank = -1; break;
+    }
+    if (bank >= 0) {
+        char* mon = (char*)self + 0x118;
+        sBmVtF140* vt = *(sBmVtF140**)((char*)self + 0x5558);
+        ((tBmSetF140)vt[4].fn)(mon + vt[4].delta, bank);
+    }
+}
+#endif
 
 INCLUDE_ASM("sound/bankmanager", func_0028F200);
 
