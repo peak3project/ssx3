@@ -3030,7 +3030,28 @@ extern "C" void func_001E2A08(int charID, int level)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2B38);
+#ifdef SKIP_ASM
+extern "C" int func_001E2B38(int x)
+{
+    switch (x) {
+    case 0: return 0xC;
+    case 1: return 0xD;
+    case 2: return 0xE;
+    case 3: return 0xF;
+    case 4: return 0x10;
+    case 5: return 0x11;
+    case 6: return 0x12;
+    case 7: return 0x13;
+    case 8: return 0x14;
+    case 9: return 0x15;
+    case 10:
+    default:
+        return 0x3D;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2BB8);

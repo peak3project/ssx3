@@ -1076,7 +1076,27 @@ extern "C" int func_0017FBF0(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017FDF0);
+#ifdef SKIP_ASM
+void* func_00320C48(int, int) __asm__("func_00320C48__FPvi");
+
+extern "C" void func_0017FDF0(void* self, signed char k)
+{
+    int id = 0;
+    switch (k) {
+    case 0: id = 0x72; break;
+    case 1: id = 0x73; break;
+    case 2: id = 0x74; break;
+    case 3: id = 0x75; break;
+    case 4: id = 0x76; break;
+    case 5: id = 0x77; break;
+    case 6: id = 0x78; break;
+    case 7: id = 0x79; break;
+    }
+    func_00320C48(*(int*)((char*)self + 0x18), id);
+}
+#endif
 
 // PORT: the real function is C++ void* func_00320C48(void* self, int) (bx/execman); these thunks pass an int handle.
 void* func_00320C48(int, int) __asm__("func_00320C48__FPvi");

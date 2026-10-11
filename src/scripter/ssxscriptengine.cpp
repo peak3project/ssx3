@@ -1207,7 +1207,32 @@ extern "C" void func_0027A860(void* self, int online, int intro)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027A9F0);
+#ifdef SKIP_ASM
+int func_00279148_r(void* self, int a1, int a2) __asm__("func_00279148");
+extern "C" void func_00279070(void* self, int a1, int a2, int a3);
+
+extern "C" bool func_0027A9F0(void* self)
+{
+    int v = 0;
+    switch (func_00279148_r(self, 1, 0)) {
+    case 12: case 18:
+        v = 3;
+        break;
+    case 13: case 19:
+        v = 2;
+        break;
+    case 14: case 20:
+        v = 1;
+        break;
+    case 15: case 16: case 17:
+        break;
+    }
+    func_00279070(self, 1, v, 1);
+    return v != 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027AA80);
