@@ -1,6 +1,57 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("object/spring", cSpring_setupNodes);
+#ifdef SKIP_ASM
+struct sSpVec_53EF0 {
+    float x, y, z, w;
+    sSpVec_53EF0() {}
+    sSpVec_53EF0(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+struct sSpNode_53EF0 {
+    sSpVec_53EF0 p;         // 0x00
+    sSpVec_53EF0 v;         // 0x10
+    float a;                // 0x20
+    float av;               // 0x24
+    int pad28[2];           // 0x28
+    sSpVec_53EF0 f;         // 0x30
+    float t;                // 0x40
+    int pad44[3];           // 0x44
+};
+
+struct sSpring_53EF0 {
+    int n;                  // 0x00
+    float k;                // 0x04
+    float damp;             // 0x08
+    float c;                // 0x0C
+    float e;                // 0x10
+    int pad14[2];           // 0x14
+    float rest;             // 0x1C
+    float scale;            // 0x20
+    sSpNode_53EF0* nodes;   // 0x24
+};
+
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern const char D_0048E9C8[];
+extern sSpVec_53EF0 D_004FF120_53EF0 __asm__("D_004FF120");
+extern "C" void cSpring_setupNodes(sSpring_53EF0* s)
+{
+    int i;
+    sSpNode_53EF0** dst = &s->nodes;
+    *dst = new (D_0048E9C8, 0x20000000, 0) sSpNode_53EF0[s->n];
+    sSpNode_53EF0* nd = s->nodes;
+    for (i = 0; i < s->n; i++, nd++) {
+        nd->p = D_004FF120_53EF0;
+        nd->v = D_004FF120_53EF0;
+        nd->f = D_004FF120_53EF0;
+        nd->av = 0;
+        nd->a = 0;
+        nd->t = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/spring", func_00353FC0);
