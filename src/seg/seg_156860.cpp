@@ -439,7 +439,32 @@ extern "C" void func_002563A8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_002563F8);
+#ifdef SKIP_ASM
+extern "C" void func_00256460(char* self);
+extern "C" void func_00256510(char* self);
+extern "C" void func_002565E0(char* self);
+
+extern "C" void func_002563F8(char* self)
+{
+    switch (*(int*)self) {
+    case 1:
+        func_00256460(self);
+        break;
+    case 2:
+        func_00256510(self);
+        break;
+    case 4:
+        func_002565E0(self);
+        break;
+    case 0:
+    case 3:
+    case 5:
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00256460);
@@ -695,7 +720,28 @@ extern "C" void func_00256998(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_00256A00);
+#ifdef SKIP_ASM
+extern "C" void func_00256A58(void* self);
+extern "C" void func_00256AA8(char* self);
+
+extern "C" void func_00256A00(char* self)
+{
+    switch (*(int*)((char*)self + 0xC)) {
+    case 1:
+        func_00256A58(self);
+        break;
+    case 2:
+        func_00256AA8(self);
+        break;
+    case 0:
+    case 3:
+    case 4:
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00256A58);
