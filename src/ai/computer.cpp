@@ -1689,7 +1689,51 @@ extern "C" void func_00111538(void* self, int v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_00111578);
+#ifdef SKIP_ASM
+extern "C" void func_00131C30(void* m, int a1);
+extern "C" void func_0012FE98(void* m, int a1);
+void func_0012E9B0_a1(void* m, int a1) __asm__("func_0012E9B0__FPv");
+extern "C" void func_0012FB68(void* m, int a1);
+extern "C" void func_00134CB0(void* m, int a1);
+extern "C" void func_00132048(void* m, int a1);
+extern "C" void func_0012E690(void* m, int a1);
+extern "C" void func_00132F98(void* m, int a1);
+
+// Controller-state dispatch: the second argument is passed through to the handler.
+extern "C" void func_00111578(void* self, int a1)
+{
+    switch (*(int*)((char*)self + 0xDE4)) {
+    case 0:
+        func_00131C30((char*)self + 0x1C0, a1);
+        break;
+    case 1:
+        func_0012FE98((char*)self + 0x1D0, a1);
+        break;
+    case 2:
+        func_0012E9B0_a1((char*)self + 0x1F0, a1);
+        break;
+    case 4:
+        func_0012FB68((char*)self + 0x210, a1);
+        break;
+    case 5:
+        func_00134CB0((char*)self + 0x230, a1);
+        break;
+    case 7:
+        func_00132048((char*)self + 0x2B0, a1);
+        break;
+    case 8:
+        func_0012E690((char*)self + 0x2C0, a1);
+        break;
+    case 11:
+        func_00132F98((char*)self + 0x370, a1);
+        break;
+    case 3: case 6: case 9: case 10: case 12: case 13:
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("ai/computer", func_00111630);
 
