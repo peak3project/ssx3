@@ -2859,9 +2859,103 @@ INCLUDE_ASM("ai/ai", func_0012DCB0);
 
 INCLUDE_ASM("ai/ai", func_0012DD98);
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012DE80);
+#ifdef SKIP_ASM
+int func_00312AA0(void* anim, int layer);
+extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+// Remaps the rider's current layer-2 animation to its follow-up and plays it.
+extern "C" void func_0012DE80(void* self)
+{
+    int cur = func_00312AA0(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 2);
+    int next = cur;
+    switch (cur) {
+    case 0x175:
+        next = 0x18F;
+        break;
+    case 0x176:
+        next = 0x190;
+        break;
+    case 0x177:
+        next = 0x191;
+        break;
+    case 0x178:
+        next = 0x192;
+        break;
+    case 0x179:
+        next = 0x193;
+        break;
+    case 0x17A:
+        next = 0x194;
+        break;
+    case 0x17B:
+        next = 0x195;
+        break;
+    case 0x17C:
+        next = 0x196;
+        break;
+    case 0x17D:
+        next = 0x197;
+        break;
+    case 0x17E:
+        next = 0x198;
+        break;
+    }
+    if (next != cur) {
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), next, 0, -1.0f);
+    }
+}
+#endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012DF48);
+#ifdef SKIP_ASM
+int func_00312AA0(void* anim, int layer);
+extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+// Remaps the rider's current layer-2 animation to its follow-up and plays it.
+extern "C" void func_0012DF48(void* self)
+{
+    int cur = func_00312AA0(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 2);
+    int next = cur;
+    switch (cur) {
+    case 0x16A:
+        next = 0x185;
+        break;
+    case 0x16B:
+        next = 0x186;
+        break;
+    case 0x16C:
+        next = 0x187;
+        break;
+    case 0x16D:
+        next = 0x188;
+        break;
+    case 0x16E:
+        next = 0x189;
+        break;
+    case 0x16F:
+        next = 0x18A;
+        break;
+    case 0x170: case 0x180:
+        next = 0x18B;
+        break;
+    case 0x171: case 0x181:
+        next = 0x18C;
+        break;
+    case 0x172: case 0x182:
+        next = 0x18D;
+        break;
+    case 0x173: case 0x183:
+        next = 0x18E;
+        break;
+    case 0x174: case 0x175: case 0x176: case 0x177: case 0x178: case 0x179: case 0x17A: case 0x17B: case 0x17C: case 0x17D: case 0x17E: case 0x17F:
+        break;
+    }
+    if (next != cur) {
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), next, 0, -1.0f);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012E010);
