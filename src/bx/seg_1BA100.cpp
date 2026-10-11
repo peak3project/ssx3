@@ -541,7 +541,14 @@ extern "C" int func_002B9DA0(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9DA8);
+#ifdef SKIP_ASM
+// volatile keeps the load out of the jr delay slot, as in the target.
+extern "C" int func_002B9DA8(void *arg0) {
+    return (*(volatile int *)((char*)(arg0) + (0x88)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9DB8);
