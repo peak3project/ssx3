@@ -3150,7 +3150,30 @@ extern "C" void func_001A92D8(void* self, int a1, unsigned int kind)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A93D0);
+#ifdef SKIP_ASM
+extern "C" void func_0039F190(void* self, int a1);
+
+// PORT: the unit declares this with a 4th arg; defined under an asm label with its real type
+extern "C" void func_001A93D0_impl(void* self, int id, int event) __asm__("func_001A93D0");
+extern "C" void func_001A93D0_impl(void* self, int id, int event)
+{
+    switch (event) {
+    case 15: case 16: case 17: case 18: case 20:
+        func_0039F190(*(char**)((char*)self + 0x10) + 0x18, 1);
+        break;
+    case 22:
+        if (id == *(int*)((char*)self + 0x6A0)) {
+            *(int*)((char*)self + 0x6A0) = 0;
+        }
+        break;
+    case 19:
+    case 21:
+        break;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001A9438);
