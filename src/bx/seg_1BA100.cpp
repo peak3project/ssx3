@@ -2204,7 +2204,46 @@ extern "C" void *func_002BC980(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BC9B0);
+#ifdef SKIP_ASM
+// Lighting painter (tWPIGD_Lighting) constructor: four current/target
+// irradiance bank references, all starting at the empty reference, plus
+// current/target gain (1.0) and rim (0.75).
+struct sRef_C9B0 { int a; int b; };
+struct sSlot_C9B0 { sRef_C9B0 cur; sRef_C9B0 tgt; };
+struct sLight_C9B0 {
+    float f0;
+    void *vt;
+    sSlot_C9B0 slot[4];
+    float gain, gainTgt, rim, rimTgt;
+};
+extern sRef_C9B0 D_004A53D0_C9B0 __asm__("D_004A53D0");
+extern char D_00484290[];
+
+static inline void refInit_C9B0(sRef_C9B0 *r) {
+    r->b = 0;
+    r->a = 0;
+}
+
+extern "C" sLight_C9B0 *func_002BC9B0(sLight_C9B0 *self) {
+    self->vt = D_00484290;
+    self->f0 = -99999.0f;
+    refInit_C9B0(&self->slot[0].cur); refInit_C9B0(&self->slot[0].tgt);
+    refInit_C9B0(&self->slot[1].cur); refInit_C9B0(&self->slot[1].tgt);
+    refInit_C9B0(&self->slot[2].cur); refInit_C9B0(&self->slot[2].tgt);
+    refInit_C9B0(&self->slot[3].cur); refInit_C9B0(&self->slot[3].tgt);
+    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[0].tgt = t; self->slot[0].cur = self->slot[0].tgt; }
+    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[1].tgt = t; self->slot[1].cur = self->slot[1].tgt; }
+    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[2].tgt = t; self->slot[2].cur = self->slot[2].tgt; }
+    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[3].tgt = t; self->slot[3].cur = self->slot[3].tgt; }
+    self->gainTgt = 1.0f;
+    self->rimTgt = 0.75f;
+    self->gain = 1.0f;
+    self->rim = 0.75f;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BCAF8);
