@@ -1264,7 +1264,40 @@ extern "C" void func_002BB140(void *self, int flags) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB1D0);
+#ifdef SKIP_ASM
+extern "C" void *func_002BB370(void *arg0);
+int operator_new_B1D0(unsigned int, void*, int, int) __asm__("operator_new__FUi");
+extern char D_00483C68[];
+struct sArr_B1D0 { int n; S12_B140 *arr; };
+
+// Reallocates the 12-byte element array (delete[] then new[] with a count cookie).
+extern "C" void func_002BB1D0(sArr_B1D0 *self, int n) {
+    if (self->arr != 0) {
+        S12_B140 *p = self->arr + *(int*)((char*)self->arr - 0x10);
+        if (self->arr != p) {
+            do {
+                p--;
+                func_002BB390(p, 0);
+            } while (self->arr != p);
+        }
+        cMemMan_free((char*)self->arr - 0x10);
+    }
+    self->n = n;
+    S12_B140 **dst = &self->arr;
+    int *blk = (int*)operator_new_B1D0(n * 12 + 0x10, D_00483C68, 0x20000000, 0);
+    blk[0] = n;
+    S12_B140 *a = (S12_B140*)(blk + 4);
+    S12_B140 *q = a;
+    int i;
+    for (i = n - 1; i != -1; i--) {
+        func_002BB370(q);
+        q++;
+    }
+    *dst = a;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB2B8);
