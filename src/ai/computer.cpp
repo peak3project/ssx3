@@ -1531,9 +1531,78 @@ extern "C" void func_001112B8(void* self, int v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_001112F8);
+#ifdef SKIP_ASM
+// Motion-state dispatch: the second argument is passed through to the handler.
+extern "C" void func_0013F410(void* self, int a1);
+void func_00139A18_a1(void* motion, int a1) __asm__("func_00139A18__FPv");
+void func_00136F28_a1(void* motion, int a1) __asm__("func_00136F28__FPv");
+extern "C" void func_0013C5A0(void* motion, int a1);
+extern "C" void func_00139178(void* motion, int a1);
+extern "C" void func_0013C7A8(void* self, int a1);
+extern "C" void func_001399E0(void* motion, int a1);
+extern "C" void cWipeoutMotion_gainFocus(void* motion, int a1);
+extern "C" void func_0013AD20(void* motion, int a1);
+extern "C" void cHandplantMotion_gainFocus(void* motion, int a1);
 
+extern "C" void func_001112F8(void* self, int a1)
+{
+    switch (*(int*)((char*)self + 0xDE0)) {
+    case 0:
+        func_0013F410(self, a1);
+        break;
+    case 1:
+        func_00139A18_a1((char*)self + 0x20, a1);
+        break;
+    case 2:
+        func_00136F28_a1((char*)self + 0x30, a1);
+        break;
+    case 4:
+        func_0013C5A0((char*)self + 0xB0, a1);
+        break;
+    case 5:
+        func_00139178((char*)self + 0x110, a1);
+        break;
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("ai/computer", func_00111380);
+#ifdef SKIP_ASM
+extern "C" void func_0013F410(void* self, int a1);
+void func_00139A18_a1(void* motion, int a1) __asm__("func_00139A18__FPv");
+void func_00136F28_a1(void* motion, int a1) __asm__("func_00136F28__FPv");
+extern "C" void func_0013C5A0(void* motion, int a1);
+extern "C" void func_00139178(void* motion, int a1);
+extern "C" void func_0013C7A8(void* self, int a1);
+extern "C" void func_001399E0(void* motion, int a1);
+extern "C" void cWipeoutMotion_gainFocus(void* motion, int a1);
+extern "C" void func_0013AD20(void* motion, int a1);
+extern "C" void cHandplantMotion_gainFocus(void* motion, int a1);
+
+extern "C" void func_00111380(void* self, int a1)
+{
+    switch (*(int*)((char*)self + 0xDE0)) {
+    case 0:
+        func_0013C7A8(self, a1);
+        break;
+    case 1:
+        func_001399E0((char*)self + 0x20, a1);
+        break;
+    case 2:
+        cWipeoutMotion_gainFocus((char*)self + 0x30, a1);
+        break;
+    case 4:
+        func_0013AD20((char*)self + 0xB0, a1);
+        break;
+    case 5:
+        cHandplantMotion_gainFocus((char*)self + 0x110, a1);
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("ai/computer", func_00111408);
 
