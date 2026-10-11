@@ -532,7 +532,42 @@ extern "C" void func_00291438(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00291710);
+#ifdef SKIP_ASM
+int func_0011FE98(void* rider);
+
+// PORT: the unit declares this as int(void*, int); defined under an asm label with its real type
+extern "C" int func_00291710_impl(void* self, void* rider) __asm__("func_00291710");
+extern "C" int func_00291710_impl(void* self, void* rider)
+{
+    int x;
+    if (func_0011FE98(rider) == 4) {
+        x = *(int*)((char*)self + 0x598C);
+    } else {
+        x = *(int*)((char*)rider + 0x438);
+    }
+    switch (x) {
+    case 2: case 3: case 13:
+        return 1;
+    case 1:
+        return 2;
+    case 4:
+        return 3;
+    case 7: case 8: case 18:
+        return 7;
+    case 9:
+        return 5;
+    case 10:
+        return 4;
+    case 11:
+        return 8;
+    case -1: case 0: case 5: case 6: case 12: case 14: case 15: case 16: case 17: case 19:
+        return 0;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002917B8);
@@ -956,7 +991,52 @@ extern "C" int func_00294F48(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00294F78);
+#ifdef SKIP_ASM
+struct sVEnt_294F78 { short delta; short index; int (*fn)(void*, int, int); };
+
+extern "C" void func_00294F78(void* self, int cue)
+{
+    int id = -1;
+    switch (cue) {
+    case 5: case 6:
+        id = -1;
+        break;
+    case 7:
+        id = 0x10;
+        break;
+    case 8:
+        id = 0x11;
+        break;
+    case 0: case 9:
+        id = 3;
+        break;
+    case 1: case 10:
+        id = 4;
+        break;
+    case 2: case 11:
+        id = 2;
+        break;
+    case 3: case 12:
+        id = 1;
+        break;
+    case 4: case 13:
+        id = 0xD;
+        break;
+    case 14:
+        id = 0x12;
+        break;
+    case 15:
+        id = 7;
+        break;
+    }
+    if (id != -1) {
+        sVEnt_294F78* vt = *(sVEnt_294F78**)((char*)self + 0xC);
+        vt[1].fn((char*)self + vt[1].delta, 0, id);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295028);
