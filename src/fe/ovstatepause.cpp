@@ -2152,7 +2152,30 @@ extern "C" void func_001FF700(void* self, void* a1, int key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", func_001FF748);
+#ifdef SKIP_ASM
+extern "C" void func_001FFD08(void* self, int a);
+
+extern "C" int func_001FF748(void* self, int id, int event, int arg)
+{
+    switch (event) {
+    case 4:
+        func_001FFD08(self, arg);
+        return 1;
+    case 7: case 8: case 9:
+        return 0;
+    case 2: case 3:
+        if (*(int*)((char*)self + 0x9C) < 10) {
+            return 0;
+        }
+        /* fall through */
+    case 5: case 6:
+        break;
+    }
+    return 0x101;
+}
+#endif
 
 INCLUDE_ASM("fe/ovstatepause", func_001FF7B8);
 

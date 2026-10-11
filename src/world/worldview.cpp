@@ -68,7 +68,30 @@ extern "C" int func_003A9890(cWorldView* self, unsigned int i)
 
 INCLUDE_ASM("world/worldview", func_003A98C8);
 
+//100%
 INCLUDE_ASM("world/worldview", func_003A9958);
+#ifdef SKIP_ASM
+struct sViewEnt_3A9958 { int state; int pad; };
+struct sView_3A9958 { int f0; char* info; char pad8[0xC]; sViewEnt_3A9958 ents[1]; };
+extern "C" int func_003A9958(sView_3A9958* self, unsigned int idx)
+{
+    if (self->info != 0 && idx < *(unsigned int*)(self->info + 8)) {
+        switch (self->ents[idx].state) {
+        case 2:
+            return 0;
+        case 5: case 6:
+            self->ents[idx].state = 3;
+            break;
+        case 1:
+            self->ents[idx].state = 0;
+            break;
+        case 0: case 3: case 4:
+            break;
+        }
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldview", func_003A99D8);
