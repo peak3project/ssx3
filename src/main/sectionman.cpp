@@ -1,6 +1,57 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("main/sectionman", cSectionMan_setSky);
+#ifdef SKIP_ASM
+extern char D_005047F8[];
+extern char D_004A2A20[]; // "APBR1"
+extern char D_004A2A28[]; // "BPBR1"
+extern char D_004A2A30[]; // "CPBR1"
+extern char D_004A2A38[]; // "DPBR1"
+extern char D_004A2A40[]; // "EPBR1"
+extern int D_004A43C4;
+extern "C" int func_0038AC50(void* self, const char* name);
+
+// Picks the default rider irradiance bank for the given course.
+extern "C" void cSectionMan_setSky(void* self, int sky)
+{
+    switch (sky) {
+    case 1:
+    case 11:
+    case 18:
+        D_004A43C4 = func_0038AC50(D_005047F8, D_004A2A28);
+        break;
+    case 2:
+    case 9:
+    case 12:
+    case 19:
+        D_004A43C4 = func_0038AC50(D_005047F8, D_004A2A30);
+        break;
+    case 3:
+    case 6:
+    case 15:
+    case 20:
+        D_004A43C4 = func_0038AC50(D_005047F8, D_004A2A38);
+        break;
+    case 4:
+    case 7:
+    case 10:
+    case 13:
+    case 16:
+    case 21:
+        D_004A43C4 = func_0038AC50(D_005047F8, D_004A2A40);
+        break;
+    case 0:
+    case 5:
+    case 8:
+    case 14:
+    case 17:
+    default:
+        D_004A43C4 = func_0038AC50(D_005047F8, D_004A2A20);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/sectionman", func_0022E228);
