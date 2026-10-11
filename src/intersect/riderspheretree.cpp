@@ -559,7 +559,24 @@ extern "C" int func_0032C0F8(sTriTester_C0F8* self, sTriMesh_C0F8* mesh, int fla
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C508);
+#ifdef SKIP_ASM
+// Eight-entry member array with an empty constructor (only the dead loop setup remains).
+struct sTreeSlot_32C508 {
+    int v;
+    sTreeSlot_32C508() {}
+};
+extern "C" void func_0032C540(void* self);
+
+extern "C" void* func_0032C508(void* self)
+{
+    new (self) sTreeSlot_32C508[8];
+    *(int*)((char*)self + 0x98) = 0;
+    func_0032C540(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C540);

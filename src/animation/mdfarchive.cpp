@@ -51,7 +51,24 @@ extern "C" int func_00314D60(int* a, int* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/mdfarchive", func_00314D98);
+#ifdef SKIP_ASM
+inline void* operator new[](unsigned int, void* p) { return p; }
+// 0x206-entry member array with an empty constructor (only the dead loop setup remains).
+struct sMdfEntry_314D98 {
+    int v;
+    sMdfEntry_314D98() {}
+};
+extern void* D_004A3E7C;
+
+extern "C" void* func_00314D98(void* self)
+{
+    new (self) sMdfEntry_314D98[0x206];
+    D_004A3E7C = self;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/mdfarchive", func_00314DD8);

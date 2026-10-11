@@ -986,7 +986,27 @@ INCLUDE_ASM("world/worldcache", func_003A8E20);
 
 INCLUDE_ASM("world/worldcache", func_003A8F10);
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A8F80);
+#ifdef SKIP_ASM
+inline void* operator new[](unsigned int, void* p) { return p; }
+// The cache's leading two-entry member array has an empty constructor; the
+// vec_mark compiler leaves only its dead loop setup behind.
+struct sCacheHead_3A8F80 {
+    int v;
+    sCacheHead_3A8F80() {}
+};
+extern "C" void func_003A9188_8F80(void* self) __asm__("func_003A9188");
+
+// PORT: the unit declares this as void(void*); defined under an asm label with its real type
+extern "C" void* func_003A8F80_impl(void* self) __asm__("func_003A8F80");
+extern "C" void* func_003A8F80_impl(void* self)
+{
+    new (self) sCacheHead_3A8F80[2];
+    func_003A9188_8F80(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8FB8);
