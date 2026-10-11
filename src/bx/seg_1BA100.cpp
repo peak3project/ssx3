@@ -836,7 +836,64 @@ extern "C" void func_002BA208(Arg_A208* arg, int v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BA448);
+#ifdef SKIP_ASM
+struct Rec_A448 { signed char v; char pad[0x17]; };
+struct Q_A448 { int a, b, c, d; };
+struct Obj_A448 {
+    int pad0;
+    Rec_A448 cur;
+    volatile int idx;
+    Rec_A448* recs;
+    int arr24[4];
+    int* p34;
+    int* vals;
+    int* p3C;
+    int arr40[4][2];
+    int* p60;
+    int* p64;
+    int* p68;
+    int* p6C;
+    Q_A448* q70;
+    int* p74;
+    int* p78;
+    int* p7C;
+    int* p80;
+    int* p84;
+};
+extern "C" void* func_00416210(void*, int, unsigned int);
+
+
+struct Outer_A448 { char pad[0x1D8]; Obj_A448 sub; };
+struct Arg_A448 { Outer_A448* o; int* vals; int* vals2; };
+extern "C" void func_002BA448(Arg_A448* arg, int v, int v2) {
+    Outer_A448* o = arg->o;
+    Obj_A448* p = &o->sub;
+    o->sub.idx++;
+    p->recs[o->sub.idx] = o->sub.cur;
+    o->sub.arr24[o->sub.idx] = 0;
+    p->p34[o->sub.idx] = 0;
+    p->vals[o->sub.idx] = p->recs[o->sub.idx].v;
+    p->p3C[o->sub.idx] = 0;
+    func_00416210((char*)p + o->sub.idx * 8 + 0x40, 0, 8);
+    p->p60[o->sub.idx] = 0;
+    p->p64[o->sub.idx] = 0;
+    p->p68[o->sub.idx] = 0;
+    p->p6C[o->sub.idx] = 0;
+    p->q70[o->sub.idx].b = 0;
+    p->q70[o->sub.idx].a = 100;
+    p->q70[o->sub.idx].c = 90;
+    p->q70[o->sub.idx].d = 50;
+    p->p74[o->sub.idx] = 0;
+    p->p80[o->sub.idx] = 0;
+    p->p84[o->sub.idx] = 0;
+    p->p78[o->sub.idx] = 127;
+    p->p7C[o->sub.idx] = 1;
+    arg->vals[arg->o->sub.idx] = v;
+    arg->vals2[arg->o->sub.idx] = v2;
+}
+#endif
 
 INCLUDE_ASM("bx/seg_1BA100", func_002BA6B0);
 
