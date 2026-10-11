@@ -38,7 +38,23 @@ extern "C" void func_0017D008(void* self, int idx)
 
 INCLUDE_ASM("fe/debugfe", func_0017D0A8);
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017D1B8);
+#ifdef SKIP_ASM
+extern "C" int func_0017D1B8(void* self, int a, int b)
+{
+    int r = (a == 2) ? 4 : 5;
+    switch (b) {
+    case 0: case 4: case 5: case 6:
+        r = 0;
+        break;
+    case 1: case 2: case 3:
+        r = 1;
+        break;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D200);

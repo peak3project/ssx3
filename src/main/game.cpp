@@ -441,7 +441,31 @@ extern "C" void func_0022D640(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/game", func_0022D668);
+#ifdef SKIP_ASM
+extern "C" void func_0022D668(void* self, int flag)
+{
+    if (flag == 0) {
+        return;
+    }
+    switch (*(int*)((char*)self + 0x1B4)) {
+    case 0:
+        *(int*)((char*)self + 0x1B8) = flag;
+        *(int*)((char*)self + 0x1B4) = 3;
+        break;
+    case 1:
+        *(int*)((char*)self + 0x1B4) = 3;
+        break;
+    case 2:
+        *(int*)((char*)self + 0x1B4) = 4;
+        break;
+    case 3:
+    case 4:
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("main/game", func_0022D6C8);
 

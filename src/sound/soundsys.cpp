@@ -5370,7 +5370,22 @@ extern "C" void func_002A1D48(void* self, void* obj)
 
 INCLUDE_ASM("sound/soundsys", func_002A1DA0);
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A1E20);
+#ifdef SKIP_ASM
+extern "C" int func_002A1E20(void* self, unsigned int x)
+{
+    switch (x) {
+    case 0: case 1: case 5: case 8: case 11: case 14: case 17: case 18:
+        return 1;
+    case 2: case 3: case 6: case 9: case 12: case 15: case 19: case 20:
+        return 2;
+    case 4: case 7: case 10: case 13: case 16: case 21:
+        return 4;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("sound/soundsys", func_002A1E68);
 
