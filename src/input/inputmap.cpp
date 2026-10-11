@@ -244,7 +244,47 @@ extern "C" void* func_003215F8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputmap", func_00321638);
+#ifdef SKIP_ASM
+struct sMapNode_1638 {
+    int type;                   // 0x0
+    sMapNode_1638* a;           // 0x4, also the free-list link
+    sMapNode_1638* b;           // 0x8
+    sMapNode_1638* c;           // 0xC
+};
+
+// Frees an expression node and its children back onto the map's node free list.
+extern "C" void func_00321638(void* self, sMapNode_1638* node)
+{
+    if (node == 0) {
+        return;
+    }
+    switch (node->type) {
+    case 18: case 19:
+    case 24: case 25: case 26: case 27: case 28:
+    case 29: case 30: case 31: case 32: case 33:
+        func_00321638(self, node->a);
+        break;
+    case 6: case 7: case 8: case 9: case 10: case 11:
+    case 12: case 13: case 14: case 15: case 16: case 17:
+    case 20: case 21:
+        func_00321638(self, node->a);
+        func_00321638(self, node->b);
+        break;
+    case 5:
+        func_00321638(self, node->a);
+        func_00321638(self, node->b);
+        func_00321638(self, node->c);
+        break;
+    case 0: case 1: case 2: case 3: case 4:
+    case 22: case 23:
+        break;
+    }
+    node->a = *(sMapNode_1638**)((char*)self + 0xE0);
+    *(sMapNode_1638**)((char*)self + 0xE0) = node;
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputmap", func_003216E8);
