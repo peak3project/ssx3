@@ -4383,7 +4383,30 @@ extern "C" int func_0029F198(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_0029F2B0);
+#ifdef SKIP_ASM
+// PORT: the unit declares this as void(int, int); defined under an asm label with its real type
+extern "C" int func_0029F2B0_impl(unsigned int idx, int flag) __asm__("func_0029F2B0");
+extern "C" int func_0029F2B0_impl(unsigned int idx, int flag)
+{
+    if (flag == 0) {
+        switch (idx) {
+        case 6: return 1;
+        case 3: return 2;
+        case 0: return 4;
+        case 8: return 8;
+        case 1: return 0x10;
+        case 4: return 0x20;
+        case 9: return 0x80;
+        case 7: return 0x40;
+        case 5: return 0x100;
+        case 2: return 0x200;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_0029F330);
@@ -5368,7 +5391,30 @@ extern "C" void func_002A1D48(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A1DA0);
+#ifdef SKIP_ASM
+// PORT: the unit declares this as void(void*, int, int); defined under an asm label with its real type
+extern "C" int func_002A1DA0_impl(void* self, unsigned int idx, int flag) __asm__("func_002A1DA0");
+extern "C" int func_002A1DA0_impl(void* self, unsigned int idx, int flag)
+{
+    if (flag == 0) {
+        switch (idx) {
+        case 6: return 1;
+        case 3: return 2;
+        case 0: return 4;
+        case 8: return 8;
+        case 1: return 0x10;
+        case 4: return 0x20;
+        case 9: return 0x40;
+        case 7: return 0x80;
+        case 5: return 0x100;
+        case 2: return 0x200;
+        }
+    }
+    return 0x1000;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A1E20);
