@@ -1457,7 +1457,42 @@ extern "C" void func_002BB5A8(void *arg0) {
 }
 #endif
 
+//95.64% - every instruction matches; only the final sh is scheduled after
+// the lq restores instead of before them. volatile store, goto-to-end and
+// declaration order don't move it.
 INCLUDE_ASM("bx/seg_1BA100", func_002BB5F0);
+#ifdef SKIP_ASM
+extern "C" void func_002BAF08(void *self);
+
+// Resolves the loaded block's offset table (-1 entries become null).
+extern "C" void func_002BB5F0(void *arg0) {
+    int temp_4 = (*(int *)((char*)(arg0) + (8)));
+    if (temp_4 != 0) {
+        if (*(int*)temp_4 != 0x10) {
+            if ((*(short *)((char*)(arg0) + (2))) == 0) {
+                cMemMan_free__FPv(temp_4);
+            }
+            (*(int *)((char*)(arg0) + (8))) = 0;
+        }
+        int* res = *(int **)((char*)(arg0) + (8));
+        if (res != 0) {
+            int* p = res + 2;
+            int i;
+            for (i = 0; i < res[1]; i++) {
+                if (*p == -1) {
+                    *p = 0;
+                } else {
+                    *p = *(int *)((char*)(arg0) + (8)) + *p;
+                    func_002BAF08((void*)*p);
+                }
+                p++;
+                res = *(int **)((char*)(arg0) + (8));
+            }
+        }
+    }
+    (*(short *)((char*)(arg0) + (0))) = 3;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB6B8);
