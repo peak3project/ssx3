@@ -67,7 +67,50 @@ extern "C" void func_00282020(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_002820B0);
+#ifdef SKIP_ASM
+extern "C" void func_002728F8(void* obj);
+extern "C" void func_00282908(void* self, void* script);
+
+struct sScriptSlot_2820B0 {
+    int f0;
+    int type;           // 0x04
+    char pad8[0x18];
+    int state;          // 0x20
+};
+
+struct sScriptEngine_2820B0 {
+    char pad0[0x2B8];
+    void* obj2B8;                       // 0x2B8
+    char pad2BC[4];
+    sScriptSlot_2820B0 slots[16];       // 0x2C0
+};
+
+// Retail builds compile the per-state debug hooks to nothing.
+static inline void slotNop_2820B0(void* self, void* slot) {}
+extern "C" void func_002820B0(sScriptEngine_2820B0* self)
+{
+    int i;
+    func_002728F8(self->obj2B8);
+    for (i = 0; i < 16; i++) {
+        sScriptSlot_2820B0* s = &self->slots[i];
+        if (s->state == 0) {
+            continue;
+        }
+        if (s->state == 1) {
+            switch (s->type) {
+            case 0: slotNop_2820B0(self, s); break;
+            case 1: func_00282908(self, s); break;
+            case 2: slotNop_2820B0(self, s); break;
+            case 3: slotNop_2820B0(self, s); break;
+            case 4: slotNop_2820B0(self, s); break;
+            case 5: slotNop_2820B0(self, s); break;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282150);
@@ -281,7 +324,100 @@ extern "C" int func_00282450(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282540);
+#ifdef SKIP_ASM
+extern "C" void func_00282338(void* self, int id);
+int func_00274C10(void* obj, int a);
+extern "C" void func_002729A8(void* mgr, int handle);
+void func_00282C88(void* self, void* slot);
+
+struct sVEnt_282540 {
+    short delta;
+    short index;
+    void* fn;
+};
+typedef void (*tVFn1_282540)(void*, int);
+typedef void (*tVFn2_282540)(void*, int, int);
+
+struct sTblEnt_282540 {
+    int f0;                 // 0x0
+    unsigned short refs;    // 0x4
+    short pad6;
+};
+
+struct sScriptSlot_282540 {
+    int* obj;               // 0x00
+    int type;               // 0x04
+    int tblIdx;             // 0x08
+    int fC;                 // 0x0C
+    short f10;              // 0x10
+    short pad12;
+    int f14;                // 0x14
+    char pad18[8];
+    int state;              // 0x20
+};
+
+struct sScriptEngine_282540 {
+    char pad0[0x2A8];
+    sVEnt_282540* vt;       // 0x2A8
+    char pad2AC[4];
+    sTblEnt_282540* tbl;    // 0x2B0
+    char pad2B4[4];
+    void* mgr;              // 0x2B8
+};
+
+sScriptSlot_282540* func_00282CB0_282540(sScriptEngine_282540* self, int id) __asm__("func_00282CB0");
+
+#define VCALL1(SELF, SLOT, A) ((tVFn1_282540)(SELF)->vt[SLOT].fn)((char*)(SELF) + (SELF)->vt[SLOT].delta, A)
+#define VCALL2(SELF, SLOT, A, B) ((tVFn2_282540)(SELF)->vt[SLOT].fn)((char*)(SELF) + (SELF)->vt[SLOT].delta, A, B)
+
+// Finishes a script slot: per-type cleanup, release of its object and
+// table reference, then returns the slot to the free list.
+// PORT: the unit declares this as void(void*, int); defined under an asm label with its real type
+extern "C" int func_00282540_impl(sScriptEngine_282540* self, int id) __asm__("func_00282540");
+extern "C" int func_00282540_impl(sScriptEngine_282540* self, int id)
+{
+    sScriptSlot_282540* s = func_00282CB0_282540(self, id);
+    if (s == 0 || s->state == 0) {
+        return 6;
+    }
+    s->f10 = 0;
+    switch (s->type) {
+    case 1:
+        {
+            sTblEnt_282540* t = self->tbl + s->f14;
+            if (t->f0 == 0) {
+                VCALL1(self, 8, s->f14);
+            }
+        }
+        break;
+    case 3:
+    case 4:
+    case 5:
+        func_00282338(self, id);
+        break;
+    case 0:
+    case 2:
+    case 6:
+        break;
+    }
+    VCALL2(self, 12, id, s->fC);
+    if (s->obj != 0) {
+        func_00274C10(s->obj, 0);
+        func_002729A8(self->mgr, *s->obj);
+    }
+    if (s->tblIdx >= 0) {
+        sTblEnt_282540* e = self->tbl + s->tblIdx;
+        if (--e->refs == 0) {
+            VCALL1(self, 9, s->tblIdx);
+        }
+    }
+    s->type = 7;
+    func_00282C88(self, s);
+    return 6;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_002826D8);
