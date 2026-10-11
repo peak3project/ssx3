@@ -1604,9 +1604,75 @@ extern "C" void func_00111380(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_00111408);
+#ifdef SKIP_ASM
+extern "C" void func_0013D818(void* self);
+extern "C" void func_00139A20(void* motion);
+extern "C" void func_00136E98(void* motion);
+extern "C" void func_00136958(void* motion);
+extern "C" void func_0013AF28(void* motion);
+extern "C" void func_001391A8(void* motion);
 
+extern "C" void func_00111408(void* self)
+{
+    switch (*(int*)((char*)self + 0xDE0)) {
+    case 0:
+        func_0013D818(self);
+        break;
+    case 1:
+        func_00139A20((char*)self + 0x20);
+        break;
+    case 2:
+        func_00136E98((char*)self + 0x30);
+        break;
+    case 3:
+        func_00136958((char*)self + 0xA0);
+        break;
+    case 4:
+        func_0013AF28((char*)self + 0xB0);
+        break;
+    case 5:
+        func_001391A8((char*)self + 0x110);
+        break;
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("ai/computer", func_001114A0);
+#ifdef SKIP_ASM
+extern "C" void func_0013F178(void* self);
+extern "C" void func_00139C88(void* motion);
+extern "C" void func_00136EE0(void* motion);
+void func_00136978(void* motion);
+extern "C" void func_0013BFA8(void* motion);
+void func_00139528(void* motion);
+
+extern "C" void func_001114A0(void* self)
+{
+    switch (*(int*)((char*)self + 0xDE0)) {
+    case 0:
+        func_0013F178(self);
+        break;
+    case 1:
+        func_00139C88((char*)self + 0x20);
+        break;
+    case 2:
+        func_00136EE0((char*)self + 0x30);
+        break;
+    case 3:
+        func_00136978((char*)self + 0xA0);
+        break;
+    case 4:
+        func_0013BFA8((char*)self + 0xB0);
+        break;
+    case 5:
+        func_00139528((char*)self + 0x110);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_00111538);
