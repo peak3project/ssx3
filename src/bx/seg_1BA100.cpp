@@ -2802,7 +2802,71 @@ extern "C" int func_002BDE30(char *a, char *b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BDEE0);
+#ifdef SKIP_ASM
+// Environment property compare: all 19 current values against the incoming set.
+extern "C" int func_002BDEE0(void *arg0, void *arg1) {
+    if ((*(float *)((char*)(arg0) + (0x8))) != (*(float *)((char*)(arg1) + (0x4)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x10))) != (*(float *)((char*)(arg1) + (0x8)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x18))) != (*(float *)((char*)(arg1) + (0xC)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x20))) != (*(float *)((char*)(arg1) + (0x10)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x28))) != (*(float *)((char*)(arg1) + (0x14)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x30))) != (*(float *)((char*)(arg1) + (0x18)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x38))) != (*(float *)((char*)(arg1) + (0x1C)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x40))) != (*(float *)((char*)(arg1) + (0x20)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x48))) != (*(float *)((char*)(arg1) + (0x24)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x50))) != (*(float *)((char*)(arg1) + (0x28)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x58))) != (*(float *)((char*)(arg1) + (0x2C)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x60))) != (*(float *)((char*)(arg1) + (0x30)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x68))) != (*(float *)((char*)(arg1) + (0x34)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x70))) != (*(float *)((char*)(arg1) + (0x38)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x78))) != (*(float *)((char*)(arg1) + (0x3C)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x80))) != (*(float *)((char*)(arg1) + (0x40)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x88))) != (*(float *)((char*)(arg1) + (0x44)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x90))) != (*(float *)((char*)(arg1) + (0x48)))) {
+        return 0;
+    }
+    if ((*(float *)((char*)(arg0) + (0x98))) != (*(float *)((char*)(arg1) + (0x4C)))) {
+        return 0;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BE078);
