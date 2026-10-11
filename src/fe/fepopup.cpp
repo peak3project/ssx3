@@ -2282,7 +2282,23 @@ extern "C" void cUIStateBuyPopup_onWidgetCreate(void* self, void* widget)
 }
 #endif
 
+//72.67% - same length; target keeps the result in v0 (0x101 set in the
+// branch delay slot) and picks with movn on a2 < 7, GCC holds it in a0 and
+// uses movz plus a final move. Ternary, switch and early-return shapes tried.
 INCLUDE_ASM("fe/fepopup", func_001CAED8);
+#ifdef SKIP_ASM
+extern "C" int func_001CAED8(void* self, int a1, unsigned int a2)
+{
+    int r = 0x101;
+    if (a2 < 10) {
+        if (a2 >= 7)
+            r = 0x100;
+        else
+            r = 0x101;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CAF00);

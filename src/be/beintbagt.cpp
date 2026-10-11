@@ -172,7 +172,25 @@ extern "C" int func_0014FEA8(void* self, int rider, int idx, int second)
 }
 #endif
 
+//58.5% - same instructions; storing *out first gets the target's registers
+// but schedules the store early, while loading both fields into locals and
+// storing last gets the schedule but swaps the 0x14 constant and table base.
 INCLUDE_ASM("be/beintbagt", func_0014FF90);
+#ifdef SKIP_ASM
+struct sBagtEntry_FF90 {
+    char pad[0xC];
+    unsigned short n; // 0xC
+    short pad2;
+    char* name; // 0x10
+};
+extern sBagtEntry_FF90 D_0045AEB8_ff90[] __asm__("D_0045AEB8");
+
+extern "C" char* func_0014FF90(void* self, int rider, int idx, int* out)
+{
+    *out = D_0045AEB8_ff90[idx].n;
+    return D_0045AEB8_ff90[idx].name;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintbagt", func_0014FFB8);
