@@ -4336,7 +4336,25 @@ extern "C" void* func_002D1B08(int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/menu", func_002D1B30);
+#ifdef SKIP_ASM
+class func_002D1B30_cObj {
+public:
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual int v07();
+};
+
+extern "C" void func_002D1B30(func_002D1B30_cObj* obj)
+{
+    obj->v07();
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/menu", func_002D1B58);
