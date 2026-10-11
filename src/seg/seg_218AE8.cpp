@@ -16,7 +16,64 @@ extern "C" void func_00317AE8(char *self, float x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_218AE8", func_00317B50);
+#ifdef SKIP_ASM
+struct sVec4_7B50 { float x, y, z, w; } __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_7B50(const sVec4_7B50& a, const sVec4_7B50& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec4_7B50 vu0Scale_7B50(const sVec4_7B50& v, float s)
+{
+    sVec4_7B50 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+
+// Plane through p with normal n: w = -dot(n, p).
+static inline void setPlane_7B50(sVec4_7B50* out, const sVec4_7B50& n, const sVec4_7B50& p)
+{
+    *out = n;
+    out->w = vu0Dot_7B50(vu0Scale_7B50(n, -1.0f), p);
+}
+
+extern "C" void func_00317B50(sVec4_7B50* out, sVec4_7B50* n, sVec4_7B50* p, sVec4_7B50* q)
+{
+    setPlane_7B50(out, *n, *p);
+    if (vu0Dot_7B50(*out, *q) < 0.0f) {
+        setPlane_7B50(out, vu0Scale_7B50(*n, -1.0f), *p);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_218AE8", func_00317C48);
