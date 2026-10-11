@@ -83,7 +83,30 @@ void* func_00320B48(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/execman", func_00320B68);
+#ifdef SKIP_ASM
+// Branchless ceil(log2(x)): count leading zeros by halving the search
+// window (16/8/4/2 bits), then subtract one more if x isn't a power of two.
+extern "C" int func_00320B68(int x)
+{
+    int n, m, y;
+    n = ((x - 0x10000) >> 31) & 16;
+    y = x << n;
+    m = ((y - 0x1000000) >> 31) & 8;
+    y <<= m;
+    n += m;
+    m = ((y - 0x10000000) >> 31) & 4;
+    y <<= m;
+    n += m;
+    m = ((y - 0x40000000) >> 31) & 2;
+    y <<= m;
+    n += m;
+    n += 1 + (y >> 31);
+    n += -(x & (x - 1)) >> 31;
+    return n ^ 31;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/execman", func_00320BF0);
