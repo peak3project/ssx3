@@ -307,7 +307,40 @@ extern "C" void func_002B97F0(void *arg0, signed char arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9810);
+#ifdef SKIP_ASM
+struct Rec_9810 { signed char v; char pad[0x17]; };
+struct Q_9810 { int a, b, c, d; };
+struct Obj_9810 {
+    int pad0;
+    Rec_9810 cur;
+    volatile int idx;
+    Rec_9810* recs;
+    int arr24[4];
+    int* p34;
+    int* vals;
+    int* p3C;
+    int arr40[4][2];
+    int* p60;
+    int* p64;
+    int* p68;
+    int* p6C;
+    Q_9810* q70;
+    int* p74;
+    int* p78;
+    int* p7C;
+    int* p80;
+    int* p84;
+};
+
+#define MIN_9810(a,b) ((a) < (b) ? (a) : (b))
+#define MAX_9810(a,b) ((a) < (b) ? (b) : (a))
+extern "C" void func_002B9810(Obj_9810 *p, int v) {
+    p->vals[p->idx] = v;
+    p->recs[p->idx].v = MAX_9810(MIN_9810(p->vals[p->idx], 127), 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B98A8);
@@ -895,9 +928,135 @@ extern "C" void func_002BA448(Arg_A448* arg, int v, int v2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BA6B0);
+#ifdef SKIP_ASM
+struct Rec_A6B0 { signed char v; char pad[0x17]; };
+struct Q_A6B0 { int a, b, c, d; };
+struct Obj_A6B0 {
+    int pad0;
+    Rec_A6B0 cur;
+    volatile int idx;
+    Rec_A6B0* recs;
+    int arr24[4];
+    int* p34;
+    int* vals;
+    int* p3C;
+    int arr40[4][2];
+    int* p60;
+    int* p64;
+    int* p68;
+    int* p6C;
+    Q_A6B0* q70;
+    int* p74;
+    int* p78;
+    int* p7C;
+    int* p80;
+    int* p84;
+};
+extern "C" void* func_00416210(void*, int, unsigned int);
 
+
+extern "C" void func_002906B8(void*);
+struct Outer_A6B0 { char pad[0x1D8]; Obj_A6B0 sub; };
+struct Arg_A6B0 { Outer_A6B0* o; int* vals; int* vals2; };
+extern "C" void func_002BA6B0(Arg_A6B0* arg, int v, int v2) {
+    Outer_A6B0* o = arg->o;
+    Obj_A6B0* p = &o->sub;
+    o->sub.idx++;
+    p->recs[o->sub.idx] = o->sub.cur;
+    o->sub.arr24[o->sub.idx] = 0;
+    p->p34[o->sub.idx] = 0;
+    p->vals[o->sub.idx] = p->recs[o->sub.idx].v;
+    p->p3C[o->sub.idx] = 0;
+    func_00416210((char*)p + o->sub.idx * 8 + 0x40, 0, 8);
+    p->p60[o->sub.idx] = 0;
+    p->p64[o->sub.idx] = 0;
+    p->p68[o->sub.idx] = 0;
+    p->p6C[o->sub.idx] = 0;
+    p->q70[o->sub.idx].b = 0;
+    p->q70[o->sub.idx].a = 100;
+    p->q70[o->sub.idx].c = 90;
+    p->q70[o->sub.idx].d = 50;
+    p->p74[o->sub.idx] = 0;
+    p->p80[o->sub.idx] = 0;
+    p->p84[o->sub.idx] = 0;
+    p->p78[o->sub.idx] = 127;
+    p->p7C[o->sub.idx] = 1;
+    arg->vals[arg->o->sub.idx] = v;
+    arg->vals2[arg->o->sub.idx] = v2;
+    func_002906B8(arg);
+}
+#endif
+
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BA920);
+#ifdef SKIP_ASM
+struct Rec_A920 { signed char v; char pad[0x17]; };
+struct Q_A920 { int a, b, c, d; };
+struct Obj_A920 {
+    int pad0;
+    Rec_A920 cur;
+    volatile int idx;
+    Rec_A920* recs;
+    int arr24[4];
+    int* p34;
+    int* vals;
+    int* p3C;
+    int arr40[4][2];
+    int* p60;
+    int* p64;
+    int* p68;
+    int* p6C;
+    Q_A920* q70;
+    int* p74;
+    int* p78;
+    int* p7C;
+    int* p80;
+    int* p84;
+};
+extern "C" void* func_00416210(void*, int, unsigned int);
+
+
+struct Outer_A920 { char pad[0x1D8]; Obj_A920 sub; };
+struct Arg_A920 { Outer_A920* o; int* vals; int* vals2; };
+#define MIN_A920(a,b) ((a) < (b) ? (a) : (b))
+#define MAX_A920(a,b) ((a) < (b) ? (b) : (a))
+extern "C" void func_002906B8(void*);
+extern "C" void func_002BA920(Arg_A920* arg, int v, int v2, int v3) {
+    Outer_A920* o = arg->o;
+    Obj_A920* p = &o->sub;
+    o->sub.idx++;
+    p->recs[o->sub.idx] = o->sub.cur;
+    o->sub.arr24[o->sub.idx] = 0;
+    p->p34[o->sub.idx] = 0;
+    p->vals[o->sub.idx] = p->recs[o->sub.idx].v;
+    p->p3C[o->sub.idx] = 0;
+    func_00416210((char*)p + o->sub.idx * 8 + 0x40, 0, 8);
+    p->p60[o->sub.idx] = 0;
+    p->p64[o->sub.idx] = 0;
+    p->p68[o->sub.idx] = 0;
+    p->p6C[o->sub.idx] = 0;
+    p->q70[o->sub.idx].b = 0;
+    p->q70[o->sub.idx].a = 100;
+    p->q70[o->sub.idx].c = 90;
+    p->q70[o->sub.idx].d = 50;
+    p->p74[o->sub.idx] = 0;
+    p->p80[o->sub.idx] = 0;
+    p->p84[o->sub.idx] = 0;
+    p->p78[o->sub.idx] = 127;
+    p->p7C[o->sub.idx] = 1;
+    arg->vals[arg->o->sub.idx] = v;
+    arg->vals2[arg->o->sub.idx] = v2;
+    {
+        Outer_A920* o2 = arg->o;
+        Obj_A920* p2 = &o2->sub;
+        p2->vals[o2->sub.idx] = v3;
+        p2->recs[o2->sub.idx].v = MAX_A920(MIN_A920(p2->vals[p2->idx], 127), 0);
+    }
+    func_002906B8(arg);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BAC30);
