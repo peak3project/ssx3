@@ -201,7 +201,39 @@ extern "C" void func_00233640(void* self, int type)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateloadscreen", func_002338C8);
+#ifdef SKIP_ASM
+extern int D_004A4324;
+extern "C" void func_00369FF8(void* g);
+extern "C" void func_00228238(void* app);
+extern "C" void* func_0028B180();
+extern "C" void func_0028F768(void* snd);
+
+struct sVec3i_38C8 {
+    int x, y, z;
+    sVec3i_38C8(int a, int b, int c) { x = a; y = b; z = c; }
+};
+
+struct sVE_38C8 {
+    short delta;
+    short index;
+    void (*fn)(void*, sVec3i_38C8);
+};
+
+extern "C" void func_002338C8(void)
+{
+    func_00369FF8(D_004A289C);
+    func_00228238(D_004A28A8);
+    // Storing through a pointer keeps the store ahead of the reload of D_004A289C.
+    int* p = &D_004A4324;
+    *p = 0;
+    char* g = (char*)D_004A289C;
+    sVE_38C8* vt = *(sVE_38C8**)(g + 0x10D8);
+    vt[15].fn(g + vt[15].delta, sVec3i_38C8(0, 0, 0));
+    func_0028F768(func_0028B180());
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233930);
