@@ -897,7 +897,37 @@ extern "C" void func_00292A50(void* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00292AE8);
+#ifdef SKIP_ASM
+struct sSndId292AE8 {
+    long v;
+} __attribute__((packed));
+extern sSndId292AE8 D_004A36A8[];
+extern "C" void func_002ADDE0(void* bank, long id);
+
+struct sVE292AE8 { short delta; short index; void (*fn)(void*, int); };
+
+struct sBank292AE8 {
+    char pad0[0x8D8];
+    sVE292AE8* vt;      // 0x8D8
+};
+struct sSys292AE8 {
+    char pad0[0x1D8];
+    sBank292AE8 bank;   // 0x1D8
+};
+
+// Notifies the sound bank, then (re)starts the default ambient stream.
+// PORT: the 8-byte stream id is passed by value from an unaligned global (64-bit `long`).
+extern "C" void func_00292AE8(char* self, int a1)
+{
+    sSys292AE8* sys = **(sSys292AE8***)(self + 0x118);
+    sVE292AE8* vt = sys->bank.vt;
+    sys = (sSys292AE8*)&sys->bank;
+    vt[4].fn((char*)sys + vt[4].delta, a1);
+    func_002ADDE0(&(**(sSys292AE8***)(self + 0x118))->bank, D_004A36A8[0].v);
+}
+#endif
 
 INCLUDE_ASM("sound/soundsys", func_00292B48);
 
