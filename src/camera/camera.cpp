@@ -245,7 +245,49 @@ void* func_0015E030(void* self)
 
 INCLUDE_ASM("camera/camera", func_0015E050);
 
+//100%
 INCLUDE_ASM("camera/camera", func_0015E2A8);
+#ifdef SKIP_ASM
+struct sCamLag_15E2A8 {
+    float f0, f4, f8, fC;
+    struct {
+        float a, b, c, d;
+    } group[3];             // 0x10
+    float f40, f44, f48, f4C;
+};
+extern sCamLag_15E2A8 D_004C53E0;
+extern int D_004C5430[5];
+
+// Resets the chase camera's tuning constants.
+extern "C" void func_0015E2A8(void)
+{
+    D_004C53E0.f0 = 0.05f;
+    D_004C53E0.f4 = 0.01f;
+    D_004C53E0.f8 = 0.4f;
+    D_004C53E0.fC = 20000.0f;
+    D_004C5430[0] = 0;
+    D_004C53E0.group[0].a = 0.02f;
+    D_004C53E0.group[0].b = 0.01366f;
+    D_004C53E0.group[0].c = 0.07f;
+    D_004C53E0.group[0].d = -1.0f;
+    D_004C5430[1] = 1;
+    D_004C53E0.group[1].a = 0.02f;
+    D_004C53E0.group[1].b = 0.01366f;
+    D_004C53E0.group[1].c = 0.08f;
+    D_004C53E0.group[1].d = -1.0f;
+    D_004C5430[2] = 1;
+    D_004C53E0.group[2].a = 0.02f;
+    D_004C53E0.group[2].b = 0.01366f;
+    D_004C53E0.group[2].c = 0.09f;
+    D_004C53E0.group[2].d = -1.0f;
+    D_004C5430[3] = 1;
+    D_004C53E0.f40 = 0.1f;
+    D_004C53E0.f44 = 0.03f;
+    D_004C53E0.f48 = 1.4f;
+    D_004C53E0.f4C = -1.0f;
+    D_004C5430[4] = 1;
+}
+#endif
 
 INCLUDE_ASM("camera/camera", func_0015E360);
 
