@@ -1063,7 +1063,25 @@ extern "C" void func_001A0570(void* self, int i, int v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feridermanager", func_001A0598);
+#ifdef SKIP_ASM
+extern "C" void func_0019EE88(void* rider);
+
+// Resets the world's rider camera indices and updates both active riders.
+extern "C" void func_001A0598(char* self)
+{
+    char* p = (char*)D_004A289C;
+    *(int*)(p + 0x24) = 0x2E;
+    *(int*)(p + 0x84) = 0x2F;
+    *(int*)(p + 0x10A8) = *(int*)(p + 0x1008);
+    for (int i = 0; i < 2; i++) {
+        p = self + i * 0xCE0;
+        if (*(int*)(p + 0xCC8) != 0)
+            func_0019EE88(p);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feridermanager", func_001A0608);
