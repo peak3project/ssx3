@@ -2513,7 +2513,36 @@ extern "C" void func_001E1C10(int which)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E1DD0);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+extern "C" int func_001E3A30(void* self);
+extern "C" void func_001E3A78(int id, int a1);
+static inline int IsBusy001E1DD0()
+{
+    int n = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
+    return n != 0 && n < 10;
+}
+// Queues the follow-up popup for an event kind unless one is already pending.
+extern "C" void func_001E1DD0(void* self, int kind, int alt)
+{
+    if (IsBusy001E1DD0()) return;
+    int id = 0;
+    switch (kind) {
+    case 6: id = func_001E3A30((void*)0x22) == 0 ? 0x28 : 0; break;
+    case 7: id = func_001E3A30((void*)0x24) == 0 ? 0x2C : 0; break;
+    case 8: id = func_001E3A30((void*)0x26) == 0 ? 0x30 : 0; break;
+    case 9: id = func_001E3A30((void*)0x23) == 0 ? 0x2A : 0; break;
+    case 10: id = func_001E3A30((void*)0x25) == 0 ? 0x2E : 0; break;
+    case 11: id = func_001E3A30((void*)0x27) == 0 ? 0x32 : 0; break;
+    }
+    if (id != 0) {
+        if (alt != 0) id++;
+        func_001E3A78(id, 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E1EB8);

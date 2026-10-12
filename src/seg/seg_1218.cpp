@@ -1658,7 +1658,35 @@ extern "C" void func_00104A40(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00104A60);
+#ifdef SKIP_ASM
+extern "C" int func_00312B18_4A60(void*, void*, int*, int) __asm__("func_00312B18");
+
+// Plays the landing animation that matches the current trick state.
+extern "C" int func_00104A60(void* a, void* b, int* c)
+{
+    switch (*c) {
+    case 0x10F: case 0x11D:
+        return func_00312B18_4A60(a, b, c, 0x123);
+    case 0x110: case 0x118: case 0x119: case 0x11E:
+        return func_00312B18_4A60(a, b, c, 0x124);
+    case 0x10D: case 0x116: case 0x11B:
+        return func_00312B18_4A60(a, b, c, 0x121);
+    case 0x10E: case 0x117: case 0x11C:
+        return func_00312B18_4A60(a, b, c, 0x122);
+    case 0x111:
+        return func_00312B18_4A60(a, b, c, 0x125);
+    case 0x112:
+        return func_00312B18_4A60(a, b, c, 0x126);
+    case 0x113:
+        return func_00312B18_4A60(a, b, c, 0x127);
+    case 0x114:
+        return func_00312B18_4A60(a, b, c, 0x128);
+    }
+    return 0x1B6;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104B48);
