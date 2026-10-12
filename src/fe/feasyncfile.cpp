@@ -4585,7 +4585,20 @@ extern "C" int func_001AC360(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AC408);
+#ifdef SKIP_ASM
+extern "C" int func_001AC360(void* self);
+extern "C" int func_001AC2B8(void* self);
+
+extern "C" int func_001AC408(void* self)
+{
+    bool ok = true;
+    ok = ok && func_001AC360(self);
+    ok = ok && func_001AC2B8(self);
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AC448);
