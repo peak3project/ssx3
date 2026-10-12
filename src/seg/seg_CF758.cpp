@@ -238,4 +238,111 @@ extern "C" void func_001CED90(int arg0, int arg1, int arg2, int arg3, int arg4)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_CF758", func_001CEEA0);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E2A0(void* self, void* parent);
+extern "C" signed char func_001A1CD0(void* mgr, int player);
+signed char cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+int cBELibrary_getRiderIndex(int flag);
+extern "C" int func_00146D98(void* self, int index);
+extern "C" int func_00150928(void* self, int a, int b);
+extern char D_0046A3C8[];
+
+struct sVEntry_1CEEA0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sChallenge_1CEEA0 {
+    char pad0[0x8];
+    void* vtbl;              // 0x8
+    int type;                // 0xC
+    void** mgr;              // 0x10
+    char f14;
+    signed char f15;         // 0x15
+    char pad16[0x2E];
+    signed char player;      // 0x44
+    char pad45[3];
+    int f48;                 // 0x48
+    int f4C;                 // 0x4C
+    int charId;              // 0x50
+    int f54;                 // 0x54
+    int f58;                 // 0x58
+    int f5C;                 // 0x5C
+    int f60;
+    int f64;                 // 0x64
+    int f68;                 // 0x68
+    int f6C;                 // 0x6C
+    int f70;                 // 0x70
+    int f74;                 // 0x74
+    int f78;                 // 0x78
+    char pad7C[0x8EC - 0x7C];
+    int f8EC;                // 0x8EC
+    int f8F0;                // 0x8F0
+    int f8F4;                // 0x8F4
+    int f8F8;                // 0x8F8
+    int f8FC[10];            // 0x8FC
+    int a[4][8];             // 0x924
+    int b[4][8];             // 0x9A4
+};
+
+extern "C" sChallenge_1CEEA0* func_001CEEA0(sChallenge_1CEEA0* self, void* parent, signed char player, int rank, int a4)
+{
+    int i;
+    int j;
+    func_0039E2A0(self, parent);
+    self->type = 0x2F;
+    self->vtbl = D_0046A3C8;
+    self->player = player;
+    self->f15 = func_001A1CD0(*self->mgr, player);
+    self->f4C = a4;
+    self->f58 = 4;
+    self->f5C = 8;
+    self->f8EC = -2;
+    self->f48 = 0;
+    self->f64 = 0;
+    self->f8F4 = 0;
+    self->f8F8 = 0;
+    self->f70 = 0;
+    self->f74 = 0;
+    self->f8FC[0] = 0;
+    self->f8FC[1] = 0;
+    self->f8FC[2] = 0;
+    self->f8FC[3] = 0;
+    self->f8FC[4] = 0;
+    self->f8FC[5] = 0;
+    self->f8FC[6] = 0;
+    self->f8FC[7] = 0;
+    self->f8FC[8] = 0;
+    self->f8FC[9] = 0;
+    self->f68 = 0;
+    self->f6C = 0;
+    self->f78 = 0;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 8; j++) {
+            self->a[i][j] = 0;
+            self->b[i][j] = 0;
+        }
+    }
+    char* iface = (char*)cBE_getInterface_ED90(cBE_getBE(), 1);
+    self->charId = cBENewPlayerInterface_getPlayerCharID(iface, self->player);
+    if (rank != 0) {
+        switch (func_00146D98(iface, cBELibrary_getRiderIndex(self->player))) {
+        case 17: self->f8F0 = 1; break;
+        case 18: self->f8F0 = 1; break;
+        case 19: self->f8F0 = 2; break;
+        case 20: self->f8F0 = 2; break;
+        case 21: self->f8F0 = 3; break;
+        default: self->f8F0 = 1; break;
+        }
+    } else {
+        self->f8F0 = -1;
+    }
+    sVEntry_1CEEA0* vt = *(sVEntry_1CEEA0**)(iface + 0xC);
+    vt[2].fn(iface + vt[2].delta);
+    self->f54 = func_00150928(cBE_getInterface_ED90(cBE_getBE(), 0xB), self->player, self->charId);
+    return self;
+}
+#endif
