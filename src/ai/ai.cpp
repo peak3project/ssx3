@@ -2335,7 +2335,86 @@ extern "C" void func_0012CA30(sAiObj12CA30* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012CB68);
+#ifdef SKIP_ASM
+extern "C" void func_00114130(void* rider, int a, int b);
+extern "C" int func_00116120_CB68(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" void* func_0028B180();
+extern "C" void func_0029E970(void* snd, void* rider);
+extern "C" void func_0029E590(void* snd, void* rider, float t);
+extern "C" void func_0012CD20_CB68(void* self) __asm__("func_0012CD20");
+extern "C" void func_0012D4E8(void* self);
+extern "C" void func_0012D160(void* self);
+extern "C" void func_0012D848(void* self);
+extern "C" void func_0012D9D8(void* self);
+
+struct sAiObj12CB68
+{
+    int f0;                 // 0x00
+    char pad4[0x6C];
+    float f70;              // 0x70
+    char pad74[0xC];
+    char* mRider;           // 0x80
+};
+
+// Decays or charges the AI's 0x70 meter (updating its sound), then runs the current state's handler.
+extern "C" void func_0012CB68(sAiObj12CB68* self, int* input)
+{
+    func_00114130(self->mRider, 0, 0);
+    if (func_00116120_CB68(self->mRider, (*input >> 12) & 1, 0)) {
+        return;
+    }
+    bool b = self->f0 == 3;
+    if (!b) {
+        float t = self->f70;
+        float v;
+        if (t > 0.00416986271739006f) {
+            v = t - 0.00416986271739006f;
+        } else {
+            v = 0.0f;
+            if (t < -0.00416986271739006f) {
+                v = t + 0.00416986271739006f;
+            }
+        }
+        self->f70 = v;
+        if (*input & 0x2000) {
+            float rate = 17.00261688232422f;
+            switch (*(int*)(self->mRider + 0xB20)) {
+            case 0:
+                rate = 8.001495361328125f;
+                break;
+            case 2:
+                rate = 34.00276565551758f;
+                break;
+            }
+            self->f70 += rate * 0.01666666753590107f;
+            if (self->f70 >= 1.0f) {
+                func_0029E970(func_0028B180(), self->mRider);
+            } else {
+                func_0029E590(func_0028B180(), self->mRider, self->f70);
+            }
+        }
+    }
+    switch (self->f0) {
+    case 0:
+        func_0012CD20_CB68(self);
+        break;
+    case 1:
+        func_0012D4E8(self);
+        break;
+    case 2:
+        func_0012D160(self);
+        break;
+    case 3:
+        func_0012D848(self);
+        break;
+    case 4:
+        func_0012D9D8(self);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012CD20);
@@ -2853,7 +2932,124 @@ extern "C" void func_0012D9D8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012DA88);
+#ifdef SKIP_ASM
+int func_00312AA0(void* anim, int layer);
+extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+// Maps the rider's layer-2 animation to its base (or alternate) variant and replays it.
+extern "C" void func_0012DA88(void* self)
+{
+    bool b = *(int*)self == 1;
+    int cur = func_00312AA0(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 2);
+    int next = cur;
+    switch (cur) {
+    case 0x148:
+        next = b ? 0x175 : 0x16A;
+        break;
+    case 0x149:
+        next = b ? 0x176 : 0x16B;
+        break;
+    case 0x14A:
+        next = b ? 0x177 : 0x16C;
+        break;
+    case 0x14B:
+        next = b ? 0x17B : 0x170;
+        break;
+    case 0x14C:
+        next = b ? 0x179 : 0x16E;
+        break;
+    case 0x14D:
+        next = b ? 0x17A : 0x16F;
+        break;
+    case 0x14E:
+        next = b ? 0x17D : 0x172;
+        break;
+    case 0x14F:
+        next = b ? 0x17E : 0x173;
+        break;
+    case 0x150:
+        next = b ? 0x178 : 0x16D;
+        break;
+    case 0x151:
+        next = b ? 0x17C : 0x171;
+        break;
+    case 0x152:
+        next = b ? 0x175 : 0x16A;
+        break;
+    case 0x153:
+        next = b ? 0x176 : 0x16B;
+        break;
+    case 0x154:
+        next = b ? 0x177 : 0x16C;
+        break;
+    case 0x155:
+        next = b ? 0x17B : 0x170;
+        break;
+    case 0x156:
+        next = b ? 0x179 : 0x16E;
+        break;
+    case 0x157:
+        next = b ? 0x17E : 0x173;
+        break;
+    case 0x158:
+        next = b ? 0x17C : 0x171;
+        break;
+    case 0x159:
+        next = b ? 0x178 : 0x16D;
+        break;
+    case 0x15A:
+        next = b ? 0x17A : 0x16F;
+        break;
+    case 0x15B:
+        next = b ? 0x17D : 0x172;
+        break;
+    case 0x15C:
+        next = b ? 0x17B : 0x170;
+        break;
+    case 0x15D:
+        next = b ? 0x17C : 0x171;
+        break;
+    case 0x15E:
+        next = b ? 0x177 : 0x16C;
+        break;
+    case 0x15F:
+        next = b ? 0x179 : 0x16E;
+        break;
+    case 0x160:
+        next = b ? 0x17E : 0x173;
+        break;
+    case 0x161:
+        next = b ? 0x17B : 0x170;
+        break;
+    case 0x162:
+        next = b ? 0x17B : 0x170;
+        break;
+    case 0x163:
+        next = b ? 0x17D : 0x172;
+        break;
+    case 0x164:
+        next = b ? 0x176 : 0x16B;
+        break;
+    case 0x165:
+        next = b ? 0x175 : 0x16A;
+        break;
+    case 0x166:
+        next = b ? 0x17B : 0x170;
+        break;
+    case 0x167:
+        next = b ? 0x17D : 0x172;
+        break;
+    case 0x168: case 0x169:
+        next = b ? 0x17F : 0x174;
+        break;
+    }
+    if (next != cur) {
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), next, 0, -1.0f);
+        func_0012E528(self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012DCB0);
