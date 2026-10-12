@@ -2644,7 +2644,61 @@ extern "C" void func_00108F88(void) {
 
 INCLUDE_ASM("seg/seg_1218", func_00108FA8);
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_0010A768);
+#ifdef SKIP_ASM
+extern "C" void func_003E6448(void* dst, int value, int size);
+extern "C" float func_0010DEF0(void* self);
+extern "C" void func_00120090(void* self, float v);
+int func_0011FEE8_A768(void*) __asm__("func_0011FEE8__FPv");
+extern "C" void func_0010A960_A768(void* self, void* pad) __asm__("func_0010A960");
+extern "C" void func_0010AA70_A768(void* self, void* pad) __asm__("func_0010AA70");
+extern "C" void func_0010B790_A768(void* self, void* pad) __asm__("func_0010B790");
+extern "C" void func_0010B590_A768(void* self, void* pad) __asm__("func_0010B590");
+extern "C" void func_0010AED8_A768(void* self, void* pad) __asm__("func_0010AED8");
+extern "C" void func_0010B250_A768(void* self, void* pad) __asm__("func_0010B250");
+extern "C" void func_0010B750_A768(void* self, void* pad) __asm__("func_0010B750");
+extern "C" void func_0010AD78_A768(void* self, void* pad) __asm__("func_0010AD78");
+
+// Clears the pad input, updates the rider, then runs the input handler for the rider state.
+extern "C" void func_0010A768(char* self, void* pad)
+{
+    func_003E6448(pad, 0, 8);
+    func_00120090(*(void**)(self + 0x18), func_0010DEF0(self));
+    int state = func_0011FEE8_A768(*(void**)(self + 0x18));
+    switch (state) {
+    case 0:
+        func_0010A960_A768(self, pad);
+        break;
+    case 2:
+        func_0010AA70_A768(self, pad);
+        break;
+    case 6:
+        func_0010B790_A768(self, pad);
+        break;
+    case 4:
+        func_0010B590_A768(self, pad);
+        break;
+    case 7:
+        func_0010AED8_A768(self, pad);
+        break;
+    case 5:
+        func_0010B250_A768(self, pad);
+        break;
+    case 8:
+        func_0010B750_A768(self, pad);
+        break;
+    case 1:
+        func_0010AD78_A768(self, pad);
+        break;
+    case 3: case 9: case 10: case 11: case 12: case 13:
+        break;
+    }
+    if (state != 5) {
+        *(int*)(self + 0xE34) = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010A898);
