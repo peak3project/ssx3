@@ -11762,7 +11762,59 @@ INCLUDE_ASM("fe/feasyncfile", func_001B7E40);
 
 INCLUDE_ASM("fe/feasyncfile", func_001B8238);
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B83C0);
+#ifdef SKIP_ASM
+extern "C" void func_002C2718_1B83C0(char* buf, const char* fmt, ...) __asm__("func_002C2718");
+extern "C" void func_002C26D0_1B83C0(void* dst, int fmt, ...) __asm__("func_002C26D0");
+extern char D_004A12C0[];
+extern char D_00464608[];
+extern char D_00464628[];
+extern char D_00464640[];
+extern char D_004644F0[];
+
+struct sVEntry_001B83C0 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+static inline int Loc_001B83C0(char* key)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry_001B83C0* vt = *(sVEntry_001B83C0**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
+}
+
+// Formats the localized string for key into the dialog's text buffer at 0x702.
+static inline void SetText_001B83C0(char* self, char* key, char* buf)
+{
+    int str = Loc_001B83C0(key);
+    func_002C26D0_1B83C0(self + 0x702, str, buf);
+}
+
+extern "C" void func_001B83C0(char* self)
+{
+    char buf[32];
+    func_002C2718_1B83C0(buf, D_004A12C0, 1);
+    switch (*(int*)(self + 0x6DC)) {
+    case 3:
+        SetText_001B83C0(self, D_00464608, buf);
+        break;
+    case 9:
+    case 17:
+    case 28:
+        SetText_001B83C0(self, D_00464628, buf);
+        break;
+    case 23:
+        SetText_001B83C0(self, D_00464640, buf);
+        break;
+    case 15:
+        SetText_001B83C0(self, D_004644F0, buf);
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/feasyncfile", func_001B84D8);
 
