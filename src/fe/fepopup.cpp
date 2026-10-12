@@ -813,7 +813,35 @@ extern "C" void func_001C75C8(void* self, void* menu, int idx, int max)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001C7620);
+#ifdef SKIP_ASM
+struct sVec3_7620 { float x, y, z; };
+// PORT: SN soft-float helpers called by name (fptodp / dpmul / dptofp); on PC: (float)((double)(...) * 1.05)
+extern "C" double func_00413AF8(float f);
+extern "C" double func_00411FD8(double a, double b);
+extern "C" float func_004127A8(double d);
+
+// Converts a screen position into the popup's normalised scroll position for the current layout.
+extern "C" void func_001C7620(void* self, sVec3_7620 pos)
+{
+    char* s = (char*)self;
+    switch (*(int*)(s + 0x31C)) {
+    case 0:
+        *(float*)(s + 0x278) = (pos.x + 15.0f) / *(float*)(s + 0x1F4);
+        *(float*)(s + 0x27C) = (pos.y + 10.0f) / *(float*)(s + 0x1F8);
+        break;
+    case 1:
+        *(float*)(s + 0x278) = func_004127A8(func_00411FD8(func_00413AF8((pos.x + 20.0f) / *(float*)(s + 0x218)), 1.05));
+        *(float*)(s + 0x27C) = (pos.y + 15.0f) / *(float*)(s + 0x21C);
+        break;
+    case 2:
+        *(float*)(s + 0x278) = 1.0f;
+        *(float*)(s + 0x27C) = 1.0f;
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C7738);
