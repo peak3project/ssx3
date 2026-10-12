@@ -4053,7 +4053,53 @@ extern "C" void func_003623D8(sGifPacket* pkt, int x, int w, int y, int h)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_00362478);
+#ifdef SKIP_ASM
+// PORT: 64-bit GS register writes (ulong).
+// Emits one GS ALPHA register write (0x42 for context 1, 0x43 for context 2) for the given blend mode.
+extern "C" void func_00362478(sGifPacket* pkt, int mode, int fix, int ctx)
+{
+    switch (ctx) {
+    case 0:
+        pkt->cur[1] = 0x42;
+        break;
+    case 1:
+        pkt->cur[1] = 0x43;
+        break;
+    default:
+        pkt->cur[1] = 0x42;
+        break;
+    }
+    switch (mode) {
+    case 0: pkt->cur[0] = 0xAA; break;
+    case 1: pkt->cur[0] = 0x2A; break;
+    case 5: pkt->cur[0] = 0x44; break;
+    case 6: pkt->cur[0] = 0x46; break;
+    case 7: pkt->cur[0] = 0x48; break;
+    case 8: pkt->cur[0] = 0x81; break;
+    case 9: pkt->cur[0] = 0x42; break;
+    case 4: pkt->cur[0] = 0x89; break;
+    case 3: pkt->cur[0] = 0x6A; break;
+    case 11: pkt->cur[0] = ((ulong)fix << 32) | 0x64; break;
+    case 12: pkt->cur[0] = ((ulong)fix << 32) | 0x68; break;
+    case 13:
+    case 14: pkt->cur[0] = ((ulong)fix << 32) | 0x88; break;
+    case 2: pkt->cur[0] = ((ulong)0x80 << 32) | 0x68; break;
+    case 16: pkt->cur[0] = 0x98; break;
+    case 17: pkt->cur[0] = 0x58; break;
+    case 10:
+    case 21: pkt->cur[0] = 0x49; break;
+    case 15:
+    case 18:
+    case 19:
+    case 20:
+        break;
+    }
+    pkt->cur += 2;
+    pkt->qwc++;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_003625C0);
