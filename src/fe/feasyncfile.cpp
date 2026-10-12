@@ -6245,7 +6245,23 @@ void* func_001AE0E0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AE100);
+#ifdef SKIP_ASM
+// Key filter: keys 8 and 9 return 0x100, every other key 0x101.
+extern "C" int func_001AE100(void* self, int a1, unsigned int key)
+{
+    int r = 0x101;
+    if (key < 10) {
+        if (key < 8) {
+            r = 0x101;
+        } else {
+            return 0x100;
+        }
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("fe/feasyncfile", func_001AE128);
 
