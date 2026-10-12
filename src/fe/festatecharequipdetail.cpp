@@ -2961,5 +2961,65 @@ extern "C" void func_0019E538(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E588);
+#ifdef SKIP_ASM
+extern void* D_004A289C;
+
+struct sVE_E588 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+struct sRider_E588 {
+    unsigned int item;  // 0x0
+    char pad4[0xC];
+    int f10;            // 0x10
+    char pad14[0xC24 - 0x14];
+    int reqItem;        // 0xC24
+    int reqFlag;        // 0xC28
+    char padC2C[0xCB4 - 0xC2C];
+    int fCB4;           // 0xCB4
+    int fCB8;           // 0xCB8
+    char padCBC[0xCC4 - 0xCBC];
+    int fCC4;           // 0xCC4
+    int fCC8;           // 0xCC8
+    char padCCC[0xCD4 - 0xCCC];
+    int timer;          // 0xCD4
+};
+
+// Item request for a rider slot: applies it straight away when allowed, otherwise arms a delayed retry.
+extern "C" void func_0019E588(sRider_E588* self, unsigned int item, int flag)
+{
+    self->reqItem = item;
+    self->reqFlag = flag;
+    // The three-way flag test (equivalent to f10 != 0 || flag == 0) is kept as written for codegen.
+    if (self->item == item
+        && ((self->f10 != 0 && flag != 0) || (self->f10 == 0 && flag == 0) || !(self->f10 == 0 || flag != 0))) {
+        int ok = 0;
+        if (self->item < 10 && self->fCB8 != 0) {
+            ok = self->fCB4 != 0;
+        }
+        if (ok) {
+            self->timer = -1;
+            int* p = &self->fCC8;
+            int v = 0;
+            if (*p != 0 || self->fCC4 != 0) {
+                v = 1;
+            }
+            *p = v;
+            self->fCC4 = 0;
+        }
+        return;
+    }
+    if (self->timer < 0) {
+        char* w = (char*)D_004A289C;
+        sVE_E588* vt = *(sVE_E588**)(w + 0x10D8);
+        self->timer = vt[114].fn(w + vt[114].delta) + 4;
+        self->fCC4 = self->fCC8;
+        self->fCC8 = 0;
+    }
+}
+#endif
 
