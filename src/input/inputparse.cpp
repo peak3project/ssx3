@@ -683,7 +683,123 @@ extern "C" void* cInputMapParser_parseBinaryFunc(void* self, int op)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputparse", cInputMapParser_parseUnaryFunc);
+#ifdef SKIP_ASM
+extern "C" float func_0031BF60(float x);
+extern "C" float func_0031C040(float x);
+
+struct sUnNode_43A0 {
+    int type;
+    union {
+        float value;
+        sUnNode_43A0* a;
+    };
+};
+
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float trunc_43A0(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0, %1\n\tcvt.s.w %0, %0" : "=f"(t) : "f"(x));
+    return t;
+}
+
+static inline float floor_43A0(float x)
+{
+    float t = trunc_43A0(x);
+    if (x < t) {
+        t -= 1.0f;
+    }
+    return t;
+}
+
+static inline float ceil_43A0(float x)
+{
+    float t = trunc_43A0(x);
+    if (t < x) {
+        t += 1.0f;
+    }
+    return t;
+}
+
+// PORT: PS2-only inline asm (EE sqrt.s).
+static inline float sqrt_43A0(float x)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only inline asm (abs.s).
+static inline float abs_43A0(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// Parses "(expr)" after a unary function name; constant arguments are folded immediately.
+extern "C" void* cInputMapParser_parseUnaryFunc(void* self, int op)
+{
+    if (*(int*)((char*)self + 0x98) != 9) {
+        func_00321500(self, D_0048E198);
+        return 0;
+    }
+    cInputMapParser_readToken(self);
+    sUnNode_43A0* a = (sUnNode_43A0*)cInputMapParser_parseExpression(self);
+    if (a == 0) {
+        return 0;
+    }
+    if (*(int*)((char*)self + 0x98) != 0xA) {
+        func_00321500(self, D_0048E0B8);
+        func_00321638(self, a);
+        return 0;
+    }
+    cInputMapParser_readToken(self);
+    if (a->type == 4) {
+        switch (op) {
+        case 0x18:
+            a->value = func_0031C228(a->value);
+            break;
+        case 0x19:
+            a->value = func_0031BF60(a->value);
+            break;
+        case 0x1A:
+            a->value = func_0031C040(a->value);
+            break;
+        case 0x1B:
+            a->value = func_0040D758(a->value);
+            break;
+        case 0x1C:
+            a->value = func_0040DA10(a->value);
+            break;
+        case 0x1D:
+            a->value = floor_43A0(a->value);
+            break;
+        case 0x1E:
+            a->value = ceil_43A0(a->value);
+            break;
+        case 0x1F:
+            a->value = abs_43A0(a->value);
+            break;
+        case 0x20:
+            a->value = sqrt_43A0(a->value);
+            break;
+        case 0x21: {
+            float x = a->value;
+            a->value = x - floor_43A0(x * 0.159154937f + 0.5f) * 6.28318548f;
+            break;
+        }
+        }
+        return a;
+    }
+    sUnNode_43A0* n = (sUnNode_43A0*)func_003215F8(self);
+    n->type = op;
+    n->a = a;
+    return n;
+}
+#endif
 
 INCLUDE_ASM("input/inputparse", cInputMapParser_compileStatement);
 
