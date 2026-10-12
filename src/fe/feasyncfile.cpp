@@ -14999,7 +14999,121 @@ extern "C" void func_001BCE38(void* self, cFEVObj_001BCE38* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BD1B8);
+#ifdef SKIP_ASM
+extern "C" void* func_001BE7D8_D1B8(void* mem, int a1, void* owner) __asm__("func_001BE7D8");
+extern "C" int func_0039A738_D1B8(void* item) __asm__("func_0039A738");
+extern "C" void func_001BD460_D1B8(void* self, int id, int a2) __asm__("func_001BD460");
+extern "C" void func_001BD428_D1B8(void* self) __asm__("func_001BD428");
+extern "C" int func_0025F180_D1B8(void* self, int id) __asm__("func_0025F180");
+extern "C" void func_0025D770_D1B8(void* self, int id) __asm__("func_0025D770");
+extern char D_00464F60[];
+
+struct sVE_D1B8 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sObj_D1B8 {
+    int pad[2];
+    sVE_D1B8* vt;
+};
+
+struct cState_D1B8 {
+    char pad0[0x10];
+    int engine;              // 0x10
+    char pad14[0x1C - 0x14];
+    int flags;               // 0x1C
+    char pad20[0x40 - 0x20];
+    char* screen;            // 0x40
+    char pad44[0x6D4 - 0x44];
+    char* info;              // 0x6D4
+    char pad6D8[0x700 - 0x6D8];
+    void* backBtn;           // 0x700
+    char pad704[0x708 - 0x704];
+    char* items[4];          // 0x708
+    void* btns[4];           // 0x718
+    char pad728[0x740 - 0x728];
+    sObj_D1B8* texts[4];     // 0x740
+    int vals[4];             // 0x750
+    int changed;             // 0x760
+    int sel;                 // 0x764
+    int selVal;              // 0x768
+    char pad76C[0x774 - 0x76C];
+    int curId;               // 0x774
+    int busy;                // 0x778
+};
+
+// Message handler for the profile-select screen.
+extern "C" void func_001BD1B8(cState_D1B8* self, char* a1, int msg)
+{
+    switch (msg) {
+    case 9:
+        for (int i = 0; i < 4; i++) {
+            if (a1 == self->items[i]) {
+                self->vals[i] = (unsigned char)a1[0x319];
+                self->busy = 0;
+                int id = func_0039A738_D1B8(a1);
+                self->curId = id;
+                int r = func_0025F180_D1B8(D_004A3028, id);
+                sObj_D1B8* t = self->texts[i];
+                t->vt[9].fn((char*)t + t->vt[9].delta, r);
+                func_0025D770_D1B8(D_004A3028, self->curId);
+                return;
+            }
+        }
+        break;
+    case 5: {
+        char* item = 0;
+        if (a1 == self->backBtn) {
+            void* p = func_001BE7D8_D1B8(cMemMan_alloc(0x6E8, D_00464F60, 0, 0), self->engine, self);
+            *(int*)((char*)p + 0x18) = 0x823;
+            func_0039F290(*(char**)(*(char**)(self->screen + 0xD0) + 0x10) + 0x18, p);
+        }
+        for (int i = 0; i < 4; i++) {
+            if (a1 == self->btns[i]) {
+                item = self->items[i];
+                break;
+            }
+        }
+        if (item == 0) {
+            break;
+        }
+        if (func_0039A738_D1B8(item) == -1) {
+            break;
+        }
+        func_001BD460_D1B8(self, func_0039A738_D1B8(item), 0);
+        break;
+    }
+    case 6:
+        func_001A8A40(self, func_001BFBB8(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), self->engine));
+        break;
+    case 7: {
+        self->changed = 1;
+        int n = *(int*)(*(char**)(self->info + 0xA0) + 0x18);
+        self->sel = n;
+        if (n < 4) {
+            self->selVal = (unsigned char)self->items[n][0x319];
+        }
+        func_001A8918(self, (int)a1, msg);
+        break;
+    }
+    case 8:
+        if ((self->flags & 6) == 0) {
+            func_001A9B58(self);
+        }
+        break;
+    case 13:
+        func_001BD428_D1B8(self);
+        break;
+    default:
+        func_001A8918(self, (int)a1, msg);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BD428);
