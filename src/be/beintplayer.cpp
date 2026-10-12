@@ -39,7 +39,7 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 extern const char D_0045A1D8[];
 extern void* D_004A11C0;
 
-//99.24%
+//100%
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBENewPlayerInterface_getThis()

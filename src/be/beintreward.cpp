@@ -11,7 +11,7 @@ struct cBERewardInterface {
     void* vtable;
 };
 
-//99.84%
+//100%
 INCLUDE_ASM("be/beintreward", cBERewardInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBERewardInterface_getThis()
@@ -1816,11 +1816,15 @@ extern "C" int func_0015A3B8(void* self, int a, int b)
 
 extern void* D_004C3E98[];
 
+//100%
 INCLUDE_ASM("be/beintreward", func_0015A478);
 #ifdef SKIP_ASM
-void* func_0015A478(void* self)
+extern void* D_004C3E98[];
+
+// Returns the reward database (callers in this unit pass a self pointer that is ignored).
+extern "C" void* func_0015A478(void* self)
 {
-    return (void*)D_004C3E98;
+    return D_004C3E98;
 }
 #endif
 
