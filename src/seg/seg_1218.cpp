@@ -1098,7 +1098,71 @@ extern "C" void func_00103578(sObj_3578* self, cStream_3578* s)
 
 INCLUDE_ASM("seg/seg_1218", func_001036A0);
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00103918);
+#ifdef SKIP_ASM
+extern "C" char* cAIAnimEventMap_getBlendInTime(int id);
+extern "C" int func_00104CA0_3918(void* self, void* ev, void* data) __asm__("func_00104CA0");
+extern "C" int func_00104A40_3918(void* self, void* ev, void* data) __asm__("func_00104A40");
+extern "C" int func_00104A60_3918(void* self, void* ev, void* data) __asm__("func_00104A60");
+extern "C" int func_00104B78_3918(void* self, void* ev, void* data) __asm__("func_00104B78");
+extern "C" int func_00104C18_3918(void* self, void* ev, void* data) __asm__("func_00104C18");
+extern "C" int func_00104B48_3918(void* self, void* ev, void* data) __asm__("func_00104B48");
+extern "C" int func_00104C38_3918(void* self, void* ev, void* data) __asm__("func_00104C38");
+extern "C" int func_00104B98_3918(void* self, void* ev, void* data) __asm__("func_00104B98");
+extern "C" int func_00104BB8_3918(void* self, void* ev, void* data) __asm__("func_00104BB8");
+extern "C" int func_00104BD8_3918(void* self, void* ev, void* data) __asm__("func_00104BD8");
+extern "C" int func_00104C80_3918(void* self, void* ev, void* data) __asm__("func_00104C80");
+
+struct sEvent3918 { int a; int b; };
+
+struct sEventOwner3918 {
+    int results[20];        // 0x00
+    sEvent3918* events;     // 0x50
+};
+
+// Runs the handler for an animation event's type and stores its result in the per-event slot.
+extern "C" void func_00103918(sEventOwner3918* self, sEvent3918* ev, int* data)
+{
+    int idx = ev - self->events;
+    char* info = cAIAnimEventMap_getBlendInTime(*data);
+    switch (*(int*)(info + 8)) {
+    case 0:
+        self->results[idx] = func_00104CA0_3918(self, ev, data);
+        break;
+    case 1:
+        self->results[idx] = func_00104A40_3918(self, ev, data);
+        break;
+    case 2:
+        self->results[idx] = func_00104A60_3918(self, ev, data);
+        break;
+    case 3:
+        self->results[idx] = func_00104B78_3918(self, ev, data);
+        break;
+    case 4:
+        self->results[idx] = func_00104C18_3918(self, ev, data);
+        break;
+    case 5:
+        self->results[idx] = func_00104B48_3918(self, ev, data);
+        break;
+    case 6:
+        self->results[idx] = func_00104C38_3918(self, ev, data);
+        break;
+    case 7:
+        self->results[idx] = func_00104B98_3918(self, ev, data);
+        break;
+    case 8:
+        self->results[idx] = func_00104BB8_3918(self, ev, data);
+        break;
+    case 9:
+        self->results[idx] = func_00104BD8_3918(self, ev, data);
+        break;
+    case 10:
+        self->results[idx] = func_00104C80_3918(self, ev, data);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103AA0);
