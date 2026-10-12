@@ -995,7 +995,52 @@ extern "C" void func_001A4E28(void* self, void* msg)
 
 INCLUDE_ASM("fe/feasyncfile", func_001A4FB0);
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A5010);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+extern "C" void func_001A5898(void* self);
+extern "C" void func_001A54D8(void* self);
+extern "C" void func_001A52B0(void* self);
+extern "C" void func_001A6978(void* self);
+int func_001A98B0(void* self);
+extern "C" void func_001AB3D0(void* self, int a1, int a2);
+extern "C" void func_001A4D90(void* self);
+extern "C" void func_001A4CE8(void* self, void* src);
+extern "C" void func_001A4FB0(void* self, int a1, int a2);
+
+// Message handler: refreshes the file list on most results, otherwise forwards to the base handler.
+extern "C" void* func_001A5010(void* self, int a1, int a2)
+{
+    switch (a1) {
+    case 0x107:
+        func_001A5898(self);
+    case 0xEA: case 0xEC: case 0xED: case 0xEF: case 0xF1: case 0x106:
+    case 0x109: case 0x10A: case 0x10B: case 0x112: case 0x113:
+        if (*(int*)((char*)self + 0x6AC) != 0) {
+            break;
+        }
+        func_001A54D8(self);
+        func_001A52B0(self);
+        func_001A6978(self);
+        func_001AB3D0(self, func_001A98B0(self), 0);
+        break;
+    case 0x10E:
+        func_001A4D90(self);
+        break;
+    case 0xE3:
+        func_001A4CE8(self, (void*)a2);
+        break;
+    case 0x102:
+        func_001A4FB0(self, a1, a2);
+        break;
+    default:
+        func_001AB3D0(self, func_001A98B0(self), 0);
+        return func_001A8E40_3(self, a1, a2);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A5128);
@@ -13564,7 +13609,58 @@ extern "C" void func_001BD610(void* self, int a1, int a2, int a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BD738);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* cBXString_cBXString4(void* self, const char* str);
+extern "C" void func_001A8A40(void* self, void* obj);
+// PORT: func_001BE510 is defined as (self) in this unit, but this caller passes a second arg.
+void func_001BE510_BD738(void* self, int a1) __asm__("func_001BE510");
+extern "C" const char* func_0039A708(void* a);
+extern "C" void func_001BE0A8(void* self);
+// PORT: func_001BE038 is defined later with its own list type; bound by asm label.
+void func_001BE038_BD738(void* self) __asm__("func_001BE038");
+struct sFEObj_001B1F88;
+extern "C" sFEObj_001B1F88* func_001B1F88(sFEObj_001B1F88* mem, int a1);
+extern "C" void func_001BD848(void* self, int a1, int a2);
+extern const char D_0045FF10[];
+
+struct sFE1BD738 {
+    char pad0[0x708];
+    void* boxes[4];     // 0x708
+};
+
+// Message handler for the slot-select screen; unknown messages go to the base handler.
+extern "C" void* func_001BD738(char* self, int a1, int a2)
+{
+    switch (a1) {
+    case 0xE0:
+        func_001BE510_BD738(self, *(int*)(self + 0x774));
+        break;
+    case 0xDF: {
+        int n = *(int*)(*(char**)(*(char**)(self + 0x6D4) + 0xA0) + 0x18);
+        *(int*)(self + 0x764) = n;
+        if (n < 4) {
+            cBXString_cBXString4(self + 0x76C, func_0039A708(((sFE1BD738*)self)->boxes[n]));
+        }
+        func_001BE0A8(self);
+        func_001BE038_BD738(self);
+        break;
+    }
+    case 0xDC: case 0xE4:
+        func_001A8A40(self, func_001B1F88((sFEObj_001B1F88*)cMemMan_alloc(0x73C, D_0045FF10, 0, 0), *(int*)(self + 0x10)));
+        break;
+    case 0x102:
+        func_001BD848(self, a1, a2);
+        break;
+    default:
+        return func_001A8E40_3(self, a1, a2);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BD848);
