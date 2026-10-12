@@ -136,7 +136,42 @@ extern "C" int func_00150B48(void* self, int a, int b, int amount)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00150B88);
+#ifdef SKIP_ASM
+extern int D_004A6CA8[];
+
+// PORT: 64-bit unsigned long flag word (bit 12 = peak 1 locked, bit 13 = peak 2).
+struct sPeakBits_0B88 {
+    unsigned long low : 12;
+    unsigned long peak1 : 1;
+    unsigned long peak2 : 1;
+    unsigned long rest : 50;
+};
+
+// Sets the locked state of a peak for a profile/character: stores the inverse of `unlocked`.
+extern "C" int func_00150B88(void* self, int a, int b, int peak, int unlocked)
+{
+    if (a >= 2) {
+        return 0;
+    }
+    unlocked ^= 1;
+    if (peak == 1) {
+        int bOff = b * 0xF88;
+        int aOff = a * 0x9B50;
+        int off = bOff + aOff;
+        char* p = (char*)D_004A6CA8 + off;
+        ((sPeakBits_0B88*)(p + 0x278))->peak1 = unlocked;
+    } else if (peak == 2) {
+        int bOff = b * 0xF88;
+        int aOff = a * 0x9B50;
+        int off = bOff + aOff;
+        char* p = (char*)D_004A6CA8 + off;
+        ((sPeakBits_0B88*)(p + 0x278))->peak2 = unlocked;
+    }
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("be/beintecon", func_00150C20);
 
