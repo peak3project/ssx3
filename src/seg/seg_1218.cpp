@@ -1010,7 +1010,37 @@ extern "C" void func_001033B0(void *arg0, V_33B0 *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_001033F8);
+#ifdef SKIP_ASM
+struct sEntry1033F8 {
+    int id;
+    int data[7];
+} __attribute__((aligned(16)));
+
+struct sList1033F8 {
+    int count;
+    char pad4[0xC];
+    sEntry1033F8 entries[6];    // 0x10
+    int fD0;                    // 0xD0
+};
+
+// Removes the entry with the given id from the list, shifting the rest down.
+extern "C" void func_001033F8(sList1033F8* self, int id)
+{
+    int i;
+    self->fD0 = -1;
+    for (i = 0; i < self->count; i++) {
+        if (self->entries[i].id == id) {
+            for (i++; i < self->count; i++) {
+                self->entries[i - 1] = self->entries[i];
+            }
+            self->count--;
+            return;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103480);
