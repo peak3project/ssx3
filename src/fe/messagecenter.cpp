@@ -468,7 +468,106 @@ extern "C" void cFEStateRequestLine_updateHelpText(void* p, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_updateButtonsText);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+void cUIText_setAsciiString(cUIText* self, const char* str);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+int func_00198AE8_UBT(void* self, int idx) __asm__("func_00198AE8__FPv");
+extern char D_004A1390[];
+extern char D_00460738[];
+extern char D_00460748[];
+extern char D_00460758[];
+extern char* D_004A28A8;
+
+class cUIObj_UBT {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08();
+    virtual void setVisible(int on);
+};
+
+struct sReqLine_UBT {
+    char pad_0x0[0x158];
+    unsigned long done;     // 0x158
+    unsigned long sel;      // 0x160
+    int count;              // 0x168
+    int f16C;               // 0x16C
+    char pad_0x170[0x1F4 - 0x170];
+    cUIObj_UBT* text;       // 0x1F4
+    cUIObj_UBT* back;       // 0x1F8
+    cUIObj_UBT* btnA;       // 0x1FC
+    cUIObj_UBT* btnB;       // 0x200
+};
+
+// Release-build assert: expands to an empty do { } while (0). The empty loop still leaves loop notes in the
+// RTL, which is what keeps the done-mask copy scheduled where the target has it.
+#define ASSERT_UBT(cond) do { } while (0)
+
+static inline int isSet_UBT(unsigned long m, int i)
+{
+    return (m >> i) & 1;
+}
+
+static inline int countSel_UBT(sReqLine_UBT* self)
+{
+    int n = 0;
+    for (int i = 0; i < 64; i++) {
+        n += (self->sel >> i) & 1;
+    }
+    return n;
+}
+
+// Updates the action button label of the selected request line and shows or hides the buttons.
+extern "C" void cFEStateRequestLine_updateButtonsText(void* p, int idx)
+{
+    sReqLine_UBT* self = (sReqLine_UBT*)p;
+    if (self->text != 0) {
+        int shown = 0;
+        cUIText_setAsciiString((cUIText*)self->text, D_004A1390);
+        self->text->setVisible(0);
+        self->back->setVisible(0);
+        int on = (self->sel >> idx) & 1;
+        if (on) {
+            unsigned long rest = self->done;
+            ASSERT_UBT(idx < 64);
+            rest &= ~((unsigned long)1 << idx);
+            int only = rest == 0;
+            if (!only) {
+                if (isSet_UBT(self->done, idx)) {
+                    shown = 1;
+                    cUIText_setUnicodeStringByID((cUIText*)self->text, GetHashValue32(D_00460738));
+                } else {
+                    shown = 1;
+                    cUIText_setUnicodeStringByID((cUIText*)self->text, GetHashValue32(D_00460748));
+                }
+            } else if (!isSet_UBT(self->done, idx)) {
+                shown = 1;
+                cUIText_setUnicodeStringByID((cUIText*)self->text, GetHashValue32(D_00460748));
+            }
+        } else if (self->f16C != 0) {
+            if (self->count >= func_00198AE8_UBT(self, idx) || countSel_UBT(self) < 6) {
+                shown = 1;
+                cUIText_setUnicodeStringByID((cUIText*)self->text, GetHashValue32(D_00460758));
+            }
+        }
+        if (shown) {
+            self->text->setVisible(1);
+            self->back->setVisible(1);
+        }
+    }
+    if (*(int*)(D_004A28A8 + 0x84) != 0 && !isSet_UBT(self->sel, idx)) {
+        self->btnA->setVisible(0);
+        self->btnB->setVisible(0);
+    } else {
+        self->btnA->setVisible(1);
+        self->btnB->setVisible(1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/messagecenter", func_001985B0);
