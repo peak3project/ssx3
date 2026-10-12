@@ -14,7 +14,57 @@ struct sUIVectorFlags {
 
 INCLUDE_ASM("ui/uivector", cUIVector_setUIData);
 
+//100%
 INCLUDE_ASM("ui/uivector", func_003A36D0);
+#ifdef SKIP_ASM
+struct sV3_36D0 { float x, y, z; };
+struct sUV_36D0 { float u, v; };
+struct sCol_36D0 { float r, g, b, a; };
+struct sCount_36D0 {
+    unsigned int flag : 1;
+    unsigned int pad1 : 1;
+    unsigned int mode : 15;
+    unsigned int count : 15;
+};
+struct cUIVector_36D0 {
+    char pad0[0x74];
+    sCount_36D0 cnt;    // 0x74
+    char pad78[0x4];
+    sCol_36D0* cols;    // 0x7C
+    sV3_36D0* verts;    // 0x80
+    char pad84[0x4];
+    sUV_36D0* uvs;      // 0x88
+};
+extern "C" void func_003A0048(void* self, unsigned short key, float v);
+
+// Sets a keyframed property: keys < 0x15 go to the base thing, higher keys address per-vertex position/UV/colour.
+extern "C" void func_003A36D0(cUIVector_36D0* self, unsigned short key, float v)
+{
+    if (self->verts == 0) {
+        return;
+    }
+    if (key >= 0x15) {
+        key -= 0x15;
+        unsigned short idx = key / 9;
+        if (idx >= self->cnt.count) {
+            return;
+        }
+        switch ((unsigned short)(key % 9)) {
+        case 0: self->verts[idx].x = v; break;
+        case 1: self->verts[idx].y = v; break;
+        case 2: self->verts[idx].z = v; break;
+        case 3: self->uvs[idx].u = v; break;
+        case 4: self->uvs[idx].v = v; break;
+        case 5: self->cols[idx].r = v; break;
+        case 6: self->cols[idx].g = v; break;
+        case 7: self->cols[idx].b = v; break;
+        case 8: self->cols[idx].a = v; break;
+        }
+    } else {
+        func_003A0048(self, key, v);
+    }
+}
+#endif
 
 INCLUDE_ASM("ui/uivector", func_003A3808);
 
