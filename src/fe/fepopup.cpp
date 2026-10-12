@@ -3964,7 +3964,99 @@ extern "C" void cKeyboardPopup_redrawScreen(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", cKeyboardPopup_SetNameForKey);
+#ifdef SKIP_ASM
+extern "C" int func_001CE560(void* self, int key, int a2);
+extern char D_004C67B8[];
+extern char D_004C67C8[];
+extern char D_004A1CC8[];
+extern char D_00466720[];
+extern char D_00466740[];
+extern char D_00466760[];
+extern char D_00466778[];
+extern char D_00466790[];
+extern char D_004667A8[];
+extern char D_004667C0[];
+extern char D_004667D8[];
+
+struct sTextVE_1CD9B8 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+static inline void SetColor_1CD9B8(cUIText* text, void* col)
+{
+    sTextVE_1CD9B8* vt = *(sTextVE_1CD9B8**)((char*)text + 8);
+    ((int (*)(void*, void*))vt[11].fn)((char*)text + vt[11].delta, col);
+}
+
+static inline void SetVisible_1CD9B8(cUIText* text, int on)
+{
+    sTextVE_1CD9B8* vt = *(sTextVE_1CD9B8**)((char*)text + 8);
+    ((void (*)(void*, int))vt[9].fn)((char*)text + vt[9].delta, on);
+}
+
+extern "C" void cKeyboardPopup_SetNameForKey(void* vself, cUIText* text, int key)
+{
+    char* self = (char*)vself;
+    char buf[16];
+    if (text == 0) {
+        return;
+    }
+    if (func_001CE560(self, key, 0) == 0) {
+        SetColor_1CD9B8(text, D_004C67B8);
+    } else {
+        SetColor_1CD9B8(text, D_004C67C8);
+    }
+    switch (key) {
+    case 27:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_00466720));
+        break;
+    case 42:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_00466740));
+        SetColor_1CD9B8(text, D_004C67C8);
+        break;
+    case 56:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_00466760));
+        SetColor_1CD9B8(text, D_004C67C8);
+        break;
+    case 70:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_00466778));
+        break;
+    case 28:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_00466790));
+        break;
+    case 55:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_004667A8));
+        break;
+    case 75:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_004667C0));
+        break;
+    case 0:
+        if (*(int*)(self + 0x43C) == 1) {
+            SetVisible_1CD9B8(text, 0);
+        } else {
+            SetVisible_1CD9B8(text, 1);
+        }
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_004667D8));
+        break;
+    case 4: case 5: case 6: case 7: case 8:
+    case 9: case 10: case 11: case 12: case 13:
+        if (*(int*)(self + 0x43C) == 1) {
+            SetVisible_1CD9B8(text, 0);
+        } else {
+            SetVisible_1CD9B8(text, 1);
+        }
+        sprintf(buf, D_004A1CC8, key - 3);
+        cUIText_setAsciiString(text, buf);
+        break;
+    case 83:
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/fepopup", func_001CDB98);
 
