@@ -48,7 +48,23 @@ extern "C" void cHandplantMotion_gainFocus(char* self)
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_00138BA0);
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139178);
+#ifdef SKIP_ASM
+// func_00139548 returns a value in $2 that is unused here; declaring it int keeps $2 free as the target has it.
+extern "C" int func_00139548(void* self);
+
+struct sVec4_9178 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// Updates the hand plant and copies its position into the rider's hand target.
+extern "C" void func_00139178(void* self)
+{
+    func_00139548(self);
+    *(sVec4_9178*)(*(char**)((char*)self + 0xA0) + 0x1E0) = *(sVec4_9178*)((char*)self + 0x10);
+}
+#endif
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_001391A8);
 
