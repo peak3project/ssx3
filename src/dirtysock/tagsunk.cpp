@@ -6952,7 +6952,39 @@ extern "C" void func_00265908(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265950);
+#ifdef SKIP_ASM
+extern void* D_004A33D8;
+extern int D_004A33D4;
+extern int D_004A33DC;
+extern int D_004A33E0;
+extern int D_004A33E4;
+struct sDsInit265950 { void* buf; int len; };
+extern sDsInit265950 D_004A5B48_s __asm__("D_004A5B48");
+extern char D_00442A18[];
+extern char D_00537190[];
+extern "C" void* func_003E6448(void* dst, int value, int size);
+extern "C" void func_003F7EE0(void* p);
+extern "C" void* func_002C22C8();
+
+// Resets the DirtySock session state and creates the session object.
+extern "C" void func_00265950(void* vself)
+{
+    int* self = (int*)vself;
+    self[0] = 1;
+    D_004A33D4 = 0;
+    self[1] = 0;
+    D_004A5B48_s.buf = D_00442A18;
+    D_004A33E0 = 0;
+    D_004A33DC = 0;
+    D_004A33E4 = 0;
+    D_004A5B48_s.len = 0;
+    func_003F7EE0(&D_004A5B48_s);
+    func_003E6448(D_00537190, 0, 0x40);
+    D_004A33D8 = func_002C22C8();
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002659C0);
