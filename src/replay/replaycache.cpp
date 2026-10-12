@@ -301,7 +301,39 @@ void func_002705A8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_002705B0);
+#ifdef SKIP_ASM
+extern "C" void func_00270658(void* self);
+
+// PORT: the unit declares the object argument as int.
+extern "C" void func_002705B0(void* self, int obj, int alt)
+{
+    char* s = (char*)self;
+    char* o = (char*)obj;
+    if (*(int*)(s + 0x3D4) == 0) {
+        return;
+    }
+    if (*(int*)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + 0x7C) != 1) {
+        return;
+    }
+    int now;
+    int start;
+    if (alt != 0) {
+        now = *(int*)(o + 0x9C);
+        start = *(int*)(s + 0x474);
+    } else {
+        now = *(int*)(o + 0xA4);
+        start = *(int*)(s + 0x47C);
+    }
+    now -= start;
+    if (now >= 1000) {
+        func_00270658(self);
+    } else {
+        *(int*)(s + 0x3D4) = 0;
+    }
+}
+#endif
 
 INCLUDE_ASM("replay/replaycache", func_00270628);
 
