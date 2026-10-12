@@ -325,7 +325,135 @@ extern "C" void func_0020CC60(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CCF8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0020AB50(int state);
+extern "C" int func_0020A8B0(int a0, int a1);
+int func_00158F30(void* self);
+extern "C" void* cUIStateStack_getCurrentState(void* stack);
+extern void* D_004A28A8;
+extern char* D_004A2EEC;
+extern int D_00534B30[];
+extern int D_004A26FC;
+extern int D_004A2700;
+//---
+void cReplay_stopAutoReplay(void* self);
+extern "C" void func_00231250(void* self, int a, int b, int refresh);
+extern "C" void func_00257610(void* self, int a1);
+extern "C" void cGame_exit(void* game, int a);
+extern "C" void func_0026F8A0(void* self, void* a1, int a2, int a3);
+extern signed char D_00535C12[];
+extern unsigned int D_004A2594;
+extern int D_004A2708;
+
+struct sGame_CCF8 {
+    char pad[0x48];
+    char* mgr;
+};
+
+struct sGlobals_CCF8 {
+    char pad[0x84];
+    sGame_CCF8* game;
+};
+
+// Continues after a result dialog closes, depending on the current overlay state and the pending dialog.
+extern "C" void func_0020CCF8(void)
+{
+    D_004A26FC = 0;
+    char* st = (char*)cUIStateStack_getCurrentState(((sGlobals_CCF8*)D_004A28A8)->game->mgr + 0x18);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    int kind = D_00535C12[0];
+    int type = **(int**)((char*)D_004A28A8 + 0xC0);
+    switch (*(int*)(st + 0x98)) {
+    case 10:
+    case 11:
+        switch (D_004A2700) {
+        case 3:
+            cReplay_stopAutoReplay(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28));
+            D_004A2594 = 1;
+            func_0020AB50(0x21);
+            break;
+        case 1:
+            cReplay_stopAutoReplay(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28));
+            func_00231250(*(void**)((char*)D_004A28A8 + 0x84), 0xD, 0, 1);
+            break;
+        case 2:
+            cReplay_stopAutoReplay(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28));
+            D_004A26FC = 4;
+            break;
+        case 4:
+            func_0020AB50(0x23);
+            break;
+        case 5:
+            D_004A2708 = 0;
+            func_0020AB50(0x17);
+            break;
+        case 6:
+            cReplay_stopAutoReplay(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28));
+            func_0020AB50(0x11);
+            func_0026F8A0(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28), 0, 0, 0);
+            break;
+        case 7:
+            D_004A2700 = 1;
+            func_0020AB50(0xF);
+            break;
+        case 8:
+            cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+            if (D_00534B30[0] != 0) {
+                if (D_004A2EEC != 0) {
+                    func_00257610(D_004A2EEC, 0);
+                }
+                cGame_exit(*(void**)((char*)D_004A28A8 + 0x84), 0);
+            } else {
+                func_0020AB50(0x18);
+            }
+            break;
+        }
+        break;
+    case 15:
+        if (D_004A2700 == 0x13) {
+            func_0020AB50(0x13);
+        } else {
+            char* b = (char*)cBE_getInterface_Fv(cBE_getBE(), 0xD);
+            if (func_00158F30(b) > 0 || *(int*)(b + 0x10) != 0) {
+                func_0020AB50(0x10);
+            } else {
+                func_0020AB50(func_0020A8B0(kind, type));
+            }
+        }
+        break;
+    case 16:
+        func_0020AB50(func_0020A8B0(kind, type));
+        break;
+    case 8:
+    case 9:
+    case 20:
+    case 21:
+        D_004A26FC = 2;
+        break;
+    case 22:
+        switch (D_004A2700) {
+        case 2:
+            cReplay_stopAutoReplay(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28));
+            D_004A26FC = 4;
+            break;
+        case 5:
+            D_004A2708 = 0;
+            func_0020AB50(0x17);
+            break;
+        case 8:
+            func_0020AB50(0x18);
+            break;
+        }
+        break;
+    case 35:
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CFD0);
 
