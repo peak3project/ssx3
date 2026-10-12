@@ -96,7 +96,30 @@ extern "C" void func_001FA9E0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", func_001FAA78);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* func_00397870(void* list, int index);
+extern char D_004A24E8[];
+
+// Pause-menu key filter: returns 0x100 for keys 8/9 and for key 6 unless the item is D_004A24E8, else 0x101.
+extern "C" int func_001FAA78(void* self, void* menu, unsigned int key, int index)
+{
+    switch (key) {
+    case 6: {
+        int id = *(int*)((char*)func_00397870((char*)menu + 0x74, index) + 0x38);
+        if (id == GetHashValue32(D_004A24E8)) {
+            break;
+        }
+    }
+    case 8:
+    case 9:
+        return 0x100;
+    }
+    return 0x101;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FAAF0);
