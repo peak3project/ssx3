@@ -563,7 +563,31 @@ int func_003A4EA8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uivector", func_003A5068);
+#ifdef SKIP_ASM
+extern void* D_004949E8[];
+extern void* D_00494C98[];
+extern void* D_00494CC0[];
+// PORT: called here for its side effect only; declared void so the scheduling matches.
+extern "C" void func_00397948_v(void* p) __asm__("func_00397948");
+extern "C" void func_003A4868(void* p);
+// PORT: the unit declares func_0039FC48 with one argument; the dtor chain passes the delete flag too.
+extern "C" void func_0039FC48_2(void* self, int flag) __asm__("func_0039FC48");
+
+// Destructor: restores the vtables, destroys the two vertex lists, then the base thing.
+extern "C" void func_003A5068(char* self, int flag)
+{
+    *(void***)(self + 0x8) = D_004949E8;
+    *(void***)(self + 0x8C) = D_00494C98;
+    func_00397948_v(self + 0x74);
+    *(void***)(self + 0x88) = D_00494CC0;
+    func_003A4868(self + 0x80);
+    *(void***)(self + 0x7C) = D_00494CC0;
+    func_003A4868(self + 0x74);
+    func_0039FC48_2(self, flag);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uivector", func_003A50F8__FPv);
@@ -611,7 +635,31 @@ extern "C" void* func_003A51D0(void* self, func_003A51D0_cFunctor* fn)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uivector", func_003A52A0);
+#ifdef SKIP_ASM
+extern void* D_004949E8[];
+extern void* D_00494C98[];
+extern void* D_00494CC0[];
+// PORT: called here for its side effect only; declared void so the scheduling matches.
+extern "C" void func_00397948_v(void* p) __asm__("func_00397948");
+extern "C" void func_003A4868(void* p);
+// PORT: the unit declares func_0039FC48 with one argument; the dtor chain passes the delete flag too.
+extern "C" void func_0039FC48_2(void* self, int flag) __asm__("func_0039FC48");
+
+// Second destructor variant; same body as func_003A5068.
+extern "C" void func_003A52A0(char* self, int flag)
+{
+    *(void***)(self + 0x8) = D_004949E8;
+    *(void***)(self + 0x8C) = D_00494C98;
+    func_00397948_v(self + 0x74);
+    *(void***)(self + 0x88) = D_00494CC0;
+    func_003A4868(self + 0x80);
+    *(void***)(self + 0x7C) = D_00494CC0;
+    func_003A4868(self + 0x74);
+    func_0039FC48_2(self, flag);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uivector", func_003A5330__FPv);
