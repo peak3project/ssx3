@@ -8298,7 +8298,42 @@ extern "C" void func_002668E8(sSlots_668E8* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266BA8);
+#ifdef SKIP_ASM
+struct sChan_266BA8 {
+    int count;                      // 0x0
+    int read;                       // 0x4
+    unsigned char buf[64][2];       // 0x8
+    int pad;
+};
+
+struct sChanSet_266BA8 {
+    sChan_266BA8 chan[8];           // 0x0
+    char pad[0x460 - 8 * 0x8C];
+    int active;                     // 0x460
+};
+
+// Pops the next (a, b) pair from channel ch's 64-entry ring; zero entries leave the outputs at -1.
+extern "C" int func_00266BA8(sChanSet_266BA8* self, int ch, int* a, int* b)
+{
+    *a = -1;
+    *b = -1;
+    if (self->active != 0 && ch < func_003F6348()) {
+        if (self->chan[ch].read < self->chan[ch].count) {
+            int i = self->chan[ch].read;
+            i %= 64;
+            if (self->chan[ch].buf[i][0] != 0)
+                *a = self->chan[ch].buf[i][0];
+            if (self->chan[ch].buf[i][1] != 0)
+                *b = self->chan[ch].buf[i][1];
+            self->chan[ch].read++;
+            return 1;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266CA0);
