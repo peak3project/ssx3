@@ -570,7 +570,50 @@ extern "C" void func_0039FD38(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistatestack", func_0039FE00);
+#ifdef SKIP_ASM
+struct sStateDef39FE00 {
+    int f0;
+    int id;                 // 0x04
+    unsigned char layer : 5; // 0x08
+    unsigned char b5 : 1;
+    unsigned char b6 : 1;
+    unsigned char b7 : 1;
+    unsigned char pad9[3];
+};
+
+struct sVE39FE00 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sState39FE00 {
+    char pad0[0x8];
+    sVE39FE00* vt;          // 0x08
+    char padC[0x8];
+    unsigned int b0 : 1;    // 0x14
+    unsigned int b1 : 6;
+    unsigned int b7 : 1;
+    unsigned int layer : 5;
+    unsigned int rest : 19;
+    char pad18[0x20];
+    int id;                 // 0x38
+    void* data;             // 0x3C
+};
+
+// Initialises a UI state from its definition record (id, layer, flags) and points it at the following data.
+extern "C" void func_0039FE00(sState39FE00* self, sStateDef39FE00* def)
+{
+    self->id = def->id;
+    self->layer = def->layer;
+    self->b0 = (*(int*)((char*)def + 8) >> 6) & 1;
+    self->vt[9].fn((char*)self + self->vt[9].delta, (*(int*)((char*)def + 8) >> 9) & 1);
+    self->b7 = def->b7;
+    self->data = def + 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uistatestack", func_0039FEB8);
