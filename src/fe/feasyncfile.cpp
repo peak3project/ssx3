@@ -17892,7 +17892,93 @@ extern "C" void func_001C1E08(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C1EA8);
+#ifdef SKIP_ASM
+extern "C" void* func_001C5018(void* self, int a1);
+extern "C" void* func_001C20F8(void* self, int a1);
+extern "C" void* func_001887A0(void* self, int engine, int reset);
+extern "C" void cUIStateStack_pushSpecial(void* stack, void* st, int a2, int a3);
+extern const char D_00465AD0[];
+extern const char D_00465AE0[];
+extern char D_00464860[];
+extern const char D_0045D698[];
+
+struct sColor_1C1EA8 {
+    float r, g, b, a;
+};
+
+struct sTextVE_1C1EA8 {
+    short delta;
+    short index;
+    void (*fn)(void*, sColor_1C1EA8*);
+};
+
+extern "C" void func_001C1EA8(char* self, char* msg, int ev)
+{
+    if (msg == 0) {
+        return;
+    }
+    switch (ev) {
+    case 5:
+        switch (*(int*)(msg + 0x18)) {
+        case 0:
+            func_001A8A40(self, func_001C5018(cMemMan_alloc(0x6D0, D_00465AD0, 0, 0), *(int*)(self + 0x10)));
+            break;
+        case 1:
+            func_001A8A40(self, func_001C20F8(cMemMan_alloc(0x6FC, D_00465AE0, 0, 0), *(int*)(self + 0x10)));
+            break;
+        case 2: {
+            char* p = (char*)func_001C0418(cMemMan_alloc(0x6DC, D_00464860, 0x100, 0), *(int*)(self + 0x10));
+            *(int*)(p + 0x18) = 0x13;
+            func_001A8A40(self, p);
+            break;
+        }
+        case 3:
+            if ((*(int*)(self + 0x1C) & 6) == 0) {
+                char* q = (char*)func_001887A0(cMemMan_alloc(0x54, D_0045D698, 0x100, 0), *(int*)(self + 0x10), 0);
+                *(int*)(q + 0x1C) = (*(int*)(q + 0x1C) & ~0x3F00) | 0x100;
+                cUIStateStack_pushSpecial(*(char**)(self + 0x10) + 0x18, q, 0, 0);
+            }
+            break;
+        }
+        break;
+    case 6:
+        func_001A8A40(self, func_001BFBB8(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(int*)(self + 0x10)));
+        break;
+    case 1: {
+        sColor_1C1EA8 c;
+        sTextVE_1C1EA8* vt = *(sTextVE_1C1EA8**)(msg + 8);
+        char* obj = msg + vt[11].delta;
+        c.r = 1.0f;
+        c.g = 1.0f;
+        c.b = 1.0f;
+        c.a = 1.0f;
+        vt[11].fn(obj, &c);
+        break;
+    }
+    case 2: {
+        sColor_1C1EA8 c;
+        sTextVE_1C1EA8* vt = *(sTextVE_1C1EA8**)(msg + 8);
+        char* obj = msg + vt[11].delta;
+        c.r = 1.0f;
+        c.g = 0.0f;
+        c.b = 0.0f;
+        c.a = 0.0f;
+        vt[11].fn(obj, &c);
+        break;
+    }
+    case 8:
+        if ((*(int*)(self + 0x1C) & 6) == 0) {
+            func_001A9B58(self);
+        }
+        break;
+    default:
+        func_001A8918(self, (int)msg, ev);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C20F8);
