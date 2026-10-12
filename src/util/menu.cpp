@@ -1350,7 +1350,79 @@ void func_002CC0B8(void* self, int val)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/menu", func_002CC0C0);
+#ifdef SKIP_ASM
+float func_00320BF0_f(void* pad, int axis) __asm__("func_00320BF0");
+extern "C" int func_00266BA8(void* kb, int a1, int* key, int* chr);
+extern "C" void func_002CC460(void* p);
+extern void* D_004A33F0;
+
+struct sVE2CC0C0 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+struct sMenu2CC0C0 {
+    int depth;              // 0x00
+    char* items[17];        // 0x04
+    int input;              // 0x48
+    int key;                // 0x4C
+    int chr;                // 0x50
+    char pad54[0x8];
+    int** pad;              // 0x5C
+};
+
+static inline int PadValid2CC0C0(int** pad)
+{
+    return *pad != 0 && **pad != 0;
+}
+
+// Reads the pad (or USB keyboard) and lets the top menu handle it; pops menus on close.
+extern "C" void func_002CC0C0(sMenu2CC0C0* self)
+{
+    if (self->depth == 0) {
+        return;
+    }
+    if (!PadValid2CC0C0(self->pad)) {
+        return;
+    }
+    int input = (int)func_00320BF0_f(self->pad, 0x3D);
+    int* key = &self->key;
+    int* chr = &self->chr;
+    *key = -1;
+    *chr = -1;
+    self->input = input;
+    if (input == -1 && D_004A33F0 != 0 && func_00266BA8(D_004A33F0, 0, key, chr) != 0) {
+        if (self->chr < 0x20) {
+            self->chr = input;
+        }
+        switch (self->key) {
+        case 0x26: self->input = 0; break;
+        case 0x28: self->input = 1; break;
+        case 0x25: self->input = 2; break;
+        case 0x27: self->input = 3; break;
+        case 0x2D: self->input = 9; break;
+        case 0x2E: self->input = 10; break;
+        case 0xD: self->input = 6; break;
+        case 0x1B: self->input = 7; break;
+        }
+    }
+    char* item = self->items[self->depth - 1];
+    sVE2CC0C0* vt = *(sVE2CC0C0**)(item + 0x12C);
+    switch (vt[2].fn(item + vt[2].delta)) {
+    case 1:
+        func_002CC460(self);
+        break;
+    case 2:
+        while (self->depth != 0) {
+            func_002CC460(self);
+        }
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/menu", func_002CC248__FPv);
