@@ -598,7 +598,42 @@ extern "C" int func_00154368(void* self, int owner)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintmission", func_001543E0);
+#ifdef SKIP_ASM
+struct sMissionEntry_43E0 {
+    char pad_0x00[0x54];
+    int owner;          // 0x54
+    char pad_0x58[0xC];
+};
+
+struct sMissionDef_43E0 {
+    int id;             // 0x0
+    char pad4[0xC];
+    int slot;           // 0x10
+    char pad14[0x10];
+};
+
+extern sMissionEntry_43E0 D_0043D950_43E0[] __asm__("D_0043D950");
+extern sMissionDef_43E0 D_0043EE10_43E0[] __asm__("D_0043EE10");
+extern "C" int func_00153D78(void* self, int id);
+
+// Counts the completed missions whose slot belongs to the given owner.
+extern "C" int func_001543E0(void* self, int owner)
+{
+    int count = 0;
+    for (int i = 0; i < 88; i++) {
+        for (int j = 0; j < 22; j++) {
+            if (D_0043EE10_43E0[i].slot == j && D_0043D950_43E0[j].owner == owner) {
+                if (func_00153D78(self, D_0043EE10_43E0[i].id)) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintmission", func_001544D0);
