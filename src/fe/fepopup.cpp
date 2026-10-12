@@ -3688,7 +3688,66 @@ extern "C" void func_001CD0B0(void* self, int v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", cKeyboardPopup_getObjName);
+#ifdef SKIP_ASM
+struct sName8_1CD0E8 { char s[8]; };
+struct sName10_1CD0E8 { char s[10]; };
+extern char D_004A1368[];
+extern sName10_1CD0E8 D_0045D550_1CD0E8 __asm__("D_0045D550");
+extern char D_004A12A8[];
+extern char D_004A1C80[];
+extern char D_004A1C88[];
+extern char D_004A1C90[];
+extern char D_004A1350[];
+extern char D_0045D560[];
+extern char D_004A1C98[];
+extern char D_004A1CA0[];
+extern char D_004A1CA8[];
+extern char D_004A1CB0[];
+extern char D_004A1CB8[];
+extern char D_004A1CC0[];
+extern char D_004A1CC8[];
+
+extern "C" int cKeyboardPopup_getObjName(void* self, int key, char* out, int shifted)
+{
+    char num[16];
+    char ch[2];
+    if (shifted != 0) {
+        *(sName8_1CD0E8*)out = *(sName8_1CD0E8*)D_004A1368;
+    } else {
+        *(sName10_1CD0E8*)out = D_0045D550_1CD0E8;
+    }
+    switch (key) {
+    case 27: func_004162D0(out, D_004A12A8); break;
+    case 42: func_004162D0(out, D_004A1C80); break;
+    case 56: func_004162D0(out, D_004A1C88); break;
+    case 70: func_004162D0(out, D_004A1C90); break;
+    case 76: func_004162D0(out, D_004A1350); break;
+    case 83: func_004162D0(out, D_0045D560); break;
+    case 28: func_004162D0(out, D_004A1C98); break;
+    case 55: func_004162D0(out, D_004A1CA0); break;
+    case 69: func_004162D0(out, D_004A1CA8); break;
+    case 79: func_004162D0(out, D_004A1CB0); break;
+    case 75: func_004162D0(out, D_004A1CB8); break;
+    case 0: func_004162D0(out, D_004A1CC0); break;
+    case 4: case 5: case 6: case 7: case 8:
+    case 9: case 10: case 11: case 12: case 13:
+        sprintf(num, D_004A1CC8, key - 3);
+        func_004162D0(out, num);
+        break;
+    default:
+        if (D_00441390[key] == '*') {
+            return 0;
+        }
+        ch[0] = D_00441390[key];
+        ch[1] = 0;
+        func_004162D0(out, ch);
+        break;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CD2F0);
