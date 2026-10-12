@@ -1221,7 +1221,47 @@ extern "C" void func_002B8190(void* self, void* obj, int* o0, int* o1, int* o2, 
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B82B8);
+#ifdef SKIP_ASM
+// Evaluates one of the trigger fade curves (selected by curve) at t.
+extern "C" float func_002B82B8(float curve, float t)
+{
+    switch ((int)curve) {
+    case 0:
+        t = t * t;
+        t = 1.0f - t;
+        break;
+    case 1:
+        t = t / (1.5f - t * 0.5f);
+        t = 1.0f - t;
+        break;
+    case 2:
+        t = 1.0f - t;
+        break;
+    case 3:
+        t = 1.0f - t;
+        t = t / (1.5f - t * 0.5f);
+        break;
+    case 4:
+        t = 1.0f - t;
+        t = t * t;
+        break;
+    case 5:
+        if (t <= 0.7f) {
+            t = 1.0f;
+        } else {
+            t = 1.0f - t;
+            t = t * 3.3333332538604736f;
+        }
+        break;
+    default:
+        t = 0.0f;
+        break;
+    }
+    return t;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B83F8);

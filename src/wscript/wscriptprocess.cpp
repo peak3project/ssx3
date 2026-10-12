@@ -143,7 +143,62 @@ extern "C" void func_003077F8(func_003077F8_cProc* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptprocess", func_003078C0);
+#ifdef SKIP_ASM
+struct sVE_003078C0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+static inline void VCall_003078C0(char* self, int slot)
+{
+    sVE_003078C0* vt = *(sVE_003078C0**)(self + 0x5C);
+    vt[slot].fn(self + vt[slot].delta);
+}
+
+// Dispatches a script event to the matching virtual handler (slots 7-16).
+extern "C" void func_003078C0(void* vself, void* vmsg)
+{
+    char* self = (char*)vself;
+    unsigned short* msg = (unsigned short*)vmsg;
+    switch (*msg) {
+    case 0:
+        VCall_003078C0(self, 7);
+        break;
+    case 1:
+        VCall_003078C0(self, 8);
+        break;
+    case 2:
+        VCall_003078C0(self, 9);
+        break;
+    case 3:
+        *(unsigned short**)(*(char**)(self + 0x10) + 0x29C) = msg + 2;
+        VCall_003078C0(self, 10);
+        *(unsigned short**)(*(char**)(self + 0x10) + 0x29C) = 0;
+        break;
+    case 4:
+        VCall_003078C0(self, 11);
+        break;
+    case 5:
+        VCall_003078C0(self, 12);
+        break;
+    case 6:
+        VCall_003078C0(self, 13);
+        break;
+    case 7:
+        VCall_003078C0(self, 14);
+        break;
+    case 8:
+        VCall_003078C0(self, 15);
+        break;
+    case 9:
+        VCall_003078C0(self, 16);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptprocess", func_003079D8);
@@ -747,7 +802,65 @@ extern "C" void func_00308328(func_00308328_cProcess* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptprocess", func_003083A0);
+#ifdef SKIP_ASM
+struct sVE_003083A0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+static inline void VCall_003083A0(char* self, int slot)
+{
+    sVE_003083A0* vt = *(sVE_003083A0**)(self + 0x40);
+    vt[slot].fn(self + vt[slot].delta);
+}
+
+// Same event dispatch as func_003078C0 for a running (state 2) sub-process.
+extern "C" void func_003083A0(void* vself, void* vmsg)
+{
+    char* self = (char*)vself;
+    unsigned short* msg = (unsigned short*)vmsg;
+    if (*(int*)self != 2) {
+        return;
+    }
+    switch (*msg) {
+    case 0:
+        VCall_003083A0(self, 7);
+        break;
+    case 1:
+        VCall_003083A0(self, 8);
+        break;
+    case 2:
+        VCall_003083A0(self, 9);
+        break;
+    case 3:
+        *(unsigned short**)(*(char**)(*(char**)(self + 0x3C) + 0x10) + 0x29C) = msg + 2;
+        VCall_003083A0(self, 10);
+        *(unsigned short**)(*(char**)(*(char**)(self + 0x3C) + 0x10) + 0x29C) = 0;
+        break;
+    case 4:
+        VCall_003083A0(self, 11);
+        break;
+    case 5:
+        VCall_003083A0(self, 12);
+        break;
+    case 6:
+        VCall_003083A0(self, 13);
+        break;
+    case 7:
+        VCall_003083A0(self, 14);
+        break;
+    case 8:
+        VCall_003083A0(self, 15);
+        break;
+    case 9:
+        VCall_003083A0(self, 16);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptprocess", func_003084D0);
