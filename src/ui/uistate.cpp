@@ -218,7 +218,157 @@ void func_0039ECA8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistate", func_0039ECB0);
+#ifdef SKIP_ASM
+void cListNode_removeFromList(cListNode*);
+extern "C" void* cUIStateStack_getCurrentState(void* self);
+extern "C" void func_0039F7B8(void* self, void* state, int a2, int a3);
+extern "C" void func_0039E868(void* state);
+
+class sState_ECB0;
+
+class sStateBase_ECB0 {
+public:
+    int pad0;
+    sState_ECB0* next;      // 0x4
+    virtual ~sStateBase_ECB0(); // vtable at 0x8
+    virtual void v02();
+    virtual void v03();
+    virtual void onEnter();
+    virtual void onExit();
+    virtual void onHide(int a);
+    virtual int onShow(int a);
+    virtual void v08();
+    virtual void v09();
+    virtual int isReady();
+    virtual void onClose(int a);
+    virtual void onUpdate();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void notify(sState_ECB0* from, int msg);
+};
+
+class sState_ECB0 : public sStateBase_ECB0 {
+public:
+    char padC[0x1C - 0xC];
+    unsigned int b0 : 1;    // 0x1C
+    unsigned int f1 : 2;
+    unsigned int b3 : 1;
+    unsigned int b4 : 1;
+    unsigned int b5 : 1;
+    unsigned int b6 : 1;
+    unsigned int b7 : 1;
+    unsigned int id : 6;
+    unsigned int b14 : 1;
+    sState_ECB0* under;     // 0x20
+};
+
+// Steps every active state of the stack through its transition states (2..7); returns nonzero when a
+// state finished closing and none was (re)opened.
+extern "C" int func_0039ECB0(void* self)
+{
+    int closed = 0;
+    int opened = 0;
+    sState_ECB0* st = (sState_ECB0*)cList_first((cList*)self);
+    if (st == 0)
+        goto done;
+    while (!cListNode_isSentinel((cListNode*)st)) {
+        sState_ECB0* next = st->next;
+        if ((*(int*)((char*)st + 0x1C) >> 5) & 1) {
+            switch ((signed char)st->id) {
+            case 2:
+                opened = 1;
+                st->onEnter();
+                st->id = 4;
+                func_0039E868(st);
+                if (st->b0) {
+                    sState_ECB0* under = st->under;
+                    if (under != 0) {
+                        func_0039F7B8(self, under, 1, 1);
+                        under->notify(st, 0x15);
+                    }
+                }
+            case 4:
+                if (st->onShow((*(int*)((char*)st + 0x1C) >> 4) & 1))
+                    st->id = 3;
+                st->b4 = 0;
+                func_0039E868(st);
+                break;
+            case 3:
+                if ((*(int*)((char*)st + 0x1C) >> 4) & 1) {
+                    st->onShow(1);
+                    st->b4 = 0;
+                }
+                st->onHide(0);
+                st->id = 5;
+                func_0039E868(st);
+                break;
+            case 5:
+                st->onUpdate();
+                func_0039E868(st);
+                break;
+            case 6:
+                if (st->isReady())
+                    st->id = 7;
+                st->b4 = 1;
+                func_0039E868(st);
+                break;
+            case 7: {
+                int handled = 0;
+                closed = 1;
+                st->onClose(0);
+                st->onExit();
+                st->id = 8;
+                st->b5 = 0;
+                if ((*(int*)((char*)st + 0x1C) >> 7) & 1)
+                    cListNode_removeFromList((cListNode*)st);
+                int fl = *(int*)((char*)st + 0x1C);
+                int pinned = fl & 1;
+                if (pinned) {
+                    sState_ECB0* under = st->under;
+                    closed = 0;
+                    handled = ((fl >> 14) & 1) ? 0 : func_0039EB60((cList*)self, 1);
+                    if (!handled) {
+                        st->b7 = 1;
+                        if (under != 0) {
+                            if (under->f1 != 0)
+                                under->f1 = under->f1 - 1;
+                            under->b5 = under->f1 == 0;
+                            under->notify(st, 0x16);
+                        }
+                    } else if (under != 0) {
+                        func_0039F7B8(self, under, 0, 1);
+                    }
+                }
+                if (st != 0) {
+                    if ((*(int*)((char*)st + 0x1C) >> 7) & 1) {
+                        cListNode_removeFromList((cListNode*)st);
+                        delete st;
+                    } else {
+                        st->b3 = 0;
+                    }
+                }
+                if (!pinned || handled) {
+                    if (cUIStateStack_getCurrentState(self) == 0) {
+                        if (func_0039EA90((cList*)self, 1) == 0)
+                            func_0039EA90((cList*)self, 8);
+                    }
+                }
+                break;
+            }
+            }
+        }
+        st = next;
+    }
+done:
+    if (closed == 0)
+        return 0;
+    return opened ^ 1;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ui/uistate", func_0039F100);
