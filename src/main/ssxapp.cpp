@@ -1255,7 +1255,85 @@ INCLUDE_ASM("main/ssxapp", func_00229FC8);
 
 INCLUDE_ASM("main/ssxapp", func_0022A128);
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_0022A270);
+#ifdef SKIP_ASM
+//---
+struct sVisObj_A270 {
+    char pad0[0x50];
+    float sphere[4];  // 0x50
+    char pad60[8];
+    float boxMin[3];  // 0x68
+    float boxMax[3];  // 0x74
+};
+
+struct sVisOwner_A270 {
+    char pad0[0x78B4];
+    int countA;                  // 0x78B4
+    sVisObj_A270* nodesA[0x80];  // 0x78B8
+    sVisObj_A270* last;          // 0x7AB8
+    int countB;                  // 0x7ABC
+    sVisObj_A270* nodesB[1];     // 0x7AC0
+};
+
+// PORT: callers declare func_0022A270 with other pointer types; defined under an asm label.
+extern "C" void func_0022A270_impl(sVisOwner_A270* self, sVisObj_A270* obj, int frustum) __asm__("func_0022A270");
+
+// PORT: PS2-only VU0 microprogram call (lqc2/ctc2/vcallms/cfc2); the PC port needs a C
+// version of the microprogram at 0xDB8 (box vs frustum test).
+// Files the previous object by the result of its test, then starts the test for this one.
+extern "C" void func_0022A270_impl(sVisOwner_A270* self, sVisObj_A270* obj, int frustum)
+{
+    unsigned int r;
+    if (obj != 0) {
+        float lo[4] __attribute__((aligned(16)));
+        float hi[4] __attribute__((aligned(16)));
+        lo[0] = obj->boxMin[0];
+        lo[1] = obj->boxMin[1];
+        lo[2] = obj->boxMin[2];
+        hi[0] = obj->boxMax[0];
+        hi[1] = obj->boxMax[1];
+        hi[2] = obj->boxMax[2];
+        lo[3] = 1.0f;
+        hi[3] = 1.0f;
+        __asm__ __volatile__("cfc2.i    %0, $vi1
+" : "=r"(r));
+        __asm__ __volatile__(
+            "lqc2      $vf20, 0x0(%0)
+"
+            "lqc2      $vf21, 0x0(%1)
+"
+            "lqc2      $vf22, 0x0(%2)
+"
+            "ctc2.ni   %3, $vi14
+"
+            "vcallms   0xDB8
+"
+            :
+            : "r"(lo), "r"(hi), "r"(obj->sphere), "r"(frustum));
+    } else {
+        __asm__ __volatile__("cfc2.i    %0, $vi1
+" : "=r"(r));
+    }
+    switch (r) {
+    case 0:
+    case 3:
+        if (self->last != 0) {
+            self->nodesA[self->countA++] = self->last;
+        }
+        break;
+    case 1:
+    case 2:
+        break;
+    case 4:
+        if (self->last != 0) {
+            self->nodesB[self->countB++] = self->last;
+        }
+        break;
+    }
+    self->last = obj;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("main/ssxapp", func_0022A368);
