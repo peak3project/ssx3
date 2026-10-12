@@ -121,7 +121,77 @@ extern "C" void func_001A1D50(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fereal", func_001A1DC0);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+extern "C" void func_0014DE28(void* be, int slot);
+extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void cBE_setState(int state);
+extern "C" void func_00369FF8(void* world);
+extern "C" void func_00195E58(void* p);
+extern "C" void cFEFlowState_setNumStates(void* flow, int n);
+extern int D_004A19B8;
+extern volatile int D_004A4324;
+extern volatile int D_004A45D8;
+extern volatile int D_004A43C8;
+extern void* D_004A289C;
+extern void* volatile D_004A289C_v __asm__("D_004A289C");
+extern void* D_004A28A8;
+extern char D_004A4E80;
+extern char D_005308B8[];
+
+struct sVec3_1DC0 {
+    int x, y, z;
+    sVec3_1DC0(int a, int b, int c) { x = a; y = b; z = c; }
+};
+
+struct sVE_1DC0 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*);
+};
+
+struct sVE0_1DC0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+class cWorld_1DC0 {
+public:
+    char pad[0x10D8];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
+    virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14();
+    virtual void setCamera(const sVec3_1DC0& v);
+};
+
+// Front-end reset on entry: clears the saved sessions once, resets the game state and the world camera.
+extern "C" void func_001A1DC0(char* self)
+{
+    if (D_004A19B8 != 0) {
+        func_0014DE28(cBE_getBE(), 0);
+        func_0014DE28(cBE_getBE(), 1);
+        func_0014DE28(cBE_getBE(), 2);
+        func_003E6448(D_005308B8, 0, 0x20);
+        D_004A19B8 = 0;
+    }
+    *(int*)(self + 0xB5AD8) = 0;
+    *(int*)(self + 0xB5ADC) = 0;
+    cBE_setState(0);
+    func_00369FF8(D_004A289C);
+    func_00195E58(*(void**)((char*)D_004A28A8 + 0x8C));
+    D_004A4324 = 0;
+    D_004A45D8 = 0;
+    do { } while (0);
+    D_004A43C8 = 0;
+    ((cWorld_1DC0*)D_004A289C_v)->setCamera(sVec3_1DC0(0, 0, 0));
+    cFEFlowState_setNumStates(&D_004A4E80, 0x56);
+    sVE0_1DC0* svt = *(sVE0_1DC0**)self;
+    svt[8].fn(self + svt[8].delta);
+}
+#endif
 
 INCLUDE_ASM("fe/fereal", cRealFE_load);
 
