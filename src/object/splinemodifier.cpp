@@ -557,7 +557,46 @@ extern "C" void func_0035A250(cMultiSplineModifier_A250* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/splinemodifier", cMultiSplineModifier_allocNodes);
+#ifdef SKIP_ASM
+// PORT: operator_new__FUi is the game's tagged allocator (size, tag, flags, d); bound by asm label
+// as operator new[] so the array new-expressions below match.
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+extern char D_0048EA30[];
+extern char D_0048EA40[];
+extern char D_0048EA50[];
+
+struct sSplineNode_A330 {
+    char data[0x40];
+    sSplineNode_A330() {}
+};
+
+struct sSplineSeg_A330 {
+    char data[0x60];
+    sSplineSeg_A330() {}
+};
+
+struct sMultiSpline_A330 {
+    int f0;
+    int count;                  // 0x4
+    char pad8[0x38 - 0x8];
+    sSplineNode_A330* nodes;    // 0x38
+    sSplineSeg_A330* segs;      // 0x3C
+    char* owner;                // 0x40
+    int* indices;               // 0x44
+};
+
+extern "C" void cMultiSplineModifier_allocNodes(void* selfv)
+{
+    sMultiSpline_A330* self = (sMultiSpline_A330*)selfv;
+    sSplineNode_A330** pn = &self->nodes;
+    *pn = new (D_0048EA30, 0x20000000, 0) sSplineNode_A330[*(int*)(*(char**)(self->owner + 0x80) + 0x4)];
+    sSplineSeg_A330** ps = &self->segs;
+    *ps = new (D_0048EA40, 0xA0000000, 0) sSplineSeg_A330[self->count];
+    self->indices = new (D_0048EA50, 0x20000000, 0) int[self->count];
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035A3F0);
