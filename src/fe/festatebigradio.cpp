@@ -242,9 +242,62 @@ extern "C" int func_00193CF8(void* self, void* ctrl, int msg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatebigradio", func_00193DE0);
+#ifdef SKIP_ASM
+struct sPlayerOpts_193DE0 {
+    unsigned int b0 : 1;
+    unsigned int b1 : 1;
+    unsigned int b2 : 1;
+    unsigned int b3 : 1;
+    unsigned int b4 : 1;
+    unsigned int b5 : 1;
+    unsigned int pad : 26;
+    int f4;     // 0x4
+    int f8;     // 0x8
+};
+extern sPlayerOpts_193DE0 D_005308B8_193DE0[] __asm__("D_005308B8");
 
+static inline int other_193DE0(int p)
+{
+    return p == 0;
+}
+
+// Sets one of the per-player radio/HUD options.
+extern "C" void func_00193DE0(void* self, int player, int which, int value)
+{
+    switch (which) {
+    case 0: D_005308B8_193DE0[other_193DE0(player)].f8 = value; break;
+    case 1: D_005308B8_193DE0[other_193DE0(player)].b3 = value; break;
+    case 2: D_005308B8_193DE0[other_193DE0(player)].b0 = value; break;
+    case 3: D_005308B8_193DE0[player].b4 = value; break;
+    case 4: D_005308B8_193DE0[player].b5 = value; break;
+    case 5: D_005308B8_193DE0[player].b1 = value; break;
+    case 6: D_005308B8_193DE0[player].b2 = value; break;
+    case 7: D_005308B8_193DE0[other_193DE0(player)].f4 = value; break;
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("fe/festatebigradio", func_00193F38);
+#ifdef SKIP_ASM
+// Returns one of the per-player radio/HUD options, or -1 for an unknown option.
+extern "C" int func_00193F38(void* self, int player, int which)
+{
+    switch (which) {
+    case 0: return D_005308B8_193DE0[other_193DE0(player)].f8;
+    case 1: return D_005308B8_193DE0[other_193DE0(player)].b3;
+    case 2: return D_005308B8_193DE0[other_193DE0(player)].b0;
+    case 3: return D_005308B8_193DE0[player].b4;
+    case 4: return D_005308B8_193DE0[player].b5;
+    case 5: return D_005308B8_193DE0[player].b1;
+    case 6: return D_005308B8_193DE0[player].b2;
+    case 7: return D_005308B8_193DE0[other_193DE0(player)].f4;
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00194080);
