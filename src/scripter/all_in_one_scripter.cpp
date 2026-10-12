@@ -284,7 +284,30 @@ extern "C" int func_002849F0(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/all_in_one_scripter", func_002849F8);
+#ifdef SKIP_ASM
+struct sSlot_49F8 {
+    int f0;     // 0x628
+    int f4;
+    int f8;     // 0x630
+    int fC;
+};
+
+struct sEngine_49F8 {
+    char pad[0x628];
+    sSlot_49F8 slots[1];
+};
+
+extern "C" int func_002849F8(sEngine_49F8* self, int idx)
+{
+    int r = 0;
+    if (self->slots[idx].f8 == 0) {
+        r = self->slots[idx].f0 == 0;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/all_in_one_scripter", func_00284A28);
