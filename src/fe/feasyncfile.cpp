@@ -6566,7 +6566,65 @@ extern "C" int func_001B0670(cFEVObj_001B0670* self, int a1)
 
 INCLUDE_ASM("fe/feasyncfile", func_001B06E0);
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B0708);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_001B0F60(void* self, int a1);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" void func_001B0C08(void* self);
+extern "C" void func_001AB178(void* self, int err);
+extern "C" void func_001AB108(void* self);
+extern "C" void func_001AFA60(void* screen, char* msg);
+extern "C" void func_001AFD88(void* self, void* a1);
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" void func_00263018(void* self, void* a1);
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern const char D_00461C60[];
+
+// Message handler: starts the memory-card task, shows error popups, or forwards to the base handler.
+extern "C" void* func_001B0708(void* self, int a1, int a2)
+{
+    switch (a1) {
+    case 0xEF:
+        if (D_004A3328 == 0) {
+            func_00260F80();
+        }
+        if (func_00261460(D_004A3328) == 0) {
+            func_002613C8(D_004A3328);
+        }
+        if (D_004A3328 == 0) {
+            func_0025B800(D_004A3028);
+        }
+        func_00263018(D_004A3328, *(void**)((char*)self + 0x6D0));
+        break;
+    case 0x110:
+        func_001AB108(self);
+        break;
+    case 0xED: case 0xEE: case 0xF0: case 0xF1: case 0x10C: case 0x112: case 0x113:
+        func_001B0C08(self);
+        func_001AB178(self, a1);
+        break;
+    case 0xF3:
+        func_001A8A40(self, func_001B0F60(cMemMan_alloc(0x6E4, D_00461C60, 0x100, 0), *(int*)((char*)self + 0x10)));
+        break;
+    case 0xE3:
+        func_001AFA60(*(void**)((char*)self + 0x40), (char*)a2);
+        break;
+    case 0xE5:
+        func_001AFD88(*(void**)((char*)self + 0x40), (void*)a2);
+        break;
+    default:
+        return func_001A8E40_3(self, a1, a2);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B0850);
