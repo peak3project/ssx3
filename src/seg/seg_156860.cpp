@@ -1304,7 +1304,115 @@ extern "C" int func_00257E98_impl(char* self, int type, const void* data, int le
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_00257F98);
+#ifdef SKIP_ASM
+// PORT: the unit declares this as (void*, int, int, int); dst is the packet buffer
+extern "C" int func_00257BD8_7F98(void* self, int ch, void* dst, int size) __asm__("func_00257BD8");
+// PORT: defined later in the unit with a struct param; bind a void* view by asm label
+extern "C" void func_002588A8_7F98(void* self) __asm__("func_002588A8");
+
+struct sGamePacket_7F98 {
+    unsigned char type;
+    int a;      // 0x4
+    int b;      // 0x8
+};
+
+struct sGameComm_7F98 {
+    int f0;
+    int f4;
+    char pad8[4];
+    int fC;
+    int f10;
+    int f14;
+    char pad18[0x3C - 0x18];
+    int f3C;
+    char pad40[0x50 - 0x40];
+    int f50;
+    char pad54[4];
+    int f58;
+    int f5C;
+    int f60;
+    int f64;
+    char pad68[0x70 - 0x68];
+    int f70;
+    int f74;
+    int f78;
+    int f7C;
+    char pad80[4];
+    int f84;
+    int f88;
+    int f8C;
+    char pad90[0x3F4 - 0x90];
+    int f3F4;
+    int f3F8;
+    int f3FC;
+    char pad400[4];
+    int f404;
+    char pad408[4];
+    int f40C;
+    char pad410[0x500 - 0x410];
+    int f500[60];
+};
+
+extern "C" void func_00257F98(sGameComm_7F98* self)
+{
+    sGamePacket_7F98 msg;
+    while (func_00257BD8_7F98(self, 3, &msg, 0xC)) {
+        switch (msg.type) {
+        case 0:
+            if (self->f7C == 0) {
+                func_00258870(self, 0xE4C, 1);
+            } else {
+                self->f3F8 = 1;
+            }
+            self->f78 = 1;
+            self->f5C = 0;
+            self->f50++;
+            self->f3FC = 0;
+            break;
+        case 1:
+            self->f5C = 0;
+            self->f78 = 0;
+            if (self->f74 != 0 && self->f64 > 0) {
+                self->f64 = 0x4B0;
+            }
+            self->f3F8 = 0;
+            self->f60 = 0;
+            self->f84 = 0;
+            if (self->f7C == 0) {
+                func_00258870(self, 0x708, 0);
+            } else {
+                func_002588A8_7F98(self);
+            }
+            break;
+        case 3:
+            self->f3F4 = 1;
+            break;
+        case 5:
+            self->f88 = 1;
+            if (self->f3C == 0) {
+                self->f3C = *(int*)((char*)D_004A28A8 + 0x18) / *(int*)((char*)D_004A28A8 + 0x10);
+            }
+            self->f78 = 0;
+            self->f0 = 0;
+            self->f14 = 1;
+            if (self->f4 == 0 && self->f70 < 15) {
+                self->f8C = 1;
+            }
+            break;
+        case 2:
+            self->f58++;
+            break;
+        case 4:
+            self->f404 = 1;
+            self->f40C = msg.a;
+            self->f500[msg.a / 60 % 60] = msg.b;
+            break;
+        }
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_156860", func_00258160);
