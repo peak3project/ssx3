@@ -699,7 +699,28 @@ extern "C" int func_002F2130(void *arg0, int arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F2218);
+#ifdef SKIP_ASM
+struct sVE_2F2218 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+extern "C" void func_002F2218(char* self, int idx)
+{
+    int off = idx * 4;
+    self += 0x6C;
+    char** slot = (char**)(self + off);
+    char* o = *slot;
+    if (o != 0) {
+        sVE_2F2218* vt = *(sVE_2F2218**)(o + 0x1F8);
+        vt[4].fn(o + vt[4].delta, 3);
+    }
+    *slot = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F2268);
