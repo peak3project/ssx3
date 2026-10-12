@@ -461,7 +461,108 @@ extern "C" int func_00246268(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateloadhint", func_00246278);
+#ifdef SKIP_ASM
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" int func_00144C98(void* iface);
+extern "C" int func_00144BF0(void* iface);
+extern char* D_004A28A8;
+extern signed char D_00535C10[];
+extern char D_004A2BD8[];
+extern char D_0047BA48[];
+extern char D_0047BA58[];
+extern char D_0047BA68[];
+extern char D_0047BA78[];
+extern char D_0047BA88[];
+extern char D_0047BAA0[];
+extern char D_0047BAB0[];
+extern char D_0047BAC0[];
+extern char D_0047BAD0[];
+
+struct sVEntry_246278 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+static inline int Loc_246278(char* key)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry_246278* vt = *(sVEntry_246278**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
+}
+
+static inline void Fmt_246278(char* buf, char* fmt, char* key, void* iface)
+{
+    int str = Loc_246278(key);
+    func_002C27C0(buf, fmt, str, func_00144BF0(iface));
+}
+
+struct sVEntryV_246278 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+static inline void Activate_246278(char* obj)
+{
+    sVEntryV_246278* vt = *(sVEntryV_246278**)(obj + 8);
+    vt[9].fn(obj + vt[9].delta, 1);
+}
+
+static inline bool IsId_246278(char* obj, char* key)
+{
+    int id = *(int*)(obj + 0x38);
+    return id == GetHashValue32(key);
+}
+
+extern "C" void func_00246278(void* self, char* obj)
+{
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (IsId_246278(obj, D_0047BA48)) {
+        char buf[200];
+        func_00416210(buf, 0, 200);
+        char* fmt = D_004A2BD8;
+        switch (func_00144C98(iface)) {
+        case 0:
+            Fmt_246278(buf, fmt, D_0047BA58, iface);
+            break;
+        case 1:
+            Fmt_246278(buf, fmt, D_0047BA68, iface);
+            break;
+        case 2:
+            Fmt_246278(buf, fmt, D_0047BA78, iface);
+            break;
+        }
+        func_003A0E90(obj, buf);
+        return;
+    }
+    switch (D_00535C10[0]) {
+    case 0:
+        if (IsId_246278(obj, D_0047BA88)) Activate_246278(obj);
+        break;
+    case 1:
+        if (IsId_246278(obj, D_0047BAA0)) Activate_246278(obj);
+        break;
+    case 2:
+        if (IsId_246278(obj, D_0047BAB0)) Activate_246278(obj);
+        break;
+    case 3:
+        if (IsId_246278(obj, D_0047BAC0)) Activate_246278(obj);
+        break;
+    case 4:
+        if (IsId_246278(obj, D_0047BA88)) Activate_246278(obj);
+        break;
+    case 5:
+        if (IsId_246278(obj, D_0047BAD0)) Activate_246278(obj);
+        break;
+    case 6:
+        if (IsId_246278(obj, D_0047BAD0)) Activate_246278(obj);
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/festateloadhint", func_002464E8);
 
