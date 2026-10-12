@@ -2859,7 +2859,51 @@ extern "C" void* func_001DE788(void *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/all_in_one_main", func_001DE7B0);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E318_E7B0(void* self, int a1, int a2) __asm__("func_0039E318");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* cBXString_cBXString2(void* self, const char* str);
+extern void* D_0046B808[];
+extern char D_004A1390_E7B0[] __asm__("D_004A1390");
+extern char D_0045CDE8[];
+
+struct sListNode_E7B0 {
+    sListNode_E7B0* next;   // 0x0
+    sListNode_E7B0* prev;   // 0x4
+    int data;               // 0x8
+};
+
+struct sList_E7B0 {
+    int count;              // 0x0
+    sListNode_E7B0* head;   // 0x4
+};
+
+// Front-end state constructor: clears the state fields, sets the vtable, the name string and an empty list.
+extern "C" void* func_001DE7B0(void* self)
+{
+    // An unused 16-byte local is needed to reproduce the 0x40-byte frame.
+    int unused[4];
+    char* s = (char*)self;
+    func_0039E318_E7B0(self, 0, 0);
+    sList_E7B0* l = (sList_E7B0*)(s + 0x6C8);
+    *(int*)(s + 0x48) = 0;
+    *(int*)(s + 0x58) = 0;
+    *(int*)(s + 0x69C) = 0;
+    *(int*)(s + 0x6A4) = 0;
+    *(int*)(s + 0x6AC) = 0;
+    *(int*)(s + 0x6B0) = 0;
+    *(int*)(s + 0x6B8) = 0;
+    *(int*)(s + 0x6BC) = 2;
+    *(void***)(s + 0x8) = D_0046B808;
+    cBXString_cBXString2(s + 0x6C0, D_004A1390_E7B0);
+    *(sListNode_E7B0**)(s + 0x6CC) = (sListNode_E7B0*)cMemMan_alloc(0xC, D_0045CDE8, 0x20000000, 0);
+    l->head->next = *(sListNode_E7B0**)(s + 0x6CC);
+    l->head->prev = *(sListNode_E7B0**)(s + 0x6CC);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/all_in_one_main", func_001DE860);
