@@ -6939,7 +6939,23 @@ extern "C" int func_002A4770(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A49E8);
+#ifdef SKIP_ASM
+struct sSndId2A49E8 {
+    long v;
+} __attribute__((packed));
+extern sSndId2A49E8 D_004A36F0[];
+extern "C" void func_002ADCA0(void* bank, int a1, long id, int a3, int a4, int a5, int a6, int a7);
+
+// Flags the transition and fades the ambient stream back in.
+// PORT: the 8-byte stream id is passed by value from an unaligned global (64-bit `long`).
+extern "C" void func_002A49E8(char* self)
+{
+    *(int*)(self + 0x5818) = 1;
+    func_002ADCA0(**(char***)(self + 0x118) + 0x1D8, 0x7530, D_004A36F0[0].v, 0, 0, 0, 0, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4A38);
