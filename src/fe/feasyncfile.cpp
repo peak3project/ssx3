@@ -19727,7 +19727,206 @@ extern "C" void func_001C3570(void* self, void* menu)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C3668);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* cUIScreen_getObjectByHashName_3668(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
+extern "C" void func_001A8918_3668(void* self, void* w, int msg) __asm__("func_001A8918");
+extern "C" void func_001A8A40_3668(void* self, void* obj) __asm__("func_001A8A40");
+extern "C" void* func_001BFBB8_3668(void* mem, void* a1) __asm__("func_001BFBB8");
+extern "C" void func_001C49C8_3668(void* self) __asm__("func_001C49C8");
+extern "C" int func_0039A738_3668(void* w) __asm__("func_0039A738");
+extern "C" void func_001C4B78_3668(void* self, int v) __asm__("func_001C4B78");
+extern "C" void func_001C3310_3668(void* self) __asm__("func_001C3310");
+extern "C" void func_001C3EE8_3668(void* self, int mode) __asm__("func_001C3EE8");
+extern "C" void func_001A9B58_3668(void* self) __asm__("func_001A9B58");
+extern "C" void func_003A0290_3668(void* w, void* pos) __asm__("func_003A0290");
+extern "C" int func_0025F338_3668(void* p) __asm__("func_0025F338");
+extern "C" void func_001C3D68_3668(void* self, int idx, int count) __asm__("func_001C3D68");
+extern void* D_004A3028;
+extern const char D_0045FF28[];
+extern char D_00465C78[];
+extern char D_00465C88[];
+extern char D_00465C98[];
+extern char D_00465CA8[];
+extern char D_00465CB8[];
+extern char D_00465CC8[];
+extern char D_00465CF0[];
+extern char D_00465D00[];
+extern char D_00465D10[];
+extern char D_00465D60[];
+extern char D_00465E10[];
+extern char D_00465E20[];
+extern char D_004A1C10[];
+
+struct cVec_3668 {
+    float x, y, z, w;
+    cVec_3668(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
+};
+
+struct cPos_3668 {
+    float x, y, z;
+};
+
+class cObj_3668 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08();
+    virtual void setVisible(int on);
+    virtual void v10();
+    virtual void setColor(const cVec_3668& v);
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16();
+    virtual void v17(); virtual void v18(); virtual void v19();
+    virtual void getSize(cPos_3668* out);
+};
+
+// Same slot-9 setVisible, declared with other return types so the two highlight-off arms are not cross-jumped.
+class cObjB_3668 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08();
+    virtual float setVisible(int on);
+};
+
+class cObjC_3668 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08();
+    virtual double setVisible(int on);
+};
+
+static inline cObj_3668* getObj_3668(char* self, char* name)
+{
+    return (cObj_3668*)cUIScreen_getObjectByHashName_3668(*(void**)(self + 0x40), GetHashValue32(name));
+}
+
+static inline int isButton_3668(cObj_3668* w, char* name)
+{
+    int id = *(int*)((char*)w + 0x38);
+    return id == GetHashValue32(name);
+}
+
+// Widget events of the online leaderboard screen: page buttons, row highlight and row selection.
+extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
+{
+    cObj_3668* o;
+    cObjB_3668* p;
+    if (w == 0) {
+        return;
+    }
+    switch (msg) {
+    case 6:
+        func_001A8A40_3668(self, func_001BFBB8_3668(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(void**)(self + 0x10)));
+        return;
+    case 9:
+        if (isButton_3668(w, D_00465C78)) {
+            func_001C49C8_3668(self);
+        } else if (isButton_3668(w, D_00465C88)) {
+            func_001C4B78_3668(self, func_0039A738_3668(w));
+            func_001C3310_3668(self);
+        }
+    case 1:
+        if (*(void**)(self + 0x40) == 0) {
+            return;
+        }
+        if (isButton_3668(w, D_00465CF0)) {
+            func_001C3EE8_3668(self, 0);
+        } else if (isButton_3668(w, D_00465D10)) {
+            func_001C3EE8_3668(self, 2);
+        } else if (isButton_3668(w, D_00465D00)) {
+            func_001C3EE8_3668(self, 1);
+        } else if (isButton_3668(w, D_00465C78)) {
+            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+            o = getObj_3668(self, D_00465CA8);
+            o->setVisible(1);
+            o = getObj_3668(self, D_00465C98);
+            o->setVisible(1);
+            o = getObj_3668(self, D_00465E10);
+            o->setVisible(1);
+        } else if (isButton_3668(w, D_00465C88)) {
+            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+            o = getObj_3668(self, D_00465CC8);
+            o->setVisible(1);
+            o = getObj_3668(self, D_00465CB8);
+            o->setVisible(1);
+            o = getObj_3668(self, D_00465E20);
+            o->setVisible(1);
+        } else {
+            char buf[0x20];
+            for (int i = 0; i < 10; i++) {
+                sprintf(buf, D_00465D60, i);
+                if (isButton_3668(w, buf)) {
+                    cPos_3668 pos;
+                    cPos_3668 size;
+                    cObj_3668* t = getObj_3668(self, D_004A1C10);
+                    func_003A0290_3668(w, &pos);
+                    w->getSize(&size);
+                    pos.y = pos.y - size.y + 14.0f;
+                    pos.x = pos.x + -40.0f;
+                    *(cPos_3668*)((char*)t + 0x44) = pos;
+                    t->setVisible(1);
+                    func_001C3D68_3668(self, i + *(int*)(self + 0x6E8), func_0025F338_3668(D_004A3028));
+                    break;
+                }
+            }
+        }
+        break;
+    case 2:
+        if (isButton_3668(w, D_00465CF0)) {
+            if (*(int*)(self + 0x6E0) != 0) {
+                break;
+            }
+            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+        } else if (isButton_3668(w, D_00465D10)) {
+            if (*(int*)(self + 0x6E0) != 2) {
+                break;
+            }
+            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+        } else if (isButton_3668(w, D_00465D00)) {
+            if (*(int*)(self + 0x6E0) != 1) {
+                break;
+            }
+            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+        } else if (isButton_3668(w, D_00465C78)) {
+            w->setColor(cVec_3668(1.0f, 0.0f, 0.0f, 0.0f));
+            p = (cObjB_3668*)getObj_3668(self, D_00465CA8);
+            p->setVisible(0);
+            p = (cObjB_3668*)getObj_3668(self, D_00465C98);
+            p->setVisible(0);
+            p = (cObjB_3668*)getObj_3668(self, D_00465E10);
+            p->setVisible(0);
+        } else if (isButton_3668(w, D_00465C88)) {
+            w->setColor(cVec_3668(1.0f, 0.0f, 0.0f, 0.0f));
+            p = (cObjB_3668*)getObj_3668(self, D_00465CC8);
+            ((cObjC_3668*)p)->setVisible(0);
+            p = (cObjB_3668*)getObj_3668(self, D_00465CB8);
+            ((cObjC_3668*)p)->setVisible(0);
+            p = (cObjB_3668*)getObj_3668(self, D_00465E20);
+            ((cObjC_3668*)p)->setVisible(0);
+        }
+        break;
+    case 8:
+        if ((*(int*)(self + 0x1C) & 6) == 0) {
+            func_001A9B58_3668(self);
+        }
+        return;
+    case 5:
+        return;
+    default:
+        goto other;
+    }
+    func_001A8918_3668(self, w, msg);
+    return;
+other:
+    func_001A8918_3668(self, w, msg);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C3D68);
