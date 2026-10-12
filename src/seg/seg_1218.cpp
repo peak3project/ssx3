@@ -1129,6 +1129,7 @@ extern "C" void func_00103578(sObj_3578* self, cStream_3578* s)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001036A0);
 #ifdef SKIP_ASM
+extern "C" char* cAIAnimEventMap_getBlendInTime(int id);
 // PORT: the handlers are defined later in the unit with mixed parameter/return types; bind uniform views by asm label
 extern "C" int f_001048C0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001048C0");
 extern "C" int f_00104940_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104940");
