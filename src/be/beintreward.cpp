@@ -297,7 +297,47 @@ extern "C" int func_00156EE0(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00157080);
+#ifdef SKIP_ASM
+extern int D_004A6CA8[];
+unsigned int BXrand();
+extern "C" int func_00157210(void* self, int kind);
+extern "C" int func_00157518(void* self, int a1, int a2, int kind);
+
+// Picks a random not-yet-unlocked reward bit of the given kind for the profile/character, or -1 if all are unlocked.
+extern "C" int func_00157080(void* self, int profile, int c, int kind)
+{
+    int total = func_00157210(self, kind);
+    int result = -1;
+    int have = func_00157518(self, profile, c, kind);
+    if (have >= total) {
+        return -1;
+    }
+    unsigned int n = BXrand() % (unsigned int)(total - have);
+    char* p = (char*)D_004A6CA8 + profile * 0x9B50 + c * 0xF88;
+    signed char* bits = 0;
+    switch (kind) {
+    case 3: bits = (signed char*)(p + 0xF30); break;
+    case 4: bits = (signed char*)(p + 0xF36); break;
+    case 5: bits = (signed char*)(p + 0xF45); break;
+    case 6: bits = (signed char*)(p + 0xF52); break;
+    case 7: bits = (signed char*)(p + 0xF53); break;
+    }
+    for (int i = 0; result < 0; i++) {
+        for (int k = 0; k < 8; k++) {
+            if (!((bits[i] >> k) & 1)) {
+                if (n == 0) {
+                    result = i * 8 + k;
+                    break;
+                }
+                n--;
+            }
+        }
+    }
+    return result;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintreward", func_00157210);
