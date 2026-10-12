@@ -113,7 +113,75 @@ extern "C" void func_0039F400(cList* self, func_0039F400_sState* st)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistatestack", func_0039F4C0);
+#ifdef SKIP_ASM
+struct cList;
+void* cList_first(cList*);
+struct cListNode;
+void cList_addToFront(cList*, cListNode*);
+
+struct func_0039F4C0_sState {
+    char pad0[0x4];
+    func_0039F4C0_sState* next;     // 0x4
+    char pad8[0x1C - 0x8];
+    unsigned int b0 : 1;
+    unsigned int b1 : 1;
+    unsigned int b2 : 1;
+    unsigned int b3 : 1;
+    unsigned int b4 : 1;
+    unsigned int b5 : 1;
+    unsigned int b6 : 1;
+    unsigned int b7 : 1;
+    unsigned int id : 6;
+    unsigned int b14 : 1;
+};
+
+static inline void setB7_F4C0(func_0039F4C0_sState* s, int v) { s->b7 = v; }
+static inline void setB14_F4C0(func_0039F4C0_sState* s, int v) { s->b14 = v; }
+static inline int func_0039F4C0_stateId(func_0039F4C0_sState* s) { return s->id; }
+
+// Release-build assert: expands to an empty do { } while (0); the leftover loop notes shape register
+// allocation of the pinned-state loop the way the target has it.
+#define ASSERT_F4C0(cond) do { } while (0)
+
+// Pushes a state, first marking every pinned state on top as covered (id 7) and suspended.
+extern "C" void func_0039F4C0(cList* self, func_0039F4C0_sState* st)
+{
+    int covered = 0;
+    int skipped = 0;
+    func_0039F4C0_sState* top = (func_0039F4C0_sState*)cList_first(self);
+    if (top != 0) {
+        while (top->b0) {
+            ASSERT_F4C0(top != 0);
+            if (top->id < 6) {
+                top->id = 7;
+                ASSERT_F4C0(top->id == 7);
+                setB7_F4C0(top, 1);
+            }
+            setB14_F4C0(top, 1);
+            top = top->next;
+            skipped = 1;
+        }
+        int f = *(int*)((char*)top + 0x1C);
+        if (skipped || ((f >> 5) & 1)) {
+            if (((f >> 6) & 1) == 0 && func_0039F4C0_stateId(top) < 6) {
+                covered = 1;
+                top->id = 6;
+                top->b7 = 1;
+            }
+        }
+    }
+    if (covered) {
+        st->id = 1;
+        st->b5 = 0;
+    } else {
+        st->id = 2;
+        st->b5 = 1;
+    }
+    cList_addToFront(self, (cListNode*)st);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uistatestack", func_0039F600);
