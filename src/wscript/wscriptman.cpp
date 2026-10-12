@@ -300,7 +300,37 @@ extern "C" float func_00309BA8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_00309C88);
+#ifdef SKIP_ASM
+extern "C" int func_003A6D18(void*, int*);
+struct func_00309DD0_sValue;
+struct sLunoValue_9C88 {
+    int word0;
+    int word1;
+    int type;
+};
+struct sLunoCall_9C88 {
+    int pad[4];
+};
+void func_00226600(void* self, int a1, int a2);
+extern "C" void* func_002224A8(void* self);
+extern "C" void func_002224B8(void* self, void* args, void* table, void* ret);
+extern "C" void func_00225B90(func_00309DD0_sValue* self, int flags);
+extern "C" void func_00309C88(void* self, int* handle)
+{
+    sLunoValue_9C88 arg;
+    sLunoValue_9C88 ret;
+    sLunoCall_9C88 call;
+    func_00226600(&arg, func_003A6D18(*(void**)((char*)self + 0x28C), handle), 0);
+    ret.type = 0;
+    ret.word0 = 0;
+    void* table = *(void**)((char*)self + (*(unsigned char*)handle << 2) + 0x3CC);
+    func_002224A8(&call);
+    func_002224B8(&call, &arg, table, &ret);
+    func_00225B90((func_00309DD0_sValue*)&ret, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_00309D20);
