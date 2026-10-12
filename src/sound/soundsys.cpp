@@ -8281,7 +8281,34 @@ extern "C" int func_002A7678(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A7718);
+#ifdef SKIP_ASM
+struct sSndKey8_7718 {
+    long v;
+} __attribute__((packed));
+extern sSndKey8_7718 D_004A3700[];
+extern "C" void func_002A6430(void* voice, float a1);
+
+struct sVE_7718 {
+    short delta;
+    short index;
+    void (*fn)(void*, long);
+};
+
+// PORT: 64-bit long sound key
+extern "C" void func_002A7718(void* self)
+{
+    char* s = (char*)self;
+    for (int i = 0; i < *(int*)(s + 0x14); i++) {
+        func_002A6430(*(char**)(s + 0x18) + i * 0x190, 0.0f);
+    }
+    char* sys = *(char**)s;
+    sVE_7718* vt = *(sVE_7718**)(sys + 0xAB0);
+    char* obj = sys + 0x1D8;
+    vt[3].fn(obj + vt[3].delta, D_004A3700->v);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A77C8);
