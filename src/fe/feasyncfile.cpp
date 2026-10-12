@@ -12662,7 +12662,154 @@ extern "C" void func_001B8AA0(void* self, cUIText* text)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B8C38);
+#ifdef SKIP_ASM
+extern "C" void* cUIScreen_getObjectByHashName_8C38(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
+extern "C" int func_0039A738_8C38(void* item) __asm__("func_0039A738");
+extern "C" int func_001BA110_8C38(void* self) __asm__("func_001BA110");
+extern "C" void* func_001BA3E0_8C38(void* mem, int a1) __asm__("func_001BA3E0");
+extern "C" void func_001BA280_8C38(void* self) __asm__("func_001BA280");
+extern "C" void func_001BA218_8C38(void* self) __asm__("func_001BA218");
+extern "C" void func_001B9820_8C38(void* self) __asm__("func_001B9820");
+extern "C" int func_001B9558_8C38(void* self) __asm__("func_001B9558");
+extern "C" void* func_001C0418_8C38(void* mem, int a1) __asm__("func_001C0418");
+extern char D_00464768[];
+extern char D_00464780[];
+extern char D_00464790[];
+extern char D_004647A8[];
+extern char D_004647B8[];
+extern char D_004647D0[];
+extern char D_004647E0[];
+extern char D_004647F8[];
+extern char D_00464810[];
+extern char D_00464828[];
+extern char D_00464838[];
+extern char D_00464848[];
+extern char D_00464860[];
+
+struct sVE_8C38 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sObj_8C38 {
+    int pad[2];
+    sVE_8C38* vt;
+};
+
+struct cState_8C38 {
+    char pad0[0x10];
+    int engine;              // 0x10
+    char pad14[0x40 - 0x14];
+    char* screen;            // 0x40
+    char pad44[0x69C - 0x44];
+    char* menu;              // 0x69C
+    char pad6A0[0x6D0 - 0x6A0];
+    int* settings;           // 0x6D0
+    char pad6D4[0x6EC - 0x6D4];
+    int online;              // 0x6EC
+    sObj_8C38* toggle;       // 0x6F0
+};
+
+static inline bool isButton_8C38(char* a1, char* name)
+{
+    int id = *(int*)(a1 + 0x38);
+    return id == GetHashValue32(name);
+}
+
+// Message handler for the network-settings screen (toggle buttons and keyboard popups).
+extern "C" void func_001B8C38(cState_8C38* self, char* a1, int msg)
+{
+    switch (msg) {
+    case 9:
+        if (isButton_8C38(a1, D_00464780) && a1 != 0) {
+            self->settings[14] = func_0039A738_8C38(a1) == 1;
+        }
+        if (isButton_8C38(a1, D_00464790) && a1 != 0) {
+            self->settings[15] = func_0039A738_8C38(a1) == 1;
+        }
+        break;
+    case 5:
+        if (isButton_8C38(a1, D_00464768)) {
+            void* obj = cUIScreen_getObjectByHashName_8C38(self->screen, GetHashValue32(D_00462B88));
+            if (obj == 0) {
+                break;
+            }
+            func_001A9150(self, (int)obj, GetHashValue32(D_004647B8), self->settings[0], 0, 10, 0x10);
+            *(int*)(self->menu + 0x58) = 1;
+            func_001CE3C8(self->menu, 0x4B, 1, 2);
+            func_001CE3C8(self->menu, 0x35, 0, 2);
+        } else if (isButton_8C38(a1, D_004647D0)) {
+            void* obj = cUIScreen_getObjectByHashName_8C38(self->screen, GetHashValue32(D_00462BA0));
+            if (obj == 0) {
+                break;
+            }
+            func_001A9150(self, (int)obj, GetHashValue32(D_00462D00), self->settings[1], 1, 11, 0x10);
+            func_001CE3C8(self->menu, 0x35, 0, 2);
+        } else if (isButton_8C38(a1, D_004647E0)) {
+            void* obj = cUIScreen_getObjectByHashName_8C38(self->screen, GetHashValue32(D_004647F8));
+            if (obj == 0) {
+                break;
+            }
+            func_001A9150(self, (int)obj, GetHashValue32(D_00464810), self->settings[2], 1, 12, 0x10);
+            func_001CE3C8(self->menu, 0x35, 0, 2);
+        } else if (isButton_8C38(a1, D_00464828)) {
+            void* obj = cUIScreen_getObjectByHashName_8C38(self->screen, GetHashValue32(D_00464838));
+            if (obj == 0) {
+                break;
+            }
+            func_001A9150(self, (int)obj, GetHashValue32(D_00462CD0), self->settings[3], 0, 13, 0x32);
+            func_001CE3C8(self->menu, 0x35, 0, 2);
+        } else if (isButton_8C38(a1, D_004647A8)) {
+            if (!func_001BA110_8C38(self)) {
+                break;
+            }
+            if (self->online) {
+                func_001A8A40(self, func_001BA3E0_8C38(cMemMan_alloc(0x6E0, D_00464848, 0, 0), self->engine));
+            } else {
+                func_001BA280_8C38(self);
+            }
+        }
+        break;
+    case 6:
+        if (self->online) {
+            void* p = func_001B6ED0(cMemMan_alloc(0xB10, D_00462D10, 0, 0), self->engine, self, 0, 0, 0);
+            *(int*)((char*)p + 0x18) = 0x832;
+            func_0039F290(*(char**)(*(char**)(self->screen + 0xD0) + 0x10) + 0x18, p);
+        } else {
+            func_001BA218_8C38(self);
+            func_001A8A40(self, func_001AD130(cMemMan_alloc(0x6D8, D_00462D68, 0, 0), self->engine));
+        }
+        break;
+    case 13: {
+        func_001B9820_8C38(self);
+        sObj_8C38* o = self->toggle;
+        if (o == 0) {
+            break;
+        }
+        o->vt[8].fn((char*)o + o->vt[8].delta, func_001B9558_8C38(self) ^ 1);
+        break;
+    }
+    case 8: {
+        char* p = (char*)func_001C0418_8C38(cMemMan_alloc(0x6DC, D_00464860, 0x100, 0), self->engine);
+        if (self->online) {
+            *(int*)(p + 0x18) = 0x14;
+        } else {
+            *(int*)(p + 0x18) = 0x15;
+        }
+        func_001A8A40(self, p);
+        break;
+    }
+    case 14:
+        break;
+    default:
+        func_001A8918(self, (int)a1, msg);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9088);
