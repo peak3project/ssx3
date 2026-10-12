@@ -1126,7 +1126,95 @@ extern "C" void func_00103578(sObj_3578* self, cStream_3578* s)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_001036A0);
+#ifdef SKIP_ASM
+// PORT: the handlers are defined later in the unit with mixed parameter/return types; bind uniform views by asm label
+extern "C" int f_001048C0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001048C0");
+extern "C" int f_00104940_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104940");
+extern "C" int f_001049C0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001049C0");
+extern "C" int f_00104110_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104110");
+extern "C" int f_00104178_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104178");
+extern "C" int f_00104238_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104238");
+extern "C" int f_001042A8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001042A8");
+extern "C" int f_00104358_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104358");
+extern "C" int f_001045D8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001045D8");
+extern "C" int f_00104660_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104660");
+extern "C" int f_001042E0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001042E0");
+extern "C" int f_001043F8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001043F8");
+extern "C" int f_001045B8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001045B8");
+extern "C" int f_001047F0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001047F0");
+extern "C" int f_00104728_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104728");
+extern "C" int f_001046B0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001046B0");
+extern "C" void func_00103AA0_36A0(void* self, void* anim) __asm__("func_00103AA0");
+
+extern "C" void func_001036A0(char* self, void* x, int* anim, float dt)
+{
+    int done = 0;
+    switch (*(int*)(cAIAnimEventMap_getBlendInTime(*anim) + 4)) {
+    case 0:
+        done = f_001048C0_36A0(self, x, anim, dt);
+        break;
+    case 1:
+        done = f_00104940_36A0(self, x, anim, dt);
+        break;
+    case 2:
+        done = f_001049C0_36A0(self, x, anim, dt);
+        break;
+    case 3:
+        done = f_00104110_36A0(self, x, anim, dt);
+        break;
+    case 4:
+        done = f_00104178_36A0(self, x, anim, dt);
+        break;
+    case 5:
+        done = f_00104238_36A0(self, x, anim, dt);
+        break;
+    case 6:
+        done = f_001042A8_36A0(self, x, anim, dt);
+        break;
+    case 7:
+        done = f_00104358_36A0(self, x, anim, dt);
+        break;
+    case 8:
+        done = f_001045D8_36A0(self, x, anim, dt);
+        break;
+    case 9:
+        done = f_00104660_36A0(self, x, anim, dt);
+        break;
+    case 10:
+        done = f_001042E0_36A0(self, x, anim, dt);
+        break;
+    case 11:
+        done = f_001043F8_36A0(self, x, anim, dt);
+        break;
+    case 12:
+        done = f_001045B8_36A0(self, x, anim, dt);
+        break;
+    case 13:
+        done = f_001047F0_36A0(self, x, anim, dt);
+        break;
+    case 14:
+        done = f_00104728_36A0(self, x, anim, dt);
+        break;
+    case 15:
+        done = f_001046B0_36A0(self, x, anim, dt);
+        break;
+    }
+    if (done == 0) {
+        char* r = *(char**)(self + 0x60);
+        if (r != 0) {
+            int ok = 0;
+            if (*(int*)(r + 0x874) != 0) {
+                ok = *(int*)(r + 0x87C) != 0;
+            }
+            if (ok) {
+                func_00103AA0_36A0(self, anim);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103918);
