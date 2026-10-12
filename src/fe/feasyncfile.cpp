@@ -13979,7 +13979,58 @@ int func_001BBAA8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BBAC8);
+#ifdef SKIP_ASM
+extern char D_00464BF0[];
+extern char D_00464C08[];
+extern char D_00464C20[];
+
+struct sObj1BBAC8 {
+    char data[0xD0];
+};
+
+// Shows the error popup for a failed network operation; returns 1 if the code needs no popup.
+// PORT: callers declare func_001BBAC8 as void; defined under an asm label with its int result.
+extern "C" int func_001BBAC8_impl(void* self, int code) __asm__("func_001BBAC8");
+extern "C" int func_001BBAC8_impl(void* self, int code)
+{
+    sObj1BBAC8 o;
+    func_001C55F8(&o);
+    if (code < 13) {
+        void* p = func_001A9C50(self);
+        *(int*)((char*)p + 0xBC) = 1;
+        char* sub = (char*)p + 0xBC;
+        *(int*)((char*)p + 0xC4) = GetHashValue32(D_00464BF0);
+        *(int*)((char*)p + 0xC0) = 3;
+        func_001C57C0(sub, 0, GetHashValue32(D_00461618));
+        *(int*)((char*)p + 0x150) = 0x80D;
+        func_001A9BC0(self, p);
+        func_001C5750(&o, 2);
+        return 0;
+    } else if (code < 18) {
+        void* p = func_001A9C50(self);
+        *(int*)((char*)p + 0xBC) = -1;
+        *(int*)((char*)p + 0x180) = 0x32;
+        char* sub = (char*)p + 0xBC;
+        *(int*)((char*)p + 0xCC) = GetHashValue32(D_00464C08);
+        *(int*)((char*)p + 0xC8) = 3;
+        *(int*)((char*)p + 0xD4) = GetHashValue32(D_00464C08);
+        *(int*)((char*)p + 0xD0) = 3;
+        *(int*)((char*)p + 0xDC) = *(int*)(*(char**)((char*)self + 0x6D0) + 0x10);
+        *(int*)((char*)p + 0xD8) = 2;
+        *(int*)((char*)p + 0xC4) = GetHashValue32(D_00464C20);
+        *(int*)((char*)p + 0xC0) = 3;
+        func_001C57C0(sub, 0, GetHashValue32(D_00461618));
+        *(int*)((char*)p + 0x150) = 0x821;
+        func_001A9BC0(self, p);
+        func_001C5750(&o, 2);
+        return 0;
+    }
+    func_001C5750(&o, 2);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BBC40);
