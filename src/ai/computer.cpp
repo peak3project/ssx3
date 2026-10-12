@@ -1735,9 +1735,132 @@ extern "C" void func_00111578(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_00111630);
+#ifdef SKIP_ASM
+void func_00131608(void* p);
+void func_0012FC60(void* p);
+extern "C" void func_0012E980(void* p, int a1);
+extern "C" void func_0012F620(void* p, int a1);
+extern "C" void func_00133128(void* p, int a1);
+extern "C" void func_0012BE20(void* p, int a1);
+extern "C" void func_00131D08(void* p, int a1);
+extern "C" void func_0012CA30(void* p, int a1);
+extern "C" void func_0012F230(void* p, int a1);
+extern "C" void func_0012C5C8(void* p, int a1);
+extern "C" void func_001328B0(void* p, int a1);
+extern "C" void func_00136268(void* p, int a1);
+// Forwards to the handler for the AI's current state.
+extern "C" void func_00111630(void* self, int a1)
+{
+    switch (*(int*)((char*)self + 0xDE4)) {
+    case 0:
+        func_00131608((char*)self + 0x1C0);
+        break;
+    case 1:
+        func_0012FC60((char*)self + 0x1D0);
+        break;
+    case 2:
+        func_0012E980((char*)self + 0x1F0, a1);
+        break;
+    case 4:
+        func_0012F620((char*)self + 0x210, a1);
+        break;
+    case 5:
+        func_00133128((char*)self + 0x230, a1);
+        break;
+    case 6:
+        func_0012BE20((char*)self + 0x290, a1);
+        break;
+    case 7:
+        func_00131D08((char*)self + 0x2B0, a1);
+        break;
+    case 8:
+        func_0012CA30((char*)self + 0x2C0, a1);
+        break;
+    case 9:
+        func_0012F230((char*)self + 0x350, a1);
+        break;
+    case 10:
+        func_0012C5C8((char*)self + 0x360, a1);
+        break;
+    case 11:
+        func_001328B0((char*)self + 0x370, a1);
+        break;
+    case 12:
+        func_00136268((char*)self + 0x390, a1);
+        break;
+    case 3:
+    case 13:
+        break;
+    }
+}
+#endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_00111728);
+#ifdef SKIP_ASM
+extern "C" void func_00131620(void* p, int a1);
+extern "C" void func_0012FC80(void* p, int a1);
+extern "C" void func_0012E9B8(void* p, int a1);
+extern "C" void func_0012E778(void* p, int a1);
+extern "C" void func_0012F730(void* p, int a1);
+extern "C" void func_00133308(void* p, int a1);
+extern "C" void func_0012BF68(void* p, int a1);
+extern "C" void func_00131D30(void* p, int a1);
+extern "C" void func_0012CB68(void* p, int a1);
+extern "C" void func_0012F398(void* p, int a1);
+extern "C" void func_0012C678(void* p, int a1);
+extern "C" void func_00132A30(void* p, int a1);
+extern "C" void func_00136508(void* p, int a1);
+// Forwards to the second handler for the AI's current state.
+extern "C" void func_00111728(void* self, int a1)
+{
+    switch (*(int*)((char*)self + 0xDE4)) {
+    case 0:
+        func_00131620((char*)self + 0x1C0, a1);
+        break;
+    case 1:
+        func_0012FC80((char*)self + 0x1D0, a1);
+        break;
+    case 2:
+        func_0012E9B8((char*)self + 0x1F0, a1);
+        break;
+    case 3:
+        func_0012E778((char*)self + 0x200, a1);
+        break;
+    case 4:
+        func_0012F730((char*)self + 0x210, a1);
+        break;
+    case 5:
+        func_00133308((char*)self + 0x230, a1);
+        break;
+    case 6:
+        func_0012BF68((char*)self + 0x290, a1);
+        break;
+    case 7:
+        func_00131D30((char*)self + 0x2B0, a1);
+        break;
+    case 8:
+        func_0012CB68((char*)self + 0x2C0, a1);
+        break;
+    case 9:
+        func_0012F398((char*)self + 0x350, a1);
+        break;
+    case 10:
+        func_0012C678((char*)self + 0x360, a1);
+        break;
+    case 11:
+        func_00132A30((char*)self + 0x370, a1);
+        break;
+    case 12:
+        func_00136508((char*)self + 0x390, a1);
+        break;
+    case 13:
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_00111890);
