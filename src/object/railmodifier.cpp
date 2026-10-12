@@ -4442,7 +4442,55 @@ extern "C" void func_00364050(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_00364240);
+#ifdef SKIP_ASM
+// Packs the rail's blend/test state into a negated register word.
+extern "C" unsigned int func_00364240(unsigned int* self, int key)
+{
+    int a = 31 - ((self[2] & 0x3E0) >> 5);
+    int b;
+    int sel = self[1] & 3;
+    switch (sel) {
+    case 0:
+        b = 0x3FF;
+        break;
+    case 1:
+        b = 0x3FE;
+        break;
+    case 2:
+        b = (self[2] & 0x1FFFFC00) >> 10;
+        break;
+    default:
+        b = 0;
+        break;
+    }
+    int c;
+    switch ((self[0] & 0x3C0) >> 6) {
+    case 5: c = 6; break;
+    case 2: c = 5; break;
+    case 1: c = 4; break;
+    case 3: c = 3; break;
+    case 6:
+    case 7: c = 2; break;
+    case 4:
+    case 8: c = 1; break;
+    case 0:
+    default: c = 0; break;
+    }
+    int lo = (short)key;
+    int hi = key >> 16;
+    int d = 0;
+    if (lo >= 0) {
+        d = lo;
+    }
+    if (hi >= 0) {
+        d |= (hi & 0xF) << 6;
+    }
+    d &= 0x3FF;
+    return ~((a << 26) | (b << 16) | (c << 13) | (d << 3));
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/railmodifier", func_00364360);
