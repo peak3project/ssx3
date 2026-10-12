@@ -578,7 +578,43 @@ extern "C" void func_00232B28(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/loadscreens_prestart", func_00232C98);
+#ifdef SKIP_ASM
+extern int D_004A4324;
+extern int D_004A45D8;
+extern int D_004A43C8;
+extern "C" void func_00369FF8(void* g);
+
+struct sVec3i_2C98 {
+    int x, y, z;
+    sVec3i_2C98(int a, int b, int c) { x = a; y = b; z = c; }
+};
+
+struct sVE_2C98 {
+    short delta;
+    short index;
+    void (*fn)(void*, sVec3i_2C98);
+};
+
+// Clearing through a pointer keeps the stores ahead of the reload of D_004A289C.
+static inline void clear_2C98(int* p)
+{
+    *p = 0;
+}
+
+extern "C" void func_00232C98(void* self)
+{
+    func_00369FF8(D_004A289C);
+    *(int*)((char*)self + 0x14) = 0;
+    clear_2C98(&D_004A4324);
+    clear_2C98(&D_004A45D8);
+    clear_2C98(&D_004A43C8);
+    char* g = (char*)D_004A289C;
+    sVE_2C98* vt = *(sVE_2C98**)(g + 0x10D8);
+    vt[15].fn(g + vt[15].delta, sVec3i_2C98(0, 0, 0));
+}
+#endif
 
 extern "C" void* func_00231CF0(void* self);
 
