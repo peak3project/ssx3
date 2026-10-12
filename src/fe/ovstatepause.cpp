@@ -944,7 +944,85 @@ extern "C" void* func_001FDBF0(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDC30);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+void cUIText_setAsciiString(cUIText* self, const char* str);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void* cUIEngine_addScreenByHashName_DC30(void* engine, void* owner, int hash, int a3) __asm__("cUIEngine_addScreenByHashName");
+extern "C" void* cUIScreen_playFrame_DC30(void* self, unsigned short frame, int flag) __asm__("cUIScreen_playFrame");
+extern "C" void* cUIScreen_getObjectByHashName_DC30(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
+extern "C" void func_0020A380_DC30(void* self) __asm__("func_0020A380");
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F0[];
+extern char D_004A2560[];
+extern char D_004700E0[];
+extern char D_004700F0[];
+extern char D_00470100[];
+extern char D_00470118[];
+extern char D_0046E9F8[];
+extern char D_00470130[];
+extern char D_00470148[];
+extern char D_0046E378[];
+
+struct cUIObj_DC30 {
+    int pad[2];
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void v7();
+    virtual void v8();
+    virtual void setVisible(int on);
+};
+
+static inline cUIObj_DC30* getObj_DC30(char* self, char* name)
+{
+    return (cUIObj_DC30*)cUIScreen_getObjectByHashName_DC30(*(void**)(self + 0x40), GetHashValue32(name));
+}
+
+// Builds the memory-card device-select overlay and pushes its menu state.
+extern "C" void func_001FDC30(char* self)
+{
+    void* engine = *(void**)(self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName_DC30(engine, self, GetHashValue32(D_004700E0), 0);
+    *(void**)(self + 0x40) = screen;
+    if (screen != 0) {
+        cUIObj_DC30* o;
+        cUIScreen_playFrame_DC30(screen, 0, 0);
+        o = getObj_DC30(self, D_004700F0);
+        cUIText_setAsciiString((cUIText*)o, D_004A2560);
+        o = getObj_DC30(self, D_00470100);
+        o->setVisible(1);
+        o = getObj_DC30(self, D_00470118);
+        o->setVisible(0);
+        o = getObj_DC30(self, D_0046E9F8);
+        o->setVisible(0);
+        o = getObj_DC30(self, D_00470130);
+        cUIText_setAsciiString((cUIText*)o, D_004A2560);
+        char name[0x20];
+        for (int i = 1; i < 5; i++) {
+            sprintf(name, D_00470148, i);
+            o = getObj_DC30(self, name);
+            *(int*)((char*)o + 0x18) = i - 1;
+        }
+    }
+    engine = *(void**)(self + 0x10);
+    screen = cUIEngine_addScreenByHashName_DC30(engine, self, GetHashValue32(D_0046E378), 0);
+    if (screen != 0) {
+        cUIScreen_playFrame_DC30(screen, 0, 0);
+    }
+    D_005366E8[++D_004A2A54] = 2;
+    D_004A2A50 = D_004428F0[2];
+    func_0020A380_DC30(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDE60);
