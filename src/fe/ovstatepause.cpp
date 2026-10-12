@@ -2239,5 +2239,104 @@ INCLUDE_ASM("fe/ovstatepause", func_001FF7B8);
 
 INCLUDE_ASM("fe/ovstatepause", func_001FFD08);
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_REWARDS_onGainTransition);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern char D_00535BC8[];
+extern void* D_004A28A8;
+extern "C" void func_003A0E90(void* obj, unsigned short* s);
+extern "C" int func_00146E98(void* iface, int idx);
+//---
+extern "C" int func_001FD190(int id);
+extern "C" unsigned short* func_002C2508(unsigned short* dst, unsigned short* src);
+extern "C" void func_002C2540(unsigned short* dst, const char* src);
+extern "C" int func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
+extern "C" void func_002C27C0(unsigned short* dst, const char* fmt, ...);
+extern "C" const char* func_00144BF0(void* iface);
+extern "C" const char* func_0014EE58(void* iface, int a1);
+extern char D_0046F520[];
+extern char D_004A2400[];
+extern char D_0046E548[];
+extern char D_0046E398[];
+extern char D_0046E3A8[];
+extern char D_0046E3C0[];
+extern char D_00470468[];
+extern char D_00470480[];
+extern char D_004A2588[];
+extern char D_004A2590[];
+
+struct sVE_REWARDS {
+    short delta;
+    short index;
+    unsigned short* (*fn)(void* self, int hash);
+};
+
+// Looks up the localised string for a hashed name through the front end's text table.
+static inline unsigned short* getText_REWARDS(char* name)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVE_REWARDS* vt = *(sVE_REWARDS**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
+}
+
+// Fills in the event title and the reward line the first time the rewards screen gains focus.
+extern "C" int cOVState_REWARDS_onGainTransition(void* self)
+{
+    if (*(int*)((char*)self + 0x48) == 0) {
+        unsigned short title[0x68];
+        unsigned short fmt[0x10];
+        unsigned short line[0x68];
+        unsigned short num[0x20];
+        void* ifA = cBE_getInterface_Fv(cBE_getBE(), 2);
+        void* ifB = cBE_getInterface_Fv(cBE_getBE(), 1);
+        void* ifC = cBE_getInterface_Fv(cBE_getBE(), 0);
+        signed char* g = (signed char*)D_00535BC8;
+        int kind = g[0x4A];
+        int mode = g[0x48];
+        switch (kind) {
+        case 6: case 7: case 8: case 9: case 10: case 11:
+            func_002C2508(title, (unsigned short*)func_001FD190(kind));
+            break;
+        case 5:
+            func_002C2540(fmt, D_0046F520);
+            func_002C26D0(title, fmt, func_00144BF0(ifC));
+            break;
+        default: {
+            unsigned short* sub = 0;
+            switch (mode) {
+            case 0:
+            case 5:
+                sub = getText_REWARDS(D_0046E548);
+                break;
+            case 1:
+                sub = getText_REWARDS(D_0046E398);
+                break;
+            case 2:
+                sub = getText_REWARDS(D_0046E3A8);
+                break;
+            case 3:
+                sub = getText_REWARDS(D_0046E3C0);
+                break;
+            }
+            func_002C2540(fmt, D_004A2400);
+            func_002C26D0(title, fmt, func_00144BF0(ifC), sub);
+            break;
+        }
+        }
+        func_003A0E90(cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00470468)), title);
+        int idx = func_00146E98(ifB, 0);
+        void* o = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2588));
+        func_002C27C0(num, D_004A2590, func_0014EE58(ifA, idx));
+        unsigned short* lfmt = getText_REWARDS(D_00470480);
+        func_002C26D0(line, lfmt, num);
+        func_003A0E90(o, line);
+    }
+    *(int*)((char*)self + 0x48) = 1;
+    return 0;
+}
+#endif
 
