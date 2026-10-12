@@ -856,7 +856,86 @@ extern "C" void* func_003252E8(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputparse", func_003252F8);
+#ifdef SKIP_ASM
+struct sInputEntry3252F8 {
+    float value;        // 0x0
+    unsigned int a;     // 0x4
+    unsigned int b;     // 0x8
+    unsigned int c;     // 0xC
+    unsigned int d;     // 0x10
+    int pad[2];
+};
+
+struct sInputList3252F8 {
+    int count;
+    sInputEntry3252F8 entries[1];
+};
+
+struct sInputParse3252F8 {
+    int defKind;
+    sInputList3252F8* list;
+};
+
+static inline unsigned int GetA3252F8(sInputList3252F8* l, int idx)
+{
+    if (idx < l->count) {
+        return l->entries[idx].a;
+    }
+    return 0;
+}
+
+static inline unsigned int GetB3252F8(sInputList3252F8* l, int idx)
+{
+    if (idx < l->count) {
+        return l->entries[idx].b;
+    }
+    return 0;
+}
+
+static inline unsigned int GetC3252F8(sInputList3252F8* l, int idx)
+{
+    if (idx < l->count) {
+        return l->entries[idx].c;
+    }
+    return 0;
+}
+
+static inline unsigned int GetD3252F8(sInputList3252F8* l, int idx)
+{
+    if (idx < l->count) {
+        return l->entries[idx].d;
+    }
+    return 0;
+}
+
+// PORT: the unit declares func_003252F8 as (void*, int, int); the definition takes an unsigned kind.
+float func_003252F8_impl(sInputParse3252F8* self, int idx, unsigned int kind) __asm__("func_003252F8");
+
+// Reads one input value (axis, or a button counter as float) for entry idx; kind 5 uses the default kind.
+float func_003252F8_impl(sInputParse3252F8* self, int idx, unsigned int kind)
+{
+    switch (kind) {
+    case 0:
+        if (idx < self->list->count) {
+            return self->list->entries[idx].value;
+        }
+        break;
+    case 1:
+        return (float)GetC3252F8(self->list, idx);
+    case 2:
+        return (float)GetA3252F8(self->list, idx);
+    case 3:
+        return (float)GetB3252F8(self->list, idx);
+    case 4:
+        return (float)GetD3252F8(self->list, idx);
+    case 5:
+        return func_003252F8_impl(self, idx, self->defKind);
+    }
+    return 0.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputparse", func_00325430);
