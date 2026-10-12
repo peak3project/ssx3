@@ -1935,7 +1935,97 @@ extern "C" int func_001CA180(char* self, char* menu, int msg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CA298);
+#ifdef SKIP_ASM
+extern "C" void cScreenPopup_createConfirmationPopup(void* self, int idx);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_001CB030(void* self, void* engine, void* owner, int a3, unsigned char a4);
+extern "C" void func_001CD088(void* popup, int a1);
+extern "C" void func_0039F290(void* stack, void* item);
+extern char D_0045D8D8[];
+
+struct sPopupVE_1CA298 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
+struct sPopupOwner_1CA298 {
+    char pad0[8];
+    sPopupVE_1CA298* vt;   // 0x8
+};
+
+struct sBtn_1CA298 {
+    int confirm;
+    int b;
+    int c;
+};
+
+static inline void Notify_1CA298(sPopupOwner_1CA298* o, int vi, void* self, int v)
+{
+    o->vt[vi].fn((char*)o + o->vt[vi].delta, self, v);
+}
+
+extern "C" void func_001CA298(char* self, int id, int ev)
+{
+    switch (ev) {
+    case 5:
+        if (*(int*)(self + 0x30C) != 0) {
+            int handled = 0;
+            int i;
+            *(int*)(self + 0xB8) = 0;
+            for (i = 0; i < 5; i++) {
+                if (id == ((int*)(self + 0x90))[i]) {
+                    if (((sBtn_1CA298*)(self + 0x2D0))[i].confirm != 0) {
+                        cScreenPopup_createConfirmationPopup(self, i);
+                    } else {
+                        Notify_1CA298(*(sPopupOwner_1CA298**)(self + 0x20), 17, self, i + 15);
+                    }
+                    handled = 1;
+                    break;
+                }
+            }
+            if (handled) {
+                break;
+            }
+            if (id != *(int*)(self + 0x88)) {
+                break;
+            }
+            void* p = cMemMan_alloc(0x444, D_0045D8D8, 0x100, 0);
+            *(void**)(self + 0x2A8) = func_001CB030(p, *(void**)(self + 0x10), self, 0, 0xF);
+            func_001CD088(*(void**)(self + 0x2A8), *(int*)(self + 0x328));
+            func_0039F290(*(char**)(*(char**)(*(char**)(self + 0x40) + 0xD0) + 0x10) + 0x18, *(void**)(self + 0x2A8));
+            if (*(cUIText**)(self + 0x84) != 0) {
+                cScreenPopup_setTextString(self, self + 0x2B4, *(cUIText**)(self + 0x84));
+            }
+        } else {
+            *(int*)(self + 0xB8) = 1;
+        }
+        break;
+    case 6:
+        if (*(int*)(self + 0x310) != 0) {
+            Notify_1CA298(*(sPopupOwner_1CA298**)(self + 0x20), 17, self, 0x14);
+        }
+        break;
+    case 7:
+    case 8:
+        break;
+    case 13:
+        cBXString_cBXString4(self + 0x2B0, *(char**)(self + 0x2A8) + 0x74);
+        if (*(cUIText**)(self + 0x80) != 0 && *(int*)(*(char**)(self + 0x2B0) - 8) != 0) {
+            cScreenPopup_checkAndFixTextEntry(self, *(cUIText**)(self + 0x80), *(const char**)(self + 0x2B0));
+        }
+        break;
+    default:
+        {
+            sPopupOwner_1CA298* o = *(sPopupOwner_1CA298**)(self + 0x20);
+            ((void (*)(void*, int, int))o->vt[19].fn)((char*)o + o->vt[19].delta, id, ev);
+        }
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA488);
