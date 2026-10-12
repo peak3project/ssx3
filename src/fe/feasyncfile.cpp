@@ -5364,7 +5364,57 @@ extern "C" int func_001ADFB8(func_001ADFB8_cObj* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001ADFE8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_001A87D0(void* self, int a1);
+extern "C" void func_0039A7A8(void* self, int a1);
+extern "C" void func_001AF098(void* self, int a1);
+extern "C" void func_001AEC60(void* self, int a1);
+extern void* D_004A28A8;
+extern int D_00534B30_1ADFE8[] __asm__("D_00534B30");
+extern signed char D_00535C12[];
+extern char D_00441268[];
+extern char D_00441278[];
+extern char D_00441288[];
+extern char D_00441298[];
+extern char D_004412A8[];
+extern char D_004412B8[];
+
+// Refreshes the race-options screen and picks the mode title for the current game mode.
+extern "C" void func_001ADFE8(void* self, int a1)
+{
+    func_001A87D0(self, a1);
+    cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    func_0039A7A8(*(void**)((char*)self + 0x6DC), D_00534B30_1ADFE8[1] ^ 1);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    switch (D_00535C12[0]) {
+    case 3:
+        *(char**)((char*)self + 0x6D8) = D_00441288;
+        break;
+    case 1:
+        *(char**)((char*)self + 0x6D8) = D_00441278;
+        break;
+    case 2:
+        *(char**)((char*)self + 0x6D8) = D_00441298;
+        break;
+    case 5:
+        *(char**)((char*)self + 0x6D8) = D_004412A8;
+        break;
+    case 4:
+        *(char**)((char*)self + 0x6D8) = D_004412B8;
+        break;
+    case 0:
+    default:
+        *(char**)((char*)self + 0x6D8) = D_00441268;
+        break;
+    }
+    func_001AF098(self, D_00534B30_1ADFE8[1]);
+    func_001AEC60(self, *(int*)((char*)self + 0x6D0));
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AE0E0__FPv);
@@ -5732,7 +5782,48 @@ extern "C" void func_001AF428(cFEVObj_001AF428* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AF470);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_001B0F60(void* self, int a1);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" void func_001AF688(void* self);
+extern "C" void func_001AB178(void* self, int err);
+extern "C" void func_001AB108(void* self);
+extern "C" void func_001AFA60(void* screen, char* msg);
+extern "C" void func_001AFD88(void* self, void* a1);
+extern const char D_00461C60[];
+
+// Message handler: opens the next screen, shows error popups, or forwards to the base handler.
+extern "C" void* func_001AF470(void* self, int a1, int a2)
+{
+    switch (a1) {
+    case 0xF3:
+        func_001A8A40(self, func_001B0F60(cMemMan_alloc(0x6E4, D_00461C60, 0x100, 0), *(int*)((char*)self + 0x10)));
+        break;
+    case 0xED: case 0xEE: case 0xF0: case 0xF1: case 0xF2: case 0x10C: case 0x112: case 0x113:
+        func_001AF688(self);
+        func_001AB178(self, a1);
+        break;
+    case 0x110:
+        func_001AB108(self);
+        break;
+    case 0xE3:
+        func_001AFA60(*(void**)((char*)self + 0x40), (char*)a2);
+        break;
+    case 0xE5:
+        func_001AFD88(*(void**)((char*)self + 0x40), (void*)a2);
+        break;
+    default:
+        return func_001A8E40_3(self, a1, a2);
+    case 0xEF:
+        break;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AF568);
