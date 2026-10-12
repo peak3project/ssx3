@@ -455,7 +455,93 @@ extern "C" void func_0020CCF8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CFD0);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIStateStack_getCurrentState(void* stack);
+extern "C" void func_0020CCF8(void);
+void cReplay_stopAutoReplay(void* self);
+extern "C" void func_00231250(void* self, int a, int b, int refresh);
+extern void* D_004A28A8;
+extern int D_00534B30[];
+extern int D_004A26FC;
+//---
+extern "C" void func_0020D190(void);
+extern "C" void func_0039F840(void* stack);
+
+struct sFlag_CFD0 {
+    int pad[2];
+    int on;
+};
+
+struct sGame_CFD0 {
+    char pad0[0x28];
+    void* replay;
+    char pad2C[0x48 - 0x2C];
+    char* mgr;
+    char pad4C[0x200 - 0x4C];
+    sFlag_CFD0* flag;
+    char pad204[0x214 - 0x204];
+    int mode;
+};
+
+struct sGlobals_CFD0 {
+    char pad0[0x78];
+    void* be;
+    char pad7C[0x84 - 0x7C];
+    sGame_CFD0* game;
+};
+
+// Per-frame update of the dialog overlay: runs the action queued in D_004A26FC once the dialog has closed.
+extern "C" void func_0020CFD0(void)
+{
+    char* mgr = ((sGlobals_CFD0*)D_004A28A8)->game->mgr;
+    char* stack = mgr + 0x18;
+    char* st = 0;
+    if (stack != 0) {
+        st = (char*)cUIStateStack_getCurrentState(stack);
+    }
+    switch ((unsigned int)D_004A26FC) {
+    case 0:
+        break;
+    case 1:
+        func_0020CCF8();
+        break;
+    case 2: {
+        D_004A26FC = 0;
+        cReplay_stopAutoReplay(((sGlobals_CFD0*)D_004A28A8)->game->replay);
+        sGlobals_CFD0* g = (sGlobals_CFD0*)D_004A28A8;
+        g->game->flag->on = 1;
+        if (st == 0) {
+            break;
+        }
+        if (g->game->mode != 2) {
+            break;
+        }
+        if (*(int*)(st + 0x98) != 8) {
+            break;
+        }
+        cBE_getInterface_Fv(g->be, 7);
+        if (D_00534B30[0] == 0) {
+            break;
+        }
+        func_0039F840(mgr + 0x18);
+        break;
+    }
+    case 3:
+        D_004A26FC = 0;
+        func_0020D190();
+        func_0039F840(((sGlobals_CFD0*)D_004A28A8)->game->mgr + 0x18);
+        break;
+    case 4:
+        D_004A26FC = 0;
+        func_00231250(((sGlobals_CFD0*)D_004A28A8)->game, 0xE, 2, 0);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", cOVStateManager_addPDATemplate);
