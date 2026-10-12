@@ -4423,7 +4423,112 @@ extern "C" void func_001E4878(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E48B0);
+#ifdef SKIP_ASM
+extern "C" void cUIState_showObjSafe_48B0(void* self, char* name) __asm__("cUIState_showObjSafe");
+extern "C" void cUIState_hideObjSafe_48B0(void* self, char* name) __asm__("cUIState_hideObjSafe");
+extern "C" int func_001E2BB8_48B0(int kind, int online) __asm__("func_001E2BB8");
+extern "C" int func_001E33E8_48B0() __asm__("func_001E33E8__FPv");
+extern "C" void func_001E4840_48B0(void* self, int obj) __asm__("func_001E4840");
+extern "C" void func_001E4878_48B0(void* self, int obj) __asm__("func_001E4878");
+extern "C" int func_001E3620_48B0(int idx) __asm__("func_001E3620");
+extern "C" int func_001E3650_48B0(int idx) __asm__("func_001E3650");
+extern "C" void func_001E4C78_48B0(void* self, int idx, int row, int a3, int a4) __asm__("func_001E4C78");
+extern "C" int func_001E2C80_48B0(int kind, int idx, int local) __asm__("func_001E2C80");
+extern "C" int func_001E4B80_48B0(void* self, int entry) __asm__("func_001E4B80");
+extern "C" void func_0039B760_48B0(void* menu, unsigned char n) __asm__("func_0039B760");
+extern int D_004A20C4;
+extern char D_0046E0D0[];
+extern char D_0046E0E0[];
+extern char D_0046E0F0[];
+extern char D_0046E100[];
+extern char D_0046E118[];
+extern char D_0046E130[];
+
+struct sList_48B0 {
+    char pad0[0x9C];
+    int a[8];       // 0x9C
+    int b[8];       // 0xBC
+    int c[8];       // 0xDC
+    int d[8];       // 0xFC
+    int e[8];       // 0x11C
+    char pad13C[0x144 - 0x13C];
+    char* menu;     // 0x144
+    char pad148[0x14C - 0x148];
+    int f14C;       // 0x14C
+    int f150;       // 0x150
+    int f154;       // 0x154
+    int f158;       // 0x158
+    char pad15C[0x174 - 0x15C];
+    int scroll;     // 0x174
+};
+
+// Rebuilds the eight rows of the friends/buddies list from the local and online entries.
+extern "C" void func_001E48B0(void* selfp)
+{
+    sList_48B0* self = (sList_48B0*)selfp;
+    int online;
+    if (D_004A20C4) {
+        online = func_001E2BB8_48B0(4, 1);
+    } else {
+        online = func_001E2BB8_48B0(4, 0);
+    }
+    int local = func_001E33E8_48B0();
+    int total = local + online;
+    int sel;
+    if (total == 0) {
+        sel = 0;
+        cUIState_hideObjSafe_48B0(self, D_0046E0D0);
+        cUIState_hideObjSafe_48B0(self, D_0046E0E0);
+        cUIState_hideObjSafe_48B0(self, D_0046E0F0);
+        cUIState_hideObjSafe_48B0(self, D_0046E100);
+        cUIState_hideObjSafe_48B0(self, D_0046E118);
+        cUIState_showObjSafe_48B0(self, D_0046E130);
+        func_001E4840_48B0(self, self->f154);
+        func_001E4840_48B0(self, self->f158);
+        func_001E4840_48B0(self, self->f14C);
+        func_001E4840_48B0(self, self->f150);
+    } else {
+        cUIState_showObjSafe_48B0(self, D_0046E0D0);
+        sel = total;
+        cUIState_showObjSafe_48B0(self, D_0046E0E0);
+        cUIState_showObjSafe_48B0(self, D_0046E0F0);
+        cUIState_showObjSafe_48B0(self, D_0046E100);
+        cUIState_hideObjSafe_48B0(self, D_0046E130);
+        func_001E4878_48B0(self, self->f154);
+        func_001E4878_48B0(self, self->f158);
+        for (int i = 0; i < 8; i++) {
+            int n = i + 1;
+            int k = local - self->scroll - n;
+            if (k >= 0) {
+                int r1 = func_001E3620_48B0(k);
+                func_001E4C78_48B0(self, k, i, r1, func_001E3650_48B0(k));
+            } else if (k + online >= 0) {
+                int nk = ~k;
+                int r;
+                if (D_004A20C4) {
+                    r = func_001E2C80_48B0(4, nk, 0);
+                } else {
+                    r = func_001E2C80_48B0(4, nk, 1);
+                }
+                func_001E4C78_48B0(self, -1, i, r, (unsigned char)func_001E4B80_48B0(self, r));
+            } else {
+                func_001E4840_48B0(self, self->a[i]);
+                func_001E4840_48B0(self, self->b[i]);
+                func_001E4840_48B0(self, self->c[i]);
+                func_001E4840_48B0(self, self->e[i]);
+                func_001E4840_48B0(self, self->d[i]);
+            }
+        }
+    }
+    unsigned char keep = self->menu[0x95];
+    func_0039B760_48B0(self->menu, sel);
+    self->menu[0x95] = keep;
+    unsigned char s = self->scroll;
+    self->menu[0x98] = s;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4B80);
