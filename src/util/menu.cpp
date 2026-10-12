@@ -3462,7 +3462,37 @@ extern "C" void func_002CF7B8(void* self, int a)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/menu", func_002CF860);
+#ifdef SKIP_ASM
+inline void* operator new[](unsigned int, void* p) { return p; }
+void* func_002CAA58(void* self);
+extern void* D_004869B8[];
+extern void* D_00486A18[];
+void cExpandMenuItem_addItem3(void* self, void* item, int index) __asm__("cExpandMenuItem_addItem__FPvT0");
+
+// Element type of an inline-constructed array; its empty constructor leaves only the loop counters.
+struct sMenuSlot_F860 {
+    void* item;
+    sMenuSlot_F860() {}
+};
+
+extern "C" void* func_002CF860(void* self, void* name, void* parent)
+{
+    char* s = (char*)self;
+    cMenuItem_cMenuItem((cMenuItem*)self, name);
+    *(void**)(s + 0x14) = parent;
+    *(void***)(s + 0x10) = D_004869B8;
+    func_002CAA58(s + 0x18);
+    *(void***)(s + 0x144) = D_00486A18;
+    new (s + 0x24) sMenuSlot_F860[70];
+    *(void**)(s + 0x148) = self;
+    if (*(void**)(s + 0x14) != 0) {
+        cExpandMenuItem_addItem3(self, *(void**)(s + 0x14), -1);
+    }
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/menu", func_002CF8D8);
