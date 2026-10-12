@@ -16816,7 +16816,115 @@ extern "C" void func_001BFD98(void* self, void* popup)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BFE70);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern "C" void func_0039F290(void* list, void* item);
+extern "C" void func_001A8918(void* self, int a1, int msg);
+extern "C" void func_001A9B58(void* self);
+extern int D_004A4E88;
+extern char D_00461618[];
+extern char D_0045DCC8[];
+extern char D_0045FCD8[];
+extern char D_00462C88[];
+extern char D_00461B30[];
+//---
+extern "C" void* func_001C0F40_FE70(void* mem, int a1, void* owner) __asm__("func_001C0F40");
+extern "C" void* func_001BCB58_FE70(void* mem, int a1) __asm__("func_001BCB58");
+extern "C" void* func_001C2D18_FE70(void* mem, int a1) __asm__("func_001C2D18");
+extern "C" void* func_001C1C50_FE70(void* mem, int a1) __asm__("func_001C1C50");
+extern char D_004654E0[];
+extern char D_00465500[];
+extern const char D_004611A8[];
+extern char D_00465510[];
+extern char D_00465530[];
+
+class cFEFactory_001BFE70 {
+public:
+    int f0;
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void* create(void* owner, int a2);
+};
+
+// Memory-card async state message handler: creates the next screen or shows an error popup.
+extern "C" void func_001BFE70(void* self, void* a1, unsigned int a2)
+{
+    char* s = (char*)self;
+    if (a1 == 0) {
+        return;
+    }
+    switch (a2) {
+    case 5:
+        switch (*(unsigned int*)((char*)a1 + 0x18)) {
+        case 1: {
+            D_004A4E88 = 1;
+            void* p = func_001C0F40_FE70(cMemMan_alloc(0x734, D_004654E0, 0, 0), *(int*)(s + 0x10), self);
+            *(int*)((char*)p + 0x18) = 0x82E;
+            func_0039F290(*(char**)((char*)*(void**)((char*)*(void**)(s + 0x40) + 0xD0) + 0x10) + 0x18, p);
+            break;
+        }
+        case 2:
+            func_001A8A40(self, func_001BCB58_FE70(cMemMan_alloc(0xB84, D_00461B30, 0, 0), *(int*)(s + 0x10)));
+            break;
+        case 3:
+            func_001A8A40(self, func_001C2D18_FE70(cMemMan_alloc(0x6F0, D_00465500, 0, 0), *(int*)(s + 0x10)));
+            break;
+        case 0: {
+            void* obj = (*(cFEFactory_001BFE70**)*(void**)(s + 0x10))->create(self, 0);
+            if (obj == 0) {
+                break;
+            }
+            func_001A8A40(self, obj);
+            break;
+        }
+        case 4:
+            func_001A8A40(self, func_001C1C50_FE70(cMemMan_alloc(0x6D0, D_004611A8, 0, 0), *(int*)(s + 0x10)));
+            break;
+        case 5: {
+            void* p = func_001A9C50(self);
+            char* sub = (char*)p + 0xBC;
+            *(int*)((char*)p + 0xBC) = 2;
+            *(int*)((char*)p + 0xC4) = GetHashValue32(D_00465510);
+            *(int*)((char*)p + 0xC0) = 3;
+            func_001C57C0(sub, 0, GetHashValue32(D_00461618));
+            func_001C57C0(sub, 1, GetHashValue32(D_00462C88));
+            *(int*)((char*)p + 0x150) = 0x82D;
+            func_001A9BC0(self, p);
+            break;
+        }
+        }
+        break;
+    case 6: {
+        void* p = func_001A9C50(self);
+        char* sub = (char*)p + 0xBC;
+        *(int*)((char*)p + 0xBC) = 2;
+        *(int*)((char*)p + 0xC4) = GetHashValue32(D_00465530);
+        *(int*)((char*)p + 0xC0) = 3;
+        func_001C57C0(sub, 0, GetHashValue32(D_0045DCC8));
+        func_001C57C0(sub, 1, GetHashValue32(D_0045FCD8));
+        *(int*)((char*)p + 0x150) = 0x846;
+        func_001A9BC0(self, p);
+        break;
+    }
+    case 8:
+        if ((*(int*)(s + 0x1C) & 6) == 0) {
+            func_001A9B58(self);
+        }
+        break;
+    default:
+        func_001A8918(self, (int)a1, a2);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C0138);
