@@ -661,7 +661,89 @@ extern "C" void func_0020D318(void* self, int a1, int key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovtemplatedialog", cOVTemplate_Dialog_onCreateScreen);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+struct cUIText;
+void cUIText_setUnicodeStringByID(cUIText* t, int id);
+extern "C" void func_0020A380(void* self);
+//---
+extern char D_00471AF8[];
+extern char D_004A23E0[];
+extern char D_004A23E8[];
+extern char D_00471B08[];
+extern char D_00471B18[];
+extern char D_0046F5B8[];
+extern char D_0046F630[];
+extern char D_0046F618[];
+extern char D_00471B48[];
+extern char D_0046F608[];
+extern char D_0046EF08[];
+extern char D_00471B30[];
+extern char D_0046F648[];
+
+struct sVE_DlgCreate {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sObj_DlgCreate {
+    int pad[2];
+    sVE_DlgCreate* vt;
+};
+
+// Builds the generic dialog overlay: title/body texts depend on the dialog kind at 0x9C.
+extern "C" void cOVTemplate_Dialog_onCreateScreen(char* self)
+{
+    void* engine = *(void**)(self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_00471AF8), 0);
+    *(void**)(self + 0x40) = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    func_0020A380(self);
+    *(int*)((char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A23E0)) + 0x18) = 0;
+    *(int*)((char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A23E8)) + 0x18) = 1;
+    cUIText* text = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00471B08));
+    switch (*(unsigned int*)(self + 0x9C)) {
+    case 1: {
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_00471B18));
+        sObj_DlgCreate* o = (sObj_DlgCreate*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00471B30));
+        o->vt[9].fn((char*)o + o->vt[9].delta, 0);
+        break;
+    }
+    case 0:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_0046F5B8));
+        break;
+    case 3:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_0046F630));
+        break;
+    case 2:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_0046F618));
+        break;
+    case 4:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_00471B48));
+        break;
+    case 5:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_0046F608));
+        break;
+    case 6: {
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_0046EF08));
+        sObj_DlgCreate* o = (sObj_DlgCreate*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00471B30));
+        o->vt[9].fn((char*)o + o->vt[9].delta, 0);
+        break;
+    }
+    default:
+        cUIText_setUnicodeStringByID(text, GetHashValue32(D_0046F648));
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020D4F0);
