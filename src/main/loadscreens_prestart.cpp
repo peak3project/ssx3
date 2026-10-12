@@ -910,7 +910,41 @@ extern "C" void cGameLoadScreen_loadTexture(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/loadscreens_prestart", func_00233260);
+#ifdef SKIP_ASM
+extern void* D_004A289C;
+extern void* D_004A28A8;
+extern int D_004A4324;
+extern "C" void func_00369FF8(void* g);
+extern "C" void cSSXApp_startGameLoad(void* self);
+extern "C" void* func_0028B180();
+extern "C" void func_0028F768(void* snd);
+
+struct sVec3i_3260 {
+    int x, y, z;
+    sVec3i_3260(int a, int b, int c) { x = a; y = b; z = c; }
+};
+
+struct sVE_3260 {
+    short delta;
+    short index;
+    void (*fn)(void*, sVec3i_3260);
+};
+
+extern "C" void func_00233260(void)
+{
+    func_00369FF8(D_004A289C);
+    cSSXApp_startGameLoad(D_004A28A8);
+    // Storing through a pointer keeps the store ahead of the reload of D_004A289C.
+    int* p = &D_004A4324;
+    *p = 0;
+    char* g = (char*)D_004A289C;
+    sVE_3260* vt = *(sVE_3260**)(g + 0x10D8);
+    vt[15].fn(g + vt[15].delta, sVec3i_3260(0, 0, 0));
+    func_0028F768(func_0028B180());
+}
+#endif
 
 extern "C" void* func_00231C70(void* self);
 
