@@ -5612,7 +5612,56 @@ int func_002A1BD0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A1BD8);
+#ifdef SKIP_ASM
+// Maps a sound id (and, for the combined ids 0x11..0x15, a sub-id) to its channel bit.
+extern "C" int func_002A1BD8(void* self, int a, int b)
+{
+    switch (a) {
+    case 0: return 0x1;
+    case 1: return 0x2;
+    case 2: return 0x4;
+    case 3: return 0x8;
+    case 4: return 0x10;
+    case 5: return 0x40;
+    case 6: return 0x80;
+    case 7: return 0x100;
+    case 8: return 0x200;
+    case 9: return 0x400;
+    case 10: return 0x800;
+    case 11: return 0x1000;
+    case 12: return 0x2000;
+    case 13: return 0x4000;
+    case 14: return 0x8000;
+    case 15: return 0x10000;
+    case 16: return 0x20000;
+    }
+    if (b != -1) {
+        if (a == 0x11) {
+            if (b == 0xE) return 0x1;
+            if (b == 0xF) return 0x40;
+            if (b == 0x10) return 0x200;
+        } else if (a == 0x12) {
+            if (b == 0xE) return 0x2;
+            if (b == 0x11) return 0x1000;
+        } else if (a == 0x13) {
+            if (b == 0xE) return 0x4;
+            if (b == 0x10) return 0x400;
+            if (b == 0x11) return 0x2000;
+        } else if (a == 0x14) {
+            if (b == 0xE) return 0x8;
+            if (b == 0xF) return 0x80;
+        } else if (a == 0x15) {
+            if (b == 0xE) return 0x10;
+            if (b == 0xF) return 0x100;
+            if (b == 0x10) return 0x800;
+            if (b == 0x11) return 0x4000;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A1D48);
