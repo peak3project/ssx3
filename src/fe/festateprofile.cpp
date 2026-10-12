@@ -716,7 +716,76 @@ extern "C" void func_0018FC98(void* p)
 
 INCLUDE_ASM("fe/festateprofile", func_0018FD90);
 
+//100%
 INCLUDE_ASM("fe/festateprofile", func_001902C0);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+void cUIText_setAsciiString(cUIText* self, const char* str);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern char D_0045E318[];
+extern char D_0045E330[];
+extern char D_0045E348[];
+extern char D_0045E358[];
+extern char D_004A15D0[];
+extern char D_004A15D8[];
+extern char D_004A1458[];
+extern char D_004A12C0[];
+extern char D_0045E260[];
+extern char D_004A1600[];
+extern char D_004A1608[];
+
+struct cUIObj_02C0 {
+    int pad[2];
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void setEnabled(int on);
+    virtual void v8();
+    virtual void setVisible(int on);
+};
+
+static inline cUIObj_02C0* getObj_02C0(char* self, char* name)
+{
+    return (cUIObj_02C0*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
+}
+
+// Hides the profile panels, numbers the six slot rows and enables the confirm buttons.
+extern "C" void func_001902C0(void* selfp)
+{
+    char* self = (char*)selfp;
+    cUIObj_02C0* o;
+    o = getObj_02C0(self, D_0045E318);
+    o->setVisible(0);
+    o = getObj_02C0(self, D_0045E330);
+    o->setVisible(0);
+    o = getObj_02C0(self, D_0045E348);
+    o->setVisible(0);
+    o = getObj_02C0(self, D_0045E358);
+    o->setVisible(0);
+    o = getObj_02C0(self, D_004A15D0);
+    o->setVisible(0);
+    o = getObj_02C0(self, D_004A15D8);
+    o->setVisible(0);
+    o = getObj_02C0(self, D_004A1458);
+    o->setVisible(0);
+    char buf[0x10];
+    for (int i = 1; i < 7; i++) {
+        sprintf(buf, D_004A12C0, i);
+        o = getObj_02C0(self, buf);
+        cUIText_setAsciiString((cUIText*)o, buf);
+        sprintf(buf, D_0045E260, i);
+        o = getObj_02C0(self, buf);
+        *(int*)((char*)o + 0x18) = i - 1;
+    }
+    getObj_02C0(self, D_004A1600)->setEnabled(0);
+    getObj_02C0(self, D_004A1608)->setEnabled(1);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateprofile", cFEStateProfileLoad_initCreateScreen);
