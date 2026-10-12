@@ -36,9 +36,143 @@ extern "C" void func_003A0000(void* self, unsigned short ev)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uithing", func_003A0048);
+#ifdef SKIP_ASM
+struct sUIThing0048 {
+    char pad0[0x14];
+    unsigned int b0 : 13;
+    unsigned int frame : 6;   // 0x14 bits 13..18
+    unsigned int b19 : 13;
+    char pad18[0x4];
+    float r;                  // 0x1C
+    float g;                  // 0x20
+    float b;                  // 0x24
+    float a;                  // 0x28
+    float rotX;               // 0x2C
+    float rotY;               // 0x30
+    float rotZ;               // 0x34
+    char pad38[0xC];
+    float x;                  // 0x44
+    float y;                  // 0x48
+    char pad4C[0x4];
+    float scaleX;             // 0x50
+    float scaleY;             // 0x54
+    char pad58[0x8];
+    float f60;                // 0x60
+    float f64;                // 0x64
+};
 
+// Sets one animatable property (position, rotation, scale, colour, frame...) from a keyframe value.
+extern "C" void func_003A0048(sUIThing0048* self, unsigned short key, float v)
+{
+    switch (key) {
+    case 0:
+        self->x = v;
+        break;
+    case 1:
+        self->y = v;
+        break;
+    case 9:
+        self->scaleX = v * 0.01f;
+        break;
+    case 10:
+        self->scaleY = v * 0.01f;
+        break;
+    case 3:
+        self->rotX = v * 0.017444444820284843f;
+        break;
+    case 4:
+        self->rotY = v * 0.017444444820284843f;
+        break;
+    case 5:
+        self->rotZ = v * 0.017444444820284843f;
+        break;
+    case 12:
+        self->frame = (int)v;
+        break;
+    case 13:
+        self->r = v * 0.003921568859368563f;
+        break;
+    case 14:
+        self->g = v * 0.003921568859368563f;
+        break;
+    case 15:
+        self->b = v * 0.003921568859368563f;
+        break;
+    case 16:
+        self->a = v * 0.003921568859368563f;
+        break;
+    case 6:
+        self->f60 = v;
+        break;
+    case 7:
+        self->f64 = v;
+        break;
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("ui/uithing", func_003A0158);
+#ifdef SKIP_ASM
+struct sUIKey0158 {
+    short key;
+    short value;
+};
+
+// Applies a list of (property, value) keyframe pairs; same mapping as func_003A0048.
+extern "C" void func_003A0158(sUIThing0048* self, unsigned int count, sUIKey0158* keys)
+{
+    for (unsigned int i = 0; i < count; i++, keys++) {
+        float v = keys->value;
+        switch (keys->key) {
+        case 0:
+            self->x = v;
+            break;
+        case 1:
+            self->y = v;
+            break;
+        case 9:
+            self->scaleX = v * 0.01f;
+            break;
+        case 10:
+            self->scaleY = v * 0.01f;
+            break;
+        case 3:
+            self->rotX = v * 0.017444444820284843f;
+            break;
+        case 4:
+            self->rotY = v * 0.017444444820284843f;
+            break;
+        case 5:
+            self->rotZ = v * 0.017444444820284843f;
+            break;
+        case 12:
+            self->frame = (int)v;
+            break;
+        case 13:
+            self->r = v * 0.003921568859368563f;
+            break;
+        case 14:
+            self->g = v * 0.003921568859368563f;
+            break;
+        case 15:
+            self->b = v * 0.003921568859368563f;
+            break;
+        case 16:
+            self->a = v * 0.003921568859368563f;
+            break;
+        case 6:
+            self->f60 = v;
+            break;
+        case 7:
+            self->f64 = v;
+            break;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uithing", func_003A0290);
