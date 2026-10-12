@@ -430,7 +430,24 @@ extern "C" void func_003714F8(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", cDynamicColourEmitter_Allocate);
+#ifdef SKIP_ASM
+extern char D_00492690[];
+
+struct sEmitColour_1548 {
+    unsigned char rgba[4];
+    sEmitColour_1548() {}
+};
+
+extern "C" void cDynamicColourEmitter_Allocate(void* self)
+{
+    char* s = (char*)self;
+    sEmitColour_1548** pc = (sEmitColour_1548**)(s + 0x204);
+    cBaseClass_DynamicEmitter_Allocate(self);
+    *pc = new (D_00492690, 0, 0) sEmitColour_1548[*(int*)(s + 0x178)];
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("render/particle", func_003715B0);
