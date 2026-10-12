@@ -1551,7 +1551,55 @@ extern "C" int func_00104358(char* self, void* x, char* anim, float dt) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_001043F8);
+#ifdef SKIP_ASM
+// PORT: PS2 abs.s helper (stands in for fabsf).
+static inline float vAbs_43F8(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+// PORT: `<?` is the g++ minimum operator (EE min.s).
+static inline float clamp_43F8(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo;
+}
+
+extern "C" int func_001043F8(char* self, void* x, char* anim, float dt)
+{
+    int slot = 0xA5;
+    switch (*(int*)anim) {
+    case 0x129: slot = 0xA5; break;
+    case 0x12A: slot = 0xAB; break;
+    case 0x12B: slot = 0xA8; break;
+    case 0x12C: slot = 0xAC; break;
+    case 0x12D: slot = 0xA6; break;
+    case 0x12E: slot = 0xAA; break;
+    case 0x12F: slot = 0xA7; break;
+    case 0x130: slot = 0xA9; break;
+    }
+    func_00313C50(anim, 1, *(int*)(D_004A3E7C + slot * 4 + 0x1030));
+    func_00313D40(anim, 1, 1);
+    char* rider = *(char**)(self + 0x60);
+    float b = vAbs_43F8(*(float*)(rider + 0x298));
+    float a = vAbs_43F8(*(float*)(rider + 0x28C));
+    float m = (a < b) ? b : a;
+    m = clamp_43F8(m, 0.0f, 1.0f);
+    float w = m * 0.75f + 0.25f;
+    func_00313D28(anim, 0, 1.0f - w);
+    func_00313D28(anim, 1, w);
+    func_00313CF0(anim, 0, m * *(float*)(anim + 0x10));
+    float t = dt * 0.01666666753590107f;
+    func_003135B0(anim, 1, t);
+    if (func_00313800(anim, t)) {
+        func_003145F8(x, anim);
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001045B8);
