@@ -178,7 +178,51 @@ extern "C" int func_00191E48(char* self, void* unused, unsigned int type, int id
 
 INCLUDE_ASM("fe/festateruleselect", func_00192088);
 
+//100%
 INCLUDE_ASM("fe/festateruleselect", func_00192240);
+#ifdef SKIP_ASM
+extern unsigned int D_005308B8_192240[] __asm__("D_005308B8");
+extern int D_005308D0[];
+extern int D_005308D4[];
+
+// Returns the current setting of a race rule (1-14), or -1 for an unknown rule.
+extern "C" int func_00192240(void* self, int rule)
+{
+    switch (rule) {
+    case 4:
+        return D_005308D0[0] & 1;
+    case 3:
+        return (D_005308B8_192240[0] >> 3) & 1;
+    case 5:
+        return (D_005308D0[0] >> 3) & 1;
+    case 14:
+        return (D_005308B8_192240[0] >> 5) & 1;
+    case 7:
+        return (D_005308B8_192240[0] >> 4) & 1;
+    case 8:
+        return (D_005308D0[0] >> 1) & 1;
+    case 1:
+        return (D_005308D0[0] >> 2) & 1;
+    case 2:
+        return D_005308D4[0];
+    case 6:
+        return (D_005308D0[0] >> 4) & 1;
+    case 9:
+        return (D_005308D0[0] >> 5) & 1;
+    case 10:
+        return (D_005308D0[0] >> 6) & 1;
+    case 11: {
+        int f = D_005308D0[0] >> 7;
+        return f & 1;
+    }
+    case 12:
+        return (D_005308D0[0] >> 8) & 1;
+    case 13:
+        return (D_005308D0[0] >> 9) & 1;
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00192380);
