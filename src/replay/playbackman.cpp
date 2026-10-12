@@ -489,7 +489,39 @@ void func_0026D168(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026D178);
+#ifdef SKIP_ASM
+extern char* D_004A28A8;
+void func_0026D2B0_D178(void* self, int a1) __asm__("func_0026D2B0");
+int func_0026D420_D178(void* self, int a1) __asm__("func_0026D420");
+extern "C" int func_0026D178(void* self, int a1)
+{
+    if (*(int*)((char*)self + 0xC) == 0) {
+        return 0;
+    }
+    int r = 1;
+    switch (**(int**)(*(char**)(D_004A28A8 + 0x84) + 0x28)) {
+    case 0: {
+        char* g = *(char**)(*(char**)(D_004A28A8 + 0x84) + 0x28);
+        if (*(int*)(g + 0x60C) != 0 || *(int*)(g + 0x608) != 0 || *(int*)(g + 0x610) != 0) {
+            break;
+        }
+        func_0026D2B0_D178(self, a1);
+    }
+        /* fall through */
+    case 10: case 11: case 12: case 14:
+        r = 0;
+        break;
+    case 1: case 2: case 4:
+        r = func_0026D420_D178(self, a1);
+        break;
+    case 3: case 5: case 6: case 7: case 8: case 9: case 13:
+        break;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026D228);
