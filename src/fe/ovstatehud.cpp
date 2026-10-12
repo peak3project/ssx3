@@ -210,7 +210,39 @@ extern "C" void func_001E9540(void* self, unsigned short* str, int a2, sVec2f* p
 
 INCLUDE_ASM("fe/ovstatehud", func_001E95A0);
 
+//100%
 INCLUDE_ASM("fe/ovstatehud", func_001E9A30);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E2A0_9A30(void* self, int a1) __asm__("func_0039E2A0");
+extern "C" void func_0020EAA0(void*);
+extern char D_00474160[];
+
+struct sElem_9A30 {
+    void* operator new[](unsigned int, void* p) { return p; }
+    char pad[8];
+    char sub[0x84];
+    sElem_9A30() { func_0020EAA0(sub); }
+};
+
+// HUD overlay state constructor: base state, vtable, the two sub-panels and default scales.
+extern "C" void* func_001E9A30(void* arg0, int a1)
+{
+    char* self = (char*)arg0;
+    func_0039E2A0_9A30(self, a1);
+    *(char**)(self + 8) = D_00474160;
+    new (self + 0x48) sElem_9A30[2];
+    *(int*)(self + 0x474) = -1;
+    *(int*)(self + 0x3D4) = 0;
+    *(int*)(self + 0x3D8) = 0;
+    *(float*)(self + 0x478) = 1.0f;
+    *(float*)(self + 0x47C) = 1.0f;
+    *(int*)(self + 0x480) = 0;
+    *(int*)(self + 0x484) = 0;
+    *(float*)(self + 0x488) = 1.0f;
+    *(float*)(self + 0x48C) = 1.0f;
+    return arg0;
+}
+#endif
 
 INCLUDE_ASM("fe/ovstatehud", cOVStateHUD1P_onCreateScreen);
 
