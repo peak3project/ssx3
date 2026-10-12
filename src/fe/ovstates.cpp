@@ -445,7 +445,148 @@ extern "C" void func_00194DD0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstates", cFEStateMainMenu_onWidgetEvent);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+extern "C" void func_001A86E8(int a);
+extern "C" void func_00145108(void* iface, int mode);
+extern "C" void cCommSystem_construct();
+extern "C" void func_0025B650();
+extern "C" void func_00260F80();
+extern "C" void func_00266CA0();
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+// PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
+// result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void func_0039F290(void* stack, void* state);
+extern "C" void* func_001887A0(void* mem, void* engine, int a2);
+extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
+extern void* D_00469518[];
+extern char D_00460080[];
+extern char D_0045D698[];
+extern char D_004A17E8[];
+extern char D_00460040[];
+extern char D_00460060[];
+extern char D_004600A0[];
+extern char D_004A1458[];
+extern char D_004A1460[];
+extern char D_004A17E0[];
+
+struct sVE_194EB0 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+struct sObj_194EB0 {
+    int pad0;
+    sVE_194EB0* vt;
+};
+
+static inline void setWidgetHidden_194EB0(char* self, char* name)
+{
+    char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
+    if (o != 0) {
+        sVE_194EB0* vt = *(sVE_194EB0**)(o + 0x8);
+        ((void (*)(void*, int))vt[9].fn)(o + vt[9].delta, 0);
+    }
+}
+
+static inline void setWidgetVisible_194EB0(char* self, char* name)
+{
+    char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
+    if (o != 0) {
+        sVE_194EB0* vt = *(sVE_194EB0**)(o + 0x8);
+        ((void (*)(void*, int))vt[8].fn)(o + vt[8].delta, 0);
+    }
+}
+
+extern "C" void cFEStateMainMenu_onWidgetEvent(void* self_, void* item_, unsigned int type)
+{
+    char* self = (char*)self_;
+    char* item = (char*)item_;
+    if (item == 0)
+        return;
+    switch (type) {
+    case 5: {
+        func_001A86E8(0);
+        char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
+        switch (*(int*)(item + 0x18)) {
+        case 11:
+            func_00145108(iface, 0);
+            *(int*)(self + 0x48) = 1;
+            break;
+        case 9:
+            func_00145108(iface, 1);
+            *(int*)(self + 0x48) = 1;
+            // both arms set the flag; the leftover compare on the cheat counter is in the target too
+            if (*(signed char*)(self + 0x54) >= 7)
+                *(int*)(self + 0x48) = 1;
+            break;
+        case 22:
+            func_00145108(iface, 2);
+            *(int*)(self + 0x48) = 1;
+            break;
+        case 49:
+            func_00145108(iface, 2);
+            cCommSystem_construct();
+            func_0025B650();
+            func_00260F80();
+            func_00266CA0();
+        case 5:
+            *(int*)(self + 0x48) = 1;
+            break;
+        }
+        sVE_194EB0* ivt = *(sVE_194EB0**)(iface + 0xC);
+        ((void (*)(void*))ivt[1].fn)(iface + ivt[1].delta);
+        if (*(int*)(item + 0x18) == 0x16 && *(int*)(self + 0x48) == 0) {
+            *(int*)(self + 0x50) = *(signed char*)(self + 0x14);
+            char* popup = (char*)operator new(0x4C, D_00460080, 0, 0);
+            func_0039E318(popup, *(void**)(self + 0x10), self);
+            *(void***)(popup + 0x8) = D_00469518;
+            int bit = 1;
+            bit <<= *(int*)(self + 0x50);
+            *(char*)(popup + 0x15) = bit;
+            *(char*)(popup + 0x48) = 0;
+            func_0039F290(*(char**)(self + 0x10) + 0x18, popup);
+            *(char**)(self + 0x4C) = item;
+            setWidgetHidden_194EB0(self, D_004A17E0);
+            setWidgetHidden_194EB0(self, D_004600A0);
+            setWidgetHidden_194EB0(self, D_004A1458);
+            setWidgetHidden_194EB0(self, D_004A1460);
+            return;
+        }
+        sObj_194EB0* obj = **(sObj_194EB0***)(self + 0x10);
+        void* r = ((void* (*)(void*, void*, int))obj->vt[4].fn)((char*)obj + obj->vt[4].delta, self, *(int*)(item + 0x18));
+        if (r != 0)
+            func_0039F400(*(char**)(self + 0x10) + 0x18, r);
+        break;
+    }
+    case 6: {
+        sObj_194EB0* obj = **(sObj_194EB0***)(self + 0x10);
+        void* r = ((void* (*)(void*, void*, int))obj->vt[5].fn)((char*)obj + obj->vt[5].delta, self, *(int*)(item + 0x18));
+        if (r != 0)
+            func_0039F400(*(char**)(self + 0x10) + 0x18, r);
+        break;
+    }
+    case 7: {
+        char* o = (char*)func_001887A0(cMemMan_alloc(0x54, D_0045D698, 0x100, 0), *(void**)(self + 0x10), 1);
+        *(int*)(o + 0x1C) = (*(int*)(o + 0x1C) & ~0x3F00) | 0x100;
+        cUIStateStack_pushSpecial(*(char**)(self + 0x10) + 0x18, o, 0, 0);
+        break;
+    }
+    case 8:
+        if (++*(signed char*)(self + 0x54) >= 7) {
+            setWidgetVisible_194EB0(self, D_00460060);
+            setWidgetVisible_194EB0(self, D_00460040);
+            setWidgetVisible_194EB0(self, D_004A17E8);
+        }
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstates", func_001952E8);
