@@ -1507,7 +1507,56 @@ extern "C" void func_00309030(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptprocess", func_00309118);
+#ifdef SKIP_ASM
+extern "C" void func_00308DB8(void* self);
+extern "C" void func_0030A868(void* self, int id, int a2, int a3);
+extern "C" void* func_0028B180();
+extern "C" void func_0029D6E0(void* snd, int a1);
+extern "C" void func_0029DBB0(void* snd, int a1);
+extern "C" void func_0026F7B8(void* p);
+extern "C" void func_0026CC48(void* p);
+extern char* D_004A28A8;
+
+// Runs the pending gate action (replay, sounds, camera) and clears it.
+extern "C" void func_00309118(void* vself)
+{
+    char* self = (char*)vself;
+    switch (*(int*)(self + 0x2AC)) {
+    case 1:
+        func_00308DB8(self);
+        func_0030A868(self, *(int*)(self + 0x2B0), 1, 0);
+        func_0029D6E0(func_0028B180(), *(int*)(self + 0x2A0));
+        func_0026F7B8(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28));
+        break;
+    case 2:
+        func_0030A868(self, *(int*)(self + 0x2B0), 3, 0);
+        break;
+    case 3:
+        func_0030A868(self, *(int*)(self + 0x2B0), 0x12, 0);
+        func_00308DB8(self);
+        func_0029DBB0(func_0028B180(), 1);
+        break;
+    case 4:
+        func_0030A868(self, *(int*)(self + 0x2B0), 5, 0);
+        func_00308DB8(self);
+        func_0029DBB0(func_0028B180(), 1);
+        break;
+    case 5:
+        func_0026CC48(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x34));
+        func_0030A868(self, *(int*)(self + 0x2B0), 1, 1);
+        func_00308DB8(self);
+        break;
+    case 6:
+        func_0030A868(self, *(int*)(self + 0x2B0), 0x12, 0);
+        func_00308DB8(self);
+        break;
+    }
+    *(int*)(self + 0x2AC) = 0;
+    *(unsigned int*)(self + 0x2B0) = 0xFFFFFFFF;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("wscript/wscriptprocess", func_00309270);
