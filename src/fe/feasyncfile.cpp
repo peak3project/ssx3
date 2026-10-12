@@ -7187,7 +7187,70 @@ extern "C" bool func_001B1590(void* self, cFEVObj_001B1590* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B15D8);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+struct sFEObj_001B1F88;
+extern "C" sFEObj_001B1F88* func_001B1F88(sFEObj_001B1F88* mem, int a1);
+extern "C" void* func_001BFBB8(void* mem, int a1);
+extern "C" void* func_00192D00(void* mem, int a1);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_0025DA90(void* self);
+extern "C" void func_001B1760(void* self, int index);
+extern "C" void func_001B1B10(void* self, int sel, int flag);
+extern "C" void func_001B1A08(void* self, int on, int a2);
+extern "C" void func_001AB288(void* self, int err);
+extern void* D_004A28A8;
+extern void* D_004A3028;
+extern int D_004A4E88;
+extern int D_00534B30_1B15D8[] __asm__("D_00534B30");
+extern const char D_0045FF10[];
+extern const char D_0045FF28[];
+extern const char D_00460CC8[];
+
+// Message handler for the profile list: select/scroll, error popups, and opening the follow-up screens.
+extern "C" void* func_001B15D8(void* self, int a1, int a2)
+{
+    void* obj;
+    switch (a1) {
+    case 0xF3:
+        cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+        if (D_00534B30_1B15D8[0xCB] >= 0) {
+            func_001B1760(self, D_00534B30_1B15D8[0xCB]);
+            func_001B1B10(self, D_00534B30_1B15D8[0xCB], 1);
+        }
+        break;
+    case 0xF5:
+        func_001B1A08(self, 1, 1);
+        break;
+    case 0xF7:
+        func_001B1A08(self, 0, 1);
+        break;
+    case 0xEE: case 0xF1: case 0xF8: case 0xFA: case 0x112: case 0x113:
+        func_001AB288(self, a1);
+        break;
+    case 0xF6:
+        func_001A8A40(self, func_00192D00(cMemMan_alloc(0x73C, D_00460CC8, 0, 0), *(int*)((char*)self + 0x10)));
+        break;
+    case 0x10C:
+        if (func_0025DA90(D_004A3028) != 0 && D_004A4E88 == 0) {
+            obj = func_001B1F88((sFEObj_001B1F88*)cMemMan_alloc(0x73C, D_0045FF10, 0, 0), *(int*)((char*)self + 0x10));
+        } else {
+            obj = func_001BFBB8(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(int*)((char*)self + 0x10));
+        }
+        func_001A8A40(self, obj);
+        break;
+    default:
+        return func_001A8E40_3(self, a1, a2);
+    case 0xE0:
+        break;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B1760);
@@ -16438,7 +16501,83 @@ extern "C" void func_001C17F8(void* self, int on)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C19C8);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_001B0F60(void* self, int a1);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" void func_001AB178(void* self, int err);
+extern "C" int func_0039F698(void* p);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern const char D_00461C60[];
+extern char D_00461618[];
+extern char D_00465958[];
+
+struct cFEObj_001C19C8 {
+    int f0;
+    int f4;
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17(void* a1, int a2);
+};
+
+// Message handler: on 0xE7 confirms (if armed) or closes the screen; other ids as in the sibling handlers.
+extern "C" void* func_001C19C8(void* self, int a1, int a2)
+{
+    switch (a1) {
+    case 0xE6:
+        *(int*)((char*)self + 0x6F0) = 1;
+        break;
+    case 0x10C: case 0x112:
+        func_0039F698(*(char**)((char*)self + 0x10) + 0x18);
+        func_001AB178(self, a1);
+        break;
+    case 0xE7:
+        if (*(int*)((char*)self + 0x6F0) != 0) {
+            void* p = func_001A9C50(self);
+            char* sub = (char*)p + 0xBC;
+            *(int*)((char*)p + 0xBC) = 1;
+            func_001C57C0(sub, 0, GetHashValue32(D_00461618));
+            *(int*)((char*)p + 0xC4) = GetHashValue32(D_00465958);
+            *(int*)((char*)p + 0xC0) = 3;
+            *(int*)((char*)p + 0x150) = 0x82F;
+            *(int*)((char*)p + 0x14C) = 6;
+            func_001A9BC0(self, p);
+        } else {
+            *(int*)((char*)self + 0x6EC) = 0;
+            (*(cFEObj_001C19C8**)((char*)self + 0x20))->v17(self, 0x14);
+        }
+        break;
+    case 0xF3:
+        func_001A8A40(self, func_001B0F60(cMemMan_alloc(0x6E4, D_00461C60, 0x100, 0), *(int*)((char*)self + 0x10)));
+        break;
+    default:
+        return func_001A8E40_3(self, a1, a2);
+    case 0xEF:
+        break;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C1B48);
