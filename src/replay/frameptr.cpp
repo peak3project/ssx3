@@ -837,5 +837,107 @@ extern "C" void func_0026FA78(int* self)
 
 INCLUDE_ASM("replay/frameptr", func_0026FB88);
 
+//100%
 INCLUDE_ASM("replay/frameptr", func_0026FE50);
+#ifdef SKIP_ASM
+extern "C" void cGameViewMan_updateAll(void* list);
+// PORT: func_0026E448 is declared (void*) in replay.cpp but takes the frame index too
+extern "C" void func_00270378(void* self);
+void* func_0026E448_2(void* self, int frame) __asm__("func_0026E448__FPv");
+extern "C" void func_0026E568(void* self);
+extern "C" void func_0026E528(void* self);
+extern "C" void func_001620D0(void* p);
+
+struct sVE_26FE50 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+extern "C" void func_0026FE50(char* self)
+{
+    int redraw = 0;
+    switch (*(int*)(self + 0x618)) {
+    case 1:
+        func_002702F8(self, 0);
+        redraw = 1;
+        func_002703F0(self, 1);
+        if (*(int*)(self + 0x484) == 0) {
+            func_0026F4A0(self, 6);
+        } else {
+            func_0026F4A0(self, 5);
+        }
+        break;
+    case 2:
+        func_00270378(self);
+        redraw = 1;
+        func_002703F0(self, 1);
+        if (*(int*)(self + 0x484) == 0) {
+            func_0026F4A0(self, 6);
+        } else {
+            func_0026F4A0(self, 5);
+        }
+        break;
+    case 3: {
+        redraw = 1;
+        char* f = (char*)func_0026E448_2(self, *(int*)(self + 0x484));
+        *(char**)(self + 0x488) = f;
+        if (*(int*)(self + 0x484) == *(int*)(f + 0x30)) {
+            func_0026E568(self);
+        } else {
+            char* n = *(char**)(f + 0x14);
+            if (n != 0 && *(int*)(n + 0x30) == *(int*)(self + 0x484)) {
+                func_0026E568(self);
+            }
+        }
+        func_002703F0(self, 1);
+        if (*(int*)(self + 0x484) == 0) {
+            func_0026F4A0(self, 6);
+        } else {
+            func_0026F4A0(self, 5);
+        }
+        break;
+    }
+    case 4:
+        redraw = 1;
+        if (*(int*)(*(char**)(self + 0x488) + 0x14) != 0) {
+            func_0026E528(self);
+            func_002703F0(self, 1);
+            func_0026F4A0(self, 5);
+        }
+        break;
+    case 5:
+        func_002703F0(self, 0);
+        func_0026F4A0(self, 4);
+        break;
+    case 6:
+        if (*(int*)self == 3) {
+            func_0026F4A0(self, 1);
+        } else {
+            func_0026F4A0(self, 3);
+        }
+        break;
+    case 7:
+        func_0026F4A0(self, 3);
+        break;
+    case 8:
+        break;
+    default:
+        if (*(int*)self != 3) {
+            *(int*)(self + 0x604) = 1;
+            func_002703F0(self, 0);
+        }
+        break;
+    }
+    *(int*)(self + 0x618) = 0;
+    if (redraw) {
+        char* views = *(char**)(*(char**)(D_004A28A8 + 0x84) + 0x84);
+        char* o = *(char**)(*(char**)(views + 4) + 0xA8);
+        func_001620D0(o);
+        sVE_26FE50* vt = *(sVE_26FE50**)(o + 0x14);
+        vt[4].fn(o + vt[4].delta);
+        cGameViewMan_updateAll(views);
+    }
+}
+#endif
 
