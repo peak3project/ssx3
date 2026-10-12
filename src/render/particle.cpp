@@ -1,6 +1,33 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("render/particle", cBaseClass_DynamicEmitter_Allocate);
+#ifdef SKIP_ASM
+// PORT: operator_new__FUi is the game's tagged allocator (size, tag, flags, d); bound by asm label
+// as operator new[] so the array new-expressions below match.
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern char D_00492650[];
+extern char D_00492670[];
+
+struct sEmitParticle_0C60 {
+    float v[4];
+    sEmitParticle_0C60() {}
+};
+
+struct sEmitState_0C60 {
+    float v[4];
+    sEmitState_0C60() {}
+};
+
+extern "C" void cBaseClass_DynamicEmitter_Allocate(void* self)
+{
+    char* s = (char*)self;
+    sEmitParticle_0C60** pp = (sEmitParticle_0C60**)(s + 0x1A0);
+    *pp = new (D_00492650, 0, 0) sEmitParticle_0C60[*(int*)(s + 0x178)];
+    sEmitState_0C60** ps = (sEmitState_0C60**)(s + 0x1A4);
+    *ps = new (D_00492670, 0, 0) sEmitState_0C60[*(int*)(s + 0x178)];
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00370CF8);
