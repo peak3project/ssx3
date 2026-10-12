@@ -3985,9 +3985,93 @@ extern "C" void func_001AB108(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AB178);
+#ifdef SKIP_ASM
+extern char D_00462768[];
+extern char D_00462780[];
+extern char D_004627A0[];
+extern char D_00462158[];
+extern char D_004627B8[];
+extern char D_004627D8[];
+// Shows an error popup with the message matching the error code.
+extern "C" void func_001AB178(void* self, int err)
+{
+    void* p = func_001A9C50(self);
+    char* sub = (char*)p + 0xBC;
+    *(int*)((char*)p + 0xBC) = 1;
+    func_001C57C0(sub, 0, GetHashValue32(D_00461618));
+    *(int*)((char*)p + 0x150) = 0x835;
+    *(int*)((char*)p + 0x14C) = 6;
+    *(int*)((char*)p + 0x170) = 0;
+    switch (err) {
+    case 0xF2:
+        *(int*)(sub + 0x8) = GetHashValue32(D_00462768);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    case 0xF1: case 0x10C: case 0x113:
+        *(int*)(sub + 0x8) = GetHashValue32(D_00462780);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    case 0x112:
+        *(int*)(sub + 0x8) = GetHashValue32(D_004627A0);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    case 0xF0:
+        *(int*)(sub + 0x8) = GetHashValue32(D_00462158);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    case 0xED:
+        *(int*)(sub + 0x8) = GetHashValue32(D_004627B8);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    case 0xEE:
+        *(int*)(sub + 0x8) = GetHashValue32(D_004627D8);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    }
+    func_001A9BC0(self, p);
+}
+#endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AB288);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern char D_00461618[];
+extern char D_00462780[];
+extern char D_004627A0[];
+extern char D_004627D8[];
+// Shows an error popup with the message matching the error code.
+extern "C" void func_001AB288(void* self, int err)
+{
+    void* p = func_001A9C50(self);
+    char* sub = (char*)p + 0xBC;
+    *(int*)((char*)p + 0xBC) = 1;
+    func_001C57C0(sub, 0, GetHashValue32(D_00461618));
+    *(int*)((char*)p + 0x150) = 0x837;
+    *(int*)((char*)p + 0x14C) = 6;
+    *(int*)((char*)p + 0x170) = 0;
+    switch (err) {
+    case 0xF1: case 0xFA: case 0x10C: case 0x113:
+        *(int*)(sub + 0x8) = GetHashValue32(D_00462780);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    case 0x112:
+        *(int*)(sub + 0x8) = GetHashValue32(D_004627A0);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    case 0xEE: case 0xF8:
+        *(int*)(sub + 0x8) = GetHashValue32(D_004627D8);
+        *(int*)(sub + 0x4) = 3;
+        break;
+    }
+    func_001A9BC0(self, p);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AB370);

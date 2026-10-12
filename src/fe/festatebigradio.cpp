@@ -198,7 +198,49 @@ extern "C" void func_00193C00(void* self, void* popup)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatebigradio", func_00193CF8);
+#ifdef SKIP_ASM
+extern int D_004A1A70;
+extern void* D_004A33CC;
+extern "C" void func_001927B0(void* p);
+extern "C" void func_00265458(void* snd, int id);
+static inline int isOn00193CF8()
+{
+    return D_004A1A70 == 1;
+}
+// Handles a menu event for one of the two radio list controls.
+extern "C" int func_00193CF8(void* self, void* ctrl, int msg)
+{
+    int found = 0;
+    void** item;
+    void** p = (void**)((char*)self + 0x6D0);
+    if (*p == ctrl) {
+        item = p;
+        found = 1;
+    } else {
+        item = (void**)((char*)self + 0x704);
+        if (*item != ctrl) item = 0;
+    }
+    switch (msg) {
+    case 8: case 9:
+        return 0x100;
+    case 5:
+        if (isOn00193CF8() && found) {
+            func_00265458(D_004A33CC, *((unsigned char*)ctrl + 0x95));
+        }
+        func_001927B0(item);
+        return 0x101;
+    case 6:
+        if (*(int*)((char*)self + 0x6F8) == 0 || *(int*)((char*)self + 0x72C) == 0) return 1;
+        return 0x101;
+    case 7:
+        if (isOn00193CF8()) return 0;
+        break;
+    }
+    return 0x101;
+}
+#endif
 
 INCLUDE_ASM("fe/festatebigradio", func_00193DE0);
 
