@@ -8756,7 +8756,47 @@ extern "C" void func_00268460(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002684C0);
+#ifdef SKIP_ASM
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" void* cBXString_cBXString2(void* self, const char* s);
+extern char D_00480488[];
+extern void* D_00481190[];
+
+struct sBlk2684C0 {
+    int v[5];
+};
+
+struct sMsg2684C0 {
+    int type;           // 0x00
+    void** vt;          // 0x04
+    char a[4];          // 0x08
+    char b[4];          // 0x0C
+    int f10;            // 0x10
+    int f14;            // 0x14
+    sBlk2684C0 blk;     // 0x18
+};
+
+static inline void Init2684C0(sMsg2684C0* m, const char* a, const char* b, int c, int d)
+{
+    m->type = 0xE3;
+    m->vt = D_00481190;
+    cBXString_cBXString2(m->a, a);
+    cBXString_cBXString2(m->b, b);
+    m->f10 = c;
+    m->f14 = d;
+}
+
+// Clones a 0xE3 message (strings, ids and trailing data block).
+extern "C" void* func_002684C0(sMsg2684C0* src)
+{
+    sMsg2684C0* m = (sMsg2684C0*)operator new(0x2C, D_00480488, 0x20000000, 0);
+    Init2684C0(m, *(const char**)src->a, *(const char**)src->b, src->f10, src->f14);
+    m->blk = src->blk;
+    return m;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268588);
