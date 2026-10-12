@@ -1,6 +1,124 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("ai/computer", cComputer_setIndividualRiderDifficulty);
+#ifdef SKIP_ASM
+struct sAiTune_SIRD {
+    char pad0[0xDC];
+    float accel;     // 0xDC
+    float speed;     // 0xE0
+    int boost;       // 0xE4
+};
+
+struct cComputer_SIRD {
+    char pad0[0x18];
+    sAiTune_SIRD* tune;     // 0x18
+    char pad1C[0xDF8 - 0x1C];
+    float skillA;           // 0xDF8
+    float skillB;           // 0xDFC
+};
+
+// Applies the per-level AI tuning; mode 0 and mode 2 override the skill values with their own tables.
+// skillB is stored as a percentage and scaled to 0..1 at the end.
+extern "C" void cComputer_setIndividualRiderDifficulty(cComputer_SIRD* self, int level, int mode)
+{
+    switch (level) {
+    case 1:
+        self->skillA = 100.0f;
+        self->skillB = 86.9153976f;
+        self->tune->accel = -49670.1406f;
+        self->tune->speed = 47500.0f;
+        self->tune->boost = 0;
+        break;
+    case 2:
+        self->skillA = 80.3891449f;
+        self->skillB = 79.5998383f;
+        self->tune->accel = -70000.0f;
+        self->tune->speed = 45000.0f;
+        self->tune->boost = 1;
+        break;
+    case 3:
+        self->skillA = 51.007576f;
+        self->skillB = 68.9012375f;
+        self->tune->accel = -81571.1797f;
+        self->tune->speed = 40000.0f;
+        self->tune->boost = 1;
+        break;
+    case 4:
+        self->skillA = 46.6018982f;
+        self->skillB = 56.8430748f;
+        self->tune->accel = -80321.1797f;
+        self->tune->speed = 37500.0f;
+        self->tune->boost = 1;
+        break;
+    case 5:
+        self->skillA = 14.000701f;
+        self->skillB = 42.4410439f;
+        self->tune->accel = -92500.0f;
+        self->tune->speed = 32500.0f;
+        self->tune->boost = 1;
+        break;
+    }
+    if (mode == 0) {
+        switch (level) {
+        case 1:
+            self->skillA = 100.0f;
+            self->skillB = 83.8930817f;
+            self->tune->speed = 45000.0f;
+            break;
+        case 2:
+            self->skillA = 55.8049736f;
+            self->skillB = 64.6436768f;
+            self->tune->speed = 42500.0f;
+            break;
+        case 3:
+            self->skillA = 40.2501869f;
+            self->skillB = 60.0044975f;
+            self->tune->speed = 37500.0f;
+            break;
+        case 4:
+            self->skillA = 15.5423021f;
+            self->skillB = 52.0049553f;
+            self->tune->speed = 32500.0f;
+            break;
+        case 5:
+            self->skillA = 7.95483208f;
+            self->skillB = 35.0202637f;
+            self->tune->speed = 30000.0f;
+            break;
+        }
+    } else if (mode == 2) {
+        switch (level) {
+        case 1:
+            self->skillA = 100.0f;
+            self->skillB = 100.0f;
+            self->tune->speed = 50000.0f;
+            break;
+        case 2:
+            self->skillA = 84.9981003f;
+            self->skillB = 82.6824875f;
+            self->tune->speed = 47500.0f;
+            break;
+        case 3:
+            self->skillA = 74.9987259f;
+            self->skillB = 70.8223801f;
+            self->tune->speed = 40000.0f;
+            break;
+        case 4:
+            self->skillA = 54.9958344f;
+            self->skillB = 59.9440651f;
+            self->tune->speed = 37500.0f;
+            break;
+        case 5:
+            self->skillA = 29.9814339f;
+            self->skillB = 46.9987717f;
+            self->tune->speed = 32500.0f;
+            break;
+        }
+    }
+    self->skillB *= 0.01f;
+}
+#endif
 
 INCLUDE_ASM("ai/computer", cComputer_updateRiderDifficulty);
 
