@@ -11772,7 +11772,26 @@ extern "C" int func_001B9488(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9558);
+#ifdef SKIP_ASM
+// The string length is stored 8 bytes before the character data.
+static inline bool has_9558(char* s)
+{
+    return *(int*)(s - 8) != 0;
+}
+
+extern "C" bool func_001B9558(void* self)
+{
+    char** names = *(char***)((char*)self + 0x6D0);
+    bool ok = true;
+    ok = ok && has_9558(names[0]);
+    ok = ok && has_9558(names[1]);
+    ok = ok && has_9558(names[2]);
+    ok = ok && has_9558(names[3]);
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B95C0);
@@ -12274,7 +12293,18 @@ extern "C" int func_001B9FA0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BA110);
+#ifdef SKIP_ASM
+extern "C" int func_001BA110(void* self)
+{
+    bool ok = true;
+    ok = ok && func_001B9D68(self);
+    ok = ok && func_001B9FA0(self);
+    ok = ok && func_001B9B18(self);
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BA178);
