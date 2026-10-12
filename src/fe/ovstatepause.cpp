@@ -899,7 +899,35 @@ extern "C" int func_001FDB78(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDB88);
+#ifdef SKIP_ASM
+struct sPauseMgr_DB88 {
+    char pad[0x8];
+    int f8;
+};
+struct sGame_DB88 {
+    char pad[0x200];
+    sPauseMgr_DB88* mgr;
+};
+struct sApp_DB88 {
+    char pad[0x84];
+    sGame_DB88* game;
+};
+
+extern void* D_004A28A8;
+extern "C" void func_002872A8(void* snd);
+
+extern "C" void func_001FDB88(void* self, int a1, int a2)
+{
+    if (a1 != 0 && a2 == 5) {
+        D_004A26FC = 3;
+        ((sApp_DB88*)D_004A28A8)->game->mgr->f8 = 1;
+        func_002872A8(func_0028B180());
+        func_0039F190(*(char**)((char*)self + 0x10) + 0x18, 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDBF0);
