@@ -463,7 +463,39 @@ extern "C" void func_00358C30(void* self, void* stream)
 
 INCLUDE_ASM("object/multiparticle", func_00358C80);
 
+//100%
 INCLUDE_ASM("object/multiparticle", func_00358DB0);
+#ifdef SKIP_ASM
+extern "C" void* func_00341C80(void* self, void* a, void* stream);
+extern "C" void func_00359030(void* self);
+extern char D_0048EC28[];
+extern char D_0048EA20[];
+
+struct sStreamVE_8DB0 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
+// Element type with an empty constructor; the array new leaves only its loop counters.
+struct sParticle_8DB0 {
+    char data[0x40];
+    sParticle_8DB0() {}
+};
+
+extern "C" void* func_00358DB0(void* self, void* a1, void* stream)
+{
+    char* s = (char*)self;
+    sParticle_8DB0** pp = (sParticle_8DB0**)(s + 0x84);
+    func_00341C80(s + 0x18, a1, stream);
+    *(void**)(s + 0x54) = D_0048EC28;
+    sStreamVE_8DB0* vt = *(sStreamVE_8DB0**)stream;
+    vt[2].fn((char*)stream + vt[2].delta, self, 0x18);
+    *pp = new (D_0048EA20, 0x20000000, 0) sParticle_8DB0[*(int*)(s + 0x74)];
+    func_00359030(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/multiparticle", func_00358E50);
