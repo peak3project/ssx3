@@ -1904,7 +1904,36 @@ extern "C" void func_001D2198(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festaterewards", func_001D22F0);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
+extern "C" void func_00253390(void* p);
+extern void* D_00469928[];
+
+// Constructor for the reward popup state: base init, empty title/body strings and text list.
+extern "C" void* func_001D22F0(void* vself, void* engine, void* owner, signed char player)
+{
+    char* self = (char*)vself;
+    func_0039E318(self, engine, owner);
+    char* title = self + 0x48;
+    char* body = self + 0x148;
+    *(signed char*)(self + 0x44) = player;
+    title[0] = 0;
+    body[0] = 0;
+    *(int*)(self + 0x274) = 0;
+    *(int*)(self + 0x278) = 0;
+    *(int*)(self + 0x27C) = 0;
+    *(int*)(self + 0x248) = 0;
+    *(void***)(self + 0x8) = D_00469928;
+    *(int*)(self + 0xC) = 6;
+    *(int*)(self + 0x270) = 1;
+    func_00253390(self + 0x24C);
+    *(char**)(self + 0x24C) = title;
+    *(char**)(self + 0x250) = body;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2380);
