@@ -1899,7 +1899,79 @@ extern "C" int func_00122E50(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00122EE8);
+#ifdef SKIP_ASM
+extern "C" int func_00135EB0(void* p);
+extern "C" int func_00135EF0(void* p);
+extern "C" int func_00135F30(void* p);
+extern "C" int func_00311AE8(void* self, int i);
+extern "C" int func_001446A0(void* self, int a1);
+
+extern "C" int func_00122EE8(char* self, int q)
+{
+    int res;
+    switch (q) {
+    case 0:
+        return func_0011FE98(self) == 2;
+    case 1:
+        return func_0011FEE8(self) == 9;
+    case 2:
+        {
+            bool ok = false;
+            if (func_0011FE98(self) == 1 || (func_0011FE98(self) == 2 && *(int*)(*(char**)(self + 0x77C) + 0x30) == 1)) {
+                ok = true;
+            }
+            return ok;
+        }
+    case 3:
+        return func_0011FE98(self) == 0;
+    case 4:
+        return func_0011FE98(self) == 4;
+    case 5:
+        res = 0;
+        if (func_0011FEE8(self) == 5) {
+            res = func_00135EB0(*(char**)(self + 0x77C) + 0x230) != 0;
+        }
+        return res;
+    case 6:
+        res = 0;
+        if (func_0011FEE8(self) == 5) {
+            res = func_00135EF0(*(char**)(self + 0x77C) + 0x230) != 0;
+        }
+        return res;
+    case 7:
+        res = 0;
+        if (func_0011FEE8(self) == 5) {
+            res = func_00135F30(*(char**)(self + 0x77C) + 0x230) != 0;
+        }
+        return res;
+    case 9:
+        return *(int*)(self + 0x330) == 1;
+    case 10:
+        return *(int*)(self + 0x330) == 2;
+    case 11:
+        return *(float*)(self + 0x2FC) != 0.0f;
+    case 8:
+        return *(int*)(*(char**)(self + 0x790) + 0x198);
+    case 15:
+        return *(int*)(*(char**)(self + 0x790) + 0x138);
+    case 16:
+        return *(int*)(*(char**)(self + 0x790) + 0x13C);
+    case 17:
+        return *(int*)(*(char**)(self + 0x790) + 0x19C);
+    case 18:
+        res = 0;
+        if (func_00311AE8(*(void**)(self + 0x784), 1) == 13) {
+            if (func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 0)) {
+                res = !func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 1);
+            }
+        }
+        return res;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_00123128);
