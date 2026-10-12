@@ -9390,7 +9390,74 @@ extern "C" void func_001B5830(void* self, void* a1, unsigned int kind)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B5A58);
+#ifdef SKIP_ASM
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_001A8A40(void* self, void* obj);
+// PORT: the unit declares func_001A97B8 as returning int; this caller ignores the result.
+extern "C" void func_001A97B8_v(void* self, void* a1, int a2) __asm__("func_001A97B8");
+extern "C" void* func_001BEE30(void* mem, int a1);
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" void func_00261408(void* self);
+extern "C" int* func_002591B8();
+extern "C" void func_002636F0(void* p, int a1);
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern const char D_00461CD8[];
+
+struct sVE1B5A58 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+// Tracks a pending flag; on 0x10/0x14 restarts the memory-card task and resets the list.
+extern "C" void func_001B5A58(void* self, void* a1, int a2)
+{
+    switch (a2) {
+    case 0x15:
+        *(int*)((char*)self + 0x6DC) = 0;
+        func_001A97B8_v(self, a1, a2);
+        break;
+    case 0xF:
+        func_001A97B8_v(self, a1, a2);
+        *(int*)((char*)self + 0x6DC) = 1;
+        break;
+    case 0x10: case 0x14: {
+        func_001A97B8_v(self, a1, a2);
+        if (D_004A3328 == 0) {
+            func_00260F80();
+        }
+        if (func_00261460(D_004A3328) == 0) {
+            func_002613C8(D_004A3328);
+        }
+        if (D_004A3328 == 0) {
+            func_0025B800(D_004A3028);
+        }
+        func_00261408(D_004A3328);
+        func_0025B800(D_004A3028);
+        func_002636F0(func_002591B8(), 0);
+        char* obj = *(char**)((char*)self + 0x6EC);
+        sVE1B5A58* vt = *(sVE1B5A58**)(obj + 8);
+        vt[8].fn(obj + vt[8].delta, 0);
+        break;
+    }
+    case 0x16:
+        if (*(int*)((char*)self + 0x6DC) != 0) {
+            func_001A8A40(self, func_001BEE30(cMemMan_alloc(0x6D4, D_00461CD8, 0, 0), *(int*)((char*)self + 0x10)));
+        }
+        func_001A97B8_v(self, a1, a2);
+        break;
+    default:
+        func_001A97B8_v(self, a1, a2);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B5BD8);
@@ -11115,7 +11182,59 @@ extern "C" void func_001B91C8(void* self, void* a1, int kind)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B92C8);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A97B8(void* self, void* a1, int a2);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern "C" void* func_001AD130(void* mem, int a1);
+extern const char D_00462D68[];
+extern char D_00462D80[];
+extern char D_0045DCC8[];
+extern char D_0045FCD8[];
+
+// Tracks a pending flag across messages; on 0x16 either asks for confirmation or opens the next screen.
+extern "C" void func_001B92C8(void* self, void* a1, int a2)
+{
+    switch (a2) {
+    case 0xF: case 0x10: case 0x14:
+        *(int*)((char*)self + 0x6E8) = 0;
+        func_001A97B8(self, a1, a2);
+        break;
+    case 0x11:
+        *(int*)((char*)self + 0x6E8) = 1;
+        func_001A97B8(self, a1, a2);
+        break;
+    case 0x16:
+        if (*(int*)((char*)self + 0x6E8) != 0) {
+            func_001A97B8(self, a1, a2);
+            void* p = func_001A9C50(self);
+            char* sub = (char*)p + 0xBC;
+            *(int*)((char*)p + 0xBC) = 2;
+            *(int*)((char*)p + 0xC4) = GetHashValue32(D_00462D80);
+            *(int*)((char*)p + 0xC0) = 3;
+            func_001C57C0(sub, 0, GetHashValue32(D_0045DCC8));
+            func_001C57C0(sub, 1, GetHashValue32(D_0045FCD8));
+            *(int*)((char*)p + 0x150) = 0x81E;
+            *(int*)((char*)p + 0x168) = 0;
+            *(int*)((char*)p + 0x164) = 0;
+            func_001A9BC0(self, p);
+        } else {
+            func_001A8A40(self, func_001AD130(cMemMan_alloc(0x6D8, D_00462D68, 0, 0), *(int*)((char*)self + 0x10)));
+        }
+        *(int*)((char*)self + 0x6E8) = 0;
+        break;
+    default:
+        func_001A97B8(self, a1, a2);
+        break;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001B9428);
@@ -15819,7 +15938,57 @@ extern "C" void func_001C0CE0(void* self, void* item)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C0D28);
+#ifdef SKIP_ASM
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" void func_001A8918(void* self, int a1, int msg);
+extern "C" void* func_001BEE30(void* mem, int a1);
+extern "C" void* func_001B88F0(void* self, int a1, int a2);
+extern "C" void* func_001BA3E0(void* self, int a1);
+extern "C" void* func_001C1C50(void* self, int a1);
+extern char D_00465740[];
+extern char D_00462ED0[];
+extern char D_00464848[];
+extern const char D_004611A8[];
+
+// On confirm (msg 5/6), opens the screen that matches this menu's id; other messages go to the base handler.
+extern "C" void func_001C0D28(void* self, int a1, unsigned int msg)
+{
+    void* obj;
+    if (a1 == 0) {
+        return;
+    }
+    switch (msg) {
+    case 5:
+    case 6:
+        switch (*(int*)((char*)self + 0x18)) {
+        case 0x12:
+            obj = func_001BEE30(cMemMan_alloc(0x6D4, D_00465740, 0, 0), *(int*)((char*)self + 0x10));
+            break;
+        case 0x14:
+            obj = func_001B88F0(cMemMan_alloc(0x6F4, D_00462ED0, 0, 0), *(int*)((char*)self + 0x10), 1);
+            break;
+        case 0x15:
+            obj = func_001B88F0(cMemMan_alloc(0x6F4, D_00462ED0, 0, 0), *(int*)((char*)self + 0x10), 0);
+            break;
+        case 0x16:
+            obj = func_001BA3E0(cMemMan_alloc(0x6E0, D_00464848, 0, 0), *(int*)((char*)self + 0x10));
+            break;
+        case 0x13:
+        default:
+            obj = func_001C1C50(cMemMan_alloc(0x6D0, D_004611A8, 0, 0), *(int*)((char*)self + 0x10));
+            break;
+        }
+        func_001A8A40(self, obj);
+        break;
+    default:
+        func_001A8918(self, a1, msg);
+        break;
+    }
+}
+#endif
 
 extern "C" void* func_001A8E40(void* self);
 
