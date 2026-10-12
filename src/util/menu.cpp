@@ -3706,7 +3706,27 @@ extern "C" void func_002CFD28(func_002CFD28_sOwner* self, func_002CFD28_sRect* r
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/menu", func_002CFE78);
+#ifdef SKIP_ASM
+// PORT: the target leaves mode in $a1 for func_002CA368; bind a 2-arg form to that symbol.
+void func_002CA368_2(void* self, int a1) __asm__("func_002CA368__FPv");
+extern "C" void func_002CBE68_v(void* self, int index) __asm__("func_002CBE68");
+
+extern "C" void func_002CFE78(void* self, int mode)
+{
+    func_002CA368_2(self, mode);
+    switch (mode) {
+    case 0:
+        func_002CBE68_v((char*)self + 0x18, 0);
+        break;
+    case 1:
+        func_002CBE68_v((char*)self + 0x18, -1);
+        break;
+    }
+    func_002CBF60((char*)self + 0x18, *(int*)(*(char**)self + 0x124));
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CFEF8);
