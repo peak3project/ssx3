@@ -4906,9 +4906,82 @@ extern "C" void func_003663D8(void* selfp, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_00366548);
+#ifdef SKIP_ASM
+struct sRailLink6548 {
+    int flags;      // 0x0
+    int f4;
+    int prev;       // 0x8
+    int fC;
+    int next;       // 0x10
+    int f14;
+    int f18;
+};
 
+// Walks the rail's link list and calls func_003663D8 on every enabled link without flag bit 1.
+extern "C" void func_00366548(void* self)
+{
+    char* s = (char*)self;
+    int i = *(int*)(s + 0x23C0);
+    while (i >= 0) {
+        sRailLink6548* links = *(sRailLink6548**)(s + 0x1FF0);
+        sRailLink6548* cur = &links[i];
+        int next = cur->next;
+        while (next >= 0) {
+            if ((*(sRailLink6548**)(s + 0x1FF0))[next].flags & 1) {
+                break;
+            }
+            next = (*(sRailLink6548**)(s + 0x1FF0))[next].next;
+        }
+        if (cur->flags & 1) {
+            if (((cur->flags >> 1) & 1) == 0) {
+                func_003663D8(self, i);
+            }
+        }
+        i = next;
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("object/railmodifier", func_00366618);
+#ifdef SKIP_ASM
+struct sRailLink6618 {
+    int flags;      // 0x0
+    int f4;
+    int prev;       // 0x8
+    int fC;
+    int next;       // 0x10
+    int f14;
+    int f18;
+};
+
+// Walks the rail's link list, clearing flag bit 1 and calling func_003663D8 on every enabled link.
+extern "C" void func_00366618(void* self)
+{
+    char* s = (char*)self;
+    int i = *(int*)(s + 0x23C0);
+    while (i >= 0) {
+        sRailLink6618* links = *(sRailLink6618**)(s + 0x1FF0);
+        sRailLink6618* cur = &links[i];
+        int next = cur->next;
+        while (next >= 0) {
+            if ((*(sRailLink6618**)(s + 0x1FF0))[next].flags & 1) {
+                break;
+            }
+            next = (*(sRailLink6618**)(s + 0x1FF0))[next].next;
+        }
+        if (cur->flags & 1) {
+            if ((cur->flags >> 1) & 1) {
+                cur->flags &= ~2;
+            }
+            func_003663D8(self, i);
+        }
+        i = next;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_003666F8);
