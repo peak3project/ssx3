@@ -308,7 +308,71 @@ extern "C" sLmCell_F2A8* func_0038F2A8(float* pos)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_0038F300);
+#ifdef SKIP_ASM
+extern "C" void func_0038F768(void);
+extern "C" void func_0038F7B0(void);
+// PORT: the unit declares D_004A5B84 as int further down; bind a pointer view by asm label
+extern char* D_004A5B84_F300 __asm__("D_004A5B84");
+
+struct sLightBufs_F300 {
+    int mode;        // 0x0
+    int count;       // 0x4
+    int f8;          // 0x8
+    int fC;          // 0xC
+    int stride;      // 0x10
+    char* buf[3];    // 0x14
+    int f20[3];      // 0x20
+    int f2C[3];      // 0x2C
+};
+
+extern "C" void func_0038F300(sLightBufs_F300* self, int mode)
+{
+    int i;
+    if (self->mode == mode) {
+        return;
+    }
+    self->mode = mode;
+    switch (mode) {
+    case 1: self->count = 1; break;
+    case 2: self->count = 2; break;
+    case 3: self->count = 2; break;
+    case 4: self->count = 2; break;
+    case 5: self->count = 2; break;
+    case 6:
+    case 7:
+        self->count = 3;
+        break;
+    }
+    self->f8 = 0;
+    self->fC = 0;
+    switch (mode) {
+    case 1: self->stride = 0x400; break;
+    case 2: self->stride = 0x200; break;
+    case 3: self->stride = 0x1C0; break;
+    case 4: self->stride = 0x180; break;
+    case 6: self->stride = 0x140; break;
+    case 5:
+    case 7:
+        self->stride = 0x100;
+        break;
+    }
+    for (i = 0; i < self->count; i++) {
+        self->buf[i] = (char*)0x70000000 + self->stride * i * 16;
+        self->f20[i] = 0;
+        self->f2C[i] = 0;
+    }
+    int total = self->stride * self->count;
+    if (total < 0x400) {
+        D_004A5B84_F300 = (char*)0x70000000 + total * 16;
+    } else {
+        D_004A5B84_F300 = 0;
+    }
+    func_0038F768();
+    func_0038F7B0();
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/lightman", func_0038F460);
