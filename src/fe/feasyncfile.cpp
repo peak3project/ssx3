@@ -8234,7 +8234,57 @@ extern "C" void func_001B25E0(const char* src, void* out)
 
 INCLUDE_ASM("fe/feasyncfile", func_001B27B0);
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B2CD0);
+#ifdef SKIP_ASM
+struct cUIText;
+struct sList1A83D8;
+extern "C" void func_001A83D8(sList1A83D8* list, int keep, unsigned int sel, int a3, int pos, int a5, int a6, int trim);
+extern "C" void func_003A19F8(cUIText* text, char* str);
+extern char D_004A1A50[];
+extern "C" void* cBXString_cBXString1(void* self, void* other);
+extern "C" void cBXString__cBXString(void* self, int flags);
+struct cBXString;
+extern "C" void* cBXString_Concat(void* self, const char* str);
+extern "C" cBXString* func_003189A0(cBXString* self, char** other);
+
+struct sBXString1B2CD0 {
+    char* str;
+};
+
+struct sListInfo1B2CD0 {
+    char pad[0xC4];
+    unsigned short pos;     // 0xC4
+    unsigned short a5;      // 0xC6
+    unsigned short a3;      // 0xC8
+};
+
+// Shows the item's name and value text in the list and refreshes it.
+// PORT: the unit declares the info argument as int.
+extern "C" void func_001B2CD0(void* self, int infov)
+{
+    char* info = (char*)infov;
+    char* s = (char*)self;
+    if (*(int*)(s + 0x40) == 0) {
+        return;
+    }
+    sListInfo1B2CD0* list = *(sListInfo1B2CD0**)(s + 0x6F0);
+    if (list == 0) {
+        return;
+    }
+    int a3 = list->a3;
+    int first = a3 == 0;
+    int pos = list->pos;
+    int a5 = list->a5;
+    sBXString1B2CD0 text;
+    cBXString_cBXString1(&text, info + 0x8);
+    cBXString_Concat(&text, D_004A1A50);
+    func_003189A0((cBXString*)&text, (char**)(info + 0xC));
+    func_003A19F8(*(cUIText**)(s + 0x6F0), text.str);
+    func_001A83D8(*(sList1A83D8**)(s + 0x6F0), 0x40, 6, a3, pos, a5, first, 1);
+    cBXString__cBXString(&text, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B2DA0);
