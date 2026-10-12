@@ -148,7 +148,61 @@ extern "C" int cCameraTriggerList_loadFromFile(void* self, const char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerlist", cCameraTriggerList_loadFromBuffer);
+#ifdef SKIP_ASM
+void cCameraTriggerList_readCookie(cCameraTriggerList* self, void* buffer);
+// readHeader is called with the expected version as a third argument here.
+extern "C" int cCameraTriggerList_readHeader_K3(cCameraTriggerList* self, void* buffer, int version) __asm__("cCameraTriggerList_readHeader");
+extern "C" int readTrigger(void* buffer, void* trigger, int version);
+// PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
+// result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
+void* operator new(unsigned int size, const char* tag, int flags, int d) __asm__("cMemMan_alloc");
+// PORT: operator_new__FUi takes (size, tag, flags, align) here.
+void* operator_new_K3(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern char D_0045BF40[];
+extern char D_0045BF58[];
+
+struct tCameraTrigger_K3 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int pad[2];
+    int f1C;
+    int f20;
+    tCameraTrigger_K3() { f1C = 4; f8 = 0; fC = 0; f10 = 0; f0 = 0; f4 = 3; }
+};
+
+extern "C" int cCameraTriggerList_loadFromBuffer(void* self_, void* buf)
+{
+    cCameraTriggerList* self = (cCameraTriggerList*)self_;
+    void* cur = buf;
+    cCameraTriggerList_initHeader(self);
+    cCameraTriggerList_readCookie(self, &cur);
+    if (self->field_0xC != 7) {
+        self->field_0xC = 7;
+        return 3;
+    }
+    int r = cCameraTriggerList_readHeader_K3(self, &cur, 7);
+    if (r != 0)
+        return r;
+    self->field_0x0 = (int)operator_new_K3(self->field_0x4 * 4, D_0045BF40, 0, 0);
+    for (int i = 0; i < self->field_0x4; i++) {
+        tCameraTrigger_K3* t = new (D_0045BF58, 0, 0) tCameraTrigger_K3;
+        r = readTrigger(&cur, &t, self->field_0xC);
+        if (r != 0) {
+            if (t != 0)
+                tCameraTrigger__tCameraTrigger(t, 3);
+            return r;
+        }
+        cCameraTriggerList_insert((cCameraTriggerList2*)self, t, i);
+    }
+    self->field_0xC = 7;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerlist", cCameraTriggerList_initHeader__FP18cCameraTriggerList);
