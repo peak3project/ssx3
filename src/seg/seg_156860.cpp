@@ -906,7 +906,35 @@ extern "C" void func_00256EE0(int self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_00257038);
+#ifdef SKIP_ASM
+extern "C" void func_00258330(void *arg0);
+extern "C" void func_00258870(void *, int, int);
+extern "C" void func_0031AD18(void);
+// Switches the controller to a new mode, running per-mode setup first.
+extern "C" void func_00257038(void *self, int mode)
+{
+    switch (mode) {
+    case 14:
+        func_00258330(self);
+        func_00258870(self, 0xE10, 0);
+        func_0031AD18();
+        *(int *)((char *)self + 0x70) = mode;
+        return;
+    case 15:
+        *(int *)((char *)self + 0x84) = 0;
+        *(int *)((char *)self + 0x78) = 0;
+        break;
+    case 1: case 3: case 5: case 7: case 9: case 11: case 13:
+        func_00258870(self, 0x708, 0);
+        break;
+    case 2: case 4: case 6: case 8: case 10: case 12:
+        break;
+    }
+    *(int *)((char *)self + 0x70) = mode;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_156860", func_002570D8);
 
