@@ -239,7 +239,45 @@ extern "C" func_0039F718_node* func_0039F718(cList* list)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistatestack", func_0039F7B8);
+#ifdef SKIP_ASM
+struct sUIState39F7B8 {
+    char pad0[0x4];
+    sUIState39F7B8* next;       // 0x04
+    char pad8[0x14];
+    unsigned int b0 : 3;        // 0x1C
+    unsigned int active : 1;
+    unsigned int b4 : 4;
+    unsigned int type : 6;
+    unsigned int b14 : 18;
+    int child;                  // 0x20
+};
+
+static inline void Set39F7B8(sUIState39F7B8* s, int on)
+{
+    if (s->type < 6) {
+        s->active = on;
+    }
+}
+
+// Sets the active flag on every state in a chain (and the last one if requested), skipping types >= 6.
+extern "C" void func_0039F7B8(void* self, sUIState39F7B8* s, int on, int last)
+{
+    if (s == 0) {
+        return;
+    }
+    sUIState39F7B8* cur = s;
+    while (cur->child != 0) {
+        Set39F7B8(cur, on);
+        cur = cur->next;
+    }
+    s = cur;
+    if (last != 0) {
+        Set39F7B8(s, on);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uistatestack", func_0039F840);
