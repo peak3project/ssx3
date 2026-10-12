@@ -2872,7 +2872,75 @@ extern "C" void func_003B2B68(char* buf)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B2B90);
+#ifdef SKIP_ASM
+// Decodes one 4x4 alpha block into the alpha bytes of dst: mode 3 is DXT3 (explicit 4-bit alpha),
+// anything else is DXT5 (two endpoints + 3-bit indices).
+// NOTE: the DXT3 path steps through dst as `unsigned long` (64-bit on the EE), not as 32-bit pixels.
+// PORT: callers declare func_003B2B90 with char* parameters; defined under an asm label.
+extern "C" void func_003B2B90_impl(unsigned long* dst, int stride, unsigned char* src, int mode) __asm__("func_003B2B90");
+extern "C" void func_003B2B90_impl(unsigned long* dst, int stride, unsigned char* src, int mode)
+{
+    if (mode == 3) {
+        for (unsigned int y = 0; y < 4; y++) {
+            for (unsigned int x = 0; x < 2; x++) {
+                unsigned char b = *src++;
+                unsigned int lo = b & 0xF;
+                *dst = (*dst & 0xFFFFFF) | (int)((lo | (lo << 4)) << 24);
+                dst++;
+                unsigned int hi = b & 0xF0;
+                *dst = (*dst & 0xFFFFFF) | (int)((hi | (hi >> 4)) << 24);
+                dst++;
+            }
+            dst = (unsigned long*)((char*)dst + stride - 0x20);
+        }
+        return;
+    }
+    unsigned char* s = src;
+    unsigned char* d = (unsigned char*)dst + 3;
+    unsigned char a0 = *s++;
+    unsigned char a1 = *s++;
+    unsigned char a2, a3, a4, a5, a6, a7;
+    if (a0 > a1) {
+        a2 = (6 * a0 + a1 + 3) / 7;
+        a3 = (5 * a0 + 2 * a1 + 3) / 7;
+        a4 = (4 * a0 + 3 * a1 + 3) / 7;
+        a5 = (3 * a0 + 4 * a1 + 3) / 7;
+        a6 = (2 * a0 + 5 * a1 + 3) / 7;
+        a7 = (a0 + 6 * a1 + 3) / 7;
+    } else {
+        a2 = (4 * a0 + a1 + 2) / 5;
+        a3 = (3 * a0 + 2 * a1 + 2) / 5;
+        a4 = (2 * a0 + 3 * a1 + 2) / 5;
+        a5 = (a0 + 4 * a1 + 2) / 5;
+        a6 = 0;
+        a7 = 0xFF;
+    }
+    for (int i = 0; i < 2; i++) {
+        unsigned long bits = *(unsigned long*)s;
+        s += 3;
+        for (int y = 0; y < 2; y++) {
+            for (int x = 0; x < 4; x++) {
+                unsigned char idx = bits & 7;
+                bits >>= 3;
+                switch (idx) {
+                case 0: *d = a0; break;
+                case 1: *d = a1; break;
+                case 2: *d = a2; break;
+                case 3: *d = a3; break;
+                case 4: *d = a4; break;
+                case 5: *d = a5; break;
+                case 6: *d = a6; break;
+                case 7: *d = a7; break;
+                }
+                d += 4;
+            }
+            d += stride - 0x10;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003B2E78);
