@@ -7805,7 +7805,95 @@ extern "C" void func_00266550(char* dst)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266578);
+#ifdef SKIP_ASM
+//---
+extern int D_004A33D4;
+
+// Maps a network error code to a front-end message id depending on the current connection stage.
+extern "C" int func_00266578(int err)
+{
+    switch (D_004A33D4) {
+    case 1:
+        break;
+    case 2:
+        switch (err) {
+        case -2: return 9;
+        case -4: return 4;
+        }
+        break;
+    case 9:
+        switch (err) {
+        case -2: return 0x11;
+        }
+        break;
+    case 4:
+        switch (err) {
+        case -2: return 9;
+        case -3: return 0xD;
+        case -4: return 4;
+        case -5: return 0xD;
+        case -7: return 0xD;
+        }
+        break;
+    case 8:
+        switch (err) {
+        case -2: return 9;
+        case -4: return 4;
+        }
+        return 0x11;
+    case 5:
+        switch (err) {
+        case -2: return 9;
+        case -3: return 0xE;
+        case -4: return 4;
+        case -5: return 0xD;
+        case -8: return 0xD;
+        }
+        break;
+    case 7:
+        switch (err) {
+        case -2: return 9;
+        case -4: return 4;
+        }
+        break;
+    case 6:
+        switch (err) {
+        case -2: return 9;
+        case -4: return 4;
+        case -5: return 0xD;
+        }
+        break;
+    case 14:
+        switch (err) {
+        case -2: return 9;
+        case -3: return 0xE;
+        case -4: return 4;
+        case -5: return 0xD;
+        case -8: return 0xD;
+        }
+        break;
+    case 11:
+        switch (err) {
+        case -2: return 9;
+        case -3: return 0xE;
+        case -4: return 8;
+        }
+        break;
+    case 12:
+    case 13:
+        switch (err) {
+        case -2: return 9;
+        case -4: return 4;
+        case -5: return 5;
+        case -6: return 6;
+        }
+        break;
+    }
+    return 3;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266728);
