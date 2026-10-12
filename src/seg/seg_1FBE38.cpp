@@ -3301,7 +3301,77 @@ extern "C" V3_0770 func_00300770(int n, Ent_0770 *e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00300948);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct Flag_0948 { char c; Flag_0948() {} Flag_0948(const Flag_0948& o) : c(o.c) {} };
+extern unsigned D_004A5698_0948 __asm__("D_004A5698");
+extern Flag_0948 D_004A569C_0948 __asm__("D_004A569C");
+extern int D_004A56A0_0948 __asm__("D_004A56A0");
+extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
+extern int *D_004A3DD8_0948 __asm__("D_004A3DD8");
+extern char **D_004A47B8_0948 __asm__("D_004A47B8");
+extern char *D_004A28A8_0948 __asm__("D_004A28A8");
+struct O_0948 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
+struct Sh_0948 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(void*); };
+struct Lvl_0948 { char pad[0x28]; char *sh[1]; };
+static inline char *refToPtr_0948(unsigned i) { return (char*)(i << 2); }
+static inline char *conv_0948(unsigned i) { if (i == 0) return 0; return refToPtr_0948(i); }
+struct V3_0948 { float x, y, z; };
+extern V3_0948 D_004C9098_0948 __asm__("D_004C9098");
+extern "C" void* func_003E6574_0948(void*, void*, int) __asm__("func_003E6574");
+struct Ent_0948 { int idx; int val; int pad; int type; };
+extern "C" V3_0948 func_00300948(int n, Ent_0948 *e) {
+    if (D_004A56A0_0948 == 0) {
+        D_004A5698_0948 = 0xFFFFFFFF;
+        D_004A56A0_0948 = 1;
+        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb 0(sp)).
+        D_004A569C_0948 = Flag_0948(D_004A569C_0948);
+    }
+    unsigned buf64[2];
+    unsigned *buf = buf64;
+    buf64[0] = 0xFFFFFFFF;
+    func_003E6574_0948(buf, &D_004A5698_0948, 8);
+    Ent_0948 *x = e;
+    for (int i = 0; i < n; i++, x++) {
+        int idx = x->idx;
+        int t = D_004A3C48_0948[idx];
+        unsigned *d = (unsigned*)((idx << 2) + (int)buf);
+        if (x->type != t && t == 2)
+            *(float*)d = (float)x->val;
+        else
+            *d = x->val;
+    }
+    unsigned id = buf[0];
+    char *obj;
+    if (~id == 0) {
+        obj = *(char**)((char*)D_004A3DD8_0948 + 0x290);
+    } else {
+        char *s = (*(char***)((char*)*D_004A47B8_0948 + 8))[id & 0xFF];
+        unsigned i;
+        char *r;
+        if (!s)
+            r = 0;
+        else {
+            i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8;
+            char *t = conv_0948(i);
+            r = t;
+        }
+        obj = r;
+    }
+    int k = *D_004A3DD8_0948;
+    if (k >= 0 && obj) {
+        O_0948 *p = *(O_0948**)(obj + 0xC);
+        void *v = obj + 0x10;
+        if (p)
+            v = p->v24();
+        Lvl_0948 *lvl = *(Lvl_0948**)(*(char**)(D_004A28A8_0948 + 0x84) + 0xC);
+        ((Sh_0948*)(lvl->sh[k] + 0x6C0))->v12(v);
+    }
+    return D_004C9098_0948;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00300B20);
