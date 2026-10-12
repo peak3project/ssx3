@@ -932,7 +932,54 @@ extern "C" void* func_0030AEB8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030AF08);
+#ifdef SKIP_ASM
+struct sScriptFlags_AF08 {
+    unsigned int f0 : 3;
+    unsigned int f1 : 4;
+    unsigned int f2 : 3;
+    unsigned int f3 : 2;
+    unsigned int f4 : 4;
+    unsigned short f5 : 3;
+    unsigned int f6 : 3;
+    unsigned int f7 : 6;
+    unsigned int f8 : 4;
+    unsigned int f9 : 3;
+    unsigned int f10 : 7;
+    unsigned int f11 : 1;
+    unsigned int pad : 7;
+    unsigned int f13 : 2;
+    unsigned int f15 : 4;
+    unsigned char f14 : 3;
+};
+
+// Reads one packed script setting; 0 when no settings block is loaded.
+extern "C" int func_0030AF08(void* self, int a1, int which)
+{
+    sScriptFlags_AF08* fl = *(sScriptFlags_AF08**)((char*)self + 0x29C);
+    if (fl != 0) {
+        switch (which) {
+        case 0: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f0;
+        case 1: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f1;
+        case 2: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f2;
+        case 3: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f3;
+        case 4: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f4;
+        case 5: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f5;
+        case 6: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f6;
+        case 7: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f7;
+        case 8: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f8;
+        case 9: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f9;
+        case 10: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f10;
+        case 11: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f11;
+        case 13: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f13;
+        case 14: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f14;
+        case 15: return (*(sScriptFlags_AF08**)((char*)self + 0x29C))->f15;
+        }
+    }
+    return 0;
+}
+#endif
 
 struct cWScriptListNode {
     char pad_0x00[0x18];
