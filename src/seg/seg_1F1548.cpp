@@ -1042,7 +1042,53 @@ INCLUDE_ASM("seg/seg_1F1548", func_002F3030);
 
 INCLUDE_ASM("seg/seg_1F1548", func_002F3418);
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F3550);
+#ifdef SKIP_ASM
+extern "C" void* func_00354648(void* self, void* a1);
+extern "C" int* func_002F2588(int* arg0);
+extern "C" void* func_002F2D60(void* arg0);
+extern "C" void func_002F39C8(void* arg0);
+extern char D_00488230[];
+
+// Particle emitter constructor: builds the two 30-entry element pools and resets the emitter state.
+extern "C" void* func_002F3550(void* p, void* a1, int a2)
+{
+    char* self = (char*)p;
+    func_00354648(self, a1);
+    *(int*)(self + 0x10) = a2;
+    *(int*)(self + 0x14) = 0;
+    *(char**)(self + 0xC) = D_00488230;
+    *(int*)(self + 0x18) = 0;
+    {
+        char* e = self + 0x1C;
+        int i = 29;
+        do {
+            func_002F2588((int*)e);
+            i--;
+            e += 0x3C;
+        } while (i != -1);
+    }
+    {
+        char* e = self + 0x724;
+        int i = 29;
+        do {
+            func_002F2D60(e);
+            i--;
+            e += 0x4C;
+        } while (i != -1);
+    }
+    *(int*)(self + 0x100C) = 0;
+    *(int*)(self + 0x1010) = 0;
+    *(int*)(self + 0x1014) = 0;
+    *(int*)(self + 0x1018) = 0;
+    *(float*)(self + 0x101C) = 1.0f;
+    *(int*)(self + 0x1020) = 0;
+    *(int*)(self + 0x1024) = 0;
+    func_002F39C8(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F3618);
