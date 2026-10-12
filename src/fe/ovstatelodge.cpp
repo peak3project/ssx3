@@ -481,7 +481,66 @@ extern "C" void func_001D3160(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D31C0);
+#ifdef SKIP_ASM
+extern "C" int func_0019E238(void* mgr, int bank, int i);
+extern "C" void* func_0019E2B0(void* mgr, int bank, int i);
+extern "C" void func_001D32E0(void* self);
+extern char D_004A1F40[];
+
+struct sVE_31C0 {
+    short delta;
+    short index;
+    int (*fn)(void*, void*, void*, int, int, int);
+};
+
+struct sWidget_31C0 {
+    char pad0[0x14];
+    int flags;      // 0x14
+};
+
+static inline int isActive_31C0(sWidget_31C0* w)
+{
+    return w != 0 && ((w->flags >> 6) & 1);
+}
+
+// Starts the preview sound of the selected lodge item once its bank entry has loaded.
+extern "C" void func_001D31C0(void* p)
+{
+    char* self = (char*)p;
+    char* mgr = *(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70;
+    if (*(void**)(self + 0x50) == 0) {
+        return;
+    }
+    if (func_0019E238(mgr, *(int*)(self + 0xB0), *(int*)(self + 0xBC)) == 0) {
+        return;
+    }
+    char* e = (char*)func_0019E2B0(mgr, *(int*)(self + 0xB0), *(int*)(self + 0xBC));
+    char* g = (char*)D_004A289C;
+    sVE_31C0* vt = *(sVE_31C0**)(g + 0x10D8);
+    int id = vt[46].fn(g + vt[46].delta, e + *(int*)(e + 0x14), D_004A1F40, 0, 1, -1);
+    char* snd = *(char**)(self + 0x50);
+    *(int*)(self + 0xC4) = id;
+    *(int*)(snd + 0x78) = id;
+    *(int*)(snd + 0x7C) = 0;
+    sWidget_31C0* a = *(sWidget_31C0**)(self + 0x48);
+    if (isActive_31C0(a)) {
+        int both = 0;
+        if (isActive_31C0(a)) {
+            sWidget_31C0* b = *(sWidget_31C0**)(self + 0x4C);
+            if (b != 0) {
+                both = (b->flags >> 6) & 1;
+            }
+        }
+        if (!both) {
+            func_001D32E0(self);
+        }
+    }
+    func_0019DC20(mgr, *(int*)(self + 0xB0), *(int*)(self + 0xBC));
+    *(int*)(self + 0xBC) = -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D32E0);
