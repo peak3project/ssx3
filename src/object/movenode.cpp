@@ -992,7 +992,38 @@ extern "C" void func_00356298(cMnNode_6298* self)
 
 INCLUDE_ASM("object/movenode", func_00356608);
 
+//100%
 INCLUDE_ASM("object/movenode", cMoveNode_setupOverlapSystem);
+#ifdef SKIP_ASM
+struct tModifierBlock;
+extern "C" void cInstanceNode_getBoundBoxInfo(void* self, void* box, float* radius);
+// PORT: these take the box / radius as a second argument; the symbols are mangled with one parameter.
+void tModifierBlock_setBoundBox_K(tModifierBlock* mb, void* box) __asm__("tModifierBlock_setBoundBox__FP14tModifierBlock");
+void tModifierBlock_setRadius_K(tModifierBlock* mb, float r) __asm__("tModifierBlock_setRadius__FP14tModifierBlock");
+
+struct sBox_3567 {
+    float v[8];
+} __attribute__((aligned(16)));
+
+// Copies the instance's bounding box and radius into its modifier block, when it has one with data.
+extern "C" void cMoveNode_setupOverlapSystem(void* self_)
+{
+    char* self = (char*)self_;
+    int* mb = *(int**)(self + 0x1C);
+    int n = mb != 0;
+    if (n)
+        n = *mb;
+    else
+        n = 0;
+    if (n) {
+        sBox_3567 box;
+        float radius;
+        cInstanceNode_getBoundBoxInfo(self, &box, &radius);
+        tModifierBlock_setBoundBox_K(*(tModifierBlock**)(self + 0x1C), &box);
+        tModifierBlock_setRadius_K(*(tModifierBlock**)(self + 0x1C), radius);
+    }
+}
+#endif
 
 INCLUDE_ASM("object/movenode", func_003567E0);
 
