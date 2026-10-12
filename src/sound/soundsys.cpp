@@ -4139,7 +4139,22 @@ extern "C" void func_0029DC48(void* self, void* obj)
 
 INCLUDE_ASM("sound/soundsys", func_0029DEF0);
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_0029E438);
+#ifdef SKIP_ASM
+// Converts the sound's volume (percent attenuation at 0x14, gain at 0x10) to a 0..127 level.
+extern "C" int func_0029E438(void* self, char* snd)
+{
+    float f = (100.0f - *(float*)(snd + 0x14) * 0.01f) * 1.27f * *(float*)(snd + 0x10);
+    int n = (int)(f * 8.466667f);
+    if (n > 127)
+        n = 127;
+    if (n < 0)
+        n = 0;
+    f = n;
+    return (int)f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029E560__FPv);
