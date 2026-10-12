@@ -2741,7 +2741,44 @@ extern "C" int func_0017A0B8(func_0017A028_sMgr* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A158);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_A158(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00144CC0(void* iface, int id);
+
+// PORT: the unit also declares this with a pointer third argument; defined under an asm label with its real type
+extern "C" int func_0017A158_impl(int* list, int idx, int kind) __asm__("func_0017A158");
+extern "C" int func_0017A158_impl(int* list, int idx, int kind)
+{
+    if (idx >= 0 && idx < list[0]) {
+        unsigned int v = *(unsigned int*)((char*)list + idx * 0x8C + 0x84);
+        switch (kind) {
+        case 0:
+            if (v < 5) return 1;
+            break;
+        case 1:
+            if (v >= 5 && v < 8) return 1;
+            break;
+        case 2:
+            if (v >= 8 && v < 11) return 1;
+            break;
+        case 3:
+            if (v >= 11 && v < 14) return 1;
+            break;
+        case 5:
+        case 6:
+            if (v >= 14 && v < 17) return 1;
+            break;
+        case 4:
+            if (!func_00144CC0(cBE_getInterface_A158(cBE_getBE(), 0), v)) return 1;
+            break;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A220);

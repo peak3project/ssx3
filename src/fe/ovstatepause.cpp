@@ -826,7 +826,37 @@ extern "C" void func_001FD150(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", func_001FD190);
+#ifdef SKIP_ASM
+extern char D_0046FED0[];
+extern char D_0046FEE0[];
+extern char D_0046FEF0[];
+extern char D_0046FF08[];
+extern char D_0046FF18[];
+extern char D_0046FF28[];
+struct sVEnt_1FD190 { short delta; short index; int (*fn)(void*, int); };
+
+// Sends the hash of the named pause-menu item to the front end's screen object.
+static inline int sendHash_1FD190(char* name)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEnt_1FD190* vt = *(sVEnt_1FD190**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
+}
+extern "C" int func_001FD190(int id)
+{
+    switch (id) {
+    case 6: return sendHash_1FD190(D_0046FED0);
+    case 7: return sendHash_1FD190(D_0046FEE0);
+    case 8: return sendHash_1FD190(D_0046FEF0);
+    case 9: return sendHash_1FD190(D_0046FF08);
+    case 10: return sendHash_1FD190(D_0046FF18);
+    case 11: return sendHash_1FD190(D_0046FF28);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FD268);
