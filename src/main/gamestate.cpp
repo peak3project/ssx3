@@ -1244,7 +1244,48 @@ void* func_00236B90(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamestate", func_00236BB0);
+#ifdef SKIP_ASM
+extern "C" void cBE_setState(int state);
+extern "C" void func_002EA820(void* p);
+extern "C" void func_0020A8F8(int mode);
+extern char* D_004A2EEC;
+struct sMgr_6BB0 {
+    char pad0[0x64];
+    void* world;    // 0x64
+};
+struct sApp_6BB0 {
+    char pad0[0x84];
+    sMgr_6BB0* mgr; // 0x84
+};
+extern sApp_6BB0* D_004A28A8_s __asm__("D_004A28A8");
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F4[];
+
+struct sGameState_6BB0 {
+    char pad0[8];
+    int done;   // 0x8
+};
+
+// Ends the game state: pushes front-end state 1 unless D_004A2EEC is active, then hands control back.
+extern "C" void func_00236BB0(sGameState_6BB0* self)
+{
+    self->done = 0;
+    if (D_004A2EEC != 0 && *(int*)(D_004A2EEC + 4) != 0) {
+        func_002EA820(D_004A28A8_s->mgr->world);
+        cBE_setState(0);
+        return;
+    }
+    func_0020A8F8(2);
+    D_005366E8[++D_004A2A54] = 1;
+    D_004A2A50 = D_004428F4[0];
+    func_002EA820(D_004A28A8_s->mgr->world);
+    cBE_setState(0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamestate", func_00236C48);
