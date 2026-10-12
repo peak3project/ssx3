@@ -1009,7 +1009,38 @@ extern "C" void func_0017F868(sDebugFE_17F868* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017FA60);
+#ifdef SKIP_ASM
+extern "C" void func_00369FF8(void* world);
+extern volatile int D_004A4324;
+extern void* D_004A289C_17FA60 __asm__("D_004A289C");
+extern void* volatile D_004A289C_v17FA60 __asm__("D_004A289C");
+
+struct sVec3_17FA60 {
+    int x, y, z;
+    sVec3_17FA60(int a, int b, int c) { x = a; y = b; z = c; }
+};
+
+class cWorld_17FA60 {
+public:
+    char pad[0x10D8];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
+    virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14();
+    virtual void setCamera(const sVec3_17FA60& v);
+};
+
+// Resets the world camera to the origin.
+extern "C" void func_0017FA60(void)
+{
+    func_00369FF8(D_004A289C_17FA60);
+    // release-build assert leftover: the empty do/while(0) keeps the world pointer reload after the call
+    do { } while (0);
+    D_004A4324 = 0;
+    ((cWorld_17FA60*)D_004A289C_v17FA60)->setCamera(sVec3_17FA60(0, 0, 0));
+}
+#endif
 
 extern "C" void* func_00231CF0(void* self);
 
