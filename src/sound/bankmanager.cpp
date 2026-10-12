@@ -1345,7 +1345,26 @@ extern "C" void func_0028E888(void* self)
 
 INCLUDE_ASM("sound/bankmanager", func_0028E8C0);
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028EF90);
+#ifdef SKIP_ASM
+struct sSndKey8_EF90 {
+    long v;
+} __attribute__((packed));
+extern sSndKey8_EF90 D_004A3648[];
+extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
+
+// PORT: 64-bit long sound key
+extern "C" void func_0028EF90(void* self)
+{
+    *(int*)((char*)self + 0x6258) = 0;
+    *(int*)((char*)self + 0x577C) = 0;
+    func_0028DF08(self);
+    *(int*)((char*)self + 0x578C) = 0;
+    func_0028D488(self);
+    func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 0xA, D_004A3648->v, 0, 2, 1, 0, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028F000);
