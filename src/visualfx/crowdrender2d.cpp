@@ -89,7 +89,58 @@ void* cCrowdAnim2D_cCrowdAnim2D(void* memory, void* param_1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/crowdrender2d", cCrowdAnim2D_advanceFrame);
+#ifdef SKIP_ASM
+// Steps a crowd animation frame for the current play mode and returns the new frame.
+extern "C" int cCrowdAnim2D_advanceFrame(void* self, int frame, int n, int* mode)
+{
+    switch (*mode) {
+    case 0:
+        frame++;
+        if (frame >= n) {
+            frame = n - 1;
+        }
+        break;
+    case 1:
+        frame--;
+        if (frame < 0) {
+            frame = 0;
+        }
+        break;
+    case 2:
+        if (n == 1) {
+            break;
+        }
+        frame++;
+        if (frame >= n) {
+            *mode = 3;
+            frame = n - 2;
+        }
+        break;
+    case 3:
+        if (n == 1) {
+            break;
+        }
+        frame--;
+        if (frame < 0) {
+            *mode = 2;
+            frame = 1;
+        }
+        break;
+    case 4:
+        if (n == 1) {
+            break;
+        }
+        frame++;
+        if (frame >= n) {
+            frame = 0;
+        }
+        break;
+    }
+    return frame;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/crowdrender2d", cCrowdAnim2D_update);

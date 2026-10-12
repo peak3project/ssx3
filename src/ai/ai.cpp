@@ -3123,7 +3123,33 @@ extern "C" void func_0012E010(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012E468);
+#ifdef SKIP_ASM
+int func_00312AA0(void* anim, int layer);
+extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+
+extern "C" void func_0012E468(void* self)
+{
+    switch (func_00312AA0(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 2)) {
+    case 0x17B:
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 0x180, 0, -1.0f);
+        break;
+    case 0x17C:
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 0x181, 0, -1.0f);
+        break;
+    case 0x17D:
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 0x182, 0, -1.0f);
+        break;
+    case 0x17E:
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 0x183, 0, -1.0f);
+        break;
+    case 0x17F:
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), 0x184, 0, -1.0f);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012E528);
