@@ -285,7 +285,50 @@ void cUITemplate_MAP_setupEventUnlock(cUITemplate_MAP* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupPeakUnlock);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+extern "C" int cBENewPlayerInterface_isPeakLocked(void* self, int a, int b, int peak);
+extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int peak);
+extern char D_00535BC8[];
+
+struct sPeakUnlock_MAP {
+    int pad0;
+    int unlocked[3];    // 0x4, indexed by peak
+};
+
+// Marks each peak as unlocked unless it is still locked for the active rider(s).
+extern "C" void cUITemplate_MAP_setupPeakUnlock(void* p)
+{
+    sPeakUnlock_MAP* self = (sPeakUnlock_MAP*)p;
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
+    self->unlocked[0] = 1;
+    self->unlocked[1] = 1;
+    self->unlocked[2] = 1;
+    for (int peak = 1; peak < 3; peak++) {
+        int locked;
+        if (D_00535BC8[0x49] == 2) {
+            locked = cBENewPlayerInterface_isPeakLocked(player, 0, cBENewPlayerInterface_getPlayerCharID(player, 0), peak);
+            if (locked) {
+                locked = cBENewPlayerInterface_isPeakLocked(player, 1, cBENewPlayerInterface_getPlayerCharID(player, 1), peak);
+            }
+        } else {
+            locked = cBENewPlayerInterface_isPeakLocked1(player, 0, peak);
+        }
+        // The store sits in its own do { } while (0) block (macro-style); the extra loop level is what
+        // gives the slot pointer priority over the peak counter in register allocation.
+        do {
+            if (locked) {
+                self->unlocked[peak] = 0;
+            }
+        } while (0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00201868);
