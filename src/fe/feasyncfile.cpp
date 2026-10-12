@@ -5470,7 +5470,113 @@ extern "C" void func_001AD4F0(void* self, void* menu)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AD5E8);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern "C" void func_0039F290(void* list, void* item);
+extern "C" void func_001A8918(void* self, int a1, int msg);
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" void func_00261408(void* self);
+extern "C" void func_001A9150(void* self, int a1, int a2, int a3, int a4, int a5, int a6);
+extern "C" void* func_001B6ED0(void* mem, int a1, void* owner, int a3, int a4, int a5);
+extern "C" void func_001CE3C8(void* self, int i, int v, int mode);
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern char D_00462C88[];
+extern char D_004A1408[];
+extern char D_00462D10[];
+//---
+extern "C" void* func_001B88F0_D5E8(void* mem, int a1, int a2) __asm__("func_001B88F0");
+extern "C" void func_001AD208_D5E8(void* self, const char* name) __asm__("func_001AD208");
+extern "C" void func_001C5878_D5E8(void* self, int a1, int a2, int a3) __asm__("func_001C5878");
+void func_0025CD28(void* self, int a1);
+extern char D_00462ED0[];
+extern char D_00462E58[];
+extern char D_00462EE8[];
+extern char D_00462F08[];
+extern char D_00462F18[];
+
+// Message handler for the persona-select screen.
+extern "C" void func_001AD5E8(void* selfp, void* a1, int a2)
+{
+    char* self = (char*)selfp;
+    switch (a2) {
+    case 5: {
+        int idx = *(int*)((char*)a1 + 0x18);
+        if (idx == -1) {
+            func_001A8A40(self, func_001B88F0_D5E8(cMemMan_alloc(0x6F4, D_00462ED0, 0, 0), *(int*)(self + 0x10), 0));
+            break;
+        }
+        if (idx >= *(int*)((char*)D_004A3028 + 0x6C)) {
+            func_001A9150(self, (int)a1, GetHashValue32(D_00462E58), (int)D_004A1408, 0, -1, 0xC);
+            *(int*)(*(char**)(self + 0x69C) + 0x58) = 1;
+            func_001CE3C8(*(void**)(self + 0x69C), 0x4B, 1, 2);
+            func_001CE3C8(*(void**)(self + 0x69C), 0x35, 0, 2);
+            *(int*)(self + 0x6D0) = 0;
+        } else {
+            func_0025CD28(D_004A3028, idx);
+            *(int*)(self + 0x6D0) = 1;
+        }
+        break;
+    }
+    case 6: {
+        if (D_004A3328 == 0) {
+            func_00260F80();
+        }
+        if (func_00261460(D_004A3328) == 0) {
+            func_002613C8(D_004A3328);
+        }
+        if (D_004A3328 == 0) {
+            func_0025B800(D_004A3028);
+        }
+        func_00261408(D_004A3328);
+        func_0025B800(D_004A3028);
+        void* p = func_001B6ED0(cMemMan_alloc(0xB10, D_00462D10, 0, 0), *(int*)(self + 0x10), self, 0, 0, 0);
+        *(int*)((char*)p + 0x18) = 0x832;
+        func_0039F290(*(char**)((char*)*(void**)((char*)*(void**)(self + 0x40) + 0xD0) + 0x10) + 0x18, p);
+        break;
+    }
+    case 8: {
+        int idx = *(int*)((char*)a1 + 0x18);
+        if (idx < 0) {
+            break;
+        }
+        if (idx < *(int*)((char*)D_004A3028 + 0x6C)) {
+            *(int*)(self + 0x6D4) = idx;
+            void* p = func_001A9C50(self);
+            char* sub = (char*)p + 0xBC;
+            *(int*)((char*)p + 0xBC) = 2;
+            *(int*)((char*)p + 0xC4) = GetHashValue32(D_00462EE8);
+            *(int*)((char*)p + 0xC0) = 3;
+            func_001C57C0(sub, 0, GetHashValue32(D_00462F08));
+            func_001C57C0(sub, 1, GetHashValue32(D_00462C88));
+            func_001C5878_D5E8(sub, 0, GetHashValue32(D_00462F18), 1);
+            *(int*)((char*)p + 0x168) = 1;
+            *(int*)((char*)p + 0x150) = 0x816;
+            func_001A9BC0(self, p);
+        }
+        break;
+    }
+    case 13:
+        func_001AD208_D5E8(self, *(char**)(self + 0x69C) + 0x74);
+        break;
+    case 14:
+        break;
+    default:
+        func_001A8918(self, (int)a1, a2);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AD8C0);
