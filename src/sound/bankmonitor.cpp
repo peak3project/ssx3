@@ -3237,7 +3237,40 @@ extern "C" void func_002B3A98(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3AC0);
+#ifdef SKIP_ASM
+struct sSndKey8_3AC0 {
+    long v;
+} __attribute__((packed));
+extern sSndKey8_3AC0 D_004A3838[];
+extern sSndKey8_3AC0 D_004A3840[];
+extern sSndKey8_3AC0 D_004A3848[];
+extern "C" void func_002ADDE0(void* bank, long key);
+extern "C" void func_0028A728(void* self, int i);
+extern "C" void func_0028BCE8(void* self, int i);
+extern "C" void func_002B3A98(void* self);
+extern "C" void func_002B1F78(void* self, int flags);
+
+// PORT: 64-bit long sound keys
+extern "C" void func_002B3AC0(void* self)
+{
+    char* s = (char*)self;
+    func_002ADDE0(**(char***)s + 0x1D8, D_004A3838[0].v);
+    func_002ADDE0(**(char***)s + 0x1D8, D_004A3840[0].v);
+    func_002ADDE0(**(char***)s + 0x1D8, D_004A3848[0].v);
+    if (*(void**)(s + 0x408) != 0) {
+        func_0028A728(**(void***)s, *(int*)(*(char**)(s + 0x408) + 0x34));
+        func_0028BCE8(**(void***)s, *(int*)(*(char**)(s + 0x408) + 0x34));
+    }
+    func_002B3A98(self);
+    *(int*)(s + 0x418) = 0;
+    if (*(void**)(s + 0x408) != 0) {
+        func_002B1F78(*(void**)(s + 0x408), 3);
+    }
+    *(void**)(s + 0x408) = 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B3B88);
