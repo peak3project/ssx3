@@ -36,7 +36,64 @@ extern "C" void func_0017D008(void* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017D0A8);
+#ifdef SKIP_ASM
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int cCommSystem_openDSockChannel(void* comm, const char* addr, int port, int host);
+extern "C" void func_00256038(void* comm, int* info);
+extern "C" int func_00255D50(void* comm, int ch);
+extern "C" void func_00255A20(void* comm);
+extern "C" void SYNCTASK_run(int a);
+extern "C" void THREAD_yieldticks(int n);
+extern "C" void cGameComm_construct(int ch, int host);
+extern "C" void func_00266D58(void* p, int ip);
+extern "C" void func_00266E30(void* p);
+extern void* D_004A28A8;
+extern void* D_004A2EB8;
+extern void* D_004A33F4;
+extern char D_0045D018[] __attribute__((aligned(8)));
+extern char D_0045D028[] __attribute__((aligned(8)));
+
+struct sNetCfg_D0A8 {
+    int active;             // 0x0
+    int f4;
+    int host;               // 0x8
+    unsigned short port;    // 0xC
+};
+extern sNetCfg_D0A8 D_00534B30_D0A8 __asm__("D_00534B30");
+
+// Debug menu: opens the direct-socket link to the paired test console and starts the game comm.
+extern "C" void func_0017D0A8(void)
+{
+    cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    if (D_00534B30_D0A8.active == 0) {
+        return;
+    }
+    char addr[32];
+    int info[4];
+    func_00256038(D_004A2EB8, info);
+    if (info[0] == 0x0A0A3519) {
+        __builtin_memcpy(addr, D_0045D018, 12);
+    } else {
+        __builtin_memcpy(addr, D_0045D028, 12);
+    }
+    int ch;
+    if (D_00534B30_D0A8.host) {
+        ch = cCommSystem_openDSockChannel(D_004A2EB8, addr, D_00534B30_D0A8.port, 1);
+    } else {
+        ch = cCommSystem_openDSockChannel(D_004A2EB8, addr, D_00534B30_D0A8.port, 0);
+    }
+    while (func_00255D50(D_004A2EB8, ch) == 0) {
+        func_00255A20(D_004A2EB8);
+        SYNCTASK_run(0);
+        THREAD_yieldticks(1);
+    }
+    cGameComm_construct(ch, D_00534B30_D0A8.host);
+    func_00266D58(D_004A33F4, info[0]);
+    func_00266E30(D_004A33F4);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D1B8);
