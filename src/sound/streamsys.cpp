@@ -428,7 +428,19 @@ extern "C" void func_002AA648(void* p, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/streamsys", func_002AA7F0);
+#ifdef SKIP_ASM
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern char D_00483228[];
+
+extern "C" void func_002AA7F0(void* self, int idx, int heap, int extra)
+{
+    sStreamInst_99D8** slot = (sStreamInst_99D8**)((idx << 2) + *(int*)((char*)self + 0x8));
+    void* mem = cMemMan_alloc(0x84, D_00483228, heap, 0);
+    *slot = cStreamInstance_cStreamInstance((sStreamInst_99D8*)mem, (sSsPlayer_99D8*)(*(char**)self + 0x1D8), heap, extra);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/streamsys", func_002AA910);
