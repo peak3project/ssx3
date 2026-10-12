@@ -430,7 +430,28 @@ extern "C" void func_002910E0(void* vself)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002913D8);
+#ifdef SKIP_ASM
+
+struct sVE_13D8 {
+    short delta;
+    short index;
+    void (*fn)(void*, long);
+};
+
+// PORT: 64-bit long sound key
+extern "C" void func_002913D8(void* self)
+{
+    char* s = (char*)self;
+    char* sys = **(char***)(s + 0x118);
+    sVE_13D8* vt = *(sVE_13D8**)(sys + 0xAB0);
+    char* obj = sys + 0x1D8;
+    vt[3].fn(obj + vt[3].delta, D_004A3680->v);
+    *(int*)(s + 0x5830) = 0;
+    *(int*)(s + 0x5834) = 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00291438);
