@@ -335,7 +335,103 @@ extern "C" int func_001D2EA0(char* self, char* widget)
 
 INCLUDE_ASM("fe/ovstatelodge", func_001D2F40);
 
+//100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_onWidgetEvent);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+void cUIText_setUnicodeStringByID(cUIText* t, int id);
+extern "C" void func_001D32E0_MR(void* self) __asm__("func_001D32E0");
+extern "C" void func_0039F400_MR(void* list, void* item) __asm__("func_0039F400");
+extern char D_00467450[];
+extern char D_00467460[];
+extern char D_00467478[];
+extern char D_00467490[];
+
+struct sVE_MR {
+    short delta;
+    short index;
+    void* (*fn)(void*, void*, int);
+};
+
+struct sFactory_MR {
+    int pad0;
+    sVE_MR* vt;
+};
+
+struct sTVE_MR {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sText_MR {
+    int pad[2];
+    sTVE_MR* vt;
+};
+
+// Widget events of the mountain-room menu: opens sub-screens and updates the description text.
+extern "C" void cFEStateMountainRoom_onWidgetEvent(char* self, char* w, unsigned int msg)
+{
+    if (w == 0) {
+        return;
+    }
+    switch (msg) {
+    case 5: {
+        int idx = *(int*)(w + 0x18);
+        if (idx == 0) {
+            func_001D32E0_MR(self);
+            break;
+        }
+        sFactory_MR* f = **(sFactory_MR***)(self + 0x10);
+        void* s = f->vt[4].fn((char*)f + f->vt[4].delta, self, idx - 1);
+        func_0039F400_MR(*(char**)(self + 0x10) + 0x18, s);
+        break;
+    }
+    case 6: {
+        sFactory_MR* f = **(sFactory_MR***)(self + 0x10);
+        void* s = f->vt[5].fn((char*)f + f->vt[5].delta, self, *(int*)(w + 0x18));
+        if (s == 0) {
+            break;
+        }
+        func_0039F400_MR(*(char**)(self + 0x10) + 0x18, s);
+        break;
+    }
+    case 1: {
+        if (*(void**)(self + 0x54) == 0) {
+            break;
+        }
+        int h = 0;
+        switch (*(int*)(w + 0x18)) {
+        case 0:
+            h = GetHashValue32(D_00467450);
+            break;
+        case 1:
+            h = GetHashValue32(D_00467460);
+            break;
+        case 2:
+            if (*(int*)(self + 0xB4) > 0) {
+                h = GetHashValue32(D_00467460);
+            } else {
+                h = GetHashValue32(D_00467478);
+            }
+            break;
+        case 3:
+            if (*(int*)(self + 0xB4) >= 2) {
+                h = GetHashValue32(D_00467460);
+            } else {
+                h = GetHashValue32(D_00467490);
+            }
+            break;
+        }
+        sText_MR* t = *(sText_MR**)(self + 0x54);
+        t->vt[9].fn((char*)t + t->vt[9].delta, 1);
+        cUIText_setUnicodeStringByID(*(cUIText**)(self + 0x54), h);
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3120);
