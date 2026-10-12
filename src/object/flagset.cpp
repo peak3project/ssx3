@@ -1274,7 +1274,44 @@ extern "C" void func_0034D650(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flagset", func_0034D6F0);
+#ifdef SKIP_ASM
+struct sFlag34D6F0 {
+    char pad0[0x30];
+    float wind;     // 0x30
+    float speed;    // 0x34
+};
+
+// PORT: SN abs.s asm helper (PS2 FPU).
+static inline float fabs_34D6F0(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// Accumulates wind strength on the flag set (clamped to 1) and sets the flap speed with the wind direction.
+extern "C" void func_0034D6F0(void* vself, float v)
+{
+    sFlag34D6F0* self = (sFlag34D6F0*)vself;
+    self->wind += fabs_34D6F0(v);
+    if (self->wind > 1.0f) {
+        self->wind = 1.0f;
+    }
+    if (self->speed == 0.0f) {
+        if (v < 0.0f) {
+            self->speed = self->wind * -0.1f;
+        } else {
+            self->speed = self->wind * 0.1f;
+        }
+    } else if (self->speed < 0.0f) {
+        self->speed = self->wind * -0.1f;
+    } else {
+        self->speed = self->wind * 0.1f;
+    }
+}
+#endif
 
 INCLUDE_ASM("object/flagset", func_0034D778);
 
