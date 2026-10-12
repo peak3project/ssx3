@@ -4896,7 +4896,25 @@ extern "C" void func_00389590(sPartVec4* a, sPartVec4* b, sPartVec4* c, float s)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00389620);
+#ifdef SKIP_ASM
+struct sVec4_9620 {
+    float x, y, z, w;
+};
+
+// Integrates the w channel of ten particle vectors: dst.w += src.w * dt.
+extern "C" void func_00389620(sVec4_9620* dst, sVec4_9620* src, float dt)
+{
+    float* s = &src->w;
+    float* d = &dst->w;
+    for (int i = 0; i < 10; i++) {
+        *d += *s * dt;
+        d += 4;
+        s += 4;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00389730);
