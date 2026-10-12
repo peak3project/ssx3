@@ -1827,7 +1827,114 @@ extern "C" void func_002992D8(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00299368);
+#ifdef SKIP_ASM
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" void* func_00287968(void* self, int a1, int a2);
+extern "C" int func_002906B8(void* self);
+
+struct sSnd9368Ch {
+    signed char vol;
+    char pad1[0x17];
+};
+struct sSnd9368E16 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+struct sSnd9368Sub {
+    char pad0[4];
+    sSnd9368Ch def;          // 0x04
+    volatile int cur;        // 0x1C
+    sSnd9368Ch* ch;          // 0x20
+    void* tgt[4];            // 0x24
+    int* p34;                // 0x34
+    int* vals;               // 0x38
+    int* p3C;                // 0x3C
+    char e40[4][8];          // 0x40
+    int* p60;                // 0x60
+    int* p64;                // 0x64
+    int* p68;                // 0x68
+    int* p6C;                // 0x6C
+    sSnd9368E16* p70;        // 0x70
+    int* p74;                // 0x74
+    int* p78;                // 0x78
+    int* p7C;                // 0x7C
+    int* p80;                // 0x80
+    int* p84;                // 0x84
+};
+struct sSnd9368Mgr {
+    char pad0[0x1D8];
+    sSnd9368Sub sub;         // 0x1D8
+};
+struct sSnd9368Sys {
+    sSnd9368Mgr* mgr;
+    int* a4;                 // 0x4
+    int* a8;                 // 0x8
+    char padC[0x118 - 0xC];
+    sSnd9368Mgr** p118;      // 0x118
+};
+
+struct sSndId299368 {
+    long v;
+} __attribute__((packed));
+extern sSndId299368 D_004A36A8_9368[] __asm__("D_004A36A8");
+extern "C" void func_002ADDE0(void* bank, long id);
+extern "C" int func_00288AE0(void* self);
+
+static inline int IsReady299368(char* obj)
+{
+    return *(int*)(obj + 0x874) != 0 && *(int*)(obj + 0x87C) != 0;
+}
+
+static inline void AddVoice299368(sSnd9368Sys* self, int a, int bb, int type)
+{
+    sSnd9368Mgr* m = self->mgr;
+    sSnd9368Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = bb;
+    sSnd9368Mgr** pp = self->p118;
+    int r = (int)func_00287968(self, type, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+}
+
+// Starts the "crowd cheer" voice for the object if the bank is ready and nothing else is playing.
+// PORT: the 8-byte stream id is passed by value from an unaligned global (64-bit `long`).
+extern "C" void func_00299368(sSnd9368Sys* self, char* obj)
+{
+    if (func_00288AE0(self) != 0) {
+        return;
+    }
+    if (!IsReady299368(obj)) {
+        return;
+    }
+    func_002ADDE0(&(*self->p118)->sub, D_004A36A8_9368[0].v);
+    AddVoice299368(self, 0, 0x6C, 9);
+    func_002906B8(self);
+}
+#endif
 
 INCLUDE_ASM("sound/soundsys", func_00299638);
 
