@@ -1387,7 +1387,42 @@ extern "C" void func_0018CA10(char* self, char* widget, unsigned int event)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateoptions", func_0018CCE0);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00147618(void* player, int which);
+extern "C" int func_0018CF50_CCE0(void* self, int on) __asm__("func_0018CF50");
+
+// Options toggle row: accept flips the setting chosen by the cursor (items 2 and 3), back is consumed.
+extern "C" int func_0018CCE0(void* self, char* menu, unsigned int key)
+{
+    void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
+    switch (key) {
+    case 9:
+        return 0x100;
+    case 5: {
+        int which;
+        switch (*(unsigned char*)(menu + 0x95)) {
+        case 2:
+            which = 0;
+            break;
+        case 3:
+            which = 1;
+            break;
+        default:
+            return 0x101;
+        }
+        func_0018CF50_CCE0(self, func_00147618(player, which) == 0);
+        return 0x101;
+    }
+    case 6:
+        return 0;
+    }
+    return 0x101;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018CDB0);
