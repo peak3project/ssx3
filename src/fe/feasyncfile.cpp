@@ -8600,7 +8600,77 @@ extern "C" void func_001B2EB8(void* self, cFEVObj_001B2EB8* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B31A0);
+#ifdef SKIP_ASM
+extern "C" int func_0025F248(void* self, int idx);
+extern "C" void func_0025D800(void* a, int b, const char* c);
+extern "C" void func_001A9B58(void* self);
+extern "C" void func_001B33D8(void* self);
+extern char D_00463A60[];
+extern char D_00463D20[];
+
+extern "C" void func_001B31A0(char* self, char* msg, int ev)
+{
+    char buf[32];
+    int i;
+    switch (ev) {
+    case 5: {
+        int id = *(int*)(msg + 0x18);
+        if (func_0025F248(D_004A3028, id) != 0) {
+            return;
+        }
+        func_001A9890(self, func_0025F1E0_p(D_004A3028, id, 0));
+        func_001AB370(self, func_001A98B0(self), 1);
+        return;
+    }
+    case 1:
+        for (i = 0; i < 6; i++) {
+            sprintf(buf, D_00463A60, i);
+            int h = *(int*)(msg + 0x38);
+            if (h == GetHashValue32(buf)) {
+                func_001B3D20(self, i, 1);
+                return;
+            }
+        }
+        func_001A8918(self, (int)msg, ev);
+        return;
+    case 2:
+        for (i = 0; i < 6; i++) {
+            sprintf(buf, D_00463A60, i);
+            int h = *(int*)(msg + 0x38);
+            if (h == GetHashValue32(buf)) {
+                func_001B3D20(self, i, 0);
+                return;
+            }
+        }
+        func_001A8918(self, (int)msg, ev);
+        return;
+    case 6: {
+        *(int*)(self + 0x6F8) = 1;
+        char* p = (char*)func_001A9C50(self);
+        *(int*)(p + 0xBC) = 0;
+        int h = GetHashValue32(D_00463D20);
+        *(int*)(p + 0x164) = 0;
+        *(int*)(p + 0xC4) = h;
+        *(int*)(p + 0xC0) = 3;
+        *(int*)(p + 0x150) = 0x802;
+        func_001A9BC0(self, p);
+        func_0025D800(D_004A3028, -1, 0);
+        return;
+    }
+    case 8:
+        if ((*(int*)(self + 0x1C) & 6) == 0) {
+            func_001A9B58(self);
+        }
+        return;
+    case 13:
+        func_001B33D8(self);
+        return;
+    }
+    func_001A8918(self, (int)msg, ev);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B33D8);
