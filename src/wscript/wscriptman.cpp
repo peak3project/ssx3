@@ -1030,7 +1030,66 @@ extern "C" void func_0030B068(func_0030B068_cNode** self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B0E8);
+#ifdef SKIP_ASM
+struct sVE_B0E8 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sNode_B0E8 {
+    char pad0[0x18];
+    sNode_B0E8* next;   // 0x18
+    char pad1C[0x24 - 0x1C];
+    int key;            // 0x24
+    char pad28[0x5C - 0x28];
+    sVE_B0E8* vt;       // 0x5C
+};
+
+static inline void destroy_B0E8(sNode_B0E8* n)
+{
+    if (n != 0) {
+        n->vt[1].fn((char*)n + n->vt[1].delta, 3);
+    }
+}
+
+// Deletes the leading run of nodes with the given key, then the run after the new head.
+extern "C" void func_0030B0E8(sNode_B0E8** head, int key)
+{
+    if (*head == 0) {
+        return;
+    }
+    sNode_B0E8* next = (*head)->next;
+    if ((*head)->key == key) {
+        for (;;) {
+            destroy_B0E8(*head);
+            *head = next;
+            sNode_B0E8* cur = next;
+            if (cur == 0) {
+                return;
+            }
+            next = cur->next;
+            if (cur->key != key) {
+                break;
+            }
+        }
+    }
+    if (*head == 0) {
+        return;
+    }
+    sNode_B0E8* n = (*head)->next;
+    while (n != 0) {
+        sNode_B0E8* cur = n;
+        n = cur->next;
+        if (cur->key != key) {
+            break;
+        }
+        destroy_B0E8(cur);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B1B8);
