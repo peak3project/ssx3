@@ -298,7 +298,40 @@ extern "C" void cFEStateMountainRoom_onWidgetCreate(void* self, sWidget_2AD0* w)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D2EA0);
+#ifdef SKIP_ASM
+struct sVEi1D2EA0 { short delta; short index; int (*fn)(void*); };
+struct sVEv1D2EA0 { short delta; short index; void (*fn)(void*, int); };
+extern char D_004A5A58;
+
+static inline int IsShown1D2EA0(char* self)
+{
+    char* w = *(char**)(self + 0x48);
+    return w != 0 && ((*(int*)(w + 0x14) >> 6) & 1);
+}
+
+// Lodge menu: when the detail panel is shown and the widget accepts, plays the select sound and closes the panel.
+extern "C" int func_001D2EA0(char* self, char* widget)
+{
+    if (IsShown1D2EA0(self)) {
+    sVEi1D2EA0* wvt = *(sVEi1D2EA0**)(widget + 8);
+    if (wvt[6].fn(widget + wvt[6].delta)) {
+        char* snd = *(char**)(*(char**)(self + 0x10) + 0x14);
+        if (snd == 0) {
+            snd = &D_004A5A58;
+        }
+        sVEv1D2EA0* svt = *(sVEv1D2EA0**)snd;
+        svt[2].fn(snd + svt[2].delta, 3);
+        char* w = *(char**)(self + 0x48);
+        sVEv1D2EA0* vt = *(sVEv1D2EA0**)(w + 8);
+        vt[9].fn(w + vt[9].delta, 0);
+    }
+    return 1;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("fe/ovstatelodge", func_001D2F40);
 
