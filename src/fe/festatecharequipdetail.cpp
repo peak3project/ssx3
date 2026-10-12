@@ -469,7 +469,96 @@ extern "C" void func_00199C28(void* selfv, char* w, unsigned int ev)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199F20);
+#ifdef SKIP_ASM
+extern "C" void func_0019A3D0(void* self);
+extern int D_004A18D8;
+
+struct sEquipItem_9F20 {
+    char pad0[0xE];
+    short cost;      // 0xE
+    char pad10[0x24];
+    int flags;       // 0x34
+};
+
+struct sEquipDetail_9F20 {
+    char pad0[0x5C];
+    char* sel;                    // 0x5C
+    char pad60[0x60];
+    int fC0;                      // 0xC0
+    int fC4;                      // 0xC4
+    int fC8;                      // 0xC8
+    char padCC[0x54];
+    int f120;                     // 0x120
+    sEquipItem_9F20* items[0x20D]; // 0x124
+    int count;                    // 0x958
+    char pad95C[0x11C];
+    int prices[27];               // 0xA78
+    int fAE4;                     // 0xAE4
+};
+
+static inline bool isMode_9F20(int m, int v)
+{
+    return m == v;
+}
+
+static inline bool hasFlag_9F20(sEquipItem_9F20* item, int f)
+{
+    return (item->flags & f) != 0;
+}
+
+extern "C" int func_00199F20(sEquipDetail_9F20* self, int a1, int kind, int idx)
+{
+    switch (kind) {
+    case 2:
+    case 3:
+        func_0019B618(self, 0, 0);
+        return 1;
+    case 0:
+        if (idx < self->count) {
+            return hasFlag_9F20(self->items[idx], 4);
+        }
+        return 0;
+    case 1:
+        if (idx == 0 || self->count == 0 || idx < self->count) return 1;
+        return 0;
+    case 6: {
+        char* p = self->sel;
+        int v = *(unsigned char*)(p + 0x95);
+        if (v < 0) return 0x110;
+        if (v < self->count) {
+            sEquipItem_9F20* item = self->items[v];
+            if (item->flags & 0x20) return 0x101;
+            if (isMode_9F20(self->fC8, 1)) {
+                int cost = item->cost;
+                if (cost > 0) cost *= 10;
+                if (cost >= self->fC0) break;
+                return 0x101;
+            } else {
+                if (D_004A18D8 >= self->prices[v - *(unsigned char*)(p + 0x98)] + self->fC4) break;
+            }
+        }
+        return 0x110;
+    }
+    case 7:
+        if (self->f120 > 0) {
+            self->f120 = self->f120 - 1;
+            return 1;
+        }
+        break;
+    case 8:
+        if (self->fAE4 != 0) {
+            func_0019A3D0(self);
+            return 0x101;
+        }
+        return 0x100;
+    case 9:
+        return 0x100;
+    }
+    return 0x101;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A098);
