@@ -1065,7 +1065,127 @@ extern "C" int func_002876D0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00287700);
+#ifdef SKIP_ASM
+extern float D_004A3504;
+extern float D_004A3508;
+extern float D_004A350C;
+extern float D_004A3510;
+extern float D_004A3514;
+extern float D_004A3518;
+extern float D_004A351C;
+extern float D_004A3520;
+extern float D_004A3524;
+extern float D_004A3528;
+extern float D_004A352C;
+extern float D_004A3530;
+extern float D_004A3534;
+extern float D_004A3538;
+extern float D_004A353C;
+extern float D_004A3540;
+extern float D_004A3544;
+extern float D_004A3548;
+extern float D_004A354C;
+extern float D_004A3550;
+extern "C" void func_002B4388(void* mon);
+extern "C" void func_003B8160(signed char vol);
+
+struct sSaChan7700 {
+    float user;     // +0x0
+    float base;     // +0x4
+    float gain;     // +0x8
+    float out;      // +0xC
+};
+
+struct sSaMix7700 {
+    char pad0[0x62BC];
+    sSaChan7700 chan[11];   // 0x62BC
+    char pad636C[0x636C - 0x636C];
+    float mix[10];          // 0x636C
+    char pad6394[0x6394 - 0x6394];
+    float vol[11];          // 0x6394
+    char pad63C0[0x63E4 - 0x63C0];
+    float cur[11];          // 0x63E4
+};
+
+// PORT: `<?`/`>?` are the g++ min/max operators (EE min.s/max.s).
+extern "C" void func_00287700(void* self_, float v, int ch)
+{
+    sSaMix7700* self = (sSaMix7700*)self_;
+    v = (v <? 1.0f) >? 0.0f;
+    sSaChan7700* c = &self->chan[ch];
+    switch (ch) {
+    case 0:
+        c->user = v;
+        c->base = v;
+        break;
+    case 1:
+        c->user = v;
+        c->base = v * D_004A3508;
+        func_002B4388((char*)self + 0x118);
+        break;
+    case 2:
+        c->user = v;
+        c->base = v * D_004A3510;
+        break;
+    case 3:
+        c->user = v;
+        c->base = v * D_004A3514;
+        break;
+    case 4:
+        c->user = v;
+        c->base = v * D_004A350C;
+        break;
+    case 5:
+        c->user = v;
+        c->base = v * D_004A3504;
+        break;
+    case 6:
+        c->user = v;
+        c->base = v * D_004A3518;
+        break;
+    case 7:
+        c->user = v;
+        c->base = v * D_004A351C;
+        break;
+    case 8:
+        c->user = v;
+        c->base = v * D_004A3520;
+        break;
+    case 9:
+        c->user = v;
+        c->base = v * D_004A3524;
+        break;
+    case 10:
+        c->user = v;
+        c->base = v * D_004A3528;
+        break;
+    }
+    c->gain = c->base * self->vol[ch];
+    c->out = c->gain * self->cur[ch];
+    switch (ch) {
+    case 0:
+        func_003B8160((int)(c->out * 127.0f));
+        break;
+    case 1:
+        func_002B4388((char*)self + 0x118);
+        break;
+    case 4:
+        self->mix[0] = c->out * D_004A352C;
+        self->mix[1] = c->out * D_004A3530;
+        self->mix[2] = c->out * D_004A3534;
+        self->mix[3] = c->out * D_004A3538;
+        self->mix[4] = c->out * D_004A353C;
+        self->mix[5] = c->out * D_004A3540;
+        self->mix[6] = c->out * D_004A3544;
+        self->mix[7] = c->out * D_004A3548;
+        self->mix[8] = c->out * D_004A354C;
+        self->mix[9] = c->out * D_004A3550;
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00287920);
