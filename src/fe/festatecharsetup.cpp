@@ -246,7 +246,118 @@ extern "C" void func_00182DB8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharsetup", func_00182EC0);
+#ifdef SKIP_ASM
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" void* func_001A0548(void* self, int idx);
+extern "C" void func_00311A50(void* anim);
+extern "C" void cRiderAnimBase_play(void* anim, int id, int a2, float t);
+extern "C" void func_001A0358(void* rider);
+extern "C" void func_0019E538(void* self, int a1);
+extern void* D_004A28A8;
+
+struct sQuat_182EC0
+{
+    float x, y, z, w;
+    sQuat_182EC0() {}
+    sQuat_182EC0(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+struct sXform_182EC0
+{
+    sQuat_182EC0 pos;
+    sQuat_182EC0 rot;
+};
+
+extern sQuat_182EC0 D_004FF140;
+extern sQuat_182EC0 D_004FF150;
+extern sQuat_182EC0 D_004FF160;
+extern "C" void func_0019F3E8(void* rider, sXform_182EC0* xf);
+extern "C" void func_0019F548(void* rider, sXform_182EC0* xf);
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQuat_182EC0 QuatMul_182EC0(const sQuat_182EC0& a, const sQuat_182EC0& b)
+{
+    sQuat_182EC0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline sQuat_182EC0 AxisAngle_182EC0(const sQuat_182EC0& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQuat_182EC0(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+// Places the rider on the setup screen's podium and, when requested, restarts its idle animation.
+extern "C" void func_00182EC0(void* self_)
+{
+    char* self = (char*)self_;
+    char* rider = (char*)func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)(self + 0x44));
+    int ok = 0;
+    if (*(unsigned int*)rider < 10 && *(int*)(rider + 0xCB8) != 0) {
+        ok = *(int*)(rider + 0xCB4) != 0;
+    }
+    if (ok && *(int*)(self + 0x4C) != 0) {
+        sQuat_182EC0 pos;
+        sXform_182EC0 xf;
+        {
+            sQuat_182EC0 p;
+            p.x = 136.0f;
+            p.y = -250.0f;
+            p.z = -82.0f;
+            p.w = 1.0f;
+            pos = p;
+            xf.pos = p;
+            xf.rot.x = 0.0f;
+            xf.rot.w = 1.0f;
+            xf.rot.y = 0.0f;
+            xf.rot.z = 0.0f;
+            xf.rot = QuatMul_182EC0(xf.rot, AxisAngle_182EC0(D_004FF140, 0.0f));
+        }
+        xf.rot = QuatMul_182EC0(xf.rot, AxisAngle_182EC0(D_004FF150, 0.0f));
+        xf.rot = QuatMul_182EC0(xf.rot, AxisAngle_182EC0(D_004FF160, 1.7453293800354004f));
+        func_0019F3E8(rider, &xf);
+        {
+            sQuat_182EC0 p;
+            p.x = 0.0f;
+            p.y = 10000.0f;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            xf.pos = p;
+        }
+        func_0019F548(rider, &xf);
+        if (*(int*)(self + 0x48) != 0) {
+            void* anim = *(void**)(rider + 0xC);
+            if (anim != 0) {
+                func_00311A50(anim);
+                cRiderAnimBase_play(anim, 0x1B3, 0, -1.0f);
+            }
+            *(int*)(rider + 0xCCC) = 0;
+            *(int*)(self + 0x48) = 0;
+            func_001A0358(rider);
+        }
+        func_0019E538(rider, 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharsetup", func_001831D0);
