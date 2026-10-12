@@ -1,6 +1,63 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("fe/ovtemplatedialog", cPDATemplate_onCreateScreen);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+// PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...)
+extern "C" void func_002C26D0_v(void* dst, int fmt, ...) __asm__("func_002C26D0");
+extern "C" void func_003A0E90(void* text, char* str);
+extern void* D_004A28A8;
+extern char D_00471A10[];
+extern char D_004A2718[];
+extern char D_00471A20[];
+
+struct sVEntry_PDA {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+static inline int Loc_PDA(int hash)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry_PDA* vt = *(sVEntry_PDA**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, hash);
+}
+
+static inline int div_PDA(int a, int b)
+{
+    return a / b;
+}
+
+extern "C" void cPDATemplate_onCreateScreen(char* self)
+{
+    *(int*)(self + 0xC) = 0x29;
+    void* engine = *(void**)(self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_00471A10), 0);
+    *(void**)(self + 0x40) = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    engine = *(void**)(self + 0x10);
+    screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_004A2718), 0);
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 1);
+    }
+    char* text = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00471A20));
+    if (text != 0) {
+        int fmt = Loc_PDA(*(int*)(text + 0xB0));
+        if (fmt != 0) {
+            char buf[48];
+            func_002C26D0_v(buf, fmt, -10 - div_PDA(*(int*)((char*)D_004A28A8 + 0x1C), 3600) % 15, 0x43);
+            func_003A0E90(text, buf);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020A8B0);
