@@ -3235,7 +3235,73 @@ extern "C" void func_001A8AE8(void* self, cFEVObj_001A8AE8* obj)
 
 INCLUDE_ASM("fe/feasyncfile", func_001A8B88);
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A8E40);
+#ifdef SKIP_ASM
+extern "C" void func_001A9930(void* self);
+extern "C" int func_0025DA90(void* self);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_001BCB58_v(void* mem, int a1) __asm__("func_001BCB58");
+extern "C" void* func_001BFBB8(void* mem, int a1);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" void func_001A8F98(void* self);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9CC0(void* self, void** popup, void* owner, void* data);
+extern "C" void func_001A9BC0(void* self, void* popup);
+extern void* D_004A3028;
+extern char D_00461B30[];
+extern const char D_0045FF28[];
+
+struct sVE1A8E40 {
+    short delta;
+    short index;
+    int (*fn)(void*, int, void*);
+};
+
+// PORT: the unit declares func_001A8E40 with one arg; defined under an asm label with its real type.
+extern "C" int func_001A8E40_impl(void* self, int msg, void* data) __asm__("func_001A8E40");
+
+// Message handler for the memory-card screen.
+extern "C" int func_001A8E40_impl(void* self, int msg, void* data)
+{
+    char* s = (char*)self;
+    switch (msg) {
+    case 0x115:
+    case 0x116:
+        func_001A9930(self);
+        break;
+    case 0xDC:
+        if (func_0025DA90(D_004A3028) == 0) {
+            func_001A8A40(self, func_001BCB58_v(cMemMan_alloc(0xB84, D_00461B30, 0, 0), *(int*)(s + 0x10)));
+        }
+        break;
+    case 0xEF:
+        func_001A8A40(self, func_001BFBB8(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(int*)(s + 0x10)));
+        break;
+    case 0x102:
+        if (*(int*)((char*)data + 0x8) == 0x74696D65) {
+            func_001A8F98(self);
+        } else {
+            void* popup = func_001A9C50(self);
+            func_001A9CC0(self, &popup, self, data);
+            func_001A9BC0(self, popup);
+        }
+        break;
+    case 0xDD:
+    case 0xDE:
+    case 0xE0:
+    case 0xE1: {
+        char* child = *(char**)(s + 0x20);
+        if (child != 0) {
+            sVE1A8E40* vt = *(sVE1A8E40**)(child + 0x8);
+            vt[24].fn(child + vt[24].delta, msg, data);
+        }
+        break;
+    }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A8F98);
