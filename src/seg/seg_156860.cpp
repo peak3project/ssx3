@@ -63,7 +63,97 @@ extern "C" char *cCommSystem_getSignature(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_00255A20);
+#ifdef SKIP_ASM
+extern "C" void func_003F42A0(void);
+extern "C" int func_003F3CC0_5A20(int sel, int a, int b) __asm__("func_003F3CC0");
+extern "C" int func_003F3C50(void* params, int a);
+extern "C" void func_00255FE8(void* self, int reason);
+extern "C" void func_00256038(void* self, int* out);
+extern char D_00536810[];
+
+struct sCommVE_5A20 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sCommObj_5A20 {
+    char pad0[8];
+    sCommVE_5A20* vt;   // 0x8
+};
+
+struct sComm_5A20 {
+    sCommObj_5A20* objs[1];   // 0x0
+    char pad4[0x1C - 4];
+    int index;                // 0x1C
+    int state;                // 0x20
+    int timer;                // 0x24
+    char pad28[4];
+    int bband;                // 0x2C
+    int type;                 // 0x30
+};
+
+extern "C" void func_00255A20(sComm_5A20* self)
+{
+    int i;
+    func_003F42A0();
+    switch (self->state) {
+    case 0:
+    case 1:
+    case 6:
+        break;
+    case 2:
+        if (func_003F3CC0_5A20(0x6F6E6C6E, 0, 0) == 0) {
+            func_003F3C50(D_00536810 + (self->index << 8), 0);
+            self->state = 3;
+        }
+        break;
+    case 3: {
+        if (func_003F3CC0_5A20(0x6F6E6C6E, 0, 0) != 0 && func_003F3CC0_5A20(0x686F7374, 0, 0) != 0) {
+            self->state = 4;
+            self->timer = 0x708;
+            self->type = func_003F3CC0_5A20(0x74797065, 0, 0);
+            int bb = func_003F3CC0_5A20(0x62626E64, 0, 0);
+            if (bb == 1) {
+                self->bband = bb;
+            }
+        }
+        int conn = func_003F3CC0_5A20(0x636F6E6E, 0, 0);
+        if ((conn >> 24) == '-') {
+            func_00255FE8(self, conn);
+            self->timer = 0;
+        }
+        break;
+    }
+    case 4: {
+        int addr;
+        func_00256038(self, &addr);
+        if (addr != 0) {
+            self->timer = 0;
+            self->state = 5;
+        }
+        break;
+    }
+    case 5:
+        for (i = 0; i < 1; i++) {
+            sCommObj_5A20* o = self->objs[i];
+            if (o != 0) {
+                o->vt[3].fn((char*)o + o->vt[3].delta);
+            }
+        }
+        break;
+    }
+    if (self->timer > 0) {
+        self->timer--;
+        if (self->timer <= 0) {
+            func_00255FE8(self, 0x74696D65);
+            self->timer = 0;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", cCommSystem_openDSockChannel);
