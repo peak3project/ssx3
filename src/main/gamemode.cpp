@@ -154,7 +154,69 @@ extern "C" void func_002380E8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_initGameMode);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern signed char D_00535C11[];
+extern "C" void cGameModeMan_restartHeat(void* self);
+
+struct sVE_initGameMode { short delta; short index; void (*fn)(void*); };
+
+struct sGameModeMan {
+    int f0;
+    int mode;      // 0x4
+    unsigned int type;  // 0x8
+    int net;       // 0xC
+    char pad[0x84 - 0x10];
+    int f84;       // 0x84
+};
+
+extern "C" void cGameModeMan_initGameMode(sGameModeMan* self, unsigned int type)
+{
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    char* gm = (char*)D_00536668[self->mode];
+    sVE_initGameMode* vt = *(sVE_initGameMode**)gm;
+    vt[3].fn(gm + vt[3].delta);
+    self->type = type;
+    int net = D_00535C11[0];
+    self->net = net;
+    if (net == 2) {
+        switch (type) {
+        case 0: self->mode = 8; break;
+        case 1: self->mode = 9; break;
+        case 3: self->mode = 9; break;
+        case 2: self->mode = 9; break;
+        case 4: self->mode = 5; break;
+        case 5: self->mode = 6; break;
+        default: self->mode = 8; break;
+        }
+    } else {
+        switch (type) {
+        case 1:
+        case 2:
+        case 3:
+            self->mode = 0;
+            break;
+        case 0: self->mode = 1; break;
+        case 12: self->mode = 2; break;
+        case 4: self->mode = 5; break;
+        case 6: self->mode = 4; break;
+        case 7: self->mode = 4; break;
+        case 8: self->mode = 4; break;
+        case 5: self->mode = 6; break;
+        case 9:
+        case 10:
+        case 11:
+            self->mode = 7;
+            break;
+        }
+    }
+    self->f84 = 1;
+    cGameModeMan_restartHeat(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_restartHeat);
