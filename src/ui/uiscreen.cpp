@@ -22,7 +22,52 @@ void cUIThread_deleteThread(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiscreen", func_0039C558);
+#ifdef SKIP_ASM
+extern "C" void func_00397948_C558(void*) __asm__("func_00397948");
+extern "C" void func_003A4868(void*);
+extern "C" void func_0039FC48(void* self, int flags);
+extern "C" void cMemMan_free__FPv(void* p);
+void operator_delete(int*);
+extern void* D_00494670[];
+extern void* D_004949E8[];
+extern void* D_00494C98[];
+extern void* D_00494CC0[];
+
+// Destructor of a UI screen: frees its buffers and tears down the embedded members.
+extern "C" void func_0039C558(void* p, int flags)
+{
+    char* self = (char*)p;
+    *(void***)(self + 0x8) = D_00494670;
+    if (*(void**)(self + 0x3C) != 0) {
+        cMemMan_free__FPv(*(void**)(self + 0x3C));
+    }
+    if (*(void**)(self + 0xC) != 0 && (*(int*)(self + 0x14) & 2)) {
+        cMemMan_free__FPv(*(void**)(self + 0xC));
+    }
+    *(void***)(self + 0xCC) = D_00494C98;
+    *(void***)(self + 0x48) = D_004949E8;
+    func_00397948_C558(self + 0xB4);
+    char* m40 = self + 0x40;
+    *(void***)(self + 0xC8) = D_00494CC0;
+    func_003A4868(self + 0xC0);
+    *(void***)(self + 0xBC) = D_00494CC0;
+    func_003A4868(self + 0xB4);
+    func_0039FC48(m40, 2);
+    *(void***)(self + 0x30) = D_00494C98;
+    func_00397948_C558(self + 0x18);
+    *(void***)(self + 0x2C) = D_00494CC0;
+    func_003A4868(self + 0x24);
+    *(void***)(self + 0x20) = D_00494CC0;
+    func_003A4868(self + 0x18);
+    *(void***)(self + 0x8) = D_00494CC0;
+    func_003A4868(self);
+    if (flags & 1) {
+        operator_delete((int*)self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uiscreen", cUIScreen_setData);
