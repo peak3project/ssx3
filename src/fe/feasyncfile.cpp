@@ -6047,7 +6047,69 @@ extern "C" void func_001AEC60(void* self, int on)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AF098);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0039A7A8(void* item, int enable);
+extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern int D_005308D0[];
+extern signed char D_00535C12_1AF098[] __asm__("D_00535C12");
+// PORT: a volatile view keeps the flag load ahead of the item load.
+extern volatile unsigned char D_004A4E8C_v __asm__("D_004A4E8C");
+
+struct sVE1AF098 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+struct sOpts1AF098 {
+    int f0;
+    int f4;     // 0x4
+    int f8;     // 0x8
+    int fC;     // 0xC
+};
+
+// Enables or greys out the race option items.
+extern "C" void func_001AF098(void* self, int all)
+{
+    char* s = (char*)self;
+    char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (all != 0) {
+        func_0039A7A8(*(void**)(s + 0x6E4), 1);
+        func_0039A7A8(*(void**)(s + 0x6E8), 1);
+        func_0039A7A8(*(void**)(s + 0x6EC), 1);
+        func_0039A7A8(*(void**)(s + 0x6E0), 0);
+        return;
+    }
+    if ((*(sOpts1AF098**)(s + 0x6D8))->f4 != 0) {
+        func_0039A7A8(*(void**)(s + 0x6E4), (D_005308D0[0] >> 8) & 1);
+    } else {
+        func_0039A7A8(*(void**)(s + 0x6E4), 1);
+    }
+    if ((*(sOpts1AF098**)(s + 0x6D8))->fC != 0) {
+        func_0039A7A8(*(void**)(s + 0x6E8), (D_005308D0[0] >> 6) & 1);
+    } else {
+        func_0039A7A8(*(void**)(s + 0x6E8), 1);
+    }
+    if ((*(sOpts1AF098**)(s + 0x6D8))->f8 != 0) {
+        int f = D_005308D0[0] >> 7;
+        func_0039A7A8(*(void**)(s + 0x6EC), f & 1);
+    } else {
+        func_0039A7A8(*(void**)(s + 0x6EC), 1);
+    }
+    if (D_00535C12_1AF098[0] != 0) {
+        cBENewRaceInterface_setNumberAI(race, 0);
+        sVE1AF098* vt = *(sVE1AF098**)(race + 0xC);
+        vt[1].fn(race + vt[1].delta);
+        func_0039A7A8(*(void**)(s + 0x6E0), 0);
+    } else {
+        func_0039A7A8(*(void**)(s + 0x6E0), D_004A4E8C_v);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AF208);
