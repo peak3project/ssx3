@@ -484,7 +484,86 @@ extern "C" void cFEStateBuyAttrib_updateBank(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatebuyattrib", func_001F5300);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBELibrary_getCharacterID(int);
+extern "C" void cFEStateBuyAttrib_updateTotalCost(void* self);
+extern "C" void cFEStateBuyAttrib_updateLevels(void* self);
+extern "C" void cFEStateBuyAttrib_updateCostPerLevel(void* self);
+extern "C" void cFEStateBuyAttrib_updateExperienceDisplay(void* self);
+extern "C" void cFEStateBuyAttrib_updateBank(void* self);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" int func_00150C20(void* iface, int a1, int charID, int attr);
+extern char D_0046F060[];
+extern const int D_004780B0[];
+
+struct sVE_5300 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sObj_5300 {
+    int pad[2];
+    sVE_5300* vt;
+};
+
+struct sVE0_5300 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sIface_5300 {
+    int pad[3];
+    sVE0_5300* vt;
+};
+
+struct sBuyAttrib_5300 {
+    char pad0[0x4C];
+    int max4C[7];           // 0x4C
+    int level[7];           // 0x68
+    int bought[7];          // 0x84
+    int cost;               // 0xA0
+    int bank;               // 0xA4
+    int busy;               // 0xA8
+    sObj_5300* confirm;     // 0xAC
+};
+
+// Commits the purchased attribute points: pays, records each point with the economy and resets the counters.
+extern "C" void func_001F5300(void* p)
+{
+    sBuyAttrib_5300* self = (sBuyAttrib_5300*)p;
+    self->bank -= self->cost;
+    self->cost = 0;
+    cFEStateBuyAttrib_updateTotalCost(self);
+    self->busy = 0;
+    cUIState_hideObjSafe(self, D_0046F060);
+    sObj_5300* o = self->confirm;
+    o->vt[7].fn((char*)o + o->vt[7].delta, 1);
+    sIface_5300* iface = (sIface_5300*)cBE_getInterface_Fv(cBE_getBE(), 0xB);
+    int* bought = self->bought;
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < self->bought[i]; j++) {
+            func_00150C20(iface, 0, cBELibrary_getCharacterID(0), D_004780B0[i]);
+        }
+    }
+    iface->vt[1].fn((char*)iface + iface->vt[1].delta);
+    int* max = self->max4C;
+    int* added = self->bought;
+    for (int i = 0; i < 7; i++) {
+        max[i] += added[i];
+        added[i] = 0;
+    }
+    cFEStateBuyAttrib_updateLevels(self);
+    cFEStateBuyAttrib_updateCostPerLevel(self);
+    cFEStateBuyAttrib_updateExperienceDisplay(self);
+    cFEStateBuyAttrib_updateBank(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatebuyattrib", func_001F54B0);
