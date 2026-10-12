@@ -6071,7 +6071,47 @@ extern "C" void func_001ADC30(void* self, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001ADDD0);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8500_DDD0(void* self, void* engine, void* owner) __asm__("func_001A8500");
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int cBENewRaceInterface_setGameMode_DDD0(void* iface, int mode) __asm__("cBENewRaceInterface_setGameMode");
+extern "C" void cBENewRaceInterface_setGameEvent_DDD0(void* iface, int ev) __asm__("cBENewRaceInterface_setGameEvent");
+extern int D_004A4E88;
+extern int D_004A11B8;
+extern int D_00535C08[];
+extern char D_00441268[];
+extern void* D_00468E38[];
+
+class cRace_DDD0 {
+public:
+    int pad[3];
+    virtual int reset();
+};
+
+// Derived state constructor: sets the vtable and defaults, then resets the new-race interface (mode 0, event 0).
+extern "C" void* func_001ADDD0(void* self, void* engine, void* owner)
+{
+    char* s = (char*)self;
+    func_001A8500_DDD0(self, engine, owner);
+    *(void***)(s + 0x8) = D_00468E38;
+    *(char**)(s + 0x6D8) = D_00441268;
+    *(int*)(s + 0xC) = 0x3F;
+    *(int*)(s + 0x6D0) = 0;
+    *(int*)(s + 0x6DC) = 0;
+    D_004A4E88 = 0;
+    cRace_DDD0* race = (cRace_DDD0*)cBE_getInterface_Fv(cBE_getBE(), 0);
+    D_004A11B8 = 1;
+    D_00535C08[0] = 0;
+    cBENewRaceInterface_setGameMode_DDD0(race, 0);
+    cBENewRaceInterface_setGameEvent_DDD0(race, 0);
+    race->reset();
+    *(int*)(s + 0x6D4) = 1;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001ADE88);
