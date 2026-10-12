@@ -66,7 +66,90 @@ extern "C" void func_003A36D0(cUIVector_36D0* self, unsigned short key, float v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uivector", func_003A3808);
+#ifdef SKIP_ASM
+//---
+struct sV3_3808 { float x, y, z; };
+struct sCol_3808 { float r, g, b, a; };
+struct sCount_3808 {
+    unsigned int flag : 1;
+    unsigned int pad1 : 1;
+    unsigned int mode : 15;
+    unsigned int count : 15;
+};
+struct sBits_3808 {
+    unsigned int lo : 13;
+    unsigned int layer : 6;
+    unsigned int hi : 13;
+};
+struct cUIVector_3808 {
+    char pad0[0x14];
+    sBits_3808 bits;    // 0x14
+    char pad18[0x4];
+    float r, g, b, a;   // 0x1C
+    char pad2C[0x44 - 0x2C];
+    float x;            // 0x44
+    float y;            // 0x48
+    char pad4C[0x4];
+    float sx;           // 0x50
+    float sy;           // 0x54
+    char pad58[0x60 - 0x58];
+    float w;            // 0x60
+    float h;            // 0x64
+    char pad68[0x74 - 0x68];
+    sCount_3808 cnt;    // 0x74
+    char pad78[0x4];
+    sCol_3808* cols;    // 0x7C
+    sV3_3808* verts;    // 0x80
+};
+struct sKey_3808 {
+    short key;
+    short value;
+};
+
+// Applies a list of (key, value) pairs: keys < 0x15 set base properties, higher keys address per-vertex data.
+extern "C" void func_003A3808(cUIVector_3808* self, unsigned int n, sKey_3808* keys)
+{
+    if (self->verts == 0) {
+        return;
+    }
+    for (unsigned int i = 0; i < n; i++, keys++) {
+        float v = (float)keys->value;
+        int key = keys->key;
+        if (key >= 0x15) {
+            key -= 0x15;
+            unsigned short idx = key / 9;
+            if (idx >= self->cnt.count) {
+                continue;
+            }
+            switch (key % 9) {
+            case 0: self->verts[idx].x = v; break;
+            case 1: self->verts[idx].y = v; break;
+            case 2: self->verts[idx].z = v; break;
+            case 5: self->cols[idx].r = v; break;
+            case 6: self->cols[idx].g = v; break;
+            case 7: self->cols[idx].b = v; break;
+            case 8: self->cols[idx].a = v; break;
+            }
+        } else {
+            switch (key) {
+            case 0: self->x = v; break;
+            case 1: self->y = v; break;
+            case 9: self->sx = v * 0.01f; break;
+            case 10: self->sy = v * 0.01f; break;
+            case 12: self->bits.layer = (int)v; break;
+            case 13: self->r = v * (1.0f / 255.0f); break;
+            case 14: self->g = v * (1.0f / 255.0f); break;
+            case 15: self->b = v * (1.0f / 255.0f); break;
+            case 16: self->a = v * (1.0f / 255.0f); break;
+            case 6: self->w = v; break;
+            case 7: self->h = v; break;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uivector", func_003A39F8);
