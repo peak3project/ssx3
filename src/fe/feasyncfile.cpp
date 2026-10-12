@@ -355,7 +355,34 @@ extern "C" void cFEAsyncManager_LoadDataFile(cFEAsyncManager* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A3DC8);
+#ifdef SKIP_ASM
+void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
+extern void* D_00467F28[];
+extern void* D_004A3E90_v __asm__("D_004A3E90");
+
+// Constructor for the memory-card screen: base init, vtable and empty-string fields.
+extern "C" void* func_001A3DC8(void* self, void* a1, void* a2)
+{
+    // An unused 16-byte local is needed to reproduce the 0x30-byte frame.
+    int unused[4];
+    func_001A8500_3(self, (int)a1, (int)a2);
+    void* empty = D_004A3E90_v;
+    *(void***)((char*)self + 0x8) = D_00467F28;
+    *(void**)((char*)self + 0x6D0) = empty;
+    *(void**)((char*)self + 0x6D4) = empty;
+    *(void**)((char*)self + 0x6E0) = empty;
+    *(int*)((char*)self + 0x6F8) = -1;
+    *(int*)((char*)self + 0xC) = 0x46;
+    *(int*)((char*)self + 0x6DC) = 0;
+    *(int*)((char*)self + 0x6E8) = 0;
+    *(int*)((char*)self + 0x6EC) = 0;
+    *(int*)((char*)self + 0x6F0) = 0;
+    *(int*)((char*)self + 0x6F4) = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A3E30);
@@ -993,7 +1020,26 @@ extern "C" void func_001A4E28(void* self, void* msg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A4FB0);
+#ifdef SKIP_ASM
+extern "C" void func_001A4E28(void* self, void* msg);
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+
+// While the popup is shown, routes its 0x807 result to func_001A4E28; otherwise to the base handler.
+extern "C" void func_001A4FB0(void* self, int a1, int a2)
+{
+    if (*(int*)((char*)self + 0x1C) & 6) {
+        if (*(int*)(*(char**)((char*)self + 0x6A0) + 0x18) == 0x807) {
+            func_001A4E28(self, (void*)a2);
+        } else {
+            func_001A8E40_3(self, a1, a2);
+        }
+    } else {
+        func_001A8E40_3(self, a1, a2);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A5010);
@@ -6310,7 +6356,7 @@ void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001AFE08(void* self, int a1, int a2, const char* name)
 {
-    func_001A8500_3(self, a1, a2);
+    func_001A8500_3(self, (int)a1, (int)a2);
     *(void***)((char*)self + 0x8) = D_00468D20;
     cBXString_cBXString2((char*)self + 0x6D0, name);
     *(int*)((char*)self + 0x6D4) = 0;
