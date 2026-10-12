@@ -1448,7 +1448,32 @@ extern "C" void func_0028F140(void* self, int mode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028F200);
+#ifdef SKIP_ASM
+extern "C" int func_002B49E0(void* stream);
+extern "C" int func_0028D960(void* self);
+
+// PORT: 64-bit long sound key
+extern "C" void func_0028F200(void* self)
+{
+    char* s = (char*)self;
+    void* mon = s + 0x118;
+    *(int*)(s + 0x6294) = 0;
+    *(int*)(s + 0x6298) = 0;
+    if (*(int*)(s + 0x530) == 0 || func_002B49E0(mon) == 0xC9) {
+        if (func_0028D960(self) != 0) {
+            if (func_002B49E0(mon) == 0xC9) {
+                *(int*)(s + 0x508) = *(int*)(s + 0x62AC);
+            }
+            func_002ADCA0(**(char***)(s + 0x118) + 0x1D8, 0xA, D_004A3648->v, 0, 3, 1, 0, 0);
+        }
+        *(int*)(s + 0x6294) = 1;
+    } else {
+        *(int*)(s + 0x6298) = 1;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028F2C0);

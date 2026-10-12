@@ -433,7 +433,6 @@ extern "C" void func_002910E0(void* vself)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002913D8);
 #ifdef SKIP_ASM
-
 struct sVE_13D8 {
     short delta;
     short index;
