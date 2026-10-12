@@ -69,7 +69,6 @@ extern "C" void func_003A36D0(cUIVector_36D0* self, unsigned short key, float v)
 //100%
 INCLUDE_ASM("ui/uivector", func_003A3808);
 #ifdef SKIP_ASM
-//---
 struct sV3_3808 { float x, y, z; };
 struct sCol_3808 { float r, g, b, a; };
 struct sCount_3808 {

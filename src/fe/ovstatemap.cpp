@@ -321,16 +321,6 @@ extern "C" void func_00208BB8(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208C28);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void cOVState_MAP_setupPopup(void* self);
-extern void* D_004A28A8;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_0020A088(void* self);
-extern "C" void func_00208BB8(void* self);
-extern char D_004706C8[];
-//---
 extern "C" void* func_0028B180();
 extern "C" void func_0028FAE0(void* self);
 extern "C" void func_00231250(void* self, int a, int b, int refresh);

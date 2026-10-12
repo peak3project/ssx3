@@ -2242,15 +2242,6 @@ INCLUDE_ASM("fe/ovstatepause", func_001FFD08);
 //100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_REWARDS_onGainTransition);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_00535BC8[];
-extern void* D_004A28A8;
-extern "C" void func_003A0E90(void* obj, unsigned short* s);
-extern "C" int func_00146E98(void* iface, int idx);
-//---
 extern "C" int func_001FD190(int id);
 extern "C" unsigned short* func_002C2508(unsigned short* dst, unsigned short* src);
 extern "C" void func_002C2540(unsigned short* dst, const char* src);

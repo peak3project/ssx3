@@ -373,13 +373,6 @@ extern "C" void func_00194168(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_001941B0);
 #ifdef SKIP_ASM
-struct cUIScreen;
-int GetHashValue32(char* str);
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_00193DE0(void* self, int player, int which, int value);
-extern "C" void func_00194080(void* self);
-//---
 // PORT: several callees are declared with other parameter types elsewhere; bind local views by asm label
 extern "C" void cUIMenu_setSelectedByIndex_41B0(void* menu, int idx) __asm__("cUIMenu_setSelectedByIndex");
 extern "C" int func_0039A768_41B0(void* item, int key, unsigned char* out) __asm__("func_0039A768");

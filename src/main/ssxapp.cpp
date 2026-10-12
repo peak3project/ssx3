@@ -1258,7 +1258,6 @@ INCLUDE_ASM("main/ssxapp", func_0022A128);
 //100%
 INCLUDE_ASM("main/ssxapp", func_0022A270);
 #ifdef SKIP_ASM
-//---
 struct sVisObj_A270 {
     char pad0[0x50];
     float sphere[4];  // 0x50

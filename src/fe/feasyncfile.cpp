@@ -5473,28 +5473,7 @@ extern "C" void func_001AD4F0(void* self, void* menu)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AD5E8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
-extern "C" void* func_001A9C50(void* self);
-extern "C" void func_001A9BC0(void* self, void* popup);
-void func_001C57C0(void* self, int a1, int a2);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_00260F80();
-extern "C" int func_00261460(void* self);
-extern "C" void func_002613C8(void* self);
-extern "C" void func_0025B800(void* self);
-extern "C" void func_00261408(void* self);
-extern "C" void func_001A9150(void* self, int a1, int a2, int a3, int a4, int a5, int a6);
-extern "C" void* func_001B6ED0(void* mem, int a1, void* owner, int a3, int a4, int a5);
-extern "C" void func_001CE3C8(void* self, int i, int v, int mode);
-extern void* D_004A3328;
-extern void* D_004A3028;
 extern char D_00462C88[];
-extern char D_004A1408[];
-extern char D_00462D10[];
-//---
 extern "C" void* func_001B88F0_D5E8(void* mem, int a1, int a2) __asm__("func_001B88F0");
 extern "C" void func_001AD208_D5E8(void* self, const char* name) __asm__("func_001AD208");
 extern "C" void func_001C5878_D5E8(void* self, int a1, int a2, int a3) __asm__("func_001C5878");
@@ -16925,22 +16904,6 @@ extern "C" void func_001BFD98(void* self, void* popup)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BFE70);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
-extern "C" void* func_001A9C50(void* self);
-extern "C" void func_001A9BC0(void* self, void* popup);
-void func_001C57C0(void* self, int a1, int a2);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_001A9B58(void* self);
-extern int D_004A4E88;
-extern char D_00461618[];
-extern char D_0045DCC8[];
-extern char D_0045FCD8[];
-extern char D_00462C88[];
-extern char D_00461B30[];
-//---
 extern "C" void* func_001C0F40_FE70(void* mem, int a1, void* owner) __asm__("func_001C0F40");
 extern "C" void* func_001BCB58_FE70(void* mem, int a1) __asm__("func_001BCB58");
 extern "C" void* func_001C2D18_FE70(void* mem, int a1) __asm__("func_001C2D18");
@@ -18537,26 +18500,6 @@ extern "C" void func_001C2578(void* self, void* vtext, char* str)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C2740);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
-extern "C" void* func_001A9C50(void* self);
-extern "C" void func_001A9BC0(void* self, void* popup);
-void func_001C57C0(void* self, int a1, int a2);
-extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_001A9B58(void* self);
-extern "C" void func_001A9150(void* self, int a1, int a2, int a3, int a4, int a5, int a6);
-extern "C" void func_001CE3C8(void* self, int i, int v, int mode);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBEOptionInterface_getDefaultQuickKeyMessageHashValue(void* self, int i);
-extern "C" char* func_0014F6A8(void* self, int i);
-extern "C" void func_003DCB20(char* dst, void* src);
-extern void* D_004A28A8;
-extern char D_0045DCC8[];
-extern char D_0045FCD8[];
-extern const char D_004611A8[];
-//---
 extern "C" void* func_001C1C50_2740(void* mem, int a1) __asm__("func_001C1C50");
 extern "C" void func_001C2A18(void* self);
 extern char D_00465BC0[];

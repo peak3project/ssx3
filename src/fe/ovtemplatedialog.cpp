@@ -328,18 +328,6 @@ extern "C" void func_0020CC60(void)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CCF8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0020AB50(int state);
-extern "C" int func_0020A8B0(int a0, int a1);
-int func_00158F30(void* self);
-extern "C" void* cUIStateStack_getCurrentState(void* stack);
-extern void* D_004A28A8;
-extern char* D_004A2EEC;
-extern int D_00534B30[];
-extern int D_004A26FC;
-extern int D_004A2700;
-//---
 void cReplay_stopAutoReplay(void* self);
 extern "C" void func_00231250(void* self, int a, int b, int refresh);
 extern "C" void func_00257610(void* self, int a1);
@@ -458,16 +446,6 @@ extern "C" void func_0020CCF8(void)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CFD0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIStateStack_getCurrentState(void* stack);
-extern "C" void func_0020CCF8(void);
-void cReplay_stopAutoReplay(void* self);
-extern "C" void func_00231250(void* self, int a, int b, int refresh);
-extern void* D_004A28A8;
-extern int D_00534B30[];
-extern int D_004A26FC;
-//---
 extern "C" void func_0020D190(void);
 extern "C" void func_0039F840(void* stack);
 
@@ -664,14 +642,6 @@ extern "C" void func_0020D318(void* self, int a1, int key)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", cOVTemplate_Dialog_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* t, int id);
-extern "C" void func_0020A380(void* self);
-//---
 extern char D_00471AF8[];
 extern char D_004A23E0[];
 extern char D_004A23E8[];

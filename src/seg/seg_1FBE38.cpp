@@ -4106,7 +4106,6 @@ extern "C" V3_2048 func_00302048(int n, Ent_2048 *e) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00302210);
 #ifdef SKIP_ASM
-//---
 extern "C" void* func_003E6574_2210(void*, void*, int) __asm__("func_003E6574");
 struct Flag_2210 { char c; Flag_2210() {} Flag_2210(const Flag_2210& o) : c(o.c) {} };
 struct Defaults_2210 { int v[3]; Flag_2210 flag; };
