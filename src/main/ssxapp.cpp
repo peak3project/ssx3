@@ -1117,7 +1117,90 @@ extern "C" void func_002297D8(void* self, int val)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_00229820);
+#ifdef SKIP_ASM
+struct sHTable_229820 {
+    char pad[0x1C];
+    unsigned int* entries;      // 0x1C
+};
+
+struct sHMgr_229820 {
+    char pad[0x8];
+    sHTable_229820** tables;    // 0x8
+};
+
+extern "C" sHMgr_229820** func_002D1BD8(void);
+
+struct sPart_229820 {
+    char pad[0x1C];
+    int count;                  // 0x1C
+    short** bones;              // 0x20
+};
+
+struct sPartRef_229820 {
+    int f0;
+    sPart_229820* part;         // 0x4
+    int f8, fC;
+};
+
+struct sSkel_229820 {
+    int f0;
+    int count;                  // 0x4
+    sPartRef_229820* parts;     // 0x8
+};
+
+struct sModel_229820 {
+    char pad[0x80];
+    sSkel_229820* skel;         // 0x80
+    char pad84[0x94 - 0x84];
+    struct {
+        int f0;
+        void* bones[1];
+    }* pose;                    // 0x94
+};
+
+extern char D_00536690_229820[] __asm__("D_00536690");
+
+static inline sModel_229820* refToPtr_229820(unsigned int p)
+{
+    return (sModel_229820*)(p << 2);
+}
+
+static inline sModel_229820* lookup_229820(sHTable_229820* t, unsigned int idx)
+{
+    unsigned int p = t->entries[idx] >> 8;
+    if (p == 0) {
+        return 0;
+    }
+    return refToPtr_229820(p);
+}
+
+static inline sModel_229820* HandleToModel_229820(unsigned int h)
+{
+    sHTable_229820* t = (*func_002D1BD8())->tables[h & 0xFF];
+    if (t == 0) {
+        return 0;
+    }
+    return lookup_229820(t, h >> 8);
+}
+
+// Points bone b of part a of the model behind handle at the shared crowd pose.
+extern "C" void func_00229820(void* self, unsigned int handle, int a, int b)
+{
+    sModel_229820* m = HandleToModel_229820(handle);
+    if (m != 0) {
+        sSkel_229820* s = m->skel;
+        void** dst = m->pose->bones;
+        sPartRef_229820* parts = s->parts;
+        if (a < s->count) {
+            sPart_229820* p = parts[a].part;
+            if (b < p->count)
+                dst[*p->bones[b]] = D_00536690_229820;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("main/ssxapp", func_00229910);
 
