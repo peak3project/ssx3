@@ -84,7 +84,24 @@ extern "C" void func_003513D0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/instanceman", func_00351508);
+#ifdef SKIP_ASM
+// PORT: the original reads *a before checking a for null.
+extern "C" float func_00351508(void* self)
+{
+    float r = 0.0f;
+    char** a = *(char***)(*(char**)((char*)self + 0x40) + 0x20);
+    char* b = *a;
+    if (a != 0 && b != 0) {
+        char* c = *(char**)(b + 0x4);
+        if (c != 0) {
+            r = *(float*)(c + 0x10);
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/instanceman", func_00351538);
