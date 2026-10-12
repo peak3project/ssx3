@@ -119,7 +119,32 @@ extern "C" void func_0028FEA0(char* self, int flags)
 
 INCLUDE_ASM("sound/soundsys", func_002906B8);
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00290B58);
+#ifdef SKIP_ASM
+struct sCurve_290B58 {
+    float key[5];       // 0x0
+    float value[5];     // 0x14
+};
+
+// Piecewise-linear lookup in a 5-point curve; 0 above the last key gap.
+// Named _impl: a later block declares func_00290B58 with its own curve struct.
+extern "C" float func_00290B58_impl(sCurve_290B58* c, float x) __asm__("func_00290B58");
+extern "C" float func_00290B58_impl(sCurve_290B58* c, float x)
+{
+    for (int i = 1; i < 5; i++) {
+        if (c->key[i - 1] <= x && x < c->key[i]) {
+            float t = (x - c->key[i - 1]) * (c->value[i] - c->value[i - 1]);
+            return c->value[i - 1] + t / (c->key[i] - c->key[i - 1]);
+        }
+    }
+    if (x < c->key[0])
+        return c->value[0];
+    if (c->key[4] <= x)
+        return c->value[4];
+    return 0.0f;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00290C10);
