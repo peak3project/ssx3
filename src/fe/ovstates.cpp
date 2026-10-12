@@ -462,7 +462,62 @@ extern "C" int func_001952E8(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstates", func_00195328);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" int func_0039FFA0(void* self, int x);
+extern char D_004A17E0[];
+extern char D_004600A0[];
+extern char D_004A1458[];
+extern char D_004A1460[];
+
+struct sVEi_195328 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+struct sVEv_195328 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+static inline void Show195328(void* self, char* name)
+{
+    char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+    if (o != 0) {
+        sVEv_195328* vt = *(sVEv_195328**)(o + 8);
+        vt[9].fn(o + vt[9].delta, 1);
+    }
+}
+
+// On confirm (msg 0x16) commits the selected entry, then re-shows the four main-menu buttons.
+extern "C" void func_00195328(void* self, char* obj, int msg)
+{
+    if (msg == 0x15) {
+        return;
+    }
+    if (msg != 0x16) {
+        return;
+    }
+    sVEi_195328* ovt = *(sVEi_195328**)(obj + 8);
+    if (ovt[23].fn(obj + ovt[23].delta, 0) != 0) {
+        *(int*)((char*)self + 0x48) = 1;
+        int v = *(signed char*)((char*)self + 0x50);
+        *(char*)((char*)self + 0x14) = v;
+        func_0039FFA0(*(void**)((char*)self + 0x4C), 2);
+        sVEv_195328* svt = *(sVEv_195328**)((char*)self + 8);
+        svt[19].fn((char*)self + svt[19].delta, *(void**)((char*)self + 0x4C), 5);
+    }
+    Show195328(self, D_004A17E0);
+    Show195328(self, D_004600A0);
+    Show195328(self, D_004A1458);
+    Show195328(self, D_004A1460);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstates", func_00195498);
