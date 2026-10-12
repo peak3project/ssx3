@@ -871,7 +871,38 @@ extern "C" void func_002AE1F0(int* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002AE230);
+#ifdef SKIP_ASM
+struct sBankSlot_2AE230 {
+    int id;         // 0x0
+    int pad4;
+    int bank;       // 0x8
+    char pad[0x28 - 0xC];
+};
+// D_004D3EF8's own type is defined later in the unit; bind a same-layout view.
+extern sBankSlot_2AE230 D_004D3EF8_2AE230[24] __asm__("D_004D3EF8");
+
+// Finds a slot: bank < 0 asks for a free slot, otherwise the slot holding bank (and id, unless id < 0).
+extern "C" int func_002AE230(int bank, int id)
+{
+    sBankSlot_2AE230* s = D_004D3EF8_2AE230;
+    for (int i = 0; i < 24; i++, s++) {
+        if (bank < 0) {
+            if (s->bank < 0) {
+                // the do/while(0) wrapper (a compiled-out macro block) is needed to match register allocation
+                do {
+                    return i;
+                } while (0);
+            }
+        } else if (s->bank == bank) {
+            if (id < 0 || s->id == id)
+                return i;
+        }
+    }
+    return -8;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE298);
