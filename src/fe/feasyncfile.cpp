@@ -645,7 +645,139 @@ extern "C" int func_001A4300(void* self, int a1, int a2, int a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A4330);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void func_001A8918(void* self, int a1, int msg);
+extern "C" void func_001A9150(void* self, int a1, int a2, int a3, int a4, int a5, int a6);
+extern "C" void func_001CE3C8(void* self, int i, int v, int mode);
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" void* cUIScreen_getObjectByHashName_4330(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern char D_004A1408[];
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void* func_002625C8_4330(void* session, int idx) __asm__("func_002625C8");
+extern "C" void func_001A9890_4330(void* self, void* entry) __asm__("func_001A9890");
+extern "C" void* func_001A98B0_4330(void* self) __asm__("func_001A98B0__FPv");
+extern "C" void func_001AB370_4330(void* self, void* a1, int a2) __asm__("func_001AB370");
+extern "C" void func_001A4750_4330(void* self) __asm__("func_001A4750");
+extern "C" void func_001A6070_4330(void* self, int idx) __asm__("func_001A6070");
+extern "C" void func_001A5FB8_4330(void* self, int idx) __asm__("func_001A5FB8");
+extern "C" void func_001A5128_4330(void* self, int idx, int n) __asm__("func_001A5128");
+extern "C" void func_001A66A8_4330(void* self, int idx, int on) __asm__("func_001A66A8");
+extern char D_00461540[];
+extern char D_004615A0[];
+extern char D_004615B0[];
+
+struct cVec_4330 {
+    float x, y, z, w;
+    cVec_4330(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
+};
+
+class cObjV_4330 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
+    virtual void set(const cVec_4330& v);
+};
+
+struct sVE_4330 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+struct sObj_4330 {
+    int pad[2];
+    sVE_4330* vt;
+};
+
+// Message handler for the slot-list screen: picks a slot by its button hash, or highlights it.
+extern "C" void func_001A4330(char* self, sObj_4330* w, int msg)
+{
+    char buf[0x20];
+    switch (msg) {
+    case 6: {
+        sObj_4330* o = *(sObj_4330**)(self + 0x20);
+        o->vt[17].fn((char*)o + o->vt[17].delta, self, 0x14);
+        break;
+    }
+    case 8:
+        func_001A9150(self, 0, GetHashValue32(D_00461540), (int)D_004A1408, 0, 1, 0x10);
+        *(int*)(*(char**)(self + 0x69C) + 0x438) = 1;
+        *(int*)(*(char**)(self + 0x69C) + 0x58) = 1;
+        func_001CE3C8(*(void**)(self + 0x69C), 0x4B, 1, 2);
+        func_001CE3C8(*(void**)(self + 0x69C), 0x35, 0, 2);
+        break;
+    case 5: {
+        int idx = *(int*)((char*)w + 0x18);
+        if (idx < 0) {
+            break;
+        }
+        if (D_004A3328 == 0) {
+            func_00260F80();
+        }
+        if (func_00261460(D_004A3328) == 0) {
+            func_002613C8(D_004A3328);
+        }
+        if (D_004A3328 == 0) {
+            func_0025B800(D_004A3028);
+        }
+        void* e = func_002625C8_4330(D_004A3328, idx);
+        if (e == 0) {
+            break;
+        }
+        func_001A9890_4330(self, e);
+        func_001AB370_4330(self, func_001A98B0_4330(self), 0);
+        break;
+    }
+    case 13:
+        func_001A4750_4330(self);
+        break;
+    case 1:
+        for (int i = 0; i < 15; i++) {
+            sprintf(buf, D_004615A0, i);
+            int id = *(int*)((char*)w + 0x38);
+            if (id == GetHashValue32(buf)) {
+                func_001A6070_4330(self, i + *(int*)(self + 0x6F4));
+                func_001A5FB8_4330(self, i);
+                func_001A5128_4330(self, i + *(int*)(self + 0x6F4), *(int**)(self + 0x6EC) - *(int**)(self + 0x6E8));
+                func_001A66A8_4330(self, i, 1);
+                break;
+            }
+        }
+        func_001A8918(self, (int)w, msg);
+        break;
+    case 2: {
+        for (int i = 0; i < 15; i++) {
+            sprintf(buf, D_004615A0, i);
+            int id = *(int*)((char*)w + 0x38);
+            if (id == GetHashValue32(buf)) {
+                sprintf(buf, D_004615B0, i);
+                sObj_4330* o = (sObj_4330*)cUIScreen_getObjectByHashName_4330(*(void**)(self + 0x40), GetHashValue32(buf));
+                if (o != 0) {
+                    o->vt[9].fn((char*)o + o->vt[9].delta, 0);
+                }
+                ((cObjV_4330*)w)->set(cVec_4330(1.0f, 0.0f, 0.0f, 0.0f));
+                func_001A66A8_4330(self, i, 0);
+                break;
+            }
+        }
+        func_001A8918(self, (int)w, msg);
+        break;
+    }
+    default:
+        func_001A8918(self, (int)w, msg);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A4670);
