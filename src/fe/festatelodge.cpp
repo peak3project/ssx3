@@ -183,7 +183,23 @@ extern "C" void func_001F3A38(char* self, char* w, int event)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatelodge", func_001F3CC8);
+#ifdef SKIP_ASM
+// Key filter: keys 7, 8 and 9 return 0x100, every other key 0x101.
+extern "C" int func_001F3CC8(void* self, int a1, unsigned int key)
+{
+    int r = 0x101;
+    if (key < 10) {
+        if (key < 7) {
+            r = 0x101;
+        } else {
+            return 0x100;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F3CF0);
