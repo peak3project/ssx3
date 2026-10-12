@@ -1181,7 +1181,49 @@ extern "C" void func_0010E910(char* self, int a1, int a2, int a3, char* evt, flo
 
 INCLUDE_ASM("ai/computer", func_0010EB30);
 
+//100%
 INCLUDE_ASM("ai/computer", func_0010F1C0);
+#ifdef SKIP_ASM
+struct sVE_0010F1C0 { short delta; short index; int (*fn)(void*); };
+extern "C" void func_0010E098(void*, int, float);
+extern "C" void func_0010E8B8_i(void* self, int v) __asm__("func_0010E8B8");
+extern "C" void func_00116120(void* rider, int a, int b);
+
+static inline void computerV_0010F1C0(char* self, int i)
+{
+    char* obj = self + 0x6C0;
+    sVE_0010F1C0* vt = *(sVE_0010F1C0**)obj;
+    vt[i].fn(obj + vt[i].delta);
+}
+
+extern "C" void func_0010F1C0(char* self, int kind, float amt)
+{
+    switch (kind) {
+    case 0:
+        break;
+    case 1:
+        computerV_0010F1C0(self, 13);
+        break;
+    case 2:
+        computerV_0010F1C0(self, 14);
+        break;
+    case 3:
+        computerV_0010F1C0(self, 15);
+        break;
+    case 4:
+        func_0010E098(self, 8, amt);
+        break;
+    case 6:
+        func_0010E8B8_i(self, (int)amt);
+        break;
+    case 5:
+        func_00116120(self, 0, 4);
+        break;
+    case 7:
+        break;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/computer", func_0010F280);
