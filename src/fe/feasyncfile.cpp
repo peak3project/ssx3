@@ -2092,7 +2092,57 @@ extern "C" void func_001A71B0(void* self, unsigned int index, const char* name, 
 
 INCLUDE_ASM("fe/feasyncfile", func_001A7390);
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A77A0);
+#ifdef SKIP_ASM
+void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
+extern "C" void* cBXString_cBXString2(void* self, const char* str);
+extern char D_00467E18[];
+
+struct sColor1A77A0 {
+    float r, g, b, a;
+};
+
+struct sScreen1A77A0 {
+    char pad0[0x8];
+    void* vt;               // 0x8
+    int id;                 // 0xC
+    char pad10[0x6D0 - 0x10];
+    char name[4];           // 0x6D0
+    int f6D4;               // 0x6D4
+    int f6D8;
+    int f6DC;               // 0x6DC
+    int f6E0;               // 0x6E0
+    int f6E4;               // 0x6E4
+    int f6E8;               // 0x6E8
+    sColor1A77A0 color;     // 0x6EC
+};
+
+// PORT: the unit declares this as (void*, int, void*, int); the body uses typed arguments.
+extern "C" void* func_001A77A0_impl(sScreen1A77A0* self, int a1, int a2, const char* name) __asm__("func_001A77A0");
+
+extern "C" void* func_001A77A0_impl(sScreen1A77A0* self, int a1, int a2, const char* name)
+{
+    // An unused 16-byte local is needed to reproduce the 0x50-byte frame.
+    int unused[4];
+    func_001A8500_3(self, a1, a2);
+    self->vt = D_00467E18;
+    cBXString_cBXString2(self->name, name);
+    self->f6E8 = 1;
+    self->id = 0x49;
+    self->f6D4 = 0;
+    self->f6DC = 0;
+    self->f6E0 = 0;
+    self->f6E4 = 0;
+    sColor1A77A0 c;
+    c.r = 1.0f;
+    c.g = 1.0f;
+    c.b = 1.0f;
+    c.a = 1.0f;
+    self->color = c;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A7848);
