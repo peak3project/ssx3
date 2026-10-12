@@ -11760,7 +11760,56 @@ extern "C" void func_001B7CB8(void* self)
 
 INCLUDE_ASM("fe/feasyncfile", func_001B7E40);
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B8238);
+#ifdef SKIP_ASM
+// PORT: func_002C2718/func_002C26D0 are varargs formatters; the unit declares fixed-arg views
+extern "C" void func_002C2718_1B8238(char* buf, const char* fmt, ...) __asm__("func_002C2718");
+extern "C" void func_002C26D0_1B8238(void* dst, int fmt, ...) __asm__("func_002C26D0");
+extern char D_004A12C0[];
+struct sVEntry_001B8238 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+static inline int Loc_001B8238(char* key)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry_001B8238* vt = *(sVEntry_001B8238**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
+}
+extern char D_004642E0[];
+extern char D_00463F20[];
+extern char D_00464588[];
+extern char D_004644D8[];
+
+extern "C" void func_001B8238(char* self)
+{
+    char buf[32];
+    func_002C2718_1B8238(buf, D_004A12C0, 1);
+    switch (*(int*)(self + 0x6DC)) {
+    case 3:
+    case 23: {
+        int name = Loc_001B8238(D_004642E0);
+        int str = Loc_001B8238(D_00463F20);
+        func_002C26D0_1B8238(self + 0x702, str, 1, name);
+        break;
+    }
+    case 9:
+    case 15:
+    case 17: {
+        int str = Loc_001B8238(D_00464588);
+        func_002C26D0_1B8238(self + 0x702, str, 1, 0x11);
+        break;
+    }
+    case 28: {
+        int str = Loc_001B8238(D_004644D8);
+        func_002C26D0_1B8238(self + 0x702, str, buf);
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B83C0);
