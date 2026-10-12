@@ -370,7 +370,103 @@ extern "C" void func_00194168(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatebigradio", func_001941B0);
+#ifdef SKIP_ASM
+struct cUIScreen;
+int GetHashValue32(char* str);
+unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void func_00193DE0(void* self, int player, int which, int value);
+extern "C" void func_00194080(void* self);
+//---
+// PORT: several callees are declared with other parameter types elsewhere; bind local views by asm label
+extern "C" void cUIMenu_setSelectedByIndex_41B0(void* menu, int idx) __asm__("cUIMenu_setSelectedByIndex");
+extern "C" int func_0039A768_41B0(void* item, int key, unsigned char* out) __asm__("func_0039A768");
+extern "C" void func_0039A7A8_41B0(void* item, int v) __asm__("func_0039A7A8");
+extern "C" int func_00192918_41B0(void* panel, void* item) __asm__("func_00192918");
+extern "C" int func_0039A738_41B0(void* item) __asm__("func_0039A738");
+extern "C" void func_00192740_41B0(void* panel, int on) __asm__("func_00192740");
+extern "C" void func_00192970_41B0(void* panel, void* screen) __asm__("func_00192970");
+extern "C" void func_001AB288_41B0(void* self) __asm__("func_001AB288");
+extern "C" int func_0025DA90_41B0(void* self) __asm__("func_0025DA90");
+extern "C" void* func_001B1F88_41B0(void* mem, int a1) __asm__("func_001B1F88");
+extern "C" void* func_001BFBB8_41B0(void* mem, int a1) __asm__("func_001BFBB8");
+extern "C" void func_001A8A40_41B0(void* self, void* obj) __asm__("func_001A8A40");
+extern "C" int func_001A8E40_41B0(void* self, int msg, void* data) __asm__("func_001A8E40");
+extern "C" void* cMemMan_alloc_41B0(int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern void* D_004A3028;
+extern char D_0045FF10[];
+extern char D_0045FF28[];
+extern char D_004A1788[];
+extern char D_004A17B0[];
+
+struct sRadioPanel_41B0 {
+    void* menu;          // 0x0
+    char pad4[4];
+    void* items[11];     // 0x8
+};
+
+struct sRadioMsg_41B0 {
+    char pad0[8];
+    int panel;           // 0x8
+    int idx;             // 0xC
+    int key;             // 0x10
+};
+
+extern "C" int func_001941B0(char* self, int msg, sRadioMsg_41B0* data)
+{
+    switch (msg) {
+    case 251:
+        cUIMenu_setSelectedByIndex_41B0(((sRadioPanel_41B0*)(self + 0x6D0))[data->panel].menu, *(unsigned char*)&data->idx);
+        break;
+    case 252: {
+        unsigned char out;
+        void* item = ((sRadioPanel_41B0*)(self + 0x6D0))[data->panel].items[data->idx];
+        if (!func_0039A768_41B0(item, data->key, &out)) {
+            break;
+        }
+        func_0039A7A8_41B0(item, out);
+        int slot = func_00192918_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], item);
+        int which = (*(signed char**)(self + 0x738))[slot];
+        if (which == -1) {
+            break;
+        }
+        int panel = data->panel;
+        func_00193DE0(self, panel, which, func_0039A738_41B0(item));
+        break;
+    }
+    case 253:
+        func_00192740_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], 1);
+        func_00194080(self);
+        break;
+    case 238: case 241: case 248: case 250: case 274: case 275:
+        func_001AB288_41B0(self);
+        break;
+    case 268:
+        if (func_0025DA90_41B0(D_004A3028)) {
+            func_001A8A40_41B0(self, func_001B1F88_41B0(cMemMan_alloc_41B0(0x73C, D_0045FF10, 0, 0), *(int*)(self + 0x10)));
+        } else {
+            func_001A8A40_41B0(self, func_001BFBB8_41B0(cMemMan_alloc_41B0(0x6D0, D_0045FF28, 0, 0), *(int*)(self + 0x10)));
+        }
+        break;
+    case 254: {
+        func_00192740_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], 0);
+        func_00192970_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], *(void**)(self + 0x40));
+        cUIMenu_setSelectedByIndex_41B0(((sRadioPanel_41B0*)(self + 0x6D0))[data->panel].menu, 0);
+        int frame = data->panel == 0 ? cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_004A1788)) : cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_004A17B0));
+        if (frame == 0xFFFF) {
+            break;
+        }
+        cUIScreen_playFrame(*(void**)(self + 0x40), frame, 1);
+        break;
+    }
+    default:
+        return func_001A8E40_41B0(self, msg, data);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00194440);
