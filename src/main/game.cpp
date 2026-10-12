@@ -451,7 +451,49 @@ extern "C" void func_0022D3D8(void* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/game", func_0022D478);
+#ifdef SKIP_ASM
+// PORT: the unit declares func_0022E298 with one arg; this caller passes the index too.
+extern "C" void func_0022E298_2(void* self, int idx) __asm__("func_0022E298");
+extern "C" void func_003A99D8(void* self, int a1);
+
+// Advances a game-entry state (finishing transitions), notifying the world view where needed.
+extern "C" void func_0022D478(void* self, int idx)
+{
+    if (D_00442168[idx].field_0x4 >= 0) {
+        int changed = 0;
+        switch (D_00442168[idx].field_0x8) {
+        case 0:
+            D_00442168[idx].field_0x8 = 4;
+            changed = 1;
+            break;
+        case 7:
+            D_00442168[idx].field_0x8 = 4;
+            changed = 1;
+            break;
+        case 3:
+            D_00442168[idx].field_0x8 = 4;
+            changed = 1;
+            break;
+        case 6:
+            D_00442168[idx].field_0x8 = 8;
+            changed = 1;
+            break;
+        case 1: case 5:
+            D_00442168[idx].field_0x8 = 2;
+            func_003A99D8(**(char***)(*(char**)((char*)self + 0x1B0) + 0x10) + 0x10, D_00442168[idx].field_0x4);
+            changed = 1;
+            break;
+        case 2: case 4: case 8:
+            break;
+        }
+        if (changed) {
+            func_0022E298_2(self, idx);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/game", func_0022D598);
