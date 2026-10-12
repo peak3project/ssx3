@@ -3568,7 +3568,58 @@ extern "C" void func_001A9710(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A97B8);
+#ifdef SKIP_ASM
+extern "C" void func_001A94E0(void* self, int a1, int a2);
+extern "C" void func_001A9438(void* self, int a1, int a2);
+extern "C" void func_001A9268(void* self, int a1, int a2);
+extern "C" void func_001A92D8(void* self, int a1, unsigned int kind);
+extern "C" void func_001A9578(void* self, int a1, int a2);
+// PORT: func_001A9638 takes a 4th arg; this caller leaves $a3 untouched.
+void func_001A9638_3(void* self, int a1, int a2) __asm__("func_001A9638");
+extern "C" void func_001A9668(void* self, int a1, int a2);
+extern "C" void func_001A9710(void* self, int a1, int a2);
+void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
+
+// PORT: the unit declares this as returning int with a pointer a1; the body returns nothing.
+extern "C" void func_001A97B8_impl(void* self, int popup, int a2) __asm__("func_001A97B8");
+
+// Routes a closed popup to the handler for its message id.
+extern "C" void func_001A97B8_impl(void* self, int popup, int a2)
+{
+    if (popup == *(int*)((char*)self + 0x69C)) {
+        func_001A94E0(self, popup, a2);
+        return;
+    }
+    switch (*(int*)(popup + 0x18)) {
+    case 0x832:
+        func_001A9438(self, popup, a2);
+        break;
+    case 0x833:
+        func_001A9268(self, popup, a2);
+        break;
+    case 0x834:
+        func_001A92D8(self, popup, a2);
+        break;
+    case 0x837:
+        func_001A9578(self, popup, a2);
+        break;
+    case 0x836:
+        func_001A9638_3(self, popup, a2);
+        break;
+    case 0x83D:
+        func_001A9668(self, popup, a2);
+        break;
+    case 0x83E:
+        func_001A9710(self, popup, a2);
+        break;
+    default:
+        func_001A93D0_3(self, popup, a2);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A9890);
