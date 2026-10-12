@@ -4103,7 +4103,107 @@ extern "C" V3_2048 func_00302048(int n, Ent_2048 *e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00302210);
+#ifdef SKIP_ASM
+//---
+extern "C" void* func_003E6574_2210(void*, void*, int) __asm__("func_003E6574");
+struct Flag_2210 { char c; Flag_2210() {} Flag_2210(const Flag_2210& o) : c(o.c) {} };
+struct Defaults_2210 { int v[3]; Flag_2210 flag; };
+extern Defaults_2210 D_004FBC20_2210 __asm__("D_004FBC20");
+extern int D_004A5730_2210 __asm__("D_004A5730");
+extern const int D_004465C8_2210[] __asm__("D_004465C8");
+extern char* const D_00445E40_2210[] __asm__("D_00445E40");
+extern int* D_004A3DD8_2210 __asm__("D_004A3DD8");
+extern char* D_004A28A8_2210 __asm__("D_004A28A8");
+struct V3_2210 { float x, y, z; };
+extern V3_2210 D_004C9098_2210 __asm__("D_004C9098");
+extern "C" void* cBE_getBE_2210() __asm__("cBE_getBE");
+extern "C" void* cBE_getInterface_2210(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00144CE0_2210(void* iface, int id) __asm__("func_00144CE0");
+extern "C" void func_0022CEA8_2210(void* self, int hash, char* name) __asm__("func_0022CEA8");
+extern "C" void func_0022D088_2210(void* self, int hash, char* name) __asm__("func_0022D088");
+extern "C" void func_00231250_2210(void* self, int a, int b, int refresh) __asm__("func_00231250");
+extern "C" void* func_0028B180_2210() __asm__("func_0028B180");
+extern "C" void func_002A49E8_2210(void* self) __asm__("func_002A49E8");
+
+struct Ent_2210 { int idx; int val; int pad; int kind; };
+
+class cRider_2210 {
+public:
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08();
+    virtual bool isBusy();
+};
+
+extern "C" V3_2210 func_00302210(int n, Ent_2210* e)
+{
+    if (D_004A5730_2210 == 0) {
+        D_004FBC20_2210.v[0] = -1;
+        D_004FBC20_2210.v[1] = -1;
+        D_004FBC20_2210.v[2] = -1;
+        D_004A5730_2210 = 1;
+        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
+        D_004FBC20_2210.flag = Flag_2210(D_004FBC20_2210.flag);
+    }
+    int v[4] __attribute__((aligned(16)));
+    int* vp = v;
+    func_003E6574_2210(vp, &D_004FBC20_2210, 0x10);
+    Ent_2210* p = e;
+    for (int i = 0; i < n; i++, p++) {
+        int k = p->idx;
+        int* d = (int*)((k << 2) + (int)vp);
+        if (p->kind != D_004465C8_2210[k] && D_004465C8_2210[k] == 2)
+            *(float*)d = (float)p->val;
+        else
+            *d = p->val;
+    }
+    int ok;
+    int cur = *D_004A3DD8_2210;
+    if (cur != -1) {
+        char* lvl = *(char**)(*(char**)(D_004A28A8_2210 + 0x84) + 0xC);
+        char* q = *(char**)(lvl + (cur << 2) + 0x28);
+        char* a = q ? q + 0x6C0 : 0;
+        char* r = a ? a - 0x6C0 : 0;
+        ok = !((cRider_2210*)(r + 0x6C0))->isBusy();
+    } else {
+        ok = 0;
+    }
+    if (ok) {
+        int sel = vp[2];
+        int action = vp[1];
+        int id = vp[0];
+        char* name = 0;
+        void* iface = cBE_getInterface_2210(cBE_getBE_2210(), 0);
+        char* ui = *(char**)(*(char**)(D_004A28A8_2210 + 0x84) + 0x78);
+        if ((unsigned int)sel < 8) {
+            name = D_00445E40_2210[sel];
+        }
+        int hash = func_00144CE0_2210(iface, id);
+        switch ((unsigned int)action) {
+        case 0:
+            func_0022CEA8_2210(ui, hash, name);
+            break;
+        case 1:
+            break;
+        case 2:
+            func_0022D088_2210(ui, hash, name);
+            break;
+        case 3:
+            func_00231250_2210(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 2, 0);
+            func_002A49E8_2210(func_0028B180_2210());
+            break;
+        case 4:
+            func_00231250_2210(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 0, 0);
+            break;
+        case 5:
+            *(int*)(ui + 0x1A4) = 1;
+            break;
+        }
+    }
+    return D_004C9098_2210;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00302490);
