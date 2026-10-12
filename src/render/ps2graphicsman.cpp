@@ -142,7 +142,21 @@ void func_003673D0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/ps2graphicsman", func_003673D8);
+#ifdef SKIP_ASM
+extern "C" int func_00366CE0(void* heap, int size, int idx, int other, int a4, int a5);
+
+// Allocates a block in the texture heap and marks the matching entry as resident and locked.
+extern "C" int func_003673D8(char* self, int size)
+{
+    int idx = func_00366CE0(self + 0x1F60, size, -1, -1, -1, 1);
+    char* e = *(char**)(self + 0x3F50) + idx * 0x1C;
+    *(int*)e |= 0x22;
+    *(int*)(e + 8) = 0x7FFFFFFF;
+    return *(int*)e >> 13;
+}
+#endif
 
 INCLUDE_ASM("render/ps2graphicsman", func_00367440);
 
