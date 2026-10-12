@@ -5,14 +5,25 @@ extern "C" void func_00372B30(void* self);
 extern "C" void func_0038AF30(void* self);
 extern void* D_00493760[16];
 
-//88.42%
+//100%
 INCLUDE_ASM("render/ps2bezierman", cPSPBezierMan_cPSPBezierMan__FPv);
 #ifdef SKIP_ASM
+// PORT: func_00374C90 (the base constructor) returns this; the unit declares it void.
+extern "C" void* func_00374C90_r(void* self) __asm__("func_00374C90");
+inline void* operator new[](unsigned int, void* p) { return p; }
+
+// Element type of an inline-constructed array; its empty constructor leaves only the loop counters.
+struct sBezSlot_8AE0 {
+    void* p;
+    sBezSlot_8AE0() {}
+};
+
 void* cPSPBezierMan_cPSPBezierMan(void* self)
 {
-    func_00374C90(self);
+    func_00374C90_r(self);
     *(void**)((char*)self + 0x4) = D_00493760;
     func_00372B30((char*)self + 0x10);
+    new ((char*)self + 0x8) sBezSlot_8AE0[2];
     func_0038AF30(self);
     return self;
 }
