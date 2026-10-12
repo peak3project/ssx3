@@ -176,7 +176,52 @@ extern "C" int func_00191E48(char* self, void* unused, unsigned int type, int id
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateruleselect", func_00192088);
+#ifdef SKIP_ASM
+struct sRaceRules_192088 {
+    unsigned int pad0 : 3;
+    unsigned int r3 : 1;        // rule 3, bit 3
+    unsigned int r7 : 1;        // rule 7, bit 4
+    unsigned int r14 : 1;       // rule 14, bit 5
+    unsigned int pad6 : 26;
+    int pad4[5];
+    unsigned int r4 : 1;        // 0x18 bit 0
+    unsigned int r8 : 1;        // bit 1
+    unsigned int r1 : 1;        // bit 2
+    unsigned int r5 : 1;        // bit 3
+    unsigned int r6 : 1;        // bit 4
+    unsigned int r9 : 1;        // bit 5
+    unsigned int r10 : 1;       // bit 6
+    unsigned int r11 : 1;       // bit 7
+    unsigned int r12 : 1;       // bit 8
+    unsigned int r13 : 1;       // bit 9
+    unsigned int pad10 : 22;
+    int r2;                     // 0x1C
+};
+extern sRaceRules_192088 D_005308B8_192088 __asm__("D_005308B8");
+
+// Sets a race rule (1-14) to the given value.
+extern "C" void func_00192088(void* self, int rule, int value)
+{
+    switch (rule) {
+    case 4: D_005308B8_192088.r4 = value; break;
+    case 3: D_005308B8_192088.r3 = value; break;
+    case 5: D_005308B8_192088.r5 = value; break;
+    case 14: D_005308B8_192088.r14 = value; break;
+    case 7: D_005308B8_192088.r7 = value; break;
+    case 8: D_005308B8_192088.r8 = value; break;
+    case 1: D_005308B8_192088.r1 = value; break;
+    case 2: D_005308B8_192088.r2 = value; break;
+    case 6: D_005308B8_192088.r6 = value; break;
+    case 9: D_005308B8_192088.r9 = value; break;
+    case 10: D_005308B8_192088.r10 = value; break;
+    case 11: D_005308B8_192088.r11 = value; break;
+    case 12: D_005308B8_192088.r12 = value; break;
+    case 13: D_005308B8_192088.r13 = value; break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00192240);
