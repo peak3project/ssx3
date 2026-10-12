@@ -162,7 +162,60 @@ extern "C" void cFEStateNetHelpPopup_onWidgetCreate(sNetHelp_1D9F38* self, sWidg
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA110);
+#ifdef SKIP_ASM
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void cMemMan_free__FPv(void* p);
+extern "C" int USTR_length(unsigned short* s);
+extern "C" void func_002C2688(unsigned short* dst, unsigned short* src);
+extern "C" void func_003A0D00(void* text, unsigned short* str);
+extern char D_00461A70[];
+
+struct sVE_A110 {
+    short delta;
+    short index;
+    unsigned short* (*fn)(void*, int);
+};
+
+struct sStrings_A110 {
+    int pad0;
+    sVE_A110* vt;
+};
+
+// Joins up to three localised help strings into one buffer and shows it in the popup text.
+extern "C" void func_001DA110(void* p)
+{
+    char* self = (char*)p;
+    unsigned short* strs[3];
+    unsigned short* buf = 0;
+    int total = 0;
+    int count = 0;
+    int* ids = (int*)(self + 0x58);
+    int i = 0;
+    do {
+        if (ids[i] == 0) {
+            break;
+        }
+        sStrings_A110* s = *(sStrings_A110**)((char*)D_004A28A8 + 0x8C);
+        strs[i] = s->vt[4].fn((char*)s + s->vt[4].delta, ids[i]);
+        count++;
+        total += USTR_length(strs[i]) + 1;
+        i++;
+    } while (i < 3);
+    if (total > 0) {
+        buf = new (D_00461A70, 0x100, 0) unsigned short[total];
+        buf[0] = 0;
+        for (int i = 0; i < count; i++) {
+            func_002C2688(buf, strs[i]);
+        }
+    }
+    func_003A0D00(*(void**)(self + 0xAC), buf);
+    if (buf != 0) {
+        cMemMan_free__FPv(buf);
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA238);
