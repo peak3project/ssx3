@@ -318,7 +318,125 @@ extern "C" void func_00208BB8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatemap", func_00208C28);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void cOVState_MAP_setupPopup(void* self);
+extern void* D_004A28A8;
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_0020A088(void* self);
+extern "C" void func_00208BB8(void* self);
+extern char D_004706C8[];
+//---
+extern "C" void* func_0028B180();
+extern "C" void func_0028FAE0(void* self);
+extern "C" void func_00231250(void* self, int a, int b, int refresh);
+extern "C" void func_002095E8(void* self, void* obj, int on);
+extern "C" void func_00209648(void* self, void* obj, int on);
+void* func_0039F190_8C28(void* self, int a1) __asm__("func_0039F190");
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern int D_004A2A54;
+extern int D_004A2A50;
+extern int D_004A26FC;
+extern int D_005366E8[];
+extern int D_004428F0[];
+extern char D_004706E8[];
+extern char D_00470700[];
+extern char D_00470718[];
+extern char D_00470730[];
+extern char D_00470748[];
+extern char D_00470760[];
+
+struct cVec_00208C28 {
+    float x, y, z, w;
+    cVec_00208C28(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
+};
+
+class cObjV_00208C28 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
+    virtual void set(const cVec_00208C28& v);
+};
+
+// Map overlay message handler: confirm/cancel of the map popup and toggling of the legend objects.
+extern "C" void func_00208C28(void* selfp, void* a1, int a2)
+{
+    char* self = (char*)selfp;
+    if (a1 == 0) {
+        return;
+    }
+    switch (a2) {
+    case 5:
+        if (*(int*)(self + 0xBC) != 0) {
+            if (*(int*)((char*)a1 + 0x18) != 0) {
+                *(int*)(self + 0xBC) = 0;
+                cOVState_MAP_setupPopup(self);
+                break;
+            }
+            void* iface = cBE_getInterface_Fv(cBE_getBE(), 10);
+            *(int*)((char*)iface + 0x10) = *(int*)(self + 0xD8);
+            func_0028FAE0(func_0028B180());
+            void* m = *(void**)((char*)D_004A28A8 + 0x84);
+            D_004A26FC = 3;
+            D_004A2A50 = D_004428F0[D_005366E8[--D_004A2A54]];
+            func_00231250(m, 0xF, 0, 0);
+            func_0020A088(self);
+            func_00208BB8(self);
+        } else {
+            *(int*)(self + 0xBC) = 1;
+            *(int*)(self + 0xD8) = *(int*)((char*)a1 + 0x18);
+            cOVState_MAP_setupPopup(self);
+            cObjV_00208C28* o = (cObjV_00208C28*)cUIScreen_getObjectByHashName(*(void**)(self + 0xD4), GetHashValue32(D_004706C8));
+            o->set(cVec_00208C28(1.0f, 0.0f, 0.0f, 0.0f));
+        }
+        break;
+    case 6:
+        if (*(int*)(self + 0xBC) != 0) {
+            *(int*)(self + 0xBC) = 0;
+            cOVState_MAP_setupPopup(self);
+        } else {
+            func_0020A088(self);
+            func_00208BB8(self);
+            func_0039F190_8C28(*(char**)(self + 0x10) + 0x18, 1);
+            *(int*)(self + 0x1C) = (*(int*)(self + 0x1C) & ~0x3F00) | 0x780;
+        }
+        break;
+    case 1:
+        if (*(int*)(self + 0xBC) != 0) {
+            func_002095E8(self, a1, 1);
+            if (*(int*)((char*)a1 + 0x18) == 0) {
+                cUIState_showObjSafe(self, D_004706E8);
+                cUIState_hideObjSafe(self, D_00470700);
+                cUIState_showObjSafe(self, D_00470718);
+                cUIState_hideObjSafe(self, D_00470730);
+                cUIState_showObjSafe(self, D_00470748);
+                cUIState_hideObjSafe(self, D_00470760);
+            } else {
+                cUIState_showObjSafe(self, D_00470700);
+                cUIState_hideObjSafe(self, D_004706E8);
+                cUIState_showObjSafe(self, D_00470730);
+                cUIState_hideObjSafe(self, D_00470718);
+                cUIState_showObjSafe(self, D_00470760);
+                cUIState_hideObjSafe(self, D_00470748);
+            }
+        }
+        break;
+    case 2:
+        if (*(int*)(self + 0xBC) != 0) {
+            func_00209648(self, a1, 1);
+        }
+        break;
+    case 7:
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208EF8);
