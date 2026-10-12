@@ -58,7 +58,23 @@ void* func_001F7298(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstateenterlodge", func_001F72B8);
+#ifdef SKIP_ASM
+// Key filter: keys 8 and 9 return 0x100, every other key 0x101.
+extern "C" int func_001F72B8(void* self, int a1, unsigned int key)
+{
+    int r = 0x101;
+    if (key < 10) {
+        if (key < 8) {
+            r = 0x101;
+        } else {
+            return 0x100;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstateenterlodge", func_001F72E0);
