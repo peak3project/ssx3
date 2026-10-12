@@ -3491,7 +3491,72 @@ extern "C" void func_00241DC8(void* self, void* dst, int n)
 }
 #endif
 
+//100%
 INCLUDE_ASM("movie/movieplayer", func_00241E18);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void func_00241DC8(void* self, void* dst, int n);
+extern "C" void* func_002C2508(void* dst, void* src);
+extern void* D_004A28A8;
+extern char D_004A29E8[];
+extern char D_0047C3B8[];
+extern char D_0047C360[];
+extern char D_0047C3D0[];
+extern char D_0047C3E8[];
+extern char D_0047C408[];
+extern char D_0047C420[];
+
+struct sVEntry_00241E18 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+static inline int Loc_00241E18(char* key)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry_00241E18* vt = *(sVEntry_00241E18**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
+}
+
+static inline void SetText_00241E18(void* out, char* key, void* arg)
+{
+    int str = Loc_00241E18(key);
+    func_002C26D0_v(out, (void*)str, arg);
+}
+
+extern "C" void func_00241E18(char* self, void* out)
+{
+    unsigned short num[256];
+    unsigned short num2[256];
+    func_002C2540(out, D_004A29E8);
+    func_00241DC8(self, num, *(int*)(self + 0x428));
+    switch (*(int*)(self + 0x130)) {
+    case 0: case 2: case 3: case 6: case 7: case 13: case 29:
+    case 49: case 50: case 51: case 52: case 53: case 54:
+        SetText_00241E18(out, D_0047C3B8, num);
+        break;
+    case 4:
+        func_00241DC8(self, num2, *(int*)(self + 0x428));
+        SetText_00241E18(out, D_0047C360, num2);
+        break;
+    case 10: case 11: case 39: case 40:
+        SetText_00241E18(out, D_0047C3D0, num);
+        break;
+    case 15: case 16: case 17: case 18:
+        SetText_00241E18(out, D_0047C3E8, num);
+        break;
+    case 31: case 32: case 33: case 34:
+        SetText_00241E18(out, D_0047C408, num);
+        break;
+    case 25: case 26: case 44:
+        func_002C2508(out, (void*)Loc_00241E18(D_0047C420));
+        break;
+    case 55:
+        break;
+    }
+}
+#endif
 
 extern "C" void* func_002420C8(void*, int);
 
