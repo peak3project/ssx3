@@ -3227,7 +3227,58 @@ extern "C" int func_001E2DC0(int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2EA0);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern char D_0046DE60[];
+extern char D_0046DE70[];
+extern char D_0046DE80[];
+extern char D_0046DE90[];
+extern char D_0046DEA0[];
+extern char D_0046DEB0[];
+extern char D_0046DEC0[];
+extern char D_0046DED0[];
+extern char D_0046DEE0[];
+extern char D_0046DEF0[];
+extern char D_0046DF00[];
+extern char D_0046DF10[];
+extern char D_0046DF20[];
+
+// Returns the string hash of the title for popup message kind (0-12), or 0.
+extern "C" int func_001E2EA0(int kind)
+{
+    switch ((unsigned int)kind) {
+    case 0:
+        return GetHashValue32(D_0046DE60);
+    case 1:
+        return GetHashValue32(D_0046DE70);
+    case 2:
+        return GetHashValue32(D_0046DE80);
+    case 3:
+        return GetHashValue32(D_0046DE90);
+    case 4:
+        return GetHashValue32(D_0046DEA0);
+    case 5:
+        return GetHashValue32(D_0046DEB0);
+    case 6:
+        return GetHashValue32(D_0046DEC0);
+    case 7:
+        return GetHashValue32(D_0046DED0);
+    case 8:
+        return GetHashValue32(D_0046DEE0);
+    case 9:
+        return GetHashValue32(D_0046DEF0);
+    case 10:
+        return GetHashValue32(D_0046DF00);
+    case 11:
+        return GetHashValue32(D_0046DF10);
+    case 12:
+        return GetHashValue32(D_0046DF20);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2FE0);
@@ -4482,7 +4533,64 @@ extern "C" void func_001E4C78(void* self_, int idx, int slot, int id, unsigned c
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4F70);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" unsigned char func_001E5AA0(void* self, int idx);
+extern "C" int func_001E3388(int id);
+extern "C" unsigned char func_001E3650(int idx);
+extern "C" int func_001E2D58(int v, int i);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern int D_004A20C4;
+extern char D_0046E140[];
+extern char D_0046E160[];
+extern char D_0046E180[];
+extern char D_0046E1A0[];
+extern char D_0046E1C0[];
+
+struct sPopup1E4F70 {
+    char pad0[0xFC];
+    cUIText* texts[4];  // 0xFC
+};
+
+struct sVE1E4F70 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+// Fills text slot `slot` with the "level N" string for the reward id and shows it.
+extern "C" void func_001E4F70(void* self, int slot, int id, unsigned char lvl)
+{
+    char buf[48];
+    if (func_001E2D58(3, id)) {
+        switch (id) {
+        case 0x73: case 0x75: case 0x77: case 0x79: case 0x7B: case 0x7D: case 0x7F: case 0x81: case 0x83: case 0x85: case 0x87: case 0x89:
+            sprintf(buf, D_0046E140, lvl);
+            break;
+        case 0x74: case 0x76: case 0x78: case 0x7A: case 0x7C: case 0x7E: case 0x80: case 0x82: case 0x84: case 0x86: case 0x88: case 0x8A:
+            sprintf(buf, D_0046E160, lvl);
+            break;
+        }
+    } else if (func_001E2D58(5, id)) {
+        sprintf(buf, D_0046E180, lvl);
+    } else if (func_001E2D58(4, id)) {
+        sprintf(buf, D_0046E1A0, lvl);
+    } else if (func_001E2D58(8, id)) {
+        sprintf(buf, D_0046E1C0, lvl);
+    }
+    sPopup1E4F70* p = (sPopup1E4F70*)self;
+    if (p->texts[slot] != 0) {
+        cUIText_setUnicodeStringByID(p->texts[slot], GetHashValue32(buf));
+        char* o = (char*)p->texts[slot];
+        sVE1E4F70* vt = *(sVE1E4F70**)(o + 8);
+        vt[9].fn(o + vt[9].delta, 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E50C8);
@@ -4747,7 +4855,55 @@ extern "C" void func_001E55D0(void* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5638);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" unsigned char func_001E5AA0(void* self, int idx);
+extern "C" int func_001E3388(int id);
+extern "C" unsigned char func_001E3650(int idx);
+extern "C" int func_001E2D58(int v, int i);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern int D_004A20C4;
+extern char D_0046E140[];
+extern char D_0046E160[];
+extern char D_0046E180[];
+extern char D_0046E1A0[];
+extern char D_0046E1C0[];
+
+// Sets the popup text to the "level N" string matching the reward id's category.
+extern "C" void func_001E5638(void* self, int id)
+{
+    char buf[32];
+    unsigned char lvl;
+    if (D_004A20C4 != 0) {
+        lvl = func_001E5AA0(self, id);
+    } else {
+        lvl = func_001E3650(func_001E3388(id));
+    }
+    if (func_001E2D58(3, id)) {
+        switch (id) {
+        case 0x73: case 0x75: case 0x77: case 0x79: case 0x7B: case 0x7D: case 0x7F: case 0x81: case 0x83: case 0x85: case 0x87: case 0x89:
+            sprintf(buf, D_0046E140, lvl);
+            break;
+        case 0x74: case 0x76: case 0x78: case 0x7A: case 0x7C: case 0x7E: case 0x80: case 0x82: case 0x84: case 0x86: case 0x88: case 0x8A:
+            sprintf(buf, D_0046E160, lvl);
+            break;
+        }
+    } else if (func_001E2D58(5, id)) {
+        sprintf(buf, D_0046E180, lvl);
+    } else if (func_001E2D58(4, id)) {
+        sprintf(buf, D_0046E1A0, lvl);
+    } else if (func_001E2D58(8, id)) {
+        sprintf(buf, D_0046E1C0, lvl);
+    }
+    if (*(cUIText**)((char*)self + 0x54) != 0) {
+        cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x54), GetHashValue32(buf));
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5780);
