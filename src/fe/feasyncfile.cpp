@@ -6302,7 +6302,155 @@ extern "C" void func_001AE680(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AE7A0);
+#ifdef SKIP_ASM
+extern "C" int cBENewRaceInterface_setNumberAI_E7A0(void* iface, int n) __asm__("cBENewRaceInterface_setNumberAI");
+extern "C" void func_001AE680_E7A0(void* self) __asm__("func_001AE680");
+extern "C" void func_001AF568_E7A0(void* self) __asm__("func_001AF568");
+extern "C" int func_0039A738_E7A0(void* item) __asm__("func_0039A738");
+extern "C" void func_0025F4C0_E7A0(void* self, int a1, int a2) __asm__("func_0025F4C0");
+extern "C" void func_0025F628_E7A0(void* self, int a1, int a2) __asm__("func_0025F628");
+extern "C" void func_0039F600_E7A0(void* list) __asm__("func_0039F600");
+extern "C" void* func_00186610_E7A0(void* mem, int a1, int a2) __asm__("func_00186610");
+extern "C" void cUIStateStack_pushSpecial_E7A0(void* stack, void* state, int a2, int a3) __asm__("cUIStateStack_pushSpecial");
+extern "C" void func_001AF098_E7A0(void* self, int on) __asm__("func_001AF098");
+extern "C" void func_001AEC60_E7A0(void* self, int v) __asm__("func_001AEC60");
+extern "C" void func_001AF208_E7A0(void* self, void* item, int on) __asm__("func_001AF208");
+extern int D_004A25A4;
+extern int D_004A2594;
+extern int D_004A2598;
+extern int D_00534B34[];
+extern char D_00460C38[];
+
+struct sRaceOpts_E7A0 {
+    char pad0[0x18];
+    unsigned int low : 6;
+    unsigned int bit6 : 1;
+    unsigned int bit7 : 1;
+    unsigned int bit8 : 1;
+    unsigned int high : 23;
+};
+extern sRaceOpts_E7A0 D_005308B8_E7A0 __asm__("D_005308B8");
+
+struct sIVE_E7A0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+static inline void commit_E7A0(char* iface)
+{
+    sIVE_E7A0* ivt = *(sIVE_E7A0**)(iface + 0xC);
+    ivt[1].fn(iface + ivt[1].delta);
+}
+
+struct cState_E7A0 {
+    char pad0[0x10];
+    char* engine;            // 0x10
+    signed char f14;         // 0x14
+    char pad15[0x6D0 - 0x15];
+    int f6D0;                // 0x6D0
+    char pad6D4[0x6DC - 0x6D4];
+    void* aiOn;              // 0x6DC
+    void* numAI;             // 0x6E0
+    void* opt8;              // 0x6E4
+    void* opt6;              // 0x6E8
+    void* opt7;              // 0x6EC
+};
+
+// Message handler for the race-options screen.
+extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
+{
+    if (a1 == 0) {
+        return;
+    }
+    switch (msg) {
+    case 5:
+        switch (*(int*)((char*)a1 + 0x18)) {
+        case 7: {
+            func_001AE680_E7A0(self);
+            D_004A25A4 = 1;
+            D_004A2594 = 0;
+            D_004A2598 = 0;
+            char* p = (char*)func_00186610_E7A0(cMemMan_alloc(0x33C, D_00460C38, 0x100, 0), *(int*)&self->engine, 1);
+            *(int*)(p + 0x1C) = (*(int*)(p + 0x1C) & ~0x3F00) | 0x100;
+            cUIStateStack_pushSpecial_E7A0(self->engine + 0x18, p, 0, 0);
+            break;
+        }
+        case 9: {
+            if (self->f6D0) {
+                break;
+            }
+            func_001AE680_E7A0(self);
+            func_001AF568_E7A0(self);
+            char* opts = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+            D_00534B34[0] = func_0039A738_E7A0(self->aiOn) != 0;
+            commit_E7A0(opts);
+            if (func_0039A738_E7A0(self->aiOn)) {
+                D_005308B8_E7A0.bit6 = 1;
+                D_005308B8_E7A0.bit7 = 1;
+                D_005308B8_E7A0.bit8 = 1;
+                char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
+                cBENewRaceInterface_setNumberAI_E7A0(race, 0);
+                commit_E7A0(race);
+            } else {
+                D_005308B8_E7A0.bit6 = func_0039A738_E7A0(self->opt6);
+                D_005308B8_E7A0.bit8 = func_0039A738_E7A0(self->opt8);
+                D_005308B8_E7A0.bit7 = func_0039A738_E7A0(self->opt7);
+                char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
+                cBENewRaceInterface_setNumberAI_E7A0(race, func_0039A738_E7A0(self->numAI));
+                commit_E7A0(race);
+            }
+            func_0025F4C0_E7A0(D_004A3028, *(int*)((char*)D_004A3028 + 0x98), self->f14);
+            break;
+        }
+        case 10:
+            if (self->f6D0) {
+                func_0025F628_E7A0(D_004A3028, 0, 1);
+            }
+            func_0039F600_E7A0(self->engine + 0x18);
+            break;
+        }
+        break;
+    case 6:
+        func_0025F628_E7A0(D_004A3028, 0, self->f6D0);
+        func_0039F600_E7A0(self->engine + 0x18);
+        break;
+    case 9:
+        if (a1 == self->aiOn) {
+            char* opts = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+            D_00534B34[0] = func_0039A738_E7A0(self->aiOn) != 0;
+            commit_E7A0(opts);
+            func_001AF098_E7A0(self, func_0039A738_E7A0(self->aiOn) != 0);
+            func_001AEC60_E7A0(self, self->f6D0);
+        } else if (a1 == self->opt6) {
+            D_005308B8_E7A0.bit6 = func_0039A738_E7A0(a1);
+        } else if (a1 == self->opt8) {
+            D_005308B8_E7A0.bit8 = func_0039A738_E7A0(a1);
+        } else if (a1 == self->opt7) {
+            D_005308B8_E7A0.bit7 = func_0039A738_E7A0(a1);
+        } else if (a1 == self->numAI) {
+            char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
+            cBENewRaceInterface_setNumberAI_E7A0(race, func_0039A738_E7A0(self->numAI));
+            D_004A4E8C = func_0039A738_E7A0(self->numAI);
+            commit_E7A0(race);
+        }
+        break;
+    case 1:
+        func_001AF208_E7A0(self, a1, 1);
+        break;
+    case 2:
+        func_001AF208_E7A0(self, a1, 0);
+        break;
+    case 7:
+        break;
+    default:
+        func_001A8918(self, (int)a1, msg);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AEBF0);
