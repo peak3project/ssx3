@@ -1062,7 +1062,84 @@ void* func_00279EF8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279F18);
+#ifdef SKIP_ASM
+struct sLvlObj_279F18 {
+    char pad0[0x18];
+    void* obj;       // 0x18
+};
+
+struct sLvl_279F18 {
+    char pad0[0x28];
+    void* riders[6];             // 0x28
+    sLvlObj_279F18* a40[2];      // 0x40
+    sLvlObj_279F18* a48[5];      // 0x48
+    sLvlObj_279F18* a5C[5];      // 0x5C
+    char pad70[8];
+    int n78;                     // 0x78
+    int n7C;                     // 0x7C
+    int n80;                     // 0x80
+    int n84;                     // 0x84
+};
+
+static inline sLvl_279F18* Lvl_279F18()
+{
+    return *(sLvl_279F18**)(*(char**)(D_004A28A8 + 0x84) + 0xC);
+}
+
+static inline void* ObjOf_279F18(sLvlObj_279F18* o)
+{
+    return o ? o->obj : 0;
+}
+
+extern "C" void* func_00279F18(void* self, int slot, int arg)
+{
+    int r;
+    switch (slot) {
+    case 0: {
+        int* p = (int*)func_0027A668_2(self, arg);
+        if (p[0] < 0) break;
+        return Lvl_279F18()->riders[p[0]];
+    }
+    case 1:
+        r = ((int*)func_0027A668_2(self, arg))[1];
+        if (r < 0) break;
+        return Lvl_279F18()->riders[r];
+    case 2:
+        r = ((int*)func_0027A668_2(self, arg))[2];
+        if (r < 0) break;
+        return Lvl_279F18()->riders[r];
+    case 3: case 4: {
+        sLvl_279F18* lvl = Lvl_279F18();
+        int j = slot - 3;
+        if (j >= lvl->n7C) break;
+        return ObjOf_279F18(lvl->a40[j]);
+    }
+    case 5: case 6: case 7: case 8: case 9: {
+        sLvl_279F18* lvl = Lvl_279F18();
+        int j = slot - 5;
+        if (j >= lvl->n80 + lvl->n84) break;
+        if (j < lvl->n80) return ObjOf_279F18(lvl->a48[j]);
+        return ObjOf_279F18(lvl->a5C[j - lvl->n80]);
+    }
+    case 10: case 11: case 12: case 13: case 14: {
+        sLvl_279F18* lvl = Lvl_279F18();
+        int j = slot - 10;
+        if (j >= lvl->n84 + lvl->n80) break;
+        if (j < lvl->n84) return ObjOf_279F18(lvl->a5C[j]);
+        return ObjOf_279F18(lvl->a48[j - lvl->n84]);
+    }
+    case 15: case 16: case 17: case 18: case 19: case 20: {
+        sLvl_279F18* lvl = Lvl_279F18();
+        int j = slot - 15;
+        if (j >= lvl->n78) break;
+        return lvl->riders[j];
+    }
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027A0D8);
 
