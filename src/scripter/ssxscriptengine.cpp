@@ -1695,7 +1695,26 @@ extern "C" int func_0027B528(sScriptEng0628* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027B578);
+#ifdef SKIP_ASM
+static inline int IsFree27B578(int* key)
+{
+    return key[1] == 0 && key[-1] == 0;
+}
+
+// Finds the next used entry (from `start`) whose key matches; returns its index or -1.
+extern "C" int func_0027B578(void* self, int key, int start)
+{
+    for (int i = start; i < 10; i++) {
+        int* k = (int*)((char*)self + (i * 16 + 0x62C));
+        if (!IsFree27B578(k) && *k == key) {
+            return i;
+        }
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027B5D8);
