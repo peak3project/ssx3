@@ -8605,7 +8605,39 @@ extern "C" void func_002682A8(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268308);
+#ifdef SKIP_ASM
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" void* cBXString_cBXString2(void* self, const char* s);
+extern char D_00480488[];
+extern char D_004811D0[];
+
+struct sLockMsg268308 {
+    int type;       // 0x00
+    char* name;     // 0x04
+    int tag;        // 0x08
+    char a[4];      // 0x0C
+    char b[4];      // 0x10
+};
+
+static inline void Init268308(sLockMsg268308* m, const char* a, const char* b)
+{
+    m->type = 0x102;
+    m->tag = 0x6C6F636B;
+    m->name = D_004811D0;
+    cBXString_cBXString2(m->a, a);
+    cBXString_cBXString2(m->b, b);
+}
+
+// Builds a "lock" message carrying the two name strings of this request.
+extern "C" void* func_00268308(char* self)
+{
+    sLockMsg268308* m = (sLockMsg268308*)operator new(0x14, D_00480488, 0x20000000, 0);
+    Init268308(m, *(const char**)(self + 0xC), *(const char**)(self + 0x10));
+    return m;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268398);
