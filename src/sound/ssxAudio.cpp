@@ -129,7 +129,22 @@ extern "C" void func_00285210(void* self, int flags)
 #undef BM_285210
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_002854A8);
+#ifdef SKIP_ASM
+// PORT: the target leaves value in $a1 for this call; bind a 2-arg form.
+extern "C" int func_002ADF80_2(void* bank, int a1) __asm__("func_002ADF80");
+
+extern "C" int func_002854A8(void* self, int value)
+{
+    char* s = (char*)self;
+    int r = func_002ADF80_2(*(void**)(**(char***)(s + 0x118) + 0x1D8), value);
+    if (r == 2) {
+        *(int*)(s + 0x62B0) = value;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_002854F8);
