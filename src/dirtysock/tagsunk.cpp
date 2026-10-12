@@ -7789,7 +7789,111 @@ extern "C" void func_00266348(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266358);
+#ifdef SKIP_ASM
+extern void* D_004A33D8;
+extern int D_004A33D4;
+extern int D_004A33DC;
+extern int D_004A33E0;
+extern int D_004A33E4;
+extern char D_00537190[];
+extern "C" int func_00266578(int err);
+//---
+extern int D_004A3940;
+extern "C" int func_002C51D0(void* self, int id);
+void func_002C67E8(void* self, int a1);
+extern "C" void func_002C68C8(void* self, int i, char* out);
+extern "C" int func_003FA360(char* name);
+
+struct cDsObj266358 {
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual int v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual int v20();
+};
+
+// Polls the current DirtySock operation: *status is 1 while busy, 2 when finished; *out receives the result.
+extern "C" int func_00266358(int* status, int* out)
+{
+    *out = 0;
+    switch (D_004A33D4) {
+    case 3:
+    case 15:
+    case 16:
+        *status = 2;
+        return 0;
+    case 10:
+        *status = 2;
+        *out = 0x800;
+        return 0;
+    }
+    if (((cDsObj266358*)D_004A33D8)->v11()) {
+        *status = 1;
+        return 0;
+    }
+    *status = 2;
+    if (func_002C51D0(D_004A33D8, *(int*)((char*)D_004A33D8 + 0xC))) {
+        return func_00266578(func_002C51D0(D_004A33D8, *(int*)((char*)D_004A33D8 + 0xC)));
+    }
+    switch (D_004A33D4) {
+    case 0:
+        break;
+    case 1:
+        if (D_004A33E4 > 0) {
+            *status = 1;
+            D_004A33E4--;
+            func_002C67E8(D_004A33D8, D_004A33DC);
+            return 0;
+        }
+        D_004A33E0 = 1;
+        break;
+    case 2:
+        if (*(int*)((char*)D_004A33D8 + 0x54) <= 0) {
+            *out = 0;
+            break;
+        }
+        for (int i = 0; i < *(int*)((char*)D_004A33D8 + 0x54); i++) {
+            func_002C68C8(D_004A33D8, i, D_00537190);
+            if (func_003FA360(D_00537190)) {
+                *out = 1;
+                return 0;
+            }
+        }
+        *out = 0;
+        break;
+    case 5:
+        *out = D_004A3940;
+        break;
+    case 6:
+        *out = D_004A3940;
+        break;
+    case 14:
+        *out = D_004A3940;
+        break;
+    case 9:
+        *out = ((cDsObj266358*)D_004A33D8)->v20() << 10;
+        break;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266550);
