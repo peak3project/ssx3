@@ -1888,7 +1888,52 @@ extern "C" int func_001CA150(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CA180);
+#ifdef SKIP_ASM
+extern "C" char* func_00397870(void* list, int idx);
+
+struct sVE1CA180 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*);
+};
+
+static inline void SetColour1CA180(char* obj, void* colour)
+{
+    sVE1CA180* vt = *(sVE1CA180**)(obj + 8);
+    vt[11].fn(obj + vt[11].delta, colour);
+}
+
+// Popup menu event handler: on draw (5) colours the selected entry; 0x101 = not handled.
+extern "C" int func_001CA180(char* self, char* menu, int msg)
+{
+    switch (msg) {
+    case 5: {
+        int sel = *(unsigned char*)(menu + 0x95);
+        for (int i = 0; i < *(unsigned char*)(menu + 0x96); i++) {
+            char* obj = func_00397870(menu + 0x74, i);
+            if (obj == *(char**)(self + 0x88)) {
+                obj = *(char**)(self + 0x84);
+            }
+            if (i == sel) {
+                SetColour1CA180(obj, self + 0x32C);
+            } else {
+                SetColour1CA180(obj, self + 0x33C);
+            }
+        }
+        break;
+    }
+    case 8: case 9:
+        return 0;
+    case 7:
+        return *(int*)(self + 0x310) ? 0x101 : 0;
+    case 6:
+        return *(int*)(self + 0xB8) ? 0 : 0x101;
+    }
+    return 0x101;
+}
+#endif
 
 INCLUDE_ASM("fe/fepopup", func_001CA298);
 
@@ -1999,7 +2044,57 @@ void* func_001CA578(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CA598);
+#ifdef SKIP_ASM
+extern "C" void func_001CB418(void* popup, const char* a1);
+extern "C" void func_001CCF00(void* popup, const char* a1);
+// PORT: the unit declares func_0039F190 as void; it returns a value this caller ignores.
+extern "C" int func_0039F190_i(void* self, int a1) __asm__("func_0039F190");
+
+struct sVE1CA598 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
+// Child-popup message handler: forwards results, plays sounds and closes the popup when done.
+extern "C" void func_001CA598(char* self, void* child, int msg)
+{
+    switch (msg) {
+    case 0x15:
+        if (child == *(void**)(self + 0x2A8)) {
+            func_001CB418(child, *(const char**)(self + 0x2B0));
+            func_001CCF00(*(void**)(self + 0x2A8), *(const char**)(self + 0x2B4));
+        }
+        break;
+    case 0xF:
+        func_0039F190_i(*(char**)(self + 0x10) + 0x18, 1);
+        *(int*)(self + 0x320) = *(int*)(self + 0x324) + 0xF;
+        break;
+    case 0x10: case 0x14:
+        *(int*)(self + 0x320) = -1;
+        func_0039F190_i(*(char**)(self + 0x10) + 0x18, 1);
+        break;
+    case 0x11: case 0x12: case 0x13:
+        func_0039F190_i(*(char**)(self + 0x10) + 0x18, 1);
+        break;
+    case 0x16:
+        if (child == *(void**)(self + 0x2A8)) {
+            *(void**)(self + 0x2A8) = 0;
+        }
+        if (child == *(void**)(self + 0x2AC)) {
+            *(void**)(self + 0x2AC) = 0;
+            if (*(int*)(self + 0x320) != -1) {
+                char* obj = *(char**)(self + 0x20);
+                sVE1CA598* vt = *(sVE1CA598**)(obj + 8);
+                vt[17].fn(obj + vt[17].delta, self, *(int*)(self + 0x320));
+            }
+        }
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", cScreenPopup_checkAndFixTextEntry);
@@ -2129,7 +2224,56 @@ extern "C" void cBuyPopupInfo_initBuySong(int* self, int a1, int a2, int a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CAA18);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern char D_004661F8[];
+extern char D_00466210[];
+extern char D_00466228[];
+extern char D_00466240[];
+extern char D_00466258[];
+extern char D_00466270[];
+extern char D_00466288[];
+
+// Fills in a popup description: title, OK button and the message text for the given kind.
+extern "C" void func_001CAA18(int* desc, int kind, int a2, int a3, int a4)
+{
+    desc[4] = a2;
+    desc[3] = 2;
+    desc[8] = GetHashValue32(D_004661F8);
+    desc[7] = 3;
+    desc[2] = -1;
+    desc[0] = a3;
+    desc[1] = a4;
+    switch (kind) {
+    case 3:
+        desc[6] = GetHashValue32(D_00466210);
+        desc[5] = 3;
+        break;
+    case 4:
+        desc[6] = GetHashValue32(D_00466228);
+        desc[5] = 3;
+        break;
+    case 5:
+        desc[6] = GetHashValue32(D_00466240);
+        desc[5] = 3;
+        break;
+    case 6:
+        desc[6] = GetHashValue32(D_00466258);
+        desc[5] = 3;
+        break;
+    case 7:
+        desc[6] = GetHashValue32(D_00466270);
+        desc[5] = 3;
+        break;
+    case 8:
+        desc[6] = GetHashValue32(D_00466288);
+        desc[5] = 3;
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", cBuyPopupInfo_initBuyBolt);
