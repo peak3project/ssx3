@@ -68,7 +68,45 @@ extern "C" void func_0015AE00(sBEDB_0015AE00* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015AF40);
+#ifdef SKIP_ASM
+struct sRec12_AF40 { int id; int f4; int f8; };
+struct sRec8_AF40 { int id; int f4; };
+struct sRec16_AF40 { int id; int f4; int f8; int fC; };
+
+struct sRewardDB_AF40 {
+    int f0;
+    int f4;
+    sRec12_AF40* t0;    // 0x8
+    sRec12_AF40* t1;    // 0xC
+    sRec8_AF40* t2;     // 0x10
+    sRec16_AF40* t3;    // 0x14
+    sRec16_AF40* t4;    // 0x18
+    sRec16_AF40* t5;    // 0x1C
+    sRec16_AF40* t7;    // 0x20
+    sRec16_AF40* t6;    // 0x24
+    sRec16_AF40* t8;    // 0x28
+};
+
+// Returns the id of entry idx in the reward table of the given type.
+extern "C" int func_0015AF40(sRewardDB_AF40* self, int type, int idx)
+{
+    switch (type) {
+    case 0: { int off = idx * 12; return *(int*)((char*)self->t0 + off); }
+    case 1: { int off = idx * 12; return *(int*)((char*)self->t1 + off); }
+    case 2: { int off = idx * 8; return *(int*)((char*)self->t2 + off); }
+    case 3: { int off = idx * 16; return *(int*)((char*)self->t3 + off); }
+    case 4: { int off = idx * 16; return *(int*)((char*)self->t4 + off); }
+    case 5: { int off = idx * 16; return *(int*)((char*)self->t5 + off); }
+    case 6: { int off = idx * 16; return *(int*)((char*)self->t6 + off); }
+    case 7: { int off = idx * 16; return *(int*)((char*)self->t7 + off); }
+    case 8: { int off = idx * 16; return *(int*)((char*)self->t8 + off); }
+    case 9: break;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("be/bedbreward", func_0015B028);
 
