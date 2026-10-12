@@ -256,7 +256,23 @@ extern "C" int func_002AA1B8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/streamsys", func_002AA210);
+#ifdef SKIP_ASM
+// func_002AA020 returns the status (the unit declares it void); the int return keeps $2 free as the target has it.
+int func_002AA020_st(void* self, int* out) __asm__("func_002AA020");
+
+// Returns the stream's second status word, or -1 when the stream is not active.
+extern "C" int func_002AA210(void* self)
+{
+    int st[2];
+    func_002AA020_st(self, st);
+    if (st[0] == 0) {
+        return -1;
+    }
+    return st[1];
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/streamsys", func_002AA320);
