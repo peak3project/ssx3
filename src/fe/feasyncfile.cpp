@@ -12584,7 +12584,70 @@ extern "C" void func_001BADE8(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BAED8);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+// PORT: the unit declares func_001A97B8 as returning int; this caller ignores the result.
+extern "C" void func_001A97B8_v(void* self, void* a1, int a2) __asm__("func_001A97B8");
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern "C" void* cBXString_cBXString4(void* self, const char* str);
+extern "C" void func_0025C610(void* net);
+extern void* D_004A3028;
+extern char D_00462D80[];
+extern char D_0045DCC8[];
+extern char D_0045FCD8[];
+extern char D_00462C70[];
+extern char D_00462C88[];
+
+// Tracks a pending flag; on 0x16 shows either the confirm popup or the network-connect popup.
+extern "C" void func_001BAED8(void* self, void* a1, int a2)
+{
+    switch (a2) {
+    case 0xF: case 0x10: case 0x14:
+        *(int*)((char*)self + 0x6D8) = 0;
+        func_001A97B8_v(self, a1, a2);
+        break;
+    case 0x11:
+        *(int*)((char*)self + 0x6D8) = 1;
+        func_001A97B8_v(self, a1, a2);
+        break;
+    case 0x16:
+        func_001A97B8_v(self, a1, a2);
+        if (*(int*)((char*)self + 0x6D8) != 0) {
+            void* p = func_001A9C50(self);
+            char* sub = (char*)p + 0xBC;
+            *(int*)((char*)p + 0xBC) = 2;
+            *(int*)((char*)p + 0xC4) = GetHashValue32(D_00462D80);
+            *(int*)((char*)p + 0xC0) = 3;
+            func_001C57C0(sub, 0, GetHashValue32(D_0045DCC8));
+            func_001C57C0(sub, 1, GetHashValue32(D_0045FCD8));
+            *(int*)((char*)p + 0x164) = 0;
+            *(int*)((char*)p + 0x150) = 0x81F;
+            func_001A9BC0(self, p);
+        } else {
+            void* p = func_001A9C50(self);
+            char* sub = (char*)p + 0xBC;
+            *(int*)((char*)p + 0xBC) = 1;
+            *(int*)((char*)p + 0xC4) = GetHashValue32(D_00462C70);
+            *(int*)((char*)p + 0xC0) = 3;
+            func_001C57C0(sub, 0, GetHashValue32(D_00462C88));
+            *(int*)((char*)p + 0x150) = 0x80E;
+            func_001A9BC0(self, p);
+            cBXString_cBXString4((char*)D_004A3028 + 0x48, **(char***)((char*)self + 0x6D0));
+            cBXString_cBXString4((char*)D_004A3028 + 0x4C, (*(char***)((char*)self + 0x6D0))[1]);
+            func_0025C610(D_004A3028);
+        }
+        *(int*)((char*)self + 0x6D8) = 0;
+        break;
+    default:
+        func_001A97B8_v(self, a1, a2);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BB098);
