@@ -108,7 +108,94 @@ extern "C" void setChallengeName(cUIText* text, int peak, int kind, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_CF758", setChallengeStats);
+#ifdef SKIP_ASM
+int cBEEconInterface_getTotalMoneyEarned(void* econ, int a, int b);
+extern "C" const char* func_00198AF0_price(int price) __asm__("func_00198AF0");
+extern "C" int func_002C27C0(void* buf, const char* fmt, ...);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+// PORT: SN soft-float float->double helper called by name
+extern "C" double func_00413AF8(float f);
+extern "C" int func_00153390(void* iface, int peak);
+extern "C" int func_00153688(void* iface, int a, int b, int peak);
+extern "C" int func_00154368(void* iface, int peak);
+extern "C" int func_001544D0(void* iface, int a, int b, int peak);
+extern "C" unsigned int func_00158960(void* self, int b, int c, int d, int e);
+extern char D_004A1EE0[];
+extern char D_00466CE0[];
+extern char D_00466CF8[];
+extern char D_00466D10[];
+extern char D_00466D28[];
+extern char D_00466D38[];
+extern char D_00466D50[];
+
+static inline unsigned int udiv_CE758(unsigned int a, unsigned int b)
+{
+    return a / b;
+}
+
+static inline unsigned int umod_CE758(unsigned int a, unsigned int b)
+{
+    return a % b;
+}
+
+extern "C" void setChallengeStats(cUIText* text, int a1, int a2, int peak, int kind, int idx)
+{
+    unsigned short buf[100];
+    char num[200];
+    void* reward = cBE_getInterface_CE758(cBE_getBE(), 0xD);
+    if (kind == 3) {
+        int money = cBEEconInterface_getTotalMoneyEarned(cBE_getInterface_CE758(cBE_getBE(), 0xB), a1, a2);
+        int fmt = Loc_CE758(D_00466CE0);
+        func_002C27C0(num, D_004A1EE0, func_00198AF0_price(money));
+        if (fmt != 0) {
+            func_002C26D0_CE758(buf, (void*)fmt, num);
+            func_003A0E90(text, buf);
+        }
+    } else if (kind == 2) {
+        void* iface = cBE_getInterface_CE758(cBE_getBE(), 0xA);
+        if (idx == 0) {
+            int t = func_00153390(iface, peak);
+            int v = func_00153688(iface, a1, a2, peak);
+            int fmt = Loc_CE758(D_00466CF8);
+            if (fmt != 0) {
+                func_002C26D0_CE758(buf, (void*)fmt, v, t);
+                func_003A0E90(text, buf);
+            }
+        } else {
+            int t = func_00154368(iface, peak);
+            int v = func_001544D0(iface, a1, a2, peak);
+            int fmt = Loc_CE758(D_00466D10);
+            if (fmt != 0) {
+                func_002C26D0_CE758(buf, (void*)fmt, v, t);
+                func_003A0E90(text, buf);
+            }
+        }
+    } else if (kind == 0) {
+        int track = D_0045AAD8_CE758[peak][kind][idx].track;
+        int type = D_0045AAD8_CE758[peak][kind][idx].type;
+        unsigned int time = func_00158960(reward, a1, a2, type, track);
+        unsigned int min = udiv_CE758(time, 60);
+        unsigned int sec = umod_CE758(time, 60);
+        sprintf(num, D_00466D28, func_00413AF8((float)(int)min), func_00413AF8((float)(int)sec));
+        int fmt = Loc_CE758(D_00466D38);
+        if (fmt != 0) {
+            func_002C26D0_CE758(buf, (void*)fmt, num);
+            func_003A0E90(text, buf);
+        }
+    } else if (kind == 1) {
+        int track = D_0045AAD8_CE758[peak][kind][idx].track;
+        int type = D_0045AAD8_CE758[peak][kind][idx].type;
+        int v = func_00158960(reward, a1, a2, type, track);
+        int fmt = Loc_CE758(D_00466D50);
+        if (fmt != 0) {
+            func_002C26D0_CE758(buf, (void*)fmt, v);
+            func_003A0E90(text, buf);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_CF758", func_001CED90);
