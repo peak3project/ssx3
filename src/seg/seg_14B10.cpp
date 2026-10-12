@@ -15,7 +15,67 @@ extern "C" void cAI_setAIState(void *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", cAI_forceAIState);
+#ifdef SKIP_ASM
+extern char D_00456C58[];
+extern char D_00456C68[];
+extern char D_004A0E90[];
+extern char D_00456C78[];
+extern char D_004A0E98[];
+extern char D_004A0EA0[];
+extern char D_00456C88[];
+
+// PORT: the unit declares cAI_forceAIState(void*); defined under an asm label with its real type.
+extern "C" void cAI_forceAIState_impl(char* self, int state) __asm__("cAI_forceAIState");
+
+// Forces the AI into the given state: state id, its state block and its name.
+extern "C" void cAI_forceAIState_impl(char* self, int state)
+{
+    switch (state) {
+    case 1:
+        *(int*)(self + 0x0) = 1;
+        *(const char**)(self + 0xA0) = D_00456C58;
+        *(void**)(self + 0x98) = self + 0xAC;
+        break;
+    case 2:
+        *(int*)(self + 0x0) = 2;
+        *(const char**)(self + 0xA0) = D_00456C68;
+        *(void**)(self + 0x98) = self + 0xB0;
+        break;
+    case 3:
+        *(int*)(self + 0x0) = 3;
+        *(const char**)(self + 0xA0) = D_004A0E90;
+        *(void**)(self + 0x98) = self + 0xB4;
+        break;
+    case 4:
+        *(int*)(self + 0x0) = 4;
+        *(const char**)(self + 0xA0) = D_00456C78;
+        *(void**)(self + 0x98) = self + 0xBC;
+        break;
+    case 5:
+        *(int*)(self + 0x0) = 5;
+        *(const char**)(self + 0xA0) = D_004A0E98;
+        *(void**)(self + 0x98) = self + 0xC0;
+        break;
+    case 6:
+        *(int*)(self + 0x0) = 6;
+        *(const char**)(self + 0xA0) = D_004A0EA0;
+        *(void**)(self + 0x98) = self + 0xC4;
+        break;
+    case 7:
+        *(int*)(self + 0x0) = 7;
+        *(const char**)(self + 0xA0) = D_00456C88;
+        *(void**)(self + 0x98) = self + 0xC8;
+        break;
+    default:
+        *(void**)(self + 0x98) = 0;
+        *(const char**)(self + 0xA0) = 0;
+        *(int*)(self + 0x0) = 0;
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00113C20);
