@@ -20437,7 +20437,30 @@ extern "C" void func_001C4E40(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C4F58);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char D_00465F00[];
+extern char D_00465F18[];
+
+// Formats a frame count (60 fps) as hours:minutes:seconds.milliseconds, dropping the hours when zero.
+extern "C" void func_001C4F58(void* self, char* buf, int frames)
+{
+    float t = frames * (1.0f / 60.0f);
+    int ms = (int)((t - (int)t) * 1000.0f);
+    int secs = (int)t;
+    int mins = secs / 60;
+    int hours = mins / 60;
+    secs -= mins * 60;
+    mins -= hours * 60;
+    if (hours > 0) {
+        sprintf(buf, D_00465F00, hours, mins, secs, ms);
+    } else {
+        sprintf(buf, D_00465F18, mins, secs, ms);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C5018);
