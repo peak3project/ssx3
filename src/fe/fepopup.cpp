@@ -2923,7 +2923,63 @@ extern "C" void func_001CB500(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CB650);
+#ifdef SKIP_ASM
+// PORT: func_001CE560's third parameter is an int* out-param; the unit declares it (void*, int, int).
+int func_001CE560_out(void* self, int idx, int* out) __asm__("func_001CE560");
+extern signed char D_00441390[];
+
+extern "C" void func_001CB650(void* self, int a1)
+{
+    bool b = *(int*)((char*)self + 0x68) != 0;
+    int flag;
+    if (*(int*)((char*)self + 0x6C)) {
+        flag = b;
+        flag = !flag;
+    } else {
+        flag = b != 0;
+    }
+    int idx = *(int*)((char*)self + 0x140);
+    int old = *(int*)((char*)self + 0x434);
+    if (idx >= 15 && idx <= 26) {
+        // PORT: reads the int field at 0x6C as a bool (bool is 4 bytes in SN gcc 2.95); use `*(int*)... == 0` off-PS2.
+        flag = !*(bool*)((char*)self + 0x6C);
+    }
+    int st = *(int*)((char*)self + 0x430);
+    if (a1) {
+        *(int*)((char*)self + 0x434) = idx;
+        *(int*)((char*)self + 0x430) = 3;
+        if (st == 2) {
+            int v = *(int*)((char*)self + 0x144);
+            if (v == 2 || (flag && v == 0) || (!flag && v == 0)) {
+                if (func_001CE560_out(self, old, 0)) {
+                    // the do/while(0) wrapper (a compiled-out macro block) is needed to match register allocation
+                    do {
+                        *(int*)((char*)self + 0x140) = old;
+                        return;
+                    } while (0);
+                }
+            }
+        }
+    }
+    int s = *(int*)((char*)self + 0x140);
+    if (s == 13 || s == 27 || s == 41 || s == 55 || s == 69 || s == 83)
+        *(int*)((char*)self + 0x140) -= 13;
+    else
+        *(int*)((char*)self + 0x140) = s + 1;
+    while (D_00441390[*(int*)((char*)self + 0x140)] == 0x2A)
+        *(int*)((char*)self + 0x140) += 1;
+    int val;
+    if (func_001CE560_out(self, *(int*)((char*)self + 0x140), &val)) {
+        *(int*)((char*)self + 0x144) = 2;
+    } else {
+        func_001CB650(self, 0);
+        if (val)
+            *(int*)((char*)self + 0x144) = flag == 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CB7F0);
