@@ -113,7 +113,131 @@ extern "C" void cReplay_restoreBucket(void* self, void* bucket, cStreamRB* strea
 
 INCLUDE_ASM("replay/replay", func_0026DE58);
 
+//100%
 INCLUDE_ASM("replay/replay", cReplay_restoreObject);
+#ifdef SKIP_ASM
+class cStreamRB;
+extern "C" void* cMemMan_alloc(unsigned int size, const char* tag, int flags, int d);
+extern "C" int func_0026EA68(void* stream);
+extern char D_004815F0[];
+extern "C" void* cDebounceNode_cDebounceNode_RO(void* self, void* bucket, void* stream) __asm__("cDebounceNode_cDebounceNode");
+extern char D_00481600[];
+extern "C" void* func_00341C80_RO(void* self, void* bucket, void* stream) __asm__("func_00341C80");
+extern char D_00481610[];
+extern "C" void* func_00359270_RO(void* self, void* bucket, void* stream) __asm__("func_00359270");
+extern char D_00481620[];
+extern "C" void* func_00358DB0_RO(void* self, void* bucket, void* stream) __asm__("func_00358DB0");
+extern char D_00481630[];
+extern "C" void* func_003422E8_RO(void* self, void* bucket, void* stream) __asm__("func_003422E8");
+extern char D_00481640[];
+extern "C" void* func_003464E0_RO(void* self, void* bucket, void* stream) __asm__("func_003464E0");
+extern char D_004A3440[];
+extern "C" void* func_003437C0_RO(void* self, void* bucket, void* stream) __asm__("func_003437C0");
+extern char D_004A3448[];
+extern "C" void* func_00341548_RO(void* self, void* bucket, void* stream) __asm__("func_00341548");
+extern char D_004A3450[];
+extern "C" void* func_0034CBE8_RO(void* self, void* bucket, void* stream) __asm__("func_0034CBE8");
+extern char D_004A3458[];
+extern "C" void* func_0034AE68_RO(void* self, void* bucket, void* stream) __asm__("func_0034AE68");
+extern char D_00481650[];
+extern "C" void* func_00352168_RO(void* self, void* bucket, void* stream) __asm__("func_00352168");
+extern char D_00481660[];
+extern "C" void* func_00357918_RO(void* self, void* bucket, void* stream) __asm__("func_00357918");
+extern char D_004A3460[];
+extern "C" void* func_00358588_RO(void* self, void* bucket, void* stream) __asm__("func_00358588");
+extern char D_004A3468[];
+extern "C" void* func_00350FD8_RO(void* self, void* bucket, void* stream) __asm__("func_00350FD8");
+extern char D_00481670[];
+extern "C" void* func_0034ED88_RO(void* self, void* bucket, void* stream) __asm__("func_0034ED88");
+extern char D_00481680[];
+extern "C" void* func_003430D0_RO(void* self, void* bucket, void* stream) __asm__("func_003430D0");
+extern char D_004A3470[];
+extern "C" void* func_00350F08_RO(void* self, void* bucket, void* stream) __asm__("func_00350F08");
+extern char D_004A3478[];
+extern "C" void* func_00356E60_RO(void* self, void* bucket, void* stream) __asm__("func_00356E60");
+extern char D_00481690[];
+extern "C" void* func_00348FA0_RO(void* self, void* bucket, void* stream) __asm__("func_00348FA0");
+extern char D_004816A0[];
+extern "C" void* func_00349DB0_RO(void* self, void* bucket, void* stream) __asm__("func_00349DB0");
+extern char D_004816B0[];
+struct sVE_RO { short delta; short index; void (*fn)(void*, int); };
+struct sObj_RO { int pad[3]; sVE_RO* vt; };
+extern "C" sObj_RO* func_00350B98_RO(void* self, void* bucket, void* stream) __asm__("func_00350B98");
+
+// Recreates a replay object of the recorded type and links it into the bucket.
+extern "C" void cReplay_restoreObject(void* self, void* bucket, cStreamRB* stream)
+{
+    switch (func_0026EA68(stream)) {
+    case 0:
+        cDebounceNode_cDebounceNode_RO(cMemMan_alloc(0x34, D_004815F0, 0x20000000, 0), bucket, stream);
+        break;
+    case 1:
+        func_00341C80_RO(cMemMan_alloc(0x6C, D_00481600, 0x20000000, 0), bucket, stream);
+        break;
+    case 2:
+        func_00359270_RO(cMemMan_alloc(0x70, D_00481610, 0x20000000, 0), bucket, stream);
+        break;
+    case 3:
+        func_00358DB0_RO(cMemMan_alloc(0x88, D_00481620, 0x20000000, 0), bucket, stream);
+        break;
+    case 4:
+        func_003422E8_RO(cMemMan_alloc(0x80, D_00481630, 0x20000000, 0), bucket, stream);
+        break;
+    case 5:
+        func_003464E0_RO(cMemMan_alloc(0xB0, D_00481640, 0x20000000, 0), bucket, stream);
+        break;
+    case 7:
+        func_003437C0_RO(cMemMan_alloc(0x24, D_004A3440, 0x20000000, 0), bucket, stream);
+        break;
+    case 8:
+        func_00341548_RO(cMemMan_alloc(0x50, D_004A3448, 0x20000000, 0), bucket, stream);
+        break;
+    case 9:
+        func_0034CBE8_RO(cMemMan_alloc(0x10C, D_004A3450, 0x20000000, 0), bucket, stream);
+        break;
+    case 10:
+        func_0034AE68_RO(cMemMan_alloc(0x1C, D_004A3458, 0x20000000, 0), bucket, stream);
+        break;
+    case 11:
+        func_00352168_RO(cMemMan_alloc(0x6C0, D_00481650, 0x20000000, 0), bucket, stream);
+        break;
+    case 13:
+        func_00357918_RO(cMemMan_alloc(0x2C, D_00481660, 0x20000000, 0), bucket, stream);
+        break;
+    case 18:
+        func_00358588_RO(cMemMan_alloc(0x218, D_004A3460, 0x20000000, 0), bucket, stream);
+        break;
+    case 19:
+        func_00350FD8_RO(cMemMan_alloc(0x1C, D_004A3468, 0x20000000, 0), bucket, stream);
+        break;
+    case 14:
+        func_0034ED88_RO(cMemMan_alloc(0x7C, D_00481670, 0x20000000, 0), bucket, stream);
+        break;
+    case 15:
+        func_003430D0_RO(cMemMan_alloc(0x48, D_00481680, 0x20000000, 0), bucket, stream);
+        break;
+    case 16:
+        func_00350F08_RO(cMemMan_alloc(0x1C, D_004A3470, 0x20000000, 0), bucket, stream);
+        break;
+    case 17:
+        func_00356E60_RO(cMemMan_alloc(0x2C, D_004A3478, 0x20000000, 0), bucket, stream);
+        break;
+    case 20:
+        func_00348FA0_RO(cMemMan_alloc(0x80, D_00481690, 0x20000000, 0), bucket, stream);
+        break;
+    case 21:
+        func_00349DB0_RO(cMemMan_alloc(0x80, D_004816A0, 0x20000000, 0), bucket, stream);
+        break;
+    case 22: {
+        sObj_RO* o = func_00350B98_RO(cMemMan_alloc(0x3C, D_004816B0, 0x20000000, 0), bucket, stream);
+        if (o != 0) {
+            o->vt[1].fn((char*)o + o->vt[1].delta, 3);
+        }
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replay", cReplay_restoreDeadBucket);
