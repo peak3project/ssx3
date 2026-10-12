@@ -373,7 +373,47 @@ INCLUDE_ASM("object/animnode", func_0034EBE0);
 
 INCLUDE_ASM("object/animnode", func_0034EC58);
 
+//100%
 INCLUDE_ASM("object/animnode", func_0034ED88);
+#ifdef SKIP_ASM
+extern "C" void* cMoveNode_cMoveNode(void* self, void* a1, void* stream);
+struct cFloatingNode;
+void cFloatingNode_initInfo(cFloatingNode* self);
+extern void* D_0048F858[];
+extern char D_0048E880[];
+
+struct sStreamVE_ED88 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
+// Element type with an empty constructor; the array new leaves only its loop counters.
+struct sAnimFrame_ED88 {
+    char data[0x40];
+    sAnimFrame_ED88() {}
+};
+
+extern "C" void* func_0034ED88(void* self, void* a1, void* stream)
+{
+    char* s = (char*)self;
+    int hasInfo;
+    cMoveNode_cMoveNode(self, a1, stream);
+    *(int*)(s + 0x78) = 0;
+    *(void***)(s + 0xC) = D_0048F858;
+    sStreamVE_ED88* vt = *(sStreamVE_ED88**)stream;
+    vt[2].fn((char*)stream + vt[2].delta, &hasInfo, 4);
+    if (hasInfo != 0) {
+        cFloatingNode_initInfo((cFloatingNode*)self);
+    }
+    sStreamVE_ED88* vt2 = *(sStreamVE_ED88**)stream;
+    vt2[2].fn((char*)stream + vt2[2].delta, s + 0x2C, 0x48);
+    sAnimFrame_ED88** pf = (sAnimFrame_ED88**)(s + 0x74);
+    *pf = new (D_0048E880, 0x20000000, 0) sAnimFrame_ED88[*(int*)(*(char**)(*(char**)(s + 0x18) + 0x80) + 0x4)];
+    *(unsigned short*)(s + 0x12) |= 1;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/animnode", func_0034EE68);
