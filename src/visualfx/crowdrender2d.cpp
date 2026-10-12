@@ -28,19 +28,67 @@ void cCrowdRender2D__cCrowdRender2D(int* param_1, int param_2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/crowdrender2d", cCrowdRender2D_init__Fv);
 #ifdef SKIP_ASM
-void cCrowdRender2D_init()
-{
+struct sCrowdAnimDef_B6D0 {
+    int f0;
+    int count;              // 0x04
+    char names[16][5];      // 0x08
+    char* shapes[16];       // 0x58
+    int handles[16];        // 0x98
+};
+struct sVEnt_B6D0 {
+    short delta;
+    short index;
+    void* fn;
+};
+typedef int (*tRegister_B6D0)(void*, char*, char*, int, int, int);
+typedef void (*tRelease_B6D0)(void*, int);
 
+extern sCrowdAnimDef_B6D0 D_00445D38_B6D0[] __asm__("D_00445D38");
+extern char* D_004A5B80;
+extern char D_004875C0[];
+extern "C" int FILE_load(const char* name, int flags);
+extern "C" char* SHAPE_locate(int file, const char* name);
+extern "C" int func_002523A8(int file);
+
+// PORT: the unit declares this as void(); defined under an asm label with its real type
+extern "C" void cCrowdRender2D_init_impl(int* self) __asm__("cCrowdRender2D_init__Fv");
+extern "C" void cCrowdRender2D_init_impl(int* self)
+{
+    int i;
+    self[0] = FILE_load(D_004875C0, 0x5000000);
+    for (i = 0; i < 1; i++) {
+        int j;
+        for (j = 0; j < D_00445D38_B6D0[i].count; j++) {
+            char* shape = SHAPE_locate(self[0], D_00445D38_B6D0[i].names[j]);
+            D_00445D38_B6D0[i].shapes[j] = shape;
+            sVEnt_B6D0* vt = *(sVEnt_B6D0**)(D_004A5B80 + 0x10D8);
+            D_00445D38_B6D0[i].handles[j] = ((tRegister_B6D0)vt[46].fn)(D_004A5B80 + vt[46].delta, shape, D_00445D38_B6D0[i].names[j], 0, 0, -1);
+        }
+    }
+    char* first = D_00445D38_B6D0[0].shapes[0];
+    self[1] = *(short*)(first + 4);
+    self[2] = *(short*)(first + 6);
+    self[3] = *(unsigned char*)first;
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/crowdrender2d", cCrowdRender2D_purge__FPi);
 #ifdef SKIP_ASM
-int cCrowdRender2D_purge(int *param_1)
+int cCrowdRender2D_purge(int* self)
 {
-	return *param_1;
+    int i;
+    for (i = 0; i < 1; i++) {
+        int j;
+        for (j = 0; j < D_00445D38_B6D0[i].count; j++) {
+            sVEnt_B6D0* vt = *(sVEnt_B6D0**)(D_004A5B80 + 0x10D8);
+            ((tRelease_B6D0)vt[50].fn)(D_004A5B80 + vt[50].delta, D_00445D38_B6D0[i].handles[j]);
+        }
+    }
+    return func_002523A8(self[0]);
 }
 #endif
 
