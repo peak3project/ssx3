@@ -172,7 +172,77 @@ extern "C" void func_00155BF0(void* self, int a, int b, int event)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintaggression", func_00155E58);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+int cBELibrary_getCharacterID(int);
+extern "C" void func_001E2A08(int charID, int level);
+extern sAggrCharProfile D_004A6CA8[][10];
+
+struct sRaceSettings_155E58 {
+    char pad_0x00[0x30];
+    int numPlayers;     // 0x30
+    char pad_0x34[0x15];
+    signed char b49;    // 0x49
+};
+extern sRaceSettings_155E58 D_005305B0;
+
+// Re-clamps every player's aggression level towards the other riders to the limits of its current state.
+extern "C" void func_00155E58(void)
+{
+    for (int i = 0; i < D_005305B0.numPlayers; i++) {
+        int profile = cBELibrary_getProfileIndex(i);
+        for (int j = 0; j < 10; j++) {
+            int ca = cBELibrary_getCharacterID(i);
+            int pts = D_004A6CA8[profile][ca].aggression[j].v[2] - 3;
+            if (pts < 0)
+                pts = 0;
+            int st = D_004A6CA8[profile][ca].aggression[j].v[0];
+            int lvl = pts / 5;
+            if (D_005305B0.b49 == 0) {
+                func_001E2A08(j, pts);
+            }
+            switch (st) {
+            case 0:
+                if (lvl >= 3) {
+                    lvl = 2;
+                    pts = 10;
+                }
+                break;
+            case 1:
+                if (lvl >= 4) {
+                    lvl = 2;
+                    pts = 10;
+                    st = 3;
+                }
+                break;
+            case 2:
+                if (lvl <= 0) {
+                    lvl = 1;
+                } else if (lvl >= 4) {
+                    lvl = 3;
+                    pts = 15;
+                }
+                break;
+            case 3:
+                if (lvl == 0) {
+                    st = 1;
+                    lvl = 3;
+                    pts = 15;
+                } else if (lvl >= 5) {
+                    lvl = 4;
+                    pts = 20;
+                }
+                break;
+            }
+            D_004A6CA8[profile][ca].aggression[j].v[0] = st;
+            D_004A6CA8[profile][ca].aggression[j].v[2] = pts;
+            D_004A6CA8[profile][ca].aggression[j].v[1] = lvl;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintaggression", func_001560A0);
