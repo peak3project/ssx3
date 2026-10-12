@@ -2475,7 +2475,50 @@ INCLUDE_ASM("render/particle", func_0037BA50);
 
 INCLUDE_ASM("render/particle", func_0037BB10);
 
+//100%
 INCLUDE_ASM("render/particle", func_0037BC40);
+#ifdef SKIP_ASM
+// Pages used by a w x h buffer of the given GS pixel format (32-bit pages are 64x32, 16-bit 64x64).
+static inline int pages_37BC40(int psm, int bw, int h)
+{
+    switch (psm) {
+    case 0:
+    case 1:
+    case 48:
+    case 49:
+        return bw * ((h + 31) >> 5);
+    case 2:
+    case 10:
+    case 50:
+    case 58:
+        return bw * ((h + 63) >> 6);
+    }
+    return 0;
+}
+
+static inline int zpages_37BC40(int psm, int bw, int h)
+{
+    switch (psm) {
+    case 48:
+    case 49:
+        return bw * ((h + 31) >> 5);
+    case 50:
+    case 58:
+        return bw * ((h + 63) >> 6);
+    }
+    return 0;
+}
+
+// Size in 256-byte blocks of the frame, texture and z buffers for a w x h screen.
+extern "C" int func_0037BC40(void* self, int w, int h, int fbPsm, int texPsm, int zPsm)
+{
+    int bw = (w + 63) >> 6;
+    int fb = pages_37BC40(fbPsm, bw, h);
+    int tex = pages_37BC40(texPsm, bw, h);
+    int z = zpages_37BC40(zPsm, bw, h);
+    return (fb + tex + z) << 5;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0037BD38);
