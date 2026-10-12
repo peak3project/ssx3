@@ -11,7 +11,59 @@ struct cOVStateHUDElem {
     float w; // 0x1c
 };
 
+//100%
 INCLUDE_ASM("fe/ovstatehud", cOVStateHiScoreList_onCreateScreen);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0020A380(void* self);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" void* func_0028B180();
+extern "C" void func_00294F78(void*, int);
+extern signed char D_00535C10[];
+extern char D_0046E9D8[];
+extern char D_0046E9E8[];
+extern char D_0046E9F8[];
+extern char D_0046EA08[];
+extern char D_0046EA18[];
+
+static inline int HasScores1E8FF0(char* hs)
+{
+    return *(int*)(hs + 0x18) >= 0 || *(int*)(hs + 0x1C) >= 0;
+}
+
+// Builds the hi-score list screen and shows/hides its panels for the current game mode.
+extern "C" void cOVStateHiScoreList_onCreateScreen(void* self)
+{
+    void* engine = *(void**)((char*)self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0046E9D8), 0);
+    *(void**)((char*)self + 0x40) = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    func_0020A380(self);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    switch (D_00535C10[0]) {
+    case 0: case 5:
+        cUIState_showObjSafe(self, D_0046E9E8);
+        break;
+    case 1: case 2: case 3: case 4: case 6:
+    default:
+        cUIState_hideObjSafe(self, D_0046E9F8);
+        break;
+    }
+    char* hs = (char*)cBE_getInterface_Fv(cBE_getBE(), 8);
+    if (!HasScores1E8FF0(hs)) {
+        cUIState_hideObjSafe(self, D_0046EA08);
+        cUIState_hideObjSafe(self, D_0046EA18);
+    }
+    func_00294F78(func_0028B180(), 0xE);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001E9130);
