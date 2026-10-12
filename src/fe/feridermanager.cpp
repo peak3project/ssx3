@@ -107,7 +107,80 @@ extern "C" void func_0019E7F0(int* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feridermanager", cFERider_init);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* func_0014AD28(void* self, int a1, int a2);
+extern "C" void func_0019EBA0(void* self);
+extern "C" void func_0019E7F0(int* self);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_002F1890(void* mem, void* owner);
+extern "C" void* func_002ECA68(void* mem, void* owner, void* a2);
+extern "C" void* func_0030D4B8(void* mem);
+extern "C" void func_0030D840(void* pool, int a1, int a2);
+extern "C" void func_002F19F0(void* a, void* b);
+// PORT: these are defined later in the unit with struct-typed params; bind void* views by asm label
+extern "C" void func_0019FF00_E980(int* self, void* list, void* prev, int force, int a4) __asm__("func_0019FF00");
+extern "C" void func_0019FBE0_E980(int* self, void* list, int a2, int a3) __asm__("func_0019FBE0");
+extern "C" void func_0019F138_E980(void* self) __asm__("func_0019F138");
+extern char D_00460AC0[];
+extern char D_00460AD8[];
+extern char D_00460AF0[];
+
+// PORT: callers declare cFERider_init as returning void; the body returns 1
+extern "C" int cFERider_init_impl(int* self, int profile, int character, int slot) __asm__("cFERider_init");
+extern "C" int cFERider_init_impl(int* self, int profile, int character, int slot)
+{
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 9);
+    if (self[0] == character && self[4] == slot) {
+        return 1;
+    }
+    if (self[0] >= 0) {
+        func_0019EBA0(self);
+    }
+    int dirty = (self[0xCC4 / 4] != 0) | (self[0xCC8 / 4] != 0);
+    self[4] = slot;
+    self[1] = profile;
+    self[0] = character;
+    self[0xC28 / 4] = 0;
+    self[0x14 / 4] = 0;
+    self[0xCC8 / 4] = 0;
+    self[0xCB4 / 4] = 0;
+    self[0xCB8 / 4] = 0;
+    self[0xCBC / 4] = 0;
+    self[0xCC0 / 4] = 0;
+    self[0xC24 / 4] = -1;
+    self[0xCC4 / 4] = dirty;
+    *(void**)&self[0xC70 / 4] = func_002F1890(cMemMan_alloc(0xA8, D_00460AC0, 0, 0), self);
+    *(void**)&self[0xC74 / 4] = func_002ECA68(cMemMan_alloc(0xC8, D_00460AD8, 0, 0), self, *(void**)&self[0xC70 / 4]);
+    *(void**)&self[2] = func_0030D4B8(cMemMan_alloc(0x160, D_00460AF0, 0, 0));
+    func_0030D840(*(void**)&self[2], 100, 15);
+    func_002F19F0(*(void**)&self[0xC70 / 4], *(void**)&self[2]);
+    void* list = func_0014AD28(iface, profile, character);
+    func_0019FF00_E980(self, list, 0, self[4], 1);
+    if (self[4] != 0) {
+        func_0019E7F0(self);
+    }
+    func_0019FBE0_E980(self, list, 0, 1);
+    func_0019F138_E980(self);
+    switch (self[0]) {
+    case 0: self[0xCD8 / 4] = 1; break;
+    case 1: self[0xCD8 / 4] = 4; break;
+    case 2: self[0xCD8 / 4] = 0x20; break;
+    case 3: self[0xCD8 / 4] = 2; break;
+    case 4: self[0xCD8 / 4] = 8; break;
+    case 5: self[0xCD8 / 4] = 0x100; break;
+    case 6: self[0xCD8 / 4] = 0x200; break;
+    case 7: self[0xCD8 / 4] = 0x80; break;
+    case 8: self[0xCD8 / 4] = 0x10; break;
+    case 9: self[0xCD8 / 4] = 0x40; break;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019EBA0);
