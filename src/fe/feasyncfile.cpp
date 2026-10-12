@@ -10931,7 +10931,59 @@ extern "C" void func_001B7C70(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B7CB8);
+#ifdef SKIP_ASM
+extern int* D_004A33D0;
+extern "C" void func_00265A68(void* self);
+extern "C" int func_00265D38(void* self);
+extern "C" void func_002659E8(void* self);
+extern "C" void* func_001B70D0(void*, int);
+void* func_001B77A8(void* self);
+extern "C" void func_001B77C8(void* self);
+extern "C" void func_001B7820(void* self);
+extern "C" void func_001B78F0(void* self);
+extern "C" void func_001B7938(void* self);
+extern "C" void func_001B7A08(void* self);
+extern "C" void func_001B7A50(void* self);
+extern "C" void func_001B7A98(void* self);
+extern "C" void func_001B7BC0(void* self);
+extern "C" void func_001B7C28(void* self);
+extern "C" void func_001B7C70(void* self);
+
+// Polls the memory card, then runs the step handler for the current memory-card state.
+extern "C" void func_001B7CB8(void* self)
+{
+    func_00265A68(D_004A33D0);
+    int* mc = D_004A33D0;
+    *(int*)((char*)self + 0x6D4) = mc[1];
+    if (func_00265D38(mc) != 0) {
+        *(int*)((char*)self + 0x6D8) = 1;
+        if (*(int*)((char*)self + 0x6D4) == 0) {
+            *(int*)((char*)self + 0x6D4) = 2;
+        }
+    }
+    switch (*(int*)((char*)self + 0x6DC)) {
+    case 0: func_001B70D0(self, 1); break;
+    case 1: func_001B77A8(self); break;
+    case 2: func_001B77C8(self); break;
+    case 5: func_001B70D0(self, 6); break;
+    case 6: func_001B7820(self); break;
+    case 8: func_001B78F0(self); break;
+    case 11: func_001B70D0(self, 0xC); break;
+    case 12: func_001B7938(self); break;
+    case 14: func_001B7A08(self); break;
+    case 16: func_001B7A50(self); break;
+    case 19: func_001B70D0(self, 0x14); break;
+    case 20: func_001B7A98(self); break;
+    case 22: func_001B7BC0(self); break;
+    case 7: case 13: case 21: case 25: func_002659E8(D_004A33D0); break;
+    case 26: func_001B7C28(self); break;
+    case 27: func_001B7C70(self); break;
+    case 28: case 29: break;
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/feasyncfile", func_001B7E40);
 
