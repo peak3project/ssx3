@@ -3758,7 +3758,40 @@ extern "C" void func_00260F10(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00260F80);
+#ifdef SKIP_ASM
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern char D_00480E48[];
+extern void* D_004A3E90;
+extern void* D_004A3328;
+
+// Creates the memory-card manager singleton (D_004A3328).
+extern "C" void func_00260F80(void)
+{
+    // An unused 32-byte local is needed to reproduce the 0x30-byte frame.
+    int unused[8];
+    char* m = (char*)operator new(0xF0, D_00480E48, 0x20000000, 0);
+    *(int*)(m + 0x40) = -1;
+    *(int*)(m + 0xA4) = 0x15180;
+    *(void**)(m + 0xEC) = D_004A3E90;
+    *(int*)(m + 0xAC) = 0;
+    *(int*)(m + 0xB0) = 0;
+    *(int*)(m + 0xB4) = 0;
+    *(int*)(m + 0xBC) = 0;
+    *(int*)(m + 0xC0) = 0;
+    *(int*)(m + 0xC4) = 0;
+    *(int*)(m + 0xC8) = 0;
+    *(int*)(m + 0xCC) = 0;
+    *(int*)(m + 0xD0) = 0;
+    *(int*)(m + 0xD8) = 0;
+    *(int*)(m + 0xDC) = 0;
+    *(int*)(m + 0xE0) = 0;
+    *(int*)(m + 0xE4) = 0;
+    *(int*)(m + 0xE8) = 0;
+    D_004A3328 = m;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261008);
