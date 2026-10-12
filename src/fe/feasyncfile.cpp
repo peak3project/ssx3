@@ -9210,7 +9210,44 @@ extern "C" void func_001B5CF8(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B5D58);
+#ifdef SKIP_ASM
+extern "C" void func_001B5A58(void* self, void* a1, int a2);
+// Dispatches a message to the matching handler, falling back to the base handler.
+extern "C" void func_001B5D58(void* self, void* a1, int a2)
+{
+    switch (*(int*)((char*)a1 + 0x18)) {
+    case 0x81C:
+        func_001B5CF8(self, a1, a2);
+        break;
+    case 0x80E:
+        func_001B55B0(self, a1, a2);
+        break;
+    case 0x81B:
+        func_001B5740(self, a1, a2);
+        break;
+    case 0x81A:
+        func_001B5830(self, a1, a2);
+        break;
+    case 0x82C:
+        func_001B5A58(self, a1, a2);
+        break;
+    case 0x840: case 0x841: case 0x842:
+        func_001B4C40(self, a1, a2);
+        break;
+    case 0x843:
+        func_001B4C00(self, a1, a2);
+        break;
+    case 0x844:
+        func_001B5BD8(self, a1, a2);
+        break;
+    default:
+        func_001A97B8(self, a1, a2);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B5E28);
@@ -11718,7 +11755,39 @@ extern "C" void func_001BA9F8(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BAA88);
+#ifdef SKIP_ASM
+extern "C" void func_001BB158(void* self, void* a1, unsigned int a2);
+extern "C" void func_001BB0E8(void* self, void* a1, int a2);
+extern "C" void func_001BB098(void* self, void* a1, int a2);
+extern "C" void func_001BADE8(void* self, void* a1, int a2);
+extern "C" void func_001BAED8(void* self, void* a1, int a2);
+// Dispatches a message to the matching handler, falling back to the base handler.
+extern "C" void func_001BAA88(void* self, void* a1, int a2)
+{
+    switch (*(int*)((char*)a1 + 0x18)) {
+    case 0x81F:
+        func_001BB158(self, a1, a2);
+        break;
+    case 0x821:
+        func_001BB0E8(self, a1, a2);
+        break;
+    case 0x822:
+        func_001BB098(self, a1, a2);
+        break;
+    case 0x80E:
+        func_001BADE8(self, a1, a2);
+        break;
+    case 0x82C:
+        func_001BAED8(self, a1, a2);
+        break;
+    default:
+        func_001A97B8(self, a1, a2);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BAB28);
