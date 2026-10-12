@@ -1393,6 +1393,7 @@ INCLUDE_ASM("fe/festateoptions", func_0018CCE0);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00147618(void* player, int which);
+// func_0018CF50 returns void; declaring it int ($v0 set by the call) reproduces the original argument scheduling.
 extern "C" int func_0018CF50_CCE0(void* self, int on) __asm__("func_0018CF50");
 
 // Options toggle row: accept flips the setting chosen by the cursor (items 2 and 3), back is consumed.
