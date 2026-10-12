@@ -715,7 +715,25 @@ extern "C" void func_00117138(char *arg0, int arg1, signed char *arg2, int arg3,
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", func_001171A8);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void func_00117008(char *, signed char *);
+extern signed char D_004A5E20[];
+extern char D_004A1070[];
+
+// Variant of func_00117138 that names the entry from a number (formatted into a shared buffer).
+extern "C" void func_001171A8(char *arg0, int arg1, int arg2, float fparg0, int arg3) {
+    sprintf((char*)D_004A5E20, D_004A1070, arg2);
+    func_00117008(arg0, D_004A5E20);
+    *(int *)(arg0 + 0x14) = arg2;
+    *(int *)(arg0 + 0) = arg1;
+    *(float *)(arg0 + 8) = -fparg0;
+    *(int *)(arg0 + 0xC) = arg3;
+    *(float *)(arg0 + 4) = -1.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00117248);
