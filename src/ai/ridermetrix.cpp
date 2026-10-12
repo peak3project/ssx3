@@ -1362,7 +1362,66 @@ extern "C" float func_00119E38(void* self, int a, int b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ridermetrix", func_00119EF8);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_001E3760(int id, int amount);
+extern "C" void func_001597B0(void* iface, int id, int amount);
+int func_00117B88_i(void* self, int type, int value, int arg, float duration) __asm__("func_00117B88");
+
+struct sVE119EF8 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+static inline int IsBusy119EF8()
+{
+    int n = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
+    return n != 0 && n < 10;
+}
+
+static inline int GetId119EF8(char* self)
+{
+    char* obj = *(char**)(self + 0x1AC) + 0x6C0;
+    sVE119EF8* vt = *(sVE119EF8**)obj;
+    return vt[7].fn(obj + vt[7].delta);
+}
+
+// PORT: callers in this unit declare it void; the function returns 0.0f.
+float func_00119EF8_impl(char* self, unsigned int kind, int amount) __asm__("func_00119EF8");
+
+// Awards trick/score metrics of the given kind and plays the matching reward popups.
+float func_00119EF8_impl(char* self, unsigned int kind, int amount)
+{
+    if (amount != 0 && !IsBusy119EF8()) {
+        void* iface = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+        func_001E3760(GetId119EF8(self), amount);
+        func_001597B0(iface, GetId119EF8(self), amount);
+        func_00117B88_i(self, 0x18, amount, 0, 0.7f);
+        switch (kind) {
+        case 3:
+            func_00117B88_i(self, 0x31, amount, amount, 1.5f);
+            break;
+        case 1:
+            func_00117B88_i(self, 0x2E, amount, 0, 2.5f);
+            break;
+        case 0:
+            func_00117B88_i(self, 0x2F, amount, 0, 2.5f);
+            break;
+        case 2:
+            func_00117B88_i(self, 0x30, amount, *(int*)(self + 0x9C), 2.5f);
+            break;
+        case 4:
+            break;
+        }
+    }
+    return 0.0f;
+}
+#endif
 
 extern "C" void func_00117AE8(void* self, int a, const char* b, float c, int d);
 extern const char D_00457888[];
