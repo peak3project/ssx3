@@ -123,7 +123,43 @@ extern "C" void cOVState_REPLAY_onUpdate(void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_setupCameraName);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
+void cUIText_setAsciiString(cUIText* self, const char* str);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" char* strcpy(char* dst, const char* src);
+extern void* D_004A28A8;
+extern char D_004A2730[];
+extern char D_004A2138[];
+
+// Shows the name of the active replay camera.
+extern "C" void cOVState_REPLAY_setupCameraName(void* self)
+{
+    char buf[16];
+    cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2730));
+    if (t == 0) {
+        return;
+    }
+    unsigned int cam = *(unsigned int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28) + 0x630);
+    switch (cam) {
+    case 0: strcpy(buf, "-  Web-cam"); break;
+    case 1: strcpy(buf, "-  Manual-cam"); break;
+    case 2: strcpy(buf, "-  Near-cam"); break;
+    case 3: strcpy(buf, "-  Mid-cam"); break;
+    case 4: strcpy(buf, "-  Far-cam"); break;
+    case 5: strcpy(buf, "-  2:00"); break;
+    case 6: strcpy(buf, "-  10:00"); break;
+    case 7: strcpy(buf, "-  4:00"); break;
+    case 8: strcpy(buf, "-  8:00"); break;
+    default: sprintf(buf, D_004A2138, cam + 1); break;
+    }
+    cUIText_setAsciiString(t, buf);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_setupTicker);
