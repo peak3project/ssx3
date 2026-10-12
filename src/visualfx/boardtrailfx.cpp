@@ -162,7 +162,63 @@ extern "C" void func_002E8560(func_002E8560_sTrail* self)
 
 INCLUDE_ASM("visualfx/boardtrailfx", func_002E86F0);
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002E87E8);
+#ifdef SKIP_ASM
+int func_0011FE98(void* self);
+int func_00312AA0(void* self, int a1);
+extern "C" char* func_00311B20(void* self, int a1);
+extern "C" int func_001446A0(void* self, int a1);
+extern float D_004A4590;
+extern float D_004A4594;
+extern float D_004A4598;
+extern float D_004A459C;
+
+static inline int boardTrailCanDraw(char* r)
+{
+    int ok = 0;
+    if (*(int*)(r + 0xAC4) != 0 && *(int*)(r + 0xAD0) == 0) ok = *(int*)(r + 0xAFC) != 0;
+    return ok;
+}
+// Picks the trail fade rate for the rider's current state; returns 0 when no trail should be drawn.
+extern "C" int func_002E87E8(char** self)
+{
+    if (func_0011FE98(self[0]) == 2) {
+        if (*(int*)(*(char**)(self[0] + 0x77C) + 0x30) != 0) {
+            return 0;
+        }
+    } else if (func_0011FE98(self[0]) != 0) {
+        if (!boardTrailCanDraw(self[0])) return 0;
+        if (*(int*)(self[0] + 0xB00) == 0) return 0;
+    }
+    if (func_00312AA0(*(void**)(self[0] + 0x784), 2) == 0x16) {
+        if (func_001446A0(func_00311B20(*(void**)(self[0] + 0x784), 2) + 0xB0, 0)) {
+            if (!func_001446A0(func_00311B20(*(void**)(self[0] + 0x784), 2) + 0xB0, 1)) {
+                return 0;
+            }
+        }
+    }
+    switch (*(int*)(self[0] + 0x438)) {
+    case 1:
+        *(float*)((char*)self + 0x9C) = D_004A4594;
+        return 1;
+    case 0:
+    case 5:
+    case 6:
+    case 12:
+        *(float*)((char*)self + 0x9C) = D_004A4590;
+        return 1;
+    case 2:
+    case 13:
+        *(float*)((char*)self + 0x9C) = D_004A4598;
+        return 1;
+    case 3:
+        *(float*)((char*)self + 0x9C) = D_004A459C;
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("visualfx/boardtrailfx", func_002E8938);
 
