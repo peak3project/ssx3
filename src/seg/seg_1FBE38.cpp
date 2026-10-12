@@ -4063,7 +4063,86 @@ extern "C" void* func_00301C80(void* self, int n, Ent_1C80* e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00301D78);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct Flag_1D78 { char c; Flag_1D78() {} Flag_1D78(const Flag_1D78& o) : c(o.c) {} };
+extern unsigned D_004A5710_1D78 __asm__("D_004A5710");
+extern Flag_1D78 D_004A5714_1D78 __asm__("D_004A5714");
+extern int D_004A5718_1D78 __asm__("D_004A5718");
+extern int D_004A3CB0_1D78[2] __asm__("D_004A3CB0");
+extern int *D_004A3DD8_1D78 __asm__("D_004A3DD8");
+extern char **D_004A47B8_1D78 __asm__("D_004A47B8");
+extern char *D_004A28A8_1D78 __asm__("D_004A28A8");
+struct O_1D78 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
+struct Sh_1D78 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(void*); };
+struct Lvl_1D78 { char pad[0x28]; char *sh[1]; };
+static inline char *refToPtr_1D78(unsigned i) { return (char*)(i << 2); }
+static inline char *conv_1D78(unsigned i) { if (i == 0) return 0; return refToPtr_1D78(i); }
+struct V3_1D78 { float x, y, z; };
+extern V3_1D78 D_004C9098_1D78 __asm__("D_004C9098");
+extern "C" void* func_003E6574_1D78(void*, void*, int) __asm__("func_003E6574");
+struct Chk_1D78 { virtual void v01(); virtual void v02(); virtual int v03(char*); };
+int* func_00226610_1D78(void*) __asm__("func_00226610__FPv");
+struct Ent_1D78 { int idx; int val; int pad; int type; };
+extern "C" void* func_00301D78(void* self, int n, Ent_1D78 *e) {
+    if (D_004A5718_1D78 == 0) {
+        D_004A5710_1D78 = 0xFFFFFFFF;
+        D_004A5718_1D78 = 1;
+        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb 0(sp)).
+        D_004A5714_1D78 = Flag_1D78(D_004A5714_1D78);
+    }
+    unsigned buf64[2];
+    unsigned *buf = buf64;
+    buf64[0] = 0xFFFFFFFF;
+    func_003E6574_1D78(buf, &D_004A5710_1D78, 8);
+    Ent_1D78 *x = e;
+    for (int i = 0; i < n; i++, x++) {
+        int idx = x->idx;
+        int t = D_004A3CB0_1D78[idx];
+        unsigned *d = (unsigned*)((idx << 2) + (int)buf);
+        if (x->type != t && t == 2)
+            *(float*)d = (float)x->val;
+        else
+            *d = x->val;
+    }
+    unsigned id = buf[0];
+    char *obj;
+    if (~id == 0) {
+        obj = *(char**)((char*)D_004A3DD8_1D78 + 0x290);
+    } else {
+        char *s = (*(char***)((char*)*D_004A47B8_1D78 + 8))[id & 0xFF];
+        unsigned i;
+        char *r;
+        if (!s)
+            r = 0;
+        else {
+            i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8;
+            char *t = conv_1D78(i);
+            r = t;
+        }
+        obj = r;
+    }
+    if (obj) {
+        int found = 1;
+        char *lvl = *(char**)(*(char**)(D_004A28A8_1D78 + 0x84) + 0xC);
+        char *q = *(char**)(lvl + (*D_004A3DD8_1D78 << 2) + 0x28);
+        char *a = q ? q + 0x6C0 : 0;
+        char *r = a ? a - 0x6C0 : 0;
+        Chk_1D78 *c = (Chk_1D78*)(r + 0x6C0);
+        if (c->v03(obj)) {
+            *(int*)((char*)self + 8) = found;
+            *func_00226610_1D78(self) = found;
+            goto done;
+        }
+    }
+    *(int*)((char*)self + 8) = 1;
+    *func_00226610_1D78(self) = 0;
+done:
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00301F48);
