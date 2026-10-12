@@ -410,7 +410,69 @@ extern "C" void func_001A3E30()
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A3EA0);
+#ifdef SKIP_ASM
+extern "C" void cBXString__cBXString(void* self, int flags);
+void cMemMan_free(void* p);
+void operator_delete(int* ptr);
+extern void* D_00467F28[];
+struct sOwner1A5450;
+extern "C" void func_001A5450(sOwner1A5450* self);
+extern "C" void func_001A85D0_dtor3EA0(void* self, int flags) __asm__("func_001A85D0");
+
+struct sVE1A3EA0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+static inline void Dealloc1A3EA0(void** p, int n)
+{
+    if (p != 0) {
+        if (n == 1) {
+            operator_delete((int*)p);
+        } else {
+            cMemMan_free(p);
+        }
+    }
+}
+
+struct sVec1A3EA0 {
+    int f0;
+    void** mBegin;  // 0x4
+    void** mEnd;    // 0x8
+    void** mCap;    // 0xC
+};
+
+struct sOwner1A3EA0 {
+    char pad0[0x8];
+    void* vt;               // 0x8
+    char padC[0x20 - 0xC];
+    char* child;            // 0x20
+    char pad24[0x6D0 - 0x24];
+    char str0[4];           // 0x6D0
+    char str1[0xC];         // 0x6D4
+    char str2[4];           // 0x6E0
+    sVec1A3EA0 mVec;        // 0x6E4
+};
+
+// Destructor for the memory-card screen.
+extern "C" void func_001A3EA0(sOwner1A3EA0* self, int flags)
+{
+    self->vt = D_00467F28;
+    char* child = self->child;
+    sVE1A3EA0* vt = *(sVE1A3EA0**)(child + 0x8);
+    vt[32].fn(child + vt[32].delta);
+    func_001A5450((sOwner1A5450*)self);
+    sVec1A3EA0* v = &self->mVec;
+    Dealloc1A3EA0(v->mBegin, self->mVec.mCap - self->mVec.mBegin);
+    cBXString__cBXString(self->str2, 2);
+    cBXString__cBXString(self->str1, 2);
+    cBXString__cBXString(self->str0, 2);
+    func_001A85D0_dtor3EA0(self, flags);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A3F68);
