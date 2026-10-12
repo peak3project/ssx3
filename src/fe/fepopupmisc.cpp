@@ -48,7 +48,82 @@ extern "C" void cFEPopupVideoCalibration_onCreateScreen(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DEC68);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+void cUIText_setUnicodeStringByID(cUIText* t, int id);
+extern "C" void* cUIScreen_getObjectByHashName_EC68(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
+extern char* D_004A1540;
+// PORT: the target re-reads this name pointer without filling the call delay slot; volatile view.
+extern char* volatile D_004A1544_EC68 __asm__("D_004A1544");
+extern char D_0045DD90[];
+extern char D_0045DDB8[];
+extern char D_0045DDC8[];
+
+struct sVE_EC68 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sVEi_EC68 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+struct sWidget_EC68 {
+    int pad[2];
+    sVEi_EC68* vt;
+};
+
+struct sObj_EC68 {
+    int pad[2];
+    sVE_EC68* vt;
+};
+
+struct sSnd_EC68 {
+    sVE_EC68* vt;
+};
+extern sSnd_EC68 D_004A5A58_EC68 __asm__("D_004A5A58");
+
+static inline void show_EC68(char* self, char* name, int on)
+{
+    sObj_EC68* o = (sObj_EC68*)cUIScreen_getObjectByHashName_EC68(*(void**)(self + 0x40), GetHashValue32(name));
+    if (o != 0) {
+        o->vt[9].fn((char*)o + o->vt[9].delta, on);
+    }
+}
+
+// Popup gain-focus handler: on first activation shows the buttons and sets the help text.
+extern "C" int func_001DEC68(char* self, sWidget_EC68* w)
+{
+    if (w->vt[5].fn((char*)w + w->vt[5].delta)) {
+        if (*(signed char*)(self + 0x48) == 0) {
+            show_EC68(self, D_004A1540, 0);
+            show_EC68(self, D_004A1544_EC68, 1);
+            cUIText* t = (cUIText*)cUIScreen_getObjectByHashName_EC68(*(void**)(self + 0x40), GetHashValue32(D_0045DD90));
+            if (t != 0) {
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DDB8));
+            }
+            show_EC68(self, D_0045DDC8, 0);
+            *(signed char*)(self + 0x48) = 1;
+        } else {
+            *(int*)(self + 0x1C) = ((*(int*)(self + 0x1C) | 0x80) & ~0x3F00) | 0x700;
+        }
+        sSnd_EC68* s = *(sSnd_EC68**)(*(char**)(self + 0x10) + 0x14);
+        if (s == 0) {
+            s = &D_004A5A58_EC68;
+        }
+        if (s != 0) {
+            s->vt[2].fn((char*)s + s->vt[2].delta, 6);
+        }
+    }
+    return 1;
+}
+#endif
 
 extern void* D_0046B230[];
 extern "C" void* func_0039E390(void*);
