@@ -8830,7 +8830,101 @@ void func_001B4198(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B41A8);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8770(void* self);
+extern "C" void func_001B4888(void* self, int a1, int a2, int a3);
+extern "C" void func_001B5068(void* self, int a1);
+extern "C" void func_001B43A8(void* self);
+extern "C" void func_001B4470(void* self);
+extern "C" void func_001B45E8(void* self);
+extern "C" int func_0039F698(void* p);
+void func_002C67E8(void* self, int a1);
+extern char* D_004A1B78_p __asm__("D_004A1B78");
+extern int D_004A1B80;
+
+struct sVEv1B41A8 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+struct sVE1B41A8 {
+    short delta;
+    short index;
+    int (*fn)(void*, ...);
+};
+
+static inline int VCall1B41A8(int slot)
+{
+    char* obj = D_004A1B78_p;
+    sVE1B41A8* vt = *(sVE1B41A8**)obj;
+    return vt[slot].fn(obj + vt[slot].delta);
+}
+
+// Per-frame update for the online-login screen: steps the login state machine on the network object.
+extern "C" void func_001B41A8(void* self)
+{
+    if (D_004A1B78_p != 0) {
+        char* obj = D_004A1B78_p;
+        sVEv1B41A8* vt = *(sVEv1B41A8**)obj;
+        vt[3].fn(obj + vt[3].delta);
+    }
+    switch (*(int*)((char*)self + 0x708)) {
+    case 1:
+        *(int*)((char*)self + 0x708) = 2;
+        break;
+    case 2:
+        if (VCall1B41A8(11) == 0) {
+            func_002C67E8(D_004A1B78_p, D_004A1B80);
+            *(int*)((char*)self + 0x708) = 3;
+        }
+        break;
+    case 3:
+        if (VCall1B41A8(11) == 0) {
+            func_001B4470(self);
+        }
+        break;
+    case 4:
+        func_001B43A8(self);
+        break;
+    case 5:
+        if ((*(int*)((char*)self + 0x6E0))-- < 0) {
+            if (VCall1B41A8(53) == 0) {
+                func_001B5068(self, -1);
+                func_001B4888(self, 0x842, 0x18, D_004A1B80);
+            } else {
+                func_0039F698(*(char**)((char*)self + 0x10) + 0x18);
+            }
+            *(int*)((char*)self + 0x708) = 0;
+            break;
+        }
+    case 0:
+        if (VCall1B41A8(11) == 0) {
+            char* obj = D_004A1B78_p;
+            sVEv1B41A8* vt = *(sVEv1B41A8**)obj;
+            vt[5].fn(obj + vt[5].delta, D_004A1B80);
+        }
+        break;
+    case 6:
+        *(int*)((char*)self + 0x708) = 7;
+        break;
+    case 7:
+        if (VCall1B41A8(11) == 0) {
+            func_002C67E8(D_004A1B78_p, D_004A1B80);
+            *(int*)((char*)self + 0x708) = 8;
+        }
+        break;
+    case 8:
+        if (VCall1B41A8(11) == 0) {
+            func_001B45E8(self);
+        }
+        break;
+    }
+    func_001A8770(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B43A8);
