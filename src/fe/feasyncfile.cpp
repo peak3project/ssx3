@@ -8370,7 +8370,78 @@ extern "C" void func_001B3978(void* self, void* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B3A30);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" char* strcpy(char* dst, const char* src);
+extern "C" void func_001B2378(void* self, int a1);
+extern "C" void func_001B3978(void* self, void* a1);
+struct sFEObj_001BCB58;
+extern "C" sFEObj_001BCB58* func_001BCB58(sFEObj_001BCB58* self, int a1);
+extern "C" void func_001B2CD0(void* self, int a1);
+extern "C" int func_0025DA90(void* self);
+int func_001A98B0(void* self);
+extern "C" void func_001AB3D0(void* self, int a1, int a2);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern void* D_004A3028;
+extern char D_00461B30[];
+extern char D_00463DC8[];
+extern char D_00461618[];
+
+// Message handler for the save/load screen; unknown ids refresh the list and go to the base handler.
+extern "C" void* func_001B3A30(void* self, int a1, int a2)
+{
+    switch (a1) {
+    case 0xE0: {
+        char buf[32];
+        strcpy(buf, (char*)self + 0x70C);
+        func_001B2378(self, 1);
+        func_001B3978(self, buf);
+        break;
+    }
+    case 0xDC:
+        if (func_0025DA90(D_004A3028) == 0) {
+            func_001A8A40(self, func_001BCB58((sFEObj_001BCB58*)cMemMan_alloc(0xB84, D_00461B30, 0, 0), *(int*)((char*)self + 0x10)));
+            break;
+        }
+        func_001B2378(self, 1);
+        break;
+    case 0xE8: {
+        void* p = func_001A9C50(self);
+        char* sub = (char*)p + 0xBC;
+        *(int*)((char*)p + 0xBC) = 1;
+        *(int*)((char*)p + 0xC4) = GetHashValue32(D_00463DC8);
+        *(int*)((char*)p + 0xC0) = 3;
+        func_001C57C0(sub, 0, GetHashValue32(D_00461618));
+        *(int*)((char*)p + 0x150) = 0x804;
+        func_001A9BC0(self, p);
+        break;
+    }
+    case 0xDE:
+        if (*(int*)((char*)self + 0x6F8) == 0) {
+            func_001B2CD0(self, a2);
+        }
+        break;
+    case 0xE1:
+        func_001B2378(self, 1);
+        break;
+    case 0xEA: case 0xEB: case 0xEC: case 0xED: case 0xEE: case 0xEF: case 0xF0:
+    case 0x106: case 0x10A: case 0x10B:
+        func_001AB3D0(self, func_001A98B0(self), 1);
+        break;
+    default:
+        func_001AB3D0(self, func_001A98B0(self), 1);
+        return func_001A8E40_3(self, a1, a2);
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001B3BF0);
