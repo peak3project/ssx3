@@ -1545,7 +1545,24 @@ void func_003DFE18(char *l, char *n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DFE88);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct E_FE88 { int mask; int value; int result; };
+struct T_FE88 { char pad[0x1C]; struct E_FE88 *ents; int count; };
+
+int func_003DFE88(struct T_FE88 *t, int *key) {
+    int i;
+    int k = *key;
+    for (i = 0; i < t->count; i++) {
+        if ((k & t->ents[i].mask) == t->ents[i].value) {
+            return t->ents[i].result;
+        }
+    }
+    return -2;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DFED0);
 
