@@ -2490,7 +2490,117 @@ int func_001441A0(void* self, void* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001441B8);
+#ifdef SKIP_ASM
+struct sHpVE_41B8 {
+    short delta;
+    short index;
+    float* (*fn)(void*);
+};
+
+struct sHpVec3_41B8 {
+    float x, y, z;
+};
+
+struct sHpGround_41B8 {
+    char pad_0x0[0x14];
+    float height;           // 0x14
+    char pad_0x18[0x8];
+};
+
+// Handplant zone: a sphere (type 2 = disabled).
+struct sHpZone_41B8 {
+    float radius;           // 0x0
+    int f4;
+    int type;               // 0x8
+    sHpVec3_41B8 center;    // 0xC
+    int f18;
+};
+
+struct sHpLevel_41B8 {
+    int level;
+    int f4;
+    int f8;
+};
+
+struct sHpGame_41B8 {
+    char pad_0x0[0x28];
+    char* riders[8];        // 0x28
+};
+
+struct sHpCtl_41B8 {
+    sHpGame_41B8* game;     // 0x0
+    sHpZone_41B8 zones[64]; // 0x4
+    int numZones;           // 0x704
+    int useHeight;          // 0x708
+    sHpLevel_41B8 levels[4];// 0x70C
+};
+
+extern "C" void func_002DA1C0(sHpGround_41B8* out, sHpVec3_41B8* pos);
+
+// Handplant difficulty level for player pl: at least the height band's level, and only above 1 when the rider is
+// inside one of the enabled zones.
+extern "C" int func_001441B8(sHpCtl_41B8* self, int pl)
+{
+    int lvl = self->levels[pl].level;
+    char* rider = self->game->riders[pl];
+    if (lvl == 0) {
+        return 0;
+    }
+    char* o = rider + 0x6C0;
+    sHpVE_41B8* vt = *(sHpVE_41B8**)o;
+    float* pos = vt[5].fn(o + vt[5].delta);
+    if (self->useHeight != 0) {
+        sHpGround_41B8 g;
+        sHpVec3_41B8 p;
+        p.x = pos[0];
+        p.y = pos[1];
+        p.z = pos[2];
+        func_002DA1C0(&g, &p);
+        int band = 1;
+        if (g.height < 1200.446f) {
+            band = 3;
+        } else if (g.height < 2999.697f) {
+            band = 2;
+        }
+        if (lvl < band) {
+            return band;
+        }
+    }
+    if (lvl < 2) {
+        return 1;
+    }
+    if (self->numZones == 0) {
+        return 1;
+    }
+    int n = self->numZones;
+    sHpZone_41B8* z = self->zones;
+    for (int i = 0; i < 64 && n != 0; i++, z++) {
+        if (z->type == 2) {
+            continue;
+        }
+        n--;
+        float d = z->center.x - pos[0];
+        float r2 = z->radius * z->radius;
+        d = d * d;
+        if (r2 < d) {
+            continue;
+        }
+        float dy = z->center.y - pos[1];
+        dy = dy * dy;
+        if (r2 < dy) {
+            continue;
+        }
+        float dz = z->center.z - pos[2];
+        d = d + dy + dz * dz;
+        if (!(r2 < d)) {
+            return lvl;
+        }
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00144368);
