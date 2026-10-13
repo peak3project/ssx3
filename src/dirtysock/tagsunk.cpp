@@ -6904,7 +6904,45 @@ extern "C" void func_00265568(void* self, int a, int b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265688);
+#ifdef SKIP_ASM
+// PORT: really returns int (the unit declares it void); the int return keeps the target's store scheduling.
+extern "C" int func_00264BE8_5688(void* self, void* msg, int size) __asm__("func_00264BE8");
+struct sMsg_5688 {
+    int code;
+    int state;
+    unsigned int arg;
+    int pad[2];
+};
+
+// Advances the connection state (5..7 -> 9, 8 -> 10) and posts a status message.
+extern "C" void func_00265688(int* self)
+{
+    sMsg_5688 m;
+    int code = 0xB;
+    if (self[0x124 / 4] != 0) {
+        code = 0xA;
+        int st = self[0];
+        if (st >= 5) {
+            int nst;
+            if (st < 8)
+                nst = 9;
+            else if (st == 8)
+                nst = 10;
+            else
+                goto send;
+            self[0] = nst;
+            code = 0xA;
+        }
+    }
+send:
+    m.code = code;
+    m.state = self[0];
+    m.arg = 0xFFFFFFFF;
+    func_00264BE8_5688(self, &m, 0x14);
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265700);
