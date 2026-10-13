@@ -2030,7 +2030,48 @@ extern "C" void func_00299368(sSnd9368Sys* self, char* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00299638);
+#ifdef SKIP_ASM
+extern "C" void func_002A3C00(void* self, void* obj, int flags);
+// PORT: func_002ADCA0 returns int; the unit declares it void elsewhere.
+extern "C" int func_002ADCA0_9638(void*, int, long, int, int, int, int, int) __asm__("func_002ADCA0");
+
+// PORT: 64-bit long sound keys
+// Plays the landing thud for a rider that is airborne-and-dropping, sets its board effect and restarts the ambient loop.
+extern "C" void func_00299638(void* self, char* obj)
+{
+    if (func_00288AE0(self) != 0) {
+        return;
+    }
+    bool ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
+    if (!ok) {
+        return;
+    }
+    bool up = 0.0f <= *(float*)(obj + 0x470);
+    if (up) {
+        return;
+    }
+    char* p = **(char***)((char*)self + 0x118) + 0x1D8;
+    sSndKey8* key = D_004A3678;
+    int r = (int)func_00287968(self, 9, 0);
+    func_002ADCA0_9638(p, 400, key->v, r, 0, 0x6B, 0x7F, 0);
+    int m = *(int*)(obj + 0x2F4);
+    if (m == 10) {
+        func_002A3C00(self, obj, 0x10);
+    } else if (m >= 5) {
+        func_002A3C00(self, obj, 0x8);
+    } else {
+        func_002A3C00(self, obj, 0x4);
+    }
+    long id = D_004A36A8[0].v;
+    func_002ADDE0(**(char***)((char*)self + 0x118) + 0x1D8, id);
+    if (*(int*)((char*)self + 0x59E4) != 0) {
+        return;
+    }
+    func_002ADCA0_9638(**(char***)((char*)self + 0x118) + 0x1D8, 3000, id, (int)obj, 0, 0, 0, 0);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002997B8);
