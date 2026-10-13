@@ -533,7 +533,63 @@ extern "C" void func_002EA8B8(void* self, int up)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EA900);
+#ifdef SKIP_ASM
+extern "C" void func_002EA820(void* self);
+extern "C" void func_002EA860(void* self);
+
+struct sFadeCol_A900 {
+    int id;
+    float c[4];
+};
+
+struct sVE_A900 { short delta; short index; void (*fn)(void*, sFadeCol_A900*); };
+
+struct sFade_A900 {
+    char pad0[0x10];
+    int mode;           // 0x10
+    float t;            // 0x14
+    float dur;          // 0x18
+    int done;           // 0x1C
+    int id;             // 0x20
+    float from[4];      // 0x24
+    int f34;
+    float to[4];        // 0x38
+};
+
+extern char* D_004A5B64_A900 __asm__("D_004A5B64");
+extern char* D_004A5B80_A900 __asm__("D_004A5B80");
+
+extern "C" void func_002EA900(sFade_A900* self)
+{
+    if (self->done != 0)
+        return;
+    int mode = self->mode;
+    if (mode != 2 && mode != 3)
+        return;
+    self->t += 1.0f / (float)*(int*)(D_004A5B64_A900 + 0x10);
+    if (self->dur < self->t) {
+        if (mode == 2)
+            func_002EA820(self);
+        else
+            func_002EA860(self);
+        return;
+    }
+    float k = self->t / self->dur;
+    if (mode == 2)
+        k = 1.0f - k;
+    sFadeCol_A900 col;
+    col.id = self->id;
+    col.c[2] = self->from[2] + (self->to[2] - self->from[2]) * k;
+    col.c[3] = self->from[3] + (self->to[3] - self->from[3]) * k;
+    col.c[0] = self->from[0] + (self->to[0] - self->from[0]) * k;
+    col.c[1] = self->from[1] + (self->to[1] - self->from[1]) * k;
+    char* d = D_004A5B80_A900;
+    sVE_A900* vt = *(sVE_A900**)(d + 0x10D8);
+    vt[41].fn(d + vt[41].delta, &col);
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EAA28);
