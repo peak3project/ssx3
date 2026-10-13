@@ -369,7 +369,30 @@ extern "C" int func_0034EBA0(sAnimNode_EBA0* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/animnode", func_0034EBE0);
+#ifdef SKIP_ASM
+struct sRange_EBE0 {
+    char pad[8];
+    float start;  // 0x8; 1e10 = unset
+    float end;    // 0xC
+};
+
+// Is t between the two bounds: [start, end) when start < end, else [end, start).
+extern "C" int func_0034EBE0(sRange_EBE0* self, float t)
+{
+    int r = 0;
+    if (self->start != 1e10f) {
+        if (self->start < self->end) {
+            if (self->start <= t && t < self->end) r = 1;
+        } else {
+            if (!(self->end <= t)) return 0;
+            r = t < self->start;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/animnode", func_0034EC58);
