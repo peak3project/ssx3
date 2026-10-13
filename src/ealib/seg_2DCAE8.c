@@ -4640,7 +4640,34 @@ void func_003E7B00(void *arg0, int arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E7BA0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int func_003EE620_7BA0(int) __asm__("func_003EE620");
+
+struct M_7BA0 { int type; int idx; int zero; int h; };
+struct S_7BA0 { int h; int f4; void (*fn)(void *, struct M_7BA0 *, int); int fC; int pad; };
+struct O_7BA0 { char pad[0x310]; struct S_7BA0 s[8]; };
+
+void func_003E7BA0_impl(struct O_7BA0 *self) __asm__("func_003E7BA0");
+void func_003E7BA0_impl(struct O_7BA0 *self) {
+    int i;
+    for (i = 0; i < 8; i++) {
+        struct S_7BA0 *s = &self->s[i];
+        if (s->h != 0 && s->fn != 0) {
+            if (func_003EE620_7BA0(s->f4) > 0) {
+                struct M_7BA0 m;
+                m.h = s->f4;
+                m.type = 2;
+                m.idx = i;
+                m.zero = 0;
+                s->fn(self, &m, s->fC);
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E7C40);
 
