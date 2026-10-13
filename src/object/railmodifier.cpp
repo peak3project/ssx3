@@ -5061,7 +5061,54 @@ extern "C" int func_003667F8(sRailNodeMan* self, int size)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_003668F8);
+#ifdef SKIP_ASM
+extern "C" void func_003663D8(void* selfp, int idx);
+
+// PORT: PS2-only MMI count-leading-sign-bits (plzcw); off-PS2 use a clz builtin. Volatile here: this caller's
+// schedule keeps the prologue and the loop constants on either side of it.
+static inline int railFloorLog2v(int x)
+{
+    long r;
+    __asm__ __volatile__("plzcw %0, %1\n\txori %0, %0, 0x1f\n\taddiu %0, %0, -1" : "=r"(r) : "0"(x));
+    return r;
+}
+
+// Picks the cheapest free node of at least 'size' bytes from its size class (skipping locked nodes and the two
+// given owners; owners whose limit is above 'age' cost size*weight) and frees it. Returns 1 if one was freed.
+extern "C" int func_003668F8(sRailNodeMan* self, int size, int skipA, int skipB, int age)
+{
+    int i = self->headsA[railFloorLog2v(size) - 6].next2;
+    int bestIdx = -1;
+    int best = 0x7FFFFFFF;
+    for (; i >= 0; i = self->nodes[i].next2) {
+        sRailNode* n = &self->nodes[i];
+        int sz = n->size;
+        if (sz < size) {
+            continue;
+        }
+        if ((n->field_0x0 >> 1) & 1) {
+            continue;
+        }
+        int owner = n->field_0x8;
+        if (owner == skipA || owner == skipB) {
+            continue;
+        }
+        sRailPair66F8* pr = &((sRailPair66F8*)D_0053AB80)[owner];
+        int cost = age < pr->a ? sz * pr->b : 0;
+        if (cost < best) {
+            best = cost;
+            bestIdx = i;
+        }
+    }
+    if (bestIdx < 0) {
+        return 0;
+    }
+    func_003663D8(self, bestIdx);
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("object/railmodifier", func_003669F0);
 
