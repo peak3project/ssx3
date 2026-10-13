@@ -1141,7 +1141,88 @@ extern "C" void func_001D58B8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D59A0);
+#ifdef SKIP_ASM
+extern "C" void* func_00227F80(void* app);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_002412A0(void* app);
+extern "C" void func_00270E68(void* p);
+extern "C" int func_0014E048(void* be);
+extern "C" void cFEMemCard_createReadBuffer_59A0(void* self, int size) __asm__("cFEMemCard_createReadBuffer");
+extern "C" void func_0014E050(void* be, int a);
+extern "C" int func_00152950(void* iface, int a);
+extern "C" int func_00152BA8();
+extern "C" void func_00241D40(void* app, int a, char* buf, int n);
+extern "C" void func_00241AA0(char* buf, int n);
+// PORT: the unit declares func_002C2540 as void; it returns dst (bound by asm label so the call is a call_value).
+extern "C" unsigned short* func_002C2540_59A0(char* buf, const char* s) __asm__("func_002C2540");
+extern "C" void func_002C26D0_59A0(char* dst, char* fmt, char* a, char* b, int n) __asm__("func_002C26D0");
+extern "C" void func_00241000(void* app, char* name, int a, int b);
+extern "C" void func_00241E18(void* app, char* buf, int n);
+void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+void cMemMan_free(void* p);
+extern void* D_004A28A8;
+extern void* D_004A2028;
+extern char D_004677A8[];
+extern char D_0045E2A0[];
+
+struct sVE_59A0 {
+    short delta;
+    short index;
+    void (*fn)(void*, char*, int, int, int, int, int);
+};
+
+// Memory-card "save" step: builds the save-file title for the current mode and starts the save; on first entry shows the saving dialog.
+extern "C" void func_001D59A0(void)
+{
+    char name[0x90];
+    char title[0x90];
+    char slot[0x200];
+    char fmt1[0x200];
+    char fmt2[0x200];
+    char* app = (char*)func_00227F80(D_004A28A8);
+    int mode = *(int*)((char*)D_004A2028 + 0x1BC);
+    if (mode == 2) {
+        func_002412A0(app);
+    } else if (mode == 1) {
+        void* replay = *(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
+        *(int*)((char*)D_004A2028 + 0x1C8) = mode;
+        func_00270E68(replay);
+        int size = func_0014E048(cBE_getBE());
+        cFEMemCard_createReadBuffer_59A0(D_004A2028, size);
+        func_0014E050(cBE_getBE(), *(int*)((char*)D_004A2028 + 0x1D4));
+        func_00241D40(app, 0, name, 0x41);
+        func_002C2540_59A0(fmt1, D_004677A8);
+        func_00241AA0(slot, 0x100);
+        func_002C26D0_59A0(title, fmt1, slot, name, *(int*)(app + 0xF8) + 1);
+        func_00241000(app, title, *(int*)((char*)D_004A2028 + 0x1D4), size);
+    } else {
+        char* app2 = (char*)func_00227F80(D_004A28A8);
+        void* iface = cBE_getInterface_Fv(cBE_getBE(), 5);
+        int a = func_00152950(iface, *(int*)((char*)D_004A2028 + 0x1CC));
+        int b = func_00152BA8();
+        func_00241D40(app2, 1, name, 0x41);
+        func_002C2540_59A0(fmt2, D_004677A8);
+        func_00241AA0(slot, 0x100);
+        func_002C26D0_59A0(title, fmt2, slot, name, *(int*)(app2 + 0xF8) + 1);
+        func_00241000(app2, title, a, b);
+    }
+    char* fe = (char*)D_004A2028;
+    if (*(int*)(fe + 0x210) == 0 && *(int*)(fe + 0x208) == 0) {
+        *(int*)(fe + 0x19C) = 0x16;
+        char* buf = (char*)operator_new_tag(0x640, D_0045E2A0, 0x100, 0);
+        func_00241E18(app, buf, 0x320);
+        sVE_59A0* vt = *(sVE_59A0**)((char*)D_004A2028 + 8);
+        vt[36].fn((char*)D_004A2028 + vt[36].delta, buf, 1, 1, 0, 0, 1);
+        *(int*)((char*)D_004A2028 + 0x210) = 1;
+        if (buf != 0) {
+            cMemMan_free(buf);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D5C28);
