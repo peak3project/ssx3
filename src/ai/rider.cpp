@@ -136,7 +136,60 @@ void cRider_addRiderMetrix(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011BBE8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
+signed char cBELibrary_getCharacterID(int index);
+extern "C" int func_0014A0B0(int c);
+// PORT: called without arguments here; the symbol is mangled for (void*).
+void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
+extern "C" void* func_0014D998(void* db, int key);
+int func_0014D988(void* db, int key);
+extern "C" void* func_0014AD50(void* iface, int rider);
+
+struct sTrickFlag_BBE8 {
+    short f0;
+    unsigned short flags;
+};
+
+extern "C" int func_0011BBE8(void* vself, char** out)
+{
+    char* self = (char*)vself;
+    int n = 0;
+    void* iface = cBE_getInterface(cBE_getBE(), 9);
+    int key = cBELibrary_getCharacterID(*(int*)(self + 0x86C));
+    int alt = func_0014A0B0(*(int*)(self + 0x86C));
+    void* db = func_0014BDB8_noarg();
+    if (alt != 0) {
+        key = alt;
+        char* p = (char*)func_0014D998(db, key);
+        int cnt = func_0014D988(db, key);
+        int i;
+        for (i = 0; i < cnt; i++) {
+            out[n] = p;
+            n++;
+            p += 0x38;
+        }
+        return n;
+    }
+    char* prof = (char*)func_0014AD50(iface, *(int*)(self + 0x86C));
+    int cnt = func_0014D988(db, key);
+    char* p = (char*)func_0014D998(db, key);
+    int i;
+    for (i = 0; i < cnt; i++) {
+        short idx = (*(short**)(prof + 0x288))[*(short*)(p + 4)];
+        sTrickFlag_BBE8* e = (idx >= 0) ? (sTrickFlag_BBE8*)(prof + 0x290 + idx * 4) : 0;
+        if (e->flags & 0x10) {
+            out[n] = p;
+            n++;
+        }
+        p += 0x38;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_0011BD60);
