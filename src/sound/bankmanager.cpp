@@ -1286,7 +1286,53 @@ void func_0028DF08(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028DF18);
+#ifdef SKIP_ASM
+struct sSndKey8_DF18 {
+    long v;
+} __attribute__((packed));
+extern sSndKey8_DF18 D_004A3648_DF18[] __asm__("D_004A3648");
+extern sSndKey8_DF18 D_004A3650_DF18[] __asm__("D_004A3650");
+extern sSndKey8_DF18 D_004A3658_DF18[] __asm__("D_004A3658");
+// PORT: func_002ADCA0 returns int; the unit declares it void elsewhere.
+extern "C" int func_002ADCA0_DF18(void*, int, long, int, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002A10C0(void* self, int id);
+extern "C" void func_002B3D48(void* self, float v);
+int func_002B4908(void* self);
+
+struct sBmVtDF18 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+typedef int (*tBmSetDF18)(void*, int);
+
+// PORT: 64-bit long sound key
+extern "C" int func_0028DF18(void* self, int quiet)
+{
+    int ok = 0;
+    if (func_002A10C0(self, 0xA) == 0) {
+        char* mon = (char*)self + 0x118;
+        if (*(int*)((char*)self + 0x62B8) == 0) {
+            func_002B3D48(mon, 2.0f);
+        }
+        sBmVtDF18* vt = *(sBmVtDF18**)((char*)self + 0x5558);
+        ok = 1;
+        ((tBmSetDF18)vt[4].fn)(mon + vt[4].delta, 0x12);
+        func_0028D488(self);
+        func_002ADCA0_DF18(**(char***)((char*)self + 0x118) + 0x1D8, 0x7D0, D_004A3648_DF18->v, 0, 1, 1, 0, 0);
+        char* p = **(char***)((char*)self + 0x118) + 0x1D8;
+        sSndKey8_DF18* key = D_004A3650_DF18;
+        int r = func_002B4908(mon);
+        func_002ADCA0_DF18(p, 0x5DC, key->v, 0, 3, r, 0, 0);
+    } else if (quiet == 0) {
+        func_002ADCA0_DF18(**(char***)((char*)self + 0x118) + 0x1D8, 0x64, D_004A3658_DF18->v, 0, 0, 0, 0, 0);
+    }
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028E100);
