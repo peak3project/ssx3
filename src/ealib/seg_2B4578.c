@@ -1388,7 +1388,23 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B82B8);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B83A0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B84E0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct V_84E0 { int a; int b; };
+struct E_84E0 { struct V_84E0 v; char pad[0xC]; };
+extern struct E_84E0 D_0050AB14_84E0[] __asm__("D_0050AB14");
+extern void func_003C36C8_84E0(int, int, int, struct V_84E0 *) __asm__("func_003C36C8");
+
+int func_003B84E0(int arg0, int flags, int arg2, struct V_84E0 *v) {
+    if (flags & 8) {
+        D_0050AB14_84E0[arg0].v = *v;
+    }
+    func_003C36C8_84E0(arg0, flags, arg2, v);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8530);
