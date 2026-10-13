@@ -1066,7 +1066,70 @@ extern "C" void func_001D83A8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8530);
+#ifdef SKIP_ASM
+extern void* D_004A2028;
+extern char D_0045E130[];
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_001D99C8_8530(void* self, void* engine, void* owner, int a3, int a4, int a5, int a6, int a7, int a8) __asm__("func_001D99C8");
+extern "C" void func_0039F290(void* list, void* item);
+
+class cPopup_8530 {
+public:
+    int pad[2];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25(int);
+    virtual void v26();
+    virtual void v27();
+    virtual void v28(int, int, int, int, int, int);
+};
+
+// Shows the memory-card popup: updates the existing one, or creates and registers a new one.
+extern "C" void func_001D8530(void* self_, int a1, int a2, int a3, int a4, int a5, int a6)
+{
+    char* self = (char*)self_;
+    if (*(int*)((char*)D_004A2028 + 0x19C) != 0x16) {
+        *(int*)(self + 0x210) = 0;
+    }
+    cPopup_8530* p = *(cPopup_8530**)(self + 0x218);
+    if (p != 0) {
+        p->v28(a1, a2, a3, a4, a5, a6);
+    } else {
+        void* mem = cMemMan_alloc(0xBFC, D_0045E130, 0x100, 0);
+        void* engine = *(void**)((char*)D_004A2028 + 0x10);
+        cPopup_8530* n = (cPopup_8530*)func_001D99C8_8530(mem, engine, D_004A2028, a1, a2, a3, a4, a5, a6);
+        *(cPopup_8530**)(self + 0x218) = n;
+        func_0039F290(*(char**)(self + 0x10) + 0x18, n);
+    }
+    if (*(int*)((char*)D_004A2028 + 0x19C) == 1) {
+        (*(cPopup_8530**)(self + 0x218))->v25(1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8670);
