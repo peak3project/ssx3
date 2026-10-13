@@ -783,7 +783,62 @@ __asm__(".globl func_00101310\n.type func_00101310,@function\nfunc_00101310 = __
 
 INCLUDE_ASM("seg/seg_1218", func_001013A8);
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00101688);
+#ifdef SKIP_ASM
+struct sSlotA_101688 {
+    int f0;
+    int f4;
+    int state;          // 0x8
+    char padC[0x10];
+};
+
+struct sPair_101688 {
+    int a;
+    int b;
+    int c;
+};
+
+struct sNode_101688 {
+    int f0;
+    int f4;
+    int f8;
+    sNode_101688* next; // 0xC
+};
+
+struct sTable_101688 {
+    void* owner;                // 0x000
+    sSlotA_101688 slots[64];    // 0x004
+    int count;                  // 0x704
+    int f708;                   // 0x708
+    sPair_101688 pairs[6];      // 0x70C
+    sNode_101688 nodes[64];     // 0x754
+    sNode_101688* freeList;     // 0xB54
+    int fB58;                   // 0xB58
+    int fB5C;                   // 0xB5C
+};
+
+extern "C" void func_00101688(void* vself)
+{
+    sTable_101688* self = (sTable_101688*)vself;
+    int i;
+    self->count = 0;
+    int j;
+    for (j = 0; j < 64; j++)
+        self->slots[j].state = 2;
+    for (i = 0; i < 6; i++) {
+        self->pairs[i].a = 0;
+        self->pairs[i].b = 0;
+    }
+    for (i = 0; i < 63; i++)
+        self->nodes[i].next = &self->nodes[i + 1];
+    self->freeList = self->nodes;
+    self->nodes[63].next = 0;
+    self->fB58 = 0;
+    self->fB5C = 0;
+    self->f708 = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00101728);
