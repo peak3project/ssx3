@@ -5695,7 +5695,57 @@ extern "C" int func_002A1820(void* self, sSs1820Rider* a, sSs1820Rider* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A19D8);
+#ifdef SKIP_ASM
+extern "C" void func_002A31C0(void* self);
+extern "C" void func_002A32B0(void* self);
+extern "C" void func_002A3358(void* self);
+extern "C" void func_002A3860(void* self);
+extern "C" void func_002A2018(void* self);
+extern "C" void func_002A2188(void* self);
+extern "C" void func_002A2568(void* self, int a1);
+extern "C" void func_002A2638(void* self);
+extern "C" void func_002A39E0(void* self);
+extern "C" void func_002A3708(void* self, char* rider);
+extern sSndKey8 D_004A3648_19D8[] __asm__("D_004A3648");
+
+// PORT: 64-bit long sound key
+// Front-end sound event dispatcher; returns 1 if the event was handled.
+extern "C" int func_002A19D8(void* self, int ev)
+{
+    if (ev == 0) {
+        func_002A31C0(self);
+        if (*(int*)((char*)self + 0x530) == 0) {
+            func_0028D488(self);
+            func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 10, D_004A3648_19D8[0].v, 0, 3, 1, 0, 0);
+        }
+    } else if (ev == 1) {
+        func_002A32B0(self);
+    } else if (ev == 2) {
+        func_002A3358(self);
+    } else if (ev == 3) {
+        func_002A3400(self);
+    } else if (ev == 7) {
+        func_002A3860(self);
+    } else if (ev == 8) {
+        func_002A2018(self);
+    } else if (ev == 10) {
+        func_002A2188(self);
+    } else if (ev == 12) {
+        func_002A2568(self, -1);
+    } else if (ev == 14) {
+        func_002A2638(self);
+    } else if (ev == 15) {
+        func_002A39E0(self);
+    } else if (ev == 5) {
+        func_002A3708(self, *(char**)((char*)func_0028B1D8() + 0x28));
+    } else {
+        return 0;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A1B58);
