@@ -1404,7 +1404,105 @@ extern "C" void func_002E2260(sWakeFx2260* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E23E0);
+#ifdef SKIP_ASM
+struct sV4_23E0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only inline asm (float absolute value).
+static inline float Abs_23E0(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_23E0 Sub_23E0(const sV4_23E0& a, const sV4_23E0& b)
+{
+    sV4_23E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector length via vsqrt).
+static inline float Length_23E0(const sV4_23E0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+struct sRiderState_23E0 {
+    char pad[0xAC4];
+    int fAC4;
+    char padAC8[8];
+    int fAD0;
+    char padAD4[0x28];
+    int fAFC;
+    int fB00;
+};
+
+static inline int Carving_23E0(sRiderState_23E0* r)
+{
+    return r->fAC4 != 0 && r->fAD0 == 0 && r->fAFC != 0;
+}
+
+struct sWake_23E0 {
+    sRiderState_23E0* rider;    // 0x00
+    char pad4[0xDC];
+    float lastSpeed;            // 0xE0
+    char padE4[0xC];
+    sV4_23E0 pos;               // 0xF0
+    sV4_23E0 dir;               // 0x100
+    int f110;                   // 0x110
+    int f114;                   // 0x114
+    char pad118[0xC];
+    int f124;                   // 0x124
+};
+
+extern "C" void func_002E23E0(sWake_23E0* self, sV4_23E0* pos, sV4_23E0* dir, int a, int b, float speed)
+{
+    float s = Abs_23E0(speed);
+    float d = Abs_23E0(Length_23E0(Sub_23E0(self->pos, *pos)));
+    float maxd = 180.0f;
+    if (self->f124 != 0)
+        maxd = 100.0f;
+    if (self->lastSpeed < s) {
+        if (maxd < d || (Carving_23E0(self->rider) && self->rider->fB00 != 0)) {
+            if (b == 0)
+                self->lastSpeed = s + s;
+            else
+                self->lastSpeed = s;
+            self->pos = *pos;
+            self->dir = *dir;
+            self->f110 = a;
+            self->f114 = b;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E24D0);
