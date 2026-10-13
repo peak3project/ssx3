@@ -2097,7 +2097,34 @@ extern "C" void* func_003B1300(int n)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B1340);
+#ifdef SKIP_ASM
+struct sBitReader_1340 {
+    unsigned char* p;   // 0x0
+    unsigned int bits;  // 0x4
+    int count;          // 0x8
+};
+
+// Reads the next byte into the bit buffer; taking the reader by reference matches the target's register copy.
+static inline void FillByte_1340(sBitReader_1340*& r, int c)
+{
+    r->bits |= *r->p++ << (24 - c);
+}
+
+// Drops the whole 32-bit buffer and refills it a byte at a time.
+extern "C" void func_003B1340(void)
+{
+    sBitReader_1340* r = (sBitReader_1340*)D_0050A088.ptr;
+    r->bits = 0;
+    int c = r->count - 32;
+    while (c < 25) {
+        FillByte_1340(r, c);
+        c += 8;
+    }
+    ((sBitReader_1340*)D_0050A088.ptr)->count = c;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("world/wscriptcache", func_003B13A8);
