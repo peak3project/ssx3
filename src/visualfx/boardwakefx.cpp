@@ -553,7 +553,46 @@ extern "C" void func_002DE398(char* self, sWakeVecE398* out)
 
 INCLUDE_ASM("visualfx/boardwakefx", func_002DE4A8);
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002DF1C8);
+#ifdef SKIP_ASM
+void cMemMan_free(void* p);
+class cVbElemBase002DF1C8 {
+public:
+    char pad[0x1F8];
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual ~cVbElemBase002DF1C8();
+};
+class cVbElem002DF1C8 : public cVbElemBase002DF1C8 {
+public:
+    char pad2[0x14];
+    virtual ~cVbElem002DF1C8();
+    static void operator delete[](void* p) { cMemMan_free(p); }
+};
+
+class cVbDtor002DF1C8 : virtual public cRiderVb_bwf {
+public:
+    char pad04[0x24];
+    cVbElem002DF1C8* m28;
+    void* m2C;
+    char pad30[0x4C];
+    void* m7C;
+    char pad80[0xAC];
+    virtual ~cVbDtor002DF1C8();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002DF1C8::~cVbDtor002DF1C8()
+{
+    delete[] m28;
+    if (m2C != 0) cMemMan_free(m2C);
+    if (m7C != 0) cMemMan_free(m7C);
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002DF1C8; expose it under the address-derived name.
+__asm__(".globl func_002DF1C8\n.type func_002DF1C8,@function\nfunc_002DF1C8 = _$_15cVbDtor002DF1C8\n.size func_002DF1C8,0x1E8\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002DF3B0);
