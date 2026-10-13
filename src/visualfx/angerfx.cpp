@@ -27,12 +27,42 @@ class cRiderVbBC_agf : public cRiderVbB_agf, public cRiderVbC_agf { public: };
 class cRiderVbPad_agf { public: char pad[0x6C0]; } __attribute__((aligned(16)));
 class cRiderVb_agf : public cRiderVbPad_agf, public cRiderVbA_agf, public cRiderVbBC_agf {
 public:
+    cRiderVb_agf();
     virtual ~cRiderVb_agf();
 };
 void operator_delete(int* p);
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/angerfx", cAngerFX_cAngerFX);
+#ifdef SKIP_ASM
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+extern char D_00487518[];
+extern "C" void func_002D4BE0(void* self);
+
+struct cAngerPart_ang {
+    char data[0x2C];
+    cAngerPart_ang() {}
+};
+
+class cAngerFX_ang : virtual public cRiderVb_agf {
+public:
+    cAngerPart_ang* parts;      // 0x4
+    char pad08[0x8];
+    cAngerFX_ang();
+    virtual ~cAngerFX_ang();
+};
+
+cAngerFX_ang::cAngerFX_ang()
+{
+    cAngerPart_ang** slot = &parts;
+    *slot = new (D_00487518, 0, 0) cAngerPart_ang[2];
+    func_002D4BE0(this);
+}
+// PORT: the compiler names this ctor __12cAngerFX_angi; expose it under the address-derived name.
+__asm__(".globl cAngerFX_cAngerFX\n.type cAngerFX_cAngerFX,@function\ncAngerFX_cAngerFX = __12cAngerFX_angi\n.size cAngerFX_cAngerFX,0x180\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/angerfx", func_002D4A70);
