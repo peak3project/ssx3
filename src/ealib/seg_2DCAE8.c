@@ -3529,7 +3529,37 @@ void THREAD_yieldticks(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5398);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int D_00450DC8_5398 __asm__("D_00450DC8");
+extern int D_00450DE4_5398 __asm__("D_00450DE4");
+extern void THREAD_yieldticks_5398(int) __asm__("THREAD_yieldticks");
+extern int func_00423C90_5398(void) __asm__("func_00423C90");
+extern void func_00423CB0_5398(int, void *) __asm__("func_00423CB0");
+extern void func_00424CE8_5398(int) __asm__("func_00424CE8");
+extern void func_00423CA0_5398(int, void *) __asm__("func_00423CA0");
+extern void func_00423C50_5398(int) __asm__("func_00423C50");
+
+void func_003E5398_impl(int ms) __asm__("func_003E5398");
+void func_003E5398_impl(int ms) {
+    int info[12];
+    if (ms != 0) {
+        int t = ms * D_00450DC8_5398 / 1000;
+        if (t <= 0) {
+            t = 1;
+        }
+        THREAD_yieldticks_5398(t);
+    } else if (D_00450DE4_5398 != 0) {
+        func_00423CB0_5398(func_00423C90_5398(), info);
+        func_00424CE8_5398(info[6]);
+    } else {
+        func_00423CA0_5398(func_00423C90_5398(), info);
+        func_00423C50_5398(info[6]);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5440);
