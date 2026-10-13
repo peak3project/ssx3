@@ -2585,7 +2585,27 @@ int BIG_typeofheader(unsigned char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", BIG_sizeofheader);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int BIG_typeofheader_SZ(unsigned char *) __asm__("BIG_typeofheader");
+
+int BIG_sizeofheader_impl(unsigned char *h) __asm__("BIG_sizeofheader");
+int BIG_sizeofheader_impl(unsigned char *h) {
+    int r = 0;
+    int t = BIG_typeofheader_SZ(h);
+    if (t == 1) {
+        r = ((h[2] << 8) | h[3]) + 4;
+    } else if (t > 0) {
+        if (t < 4) {
+            unsigned char *p = h + 12;
+            r = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", BIG_debuginfo);
