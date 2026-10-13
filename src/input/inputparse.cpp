@@ -1411,7 +1411,42 @@ extern "C" void func_00326478(void* self, sParseStream* s)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputparse", func_003264B0);
+#ifdef SKIP_ASM
+// PORT: func_00326A20__FPv is called with (self, s, a2, a3, msg) here; bind the 5-arg form to that symbol.
+void func_00326A20_5(void* self, sParseStream* s, int a2, int a3, const char* msg) __asm__("func_00326A20__FPv");
+extern char D_0048E3D8[];
+
+// Skips a /* */ comment; newlines inside it are kept, otherwise it becomes one space.
+extern "C" void func_003264B0(void* self, sParseStream* s, int a2, int a3)
+{
+    int single = 1;
+    int run = 1;
+    while (run) {
+        int ch = *(int*)((char*)self + 0xC);
+        if (ch == '\n') {
+            single = 0;
+            *(int*)((char*)s + 0xC) += 1;
+            func_00326360(self, (char)*(int*)((char*)self + 0xC));
+        } else if (ch == '*') {
+            func_00326478(self, s);
+            if (*(int*)((char*)self + 0xC) != '/')
+                continue;
+            func_00326478(self, s);
+            if (single) {
+                func_00326360(self, ' ');
+            }
+            return;
+        } else if (ch < 0) {
+            goto error;
+        }
+        func_00326478(self, s);
+    }
+error:
+    func_00326A20_5(self, s, a2, a3, D_0048E3D8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputparse", func_003265C0);
