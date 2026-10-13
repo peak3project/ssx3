@@ -759,7 +759,49 @@ extern "C" void func_00398910(void* self, unsigned short ev)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiengine", func_00398998);
+#ifdef SKIP_ASM
+// PORT: func_0039FE00 really takes (self, data) and its result is unused here; the unit declares it with one argument.
+void func_0039FE00_8998(void* self, void* data) __asm__("func_0039FE00");
+
+struct sUISize8998 {
+    float w, h;
+    sUISize8998() {}
+    sUISize8998(float aw, float ah) : w(aw), h(ah) {}
+};
+struct sUIObj8998 {
+    char pad0[0x5C];
+    char* scene;                // 0x5C
+    char pad60[0x74 - 0x60];
+    unsigned int b0 : 1;        // 0x74
+    unsigned int clip : 1;
+    unsigned int align : 2;
+    unsigned int rest : 28;
+    char pad78[0x7C - 0x78];
+    s398380Item* item;          // 0x7C
+    sUISize8998 size;           // 0x80
+};
+struct sUIData8998 {
+    char pad0[0x20];
+    unsigned char align : 2;    // 0x20
+    unsigned int clip : 1;
+    unsigned int rest : 29;
+    int id;                     // 0x24
+    unsigned short w;           // 0x28
+    unsigned short h;           // 0x2A
+};
+
+// Copies the widget's clip/alignment bits, looks up its item and sets its size (stored in 1/100 units).
+extern "C" void func_00398998(sUIObj8998* self, sUIData8998* data)
+{
+    func_0039FE00_8998(self, data);
+    self->clip = data->clip;
+    self->align = data->align;
+    self->item = func_00398380(*(char**)(*(char**)(self->scene + 0xD0) + 0x10) + 0x58, data->id);
+    self->size = sUISize8998(data->w * 0.01f, data->h * 0.01f);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uiengine", func_00398A60__FPvT0);
