@@ -1213,7 +1213,28 @@ int func_003B7E70(int arg0, int arg1) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7EB0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7F18);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+int *func_003B6A38_7F18(void) __asm__("func_003B6A38");
+int func_003B86C0_7F18(int) __asm__("func_003B86C0");
+
+int func_003B7F18(void) {
+    int *p;
+    int r;
+
+    p = func_003B6A38_7F18();
+    if (p == 0) {
+        return -8;
+    }
+    r = func_003B86C0_7F18(*(volatile int *)(p + 1));
+    if (r < 0) {
+        r = *(signed char *)((char *)p + 0xEC);
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7F60);
 
