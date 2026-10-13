@@ -813,7 +813,55 @@ extern "C" void func_003A84F8(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A8528);
+#ifdef SKIP_ASM
+struct sHandle_8528 {
+    unsigned int type : 8;
+    unsigned int index : 24;
+};
+struct sRef_8528 {
+    unsigned char kind;
+    unsigned char type;
+    unsigned short index;
+};
+struct sRefList_8528 {
+    int f0;
+    int f4;
+    int count;          // 0x8
+    sRef_8528* refs;    // 0xC
+};
+struct sCell_8528 {
+    int loaded;             // 0x0
+    int f4;
+    sRefList_8528* list;    // 0x8
+    int pad[3];
+};
+struct sCache_8528 {
+    char pad[0x3F0];
+    sCell_8528 cells[1];    // 0x3F0
+};
+extern "C" void func_003A8E20(void* self, int cell, int kind, sHandle_8528 h);
+extern "C" void func_003A7C30(int* self, int flags);
+
+// Unloads a cache cell: reports each referenced object (kind, handle) to func_003A8E20, then frees the list.
+extern "C" void func_003A8528(void* vself, int cell)
+{
+    sCache_8528* self = (sCache_8528*)vself;
+    sRefList_8528* list = self->cells[cell].list;
+    sHandle_8528 h;
+    *(unsigned int*)&h = 0xFFFFFFFF;  // starts as the invalid handle
+    for (int i = list->count - 1; i >= 0; i--) {
+        h.type = list->refs[i].type;
+        h.index = list->refs[i].index;
+        func_003A8E20(self, cell, list->refs[i].kind, h);
+    }
+    if (self->cells[cell].list != 0)
+        func_003A7C30((int*)self->cells[cell].list, 3);
+    self->cells[cell].list = 0;
+    self->cells[cell].loaded = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8618);
