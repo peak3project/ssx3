@@ -3401,7 +3401,47 @@ void func_003C0640(void *in, void *out, float s) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C06B0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C07A8);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 FPU-flag probe: builds two float4s from flag bits and multiplies them on VU0.
+void func_003C07A8_impl(int flags) __asm__("func_003C07A8");
+void func_003C07A8_impl(int flags)
+{
+    float a[4] __attribute__((aligned(16)));
+    float b[4] __attribute__((aligned(16)));
+    int i;
+    for (i = 0; i < 4; i++) {
+        float f;
+        if ((flags & 0x8800) == 0) {
+            f = 0.0f;
+            if (!(flags & 8))
+                f = 1.0f;
+        } else {
+            f = 1.0000000031710769e-30f;
+            if (!(flags & 8))
+                f = 1.0000000150474662e+30f;
+        }
+        a[i] = f;
+        if (flags & 0x80)
+            f = -f;
+        b[i] = f;
+        flags <<= 1;
+    }
+    __asm__ __volatile__(
+        "qmfc2.ni   $8, $vf1\n"
+        "qmfc2.ni   $9, $vf2\n"
+        "lqc2       $vf1, %0\n"
+        "lqc2       $vf2, %1\n"
+        "vmul.xyzw  $vf1, $vf1, $vf2\n"
+        "qmtc2.ni   $8, $vf1\n"
+        "qmtc2.ni   $9, $vf2\n"
+        "vnop\n"
+        :
+        : "m"(a[0]), "m"(b[0])
+        : "$8", "$9");
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C0858);
