@@ -1123,7 +1123,19 @@ void func_003DF028(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF0B8);
+#ifdef SKIP_ASM
+extern void func_003DD310_F0B8(int) __asm__("func_003DD310");
+extern void func_003DF028_F0B8(void *) __asm__("func_003DF028");
+
+/* Callback (third argument is the stream); later code takes its address as void (*)(void *). */
+void func_003DF0B8_impl(int arg0, int arg1, char *s) __asm__("func_003DF0B8");
+void func_003DF0B8_impl(int arg0, int arg1, char *s) {
+    func_003DD310_F0B8(*(volatile int *)(s + 0x1C));
+    func_003DF028_F0B8(s);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF0F0);
