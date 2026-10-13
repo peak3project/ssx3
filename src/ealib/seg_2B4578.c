@@ -8273,7 +8273,18 @@ self->f26 = 1;
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CF740);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern void func_003C51E8_F740(void *, void *, int) __asm__("func_003C51E8");
+
+int func_003CF740(char *self, int n, int arg2, void *dst) {
+    func_003C51E8_F740(dst, *(char **)(self + 0x1C), n * 4);
+    *(char **)(self + 0x1C) += n * 4;
+    return n;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003CF798);
