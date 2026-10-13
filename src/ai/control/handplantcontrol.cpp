@@ -2010,7 +2010,25 @@ public:
 void operator_delete(int* p);
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00140D80);
+#ifdef SKIP_ASM
+struct cVbHead00140D80 {
+    char pad[0x18];
+};
+
+class cVbDtor00140D80 : public cVbHead00140D80, virtual public cRiderVb_hpc {
+public:
+    virtual ~cVbDtor00140D80();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor00140D80::~cVbDtor00140D80()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor00140D80; expose it under the address-derived name.
+__asm__(".globl func_00140D80\n.type func_00140D80,@function\nfunc_00140D80 = _$_15cVbDtor00140D80\n.size func_00140D80,0x15C\n");
+#endif
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_00140EE0);
 
