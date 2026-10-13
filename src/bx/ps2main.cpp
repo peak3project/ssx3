@@ -84,7 +84,38 @@ extern "C" float func_0031B098(float a, float b, float c, float d, float e, floa
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/ps2main", func_0031B178);
+#ifdef SKIP_ASM
+extern "C" float func_0031B098(float a, float b, float c, float d, float e, float f, float g, float h, float i);
+
+// 4x4 determinant by cofactor expansion along the first row.
+extern "C" float func_0031B178(void* vm)
+{
+    float (*m)[4] = (float (*)[4])vm;
+    float ans;
+    float a1, a2, a3, a4, b1, b2, b3, b4;
+    float c1, c2, c3, c4, d1, d2, d3, d4;
+
+    a1 = m[0][0]; b1 = m[0][1];
+    c1 = m[0][2]; d1 = m[0][3];
+
+    a2 = m[1][0]; b2 = m[1][1];
+    c2 = m[1][2]; d2 = m[1][3];
+
+    a3 = m[2][0]; b3 = m[2][1];
+    c3 = m[2][2]; d3 = m[2][3];
+
+    a4 = m[3][0]; b4 = m[3][1];
+    c4 = m[3][2]; d4 = m[3][3];
+
+    ans = a1 * func_0031B098(b2, b3, b4, c2, c3, c4, d2, d3, d4)
+        - b1 * func_0031B098(a2, a3, a4, c2, c3, c4, d2, d3, d4)
+        + c1 * func_0031B098(a2, a3, a4, b2, b3, b4, d2, d3, d4)
+        - d1 * func_0031B098(a2, a3, a4, b2, b3, b4, c2, c3, c4);
+    return ans;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/ps2main", func_0031B310);
