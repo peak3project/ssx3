@@ -4043,4 +4043,39 @@ extern "C" int func_0010C3B8(void* self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_0010C450);
+#ifdef SKIP_ASM
+extern "C" int func_0010C450(void* self, int a, int b)
+{
+    switch (a) {
+    case 1:
+        if (b == 1)
+            return 1;
+        return (b == 2) ? 1 : 2;
+    case 2:
+        if (b == 1)
+            return 1;
+        return (b == 2) ? 1 : 2;
+    case 3:
+        if (b == 1)
+            return 0;
+        if (b == 2)
+            return 1;
+        return 1;
+    case 4:
+        if (b == 1)
+            return 0;
+        if (b == 2)
+            return 0;
+        return 1;
+    case 5:
+        if (b == 1)
+            return 0;
+        if (b == 2)
+            return 0;
+        return 0;
+    }
+    return 0;
+}
+#endif
