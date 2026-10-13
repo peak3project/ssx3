@@ -823,7 +823,21 @@ extern "C" void func_00208588(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/uitemplatemap", func_002085B8);
+#ifdef SKIP_ASM
+extern "C" int func_002018A8(void* p);
+// PORT: returns int (value unused here); the int return type keeps the target's register choice after the call.
+extern "C" int func_0039F190_85B8(void* self, int a1) __asm__("func_0039F190");
+
+extern "C" void func_002085B8(char* self)
+{
+    if (func_002018A8(self + 0x9C) == 1) {
+        func_0039F190_85B8(*(char**)(self + 0x10) + 0x18, 1);
+        *(int*)(self + 0x1C) = (*(int*)(self + 0x1C) & ~0x3F00) | 0x780;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/uitemplatemap", func_00208610);
