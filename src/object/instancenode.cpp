@@ -320,7 +320,89 @@ extern "C" void func_00350288(void* self, sInMat44_0288* parent, sInMat44_0288* 
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/instancenode", cInstanceNode_getBoundBoxInfo);
+#ifdef SKIP_ASM
+struct sIbVec4
+{
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sIbVec4 IbSub(const sIbVec4& a, const sIbVec4& b)
+{
+    sIbVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dot product).
+static inline float IbDot(const sIbVec4& a, const sIbVec4& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float IbSqrt(float v)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(v));
+    return r;
+}
+
+// Writes the model's bounding box (min, max) and the radius of the sphere around its centre that holds every corner.
+extern "C" void cInstanceNode_getBoundBoxInfo(void* self, sIbVec4* box, float* radius)
+{
+    sIbVec4 t;
+    t.x = *(float*)(*(char**)((char*)self + 0x18) + 0x60);
+    t.y = *(float*)(*(char**)((char*)self + 0x18) + 0x64);
+    t.z = *(float*)(*(char**)((char*)self + 0x18) + 0x68);
+    t.w = 1.0f;
+    box[0] = t;
+    t.x = *(float*)(*(char**)((char*)self + 0x18) + 0x6C);
+    t.y = *(float*)(*(char**)((char*)self + 0x18) + 0x70);
+    t.z = *(float*)(*(char**)((char*)self + 0x18) + 0x74);
+    box[1] = t;
+    t = *(sIbVec4*)(*(char**)((char*)self + 0x18) + 0x40);
+    sIbVec4* mx = &box[1];
+    sIbVec4* ctr = &t;
+    float best = 0.0f;
+    for (int i = 0; i < 8; i++) {
+        float x = (i & 1) ? box[0].x : mx->x;
+        float y = (i & 2) ? box[0].y : mx->y;
+        float z = (i & 4) ? box[0].z : mx->z;
+        sIbVec4 c;
+        c.x = x;
+        c.y = y;
+        c.z = z;
+        c.w = 1.0f;
+        sIbVec4 d = IbSub(c, *ctr);
+        float l = IbDot(d, d);
+        if (best < l) best = l;
+    }
+    *radius = IbSqrt(best);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/instancenode", func_00350698);
