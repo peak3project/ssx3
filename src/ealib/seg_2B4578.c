@@ -456,7 +456,19 @@ void func_003B58A0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B58D8);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct G_58D8 { char pad[0x176]; volatile unsigned char depth; };
+extern struct G_58D8 D_0050A8E8_58D8[] __asm__("D_0050A8E8");
+extern void (*D_0044C470_58D8[])(void) __asm__("D_0044C470");
+
+void func_003B58D8(void) {
+    D_0050A8E8_58D8[0].depth--;
+    D_0044C470_58D8[0]();
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5910);
