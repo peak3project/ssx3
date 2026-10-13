@@ -574,7 +574,92 @@ extern "C" void func_00349AD0(void* self, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flexrailnode", func_00349B48);
+#ifdef SKIP_ASM
+extern "C" void func_00347D90(void* self, int type, void* a1, void* desc);
+extern "C" void func_0034A0B0(void* self);
+struct sFrBoxRail60;
+extern "C" void func_00349F18(sFrBoxRail60* self);
+struct sFrNodeA028;
+extern "C" void func_0034A028(void* self, sFrNodeA028* node);
+extern char D_0048FD90[];
+extern char D_0048E830[];
+
+struct sFrV_9B48 { float x, y, z, w; } __attribute__((aligned(16)));
+extern sFrV_9B48 D_004FF120_9B48 __asm__("D_004FF120");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sFrV_9B48 Sub_9B48(const sFrV_9B48& a, const sFrV_9B48& b)
+{
+    sFrV_9B48 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+struct sFlexRef_9B48 {
+    unsigned int id;
+    sFlexRef_9B48() : id(0xFFFFFFFF) {}
+};
+
+struct sFlexElem_9B48 {
+    sFrV_9B48 pos;              // 0x00
+    sFrV_9B48 dir;              // 0x10
+    sFrV_9B48 v20;              // 0x20
+    sFrV_9B48 v30;              // 0x30
+    sFrV_9B48 v40;              // 0x40
+    sFlexRef_9B48 link;         // 0x50
+    int bone;                   // 0x54
+    char pad58[8];
+};
+
+extern "C" void* func_00349B48(char* self, void* a1, char* desc)
+{
+    func_00347D90(self, 0x15, a1, desc);
+    *(void**)(self + 0xC) = D_0048FD90;
+    *(float*)(self + 0x60) = *(float*)(desc + 0x48);
+    *(float*)(self + 0x64) = *(float*)(desc + 0x4C);
+    *(float*)(self + 0x68) = *(float*)(desc + 0x50);
+    sFlexRef_9B48 refs[8];
+    int bones[8];
+    int n = 0;
+    unsigned int* ids = (unsigned int*)(desc + 4);
+    int* bn = (int*)(desc + 0x24);
+    for (int i = 0; i < 8; i++, ids++, bn++) {
+        unsigned int id = *ids;
+        if (id != 0xFFFFFFFF) {
+            refs[n].id = id;
+            bones[n] = *bn;
+            n++;
+        }
+    }
+    sFlexElem_9B48*& elems = *(sFlexElem_9B48**)(self + 0x70);
+    elems = new (D_0048E830, 0x20000000, 0) sFlexElem_9B48[*(int*)(self + 0x20)];
+    for (int j = 0; j < *(int*)(self + 0x20); j++) {
+        (*(sFlexElem_9B48**)(self + 0x70))[j].link.id = refs[j].id;
+        (*(sFlexElem_9B48**)(self + 0x70))[j].bone = bones[j];
+        (*(sFlexElem_9B48**)(self + 0x70))[j].v30 = D_004FF120_9B48;
+        (*(sFlexElem_9B48**)(self + 0x70))[j].v40 = D_004FF120_9B48;
+        (*(sFlexElem_9B48**)(self + 0x70))[j].v20 = D_004FF120_9B48;
+        (*(sFlexElem_9B48**)(self + 0x70))[j].dir = D_004FF120_9B48;
+        func_0034A028(self, (sFrNodeA028*)&(*(sFlexElem_9B48**)(self + 0x70))[j]);
+    }
+    for (int k = 0; k < *(int*)(self + 0x20) - 1; k++) {
+        (*(sFlexElem_9B48**)(self + 0x70))[k].dir =
+            Sub_9B48((*(sFlexElem_9B48**)(self + 0x70))[k + 1].pos, (*(sFlexElem_9B48**)(self + 0x70))[k].pos);
+    }
+    func_0034A0B0(self);
+    func_00349F18((sFrBoxRail60*)self);
+    cFlexRailNode_addSpaceHash(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flexrailnode", func_00349DB0);
