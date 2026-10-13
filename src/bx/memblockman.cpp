@@ -815,7 +815,42 @@ extern "C" void func_0031AB10(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/memblockman", func_0031AB30);
+#ifdef SKIP_ASM
+extern "C" int func_00423C90();
+extern "C" void func_00423D10(int thread);
+int cExecutionMan_checkHalt(void* self, int flag);
+
+struct sMbVE_AB30 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sMbOwner_AB30 {
+    char pad_0x0[0x28];
+    sMbVE_AB30 vt5;     // 0x28
+};
+
+// Halt request: on the execution thread checks the halt directly; otherwise forwards it and wakes the worker.
+extern "C" void func_0031AB30(void* self)
+{
+    char* s = (char*)self;
+    *(volatile int*)(s + 0x4038) = 1;
+    int cur = func_00423C90();
+    if (cur != *(int*)(s + 0x14040)) {
+        func_00423D10(*(int*)(s + 0x14040));
+    }
+    if (cur == *(int*)(s + 0x10)) {
+        cExecutionMan_checkHalt(self, 0);
+        return;
+    }
+    sMbOwner_AB30* o = *(sMbOwner_AB30**)(s + 0x8);
+    o->vt5.fn(s + o->vt5.delta);
+    func_0031AAF0(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/memblockman", func_0031ABC0__FPv);
