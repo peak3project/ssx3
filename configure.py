@@ -64,7 +64,9 @@ for _u, _d in list(UNIT_CC.items()):
     if not os.path.isfile(f"{_d}/bin/ee-gcc2953.exe"):
         print(f"warning: {_d} missing; {_u} builds with the default compiler")
         del UNIT_CC[_u]
-COMMON_CXXFLAGS = ""
+# The game was built without C++ exception support: its constructors and destructors have no EH cleanup
+# landing pads, which g++ 2.95 emits by default (e.g. cAngerFX_cAngerFX only matches with -fno-exceptions).
+COMMON_CXXFLAGS = "-fno-exceptions"
 
 # splat's generated INCLUDE_ASM macro emits `.include "FOLDER/NAME.s"` relative
 # to the nonmatchings dir (no longer hardcodes "asm/nonmatchings/"), so the
@@ -370,6 +372,9 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                 build(entry.object_path, entry.src_paths, "as")
         elif isinstance(seg, splat.segtypes.common.c.CommonSegC):
             unit_flags = UNIT_CFLAGS.get(seg.name, "")
+            # .cpp sources are listed as c segments and go through the cc rule; give them the C++ flags here
+            if any(str(p).endswith(".cpp") for p in entry.src_paths):
+                unit_flags = (unit_flags + " " + COMMON_CXXFLAGS).strip()
             task, tvars = ("cc_unit", {"ccdir": UNIT_CC[seg.name]}) if seg.name in UNIT_CC else ("cc", None)
             if dual_objects:
                 build(entry.object_path, entry.src_paths, task, out_dir="obj/target", collect_objdiff=True, orig_entry=entry,
