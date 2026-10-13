@@ -2711,7 +2711,65 @@ extern "C" int func_00273F68(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00274100);
+#ifdef SKIP_ASM
+extern "C" int func_002743E8(void* self, float t, float dt);
+
+class cChan_274100 {
+public:
+    int f0;
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual int nextTime();
+};
+
+struct sTrackHdr_274100 {
+    char pad0[2];
+    unsigned char count;    // 0x2
+    unsigned char id;       // 0x3
+};
+
+struct sTrack_274100 {
+    char pad0[0x1C];
+    sTrackHdr_274100* hdr;          // 0x1C
+    int pad20;
+    cChan_274100** chans;           // 0x24
+    int active;                     // 0x28
+};
+
+// Plays the track from prev to time; when jumping, stops at every channel event in between.
+extern "C" int func_00274100(void* self_, float prev, float time, float speed, int jump)
+{
+    sTrack_274100* self = (sTrack_274100*)self_;
+    if (self->active == 0) {
+        return 1;
+    }
+    if (jump) {
+        for (;;) {
+            float next = time;
+            for (int i = 0; i < self->hdr->count; i++) {
+                float f = (float)self->chans[i]->nextTime();
+                if (f >= 0.0f && f < next) {
+                    next = f;
+                }
+            }
+            if (next == time) {
+                return func_002743E8(self, time, time - prev);
+            }
+            float d = next - prev;
+            prev = next;
+            if (!func_002743E8(self, prev, d)) {
+                return 0;
+            }
+        }
+    }
+    return func_002743E8(self, time, speed);
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00274240);
