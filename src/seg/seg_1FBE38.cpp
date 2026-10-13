@@ -6969,7 +6969,68 @@ extern "C" void func_003072B0(P_72B0* self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00307308);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern char* D_004A28A8_7308 __asm__("D_004A28A8");
+extern "C" int func_00153D78(void* missions, int id);
+extern "C" void func_00154160(void* missions, int id, int done);
+extern "C" int func_00153FA0(void* missions, int id);
+extern "C" int func_001511B0(void* econ, int reward);
+extern "C" int func_00144C98(void* iface);
+extern "C" void func_0010F2D8(void* rider, int player, int money);
+extern "C" unsigned int func_00153FD8(void* missions, int id);
+extern "C" void func_001541D0(void* missions, int id, int active);
+extern "C" void func_0030AC98(int, void *, int);
+extern "C" int func_00153E28(void* missions, int id);
+extern "C" void func_00154010(void* missions, int id, int a);
+extern "C" void func_00154080(void* missions, int id, int a);
+extern "C" void func_00308DB8(int script);
+extern "C" void func_00309B00(int script, void* self);
+extern "C" void func_0026F228(void* replay);
+extern "C" void func_0026F7B8(void* replay);
+
+struct sGame_7308 {
+    char pad_0x0[0x28];
+    void* riders[8];        // 0x28
+};
+
+// Mission completed: pays the reward the first time, unlocks the follow-up mission and resets the script.
+extern "C" void func_00307308(char* self)
+{
+    int money = 0;
+    void* missions = cBE_getInterface_Fv(cBE_getBE(), 0xA);
+    if (func_00153D78(missions, *(int*)(self + 0x20)) == 0) {
+        func_00154160(missions, *(int*)(self + 0x20), 1);
+        int reward = func_00153FA0(missions, *(int*)(self + 0x20));
+        money = func_001511B0(cBE_getInterface_Fv(cBE_getBE(), 0xB), reward);
+    }
+    int pl = func_00144C98(cBE_getInterface_Fv(cBE_getBE(), 0));
+    sGame_7308* game = *(sGame_7308**)(*(char**)(D_004A28A8_7308 + 0x84) + 0xC);
+    func_0010F2D8(game->riders[**(int**)(self + 0x10)], pl, money);
+    unsigned int next = func_00153FD8(missions, *(int*)(self + 0x20));
+    if (next != 0xFFFFFFFF) {
+        func_001541D0(missions, *(int*)(self + 0x20), 0);
+        if (*(int*)(self + 0x6C) != 0) {
+            func_0030AC98(*(int*)(self + 0x10), self, *(int*)(self + 0x6C));
+        }
+        if (func_00153E28(missions, next) != 0) {
+            func_00154010(missions, next, 0);
+            func_00154080(missions, next, 1);
+            func_001541D0(missions, next, 1);
+        }
+    } else if (*(int*)(self + 0x6C) != 0) {
+        func_0030AC98(*(int*)(self + 0x10), self, *(int*)(self + 0x6C));
+    }
+    func_00308DB8(*(int*)(self + 0x10));
+    func_00309B00(*(int*)(self + 0x10), self);
+    func_0026F228(*(void**)(*(char**)(D_004A28A8_7308 + 0x84) + 0x28));
+    func_0026F7B8(*(void**)(*(char**)(D_004A28A8_7308 + 0x84) + 0x28));
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003074C0);
