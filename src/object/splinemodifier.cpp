@@ -691,7 +691,71 @@ void* func_0035A5D8(void* self)
 
 INCLUDE_ASM("object/splinemodifier", cMultiSplineModifier_setupOverlapSystem);
 
+//100%
 INCLUDE_ASM("object/splinemodifier", func_0035A780);
+#ifdef SKIP_ASM
+void operator_delete(int*);
+extern "C" void* func_002D1BE0();
+
+struct sHashKey_A780 {
+    int level;      // 0x0
+    int x;          // 0x4
+    int y;          // 0x8
+    int z;          // 0xC
+};
+
+struct sOctCell_A780 {
+    void* child[8];
+    void* lists[3];
+};
+
+struct sHashCellR_A780 {
+    char pad_0x0[0x10];
+    sOctCell_A780* oct;   // 0x10
+};
+
+extern "C" void func_00328F28_A780(sHashKey_A780* out, void* box) __asm__("func_00328F28");
+extern "C" void func_003284B8_A780(sOctCell_A780* oct, int type, void* node, sHashKey_A780* key,
+                                   sHashCellR_A780* cell) __asm__("func_003284B8");
+
+static inline int octEmpty_A780(sOctCell_A780* o)
+{
+    if (o->child[0] != 0 || o->child[1] != 0 || o->child[2] != 0 || o->child[3] != 0
+        || o->child[4] != 0 || o->child[5] != 0 || o->child[6] != 0 || o->child[7] != 0) {
+        return 0;
+    }
+    for (int i = 0; i < 3; i++) {
+        if (o->lists[i] != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+// Removes every spline segment but the first from the space hash (freeing octree cells that become empty).
+extern "C" void func_0035A780(void* vself)
+{
+    char* self = (char*)vself;
+    for (int i = 1; i < *(int*)(self + 0x4); i++) {
+        void* node = (*(void***)(self + 0x44))[i];
+        sHashCellR_A780* cell = (sHashCellR_A780*)func_002D1BE0();
+        // PORT: the segment array (0x60-byte entries) is indexed with 32-bit integer arithmetic.
+        char* box = (char*)(i * 0x60 + *(int*)(self + 0x3C)) + 0x30;
+        (*(int*)((char*)cell + 0xA0))++;
+        sHashKey_A780 key;
+        func_00328F28_A780(&key, box);
+        sHashCellR_A780* c1 = key.x < 0 ? cell + 4 : cell;
+        sHashCellR_A780* c2 = key.y < 0 ? c1 + 2 : c1;
+        sHashCellR_A780* c3 = key.z < 0 ? c2 + 1 : c2;
+        sHashCellR_A780* c = c3;
+        func_003284B8_A780(c->oct, 0, node, &key, c);
+        if (octEmpty_A780(c->oct)) {
+            operator_delete((int*)c->oct);
+            c->oct = 0;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035A918);
