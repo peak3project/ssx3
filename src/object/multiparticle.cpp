@@ -408,7 +408,129 @@ extern "C" void func_00358700(int kind)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/multiparticle", func_00358780);
+#ifdef SKIP_ASM
+struct sMpVec4_8780 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sMpBox_8780 {
+    sMpVec4_8780 min;
+    sMpVec4_8780 max;
+};
+struct sMpCell_8780 {
+    int level;
+    int x, y, z;
+};
+struct sMpNode_8780 {
+    sMpNode_8780* child[2][2][2];   // 0x00
+    void* lists[3];                 // 0x20
+    int empty()
+    {
+        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
+            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
+            return 0;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (lists[i]) return 0;
+        }
+        return 1;
+    }
+};
+struct sMpRoot_8780 {
+    sMpCell_8780 cell;
+    sMpNode_8780* node;
+};
+struct sMpPart_8780 {
+    char pad[0x20];
+    int count;             // 0x20
+    char* first;           // 0x24
+};
+struct sMpTable_8780 {
+    char pad[0x44];
+    unsigned int* entries; // 0x44
+};
+struct sMpMgr_8780 {
+    char pad[0x8];
+    sMpTable_8780** tables; // 0x8
+};
+
+extern "C" sMpMgr_8780** func_002D1BD8_8780(void) __asm__("func_002D1BD8");
+extern "C" char* func_002D1BE0(void);
+extern "C" void func_00328F28(void* out, const void* box);
+extern "C" void func_003284B8(void* node, int idx, void* item, const void* target, const void* cur);
+void operator_delete(int*);
+
+static inline void* refToPtr_8780(unsigned int p)
+{
+    return (void*)(p << 2);
+}
+
+static inline void* lookup_8780(sMpTable_8780* t, unsigned int idx)
+{
+    unsigned int p = t->entries[idx] >> 8;
+    if (p == 0) {
+        return 0;
+    }
+    return refToPtr_8780(p);
+}
+
+struct sMpRef_8780 {
+    unsigned int id;
+
+    void* get(sMpMgr_8780* w)
+    {
+        sMpTable_8780* t = w->tables[id & 0xFF];
+        if (t == 0) {
+            return 0;
+        }
+        return lookup_8780(t, id >> 8);
+    }
+};
+
+static inline sMpRoot_8780* findRoot_8780(char* w, int x, int y, int z)
+{
+    sMpRoot_8780* r = (sMpRoot_8780*)w;
+    sMpRoot_8780* rx = x >= 0 ? r : r + 4;
+    sMpRoot_8780* ry = y >= 0 ? rx : rx + 2;
+    sMpRoot_8780* rz = z >= 0 ? ry : ry + 1;
+    return rz;
+}
+
+static inline void remove_8780(char* w, void* item, const sMpBox_8780* box)
+{
+    (*(int*)(w + 0xA0))++;
+    sMpCell_8780 c;
+    func_00328F28(&c, box);
+    sMpRoot_8780* r = findRoot_8780(w, c.x, c.y, c.z);
+    func_003284B8(r->node, 2, item, &c, &r->cell);
+    if (r->node->empty()) {
+        operator_delete((int*)r->node);
+        r->node = 0;
+    }
+}
+
+// Removes every particle node of slot 'idx' from the world's spatial tree.
+extern "C" void func_00358780(void* self, int idx)
+{
+    sMpRef_8780 ref = ((sMpRef_8780*)((char*)self + 0x18))[idx];
+    sMpPart_8780* part = (sMpPart_8780*)ref.get(*func_002D1BD8_8780());
+    char* node = part->first;
+    for (int i = 0; i < part->count; i++) {
+        sMpBox_8780 box;
+        box.min.x = *(float*)(node + 0x6C);
+        box.min.y = *(float*)(node + 0x70);
+        box.min.z = *(float*)(node + 0x74);
+        box.min.w = 1.0f;
+        box.max.x = *(float*)(node + 0x78);
+        box.max.y = *(float*)(node + 0x7C);
+        box.max.z = *(float*)(node + 0x80);
+        box.max.w = 1.0f;
+        remove_8780(func_002D1BE0(), node, &box);
+        node = *(char**)(node + 0x64);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/multiparticle", func_00358998);
