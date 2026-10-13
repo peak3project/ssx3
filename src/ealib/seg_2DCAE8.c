@@ -93,7 +93,26 @@ int func_003DBCD8(unsigned short *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBD18);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int USTR_length_BD18(const unsigned short *) __asm__("USTR_length");
+extern int func_003DBDD0_BD18(const unsigned short *, const unsigned short *, int) __asm__("func_003DBDD0");
+
+/* Index of sub in s (UCS-2), or 0xFFFF. */
+int func_003DBD18_impl(const unsigned short *s, const unsigned short *sub) __asm__("func_003DBD18");
+int func_003DBD18_impl(const unsigned short *s, const unsigned short *sub) {
+    int n = USTR_length_BD18(sub);
+    int i;
+    for (i = 0; s[i] != 0; i++) {
+        if (func_003DBDD0_BD18(&s[i], sub, n) == 0) {
+            return i;
+        }
+    }
+    return 0xFFFF;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBDB0);
