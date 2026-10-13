@@ -837,7 +837,67 @@ extern "C" void func_00271058(void* self, signed char* data, int size)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_002710A8);
+#ifdef SKIP_ASM
+extern "C" void func_00271228(void* self);
+extern "C" void func_002712C0(void* self);
+extern "C" void func_00271348(void* self);
+struct sReplayCache1380;
+extern "C" void func_00271380(sReplayCache1380* self);
+extern "C" void func_002714E0(void* self);
+struct sReplayCache1510;
+extern "C" void func_00271510(sReplayCache1510* self);
+extern "C" void func_00271620(void* self);
+extern "C" void func_00271688(void* self);
+void* func_002716F0(void* self);
+extern "C" void func_00271708(void* self);
+
+struct sRcCache10A8 {
+    char pad_0x000[0x638];
+    int state;      // 0x638
+    char* buf;      // 0x63C
+    char pad_0x640[0xC];
+    int used;       // 0x64C
+    char* dst;      // 0x650
+};
+
+// Runs the replay-cache writer state machine until the 16 KB block is full or the stream is done (state 11);
+// returns the block and its size, or 0 if there was nothing to write.
+extern "C" int func_002710A8(sRcCache10A8* self, char** block, int* size)
+{
+    if (self->state == 11) {
+        *size = 0;
+        return 0;
+    }
+    self->used = 0;
+    self->dst = self->buf;
+    while (self->used < 0x4000 && self->state != 11) {
+        func_00270FC0((sRcStream0FC0*)self);
+        if (self->used >= 0x4000) {
+            goto done;
+        }
+        switch (self->state) {
+        case 0: func_00271228(self); break;
+        case 1: func_002712C0(self); break;
+        case 2: func_00271348(self); break;
+        case 3: func_00271380((sReplayCache1380*)self); break;
+        case 4: func_002714E0(self); break;
+        case 5: func_00271510((sReplayCache1510*)self); break;
+        case 6: func_00271620(self); break;
+        case 7: func_00271688(self); break;
+        case 8: func_002716F0(self); break;
+        case 9: func_00271708(self); break;
+        case 10: self->state++; break;
+        case 11: break;
+        }
+    }
+done:
+    *size = self->used;
+    *block = self->buf;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00271228);
