@@ -147,7 +147,54 @@ extern "C" int func_00152BA8()
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintsavefile", func_00152BB0);
+#ifdef SKIP_ASM
+class cBEIface_2BB0 {
+public:
+    char pad[0xC];
+    virtual void v1();
+    virtual void onLoad();
+};
+cBEIface_2BB0* cBEOptionInterface_getThis();
+cBEIface_2BB0* cBEScoreInterface_getThis();
+cBEIface_2BB0* cBENewPlayerInterface_getThis();
+extern "C" void cSSXApp_initLocale(void* app);
+extern "C" void func_00228C08(void* app);
+extern void* D_004A28A8;
+
+// Restores the save block written by func_00152758 after checking its CRC; returns 0 when the CRC is wrong.
+extern "C" int func_00152BB0(void* self, char* buf)
+{
+    int size = func_00152948(self) - 4;
+    int crc = func_003E62D0(buf, size, 0xFBEA);
+    int stored = 0;
+    __builtin_memcpy(&stored, buf + size, 4);
+    if (crc != stored) {
+        return 0;
+    }
+    char* p = buf;
+    cBEIface_2BB0* o;
+    D_00535898 = *(sSaveHdr_2758*)p;
+    o = cBEOptionInterface_getThis();
+    p += sizeof(sSaveHdr_2758);
+    o->onLoad();
+    func_0041605C(D_00535C18, p, 0xA28);
+    p += 0xA28;
+    o = cBEScoreInterface_getThis();
+    o->onLoad();
+    sSaveBits6_2758 bits = *(sSaveBits6_2758*)p;
+    for (int i = 0; i < 6; i++) {
+        D_00535B20[i].b1 = bits.e[i].a;
+        D_00535B20[i].f13 = bits.e[i].b;
+    }
+    o = cBENewPlayerInterface_getThis();
+    o->onLoad();
+    cSSXApp_initLocale(D_004A28A8);
+    func_00228C08(D_004A28A8);
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("be/beintsavefile", func_00152DE0);
 
