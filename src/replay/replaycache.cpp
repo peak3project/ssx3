@@ -1743,7 +1743,65 @@ extern "C" void func_00272EC0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272F28);
+#ifdef SKIP_ASM
+struct sCacheEvent_2F28 {
+    char pad0[0xC];
+    int end;                        // 0xC
+    char pad10[0x18 - 0x10];
+    sCacheEvent_2F28* next;         // 0x18
+};
+
+struct sCacheRec_2F28 {
+    char pad0[4];
+    unsigned short time;            // 0x4
+};
+
+struct sCacheTrack_2F28 {
+    char pad0[0x14];
+    sCacheRec_2F28* rec;            // 0x14
+    char pad18[0x24 - 0x18];
+    sCacheEvent_2F28* events;       // 0x24
+    int numEvents;                  // 0x28
+};
+
+// Drops finished events and plays every record whose start time has been reached.
+extern "C" int func_00272F28(sCacheTrack_2F28* self, int* flags, float t)
+{
+    float zero;
+    sCacheEvent_2F28* prev = 0;
+    sCacheEvent_2F28* e = self->events;
+    while (e != 0) {
+        if ((float)e->end <= t) {
+            *flags |= 8;
+            if (prev == 0) {
+                e = self->events = e->next;
+            } else {
+                e = e->next;
+                prev->next = e;
+            }
+            self->numEvents--;
+        } else {
+            prev = e;
+            e = e->next;
+        }
+    }
+    zero = 0.0f;
+loop:
+    do {
+        if (self->rec != 0 && t - (float)self->rec->time >= zero) {
+            *flags |= 4;
+            func_002730C0(self, (sCacheRecord*)self->rec);
+            func_00273140(self);
+            goto loop;
+        }
+    } while (0);
+    if (self->events == 0 && self->rec == 0)
+        return 0;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00273040);
