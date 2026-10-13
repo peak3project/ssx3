@@ -659,7 +659,38 @@ extern "C" void* func_00356078(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/movenode", func_003560C0);
+#ifdef SKIP_ASM
+struct sMnVEntryI2_60C0 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+struct sMnVEntryI_60C0 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+// Taking the object by reference matches the target's register allocation (see func_00356078).
+static inline int VCall23_60C0(char*& o, int a)
+{
+    sMnVEntryI2_60C0* vt = *(sMnVEntryI2_60C0**)o;
+    return vt[23].fn(o + vt[23].delta, a);
+}
+// Asks the modifier object (slot 23, passing a through), then falls back to the node's own slot 27.
+extern "C" int func_003560C0(char* self, int a)
+{
+    char** h = *(char***)(self + 0x1C);
+    char* o = h ? *h : 0;
+    if (o != 0) {
+        int r = VCall23_60C0(o, a);
+        if (r != 0) return r;
+    }
+    sMnVEntryI_60C0* vs = *(sMnVEntryI_60C0**)(self + 0xC);
+    return vs[27].fn(self + vs[27].delta);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/movenode", func_00356128);
