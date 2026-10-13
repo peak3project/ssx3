@@ -3086,7 +3086,21 @@ int func_003E4EA8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4EE8);
+#ifdef SKIP_ASM
+extern int D_00450DE8_4EE8[] __asm__("D_00450DE8");
+extern int D_00450DEC_4EE8[] __asm__("D_00450DEC");
+extern int D_00450DCC_4EE8[] __asm__("D_00450DCC");
+
+// Resets the timer state.
+void func_003E4EE8(void) {
+    int *p = D_00450DE8_4EE8;
+    D_00450DEC_4EE8[0] = 0;
+    D_00450DCC_4EE8[0] = 0;
+    p[0] = 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4F08);
