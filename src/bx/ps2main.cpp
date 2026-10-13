@@ -198,7 +198,36 @@ extern "C" void func_0031B6C8(void* m)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/ps2main", func_0031B748);
+#ifdef SKIP_ASM
+struct sVec4_B748 {
+    float x, y, z, w;
+
+    sVec4_B748() {}
+    sVec4_B748(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sMtx_B748 {
+    float m[4][4];
+};
+
+struct sXform_B748 {
+    sVec4_B748 pos;     // 0x0
+    sVec4_B748 rot;     // 0x10, quaternion
+};
+
+// PORT: func_0031B7A8 returns the quaternion by value (hidden result pointer).
+extern "C" sVec4_B748 func_0031B7A8_v(sMtx_B748* mat) __asm__("func_0031B7A8");
+
+// Splits a rigid transform matrix into its translation row and rotation quaternion.
+extern "C" sXform_B748* func_0031B748(sXform_B748* out, sMtx_B748* mat)
+{
+    out->pos = sVec4_B748(mat->m[3][0], mat->m[3][1], mat->m[3][2], mat->m[3][3]);
+    out->rot = func_0031B7A8_v(mat);
+    return out;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/ps2main", func_0031B7A8);
