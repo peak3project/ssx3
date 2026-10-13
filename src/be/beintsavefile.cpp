@@ -196,7 +196,49 @@ extern "C" int func_00152BB0(void* self, char* buf)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintsavefile", func_00152DE0);
+#ifdef SKIP_ASM
+cBEIface_2BB0* func_00147F78_2DE0() __asm__("func_00147F78");
+cBEIface_2BB0* cBEBAGTInterface_getThis_2DE0() __asm__("cBEBAGTInterface_getThis__Fv");
+extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
+extern "C" void func_001515B8(void* p);
+struct sProfSub_2DE0 { char pad[0x288]; int keep; char pad28C[0xF88 - 0x28C]; };
+struct sProfile_2DE0 { sProfSub_2DE0 sub[10]; };
+extern sProfile_2DE0 D_004A6CA8_2DE0[] __asm__("D_004A6CA8");
+struct sCharFlag_2DE0 { unsigned char f; char pad[0x1B]; };
+extern sCharFlag_2DE0 D_00535B31[];
+
+// Loads rider profile 'idx' from a save block after checking its CRC; the per-sub-profile 'keep' values survive the load.
+extern "C" int func_00152DE0(void* self, char* buf, int idx)
+{
+    int size = func_00152BA8() - 4;
+    int crc = func_003E62D0(buf, size, 0xFBEA);
+    int stored = 0;
+    __builtin_memcpy(&stored, buf + size, 4);
+    if (crc != stored) {
+        return 0;
+    }
+    int keep[10];
+    for (int i = 0; i < 10; i++) {
+        keep[i] = D_004A6CA8_2DE0[idx].sub[i].keep;
+    }
+    char* p = buf;
+    strncpy((char*)&D_00535B20[idx], p, 0xC);
+    p += 0xC;
+    D_004A6CA8_2DE0[idx] = *(sProfile_2DE0*)p;
+    p += sizeof(sProfile_2DE0);
+    D_00535B31[idx].f = *p;
+    cBENewPlayerInterface_getThis()->onLoad();
+    func_00147F78_2DE0()->onLoad();
+    cBEBAGTInterface_getThis_2DE0()->onLoad();
+    for (int i = 0; i < 10; i++) {
+        D_004A6CA8_2DE0[idx].sub[i].keep = keep[i];
+        func_001515B8(&D_004A6CA8_2DE0[idx].sub[i]);
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintsavefile", func_00153050);
