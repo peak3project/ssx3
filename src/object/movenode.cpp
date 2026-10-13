@@ -1106,7 +1106,102 @@ extern "C" void cMoveNode_setupOverlapSystem(void* self_)
 
 INCLUDE_ASM("object/movenode", func_003567E0);
 
+//100%
 INCLUDE_ASM("object/movenode", func_003568B0);
+#ifdef SKIP_ASM
+struct sMnVec4_68B0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sMnBox_68B0 {
+    sMnVec4_68B0 min, max;
+};
+
+struct sMnVEntM_68B0 {
+    short delta;
+    short index;
+    sMnVec4_68B0* (*fn)(void*);
+};
+struct sMnVEnt_68B0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+extern "C" sMnBox_68B0* func_00352B88_68B0(void* mb) __asm__("func_00352B88");
+extern "C" float func_00352BF8(void* mb);
+extern "C" void* func_002D1BE0(void);
+extern "C" void func_003291E0(void* mgr, int a, void* obj, sMnBox_68B0* box, sMnBox_68B0* old);
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline void vu0Sub_68B0(sMnVec4_68B0& out, const sMnVec4_68B0& a, const sMnVec4_68B0& b)
+{
+    sMnVec4_68B0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    out = r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline void vu0Add_68B0(sMnVec4_68B0& out, const sMnVec4_68B0& a, const sMnVec4_68B0& b)
+{
+    sMnVec4_68B0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    out = r;
+}
+
+// World position: translation row of the node's transform (virtual slot 24).
+static inline sMnVec4_68B0 pos_68B0(char* self)
+{
+    sMnVEntM_68B0* vt = *(sMnVEntM_68B0**)(self + 0xC);
+    return vt[24].fn(self + vt[24].delta)[3];
+}
+
+static inline void VCall24_68B0(char*& o)
+{
+    sMnVEnt_68B0* vt = *(sMnVEnt_68B0**)o;
+    vt[24].fn(o + vt[24].delta);
+}
+
+// Refits the modifier block's bound box around the node's position (radius from the block) and re-files it.
+extern "C" void func_003568B0(char* self)
+{
+    char** h = *(char***)(self + 0x1C);
+    char* o = h ? *h : 0;
+    if (o == 0)
+        return;
+    sMnBox_68B0 box;
+    sMnBox_68B0 old = *func_00352B88_68B0(*(void**)(self + 0x1C));
+    float r = func_00352BF8(*(void**)(self + 0x1C));
+    sMnVec4_68B0 rv;
+    rv.w = 0.0f;
+    rv.x = r;
+    rv.y = r;
+    rv.z = r;
+    sMnVec4_68B0 v;
+    vu0Sub_68B0(v, pos_68B0(self), rv);
+    box.min = v;
+    vu0Add_68B0(v, pos_68B0(self), rv);
+    box.max = v;
+    tModifierBlock_setBoundBox_K(*(tModifierBlock**)(self + 0x1C), &box);
+    void* obj = *(void**)(self + 0x18);
+    func_003291E0(func_002D1BE0(), 0, obj, &box, &old);
+    VCall24_68B0(o);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/movenode", func_003569D0);
