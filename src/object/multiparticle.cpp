@@ -633,7 +633,86 @@ extern "C" void func_00358FD0(void* self, int msg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/multiparticle", func_00359030);
+#ifdef SKIP_ASM
+struct sMpItem_9030 {
+    char pad_0x0[0x90];
+    float mtx[16];          // 0x90
+} __attribute__((aligned(16)));
+
+struct sMpPart_9030 {
+    int field_0x0;
+    int field_0x4;
+    void* info;             // 0x8
+    int field_0xc;
+};
+
+struct sMpModel_9030 {
+    int field_0x0;
+    int count;              // 0x4
+    sMpPart_9030* parts;    // 0x8
+};
+
+struct sMpInst_9030 {
+    char pad_0x0[0x80];
+    sMpModel_9030* model;   // 0x80
+};
+
+struct sMpNode_9030 {
+    char pad_0x0[0x48];
+    sMpItem_9030* items;    // 0x48 (self + 0x7C)
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void vu0CopyMatrix_9030(void* dst, void* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+struct sMtx_9030 {
+    float m[16];
+};
+
+struct sMp_9030 {
+    char pad_0x0[0x60];
+    sMpInst_9030* inst;     // 0x60
+    char pad_0x64[0x10];
+    int count;              // 0x74
+    char pad_0x78[0xC];
+    sMtx_9030* mtx;         // 0x84
+};
+
+// Gathers the world matrices of the model's active parts into the matrix buffer at 0x84.
+extern "C" void func_00359030(void* vself)
+{
+    sMp_9030* self = (sMp_9030*)vself;
+    if (self->count <= 0) {
+        return;
+    }
+    sMpModel_9030* model = self->inst->model;
+    int n = 0;
+    sMpPart_9030* p = model->parts;
+    for (int i = 0; i < model->count; i++, p++) {
+        if (p->info != 0) {
+            sMpNode_9030* node = (sMpNode_9030*)((char*)self + 0x34);
+            vu0CopyMatrix_9030(&self->mtx[n], node->items[n].mtx);
+            n++;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/multiparticle", func_003590C8);
