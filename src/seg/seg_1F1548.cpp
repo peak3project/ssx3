@@ -736,7 +736,43 @@ extern "C" void func_002F1A00(void *arg0) {
 
 INCLUDE_ASM("seg/seg_1F1548", func_002F1A08);
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F2088);
+#ifdef SKIP_ASM
+extern "C" void func_00371380(void* obj, int level);
+
+struct sRiderInfo_2088 {
+    char pad[0xB18];
+    int fB18;               // 0xB18
+    char padB1C[0xC2C - 0xB1C];
+    int fC2C;               // 0xC2C
+    char padC30[0xCC8 - 0xC30];
+    int fCC8;               // 0xCC8
+};
+
+struct sOwner_2088 {
+    char pad[0x6C];
+    void* items[10];        // 0x6C
+    char pad94[4];
+    sRiderInfo_2088* a;     // 0x98
+    sRiderInfo_2088* b;     // 0x9C
+};
+
+extern "C" void func_002F2088(sOwner_2088* self)
+{
+    int i;
+    for (i = 0; i < 10; i++) {
+        if (self->items[i] != 0) {
+            int level = 7;
+            if (self->b != 0)
+                level = (self->b->fC2C < 0) ? 0x16 : self->b->fC2C + 1;
+            sRiderInfo_2088* r = self->b;
+            if ((self->a != 0 && self->a->fB18 != 0) || (r != 0 && r->fCC8 != 0))
+                func_00371380(self->items[i], level);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F2130);
