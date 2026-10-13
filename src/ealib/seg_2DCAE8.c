@@ -2754,7 +2754,27 @@ void func_003E2E50(int arg0, signed char *arg1, int *arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E2EE0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int BIG_typeofheader_2EE0(unsigned char *) __asm__("BIG_typeofheader");
+
+int func_003E2EE0_impl(unsigned char *h) __asm__("func_003E2EE0");
+int func_003E2EE0_impl(unsigned char *h) {
+    int r = 0;
+    int t = BIG_typeofheader_2EE0(h);
+    if (t == 1) {
+        r = (h[4] << 8) | h[5];
+    } else if (t > 0) {
+        if (t < 4) {
+            unsigned char *p = h + 8;
+            r = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E2F70);
