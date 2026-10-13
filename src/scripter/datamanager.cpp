@@ -1754,7 +1754,67 @@ extern "C" sScriptMgr_7F20* func_00277F20(sScriptMgr_7F20* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/datamanager", func_002780B8);
+#ifdef SKIP_ASM
+extern void* D_00482260[];
+extern void* D_00482298[];
+extern void* D_004822E0[];
+extern void* D_00482318[];
+extern "C" void func_00278308(void* self);
+extern "C" void func_00283518(void* self, int flags);
+extern "C" void func_00275498(void* self, int flags);
+extern "C" void func_00283228(void* self, int flags);
+extern "C" void func_002758C0(void* self, int flags);
+extern "C" void func_002837C8(void* self, int flags);
+extern "C" void func_00281ED8(void* self, int flags);
+
+struct sVE_780B8 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sSlot_780B8 {
+    char pad[0xC];
+    sVE_780B8* vt;              // 0xC
+    char rest[0x120 - 0x10];
+};
+
+// Script manager destructor: members in reverse order, then the base.
+extern "C" void func_002780B8(char* self, int flags)
+{
+    *(void***)(self + 0x2AC) = D_00482100;
+    *(void***)(self + 0x518) = D_004821A0;
+    *(void***)(self + 0x528) = D_00482168;
+    *(void***)(self + 0x2A8) = D_004821B8;
+    if (*(int*)(self + 0x52C) != 0) {
+        func_00278308(self);
+    }
+    D_004A34B0 = 0;
+    func_00283518(self + 0xA38, 2);
+    func_00275498(self + 0xA28, 2);
+    *(void***)(self + 0x944) = D_00482298;
+    *(void***)(self + 0x92C) = D_00482260;
+    func_00283228(self + 0x938, 0);
+    *(void***)(self + 0x928) = D_00482318;
+    *(void***)(self + 0x910) = D_004822E0;
+    func_00283228(self + 0x91C, 0);
+    sSlot_780B8* p = (sSlot_780B8*)(self + 0x910);
+    sSlot_780B8* begin = (sSlot_780B8*)(self + 0x6D0);
+    if (begin != 0) {
+        do {
+            while (begin != p) {
+                p--;
+                p->vt[1].fn((char*)p + p->vt[1].delta, 0);
+            }
+        } while (0);
+    }
+    func_002758C0(self + 0x51C, 0);
+    func_002837C8(self + 0x500, 0);
+    func_00281ED8(self, flags);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/datamanager", func_00278210);
