@@ -804,6 +804,8 @@ void* func_0031AAF0(void* self)
 
 INCLUDE_ASM("bx/memblockman", func_0031AB10);
 
+INCLUDE_ASM("bx/memblockman", func_0031AB30);
+
 //100%
 INCLUDE_ASM("bx/memblockman", func_0031ABC0__FPv);
 #ifdef SKIP_ASM

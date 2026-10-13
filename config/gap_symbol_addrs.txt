@@ -8923,6 +8923,7 @@ func_0031AA58 = 0x0031AA58; //type:func
 func_0031AAC8 = 0x0031AAC8; //type:func
 func_0031AAF0__FPv = 0x0031AAF0; //type:func
 func_0031AB10 = 0x0031AB10; //type:func
+func_0031AB30 = 0x0031AB30; //type:func
 func_0031ABC0__FPv = 0x0031ABC0; //type:func
 func_0031ABC8__FPv = 0x0031ABC8; //type:func
 func_0031ABD0 = 0x0031ABD0; //type:func
