@@ -340,12 +340,39 @@ class cRiderVbBC_s1f : public cRiderVbB_s1f, public cRiderVbC_s1f { public: };
 class cRiderVbPad_s1f { public: char pad[0x6C0]; } __attribute__((aligned(16)));
 class cRiderVb_s1f : public cRiderVbPad_s1f, public cRiderVbA_s1f, public cRiderVbBC_s1f {
 public:
+    cRiderVb_s1f();
     virtual ~cRiderVb_s1f();
 };
 void operator_delete(int* p);
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F0E88);
+#ifdef SKIP_ASM
+extern "C" void func_002F1148(void* self);
+
+struct cSegItem_2F0E88 {
+    char data[0x10];
+    cSegItem_2F0E88() {}
+};
+
+class cSeg_2F0E88 : virtual public cRiderVb_s1f {
+public:
+    char pad04[0xC];
+    cSegItem_2F0E88 a[4];
+    cSegItem_2F0E88 b[4];
+    char pad90[0x20];
+    cSeg_2F0E88();
+    virtual ~cSeg_2F0E88();
+};
+
+cSeg_2F0E88::cSeg_2F0E88()
+{
+    func_002F1148(this);
+}
+// PORT: the compiler names this ctor __11cSeg_2F0E88i; expose it under the address-derived name.
+__asm__(".globl func_002F0E88\n.type func_002F0E88,@function\nfunc_002F0E88 = __11cSeg_2F0E88i\n.size func_002F0E88,0x160\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F0FE8);
