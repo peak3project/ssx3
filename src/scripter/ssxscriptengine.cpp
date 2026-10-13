@@ -404,7 +404,49 @@ extern "C" int func_00278AD0(void* self, int key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00278B98);
+#ifdef SKIP_ASM
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int* func_00144BC0(void* iface);
+
+// Minimal view of cBXString; the members are bound to the game's (unmangled) symbols.
+// PORT: asm labels are not accepted on destructors, so the dtor forwards to the out-of-line one (in-charge flag 2).
+struct sBXStr_8B98;
+extern "C" void cBXString_dtor_8B98(sBXStr_8B98* self, int flags) __asm__("cBXString__cBXString");
+
+struct sBXStr_8B98 {
+    char* p;
+    int pad[3];
+    sBXStr_8B98(const char* s) __asm__("cBXString_cBXString2");
+    ~sBXStr_8B98() { cBXString_dtor_8B98(this, 2); }
+    sBXStr_8B98& operator=(const sBXStr_8B98& s) __asm__("cBXString_operatorE");
+};
+sBXStr_8B98 operator+(const char* a, const sBXStr_8B98& b) __asm__("func_003186D0");
+sBXStr_8B98 operator+(const sBXStr_8B98& a, const char* b) __asm__("func_00318630");
+extern "C" void* func_003DF690_8B98(const char* name, int flags) __asm__("func_003DF690");
+extern "C" void func_0027B370(void* self, int slot, const char* name, int flags, int key, int a, int b);
+extern const char D_00481C08[];
+extern const char D_004A34B8[];
+extern const char D_00481C38[];
+extern const char D_004A34C0[];
+
+// Loads the current profile's script file (counting it if found), then queues the profile's second script.
+extern "C" void func_00278B98(char* self)
+{
+    sBXStr_8B98 name((char*)func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)) + 0x34);
+    sBXStr_8B98 path = D_00481C08 + name + D_004A34B8;
+    void* h = func_003DF690_8B98(path.p, 0);
+    *(void**)(self + 0x538) = h;
+    if (h != 0) {
+        *(int*)(self + 0x620) += 1;
+    }
+    path = D_00481C38 + name + D_004A34C0;
+    func_0027B370(self, 1, path.p, 0, -1, 0, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00278CD8);
