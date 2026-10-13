@@ -3009,7 +3009,73 @@ extern "C" void func_0037D758(sPartDrawList* self, sPartQ16* q, sPartMtx* m0, sP
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037D800);
+#ifdef SKIP_ASM
+struct sPtRS_D800 {
+    int f0;
+    int f4;
+    int f8;                         // bits 0..4 = key
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sPtEnt_D800 {
+    sPtRS_D800 rs;                  // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+
+struct sPtRing_D800 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sPtEnt_D800 ents[1];            // 0x80
+};
+
+struct sPtGfx_D800 {
+    char pad_0x0[0xE84];
+    sPtRS_D800* top;                // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sPtRing_D800* ring;             // 0x18F0
+    void* texset;                   // 0x18F4
+    char pad_0x18F8[0x5A00 - 0x18F8];
+    unsigned int bufAddr;           // 0x5A00
+};
+
+extern "C" void func_00367F18_D800(void* texset, int idx, float* color, unsigned int* buf) __asm__("func_00367F18");
+
+// Release-build assert: expands to an empty do { } while (0); its loop notes keep the target's scheduling.
+#define ASSERT_D800(cond) do { } while (0)
+
+// PORT: uncached (0x30000000) pointers held in int.
+// Like func_0037D348 for the two-argument upload; the queued entry is flagged.
+extern "C" void func_0037D800(sPtGfx_D800* self, int idx, float* color)
+{
+    unsigned int buf = self->bufAddr;
+    unsigned int p = buf | 0x30000000;
+    func_00367F18_D800(self->texset, idx, color, &p);
+    unsigned int next = p & 0x0FFFFFFF;
+    self->bufAddr = next;
+    sPtRing_D800* ring = self->ring;
+    sPtRS_D800* rs = self->top;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sPtEnt_D800* e = (sPtEnt_D800*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        ASSERT_D800(e != 0);
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 1;
+    }
+    self->bufAddr += 0x10;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0037D908);
