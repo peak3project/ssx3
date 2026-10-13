@@ -5034,7 +5034,39 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8688);
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8778);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8968);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int func_003EEC88_8968(int, int) __asm__("func_003EEC88");
+extern int func_003EED08_8968(int, int) __asm__("func_003EED08");
+extern void *func_003EE480_8968(int, int) __asm__("func_003EE480");
+extern void func_00259210_8968(void *) __asm__("func_00259210");
+
+struct S_8968 { int h; int f4; int a; int b; int pad; };
+struct O_8968 { char pad[0x310]; struct S_8968 s[8]; };
+
+int func_003E8968_impl(struct O_8968 *self, unsigned int i, int arg) __asm__("func_003E8968");
+int func_003E8968_impl(struct O_8968 *self, unsigned int i, int arg) {
+    int r;
+    if (i < 8) {
+        if (self->s[i].h == 0) {
+            return -1;
+        }
+        if (i - 3 >= 5) {
+            return -1;
+        }
+        r = func_003EEC88_8968(self->s[i].h, arg);
+        if (r == 0) {
+            return 0;
+        }
+        func_003EED08_8968(self->s[i].h, arg);
+        func_00259210_8968(func_003EE480_8968(self->s[i].f4, r));
+        return 1;
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8A28);
