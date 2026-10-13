@@ -179,7 +179,69 @@ INCLUDE_ASM("object/floatingnode", func_0034F600);
 
 INCLUDE_ASM("object/floatingnode", func_0034F790);
 
+//100%
 INCLUDE_ASM("object/floatingnode", func_0034F930);
+#ifdef SKIP_ASM
+extern char* D_004A5B64;
+
+// The tilt clamp reads the angles through a view of the spring block at +0x2C.
+struct sFloatTilt_34F930 {
+    char pad0[0x28];
+    float pos2;         // 0x54
+    char pad2C[0x38 - 0x2C];
+    float pos3;         // 0x64
+};
+
+struct sFloatingNode_34F930 {
+    char pad0[0x12];
+    unsigned short flags;           // 0x12
+    char pad14[0x2C - 0x14];
+    float k;            // 0x2C
+    float damp;         // 0x30
+    float gain;         // 0x34
+    float k2;           // 0x38
+    float damp2;        // 0x3C
+    float gain2;        // 0x40
+    float in1;          // 0x44
+    float vel1;         // 0x48
+    float rest1;        // 0x4C
+    float pos1;         // 0x50
+    float pos2;         // 0x54
+    float pad58;
+    float vel2;         // 0x5C
+    float in2;          // 0x60
+    float pos3;         // 0x64
+    float pad68;
+    float vel3;         // 0x6C
+    float in3;          // 0x70
+};
+
+// PORT: g++ >?/<? (min/max) operator, removed in GCC 4.3.
+// Steps the float spring (bob height plus two tilt axes) by one frame.
+extern "C" int func_0034F930(sFloatingNode_34F930* self)
+{
+    float dt = 1.0f / (float)*(int*)(D_004A5B64 + 0x10);
+    float a1 = -self->k * (self->pos1 - self->rest1) + self->gain * self->in1 + -self->damp * self->vel1;
+    float a2 = -self->k2 * self->pos2 + self->gain2 * self->in2 + -self->damp2 * self->vel2;
+    float a3 = -self->k2 * self->pos3 + self->gain2 * self->in3 + -self->damp2 * self->vel3;
+    self->pos1 += self->vel1 * dt;
+    self->vel1 += a1 * dt;
+    self->pos2 += self->vel2 * dt;
+    self->vel2 += a2 * dt;
+    self->pos3 += self->vel3 * dt;
+    self->vel3 += a3 * dt;
+    sFloatTilt_34F930* t = (sFloatTilt_34F930*)&self->k;
+    float lo = -1.3962635f;    // +-80 degrees
+    float hi = 1.3962635f;
+    self->pos2 = t->pos2 >= lo ? t->pos2 <? hi : lo;
+    self->pos3 = t->pos3 >= lo ? t->pos3 <? hi : lo;
+    self->in1 = 0.0f;
+    self->in2 = 0.0f;
+    self->in3 = 0.0f;
+    self->flags |= 1;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/floatingnode", func_0034FA88);
