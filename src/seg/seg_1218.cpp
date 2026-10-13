@@ -676,7 +676,40 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00101310);
+#ifdef SKIP_ASM
+extern "C" void func_00101688(void* self);
+
+struct sSlotA_101310 {
+    char pad[0x18];
+    unsigned int id;
+    sSlotA_101310() : id(0xFFFFFFFF) {}
+};
+
+struct sSlotB_101310 {
+    unsigned int id;
+    char pad[0xC];
+    sSlotB_101310() : id(0xFFFFFFFF) {}
+};
+
+class cTable_101310 {
+public:
+    void* owner;
+    sSlotA_101310 a[64];
+    char pad704[0x50];
+    sSlotB_101310 b[64];
+    cTable_101310(void* o);
+};
+
+cTable_101310::cTable_101310(void* o)
+{
+    owner = o;
+    func_00101688(this);
+}
+// PORT: the compiler names this ctor __13cTable_101310Pv; expose it under the address-derived name.
+__asm__(".globl func_00101310\n.type func_00101310,@function\nfunc_00101310 = __13cTable_101310Pv\n.size func_00101310,0x94\n");
+#endif
 
 INCLUDE_ASM("seg/seg_1218", func_001013A8);
 
