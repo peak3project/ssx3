@@ -1,6 +1,25 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern unsigned char *func_004187E8_BAE8(void *, void *, unsigned int, int, void *) __asm__("func_004187E8");
+extern char func_003DBAC8_BAE8[] __asm__("func_003DBAC8");
+
+int func_003DBAE8_impl(short key, unsigned char *p) __asm__("func_003DBAE8");
+int func_003DBAE8_impl(short key, unsigned char *p) {
+    short k = key;
+    unsigned char *n = p + 8;
+    unsigned char *r;
+    r = func_004187E8_BAE8(&k, p + 0x10, (n[3] << 24) | (n[2] << 16) | (n[1] << 8) | n[0], 4, func_003DBAC8_BAE8);
+    if (r == 0) {
+        return -1;
+    }
+    r += 2;
+    return (r[1] << 8) | r[0];
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBB68);
