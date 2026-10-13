@@ -1069,7 +1069,29 @@ extern "C" void func_00356298(cMnNode_6298* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/movenode", func_00356608);
+#ifdef SKIP_ASM
+// Draws the node with a caller-supplied texture and flags (visibility, rotation and light as in func_00356298).
+extern "C" void func_00356608(cMnNode_6298* self, void* tex, int flags)
+{
+    sMnCam_6298* cam = *D_004A47B8_6298;
+    sMnObj_6298* obj = OBJ_6298(self);
+    if (!Visible_6298(cam, obj)) {
+        return;
+    }
+    void* rot = 0;
+    cMnGfx_6298* gfx = D_004A5B80_6298;
+    sMnMat_6298 rm;
+    if (HasRot_6298(MOD_6298(self))) {
+        rot = RotOf_6298(self, &rm);
+        flags |= 2;
+    }
+    void* light = HasLight_6298(MOD_6298(self)) ? LightOf_6298(self) : OBJ_6298(self)->light;
+    sMnGfxVt_6298* vt = gfx->vt;
+    ((MnDrawFn_6298)vt[95].fn)((char*)gfx + vt[95].delta, OBJ_6298(self), light, D_004FF1A0, tex, rot, flags, *(float*)((char*)self + 0x24));
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/movenode", cMoveNode_setupOverlapSystem);
