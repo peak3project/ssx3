@@ -3172,7 +3172,60 @@ cRiderE_108C80::cRiderE_108C80(int flag)
 __asm__(".globl func_00108C80\n.type func_00108C80,@function\nfunc_00108C80 = __14cRiderE_108C80ii\n.size func_00108C80,0x208\n");
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00108E88);
+#ifdef SKIP_ASM
+class cObj_8E88b;
+typedef void (cObj_8E88b::*Fn_8E88b)();
+extern "C" Fn_8E88b D_0043CF20_8E88b[4] __asm__("D_0043CF20");
+struct sQ_8E88 {
+    int v[4];
+} __attribute__((aligned(16)));
+extern sQ_8E88 D_004FF130_8E88 __asm__("D_004FF130");
+extern "C" void func_0010CAB8(void* self);
+extern "C" void func_0010D170(void* self);
+extern "C" void* func_003E6448_8E88(void* dst, int value, int size) __asm__("func_003E6448");
+
+// PORT: the unit later declares func_00108E88 without parameters; it takes the rider.
+void func_00108E88_self(char* self) __asm__("func_00108E88");
+
+void func_00108E88_self(char* self)
+{
+    *(int*)(self + 0xE0C) = -1;
+    *(int*)(self + 0xE10) = 0;
+    *(int*)(self + 0xE14) = 0;
+    *(int*)(self + 0xE18) = 0;
+    *(int*)(self + 0xE20) = 0;
+    *(int*)(self + 0xE24) = 0;
+    *(int*)(self + 0xE28) = 0;
+    *(int*)(self + 0xE1C) = 0;
+    *(int*)(self + 0xE2C) = 0;
+    *(int*)(self + 0xE38) = 0;
+    *(int*)(self + 0xE3C) = 0;
+    *(int*)(self + 0xE30) = 0;
+    *(int*)(self + 0xE34) = 0;
+    *(int*)(self + 0xDF0) = 0;
+    *(int*)(self + 0xE74) = 0;
+    *(int*)(self + 0xE78) = 0;
+    *(short*)(self + 0xF38) = 0;
+    *(int*)(self + 0xF30) = 0;
+    *(int*)(self + 0xF34) = 0;
+    *(sQ_8E88*)(self + 0xE50) = D_004FF130_8E88;
+    *(sQ_8E88*)(self + 0xE60) = D_004FF130_8E88;
+    *(int*)(self + 0xE40) = 0;
+    func_0010CAB8(self);
+    *(int*)(self + 0xE70) = -1;
+    *(float*)(self + 0xDF4) = 1.0f;
+    *(Fn_8E88b*)(self + 0xF44) = D_0043CF20_8E88b[1];
+    *(short*)(self + 0xF38) = 1;
+    do {
+        func_003E6448_8E88(self + 0xE7C, 0, 0x3C);
+        func_003E6448_8E88(self + 0xEB8, 0, 0x3C);
+        func_003E6448_8E88(self + 0xEF4, 0, 0x3C);
+    } while (0);
+    func_0010D170(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00108F88);
