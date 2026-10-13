@@ -7227,7 +7227,33 @@ extern "C" int func_002A4A38(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A4A78);
+#ifdef SKIP_ASM
+struct sSndKey8_4A78 {
+    long v;
+} __attribute__((packed));
+extern sSndKey8_4A78 D_004A3650[];
+extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_0028DEF0(void* self, int a1);
+
+// PORT: 64-bit long sound key
+extern "C" void func_002A4A78(void* self)
+{
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (*(int*)((char*)self + 0x578C) == 0 && D_00535C11[0] == 0) {
+        if (func_002A3F90(self) != 0) {
+            func_0028DEF0(self, 0xD);
+            func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 2, D_004A3650->v, 0, 2, 0, 0, 0);
+        } else {
+            char* p = **(char***)((char*)self + 0x118) + 0x1D8;
+            sSndKey8_4A78* key = D_004A3650;
+            int r = func_002B4908((char*)self + 0x118);
+            func_002ADCA0(p, 2, key->v, 0, 4, r, 0, 0);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4B68);
