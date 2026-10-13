@@ -300,7 +300,60 @@ extern "C" void func_00275D90(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/datamanager", func_00275DD8);
+#ifdef SKIP_ASM
+extern "C" int func_00277450(void* self, int index, int a2);
+extern "C" void func_002776E0(void* self);
+extern "C" void* func_00282BF0(void* self, int a1);
+int func_00283C58(void* self);
+extern "C" int func_00283C80(void* list, void* cmd);
+extern "C" void* func_00283D70(void* list, int i);
+// The unit declares func_00283D28 as returning void*, but it returns the list's count.
+int func_00283D28_count(void* list) __asm__("func_00283D28");
+struct sDmCmd5DD8 {
+    int a1;         // 0x0
+    int id;         // 0x4
+    int a2;         // 0x8
+    int field_0xC;  // 0xC
+    int a4;         // 0x10
+    int a5;         // 0x14
+    int a6;         // 0x18
+};
+
+// Queues a plain command (no lookup) and starts it when the queue was idle.
+extern "C" int func_00275DD8(char* self, int a1, int a2)
+{
+    if (func_00283C58(self + 0xC) != 0) {
+        return 0;
+    }
+    sDmCmd5DD8 cmd;
+    cmd.a1 = a1;
+    cmd.id = -1;
+    cmd.a2 = a2;
+    cmd.field_0xC = -1;
+    cmd.a4 = -1;
+    cmd.a5 = -1;
+    // 64-bit "none" value compared against the pending index below; needed for the target's branch layout
+    long none = 0;
+    cmd.a6 = -1;
+    void* list = self + 0xC;
+    func_00283C80(list, &cmd);
+    if (*(int*)(self + 0xA4) == 0) {
+        return 1;
+    }
+    if (*(int*)(self + 0xBC) >= none) {
+        return 1;
+    }
+    *(int*)(self + 0xBC) = func_00277450(self, func_00283D28_count(list) - 1, 0);
+    if (*(int*)(self + 0xA4) == 3) {
+        int ok = *(int*)((char*)func_00282BF0(*(void**)self, *(int*)((char*)func_00283D70(list, 0) + 0xC)) + 0x20) == 4;
+        if (ok)
+            func_002776E0(self);
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/datamanager", func_00275ED0);
