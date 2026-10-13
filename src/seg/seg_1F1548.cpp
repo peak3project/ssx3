@@ -313,9 +313,56 @@ extern "C" void func_002F0CD0(sMgr_0CD0* self)
 }
 #endif
 
+#ifdef SKIP_ASM
+// Classes here derive virtually from cRider. g++ 2.95 then emits, in their destructors, the vtable fix-ups
+// for the virtual base (stack copies of the cRider-in-D vtables with the dtor's this-delta adjusted when
+// not most-derived). Only the cRider layout that code depends on is modelled (see
+// ai/control/handplantcontrol.cpp).
+class cRiderVbA0_s1f {
+public:
+    virtual ~cRiderVbA0_s1f();
+    virtual void a01(); virtual void a02(); virtual void a03(); virtual void a04(); virtual void a05();
+    virtual void a06(); virtual void a07(); virtual void a08(); virtual void a09(); virtual void a10();
+    virtual void a11(); virtual void a12(); virtual void a13(); virtual void a14(); virtual void a15();
+    virtual void a16(); virtual void a17(); virtual void a18(); virtual void a19();
+};
+class cRiderVbA_s1f : public cRiderVbA0_s1f { public: char padA[0xC]; };
+class cRiderVbB0_s1f { public: virtual void b01(); };
+class cRiderVbB_s1f : public cRiderVbB0_s1f { public: char padB[0x14]; };
+class cRiderVbC0_s1f {
+public:
+    virtual ~cRiderVbC0_s1f();
+    virtual void c01(); virtual void c02(); virtual void c03(); virtual void c04(); virtual void c05();
+    virtual void c06();
+};
+class cRiderVbC_s1f : public cRiderVbC0_s1f { public: char padC[0x10]; };
+class cRiderVbBC_s1f : public cRiderVbB_s1f, public cRiderVbC_s1f { public: };
+class cRiderVbPad_s1f { public: char pad[0x6C0]; } __attribute__((aligned(16)));
+class cRiderVb_s1f : public cRiderVbPad_s1f, public cRiderVbA_s1f, public cRiderVbBC_s1f {
+public:
+    virtual ~cRiderVb_s1f();
+};
+void operator_delete(int* p);
+#endif
+
 INCLUDE_ASM("seg/seg_1F1548", func_002F0E88);
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F0FE8);
+#ifdef SKIP_ASM
+class cVbDtor002F0FE8 : virtual public cRiderVb_s1f {
+public:
+    char body[0xAC];
+    virtual ~cVbDtor002F0FE8();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002F0FE8::~cVbDtor002F0FE8()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002F0FE8; expose it under the address-derived name.
+__asm__(".globl func_002F0FE8\n.type func_002F0FE8,@function\nfunc_002F0FE8 = _$_15cVbDtor002F0FE8\n.size func_002F0FE8,0x15C\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F1148);
