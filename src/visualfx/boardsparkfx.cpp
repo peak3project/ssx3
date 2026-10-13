@@ -304,7 +304,66 @@ cVbDtor002DA8E8::~cVbDtor002DA8E8()
 __asm__(".globl func_002DA8E8\n.type func_002DA8E8,@function\nfunc_002DA8E8 = _$_15cVbDtor002DA8E8\n.size func_002DA8E8,0x18C\n");
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardsparkfx", func_002DAA78);
+#ifdef SKIP_ASM
+struct sV4_AA78 { float x, y, z, w; } __attribute__((aligned(16)));
+struct sRS_AA78 {
+    int f0;
+    int flagsA;     // 0x4
+    int flagsB;     // 0x8
+    int fC;
+    short tex;      // 0x10
+    short pad;
+};
+extern sV4_AA78 D_004FF130;
+extern sRS_AA78 D_00501420_AA78 __asm__("D_00501420");
+extern char* D_004A289C_AA78 __asm__("D_004A289C");
+
+// Render-state field setters (mask, shift, value), as the unit's other effects write them.
+#define RS_SETA_AA78(rs, mask, shift, v) ((rs).flagsA = ((rs).flagsA & ~(mask)) | (((v) << (shift)) & (mask)))
+#define RS_SETB_AA78(rs, mask, shift, v) ((rs).flagsB = ((rs).flagsB & ~(mask)) | (((v) << (shift)) & (mask)))
+
+struct sSparkFx_AA78 {
+    char pad0[0x10];
+    sV4_AA78 pos;           // 0x10
+    char pad20[0x50];
+    int f70, f74, f78;      // 0x70
+    sRS_AA78 rsA;           // 0x7C
+    sRS_AA78 rsB;           // 0x90
+};
+
+// Spark FX init: two render states copied from the defaults with their mode bits set (the second also sets f0 bits 2-3).
+extern "C" void func_002DAA78(void* vself)
+{
+    sSparkFx_AA78* self = (sSparkFx_AA78*)vself;
+    self->pos = D_004FF130;
+    self->f70 = 0;
+    self->f74 = 0;
+    self->f78 = 0;
+    self->rsA = D_00501420_AA78;
+    RS_SETB_AA78(self->rsA, 0x3E0, 5, 7);
+    RS_SETA_AA78(self->rsA, 0x400000, 22, 1);
+    RS_SETA_AA78(self->rsA, 0x1800000, 23, 0);
+    RS_SETA_AA78(self->rsA, 0x300000, 20, 0);
+    RS_SETA_AA78(self->rsA, 0xFF000, 12, 0);
+    RS_SETA_AA78(self->rsA, 0x3, 0, 2);
+    RS_SETA_AA78(self->rsA, 0x7C, 2, 7);
+    int texA = *(int*)(D_004A289C_AA78 + 0xFA8);
+    self->rsA.tex = texA;
+    self->rsB = D_00501420_AA78;
+    RS_SETB_AA78(self->rsB, 0x3E0, 5, 7);
+    RS_SETA_AA78(self->rsB, 0x400000, 22, 1);
+    RS_SETA_AA78(self->rsB, 0x1800000, 23, 0);
+    RS_SETA_AA78(self->rsB, 0x300000, 20, 0);
+    RS_SETA_AA78(self->rsB, 0xFF000, 12, 9);
+    RS_SETA_AA78(self->rsB, 0x3, 0, 2);
+    RS_SETA_AA78(self->rsB, 0x7C, 2, 7);
+    int texB = *(int*)(D_004A289C_AA78 + 0xFA8);
+    self->rsB.tex = texB;
+    self->rsB.f0 |= 0xC;
+}
+#endif
 
 INCLUDE_ASM("visualfx/boardsparkfx", func_002DABC8);
 
