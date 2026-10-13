@@ -86,7 +86,26 @@ void func_003DBDB0(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBDD0);
+#ifdef SKIP_ASM
+/* UCS-2 strncmp. */
+int func_003DBDD0_impl(const unsigned short *a, const unsigned short *b, int n) __asm__("func_003DBDD0");
+int func_003DBDD0_impl(const unsigned short *a, const unsigned short *b, int n) {
+    int i;
+    int d = 0;
+    for (i = 0; i < n; i++, b++, a++) {
+        if (d != 0) {
+            break;
+        }
+        d = *a - *b;
+        if (*a == 0) {
+            break;
+        }
+    }
+    return d;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", USTR_copy);
