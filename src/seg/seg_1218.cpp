@@ -261,7 +261,77 @@ extern "C" float func_00100348_0348(char* self, sV4_0348* target)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00100610);
+#ifdef SKIP_ASM
+struct sV4_0610 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sV4_0610 Add_0610(const sV4_0610& a, const sV4_0610& b)
+{
+    sV4_0610 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_0610 Sub_0610(const sV4_0610& a, const sV4_0610& b)
+{
+    sV4_0610 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV4_0610 Scale_0610(const sV4_0610& v, float s)
+{
+    sV4_0610 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+struct sCam_0610 {
+    char pad0[0x110];
+    sV4_0610 pos;       // 0x110
+    char pad120[0x490 - 0x120];
+    sV4_0610 target;    // 0x490
+    char pad4A0[0x10];
+    sV4_0610 base;      // 0x4B0
+};
+
+// PORT: the unit later declares func_00100610 with the out-pointer spelled out; same symbol, by-value return here
+sV4_0610 func_00100610_0610(char* self) __asm__("func_00100610");
+
+sV4_0610 func_00100610_0610(char* self)
+{
+    sV4_0610 d = Sub_0610((*(sCam_0610**)(self + 0x18))->target, (*(sCam_0610**)(self + 0x18))->pos);
+    d = Scale_0610(d, 0.1f);
+    return Add_0610((*(sCam_0610**)(self + 0x18))->base, d);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_1218", func_00100680);
