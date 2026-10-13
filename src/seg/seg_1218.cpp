@@ -2859,7 +2859,127 @@ extern "C" int func_00108C28(S_8C28 *arg0, void *arg1) {
 }
 #endif
 
+#ifdef SKIP_ASM
+// Classes here derive virtually from cRider. g++ 2.95 then emits, in their destructors, the vtable fix-ups
+// for the virtual base (stack copies of the cRider-in-D vtables with the dtor's this-delta adjusted when
+// not most-derived). Only the cRider layout that code depends on is modelled (see
+// ai/control/handplantcontrol.cpp).
+class cRiderVbA0_s12 {
+public:
+    virtual ~cRiderVbA0_s12();
+    virtual void a01(); virtual void a02(); virtual void a03(); virtual void a04(); virtual void a05();
+    virtual void a06(); virtual void a07(); virtual void a08(); virtual void a09(); virtual void a10();
+    virtual void a11(); virtual void a12(); virtual void a13(); virtual void a14(); virtual void a15();
+    virtual void a16(); virtual void a17(); virtual void a18(); virtual void a19();
+};
+class cRiderVbA_s12 : public cRiderVbA0_s12 { public: char padA[0xC]; };
+class cRiderVbB0_s12 { public: virtual void b01(); };
+class cRiderVbB_s12 : public cRiderVbB0_s12 { public: char padB[0x14]; };
+class cRiderVbC0_s12 {
+public:
+    virtual ~cRiderVbC0_s12();
+    virtual void c01(); virtual void c02(); virtual void c03(); virtual void c04(); virtual void c05();
+    virtual void c06();
+};
+class cRiderVbC_s12 : public cRiderVbC0_s12 { public: char padC[0x10]; };
+class cRiderVbBC_s12 : public cRiderVbB_s12, public cRiderVbC_s12 { public: };
+class cRiderVbPad_s12 { public: char pad[0x6C0]; } __attribute__((aligned(16)));
+class cRiderVb_s12 : public cRiderVbPad_s12, public cRiderVbA_s12, public cRiderVbBC_s12 {
+public:
+    cRiderVb_s12();
+    virtual ~cRiderVb_s12();
+};
+void operator_delete(int* p);
+#endif
+
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00108C80);
+#ifdef SKIP_ASM
+// PORT: the rider class below derives from a composite of 31 parts that each derive virtually from cRider;
+// only the parts' vbase-pointer offsets (and the composite's vptr at 0xDE8) matter to this ctor.
+struct cCompHead00_s12 { char pad[0x18]; };
+class cCompPart00_s12 : public cCompHead00_s12, virtual public cRiderVb_s12 { };
+struct cCompHead01_s12 { char pad[0x4]; };
+class cCompPart01_s12 : public cCompHead01_s12, virtual public cRiderVb_s12 { };
+struct cCompHead02_s12 { char pad[0x40]; };
+class cCompPart02_s12 : public cCompHead02_s12, virtual public cRiderVb_s12 { };
+struct cCompHead03_s12 { char pad[0x20]; };
+class cCompPart03_s12 : public cCompHead03_s12, virtual public cRiderVb_s12 { };
+struct cCompHead04_s12 { char pad[0x50]; };
+class cCompPart04_s12 : public cCompHead04_s12, virtual public cRiderVb_s12 { };
+struct cCompHead05_s12 { char pad[0xA0]; };
+class cCompPart05_s12 : public cCompHead05_s12, virtual public cRiderVb_s12 { };
+class cCompPart06_s12 : virtual public cRiderVb_s12 { };
+struct cCompHead07_s12 { char pad[0x14]; };
+class cCompPart07_s12 : public cCompHead07_s12, virtual public cRiderVb_s12 { };
+class cCompPart08_s12 : virtual public cRiderVb_s12 { };
+class cCompPart09_s12 : virtual public cRiderVb_s12 { };
+struct cCompHead10_s12 { char pad[0x14]; };
+class cCompPart10_s12 : public cCompHead10_s12, virtual public cRiderVb_s12 { };
+struct cCompHead11_s12 { char pad[0x58]; };
+class cCompPart11_s12 : public cCompHead11_s12, virtual public cRiderVb_s12 { };
+struct cCompHead12_s12 { char pad[0x14]; };
+class cCompPart12_s12 : public cCompHead12_s12, virtual public cRiderVb_s12 { };
+struct cCompHead13_s12 { char pad[0x8]; };
+class cCompPart13_s12 : public cCompHead13_s12, virtual public cRiderVb_s12 { };
+struct cCompHead14_s12 { char pad[0x80]; };
+class cCompPart14_s12 : public cCompHead14_s12, virtual public cRiderVb_s12 { };
+struct cCompHead15_s12 { char pad[0x8]; };
+class cCompPart15_s12 : public cCompHead15_s12, virtual public cRiderVb_s12 { };
+struct cCompHead16_s12 { char pad[0x4]; };
+class cCompPart16_s12 : public cCompHead16_s12, virtual public cRiderVb_s12 { };
+struct cCompHead17_s12 { char pad[0x14]; };
+class cCompPart17_s12 : public cCompHead17_s12, virtual public cRiderVb_s12 { };
+struct cCompHead18_s12 { char pad[0x8]; };
+class cCompPart18_s12 : public cCompHead18_s12, virtual public cRiderVb_s12 { };
+class cCompPart19_s12 : virtual public cRiderVb_s12 { };
+class cCompPart20_s12 : virtual public cRiderVb_s12 { };
+struct cCompHead21_s12 { char pad[0xB0]; };
+class cCompPart21_s12 : public cCompHead21_s12, virtual public cRiderVb_s12 { };
+struct cCompHead22_s12 { char pad[0xA0]; };
+class cCompPart22_s12 : public cCompHead22_s12, virtual public cRiderVb_s12 { };
+struct cCompHead23_s12 { char pad[0xE0]; };
+class cCompPart23_s12 : public cCompHead23_s12, virtual public cRiderVb_s12 { };
+struct cCompHead24_s12 { char pad[0x3A0]; };
+class cCompPart24_s12 : public cCompHead24_s12, virtual public cRiderVb_s12 { };
+struct cCompHead25_s12 { char pad[0x100]; };
+class cCompPart25_s12 : public cCompHead25_s12, virtual public cRiderVb_s12 { };
+struct cCompHead26_s12 { char pad[0x10]; };
+class cCompPart26_s12 : public cCompHead26_s12, virtual public cRiderVb_s12 { };
+class cCompPart27_s12 : virtual public cRiderVb_s12 { };
+struct cCompHead28_s12 { char pad[0x30]; };
+class cCompPart28_s12 : public cCompHead28_s12, virtual public cRiderVb_s12 { };
+struct cCompHead29_s12 { char pad[0x120]; };
+class cCompPart29_s12 : public cCompHead29_s12, virtual public cRiderVb_s12 { };
+struct cCompHead30_s12 { char pad[0xA0]; };
+class cCompPart30_s12 : public cCompHead30_s12, virtual public cRiderVb_s12 { };
+class cComp_s12 : public cCompPart00_s12, public cCompPart01_s12, public cCompPart02_s12, public cCompPart03_s12, public cCompPart04_s12, public cCompPart05_s12, public cCompPart06_s12, public cCompPart07_s12, public cCompPart08_s12, public cCompPart09_s12, public cCompPart10_s12, public cCompPart11_s12, public cCompPart12_s12, public cCompPart13_s12, public cCompPart14_s12, public cCompPart15_s12, public cCompPart16_s12, public cCompPart17_s12, public cCompPart18_s12, public cCompPart19_s12, public cCompPart20_s12, public cCompPart21_s12, public cCompPart22_s12, public cCompPart23_s12, public cCompPart24_s12, public cCompPart25_s12, public cCompPart26_s12, public cCompPart27_s12, public cCompPart28_s12, public cCompPart29_s12, public cCompPart30_s12 {
+public:
+    char tail[0xC4];
+    // PORT: func_0010FCD8 constructs this part (fields up to 0xDE8 and the vptr at 0xDE8)
+    cComp_s12();
+    virtual void v01();
+};
+// PORT: func_00108E88 takes the rider; declared elsewhere in this file without parameters
+void func_00108E88_self(void* self) __asm__("func_00108E88");
+
+class cRiderE_108C80 : public cComp_s12 {
+public:
+    char tail[0x160];
+    cRiderE_108C80(int flag);
+    virtual ~cRiderE_108C80();
+    virtual void a19();
+};
+
+cRiderE_108C80::cRiderE_108C80(int flag)
+{
+    if (flag)
+        *(int*)((char*)(cRiderVb_s12*)this + 0x878) = 1;
+    func_00108E88_self(this);
+}
+// PORT: the compiler names this ctor __14cRiderE_108C80ii; expose it under the address-derived name.
+__asm__(".globl func_00108C80\n.type func_00108C80,@function\nfunc_00108C80 = __14cRiderE_108C80ii\n.size func_00108C80,0x208\n");
+#endif
 
 INCLUDE_ASM("seg/seg_1218", func_00108E88);
 
