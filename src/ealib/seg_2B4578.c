@@ -2353,7 +2353,47 @@ void func_003BC588(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC5C8);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern unsigned int D_0050AC50_C5C8[6] __asm__("D_0050AC50");
+
+unsigned int func_003BC5C8(void) {
+    unsigned int s, c, n;
+
+    s = D_0050AC50_C5C8[5] + D_0050AC50_C5C8[4];
+    c = 0;
+    if (s < D_0050AC50_C5C8[5] || s < D_0050AC50_C5C8[4]) {
+        c = 1;
+    }
+    D_0050AC50_C5C8[4] = s;
+    s = s + D_0050AC50_C5C8[3] + c;
+    c = s < D_0050AC50_C5C8[3];
+    D_0050AC50_C5C8[3] = s;
+    s = s + D_0050AC50_C5C8[2] + c;
+    c = s < D_0050AC50_C5C8[2];
+    D_0050AC50_C5C8[2] = s;
+    n = ++D_0050AC50_C5C8[5];
+    s = s + D_0050AC50_C5C8[1] + c;
+    c = s < D_0050AC50_C5C8[1];
+    D_0050AC50_C5C8[1] = s;
+    s = s + D_0050AC50_C5C8[0] + c;
+    D_0050AC50_C5C8[0] = s;
+    if (n == 0) {
+        if (++D_0050AC50_C5C8[4] == 0) {
+            if (++D_0050AC50_C5C8[3] == 0) {
+                if (++D_0050AC50_C5C8[2] == 0) {
+                    if (++D_0050AC50_C5C8[1] == 0) {
+                        s = ++D_0050AC50_C5C8[0];
+                    }
+                }
+            }
+        }
+    }
+    return s;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC6B8);
