@@ -971,7 +971,50 @@ extern "C" void func_0035F3A8(sRailModSelect* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035F410);
+#ifdef SKIP_ASM
+// Advances the rail timer; each whole step moves to the next/previous frame (mode 0), or alternates between a
+// fixed 10-per-second step (mode 1) and a random 25..100% rate (mode 2).
+extern "C" void func_0035F410(sRailTimer* self)
+{
+    if (!(0.0f < self->f8)) {
+        return;
+    }
+    float one = 1.0f;
+    float* acc = (float*)&self->f4;
+    *acc += self->f8;
+    if (!(one <= *acc)) {
+        return;
+    }
+    *acc -= one;
+    if (self->f0 == 0) {
+        if (self->f10 == 0) {
+            if (++self->f14 >= self->f20) {
+                self->f14 = 0;
+            }
+        } else if (--self->f14 < 0) {
+            self->f14 = self->f20 - 1;
+        }
+    } else if (self->f0 == 1) {
+        self->f8 = 10.0f / (float)*(int*)(D_004A5B64 + 0x10);
+        self->f0 = 2;
+        if (++self->f14 >= self->f20) {
+            self->f14 = 0;
+        }
+    } else if (self->f0 == 2) {
+        union { int i; float f; } u;
+        float base = 0.25f;
+        u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
+        self->f0 = 1;
+        self->f8 = self->fC * ((u.f - one) * 0.75f + base);
+        if (++self->f14 >= self->f20) {
+            self->f14 = 0;
+        }
+    }
+    func_0035F378((sRailModSelect*)self, self->f14);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F598);
