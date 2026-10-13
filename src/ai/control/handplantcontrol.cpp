@@ -2378,7 +2378,25 @@ extern "C" void* func_00142388(void* self, int inChrg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001424D0);
+#ifdef SKIP_ASM
+struct cVbHead001424D0 {
+    char pad[0x4];
+};
+
+class cVbDtor001424D0 : public cVbHead001424D0, virtual public cRiderVb_hpc {
+public:
+    virtual ~cVbDtor001424D0();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor001424D0::~cVbDtor001424D0()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor001424D0; expose it under the address-derived name.
+__asm__(".globl func_001424D0\n.type func_001424D0,@function\nfunc_001424D0 = _$_15cVbDtor001424D0\n.size func_001424D0,0x15C\n");
+#endif
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_00142630);
 
