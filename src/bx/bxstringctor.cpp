@@ -2151,5 +2151,58 @@ int func_0026AF98_impl(void* self, void* a1, void** out, int maxOut)
 
 INCLUDE_ASM("bx/bxstringctor", func_0026AFB8);
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_0026B178);
+#ifdef SKIP_ASM
+struct sBXBox;
+struct sPathItem_B178 {
+    char pad[0x3C];
+};
+
+struct sPathList_B178 {
+    char pad_0x0[0x10];
+    int count;                  // 0x10
+    sPathItem_B178* items;      // 0x14
+};
+
+extern "C" float func_0026A9B0(sBXBox* self, float* p);
+
+static inline int minB178(int a, int b)
+{
+    return a < b ? a : b;
+}
+
+// Collects up to max items nearest to pos (items containing it first), nearest first; returns how many.
+extern "C" int func_0026B178(sPathList_B178* self, float* pos, sPathItem_B178** out, int max)
+{
+    float dist[52];
+    int n = 0;
+    int want = minB178(self->count, max);
+    int i;
+    for (i = 0; i < self->count; i++) {
+        dist[i] = func_0026A9B0((sBXBox*)&self->items[i], pos);
+        if (dist[i] == 0.0f) {
+            dist[i] = 1e37f;
+            out[n++] = &self->items[i];
+            if (n == want) {
+                break;
+            }
+        }
+    }
+    while (n < want) {
+        float best = dist[0];
+        int bi = 0;
+        for (i = 1; i < self->count; i++) {
+            if (dist[i] < best) {
+                best = dist[i];
+                bi = i;
+            }
+        }
+        dist[bi] = 1e37f;
+        out[n] = &self->items[bi];
+        n++;
+    }
+    return n;
+}
+#endif
 
