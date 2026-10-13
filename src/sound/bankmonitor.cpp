@@ -2562,12 +2562,13 @@ extern "C" void func_002B1720(sBankSlots* self)
 
 extern "C" void* func_002AFD10(int);
 
-//96.5%
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1758__FPvi);
 #ifdef SKIP_ASM
 void* func_002B1758(void* self, int a1)
 {
-    return func_002AFD10(*(int*)((char*)*(void**)((char*)self + 0x4) + a1 * 4));
+    // a1 also stays in $5 as func_002AFD10's second argument
+    return func_002AFD10_impl((void*)(*(int**)((char*)self + 0x4))[a1], (void*)a1);
 }
 #endif
 
