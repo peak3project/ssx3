@@ -342,7 +342,23 @@ int func_003DCF40(T_CF40 arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCF70);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+typedef void (*Fn_CF70)(int, int, int);
+struct E_CF70 { int f0; int f4; volatile int f8; int fC; int f10; int f14; char pad[0x10]; Fn_CF70 fn; int pad2; };
+extern struct E_CF70 *D_00519AD8_CF70 __asm__("D_00519AD8");
+
+void func_003DCF70_impl(int h, Fn_CF70 fn) __asm__("func_003DCF70");
+void func_003DCF70_impl(int h, Fn_CF70 fn) {
+    struct E_CF70 *e = &D_00519AD8_CF70[((unsigned char *)&h)[3]];
+    e->fn = fn;
+    if (e->f8 != 0) {
+        fn(h, e->f8, e->f14);
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCFC0);
 
