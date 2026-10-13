@@ -1033,7 +1033,22 @@ extern "C" void func_003A8CD0(sWorldCache8CD0* self, int group, int id, unsigned
 
 INCLUDE_ASM("world/worldcache", func_003A8E20);
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A8F10);
+#ifdef SKIP_ASM
+static inline char *refToPtr_8F10(unsigned i) { return (char*)(i << 2); }
+static inline char *conv_8F10(unsigned i) { if (i == 0) return 0; return refToPtr_8F10(i); }
+// Sets flag 0x40 on every object listed for cell idx.
+extern "C" void func_003A8F10(char** self, int idx)
+{
+    int n = *(short*)(*(char**)(self[0] + 0x14) + idx * 0x58 + 0x22);
+    char* list = ((char**)self[2])[idx];
+    for (unsigned i = 0; i < n; i++) {
+        char* o = conv_8F10(((unsigned*)*(char**)(list + 0xC))[i] >> 8);
+        *(unsigned short*)(o + 0xA) |= 0x40;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8F80);
