@@ -3748,7 +3748,22 @@ void func_003E5EF8(int a0, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5F48);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct P_5F48 { int a; int b; };
+extern struct P_5F48 D_00450E08_5F48[] __asm__("D_00450E08");
+extern int D_00451008_5F48[] __asm__("D_00451008");
+void func_003E5B60_5F48(void) __asm__("func_003E5B60");
+
+int func_003E5F48(int arg0) {
+    if (D_00451008_5F48[0] == 0) {
+        func_003E5B60_5F48();
+    }
+    return (D_00450E08_5F48 + arg0)->b & 1;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5F98);
