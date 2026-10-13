@@ -357,7 +357,53 @@ extern "C" void* func_002F6238(void* self, int inChrg)
 }
 #endif
 
+#ifdef SKIP_ASM
+// Classes here derive virtually from cRider. g++ 2.95 then emits, in their destructors, the vtable fix-ups
+// for the virtual base (stack copies of the cRider-in-D vtables with the dtor's this-delta adjusted when
+// not most-derived). Only the cRider layout that code depends on is modelled (see
+// ai/control/handplantcontrol.cpp).
+class cRiderVbA0_wlm {
+public:
+    virtual ~cRiderVbA0_wlm();
+    virtual void a01(); virtual void a02(); virtual void a03(); virtual void a04(); virtual void a05();
+    virtual void a06(); virtual void a07(); virtual void a08(); virtual void a09(); virtual void a10();
+    virtual void a11(); virtual void a12(); virtual void a13(); virtual void a14(); virtual void a15();
+    virtual void a16(); virtual void a17(); virtual void a18(); virtual void a19();
+};
+class cRiderVbA_wlm : public cRiderVbA0_wlm { public: char padA[0xC]; };
+class cRiderVbB0_wlm { public: virtual void b01(); };
+class cRiderVbB_wlm : public cRiderVbB0_wlm { public: char padB[0x14]; };
+class cRiderVbC0_wlm {
+public:
+    virtual ~cRiderVbC0_wlm();
+    virtual void c01(); virtual void c02(); virtual void c03(); virtual void c04(); virtual void c05();
+    virtual void c06();
+};
+class cRiderVbC_wlm : public cRiderVbC0_wlm { public: char padC[0x10]; };
+class cRiderVbBC_wlm : public cRiderVbB_wlm, public cRiderVbC_wlm { public: };
+class cRiderVbPad_wlm { public: char pad[0x6C0]; } __attribute__((aligned(16)));
+class cRiderVb_wlm : public cRiderVbPad_wlm, public cRiderVbA_wlm, public cRiderVbBC_wlm {
+public:
+    virtual ~cRiderVb_wlm();
+};
+void operator_delete(int* p);
+#endif
+
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F6388);
+#ifdef SKIP_ASM
+class cVbDtor002F6388 : virtual public cRiderVb_wlm {
+public:
+    virtual ~cVbDtor002F6388();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002F6388::~cVbDtor002F6388()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002F6388; expose it under the address-derived name.
+__asm__(".globl func_002F6388\n.type func_002F6388,@function\nfunc_002F6388 = _$_15cVbDtor002F6388\n.size func_002F6388,0x15C\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F64E8__FPv);
