@@ -2313,7 +2313,44 @@ extern "C" void func_00396A00(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_00396B40);
+#ifdef SKIP_ASM
+// PORT: PS2-only GS packet build; uncached (0x30000000) pointers held in int and 128-bit qword copies.
+typedef int cQuad128_6B40 __attribute__((mode(TI)));
+extern char D_1150[];
+
+struct sRS_6B40 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+
+// Emits the font's GS setup packet (register set + the 10 cached qwords) and a VU call for the glyph program.
+extern "C" void func_00396B40(char* self)
+{
+    sRS_6B40* rs = *(sRS_6B40**)(self + 0xE84);
+    unsigned int addrMask = 0x3FFFFFFF;
+    rs->f0 = (rs->f0 & ~0x3C0) | 0x180;
+    sRS_6B40* rs2 = *(sRS_6B40**)(self + 0xE84);
+    rs2->fC = (rs2->fC & 0xC0000000) | (*(unsigned int*)(self + 0x5A00) & addrMask);
+    unsigned long* p = (unsigned long*)(*(unsigned int*)(self + 0x5A00) | 0x30000000);
+    p[0] = 0x6000000C;
+    p[2] = (unsigned long)0x8000 << 45;
+    p[3] = 0x6C0A000701000101;
+    p[1] = 0;
+    p += 4;
+    cQuad128_6B40* src = (cQuad128_6B40*)(self + 0x6BB0);
+    for (int i = 0; i < 10; i++) {
+        ((cQuad128_6B40*)p)[i] = src[i];
+    }
+    p[20] = 0;
+    p[21] = (unsigned long)(((unsigned int)D_1150 >> 3) | 0x14000000) << 32;
+    p += 22;
+    *(unsigned int*)(self + 0x5A00) = (unsigned int)p & 0x0FFFFFFF;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/font", func_00396D30);
