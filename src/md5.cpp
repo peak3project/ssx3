@@ -131,8 +131,6 @@ extern "C" void md5_process(md5_ctx* ctx, const unsigned char* data)
     pms->abcd[3] += d;
 }
 #endif
-#ifdef SKIP_ASM
-#endif
 
 //100%
 INCLUDE_ASM("md5", md5_init__FP7md5_ctx);
