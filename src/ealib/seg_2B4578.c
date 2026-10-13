@@ -5058,7 +5058,24 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C6380);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C64A8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6500);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct S_6500 { int used; int pad[3]; };
+struct G_6500 { char pad[0x28]; unsigned short count; char pad2[0x1F4 - 0x2A]; struct S_6500 *slots; };
+extern struct G_6500 D_0050A8E8_6500[] __asm__("D_0050A8E8");
+
+int func_003C6500(void) {
+    int i;
+    for (i = 0; i < D_0050A8E8_6500[0].count; i++) {
+        if (D_0050A8E8_6500[0].slots[i].used == 0) {
+            return i;
+        }
+    }
+    return -9;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6540);
