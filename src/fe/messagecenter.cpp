@@ -2,7 +2,139 @@
 
 INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_onWidgetCreate);
 
+//100%
 INCLUDE_ASM("fe/messagecenter", func_00197500);
+#ifdef SKIP_ASM
+extern "C" void func_00197CA0(void* self);
+extern "C" void func_00198118(void* self);
+extern "C" void func_00198988_7500(void* self, int idx) __asm__("func_00198988");
+extern "C" void cFEStateRequestLine_updateHilightedSongInfo(void* self, int idx);
+extern "C" void cFEStateRequestLine_updateHelpText(void* self, int idx);
+extern "C" void cFEStateRequestLine_updateButtonsText(void* self, int idx);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_00158848(void* iface, int a, int b, unsigned long m);
+extern "C" void func_00158820(void* iface, int a, int b, unsigned long m);
+extern "C" void* func_0028B180();
+extern "C" void func_0028C2D0(void* p, unsigned long m);
+extern "C" void func_0039F190(void* list, int a);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_00195FF0(void* mem, void* engine, int a, int b);
+extern "C" void func_0039F400(void* list, void* item);
+int func_00198AE8(void* self, int idx) __asm__("func_00198AE8__FPv");
+extern char* D_004A28A8;
+extern const char D_00460650[];
+
+struct sReqLine_7500 {
+    char pad_0x0[0x10];
+    char* engine;           // 0x10
+    char pad_0x14[0x30];
+    signed char player;     // 0x44
+    char pad_0x45[3];
+    int f48;                // 0x48
+    int list[64];           // 0x4C
+    int count;              // 0x14C
+    int top;                // 0x150
+    char pad_0x154[0x4];
+    unsigned long done;     // 0x158
+    unsigned long sel;      // 0x160
+    int limit;              // 0x168
+    int f16C;               // 0x16C
+};
+
+struct sVE_7500 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+static inline int isSet_7500(unsigned long m, int i)
+{
+    return (m >> i) & 1;
+}
+
+static inline int onlyBit_7500(unsigned long m, int i)
+{
+    unsigned long rest = m & ~((unsigned long)1 << i);
+    return rest == 0;
+}
+
+static inline int countSel_7500(sReqLine_7500* self)
+{
+    int n = 0;
+    for (int i = 0; i < 64; i++) {
+        n += (self->sel >> i) & 1;
+    }
+    return n;
+}
+
+// Request-line widget events: 1 hilights a song, 5 toggles it (done/selected masks), 6 saves the masks and leaves.
+extern "C" void func_00197500(void* p, void* item, unsigned int msg)
+{
+    sReqLine_7500* self = (sReqLine_7500*)p;
+    if (item == 0) {
+        return;
+    }
+    switch (msg) {
+    case 5: {
+        int k = self->top + *(int*)((char*)item + 0x18);
+        if (k >= self->count) {
+            return;
+        }
+        int idx = self->list[k];
+        if (!isSet_7500(self->sel, idx)) {
+            if (self->f16C != 0) {
+                if (self->limit >= func_00198AE8(self, idx) || countSel_7500(self) < 6) {
+                    func_00198988_7500(self, idx);
+                }
+            }
+        } else {
+            unsigned long done = self->done;
+            int empty = done == 0;
+            if (empty || !onlyBit_7500(done, idx)) {
+                if (isSet_7500(done, idx)) {
+                    self->done = done & ~((unsigned long)1 << idx);
+                } else {
+                    self->done = done | ((unsigned long)1 << idx);
+                }
+                func_00197CA0(self);
+                func_00198118(self);
+            }
+        }
+        cFEStateRequestLine_updateButtonsText(self, idx);
+        break;
+    }
+    case 6: {
+        void* iface = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+        func_00158848(iface, self->player, self->f48, self->done);
+        func_00158820(iface, self->player, self->f48, self->sel);
+        func_0028C2D0(func_0028B180(), self->done);
+        if (self->f16C != 0) {
+            char* pl = (char*)func_0028B180();
+            sVE_7500* vt = *(sVE_7500**)(pl + 0x5558);
+            char* obj = pl + 0x118;
+            vt[3].fn(obj + vt[3].delta, 0xA);
+        }
+        if (*(int*)(D_004A28A8 + 0x84) != 0) {
+            func_0039F190(self->engine + 0x18, 1);
+        } else {
+            void* r = func_00195FF0(cMemMan_alloc(0x80, D_00460650, 0, 0), self->engine, self->player, self->f16C);
+            if (r != 0) {
+                func_0039F400(self->engine + 0x18, r);
+            }
+        }
+        break;
+    }
+    case 1: {
+        int idx = self->list[self->top + *(int*)((char*)item + 0x18)];
+        cFEStateRequestLine_updateHilightedSongInfo(self, idx);
+        cFEStateRequestLine_updateHelpText(self, idx);
+        cFEStateRequestLine_updateButtonsText(self, idx);
+        break;
+    }
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/messagecenter", func_001977D0);
 
