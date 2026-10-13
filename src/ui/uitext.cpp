@@ -186,7 +186,59 @@ extern "C" void func_003A0E90(void* self, const unsigned short* str)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uitext", cUIText_setUnicodeStringPrivate);
+#ifdef SKIP_ASM
+extern "C" int USTR_length(unsigned short* s);
+extern "C" void USTR_copy(unsigned short* dst, unsigned short* src);
+extern "C" void cUIText_deleteText(void* self);
+extern "C" int cUIText_getNumTextLines(void* self);
+void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern char D_00494088[];
+extern char D_00494098[];
+extern unsigned short D_004A47A8;
+
+// Stores a copy of the string and splits it into lines at CR and at doubled line-break markers.
+extern "C" void cUIText_setUnicodeStringPrivate(void* self_, const unsigned short* str)
+{
+    char* self = (char*)self_;
+    ((cUIText_3A0C70*)self)->v05(1);
+    ((cUIText_3A0C70*)self)->v24(1);
+    cUIText_deleteText(self);
+    int len = USTR_length((unsigned short*)str);
+    if (len < 0x321) {
+        *(short*)(self + 0xB8) = len + 1;
+        *(unsigned short**)(self + 0xB4) = (unsigned short*)operator_new_tag((len + 1) * 2, D_00494088, 0x100, 0);
+        USTR_copy(*(unsigned short**)(self + 0xB4), (unsigned short*)str);
+        int n = cUIText_getNumTextLines(self);
+        *(int*)(self + 0xA8) = n;
+        if (n >= 2) {
+            unsigned short** lines = (unsigned short**)operator_new_tag(n * 4, D_00494098, 0x100, 0);
+            unsigned short* text = *(unsigned short**)(self + 0xB4);
+            *(unsigned short***)(self + 0xAC) = lines;
+            *(short*)(self + 0xBA) = *(unsigned short*)(self + 0xA8);
+            lines[0] = text;
+            int k = 1;
+            unsigned short* p = text;
+            while (*p != 0) {
+                unsigned short c = *p;
+                unsigned short next = p[1];
+                if (c == D_004A47A8 && next == c) {
+                    *p = 0;
+                    p += 2;
+                    lines[k++] = p;
+                } else if (c == 0xD) {
+                    *p = 0;
+                    p++;
+                    lines[k++] = p;
+                } else {
+                    p++;
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uitext", cUIText_setUnicodeStringByID__FP7cUITexti);
