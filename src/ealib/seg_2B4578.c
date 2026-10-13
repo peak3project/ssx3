@@ -4992,7 +4992,17 @@ int func_003C6C98(int i) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6CC0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct Inner_6CC0 { char pad[0x48]; int a; volatile int b; };
+struct S_6CC0 { char pad[0x304]; struct Inner_6CC0 *p[1]; };
+extern struct S_6CC0 D_005157B8_6CC0 __asm__("D_005157B8");
+int func_003C6CC0(int i) {
+    return (&D_005157B8_6CC0)[0].p[i]->b;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6CE0);
