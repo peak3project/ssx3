@@ -3258,7 +3258,29 @@ extern "C" void func_0010A898(char *arg0, C_A898 *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_0010A8E8);
+#ifdef SKIP_ASM
+class cObj_A8E8;
+typedef void (cObj_A8E8::*Fn_A8E8)();
+extern "C" Fn_A8E8 D_0043CF20_A8E8[4] __asm__("D_0043CF20");
+extern "C" void func_00111D98(void* self, void* src);
+
+class cStream_A8E8 {
+public:
+    virtual void v1();
+    virtual void read(void* dst, int size);
+};
+
+extern "C" void func_0010A8E8(char* self, cStream_A8E8* in)
+{
+    func_00111D98(self, in);
+    in->read(self + 0xDF0, 0x150);
+    short state = *(short*)(self + 0xF38);
+    *(Fn_A8E8*)(self + 0xF44) = D_0043CF20_A8E8[state];
+    *(short*)(self + 0xF38) = state;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010A960);
