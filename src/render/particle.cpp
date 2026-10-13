@@ -2878,7 +2878,70 @@ extern "C" void func_0037D318(char* self, int a1, int a2, int a3, int a4, int a5
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037D348);
+#ifdef SKIP_ASM
+struct sPtRS_D348 {
+    int f0;
+    int f4;
+    int f8;                         // bits 0..4 = key
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sPtEnt_D348 {
+    sPtRS_D348 rs;                  // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+
+struct sPtRing_D348 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sPtEnt_D348 ents[1];            // 0x80
+};
+
+struct sPtGfx_D348 {
+    char pad_0x0[0xE84];
+    sPtRS_D348* top;                // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sPtRing_D348* ring;             // 0x18F0
+    void* texset;                   // 0x18F4
+    char pad_0x18F8[0x5A00 - 0x18F8];
+    unsigned int bufAddr;           // 0x5A00
+};
+
+extern "C" void func_00367DB8_D348(void* texset, int idx, unsigned int* buf) __asm__("func_00367DB8");
+
+// PORT: uncached (0x30000000) pointers held in int.
+// Uploads texture idx into the uncached buffer and queues a ring entry for it.
+extern "C" int func_0037D348(sPtGfx_D348* self, int idx)
+{
+    unsigned int buf = self->bufAddr;
+    unsigned int p = buf | 0x30000000;
+    func_00367DB8_D348(self->texset, idx, &p);
+    unsigned int next = p & 0x0FFFFFFF;
+    self->bufAddr = next;
+    sPtRing_D348* ring = self->ring;
+    sPtRS_D348* rs = self->top;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sPtEnt_D348* e = (sPtEnt_D348*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 0;
+    }
+    self->bufAddr += 0x10;
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_0037D450);
 
