@@ -1669,7 +1669,21 @@ extern "C" void func_0013F8F8(sSortObj_F8F8** first, sSortObj_F8F8** last, sSort
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013FAD8);
+#ifdef SKIP_ASM
+// Sort entry point: small ranges are handled inline, larger ones go to the merge sort.
+struct sSortObj_FAD8;
+extern "C" void func_0013F8F8_FAD8(sSortObj_FAD8**, sSortObj_FAD8**, sSortObj_FAD8**, void*) __asm__("func_0013F8F8");
+extern "C" void func_0013FAD8(sSortObj_FAD8** first, sSortObj_FAD8** last, sSortObj_FAD8** buf, void* cmp)
+{
+    int n = last - first;
+    if (n >= 2)
+        func_0013F8F8_FAD8(first, last, buf, cmp);
+    else if (n == 1)
+        *buf = *first;
+}
+#endif
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013FB20);
 
