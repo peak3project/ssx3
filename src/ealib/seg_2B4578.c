@@ -7744,7 +7744,28 @@ int func_003CEE88(S_EE88 *self) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CEED0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CEF20);
+#ifdef SKIP_ASM
+// Identical copy of func_003CA900.
+extern void func_003CEBE8_EF20(void *, int, int, int) __asm__("func_003CEBE8");
+
+int func_003CEF20(char *p, int arg1, int arg2, int arg3) {
+    int (**obj)(void *, int, int, int, int);
+    int n;
+    obj = *(int (***)(void *, int, int, int, int))(p + 8);
+    if (obj != 0) {
+        n = (*obj)(obj, arg1, arg3, arg2, *(unsigned char *)(p + 0x1A));
+        if (n <= 0) {
+            return n;
+        }
+    } else {
+        n = arg1;
+    }
+    func_003CEBE8_EF20(p + 0x20, n, arg2, arg3);
+    return n;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003CEFB0);
