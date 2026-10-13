@@ -3544,7 +3544,29 @@ extern "C" void* func_002E6320(void* self, int inChrg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E64C0);
+#ifdef SKIP_ASM
+void cMemMan_free(void* p);
+extern "C" void func_0037C720(void* mgr, float f);
+extern char* D_004A289C;
+
+class cVbDtor002E64C0 : virtual public cRiderVb_bwf {
+public:
+    char pad04[0x3A8];
+    void* m3AC;
+    virtual ~cVbDtor002E64C0();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002E64C0::~cVbDtor002E64C0()
+{
+    if (m3AC != 0) cMemMan_free(m3AC);
+    func_0037C720(D_004A289C, 0.0f);
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002E64C0; expose it under the address-derived name.
+__asm__(".globl func_002E64C0\n.type func_002E64C0,@function\nfunc_002E64C0 = _$_15cVbDtor002E64C0\n.size func_002E64C0,0x17C\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E6640);
