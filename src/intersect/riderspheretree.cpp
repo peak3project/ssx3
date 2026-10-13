@@ -1102,7 +1102,74 @@ extern "C" void func_0032DA40(int n, int* keys, int* vals)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032DB40);
+#ifdef SKIP_ASM
+struct sV4_DB40 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_DB40(const sV4_DB40& a, const sV4_DB40& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV4_DB40 vu0Scale_DB40(const sV4_DB40& v, float s)
+{
+    sV4_DB40 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+extern "C" void func_0032DA40(int n, int* keys, int* idx);
+
+struct sBox_DB40 {
+    sV4_DB40 axes[4];   // 0x00
+    char pad40[0x5C];
+    int order[8];       // 0x9C
+};
+
+extern "C" void func_0032DB40(void* vself, void* vdir)
+{
+    sBox_DB40* self = (sBox_DB40*)vself;
+    sV4_DB40* dir = (sV4_DB40*)vdir;
+    int keys[8];
+    sV4_DB40 v = vu0Scale_DB40(*dir, -1000.0f);
+    int i;
+    for (i = 0; i < 4; i++) {
+        int n = (int)vu0Dot_DB40(self->axes[i], v);
+        keys[i] = n;
+        keys[7 - i] = -n;
+        self->order[i] = i;
+        self->order[7 - i] = 7 - i;
+    }
+    func_0032DA40(8, keys, self->order);
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032DC10);
