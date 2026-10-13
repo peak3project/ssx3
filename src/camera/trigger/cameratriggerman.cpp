@@ -32,7 +32,109 @@ void func_0016CA10(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", cCameraTriggerMan_purge);
+#ifdef SKIP_ASM
+void operator_delete(int*);
+extern void* D_004A28A8;
+extern "C" void func_0016C098(void** self);
+
+struct sCtVec4_P {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sCtBox_P {
+    sCtVec4_P min;
+    sCtVec4_P max;
+};
+struct sCtCell_P {
+    int level;
+    int x, y, z;
+};
+struct sCtNode_P {
+    sCtNode_P* child[2][2][2];      // 0x00
+    void* lists[3];                 // 0x20
+    int empty()
+    {
+        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
+            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
+            return 0;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (lists[i]) return 0;
+        }
+        return 1;
+    }
+};
+struct sCtRoot_P {
+    sCtCell_P cell;                 // 0x00
+    sCtNode_P* node;                // 0x10
+};
+
+extern "C" void func_00328F28_P(void* out, const void* box) __asm__("func_00328F28");
+extern "C" void func_003284B8_P(void* node, int idx, void* item, const void* target, const void* cur) __asm__("func_003284B8");
+
+class cCtShape_P {
+public:
+    char pad[0x24];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual sCtBox_P bounds();
+};
+
+struct sCtTrig_P {
+    int f0;
+    unsigned int mask;              // 0x4
+    cCtShape_P* shape;              // 0x8
+    char padC[0x8];
+    char item[0xC];                 // 0x14
+    sCtTrig_P* reg;                 // 0x20
+};
+
+struct sCtMan_P {
+    sCtTrig_P** trigs;              // 0x0
+    int count;                      // 0x4
+};
+
+static inline void remove_P(char* w, void* item, const sCtBox_P* box)
+{
+    (*(int*)(w + 0xA0))++;
+    sCtCell_P c;
+    func_00328F28_P(&c, box);
+    sCtRoot_P* r = (sCtRoot_P*)w;
+    sCtRoot_P* rx = c.x < 0 ? r + 4 : r;
+    sCtRoot_P* ry = c.y < 0 ? rx + 2 : rx;
+    sCtRoot_P* rz = c.z < 0 ? ry + 1 : ry;
+    sCtRoot_P* q = rz;
+    func_003284B8_P(q->node, 2, item, &c, q);
+    if (q->node->empty()) {
+        operator_delete((int*)q->node);
+        q->node = 0;
+    }
+}
+
+// Takes every registered trigger out of the world's space hash and clears the trigger stacks and active lists.
+extern "C" void cCameraTriggerMan_purge(void* vself)
+{
+    sCtMan_P* self = (sCtMan_P*)vself;
+    for (int i = 0; i < self->count; i++) {
+        sCtTrig_P* t = self->trigs[i];
+        if (t->reg != 0) {
+            char* w = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x20);
+            sCtBox_P box = t->shape->bounds();
+            remove_P(w, t->item, &box);
+        }
+    }
+    cCameraTriggerStack_init((cCameraTriggerStack*)((char*)vself + 0x1C));
+    cCameraTriggerStack_init((cCameraTriggerStack*)((char*)vself + 0x3C));
+    func_0016C098((void**)vself);
+    cActiveTriggerList_purge((cActiveTriggerList*)((char*)vself + 0x14));
+    cActiveTriggerList_purge((cActiveTriggerList*)((char*)vself + 0x18));
+    cCamera_resetChaseControllerSwitches();
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", cCameraTriggerMan_loadTriggers);
