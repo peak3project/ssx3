@@ -1240,7 +1240,54 @@ void* func_002722E0(void* self, void* a1, void* a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272308);
+#ifdef SKIP_ASM
+struct sBlk_2308 {
+    unsigned int size;
+    sBlk_2308* next;
+};
+struct sHeap_2308 {
+    int f0;
+    int f4;
+    sBlk_2308* free;
+};
+
+// First-fit allocation from the heap's free list (8-byte block headers); splits a block that has room to spare.
+// PORT: the unit declares it as void*(void*, int); defined under its own name bound to the symbol.
+extern "C" void* func_00272308_impl(sHeap_2308* h, unsigned int size) __asm__("func_00272308");
+extern "C" void* func_00272308_impl(sHeap_2308* h, unsigned int size)
+{
+    size = (size + 3) & ~3;
+    sBlk_2308* prev = 0;
+    sBlk_2308* b = h->free;
+    sBlk_2308* r = 0;
+    unsigned int split = size + 16;
+    if (b != 0) {
+        do {
+            if (b->size >= size) {
+                if (split < b->size) {
+                    sBlk_2308* nb = (sBlk_2308*)((char*)b + (size + 8));
+                    nb->size = (b->size - size) - 8;
+                    nb->next = b->next;
+                    b->next = nb;
+                    b->size = size;
+                }
+                r = b;
+                if (prev == 0)
+                    h->free = r->next;
+                else
+                    prev->next = r->next;
+                b->next = 0;
+                break;
+            }
+            prev = b;
+            b = b->next;
+        } while (b != 0);
+    }
+    return (char*)r + 8;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_002723A8);
