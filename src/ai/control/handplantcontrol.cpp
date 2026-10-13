@@ -2610,7 +2610,34 @@ float func_001446E8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001446F8);
+#ifdef SKIP_ASM
+struct cHpHead_1446F8 { char pad[0x18]; };
+class cHpB_1446F8 : public cHpHead_1446F8, virtual public cRiderVb_hpc {
+public:
+    char body[0xDCC];
+    // PORT: overrides of the last five cRider virtuals (their vtable entries get this-adjusted copies)
+    virtual void a15(); virtual void a16(); virtual void a17(); virtual void a18(); virtual void a19();
+    ~cHpB_1446F8();
+};
+class cHpD1_1446F8 : public cHpB_1446F8 {
+public:
+    virtual void d01();
+};
+class cHpD_1446F8 : public cHpD1_1446F8 {
+public:
+    char tail[0x20];
+    virtual ~cHpD_1446F8();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cHpD_1446F8::~cHpD_1446F8()
+{
+}
+// PORT: the compiler names this dtor _$_11cHpD_1446F8; expose it under the address-derived name.
+__asm__(".globl func_001446F8\n.type func_001446F8,@function\nfunc_001446F8 = _$_11cHpD_1446F8\n.size func_001446F8,0x1B0\n");
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001448A8);
