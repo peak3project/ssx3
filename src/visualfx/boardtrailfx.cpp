@@ -586,7 +586,22 @@ extern "C" void func_002EAA28(void* self)
 
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EAAE0);
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EAC60);
+#ifdef SKIP_ASM
+class cVbDtor002EAC60 : virtual public cRiderVb_btf {
+public:
+    char body[0x10C];
+    virtual ~cVbDtor002EAC60();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002EAC60::~cVbDtor002EAC60()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002EAC60; expose it under the address-derived name.
+__asm__(".globl func_002EAC60\n.type func_002EAC60,@function\nfunc_002EAC60 = _$_15cVbDtor002EAC60\n.size func_002EAC60,0x15C\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EADC0__FPv);
