@@ -698,7 +698,56 @@ extern "C" void func_003A82C8(func_003A82C8_sCache* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A8330);
+#ifdef SKIP_ASM
+extern "C" void func_003A7010(void* p, int i);
+extern "C" void func_003A8528(void* self, int i);
+
+struct sWcEnt_8330 {
+    int state;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+};
+
+struct sWc_8330 {
+    char pad[0x3EC];
+    unsigned int count;         // 0x3EC
+    sWcEnt_8330 ents[1];        // 0x3F0
+};
+
+extern "C" void func_003A8330(void* vself)
+{
+    sWc_8330* self = (sWc_8330*)vself;
+    unsigned int i;
+    for (i = 0; i < self->count; i++) {
+        switch (self->ents[i].state) {
+        case 0:
+        case 1:
+            break;
+        case 2:
+            func_003A7010((char*)self + 0x300, i);
+            self->ents[i].state = 4;
+            func_003A8528(self, i);
+            break;
+        case 3:
+        case 4:
+            self->ents[i].state = 4;
+            func_003A8528(self, i);
+            break;
+        }
+        self->ents[i].state = 0;
+        self->ents[i].f8 = 0;
+        self->ents[i].f4 = 0;
+        self->ents[i].f10 = 0;
+        self->ents[i].f14 = 0;
+        self->ents[i].fC = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8448);
