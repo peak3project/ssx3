@@ -817,3 +817,5 @@ SYNCTASK_init = 0x003E57D0; //type:func
 SYNCTASK_del = 0x003E58C8; //type:func
 SHAPE_cloneat = 0x003B4540; //type:func
 ungetc = 0x00420378; //type:func
+// input/inputmap func_00321428: self + 0x108EC offset, not an address (splat paired lui 0x1 with addiu 0x8EC).
+D_108EC = 0x000108EC; // ignore:true

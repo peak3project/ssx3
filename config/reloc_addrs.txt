@@ -1,0 +1,9 @@
+// Per-instruction relocation overrides for splat (see splat's reloc_addrs docs).
+
+// render/particle: MSCAL of a VU1 microprogram entry linked at VU address 0. The binary has
+// lui/addiu 0, which splat leaves as plain immediates; give them a symbol like the
+// nonzero entries (D_510, D_408) get, so the C side's reference to it can match.
+rom:0x28166C reloc:MIPS_HI16 symbol:D_0 // func_00380518
+rom:0x281674 reloc:MIPS_LO16 symbol:D_0 // func_00380518
+rom:0x282584 reloc:MIPS_HI16 symbol:D_0 // func_00381310
+rom:0x28258C reloc:MIPS_LO16 symbol:D_0 // func_00381310
