@@ -200,7 +200,63 @@ extern "C" void func_0031B6C8(void* m)
 
 INCLUDE_ASM("bx/ps2main", func_0031B748);
 
+//100%
 INCLUDE_ASM("bx/ps2main", func_0031B7A8);
+#ifdef SKIP_ASM
+struct sMtx_B7A8 {
+    float m[4][4];
+};
+
+struct sQuat_B7A8 {
+    float x, y, z, w;
+};
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float sqrtB7A8(float v)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(v));
+    return r;
+}
+
+// Rotation matrix to quaternion (Shoemake): from the trace when positive, else from the largest diagonal term.
+extern "C" sQuat_B7A8* func_0031B7A8(sQuat_B7A8* qu, sMtx_B7A8* mat)
+{
+    float tr = mat->m[0][0] + mat->m[1][1] + mat->m[2][2];
+    if (0.0f < tr) {
+        float s = sqrtB7A8(tr + 1.0f);
+        qu->w = s * 0.5f;
+        s = 0.5f / s;
+        qu->x = (mat->m[1][2] - mat->m[2][1]) * s;
+        qu->y = (mat->m[2][0] - mat->m[0][2]) * s;
+        qu->z = (mat->m[0][1] - mat->m[1][0]) * s;
+    } else {
+        float q[4];
+        int i = 0;
+        if (mat->m[0][0] < mat->m[1][1]) {
+            i = 1;
+        }
+        if (mat->m[i][i] < mat->m[2][2]) {
+            i = 2;
+        }
+        int j = (i + 1) % 3;
+        int k = (j + 1) % 3;
+        float s = sqrtB7A8(mat->m[i][i] - mat->m[j][j] - mat->m[k][k] + 1.0f);
+        q[i] = s * 0.5f;
+        if (s != 0.0f) {
+            s = 0.5f / s;
+        }
+        q[3] = (mat->m[j][k] - mat->m[k][j]) * s;
+        q[j] = (mat->m[i][j] + mat->m[j][i]) * s;
+        q[k] = (mat->m[i][k] + mat->m[k][i]) * s;
+        qu->x = q[0];
+        qu->y = q[1];
+        qu->z = q[2];
+        qu->w = q[3];
+    }
+    return qu;
+}
+#endif
 
 INCLUDE_ASM("bx/ps2main", func_0031BB30);
 
