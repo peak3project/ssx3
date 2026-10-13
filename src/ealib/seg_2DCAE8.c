@@ -4407,7 +4407,23 @@ void func_003E73E0(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E7450);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int func_003F4C68_7450(int *, int, int, int, int, int, int, int, int, int *) __asm__("func_003F4C68");
+extern void func_003F4C98_7450(int *, int, int) __asm__("func_003F4C98");
+
+int func_003E7450_impl(char *o, int a, int b, int c) __asm__("func_003E7450");
+int func_003E7450_impl(char *o, int a, int b, int c) {
+    int sp10[4];
+    int sp20;
+
+    func_003F4C98_7450(sp10, 0x70696E67, 0x72657175);
+    func_003F4C68_7450(sp10, 1, *(int *)(o + 0xC), a, b, c, 0, 0, 1, &sp20);
+    return sp20;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E74E8);
 
