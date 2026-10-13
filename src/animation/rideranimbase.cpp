@@ -372,7 +372,63 @@ extern "C" void func_00312598(void* p, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_00312660);
+#ifdef SKIP_ASM
+extern "C" int func_00311F00(void* self, void* seq, int anim, int a3, int a4, int a5, float blend);
+extern "C" void* cAnimSequencer_getSequence(void* self, int index) __asm__("cAnimSequencer_getSequence__FP14cAnimSequenceri");
+extern "C" void func_00313CF0(void* self, int idx, float v);
+extern "C" int func_00314418_2660(void* self, void* out, int max) __asm__("func_00314418");
+extern "C" void func_00314668(void* self);
+extern char* D_004A3E7C;
+extern int D_004A5950;
+
+struct sVEntry00312660 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+struct sSeqVec_312660 {
+    float x, y, z, w;
+    sSeqVec_312660() {}
+} __attribute__((aligned(16)));
+
+struct sSeqState_312660 {
+    int id;
+    float time;
+    int pad08[2];
+    long e;
+    char pad18[0x8];
+    sSeqVec_312660 a;
+    sSeqVec_312660 b;
+    int c;
+    char pad44[0xC];
+};
+
+struct sSequencer_312660 {
+    int mCount;
+    void* mFirstSequence;
+};
+
+// Samples the first animation state of 'anim' at time 't' using a temporary sequencer.
+extern "C" sSeqState_312660 func_00312660(char* self, int anim, int h, float t)
+{
+    sSeqState_312660 states[0x40];
+    sSequencer_312660 seq;
+    func_003142E8(&seq);
+    if (h == D_004A5950) {
+        sVEntry00312660* vt = *(sVEntry00312660**)(self + 0x58);
+        int id = vt[4].fn(self + vt[4].delta, anim);
+        h = *(int*)(id * 4 + D_004A3E7C + 0x1030);
+    }
+    func_00311F00(self, &seq, anim, h, 1, 0, 0.0f);
+    func_00313CF0(cAnimSequencer_getSequence(&seq, 0), 0, t);
+    func_00314418_2660(&seq, states, 0x40);
+    func_00314668(&seq);
+    return states[0];
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00312790);
