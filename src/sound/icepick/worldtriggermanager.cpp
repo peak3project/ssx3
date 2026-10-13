@@ -1108,7 +1108,65 @@ extern "C" void func_002B6F40(void* self, int* shape, sVec3_2B6CF8* lo, sVec3_2B
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B7318);
+#ifdef SKIP_ASM
+struct sWtVec4_7318 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sWtBox_7318 {
+    sWtVec4_7318 min;
+    sWtVec4_7318 max;
+};
+struct sWtCell_7318 {
+    int level;
+    int x, y, z;
+};
+struct sWtRoot_7318 {
+    sWtCell_7318 cell;
+    void* node;
+};
+
+extern "C" void func_002B6CF8_7318(void* self, void* trig, sVec3_2B6CF8* min, sVec3_2B6CF8* max) __asm__("func_002B6CF8");
+extern "C" void func_00328F28(void* out, const void* box);
+extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
+
+static inline void insert_7318(char* w, void* item, const sWtBox_7318* box)
+{
+    sWtCell_7318 c;
+    func_00328F28(&c, box);
+    sWtRoot_7318* r = (sWtRoot_7318*)w;
+    sWtRoot_7318* rx = c.x < 0 ? r + 4 : r;
+    sWtRoot_7318* ry = c.y < 0 ? rx + 2 : rx;
+    sWtRoot_7318* rz = c.z < 0 ? ry + 1 : ry;
+    func_00328C20(rz, 2, item, &c);
+}
+
+// Registers an active sound trigger in the world's spatial tree using its bounds.
+extern "C" void func_002B7318(void* self, sTriggerEntry18* e)
+{
+    char* trig = (char*)e;
+    if (trig == 0 || *(int*)(trig + 0xC) == 0 || *(int*)(*(char**)(trig + 0x10) + 4) == 0) {
+        return;
+    }
+    sVec3_2B6CF8 min;
+    sVec3_2B6CF8 max;
+    func_002B6CF8_7318(self, trig, &min, &max);
+    char* w = *(char**)((char*)func_0028B1C8() + 0x20);
+    *(int*)(trig + 8) = 5;
+    float one = 1.0f;
+    sWtBox_7318 box;
+    box.min.x = min.x;
+    box.min.y = min.y;
+    box.min.z = min.z;
+    box.min.w = one;
+    box.max.x = max.x;
+    box.max.y = max.y;
+    box.max.z = max.z;
+    box.max.w = one;
+    insert_7318(w, trig, &box);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B7410);
