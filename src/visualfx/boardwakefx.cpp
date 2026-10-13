@@ -2040,7 +2040,22 @@ extern "C" void* func_002E3680(void* self, int inChrg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E37D0);
+#ifdef SKIP_ASM
+class cVbDtor002E37D0 : virtual public cRiderVb_bwf {
+public:
+    char body[0x3C];
+    virtual ~cVbDtor002E37D0();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002E37D0::~cVbDtor002E37D0()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002E37D0; expose it under the address-derived name.
+__asm__(".globl func_002E37D0\n.type func_002E37D0,@function\nfunc_002E37D0 = _$_15cVbDtor002E37D0\n.size func_002E37D0,0x15C\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3930);
