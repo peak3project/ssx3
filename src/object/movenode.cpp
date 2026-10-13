@@ -635,7 +635,29 @@ extern "C" void func_00356020(cMoveNode* self, cMoveNode* other)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/movenode", func_00356078);
+#ifdef SKIP_ASM
+struct sMnVEntryP_6078 {
+    short delta;
+    short index;
+    void* (*fn)(void*);
+};
+// Virtual call through the modifier object's vtable (slot 18); taking the object by reference matches the register allocation.
+static inline void* VCall18_6078(char*& o)
+{
+    sMnVEntryP_6078* vt = *(sMnVEntryP_6078**)o;
+    return vt[18].fn(o + vt[18].delta);
+}
+extern "C" void* func_00356078(char* self)
+{
+    char** h = *(char***)(self + 0x1C);
+    char* o = h ? *h : 0;
+    if (o != 0)
+        return VCall18_6078(o);
+    return *(char**)(self + 0x18) + 0x10;
+}
+#endif
 
 INCLUDE_ASM("object/movenode", func_003560C0);
 
