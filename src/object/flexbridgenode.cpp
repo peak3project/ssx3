@@ -303,7 +303,90 @@ extern "C" void func_003475A8(void* self)
 
 INCLUDE_ASM("object/flexbridgenode", func_003475D8);
 
+//100%
 INCLUDE_ASM("object/flexbridgenode", func_00347B80);
+#ifdef SKIP_ASM
+extern void* D_004A47B8;
+extern char* D_004A5B80;
+
+struct sRS_7B80 {
+    unsigned int f0_0 : 12;
+    unsigned int f0_12 : 8;
+    unsigned int f0_20 : 12;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 25;
+    int f8;
+    int fC;
+    int f10;
+};
+
+struct sRow_7B80 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sModel_7B80 {
+    char pad_0x0[0x7D];
+    unsigned char page;     // 0x7D
+    short slot;             // 0x7E
+    char pad_0x80[0x14];
+    void* mesh;             // 0x94
+};
+
+static inline int IsLoaded_7B80(sModel_7B80* m)
+{
+    char* wc = *(char**)D_004A47B8;
+    if (m->page == 0xFF)
+        return 1;
+    int ok = *(int*)(wc + (m->page << 3) + 0x24) == 6;
+    return ok ? *(int*)(wc + m->slot * 0x18 + 0x3F0) == 3 : 0;
+}
+
+struct sPair_7B80 { sRow_7B80 r[4]; };
+struct sVE43_7B80 { short delta; short index; sPair_7B80 (*fn)(void*); };
+struct sVE93_7B80 { short delta; short index; int (*fn)(void*, void*, void*, sPair_7B80*); };
+struct sVE96_7B80 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
+struct sVE7_7B80 { short delta; short index; void (*fn)(void*, void*, void*, void*); };
+struct sVE24_7B80 { short delta; short index; void* (*fn)(void*); };
+
+#define TOP_7B80(c) (*(sRS_7B80**)((c) + 0xE84))
+
+// Draws the bridge piece's model (through its handler if it has one) unless it is culled or not streamed in.
+extern "C" void func_00347B80(char* self)
+{
+    sModel_7B80* m = *(sModel_7B80**)(self + 0x18);
+    if (!IsLoaded_7B80(m)) {
+        return;
+    }
+    char* ctx = D_004A5B80;
+    {
+        sVE93_7B80* vt = *(sVE93_7B80**)(ctx + 0x10D8);
+        char* thisp = ctx + vt[93].delta;
+        char* lo = self + 0x90;
+        char* hi = self + 0xA0;
+        sVE43_7B80* vt43 = *(sVE43_7B80**)(ctx + 0x10D8);
+        sPair_7B80 c = vt43[43].fn(ctx + vt43[43].delta);
+        if (vt[93].fn(thisp, lo, hi, &c) == 1) {
+            return;
+        }
+    }
+    sVE24_7B80* sv = *(sVE24_7B80**)(self + 0xC);
+    void* mtx = sv[24].fn(self + sv[24].delta);
+    TOP_7B80(ctx)[1] = TOP_7B80(ctx)[0];
+    sRS_7B80* t = TOP_7B80(ctx);
+    TOP_7B80(ctx) = t + 1;
+    t[1].f4_2 = 5;
+    char* h = *(char**)(self + 0x78);
+    if (h != 0) {
+        sVE7_7B80* hv = *(sVE7_7B80**)(h + 4);
+        hv[7].fn(h + hv[7].delta, mtx, (*(sModel_7B80**)(self + 0x18))->mesh, 0);
+    } else {
+        sVE96_7B80* v96 = *(sVE96_7B80**)(ctx + 0x10D8);
+        v96[96].fn(ctx + v96[96].delta, *(void**)(self + 0x18), 0, 0, 0);
+    }
+    TOP_7B80(ctx)--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flexbridgenode", func_00347D38);
