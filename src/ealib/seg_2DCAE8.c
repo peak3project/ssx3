@@ -854,7 +854,34 @@ void func_003DE7B0(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DE800);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern void MUTEX_unlock_E800(void *) __asm__("MUTEX_unlock");
+extern char D_00519AC4_E800[] __asm__("D_00519AC4");
+struct Slot_E800 { int used; char pad[0x10C]; };
+struct G_E800 { int f0; int count; char pad[0xC]; char mutex[0x18]; struct Slot_E800 *slots; };
+extern struct G_E800 D_00519AB0_E800 __asm__("D_00519AB0");
+
+struct Slot_E800 *func_003DE800_impl(void) __asm__("func_003DE800");
+struct Slot_E800 *func_003DE800_impl(void) {
+    int i;
+    MUTEX_lock(D_00519AC4_E800);
+    for (i = 0; i < D_00519AB0_E800.count; i++) {
+        if (D_00519AB0_E800.slots[i].used == 0) {
+            D_00519AB0_E800.slots[i].used = 1;
+            break;
+        }
+    }
+    MUTEX_unlock_E800(D_00519AB0_E800.mutex);
+    if (i == D_00519AB0_E800.count) {
+        for (;;) {
+        }
+    }
+    return &D_00519AB0_E800.slots[i];
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DE8C0);
