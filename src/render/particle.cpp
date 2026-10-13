@@ -2654,7 +2654,21 @@ extern "C" void func_0037C570(void* self, sPartColour_C570* c)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037C720);
+#ifdef SKIP_ASM
+// PORT: g++ `<?` (min) operator; needs a macro / std::min on a modern compiler.
+static inline float clamp_C720(float x, float hi)
+{
+    return x >= 0.0f ? (x <? hi) : 0.0f;
+}
+
+// Stores the inverted alpha (1 - clamped a) as a 0..128 value.
+extern "C" void func_0037C720(void* self, float a)
+{
+    *(int*)((char*)self + 0x59F8) = func_004139F8((1.0f - clamp_C720(a, 1.0f)) * 128.0f);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0037C7C0);
