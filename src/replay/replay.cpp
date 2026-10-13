@@ -111,7 +111,30 @@ extern "C" void cReplay_restoreBucket(void* self, void* bucket, cStreamRB* strea
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replay", func_0026DE58);
+#ifdef SKIP_ASM
+struct cBucketMan;
+void* cBucketMan_first(cBucketMan* self, int index);
+void* cBucketMan_next(cBucketMan* self, void* node, int index);
+struct sBucketVEntryDE58 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+// Calls virtual slot 3 on every object in the given bucket of the global bucket manager.
+extern "C" void func_0026DE58(void* self, int a)
+{
+    void* node = cBucketMan_first((cBucketMan*)&D_004A5988, a);
+    cBucketMan* bm = (cBucketMan*)&D_004A5988;
+    while (node != 0) {
+        sBucketVEntryDE58* vt = *(sBucketVEntryDE58**)((char*)node + 0xC);
+        vt[3].fn((char*)node + vt[3].delta);
+        node = cBucketMan_next(bm, node, a);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replay", cReplay_restoreObject);
