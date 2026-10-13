@@ -533,7 +533,55 @@ extern "C" void func_0011DF18(void* self, int notify)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011DFE0);
+#ifdef SKIP_ASM
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" void cRider_updateOrientationImplicit(char* self);
+
+struct sQuat_DFE0 {
+    float x, y, z, w;
+    sQuat_DFE0() {}
+    // PORT: this store order (x, w, y, z) reproduces the target float-register allocation
+    sQuat_DFE0(float a, float b, float c, float d) { x = a; w = d; y = b; z = c; }
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQuat_DFE0 QuatMul_DFE0(const sQuat_DFE0& a, const sQuat_DFE0& b)
+{
+    sQuat_DFE0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline sQuat_DFE0 AxisAngle_DFE0(const sQuat_DFE0& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQuat_DFE0(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+extern "C" void func_0011DFE0(char* self, sQuat_DFE0* axis, float angle)
+{
+    *(sQuat_DFE0*)(self + 0x120) = QuatMul_DFE0(AxisAngle_DFE0(*axis, angle), *(sQuat_DFE0*)(self + 0x120));
+    cRider_updateOrientationImplicit(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", cRider_updateOrientationImplicit);
