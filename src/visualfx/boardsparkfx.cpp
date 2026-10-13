@@ -239,7 +239,70 @@ extern "C" void* cBoardSparkFX_cBoardSparkFX(cBoardSparkFX* self, int inChrg)
 }
 #endif
 
+#ifdef SKIP_ASM
+// Classes here derive virtually from cRider. g++ 2.95 then emits, in their destructors, the vtable fix-ups
+// for the virtual base (stack copies of the cRider-in-D vtables with the dtor's this-delta adjusted when
+// not most-derived). Only the cRider layout that code depends on is modelled (see
+// ai/control/handplantcontrol.cpp).
+class cRiderVbA0_bsf {
+public:
+    virtual ~cRiderVbA0_bsf();
+    virtual void a01(); virtual void a02(); virtual void a03(); virtual void a04(); virtual void a05();
+    virtual void a06(); virtual void a07(); virtual void a08(); virtual void a09(); virtual void a10();
+    virtual void a11(); virtual void a12(); virtual void a13(); virtual void a14(); virtual void a15();
+    virtual void a16(); virtual void a17(); virtual void a18(); virtual void a19();
+};
+class cRiderVbA_bsf : public cRiderVbA0_bsf { public: char padA[0xC]; };
+class cRiderVbB0_bsf { public: virtual void b01(); };
+class cRiderVbB_bsf : public cRiderVbB0_bsf { public: char padB[0x14]; };
+class cRiderVbC0_bsf {
+public:
+    virtual ~cRiderVbC0_bsf();
+    virtual void c01(); virtual void c02(); virtual void c03(); virtual void c04(); virtual void c05();
+    virtual void c06();
+};
+class cRiderVbC_bsf : public cRiderVbC0_bsf { public: char padC[0x10]; };
+class cRiderVbBC_bsf : public cRiderVbB_bsf, public cRiderVbC_bsf { public: };
+class cRiderVbPad_bsf { public: char pad[0x6C0]; } __attribute__((aligned(16)));
+class cRiderVb_bsf : public cRiderVbPad_bsf, public cRiderVbA_bsf, public cRiderVbBC_bsf {
+public:
+    virtual ~cRiderVb_bsf();
+};
+void operator_delete(int* p);
+#endif
+
+//100%
 INCLUDE_ASM("visualfx/boardsparkfx", func_002DA8E8);
+#ifdef SKIP_ASM
+class cVbMember002DA8E8 {
+public:
+    char pad[0x1F8];
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual ~cVbMember002DA8E8();
+};
+
+class cVbDtor002DA8E8 : virtual public cRiderVb_bsf {
+public:
+    char pad04[0x1C];
+    cVbMember002DA8E8* m20;
+    void* m24;
+    void* m28;
+    char pad2C[0x80];
+    virtual ~cVbDtor002DA8E8();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002DA8E8::~cVbDtor002DA8E8()
+{
+    delete m20;
+    operator_delete((int*)m24);
+    operator_delete((int*)m28);
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002DA8E8; expose it under the address-derived name.
+__asm__(".globl func_002DA8E8\n.type func_002DA8E8,@function\nfunc_002DA8E8 = _$_15cVbDtor002DA8E8\n.size func_002DA8E8,0x18C\n");
+#endif
 
 INCLUDE_ASM("visualfx/boardsparkfx", func_002DAA78);
 
