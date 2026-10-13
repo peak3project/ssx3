@@ -1369,7 +1369,65 @@ extern "C" void func_002F41A8(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F4260);
+#ifdef SKIP_ASM
+struct sV4_4260 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_4260 Sub_4260(const sV4_4260& a, const sV4_4260& b)
+{
+    sV4_4260 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector length via vsqrt).
+static inline float Length_4260(const sV4_4260& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+extern float D_004A4270;
+extern float D_004A4274;
+extern float D_004A4278;
+extern float D_004A427C;
+
+extern "C" void func_002F4260(char* self, sV4_4260* p, float speed)
+{
+    float k = 1.0f - Length_4260(Sub_4260(*(sV4_4260*)(self + 0x1010), *p)) / D_004A4270;
+    if (k > 0.0f && *(float*)(self + 0x1028) > D_004A4278) {
+        float lo = D_004A4274;
+        float t = (speed * 0.036f - lo) / (120.0f - lo);
+        float c = (t >= 0.0f) ? (t <? 1.0f) : 0.0f;
+        *(float*)(self + 0x1024) += k * c * D_004A427C;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F4330);
