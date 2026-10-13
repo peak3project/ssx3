@@ -80,12 +80,14 @@ extern "C" void cCameraTriggerMan_streamIn(void* self, void* stream)
 extern void* D_004C5830[];
 extern "C" void* func_0016CEF0(void*, void*, int);
 
-//80.0%
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CEC8__FPvi);
 #ifdef SKIP_ASM
-void* func_0016CEC8(void* self, int a1)
+// PORT: the unit declares func_0016CEF0 as returning void*; this caller treats it as void.
+void func_0016CEF0_CEC8(void*, void*, int) __asm__("func_0016CEF0");
+void func_0016CEC8(void* self, int a1)
 {
-    return func_0016CEF0((void*)D_004C5830, self, a1);
+    func_0016CEF0_CEC8((void*)D_004C5830, self, a1);
 }
 #endif
 
