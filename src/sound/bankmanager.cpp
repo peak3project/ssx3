@@ -1056,7 +1056,31 @@ extern "C" void func_0028CDF8(char* self)
 
 INCLUDE_ASM("sound/bankmanager", func_0028CF98);
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028D488);
+#ifdef SKIP_ASM
+extern "C" unsigned int func_002ADF60(void* rng);
+extern "C" int func_0028D8A0(void* self);
+extern "C" void func_002B42B8(void* q, int a, int b);
+
+extern "C" void func_0028D488(void* vself)
+{
+    char* self = (char*)vself;
+    unsigned int count = *(unsigned int*)(self + 0x504);
+    int prev = *(int*)(self + 0x62A4);
+    *(unsigned int*)(self + 0x508) = ((func_002ADF60(*(void**)(**(char***)(self + 0x118) + 0x1D8)) & 0x7FFF) * count) / 0x7FFF;
+    int n = ((func_002ADF60(*(void**)(**(char***)(self + 0x118) + 0x1D8)) & 0x7FFF) * 10) / 0x7FFF + 1;
+    int i;
+    for (i = 0; i < n; i++)
+        func_002B42B8(self + 0x118, 1, func_0028D8A0(self));
+    char* q = self + 0x118;
+    if (prev == *(int*)(self + 0x508)) {
+        func_002B42B8(q, 1, func_0028D8A0(self));
+        if (prev == *(int*)(self + 0x508))
+            func_002B42B8(q, 0, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028D5A0);
