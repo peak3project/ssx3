@@ -719,9 +719,60 @@ extern "C" void func_002EF378(const char* name)
 }
 #endif
 
+#ifdef SKIP_ASM
+// Classes here derive virtually from cRider. g++ 2.95 then emits, in their destructors, the vtable fix-ups
+// for the virtual base (stack copies of the cRider-in-D vtables with the dtor's this-delta adjusted when
+// not most-derived). Only the cRider layout that code depends on is modelled (see
+// ai/control/handplantcontrol.cpp).
+class cRiderVbA0_rsm {
+public:
+    virtual ~cRiderVbA0_rsm();
+    virtual void a01(); virtual void a02(); virtual void a03(); virtual void a04(); virtual void a05();
+    virtual void a06(); virtual void a07(); virtual void a08(); virtual void a09(); virtual void a10();
+    virtual void a11(); virtual void a12(); virtual void a13(); virtual void a14(); virtual void a15();
+    virtual void a16(); virtual void a17(); virtual void a18(); virtual void a19();
+};
+class cRiderVbA_rsm : public cRiderVbA0_rsm { public: char padA[0xC]; };
+class cRiderVbB0_rsm { public: virtual void b01(); };
+class cRiderVbB_rsm : public cRiderVbB0_rsm { public: char padB[0x14]; };
+class cRiderVbC0_rsm {
+public:
+    virtual ~cRiderVbC0_rsm();
+    virtual void c01(); virtual void c02(); virtual void c03(); virtual void c04(); virtual void c05();
+    virtual void c06();
+};
+class cRiderVbC_rsm : public cRiderVbC0_rsm { public: char padC[0x10]; };
+class cRiderVbBC_rsm : public cRiderVbB_rsm, public cRiderVbC_rsm { public: };
+class cRiderVbPad_rsm { public: char pad[0x6C0]; } __attribute__((aligned(16)));
+class cRiderVb_rsm : public cRiderVbPad_rsm, public cRiderVbA_rsm, public cRiderVbBC_rsm {
+public:
+    virtual ~cRiderVb_rsm();
+};
+void operator_delete(int* p);
+#endif
+
 INCLUDE_ASM("visualfx/renderstateman", func_002EF3B0);
 
+//100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EF530);
+#ifdef SKIP_ASM
+void cMemMan_free(void* p);
+
+class cVbDtor002EF530 : virtual public cRiderVb_rsm {
+public:
+    void* m04;
+    char pad08[0x18];
+    virtual ~cVbDtor002EF530();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002EF530::~cVbDtor002EF530()
+{
+    if (m04 != 0) cMemMan_free(m04);
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002EF530; expose it under the address-derived name.
+__asm__(".globl func_002EF530\n.type func_002EF530,@function\nfunc_002EF530 = _$_15cVbDtor002EF530\n.size func_002EF530,0x170\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EF6A0);
