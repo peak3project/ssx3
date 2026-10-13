@@ -289,7 +289,47 @@ extern "C" void func_0015E2A8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_0015E360);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+struct sCamShake_E360 {
+    float f0;
+    float f4;
+    float weight;   // 0x8
+    float range;    // 0xC
+};
+// View of the tuning block initialised by func_0015E2A8 as one entry per shake type.
+extern sCamShake_E360 D_004C53E0_E360[] __asm__("D_004C53E0");
+
+#define MIN_E360(a, b) ((a) <= (b) ? (a) : (b))
+#define MAX_E360(a, b) ((b) <= (a) ? (a) : (b))
+
+// Requests a camera shake of 'type' with strength 'amount' at 'dist' from the camera; keeps the strongest request.
+// Replays ignore types 1-4.
+extern "C" void func_0015E360(char* self, int type, float amount, float dist)
+{
+    int state = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
+    int replay = state != 0 && state < 10;
+    if (replay && (unsigned int)(type - 1) < 4) {
+        return;
+    }
+    float scale;
+    float range = D_004C53E0_E360[type].range;
+    if (0.0f < dist && 0.0f < range) {
+        float t = 2.0f - (dist + dist) / range;
+        scale = MAX_E360(MIN_E360(t, 1.0f), 0.0f);
+    } else {
+        scale = 1.0f;
+    }
+    float v = amount * scale * D_004C53E0_E360[type].weight;
+    if (*(float*)(self + 0x454) < v) {
+        *(int*)(self + 0x450) = type;
+        *(float*)(self + 0x454) = v;
+    }
+    *(int*)(self + 0x458) = 1;
+}
+#endif
 
 INCLUDE_ASM("camera/camera", func_0015E460);
 
