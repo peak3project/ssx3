@@ -4472,7 +4472,89 @@ extern "C" void func_00384DC0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00384E50);
+#ifdef SKIP_ASM
+struct sPtRS_4E50 {
+    int f0;
+    int f4;
+    int f8;                         // bits 0..4 = key
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sPtEnt_4E50 {
+    sPtRS_4E50 rs;                  // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+
+struct sPtRing_4E50 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sPtEnt_4E50 ents[1];            // 0x80
+};
+
+struct sPtGfx_4E50 {
+    char pad_0x0[0xE84];
+    sPtRS_4E50* top;                // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sPtRing_4E50* ring;             // 0x18F0
+};
+
+struct sPktBuilder_4E50 {
+    unsigned int* where;            // 0x0
+    unsigned int cur;               // 0x4 (uncached)
+    unsigned int start;             // 0x8 (uncached)
+    int open;                       // 0xC
+};
+
+extern sPtGfx_4E50* D_004A5B80_4E50 __asm__("D_004A5B80");
+extern "C" void func_00384DC0(void* self);
+void operator_delete(int*);
+
+// PORT: uncached (0x30000000) pointers held in int; 64-bit GS words are `ulong`.
+// Packet builder destructor: closes the packet with its DMA tags and queues it on the particle ring.
+extern "C" void func_00384E50(sPktBuilder_4E50* self, int flags)
+{
+    if (self->start != 0) {
+        if (self->open != 0)
+            func_00384DC0(self);
+        unsigned long* p = (unsigned long*)self->start;
+        int qwc = ((unsigned long*)self->cur - p) / 2;
+        p[0] = (qwc - 1) | 0x10000000;
+        ((unsigned long*)self->start)[1] = 0;
+        ((unsigned long*)self->start)[2] = 0;
+        unsigned int n = qwc;
+        ((unsigned long*)self->start)[3] = (unsigned long)((n - 2) | 0x50000000) << 32;
+        unsigned int buf = self->start & 0x0FFFFFFF;
+        unsigned int next = self->cur & 0x0FFFFFFF;
+        self->cur = next;
+        self->start = buf;
+        sPtGfx_4E50* g = D_004A5B80_4E50;
+        sPtRing_4E50* ring = g->ring;
+        sPtRS_4E50* rs = g->top;
+        if (ring->count < 0xA28) {
+            rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+            int key = *(int*)((char*)ring + 0x69CC0);
+            sPtEnt_4E50* e = (sPtEnt_4E50*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            e->rs = *rs;
+            e->buf = buf;
+            e->next = next;
+            e->key = key;
+            e->flag = 0;
+        }
+        self->cur += 0x10;
+        *self->where = self->cur;
+    }
+    if (flags & 1)
+        operator_delete((int*)self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00384FD0);
