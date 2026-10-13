@@ -3662,7 +3662,110 @@ extern "C" void func_00380380(void* self, char* obj, int idx, float* pos, float*
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00380518);
+#ifdef SKIP_ASM
+struct sPtRS_0518 {
+    int f0;                         // bits 6..9 = layer
+    int f4;
+    int f8;                         // bits 0..4 = key
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sPtEnt_0518 {
+    sPtRS_0518 rs;                  // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+
+struct sPtRing_0518 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sPtEnt_0518 ents[1];            // 0x80
+};
+
+struct sQuad_0518 {
+    unsigned int w[4];
+} __attribute__((aligned(16)));
+
+struct sPtGfx_0518 {
+    char pad_0x0[0xE84];
+    sPtRS_0518* top;                // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sPtRing_0518* ring;             // 0x18F0
+    char pad_0x18F4[0x5A00 - 0x18F4];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x6B90 - 0x5A04];
+    int texReady;                   // 0x6B90
+};
+
+extern int D_004A44F8;
+extern int D_004A4474;
+extern char D_0[];
+extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
+extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
+extern "C" void func_0037D968(void* self);
+
+static inline void CopyQuads_0518(unsigned long** pp, const void* srcp, int n)
+{
+    const sQuad_0518* src = (const sQuad_0518*)srcp;
+    sQuad_0518* d = (sQuad_0518*)*pp;
+    sQuad_0518* end = d + n;
+    while (d != end) {
+        *d++ = *src++;
+    }
+    *pp = (unsigned long*)d;
+}
+
+// Sends obj's 0x15 quads to the VU1 program at address 0 under a pushed render state.
+extern "C" void func_00380518(sPtGfx_0518* self, sQuad_0518* obj)
+{
+    if (D_004A44F8 != 0)
+        return;
+    self->top[1] = *self->top;
+    self->top++;
+    self->top->f0 = (self->top->f0 & ~0x3C0) | 0x100;
+    self->top->fC &= 0xC0000000;
+    self->top->f4 = (self->top->f4 & ~3) | 2;
+    self->top->f8 &= 0xE00003FF;
+    self->top->f8 = (self->top->f8 & ~0x3E0) | 0xE0;
+    unsigned int buf = self->bufAddr;
+    unsigned long* p = func_0038F460(D_004A4474, buf, -1, 0);
+    p[0] = 0x10000017;
+    p[1] = 0;
+    p[2] = 0;
+    p[3] = (unsigned long)0xD82B << 47;
+    p += 4;
+    CopyQuads_0518(&p, obj, 0x15);
+    p[0] = (unsigned long)(((unsigned int)D_0 >> 3) | 0x14000000) << 32;
+    p[1] = (unsigned long)0x8800 << 45;
+    p += 2;
+    self->bufAddr = func_0038F668(D_004A4474, p, 4);
+    if (self->texReady == 0) {
+        func_0037D968(self);
+    }
+    sPtRing_0518* ring = self->ring;
+    unsigned int next = self->bufAddr;
+    sPtRS_0518* rs = self->top;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sPtEnt_0518* e = (sPtEnt_0518*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 0;
+    }
+    self->bufAddr += 0x10;
+    self->top--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_003807A0);
