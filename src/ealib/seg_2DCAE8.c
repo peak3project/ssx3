@@ -3902,7 +3902,42 @@ int func_003E62D0(unsigned char *arg0, int arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6328);
+#ifdef SKIP_ASM
+extern int D_00451218[];
+
+/* Shell sort of keys[] (descending) carrying vals[] along, gap table D_00451218 (same as func_0032DA40). */
+void func_003E6328(int n, int *keys, int *vals) {
+    int k = 1;
+    int gap;
+    int i;
+    while (D_00451218[k] < n) {
+        k++;
+    }
+    for (;;) {
+        gap = D_00451218[--k];
+        for (i = gap; i < n; i++) {
+            int key = keys[i];
+            int val = vals[i];
+            int j = i - gap;
+            do {
+                if (keys[j] >= key) {
+                    break;
+                }
+                keys[j + gap] = keys[j];
+                vals[j + gap] = vals[j];
+                j -= gap;
+            } while (j >= 0);
+            keys[j + gap] = key;
+            vals[j + gap] = val;
+        }
+        if (gap < 2) {
+            break;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6428);
