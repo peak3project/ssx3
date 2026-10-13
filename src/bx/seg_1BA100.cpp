@@ -1673,7 +1673,54 @@ extern "C" void func_002BB5A8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB5F0);
+#ifdef SKIP_ASM
+extern "C" void func_002BAF08_B5F0(int p) __asm__("func_002BAF08");
+
+struct sReloc_B5F0 {
+    int magic;          // 0x0 (0x10 once relocated)
+    int count;          // 0x4
+    int offs[1];        // 0x8
+};
+
+struct sRes_B5F0 {
+    short state;        // 0x0
+    short keep;         // 0x2
+    int pad4;
+    sReloc_B5F0* data;  // 0x8
+};
+
+// Relocates the loaded block's offset table (dropping it if it has the wrong magic) and marks it ready.
+extern "C" void func_002BB5F0(void* vself)
+{
+    sRes_B5F0* self = (sRes_B5F0*)vself;
+    if (self->data == 0) {
+        self->state = 3;
+        return;
+    }
+    {
+        if (self->data->magic != 0x10) {
+            if (self->keep == 0) {
+                cMemMan_free(self->data);
+            }
+            self->data = 0;
+        }
+        if (self->data != 0) {
+            int* p = self->data->offs;
+            for (int i = 0; i < self->data->count; i++, p++) {
+                if (*p == -1) {
+                    *p = 0;
+                } else {
+                    *p = (int)self->data + *p;
+                    func_002BAF08_B5F0(*p);
+                }
+            }
+        }
+    }
+    self->state = 3;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB6B8);
