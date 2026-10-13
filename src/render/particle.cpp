@@ -2424,7 +2424,74 @@ INCLUDE_ASM("render/particle", func_00379BD0);
 
 INCLUDE_ASM("render/particle", func_0037A260);
 
+//100%
 INCLUDE_ASM("render/particle", func_0037A430);
+#ifdef SKIP_ASM
+struct sPtRS_A430 {
+    int f0;                         // bits 6..9 = layer
+    int f4;
+    int f8;                         // bits 0..4 = key
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sPtEnt_A430 {
+    sPtRS_A430 rs;                  // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+
+struct sPtRing_A430 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sPtEnt_A430 ents[1];            // 0x80
+};
+
+struct sPtGfx_A430 {
+    char pad_0x0[0xE84];
+    sPtRS_A430* top;                // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sPtRing_A430* ring;             // 0x18F0
+    char pad_0x18F4[0x5A00 - 0x18F4];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x5A28 - 0x5A04];
+    unsigned int pendBuf;           // 0x5A28
+    unsigned long* pend;            // 0x5A2C
+};
+
+extern int D_004A4474;
+extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
+
+// PORT: uncached (0x30000000) pointers held in int.
+// Flushes the pending packet into a ring entry and resets the render state's layer bits.
+extern "C" void func_0037A430(sPtGfx_A430* self)
+{
+    unsigned int next = func_0038F668(D_004A4474, self->pend, 4);
+    self->bufAddr = next;
+    unsigned int buf = self->pendBuf;
+    sPtRing_A430* ring = self->ring;
+    sPtRS_A430* rs = self->top;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sPtEnt_A430* e = (sPtEnt_A430*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 0;
+    }
+    self->bufAddr += 0x10;
+    self->top->f0 &= ~0x3C0;
+    self->top->fC &= 0xC0000000;
+    self->pendBuf = 0;
+    self->pend = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0037A540);
