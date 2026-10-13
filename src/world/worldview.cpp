@@ -718,7 +718,32 @@ extern "C" int func_003AA8D8(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldview", func_003AA8F0);
+#ifdef SKIP_ASM
+static inline char *refToPtr_A8F0(unsigned i) { return (char*)(i << 2); }
+static inline char *conv_A8F0(unsigned i) { if (i == 0) return 0; return refToPtr_A8F0(i); }
+// Resolves the node's object handle (0x80) to its object pointer and caches the object's 0xC field.
+extern "C" int func_003AA8F0(char** self, char* node)
+{
+    unsigned id = *(unsigned*)(node + 0x80);
+    char *s = (*(char***)(**(char***)self + 8))[id & 0xFF];
+    unsigned i;
+    char *r;
+    if (!s)
+        r = 0;
+    else {
+        i = ((unsigned*)*(char**)(s + 0x14))[id >> 8] >> 8;
+        char *t = conv_A8F0(i);
+        r = t;
+    }
+    *(char**)(node + 0x80) = r;
+    int v = *(int*)(r + 0xC);
+    *(int*)(node + 0x8C) = 0;
+    *(int*)(node + 0x94) = v;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldview", func_003AA960);
