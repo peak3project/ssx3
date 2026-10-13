@@ -1201,7 +1201,31 @@ void func_00356B30_2(void* self, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/movenode", func_00356BF0);
+#ifdef SKIP_ASM
+struct sMnVEntryI_6BF0 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+static inline int VCall_6BF0(char* o, int i)
+{
+    sMnVEntryI_6BF0* vt = *(sMnVEntryI_6BF0**)o;
+    return vt[i].fn(o + vt[i].delta);
+}
+// Does the modifier object's virtual slot 26 report state 2?
+extern "C" int func_00356BF0(char* self)
+{
+    char** h = *(char***)(self + 0x1C);
+    if (h != 0) {
+        char* o = *h;
+        if (o != 0 && VCall_6BF0(o, 26) == 2)
+            return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/movenode", func_00356C48);
