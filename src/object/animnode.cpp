@@ -371,7 +371,61 @@ extern "C" int func_0034EBA0(sAnimNode_EBA0* self)
 
 INCLUDE_ASM("object/animnode", func_0034EBE0);
 
+//100%
 INCLUDE_ASM("object/animnode", func_0034EC58);
+#ifdef SKIP_ASM
+extern "C" void* func_00355280(void* self, void* a1, int type, void* a2);
+struct cFloatingNode;
+void cFloatingNode_initInfo(cFloatingNode* self);
+extern char D_0048E880[];
+extern void* D_0048F858[];
+
+struct sAnimFrame_EC58 {
+    char data[0x40];
+    sAnimFrame_EC58() {}
+};
+
+struct sQ_EC58 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sAnimInfo_EC58 {
+    int f0;
+    float f4, f8, fC, f10, f14, f18;
+};
+
+extern "C" void* func_0034EC58(void* self, void* a1, void* a2, sAnimInfo_EC58* info)
+{
+    char* s = (char*)self;
+    func_00355280(self, a1, 0xE, a2);
+    *(void***)(s + 0xC) = D_0048F858;
+    *(float*)(s + 0x2C) = info->f4;
+    *(float*)(s + 0x30) = info->f8;
+    *(float*)(s + 0x34) = info->f14;
+    *(float*)(s + 0x38) = info->fC;
+    *(float*)(s + 0x3C) = info->f10;
+    *(float*)(s + 0x40) = info->f18 * 1e-6f;
+    sQ_EC58 p = *(sQ_EC58*)(*(char**)(s + 0x18) + 0x40);
+    *(int*)(s + 0x54) = 0;
+    *(int*)(s + 0x5C) = 0;
+    *(int*)(s + 0x60) = 0;
+    *(int*)(s + 0x64) = 0;
+    *(int*)(s + 0x6C) = 0;
+    *(int*)(s + 0x70) = 0;
+    *(int*)(s + 0x48) = 0;
+    *(int*)(s + 0x44) = 0;
+    *(int*)(s + 0x78) = 0;
+    *(float*)(s + 0x4C) = p.z;
+    *(float*)(s + 0x50) = p.z;
+    cFloatingNode_initInfo((cFloatingNode*)self);
+    sAnimFrame_EC58** pf = (sAnimFrame_EC58**)(s + 0x74);
+    *pf = new (D_0048E880, 0x20000000, 0) sAnimFrame_EC58[*(int*)(*(char**)(*(char**)(s + 0x18) + 0x80) + 0x4)];
+    *(unsigned short*)(s + 0x12) |= 1;
+    char* m = *(char**)(s + 0x18);
+    *(unsigned int*)(m + 8) = (*(unsigned int*)(m + 8) & 0xFFFFFFFD) | 4;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/animnode", func_0034ED88);
