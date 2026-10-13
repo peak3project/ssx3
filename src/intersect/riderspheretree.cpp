@@ -2362,7 +2362,65 @@ extern "C" int func_0032FE40(void* self, void* a, void* b, void* box)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032FE78);
+#ifdef SKIP_ASM
+extern "C" int func_00330360(void* self, sSphereVec4* plane, sSphereVec4* p, float* out);
+extern "C" int func_00330250(void* self, sSphereVec4* a, sSphereVec4* b, sSphereVec4* c);
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sSphereVec4 sphereScale_32FE78(const sSphereVec4& v, float s)
+{
+    sSphereVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sSphereVec4 sphereSub_32FE78(const sSphereVec4& a, const sSphereVec4& b)
+{
+    sSphereVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// Like func_0032FFA0 without the plane-side flip. The success tail is written out twice (jump2 merges the
+// copies); the extra self reference keeps the target's register order for self and a.
+extern "C" int func_0032FE78(void* self, sSphereVec4* a, sSphereVec4* b, sSphereVec4* c, sSphereVec4* plane,
+                             sSphereVec4* outPos, sSphereVec4* outDir, float* outDist)
+{
+    float t;
+    if (func_00330360(self, plane, a, &t) == 0) {
+        return 0;
+    }
+    sSphereVec4 p = sphereSub_32FE78(*(sSphereVec4*)((char*)self + 0x60), sphereScale_32FE78(*plane, t));
+    *outPos = p;
+    if (func_0032B6A8_tol(a, b, c, outPos, 9.999999747378752e-05f) != 0) {
+        *outDir = *plane;
+        *outDist = *(float*)((char*)self + 0x70) - t;
+        return 1;
+    }
+    if (func_00330250(self, a, b, c) == 0)
+        return 0;
+    *outDir = *plane;
+    *outDist = *(float*)((char*)self + 0x70) - t;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032FFA0);
