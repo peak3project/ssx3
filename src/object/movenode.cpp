@@ -1104,7 +1104,52 @@ extern "C" void cMoveNode_setupOverlapSystem(void* self_)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/movenode", func_003567E0);
+#ifdef SKIP_ASM
+#include "common.h"
+struct tModifierBlock;
+void tModifierBlock_setBoundBox_K(tModifierBlock* mb, void* box) __asm__("tModifierBlock_setBoundBox__FP14tModifierBlock");
+struct sMnVec4_67E0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sMnBox_67E0 {
+    sMnVec4_67E0 min, max;
+};
+
+extern "C" sMnBox_67E0* func_00352B88_67E0(void* mb) __asm__("func_00352B88");
+extern "C" void* func_002D1BE0(void);
+extern "C" void func_003291E0_67E0(void* mgr, int a, void* obj, sMnBox_67E0* box, sMnBox_67E0* old) __asm__("func_003291E0");
+
+// Sets the modifier block's bound box from the node's own extents (self->18 + 0x60) and re-files it.
+extern "C" void func_003567E0(void* vself)
+{
+    char* self = (char*)vself;
+    char** h = *(char***)(self + 0x1C);
+    char* blk = h ? *h : 0;
+    // Binding a reference to the object matches the target register allocation (see func_00356078).
+    char*& o = blk;
+    if (o == 0)
+        return;
+    sMnBox_67E0 box;
+    sMnBox_67E0 old = *func_00352B88_67E0(*(void**)(self + 0x1C));
+    char* n = *(char**)(self + 0x18);
+    sMnVec4_67E0 v;
+    v.x = *(float*)(n + 0x60);
+    v.y = *(float*)(n + 0x64);
+    v.z = *(float*)(n + 0x68);
+    v.w = 1.0f;
+    box.min = v;
+    v.x = *(float*)(n + 0x6C);
+    v.y = *(float*)(n + 0x70);
+    v.z = *(float*)(n + 0x74);
+    box.max = v;
+    tModifierBlock_setBoundBox_K(*(tModifierBlock**)(self + 0x1C), &box);
+    void* obj = *(void**)(self + 0x18);
+    func_003291E0_67E0(func_002D1BE0(), 0, obj, &box, &old);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/movenode", func_003568B0);
