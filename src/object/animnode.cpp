@@ -123,7 +123,113 @@ extern "C" void func_0034E600(void* self, int id, int idx, sVec4_E600* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/animnode", func_0034E698);
+#ifdef SKIP_ASM
+struct sVec4_E698 {
+    float x, y, z, w;
+    sVec4_E698() {}
+} __attribute__((aligned(16)));
+
+struct sDelta_E698 {
+    sVec4_E698 pos;
+    sVec4_E698 rot;
+};
+
+struct sBody_E698 {
+    sVec4_E698 pos;     // 0x00
+    char pad10[0x10];
+    sVec4_E698 vel;     // 0x20
+    sVec4_E698 angVel;  // 0x30
+    char pad40[0x10];
+    int anim;           // 0x50
+    char pad54[0x8];
+    int bone;           // 0x5C
+};
+
+// Takes the body as a second (out) argument, as in multiparticle.cpp.
+extern "C" void func_00356AE0(void* self, sBody_E698* body);
+extern "C" void func_0034E798(char* self);
+extern "C" void func_0034E600_E698(void* self, int id, int idx, sVec4_E698* out) __asm__("func_0034E600");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4_E698 vu0Sub_E698(const sVec4_E698& a, const sVec4_E698& b)
+{
+    sVec4_E698 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sVec4_E698 vu0Add_E698(const sVec4_E698& a, const sVec4_E698& b)
+{
+    sVec4_E698 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sVec4_E698 vu0Cross_E698(const sVec4_E698& a, const sVec4_E698& b)
+{
+    sVec4_E698 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void vu0AddEq_E698(sVec4_E698& a, const sVec4_E698& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// Applies the attached bone's motion delta to the body: vel += delta.pos + (body.pos - bonePos) x delta.rot; angVel += delta.rot.
+extern "C" void func_0034E698(char* self, sBody_E698* body)
+{
+    func_00356AE0(self + 0x14, body);
+    int bone = body->bone;
+    if (bone < 0)
+        return;
+    if (*(int*)(self + 0x10) != 0)
+        func_0034E798(self);
+    sVec4_E698 p;
+    func_0034E600_E698(self, body->anim, bone, &p);
+    sVec4_E698 d = vu0Sub_E698(body->pos, p);
+    sVec4_E698 rot = ((sDelta_E698*)*(char**)(self + 0x4C))[bone].rot;
+    vu0AddEq_E698(body->vel, vu0Add_E698(((sDelta_E698*)*(char**)(self + 0x4C))[bone].pos,
+                                          vu0Cross_E698(d, ((sDelta_E698*)*(char**)(self + 0x4C))[bone].rot)));
+    vu0AddEq_E698(body->angVel, rot);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/animnode", func_0034E798);
