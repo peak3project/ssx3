@@ -1968,7 +1968,21 @@ extern "C" void func_003B1140(sWSPool* self, sWSItem* item)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B11A0);
+#ifdef SKIP_ASM
+struct sAlloc_11A0 {
+    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
+    void* (*free)(void* p);
+    int flags;
+};
+// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
+extern sAlloc_11A0 D_00509430_11A0 __asm__("D_00509430");
+extern "C" void* func_003B11A0(void)
+{
+    return func_003B0948(D_00509430_11A0.alloc(D_004953E8, 0x80, 0, 0, D_00509430_11A0.flags));
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003B11E8__FPv);
