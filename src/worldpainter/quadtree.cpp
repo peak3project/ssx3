@@ -219,7 +219,39 @@ extern "C" short func_002C2338(unsigned char c)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2430);
+#ifdef SKIP_ASM
+extern unsigned char D_00445998[];
+// Shift-JIS full-width range table: {first code, ASCII of first code} per range (digits, upper, lower case).
+extern unsigned char D_004A3890[6];
+extern unsigned char D_004A3891[5];
+
+// Converts a Shift-JIS double-byte character (lead byte in the low byte) to ASCII; 0 if it has none.
+// PORT: declared earlier in the unit as char(short); defined under its own name bound to the symbol.
+extern "C" unsigned char func_002C2430_impl(unsigned int code) __asm__("func_002C2430");
+extern "C" unsigned char func_002C2430_impl(unsigned int code)
+{
+    unsigned int hi = (code >> 8) & 0xFF;
+    int i = 0;
+    unsigned char* ascii = D_004A3891;
+    code &= 0xFF;
+    if (code == 0x81)
+        return D_00445998[hi - 0x40];
+    if (code == 0x82) {
+        if (hi - 0x4F < 10)
+            i = 0;
+        else if (hi - 0x60 < 26)
+            i = 1;
+        else if ((unsigned char)(hi + 0x7F) < 26)
+            i = 2;
+        else
+            i = 0;
+        return ascii[i * 2] + (hi - D_004A3890[i * 2]);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C24D0);
