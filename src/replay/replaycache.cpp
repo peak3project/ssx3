@@ -2170,7 +2170,73 @@ extern "C" void func_00273630(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00273698);
+#ifdef SKIP_ASM
+struct sCacheEvent_3698 {
+    char pad0[0x8];
+    int end;                        // 0x8
+    char padC[0x10 - 0xC];
+    float value;                    // 0x10
+    float speed;                    // 0x14
+    char pad18[0x20 - 0x18];
+    sCacheEvent_3698* next;         // 0x20
+};
+
+struct sCacheRec_3698 {
+    char pad0[4];
+    unsigned short time;            // 0x4
+};
+
+struct sCacheTrack_3698 {
+    char pad0[0x14];
+    sCacheRec_3698* rec;            // 0x14
+    char pad18[0x20 - 0x18];
+    sCacheEvent_3698* events;       // 0x20
+    int numEvents;                  // 0x24
+};
+
+// Advances running events by dt, drops finished ones and starts every record that is due.
+extern "C" int func_00273698(sCacheTrack_3698* self, int* flags, float t, float dt)
+{
+    float zero;
+    sCacheEvent_3698* prev = 0;
+    sCacheEvent_3698* e = self->events;
+    while (e != 0) {
+        if ((float)e->end <= t) {
+            *flags |= 2;
+            if (prev == 0) {
+                e = self->events = e->next;
+            } else {
+                e = e->next;
+                prev->next = e;
+            }
+            self->numEvents--;
+        } else {
+            prev = e;
+            e->value += e->speed * dt;
+            e = e->next;
+        }
+    }
+    zero = 0.0f;
+loop:
+    do {
+        if (self->rec != 0) {
+            float d = t - (float)self->rec->time;
+            if (d >= zero) {
+                *flags |= 1;
+                sCacheEvent_3698* n = (sCacheEvent_3698*)func_00273860(self, (sCacheRecord2*)self->rec);
+                n->value += d * n->speed;
+                func_002738F8(self);
+                goto loop;
+            }
+        }
+    } while (0);
+    if (self->events == 0 && self->rec == 0)
+        return 0;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_002737E0);
