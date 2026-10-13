@@ -410,7 +410,108 @@ extern "C" void func_00358700(int kind)
 
 INCLUDE_ASM("object/multiparticle", func_00358780);
 
+//100%
 INCLUDE_ASM("object/multiparticle", func_00358998);
+#ifdef SKIP_ASM
+struct sMpVec4_8998 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sMpBox_8998 {
+    sMpVec4_8998 min;
+    sMpVec4_8998 max;
+};
+struct sMpCell_8998 {
+    int level;
+    int x, y, z;
+};
+struct sMpRoot_8998 {
+    sMpCell_8998 cell;
+    void* node;
+};
+struct sMpPart_8998 {
+    char pad[0x20];
+    int count;             // 0x20
+    char* first;           // 0x24
+};
+struct sMpTable_8998 {
+    char pad[0x44];
+    unsigned int* entries; // 0x44
+};
+struct sMpMgr_8998 {
+    char pad[0x8];
+    sMpTable_8998** tables; // 0x8
+};
+
+extern "C" sMpMgr_8998** func_002D1BD8_8998(void) __asm__("func_002D1BD8");
+extern "C" char* func_002D1BE0(void);
+extern "C" void func_00328F28(void* out, const void* box);
+extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
+
+static inline void* refToPtr_8998(unsigned int p)
+{
+    return (void*)(p << 2);
+}
+
+static inline void* lookup_8998(sMpTable_8998* t, unsigned int idx)
+{
+    unsigned int p = t->entries[idx] >> 8;
+    if (p == 0) {
+        return 0;
+    }
+    return refToPtr_8998(p);
+}
+
+struct sMpRef_8998 {
+    unsigned int id;
+
+    void* get(sMpMgr_8998* w)
+    {
+        sMpTable_8998* t = w->tables[id & 0xFF];
+        if (t == 0) {
+            return 0;
+        }
+        return lookup_8998(t, id >> 8);
+    }
+};
+
+static inline sMpRoot_8998* findRoot_8998(char* w, int x, int y, int z)
+{
+    sMpRoot_8998* r = (sMpRoot_8998*)w;
+    sMpRoot_8998* rx = x >= 0 ? r : r + 4;
+    sMpRoot_8998* ry = y >= 0 ? rx : rx + 2;
+    sMpRoot_8998* rz = z >= 0 ? ry : ry + 1;
+    return rz;
+}
+
+static inline void insert_8998(char* w, void* item, const sMpBox_8998* box)
+{
+    sMpCell_8998 c;
+    func_00328F28(&c, box);
+    func_00328C20(findRoot_8998(w, c.x, c.y, c.z), 2, item, &c);
+}
+
+// Re-inserts every particle node of slot 'idx' into the world's spatial tree, then frees the slot.
+extern "C" void func_00358998(void* self, int idx)
+{
+    sMpRef_8998 ref = ((sMpRef_8998*)((char*)self + 0x18))[idx];
+    sMpPart_8998* part = (sMpPart_8998*)ref.get(*func_002D1BD8_8998());
+    char* node = part->first;
+    for (int i = 0; i < part->count; i++) {
+        sMpBox_8998 box;
+        box.min.x = *(float*)(node + 0x6C);
+        box.min.y = *(float*)(node + 0x70);
+        box.min.z = *(float*)(node + 0x74);
+        box.min.w = 1.0f;
+        box.max.x = *(float*)(node + 0x78);
+        box.max.y = *(float*)(node + 0x7C);
+        box.max.z = *(float*)(node + 0x80);
+        box.max.w = 1.0f;
+        insert_8998(func_002D1BE0(), node, &box);
+        node = *(char**)(node + 0x64);
+    }
+    ((unsigned int*)((char*)self + 0x18))[idx] = 0xFFFFFFFF;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/multiparticle", func_00358B28);
