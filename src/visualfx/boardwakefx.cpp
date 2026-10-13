@@ -84,7 +84,61 @@ extern "C" void* cBoardWakeFX_cBoardWakeFX(void* self, int inChrg)
 }
 #endif
 
+#ifdef SKIP_ASM
+// Classes here derive virtually from cRider. g++ 2.95 then emits, in their destructors, the vtable fix-ups
+// for the virtual base (stack copies of the cRider-in-D vtables with the dtor's this-delta adjusted when
+// not most-derived). Only the cRider layout that code depends on is modelled (see
+// ai/control/handplantcontrol.cpp).
+class cRiderVbA0_bwf {
+public:
+    virtual ~cRiderVbA0_bwf();
+    virtual void a01(); virtual void a02(); virtual void a03(); virtual void a04(); virtual void a05();
+    virtual void a06(); virtual void a07(); virtual void a08(); virtual void a09(); virtual void a10();
+    virtual void a11(); virtual void a12(); virtual void a13(); virtual void a14(); virtual void a15();
+    virtual void a16(); virtual void a17(); virtual void a18(); virtual void a19();
+};
+class cRiderVbA_bwf : public cRiderVbA0_bwf { public: char padA[0xC]; };
+class cRiderVbB0_bwf { public: virtual void b01(); };
+class cRiderVbB_bwf : public cRiderVbB0_bwf { public: char padB[0x14]; };
+class cRiderVbC0_bwf {
+public:
+    virtual ~cRiderVbC0_bwf();
+    virtual void c01(); virtual void c02(); virtual void c03(); virtual void c04(); virtual void c05();
+    virtual void c06();
+};
+class cRiderVbC_bwf : public cRiderVbC0_bwf { public: char padC[0x10]; };
+class cRiderVbBC_bwf : public cRiderVbB_bwf, public cRiderVbC_bwf { public: };
+class cRiderVbPad_bwf { public: char pad[0x6C0]; } __attribute__((aligned(16)));
+class cRiderVb_bwf : public cRiderVbPad_bwf, public cRiderVbA_bwf, public cRiderVbBC_bwf {
+public:
+    virtual ~cRiderVb_bwf();
+};
+void operator_delete(int* p);
+#endif
+
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002DCDA0);
+#ifdef SKIP_ASM
+void cMemMan_free(void* p);
+
+class cVbDtor002DCDA0 : virtual public cRiderVb_bwf {
+public:
+    char pad04[0x8];
+    void* m0C;
+    void* m10;
+    char pad14[0xA8];
+    virtual ~cVbDtor002DCDA0();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor002DCDA0::~cVbDtor002DCDA0()
+{
+    if (m0C != 0) cMemMan_free(m0C);
+    if (m10 != 0) cMemMan_free(m10);
+}
+// PORT: the compiler names this dtor _$_15cVbDtor002DCDA0; expose it under the address-derived name.
+__asm__(".globl func_002DCDA0\n.type func_002DCDA0,@function\nfunc_002DCDA0 = _$_15cVbDtor002DCDA0\n.size func_002DCDA0,0x184\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002DCF28);
