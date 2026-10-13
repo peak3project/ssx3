@@ -263,7 +263,53 @@ extern "C" void func_00117708(void* self, float seconds)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ridermetrix", func_00117718);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+// Same function as func_00117B88(self, type, value, arg, duration): the float travels in $f12 either way,
+// but the original prototype lists it before arg, which decides the argument evaluation order.
+extern "C" void func_00117B88_f(void* self, int type, int value, float duration, int arg) __asm__("func_00117B88");
+extern "C" void func_00119EF8(void* self, int type, int value);
+
+struct sRaceSettings_117718 {
+    char pad[0x48];
+    signed char mode;       // 0x48
+    signed char online;     // 0x49
+};
+extern sRaceSettings_117718 D_00535BC8_117718 __asm__("D_00535BC8");
+
+// Records a trick combo (count at 0x9C, score at 0xA0) in the rider metrics and awards it.
+extern "C" void func_00117718(void* self_)
+{
+    char* self = (char*)self_;
+    int n = *(int*)(self + 0x9C);
+    if (n >= 2) {
+        int pts = *(int*)(self + 0xA0);
+        if (pts > 0) {
+            *(int*)(self + 0x198) += pts;
+            *(int*)(self + 0x134) += n;
+            if (*(int*)(self + 0x188) < pts)
+                *(int*)(self + 0x188) = pts;
+            if (*(int*)(self + 0x9C) > *(int*)(self + 0x184))
+                *(int*)(self + 0x184) = *(int*)(self + 0x9C);
+            cBE_getInterface_Fv(cBE_getBE(), 0);
+            int offline = 0;
+            if (D_00535BC8_117718.mode == 4)
+                offline = D_00535BC8_117718.online == 0;
+            if (!offline) {
+                func_00117B88_f(self, 0x26, *(int*)(self + 0xA0), 1.5f, *(int*)(self + 0x9C));
+                func_00117B88_f(self, 0x18, *(int*)(self + 0xA0), 0.7f, 0);
+            } else {
+                int v = *(int*)(self + 0xA0) / 500;
+                func_00119EF8(self, 2, v > 20 ? 20 : v);
+            }
+        }
+    }
+    func_001175F8(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ridermetrix", func_00117838);
