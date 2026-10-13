@@ -746,12 +746,42 @@ class cRiderVbBC_rsm : public cRiderVbB_rsm, public cRiderVbC_rsm { public: };
 class cRiderVbPad_rsm { public: char pad[0x6C0]; } __attribute__((aligned(16)));
 class cRiderVb_rsm : public cRiderVbPad_rsm, public cRiderVbA_rsm, public cRiderVbBC_rsm {
 public:
+    cRiderVb_rsm();
     virtual ~cRiderVb_rsm();
 };
 void operator_delete(int* p);
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EF3B0);
+#ifdef SKIP_ASM
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+extern char D_00487B78[];
+extern "C" void func_002EF6A0(void* self);
+
+struct cRsmItem_2EF3B0 {
+    char data[0x20];
+    cRsmItem_2EF3B0() {}
+};
+
+class cRsm_2EF3B0 : virtual public cRiderVb_rsm {
+public:
+    cRsmItem_2EF3B0* items;     // 0x4
+    char pad08[0x18];
+    cRsm_2EF3B0();
+    virtual ~cRsm_2EF3B0();
+};
+
+cRsm_2EF3B0::cRsm_2EF3B0()
+{
+    cRsmItem_2EF3B0** slot = &items;
+    *slot = new (D_00487B78, 0, 0) cRsmItem_2EF3B0[25];
+    func_002EF6A0(this);
+}
+// PORT: the compiler names this ctor __11cRsm_2EF3B0i; expose it under the address-derived name.
+__asm__(".globl func_002EF3B0\n.type func_002EF3B0,@function\nfunc_002EF3B0 = __11cRsm_2EF3B0i\n.size func_002EF3B0,0x180\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EF530);
