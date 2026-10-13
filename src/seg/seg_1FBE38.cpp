@@ -1085,7 +1085,71 @@ extern "C" V3_C9C8 func_002FC9C8(int n, Ent_C9C8 *e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_002FCC20);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern char *D_004A3DD8_CC20 __asm__("D_004A3DD8");
+extern char **D_004A47B8_CC20 __asm__("D_004A47B8");
+struct V3_CC20 { float x, y, z; };
+extern V3_CC20 D_004C9098_CC20 __asm__("D_004C9098");
+struct Tag_CC20 { char c; Tag_CC20() {} Tag_CC20(const Tag_CC20 &o) : c(o.c) {} };
+extern unsigned D_CC20[] __asm__("D_004FB5B0");
+extern int D_004A55F4;
+extern const int D_00446028[];
+extern "C" void* func_003E6574_CC20(void*, void*, int) __asm__("func_003E6574");
+struct Ent_CC20 { int idx; int val; int pad; int type; };
+extern "C" int checkActiveNode(void*, int, void*);
+#define ASSERT_CC20(c) do { } while (0)
+
+// PORT: struct return written with the hidden return pointer explicit.
+extern "C" V3_CC20* func_002FCC20(V3_CC20* ret, int n, Ent_CC20 *e) {
+    if (D_004A55F4 == 0) {
+        D_CC20[0] = 0xFFFFFFFF;
+        *(float*)&D_CC20[2] = 0.5f;
+        ((int*)D_CC20)[1] = 0;
+        D_004A55F4 = 1;
+        (*(Tag_CC20*)((char*)D_CC20 + 12)) = Tag_CC20((*(Tag_CC20*)((char*)D_CC20 + 12)));
+    }
+    unsigned buf64[4];
+    unsigned *buf = buf64;
+    buf[0] = 0xFFFFFFFF;
+    func_003E6574_CC20(buf, D_CC20, 16);
+    Ent_CC20 *x = e;
+    for (int i = 0; i < n; i++, x++) {
+        int idx = x->idx;
+        int t = D_00446028[idx];
+        unsigned *d = (unsigned*)((idx << 2) + (int)buf);
+        if (x->type != t && t == 2)
+            *(float*)d = (float)x->val;
+        else
+            *d = x->val;
+    }
+    unsigned id = buf[0];
+    char *obj;
+    if (~id == 0) {
+        obj = *(char**)(D_004A3DD8_CC20 + 0x290);
+    } else {
+        char *s = (*(char***)((char*)*D_004A47B8_CC20 + 8))[id & 0xFF];
+        unsigned i;
+        if (!s || (i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8) == 0)
+            obj = 0;
+        else
+            obj = (char*)(i << 2);
+    }
+    if (obj) {
+        void* node = *(void**)(obj + 0xC);
+        if (node)
+            checkActiveNode(node, 9, buf);
+    }
+    // compiled-out debug macros around the return; they shape the register allocation here
+    do {
+        *ret = D_004C9098_CC20;
+        ASSERT_CC20(ret);
+        return ret;
+    } while (0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_002FCDC8);
