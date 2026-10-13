@@ -1110,7 +1110,95 @@ extern "C" void func_002B6F40(void* self, int* shape, sVec3_2B6CF8* lo, sVec3_2B
 
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B7318);
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B7410);
+#ifdef SKIP_ASM
+struct sWtVec4_7410 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sWtBox_7410 {
+    sWtVec4_7410 min;
+    sWtVec4_7410 max;
+};
+
+struct sHashKey_7410 {
+    int level;
+    int x, y, z;
+};
+
+struct sOctCell_7410 {
+    void* child[8];
+    void* lists[3];
+};
+
+struct sHashCellR_7410 {
+    char pad_0x0[0x10];
+    sOctCell_7410* oct;   // 0x10
+};
+
+extern "C" void func_002B6CF8_7410(void* self, void* trig, sVec3_2B6CF8* min, sVec3_2B6CF8* max) __asm__("func_002B6CF8");
+extern "C" void func_00328F28_7410(sHashKey_7410* out, const void* box) __asm__("func_00328F28");
+extern "C" void func_003284B8_7410(sOctCell_7410* oct, int type, void* node, sHashKey_7410* key,
+                                   sHashCellR_7410* cell) __asm__("func_003284B8");
+struct sTriggerIdSlot120;
+extern "C" void func_002B77C0(sTriggerIdSlot120* self, int trig);
+
+static inline int octEmpty_7410(sOctCell_7410* o)
+{
+    if (o->child[0] != 0 || o->child[1] != 0 || o->child[2] != 0 || o->child[3] != 0
+        || o->child[4] != 0 || o->child[5] != 0 || o->child[6] != 0 || o->child[7] != 0) {
+        return 0;
+    }
+    for (int i = 0; i < 3; i++) {
+        if (o->lists[i] != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static inline void wtRemove_7410(sHashCellR_7410* cell, void* item, const sWtBox_7410* box)
+{
+    (*(int*)((char*)cell + 0xA0))++;
+    sHashKey_7410 key;
+    func_00328F28_7410(&key, box);
+    sHashCellR_7410* c1 = key.x < 0 ? cell + 4 : cell;
+    sHashCellR_7410* c2 = key.y < 0 ? c1 + 2 : c1;
+    sHashCellR_7410* c3 = key.z < 0 ? c2 + 1 : c2;
+    sHashCellR_7410* c = c3;
+    func_003284B8_7410(c->oct, 2, item, &key, c);
+    if (octEmpty_7410(c->oct)) {
+        operator_delete((int*)c->oct);
+        c->oct = 0;
+    }
+}
+
+// Removes an active sound trigger from the world's spatial tree (freeing an octree cell that becomes empty).
+extern "C" void func_002B7410(void* self, sWtmEnt18* e)
+{
+    char* trig = (char*)e;
+    if (trig == 0 || *(int*)(trig + 0xC) == 0 || *(int*)(*(char**)(trig + 0x10) + 4) == 0) {
+        return;
+    }
+    sVec3_2B6CF8 min;
+    sVec3_2B6CF8 max;
+    func_002B6CF8_7410(self, trig, &min, &max);
+    sHashCellR_7410* cell = ((sHashCellR_7410**)func_0028B1C8())[8];
+    float one = 1.0f;
+    sWtBox_7410 box;
+    box.min.x = min.x;
+    box.min.y = min.y;
+    box.min.z = min.z;
+    box.min.w = one;
+    box.max.x = max.x;
+    box.max.y = max.y;
+    box.max.z = max.z;
+    box.max.w = one;
+    wtRemove_7410(cell, trig, &box);
+    func_002B77C0((sTriggerIdSlot120*)self, (int)trig);
+}
+#endif
 
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B75D0);
 
