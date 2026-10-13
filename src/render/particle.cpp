@@ -2100,7 +2100,62 @@ extern "C" void func_00376768(sPtGfx6768* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00376938);
+#ifdef SKIP_ASM
+struct sPtVEntryI6938 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+struct sPtGfx6938 {
+    char pad_0x0[0x10D8];
+    sPtVEntryI6938* vtable;         // 0x10D8
+    char pad_0x10DC[0x5900 - 0x10DC];
+    unsigned short scissor[4];      // 0x5900: x, y, w, h
+};
+
+// Clips the rectangle to the screen (negative origins shrink the size) and stores it as the scissor box.
+extern "C" void func_00376938(void* p, float x, float y, float w, float h)
+{
+    sPtGfx6938* self = (sPtGfx6938*)p;
+    sPtVEntryI6938* e = &self->vtable[10];
+    int width = e->fn((char*)self + e->delta);
+    e = &self->vtable[11];
+    int height = e->fn((char*)self + e->delta);
+    if (x < 0.0f) {
+        w += x;
+        x = 0.0f;
+    }
+    if (y < 0.0f) {
+        h += y;
+        y = 0.0f;
+    }
+    int ix = (int)x;
+    self->scissor[0] = ix < width - 1 ? ix : width - 1;
+    int iy = (int)y;
+    self->scissor[1] = iy < height - 1 ? iy : height - 1;
+    int iw = (int)w;
+    int maxw = width - self->scissor[0];
+    int rw;
+    if (iw >= 0) {
+        rw = maxw < iw ? maxw : iw;
+    } else {
+        rw = 0;
+    }
+    self->scissor[2] = rw;
+    int ih = (int)h;
+    int maxh = height - self->scissor[1];
+    int rh;
+    if (ih >= 0) {
+        rh = maxh < ih ? maxh : ih;
+    } else {
+        rh = 0;
+    }
+    self->scissor[3] = rh;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("render/particle", func_00376A70);
