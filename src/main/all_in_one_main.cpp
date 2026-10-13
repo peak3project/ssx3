@@ -221,9 +221,175 @@ extern "C" void func_001DB718(L_B718 *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/all_in_one_main", func_001DB778);
+#ifdef SKIP_ASM
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator_new_tagDB778(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
+void* cMemMan_free(void* ptr);
+void operator_delete(int*);
+extern char D_0045CDE8[];
 
+struct sPtrVecDB778 {
+    void* alloc;
+    void** start;
+    void** finish;
+    void** eos;
+};
+
+static inline void** sPtrVecDB778_allocate(unsigned int n)
+{
+    if (n == 1)
+        return (void**)cMemMan_alloc(4, D_0045CDE8, 0x20000000, 0);
+    return (void**)operator_new_tagDB778(n * 4, D_0045CDE8, 0x20000000, 0);
+}
+
+static inline void sPtrVecDB778_deallocate(void** p, unsigned int n)
+{
+    if (p != 0) {
+        if (n == 1)
+            operator_delete((int*)p);
+        else
+            cMemMan_free(p);
+    }
+}
+
+static inline void** sPtrVecDB778_copy(void** first, void** last, void** result)
+{
+    func_0041610C(result, first, (last - first) * sizeof(void*));
+    return result + (last - first);
+}
+
+static inline void** sPtrVecDB778_ucopy(void** first, void** last, void** result)
+{
+    return sPtrVecDB778_copy(first, last, result);
+}
+
+static inline void sPtrVecDB778_construct(void** p, void* const& v)
+{
+    if (p != 0)
+        *p = v;
+}
+
+static inline void** sPtrVecDB778_copy_backward(void** first, void** last, void** result)
+{
+    int n = last - first;
+    func_0041610C(result - n, first, n * sizeof(void*));
+    return result - n;
+}
+
+extern "C" void func_001DB778(sPtrVecDB778* self, void** pos, void* const& x)
+{
+    if (self->finish != self->eos) {
+        if (self->finish != 0)
+            *self->finish = self->finish[-1];
+        ++self->finish;
+        void* x_copy = x;
+        sPtrVecDB778_copy_backward(pos, self->finish - 2, self->finish - 1);
+        *pos = x_copy;
+    } else {
+        unsigned int old_size = self->finish - self->start;
+        unsigned int len = old_size != 0 ? 2 * old_size : 1;
+        void** new_start = sPtrVecDB778_allocate(len);
+        void** new_finish = new_start;
+        new_finish = sPtrVecDB778_ucopy(self->start, pos, new_start);
+        sPtrVecDB778_construct(new_finish, x);
+        ++new_finish;
+        new_finish = sPtrVecDB778_ucopy(pos, self->finish, new_finish);
+        sPtrVecDB778_deallocate(self->start, self->eos - self->start);
+        self->start = new_start;
+        self->finish = new_finish;
+        self->eos = new_start + len;
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("main/all_in_one_main", func_001DB918);
+#ifdef SKIP_ASM
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator_new_tagDB918(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
+void* cMemMan_free(void* ptr);
+void operator_delete(int*);
+extern char D_0045CDE8[];
+
+struct sPtrVecDB918 {
+    void* alloc;
+    void** start;
+    void** finish;
+    void** eos;
+};
+
+static inline void** sPtrVecDB918_allocate(unsigned int n)
+{
+    if (n == 1)
+        return (void**)cMemMan_alloc(4, D_0045CDE8, 0x20000000, 0);
+    return (void**)operator_new_tagDB918(n * 4, D_0045CDE8, 0x20000000, 0);
+}
+
+static inline void sPtrVecDB918_deallocate(void** p, unsigned int n)
+{
+    if (p != 0) {
+        if (n == 1)
+            operator_delete((int*)p);
+        else
+            cMemMan_free(p);
+    }
+}
+
+static inline void** sPtrVecDB918_copy(void** first, void** last, void** result)
+{
+    func_0041610C(result, first, (last - first) * sizeof(void*));
+    return result + (last - first);
+}
+
+static inline void** sPtrVecDB918_ucopy(void** first, void** last, void** result)
+{
+    return sPtrVecDB918_copy(first, last, result);
+}
+
+static inline void sPtrVecDB918_construct(void** p, void* const& v)
+{
+    if (p != 0)
+        *p = v;
+}
+
+static inline void** sPtrVecDB918_copy_backward(void** first, void** last, void** result)
+{
+    int n = last - first;
+    func_0041610C(result - n, first, n * sizeof(void*));
+    return result - n;
+}
+
+extern "C" void func_001DB918(sPtrVecDB918* self, void** pos, void* const& x)
+{
+    if (self->finish != self->eos) {
+        if (self->finish != 0)
+            *self->finish = self->finish[-1];
+        ++self->finish;
+        void* x_copy = x;
+        sPtrVecDB918_copy_backward(pos, self->finish - 2, self->finish - 1);
+        *pos = x_copy;
+    } else {
+        unsigned int old_size = self->finish - self->start;
+        unsigned int len = old_size != 0 ? 2 * old_size : 1;
+        void** new_start = sPtrVecDB918_allocate(len);
+        void** new_finish = new_start;
+        new_finish = sPtrVecDB918_ucopy(self->start, pos, new_start);
+        sPtrVecDB918_construct(new_finish, x);
+        ++new_finish;
+        new_finish = sPtrVecDB918_ucopy(pos, self->finish, new_finish);
+        sPtrVecDB918_deallocate(self->start, self->eos - self->start);
+        self->start = new_start;
+        self->finish = new_finish;
+        self->eos = new_start + len;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/all_in_one_main", func_001DBAB8);
