@@ -2050,7 +2050,25 @@ cVbDtor00140EE0::~cVbDtor00140EE0()
 __asm__(".globl func_00140EE0\n.type func_00140EE0,@function\nfunc_00140EE0 = _$_15cVbDtor00140EE0\n.size func_00140EE0,0x15C\n");
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00141040);
+#ifdef SKIP_ASM
+struct cVbHead00141040 {
+    char pad[0x50];
+};
+
+class cVbDtor00141040 : public cVbHead00141040, virtual public cRiderVb_hpc {
+public:
+    virtual ~cVbDtor00141040();
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor00141040::~cVbDtor00141040()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor00141040; expose it under the address-derived name.
+__asm__(".globl func_00141040\n.type func_00141040,@function\nfunc_00141040 = _$_15cVbDtor00141040\n.size func_00141040,0x15C\n");
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001411C0);
