@@ -2242,7 +2242,40 @@ INCLUDE_ASM("seg/seg_1218", func_001057B8);
 
 INCLUDE_ASM("seg/seg_1218", func_00105D98);
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00106538);
+#ifdef SKIP_ASM
+struct sV4_6538 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq_6538(sV4_6538& a, const sV4_6538& b)
+{
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+extern "C" void func_00329B40(void* p, const sV4_6538* d);
+
+extern "C" void func_00106538(char* self, const sV4_6538* d)
+{
+    AddEq_6538(*(sV4_6538*)(self + 0x110), *d);
+    AddEq_6538(*(sV4_6538*)(self + 0x9D0), *d);
+    func_00329B40(*(void**)(self + 0xAA0), d);
+    AddEq_6538(*(sV4_6538*)(self + 0x400), *d);
+    AddEq_6538(*(sV4_6538*)(self + 0x410), *d);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_1218", func_001065B0);
 
