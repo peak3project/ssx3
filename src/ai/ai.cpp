@@ -6134,7 +6134,71 @@ extern "C" void func_001328B0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_001329B0);
+#ifdef SKIP_ASM
+struct sV4_29B0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector length via vsqrt).
+static inline float Length_29B0(const sV4_29B0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+struct sRider_29B0 {
+    char pad[0x1E0];
+    sV4_29B0 vel;
+};
+
+struct sFlags_29B0 {
+    char pad[0x1C];
+    int flags;
+};
+
+struct sOwner_29B0 {
+    char pad[0x58];
+    sFlags_29B0* ctl;
+};
+
+struct sState_29B0 {
+    float t;            // 0x0
+    int f4;             // 0x4
+    int fast;           // 0x8
+    int ctl;            // 0xC
+    int flag;           // 0x10
+    sRider_29B0* rider; // 0x14
+};
+
+extern "C" void func_001329B0(sState_29B0* s, sOwner_29B0* o, int flag, float t)
+{
+    int on = 1;
+    s->t = t;
+    s->flag = flag ? on : 0;
+    s->fast = Length_29B0(s->rider->vel) > 2222.2222f;
+    bool c = false;
+    sFlags_29B0* f = o->ctl;
+    if (f != 0)
+        c = (f->flags & 1) ? on : 0;
+    s->ctl = c;
+}
+#endif
 
 INCLUDE_ASM("ai/ai", func_00132A30);
 
