@@ -678,7 +678,35 @@ extern "C" void func_002D96E0(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D9738);
+#ifdef SKIP_ASM
+struct sAvNode_9738 { char pad[0xF4]; sAvNode_9738* next; };
+struct sAvEnt_9738 { short a; short depth; };
+struct sAv_9738 {
+    int f0;
+    sAvNode_9738* head;      // 0x4
+    char pad8[6];
+    unsigned short count;    // 0xE
+    char pad10[0x100];
+    sAvEnt_9738 ents[64];    // 0x110
+};
+// Records (a, depth of stop in the node list) while there is room for it.
+extern "C" void func_002D9738(sAv_9738* self, int a, sAvNode_9738* stop)
+{
+    if (self->count < 64) {
+        int depth = 0;
+        sAvNode_9738* p = self->head;
+        while (p != 0 && p != stop) {
+            depth++;
+            p = p->next;
+        }
+        self->ents[self->count].a = a;
+        self->ents[self->count].depth = depth;
+        self->count++;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", cAvalanche_triggerAvalanche);
