@@ -740,7 +740,38 @@ void func_003DDF80(char *dst) {
 
 INCLUDE_ASM("ealib/seg_2DCAE8", iFILESYS_ExecCommand);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", iFILESYS_CommandCompleteCallback);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct Cmd_IFS { int f0; int abort; volatile int status; char pad[8]; int f14; char pad2[0x10]; void (*cb)(int, int, int); };
+struct G_IFS { char pad[0x10]; volatile int busy; char pad2[0x10]; struct Cmd_IFS *cur; };
+extern struct G_IFS D_00519AB0_IFS __asm__("D_00519AB0");
+extern void iFILESYS_ExecCommand_IFS(int) __asm__("iFILESYS_ExecCommand");
+
+void iFILESYS_CommandCompleteCallback_impl(int ok) __asm__("iFILESYS_CommandCompleteCallback");
+void iFILESYS_CommandCompleteCallback_impl(int ok) {
+    struct Cmd_IFS *c;
+    D_00519AB0_IFS.busy++;
+    c = D_00519AB0_IFS.cur;
+    if (c == 0) {
+        return;
+    }
+    if (c->abort != 0) {
+        c->status = -1;
+    } else {
+        c->status = ok ? 1 : -2;
+    }
+    D_00519AB0_IFS.cur = 0;
+    if (c->cb != 0) {
+        c->cb(c->f0, c->status, c->f14);
+    }
+    D_00519AB0_IFS.busy--;
+    if (D_00519AB0_IFS.busy == 0) {
+        iFILESYS_ExecCommand_IFS(0);
+    }
+}
+#endif
 
 void func_003DE4C8(void) {
 }
