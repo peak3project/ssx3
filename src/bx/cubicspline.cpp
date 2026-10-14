@@ -565,7 +565,88 @@ extern "C" void func_0031EEE8(void* ms, sMState_31EEE8* av)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031F2C8);
+#ifdef SKIP_ASM
+// dlmalloc 2.7 mEMALIGn()
+extern "C" void* func_0031E818(void* ms, unsigned int bytes);
+// PORT: the unit declares func_0031ED60(void*); the body really takes (ms, mem).
+extern "C" void func_0031ED60_F2C8(void* ms, void* mem) __asm__("func_0031ED60");
+extern "C" int* func_00415FB8();
+
+struct sMChunk_31F2C8
+{
+    unsigned int prev_size;      // 0x0
+    unsigned int size;           // 0x4
+};
+
+// PORT: the unit declares func_0031F2C8(void*); the body really takes (ms, alignment, bytes).
+extern "C" void* func_0031F2C8_memalign(void* ms, unsigned int alignment, unsigned int bytes) __asm__("func_0031F2C8");
+
+extern "C" void* func_0031F2C8_memalign(void* ms, unsigned int alignment, unsigned int bytes)
+{
+    unsigned int nb;
+    char* m;
+    sMChunk_31F2C8* p;
+    char* brk;
+    sMChunk_31F2C8* newp;
+    unsigned int newsize;
+    unsigned int leadsize;
+    sMChunk_31F2C8* remainder;
+    unsigned int remainder_size;
+    unsigned int size;
+
+    if (alignment <= 16)
+        return func_0031E818(ms, bytes);
+    if (alignment < 16)
+        alignment = 16;
+    if ((alignment & (alignment - 1)) != 0) {
+        unsigned int a = 16 * 2;
+        while (a < alignment)
+            a <<= 1;
+        alignment = a;
+    }
+    if (bytes >= (unsigned int)-32) {
+        *func_00415FB8() = 12;
+        return 0;
+    }
+    nb = (bytes + 4 + 15 < 16) ? 16 : (bytes + 4 + 15) & ~15;
+    m = (char*)func_0031E818(ms, nb + alignment + 16);
+    if (m == 0)
+        return 0;
+    p = (sMChunk_31F2C8*)(m - 8);
+    // PORT: chunk header reads go through (int)m - 8 (pointer in int) to match gcc 2.95 offset folding
+    if ((unsigned int)m % alignment != 0) {
+        brk = (char*)(((unsigned int)(m + alignment - 1) & -(int)alignment) - 8);
+        if ((unsigned int)(brk - (char*)p) < 16)
+            brk += alignment;
+        newp = (sMChunk_31F2C8*)brk;
+        leadsize = brk - (char*)p;
+        newsize = (((sMChunk_31F2C8*)((int)m - 8))->size & ~3) - leadsize;
+        if (((sMChunk_31F2C8*)((int)m - 8))->size & 2) {
+            newp->prev_size = ((sMChunk_31F2C8*)((int)m - 8))->prev_size + leadsize;
+            newp->size = newsize | 2;
+            return (char*)newp + 8;
+        }
+        newp->size = newsize | 1;
+        ((sMChunk_31F2C8*)((char*)newp + newsize))->size |= 1;
+        ((sMChunk_31F2C8*)((int)m - 8))->size = (((sMChunk_31F2C8*)((int)m - 8))->size & 1) | leadsize;
+        func_0031ED60_F2C8(ms, (char*)p + 8);
+        p = newp;
+    }
+    if (!(p->size & 2)) {
+        size = p->size & ~3;
+        if (size > nb + 16) {
+            remainder_size = size - nb;
+            remainder = (sMChunk_31F2C8*)((char*)p + nb);
+            remainder->size = remainder_size | 1;
+            p->size = (p->size & 1) | nb;
+            func_0031ED60_F2C8(ms, (char*)remainder + 8);
+        }
+    }
+    return (char*)p + 8;
+}
+#endif
 
 INCLUDE_ASM("bx/cubicspline", func_0031F4E8);
 
