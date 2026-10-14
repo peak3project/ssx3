@@ -3594,7 +3594,203 @@ extern "C" void func_001CC190(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CC1E0);
+#ifdef SKIP_ASM
+extern "C" char* strcpy(char* dst, const char* src);
+extern "C" int strlen(const char* s);
+extern "C" void func_00416210(void* dst, int c, int n);
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_001CE3C8(void* self, int i, int v, int mode);
+extern "C" void cKeyboardPopup_redrawScreen(void* self);
+extern "C" int cKeyboardPopup_getObjName(void* self, int key, char* out, int a3);
+extern "C" void func_001CC848(void* self, int a1);
+extern "C" void func_001CC7C8(void* self);
+extern "C" void func_001CE5E0(void* self, int digit);
+extern "C" void func_001CC1E0(void* self, int a1);
+// PORT: func_001CE560's third parameter is an int* out-param; the unit declares it (void*, int, int).
+int func_001CE560_out(void* self, int idx, int* out) __asm__("func_001CE560");
+// func_0039F190 returns its last list node in $v0; the unit declares it void.
+void* func_0039F190_r(void* self, int a1) __asm__("func_0039F190");
+
+struct sVE_C1E0 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+struct sUIObj_C1E0 {
+    char pad_0x0[0x8];
+    sVE_C1E0* vt;                   // 0x8
+};
+
+struct sColor_C1E0 {
+    float r, g, b, a;
+    sColor_C1E0(float ar, float ag, float ab, float aa) : r(ar), g(ag), b(ab), a(aa) {}
+};
+
+
+struct sKeyboard_C1E0 {
+    char pad_0x0[0x10];
+    char* owner;                    // 0x10
+    char pad_0x14[0xC];
+    sUIObj_C1E0* parent;            // 0x20
+    char pad_0x24[0x1C];
+    void* screen;                   // 0x40
+    char pad_0x44[0x10];
+    int pendingAccept;              // 0x54
+    int needText;                   // 0x58
+    int done;                       // 0x5C
+    int maxLen;                     // 0x60
+    int minLen;                     // 0x64
+    int caps;                       // 0x68
+    int shift;                      // 0x6C
+    char pad_0x70[0x4];
+    char text[0xC0];                // 0x74
+    int cursor;                     // 0x134
+    int mark;                       // 0x138
+    int end;                        // 0x13C
+    int key;                        // 0x140
+    char pad_0x144[0x2DC];
+    int closeOnAccept;              // 0x420
+};
+
+// Handles the currently selected key of the on-screen keyboard.
+extern "C" void func_001CC1E0(void* self_, int flag)
+{
+    sKeyboard_C1E0* self = (sKeyboard_C1E0*)self_;
+    int redo = 0;
+    int moved;
+    if (self->pendingAccept != 0) {
+        int key = self->key;
+        if (key != 0x37 && key != 0x46) {
+            self->pendingAccept = 0;
+            self->key = 0x46;
+            func_001CC1E0(self, 0);
+            redo = 1;
+            self->key = key;
+        }
+    }
+    moved = 0;
+    if (flag == 0 && func_001CE560_out(self, self->key, 0) != 0) {
+        switch (self->key) {
+        case 27: {
+            int len = strlen(self->text);
+            if (self->cursor != len) {
+                if (self->cursor == 0)
+                    break;
+                if (self->cursor > 0)
+                    self->cursor--;
+                strcpy(&self->text[self->cursor], &self->text[self->cursor + 1]);
+                if (self->mark == self->cursor + 1) {
+                    self->mark = self->cursor;
+                    moved = 1;
+                }
+                if ((unsigned int)strlen(self->text) < (unsigned int)self->end)
+                    self->end = strlen(self->text);
+            } else if (self->mark == self->cursor) {
+                self->mark = 0;
+            } else {
+                if (self->cursor > 0)
+                    self->cursor--;
+                self->text[self->cursor] = 0;
+                self->end = self->cursor;
+            }
+            break;
+        }
+        case 28:
+        case 69:
+        case 79:
+            break;
+        case 42:
+            self->caps ^= 1;
+            cKeyboardPopup_redrawScreen(self);
+            break;
+        case 56:
+            self->shift ^= 1;
+            cKeyboardPopup_redrawScreen(self);
+            break;
+        case 70:
+            func_00416210(self->text, 0, 0x40);
+            self->text[0] = 0;
+            self->cursor = 0;
+            self->end = 0;
+            self->mark = 0;
+            break;
+        case 76:
+            if (self->cursor == self->mark) {
+                if (self->cursor != 0)
+                    self->mark = self->cursor - 1;
+                moved = 1;
+            }
+            if (self->cursor > 0)
+                self->cursor--;
+            break;
+        case 83: {
+            int len = strlen(self->text);
+            if (self->cursor != len) {
+                if (self->cursor < self->maxLen - 1)
+                    self->cursor++;
+                if (self->end == self->cursor)
+                    self->end++;
+            }
+            break;
+        }
+        case 55:
+            if (self->closeOnAccept != 0)
+                func_0039F190_r(self->owner + 0x18, 1);
+            self->done = 1;
+            self->parent->vt[19].fn((char*)self->parent + self->parent->vt[19].delta, 0, 0xD);
+            break;
+        case 75:
+            if (func_001CE560_out(self, 0x4B, 0) != 0)
+                func_001CC7C8(self);
+            break;
+        case 0:
+            func_0039F190_r(self->owner + 0x18, 1);
+            self->parent->vt[19].fn((char*)self->parent + self->parent->vt[19].delta, 0, 0xE);
+            break;
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+            func_001CE5E0(self, self->key - 4);
+            break;
+        default:
+            func_001CC7C8(self);
+            break;
+        }
+    }
+    if (self->key != 0x38 && self->shift != 0) {
+        self->shift ^= 1;
+        cKeyboardPopup_redrawScreen(self);
+    }
+    func_001CC848(self, moved);
+    if (self->needText != 0)
+        func_001CE3C8(self, 0x4B, strlen(self->text) != 0, 2);
+    if (strlen(self->text) < self->minLen)
+        func_001CE3C8(self, 0x37, 0, 2);
+    else
+        func_001CE3C8(self, 0x37, 1, 2);
+    cKeyboardPopup_redrawScreen(self);
+    if (redo) {
+        char name[32];
+        cKeyboardPopup_getObjName(self, 0x46, name, 1);
+        sUIObj_C1E0* o = (sUIObj_C1E0*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
+        if (o != 0) {
+            // PORT: takes the address of a temporary (accepted by g++ 2.95); use a named local elsewhere.
+            o->vt[11].fn((char*)o + o->vt[11].delta, &sColor_C1E0(0.3f, 0, 0, 0));
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CC620);
