@@ -206,7 +206,266 @@ extern "C" void func_00211270(void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstateprofile", func_00211380);
+#ifdef SKIP_ASM
+class cMCSub_1380 {
+public:
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual int v08();
+    virtual int v09();
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual void v14(int, void*);
+    virtual int v15();
+    virtual int v16();
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual int v25();
+    virtual int v26();
+    virtual int v27();
+    virtual int v28();
+    virtual int v29();
+    virtual int v30();
+    virtual int v31();
+    virtual int v32();
+    virtual int v33();
+    virtual int v34();
+    virtual int v35();
+    virtual int v36();
+    virtual int v37();
+    virtual int v38();
+    virtual int v39();
+    virtual int v40();
+    virtual int v41();
+    virtual int v42();
+    virtual int v43();
+    virtual int v44();
+    virtual int v45();
+    virtual int v46();
+    virtual int v47();
+    virtual int v48();
+    virtual int v49();
+    virtual int v50();
+    virtual int v51();
+    virtual int v52();
+    virtual int v53();
+    virtual int v54(int);
+    virtual int v55();
+    virtual int v56();
+    virtual int v57();
+    virtual int v58();
+    virtual int v59();
+    virtual int v60();
+    virtual int v61();
+    virtual int v62();
+    virtual int v63();
+    virtual void v64(void*);
+    virtual int v65();
+    virtual int v66(int);
+    virtual int v67(int);
+};
+
+class cState_1380 {
+public:
+    int pad[2];
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual int v08();
+    virtual int v09();
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual int v14();
+    virtual int v15();
+    virtual int v16();
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual int v25();
+    virtual int v26();
+    virtual int v27();
+    virtual int v28();
+    virtual int v29();
+    virtual int v30();
+    virtual int v31();
+    virtual int v32();
+    virtual int v33();
+    virtual int v34();
+    virtual void v35(int);
+    virtual int v36();
+    virtual int v37();
+    virtual int v38();
+    virtual int v39();
+    virtual int v40();
+    virtual int v41();
+    virtual int v42();
+    virtual void v43();
+};
+
+class cUIObj_1380 {
+public:
+    int pad[2];
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual void v08(int);
+    virtual void v09(int);
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual int v14();
+    virtual int v15();
+    virtual int v16();
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual void v25(int);
+};
+
+struct sVE_1380 {
+    short delta;
+    short index;
+    unsigned short* (*fn)(void*, int);
+};
+
+class cG_1380 {
+public:
+    int pad;
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual void v04(int);
+};
+
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void func_001D8240();
+extern "C" void func_00211270(void* self);
+extern "C" int func_001D97E0(void* self, void* mp, int dev, int a3);
+extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* mp, int dev, unsigned short* buf, int len);
+extern "C" void func_003A0D00(void* obj, unsigned short* s);
+extern "C" void func_003A0E90(void* obj, unsigned short* s);
+extern "C" void* func_00227F80(void* self);
+extern void* D_004A28A8;
+extern char D_004700F0[];
+extern char D_00471D68[];
+extern char D_00471D78[];
+extern char D_00471D90[];
+extern char D_00471DA0[];
+
+struct sCol_1380 {
+    float r, g, b, a;
+};
+
+extern sCol_1380 D_004C66C8_1380 __asm__("D_004C66C8");
+
+static inline cUIObj_1380* getObj_1380(cState_1380* self, char* name)
+{
+    return (cUIObj_1380*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+}
+
+// Refreshes the memory-card profile list: device name, then the six profile slots and the arrow hints.
+extern "C" void func_00211380(void* p)
+{
+    cState_1380* self = (cState_1380*)p;
+    unsigned short buf[0x320];
+    char name[0x40];
+    char* mp = (char*)func_00227F80(D_004A28A8);
+    if (self->v42()) {
+        if (!(*(cMCSub_1380**)(mp + 0x434))->v53()) {
+            func_001D8240();
+            func_00211270(self);
+            return;
+        }
+        if (*(int*)((char*)self + 0x214) != 3)
+            self->v35(3);
+    }
+    if (self->v42()) {
+        cMCOverlayManager_GetDeviceDisplayString(mp, *(int*)(mp + 0x428), buf, 0x320);
+        int first = 0;
+        func_003A0D00(getObj_1380(self, D_00471D78), buf);
+        *(int*)((char*)self + 0x21C) = *(int*)(mp + 0x428);
+        self->v43();
+        cUIObj_1380* o = getObj_1380(self, D_004700F0);
+        *(sCol_1380*)((char*)o + 0x88) = D_004C66C8_1380;
+        (*(cMCSub_1380**)(mp + 0x434))->v64(buf);
+        func_003A0E90(o, buf);
+        o->v09(0);
+        for (int i = 1; i < 7; i++) {
+            sprintf(name, D_00471D68, i);
+            o = getObj_1380(self, name);
+            (*(cMCSub_1380**)(mp + 0x434))->v14(i - 1, (char*)self + 0x234);
+            func_003A0E90(o, (unsigned short*)((char*)self + 0x234));
+            if (!(*(cMCSub_1380**)(mp + 0x434))->v67(i - 1) && !(*(cMCSub_1380**)(mp + 0x434))->v66(i - 1)
+                && (*(cMCSub_1380**)(mp + 0x434))->v55()) {
+                if (!first) {
+                    first = 1;
+                    o->v08(0);
+                } else {
+                    o->v25(1);
+                    o->v08(1);
+                }
+            } else if ((*(cMCSub_1380**)(mp + 0x434))->v54(*(int*)(mp + 0x428))) {
+                if ((*(cMCSub_1380**)(mp + 0x434))->v66(i - 1)) {
+                    o->v08(1);
+                    o->v25(1);
+                } else {
+                    o->v08(0);
+                    o->v25(0);
+                }
+            } else {
+                o->v25(1);
+                o->v08(1);
+            }
+        }
+        if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 1) == -1)
+            getObj_1380(self, D_00471D90)->v09(0);
+        else
+            getObj_1380(self, D_00471D90)->v09(1);
+        if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 0) == -1)
+            getObj_1380(self, D_00471DA0)->v09(0);
+        else
+            getObj_1380(self, D_00471DA0)->v09(1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_00211850);
