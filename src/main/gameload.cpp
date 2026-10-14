@@ -865,7 +865,205 @@ extern "C" void func_00231348(void* self, cStream_00231348* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_002314D0);
+#ifdef SKIP_ASM
+// PORT: these state loaders are declared with one parameter in their units; this caller also passes the stream.
+extern "C" void func_00234A30(void* state, void* stream);
+void func_00236D80_14D0(void* state, void* stream) __asm__("func_00236D80__FPv");
+void func_00234E00_14D0(void* state, void* stream) __asm__("func_00234E00__FPv");
+void func_00234ED8_14D0(void* state, void* stream) __asm__("func_00234ED8__FPv");
+extern "C" void func_00234120(void* state, void* stream);
+void func_00233BB0_14D0(void* state, void* stream) __asm__("func_00233BB0__FPv");
+void func_00236EE8_14D0(void* state, void* stream) __asm__("func_00236EE8__FPv");
+void func_00233BF0_14D0(void* state, void* stream) __asm__("func_00233BF0__FPv");
+void func_00236B90_14D0(void* state, void* stream) __asm__("func_00236B90__FPv");
+extern "C" void func_00235A18(void* state, void* stream);
+void func_00236B18_14D0(void* state, void* stream) __asm__("func_00236B18__FPv");
+void func_00236FC8_14D0(void* state, void* stream) __asm__("func_00236FC8__FPv");
+extern "C" void func_00235FD0(void* state, void* stream);
+extern "C" void func_002367C8(void* state, void* stream);
+void func_002361E8_14D0(void* state, void* stream) __asm__("func_002361E8__FPv");
+
+class cGameState_14D0;
+
+class cStream_14D0 {
+public:
+    virtual void v01();
+    virtual void read(void* dst, int size);
+};
+
+class cLoadable_14D0 {
+public:
+    int pad[3];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void load(cStream_14D0* stream);
+};
+
+struct sGameLoad_14D0 {
+    char pad0[0x70];
+    cLoadable_14D0* a;              // 0x70
+    cLoadable_14D0* b;              // 0x74
+    char pad78[0x184];
+    cGameState_14D0* prev;          // 0x1FC
+    cGameState_14D0* cur;           // 0x200
+    char pad204[0xC];
+    int nextId;                     // 0x210
+    int curId;                      // 0x214
+    int prevId;                     // 0x218
+    int nextArg;                    // 0x21C
+};
+
+// Game load state machine: restores the state ids and every state from a save stream.
+extern "C" void func_002314D0(void* self_, cStream_14D0* stream)
+{
+    sGameLoad_14D0* self = (sGameLoad_14D0*)self_;
+    self->a->load(stream);
+    self->b->load(stream);
+    stream->read(&self->curId, 4);
+    stream->read(&self->prevId, 4);
+    stream->read(&self->nextId, 4);
+    stream->read(&self->nextArg, 4);
+    func_00234A30((char*)self + 0xB0, stream);
+    func_00236D80_14D0((char*)self + 0xD0, stream);
+    func_00234E00_14D0((char*)self + 0xE0, stream);
+    func_00234ED8_14D0((char*)self + 0xF0, stream);
+    func_00234120((char*)self + 0x100, stream);
+    func_00233BB0_14D0((char*)self + 0x118, stream);
+    func_00236EE8_14D0((char*)self + 0x128, stream);
+    func_00233BF0_14D0((char*)self + 0x138, stream);
+    func_00236B90_14D0((char*)self + 0x148, stream);
+    func_00235A18((char*)self + 0x158, stream);
+    func_00236B18_14D0((char*)self + 0x178, stream);
+    func_00236FC8_14D0((char*)self + 0x18C, stream);
+    func_00235FD0((char*)self + 0x19C, stream);
+    func_002367C8((char*)self + 0x1B8, stream);
+    func_002361E8_14D0((char*)self + 0x1DC, stream);
+    switch (self->curId) {
+    case 0:
+        self->cur = 0;
+        break;
+    case 1:
+        self->cur = (cGameState_14D0*)((char*)self + 0xB0);
+        break;
+    case 2:
+        self->cur = (cGameState_14D0*)((char*)self + 0xD0);
+        break;
+    case 3:
+        self->cur = (cGameState_14D0*)((char*)self + 0xE0);
+        break;
+    case 4:
+        self->cur = (cGameState_14D0*)((char*)self + 0xF0);
+        break;
+    case 5:
+        self->cur = (cGameState_14D0*)((char*)self + 0x100);
+        break;
+    case 6:
+        self->cur = (cGameState_14D0*)((char*)self + 0x118);
+        break;
+    case 7:
+        self->cur = (cGameState_14D0*)((char*)self + 0x128);
+        break;
+    case 8:
+        self->cur = (cGameState_14D0*)((char*)self + 0x138);
+        break;
+    case 9:
+        self->cur = (cGameState_14D0*)((char*)self + 0x148);
+        break;
+    case 10:
+        self->cur = (cGameState_14D0*)((char*)self + 0x158);
+        break;
+    case 11:
+        self->cur = (cGameState_14D0*)((char*)self + 0x178);
+        break;
+    case 12:
+        self->cur = (cGameState_14D0*)((char*)self + 0x18C);
+        break;
+    case 13:
+        self->cur = (cGameState_14D0*)((char*)self + 0x19C);
+        break;
+    case 14:
+        self->cur = (cGameState_14D0*)((char*)self + 0x1B8);
+        break;
+    case 15:
+        self->cur = (cGameState_14D0*)((char*)self + 0x1DC);
+        break;
+    case 16:
+        self->cur = (cGameState_14D0*)((char*)self + 0x1EC);
+        break;
+    default:
+        self->cur = 0;
+        self->curId = 0;
+        break;
+    }
+    switch (self->prevId) {
+    case 1:
+        self->prev = (cGameState_14D0*)((char*)self + 0xB0);
+        break;
+    case 2:
+        self->prev = (cGameState_14D0*)((char*)self + 0xD0);
+        break;
+    case 3:
+        self->prev = (cGameState_14D0*)((char*)self + 0xE0);
+        break;
+    case 4:
+        self->prev = (cGameState_14D0*)((char*)self + 0xF0);
+        break;
+    case 5:
+        self->prev = (cGameState_14D0*)((char*)self + 0x100);
+        break;
+    case 6:
+        self->prev = (cGameState_14D0*)((char*)self + 0x118);
+        break;
+    case 7:
+        self->prev = (cGameState_14D0*)((char*)self + 0x128);
+        break;
+    case 8:
+        self->prev = (cGameState_14D0*)((char*)self + 0x138);
+        break;
+    case 9:
+        self->prev = (cGameState_14D0*)((char*)self + 0x148);
+        break;
+    case 10:
+        self->prev = (cGameState_14D0*)((char*)self + 0x158);
+        break;
+    case 11:
+        self->prev = (cGameState_14D0*)((char*)self + 0x178);
+        break;
+    case 12:
+        self->prev = (cGameState_14D0*)((char*)self + 0x18C);
+        break;
+    case 13:
+        self->prev = (cGameState_14D0*)((char*)self + 0x19C);
+        break;
+    case 14:
+        self->prev = (cGameState_14D0*)((char*)self + 0x1B8);
+        break;
+    case 15:
+        self->prev = (cGameState_14D0*)((char*)self + 0x1DC);
+        break;
+    case 16:
+        self->prev = (cGameState_14D0*)((char*)self + 0x1EC);
+        break;
+    default:
+        self->prevId = 0;
+    case 0:
+        self->prev = 0;
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_00231840);
