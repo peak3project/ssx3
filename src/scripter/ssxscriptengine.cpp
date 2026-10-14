@@ -954,7 +954,92 @@ extern "C" void func_002799E0(void* self, void* obj, int a2, int type, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279A70);
+#ifdef SKIP_ASM
+unsigned int BXrand();
+unsigned char func_002743C8(void* self);
+int func_00274388(void* self);
+int func_0027C958(void* self);
+// PORT: func_0027C960 forwards (self, index) to func_002742E0; the unit declares it with one arg.
+void* func_0027C960_9A70(void* self, int i) __asm__("func_0027C960__FPv");
+// PORT: callers elsewhere declare func_0027BDB8 with two args; it takes the three player slots too.
+extern "C" void func_0027BDB8_9A70(void* self, int* flags, int p0, int p1, int p2) __asm__("func_0027BDB8");
+extern "C" void* func_00274C20(void* self, int i);
+extern "C" void func_00273A60(void* self, int idx);
+extern int D_00482608[];
+
+struct sScriptHdr_9A70 {
+    char pad_0x0;
+    unsigned char numEvents;        // 0x1
+};
+
+struct sScript_9A70 {
+    char pad_0x0[0x10];
+    sScriptHdr_9A70* hdr;           // 0x10
+};
+
+struct sScriptOpt_9A70 {
+    signed char slot;               // 0x0
+    char pad_0x1;
+    short mask;                     // 0x2
+};
+
+struct sScriptCount_9A70 {
+    int count;
+    int pad[2];
+};
+
+// Picks a random option for every choice event of a script, honouring the per-slot team flags.
+extern "C" void func_00279A70(void* self, sScript_9A70* script, int idx, int* players)
+{
+    int flags[21];
+    int cands[32];
+    unsigned int all = 0;
+    int i;
+    func_0027BDB8_9A70(self, flags, players[0], players[1], players[2]);
+    {
+        int j;
+        for (j = 0; j < 21; j++)
+            all |= flags[j];
+    }
+    for (i = 0; i < script->hdr->numEvents; i++) {
+        void* ev = func_00274C20(script, i);
+        if (func_002743C8(ev) == 5) {
+            int cnt = func_00274388(ev);
+            if (cnt >= 2) {
+                int m = 0;
+                int k;
+                for (k = 0; k < cnt; k++) {
+                    sScriptOpt_9A70* opt = (sScriptOpt_9A70*)func_0027C960_9A70(ev, k);
+                    int slot = D_00482608[opt->slot];
+                    if (slot >= 0) {
+                        if (opt->mask == 0 || (opt->mask & flags[slot]) != 0)
+                            cands[m++] = k;
+                    } else {
+                        if (opt->mask == 0 || (opt->mask & all) != 0)
+                            cands[m++] = k;
+                    }
+                }
+                if (m > 0) {
+                    func_00273A60(ev, cands[BXrand() % m]);
+                    sScriptOpt_9A70* opt = (sScriptOpt_9A70*)func_0027C958(ev);
+                    int slot = D_00482608[opt->slot];
+                    if (slot >= 0) {
+                        all &= ~flags[slot];
+                        flags[slot] = 0;
+                    }
+                }
+            }
+        } else {
+            int cnt = func_00274388(ev);
+            if (cnt >= 2)
+                func_00273A60(ev, BXrand() % cnt);
+        }
+    }
+    (*(sScriptCount_9A70**)((char*)self + 0x530))[idx].count++;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279CE0);
