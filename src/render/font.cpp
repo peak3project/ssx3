@@ -622,7 +622,118 @@ extern "C" char* func_00392430(void* f_, const char* str, char* dst, int max, fl
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_00392680);
+#ifdef SKIP_ASM
+struct sGlyph2680 {
+    unsigned short code;    // 0x0
+    unsigned char w;        // 0x2
+    unsigned char h;        // 0x3
+    int f4;
+    signed char adv;        // 0x8
+    signed char xoff;       // 0x9
+    signed char yoff;       // 0xA
+    char pad;
+};
+
+struct sFontRes2680 {
+    int count;              // 0x0
+    sGlyph2680* table;      // 0x4
+    sGlyph2680* def;        // 0x8
+    int first;              // 0xC
+    int last;               // 0x10
+    char pad_0x14[0x28 - 0x14];
+    float padX;             // 0x28
+    float padY;             // 0x2C
+};
+
+static inline sGlyph2680* sFontRes2680_find(sFontRes2680* f, int c)
+{
+    if (c < f->first)
+        return 0;
+    if (c <= f->last)
+        return f->table + c - f->first;
+    int lo = f->last - f->first;
+    int hi = f->count;
+    do {
+        int mid = (lo + hi) >> 1;
+        sGlyph2680* p = f->table + mid;
+        if (c == p->code)
+            return p;
+        if (c < p->code)
+            hi = mid;
+        else
+            lo = mid + 1;
+    } while (lo < hi);
+    return f->def;
+}
+
+// PORT: PS2-only abs.s asm helper (fabsf off-PS2).
+static inline float fabs_2680(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// Unicode version of func_00392430: copies as much of str into dst as fits in width; returns the next line start (0 when done).
+extern "C" unsigned short* func_00392680(void* f_, const unsigned short* str, unsigned short* dst, int max, float sx, float width)
+{
+    sFontRes2680* f = (sFontRes2680*)f_;
+    width -= fabs_2680(f->padX);
+    if (width < 0.0f)
+        width = 0.0f;
+    const unsigned short* start = str;
+    float w = 0.0f;
+    float pend = w;
+    int lastSpace = -1;
+    int n = 0;
+    int k = 0;
+    while (*str) {
+        int sp = *str == ' ';
+        if (sp) {
+            if (width <= w) {
+                dst[lastSpace + 1] = 0;
+                const unsigned short* p = start + lastSpace;
+                do
+                    p++;
+                while (*p == ' ');
+                return (unsigned short*)p;
+            }
+            if (k > 0 && start[k - 1] != ' ')
+                lastSpace = k - 1;
+        }
+        sGlyph2680* g = sFontRes2680_find(f, *str);
+        if (g) {
+            float right = (g->xoff + g->w) * sx;
+            w += pend + right;
+            pend = g->adv * sx - right;
+        }
+        if (width <= w) {
+            if (lastSpace == -1) {
+                dst[n] = 0;
+                return (unsigned short*)str;
+            }
+        }
+        dst[n] = *str;
+        n++;
+        k++;
+        str++;
+        if (n == max - 1)
+            break;
+    }
+    if (width <= w) {
+        dst[lastSpace + 1] = 0;
+        const unsigned short* p = start + lastSpace;
+        do
+            p++;
+        while (*p == ' ');
+        return (unsigned short*)p;
+    }
+    dst[n] = 0;
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("render/font", func_00392908);
