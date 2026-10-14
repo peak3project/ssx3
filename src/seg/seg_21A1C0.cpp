@@ -236,7 +236,16 @@ extern "C" void func_003198A0(int sema)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319910);
+#ifdef SKIP_ASM
+extern "C" void func_00423DD0(void);
+
+extern "C" void func_00319910(void)
+{
+    func_00423DD0();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319930);
 
