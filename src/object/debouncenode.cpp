@@ -260,7 +260,129 @@ extern "C" void func_003434E8(sDebounceScroll* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/debouncenode", func_00343588);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct sDfVec_343588 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sDfMat_343588 {
+    sDfVec_343588 r[4];
+};
+
+struct sDfSlot_343588 {
+    int f0;
+    int type;
+};
+
+struct sDfCam_343588 {
+    char pad_0x0[0x20];
+    sDfSlot_343588 slots[(0x3F0 - 0x20) / 8];  // 0x20
+    struct {
+        int kind;
+        char pad[0x14];
+    } paths[1];                     // 0x3F0
+};
+
+struct sDfObj_343588 {
+    char pad_0x0[0x60];
+    float pos[3];                   // 0x60
+    float scl[3];                   // 0x6C
+    char pad_0x78[0x7D - 0x78];
+    unsigned char slot;             // 0x7D
+    short path;                     // 0x7E
+    char pad_0x80[0x94 - 0x80];
+    void* light;                    // 0x94
+};
+
+struct sDfGfxVt_343588 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+struct cDfGfx_343588 {
+    char pad_0x0[0x10D8];
+    sDfGfxVt_343588* vt;            // 0x10D8
+};
+
+typedef sDfMat_343588 (*DfViewFn_343588)(void*);
+typedef int (*DfCullFn_343588)(void*, sDfVec_343588*, sDfVec_343588*, const sDfMat_343588&);
+typedef void (*DfDrawFn_343588)(void*, void*, void*, void*, int);
+
+extern sDfCam_343588** D_004A47B8_343588 __asm__("D_004A47B8");
+extern cDfGfx_343588* D_004A5B80_343588 __asm__("D_004A5B80");
+extern sDfMat_343588 D_004FF1A0_343588 __asm__("D_004FF1A0");
+
+#define OBJ_343588(s) (*(sDfObj_343588**)((char*)(s) + 0x18))
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void MatCopy_343588(sDfMat_343588* d, const sDfMat_343588* s)
+{
+    __asm__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+static inline bool IsT6_343588(sDfCam_343588* c, int i)
+{
+    return c->slots[i].type == 6;
+}
+
+static inline int Visible_343588(sDfCam_343588* cam, sDfObj_343588* obj)
+{
+    if (obj->slot == 0xFF) {
+        return 1;
+    }
+    if (IsT6_343588(cam, obj->slot)) {
+        return cam->paths[obj->path].kind == 3;
+    }
+    return 0;
+}
+
+// Draws the debounce node's object: culls its box, then draws it offset in x/y by the values at 0x40.
+extern "C" void func_00343588(char* self)
+{
+    sDfCam_343588* cam = *D_004A47B8_343588;
+    if (!Visible_343588(cam, OBJ_343588(self))) {
+        return;
+    }
+    cDfGfx_343588* gfx = D_004A5B80_343588;
+    {
+        sDfGfxVt_343588* vt = gfx->vt;
+        char* thisp = (char*)gfx + vt[93].delta;
+        sDfVec_343588 b[2];
+        b[0].x = OBJ_343588(self)->pos[0];
+        b[0].y = OBJ_343588(self)->pos[1];
+        b[0].z = OBJ_343588(self)->pos[2];
+        b[0].w = 1.0f;
+        b[1].x = OBJ_343588(self)->scl[0];
+        b[1].y = OBJ_343588(self)->scl[1];
+        b[1].z = OBJ_343588(self)->scl[2];
+        b[1].w = 1.0f;
+        int res = ((DfCullFn_343588)vt[93].fn)(thisp, &b[0], &b[1], ((DfViewFn_343588)gfx->vt[43].fn)((char*)gfx + gfx->vt[43].delta));
+        if (res == 1) {
+            return;
+        }
+    }
+    sDfMat_343588 xf;
+    MatCopy_343588(&xf, &D_004FF1A0_343588);
+    xf.r[3].x = *(float*)(self + 0x40);
+    xf.r[3].y = *(float*)(self + 0x44);
+    ((DfDrawFn_343588)gfx->vt[96].fn)((char*)gfx + gfx->vt[96].delta, OBJ_343588(self), 0, &xf, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/debouncenode", func_00343718);
