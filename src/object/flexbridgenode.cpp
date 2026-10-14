@@ -562,7 +562,93 @@ extern "C" void func_00348058(void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flexbridgenode", func_003480C8);
+#ifdef SKIP_ASM
+struct sRS_80C8 {
+    unsigned int f0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 25;
+    int f8;
+    int fC;
+    short f10;
+};
+
+struct sRow_80C8 { float x, y, z, w; } __attribute__((aligned(16)));
+struct sPair_80C8 { sRow_80C8 r[4]; };
+struct sVE43_80C8 { short delta; short index; sPair_80C8 (*fn)(void*); };
+struct sVE93_80C8 { short delta; short index; int (*fn)(void*, void*, void*, sPair_80C8*); };
+
+// Cubic basis rows (t^3, t^2, t, 1) for t = 0..3/7, filled once.
+extern sRow_80C8 D_004FF6C0[8];
+extern int D_004A5980;
+
+// Bridge pre-draw: skips culled pieces, builds the curve basis once, resets the render state, then busy-waits
+// per segment.
+extern "C" void func_003480C8(char* self)
+{
+    char* ctx = D_004A5B80;
+    {
+        sVE93_80C8* vt = *(sVE93_80C8**)(ctx + 0x10D8);
+        char* thisp = ctx + vt[93].delta;
+        char* lo = self + 0x30;
+        char* hi = self + 0x40;
+        sVE43_80C8* vt43 = *(sVE43_80C8**)(ctx + 0x10D8);
+        sPair_80C8 c = vt43[43].fn(ctx + vt43[43].delta);
+        if (vt[93].fn(thisp, lo, hi, &c) == 1) {
+            return;
+        }
+    }
+    if (D_004A5980 == 0) {
+        sRow_80C8* t = D_004FF6C0;
+        t[0].x = 0.0f;
+        t[0].y = 0.0f;
+        t[0].z = 0.0f;
+        t[0].w = 1.0f;
+        t[1].x = 0.0029154522f;
+        t[1].y = 0.020408165f;
+        t[1].z = 0.14285715f;
+        t[1].w = 1.0f;
+        t[2].x = 0.023323618f;
+        t[2].y = 0.08163266f;
+        t[2].z = 0.2857143f;
+        t[2].w = 1.0f;
+        t[3].x = 0.07871722f;
+        t[3].y = 0.1836735f;
+        t[3].z = 0.42857146f;
+        t[3].w = 1.0f;
+        t[4].x = 0.07871722f;
+        t[4].y = 0.1836735f;
+        t[4].z = 0.42857146f;
+        t[4].w = 1.0f;
+        t[5].x = 0.07871722f;
+        t[5].y = 0.1836735f;
+        t[5].z = 0.42857146f;
+        t[5].w = 1.0f;
+        t[6].x = 0.07871722f;
+        t[6].y = 0.1836735f;
+        t[6].z = 0.42857146f;
+        t[6].w = 1.0f;
+        t[7].x = 0.07871722f;
+        t[7].y = 0.1836735f;
+        t[7].z = 0.42857146f;
+        t[7].w = 1.0f;
+        D_004A5980 = 1;
+    }
+    sRS_80C8* top = *(sRS_80C8**)(ctx + 0xE84);
+    top->f10 = -1;
+    (*(sRS_80C8**)(ctx + 0xE84))->f4_2 = 1;
+    for (int i = 0; i < *(int*)(self + 0x20) - 1; i++) {
+        int j = 7;
+        while (j >= 0) {
+            j--;
+            // PORT: PS2-only pipeline delay.
+            __asm__ __volatile__("nop\n\tnop\n\tnop\n\tnop\n\tnop");
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("object/flexbridgenode", func_00348290);
 
