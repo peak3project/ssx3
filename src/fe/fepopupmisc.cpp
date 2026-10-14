@@ -5782,7 +5782,143 @@ extern "C" int func_001E81D0(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8200);
+#ifdef SKIP_ASM
+// Wide-string copy; returns dst.
+extern "C" unsigned short* func_002C2508(unsigned short* dst, const unsigned short* src);
+extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
+extern "C" void func_003A0E90(void* text, void* p);
+extern char D_0046E898[];
+extern char D_004A21A8[];
+
+class cUIObj_8200 {
+public:
+    int pad[2];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void setVisible(int on);
+};
+
+struct sVEntry8200 {
+    short delta;
+    short index;
+    unsigned short* (*fn)(void*, int);
+};
+
+extern "C" void func_001E8200(void* self)
+{
+    char buf[32];
+    unsigned short fmt[0x68];
+    unsigned short text[0x68];
+    void* engine = *(void**)((char*)self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0046E340), 0);
+    *(void**)((char*)self + 0x40) = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    func_0020A380(self);
+    *(int*)((char*)self + 0x9C) = 0;
+    char* obj = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E818));
+    if (obj != 0) {
+        *(int*)(obj + 0x90) |= 8;
+    }
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* iface1 = cBE_getInterface_Fv(cBE_getBE(), 1);
+    char* iface8 = (char*)cBE_getInterface_Fv(cBE_getBE(), 8);
+    char* ifaceD = (char*)cBE_getInterface_Fv(cBE_getBE(), 0xD);
+    int* p = *(int**)((char*)D_004A28A8 + 0xC0);
+    signed char event = D_00535BC8[0x48];
+    cUIState_hideObjSafe(self, D_0046E828);
+    cUIState_hideObjSafe(self, D_0046E838);
+    cUIState_hideObjSafe(self, D_0046E848);
+    cUIState_hideObjSafe(self, D_0046E858);
+    int mode = *p;
+    if (event != 6) {
+        switch (mode) {
+        case 0:
+        case 1:
+            cUIState_showObjSafe(self, D_0046E828);
+            break;
+        case 2:
+            cUIState_showObjSafe(self, D_0046E838);
+            break;
+        case 3:
+            cUIState_showObjSafe(self, D_0046E858);
+            break;
+        }
+    }
+    int pl = func_00146E98(iface1, 0);
+    int sel = D_00536730[pl];
+    if (*(int*)(ifaceD + 0x14) == 0 && (mode == 3 || D_00535BC8[0x4A] == 4 || D_00535BC8[0x4A] == 5)) {
+        D_004A213C = 1;
+        cUIState_showObjSafe(self, D_0046E7A0);
+    } else {
+        D_004A213C = 0;
+        cUIState_hideObjSafe(self, D_0046E7A0);
+    }
+    if (*(int*)(ifaceD + 0x14) == 1 && (mode == 3 || D_00535BC8[0x4A] == 5)) {
+        cUIState_showObjSafe(self, D_004A2180);
+    } else {
+        cUIState_hideObjSafe(self, D_004A2180);
+    }
+    if (*(int*)(ifaceD + 0x14) == 2 && (mode == 3 || D_00535BC8[0x4A] == 5)) {
+        cUIState_showObjSafe(self, D_004A2188);
+    } else {
+        cUIState_hideObjSafe(self, D_004A2188);
+    }
+    if (*(int*)(ifaceD + 0x14) == 3 && (mode == 3 || D_00535BC8[0x4A] == 5)) {
+        cUIState_showObjSafe(self, D_004A2190);
+    } else {
+        cUIState_hideObjSafe(self, D_004A2190);
+    }
+    int off = pl * 4;
+    int i;
+    cUIObj_8200* o;
+    for (i = 1; i < 7; i++) {
+        sprintf(buf, D_004A2198, i);
+        o = (cUIObj_8200*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
+        o->setVisible(0);
+        if (i == sel + 1) {
+            o->setVisible(1);
+        }
+    }
+    if ((unsigned int)sel >= 6) {
+        cUIState_showObjSafe(self, D_004A21A8);
+    }
+    o = (cUIObj_8200*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E868));
+    char* loc = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry8200* vt = *(sVEntry8200**)(loc + 4);
+    func_002C2508(fmt, vt[4].fn(loc + vt[4].delta, GetHashValue32(D_0046E898)));
+    func_002C26D0(text, fmt, *(unsigned int*)((char*)D_00536640 + off));
+    func_003A0E90(o, text);
+    o = (cUIObj_8200*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E878));
+    int vis = 0;
+    if (*(int*)(iface8 + 0x18) >= 0 || *(int*)(iface8 + 0x1C) >= 0) {
+        vis = 1;
+    }
+    if (vis) {
+        o->setVisible(1);
+    } else {
+        o->setVisible(0);
+    }
+    char* r = *(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + off + 0x28);
+    if (D_00535BC8[0x49] == 2
+        || *(int*)(r + 0x480) != 0
+        || D_00535BC8[0x4A] == 9 || D_00535BC8[0x4A] == 10 || D_00535BC8[0x4A] == 11
+        || (mode == 1 && p[0x70 / 4] == 3)) {
+        cUIState_hideObjSafe(self, D_0046E888);
+        cUIState_hideObjSafe(self, D_004A21A0);
+    }
+    func_00294F78(func_0028B180(), 0xE);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E87B8);
