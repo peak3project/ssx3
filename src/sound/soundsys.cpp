@@ -4550,7 +4550,7 @@ INCLUDE_ASM("sound/soundsys", func_0029ED90);
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int BXFILE_exists(const char* name);
-extern "C" void func_002B0CE0(void* self);
+extern "C" void SPCH_Init(void* self);
 extern "C" void func_002B0DA0(void* self);
 extern "C" void func_002B0E60(void* self, int a, int b, char* name, int c, int d, int e);
 extern "C" void func_003DED50(const char* name, int a, int b, void** h);
@@ -4592,7 +4592,7 @@ extern "C" void func_0029ED90(char* self, int restart)
     }
     *(int*)(self + 0x572C) = mode;
     if (restart) {
-        func_002B0CE0(self + 0x5560);
+        SPCH_Init(self + 0x5560);
         func_002B0E60(self + 0x5560, 0, 0, D_004A3568, (int)func_00287968(self, 4, 0), 1, -1);
     }
 }

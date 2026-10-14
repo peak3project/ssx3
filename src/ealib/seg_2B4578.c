@@ -8907,7 +8907,7 @@ int func_003D1F80(unsigned int a0, char *a1) {
 #endif
 
 //100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003D2068);
+INCLUDE_ASM("ealib/seg_2B4578", PATHI_copyevent);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_0044F420_2068[] __asm__("D_0044F420");
@@ -8915,7 +8915,7 @@ extern int D_0044F43C_2068[] __asm__("D_0044F43C");
 extern char D_00495B48_2068[] __asm__("D_00495B48");
 extern void func_0041605C_2068(unsigned int, void *, int) __asm__("func_0041605C");
 
-unsigned int func_003D2068(void *arg0) {
+unsigned int PATHI_copyevent(void *arg0) {
     int temp_9;
     unsigned int *p;
     unsigned int temp_3;
@@ -9392,7 +9392,7 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D4050);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003D0B18_4050(void *, void *) __asm__("func_003D0B18");
 extern void func_003D1F80_4050(int, int) __asm__("func_003D1F80");
-extern int func_003D2068_4050(void *) __asm__("func_003D2068");
+extern int PATHI_copyevent_4050(void *) __asm__("PATHI_copyevent");
 extern void func_003D32B8_4050(int, void *) __asm__("func_003D32B8");
 extern void *func_00416210_4050(void *, int, int) __asm__("func_00416210");
 extern char *D_0044F420_4050[] __asm__("D_0044F420");
@@ -9436,7 +9436,7 @@ int func_003D4050(int idx) {
             m.sc = idx;
             m.be = -1;
             func_003D0B18_4050(&a, &m);
-            r = func_003D2068_4050(&a);
+            r = PATHI_copyevent_4050(&a);
             func_003D1F80_4050(h, r);
         }
     }

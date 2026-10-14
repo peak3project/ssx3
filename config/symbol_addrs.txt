@@ -233,6 +233,37 @@ cExecutionMan_checkHalt__FPvi = 0x003174A8; //type:func
 cBERaceState_getState__FPv = 0x00153088; //type:func
 cBEPostRaceState_getState__FPv = 0x00156338; //type:func
 cBEPreRaceState_getState__FPv = 0x00156570; //type:func
+
+// Names taken from debug strings printed by the function itself
+// MPEG-2 header parser; marker_bit string "group_of_pictures_header()"
+group_of_pictures_header = 0x003B16E0; //type:func
+// string "sequence_scalable_extension()"
+sequence_scalable_extension = 0x003B1EE0; //type:func
+// string "picture_spatial_scalable_extension(), first marker bit"
+picture_spatial_scalable_extension = 0x003B2230; //type:func
+// string "copyright_extension(), first marker bit"
+copyright_extension = 0x003B23A0; //type:func
+// log string "SPCH_Init: rNum=%d"
+SPCH_Init = 0x002B0CE0; //type:func
+// error string "PATHI_copyevent : can't add new event"
+PATHI_copyevent = 0x003D2068; //type:func
+// libgraph; strings "sceGsSyncPath: DMA Ch.1 does not terminate"
+sceGsSyncPath = 0x003FDB18; //type:func
+// libusbkb; string "sceUsbKbGetInfo: sceSifCallRpc -> %d"
+sceUsbKbGetInfo = 0x0040C2E8; //type:func
+// libusbkb; string "sceUsbKbRead: sceSifCallRpc -> %d"
+sceUsbKbRead = 0x0040C390; //type:func
+// libusbkb; string "sceUsbKbGetLocation: sceSifCallRpc -> %d"
+sceUsbKbGetLocation = 0x0040C470; //type:func
+// libusbkb; string "sceUsbKbSetLEDStatus: sceSifCallRpc -> %d"
+sceUsbKbSetLEDStatus = 0x0040C550; //type:func
+// libusbkb; string "sceUsbKbSetLEDMode: sceSifCallRpc -> %d"
+sceUsbKbSetLEDMode = 0x0040C628; //type:func
+// libmpeg; string "_sequenceScalableExtension() is not implemented"
+_sequenceScalableExtension = 0x00403D70; //type:func
+// libmpeg; string "_sliceA0(): error happens"
+_sliceA0 = 0x004061E8; //type:func
+
 // Spreadsheet Auto Generation
 
 cMemMan_alloc = 0x00317D70; //type:func

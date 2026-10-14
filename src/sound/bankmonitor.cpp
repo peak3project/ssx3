@@ -2337,7 +2337,7 @@ extern "C" void func_002B0C78(void* self)
 #endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
-INCLUDE_ASM("sound/bankmonitor", func_002B0CE0);
+INCLUDE_ASM("sound/bankmonitor", SPCH_Init);
 #ifdef SKIP_ASM
 extern "C" int func_003D6778(int a, int b, int c);
 // PORT: the unit defines func_002ADF60() with no args; this caller passes one.
@@ -2353,7 +2353,7 @@ extern "C" int func_003E4E98();
 extern char D_00483390[];
 extern char D_004833A8[];
 
-extern "C" void func_002B0CE0(void* self)
+extern "C" void SPCH_Init(void* self)
 {
     int buf = func_003D6778(0x5622, 0x10, 1);
     int seed = func_002ADF60_a(*(int*)(**(char***)self + 0x1D8));
