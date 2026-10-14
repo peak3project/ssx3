@@ -1375,7 +1375,86 @@ void func_001D5F38(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D5F40);
+#ifdef SKIP_ASM
+extern "C" void* func_0028B180();
+extern "C" int func_00152BB0(void* self, char* buf);
+extern "C" int func_00152DE0(void* self, char* buf, int idx);
+extern "C" void func_001D64C0(unsigned int mode);
+extern "C" void func_00287410(void* opt, int v);
+extern "C" void func_00287488(void* opt, int v);
+extern "C" void func_00287520(void* opt, int v);
+extern "C" void func_00287558(void* opt, int v);
+extern "C" void func_002875D0(void* opt, int v);
+void cMemMan_free(void*);
+extern void* D_004A2028;
+
+struct sSndCfg_1D5F40 {
+    unsigned int sfxVol : 4;        // bits 0-3
+    unsigned int musicVol : 4;      // bits 4-7
+    unsigned int speechVol : 4;     // bits 8-11
+    unsigned int output : 2;        // bits 12-13
+    unsigned int pad14 : 2;
+    int f16 : 1;                    // bit 16
+    int f17 : 1;                    // bit 17
+    int pad18 : 14;
+    char rest[0x288 - 4];
+};
+// PORT: D_00535610 is viewed with different types across the program; view bound by asm label
+extern sSndCfg_1D5F40 D_00535610_1D5F40 __asm__("D_00535610");
+
+static inline sSndCfg_1D5F40 Cfg_1D5F40()
+{
+    return D_00535610_1D5F40;
+}
+
+struct sMemCard_1D5F40 {
+    char pad0[0x1BC];
+    int op;                         // 0x1BC
+    char pad1C0[0x1CC - 0x1C0];
+    int slot;                       // 0x1CC
+    char* buf;                      // 0x1D0
+    char* data;                     // 0x1D4
+    char pad1D8[0x228 - 0x1D8];
+    int busy;                       // 0x228
+};
+
+// Memory-card load/save step: applies the loaded sound options, then frees the transfer buffer.
+extern "C" int func_001D5F40()
+{
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 5);
+    switch (((sMemCard_1D5F40*)D_004A2028)->op) {
+    case 2:
+        if (!func_00152BB0(iface, ((sMemCard_1D5F40*)D_004A2028)->buf))
+            return 0;
+        if (func_0028B180() != 0) {
+            cBE_getInterface_Fv(cBE_getBE(), 4);
+            func_001D64C0(Cfg_1D5F40().output);
+            func_00287410(func_0028B180(), Cfg_1D5F40().sfxVol);
+            func_00287488(func_0028B180(), Cfg_1D5F40().speechVol);
+            func_00287520(func_0028B180(), Cfg_1D5F40().musicVol);
+            func_00287558(func_0028B180(), Cfg_1D5F40().f17 != 0);
+            func_002875D0(func_0028B180(), Cfg_1D5F40().f16 != 0);
+        }
+        break;
+    case 0:
+        if (!func_00152DE0(iface, ((sMemCard_1D5F40*)D_004A2028)->buf, ((sMemCard_1D5F40*)D_004A2028)->slot))
+            return 0;
+        break;
+    case 1:
+        break;
+    }
+    if (((sMemCard_1D5F40*)D_004A2028)->busy == 1) {
+        if (((sMemCard_1D5F40*)D_004A2028)->data != 0)
+            cMemMan_free(((sMemCard_1D5F40*)D_004A2028)->data);
+        ((sMemCard_1D5F40*)D_004A2028)->buf = 0;
+        ((sMemCard_1D5F40*)D_004A2028)->data = 0;
+        ((sMemCard_1D5F40*)D_004A2028)->busy = 0;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D64C0);
