@@ -2152,7 +2152,141 @@ extern "C" void func_00240130(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("movie/movieplayer", func_002402D0);
+#ifdef SKIP_ASM
+extern "C" int func_00241CD8(void* self);
+extern "C" void func_0023EB50(void* self);
+extern "C" void func_00241FD0(void* self);
+extern "C" void func_00242050(void* self);
+
+struct sMovieVEntry02D0a {
+    short delta;
+    short index;
+    int (*fn)(void*, ...);
+};
+
+struct sMovieVEntry02D0b {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+static inline sMovieVEntry02D0a* Pad_02D0(void* self, char** po)
+{
+    *po = *(char**)((char*)self + 0x434);
+    return *(sMovieVEntry02D0a**)*po;
+}
+
+static inline int Pad0_02D0(void* self, int slot)
+{
+    void* o = *(void**)((char*)self + 0x434);
+    sMovieVEntry02D0a* vt = *(sMovieVEntry02D0a**)o;
+    return vt[slot].fn((char*)o + vt[slot].delta);
+}
+
+static inline int Pad1_02D0(void* self, int slot, int a)
+{
+    void* o = *(void**)((char*)self + 0x434);
+    sMovieVEntry02D0a* vt = *(sMovieVEntry02D0a**)o;
+    return vt[slot].fn((char*)o + vt[slot].delta, a);
+}
+
+static inline void Post_02D0(void* self, int code)
+{
+    sMovieVEntry02D0b* vt = *(sMovieVEntry02D0b**)((char*)self + 0x748);
+    vt[1].fn((char*)self + vt[1].delta, code);
+}
+
+#define S_02D0 ((char*)self)
+#define CB_02D0(off) (*(int (**)())(S_02D0 + (off)))()
+
+extern "C" void func_002402D0(void* self)
+{
+    if (*(int*)(S_02D0 + 0x338))
+        return;
+    int quit = 0;
+    if (*(int*)(S_02D0 + 0xBC) || *(int*)(S_02D0 + 0xC0) || CB_02D0(0x78))
+        quit = 1;
+    int held = *(int*)(S_02D0 + 0x43C);
+    int ready = func_00241CD8(self);
+    if (!CB_02D0(0x78) && ready) {
+
+        if (*(int*)(S_02D0 + 0x43C) & 8) {
+            if (*(int*)(S_02D0 + 0x124) || CB_02D0(0x78) || CB_02D0(0x68) || quit) {
+                func_0023EB50(self);
+                return;
+            }
+        } else {
+            if (*(int*)(S_02D0 + 0x120) && (*(int*)(S_02D0 + 0x43C) & 0x10)) {
+                Post_02D0(self, 0x27);
+                return;
+            }
+            if (*(int*)(S_02D0 + 0x43C) & 1) {
+                Post_02D0(self, 5);
+                return;
+            }
+            if (*(int*)(S_02D0 + 0x11C) && (*(int*)(S_02D0 + 0x43C) & 4)) {
+                Post_02D0(self, 0x17);
+                return;
+            }
+        }
+        if (!(*(int*)(S_02D0 + 0x43C) & 8) && (held & 8)) {
+            func_00241FD0(self);
+            return;
+        }
+        int rel = held & ~4;
+        if (*(int*)(S_02D0 + 0x43C) == 0 && rel) {
+            func_00241FD0(self);
+            return;
+        }
+    }
+    if (!quit) {
+        if (*(int*)(S_02D0 + 0xC8)) {
+            *(int*)(S_02D0 + 0xC8) = 0;
+            func_00242050(self);
+        }
+        if (*(int*)(S_02D0 + 0x43C) & 8) {
+            Post_02D0(self, 0x31);
+            return;
+        }
+    }
+    (*(void (**)())(S_02D0 + 0xA4))();
+    if ((*(int*)(S_02D0 + 0x130) ^ 0x1D) != 0)
+        return;
+    if (CB_02D0(0x78)) {
+        if (*(int*)(S_02D0 + 0xD0)) {
+            Post_02D0(self, 0x1F);
+            return;
+        }
+        if (!Pad0_02D0(self, 53)) {
+            Post_02D0(self, 0x24);
+            return;
+        }
+        if (!Pad1_02D0(self, 67, *(int*)(S_02D0 + 0xF8))) {
+            Post_02D0(self, 0x25);
+            return;
+        }
+        if (!Pad1_02D0(self, 65, *(int*)(S_02D0 + 0xF8)))
+            return;
+        Post_02D0(self, 0x25);
+        return;
+    }
+    if (CB_02D0(0x68)) {
+        if (!*(int*)(S_02D0 + 0xD4))
+            return;
+        char* o;
+        sMovieVEntry02D0a* vt = Pad_02D0(self, &o);
+        ((void (*)(void*, int, char*))vt[14].fn)(o + vt[14].delta, *(int*)(S_02D0 + 0xF8), S_02D0 + 0x234);
+        Post_02D0(self, 0x18);
+        return;
+    }
+    if (CB_02D0(0x6C))
+        Post_02D0(self, 1);
+}
+#undef CB_02D0
+#undef S_02D0
+#endif
 
 //100%
 INCLUDE_ASM("movie/movieplayer", func_002405D0);
