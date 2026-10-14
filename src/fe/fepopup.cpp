@@ -282,7 +282,141 @@ extern "C" void func_001C5F20(void* self, float t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", cScreenPopup_FillObjectPointers);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char D_0045DB90[];
+extern char D_00465FA8[];
+extern char D_00465FB8[];
+extern char D_00465FC8[];
+extern char D_00465FD8[];
+extern char D_00465FE8[];
+extern char D_00465FF8[];
+extern char D_00466008[];
+extern char D_00466018[];
+extern char D_00466028[];
+extern char D_00466038[];
+extern char D_00466048[];
+extern char D_00466058[];
+extern char D_00466070[];
+extern char D_004A1C60[];
+extern char D_004A1C68[];
+extern char D_004A1C70[];
+extern char D_004A1C78[];
+extern char D_00466080[];
+
+struct sV3_6260 {
+    float x, y, z;
+};
+
+struct sVE_6260 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*);
+};
+
+struct sObj_6260 {
+    char pad0[0x8];
+    sVE_6260* vt;                   // 0x8
+    char padC[0x44 - 0xC];
+    sV3_6260 pos;                   // 0x44
+    void GetRect(void* out) { vt[20].fn((char*)this + vt[20].delta, out); }
+};
+
+static inline sObj_6260* find_6260(void* self, char* name)
+{
+    return (sObj_6260*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+}
+
+#define POS_6260(o) (*(sV3_6260*)((char*)self + (o)))
+#define OBJ_6260(o) (*(sObj_6260**)((char*)self + (o)))
+
+// Looks up the popup's widgets by name and caches them (and their positions) in the screen object.
+extern "C" void cScreenPopup_FillObjectPointers(void* self)
+{
+    if (sObj_6260* o = find_6260(self, D_004A1C60)) {
+        POS_6260(0x188) = o->pos;
+        o->GetRect((char*)self + 0x1F4);
+        OBJ_6260(0x48) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_004A1C68)) {
+        POS_6260(0x194) = o->pos;
+        OBJ_6260(0x4C) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00465FA8))
+        OBJ_6260(0x64) = o;
+    if (sObj_6260* o = find_6260(self, D_00465FB8)) {
+        POS_6260(0x230) = o->pos;
+        OBJ_6260(0x54) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00465FC8)) {
+        POS_6260(0x224) = o->pos;
+        OBJ_6260(0x50) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00465FD8)) {
+        POS_6260(0x248) = o->pos;
+        OBJ_6260(0x5C) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00465FE8)) {
+        POS_6260(0x23C) = o->pos;
+        o->GetRect((char*)self + 0x218);
+        OBJ_6260(0x58) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_004A1C70)) {
+        POS_6260(0x254) = o->pos;
+        OBJ_6260(0x60) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00465FF8))
+        OBJ_6260(0x68) = o;
+    if (sObj_6260* o = find_6260(self, D_0045DB90)) {
+        POS_6260(0x1A0) = o->pos;
+        OBJ_6260(0x6C) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_004A1C78)) {
+        POS_6260(0x1AC) = o->pos;
+        OBJ_6260(0x70) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00466008)) {
+        POS_6260(0x1C4) = o->pos;
+        OBJ_6260(0x74) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00466018)) {
+        POS_6260(0x1B8) = o->pos;
+        OBJ_6260(0x7C) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00466028)) {
+        POS_6260(0x1D0) = o->pos;
+        OBJ_6260(0x78) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00466038)) {
+        POS_6260(0x1DC) = o->pos;
+        OBJ_6260(0x80) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00466048)) {
+        POS_6260(0x1E8) = o->pos;
+        OBJ_6260(0x88) = o;
+    }
+    if (sObj_6260* o = find_6260(self, D_00466058))
+        OBJ_6260(0x84) = o;
+    if (sObj_6260* o = find_6260(self, D_00466070)) {
+        POS_6260(0x200) = o->pos;
+        o->GetRect((char*)self + 0x20C);
+        OBJ_6260(0x8C) = o;
+    }
+    for (int i = 0; i < 5; i++) {
+        char name[32];
+        sprintf(name, D_00466080, i);
+        sObj_6260* o = find_6260(self, name);
+        if (o != 0)
+            ((sObj_6260**)((char*)self + 0x90))[i] = o;
+    }
+}
+#undef POS_6260
+#undef OBJ_6260
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C66E8);
