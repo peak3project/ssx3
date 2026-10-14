@@ -214,7 +214,27 @@ extern "C" void func_00319820(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_003198A0);
+#ifdef SKIP_ASM
+extern "C" void func_00423DE0(int sema);
+extern "C" int func_0042A538(void* client, int cmd, int a, int b, int c, int d);
+extern "C" int func_00402398(int* status);
+extern char D_004A3EA8[];
+
+// IOP poll thread: waits for its semaphore, then issues RPC 0x4402 and waits for completion.
+extern "C" void func_003198A0(int sema)
+{
+    for (;;) {
+        func_00423DE0(sema);
+        while (func_0042A538(D_004A3EA8, 0x4402, 0, 0, 0, 0) < 0)
+            ;
+        int status = 0;
+        while (func_00402398(&status) == 0 || status != 0)
+            ;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319910);
 
