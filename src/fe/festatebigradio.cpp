@@ -1,6 +1,212 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("fe/festatebigradio", cFEStateBraggingRights_onCreateScreen);
+#ifdef SKIP_ASM
+struct cUIText;
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+// PORT: several callees are declared with other parameter types elsewhere; bind local views by asm label
+extern "C" void func_00192740_2DB0(void* panel, int on) __asm__("func_00192740");
+void func_00192968(void* panel, int mask);
+extern "C" void func_00192970_2DB0(void* panel, void* screen) __asm__("func_00192970");
+extern "C" int func_00193F38(void* self, int player, int which);
+extern "C" unsigned char cUIListBox_addEntryByStringID_2DB0(void* box, int id, int idx) __asm__("cUIListBox_addEntryByStringID");
+extern "C" unsigned char cUIListBox_addEntryByAsciiString_2DB0(void* box, const char* str, int data) __asm__("cUIListBox_addEntryByAsciiString");
+extern "C" int func_0039A768_2DB0(void* item, int key, unsigned char* out) __asm__("func_0039A768");
+extern "C" void func_0039A7A8_2DB0(void* item, int v) __asm__("func_0039A7A8");
+extern int D_004A1A70;
+extern signed char D_00535C12[];
+extern signed char D_004A1710[6];
+extern signed char D_004A1718[7];
+extern signed char D_004A1720[7];
+extern signed char D_004A1728[7];
+extern signed char D_004A1730[5];
+extern signed char D_004A1738[7];
+extern char* D_00441108[];
+extern char D_0045FCC8[];
+extern char D_004A14F8[];
+extern char D_0045FCD8[];
+extern char D_0045DCC8[];
+extern char D_0045DF40[];
+extern char D_004A16E0[];
+extern char D_004A16D8[];
+extern char D_004A1758[];
+extern char D_004A1760[];
+extern char D_004A1768[];
+extern char D_004A1770[];
+extern char D_004A1778[];
+extern char D_004A1780[];
+extern char D_004A1580[];
+extern char D_004A1588[];
+extern char D_0045FCE8[];
+extern char D_0045FCF8[];
+extern char D_0045FD08[];
+
+struct sStr2_2DB0 { char c[2]; };
+
+class cUIObj_2DB0 {
+public:
+    int pad[2];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void setEnabled(int v);
+    virtual void setVisible(int v);
+};
+
+struct sRadioPanel_2DB0 {
+    void* menu;          // 0x0
+    char pad4[4];
+    void* items[11];     // 0x8
+};
+
+struct sBragging_2DB0 {
+    char pad0[0x10];
+    void* engine;                   // 0x10
+    char pad14[0x8];
+    int flags;                      // 0x1C
+    char pad20[0x20];
+    void* screen;                   // 0x40
+    char pad44[0x68C];
+    sRadioPanel_2DB0 panels[2];     // 0x6D0
+    signed char* rules;             // 0x738
+};
+
+static inline void* find_2DB0(sBragging_2DB0* self, char* name)
+{
+    return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
+}
+
+static inline bool isNet_2DB0()
+{
+    return D_004A1A70 == 1;
+}
+
+// Bragging rights screen: builds the rule rows of both player panels for the current mode.
+extern "C" void cFEStateBraggingRights_onCreateScreen(sBragging_2DB0* self)
+{
+    void* engine = self->engine;
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0045FCC8), 0);
+    self->screen = screen;
+    if (screen != 0)
+        cUIScreen_playFrame(screen, 0, 0);
+    sRadioPanel_2DB0* a = &self->panels[0];
+    sRadioPanel_2DB0* b = &self->panels[1];
+    if ((self->flags >> 4) & 1) {
+        func_00192740_2DB0(a, 0);
+        func_00192740_2DB0(b, 0);
+    }
+    int n = 0;
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    unsigned int mask = 0;
+    switch (D_00535C12[0]) {
+    case 0:
+        self->rules = D_004A1710;
+        n = 6;
+        break;
+    case 1:
+        self->rules = D_004A1718;
+        n = 7;
+        break;
+    case 3:
+        self->rules = D_004A1720;
+        n = 7;
+        break;
+    case 2:
+        self->rules = D_004A1728;
+        n = 7;
+        break;
+    case 4:
+        self->rules = D_004A1730;
+        n = 5;
+        break;
+    case 5:
+        self->rules = D_004A1738;
+        n = 7;
+        break;
+    }
+    for (int i = 0; i < n; i++)
+        mask |= 1 << i;
+    func_00192968(a, mask);
+    func_00192968(b, mask);
+    func_00192970_2DB0(a, self->screen);
+    func_00192970_2DB0(b, self->screen);
+    sStr2_2DB0 name = *(sStr2_2DB0*)D_004A14F8;
+    for (int row = 0; row < n; row++) {
+        name.c[0] = row + '1';
+        cUIText* txt = (cUIText*)find_2DB0(self, name.c);
+        if (txt != 0)
+            cUIText_setUnicodeStringByID(txt, GetHashValue32(D_00441108[self->rules[row]]));
+        for (int p = 0; p < 2; p++) {
+            unsigned char out = 0;
+            void* lb = ((sRadioPanel_2DB0*)((char*)self + 0x6D0))[p].items[row];
+            switch (self->rules[row]) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045FCD8), 0);
+                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045DCC8), 1);
+                func_0039A768_2DB0(lb, func_00193F38(self, p, self->rules[row]), &out);
+                func_0039A7A8_2DB0(lb, out);
+                break;
+            case 0:
+                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045DF40), 0);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A16E0, 5);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A16D8, 10);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1758, 15);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1760, 20);
+                func_0039A768_2DB0(lb, func_00193F38(self, p, self->rules[row]), &out);
+                func_0039A7A8_2DB0(lb, out);
+                break;
+            case 7:
+                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045DF40), 0);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1768, 3000);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1770, 5000);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1778, 10000);
+                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1780, 15000);
+                func_0039A768_2DB0(lb, func_00193F38(self, p, self->rules[row]), &out);
+                func_0039A7A8_2DB0(lb, out);
+                break;
+            }
+        }
+    }
+    cUIObj_2DB0* o = (cUIObj_2DB0*)find_2DB0(self, D_004A1580);
+    if (o != 0) {
+        if (isNet_2DB0()) {
+            o->setVisible(1);
+            cUIObj_2DB0* c = (cUIObj_2DB0*)find_2DB0(self, D_0045FCE8);
+            if (c != 0)
+                c->setVisible(0);
+            cUIObj_2DB0* d = (cUIObj_2DB0*)find_2DB0(self, D_0045FCF8);
+            if (d != 0)
+                d->setVisible(0);
+        } else {
+            o->setVisible(0);
+        }
+    }
+    if (isNet_2DB0()) {
+        cUIObj_2DB0* c = (cUIObj_2DB0*)find_2DB0(self, D_004A1588);
+        if (c != 0)
+            c->setVisible(0);
+        cUIObj_2DB0* d = (cUIObj_2DB0*)find_2DB0(self, D_0045FD08);
+        if (d != 0)
+            d->setVisible(0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00193310__FPv);
