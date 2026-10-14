@@ -116,7 +116,80 @@ extern "C" void func_00154A58(int rider, int a)
 
 INCLUDE_ASM("be/beintscore", func_00154AB8);
 
+//100%
 INCLUDE_ASM("be/beintscore", func_00154EE8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBELibrary_getProfileIndex(int);
+signed char cBELibrary_getCharacterID(int index);
+extern "C" int func_00155328(void* self, int a);
+extern "C" void func_001E25D8(int mode, int event, int result);
+extern "C" void func_001E1EB8(void);
+extern "C" void func_001E1550(void);
+extern "C" int func_001456A0(void* self, int idx, int mode);
+extern "C" void func_001591E8(void* iface, int profile, int charID, int mode, int event, int medal);
+extern signed char D_00535C12[];
+
+struct sRaceSettings_154EE8 {
+    char pad_0x00[0x40];
+    int event;          // 0x40
+    char pad_0x44[0x4];
+    signed char b48;    // 0x48
+    signed char b49;    // 0x49
+};
+extern sRaceSettings_154EE8 D_005305B0;
+
+struct sEvent_154EE8 {
+    int id;
+    char pad_0x4[0x60];
+};
+extern sEvent_154EE8 D_0043D950[];
+
+// Race result: records it, refreshes the event popups and passes the medal (cleared when the record is not beaten) to the reward interface.
+extern "C" void func_00154EE8(char* self, int rider, int result, int score)
+{
+    int profile = cBELibrary_getProfileIndex(rider);
+    if (profile >= 2)
+        return;
+    *(int*)(self + profile * 0xB0 + 0xCC) = result;
+    void* be = cBE_getInterface_Fv(cBE_getBE(), 0);
+    int charID = cBELibrary_getCharacterID(rider);
+    int mode = D_00535C12[0];
+    int event = D_0043D950[D_005305B0.event].id;
+    if (event == 0x16)
+        event = 0;
+    int medal = func_00155328(self, result);
+    if (mode == 4 || mode == 5)
+        medal = result == 0 ? 1 : -1;
+    if (D_005305B0.b49 == 0)
+        func_001E25D8(mode, event, result);
+    if (medal == -1)
+        return;
+    if (D_005305B0.b49 == 0) {
+        func_001E1EB8();
+        if (D_005305B0.b49 == 0 && mode != 4 && mode != 5)
+            func_001E1550();
+    }
+    void* reward = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+    if (D_005305B0.b49 != 0)
+        return;
+    if (D_005305B0.b48 == 4)
+        return;
+    int best = func_001456A0(be, event, mode);
+    if (best != -1) {
+        if (mode == 0 || mode == 4) {
+            if (best * 60 >= score)
+                medal = 0;
+        } else {
+            if (score >= best)
+                medal = 0;
+        }
+    }
+    func_001591E8(reward, profile, charID, mode, event, medal);
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintscore", func_001550E8);
