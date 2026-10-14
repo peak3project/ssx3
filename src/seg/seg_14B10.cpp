@@ -443,7 +443,68 @@ extern "C" void func_00115168(char* s)
 
 INCLUDE_ASM("seg/seg_14B10", func_00115358);
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", func_00115640);
+#ifdef SKIP_ASM
+struct Q_5640 {
+    float x, y, z, w;
+    Q_5640() {}
+    Q_5640(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" void cRiderAnimBase_changeHeadingOffset(void* self, float angle);
+extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" void func_0011DFE0(void* self, Q_5640 dir, float angle);
+// PORT: the unit defines func_00116930 with no parameters; this caller passes the rider.
+extern "C" void func_00116930_p(void* self) __asm__("func_00116930");
+int func_0011FE98(void* self);
+extern Q_5640 D_004FF130_5640 __asm__("D_004FF130");
+extern Q_5640 D_004FF160_5640 __asm__("D_004FF160");
+
+static inline Q_5640 AxisAngle_5640(const Q_5640& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return Q_5640(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+static inline void SetHeading_5640(char* a, float angle)
+{
+    *(Q_5640*)(a + 0x30) = D_004FF130_5640;
+    *(Q_5640*)(a + 0x40) = AxisAngle_5640(D_004FF160_5640, -angle);
+}
+
+// Finishes a pending turn-around request (state 3 = left, 4 = right) of the rider.
+extern "C" void func_00115640(char* self)
+{
+    if (*(int*)(self + 0x328) == 0)
+        return;
+    if (func_0011FE98(self) == 1) {
+        if (*(int*)(self + 0x328) == 3 || *(int*)(self + 0x328) == 4)
+            SetHeading_5640(*(char**)(self + 0x784), 0.0f);
+        if (*(int*)(self + 0x328) == 3)
+            cRiderAnimBase_play(*(void**)(self + 0x784), 0x11A, 0, -1.0f);
+        else if (*(int*)(self + 0x328) == 4)
+            cRiderAnimBase_play(*(void**)(self + 0x784), 0x115, 0, -1.0f);
+        else
+            cRiderAnimBase_play(*(void**)(self + 0x784), 0x10C, 0, -1.0f);
+    } else if (func_0011FE98(self) == 0) {
+        if (*(int*)(self + 0x328) == 3) {
+            func_0011DFE0(self, *(Q_5640*)(self + 0x1C0), 1.5707964f);
+            cRiderAnimBase_changeHeadingOffset(*(void**)(self + 0x784), 1.5707964f);
+            SetHeading_5640(*(char**)(self + 0x784), 0.0f);
+        } else if (*(int*)(self + 0x328) == 4) {
+            func_0011DFE0(self, *(Q_5640*)(self + 0x1C0), -1.5707964f);
+            cRiderAnimBase_changeHeadingOffset(*(void**)(self + 0x784), -1.5707964f);
+            SetHeading_5640(*(char**)(self + 0x784), 0.0f);
+        }
+        cRiderAnimBase_play(*(void**)(self + 0x784), 5, 0, -1.0f);
+    }
+    *(int*)(self + 0x328) = 0;
+    func_00116930_p(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_001158B8);
