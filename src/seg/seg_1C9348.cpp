@@ -1,6 +1,68 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_1C9348", HUFF_about);
+#ifdef SKIP_ASM
+// PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
+// result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
+void* operator new(unsigned int size, const char* tag, int flags, int align) __asm__("cMemMan_alloc");
+extern "C" void* func_00416210(void* dst, int c, unsigned int n);
+extern char D_004865C8[];
+extern char D_004865D8[] __attribute__((aligned(8)));
+extern char D_004A3980[] __attribute__((aligned(8)));
+extern char D_004A3988[] __attribute__((aligned(8)));
+extern char D_004A3990[] __attribute__((aligned(8)));
+extern char D_004865F0[] __attribute__((aligned(8)));
+
+// EA codex "about" block describing the Huffman/RLE codec.
+struct sCodexAbout_HUFF {
+    int signature;                  // 0x0
+    int size;                       // 0x4
+    int version;                    // 0x8
+    unsigned int b0 : 1;            // 0xC
+    unsigned int b1 : 1;
+    unsigned int b2 : 1;
+    unsigned int b3 : 1;
+    unsigned int b4 : 1;
+    unsigned int pad : 27;
+    int f10;
+    int f14;
+    int f18;
+    int f1C;
+    int f20;
+    char author[32];                // 0x24
+    char versionstr[8];             // 0x44
+    char shorttypestr[8];           // 0x4C
+    char longtypestr[16];           // 0x54
+    char desc[32];                  // 0x64
+};
+
+extern "C" void* HUFF_about(void)
+{
+    sCodexAbout_HUFF* a = (sCodexAbout_HUFF*)operator new(0x84, D_004865C8, 0x20000000, 0);
+    if (a != 0) {
+        func_00416210(a, 0, 0x84);
+        a->signature = 'HUFF';
+        a->size = 0x84;
+        a->version = 100;
+        a->b0 = 1;
+        a->b1 = 1;
+        a->b2 = 1;
+        a->b3 = 1;
+        a->b4 = 0;
+        a->f14 = 0;
+        a->f18 = 0;
+        a->f1C = 1;
+        a->f20 = 0;
+        __builtin_memcpy(a->author, D_004865D8, 18);
+        __builtin_memcpy(a->versionstr, D_004A3980, 5);
+        __builtin_memcpy(a->shorttypestr, D_004A3988, 4);
+        __builtin_memcpy(a->longtypestr, D_004A3990, 8);
+        __builtin_memcpy(a->desc, D_004865F0, 12);
+    }
+    return a;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1C9348", func_002C8468);
