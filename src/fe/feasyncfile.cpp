@@ -7270,7 +7270,121 @@ extern "C" void* func_001AFE08(void* self, int a1, int a2, const char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AFE68);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
+void* cBE_getInterface_Fv_FE68(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" char* func_00263270(void* self, int id);
+extern "C" void* cBXString_operatorE(void* self, void* other);
+extern "C" void* cBXString_cBXString4(void* self, const char* str);
+extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" int cBENewRaceInterface_setGameMode_FE68(void* iface, int mode) __asm__("cBENewRaceInterface_setGameMode");
+extern "C" void cBENewRaceInterface_setGameEvent_FE68(void* iface, int ev) __asm__("cBENewRaceInterface_setGameEvent");
+extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern "C" void func_001B0850(void* self, void* iface, void* screen);
+extern "C" void func_0025E6D0(void* self, const char* str);
+extern "C" void func_001AF930(void* screen);
+extern void* D_004A28A8;
+extern void* D_004A3328;
+extern char* D_004A3028_FE68 __asm__("D_004A3028");
+extern int D_004A11B8;
+extern int D_00535C08[];
+extern int D_00534B34[];
+extern char D_004635D8[];
+
+struct sVE_FE68 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sRaceSetup_FE68 {
+    int f0;
+    char* name;                     // 0x4
+    int f8;
+    int mode;                       // 0xC
+    int event;                      // 0x10
+    int f14;
+    int f18;
+    int f1C;
+    int numAI;                      // 0x20
+    int f24;
+    int info[5];                    // 0x28
+};
+
+struct sRaceFlags_FE68 {
+    char pad0[0x18];
+    unsigned int b0 : 6;
+    unsigned int b6 : 1;
+    unsigned int b7 : 1;
+    unsigned int b8 : 1;
+    unsigned int b9 : 23;
+    char pad1C[0x4];
+};
+extern sRaceFlags_FE68 D_005308B8_FE68 __asm__("D_005308B8");
+
+struct sInfo_FE68 {
+    int v[5];
+};
+
+static inline void vcall_FE68(void* p)
+{
+    sVE_FE68* vt = *(sVE_FE68**)((char*)p + 0xC);
+    ((int (*)(void*))vt[1].fn)((char*)p + vt[1].delta);
+}
+
+// Creates the race-setup screen and applies the selected online race settings.
+extern "C" void func_001AFE68(char* self)
+{
+    sVE_FE68* vt = *(sVE_FE68**)(self + 0x8);
+    vt[32].fn(self + vt[32].delta);
+    void* engine = *(void**)(self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_004635D8), 0);
+    *(void**)(self + 0x40) = screen;
+    if (screen == 0)
+        return;
+    cUIScreen_playFrame(screen, 0, 0);
+    if (D_004A3328 == 0)
+        func_00260F80();
+    if (func_00261460(D_004A3328) == 0)
+        func_002613C8(D_004A3328);
+    if (D_004A3328 == 0)
+        func_0025B800(D_004A3028_FE68);
+    char* name = self + 0x6D0;
+    sRaceSetup_FE68* r = (sRaceSetup_FE68*)func_00263270(D_004A3328, *(int*)name);
+    cBXString_operatorE(D_004A3028_FE68 + 0x98, name);
+    *(sInfo_FE68*)(D_004A3028_FE68 + 0xCC) = *(sInfo_FE68*)r->info;
+    if (r == 0)
+        return;
+    cBXString_cBXString4(D_004A3028_FE68 + 0x8C, r->name);
+    func_003E6448(&D_005308B8_FE68, 0, 0x20);
+    D_005308B8_FE68.b6 = r->f18;
+    D_005308B8_FE68.b7 = r->f24;
+    D_005308B8_FE68.b8 = r->f1C;
+    void* be = cBE_getInterface_Fv_FE68(cBE_getBE(), 0);
+    D_00535C08[0] = r->f8;
+    D_004A11B8 = 1;
+    cBENewRaceInterface_setGameMode_FE68(be, r->mode);
+    cBENewRaceInterface_setGameEvent_FE68(be, r->event);
+    cBENewRaceInterface_setNumberAI(be, r->numAI);
+    vcall_FE68(be);
+    void* net = cBE_getInterface_Fv_FE68(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    D_00534B34[0] = r->f14;
+    vcall_FE68(net);
+    func_001B0850(self, be, *(void**)(self + 0x40));
+    func_0025E6D0(D_004A3028_FE68, *(char**)(D_004A3028_FE68 + 0x98));
+    func_001AF930(*(void**)(self + 0x40));
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B00B8);
