@@ -439,7 +439,100 @@ extern "C" void func_0039BE70(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uimenu", func_0039BED8);
+#ifdef SKIP_ASM
+struct cUIThing;
+unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
+extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+void* func_0039FF50(void* self);
+extern "C" int func_003A0318(void* self, int a);
+extern char D_004A5A58[4];
+
+struct sVE_BED8 { short delta; short index; int (*fn)(void*, ...); };
+struct sVEv_BED8 { short delta; short index; void (*fn)(void*, ...); };
+
+static inline int inputIs_BED8(void* in, int slot)
+{
+    sVE_BED8* vt = *(sVE_BED8**)((char*)in + 8);
+    return vt[slot].fn((char*)in + vt[slot].delta);
+}
+
+static inline void focusNotify_BED8(char* self, int what)
+{
+    char* o = *(char**)(*(char**)(self + 0x5C) + 0xD0);
+    sVEv_BED8* vt = *(sVEv_BED8**)(o + 8);
+    vt[19].fn(o + vt[19].delta, self, what);
+}
+
+static inline int focusMove_BED8(char* self, int dir)
+{
+    char* o = *(char**)(*(char**)(self + 0x5C) + 0xD0);
+    sVE_BED8* vt = *(sVE_BED8**)(o + 8);
+    return vt[21].fn(o + vt[21].delta, self, dir);
+}
+
+// Menu input: up/down move the selection (with transition frames and wrap events), accept notifies, else
+// the sub-handler gets the input.
+extern "C" int func_0039BED8(char* self, void* in)
+{
+    int result = 0;
+    char* listener = D_004A5A58;
+    char* owner = (char*)func_0039FF50(self);
+    if (*(char**)(owner + 0x14) != 0) {
+        listener = *(char**)(owner + 0x14);
+    }
+    int f;
+    if (inputIs_BED8(in, 5)) {
+        focusNotify_BED8(self, 5);
+        f = focusMove_BED8(self, 0);
+        if (f & 0x100) {
+            unsigned short ev = cUIThing_getKeyframerEvent((cUIThing*)self, 2);
+            if (ev != 0xFFFF) {
+                cUIScreen_playFrame(*(void**)(self + 0x5C), ev, 1);
+            }
+        }
+        if (f & 1) {
+            result = func_003A0318(self, 1);
+        } else if (f & 0x10) {
+            result = func_003A0318(self, 0);
+        }
+        if (listener != 0) {
+            sVEv_BED8* vt = *(sVEv_BED8**)listener;
+            vt[2].fn(listener + vt[2].delta, result);
+        }
+    } else if (inputIs_BED8(in, 6)) {
+        focusNotify_BED8(self, 6);
+        f = focusMove_BED8(self, 1);
+        if (f & 0x100) {
+            unsigned short ev = cUIThing_getKeyframerEvent((cUIThing*)self, 3);
+            if (ev != 0xFFFF) {
+                cUIScreen_playFrame(*(void**)(self + 0x5C), ev, 1);
+            }
+        }
+        if (f & 1) {
+            result = func_003A0318(self, 1);
+        } else if (f & 0x10) {
+            result = func_003A0318(self, 0);
+        }
+        if (listener != 0) {
+            sVEv_BED8* vt = *(sVEv_BED8**)listener;
+            vt[2].fn(listener + vt[2].delta, result);
+        }
+    } else if (inputIs_BED8(in, 4)) {
+        focusNotify_BED8(self, 4);
+        return 1;
+    } else {
+        char* sub = *(char**)(self + 0x7C);
+        if (sub != 0) {
+            sVE_BED8* vt = *(sVE_BED8**)(sub + 8);
+            return vt[15].fn(sub + vt[15].delta, in);
+        }
+        return 0;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uimenu", func_0039C130);
