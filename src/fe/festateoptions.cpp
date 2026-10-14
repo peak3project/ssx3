@@ -903,7 +903,149 @@ extern "C" int func_0018A8C0(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateoptions", func_0018A8D0);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void func_0039F290(void* list, void* item);
+extern "C" void func_0039F400(void* list, void* item);
+extern "C" int func_0039A738(void* self);
+extern "C" void func_0018BEF8(void* self, unsigned int mode);
+extern "C" void* func_0028B180();
+extern "C" void func_00287410(void* snd, int v);
+extern "C" void func_00287488(void* snd, int v);
+extern "C" void func_00287520(void* snd, int v);
+extern "C" void func_00287558(void* snd, int v);
+extern "C" void func_002875D0(void* snd, int v);
+extern char D_0045DD68[];
+extern void* D_0046B3D0[];
+extern char D_004A1568[];
+extern char D_004A1590[];
+extern char D_004A1598[];
+extern char D_004A15A0[];
+extern char D_004A15A8[];
+extern char D_004A15B0[];
+extern char D_004A15B8[];
+extern int D_004A1A70;
+extern int D_004A14D4;
+
+struct sSndCfg_18A8D0 {
+    unsigned int sfxVol : 4;        // bits 0-3
+    unsigned int musicVol : 4;      // bits 4-7
+    unsigned int speechVol : 4;     // bits 8-11
+    unsigned int output : 2;        // bits 12-13
+    unsigned int pad14 : 2;
+    int f16 : 1;                    // bit 16
+    int f17 : 1;                    // bit 17
+    int f18 : 1;                    // bit 18
+    int pad19 : 13;
+    char rest[0x288 - 4];
+};
+// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
+extern sSndCfg_18A8D0 D_00535610_18A8D0 __asm__("D_00535610");
+
+struct sVE_18A8D0a {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sVE_18A8D0c {
+    short delta;
+    short index;
+    void* (*fn)(void*, void*, int);
+};
+
+static inline int Is_18A8D0(int id, char* s)
+{
+    return id == GetHashValue32(s);
+}
+
+static inline sSndCfg_18A8D0 Cfg_18A8D0()
+{
+    return D_00535610_18A8D0;
+}
+
+struct sOptSound_18A8D0 {
+    char pad0[0x10];
+    char* engine;                   // 0x10
+};
+
+// Sound options screen: widget event handler (popup, apply on exit, value changes).
+extern "C" void func_0018A8D0(sOptSound_18A8D0* self, char* widget, unsigned int event)
+{
+    if (widget == 0)
+        return;
+    char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 4);
+    switch (event) {
+    case 5: // empty case; needed for the original compare-tree shape
+        break;
+    case 7: {
+        char* p = (char*)operator new(0x4C, D_0045DD68, 0x100, 0);
+        func_0039E318(p, self->engine, self);
+        *(void***)(p + 8) = D_0046B3D0;
+        p[0x48] = 0;
+        func_0039F290(self->engine + 0x18, p);
+        break;
+    }
+    case 6: {
+        {
+            sVE_18A8D0a* vt = *(sVE_18A8D0a**)(iface + 0xC);
+            vt[1].fn(iface + vt[1].delta);
+        }
+        func_00287410(func_0028B180(), Cfg_18A8D0().sfxVol);
+        func_00287488(func_0028B180(), Cfg_18A8D0().speechVol);
+        func_00287520(func_0028B180(), Cfg_18A8D0().musicVol);
+        func_00287558(func_0028B180(), Cfg_18A8D0().f17 != 0);
+        func_002875D0(func_0028B180(), Cfg_18A8D0().f16 != 0);
+        char* eng = *(char**)self->engine;
+        sVE_18A8D0c* vt = *(sVE_18A8D0c**)(eng + 4);
+        void* r = vt[5].fn(eng + vt[5].delta, self, *(int*)(widget + 0x18));
+        if (r != 0)
+            func_0039F400(self->engine + 0x18, r);
+        break;
+    }
+    case 9:
+        if (Is_18A8D0(*(int*)(widget + 0x38), D_004A1568)) {
+            D_00535610_18A8D0.output = func_0039A738(widget);
+            func_0018BEF8(self, func_0039A738(widget));
+        }
+        else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A1590)) {
+            unsigned char vol = *(unsigned char*)(widget + 0x74);
+            D_00535610_18A8D0.sfxVol = vol;
+            func_00287410(func_0028B180(), Cfg_18A8D0().sfxVol);
+        }
+        else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A1598)) {
+            unsigned char vol = *(unsigned char*)(widget + 0x74);
+            D_00535610_18A8D0.speechVol = vol;
+            func_00287488(func_0028B180(), Cfg_18A8D0().speechVol);
+        }
+        else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A15A0)) {
+            unsigned char vol = *(unsigned char*)(widget + 0x74);
+            D_00535610_18A8D0.musicVol = vol;
+            func_00287520(func_0028B180(), Cfg_18A8D0().musicVol);
+        }
+        else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A15A8)) {
+            D_00535610_18A8D0.f17 = func_0039A738(widget) != 0;
+            func_00287558(func_0028B180(), Cfg_18A8D0().f17 != 0);
+        }
+        else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A15B0)) {
+            D_00535610_18A8D0.f16 = func_0039A738(widget) != 0;
+            func_002875D0(func_0028B180(), Cfg_18A8D0().f16 != 0);
+        }
+        bool on = D_004A1A70 == 1;
+        if (on && Is_18A8D0(*(int*)(widget + 0x38), D_004A15B8))
+            D_00535610_18A8D0.f18 = func_0039A738(widget) != 0;
+        D_004A14D4 = 1;
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsSound_updateWidget);
 
