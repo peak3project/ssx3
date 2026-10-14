@@ -3178,7 +3178,65 @@ extern "C" int func_002CED78(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/menu", func_002CEEE8);
+#ifdef SKIP_ASM
+extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int func_00413AF8(float f);
+extern char D_00486700[];
+extern char* D_00487470[];
+
+struct sRect_2CEEE8 { float x, y, w, h; };
+
+struct sFont_2CEEE8 {
+    char pad_0x0[0x14];
+    int lineHeight;                 // 0x14
+    char pad_0x18[0x18];
+    float scaleX;                   // 0x30
+    float scaleY;                   // 0x34
+    float drawScaleX;               // 0x38
+    float drawScaleY;               // 0x3C
+};
+
+struct sMenuValueItem_2CEEE8 {
+    char* menu;                     // 0x00
+    char pad_0x4[0x10];
+    float* values;                  // 0x14
+    int index;                      // 0x18
+};
+
+static inline sFont_2CEEE8* font_2CEEE8(sMenuValueItem_2CEEE8* item)
+{
+    return *(sFont_2CEEE8**)(*(char**)(item->menu + 0x124) + 0x58);
+}
+
+static inline float textWidth_2CEEE8(sMenuValueItem_2CEEE8* item, const char* str)
+{
+    sFont_2CEEE8* f = font_2CEEE8(item);
+    return func_00391FB0(f, str, 0, 0, f->drawScaleX, f->drawScaleY);
+}
+
+#define MAX_2CEEE8(a, b) ((a) > (b) ? (a) : (b))
+
+// Returns the rect of a value menu item: sized for the widest of the three option labels plus the formatted value.
+extern "C" sRect_2CEEE8* func_002CEEE8(sRect_2CEEE8* ret, sMenuValueItem_2CEEE8* item)
+{
+    sRect_2CEEE8 r;
+    char buf[64];
+    sprintf(buf, D_00486700, func_00413AF8(*(float*)((char*)item->values + (item->index << 2))));
+    float z = 0.0f;
+    r.y = z;
+    r.x = z;
+    sFont_2CEEE8* font = font_2CEEE8(item);
+    r.h = (float)font->lineHeight * font->scaleY + 12.0f;
+    r.w = MAX_2CEEE8(MAX_2CEEE8(textWidth_2CEEE8(item, D_00487470[0]), textWidth_2CEEE8(item, D_00487470[1])),
+                     textWidth_2CEEE8(item, D_00487470[2]));
+    r.w = r.w + textWidth_2CEEE8(item, buf) + 144.0f;
+    *ret = r;
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/menu", func_002CF1C8);
