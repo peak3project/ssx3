@@ -305,7 +305,173 @@ extern "C" void cFEStateCharSelect_onWidgetCreate(char* self, sWidget_1620* w)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharselect", func_001817E8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
+extern "C" void* func_001887A0(void* mem, void* owner, int a2);
+extern "C" void* func_0018ECA0(void* mem, void* owner, int a2, unsigned char a3);
+extern "C" void* func_001A0548(void* self, int a1);
+extern "C" void func_0019E538(void* self, int a1);
+extern "C" void func_001A1CB8(void* self, int rider, unsigned char mask);
+extern "C" void func_00181BD0(void* self, int index, signed char charID);
+extern "C" void func_001472C8(void* iface, int rider, int idx);
+extern "C" void func_00147448(void* iface, int rider, int id);
+extern "C" void func_001474A8(void* iface, int rider, int id);
+extern "C" void func_0039F400(void* stack, void* state);
+extern void* D_004A28A8;
+extern signed char D_00440F68[];
+extern char D_0045D698[];
+extern char D_0045D6A8[];
+
+class cWidgetBase_17E8 {
+public:
+    int pad0[2];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void setVisible(int on);
+};
+
+class cWidget_17E8 : public cWidgetBase_17E8 {
+public:
+    char padC[0xC];
+    int id;                         // 0x18
+};
+typedef cWidget_17E8 sObj_17E8;
+
+class cIface_17E8 {
+public:
+    int pad0[3];
+    virtual void commit();
+};
+typedef cIface_17E8 sIface_17E8;
+
+class cStateFactory_17E8 {
+public:
+    int pad0;
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void* onSelect(void* owner, int id);
+    virtual void* onBack(void* owner, int id);
+};
+
+struct sCharSel_17E8 {
+    char pad0[0x10];
+    char* engine;                   // 0x10
+    signed char player;             // 0x14
+    char pad15[0x2F];
+    signed char rider;              // 0x44
+    char pad45[0x7];
+    int board;                      // 0x4C
+    char pad50[0x30];
+    int dirty;                      // 0x80
+};
+
+static inline char* riderSlot_17E8(sCharSel_17E8* self)
+{
+    return (char*)func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, self->rider);
+}
+
+static inline void refresh_17E8(sIface_17E8* iface)
+{
+    iface->commit();
+}
+
+// Character select: widget event handler.
+extern "C" void func_001817E8(sCharSel_17E8* self, sObj_17E8* widget, int event)
+{
+    if (widget == 0)
+        return;
+    switch (event) {
+    case 5: {
+        int on = 1;
+        char* r = riderSlot_17E8(self);
+        *(int*)(r + 0xC20) = on;
+        *(int*)(r + 0xC1C) = 0;
+        int rider = self->rider;
+        int player = self->player;
+        int ch = D_00440F68[widget->id];
+        int board = self->board;
+        sIface_17E8* iface = (sIface_17E8*)cBE_getInterface_Fv(cBE_getBE(), 1);
+        func_001472C8(iface, rider, player);
+        func_00147448(iface, rider, ch);
+        func_001474A8(iface, rider, board);
+        refresh_17E8(iface);
+        unsigned char mask = on << self->player;
+        func_001A1CB8(*(void**)self->engine, self->rider, mask);
+        void* st = (*(cStateFactory_17E8**)self->engine)->onSelect(self, widget->id);
+        if (st != 0)
+            func_0039F400(self->engine + 0x18, st);
+        func_0019E538(riderSlot_17E8(self), 0);
+        self->dirty = 0;
+        break;
+    }
+    case 6: {
+        void* st = (*(cStateFactory_17E8**)self->engine)->onBack(self, widget->id);
+        if (st != 0) {
+            func_0039F400(self->engine + 0x18, st);
+            func_0019E538(riderSlot_17E8(self), 0);
+            self->dirty = 0;
+        }
+        break;
+    }
+    case 1: {
+        widget->setVisible(1);
+        func_00181BD0(self, self->rider, D_00440F68[widget->id]);
+        int rider = self->rider;
+        int player = self->player;
+        int ch = D_00440F68[widget->id];
+        int board = self->board;
+        sIface_17E8* iface = (sIface_17E8*)cBE_getInterface_Fv(cBE_getBE(), 1);
+        func_001472C8(iface, rider, player);
+        func_00147448(iface, rider, ch);
+        func_001474A8(iface, rider, board);
+        refresh_17E8(iface);
+        break;
+    }
+    case 2:
+        widget->setVisible(0);
+        break;
+    case 3:
+    case 4:
+        break;
+    case 7: {
+        sIface_17E8* iface = (sIface_17E8*)cBE_getInterface_Fv(cBE_getBE(), 1);
+        func_001472C8(iface, self->rider, self->player);
+        refresh_17E8(iface);
+        char* st = (char*)func_001887A0(cMemMan_alloc(0x54, D_0045D698, 0x100, 0), self->engine, 1);
+        *(int*)(st + 0x1C) = (*(int*)(st + 0x1C) & ~0x3F00) | 0x100;
+        cUIStateStack_pushSpecial(self->engine + 0x18, st, 0, 0);
+        func_0019E538(riderSlot_17E8(self), 0);
+        self->dirty = 0;
+        break;
+    }
+    case 8: {
+        sIface_17E8* iface = (sIface_17E8*)cBE_getInterface_Fv(cBE_getBE(), 1);
+        func_001472C8(iface, self->rider, self->player);
+        refresh_17E8(iface);
+        void* st = func_0018ECA0(cMemMan_alloc(0x280, D_0045D6A8, 0x100, 0), self->engine, 2, 1 << self->player);
+        func_0039F400(self->engine + 0x18, st);
+        char* top = *(char**)self->engine;
+        if (top != 0)
+            *(int*)(top + 0xC) = 9;
+        func_0019E538(riderSlot_17E8(self), 0);
+        self->dirty = 0;
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00181BD0);
