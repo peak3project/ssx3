@@ -193,7 +193,144 @@ extern "C" void func_001A1DC0(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fereal", cRealFE_load);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+void func_00317530(void* self, float t);
+void func_00317550(void* self, float t);
+void func_0014BD78(void* iface);
+extern "C" void func_0014AF10(void* iface);
+extern "C" void func_00195BE0(void* self);
+extern "C" void cUIEngine_loadFile(void* engine, const char* path);
+// PORT: the unit declares cRealFE_loadCharAnimations without parameters; this caller passes self.
+extern "C" void cRealFE_loadCharAnimations_1(void* self) __asm__("cRealFE_loadCharAnimations");
+extern "C" void func_0019CE68(void* self);
+extern "C" void func_001A0498(void* self);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* cFECustom_cFECustom(void* self, void* owner);
+extern "C" void* func_001A2E20(void* self);
+extern "C" void cIrradianceDataBase_Load(void* db);
+extern "C" void* func_0028B180();
+extern "C" void func_00285FB0(void* snd);
+extern void* D_004A28A8;
+extern void* D_004A289C;
+extern char* D_004A5B64;
+extern char D_00461278[];
+extern char D_00461288[];
+extern char D_00461298[];
+extern char D_004612A8[];
+extern void* D_0046D1D0[];
+extern char D_005047F8[];
+
+struct sStr11_1E80 { char c[11]; };
+
+struct sV4_1E80 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVE_1E80 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+class cCamObj_1E80 {
+public:
+    char pad0[0x90];
+    virtual void v01();
+    virtual void v02();
+    virtual void update();
+};
+
+struct sCam_1E80 {
+    char pad0[0x10];
+    cCamObj_1E80 obj;               // 0x10 (vptr at 0xA0)
+};
+
+struct sUI_1E80 {
+    void* custom;                   // 0x0
+    char pad4[0x4];
+    void* f8;                       // 0x8
+    void* input;                    // 0xC
+    void* f10;                      // 0x10
+    void* sound;                    // 0x14
+};
+
+struct sRealFE_1E80 {
+    char pad0[0xC];
+    sUI_1E80* ui;                   // 0xC
+};
+
+static inline void progress_1E80(float t)
+{
+    func_00317550(D_004A5B64 + 0x38, t);
+}
+
+// Front end: loads the UI files, rider data and sound for the front end.
+extern "C" void cRealFE_load(sRealFE_1E80* self)
+{
+    func_00317530(D_004A5B64 + 0x38, 3.5f);
+    progress_1E80(20.0f);
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 9);
+    func_0014BD78(iface);
+    func_0014AF10(iface);
+    func_00195BE0(*(void**)((char*)D_004A28A8 + 0x8C));
+    progress_1E80(50.0f);
+    {
+        char* g = (char*)D_004A289C;
+        sVE_1E80* vt = *(sVE_1E80**)(g + 0x10D8);
+        vt[44].fn(g + vt[44].delta, 0);
+    }
+    sUI_1E80* ui = self->ui;
+    // Looks like a macro expansion: a local copy of the path plus the load call.
+    do {
+        sStr11_1E80 path = *(sStr11_1E80*)D_00461278;
+        cUIEngine_loadFile(ui, D_00461278);
+    } while (0);
+    progress_1E80(75.0f);
+    cRealFE_loadCharAnimations_1(self);
+    func_0019CE68((char*)self + 0x1A70);
+    func_001A0498((char*)self + 0xB0);
+    sCam_1E80* cam = *(sCam_1E80**)((char*)D_004A28A8 + 0x7C);
+    sV4_1E80 pos;
+    sV4_1E80 up;
+    sV4_1E80 t;
+    t.x = 0.0f;
+    t.y = 0.0f;
+    t.z = -195.0f;
+    t.w = 0.0f;
+    pos = t;
+    t.w = 1.0f;
+    t.x = 0.0f;
+    t.y = 1.0f;
+    t.z = 0.0f;
+    up = t;
+    *(sV4_1E80*)((char*)cam + 0x30) = pos;
+    *(sV4_1E80*)((char*)cam + 0x40) = up;
+    ((cCamObj_1E80*)((char*)cam + 0x10))->update();
+    progress_1E80(99.0f);
+    char* in = (char*)cMemMan_alloc(0x1C, D_00461288, 0, 0);
+    sUI_1E80* ui2 = self->ui;
+    in[4] = 0;
+    *(void***)(in + 8) = D_0046D1D0;
+    *(int*)(in + 0x18) = 0;
+    *(int*)(in + 0xC) = 0;
+    *(int*)(in + 0x10) = 0;
+    *(int*)(in + 0x14) = 0;
+    ui2->input = in;
+    self->ui->custom = cFECustom_cFECustom(cMemMan_alloc(0x14, D_00461298, 0, 0), self->ui);
+    self->ui->sound = func_001A2E20(cMemMan_alloc(8, D_004612A8, 0, 0));
+    char* g = (char*)D_004A28A8;
+    void* a = *(void**)(g + 0x8C);
+    self->ui->f10 = a;
+    void* b = *(void**)(g + 0x88);
+    self->ui->f8 = b;
+    cIrradianceDataBase_Load(D_005047F8);
+    func_00285FB0(func_0028B180());
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fereal", func_001A2128);
