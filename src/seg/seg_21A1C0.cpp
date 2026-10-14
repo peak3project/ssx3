@@ -127,7 +127,24 @@ extern "C" void func_00319690(void* self, char* out, const char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319718);
+#ifdef SKIP_ASM
+extern "C" void func_00319690(void* self, char* out, const char* name);
+extern "C" int func_0042BA68(const char* path, int argLen, const char* args);
+
+// Loads an IOP module, retrying while the IOP is busy (-204) or always when 'retry' is set.
+extern "C" int func_00319718(void* self, const char* name, int retry, int argLen, const char* args)
+{
+    char path[256];
+    int r;
+    func_00319690(self, path, name);
+    do {
+        r = func_0042BA68(path, argLen, args);
+    } while (r < 0 && (retry != 0 || r == -204));
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319790);
 
