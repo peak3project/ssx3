@@ -146,7 +146,19 @@ extern "C" int func_00319718(void* self, const char* name, int retry, int argLen
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319790);
+#ifdef SKIP_ASM
+extern "C" void func_0042B438(int fd, int a, int b, void* out);
+extern "C" void func_0042B640(int fd);
+
+extern "C" void func_00319790(void* self, int fd)
+{
+    char tmp[16];
+    func_0042B438(fd, 0, 0, tmp);
+    func_0042B640(fd);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_003197D0);
 
