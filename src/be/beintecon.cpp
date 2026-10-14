@@ -597,7 +597,116 @@ extern "C" void func_00151C48(sEconItems_00151C48* self, int id, int on)
 
 INCLUDE_ASM("be/beintecon", func_00151C90);
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00151EF0);
+#ifdef SKIP_ASM
+// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
+void* func_0014BDB8_1EF0() __asm__("func_0014BDB8__FPv");
+struct sEconLink_151EF0;
+extern "C" sEconLink_151EF0* func_0014DB40(void* db, int kind, int id, int on, int* n);
+extern "C" int func_0014D448(void* db, int kind, int id);
+extern "C" int func_00151C90(void* self, int id, int on);
+
+struct sEconItem_151EF0
+{
+    short id;
+    unsigned short flags;
+};
+
+struct sEconItems_151EF0
+{
+    char pad[0x288];
+    short* lookup;                  // 0x288
+    int count;                      // 0x28C
+    sEconItem_151EF0 items[0x20D];  // 0x290
+    char pad2[0xBC0 - 0x290 - 0x20D * 4];
+    signed char kind;               // 0xBC0
+};
+
+// One dependency: when condId is set, applies only if its owned state equals cond.
+struct sEconLink_151EF0
+{
+    char pad0[0x5];
+    signed char cond;   // 0x5
+    short condId;       // 0x6
+    char pad8;
+    signed char on;     // 0x9
+    short target;       // 0xA
+};
+
+struct sEconDef_151EF0
+{
+    char pad0[0x34];
+    int flags;          // 0x34
+};
+
+struct sEconDefs_151EF0
+{
+    char pad0[0x4];
+    sEconDef_151EF0* defs;  // 0x4
+};
+
+static inline sEconItem_151EF0* getItem_151EF0(sEconItems_151EF0* self, int id)
+{
+    int idx = self->lookup[id];
+    if (idx >= 0)
+        return &self->items[idx];
+    return 0;
+}
+
+static inline int isOwned_151EF0(sEconItem_151EF0* p)
+{
+    return p->flags & 0x10;
+}
+
+static inline sEconDef_151EF0* getDef_151EF0(sEconDefs_151EF0* db, int i)
+{
+    if (i < 0)
+        return 0;
+    return &db->defs[i];
+}
+
+// Sets item id owned/unowned and applies its dependency links (cascading through func_00151C90); 0 on failure.
+extern "C" int func_00151EF0(void* selfp, int id, int on)
+{
+    sEconItems_151EF0* self = (sEconItems_151EF0*)selfp;
+    sEconDefs_151EF0* db = (sEconDefs_151EF0*)func_0014BDB8_1EF0();
+    int n = 0;
+    sEconLink_151EF0* l = func_0014DB40(db, self->kind, id, on, &n);
+    sEconItem_151EF0* item = getItem_151EF0(self, id);
+    for (int i = 0; i < n; i++, l++)
+    {
+        if (l->target == -1)
+            continue;
+        if (l->condId != -1)
+        {
+            if ((isOwned_151EF0(getItem_151EF0(self, l->condId)) != 0) != (l->cond != 0))
+                continue;
+        }
+        sEconItem_151EF0* t = &self->items[self->lookup[l->target]];
+        int has = isOwned_151EF0(t) != 0;
+        if (has == (l->on != 0))
+        {
+            if (has)
+                continue;
+            if (!(getDef_151EF0(db, func_0014D448(db, self->kind, l->target))->flags & 8))
+                continue;
+        }
+        if (t->id == id)
+        {
+            if (l->on)
+                item->flags |= 0x10;
+            else
+                item->flags &= ~0x10;
+        }
+        else if (func_00151C90(self, t->id, l->on != 0) == 0)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintecon", func_001520E8);
