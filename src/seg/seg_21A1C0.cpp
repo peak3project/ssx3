@@ -1,6 +1,129 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_003191C0);
+#ifdef SKIP_ASM
+struct cBXString_91C0 {
+    char* str;
+};
+extern "C" long func_0041E9E0(const char* s, char** end, int base);
+extern "C" int strlen(const char* s);
+extern "C" void func_003189D0(cBXString_91C0* self, int len);
+extern "C" int func_004186C8(char* buf, const char* fmt, char* ap);
+extern "C" void func_00318A88(cBXString_91C0* self, int len);
+
+#define MAX_91C0(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN_91C0(a, b) (((a) < (b)) ? (a) : (b))
+
+// vsprintf into a cBXString: estimates the formatted length first (the MFC CString::FormatV
+// scheme), reserves it, then formats in place.
+extern "C" void func_003191C0(void* self_, const char* fmt, char* args)
+{
+    cBXString_91C0* self = (cBXString_91C0*)self_;
+    char* ap = args;
+    int maxLen = 1;
+    const char* p;
+    for (p = fmt; *p != 0; p++) {
+        if (*p != '%' || *++p == '%') {
+            maxLen++;
+            continue;
+        }
+        int width = 0;
+        int widthArg = 0;
+        for (; *p != 0; p++) {
+            if (*p == '#')
+                maxLen += 2;
+            else if (*p == '*') {
+                ap += 8;
+                widthArg = 1;
+                width = *(int*)(ap - 8);
+            } else if (*p == '-' || *p == '+' || *p == '0' || *p == ' ')
+                ;
+            else
+                break;
+        }
+        if (!widthArg) {
+            char* end;
+            width = func_0041E9E0(p, &end, 10);
+            p = end;
+        }
+        int precision = 0;
+        if (*p == '.') {
+            p++;
+            if (*p == '*') {
+                ap += 8;
+                precision = *(int*)(ap - 8);
+                p++;
+            } else {
+                char* end;
+                precision = func_0041E9E0(p, &end, 10);
+                p = end;
+            }
+        }
+        switch (*p) {
+        case 'h':
+        case 'l':
+        case 'F':
+        case 'N':
+        case 'L':
+            p++;
+            break;
+        }
+        int itemLen = 0;
+        switch (*p) {
+        case 'c':
+        case 'C':
+            itemLen = 2;
+            ap += 8;
+            break;
+        case 's':
+        case 'S':
+            ap += 8;
+            itemLen = strlen(*(char**)(ap - 8));
+            itemLen = MAX_91C0(1, itemLen);
+            break;
+        }
+        if (itemLen != 0) {
+            itemLen = MAX_91C0(itemLen, width);
+            if (precision != 0)
+                itemLen = MIN_91C0(itemLen, precision);
+        } else {
+            switch (*p) {
+            case 'e':
+            case 'f':
+            case 'g':
+            case 'G':
+                ap += 8;
+                itemLen = 128;
+                itemLen = MAX_91C0(itemLen, width + precision);
+                break;
+            case 'd':
+            case 'i':
+            case 'u':
+            case 'x':
+            case 'X':
+            case 'o':
+                ap += 8;
+                itemLen = 32;
+                itemLen = MAX_91C0(itemLen, width + precision);
+                break;
+            case 'p':
+                ap += 8;
+                itemLen = 32;
+                itemLen = MAX_91C0(itemLen, width + precision);
+                break;
+            case 'n':
+                ap += 8;
+                break;
+            }
+        }
+        maxLen += itemLen;
+    }
+    func_003189D0(self, maxLen);
+    func_004186C8(self->str, fmt, args);
+    func_00318A88(self, -1);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_21A1C0", func_003194A8);
