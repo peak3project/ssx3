@@ -4849,7 +4849,71 @@ extern "C" void func_00366008(sRailNodeMan* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_003660A8);
+#ifdef SKIP_ASM
+// PORT: PS2-only MMI count-leading-sign-bits (plzcw); off-PS2 use a clz builtin. Volatile so it stays before
+// the size-class multiply, as in the target schedule.
+static inline int railFloorLog2_60A8(int x)
+{
+    long r;
+    __asm__ __volatile__("plzcw %0, %1\n\txori %0, %0, 0x1f\n\taddiu %0, %0, -1" : "=r"(r) : "r"(x));
+    return r;
+}
+
+// Links node idx into its size-class list (list A ordered by field_0x0, list B by size).
+extern "C" void func_003660A8(void* selfp, int idx)
+{
+    sRailNodeMan* self = (sRailNodeMan*)selfp;
+    sRailNode* node = &self->nodes[idx];
+    sRailNode* heads;
+    int tag;
+    if (node->field_0x0 & 1) {
+        heads = self->headsA;
+        tag = 0x90000000;
+    } else {
+        heads = self->headsB;
+        tag = 0xA0000000;
+    }
+    int b = railFloorLog2_60A8(node->size) - 6;
+    sRailNode* head = &heads[b];
+    int first = head->next2;
+    if (first == -1) {
+        head->next2 = idx;
+        node->prev2 = b | tag;
+        node->next2 = first;
+        return;
+    }
+    for (int i = first; i >= 0; i = self->nodes[i].next2) {
+        sRailNode* n = &self->nodes[i];
+        if (n->next2 == -1) {
+            n->next2 = idx;
+            node->prev2 = i;
+            node->next2 = -1;
+            return;
+        }
+        if ((heads == self->headsA && n->field_0x0 > node->field_0x0) ||
+            (heads == self->headsB && n->size >= node->size)) {
+            int link = n->prev2;
+            node->next2 = i;
+            node->prev2 = link;
+            sRailNode* prev;
+            if (link < 0) {
+                if ((link & 0x70000000) == 0x10000000) {
+                    prev = &self->headsA[link & 0x0FFFFFFF];
+                } else {
+                    prev = &self->headsB[link & 0x0FFFFFFF];
+                }
+            } else {
+                prev = &self->nodes[link];
+            }
+            prev->next2 = idx;
+            self->nodes[node->next2].prev2 = idx;
+            return;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_00366238);
