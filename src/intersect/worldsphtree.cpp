@@ -2318,7 +2318,120 @@ extern "C" void func_00341A50(void* self, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341AA0);
+#ifdef SKIP_ASM
+extern char* D_004A5B64;
+extern void* D_00490B10[];
+extern "C" void func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
+extern "C" float func_00351508(void* inst);
+float AIrandf(float lo, float hi);
+float func_00317890(float a, float b);
+
+struct sSphFloat_1AA0 {
+    unsigned short id;  // 0x00
+    char pad02[0x2];
+    int active;         // 0x04
+    int atLimit;        // 0x08
+    int fC;             // 0x0C
+    float speed;        // 0x10
+    float min;          // 0x14
+    float max;          // 0x18
+    float value;        // 0x1C
+    float start;        // 0x20
+    char pad24[0x18];
+    void** vt;          // 0x3C
+    char pad40[0x2];
+    unsigned short flags; // 0x42
+    char pad44[0x20];
+    void* inst;         // 0x64
+};
+
+struct sSphFloatDef_1AA0 {
+    int f0;
+    unsigned short id;  // 0x04
+    char pad06[0x2];
+    int dir;            // 0x08
+    float min;          // 0x0C
+    float max;          // 0x10
+    float speed;        // 0x14
+    float speedVar;     // 0x18
+    float value;        // 0x1C
+    int random;         // 0x20
+    int f24;            // 0x24
+};
+
+struct sFloat_1AA0 {
+    float v;
+};
+
+static inline void setRate_1AA0(sFloat_1AA0* dst, float v, float dflt)
+{
+    float r;
+    if (v >= 0.0f) {
+        r = v * 0.03333333507180214f;
+    } else {
+        r = dflt;
+    }
+    dst->v = r;
+}
+
+static inline void setRateMax_1AA0(sFloat_1AA0* dst, float v, char* info)
+{
+    float r;
+    if (v < 0.0f) {
+        r = *(float*)(info + 0x14);
+    } else {
+        r = v * 0.03333333507180214f;
+    }
+    dst->v = r;
+}
+
+// Animated float constructor: range and start value (frames -> seconds), optional random start and speed.
+extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, sSphFloatDef_1AA0* def)
+{
+    func_0034D9B0((char*)self + 0x1C, a1, a2, obj, def->f24 != 0);
+    self->vt = D_00490B10;
+    float v = 0.0f;
+    char* info = *(char**)(obj + 0x80);
+    if (self->inst != 0) {
+        v = func_00351508(self->inst);
+    }
+    self->id = def->id;
+    setRate_1AA0((sFloat_1AA0*)&self->min, def->min, v);
+    setRateMax_1AA0((sFloat_1AA0*)&self->max, def->max, info);
+    v = def->value;
+    if (v < 0.0f) {
+        v = self->min;
+    } else {
+        v *= 0.03333333507180214f;
+    }
+    if (v < self->min) {
+        v = self->min;
+    }
+    if (self->max < v) {
+        v = self->max;
+    }
+    if (def->random != 0) {
+        v = AIrandf(self->min, self->max);
+    }
+    self->value = v;
+    if (def->speedVar != 0.0f) {
+        self->speed = func_00317890(def->speed * 0.03333333507180214f, def->speedVar * 0.03333333507180214f) / (float)*(int*)(D_004A5B64 + 0x10);
+    } else {
+        self->speed = def->speed * 0.03333333507180214f / (float)*(int*)(D_004A5B64 + 0x10);
+    }
+    if (def->dir == 1) {
+        self->speed = -self->speed;
+    }
+    self->start = self->value;
+    self->active = 1;
+    self->flags |= 1;
+    self->fC = 0;
+    self->atLimit = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341C80);
