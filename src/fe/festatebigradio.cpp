@@ -168,7 +168,130 @@ extern "C" void cFEStateBraggingRights_onWidgetCreate(char* self, cUIObj_193650*
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatebigradio", func_001938F8);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern int D_004A1A70;
+extern void* D_004A33CC;
+extern "C" void func_001927B0(void* p);
+extern "C" void func_00194080(void* self);
+extern "C" void func_00193DE0(void* self, int player, int which, int value);
+extern "C" int func_00192918_38F8(void* panel, void* item) __asm__("func_00192918");
+extern "C" int func_0039A738_38F8(void* item) __asm__("func_0039A738");
+extern "C" void func_00192740_38F8(void* panel, int on) __asm__("func_00192740");
+extern "C" void func_00265688(void* snd);
+extern "C" void func_00265568(void* snd, int slot, int value);
+extern "C" void func_0039F400(void* list, void* obj);
+extern "C" void* func_001A9C50(void* self);
+extern "C" void func_001A9BC0(void* self, void* popup);
+void func_001C57C0(void* self, int a1, int a2);
+extern "C" void func_001A8918(void* self, void* widget);
+extern "C" void func_003E6448(void* dst, int c, int n);
+extern char D_0045FD98[];
+extern char D_0045DCC8[];
+extern char D_0045FCD8[];
+extern char D_005308B8[];
+
+struct sVE_38F8 {
+    short delta;
+    short index;
+    void* (*fn)(void*, void*, int);
+};
+
+struct sVObj_38F8 {
+    int f0;
+    sVE_38F8* vt;                   // 0x4
+};
+
+struct sWidget_38F8 {
+    char pad_0x0[0x18];
+    int panel;                      // 0x18
+};
+
+static inline int isOn_38F8()
+{
+    return D_004A1A70 == 1;
+}
+
+static inline void* vcall_38F8(char* self, int slot, sWidget_38F8* w)
+{
+    sVObj_38F8* o = **(sVObj_38F8***)(self + 0x10);
+    return o->vt[slot].fn((char*)o + o->vt[slot].delta, self, w->panel);
+}
+
+// Widget event handler of the big radio-button screen (two radio panels at self+0x6D0).
+extern "C" void func_001938F8(char* self, sWidget_38F8* w, int event)
+{
+    int panel;
+    switch (event) {
+    case 5: {
+        int i = 0;
+        do {
+            if (func_00192918_38F8(self + 0x6D0 + i * 0x34, w) != -1) {
+                if (isOn_38F8() && i == 0)
+                    func_00265688(D_004A33CC);
+                func_00192740_38F8(self + 0x6D0 + i * 0x34, 1);
+                func_00194080(self);
+                break;
+            }
+            i++;
+        } while (i < 2);
+        if (isOn_38F8())
+            break;
+        if (*(int*)(self + 0x6F8) == 0)
+            break;
+        if (*(int*)(self + 0x72C) == 0)
+            break;
+        void* r = vcall_38F8(self, 4, w);
+        if (r != 0)
+            func_0039F400(*(char**)(self + 0x10) + 0x18, r);
+        break;
+    }
+    case 6:
+        if (isOn_38F8()) {
+            char* p = (char*)func_001A9C50(self);
+            char* sub = p + 0xBC;
+            *(int*)(p + 0xBC) = 2;
+            *(int*)(p + 0xC4) = GetHashValue32(D_0045FD98);
+            *(int*)(p + 0xC0) = 3;
+            func_001C57C0(sub, 0, GetHashValue32(D_0045DCC8));
+            func_001C57C0(sub, 1, GetHashValue32(D_0045FCD8));
+            *(int*)(p + 0x150) = 0x838;
+            *(int*)(p + 0x168) = 1;
+            func_001A9BC0(self, p);
+        } else {
+            void* r = vcall_38F8(self, 5, w);
+            if (r != 0)
+                func_0039F400(*(char**)(self + 0x10) + 0x18, r);
+            func_003E6448(D_005308B8, 0, 0x20);
+        }
+        break;
+    case 1:
+    case 2:
+        panel = w->panel;
+        func_001927B0(self + 0x6D0 + panel * 0x34);
+        break;
+    case 7:
+        if (isOn_38F8())
+            func_001A8918(self, w);
+        break;
+    case 9:
+        if (isOn_38F8()) {
+            void* snd = D_004A33CC;
+            int slot = func_00192918_38F8(self + 0x6D0, w);
+            func_00265568(snd, slot, func_0039A738_38F8(w));
+        } else {
+            panel = w->panel;
+            int slot = func_00192918_38F8(self + 0x6D0 + panel * 0x34, w);
+            int which = (*(signed char**)(self + 0x738))[slot];
+            if (which != -1)
+                func_00193DE0(self, panel, which, func_0039A738_38F8(w));
+        }
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00193C00);
