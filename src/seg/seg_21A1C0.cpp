@@ -45,7 +45,28 @@ extern "C" void func_003194F0(cBXString_94F0* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319578);
+#ifdef SKIP_ASM
+struct cBXString_9578 {
+    char* str;
+};
+extern "C" void func_00318120(void* self);
+extern "C" void* func_0041610C(void* dst, const void* src, int n);
+extern unsigned char D_00499C81[];
+
+// Strips leading white space.
+extern "C" void func_00319578(cBXString_9578* self)
+{
+    func_00318120(self);
+    char* p = self->str;
+    while (D_00499C81[(int)*p] & 8)
+        p++;
+    int len = *(int*)(self->str - 8) - (p - self->str);
+    func_0041610C(self->str, p, len + 1);
+    *(int*)(self->str - 8) = len;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319610);
 
