@@ -68,7 +68,26 @@ extern "C" void func_00319578(cBXString_9578* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319610);
+#ifdef SKIP_ASM
+extern "C" void func_00426408(int a);
+extern "C" void func_0042AB18(void);
+extern "C" void func_00319820(void* self);
+extern "C" void func_00401718(int a);
+extern "C" void func_00402450(int a);
+extern "C" void func_00427D28(void);
+
+extern "C" void func_00319610(void* self)
+{
+    func_00426408(0);
+    func_0042AB18();
+    func_00319820(self);
+    func_00401718(0);
+    func_00402450(2);
+    func_00427D28();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319660);
 
