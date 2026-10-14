@@ -975,7 +975,78 @@ int func_00198AE8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/messagecenter", func_00198AF0);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int strlen(const char* s);
+extern char D_004C6310[];
+extern char D_004A12C0[];
+
+struct sOptions_8AF0 {
+    unsigned int pad0 : 22;
+    unsigned int moneyFormat : 3;   // 0 = "$ 1,000", 2 = "$ 1.000", 1/3 = "1 000 $"
+    unsigned int pad1 : 7;
+    int data[0x288 / 4 - 1];
+};
+extern sOptions_8AF0 D_00535610_8AF0 __asm__("D_00535610");
+
+struct cBEOptionInterface_8AF0 {
+    sOptions_8AF0 getOptions() { return D_00535610_8AF0; }
+};
+
+// Formats a money amount with the currency sign and thousands separator chosen in the options.
+extern "C" const char* func_00198AF0(void* amount_)
+{
+    // PORT: callers in this unit declare the amount parameter as void*.
+    int amount = (int)amount_;
+    int prefix = 1;
+    char sep = ' ';
+    char n;
+    switch (((cBEOptionInterface_8AF0*)cBE_getInterface_Fv(cBE_getBE(), 4))->getOptions().moneyFormat) {
+    case 0:
+        sep = ',';
+        break;
+    case 1:
+        prefix = 0;
+        break;
+    case 2:
+        sep = '.';
+        break;
+    case 3:
+        prefix = 0;
+        break;
+    }
+    n = 0;
+    if (prefix) {
+        D_004C6310[0] = '$';
+        D_004C6310[1] = ' ';
+        n = 2;
+    }
+    if (amount < 0) {
+        D_004C6310[n++] = '-';
+        amount = -amount;
+    }
+    char tmp[32];
+    sprintf(tmp, D_004A12C0, amount);
+    char len = strlen(tmp);
+    char i;
+    for (i = 0; i != len; i++) {
+        D_004C6310[n++] = tmp[i];
+        char left = len - i - 1;
+        if (left != 0 && left % 3 == 0)
+            D_004C6310[n++] = sep;
+    }
+    if (!prefix) {
+        D_004C6310[n++] = ' ';
+        D_004C6310[n++] = '$';
+    }
+    D_004C6310[n] = 0;
+    return D_004C6310;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00198DA0);
