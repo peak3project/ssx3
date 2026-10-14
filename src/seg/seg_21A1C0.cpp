@@ -89,7 +89,19 @@ extern "C" void func_00319610(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319660);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char D_0048D9D8[];
+extern char D_0048D9C8[];
+
+// Builds the IOP module directory ("cdrom0:\DATA\MODULES\").
+extern "C" void func_00319660(void* self, char* out)
+{
+    sprintf(out, D_0048D9D8, D_0048D9C8);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319690);
 
