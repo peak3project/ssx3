@@ -338,7 +338,165 @@ extern "C" void* func_00188EE8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsGame_onCreateScreen);
+#ifdef SKIP_ASM
+struct cUIText;
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
+extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int a2);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" int func_0039A768_OGCS(void* item, int key, unsigned char* out) __asm__("func_0039A768");
+extern "C" void func_0039A7A8(void* self, int v);
+extern char D_0045DED0[];
+extern char D_004A14F8[];
+extern char D_004A1500[];
+extern char D_004A1398[];
+extern char D_0045DEE0[];
+extern char D_0045DEF0[];
+extern char D_0045DF00[];
+extern char D_0045DF10[];
+extern char D_0045DF20[];
+extern char D_0045DF30[];
+extern char D_0045DF40[];
+extern char D_0045DF50[];
+extern char D_0045DF68[];
+extern char* D_00440FD8[];
+extern char* D_00440FB8[];
+extern char* D_00440FC8[];
+extern char* D_00440FCC[];
+extern char* D_00440FD0[];
+extern char* D_00440FF8[];
+extern char* D_00440FE8[];
+extern char* D_00440FEC[];
+extern char* D_00440FF0[];
+
+struct sGameCfg_OGCS {
+    unsigned int pad0 : 19;
+    unsigned int showHud : 1;       // bit 19
+    unsigned int f20 : 2;           // bits 20-21
+    unsigned int mode : 3;          // bits 22-24
+    unsigned int pad25 : 7;
+    char rest[0x288 - 4];
+};
+// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
+extern sGameCfg_OGCS D_00535610_OGCS __asm__("D_00535610");
+
+static inline sGameCfg_OGCS getOptions_OGCS()
+{
+    return D_00535610_OGCS;
+}
+
+struct sVE_OGCS {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sOptGame_OGCS {
+    char pad0[0x10];
+    void* engine;                   // 0x10
+    char pad14[0x2C];
+    void* screen;                   // 0x40
+    char pad44[0x4];
+    signed char item[3];            // 0x48
+};
+
+static inline void* find_OGCS(sOptGame_OGCS* self, char* name)
+{
+    return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
+}
+
+extern "C" void cFEStateOptionsGame_onCreateScreen(sOptGame_OGCS* self)
+{
+    void* engine = self->engine;
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0045DED0), 0);
+    self->screen = screen;
+    if (screen != 0)
+        cUIScreen_playFrame(screen, 0, 0);
+    cBE_getInterface_Fv(cBE_getBE(), 4);
+    self->item[0] = -1;
+    self->item[1] = 1;
+    self->item[2] = 2;
+    char* a = (char*)find_OGCS(self, D_004A14F8);
+    find_OGCS(self, D_004A1500);
+    {
+        sVE_OGCS* vt = *(sVE_OGCS**)(a + 8);
+        vt[9].fn(a + vt[9].delta, 0);
+    }
+    {
+        sVE_OGCS* vt = *(sVE_OGCS**)(a + 8);
+        vt[8].fn(a + vt[8].delta, 1);
+    }
+    void* menu = find_OGCS(self, D_004A1398);
+    if (menu != 0)
+        cUIMenu_setSelectedByIndex(menu, 1);
+    if (self->item[0] >= 0) {
+        void* lb = find_OGCS(self, D_00440FD8[self->item[0]]);
+        if (lb != 0) {
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DEE0), 0);
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DEF0), 1);
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF00), 2);
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF10), 3);
+            unsigned char out;
+            if (func_0039A768_OGCS(lb, getOptions_OGCS().mode, &out))
+                func_0039A7A8(lb, out);
+        }
+        {
+            cUIText* t = (cUIText*)find_OGCS(self, D_00440FB8[self->item[0]]);
+            if (t != 0)
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_00440FC8[0]));
+        }
+        {
+            cUIText* t = (cUIText*)find_OGCS(self, D_00440FF8[self->item[0]]);
+            if (t != 0)
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_00440FE8[0]));
+        }
+    }
+    if (self->item[1] >= 0) {
+        void* lb = find_OGCS(self, D_00440FD8[self->item[1]]);
+        if (lb != 0) {
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF20), 0);
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF30), 0);
+            func_0039A7A8(lb, getOptions_OGCS().showHud);
+        }
+        {
+            cUIText* t = (cUIText*)find_OGCS(self, D_00440FB8[self->item[1]]);
+            if (t != 0)
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_00440FCC[0]));
+        }
+        {
+            cUIText* t = (cUIText*)find_OGCS(self, D_00440FF8[self->item[1]]);
+            if (t != 0)
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_00440FEC[0]));
+        }
+    }
+    if (self->item[2] >= 0) {
+        void* lb = find_OGCS(self, D_00440FD8[self->item[2]]);
+        if (lb != 0) {
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF50), 0);
+            cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF68), 0);
+            func_0039A7A8(lb, getOptions_OGCS().f20);
+        }
+        {
+            cUIText* t = (cUIText*)find_OGCS(self, D_00440FB8[self->item[2]]);
+            if (t != 0)
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_00440FD0[0]));
+        }
+        {
+            cUIText* t = (cUIText*)find_OGCS(self, D_00440FF8[self->item[2]]);
+            if (t != 0)
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_00440FF0[0]));
+        }
+    }
+}
+#endif
 
 extern "C" void* func_0039E4C0(void* self);
 
