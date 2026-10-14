@@ -2217,7 +2217,75 @@ extern "C" void func_00298D00(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00298D90);
+#ifdef SKIP_ASM
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" void* func_00287968(void* self, int a1, int a2);
+extern "C" int func_002906B8(void* self);
+extern "C" int func_00288AE0(void* self);
+extern "C" void func_002ADDE0(void* bank, long id);
+
+struct sSnd8D90Self {
+    sSnd74A0Sys sys;
+    char pad11C[0x59E0 - sizeof(sSnd74A0Sys)];
+    int handle;              // 0x59E0
+    int count;               // 0x59E4
+};
+
+static inline void snd8D90AddVoice(void* vself, int a, int b)
+{
+    sSnd74A0Sys* self = (sSnd74A0Sys*)vself;
+    sSnd74A0Mgr* m = self->mgr;
+    sSnd74A0Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+    sSnd74A0Mgr** pp = self->p118;
+    int r = (int)func_00287968(self, 9, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+}
+
+// Landing/trick sting: first call starts the base sting, an extra layer on request; counts the calls.
+extern "C" void func_00298D90(sSnd8D90Self* self, char* obj, int extra)
+{
+    int b7 = 0x7A;
+    if (func_00288AE0(self) == 0) {
+        bool ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
+        if (ok) {
+            func_002ADDE0(&(*self->sys.p118)->sub, D_004A36A8[0].v);
+            if (self->count == 0) {
+                snd8D90AddVoice(self, 0, b7);
+                self->handle = func_002906B8(self);
+            }
+            if (extra != 0) {
+                snd8D90AddVoice(self, 0, 0x4A);
+                func_002906B8(self);
+            }
+            self->count++;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002992D8);
