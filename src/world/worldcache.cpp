@@ -997,7 +997,125 @@ extern "C" void cWorldCache_updatePages(void* p)
 
 INCLUDE_ASM("world/worldcache", func_003A88A8);
 
+//100%
 INCLUDE_ASM("world/worldcache", cWorldCache_addBxStreamDataTest);
+#ifdef SKIP_ASM
+struct sWCPool_7878;
+extern "C" char* func_003A7878(sWCPool_7878* self, int size, unsigned int flags);
+// PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
+void* operator_new_bx(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern char D_00494D40[];
+extern char D_00494E98[];
+
+struct sBxRef_8AA8 {
+    unsigned char refs;
+    unsigned char pad;
+    unsigned short pad2;
+};
+struct sBxTypeTbl_8AA8 {
+    sBxRef_8AA8* refs;
+    int count;
+};
+struct sBxBank_8AA8 {
+    int f0;
+    sBxTypeTbl_8AA8 types[1];       // 0x4
+};
+struct sBxItem_8AA8 {
+    unsigned char type;
+    unsigned char bank;
+    unsigned short id;
+};
+struct sBxList_8AA8 {
+    char pad0[0x8];
+    int count;                      // 0x8
+    sBxItem_8AA8* items;            // 0xC
+};
+struct sBxSlot_8AA8 {
+    sBxList_8AA8* list;
+    char pad4[0x14];
+};
+struct sBxPools_8AA8 {
+    char pad0[0x3C];
+    sWCPool_7878* pools[1];         // 0x3C
+};
+struct sWorldCache_8AA8 {
+    int f0;
+    sBxBank_8AA8* global;           // 0x4
+    sBxBank_8AA8** banks;           // 0x8
+    sBxPools_8AA8* pools;           // 0xC
+    char pad10[0x3E8];
+    sBxSlot_8AA8 slots[1];          // 0x3F8
+};
+
+static inline void* bxAlloc_8AA8(sBxPools_8AA8* pl, int bank, int size, unsigned int flags)
+{
+    if (bank == 0xFF)
+        return operator_new_bx(size, D_00494D40, flags, 0);
+    return func_003A7878(pl->pools[bank], size, flags);
+}
+
+static inline int addRef_8AA8(sBxRef_8AA8* r)
+{
+    if (r->refs != 0) {
+        r->refs++;
+        return 1;
+    }
+    r->refs++;
+    return 0;
+}
+
+static inline void release_8AA8(sBxRef_8AA8* r)
+{
+    if (--r->refs == 0)
+        *(unsigned int*)r = r->refs;
+}
+
+// Adds one stream data item (type, bank|id<<8) to a load list, allocating its storage on first use.
+extern "C" unsigned int cWorldCache_addBxStreamDataTest(sWorldCache_8AA8* self, int slot, int type, unsigned int key, int size)
+{
+    int bank = key & 0xFF;
+    unsigned int id = key >> 8;
+    sBxBank_8AA8* b;
+    if (bank == 0xFF)
+        b = self->global;
+    else
+        b = self->banks[bank];
+    if (addRef_8AA8(&b->types[type].refs[id])) {
+        sBxList_8AA8* l = self->slots[slot].list;
+        l->items[l->count].type = type;
+        l->items[l->count].bank = key;
+        l->items[l->count].id = key >> 8;
+        l->count++;
+        return 0;
+    }
+    if (size == 0)
+        return 0;
+    void* p;
+    switch (type) {
+    case 9:
+    case 10:
+        p = bxAlloc_8AA8(self->pools, bank, size, 0x45000000);
+        break;
+    case 1:
+    case 2:
+    case 3:
+    case 11:
+    case 12:
+        p = bxAlloc_8AA8(self->pools, bank, size, 0x22000000);
+        break;
+    case 14:
+        p = operator_new_bx(size, D_00494E98, 0, 0);
+        break;
+    default:
+        p = bxAlloc_8AA8(self->pools, bank, size, 0);
+        break;
+    }
+    if (p != 0)
+        return (unsigned int)p;
+    release_8AA8(&b->types[type].refs[id]);
+    return 0xFFFFFFFF;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8CD0);
