@@ -751,7 +751,73 @@ extern "C" int func_00116938(int arg0) {
 
 INCLUDE_ASM("seg/seg_14B10", gGenTrickName);
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", gGenMonsterTrickReqName);
+#ifdef SKIP_ASM
+extern "C" void func_003E6448(void* p, int c, int n);
+
+// Packed trick id (64-bit EE `long` bitfields).
+struct sTrickBits_6E10 {
+    unsigned long pad0 : 10;
+    unsigned long kind : 2;     // 10
+    unsigned long dir : 4;      // 12
+    unsigned long spin : 3;     // 16
+    unsigned long flip : 3;     // 19
+    unsigned long pad22 : 6;
+    unsigned long grab : 4;     // 28
+    unsigned long pad32 : 3;
+    unsigned long mod : 7;      // 35
+    unsigned long hasExtra : 1; // 42
+    unsigned long extra : 7;    // 43
+    unsigned long pad50 : 14;
+};
+
+union sTrickId_6E10 {
+    sTrickBits_6E10 b;
+    unsigned int w[2];
+};
+
+extern "C" void gGenTrickName(char* buf, sTrickId_6E10* id, int size);
+
+struct sMonsterReq_6E10 {
+    int trick;
+    int pad4;
+    unsigned char kind;
+    unsigned char dir;
+    unsigned char spin;
+    unsigned char flip;
+    unsigned char grab;
+    unsigned char mod;
+    unsigned char extra;
+    unsigned char padF;
+};
+extern sMonsterReq_6E10 D_0043D608[];
+
+// Name of the monster trick required for `trick` (empty when it is not one).
+extern "C" void gGenMonsterTrickReqName(char* buf, int trick, int size)
+{
+    sMonsterReq_6E10* r = D_0043D608;
+    for (int i = 0; i < 0x18; i++, r++) {
+        if (r->trick == trick) {
+            sTrickId_6E10 id;
+            func_003E6448(&id, 0, 8);
+            id.b.kind = r->kind;
+            id.b.dir = r->dir;
+            id.b.spin = r->spin;
+            id.b.flip = r->flip;
+            id.b.grab = r->grab;
+            id.b.mod = r->mod;
+            id.b.extra = r->extra;
+            if (id.w[1] & 0x3F800) {  // extra != 0
+                id.b.hasExtra = 1;
+            }
+            gGenTrickName(buf, &id, size);
+            return;
+        }
+    }
+    buf[0] = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00116FA8);
