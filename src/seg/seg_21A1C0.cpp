@@ -185,7 +185,34 @@ extern "C" void func_00319800(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319820);
+#ifdef SKIP_ASM
+extern "C" void func_00426408(int a);
+extern "C" void func_00401718(int a);
+extern "C" void func_00402450(int a);
+extern "C" void func_00319690(void* self, char* out, const char* name);
+extern "C" int func_0042BF68(const char* path);
+extern "C" int func_0042BF30(void);
+extern "C" void func_0042AB18(void);
+extern char D_0048D9F8[];
+
+// Loads the DNAS image (DNAS271.IMG) and waits for it to finish.
+extern "C" void func_00319820(void* self)
+{
+    char path[256];
+    func_00426408(0);
+    func_00401718(0);
+    func_00402450(2);
+    func_00319690(self, path, D_0048D9F8);
+    while (func_0042BF68(path) == 0)
+        ;
+    while (func_0042BF30() == 0)
+        ;
+    func_00426408(0);
+    func_0042AB18();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_003198A0);
 
