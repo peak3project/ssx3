@@ -67,7 +67,88 @@ void* func_002593B8(void* self, int a1, void* a2, void* a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002594D0);
+#ifdef SKIP_ASM
+struct cBXString2;
+cBXString2* cBXString_cBXString(cBXString2* self);
+extern "C" void* cBXString_cBXString2(void* self, const char* s);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_00260F10(void* self);
+// The shared empty-string pointer is read as const so one load serves several string inits.
+extern void* const D_004A3E90_94D0 __asm__("D_004A3E90");
+extern char D_004807D8[];
+extern char D_004804A8[];
+
+struct sBXStr_94D0 {
+    void* str;
+};
+
+struct sListNode_94D0 {
+    sListNode_94D0* next;
+    sListNode_94D0* prev;
+    void* data;
+};
+
+struct sList_94D0 {
+    int f0;
+    sListNode_94D0* head;           // 0x4
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+};
+
+extern "C" void* func_002594D0(void* self_)
+{
+    char* self = (char*)self_;
+    // An unused 16-byte local is needed to reproduce the 0x40-byte frame.
+    int unused[4];
+    *(int*)(self + 0x0) = 0;
+    *(int*)(self + 0x4) = 0;
+    *(int*)(self + 0x8) = 0;
+    *(int*)(self + 0xC) = 0;
+    *(int*)(self + 0x10) = 0;
+    *(int*)(self + 0x14) = 0;
+    *(int*)(self + 0x18) = 0;
+    *(int*)(self + 0x44) = 0;
+    *(void**)(self + 0x48) = D_004A3E90_94D0;
+    *(void**)(self + 0x4C) = D_004A3E90_94D0;
+    *(int*)(self + 0x54) = 0;
+    *(int*)(self + 0x58) = 0;
+    *(int*)(self + 0x5C) = 0;
+    *(int*)(self + 0x60) = 0;
+    *(int*)(self + 0x64) = 0;
+    *(int*)(self + 0x6C) = 0;
+    sBXStr_94D0* p = (sBXStr_94D0*)(self + 0x70);
+    for (int i = 3; i != -1; i--, p++) {
+        p->str = D_004A3E90_94D0;
+    }
+    *(void**)(self + 0x80) = D_004A3E90_94D0;
+    *(void**)(self + 0x84) = D_004A3E90_94D0;
+    *(void**)(self + 0x88) = D_004A3E90_94D0;
+    *(void**)(self + 0x8C) = D_004A3E90_94D0;
+    *(void**)(self + 0x90) = D_004A3E90_94D0;
+    *(void**)(self + 0x94) = D_004A3E90_94D0;
+    *(void**)(self + 0x98) = D_004A3E90_94D0;
+    *(void**)(self + 0x9C) = D_004A3E90_94D0;
+    cBXString_cBXString2(self + 0xE8, D_004807D8);
+    sList_94D0* lst = (sList_94D0*)(self + 0xEC);
+    *(sListNode_94D0**)(self + 0xF0) = (sListNode_94D0*)cMemMan_alloc(0xC, D_004804A8, 0x20000000, 0);
+    lst->head->next = *(sListNode_94D0**)(self + 0xF0);
+    lst->head->prev = *(sListNode_94D0**)(self + 0xF0);
+    *(int*)(self + 0xF4) = 0;
+    *(int*)(self + 0xF8) = 0;
+    *(int*)(self + 0xFC) = 0;
+    *(int*)(self + 0x100) = 0;
+    cBXString_cBXString((cBXString2*)(self + 0x260));
+    cBXString_cBXString((cBXString2*)(self + 0x2B0));
+    for (int i = 0x1C; i >= 0; i--)
+        ((int*)(self + 0x1EC))[i] = 0;
+    func_00260F10(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259628);
