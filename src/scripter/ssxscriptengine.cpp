@@ -2303,7 +2303,92 @@ void func_0027BD90(void* self, void* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027BDB8);
+#ifdef SKIP_ASM
+extern "C" int func_00123128(void* self);
+extern char* D_004A28A8;
+extern int D_00481BB0[];
+
+struct sRiderObj_BDB8 {
+    char pad_0x0[0x18];
+    void* rider;                    // 0x18
+};
+
+struct sRiderSet_BDB8 {
+    char pad_0x0[0x28];
+    void* players[6];               // 0x28
+    sRiderObj_BDB8* groupA[2];      // 0x40
+    sRiderObj_BDB8* groupB[5];      // 0x48
+    sRiderObj_BDB8* groupC[5];      // 0x5C
+    char pad_0x70[0x8];
+    int numPlayers;                 // 0x78
+    int numA;                       // 0x7C
+    int numB;                       // 0x80
+    int numC;                       // 0x84
+};
+
+// PORT: callers pass only (self, flags); the three player slots arrive in a2..a4.
+extern "C" void func_0027BDB8_def(void* self, int* flags, int p0, int p1, int p2) __asm__("func_0027BDB8");
+
+// Fills the 21 per-slot team flags of the script engine from the current rider set.
+extern "C" void func_0027BDB8_def(void* self, int* flags, int p0, int p1, int p2)
+{
+    sRiderSet_BDB8* set = *(sRiderSet_BDB8**)(*(char**)(D_004A28A8 + 0x84) + 0xC);
+    int numA = set->numA;
+    int numB = set->numB;
+    int i;
+    for (i = 0; i < 21; i++) {
+        flags[i] = 0;
+        switch (i) {
+        case 0:
+            if (p0 >= 0)
+                flags[i] = D_00481BB0[func_00123128(set->players[p0])];
+            break;
+        case 1:
+            if (p1 >= 0)
+                flags[i] = D_00481BB0[func_00123128(set->players[p1])];
+            break;
+        case 2:
+            if (p2 >= 0)
+                flags[i] = D_00481BB0[func_00123128(set->players[p2])];
+            break;
+        case 3:
+        case 4:
+            if (i - 3 < numA)
+                flags[i] = D_00481BB0[func_00123128(set->groupA[i - 3]->rider)];
+            break;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            if (i - 5 < numB)
+                flags[i] = D_00481BB0[func_00123128(set->groupB[i - 5]->rider)];
+            break;
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+            if (i - 10 < set->numC)
+                flags[i] = D_00481BB0[func_00123128(set->groupC[i - 10]->rider)];
+            break;
+        case 15:
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+            if (i - 15 < set->numPlayers)
+                flags[i] = D_00481BB0[func_00123128(set->players[i - 15])];
+            break;
+        default:
+            break;
+        }
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027BF50);
