@@ -333,7 +333,75 @@ extern "C" int cDirtysock_tag_TagFieldGetFourCC(const char* data, int defval)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetString);
+#ifdef SKIP_ASM
+extern "C" int strlen(const char* s);
+extern unsigned char D_004961C0[];
+extern unsigned char D_004962C0[];
+
+// TagFieldGetString: copy a (optionally quoted) string field, decoding %xx escapes; returns its length.
+extern "C" int cDirtysock_tag_TagFieldGetString(const char* data, char* buf, int len, const char* defval)
+{
+    int count;
+    unsigned char term;
+    const unsigned char* src;
+
+    // handle default
+    if (data == 0) {
+        if (defval == 0) {
+            return -1;
+        }
+        if (buf == 0) {
+            return strlen(defval);
+        }
+        for (count = 1; (count < len) && (*defval != 0); count++) {
+            *buf++ = *defval++;
+        }
+        *buf = 0;
+        return count - 1;
+    }
+
+    // check for quote
+    if ((*data == '"') || (*data == '\'')) {
+        term = *data++;
+    } else {
+        term = 0;
+    }
+
+    // calc length
+    if (buf == 0) {
+        for (count = 0, src = (const unsigned char*)data; (*src != term) && (*src >= ' '); count++) {
+            if ((src[0] == '%') && (src[1] >= ' ') && (src[2] >= ' ')) {
+                src += 2;
+            }
+            src++;
+        }
+        return count;
+    }
+
+    if (len <= 0) {
+        return -1;
+    }
+
+    for (count = 1, src = (const unsigned char*)data; (count < len) && (*src != term) && (*src >= ' '); ) {
+        if ((src[0] == '%') && (src[1] == '%')) {
+            *buf++ = '%';
+            src += 2;
+            count++;
+        } else if ((src[0] == '%') && (src[1] >= ' ') && (src[2] >= ' ')) {
+            *buf++ = D_004961C0[src[1]] | D_004962C0[src[2]];
+            src += 3;
+            count++;
+        } else {
+            *buf++ = *src++;
+            count++;
+        }
+    }
+    *buf = 0;
+    return count - 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetBinary);
