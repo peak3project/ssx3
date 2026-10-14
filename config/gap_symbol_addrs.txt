@@ -11503,3 +11503,6 @@ func_003ECB00 = 0x003ECB00; //type:func
 func_003EDD70 = 0x003EDD70; //type:func
 
 func_002A1388 = 0x002A1388; //type:func
+
+// --- src/seg/seg_21A1C0.cpp ---
+func_00319910 = 0x00319910; //type:func

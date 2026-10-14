@@ -405,7 +405,7 @@ segments:
 
       - [0x218fe8, cpp, bx/bxstring]
 
-      - [0x21a1c0, asm]
+      - [0x21a1c0, cpp, seg/seg_21A1C0]
 
       - [0x21aa30, cpp, bx/memblockman]
 
