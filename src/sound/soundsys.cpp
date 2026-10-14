@@ -6588,7 +6588,61 @@ extern "C" void func_002A3400(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A34D0);
+#ifdef SKIP_ASM
+// PORT: callers pass self to func_002A42C8 (the unit's later definition takes no args).
+int func_002A42C8_s(void* self) __asm__("func_002A42C8");
+extern "C" int func_002A4040(void* self);
+extern sSndKey8 D_004A36E8[];
+
+// Rider trick-landing cheer: queued with the rider's trick class (or the stored landing quality when looked up).
+extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
+{
+    if (func_0029F128(self) == 0) return 1;
+    if (func_00288AE0(self) != 0) return 1;
+    if (func_002A4248_s(self) != 0 && rider != 0) {
+        sSndKey8* key = D_004A36E8;
+        char* o = rider + 0x6C0;
+        sSsVt1280* e = &(*(sSsVt1280**)o)[7];
+        char* bank = **(char***)((char*)self + 0x118) + 0x1D8;
+        int v = e->fn(o + e->delta);
+        func_002ADCA0_9638(bank, 1000, key->v, 0, v, 0, 0, 0);
+        return 1;
+    }
+    if (func_002A42C8_s(self) != 0) return 1;
+    if (check != 0) {
+        if (func_002B0E28((char*)self + 0x5560, 0) == 0) return 0;
+    }
+    int given = 1;
+    if (rider == 0) {
+        if (func_002A4078(self) == 0) return 1;
+        if (func_002A4040(self) != 0) return 1;
+        rider = (char*)func_00285D98_p(self, which);
+        given = 0;
+    }
+    if (func_00123168(rider) != 0) return 1;
+    if (func_002B1458((char*)self + 0x5560, 0, 0x20C4, 0, 0xB, 0, 0, 0.0f) == 0) return 1;
+    int r = func_0029F198(self);
+    int s = func_002A1D48_i(self, rider);
+    int v;
+    if (given) {
+        v = func_002A1E68(self, rider);
+    } else {
+        switch (*(int*)(rider + 0xEC)) {
+        case 0: v = 1; break;
+        case 1: v = 2; break;
+        case 2: v = 4; break;
+        case 3: v = 8; break;
+        case 4: v = 0x10; break;
+        case 5: v = 0x200; break;
+        default: v = 0; break;
+        }
+    }
+    D_004A482C_5(func_003D8008(1, 0, 0x20C4), 3, r, s, v);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A3708);
