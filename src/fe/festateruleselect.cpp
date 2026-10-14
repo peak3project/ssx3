@@ -2,7 +2,145 @@
 
 INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_setupMenu);
 
+//100%
 INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_onCreateScreen);
+#ifdef SKIP_ASM
+struct cUIText;
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" void cFEStateRuleSelect_setupMenu(void* self, signed char a1);
+extern "C" void func_0039B760(void* menu, int count);
+extern "C" void func_003E6448(void* dst, int c, int n);
+extern char D_0045FB10[];
+extern char D_0045FB20[];
+extern char D_004A1398[];
+extern char D_005308B8[];
+extern signed char D_00535C12[];
+extern signed char D_00441098[11];
+extern signed char D_004410A8[10];
+extern signed char D_004410B8[11];
+extern signed char D_004A1690[8];
+extern signed char D_004A1698[8];
+extern signed char D_004A16A0[8];
+extern char* D_00441058[];
+struct sStr3_19188 { char c[3]; };
+struct sStr2_19188 { char c[2]; };
+// PORT: the local name templates "0b" and "0" are splat-named sdata literals; copied from the symbols.
+extern char D_004A16A8[];
+extern char D_004A13A0[];
+
+struct sVE_19188 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sUIObj_19188 {
+    char pad0[0x8];
+    sVE_19188* vt;                  // 0x8
+    char padC[0x8];
+    int flags;                      // 0x14
+};
+
+struct sRuleSel_19188 {
+    char pad0[0x10];
+    void* engine;                   // 0x10
+    char pad14[0x2C];
+    void* screen;                   // 0x40
+    char pad44[0x4];
+    signed char* rules;             // 0x48
+    char pad4C[0x4];
+    signed char count;              // 0x50
+    signed char sel[15];            // 0x51
+};
+
+static inline void* find_19188(sRuleSel_19188* self, char* name)
+{
+    return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
+}
+
+// Builds the rule select screen: picks the rule list for the current mode and fills the 11 rule rows.
+extern "C" void cFEStateRuleSelect_onCreateScreen(sRuleSel_19188* self)
+{
+    void* engine = self->engine;
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0045FB10), 0);
+    self->screen = screen;
+    if (screen != 0)
+        cUIScreen_playFrame(screen, 0, 0);
+    self->rules = 0;
+    int count = 0;
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    switch (D_00535C12[0]) {
+    case 0:
+        self->rules = D_00441098;
+        count = 11;
+        break;
+    case 1:
+        self->rules = D_004410A8;
+        count = 10;
+        break;
+    case 3:
+        self->rules = D_004A1690;
+        count = 8;
+        break;
+    case 2:
+        self->rules = D_004A1698;
+        count = 8;
+        break;
+    case 4:
+        self->rules = D_004410B8;
+        count = 11;
+        break;
+    case 5:
+        self->rules = D_004A16A0;
+        count = 8;
+        break;
+    }
+    sStr3_19188 name;
+    sStr2_19188 label;
+    char* lp = label.c;
+    int n = 14;
+    signed char* p = &self->sel[14];
+    for (; n >= 0; n--)
+        *p-- = 0;
+    self->count = count;
+    func_003E6448(D_005308B8, 0, 0x20);
+    cFEStateRuleSelect_setupMenu(self, 0);
+    sUIObj_19188* menu = (sUIObj_19188*)find_19188(self, D_004A1398);
+    if (menu != 0) {
+        menu->flags |= 0x80;
+        func_0039B760(menu, count);
+        cUIMenu_setSelectedByIndex(menu, 0);
+        cUIText* help = (cUIText*)find_19188(self, D_0045FB20);
+        int rule = self->rules[0];
+        if (help != 0)
+            cUIText_setUnicodeStringByID(help, GetHashValue32(D_00441058[rule]));
+    }
+    name = *(sStr3_19188*)D_004A16A8;
+    label = *(sStr2_19188*)D_004A13A0;
+    for (signed char i = 0; i < 11; i++) {
+        sUIObj_19188* o = (sUIObj_19188*)find_19188(self, name.c);
+        o->flags &= ~1;
+        sUIObj_19188* l = (sUIObj_19188*)find_19188(self, lp);
+        if (i >= count) {
+            l->vt[9].fn((char*)l + l->vt[9].delta, 0);
+            l->vt[8].fn((char*)l + l->vt[8].delta, 1);
+        }
+        if (i < 9) {
+            label.c[0]++;
+            name.c[0]++;
+        } else {
+            name.c[0] = label.c[0] = i + 0x58;
+        }
+    }
+}
+#endif
 
 extern "C" void* func_0039E4C0(void* self);
 
