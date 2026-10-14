@@ -17,7 +17,33 @@ extern "C" void func_003194A8(void* str, const char* fmt, ...)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_003194F0);
+#ifdef SKIP_ASM
+struct cBXString_94F0 {
+    char* str;
+};
+extern "C" void func_00318120(void* self);
+extern unsigned char D_00499C81[];
+
+// Strips trailing white space (D_00499C81 is the ctype table + 1, bit 8 = space).
+extern "C" void func_003194F0(cBXString_94F0* self)
+{
+    func_00318120(self);
+    char* end = 0;
+    char* p;
+    for (p = self->str; *p != 0; p++) {
+        if (end == 0)
+            end = p;
+        if (!(D_00499C81[(int)*p] & 8))
+            end = 0;
+    }
+    if (end != 0) {
+        *end = 0;
+        *(int*)(self->str - 8) = end - self->str;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319578);
 
