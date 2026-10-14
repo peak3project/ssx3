@@ -2,7 +2,210 @@
 
 INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetCreate);
 
+//100%
 INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetEvent);
+#ifdef SKIP_ASM
+struct cUIText;
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" cUIText* cUIScreen_getObjectByHashName(void* self, int hash);
+void cUIText_setUnicodeStringByID(cUIText* self, int id);
+extern "C" void func_001587F8(void* iface, int player, int a2, int a3);
+extern "C" void* func_0028B180();
+extern "C" void func_0028BF78(void* audio, int a1);
+extern "C" void* func_00196B90(void* p, int a1, signed char idx, int a3);
+extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
+extern "C" void func_0039F190(void* stack, int a1);
+extern "C" void func_0039F400(void* stack, void* state);
+extern void* D_004A28A8;
+extern char D_00460470[];
+extern char D_00460488[];
+extern char D_00460498[];
+extern char D_004604B0[];
+extern char D_004604C0[];
+extern char D_004604E0[];
+extern char D_004604F8[];
+extern char D_00460510[];
+extern char D_00460528[];
+extern char D_00460540[];
+
+struct sVE_AOWE {
+    short delta;
+    short index;
+    void* (*fn)(void*, ...);
+};
+
+struct sOption_AOWE {
+    char pad_0x0[0x78];
+    int state;                      // 0x78
+    int color;                      // 0x7C
+};
+
+struct sToggle_AOWE {
+    char pad_0x0[0x8];
+    sVE_AOWE* vt;                   // 0x8
+};
+
+struct sAudioOptions_AOWE {
+    char pad_0x0[0x10];
+    char* owner;                    // 0x10
+    char pad_0x14[0x2C];
+    void* screen;                   // 0x40
+    signed char player;             // 0x44
+    char pad_0x45[0x7];
+    sOption_AOWE* options[4];       // 0x4C
+    int selColor;                   // 0x5C
+    int normColor;                  // 0x60
+    sToggle_AOWE* toggles[3];       // 0x64
+    int f70;                        // 0x70
+    int f74;                        // 0x74
+    int sel;                        // 0x78
+    int f7C;                        // 0x7C
+};
+
+struct sWidget_AOWE {
+    char pad_0x0[0x18];
+    int idx;                        // 0x18
+};
+
+static inline int online_AOWE()
+{
+    return *(int*)((char*)D_004A28A8 + 0x84);
+}
+
+static inline void setOption_AOWE(sOption_AOWE* o, int state, int color)
+{
+    o->state = state;
+    o->color = color;
+}
+
+static inline void setText_AOWE(cUIText* t, char* str)
+{
+    cUIText_setUnicodeStringByID(t, GetHashValue32(str));
+}
+
+static inline void applyMode_AOWE(sAudioOptions_AOWE* self)
+{
+    func_001587F8(cBE_getInterface_Fv(cBE_getBE(), 0xD), self->player, self->f70, self->sel);
+    func_0028BF78(func_0028B180(), self->sel);
+}
+
+static inline void* vcall_AOWE(sAudioOptions_AOWE* self, int slot, sWidget_AOWE* w)
+{
+    char* o = *(char**)self->owner;
+    sVE_AOWE* vt = *(sVE_AOWE**)(o + 4);
+    return vt[slot].fn(o + vt[slot].delta, self, w->idx);
+}
+
+static inline void setEnabled_AOWE(sToggle_AOWE* t, int on)
+{
+    ((void (*)(void*, int))t->vt[6].fn)((char*)t + t->vt[6].delta, on);
+}
+
+extern "C" void cFEStateAudioOptions_onWidgetEvent(sAudioOptions_AOWE* self, sWidget_AOWE* w, unsigned int event)
+{
+    if (w == 0)
+        return;
+    switch (event) {
+    case 5: {
+        int idx = w->idx;
+        if (idx != 0 && idx != 2) {
+            if (idx != 1 && idx != 3)
+                goto other;
+            if (self->f7C == 0)
+                return;
+        }
+        setOption_AOWE(self->options[self->sel], -1, self->normColor);
+        self->sel = w->idx;
+        setOption_AOWE(self->options[self->sel], -1, self->selColor);
+        applyMode_AOWE(self);
+        break;
+    other:
+        if (idx != 4)
+            return;
+        if (self->f74 == 0 && self->f7C == 0)
+            return;
+        char* popup = (char*)func_00196B90(cMemMan_alloc(0x210, D_00460470, 0, 0), (int)self->owner, self->player, self->f74);
+        if (online_AOWE()) {
+            *(int*)(popup + 0x1C) = (*(int*)(popup + 0x1C) & ~0x3F00) | 0x100;
+            cUIStateStack_pushSpecial(self->owner + 0x18, popup, 0, 0);
+        } else {
+            func_0039F400(self->owner + 0x18, popup);
+        }
+        break;
+    }
+    case 6:
+        applyMode_AOWE(self);
+        if (online_AOWE()) {
+            func_0039F190(self->owner + 0x18, 1);
+        } else {
+            void* r = vcall_AOWE(self, 5, w);
+            if (r != 0)
+                func_0039F400(self->owner + 0x18, r);
+        }
+        break;
+    case 1: {
+        cUIText* text = cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00460488));
+        if (text == 0)
+            return;
+        bool a = false;
+        bool c = false;
+        bool b = false;
+        switch (w->idx) {
+        case 0:
+            setText_AOWE(text, D_00460498);
+            break;
+        case 2:
+            setText_AOWE(text, D_004604B0);
+            break;
+        case 1:
+            if (self->f7C == 0) {
+                b = online_AOWE();
+                if (online_AOWE())
+                    setText_AOWE(text, D_004604C0);
+                else if (self->f74 == 0)
+                    setText_AOWE(text, D_004604F8);
+                else
+                    setText_AOWE(text, D_004604E0);
+            } else
+                setText_AOWE(text, D_00460510);
+            break;
+        case 3:
+            if (self->f7C == 0) {
+                c = online_AOWE();
+                if (online_AOWE())
+                    setText_AOWE(text, D_004604C0);
+                else if (self->f74 == 0)
+                    setText_AOWE(text, D_004604F8);
+                else
+                    setText_AOWE(text, D_004604E0);
+            } else
+                setText_AOWE(text, D_00460528);
+            break;
+        case 4:
+            if (self->f74 == 0 && self->f7C == 0) {
+                a = online_AOWE();
+                if (online_AOWE())
+                    setText_AOWE(text, D_004604C0);
+                else
+                    setText_AOWE(text, D_004604F8);
+            } else
+                setText_AOWE(text, D_00460540);
+            break;
+        }
+        if (online_AOWE()) {
+            setEnabled_AOWE(self->toggles[0], a);
+            setEnabled_AOWE(self->toggles[1], b);
+            setEnabled_AOWE(self->toggles[2], c);
+        }
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateaudiooptions", func_00196B08);
