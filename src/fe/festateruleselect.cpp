@@ -1,6 +1,184 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_setupMenu);
+#ifdef SKIP_ASM
+struct cUIScreen;
+struct cUIText;
+int GetHashValue32(char* str);
+int cUIScreen_getFrameByLabel(cUIScreen* self, int hash);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" void func_0039A670(void* self);
+extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
+// The entry data is unsigned here: the negative time steps are passed as 0xFFFFFFFD etc.
+extern "C" unsigned char cUIListBox_addEntryByAsciiString(void* box, const char* str, unsigned int data);
+extern "C" int func_0039A768(void* self, int key, unsigned char* out);
+extern "C" void func_0039A7A8(void* self, int v);
+extern "C" int func_00192240(void* self, int rule);
+extern "C" void cFEStateRuleSelect_updateMenuColor(void* self);
+extern char D_004A16A8[];
+extern char D_004A16B0[];
+extern char D_004A1398[];
+extern char D_0045E270[];
+extern char D_0045E280[];
+extern char D_0045DF40[];
+extern char D_0045E028[];
+extern char D_0045FA80[];
+extern char D_0045DCC8[];
+extern char D_0045FA90[];
+extern char D_0045FAA8[];
+extern char D_0045FAC0[];
+extern char D_004A16B8[];
+extern char D_004A16C0[];
+extern char D_004A16C8[];
+extern char D_004A16D0[];
+extern char D_004A16D8[];
+extern char D_004A16E0[];
+extern char D_004A16E8[];
+extern char D_004A16F0[];
+extern char D_004A16F8[];
+extern char D_004A1700[];
+extern char D_004A13A0[];
+extern char D_004A14F8[];
+extern char D_004A1500[];
+extern char D_004A1508[];
+extern char D_004A1510[];
+extern char D_004A1518[];
+extern signed char D_00441008[];
+extern char* D_00441018[];
+// PORT: the frame labels are copied with the builtin block move (the original likely used
+// strcpy on string literals); the two strings live at these symbols.
+extern char D_0045FAD8[] __attribute__((aligned(8)));
+extern char D_004A1708[] __attribute__((aligned(8)));
+
+struct sStr3_1388 { char c[3]; };
+
+struct sVE_1388 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+static inline void SetVisible_1388(char* o, int on)
+{
+    sVE_1388* vt = *(sVE_1388**)(o + 0x8);
+    vt[9].fn(o + vt[9].delta, on);
+}
+
+struct sRuleSel_1388 {
+    char pad0[0x40];
+    void* screen;                   // 0x40
+    char pad44[0x4];
+    signed char* rules;             // 0x48
+    char pad4C[0x4];
+    signed char count;              // 0x50
+};
+
+static inline void* find_1388(sRuleSel_1388* self, char* name)
+{
+    return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
+}
+
+// Fills the 11 rule rows (name text plus the option list box) starting at the given scroll row.
+extern "C" void cFEStateRuleSelect_setupMenu(void* self_, signed char first)
+{
+    sRuleSel_1388* self = (sRuleSel_1388*)self_;
+    signed char i = 0;
+    sStr3_1388 name;
+    sStr3_1388 label;
+    char* lp = label.c;
+    name = *(sStr3_1388*)D_004A16A8;
+    label = *(sStr3_1388*)D_004A16B0;
+    for (; i < 11; i++) {
+        char* lb = (char*)find_1388(self, name.c);
+        cUIText* txt = (cUIText*)find_1388(self, lp);
+        if (lb != 0 && txt != 0) {
+            signed char row = i + first;
+            if (row >= self->count)
+                break;
+            int rule = self->rules[row];
+            int kind = D_00441008[rule];
+            cUIText_setUnicodeStringByID(txt, GetHashValue32(D_00441018[rule]));
+            func_0039A670(lb);
+            *(int*)(lb + 0x18) = rule;
+            switch (kind) {
+            case 0:
+                break;
+            case 1:
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045E028), 1);
+                break;
+            case 2:
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045FA80), 0);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DCC8), 1);
+                break;
+            case 3:
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16B8, 90);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16C0, 80);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16C8, 70);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16D0, 60);
+                break;
+            case 4:
+                cUIListBox_addEntryByAsciiString(lb, D_004A16D8, 10);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16E0, 5);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16E8, 3);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16F0, -3);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16F8, -5);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1700, -10);
+                break;
+            case 5:
+                cUIListBox_addEntryByAsciiString(lb, D_004A13A0, 0);
+                cUIListBox_addEntryByAsciiString(lb, D_004A14F8, 0);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1500, 0);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1508, 0);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1510, 0);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1518, 0);
+                break;
+            case 6:
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045FA90), 0);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045FAA8), 0);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045FAC0), 0);
+                break;
+            }
+            if (rule != 0) {
+                unsigned char out;
+                func_0039A768(lb, func_00192240(self, rule), &out);
+                func_0039A7A8(lb, out);
+            } else {
+                SetVisible_1388(lb, 0);
+            }
+        }
+        if (i < 9) {
+            name.c[0]++;
+            label.c[0]++;
+        } else {
+            label.c[0] = name.c[0] = i + 0x58;
+        }
+    }
+    unsigned int sel = 0xFF;
+    char* menu = (char*)find_1388(self, D_004A1398);
+    if (menu != 0)
+        sel = *(unsigned char*)(menu + 0x95);
+    char frame[32];
+    if (self->rules[sel] == 0) {
+        char* a = (char*)find_1388(self, D_0045E270);
+        char* b = (char*)find_1388(self, D_0045E280);
+        if (a) SetVisible_1388(a, 0);
+        if (b) SetVisible_1388(b, 0);
+        __builtin_memcpy(frame, D_004A1708, 7);
+    } else {
+        __builtin_memcpy(frame, D_0045FAD8, 10);
+    }
+    int f = cUIScreen_getFrameByLabel((cUIScreen*)self->screen, GetHashValue32(frame));
+    if (f != 0xFFFF)
+        cUIScreen_playFrame(self->screen, f, 1);
+    cFEStateRuleSelect_updateMenuColor(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_onCreateScreen);
