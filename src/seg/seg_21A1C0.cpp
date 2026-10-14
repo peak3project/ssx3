@@ -174,7 +174,16 @@ extern "C" void func_003197D0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319800);
+#ifdef SKIP_ASM
+extern "C" void func_0040B1F8(void);
+
+extern "C" void func_00319800(void* self)
+{
+    func_0040B1F8();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319820);
 
