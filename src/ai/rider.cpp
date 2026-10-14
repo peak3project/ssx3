@@ -2549,7 +2549,160 @@ extern "C" void cRider_quitEvent(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00125448);
+#ifdef SKIP_ASM
+extern "C" void* func_0028B180();
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" void* func_00287968(void* self, int a1, int a2);
+extern "C" int func_002906B8(void* self);
+extern "C" int func_00288A20(void* self, void* obj);
+extern "C" int func_002AD550(void* bank, int id, int a);
+extern "C" void func_002AD5F0(void* bank, int id, int a, float f);
+void func_00280548(void* self, int a1, void* a2, void* a3);
+
+struct sSnd5448Ch {
+    signed char vol;
+    char pad1[0x17];
+};
+struct sSnd5448E16 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+struct sSnd5448Sub {
+    char pad0[4];
+    sSnd5448Ch def;          // 0x04
+    volatile int cur;        // 0x1C
+    sSnd5448Ch* ch;          // 0x20
+    void* tgt[4];            // 0x24
+    int* p34;                // 0x34
+    int* vals;               // 0x38
+    int* p3C;                // 0x3C
+    char e40[4][8];          // 0x40
+    int* p60;                // 0x60
+    int* p64;                // 0x64
+    int* p68;                // 0x68
+    int* p6C;                // 0x6C
+    sSnd5448E16* p70;        // 0x70
+    int* p74;                // 0x74
+    int* p78;                // 0x78
+    int* p7C;                // 0x7C
+    int* p80;                // 0x80
+    int* p84;                // 0x84
+};
+struct sSnd5448Mgr {
+    char pad0[0x1D8];
+    sSnd5448Sub sub;         // 0x1D8
+};
+struct sSnd5448Sys {
+    sSnd5448Mgr* mgr;
+    int* a4;                 // 0x4
+    int* a8;                 // 0x8
+    char padC[0x118 - 0xC];
+    sSnd5448Mgr** p118;      // 0x118
+};
+
+// Animation sound event: one entry per voice of the event.
+struct sSndEvt5448 {
+    int id;                  // 0x00
+    int frame;               // 0x04
+    char pad8[0x4];
+    int slot;                // 0x0C
+    char pad10[0xC];
+    signed char* vol;        // 0x1C
+    sSndEvt5448* next;       // 0x20
+};
+
+struct sRider5448 {
+    char pad0[0xB08];
+    int ids[4];              // 0xB08
+};
+
+#define SND_5448_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_5448_MAX(a, b) ((a) > (b) ? (a) : (b))
+
+static inline void snd5448AddVoice(sSnd5448Sys* snd, int a, int b)
+{
+    sSnd5448Mgr* m = snd->mgr;
+    sSnd5448Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    snd->a4[snd->mgr->sub.cur] = a;
+    snd->a8[snd->mgr->sub.cur] = b;
+}
+
+// Rider animation sounds: drops finished voices, then starts the event's voices for this frame (flag 1) or
+// stops the voices the event no longer lists (flag 2).
+extern "C" void func_00125448(void* vself, void* vevt, float frame, float unused, int flags)
+{
+    char* self = (char*)vself;
+    char* evt = (char*)vevt;
+    sRider5448* rd = (sRider5448*)vself;
+    sSnd5448Sys* snd = (sSnd5448Sys*)func_0028B180();
+    int j;
+    for (j = 0; j < 4; j++) {
+        if (rd->ids[j] >= 0 && func_002AD550(&(*snd->p118)->sub, rd->ids[j], 1) == 0) {
+            rd->ids[j] = -1;
+        }
+    }
+    if (flags & 1) {
+        for (sSndEvt5448* e = *(sSndEvt5448**)(evt + 0xC); e; e = e->next) {
+            char* pos = self + 0x110;
+            if ((float)e->frame != frame) goto done;
+            int b;
+            int a;
+            func_00280548(self + 0x6D0, e->id, &b, &a);
+            snd5448AddVoice(snd, a, b);
+            sSnd5448Mgr* m2 = *snd->p118;
+            sSnd5448Sub* s2 = &m2->sub;
+            s2->vals[m2->sub.cur] = *e->vol;
+            s2->ch[m2->sub.cur].vol = SND_5448_MAX(0, SND_5448_MIN(s2->vals[s2->cur], 0x7F));
+            sSnd5448Mgr** pp = snd->p118;
+            int r = (int)func_00287968(snd, 4, 0);
+            (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+            sSnd5448Mgr* m3 = *snd->p118;
+            m3->sub.tgt[m3->sub.cur] = pos;
+            sSnd5448Mgr** pq = snd->p118;
+            int q = func_00288A20(snd, self);
+            (*pq)->sub.p64[(*pq)->sub.cur] = q;
+            rd->ids[e->slot] = func_002906B8(snd);
+        }
+    done:;
+    } else if (flags & 2) {
+        int stop[4];
+        for (j = 0; j < 4; j++) stop[j] = 1;
+        for (sSndEvt5448* e = *(sSndEvt5448**)(evt + 0xC); e; e = e->next) {
+            stop[e->slot] = 0;
+        }
+        for (j = 0; j < 4; j++) {
+            if (stop[j] && rd->ids[j] >= 0) {
+                func_002AD5F0(&(*snd->p118)->sub, rd->ids[j], 1, 0.0f);
+                rd->ids[j] = -1;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_00125958);
