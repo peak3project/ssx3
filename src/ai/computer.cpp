@@ -844,7 +844,113 @@ extern "C" int func_0010DA10(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_0010DBF0);
+#ifdef SKIP_ASM
+extern "C" int func_00155B50(void* self, int a, int b);
+void* cBEAggressionInterface_getThis();
+
+struct sVE_0010DBF0 { short delta; short index; int (*fn)(void*); };
+struct sVec_0010DBF0 { float x, y, z, w; } __attribute__((aligned(16)));
+struct sEnt_0010DBF0 { int vis; int val; float dist; float angle; int d; int e; int f; int g; int h; };
+struct sRider_0010DBF0 {
+    sEnt_0010DBF0 ent[6];           // 0x0
+    char padD8[0xF4 - 0xD8];
+    int lastTaunt;                  // 0xF4
+    char padF8[0x1B0 - 0xF8];
+    sVec_0010DBF0 vel;              // 0x1B0
+};
+struct sAI_0010DBF0 { char pad[0x28]; char* riders[20]; int count; };
+
+static inline int id_0010DBF0(char* self)
+{
+    char* o = *(char**)(self + 0x18) + 0x6C0;
+    sVE_0010DBF0* ve = &(*(sVE_0010DBF0**)o)[7];
+    return ve->fn(o + ve->delta);
+}
+
+static inline float atan2_0010DBF0(float y, float x, float pi)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f) {
+            return y;
+        }
+        if (y >= 0.0f) {
+            return 1.5707963705062866f;
+        }
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f) {
+            a += pi;
+        } else {
+            a -= pi;
+        }
+    }
+    return a;
+}
+
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float ffloor_0010DBF0(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
+    if (x < t) {
+        t -= 1.0f;
+    }
+    return t;
+}
+
+static inline float wrap_0010DBF0(float x)
+{
+    return x - ffloor_0010DBF0(x * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
+}
+
+static inline bool isAggr_0010DBF0(void* agg, int a, int b)
+{
+    return func_00155B50(agg, a, b) >= 3;
+}
+
+// Taunt check: finds a close rider beside us (30..150 degrees off our heading) that we're aggressive towards,
+// at most every 120 frames; *side tells which side it is on.
+extern "C" int func_0010DBF0(char* self, int* side)
+{
+    if (func_001298C8() % 6 != 0)
+        return 0;
+    sAI_0010DBF0* ai = *(sAI_0010DBF0**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
+    int i;
+    for (i = 0; i < ai->count; i++)
+    {
+        float pi = 3.1415927410125732f;
+        float lo = 0.5235988497734070f;
+        float hi = 2.6179940700531006f;
+        if (i == id_0010DBF0(self))
+            continue;
+        sRider_0010DBF0* r = *(sRider_0010DBF0**)(self + 0x18);
+        if (!(r->ent[i].dist < 200.0f))
+            continue;
+        sVec_0010DBF0 a = r->vel;
+        sVec_0010DBF0 b = r->vel;
+        float ang = atan2_0010DBF0(a.y, b.x, pi);
+        float d = wrap_0010DBF0(ang - (*(sRider_0010DBF0**)(self + 0x18))->ent[i].angle);
+        float ad = __builtin_fabsf(d);
+        if (!(lo < ad))
+            continue;
+        if (!(ad < hi))
+            continue;
+        void* agg = cBEAggressionInterface_getThis();
+        if (!isAggr_0010DBF0(agg, id_0010DBF0(self), i))
+            continue;
+        if (!((*(sRider_0010DBF0**)(self + 0x18))->lastTaunt + 120 < func_001298C8()))
+            continue;
+        *side = 0.0f < d;
+        (*(sRider_0010DBF0**)(self + 0x18))->lastTaunt = func_001298C8();
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_0010DEB0);
