@@ -103,7 +103,29 @@ extern "C" void func_00319660(void* self, char* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319690);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" char* strchr(const char* s, int c);
+extern "C" char* strcpy(char* d, const char* s);
+extern "C" void func_00319660(void* self, char* out);
+extern char D_004A3E98[];
+extern char D_004A3EA0[];
+
+// Full path of an IOP module: names with a device prefix are used as is, others get
+// the module directory and the ";1" ISO version suffix.
+extern "C" void func_00319690(void* self, char* out, const char* name)
+{
+    if (strchr(name, ':') != 0) {
+        strcpy(out, name);
+    } else {
+        char dir[256];
+        func_00319660(self, dir);
+        sprintf(out, D_004A3E98, dir, name, D_004A3EA0);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319718);
 
