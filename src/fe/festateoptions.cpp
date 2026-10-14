@@ -623,7 +623,102 @@ extern "C" void cFEStateOptionsGame_onWidgetEvent(sOptGame_189980* self, char* w
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateoptions", func_00189D60);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_0039A7A8(void* self, int v);
+extern "C" int func_0039A738(void* self);
+extern "C" void func_00228C08(void* p);
+extern char* D_00440FD8[];
+extern void* D_004A28A8;
+extern void* D_004A289C;
+
+struct sGameCfg_189D60 {
+    unsigned int pad0 : 19;
+    unsigned int showHud : 1;       // bit 19
+    unsigned int f20 : 2;           // bits 20-21
+    unsigned int mode : 3;          // bits 22-24
+    unsigned int pad25 : 7;
+    signed char f4;
+    signed char f5;                 // 0x5
+    signed char f6;                 // 0x6
+    char pad7[0x288 - 7];
+};
+// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
+extern sGameCfg_189D60 D_00535610_189D60 __asm__("D_00535610");
+
+struct sOptionIface_189D60 {
+    sGameCfg_189D60 getOptions() { return D_00535610_189D60; }
+};
+
+struct sVE_189D60a {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+struct sVE_189D60b {
+    short delta;
+    short index;
+    void (*fn)(void*, char);
+};
+struct sVE_189D60c {
+    short delta;
+    short index;
+    void (*fn)(void*, int, int);
+};
+
+struct sOptGame_189D60 {
+    char pad0[0x40];
+    char* screen;                   // 0x40
+    char pad44[0x4];
+    signed char item[3];            // 0x48
+};
+
+static inline void* find_189D60(sOptGame_189D60* self, int i)
+{
+    return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00440FD8[self->item[i]]));
+}
+
+// Pushes the current game options into the option widgets of the screen.
+extern "C" void func_00189D60(void* self_)
+{
+    sOptGame_189D60* self = (sOptGame_189D60*)self_;
+    sOptionIface_189D60* iface = (sOptionIface_189D60*)cBE_getInterface_Fv(cBE_getBE(), 4);
+    if (self->item[0] >= 0) {
+        void* w = find_189D60(self, 0);
+        if (w != 0) {
+            func_0039A7A8(w, iface->getOptions().mode);
+            char* o = *(char**)((char*)D_004A28A8 + 0x8C);
+            sVE_189D60b* vt = *(sVE_189D60b**)(o + 4);
+            vt[3].fn(o + vt[3].delta, func_0039A738(w));
+            char* scr = self->screen;
+            sVE_189D60a* vt2 = *(sVE_189D60a**)(scr + 0x48);
+            char* sub = scr + 0x40;
+            vt2[16].fn(sub + vt2[16].delta);
+        }
+    }
+    if (self->item[1] >= 0) {
+        void* w = find_189D60(self, 1);
+        if (w != 0)
+            func_0039A7A8(w, iface->getOptions().showHud);
+    }
+    if (self->item[2] >= 0) {
+        void* w = find_189D60(self, 2);
+        if (w != 0)
+            func_0039A7A8(w, iface->getOptions().f20);
+    }
+    char* g = (char*)D_004A289C;
+    sVE_189D60c* vt = *(sVE_189D60c**)(g + 0x10D8);
+    char* thisp = g + vt[12].delta;
+    void (**pf)(void*, int, int) = &vt[12].fn;
+    (*pf)(thisp, iface->getOptions().f6, iface->getOptions().f5);
+    func_00228C08(D_004A28A8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018A258);
