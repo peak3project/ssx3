@@ -546,7 +546,198 @@ extern "C" int func_00230E98(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_00230F40);
+#ifdef SKIP_ASM
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0022E550(void* self);
+extern void* D_004A28A8;
+extern int D_004A2A50;
+extern int D_00534B30[];
+
+class cGameState_0F40 {
+public:
+    int pad[3];
+    virtual void v01();
+    virtual void enter();
+    virtual void update();
+    virtual void v04();
+    virtual void start(int arg);
+    virtual void tick();
+    virtual void exit();
+};
+
+struct sGameLoad_0F40 {
+    char pad0[0x84];
+    void* loader;                   // 0x84
+    char pad88[0x174];
+    cGameState_0F40* prev;          // 0x1FC
+    cGameState_0F40* cur;           // 0x200
+    cGameState_0F40* pending;       // 0x204
+    int pendingId;                  // 0x208
+    int enteredId;                  // 0x20C
+    int nextId;                     // 0x210
+    int curId;                      // 0x214
+    int prevId;                     // 0x218
+    int nextArg;                    // 0x21C
+    char pad220[0x4];
+    int hold;                       // 0x224
+};
+
+// Game load state machine: runs the current state and switches to the requested one.
+extern "C" void func_00230F40(void* self_)
+{
+    sGameLoad_0F40* self = (sGameLoad_0F40*)self_;
+    cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    if (D_00534B30[0] == 0 && self->hold != 0)
+        return;
+    if (D_004A2A50 & 0x20)
+        return;
+    if (self->cur != 0 && (self->curId != 3 || self->nextId == 0))
+        self->cur->tick();
+    if (self->pendingId != 0) {
+        switch (self->pendingId) {
+    case 1:
+        self->pending = (cGameState_0F40*)((char*)self + 0xB0);
+        break;
+    case 2:
+        self->pending = (cGameState_0F40*)((char*)self + 0xD0);
+        break;
+    case 3:
+        self->pending = (cGameState_0F40*)((char*)self + 0xE0);
+        break;
+    case 4:
+        self->pending = (cGameState_0F40*)((char*)self + 0xF0);
+        break;
+    case 5:
+        self->pending = (cGameState_0F40*)((char*)self + 0x100);
+        break;
+    case 6:
+        self->pending = (cGameState_0F40*)((char*)self + 0x118);
+        break;
+    case 7:
+        self->pending = (cGameState_0F40*)((char*)self + 0x128);
+        break;
+    case 8:
+        self->pending = (cGameState_0F40*)((char*)self + 0x138);
+        break;
+    case 9:
+        self->pending = (cGameState_0F40*)((char*)self + 0x148);
+        break;
+    case 10:
+        self->pending = (cGameState_0F40*)((char*)self + 0x158);
+        break;
+    case 11:
+        self->pending = (cGameState_0F40*)((char*)self + 0x178);
+        break;
+    case 12:
+        self->pending = (cGameState_0F40*)((char*)self + 0x18C);
+        break;
+    case 13:
+        self->pending = (cGameState_0F40*)((char*)self + 0x19C);
+        break;
+    case 14:
+        self->pending = (cGameState_0F40*)((char*)self + 0x1B8);
+        break;
+    case 15:
+        self->pending = (cGameState_0F40*)((char*)self + 0x1DC);
+        break;
+    case 16:
+        self->pending = (cGameState_0F40*)((char*)self + 0x1EC);
+        break;
+        }
+        self->enteredId = self->pendingId;
+        self->pendingId = 0;
+        self->pending->enter();
+    }
+    if (self->pending != 0)
+        self->pending->update();
+    int next = self->nextId;
+    if (next == 0)
+        return;
+    int arg = self->nextArg;
+    if (self->cur != 0)
+        self->cur->exit();
+    self->prevId = self->curId;
+    self->prev = self->cur;
+    switch (next) {
+    case 1:
+        self->cur = (cGameState_0F40*)((char*)self + 0xB0);
+        self->curId = 1;
+        break;
+    case 2:
+        self->cur = (cGameState_0F40*)((char*)self + 0xD0);
+        self->curId = 2;
+        break;
+    case 3:
+        self->cur = (cGameState_0F40*)((char*)self + 0xE0);
+        self->curId = 3;
+        break;
+    case 4:
+        self->cur = (cGameState_0F40*)((char*)self + 0xF0);
+        self->curId = 4;
+        break;
+    case 5:
+        self->cur = (cGameState_0F40*)((char*)self + 0x100);
+        self->curId = 5;
+        break;
+    case 6:
+        self->cur = (cGameState_0F40*)((char*)self + 0x118);
+        self->curId = 6;
+        break;
+    case 7:
+        self->cur = (cGameState_0F40*)((char*)self + 0x128);
+        self->curId = 7;
+        break;
+    case 8:
+        self->cur = (cGameState_0F40*)((char*)self + 0x138);
+        self->curId = 8;
+        break;
+    case 9:
+        self->cur = (cGameState_0F40*)((char*)self + 0x148);
+        self->curId = 9;
+        break;
+    case 10:
+        self->cur = (cGameState_0F40*)((char*)self + 0x158);
+        self->curId = 10;
+        break;
+    case 11:
+        self->cur = (cGameState_0F40*)((char*)self + 0x178);
+        self->curId = 11;
+        break;
+    case 12:
+        self->cur = (cGameState_0F40*)((char*)self + 0x18C);
+        self->curId = 12;
+        break;
+    case 13:
+        self->cur = (cGameState_0F40*)((char*)self + 0x19C);
+        self->curId = 13;
+        break;
+    case 14:
+        self->cur = (cGameState_0F40*)((char*)self + 0x1B8);
+        self->curId = 14;
+        break;
+    case 15:
+        self->cur = (cGameState_0F40*)((char*)self + 0x1DC);
+        self->curId = 15;
+        break;
+    case 16:
+        self->cur = (cGameState_0F40*)((char*)self + 0x1EC);
+        self->curId = 16;
+        break;
+    }
+    self->nextId = 0;
+    self->nextArg = 0;
+    if (self->enteredId == self->curId) {
+        self->enteredId = 0;
+        self->pending = 0;
+    }
+    if (self->cur != 0) {
+        func_0022E550(self->loader);
+        self->cur->start(arg);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_00231250);
