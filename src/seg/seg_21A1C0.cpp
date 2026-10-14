@@ -160,7 +160,19 @@ extern "C" void func_00319790(void* self, int fd)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_003197D0);
+#ifdef SKIP_ASM
+extern "C" int func_00319718(void* self, const char* name, int retry, int argLen, const char* args);
+extern void* D_004A3E94;
+extern char D_0048D9E8[];
+
+// Loads MSIFRPC.IRX.
+extern "C" void func_003197D0(void* self)
+{
+    func_00319718(D_004A3E94, D_0048D9E8, 1, 0, 0);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_21A1C0", func_00319800);
 
