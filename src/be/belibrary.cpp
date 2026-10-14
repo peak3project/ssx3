@@ -75,7 +75,48 @@ int cBELibrary_getRiderIndex(int flag)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014A188);
+#ifdef SKIP_ASM
+struct sBlk4C_A188 { char b[0x4C]; };
+struct sBlkF88_A188 { char b[0xF88]; };
+struct sBlk9B50_A188 { char b[0x9B50]; };
+struct sBlk20_A188 { char b[0x20]; };
+
+// Profile block: the two active rider entries followed by the rest of the profile data
+struct sProfileBlk_A188 {
+    sCharEntry rider[2];
+    char rest[0xA8 - 2 * sizeof(sCharEntry)];
+};
+
+extern int D_004A6CA8[];
+extern sBlkF88_A188 D_004B07F8[];
+extern sBlk9B50_A188 D_004BA348;
+extern sBlk20_A188 D_005308B8;
+
+#define PROFILE_A188 ((sProfileBlk_A188*)D_00535B20)
+
+// Save game: copies the live game-state blocks into the save buffer.
+extern "C" void func_0014A188(char* p)
+{
+    int rider;
+    *(sBlk4C_A188*)p = *(sBlk4C_A188*)D_005305B0;
+    p += sizeof(sBlk4C_A188);
+    *(sProfileBlk_A188*)p = *PROFILE_A188;
+    p += sizeof(sProfileBlk_A188);
+    rider = PROFILE_A188->rider[0].mCharID;
+    *(sBlkF88_A188*)p = ((sBlkF88_A188*)D_004A6CA8)[rider];
+    p += sizeof(sBlkF88_A188);
+    rider = PROFILE_A188->rider[1].mCharID;
+    if (rider >= 0) {
+        *(sBlkF88_A188*)p = D_004B07F8[rider];
+        p += sizeof(sBlkF88_A188);
+    }
+    *(sBlk9B50_A188*)p = D_004BA348;
+    p += sizeof(sBlk9B50_A188);
+    *(sBlk20_A188*)p = D_005308B8;
+}
+#endif
 
 INCLUDE_ASM("be/belibrary", func_0014A5E0);
 
