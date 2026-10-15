@@ -248,7 +248,127 @@ extern "C" cLunoValue* func_00225248(cLunoTableRef* self, cLunoValue* key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("luno/lunovm", luno_cLunoTable_set);
+#ifdef SKIP_ASM
+extern char D_00479880[];
+extern char D_00479890[];
+
+struct sLunoPair_set {
+    int word0;
+    int word1;
+};
+
+// PORT: the game's operator new is cMemMan_alloc(size, tag, flags, 0); bound by asm label
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+
+// Table chain node (same layout as cLunoNode / cLunoNode_224F68).
+struct cLunoNode_set {
+    cLunoValue key;            // 0x00
+    cLunoValue value;          // 0x0C
+    cLunoNode_set* next;       // 0x18
+    cLunoVtEntry* vtable;      // 0x1C
+};
+
+// cLunoValue::operator= (inline Clear of the destination, then copy by type)
+#define LUNO_ASSIGN_SET(D, S)                                              \
+    {                                                                      \
+        cLunoValue* d = &(D);                                              \
+        if ((D).type == 4) {                                               \
+            func_00224DF0((cLunoTableRef*)d, 2);                           \
+        }                                                                  \
+        d->type = 0;                                                       \
+        (D).word0 = 0;                                                     \
+        if ((S)->type == 4) {                                              \
+            func_00225068((cLunoTableRef*)d, (cLunoTableRef*)(S));         \
+        } else if ((S)->type == 5) {                                       \
+            *(sLunoPair_set*)&(D) = *(sLunoPair_set*)(S);                  \
+        } else {                                                           \
+            (D).word0 = (S)->word0;                                        \
+        }                                                                  \
+        d->type = (S)->type;                                               \
+    }
+
+static inline int lunoKeyEquals_set(cLunoValue* a, cLunoValue* b)
+{
+    if (b->type == a->type) {
+        return a->word0 == b->word0;
+    }
+    if (a->type == 2 && b->type == 1) {
+        return *(float*)&a->word0 == (float)b->word0;
+    }
+    if (a->type == 1 && b->type == 2) {
+        return a->word0 == (int)*(float*)&b->word0;
+    }
+    if (a->type == 3 && b->type == 1) {
+        return a->word0 == b->word0;
+    }
+    return 0;
+}
+
+// Table store: sets key to val (a nil value removes a chained entry); nil keys are ignored.
+extern "C" void luno_cLunoTable_set(cLunoTableRef* self, cLunoValue* key, cLunoValue* val)
+{
+    if (key->type == 0) {
+        return;
+    }
+    cLunoTable* t = self->table;
+    cLunoNode_set* n = (cLunoNode_set*)t->nodes + (unsigned int)key->word0 % (unsigned int)t->modulus;
+    if (n->value.type == 0) {
+        LUNO_ASSIGN_SET(n->key, key)
+        LUNO_ASSIGN_SET(n->value, val)
+        return;
+    }
+    if (lunoKeyEquals_set(&n->key, key)) {
+        LUNO_ASSIGN_SET(n->value, val)
+        return;
+    }
+    cLunoNode_set* prev = n;
+    for (n = n->next; n != 0; n = n->next) {
+        if (lunoKeyEquals_set(&n->key, key)) {
+            {
+                cLunoValue* d = &n->value;
+                if (n->value.type == 4) {
+                    func_00224DF0((cLunoTableRef*)d, 2);
+                }
+                d->type = 0;
+                // Expanded Clear(); the do/while(0) is the original macro's wrapper (changes scheduling).
+                do {
+                    n->value.word0 = 0;
+                } while (0);
+                if (val->type == 4) {
+                    func_00225068((cLunoTableRef*)d, (cLunoTableRef*)val);
+                } else if (val->type == 5) {
+                    *(sLunoPair_set*)&n->value = *(sLunoPair_set*)val;
+                } else {
+                    n->value.word0 = val->word0;
+                }
+                d->type = val->type;
+            }
+            if (n->value.type == 0) {
+                prev->next = n->next;
+                if (n != 0) {
+                    n->vtable[1].func((char*)n + n->vtable[1].delta, 3);
+                }
+            }
+            return;
+        }
+        prev = n;
+    }
+    if (val->type != 0) {
+        cLunoNode_set* node = (cLunoNode_set*)operator new(0x20, D_00479880, 0x20000000, 0);
+        node->value.type = 0;
+        node->value.word0 = 0;
+        node->vtable = (cLunoVtEntry*)D_00479890;
+        node->key.type = 0;
+        node->key.word0 = 0;
+        LUNO_ASSIGN_SET(node->key, key)
+        LUNO_ASSIGN_SET(node->value, val)
+        node->next = 0;
+        prev->next = node;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("luno/lunovm", func_002257E0);
