@@ -850,5 +850,6 @@ SHAPE_cloneat = 0x003B4540; //type:func
 ungetc = 0x00420378; //type:func
 // input/inputmap func_00321428: self + 0x108EC offset, not an address (splat paired lui 0x1 with addiu 0x8EC).
 D_108EC = 0x000108EC; // ignore:true
-// render (font/particle/bezierman): +0x20 offset added to an uncached 0x30000000-based packet pointer, not an address.
+// render (font/particle/bezierman): +0x20 / +0x80 offsets added to an uncached 0x30000000-based packet pointer, not addresses.
 D_30000020 = 0x30000020; // ignore:true
+D_30000080 = 0x30000080; // ignore:true
