@@ -7220,7 +7220,109 @@ extern "C" void func_002A2DA0(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A2E50);
+#ifdef SKIP_ASM
+extern "C" int func_002A4770(void* self);
+extern "C" void func_002A2188(void* self);
+extern "C" void func_002A23D0(void* self, int a1);
+extern "C" void func_002A2018(void* self);
+extern "C" void func_002A2A10(void* self);
+extern "C" void func_002A2B88(void* self);
+extern "C" void func_002A2260(void* self);
+extern "C" void func_002A2318(void* self);
+extern "C" void func_002A20D0(void* self);
+extern "C" int func_002A1E20(void* self, unsigned int a1);
+extern "C" int* func_00144BC0(void*);
+extern "C" void* func_0028B1E8();
+extern "C" unsigned int func_002ADF60(void* rng);
+extern "C" int func_00146E98(void* iface, int a1);
+// PORT: declared signed char elsewhere; the caller here sign-extends an int result itself.
+int cBENewPlayerInterface_getRiderCharID_i(void* self, int riderIndex) __asm__("cBENewPlayerInterface_getRiderCharID__FPvi");
+int cBERewardInterface_getTrackMedal(void* self, int a1, int ch, int a3, int track);
+void func_002B1758(void* snd, int a1);
+
+// Front-end music: picks the next track (a queued one, else a random one not played yet in this round of
+// 5 or 8 tracks; the bonus track joins once both medals are won), marks it played and starts it.
+extern "C" void func_002A2E50(void* vself, int bonus)
+{
+    char* self = (char*)vself;
+    int pick = 0;
+    if (*(int*)(self + 0x5790) == 0 && *(int*)(self + 0x6258) == 0) {
+        *(int*)(self + 0x5790) = 1;
+        *(int*)(self + 0x5798) = 3;
+        *(unsigned int*)(self + 0x573C) |= 0x80;
+        *(int*)(self + 0x578C) = 0;
+    } else {
+        if (func_002A4770(self) != 0) {
+            return;
+        }
+        int queued = *(int*)(self + 0x5798);
+        if (queued != -1 && *(int*)(self + 0x6258) == 0) {
+            pick = queued;
+            *(int*)(self + 0x5798) = -1;
+        } else {
+            int n = bonus == 0 ? 8 : 5;
+            int left = 0;
+            for (int i = 0; i < n; i++) {
+                left += ((*(int*)(self + 0x573C) >> i) ^ 1) & 1;
+            }
+            if (left == 0) {
+                *(unsigned int*)(self + 0x573C) = 0;
+                left = n;
+                int track = 0xE;
+                void* players = cBE_getInterface_Fv(cBE_getBE(), 1);
+                signed char ch = cBENewPlayerInterface_getRiderCharID_i(players, func_00146E98(players, 0));
+                int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+                if (sel != 1) {
+                    track = sel == 2 ? 0xF : 0x10;
+                }
+                void* rewards = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+                int gold = cBERewardInterface_getTrackMedal(rewards, 0, ch, 4, track) != -1;
+                int plat = cBERewardInterface_getTrackMedal(rewards, 0, ch, 5, track) != -1;
+                if (gold && plat) {
+                    *(unsigned int*)(self + 0x573C) |= 8;
+                }
+            }
+            int r = (func_002ADF60(*(void**)(**(char***)(self + 0x118) + 0x1D8)) & 0x7FFF) * left / 0x7FFF + 1;
+            int cnt = 0;
+            while (cnt < r) {
+                cnt += ((*(int*)(self + 0x573C) >> pick) ^ 1) & 1;
+                pick += cnt < r;
+            }
+        }
+    }
+    *(unsigned int*)(self + 0x573C) |= 1 << pick;
+    char* snd = self + 0x5560;
+    switch (pick) {
+    case 0:
+        func_002A2188(self);
+        break;
+    case 1:
+        func_002A23D0(self, -1);
+        break;
+    case 2:
+        func_002A2018(self);
+        break;
+    case 3:
+        func_002A2A10(self);
+        break;
+    case 4:
+        func_002A2B88(self);
+        break;
+    case 5:
+        func_002A2260(self);
+        break;
+    case 6:
+        func_002A2318(self);
+        break;
+    case 7:
+        func_002A20D0(self);
+        break;
+    }
+    func_002B1758(snd, 0);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A3170);
