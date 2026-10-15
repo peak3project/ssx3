@@ -1097,7 +1097,201 @@ extern "C" void func_002948A0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002948D0);
+#ifdef SKIP_ASM
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" void* func_00287968(void* self, int a1, int a2);
+extern "C" int func_002906B8(void* self);
+extern "C" int func_00288A20(void* self, void* obj);
+extern "C" int func_00288AE0(void* self);
+extern "C" int func_00285D98(void* self, int which);
+extern "C" void func_003B58A0();
+extern "C" void func_003B58D8();
+extern "C" int func_003B8AB8(int id);
+extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
+extern "C" int func_00291710(void* self, int id);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern signed char D_00535C11[];
+
+struct sSnd48D0Ch {
+    signed char vol;
+    char pad1[0x17];
+};
+struct sSnd48D0E16 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+struct sSnd48D0Sub {
+    char pad0[4];
+    sSnd48D0Ch def;          // 0x04
+    volatile int cur;        // 0x1C
+    sSnd48D0Ch* ch;          // 0x20
+    void* tgt[4];            // 0x24
+    int* p34;                // 0x34
+    int* vals;               // 0x38
+    int* p3C;                // 0x3C
+    char e40[4][8];          // 0x40
+    int* p60;                // 0x60
+    int* p64;                // 0x64
+    int* p68;                // 0x68
+    int* p6C;                // 0x6C
+    sSnd48D0E16* p70;        // 0x70
+    int* p74;                // 0x74
+    int* p78;                // 0x78
+    int* p7C;                // 0x7C
+    int* p80;                // 0x80
+    int* p84;                // 0x84
+};
+struct sSnd48D0Mgr {
+    char pad0[0x1D8];
+    sSnd48D0Sub sub;         // 0x1D8
+};
+struct sSnd48D0Sys {
+    sSnd48D0Mgr* mgr;
+    int* a4;                 // 0x4
+    int* a8;                 // 0x8
+    char padC[0x118 - 0xC];
+    sSnd48D0Mgr** p118;      // 0x118
+    char pad11C[0x5FB8 - 0x11C];
+    int handle;              // 0x5FB8
+};
+
+extern "C" void func_002A7438(void* self, int id);
+extern "C" void func_002A73A8(void* self, int level, int id);
+extern "C" int func_00288B40(void* self, int pos, float range);
+
+struct sCurve_48D0 {
+    float key[5];
+    float value[5];
+};
+extern sCurve_48D0 D_00482D30;
+// The unit declares func_00290B58 with other curve structs; bound by asm label.
+extern "C" float func_00290B58_48D0(sCurve_48D0* c, float x) __asm__("func_00290B58");
+
+struct sVE_48D0 { short delta; short index; int (*fn)(void*); };
+
+static inline int vcall_48D0(char* obj, int slot)
+{
+    char* o = obj + 0x6C0;
+    sVE_48D0* vt = *(sVE_48D0**)o;
+    return vt[slot].fn(o + vt[slot].delta);
+}
+
+static inline void snd48D0AddVoice(sSnd48D0Sys* self, int a, int b)
+{
+    sSnd48D0Mgr* m = self->mgr;
+    sSnd48D0Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+}
+
+#define SND_48D0_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_48D0_MAX(a, b) ((a) > (b) ? (a) : (b))
+
+// Rider speed sound: sets the speed level for the rider's board sound and (re)starts the wind loop with the
+// curve-mapped volume.
+extern "C" void func_002948D0(void* vself, char* obj, float speed)
+{
+    sSnd48D0Sys* self = (sSnd48D0Sys*)vself;
+    int id = -1;
+    if (func_00288AE0(self) != 0) {
+        id = 0;
+    } else {
+        bool ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
+        if (ok) {
+            id = *(int*)(obj + 0x870);
+        }
+    }
+    if ((char*)func_00285D98(self, id) == obj) {
+        if (speed <= 0.0f) {
+            func_002A7438(self, id);
+        } else if (speed < 0.25f) {
+            func_002A73A8(self, 0, id);
+        } else if (speed < 0.65f) {
+            func_002A73A8(self, 1, id);
+        } else {
+            func_002A73A8(self, 2, id);
+        }
+    }
+    if (vcall_48D0(obj, 9) != 0 || *(int*)(obj + 0x87C) == 0) {
+        if (func_00288B40(self, vcall_48D0(obj, 5), 100.0f) < 0) {
+            return;
+        }
+    }
+    sCurve_48D0 curve = D_00482D30;
+    int vol = (int)func_00290B58_48D0(&curve, *(float*)(obj + 0x770));
+    vol = vol > 127 ? 127 : vol;
+    vol = vol < 0 ? 0 : vol;
+    int b;
+    bool ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
+    if (ok) {
+        b = func_00291710(self, (int)obj) * 8 + 1;
+    } else {
+        b = func_00291710(self, (int)obj) * 8 + 5;
+    }
+    func_003B58A0();
+    bool playing = func_003B8AB8(self->handle) != 0;
+    func_003B58D8();
+    if (!playing) {
+        func_002AD5F0(&(*self->p118)->sub, self->handle, 1, 0.0f);
+    }
+    int flag = 0;
+    bool ok2 = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
+    if (ok2) {
+        cBE_getInterface_Fv(cBE_getBE(), 0);
+        if (D_00535C11[0] == 2) {
+            flag = func_00288AE0(self) == 0;
+        }
+    }
+    snd48D0AddVoice(self, 10, b);
+    sSnd48D0Mgr* m2 = *self->p118;
+    sSnd48D0Sub* s2 = &m2->sub;
+    s2->vals[m2->sub.cur] = vol;
+    s2->ch[m2->sub.cur].vol = SND_48D0_MAX(0, SND_48D0_MIN(s2->vals[s2->cur], 0x7F));
+    sSnd48D0Mgr** pp = self->p118;
+    int r = (int)func_00287968(self, 6, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+    func_002A9988(&(*self->p118)->sub, 30.0f, -1.0f);
+    {
+        sSnd48D0Mgr* m3 = *self->p118;
+        m3->sub.tgt[m3->sub.cur] = obj + 0x110;
+    }
+    {
+        sSnd48D0Mgr** pq = self->p118;
+        int q = func_00288A20(self, obj);
+        (*pq)->sub.p64[(*pq)->sub.cur] = q;
+    }
+    if (flag) {
+        (*self->p118)->sub.p80[(*self->p118)->sub.cur] = 1;
+        (*self->p118)->sub.p84[(*self->p118)->sub.cur] = *(int*)(obj + 0x870);
+    }
+    self->handle = func_002906B8(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00294F48);
