@@ -2593,7 +2593,56 @@ INCLUDE_ASM("render/particle", func_0037A610);
 
 INCLUDE_ASM("render/particle", func_0037B548);
 
+//100%
 INCLUDE_ASM("render/particle", func_0037BA50);
+#ifdef SKIP_ASM
+// PORT: PS2-only GS packet build; uncached (0x30000000) pointers held in int and 128-bit qword copies.
+typedef int cQuad128_BA50 __attribute__((mode(TI)));
+
+struct sRS_BA50 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void CopyMat_BA50(void* dst, const void* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+// Emits a particle-batch header packet: GIF tag, the batch matrix and two parameter qwords.
+extern "C" void func_0037BA50(char* self, void* mat, cQuad128_BA50* a, cQuad128_BA50* b)
+{
+    unsigned int buf = *(unsigned int*)(self + 0x5A00);
+    unsigned long* p = (unsigned long*)(buf | 0x30000000);
+    p[0] = 0x60000007;
+    p[2] = (unsigned long)0x8000 << 45;
+    p[3] = (unsigned long)0xD80C << 47;
+    p[1] = 0;
+    CopyMat_BA50(p + 4, mat);
+    ((cQuad128_BA50*)p)[6] = *a;
+    ((cQuad128_BA50*)p)[7] = *b;
+    p += 16;
+    *(unsigned int*)(self + 0x5A00) = (unsigned int)p & 0x0FFFFFFF;
+    sRS_BA50* rs = *(sRS_BA50**)(self + 0xE84);
+    rs->f0 = (rs->f0 & ~0x3C0) | 0x1C0;
+    sRS_BA50* rs2 = *(sRS_BA50**)(self + 0xE84);
+    rs2->fC = (rs2->fC & 0xC0000000) | (buf & 0x3FFFFFFF);
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_0037BB10);
 
