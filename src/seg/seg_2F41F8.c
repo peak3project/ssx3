@@ -143,7 +143,12 @@ int func_003F6348(void) { return D_00526010[0]; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6358);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F63E0);
+#ifdef SKIP_ASM
+extern int D_00526038[];
+void func_003F63E0(int a0) { D_00526038[0] = a0; }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F63F0);
 
