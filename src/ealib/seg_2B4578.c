@@ -8363,7 +8363,24 @@ int func_003CE1B0(int arg0, int idx, int arg2, int arg3, int arg4, int arg5, A6_
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CE378);
+#ifdef SKIP_ASM
+struct S_E378 { char pad[0x304]; int *p[1]; };
+extern struct S_E378 D_005157B8_E378 __asm__("D_005157B8");
+extern struct { char pad[0x46]; unsigned char cnt; } D_0050A8E8_E378 __asm__("D_0050A8E8");
+extern int func_003BA6E8_E378(int) __asm__("func_003BA6E8");
+
+int func_003CE378_E378(int) __asm__("func_003CE378");
+int func_003CE378_E378(int key) {
+    int i;
+    for (i = 0; i < D_0050A8E8_E378.cnt; i++) {
+        int *q = D_005157B8_E378.p[i];
+        if (q != 0 && func_003BA6E8_E378(*(volatile int *)q) == key) return i;
+    }
+    return -1;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CE410);
 
