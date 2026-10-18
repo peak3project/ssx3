@@ -80,7 +80,11 @@ int func_003F4330(void) { return func_003F4DE8(); }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4350);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F43D0);
+#ifdef SKIP_ASM
+int func_003F43D0(int a, ...) { return 1; }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4410);
 
