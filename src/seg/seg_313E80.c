@@ -605,7 +605,37 @@ void func_004177B0(int reent, char *buf, int fmt, ...) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", sprintf);
+#ifdef SKIP_ASM
+#define sprintf_va_start(ap) \
+    (ap = (char*)__builtin_next_arg() \
+          - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0))
+struct Fsprintf {
+    char *p;
+    int r;
+    int w;
+    short flags, file;
+    char *base;
+    int size;
+    int pad[0x54 / 4 - 6];
+    int ent;
+};
+extern int D_00454944;
+void sprintf(char *buf, int fmt, ...) {
+    char *ap;
+    struct Fsprintf f;
+    sprintf_va_start(ap);
+    f.p = buf;
+    f.w = 0x7FFFFFFF;
+    f.flags = 0x208;
+    f.base = buf;
+    f.size = 0x7FFFFFFF;
+    f.ent = D_00454944;
+    func_0041B658((int)&f, fmt, ap);
+    *f.p = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_004178A8);
