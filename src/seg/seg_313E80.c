@@ -907,7 +907,17 @@ void func_0041AA50(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_0041AA88);
+#ifdef SKIP_ASM
+int func_0041AA88(char *a, char *b) {
+    while (*a && func_0041EA18(*a) == func_0041EA18(*b)) {
+        a++;
+        b++;
+    }
+    return func_0041EA18((unsigned char)*a) - func_0041EA18((unsigned char)*b);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_0041AB08);
 
