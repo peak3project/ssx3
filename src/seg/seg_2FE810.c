@@ -1267,7 +1267,17 @@ void func_0040BFD8(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BFE0);
+#ifdef SKIP_ASM
+extern int func_0040BAE8(void);
+extern int func_0040BBA0(void);
+extern void func_0040BF48(int, int);
+void func_0040BFE0(int a) {
+    int t = func_0040BAE8();
+    func_0040BF48(a, t - 540 + func_0040BBA0() * 60);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C028);
 
