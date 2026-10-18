@@ -1015,7 +1015,35 @@ int func_0041FDD0(int *err, int a, int b, int c) {
 
 INCLUDE_ASM("seg/seg_313E80", func_0041FE30);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_0041FF40);
+#ifdef SKIP_ASM
+struct F41FF40 {
+    int p, r, w;
+    short flags, file;
+    int base, size_, lbf;
+    int cookie;
+    void *rd, *wr, *sk, *cl;
+    int pad[0x54 / 4 - 12];
+    int ent;
+};
+extern char func_00417948[], func_004179B0[], func_00417A30[];
+void func_0041FF40(struct F41FF40 *f, short flags, short file, int ent) {
+    f->p = 0;
+    f->r = 0;
+    f->w = 0;
+    f->flags = flags;
+    f->file = file;
+    f->base = 0;
+    f->lbf = 0;
+    f->cookie = (int)f;
+    f->rd = func_00417948;
+    f->wr = func_004179B0;
+    f->sk = func_00417A30;
+    f->cl = (void *)func_00417A98;
+    f->ent = ent;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_0041FF98);
 
