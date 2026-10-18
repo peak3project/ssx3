@@ -9144,7 +9144,19 @@ void func_003D2FC0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2FE0);
+#ifdef SKIP_ASM
+extern unsigned char D_0044F42C_2FE0 __asm__("D_0044F42C");
+extern int D_0044F430_2FE0 __asm__("D_0044F430");
+int func_003D2A68(int);
+int func_003D2FE0(void) {
+    func_003D2A68(-1);
+    D_0044F42C_2FE0 = 0;
+    D_0044F430_2FE0 = 0;
+    return 0;
+}
+#endif
 
 void func_003D3010(void) {
 }
