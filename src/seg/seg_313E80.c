@@ -74,7 +74,19 @@ sat:
 
 INCLUDE_ASM("seg/seg_313E80", func_004139F8);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413A90);
+#ifdef SKIP_ASM
+extern void func_00413068(float *, int *);
+extern int func_00412F58(int *);
+int func_00413A90(float x) {
+    int obj[2];
+    float f = x;
+    func_00413068(&f, obj);
+    obj[1] = obj[1] == 0;
+    return func_00412F58(obj);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00413AC8);
