@@ -4,7 +4,17 @@ INCLUDE_ASM("seg/seg_2F0F40", func_003EFF40);
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F00D8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0150);
+#ifdef SKIP_ASM
+extern char* strchr(const char* s, int c);
+void func_003F0150(char* s) {
+    char* p = strchr(s, '@');
+    if (p) *p = 0;
+    p = strchr(s, '/');
+    if (p) *p = 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0198);
 
