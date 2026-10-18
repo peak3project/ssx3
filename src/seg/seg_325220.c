@@ -582,7 +582,71 @@ INCLUDE_ASM("seg/seg_325220", func_00426A98);
 
 INCLUDE_ASM("seg/seg_325220", func_00426B48);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426C88);
+#ifdef SKIP_ASM
+struct B26C88 {
+    int f0;
+    int f4;
+    int pad8;
+    int head;
+    int tail;
+};
+struct E26C88 {
+    int pad0[3];
+    int fC;
+    int pad10[3];
+    int f1C;
+    int f20;
+    int f24;
+    int f28;
+    int f2C;
+    int f30;
+    int f34;
+    int pad38;
+    int next;
+    struct B26C88 *owner;
+};
+struct A26C88 {
+    int pad0[4];
+    int f10;
+    int f14;
+    int pad18;
+    int f1C;
+    int f20;
+    int f24;
+    int f28;
+    int f2C;
+    int f30;
+    struct E26C88 *e;
+};
+extern void func_00424C50(int);
+void func_00426C88(struct A26C88 *a) {
+    struct E26C88 *e = a->e;
+    struct B26C88 *b = e->owner;
+    if (b->head == 0) {
+        b->head = (int)e;
+    } else {
+        ((struct E26C88 *)b->tail)->next = (int)e;
+    }
+    b->tail = (int)e;
+    {
+        int t1 = a->f14;
+        int t2 = a->f1C;
+        e->f20 = t1;
+        e->f1C = t2;
+    }
+    e->f24 = a->f20;
+    e->fC = a->f24;
+    e->f28 = a->f28;
+    e->f2C = a->f2C;
+    e->f30 = a->f30;
+    e->f34 = a->f10;
+    if (b->f0 >= 0 && b->f4 == 0) {
+        func_00424C50(b->f0);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00426D18);
 
