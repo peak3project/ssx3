@@ -856,6 +856,18 @@ D_30000020 = 0x30000020; // ignore:true
 D_30000030 = 0x30000030; // ignore:true
 D_30000040 = 0x30000040; // ignore:true
 D_30000080 = 0x30000080; // ignore:true
+D_30000010 = 0x30000010; // ignore:true
+D_30000050 = 0x30000050; // ignore:true
+D_30000060 = 0x30000060; // ignore:true
+D_30000070 = 0x30000070; // ignore:true
+D_300000A0 = 0x300000A0; // ignore:true
+D_300000B0 = 0x300000B0; // ignore:true
+// object/railmodifier, render/bezierman, render/particle, fe/festatecharequipdetail, ealib: large struct offsets
+// added to an object pointer (addiu after a lui of the high half), not addresses.
+D_678A0 = 0x000678A0; // ignore:true
+D_67CAC = 0x00067CAC; // ignore:true
+D_B4008 = 0x000B4008; // ignore:true
+D_C328 = 0x0000C328; // ignore:true
 // ealib + loose asm: +0x20 / +0x140 offsets added to a 0x20000000 (scratchpad) pointer in copy loops, not addresses.
 D_20000020 = 0x20000020; // ignore:true
 D_20000140 = 0x20000140; // ignore:true
