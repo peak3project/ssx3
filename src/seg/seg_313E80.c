@@ -592,7 +592,7 @@ void func_00416F90(int a, int b) {
 INCLUDE_ASM("seg/seg_313E80", func_00416FC0);
 #ifdef SKIP_ASM
 extern void func_0041FE30(void);
-extern void func_00417418(int, void (*)(void));
+extern int func_00417418(int, void (*)(void));
 void func_00416FC0(int a) {
     func_00417418(a, func_0041FE30);
 }
@@ -610,7 +610,30 @@ void func_00416FE0(void) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00417008);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00417418);
+#ifdef SKIP_ASM
+struct G17418 {
+    struct G17418 *next;
+    int n;
+    char *files;
+};
+int func_00417418(int r_, void (*fn_)(void)) {
+    char *r = (char *)r_;
+    int (*fn)(char *) = (int (*)(char *))fn_;
+    struct G17418 *g;
+    char *fp;
+    int n;
+    int ret = 0;
+    for (g = (struct G17418 *)(r + 0x1D8); g; g = g->next) {
+        fp = g->files;
+        for (n = g->n; --n >= 0; fp += 0x58)
+            if (*(short *)(fp + 0xC))
+                ret |= fn(fp);
+    }
+    return ret;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_004174B0);
 
