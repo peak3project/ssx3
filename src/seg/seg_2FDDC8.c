@@ -420,7 +420,13 @@ int func_00402D68(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402D78);
+#ifdef SKIP_ASM
+int func_00402D78(int *p) {
+    return p[2] = p[3];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402D88);
 
