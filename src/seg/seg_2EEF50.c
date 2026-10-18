@@ -302,7 +302,30 @@ int func_003EEEE8(int* p, int key) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEF40);
+#ifdef SKIP_ASM
+int func_003EEF40(int* p, int key) {
+    int k = key >= 0 ? key : -key;
+    int* prev = &((int*)p[5])[k % p[4]];
+    int* n;
+    for (;;) {
+        n = (int*)*prev;
+        if (!n) {
+            return 0;
+        }
+        if (n[2] == key) {
+            break;
+        }
+        prev = n;
+    }
+    *prev = n[0];
+    n[0] = p[7];
+    p[7] = (int)n;
+    p[0]--;
+    return n[1];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEFB8);
