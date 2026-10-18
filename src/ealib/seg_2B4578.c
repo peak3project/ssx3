@@ -4732,7 +4732,28 @@ void func_003C3250(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3300);
+#ifdef SKIP_ASM
+struct G_3300 {
+    char pad[0x1B10];
+    volatile int f1B10;
+    volatile int f1B14;
+    volatile int f1B18;
+};
+struct H_3300 { int f0; int f4; int f8; };
+extern struct G_3300 D_0050AD00_3300 __asm__("D_0050AD00");
+extern int D_0050ACE0_3300[] __asm__("D_0050ACE0");
+extern int func_00423DA0_3300(int *) __asm__("func_00423DA0");
+
+void func_003C3300(void) {
+    D_0050ACE0_3300[1] = 0x14;
+    D_0050AD00_3300.f1B14 = -1;
+    D_0050ACE0_3300[2] = 1;
+    D_0050AD00_3300.f1B18 = 0;
+    D_0050AD00_3300.f1B10 = func_00423DA0_3300(D_0050ACE0_3300);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3358);
@@ -4753,7 +4774,7 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C33E0);
 struct G_33E0 {
     char pad[0x1B10];
     volatile int f1B10;
-    int f1B14;
+    volatile int f1B14;
     volatile int f1B18;
 };
 extern struct G_33E0 D_0050AD00_33E0 __asm__("D_0050AD00");
