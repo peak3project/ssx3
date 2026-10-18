@@ -1054,7 +1054,21 @@ INCLUDE_ASM("seg/seg_2FE810", sceUsbKbSetLEDMode);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C728);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C770);
+#ifdef SKIP_ASM
+struct E_529000 { int f0; int f4; int f8; char pad[0x2C]; };
+struct T_529000 { int n; struct E_529000 *e; };
+extern struct T_529000 D_00529000[];
+int func_0040C770(int a, unsigned b) {
+    if (a >= D_00529000[0].n)
+        return -11;
+    if (b >= 2)
+        return -12;
+    D_00529000[0].e[a].f4 = b;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C7C0);
 
