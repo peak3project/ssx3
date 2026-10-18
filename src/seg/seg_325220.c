@@ -1113,7 +1113,19 @@ void func_0042E418(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042E458);
+#ifdef SKIP_ASM
+extern int D_004A5B90;
+extern char D_004953D8[];
+extern void func_00414C20(void *a0, void *a1);
+int *func_0042E458(void) {
+    if (D_004A5B90 == 0) {
+        func_00414C20(&D_004A5B90, D_004953D8);
+    }
+    return &D_004A5B90;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042E498);
