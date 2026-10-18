@@ -28,7 +28,14 @@ int func_003F0800(int* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0808);
+#ifdef SKIP_ASM
+void func_003F0808(int* p, int a, int b) {
+    p[0x504 / 4] = a;
+    p[0x508 / 4] = b;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0818);
 
