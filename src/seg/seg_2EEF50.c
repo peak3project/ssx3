@@ -366,7 +366,41 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EF640);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF6F8);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF770);
+#ifdef SKIP_ASM
+int func_003EF770(unsigned char* dst, unsigned int* e, unsigned short c, signed char ch) {
+    int found = 0;
+    unsigned char* d0 = dst;
+    for (; e[1]; e += 3) {
+        if (c < e[0]) {
+            continue;
+        }
+        if (e[1] < c) {
+            continue;
+        }
+        {
+            unsigned char b;
+            c = c - *(unsigned short*)e;
+            b = ((unsigned char*)e[2])[c];
+            if (b != 0xFF) {
+                *dst = b;
+            } else if (ch) {
+                *dst = ch;
+            } else {
+                *dst = b;
+            }
+            dst++;
+            found = 1;
+            break;
+        }
+    }
+    if (!found && ch) {
+        *dst++ = ch;
+    }
+    return dst - d0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF808);
