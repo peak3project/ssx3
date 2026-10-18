@@ -56,7 +56,9 @@ UNIT_CFLAGS = {
     # strchr/strcpy/sprintf/ungetc) and seg_325220 reach .sdata/.sbss globals with lui/%lo and never via $gp.
     "seg/seg_2F0F40": "-G0",
     "seg/seg_313E80": "-G0",
+    "seg/seg_316F98": "-G0",
     "seg/seg_325220": "-G0",
+    "seg/seg_32F020": "-G0",
 }
 # Fork-only: per-unit compiler. EA's embedded $gp module (ealib/seg_2D7498, 0x3D6498-0x3DBAE8) was built with an
 # older SN build, ee-gcc 2.95.3-114 (its non-leaf functions save ra with sq; 107 and 114 reproduce all 48 landed
@@ -69,6 +71,21 @@ for _u, _d in list(UNIT_CC.items()):
     if not os.path.isfile(f"{_d}/bin/ee-gcc2953.exe"):
         print(f"warning: {_d} missing; {_u} builds with the default compiler")
         del UNIT_CC[_u]
+# Fork-only: units built with Sony's ee-gcc 2.9-ee-991111 (Linux-native i386 build, decomp.me PS2 compiler bundle).
+# Most of the Sony SDK and runtime library code in .text was compiled with it: its non-leaf functions save callee
+# registers with `sd $16,0($sp); sd $31,0x10($sp)`, which neither SN 2.95.3 build produces (they use sq). Unit edges
+# sit where that fingerprint starts and stops. Override the location with EE_GCC29_DIR; if the compiler is missing
+# (or not on Linux) these units fall back to the default compiler and those functions just don't match.
+EE_GCC29_DIR = os.environ.get("EE_GCC29_DIR", f"{TOOLS_DIR}/cc/ee-gcc2.9-991111")
+UNIT_CC_NATIVE = {
+    "seg/seg_2FE810": EE_GCC29_DIR,
+    "seg/seg_313E80": EE_GCC29_DIR,
+    "seg/seg_325220": EE_GCC29_DIR,
+}
+if not sys.platform.startswith("linux") or not os.path.isfile(f"{EE_GCC29_DIR}/bin/ee-gcc"):
+    if UNIT_CC_NATIVE:
+        print(f"warning: {EE_GCC29_DIR}/bin/ee-gcc missing or not on Linux; ee-gcc 2.9 units build with the default compiler")
+    UNIT_CC_NATIVE = {}
 # The game was built without C++ exception support: its constructors and destructors have no EH cleanup
 # landing pads, which g++ 2.95 emits by default (e.g. cAngerFX_cAngerFX only matches with -fno-exceptions).
 COMMON_CXXFLAGS = "-fno-exceptions"
@@ -316,6 +333,12 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
     )
 
     ninja.rule(
+        "cc_native",
+        description="cc $in ($ccdir)",
+        command=f"python3 {ROOT}/tools/cc_native.py $ccdir -c {COMMON_INCLUDES} {ASM_INCLUDE_FLAG} {COMMON_CFLAGS} $in $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
+    )
+
+    ninja.rule(
         "cpp",
         description="cpp $in",
         command=f"{COMPILE_CXX_RULE} $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
@@ -380,7 +403,12 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
             # .cpp sources are listed as c segments and go through the cc rule; give them the C++ flags here
             if any(str(p).endswith(".cpp") for p in entry.src_paths):
                 unit_flags = (unit_flags + " " + COMMON_CXXFLAGS).strip()
-            task, tvars = ("cc_unit", {"ccdir": UNIT_CC[seg.name]}) if seg.name in UNIT_CC else ("cc", None)
+            if seg.name in UNIT_CC_NATIVE:
+                task, tvars = ("cc_native", {"ccdir": UNIT_CC_NATIVE[seg.name]})
+            elif seg.name in UNIT_CC:
+                task, tvars = ("cc_unit", {"ccdir": UNIT_CC[seg.name]})
+            else:
+                task, tvars = ("cc", None)
             if dual_objects:
                 build(entry.object_path, entry.src_paths, task, out_dir="obj/target", collect_objdiff=True, orig_entry=entry,
                       extra_flags=unit_flags or None, variables=tvars)
