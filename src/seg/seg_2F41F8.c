@@ -209,7 +209,19 @@ int func_003F61C8(void) { return 0; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F61D0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F62F8);
+#ifdef SKIP_ASM
+extern int func_0040C220(void);
+extern int func_003F5E90(int, int);
+extern int D_00525F80a[] __asm__("D_00525F80");
+int func_003F62F8(void) {
+    int r;
+    func_0040C220();
+    r = func_003F5E90(D_00525F80a[1], 1);
+    return r | func_003F5E90(D_00525F80a[0], 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6348);
