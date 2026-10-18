@@ -5910,7 +5910,31 @@ int func_003C72A0(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C72F8);
+#ifdef SKIP_ASM
+int f_72F8_72F8(unsigned char *, int) __asm__("func_003C72F8");
+int f_72F8_72F8(unsigned char *p, int n) {
+    int v = 0;
+    int i = n;
+    int ext;
+    while (i--) {
+        v = (v << 8) + *p++;
+    }
+    if (n == 1 && v >= 0x80) {
+        v -= 0x100;
+    } else {
+        if (n == 2 && v > 0x7FFF) {
+            ext = 0xFFFF0000;
+            v += ext;
+        } else if (n == 3 && v > 0x7FFFFF) {
+            ext = 0xFF000000;
+            v += ext;
+        }
+    }
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C7388);
