@@ -602,7 +602,30 @@ int func_003DD878(int a0, int a1, int a2) {
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DD8E8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDA10);
+#ifdef SKIP_ASM
+struct H_DA10 { unsigned int v; };
+extern char *D_00519AD8_DA10[] __asm__("D_00519AD8");
+extern int func_003DD310_DA10(struct H_DA10) __asm__("func_003DD310");
+extern int func_003DD648_DA10(int, int, int, int, int, void *) __asm__("func_003DD648");
+extern void func_003DCF70_DA10(int, void *) __asm__("func_003DCF70");
+extern void func_003DD8E8_DA10(void) __asm__("func_003DD8E8");
+extern void iFILESYS_ExecCommand_DA10(int) __asm__("iFILESYS_ExecCommand");
+
+void func_003DDA10(struct H_DA10 h, int mode, int *p) {
+    int e = *(int *)(((unsigned char *)&h)[3] * 0x30 + D_00519AD8_DA10[0] + 0x10);
+    int r = func_003DD310_DA10(h);
+    if (mode != 1) {
+        *(int *)(p[4] + 0xC) = 4;
+        iFILESYS_ExecCommand_DA10(p[4]);
+    } else {
+        int x = func_003DD648_DA10(r, 0, p[0], 0x800, e, p);
+        *(int *)&h = x;
+        func_003DCF70_DA10(x, func_003DD8E8_DA10);
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDAC0);
 
