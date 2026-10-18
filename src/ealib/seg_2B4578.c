@@ -6119,7 +6119,33 @@ int func_003C6CE0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6CE8);
+#ifdef SKIP_ASM
+struct E_6CE8 { int f0; char pad4[0x5E]; unsigned char n; char pad63; int arr[1]; };
+struct G_6CE8 { char pad[0x304]; struct E_6CE8 *p[1]; };
+extern struct G_6CE8 D_005157B8_6CE8 __asm__("D_005157B8");
+extern void f_89E0_6CE8(int) __asm__("func_003B89E0");
+extern void f_7080_6CE8(void) __asm__("func_003C7080");
+extern int f_6CE0_6CE8(int, int, int) __asm__("func_003C6CE0");
+extern void f_5E98_6CE8(int) __asm__("func_003B5E98");
+
+int func_003C6CE8(int arg0) {
+    struct E_6CE8 *e = D_005157B8_6CE8.p[arg0];
+    int i = 0;
+
+    f_89E0_6CE8(*(volatile int *)&e->f0);
+    f_7080_6CE8();
+    f_6CE0_6CE8(arg0, 0, 0x7FFFFFFF);
+    *(volatile int *)&e->f0 = -1;
+
+    for (; i < e->n; i++) {
+        if (e->arr[i]) f_5E98_6CE8(e->arr[i]);
+
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6DA0);
