@@ -9845,7 +9845,35 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D37A0);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3900);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3C90);
+#ifdef SKIP_ASM
+struct G_3C90 { char pad[0x34]; unsigned int *t34; short *t38; char pad2[0xC]; int *t48; };
+extern struct G_3C90 *D_0044F420_3C90 __asm__("D_0044F420");
+
+int func_003D3C90(int idx, int def) {
+    int ret = def;
+    struct G_3C90 *g;
+    unsigned int *base;
+    int k;
+    if (idx < 0) return ret;
+    g = D_0044F420_3C90;
+    base = g->t34;
+    k = ((unsigned char *)base)[g->t38[idx] * 4 + 4];
+    if (k == 0) return ret;
+    {
+        int lo = g->t48[k - 1];
+        int n = g->t48[k] - lo;
+        unsigned int *start = base + lo;
+        int i;
+        for (i = 0; i < n; i++) {
+            unsigned int w = start[i];
+            if (ret == (int)w >> 16) ret = w & 0xFFFF;
+        }
+    }
+    return ret;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3D20);
