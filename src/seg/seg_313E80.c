@@ -195,7 +195,14 @@ int *func_00415150(int **p) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00415168);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004151B8);
+#ifdef SKIP_ASM
+extern int func_00414B98(void);
+int func_004151B8(void) {
+    return func_00414B98() ^ 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_004151D8);
