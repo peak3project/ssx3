@@ -209,7 +209,26 @@ INCLUDE_ASM("seg/seg_313E80", func_00413BD0);
 
 INCLUDE_ASM("seg/seg_313E80", func_00413CD0);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413F38);
+#ifdef SKIP_ASM
+struct N13F38 {
+    int off;
+    int a;
+    int b;
+};
+int func_00413F38(struct N13F38 *n) {
+    int cnt = 0;
+    if (n->off != 0) {
+        do {
+            if (n->a != 0 && n->b != 0)
+                cnt++;
+            n = (struct N13F38 *)((char *)n + n->off + 4);
+        } while (n->off);
+    }
+    return cnt;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00413F80);
