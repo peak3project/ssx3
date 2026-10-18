@@ -1472,7 +1472,23 @@ void* func_00272510(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272570);
+#ifdef SKIP_ASM
+extern "C" float func_00272570(float* p, float t)
+{
+    float r;
+    if (t != 0.0f) {
+        r = p[0];
+        r = r * t + p[1];
+        r = r * t + p[2];
+        r = r * t + p[3];
+    } else {
+        r = p[3];
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_002725B8);
