@@ -5091,7 +5091,30 @@ int func_003C5880(int which, int val) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5908);
+#ifdef SKIP_ASM
+extern int func_003B4DD8_5908(void *) __asm__("func_003B4DD8");
+
+int func_003C5908(int which, int *out) {
+    char sp[0xE0];
+    func_003B4DD8_5908(sp);
+    switch (which) {
+    case 0:
+        *out = *(unsigned char *)(sp + 0x2E);
+        break;
+    case 1:
+        *out = *(unsigned char *)(sp + 0x2F);
+        break;
+    case 2:
+        *out = *(unsigned char *)(sp + 0x30);
+        break;
+    default:
+        return -5;
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5998);
