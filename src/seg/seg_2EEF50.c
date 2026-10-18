@@ -241,7 +241,30 @@ int func_003EEC88(int* p, int key) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EED08);
+#ifdef SKIP_ASM
+extern int func_003EEA48(int*, int);
+int func_003EED08(int* p, int key) {
+    int* n;
+    int* prev = &((int*)p[5])[func_003EEA48(p, key)];
+    for (;;) {
+        n = (int*)*prev;
+        if (!n) {
+            return 0;
+        }
+        if (!((int (*)(int, int))p[8])(n[2], key)) {
+            break;
+        }
+        prev = (int*)*prev;
+    }
+    *prev = n[0];
+    n[0] = p[7];
+    p[7] = (int)n;
+    p[0]--;
+    return n[1];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEDA0);
 
