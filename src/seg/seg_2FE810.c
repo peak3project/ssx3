@@ -1356,7 +1356,24 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040C928);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C980);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040CEF8);
+#ifdef SKIP_ASM
+extern unsigned char *D_00529098[];
+extern unsigned char D_00529140[];
+int func_0040CEF8(void) {
+    unsigned char *s = D_00529140;
+    unsigned char *d = D_00529098[0];
+    int i;
+    if (s[6])
+        return -1;
+    i = 6;
+    do {
+        *d = *s; i--; s++; d++;
+    } while (i >= 0);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040CF48);
