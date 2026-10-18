@@ -819,7 +819,21 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003FB308);
 int func_003FB308(int a0) { return a0 ? 0 : 12; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB318);
+#ifdef SKIP_ASM
+unsigned int func_003FB318(unsigned int c) {
+    unsigned char i = 8;
+    do {
+        if (c & 1) {
+            c = (c >> 1) ^ 0xEDB88320;
+        } else {
+            c >>= 1;
+        }
+    } while (--i != 0);
+    return c;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB358);
 
