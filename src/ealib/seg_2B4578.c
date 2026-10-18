@@ -433,7 +433,29 @@ void func_003B54E0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5540);
+#ifdef SKIP_ASM
+struct G_5540 { char pad[0x174]; signed char f174; char pad1[0x180 - 0x175]; unsigned f180; char pad2[0x330 - 0x184]; volatile unsigned f330; volatile unsigned short f334; };
+extern struct G_5540 D_0050A8E8_5540 __asm__("D_0050A8E8");
+extern void func_003B55F0_5540(void) __asm__("func_003B55F0");
+
+void func_003B5540(unsigned arg0) {
+    unsigned lim;
+    if (D_0050A8E8_5540.f174 != 0) {
+        if ((int)arg0 != (short)D_0050A8E8_5540.f334) {
+            D_0050A8E8_5540.f334 = arg0;
+            D_0050A8E8_5540.f180 = 0;
+            D_0050A8E8_5540.f330 = 0;
+        }
+        D_0050A8E8_5540.f330++;
+        lim = D_0050A8E8_5540.f330 * 100 / arg0;
+        while (lim >= D_0050A8E8_5540.f180) {
+            func_003B55F0_5540();
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B55F0);
 
