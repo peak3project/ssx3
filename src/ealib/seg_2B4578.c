@@ -8017,7 +8017,34 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003CAFD0);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB110);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB1A8);
+#ifdef SKIP_ASM
+struct O_B1A8 { int (*fn)(struct O_B1A8 *, int, int *, int, int); };
+struct S_B1A8 { char pad0[8]; struct O_B1A8 *f8; char padC[0xE]; unsigned char f1A; char pad1B[5]; int f20; };
+extern int f_AEA0_B1A8(struct S_B1A8 *, int) __asm__("func_003CAEA0");
+extern int f_AFD0_B1A8(struct S_B1A8 *, int, int, int *) __asm__("func_003CAFD0");
+extern int f_6C98_B1A8(int) __asm__("func_003C6C98");
+extern void f_6210_B1A8(int *, int, int) __asm__("func_00416210");
+
+int func_003CB1A8_impl(struct S_B1A8 *, int, int, int *) __asm__("func_003CB1A8");
+int func_003CB1A8_impl(struct S_B1A8 *s, int n, int a2, int *buf) {
+    int w = f_AEA0_B1A8(s, n);
+    int r;
+    if (s->f20 >= 0) {
+        if (f_6C98_B1A8(s->f20) < w) return 0;
+    }
+    if (w > 0) {
+        r = s->f8->fn(s->f8, w, buf, a2, s->f1A);
+        if (r <= 0) return r;
+    }
+    r = f_AFD0_B1A8(s, n, a2, buf);
+    if (r < n) {
+        f_6210_B1A8(buf + r, 0, (n - r) * 4);
+    }
+    return n;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB280);
