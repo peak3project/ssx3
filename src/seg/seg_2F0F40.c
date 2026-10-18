@@ -144,7 +144,32 @@ void func_003F0808(int* p, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0818);
+#ifdef SKIP_ASM
+int func_003F0818(char* p, const char* src, int key, char* s, int x) {
+    short* q;
+    int j;
+    cDirtysock_tag_TagFieldDupl(p + 0x2C8, 0x40, src);
+    *(int*)(p + 0x1C) = key;
+    j = 0;
+    q = (short*)(p + 0x30C);
+    do {
+        if (s[0] < 0x61 || s[1] < 0x61) {
+            break;
+        }
+        *q = 0;
+        j++;
+        *q = s[0] << 8;
+        *q |= s[1];
+        s += 2;
+        q++;
+    } while (j < 4);
+    *(int*)(p + 0x18) = x;
+    *(int*)(p + 0x308) = j;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F08E8);
 
