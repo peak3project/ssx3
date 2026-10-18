@@ -1385,7 +1385,17 @@ void func_004103B0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004103D8);
+#ifdef SKIP_ASM
+extern int func_004165A8(int, int);
+int func_004103D8(int a, int b, int c) {
+    if (func_004165A8(a, b)) {
+        c = 0;
+    }
+    return c;
+}
+#endif
 
 void func_00410408(void) {
 }
