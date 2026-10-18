@@ -994,7 +994,23 @@ int func_003B6788(int arg0, char *arg1, int arg2, int arg3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6820);
+#ifdef SKIP_ASM
+typedef struct { void *p; int pad[3]; } B6820_ent;
+extern B6820_ent *D_0050AADC_6820[] __asm__("D_0050AADC");
+extern int f_64D8_6820(int) __asm__("func_003B64D8");
+extern void *f_6540_6820(void *, int) __asm__("func_003C6540");
+extern int f_B588_6820(void *, void *, int, int, int) __asm__("func_003BB588");
+
+int func_003B6820(int a, int b, int c) {
+    char *obj;
+    if (f_64D8_6820(a) < 0) return -8;
+    obj = D_0050AADC_6820[0][a].p;
+    if (b < 0 || b >= *(unsigned short *)(obj + 6)) return -8;
+    return f_B588_6820(obj, f_6540_6820(obj, b), a, b, c);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B68B8);
