@@ -6115,7 +6115,56 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8FD0);
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E9160);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E9378);
+#ifdef SKIP_ASM
+struct N_9378 { int f0; int f4; unsigned int f8; int fC; int f10; int f14; int f18; char name[1]; };
+extern char D_004A4888_9378[] __asm__("D_004A4888");
+extern int func_003EE620_9378(int) __asm__("func_003EE620");
+extern void func_003EE600_9378(int, int) __asm__("func_003EE600");
+extern int func_003EE558_9378(int) __asm__("func_003EE558");
+extern struct N_9378 *func_003EE560_9378(int, int) __asm__("func_003EE560");
+extern int strlen_9378(const char *) __asm__("strlen");
+extern int func_00416B18_9378(const char *, const char *, int) __asm__("func_00416B18");
+
+int func_003E9378_impl(char *self, int limit, unsigned int mask, unsigned int val, char *name, int def) __asm__("func_003E9378");
+int func_003E9378_impl(char *self, int limit, unsigned int mask, unsigned int val, char *name, int def) {
+    int i;
+    int best = -1;
+    int minv = 999;
+    int mini = def;
+
+    if (name == 0) {
+        name = D_004A4888_9378;
+    }
+    if (*(int *)(self + 0x310) != 0) {
+    i = 0;
+    func_003EE600_9378(*(int *)(self + 0x314), func_003EE620_9378(*(int *)(self + 0x314)));
+    for (; i < func_003EE558_9378(*(int *)(self + 0x314)); i++) {
+        struct N_9378 *n = func_003EE560_9378(*(int *)(self + 0x314), i);
+        int r;
+        if ((n->f8 & mask) != val) continue;
+        if (func_00416B18_9378(n->name, name, strlen_9378(name)) != 0) continue;
+        r = n->f10 * 100 / n->fC;
+        if (r < limit) {
+            if (best < r) {
+                def = i;
+                best = r;
+            }
+        }
+        if (r < minv) {
+            minv = r;
+            mini = i;
+        }
+    }
+    if (best < 0) {
+        best = minv;
+        def = mini;
+    }
+    }
+    return def;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E94F0);
