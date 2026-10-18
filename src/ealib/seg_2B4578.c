@@ -1096,6 +1096,27 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B6BD0);
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6EA8);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7080);
+#ifdef SKIP_ASM
+extern int *D_0050A0A0_7080[] __asm__("D_0050A0A0");
+extern void func_003B6EA8_7080(int *) __asm__("func_003B6EA8");
+extern void func_003B6BD0_7080(int) __asm__("func_003B6BD0");
+extern void func_003E13E8_7080(int) __asm__("func_003E13E8");
+
+int func_003B7080(int arg0, int *arg1) {
+    int *o = D_0050A0A0_7080[arg0];
+    int tag = *arg1;
+    if (tag == 0x6C444353) {
+        func_003B6EA8_7080(o);
+        return 1;
+    }
+    if (*arg1 != 0x6C484353) {
+        func_003E13E8_7080(*o);
+        return 1;
+    }
+    func_003B6BD0_7080(arg0);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B70F8);
 
@@ -2394,7 +2415,41 @@ int func_003BAA00(int h, int *pos) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BAAC0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BB0C8);
+#ifdef SKIP_ASM
+struct E_B0C8 {
+    char pad00[0x26];
+    unsigned char f26;
+    char pad27[0x69 - 0x27];
+    signed char f69;
+    char pad6A[0x8C - 0x6A];
+};
+struct G_B0C8 {
+    char pad[0x17E];
+    short f17E;
+    char pad180[0x1F0 - 0x180];
+    struct E_B0C8 *f1F0;
+};
+extern struct G_B0C8 D_0050A8E8_B0C8 __asm__("D_0050A8E8");
+extern unsigned char D_0044C588_B0C8[] __asm__("D_0044C588");
+
+unsigned char func_003BB0C8(void) {
+    int i;
+again:
+    D_0044C588_B0C8[0] = D_0044C588_B0C8[0] + 1;
+    if (D_0044C588_B0C8[0] == 0) {
+        D_0044C588_B0C8[0] = D_0044C588_B0C8[0] + 1;
+    }
+    for (i = 0; i < D_0050A8E8_B0C8.f17E; i++) {
+        struct E_B0C8 *e = &D_0050A8E8_B0C8.f1F0[i];
+        if (e->f69 != 0 && e->f26 == D_0044C588_B0C8[0]) {
+            goto again;
+        }
+    }
+    return D_0044C588_B0C8[0];
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BB140);
 
