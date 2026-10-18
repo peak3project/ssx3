@@ -545,7 +545,23 @@ void func_00417578(int *p, int fmt, ...) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004175C8);
+#ifdef SKIP_ASM
+#define func_004175C8_va_start(ap) \
+    (ap = (char*)__builtin_next_arg() \
+          - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0))
+extern int D_00454944;
+extern void func_0041B658(int, int, char *);
+void func_004175C8(int fmt, ...) {
+    char *ap;
+    int *g;
+    func_004175C8_va_start(ap);
+    g = (int *)D_00454944;
+    ((int *)g[2])[0x54 / 4] = (int)g;
+    func_0041B658(g[2], fmt, ap);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00417628);
