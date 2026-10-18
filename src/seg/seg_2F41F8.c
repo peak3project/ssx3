@@ -17,6 +17,10 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F3940);
 INCLUDE_ASM("seg/seg_2F41F8", func_003F39C8);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3A98);
+#ifdef SKIP_ASM
+extern int func_003F39C8(void);
+int func_003F3A98(void) { return func_003F39C8(); }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3AB8);
 
@@ -35,6 +39,10 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F40B8);
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4118);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4198);
+#ifdef SKIP_ASM
+extern int func_003F4DE8(void);
+int func_003F4198(void) { return func_003F4DE8(); }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F41B8);
 
@@ -154,7 +162,12 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F63F0);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F64E0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6520);
+#ifdef SKIP_ASM
+extern struct { char pad[16]; unsigned char v[1]; } D_00525F80;
+int func_003F6520(int a0) { return D_00525F80.v[a0] != 0; }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6538);
 
@@ -317,8 +330,16 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F80E0);
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8178);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8200);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+int func_003F8200(int *a0) { *a0 = *(int *)(D_004A4BC4 + 0x104); return 0; }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8218);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+int func_003F8218(int *a0) { *a0 = *(int *)(D_004A4BC4 + 0x10C); return 0; }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8230);
 
