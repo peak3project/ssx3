@@ -748,7 +748,16 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_00406B00);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00406CA0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00406DF0);
+#ifdef SKIP_ASM
+extern int D_004532C0[];
+void func_00406DF0(int *p, unsigned a) {
+    volatile int *r = (volatile int *)0x10002000;
+    *r = a;
+    p[518] = D_004532C0[a >> 28];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00406E20);
 
