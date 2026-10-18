@@ -326,7 +326,21 @@ int func_00415238(int *a, int *b) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00415260);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00415728);
+#ifdef SKIP_ASM
+extern char func_00415F48[];
+extern char func_004151F8[];
+extern int func_00415840(int, char *, int, char *, char *, void *);
+int func_00415728(int *p) {
+    int r = 0;
+    if (p) {
+        short *vt = (short *)p[1];
+        r = func_00415840(((int *)vt)[1], func_00415F48, 1, (char *)p + vt[0], func_004151F8, p);
+    }
+    return r != 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00415778);
 
