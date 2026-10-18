@@ -676,7 +676,17 @@ void func_00403460(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403470);
+#ifdef SKIP_ASM
+extern int sprintf(char *, const char *, ...);
+extern void func_004034A8(int *, int);
+void func_00403470(int *a, char *fmt) {
+    char buf[256];
+    sprintf(buf, fmt);
+    func_004034A8(a, (int)buf);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004034A8);
@@ -1112,8 +1122,40 @@ void func_0040BA48(U64 *p) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA68);
+#ifdef SKIP_ASM
+extern unsigned char D_004533FA[];
+extern int func_0040B9A8(void);
+extern void func_00423E50(unsigned *);
+int func_0040BA68(void) {
+    unsigned buf[1];
+    int r;
+    if (func_0040B9A8()) {
+        r = D_004533FA[0];
+    } else {
+        func_00423E50(buf);
+        r = (buf[0] >> 1) & 3;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BAA8);
+#ifdef SKIP_ASM
+extern unsigned char D_004533FD[];
+extern int func_0040B9A8(void);
+extern void func_00423E50(unsigned *);
+int func_0040BAA8(void) {
+    unsigned buf[1];
+    int r;
+    if (func_0040B9A8()) {
+        r = D_004533FD[0];
+    } else {
+        func_00423E50(buf);
+        r = buf[0] & 1;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BAE8);
 
