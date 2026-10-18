@@ -114,7 +114,7 @@ struct S07A0 {
 extern int func_003F0B50(struct S07A0*);
 extern void func_003F0BE0(struct S07A0*);
 extern void func_003F55B8(int);
-extern void func_00259210(struct S07A0*);
+extern void func_00259210(void*);
 void func_003F07A0(struct S07A0* p) {
     if (p->obj) {
         p->obj->fn(p->obj);
@@ -170,7 +170,38 @@ int func_003F0B50(struct S07A0* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0BE0);
+#ifdef SKIP_ASM
+extern int func_003EE9A0(int);
+extern void* func_003EE480(int, int);
+extern void func_003EE820(int);
+extern void func_003EE260(int);
+void func_003F0BE0(struct S07A0* sp) {
+    int* p = (int*)sp;
+    int t[4];
+    int x;
+    if (p[0x4A8 / 4]) {
+        while ((x = func_003EE9A0(p[0x4A4 / 4]))) {
+            func_00259210(func_003EE480(p[0x4A8 / 4], x));
+        }
+        if (p[0x4B8 / 4]) {
+            t[0] = 0x726F7374;
+            t[1] = 0;
+            t[2] = 0;
+            t[3] = p[0x4A8 / 4];
+            ((void (*)(int*, int*, int))p[0x4B8 / 4])(p, t, p[0x4B4 / 4]);
+        }
+        func_003EE820(p[0x4A4 / 4]);
+        p[0x4A4 / 4] = 0;
+        func_003EE260(p[0x4A8 / 4]);
+        p[0x4A8 / 4] = 0;
+        p[0x4A8 / 4] = 0;
+        p[0x4B4 / 4] = 0;
+        p[0x4B8 / 4] = 0;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0C90);
 
