@@ -341,7 +341,19 @@ int func_003F67E0(int a, unsigned int mode, int *out) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6838);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F68F0);
+#ifdef SKIP_ASM
+extern char D_004A5B10;
+extern void func_003F65F8(char *, char *, int, int);
+extern void func_003F6670(char *, char *, int, int);
+char *func_003F68F0(char *a, int b, int c) {
+    unsigned int v = *(unsigned short *)(a + (c << 1) + 12);
+    func_003F65F8(&D_004A5B10, a, b, v);
+    func_003F6670(&D_004A5B10, a, b, v);
+    return &D_004A5B10;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6960);
 
