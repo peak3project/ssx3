@@ -303,7 +303,27 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EFAF8);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFBA0);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFC68);
+#ifdef SKIP_ASM
+char* func_003EFC68(char* s, int* out) {
+    int v = 0;
+    int c;
+    for (;; s++) {
+        if ((unsigned char)(*(unsigned char*)s - '0') < 10 || (unsigned char)(*(unsigned char*)s - 'a') < 6 || (unsigned char)(*(unsigned char*)s - 'A') < 6) {
+            c = *s;
+            if (c >= ':') {
+                c = (char)(c + 9);
+            }
+            v = (v << 4) | (c & 0xF);
+            continue;
+        }
+        break;
+    }
+    *out = v;
+    return s;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFCD8);
 
