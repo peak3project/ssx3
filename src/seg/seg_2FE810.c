@@ -1213,7 +1213,14 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040FC90);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040FCB0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004103A0);
+#ifdef SKIP_ASM
+extern int func_00418790(void) __attribute__((noreturn));
+int func_004103A0(void) {
+    return func_00418790();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004103B0);
