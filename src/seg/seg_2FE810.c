@@ -612,7 +612,15 @@ INCLUDE_ASM("seg/seg_2FE810", func_004030E0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403240);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004032A8);
+#ifdef SKIP_ASM
+extern void func_00405B48(unsigned);
+void func_004032A8(int *p) {
+    p[530] = 0;
+    func_00405B48(1);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004032B8);
 
@@ -621,6 +629,13 @@ INCLUDE_ASM("seg/seg_2FE810", func_00403338);
 INCLUDE_ASM("seg/seg_2FE810", func_00403398);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403460);
+#ifdef SKIP_ASM
+extern char D_00497CE8[];
+extern void func_00425C60(char *, int);
+void func_00403460(int a) {
+    func_00425C60(D_00497CE8, a);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403470);
 
@@ -679,10 +694,31 @@ void _sequenceScalableExtension(int *p) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403D80);
+#ifdef SKIP_ASM
+extern char D_00497D88[];
+extern void func_004034A8(int *, int);
+void func_00403D80(int *p) {
+    func_004034A8(p, (int)D_00497D88);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403D90);
+#ifdef SKIP_ASM
+extern char D_00497DA0[];
+extern void func_004034A8(int *, int);
+void func_00403D90(int *p) {
+    func_004034A8(p, (int)D_00497DA0);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403DA0);
+#ifdef SKIP_ASM
+extern char D_00497DD8[];
+extern void func_004034A8(int *, int);
+void func_00403DA0(int *p) {
+    func_004034A8(p, (int)D_00497DD8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403DB0);
