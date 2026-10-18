@@ -1351,7 +1351,58 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D8598);
 
 INCLUDE_ASM("ealib/seg_2D7498", func_003D85C8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8780);
+#ifdef SKIP_ASM
+static __inline__ unsigned char *tail_8780(unsigned char *s) {
+    int n = s[4] & 0xF;
+    return s + ((s[5] * (n + 2) + 0xF) & 0x3FFC) + n * 4;
+}
+
+static __inline__ int bit_8780(unsigned char *b, int i) {
+    unsigned char m = 1 << (i % 8);
+    return b[i / 8] & m;
+}
+
+int func_003D8780(short *p, unsigned char *shp, int x) {
+    int r = 1;
+    int h, bit;
+    int idx;
+    unsigned char *q, *t;
+    int extra;
+
+    if (shp[5] < x) {
+        r = 0;
+    } else {
+        h = p[1];
+        if (h != -1) {
+            bit = 0;
+            if (h < *(unsigned short *)(shp + 0xA)) {
+                idx = shp[5] * h + x;
+                extra = 0;
+                t = tail_8780(shp);
+                if (shp[4] & 0x80) {
+                    extra = (shp[5] + 7) / 8 + 1;
+                }
+                q = t + extra;
+                if (shp[6]) {
+                    q += shp[6] + 1;
+                }
+                bit = bit_8780(q, idx);
+            }
+            r = bit;
+            if (r == 0) {
+                goto out;
+            }
+        }
+        if (shp[4] & 0x80) {
+            r = bit_8780(tail_8780(shp) + 1, x);
+        }
+    }
+out:
+    return r;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2D7498", func_003D88C8);
 
