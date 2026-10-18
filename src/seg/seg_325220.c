@@ -306,7 +306,31 @@ INCLUDE_ASM("seg/seg_325220", func_00425260);
 
 INCLUDE_ASM("seg/seg_325220", func_00425320);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425358);
+#ifdef SKIP_ASM
+extern int D_00455174;
+extern char D_0052BB80[];
+extern void func_0042CA58_v(char *) __asm__("func_0042CA58");
+void func_00425358(int c) {
+    int idx;
+    if (D_00455174 >= 0x7E) {
+        D_00455174 = 0;
+        D_0052BB80[0x7F] = 0;
+        func_0042CA58_v(D_0052BB80);
+    }
+    idx = D_00455174;
+    if (c == 10) {
+        D_00455174 = 0;
+        D_0052BB80[idx] = c;
+        D_0052BB80[idx + 1] = 0;
+        func_0042CA58_v(D_0052BB80);
+    } else {
+        D_00455174 = idx + 1;
+        D_0052BB80[idx] = c;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425408);
