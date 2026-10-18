@@ -2465,7 +2465,162 @@ extern "C" void func_003779E0(void* self, sPart20* src)
 
 INCLUDE_ASM("render/particle", func_00377A10);
 
+//100%
 INCLUDE_ASM("render/particle", func_00377CF0);
+#ifdef SKIP_ASM
+typedef int cQuad128_CF0 __attribute__((mode(TI)));
+
+struct sRS_CF0 {
+    int f0;
+    int f4;
+    int f8;                         // bits 0..4 = key
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sEnt_CF0 {
+    sRS_CF0 rs;                     // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+
+struct sRing_CF0 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sEnt_CF0 ents[1];               // 0x80
+};
+
+struct sPtGfx_CF0 {
+    char pad_0x0[0xE84];
+    sRS_CF0* top;                // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sRing_CF0* ring;             // 0x18F0
+    char pad_0x18F4[0x5A00 - 0x18F4];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x6AF0 - 0x5A04];
+    float f6AF0;                    // 0x6AF0
+    char pad_0x6AF4[0x6B04 - 0x6AF4];
+    float f6B04;                    // 0x6B04
+    char pad_0x6B08[0x6B30 - 0x6B08];
+    sMat7278 m6B30;                 // 0x6B30
+    float xmin;                     // 0x6B70
+    float ymin;                     // 0x6B74
+    float zmin;                     // 0x6B78
+    char pad_0x6B7C[4];
+    float xmax;                     // 0x6B80
+    float ymax;                     // 0x6B84
+    float zmax;                     // 0x6B88
+    char pad_0x6B8C[4];
+    int texReady;                   // 0x6B90
+};
+
+// PORT: PS2-only VU0 inline asm (vector subtract); the PC port needs a C fallback.
+static inline sPt7278 Sub_CF0(const sPt7278& a, const sPt7278& b)
+{
+    sPt7278 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+union uFI_CF0 {
+    float f;
+    int i;
+};
+
+static inline int Bits_CF0(float f)
+{
+    uFI_CF0 u;
+    u.f = f;
+    return u.i;
+}
+
+static inline int Outcode_CF0(sPtGfx_CF0* self, const sPt7278& v)
+{
+    int c = 0;
+    if (v.x < self->xmin)
+        c = 2;
+    if (self->xmax < v.x)
+        c |= 1;
+    if (v.y < self->ymin)
+        c |= 8;
+    if (self->ymax < v.y)
+        c |= 4;
+    if (v.w < 0.0f) {
+        c ^= 0x2F;
+    } else {
+        if (v.z > self->zmin)
+            c |= 0x20;
+        if (v.z < self->zmax)
+            c |= 0x10;
+    }
+    return c;
+}
+
+// PORT: PS2-only GS packet build and VU0 inline asm; uncached (0x30000000) pointers.
+extern "C" void func_00377CF0(sPtGfx_CF0* self, sPt7278* pos, float* size, int* uv0, int* uv1, float* color)
+{
+    if (self->texReady == 0) {
+        func_0037D968(self);
+    }
+    sPt7278 p = MulMat7278(&self->m6B30, *pos);
+    float sx = size[0];
+    float inv = 1.0f / p.w;
+    float sy = size[1];
+    p.x *= inv;
+    p.y *= inv;
+    float dx = self->f6AF0 * sx * inv;
+    p.w = inv;
+    float dy = self->f6B04 * sy * inv;
+    sPt7278 d(dx, dy, 0.0f, 0.0f);
+    sPt7278 a = Sub_CF0(p, d);
+    sPt7278 b = Add7278(p, d);
+    int ca = Outcode_CF0(self, a);
+    int cb = Outcode_CF0(self, b);
+    if ((ca & cb) == 0) {
+        unsigned int buf = self->bufAddr;
+        long* q = (long*)(buf | 0x30000000);
+        *(cQuad128_CF0*)q = 0x10000005;
+        q[3] = (long)0x50000004 << 32;
+        q[2] = 0;
+        q[4] = ((long)0x64000000 << 32) | 0x8001;
+        q[5] = 0x525120;
+        q[6] = 0x5E;
+        q[7] = uv0[0] | ((long)uv0[1] << 32);
+        long one = Bits_CF0(1.0f);
+        q[8] = (long)(int)(color[1] * 128.0f) | ((long)(int)(color[2] * 128.0f) << 8) | ((long)(int)(color[3] * 128.0f) << 16) | ((long)(int)(color[0] * 128.0f) << 24) | (one << 32);
+        q[9] = (int)a.x | ((long)(int)a.y << 16) | ((long)(int)(a.z * a.w) << 32);
+        q[10] = uv1[0] | ((long)uv1[1] << 32);
+        q[11] = (int)b.x | ((long)(int)b.y << 16) | ((long)(int)(b.z * b.w) << 32);
+        q += 12;
+        unsigned int next = (unsigned int)q & 0x0FFFFFFF;
+        sRing_CF0* ring = self->ring;
+        self->bufAddr = next;
+        sRS_CF0* rs = self->top;
+        if (ring->count < 0xA28) {
+            rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+            int key = *(int*)((char*)ring + 0x69CC0);
+            sEnt_CF0* e = (sEnt_CF0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            e->rs = *rs;
+            e->buf = buf;
+            e->next = next;
+            e->key = key;
+            e->flag = 0;
+        }
+        self->bufAddr += 0x10;
+    }
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_003781A0);
 
