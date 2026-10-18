@@ -516,7 +516,18 @@ extern int func_003F77F8(void);
 int func_003F7820(void) { return func_003F77F8(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7840);
+#ifdef SKIP_ASM
+typedef struct { char c[17]; } S17b;
+extern char *D_004A4BC4;
+extern void func_003F7920b(int) __asm__("func_003F7920");
+void func_003F7840(void) {
+    S17b *dst = *(S17b **)(D_004A4BC4 + 0xCC);
+    *dst = **(S17b **)(D_004A4BC4 + 0x144);
+    func_003F7920b(0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7890);
