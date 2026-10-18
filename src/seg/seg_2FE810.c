@@ -407,7 +407,15 @@ int func_004029C8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004029D0);
+#ifdef SKIP_ASM
+extern int func_00403500(int, int, int);
+int func_004029D0(int *p, int b, int n) {
+    func_00403500(p[16], b, (n + 19) / 16 * 16);
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00402A10);
 
