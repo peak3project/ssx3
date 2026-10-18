@@ -581,7 +581,7 @@ INCLUDE_ASM("seg/seg_313E80", func_00417A30);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00417A98);
 #ifdef SKIP_ASM
-extern void func_0041FB98(int, int);
+extern int func_0041FB98(int, int);
 void func_00417A98(int *p) {
     func_0041FB98(p[0x54 / 4], ((short *)p)[7]);
 }
@@ -908,7 +908,20 @@ INCLUDE_ASM("seg/seg_313E80", func_0041F3A8);
 
 INCLUDE_ASM("seg/seg_313E80", func_0041F9D8);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_0041FB98);
+#ifdef SKIP_ASM
+extern int D_004A5BB8;
+extern int func_00424488(int);
+int func_0041FB98(int err, int a) {
+    int r;
+    D_004A5BB8 = 0;
+    r = func_00424488(a);
+    if (r == -1 && D_004A5BB8)
+        *(int *)err = D_004A5BB8;
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_0041FBF0);
 
