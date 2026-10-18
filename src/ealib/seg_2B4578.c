@@ -195,7 +195,21 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B4478);
 
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_cloneat);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4690);
+#ifdef SKIP_ASM
+extern int func_003B4478_4690(int) __asm__("func_003B4478");
+extern void *func_003B3A10_4690(int) __asm__("func_003B3A10");
+extern void SHAPE_cloneat_4690(void *, int) __asm__("SHAPE_cloneat");
+extern void *(*D_0044C454_4690)(void *, int, int, int, int) __asm__("D_0044C454");
+
+void *func_003B4690(int arg0) {
+    int sz = func_003B4478_4690(arg0);
+    void *r = D_0044C454_4690(func_003B3A10_4690(arg0), sz, 0, 0x10, 0x400);
+    SHAPE_cloneat_4690(r, arg0);
+    return r;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4708);
 
