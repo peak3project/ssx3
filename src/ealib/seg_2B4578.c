@@ -2158,7 +2158,33 @@ signed char func_003B9FC8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA020);
+#ifdef SKIP_ASM
+struct S_A020 {
+    unsigned char b0, b1, b2, b3, b4, b5;
+    short pad6;
+    unsigned short h8, hA, hC, hE, h10, h12, h14, h16;
+};
+
+int func_003BA020(struct S_A020 *s) {
+    s->hC = 0x1000;
+    s->b2 = 0x3C;
+    s->hE = 0x1000;
+    s->h10 = 0x1000;
+    s->h12 = 0;
+    s->h14 = 0xFFFF;
+    s->h16 = 0;
+    s->b1 = 0x40;
+    s->b3 = 0x7F;
+    s->b0 = 0x7F;
+    s->b4 = 0x7F;
+    s->b5 = 0x7F;
+    s->h8 = 0;
+    s->hA = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA078);
