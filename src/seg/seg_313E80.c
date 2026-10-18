@@ -522,7 +522,18 @@ int *func_004151E0(int *p, int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004151F8);
+#ifdef SKIP_ASM
+extern int D_00499AC0[];
+extern int D_004A5BB0[];
+extern void func_00414C20(int *, int);
+int *func_004151F8(void) {
+    if (D_004A5BB0[0] == 0)
+        func_00414C20(D_004A5BB0, (int)D_00499AC0);
+    return D_004A5BB0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415238);
@@ -538,14 +549,14 @@ INCLUDE_ASM("seg/seg_313E80", func_00415260);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415728);
 #ifdef SKIP_ASM
+extern int *func_004151F8(void);
 extern char func_00415F48[];
-extern char func_004151F8[];
 extern int func_00415840(int, char *, int, char *, char *, void *);
 int func_00415728(int *p) {
     int r = 0;
     if (p) {
         short *vt = (short *)p[1];
-        r = func_00415840(((int *)vt)[1], func_00415F48, 1, (char *)p + vt[0], func_004151F8, p);
+        r = func_00415840(((int *)vt)[1], func_00415F48, 1, (char *)p + vt[0], (char *)func_004151F8, p);
     }
     return r != 0;
 }
