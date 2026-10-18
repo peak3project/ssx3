@@ -3,9 +3,9 @@
 Requires a dual build first: `./configure.py -c -o && ninja`.
 
 For each unit, diffs obj/target against obj/current and classifies every
-function as Matching (100%, or a near-miss objdiff's own report still counts
-as matched — see README.md), Partial (has a C implementation that doesn't yet
-byte-match), or Not Started (still a raw INCLUDE_ASM stub).
+function as Matching (100%, or a near-miss objdiff's own per-function report
+scores as matched — see README.md), Partial (has a C implementation that
+doesn't yet byte-match), or Not Started (still a raw INCLUDE_ASM stub).
 """
 
 import json
@@ -47,13 +47,19 @@ def run_report():
     return data
 
 
-def per_unit_matched_counts(report):
-    counts = {}
+def report_matched_functions(report):
+    """(unit, function) pairs that objdiff's own report counts as matched.
+
+    The report's per-function `fuzzy_match_percent` already treats a function whose only
+    remaining difference is a relocation immediate as matched (see the gp-relative note in
+    README.md), so this is the authoritative Matching set; no guessing is needed.
+    """
+    matched = set()
     for u in report["units"]:
-        mf = u["measures"].get("matched_functions", 0)
-        if mf:
-            counts[u["name"]] = int(mf)
-    return counts
+        for f in u.get("functions", []):
+            if f.get("fuzzy_match_percent", 0) >= 100.0:
+                matched.add((u["name"], f["name"]))
+    return matched
 
 
 def diff_unit(target_path, base_path, tmp_path):
@@ -102,45 +108,47 @@ def collect_functions(units):
     return results
 
 
-def classify(results, matched_counts):
-    """Splits functions into Matching/Partial/Not Started per unit.
+def classify(results, report_matched):
+    """Splits functions into Matching/Partial/Not Started.
 
-    A unit's `matched_functions` count from `report generate` is usually
-    higher than the number of exactly-100% functions we see here: objdiff's
-    own report still counts a function as matched if the only remaining byte
-    difference is a relocation immediate (see the gp-relative note in
-    README.md), which shows up as a near-100% (not exactly 100%) score in a
-    plain diff. We approximate that by promoting the highest-scoring partial
-    functions in each unit up to Matching until the counts reconcile.
+    A function is Matching when the plain diff scores it exactly 100%, or when objdiff's own
+    report counts it as matched (a relocation-immediate-only difference shows up as a
+    near-100% score in the plain diff). Every other function with a C implementation is
+    Partial, whatever its score: a function is never promoted just to make counts agree.
     """
-    by_unit = defaultdict(list)
-    for unit, name, dem, size, mp in results:
-        by_unit[unit].append((name, dem, size, mp))
-
     final = []
-    for unit, items in by_unit.items():
-        exact100 = [it for it in items if it[3] == 100.0]
-        partial = [it for it in items if it[3] is not None and it[3] != 100.0]
-        not_started = [it for it in items if it[3] is None]
-
-        report_mf = matched_counts.get(unit, len(exact100))
-        extra = max(0, report_mf - len(exact100))
-
-        partial_sorted = sorted(partial, key=lambda x: -x[3])
-        bonus_matching = partial_sorted[:extra]
-        real_partial = partial_sorted[extra:]
-
-        for name, dem, size, mp in exact100 + bonus_matching:
-            final.append((unit, name, dem, size, "Matching", mp))
-        for name, dem, size, mp in real_partial:
-            final.append((unit, name, dem, size, "Partial", mp))
-        for name, dem, size, mp in not_started:
-            final.append((unit, name, dem, size, "Not Started", mp))
-
+    for unit, name, dem, size, mp in results:
+        if mp is None:
+            status = "Not Started"
+        elif mp == 100.0 or (unit, name) in report_matched:
+            status = "Matching"
+        else:
+            status = "Partial"
+        final.append((unit, name, dem, size, status, mp))
     return final
 
 
-def write_markdown(final, snapshot_date):
+def unit_label(unit):
+    """Markdown label for a unit; bare-address unit names are unsplit segments with no source file yet."""
+    tail = unit.rsplit("/", 1)[-1]
+    if all(c in "0123456789ABCDEFabcdef" for c in tail) and len(tail) >= 5:
+        return f"`{unit}` (unsplit segment at 0x{tail.upper()}, no source file yet)"
+    return f"`{unit}`"
+
+
+def source_revision():
+    """Short commit hash of the checkout the report was built from, plus '-dirty' if src/ has local edits."""
+    try:
+        rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True,
+                             text=True, check=True).stdout.strip()
+        dirty = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", "src", "include", "asm", "config"],
+                               cwd=ROOT).returncode != 0
+        return rev + ("-dirty" if dirty else "")
+    except Exception:
+        return "unknown"
+
+
+def write_markdown(final, snapshot_date, revision):
     by_unit = defaultdict(list)
     for unit, name, dem, size, status, mp in final:
         by_unit[unit].append((name, dem, size, status, mp))
@@ -160,16 +168,16 @@ def write_markdown(final, snapshot_date):
         "`python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md)."
     )
     lines.append("")
-    lines.append(f"Snapshot as of {snapshot_date}.")
+    lines.append(f"Snapshot of commit `{revision}`, generated {snapshot_date}.")
     lines.append("")
     lines.append("**Status definitions:**")
     lines.append(
         "- **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss "
-        "where objdiff's own report considers the function matched despite a lower raw "
-        "percentage (this happens for a handful of functions where the only remaining byte "
-        "difference is a relocation immediate baked in at link time by the original SN "
-        "toolchain, not a real code difference — see the gp-relative note in "
-        "[README.md](README.md))."
+        "that objdiff's own report scores as matched despite a lower raw percentage (the only "
+        "remaining byte difference is a relocation immediate baked in at link time by the "
+        "original SN toolchain, not a real code difference — see the gp-relative note in "
+        "[README.md](README.md)). Taken per function from objdiff's report; nothing is "
+        "promoted to make counts agree."
     )
     lines.append(
         "- **Partial** — has a C implementation (not raw `INCLUDE_ASM`) but doesn't yet "
@@ -213,7 +221,7 @@ def write_markdown(final, snapshot_date):
     for unit, m, p, n, t in sorted(unit_summary, key=lambda x: (-(x[1] + x[2]), x[0])):
         if m == 0 and p == 0:
             continue
-        lines.append(f"| `{unit}` | {m} | {p} | {n} | {t} |")
+        lines.append(f"| {unit_label(unit)} | {m} | {p} | {n} | {t} |")
 
     lines.append("")
     lines.append("## Full per-file breakdown")
@@ -227,7 +235,7 @@ def write_markdown(final, snapshot_date):
     lines.append("")
 
     for unit, m, p, n, t in sorted(unit_summary, key=lambda x: x[0]):
-        lines.append(f"### `{unit}`")
+        lines.append(f"### {unit_label(unit)}")
         lines.append("")
         lines.append(f"{m} matching, {p} partial, {n} not started ({t} total)")
         lines.append("")
@@ -256,13 +264,14 @@ def main():
     import datetime
 
     snapshot_date = datetime.date.today().isoformat()
+    revision = source_revision()
 
     units = load_units()
     report = run_report()
-    matched_counts = per_unit_matched_counts(report)
+    report_matched = report_matched_functions(report)
     results = collect_functions(units)
-    final = classify(results, matched_counts)
-    write_markdown(final, snapshot_date)
+    final = classify(results, report_matched)
+    write_markdown(final, snapshot_date, revision)
 
 
 if __name__ == "__main__":
