@@ -339,7 +339,17 @@ extern int func_003F7BD0(void);
 void func_003F72C8(int *a) { func_003F7BD0(); *a = 2; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F72F8);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern int func_003F7BD0(void);
+int func_003F72F8(int a, int *b) {
+    *b = *(int *)(D_004A4BC4 + 0x148);
+    *(int *)(D_004A4BC4 + 0x148) = 0;
+    return func_003F7BD0();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7328);
 
