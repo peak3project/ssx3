@@ -724,7 +724,43 @@ void func_003DDA10(struct H_DA10 h, int mode, int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDAC0);
+#ifdef SKIP_ASM
+struct N_DAC0 { int f0; int f4; int f8; char *fC; int *f10; struct N_DAC0 *next; };
+struct R_DAC0 { int f0; int pad[3]; int f10; int f14; int pad2[3]; int f24; };
+extern struct N_DAC0 *D_00519AE4_DAC0 __asm__("D_00519AE4");
+extern struct R_DAC0 *func_003DE670_DAC0(void) __asm__("func_003DE670");
+extern int func_00416B18_DAC0(char *, char *, int) __asm__("func_00416B18");
+extern void iFILESYS_ExecCommand_DAC0(void *) __asm__("iFILESYS_ExecCommand");
+extern int (*D_00450C10_DAC0[])(char *, int, int) __asm__("D_00450C10");
+extern char D_00495D68_DAC0[] __asm__("D_00495D68");
+extern int func_003DD4E8_DAC0(char *, int, int, void *) __asm__("func_003DD4E8");
+extern void func_003DCF70_DAC0(int, void *) __asm__("func_003DCF70");
+extern char func_003DDA10_DAC0[] __asm__("func_003DDA10");
+
+int func_003DDAC0(char *name, int a1, int a2, int a3) {
+    struct N_DAC0 *n = D_00519AE4_DAC0;
+    struct R_DAC0 *r = func_003DE670_DAC0();
+    r->f0 = (r->f0 & 0xFF0FFFFF) | 0x900000;
+    r->f14 = a3;
+    r->f10 = a2;
+    for (; n != 0; n = n->next) {
+        if (func_00416B18_DAC0(name, n->fC + 0x10, 0x100) == 0) {
+            r->f24 = (int)n->fC;
+            iFILESYS_ExecCommand_DAC0(r);
+            return (int)r;
+        }
+    }
+    n = (struct N_DAC0 *)D_00450C10_DAC0[1](name, 0x18, a1);
+    n->f10 = (int *)r;
+    n->f4 = 0x800;
+    n->f8 = a1;
+    n->f0 = D_00450C10_DAC0[1](D_00495D68_DAC0, 0x800, a1);
+    func_003DCF70_DAC0(func_003DD4E8_DAC0(name, 1, a2, n), func_003DDA10_DAC0);
+    return r->f0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDC00);
