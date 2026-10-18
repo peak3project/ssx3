@@ -9957,7 +9957,32 @@ int func_003D4950(char *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D49D0);
+#ifdef SKIP_ASM
+struct C_49D0 { signed char a; signed char b; unsigned short v; };
+
+int func_003D49D0(int n, int key, struct C_49D0 *tbl) {
+    struct C_49D0 *best = tbl;
+    int bd;
+    int i;
+    if (n <= 0) return -1;
+    bd = 0x7F;
+    for (i = 0; i < n; i++) {
+        int da = tbl[i].a - key;
+        int db = tbl[i].b - key;
+        int d;
+        if (da < 0) da = -da;
+        if (db < 0) db = -db;
+        d = da < db ? da : db;
+        if (d < bd) {
+            bd = d;
+            best = &tbl[i];
+        }
+    }
+    return best->v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4A50);
