@@ -354,7 +354,26 @@ void func_003DCDE0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCE90);
+#ifdef SKIP_ASM
+struct H_CE90 { unsigned int v; };
+extern char *D_00519AD8_CE90[] __asm__("D_00519AD8");
+
+int func_003DCE90(struct H_CE90 h) {
+    struct H_CE90 c;
+    unsigned int u = h.v;
+    int ok = 0;
+    c.v = u;
+    if (u != 0) {
+        ok = ((*(unsigned int *)(((unsigned char *)&c)[3] * 0x30 + D_00519AD8_CE90[0]) ^ u) & 0xFFFFF) == 0;
+    }
+    if (ok == 0) {
+        return -3;
+    }
+    return *(volatile int *)(((unsigned char *)&h)[3] * 0x30 + D_00519AD8_CE90[0] + 8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCF10);
