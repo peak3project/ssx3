@@ -289,7 +289,21 @@ extern struct { char pad[16]; unsigned char v[1]; } D_00525F80;
 int func_003F6520(int a0) { return D_00525F80.v[a0] != 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6538);
+#ifdef SKIP_ASM
+extern int func_003F63F0(void);
+extern int func_003F6520(int);
+extern int func_003F6348(void);
+int func_003F6538(void) {
+    int i;
+    func_003F63F0();
+    for (i = 0; i < func_003F6348(); i++) {
+        if (func_003F6520(i) == 1) return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F65A0);
