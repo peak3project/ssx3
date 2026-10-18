@@ -562,7 +562,26 @@ int func_003EFAF8(char* dst, int size, char* src, unsigned short* tbl) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFBA0);
+#ifdef SKIP_ASM
+extern int func_003EF640(unsigned short*, char*);
+extern int func_003EF770(unsigned char*, unsigned int*, unsigned short, signed char);
+int func_003EFBA0(unsigned char* dst, int size, char* src, signed char ch, unsigned int* e) {
+    int di = 0;
+    int si = 0;
+    int lim = size - 1;
+    if (*src && lim > 0) {
+        unsigned short c;
+        do {
+            si += func_003EF640(&c, src + si);
+            di += func_003EF770(dst + di, e, c, ch);
+        } while (src[si] && di < lim);
+    }
+    dst[di] = 0;
+    return di + 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFC68);
