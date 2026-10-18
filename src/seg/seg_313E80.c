@@ -354,7 +354,47 @@ void func_00414008(struct N14008 *n) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00414148);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414230);
+#ifdef SKIP_ASM
+extern int D_004998F0[];
+extern int D_004998F8[];
+extern int func_004165A8(int, int);
+struct C14230 {
+    char *aug;
+    int f4;
+    unsigned f8;
+    int fC;
+    int f10;
+};
+struct U14230 {
+    int v;
+} __attribute__((packed));
+extern int strlen(char *);
+unsigned char *func_00414230(int *cie, struct C14230 *o) {
+    char *s;
+    unsigned char *p;
+    unsigned tmp;
+    o->aug = (char *)cie - cie[1] + 13;
+    if (func_004165A8((int)o->aug, (int)D_004998F0) == 0 || func_004165A8((int)o->aug, (int)D_004998F8) == 0 || *o->aug == 'z') {
+        s = o->aug + strlen(o->aug);
+        p = (unsigned char *)s + 1;
+        if (func_004165A8((int)o->aug, (int)D_004998F8) == 0) {
+            o->f4 = ((struct U14230 *)p)->v;
+            p += 4;
+        } else {
+            o->f4 = 0;
+        }
+        p = func_00413B38(p, &o->f8);
+        p = func_00413B80(p, &o->fC);
+        o->f10 = *p++;
+        if (*o->aug == 'z')
+            p = func_00413B38(p, &tmp) + tmp;
+        return p;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414338);
 
