@@ -3664,7 +3664,58 @@ extern "C" void func_002BECC8(char* self, Stream_ECC8* s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BEE48);
+#ifdef SKIP_ASM
+struct VEnt_EE48 { short delta; short idx; void (*fn)(void*, void*, int); };
+struct Stream_EE48 { char* vt; };
+
+static inline void Wr_EE48(Stream_EE48* s, void* p, int n) {
+    VEnt_EE48* e = (VEnt_EE48*)(s->vt + 0x10);
+    e->fn((char*)s + e->delta, p, n);
+}
+
+extern "C" void func_002BEE48(char* self, Stream_EE48* s) {
+    Wr_EE48(s, self + 0x8, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x10, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x18, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x20, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x28, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x30, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x38, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x40, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x48, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x50, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x58, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x60, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x68, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x70, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x78, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x80, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x88, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x90, 4);
+    Wr_EE48(s, self, 4);
+    Wr_EE48(s, self + 0x98, 4);
+    Wr_EE48(s, self, 4);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BF2A0);
