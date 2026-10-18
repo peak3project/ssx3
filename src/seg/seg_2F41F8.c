@@ -1182,7 +1182,24 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003FBAD0);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBB50);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBBE0);
+#ifdef SKIP_ASM
+typedef struct { char c[4]; } S4;
+extern int D_004A5B20;
+extern int func_003FBB50(int, int, int **);
+void func_003FBBE0(S4 *out) {
+    char *s = (char *)D_004A5B20;
+    int *r;
+    int sz = *(int *)(s + 0x94) << 4;
+    if (sz == 0) {
+        *(int *)out = 0;
+    } else {
+        func_003FBB50(*(int *)(s + 0x9C), sz, &r);
+        *out = *(S4 *)r[1];
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBC40);
 
