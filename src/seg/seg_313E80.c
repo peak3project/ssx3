@@ -985,7 +985,20 @@ int func_0041FD10(int *err, int a, int b, int c) {
 
 INCLUDE_ASM("seg/seg_313E80", func_0041FD70);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_0041FDD0);
+#ifdef SKIP_ASM
+extern int D_004A5BB8;
+extern int func_00424368(int, int, int);
+int func_0041FDD0(int *err, int a, int b, int c) {
+    int r;
+    D_004A5BB8 = 0;
+    r = func_00424368(a, b, c);
+    if (r == -1 && D_004A5BB8)
+        *err = D_004A5BB8;
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_0041FE30);
 
