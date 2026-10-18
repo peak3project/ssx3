@@ -548,7 +548,17 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_004034A8);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00403500);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00403600);
+#ifdef SKIP_ASM
+int func_00403600(int *p, int a, int b) {
+    p[1] = a;
+    p[2] = b;
+    p[3] = a >> 4;
+    p[4] = b >> 4;
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00403620);
 
