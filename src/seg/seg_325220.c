@@ -1200,7 +1200,21 @@ INCLUDE_ASM("seg/seg_325220", func_0042CAE0);
 
 INCLUDE_ASM("seg/seg_325220", func_0042CB68);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042CB78);
+#ifdef SKIP_ASM
+// 88.57% (identical shape/score for func_0042C360, func_0042C780, func_0042CB78 -- same asm)
+// target: bnez delay slot is an unfilled nop with `addiu $4,$4,4` placed BEFORE bnez; ours fills the slot with the addiu.
+// do{}while(0) in body made it worse (85.71). byte version func_0042C4D0 same issue (86.67), see drafts/w2/func_0042C4D0.c
+int func_0042CB78(int *a0, int *a1, unsigned int a2) {
+    unsigned int n = a2 >> 2;
+    unsigned int i;
+    for (i = 0; i < n; i++) {
+        *a0++ = *a1++;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042CBB0);
 
