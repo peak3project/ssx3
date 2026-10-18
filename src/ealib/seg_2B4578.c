@@ -10104,7 +10104,28 @@ int func_003D53B8(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5450);
+#ifdef SKIP_ASM
+struct P_5450 { char pad[0x30]; int m_a; int m_b; char pad2[0x928 - 0x38]; };
+extern struct P_5450 D_7610_5450[4] __asm__("D_00517610");
+extern struct P_5450 *D_0044F420_5450 __asm__("D_0044F420");
+extern unsigned int D_0044F430_5450 __asm__("D_0044F430");
+
+int func_003D5450(unsigned int idx) {
+    if (D_0044F430_5450 == 0)
+        D_0044F430_5450 = 0xFFFFFFFF;
+    if (idx < 4 && D_7610_5450[idx].m_b != 0) {
+        int v = D_7610_5450[idx].m_a;
+        D_0044F420_5450 = &D_7610_5450[idx];
+        D_0044F430_5450 = v;
+        return v;
+    }
+    if ((int)idx != -1)
+        D_0044F430_5450 = 0;
+    return D_0044F430_5450;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003D54C8);
