@@ -227,7 +227,13 @@ extern char D_004A5B14;
 void func_003F6AB0(void) { D_004A5B14 = 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6AB8);
+#ifdef SKIP_ASM
+extern int D_00526140[];
+extern int func_003F6960(int, int, int, int *, int);
+int func_003F6AB8(int a, unsigned short b, int c) { return func_003F6960(2, a, b | (c << 16), D_00526140, 0x80); }
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6AF0);
