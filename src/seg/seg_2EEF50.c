@@ -174,7 +174,17 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EF090);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF210);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF600);
+#ifdef SKIP_ASM
+int func_003EF600(unsigned char x) {
+    int n;
+    for (n = 1; n < 7 && (x & 0x80); n++) {
+        x <<= 1;
+    }
+    return n;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF640);
 
