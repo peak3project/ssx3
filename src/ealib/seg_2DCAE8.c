@@ -3270,7 +3270,46 @@ void func_003E3AD8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3B00);
+#ifdef SKIP_ASM
+struct Sub_3B00 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; };
+struct S_3B00 { unsigned int flags; int pad4[6]; int f1C; struct Sub_3B00 sub; };
+extern struct S_3B00 D_00519C40_3B00 __asm__("D_00519C40");
+extern int func_00401DF8_3B00(int, int, int, void *) __asm__("func_00401DF8");
+extern void func_003E35B0_3B00(unsigned short) __asm__("func_003E35B0");
+extern void func_004013E8_3B00(int) __asm__("func_004013E8");
+
+void func_003E3B00_impl(void) __asm__("func_003E3B00");
+void func_003E3B00_impl(void) {
+    struct Sub_3B00 *s = &D_00519C40_3B00.sub;
+    int v;
+    int i;
+    int ok;
+    int n;
+    if (D_00519C40_3B00.flags & 1) {
+        v = ((int *)&D_00519C40_3B00)[0x3C / 4];
+    } else {
+        v = s->f14;
+    }
+    ok = 0;
+    i = 0;
+    while (i < 3) {
+        if (func_00401DF8_3B00(s->fC, s->f10, v, &D_00519C40_3B00.f1C) != 0) {
+            D_00519C40_3B00.flags |= 2;
+            ok = 1;
+            break;
+        }
+        n = i + 1;
+        func_003E35B0_3B00(n);
+        i = n;
+        func_004013E8_3B00(0);
+    }
+    if (!ok) {
+        D_00519C40_3B00.flags |= 6;
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3BE0);
 
