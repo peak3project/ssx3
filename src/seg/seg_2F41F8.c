@@ -826,7 +826,21 @@ int func_003F7D98(void) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7DE0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7E90);
+#ifdef SKIP_ASM
+char *func_003F7E90(char *dst, char *src, int n) {
+    char *d;
+    unsigned char *s = (unsigned char*)src;
+    if (s && dst && n && s != (unsigned char*)dst) {
+        d = dst;
+        do {
+            if (--n == 0) { *d = 0; break; }
+        } while ((*d++ = *s++) != 0);
+    }
+    return dst;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7EE0);
