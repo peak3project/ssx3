@@ -922,7 +922,44 @@ void func_003D7B98(void) {
 
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7C38);
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7D58);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct P_7D58 { char pad[9]; signed char b9; unsigned char bA; };
+struct R_7D58 { unsigned int f0; unsigned short h; unsigned char c; unsigned char d; short s8; short next; struct P_7D58 *p; int arr[20]; };
+struct G_7D58 { int z[8]; int a[8]; int b[8]; int n; struct R_7D58 r[16]; };
+extern struct G_7D58 D_0044FFF8_7D58 __asm__("D_0044FFF8");
+void func_003D7C38(unsigned int);
+
+void func_003D7D58(int a) {
+    int i;
+    unsigned int f0, f;
+    unsigned int h, hi;
+    int d;
+
+    f0 = D_0044FFF8_7D58.r[a].f0;
+    d = D_0044FFF8_7D58.r[a].d;
+    h = D_0044FFF8_7D58.r[a].h;
+    D_0044FFF8_7D58.n = 0;
+    for (i = 0; i < 16; i++) {
+        if (i == a) continue;
+        if (D_0044FFF8_7D58.r[i].c == 0) continue;
+        if (D_0044FFF8_7D58.r[i].d != d) continue;
+        if (D_0044FFF8_7D58.r[i].s8 != 0) continue;
+        f = D_0044FFF8_7D58.r[i].f0;
+        hi = D_0044FFF8_7D58.r[i].h;
+        if (f < f0 || (f == f0 && hi < h)) {
+            if ((D_0044FFF8_7D58.r[i].p->bA >> 2) & 1) continue;
+            func_003D7C38(i);
+        } else if (D_0044FFF8_7D58.r[i].p->b9 == 100) {
+            if (D_0044FFF8_7D58.r[i].d == d) {
+                D_0044FFF8_7D58.n = 1;
+            }
+        }
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7EC8);
