@@ -439,7 +439,13 @@ void func_00415DD8(void) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00415DF8);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00415E48);
+#ifdef SKIP_ASM
+void func_00415E48(void) {
+    ((void (*)(void))func_00414B68)();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00415E68);
 
