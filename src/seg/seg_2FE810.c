@@ -668,7 +668,15 @@ INCLUDE_ASM("seg/seg_2FE810", func_00403BB0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403CE0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", _sequenceScalableExtension);
+#ifdef SKIP_ASM
+extern char D_00497D58[];
+extern void func_004034A8(int *, int);
+void _sequenceScalableExtension(int *p) {
+    func_004034A8(p, (int)D_00497D58);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403D80);
 
