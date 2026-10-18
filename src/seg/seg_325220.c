@@ -962,7 +962,18 @@ INCLUDE_ASM("seg/seg_325220", func_0042E418);
 
 INCLUDE_ASM("seg/seg_325220", func_0042E458);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042E498);
+#ifdef SKIP_ASM
+extern int D_00456890[];
+extern void operator_delete__FPi(int *a0);
+void func_0042E498(int *a0, int a1) {
+    a0[3] = (int)D_00456890;
+    if (a1 & 1) {
+        operator_delete__FPi(a0);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042E4C8);
 
