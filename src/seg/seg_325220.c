@@ -731,7 +731,34 @@ void func_00427438(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00427498);
+#ifdef SKIP_ASM
+struct E427498 { int f0; int f4; int f8; int fC; };
+extern int D_00455218;
+extern char D_0052EC00[];
+extern void func_00427438(void);
+extern int func_00423DE0_i(int) __asm__("func_00423DE0");
+extern void func_00423DC0(int);
+struct E427498 *func_00427498(void) {
+    struct E427498 *p;
+    struct E427498 *end;
+    func_00427438();
+    func_00423DE0_i(D_00455218);
+    p = (struct E427498 *)D_0052EC00;
+    end = p + 32;
+    while (p < end) {
+        if (p->f4 == 0) {
+            p->f4 = 0x10000000;
+            func_00423DC0(D_00455218);
+            return p;
+        }
+        p++;
+    }
+    func_00423DC0(D_00455218);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427520);
