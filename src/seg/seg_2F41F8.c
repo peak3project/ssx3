@@ -249,7 +249,21 @@ int func_003F5D88(void) { return func_003F4DE8(); }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5DA8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5E90);
+#ifdef SKIP_ASM
+extern int func_0042B438(int, int, int, int *);
+extern int func_0042B640(int);
+int func_003F5E90(int a, int b) {
+    int buf[4];
+    int r = 0;
+    if (a >= 0) {
+        if (func_0042B438(a, 0, 0, buf) < 0) r = b;
+        if (func_0042B640(a) < 0) r = b;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5F08);
 
