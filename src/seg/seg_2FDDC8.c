@@ -212,7 +212,16 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FED08);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FED50);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FED60);
+#ifdef SKIP_ASM
+extern void func_003FEB78(void *, int);
+unsigned short func_003FED60(void) {
+    unsigned short v;
+    func_003FEB78(&v, 0x43A);
+    return v;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FED88);
 
