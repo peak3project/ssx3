@@ -467,7 +467,11 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003FB300);
 int func_003FB300(void) { return 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB308);
+#ifdef SKIP_ASM
+int func_003FB308(int a0) { return a0 ? 0 : 12; }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB318);
 
