@@ -804,7 +804,13 @@ int func_00410848(short *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00410850);
+#ifdef SKIP_ASM
+int func_00410850(short *p) {
+    return p[2];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00410858);
 
