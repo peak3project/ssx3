@@ -1008,7 +1008,18 @@ INCLUDE_ASM("seg/seg_325220", func_0042C410);
 
 INCLUDE_ASM("seg/seg_325220", func_0042C4C0);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C4D0);
+#ifdef SKIP_ASM
+// 86.67%: target has addiu $4 before bnez with unfilled nop delay slot; ours fills slot
+int func_0042C4D0(unsigned char *a0, unsigned char *a1, unsigned int a2) {
+    unsigned int i;
+    for (i = 0; i < a2; i++) {
+        *a0++ = *a1++;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C500);
 
