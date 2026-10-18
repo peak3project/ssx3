@@ -1139,6 +1139,7 @@ int func_0040BA68(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BAA8);
 #ifdef SKIP_ASM
 extern unsigned char D_004533FD[];
@@ -1146,14 +1147,10 @@ extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 int func_0040BAA8(void) {
     unsigned buf[1];
-    int r;
-    if (func_0040B9A8()) {
-        r = D_004533FD[0];
-    } else {
-        func_00423E50(buf);
-        r = buf[0] & 1;
-    }
-    return r;
+    if (func_0040B9A8())
+        return D_004533FD[0];
+    func_00423E50(buf);
+    return buf[0] & 1;
 }
 #endif
 
