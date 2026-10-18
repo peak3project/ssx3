@@ -930,7 +930,31 @@ int func_003B6548(void *dst, int idx) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B65D0);
+#ifdef SKIP_ASM
+struct E_65D0 { int f0; char pad[0xE]; short f12; char pad2[0x8C - 0x14]; };
+struct G_65D0 { char pad[0x17E]; short cnt; char pad2[0x1F0 - 0x180]; struct E_65D0 *tab; };
+extern struct G_65D0 D_0050A8E8_65D0 __asm__("D_0050A8E8");
+extern int f_64D8_65D0(int) __asm__("func_003B64D8");
+extern int f_8AB8_65D0(int) __asm__("func_003B8AB8");
+
+int func_003B65D0(int a) {
+    int ok = 0;
+    int i;
+    if (f_64D8_65D0(a) != 0) return -8;
+    func_003B58A0();
+    for (i = 0; i < D_0050A8E8_65D0.cnt; i++) {
+        struct E_65D0 *e = &D_0050A8E8_65D0.tab[i];
+        if (e->f12 == a && f_8AB8_65D0(e->f0) == 0) {
+            ok = 1;
+            break;
+        }
+    }
+    func_003B58D8();
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6670);
