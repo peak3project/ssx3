@@ -628,6 +628,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_00403338);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403398);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403460);
 #ifdef SKIP_ASM
 extern char D_00497CE8[];
