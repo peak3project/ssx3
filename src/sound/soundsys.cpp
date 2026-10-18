@@ -1406,7 +1406,64 @@ extern "C" int func_00295028(void* vself, int a, int b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00295208);
+#ifdef SKIP_ASM
+
+static inline int ring5208Full(sSnd5028Sys* s)
+{
+    return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
+}
+static inline int ring5208Pop(sSnd5028Sys* s)
+{
+    sSnd5028Ring* r = &s->ring;
+    if (ring5028Empty(s)) return -1;
+    int v = r->data[r->tail];
+    if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
+    return v;
+}
+static inline void ring5208Push(sSnd5028Sys* s, int v)
+{
+    sSnd5028Ring* r = &s->ring;
+    if (ring5208Full(s)) return;
+    r->data[r->head] = v;
+    if (++s->ring.head >= s->ring.cap) s->ring.head = 0;
+}
+
+// Ages the queue of pending one-shot sounds (records of 5: event, handle, end time, stop flag, index): finished
+// sounds are dropped, timed-out ones are stopped if flagged, the others go back into the queue.
+extern "C" void func_00295208(void* vself)
+{
+    sSnd5028Sys* self = (sSnd5028Sys*)vself;
+    int n = ring5028Count(self) / 5;
+    for (int i = 0; i < n; i++) {
+        int e = ring5208Pop(self);
+        int h = ring5208Pop(self);
+        int t = ring5208Pop(self);
+        int stop = ring5208Pop(self);
+        int idx = ring5208Pop(self);
+        if (h < 0) continue;
+        if (h != 0 && func_002AD550(*self->mgr + 0x1D8, h, 1) == 0) continue;
+        char* mgr = *self->mgr;
+        char* bank = mgr + 0x1D8;
+        if (*(int*)(mgr + 0x260) < t) {
+            ring5208Push(self, e);
+            ring5208Push(self, h);
+            ring5208Push(self, t);
+            ring5208Push(self, stop);
+            ring5208Push(self, idx);
+        } else if (t == -1) {
+            ring5208Push(self, e);
+            ring5208Push(self, h);
+            ring5208Push(self, t);
+            ring5208Push(self, stop);
+            ring5208Push(self, idx);
+        } else if (stop != 0) {
+            func_002AD5F0(bank, h, 1, 0.0f);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295628);
