@@ -56,7 +56,13 @@ void func_003EE768(int* p, int v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE770);
+#ifdef SKIP_ASM
+int func_003EE770(int* p) {
+    return p[13];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE778);
 
