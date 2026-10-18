@@ -223,7 +223,18 @@ void func_00424E28(struct Ring4E28 *r) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424E68);
+#ifdef SKIP_ASM
+struct Ring4E68 { int size; int count; char *rd; char *wr; char data[1]; };
+void func_00424E68(struct Ring4E68 *r) {
+    r->count--;
+    r->rd++;
+    if (r->rd == (char *)r + (r->size + 16)) {
+        r->rd = r->data;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00424EA8);
 
