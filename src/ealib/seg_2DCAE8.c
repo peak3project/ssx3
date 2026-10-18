@@ -6389,7 +6389,56 @@ unsigned char *func_003EAE68(unsigned char *a0, int *a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003EAEB8);
+#ifdef SKIP_ASM
+extern int D_004969E0[];
+
+int *func_003EAEB8(int *tm, long t) {
+    unsigned secs = (int)t;
+    int *p;
+    int len;
+    int year;
+    unsigned days = secs / 86400;
+    int rem = secs % 86400;
+    year = 1970;
+    tm[0] = rem % 60;
+    rem /= 60;
+    tm[1] = rem % 60;
+    tm[2] = rem / 60;
+    while (1) {
+        len = (year & 3) == 0 && (year % 100 != 0 || year % 400 == 0) ? 366 : 365;
+        if ((int)days < len) break;
+        {
+            int ny = year + (int)days / 366;
+            int y0 = year - 1;
+            int y1;
+            int a, b, dy;
+            if (ny == year) ny++;
+            y1 = ny - 1;
+            a = y0 / 4 - y0 / 100 + y0 / 400;
+            b = y1 / 4 - y1 / 100 + y1 / 400;
+            dy = ny - year;
+            year = ny;
+            days -= dy * 365;
+            days += a;
+            days -= b;
+        }
+    }
+    tm[5] = year - 1900;
+    tm[7] = days;
+    tm[4] = 0;
+    p = D_004969E0 + (len & 1) * 12;
+    while ((int)days >= *p) {
+        days -= *p;
+        p++;
+        tm[4]++;
+    }
+    tm[3] = days + 1;
+    tm[8] = 0;
+    return tm;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003EB090);
