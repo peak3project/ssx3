@@ -268,7 +268,18 @@ INCLUDE_ASM("seg/seg_325220", func_004254D0);
 
 INCLUDE_ASM("seg/seg_325220", func_00425638);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425C28);
+#ifdef SKIP_ASM
+// not matched: varargs wrapper (a0 passes through, $5 = &spill at sp+0x58 passed as ap). hand-rolled va_start gives right sd $5..$11
+// but also emits swc1 $f12..$f18 saves (target has none) -> size mismatch (18 vs 14 insns).
+extern void func_00425638(int a0, char *ap);
+void func_00425C28(int a0, ...) {
+    char *ap;
+    ap = (char *)__builtin_next_arg() - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0);
+    func_00425638(a0, ap);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00425C60);
 
