@@ -1904,7 +1904,49 @@ void func_003E0118(int a0, int a1, char *arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E0170);
+#ifdef SKIP_ASM
+extern int func_003DD310_0170(int) __asm__("func_003DD310");
+extern int func_003DFED0_0170(void *) __asm__("func_003DFED0");
+extern void func_003E0270_0170(void *, int) __asm__("func_003E0270");
+extern void func_003E03D0_0170(void *, int) __asm__("func_003E03D0");
+extern void MUTEX_lock_0170(void *) __asm__("MUTEX_lock");
+extern void MUTEX_unlock_0170(void *) __asm__("MUTEX_unlock");
+struct O_0170 { int f0; int f4; int pad[2]; int f10; char pad2[0x118 - 0x14]; int f118; };
+struct S_0170 { int f0; int f4; char pad[0x40 - 8]; int f40; char pad2[0x58 - 0x44]; int f58; char pad3[0x60 - 0x5C]; struct O_0170 *f60; char pad4[0x170 - 0x64]; int f170; int f174; int f178; };
+
+void func_003E0170(int a, int b, struct S_0170 *s) {
+    struct O_0170 *o = s->f60;
+    int cond;
+    int amount;
+    int r;
+    if (o->f10 == 1) {
+        amount = s->f178;
+        cond = !(s->f170 + amount < o->f118);
+    } else {
+        amount = func_003DD310_0170(s->f174);
+        cond = amount < s->f178;
+    }
+    s->f170 = s->f170 + amount;
+    s->f58 = s->f58 + amount;
+    r = func_003DFED0_0170(s);
+    if (o->f4 != 4) {
+        if (!cond && r == 0) {
+            goto dec;
+        }
+        MUTEX_lock_0170(&s->f4);
+        if (o->f4 != 4) {
+            o->f4 = 3;
+        }
+        MUTEX_unlock_0170(&s->f4);
+    }
+    func_003E0270_0170(s, s->f40);
+    return;
+dec:
+    func_003E03D0_0170(s, s->f40 - 1);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E0270);
 
