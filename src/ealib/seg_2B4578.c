@@ -1043,7 +1043,24 @@ int func_003B6A38(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6A70);
+#ifdef SKIP_ASM
+extern char *D_0050A0A0_6A70[] __asm__("D_0050A0A0");
+extern void *func_003B7A70_6A70(int) __asm__("func_003B7A70");
+extern void func_003C6320_6A70(void *, void *) __asm__("func_003C6320");
+extern void func_003C6288_6A70(void *, void *) __asm__("func_003C6288");
+
+void func_003B6A70(int arg0) {
+    char *s = D_0050A0A0_6A70[arg0 & 0xFF];
+    void *r = func_003B7A70_6A70(arg0);
+    func_003C6320_6A70(s + 0x11C, r);
+    func_003C6288_6A70(s + 0x128, r);
+    if (*(void **)(s + 0x134) == r) {
+        *(int *)(s + 0x134) = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6AD8);
