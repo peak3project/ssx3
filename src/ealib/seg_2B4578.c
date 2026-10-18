@@ -8222,7 +8222,20 @@ int func_003CEFB0(S_EFB0 *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CEFF8);
+#ifdef SKIP_ASM
+extern void func_003CE7C0_EFF8(char *, int) __asm__("func_003CE7C0");
+
+void func_003CEFF8(char *arg0, int *arg1) {
+    float x = (float)(arg1[0] >> 7);
+    float y = (float)(arg1[1] >> 7);
+    float d = (float)(arg1[2] >> 8);
+    *(float *)(arg0 + 0x114) = x / d;
+    *(float *)(arg0 + 0x118) = y / d;
+    func_003CE7C0_EFF8(arg0 + 0x20, 4);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CF060);
 
