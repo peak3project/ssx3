@@ -75,7 +75,16 @@ int func_003EE5E0(int* p, int inc) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE600);
+#ifdef SKIP_ASM
+int func_003EE600(int* p, int inc) {
+    if (inc) {
+        p[3]++;
+    }
+    return p[3] > 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE620);
 
