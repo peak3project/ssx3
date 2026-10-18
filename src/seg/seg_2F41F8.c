@@ -46,7 +46,18 @@ extern int func_003F4DE8(void);
 int func_003F4198(void) { return func_003F4DE8(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F41B8);
+#ifdef SKIP_ASM
+extern unsigned int func_003F4DE8u(void) __asm__("func_003F4DE8");
+void func_003F41B8(int n) {
+    if (n == 0) n = 5;
+    if (n > 0) {
+        unsigned int end = func_003F4DE8u() + n;
+        while (func_003F4DE8u() < end) func_003F4DE8u();
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4210);
