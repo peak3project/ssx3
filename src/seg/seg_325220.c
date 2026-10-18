@@ -155,7 +155,13 @@ void func_00425CC0(int *a0, int *a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425CE0);
+#ifdef SKIP_ASM
+void func_00425CE0(int *a0, int *a1) {
+    a1[2] = a0[4];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00425CF0);
 
