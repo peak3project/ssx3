@@ -91,7 +91,16 @@ INCLUDE_ASM("seg/seg_313E80", func_00414818);
 
 INCLUDE_ASM("seg/seg_313E80", func_004149F0);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414B68);
+#ifdef SKIP_ASM
+extern int D_00499A48[];
+extern void operator_delete__FPi(int *);
+void func_00414B68(int *p, int flag) {
+    p[1] = (int)D_00499A48;
+    if (flag & 1) operator_delete__FPi(p);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414B98);
 
@@ -125,9 +134,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00414F00);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00414F50);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00414F50(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -148,9 +156,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00414F90);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00414FE0);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00414FE0(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -170,9 +177,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415018);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415068);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415068(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -318,9 +324,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415CA8);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415CF8);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415CF8(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -329,9 +334,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415D18);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415D68);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415D68(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -340,9 +344,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415D88);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415DD8);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415DD8(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -351,9 +354,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415DF8);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415E48);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415E48(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -362,9 +364,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415E68);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415EB8);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415EB8(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -373,9 +374,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415ED8);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415F28);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415F28(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
@@ -384,9 +384,8 @@ INCLUDE_ASM("seg/seg_313E80", func_00415F48);
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415F98);
 #ifdef SKIP_ASM
-extern void func_00414B68(void);
 void func_00415F98(void) {
-    func_00414B68();
+    ((void (*)(void))func_00414B68)();
 }
 #endif
 
