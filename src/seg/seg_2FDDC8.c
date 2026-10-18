@@ -914,7 +914,15 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_0040C980);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040CEF8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040CF48);
+#ifdef SKIP_ASM
+extern unsigned char D_00529141[];
+extern unsigned char D_00529101[];
+int func_0040CF48(void) {
+    return D_00529141[0] == D_00529101[0] ? 0 : -1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040CF68);
 
