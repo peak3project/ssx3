@@ -572,7 +572,22 @@ int func_004271D8(int arg) {
 
 INCLUDE_ASM("seg/seg_325220", func_00427230);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004273F8);
+#ifdef SKIP_ASM
+extern int func_004271D8(int a0);
+extern void func_00427230(int a0);
+extern void func_00423CC0(void);
+int func_004273F8(int a0) {
+    int r;
+    while (1) {
+        while ((r = func_004271D8(a0)) != 0) {
+            func_00427230(r);
+        }
+        func_00423CC0();
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00427438);
 
