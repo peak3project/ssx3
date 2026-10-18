@@ -121,7 +121,16 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FDFB0);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE090);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE268);
+#ifdef SKIP_ASM
+struct S003FE268 { int c[5]; };
+extern struct S003FE268 D_005261D0[];
+struct S003FE268 *func_003FE268(struct S003FE268 *d) {
+    *d = D_005261D0[0];
+    return d;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE2A0);
