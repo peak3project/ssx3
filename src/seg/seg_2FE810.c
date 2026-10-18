@@ -567,7 +567,24 @@ int func_00402B48(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402B58);
+#ifdef SKIP_ASM
+extern void func_00403398(int *);
+int func_00402B58(int *a) {
+    int *p = (int *)a[16];
+    p[0] = 0;
+    p[1] = 0;
+    p[2] = 0;
+    a[2] = 0;
+    p[43] = 0;
+    p[32] = -1;
+    func_00403398(p);
+    p[70] = 0;
+    func_004032A8(p);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402BB0);
