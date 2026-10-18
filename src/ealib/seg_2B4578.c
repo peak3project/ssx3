@@ -4880,7 +4880,32 @@ int func_003C5648(int *arg0) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5660);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5710);
+#ifdef SKIP_ASM
+extern int func_003B4DD8_5710(void *) __asm__("func_003B4DD8");
+extern void func_003B4FC0_5710(void *) __asm__("func_003B4FC0");
+
+
+int func_003C5710(int arg0, int arg1) {
+    char buf[0xE0];
+    func_003B4DD8_5710(buf);
+    { int lim = 0xFFFF; arg1 = arg1 > lim ? lim : arg1; }
+    *(short *)(buf + 0x2A) = arg1 & 0xFF;
+    switch (arg0) {
+    case 0:
+        *(short *)(buf + 0x2A) = arg1;
+        break;
+    case 1:
+        *(short *)(buf + 0x2C) = arg1;
+        break;
+    default:
+        return -5;
+    }
+    func_003B4FC0_5710(buf);
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5788);
