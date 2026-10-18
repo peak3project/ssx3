@@ -367,7 +367,24 @@ short *func_003F65A0(unsigned int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F65F8);
+#ifdef SKIP_ASM
+extern short D_00451420[], D_00451350[];
+extern short *func_003F65A0(unsigned int);
+void func_003F65F8(char *out, char *flags, int mode, int c) {
+    unsigned char *p;
+    unsigned int t;
+    if ((*(int *)flags & 1) && (t = c - 0x59, t < 0xB)) {
+        p = (unsigned char *)&D_00451420[t];
+    } else if (mode == 0) {
+        p = (unsigned char *)&D_00451350[c];
+    } else {
+        p = (unsigned char *)func_003F65A0(c);
+    }
+    *out = p[1];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6670);
 
