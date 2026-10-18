@@ -1492,7 +1492,47 @@ int func_003B7B00(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7B48);
+#ifdef SKIP_ASM
+struct N_7B48 { char pad[0xC]; int fC; int f10; };
+struct P_7B48 { char pad[0x10]; int f10; };
+struct S_7B48 { int f0; char pad4[4]; int f8; char padC[8]; unsigned short f14; char pad16[0x106]; struct N_7B48 *f11C; char pad120[4]; int f124; };
+extern struct S_7B48 *f_6A38_7B48(int) __asm__("func_003B6A38");
+extern struct P_7B48 *f_7A70_7B48(int) __asm__("func_003B7A70");
+extern unsigned int f_6C98_7B48(int) __asm__("func_003C6C98");
+extern unsigned int f_14C8_7B48(int) __asm__("func_003E14C8");
+
+int func_003B7B48_impl(int, int *) __asm__("func_003B7B48");
+int func_003B7B48_impl(int arg0, int *out) {
+    struct S_7B48 *s;
+    struct N_7B48 *n;
+    unsigned int t;
+    int v;
+    
+    out[2] = 0;
+    out[1] = 0;
+    out[0] = 0;
+    s = f_6A38_7B48(arg0);
+    if (s == 0) return -8;
+    v = s->f124;
+    out[0] = v;
+    if (v != 0) {
+        n = s->f11C;
+        out[1] = n->fC;
+        if (s->f14 == 0) return 0;
+        do {
+            out[2] = f_6C98_7B48(s->f8) * 1000 / s->f14;
+            if (out[2] != 0) return 0;
+            n = (struct N_7B48 *)f_7A70_7B48(out[1]);
+            if (n->f10 == 0) return 0;
+        } while (0);
+        t = f_14C8_7B48(s->f0);
+        out[2] = (t > 0x3D0900 ? 0x3D0900 : t) * 1000 / n->f10;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7C40);
 
