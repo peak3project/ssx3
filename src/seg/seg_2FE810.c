@@ -37,6 +37,12 @@ unsigned func_003FDF28(unsigned a) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FDF50);
+#ifdef SKIP_ASM
+void func_003FDF50(char *p, int n) {
+    while (n--)
+        *p++ = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDF88);
@@ -253,13 +259,38 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FFA58);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFBC0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFC38);
+#ifdef SKIP_ASM
+extern char *D_004515D0[];
+extern char D_004979A8[];
+extern char *strcpy(char *, const char *);
+void func_003FFC38(unsigned i, char *dst) {
+    if (i < 8) {
+        strcpy(dst, D_004515D0[i]);
+        return;
+    }
+    *dst = D_004979A8[0];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFC70);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFCD8);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFD28);
+#ifdef SKIP_ASM
+extern char *D_004515F0[];
+extern char D_004979A8[];
+extern char *strcpy(char *, const char *);
+void func_003FFD28(unsigned i, char *dst) {
+    if (i < 4) {
+        strcpy(dst, D_004515F0[i]);
+        return;
+    }
+    *dst = D_004979A8[0];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFD60);
 
