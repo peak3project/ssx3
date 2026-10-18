@@ -70,7 +70,16 @@ void func_003F1538(char* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F1548);
+#ifdef SKIP_ASM
+extern int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src);
+void func_003F1548(char* p, const char* src) {
+    if (p[0x2C8]) {
+        cDirtysock_tag_TagFieldDupl(p + 0x40, 0x100, src);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F1578);
 
