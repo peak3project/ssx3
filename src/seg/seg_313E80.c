@@ -232,7 +232,20 @@ void func_004146D0(int a, int *p) {
 
 INCLUDE_ASM("seg/seg_313E80", func_004146F8);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414728);
+#ifdef SKIP_ASM
+extern int *D_0052ADE8;
+void func_00414728(int a, int *p) {
+    p[2] = a;
+    p[5] = (int)D_0052ADE8;
+    D_0052ADE8 = p;
+    p[1] = 0;
+    p[0] = 0;
+    p[4] = 0;
+    p[3] = a;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414750);
 
