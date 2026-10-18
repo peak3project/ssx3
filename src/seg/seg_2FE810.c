@@ -297,7 +297,18 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FF8F0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF9A8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFA08);
+#ifdef SKIP_ASM
+struct E_526250 { int pad[4]; int f10; int pad2[2]; };
+struct R_526250 { struct E_526250 e[4]; };
+extern struct R_526250 D_00526250[];
+extern int * func_003FF9A8(int, int);
+int func_003FFA08(int a, int b) {
+    if (!D_00526250[a].e[b].f10) return 0;
+    return func_003FF9A8(a, b)[22];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFA58);
 
