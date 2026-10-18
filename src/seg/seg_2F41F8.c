@@ -269,7 +269,23 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F5F08);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5F88);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6040);
+#ifdef SKIP_ASM
+typedef struct { char pad0[16]; unsigned char v[128]; int cnt; char pad2[0x14]; char *ents; } Q;
+extern Q D_00525F80q __asm__("D_00525F80");
+int func_003F6040(int i) {
+    int c;
+    for (c = 0; c < D_00525F80q.cnt; c++) {
+        if (i >= D_00525F80q.cnt) i = 0;
+        if (D_00525F80q.v[i] != 0) {
+            if (*(unsigned char *)(D_00525F80q.ents + i * 0x8C + 0x88) == 0) return i;
+        }
+        i++;
+    }
+    return -1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F60B8);
 
