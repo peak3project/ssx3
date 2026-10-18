@@ -36,7 +36,16 @@ int func_003EE558(int* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE560);
+#ifdef SKIP_ASM
+int func_003EE560(int* p, int i) {
+    if (!p || i < 0 || i >= p[6]) {
+        return 0;
+    }
+    return **(int**)(p[16] + i * 4);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE5A0);
