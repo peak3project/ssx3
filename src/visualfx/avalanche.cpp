@@ -565,7 +565,152 @@ extern "C" void func_002D8948(void)
 
 INCLUDE_ASM("visualfx/avalanche", func_002D8A00);
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D8EA8);
+#ifdef SKIP_ASM
+struct sQ_8EA8 {
+    int v[4];
+} __attribute__((aligned(16)));
+
+struct sElem_8EA8 {
+    float x, y, z, w;
+    int r;
+    int g;
+    int b;
+    int a;
+    sQ_8EA8 q;
+};
+
+struct sLink_8EA8 {
+    float id;
+    char* obj;
+};
+
+struct sGroup_8EA8 {
+    int f0;
+    int f4;
+    int f8;
+    unsigned short nlinks;      // 0xC
+    unsigned short npairs;      // 0xE
+    sLink_8EA8 links[1];        // 0x10
+};
+
+struct sNode_8EA8 {
+    char pad[0xD0];
+    char sub[0x2E0 - 0xD0];
+    char* obj;                  // 0x2E0
+    sNode_8EA8* next;           // 0x2E4
+};
+
+struct sSelf_8EA8 {
+    sGroup_8EA8* group;         // 0x0
+    sNode_8EA8* nodes;          // 0x4
+    char pad8[0x10];
+    float thresh;               // 0x18
+};
+
+struct sRS_8EA8 {
+    int w0;
+    unsigned int w1;
+};
+
+struct sVE_8EA8 {
+    short delta;
+    short index;
+    sQ_8EA8* (*fn)(void*);
+};
+
+struct sVE2_8EA8 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, void*, int);
+};
+
+struct sCtx_8EA8 {
+    char pad[0xE84];
+    sRS_8EA8* top;              // 0xE84
+    char pad2[0x10D8 - 0xE88];
+    sVE2_8EA8* vt;              // 0x10D8
+};
+
+extern sCtx_8EA8* D_004A5B80_8EA8 __asm__("D_004A5B80");
+extern int D_004A3A58;
+extern int D_004A3A54;
+extern sElem_8EA8 D_004EDB70_8EA8[] __asm__("D_004EDB70");
+extern "C" void func_002D8A00(void* node);
+extern "C" void func_00371688(void* p, int a);
+
+static inline void rsSet_8EA8(sCtx_8EA8* ctx, int mask, int shift, int v)
+{
+    ctx->top->w1 = (ctx->top->w1 & ~mask) | ((v << shift) & mask);
+}
+
+// PORT: link ids are compared as floats; pointers held in 32-bit fields.
+// Updates the avalanche debris nodes and draws the link markers.
+extern "C" void func_002D8EA8(void* selfp)
+{
+    sSelf_8EA8* self = (sSelf_8EA8*)selfp;
+    sCtx_8EA8* ctx = D_004A5B80_8EA8;
+    if (self->group == 0) {
+        return;
+    }
+    int i;
+    sNode_8EA8* n;
+    for (n = self->nodes, i = 0; n != 0; n = n->next, i++) {
+        if (n->obj != 0) {
+            if (i < D_004A3A58) {
+                func_002D8A00(n);
+            }
+            if (D_004A3A54 != 0) {
+                if (*(unsigned char*)(n->obj + 0xF2) != 0) {
+                    func_00371688(n->sub, 7);
+                }
+            }
+        }
+    }
+    if (D_004A3A58 == 0) {
+        return;
+    }
+    int k;
+    for (k = 0; k < self->group->nlinks; k++) {
+        char* q0 = (char*)&D_004EDB70_8EA8[0].q;
+        char* d0 = (char*)D_004EDB70_8EA8;
+        char* q1 = (char*)&D_004EDB70_8EA8[1].q;
+        sQ_8EA8 t = *(sQ_8EA8*)(self->group->links[k].obj + 0x40);
+        *(sQ_8EA8*)(q0 + k * 0x60) = t;
+        int c = 0;
+        char* e0 = d0 + k * 0x60;
+        if (self->group->links[k].id < self->thresh) {
+            c = 0xFF;
+        }
+        *(int*)(e0 + 0x10) = c;
+        int d = 0;
+        if (self->thresh <= self->group->links[k].id) {
+            d = 0xFF;
+        }
+        *(int*)(e0 + 0x14) = d;
+        char* o = *(char**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + 0x28);
+        char* sub = o + 0x6C0;
+        sVE_8EA8* vt = *(sVE_8EA8**)sub;
+        *(sQ_8EA8*)(q1 + k * 0x60) = *vt[5].fn(sub + vt[5].delta);
+        int e = 0;
+        char* e1 = d0 + (2 * k + 1) * 0x30;
+        if (self->group->links[k].id < self->thresh) {
+            e = 0xFF;
+        }
+        *(int*)(e1 + 0x10) = e;
+        int f = 0;
+        if (self->thresh <= self->group->links[k].id) {
+            f = 0xFF;
+        }
+        *(int*)(e1 + 0x14) = f;
+    }
+    int saved = (ctx->top->w1 & 0x1800000) >> 23;
+    rsSet_8EA8(ctx, 0x1800000, 23, 2);
+    ctx->vt[0x248 / 8].fn((char*)ctx + ctx->vt[0x248 / 8].delta, self->group->nlinks, D_004EDB70_8EA8, 0);
+    rsSet_8EA8(ctx, 0x1800000, 23, saved);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/avalanche", func_002D9130);
