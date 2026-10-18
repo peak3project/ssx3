@@ -1591,7 +1591,21 @@ int func_004103D8(int a, int b, int c) {
 void func_00410408(void) {
 }
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410410);
+#ifdef SKIP_ASM
+extern int *func_00410410_alloc(int) __asm__("func_004188C0");
+extern void func_004103B0(void);
+extern void func_00416210(int *, int, int);
+int *func_00410410(void) {
+    int *p = func_00410410_alloc(0x18);
+    if (!p)
+        func_004103B0();
+    func_00416210(p, 0, 0x18);
+    p[1] = (int)(p + 4);
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410468);
