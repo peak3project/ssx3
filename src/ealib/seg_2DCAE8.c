@@ -4988,7 +4988,56 @@ int func_003E6A70(char *arg0, short **arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6B10);
+#ifdef SKIP_ASM
+extern int func_003F4EA0(int, int *);
+extern int func_003F4DE8(void);
+extern int func_003F4C98_6B10(int *, int, int) __asm__("func_003F4C98");
+extern int func_003F4C68_6B10(int *, int, int, int, int, int, int, int, int, int) __asm__("func_003F4C68");
+extern void *func_0041605C_6B10(short *, int, int) __asm__("func_0041605C");
+extern int D_0051EEB8_6B10[] __asm__("D_0051EEB8");
+
+int func_003E6B10_impl(char *self, short *out, int n) __asm__("func_003E6B10");
+int func_003E6B10_impl(char *self, short *out, int n) {
+    int loc;
+    int ret = 0;
+    int h;
+
+    if (*(int *)(self + 0x164) < 0) {
+        h = func_003F4EA0(*(int *)(self + 0x16C), &loc);
+        if (h >= 0) {
+            if (h != *(int *)(self + 0x15C)) {
+                *(int *)(self + 0x160) = 0x10;
+                *(int *)(self + 0x15C) = h;
+                *(int *)(self + 0x164) = loc + 0x10;
+            }
+        }
+    }
+    if (*(int *)(self + 0x160) < *(int *)(self + 0x164)) {
+        if (n == 1) {
+            func_003E6A70(self, &out);
+            ret = *out;
+            *(int *)(self + 0x160) += ret;
+        } else {
+            int rem = *(int *)(self + 0x164) - *(int *)(self + 0x160);
+            if (n >= rem) {
+                ret = rem;
+                func_0041605C_6B10(out, ((*(int *)(self + 0x16C) + *(int *)(self + 0x160)) & 0x0FFFFFFF) | 0x20000000, ret);
+                *(int *)(self + 0x160) = *(int *)(self + 0x164);
+            }
+        }
+    }
+    if (*(int *)(self + 0x160) == *(int *)(self + 0x164)) {
+        *(int *)(self + 0x160) = 0;
+        *(int *)(self + 0x164) = -1;
+        *(int *)(self + 0x170) = func_003F4DE8();
+        func_003F4C98_6B10(D_0051EEB8_6B10, 0x676D6C6B, 0x72656376);
+        func_003F4C68_6B10(D_0051EEB8_6B10, 1, *(int *)self, *(int *)(self + 0x16C), 0, 0, 0, 0, 0, 0);
+    }
+    return ret;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6C80);
 
