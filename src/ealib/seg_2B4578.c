@@ -1993,7 +1993,31 @@ int func_003B8EE8(int arg0) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8F78);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9140);
+#ifdef SKIP_ASM
+extern void f7138_9140(int) __asm__("func_003C7138");
+struct T_9140 { char pad[8]; int cnt; char pad2[0x64]; };
+extern struct T_9140 D_0050A120_9140[] __asm__("D_0050A120");
+typedef struct { int a; signed char b, c, d, e; } E_9140;
+
+void func_003B9140(int arg0, int arg1, int arg2) {
+    struct T_9140 *t = D_0050A120_9140;
+    E_9140 *p;
+    int i = 0;
+    t[arg0].cnt++;
+    p = (E_9140 *)((char *)t + 0x700);
+    do {
+        if (p->b == arg0 && p->c == arg1 && p->d == arg2 && p->e >= 0) {
+            f7138_9140(p->a);
+            p->e = -1;
+            break;
+        }
+        i++;
+        p++;
+    } while (i < 0x18);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B91E0);
