@@ -57,6 +57,7 @@ To check current progress locally:
 ```bash
 $ ./configure.py -c -o && ninja   # -o builds obj/target and obj/current
 $ python3 scripts/progress.py
+$ python3 scripts/progress_svg.py   # regenerates docs/progress.svg
 ```
 
 The first step is a full dual build (everything compiles twice, once as
