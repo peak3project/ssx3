@@ -63,7 +63,13 @@ long func_00424558(int a0, char *a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424570);
+#ifdef SKIP_ASM
+int func_00424570(void) {
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00424578);
 
