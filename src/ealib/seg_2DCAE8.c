@@ -1022,7 +1022,43 @@ int func_003DE9B8(int *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DEA48);
+#ifdef SKIP_ASM
+struct S_EA48 { volatile int e, a, b, d, r, n; int c; int (*fn)(int, int, int, int, int, void *); int h; };
+extern int func_003DD310_EA48(int) __asm__("func_003DD310");
+extern void func_003DCF70_EA48(int, void *) __asm__("func_003DCF70");
+extern char func_003DEA48_EA48[] __asm__("func_003DEA48");
+
+void func_003DEA48(int a, int mode, struct S_EA48 *s) {
+    int n = func_003DD310_EA48(a);
+    s->h = 0;
+    if (mode == 1) {
+        s->b += n;
+        s->c += n;
+        s->r += n;
+        if (n < s->n) {
+            s->d = 0;
+        } else {
+            s->d -= n;
+        }
+        if (s->d <= 0) {
+            return;
+        }
+        if (s->d > 0x8000) {
+            s->n = 0x8000;
+        } else {
+            s->n = s->d;
+        }
+        s->h = s->fn(s->a, s->b, s->c, s->n, s->e, s);
+        if (s->h != 0) {
+            func_003DCF70_EA48(s->h, func_003DEA48_EA48);
+            return;
+        }
+    }
+    s->d = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DEB50);
