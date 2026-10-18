@@ -57,7 +57,25 @@ void func_003F0610(int* p, int a) {
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0658);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0710);
+#ifdef SKIP_ASM
+extern void* func_002591E8(int);
+extern void func_00416210(void*, int, int);
+extern int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src);
+extern int func_003F5478(int);
+int* func_003F0710(const char* a, const char* b) {
+    int* p = (int*)func_002591E8(0x50C);
+    if (p) {
+        func_00416210(p, 0, 0x50C);
+        cDirtysock_tag_TagFieldDupl((char*)p + 0x314, 0x40, a);
+        cDirtysock_tag_TagFieldDupl((char*)p + 0x354, 0x40, b);
+        p[1] = func_003F5478(0x8000);
+        p[5] = 0x64;
+    }
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F07A0);
