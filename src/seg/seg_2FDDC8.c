@@ -389,7 +389,13 @@ char *func_00402D08(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402D18);
+#ifdef SKIP_ASM
+char *func_00402D18(int *p) {
+    return (char *)p[16] + 0xB4;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402D28);
 
