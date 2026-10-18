@@ -128,7 +128,18 @@ void func_00413AC8(int a, int b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413AF8);
+#ifdef SKIP_ASM
+extern void func_00413068(float *, int *);
+extern int func_00412778(int, int, int, unsigned long long);
+int func_00413AF8(float x) {
+    int o[4];
+    float f = x;
+    func_00413068(&f, o);
+    return func_00412778(o[0], o[1], o[2], ((unsigned long long)(long long)o[3] << 32) >> 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00413B38);
