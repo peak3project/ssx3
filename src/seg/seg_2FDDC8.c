@@ -979,7 +979,13 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_0040BBA0);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040BC08);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040BC70);
+#ifdef SKIP_ASM
+unsigned char func_0040BC70(unsigned char a) {
+    return a + (a / 10) * 6;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040BCA0);
 
