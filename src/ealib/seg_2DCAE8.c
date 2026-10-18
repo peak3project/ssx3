@@ -5323,7 +5323,39 @@ int func_003E8650(S_8650 *s, unsigned int i, int arg2, int arg3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8688);
+#ifdef SKIP_ASM
+extern int func_003EE770_8688(int) __asm__("func_003EE770");
+extern int func_003EE9A0_8688(int) __asm__("func_003EE9A0");
+extern void *func_003EE480_8688(int, int) __asm__("func_003EE480");
+extern void func_00259210_8688(void *) __asm__("func_00259210");
+extern void func_003EE820_8688(int) __asm__("func_003EE820");
+extern void func_003EE260_8688(int) __asm__("func_003EE260");
+
+struct S_8688 { int h; int f4; int f8; int fC; int pad; };
+struct O_8688 { char pad[0x310]; struct S_8688 s[8]; };
+
+void func_003E8688(struct O_8688 *self, unsigned int idx, int x) {
+    int h, t;
+    if (idx < 8) {
+        if (x != 0) {
+            h = func_003EE770_8688(x);
+            while ((t = func_003EE9A0_8688(h)) != 0) {
+                func_00259210_8688(func_003EE480_8688(x, t));
+            }
+            func_003EE820_8688(h);
+            func_003EE260_8688(x);
+            if (self->s[idx].f4 == x) {
+                self->s[idx].h = 0;
+                self->s[idx].f4 = 0;
+            }
+            self->s[idx].f8 = 0;
+            self->s[idx].fC = 0;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8778);
 
