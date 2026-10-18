@@ -107,7 +107,15 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FE590);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE5C8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE660);
+#ifdef SKIP_ASM
+unsigned func_003FE660(unsigned *p, unsigned v) {
+    unsigned o = *p;
+    *p = v;
+    return (o >> 8) & 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE678);
 
