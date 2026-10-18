@@ -714,6 +714,7 @@ void func_00403D90(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403DA0);
 #ifdef SKIP_ASM
 extern char D_00497DD8[];
