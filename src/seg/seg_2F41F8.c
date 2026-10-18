@@ -231,7 +231,13 @@ extern int func_003F6960(int, int, int, int *, int);
 int func_003F6B20(void) { return func_003F6960(4, 0, 0, D_00526140, 0x80); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6B50);
+#ifdef SKIP_ASM
+extern int D_00526140[];
+extern int func_003F6960(int, int, int, int *, int);
+int func_003F6B50(void) { return func_003F6960(5, 0, 0, D_00526140, 0x80); }
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6B80);
