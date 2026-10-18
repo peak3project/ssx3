@@ -63,7 +63,18 @@ void func_00413A90(float x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413AC8);
+#ifdef SKIP_ASM
+void func_00413AC8(int a, int b, int c, int d) {
+    int v[4];
+    v[0] = a;
+    v[1] = b;
+    v[2] = c;
+    v[3] = d;
+    func_00412F58(v);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00413AF8);
 
