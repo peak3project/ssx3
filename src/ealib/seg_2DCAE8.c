@@ -5848,7 +5848,62 @@ int func_003E8260(struct S_8260 *s, int a1, int a2, int a3, int a4) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8368);
+#ifdef SKIP_ASM
+extern int func_003EE778_8368(int, int) __asm__("func_003EE778");
+extern int func_003EE1E8_8368(int, int, int) __asm__("func_003EE1E8");
+extern int func_003EE9A0_8368(int) __asm__("func_003EE9A0");
+extern void *func_003EE480_8368(int, int) __asm__("func_003EE480");
+extern void func_00259210_8368(void *) __asm__("func_00259210");
+extern void func_003EE820_8368(int) __asm__("func_003EE820");
+extern void func_003EE260_8368(int) __asm__("func_003EE260");
+extern void func_004162D0_8368(char *, char *) __asm__("func_004162D0");
+extern int func_003F5910_8368(int, int, int, void *, int) __asm__("func_003F5910");
+extern char D_004A48B0_8368[] __asm__("D_004A48B0") __attribute__((aligned(8)));
+extern char D_004A48B8_8368[] __asm__("D_004A48B8") __attribute__((aligned(8)));
+extern char D_004A48C0_8368[] __asm__("D_004A48C0") __attribute__((aligned(8)));
+extern char D_004A48C8_8368[] __asm__("D_004A48C8");
+extern char D_004A48D0_8368[] __asm__("D_004A48D0");
+struct Sl_8368 { int h; int f4; int f8; int fC; int pad; };
+struct S_8368 { int f0; int f4; int f8; int fC; char pad[0x310 - 0x10]; struct Sl_8368 s[8]; };
+
+int func_003E8368(struct S_8368 *self, unsigned int idx, int x) {
+    char name[0x100];
+    if (idx >= 8) return 0;
+    if (idx == 0) __builtin_memcpy(name, D_004A48B0_8368, 7);
+    else if (idx == 2) __builtin_memcpy(name, D_004A48B8_8368, 7);
+    else if (idx == 1) __builtin_memcpy(name, D_004A48C0_8368, 7);
+    else name[0] = 0;
+    if (x) {
+        if (self->s[idx].h == 0) {
+            self->s[idx].h = func_003EE778_8368(1000, 2000);
+            self->s[idx].f4 = func_003EE1E8_8368(100, 100, 0);
+            if (self->fC != 0x6F66666C && self->fC != 0x72646972 && self->fC != 0x636F6E6E && name[0] != 0) {
+                func_004162D0_8368(name, D_004A48C8_8368);
+                func_003F5910_8368(self->f0, 0x73656C65, 0, name, -1);
+            }
+        }
+    }
+    if (!x) {
+        if (self->s[idx].h != 0) {
+            int t;
+            while ((t = func_003EE9A0_8368(self->s[idx].h)) != 0) {
+                func_00259210_8368(func_003EE480_8368(self->s[idx].f4, t));
+            }
+            func_003EE820_8368(self->s[idx].h);
+            self->s[idx].h = 0;
+            func_003EE260_8368(self->s[idx].f4);
+            self->s[idx].f4 = 0;
+            if (self->fC != 0x6F66666C && self->fC != 0x72646972 && self->fC != 0x636F6E6E && name[0] != 0) {
+                func_004162D0_8368(name, D_004A48D0_8368);
+                func_003F5910_8368(self->f0, 0x73656C65, 0, name, -1);
+            }
+        }
+    }
+    return self->s[idx].f4;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E85B0);
