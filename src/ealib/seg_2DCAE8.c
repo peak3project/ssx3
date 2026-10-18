@@ -2239,7 +2239,53 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E0E90);
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1110);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E12E0);
+#ifdef SKIP_ASM
+extern int fFBD0_12E0(int, void *, void *) __asm__("func_003DFBD0");
+extern void mlock_12E0(void *) __asm__("MUTEX_lock");
+extern void munlock_12E0(void *) __asm__("MUTEX_unlock");
+struct B_12E0 { int f0; unsigned int f4; };
+struct H_12E0 { int f0; unsigned int f4; int f8; struct B_12E0 *fC; };
+struct O_12E0 { char pad[0x30]; struct B_12E0 *f30; };
+
+struct B_12E0 *func_003E12E0(int h) {
+    struct { struct O_12E0 *o; struct H_12E0 *s; } loc;
+    struct B_12E0 *p;
+    struct B_12E0 *q;
+    unsigned int m, hdr;
+    int left;
+    if (fFBD0_12E0(h, &loc.o, &loc.s) != 0) {
+        return 0;
+    }
+    if (loc.s->f8 == 0) {
+        return 0;
+    }
+    p = loc.s->fC;
+    m = p->f4 & 0xFFFFFF;
+    p->f4 = m;
+    mlock_12E0((char *)loc.o + 4);
+    left = loc.s->f8 - m;
+    loc.s->f8 = left;
+    munlock_12E0((char *)loc.o + 4);
+    if (left > 0) {
+        q = (struct B_12E0 *)((char *)p + m);
+        hdr = loc.s->f4 << 24;
+        if ((q->f4 & 0xFF000000) != hdr) {
+            do {
+                if (q->f0 == -1) {
+                    q = loc.o->f30;
+                } else {
+                    m = q->f4 & 0xFFFFFF;
+                    q = (struct B_12E0 *)((char *)q + m);
+                }
+            } while ((q->f4 & 0xFF000000) != hdr);
+        }
+        loc.s->fC = q;
+    }
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E13E8);
