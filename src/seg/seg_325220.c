@@ -1,6 +1,13 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424220);
+#ifdef SKIP_ASM
+extern int D_00455168;
+void func_00424220(void) {
+    D_00455168 = 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00424230);
 
