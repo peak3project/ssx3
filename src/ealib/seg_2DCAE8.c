@@ -5802,7 +5802,47 @@ int func_003E8D70(void *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8DC0);
+#ifdef SKIP_ASM
+struct S_8DC0 { int f0; int f4; char pad[4]; int fC; char pad2[0x540 - 0x10]; int f540; };
+struct N_8DC0 { int f0; int f4; int f8; int fC; int f10; int f14; char name[0x20]; };
+extern struct N_8DC0 *func_003E7718_8DC0(void *, int, int, int) __asm__("func_003E7718");
+extern int func_003F5D88_8DC0(int) __asm__("func_003F5D88");
+extern char *strncpy_8DC0(char *, char *, int) __asm__("strncpy");
+extern char D_004A4880_8DC0[] __asm__("D_004A4880");
+extern char D_004A4890_8DC0[] __asm__("D_004A4890");
+extern void TagSetString_8DC0(char *, int, char *, char *) __asm__("cDirtysock_tag_TagFieldSetString");
+extern void TagSetAddress_8DC0(char *, int, char *, int) __asm__("cDirtysock_tag_TagFieldSetAddress");
+extern int func_003E7450_8DC0(int, int, char *, int) __asm__("func_003E7450");
+
+int func_003E8DC0(struct S_8DC0 *self, char *name, int addr, int x, int a4, int a5) {
+    char buf[0x100];
+    struct N_8DC0 *n;
+    if (self->fC != 0x636F6E6E && self->fC != 0x69646C65 && self->fC != 0x61757468 && self->fC != 0x61636374) {
+        return -1;
+    }
+    if (self->f4 == 0) {
+        return -2;
+    }
+    if (self->f540 >= 0x40) {
+        return -3;
+    }
+    n = func_003E7718_8DC0(self, 0x70696E67, a4, a5);
+    if (n == 0) {
+        return -4;
+    }
+    n->f8 = addr;
+    n->fC = func_003F5D88_8DC0(self->f0) + x;
+    strncpy_8DC0(n->name, name, 0x1F);
+    buf[0] = 0;
+    TagSetString_8DC0(buf, 0x100, D_004A4880_8DC0, name);
+    TagSetAddress_8DC0(buf, 0x100, D_004A4890_8DC0, addr);
+    func_003E7450_8DC0(self->f4, addr, buf, 0x100);
+    self->f540 = self->f540 + 1;
+    return n->f0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8F08);
