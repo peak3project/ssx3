@@ -98,7 +98,18 @@ INCLUDE_ASM("seg/seg_313E80", func_00414C70);
 
 INCLUDE_ASM("seg/seg_313E80", func_00414D08);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414EE0);
+#ifdef SKIP_ASM
+extern int D_004999D0[];
+int *func_00414EE0(int *p, int a, int b, int c) {
+    p[0] = a;
+    p[1] = (int)D_004999D0;
+    p[2] = b;
+    p[3] = c;
+    return p;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414F00);
 
