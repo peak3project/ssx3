@@ -314,7 +314,14 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F77F0);
 int func_003F77F0(void) { return 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F77F8);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern int func_003FC990(char *);
+extern int func_003F8178(int);
+int func_003F77F8(void) { return func_003F8178(func_003FC990(D_004A4BC4 + 0x44)); }
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7820);
