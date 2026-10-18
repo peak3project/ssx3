@@ -263,7 +263,16 @@ int func_003F6520(int a0) { return D_00525F80.v[a0] != 0; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6538);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F65A0);
+#ifdef SKIP_ASM
+extern short D_004513DC[], D_0045133A[], D_00451350[];
+short *func_003F65A0(unsigned int c) {
+    if (c - 0x2E < 8) return &D_004513DC[c];
+    if (c - 0x87 >= 5) return &D_00451350[c];
+    return &D_0045133A[c];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F65F8);
 
