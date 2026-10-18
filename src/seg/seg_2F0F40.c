@@ -22,7 +22,21 @@ INCLUDE_ASM("seg/seg_2F0F40", func_003F02D0);
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0568);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0610);
+#ifdef SKIP_ASM
+void func_003F0610(int* p, int a) {
+    int t[4];
+    p[2] = a;
+    if (p[0x4C4 / 4]) {
+        t[0] = 0x636F6E6E;
+        t[1] = a;
+        t[2] = 0;
+        t[3] = 0;
+        ((void (*)(int*, int*, int))p[0x4C4 / 4])(p, t, p[0x4C0 / 4]);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0658);
 
