@@ -36,6 +36,7 @@ unsigned func_003FDF28(unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDF50);
 #ifdef SKIP_ASM
 void func_003FDF50(char *p, int n) {
