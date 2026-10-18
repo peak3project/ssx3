@@ -1565,7 +1565,28 @@ int func_0042CA80(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042CAE0);
+#ifdef SKIP_ASM
+extern int D_004564F8[];
+extern char D_0042D200[];
+extern void func_00423A50(int, void (*)(void));
+extern void func_00423A60(int, void *);
+unsigned func_0042CAE0(int a0, int a1) {
+    int old;
+    if (a0 - 1 >= 13U) {
+        return 0xFFFFFFFF;
+    }
+    old = D_004564F8[a0];
+    D_004564F8[a0] = a1;
+    if (a0 - 1 < 3U) {
+        func_00423A50(a0, (void (*)(void))D_0042D200);
+    } else {
+        func_00423A60(a0, (void (*)(void))D_0042D200);
+    }
+    return old;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042CB68);
 
