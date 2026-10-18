@@ -1719,7 +1719,38 @@ int func_003B8530(int a, int n, int v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B85F0);
+#ifdef SKIP_ASM
+extern int func_003BAA00_85F0(int, int *) __asm__("func_003BAA00");
+extern int func_003BA6E8_85F0(void) __asm__("func_003BA6E8");
+extern void f_A7B0_85F0(int) __asm__("func_003BA7B0");
+extern void f_2A50_85F0(int) __asm__("func_003C2A50");
+extern void f_27E0_85F0(int, int) __asm__("func_003C27E0");
+struct E_85F0 { short f0; short f2; short f4; char pad6[0x2A]; int f30; int f34; int f38; char pad3C[0x26]; short f62; };
+struct G_85F0 { char pad[0x1F0]; struct E_85F0 *tab; };
+extern struct G_85F0 D_0050A8E8_85F0[] __asm__("D_0050A8E8");
+
+int func_003B85F0_impl(int, int) __asm__("func_003B85F0");
+int func_003B85F0_impl(int arg0, int arg1) {
+    int h = func_003BA6E8_85F0();
+    int sp0;
+    if (h >= 0) {
+        sp0 = -1;
+        while (func_003BAA00_85F0(h, &sp0) != 0) {
+            struct E_85F0 *e = (struct E_85F0 *)((char *)D_0050A8E8_85F0[0].tab + sp0 * 0x8C);
+            int v = arg1 << 16;
+            e->f30 = 0;
+            if (e->f38 == v) return 0;
+            e->f38 = v;
+            f_A7B0_85F0(sp0);
+            f_2A50_85F0(sp0);
+            if (e->f62 > 0) f_27E0_85F0(e->f4, 0);
+        }
+    }
+    return h;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B86C0);
