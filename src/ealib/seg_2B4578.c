@@ -909,7 +909,26 @@ int func_003B6528(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6548);
+#ifdef SKIP_ASM
+extern void *func_0041610C_6548(void *, void *, int) __asm__("func_0041610C");
+struct R_6548 { void *ptr; int pad[3]; };
+struct G_6548 { char pad[0x1F4]; struct R_6548 *recs; };
+extern struct G_6548 D_0050A8E8_6548 __asm__("D_0050A8E8");
+
+int func_003B6548(void *dst, int idx) {
+    int ret = 0;
+    int n = func_003B6528(idx);
+    if (n < 0) {
+        ret = n;
+    } else {
+        func_0041610C_6548(dst, D_0050A8E8_6548.recs[idx].ptr, n);
+        D_0050A8E8_6548.recs[idx].ptr = dst;
+    }
+    return ret;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B65D0);
 
