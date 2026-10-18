@@ -1376,7 +1376,17 @@ int func_00412888(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_004128A8);
+#ifdef SKIP_ASM
+extern int *func_00410490(void);
+int *func_004128A8(void) {
+    int *p = (int *)*func_00410490();
+    p[5] = 1;
+    *(long *)(p + 8) += 1;
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_004128E0);
