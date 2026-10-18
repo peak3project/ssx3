@@ -4762,7 +4762,26 @@ int func_003E72A0_impl(int a, char *b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E7340);
+#ifdef SKIP_ASM
+extern void *RpcAlloc(int);
+extern void *func_00416210_7340(void *, int, int) __asm__("func_00416210");
+extern int func_003F4C68_7340(int *, int, int, int, int, int, int, int, int, int *) __asm__("func_003F4C68");
+extern int func_003F4C98_7340(int *, int, int) __asm__("func_003F4C98");
+
+char *func_003E7340_impl(void) __asm__("func_003E7340");
+char *func_003E7340_impl(void) {
+    int sp10[4];
+    unsigned s, m;
+    char *r = (char *)RpcAlloc(0x854);
+    func_00416210_7340(r, 0, 0x854);
+    s = (unsigned)r + 0x53; *(int *)(r + 0x10) = s & 0xFFFFFFC0u;
+    func_003F4C98_7340(sp10, 0x70696E67, 0x63726561);
+    func_003F4C68_7340(sp10, 1, 0, 0, 0, 0, 0, 0, 1, (int *)(r + 0xC));
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E73E0);
