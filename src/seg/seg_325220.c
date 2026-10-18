@@ -172,7 +172,15 @@ int func_00425CF0(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425D08);
+#ifdef SKIP_ASM
+extern int D_0052BE00[];
+int func_00425D08(int a0, int a1) {
+    D_0052BE00[a0] = a1;
+    return a1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00425D28);
 
