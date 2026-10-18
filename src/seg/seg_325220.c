@@ -349,7 +349,17 @@ void func_00426678(unsigned int *a0) {
 
 INCLUDE_ASM("seg/seg_325220", func_00426698);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004266C8);
+#ifdef SKIP_ASM
+extern int func_00426698(int *a0);
+int func_004266C8(int *a0, int a1) {
+    if (a1 < 0 || a1 >= a0[8]) {
+        return func_00426698(a0);
+    }
+    return a0[7] + (a1 << 6);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00426708);
 
