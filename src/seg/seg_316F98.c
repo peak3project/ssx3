@@ -1,7 +1,7 @@
 #include "common.h"
 
 // defined in seg_313E80 (moved there with the ee-gcc 2.9 split)
-extern void func_00414B68(int *p, int flag);
+extern int func_00414B68(int *p, int flag);
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00415F98);
