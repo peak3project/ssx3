@@ -193,7 +193,59 @@ void func_003B4458(int arg0, int arg1, int arg2) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4478);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_cloneat);
+#ifdef SKIP_ASM
+extern int f_3BB0_CA(char *) __asm__("func_003B3BB0");
+extern int f_4708_CA(int) __asm__("func_003B4708");
+extern void f_6188_CA(char *, char *, int) __asm__("func_003E6188");
+extern int sprintf(char *, const char *, ...);
+extern char D_004957B8_CA[] __asm__("D_004957B8");
+
+void SHAPE_cloneat(char *dst, char *src) {
+    int off = 0;
+    char *prev;
+    char *cur = 0;
+    char *nx;
+    int n;
+    int r;
+    int pad = (((int)src + 15) & -16) - (int)src;
+    int padm;
+    int al;
+    if (src) {
+        al = -16;
+        padm = pad - 16;
+        do {
+            n = f_3BB0_CA(src);
+            if (off != 0) {
+                r = f_4708_CA(*(unsigned char *)src);
+                if (r) {
+                    off = (((off - pad) + 0x1F) & al) + padm;
+                } else {
+                    off = (((off - pad) + 0xF) & al) + pad;
+                }
+            }
+            prev = cur;
+            cur = dst + off;
+            if (prev) {
+                *(unsigned int *)prev = *(unsigned char *)prev | ((cur - prev) << 8);
+            }
+            *(unsigned int *)cur = *(unsigned char *)cur;
+            if (n) {
+                f_6188_CA(cur, src, n);
+                if (*(unsigned char *)cur == 0x69 && n > 0x14) {
+                    sprintf(cur + 0x10, D_004957B8_CA, *(short *)(cur + 4));
+                }
+            }
+            r = *(int *)src >> 8;
+            nx = 0;
+            if (r) nx = src + r;
+            src = nx;
+            off += n;
+        } while (src);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4690);
