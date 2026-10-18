@@ -823,7 +823,22 @@ void func_00415DD8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00415DF8);
+#ifdef SKIP_ASM
+extern int D_0053EA70[];
+extern int D_00499C20[];
+extern int D_004A5BB0[];
+extern int *func_004151F8(void);
+extern void func_00414C00(int *, int, int);
+int *func_00415DF8(void) {
+    if (D_0053EA70[0] == 0) {
+        func_004151F8();
+        func_00414C00(D_0053EA70, (int)D_00499C20, (int)D_004A5BB0);
+    }
+    return D_0053EA70;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00415E48);
