@@ -38,7 +38,18 @@ int func_003EE558(int* p) {
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE560);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE5A0);
+#ifdef SKIP_ASM
+void func_003EE5A0(int* p, int a, int b, int c) {
+    if (p[6] > 0) {
+        p[2] = 1;
+    }
+    p[11] = a;
+    p[10] = b;
+    p[12] = c;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE5C0);
 
