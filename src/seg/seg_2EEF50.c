@@ -199,7 +199,21 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EEB30);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEBF8);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEC88);
+#ifdef SKIP_ASM
+extern int func_003EEA48(int*, int);
+int func_003EEC88(int* p, int key) {
+    int* n = ((int**)p[5])[func_003EEA48(p, key)];
+    while (n) {
+        if (!((int (*)(int, int))p[8])(n[2], key)) {
+            return n[1];
+        }
+        n = (int*)n[0];
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EED08);
 
