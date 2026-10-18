@@ -1414,7 +1414,16 @@ int *func_004128A8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004128E0);
+#ifdef SKIP_ASM
+extern int func_004188C0(void);
+extern int func_00412800(void) __attribute__((noreturn));
+int func_004128E0(void) {
+    if (func_004188C0() == 0)
+        return func_00412800();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00412908);
@@ -1435,7 +1444,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_00412A28);
 INCLUDE_ASM("seg/seg_2FE810", func_00412AF0);
 #ifdef SKIP_ASM
 extern int *func_00410490(void);
-extern void func_00412800(void) __attribute__((noreturn));
+extern int func_00412800(void) __attribute__((noreturn));
 void func_00412AF0(void) {
     int *p = (int *)*func_00410490();
     if (p == 0) {
