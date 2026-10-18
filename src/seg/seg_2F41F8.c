@@ -67,7 +67,24 @@ int func_003F4210(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4250);
+#ifdef SKIP_ASM
+extern int D_0051F030[];
+int func_003F4250(int a, int b) {
+    int i;
+    int *p = D_0051F030;
+    for (i = 0; i < 16; i++) {
+        if (p[0] == a && p[1] == b) {
+            p[0] = 0;
+            p[1] = 0;
+            return 0;
+        }
+        p += 2;
+    }
+    return -1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F42A0);
 
