@@ -354,12 +354,37 @@ void func_00414750(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414780);
+#ifdef SKIP_ASM
+extern int *D_0052ADE8;
+extern void func_00418910(int);
+extern void func_00418790();
+int func_00414780(key)
+    int key;
+{
+    int **pp = &D_0052ADE8;
+    int *n;
+    if (D_0052ADE8 != 0) {
+        do {
+            n = *pp;
+            if (n[2] == key) {
+                *pp = (int *)n[5];
+                if (n[0] != 0)
+                    func_00418910(n[3]);
+                return (int)n;
+            }
+            pp = (int **)&n[5];
+        } while (n[5] != 0);
+    }
+    func_00418790(key, pp);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_004147F8);
 #ifdef SKIP_ASM
-extern int func_00414780(void);
+extern int func_00414780();
 extern void func_00418910(int);
 void func_004147F8(void) {
     func_00418910(func_00414780());
