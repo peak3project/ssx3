@@ -2382,7 +2382,30 @@ int FILE_loadsizez(int arg0, int *arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1AD0);
+#ifdef SKIP_ASM
+extern int func_003DEBF0_1AD0(int, int, int, void *) __asm__("func_003DEBF0");
+extern int func_003DEC60_1AD0(int, int, int, int, int) __asm__("func_003DEC60");
+extern void func_003DECA0_1AD0(int, int) __asm__("func_003DECA0");
+
+int func_003E1AD0_impl(int a, int *b) __asm__("func_003E1AD0");
+int func_003E1AD0_impl(int a, int *b) {
+    int sp0;
+    int n;
+    n = b[2];
+    if (n <= 0) {
+        n = 0x7FFFFFFF;
+    }
+    if (func_003DEBF0_1AD0(b[0], 1, a, &sp0) != 0) {
+        int m = a - 1;
+        n = func_003DEC60_1AD0(sp0, 0, b[1], n, m);
+        func_003DECA0_1AD0(sp0, m);
+        return n;
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1B68);
