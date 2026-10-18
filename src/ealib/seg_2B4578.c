@@ -9768,7 +9768,45 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1BA8);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1D28);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1E80);
+#ifdef SKIP_ASM
+extern void f_1BA8_1E80(int, int) __asm__("func_003D1BA8");
+extern int f_1D28_1E80(int) __asm__("func_003D1D28");
+struct O_1E80 { unsigned int f0; unsigned int f4; char pad8[4]; unsigned int fC; };
+struct T_1E80 { char pad[0xDC]; struct O_1E80 *a[16]; char pad11C[0x91C - 0x11C]; int n; };
+extern struct T_1E80 *D_0044F420_1E80 __asm__("D_0044F420");
+extern unsigned int D_0044F438_1E80 __asm__("D_0044F438");
+
+int func_003D1E80_impl(void) __asm__("func_003D1E80");
+int func_003D1E80_impl(void) {
+    int i;
+    int sum = 0;
+    struct O_1E80 *o;
+    int st;
+    unsigned int v;
+    for (i = 0; i < 16; i++) {
+        if (i >= D_0044F420_1E80->n) {
+            D_0044F420_1E80->a[i] = 0;
+            continue;
+        }
+        o = D_0044F420_1E80->a[i];
+        if (o == 0) break;
+        v = o->fC;
+        st = ((v >> 22) & 0x3F) < ((v >> 16) & 0x3F) ? 0 : 3;
+        if (o->f4 != 0) {
+            if (o->f0 + o->f4 < D_0044F438_1E80) st = 1;
+        }
+        if (st != 0) {
+            f_1BA8_1E80(i, st);
+            i--;
+        } else {
+            sum += f_1D28_1E80(i);
+        }
+    }
+    return sum;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1F80);
