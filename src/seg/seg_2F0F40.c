@@ -105,7 +105,16 @@ void func_003F1548(char* p, const char* src) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F1578);
+#ifdef SKIP_ASM
+extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key, const char* val);
+void func_003F1578(char* p, const char* val, const char* key) {
+    if (key[0] && key[1] && !key[2] && val[0]) {
+        cDirtysock_tag_TagFieldSetString(p + 0x140, 0x100, key, val);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F15C8);
 
