@@ -543,7 +543,21 @@ int func_00402B48(int *p) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402B58);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402BB0);
+#ifdef SKIP_ASM
+int func_00402BB0(int *p) {
+    char *q = (char *)p[16];
+    int *t;
+    if ((t = *(int **)(q + 0x1B8))) t[10] = 0;
+    if ((t = *(int **)(q + 0x1C8))) t[10] = 0;
+    if ((t = *(int **)(q + 0x1D8))) t[10] = 0;
+    if ((t = *(int **)(q + 0x1BC))) t[10] = 0;
+    if ((t = *(int **)(q + 0x1CC))) t[10] = 0;
+    if ((t = *(int **)(q + 0x1DC))) t[10] = 0;
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402C08);
 
