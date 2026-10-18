@@ -33,5 +33,3 @@ tools/wibo/
 tools/objdiff/objdiff-cli-macos
 tools/cc/eegcc-2.95.3-V1.36-vecmark
 tools/cc/eegcc-2.95.3-114
-
-.claude/settings.local.json
