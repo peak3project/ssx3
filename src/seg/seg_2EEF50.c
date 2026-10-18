@@ -222,6 +222,7 @@ int func_003EE770(int* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE778);
 #ifdef SKIP_ASM
 extern int* func_002591E8(int);
