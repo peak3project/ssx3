@@ -4,7 +4,13 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EDF50);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE028);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE1B0);
+#ifdef SKIP_ASM
+int func_003EE1B0(int* p, int** a, int** b) {
+    return ((int (*)(int, int, int, int))p[12])(p[11], p[10], **a, **b);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE1E8);
