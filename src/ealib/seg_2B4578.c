@@ -7493,7 +7493,40 @@ void func_003C95F0(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9618);
+#ifdef SKIP_ASM
+typedef struct { int a, b, c; } Q_9618;
+extern int f_9520_9618[] __asm__("func_003C9520");
+extern int f_95F0_9618[] __asm__("func_003C95F0");
+extern int f_9518_9618[] __asm__("func_003C9518");
+extern int f_D1A8_9618(int) __asm__("func_003CD1A8");
+extern void *f_DDB8_9618(int) __asm__("func_003CDDB8");
+extern Q_9618 f_E078_9618(int) __asm__("func_003CE078");
+extern void f_E0B8_9618(int, Q_9618 *, int) __asm__("func_003CE0B8");
+extern int f_DDE8_9618(int, int, int, int) __asm__("func_003CDDE8");
+
+void func_003C9618_impl(char *, char *) __asm__("func_003C9618");
+void func_003C9618_impl(char *self, char *src) {
+    Q_9618 q;
+    Q_9618 t;
+    int n;
+    *(int **)(self + 0) = f_9520_9618;
+    *(int **)(self + 4) = f_95F0_9618;
+    *(int *)(self + 0x2C) = *(int *)(src + 4);
+    *(int *)(self + 0x20) = 0;
+    *(int *)(self + 0x24) = *(int *)(src + 0x10);
+    *(int *)(self + 0x28) = *(int *)(src + 0x14);
+    *(void **)(self + 0x1C) = f_DDB8_9618(f_D1A8_9618(0xD68));
+    t = f_E078_9618(*(int *)(self + 0x1C));
+    q = t;
+    q.c = 1;
+    f_E0B8_9618(*(int *)(self + 0x1C), &q, 0);
+    n = *(int *)(self + 0x24);
+    f_DDE8_9618(*(int *)(self + 0x1C), *(int *)(src + 0), n * 4, n);
+    *(int **)(src + 0x28) = f_9518_9618;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003C96F0);
