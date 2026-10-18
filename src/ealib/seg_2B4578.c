@@ -1239,7 +1239,24 @@ int func_003B7E70(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7EB0);
+#ifdef SKIP_ASM
+int *func_003B6A38_7EB0(void) __asm__("func_003B6A38");
+int func_003B8530_7EB0(int, int, int) __asm__("func_003B8530");
+
+int func_003B7EB0(int arg0, int arg1, int arg2) {
+    int *p;
+
+    p = func_003B6A38_7EB0();
+    if (p == 0) {
+        return -8;
+    }
+    *(char *)((char *)p + 0xEC) = arg2;
+    func_003B8530_7EB0(p[1], arg1 / 10, arg2);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7F18);
