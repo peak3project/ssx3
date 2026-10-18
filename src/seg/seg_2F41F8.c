@@ -1027,7 +1027,20 @@ extern int D_004A4BF0;
 int func_003FB640(void) { return D_004A4BF0 != 4; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB650);
+#ifdef SKIP_ASM
+extern int D_004A4BE4, D_004A4BE8, D_004A4BEC, D_004A4BF0;
+int func_003FB650(int a, int b) {
+    if (a == 0 || b == 0) return 2;
+    if (D_004A4BF0 == 4) return 4;
+    D_004A4BEC = a;
+    D_004A4BE8 = a + b - 1;
+    D_004A4BE4 = a;
+    D_004A4BF0 = 5;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB6A0);
 
