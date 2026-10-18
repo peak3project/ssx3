@@ -108,7 +108,22 @@ INCLUDE_ASM("seg/seg_2F0F40", func_003F0E38);
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F11F8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F14D8);
+#ifdef SKIP_ASM
+extern int func_003EEC88(int, int);
+extern int func_003EE468(int, int);
+int func_003F14D8(int* p, int a) {
+    int r = 0;
+    if (p[0x4A4 / 4] && a) {
+        int x = func_003EEC88(p[0x4A4 / 4], a);
+        if (x) {
+            r = func_003EE468(p[0x4A8 / 4], x);
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F1538);
