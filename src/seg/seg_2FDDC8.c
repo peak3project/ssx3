@@ -807,7 +807,14 @@ void func_0040B1F8(void) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040B208);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040B2B0);
+#ifdef SKIP_ASM
+void func_0040B2B0(unsigned *p) {
+    p[6] = 0;
+    p[4] &= 0xFFFFFFFE;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040B2D0);
 
