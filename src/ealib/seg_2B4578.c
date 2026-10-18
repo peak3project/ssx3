@@ -7394,7 +7394,45 @@ void func_003C93F8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9420);
+#ifdef SKIP_ASM
+typedef struct { int a, b, c; } Q_9420;
+extern int f_9360_9420[] __asm__("func_003C9360");
+extern int f_93F8_9420[] __asm__("func_003C93F8");
+extern int f_9358_9420[] __asm__("func_003C9358");
+extern int f_D1A8_9420(int) __asm__("func_003CD1A8");
+extern void *f_DDB8_9420(int) __asm__("func_003CDDB8");
+extern Q_9420 f_E078_9420(int) __asm__("func_003CE078");
+extern void f_E0B8_9420(int, Q_9420 *, int) __asm__("func_003CE0B8");
+extern void f_E0D8_9420(int, int) __asm__("func_003CE0D8");
+extern void f_DDE8_9420(int, int, int, int) __asm__("func_003CDDE8");
+
+void func_003C9420_impl(char *, char *) __asm__("func_003C9420");
+void func_003C9420_impl(char *self, char *src) {
+    Q_9420 q;
+    Q_9420 t;
+    int n;
+    *(int **)(self + 0) = f_9360_9420;
+    *(int *)(self + 0x1C) = *(int *)(src + 0xC);
+    *(int *)(self + 0x20) = 0;
+    *(int *)(self + 0x24) = *(int *)(src + 0x24);
+    *(int **)(src + 0x28) = f_9358_9420;
+    *(int **)(self + 4) = f_93F8_9420;
+    *(void **)(self + 0x28) = f_DDB8_9420(f_D1A8_9420(0xD68));
+    t = f_E078_9420(*(int *)(self + 0x28));
+    q = t;
+    q.c = 1;
+    f_E0B8_9420(*(int *)(self + 0x28), &q, 0);
+    if (*(int *)(self + 0x24) < 3) {
+        f_E0D8_9420(*(int *)(self + 0x28), 0);
+    } else {
+        f_E0D8_9420(*(int *)(self + 0x28), 1);
+    }
+    n = *(int *)(self + 0x1C);
+    f_DDE8_9420(*(int *)(self + 0x28), *(int *)(src + 0), n * 4, n);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9518);
