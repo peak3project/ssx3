@@ -1020,7 +1020,22 @@ int func_003FB490(void) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB4C0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB558);
+#ifdef SKIP_ASM
+extern int D_00451518[];
+extern int D_004A5B1C;
+int func_003FB558(int **out) {
+    int *p = D_00451518;
+    if (D_00451518[0] == 0) return 6;
+    if (out == 0) return 2;
+    p[2] = (int)&D_004A5B1C;
+    p[1] = 4;
+    D_004A5B1C = ~p[3];
+    *out = &p[1];
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB5B0);
 
