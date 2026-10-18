@@ -380,7 +380,21 @@ int func_003F72F8(int a, int *b) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7328);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F73A8);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern char D_004A4BC8[];
+extern int func_003F77F8(void);
+extern int func_003FC390_call(char *, int, int) __asm__("func_003FC390");
+extern int func_003F8178(int);
+int func_003F73A8(void) {
+    char *p = D_004A4BC4;
+    *(int (**)(void))(p + 0xFC) = func_003F77F8;
+    *(int *)(p + 0x100) = 0;
+    return func_003F8178(func_003FC390_call(D_004A4BC8, -1, 0));
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F73F0);
 
