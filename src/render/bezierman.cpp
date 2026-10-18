@@ -200,7 +200,142 @@ extern "C" void func_0038CA08(void* self, void* obj)
 
 INCLUDE_ASM("render/bezierman", func_0038CA70);
 
+//100%
 INCLUDE_ASM("render/bezierman", func_0038CE20);
+#ifdef SKIP_ASM
+// func_0038CE20 NEAR 99.95%: only diff is target reloc %lo(D_30000040)/%lo(D_30000030) (p += 0x40 / 0x30) vs our plain immediate; needs splat symbol fix
+struct sRS_CE20 {
+    unsigned int pad0 : 2;
+    unsigned int blend : 2;
+    unsigned int rest : 28;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short tex2;
+};
+struct sEnt_CE20 {
+    sRS_CE20 rs;                    // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+struct sRing_CE20 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sEnt_CE20 ents[1];              // 0x80
+};
+struct sGfx_CE20 {
+    char pad_0x0[0xE84];
+    sRS_CE20* top;                  // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sRing_CE20* ring;               // 0x18F0
+};
+struct sObj_CE20 {
+    char pad_0x0[0xC];
+    int flags;                      // 0xC
+    char pad_0x10[0x1A0 - 0x10];
+    short tex;                      // 0x1A0
+    short tex2;                     // 0x1A2
+};
+struct sPatch_CE20 {
+    void* obj;
+    int extra;
+    int kind;
+};
+struct sTbl_CE20 {
+    int lo;
+    int hi;
+};
+extern sGfx_CE20* D_004A5B80_CE20 __asm__("D_004A5B80");
+extern int D_004A44D8;
+extern int D_004A44DC;
+extern sTbl_CE20 D_00504960[];
+extern "C" void* func_0038F708(void* obj, int a1, int a2);
+extern "C" unsigned int func_0038CA08_r(void* self, void* obj) __asm__("func_0038CA08");
+extern "C" void func_0038D168(void* self, int base, void* obj, int a3, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int* handle);
+extern "C" void func_0038D448(void* self, int a1, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int a4, unsigned int* handle);
+
+extern "C" void func_0038CE20(void* self, int idx, sPatch_CE20* patch, int* vals, unsigned int* handle)
+{
+    int base = *(int*)((char*)self + 0x30) + idx * 12;
+    sObj_CE20* obj = (sObj_CE20*)func_0038F708(patch->obj, 0x1B0, 2);
+    int addr = *(int*)((char*)self + 0x454) + (idx << 8);
+    sGfx_CE20* gfx = D_004A5B80_CE20;
+    int f18 = (obj->flags & 0x600000) != 0;
+    if (f18) {
+        if (D_004A44D8 != 0)
+            f18 = 0;
+    }
+    unsigned int r = func_0038CA08_r(self, obj);
+    int f23 = r != 0;
+    int tex = obj->tex;
+    gfx->top->tex = tex;
+    if (D_004A44DC != 0)
+        f23 = 0;
+    int tex2 = obj->tex2;
+    gfx->top->tex2 = tex2;
+    switch (obj->flags & 0x180000) {
+    case 0x80000:
+        gfx->top->blend = 2;
+        break;
+    case 0x100000:
+        gfx->top->blend = 1;
+        break;
+    case 0x180000:
+        gfx->top->blend = 3;
+        break;
+    default:
+        gfx->top->blend = 0;
+        break;
+    }
+    unsigned int buf = *handle;
+    long* p = (long*)(buf | 0x30000000);
+    if (vals != 0) {
+        p[0] = 0x10000002;
+        p[1] = 0;
+        p[2] = ((long)vals[0] << 32) | 0x6E0180D0;
+        p[3] = 0;
+        p[4] = 0;
+        p[5] = (long)0x6C1080C0 << 32;
+        p[6] = ((long)((int)patch->obj + 0x40) << 32) | 0x30000010;
+        p[7] = 0;
+        p += 8;
+    }
+    p[0] = ((long)addr << 32) | 0x50000000;
+    p[2] = 0x10000001;
+    p[1] = 0;
+    sTbl_CE20* tbl = D_00504960;
+    p[3] = 0;
+    int ti = patch->extra + 2;
+    p[4] = 0;
+    p[5] = (long)(tbl[ti].lo | 0x14000000) << 32;
+    p += 6;
+    unsigned int next = (unsigned int)p & 0x0FFFFFFF;
+    *handle = next;
+    sRing_CE20* ring = gfx->ring;
+    sRS_CE20* rs = gfx->top;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sEnt_CE20* e = (sEnt_CE20*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 0;
+    }
+    *handle += 0x10;
+    if (f18) {
+        func_0038D168(self, base, obj, 2, tbl, patch, handle);
+    }
+    if (f23) {
+        func_0038D448(self, 2, tbl, patch, r, handle);
+    }
+}
+#endif
 
 INCLUDE_ASM("render/bezierman", func_0038D168);
 
