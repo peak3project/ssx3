@@ -94,7 +94,17 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FDE30);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FDEA0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FDF28);
+#ifdef SKIP_ASM
+unsigned func_003FDF28(unsigned a) {
+    if ((a >> 28) == 7) {
+        a &= 0xFFFFFFF;
+        a |= 0x80000000;
+    }
+    return a;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FDF50);
 
