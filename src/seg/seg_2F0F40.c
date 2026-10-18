@@ -78,7 +78,14 @@ INCLUDE_ASM("seg/seg_2F0F40", func_003F15C8);
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F16D8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F17C8);
+#ifdef SKIP_ASM
+void func_003F17C8(int* p, int a, int b) {
+    p[0x4B0 / 4] = a;
+    p[0x4AC / 4] = b;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F17D8);
 
