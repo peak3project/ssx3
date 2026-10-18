@@ -3495,7 +3495,52 @@ void func_003E3020(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3098);
+#ifdef SKIP_ASM
+extern char *strchr_3098(char *, int) __asm__("strchr");
+extern int strlen_3098(char *) __asm__("strlen");
+extern int func_00416B18_3098(char *, char *, int) __asm__("func_00416B18");
+extern char *func_004162D0_3098(char *, char *) __asm__("func_004162D0");
+extern char *D_00450C50_3098[] __asm__("D_00450C50");
+extern char *D_00450C3C_3098[] __asm__("D_00450C3C");
+extern int D_00450C44_3098[] __asm__("D_00450C44");
+extern char D_00519AF0_3098[] __asm__("D_00519AF0");
+
+void func_003E3098(char *path, char *out, int *kind) {
+    int k;
+    out[0] = 0;
+    k = D_00450C44_3098[0];
+    if (strchr_3098(path, 0x3A) != 0) {
+        int n = strlen_3098(D_00450C50_3098[0]);
+        if (func_00416B18_3098(path, D_00450C3C_3098[0], 3) == 0) {
+            k = 1;
+            path += 3;
+        } else if (func_00416B18_3098(path, D_00450C50_3098[0], n) == 0) {
+            path += n;
+            k = 2;
+        } else {
+            if (D_00450C44_3098[0] == 1) return;
+            if (path[2] != 0x3A) return;
+        }
+    }
+    if (k == 2) {
+        func_004162D0_3098(out, D_00450C50_3098[0]);
+    }
+    if (path[0] != 0x5C && path[0] != 0x2F && path[0] != 0x7E) {
+        func_004162D0_3098(out, D_00519AF0_3098);
+    }
+    func_004162D0_3098(out, path);
+    for (; *out != 0; out++) {
+        if (*out == 0x5C) {
+            *out = 0x2F;
+        }
+    }
+    if (kind != 0) {
+        *kind = k;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3208);
