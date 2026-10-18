@@ -2121,7 +2121,20 @@ int func_003E14C8(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E14F8);
+#ifdef SKIP_ASM
+extern int func_003DFBD0_14F8(int, void *, void *) __asm__("func_003DFBD0");
+
+int func_003E14F8(int arg0) {
+    int loc[2];
+
+    if (func_003DFBD0_14F8(arg0, &loc[0], &loc[1]) != 0) {
+        return 0;
+    }
+    return *(volatile int *)((char*)loc[0] + 0x38);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1530);
 
