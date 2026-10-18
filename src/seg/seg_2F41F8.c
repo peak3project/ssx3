@@ -215,7 +215,13 @@ void func_003F6AB0(void) { D_004A5B14 = 0; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6AB8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6AF0);
+#ifdef SKIP_ASM
+extern int D_00526140[];
+extern int func_003F6960(int, int, int, int *, int);
+int func_003F6AF0(void) { return func_003F6960(3, 0, 0, D_00526140, 0x80); }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6B20);
 
