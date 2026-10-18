@@ -4811,7 +4811,35 @@ void func_003E67F8(int *arg0) {
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6878);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6958);
+#ifdef SKIP_ASM
+extern int D_0051EEA8_6958[] __asm__("D_0051EEA8");
+extern int func_003F4C98_6958(int *, int, int) __asm__("func_003F4C98");
+extern void func_003F4C68_6958(int *, int, int, int, int, int, int, int, int, void *) __asm__("func_003F4C68");
+extern char func_003E6878_6958[] __asm__("func_003E6878");
+extern void func_003E6878_call(int, int, int, int, int, int, int, int, void *) __asm__("func_003E6878");
+struct S_6958 { int f0; int f4; char pad[0x158 - 8]; int f158; };
+
+char *func_003E6958(struct S_6958 *self) {
+    int flag = 0;
+    if (self->f4 == -1) {
+        self->f4 = 0;
+        flag = 1;
+    }
+    if (self->f4 == 0) {
+        self->f4 = 1;
+        func_003F4C98_6958(D_0051EEA8_6958, 0x676D6C6B, 0x73746174);
+        if (flag == 0) {
+            func_003F4C68_6958(D_0051EEA8_6958, 0, self->f0, 0, 0, 0, self->f158, 0x150, (int)func_003E6878_6958, self);
+        } else {
+            func_003F4C68_6958(D_0051EEA8_6958, 1, self->f0, 0, 0, 0, self->f158, 0x150, 1, 0);
+            func_003E6878_call(0, 0, 0, 0, 0, 0, 0, 0, self);
+        }
+    }
+    return (char *)self + 8;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6A70);
