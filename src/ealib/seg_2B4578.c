@@ -10472,7 +10472,30 @@ void func_003D4F10(void) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5128);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5290);
+#ifdef SKIP_ASM
+struct E_5290 { char pad[0x30]; unsigned mask; int w34; char pad2[0x20]; int tab[24]; char pad3[0x928 - 0xB8]; };
+extern struct E_5290 D_00517610_5290[] __asm__("D_00517610");
+
+int func_003D5290(unsigned arg0) {
+    unsigned i, b;
+    unsigned hi = arg0 & 0xF0000000;
+    unsigned mid = arg0 & 0x0F000000;
+    unsigned m = arg0 & 0xFFFFFF;
+    for (i = 0; i < 4; i++) {
+        unsigned mk = D_00517610_5290[i].mask;
+        if (D_00517610_5290[i].w34 != 0 &&
+            (mk & hi) && (mk & mid)) {
+            for (b = 0; b < 0x18; b++) {
+                if ((m >> b) & 1)
+                    return D_00517610_5290[i].tab[b];
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5330);
 
