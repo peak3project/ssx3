@@ -4101,7 +4101,16 @@ void func_003C3250(int arg0, int arg1) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3300);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3358);
+#ifdef SKIP_ASM
+extern void func_00423DB0_3358(int) __asm__("func_00423DB0");
+extern int D_0050AD00_3358[] __asm__("D_0050AD00");
+void func_003C3358(void) {
+    int *p = D_0050AD00_3358;
+    func_00423DB0_3358(((volatile int *)p)[0x6C4]);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3380);
 
