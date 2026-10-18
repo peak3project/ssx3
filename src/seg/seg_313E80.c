@@ -901,7 +901,7 @@ void func_00418D68(int a, int b, int c) {
 INCLUDE_ASM("seg/seg_313E80", func_00418DB8);
 #ifdef SKIP_ASM
 extern int func_00413AF8(void);
-extern void func_00418E68(int, int, int);
+extern int func_00418E68(int, int, int);
 void func_00418DB8(int a, int b) {
     func_00418E68(func_00413AF8(), a, b);
 }
@@ -926,7 +926,22 @@ void func_00418E18(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00418E68);
+#ifdef SKIP_ASM
+extern int D_00454944;
+extern int func_00412500(int, int);
+extern int func_00421B98(int, int, int, char *, int, int);
+int func_00418E68(int a, int prec, int buf_) {
+    char *buf = (char *)buf_;
+    char *p = buf;
+    if (func_00412500(a, 0) < 0) {
+        *p++ = '-';
+        prec--;
+    }
+    return func_00421B98(D_00454944, a, prec, p, 'g', 0) ? (int)buf : 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00418EF8);
 
