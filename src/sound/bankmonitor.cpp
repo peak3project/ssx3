@@ -2174,7 +2174,118 @@ extern "C" int func_002B03B8(const char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002B04D8);
+#ifdef SKIP_ASM
+struct sSndKey8_04D8 {
+    long v;
+} __attribute__((packed));
+extern sSndKey8_04D8 D_004A37D8[];
+extern sSndKey8_04D8 D_004A37E0[];
+extern char* D_004A37B4;
+extern char D_004832F8[];
+extern char D_004A3590[];
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int func_002AFA58(void* self, int a1);
+extern "C" int func_002B1520(void* sys, int a, int b);
+extern "C" int func_002B03B8(const char* name);
+extern "C" int func_002AAE08(void* self, int i);
+extern "C" float func_002AAE78(void* self, int i);
+extern "C" int func_002AB028(void* self, int i);
+extern "C" void func_002AB0D0(void* self, int i, int w);
+// PORT: func_002ADCA0 takes a 64-bit sound key by value and returns int.
+extern "C" int func_002ADCA0_04D8(void*, int, long, void*, int, int, int, int) __asm__("func_002ADCA0");
+
+typedef int (*Fn1_04D8)(void*, int, char*, int, int, int, int, float, int, int);
+
+struct sBmVE_04D8 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+struct sBmObj_04D8 {
+    char pad[0x40];
+    int f40;
+};
+
+struct sBmList_04D8 {
+    int f0;                     // 0x0
+    int f4;                     // 0x4
+    char pad8[0xE8];
+    int count;                  // 0xF0
+    sBmObj_04D8* ids[1];        // 0xF4
+};
+
+struct sBmArgs_04D8 {
+    int f0;
+    int f4;
+    char pad8[4];
+    unsigned short fC;
+};
+
+static inline sBmObj_04D8** at_04D8(sBmObj_04D8** base, int i)
+{
+    return base + i;
+}
+
+extern "C" int func_002B04D8_impl(sBmList_04D8* self, sBmArgs_04D8* a) __asm__("func_002B04D8");
+
+extern "C" int func_002B04D8_impl(sBmList_04D8* self, sBmArgs_04D8* a)
+{
+    int idx = -1;
+    int i;
+    if (func_002AFA58(self->ids[a->f0], a->f0)) {
+        idx = a->f0;
+    } else {
+        for (i = 0; i < self->count; i++) {
+            if (func_002AFA58(self->ids[i], a->f0)) {
+                idx = i;
+            }
+        }
+    }
+    if (idx >= 0 && func_002B1520(D_004A37B4, self->f0, a->fC)) {
+        sBmObj_04D8** slot = at_04D8(self->ids, idx);
+        int lang = func_002B03B8((char*)*slot + 4);
+        char buf[0x100];
+        sprintf(buf, D_004832F8, D_004A3590, D_004A37B4 + 0x158 + lang * 0x14, (char*)*slot + 4);
+        char* d0 = D_004A37B4;
+        sBmVE_04D8* vt0 = *(sBmVE_04D8**)(d0 + 0x1BC);
+        int h = ((int (*)(void*, int, int))vt0[2].fn)(d0 + vt0[2].delta, self->f0, (*slot)->f40);
+        char* d; sBmVE_04D8* vt;
+        int t = (int)func_002AAE78(*(void**)D_004A37B4, self->f4);
+        int r;
+        if (func_002AAE08(*(void**)D_004A37B4, self->f4) != 0) {
+            if (func_002AB028(*(void**)D_004A37B4, self->f4) != 0) {
+                d = D_004A37B4;
+                vt = *(sBmVE_04D8**)(d + 0x1BC);
+                r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
+                if (r >= 0) {
+                    func_002ADCA0_04D8(**(char***)D_004A37B4 + 0x1D8, t, D_004A37D8[0].v, self, r, h, 0, 0);
+                }
+                return r;
+            }
+            d = D_004A37B4;
+            vt = *(sBmVE_04D8**)(d + 0x1BC);
+            r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
+            if (r >= 0) {
+                func_002ADCA0_04D8(**(char***)D_004A37B4 + 0x1D8, 0xC8, D_004A37E0[0].v, self, r, h, 0, 0);
+            }
+            return r;
+        }
+        d = D_004A37B4;
+        vt = *(sBmVE_04D8**)(d + 0x1BC);
+        int w = ((int (*)(void*, int, int, int))vt[3].fn)(d + vt[3].delta, self->f0, h, *(int*)((char*)self + 0x8D0));
+        if (w != 0) {
+            func_002AB0D0(*(void**)D_004A37B4, self->f4, w);
+        }
+        char* d2 = D_004A37B4;
+        sBmVE_04D8* vt2 = *(sBmVE_04D8**)(d2 + 0x1BC);
+        return ((Fn1_04D8)vt2[1].fn)(d2 + vt2[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), *(int*)((char*)self + 0x8C8), *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B07F8);
