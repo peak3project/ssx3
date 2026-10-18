@@ -611,7 +611,16 @@ extern char D_00497508[];
 char *func_003FB5E8(void) { return D_00497508; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB5F8);
+#ifdef SKIP_ASM
+extern int D_004A4BF0;
+int func_003FB5F8(void) {
+    if (D_004A4BF0 != 4) return 3;
+    D_004A4BF0 = 6;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB620);
