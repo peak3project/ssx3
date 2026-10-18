@@ -2150,7 +2150,29 @@ int func_003B9D00(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9DC8);
+#ifdef SKIP_ASM
+extern char D_0050A120_9DC8[] __asm__("D_0050A120");
+
+int func_003B9DC8(int arg0) {
+    int r, h;
+    char *t;
+
+    func_003B58A0();
+    h = func_003B8D98(arg0);
+    if (h < 0) {
+        func_003B58D8();
+        return h;
+    }
+    t = D_0050A120_9DC8 + h * 0x70;
+    if (*(signed char *)(t + 0x28) == 5)
+        *(signed char *)(t + 0x28) = 3;
+    r = func_003B9FC8(arg0);
+    func_003B58D8();
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9E48);
