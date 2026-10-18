@@ -552,7 +552,7 @@ INCLUDE_ASM("seg/seg_313E80", func_004175C8);
     (ap = (char*)__builtin_next_arg() \
           - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0))
 extern int D_00454944;
-extern void func_0041B658(int, int, char *);
+extern int func_0041B658(int, int, char *);
 void func_004175C8(int fmt, ...) {
     char *ap;
     int *g;
@@ -637,7 +637,35 @@ INCLUDE_ASM("seg/seg_313E80", func_004185D0);
 
 INCLUDE_ASM("seg/seg_313E80", func_004186C8);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00418720);
+#ifdef SKIP_ASM
+struct F18720 {
+    char *p;
+    int r;
+    unsigned w;
+    short flags, file;
+    char *base;
+    unsigned size;
+    int pad[0x54 / 4 - 6];
+    int ent;
+};
+extern int D_00454944;
+int func_00418720(char *buf, unsigned n, int fmt, char *ap) {
+    struct F18720 f;
+    int r;
+    f.p = buf;
+    f.w = n;
+    f.flags = 0x208;
+    f.base = buf;
+    f.size = n;
+    f.ent = D_00454944;
+    r = func_0041B658((int)&f, fmt, ap);
+    if (n < (unsigned)r) r = -1;
+    *f.p = 0;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00418790);
