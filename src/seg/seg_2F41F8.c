@@ -405,7 +405,17 @@ extern int func_003F6C40(void);
 int func_003F6B80(void) { return func_003F6C40() & 1; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6BA0);
+#ifdef SKIP_ASM
+extern int D_00526140[];
+extern void func_003F6960b(int, int, int, int *, int) __asm__("func_003F6960");
+void func_003F6BA0(int *a, int *b) {
+    func_003F6960b(7, 0, 0, D_00526140, 0x80);
+    *a = D_00526140[0];
+    *b = D_00526140[1];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6C10);
