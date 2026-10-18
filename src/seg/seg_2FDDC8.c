@@ -1170,7 +1170,20 @@ int func_0040C770(int a, unsigned b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040C7C0);
+#ifdef SKIP_ASM
+int func_0040C7C0(int a, unsigned b) {
+    if (a >= D_00529000[0].n) {
+        return -11;
+    }
+    if (b < 3) {
+        D_00529000[0].e[a].f8 = b;
+        return 0;
+    }
+    return -12;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040C810);
 
