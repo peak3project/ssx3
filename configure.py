@@ -52,6 +52,11 @@ COMMON_CFLAGS = "-O2"
 UNIT_CFLAGS = {
     "ealib/seg_2B4578": "-G0",
     "ealib/seg_2DCAE8": "-G0",
+    # Library tail of .text (0x3EDF50-0x42E590), split by the same evidence: seg_2F0F40, seg_313E80 (C library:
+    # strchr/strcpy/sprintf/ungetc) and seg_325220 reach .sdata/.sbss globals with lui/%lo and never via $gp.
+    "seg/seg_2F0F40": "-G0",
+    "seg/seg_313E80": "-G0",
+    "seg/seg_325220": "-G0",
 }
 # Fork-only: per-unit compiler. EA's embedded $gp module (ealib/seg_2D7498, 0x3D6498-0x3DBAE8) was built with an
 # older SN build, ee-gcc 2.95.3-114 (its non-leaf functions save ra with sq; 107 and 114 reproduce all 48 landed

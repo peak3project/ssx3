@@ -16,11 +16,11 @@
 .endm
 
 # An alternative entry to a function.
+# (No .aent: the original toolchain's assembler doesn't know it, and it only affects debug info, not code.)
 .macro alabel label, visibility=global
     .\visibility \label
     .type \label, @function
     \label:
-        .aent \label
 .endm
 
 # A label referenced by an error handler table.

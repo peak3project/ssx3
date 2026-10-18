@@ -527,7 +527,16 @@ segments:
       
       - [0x2ec198, cpp, dirtysock/tags]
       
-      - [0x2eef50, asm]
+      # Library tail of .text, split at the points where the small-data evidence changes (no names known for most
+      # of it yet). $gp users = functions with %gp_rel small-data accesses; "absolute" = functions that reach
+      # .sdata/.sbss globals with lui/%lo, i.e. built with -G0 (see UNIT_CFLAGS in configure.py).
+      - [0x2eef50, c, seg/seg_2EEF50]   # 0x3EDF50: $gp small-data users (default flags)
+      - [0x2f0f40, c, seg/seg_2F0F40]   # 0x3EFF40: absolute small-data users (-G0)
+      - [0x2f41f8, c, seg/seg_2F41F8]   # 0x3F31F8: dense $gp module (default flags)
+      - [0x2fddc8, c, seg/seg_2FDDC8]   # 0x3FCDC8: Sony SDK area (sceGsSyncPath, sceUsbKb*); no small-data evidence
+      - [0x313e80, c, seg/seg_313E80]   # 0x412E80: C library (strchr, strcpy, sprintf, ungetc); -G0
+      - [0x3249a0, c, seg/seg_3249A0]   # 0x4239A0: 16-byte hand-written syscall stubs
+      - [0x325220, c, seg/seg_325220]   # 0x424220: absolute small-data users (-G0)
       
       # --- .vutext
       - [0x32f590, textbin, vutext]
