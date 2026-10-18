@@ -217,6 +217,27 @@ int func_003EE770(int* p) {
 #endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE778);
+#ifdef SKIP_ASM
+extern int* func_002591E8(int);
+extern void* func_00416210_p(void*, int, int) __asm__("func_00416210");
+extern int func_003EE900(int*, int);
+extern int func_003EEAB8();
+int* func_003EE778(int n, int m) {
+    int cnt = n > 0 ? n : 1;
+    int nb = m > 15 ? m : 16;
+    int* p;
+    p = func_002591E8(0x24);
+    func_00416210_p(p, 0, 0x24);
+    p[4] = nb;
+    p[5] = (int)func_002591E8(nb * 4);
+    func_00416210_p((void*)p[5], 0, p[4] * 4);
+    p[8] = (int)func_003EEAB8;
+    if (cnt > 0) {
+        func_003EE900(p, cnt);
+    }
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE820);
