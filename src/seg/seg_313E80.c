@@ -574,7 +574,36 @@ void func_00417628(void) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00417648);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004177B0);
+#ifdef SKIP_ASM
+#define func_004177B0_va_start(ap) \
+    (ap = (char*)__builtin_next_arg() \
+          - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0))
+struct F177B0 {
+    char *p;
+    int r;
+    int w;
+    short flags, file;
+    char *base;
+    int size;
+    int pad[0x54 / 4 - 6];
+    int ent;
+};
+void func_004177B0(int reent, char *buf, int fmt, ...) {
+    char *ap;
+    struct F177B0 f;
+    func_004177B0_va_start(ap);
+    f.p = buf;
+    f.w = 0x7FFFFFFF;
+    f.flags = 0x208;
+    f.base = buf;
+    f.size = 0x7FFFFFFF;
+    f.ent = reent;
+    func_0041B658((int)&f, fmt, ap);
+    *f.p = 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", sprintf);
 
