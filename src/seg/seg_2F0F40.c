@@ -319,4 +319,35 @@ void func_003F30F0(unsigned int* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F3128);
+#ifdef SKIP_ASM
+struct Md5Ctx {
+    unsigned int count;
+    unsigned int state[4];
+    unsigned char buf[64];
+};
+extern void func_003F2220(struct Md5Ctx*);
+void func_003F3128(struct Md5Ctx* ctx, unsigned char* data, int len) {
+    unsigned int idx;
+    unsigned char* p;
+    p = data;
+    if (len < 0) {
+        len = 0;
+        while (data[len]) {
+            len++;
+        }
+    }
+    idx = ctx->count & 0x3F;
+    while (len > 0) {
+        ctx->buf[idx] = *p++;
+        ctx->count++;
+        idx++;
+        if (idx == 0x40) {
+            func_003F2220(ctx);
+            idx = 0;
+        }
+        len--;
+    }
+}
+#endif
