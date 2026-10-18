@@ -296,7 +296,61 @@ void func_00413F80(struct N13F80 *n, struct L13F80 *l, unsigned *lo, unsigned *h
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414008);
+#ifdef SKIP_ASM
+struct N14008 {
+    unsigned lo;
+    unsigned hi;
+    struct N13F80 *root;
+    struct N13F80 **roots;
+    int cnt;
+};
+struct LL14008 {
+    int *a;
+    int na;
+    int *b;
+    int nb;
+};
+extern int *func_004188C0(int);
+extern struct N13F80 **func_00413CD0(struct LL14008 *, int);
+void func_00414008(struct N14008 *n) {
+    struct N13F80 **pp;
+    int cnt, bytes;
+    struct LL14008 l;
+    unsigned lo, hi;
+    if (n->roots != 0) {
+        pp = n->roots;
+        cnt = 0;
+        while (*pp != 0) {
+            cnt += func_00413F38((struct N13F38 *)*pp);
+            pp++;
+        }
+    } else {
+        cnt = func_00413F38((struct N13F38 *)n->root);
+    }
+    bytes = cnt * 4;
+    n->cnt = cnt;
+    l.a = func_004188C0(bytes);
+    l.b = func_004188C0(bytes);
+    l.na = 0;
+    l.nb = 0;
+    lo = 0xFFFFFFFF;
+    hi = 0;
+    if (n->roots != 0) {
+        pp = n->roots;
+        while (*pp != 0) {
+            func_00413F80(*pp, (struct L13F80 *)&l, &lo, &hi);
+            pp++;
+        }
+    } else {
+        func_00413F80(n->root, (struct L13F80 *)&l, &lo, &hi);
+    }
+    n->roots = func_00413CD0(&l, cnt);
+    n->lo = lo;
+    n->hi = hi;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414148);
 
