@@ -130,7 +130,22 @@ int func_003EE770(int* p) {
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE778);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE820);
+#ifdef SKIP_ASM
+extern void func_00259210(void*);
+void func_003EE820(int* p) {
+    if (p[6]) {
+        do {
+            int* q = (int*)p[6];
+            p[6] = *q;
+            func_00259210(q);
+        } while (p[6]);
+    }
+    func_00259210((void*)p[5]);
+    func_00259210(p);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE878);
