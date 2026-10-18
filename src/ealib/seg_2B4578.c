@@ -5433,7 +5433,29 @@ void func_003C6320(void *arg0, void *arg1) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6380);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C64A8);
+#ifdef SKIP_ASM
+struct U64_64A8 { unsigned int lo, hi; };
+unsigned int func_003C64A8(struct U64_64A8 n, unsigned int d) {
+    unsigned int q = 0;
+    unsigned int lo = n.lo;
+    unsigned int r = n.hi;
+    int i;
+    for (i = 31; i >= 0; i--) {
+        unsigned int c = lo >> 31;
+        r <<= 1;
+        r += c;
+        q <<= 1;
+        lo <<= 1;
+        if (r >= d) {
+            r -= d;
+            q++;
+        }
+    }
+    return q;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6500);
