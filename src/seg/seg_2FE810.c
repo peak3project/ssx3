@@ -97,7 +97,17 @@ int func_003FE558(unsigned *p, int m) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE590);
+#ifdef SKIP_ASM
+extern void func_003FDEA0(int *, unsigned, int);
+int func_003FE590(int *p, unsigned n, int m, int x) {
+    if (m == 1)
+        return (unsigned)p[4] < n;
+    func_003FDEA0(p, n, x);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FE5C8);
 
