@@ -283,7 +283,26 @@ void func_003DC9F8(char *dst, const char *fmt, ...) {
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCA40);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCB20);
+#ifdef SKIP_ASM
+extern char D_00495D18_CB20[] __asm__("D_00495D18");
+
+void func_003DCB20_impl(char *out, unsigned short *in) __asm__("func_003DCB20");
+void func_003DCB20_impl(char *out, unsigned short *in) {
+    unsigned short c; unsigned t;
+    while ((t = *in) != 0) {
+        c = t;
+        if (c >= 0x100 || (c == 0x5C && in[1] == 0x78)) {
+            sprintf(out, D_00495D18_CB20, *in); out += 6;
+        } else {
+            *out = (char)*in; out++;
+        }
+        in++;
+    }
+    *out = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCBD8);
