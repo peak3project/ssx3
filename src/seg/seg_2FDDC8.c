@@ -72,7 +72,19 @@ int func_003FD1F0(int *p, int n) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD210);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD2B8);
+#ifdef SKIP_ASM
+unsigned func_003FD2B8(int *p, unsigned n) {
+    unsigned r;
+    if (n <= 0xFEFF) {
+        r = ((unsigned *)func_003FD1F0(p, n))[4];
+    } else {
+        r = n == 0xFFF1 ? 0xFFF00000 : 0;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD2F8);
 
