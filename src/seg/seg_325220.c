@@ -177,7 +177,15 @@ void func_00424A60(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424A80);
+#ifdef SKIP_ASM
+extern void func_00423B70(void);
+void func_00424A80(void) {
+    func_00423B70();
+    __asm__ volatile("sync");
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00424AA0);
 
