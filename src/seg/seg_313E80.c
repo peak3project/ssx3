@@ -333,7 +333,15 @@ void func_00414C20(int *p, int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414C40);
+#ifdef SKIP_ASM
+extern int func_00414B98();
+int func_00414C40(int a, int b, int c, int d) {
+    if (func_00414B98(a, b) == 0) d = 0;
+    return d;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414C70);
 
