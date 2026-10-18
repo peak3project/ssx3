@@ -531,7 +531,19 @@ INCLUDE_ASM("seg/seg_313E80", func_00417418);
 
 INCLUDE_ASM("seg/seg_313E80", func_004174B0);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00417578);
+#ifdef SKIP_ASM
+#define func_00417578_va_start(ap) \
+    (ap = (char*)__builtin_next_arg() \
+          - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0))
+extern void func_0041B728(int *, int, int, char *);
+void func_00417578(int *p, int fmt, ...) {
+    char *ap;
+    func_00417578_va_start(ap);
+    func_0041B728(p, p[2], fmt, ap);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_004175C8);
 
