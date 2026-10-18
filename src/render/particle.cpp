@@ -3036,7 +3036,111 @@ void* func_0037D090(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037D0B0);
+#ifdef SKIP_ASM
+struct sTexSrc_D0B0 {
+    int f0;                         // 0x0: low byte = type, upper 24 bits = offset
+    short s4;                       // 0x4
+    short s6;                       // 0x6
+    char pad8[4];
+    unsigned int fC;                // 0xC
+};
+
+struct sVE_D0B0 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, void*, int, int, unsigned int, int, int, void*, int);
+};
+
+struct sGfxView_D0B0 {
+    char pad[0x10D8];
+    sVE_D0B0* vt;                   // 0x10D8
+};
+
+extern char D_004A4390[];
+void* operator_new_D0B0(unsigned int, char*, unsigned int, int) __asm__("operator_new__FUi");
+extern "C" void func_003E6188(void* dst, void* src, int n);
+extern "C" unsigned int func_003B47F8(void* src, void* dst);
+extern "C" void func_002523A8(void* p);
+
+extern "C" void func_0037D0B0(void* selfp, int a1, void* objp, int a3)
+{
+    sGfxView_D0B0* self = (sGfxView_D0B0*)selfp;
+    sTexSrc_D0B0* obj = (sTexSrc_D0B0*)objp;
+    int mode = 0;
+    char* extra = 0;
+    int flagB = 0;
+    unsigned int type = *(unsigned char*)obj;
+    switch (type) {
+    case 1: {
+        mode = 0xB;
+        int w = obj->f0 >> 8;
+        flagB = 1;
+        char* sub = w ? (char*)obj + w : 0;
+        int hi = obj->fC & 0x2000;
+        if (hi) mode = 0xC;
+        if (((sTexSrc_D0B0*)sub)->fC & 0x1000)
+            extra = sub + *(int*)(sub + 0x10);
+        else
+            extra = sub + 0x10;
+        break;
+    }
+    case 2: {
+        mode = 9;
+        int w = obj->f0 >> 8;
+        flagB = 1;
+        char* sub = w ? (char*)obj + w : 0;
+        int hi = obj->fC & 0x2000;
+        if (hi) mode = 0xA;
+        if (((sTexSrc_D0B0*)sub)->fC & 0x1000)
+            extra = sub + *(int*)(sub + 0x10);
+        else
+            extra = sub + 0x10;
+        break;
+    }
+    case 3:
+        mode = 2;
+        break;
+    case 5:
+        mode = 0;
+        break;
+    }
+    int allocated = 0;
+    char* tmp = 0;
+    char* p10 = (char*)obj + 0x10;
+    unsigned int fC;
+    char* data;
+    unsigned char* ob = (unsigned char*)obj;
+    if (ob[0x10] == 0x10 && ob[0x11] == 0xFB) {
+        unsigned int size = (ob[0x12] << 16 | ob[0x13] << 8 | ob[0x14]) + 0x10;
+        allocated = 1;
+        tmp = (char*)operator_new_D0B0(size, D_004A4390, 0x80000100, 0);
+        func_003E6188(tmp, obj, 0x10);
+        char* payload = tmp + 0x10;
+        func_003B47F8(p10, payload);
+        *(unsigned char*)tmp &= 0x7F;
+        if (((sTexSrc_D0B0*)tmp)->fC & 0x1000) {
+            data = tmp + *(int*)(tmp + 0x10);
+            fC = obj->fC;
+        } else {
+            data = tmp + 0x10;
+            fC = obj->fC;
+        }
+    } else {
+        if (obj->fC & 0x1000)
+            data = (char*)obj + *(int*)((char*)obj + 0x10);
+        else
+            data = p10;
+        fC = obj->fC;
+    }
+    sVE_D0B0* e = &self->vt[0x188 / 8];
+    e->fn((char*)self + e->delta, a1, data, obj->s4, obj->s6, fC >> 28, mode, flagB, extra, a3);
+    if (allocated) {
+        func_002523A8(tmp);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0037D318);
