@@ -331,7 +331,14 @@ void func_003FFC38(unsigned i, char *dst) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFC70);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFCD8);
+#ifdef SKIP_ASM
+int func_003FFCD8(int a, int b) {
+    if (!D_00526250[a].e[b].f10) return 0;
+    return ((unsigned char *)func_003FF9A8(a, b))[0x71];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFD28);
