@@ -1349,7 +1349,48 @@ int func_003B7410(void) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7450);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B76E8);
+#ifdef SKIP_ASM
+struct O_76E8 { int f0; char pad4[8]; volatile int fC; char pad10[0x10C]; int f11C; char pad120[8]; int f128; int f12C; int f130; };
+struct S_76E8 { char pad0[8]; int f8; volatile int fC; char pad10[0x10]; volatile int f20; char pad24[4]; };
+extern struct O_76E8 *f_6A38_76E8(int) __asm__("func_003B6A38");
+extern int f_0C88_76E8(int, int, int, int) __asm__("func_003E0C88");
+extern int f_0D80_76E8(int, int, int, int) __asm__("func_003E0D80");
+extern struct S_76E8 *f_62E8_76E8(void *) __asm__("func_003C62E8");
+extern void f_6210_76E8(void *, int, int) __asm__("func_00416210");
+extern void f_62B8_76E8(void *, void *) __asm__("func_003C62B8");
+
+int func_003B76E8_impl(int, int, int, int, int) __asm__("func_003B76E8");
+int func_003B76E8_impl(int a0, int a1, int a2, int a3, int a4) {
+    struct O_76E8 *o = f_6A38_76E8(a0);
+    struct S_76E8 *s;
+    int r;
+    if (o == 0) return -8;
+    if (o->f130 == 0) return -13;
+    if (a4 == 0) {
+        r = f_0C88_76E8(o->f0, a2, a3, 0x6C454353);
+    } else if (a4 == 1) {
+        r = f_0D80_76E8(o->f0, a2, 0, 0x6C454353);
+    } else {
+        r = a3;
+    }
+    if (r == 0) return -1;
+    func_003B58A0();
+    a4 = (int)f_62E8_76E8((char *)o + 0x128);
+    s = (struct S_76E8 *)a4;
+    f_6210_76E8(s, 0, 0x28);
+    f_62B8_76E8((char *)o + 0x11C, s);
+    s->f8 = r;
+    o->fC += 0x100;
+    if (o->fC < 0) o->fC = 0;
+    s->fC = o->fC | a0;
+    s->f20 = a1;
+    o = (struct O_76E8 *)s->fC;
+    func_003B58D8();
+    return (int)o;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7818);
