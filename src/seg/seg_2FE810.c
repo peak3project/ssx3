@@ -1134,7 +1134,27 @@ INCLUDE_ASM("seg/seg_2FE810", func_00409400);
 
 INCLUDE_ASM("seg/seg_2FE810", func_004094E8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409638);
+#ifdef SKIP_ASM
+int func_00409638(int a) {
+    int r = 0;
+    int v;
+    switch (a) {
+    case 0:
+        do {
+            v = *(volatile int *)0x10002010;
+            __asm__ volatile("nop");
+        } while (v < 0);
+        r = 0;
+        break;
+    case 1:
+        r = *(volatile unsigned *)0x10002010 >> 31;
+        break;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004096A0);
 
