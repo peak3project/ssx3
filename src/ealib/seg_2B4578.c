@@ -5040,7 +5040,32 @@ int func_003C5788(int arg0, int *arg1) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C57F0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5880);
+#ifdef SKIP_ASM
+extern int func_003B4DD8_5880(void *) __asm__("func_003B4DD8");
+extern void func_003B4FC0_5880(void *) __asm__("func_003B4FC0");
+
+int func_003C5880(int which, int val) {
+    char sp[0xE0];
+    func_003B4DD8_5880(sp);
+    switch (which) {
+    case 0:
+        sp[0x2E] = val;
+        break;
+    case 1:
+        sp[0x2F] = val;
+        break;
+    case 2:
+        sp[0x30] = val;
+        break;
+    default:
+        return -5;
+    }
+    func_003B4FC0_5880(sp);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5908);
 
