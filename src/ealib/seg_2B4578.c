@@ -2093,7 +2093,49 @@ int func_003B8D98(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8DE8);
+#ifdef SKIP_ASM
+struct E_8DE8 { char pad0[0x10]; int f10; int f14; int f18; int f1C; char pad20[0x50]; };
+struct V_8DE8 { int id; signed char owner; signed char slot; char pad[2]; };
+extern struct E_8DE8 D_0050A120_8DE8[] __asm__("D_0050A120");
+extern struct V_8DE8 D_0050A820_8DE8[] __asm__("D_0050A820");
+extern void f_9920_8DE8(int) __asm__("func_003B9920");
+extern int f_85F0_8DE8(int, int) __asm__("func_003B85F0");
+
+int func_003B8DE8_impl(int) __asm__("func_003B8DE8");
+int func_003B8DE8_impl(int id) {
+    struct E_8DE8 *e = &D_0050A120_8DE8[id];
+    struct V_8DE8 *v;
+    int i;
+    e->f14 = e->f14 + e->f18;
+    if (e->f18 < 0) {
+        if (!(e->f1C < e->f14)) {
+            e->f14 = e->f1C;
+            e->f18 = 0;
+        }
+    } else {
+        if (!(e->f14 < e->f1C)) {
+            e->f14 = e->f1C;
+            e->f18 = 0;
+        }
+    }
+    if (e->f14 < 0) {
+        f_9920_8DE8(e->f10);
+        return 1;
+    }
+    i = 0x17;
+    v = D_0050A820_8DE8;
+    do {
+        if (v->owner == id && v->id >= 0) {
+            f_85F0_8DE8(v->id, ((*(unsigned int *)((char *)e + (v->slot << 2) + 0x30) >> 10 & 0x7F) * *(short *)((char *)e + 0x16)) >> 7);
+        }
+        i--;
+        v++;
+    } while (i >= 0);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8EE8);
