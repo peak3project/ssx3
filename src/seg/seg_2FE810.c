@@ -281,7 +281,21 @@ int func_003FF160(void) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF1B0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF330);
+#ifdef SKIP_ASM
+typedef int i128 __attribute__((mode(TI)));
+int func_003FF330(i128 *src, int n) {
+    int c = 0;
+    while (n--) {
+        if (*(volatile unsigned *)0x10003800 & 0x10000000)
+            return c;
+        *(i128 *)0x10004000 = *src++;
+        c++;
+    }
+    return c;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF390);
 
