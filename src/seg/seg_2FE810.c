@@ -801,7 +801,20 @@ void func_004032A8(int *p) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_004032B8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403338);
+#ifdef SKIP_ASM
+extern void func_00405B48(unsigned);
+void func_00403338(int *p) {
+    int v = 0x70000000;
+    func_00405B48(1);
+    p[356] = v;
+    p[357] = 0x70001800;
+    p[436] = 0x70001B00;
+    p[437] = 0x70003300;
+    p[516] = 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403398);
 
