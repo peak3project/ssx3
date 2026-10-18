@@ -6,7 +6,22 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EE028);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE1B0);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE1E8);
+#ifdef SKIP_ASM
+extern int* func_002591E8(int);
+extern void func_00416210(void*, int, int);
+extern void func_003EE028(int*);
+int* func_003EE1E8(int a, int b, int c) {
+    int* p = func_002591E8(0x44);
+    func_00416210(p, 0, 0x44);
+    p[0] = a;
+    func_003EE028(p);
+    p[0] = b;
+    p[1] = c;
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE260);
