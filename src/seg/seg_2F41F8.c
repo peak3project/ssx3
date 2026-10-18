@@ -1074,7 +1074,21 @@ int func_003FA6E8(void) { return func_003FB300(); }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA708);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA7A0);
+#ifdef SKIP_ASM
+extern unsigned char D_004A4BE0[];
+extern int strlen(const char *);
+extern void func_00416210(char *, int, int);
+extern void func_0041605C(char *, char *, int);
+char *func_003FA7A0(char *dst, int unused, char *src) {
+    char *p = dst + 1;
+    func_00416210(dst, 0, 0x20);
+    *dst = D_004A4BE0[0];
+    func_0041605C(p, src, strlen(src));
+    return p + strlen(src);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA818);
 
