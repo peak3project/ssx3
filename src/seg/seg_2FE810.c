@@ -1144,7 +1144,22 @@ void func_0040A328(unsigned short a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A360);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A440);
+#ifdef SKIP_ASM
+extern int *D_005271E8[];
+extern int *D_005271EC[];
+extern int *D_005271F0[];
+void func_0040A440(unsigned a) {
+    int *p = (int *)(a | 0x20000000);
+    if (D_005271E8[0])
+        *D_005271E8[0] = p[0];
+    if (D_005271EC[0])
+        *D_005271EC[0] = p[1];
+    if (D_005271F0[0])
+        *D_005271F0[0] = p[36];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A498);
 
