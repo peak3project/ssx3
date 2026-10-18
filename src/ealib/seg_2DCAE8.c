@@ -5503,7 +5503,33 @@ unsigned char *func_003EAE68(unsigned char *a0, int *a1) {
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003EAEB8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003EB090);
+#ifdef SKIP_ASM
+extern void func_003EAEB8_B090(int *, unsigned long) __asm__("func_003EAEB8");
+unsigned long func_003EB090(int *t) {
+    unsigned lo = 0;
+    unsigned hi = 0xFFFFFFFF;
+    unsigned mid;
+    int d;
+    int b[12];
+    do {
+        mid = (lo + hi) >> 1;
+        func_003EAEB8_B090(b, mid);
+        d = b[5] - t[5];
+        if (d == 0) d = b[4] - t[4];
+        if (d == 0) d = b[3] - t[3];
+        if (d == 0) d = b[2] - t[2];
+        if (d == 0) d = b[1] - t[1];
+        if (d == 0) d = b[0] - t[0];
+        if (d == 0) goto done;
+        if (d > 0) hi = mid - 1;
+        else lo = mid + 1;
+    } while (hi >= lo);
+done:
+    return d ? 0 : mid;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003EB190);
