@@ -264,7 +264,23 @@ int func_00426008(int a0, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426020);
+#ifdef SKIP_ASM
+extern int *D_0052BCE4;
+extern int *D_0052BCEC;
+void func_00426020(int a0, int a1, int a2) {
+    int off = a0 << 3;
+    if (a0 < 0) {
+        a0 = (int)D_0052BCE4;
+    } else {
+        a0 = (int)D_0052BCEC;
+    }
+    off += a0;
+    ((int *)off)[0] = a1;
+    ((int *)off)[1] = a2;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426050);
