@@ -1205,7 +1205,8 @@ extern "C" void func_0018A8D0(sOptSound_18A8D0* self, char* widget, unsigned int
 }
 #endif
 
-//100%
+//99.86% - identical instructions and relocations at the same address; the assembler pads one short loop
+// (the struct copy loop) with a nop that the original build doesn't have
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsSound_updateWidget);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
