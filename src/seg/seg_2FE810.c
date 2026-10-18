@@ -190,7 +190,24 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FEBC0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FEBD8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FEC38);
+#ifdef SKIP_ASM
+extern int func_003FED08(void);
+extern unsigned short func_003FED60(void);
+extern void func_003FED50(int);
+int func_003FEC38(void) {
+    int r = 0;
+    int n = func_003FED08();
+    if (n < 4) {
+        if (n > 0) {
+            func_003FED50(func_003FED60());
+            r = 1;
+        }
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FEC88);
 
