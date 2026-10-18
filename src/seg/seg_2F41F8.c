@@ -847,7 +847,24 @@ int func_003F8000(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8048);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern char *func_003F7E90(char *, char *, int);
+extern int func_003F6E98(int);
+int func_003F8048(char *name) {
+    int r = 0;
+    if (name == 0) {
+        r = 7;
+    } else {
+        func_003F7E90(D_004A4BC4 + 0xA8, name, 0x11);
+        func_003F7E90(D_004A4BC4 + 0xB9, name + 0x11, 0x11);
+    }
+    if (r == 0) r = func_003F6E98(1);
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F80C0);
