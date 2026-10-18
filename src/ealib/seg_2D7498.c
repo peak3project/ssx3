@@ -2465,7 +2465,74 @@ unsigned int func_003DB4D0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB5C0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct P_B5C0 { unsigned short a; unsigned short b; };
+extern struct P_B5C0 D_00450B88_B5C0[32] __asm__("D_00450B88");
+extern int D_004A4858;
+extern unsigned int func_003DB4D0(void);
+
+int func_003DB5C0(int range, int key) {
+    int hist = range / 2;
+    int count = 0;
+    int done = 0;
+    int best = -1;
+    unsigned int res;
+    unsigned int cand;
+    int lim, head, j, found, k, flag;
+    unsigned short k16;
+
+    hist = hist < 11 ? hist : 10;
+    res = ((func_003DB4D0() >> 16) * range) >> 16;
+    if (key == -1) {
+        return res;
+    }
+    k16 = key;
+    do {
+        cand = ((func_003DB4D0() >> 16) * range) >> 16;
+        lim = hist;
+        lim = lim < 33 ? lim : 32;
+        head = D_004A4858;
+        found = -1;
+        j = 0;
+        k = 0;
+        flag = 0;
+        do {
+            if (j < lim) {
+                if (D_00450B88_B5C0[head].b == k16) {
+                    j++;
+                    if (D_00450B88_B5C0[head].a == cand) {
+                        flag = 1;
+                        found = j - 1;
+                    }
+                }
+            } else {
+                flag = 1;
+            }
+            head--;
+            k++;
+            if (head < 0) head += 32;
+            if (k >= 33) flag = 1;
+        } while (!flag);
+        if (found == -1) {
+            res = cand;
+            done = 1;
+        } else if (best < found) {
+            best = found;
+            res = cand;
+        }
+        count = count + 1;
+        if (count >= 32) done = 1;
+    } while (!done);
+    D_004A4858++;
+    if (D_004A4858 >= 32) D_004A4858 = 0;
+    D_00450B88_B5C0[D_004A4858].a = res;
+    D_00450B88_B5C0[D_004A4858].b = k16;
+    return cand;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB790);
