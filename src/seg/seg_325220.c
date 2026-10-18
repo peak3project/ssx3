@@ -229,7 +229,31 @@ INCLUDE_ASM("seg/seg_325220", func_00424B78);
 
 INCLUDE_ASM("seg/seg_325220", func_00424C50);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424CE8);
+#ifdef SKIP_ASM
+struct S_0052B3A8 {
+    int pad0;
+    unsigned idx;
+    struct { char a; char b; } e[512];
+};
+extern int D_00455170;
+extern int D_0052B3A0;
+extern struct S_0052B3A8 D_0052B3A8;
+extern void func_00423DD0(int);
+int func_00424CE8(unsigned a0) {
+    unsigned i;
+    if (a0 >= 0x80 || D_00455170 == 0) {
+        return -1;
+    }
+    i = D_0052B3A8.idx & 0x1FF;
+    D_0052B3A8.idx = i + 1;
+    D_0052B3A8.e[i].a = 1;
+    D_0052B3A8.e[i].b = a0;
+    func_00423DD0(D_0052B3A0);
+    return a0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00424D68);
 
