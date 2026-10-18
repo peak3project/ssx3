@@ -3074,7 +3074,38 @@ int func_003E32F8(int arg0) {
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3350);
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E33B0);
+#ifdef SKIP_ASM
+struct S_33B0 { int busy; int a; int b; int c; int d; };
+extern volatile struct S_33B0 D_00519C20_33B0 __asm__("D_00519C20");
+extern int D_00450C40_33B0 __asm__("D_00450C40");
+extern int D_00450C4C_33B0 __asm__("D_00450C4C");
+extern void func_00428168_33B0(int, int, int) __asm__("func_00428168");
+extern int func_004283A0_33B0(int, int, int) __asm__("func_004283A0");
+extern void iFILESYS_CommandCompleteCallback_33B0(int) __asm__("iFILESYS_CommandCompleteCallback");
+
+int func_003E33B0_impl(void) __asm__("func_003E33B0");
+int func_003E33B0_impl(void) {
+    volatile struct S_33B0 *s = &D_00519C20_33B0;
+    volatile struct S_33B0 *p;
+    int r;
+    int ok;
+    if (s->busy != 0) {
+        if (D_00450C40_33B0 != s->a || D_00450C4C_33B0 != s->c) {
+            func_00428168_33B0(s->a, s->c, 0);
+        }
+        p = &D_00519C20_33B0;
+        r = func_004283A0_33B0(p->a, p->b, p->d);
+        ok = r == p->d;
+        D_00450C40_33B0 = p->a;
+        D_00450C4C_33B0 = p->c + p->d;
+        D_00519C20_33B0.busy = 0;
+        iFILESYS_CommandCompleteCallback_33B0(ok);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3478);
