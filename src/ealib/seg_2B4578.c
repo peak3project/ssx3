@@ -10376,7 +10376,25 @@ void func_003D6360(void *arg0, int arg1, int arg2, int arg3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D6378);
+#ifdef SKIP_ASM
+extern int D_0044F438_6378[] __asm__("D_0044F438");
+extern int f_6378_cb(int) __asm__("func_002AF428");
+
+void func_003D6378(char *self, int a, int b) {
+    int t;
+    int q, d;
+    *(int *)(self + 8) = D_0044F438_6378[0];
+    self[0xD] = b;
+    t = f_6378_cb(*(int *)(self + 0x54));
+    self[0xC] = (int)(float)t;
+    self[0xE] = a;
+    self[0x34] = (int)(float)a;
+    d = 0x7F;
+    q = a / d;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D63F8);
