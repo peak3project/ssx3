@@ -197,7 +197,38 @@ void func_003EE878(int* p, int v) {
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE880);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE900);
+#ifdef SKIP_ASM
+extern int* func_002591E8(int);
+int func_003EE900(int* p, int n) {
+    int g = n > 0;
+    int cnt = 1;
+    int size;
+    int* mem;
+    int* item;
+    int* end;
+    if (g) {
+        cnt = n;
+    }
+    cnt++;
+    size = cnt * 12;
+    mem = func_002591E8(size);
+    if (!mem) {
+        return -1;
+    }
+    mem[0] = p[6];
+    p[6] = (int)mem;
+    item = mem + 3;
+    end = (int*)((char*)mem + size);
+    while (item != end) {
+        item[0] = p[7];
+        p[7] = (int)item;
+        item += 3;
+    }
+    return cnt - 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE9A0);
 
