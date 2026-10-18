@@ -521,7 +521,12 @@ extern int func_3FB2C8(void);
 int func_003FA6C8(void) { return func_003FB2C8(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA6E8);
+#ifdef SKIP_ASM
+extern int func_3FB300(void);
+int func_003FA6E8(void) { return func_003FB300(); }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA708);
 
