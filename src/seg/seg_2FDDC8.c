@@ -108,7 +108,14 @@ unsigned func_003FDF28(unsigned a) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FDF50);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FDF88);
+#ifdef SKIP_ASM
+extern int D_00451590[];
+int func_003FDF88(unsigned n) {
+    return n < 10 ? D_00451590[n] : 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FDFB0);
 
