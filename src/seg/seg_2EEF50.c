@@ -293,7 +293,26 @@ void func_003EF808(int a, int b, int c) {
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF828);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF940);
+#ifdef SKIP_ASM
+extern int func_003EF600(unsigned char);
+int func_003EF940(char* s) {
+    int i = 0;
+    int count = 0;
+    if (s[0]) {
+        do {
+            if (s[i] & 0x80) {
+                i += func_003EF600(s[i]);
+            } else {
+                i++;
+            }
+            count++;
+        } while (s[i]);
+    }
+    return count;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF9B8);
 
