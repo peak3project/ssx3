@@ -2,7 +2,24 @@
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003EFF40);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F00D8);
+#ifdef SKIP_ASM
+extern char D_004A4AD8[];
+extern int func_003F5910(int, int, int, int, int);
+extern void func_003EFF40(int*, char*, int*);
+void func_003F00D8(int* p, int a, int b) {
+    int t[4];
+    func_003F5910(p[1], a, 0, b, -1);
+    if (p[0x508 / 4]) {
+        t[1] = a;
+        t[3] = b;
+        t[2] = 0;
+        t[0] = 0;
+        func_003EFF40(p, D_004A4AD8, t);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0150);
