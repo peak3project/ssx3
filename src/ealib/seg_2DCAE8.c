@@ -155,7 +155,18 @@ void USTR_copy(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", USTR_ncopy);
+#ifdef SKIP_ASM
+void USTR_ncopy_impl(unsigned short *dst, unsigned short *src, int n) __asm__("USTR_ncopy");
+void USTR_ncopy_impl(unsigned short *dst, unsigned short *src, int n) {
+    int i;
+    for (i = 0; i < n && src[i] != 0; i++) {
+        dst[i] = src[i];
+    }
+    dst[i] = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBE90);
