@@ -681,7 +681,15 @@ char *func_0041EC08(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_0041EC18);
+#ifdef SKIP_ASM
+extern int D_00454944;
+extern void func_0041EA38(int, int, int);
+void func_0041EC18(int a, int b) {
+    func_0041EA38(D_00454944, a, b);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_0041EC48);
