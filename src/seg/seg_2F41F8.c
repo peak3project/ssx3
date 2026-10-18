@@ -280,7 +280,22 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F6670);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6700);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F67E0);
+#ifdef SKIP_ASM
+int func_003F67E0(int a, unsigned int mode, int *out) {
+    int r = 1;
+    int v = 0;
+    switch (mode) {
+    case 0x90: v = a & 1; break;
+    case 0x14: v = a & 2; break;
+    case 0x91: v = a & 4; break;
+    default: r = 0; break;
+    }
+    if (r) *out = v;
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6838);
 
