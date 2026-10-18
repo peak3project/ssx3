@@ -369,7 +369,25 @@ INCLUDE_ASM("seg/seg_325220", func_00426820);
 
 INCLUDE_ASM("seg/seg_325220", func_004268F0);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426A48);
+#ifdef SKIP_ASM
+struct N426A48 { int key; char pad[0x34]; struct N426A48 *next; };
+struct O426A48 { char pad[8]; struct N426A48 *head; char pad2[8]; struct O426A48 *next; };
+struct P426A48 { char pad[0x28]; struct O426A48 *list; };
+struct N426A48 *func_00426A48(int a0, struct P426A48 *a1) {
+    struct O426A48 *o;
+    struct N426A48 *n;
+    for (o = a1->list; o != 0; o = o->next) {
+        for (n = o->head; n != 0; n = n->next) {
+            if (n->key == a0) {
+                return n;
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00426A98);
 
