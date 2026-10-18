@@ -23,7 +23,23 @@ extern int func_003F39C8(void);
 int func_003F3A98(void) { return func_003F39C8(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3AB8);
+#ifdef SKIP_ASM
+extern int func_003F39C8(void);
+int func_003F3AB8(void) {
+    int *p;
+    int r = 0;
+    p = (int *)func_003F39C8();
+    if (p) {
+        while (((int (*)(int *))p[2])(p) == 0)
+            ;
+        r = p[1];
+        ((void (*)(int *))p[3])(p);
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3B18);
 
