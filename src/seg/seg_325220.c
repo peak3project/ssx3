@@ -281,7 +281,21 @@ void func_00425C28(int a0, ...) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425C60);
+#ifdef SKIP_ASM
+extern void (*D_00455178)(int);
+extern void func_00425358(int c);
+extern void func_00425638(int a0, char *ap);
+void func_00425C60(int a0, ...) {
+    char *ap;
+    void (*old)(int) = D_00455178;
+    D_00455178 = func_00425358;
+    ap = (char *)__builtin_next_arg() - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0);
+    func_00425638(a0, ap);
+    D_00455178 = old;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425CC0);
