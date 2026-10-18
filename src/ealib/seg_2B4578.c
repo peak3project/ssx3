@@ -264,7 +264,49 @@ void func_003B49B0(void) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B49D0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4D00);
+#ifdef SKIP_ASM
+int func_003B4D00(unsigned char *p, int *out) {
+    int r = 0;
+    unsigned char *q;
+    unsigned int c;
+    unsigned int n;
+    if (p) {
+        q = (((*p << 8) & 0x100) ? p + 5 : p + 2);
+        r = *q++;
+        r = (r << 8) + *q++;
+        r = (r << 8) + *q++;
+        if (out) {
+            for (;;) {
+                c = *q++;
+                if ((c & 0x80) == 0) {
+                    q++;
+                    q += c & 3;
+                } else if ((c & 0x40) == 0) {
+                    n = *q >> 6;
+                    q += 2;
+                    q += n;
+                } else if ((c & 0x20) == 0) {
+                    q += 3;
+                    q += c & 3;
+                } else {
+                    n = ((c & 0x1F) << 2) + 4;
+                    if (n <= 0x70) {
+                        q += n;
+                    } else {
+                        q += c & 3;
+                        n = q - p;
+                        *out = n;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4DD8);
