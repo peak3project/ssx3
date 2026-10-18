@@ -5038,7 +5038,31 @@ int func_003C5788(int arg0, int *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C57F0);
+#ifdef SKIP_ASM
+extern int func_003B4DD8_57F0(void *) __asm__("func_003B4DD8");
+
+int func_003C57F0(int which, int *out) {
+    char sp[0xE0];
+    *out = 0;
+    func_003B4DD8_57F0(sp);
+    switch (which) {
+    case 0:
+        *out = *(unsigned char *)(sp + 6);
+        break;
+    case 1:
+        *out = *(unsigned char *)(sp + 7);
+        break;
+    case 2:
+        *out = *(unsigned char *)(sp + 8);
+        break;
+    default:
+        return -5;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5880);
