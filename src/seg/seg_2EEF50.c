@@ -93,7 +93,35 @@ void func_003EE3E0(int* p, int* a, int b) {
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE468);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE480);
+#ifdef SKIP_ASM
+int func_003EE480(int* p, int* item) {
+    int i;
+    int v;
+    for (i = 0; i < p[6]; i++) {
+        if (((int*)p[16])[i] == (int)item) {
+            break;
+        }
+    }
+    if (i == p[6]) {
+        return 0;
+    }
+    if (i < p[5]) {
+        p[5]--;
+        p[2]++;
+    }
+    p[6]--;
+    for (; i < p[6]; i++) {
+        ((int*)p[16])[i] = ((int*)p[16])[i + 1];
+    }
+    v = *item;
+    *item = p[14];
+    p[14] = (int)item;
+    p[4]++;
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE550);
