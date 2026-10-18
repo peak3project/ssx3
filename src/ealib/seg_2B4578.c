@@ -1170,7 +1170,37 @@ void func_003B6AD8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6B10);
+#ifdef SKIP_ASM
+struct N_6B10 { char pad[0xC]; volatile int f0C; char pad2[4]; volatile unsigned f14; volatile unsigned f18; volatile unsigned f1C; };
+struct S_6B10 { char pad[0x11C]; struct N_6B10 *node; };
+
+void func_003B6B10(struct N_6B10 *node, unsigned n, struct S_6B10 *s) {
+    unsigned left = 0;
+    int i = 0;
+    for (;;) {
+        i++;
+        node = s->node;
+        if (i >= 0xC9) {
+            func_003B6A70(node->f0C);
+            return;
+        }
+        if (node->f1C < n) {
+            left = n - node->f1C;
+            n -= left;
+        }
+        node->f14 += n;
+        node->f1C -= n;
+        if (node->f14 >= node->f18) {
+            func_003B6A70(node->f0C);
+        }
+        if (left == 0) return;
+        n = left;
+        left = 0;
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6BD0);
 
