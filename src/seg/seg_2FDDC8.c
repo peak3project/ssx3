@@ -146,7 +146,18 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FE458);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE4D8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE558);
+#ifdef SKIP_ASM
+extern void func_003FDE30(int *, int);
+int func_003FE558(unsigned *p, int m) {
+    if (m != 1) {
+        func_003FDE30((int *)p, m);
+        return 0;
+    }
+    return (*p >> 8) & 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FE590);
 
