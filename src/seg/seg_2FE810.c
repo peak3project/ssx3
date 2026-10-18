@@ -1114,8 +1114,30 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040BD90);
 INCLUDE_ASM("seg/seg_2FE810", func_0040BE48);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BEF0);
+#ifdef SKIP_ASM
+extern void func_0040BD90(unsigned char *);
+void func_0040BEF0(unsigned char *p) {
+    p[3]++;
+    if (p[3] == 24) {
+        p[3] = 0;
+        func_0040BD90(p);
+    }
+}
+#endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BF20);
+#ifdef SKIP_ASM
+extern void func_0040BE48(unsigned char *);
+void func_0040BF20(unsigned char *p) {
+    if (p[3] == 0) {
+        p[3] = 23;
+        func_0040BE48(p);
+    } else {
+        p[3]--;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BF48);
 
