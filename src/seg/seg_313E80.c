@@ -97,7 +97,24 @@ unsigned char *func_00413B38(unsigned char *p, unsigned *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413B80);
+#ifdef SKIP_ASM
+unsigned char *func_00413B80(unsigned char *p, int *out) {
+    unsigned shift = 0;
+    int r = 0;
+    unsigned b;
+    do {
+        b = *p++;
+        r |= (b & 0x7F) << shift;
+        shift += 7;
+    } while (b & 0x80);
+    if (shift < 32 && (b & 0x40))
+        r |= -1 << shift;
+    *out = r;
+    return p;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00413BD0);
 
