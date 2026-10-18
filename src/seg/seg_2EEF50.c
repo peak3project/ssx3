@@ -11,7 +11,7 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EE1E8);
 #ifdef SKIP_ASM
 extern int* func_002591E8(int);
 extern void func_00416210(void*, int, int);
-extern void func_003EE028(int*);
+extern int func_003EE028(int*);
 int* func_003EE1E8(int a, int b, int c) {
     int* p = func_002591E8(0x44);
     func_00416210(p, 0, 0x44);
@@ -57,7 +57,27 @@ void func_003EE2B8(int* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE320);
+#ifdef SKIP_ASM
+typedef int (*func_003EE320_cb)(int, int, int);
+int* func_003EE320(int* p, int a) {
+    int* n;
+    if (!p[14] && func_003EE028(p) <= 0) {
+        return 0;
+    }
+    n = (int*)p[14];
+    p[14] = *n;
+    *n = a;
+    ((int*)p[16])[p[6]] = (int)n;
+    p[6]++;
+    p[4]--;
+    if (!p[9] || ((func_003EE320_cb)p[9])(p[8], p[7], *n) > 0) {
+        p[2]++;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE3E0);
