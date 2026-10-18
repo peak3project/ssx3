@@ -265,7 +265,19 @@ int func_00414B68(int *p, int flag) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00414B98);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414BD8);
+#ifdef SKIP_ASM
+extern int D_004999D0[];
+void func_00414BD8(int *p, int a, int b, int c) {
+    if (p != 0) {
+        p[3] = c;
+        p[0] = a;
+        p[2] = b;
+        p[1] = (int)D_004999D0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00414C00);
