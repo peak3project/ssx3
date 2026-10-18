@@ -340,7 +340,16 @@ void func_00402AF0(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402B00);
+#ifdef SKIP_ASM
+void func_00402B00(int *p, int a, int b, int c) {
+    int *q = (int *)p[16];
+    q[37] = a;
+    q[38] = b;
+    q[39] = c;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402B18);
 
