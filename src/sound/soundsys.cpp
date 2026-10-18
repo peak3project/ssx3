@@ -4669,7 +4669,81 @@ void func_0029D6D0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_0029D6E0);
+#ifdef SKIP_ASM
+extern "C" void func_00296E20(void* self, void* obj);
+extern "C" void func_00297438(void* self, void* obj);
+extern "C" void func_0029B3C0(void* self, void* obj);
+extern "C" int func_002B46E8(void* monitor);
+extern "C" void func_002B4708(void* monitor);
+extern "C" int func_002B4620(void* monitor);
+extern "C" int func_001547A0(void* iface, int mission);
+extern "C" int func_0028D960(void* self);
+extern "C" void func_0028CF98(void* self, int a1, int a2, int a3, int a4);
+extern "C" void func_0028D488(void* self);
+extern "C" int func_002B49E0(void*);
+extern "C" int func_0028DEF0_D6E0(void* self, int a1) __asm__("func_0028DEF0");
+extern sSndKey8 D_004A3648_D6E0[] __asm__("D_004A3648");
+extern sSndKey8 D_004A3650_D6E0[] __asm__("D_004A3650");
+extern sSndKey8 D_004A3658_D6E0[] __asm__("D_004A3658");
+
+struct sSndVE_D6E0 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+// PORT: 64-bit long sound keys
+// Mission start: resets the rider sounds, stops the front-end bank loops and picks the mission's music track.
+extern "C" void func_0029D6E0(char* self, int mission)
+{
+    char* bank = self + 0x118;
+    *(int*)(self + 0x5FD8) = 0;
+    func_00296E20(self, *(void**)((char*)func_0028B1D8() + 0x28));
+    func_00297438(self, *(void**)((char*)func_0028B1D8() + 0x28));
+    func_0029B3C0(self, 0);
+    if (func_002B46E8(bank) != 0) {
+        if (func_0028D960(self) != 0) {
+            sSndVE_D6E0* vt = *(sSndVE_D6E0**)(self + 0x5558);
+            vt[3].fn(bank + vt[3].delta, 8);
+        }
+        func_002B4708(bank);
+    }
+    if (*(int*)(self + 0x608C) == 2) {
+        return;
+    }
+    char*** mgr = (char***)(self + 0x118);
+    if ((unsigned int)(func_002B49E0(self + 0x118) - 1) < 3) {
+        func_002ADDE0(**mgr + 0x1D8, D_004A3648_D6E0[0].v);
+        func_002ADDE0(**mgr + 0x1D8, D_004A3650_D6E0[0].v);
+        func_002ADDE0(**mgr + 0x1D8, D_004A3658_D6E0[0].v);
+        func_0028DEF0_D6E0(self, 0x12);
+        func_0028D488(self);
+        func_0028CF98(self, 0, 0, -1, 0);
+        return;
+    }
+    int track = -1;
+    int kind = func_001547A0(cBE_getInterface_Fv(cBE_getBE(), 0xA), mission);
+    *(int*)(self + 0x5FD0) = kind;
+    switch (kind) {
+    case 1: track = 0x21; break;
+    case 2: track = 0x22; break;
+    case 3: track = 0x26; break;
+    case 0:
+    case 4: track = -1; break;
+    }
+    do {
+        if (func_002B4620(self + 0x118) != 0) {
+            sSndVE_D6E0* vt = *(sSndVE_D6E0**)(self + 0x5558);
+            char* mon = self + 0x118;
+            ((int (*)(void*, int))vt[4].fn)(mon + vt[4].delta, track);
+            *(int*)(self + 0x5FD4) = 1;
+        }
+        func_002B4708(self + 0x118);
+    } while (0);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_0029D8E0);
