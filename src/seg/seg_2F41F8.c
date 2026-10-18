@@ -331,7 +331,18 @@ void func_003F63E0(int a0) { D_00526038[0] = a0; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F63F0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F64E0);
+#ifdef SKIP_ASM
+unsigned char *func_003F64E0(int n) {
+    int off = n * 0x8C;
+    if (((unsigned char*)D_00525F80q.ents)[off + 0x88] == 1) {
+        ((unsigned char*)D_00525F80q.ents)[off + 0x88] = 0;
+        return (unsigned char*)D_00525F80q.ents + off;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6520);
