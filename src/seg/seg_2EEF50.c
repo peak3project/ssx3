@@ -175,7 +175,23 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EED08);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEDA0);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEE80);
+#ifdef SKIP_ASM
+int func_003EEE80(int* p, int key, int val) {
+    int k = key >= 0 ? key : -key;
+    int* n = ((int**)p[5])[k % p[4]];
+    while (n) {
+        if (n[2] == key) {
+            int old = n[1];
+            n[1] = val;
+            return old;
+        }
+        n = (int*)n[0];
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEEE8);
