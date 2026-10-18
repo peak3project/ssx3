@@ -13,7 +13,25 @@ INCLUDE_ASM("seg/seg_325220", func_00424230);
 
 INCLUDE_ASM("seg/seg_325220", func_004242C0);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424368);
+#ifdef SKIP_ASM
+extern int D_00455168;
+extern int func_00425260(void);
+extern int func_00425040(int, int);
+int func_00424368(int a0, int a1, int a2) {
+    if (a0 == 1 || a0 == 2) {
+        if (D_00455168 == 0) {
+            if (func_00425260() == 0) {
+                return -1;
+            }
+            D_00455168 = 1;
+        }
+        return func_00425040(a1, a2);
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004243E8);
