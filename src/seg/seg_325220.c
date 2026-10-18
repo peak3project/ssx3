@@ -1036,7 +1036,18 @@ void func_0042C628(void) {
 
 INCLUDE_ASM("seg/seg_325220", func_0042C630);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C6A0);
+#ifdef SKIP_ASM
+extern int D_00456538;
+extern int func_0042C510(int a0, int a1);
+extern void func_004239E0(int a0, int a1, int a2);
+void func_0042C6A0(int a0, int a1) {
+    int r = func_0042C510(a0, a1);
+    func_0042C628();
+    func_004239E0(r, a1, D_00456538 + 4);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C6E8);
 
