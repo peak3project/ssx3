@@ -122,7 +122,38 @@ INCLUDE_ASM("seg/seg_313E80", func_00413CD0);
 
 INCLUDE_ASM("seg/seg_313E80", func_00413F38);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413F80);
+#ifdef SKIP_ASM
+struct N13F80 {
+    int off;
+    int a;
+    unsigned addr;
+    int size;
+};
+struct L13F80 {
+    struct N13F80 **arr;
+    int cnt;
+};
+void func_00413F80(struct N13F80 *n, struct L13F80 *l, unsigned *lo, unsigned *hi) {
+    unsigned mn = *lo;
+    unsigned mx = *hi;
+    if (n->off != 0) {
+        do {
+            if (n->a != 0 && n->addr != 0) {
+                l->arr[l->cnt++] = n;
+                if (n->addr < mn)
+                    mn = n->addr;
+                if (mx < n->addr + n->size)
+                    mx = n->addr + n->size;
+            }
+            n = (struct N13F80 *)((char *)n + n->off + 4);
+        } while (n->off);
+    }
+    *lo = mn;
+    *hi = mx;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414008);
 
