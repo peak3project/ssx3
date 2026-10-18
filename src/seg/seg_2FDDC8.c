@@ -1,6 +1,21 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCDC8);
+#ifdef SKIP_ASM
+extern int func_003FC0D8(int);
+extern int func_003FA240(int);
+extern int func_003FB810(int);
+int func_003FCDC8(int a) {
+    int r;
+    if (func_003FC0D8(a)) {
+        r = func_003FB810(func_003FA240(a));
+    } else {
+        r = 2;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCE10);
 
