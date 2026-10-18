@@ -624,7 +624,20 @@ void func_00418CA8(int unused) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00418D08);
+#ifdef SKIP_ASM
+extern void func_00423DC0(int);
+extern int D_00454CA8;
+extern int D_00454CAC;
+extern int D_00455248;
+void func_00418D08(int unused) {
+    if (--D_00454CAC == 0) {
+        D_00454CA8 = -1;
+        func_00423DC0(D_00455248);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00418D48);
