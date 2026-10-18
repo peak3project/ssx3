@@ -42,7 +42,32 @@ INCLUDE_ASM("seg/seg_2F0F40", func_003F0658);
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0710);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F07A0);
+#ifdef SKIP_ASM
+struct S07A0Obj {
+    int pad[3];
+    void (*fn)(struct S07A0Obj*);
+};
+struct S07A0 {
+    struct S07A0Obj* obj;
+    int f4;
+};
+extern void func_003F0B50(struct S07A0*);
+extern void func_003F0BE0(struct S07A0*);
+extern void func_003F55B8(int);
+extern void func_00259210(struct S07A0*);
+void func_003F07A0(struct S07A0* p) {
+    if (p->obj) {
+        p->obj->fn(p->obj);
+        p->obj = 0;
+    }
+    func_003F0B50(p);
+    func_003F0BE0(p);
+    func_003F55B8(p->f4);
+    func_00259210(p);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0800);
