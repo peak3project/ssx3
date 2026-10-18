@@ -5148,7 +5148,39 @@ int func_003C5648(int *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5660);
+#ifdef SKIP_ASM
+extern int func_003B4DD8_5660(void *) __asm__("func_003B4DD8");
+
+int func_003C5660(int mode, int rate, int *out) {
+    char sp[0xE0];
+    func_003B4DD8_5660(sp);
+    switch (mode) {
+    case 0:
+        if (rate <= 24000) {
+            *out = 24000;
+        } else if (rate <= 36000) {
+            *out = 36000;
+        } else {
+            *out = 48000;
+        }
+        break;
+    case 1:
+        if (rate <= 24000) {
+            *out = 24000;
+        } else if (rate <= 36000) {
+            *out = 36000;
+        } else {
+            *out = 48000;
+        }
+        break;
+    default:
+        return -5;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5710);
