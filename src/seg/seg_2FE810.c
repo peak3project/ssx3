@@ -1409,7 +1409,14 @@ int *func_004128A8(void) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_004128E0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00412908);
+#ifdef SKIP_ASM
+extern int func_00418910(void);
+int func_00412908(void) {
+    return func_00418910();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00412928);
 
