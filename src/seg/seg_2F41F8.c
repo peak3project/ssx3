@@ -569,7 +569,20 @@ int func_003F8550(unsigned v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8588);
+#ifdef SKIP_ASM
+int func_003F8588(unsigned v) {
+    int i = 7;
+    v &= 0xFFFF;
+    if (!(v & 0x80)) {
+        do {
+            i--;
+        } while (i >= 0 && !(v & (1 << i)));
+    }
+    return i;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F85C0);
 
