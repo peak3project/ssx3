@@ -4622,7 +4622,36 @@ void func_003C3500(unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C35F8);
+#ifdef SKIP_ASM
+struct G_35F8 { char pad[0x2A]; unsigned short u2A; char pad2[0x42 - 0x2C]; unsigned char c42; char pad3[0x1F8 - 0x43]; short s1F8; char pad4[2]; int f1FC; };
+extern struct G_35F8 D_0050A8E8_35F8 __asm__("D_0050A8E8");
+extern short D_0050AB08_35F8 __asm__("D_0050AB08");
+extern short D_0050AAF4_35F8 __asm__("D_0050AAF4");
+extern int D_00515B50_35F8 __asm__("D_00515B50");
+extern void func_003CC848_35F8(void) __asm__("func_003CC848");
+extern void func_003CC630_35F8(int, int) __asm__("func_003CC630");
+
+void func_003C35F8(int arg0) {
+    func_003B58A0();
+    if (arg0 == 8) {
+        func_003C3500(D_0050AB08_35F8);
+    } else if (arg0 == 0x100) {
+        func_003C3450(D_0050AAF4_35F8);
+    } else if (arg0 == 4) {
+        if (D_0050A8E8_35F8.s1F8 != 1 || D_0050A8E8_35F8.c42 != 0) {
+            if (D_0050A8E8_35F8.c42 == 0) {
+                D_00515B50_35F8 = 0;
+            }
+            func_003CC848_35F8();
+        } else {
+            func_003CC630_35F8(D_0050A8E8_35F8.u2A, D_0050A8E8_35F8.f1FC);
+        }
+    }
+    func_003B58D8();
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C36A8);
