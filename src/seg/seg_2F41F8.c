@@ -885,7 +885,17 @@ unsigned int func_003FB318(unsigned int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB358);
+#ifdef SKIP_ASM
+extern unsigned int func_003FB318(unsigned int);
+void func_003FB358(unsigned int *t) {
+    unsigned int i;
+    for (i = 0; i < 256; i++) {
+        *t++ = func_003FB318(i);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB3A0);
 
