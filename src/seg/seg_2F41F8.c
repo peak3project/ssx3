@@ -518,7 +518,18 @@ int func_003F7820(void) { return func_003F77F8(); }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7840);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7890);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern void func_003F7958b(int) __asm__("func_003F7958");
+typedef struct { char c[17]; } S17;
+void func_003F7890(void) {
+    S17 *dst = (S17 *)(*(char **)(D_004A4BC4 + 0xCC) + 0x11);
+    *dst = **(S17 **)(D_004A4BC4 + 0x144);
+    func_003F7958b(0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F78E0);
