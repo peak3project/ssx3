@@ -53,7 +53,40 @@ int *func_00412F18(void) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00412F58);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413068);
+#ifdef SKIP_ASM
+struct FB {
+    unsigned m : 23;
+    unsigned e : 8;
+    unsigned s : 1;
+};
+void func_00413068(float *f, int *o) {
+    struct FB *b = (struct FB *)f;
+    unsigned m = b->m;
+    int e = b->e;
+    o[1] = b->s;
+    if (e == 0) {
+        o[0] = 2;
+        return;
+    }
+    if (e == 0xFF) {
+        if (m == 0) {
+            o[0] = 4;
+            return;
+        }
+        if (m & 0x100000)
+            o[0] = 1;
+        else
+            o[0] = 0;
+        o[3] = m;
+        return;
+    }
+    o[2] = e - 0x7F;
+    o[0] = 3;
+    o[3] = (m << 7) | 0x40000000;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_004130F8);
 
