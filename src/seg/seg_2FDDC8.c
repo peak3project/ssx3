@@ -547,12 +547,29 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_00402BB0);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402C08);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402C30);
+#ifdef SKIP_ASM
+struct FA_402C30 { int (*fn)(int *, int *, int); int arg; };
+struct T_402C30 { char pad[12]; struct FA_402C30 e[1]; };
+int func_00402C30(int *p, int *v) {
+    int r = 0;
+    if (p) {
+        struct T_402C30 *q = (struct T_402C30 *)p[16];
+        if (q) {
+            if (q->e[*v].fn) {
+                r = q->e[*v].fn(p, v, q->e[*v].arg);
+            }
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00402C80);
 #ifdef SKIP_ASM
-extern void func_00402C30(int *, int *);
+extern int func_00402C30(int *, int *);
 int func_00402C80(int *p) {
     int v[8];
     v[0] = 1;
