@@ -977,7 +977,43 @@ int FILESYS_bypassqueuefileinfo(char *name, int flags, int *out) {
 void func_003DE668(void) {
 }
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DE670);
+#ifdef SKIP_ASM
+typedef struct { unsigned int id : 20; unsigned int st : 4; unsigned int idx : 8; char pad[0x2C]; } E_E670;
+struct G_E670 { int f0; char pad[0x10]; int mtx; char pad2[0x28 - 0x18]; char *f28; };
+extern struct G_E670 D_00519AB0_E670 __asm__("D_00519AB0");
+extern int D_00450C0C_E670 __asm__("D_00450C0C");
+extern void MUTEX_lock_E670(void *) __asm__("MUTEX_lock");
+extern void MUTEX_unlock_E670(void *) __asm__("MUTEX_unlock");
+
+E_E670 *func_003DE670_impl(void) __asm__("func_003DE670");
+#define EP_E670(o) ((E_E670 *)((o) + (int)D_00519AB0_E670.f28))
+E_E670 *func_003DE670_impl(void) {
+    int i = 0;
+    int t;
+    MUTEX_lock_E670(&D_00519AB0_E670.mtx);
+    for (; i < D_00519AB0_E670.f0; i++) {
+        if (EP_E670(i * 0x30)->st == 0) {
+            EP_E670(i * 0x30)->st = 1;
+            EP_E670(i * 0x30)->idx = i;
+            t = D_00450C0C_E670;
+            EP_E670(i * 0x30)->id = t;
+            D_00450C0C_E670 = t + 1;
+            if (t + 1 > 0xFFFFF) {
+                D_00450C0C_E670 = 1;
+            }
+            break;
+        }
+    }
+    MUTEX_unlock_E670(&D_00519AB0_E670.mtx);
+    if (i == D_00519AB0_E670.f0) {
+        while (1) {
+        }
+    }
+    return (E_E670 *)(D_00519AB0_E670.f28 + i * 0x30);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DE7B0);
