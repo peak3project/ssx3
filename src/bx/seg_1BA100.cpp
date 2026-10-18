@@ -653,7 +653,20 @@ extern "C" int func_002B9E20(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9E28);
+#ifdef SKIP_ASM
+struct Q_9E28 { int a; int *data; int tail; int head; };
+extern "C" int func_002B9E28(char *self) {
+    int r;
+    if (*(int *)(self + 4) != 0) {
+        Q_9E28 *q = (Q_9E28 *)(self + 0x18C);
+        if (*(int *)(self + 0x194) == *(int *)(self + 0x198)) r = -1;
+        else r = q->data[q->head];
+    } else r = -1;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9E70);
