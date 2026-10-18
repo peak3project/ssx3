@@ -675,7 +675,15 @@ int func_003FB278(void) { return 1; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB280);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB2C8);
+#ifdef SKIP_ASM
+extern char *func_003FB5E8(void);
+void func_003FB2C8(char **a) {
+    char *r = func_003FB5E8();
+    if (a) *a = r;
+}
+#endif
 
 void func_003FB2F8(void) {
 }
