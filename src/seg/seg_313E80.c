@@ -72,7 +72,34 @@ sat:
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004139F8);
+#ifdef SKIP_ASM
+unsigned func_004139F8(float x) {
+    int o[4];
+    float f = x;
+    unsigned c;
+    func_00413068(&f, o);
+    c = o[0];
+    if ((c ^ 2) == 0)
+        return 0;
+    if (c < 2)
+        return 0;
+    if (o[1])
+        return 0;
+    if ((c ^ 4) == 0)
+        goto sat;
+    if (o[2] < 0)
+        return 0;
+    if (o[2] >= 0x20) {
+sat:
+        return 0xFFFFFFFF;
+    }
+    if (o[2] >= 0x1F)
+        return (unsigned)o[3] << (o[2] - 0x1E);
+    return (unsigned)o[3] >> (0x1E - o[2]);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00413A90);
