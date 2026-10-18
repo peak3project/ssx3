@@ -5246,7 +5246,28 @@ void func_003C6040(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C60E0);
+#ifdef SKIP_ASM
+struct G_60E0 {
+    char pad[0x174];
+    signed char f174;
+    char pad175[3];
+    signed char f178;
+    char pad179[0x19C - 0x179];
+    void (*fn[8])(void);
+};
+extern struct G_60E0 D_0050A8E8_60E0 __asm__("D_0050A8E8");
+
+void func_003C60E0(void) {
+    int i;
+    if (D_0050A8E8_60E0.f174 != 0) {
+        for (i = 0; i < D_0050A8E8_60E0.f178; i++) {
+            D_0050A8E8_60E0.fn[i]();
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6158);
 
