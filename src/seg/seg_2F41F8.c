@@ -328,7 +328,12 @@ extern int func_003F7920(int);
 int func_003F78E0(void) { return func_003F7920(0); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7900);
+#ifdef SKIP_ASM
+extern int func_003F7958(int);
+int func_003F7900(void) { return func_003F7958(0); }
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7920);
 
