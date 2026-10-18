@@ -292,7 +292,25 @@ void func_003F1578(char* p, const char* val, const char* key) {
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F15C8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F16D8);
+#ifdef SKIP_ASM
+extern char D_004A4B70[];
+extern char D_004A4B78[];
+extern int D_004A4AE8[];
+extern char* cDirtysock_tag_TagFieldFind(const char* tag, const char* key);
+extern int cDirtysock_tag_TagFieldGetString(const char* data, char* buf, int len, const char* defval);
+int func_003F16D8(int* p, char* tag, int a, int b, int c) {
+    if (cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(tag, D_004A4B70), 0, 0, (char*)D_004A4AE8) < 0x40) {
+        if (cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(tag, D_004A4B78), 0, 0, (char*)D_004A4AE8) <= 0) {
+            func_003F0658(p, 2, a, b, c);
+            func_003F00D8(p, 0x53454E44, (int)tag);
+            return 0;
+        }
+    }
+    return -3;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F17C8);
