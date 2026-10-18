@@ -7032,7 +7032,30 @@ void func_003C9938(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9960);
+#ifdef SKIP_ASM
+extern int func_003CD1A8_9960(int) __asm__("func_003CD1A8");
+extern void *func_003CDDB8_9960(int) __asm__("func_003CDDB8");
+extern int func_003CE0E0_9960(int) __asm__("func_003CE0E0");
+extern signed char func_003CE118_9960(int) __asm__("func_003CE118");
+extern int func_003CE378_9960(int) __asm__("func_003CE378");
+extern int func_003C96F0_9960[] __asm__("func_003C96F0");
+extern int func_003C9938_9960[] __asm__("func_003C9938");
+
+void func_003C9960(void *arg0, void *arg1) {
+    (*(int **)((char *)(arg0) + 0)) = func_003C96F0_9960;
+    (*(int *)((char *)(arg0) + 0x24)) = func_003CE378_9960(func_003CE0E0_9960((*(int *)((char *)(arg1) + 0x1C))));
+    (*(signed char *)((char *)(arg0) + 0x38)) = func_003CE118_9960((*(int *)((char *)(arg1) + 0x1C)));
+    (*(int *)((char *)(arg0) + 0x1C)) = 0;
+    (*(short *)((char *)(arg0) + 0x2C)) = 0;
+    (*(int *)((char *)(arg0) + 0x30)) = (int)(*(int *)((char *)(arg1) + 0x24));
+    (*(int *)((char *)(arg0) + 0x20)) = (int)(*(int *)((char *)(arg1) + 0xC));
+    (*(int **)((char *)(arg0) + 4)) = func_003C9938_9960;
+    (*(void **)((char *)(arg0) + 0x34)) = func_003CDDB8_9960(func_003CD1A8_9960(0xD68));
+    (*(int *)((char *)(arg0) + 0x28)) = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C99F8);
