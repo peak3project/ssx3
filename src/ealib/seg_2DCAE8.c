@@ -4924,7 +4924,18 @@ void func_003E67F8(int *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6878);
+#ifdef SKIP_ASM
+struct S_6878 { int f0; int f4; char pad[0x158 - 8]; int f158; };
+
+int func_003E6878(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, struct S_6878 *self) {
+    char *src = (char *)((self->f158 & 0x0FFFFFFF) | 0x20000000);
+    __builtin_memcpy((char *)self + 8, src, 0x150);
+    self->f4 = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6958);
