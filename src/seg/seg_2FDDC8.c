@@ -1272,7 +1272,17 @@ int func_00412888(void) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_004128A8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_004128E0);
+#ifdef SKIP_ASM
+extern int func_004188C0(void);
+extern void func_00412800(void) __attribute__((noreturn));
+void func_004128E0(void) {
+    if (func_004188C0() == 0) {
+        func_00412800();
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00412908);
