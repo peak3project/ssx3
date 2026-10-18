@@ -26,7 +26,14 @@ int func_003FD1D8(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD1F0);
+#ifdef SKIP_ASM
+int func_003FD1F0(int *p, int n) {
+    int base = *p;
+    return base + *(int *)(base + 0x20) + n * 40;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD210);
 
