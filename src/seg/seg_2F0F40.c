@@ -88,7 +88,7 @@ struct S07A0 {
     struct S07A0Obj* obj;
     int f4;
 };
-extern void func_003F0B50(struct S07A0*);
+extern int func_003F0B50(struct S07A0*);
 extern void func_003F0BE0(struct S07A0*);
 extern void func_003F55B8(int);
 extern void func_00259210(struct S07A0*);
@@ -125,7 +125,27 @@ INCLUDE_ASM("seg/seg_2F0F40", func_003F0818);
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F08E8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0B50);
+#ifdef SKIP_ASM
+extern int D_004A4AE8[];
+extern void func_003F5738(int);
+int func_003F0B50(struct S07A0* p) {
+    if (p->obj) {
+        p->obj->fn(p->obj);
+        p->obj = 0;
+    }
+    func_003F00D8((int*)p, 0x44495343, (int)D_004A4AE8);
+    func_003F5738(p->f4);
+    if (((int*)p)[2] == 5) {
+        func_003F0610((int*)p, 6);
+    }
+    func_003F0610((int*)p, 0);
+    ((int*)p)[0x4C4 / 4] = 0;
+    func_003F0BE0(p);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0BE0);
 
