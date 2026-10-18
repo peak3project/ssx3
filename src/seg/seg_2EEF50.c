@@ -655,7 +655,37 @@ char* func_003EFC68(char* s, int* out) {
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFCD8);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFD30);
+#ifdef SKIP_ASM
+extern unsigned int func_003EFCD8(unsigned int, unsigned int*, unsigned int*);
+extern void func_003F30F0(void*);
+extern void func_003F3128(void*, unsigned int, int);
+extern void func_003F31F8(void*, int, int);
+extern unsigned int D_004A4A98;
+extern unsigned int D_004A4A9C;
+void func_003EFD30(unsigned int a, int b, int c, int d) {
+    char buf[96];
+    unsigned int lo, hi;
+    unsigned int orig;
+    func_003F30F0(buf);
+    orig = a;
+    func_003F3128(buf, orig, b);
+    if (orig) {
+        do {
+            a = func_003EFCD8(a, &lo, &hi);
+            if (!lo || !hi) {
+                break;
+            }
+            if (lo >= D_004A4A98 && hi < D_004A4A9C && lo < hi) {
+                func_003F3128(buf, lo, hi - lo);
+            }
+        } while (a);
+    }
+    func_003F3128(buf, orig, b);
+    func_003F31F8(buf, c, d);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFE20);
 
