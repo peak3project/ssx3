@@ -28,7 +28,14 @@ void func_003FD100(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD128);
+#ifdef SKIP_ASM
+extern int (*D_00451534[])(void);
+void func_003FD128(void) {
+    D_00451534[0]();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD150);
 
