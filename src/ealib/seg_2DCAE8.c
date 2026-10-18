@@ -3072,7 +3072,26 @@ int func_003E32F8(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3350);
+#ifdef SKIP_ASM
+struct S_3350 { int a, b, c, d, e; };
+extern volatile struct S_3350 D_00519C20_3350 __asm__("D_00519C20");
+extern int func_003E4648(int);
+
+int func_003E3350(int arg0, int arg1, int arg2, int arg3) {
+    int lo = arg0 & 0xFFFFFF;
+    if ((arg0 >> 24) == 1) {
+        return func_003E4648(lo);
+    }
+    D_00519C20_3350.a = 1;
+    D_00519C20_3350.b = lo;
+    D_00519C20_3350.c = arg1;
+    D_00519C20_3350.d = arg2;
+    D_00519C20_3350.e = arg3;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E33B0);
