@@ -934,7 +934,14 @@ int func_0042C130(int *a0, int *a1, unsigned int a2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C168);
+#ifdef SKIP_ASM
+int *func_0042C168(int *a0, int *a1, int a2) {
+    while (*a0 != a2 && a0 < a1) a0++;
+    return a0 < a1 ? a0 : 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C1A8);
 
