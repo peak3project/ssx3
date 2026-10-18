@@ -715,7 +715,17 @@ extern int D_00451518[];
 int func_003FB480(void) { return D_00451518[0] != 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB490);
+#ifdef SKIP_ASM
+extern int D_00451518[];
+int func_003FB490(void) {
+    unsigned long long v = 0xFFFFFFFF;
+    if (D_00451518[0] == 0) return 6;
+    D_00451518[3] = v;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB4C0);
 
