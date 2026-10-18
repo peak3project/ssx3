@@ -470,7 +470,20 @@ int func_00414C40(int a, int b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414C70);
+#ifdef SKIP_ASM
+extern int func_00414B98();
+int func_00414C70(int *p, int a, int b, int c, int d, int e) {
+    int *o;
+    short *vt;
+    if (func_00414B98(p, a) != 0)
+        return c;
+    o = (int *)p[2];
+    vt = (short *)o[1];
+    return ((int (*)(int *, int, int, int, int, int))((int *)vt)[5])((int *)((char *)o + vt[8]), a, b, c, d, e);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00414D08);
 
