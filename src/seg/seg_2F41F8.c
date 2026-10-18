@@ -950,7 +950,19 @@ void func_003FB358(unsigned int *t) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB3A0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB430);
+#ifdef SKIP_ASM
+extern int D_00451518[];
+extern int func_00266760(int, char *, int, int);
+int func_003FB430(void) {
+    int *p = D_00451518;
+    if (D_00451518[0] == 0) return 6;
+    func_00266760(p[4], (char *)p[0], 0x400, 4);
+    D_00451518[0] = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB480);
