@@ -1037,7 +1037,18 @@ void func_0040A320(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A328);
+#ifdef SKIP_ASM
+extern int D_004533C8[];
+extern void func_0040A320(int, int, int);
+extern void func_00423B20(int, void (*)(int, int, int), int);
+extern void func_00423DE0(int);
+void func_0040A328(unsigned short a) {
+    func_00423B20(a, func_0040A320, D_004533C8[0]);
+    func_00423DE0(D_004533C8[0]);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A360);
 
