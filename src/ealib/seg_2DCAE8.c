@@ -5871,7 +5871,51 @@ void func_003E8688(struct O_8688 *self, unsigned int idx, int x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8778);
+#ifdef SKIP_ASM
+struct Sl_8778 { int f0; int f4; int f8; int fC; int f10; };
+struct S_8778 { char pad[0x310]; struct Sl_8778 slots[8]; };
+extern int func_003EEC88_8778(int, char *) __asm__("func_003EEC88");
+extern void *func_002591E8_8778(int) __asm__("func_002591E8");
+extern void *func_00416210_8778(void *, int, int) __asm__("func_00416210");
+extern char *strcpy_8778(char *, char *) __asm__("strcpy");
+extern int func_003EE320_8778(int, void *) __asm__("func_003EE320");
+extern void func_003EEB30_8778(int, void *, int) __asm__("func_003EEB30");
+
+int func_003E8778_impl(struct S_8778 *self, unsigned int idx, char *a2) __asm__("func_003E8778");
+int func_003E8778_impl(struct S_8778 *self, unsigned int idx, char *a2) {
+    int r;
+    int x;
+    char *y;
+    if (idx < 8) {
+        if (self->slots[idx].f0 == 0) return -1;
+        if (idx == 3) {
+            char *p;
+            if (func_003EEC88_8778(self->slots[3].f0, a2) != 0) return 0;
+            p = func_002591E8_8778(0x138);
+            func_00416210_8778(p, 0, 0x138);
+            strcpy_8778(p + 8, a2);
+            r = func_003EE320_8778(self->slots[3].f4, p);
+            x = self->slots[3].f0;
+            y = p + 8;
+        } else if (idx - 4 < 4) {
+            char *q;
+            if (func_003EEC88_8778(self->slots[idx].f0, a2 + 8) != 0) return 0;
+            q = func_002591E8_8778(0xA8);
+            __builtin_memcpy(q, a2, 0xA8);
+            r = func_003EE320_8778(self->slots[idx].f4, q);
+            x = self->slots[idx].f0;
+            y = q + 8;
+        } else {
+            return -1;
+        }
+        func_003EEB30_8778(x, y, r);
+        return 1;
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E8968);
