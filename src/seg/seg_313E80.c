@@ -588,7 +588,20 @@ int func_004178A8(void) {
 
 INCLUDE_ASM("seg/seg_313E80", func_004178B0);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00417948);
+#ifdef SKIP_ASM
+extern long func_0041FD10(int *, int, int, int);
+long func_00417948(int *f, int a, int b) {
+    int r = func_0041FD10((int *)f[0x54 / 4], ((short *)f)[7], a, b);
+    if (r >= 0) {
+        f[0x50 / 4] += r;
+    } else {
+        ((unsigned short *)f)[6] &= 0xEFFF;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_004179B0);
 
@@ -989,7 +1002,7 @@ INCLUDE_ASM("seg/seg_313E80", func_0041FD10);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern int func_004243E8(int, int, int);
-int func_0041FD10(int *err, int a, int b, int c) {
+long func_0041FD10(int *err, int a, int b, int c) {
     int r;
     D_004A5BB8 = 0;
     r = func_004243E8(a, b, c);
@@ -1043,7 +1056,7 @@ struct F41FF40 {
     int pad[0x54 / 4 - 12];
     int ent;
 };
-extern char func_00417948[], func_004179B0[], func_00417A30[];
+extern long func_00417948(); extern int func_004179B0(), func_00417A30();
 void func_0041FF40(struct F41FF40 *f, short flags, short file, int ent) {
     f->p = 0;
     f->r = 0;
