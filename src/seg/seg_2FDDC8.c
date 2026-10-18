@@ -6,7 +6,21 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FCE10);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCF00);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCF98);
+#ifdef SKIP_ASM
+extern int func_003FB898(int, int);
+int func_003FCF98(int a, int *out) {
+    int r;
+    if (out) {
+        *out = func_003FB898(a, 2);
+        r = 0;
+    } else {
+        r = 4;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCFD8);
 
