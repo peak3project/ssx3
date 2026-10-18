@@ -321,7 +321,23 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FF130);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FF150);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FF160);
+#ifdef SKIP_ASM
+int func_003FF160(void) {
+    int v = *(volatile int *)0x10003800;
+    if (!(v & 3)) {
+        return 0;
+    }
+    if (v & 0x700) {
+        return 1;
+    }
+    if (v & 0xC) {
+        return 2;
+    }
+    return (v & 0x3000) ? 3 : 4;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FF1B0);
 
