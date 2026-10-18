@@ -78,7 +78,24 @@ void func_00413AC8(int a, int b, int c, int d) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00413AF8);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413B38);
+#ifdef SKIP_ASM
+unsigned char *func_00413B38(unsigned char *p, unsigned *out) {
+    unsigned b = *p++;
+    unsigned r = b & 0x7F;
+    int shift = 0;
+    if (b & 0x80) {
+        do {
+            b = *p++;
+            shift += 7;
+            r |= (b & 0x7F) << shift;
+        } while (b & 0x80);
+    }
+    *out = r;
+    return p;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00413B80);
 
