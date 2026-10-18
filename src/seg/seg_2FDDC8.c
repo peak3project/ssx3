@@ -1364,7 +1364,18 @@ int func_00412E10(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00412E38);
+#ifdef SKIP_ASM
+extern char D_004998B8[];
+extern void operator_delete__FPi(void *);
+void func_00412E38(int *p, int f) {
+    *p = (int)D_004998B8;
+    if (f & 1) {
+        operator_delete__FPi(p);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00412E68);
