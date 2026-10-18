@@ -8121,7 +8121,17 @@ int func_003CEE88(S_EE88 *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CEED0);
+#ifdef SKIP_ASM
+extern void func_003CE7C0_EED0(char *, int) __asm__("func_003CE7C0");
+
+void func_003CEED0(char *arg0, int *arg1) {
+    float a = (float)(arg1[0] >> 8);
+    *(float *)(arg0 + 0x118) = (a + a) / (float)(arg1[1] >> 8);
+    func_003CE7C0_EED0(arg0 + 0x20, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CEF20);
