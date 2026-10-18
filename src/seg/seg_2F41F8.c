@@ -336,6 +336,7 @@ extern char *D_004A4BC4;
 int func_003F8200(int *a0) { *a0 = *(int *)(D_004A4BC4 + 0x104); return 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8218);
 #ifdef SKIP_ASM
 extern char *D_004A4BC4;
