@@ -1282,7 +1282,20 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_004126A0);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_00412740);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_00412778);
+#ifdef SKIP_ASM
+struct S412778 { int a, b, c; long d; };
+extern void func_00411B08(struct S412778 *);
+void func_00412778(int a, int b, int c, long d) {
+    struct S412778 s;
+    s.a = a;
+    s.b = b;
+    s.c = c;
+    s.d = d;
+    func_00411B08(&s);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_004127A8);
 
