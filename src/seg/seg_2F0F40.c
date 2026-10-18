@@ -37,7 +37,30 @@ INCLUDE_ASM("seg/seg_2F0F40", func_003F0198);
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F02D0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0568);
+#ifdef SKIP_ASM
+extern char D_004A4B18[];
+extern char D_004A4B10[];
+extern char D_004A4B08[];
+extern int cDirtysock_tag_TagFieldSetFourCC(char* dst, int len, const char* key, int val);
+extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key, const char* val);
+void func_003F0568(char* p) {
+    char buf[0x200];
+    if (*(int*)(p + 0x1C)) {
+        cDirtysock_tag_TagFieldSetFourCC(p + 0x140, 0x100, D_004A4B18, *(int*)(p + 0x1C));
+    }
+    cDirtysock_tag_TagFieldDupl(buf, 0x200, p + 0x240);
+    if (p[0x140]) {
+        cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A4B10, p + 0x140);
+    }
+    if (p[0x40]) {
+        cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A4B08, p + 0x40);
+    }
+    func_003F00D8((int*)p, 0x50534554, (int)buf);
+    *(int*)(p + 0x2C0) = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0610);
