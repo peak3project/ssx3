@@ -7068,7 +7068,16 @@ int func_003CA990(S_A990 *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CA9D8);
+#ifdef SKIP_ASM
+extern void func_003CE7C0_A9D8(char *, int) __asm__("func_003CE7C0");
+
+void func_003CA9D8(char *arg0, int *arg1) {
+    *(float *)(arg0 + 0x114) = (float)(arg1[0] >> 7) / (float)(arg1[1] >> 8);
+    func_003CE7C0_A9D8(arg0 + 0x20, 3);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAA28);
 
