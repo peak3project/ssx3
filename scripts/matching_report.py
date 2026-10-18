@@ -62,19 +62,24 @@ def report_matched_functions(report):
     return matched
 
 
-def diff_unit(target_path, base_path, tmp_path):
-    result = subprocess.run(
-        [str(OBJDIFF_CLI), "diff", "-1", target_path, "-2", base_path, "-o", str(tmp_path), "--format", "json"],
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0 or not tmp_path.exists():
-        return None
-    try:
-        data = json.loads(tmp_path.read_text())
-    except Exception:
-        return None
-    return data
+def diff_unit(target_path, base_path, tmp_path, attempts=3):
+    # Retried: on some filesystems (e.g. a Windows drive under WSL) writing or reading the temp file
+    # occasionally fails, and a silently skipped unit would make the report undercount.
+    for _ in range(attempts):
+        if tmp_path.exists():
+            tmp_path.unlink()
+        result = subprocess.run(
+            [str(OBJDIFF_CLI), "diff", "-1", target_path, "-2", base_path, "-o", str(tmp_path), "--format", "json"],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0 or not tmp_path.exists():
+            continue
+        try:
+            return json.loads(tmp_path.read_text())
+        except Exception:
+            continue
+    return None
 
 
 def collect_functions(units):
@@ -90,6 +95,7 @@ def collect_functions(units):
 
         data = diff_unit(target_path, base_path, tmp_path)
         if data is None:
+            print(f"WARNING: objdiff diff failed for {u['name']}; it is missing from the report", file=sys.stderr)
             continue
 
         for sym in data.get("left", {}).get("symbols", []):
