@@ -1018,7 +1018,21 @@ int func_0042C360(int *a0, int *a1, unsigned int a2) {
 
 INCLUDE_ASM("seg/seg_325220", func_0042C398);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C3A8);
+#ifdef SKIP_ASM
+extern void func_00423E50(unsigned *p);
+extern void func_00423E40(unsigned *p);
+int func_0042C3A8(void) {
+    unsigned a[2];
+    func_00423E50(&a[0]);
+    a[1] = (a[0] & 0xFFFF1FFF) | 0x2000;
+    func_00423E40(&a[1]);
+    func_00423E50(&a[1]);
+    func_00423E40(&a[0]);
+    return ((a[1] >> 13) & 7) == 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C410);
 
