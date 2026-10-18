@@ -1293,7 +1293,25 @@ extern int func_003FBD70(int, int, int, int);
 int func_003FC4C8(int a, int b, int c) { return func_003FBD70(a, b, c, 4); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC4E8);
+#ifdef SKIP_ASM
+extern int D_004A5B20;
+extern int func_003F9B38(char *);
+extern int func_003FB810b(int) __asm__("func_003FB810");
+extern void func_003FBBE0b(char *) __asm__("func_003FBBE0");
+int func_003FC4E8(char *x) {
+    char *p;
+    func_003FBBE0b(x + 0x60);
+    *(int *)((char *)D_004A5B20 + 0x60) = *(int *)(x + 0x60);
+    p = (char *)D_004A5B20;
+    *(int *)(p + 0x74) = 3;
+    *(int *)(p + 0x78) = 3;
+    *(int *)(p + 0x98) = 0;
+    *(int *)(p + 0x94) = 0;
+    return func_003FB810b(func_003F9B38(x));
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC548);
 
