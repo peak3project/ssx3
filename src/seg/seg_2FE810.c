@@ -304,7 +304,14 @@ INCLUDE_ASM("seg/seg_2FE810", func_00400E30);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00400EA8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004011C0);
+#ifdef SKIP_ASM
+extern int func_00400EA8(int, int, int);
+int func_004011C0(int a, int b) {
+    return func_00400EA8(a, b, 0);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004011E0);
 
