@@ -1059,7 +1059,19 @@ int func_0040CF68(void) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040CF88);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040D010);
+#ifdef SKIP_ASM
+extern char *D_00529004[];
+int func_0040D010(int i) {
+    int *p = (int *)(D_00529004[0] + i * 0x38 + 0x10);
+    p[9] = 0;
+    p[7] = 0;
+    p[8] = 0;
+    p[1] = 0;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_0040D040);
 
