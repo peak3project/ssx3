@@ -10155,7 +10155,37 @@ int func_003D4A50(unsigned arg0) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4B00);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4BB0);
+#ifdef SKIP_ASM
+struct P_4BB0 { char pad[0x30]; int m_a; int m_b; char pad2[0x928 - 0x38]; };
+extern struct P_4BB0 D_7610_4BB0[4] __asm__("D_00517610");
+extern struct P_4BB0 *D_0044F420_4BB0 __asm__("D_0044F420");
+extern unsigned int D_0044F430_4BB0 __asm__("D_0044F430");
+
+static inline int sel_4BB0(unsigned int idx) {
+    if (D_0044F430_4BB0 == 0)
+        D_0044F430_4BB0 = 0xFFFFFFFF;
+    if (idx < 4 && D_7610_4BB0[idx].m_b != 0) {
+        int v = D_7610_4BB0[idx].m_a;
+        D_0044F420_4BB0 = &D_7610_4BB0[idx];
+        D_0044F430_4BB0 = v;
+        return v;
+    }
+    if ((int)idx != -1)
+        D_0044F430_4BB0 = 0;
+    return D_0044F430_4BB0;
+}
+
+int func_003D4BB0(int key) {
+    int i;
+    for (i = 0; i < 4; i++) {
+        if (D_7610_4BB0[i].m_b != 0 && D_7610_4BB0[i].m_a == key)
+            return sel_4BB0(i);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4C40);
