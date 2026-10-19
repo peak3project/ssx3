@@ -3266,7 +3266,45 @@ int func_0040D430(int a, unsigned b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D4A0);
+#ifdef SKIP_ASM
+struct En_D4A0 { char pad[0x10]; int f10; int f14; char pad2[8]; short f20; char pad3[10]; int f2C; int f30; int f34; };
+struct Ki_D4A0 { unsigned cnt; struct En_D4A0 *ents; };
+extern struct Ki_D4A0 K_529000[] __asm__("D_00529000");
+extern int K_453438[] __asm__("D_00453438");
+extern char K_5290A0[] __asm__("D_005290A0");
+extern char K_529100[] __asm__("D_00529100");
+extern int K_529140[] __asm__("D_00529140");
+extern char K_4982F8[] __asm__("D_004982F8");
+extern void cb_C8B0(void) __asm__("func_0040C8B0");
+extern void q_00423DE0(int) __asm__("func_00423DE0");
+extern int q_00426D18(char *, int, int, char *, int, int *, int, void (*)(void), int) __asm__("func_00426D18");
+extern void q_00425C60(char *, int) __asm__("func_00425C60");
+int func_0040D4A0(unsigned a) {
+    int r;
+    struct En_D4A0 *e;
+    if (K_453438[0] == -1)
+        return -1;
+    if (a >= K_529000[0].cnt)
+        return -11;
+    K_529100[0] = a;
+    q_00423DE0(K_453438[0]);
+    r = q_00426D18(K_5290A0, 6, 1, K_529100, 16, K_529140, 0, cb_C8B0, 0);
+    if (r != 0) {
+        q_00425C60(K_4982F8, r);
+        return -2;
+    }
+    e = &K_529000[0].ents[a];
+    e->f10 = 0;
+    e->f14 = 0;
+    e->f20 = 0;
+    e->f2C = 0;
+    e->f30 = 0;
+    e->f34 = 0;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040D588);
 
