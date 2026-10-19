@@ -1003,7 +1003,23 @@ extern int *D_004A4BD8;
 int func_003F8710(void) { return D_004A4BD8[2]; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8720);
+#ifdef SKIP_ASM
+extern int *D_004A4BD8;
+extern int **D_004A4BDC_p __asm__("D_004A4BDC");
+int func_003F8720(int a, int *out) {
+    int *d;
+    int **e;
+    *out = 1;
+    d = D_004A4BD8;
+    e = D_004A4BDC_p;
+    d[0] = 0xB;
+    d[1] = 0x18;
+    ((void (*)(int))e[0x38 / 4])(d[3]);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8768);
 
