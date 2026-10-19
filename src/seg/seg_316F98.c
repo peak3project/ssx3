@@ -44,7 +44,39 @@ INCLUDE_ASM("seg/seg_316F98", func_00416B18);
 
 INCLUDE_ASM("seg/seg_316F98", strncpy);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00416EB0);
+#ifdef SKIP_ASM
+extern int func_00420180(int, char *, int *);
+extern char *func_00420010(int);
+extern int func_0041FCB0(int *, int, int, int);
+extern long func_00417948(), func_004179B0(), func_00417A30();
+extern void func_00417A98();
+extern long func_00417008(char *, int, int);
+char *func_00416EB0_(int ptr, char *file, char *mode) __asm__("func_00416EB0");
+char *func_00416EB0_(int ptr, char *file, char *mode) {
+    char *fp;
+    int f, flags, oflags;
+    if ((flags = func_00420180(ptr, mode, &oflags)) == 0)
+        return 0;
+    if ((fp = func_00420010(ptr)) == 0)
+        return 0;
+    if ((f = func_0041FCB0(*(int **)(fp + 0x54), (int)file, oflags, 0x1B6)) < 0) {
+        *(short *)(fp + 0xC) = 0;
+        return 0;
+    }
+    *(short *)(fp + 0xE) = f;
+    *(short *)(fp + 0xC) = flags;
+    *(char **)(fp + 0x1C) = fp;
+    *(void **)(fp + 0x20) = func_00417948;
+    *(void **)(fp + 0x24) = func_004179B0;
+    *(void **)(fp + 0x28) = func_00417A30;
+    *(void **)(fp + 0x2C) = func_00417A98;
+    if (flags & 0x100)
+        func_00417008(fp, 0, 2);
+    return fp;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00416F90);
