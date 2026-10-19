@@ -4063,7 +4063,24 @@ int func_0040BAA8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BAE8);
+#ifdef SKIP_ASM
+extern short D_004533F8_s[] __asm__("D_004533F8");
+extern int func_0040B9A8(void);
+extern void func_00423E50(unsigned *);
+int func_0040BAE8(void) {
+    unsigned buf[1];
+    int r;
+    if (func_0040B9A8()) {
+        r = D_004533F8_s[0];
+    } else {
+        func_00423E50(buf);
+        if (((buf[0] >> 13) & 7) == 0) r = 0x21C; else r = (int)buf[0] >> 21;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BB38);
