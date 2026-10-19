@@ -1170,5 +1170,18 @@ extern "C" void func_001A2F70(void* self, int sel)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fereal", func_001A3050);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E2A0(void* self, void* owner);
+extern void* D_00469248[];
+
+extern "C" void* func_001A3050(void* self, void* owner)
+{
+    func_0039E2A0(self, owner);
+    *(int*)((char*)self + 0xC) = 0x16;
+    *(void***)((char*)self + 0x8) = D_00469248;
+    return self;
+}
+#endif
 
