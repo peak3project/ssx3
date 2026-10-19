@@ -1157,7 +1157,42 @@ int *func_00420978(int a, int b) {
 
 INCLUDE_ASM("seg/seg_316F98", func_004209B0);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00420BC8);
+#ifdef SKIP_ASM
+extern struct Bigint *func_004205F0(int, struct Bigint *, int, int);
+extern struct Bigint *func_004209B0(int, struct Bigint *, struct Bigint *);
+extern int *func_00420978(int, int);
+extern void func_004205B8(int *, int *);
+extern int D_0049A8E8[];
+struct Bigint *func_00420BC8(int ptr, struct Bigint *b, int k) {
+    struct Bigint *b1, *p5, *p51;
+    int i;
+    if ((i = k & 3))
+        b = func_004205F0(ptr, b, D_0049A8E8[i - 1], 0);
+    if (!(k >>= 2))
+        return b;
+    if (!(p5 = ((struct Bigint **)ptr)[0x48 / 4])) {
+        p5 = ((struct Bigint **)ptr)[0x48 / 4] = (struct Bigint *)func_00420978(ptr, 625);
+        p5->next = 0;
+    }
+    for (;;) {
+        if (k & 1) {
+            b1 = func_004209B0(ptr, b, p5);
+            func_004205B8((int *)ptr, (int *)b);
+            b = b1;
+        }
+        if (!(k >>= 1))
+            break;
+        if (!(p51 = p5->next)) {
+            p51 = p5->next = func_004209B0(ptr, p5, p5);
+            p51->next = 0;
+        }
+        p5 = p51;
+    }
+    return b;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00420CC8);
 
