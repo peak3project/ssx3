@@ -2106,7 +2106,44 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F99B8);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9B38);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9C48);
+#ifdef SKIP_ASM
+extern int c9c48_9208(void) __asm__("func_003F9208");
+extern void c9c48_86F0(int) __asm__("func_003F86F0");
+extern int c9c48_A6E8(void) __asm__("func_003FA6E8");
+extern int *D_9C48s __asm__("D_004A4BD8");
+typedef struct { char pad[0x34]; void (*f34)(int, int, int); } E9C48;
+extern E9C48 *D_9C48e __asm__("D_004A4BDC");
+int func_003F9C48_impl(int *src, int a, int b) __asm__("func_003F9C48");
+int func_003F9C48_impl(int *src, int a, int b) {
+    int *s;
+    int *t;
+    int v;
+    E9C48 *e;
+    if (c9c48_9208() == 0) return 2;
+    if (src == 0) return 0xC;
+    s = D_9C48s;
+    if (s[0] != 0) return 0xD;
+    s[0] = 8;
+    s[1] = 0x1B;
+    c9c48_86F0(0);
+    __builtin_memcpy((char *)D_9C48s + 0xC, (char *)src, 0x60);
+    if (b == 0) {
+        v = a + c9c48_A6E8();
+        t = D_9C48s;
+        e = D_9C48e;
+        t[0x70 / 4] = v;
+        e->f34(t[3], a + c9c48_A6E8(), 0);
+    } else {
+        int *d = D_9C48s;
+        E9C48 *e2 = D_9C48e;
+        d[0x70 / 4] = a;
+        e2->f34(d[3], a, b);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9DC0);
