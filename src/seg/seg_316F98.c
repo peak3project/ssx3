@@ -823,7 +823,14 @@ void func_004200F0(char *r) {
 
 INCLUDE_ASM("seg/seg_316F98", func_00420180);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00420228);
+#ifdef SKIP_ASM
+void func_00420228(char *d, char *s, unsigned n) {
+    while (n--)
+        *d++ = *s++;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00420260);
 
