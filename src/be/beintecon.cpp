@@ -98,7 +98,19 @@ extern "C" int func_001509F8(void* self, int rider)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00150A58);
+#ifdef SKIP_ASM
+extern int D_004A6CA8[];
+
+extern "C" void func_00150A58(void* self, int a, int b, int val)
+{
+    if (a < 2) {
+        char* p = (char*)D_004A6CA8 + (b * 0xf88 + a * 0x9b50);
+        *(int*)(p + 0xAC4) = val;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintecon", func_00150A90);
