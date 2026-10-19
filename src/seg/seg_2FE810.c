@@ -464,7 +464,17 @@ int func_00400670(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004006D8);
+#ifdef SKIP_ASM
+int func_004006D8(int a) {
+    D_00526440[1] = a;
+    D_00526440[0] = 13;
+    if (func_00426D18(D_00526200, 1, 0, D_00526440, 128, D_00526440, 128, 0, 0) < 0)
+        return 0;
+    return D_00526440[3];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00400740);
 
