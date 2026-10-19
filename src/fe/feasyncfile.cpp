@@ -22006,7 +22006,15 @@ void func_001C57C0(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C57E0);
+#ifdef SKIP_ASM
+extern "C" void func_001C57E0(void* self, int a1, cFEAsyncSlot* a2)
+{
+    cFEAsyncSlots* s = (cFEAsyncSlots*)self;
+    s->mSlots[a1] = *a2;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C5800);
