@@ -5337,7 +5337,68 @@ void func_00411F70(long a, long b) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00411FD8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00412280);
+#ifdef SKIP_ASM
+struct S412280 { unsigned cls; int sign; int exp; int pad; unsigned long frac; long pad2; };
+extern void unp_80(long *, struct S412280 *) __asm__("func_00411C38");
+extern void pk_80(struct S412280 *) __asm__("func_00411B08");
+extern struct S412280 D_0052ADC0;
+void func_00412280(long x, long y) {
+    struct S412280 a;
+    struct S412280 b;
+    struct S412280 *r;
+    struct S412280 *p;
+    unsigned long n, d, q, bit;
+    unp_80(&x, &a);
+    unp_80(&y, &b);
+    p = &a;
+    if (a.cls < 2) {
+        r = &a;
+    } else if (b.cls < 2) {
+        r = &b;
+    } else {
+        a.sign ^= b.sign;
+        if ((a.cls ^ 4) == 0 || (a.cls ^ 2) == 0) {
+            r = &a;
+            if (a.cls == b.cls)
+                r = &D_0052ADC0;
+        } else if ((b.cls ^ 4) == 0) {
+            a.frac = 0;
+            a.exp = 0;
+            r = &a;
+        } else if ((b.cls ^ 2) == 0) {
+            a.cls = 4;
+            r = &a;
+        } else {
+            a.exp = a.exp - b.exp;
+            n = a.frac;
+            d = b.frac;
+            if (n < d) {
+                a.exp--;
+                n <<= 1;
+            }
+            q = 0;
+            for (bit = 0x1000000000000000UL; bit != 0; bit >>= 1) {
+                if (n >= d) {
+                    q |= bit;
+                    n -= d;
+                }
+                n <<= 1;
+            }
+            if ((q & 0xFF) == 0x80) {
+                if (q & 0x100)
+                    q += 0x80;
+                else if (n != 0)
+                    q += 0x80;
+            }
+            p->frac = q;
+            r = p;
+        }
+    }
+    pk_80(r);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004123E8);
 
