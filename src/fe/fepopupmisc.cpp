@@ -6335,7 +6335,42 @@ extern "C" void func_001E5800(void* self, void* a1, unsigned int msg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E58E0);
+#ifdef SKIP_ASM
+extern "C" char* func_001E39F8_58E0() __asm__("func_001E39F8");
+extern "C" int func_001E33E8_58E0() __asm__("func_001E33E8__FPv");
+
+extern "C" void func_001E58E0(void* self)
+{
+    int id = *(int*)((char*)self + 0x68);
+    sPopupEntry18_5800* a = &D_004C6C08_5800[id];
+    sEntry14_5800* b = &D_00441630_5800[a->field_0x4];
+    if (b->type == 4) {
+        int next = func_001E34D8(id);
+        if (next == -1) {
+            char* o = *(char**)((char*)self + 0x20);
+            sVE5800* vt = *(sVE5800**)(o + 8);
+            vt[17].fn(o + vt[17].delta, self, 0x14);
+            return;
+        }
+        *(int*)((char*)self + 0x68) = next;
+        *(int*)((char*)self + 0x6C) = *(int*)((char*)self + 0x6C) + 1;
+        func_001E5428(self);
+    } else if (func_001E3408() > 0) {
+        char* h = func_001E39F8_58E0();
+        int bit;
+        *(int*)((char*)self + 0x68) = func_001E3460(&bit);
+        *(int*)(h + 0xC8) |= 1 << bit;
+        *(int*)((char*)self + 0x6C) = func_001E33E8_58E0() - bit;
+        func_001E5428(self);
+    } else {
+        char* o = *(char**)((char*)self + 0x20);
+        sVE5800* vt = *(sVE5800**)(o + 8);
+        vt[17].fn(o + vt[17].delta, self, 0x14);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5A18);
