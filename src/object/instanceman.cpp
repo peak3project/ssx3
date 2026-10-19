@@ -100,7 +100,20 @@ extern "C" void func_00351410(void* a0, sInstVtbl_00351410* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/instanceman", func_00351448);
+#ifdef SKIP_ASM
+class sInstVtbl_00351448 {
+public:
+    virtual void v1(void*, int);
+    virtual void v2(void*, int);
+};
+
+extern "C" void func_00351448(void* a0, sInstVtbl_00351448* a1)
+{
+    a1->v2(a0, 0x40);
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/instanceman", func_00351480);
 #ifdef SKIP_ASM
