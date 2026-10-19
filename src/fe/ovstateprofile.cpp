@@ -1097,7 +1097,14 @@ extern "C" void func_00212508(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstateprofile", func_00212680);
+#ifdef SKIP_ASM
+extern "C" void* func_00212680(void* a, ...)
+{
+    return a;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_002126C0);
