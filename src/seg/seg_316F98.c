@@ -736,7 +736,38 @@ void func_0041B528(short *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041B550);
+#ifdef SKIP_ASM
+extern char *D_00454CDC;
+extern int D_00454CD8;
+extern char D_0052AE98[];
+extern int func_00424368(int, int, int);
+int func_0041B550_(int fd, char *buf, unsigned n, int mode) __asm__("func_0041B550");
+int func_0041B550_(int fd, char *buf, unsigned n, int mode) {
+    unsigned i;
+    int r;
+    if (mode == 1) {
+        r = func_00424368(fd, (int)D_0052AE98, D_00454CD8);
+        D_00454CD8 = 0;
+        D_00454CDC = D_0052AE98;
+        return r;
+    }
+    for (i = 0; i < n; i++) {
+        *D_00454CDC = buf[i];
+        D_00454CDC++;
+        D_00454CD8++;
+        if (D_00454CD8 >= 128) {
+            r = func_00424368(fd, (int)D_0052AE98, D_00454CD8);
+            D_00454CDC = D_0052AE98;
+            D_00454CD8 = 0;
+            if (r == 0)
+                return 0;
+        }
+    }
+    return i;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041B658);
 
