@@ -935,7 +935,17 @@ extern "C" int func_00157E60(void* self, int a1, int a2, int bit)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00157EA0);
+#ifdef SKIP_ASM
+extern int D_004A6CA8[];
+
+extern "C" int func_00157EA0(void* self, int a1, int a2, int bit)
+{
+    char* p = (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
+    return (*(unsigned long*)(p + 0xF78) >> bit) & 1;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintreward", func_00157EE0);
