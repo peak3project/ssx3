@@ -1109,7 +1109,15 @@ extern "C" unsigned int func_0031FFD8(void* self, long incr) // PORT: 64-bit lon
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_00320038);
+#ifdef SKIP_ASM
+extern "C" void* func_0031E818(void* ms, unsigned int bytes);
+extern "C" void* func_00320038(void* ms, unsigned int bytes)
+{
+    return func_0031E818(ms, bytes);
+}
+#endif
 
 extern "C" int func_0031F2C8(void* self);
 
