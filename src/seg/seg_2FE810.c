@@ -2425,7 +2425,42 @@ void func_0040BFE0(int a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C028);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C220);
+#ifdef SKIP_ASM
+extern int func_0042C078_0() __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+extern int func_00423AA0(int, int);
+extern void func_00424880(int);
+extern int func_00423DB0(int);
+extern int D_0052909C[];
+extern int D_00453438[];
+extern char D_00498278[];
+extern char D_004982A8[];
+int func_0040C220(void) {
+    int n = 0;
+    int s, r;
+    s = func_0042C078_0();
+    r = func_00423AA0(3, D_0052909C[0]);
+    if (r == 0)
+        func_00424880(3);
+    if (s)
+        func_0042C0C0();
+    if (r < 0) {
+        n = 1;
+        func_0040A618_log(D_00498278);
+    }
+    if (D_00453438[0] != -1) {
+        if (func_00423DB0(D_00453438[0]) < 0) {
+            n++;
+            func_0040A618_log(D_004982A8);
+        } else {
+            D_00453438[0] = -1;
+        }
+    }
+    return n == 0 ? 0 : -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbGetInfo);
