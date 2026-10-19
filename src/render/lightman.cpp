@@ -27,7 +27,24 @@ extern "C" void func_0038DC20(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_0038DC28);
+#ifdef SKIP_ASM
+struct sLmIdx_DC28 {
+    unsigned int a;
+    unsigned int b;
+    unsigned int c;
+    unsigned int d;
+};
+
+extern "C" void func_0038DC28(sLmIdx_DC28* self)
+{
+    self->a = 0xFFFFFFFF;
+    self->b = 0xFFFFFFFF;
+    self->c = 0xFFFFFFFF;
+    self->d = 0xFFFFFFFF;
+}
+#endif
 //100%
 INCLUDE_ASM("render/lightman", func_0038DC48);
 #ifdef SKIP_ASM
