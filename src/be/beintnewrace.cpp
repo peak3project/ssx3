@@ -168,7 +168,16 @@ extern "C" void* func_00144BF0()
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintnewrace", func_00144C10);
+#ifdef SKIP_ASM
+extern sPad16 D_0043D974;
+
+extern "C" void* func_00144C10()
+{
+    return (char*)&D_0043D974 + D_00535C08.value * 0x64;
+}
+#endif
 
 INCLUDE_ASM("be/beintnewrace", func_00144C30);
 //100%
