@@ -801,7 +801,22 @@ void func_0041FF40(struct F41FF40 *f, short flags, short file, int ent) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041FF98);
+#ifdef SKIP_ASM
+extern void *func_00416210(void *, int, int);
+int *func_0041FF98(int a, int cnt) {
+    int sz = cnt * 0x58;
+    int *p = (int *)func_0041DBF8(a, sz + 0xC);
+    if (!p)
+        return 0;
+    p[1] = cnt;
+    p[0] = 0;
+    p[2] = (int)(p + 3);
+    func_00416210(p + 3, 0, sz);
+    return p;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00420010);
 
