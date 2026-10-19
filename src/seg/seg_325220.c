@@ -1705,7 +1705,39 @@ int func_0042BA88(int a0, int a1, int a2, int *a3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042BAA8);
+#ifdef SKIP_ASM
+struct B2F080 { int f0; int f4; char n1[0xFC]; char n2[0xFC]; };
+extern struct B2F080 D_X __asm__("D_0052F080");
+extern char D_0052F280[];
+extern int func_0042B068(void);
+extern int func_0042B168(void);
+extern char *strncpy(char *, const char *, int);
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_0042BAA8_i(char *, char *, int *, int) __asm__("func_0042BAA8");
+int func_0042BAA8_i(char *a0, char *a1, int *a2, int a3) {
+    if (func_0042B068() < 0) {
+        return 0xFFFF0000;
+    }
+    if (func_0042B168() != 0) {
+        return 0xFFFEFFFC;
+    }
+    strncpy(D_X.n1, a0, 0xFC);
+    D_X.n1[0xFB] = 0;
+    strncpy(D_X.n2, a1, 0xFC);
+    D_X.n2[0xFB] = 0;
+    if (func_00426D18_v(D_0052F280, a3, 0, &D_X, 0x200, &D_X, 0x10, 0, 0) < 0) {
+        return 0xFFFEFFFF;
+    }
+    if (D_X.f0 == 0) {
+        return 0xFFFEFFFD;
+    }
+    a2[0] = D_X.f0;
+    a2[1] = D_X.f4;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042BBB0);
