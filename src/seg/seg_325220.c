@@ -697,7 +697,18 @@ void func_00426678(unsigned int *a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426698);
+#ifdef SKIP_ASM
+struct S6698 { int p0[5]; char *base; int cnt; int p1[2]; int idx; };
+char *f6698(struct S6698 *a0) __asm__("func_00426698");
+char *f6698(struct S6698 *a0) {
+    int r = a0->idx % a0->cnt;
+    char *p = a0->base + r * 64;
+    a0->idx = r + 1;
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004266C8);
