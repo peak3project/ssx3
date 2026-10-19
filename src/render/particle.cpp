@@ -1055,7 +1055,47 @@ extern "C" void* func_00372B30(void* self)
 
 INCLUDE_ASM("render/particle", func_00372B78);
 
+//100%
 INCLUDE_ASM("render/particle", func_003737D0);
+#ifdef SKIP_ASM
+struct sPtBufs_37D0 {
+    void* p[3];
+};
+
+struct sPtSys_37D0 {
+    char pad0[0xC];
+    sPtBufs_37D0 b0C;       // 0x0C
+    char pad18[0xC];
+    sPtBufs_37D0 b24;       // 0x24
+    char pad30[0x18];
+    sPtBufs_37D0 b48;       // 0x48
+    sPtBufs_37D0 b54;       // 0x54
+    sPtBufs_37D0 b60;       // 0x60
+    char pad6C[0x148];
+    sPtBufs_37D0 b1B4;      // 0x1B4
+    sPtBufs_37D0 b1C0;      // 0x1C0
+};
+
+#define PT_FREE_BUFS_37D0(t) \
+    if ((t).p[0]) cMemMan_free((t).p[0]); \
+    if ((t).p[1]) cMemMan_free((t).p[1]); \
+    if ((t).p[2]) cMemMan_free((t).p[2]); \
+    (t).p[0] = 0; \
+    (t).p[1] = 0; \
+    (t).p[2] = 0
+
+// Frees the seven three-buffer sets and clears their pointers.
+extern "C" void func_003737D0(sPtSys_37D0* self)
+{
+    PT_FREE_BUFS_37D0(self->b0C);
+    PT_FREE_BUFS_37D0(self->b24);
+    PT_FREE_BUFS_37D0(self->b48);
+    PT_FREE_BUFS_37D0(self->b54);
+    PT_FREE_BUFS_37D0(self->b60);
+    PT_FREE_BUFS_37D0(self->b1B4);
+    PT_FREE_BUFS_37D0(self->b1C0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_003739D0);
@@ -1131,9 +1171,70 @@ extern "C" void func_003739D0(sPtPools39D0* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00373C28);
+#ifdef SKIP_ASM
+struct sPtVec3_3C28 {
+    float x, y, z;
+};
 
+// One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
+struct sPtMtx_3C28 {
+    float m[4][4];
+};
+
+static inline float ptBlend_3C28(sPtVec3_3C28* p, sPtMtx_3C28* mt, float* w, int j)
+{
+    float x = p->x;
+    float y = p->y;
+    float z = p->z;
+    return (mt[0].m[0][j] * x + mt[0].m[1][j] * y + mt[0].m[2][j] * z + mt[0].m[3][j]) * w[0]
+         + (mt[1].m[0][j] * x + mt[1].m[1][j] * y + mt[1].m[2][j] * z + mt[1].m[3][j]) * w[1]
+         + (mt[2].m[0][j] * x + mt[2].m[1][j] * y + mt[2].m[2][j] * z + mt[2].m[3][j]) * w[2]
+         + (mt[3].m[0][j] * x + mt[3].m[1][j] * y + mt[3].m[2][j] * z + mt[3].m[3][j]);
+}
+
+// Blends p through four matrices: out = M0 p * w[0] + M1 p * w[1] + M2 p * w[2] + M3 p
+// (rows 0-2 scale x, y, z; row 3 is the translation).
+extern "C" void func_00373C28(void* self, sPtVec3_3C28* p, sPtMtx_3C28* mt, float* w, float* out)
+{
+    out[0] = ptBlend_3C28(p, mt, w, 0);
+    out[1] = ptBlend_3C28(p, mt, w, 1);
+    out[2] = ptBlend_3C28(p, mt, w, 2);
+}
+#endif
+//100%
 INCLUDE_ASM("render/particle", func_00373EA8);
+#ifdef SKIP_ASM
+struct sPtVec4_3EA8 {
+    float x, y, z, w;
+};
+
+// One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
+struct sPtMtx_3EA8 {
+    float m[4][4];
+};
+
+static inline float ptBlend4_3EA8(sPtVec4_3EA8* p, sPtMtx_3EA8* mt, float* w, int j)
+{
+    float x = p->x;
+    float y = p->y;
+    float z = p->z;
+    float h = p->w;
+    return (mt[0].m[0][j] * x + mt[0].m[1][j] * y + mt[0].m[2][j] * z + mt[0].m[3][j] * h) * w[0]
+         + (mt[1].m[0][j] * x + mt[1].m[1][j] * y + mt[1].m[2][j] * z + mt[1].m[3][j] * h) * w[1]
+         + (mt[2].m[0][j] * x + mt[2].m[1][j] * y + mt[2].m[2][j] * z + mt[2].m[3][j] * h) * w[2]
+         + (mt[3].m[0][j] * x + mt[3].m[1][j] * y + mt[3].m[2][j] * z + mt[3].m[3][j] * h) * w[3];
+}
+
+// Blends the homogeneous point p through four matrices weighted by w[0..3]; writes x, y, z.
+extern "C" void func_00373EA8(void* self, sPtVec4_3EA8* p, sPtMtx_3EA8* mt, float* w, float* out)
+{
+    out[0] = ptBlend4_3EA8(p, mt, w, 0);
+    out[1] = ptBlend4_3EA8(p, mt, w, 1);
+    out[2] = ptBlend4_3EA8(p, mt, w, 2);
+}
+#endif
 //100%
 INCLUDE_ASM("render/particle", func_00374180);
 #ifdef SKIP_ASM

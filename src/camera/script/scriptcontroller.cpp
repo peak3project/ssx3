@@ -2085,10 +2085,30 @@ extern "C" void func_0016BD30(float* p)
     *p = Clamp_BD30(w, -1.5707963705062866f, 1.5707963705062866f);
 }
 #endif
-
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BDA0);
+#ifdef SKIP_ASM
+extern "C" void func_0016BCE0(float* p);
 
+extern "C" void func_0016BDA0(float* p)
+{
+    float r = *p * 0.01745329424738884f;
+    func_0016BCE0(&r);
+    *p = r * 57.2957763671875f;
+}
+#endif
+//100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BDE8);
+#ifdef SKIP_ASM
+extern "C" void func_0016BD30(float* p);
+
+extern "C" void func_0016BDE8(float* p)
+{
+    float r = *p * 0.01745329424738884f;
+    func_0016BD30(&r);
+    *p = r * 57.2957763671875f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE30);

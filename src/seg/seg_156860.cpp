@@ -950,7 +950,205 @@ extern "C" void func_00256C50(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_00256C78);
+#ifdef SKIP_ASM
+void* cBE_getInterface_6C78(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int func_0014E2C0(void* iface);
+extern "C" void func_00257038_6C78(void* self, int mode) __asm__("func_00257038");
+extern "C" void func_003E6448_6C78(void* p, int c, int n) __asm__("func_003E6448");
+extern "C" int func_003E7340();
+
+struct sGcQueue_6C78 {
+    int wr;                 // 0x0
+    int rd;                 // 0x4
+    int* slots[32];         // 0x8
+};
+
+// cGameComm (0x5F0 bytes, allocated by cGameComm_construct).
+struct sGameComm_6C78 {
+    int unk_0;          // 0x0
+    int unk_4;          // 0x4
+    int unk_8;          // 0x8
+    int unk_C;          // 0xC
+    int unk_10;         // 0x10
+    int unk_14;         // 0x14
+    int unk_18;         // 0x18
+    int unk_1C;         // 0x1C
+    int unk_20;         // 0x20
+    int unk_24;         // 0x24
+    int unk_28;         // 0x28
+    int unk_2C;         // 0x2C
+    int unk_30;         // 0x30
+    int unk_34;         // 0x34
+    int unk_38;         // 0x38
+    int unk_3C;         // 0x3C
+    int unk_40;         // 0x40
+    int unk_44;         // 0x44
+    int unk_48;         // 0x48
+    int unk_4C;         // 0x4C
+    int unk_50;         // 0x50
+    int unk_54;         // 0x54
+    int unk_58;         // 0x58
+    int unk_5C;         // 0x5C
+    int unk_60;         // 0x60
+    int unk_64;         // 0x64
+    int unk_68;         // 0x68
+    int unk_6C;         // 0x6C
+    int unk_70;         // 0x70
+    int unk_74;         // 0x74
+    int unk_78;         // 0x78
+    int unk_7C;         // 0x7C
+    int unk_80;         // 0x80
+    int unk_84;         // 0x84
+    int unk_88;         // 0x88
+    int unk_8C;         // 0x8C
+    int unk_90;         // 0x90
+    int unk_94;         // 0x94
+    int unk_98;         // 0x98
+    int unk_9C;         // 0x9C
+    int unk_A0;         // 0xA0
+    int unk_A4;         // 0xA4
+    int unk_A8;         // 0xA8
+    int unk_AC;         // 0xAC
+    int unk_B0;         // 0xB0
+    int unk_B4;         // 0xB4
+    int unk_B8;         // 0xB8
+    int unk_BC;         // 0xBC
+    int unk_C0;         // 0xC0
+    int unk_C4[4];          // 0xC4 (cleared high to low)
+    char unk_D4[0x18];      // 0xD4 (random state; func_003178E0 / func_00317908)
+    int unk_EC;         // 0xEC
+    char unk_F0[0x10];      // 0xF0 (name, host side)
+    int unk_100;        // 0x100
+    char unk_104[0x10];     // 0x104 (name, client side)
+    float unk_114;      // 0x114
+    float unk_118;      // 0x118
+    float unk_11C;      // 0x11C
+    int unk_120;        // 0x120
+    int unk_124;        // 0x124
+    int unk_128;        // 0x128
+    int unk_12C;        // 0x12C
+    int unk_130;        // 0x130
+    int unk_134;        // 0x134
+    int unk_138;        // 0x138
+    int unk_13C;        // 0x13C
+    int unk_140;        // 0x140
+    sGcQueue_6C78 q[5];     // 0x144
+    void* buf;              // 0x3EC
+    int bufSize;            // 0x3F0
+    int unk_3F4;            // 0x3F4
+    int unk_3F8;            // 0x3F8
+    int unk_3FC;            // 0x3FC
+    int unk_400;            // 0x400
+    int unk_404;            // 0x404
+    int unk_408;            // 0x408
+    int unk_40C;            // 0x40C
+    char unk_410[0xF0];     // 0x410
+    char unk_500[0xF0];     // 0x500
+};
+
+struct sGcGlobals_6C78 {
+    char pad0[0x10];
+    int unk_10;             // 0x10
+    float unk_14;           // 0x14
+    int unk_18;             // 0x18
+    char pad1C[0x5C];
+    void* be;               // 0x78
+};
+extern sGcGlobals_6C78* D_004A28A8_6C78 __asm__("D_004A28A8");
+
+// cGameComm setup (called by cGameComm_construct on a fresh 0x5F0-byte block): clears the session state,
+// the five packet queues and the two message buffers, and returns self.
+// PORT: the unit declares this as (int, int, int) returning int.
+extern "C" int func_00256C78(int vself, int port, int b)
+{
+    sGameComm_6C78* self = (sGameComm_6C78*)vself;
+    self->unk_6C = port;
+    self->unk_44 = b;
+    func_00257038_6C78(self, 0);
+    self->bufSize = func_0014E2C0(cBE_getInterface_6C78(D_004A28A8_6C78->be, 7));
+    self->unk_60 = 30;
+    self->unk_0 = 1;
+    self->buf = 0;
+    self->unk_40 = 1;
+    self->unk_24 = 0;
+    self->unk_28 = 0;
+    self->unk_5C = 0;
+    self->unk_2C = 0;
+    self->unk_64 = -1;
+    self->unk_48 = 0;
+    self->unk_7C = 0;
+    self->unk_80 = 0;
+    self->unk_84 = 0;
+    self->unk_30 = 0;
+    self->unk_18 = 0;
+    self->unk_94 = 0;
+    self->unk_88 = 0;
+    self->unk_8C = 0;
+    self->unk_90 = 0;
+    self->unk_9C = 1;
+    self->unk_68 = -1;
+    self->unk_AC = 1;
+    self->unk_A0 = 0;
+    self->unk_A4 = 0;
+    self->unk_B0 = 0;
+    self->unk_A8 = 0;
+    self->unk_98 = 0;
+    self->unk_4C = 0;
+    self->unk_50 = 0;
+    self->unk_54 = 0;
+    self->unk_58 = 0;
+    self->unk_124 = 0;
+    self->unk_12C = 0;
+    self->unk_128 = 0;
+    self->unk_114 = D_004A28A8_6C78->unk_14;
+    self->unk_118 = D_004A28A8_6C78->unk_14;
+    self->unk_11C = D_004A28A8_6C78->unk_14;
+    self->unk_120 = 3;
+    self->unk_4 = 0;
+    self->unk_8 = 0;
+    self->unk_10 = 0;
+    self->unk_14 = 0;
+    self->unk_134 = 0;
+    self->unk_74 = 0;
+    self->unk_78 = 0;
+    self->unk_3F4 = 0;
+    self->unk_C = 0;
+    self->unk_3F8 = 0;
+    self->unk_3FC = 0;
+    self->unk_B4 = 0;
+    self->unk_B8 = 0;
+    self->unk_BC = 0;
+    self->unk_C0 = 0;
+    for (int j = 3; j >= 0; j--) {
+        self->unk_C4[j] = 0;
+    }
+    self->unk_34 = D_004A28A8_6C78->unk_18 / D_004A28A8_6C78->unk_10;
+    self->unk_38 = 0;
+    self->unk_3C = 0;
+    self->unk_138 = 0;
+    self->unk_140 = 0;
+    self->unk_13C = 0;
+    for (int i = 0; i < 4; i++) {
+        sGcQueue_6C78* q = &self->q[i];
+        q->wr = 0;
+        q->rd = 0;
+        func_003E6448_6C78(q->slots, 0, sizeof(q->slots));
+    }
+    self->q[4].wr = 0;
+    self->q[4].rd = 0;
+    func_003E6448_6C78(self->q[4].slots, 0, sizeof(self->q[4].slots));
+    self->unk_400 = 0;
+    self->unk_404 = 0;
+    self->unk_408 = -1;
+    self->unk_40C = -1;
+    func_003E6448_6C78(self->unk_410, 0, sizeof(self->unk_410));
+    func_003E6448_6C78(self->unk_500, 0, sizeof(self->unk_500));
+    self->unk_140 = func_003E7340();
+    return (int)self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00256EE0);
@@ -1917,7 +2115,93 @@ extern "C" void func_002583A8(S83A8 *self, int arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", cGameComm_syncGame);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+void* operator_new_8448(unsigned int size, const char* tag, int flags, int align) __asm__("operator_new__FUi");
+void cMemMan_free_8448(void* p) __asm__("cMemMan_free__FPv");
+extern "C" void func_0014E9F8(void* iface);
+extern "C" void func_0014EA90(void* iface);
+extern "C" void func_0014F898();
+extern "C" void func_0014E2C8_8448(void* iface, int which, void* buf) __asm__("func_0014E2C8");
+extern "C" void func_0014E5C8_8448(void* iface, int which, void* buf) __asm__("func_0014E5C8");
+extern "C" void func_003E6448_8448(char* p, int c, int n) __asm__("func_003E6448");
+extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
+extern "C" void* cBE_getBE();
+extern "C" int func_00147318(void* iface, int a1);
+extern "C" void func_001472C8(void* iface, int a1, int a2);
+extern "C" void func_00237CB0(unsigned int seed);
+extern "C" void THREAD_yieldticks(int);
+unsigned int AIrand();
+void func_003178E0_8448(void* self) __asm__("func_003178E0__FPv");
+void* func_00317908(void* self);
+
+struct sVEnt_8448 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+extern char D_004805B8[];
+extern char D_004805C8[];
+extern char D_00534B30[];
+
+static inline int ggHost_8448(char* g) { return *(int*)(g + 8); }
+static inline void ggSetTime_8448(char* g, float t) { *(float*)(g + 0x10) = t; }
+static inline int ggSynced_8448(char* s) { return *(int*)(s + 0x70) == 0xE; }
+static inline int ggDropped_8448(char* s) { return *(int*)(s + 4); }
+
+// Joins the game session: sets up the sync buffer and this side's name slot, then pumps
+// messages until the sync state (0xE) is reached or the link drops.
+extern "C" void cGameComm_syncGame(char* self)
+{
+    void* iface = cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    *(void**)(self + 0x3EC) = operator_new_8448(*(unsigned int*)(self + 0x3F0), D_004805B8, 0x100, 0);
+    func_0014E9F8(iface);
+    if (ggHost_8448(D_00534B30) != 0) {
+        func_003E6448_8448(self + 0xF0, 0, 0x10);
+        strncpy(self + 0xF0, D_004805C8, 0xF);
+        *(int*)(self + 0xEC) = *(int*)((char*)D_004A2EB8 + 0x2C);
+        func_0014E2C8_8448(iface, 0, *(void**)(self + 0x3EC));
+        func_0014E5C8_8448(iface, 0, *(void**)(self + 0x3EC));
+    } else {
+        func_0014F898();
+        func_003E6448_8448(self + 0x104, 0, 0x10);
+        strncpy(self + 0x104, D_004805C8, 0xF);
+        *(int*)(self + 0x100) = *(int*)((char*)D_004A2EB8 + 0x2C);
+        func_0014E2C8_8448(iface, 1, *(void**)(self + 0x3EC));
+        func_0014E5C8_8448(iface, 1, *(void**)(self + 0x3EC));
+        void* ui = cBE_getInterface_Fv(cBE_getBE(), 1);
+        func_001472C8(ui, 1, func_00147318(ui, 0));
+        sVEnt_8448* vt = *(sVEnt_8448**)((char*)ui + 0xC);
+        vt[1].fn((char*)ui + vt[1].delta);
+    }
+    func_003178E0_8448(self + 0xD4);
+    while (!ggSynced_8448(self) && ggDropped_8448(self) == 0) {
+        func_002570D8(self);
+        THREAD_yieldticks(1);
+    }
+    if (*(void**)(self + 0x3EC)) {
+        cMemMan_free_8448(*(void**)(self + 0x3EC));
+    }
+    *(int*)(self + 0x120) = 3;
+    *(void**)(self + 0x3EC) = 0;
+    if (*(int*)(self + 4) == 0) {
+        func_0014EA90(iface);
+        func_00317908(self + 0xD4);
+        func_00237CB0(AIrand());
+        ggSetTime_8448(D_00534B30, *(float*)(self + 0x11C));
+        if (*(int*)(self + 0xEC) != 0 && *(int*)(self + 0x100) != 0) {
+            *(int*)(self + 0x120) = 2;
+        }
+        if (*(int*)(self + 4) == 0 && func_00416B18_70D8(self + 0xF0, self + 0x104, 9) != 0) {
+            func_00257678(self);
+            func_002578F8(self);
+        }
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_156860", func_002586B0);

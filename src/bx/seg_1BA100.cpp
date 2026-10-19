@@ -1751,7 +1751,152 @@ extern "C" void func_002BB6B8(void) {
 
 INCLUDE_ASM("bx/seg_1BA100", func_002BB6E0);
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB928);
+#ifdef SKIP_ASM
+// PORT: PS2-only vector layout (16-byte aligned quads, copied with lq/sq).
+struct sQtVec4_B928 {
+    float x, y, z, w;
+    sQtVec4_B928() {}
+    sQtVec4_B928(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sQtVtx_B928 {
+    char pad_0x0[0x20];
+    sQtVec4_B928 pos;   // 0x20
+};
+
+struct sQtNode_B928 {
+    unsigned short child[4];
+};
+
+struct sQtTree_B928 {
+    char pad_0x0[0x20];
+    sQtNode_B928* nodes;    // 0x20
+};
+
+struct sQtVEntry_B928 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, sQtVtx_B928*, int);
+};
+
+struct sQtCtx_B928 {
+    char pad_0x0[0x10D8];
+    sQtVEntry_B928* vtable;      // 0x10D8
+};
+
+class cQtCam_B928 {
+public:
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual sQtVec4_B928* v05();
+};
+
+extern sQtCtx_B928* D_004A5B80_B928 __asm__("D_004A5B80");
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sQtVec4_B928 qtAdd_B928(const sQtVec4_B928& a, const sQtVec4_B928& b)
+{
+    sQtVec4_B928 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v / s).
+static inline sQtVec4_B928 qtDiv_B928(const sQtVec4_B928& v, float s)
+{
+    sQtVec4_B928 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// Walks a quadtree: inner nodes split the rect (lo, hi) at its midpoint into four children;
+// leaves submit the rect's outline as a 5-vertex strip at the camera's height.
+extern "C" void func_002BB928(void* ctx, sQtTree_B928* tree, sQtNode_B928* node, sQtVtx_B928* v,
+                              sQtVec4_B928* lo, sQtVec4_B928* hi)
+{
+    if (node->child[0] & 1) {
+        sQtVec4_B928 mid = qtDiv_B928(qtAdd_B928(*lo, *hi), 2.0f);
+        sQtVec4_B928 a;
+        a.x = lo->x;
+        a.y = mid.y;
+        a.z = 0.0f;
+        a.w = 1.0f;
+        sQtVec4_B928 b;
+        b.x = hi->x;
+        b.y = mid.y;
+        b.z = 0.0f;
+        b.w = 1.0f;
+        sQtVec4_B928 c;
+        c.x = mid.x;
+        c.y = lo->y;
+        c.z = 0.0f;
+        c.w = 1.0f;
+        sQtVec4_B928 d;
+        d.x = mid.x;
+        d.y = hi->y;
+        d.z = 0.0f;
+        d.w = 1.0f;
+        func_002BB928(ctx, tree, tree->nodes + (node->child[0] >> 1), v, lo, &mid);
+        func_002BB928(ctx, tree, tree->nodes + (node->child[1] >> 1), v, &a, &d);
+        func_002BB928(ctx, tree, tree->nodes + (node->child[2] >> 1), v, &c, &b);
+        func_002BB928(ctx, tree, tree->nodes + (node->child[3] >> 1), v, &mid, hi);
+    } else {
+        sQtCtx_B928* g = D_004A5B80_B928;
+        char* rider = *(char**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40) + 0x18);
+        sQtVec4_B928 cam = *((cQtCam_B928*)(rider + 0x6C0))->v05();
+        sQtVec4_B928 t;
+        t.x = lo->x;
+        t.y = lo->y;
+        t.z = cam.z;
+        t.w = 1.0f;
+        v[0].pos = t;
+        t.x = hi->x;
+        t.y = lo->y;
+        t.z = cam.z;
+        t.w = 1.0f;
+        v[1].pos = t;
+        t.x = hi->x;
+        t.y = hi->y;
+        t.z = cam.z;
+        t.w = 1.0f;
+        v[2].pos = t;
+        t.x = lo->x;
+        t.y = hi->y;
+        t.z = cam.z;
+        t.w = 1.0f;
+        v[3].pos = t;
+        t.x = lo->x;
+        t.y = lo->y;
+        t.z = cam.z;
+        t.w = 1.0f;
+        v[4].pos = t;
+        sQtVEntry_B928* vt = g->vtable;
+        vt[73].fn((char*)g + vt[73].delta, 5, v, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BBBF8);
@@ -3910,7 +4055,59 @@ extern "C" void func_002BFD30(char* self, Stream_FD30* s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BFEB0);
+#ifdef SKIP_ASM
+class cStream_FEB0 {
+public:
+    virtual int read(void* p, int n);
+    virtual int write(void* p, int n);
+};
+
+// Reads 19 words into self (at +0x8 .. +0x98), each followed by one into +0x0
+// (the read-side twin of func_002BEE48).
+extern "C" void func_002BFEB0(char* self, cStream_FEB0* s)
+{
+    s->read(self + 0x8, 4);
+    s->read(self, 4);
+    s->read(self + 0x10, 4);
+    s->read(self, 4);
+    s->read(self + 0x18, 4);
+    s->read(self, 4);
+    s->read(self + 0x20, 4);
+    s->read(self, 4);
+    s->read(self + 0x28, 4);
+    s->read(self, 4);
+    s->read(self + 0x30, 4);
+    s->read(self, 4);
+    s->read(self + 0x38, 4);
+    s->read(self, 4);
+    s->read(self + 0x40, 4);
+    s->read(self, 4);
+    s->read(self + 0x48, 4);
+    s->read(self, 4);
+    s->read(self + 0x50, 4);
+    s->read(self, 4);
+    s->read(self + 0x58, 4);
+    s->read(self, 4);
+    s->read(self + 0x60, 4);
+    s->read(self, 4);
+    s->read(self + 0x68, 4);
+    s->read(self, 4);
+    s->read(self + 0x70, 4);
+    s->read(self, 4);
+    s->read(self + 0x78, 4);
+    s->read(self, 4);
+    s->read(self + 0x80, 4);
+    s->read(self, 4);
+    s->read(self + 0x88, 4);
+    s->read(self, 4);
+    s->read(self + 0x90, 4);
+    s->read(self, 4);
+    s->read(self + 0x98, 4);
+    s->read(self, 4);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002C0308);
