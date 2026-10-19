@@ -449,7 +449,13 @@ void* func_003AD230(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AD250);
+#ifdef SKIP_ASM
+extern "C" void* func_003AD250(void* self, ...) {
+    return self;
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003AD290);
 
@@ -620,6 +626,7 @@ extern "C" void* func_003ADE08(void* self, int a1, int a2, int a3, int a4, int a
 INCLUDE_ASM("world/wscriptcache", func_003ADE58);
 
 INCLUDE_ASM("world/wscriptcache", func_003ADE90);
+
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003ADEC8);
 #ifdef SKIP_ASM
