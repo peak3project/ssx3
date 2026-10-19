@@ -127,7 +127,19 @@ INCLUDE_ASM("be/beintcharacter", func_0014F138);
 
 INCLUDE_ASM("be/beintcharacter", func_0014F170);
 
+//100%
 INCLUDE_ASM("be/beintcharacter", func_0014F1B0);
+#ifdef SKIP_ASM
+struct sCharEntryView_F1B0 {
+    char pad_0x00[0x64];
+    char field_0x64[0x88 - 0x64];
+};
+extern sCharEntryView_F1B0 D_00530970_F1B0[] __asm__("D_00530970");
+extern "C" void* func_0014F1B0(void* self, int riderIndex)
+{
+    return D_00530970_F1B0[cBELibrary_getCharacterID(riderIndex)].field_0x64;
+}
+#endif
 
 INCLUDE_ASM("be/beintcharacter", func_0014F1E0);
 
