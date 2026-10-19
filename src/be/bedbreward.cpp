@@ -822,7 +822,16 @@ extern "C" int func_0015C2E8(void)
 
 INCLUDE_ASM("be/bedbreward", func_0015C2F8);
 
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015C308);
+#ifdef SKIP_ASM
+extern float D_00534B40[];
+
+extern "C" float func_0015C308(void)
+{
+    return D_00534B40[0];
+}
+#endif
 
 INCLUDE_ASM("be/bedbreward", func_0015C318);
 
