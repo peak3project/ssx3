@@ -399,7 +399,32 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FF390);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF4A8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF5E8);
+#ifdef SKIP_ASM
+struct E_526250 { int pad[4]; int f10; int pad2[2]; };
+struct R_526250 { struct E_526250 e[4]; };
+extern struct R_526250 D_00526250[];
+extern char D_00526200[];
+extern int D_00526440[];
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+int func_003FF5E8(void) {
+    int i;
+    for (i = 0; i < 4; i++) {
+        D_00526250[0].e[i].f10 = 0;
+        D_00526250[0].e[i].pad2[1] = 0;
+        D_00526250[0].e[i].pad2[0] = 0;
+        D_00526250[1].e[i].f10 = 0;
+        D_00526250[1].e[i].pad2[1] = 0;
+        D_00526250[1].e[i].pad2[0] = 0;
+    }
+    D_00526440[0] = 16;
+    D_00526440[4] = 0;
+    if (func_00426D18(D_00526200, 1, 0, D_00526440, 128, D_00526440, 128, 0, 0) < 0)
+        return 0;
+    return D_00526440[3];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF688);
@@ -427,9 +452,6 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FF8F0);
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF9A8);
 #ifdef SKIP_ASM
-struct E_526250 { int pad[4]; int f10; int pad2[2]; };
-struct R_526250 { struct E_526250 e[4]; };
-extern struct R_526250 D_00526250[];
 extern void func_00424698(int *, int *);
 int *func_003FF9A8(int a, int b) {
     int *p, c;
