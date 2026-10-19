@@ -1983,7 +1983,28 @@ void func_00409388(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409400);
+#ifdef SKIP_ASM
+extern void q9400_9388(int) __asm__("func_00409388");
+extern void q9400_9310(int) __asm__("func_00409310");
+void q9400(int *p) __asm__("func_00409400");
+void q9400(int *p) {
+    q9400_9388(1);
+    p[0] = *(volatile int *)0x1000B410;
+    p[1] = *(volatile int *)0x1000B430;
+    p[2] = *(volatile int *)0x1000B420;
+    p[3] = *(volatile int *)0x1000B400;
+    while (*(volatile int *)0x10002010 & 0xF0)
+        ;
+    q9400_9310(0);
+    p[4] = *(volatile int *)0x1000B010;
+    p[5] = *(volatile int *)0x1000B020;
+    p[6] = *(volatile int *)0x1000B000;
+    p[7] = *(volatile int *)0x10002020;
+    p[8] = *(volatile int *)0x10002010;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004094E8);
 
