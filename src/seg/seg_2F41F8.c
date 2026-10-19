@@ -2117,7 +2117,17 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003FB278);
 int func_003FB278(void) { return 1; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB280);
+#ifdef SKIP_ASM
+static inline unsigned roundup_kb(unsigned v) { if (v & 0x3FF) return ((v >> 10) + 1) << 10; return (v >> 10) << 10; }
+void func_003FB280(char *p, int *out, int *kind) {
+    unsigned a = roundup_kb(*(unsigned *)(p + 0x3CC));
+    unsigned b = roundup_kb(*(unsigned *)(p + 4));
+    *out = a + b + 0x1400;
+    *kind = 3;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB2C8);
