@@ -1909,7 +1909,27 @@ void func_003FBA78(int key, int n, int *val) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBAD0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBB50);
+#ifdef SKIP_ASM
+typedef struct { char pad[0xC]; int (*f0)(int, int, int); int (*f1)(int, int); int (*f2)(int); } V3FBB50;
+typedef struct { char pad[0x70]; V3FBB50 *vt; } S3FBB50;
+extern S3FBB50 *D_BB50 __asm__("D_004A5B20");
+extern int func_003FB840c(int) __asm__("func_003FB840");
+int func_003FBB50_impl(int a, int b, int c) __asm__("func_003FBB50");
+int func_003FBB50_impl(int a, int b, int c) {
+    V3FBB50 *vt = D_BB50->vt;
+    int r = vt->f0(a, b, c);
+    if (r == 0) {
+        r = vt->f1(a, b);
+        if (r == 0) {
+            r = vt->f2(c);
+            if (r == 0) return 0;
+        }
+    }
+    return func_003FB840c(r);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBBE0);
