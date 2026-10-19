@@ -623,7 +623,18 @@ extern "C" void* func_003ADE08(void* self, int a1, int a2, int a3, int a4, int a
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003ADE58);
+#ifdef SKIP_ASM
+extern "C" void func_003ADEC8(void* self, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8);
+
+extern "C" void* func_003ADE58(void* self, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
+{
+    *(int*)((char*)self + 0x60) = 0;
+    func_003ADEC8(self, a1, a2, a3, a4, a5, a6, a7, a8);
+    return self;
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003ADE90);
 
