@@ -1926,7 +1926,41 @@ INCLUDE_ASM("seg/seg_2FE810", func_004086C0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_004087D0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408988);
+#ifdef SKIP_ASM
+struct Ent_8988 { int f0; int f4; unsigned a[4]; unsigned b[69]; int cnt; int pad[4]; };
+struct P_8988 { char pad[0x590]; struct Ent_8988 e[2]; int idx; };
+extern char q8988_D[] __asm__("D_00526FC0");
+extern int q8988_C078() __asm__("func_0042C078");
+extern void q8988_C0C0(void) __asm__("func_0042C0C0");
+void q8988(struct P_8988 *p) __asm__("func_00408988");
+void q8988(struct P_8988 *p) {
+    int i = 0;
+    unsigned long long *t = (unsigned long long *)(((unsigned)q8988_D & 0x0FFFFFFF) | 0x20000000);
+    int n = p->e[p->idx].cnt;
+    int s;
+    if (n > 0) {
+        do {
+            unsigned a = p->e[p->idx].a[i] & 0x0FFFFFFF;
+            unsigned b = p->e[p->idx].b[i] & 0x0FFFFFFF;
+            int last = (i == n - 1) ? 0 : 3;
+            i++;
+            t[0] = ((unsigned long long)a << 32) | 0x30000030;
+            t[2] = ((unsigned long long)b << 32) | ((unsigned long long)last << 28) | 0x30;
+            t += 4;
+        } while (i < n);
+    }
+    s = q8988_C078();
+    __asm__ volatile("sync");
+    *(volatile int *)0x1000D480 = p->e[p->idx].f0;
+    *(volatile int *)0x1000D430 = (int)q8988_D;
+    *(volatile int *)0x1000D420 = 0;
+    *(volatile int *)0x1000D400 = 0x105;
+    if (s)
+        q8988_C0C0();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408AF8);
