@@ -2240,7 +2240,40 @@ void func_0040A000(unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A090);
+#ifdef SKIP_ASM
+extern int A_5271C0[] __asm__("D_005271C0");
+extern int A_527240[] __asm__("D_00527240");
+extern int A_5276C0[] __asm__("D_005276C0");
+extern int A_528780[] __asm__("D_00528780");
+extern int A_4533C0[] __asm__("D_004533C0");
+extern int A_4533C4[] __asm__("D_004533C4");
+extern int func_KbOpenC(int *, int, int, int *, int, int *, int, void (*)(void), int *) __asm__("func_00426D18");
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern void func_00426358(int, int);
+extern void cb_A000(void) __asm__("func_0040A000");
+int func_0040A090(int a, int b, int c) {
+    int r;
+    if (A_5271C0[9] == 0)
+        return -100;
+    if (func_00423DF0(A_4533C4[0]) < 0)
+        return -200;
+    A_527240[0] = a;
+    A_527240[7] = (int)A_5276C0;
+    A_527240[6] = b;
+    A_527240[3] = c;
+    func_00426358(b, c);
+    func_00426358((int)A_5276C0, 0xC0);
+    r = func_KbOpenC(A_5271C0, 5, 1, A_527240, 48, A_528780, 4, cb_A000, A_5276C0);
+    if (r == 0)
+        A_4533C0[0] = 5;
+    else
+        func_00423DC0(A_4533C4[0]);
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A1A8);
 
