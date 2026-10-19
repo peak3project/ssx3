@@ -711,7 +711,40 @@ extern "C" void func_0013C7A8(sHpCtl_13C7A8* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C878);
+#ifdef SKIP_ASM
+struct sPhys_C878 {
+    int pad0;
+    float f4;
+    float f8;
+    char padC[0xC];
+    char* p18;
+};
+
+extern "C" float func_0013C878(sPhys_C878* self, float* cfg, float a, float b)
+{
+    float r;
+    if (a > 0.0f) {
+        r = cfg[0] * (a * -0.033333f);
+        if (b > 0.0f) {
+            r -= cfg[7] * b;
+        }
+    } else {
+        float s4 = self->f4;
+        if (-s4 < a) {
+            r = (-cfg[0] * a) / s4;
+            r -= cfg[7] * b;
+        } else {
+            a = (-self->f8) >? a;
+            r = cfg[0] * (1.0f - ((a + s4) * 2.0f) / (self->f8 - s4));
+            r -= cfg[7] * b;
+        }
+    }
+    *(float*)(self->p18 + 0x758) = ((-a) / self->f8) >? 0.0f;
+    return r;
+}
+#endif
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C948);
 
