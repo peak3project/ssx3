@@ -1925,7 +1925,29 @@ int func_0042B640(int a0) {
 
 INCLUDE_ASM("seg/seg_325220", func_0042B6D0);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042B770);
+#ifdef SKIP_ASM
+struct B770 { int f0; };
+extern struct B770 D_G7a __asm__("D_0052F080");
+extern char D_0052F280[];
+extern int func_0042B068(void);
+extern int func_0042B168(void);
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_0042B770(int a0) {
+    if (func_0042B068() < 0) {
+        return 0xFFFF0000;
+    }
+    if (func_0042B168() != 0) {
+        return 0xFFFEFFFC;
+    }
+    D_G7a.f0 = a0;
+    if (func_00426D18_v(D_0052F280, 0xA, 0, &D_G7a, 4, &D_G7a, 4, 0, 0) < 0) {
+        return 0xFFFEFFFF;
+    }
+    return D_G7a.f0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042B800);
