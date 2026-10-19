@@ -65,7 +65,24 @@ int func_003F40B8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4118);
+#ifdef SKIP_ASM
+extern int D_004A4BA0;
+extern int D_004A4BA4;
+extern int func_003F40B8(void);
+extern int func_003F4C98(char *, int, int);
+extern int func_003F4C68(char *, int, int, int, int, int, int, int, int, int);
+int func_003F4118(void) {
+    char buf[16];
+    if (D_004A4BA0 == 0) return -1;
+    func_003F40B8();
+    func_003F4C98(buf, 'netw', 'dest');
+    func_003F4C68(buf, 1, D_004A4BA4, 0, 0, 0, 0, 0, 1, 0);
+    D_004A4BA0 = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4198);
