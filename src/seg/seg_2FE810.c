@@ -3286,7 +3286,77 @@ int func_0040B3D8(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B400);
+#ifdef SKIP_ASM
+struct N_B400 { char pad0[0x14]; struct N_B400 *f14; int f18; struct C_B400 *f1C; int f20; int f24; int f28; int f2C; };
+struct C_B400 { struct N_B400 *f0; int f4; int f8; int padC; int f10; char pad14[0x10]; int f24; int f28; int pad2C; int f30; int f34; int f38; };
+extern int func_00423DA0(int *);
+extern int fr_B400(int) __asm__("func_00423DB0");
+extern void func_00423DE0(int);
+extern void lg_B400(char *) __asm__("func_00425C60");
+extern struct N_B400 *func_0040B208(char *);
+extern void rl_B400(struct N_B400 *) __asm__("func_0040B2B0");
+extern int func_004261B0(unsigned, struct N_B400 *, int, int, int, int);
+extern char D_00498178[];
+extern char D_00528FC0[];
+int func_0040B400(int cc, int a, int flag, int d, int e, int f) {
+    struct C_B400 *c = (struct C_B400 *)cc;
+    int s[6];
+    int h;
+    struct N_B400 *n;
+    if (flag != 0) {
+        lg_B400(D_00498178);
+        return -1;
+    }
+    s[5] = 0;
+    s[2] = 1;
+    s[1] = 1;
+    c->f28 = func_00423DA0(s);
+    if (c->f28 < 0)
+        return -3;
+    func_00423DE0(c->f28);
+    c->f10 = a;
+    c->f24 = 0;
+    c->f30 = d;
+    c->f34 = e;
+    c->f38 = f;
+    n = func_0040B208(D_00528FC0);
+    if (n == 0) {
+        fr_B400(c->f28);
+        return -1;
+    }
+    c->f0 = n;
+    c->f4 = n->f18;
+    n->f20 = a;
+    n->f24 = d;
+    n->f28 = e;
+    n->f2C = f;
+    n->f14 = n;
+    n->f1C = c;
+    s[1] = 1;
+    s[2] = 0;
+    s[5] = 0;
+    h = func_00423DA0(s);
+    c->f8 = h;
+    if (h < 0) {
+        rl_B400(n);
+        fr_B400(c->f28);
+        return -3;
+    }
+    if (func_004261B0(0x80000019, n, 0x40, 0, 0, 0) == 0) {
+        rl_B400(n);
+        fr_B400(h);
+        fr_B400(c->f28);
+        return -2;
+    }
+    func_00423DE0(h);
+    fr_B400(h);
+    if (c->f24 == 0)
+        fr_B400(c->f28);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040B5B0);
 
