@@ -908,7 +908,33 @@ void func_00400838(unsigned short a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_004008A0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400908);
+#ifdef SKIP_ASM
+extern int D_00451614[];
+extern int D_00451620[];
+extern int D_00451628[];
+extern int D_00451634[];
+extern char D_00451658[];
+extern int D_0045165C[];
+extern int D_005264C0[];
+extern int func_00423DD0_i(int) __asm__("func_00423DD0");
+void func_00400908(char *p) {
+    *(volatile int *)D_00451658 = *(int *)p;
+    *(volatile int *)D_0045165C = *(volatile int *)D_00451658;
+    if (*(volatile int *)D_00451658 == 11) {
+        *(volatile int *)D_00451658 = 0;
+        *(volatile int *)D_00451634 = 0;
+        return;
+    }
+    func_00423DD0_i(*(volatile int *)D_00451628);
+    if (D_00451614[0] != 0 && D_005264C0[0] != 0)
+        func_00423DD0_i(*(volatile int *)D_00451620);
+    else
+        *(volatile int *)D_00451634 = 0;
+    *(volatile int *)D_00451658 = 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004009A8);
 
