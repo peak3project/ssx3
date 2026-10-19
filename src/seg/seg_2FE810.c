@@ -2069,6 +2069,34 @@ int func_00405E10(int a) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00405E30);
+#ifdef SKIP_ASM
+#define H1(x) (((x) + ((x) > 0)) >> 1)
+#define H3(x) ((3 * (x) + ((x) > 0)) >> 1)
+void func_00405E30(int *p, int *o, int *in, int a, int b) {
+    if (p[93] == 3) {
+        if (p[94] != 0) {
+            o[0] = H1(a) + in[0];
+            o[1] = H1(b) + in[1] - 1;
+            o[2] = H3(a) + in[0];
+            o[3] = H3(b) + in[1] + 1;
+        } else {
+            o[0] = H3(a) + in[0];
+            o[1] = H3(b) + in[1] - 1;
+            o[2] = H1(a) + in[0];
+            o[3] = H1(b) + in[1] + 1;
+        }
+    } else {
+        o[0] = H1(a) + in[0];
+        o[1] = H1(b) + in[1];
+        if (p[93] == 1)
+            o[1] = o[1] - 1;
+        else
+            o[1] = o[1] + 1;
+    }
+}
+#undef H1
+#undef H3
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00405FB8);
 
