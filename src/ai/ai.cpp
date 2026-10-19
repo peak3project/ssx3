@@ -782,7 +782,28 @@ extern "C" int func_0012A180(sAiObj128A48* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012A1F0);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+extern int D_00536708[];
+
+struct sAiIds12A1F0 {
+    char pad[0x18];
+    int ids[1];
+};
+struct sAiApp12A1F0 {
+    char pad[0xC0];
+    sAiIds12A1F0* p;
+};
+
+extern "C" int func_0012A1F0(void* self, int idx) {
+    int id = ((sAiApp12A1F0*)D_004A28A8)->p->ids[idx];
+    int r = 0;
+    for (int i = 0; i < 6; i++) if (id == D_00536708[i]) r = 1;
+    return r;
+}
+#endif
 //100%
 INCLUDE_ASM("ai/ai", func_0012A240);
 #ifdef SKIP_ASM
