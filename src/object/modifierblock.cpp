@@ -295,7 +295,24 @@ extern "C" int func_00352E50(tModifierBlock* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/modifierblock", func_00352E98);
+#ifdef SKIP_ASM
+class sMbVtbl_2E98 {
+public:
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+};
+
+extern "C" void func_00352E98(sMbVtbl_2E98** self)
+{
+    sMbVtbl_2E98* o = *self;
+    if (o != 0) {
+        o->v3();
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/modifierblock", func_00352ED0);
