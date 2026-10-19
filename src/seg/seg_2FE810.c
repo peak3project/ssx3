@@ -4787,7 +4787,28 @@ int func_0040C8C0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C928);
+#ifdef SKIP_ASM
+struct S40C928 { int n; int m; unsigned char d[1]; };
+extern unsigned char *D_00529098[];
+extern unsigned char D_00529140[];
+int func_0040C928(void) {
+    struct S40C928 *p = (struct S40C928 *)D_00529098[0];
+    unsigned char *s = D_00529140;
+    int i = 0;
+    int n = s[0];
+    p->n = n;
+    p->m = s[1];
+    if (n != 0) {
+        do {
+            p->d[i] = s[2 + i];
+            i++;
+        } while (i < p->n);
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C980);
 
