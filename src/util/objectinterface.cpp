@@ -191,7 +191,23 @@ extern "C" void* func_002D21C0(void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/objectinterface", func_002D21D0);
+#ifdef SKIP_ASM
+// PORT: callers declare func_002D21D0 as void; it really returns the written size (4).
+extern "C" int func_002D21D0_impl(signed char** self, float f) __asm__("func_002D21D0");
+extern "C" int func_002D21D0_impl(signed char** self, float f)
+{
+    unsigned int v = *(unsigned int*)&f;
+    signed char* p = *self;
+    p[0] = v;
+    p[1] = v >> 8;
+    p[2] = v >> 16;
+    p[3] = v >> 24;
+    *self += 4;
+    return 4;
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/objectinterface", func_002D2210);
