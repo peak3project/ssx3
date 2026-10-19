@@ -1367,7 +1367,31 @@ void func_00403338(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403398);
+#ifdef SKIP_ASM
+extern int func_0042C078_0() __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+extern void func_00409638_2(int, int) __asm__("func_00409638");
+void func_00403398(int *p) {
+    int s;
+    p[0x818 / 4] = 1;
+    p[0x1B0 / 4] = 0;
+    s = func_0042C078_0();
+    *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 | 0x10000;
+    *(volatile int *)0x1000B000 = 0;
+    *(volatile int *)0x1000B400 = 0;
+    *(volatile int *)0x1000D400 = 0;
+    *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 & 0xFFFEFFFF;
+    if (s)
+        func_0042C0C0();
+    *(volatile int *)0x1000B020 = 0;
+    *(volatile int *)0x1000B420 = 0;
+    *(volatile int *)0x1000D420 = 0;
+    *(volatile int *)0x10002010 = 0x40000000;
+    func_00409638_2(0, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403460);
