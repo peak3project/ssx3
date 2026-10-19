@@ -2154,7 +2154,22 @@ int func_00412908(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00412928);
+#ifdef SKIP_ASM
+extern int func_00415260(int, int, int);
+int func_00412928(int *a, int (*fn)(void), short *c) {
+    int r;
+    if (c != 0 && c[2] != 4)
+        return 0;
+    if (fn == (int (*)(void))-1)
+        return a[2];
+    r = func_00415260(fn(), a[3], a[10]);
+    if (r)
+        a[2] = r;
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00412998);
 
