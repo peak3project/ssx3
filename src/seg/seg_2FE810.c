@@ -921,6 +921,70 @@ int func_004011C0(int a, int b) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004011E0);
+#ifdef SKIP_ASM
+extern int D_00451610[];
+extern int D_00451628[];
+extern int D_0045161C[];
+extern int D_0045163C[];
+extern int D_005264D8[];
+extern int D_005264E0[];
+extern char D_004527D0[];
+extern char D_00497A78[];
+extern char D_00497AA0[];
+extern void func_00400C00();
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern void func_00423CA0(int, int *);
+extern void func_00425C60();
+extern int func_004013E8(int);
+extern void func_00426408(int);
+extern int func_00426B48(char *, unsigned, int);
+int func_004011E0(int a) {
+    int i;
+    func_00400C00();
+    if (D_00451628[0] != func_00423DF0(*(volatile int *)D_00451628)) {
+        if (D_00451610[0] > 0)
+            func_00425C60(D_00497A78, a, D_0045161C[0]);
+        return 0;
+    }
+    D_0045161C[0] = a;
+    func_00423CA0(D_005264D8[0], D_005264E0);
+    if (func_004013E8(1) != 0) {
+        func_00423DC0(*(volatile int *)D_00451628);
+        return 0;
+    }
+    func_00426408(0);
+    if (D_0045163C[0] >= 0)
+        return 1;
+    for (;;) {
+        if (func_00426B48(D_004527D0, 0x80000595, 0) < 0) {
+            if (D_00451610[0] > 0)
+                func_00425C60(D_00497AA0);
+            i = 0x100000;
+            do {
+                i--;
+                __asm__ volatile("nop");
+                __asm__ volatile("nop");
+                __asm__ volatile("nop");
+                __asm__ volatile("nop");
+            } while (i != -1);
+            continue;
+        }
+        if (*(int *)(D_004527D0 + 0x24) != 0)
+            break;
+        i = 0x100000;
+        do {
+            i--;
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+        } while (i != -1);
+    }
+    D_0045163C[0] = 0;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401350);
