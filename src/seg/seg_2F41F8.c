@@ -1014,7 +1014,30 @@ extern int func_003F7BD0(void);
 int func_003F71F8(void) { return func_003F7BD0(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7218);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern int f7A60c(int, int) __asm__("func_003F7A60");
+int func_003F7218_impl(int *a, int *b) __asm__("func_003F7218");
+int func_003F7218_impl(int *a, int *b) {
+    int x; int err = 0xC;
+    *a = 1;
+    switch (*(unsigned *)(D_004A4BC4 + 0xD8)) {
+    case 0: x = 1; break;
+    case 1: { unsigned sel = *(unsigned *)(D_004A4BC4 + 0xD0);
+        if (sel >= 2) { if (sel != 2) goto fail; x = 4; } else x = 2; break; }
+    case 2: x = 3; break;
+    case 4: x = 5; break;
+    case 3: case 5: x = 6; break;
+    default: goto fail;
+    }
+    return f7A60c(x, 1);
+fail:
+    *b = err; *a = 0; return err;
+}
+
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F72C8);
