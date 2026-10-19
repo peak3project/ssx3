@@ -108,7 +108,161 @@ void func_00416FE0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00417008);
+#ifdef SKIP_ASM
+struct R17008 {
+    int err;
+    char pad[0x38 - 4];
+    int didinit;
+};
+struct F17008 {
+    unsigned char *p;
+    int r;
+    int w;
+    unsigned short flags;
+    short file;
+    unsigned char *base;
+    int size;
+    int lbfsize;
+    int cookie;
+    int pad20[2];
+    long (*seek)(int, long, int);
+    int pad2C;
+    unsigned char *ubbase;
+    int ubsize;
+    unsigned char *up;
+    int ur;
+    char pad40[0x4C - 0x40];
+    int blksize;
+    int offset;
+    struct R17008 *data;
+};
+extern struct R17008 *g17008_impure __asm__("D_00454944");
+extern void g17008_init(struct R17008 *) __asm__("func_004200F0");
+extern int g17008_fflush(struct F17008 *) __asm__("func_0041FE30");
+extern int g17008_fstat(struct R17008 *, int, int *) __asm__("func_0041FBF0");
+extern long g17008_sseek(int, long, int) __asm__("func_00417A30");
+extern void g17008_smakebuf(struct F17008 *) __asm__("func_004174B0");
+extern int g17008_srefill(struct F17008 *) __asm__("func_00417648");
+int func_00417008_(struct F17008 *fp, long offset, int whence) __asm__("func_00417008");
+int func_00417008_(struct F17008 *fp, long offset, int whence) {
+    long (*seekfn)(int, long, int);
+    long target, curoff;
+    unsigned n;
+    int st[0x68 / 4];
+    int havepos;
+    struct R17008 *ptr;
+    if (fp->data == 0)
+        fp->data = g17008_impure;
+    if (fp->data->didinit == 0)
+        g17008_init(fp->data);
+    ptr = fp->data;
+    if ((*(int *)&fp->flags & 0x108) == 0x108)
+        g17008_fflush(fp);
+    if ((seekfn = fp->seek) == 0) {
+        ptr->err = 0x1D;
+        return -1;
+    }
+    switch (whence) {
+    case 1:
+        g17008_fflush(fp);
+        if (fp->flags & 0x1000)
+            curoff = fp->offset;
+        else {
+            curoff = (*seekfn)(fp->cookie, 0, 1);
+            if (curoff == -1)
+                return -1;
+        }
+        if (fp->flags & 4) {
+            curoff -= fp->r;
+            if (fp->ubbase)
+                curoff -= fp->ur;
+        } else if (fp->flags & 8 && fp->p != 0)
+            curoff += fp->p - fp->base;
+        offset += curoff;
+        whence = 0;
+        havepos = 1;
+        break;
+    case 0:
+    case 2:
+        havepos = 0;
+        break;
+    default:
+        ptr->err = 0x16;
+        return -1;
+    }
+    if (fp->base == 0)
+        g17008_smakebuf(fp);
+    if (fp->flags & 0x81A)
+        goto dumb;
+    if ((fp->flags & 0x400) == 0) {
+        if (seekfn != g17008_sseek || fp->file < 0 || g17008_fstat(ptr, fp->file, st) ||
+            (st[1] & 0xF000) != 0x8000) {
+            fp->flags |= 0x800;
+            goto dumb;
+        }
+        fp->blksize = 0x400;
+        fp->flags |= 0x400;
+    }
+    if (whence == 0)
+        target = offset;
+    else {
+        if (g17008_fstat(ptr, fp->file, st))
+            goto dumb;
+        target = *(long *)&st[4] + offset;
+    }
+    if (!havepos) {
+        if (fp->flags & 0x1000)
+            curoff = fp->offset;
+        else {
+            curoff = (*seekfn)(fp->cookie, 0, 1);
+            if (curoff == -1)
+                goto dumb;
+        }
+        curoff -= fp->r;
+        if (fp->ubbase)
+            curoff -= fp->ur;
+    }
+    if (fp->ubbase) {
+        curoff += fp->r;
+        n = fp->up - fp->base;
+        curoff -= n;
+        n += fp->ur;
+    } else {
+        n = fp->p - fp->base;
+        curoff -= n;
+        n += fp->r;
+    }
+    if ((fp->flags & 0x2000) == 0 && target >= curoff && target < curoff + n) {
+        int o = target - curoff;
+        fp->p = fp->base + o;
+        fp->r = n - o;
+        fp->flags &= ~0x20;
+        return 0;
+    }
+    curoff = target & -fp->blksize;
+    if ((*seekfn)(fp->cookie, curoff, 0) == -1)
+        goto dumb;
+    fp->r = 0;
+    fp->flags &= ~0x20;
+    n = target - curoff;
+    if (n) {
+        if (g17008_srefill(fp) || fp->r < n)
+            goto dumb;
+        fp->p += n;
+        fp->r -= n;
+    }
+    return 0;
+dumb:
+    if (g17008_fflush(fp) || (*seekfn)(fp->cookie, offset, whence) == -1)
+        return -1;
+    fp->p = fp->base;
+    fp->r = 0;
+    fp->flags &= ~0x20;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00417418);
