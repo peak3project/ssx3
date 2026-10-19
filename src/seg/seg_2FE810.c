@@ -2390,7 +2390,28 @@ int func_00410B00(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410B80);
+#ifdef SKIP_ASM
+extern int *func_00414818();
+extern long long *func_00410B80_idx() __asm__("func_00410A78");
+int *func_00410B80(int a, int *b, int c) {
+    int *q = func_00414818(a, c);
+    unsigned short i;
+    if (q == 0)
+        return 0;
+    i = *(unsigned short *)((char *)q + 0x298);
+    if (*((char *)b + i + 0x29C) != 0)
+        {
+            long long v = *func_00410B80_idx(i, b, 0);
+            q[0] = (int)v;
+        }
+    else
+        q[0] = b[0];
+    q[0] = q[0] + q[2];
+    return q;
+}
+#endif
 
 void func_00410C10(void) {
 }
