@@ -2665,7 +2665,16 @@ int func_0027C098(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C0A0);
+#ifdef SKIP_ASM
+extern "C" void* func_002742E0(void* self);
+
+extern "C" void* func_0027C0A0(void* self)
+{
+    return func_002742E0(self);
+}
+#endif
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C0C0);
 #ifdef SKIP_ASM
