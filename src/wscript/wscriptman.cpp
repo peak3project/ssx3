@@ -1589,7 +1589,15 @@ extern "C" func_0030B388_cObj* func_0030B388(void* self, unsigned int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B3F0);
+#ifdef SKIP_ASM
+extern "C" void* func_0030B388_h(void* self, int hash) __asm__("func_0030B388");
+
+extern "C" void func_0030B3F0(void* self, int name) {
+    func_0030B388_h(self, GetHashValue32__FPc(name));
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B428);
