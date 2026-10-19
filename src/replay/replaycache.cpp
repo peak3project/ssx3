@@ -3125,7 +3125,18 @@ extern "C" void* func_002742E0(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00274318);
+#ifdef SKIP_ASM
+struct sH274318 { int pad0; int pad4; int offs[1]; };
+extern "C" void* func_00274318(sH274318* self, int idx) {
+    char* e = (char*)self + self->offs[idx];
+    if (*(unsigned short*)e >= 9) {
+        return e + 8;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00274348__FPv);
