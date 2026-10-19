@@ -775,7 +775,14 @@ extern "C" int func_002F6B38(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F6B48);
+#ifdef SKIP_ASM
+extern "C" void* func_002F6B48(void* self, ...)
+{
+    return self;
+}
+#endif
 
 INCLUDE_ASM("visualfx/worldlightman", func_002F6B88);
 
