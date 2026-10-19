@@ -2780,7 +2780,14 @@ int func_0030D3D8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3E0);
+#ifdef SKIP_ASM
+extern "C" void func_0030AC98_1(void* arg0) __asm__("func_0030AC98");
+extern "C" void func_0030D3E0(char* self) {
+    func_0030AC98_1(*(void**)(self + 0x10));
+}
+#endif
 
 INCLUDE_ASM("wscript/wscriptman", func_0030D400);
 //100%
