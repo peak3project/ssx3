@@ -2076,7 +2076,14 @@ INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE60);
 
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE90);
 
+//100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BEC0);
+#ifdef SKIP_ASM
+extern "C" void func_0016BEC0(float* p)
+{
+    *p = ClampF_BC88(*p, -10000.0f, 10000.0f);
+}
+#endif
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BEE8__FPv);
 #ifdef SKIP_ASM
