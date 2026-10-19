@@ -268,7 +268,33 @@ INCLUDE_ASM("seg/seg_316F98", func_00417AB8);
 
 INCLUDE_ASM("seg/seg_316F98", func_004185D0);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004186C8);
+#ifdef SKIP_ASM
+struct Fvsprintf {
+    char *p;
+    int r;
+    int w;
+    short flags, file;
+    char *base;
+    int size;
+    int pad[0x54 / 4 - 6];
+    int ent;
+};
+extern int D_00454944;
+extern int func_0041B658(int, int, char *);
+void func_004186C8(char *buf, int fmt, char *ap) {
+    struct Fvsprintf f;
+    f.p = buf;
+    f.w = 0x7FFFFFFF;
+    f.flags = 0x208;
+    f.base = buf;
+    f.size = 0x7FFFFFFF;
+    f.ent = D_00454944;
+    func_0041B658((int)&f, fmt, ap);
+    *f.p = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00418720);
