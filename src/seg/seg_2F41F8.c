@@ -304,7 +304,24 @@ int func_003F5E90(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5F08);
+#ifdef SKIP_ASM
+typedef struct { char pad0[16]; unsigned char v[128]; int cnt; unsigned char prev[128]; } Q5F08;
+extern Q5F08 D_5F80q __asm__("D_00525F80");
+extern char D_00525F88[];
+extern int sceUsbKbGetInfo(char *);
+void func_003F5F08(void) {
+    int i;
+    char *p;
+    for (i = 0; i < D_5F80q.cnt; i++) D_5F80q.prev[i] = D_5F80q.v[i];
+    if (sceUsbKbGetInfo(D_00525F88) == 0) {
+        p = D_00525F88 - 8;
+        *(int *)(p + 0x9C) = 1;
+        p[0xA0] = 1;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5F88);
 
