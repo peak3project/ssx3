@@ -4309,7 +4309,45 @@ void func_003E35B0(unsigned short arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3618);
+#ifdef SKIP_ASM
+struct S_3618 { int pad[0xB]; int f2C; };
+extern struct S_3618 D_00519C40_3618 __asm__("D_00519C40");
+extern int D_00519C80_3618[] __asm__("D_00519C80");
+extern int D_00450C58_3618[] __asm__("D_00450C58");
+extern void func_00401718_3618(int) __asm__("func_00401718");
+extern void func_00402450_3618(int) __asm__("func_00402450");
+extern void func_00401BF0_3618(int) __asm__("func_00401BF0");
+extern int func_00401DF8_3618(int, int, void *, void *) __asm__("func_00401DF8");
+extern int func_004013E8_3618(int) __asm__("func_004013E8");
+extern int func_00402300_3618(void) __asm__("func_00402300");
+extern void func_003E35B0_3618(int) __asm__("func_003E35B0");
+
+int *func_003E3618(void) {
+    int n = 10;
+    int r;
+    int q;
+    do {
+        if (n == 0) {
+            n = 10;
+            func_00401718_3618(0);
+            func_00402450_3618(D_00450C58_3618[2]);
+        }
+        func_00401BF0_3618(0);
+        while (func_00401DF8_3618(D_00519C40_3618.f2C, 1, D_00519C80_3618, (char *)&D_00519C40_3618 + 0x1C) == 0) {
+            func_003E35B0_3618(0x1E0);
+        }
+        do {
+            r = func_004013E8_3618(1);
+            func_003E35B0_3618(0x1E0);
+        } while (r != 0);
+        q = func_00402300_3618() == 0;
+        if (!q) n--;
+    } while (!q);
+    return D_00519C80_3618;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E36F8);
