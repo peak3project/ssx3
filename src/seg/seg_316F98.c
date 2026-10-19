@@ -1968,7 +1968,61 @@ INCLUDE_ASM("seg/seg_316F98", func_004214C0);
 
 INCLUDE_ASM("seg/seg_316F98", func_00421530);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004216E8);
+#ifdef SKIP_ASM
+struct R216E8;
+extern char *g216E8_dtoa(struct R216E8 *, double, int, int, int *, int *, char **) __asm__("func_00422780");
+extern char *g216E8_strcpy(char *, char *) __asm__("strcpy");
+void func_004216E8_(struct R216E8 *ptr, char *buf, double invalue, int ndigit, char type, int dot) __asm__("func_004216E8");
+void func_004216E8_(struct R216E8 *ptr, char *buf, double invalue, int ndigit, char type, int dot) {
+    int decpt;
+    int i = ndigit;
+    int sign;
+    char *p, *end;
+    p = g216E8_dtoa(ptr, invalue, 2, i + 1, &decpt, &sign, &end);
+    if (decpt == 9999) {
+        g216E8_strcpy(buf, p);
+        return;
+    }
+    *buf++ = *p++;
+    if (dot || i != 0)
+        *buf++ = '.';
+    while (*p && i > 0) {
+        *buf++ = *p++;
+        i--;
+    }
+    if (type == 'g')
+        type = 'e';
+    else if (type == 'G')
+        type = 'E';
+    else {
+        while (i > 0) {
+            *buf++ = '0';
+            i--;
+        }
+    }
+    *buf++ = type;
+    decpt--;
+    if (decpt < 0) {
+        *buf++ = '-';
+        decpt = -decpt;
+    } else
+        *buf++ = '+';
+    if (decpt >= 100) {
+        int dig = decpt / 100;
+        *buf++ = dig + '0';
+        decpt -= dig * 100;
+    }
+    {
+        int dig = decpt / 10;
+        *buf++ = dig + '0';
+        decpt -= dig * 10;
+    }
+    *buf++ = decpt + '0';
+    *buf = '\0';
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_004218D8);
 
