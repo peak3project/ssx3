@@ -2154,7 +2154,18 @@ extern "C" void func_002893C8(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00289400);
+#ifdef SKIP_ASM
+struct func_00289400_key { long v; } __attribute__((packed));
+extern func_00289400_key D_004A3600[];
+extern "C" int func_002ADCA0_k(void*, int, long, int, int, int, int, int) __asm__("func_002ADCA0");
+
+extern "C" void func_00289400(char* self)
+{
+    func_002ADCA0_k(**(char***)(self + 0x118) + 0x1D8, 0xFA, D_004A3600[0].v, 0, 0, 0, 0, 0);
+}
+#endif
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00289448);
 #ifdef SKIP_ASM
