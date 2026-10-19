@@ -749,7 +749,16 @@ extern "C" char* func_0015C5A8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015C5B8);
+#ifdef SKIP_ASM
+extern char D_00534FB8[];
+
+extern "C" char* func_0015C5B8(void)
+{
+    return D_00534FB8;
+}
+#endif
 //100%
 INCLUDE_ASM("be/bedbreward", func_0015C5C8);
 #ifdef SKIP_ASM
