@@ -19,7 +19,28 @@ int func_003FCDC8(int a) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCE10);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCF00);
+#ifdef SKIP_ASM
+extern int func_003FB858(int, int*, int*);
+extern int func_003FB898(int, int);
+extern int func_00266760(int, int, int, int);
+int func_003FCF00(int a, int b, int c, int d) {
+    int v[2];
+    int r;
+    v[0] = 4;
+    v[1] = 1;
+    func_003FB858(d, v, &v[1]);
+    r = func_003FB898(c, d);
+    if (a) {
+        func_00266760(b, a - 0xC, r, v[0]);
+        r = 0;
+    } else {
+        r = 4;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCF98);
