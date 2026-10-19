@@ -2705,7 +2705,29 @@ void func_00407B70(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407C38);
+#ifdef SKIP_ASM
+struct S_7C38 { char pad[0x13C]; int f13C; char pad2[0x34]; int f174; int f178; char pad3[8]; int f184; int pad188; int f18C[3]; int f198[3]; };
+extern int sc_72E8(struct S_7C38 *, int) __asm__("func_004072E8");
+void func_00407C38(struct S_7C38 *a) {
+    int n;
+    int i;
+    if (a->f13C) {
+        if (a->f184 == 0) n = 1;
+        else n = a->f178 ? 3 : 2;
+    } else {
+        if (a->f174 != 3) n = 1;
+        else n = a->f184 ? 3 : 2;
+    }
+    for (i = 0; i < n; i++) {
+        a->f18C[i] = sc_72E8(a, 16);
+        sc_72E8(a, 1);
+        a->f198[i] = sc_72E8(a, 16);
+        sc_72E8(a, 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407D30);
