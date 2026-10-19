@@ -1992,7 +1992,23 @@ extern "C" sPair_B7B8 func_0016B7B8(char* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BC88);
+#ifdef SKIP_ASM
+// PORT: `<?` (GNU min operator) gives the target's min.s
+static inline float ClampF_BC88b(float v, float lo, float hi)
+{
+    if (v >= lo) {
+        return v <? hi;
+    }
+    return lo;
+}
+
+extern "C" void func_0016BC88(float* p)
+{
+    *p = ClampF_BC88b(*p, 5.0f, 80.0f);
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BCB8);
