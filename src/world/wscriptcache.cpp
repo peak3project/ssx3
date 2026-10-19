@@ -1507,7 +1507,27 @@ extern "C" int func_003AF2F8(void *arg0) {
 
 INCLUDE_ASM("world/wscriptcache", func_003AF300);
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF378);
+#ifdef SKIP_ASM
+extern unsigned char D_00499C81[];
+static inline int to_lower_AF378(int c) { if (D_00499C81[c] & 1) return c + 0x20; return c; }
+
+extern "C" int func_003AF378(const char* a, const char* b)
+{
+    int i;
+    int d = 0;
+    i = 0;
+    while (a[i] != 0 && b[i] != 0) {
+        d += to_lower_AF378(a[i]) - to_lower_AF378(b[i]);
+        if (d != 0) {
+            return d;
+        }
+        i++;
+    }
+    return a[i] - b[i];
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("world/wscriptcache", func_003AF428);
 #ifdef SKIP_ASM
