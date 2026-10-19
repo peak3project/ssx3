@@ -1783,7 +1783,40 @@ unsigned int func_0042AFE8(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042B068);
+#ifdef SKIP_ASM
+typedef struct { char b[4]; } K4;
+extern int D_00455228;
+extern char D_0052F280[];
+extern K4 D_Gm __asm__("D_0052F2A8");
+extern K4 D_G68 __asm__("D_0052F080");
+extern int func_00426B48_v(void *, int, int) __asm__("func_00426B48");
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_0042B068(void) {
+    int i;
+    if (D_00455228 < 0) {
+        for (;;) {
+            if (func_00426B48_v(D_0052F280, 0x80000006, 0) < 0) {
+                return -1;
+            }
+            if (((int *)D_0052F280)[9] != 0) {
+                D_00455228 = 0;
+                if (func_00426D18_v(D_0052F280, 0xFF, 0, 0, 0, &D_G68, 4, 0, 0) < 0) {
+                    return 0xFFFEFFFF;
+                }
+                D_Gm = D_G68;
+                return 0;
+            }
+            i = 0x100000;
+            do {
+                i--;
+            } while (i != -1);
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042B168);
