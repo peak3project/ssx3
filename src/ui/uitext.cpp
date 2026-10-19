@@ -21,7 +21,33 @@ extern "C" void cUIText_deleteText(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uitext", cUIText_getNumTextLines);
+#ifdef SKIP_ASM
+extern unsigned short D_004A47A8;
+extern "C" char cUIText_getNumTextLines_(void* self) __asm__("cUIText_getNumTextLines");
+extern "C" char cUIText_getNumTextLines_(void* self)
+{
+    unsigned short* text = *(unsigned short**)((char*)self + 0xB4);
+    if (text == 0) return 0;
+    unsigned short* p = text;
+    int n = 1;
+    while (*p != 0) {
+        unsigned short c = *p;
+        unsigned short next = p[1];
+        if (c == D_004A47A8 && next == c) {
+            p += 2;
+            n++;
+        } else if (c == 13) {
+            p++;
+            n++;
+        } else {
+            p++;
+        }
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uitext", func_003A0C00);
