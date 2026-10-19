@@ -209,7 +209,21 @@ int func_003F4C68_impl(int a0, int a1, int a2, int a3, int a4, int a5, int a6, i
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4C98);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4D68);
+#ifdef SKIP_ASM
+typedef struct { char pad[0x4D88]; int a; int b; char pad2[0x40]; int c; int d; } S4D68;
+extern S4D68 D_4d68 __asm__("D_0051F0C0");
+extern int func_003F4C68d(int *, int, int, int, int, int, int, int, int, int) __asm__("func_003F4C68");
+extern void func_003F4A78v(void) __asm__("func_003F4A78");
+int func_003F4D68(void) {
+    int t[4];
+    t[3] = 1;
+    func_003F4C68d(t, 1, 0, 0, 0, 0, D_4d68.a, D_4d68.b - D_4d68.a, 1, 0);
+    while (D_4d68.c != D_4d68.d) func_003F4A78v();
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4DE8);
 
