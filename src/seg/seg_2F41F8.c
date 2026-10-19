@@ -2547,7 +2547,32 @@ int func_003FBDF0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBE40);
+#ifdef SKIP_ASM
+typedef struct { char pad[0x78]; int st; int pad2; int h; int pad3; char buf[0x10]; int cnt; } S3FBE40;
+extern S3FBE40 *D_BE40 __asm__("D_004A5B20");
+extern int fBCD8(int, int) __asm__("func_003FBCD8");
+extern void fB9D0(int, int *, int *, char *) __asm__("func_003FB9D0");
+extern int fBAD0(int, int, char *) __asm__("func_003FBAD0");
+extern int f9C48(S3FBE40 *, int, int) __asm__("func_003F9C48");
+extern int fB810x(int) __asm__("func_003FB810");
+int func_003FBE40(void) {
+    int x[2];
+    int r;
+    int p, q;
+    x[1] = 0;
+    D_BE40->st = 0xB;
+    r = fBCD8(D_BE40->h, 0xC);
+    if (r != 0) return r;
+    fB9D0(D_BE40->h, &x[0], &x[1], D_BE40->buf);
+    q = x[1];
+    p = x[0];
+    r = fBAD0(p, q, D_BE40->buf);
+    if (D_BE40->cnt == r) return 5;
+    return fB810x(f9C48(D_BE40, D_BE40->cnt, 0));
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBED0);
