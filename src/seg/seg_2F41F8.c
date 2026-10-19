@@ -1057,7 +1057,30 @@ int func_003F80C0(void) { return func_003F6E98(3); }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F80E0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8178);
+#ifdef SKIP_ASM
+int func_003F8178(int a);
+int func_003F8178(int a) {
+    switch (a) {
+    case 0: return 0;
+    case 104: return 1;
+    case 103: return 2;
+    case 114: return 3;
+    case 108: return 4;
+    case 3:
+    case 7:
+    case 110: return 5;
+    case 9: return 6;
+    case 1: return 0x13;
+    case 2: return 0x14;
+    case 4: return 7;
+    case 6:
+    case 107: return 0xB;
+    }
+    return 0x18;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8200);
