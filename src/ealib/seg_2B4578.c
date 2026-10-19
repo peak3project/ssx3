@@ -10767,7 +10767,60 @@ done:
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D0D70);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D0ED0);
+#ifdef SKIP_ASM
+struct Ev_0ED0 { int w0; char pad4[4]; signed char b8; unsigned char b9; short hA; short hC; signed char bE; char pF; };
+struct Q_0ED0 { int p[4]; };
+struct P_0ED0 { unsigned int x30; int x34; char pad2[0x928 - 8]; };
+extern unsigned char D_0044F42C_0ED0 __asm__("D_0044F42C");
+extern int D_0044F430_0ED0 __asm__("D_0044F430");
+extern int D_0044F420_0ED0 __asm__("D_0044F420");
+extern struct P_0ED0 D_00517610_0ED0[4] __asm__("D_00517610");
+extern int f5450_0ED0(int) __asm__("func_003D5450");
+extern void f6210_0ED0(void *, int, int) __asm__("func_00416210");
+extern void f0B18_0ED0(void *, void *) __asm__("func_003D0B18");
+extern char *fcopy_0ED0(void *) __asm__("PATHI_copyevent");
+extern int f1F80_0ED0(unsigned int, char *) __asm__("func_003D1F80");
+
+int func_003D0ED0(unsigned int arg0, int arg1) {
+    struct Ev_0ED0 ev;
+    struct Q_0ED0 q;
+    unsigned int i;
+    unsigned int fl, t, u;
+    char *base;
+    struct P_0ED0 *p;
+    if (D_0044F42C_0ED0 == 0 || D_0044F430_0ED0 != 0 || f5450_0ED0(-1) == 0) {
+        return -18;
+    }
+    f6210_0ED0(&q, 0, 0x10);
+    i = 0;
+    f6210_0ED0(&ev, 0, 0x10);
+    ev.w0 = arg0;
+    ev.b9 = 4;
+    ev.bE = ev.b8 = -1;
+    ev.hC = arg1;
+    f0B18_0ED0(&q, &ev);
+    base = (char *)D_00517610_0ED0;
+    p = (struct P_0ED0 *)(base + 0x30);
+    do {
+        if (p->x34 != 0) {
+            fl = p->x30;
+            t = fl & 0xF0000000;
+            if ((t & arg0) != 0 && (u = fl & 0x0F000000, (u & arg0) != 0)) {
+                if (f5450_0ED0(i & 0xFF) != 0) {
+                    f1F80_0ED0(arg0, fcopy_0ED0(&q));
+                }
+            }
+        }
+        i++;
+        p++;
+    } while (i < 4);
+    D_0044F430_0ED0 = 0;
+    D_0044F420_0ED0 = 0;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1038);
 
