@@ -4663,7 +4663,21 @@ extern "C" int func_001E3460(int* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E34D8);
+#ifdef SKIP_ASM
+extern "C" int func_001E34D8(int i)
+{
+    sPopupEntry18* a = &D_004C6C08[i];
+    int n = i + 1;
+    sPopupEntry18* b = &D_004C6C08[n];
+    int r = -1;
+    if (b->field_0x4 == a->field_0x4) {
+        r = n;
+    }
+    return r;
+}
+#endif
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3510);
 #ifdef SKIP_ASM
