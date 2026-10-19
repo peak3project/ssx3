@@ -219,7 +219,47 @@ int func_004178A8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004178B0);
+#ifdef SKIP_ASM
+#define func_004178B0_va_start(ap) \
+    (ap = (char*)__builtin_next_arg() \
+          - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0))
+struct F178B0 {
+    char *p;
+    int r;
+    int w;
+    short flags, file;
+    char *base;
+    int size;
+    int lbfsize;
+    int cookie;
+    int (*read)(void);
+    int pad1[3];
+    int ubbase;
+    int pad2[0x44 / 4 - 0x34 / 4];
+    int lbbase;
+    int pad3[0x54 / 4 - 0x48 / 4];
+    int ent;
+};
+extern int strlen(char *);
+extern int D_00454944;
+extern int func_00417AB8(struct F178B0 *, int, char *);
+int func_004178B0(char *str, int fmt, ...) {
+    char *ap;
+    struct F178B0 f;
+    f.flags = 4;
+    f.p = str;
+    f.base = str;
+    f.size = f.r = strlen(str);
+    f.read = func_004178A8;
+    f.ubbase = 0;
+    f.lbbase = 0;
+    f.ent = D_00454944;
+    func_004178B0_va_start(ap);
+    return func_00417AB8(&f, fmt, ap);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00417948);
