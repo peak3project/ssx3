@@ -1689,6 +1689,76 @@ INCLUDE_ASM("seg/seg_316F98", func_00421F20);
 INCLUDE_ASM("seg/seg_316F98", func_004224A0);
 
 INCLUDE_ASM("seg/seg_316F98", func_00422560);
+#ifdef SKIP_ASM
+extern int func_00420E28_cmp(struct Bigint *, struct Bigint *) __asm__("func_00420E28");
+int func_00422560(struct Bigint *b, struct Bigint *S) {
+    int n;
+    int borrow, y;
+    unsigned carry, q, ys;
+    unsigned *bx, *bxe, *sx, *sxe;
+    int z;
+    unsigned si, zs;
+    n = S->wds;
+    if (b->wds < n)
+        return 0;
+    sx = S->x;
+    sxe = sx + --n;
+    bx = b->x;
+    bxe = bx + n;
+    q = *bxe / (*sxe + 1);
+    if (q) {
+        borrow = 0;
+        carry = 0;
+        do {
+            si = *sx++;
+            ys = (si & 0xffff) * q + carry;
+            zs = (si >> 16) * q + (ys >> 16);
+            carry = zs >> 16;
+            y = (*bx & 0xffff) - (ys & 0xffff) + borrow;
+            borrow = y >> 16;
+            z = (*bx >> 16) - (zs & 0xffff) + borrow;
+            borrow = z >> 16;
+            ((unsigned short *)bx)[1] = (unsigned short)z;
+            ((unsigned short *)bx)[0] = (unsigned short)y;
+            bx++;
+        } while (sx <= sxe);
+        if (!*bxe) {
+            bx = b->x;
+            while (--bxe > bx && !*bxe)
+                --n;
+            b->wds = n;
+        }
+    }
+    if (func_00420E28_cmp(b, S) >= 0) {
+        q++;
+        borrow = 0;
+        carry = 0;
+        bx = b->x;
+        sx = S->x;
+        do {
+            si = *sx++;
+            ys = (si & 0xffff) + carry;
+            zs = (si >> 16) + (ys >> 16);
+            carry = zs >> 16;
+            y = (*bx & 0xffff) - (ys & 0xffff) + borrow;
+            borrow = y >> 16;
+            z = (*bx >> 16) - (zs & 0xffff) + borrow;
+            borrow = z >> 16;
+            ((unsigned short *)bx)[1] = (unsigned short)z;
+            ((unsigned short *)bx)[0] = (unsigned short)y;
+            bx++;
+        } while (sx <= sxe);
+        bx = b->x;
+        bxe = bx + n;
+        if (!*bxe) {
+            while (--bxe > bx && !*bxe)
+                --n;
+            b->wds = n;
+        }
+    }
+    return q;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00422780);
 
