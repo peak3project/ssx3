@@ -1031,7 +1031,37 @@ void func_00426F48(struct N6F48 *n, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426FE0);
+#ifdef SKIP_ASM
+struct N6FE0 { int f0; int f4; int f8; int fC; int f10; int f14; char pad[0x20]; struct N6FE0 *next; struct N6FE0 *f3C; struct S6FE0 *f40; };
+struct S6FE0 { int f0; int f4; struct N6FE0 *head; };
+extern int func_0042C078_r(void) __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+void func_00426FE0(struct N6FE0 *n, int a1, int a2, int a3, int a4, int a5, struct S6FE0 *a6) {
+    struct N6FE0 *p;
+    struct N6FE0 *h;
+    func_0042C078_r();
+    n->f3C = 0;
+    n->next = 0;
+    n->f0 = a1;
+    h = a6->head;
+    n->f4 = a2;
+    n->f8 = a3;
+    n->f10 = a4;
+    n->f14 = a5;
+    n->f40 = a6;
+    if (h == 0) {
+        a6->head = n;
+    } else {
+        p = h;
+        for (; p->next != 0; p = p->next)
+            ;
+        p->next = n;
+    }
+    func_0042C0C0();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_004270B0);
 
