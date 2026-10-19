@@ -1332,7 +1332,15 @@ extern char D_00497528[];
 char *func_003FB800(void) { return D_00497528; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB810);
+#ifdef SKIP_ASM
+char *func_003FB810_impl(char *p) __asm__("func_003FB810");
+char *func_003FB810_impl(char *p) {
+    if (p == 0) return 0;
+    return p + 100;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB828);
 
