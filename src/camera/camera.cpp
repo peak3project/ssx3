@@ -4099,7 +4099,14 @@ extern "C" void* func_001673A0(void* self, void* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_001673B8);
+#ifdef SKIP_ASM
+extern "C" void* func_001673B8(void* self, ...)
+{
+    return self;
+}
+#endif
 
 INCLUDE_ASM("camera/camera", func_001673F8);
 
