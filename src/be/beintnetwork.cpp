@@ -477,5 +477,22 @@ extern "C" void* func_0014EEC8(void* self, int player, int index)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintnetwork", func_0014EF00);
+#ifdef SKIP_ASM
+signed char cBELibrary_getCharacterID(int index);
+
+struct sNetChar_0014EF00
+{
+    char pad_0x00[0x30];
+    char field_0x30[0x88 - 0x30];
+};
+
+extern sNetChar_0014EF00 D_00530970_EF00[] __asm__("D_00530970");
+
+extern "C" void* func_0014EF00(void* self, int rider)
+{
+    return D_00530970_EF00[cBELibrary_getCharacterID(rider)].field_0x30;
+}
+#endif
 
