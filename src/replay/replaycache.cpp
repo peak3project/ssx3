@@ -1250,7 +1250,15 @@ extern "C" void func_002721D0(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272200);
+#ifdef SKIP_ASM
+extern "C" void func_00272200(int* self) {
+    self[2] = 0;
+    self[3] = 0;
+    self[4] = 0;
+}
+#endif
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272210);
 #ifdef SKIP_ASM
