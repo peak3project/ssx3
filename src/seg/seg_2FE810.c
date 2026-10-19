@@ -1534,7 +1534,22 @@ void func_0040C8B0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C8C0);
+#ifdef SKIP_ASM
+struct S_C8C0 { char pad[0x90]; int f90; int pad2; int f98; };
+extern struct S_C8C0 G_C8C0[] __asm__("D_00529000");
+extern int (*D_00453420[])(void);
+int func_0040C8C0(void) {
+    int r = 0;
+    unsigned s = G_C8C0[0].f90;
+    if (s - 1 < 5)
+        r = D_00453420[s]();
+    G_C8C0[0].f90 = 0;
+    G_C8C0[0].f98 = 0;
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C928);
 
