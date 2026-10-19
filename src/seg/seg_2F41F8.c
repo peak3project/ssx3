@@ -739,7 +739,28 @@ char *func_003F68F0(char *a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6960);
+#ifdef SKIP_ASM
+extern unsigned char D_004A5B14b __asm__("D_004A5B14");
+extern int D_6100[] __asm__("D_00526100");
+typedef struct { int a; int b; } R6960;
+extern R6960 D_526080s[] __asm__("D_00526080");
+extern int f6F08(int *) __asm__("func_00426F08");
+extern int f6D18(int *, int, int, R6960 *, int, int, int, int, int) __asm__("func_00426D18");
+void func_003F6960_impl(int a, int b, int c, int d, int e) __asm__("func_003F6960");
+void func_003F6960_impl(int a, int b, int c, int d, int e) {
+    R6960 *r = D_526080s;
+    if (D_004A5B14b) {
+        while (f6F08(D_6100) > 0) ;
+        r->a = b;
+        r->b = c;
+        do {
+            if (f6D18(D_6100, a, 0, D_526080s, 0x80, d, e, 0, 0) >= 0) break;
+        } while (1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6A40);
