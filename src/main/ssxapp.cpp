@@ -904,7 +904,22 @@ extern "C" void func_002292E0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_00229398);
+#ifdef SKIP_ASM
+extern "C" void func_00229B90(void* self, int a1);
+
+extern "C" void func_00229398(void* self)
+{
+    int i;
+    for (i = 0; i < 0x80; i++) {
+        unsigned* e = (unsigned*)((char*)self + 0x8) + i;
+        if (*e != 0xFFFFFFFF) {
+            func_00229B90(self, i);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxapp", func_00229408);
