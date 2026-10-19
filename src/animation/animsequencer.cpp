@@ -690,7 +690,19 @@ cAnimSequenceNode* cAnimSequencer_getSequence(cAnimSequencer* self, int index)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00314788);
+#ifdef SKIP_ASM
+extern "C" int func_00314788(void* self, int id)
+{
+    char* node;
+    for (node = *(char**)((char*)self + 4); node != 0; node = *(char**)(node + 0xC8)) {
+        if (*(int*)node == id)
+            return 1;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("animation/animsequencer", func_003147B8);
 //100% - objdiff report; single-function view differs only in a relocation name
