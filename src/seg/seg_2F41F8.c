@@ -717,7 +717,28 @@ int func_003F75D8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7658);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern char fn7958[] __asm__("func_003F7958");
+extern char fn7890[] __asm__("func_003F7890");
+extern int func_003FCE10(char *, int, int, int);
+extern int func_003FC708(char *, int, int, int, int);
+extern int func_003F8178(int);
+int func_003F7658(void) {
+    int r;
+    char *d = D_004A4BC4;
+    *(char **)(d + 0xFC) = fn7890;
+    *(char **)(d + 0x100) = fn7958;
+    r = func_003F8178(func_003FCE10(d + 0x144, *(int *)(d + 0x140), 0x11, 0));
+    if (r == 0) {
+        char *e = D_004A4BC4;
+        r = func_003F8178(func_003FC708(e + 0x44, 0x50415353, 0, *(int *)(e + 0x144), 0x11));
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F76D8);
