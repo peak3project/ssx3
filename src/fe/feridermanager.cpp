@@ -874,7 +874,18 @@ extern "C" int func_0019F6F0(void *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F718);
+#ifdef SKIP_ASM
+typedef int cQuad128_F718 __attribute__((mode(TI)));
+
+extern "C" void func_0019F718(void* arg0, int arg1, cQuad128_F718* src)
+{
+    int bones = *(int*)(*(char**)((char*)arg0 + 8) + 0x2C);
+    int slot = *(int*)((char*)arg0 + (arg1 << 2) + 0xC7C);
+    *(cQuad128_F718*)((slot << 5) + bones + 0x10) = *src;
+}
+#endif
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F740);
 #ifdef SKIP_ASM
