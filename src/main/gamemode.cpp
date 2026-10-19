@@ -219,7 +219,16 @@ extern "C" void cGameModeMan_initGameMode(sGameModeMan* self, unsigned int type)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamemode", func_002382B8);
+#ifdef SKIP_ASM
+extern int D_00536730[];
+
+extern "C" void func_002382B8(void* self, int idx)
+{
+    D_00536730[idx] = -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_restartHeat);
