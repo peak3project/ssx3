@@ -71,7 +71,37 @@ int func_003FDF88(unsigned n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDFB0);
+#ifdef SKIP_ASM
+extern int D_00451590[];
+extern int D_004977F0[];
+extern void func_003FDF50(char *, int);
+extern int func_003FE090_i(char *) __asm__("func_003FE090");
+int func_003FDFB0(int a) {
+    char buf[20];
+    int i;
+    int saved = *(volatile int *)0x1000E000 & 1;
+    for (i = 0; i < 10; i++) {
+        if (D_004977F0[i] != 0) {
+            int *t = (int *)D_00451590[i];
+            t[0] = 0;
+            t[0x30 / 4] = 0;
+            t[0x10 / 4] = 0;
+            t[0x50 / 4] = 0;
+            t[0x40 / 4] = 0;
+            t[0x80 / 4] = 0;
+        }
+    }
+    *(volatile int *)0x1000E010 = 0xFF1F;
+    *(int *)0x1000E010 &= 0xFF1F0000;
+    func_003FDF50(buf, 20);
+    func_003FE090_i(buf);
+    if (a == 1)
+        *(volatile int *)0x1000E000 |= 1;
+    return saved;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FE090);
 
