@@ -2262,6 +2262,30 @@ INCLUDE_ASM("seg/seg_2FE810", func_004065D0);
 INCLUDE_ASM("seg/seg_2FE810", func_00406A78);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00406B00);
+#ifdef SKIP_ASM
+extern int Q_72E8(int, int) __asm__("func_004072E8");
+extern void Q_6CA0(int, int *, int *, int, int, int, int, int) __asm__("func_00406CA0");
+void func_00406B00(int p, int *x, int *out, int *t, int idx, int m, int k, int n0, int n1, int f1, int f2) {
+    int v;
+    int *q;
+    if (m == 1) {
+        if (k == 0 && f1 == 0) {
+            v = Q_72E8(p, 1);
+            t[idx] = v;
+            t[idx + 2] = v;
+        }
+        q = &x[idx * 2];
+        Q_6CA0(p, q, out, n0, n1, f1, f2, 0);
+        q[4] = q[0];
+        q[5] = q[1];
+    } else {
+        t[idx] = Q_72E8(p, 1);
+        Q_6CA0(p, &x[idx * 2], out, n0, n1, f1, f2, 0);
+        t[idx + 2] = Q_72E8(p, 1);
+        Q_6CA0(p, &x[idx * 2 + 4], out, n0, n1, f1, f2, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406CA0);
