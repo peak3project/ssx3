@@ -1069,7 +1069,17 @@ int func_003F8838(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8880);
+#ifdef SKIP_ASM
+extern int *D_004A4BD8;
+int func_003F8880(int a) {
+    int m = D_004A4BD8[1];
+    if (m != 0x1B && m != 0x1D && m != 0x1C && m != 7 && m != 0xB && m != 0x18) return 0x12;
+    if (a != 0 && a != 3 && a != 4 && a != 9 && a != 0xE && a != 0xD && a != 0x11 && a != 0xA) return 0x10;
+    return a;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8908);
