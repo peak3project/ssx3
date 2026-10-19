@@ -2166,7 +2166,69 @@ int func_003F9818_impl(char *str, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F99B8);
+#ifdef SKIP_ASM
+typedef struct { unsigned short h0; char pad[0xE]; void (*f10)(int); } E99B8;
+extern int c99b8_9208(void) __asm__("func_003F9208");
+extern int c99b8_86B8(int) __asm__("func_003F86B8");
+extern int c99b8_8550(int) __asm__("func_003F8550");
+extern int c99b8_8588(int) __asm__("func_003F8588");
+extern void c99b8_86F0(int) __asm__("func_003F86F0");
+extern void c99b8_B2F8(int) __asm__("func_003FB2F8");
+extern unsigned c99b8_6210(void *, int, int) __asm__("func_00416210");
+extern char *strcpy(char *, const char *);
+extern int *D_99B8s __asm__("D_004A4BD8");
+extern E99B8 *D_99B8e __asm__("D_004A4BDC");
+int func_003F99B8_impl(char *str, int a, int b) __asm__("func_003F99B8");
+int func_003F99B8_impl(char *str, int a, int b) {
+    int v;
+    int t;
+    int *s;
+    int *s2;
+    unsigned m;
+    if (c99b8_9208() == 0) return 2;
+    if (str == 0) return 0xC;
+    if ((unsigned)(a + 1) >= 9) return 9;
+    if (a != -1) {
+        m = 1 << a;
+        if (!(D_99B8e->h0 & m)) return 0xB;
+    }
+    if (D_99B8s[0] != 0) return 0xD;
+    c99b8_6210(D_99B8s + 3, 0, 0x60);
+    if (a == -1) {
+        if (c99b8_86B8(D_99B8e->h0) == 1) {
+            v = c99b8_8550(D_99B8e->h0);
+            s = D_99B8s;
+            s[4] = v;
+            s[0] = 6;
+        } else if (b == 0) {
+            v = c99b8_8550(D_99B8e->h0);
+            s = D_99B8s;
+            s[4] = v;
+            s[0] = 3;
+        } else if (b == 1) {
+            v = c99b8_8588(D_99B8e->h0);
+            s = D_99B8s;
+            s[4] = v;
+            s[0] = 3;
+        } else {
+            return 0xC;
+        }
+    } else {
+        s2 = D_99B8s;
+        s2[4] = a;
+        s2[0] = 6;
+    }
+    c99b8_86F0(0);
+    strcpy((char *)(D_99B8s + 0x15), str);
+    D_99B8s[0x6C / 4] = b;
+    c99b8_B2F8(1);
+    D_99B8e->f10(D_99B8s[4]);
+    D_99B8s[1] = 1;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9B38);
 
