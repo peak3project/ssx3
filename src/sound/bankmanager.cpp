@@ -473,7 +473,17 @@ extern "C" void func_0028BDE0(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028BE08);
+#ifdef SKIP_ASM
+extern "C" void func_0028B6C8(void *dst, void *src);
+
+extern "C" void func_0028BE08(void* self, int i, int j)
+{
+    char* base = *(char**)((char*)self + 0xACC);
+    func_0028B6C8(base + i * 0x60, base + j * 0x60);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028BE38);
