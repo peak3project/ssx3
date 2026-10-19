@@ -209,7 +209,43 @@ unsigned func_003FD2B8(int *p, unsigned n) {
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD2F8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD558);
+#ifdef SKIP_ASM
+extern char D_004975F0[];
+extern char D_004975F8[];
+extern char D_00497600[];
+extern int func_003FD1D8(int*);
+int func_003FD558(int* o, int imgi, int x) {
+    int* img = (int*)imgi;
+    int ok = 0;
+    struct sShdr* s1;
+    struct sShdr* s2;
+    struct sShdr* s3;
+    if (func_003FD1D8(img)) {
+        if (img[4] == 0x80001) {
+            o[1] = x;
+            o[0] = (int)img;
+            ok = 1;
+            s1 = func_003FD210(o, D_004975F0);
+            s2 = func_003FD210(o, D_004975F8);
+            s3 = func_003FD210(o, D_00497600);
+            if (s1) {
+                o[2] = (int)img + s1->offset;
+                o[3] = s1->size;
+            }
+            if (s3) {
+                o[8] = (int)img + s3->offset;
+            }
+            if (s2) {
+                o[5] = (unsigned int)s2->size >> 4;
+                o[4] = (int)img + s2->offset;
+            }
+        }
+    }
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD660);
