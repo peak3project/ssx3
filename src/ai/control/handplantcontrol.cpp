@@ -3239,7 +3239,19 @@ extern "C" int func_00144010(void *arg0, float fparg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00144040);
+#ifdef SKIP_ASM
+class cObj_4040;
+typedef void (cObj_4040::*Fn_4040)();
+extern Fn_4040 D_0043CF20_4040[] __asm__("D_0043CF20");
+
+extern "C" void func_00144040(char* self, int idx)
+{
+    *(Fn_4040*)(self + 0xF44) = D_0043CF20_4040[idx];
+    *(short*)(self + 0xF38) = idx;
+}
+#endif
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00144068__FPv);
 #ifdef SKIP_ASM
