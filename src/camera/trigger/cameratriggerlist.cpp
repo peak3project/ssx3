@@ -97,7 +97,30 @@ extern "C" void func_0016C098(void** self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerlist", func_0016C0D8);
+#ifdef SKIP_ASM
+struct sTrig_16C0D8 {
+    int id;
+};
+
+struct sList_16C0D8 {
+    sTrig_16C0D8** arr;
+    int count;
+};
+
+extern "C" void* func_0016C0D8(sList_16C0D8* self, int id)
+{
+    int i;
+    for (i = 0; i < self->count; i++) {
+        sTrig_16C0D8* t = self->arr[i];
+        if (t->id == id) {
+            return t;
+        }
+    }
+    return 0;
+}
+#endif
 
 struct cCameraTriggerList2 {
     void** arr; // 0x0
