@@ -472,7 +472,14 @@ extern "C" void* func_00145340()
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintnewrace", func_00145360);
+#ifdef SKIP_ASM
+extern "C" void* func_00145360(void* self, int a1)
+{
+    return (char*)&D_0043E97C + a1 * 0x54;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00145378);
