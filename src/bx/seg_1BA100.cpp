@@ -1433,73 +1433,7 @@ extern "C" int func_002BAF90(int *arg0) {
 }
 #endif
 
-//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BAFB0);
-#ifdef SKIP_ASM
-// Placement new for constructing the key table in place.
-inline void* operator new(unsigned int, void* p) { return p; }
-
-// 8-byte key: a byte id at offset 0, overlaid by the packed word id | (index << 8).
-struct sKey_AFB0 {
-    union {
-        unsigned char id;
-        int packed;
-    };
-    int pad;
-
-    sKey_AFB0(int n)
-    {
-        id = n;
-        packed = (packed & 0xFF) | (n << 8);
-    }
-};
-
-// Zeroed 8-byte header placed before the key table.
-struct sPair_AFB0 {
-    int a;
-    int b;
-
-    sPair_AFB0() : a(0), b(0) {}
-};
-
-extern sPair_AFB0 D_004A52E0;
-extern sKey_AFB0 D_004A52E8;
-extern sKey_AFB0 D_004A52F0;
-extern sKey_AFB0 D_004A52F8;
-extern sKey_AFB0 D_004A5300;
-extern sKey_AFB0 D_004A5308;
-extern sKey_AFB0 D_004A5310;
-extern sKey_AFB0 D_004A5318;
-extern sKey_AFB0 D_004A5320;
-extern sKey_AFB0 D_004A5328;
-extern sKey_AFB0 D_004A5330;
-extern sKey_AFB0 D_004A5338;
-extern sKey_AFB0 D_004A5340;
-extern sKey_AFB0 D_004A5348;
-extern sKey_AFB0 D_004A5350;
-
-// Static initializer (initialize, priority) for the key table.
-extern "C" void func_002BAFB0(int initialize, int priority)
-{
-    if (priority == 0xFFFF && initialize != 0) {
-        new (&D_004A52E0) sPair_AFB0();
-        new (&D_004A52E8) sKey_AFB0(0);
-        new (&D_004A52F0) sKey_AFB0(1);
-        new (&D_004A52F8) sKey_AFB0(2);
-        new (&D_004A5300) sKey_AFB0(3);
-        new (&D_004A5308) sKey_AFB0(4);
-        new (&D_004A5310) sKey_AFB0(5);
-        new (&D_004A5318) sKey_AFB0(6);
-        new (&D_004A5320) sKey_AFB0(7);
-        new (&D_004A5328) sKey_AFB0(8);
-        new (&D_004A5330) sKey_AFB0(9);
-        new (&D_004A5338) sKey_AFB0(10);
-        new (&D_004A5340) sKey_AFB0(11);
-        new (&D_004A5348) sKey_AFB0(12);
-        new (&D_004A5350) sKey_AFB0(13);
-    }
-}
-#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("bx/seg_1BA100", func_002BB0E0);
