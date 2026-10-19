@@ -1459,7 +1459,31 @@ int func_0042C3A8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C410);
+#ifdef SKIP_ASM
+struct P42C410 { int a; int b; };
+extern struct P42C410 D_004559F8[];
+extern char D_00455250[];
+extern int func_0042C3A8(void);
+extern void func_0042C340(int, int);
+extern void func_0042C350(int, char *, int);
+extern void func_00424020(int);
+extern int func_0042C398(int);
+void func_0042C410(void) {
+    unsigned i;
+    if (func_0042C3A8() != 0) {
+        func_0042C340(D_004559F8[0].a, D_004559F8[0].b);
+        func_0042C350(0x80074000, D_00455250, 0x7A8);
+        func_00424020(0);
+        func_00424020(2);
+        func_0042C340(D_004559F8[1].a, D_004559F8[1].b);
+        for (i = 2; i < 3; i++) {
+            func_0042C340(D_004559F8[i].a, func_0042C398(D_004559F8[i].a));
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C4C0);
 
