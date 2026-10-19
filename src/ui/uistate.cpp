@@ -438,5 +438,34 @@ done:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistate", func_0039F200);
+#ifdef SKIP_ASM
+struct func_0039F200_sFlags {
+    unsigned int b0 : 5;
+    unsigned int b5 : 1;
+    unsigned int b6 : 1;
+    unsigned int b7 : 1;
+    unsigned int id : 6;
+};
+
+struct func_0039F200_node {
+    char pad0[0x1C];
+    union {
+        int flags; // 0x1C
+        func_0039F200_sFlags bits;
+    };
+};
+
+static inline void func_0039F200_setId(func_0039F200_node* n, int v) { n->bits.id = v; }
+static inline void func_0039F200_setB7(func_0039F200_node* n, int v) { n->bits.b7 = v; }
+
+extern "C" void func_0039F200(void* self, func_0039F200_node* n)
+{
+    if (((n->flags >> 5) & 1) && (((unsigned int)n->flags >> 8) & 0x3F) == 5) {
+        func_0039F200_setId(n, 6);
+        func_0039F200_setB7(n, 1);
+    }
+}
+#endif
 
