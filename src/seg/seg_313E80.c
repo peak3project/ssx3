@@ -388,7 +388,34 @@ unsigned char *func_00413B80(unsigned char *p, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413BD0);
+#ifdef SKIP_ASM
+struct K13BD0 { int f0; int f4; int key; };
+struct L13BD0 { struct K13BD0 **items; unsigned n; };
+void func_00413BD0(struct L13BD0 *a, struct L13BD0 *b) {
+    unsigned m = b->n;
+    unsigned n;
+    unsigned j;
+    j = m;
+    if (m != 0) {
+        n = a->n;
+        do {
+            struct K13BD0 *x;
+            j--;
+            x = b->items[j];
+            if (n != 0 && a->items[n - 1]->key - x->key > 0) {
+                do {
+                    a->items[n + j] = a->items[n - 1];
+                    n--;
+                } while (n != 0 && a->items[n - 1]->key - x->key > 0);
+            }
+            a->items[n + j] = x;
+        } while (j != 0);
+        a->n = a->n + m;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00413CD0);
 
