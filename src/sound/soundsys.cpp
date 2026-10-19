@@ -10485,7 +10485,16 @@ extern "C" void func_002A7718(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A77A8);
+#ifdef SKIP_ASM
+extern "C" void func_002A68B0(char* self, char* obj, float dt);
+
+extern "C" void func_002A77A8(void* self, char* obj, float dt)
+{
+    func_002A68B0(*(char**)(obj + 0x80), obj, dt);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A77C8);
