@@ -1443,7 +1443,35 @@ void func_00407D30(int p) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00407DC0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407E90);
+#ifdef SKIP_ASM
+extern void func_004086C0(int *, int, int);
+extern void func_004087D0(int *, int, int, int);
+void func_00407E90(int *p, int n, int flag) {
+    int a, b;
+    if (flag) {
+        if (p[0x174 / 4] == 3) {
+            if (p[0x150 / 4] == 3)
+                a = p[0x1C4 / 4];
+            else
+                a = p[0x1B8 / 4];
+            func_004086C0(p, a, n - 1);
+        } else {
+            if (p[0x150 / 4] == 3) {
+                a = p[0x1D4 / 4];
+                b = p[0x1E4 / 4];
+            } else {
+                a = p[0x1C8 / 4];
+                b = p[0x1D8 / 4];
+            }
+            func_004087D0(p, a, b, n - 1);
+        }
+    }
+    if (p[0xF8 / 4] == 1)
+        p[0xF8 / 4] = 2;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00407F20);
 
