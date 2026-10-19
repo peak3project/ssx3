@@ -1356,7 +1356,63 @@ int func_00429560(int a0) {
 
 INCLUDE_ASM("seg/seg_325220", func_00429628);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00429790);
+#ifdef SKIP_ASM
+struct S9790 { int f0; int f4; int f8; int fC; int f10; };
+extern int D_0045520C;
+extern struct S9790 D_Y __asm__("D_0052D700");
+extern char D_0052E340[];
+extern char D_0052EE00[];
+extern int *func_00427520_p(int) __asm__("func_00427520");
+extern int func_00427988_b(int);
+extern void func_004279B8(void);
+extern int func_00423DA0(int *p);
+extern void func_00423DB0(int);
+extern int func_00423DE0_i(int) __asm__("func_00423DE0");
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_00429790_d(int, int) __asm__("func_00429790");
+int func_00429790_d(int a0, int a1) {
+    int buf[12];
+    int sem;
+    int v;
+    int *t;
+    struct S9790 *p = &D_Y;
+    t = func_00427520_p(a0);
+    func_00427988_b(0xB);
+    if (D_0045520C == 0) {
+        func_004279B8();
+        return -1;
+    }
+    if (t == 0 || t[1] == 0) {
+        func_004279B8();
+        return -9;
+    }
+    p->fC = t[0];
+    p->f10 = a1;
+    buf[1] = 1;
+    buf[2] = 0;
+    buf[5] = 0;
+    sem = func_00423DA0(&buf[0]);
+    p->f0 = sem;
+    p->f4 = (int)&buf[8];
+    p->f8 = 4;
+    if (func_00426D18_v(D_0052EE00, 0xB, 0, p, 0x20, D_0052E340, 4, 0, 0) < 0) {
+        func_00423DE0_i(sem);
+        func_004279B8();
+        return -0xB;
+    }
+    v = *(int *)((int)D_0052E340 | 0x20000000);
+    func_004279B8();
+    if (v == 0) {
+        func_00423DB0(sem);
+        return -0xB;
+    }
+    func_00423DE0_i(sem);
+    func_00423DB0(sem);
+    return buf[8];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_004298E8);
 
