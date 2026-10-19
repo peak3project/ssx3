@@ -393,7 +393,26 @@ void func_003F5F08(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5F88);
+#ifdef SKIP_ASM
+typedef struct { char pad0[16]; unsigned char v[128]; int cnt; unsigned char prev[8]; int st; unsigned char flag; char pad3[0x1B]; void (*cb)(int, int); } Q5F88;
+extern Q5F88 D_5F88q __asm__("D_00525F80");
+extern int f810(int, int *) __asm__("func_0040C810");
+int func_003F5F88(void) {
+    int tmp;
+    int r;
+    int i;
+    r = f810(1, &tmp);
+    if (r != 0) return r;
+    for (i = 0; i < D_5F88q.cnt; i++) {
+        if (((unsigned char *)&D_5F88q)[0x94 + i] != D_5F88q.v[i]) D_5F88q.cb(i, D_5F88q.v[i]);
+    }
+    D_5F88q.flag = 0;
+    D_5F88q.st = 0;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6040);
