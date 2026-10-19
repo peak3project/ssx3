@@ -2256,7 +2256,19 @@ INCLUDE_ASM("seg/seg_2FE810", func_00410930);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00410A78);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410B00);
+#ifdef SKIP_ASM
+extern int func_00410A78();
+extern int func_0041605C(int, int, int);
+int func_00410B00(int a, int b, int c) {
+    int x = func_00410A78(a, b, 0);
+    int y = func_00410A78(a, c, 0);
+    int k;
+    k = a < 31 ? 16 : (a <= 63 ? 4 : 8);
+    return func_0041605C(y, x, k);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00410B80);
 
