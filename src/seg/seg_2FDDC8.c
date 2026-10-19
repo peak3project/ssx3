@@ -66,7 +66,21 @@ void func_003FD128(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD150);
+#ifdef SKIP_ASM
+extern void (*D_0045152C[])(int, int);
+extern int (*D_00451530_a[])(int) __asm__("D_00451530");
+extern int (*D_00451534_a[])(int) __asm__("D_00451534");
+void func_003FD150(int a, int b, int (*fn)(int), int arg) {
+    int none;
+    D_0045152C[0](a, 0x1020000);
+    none = 0;
+    do {
+    } while (D_00451530_a[0](fn(arg) == none) == 1);
+    D_00451534_a[0](b);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD1D8);
