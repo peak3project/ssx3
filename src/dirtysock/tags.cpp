@@ -81,7 +81,43 @@ extern "C" unsigned char* func_003EB8B8(char* record)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldDelete);
+#ifdef SKIP_ASM
+extern "C" unsigned char* cDirtysock_tag_TagFieldFind(char* record, char* name);
+
+extern "C" int cDirtysock_tag_TagFieldDelete(unsigned char* record, char* name)
+{
+    unsigned char* p = cDirtysock_tag_TagFieldFind((char*)record, name);
+    unsigned char* dst;
+    unsigned char* src;
+    if (p == 0) {
+        return -1;
+    }
+    dst = p;
+    while (dst != record && dst[-1] > ' ') {
+        dst--;
+    }
+    src = p;
+    while (*src >= ' ') {
+        src++;
+    }
+    while ((unsigned int)(*src - 1) < 0x1FU) {
+        src++;
+    }
+    int c = *src;
+    if (c != 0) {
+        do {
+            *dst = c;
+            src++;
+            c = *src;
+            dst++;
+        } while (c != 0);
+    }
+    *dst = 0;
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", func_003EB9E8);
