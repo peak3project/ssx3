@@ -725,7 +725,38 @@ int func_004267C0(int a0, int a1, int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426820);
+#ifdef SKIP_ASM
+extern int func_00426698(int *a0);
+extern int func_004266C8(int *a0, int a1);
+extern int func_004261F0(int a0, int a1, int a2, int a3, int a4, int a5);
+extern void func_00423B80(int a0, int (*a1)(int, int, int *), int *a2);
+extern int func_004267C0(int a0, int a1, int *p);
+extern int func_004266C8_u(int *, unsigned) __asm__("func_004266C8");
+void func_00426820(int *a0, int *a1) {
+    int *p;
+    unsigned fl = a0[4];
+    int t1;
+    int t2;
+    if (fl & 4) {
+        p = (int *)func_004266C8_u(a1, fl >> 16);
+    } else {
+        p = (int *)func_00426698(a1);
+    }
+    t1 = a0[5];
+    t2 = a0[7];
+    p[5] = t1;
+    p[7] = t2;
+    p[8] = 0x8000000C;
+    p[9] = a0[8];
+    p[10] = a0[9];
+    p[11] = a0[10];
+    if (func_004261F0(0x80000008, (int)p, 0x40, a0[8], a0[9], a0[10]) == 0) {
+        func_00423B80(10, func_004267C0, p);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_004268F0);
 
