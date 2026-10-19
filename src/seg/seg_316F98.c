@@ -587,7 +587,22 @@ int func_0041AA88(char *a, char *b) {
 
 INCLUDE_ASM("seg/seg_316F98", func_0041AB08);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041AB78);
+#ifdef SKIP_ASM
+extern int func_0041EA18(int);
+int func_0041AB78(char *s1, char *s2, unsigned n) {
+    if (n == 0)
+        return 0;
+    while (n-- != 0 && func_0041EA18(*s1) == func_0041EA18(*s2)) {
+        if (n == 0 || *s1 == '\0' || *s2 == '\0')
+            break;
+        s1++;
+        s2++;
+    }
+    return func_0041EA18(*(unsigned char *)s1) - func_0041EA18(*(unsigned char *)s2);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041AC40);
 
