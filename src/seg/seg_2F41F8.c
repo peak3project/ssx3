@@ -2382,6 +2382,17 @@ int func_003FC8F8_impl(int a, int b, int c, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC990);
+#ifdef SKIP_ASM
+typedef struct { int w[25]; } K100;
+extern K100 *D_C990 __asm__("D_004A5B20");
+int func_003FC990_impl(K100 *dst) __asm__("func_003FC990");
+int func_003FC990_impl(K100 *dst) {
+    if (dst == 0) return 4;
+    *dst = *D_C990;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FCA40);
