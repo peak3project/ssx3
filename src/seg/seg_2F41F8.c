@@ -1468,7 +1468,23 @@ extern int func_3FB300(void);
 int func_003FA6E8(void) { return func_003FB300(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA708);
+#ifdef SKIP_ASM
+void func_003FA708_impl(unsigned a, unsigned char *p) __asm__("func_003FA708");
+void func_003FA708_impl(unsigned a, unsigned char *p) {
+    switch (a) {
+    case 0: p[0] = 0; p[1] = 0; break;
+    case 1: p[0] = 0; p[1] = 1; break;
+    case 2: p[0] = 0; p[1] = 2; break;
+    case 3: p[0] = 0; p[1] = 3; break;
+    case 4: p[0] = 1; p[1] = 0; break;
+    case 5: p[0] = 1; p[1] = 1; break;
+    case 6: p[0] = 1; p[1] = 2; break;
+    case 7: p[0] = 1; p[1] = 3; break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA7A0);
