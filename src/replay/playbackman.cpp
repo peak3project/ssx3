@@ -443,7 +443,16 @@ extern "C" void func_0026CD20(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026CD98);
+#ifdef SKIP_ASM
+extern "C" void func_0026CD98(void* self)
+{
+    func_0026CBB8(self);
+    *(int*)(*(char**)((char*)self + 4) + 8) = 0;
+    *(int*)((char*)self + 0x70) = 2;
+}
+#endif
 
 extern "C" void* func_0026CC18(void*);
 
