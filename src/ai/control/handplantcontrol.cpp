@@ -3382,7 +3382,14 @@ extern "C" void func_00144130(void *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00144138);
+#ifdef SKIP_ASM
+extern "C" int func_00144138(void* self)
+{
+    return (int)((float)*(int*)((char*)self + 0xC) * 0.016666668f);
+}
+#endif
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00144158);
 #ifdef SKIP_ASM
