@@ -1583,7 +1583,17 @@ extern "C" void func_00294678(void* self, char* rider)
 
 INCLUDE_ASM("sound/soundsys", func_002947B0);
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00294860);
+#ifdef SKIP_ASM
+extern "C" int func_00294860(void* self, int i)
+{
+    if (i < 6) {
+        return *(int*)((char*)self + (i << 2) + 0x59e8);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00294880);
