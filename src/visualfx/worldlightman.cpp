@@ -1587,7 +1587,16 @@ void func_002F8168(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F8170);
+#ifdef SKIP_ASM
+static inline unsigned long bitOf(int b) { return 1UL << b; }
+extern "C" int func_002F8170(unsigned long* p, int bit)
+{
+    unsigned long m = 1UL << bit;
+    return (*p & m) != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F8188);
