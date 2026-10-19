@@ -2046,7 +2046,14 @@ void* func_00250A80(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/debugmenu", func_00250AA0);
+#ifdef SKIP_ASM
+extern "C" void* func_00250AA0(void* fmt, ...)
+{
+    return fmt;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/debugmenu", func_00250AE0);
