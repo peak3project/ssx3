@@ -5111,7 +5111,31 @@ void func_00412500(long a, long b) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00412550);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00412608);
+#ifdef SKIP_ASM
+extern void func_00411C38(long *, int *);
+struct S412608 { unsigned cls; int sign; int exp; int pad; unsigned long frac; };
+int func_00412608(long a) {
+    struct S412608 s;
+    int r;
+    func_00411C38(&a, (int *)&s);
+    if ((s.cls ^ 2) == 0)
+        return 0;
+    if (s.cls < 2)
+        return 0;
+    if ((s.cls ^ 4) == 0)
+        goto sat;
+    if (s.exp < 0)
+        return 0;
+    if (s.exp >= 31) {
+sat:
+        return s.sign ? 0x80000000 : 0x7FFFFFFF;
+    }
+    r = (int)(s.frac >> (60 - s.exp));
+    return s.sign ? -r : r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004126A0);
 
