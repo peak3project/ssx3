@@ -1504,7 +1504,28 @@ extern "C" int func_001E00D0(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E00E0);
+#ifdef SKIP_ASM
+class cWidget_E00E0 {
+    int pad0[2];
+public:
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void v7();
+    virtual void v8();
+    virtual void v9(int a);
+};
+
+extern "C" void func_001E00E0(void* self)
+{
+    (*(cWidget_E00E0**)((char*)self + 0x48))->v9(0);
+}
+#endif
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0110);
 #ifdef SKIP_ASM
