@@ -2192,7 +2192,53 @@ extern "C" void func_001A6E70(sOwner1A6E70* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A6F70);
+#ifdef SKIP_ASM
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" int func_00262598(void* self);
+extern "C" const char* func_002625C8(void* self, int idx);
+extern "C" int func_00262400(void* self, int a1);
+extern "C" int func_00263128(void* self, const char* name);
+extern "C" int f_262A38(void* self, const char* name) __asm__("func_00262A38");
+extern "C" void f_261EF8(void* self, const char* name, int a2, void* out) __asm__("func_00261EF8");
+extern void* D_004A3328;
+extern void* D_004A3028;
+
+static inline void* GetSession_001A6F70()
+{
+    if (D_004A3328 == 0) {
+        func_00260F80();
+    }
+    if (func_00261460(D_004A3328) == 0) {
+        func_002613C8(D_004A3328);
+    }
+    if (D_004A3328 == 0) {
+        func_0025B800(D_004A3028);
+    }
+    return D_004A3328;
+}
+
+extern "C" void func_001A6F70()
+{
+    int buf[4];
+    int i;
+    int n = func_00262598(GetSession_001A6F70());
+    for (i = 0; i < n; i++) {
+        const char* name = func_002625C8(GetSession_001A6F70(), i);
+        if (name != 0 && func_00262400(GetSession_001A6F70(), i) != 0) {
+            int a = func_00263128(GetSession_001A6F70(), name);
+            int b = f_262A38(GetSession_001A6F70(), name);
+            if (a == 0 && b == 0) {
+                f_261EF8(GetSession_001A6F70(), name, 2, buf);
+            }
+        }
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001A71B0);
