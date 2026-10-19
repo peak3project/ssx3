@@ -688,7 +688,31 @@ extern "C" void func_00151A88(sEconItems_151A88* self, int k)
 
 INCLUDE_ASM("be/beintecon", func_00151BD0);
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00151C20);
+#ifdef SKIP_ASM
+struct sEconItem_00151C20
+{
+    short id;
+    unsigned short flags;
+};
+
+struct sEconItems_00151C20
+{
+    char pad[0x288];
+    short* lookup;
+    int count;
+    sEconItem_00151C20 items[1];
+};
+
+extern "C" int func_00151C20(sEconItems_00151C20* self, int idx)
+{
+    if (idx >= self->count)
+        return -1;
+    sEconItem_00151C20* p = self->items + idx;
+    return p->id;
+}
+#endif
 //100%
 INCLUDE_ASM("be/beintecon", func_00151C48);
 #ifdef SKIP_ASM
