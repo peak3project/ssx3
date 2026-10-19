@@ -2168,7 +2168,21 @@ void func_0042C7C8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C8A0);
+#ifdef SKIP_ASM
+extern char D_0052F328[];
+extern int func_004241D0(int a0, int *a1);
+int f8A0(unsigned short a0, int a1, int a2) __asm__("func_0042C8A0");
+int f8A0(unsigned short a0, int a1, int a2) {
+    int buf[4];
+    buf[0] = a0;
+    buf[1] = a1;
+    buf[2] = a2;
+    buf[3] = (int)D_0052F328 | 0x20000000;
+    return func_004241D0(1, buf);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042C8E8);
