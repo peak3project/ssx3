@@ -58,7 +58,58 @@ int func_003FCF98(int a, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCFD8);
+#ifdef SKIP_ASM
+extern char D_00497598[];
+extern char D_004975A8[];
+extern char D_004975C0[];
+extern char D_004975D8[];
+extern int D_0045152C_i[] __asm__("D_0045152C");
+extern int D_00451530_i[] __asm__("D_00451530");
+extern int D_00451534_i[] __asm__("D_00451534");
+extern char func_003FD810[];
+extern char func_003FD908[];
+extern int func_003FD558(int*, int, int);
+extern void func_003FD660(int, int);
+extern int func_003FD758(int*, char*);
+extern void func_00424020(int);
+int func_003FCFD8(int a, int b) {
+    int obj[12];
+    int hdr[3];
+    int r;
+    int* p;
+    if (func_003FD558(obj, a, b) == 0) {
+        return -1;
+    }
+    r = func_003FD758(obj, D_00497598);
+    if (r == 0) {
+        return -2;
+    }
+    hdr[0] = func_003FD908 - func_003FD810;
+    hdr[1] = r;
+    hdr[2] = (int)func_003FD810;
+    func_003FD660((int)obj, (int)hdr);
+    p = D_0045152C_i;
+    *p = func_003FD758(obj, D_004975A8);
+    if (*p == 0) {
+        return -3;
+    }
+    p = D_00451530_i;
+    *p = func_003FD758(obj, D_004975C0);
+    if (*p == 0) {
+        return -4;
+    }
+    p = D_00451534_i;
+    *p = func_003FD758(obj, D_004975D8);
+    if (*p == 0) {
+        return -5;
+    }
+    func_00424020(0);
+    func_00424020(2);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD0D8);
