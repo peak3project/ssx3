@@ -1539,7 +1539,23 @@ extern "C" void func_0028E100(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028E510);
+#ifdef SKIP_ASM
+struct sVE_E510 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+extern "C" int func_0028E510(void* self, void* a1)
+{
+    char* mon = (char*)self + 0x118;
+    sVE_E510* vt = *(sVE_E510**)((char*)self + 0x5558);
+    vt[4].fn(mon + vt[4].delta, *(int*)((char*)a1 + 0x1C));
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("sound/bankmanager", func_0028E548);
 //100%
