@@ -43,7 +43,20 @@ int func_003F3AB8(void) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3B18);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3BC8);
+#ifdef SKIP_ASM
+extern int D_004A4BA4;
+extern int func_003F4C98(char *, int, int);
+extern int func_003F4C68b(char *, int, int, int, int, int, int, int, int, int *) __asm__("func_003F4C68");
+int func_003F3BC8(int self, int a, int b) {
+    char buf[16];
+    int out;
+    func_003F4C98(buf, 'netw', 'list');
+    func_003F4C68b(buf, 5, D_004A4BA4, 0, self, -1, a, b << 8, 1, &out);
+    return out;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3C50);
 
