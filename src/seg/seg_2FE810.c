@@ -1801,7 +1801,42 @@ int func_00402E10(int *a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402F80);
+#ifdef SKIP_ASM
+struct P_2F80 { char pad[4]; int f4; int f8; char padC[0xA0]; int fAC; char pad2[0x68]; int f118; char pad3[4]; int f120; char pad4[0x50]; int f174; };
+struct A_2F80 { char pad[8]; int f8; char pad2[0x34]; struct P_2F80 *f40; };
+extern int s2_7F20(struct P_2F80 *, int) __asm__("func_00407F20");
+extern int s2_7DC0(struct P_2F80 *) __asm__("func_00407DC0");
+extern void s2_2C80(struct A_2F80 *) __asm__("func_00402C80");
+extern void s2_7E90(struct P_2F80 *, int, int) __asm__("func_00407E90");
+int func_00402F80(struct A_2F80 *a, int b, int c) {
+    struct P_2F80 *p = a->f40;
+    int t, ret;
+    int flag = 0;
+    if (c == -1 || b < c) {
+        if (p->f8 == 0) {
+            a->f8 = 0;
+            p->f8 = 1;
+        }
+        t = s2_7F20(p, 0) ? s2_7DC0(p) != 0 : 0;
+        ret = t;
+    } else {
+        ret = s2_7F20(p, 0);
+        flag = 1;
+        s2_2C80(a);
+    }
+    s2_7E90(p, p->f118, p->f4);
+    if ((t = p->f174) != 3 && flag == 0)
+        p->f120 = p->f120 == 0;
+    a->f8 = p->f118 - p->fAC;
+    if (p->f120 == 0) {
+        p->f118++;
+        p->f4++;
+    }
+    return ret;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403098);
 
