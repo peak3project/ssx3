@@ -1637,7 +1637,41 @@ INCLUDE_ASM("seg/seg_2FE810", func_004039F0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403AD0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403BB0);
+#ifdef SKIP_ASM
+extern char D_00497D10[];
+extern char D_00497D38[];
+extern void func_00405B48(unsigned);
+void func_00403BB0(int *p) {
+    unsigned v;
+    unsigned h;
+    unsigned w;
+    int t;
+    unsigned x;
+    unsigned y;
+    unsigned z;
+    p[0x848 / 4] = 1;
+    func_00405B48(0);
+    v = func_004072E8(p, 28);
+    x = (v >> 1) & 0xFFF;
+    t = (v >> 17) & 3;
+    y = (v >> 13) & 3;
+    z = (v >> 15) & 3;
+    p[0x140 / 4] = t;
+    if (t != 1)
+        func_004034A8(p, (int)D_00497D10);
+    p[0x13C / 4] = (v >> 19) & 1;
+    h = v >> 20;
+    w = (unsigned)func_004072E8(p, 16) >> 8;
+    if (h != 0x48 && h != 0x58 && h != 0x44)
+        func_004034A8(p, (int)D_00497D38);
+    p[0x124 / 4] = (z << 12) | (p[0x124 / 4] & 0xFFF);
+    p[0x128 / 4] = (y << 12) | (p[0x128 / 4] & 0xFFF);
+    p[0x134 / 4] = p[0x134 / 4] + (x << 18);
+    p[0x138 / 4] = p[0x138 / 4] + (w << 10);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403CE0);
