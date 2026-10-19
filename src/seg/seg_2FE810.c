@@ -95,7 +95,18 @@ void func_003FE2B8(int *p, unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE320);
+#ifdef SKIP_ASM
+void func_003FE320(int *p, unsigned a, int c) {
+    unsigned v = func_003FDF28(a);
+    func_003FDE30(p);
+    if (p[4] != 0xFFFFFFFF)
+        p[4] = v;
+    p[8] = c;
+    p[0] = (p[0] & ~0xC) | 0x101;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FE398);
 
