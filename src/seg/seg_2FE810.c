@@ -571,7 +571,24 @@ INCLUDE_ASM("seg/seg_2FE810", func_00400190);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00400250);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400328);
+#ifdef SKIP_ASM
+extern unsigned char *func_003FF9A8_c(int, int) __asm__("func_003FF9A8");
+int func_00400328(int a, int b) {
+    unsigned char *p;
+    if (!D_00526250[a].e[b].f10)
+        return 0;
+    p = func_003FF9A8_c(a, b);
+    if (p[0x72] != 1)
+        return 0;
+    if (p[0x64] < 2)
+        return 0;
+    if (p[0x66] < 2)
+        return 0;
+    return p[0x79] + ((long)p[0x7A] << 8) + ((long)p[0x7B] << 16) + ((long)p[0x7C] << 24);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004003E0);
