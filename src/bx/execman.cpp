@@ -115,7 +115,28 @@ extern "C" int func_003209B8(int *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/execman", func_003209C0);
+#ifdef SKIP_ASM
+class cExecIf_9C0 {
+public:
+    int pad[2];
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+};
+struct cExecHolder_9C0 {
+    int pad[2];
+    cExecIf_9C0* obj;
+};
+
+extern "C" void func_003209C0(cExecHolder_9C0* self)
+{
+    self->obj->v5();
+}
+#endif
 
 INCLUDE_ASM("bx/execman", func_003209F0);
 
