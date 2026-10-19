@@ -2726,7 +2726,29 @@ extern "C" float func_003300F8(sSphereVec4* a, sSphereVec4* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_00330128);
+#ifdef SKIP_ASM
+// PORT: callers use this as a by-value struct return (hidden out pointer in $4).
+sSphereVec4 func_00330128_def(sSphereVec4* a, sSphereVec4* b, sSphereVec4* p) __asm__("func_00330128");
+
+sSphereVec4 func_00330128_def(sSphereVec4* a, sSphereVec4* b, sSphereVec4* p)
+{
+    sSphereVec4 d = Sub_CDB0(*p, *a);
+    sSphereVec4 e = Sub_CDB0(*b, *a);
+    sSphereVec4 n = Normalize_CDB0(e);
+    float t = Dot_CDB0(n, d);
+    float len = sphereLength_32FDB0(e);
+    if (t <= 0.0f) {
+        return *a;
+    } else if (len <= t) {
+        return *b;
+    } else {
+        sSphereVec4 r = Add_CDB0(*a, Scale_CDB0(n, t));
+        return r;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/riderspheretree", func_00330250);
