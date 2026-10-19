@@ -5252,7 +5252,22 @@ INCLUDE_ASM("seg/seg_2FE810", func_00410858);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00410930);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410A78);
+#ifdef SKIP_ASM
+struct S410A78 { int base; char pad[0x14]; long e[0x50]; unsigned short n; short pad2; signed char kind[1]; };
+extern int nr_410A78(void) __asm__("func_00418790");
+int func_00410A78(int idx, struct S410A78 *s, int z) {
+    if (s->kind[idx] == 2) {
+        do {
+            idx = (int)s->e[idx];
+        } while (s->kind[idx] == 2);
+    }
+    if (s->kind[idx] == 1)
+        return s->base + (int)s->e[idx];
+    return nr_410A78();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410B00);
