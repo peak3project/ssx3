@@ -106,7 +106,17 @@ extern "C" void func_003159A8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/gameanimmap", func_003159B8);
+#ifdef SKIP_ASM
+// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
+extern "C" void func_003159B8(long *self, int bit) {
+    long mask = 1L << bit;
+    long a = self[0];
+    self[1] |= mask & a;
+    self[0] = a & ~mask;
+}
+#endif
 
 INCLUDE_ASM("animation/gameanimmap", func_003159E8);
 //99.38%
