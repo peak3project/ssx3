@@ -1919,7 +1919,30 @@ done:
 
 INCLUDE_ASM("bx/bxstringctor", func_0026A920);
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A970);
+#ifdef SKIP_ASM
+struct sBXEnt16_A970 {
+    int key;
+    int pad[3];
+};
+struct sBXTab_A970 {
+    int count;
+    sBXEnt16_A970* items;
+};
+
+extern "C" sBXEnt16_A970* func_0026A970(sBXTab_A970* self, int key)
+{
+    sBXEnt16_A970* e = self->items;
+    for (int i = 0; i < self->count; i++, e++) {
+        if (e->key == key) {
+            return e;
+        }
+    }
+    return 0;
+}
+#endif
+
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A9B0);
 #ifdef SKIP_ASM
