@@ -1478,7 +1478,50 @@ INCLUDE_ASM("seg/seg_316F98", func_004216E8);
 
 INCLUDE_ASM("seg/seg_316F98", func_004218D8);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00421A50);
+#ifdef SKIP_ASM
+struct Reent51 {
+    int pad0[0x50 / 4];
+    int cvtlen;
+    char *cvtbuf;
+};
+extern int D_00454944;
+#define REENT ((struct Reent51 *)D_00454944)
+extern char *func_00421F20(struct Reent51 *, char *, int);
+extern char *func_00422780(struct Reent51 *, double, int, int, int *, int *, char **);
+char *func_00421A50_(double value, int ndigit, int *decpt, int *sign, char *buf) __asm__("func_00421A50");
+char *func_00421A50_(double value, int ndigit, int *decpt, int *sign, char *buf) {
+    char *save, *p, *end;
+    int i = 0;
+    int newlen;
+    if (buf == 0) {
+        if (ndigit >= REENT->cvtlen) {
+            newlen = ndigit + 1;
+            buf = func_00421F20(REENT, REENT->cvtbuf, newlen);
+            if (buf == 0)
+                return 0;
+            REENT->cvtlen = newlen;
+            REENT->cvtbuf = buf;
+        }
+        buf = REENT->cvtbuf;
+    }
+    save = buf;
+    p = func_00422780(REENT, value, 2, ndigit, decpt, sign, &end);
+    while (p < end) {
+        *buf++ = *p++;
+        i++;
+    }
+    if (i < ndigit) {
+        i = ndigit - i;
+        do {
+            *buf++ = '0';
+        } while (--i);
+    }
+    *buf = 0;
+    return save;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00421B98);
 
