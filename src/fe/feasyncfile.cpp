@@ -19035,7 +19035,22 @@ extern "C" void* func_001C0358(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C03D0);
+#ifdef SKIP_ASM
+void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
+extern void* D_0046AC38[];
+
+extern "C" void* func_001C03D0(void* self, int a1, int a2)
+{
+    func_001A8500_3(self, a1, a2);
+    *(int*)((char*)self + 0xC) = 0x43;
+    *(void***)((char*)self + 0x8) = D_0046AC38;
+    *(int*)((char*)self + 0x6D0) = 0;
+    *(int*)((char*)self + 0x6D8) = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C0418);
