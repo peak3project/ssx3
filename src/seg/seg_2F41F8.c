@@ -1344,7 +1344,34 @@ extern int func_003F6E98(int);
 int func_003F80C0(void) { return func_003F6E98(3); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F80E0);
+#ifdef SKIP_ASM
+extern char *D_80E0 __asm__("D_004A4BC4");
+extern void f7A30(void) __asm__("func_003F7A30");
+int func_003F80E0(int *out) {
+    int err = 0;
+    int v;
+    if (out == 0) {
+        err = 7;
+    } else {
+        *out = 0;
+        if (*(int *)(D_80E0 + 0xD0) != 4) {
+            err = ((int (*)(int *))*(int *)(D_80E0 + 0xD4))(out);
+            if (err == 0) {
+                v = *out;
+                if (v == 2) {
+                    f7A30();
+                    *out = v;
+                }
+            } else {
+                f7A30();
+            }
+        }
+    }
+    return err;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8178);
