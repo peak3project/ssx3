@@ -2693,7 +2693,38 @@ int func_003FBF80(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBFE0);
+#ifdef SKIP_ASM
+typedef struct { char pad[0x78]; int st; int h; int pad2; int a; char buf[4]; int c; } S3FBFE0;
+typedef struct { int tag; int p; } P3FBFE0;
+typedef struct { int a; int b; P3FBFE0 *p; } L3FBFE0;
+extern S3FBFE0 *D_BFE0 __asm__("D_004A5B20");
+extern int fB910(int, int) __asm__("func_003FB910");
+extern int fBCD8(int, int) __asm__("func_003FBCD8");
+extern void fB9D0(int, int *, int *, char *) __asm__("func_003FB9D0");
+extern int fBB50(int, int, P3FBFE0 **) __asm__("func_003FBB50");
+extern int f5FC8(int, char *, int) __asm__("func_00415FC8");
+int func_003FBFE0(void) {
+    L3FBFE0 x; int h; int r; int err = 0xA; int hh;
+    x.p = 0; hh = D_BFE0->h; x.b = 0;
+    D_BFE0->st = err;
+    h = fB910(hh, 0);
+    r = fBCD8(h, 0xC);
+    if (r != 0) return r;
+    fB9D0(h, &x.a, &x.b, D_BFE0->buf);
+    if (x.a != D_BFE0->c) return 0xB;
+    if (x.b != D_BFE0->a) return 0x6E;
+    r = fBCD8(D_BFE0->h, x.b);
+    if (r != 0) return r;
+    r = fBB50(D_BFE0->h, D_BFE0->a, &x.p);
+    if (r != 0) return r;
+    if (x.p->tag != 4) return 0xB;
+    if (f5FC8(x.p->p, D_BFE0->buf, 4) == 0) err = 0;
+    return err;
+}
+
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC0D8);
