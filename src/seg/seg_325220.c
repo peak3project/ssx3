@@ -722,7 +722,40 @@ int func_004266C8(int *a0, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426708);
+#ifdef SKIP_ASM
+struct Q6708 { int f0; int pad4; int f8; char padC[0x10]; int f1C; int f20; int f24; };
+struct A6708 { char pad[0x1C]; struct Q6708 *q; unsigned f20; int f24; int f28; int f2C; };
+extern void func_00423DD0(int);
+extern void func_00426678_k(int) __asm__("func_00426678");
+void f6708(struct A6708 *a) __asm__("func_00426708");
+void f6708(struct A6708 *a) {
+    struct Q6708 *q;
+    switch (a->f20) {
+    case 0x8000000A:
+        q = a->q;
+        if (q->f1C != 0) {
+            ((void (*)(int))q->f1C)(q->f20);
+        }
+        break;
+    case 0x80000009:
+        q = a->q;
+        q->f24 = a->f24;
+        ((int *)q)[5] = a->f28;
+        ((int *)q)[6] = a->f2C;
+        break;
+    case 0x8000000B:
+        break;
+    }
+    q = a->q;
+    if (q->f8 >= 0) {
+        func_00423DD0(q->f8);
+    }
+    func_00426678_k(q->f0);
+    q->f0 = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004267C0);
