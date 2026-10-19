@@ -1481,7 +1481,18 @@ extern "C" int func_00158B70(void* self, int kind, int v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00158BB8);
+#ifdef SKIP_ASM
+extern void* D_0045B048[];
+
+extern "C" int func_00158BB8(void* self, int medal, unsigned int earned)
+{
+    if (earned >= *(unsigned int*)((char*)(void*)D_0045B048 + medal * 4))
+        return 1;
+    return -1;
+}
+#endif
 //100%
 INCLUDE_ASM("be/beintreward", func_00158BE0);
 #ifdef SKIP_ASM
