@@ -22093,7 +22093,15 @@ extern "C" void func_001C5878(void* self, int a1, int a2, int a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C58A0);
+#ifdef SKIP_ASM
+extern "C" void func_001C58A0(void* self, int a1, cFEAsyncReq5810* a2)
+{
+    cFEAsyncReqs5810* s = (cFEAsyncReqs5810*)self;
+    s->mReqs[a1] = *a2;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C58D0);
