@@ -2619,7 +2619,40 @@ int sceUsbKbGetInfo(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbRead);
+#ifdef SKIP_ASM
+struct S_KbInfo2 { int cnt; char pad[0x8C]; int f90; int f94; int f98; };
+extern struct S_KbInfo2 G_KbInfo2[] __asm__("D_00529000");
+extern int G_KbRdy[] __asm__("D_00453438");
+extern char G_KbName[] __asm__("D_005290A0");
+extern char G_KbArg[] __asm__("D_00529100");
+extern int G_KbBuf[] __asm__("D_00529140");
+extern char D_004982F8[];
+extern void func_0040C8B0(void);
+extern void func_00423DE0(int);
+extern int func_KbOpenR(char *, int, int, char *, int, int *, int, void (*)(void), int) __asm__("func_00426D18");
+extern void func_00425C60(char *, int);
+int sceUsbKbRead(unsigned a, int b) {
+    if (G_KbRdy[0] == -1)
+        return -1;
+    if (a >= G_KbInfo2[0].cnt)
+        return -11;
+    G_KbArg[0] = a;
+    func_00423DE0(G_KbRdy[0]);
+    {
+        int r = func_KbOpenR(G_KbName, 2, 1, G_KbArg, 16, G_KbBuf, 0x50, func_0040C8B0, 0);
+        if (r != 0) {
+            func_00425C60(D_004982F8, r);
+            return -2;
+        }
+    }
+    G_KbInfo2[0].f90 = 2;
+    G_KbInfo2[0].f94 = a;
+    G_KbInfo2[0].f98 = b;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbGetLocation);
 
