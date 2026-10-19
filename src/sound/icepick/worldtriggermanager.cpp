@@ -813,7 +813,20 @@ void func_002B6900(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B6918);
+#ifdef SKIP_ASM
+extern "C" int func_002B63D0(void* self, int idx, int* type, int* a, int* b, int c, int d);
+
+extern "C" int func_002B6918(void* self, int idx)
+{
+    int type;
+    int a;
+    int b;
+    func_002B63D0(self, idx, &type, &a, &b, 0, 2);
+    return type == 3;
+}
+#endif
 
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B6950);
 //100%
