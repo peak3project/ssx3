@@ -550,7 +550,27 @@ int func_003EF600(unsigned char x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF640);
+#ifdef SKIP_ASM
+int func_003EF640(unsigned short* out, char* src) {
+    unsigned char* in = (unsigned char*)src;
+    int n;
+    if (!(in[0] & 0x80)) {
+        n = 1;
+        *out = in[0];
+    } else if ((in[0] & 0xE0) == 0xC0) {
+        n = 2;
+        *out = ((in[0] & ~0xE0) << 6) | (in[1] & ~0xC0);
+    } else if ((in[0] & 0xF0) == 0xE0) {
+        n = 3;
+        *out = ((in[0] & ~0xF0) << 12) | ((in[1] & ~0xC0) << 6) | (in[2] & ~0xC0);
+    } else {
+        n = func_003EF600(in[0]);
+    }
+    return n;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF6F8);
 
