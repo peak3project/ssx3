@@ -3224,7 +3224,49 @@ int func_0040AB80(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AC38);
+#ifdef SKIP_ASM
+struct S40_AC38 { char b[0x40]; };
+extern int R_5271C0[] __asm__("D_005271C0");
+extern int R_527270[] __asm__("D_00527270");
+extern struct S40_AC38 R_527200 __asm__("D_00527200");
+extern int R_528780[] __asm__("D_00528780");
+extern int R_4533C0[] __asm__("D_004533C0");
+extern int R_4533C4[] __asm__("D_004533C4");
+extern int R_open(int *, int, int, int *, int, int *, int, int, int) __asm__("func_00426D18");
+extern int R_3DF0(int) __asm__("func_00423DF0");
+extern void R_3DC0(int) __asm__("func_00423DC0");
+extern void R_4020(int) __asm__("func_00424020");
+extern char *strncpy(char *, const char *, int);
+int func_0040AC38(int a, int b, char *s, struct S40_AC38 *c, int e) {
+    int r;
+    int *h = R_5271C0;
+    if (h[9] == 0)
+        return -100;
+    if (R_3DF0(R_4533C4[0]) < 0)
+        return -200;
+    if (s == 0 || s[0] == 0) {
+        R_3DC0(R_4533C4[0]);
+        return -210;
+    }
+    e &= 7;
+    R_527270[0] = a;
+    R_527270[1] = b;
+    R_527270[2] = e;
+    R_527200 = *c;
+    R_527270[4] = (int)&R_527200;
+    strncpy((char *)(R_527270 + 5), s, 0x3FF);
+    ((char *)R_527270)[0x413] = 0;
+    R_4020(0);
+    r = R_open(h, 14, 1, R_527270, 0x414, R_528780, 4, 0, 0);
+    if (r == 0)
+        R_4533C0[0] = 14;
+    else
+        R_3DC0(R_4533C4[0]);
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040AE00);
 
