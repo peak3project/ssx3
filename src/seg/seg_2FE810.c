@@ -2006,7 +2006,36 @@ void q9400(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004094E8);
+#ifdef SKIP_ASM
+extern void q94E8_9388(int) __asm__("func_00409388");
+extern void q94E8_9310(int) __asm__("func_00409310");
+void q94E8(int *p) __asm__("func_004094E8");
+void q94E8(int *p) {
+    unsigned v = p[7];
+    int e = v & 0x7F;
+    int n = ((v >> 16) & 3) + ((v >> 8) & 0xF);
+    int r = p[0] - (n << 4);
+    int q = p[2] + n;
+    if (p[4] != 0 && p[5] != 0) {
+        *(volatile int *)0x1000B010 = p[4];
+        *(volatile int *)0x1000B020 = p[5];
+        q94E8_9310(p[6] | 0x100);
+    }
+    while (*(volatile int *)0x10002010 < 0)
+        ;
+    *(volatile int *)0x10002000 = e;
+    while (*(volatile int *)0x10002010 < 0)
+        ;
+    if (r != 0 && q != 0) {
+        *(volatile int *)0x1000B410 = r;
+        *(volatile int *)0x1000B430 = p[1];
+        *(volatile int *)0x1000B420 = q;
+        q94E8_9388(p[3] | 0x100);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409638);
