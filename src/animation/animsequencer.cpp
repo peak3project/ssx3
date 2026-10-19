@@ -853,7 +853,17 @@ void func_00314AA0_impl(void* self, char* data)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00314AC0);
+#ifdef SKIP_ASM
+extern "C" int func_00314AC0(void* self)
+{
+    char* data = *(char**)((char*)self + 4);
+    if (data != 0)
+        return *(short*)(data + 4);
+    return 0;
+}
+#endif
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00314AE0);
 #ifdef SKIP_ASM
