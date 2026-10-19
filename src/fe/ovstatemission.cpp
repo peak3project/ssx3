@@ -236,5 +236,17 @@ extern "C" void func_001A3648(sMissionSlot* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatemission", func_001A3698);
+#ifdef SKIP_ASM
+extern "C" void cFEAsyncManager_UnloadFEAsyncFile(void* mgr, int file);
+
+extern "C" void func_001A3698(void* mgr)
+{
+    int i;
+    for (i = 0; i < 5; i++) {
+        cFEAsyncManager_UnloadFEAsyncFile(mgr, i);
+    }
+}
+#endif
 
