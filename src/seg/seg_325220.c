@@ -858,7 +858,56 @@ void func_00426A98(int *a0, int *a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426B48);
+#ifdef SKIP_ASM
+struct S6B48 { struct S6B48 *f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; };
+extern char D_0052D680[];
+extern struct S6B48 *func_004265D0(char *);
+extern void func_00426678_i(struct S6B48 *) __asm__("func_00426678");
+extern int func_00423DA0(int *);
+extern void func_00423DB0(int);
+extern int func_00423DE0_i(int) __asm__("func_00423DE0");
+int func_00426B48_d(struct S6B48 *, int, int) __asm__("func_00426B48");
+int func_00426B48_d(struct S6B48 *a0, int a1, int a2) {
+    int buf[8];
+    struct S6B48 *t;
+    a0->f10 = 0;
+    a0->f24 = 0;
+    t = func_004265D0(D_0052D680);
+    if (t == 0) {
+        return -1;
+    }
+    a0->f0 = t;
+    a0->f4 = t->f18;
+    t->f20 = a1;
+    t->f14 = (int)t;
+    t->f1C = (int)a0;
+    if (!(a2 & 1)) {
+        buf[1] = 1;
+        buf[2] = 0;
+        a0->f8 = func_00423DA0(buf);
+        if (a0->f8 < 0) {
+            func_00426678_i(t);
+            return -3;
+        }
+        if (func_004261B0(0x80000009, (int)t, 0x40, 0, 0, 0) == 0) {
+            func_00426678_i(t);
+            func_00423DB0(a0->f8);
+            return -2;
+        }
+        func_00423DE0_i(a0->f8);
+        func_00423DB0(a0->f8);
+        return 0;
+    }
+    a0->f8 = -1;
+    if (func_004261B0(0x80000009, (int)t, 0x40, 0, 0, 0) == 0) {
+        func_00426678_i(t);
+        return -2;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426C88);
