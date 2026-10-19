@@ -2098,7 +2098,69 @@ int func_003F95E8(char *dst) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9698);
+#ifdef SKIP_ASM
+typedef struct { unsigned short h0; char pad[0xE]; void (*f10)(int); } E9698;
+extern int c9698_9208(void) __asm__("func_003F9208");
+extern int c9698_86B8(int) __asm__("func_003F86B8");
+extern int c9698_8550(int) __asm__("func_003F8550");
+extern int c9698_8588(int) __asm__("func_003F8588");
+extern void c9698_86F0(int) __asm__("func_003F86F0");
+extern void c9698_B2F8(int) __asm__("func_003FB2F8");
+extern unsigned c9698_6210(void *, int, int) __asm__("func_00416210");
+extern char *strcpy(char *, const char *);
+extern int *D_9698s __asm__("D_004A4BD8");
+extern E9698 *D_9698e __asm__("D_004A4BDC");
+int func_003F9698_impl(char *str, int a, int b) __asm__("func_003F9698");
+int func_003F9698_impl(char *str, int a, int b) {
+    int v;
+    int t;
+    int *s;
+    int *s2;
+    unsigned m;
+    if (c9698_9208() == 0) return 2;
+    if (str == 0) return 0xC;
+    if ((unsigned)(a + 1) >= 9) return 9;
+    if (a != -1) {
+        m = 1 << a;
+        if (!(D_9698e->h0 & m)) return 0xB;
+    }
+    if (D_9698s[0] != 0) return 0xD;
+    c9698_6210(D_9698s + 3, 0, 0x60);
+    if (a == -1) {
+        if (c9698_86B8(D_9698e->h0) == 1) {
+            v = c9698_8550(D_9698e->h0);
+            s = D_9698s;
+            s[4] = v;
+            s[0] = 5;
+        } else if (b == 0) {
+            v = c9698_8550(D_9698e->h0);
+            s = D_9698s;
+            s[4] = v;
+            s[0] = 2;
+        } else if (b == 1) {
+            v = c9698_8588(D_9698e->h0);
+            s = D_9698s;
+            s[4] = v;
+            s[0] = 2;
+        } else {
+            return 0xC;
+        }
+    } else {
+        s2 = D_9698s;
+        s2[4] = a;
+        s2[0] = 5;
+    }
+    c9698_86F0(0);
+    strcpy((char *)(D_9698s + 0x15), str);
+    D_9698s[0x6C / 4] = b;
+    c9698_B2F8(1);
+    D_9698e->f10(D_9698s[4]);
+    D_9698s[1] = 1;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9818);
