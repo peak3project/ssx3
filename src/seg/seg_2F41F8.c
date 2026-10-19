@@ -1544,7 +1544,22 @@ char *func_003FB840_impl(char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB858);
+#ifdef SKIP_ASM
+void func_003FB858(unsigned a, int *x, int *y) {
+    int sx = 4, sy = 1;
+    switch (a) {
+    case 0: sx = 4; sy = 1; break;
+    case 1: sx = 4; sy = 1; break;
+    case 2: sx = 4; sy = 1; break;
+    case 3: sx = 4; sy = 1; break;
+    case 4: sx = 4; sy = 1; break;
+    }
+    *x = sx;
+    *y = sy;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB898);
