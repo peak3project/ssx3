@@ -1352,7 +1352,15 @@ char *func_003FB828_impl(char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB840);
+#ifdef SKIP_ASM
+char *func_003FB840_impl(char *p) __asm__("func_003FB840");
+char *func_003FB840_impl(char *p) {
+    if (p == 0) return 0;
+    return p + 300;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB858);
 
