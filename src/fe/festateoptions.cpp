@@ -2838,5 +2838,18 @@ extern "C" void func_0018E478(void* self)
 
 INCLUDE_ASM("fe/festateoptions", func_0018E510);
 
+//100%
 INCLUDE_ASM("fe/festateoptions", func_0018EA98);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E2A0(void* self);
+extern void* D_0046C158[];
+
+extern "C" void* func_0018EA98(void* self)
+{
+    func_0039E2A0(self);
+    *(void***)((char*)self + 0x8) = D_0046C158;
+    *(int*)((char*)self + 0xC) = 8;
+    return self;
+}
+#endif
 
