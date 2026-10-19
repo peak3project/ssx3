@@ -1194,7 +1194,44 @@ struct Bigint *func_00420BC8(int ptr, struct Bigint *b, int k) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00420CC8);
+#ifdef SKIP_ASM
+extern int *func_00420510(int, int);
+extern void func_004205B8(int *, int *);
+struct Bigint *func_00420CC8(int ptr, struct Bigint *b, int k) {
+    int i, k1, n, n1;
+    struct Bigint *b1;
+    unsigned *x, *x1, *xe, z;
+    n = k >> 5;
+    k1 = b->k;
+    n1 = n + b->wds + 1;
+    for (i = b->maxwds; n1 > i; i <<= 1)
+        k1++;
+    b1 = (struct Bigint *)func_00420510(ptr, k1);
+    x1 = b1->x;
+    for (i = 0; i < n; i++)
+        *x1++ = 0;
+    x = b->x;
+    xe = x + b->wds;
+    if (k &= 0x1f) {
+        k1 = 32 - k;
+        z = 0;
+        do {
+            *x1++ = *x << k | z;
+            z = *x++ >> k1;
+        } while (x < xe);
+        if ((*x1 = z))
+            ++n1;
+    } else
+        do
+            *x1++ = *x++;
+        while (x < xe);
+    b1->wds = n1 - 1;
+    func_004205B8((int *)ptr, (int *)b);
+    return b1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00420E28);
