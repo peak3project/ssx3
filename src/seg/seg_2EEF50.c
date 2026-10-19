@@ -635,13 +635,38 @@ int func_003EF770(unsigned char* dst, unsigned int* e, unsigned short c, signed 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF808);
 #ifdef SKIP_ASM
-extern void func_003EF828(int, int, int, int);
+extern int func_003EF828(char*, int, char*, signed char);
 void func_003EF808(int a, int b, int c) {
-    func_003EF828(a, b, c, 0);
+    func_003EF828((char*)a, b, (char*)c, 0);
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF828);
+#ifdef SKIP_ASM
+int func_003EF828(char* dst, int max, char* src, signed char ch) {
+    int i = 0;
+    int j = 0;
+    while (!(src[i] & 0x80) && src[i]) {
+        i++;
+    }
+    if (src[i]) {
+        j = i;
+        while (src[i] && j < max) {
+            if (src[i] & 0x80) {
+                i += func_003EF600(src[i]);
+                if (ch) {
+                    dst[j++] = ch;
+                }
+            } else {
+                dst[j++] = src[i++];
+            }
+        }
+        dst[j++] = 0;
+    }
+    return j;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF940);
