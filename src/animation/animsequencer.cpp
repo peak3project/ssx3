@@ -860,7 +860,19 @@ void* func_00314A40(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00314A60);
+#ifdef SKIP_ASM
+extern "C" char* func_003E22F0(int a, int b);
+void func_00314AA0_impl(void* self, char* data) __asm__("func_00314AA0");
+
+extern "C" void func_00314A60(void* self, int a, int b)
+{
+    char* data = func_003E22F0(a, b);
+    *(char**)self = data;
+    func_00314AA0_impl(self, data);
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00314AA0);
