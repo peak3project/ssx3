@@ -741,7 +741,82 @@ extern "C" void* func_002526B8(void* block, int size)
 }
 #endif
 
+//100%
 INCLUDE_ASM("mem/memstd", func_00252718);
+#ifdef SKIP_ASM
+extern "C" void func_003E6188(void* dst, void* src, int n);
+
+extern "C" void* func_00252718(sMemHdr_2523D0* ptr, int size)
+{
+    unsigned short id = *(unsigned short*)((int)ptr - 0xE);
+    sMemClass_2523D0* cls = (sMemClass_2523D0*)D_004D2438[id & 0x3F];
+    sMemNode_2523D0* blk = (sMemNode_2523D0*)(ptr - 1);
+    if (cls->locked != 0) {
+        MUTEX_lock(cls->sema);
+    }
+    sMemNode_2523D0* next = *(sMemNode_2523D0**)((int)ptr - 8);
+    if (next->flags & 0x4000) {
+        sMemNode_2523D0* b = next->fprev;
+        sMemNode_2523D0* a = next->fnext;
+        b->fnext = a;
+        a->fprev = b;
+        next->tag = 0x424F;
+        next->flags &= 0xBFFF;
+        next = next->pnext;
+        *(sMemNode_2523D0**)((int)ptr - 8) = next;
+        next->pprev = blk;
+    }
+    int v = size;
+    if (v < 8) {
+        if (v == -1) {
+            v = 0x40000000;
+        } else if (v >= 0) {
+            v = 8;
+        }
+    }
+    int hdr = func_00252960(0, id);
+    int avail = (char*)next - (char*)blk - 0x10;
+    int al = cls->align;
+    v = ((v + hdr + 0xF + al) & -al) - 0x10;
+    if (avail < v) {
+        v = avail;
+        size = avail - hdr;
+    }
+    func_003E6188((char*)ptr + size, (char*)ptr + blk->size, hdr);
+    blk->size = size;
+    if (avail - v > 0x40) {
+        sMemNode_2523D0* nb = (sMemNode_2523D0*)((char*)ptr + (v + 0x10));
+        MEM_initblock(nb, 0, 0, 0, 0, blk, next);
+        int sz = (char*)nb->pnext - (char*)nb;
+        sMemNode_2523D0* q = &cls->head;
+        sMemNode_2523D0* p = q;
+        if ((char*)cls->head.fnext + ((char*)cls->head.fprev - (char*)cls->head.fnext) / 2 < (char*)nb) {
+            do
+                p = p->fprev;
+            while (nb < p);
+            q = p->fnext;
+        } else {
+            do
+                q = q->fnext;
+            while (q < nb);
+            p = q->fprev;
+        }
+        nb->size = sz;
+        nb->fnext = q;
+        nb->fprev = p;
+        p->fnext = nb;
+        q->fprev = nb;
+        nb->tag = 0x4246;
+        nb->flags |= 0x4000;
+        next->pprev = nb;
+        blk->pnext = nb;
+    }
+    if (cls->locked != 0) {
+        MUTEX_unlock(cls->sema);
+    }
+    return ptr;
+}
+#endif
 //100%
 INCLUDE_ASM("mem/memstd", func_00252960);
 #ifdef SKIP_ASM
