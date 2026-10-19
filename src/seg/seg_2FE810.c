@@ -1584,7 +1584,21 @@ int func_00402A58(int *a, unsigned b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402AA0);
+#ifdef SKIP_ASM
+extern int func_00402E10(int *);
+int func_00402AA0(int *a, unsigned b, int c, int d) {
+    int *p = (int *)a[16];
+    b = (b & 0xFFFFFFF) | 0x20000000;
+    p[56] = d * 16;
+    p[54] = b;
+    p[57] = c * d;
+    p[55] = c * 16;
+    p[44] = 0;
+    return func_00402E10(a);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402AF0);
