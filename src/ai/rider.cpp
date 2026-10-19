@@ -791,7 +791,23 @@ extern "C" void* func_0011FF48(void* dst, cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011FF70);
+#ifdef SKIP_ASM
+struct sRiderXform_FF70 {
+    cQuad128 q;
+    char pad_0x10[0x10];
+};
+
+extern "C" void* func_0011FF70(void* dst, cRider* self)
+{
+    cAnimModel* q = self->mAnimModel;
+    int i = self->unk_8A8;
+    sRiderXform_FF70* b = (sRiderXform_FF70*)q->bones;
+    *(cQuad128*)dst = b[i].q;
+    return dst;
+}
+#endif
 
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv really takes (be, kind); bind the 2-arg form to that symbol.
