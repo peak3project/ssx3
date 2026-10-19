@@ -701,7 +701,31 @@ int func_003F6D98(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6DC8);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+typedef struct { char b[0x1A]; } K6DC8;
+extern K6DC8 D_00497060;
+extern int fB800(void) __asm__("func_003FB800");
+extern int fC0E8(void *) __asm__("func_003FC0E8");
+extern int func_003F8178(int);
+typedef struct { int a; char *p; char *d; K6DC8 *buf; int len; int r; int v; } R6DC8;
+int func_003F6DC8(void) {
+    K6DC8 buf;
+    R6DC8 req;
+    char *d = D_004A4BC4;
+    buf = D_00497060;
+    req.a = 2;
+    req.p = d + 0x138;
+    req.d = d;
+    req.len = 0x1A;
+    req.buf = &buf;
+    req.r = fB800();
+    req.v = *(int *)(D_004A4BC4 + 0x140);
+    return func_003F8178(fC0E8(&req));
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6E70);
