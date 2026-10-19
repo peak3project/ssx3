@@ -1875,7 +1875,17 @@ extern "C" void func_00272BD0(void* self, int a1)
 
 INCLUDE_ASM("replay/replaycache", func_00272BF8);
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272C48);
+#ifdef SKIP_ASM
+extern "C" void* func_00272CC0(void* self, int a1);
+extern "C" void func_00274A08(void* p);
+
+extern "C" void func_00272C48(void* self, int a1)
+{
+    func_00274A08(func_00272CC0(self, a1));
+}
+#endif
 
 INCLUDE_ASM("replay/replaycache", func_00272C70);
 //100%
