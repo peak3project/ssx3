@@ -804,7 +804,16 @@ extern "C" int func_00279370(void* self, int a)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_002793B8);
+#ifdef SKIP_ASM
+extern "C" void func_00275ED0(void* e, int a, int b, int c, int d, int f, int g);
+
+extern "C" void func_002793B8(void* self, int i, int a, int on, int d, int f, int g)
+{
+    func_00275ED0(*(char**)((char*)self + 0x624) + i * 0xCC, a, on ? 8 : 0, 0, d, f, g);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_002793F8);
