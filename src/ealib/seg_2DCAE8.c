@@ -5869,7 +5869,36 @@ int func_003E6B10_impl(char *self, short *out, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6C80);
+#ifdef SKIP_ASM
+typedef struct { char b[4]; } U4_6C80;
+extern int D_0051EEC8_6C80[] __asm__("D_0051EEC8");
+extern int f4C98_6C80(int *, int, int) __asm__("func_003F4C98");
+extern void f4C68_6C80(int *, int, int, int, int, int, int, int, int, int) __asm__("func_003F4C68");
+
+int func_003E6C80(char *self, short *buf, int n) {
+    U4_6C80 t;
+    int h;
+    int a;
+    int b;
+    if (n == 1) {
+        n = (((unsigned char *)buf)[3] + 0x17) & 0x7FFC;
+        buf[0] = n;
+    }
+    t = *(U4_6C80 *)((*(int *)(self + 0x17C) & 0x0FFFFFFF) | 0x20000000);
+    a = *(int *)(self + 0x178);
+    b = *(int *)(self + 0x174);
+    h = *(int *)&t;
+    if (b - (a - h) < n) {
+        return 0;
+    }
+    *(int *)(self + 0x178) = a + n;
+    f4C98_6C80(D_0051EEC8_6C80, 0x676D6C6B, 0x73656E64);
+    f4C68_6C80(D_0051EEC8_6C80, 1, *(int *)self, 0, (int)buf, n, 0, 0, 0, 0);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6D78);
