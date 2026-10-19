@@ -406,7 +406,22 @@ extern "C" void* func_0026BAA8(void* self, ...)
 
 INCLUDE_ASM("path/pathsys", func_0026BAE8);
 
+//100%
 INCLUDE_ASM("path/pathsys", func_0026C3D0);
+#ifdef SKIP_ASM
+struct sPathVec_C3D0 {
+    float x, y, z, w;
+};
+
+extern "C" sPathVec_C3D0* func_0026C3D0(sPathVec_C3D0* out, float* in)
+{
+    out->x = in[3];
+    out->y = in[4];
+    out->z = in[5];
+    out->w = 1.0f;
+    return out;
+}
+#endif
 //100%
 INCLUDE_ASM("path/pathsys", func_0026C400);
 #ifdef SKIP_ASM
