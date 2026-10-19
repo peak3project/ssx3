@@ -902,7 +902,34 @@ INCLUDE_ASM("seg/seg_316F98", func_00420260);
 
 INCLUDE_ASM("seg/seg_316F98", ungetc);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00420510);
+#ifdef SKIP_ASM
+extern int *func_004224A0(int *, int, int);
+int *func_00420510(int ep_, int k) {
+    int *ep = (int *)ep_;
+    int x;
+    int *rv;
+    if (ep[0x4C / 4] == 0) {
+        ep[0x4C / 4] = (int)func_004224A0(ep, 4, 16);
+        if (ep[0x4C / 4] == 0)
+            return 0;
+    }
+    rv = ((int **)ep[0x4C / 4])[k];
+    if (rv) {
+        ((int **)ep[0x4C / 4])[k] = (int *)*rv;
+    } else {
+        x = 1 << k;
+        rv = func_004224A0(ep, 1, 0x18 + (x - 1) * 4);
+        if (rv == 0)
+            return 0;
+        rv[1] = k;
+        rv[2] = x;
+    }
+    rv[3] = rv[4] = 0;
+    return rv;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_004205B8);
