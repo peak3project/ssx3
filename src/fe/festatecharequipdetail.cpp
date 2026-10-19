@@ -3114,7 +3114,31 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019DF20);
 
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E070);
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E1C0);
+#ifdef SKIP_ASM
+struct sSlot120_E1C0 {
+    unsigned int state;
+    char pad04[0x11C];
+};
+struct sRow12000_E1C0 {
+    sSlot120_E1C0 slots[0x100];
+};
+struct sTable_E1C0 {
+    sRow12000_E1C0 rows[1];
+};
+
+extern "C" int func_0019E1C0(sTable_E1C0* self, int a1)
+{
+    int i;
+    for (i = 0; i < 0x100; i++) {
+        if (self->rows[a1].slots[i].state >= 2) {
+            return 0;
+        }
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E208);
