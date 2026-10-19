@@ -4029,7 +4029,28 @@ int func_0040B9A8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B9E8);
+#ifdef SKIP_ASM
+extern unsigned char D_004533FC[];
+extern int func_0040B9A8(void);
+extern void func_00423E50(unsigned *);
+int func_0040B9E8(void) {
+    unsigned buf[1];
+    int r;
+    func_00423E50(buf);
+    if (func_0040B9A8()) {
+        r = D_004533FC[0];
+    } else {
+        func_00423E50(buf);
+        if (((buf[0] >> 13) & 7) == 0)
+            r = (buf[0] >> 4) & 1;
+        else
+            r = (buf[0] >> 16) & 0x1F;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA48);
 
