@@ -1620,7 +1620,27 @@ void func_00407E90(int *p, int n, int flag) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00407F20);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004081D8);
+#ifdef SKIP_ASM
+extern int sprintf(char *, const char *, ...);
+extern void func_004034A8(int *, int);
+extern char D_004980A8[];
+int func_004081D8(int *p, int *q) {
+    char buf[256];
+    int r;
+    int n = p[0xE0 / 4];
+    if (n != 0)
+        r = p[0xDC / 4] >= q[1] && n >= q[2];
+    else
+        r = p[0xE4 / 4] >= q[3] * q[4];
+    if (r == 0) {
+        sprintf(buf, D_004980A8, q[1], q[2]);
+        func_004034A8(p, (int)buf);
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00408278);
 
