@@ -8,7 +8,36 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F3530);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F35D0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3748);
+#ifdef SKIP_ASM
+extern void f33B0(void *, int, int, int) __asm__("func_003F33B0");
+extern void f3530(void *, unsigned char *, int) __asm__("func_003F3530");
+int func_003F3748(char *out, int n, unsigned char *in, int a, int b, int c) {
+    unsigned char ctx[0x110];
+    unsigned char k;
+    int i;
+    int ch;
+    int cur;
+    unsigned t;
+    k = 0;
+    f33B0(ctx, a, b, c);
+    i = 0;
+    while (i < n - 1) {
+        cur = in[i];
+        i++;
+        if (cur == 0) break;
+        f3530(ctx, &k, 1);
+        t = k % 96U - 0x40;
+        ch = (int)(cur - t) % 96 + 0x20;
+        *out = ch;
+        if ((char)ch == 0x7F) break;
+        out++;
+    }
+    if (i < n) *out = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3860);
