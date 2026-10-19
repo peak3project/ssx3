@@ -11785,7 +11785,22 @@ int func_001B6078(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6080);
+#ifdef SKIP_ASM
+extern "C" int func_001B6080(void* self, int a1, unsigned int key)
+{
+    int r = 0x101;
+    if (key < 2) {
+        if (*(int*)((char*)self + 0x6D4) > 1) {
+            r = 0x101;
+        } else {
+            return 0;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B60A8);
