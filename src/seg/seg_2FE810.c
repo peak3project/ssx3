@@ -1661,7 +1661,26 @@ int func_0040A618(void) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A688);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A7D0);
+#ifdef SKIP_ASM
+extern char D_00527780[];
+extern unsigned strlen(char *);
+extern int func_0041605C(int, int, int);
+void func_0040A7D0(char *dst) {
+    char *src;
+    int n;
+    if (dst) {
+        src = (char *)((unsigned)D_00527780 | 0x20000000);
+        if (strlen(src) < 0x400)
+            n = strlen(src);
+        else
+            n = 0x3FF;
+        func_0041605C((int)dst, (unsigned)D_00527780 | 0x20000000, n);
+        dst[n] = 0;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A858);
 
