@@ -194,5 +194,20 @@ extern "C" void func_00314FE8(sMdfIndex_00314E88* self, char* list)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/mdfarchive", func_00315070);
+#ifdef SKIP_ASM
+extern char* D_0048CFC0[];
+extern char D_0048A4C0[];
+
+extern "C" char* func_00315070(sMdfIndex_00314E88* self, unsigned int key)
+{
+    for (int i = 0; i < 0x206; i++) {
+        if (key == ((unsigned int*)((char*)self + 0x1030))[i]) {
+            return D_0048CFC0[i];
+        }
+    }
+    return D_0048A4C0;
+}
+#endif
 
