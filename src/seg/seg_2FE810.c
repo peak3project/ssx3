@@ -2327,7 +2327,33 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040AC38);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040AE00);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AF58);
+#ifdef SKIP_ASM
+extern int A_5271C0[] __asm__("D_005271C0");
+extern int A_527240[] __asm__("D_00527240");
+extern int A_528780[] __asm__("D_00528780");
+extern int A_4533C0[] __asm__("D_004533C0");
+extern int A_4533C4[] __asm__("D_004533C4");
+extern int func_KbOpenA(int *, int, int, int *, int, int *, int, int, int) __asm__("func_00426D18");
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+int func_0040AF58(int a, int b) {
+    int r;
+    if (A_5271C0[9] == 0)
+        return -100;
+    if (func_00423DF0(A_4533C4[0]) < 0)
+        return -200;
+    A_527240[1] = a;
+    A_527240[2] = b;
+    r = func_KbOpenA(A_5271C0, 17, 1, A_527240, 48, A_528780, 4, 0, 0);
+    if (r == 0)
+        A_4533C0[0] = 17;
+    else
+        func_00423DC0(A_4533C4[0]);
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040B028);
 
