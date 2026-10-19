@@ -381,11 +381,6 @@ int func_003FF0F0(void) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF130);
-#ifdef SKIP_ASM
-void func_003FF130(unsigned a, unsigned b, unsigned c) {
-    *(unsigned *)0x10003820 = a | (b << 1) | (c << 2);
-}
-#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF150);
 
@@ -1090,14 +1085,14 @@ extern int D_004531B0[];
 extern int func_004014F8();
 extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
 extern void func_00423DC0(int);
-extern void func_00426358(int *, int);
+extern void func_00426358_p(int *, int) __asm__("func_00426358");
 int func_00402450(int a) {
     int v;
     int *p = D_00452C40;
     if (func_004014F8(34) == 0)
         return 0;
     D_00452C40[0] = a;
-    func_00426358(p, 4);
+    func_00426358_p(p, 4);
     if (func_00426D18(D_00453180, D_004531A8[0], 0, p, D_004531AC[0], D_00452800, D_004531B0[0], 0, 0) < 0) {
         func_00423DC0(D_0045162C[0]);
         return 0;
@@ -1151,14 +1146,14 @@ extern int D_00452C40[];
 extern int func_004014F8();
 extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
 extern void func_00423DC0(int);
-extern void func_00426358(int *, int);
+extern void func_00426358_p(int *, int) __asm__("func_00426358");
 int func_00402618(int a, int *out) {
     int v;
     int *p = D_00452C40;
     if (func_004014F8(26) == 0)
         return -1;
     D_00452C40[0] = a;
-    func_00426358(p, 4);
+    func_00426358_p(p, 4);
     if (func_00426D18(D_00453180, 5, 0, p, 4, D_00452800, 8, 0, 0) < 0) {
         func_00423DC0(*(volatile int *)D_0045162C);
         return -1;
@@ -3284,13 +3279,6 @@ int func_0040B9A8(void) {
 INCLUDE_ASM("seg/seg_2FE810", func_0040B9E8);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA48);
-#ifdef SKIP_ASM
-typedef struct { int a; int b; } U64;
-extern U64 D_004533F8[];
-void func_0040BA48(U64 *p) {
-    D_004533F8[0] = *p;
-}
-#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA68);
@@ -3339,11 +3327,6 @@ unsigned char func_0040BC70(unsigned char a) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BCA0);
-#ifdef SKIP_ASM
-unsigned char func_0040BCA0(unsigned char x) {
-    return x - (x / 16) * 6;
-}
-#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BCC0);
