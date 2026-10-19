@@ -1354,7 +1354,22 @@ int func_001588B0(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_001588C8);
+#ifdef SKIP_ASM
+extern int D_0045AFE8[];
+
+extern "C" int func_001588C8(void* self, int kind, int v)
+{
+    int* t = D_0045AFE8 + kind * 4;
+    for (int i = 0; i < 4; i++)
+    {
+        if (v >= t[i])
+            return i;
+    }
+    return -1;
+}
+#endif
 
 void* cBECharProfileDB_getScoreStats(void* self, int a, int b);
 extern int D_004A6CA8[];
