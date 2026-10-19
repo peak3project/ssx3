@@ -475,7 +475,16 @@ extern "C" void func_0028BDE0(void* self, int i)
 
 INCLUDE_ASM("sound/bankmanager", func_0028BE08);
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028BE38);
+#ifdef SKIP_ASM
+extern "C" void func_0028B730(sBankNode* self);
+
+extern "C" void func_0028BE38(void* self, int i)
+{
+    func_0028B730((sBankNode*)((char*)*(void**)((char*)self + 0xACC) + i * 0x60));
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmanager", func_0028BE60);
 #ifdef SKIP_ASM
