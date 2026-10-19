@@ -4707,7 +4707,59 @@ extern "C" void func_00396B40(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_00396C30);
+#ifdef SKIP_ASM
+extern char D_80[];
+extern char D_70[];
+
+struct sMtx_6C30 {
+    float m[16];
+};
+
+struct sMtxList_6C30 {
+    int count;
+    int* index;
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void vu0CopyMtx_6C30(void* dst, const void* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+// Emits a DMA chain that uploads count 4x4 matrices (selected by index) and then a closing tag.
+extern "C" void func_00396C30(void* self, sMtxList_6C30* list, sMtx_6C30* mats, unsigned long** cur)
+{
+    int n = list->count;
+    int* idx = list->index;
+    unsigned long* p = *cur;
+    p[0] = (n << 2) | 0x10000002;
+    p[2] = (unsigned long)0x8000 << 45;
+    p[3] = ((unsigned long)(unsigned int)((n << 18) | 0x6C000011) << 32) | 0x1000101;
+    p[1] = 0;
+    p += 4;
+    for (int i = 0; i < n; i++) {
+        vu0CopyMtx_6C30(p, &mats[idx[i]]);
+        p += 8;
+    }
+    p[0] = ((unsigned long)n << 32) | 0x600103FF;
+    p[1] = (unsigned long)(((unsigned int)D_80 >> 3) | 0x14000000) | ((unsigned long)(((unsigned int)D_70 >> 3) | 0x14000000) << 32);
+    p += 2;
+    *cur = p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/font", func_00396D30);
