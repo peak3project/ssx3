@@ -92,7 +92,24 @@ extern "C" int func_002C71C0(void* self, int year) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/statemachine", func_002C7208);
+#ifdef SKIP_ASM
+extern "C" int func_002C71C0(void* self, int a1);
+
+extern "C" int func_002C7208(int self, int month, int year)
+{
+    int m = month;
+    int one = 1;
+    if (month != 2) {
+        if (m >= 8) m++;
+        return (m & one) ? 31 : 30;
+    }
+    m = func_002C71C0((void*)self, year);
+    return m == 0 ? 28 : 29;
+}
+
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/statemachine", func_002C7260);
 #ifdef SKIP_ASM
