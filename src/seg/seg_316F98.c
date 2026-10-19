@@ -236,7 +236,18 @@ long func_00417948(int *f, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004179B0);
+#ifdef SKIP_ASM
+extern long func_0041FDD0(int *, int, int, int);
+int func_004179B0_(int *f, int a, int b) __asm__("func_004179B0");
+int func_004179B0_(int *f, int a, int b) {
+    if (((unsigned short *)f)[6] & 0x100)
+        func_0041FC50((int *)f[0x54 / 4], ((short *)f)[7], 0, 2);
+    ((unsigned short *)f)[6] &= 0xEFFF;
+    return func_0041FDD0((int *)f[0x54 / 4], ((short *)f)[7], a, b);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00417A30);
