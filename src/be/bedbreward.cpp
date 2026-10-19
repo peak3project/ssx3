@@ -680,7 +680,16 @@ extern "C" int func_0015C110(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015C120);
+#ifdef SKIP_ASM
+extern unsigned char D_00535610_b[] __asm__("D_00535610");
+
+extern "C" long func_0015C120(void)
+{
+    return D_00535610_b[0] >> 4;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/bedbreward", func_0015C130);
