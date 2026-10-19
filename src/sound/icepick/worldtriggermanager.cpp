@@ -855,7 +855,18 @@ extern "C" int func_002B69B8(void* self, void* src, void* state)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B6A38);
+#ifdef SKIP_ASM
+extern "C" int func_002B6A38(void* self, unsigned int i)
+{
+    if (i < 2) {
+        return 0;
+    }
+    sTriggerRef* refs = *(sTriggerRef**)((char*)self + 0x33c);
+    return *(int*)((char*)refs[i].obj + 0xC) == 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B6A68);
