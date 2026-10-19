@@ -395,7 +395,14 @@ extern "C" void func_0026BA88(void* dst, void* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("path/pathsys", func_0026BAA8);
+#ifdef SKIP_ASM
+extern "C" void* func_0026BAA8(void* self, ...)
+{
+    return self;
+}
+#endif
 
 INCLUDE_ASM("path/pathsys", func_0026BAE8);
 
