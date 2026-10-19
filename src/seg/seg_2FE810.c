@@ -5356,7 +5356,23 @@ void func_00411310(int a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00411340);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00411438);
+#ifdef SKIP_ASM
+extern double itod_411438(int) __asm__("func_00412550");
+extern double dmul_411438(double, double) __asm__("func_00411FD8");
+extern double dadd_411438(double, double) __asm__("func_00411F18");
+double func_00411438(long a) {
+    double hi = itod_411438((int)(a >> 32));
+    double lo;
+    hi = dmul_411438(hi, 65536.0);
+    hi = dmul_411438(hi, 65536.0);
+    lo = itod_411438((int)(a & 0xFFFFFFFF));
+    if ((int)(a & 0xFFFFFFFF) < 0)
+        lo = dadd_411438(lo, 4294967296.0);
+    return dadd_411438(hi, lo);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004114D0);
 
