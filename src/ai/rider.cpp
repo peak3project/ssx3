@@ -770,7 +770,20 @@ extern "C" void func_0011FEF8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011FF18);
+#ifdef SKIP_ASM
+class cHandler_FF18 {
+public:
+    char pad[0xDE8];
+    virtual void v1(void* a);
+};
+
+extern "C" void func_0011FF18(cRider* self, void* a1)
+{
+    ((cHandler_FF18*)self->mRiderHandler)->v1(a1);
+}
+#endif
 //100%
 INCLUDE_ASM("ai/rider", func_0011FF48);
 #ifdef SKIP_ASM
