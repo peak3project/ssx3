@@ -1027,7 +1027,24 @@ int func_003F6E98(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6EE0);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+int func_003F6EE0(int *out) {
+    int err = 0; char *d;
+    *out = 0;
+    if (out == 0) err = 7;
+    d = D_004A4BC4;
+    if (*(unsigned *)(d + 0xD0) >= 4) err = 0xF;
+    if (err == 0) {
+        if (*(unsigned *)(D_004A4BC4 + 0xD8) < 9) err = ((int (*)(int *, char *))*(int *)(d + 0xDC))(out, d);
+        else ((void (*)(int *, int *))*(int *)(D_004A4BC4 + 0xE8))(out, &err);
+    }
+    return err;
+}
+
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6F68);
 
