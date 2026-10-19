@@ -10738,7 +10738,59 @@ extern "C" void func_001B43A8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B4470);
+#ifdef SKIP_ASM
+extern "C" void func_001B47C0(void* self, int a1);
+extern "C" void func_001B4FA0(void* self, int err);
+
+extern "C" void func_001B4470(void* self_)
+{
+    char* self = (char*)self_;
+    int k;
+    int e;
+    if (((cFEVObj_001B43A8*)D_004A1B78)->v53() == 0) {
+        k = D_004A1B80;
+        if (k == 0) {
+            D_004A1B80 = 1;
+            func_001B47C0(self, 2);
+            *(int*)(self + 0x708) = 2;
+        } else {
+            e = *(int*)(self + 0x70C);
+            *(int*)(self + 0x708) = 0;
+            if (e != 1) {
+                D_004A1B80 = (k + 1) % 2;
+                func_001B4FA0(self, e);
+            } else {
+                func_001B5068(self, -1);
+                func_001B4888(self, 0x840, 2, -1);
+            }
+        }
+    } else {
+        if (((cFEVObj_001B43A8*)D_004A1B78)->v55() == 0) {
+            k = D_004A1B80;
+                if (k == 0) {
+                *(int*)(self + 0x70C) = -200;
+                D_004A1B80 = 1;
+                func_001B47C0(self, 2);
+                *(int*)(self + 0x708) = 2;
+            } else {
+                e = *(int*)(self + 0x70C);
+                *(int*)(self + 0x708) = 0;
+                if (e != 1) {
+                    D_004A1B80 = (k + 1) % 2;
+                    func_001B4FA0(self, e);
+                } else {
+                    func_001B4888(self, 0x841, 0x14, 1);
+                }
+                func_001B5068(self, -1);
+            }
+        } else {
+            *(int*)(self + 0x708) = 4;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B45E8);
