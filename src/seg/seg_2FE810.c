@@ -2025,7 +2025,23 @@ void func_00411F18(long a, long b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00411F70);
+#ifdef SKIP_ASM
+struct S412778;
+extern void func_00411C38(long *, int *);
+extern struct S412778 *func_00411CD8(int *, int *, int *);
+extern void func_00411B08(struct S412778 *);
+void func_00411F70(long a, long b) {
+    int x[8];
+    int y[8];
+    int z[8];
+    func_00411C38(&a, x);
+    func_00411C38(&b, y);
+    y[1] ^= 1;
+    func_00411B08(func_00411CD8(x, y, z));
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00411FD8);
 
