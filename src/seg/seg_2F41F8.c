@@ -882,7 +882,31 @@ int func_003F7478(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7528);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern char fn7958[] __asm__("func_003F7958");
+extern char fn7900[] __asm__("func_003F7900");
+extern int func_003FCE10(char *, int, int, int);
+extern int fC548(char *, int, int, int, int) __asm__("func_003FC548");
+extern int func_003F8178(int);
+typedef struct { char b[17]; } K17b;
+int func_003F7528(void) {
+    int r;
+    char *d = D_004A4BC4;
+    *(char **)(d + 0xFC) = fn7900;
+    *(char **)(d + 0x100) = fn7958;
+    r = func_003F8178(func_003FCE10(d + 0x144, *(int *)(d + 0x140), 0x11, 0));
+    if (r == 0) {
+        char *e = D_004A4BC4;
+        K17b *dst = *(K17b **)(e + 0x144);
+        *dst = *(K17b *)(e + 0xB9);
+        r = func_003F8178(fC548(D_004A4BC4 + 0x44, 0x50415353, 0, *(int *)(D_004A4BC4 + 0x144), 0x11));
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F75D8);
