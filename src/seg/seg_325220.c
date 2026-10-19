@@ -1166,7 +1166,32 @@ struct N70B0 *func_004270B0(struct N70B0 *x, struct S70B0 *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00427148);
+#ifdef SKIP_ASM
+struct N7148 { char pad[0x14]; struct N7148 *next; };
+extern struct { char pad[0x28]; struct N7148 *head; } D_7148 __asm__("D_0052D680");
+extern int f7148a(void) __asm__("func_0042C078");
+extern void f7148b(void) __asm__("func_0042C0C0");
+struct N7148 *f7148(struct N7148 *x) __asm__("func_00427148");
+struct N7148 *f7148(struct N7148 *x) {
+    struct N7148 *p;
+    f7148a();
+    p = D_7148.head;
+    if (p == x) {
+        D_7148.head = p->next;
+    } else {
+        for (; p != 0; p = p->next) {
+            if (p->next == x) {
+                p->next = x->next;
+                break;
+            }
+        }
+    }
+    f7148b();
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004271D8);
