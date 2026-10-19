@@ -1653,7 +1653,41 @@ int func_0042AD08(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042AD28);
+#ifdef SKIP_ASM
+struct S2AD28 { int cmd; char name[0xFC]; };
+extern int D_00455224;
+extern char D_0052EEC0[];
+extern int D_0052EF00;
+extern struct S2AD28 D_0052EF80;
+extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
+int func_0042AD28(char *a0, int a1) {
+    int i;
+    if (D_00455224 < 0) {
+        return 0;
+    }
+    i = 0;
+    if ((D_0052EF80.name[0] = a0[0]) != 0) {
+        do {
+            i++;
+            if (i >= 0xFC) {
+                break;
+            }
+        } while ((D_0052EF80.name[i] = a0[i]) != 0);
+    }
+    if (i == 0xFC) {
+        D_0052EF80.name[0xFB] = 0;
+        i = 0xFB;
+    }
+    D_0052EF80.cmd = a1;
+    D_0052EF80.name[0xFB] = 0;
+    if (func_00426D18(D_0052EEC0, 3, 0, (int)&D_0052EF80, i + 5, &D_0052EF00, 4, 0, 0) < 0) {
+        return -1;
+    }
+    return D_0052EF00;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042AE18);
