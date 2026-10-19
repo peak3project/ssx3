@@ -2172,5 +2172,15 @@ extern "C" void* MEM_initblock(void* self, int p1, void* p2, int p3, short p4, i
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/debugmenu", func_002516F0);
+#ifdef SKIP_ASM
+extern char D_004D2438[];
+extern "C" void* func_003E6448(void* dst, int c, unsigned int n);
+
+extern "C" void func_002516F0(void)
+{
+    func_003E6448(D_004D2438, 0, 0x100);
+}
+#endif
 
