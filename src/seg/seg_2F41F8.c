@@ -2100,7 +2100,71 @@ int func_003F95E8(char *dst) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9698);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9818);
+#ifdef SKIP_ASM
+typedef struct { unsigned short h0; char pad[0xE]; void (*f10)(int); } E9818;
+extern int c9818_9208(void) __asm__("func_003F9208");
+extern int c9818_86B8(int) __asm__("func_003F86B8");
+extern int c9818_8550(int) __asm__("func_003F8550");
+extern int c9818_8588(int) __asm__("func_003F8588");
+extern void c9818_86F0(int) __asm__("func_003F86F0");
+extern void c9818_B2F8(int) __asm__("func_003FB2F8");
+extern unsigned c9818_6210(void *, int, int) __asm__("func_00416210");
+extern unsigned strlen(const char *);
+extern char *strcpy(char *, const char *);
+extern int *D_9818s __asm__("D_004A4BD8");
+extern E9818 *D_9818e __asm__("D_004A4BDC");
+int func_003F9818_impl(char *str, int a, int b) __asm__("func_003F9818");
+int func_003F9818_impl(char *str, int a, int b) {
+    int v;
+    int t;
+    int *s;
+    int *s2;
+    unsigned m;
+    if (c9818_9208() == 0) return 2;
+    if (str == 0) return 0xC;
+    if (strlen(str) >= 0x18) return 0xC;
+    if ((unsigned)(a + 1) >= 9) return 9;
+    if (a != -1) {
+        m = 1 << a;
+        if (!(D_9818e->h0 & m)) return 0xB;
+    }
+    if (D_9818s[0] != 0) return 0xD;
+    c9818_6210(D_9818s + 3, 0, 0x60);
+    if (a == -1) {
+        if (c9818_86B8(D_9818e->h0) == 1) {
+            v = c9818_8550(D_9818e->h0);
+            s = D_9818s;
+            s[4] = v;
+            s[0] = 4;
+        } else if (b == 0) {
+            v = c9818_8550(D_9818e->h0);
+            s2 = D_9818s;
+            s2[4] = v;
+            s2[0] = 1;
+        } else if (b == 1) {
+            v = c9818_8588(D_9818e->h0);
+            s2 = D_9818s;
+            s2[4] = v;
+            s2[0] = b;
+        } else {
+            return 0xC;
+        }
+    } else {
+        s2 = D_9818s;
+        s2[4] = a;
+        s2[0] = 4;
+    }
+    c9818_86F0(0);
+    strcpy((char *)(D_9818s + 0x15), str);
+    D_9818s[0x6C / 4] = b;
+    c9818_B2F8(1);
+    D_9818e->f10(D_9818s[4]);
+    D_9818s[1] = 1;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F99B8);
 
