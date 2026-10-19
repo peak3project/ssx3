@@ -1950,7 +1950,36 @@ void func_0040BF20(unsigned char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BF48);
+#ifdef SKIP_ASM
+extern void func_0040BCC0(unsigned char *);
+extern void func_0040BEF0(unsigned char *);
+extern void func_0040BF20(unsigned char *);
+extern void func_0040BD28(unsigned char *);
+void func_0040BF48(int a, int d0) {
+    int d;
+    unsigned char *p = (unsigned char *)a;
+    func_0040BCC0(p);
+    d = p[2] + d0;
+    if (d >= 0) {
+        if (d > 60) {
+            do {
+                d -= 60;
+                func_0040BEF0(p);
+            } while (d > 60);
+        }
+        p[2] = d;
+    } else {
+        while (d < 0) {
+            d += 60;
+            func_0040BF20(p);
+        }
+        p[2] = d;
+    }
+    func_0040BD28(p);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BFD8);
