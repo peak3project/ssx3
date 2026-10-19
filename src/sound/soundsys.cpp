@@ -1581,7 +1581,32 @@ extern "C" void func_00294678(void* self, char* rider)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002947B0);
+#ifdef SKIP_ASM
+extern "C" void* func_0028B1D8();
+extern "C" void func_00294678(void* self, char* rider);
+
+extern "C" void func_002947B0(void* self)
+{
+    int* slot = (int*)((char*)self + 0x59E8);
+    int i = 0;
+    int off = 0;
+    do {
+        char* r;
+        if (*slot != 0 && i < *(int*)((char*)func_0028B1D8() + 0x78)
+            && (r = *(char**)((char*)func_0028B1D8() + off + 0x28)) != 0) {
+            i++;
+            func_00294678(self, r);
+        } else {
+            *slot = 0;
+            i++;
+        }
+        slot++;
+        off += 4;
+    } while (i < 6);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00294860);
