@@ -1553,7 +1553,18 @@ void func_0040BCC0(unsigned char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BD28);
+#ifdef SKIP_ASM
+void func_0040BD28(unsigned char *p) {
+    p[7] = func_0040BC70(p[7]);
+    p[6] = func_0040BC70(p[6]);
+    p[5] = func_0040BC70(p[5]);
+    p[3] = func_0040BC70(p[3]);
+    p[2] = func_0040BC70(p[2]);
+    p[1] = func_0040BC70(p[1]);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BD90);
 
