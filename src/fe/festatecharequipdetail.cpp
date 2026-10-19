@@ -3198,7 +3198,18 @@ extern "C" int func_0019E2F0(sEquipTable* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E330);
+#ifdef SKIP_ASM
+extern "C" int func_0019E330(sEquipTable* self, int a1, int a2)
+{
+    int v = self->rows[a1].slots[a2].value;
+    self->rows[a1].slots[a2].value = 0;
+    *(int*)((char*)self + 0xB4000) -= self->rows[a1].slots[a2].f118;
+    self->rows[a1].slots[a2].f118 = 0;
+    return v;
+}
+#endif
 
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E380);
 
