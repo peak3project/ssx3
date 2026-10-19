@@ -417,7 +417,21 @@ extern "C" void func_00351948(void* self, sImMat44* m)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/instanceman", func_00351A10);
+#ifdef SKIP_ASM
+extern void* D_00490AB0[];
+extern "C" void* func_00351330(void* self, float* src, float f);
+void func_00351A60_vf(void* self, float f) __asm__("func_00351A60__FPv");
+
+extern "C" void* func_00351A10(void* self, float* src, float f)
+{
+    func_00351330(self, src, f);
+    *(void***)((char*)self + 0x84) = D_00490AB0;
+    func_00351A60_vf(self, f);
+    return self;
+}
+#endif
 
 extern "C" void* func_00351538(void* self);
 
