@@ -160,7 +160,32 @@ extern "C" void func_003209F0(cExecHolder_9F0* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/execman", func_00320A20);
+#ifdef SKIP_ASM
+class cExecIf_A20 {
+public:
+    int pad[2];
+    virtual unsigned int v1();
+    virtual unsigned int v2();
+    virtual unsigned int v3();
+    virtual unsigned int v4();
+    virtual unsigned int v5();
+    virtual unsigned int v6();
+};
+struct cExecHolder_A20 {
+    int pad[2];
+    cExecIf_A20* obj;
+};
+
+extern "C" unsigned int func_00320A20(cExecHolder_A20* self)
+{
+    if (self->obj != 0) {
+        return self->obj->v6();
+    }
+    return 0xFFFFFFFF;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/execman", func_00320A60);
