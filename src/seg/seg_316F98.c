@@ -1884,6 +1884,114 @@ char *func_00421E60(int ep, char *buf, long val, int nd, int unused, char fmt, i
 #endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00421F20);
+#ifdef SKIP_ASM
+extern void func_00418CA8_lock(int) __asm__("func_00418CA8");
+extern void func_00418D08_unlock(int) __asm__("func_00418D08");
+extern void *func_0041DBF8_malloc(int, int) __asm__("func_0041DBF8");
+extern void func_0041E340_free(int, void *) __asm__("func_0041E340");
+extern void *func_0041605C_memcpy(void *, void *, unsigned) __asm__("func_0041605C");
+#define MALLOC_COPY(dest, src, nbytes)     do {         unsigned mcn = (nbytes);         if (mcn < 37) {             unsigned *mcsrc = (unsigned *)(src);             unsigned *mcdst = (unsigned *)(dest);             if (mcn >= 20) {                 *mcdst++ = *mcsrc++;                 *mcdst++ = *mcsrc++;                 if (mcn >= 28) {                     *mcdst++ = *mcsrc++;                     *mcdst++ = *mcsrc++;                     if (mcn >= 36) {                         *mcdst++ = *mcsrc++;                         *mcdst++ = *mcsrc++;                     }                 }             }             *mcdst++ = *mcsrc++;             *mcdst++ = *mcsrc++;             *mcdst = *mcsrc;         } else             func_0041605C_memcpy(dest, src, mcn);     } while (0)
+#define inuse(p) (chunk_at_offset(p, (p)->size & ~1u)->size & 1)
+void *func_00421F20_(int ptr, void *oldmem, unsigned bytes) __asm__("func_00421F20");
+void *func_00421F20_(int ptr, void *oldmem, unsigned bytes) {
+    unsigned nb, oldsize, newsize, nextsize, prevsize, remainder_size;
+    mchunkptr oldp, newp, next, prev, remainder, bck, fwd;
+    void *newmem;
+    if (oldmem == 0)
+        return func_0041DBF8_malloc(ptr, bytes);
+    func_00418CA8_lock(ptr);
+    newp = oldp = (mchunkptr)((char *)oldmem - 8);
+    newsize = oldsize = chunksize(oldp);
+    nb = (bytes + 19 < 31) ? 16 : ((bytes + 19) & ~15u);
+    if (oldsize < nb) {
+        next = chunk_at_offset(oldp, oldsize);
+        if (next == top || !inuse(next)) {
+            nextsize = chunksize(next);
+            if (next == top) {
+                if (nextsize + newsize >= nb + 16) {
+                    newsize += nextsize;
+                    top = chunk_at_offset(oldp, nb);
+                    set_head(top, (newsize - nb) | 1);
+                    set_head_size(oldp, nb);
+                    func_00418D08_unlock(ptr);
+                    return (char *)oldp + 8;
+                }
+            } else if (nextsize + newsize >= nb) {
+                unlink(next, bck, fwd);
+                newsize += nextsize;
+                goto split;
+            }
+        } else {
+            next = 0;
+            nextsize = 0;
+        }
+        if (!(oldp->size & 1)) {
+            prev = chunk_at_offset(oldp, -(int)oldp->prev_size);
+            prevsize = chunksize(prev);
+            if (next != 0) {
+                if (next == top) {
+                    if (nextsize + prevsize + newsize >= nb + 16) {
+                        unlink(prev, bck, fwd);
+                        newp = prev;
+                        newsize += prevsize + nextsize;
+                        newmem = (char *)newp + 8;
+                        MALLOC_COPY((char *)newp + 8, oldmem, oldsize - 4);
+                        top = chunk_at_offset(newp, nb);
+                        set_head(top, (newsize - nb) | 1);
+                        set_head_size(newp, nb);
+                        func_00418D08_unlock(ptr);
+                        return newmem;
+                    }
+                } else if (nextsize + prevsize + newsize >= nb) {
+                    unlink(next, bck, fwd);
+                    unlink(prev, bck, fwd);
+                    newp = prev;
+                    newsize += nextsize + prevsize;
+                    newmem = (char *)newp + 8;
+                    MALLOC_COPY((char *)newp + 8, oldmem, oldsize - 4);
+                    goto split;
+                }
+            }
+            if (prev != 0 && prevsize + newsize >= nb) {
+                unlink(prev, bck, fwd);
+                newp = prev;
+                newsize += prevsize;
+                newmem = (char *)newp + 8;
+                MALLOC_COPY((char *)newp + 8, oldmem, oldsize - 4);
+                goto split;
+            }
+        }
+        newmem = func_0041DBF8_malloc(ptr, bytes);
+        if (newmem == 0) {
+            func_00418D08_unlock(ptr);
+            return 0;
+        }
+        if ((newp = (mchunkptr)((char *)newmem - 8)) == chunk_at_offset(oldp, oldp->size & ~1u)) {
+            newsize += chunksize(newp);
+            newp = oldp;
+            goto split;
+        }
+        MALLOC_COPY(newmem, oldmem, oldsize - 4);
+        func_0041E340_free(ptr, oldmem);
+        func_00418D08_unlock(ptr);
+        return newmem;
+    }
+split:
+    if (newsize - nb >= 16) {
+        remainder = chunk_at_offset(newp, nb);
+        remainder_size = newsize - nb;
+        set_head_size(newp, nb);
+        set_head(remainder, remainder_size | 1);
+        chunk_at_offset(remainder, remainder_size)->size |= 1;
+        func_0041E340_free(ptr, (char *)remainder + 8);
+    } else {
+        set_head_size(newp, newsize);
+        chunk_at_offset(newp, newsize)->size |= 1;
+    }
+    func_00418D08_unlock(ptr);
+    return (char *)newp + 8;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_004224A0);
 #ifdef SKIP_ASM
