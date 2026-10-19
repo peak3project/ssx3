@@ -162,7 +162,34 @@ extern "C" void func_003209F0(cExecHolder_9F0* self)
 
 INCLUDE_ASM("bx/execman", func_00320A20);
 
+//100%
 INCLUDE_ASM("bx/execman", func_00320A60);
+#ifdef SKIP_ASM
+class cExecIf_A60 {
+public:
+    int pad[2];
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void v7();
+    virtual void v8();
+    virtual void v9();
+    virtual void v10();
+    virtual void v11();
+};
+struct cExecHolder_A60 {
+    int pad[2];
+    cExecIf_A60* obj;
+};
+
+extern "C" void func_00320A60(cExecHolder_A60* self)
+{
+    self->obj->v11();
+}
+#endif
 
 INCLUDE_ASM("bx/execman", func_00320A90);
 //100%
