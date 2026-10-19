@@ -1400,7 +1400,14 @@ int func_003FB910(int a, int b) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB958);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB9A0);
+#ifdef SKIP_ASM
+extern char D_00497550[];
+void func_003FB9A0(char *dst) {
+    __builtin_memcpy(dst, D_00497550, 12);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB9D0);
 
