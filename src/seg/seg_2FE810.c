@@ -2521,7 +2521,35 @@ long func_00406EC8(int p) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00406F78);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004070F0);
+#ifdef SKIP_ASM
+extern int D_004532C0[];
+extern int func_00402C80(int *);
+extern long func_00406EC8_k() __asm__("func_00406EC8");
+int func_004070F0(int p, int n) {
+    int c;
+    int x;
+    int *e;
+    if (*(int *)(p + 0x818) || *(int *)(p + 0x83C) < n) {
+        c = 0;
+        if ((*(volatile int *)0x10002010 & 0x80004000) == 0x80000000) {
+            do {
+                if (c++ >= 0x1389) {
+                    func_00402C80(*(int **)(p + 0x858));
+                    c = 0;
+                }
+            } while ((*(volatile int *)0x10002010 & 0x80004000) == 0x80000000);
+        }
+        *(volatile int *)0x10002000 = 0x40000000;
+        *(int *)(p + 0x818) = D_004532C0[4];
+        x = (int)func_00406EC8_k(p);
+        *(int *)(p + 0x838) = x;
+        *(int *)(p + 0x83C) = 32;
+    }
+    return (unsigned)*(int *)(p + 0x838) >> (32 - n);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004071F8);
