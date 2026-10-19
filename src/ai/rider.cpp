@@ -1465,7 +1465,27 @@ extern "C" void func_00121F30(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00122048);
+#ifdef SKIP_ASM
+extern "C" void func_00389C38(void* p, int a);
+extern void* D_004A289C;
+
+struct sVE_2048 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
+extern "C" void func_00122048()
+{
+    char buf[0xA0];
+    func_00389C38(buf, 0);
+    char* g = (char*)D_004A289C;
+    sVE_2048* vt = *(sVE_2048**)(g + 0x10D8);
+    vt[69].fn(g + vt[69].delta, buf, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_00122088);
