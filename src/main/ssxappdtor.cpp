@@ -939,7 +939,15 @@ extern "C" int func_00244388(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxappdtor", func_00244398);
+#ifdef SKIP_ASM
+struct sL244398 { int pad; int items[4]; int cur; };
+struct sO244398 { char pad[0x84]; sL244398* list; };
+extern "C" int func_00244398(sO244398* self) {
+    return self->list->items[self->list->cur];
+}
+#endif
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_002443B0);
 #ifdef SKIP_ASM
