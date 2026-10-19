@@ -1086,7 +1086,38 @@ int func_00402450(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402520);
+#ifdef SKIP_ASM
+struct P8 { char b[8]; } __attribute__((packed));
+extern char D_00453180[];
+extern int D_0045162C[];
+extern int D_00451610[];
+extern int D_00452800[];
+extern char D_00497BD8[];
+extern char D_00497BF8[];
+extern int func_004014F8();
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+extern void func_00423DC0(int);
+extern void func_00425C60();
+int func_00402520(struct P8 *a) {
+    int v;
+    if (func_004014F8(15) == 0)
+        return 0;
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497BD8);
+    if (func_00426D18(D_00453180, 1, 0, 0, 0, D_00452800, 16, 0, 0) < 0) {
+        func_00423DC0(D_0045162C[0]);
+        return 0;
+    }
+    *a = *(struct P8 *)((unsigned)&D_00452800[1] | 0x20000000);
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497BF8);
+    v = *(int *)((unsigned)D_00452800 | 0x20000000);
+    func_00423DC0(D_0045162C[0]);
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402618);
