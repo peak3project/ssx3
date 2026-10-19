@@ -848,5 +848,18 @@ int func_00187C10(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fememcard", func_00187C18);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
+extern void* D_0046B4A0[];
+
+extern "C" void* func_00187C18(void* self, void* engine, void* owner)
+{
+    func_0039E318(self, engine, owner);
+    *(int*)((char*)self + 0x48) = 0;
+    *(void***)((char*)self + 0x8) = D_0046B4A0;
+    return self;
+}
+#endif
 
