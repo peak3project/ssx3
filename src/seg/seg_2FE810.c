@@ -660,7 +660,26 @@ int func_00400548(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004005A0);
+#ifdef SKIP_ASM
+struct P12 { char b[12]; } __attribute__((packed));
+extern char D_00526200[];
+extern int D_00526440[];
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+extern int func_003FFC70(int, int, int);
+int func_004005A0(int a, int b, struct P12 *c) {
+    D_00526440[1] = a;
+    D_00526440[0] = 11;
+    D_00526440[2] = b;
+    *(struct P12 *)&D_00526440[3] = *c;
+    if (func_00426D18(D_00526200, 1, 0, D_00526440, 128, D_00526440, 128, 0, 0) < 0)
+        return 0;
+    if (D_00526440[7] == 1)
+        func_003FFC70(a, b, 2);
+    return D_00526440[7];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400670);
