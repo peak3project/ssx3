@@ -1262,7 +1262,63 @@ int func_00420E28(struct Bigint28 *a, struct Bigint28 *b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00420E90);
+#ifdef SKIP_ASM
+extern int *func_00420510(int, int);
+struct Bigint *func_00420E90(int ptr, struct Bigint *a, struct Bigint *b) {
+    struct Bigint *c;
+    int i, wa, wb;
+    int borrow, y, z;
+    unsigned *xa, *xae, *xb, *xbe, *xc;
+    i = func_00420E28((struct Bigint28 *)a, (struct Bigint28 *)b);
+    if (!i) {
+        c = (struct Bigint *)func_00420510(ptr, 0);
+        c->wds = 1;
+        c->x[0] = 0;
+        return c;
+    }
+    if (i < 0) {
+        c = a;
+        a = b;
+        b = c;
+        i = 1;
+    } else
+        i = 0;
+    c = (struct Bigint *)func_00420510(ptr, a->k);
+    c->sign = i;
+    wa = a->wds;
+    xa = a->x;
+    xae = xa + wa;
+    wb = b->wds;
+    xb = b->x;
+    xbe = xb + wb;
+    xc = c->x;
+    borrow = 0;
+    do {
+        y = (*xa & 0xffff) - (*xb & 0xffff) + borrow;
+        borrow = y >> 16;
+        z = (*xa++ >> 16) - (*xb++ >> 16) + borrow;
+        borrow = z >> 16;
+        ((unsigned short *)xc)[1] = z;
+        ((unsigned short *)xc)[0] = y;
+        xc++;
+    } while (xb < xbe);
+    while (xa < xae) {
+        y = (*xa & 0xffff) + borrow;
+        borrow = y >> 16;
+        z = (*xa++ >> 16) + borrow;
+        borrow = z >> 16;
+        ((unsigned short *)xc)[1] = z;
+        ((unsigned short *)xc)[0] = y;
+        xc++;
+    }
+    while (!*--xc)
+        wa--;
+    c->wds = wa;
+    return c;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00421020);
 
