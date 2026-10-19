@@ -450,7 +450,19 @@ int func_00400548(int a, int b) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_004005A0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400670);
+#ifdef SKIP_ASM
+extern char D_00526200[];
+extern int D_00526440[];
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+int func_00400670(void) {
+    D_00526440[0] = 12;
+    if (func_00426D18(D_00526200, 1, 0, D_00526440, 128, D_00526440, 128, 0, 0) < 0)
+        return 0;
+    return D_00526440[3];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004006D8);
 
