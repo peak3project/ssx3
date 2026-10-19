@@ -520,7 +520,29 @@ int func_003FFA08(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFA58);
+#ifdef SKIP_ASM
+struct B128 { char b[128]; };
+extern unsigned char *func_003FF9A8_c(int, int) __asm__("func_003FF9A8");
+extern int func_0042C078();
+extern void func_0042C0C0();
+extern int func_0041605C_k() __asm__("func_0041605C");
+int func_003FFA58(int a, int b, int c) {
+    struct B128 s;
+    int *q;
+    int r;
+    if (!D_00526250[a].e[b].f10)
+        return 0;
+    r = func_0042C078();
+    q = (int *)&s;
+    s = *(struct B128 *)func_003FF9A8_c(a, b);
+    func_0041605C_k(c, q, q[0x60 / 4]);
+    if (r == 1)
+        func_0042C0C0();
+    return q[0x60 / 4];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFBC0);
