@@ -644,7 +644,33 @@ extern int D_00526038[];
 void func_003F63E0(int a0) { D_00526038[0] = a0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F63F0);
+#ifdef SKIP_ASM
+typedef struct { char pad[0x9C]; unsigned st; char pad2[0x14]; int cnt; int max; int pad3; int (*cb)(int); } Q63F0;
+extern Q63F0 D_63F0q __asm__("D_00525F80");
+extern void f5F88(void) __asm__("func_003F5F88");
+extern void f6138(void) __asm__("func_003F6138");
+extern void f5F08(void) __asm__("func_003F5F08");
+extern void f60B8(void) __asm__("func_003F60B8");
+void func_003F63F0_impl(void) __asm__("func_003F63F0");
+void func_003F63F0_impl(void) {
+    switch (D_63F0q.st) {
+    case 1: f5F88(); break;
+    case 0: break;
+    case 2: f6138(); break;
+    case 3: if (D_63F0q.cb(1) != 0) D_63F0q.st = 0; break;
+    }
+    if (D_63F0q.st == 0) {
+        if (D_63F0q.cb(0) != 0) D_63F0q.st = 3;
+        if (D_63F0q.st == 0) {
+            D_63F0q.cnt = D_63F0q.cnt + 1;
+            if (D_63F0q.max < D_63F0q.cnt) { D_63F0q.cnt = 0; f5F08(); } else { f60B8(); }
+        }
+    }
+}
+
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F64E0);
