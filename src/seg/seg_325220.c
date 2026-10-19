@@ -602,7 +602,33 @@ struct N426A48 *func_00426A48(int a0, struct P426A48 *a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426A98);
+#ifdef SKIP_ASM
+extern int func_00426698(int *a0);
+extern int *func_00426A48_p(int, int *) __asm__("func_00426A48");
+extern void func_004261F0_v(int, int *, int, int, int, int) __asm__("func_004261F0");
+void func_00426A98(int *a0, int *a1) {
+    int *q = (int *)func_00426698(a1);
+    int *n;
+    int t1 = a0[5];
+    int t2 = a0[7];
+    q[7] = t2;
+    q[5] = t1;
+    q[8] = 0x80000009;
+    n = func_00426A48_p(a0[8], a1);
+    if (n == 0) {
+        q[9] = 0;
+        q[10] = 0;
+        q[11] = 0;
+    } else {
+        q[9] = (int)n;
+        q[10] = n[2];
+        q[11] = n[5];
+    }
+    func_004261F0_v(0x80000008, q, 0x40, 0, 0, 0);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00426B48);
 
