@@ -1739,7 +1739,43 @@ INCLUDE_ASM("seg/seg_2FE810", func_00405E30);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00405FB8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004060C8);
+#ifdef SKIP_ASM
+extern char D_00497F08[];
+extern int func_00406318(int *, int);
+extern void func_00406E20(int);
+extern int func_00405B70(int *);
+extern void func_00404B78(int *, int);
+extern void func_004034A8(int *, int);
+int func_004060C8(int *p) {
+    int n;
+    int r;
+    p[0x810 / 4] = 0;
+    n = p[0x12C / 4] * p[0x130 / 4];
+    p[0x814 / 4] = 0;
+    if (p[0x174 / 4] != 3)
+        n >>= 1;
+    do {
+        r = func_00406318(p, n);
+    } while (r == 1 || r == 3);
+    func_00406E20((int)p);
+    if (func_00405B70(p) == 0) {
+        r = 4;
+        if (p[0x10A0 / 4] != 0)
+            p[0x10A0 / 4] = 0;
+        else
+            r = 2;
+    }
+    while ((*(volatile unsigned *)0x1000D400 >> 8) & 1)
+        ;
+    if (r == 0)
+        func_00404B78(p, p[0x810 / 4] == 0);
+    if ((unsigned)(r - 1) < 2)
+        func_004034A8(p, (int)D_00497F08);
+    return r == 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", _sliceA0);
 
