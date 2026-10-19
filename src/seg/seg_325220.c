@@ -1858,7 +1858,46 @@ int func_0042B230_i(int a0, int a1, K2B230 *a2, int *a3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042B438);
+#ifdef SKIP_ASM
+typedef struct { char b[0xFC]; } K2B438;
+struct B438 { int f0; int f4; char pad0[0xFC]; char pad[0xFC]; };
+extern struct B438 D_G38 __asm__("D_0052F080");
+extern char D_0052F280[];
+extern int func_0042B068(void);
+extern int func_0042B168(void);
+extern void *func_0041605C(void *, void *, int);
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_0042B438_i(int a0, int a1, K2B438 *a2, int *a3) __asm__("func_0042B438");
+int func_0042B438_i(int a0, int a1, K2B438 *a2, int *a3) {
+    int r;
+    if (func_0042B068() < 0) {
+        return 0xFFFF0000;
+    }
+    if (func_0042B168() != 0) {
+        return 0xFFFEFFFC;
+    }
+    D_G38.f0 = a0;
+    if (a2 != 0) {
+        if (a1 >= 0xFD) {
+            *(K2B438 *)D_G38.pad = *a2;
+            D_G38.f4 = 0xFC;
+        } else {
+            func_0041605C(D_G38.pad, a2, a1);
+            D_G38.f4 = a1;
+        }
+    } else {
+        D_G38.f4 = 0;
+    }
+    if (func_00426D18_v(D_0052F280, 7, 0, &D_G38, 0x200, &D_G38, 8, 0, 0) < 0) {
+        return 0xFFFEFFFF;
+    }
+    r = D_G38.f0;
+    *a3 = D_G38.f4;
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042B640);
 
