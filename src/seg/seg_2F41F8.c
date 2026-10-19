@@ -1623,7 +1623,21 @@ int func_003FB490(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB4C0);
+#ifdef SKIP_ASM
+extern unsigned D_4C0[] __asm__("D_00451518");
+int func_003FB4C0(unsigned char *buf, unsigned n) {
+    unsigned crc = D_4C0[3];
+    unsigned i;
+    if (D_4C0[0] == 0) return 6;
+    if (buf == 0) return 2;
+    for (i = 0; i < n; i++)
+        crc = ((crc >> 8) & 0xFFFFFF) ^ ((unsigned *)D_4C0[0])[(crc ^ buf[i]) & 0xFF];
+    D_4C0[3] = crc;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB558);
