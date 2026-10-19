@@ -2120,7 +2120,22 @@ int func_003FA1D0(unsigned int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA240);
+#ifdef SKIP_ASM
+extern int f9208(void) __asm__("func_003F9208");
+extern char *D_A240 __asm__("D_004A4BDC");
+extern void fA6A8(char *, char *, char *) __asm__("func_003FA6A8");
+extern int fB308(char *) __asm__("func_003FB308");
+int func_003FA240_impl(char *src) __asm__("func_003FA240");
+int func_003FA240_impl(char *src) {
+    if (src == 0) return 0xC;
+    if (f9208() == 0) return 2;
+    __builtin_memcpy(D_A240 + 0x50, src, 0x3D0);
+    fA6A8(src, D_A240 + 0x420, D_A240 + 0x424);
+    return fB308(src);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA360);
