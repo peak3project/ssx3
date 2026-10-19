@@ -1286,7 +1286,18 @@ extern "C" void func_0012B030(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012B060);
+#ifdef SKIP_ASM
+extern "C" void func_0010F3B8(void*);
+
+extern "C" void func_0012B060(void* self)
+{
+    cAI_purgeMissionRiders(self);
+    func_0010F3B8(self);
+    *(int*)((char*)self + 0x10) = 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/ai", func_0012B090);
