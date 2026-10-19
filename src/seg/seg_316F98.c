@@ -657,6 +657,7 @@ void func_0041A818(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041A840);
 #ifdef SKIP_ASM
 extern char D_00499C81[];
@@ -776,6 +777,7 @@ INCLUDE_ASM("seg/seg_316F98", func_0041AD80);
 
 INCLUDE_ASM("seg/seg_316F98", func_0041AE00);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041AE70);
 #ifdef SKIP_ASM
 char *func_0041AE70(char *s) {
@@ -840,6 +842,7 @@ int func_0041B550_(int fd, char *buf, unsigned n, int mode) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041B658);
 #ifdef SKIP_ASM
 extern int func_0041B728_f(int, int, char *, char *) __asm__("func_0041B728");
@@ -914,6 +917,7 @@ void func_0041CA40(int *p, int b, int c) {
 
 INCLUDE_ASM("seg/seg_316F98", func_0041CA70);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041D990);
 #ifdef SKIP_ASM
 struct mchunk {
@@ -1054,6 +1058,7 @@ void func_0041D990_(int ptr, unsigned nb) {
 
 INCLUDE_ASM("seg/seg_316F98", func_0041DBF8);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041E340);
 #ifdef SKIP_ASM
 extern void func_00418CA8_lock(int) __asm__("func_00418CA8");
@@ -1142,6 +1147,7 @@ int func_0041EA18(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041EA38);
 #ifdef SKIP_ASM
 extern char D_0049A7D0b[] __asm__("D_0049A7D0");
@@ -1859,6 +1865,7 @@ char *func_00421A50_(double value, int ndigit, int *decpt, int *sign, char *buf)
 
 INCLUDE_ASM("seg/seg_316F98", func_00421B98);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00421E60);
 #ifdef SKIP_ASM
 extern void func_00421530_f(int, char *, long, int, int, int, int) __asm__("func_00421530");
@@ -1883,6 +1890,7 @@ char *func_00421E60(int ep, char *buf, long val, int nd, int unused, char fmt, i
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00421F20);
 #ifdef SKIP_ASM
 extern void func_00418CA8_lock(int) __asm__("func_00418CA8");
@@ -1993,6 +2001,7 @@ split:
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004224A0);
 #ifdef SKIP_ASM
 extern void *func_0041DBF8_malloc(int, int) __asm__("func_0041DBF8");
@@ -2014,6 +2023,7 @@ void *func_004224A0_(int ptr, int n, int elem_size) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00422560);
 #ifdef SKIP_ASM
 extern int func_00420E28_cmp(struct Bigint *, struct Bigint *) __asm__("func_00420E28");
