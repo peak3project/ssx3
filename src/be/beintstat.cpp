@@ -136,7 +136,23 @@ extern "C" float func_00149208(void* self, int rider, int value)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintstat", func_001492F0);
+#ifdef SKIP_ASM
+extern "C" float func_001492F0(void* self, int rider, int value)
+{
+    int profile = cBELibrary_getProfileIndex(rider);
+    int c = cBELibrary_getCharacterID(rider);
+    if (cBENewPlayerInterface_isMissionMan(rider))
+        return 0.5f;
+    int v;
+    if (value > 0)
+        v = value;
+    else
+        v = D_00535538_func_00149038[profile].e[c][6] / 5;
+    return (float)v / (float)D_005308D8_func_00149038[c].v[0xE];
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_001493D8);
@@ -467,3 +483,11 @@ extern "C" void func_00149A88(void* self, signed char idx)
 
 INCLUDE_ASM("be/beintstat", func_00149BB8);
 
+
+//100%
+INCLUDE_ASM("be/beintstat", func_0014A078);
+#ifdef SKIP_ASM
+extern "C" void func_0014A078(void) {
+
+}
+#endif

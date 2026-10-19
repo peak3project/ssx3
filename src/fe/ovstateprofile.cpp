@@ -683,7 +683,192 @@ extern "C" int func_00211B38(void* self, int a1, unsigned int key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstateprofile", func_00211BC8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int GetHashValue32(char* str);
+extern "C" void* func_00227F80(void* app);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int strlen(const char* s);
+extern "C" void func_00147138(void* player, int idx, char* name);
+extern "C" void* func_00147170(void* player, int idx);
+extern "C" void func_0023CAE8(void* app, int a1, int a2);
+extern "C" void* func_001CB030(void* mem, void* engine, void* owner, int a3, int a4);
+extern "C" void func_001CB418(void* kb, void* name);
+extern "C" void func_001CD088(void* kb, int a1);
+extern "C" void func_001CD0B0(void* kb, int a1);
+extern "C" void func_001CE3C8(void* kb, int key, int a2, int a3);
+extern "C" void func_001CE408(void* kb, int a1);
+extern "C" void cKeyboardPopup_setStatic(void* kb, void* text);
+extern "C" void func_0023D570(void* mp, int a1);
+extern "C" void func_002C2540(void* dst, char* src);
+extern "C" void func_002C2580(char* dst, void* src);
+extern "C" void func_0039F290(void* list, void* item);
+extern void* D_004A28A8;
+extern char D_00471DC0[];
+extern char D_00471DD8[];
+extern char D_00471DE8[];
+
+struct sVEntryK211BC8 {
+    short delta;
+    short index;
+    void* (*fn)(void*, ...);
+};
+
+struct sVEntryVK211BC8 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+#define VCALLV_K211BC8(obj, off, idx) (*(sVEntryVK211BC8**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryVK211BC8**)((char*)(obj) + (off)))[idx].delta
+
+#define VCALL_K211BC8(obj, off, idx) (*(sVEntryK211BC8**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryK211BC8**)((char*)(obj) + (off)))[idx].delta
+
+
+struct sProfileK211BC8 {
+    int f0;                  // 0x0
+    int f4;                  // 0x4
+    void* vtbl;              // 0x8
+    int fC;                  // 0xC
+    void* engine;            // 0x10
+    unsigned char f14;       // 0x14
+    unsigned char f15;       // 0x15
+    char pad16[0x40 - 0x16];
+    char* screen;            // 0x40
+    char pad44[0x19C - 0x44];
+    int f19C;                // 0x19C
+    int f1A0;                // 0x1A0
+    char* keyboard;          // 0x1A4
+    int f1A8;                // 0x1A8
+    char pad1AC[0x1C0 - 0x1AC];
+    int state;               // 0x1C0
+    int f1C4;                // 0x1C4
+    int f1C8;                // 0x1C8
+    int slot;                // 0x1CC
+    char pad1D0[0x1DC - 0x1D0];
+    int f1DC;                // 0x1DC
+    int f1E0;                // 0x1E0
+    int f1E4;                // 0x1E4
+    char pad1E8[0x214 - 0x1E8];
+    int f214;                // 0x214
+    char pad218[0x220 - 0x218];
+    int f220;                // 0x220
+    int f224;                // 0x224
+};
+
+struct sMgrK211BC8 {
+    char pad0[0xF8];
+    int fF8;                 // 0xF8
+};
+
+static inline void* GetText_K211BC8(char* key)
+{
+    char* db = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntryK211BC8* vt = *(sVEntryK211BC8**)(db + 4);
+    return vt[4].fn(db + vt[4].delta, GetHashValue32(key));
+}
+
+// Profile screen: handles menu events (5 = name picked, 6 = back, 7 = slot chosen, 13 = name entered).
+extern "C" void func_00211BC8(void* vself, char* item, int event)
+{
+    sProfileK211BC8* self = (sProfileK211BC8*)vself;
+    switch (event) {
+    case 13: {
+        char buf[0x70];
+        char fmt[0x70];
+        char* name = self->keyboard + 0x74;
+        func_002C2540((char*)func_00227F80(D_004A28A8) + 0x276, name);
+        char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
+        if (strlen(name) != 0) {
+            func_00147138(player, self->slot, name);
+        } else {
+            func_002C2580(fmt, GetText_K211BC8(D_00471DC0));
+            sprintf(buf, fmt, self->slot + 1);
+            func_00147138(player, self->slot, buf);
+        }
+        VCALLV_K211BC8(player, 0xC, 1));
+        func_0023CAE8(func_00227F80(D_004A28A8), 1, self->slot);
+        self->f1A8 = 1;
+        self->f1DC = 1;
+        self->state = 3;
+        break;
+    }
+    case 5: {
+        if (item == 0) break;
+        if (self->f1A8 != 0) break;
+        char* mp = (char*)func_00227F80(D_004A28A8);
+        if (self->f214 != 3) break;
+        ((sMgrK211BC8*)mp)->fF8 = self->f1C4 = *(int*)(item + 0x18);
+        if (self->state == 1) {
+            if (self->keyboard == 0) {
+                char* kb = (char*)func_001CB030(cMemMan_alloc(0x444, D_00471DD8, 0x100, 0), self->engine, vself, 0, self->f15);
+                self->keyboard = kb;
+                *(int*)(kb + 0x140) = 0x37;
+                func_001CD088(self->keyboard, 8);
+                func_001CE3C8(self->keyboard, 0x4B, 1, 2);
+                *(int*)(self->keyboard + 0x58) = 1;
+                func_001CE408(self->keyboard, 1);
+                func_001CE3C8(self->keyboard, 0xE, 0, 2);
+                func_001CE3C8(self->keyboard, 0x27, 0, 2);
+                func_001CE3C8(self->keyboard, 0x28, 0, 2);
+                func_001CE3C8(self->keyboard, 0x34, 0, 2);
+                func_001CE3C8(self->keyboard, 0x1A, 0, 2);
+                func_001CE3C8(self->keyboard, 0x19, 0, 2);
+                func_001CE3C8(self->keyboard, 0x35, 0, 2);
+                func_001CE3C8(self->keyboard, 0x40, 0, 2);
+                func_001CE3C8(self->keyboard, 0x41, 0, 2);
+                func_001CE3C8(self->keyboard, 0x42, 0, 2);
+                func_001CD0B0(self->keyboard, 1);
+            }
+            cKeyboardPopup_setStatic(self->keyboard, GetText_K211BC8(D_00471DE8));
+            *(int*)(self->keyboard + 0x54) = 1;
+            func_001CB418(self->keyboard, func_00147170(cBE_getInterface_Fv(cBE_getBE(), 1), self->slot));
+            func_0039F290(*(char**)(*(char**)(self->screen + 0xD0) + 0x10) + 0x18, self->keyboard);
+            self->f1A0 = 1;
+            self->f19C = 0;
+        }
+        break;
+    }
+    case 6: {
+        char* mp = (char*)func_00227F80(D_004A28A8);
+        if (self->f1A8 != 1) {
+            int st = self->state;
+            if (st != 6) {
+                self->f1E4 = 1;
+                if (st == 0 || st == 2 || st == 1) {
+                    VCALLV_K211BC8(mp, 0x748, 1), 0);
+                }
+                self->state = 6;
+            }
+        }
+        break;
+    }
+    case 7:
+        if (self->f1A8 != 1 && self->state != 6) {
+            char* mp = (char*)func_00227F80(D_004A28A8);
+            if (VCALL_K211BC8(*(char**)(mp + 0x434), 0, 54), *(int*)(mp + 0x428)) != 0) {
+                ((sMgrK211BC8*)mp)->fF8 = self->f1C4 = *(int*)(item + 0x18);
+                if (self->state == 1) {
+                    if (VCALL_K211BC8(*(char**)(mp + 0x434), 0, 67), self->f1C4) != 0) {
+                        self->f1A8 = 1;
+                        self->state = 4;
+                        func_0023D570(mp, 0);
+                        VCALLV_K211BC8(mp, 0x748, 1), 0x18);
+                    }
+                }
+            }
+        }
+        break;
+    case 14:
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_00212080);
@@ -914,9 +1099,54 @@ extern "C" void func_00212508(void* self)
 
 INCLUDE_ASM("fe/ovstateprofile", func_00212680);
 
+//100%
 INCLUDE_ASM("fe/ovstateprofile", func_002126C0);
-
+#ifdef SKIP_ASM
+extern "C" int func_002126C0(const char* first1, const char* last1, const char* first2, const char* last2)
+{
+    for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
+        if (*first1 < *first2) return 1;
+        if (*first2 < *first1) return 0;
+    }
+    return first1 == last1 && first2 != last2;
+}
+#endif
+//100%
 INCLUDE_ASM("fe/ovstateprofile", func_00212728);
-
+#ifdef SKIP_ASM
+extern "C" int func_00212728(const char* first1, const char* last1, const char* first2, const char* last2)
+{
+    for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
+        if (*first1 < *first2) return -1;
+        if (*first2 < *first1) return 1;
+    }
+    if (first2 == last2) return first1 != last1;
+    return -1;
+}
+#endif
+//100%
 INCLUDE_ASM("fe/ovstateprofile", func_00212788);
+#ifdef SKIP_ASM
+void operator_delete(int*);
 
+struct sListNode_00212788 {
+    sListNode_00212788* next;
+    sListNode_00212788* prev;
+};
+struct sList_00212788 {
+    int pad0;
+    sListNode_00212788* node;
+};
+
+extern "C" void func_00212788(sList_00212788* self)
+{
+    sListNode_00212788* cur = self->node->next;
+    while (cur != self->node) {
+        sListNode_00212788* tmp = cur;
+        cur = cur->next;
+        operator_delete((int*)tmp);
+    }
+    self->node->next = self->node;
+    self->node->prev = self->node;
+}
+#endif

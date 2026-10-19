@@ -152,9 +152,20 @@ extern "C" void func_003973A8(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uianimation", func_00397440);
-
+#ifdef SKIP_ASM
+extern "C" int func_00397440(void *arg0) {
+    return (*(short *)((char*)(arg0) + (0xA))) >= (int) (*(unsigned short *)((char*)((*(void **)((char*)(arg0) + (0)))) + (2)));
+}
+#endif
+//100%
 INCLUDE_ASM("ui/uianimation", func_00397458);
+#ifdef SKIP_ASM
+extern "C" short func_00397458(void **arg0) {
+    return (*(short *)((char*)(*arg0) + (2)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uianimation", func_00397468);

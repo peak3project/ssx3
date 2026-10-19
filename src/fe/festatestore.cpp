@@ -501,7 +501,259 @@ extern "C" void cFEStateUberTrick_onWidgetCreate(void* self, void* widget)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatestore", func_00185268);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+struct cUIText;
+void cUIText_setUnicodeStringByID(cUIText* t, int id);
+extern "C" void cFEStateUberTrick_costVisible(void* self, int on);
+extern "C" void cFEStateUberTrick_trickVisible(void* self, int on);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void cRiderAnimBase_play(void* anim, int id, int a2, float t);
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
+extern "C" void cUIStateBuyPopup_initBuyTrick(void* popup, int trick, int cost, int points);
+extern "C" void cWScriptMan_checkGate(void* self);
+extern "C" int func_00116938(int id);
+extern "C" void func_0014FD80(void* iface, int rider, int a, int b);
+struct sTrick_185268;
+extern "C" sTrick_185268* func_0014FF90(void* iface, int rider, int a, int* out);
+extern "C" int func_0014FFB8(void* iface, int rider, int a, int b);
+extern "C" int func_00150048(void* iface, int rider, int a, int b);
+extern "C" int func_00150928(void* iface, int a1, int charID);
+extern "C" void func_00183B08(void* self);
+extern "C" void func_00183C08(void* self);
+extern "C" void func_00184520(void* self);
+extern "C" void func_00184780(void* self, int on);
+extern "C" void* func_001A0548(void* self, int idx);
+extern "C" void* func_001CABA8(void* mem, void* owner, void* state, int a3);
+extern "C" void func_0039F290(void* list, void* item);
+extern "C" void func_0039F400(void* list, void* item);
+extern void* D_004A28A8;
+extern signed char D_00535C11[];
+extern char D_004A14A8[];
+extern char D_0045D920[];
+extern char D_0045D930[];
+extern char D_0045DA70[];
+extern char D_0045DAD8[];
+extern char D_0045DAE8[];
+extern char D_0045DB00[];
+extern char D_0045DB18[];
+extern char D_0045DB30[];
+extern char D_0045DB48[];
+
+struct sVE_185268 {
+    short delta;
+    short index;
+    void* fn;
+};
+struct sSnd_185268 {
+    sVE_185268* vt;
+};
+extern sSnd_185268 D_004A5A58;
+
+struct sColor_185268 {
+    float a, r, g, b;
+    sColor_185268(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
+};
+class cUIObj_185268 {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void SetColor(const sColor_185268& c);
+};
+
+struct sTrick_185268 {
+    unsigned short anim;
+    unsigned short f2;
+    unsigned short id;
+    unsigned short cost;
+};
+
+static inline int Is_185268(int id, char* s)
+{
+    return id == GetHashValue32(s);
+}
+
+static inline void SetActive_185268(char* menu, int on)
+{
+    sVE_185268* vt = *(sVE_185268**)(menu + 8);
+    ((void (*)(void*, int))vt[7].fn)(menu + vt[7].delta, on);
+}
+
+static inline void PlaySound_185268(char* self, int id)
+{
+    sSnd_185268* snd = *(sSnd_185268**)(*(char**)(self + 0x10) + 0x14);
+    if (snd == 0)
+        snd = &D_004A5A58;
+    if (snd != 0)
+        ((void (*)(void*, int))snd->vt[2].fn)((char*)snd + snd->vt[2].delta, id);
+}
+
+static inline void Back_185268(char* self)
+{
+    char* mgr = **(char***)(self + 0x10);
+    sVE_185268* vt = *(sVE_185268**)(mgr + 4);
+    void* r = ((void* (*)(void*, void*, int))vt[5].fn)(mgr + vt[5].delta, self, 0);
+    if (r != 0)
+        func_0039F400(*(char**)(self + 0x10) + 0x18, r);
+}
+
+extern "C" void func_00185268(char* self, char* item, int msg)
+{
+    switch (msg) {
+    case 5:
+        if (*(char**)(item + 0x40) == *(char**)(self + 0x4C)) {
+            if (Is_185268(*(int*)(item + 0x38), D_004A14A8)) {
+                Back_185268(self);
+            } else {
+                SetActive_185268(*(char**)(self + 0x4C), 0);
+                cUIMenu_setSelectedByIndex(*(void**)(self + 0x50), 0);
+                SetActive_185268(*(char**)(self + 0x50), 1);
+                func_00183C08(self);
+                cFEStateUberTrick_costVisible(self, 1);
+                func_00184780(self, 1);
+            }
+        } else if (*(char**)(item + 0x40) == *(char**)(self + 0x50)) {
+            char* a = *(char**)(*(char**)(self + 0x4C) + 0xA0);
+            char* b = *(char**)(*(char**)(self + 0x50) + 0xA0);
+            if (a != 0 && b != 0) {
+                int ai = *(signed char*)(a + 0x18);
+                int bi = *(signed char*)(b + 0x18);
+                char* pi = (char*)cBE_getInterface_Fv(cBE_getBE(), 6);
+                cBE_getInterface_Fv(cBE_getBE(), 0);
+                if (func_00150048(pi, *(signed char*)(self + 0x44), ai, bi) && !func_0014FFB8(pi, *(signed char*)(self + 0x44), ai, bi)) {
+                    func_0014FD80(pi, *(signed char*)(self + 0x44), ai, bi);
+                    sVE_185268* vt = *(sVE_185268**)(pi + 0xC);
+                    ((int (*)(void*))vt[1].fn)(pi + vt[1].delta);
+                    cWScriptMan_checkGate(self);
+                } else if (D_00535C11[0] != 0) {
+                    PlaySound_185268(self, 4);
+                } else if (func_0014FFB8(pi, *(signed char*)(self + 0x44), ai, bi)) {
+                    char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
+                    signed char charID = cBENewPlayerInterface_getPlayerCharID(player, *(signed char*)(self + 0x44));
+                    {
+                        sVE_185268* vt = *(sVE_185268**)(player + 0xC);
+                        ((void (*)(void*))vt[2].fn)(player + vt[2].delta);
+                    }
+                    int points = func_00150928(cBE_getInterface_Fv(cBE_getBE(), 0xB), *(signed char*)(self + 0x44), charID);
+                    int n;
+                    sTrick_185268* tbl = func_0014FF90(pi, *(signed char*)(self + 0x44), ai, &n);
+                    int trick = func_00116938(tbl[bi].id);
+                    if (points >= tbl[bi].cost) {
+                        void* popup = func_001CABA8(cMemMan_alloc(0x70, D_0045DAD8, 0x100, 0), *(void**)(self + 0x10), self, *(signed char*)(self + 0x44));
+                        cUIStateBuyPopup_initBuyTrick(popup, trick, tbl[bi].cost, points);
+                        func_0039F290(*(char**)(self + 0x10) + 0x18, popup);
+                    } else {
+                        PlaySound_185268(self, 4);
+                    }
+                }
+            }
+        }
+        break;
+    case 6:
+        if (*(char**)(item + 0x40) == *(char**)(self + 0x50)) {
+            SetActive_185268(*(char**)(self + 0x4C), 1);
+            SetActive_185268(*(char**)(self + 0x50), 0);
+            {
+                cUIObj_185268* o = *(cUIObj_185268**)(*(char**)(self + 0x50) + 0xA0);
+                if (o != 0)
+                    o->SetColor(sColor_185268(1.0f, 0.0f, 0.0f, 0.0f));
+            }
+            cUIMenu_setSelectedByIndex(*(void**)(self + 0x50), 0xFF);
+            func_00183B08(self);
+            cFEStateUberTrick_costVisible(self, 0);
+            func_00184780(self, 0);
+        } else {
+            Back_185268(self);
+        }
+        break;
+    case 7:
+        if (*(char**)(item + 0x40) == *(char**)(self + 0x50)) {
+            char* a = *(char**)(*(char**)(self + 0x4C) + 0xA0);
+            char* b = *(char**)(*(char**)(self + 0x50) + 0xA0);
+            if (a != 0 && b != 0) {
+                char* pi = (char*)cBE_getInterface_Fv(cBE_getBE(), 6);
+                int bi = *(signed char*)(b + 0x18);
+                int ai = *(signed char*)(a + 0x18);
+                int n = 0;
+                sTrick_185268* tbl = func_0014FF90(pi, *(signed char*)(self + 0x44), ai, &n);
+                if (*(int*)(self + 0x48) != 0) {
+                    char* r = (char*)func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)(self + 0x44));
+                    cRiderAnimBase_play(*(void**)(r + 0xC), tbl[bi].anim, 0, -1.0f);
+                }
+            }
+        }
+        break;
+    case 1:
+        *(int*)((char*)func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)(self + 0x44)) + 0xCD0) = 1;
+        if (*(char**)(item + 0x40) == *(char**)(self + 0x4C)) {
+            if (*(void**)(self + 0x50) != 0 && *(int*)(item + 0x18) != -1) {
+                cFEStateUberTrick_trickVisible(self, 1);
+                cWScriptMan_checkGate(self);
+                cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0045D920));
+                if (t != 0)
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DAE8));
+            } else {
+                cFEStateUberTrick_trickVisible(self, 0);
+                cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0045D920));
+                if (t != 0)
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DB00));
+            }
+        } else if (*(char**)(self + 0x50) != 0 && *(char**)(item + 0x40) == *(char**)(self + 0x50)) {
+            cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0045D930));
+            char* a = *(char**)(*(char**)(self + 0x4C) + 0xA0);
+            char* b = *(char**)(*(char**)(self + 0x50) + 0xA0);
+            if (a != 0 && b != 0 && t != 0) {
+                int ai = *(signed char*)(a + 0x18);
+                int bi = *(signed char*)(b + 0x18);
+                char* pi = (char*)cBE_getInterface_Fv(cBE_getBE(), 6);
+                cBE_getInterface_Fv(cBE_getBE(), 0);
+                if (func_00150048(pi, *(signed char*)(self + 0x44), ai, bi) && !func_0014FFB8(pi, *(signed char*)(self + 0x44), ai, bi)) {
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DA70));
+                } else if (D_00535C11[0] == 0) {
+                    if (func_0014FFB8(pi, *(signed char*)(self + 0x44), ai, bi)) {
+                        char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
+                        signed char charID = cBENewPlayerInterface_getPlayerCharID(player, *(signed char*)(self + 0x44));
+                        {
+                            sVE_185268* vt = *(sVE_185268**)(player + 0xC);
+                            ((void (*)(void*))vt[2].fn)(player + vt[2].delta);
+                        }
+                        int points = func_00150928(cBE_getInterface_Fv(cBE_getBE(), 0xB), *(signed char*)(self + 0x44), charID);
+                        int n;
+                        sTrick_185268* tbl = func_0014FF90(pi, *(signed char*)(self + 0x44), ai, &n);
+                        if (points >= tbl[bi].cost)
+                            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DB18));
+                        else
+                            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DB30));
+                    }
+                } else {
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DB48));
+                }
+                func_00184520(self);
+            }
+        }
+        break;
+    case 2:
+        *(int*)((char*)func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)(self + 0x44)) + 0xCD0) = 0;
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatestore", func_001859D8);

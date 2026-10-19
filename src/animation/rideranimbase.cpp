@@ -47,11 +47,37 @@ extern "C" void func_00311958(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_003119E8);
-
+#ifdef SKIP_ASM
+extern "C" int func_003119E8(void *arg0, int arg1) {
+    return (*(int *)((char*)(arg0) + (0x50))) + (arg1 * 8);
+}
+#endif
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_003119F8);
+#ifdef SKIP_ASM
+extern "C" int* cAIAnimEventMap_getBlendInTime(int anim);
+extern int D_0044AF80[];
 
+extern "C" int func_003119F8(void* self, int anim)
+{
+    int i = cAIAnimEventMap_getBlendInTime(anim)[3];
+    return D_0044AF80[i];
+}
+#endif
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_00311A30);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+// func_00311860 is matched as (void) but this caller passes the anim in $4.
+extern "C" const char* func_00311860_anim(int anim) __asm__("func_00311860");
+
+extern "C" const char* func_00311A30(void* self, int anim)
+{
+    return func_00311860_anim(anim);
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00311A50);
@@ -267,9 +293,35 @@ extern "C" void cRiderAnimBase_changeOrientationOffset(void* self, sRabXform_003
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_00311D88);
-
+#ifdef SKIP_ASM
+// Sets the field at 0x80 of every sequence node of all 6 sequencers.
+extern "C" void func_00311D88(sRiderAnimBase* self, int value)
+{
+    for (int i = 0; i < 6; i++)
+    {
+        int j = 0;
+        if (j < ((cAnimSequencer*)self->mSequencers)[i].mCount)
+        {
+            do
+            {
+                *(int*)((char*)cAnimSequencer_getSequence(&((cAnimSequencer*)self->mSequencers)[i], j++) + 0x80) = value;
+            } while (j < ((cAnimSequencer*)self->mSequencers)[i].mCount);
+        }
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_00311E38);
+#ifdef SKIP_ASM
+// Resets sequencer i and marks its slot empty (0x1B6 = no anim, see func_00311AE8).
+extern "C" void func_00311E38(sRiderAnimBase* self, int i)
+{
+    func_00314668(self->mSequencers + (i << 3));
+    self->mAnims[i] = 0x1B6;
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00311E88);
@@ -622,9 +674,259 @@ extern "C" void func_00312BD0(void* self, void* unused, void* rider, int anim)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_00312C20);
+#ifdef SKIP_ASM
+// Packed animation channel table (built by func_003130A8, sampled here).
+struct sRabChannel {
+    int type;      // 0x0
+    float v4;      // 0x4
+    float v8;      // 0x8
+    float vC;      // 0xC (key index for types 6..9)
+    float v10;     // 0x10
+};
 
+struct sRabChannelSet {
+    sRabChannel* channels;   // 0x0
+    unsigned char* data4;    // 0x4: type 6 keys, u8, one row per frame
+    unsigned char* data8;    // 0x8: type 7 keys, u8, one row per 2 frames
+    unsigned char* dataC;    // 0xC: type 8 keys, u16
+    unsigned char* data10;   // 0x10: type 9 keys, float
+    unsigned char count6;    // 0x14
+    unsigned char count7;    // 0x15
+    unsigned char count8;    // 0x16
+    unsigned char count9;    // 0x17
+};
+
+extern "C" void func_00312C20(sRabChannelSet* self, int first, int count, float t, float* out)
+{
+    float half = t * 0.5f;
+    int it = (int)t;
+    int ih = (int)half;
+    float frac = t - (float)it;
+    float fracHalf = half - (float)ih;
+    sRabChannel* ch = self->channels + first;
+    sRabChannel* end = ch + count;
+    unsigned char* row4 = self->data4 + it * self->count6;
+    unsigned char* row8 = self->data8 + ih * self->count7;
+    unsigned short* rowC = (unsigned short*)self->dataC + it * self->count8;
+    float* row10 = (float*)self->data10 + it * self->count9;
+    if (frac < 0.001f) {
+        frac = 0.0f;
+    }
+    if (fracHalf < 0.001f) {
+        fracHalf = 0.0f;
+    }
+    if (frac != 0.0f || fracHalf != 0.0f) {
+        unsigned char* next4 = row4 + self->count6;
+        unsigned char* next8 = row8 + self->count7;
+        unsigned short* nextC = rowC + self->count8;
+        float* next10 = row10 + self->count9;
+        for (;;) {
+            switch (ch->type) {
+            case 0:
+                *out++ = 0.0f;
+                break;
+            case 1:
+                *out++ = ch->v4;
+                break;
+            case 2:
+                *out++ = t * ch->v4 + ch->v8;
+                break;
+            case 3:
+                *out++ = t * (t * ch->v4 + ch->v8) + ch->vC;
+                break;
+            case 4:
+                *out++ = t * (t * (t * ch->v4 + ch->v8) + ch->vC) + ch->v10;
+                break;
+            case 5: {
+                float split = ch->v10;
+                float a = ch->v4;
+                float b = ch->v8;
+                float c = ch->vC;
+                if (t <= split) {
+                    *out++ = t * a + b;
+                } else {
+                    *out++ = a * split + b + c * (t - split);
+                }
+                break;
+            }
+            case 6: {
+                int k = *(int*)&ch->vC;
+                float a = row4[k];
+                *out++ = (a + frac * ((float)next4[k] - a)) * ch->v8 + ch->v4;
+                break;
+            }
+            case 7: {
+                int k = *(int*)&ch->vC;
+                float a = row8[k];
+                *out++ = (a + fracHalf * ((float)next8[k] - a)) * ch->v8 + ch->v4;
+                break;
+            }
+            case 8: {
+                int k = *(int*)&ch->vC;
+                float a = rowC[k];
+                *out++ = (a + frac * ((float)nextC[k] - a)) * ch->v8 + ch->v4;
+                break;
+            }
+            case 9: {
+                int k = *(int*)&ch->vC;
+                float a = row10[k];
+                *out++ = a + frac * (next10[k] - a);
+                break;
+            }
+            }
+            ch++;
+            if (ch == end) return;
+        }
+    } else {
+        for (;;) {
+            switch (ch->type) {
+            case 0:
+                *out++ = 0.0f;
+                break;
+            case 1:
+                *out++ = ch->v4;
+                break;
+            case 2:
+                *out++ = t * ch->v4 + ch->v8;
+                break;
+            case 3:
+                *out++ = t * (t * ch->v4 + ch->v8) + ch->vC;
+                break;
+            case 4:
+                *out++ = t * (t * (t * ch->v4 + ch->v8) + ch->vC) + ch->v10;
+                break;
+            case 5: {
+                float split = ch->v10;
+                float a = ch->v4;
+                float b = ch->v8;
+                float c = ch->vC;
+                if (t <= split) {
+                    *out++ = t * a + b;
+                } else {
+                    *out++ = a * split + b + c * (t - split);
+                }
+                break;
+            }
+            case 6:
+                *out++ = (float)row4[*(int*)&ch->vC] * ch->v8 + ch->v4;
+                break;
+            case 7:
+                *out++ = (float)row8[*(int*)&ch->vC] * ch->v8 + ch->v4;
+                break;
+            case 8:
+                *out++ = (float)rowC[*(int*)&ch->vC] * ch->v8 + ch->v4;
+                break;
+            case 9:
+                *out++ = row10[*(int*)&ch->vC];
+                break;
+            }
+            ch++;
+            if (ch == end) break;
+        }
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_003130A8);
+#ifdef SKIP_ASM
+// PORT: reinterprets packed 24-bit float bits
+static inline float bitsToFloat_003130A8(int x)
+{
+    union { int i; float f; } u;
+    u.i = x;
+    return u.f;
+}
+
+#define READ24_003130A8(p, o) bitsToFloat_003130A8(((p)[o] << 8) | ((p)[(o) + 1] << 16) | ((p)[(o) + 2] << 24))
+
+static inline void setType_003130A8(sRabChannelSet* self, sRabChannel* ch, int type)
+{
+    if (type == 6) {
+        *(int*)&ch->vC = self->count6++;
+    } else if (type == 7) {
+        *(int*)&ch->vC = self->count7++;
+    } else if (type == 8) {
+        *(int*)&ch->vC = self->count8++;
+    } else if (type == 9) {
+        *(int*)&ch->vC = self->count9++;
+    }
+    ch->type = type;
+}
+
+extern "C" void func_003130A8(sRabChannelSet* self, unsigned char* data, int frames)
+{
+    unsigned char* p = data;
+    int n = *p;
+    p++;
+    if (n == 0) {
+        return;
+    }
+    sRabChannel* ch = self->channels;
+    self->count6 = 0;
+    self->count7 = 0;
+    self->count8 = 0;
+    self->count9 = 0;
+    sRabChannel* end = ch + n;
+    while (1) {
+        setType_003130A8(self, ch, *p >> 4);
+        if (++ch == end) break;
+        setType_003130A8(self, ch, *p & 0xF);
+        if (++ch == end) break;
+        p++;
+    }
+    p++;
+    ch = self->channels;
+    do {
+        switch (ch->type) {
+        case 1:
+            ch->v4 = READ24_003130A8(p, 0);
+            p += 3;
+            break;
+        case 3:
+            ch->v4 = READ24_003130A8(p, 0);
+            ch->v8 = READ24_003130A8(p, 3);
+            ch->vC = READ24_003130A8(p, 6);
+            p += 9;
+            break;
+        case 4:
+            ch->v4 = READ24_003130A8(p, 0);
+            ch->v8 = READ24_003130A8(p, 3);
+            ch->vC = READ24_003130A8(p, 6);
+            ch->v10 = READ24_003130A8(p, 9);
+            p += 12;
+            break;
+        case 5:
+            ch->v4 = READ24_003130A8(p, 0);
+            ch->v8 = READ24_003130A8(p, 3);
+            ch->vC = READ24_003130A8(p, 6);
+            ch->v10 = (float)(p[9] | (p[10] << 8));
+            p += 11;
+            break;
+        case 2:
+        case 6:
+        case 7:
+        case 8:
+            ch->v4 = READ24_003130A8(p, 0);
+            ch->v8 = READ24_003130A8(p, 3);
+            p += 6;
+            break;
+        }
+        ch++;
+    } while (ch != end);
+    int a = frames * self->count6;
+    int b = ((frames - 2) / 2 + 2) * self->count7;
+    int c = frames * self->count8 * 2;
+    int ofs = (p - data) + a + b;
+    self->data4 = p;
+    self->data8 = p + a;
+    int pad = ofs & 1;
+    self->dataC = p + a + b + pad;
+    self->data10 = p + a + b + c + ((ofs + c + pad) & 3);
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00313508);

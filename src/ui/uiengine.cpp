@@ -533,7 +533,29 @@ extern "C" void func_00398438(s3983F0* self)
 
 INCLUDE_ASM("ui/uiengine", func_003984B0);
 
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ui/uiengine", func_003984E8);
+#ifdef SKIP_ASM
+extern "C" void func_003984B0(void* self, unsigned int index, void* data, int type);
+
+struct sChunkHdr_3984E8 {
+    unsigned int count;
+};
+
+extern "C" void func_003984E8(sChunkHdr_3984E8** self, sChunkHdr_3984E8* hdr)
+{
+    char* rec = (char*)hdr + 4;
+    *self = hdr;
+    unsigned int i = 0;
+    if (hdr->count != 0) {
+        do {
+            func_003984B0(self, i, rec + 8, *(int*)rec);
+            i++;
+            rec += *(int*)(rec + 4) + 8;
+        } while (i < (*self)->count);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uiengine", cUIFontInterface_loadFonts);

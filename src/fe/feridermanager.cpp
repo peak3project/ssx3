@@ -338,7 +338,146 @@ extern "C" void func_0019ED80(sFERiderED80* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019EE88);
+#ifdef SKIP_ASM
+extern void* D_004A289C;
+extern char D_005047F8[];
+extern char D_00504810[];
+extern char D_004A1620[];
+extern char D_004A1628[];
+extern char D_004A1980[];
+extern char D_004A1638[];
+extern char D_004A1640[];
+extern char D_004A1988[];
+extern char D_004A1650[];
+extern char D_004A1990[];
+extern char D_004A1660[];
+extern char D_004A1998[];
+extern char D_004A19A0[];
+
+struct sVec4_EE88 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sMtx_EE88 {
+    float m[40];
+} __attribute__((aligned(16)));
+
+extern "C" void func_00389260(sMtx_EE88* m);
+extern "C" void* func_0038AC20(char* tbl, char* name);
+extern "C" void func_00389590(sMtx_EE88* m, void* a, char* b, float s);
+extern "C" void func_00389CB8(sMtx_EE88* m, sVec4_EE88* v, float s);
+extern "C" void func_00310640(void* model, int a, int b, int c);
+extern "C" void func_002F2088(void* p);
+
+struct sModel_EE88 {
+    char pad0[0x2C];
+    sVec4_EE88* bones;  // 0x2C
+};
+
+struct sFERider_EE88 {
+    int type;           // 0x0
+    char pad4[0x8 - 0x4];
+    sModel_EE88* model; // 0x8
+    char padC[0x14 - 0xC];
+    int f14;            // 0x14
+    char pad18[0xC2C - 0x18];
+    int layer;          // 0xC2C
+    char padC30[0xC70 - 0xC30];
+    void* fC70;         // 0xC70
+    char padC74[0xCD0 - 0xC74];
+    int fCD0;           // 0xCD0
+    int pending;        // 0xCD4
+};
+
+struct sVE_EE88 {
+    short delta;
+    short index;
+    void (*fn)(void*, sMtx_EE88*, int);
+};
+
+extern "C" void func_0019EE88(void* selfp)
+{
+    sFERider_EE88* self = (sFERider_EE88*)selfp;
+    sMtx_EE88 m;
+    sVec4_EE88 pos;
+    if (self->pending >= 0)
+        return;
+    if (self->model == 0)
+        return;
+    if (self->f14 == 0)
+        return;
+    func_00389260(&m);
+    int type = self->type;
+    if (self->fCD0 != 0) {
+        switch (type) {
+        case 0:
+        case 7:
+        case 8:
+            type = 6;
+            break;
+        }
+    }
+    switch (type) {
+    case 7:
+    case 8:
+        type = 6;
+        break;
+    }
+    switch (type) {
+    case 0:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1620), D_00504810, 1.0f);
+        break;
+    case 1:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1628), D_00504810, 1.0f);
+        break;
+    case 2:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1980), D_00504810, 1.0f);
+        break;
+    case 3:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1638), D_00504810, 1.0f);
+        break;
+    case 4:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1640), D_00504810, 1.0f);
+        break;
+    case 5:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1988), D_00504810, 1.0f);
+        break;
+    case 6:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1650), D_00504810, 1.0f);
+        break;
+    case 7:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1990), D_00504810, 1.0f);
+        break;
+    case 8:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1660), D_00504810, 1.0f);
+        break;
+    case 9:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A1998), D_00504810, 1.0f);
+        break;
+    default:
+        func_00389590(&m, func_0038AC20(D_005047F8, D_004A19A0), D_00504810, 1.0f);
+        break;
+    }
+    int idx = func_00310C48(self->model, 0, D_004A1978);
+    pos = self->model->bones[idx * 2];
+    func_00389CB8(&m, &pos, 1.0f);
+    {
+        char* o = (char*)D_004A289C;
+        sVE_EE88* vt = *(sVE_EE88**)(o + 0x10D8);
+        vt[69].fn(o + vt[69].delta, &m, 1);
+    }
+    int* fl = (int*)(*(char**)((char*)D_004A289C + 0xE84) + 8);
+    unsigned int old = (unsigned int)(*fl & 0x3E0) >> 5;
+    if (self->layer >= 0)
+        *fl = (*fl & ~0x3E0) | ((self->layer << 5) & 0x3E0);
+    func_00310640(self->model, 0, 0, 0);
+    func_002F2088(self->fC70);
+    fl = (int*)(*(char**)((char*)D_004A289C + 0xE84) + 8);
+    *fl = (*fl & ~0x3E0) | (old << 5);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feridermanager", func_0019F138);
@@ -471,9 +610,117 @@ extern "C" void func_0019F3E8(void* self, sQuadRM* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F418);
+#ifdef SKIP_ASM
+extern "C" void func_0019F2D0(void* self);
 
+struct sVec_F418 {
+    float x, y, z, w;
+    sVec_F418() {}
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
+static inline sVec_F418 Rot_F418(const sVec_F418& q, const sVec_F418& v)
+{
+    sVec_F418 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddTo_F418(sVec_F418& dst, const sVec_F418& b)
+{
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "+m"(dst)
+        : "m"(b)
+        : "memory");
+}
+
+// Moves the rider model's first transform by the vector v rotated into its current orientation.
+extern "C" void func_0019F418(void* self, sVec_F418* v)
+{
+    sVec_F418* pos = (sVec_F418*)((char*)self + 0xC30);
+    sVec_F418* rot = (sVec_F418*)((char*)self + 0xC40);
+    AddTo_F418(*pos, Rot_F418(*rot, *v));
+    func_0019F2D0(self);
+}
+#endif
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F488);
+#ifdef SKIP_ASM
+extern "C" void func_0019F2D0(void* self);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+struct sQuat_F488 {
+    float x, y, z, w;
+    sQuat_F488() {}
+    sQuat_F488(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQuat_F488 QuatMul_F488(const sQuat_F488& a, const sQuat_F488& b)
+{
+    sQuat_F488 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// Turns the rider model's first transform about the given axis by the given angle.
+extern "C" void func_0019F488(void* self, sQuat_F488* axis, float angle)
+{
+    sQuat_F488* rot = (sQuat_F488*)((char*)self + 0xC40);
+    sQuat_F488 q;
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    sQuat_F488 r;
+    r.w = c;
+    r.x = s * axis->x;
+    r.y = s * axis->y;
+    r.z = s * axis->z;
+    q = r;
+    *rot = QuatMul_F488(*rot, q);
+    func_0019F2D0(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F548);
@@ -488,21 +735,153 @@ extern "C" void func_0019F548(void* self, sQuadRM* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F578);
+#ifdef SKIP_ASM
+extern "C" void func_0019F2D0(void* self);
 
+struct sVec_F578 {
+    float x, y, z, w;
+    sVec_F578() {}
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
+static inline sVec_F578 Rot_F578(const sVec_F578& q, const sVec_F578& v)
+{
+    sVec_F578 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddTo_F578(sVec_F578& dst, const sVec_F578& b)
+{
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "+m"(dst)
+        : "m"(b)
+        : "memory");
+}
+
+// Moves the rider model's first transform by the vector v rotated into its current orientation.
+extern "C" void func_0019F578(void* self, sVec_F578* v)
+{
+    sVec_F578* pos = (sVec_F578*)((char*)self + 0xC50);
+    sVec_F578* rot = (sVec_F578*)((char*)self + 0xC60);
+    AddTo_F578(*pos, Rot_F578(*rot, *v));
+    func_0019F2D0(self);
+}
+#endif
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F5E8);
+#ifdef SKIP_ASM
+extern "C" void func_0019F2D0(void* self);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
 
+struct sQuat_F5E8 {
+    float x, y, z, w;
+    sQuat_F5E8() {}
+    sQuat_F5E8(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQuat_F5E8 QuatMul_F5E8(const sQuat_F5E8& a, const sQuat_F5E8& b)
+{
+    sQuat_F5E8 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// Turns the rider model's first transform about the given axis by the given angle.
+extern "C" void func_0019F5E8(void* self, sQuat_F5E8* axis, float angle)
+{
+    sQuat_F5E8* rot = (sQuat_F5E8*)((char*)self + 0xC60);
+    sQuat_F5E8 q;
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    sQuat_F5E8 r;
+    r.w = c;
+    r.x = s * axis->x;
+    r.y = s * axis->y;
+    r.z = s * axis->z;
+    q = r;
+    *rot = QuatMul_F5E8(*rot, q);
+    func_0019F2D0(self);
+}
+#endif
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F6A8);
+#ifdef SKIP_ASM
+extern "C" int func_0019F6A8(void *arg0, int arg1) {
+    return (*(int *)((char*)((*(void **)((char*)(arg0) + (8)))) + (0x2C))) + ((*(int *)(((char*)(arg0) + (arg1 << 2)) + (0xC7C))) << 5);
+}
+#endif
 
 INCLUDE_ASM("fe/feridermanager", func_0019F6C8);
-
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F6F0);
+#ifdef SKIP_ASM
+extern "C" int func_0019F6F0(void *arg0, int arg1) {
+    return (*(int *)((char*)((*(void **)((char*)(arg0) + (8)))) + (0x2C))) + ((*(int *)(((char*)(arg0) + (arg1 << 2)) + (0xC7C))) << 5) + 0x10;
+}
+#endif
 
 INCLUDE_ASM("fe/feridermanager", func_0019F718);
-
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F740);
+#ifdef SKIP_ASM
+extern "C" void func_00312AA0__FPvi(int, int);
 
+extern "C" void func_0019F740(void *arg0) {
+    func_00312AA0__FPvi((*(int *)((char*)(arg0) + (0xC))), 2);
+}
+#endif
+//100%
 INCLUDE_ASM("fe/feridermanager", func_0019F760);
+#ifdef SKIP_ASM
+extern "C" void func_00312AB0(int, int);
+
+extern "C" void func_0019F760(void *arg0) {
+    func_00312AB0((*(int *)((char*)(arg0) + (0xC))), 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F780);
@@ -1072,7 +1451,13 @@ extern "C" void* func_001A0548(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feridermanager", func_001A0558);
+#ifdef SKIP_ASM
+extern "C" int func_001A0558(int arg0, int arg1) {
+    return (*(int *)((char*)(((arg1 * 0xCE0) + arg0)) + (0xCC8)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feridermanager", func_001A0570);

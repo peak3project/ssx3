@@ -102,21 +102,62 @@ extern "C" char* func_00156B28(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00156B70);
-
+#ifdef SKIP_ASM
+extern "C" int func_00156B70(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (8)));
+}
+#endif
+//100%
 INCLUDE_ASM("be/beintreward", func_00156B90);
-
+#ifdef SKIP_ASM
+extern "C" int func_00156B90(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (0xC)));
+}
+#endif
+//100%
 INCLUDE_ASM("be/beintreward", func_00156BB0);
-
+#ifdef SKIP_ASM
+extern "C" int func_00156BB0(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (0x10)));
+}
+#endif
+//100%
 INCLUDE_ASM("be/beintreward", func_00156BD0);
-
+#ifdef SKIP_ASM
+extern "C" int func_00156BD0(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (0x14)));
+}
+#endif
+//100%
 INCLUDE_ASM("be/beintreward", func_00156BF0);
-
+#ifdef SKIP_ASM
+extern "C" int func_00156BF0(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (0x18)));
+}
+#endif
+//100%
 INCLUDE_ASM("be/beintreward", func_00156C10);
-
+#ifdef SKIP_ASM
+extern "C" int func_00156C10(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (0x1C)));
+}
+#endif
+//100%
 INCLUDE_ASM("be/beintreward", func_00156C30);
-
+#ifdef SKIP_ASM
+extern "C" int func_00156C30(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (0x20)));
+}
+#endif
+//100%
 INCLUDE_ASM("be/beintreward", func_00156C50);
+#ifdef SKIP_ASM
+extern "C" int func_00156C50(void *arg0) {
+    return (*(int *)((char*)(func_0015A478(arg0)) + (0x24)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintreward", func_00156C70);
@@ -1411,7 +1452,6 @@ extern "C" int cBERewardInterface_getEarningsMedal(void* self, int a, int b, int
 INCLUDE_ASM("be/beintreward", func_00158B70);
 
 INCLUDE_ASM("be/beintreward", func_00158BB8);
-
 //100%
 INCLUDE_ASM("be/beintreward", func_00158BE0);
 #ifdef SKIP_ASM
@@ -1521,7 +1561,13 @@ void* func_00158F30(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00158F50);
+#ifdef SKIP_ASM
+extern "C" void *func_00158F50(void) {
+    return *D_004C3EF0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintreward", func_00158F60);
@@ -1758,9 +1804,186 @@ extern "C" void func_00159B08(void* self, int rider, int k)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00159C68);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+int cBELibrary_getCharacterID(int);
 
+extern "C" void func_00159C68(void* self, int rider, int bit)
+{
+    int profile = cBELibrary_getProfileIndex(rider);
+    func_00159CD0(self, profile, cBELibrary_getCharacterID(rider), bit);
+}
+#endif
+
+//100%
 INCLUDE_ASM("be/beintreward", func_00159CD0);
+#ifdef SKIP_ASM
+extern "C" int func_0015A2E0(void* self, int a1, int a2, int bit);
+extern "C" void func_0015A358(void* self, int bit, unsigned char* bits);
+extern "C" void func_0014B560(void* stats, int profile, int c, int value, int flag);
+extern "C" void func_001E2428(int which);
+extern "C" void func_001E2518();
+extern "C" void func_001E2578();
+extern "C" void func_001E38B8(int profile);
+
+struct sSlots4_00159CD0 {
+    int v[4];
+};
+struct sSlots2_00159CD0 {
+    int v[2];
+};
+extern sSlots4_00159CD0 D_0045AA28;
+extern sSlots2_00159CD0 D_004A1268[];
+
+extern "C" void func_00159CD0(void* self, int profile, int c, int bit)
+{
+    char* rec = (char*)D_004A6CA8 + profile * 0x9B50 + c * 0xF88;
+    sReward_0015A628* q = (sReward_0015A628*)D_004C3EF0;
+    sSlots4_00159CD0 slots4 = D_0045AA28;
+    sSlots2_00159CD0 slots2 = D_004A1268[0];
+    int item = -1;
+    int value = 0;
+
+    if (bit < 0x11 || bit > 0x13) {
+        if (func_0015A2E0(self, profile, c, bit))
+            return;
+    }
+
+    switch (bit) {
+    case 0:
+        func_001E2578();
+        value = 0x1D;
+        break;
+    case 1:
+        func_001E2518();
+        value = 0x18;
+        break;
+    case 2:
+        func_001E2428(0);
+        value = 0x12;
+        break;
+    case 3:
+        func_001E2428(1);
+        value = 0x19;
+        break;
+    case 4:
+        func_001E2428(2);
+        value = 0x1A;
+        break;
+    case 5:
+    case 8:
+    case 11:
+    case 14:
+    {
+        int i;
+        for (i = 0; i < 4 && (slots4.v[i] = func_00157080(self, profile, c, 4)) >= 0; i++) {
+            func_001580F8(self, profile, c, slots4.v[i], 0);
+            func_0015A628(q, bit, 4, slots4.v[i]);
+        }
+        int v = func_00157080(self, profile, c, 3);
+        if (v >= 0) {
+            func_00157FD0(self, profile, c, v, 0);
+            func_0015A628(q, bit, 3, v);
+        }
+        if (bit == 11)
+            func_001E38B8(profile);
+        func_00158F60(self, profile, c, bit, 1);
+        break;
+    }
+    case 6:
+    case 9:
+    case 12:
+    case 15:
+    {
+        int i;
+        int v = func_00157080(self, profile, c, 7);
+        if (v >= 0) {
+            func_00158348(self, profile, c, v, 0);
+            func_0015A628(q, bit, 7, v);
+        }
+        for (i = 0; i < 2 && (slots2.v[i] = func_00157080(self, profile, c, 5)) >= 0; i++) {
+            func_00158220(self, profile, c, slots2.v[i], 0);
+            func_0015A628(q, bit, 5, slots2.v[i]);
+        }
+        if (bit == 12)
+            func_001E38B8(profile);
+        func_00158F60(self, profile, c, bit, 2);
+        break;
+    }
+    case 7:
+        value = 0x1B;
+        break;
+    case 10:
+        value = 0x17;
+        break;
+    case 13:
+        value = 0x1C;
+        break;
+    case 16:
+        value = 0x15;
+        break;
+    case 17:
+        item = func_00156C70(self, profile, c, 0);
+        break;
+    case 18:
+        item = func_00156C70(self, profile, c, 1);
+        break;
+    case 19:
+        item = func_00156C70(self, profile, c, 2);
+        break;
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
+    case 29:
+    case 30:
+    case 31:
+        item = func_00156EE0(self, profile, c);
+        break;
+    }
+
+    func_0015A358(self, bit, (unsigned char*)(rec + 0xF28));
+    if (value != 0) {
+        func_0015A628(q, bit, 8, value);
+        func_00158618(self, profile, c, value, 0);
+    }
+    if (item != -1) {
+        void* stats = cBE_getInterface_Fv(cBE_getBE(), 9);
+        func_0015A628(q, bit, 9, item);
+        func_0014B560(stats, profile, c, item, 0);
+    }
+    if (func_001577E0(self, profile, c)) {
+        if (!func_0015A2E0(self, profile, c, 0))
+            func_00159CD0(self, profile, c, 0);
+    }
+    if (func_001578A0(self, profile, c)) {
+        if (!func_0015A2E0(self, profile, c, 1))
+            func_00159CD0(self, profile, c, 1);
+    }
+    for (int i = 0; i < 3; i++) {
+        if (func_00157A78(self, profile, c, i)) {
+            if (!func_0015A2E0(self, profile, c, i + 2))
+                func_00159CD0(self, profile, c, i + 2);
+        }
+    }
+    for (int kind = 0; kind < 3; kind++) {
+        for (int tier = 0; tier < 4; tier++) {
+            int b = func_00159080(self, profile, c, kind, tier);
+            if (func_00157BF0(self, profile, c, kind, tier)) {
+                if (!func_0015A2E0(self, profile, c, b))
+                    func_00159170(self, profile, c, kind, tier);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintreward", func_0015A2E0);
@@ -1897,7 +2120,26 @@ extern "C" void func_0015A510(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_0015A548);
+#ifdef SKIP_ASM
+extern "C" int func_0015A548(void* self, int n, unsigned char* bits)
+{
+    int i = 0;
+    int bi = 0;
+    int count = 0;
+    while (i < n) {
+        unsigned char b = bits[bi];
+        int j;
+        bi++;
+        for (j = 0; j < 8 && i < n; j++) {
+            count += (b >> j) & 1;
+            i++;
+        }
+    }
+    return count;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintreward", func_0015A5B0);
@@ -2054,5 +2296,158 @@ extern "C" void func_0015A7D0(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_0015A818);
+#ifdef SKIP_ASM
+struct sRewardStr3 {
+    char* s[3];
+};
+struct sRewardStr2 {
+    char* s[2];
+};
+struct sRewardStr4 {
+    char* s[3];
+    int pad;
+};
+struct sRewardData {
+    int unk0;
+    int* base;
+    sRewardStr3* t0;
+    sRewardStr3* t1;
+    sRewardStr2* t2;
+    sRewardStr4* t3;
+    sRewardStr4* t4;
+    sRewardStr4* t5;
+    sRewardStr4* t7;
+    sRewardStr4* t6;
+    sRewardStr4* t8;
+    char* strings;
+    int n0;
+    int n1;
+    int n2;
+    int n3;
+    int n4;
+    int n5;
+    int n7;
+    int n6;
+    int n8;
+};
+
+#define FIXUP(e) if (e) e = self->strings + ((int)e - 1)
+
+extern "C" void func_0015A818(sRewardData* self, int* data)
+{
+    int n;
+    int* p = data;
+    self->base = data;
+    for (n = 0; n < 9; n++) {
+        unsigned int type = *p++;
+        int count = *p++;
+        if (count != 0) {
+            switch (type) {
+            case 0:
+                self->t0 = (sRewardStr3*)p;
+                self->n0 = count;
+                p = (int*)((sRewardStr3*)p + count);
+                break;
+            case 1:
+                self->t1 = (sRewardStr3*)p;
+                self->n1 = count;
+                p = (int*)((sRewardStr3*)p + count);
+                break;
+            case 2:
+                self->t2 = (sRewardStr2*)p;
+                self->n2 = count;
+                p = (int*)((sRewardStr2*)p + count);
+                break;
+            case 3:
+                self->t3 = (sRewardStr4*)p;
+                self->n3 = count;
+                p = (int*)((sRewardStr4*)p + count);
+                break;
+            case 4:
+                self->t4 = (sRewardStr4*)p;
+                self->n4 = count;
+                p = (int*)((sRewardStr4*)p + count);
+                break;
+            case 5:
+                self->t5 = (sRewardStr4*)p;
+                self->n5 = count;
+                p = (int*)((sRewardStr4*)p + count);
+                break;
+            case 6:
+                self->t6 = (sRewardStr4*)p;
+                self->n6 = count;
+                p = (int*)((sRewardStr4*)p + count);
+                break;
+            case 7:
+                self->t7 = (sRewardStr4*)p;
+                self->n7 = count;
+                p = (int*)((sRewardStr4*)p + count);
+                break;
+            case 8:
+                self->t8 = (sRewardStr4*)p;
+                self->n8 = count;
+                p = (int*)((sRewardStr4*)p + count);
+                break;
+            }
+        }
+    }
+    p++;
+    self->strings = (char*)p;
+    for (int i = 0; i < self->n0; i++) {
+        sRewardStr3* e = &self->t0[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+    for (int i = 0; i < self->n1; i++) {
+        sRewardStr3* e = &self->t1[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+    for (int i = 0; i < self->n2; i++) {
+        sRewardStr2* e = &self->t2[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+    }
+    for (int i = 0; i < self->n3; i++) {
+        sRewardStr4* e = &self->t3[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+    for (int i = 0; i < self->n4; i++) {
+        sRewardStr4* e = &self->t4[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+    for (int i = 0; i < self->n5; i++) {
+        sRewardStr4* e = &self->t5[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+    for (int i = 0; i < self->n6; i++) {
+        sRewardStr4* e = &self->t6[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+    for (int i = 0; i < self->n7; i++) {
+        sRewardStr4* e = &self->t7[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+    for (int i = 0; i < self->n8; i++) {
+        sRewardStr4* e = &self->t8[i];
+        FIXUP(e->s[0]);
+        FIXUP(e->s[1]);
+        FIXUP(e->s[2]);
+    }
+}
+#endif
 

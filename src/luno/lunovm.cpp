@@ -112,7 +112,18 @@ extern "C" cLunoTableRef* func_00224DA0(cLunoTableRef* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("luno/lunovm", func_00224DD0);
+#ifdef SKIP_ASM
+extern "C" void **func_00224DD0(void **arg0, void **arg1) {
+    void *temp_6;
+
+    temp_6 = *arg1;
+    *arg0 = temp_6;
+    (*(int *)((char*)(temp_6) + (8))) = (int) ((*(int *)((char*)(temp_6) + (8))) + 1);
+    return arg0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("luno/lunovm", func_00224DF0);
@@ -203,7 +214,57 @@ extern "C" cLunoTableRef* func_00225068(cLunoTableRef* self, cLunoTableRef* othe
 }
 #endif
 
+//100%
 INCLUDE_ASM("luno/lunovm", func_002250E0);
+#ifdef SKIP_ASM
+extern "C" void func_00225B90(cLunoValue* self, int flags);
+extern cLunoValue D_004C9098;
+void* func_00226620(void* self);
+
+struct cLunoNode_50E0 {
+    cLunoValue key;     // 0x00
+    cLunoValue value;   // 0x0C
+    cLunoNode_50E0* next;    // 0x18
+    void* vtable;       // 0x1C
+};
+
+static inline int lunoKeyEquals_50E0(cLunoValue* a, cLunoValue* b)
+{
+    if (b->type == a->type) {
+        return a->word0 == b->word0;
+    }
+    if (a->type == 2 && b->type == 1) {
+        return *(float*)&a->word0 == (float)b->word0;
+    }
+    if (a->type == 1 && b->type == 2) {
+        return a->word0 == (int)*(float*)&b->word0;
+    }
+    if (a->type == 3 && b->type == 1) {
+        return a->word0 == b->word0;
+    }
+    return 0;
+}
+
+extern "C" cLunoValue* func_002250E0(cLunoTableRef* self, unsigned int arg1)
+{
+    cLunoTable* t = self->table;
+    cLunoNode_50E0* n = (cLunoNode_50E0*)t->nodes + arg1 % (unsigned int)t->modulus;
+    if (n->value.type != 0) {
+        do {
+            cLunoValue key;
+            key.type = 3;
+            *(int*)func_00226620(&key) = arg1;
+            int eq = lunoKeyEquals_50E0(&n->key, &key);
+            func_00225B90(&key, 2);
+            if (eq) {
+                return &n->value;
+            }
+            n = n->next;
+        } while (n != 0);
+    }
+    return &D_004C9098;
+}
+#endif
 
 //100%
 INCLUDE_ASM("luno/lunovm", func_00225248);

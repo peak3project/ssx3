@@ -61,6 +61,14 @@ extern "C" void func_00195A50(void* self, signed char i)
 #endif
 
 //100%
+INCLUDE_ASM("util/locale", func_00195A98);
+#ifdef SKIP_ASM
+extern "C" void func_00195A98(void) {
+
+}
+#endif
+
+//100%
 INCLUDE_ASM("util/locale", func_00195AA0);
 #ifdef SKIP_ASM
 extern "C" void func_00195948(void* self);

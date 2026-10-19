@@ -1177,7 +1177,196 @@ extern "C" void func_001D86B0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8700);
+#ifdef SKIP_ASM
+extern void* D_004A2028;
+extern void* D_004A28A8;
+extern "C" void* func_00227F80(void* app);
+extern "C" void func_001D9308(void*, int);
+extern "C" void func_001D7190(void);
+extern "C" void func_0039F190(void* list, int a1);
+
+struct sVEntryK1D8700 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+#define VCALL_K1D8700(obj, idx) ((*(sVEntryK1D8700**)((char*)(obj) + 8))[idx].fn((char*)(obj) + (*(sVEntryK1D8700**)((char*)(obj) + 8))[idx].delta))
+
+static inline void notifyK1D8700(char* self, char* mp)
+{
+    if (*(int*)(self + 0x204) == 1) {
+        *(int*)(mp + 0x440) = *(int*)(self + 0x204);
+        VCALL_K1D8700(self, 40);
+    }
+}
+
+// Popup button callback: 0xF/0x10/0x11 pick choice 0/1/2; 0x16 dismisses.
+extern "C" void func_001D8700(void* self_, int a1, int button)
+{
+    char* self = (char*)self_;
+    if (button >= 0xF && button <= 0x11) {
+        int choice = 0;
+        if (button == 0x10) {
+            choice = 1;
+        } else if (button == 0x11) {
+            choice = 2;
+        }
+        char* mp = (char*)func_00227F80(D_004A28A8);
+        switch (*(int*)(self + 0x19C)) {
+        case 2:
+            if (choice == 0) {
+                VCALL_K1D8700(self, 45);
+            } else {
+                *(int*)(self + 0x1C0) = 1;
+            }
+            break;
+        case 19:
+            if (choice == 0) {
+                *(int*)(self + 0x1F0) = 0;
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            } else {
+                *(int*)(self + 0x1EC) = 1;
+            }
+            break;
+        case 1:
+            if (choice != 0) {
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            } else {
+                *(int*)(self + 0x1C0) = 3;
+                *(int*)(self + 0x1F0) = 1;
+            }
+            break;
+        case 9:
+            if (choice == 0) {
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            } else {
+                *(int*)(self + 0x1EC) = 1;
+            }
+            break;
+        case 18:
+            if (choice == 0) {
+                *(int*)(self + 0x1EC) = 1;
+            } else {
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            }
+            break;
+        case 10:
+            if (choice == 0) {
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            }
+            break;
+        case 11:
+            *(int*)(self + 0x1F0) = 0;
+            VCALL_K1D8700(self, 41);
+            notifyK1D8700(self, mp);
+            break;
+        case 4:
+        case 5:
+        case 6:
+            VCALL_K1D8700(self, 40);
+            break;
+        case 3:
+            *(int*)(self + 0x1B0) = 0;
+            if (choice == 0) {
+                *(int*)(self + 0x1A8) = 1;
+                *(int*)(self + 0x1E0) = 1;
+            } else {
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            }
+            break;
+        case 12:
+            if (choice == 0) {
+                VCALL_K1D8700(self, 41);
+                *(int*)(self + 0x1C0) = 1;
+                notifyK1D8700(self, mp);
+            } else if (choice == 1) {
+                *(int*)(self + 0x1EC) = 1;
+            } else {
+                func_001D7190();
+                return;
+            }
+            break;
+        case 13:
+            if (choice == 0) {
+                *(int*)(self + 0x1C0) = 3;
+                *(int*)(self + 0x1F0) = 1;
+            } else {
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            }
+            break;
+        case 7:
+            *(int*)(self + 0x1A8) = 0;
+            *(int*)(self + 0x1E0) = 0;
+            if (*(int*)(self + 0x1F4) != 0) {
+                VCALL_K1D8700(self, 41);
+            }
+            if (*(int*)(self + 0x1DC) != 0) {
+                *(int*)(self + 0x1A8) = 1;
+            }
+            notifyK1D8700(self, mp);
+            break;
+        case 16:
+            *(int*)(self + 0x1E8) = 0;
+            func_001D9308(self, 0);
+            if (*(int*)(self + 0x1DC) != 0) {
+                *(int*)(self + 0x1A8) = 1;
+            } else {
+                *(int*)(self + 0x1A8) = 0;
+            }
+            notifyK1D8700(self, mp);
+            break;
+        case 17:
+            *(int*)(self + 0x1E8) = 0;
+            VCALL_K1D8700(self, 41);
+            break;
+        case 14:
+        case 15:
+            *(int*)(self + 0x1B0) = 0;
+            if (choice == 0) {
+                *(int*)(self + 0x1A8) = 1;
+                *(int*)(self + 0x1E8) = 1;
+            } else if (choice == 1) {
+                *(int*)(self + 0x1E8) = 0;
+                VCALL_K1D8700(self, 41);
+                notifyK1D8700(self, mp);
+            }
+            break;
+        case 8:
+        case 23:
+            VCALL_K1D8700(self, 41);
+            break;
+        case 24:
+            VCALL_K1D8700(self, 41);
+            break;
+        }
+        if (*(int*)(self + 0x19C) != 0x16) {
+            func_0039F190(*(char**)((char*)D_004A2028 + 0x10) + 0x18, 1);
+        }
+        *(int*)(self + 0x210) = 0;
+    } else if (button == 0x16) {
+        char* fe = (char*)D_004A2028;
+        if (*(int*)(fe + 0x1A0) != 0) {
+            *(int*)(fe + 0x1A4) = 0;
+            *(int*)(fe + 0x1A0) = 0;
+        } else {
+            if (*(int*)(self + 0x19C) == button) {
+                *(int*)(self + 0x210) = 0;
+            }
+            *(int*)((char*)D_004A2028 + 0x218) = 0;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8BE0);
@@ -1281,7 +1470,180 @@ extern "C" void func_001D8D68(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8DE0);
+#ifdef SKIP_ASM
+// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
+void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+void cMemMan_free(void* p);
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void* func_00227F80(void* app);
+extern "C" void func_00241E18(void*, unsigned short*, int);
+extern "C" void func_0020E900(void);
+extern "C" void func_0039E510(void*);
+extern "C" void func_00241380(void*);
+extern "C" int func_0023C898(void*);
+extern "C" void func_0023D618(void*);
+extern void* D_004A2028;
+extern void* D_004A28A8;
+extern char D_0045E2A0[];
+extern char D_004A1600[];
+
+class cStreamK1D8DE0 {
+public:
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06();
+    virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
+    virtual int v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17();
+    virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23();
+    virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35();
+    virtual void v36(); virtual void v37(); virtual void v38(); virtual void v39(); virtual void v40(); virtual void v41();
+    virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45(); virtual void v46(); virtual void v47();
+    virtual void v48(); virtual void v49(); virtual void v50(); virtual void v51(); virtual void v52();
+    virtual bool v53();
+    virtual void v54(); virtual void v55(); virtual void v56(); virtual void v57(); virtual void v58(); virtual void v59();
+    virtual void v60(); virtual void v61(); virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
+    virtual void v66();
+    virtual bool v67(int);
+    virtual void v68(); virtual void v69(); virtual void v70(); virtual void v71(); virtual void v72(); virtual void v73();
+    virtual void v74();
+    virtual int v75();
+};
+
+class cSubK1D8DE0 {
+public:
+    virtual void v01(int);
+};
+
+class cPopupK1D8DE0 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06();
+    virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12();
+    virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18();
+    virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24();
+    virtual void v25(); virtual void v26();
+    virtual void v27(unsigned short*);
+};
+
+class cMemCardK1D8DE0 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06();
+    virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12();
+    virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18();
+    virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35(int);
+    virtual void v36(); virtual void v37();
+    virtual void v38(int);
+    virtual void v39(int, int);
+    virtual void v40(); virtual void v41(); virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45();
+    virtual void v46();
+    virtual void v47();
+};
+
+struct sVEntryK1D8DE0 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+#define VCALL_K1D8DE0(obj, off, idx) (*(sVEntryK1D8DE0**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryK1D8DE0**)((char*)(obj) + (off)))[idx].delta
+
+#define BUSY_K1D8DE0(self, mp) ((*(int*)((self) + 0x1B0) == 1 && func_0023C898(mp) == 0) \
+        || (*(int*)((self) + 0x1B0) == 0 && (*(cStreamK1D8DE0**)((mp) + 0x434))->v11() != 0))
+
+extern "C" void func_001D8DE0(cMemCardK1D8DE0* card)
+{
+    char* self = (char*)card;
+    if (*(void**)(self + 0x218) == 0 && *(int*)(self + 0x1A4) == 0) {
+        if (*(int*)((char*)D_004A28A8 + 0x84) != 0) {
+            func_0020E900();
+        } else {
+            func_0039E510(self);
+        }
+    }
+    char* mp = (char*)func_00227F80(D_004A28A8);
+    if (*(int*)(self + 0x1D8) == 0) {
+        func_00241380(mp);
+        *(int*)(self + 0x1D8) = 1;
+        *(int*)(self + 0x214) = 1;
+        VCALL_K1D8DE0(self, 8, 35), 1);
+        VCALL_K1D8DE0(mp, 0x748, 1), 0x31);
+    }
+    if (*(int*)(self + 0x1C0) != 6 || BUSY_K1D8DE0(self, mp)) {
+        func_0023D618(mp);
+    }
+    switch (*(int*)(self + 0x1C0)) {
+    case 0:
+        VCALL_K1D8DE0(self, 8, 31));
+        break;
+    case 1:
+        VCALL_K1D8DE0(self, 8, 27));
+        break;
+    case 2:
+        VCALL_K1D8DE0(self, 8, 32));
+        break;
+    case 3:
+        VCALL_K1D8DE0(self, 8, 28));
+        break;
+    case 4:
+        VCALL_K1D8DE0(self, 8, 30));
+        break;
+    case 5:
+        VCALL_K1D8DE0(self, 8, 29));
+        break;
+    case 6:
+        {
+            char* mp2 = (char*)func_00227F80(D_004A28A8);
+            if (!BUSY_K1D8DE0(self, mp2))
+                VCALL_K1D8DE0(self, 8, 33));
+        }
+        break;
+    }
+    if (*(int*)((char*)D_004A2028 + 0x210) == 0 && *(int*)((char*)D_004A2028 + 0x208) == 0 && *(int*)((char*)D_004A2028 + 0x204) == 0) {
+        int m = *(int*)(mp + 0x130);
+        if (m == 0x28 || m == 0xB || m == 0xF || m == 0x10 || m == 0x11 || m == 0x12 || m == 0x1F
+            || m == 0x21 || m == 0x20 || m == 0x22 || m == 0x2C || m == 0x19 || m == 0x1A) {
+            VCALL_K1D8DE0(self, 8, 47));
+        }
+    }
+    if (*(int*)((char*)D_004A2028 + 0x210) != 0) {
+        unsigned short* buf = (unsigned short*)operator_new_tag(0x7D0, D_0045E2A0, 0x100, 0);
+        func_00241E18(mp, buf, 0x320);
+        (*(cPopupK1D8DE0**)(self + 0x218))->v27(buf);
+        if (buf != 0) {
+            cMemMan_free(buf);
+        }
+    }
+    VCALL_K1D8DE0(self, 8, 26));
+    if (*(void**)(self + 0x218) == 0 && (*(cStreamK1D8DE0**)(mp + 0x434))->v75() != 0) {
+        void* menu = cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1600));
+        int sel = *(int*)(self + 0x1C4);
+        if (menu != 0) {
+            sel = *(unsigned char*)((char*)menu + 0x95);
+        }
+        sVEntryK1D8DE0* vt = *(sVEntryK1D8DE0**)(self + 8);
+        void (**pf)(void*, ...) = &vt[38].fn;
+        (*pf)(self + vt[38].delta, (*(cStreamK1D8DE0**)(mp + 0x434))->v67(sel) == 0 || (*(cStreamK1D8DE0**)(mp + 0x434))->v53() == 0);
+        bool a = !(*(cStreamK1D8DE0**)(mp + 0x434))->v67(sel);
+        bool b = !(*(cStreamK1D8DE0**)(mp + 0x434))->v53();
+        VCALL_K1D8DE0(self, 8, 39), a, b);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9258);

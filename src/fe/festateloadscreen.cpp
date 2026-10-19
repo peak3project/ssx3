@@ -384,7 +384,15 @@ extern "C" void func_00233AA0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233AD0);
+#ifdef SKIP_ASM
+extern "C" void func_00231278__FPvi(int);
+
+extern "C" void func_00233AD0(void) {
+    func_00231278__FPvi((*(int*)&D_004A2C68));
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233AF0);

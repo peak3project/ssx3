@@ -515,7 +515,22 @@ void func_00278DE8(void* self, int val)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00278DF0);
+#ifdef SKIP_ASM
+extern "C" void func_00278DF0(void *arg0, int arg1) {
+    int var_3;
+    int var_6;
+
+    var_6 = 0;
+    var_3 = 1;
+    do {
+        var_3 -= 1;
+        (*(int *)((char*)((var_6 + (*(int *)((char*)(arg0) + (0x54C))))) + (8))) = arg1;
+        var_6 += 0xCC;
+    } while (var_3 >= 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00278E20);
@@ -668,9 +683,24 @@ extern "C" void func_00279148(void* self, int i, int a)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279178);
+#ifdef SKIP_ASM
+extern "C" void func_00276A08(int, int);
 
+extern "C" void func_00279178(void *arg0, int arg1, int arg2) {
+    func_00276A08((*(int *)((char*)(arg0) + (0x54C))) + (arg1 * 0xCC), arg2);
+}
+#endif
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_002791A8);
+#ifdef SKIP_ASM
+extern "C" void func_00276A78(int, int);
+
+extern "C" void func_002791A8(void *arg0, int arg1, int arg2) {
+    func_00276A78((*(int *)((char*)(arg0) + (0x54C))) + (arg1 * 0xCC), arg2);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("scripter/ssxscriptengine", func_002791D8);
@@ -707,7 +737,18 @@ extern "C" void func_00279248(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279270);
+#ifdef SKIP_ASM
+extern "C" void func_00277100(int, int);
+
+extern "C" void func_00279270(void *arg0, int arg1) {
+    int temp_5;
+
+    temp_5 = arg1 * 0xCC;
+    func_00277100((*(int *)((char*)(arg0) + (0x54C))) + temp_5, temp_5);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279298);
@@ -770,7 +811,6 @@ INCLUDE_ASM("scripter/ssxscriptengine", func_002793F8);
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279428);
 
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279458);
-
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279488);
 #ifdef SKIP_ASM
@@ -843,7 +883,26 @@ extern "C" int func_002795D0(void* self, int key, int a, int b, int c)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_002796B8);
+#ifdef SKIP_ASM
+extern "C" int func_002795D0(void* self, int key, int a, int b, int c);
+
+struct sEnt_002796B8 { int a; int key; int c; };
+
+extern "C" int func_002796B8(char* self, int id, int a, int b, int c)
+{
+    int i = 0;
+    if (**(int**)(self + 0x52C) > 0) {
+        do {
+            if ((*(sEnt_002796B8**)(self + 0x530))[i].key == id)
+                return func_002795D0(self, i, a, b, c);
+            i++;
+        } while (i < **(int**)(self + 0x52C));
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279720);
@@ -2607,8 +2666,16 @@ int func_0027C098(void* self)
 #endif
 
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C0A0);
-
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C0C0);
+#ifdef SKIP_ASM
+extern "C" void func_00274318(int, int);
+extern "C" int func_00274D90();
+
+extern "C" void func_0027C0C0(void* self, void* arg1, int arg2) {
+    func_00274318(func_00274D90(), arg2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C0F0);
@@ -2652,8 +2719,16 @@ int func_0027C2A8(void* self)
 #endif
 
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C2B0);
-
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C2D0);
+#ifdef SKIP_ASM
+extern "C" void func_00274318(int, int);
+extern "C" int func_00274D90();
+
+extern "C" void func_0027C2D0(void* self, void* arg1, int arg2) {
+    func_00274318(func_00274D90(), arg2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C300);
@@ -2697,8 +2772,16 @@ int func_0027C4B8(void* self)
 #endif
 
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C4C0);
-
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C4E0);
+#ifdef SKIP_ASM
+extern "C" void func_00274318(int, int);
+extern "C" int func_00274D90();
+
+extern "C" void func_0027C4E0(void* self, void* arg1, int arg2) {
+    func_00274318(func_00274D90(), arg2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C510);
@@ -2741,8 +2824,16 @@ int func_0027C6A0(void* self)
 #endif
 
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C6A8);
-
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C6C8);
+#ifdef SKIP_ASM
+extern "C" void func_00274318(int, int);
+extern "C" int func_00274D90();
+
+extern "C" void func_0027C6C8(void* self, void* arg1, int arg2) {
+    func_00274318(func_00274D90(), arg2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C6F8);
@@ -2785,8 +2876,16 @@ int func_0027C888(void* self)
 #endif
 
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C890);
-
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C8B0);
+#ifdef SKIP_ASM
+extern "C" void func_00274318(int, int);
+extern "C" int func_00274D90();
+
+extern "C" void func_0027C8B0(void* self, void* arg1, int arg2) {
+    func_00274318(func_00274D90(), arg2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C8E0);
@@ -2831,7 +2930,16 @@ void* func_0027C960(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C980);
+#ifdef SKIP_ASM
+extern "C" void func_00274318(int, int);
+extern "C" int func_00274D90();
+
+extern "C" void func_0027C980(void* self, void* arg1, int arg2) {
+    func_00274318(func_00274D90(), arg2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C9B0);
@@ -4234,7 +4342,114 @@ extern "C" void func_002814F8(void* self, void* obj, int a2, int flags, float t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_002816A0);
+#ifdef SKIP_ASM
+extern "C" void func_0027C8E0(void* self, int* out);
+// PORT: func_0027C888 is defined returning int, but it returns a pointer here; bound by asm label.
+signed char* func_0027C888_p(void* self) __asm__("func_0027C888__FPv");
+void func_0027D788(void* self, float val);
+extern "C" int func_00281C40(void* self, int i);
+extern "C" void func_00281C68(void* self, int* info, float t);
+extern "C" void func_00282D30(void* self, float dt);
+extern "C" void* func_0028B180();
+extern "C" float func_002B4920(void* p);
+
+struct sNode_2816A0
+{
+    char pad0[0x4];
+    int side;           // 0x4
+    int start;          // 0x8
+    char padC[0x4];
+    unsigned int len;   // 0x10
+    signed char* kind;  // 0x14
+};
+
+extern "C" void func_002816A0(char* self, void* obj, float t, float dt)
+{
+    int info[2];
+    func_0027C8E0(obj, info);
+    if (*func_0027C888_p(obj) != 0) {
+        *(int*)(self + 0xF0) = 0;
+        char* p = (char*)func_0028B180();
+        void* timer = p + 0x118;
+        if (*(int*)(p + 0x530) != 0) {
+            float now = func_002B4920(timer);
+            if (*(float*)(self + 0xF4) < now) {
+                *(int*)(self + 0xF0) = 1;
+                if (*(int*)(self + 0xEC) != 0) {
+                    func_00281C68(self, info, t);
+                    *(int*)(self + 0xEC) = 0;
+                }
+            }
+            *(float*)(self + 0xF4) = now;
+        } else {
+            *(int*)(self + 0xF0) = 1;
+        }
+    }
+    if (info[0] == 0) {
+        return;
+    }
+    if (*(int*)(self + 0xE8) == 0) {
+        return;
+    }
+    // PORT: info[1] holds a node pointer
+    sNode_2816A0* n = (sNode_2816A0*)info[1];
+    switch (*n->kind) {
+    case 0: {
+        if ((float)(n->len + n->start) < t) {
+            *(int*)(self + 0xE8) = 0;
+        }
+        int a = func_00281C40(self, n->side);
+        int b = func_00281C40(self, 1 - n->side);
+        if (b == 0) {
+            *(int*)(self + 0xE8) = 0;
+            break;
+        }
+        float w = 1.0f;
+        if ((float)(n->len + n->start) < t) {
+            *(int*)(self + 0xE8) = 0;
+        } else {
+            w = (t - (float)n->start) / (float)n->len;
+        }
+        func_0027D788((void*)a, w);
+        func_0027D788((void*)b, 1.0f - w);
+        break;
+    }
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6: {
+        int a = func_00281C40(self, n->side);
+        int b = func_00281C40(self, 1 - n->side);
+        func_00282D30(*(void**)(self + 0xD8), dt);
+        if (*(int*)(*(char**)(self + 0xD8) + 8) <= 0) {
+            *(int*)(self + 0xE8) = 0;
+        }
+        if (*(int*)(self + 0xE8) != 0 && b != 0 && t < (float)(n->len + n->start)) {
+            func_0027D788((void*)b, 1.0f);
+            func_0027D788((void*)a, 0.0f);
+        } else {
+            if (b != 0) {
+                func_0027D788((void*)b, 0.0f);
+            }
+            func_0027D788((void*)a, 1.0f);
+        }
+        break;
+    }
+    case 7:
+        func_00282D30(*(void**)(self + 0xD8), dt);
+        if (*(int*)(*(char**)(self + 0xD8) + 8) <= 0) {
+            *(int*)(self + 0xE8) = 0;
+        }
+        break;
+    case 8:
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00281A00);

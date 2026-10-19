@@ -132,9 +132,41 @@ void func_001A34A8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatemission", func_001A34B0);
-
+#ifdef SKIP_ASM
+extern "C" int func_001A34B0(void) {
+    return -1;
+}
+#endif
+//100%
 INCLUDE_ASM("fe/ovstatemission", func_001A34B8);
+#ifdef SKIP_ASM
+extern "C" int cBENewPlayerInterface_isPeakLocked1(void*, int, int);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00146E98(void*, int);
+
+extern "C" unsigned int func_001A34B8(void)
+{
+    signed char i;
+    unsigned char best = 0;
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
+    for (i = 0; i < 2; i++) {
+        int h = func_00146E98(iface, i != 0);
+        unsigned char cnt = 0;
+        signed char j;
+        for (j = 1; j < 3; j++) {
+            cnt += cBENewPlayerInterface_isPeakLocked1(iface, h, j);
+        }
+        if (best < cnt) {
+            best = cnt;
+        }
+    }
+    return best;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatemission", func_001A3590);

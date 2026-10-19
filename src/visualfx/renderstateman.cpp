@@ -519,7 +519,25 @@ extern "C" void* func_002EF198(int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EF1F0);
+#ifdef SKIP_ASM
+extern int D_004A3B64;
+extern int D_004A55B0;
+
+extern "C" void* func_002EF1F0(int i)
+{
+    if (D_004A3B64 != 0) {
+        return &D_004A55B0;
+    }
+    {
+        sRSMEntry* e = &D_004FA370[i];
+        sRSMObj* o = *e->p1C;
+        sRSMVEntry* vt = o->vt;
+        return vt[40].fn((char*)o + vt[40].delta);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EF248);
@@ -1196,7 +1214,15 @@ extern "C" void func_002EF950(sTrail_EF950* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EFF90);
+#ifdef SKIP_ASM
+extern void* D_004A3B78;
+
+extern "C" int func_002EFF90(void) {
+    return (*(int*)&D_004A3B78);
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EFF98);
@@ -1397,7 +1423,15 @@ extern "C" void func_002F00A0(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/renderstateman", func_002F0360);
+#ifdef SKIP_ASM
+extern void* D_004A3B80;
+
+extern "C" int func_002F0360(void) {
+    return (*(int*)&D_004A3B80);
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002F0368);
@@ -1411,6 +1445,14 @@ extern "C" void* func_002F0368(void* self)
     *(void***)((char*)self + 0x4) = D_00487D78;
     D_004A3B80 = self;
     return self;
+}
+#endif
+
+//100%
+INCLUDE_ASM("visualfx/renderstateman", func_002F0388);
+#ifdef SKIP_ASM
+extern "C" void func_002F0388(void) {
+
 }
 #endif
 

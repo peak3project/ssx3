@@ -171,7 +171,6 @@ extern "C" void* func_00144BF0()
 INCLUDE_ASM("be/beintnewrace", func_00144C10);
 
 INCLUDE_ASM("be/beintnewrace", func_00144C30);
-
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00144C48);
 #ifdef SKIP_ASM
@@ -680,7 +679,38 @@ extern "C" int func_00145750(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintnewrace", func_00145818);
+#ifdef SKIP_ASM
+extern "C" int func_00145818(void* self, unsigned int arg1) {
+    switch (arg1) {
+    case 14:
+    case 15:
+    case 16:
+        return 4;
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+        return 0;
+    case 5:
+    case 6:
+    case 7:
+        return 1;
+    case 8:
+    case 9:
+    case 10:
+        return 2;
+    case 11:
+    case 12:
+    case 13:
+        return 3;
+    default:
+        return 4;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00145870);
@@ -716,5 +746,29 @@ extern "C" int func_00145870(void* self, int idx)
 }
 #endif
 
-INCLUDE_ASM("be/beintnewrace", func_001458C8);
 
+//100%
+INCLUDE_ASM("be/beintnewrace", func_001458C8);
+#ifdef SKIP_ASM
+extern "C" int func_001458C8(void* self, unsigned int arg1) {
+    switch (arg1) {
+    case 0:
+        return 0;
+    case 1:
+        return 1;
+    case 2:
+        return 3;
+    case 3:
+        return 2;
+    case 4:
+        return 5;
+    case 5:
+        return 6;
+    case 12:
+    case 13:
+        return 4;
+    default:
+        return 0;
+    }
+}
+#endif

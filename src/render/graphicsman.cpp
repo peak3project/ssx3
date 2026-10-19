@@ -371,10 +371,22 @@ extern "C" void func_0036A2C0(void* self, sGmMtx_A2C0* m)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036A3B0);
+#ifdef SKIP_ASM
+extern "C" int func_0036A3B0(int arg0) {
+    int temp_2;
+    int temp_2_2;
+    int temp_2_3;
+
+    temp_2_2 = arg0 & 0xFF;
+    temp_2_3 = (temp_2_2 | (temp_2_2 * 0x10)) & 0xF0F;
+    temp_2 = (temp_2_3 | (temp_2_3 * 4)) & 0x3333;
+    return (temp_2 | (temp_2 * 2)) & 0x5555;
+}
+#endif
 
 INCLUDE_ASM("render/graphicsman", func_0036A3E0);
-
 INCLUDE_ASM("render/graphicsman", func_0036A428);
 
 //100%
@@ -736,11 +748,66 @@ extern "C" void func_0036CE28(void* self, float a, float b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036CE48);
-
+#ifdef SKIP_ASM
+extern "C" void func_0036CE48(void *arg0) {
+    (*(int *)((char*)(arg0) + (0x14))) = 0;
+    (*(float *)((char*)(arg0) + (0x1C))) = 1e20f;
+}
+#endif
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036CE58);
-
+#ifdef SKIP_ASM
+// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
+extern "C" void func_0036CE58(void *arg0, long long *arg1) {
+    (*(long long *)((char*)(arg0) + (0xB0))) = (long long) *arg1;
+    (*(long long *)((char*)(arg0) + (0xC0))) = (long long) D_004FF120;
+    (*(long long *)((char*)(arg0) + (0xD0))) = (long long) D_004FF120;
+}
+#endif
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036CE80);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 inline asm (a - b). Same body as vu0SubGM (defined later in the unit).
+static inline sGfxVec4 vu0Sub_CE80(const sGfxVec4& a, const sGfxVec4& b)
+{
+    sGfxVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v * s). Same body as vu0ScaleGM (defined later in the unit).
+static inline sGfxVec4 vu0Scale_CE80(const sGfxVec4& v, float s)
+{
+    sGfxVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+extern "C" void func_0036CE80(char* self, sGfxVec4* a, sGfxVec4* b)
+{
+    *(sGfxVec4*)(self + 0xB0) = vu0Sub_CE80(vu0Scale_CE80(*a, 2.0f), *b);
+    *(sGfxVec4*)(self + 0xC0) = vu0Sub_CE80(*b, *a);
+    *(cQuad128*)(self + 0xD0) = D_004FF120;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_0036CEF8);
@@ -800,9 +867,16 @@ extern "C" void func_0036CEF8(char* self, sGfxVec4* a, sGfxVec4* b, sGfxVec4* c)
 }
 #endif
 
-INCLUDE_ASM("render/graphicsman", func_0036CFA8);
-
 extern cQuad128 D_004FF120;
+
+//100%
+INCLUDE_ASM("render/graphicsman", func_0036CFA8);
+#ifdef SKIP_ASM
+extern "C" void func_0036CFA8(char* self, sGfxVec4* v, float s)
+{
+    *(sGfxVec4*)(self + 0xE0) = vu0DivGM(vu0ScaleGM(*v, *(float*)(self + 0xC)), s * *(float*)(self + 0x4C));
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_0036D008);

@@ -269,6 +269,14 @@ extern "C" float func_001139A0(void* self, sVec4_1139A0* pos, sVec4_1139A0* vel,
 #endif
 
 //100%
+INCLUDE_ASM("ai/airpredictor", func_00113A98);
+#ifdef SKIP_ASM
+extern "C" void func_00113A98(void) {
+
+}
+#endif
+
+//100%
 INCLUDE_ASM("ai/airpredictor", func_00113AA0);
 #ifdef SKIP_ASM
 struct sVEntry00113AA0 {

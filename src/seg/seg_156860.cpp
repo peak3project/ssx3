@@ -1026,7 +1026,242 @@ extern "C" void func_00257038(void *self, int mode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_002570D8);
+#ifdef SKIP_ASM
+// PORT: several callees are defined later in the unit with their own parameter types; bind local views by asm label
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0014E2C8_70D8(void* iface, int a1, int a2) __asm__("func_0014E2C8");
+extern "C" void func_0014E5C8_70D8(void* iface, int a1, int a2) __asm__("func_0014E5C8");
+extern "C" float func_00255D88_70D8(int arg0, int arg1) __asm__("func_00255D88");
+extern "C" void func_00257038_70D8(void* self, int mode) __asm__("func_00257038");
+extern "C" void func_00257750_70D8(char* p) __asm__("func_00257750");
+extern "C" int func_002577C8_70D8(char* s) __asm__("func_002577C8");
+extern "C" void func_00257A80_70D8(char* s) __asm__("func_00257A80");
+extern "C" void func_00257CD8_70D8(char* s) __asm__("func_00257CD8");
+extern "C" void func_00257DC0_70D8(char* s) __asm__("func_00257DC0");
+extern "C" void func_00257F98_70D8(char* s) __asm__("func_00257F98");
+extern "C" int func_002581D8_70D8(char* s) __asm__("func_002581D8");
+extern "C" void func_002581E8_70D8(char* s, int a1, int a2) __asm__("func_002581E8");
+extern "C" void func_002581F8_70D8(char* s) __asm__("func_002581F8");
+extern "C" int func_00258280_70D8(char* s) __asm__("func_00258280");
+extern "C" void func_00258290_70D8(char* s, int a1, int a2) __asm__("func_00258290");
+extern "C" void func_002582A0_70D8(char* s) __asm__("func_002582A0");
+extern "C" void func_00258CB0_70D8(void* s) __asm__("func_00258CB0");
+extern "C" int func_003E7450_70D8(int sock, int a1, char* tag, int n) __asm__("func_003E7450");
+extern "C" int func_003E7500_70D8(int sock, char* buf, int* len, int* info) __asm__("func_003E7500");
+extern "C" int func_00416B18_70D8(const char* a, const char* b, int n) __asm__("func_00416B18");
+extern void* D_004A28A8;
+extern int D_004A2EB8;
+extern char D_00481380[];
+
+// PORT: the unit declares func_002570D8 as (void*)
+extern "C" void func_002570D8(void* vs)
+{
+    char* s = (char*)vs;
+    if (*(int*)(s + 0x138) > 0) {
+        char msg[0x100];
+        int info[4];
+        int len;
+        *(int*)(s + 0x138) = *(int*)(s + 0x138) - 1;
+        for (;;) {
+            len = 0x100;
+            if (func_003E7500_70D8(*(int*)(s + 0x140), msg, &len, info) == 0) {
+                break;
+            }
+            if (func_00416B18_70D8(msg, D_00481380, 0xD) != 0) {
+                continue;
+            }
+            for (int i = 0; i < *(int*)(s + 0xB8); i++) {
+                if (*(int*)(s + (i << 2) + 0xC4) == info[2]) {
+                    *(int*)(s + 0x138) = 0;
+                    *(int*)(s + 0x13C) = 1;
+                    break;
+                }
+            }
+            if (*(int*)(s + 0x138) <= 0) {
+                break;
+            }
+        }
+        if (*(int*)(s + 0x138) > 0 && *(int*)(s + 0xB8) < 4) {
+            if (*(int*)(s + 0xBC) > 0) {
+                *(int*)(s + 0xBC) = *(int*)(s + 0xBC) - 1;
+            } else {
+                int sock = func_003E7450_70D8(*(int*)(s + 0x140), *(int*)(s + 0xC0), D_00481380, 0xE);
+                int k = *(int*)(s + 0xB8);
+                *(int*)(s + (k << 2) + 0xC4) = sock;
+                *(int*)(s + 0xB8) = k + 1;
+                *(int*)(s + 0xBC) = 4;
+            }
+        }
+    }
+    *(float*)(s + 0xB0) = *(float*)(s + 0xB0) - 0.15000000596046448f;
+    if (*(float*)(s + 0xB0) < 0.0f) {
+        *(float*)(s + 0xB0) = 0.0f;
+    }
+    if (*(int*)(s + 0x3FC) > 0) {
+        *(int*)(s + 0x3FC) = *(int*)(s + 0x3FC) - 1;
+    }
+    func_00258CB0_70D8(s);
+    func_00257750_70D8(s);
+    if (func_002577C8_70D8(s) != 0) {
+        return;
+    }
+    func_00257CD8_70D8(s);
+    func_00257DC0_70D8(s);
+    func_002581F8_70D8(s);
+    func_002582A0_70D8(s);
+    func_00257F98_70D8(s);
+    if (func_002577C8_70D8(s) != 0) {
+        return;
+    }
+    void* iface = cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    if (*(int*)(s + 0x44) != 0) {
+        switch (*(unsigned int*)(s + 0x70)) {
+        case 0:
+            func_00257038_70D8(s, 1);
+            break;
+        case 1:
+            func_00258290_70D8(s, (int)(s + 0xD4), 0x2C);
+            func_00257038_70D8(s, 2);
+            break;
+        case 2:
+            if (func_00258280_70D8(s) != 0) {
+                func_00257038_70D8(s, 3);
+            }
+            break;
+        case 3:
+            func_002581E8_70D8(s, (int)(s + 0x100), 0x14);
+            func_00257038_70D8(s, 4);
+            break;
+        case 4:
+            if (func_002581D8_70D8(s) != 0) {
+                func_00257038_70D8(s, 5);
+            }
+            break;
+        case 5:
+            func_0014E2C8_70D8(iface, 0, *(int*)(s + 0x3EC));
+            func_00258290_70D8(s, *(int*)(s + 0x3EC), *(int*)(s + 0x3F0));
+            func_00257038_70D8(s, 6);
+            break;
+        case 6:
+            if (func_00258280_70D8(s) != 0) {
+                func_00257038_70D8(s, 7);
+            }
+            break;
+        case 7:
+            func_002581E8_70D8(s, *(int*)(s + 0x3EC), *(int*)(s + 0x3F0));
+            func_00257038_70D8(s, 8);
+            break;
+        case 8:
+            if (func_002581D8_70D8(s) != 0) {
+                func_0014E5C8_70D8(iface, 1, *(int*)(s + 0x3EC));
+                func_00257038_70D8(s, 9);
+            }
+            break;
+        case 9:
+            *(float*)(s + 0x114) = func_00255D88_70D8(D_004A2EB8, *(int*)(s + 0x6C));
+            func_00258290_70D8(s, (int)(s + 0x114), 4);
+            func_00257038_70D8(s, 10);
+            break;
+        case 10:
+            if (func_00258280_70D8(s) != 0) {
+                func_00257038_70D8(s, 11);
+            }
+            break;
+        case 11:
+            func_002581E8_70D8(s, (int)(s + 0x118), 4);
+            func_00257038_70D8(s, 12);
+            break;
+        case 12:
+            if (func_002581D8_70D8(s) != 0) {
+                func_00257038_70D8(s, 13);
+            }
+            break;
+        case 13:
+            func_00257038_70D8(s, 14);
+            break;
+        case 14:
+            func_00257A80_70D8(s);
+            break;
+        case 15:
+            break;
+        }
+    } else {
+        switch (*(unsigned int*)(s + 0x70)) {
+        case 0:
+            func_00257038_70D8(s, 3);
+            break;
+        case 3:
+            func_002581E8_70D8(s, (int)(s + 0xD4), 0x2C);
+            func_00257038_70D8(s, 4);
+            break;
+        case 4:
+            if (func_002581D8_70D8(s) != 0) {
+                func_00257038_70D8(s, 1);
+            }
+            break;
+        case 1:
+            func_00258290_70D8(s, (int)(s + 0x100), 0x14);
+            func_00257038_70D8(s, 2);
+            break;
+        case 2:
+            if (func_00258280_70D8(s) != 0) {
+                func_00257038_70D8(s, 7);
+            }
+            break;
+        case 7:
+            func_002581E8_70D8(s, *(int*)(s + 0x3EC), *(int*)(s + 0x3F0));
+            func_00257038_70D8(s, 8);
+            break;
+        case 8:
+            if (func_002581D8_70D8(s) != 0) {
+                func_0014E5C8_70D8(iface, 0, *(int*)(s + 0x3EC));
+                func_00257038_70D8(s, 5);
+            }
+            break;
+        case 5:
+            func_0014E2C8_70D8(iface, 1, *(int*)(s + 0x3EC));
+            func_00258290_70D8(s, *(int*)(s + 0x3EC), *(int*)(s + 0x3F0));
+            func_00257038_70D8(s, 6);
+            break;
+        case 6:
+            if (func_00258280_70D8(s) != 0) {
+                func_00257038_70D8(s, 11);
+            }
+            break;
+        case 11:
+            func_002581E8_70D8(s, (int)(s + 0x114), 4);
+            func_00257038_70D8(s, 12);
+            break;
+        case 12:
+            if (func_002581D8_70D8(s) != 0) {
+                func_00257038_70D8(s, 9);
+            }
+            break;
+        case 9:
+            *(float*)(s + 0x118) = func_00255D88_70D8(D_004A2EB8, *(int*)(s + 0x6C));
+            func_00258290_70D8(s, (int)(s + 0x118), 4);
+            func_00257038_70D8(s, 10);
+            break;
+        case 10:
+            if (func_00258280_70D8(s) != 0) {
+                func_00257038_70D8(s, 13);
+            }
+            break;
+        case 13:
+            func_00257038_70D8(s, 14);
+            break;
+        case 14:
+            func_00257A80_70D8(s);
+            break;
+        case 15:
+            break;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00257610);

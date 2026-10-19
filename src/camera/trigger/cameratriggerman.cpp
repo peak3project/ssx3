@@ -25,6 +25,14 @@ extern "C" void cCameraTriggerMan_cleanupOnExit(void* self)
 #endif
 
 //100%
+INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CA08);
+#ifdef SKIP_ASM
+extern "C" void func_0016CA08(void) {
+
+}
+#endif
+
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CA10__FPv);
 #ifdef SKIP_ASM
 void func_0016CA10(void* self)
@@ -32,7 +40,106 @@ void func_0016CA10(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CA18);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+void operator_delete(int*);
+extern void* D_004A28A8;
+extern "C" void func_0016BF40(void* self);
+
+struct sCtVec4_CA18 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sCtBox_CA18 {
+    sCtVec4_CA18 min;
+    sCtVec4_CA18 max;
+};
+struct sCtCell_CA18 {
+    int level;
+    int x, y, z;
+};
+struct sCtNode_CA18 {
+    sCtNode_CA18* child[2][2][2];   // 0x00
+    void* lists[3];                 // 0x20
+    int empty()
+    {
+        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
+            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
+            return 0;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (lists[i]) return 0;
+        }
+        return 1;
+    }
+};
+struct sCtRoot_CA18 {
+    sCtCell_CA18 cell;              // 0x00
+    sCtNode_CA18* node;             // 0x10
+};
+
+extern "C" void func_00328F28_CA18(void* out, const void* box) __asm__("func_00328F28");
+extern "C" void func_003284B8_CA18(void* node, int idx, void* item, const void* target, const void* cur) __asm__("func_003284B8");
+
+class cCtShape_CA18 {
+public:
+    char pad[0x24];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual sCtBox_CA18 bounds();
+};
+
+struct sCtTrig_CA18 {
+    int f0;
+    unsigned int mask;              // 0x4
+    cCtShape_CA18* shape;           // 0x8
+    char padC[0x8];
+    char item[0xC];                 // 0x14
+    sCtTrig_CA18* reg;              // 0x20
+};
+
+struct sCtMan_CA18 {
+    sCtTrig_CA18** trigs;           // 0x0
+    int count;                      // 0x4
+};
+
+static inline void remove_CA18(char* w, void* item, const sCtBox_CA18* box)
+{
+    (*(int*)(w + 0xA0))++;
+    sCtCell_CA18 c;
+    func_00328F28_CA18(&c, box);
+    sCtRoot_CA18* r = (sCtRoot_CA18*)w;
+    sCtRoot_CA18* rx = c.x < 0 ? r + 4 : r;
+    sCtRoot_CA18* ry = c.y < 0 ? rx + 2 : rx;
+    sCtRoot_CA18* rz = c.z < 0 ? ry + 1 : ry;
+    sCtRoot_CA18* q = rz;
+    func_003284B8_CA18(q->node, 2, item, &c, q);
+    if (q->node->empty()) {
+        operator_delete((int*)q->node);
+        q->node = 0;
+    }
+}
+
+extern "C" void func_0016CA18_impl(void* vself) __asm__("func_0016CA18");
+extern "C" void func_0016CA18_impl(void* vself)
+{
+    sCtMan_CA18* self = (sCtMan_CA18*)vself;
+    for (int i = 0; i < self->count; i++) {
+        sCtTrig_CA18* t = self->trigs[i];
+        char* w = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x20);
+        sCtBox_CA18 box = t->shape->bounds();
+        remove_CA18(w, t->item, &box);
+    }
+    cCameraTriggerStack_init((cCameraTriggerStack*)((char*)vself + 0x1C));
+    cCameraTriggerStack_init((cCameraTriggerStack*)((char*)vself + 0x3C));
+    func_0016BF40(vself);
+    cCamera_resetChaseControllerSwitches();
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", cCameraTriggerMan_purge);
@@ -181,7 +288,18 @@ extern "C" void cCameraTriggerMan_streamIn(void* self, void* stream)
 }
 #endif
 
+extern void* D_004C5830[];
+extern "C" void* func_0016CEF0(void*, void*, int);
+
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CEA8);
+#ifdef SKIP_ASM
+extern "C" void func_0016CA18();
+
+extern "C" void func_0016CEA8(void) {
+    func_0016CA18();
+}
+#endif
 
 extern void* D_004C5830[];
 extern "C" void* func_0016CEF0(void*, void*, int);
@@ -372,12 +490,18 @@ void* func_0016D1D8(void* self)
 }
 #endif
 
-INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016D1F8);
-
 struct cCameraTriggerStack {
     int field_0x0;
     int field_0x4;
 };
+
+//100%
+INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016D1F8);
+#ifdef SKIP_ASM
+extern "C" int func_0016D1F8(int arg0) {
+    return arg0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", cCameraTriggerStack_init__FP19cCameraTriggerStack);

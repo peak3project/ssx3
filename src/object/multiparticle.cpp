@@ -278,7 +278,25 @@ extern "C" void func_00358380(sMultiPart_58380* self, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/multiparticle", func_00358468);
+#ifdef SKIP_ASM
+// Same stream-like class as func_003584B8_cObj; v01 sits at vtable offset 8, v02 at 0x10.
+class func_00358468_cObj {
+public:
+    virtual void v01(void* buf, int size);
+    virtual void v02(void* buf, int size);
+};
+
+extern char D_004913B8[];
+
+extern "C" void* func_00358468(void* self, func_00358468_cObj* obj)
+{
+    *(char**)((char*)self + 4) = D_004913B8;
+    obj->v02(self, 4);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/multiparticle", func_003584B8);

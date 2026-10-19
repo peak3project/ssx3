@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", cBoardWakeFX_cBoardWakeFX);
@@ -1230,7 +1231,33 @@ extern "C" void func_002E0EE8(sWakeFx0EE8* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E10B8);
+#ifdef SKIP_ASM
+extern int D_004A3AFC;
+
+struct sWake10B8 {
+    char pad0[0x18];
+    int f18;
+    char pad1C[0x4];
+    int f20;
+    float f24;
+};
+
+// PORT: the seed is reinterpreted as a float in [1,2) through memory (type pun).
+static inline float wakeRand10B8()
+{
+    D_004A3AFC = ((D_004A3AFC * 0x18FCD + 0xE9507C) & 0x7FFFFF) | 0x3F800000;
+    return *(float*)&D_004A3AFC - 1.0f;
+}
+
+extern "C" void func_002E10B8(sWake10B8* self)
+{
+    self->f18 = 1;
+    self->f20 = 0;
+    self->f24 = wakeRand10B8() * 0.09999999403953552f + 0.4000000059604645f;
+}
+#endif
 
 INCLUDE_ASM("visualfx/boardwakefx", func_002E1120);
 

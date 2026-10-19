@@ -272,10 +272,25 @@ extern "C" void func_0026C898(void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026C998);
+#ifdef SKIP_ASM
+extern "C" int func_0026CFE8();
+
+extern "C" int func_0026C998(void* self, int a1)
+{
+    int idx = func_0026CFE8();
+    if (idx >= 0) {
+        if (*(int*)(*(char**)((char*)self + 0x58) + idx * 0xC + 4) != 0)
+            return 1;
+        if (*(int*)((char*)self + 0x78) < 0)
+            return 1;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("replay/playbackman", func_0026C9F0);
-
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026CA90);
 #ifdef SKIP_ASM
@@ -296,7 +311,33 @@ extern "C" void func_0026CA90(void* self)
 }
 #endif
 
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/playbackman", func_0026CAF8);
+#ifdef SKIP_ASM
+extern "C" void SYNCTASK_run(int);
+extern "C" void THREAD_yieldticks(int);
+extern "C" int func_0026C998(void* self, int a1);
+extern "C" int func_0026C9F0(void* self, int a1);
+extern "C" int func_0026CFE8();
+extern "C" int func_0026D020(void* self, int idx);
+
+extern "C" int func_0026CAF8(void* self, int a1)
+{
+    int idx;
+    if (*(int*)((char*)self + 0x70) == 0 && (idx = func_0026CFE8()) >= 0 && func_0026C9F0(self, a1) != 0) {
+        while (func_0026C998(self, a1) == 0) {
+            cPlaybackMan_update((cPlaybackMan_C5F8*)self);
+            SYNCTASK_run(0);
+            THREAD_yieldticks(1);
+        }
+        if (func_0026D020(self, idx) != 0) {
+            if (*(int*)(*(char**)((char*)self + 4) + 0xC) > 0)
+                return 1;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026CBB0__FPv);
@@ -441,8 +482,27 @@ extern "C" void func_0026CDF8(void* self)
 INCLUDE_ASM("replay/playbackman", func_0026CE50);
 
 INCLUDE_ASM("replay/playbackman", func_0026CFE8);
-
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026D020);
+#ifdef SKIP_ASM
+extern "C" int func_002C85A0(void* src, int a, int dst);
+extern "C" void func_003E6448(void* dst, int c, int n);
+
+extern "C" int func_0026D020(void* self, int idx)
+{
+    char* entry = (char*)(idx * 0xC + *(int*)((char*)self + 0x58)); // PORT: pointer held as int
+    int data = *(int*)(entry + 4);
+    if (data != 0) {
+        func_002C85A0((void*)data, 0, (int)*(void**)((char*)self + 4));
+        return 1;
+    }
+    char* buf = *(char**)((char*)self + 4);
+    func_003E6448(buf, 0, 0x1C22C);
+    *(int*)(buf + 0) = 0xDBAC0101;
+    *(int*)(buf + 4) = 0x1C200;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026D0A0);
@@ -609,7 +669,44 @@ extern "C" int func_0026D2B0(sPbStream_D2B0* self, sPbChunk_D2B0* chunk)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026D390);
+#ifdef SKIP_ASM
+struct sEntry_D390 {
+    unsigned int len : 12;
+    unsigned int rest : 20;
+    int data;
+};
+
+struct sOwner_D390 {
+    int count;                  // 0x0
+    char pad4[8];
+    sEntry_D390* entries;       // 0xC
+};
+
+extern "C" void func_0026D390(sOwner_D390* self, unsigned int pos)
+{
+    int n = self->count;
+    unsigned int sum = 0;
+    sEntry_D390* p = self->entries;
+    int i = 0;
+    if (n > 0) {
+        sum = p->len;
+        p++;
+        if (pos >= sum) {
+            do {
+                i++;
+                if (i >= n)
+                    break;
+                sum += p->len;
+                p++;
+            } while (pos >= sum);
+        }
+    }
+    self->entries[i].len = sum - pos + 1;
+    self->count = i + 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026D420);

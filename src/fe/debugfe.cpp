@@ -355,7 +355,168 @@ extern "C" void func_0017D688(sDebugFE17D688* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017D6F0);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+extern void* D_004A3028;
+extern char D_004A1320[];
+extern "C" void* cBXString_cBXString4(void* self, const char* str);
+extern "C" void* cBXString_operatorE(void* self, void* other);
+extern "C" void func_002CC3B8(void* menu, void* items);
+extern "C" void func_002CC460(void* list);
+extern "C" void func_0025C610(void* net);
+extern "C" void func_0017DA30(void* self, int a1);
+extern "C" void func_0017DE70(char* self);
+extern "C" void func_001DB418(void* items, void* net);
+extern "C" int func_0025F120(void* net);
+extern "C" char* func_0025F150(void* net, int i);
+extern "C" int func_0025F430(void* net);
+extern "C" int func_004165A8(char* a, char* b);
+extern "C" void func_0025D800(void* a, int b, int c);
+void func_0025CD28(void* a, int b);
+void func_0025FC28(void* a, int b);
+
+
+struct sDebugFE17D6F0 {
+    int f0;                       // 0x0
+    int state;                    // 0x4
+    int menu[0x1A];               // 0x8: menu stack (count first)
+    char items70[0x604 - 0x70];   // 0x70
+    char items604[0x74C - 0x604]; // 0x604
+    char items74C[0xD2C - 0x74C]; // 0x74C
+    char itemsD2C[0x1044 - 0xD2C];   // 0xD2C
+    char items1044[0x18C0 - 0x1044]; // 0x1044
+    char items18C0[0x1A44 - 0x18C0]; // 0x18C0
+    int f1A44;                    // 0x1A44
+    char pad1A48[0x1C04 - 0x1A48];
+    char* user;                   // 0x1C04
+    char* pass;                   // 0x1C08
+    int text;                     // 0x1C0C (cBXString)
+};
+
+static inline void ClearMenu0017D6F0(int* list)
+{
+    while (*list != 0) {
+        func_002CC460(list);
+    }
+}
+
+static inline void SetMenu0017D6F0(int* menu, void* items)
+{
+    ClearMenu0017D6F0(menu);
+    func_002CC3B8(menu, items);
+}
+
+// Debug front end: handles a menu event (id at ev+0, argument at ev+8).
+extern "C" void func_0017D6F0(void* vself, void* ev)
+{
+    sDebugFE17D6F0* self = (sDebugFE17D6F0*)vself;
+    switch (*(int*)ev) {
+    case 0x115: {
+        int* list = self->menu;
+        while (*list != 0) {
+            func_002CC460(list);
+        }
+        if (*(int*)((char*)D_004A28A8 + 0x74) != 0) {
+            self->state = 0;
+        } else {
+            self->state = 0x13;
+            func_002CC3B8(self->menu, self->items604);
+        }
+        break;
+    }
+    case 0x102:
+        func_0017DA30(self, *(int*)((char*)ev + 8));
+        break;
+    case 0xC9:
+        if (*(int*)((char*)D_004A28A8 + 0x74) != 0) {
+            cBXString_cBXString4((char*)D_004A3028 + 0x48, *(char**)((char*)D_004A28A8 + 0xC4));
+            cBXString_cBXString4((char*)D_004A3028 + 0x4C, *(char**)((char*)D_004A28A8 + 0xC8));
+            func_0025C610(D_004A3028);
+            self->state = 5;
+        } else {
+            self->state = 3;
+            func_002CC3B8(self->menu, self->items70);
+        }
+        break;
+    case 0xCB:
+        self->state = 5;
+        cBXString_cBXString4((char*)D_004A3028 + 0x48, self->user);
+        cBXString_cBXString4((char*)D_004A3028 + 0x4C, self->pass);
+        func_0025C610(D_004A3028);
+        break;
+    case 0xD4:
+        if (*(int*)((char*)D_004A28A8 + 0x74) != 0) {
+            self->state = 7;
+            func_0025CD28(D_004A3028, 0);
+        } else {
+            func_001DB418(self->items74C, D_004A3028);
+            func_002CC3B8(self->menu, self->items74C);
+            self->state = 6;
+        }
+        break;
+    case 0xDA:
+        if (*(int*)((char*)D_004A28A8 + 0x74) != 0) {
+            int i;
+            for (i = 0; i < func_0025F120(D_004A3028); i++) {
+                if (func_004165A8(func_0025F150(D_004A3028, i), D_004A1320) == 0) {
+                    func_0025D800(D_004A3028, i, 0);
+                    self->state = 0xB;
+                }
+            }
+        } else {
+            func_002CC3B8(self->menu, self->itemsD2C);
+            self->state = 0xA;
+        }
+        break;
+    case 0xD6:
+    case 0xD8:
+        func_001DB418(self->items74C, D_004A3028);
+        func_002CC3B8(self->menu, self->items74C);
+        self->state = 6;
+        break;
+    case 0xDC:
+        if (func_0025F430(D_004A3028) != 0) {
+            func_002CC3B8(self->menu, self->items1044);
+            self->state = 0xC;
+        } else {
+            func_002CC3B8(self->menu, self->itemsD2C);
+            self->state = 0xA;
+        }
+        break;
+    case 0xED:
+    case 0xF0:
+    case 0xF1: {
+        self->state = 0x11;
+        int* list = self->menu;
+        while (*list != 0) {
+            func_002CC460(list);
+        }
+        func_002CC3B8(self->menu, self->items604);
+        break;
+    }
+    case 0xEF:
+        func_0017DE70((char*)self);
+        self->state = 0x10;
+        break;
+    case 0xEC:
+        if (self->state == 0xC) {
+            int* list = self->menu;
+            while (*list != 0) {
+                func_002CC460(list);
+            }
+            self->state = 0xF;
+            cBXString_operatorE(&self->text, (char*)ev + 8);
+            self->f1A44 = self->text;
+            func_002CC3B8(self->menu, self->items18C0);
+        } else {
+            func_0025FC28(D_004A3028, *(int*)((char*)ev + 8));
+        }
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017DA30);
@@ -409,7 +570,176 @@ extern "C" void func_0017DA30(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017DB18);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+extern void* D_004A2EB8;
+extern void* D_004A3028;
+extern void* D_004A33F4;
+extern char D_0045CE60[];
+struct cAppMan;
+extern "C" void func_002CC3B8(void* menu, void* items);
+extern "C" int func_002CC098(void* menu);
+extern "C" void func_00255F50(void* comm, int a1);
+extern "C" void func_0025B6D8(void* net, int a1);
+extern "C" void func_001DB418(void* items, void* net);
+extern "C" void func_001DB528(void* items, void* net);
+extern "C" void func_001DB620(void* items, void* net);
+extern "C" void func_0025D800(void* a, int b, int c);
+extern "C" int func_00255D50(void* comm, int ch);
+extern "C" void cGameComm_construct(int ch, int host);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+void* func_00232720(void* mem);
+void cAppMan_setNextModule(cAppMan* app, unsigned int module);
+extern "C" void func_00256038(void* comm, int* info);
+extern "C" void func_00266D58(void* p, int ip);
+extern "C" void func_00266E30(void* p);
+
+struct sDebugFE17DB18 {
+    int f0;                          // 0x0
+    unsigned int state;              // 0x4
+    int menu[0x1A];                  // 0x8: menu stack (count first)
+    char items70[0x74C - 0x70];      // 0x70
+    char items74C[0xD2C - 0x74C];    // 0x74C
+    char itemsD2C[0x1044 - 0xD2C];   // 0xD2C
+    char items1044[0x18C0 - 0x1044]; // 0x1044
+    char items18C0[0x1AAC - 0x18C0]; // 0x18C0
+    char items1AAC[0x1C10 - 0x1AAC]; // 0x1AAC
+    int channel;                     // 0x1C10
+};
+
+// Debug front end: runs the menu state machine until the state settles.
+extern "C" void func_0017DB18(void* vself)
+{
+    sDebugFE17DB18* self = (sDebugFE17DB18*)vself;
+    unsigned int state;
+    do {
+        state = self->state;
+        switch (state) {
+        case 0: {
+            char* comm = (char*)D_004A2EB8;
+            bool busy = *(int*)(comm + 0x20) != 1;
+            if (!busy) {
+                func_00255F50(comm, 0);
+            }
+            self->state = 1;
+            break;
+        }
+        case 1:
+            if (*(int*)((char*)D_004A2EB8 + 0x20) != 3 && *(int*)((char*)D_004A2EB8 + 0x20) != 4) {
+                func_0025B6D8(D_004A3028, 0);
+                self->state = 2;
+            }
+            break;
+        case 13:
+            if (func_002CC098(self->menu) == 0) {
+                func_002CC3B8(self->menu, self->items1AAC);
+            }
+            break;
+        case 17:
+            if (func_002CC098(self->menu) == 0) {
+                self->state = 0xC;
+                func_002CC3B8(self->menu, self->items1044);
+            }
+            break;
+        case 24:
+            if (func_002CC098(self->menu) == 0) {
+                func_002CC3B8(self->menu, self->items1044);
+                self->state = 0xC;
+            }
+            break;
+        case 21:
+            if (func_002CC098(self->menu) == 0) {
+                self->state = 3;
+                func_002CC3B8(self->menu, self->items70);
+            }
+            break;
+        case 20:
+            if (func_002CC098(self->menu) == 0) {
+                self->state = 3;
+                func_002CC3B8(self->menu, self->items70);
+            }
+            break;
+        case 18:
+        case 19:
+            if (func_002CC098(self->menu) == 0) {
+                self->state = 0;
+            }
+            break;
+        case 22:
+            if (func_002CC098(self->menu) == 0) {
+                func_001DB418(self->items74C, D_004A3028);
+                func_002CC3B8(self->menu, self->items74C);
+                self->state = 6;
+            }
+            break;
+        case 23:
+            if (func_002CC098(self->menu) == 0) {
+                func_002CC3B8(self->menu, self->itemsD2C);
+                self->state = 0xA;
+            }
+            break;
+        case 15: {
+            int* menu = self->menu;
+            if (*menu == 0) {
+                func_002CC3B8(menu, self->items18C0);
+            }
+            break;
+        }
+        case 6: {
+            int* menu = self->menu;
+            if (*menu == 0) {
+                func_002CC3B8(menu, self->items74C);
+            }
+            break;
+        }
+        case 10: {
+            int* menu = self->menu;
+            char* items = self->itemsD2C;
+            if (*menu == 0) {
+                func_002CC3B8(menu, items);
+            }
+            func_001DB528(items, D_004A3028);
+            break;
+        }
+        case 12:
+            if (self->menu[0] == 0) {
+                func_0025D800(D_004A3028, -1, 0);
+                self->state = 0xB;
+            } else {
+                func_001DB620(self->items1044, D_004A3028);
+            }
+            break;
+        case 3: {
+            int* menu = self->menu;
+            if (*menu == 0) {
+                func_002CC3B8(menu, self->items70);
+            }
+            break;
+        }
+        case 14: {
+            int* menu = self->menu;
+            if (*menu == 0) {
+                self->state = 0xC;
+                func_002CC3B8(menu, self->items1044);
+            }
+            break;
+        }
+        case 16:
+            if (func_00255D50(D_004A2EB8, self->channel) != 0) {
+                int info[4];
+                cGameComm_construct(self->channel, *(int*)((char*)D_004A3028 + 0xB4));
+                cAppMan_setNextModule((cAppMan*)D_004A28A8, (unsigned int)func_00232720(cMemMan_alloc(8, D_0045CE60, 0x100, 0)));
+                func_00256038(D_004A2EB8, info);
+                func_00266D58(D_004A33F4, info[0]);
+                func_00266E30(D_004A33F4);
+            }
+            break;
+        }
+    } while (self->state != state);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017DE70);

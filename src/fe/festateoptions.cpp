@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptions_onCreateScreen);

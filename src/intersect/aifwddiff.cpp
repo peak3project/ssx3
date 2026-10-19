@@ -403,10 +403,23 @@ extern "C" int func_00328030(void* self, sVec4_28030* p, void* a2, void* a3, sVe
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/aifwddiff", func_00328170);
+#ifdef SKIP_ASM
+extern "C" void func_003281D0(void *, int, void *, int, int);
+
+extern "C" void func_00328170(void *arg0) {
+    void *temp_4;
+
+    temp_4 = (*(void **)((char*)(arg0) + (0x98)));
+    if ((*(int *)((char*)(temp_4) + (8))) != 0) {
+        (*(int *)((char*)((*(void **)((char*)(arg0) + (0x98)))) + (0x28))) = func_0032DF28(temp_4);
+    }
+    func_003281D0(arg0, (*(int *)((char*)((*(void **)((char*)(arg0) + (0x98)))) + (0xC))), (char*)arg0 + 0x80, 0, 0);
+}
+#endif
 
 INCLUDE_ASM("intersect/aifwddiff", func_003281D0);
-
 //100%
 INCLUDE_ASM("intersect/aifwddiff", func_00328360);
 #ifdef SKIP_ASM

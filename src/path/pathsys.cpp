@@ -184,7 +184,19 @@ extern "C" sPathEntry* func_0026B5E0(sPathEntryList* list, int type, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("path/pathsys", func_0026B648);
+#ifdef SKIP_ASM
+extern "C" int func_0026B648(void *arg0, int arg1) {
+    int temp_2;
+
+    temp_2 = (*(int *)((char*)(arg0) + (0)));
+    if ((temp_2 <= 0) || (arg1 >= temp_2) || (arg1 < 0)) {
+        return 0;
+    }
+    return (*(int *)((char*)(arg0) + (4))) + (arg1 * 0x28);
+}
+#endif
 
 //100%
 INCLUDE_ASM("path/pathsys", func_0026B680);
@@ -388,10 +400,20 @@ INCLUDE_ASM("path/pathsys", func_0026BAA8);
 INCLUDE_ASM("path/pathsys", func_0026BAE8);
 
 INCLUDE_ASM("path/pathsys", func_0026C3D0);
-
+//100%
 INCLUDE_ASM("path/pathsys", func_0026C400);
-
+#ifdef SKIP_ASM
+extern "C" int func_0026C400(void *arg0) {
+    return (*(int *)((char*)(arg0) + (4)));
+}
+#endif
+//100%
 INCLUDE_ASM("path/pathsys", func_0026C408);
+#ifdef SKIP_ASM
+extern "C" int func_0026C408(int *arg0) {
+    return *arg0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("path/pathsys", func_0026C410__FPv);
@@ -409,13 +431,29 @@ void func_0026C418(void* self)
 }
 #endif
 
-INCLUDE_ASM("path/pathsys", func_0026C420);
-
-INCLUDE_ASM("path/pathsys", func_0026C428);
-
-INCLUDE_ASM("path/pathsys", func_0026C430);
-
 extern "C" void* func_0026BAE8(int, int);
+
+//100%
+INCLUDE_ASM("path/pathsys", func_0026C420);
+#ifdef SKIP_ASM
+extern "C" int func_0026C420(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x38)));
+}
+#endif
+//100%
+INCLUDE_ASM("path/pathsys", func_0026C428);
+#ifdef SKIP_ASM
+extern "C" int func_0026C428(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x3C)));
+}
+#endif
+//100%
+INCLUDE_ASM("path/pathsys", func_0026C430);
+#ifdef SKIP_ASM
+extern "C" float func_0026C430(void *arg0) {
+    return (*(float *)((char*)(arg0) + (0x38)));
+}
+#endif
 
 //99.38%
 INCLUDE_ASM("path/pathsys", func_0026C438__FPv);

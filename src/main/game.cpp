@@ -635,7 +635,199 @@ extern "C" void func_0022D6C8(char* self, int mode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/game", func_0022D8D8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+struct cWorldView;
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+unsigned int cWorldView_getNumSections_u(cWorldView* view) __asm__("cWorldView_getNumSections__FP10cWorldView");
+int cWorldView_isSectionLoaded(cWorldView* view, int section);
+extern "C" void* func_00144D38(void* iface, int i);
+extern "C" int func_00144D50(void* iface, int i);
+extern "C" void func_0022DE58(void* self, int v);
+extern "C" void func_0022DE98(void* self);
+extern "C" void func_0022DF50(void* self);
+void* func_0022DFD0(void* self);
+extern "C" void func_0022DFF0(void* self);
+extern "C" int* func_0022E348(void* self, int* node);
+extern "C" void func_0022E360(void* self, int* prev, int* node);
+extern "C" void func_00230338(void* game, int section);
+extern "C" void func_00230360(void* game, int section);
+extern "C" void func_003A7058(void* p, int v);
+extern "C" int func_003A9890(cWorldView* view, int section);
+extern "C" int func_003A98C8(cWorldView* view, int section, float f);
+extern "C" int func_003A9958(cWorldView* view, int section);
+extern "C" void func_003A99D8_m662(cWorldView* view, int section) __asm__("func_003A99D8");
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern int D_00442150[];
+extern float D_0044C208[];
+extern char D_0047B470[];
+extern char D_0047B480[];
+extern char D_004A2A18[];
+
+static inline cWorldView* gameWorldView_22D8D8(void* self)
+{
+    return (cWorldView*)(*(char**)*(char**)(*(char**)((char*)self + 0x1B0) + 0x10) + 0x10);
+}
+
+extern "C" void func_0022D8D8(void* self)
+{
+    char buf[0x100];
+    if (*(int*)((char*)self + 0x1A8) != 0) {
+        func_0022DE98(self);
+    }
+    int* node = func_0022E348(self, 0);
+    int* prev = 0;
+    if (node == 0 && *(int*)((char*)self + 0x1B4) == 0) {
+        return;
+    }
+    int busy = 0;
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
+    int changed = 0;
+    int forceOff = 0;
+    int pending = 0;
+    while (node != 0) {
+        int idx = *node;
+        int remove = 0;
+        int section = D_00442168[idx].field_0x4;
+        switch (D_00442168[idx].field_0x8) {
+        case 7:
+            if (func_003A9890(gameWorldView_22D8D8(self), section)) {
+                D_00442168[idx].field_0x8 = 0;
+            } else {
+                busy = 1;
+            }
+            break;
+        case 5:
+            if (func_003A9958(gameWorldView_22D8D8(self), section)) {
+                D_00442168[idx].field_0x8 = 7;
+                func_00230360(*(void**)((char*)self + 0x1B0), section);
+            }
+            busy = 1;
+            break;
+        case 6:
+            if (cWorldView_isSectionLoaded(gameWorldView_22D8D8(self), section)) {
+                D_00442168[idx].field_0x8 = 1;
+                func_00230338(*(void**)((char*)self + 0x1B0), section);
+            } else {
+                changed = 1;
+            }
+            break;
+        case 8:
+            if (cWorldView_isSectionLoaded(gameWorldView_22D8D8(self), section)) {
+                D_00442168[idx].field_0x8 = 2;
+                func_00230338(*(void**)((char*)self + 0x1B0), section);
+                func_003A99D8_m662(gameWorldView_22D8D8(self), section);
+            } else {
+                changed = 1;
+                forceOff = 1;
+            }
+            break;
+        case 3:
+            pending = 1;
+            break;
+        case 4:
+            pending = 1;
+            forceOff = 1;
+            break;
+        case 1:
+            if (func_00144D50(iface, idx) == 4) {
+                func_0022DE58(self, idx);
+            }
+            remove = 1;
+            break;
+        case 2:
+            if (func_00144D50(iface, idx) == 4) {
+                func_0022DE58(self, idx);
+            }
+            if (*(int*)((char*)self + 0x1A8) != 0) {
+                func_0022DE98(self);
+            }
+            remove = 1;
+            break;
+        case 0:
+            remove = 1;
+            break;
+        }
+        if (remove) {
+            func_0022E360(self, prev, node);
+            node = prev;
+        }
+        prev = node;
+        node = func_0022E348(self, prev);
+    }
+    if (!busy && pending) {
+        int* n = func_0022E348(self, 0);
+        char* fmt = cWorldView_getNumSections_u(gameWorldView_22D8D8(self)) >= 2 ? D_0047B470 : D_0047B480;
+        for (; n != 0; n = func_0022E348(self, n)) {
+            int idx = *n;
+            int section = D_00442168[idx].field_0x4;
+            sprintf(buf, D_004A2A18, fmt, func_00144D38(iface, idx));
+            int* state = &D_00442168[idx].field_0x8;
+            if (*state == 3) {
+                if (func_003A98C8(gameWorldView_22D8D8(self), section, D_0044C208[D_00442168[idx].field_0xc])) {
+                    changed = 1;
+                    *state = 6;
+                }
+            } else if (*state == 4) {
+                if (func_003A98C8(gameWorldView_22D8D8(self), section, D_0044C208[D_00442168[idx].field_0xc])) {
+                    *state = 8;
+                    changed = 1;
+                    forceOff = 1;
+                }
+            }
+        }
+    }
+    if (changed) {
+        *(int*)((char*)self + 0x1C4) = 2;
+    } else if (*(int*)((char*)self + 0x1C0) == 0) {
+        *(int*)((char*)self + 0x1C4) = 3;
+    } else {
+        char* w = *(char**)*(char**)(*(char**)((char*)self + 0x1B0) + 0x10);
+        if (*(int*)(w + 0x250) != 0 && *(int*)(w + 0x2A0) != 0) {
+            *(int*)((char*)self + 0x1C4) = 1;
+        } else {
+            *(int*)((char*)self + 0x1C4) = 0;
+        }
+    }
+    int hold = 0;
+    switch (*(unsigned int*)((char*)self + 0x1B4)) {
+    case 0:
+        break;
+    case 1:
+        func_0022DF50(self);
+        *(int*)((char*)self + 0x1B4) = 2;
+        break;
+    case 2:
+        break;
+    case 3:
+        hold = 1;
+        func_0022DF50(self);
+        *(int*)((char*)self + 0x1B4) = 4;
+        break;
+    case 4:
+        if (forceOff) {
+            hold = 1;
+        } else if (func_0022DFD0(self) != 0) {
+            func_0022DFF0(self);
+            *(int*)((char*)self + 0x1B4) = 0;
+            *(int*)((char*)self + 0x1B8) = 0;
+        } else {
+            hold = 1;
+        }
+        break;
+    }
+    if (forceOff || hold) {
+        *(int*)((char*)self + 0x1D0) = 0;
+        *(int*)((char*)self + 0x1C4) = 4;
+    } else {
+        *(int*)((char*)self + 0x1D0) = 1;
+    }
+    func_003A7058(*(char**)*(char**)(*(char**)((char*)self + 0x1B0) + 0x10) + 0x300, D_00442150[*(int*)((char*)self + 0x1C4)]);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/game", func_0022DE58);
@@ -811,5 +1003,21 @@ extern "C" int func_0022E0E0(void* self, int a1)
 }
 #endif
 
-INCLUDE_ASM("main/game", func_0022E118);
 
+//100% - objdiff report; single-function view differs only in a relocation name
+INCLUDE_ASM("main/game", func_0022E118);
+#ifdef SKIP_ASM
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0022D088(void* self, int a1, int a2);
+extern signed char D_00535C11[];
+
+extern "C" void func_0022E118(void* self, int a1)
+{
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (D_00535C11[0] == 0) {
+        func_0022D088(self, a1, 1);
+        *(int*)((char*)self + 0x1CC) = 1;
+    }
+}
+#endif

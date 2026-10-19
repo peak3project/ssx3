@@ -490,6 +490,14 @@ int func_002306A8(void* self, int i)
 INCLUDE_ASM("main/gameload", func_002306B8);
 
 //100%
+INCLUDE_ASM("main/gameload", func_00230E90);
+#ifdef SKIP_ASM
+extern "C" void func_00230E90(void) {
+
+}
+#endif
+
+//100%
 INCLUDE_ASM("main/gameload", func_00230E98);
 #ifdef SKIP_ASM
 extern "C" int func_00231CF0(void* self);
@@ -765,7 +773,25 @@ void func_00231278(void* self, int val)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_00231280);
+#ifdef SKIP_ASM
+extern "C" void func_00231280(void *self) {
+    void *obj;
+    void *vtbl;
+
+    if (*(int *)((char*)self + 0x208) != 0) {
+        *(int *)((char*)self + 0x208) = 0;
+    }
+    if (*(int *)((char*)self + 0x20C) != 0) {
+        obj = *(void **)((char*)self + 0x204);
+        vtbl = *(void **)((char*)obj + 0xC);
+        (*(void (**)(void *))((char*)vtbl + 0x24))((char*)obj + *(short *)((char*)vtbl + 0x20));
+        *(int *)((char*)self + 0x20C) = 0;
+        *(void **)((char*)self + 0x204) = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_002312D8);

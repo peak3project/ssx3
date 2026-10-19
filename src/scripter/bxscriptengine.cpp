@@ -324,7 +324,26 @@ extern "C" int func_00282450(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282498);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" void* func_00282CB0_v(void) __asm__("func_00282CB0");
+void func_00274808(void* self, float t);
+
+extern "C" int func_00282498(float t)
+{
+    if (t < 0.01f) return 0;
+    char* c = (char*)func_00282CB0_v();
+    if (c == 0) return 0;
+    if (*(int*)(c + 4) == 1) {
+        *(float*)(c + 0x18) = t;
+        return 1;
+    }
+    func_00274808(*(void**)c, t);
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("scripter/bxscriptengine", func_00282500);
 
@@ -425,9 +444,24 @@ extern "C" int func_00282540_impl(sScriptEngine_282540* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282698);
+#ifdef SKIP_ASM
+extern "C" void func_00272BF8(int);
 
+extern "C" void func_00282698(void *arg0) {
+    func_00272BF8((*(int *)((char*)(arg0) + (0x2B8))));
+}
+#endif
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_002826B8);
+#ifdef SKIP_ASM
+extern "C" void func_00272C70(int);
+
+extern "C" void func_002826B8(void *arg0) {
+    func_00272C70((*(int *)((char*)(arg0) + (0x2B8))));
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_002826D8);
@@ -467,7 +501,15 @@ extern "C" void func_00282720(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282790);
+#ifdef SKIP_ASM
+extern int D_004A34E8;
+
+extern "C" int func_00282790(void) {
+    return D_004A34E8;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282798);

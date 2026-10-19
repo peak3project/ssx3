@@ -264,7 +264,46 @@ INCLUDE_ASM("sound/asyncsys", func_0028A728);
 
 INCLUDE_ASM("sound/asyncsys", func_0028AAF8);
 
+//100%
 INCLUDE_ASM("sound/asyncsys", func_0028B0F0);
+#ifdef SKIP_ASM
+struct sVE_0028B0F0 { short delta; short index; void (*fn)(void*, int, int, int); };
+
+struct sRing_0028B0F0 {
+    int pad0;
+    int* data;  // 0x4
+    int tail;   // 0x8
+    int head;   // 0xC
+    char pad10[0x20];
+};
+
+struct sAsync_0028B0F0 {
+    char pad0[0x18C];
+    sRing_0028B0F0 q1;       // 0x18C
+    sRing_0028B0F0 q2;       // 0x1BC
+    char pad1ec[0];
+};
+
+extern "C" void func_0028B0F0(sAsync_0028B0F0* self, int arg)
+{
+    sVE_0028B0F0* e = &(*(sVE_0028B0F0**)((char*)self + 0x1D4))[3];
+    void (**pf)(void*, int, int, int) = &e->fn;
+    char* thisp = (char*)self + e->delta;
+    sRing_0028B0F0* q1 = &self->q1;
+    int a;
+    int b;
+    if (self->q1.tail == self->q1.head)
+        a = -1;
+    else
+        a = q1->data[q1->head];
+    sRing_0028B0F0* q2 = &self->q2;
+    if (self->q2.tail == self->q2.head)
+        b = -1;
+    else
+        b = q2->data[q2->head];
+    (*pf)(thisp, a, arg, b);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/asyncsys", func_0028B180);
@@ -277,7 +316,21 @@ extern "C" void* func_0028B180()
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/asyncsys", func_0028B188);
+#ifdef SKIP_ASM
+extern char* D_004A28A8;
+
+extern "C" int func_0028B188(void) {
+    int var_4;
+
+    var_4 = 0;
+    if (((*(int *)((char*)(D_004A28A8) + (0x7C))) != 0) || ((*(int *)((char*)(D_004A28A8) + (0x80))) != 0)) {
+        var_4 = 1;
+    }
+    return var_4;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/asyncsys", func_0028B1B0);
@@ -357,7 +410,13 @@ extern "C" void* func_0028B210(int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/asyncsys", func_0028B230);
+#ifdef SKIP_ASM
+extern "C" int func_0028B230(void) {
+    return (*(int *)((char*)((*(void **)((char*)(D_004A28A8) + (0x84)))) + (0x10)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/asyncsys", func_0028B240__FPv);

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 #ifdef SKIP_ASM
 // Classes here derive virtually from cRider. g++ 2.95 then emits, in their destructors, the vtable fix-ups

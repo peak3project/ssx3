@@ -64,9 +64,28 @@ extern "C" void func_003AC8F0(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AC980);
+#ifdef SKIP_ASM
+extern "C" void func_003ACAD0(int);
 
+extern "C" void func_003AC980(void *self) {
+    unsigned int i;
+
+    for (i = 0; i < *(unsigned int *)((char *)self + 8); i++) {
+        func_003ACAD0(*(int *)((char *)self + 4) + i * 0xC);
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AC9E0);
+#ifdef SKIP_ASM
+extern "C" void func_003ACBB8(int, int);
+
+extern "C" void func_003AC9E0(void *arg0, int arg1, int arg2) {
+    func_003ACBB8((*(int *)((char*)(arg0) + (4))) + (arg1 * 0xC), arg2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003ACA10);
@@ -131,9 +150,70 @@ extern "C" void func_003ACA70(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003ACAD0);
-
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" void ASYNCFILE_release_CAD0(int, int *, int *) __asm__("ASYNCFILE_release");
+extern "C" void func_002523A8_CAD0(int) __asm__("func_002523A8");
+extern "C" void func_003B47F8_CAD0(int, int) __asm__("func_003B47F8");
+extern "C" int func_003B4818_CAD0(int) __asm__("func_003B4818");
+extern "C" int func_003DF980_CAD0(int) __asm__("func_003DF980");
+extern "C" void func_003E6574_CAD0(int, int, int) __asm__("func_003E6574");
+int operator_new_CAD0(unsigned int, void*, int, int) __asm__("operator_new__FUi");
+extern char D_00495080[];
+extern "C" void func_003ACAD0_impl(void *self_) __asm__("func_003ACAD0");
+extern "C" void func_003ACAD0_impl(void *self_) {
+    char *self = (char*)self_;
+    short st = *(short*)self;
+    if (st == 1 && func_003DF980_CAD0(*(int*)(self + 4)) == st) {
+        int sp0 = 0;
+        int sp4 = 0;
+        ASYNCFILE_release_CAD0(*(int*)(self + 4), &sp0, &sp4);
+        if (sp0 != 0) {
+            if (sp4 > 0) {
+                int t = func_003B4818_CAD0(sp0);
+                if (t > 0) {
+                    int r = operator_new_CAD0(t, D_00495080, 0x20000000, 0);
+                    *(int*)(self + 8) = r;
+                    func_003B47F8_CAD0(sp0, r);
+                } else {
+                    int r = operator_new_CAD0(sp4, D_00495080, 0x20000000, 0);
+                    *(int*)(self + 8) = r;
+                    func_003E6574_CAD0(r, sp0, sp4);
+                }
+                func_002523A8_CAD0(sp0);
+            }
+        }
+        *(short*)self = 2;
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003ACBB8);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct sBXStr_CBB8 { char *p; int pad[3]; sBXStr_CBB8() {} };
+extern "C" void func_003186D0_CBB8(sBXStr_CBB8*, const char*, int) __asm__("func_003186D0");
+extern "C" void func_00318630_CBB8(sBXStr_CBB8*, sBXStr_CBB8*, const char*) __asm__("func_00318630");
+extern "C" int func_003DF690_CBB8(const char*, int) __asm__("func_003DF690");
+extern "C" void cBXString_dt_CBB8(sBXStr_CBB8*, int) __asm__("cBXString__cBXString");
+extern char D_004A47C0[];
+extern char D_004A4818[];
+extern "C" void func_003ACBB8_impl(void *self, int arg) __asm__("func_003ACBB8");
+extern "C" void func_003ACBB8_impl(void *self, int arg) {
+    sBXStr_CBB8 a;
+    sBXStr_CBB8 b;
+    *(short*)((char*)self + 2) = 0;
+    func_003186D0_CBB8(&b, D_004A47C0, arg);
+    func_00318630_CBB8(&a, &b, D_004A4818);
+    *(int*)((char*)self + 4) = func_003DF690_CBB8(a.p, 0x100);
+    cBXString_dt_CBB8(&a, 2);
+    cBXString_dt_CBB8(&b, 2);
+    int n = *(int*)((char*)self + 4);
+    *(short*)((char*)self + 0) = n <= 0 ? 2 : 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003ACC50);
@@ -540,7 +620,6 @@ extern "C" void* func_003ADE08(void* self, int a1, int a2, int a3, int a4, int a
 INCLUDE_ASM("world/wscriptcache", func_003ADE58);
 
 INCLUDE_ASM("world/wscriptcache", func_003ADE90);
-
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003ADEC8);
 #ifdef SKIP_ASM
@@ -648,7 +727,13 @@ extern "C" void func_003ADEC8(void* selfp, int a1, int a2, int a3, int a4, int a
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AE2F8);
+#ifdef SKIP_ASM
+extern "C" void func_003AE2F8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x70))) = arg1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AE300);
@@ -844,7 +929,21 @@ extern "C" int func_003AE6C8(void* self, float f)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AE718);
+#ifdef SKIP_ASM
+extern "C" int func_003AF258(int, int);
+
+extern "C" int func_003AE718(void *self) {
+    if (*(int *)((char *)self + 0x70) != 0) {
+        if (*(int *)((char *)self + 0x74) != 0) {
+            return func_003AF258(*(int *)((char *)self + 0x70), *(int *)((char *)self + 0x44));
+        }
+        return func_003AF258(*(int *)((char *)self + 0x70), func_004139F8(*(float *)((char *)self + 0x48)));
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003AE780);
 
@@ -922,7 +1021,23 @@ void* func_003AE958(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AE978);
+#ifdef SKIP_ASM
+extern "C" int func_003AEF48(int);
+
+extern "C" int func_003AE978(int *arg0) {
+    int temp_4;
+    int var_2;
+
+    temp_4 = *arg0;
+    var_2 = 0;
+    if (temp_4 != 0) {
+        var_2 = func_003AEF48(temp_4);
+    }
+    return var_2;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AE9A0);
@@ -1215,7 +1330,25 @@ extern "C" int func_003AEEF8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AEF48);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" int func_003B7E70(int, int);
+int func_003AEF48_impl(void *self, int arg) __asm__("func_003AEF48");
+
+int func_003AEF48_impl(void *self, int arg) {
+    int r;
+
+    if (*(int *)((char *)self + 0xC) != -1) {
+        func_003B58A0();
+        r = func_003B7E70(*(int *)((char *)self + 0xC), arg);
+        func_003B58D8();
+        return r;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AEFA8);
@@ -1246,59 +1379,281 @@ extern "C" int func_003AEFA8(void* self)
 }
 #endif
 
+extern void* D_00456890[];
+
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF010);
+#ifdef SKIP_ASM
+extern "C" void *func_003AF010(void *arg0) {
+    (*(int *)((char*)(arg0) + (0))) = 0;
+    (*(int *)((char*)(arg0) + (4))) = 0;
+    return arg0;
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003AF020);
-
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF0C8);
+#ifdef SKIP_ASM
+extern "C" void* func_003B0340(void*);
+extern "C" void f03A8_F0C8(void*, int) __asm__("func_003B03A8");
+extern "C" void f03B0_F0C8(void*, int) __asm__("func_003B03B0");
+extern "C" void f03B8_F0C8(void*, int) __asm__("func_003B03B8");
+extern "C" void f03C0_F0C8(void*, int) __asm__("func_003B03C0");
+extern "C" void f03C8_F0C8(void*, unsigned int) __asm__("func_003B03C8");
+extern "C" void f03D0_F0C8(void*, int) __asm__("func_003B03D0");
+extern char D_00495260[];
+struct sAlloc_F0C8 {
+    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
+    void (*free)(void* p);
+    int flags;
+};
+// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
+extern sAlloc_F0C8 D_00509430_F0C8 __asm__("D_00509430");
+
+struct sElem_F0C8 { char pad[0x34]; };
+struct sSelf_F0C8 { sElem_F0C8* arr; unsigned int count; };
+
+extern "C" void func_003AF0C8(void* vself, unsigned int count, int a2, int a3, int a4, int a5)
+{
+    sSelf_F0C8* self = (sSelf_F0C8*)vself;
+    unsigned int* raw;
+    char* arr;
+    char* p;
+    int i;
+    unsigned int k;
+
+    i = count - 1;
+    raw = (unsigned int*)D_00509430_F0C8.alloc(D_00495260, count * 0x34 + 0x10, 0, 0, D_00509430_F0C8.flags);
+    arr = (char*)raw + 0x10;
+    *raw = count;
+    p = arr;
+    if (count != 0) {
+        do {
+            i--;
+            func_003B0340(p);
+            p += 0x34;
+        } while (i != -1);
+    }
+    self->arr = (sElem_F0C8*)arr;
+    self->count = count;
+    if (count != 0) {
+        f03D0_F0C8(arr, 0);
+    }
+    for (k = 0; k < self->count; k++) {
+        f03A8_F0C8(&self->arr[k], a2);
+        f03B0_F0C8(&self->arr[k], a3);
+        f03B8_F0C8(&self->arr[k], a4);
+        f03C0_F0C8(&self->arr[k], a5);
+        f03C8_F0C8(&self->arr[k], k);
+    }
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003AF230);
 
 INCLUDE_ASM("world/wscriptcache", func_003AF258);
-
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF2F8);
+#ifdef SKIP_ASM
+extern "C" int func_003AF2F8(void *arg0) {
+    return (*(int *)((char*)(arg0) + (4)));
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003AF300);
 
 INCLUDE_ASM("world/wscriptcache", func_003AF378);
-
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("world/wscriptcache", func_003AF428);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct sNames_F428 { const char* e[5]; };
+struct sVals_F428 { unsigned int e[5]; };
+extern const sNames_F428 D_00495290;
+extern const sVals_F428 D_004952A8;
+extern "C" int func_003AF378(const char*, const char*) __asm__("func_003AF378");
 
+extern "C" unsigned int func_003AF428(char* s, unsigned int len)
+{
+    unsigned int i;
+    char ch = 9;
+    unsigned int r;
+    unsigned int j;
+
+    for (i = 0; i < len; i++) {
+        char c = s[i];
+        if (c == 9 || c == 13) {
+            s[i] = 0;
+            ch = c;
+            break;
+        }
+    }
+    sNames_F428 names = D_00495290;
+    sVals_F428 vals = D_004952A8;
+    r = 0xFFFFFFFF;
+    for (j = 0; j < 5; j++) {
+        if (func_003AF378(names.e[j], s) == 0) {
+            r = vals.e[j];
+            break;
+        }
+    }
+    if (i != len) {
+        s[i] = ch;
+    }
+    return r;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF560);
+#ifdef SKIP_ASM
+// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
+extern "C" long func_0041E9E0(unsigned char *s, unsigned char **end, int base);
+
+extern "C" int func_003AF560(unsigned char **pp, unsigned int *plen, int *out) {
+    unsigned int i;
+    int ch = 9;
+    unsigned char *end;
+    long r;
+
+    for (i = 0; i < *plen; i++) {
+        unsigned char c = (*pp)[i];
+        if ((unsigned int)(c - 9) < 2U) {
+            ch = (signed char)c;
+            (*pp)[i] = 0;
+            break;
+        }
+    }
+    r = func_0041E9E0(*pp, &end, 10);
+    *plen = *plen - (end - *pp);
+    if (i != *plen) {
+        (*pp)[i] = (unsigned char)ch;
+    }
+    if (end == *pp) {
+        return 0;
+    }
+    *out = (int)r;
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003AF670);
 
 INCLUDE_ASM("world/wscriptcache", func_003AF7F0);
-
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B0340);
-
+#ifdef SKIP_ASM
+extern "C" void *func_003B0340(void *self) {
+    *(int *)((char *)self + 0x00) = 0x20;
+    *(int *)((char *)self + 0x04) = 0x15E;
+    *(int *)((char *)self + 0x08) = 0x258;
+    *(int *)((char *)self + 0x0C) = 0x32;
+    *(unsigned *)((char *)self + 0x10) = 0xFFFFFFFFu;
+    *(unsigned char *)((char *)self + 0x24) = 0xFF;
+    *(unsigned char *)((char *)self + 0x25) = 0xFF;
+    *(unsigned char *)((char *)self + 0x26) = 0xFF;
+    *(int *)((char *)self + 0x18) = 2;
+    *(unsigned *)((char *)self + 0x14) = 0xFFFFFFFFu;
+    *(unsigned char *)((char *)self + 0x27) = 0xFF;
+    *(int *)((char *)self + 0x1C) = 2;
+    *(int *)((char *)self + 0x20) = 0;
+    *(int *)((char *)self + 0x28) = 0;
+    *(int *)((char *)self + 0x2C) = 0;
+    *(int *)((char *)self + 0x30) = 0;
+    return self;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03A8);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03A8(int *arg0, int arg1) {
+    *arg0 = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03B0);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03B0(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (4))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03B8);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03B8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (8))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03C0);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03C0(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0xC))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03C8);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03C8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x10))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03D0);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03D0(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x14))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03D8);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03D8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x18))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03E0);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03E0(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x1C))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03E8);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03E8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x20))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03F0);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03F0(void *arg0, signed char arg1) {
+    (*(signed char *)((char*)(arg0) + (0x24))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B03F8);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B03F8(void *arg0, signed char arg1) {
+    (*(signed char *)((char*)(arg0) + (0x25))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B0400);
-
+#ifdef SKIP_ASM
+extern "C" void func_003B0400(void *arg0, signed char arg1) {
+    (*(signed char *)((char*)(arg0) + (0x26))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B0408);
-
-extern void* D_00456890[];
+#ifdef SKIP_ASM
+extern "C" void func_003B0408(void *arg0, signed char arg1) {
+    (*(signed char *)((char*)(arg0) + (0x27))) = arg1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003B0410__FPv);
@@ -2333,7 +2688,48 @@ extern "C" void func_003B17A8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B1878);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern unsigned char D_0044C2D8[];
+extern int D_005094F8_B1878[] __asm__("D_005094F8");
+
+extern "C" int func_003B1878(void)
+{
+    int r;
+    int v;
+    int t;
+
+    if (*(int*)((char*)D_0050A088.ptr + 0x420) != 0) {
+        r = 0;
+        if (D_005094F8_B1878[0] >= 0xAF1) {
+            r = (int)func_003B1300(3);
+        }
+    } else {
+        r = 0;
+    }
+    if (*(int*)((char*)D_0050A088.ptr + 0x424) == 1) {
+        *(int*)((char*)D_0050A088.ptr + 0x434) = (int)func_003B1300(7);
+    }
+    t = (int)func_003B1300(5);
+    {
+        char *p = (char*)D_0050A088.ptr;
+        *(int*)(p + 0x438) = *(int*)(p + 0x420) != 0
+            ? (*(int*)(p + 0x428) != 0 ? (int)D_0044C2D8[t] : t * 2)
+            : t;
+    }
+    if (func_003B1300(1) != 0) {
+        *(int*)((char*)D_0050A088.ptr + 0x43C) = (int)func_003B1300(1);
+        func_003B1300(1);
+        func_003B1300(6);
+        func_003B2318();
+    } else {
+        *(int*)((char*)D_0050A088.ptr + 0x43C) = 0;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003B1988);

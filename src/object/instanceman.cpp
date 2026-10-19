@@ -89,8 +89,46 @@ extern "C" void func_003513D0(void* self)
 INCLUDE_ASM("object/instanceman", func_00351410);
 
 INCLUDE_ASM("object/instanceman", func_00351448);
-
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/instanceman", func_00351480);
+#ifdef SKIP_ASM
+struct sImMat44_351480 {
+    float m[4][4];
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_351480(sImMat44_351480* d, const sImMat44_351480* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+extern void* D_00490AD0[];
+extern sImMat44_351480 D_004FF1A0;
+extern "C" void* func_00351330(void* self, float* src, float f);
+// PORT: func_00351800 is defined later in the unit with a typed self; bound by asm label.
+void func_00351800_vf(void* self, float f) __asm__("func_00351800");
+
+extern "C" void* func_00351480(void* self, float* src, float f)
+{
+    func_00351330(self, src, f);
+    *(void***)((char*)self + 0x84) = D_00490AD0;
+    vu0CopyMat_351480((sImMat44_351480*)((char*)self + 0x90), &D_004FF1A0);
+    *(float**)((char*)self + 0x40) = src;
+    func_00351800_vf(self, f);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/instanceman", func_00351508);

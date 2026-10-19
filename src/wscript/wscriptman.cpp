@@ -39,9 +39,52 @@ extern "C" void* cWScriptMan_addProcess1(void* self, int a1, int a2, int a3, int
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_00309618);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+class cWSObj_309618 {
+public:
+    char pad_0x00[0x5C];
+    virtual void v00(int);
+    virtual void v01();
+};
 
+extern "C" void* func_0030B320_a(void* self, int id) __asm__("func_0030B320");
+extern "C" int func_0030B2D0_a(void* self, void* node) __asm__("func_0030B2D0");
+
+extern "C" void func_00309618(char* self, int id) {
+    cWSObj_309618* obj = (cWSObj_309618*)func_0030B320_a(self + 0x2B8, id);
+    if (obj != 0) {
+        func_0030B2D0_a(self + 0x2B8, obj);
+        obj->v00(3);
+        return;
+    }
+    obj = (cWSObj_309618*)func_0030B320_a(self + 0x2BC, id);
+    if (obj != 0) {
+        func_0030B2D0_a(self + 0x2BC, obj);
+        obj->v00(3);
+        return;
+    }
+    obj = (cWSObj_309618*)func_0030B320_a(self + 0x2B4, id);
+    if (obj != 0) {
+        func_0030B2D0_a(self + 0x2B4, obj);
+        obj->v00(3);
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_003096F0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" int func_0030B2D0_vv(void* self, void* node) __asm__("func_0030B2D0");
+extern "C" void func_003096F0(char* self, void* node) {
+    if (func_0030B2D0_vv(self + 0x2B8, node) == 0 &&
+        func_0030B2D0_vv(self + 0x2B4, node) == 0) {
+        func_0030B2D0_vv(self + 0x2BC, node);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_00309750);
@@ -865,7 +908,224 @@ extern "C" void func_0030A728(void* self, unsigned int id, int kind)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030A868);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0030A728(void* self, unsigned int id, int kind);
+// PORT: the unit defines func_0030C7C0 later as (cWSQueue*, int, int, int)
+extern "C" void func_0030C7C0_a(void* queue, unsigned int id, int kind, int ctx) __asm__("func_0030C7C0");
+extern "C" void* func_0030AEB8(void* self);
+extern "C" int func_0030B8C0(void* self);
+extern "C" int func_00153D78(void* iface, unsigned int id);
+extern "C" int func_00153DD0(void* iface, unsigned int id);
+extern "C" int func_00153E28(void* iface, unsigned int id);
+extern "C" int func_00153E80(void* iface, unsigned int id);
+extern "C" int func_00153ED8(void* iface, unsigned int id);
+extern "C" int func_00153FD8(void* iface, unsigned int id);
+extern "C" void* func_0028B180();
+extern "C" void func_0029D6E0(void* p, unsigned int id);
+extern "C" void func_0029DBB0(void* p, int a1);
+extern char* D_004A28A8;
+extern signed char D_00535C10[];
+
+class cWSObj_30A868 {
+public:
+    char pad_0x00[0x20];
+    unsigned int id;        // 0x20
+    char pad_0x24[0x5C - 0x24];
+    // vptr at 0x5C
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+};
+
+// PORT: the unit defines func_0030B388 later with its own class type
+extern "C" cWSObj_30A868* func_0030B388_a(void* self, unsigned int id) __asm__("func_0030B388");
+
+extern "C" int func_0030A868(char* self, unsigned int id, unsigned int cmd, int ctx)
+{
+    int force = 0;
+    if (cmd == 15 || cmd == 19) {
+        force = 1;
+    }
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (force == 0) {
+        if (D_00535C10[0] != 4) {
+            return 0;
+        }
+        if (*(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x7C) != 1) {
+            return 0;
+        }
+    }
+    int saved = *(int*)self;
+    if (ctx != -1) {
+        *(int*)self = ctx;
+    }
+    switch (cmd) {
+    case 0:
+    case 1:
+    case 2:
+    case 18:
+        func_0030A728(self, id, cmd);
+        break;
+    case 8:
+    case 9:
+    case 11: {
+        int v = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
+        int busy = v != 0 && v < 10;
+        if (!busy) {
+            func_0030C7C0_a(self + 0x1C4, id, cmd, *(int*)self);
+        }
+        break;
+    }
+    }
+    int result = 0;
+    cWSObj_30A868* obj = (cWSObj_30A868*)func_0030AEB8(self);
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 10);
+    switch (cmd) {
+    case 0:
+        break;
+    case 3:
+        if (id != 0xFFFFFFFF) {
+            obj = func_0030B388_a(self + 0x2B8, id);
+            if (obj == 0) {
+                obj = func_0030B388_a(self + 0x2B4, id);
+            }
+        }
+        if (obj != 0) {
+            obj->v17();
+            func_0029D6E0(func_0028B180(), id);
+        }
+        break;
+    case 4:
+        if (id != 0xFFFFFFFF) {
+            obj = func_0030B388_a(self + 0x2B8, id);
+        }
+        if (obj != 0) {
+            obj->v02();
+        }
+        break;
+    case 5:
+        if (id != 0xFFFFFFFF) {
+            obj = func_0030B388_a(self + 0x2B8, id);
+        }
+        if (obj != 0) {
+            obj->v19();
+            func_0029DBB0(func_0028B180(), 0);
+        }
+        break;
+    case 17:
+        if (id != 0xFFFFFFFF) {
+            obj = func_0030B388_a(self + 0x2B8, id);
+            if (obj == 0) {
+                obj = func_0030B388_a(self + 0x2B4, id);
+            }
+        }
+        if (obj != 0) {
+            obj->v20();
+        }
+        break;
+    case 13:
+        if (id == 0xFFFFFFFF) {
+            if (obj != 0) {
+                id = obj->id;
+            }
+            if (id == 0xFFFFFFFF) {
+                break;
+            }
+        }
+        result = func_00153E28(iface, id) != 0;
+        break;
+    case 12:
+        if (id == 0xFFFFFFFF) {
+            if (obj != 0) {
+                id = obj->id;
+            }
+            if (id == 0xFFFFFFFF) {
+                break;
+            }
+        }
+        result = func_00153DD0(iface, id) != 0;
+        break;
+    case 16:
+        if (id == 0xFFFFFFFF) {
+            if (obj != 0) {
+                id = obj->id;
+            }
+            if (id == 0xFFFFFFFF) {
+                break;
+            }
+        }
+        if (*(int*)(self + 0x2AC) == 1) {
+            break;
+        }
+        if (func_0030B8C0(self) != 0) {
+            break;
+        }
+        if (func_00153ED8(iface, id) != 0) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+        break;
+    case 19:
+        if (id == 0xFFFFFFFF) {
+            if (obj != 0) {
+                id = obj->id;
+            }
+            if (id == 0xFFFFFFFF) {
+                break;
+            }
+        }
+        result = func_00153FD8(iface, id) == -1;
+        break;
+    case 14:
+        if (id == 0xFFFFFFFF) {
+            if (obj != 0) {
+                id = obj->id;
+            }
+            if (id == 0xFFFFFFFF) {
+                break;
+            }
+        }
+        result = func_00153E80(iface, id) != 0;
+        break;
+    case 15:
+        if (id == 0xFFFFFFFF) {
+            if (obj != 0) {
+                id = obj->id;
+            }
+            if (id == 0xFFFFFFFF) {
+                break;
+            }
+        }
+        result = func_00153D78(iface, id) != 0;
+        break;
+    }
+    *(int*)self = saved;
+    return result;
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030AC98);
@@ -1281,7 +1541,15 @@ extern "C" void* func_0030B320(void* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B350);
+#ifdef SKIP_ASM
+extern "C" int GetHashValue32__FPc(int);
+
+extern "C" void func_0030B350(void *arg0, int arg1) {
+    func_0030B320(arg0, GetHashValue32__FPc(arg1));
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B388);
@@ -1329,7 +1597,18 @@ extern "C" int func_0030B428(cWScriptListHead* self, cWScriptListNode* node)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B458);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" int func_0030B388_vv(void* self, void* node) __asm__("func_0030B388");
+extern "C" void func_0030B458(char* self, void* node) {
+    if (func_0030B388_vv(self + 0x2B8, node) == 0 &&
+        func_0030B388_vv(self + 0x2B4, node) == 0) {
+        func_0030B388_vv(self + 0x2BC, node);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B4B8__FPv);
@@ -1424,10 +1703,23 @@ extern "C" void func_0030B540(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B590);
+#ifdef SKIP_ASM
+extern "C" int func_0026CAF8(void*, int);
+extern "C" int func_0030B590(char* self) {
+    func_0026CDF8(*(void**)(*(char**)(D_004A28A8 + 0x84) + 0x34));
+    func_0026F228(*(void**)(*(char**)(D_004A28A8 + 0x84) + 0x28));
+    if (func_0026CAF8(*(void**)(*(char**)(D_004A28A8 + 0x84) + 0x34), *(int*)(self + 0x2A0)) != 0) {
+        *(int*)(self + 0x2AC) = 5;
+        *(int*)(self + 0x2B0) = *(int*)(self + 0x2A0);
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("wscript/wscriptman", func_0030B608);
-
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B658);
 #ifdef SKIP_ASM
@@ -2185,87 +2477,281 @@ INCLUDE_ASM("wscript/wscriptman", func_0030C898);
 
 INCLUDE_ASM("wscript/wscriptman", func_0030C8D8);
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D238);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D238(void *arg0, int arg1, int arg2) {
+    (*(int *)((char*)(arg0) + (0))) = arg1;
+    (*(int *)((char*)(arg0) + (4))) = arg2;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D248);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D248(int arg0) {
+    return arg0;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D250);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D250(int arg0) {
+    return arg0;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D258);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D258(int arg0) {
+    return arg0;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D260);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D260(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x29C))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D268);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D268(void *arg0) {
+    return (*(int *)((char*)(arg0) + (4)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D270);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D270(void *arg0) {
+    return (*(int *)((char*)(arg0) + (8)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D278);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D278(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0xC)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D280);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D280(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x10)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D288);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D288(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x14)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D290);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D290(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x18)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D298);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D298(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x1C)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2A0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2A0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x20)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2A8);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2A8(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x24)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2B0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2B0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x28)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2B8);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2B8(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x34)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2C0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2C0(int arg0) {
+    return arg0 + 0x38;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2C8);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D2C8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x2A0))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2D0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2D0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x2A0)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2D8);
+#ifdef SKIP_ASM
+extern int D_004A3DD8;
 
+extern "C" int func_0030D2D8(void) {
+    return D_004A3DD8;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2E0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2E0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x290)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2E8);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2E8(int *arg0) {
+    return *arg0;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2F0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2F0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x294)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D2F8);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D2F8(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x298)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D300);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D300(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x290))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D308);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D308(int arg0, int arg1) {
+    return (*(int *)(((char*)(arg0) + (arg1 << 2)) + (0x3CC)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D318);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D318(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x2A8)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D320);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D320(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x2A8))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D328);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D328(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x2A4)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D330);
+#ifdef SKIP_ASM
+extern "C" int func_0030D330(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x1C4))) != (*(int *)((char*)(arg0) + (0x1C8)));
+}
+#endif
 
 INCLUDE_ASM("wscript/wscriptman", func_0030D348);
 
 INCLUDE_ASM("wscript/wscriptman", func_0030D368);
-
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D388);
+#ifdef SKIP_ASM
+extern "C" void func_0030D388(int *arg0, int arg1) {
+    *arg0 = arg1;
+}
+#endif
 
 INCLUDE_ASM("wscript/wscriptman", func_0030D390);
-
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D398);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D398(int *arg0) {
+    *arg0 = 0;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3A0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D3A0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x18)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3A8);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D3A8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x18))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3B0);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D3B0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x24)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3B8);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D3B8(void *arg0, int arg1) {
+    (*(int *)((char*)((*(void **)((char*)(arg0) + (0x10)))) + (0x29C))) = arg1;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3C8);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D3C8(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x1C)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3D0);
+#ifdef SKIP_ASM
+extern "C" int func_0030D3D0(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x20)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3D8__FPv);
@@ -2279,7 +2765,6 @@ int func_0030D3D8(void* self)
 INCLUDE_ASM("wscript/wscriptman", func_0030D3E0);
 
 INCLUDE_ASM("wscript/wscriptman", func_0030D400);
-
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D420);
 #ifdef SKIP_ASM
@@ -2296,13 +2781,34 @@ extern "C" void func_0030D420(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D450);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D450(void *arg0) {
+    return (*(int *)((char*)((*(void **)((char*)(arg0) + (0x3C)))) + (0x1C)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D460);
-
+#ifdef SKIP_ASM
+extern "C" int func_0030D460(void *arg0) {
+    return (*(int *)((char*)(arg0) + (4)));
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D468);
-
+#ifdef SKIP_ASM
+extern "C" void func_0030D468(int *arg0) {
+    *arg0 = 3;
+}
+#endif
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D478);
+#ifdef SKIP_ASM
+extern "C" int func_0030D478(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x64)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D480__FPv);
@@ -2313,9 +2819,15 @@ int func_0030D480(void* self)
 }
 #endif
 
-INCLUDE_ASM("wscript/wscriptman", func_0030D488);
-
 extern "C" void* func_0030C8D8(int, int);
+
+//100%
+INCLUDE_ASM("wscript/wscriptman", func_0030D488);
+#ifdef SKIP_ASM
+extern "C" int func_0030D488(void *arg0) {
+    return (*(int *)((char*)(arg0) + (0x60))) == 2;
+}
+#endif
 
 //99.38%
 INCLUDE_ASM("wscript/wscriptman", func_0030D498__FPv);

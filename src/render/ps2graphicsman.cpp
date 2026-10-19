@@ -158,7 +158,259 @@ extern "C" int func_003673D8(char* self, int size)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/ps2graphicsman", func_00367440);
+#ifdef SKIP_ASM
+extern "C" void cPSPGraphicsMan_NewBindTexID(void* self, int id);
+extern "C" int func_00366CE0(void* heap, int size, int idx, int other, int a4, int a5);
+extern "C" void func_00366E90(void* self, void* tex);
+extern "C" void* func_003E6574(void*, void*, int);
+extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
+// PORT: operator_new__FUi is the game's tagged allocator (size, tag, flags, d); bound by asm label
+void* operator_new_7440(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+
+// PORT: PS2-only MMI count-leading-sign-bits (plzcw) = floor(log2(x)); off-PS2 use a clz builtin.
+// Volatile: the target keeps each log2 in order (zero-extend, plzcw, truncate).
+// Volatile: the target keeps each log2 in order (zero-extend, plzcw, truncate) before the next.
+static inline int texLog2_7440(unsigned int x)
+{
+    long r;
+    __asm__ __volatile__("plzcw %0, %1\n\txori %0, %0, 0x1f\n\taddiu %0, %0, -1" : "=r"(r) : "r"((unsigned long)x));
+    return r;
+}
+
+// GS pixel storage mode -> bits per pixel
+static inline int psmBpp_7440(int psm)
+{
+    switch (psm) {
+    case 0x0:
+    case 0x1:
+    case 0x30:
+    case 0x31:
+        return 32;
+    case 0x2:
+    case 0xA:
+    case 0x32:
+    case 0x3A:
+        return 16;
+    case 0x13:
+    case 0x1B:
+        return 8;
+    case 0x14:
+    case 0x24:
+    case 0x2C:
+        return 4;
+    }
+    return 0;
+}
+
+static inline int imax_7440(int a, int b)
+{
+    return a < b ? b : a;
+}
+
+// VRAM bytes for one level: the image rounded up to whole GS pages, then to 256 bytes
+static inline int vramBytes_7440(int w, int h, int bpp)
+{
+    int pw, ph;
+    switch (bpp) {
+    case 4:
+        pw = 0x80;
+        ph = 0x80;
+        break;
+    case 8:
+        pw = 0x80;
+        ph = 0x40;
+        break;
+    case 15:
+    case 16:
+        pw = 0x40;
+        ph = 0x40;
+        break;
+    case 32:
+    default:
+        pw = 0x40;
+        ph = 0x20;
+        break;
+    }
+    int n = imax_7440(w, pw) * imax_7440(h, ph) * bpp / 8;
+    return n + (-n & 0xFF);
+}
+
+// CLUT format -> bytes per CLUT entry
+static inline int clutEntryBytes_7440(int f)
+{
+    switch (f) {
+    case 0:
+        return 0;
+    case 1:
+        return 4;
+    case 2:
+        return 2;
+    }
+    return 0;
+}
+
+// CLUT format -> GS CPSM
+static inline int clutPsm_7440(int f)
+{
+    switch (f) {
+    case 0:
+        return 0;
+    case 1:
+        return 0;
+    case 2:
+        return 2;
+    }
+    return 0;
+}
+
+extern "C" int func_00367440(void* self, int a1, void* a2, int a3, int a4, int a5, int a6, int a7,
+                             int a8, int a9, int a10, int a11)
+{
+    char* s = (char*)self;
+    void* data = (void*)a1;
+    const char* name = (const char*)a2;
+    unsigned int w = a3;
+    unsigned int h = a4;
+    int mip = a5;
+    int fmt = a6;
+    int clutFmt = a7;
+    void* clut = (void*)a8;
+    int id;
+    if (a11 < 0) {
+        id = cPSPGraphicsMan_NewNonBindTexID((cTexSlots367150*)self);
+    } else {
+        cPSPGraphicsMan_NewBindTexID(self, a11);
+        id = a11;
+    }
+    char* t = *(char**)(s + (id << 2) + 8);
+    strncpy(t + 4, name, 8);
+    *(int*)(t + 0x0) = a10;
+    *(int*)(t + 0xC) = fmt;
+    *(int*)(t + 0x28) = -1;
+    *(int*)(t + 0x30) = -1;
+    *(int*)(t + 0x2C) = -1;
+    *(int*)(t + 0x24) = mip;
+    *(int*)(t + 0x34) = -1;
+    int psm;
+    switch (fmt) {
+    case 8:
+        psm = 1;
+        break;
+    case 2:
+        psm = 2;
+        break;
+    case 9:
+    case 10:
+        psm = 0x13;
+        break;
+    case 11:
+    case 12:
+        psm = 0x14;
+        break;
+    case 0:
+    default:
+        psm = 0;
+        break;
+    }
+    int bpp = psmBpp_7440(psm);
+    *(int*)(t + 0x18) = bpp;
+    if (bpp <= 0)
+        return -1;
+    if (data != 0) {
+        int size = 0;
+        int vram = 0;
+        for (int lv = 0; lv <= mip; lv++) {
+            int lw = w >> lv;
+            int lh = h >> lv;
+            int n = lw * lh * bpp / 8;
+            if (n < 0x100)
+                n = 0x100;
+            size += n;
+            vram += vramBytes_7440(lw, lh, bpp);
+        }
+        *(int*)(t + 0x14) = vram;
+        *(int*)(t + 0x10) = size;
+        if (*(int*)(t + 0x0) != 0) {
+            void* p = operator_new_7440(size, name, *(int*)(s + 0x1F58) | 0x05000000, 0);
+            *(void**)(t + 0x1C) = p;
+            func_003E6574(p, data, size);
+        } else {
+            *(void**)(t + 0x1C) = data;
+        }
+    } else {
+        *(void**)(t + 0x1C) = 0;
+        *(int*)(t + 0x10) = 0;
+        *(int*)(t + 0x14) = vramBytes_7440(w, h, bpp);
+    }
+    int esz;
+    if (clut != 0 && (esz = clutEntryBytes_7440(clutFmt)) != 0) {
+        int entries = (unsigned int)(*(int*)(t + 0xC) - 0xB) <= 1 ? 0x10 : 0x100;
+        if (*(int*)(t + 0x0) != 0) {
+            void* p = operator_new_7440(0x400, name, *(int*)(s + 0x1F58) | 0x05000000, 0);
+            *(void**)(t + 0x20) = p;
+            func_003E6574(p, clut, entries * esz);
+        } else {
+            *(void**)(t + 0x20) = clut;
+        }
+    } else {
+        *(void**)(t + 0x20) = 0;
+    }
+    int lcm = 0;
+    int l = 0;
+    int k = -0xB9;
+    int mmin = 5;
+    if (mip == 0) {
+        lcm = 1;
+        l = mip;
+        k = 0;
+        mmin = 1;
+    }
+    ulong* tex0p = (ulong*)(t + 0x38);
+    int lw2 = texLog2_7440(w - 1);
+    int lh2 = texLog2_7440(h - 1);
+    int cpsm = clutPsm_7440(clutFmt);
+    *tex0p = (ulong)0 | ((ulong)((w + 63) >> 6) << 14) | ((ulong)psm << 20) | ((ulong)(lw2 + 1) << 26)
+        | ((ulong)(lh2 + 1) << 30) | ((ulong)1 << 34) | ((ulong)0 << 35) | ((ulong)0 << 37)
+        | ((ulong)cpsm << 51) | ((ulong)0 << 55) | ((ulong)0 << 56) | ((ulong)(bpp <= 8) << 61);
+    *(ulong*)(t + 0x40) = (ulong)lcm | ((ulong)(unsigned int)mip << 2) | ((ulong)1 << 5)
+        | ((ulong)mmin << 6) | ((ulong)l << 19) | ((ulong)k << 32);
+    if (mip != 0) {
+        *(ulong*)(t + 0x48) = ((ulong)((w + 0x7F) >> 7) << 14) | ((ulong)((w + 0xFF) >> 8) << 34)
+            | ((ulong)((w + 0x1FF) >> 9) << 54);
+        *(ulong*)(t + 0x50) = ((ulong)((w + 0x3FF) >> 10) << 14) | ((ulong)((w + 0x7FF) >> 11) << 34)
+            | ((ulong)((w + 0xFFF) >> 12) << 54);
+    }
+    if (a9 == 1) {
+        int node = func_00366CE0(s + 0x1F60, *(int*)(t + 0x14), id, -1, -1, 1);
+        int* f = (int*)(*(char**)(s + 0x3F50) + node * 0x1C);
+        int fl = *f | 2;
+        *f = fl;
+        *(int*)(t + 0x30) = node;
+        *(int*)(t + 0x28) = fl >> 8;
+    } else if (a9 == 3) {
+        int node = func_00366CE0(s + 0x1F60, *(int*)(t + 0x14) + 0x2000, id, -1, -1, 1);
+        int* f = (int*)(*(char**)(s + 0x3F50) + node * 0x1C);
+        int fl = *f | 0x22;
+        *f = fl;
+        *(int*)(t + 0x30) = node;
+        int a = fl >> 8;
+        *(int*)(t + 0x28) = a + (-a & 0x1F);
+    }
+    if (*(int*)(t + 0x0) != 0) {
+        if (*(int*)(t + 0xC) == 9) {
+            if (*(int*)(s + 0x6344) < *(int*)(t + 0x14) && a9 == 0)
+                func_00366E90(self, t);
+            else
+                *(ulong*)(t + 0x38) = (*(ulong*)(t + 0x38) & ~((ulong)0x3F << 20)) | ((ulong)0x1B << 20);
+        }
+    } else if (*(int*)(t + 0xC) == 9) {
+        *(ulong*)(t + 0x38) = (*(ulong*)(t + 0x38) & ~((ulong)0x3F << 20)) | ((ulong)0x1B << 20);
+    }
+    return id;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/ps2graphicsman", func_00367B60);
@@ -588,7 +840,146 @@ extern "C" void func_00368660(char* self, int a, int b, int a3, ulong** pp, void
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/ps2graphicsman", func_00368970);
+#ifdef SKIP_ASM
+static inline int imax_8970(int a, int b)
+{
+    return a < b ? b : a;
+}
+
+// VRAM bytes of a w x h image: rounded up to whole GS pages, then to 256 bytes
+static inline int vramBytes_8970(int w, int h, int bpp)
+{
+    int pw, ph;
+    switch (bpp) {
+    case 4:
+        pw = 0x80;
+        ph = 0x80;
+        break;
+    case 8:
+        pw = 0x80;
+        ph = 0x40;
+        break;
+    case 15:
+    case 16:
+        pw = 0x40;
+        ph = 0x40;
+        break;
+    case 32:
+    default:
+        pw = 0x40;
+        ph = 0x20;
+        break;
+    }
+    int n = imax_8970(w, pw) * imax_8970(h, ph) * bpp / 8;
+    return n + (-n & 0xFF);
+}
+
+// TEX0.TW / TEX0.TH of a texture record
+static inline int texTW_8970(char* t)
+{
+    return (*(ulong*)(t + 0x38) >> 26) & 0xF;
+}
+
+static inline int texTH_8970(char* t)
+{
+    return (*(ulong*)(t + 0x38) >> 30) & 0xF;
+}
+
+// VRAM blocks of mip level lv
+static inline int levelBlocks_8970(char* t, int lv, int shift)
+{
+    return vramBytes_8970((1 << texTW_8970(t)) >> lv, (1 << texTH_8970(t)) >> lv, *(int*)(t + 0x18)) >> shift;
+}
+
+// self: the GS texture manager. +0x8 the texture records, +0x1F4C the texture bound to each context,
+// +0x1F54 the texture whose CLUT is loaded.
+// PORT: 64-bit `ulong` GIF/DMA packet words.
+extern "C" void func_00368970(void* self, int idx, int slot, ulong** dma)
+{
+    char* s = (char*)self;
+    ulong* p = *dma;
+    int off = slot << 2;
+    char* bound = s + 0x1F4C;
+    int* cur = (int*)(bound + off);
+    if (*cur != idx) {
+        *cur = idx;
+        char* t = *(char**)(s + (idx << 2) + 8);
+        int rTex0, rTex1, rMip1, rMip2;
+        if (slot == 0) {
+            rTex0 = 6;
+            rTex1 = 0x14;
+            rMip1 = 0x34;
+            rMip2 = 0x36;
+        } else {
+            rTex0 = 7;
+            rTex1 = 0x15;
+            rMip1 = 0x35;
+            rMip2 = 0x37;
+        }
+        int shift = *(int*)(t + 0xC) == 9 ? 6 : 8;
+        int n;
+        if (*(int*)(t + 0x24) >= 4) {
+            n = 4;
+        } else {
+            n = 2;
+            if (*(int*)(t + 0x24) >= 1)
+                n = 3;
+        }
+        p[0] = (n + 2) | 0x10000000;
+        p[1] = 0;
+        p[2] = 0;
+        unsigned int direct = (n + 1) | 0x50000000;
+        p[3] = (ulong)direct << 32;
+        p[4] = (ulong)(n | 0x8000) | ((ulong)1 << 60);
+        p[5] = 0xE;
+        p += 6;
+        if (*(int*)(t + 0x24) > 0) {
+            int tbp1 = *(int*)(t + 0x28) + levelBlocks_8970(t, 0, shift);
+            int tbp2 = tbp1 + levelBlocks_8970(t, 1, shift);
+            int tbp3 = tbp2 + levelBlocks_8970(t, 2, shift);
+            p[0] = *(ulong*)(t + 0x48) | ((ulong)tbp1 | ((ulong)tbp2 << 20) | ((ulong)tbp3 << 40));
+            p[1] = rMip1;
+            p += 2;
+            if (*(int*)(t + 0x24) >= 4) {
+                int tbp4 = tbp3 + levelBlocks_8970(t, 3, shift);
+                int tbp5 = tbp4 + levelBlocks_8970(t, 4, shift);
+                int tbp6 = tbp5 + levelBlocks_8970(t, 5, shift);
+                p[0] = *(ulong*)(t + 0x50) | ((ulong)tbp4 | ((ulong)tbp5 << 20) | ((ulong)tbp6 << 40));
+                p[1] = rMip2;
+                p += 2;
+            }
+        }
+        p[0] = *(ulong*)(t + 0x40);
+        p[1] = rTex1;
+        int caddr = *(int*)(t + 0x2C);
+        int cbp = 0;
+        if (caddr >= 0) {
+            *(int*)(s + 0x1F54) = idx;
+            cbp = caddr;
+        }
+        p[2] = *(ulong*)(t + 0x38) | ((ulong)*(int*)(t + 0x28) | ((ulong)cbp << 37));
+        p[3] = rTex0;
+        p += 4;
+    } else if (*(int*)(s + 0x1F54) != idx) {
+        char* t = *(char**)(s + (idx << 2) + 8);
+        if (*(int*)(t + 0x2C) >= 0) {
+            *(int*)(s + 0x1F54) = idx;
+            p[0] = 0x10000003;
+            p[1] = 0;
+            p[2] = 0;
+            p[3] = (ulong)0x50000002 << 32;
+            p[4] = (ulong)(1 | 0x8000) | ((ulong)1 << 60);
+            p[5] = 0xE;
+            p[6] = *(ulong*)(t + 0x38) | ((ulong)*(int*)(t + 0x2C) << 37);
+            p[7] = slot == 0 ? 0x16 : 0x17;
+            p += 8;
+        }
+    }
+    *dma = p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/ps2graphicsman", func_00369098);

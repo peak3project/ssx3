@@ -61,7 +61,200 @@ extern "C" int func_001A07C8(void* self, int a1, int hash)
 
 INCLUDE_ASM("fe/fereal", cFECustom_getNextState);
 
+//100%
 INCLUDE_ASM("fe/fereal", func_001A16C0);
+#ifdef SKIP_ASM
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+void cAppMan_setNextModule(struct cAppMan* app, unsigned int module);
+unsigned int func_00232720(void* mem);
+extern "C" void* func_00181090(void* mem, void* owner, int a2);
+extern "C" void* func_001828C0(void* mem, void* owner, int a2);
+extern "C" void* func_00183238(void* mem, void* owner, int a2);
+extern "C" void* func_00186610(void* mem, void* owner, int a2);
+extern "C" void* func_001887A0(void* mem, void* owner, int a2);
+extern "C" void* func_0018D240(void* mem, void* owner);
+extern "C" void* func_00194738(void* self, void* owner);
+extern "C" void* func_00194A60(void* mem, void* owner);
+extern "C" void* func_00195FF0(void* mem, void* owner, int a2, int a3);
+extern "C" void* func_001BFBB8(void* mem, void* owner);
+extern "C" void* func_001C1C50(void* mem, void* owner);
+extern "C" void* cFEStateMountainRoom_cFEStateMountainRoom(void* mem, void* owner, int a2);
+extern "C" void* func_001D3780(void* mem, void* owner, int a2, int a3);
+extern "C" void* func_001D4BC8(void* mem, void* owner, int a2, int a3);
+extern "C" void* func_001F3700(void* self, void* owner);
+extern "C" void* func_001F3FF8(void* mem, void* owner);
+extern void* D_004A28A8;
+extern int D_004A19D8;
+extern int D_004A1A70;
+extern int D_004A2594;
+extern int D_004A2598;
+extern signed char D_00535C11[];
+extern char D_0045CE60[];
+extern char D_0045E290[];
+extern char D_0045FF28[];
+extern char D_00460650[];
+extern char D_00460BA8[];
+extern char D_00460BC0[];
+extern char D_00460C08[];
+extern char D_00460C38[];
+extern char D_00460C68[];
+extern char D_00460C80[];
+extern char D_00460D60[];
+extern char D_00460DD8[];
+extern char D_00460DF8[];
+extern char D_00460E28[];
+extern char D_00461188[];
+extern char D_00461198[];
+extern char D_004611A8[];
+
+static inline bool IsMode1_1A16C0()
+{
+    return D_004A1A70 == 1;
+}
+
+extern "C" void* func_001A16C0(void** self, char* desc, int arg)
+{
+    switch (*(int*)(desc + 0xC)) {
+    case 9:
+        if (IsMode1_1A16C0()) {
+            return func_001BFBB8(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *self);
+        }
+        cBE_getInterface_Fv(cBE_getBE(), 0);
+        switch (D_00535C11[0]) {
+        case 1:
+            return func_00194A60(cMemMan_alloc(0x58, D_00460BA8, 0, 0), *self);
+        case 0:
+            return func_00194A60(cMemMan_alloc(0x58, D_00460BA8, 0, 0), *self);
+        case 2:
+            if (desc[0x44] == 1) {
+                return func_001828C0(cMemMan_alloc(0x50, D_00460C08, 0, 0), *self, 0);
+            }
+            return func_00194A60(cMemMan_alloc(0x58, D_00460BA8, 0, 0), *self);
+        }
+        break;
+    case 23:
+        return func_00181090(cMemMan_alloc(0x90, D_00460BC0, 0, 0), *self, 1);
+    case 13:
+    case 14:
+    case 16:
+        if (D_004A19D8 != 0) {
+            return func_001F3700(cMemMan_alloc(0x58, D_00461188, 0, 0), *self);
+        }
+        return func_001828C0(cMemMan_alloc(0x50, D_00460C08, 0, 0), *self, desc[0x44]);
+    case 15:
+    case 18:
+        if (D_004A19D8 != 0) {
+            return func_001F3FF8(cMemMan_alloc(0x4C, D_00460DD8, 0, 0), *self);
+        }
+        return func_00183238(cMemMan_alloc(0x54, D_00460C68, 0, 0), *self, desc[0x44]);
+    case 17:
+        return func_00195FF0(cMemMan_alloc(0x80, D_00460650, 0, 0), *self, desc[0x44], D_004A19D8);
+    case 19:
+        cBE_getInterface_Fv(cBE_getBE(), 0);
+        switch (D_00535C11[0]) {
+        case 0:
+        case 1:
+            return func_001828C0(cMemMan_alloc(0x50, D_00460C08, 0, 0), *self, 0);
+        case 2:
+            return func_001828C0(cMemMan_alloc(0x50, D_00460C08, 0, 0), *self, 1);
+        }
+        break;
+    case 20: {
+        D_004A2598 = 1;
+        D_004A2594 = 0;
+        char* p = (char*)func_00186610(cMemMan_alloc(0x33C, D_00460C38, 0, 0), *self, 0);
+        p[0x44] = 0;
+        return p;
+    }
+    case 21:
+        D_004A2598 = 1;
+        D_004A2594 = 0;
+        return func_00186610(cMemMan_alloc(0x33C, D_00460C38, 0, 0), *self, 0);
+    case 12:
+        return func_00181090(cMemMan_alloc(0x90, D_00460BC0, 0, 0), *self, desc[0x44]);
+    case 8: {
+        cBE_getInterface_Fv(cBE_getBE(), 0);
+        int c = D_00535C11[0];
+        if (c >= 3) {
+            goto other;
+        }
+        if (c < 0) {
+            goto other;
+        }
+    }
+    case 5:
+    case 11:
+    case 22:
+        return func_00194A60(cMemMan_alloc(0x58, D_00460BA8, 0, 0), *self);
+    case 35:
+    other: {
+        int sc = ((int*)self)[3];
+        if (sc == 24) {
+            return func_0018D240(cMemMan_alloc(0x4C, D_00460D60, 0, 0), *self);
+        } else if (sc == 9) {
+            return func_00181090(cMemMan_alloc(0x90, D_00460BC0, 0, 0), *self, desc[0x44]);
+        } else if (sc == 39) {
+            return func_001F3700(cMemMan_alloc(0x58, D_00461188, 0, 0), *self);
+        }
+        break;
+    }
+    case 28:
+    case 29:
+    case 30:
+    case 31:
+    case 32:
+    case 36:
+    case 37:
+    case 38:
+        return func_001887A0(cMemMan_alloc(0x54, D_00461198, 0, 0), *self, 0);
+    case 33:
+        switch (arg) {
+        case 0:
+            if (((int*)self)[3] == 0x22) {
+                return func_001887A0(cMemMan_alloc(0x54, D_00461198, 0, 0), *self, 0);
+            }
+            return func_0018D240(cMemMan_alloc(0x4C, D_00460D60, 0, 0), *self);
+        case 1:
+            cAppMan_setNextModule((struct cAppMan*)D_004A28A8, func_00232720(cMemMan_alloc(8, D_0045CE60, 0x100, 0)));
+            break;
+        case 2:
+            if (IsMode1_1A16C0()) {
+                return func_001C1C50(cMemMan_alloc(0x6D0, D_004611A8, 0, 0), *self);
+            }
+            break;
+        }
+        break;
+    case 2:
+    case 39:
+        return func_00194738(cMemMan_alloc(0x4C, D_0045E290, 0, 0), *self);
+    case 40:
+    case 41:
+        return func_001F3700(cMemMan_alloc(0x58, D_00461188, 0, 0), *self);
+    case 43:
+        if (D_004A19D8 != 0) {
+            return func_001F3FF8(cMemMan_alloc(0x4C, D_00460DD8, 0, 0), *self);
+        }
+        return func_001828C0(cMemMan_alloc(0x50, D_00460C08, 0, 0), *self, desc[0x44]);
+    case 42:
+        return func_001F3FF8(cMemMan_alloc(0x4C, D_00460DD8, 0, 0), *self);
+    case 46:
+        if (D_004A19D8 != 0) {
+            return func_001F3FF8(cMemMan_alloc(0x4C, D_00460DD8, 0, 0), *self);
+        }
+        return func_00183238(cMemMan_alloc(0x54, D_00460C68, 0, 0), *self, desc[0x44]);
+    case 44:
+        return cFEStateMountainRoom_cFEStateMountainRoom(cMemMan_alloc(0xC8, D_00460DF8, 0, 0), *self, desc[0x44]);
+    case 45:
+        return func_001D3780(cMemMan_alloc(0xE4, D_00460E28, 0, 0), *self, desc[0x44], arg);
+    case 47:
+        return func_001D4BC8(cMemMan_alloc(0x50, D_00460C80, 0, 0), *self, desc[0x44], arg != 0);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fereal", func_001A1CB8);

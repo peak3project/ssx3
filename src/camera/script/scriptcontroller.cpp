@@ -1997,8 +1997,42 @@ INCLUDE_ASM("camera/script/scriptcontroller", func_0016BC88);
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BCB8);
 
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BCE0);
-
+//100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BD30);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float ffloor_BD30(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
+    if (x < t) {
+        t -= 1.0f;
+    }
+    return t;
+}
+
+// PORT: `<?` (GNU min operator) gives the target's min.s
+static inline float Clamp_BD30(float v, float lo, float hi)
+{
+    if (v >= lo) {
+        return v <? hi;
+    }
+    return lo;
+}
+
+static inline float Wrap_BD30(float a)
+{
+    float n = ffloor_BD30(a * 0.15915493667125702f + 0.5f);
+    return a - n * 6.2831854820251465f;
+}
+
+extern "C" void func_0016BD30(float* p)
+{
+    float w = Wrap_BD30(*p);
+    *p = w;
+    *p = Clamp_BD30(w, -1.5707963705062866f, 1.5707963705062866f);
+}
+#endif
 
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BDA0);
 
@@ -2011,7 +2045,6 @@ INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE60);
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE90);
 
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BEC0);
-
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BEE8__FPv);
 #ifdef SKIP_ASM

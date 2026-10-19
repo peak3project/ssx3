@@ -63,6 +63,20 @@ void cMemMan_free(void* ptr)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/memman", func_00317EE0);
-
+#ifdef SKIP_ASM
+extern "C" void func_00317EE0(void) {
+    MUTEX_lock(D_00538B00);
+    MUTEX_unlock(D_00538B00);
+}
+#endif
+//100%
 INCLUDE_ASM("bx/memman", func_00317F18);
+#ifdef SKIP_ASM
+extern "C" void func_00319CC8();
+
+extern "C" void func_00317F18(void) {
+    func_00319CC8();
+}
+#endif

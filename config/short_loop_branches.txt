@@ -1,0 +1,10 @@
+// Loop-back branches that configure.py writes as raw `.word`s after splitting (fix_short_loop_branches).
+// Re-assembling these very short loops makes SN `as` add its R5900 short-loop nops a second time, which
+// made the function (and obj/target) 4-8 bytes longer than retail. Found by a full link, 2026-10-17;
+// tools/gen/fix_short_loops.py finds more if a function ever comes out longer than its slot.
+0x0027509C // func_00274DE0 (replay/replaycache): c.lt.s; nop; nop; bc1tl
+0x0031E134 // func_0031E0E0 (bx/cubicspline): c.le.s; nop; nop; bc1tl
+0x003BC79C // func_003BC770 (ealib/seg_2B4578): c.lt.s; nop; nop; bc1tl
+0x003BC86C // func_003BC840 (ealib/seg_2B4578): c.lt.s; nop; nop; bc1tl
+0x003C5280 // func_003C51E8 (ealib/seg_2B4578): 5-instruction ld/sd copy loop, bgez
+0x003C52B0 // func_003C51E8 (ealib/seg_2B4578): 5-instruction lbu/sb copy loop, bgez

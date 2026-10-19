@@ -146,6 +146,14 @@ extern "C" void func_00319CC8(void)
 #endif
 
 //100%
+INCLUDE_ASM("bx/memblockman", func_00319D08);
+#ifdef SKIP_ASM
+extern "C" void func_00319D08(void) {
+
+}
+#endif
+
+//100%
 INCLUDE_ASM("bx/memblockman", func_00319D10__FPv);
 #ifdef SKIP_ASM
 void func_00319D10(void* self)
@@ -398,7 +406,20 @@ extern "C" void func_0031A200(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/memblockman", func_0031A258);
+#ifdef SKIP_ASM
+extern "C" int func_0031A258(void) {
+    return 0;
+}
+#endif
+//100%
+INCLUDE_ASM("bx/memblockman", func_0031A260);
+#ifdef SKIP_ASM
+extern "C" void func_0031A260(void) {
+
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/memblockman", func_0031A268);

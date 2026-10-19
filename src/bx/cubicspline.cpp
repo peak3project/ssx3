@@ -112,10 +112,25 @@ INCLUDE_ASM("bx/cubicspline", func_0031D8B0);
 
 INCLUDE_ASM("bx/cubicspline", func_0031DEE0);
 
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("bx/cubicspline", func_0031E0E0);
+#ifdef SKIP_ASM
+extern "C" void func_0031DEE0(void* self, float t);
+
+extern "C" void func_0031E0E0(void* self)
+{
+    float end = *(float*)((char*)self + 4);
+    float start = *(float*)(*(char**)((char*)self + 8) + 0x10);
+    float step = (end - start) * 0.010101010091602802f;
+    for (float a = start; a <= end; a += step) {
+    }
+    for (float t = start; t <= end; t += step) {
+        func_0031DEE0(self, t);
+    }
+}
+#endif
 
 INCLUDE_ASM("bx/cubicspline", func_0031E190);
-
 INCLUDE_ASM("bx/cubicspline", func_0031E1D8);
 
 //100%
@@ -738,7 +753,48 @@ extern "C" void* func_0031F4E8_memalign(void* ms, unsigned int alignment, unsign
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031F718);
+#ifdef SKIP_ASM
+extern "C" void func_003E6448(void* dst, int c, int n);
+
+// dlmalloc 2.7 cALLOc()
+extern "C" void* func_0031F718(void* ms, unsigned int n, unsigned int elem_size)
+{
+    unsigned int bytes = n * elem_size;
+    void* mem = func_0031E818(ms, bytes);
+    if (mem != 0) {
+        unsigned int csz = *(unsigned int*)((char*)mem - 4);
+        if (!(csz & 2)) {
+            unsigned int clearsize = (csz & ~3U) - 4;
+            unsigned int nclears = clearsize >> 2;
+            unsigned int* d = (unsigned int*)mem;
+            if (nclears > 9) {
+                func_003E6448(d, 0, clearsize);
+            } else {
+                d[0] = 0;
+                d[1] = 0;
+                d[2] = 0;
+                if (nclears > 4) {
+                    d[3] = 0;
+                    d[4] = 0;
+                    if (nclears > 6) {
+                        d[5] = 0;
+                        d[6] = 0;
+                        if (nclears > 8) {
+                            d[7] = 0;
+                            d[8] = 0;
+                        }
+                    }
+                }
+            }
+        } else {
+            func_003E6448(mem, 0, (csz & ~3U) - 8);
+        }
+    }
+    return mem;
+}
+#endif
 
 INCLUDE_ASM("bx/cubicspline", func_0031F7F0);
 
@@ -747,13 +803,49 @@ INCLUDE_ASM("bx/cubicspline", func_0031F810);
 INCLUDE_ASM("bx/cubicspline", func_0031F838);
 
 INCLUDE_ASM("bx/cubicspline", func_0031F858);
-
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031FAA8);
+#ifdef SKIP_ASM
+// dlmalloc 2.7 vALLOc(): memalign to the page size.
+struct sMState_31FAA8
+{
+    unsigned int max_fast;              // 0x0
+    char pad4[0x35C - 4];
+    unsigned int pagesize;              // 0x35C
+};
 
+extern "C" void* func_0031FAA8(void** ms, unsigned int bytes)
+{
+    sMState_31FAA8* av = *(sMState_31FAA8**)ms;
+    if (av->max_fast == 0) {
+        func_0031EEE8(ms, (sMState_31EEE8*)av);
+    }
+    return func_0031F2C8_memalign(ms, av->pagesize, bytes);
+}
+#endif
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031FB00);
+#ifdef SKIP_ASM
+// dlmalloc 2.7 pvALLOc(): memalign to the page size, with the size rounded up to a page.
+struct sMState_31FB00
+{
+    unsigned int max_fast;              // 0x0
+    char pad4[0x35C - 4];
+    unsigned int pagesize;              // 0x35C
+};
+
+extern "C" void* func_0031FB00(void** ms, unsigned int bytes)
+{
+    sMState_31FB00* av = *(sMState_31FB00**)ms;
+    if (av->max_fast == 0) {
+        func_0031EEE8(ms, (sMState_31EEE8*)av);
+    }
+    unsigned int pagesize = av->pagesize;
+    return func_0031F2C8_memalign(ms, pagesize, (bytes + pagesize - 1) & ~(pagesize - 1));
+}
+#endif
 
 INCLUDE_ASM("bx/cubicspline", func_0031FB68);
-
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031FBB8__FPvT0);
 #ifdef SKIP_ASM
@@ -877,7 +969,58 @@ extern "C" sMallinfo_31FC20 func_0031FC20(void* ms)
 }
 #endif
 
+//100%
+INCLUDE_ASM("bx/cubicspline", func_0031FE28);
+#ifdef SKIP_ASM
+extern "C" void func_0031FE28(void) {
+
+}
+#endif
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031FE30);
+#ifdef SKIP_ASM
+extern "C" int func_0031FE30(void** self, int kind, unsigned int val) {
+    char* ms = (char*)*self;
+    func_0031EEE8(self, (sMState_31EEE8*)ms);
+    switch (kind) {
+    case 1:
+        if (val < 0x51U) {
+            int low = (*(int*)ms) & 3;
+            int res;
+            if (val != 0) {
+                unsigned int t = val + 0x13;
+                if (t >= 0x10U) {
+                    res = (t & 0xFFFFFFF0) | low;
+                } else {
+                    res = low | 0x10;
+                }
+            } else {
+                res = low | 8;
+            }
+            *(int*)ms = res;
+            return 1;
+        }
+        return 0;
+    case -1:
+        *(unsigned int*)(ms + 0x344) = val;
+        return 1;
+    case -2:
+        *(unsigned int*)(ms + 0x348) = val;
+        return 1;
+    case -3:
+        *(unsigned int*)(ms + 0x34C) = val;
+        return 1;
+    case -4:
+        if (val == 0) {
+            *(int*)(ms + 0x354) = 0;
+            return 1;
+        }
+        return 0;
+    default:
+        return 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031FF20__FPv);
@@ -976,6 +1119,14 @@ INCLUDE_ASM("bx/cubicspline", func_003200C0__FPv);
 int func_003200C0(void* self)
 {
     return func_0031ED60(self);
+}
+#endif
+
+//100%
+INCLUDE_ASM("bx/cubicspline", func_003200E0);
+#ifdef SKIP_ASM
+extern "C" void func_003200E0(void) {
+
 }
 #endif
 

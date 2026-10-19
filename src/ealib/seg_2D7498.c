@@ -2299,7 +2299,86 @@ int func_003DB008(unsigned char *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB040);
+#ifdef SKIP_ASM
+struct S_B040 {
+    int a;
+    int b;
+    void (*cb)(unsigned char *, int, int, int);
+};
+extern struct S_B040 D_0044FF90_B040 __asm__("D_0044FF90");
+
+/* Sequence data header: +6 entry count, +7 low nibble = event count, +0xC entry offsets (in words). */
+struct Hdr_B040 {
+    unsigned char pad0[0xC];
+    unsigned short offs[1];
+};
+
+struct Ev_B040 {
+    int a;
+    int b;
+    int type;
+};
+
+void func_003DB040(unsigned char *ctx, unsigned char *data, int idx, int *tbl) {
+    struct Ev_B040 ev;
+    int time;
+    int count;
+    int i;
+    unsigned char *track;
+    unsigned char *events;
+    if (D_0044FF90_B040.cb != 0) {
+        func_003D8330(ctx, &time);
+        count = data[7] & 0xF;
+        track = data + ((struct Hdr_B040 *)data)->offs[idx] * 4;
+        events = data + (((data[6] * 2 + 3) & 0x3FC) + 0xC);
+        for (i = 0; i < count; i++) {
+            /* PORT: pointer arithmetic through int (index-first addu); use uintptr_t off-PS2. */
+            unsigned char *e = (unsigned char *)(i * 3 + (int)events);
+            int type;
+            int a;
+            int b;
+            ev.a = e[0];
+            ev.b = e[1];
+            ev.type = e[2];
+            type = ev.type;
+            a = ev.a;
+            b = ev.b;
+            switch (type) {
+            case 0:
+            case 3: {
+                int n = track[4] >> 2;
+                int found = 0;
+                int k;
+                for (k = 0; k < n; k++) {
+                    unsigned char *ent = track + (track + k)[8] * 4;
+                    int m;
+                    if (ent[2] == b) {
+                        found = 1;
+                        break;
+                    }
+                    for (m = 0; m < 4; m++) {
+                        if ((ent + m)[8] == b) {
+                            found = 1;
+                            break;
+                        }
+                    }
+                }
+                if (found)
+                    D_0044FF90_B040.cb(ctx, a, tbl[b], time);
+                break;
+            }
+            case 1:
+            case 2:
+            case 4:
+            case 5:
+                break;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB208);

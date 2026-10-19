@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", cAI_setAIState);

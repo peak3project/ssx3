@@ -100,7 +100,243 @@ extern "C" void func_001CF238(void* self)
 
 INCLUDE_ASM("fe/festaterewards", func_001CF270);
 
+//100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_onWidgetCreate);
+#ifdef SKIP_ASM
+struct cUIText;
+void cUIText_setAsciiString(cUIText* self, const char* str);
+void cUIText_setUnicodeStringByID(cUIText* self, int id);
+extern "C" void* func_00398380(void* self, int id);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char D_00460488[];
+extern char D_00466DA0[];
+extern char D_00466DB0[];
+extern char D_00466DC0[];
+extern char D_00466DD8[];
+extern char D_00466DE8[];
+extern char D_004A1EE8[];
+extern char D_004A1EF0[];
+extern char D_0045DB90[];
+extern char D_00466DF8[];
+extern char D_00466E08[];
+extern char D_00466E18[];
+extern char D_00466E30[];
+extern char D_00466E40[];
+extern char D_00466E50[];
+extern char D_00466E60[];
+extern char D_00466E70[];
+extern char D_00466E88[];
+extern char D_00466EA0[];
+extern char D_00466EB0[];
+extern char D_00466EC0[];
+extern char D_00466ED0[];
+extern char D_00466EE8[];
+extern char D_00466EF8[];
+extern char D_00466210[];
+extern char D_00466228[];
+extern char D_00466240[];
+extern char D_00466258[];
+extern char D_00466270[];
+extern char D_00466288[];
+extern char D_00466F10[];
+extern char D_00466F20[];
+extern char D_00466F30[];
+extern char D_004A12C0[];
+extern char D_004A1408[];
+extern char* D_00441440[][8];
+extern char* D_004414C0[][8];
+
+struct sVEi_F820 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+struct sVEv_F820 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sWidget_F820 {
+    char pad0[0x8];
+    sVEi_F820* vt;              // 0x8
+    char padC[0x18 - 0xC];
+    int index;                  // 0x18
+    char pad1C[0x38 - 0x1C];
+    int hash;                   // 0x38
+    char pad3C[0x78 - 0x3C];
+    int reward;                 // 0x78
+    void* tex;                  // 0x7C
+};
+
+struct sGallery_F820 {
+    char pad0[0x8];
+    sVEv_F820* vt;              // 0x8
+    char padC[0x10 - 0xC];
+    char* ui;                   // 0x10
+    char pad14[0x4C - 0x14];
+    int type;                   // 0x4C
+    char pad50[0x58 - 0x50];
+    int rows;                   // 0x58
+    int cols;                   // 0x5C
+    char pad60[0x68 - 0x60];
+    int count68;                // 0x68
+    int count6C;                // 0x6C
+    char pad70[0x8F4 - 0x70];
+    sWidget_F820* w8F4;         // 0x8F4
+    sWidget_F820* w8F8;         // 0x8F8
+    char pad8FC[0x900 - 0x8FC];
+    sWidget_F820* w900;         // 0x900
+    sWidget_F820* w904;         // 0x904
+    sWidget_F820* w908;         // 0x908
+    sWidget_F820* w90C;         // 0x90C
+    sWidget_F820* w910;         // 0x910
+    sWidget_F820* w914;         // 0x914
+    sWidget_F820* w918;         // 0x918
+    sWidget_F820* w91C;         // 0x91C
+    sWidget_F820* w920;         // 0x920
+    sWidget_F820* cells[4][8];  // 0x924
+    sWidget_F820* frames[4][8]; // 0x9A4
+};
+
+static inline void show_F820(sWidget_F820* w, int on)
+{
+    w->vt[9].fn((char*)w + w->vt[9].delta, on);
+}
+
+extern "C" void cFEStateRewardGalleryBase_onWidgetCreate(sGallery_F820* self, sWidget_F820* w)
+{
+    char buf[16];
+    int hash = w->hash;
+
+    if (hash == GetHashValue32(D_00460488)) {
+        self->w900 = w;
+        show_F820(w, 0);
+    } else if (hash == GetHashValue32(D_00466DA0)) {
+        self->w91C = w;
+    } else if (hash == GetHashValue32(D_00466DB0)) {
+        self->w920 = w;
+    } else if (hash == GetHashValue32(D_00466DC0)) {
+        self->w8F8 = w;
+        show_F820(w, 0);
+    } else if (hash == GetHashValue32(D_00466DD8)) {
+        self->w918 = w;
+        sprintf(buf, D_004A12C0, self->count68);
+        cUIText_setAsciiString((cUIText*)self->w918, buf);
+    } else if (hash == GetHashValue32(D_00466DE8)) {
+        self->w914 = w;
+        sprintf(buf, D_004A12C0, self->count6C);
+        cUIText_setAsciiString((cUIText*)self->w914, buf);
+    } else if (hash == GetHashValue32(D_004A1EE8)) {
+        cUIText_setAsciiString((cUIText*)w, D_004A1EF0);
+    } else if (hash == GetHashValue32(D_0045DB90)) {
+        self->w8F4 = w;
+    } else if (hash == GetHashValue32(D_00466DF8)) {
+        switch (self->type) {
+        case 3:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E08);
+                w->tex = func_00398380(ui + 0x58, h);
+            }
+            w->reward = -1;
+            break;
+        case 4:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E18);
+                w->tex = func_00398380(ui + 0x58, h);
+            }
+            w->reward = -1;
+            break;
+        case 5:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E30);
+                w->tex = func_00398380(ui + 0x58, h);
+            }
+            w->reward = -1;
+            break;
+        case 6:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E40);
+                w->tex = func_00398380(ui + 0x58, h);
+            }
+            w->reward = -1;
+            break;
+        case 7:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E50);
+                w->tex = func_00398380(ui + 0x58, h);
+            }
+            w->reward = -1;
+            break;
+        }
+    } else if (hash == GetHashValue32(D_00466E60)) {
+        switch (self->type) {
+        case 3:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466E70));
+            break;
+        case 4:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466E88));
+            break;
+        case 5:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466EA0));
+            break;
+        case 6:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466EB0));
+            break;
+        case 7:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466EC0));
+            break;
+        case 8:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466ED0));
+            break;
+        }
+    } else if (hash == GetHashValue32(D_00466EE8)) {
+        self->w904 = w;
+        cUIText_setAsciiString((cUIText*)w, D_004A1408);
+    } else if (hash == GetHashValue32(D_00466EF8)) {
+        int type = self->type;
+        if (type == 3)
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466210));
+        else if (type == 4)
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466228));
+        else if (type == 5)
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466240));
+        else if (type == 6)
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466258));
+        else if (type == 7)
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466270));
+        else if (type == 8)
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466288));
+    } else if (hash == GetHashValue32(D_00466F10)) {
+        self->w908 = w;
+        cUIText_setAsciiString((cUIText*)w, D_004A1408);
+    } else if (hash == GetHashValue32(D_00466F20)) {
+        self->w90C = w;
+        cUIText_setAsciiString((cUIText*)w, D_004A1408);
+    } else if (hash == GetHashValue32(D_00466F30)) {
+        self->w910 = w;
+        self->vt[43].fn((char*)self + self->vt[43].delta);
+    } else {
+        for (int row = 0; row < self->rows; row++) {
+            for (int col = 0; col < self->cols; col++) {
+                if (hash == GetHashValue32(D_00441440[row][col])) {
+                    w->index = row * self->cols + col;
+                    show_F820(w, 0);
+                    self->cells[row][col] = w;
+                } else if (hash == GetHashValue32(D_004414C0[row][col])) {
+                    self->frames[row][col] = w;
+                    show_F820(w, 0);
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001CFD18);
@@ -1725,7 +1961,158 @@ extern "C" void cFEStatePreviewReward_onCreateScreen(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festaterewards", cFEStatePreviewReward_onWidgetCreate);
+#ifdef SKIP_ASM
+extern char D_00466DF8[];
+extern char D_00466E08[];
+extern char D_00466E18[];
+extern char D_00466E30[];
+extern char D_00466E50[];
+extern char D_00466E60[];
+extern char D_00466E70[];
+extern char D_00466E88[];
+extern char D_00466EA0[];
+extern char D_00467150[];
+extern char D_00466EC0[];
+extern char D_00466F10[];
+extern char D_00467160[];
+extern char D_00467170[];
+extern char D_00467188[];
+extern char D_00467198[];
+extern char D_004671A8[];
+extern char D_004671C0[];
+
+struct sVE_1C98 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sWidget_1C98 {
+    char pad_0x0[8];
+    sVE_1C98* vt;       // 0x8
+    char pad_0xC[0x38 - 0xC];
+    int hash;           // 0x38
+    char pad_0x3C[0x78 - 0x3C];
+    int f78;            // 0x78
+    void* f7C;          // 0x7C
+};
+
+struct sPreviewReward_1C98 {
+    char pad_0x0[0x10];
+    char* ui;                   // 0x10
+    char pad_0x14[0x48 - 0x14];
+    sWidget_1C98* items[3];     // 0x48
+    sWidget_1C98* frames[3];    // 0x54
+    char** reward;              // 0x60
+    char pad_0x64[0x68 - 0x64];
+    int type;                   // 0x68
+    char pad_0x6C[0x70 - 0x6C];
+    int f70;                    // 0x70
+    int sel;                    // 0x74
+};
+
+extern "C" void cFEStatePreviewReward_onWidgetCreate(sPreviewReward_1C98* self, sWidget_1C98* w)
+{
+    if (w == 0)
+        return;
+
+    int hash = w->hash;
+    if (hash == GetHashValue32(D_00466DF8)) {
+        switch (self->type) {
+        case 3:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E08);
+                w->f7C = func_00398380(ui + 0x58, h);
+            }
+            w->f78 = -1;
+            break;
+        case 4:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E18);
+                w->f7C = func_00398380(ui + 0x58, h);
+            }
+            w->f78 = -1;
+            break;
+        case 5:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E30);
+                w->f7C = func_00398380(ui + 0x58, h);
+            }
+            w->f78 = -1;
+            break;
+        case 7:
+            {
+                char* ui = self->ui;
+                int h = GetHashValue32(D_00466E50);
+                w->f7C = func_00398380(ui + 0x58, h);
+            }
+            w->f78 = -1;
+            break;
+        }
+    } else if (hash == GetHashValue32(D_00466E60)) {
+        switch (self->type) {
+        case 3:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466E70));
+            break;
+        case 4:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466E88));
+            break;
+        case 5:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466EA0));
+            break;
+        case 6:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00467150));
+            break;
+        case 7:
+            cUIText_setUnicodeStringByID((cUIText*)w, GetHashValue32(D_00466EC0));
+            break;
+        }
+    } else if (hash == GetHashValue32(D_00466F10)) {
+        switch (self->type) {
+        case 4:
+            w->vt[9].fn((char*)w + w->vt[9].delta, 0);
+            break;
+        case 3:
+        case 5:
+        case 7:
+            cUIText_setAsciiString((cUIText*)w, *self->reward);
+            break;
+        case 6:
+            break;
+        }
+    } else if (hash == GetHashValue32(D_00467160)) {
+        self->frames[0] = w;
+        w->vt[9].fn((char*)w + w->vt[9].delta, 0);
+    } else if (hash == GetHashValue32(D_00467170)) {
+        self->frames[1] = w;
+        w->vt[9].fn((char*)w + w->vt[9].delta, 0);
+    } else if (hash == GetHashValue32(D_00467188)) {
+        self->frames[2] = w;
+        w->vt[9].fn((char*)w + w->vt[9].delta, 0);
+    } else if (hash == GetHashValue32(D_00467198)) {
+        self->items[0] = w;
+    } else if (hash == GetHashValue32(D_004671A8)) {
+        self->items[1] = w;
+    } else if (hash == GetHashValue32(D_004671C0)) {
+        self->items[2] = w;
+    }
+    int sel = self->sel;
+    if (sel >= 0) {
+        sWidget_1C98* item = self->items[sel];
+        if (item != 0 && self->frames[sel] != 0) {
+            item->f78 = self->f70;
+            item->f7C = 0;
+            sWidget_1C98* f = self->frames[self->sel];
+            f->vt[9].fn((char*)f + f->vt[9].delta, 1);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1F78);

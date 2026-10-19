@@ -84,7 +84,29 @@ extern "C" void func_00313AD8(void* self, int key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00313B38);
+#ifdef SKIP_ASM
+void operator_delete(int* ptr);
+struct sNode_00313B38 {
+    int id;
+    int refs;
+    float time;
+    sNode_00313B38* next;
+};
+
+extern "C" void func_00313B38(char* self, int id, float time) {
+    sNode_00313B38** link;
+    for (link = (sNode_00313B38**)(self + 0xAC); *link != 0; link = &(*link)->next) {
+        sNode_00313B38* n = *link;
+        if (n->id == id && n->time == time && n->refs == 0) {
+            *link = n->next;
+            operator_delete((int*)n);
+            return;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00313BA8);
@@ -187,7 +209,13 @@ extern "C" void func_00313CF0(void* self, int a1, float val)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00313D10);
+#ifdef SKIP_ASM
+extern "C" void func_00313D10(int arg0, int arg1, float fparg0) {
+    (*(float *)((char*)(((arg1 * 0x1C) + arg0)) + (0xC))) = fparg0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00313D28);
@@ -209,7 +237,13 @@ extern "C" void func_00313D40(void* self, int a1, int val)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00313D58);
+#ifdef SKIP_ASM
+extern "C" void func_00313D58(int arg0, int arg1) {
+    (*(int *)((char*)(((arg1 * 0x1C) + arg0)) + (0x18))) = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00313D70);
@@ -659,7 +693,6 @@ cAnimSequenceNode* cAnimSequencer_getSequence(cAnimSequencer* self, int index)
 INCLUDE_ASM("animation/animsequencer", func_00314788);
 
 INCLUDE_ASM("animation/animsequencer", func_003147B8);
-
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("animation/animsequencer", func_003147F0);
 #ifdef SKIP_ASM
@@ -821,10 +854,34 @@ void func_00314AA0_impl(void* self, char* data)
 #endif
 
 INCLUDE_ASM("animation/animsequencer", func_00314AC0);
-
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00314AE0);
+#ifdef SKIP_ASM
+extern "C" int func_0041AA88(const char* a, const char* b);
 
+extern "C" int func_00314AE0(char* self, const char* name) {
+    int i;
+    for (i = 0; i < *(short*)(*(char**)(self + 4) + 4); i++) {
+        if (func_0041AA88(name, *(char**)(self + 8) + i * 0x60) == 0)
+            return 1;
+    }
+    return 0;
+}
+#endif
+//100%
 INCLUDE_ASM("animation/animsequencer", func_00314B70);
+#ifdef SKIP_ASM
+extern "C" int func_0041AA88(const char* a, const char* b);
+
+extern "C" char* func_00314B70(char* self, const char* name) {
+    int i;
+    for (i = 0; i < *(short*)(*(char**)(self + 4) + 4); i++) {
+        if (func_0041AA88(name, *(char**)(self + 8) + i * 0x60) == 0)
+            return *(char**)(self + 8) + i * 0x60;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00314C00);
@@ -858,5 +915,11 @@ extern "C" void* func_00314C00(sMdfArchive* self, const char* name)
 }
 #endif
 
-INCLUDE_ASM("animation/animsequencer", func_00314C98);
 
+//100%
+INCLUDE_ASM("animation/animsequencer", func_00314C98);
+#ifdef SKIP_ASM
+extern "C" int func_00314C98(void *arg0, int arg1) {
+    return (*(int *)((char*)(arg0) + (8))) + (arg1 * 0x60);
+}
+#endif

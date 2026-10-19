@@ -46,8 +46,6 @@ extern "C" void* cBE_getBE()
 }
 #endif
 
-INCLUDE_ASM("be/be", func_0014DD48);
-
 struct sBEInterfaceVTable {
     char pad_0x00[0x8];
     short field_0x8;
@@ -62,6 +60,16 @@ struct sBEInterface {
 
 extern sBEInterface* D_005308A8[];
 extern int D_004A11F4;
+
+//100%
+INCLUDE_ASM("be/be", func_0014DD48);
+#ifdef SKIP_ASM
+extern int D_004A11F0;
+
+extern "C" int func_0014DD48(void) {
+    return D_004A11F0 != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/be", cBE_getInterface__Fv);
@@ -151,7 +159,15 @@ extern "C" void cBE_setState(int state)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/be", func_0014DEE8);
+#ifdef SKIP_ASM
+extern "C" void func_0014A078(int);
+
+extern "C" void func_0014DEE8(void) {
+    func_0014A078((*(int*)&D_004A11F8));
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/be", func_0014DF08);

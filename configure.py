@@ -147,6 +147,39 @@ compiler_type = "gcc"
 """)
 
 
+def rewrite_uld_hi_for_objdiff():
+    """Objects mode only: `lui $r, %hi(SYM + 0x7)` -> `%hi(SYM)` where that lui feeds an unaligned 64-bit load.
+
+    For an 8-byte value read with ldl %lo(SYM + 0x7) / ldr %lo(SYM), splat writes the lui as %hi(SYM + 0x7) and
+    modern gas pairs that HI16 with the ldl's LO16. The EE assembler the game was built with pairs it with the
+    ldr's LO16 (+0), and objdiff reads a HI16's addend from the LO16 after it, so identical bytes compared as
+    +7 vs +0 (sound-key family, 2026-10-18). Only rewritten when both spellings give the same immediate and the
+    function has the matching ldr. Never used for the linked ELF (same bytes either way).
+    """
+    import re
+
+    hi7 = re.compile(r"(lui\s+(\$\w+), )%hi\((D_([0-9A-F]{8})) \+ 0x7\)")
+    rewritten = 0
+    for f in Path("asm/nonmatchings").rglob("*.s"):
+        text = f.read_text()
+        if " + 0x7)" not in text:
+            continue
+
+        def sub(m):
+            nonlocal rewritten
+            addr = int(m.group(4), 16)
+            same = ((addr + 7 + 0x8000) >> 16) == ((addr + 0x8000) >> 16)
+            if same and re.search(r"ldr\s+\$\w+, %%lo\(%s\)\(%s\)" % (m.group(3), re.escape(m.group(2))), text):
+                rewritten += 1
+                return f"{m.group(1)}%hi({m.group(3)})"
+            return m.group(0)
+
+        new_text = hi7.sub(sub, text)
+        if new_text != text:
+            f.write_text(new_text)
+    print(f"uld %hi rewrite for objdiff: {rewritten} lui")
+
+
 def rewrite_lit4_loads_for_objdiff():
     """Objects mode only: turn `lwc1 $fN, (D_x)` loads of .lit4 pool entries back into `li.s $fN, value`.
 
@@ -186,6 +219,41 @@ def rewrite_lit4_loads_for_objdiff():
         if new != text:
             f.write_text(new)
     print(f"lit4: rewrote {rewritten} literal loads to li.s for objdiff")
+
+def fix_short_loop_branches():
+    """Write the loop-back branch of each address in config/short_loop_branches.txt as a raw `.word`.
+
+    Re-assembling splat's output of a very short loop (e.g. `c.lt.s; nop; nop; bc1tl`) makes SN `as` insert
+    its R5900 short-loop nops a second time, so the function (and obj/target) comes out longer than retail.
+    As a raw word the branch keeps its exact encoding and the assembler no longer sees a loop.
+    """
+    import re
+
+    path = Path("config/short_loop_branches.txt")
+    if not path.exists():
+        return
+    addrs = {int(m, 16) for m in re.findall(r"^\s*0x([0-9A-Fa-f]+)", path.read_text(), re.M)}
+    line = re.compile(r"^(\s*/\* [0-9A-F]+ ([0-9A-F]{8}) ([0-9A-F]{8}) \*/)\s+(\S+)\s.*$", re.M)
+    done = set()
+    for f in Path("asm/nonmatchings").rglob("*.s"):
+        text = f.read_text()
+        if not any(f"{a:08X}" in text for a in addrs):
+            continue
+
+        def sub(m):
+            vram = int(m.group(2), 16)
+            if vram not in addrs:
+                return m.group(0)
+            done.add(vram)
+            word = int.from_bytes(bytes.fromhex(m.group(3)), "little")
+            return f"{m.group(1)}  .word 0x{word:08X} /* {m.group(4)}: raw word, see config/short_loop_branches.txt */"
+
+        f.write_text(line.sub(sub, text))
+    missing = addrs - done
+    if missing:
+        print("short-loop fix: not found: " + ", ".join(f"0x{a:08X}" for a in sorted(missing)))
+    print(f"short-loop fix: {len(done)} loop branches written as raw words")
+
 
 def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_only=False, dual_objects=False):
     """
@@ -304,7 +372,7 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
 
     cross = "mips-linux-gnu-"
 
-    ld_args = "-EL -T config/undefined_syms_auto.txt -T config/undefined_funcs_auto.txt -Map $mapfile -T $in -o $out"
+    ld_args = "-EL -T config/undefined_syms.txt -T config/undefined_syms_auto.txt -T config/undefined_funcs_auto.txt -Map $mapfile -T $in -o $out"
 
     as_cpp = "cpp"
     as_filter = ""
@@ -342,6 +410,25 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
         "cpp",
         description="cpp $in",
         command=f"{COMPILE_CXX_RULE} $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
+    )
+
+    # Objects mode, obj/current only: the same compiles through tools/jtbl_cc.py, which points each switch jump
+    # table that matches the retail one entry for entry at its jtbl_* symbol (see that file).
+    jt = "python3 tools/jtbl_cc.py --unit $unit -- "
+    ninja.rule(
+        "cc_jt",
+        description="cc $in (jtbl)",
+        command=f"{jt}{COMPILE_C_RULE} $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
+    )
+    ninja.rule(
+        "cc_unit_jt",
+        description="cc $in ($ccdir, jtbl)",
+        command=f"{jt}{COMPILE_C_RULE.replace(CC_DIR, '$ccdir')} $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
+    )
+    ninja.rule(
+        "cpp_jt",
+        description="cpp $in (jtbl)",
+        command=f"{jt}{COMPILE_CXX_RULE} $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
     )
 
     ninja.rule(
@@ -413,8 +500,12 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                 build(entry.object_path, entry.src_paths, task, out_dir="obj/target", collect_objdiff=True, orig_entry=entry,
                       extra_flags=unit_flags or None, variables=tvars)
                 flags, inc = current_c_flags(entry)
-                build(entry.object_path, entry.src_paths, task, out_dir="obj/current",
-                      extra_flags=(flags + " " + unit_flags).strip(), implicit=inc, variables=tvars)
+                # (fork) tools/jtbl_cc.py drives the SN driver; the ee-gcc 2.9 wrapper isn't wired to it, so these units' switch
+                # functions keep their local jump tables (and stay below 100% in objdiff)
+                jt = task != "cc_native"
+                build(entry.object_path, entry.src_paths, task + "_jt" if jt else task, out_dir="obj/current",
+                      extra_flags=(flags + " " + unit_flags).strip(), implicit=inc + (["tools/jtbl_cc.py"] if jt else []),
+                      variables={**(tvars or {}), "unit": seg.name})
             else:
                 build(entry.object_path, entry.src_paths, task, extra_flags=unit_flags or None, variables=tvars)
         elif isinstance(seg, splat.segtypes.common.cpp.CommonSegCpp):
@@ -544,9 +635,8 @@ def main():
 
     do_clean = (args.clean or args.only_clean) or False
 
-    # FIXME: Set skip_checksum to False once builds are able
-    # to match; it has been temporairly enabled here.
-    do_skip_checksum = args.skip_checksum or True
+    # The normal build is byte-identical to retail since 2026-10-17 (fork), so the checksum runs unless -s.
+    do_skip_checksum = args.skip_checksum
     do_objects = args.objects or False
 
     if do_clean:
@@ -555,11 +645,13 @@ def main():
             return
 
     split.main([YAML_FILE], modes="all", verbose=False)
+    fix_short_loop_branches()
 
     linker_entries = split.linker_writer.entries
 
     if do_objects:
         rewrite_lit4_loads_for_objdiff()
+        rewrite_uld_hi_for_objdiff()
         build_stuff(linker_entries, skip_checksum=True, objects_only=True, dual_objects=True)
     else:
         build_stuff(linker_entries, do_skip_checksum)

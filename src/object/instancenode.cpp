@@ -66,9 +66,17 @@ extern "C" void func_0034FC80(void* self, void* a1)
 }
 #endif
 
-INCLUDE_ASM("object/instancenode", func_0034FCA0);
-
 extern "C" void* func_002D19E8(int);
+
+//100%
+INCLUDE_ASM("object/instancenode", func_0034FCA0);
+#ifdef SKIP_ASM
+extern "C" void func_002D1A78(int);
+
+extern "C" void func_0034FCA0(void *arg0) {
+    func_002D1A78((*(int *)((char*)(arg0) + (0x18))));
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/instancenode", func_0034FCC0__FPv);

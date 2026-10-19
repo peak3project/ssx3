@@ -1606,7 +1606,153 @@ extern "C" char* func_0035BA88(char* self, cSmStream_BA88* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/splinemodifier", func_0035BD70);
+#ifdef SKIP_ASM
+void operator_delete(int*);
+extern "C" void* func_002D1BE0();
+
+struct sSmVec4_BD70 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sSmBox_BD70 {
+    sSmVec4_BD70 min;
+    sSmVec4_BD70 max;
+};
+struct sSmCell_BD70 {
+    int level;
+    int x, y, z;
+};
+struct sSmNode_BD70 {
+    sSmNode_BD70* child[2][2][2];   // 0x00
+    void* lists[3];                 // 0x20
+    int empty()
+    {
+        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
+            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
+            return 0;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (lists[i]) return 0;
+        }
+        return 1;
+    }
+};
+struct sSmRoot_BD70 {
+    sSmCell_BD70 cell;              // 0x00
+    sSmNode_BD70* node;             // 0x10
+};
+struct sSmSeg_BD70 {
+    char pad0[0x64];
+    sSmSeg_BD70* next;              // 0x64
+    char pad68[4];
+    float minx, miny, minz;         // 0x6C
+    float maxx, maxy, maxz;         // 0x78
+};
+struct sSmTrack_BD70 {
+    char pad0[0x20];
+    int count;                      // 0x20
+    sSmSeg_BD70* first;             // 0x24
+};
+struct sSmSet_BD70 {
+    char pad0[0x44];
+    unsigned int* refs;             // 0x44
+};
+struct sSmWorld_BD70 {
+    char pad0[0x8];
+    sSmSet_BD70** sets;             // 0x8
+};
+
+extern "C" void* func_002D1BD8();
+extern "C" void func_00328F28(void* out, const void* box);
+extern "C" void func_003284B8(void* node, int idx, void* item, const void* target, const void* cur);
+extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
+extern char D_004911D0[];
+extern char D_00491200[];
+
+static inline sSmRoot_BD70* findRoot_BD70(char* w, const sSmCell_BD70& c)
+{
+    sSmRoot_BD70* r = (sSmRoot_BD70*)w;
+    sSmRoot_BD70* rx = c.x >= 0 ? r : r + 4;
+    sSmRoot_BD70* ry = c.y >= 0 ? rx : rx + 2;
+    sSmRoot_BD70* rz = c.z >= 0 ? ry : ry + 1;
+    return rz;
+}
+
+static inline void remove_BD70(char* w, void* item, const sSmBox_BD70* box)
+{
+    (*(int*)(w + 0xA0))++;
+    sSmCell_BD70 c;
+    func_00328F28(&c, box);
+    sSmRoot_BD70* r = findRoot_BD70(w, c);
+    func_003284B8(r->node, 2, item, &c, &r->cell);
+    if (r->node->empty()) {
+        operator_delete((int*)r->node);
+        r->node = 0;
+    }
+}
+
+static inline void insert_BD70(char* w, void* item, const sSmBox_BD70* box)
+{
+    sSmCell_BD70 c;
+    func_00328F28(&c, box);
+    func_00328C20(findRoot_BD70(w, c), 2, item, &c);
+}
+
+static inline sSmTrack_BD70* toTrack_BD70(unsigned int p)
+{
+    return (sSmTrack_BD70*)(p << 2);
+}
+
+static inline sSmTrack_BD70* refToTrack_BD70(unsigned int v)
+{
+    unsigned int p = v >> 8;
+    if (p == 0) {
+        return 0;
+    }
+    return toTrack_BD70(p);
+}
+
+struct sSmRef_BD70 {
+    unsigned int id;
+
+    sSmTrack_BD70* get()
+    {
+        sSmSet_BD70* set = (*(sSmWorld_BD70**)func_002D1BD8())->sets[id & 0xFF];
+        if (set == 0) {
+            return 0;
+        }
+        return refToTrack_BD70(set->refs[id >> 8]);
+    }
+};
+
+extern "C" void func_0035BD70(char* self, int flags)
+{
+    *(void**)(self + 0x8) = D_004911D0;
+    remove_BD70((char*)func_002D1BE0(), *(void**)(self + 0x44), (sSmBox_BD70*)(self + 0x10));
+    operator_delete(*(int**)(self + 0x44));
+    sSmTrack_BD70* t = ((sSmRef_BD70*)(self + 0x30))->get();
+    sSmSeg_BD70* seg = t->first;
+    for (int i = 0; i < t->count; i++) {
+        sSmBox_BD70 b;
+        b.min.x = seg->minx;
+        b.min.y = seg->miny;
+        b.min.z = seg->minz;
+        b.min.w = 1.0f;
+        b.max.x = seg->maxx;
+        b.max.y = seg->maxy;
+        b.max.z = seg->maxz;
+        b.max.w = 1.0f;
+        insert_BD70((char*)func_002D1BE0(), seg, &b);
+        seg = seg->next;
+    }
+    *(void**)(self + 0x8) = D_00491200;
+    func_0035B6D0((sSplineLink*)self);
+    if (flags & 1) {
+        operator_delete((int*)self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035C040);

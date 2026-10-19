@@ -657,7 +657,220 @@ extern "C" void* func_00323A68(void* self)
 }
 #endif
 
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("input/inputparse", cInputMapParser_parseTerm);
+#ifdef SKIP_ASM
+extern "C" void* cInputMapParser_parseBinaryFunc(void* self, int op);
+extern "C" void* cInputMapParser_parseUnaryFunc(void* self, int op);
+extern char D_0048E008[];
+extern char D_0048E028[];
+extern char D_0048E048[];
+extern char D_0048E070[];
+extern char D_0048E098[];
+extern char D_0048E0B8[];
+extern char D_0048E0D8[];
+
+struct sTermNode_3BD8 {
+    int type;
+    union {
+        float value;
+        int index;
+        void* a;
+    };
+    int b;
+};
+
+struct sTermVar_3BD8 {
+    char name[0x40];
+    sTermNode_3BD8* expr;       // 0x40
+};
+
+struct sTermParser_3BD8 {
+    char pad0[0x98];
+    int tok;                    // 0x98
+    char name[0x40];            // 0x9C
+    float number;               // 0xDC
+    char padE0[0x108E8 - 0xE0];
+    sTermVar_3BD8* cur;         // 0x108E8
+};
+
+extern "C" void* cInputMapParser_parseTerm(void* p)
+{
+    sTermParser_3BD8* self = (sTermParser_3BD8*)p;
+    sTermNode_3BD8* node;
+    sTermNode_3BD8* t;
+    char* name;
+    int input;
+    int mod;
+    int cfg;
+    sTermVar_3BD8* var;
+    int type;
+
+again:
+    switch (self->tok) {
+    case 2:
+        name = self->name;
+        input = func_003216E8(self, name);
+        if (input >= 0) {
+            mod = 5;
+            cInputMapParser_readToken(self);
+            if (self->tok == 4) {
+                cInputMapParser_readToken(self);
+                if (self->tok != 2) {
+                    func_00321500(self, D_0048E008);
+                    return 0;
+                }
+                mod = cInputMapParser_lookupModifierName(self, name);
+                if (mod == 6) {
+                    func_00321500(self, D_0048E028, name);
+                    return 0;
+                }
+                cInputMapParser_readToken(self);
+            }
+            node = (sTermNode_3BD8*)func_003215F8(self);
+            node->type = 2;
+            node->index = input;
+            node->b = mod;
+            return node;
+        }
+        cfg = cInputMapParser_lookupConfigName(self, name);
+        if (cfg >= 0) {
+            cInputMapParser_readToken(self);
+            node = (sTermNode_3BD8*)func_003215F8(self);
+            node->type = 3;
+            node->index = cfg;
+            return node;
+        }
+        var = (sTermVar_3BD8*)func_00321A40((sTable_321A40*)self, name);
+        if (var != 0) {
+            int mod2;
+            cInputMapParser_readToken(self);
+            if (var == self->cur) {
+                func_00321500(self, D_0048E048);
+                return 0;
+            }
+            mod2 = 5;
+            if (self->tok == 4) {
+                cInputMapParser_readToken(self);
+                if (self->tok != 2) {
+                    func_00321500(self, D_0048E008);
+                    return 0;
+                }
+                mod2 = cInputMapParser_lookupModifierName(self, name);
+                if (mod2 == 6) {
+                    func_00321500(self, D_0048E070, name);
+                    return 0;
+                }
+                cInputMapParser_readToken(self);
+            }
+            type = var->expr->type;
+            if (type == 4) {
+                node = (sTermNode_3BD8*)func_003215F8(self);
+                node->type = type;
+                node->value = var->expr->value;
+                return node;
+            }
+            node = (sTermNode_3BD8*)func_003215F8(self);
+            node->type = 1;
+            node->a = var;
+            node->b = mod2;
+            return node;
+        }
+        func_00321500(self, D_0048E098, name);
+        return 0;
+    case 11:
+        node = (sTermNode_3BD8*)func_003215F8(self);
+        node->type = 4;
+        node->value = self->number;
+        cInputMapParser_readToken(self);
+        return node;
+    case 20:
+        cInputMapParser_readToken(self);
+        goto again;
+    case 21:
+        cInputMapParser_readToken(self);
+        t = (sTermNode_3BD8*)cInputMapParser_parseTerm(self);
+        if (t == 0)
+            return 0;
+        if (t->type == 4) {
+            t->value = -t->value;
+            return t;
+        }
+        node = (sTermNode_3BD8*)func_003215F8(self);
+        node->type = 0x12;
+        node->a = t;
+        return node;
+    case 24:
+        cInputMapParser_readToken(self);
+        t = (sTermNode_3BD8*)cInputMapParser_parseTerm(self);
+        if (t == 0)
+            return 0;
+        if (t->type == 4) {
+            t->value = t->value == 0.0f ? 1.0f : 0.0f;
+            return t;
+        }
+        node = (sTermNode_3BD8*)func_003215F8(self);
+        node->type = 0x13;
+        node->a = t;
+        return node;
+    case 9:
+        cInputMapParser_readToken(self);
+        node = (sTermNode_3BD8*)cInputMapParser_parseExpression(self);
+        if (self->tok != 10) {
+            func_00321500(self, D_0048E0B8);
+            func_00321638(self, node);
+            return 0;
+        }
+        cInputMapParser_readToken(self);
+        return node;
+    case 25:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseBinaryFunc(self, 0x14);
+    case 26:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseBinaryFunc(self, 0x15);
+    case 27:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseBinaryFunc(self, 0x16);
+    case 28:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseBinaryFunc(self, 0x17);
+    case 29:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x18);
+    case 30:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x19);
+    case 31:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x1A);
+    case 32:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x1B);
+    case 33:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x1C);
+    case 34:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x1D);
+    case 35:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x1E);
+    case 36:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x1F);
+    case 37:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x20);
+    case 38:
+        cInputMapParser_readToken(self);
+        return cInputMapParser_parseUnaryFunc(self, 0x21);
+    default:
+        func_00321500(self, D_0048E0D8);
+        return 0;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("input/inputparse", cInputMapParser_parseBinaryFunc);
@@ -917,7 +1130,193 @@ extern "C" int cInputMapParser_compileStatement(void* self, const char* name, in
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputparse", func_00324678);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" void func_00321500(void* self, const char* fmt, ...);
+extern "C" int func_00321AD0_i(void* self, void* var) __asm__("func_00321AD0");
+extern "C" int func_00321AD8(void* self, int a1, int a2);
+extern "C" int func_00324EC8_K(void* self, void* node, int* dst, void* code, int cap, int op, int a6) __asm__("func_00324EC8");
+extern "C" int func_003250D8_K(void* self, void* node, int* dst, void* code, int cap, int op, int a6) __asm__("func_003250D8");
+extern char D_0048E228[];
+extern char D_0048E240[];
+extern char D_0048E268[];
+
+struct sNode_324678 {
+    int type;
+    union {
+        float value;
+        int index;
+        void* a;
+    };
+    union {
+        int b;
+        sNode_324678* then_;
+    };
+    sNode_324678* else_;
+};
+struct sVar_324678 {
+    char name[0x40];
+    sNode_324678* expr;         // 0x40
+};
+union sInsn_324678 {
+    struct {
+        unsigned int op : 6;
+        unsigned int dst : 6;
+        unsigned int src : 10;
+        unsigned int arg : 10;
+    } r;
+    struct {
+        unsigned int op : 6;
+        unsigned int reg : 10;
+        unsigned int offset : 16;
+    } j;
+    float f;
+};
+struct sCodeGen_324678 {
+    char pad0[0x108EC];
+    int freeRegs[63];           // 0x108EC
+    int numFree;                // 0x109E8
+};
+
+extern "C" int func_00324678(void* vself, void* vnode, int* dst, void* vcode, int cap, int a5)
+{
+    sCodeGen_324678* self = (sCodeGen_324678*)vself;
+    sNode_324678* node = (sNode_324678*)vnode;
+    sInsn_324678* code = (sInsn_324678*)vcode;
+    switch (node->type) {
+    case 4:
+        if (*dst < 0) {
+            if (self->numFree > 0) {
+                *dst = self->freeRegs[--self->numFree];
+            }
+            if (*dst < 0) {
+                func_00321500(self, D_0048E240);
+                return -1;
+            }
+        }
+        if (cap < 2) {
+            func_00321500(self, D_0048E228);
+            return -1;
+        }
+        code->r.op = 0;
+        code->r.dst = *dst;
+        code->r.src = 0;
+        code->r.arg = 0;
+        code[1].f = node->value;
+        return 2;
+    case 1:
+        return func_00324678(self, ((sVar_324678*)node->a)->expr, dst, code, cap, node->b != 5 ? node->b : a5);
+    case 2: {
+        int idx = func_00321AD8(self, node->index, node->b == 5 ? a5 : node->b);
+        if (*dst == -1) {
+            *dst = idx;
+            return 0;
+        }
+        if (cap <= 0) {
+            func_00321500(self, D_0048E228);
+            return -1;
+        }
+        code->r.op = 1;
+        code->r.dst = *dst;
+        code->r.src = idx;
+        code->r.arg = 0;
+        return 1;
+    }
+    case 3:
+        if (*dst == -1) {
+            *dst = func_00321AD0_i(self, node->a);
+            return 0;
+        }
+        if (cap <= 0) {
+            func_00321500(self, D_0048E228);
+            return -1;
+        }
+        code->r.op = 1;
+        code->r.dst = *dst;
+        code->r.src = func_00321AD0_i(self, node->a);
+        code->r.arg = 0;
+        return 1;
+    case 5: {
+        int cond = -1;
+        int n1 = func_00324678(self, node->a, &cond, code, cap, a5);
+        if (n1 < 0) {
+            return -1;
+        }
+        code += n1;
+        cap -= n1;
+        if (cap <= 0) {
+            func_00321500(self, D_0048E228);
+            return -1;
+        }
+        unsigned int reg = cond;
+        code->j.op = 2;
+        code->j.reg = reg;
+        if (reg < 0x40) {
+            self->freeRegs[self->numFree++] = reg;
+        }
+        cap--;
+        int n2 = func_00324678(self, node->then_, dst, code + 1, cap, a5);
+        if (n2 < 0) {
+            return -1;
+        }
+        if (n2 + 1 > 0xFFFF) {
+            func_00321500(self, D_0048E268);
+            return -1;
+        }
+        code->j.offset = n2 + 1;
+        code += n2 + 1;
+        cap -= n2;
+        if (cap <= 0) {
+            func_00321500(self, D_0048E228);
+            return -1;
+        }
+        code->j.op = 3;
+        code->j.reg = 0;
+        int n3 = func_00324678(self, node->else_, dst, code + 1, cap - 1, a5);
+        if (n3 < 0) {
+            return -1;
+        }
+        if (n3 > 0xFFFF) {
+            func_00321500(self, D_0048E268);
+            return -1;
+        }
+        code->j.offset = n3;
+        return n1 + n2 + n3 + 2;
+    }
+    case 6: return func_00324EC8_K(self, node, dst, code, cap, 4, a5);
+    case 7: return func_00324EC8_K(self, node, dst, code, cap, 5, a5);
+    case 8: return func_00324EC8_K(self, node, dst, code, cap, 6, a5);
+    case 9: return func_00324EC8_K(self, node, dst, code, cap, 7, a5);
+    case 10: return func_00324EC8_K(self, node, dst, code, cap, 8, a5);
+    case 11: return func_00324EC8_K(self, node, dst, code, cap, 9, a5);
+    case 12: return func_00324EC8_K(self, node, dst, code, cap, 10, a5);
+    case 13: return func_00324EC8_K(self, node, dst, code, cap, 11, a5);
+    case 14: return func_00324EC8_K(self, node, dst, code, cap, 12, a5);
+    case 15: return func_00324EC8_K(self, node, dst, code, cap, 13, a5);
+    case 16: return func_00324EC8_K(self, node, dst, code, cap, 14, a5);
+    case 17: return func_00324EC8_K(self, node, dst, code, cap, 15, a5);
+    case 20: return func_00324EC8_K(self, node, dst, code, cap, 16, a5);
+    case 21: return func_00324EC8_K(self, node, dst, code, cap, 17, a5);
+    case 22: return func_00324EC8_K(self, node, dst, code, cap, 18, a5);
+    case 23: return func_00324EC8_K(self, node, dst, code, cap, 19, a5);
+    case 24: return func_003250D8_K(self, node, dst, code, cap, 20, a5);
+    case 25: return func_003250D8_K(self, node, dst, code, cap, 21, a5);
+    case 26: return func_003250D8_K(self, node, dst, code, cap, 22, a5);
+    case 27: return func_003250D8_K(self, node, dst, code, cap, 23, a5);
+    case 28: return func_003250D8_K(self, node, dst, code, cap, 24, a5);
+    case 29: return func_003250D8_K(self, node, dst, code, cap, 25, a5);
+    case 30: return func_003250D8_K(self, node, dst, code, cap, 26, a5);
+    case 31: return func_003250D8_K(self, node, dst, code, cap, 27, a5);
+    case 32: return func_003250D8_K(self, node, dst, code, cap, 28, a5);
+    case 33: return func_003250D8_K(self, node, dst, code, cap, 29, a5);
+    case 18: return func_003250D8_K(self, node, dst, code, cap, 30, a5);
+    case 19: return func_003250D8_K(self, node, dst, code, cap, 31, a5);
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputparse", func_00324EC8);
@@ -1765,7 +2164,237 @@ extern "C" void func_00326E50(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputparse", func_00326EB0);
+#ifdef SKIP_ASM
+extern "C" int func_003FF708(int port, int slot, void* buf);
+extern "C" int func_003FFA58(int port, int slot, unsigned char* data);
+extern "C" int func_003FFBC0(int port, int slot);
+extern "C" int func_003FFCD8(int port, int slot);
+extern "C" int func_003FFD60(int port, int slot, int id, int idx);
+extern "C" int func_003FFFA0(int port, int slot, int term, int offs);
+extern "C" int func_004000D8(int port, int slot, int mode, int lock);
+extern "C" int func_00400190(int port, int slot, unsigned char* data);
+extern "C" int func_00400250(int port, int slot, unsigned char* data);
+extern "C" int func_00400490(int port, int slot);
+extern "C" int func_004004F0(int port, int slot);
+extern unsigned char D_004A3FB8;
+
+struct sPad_326EB0 {
+    char pad0[0x4];
+    int port;                   // 0x4
+    int slot;                   // 0x8
+    char padC[0x30 - 0xC];
+    int actSmall;               // 0x30
+    int lastSmall;              // 0x34
+    int actBig;                 // 0x38
+    int lastBig;                // 0x3C
+    unsigned char actDirect[8]; // 0x40
+    int phase;                  // 0x48
+    int retry;                  // 0x4C
+    int modeSet;                // 0x50
+    int pressure;               // 0x54
+    int analog;                 // 0x58
+    int actuator;               // 0x5C
+    char pad60[0x80 - 0x60];
+    unsigned char buf[0x100];   // 0x80
+};
+
+static inline float Analog_326EB0(int v)
+{
+    if (v < 0)
+        v = 0;
+    return v * 0.003921568859368563f;
+}
+
+extern "C" int func_00326EB0(sPad_326EB0* self, float* out)
+{
+    unsigned char data[32];
+    int ok = 0;
+    int ret;
+    if (self->phase == 0) {
+        int r = func_003FF708(self->port, self->slot, self->buf);
+        if (r == 1) {
+            self->phase = r;
+            self->modeSet = 0;
+            self->actSmall = 0;
+            self->lastSmall = -1;
+            self->actBig = 0;
+            self->lastBig = -1;
+        }
+    }
+    int state = func_003FFBC0(self->port, self->slot);
+    if (state == 0 || state == 7) {
+        self->phase = 1;
+        self->modeSet = 0;
+    }
+    switch (self->phase) {
+    case 1:
+        if (state == 6 || state == 2) {
+            self->pressure = 0;
+            self->analog = 0;
+            self->actuator = 0;
+            int id = func_003FFFA0(self->port, self->slot, 1, 0);
+            if (id != 0) {
+                int ext = func_003FFFA0(self->port, self->slot, 2, 0);
+                switch (ext) {
+                case 0:
+                    if (id == 4)
+                        self->phase = 10;
+                    break;
+                case 4:
+                    self->phase = 2;
+                    break;
+                case 7:
+                    self->analog = 1;
+                    self->phase = 2;
+                    break;
+                }
+            }
+        }
+        break;
+    case 2:
+        if (self->analog == 0 || self->modeSet == 0) {
+            int r = func_004000D8(self->port, self->slot, 1, 3);
+            if (r == 1) {
+                self->modeSet = r;
+                self->phase = 3;
+            }
+        } else {
+            self->phase = 4;
+        }
+        break;
+    case 3:
+        if (func_003FFBC0(self->port, self->slot) != 5)
+            self->phase = 1;
+        break;
+    case 4:
+        if (func_00400490(self->port, self->slot) == 1)
+            self->phase = 5;
+        else
+            self->phase = 7;
+        break;
+    case 5:
+        if (func_004004F0(self->port, self->slot) == 1) {
+            self->retry = 0;
+            self->phase = 6;
+        }
+        break;
+    case 6: {
+        int r = func_003FFCD8(self->port, self->slot);
+        if (r == 1) {
+            self->phase = 1;
+            self->modeSet = 0;
+        } else if (r == 0) {
+            if (++self->retry >= 5) {
+                self->pressure = 1;
+                self->phase = 7;
+            }
+        } else {
+            self->retry = 0;
+        }
+        break;
+    }
+    case 7:
+        if (func_003FFD60(self->port, self->slot, -1, 0) != 0)
+            self->phase = 8;
+        else
+            self->phase = 10;
+        break;
+    case 8:
+        if (func_00400250(self->port, self->slot, &D_004A3FB8) == 1) {
+            self->retry = 0;
+            self->phase = 9;
+        }
+        break;
+    case 9: {
+        int r = func_003FFCD8(self->port, self->slot);
+        if (r == 1) {
+            self->phase = 1;
+            self->modeSet = 0;
+        } else if (r == 0) {
+            if (++self->retry >= 5) {
+                self->actuator = 1;
+                self->phase = 10;
+            }
+        } else {
+            self->retry = 0;
+        }
+        break;
+    }
+    case 10:
+        if (func_003FFA58(self->port, self->slot, data) == 0 || data[0] != 0) {
+            self->phase = 1;
+            self->modeSet = 0;
+        } else {
+            ok = 1;
+        }
+        break;
+    }
+    ret = 0;
+    if (ok) {
+        ret = 0x18;
+        out[0] = !(data[2] & 0x01) ? 1.0f : 0.0f;
+        out[1] = !(data[2] & 0x08) ? 1.0f : 0.0f;
+        out[2] = !(data[2] & 0x02) ? 1.0f : 0.0f;
+        out[3] = !(data[2] & 0x04) ? 1.0f : 0.0f;
+        if (self->pressure != 0) {
+            out[4] = data[8] * 0.003921568859368563f;
+            out[5] = data[9] * 0.003921568859368563f;
+            out[6] = data[10] * 0.003921568859368563f;
+            out[7] = data[11] * 0.003921568859368563f;
+            out[8] = data[12] * 0.003921568859368563f;
+            out[9] = data[13] * 0.003921568859368563f;
+            out[10] = data[14] * 0.003921568859368563f;
+            out[11] = data[15] * 0.003921568859368563f;
+            out[12] = data[16] * 0.003921568859368563f;
+            out[13] = data[17] * 0.003921568859368563f;
+            out[14] = data[18] * 0.003921568859368563f;
+            out[15] = data[19] * 0.003921568859368563f;
+        } else {
+            out[4] = !(data[2] & 0x20) ? 1.0f : 0.0f;
+            out[5] = !(data[2] & 0x80) ? 1.0f : 0.0f;
+            out[6] = !(data[2] & 0x10) ? 1.0f : 0.0f;
+            out[7] = !(data[2] & 0x40) ? 1.0f : 0.0f;
+            out[8] = !(data[3] & 0x10) ? 1.0f : 0.0f;
+            out[9] = !(data[3] & 0x20) ? 1.0f : 0.0f;
+            out[10] = !(data[3] & 0x40) ? 1.0f : 0.0f;
+            out[11] = !(data[3] & 0x80) ? 1.0f : 0.0f;
+            out[12] = !(data[3] & 0x04) ? 1.0f : 0.0f;
+            out[13] = !(data[3] & 0x08) ? 1.0f : 0.0f;
+            out[14] = !(data[3] & 0x01) ? 1.0f : 0.0f;
+            out[15] = !(data[3] & 0x02) ? 1.0f : 0.0f;
+        }
+        if (self->analog != 0) {
+            out[16] = Analog_326EB0(((0x4F - data[4]) * 0xFF) / 0x4F);
+            out[17] = Analog_326EB0(((data[4] - 0xB0) * 0xFF) / 0x4F);
+            out[18] = Analog_326EB0(((0x4F - data[5]) * 0xFF) / 0x4F);
+            out[19] = Analog_326EB0(((data[5] - 0xB0) * 0xFF) / 0x4F);
+            out[20] = Analog_326EB0(((0x4F - data[6]) * 0xFF) / 0x4F);
+            out[21] = Analog_326EB0(((data[6] - 0xB0) * 0xFF) / 0x4F);
+            out[22] = Analog_326EB0(((0x4F - data[7]) * 0xFF) / 0x4F);
+            out[23] = Analog_326EB0(((data[7] - 0xB0) * 0xFF) / 0x4F);
+        } else {
+            out[16] = 0.0f;
+            out[17] = 0.0f;
+            out[18] = 0.0f;
+            out[19] = 0.0f;
+            out[20] = 0.0f;
+            out[21] = 0.0f;
+            out[22] = 0.0f;
+            out[23] = 0.0f;
+        }
+    }
+    if (self->phase == 10 && (self->actSmall != self->lastSmall || self->actBig != self->lastBig)) {
+        self->actDirect[0] = self->actSmall;
+        self->actDirect[1] = self->actBig;
+        self->lastSmall = self->actSmall;
+        self->lastBig = self->actBig;
+        func_00400190(self->port, self->slot, self->actDirect);
+    }
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputparse", func_00327738__FPv);

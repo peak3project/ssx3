@@ -20,12 +20,49 @@ cStreamPause* cStreamPause_construct()
 #endif
 
 INCLUDE_ASM("main/streampause", func_00242D50);
-
+//100%
 INCLUDE_ASM("main/streampause", func_00242D90);
-
+#ifdef SKIP_ASM
+extern "C" int func_00242D90(signed char *first1, signed char *last1, signed char *first2, signed char *last2) {
+    for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
+        if (*first1 < *first2) return 1;
+        if (*first2 < *first1) return 0;
+    }
+    return first1 == last1 && first2 != last2;
+}
+#endif
+//100%
 INCLUDE_ASM("main/streampause", func_00242DF8);
-
+#ifdef SKIP_ASM
+extern "C" int func_00242DF8(signed char *first1, signed char *last1, signed char *first2, signed char *last2) {
+    for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
+        if (*first1 < *first2) return -1;
+        if (*first2 < *first1) return 1;
+    }
+    if (first2 == last2) return first1 != last1;
+    return -1;
+}
+#endif
+//100%
 INCLUDE_ASM("main/streampause", func_00242E58);
+#ifdef SKIP_ASM
+void operator_delete(int* ptr);
+
+extern "C" void func_00242E58(void *self) {
+    int **head = *(int ***)((char*)self + 4);
+    int **node = (int **)*head;
+    int **next;
+
+    while (node != head) {
+        next = (int **)*node;
+        operator_delete((int*)node);
+        node = next;
+        head = *(int ***)((char*)self + 4);
+    }
+    **(int ***)((char*)self + 4) = *(int **)((char*)self + 4);
+    *(int ***)((char*)*(int ***)((char*)self + 4) + 4) = *(int ***)((char*)self + 4);
+}
+#endif
 
 INCLUDE_ASM("main/streampause", func_00242EB8);
 
@@ -64,3 +101,17 @@ extern "C" void func_00243838(void* self, int flags)
 
 INCLUDE_ASM("main/streampause", func_002438B0);
 
+//100%
+INCLUDE_ASM("main/streampause", func_002438E0);
+#ifdef SKIP_ASM
+extern "C" void func_002438E0(void) {
+
+}
+#endif
+//100%
+INCLUDE_ASM("main/streampause", func_002438E8);
+#ifdef SKIP_ASM
+extern "C" void func_002438E8(void) {
+
+}
+#endif

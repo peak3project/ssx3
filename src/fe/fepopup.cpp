@@ -241,7 +241,33 @@ extern "C" void func_001C5DD8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001C5E58);
+#ifdef SKIP_ASM
+struct sVEntry_5E58 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+static inline void Call9_5E58(char* o, int a)
+{
+    if (o != 0) {
+        sVEntry_5E58* vt = *(sVEntry_5E58**)(o + 8);
+        vt[9].fn(o + vt[9].delta, a);
+    }
+}
+
+extern "C" void func_001C5E58(void* self, int a)
+{
+    char* s = (char*)self;
+    Call9_5E58(*(char**)(s + 0x70), a);
+    Call9_5E58(*(char**)(s + 0x74), a);
+    Call9_5E58(*(char**)(s + 0x78), a);
+    Call9_5E58(*(char**)(s + 0x7C), a);
+    Call9_5E58(*(char**)(s + 0x88), a);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C5F20);
@@ -1621,7 +1647,62 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
 
 INCLUDE_ASM("fe/fepopup", func_001C8A38);
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001C8EF0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" void func_001C9038(void* self, void* text, unsigned short* str, float* size);
+extern "C" void func_001C9210_s(void* self, void* text, const char* str, float* size) __asm__("func_001C9210");
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern void* D_004A28A8;
+extern char D_004660A8[];
+
+struct sVEntry_8EF0 {
+    short delta;
+    short index;
+    unsigned short* (*fn)(void*, int);
+};
+
+extern "C" void func_001C8EF0(void* vself, int* item, float* size, int flag, float extra)
+{
+    char* self = (char*)vself;
+    void* text;
+    if (flag != 0)
+        text = *(void**)(self + 0x74);
+    else
+        text = *(void**)(self + 0x78);
+    if (text == 0)
+        return;
+    switch (item[0]) {
+    case 0:
+        break;
+    case 2:
+        func_001C9210_s(self, text, (const char*)item[1], size);
+        goto add;
+    case 1:
+        func_001C9038(self, text, (unsigned short*)item[1], size);
+        goto add;
+    case 3: {
+        char* o = *(char**)((char*)D_004A28A8 + 0x8C);
+        sVEntry_8EF0* vt = *(sVEntry_8EF0**)(o + 4);
+        unsigned short* str = vt[4].fn(o + vt[4].delta, item[1]);
+        if (str) {
+            func_001C9038(self, text, str, size);
+            goto add;
+        } else {
+            char buf[0x40];
+            sprintf(buf, D_004660A8, item[1]);
+            func_001C9210_s(self, text, buf, size);
+        }
+        break;
+    }
+    default:
+    add:
+        size[1] += extra;
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C9038);
@@ -2037,7 +2118,26 @@ extern "C" void cScreenPopup_createConfirmationPopup(void* self, int idx)
 
 INCLUDE_ASM("fe/fepopup", func_001C9CD0);
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CA0F0);
+#ifdef SKIP_ASM
+struct sVEntry_A0F0 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+extern "C" void func_001CA0F0(void* self, int idx, int a)
+{
+    char* o = *(char**)((char*)self + (idx << 2) + 0x90);
+    if (o != 0) {
+        sVEntry_A0F0* vt = *(sVEntry_A0F0**)(o + 8);
+        vt[8].fn(o + vt[8].delta, a);
+        sVEntry_A0F0* vt2 = *(sVEntry_A0F0**)(o + 8);
+        vt2[25].fn(o + vt2[25].delta, 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA150);
@@ -4553,7 +4653,234 @@ extern "C" void cKeyboardPopup_SetNameForKey(void* vself, cUIText* text, int key
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CDB98);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+int GetHashValue32(char* str);
+extern "C" int cKeyboardPopup_getObjName(void* self, int key, char* out, int a3);
+extern "C" void cKeyboardPopup_redrawScreen(void* self);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_001CB500(void* self, int a1);
+extern "C" void func_001CB650(void* self, int a1);
+extern "C" void func_001CB7F0(void* self, int a1);
+extern "C" void func_001CB9B0(void* self, int a1);
+extern "C" void func_001CC1E0(void* self, int a1);
+extern "C" void func_001CC620(void* self, int value);
+extern "C" bool func_001CC6E8_b(void* self, int value) __asm__("func_001CC6E8");
+extern "C" int func_001CE560(void*, int, int);
+extern "C" void* func_001D9D48(void* mem, void* engine, void* owner);
+void func_001DA510(void* self, int i, int a, int b);
+void func_001DA528(void* self, int val);
+void func_001DA530(void* self, int i, int value);
+extern "C" void func_0039F190(void* self, int a1);
+extern "C" void func_0039F290(void* list, void* item);
+extern int D_004A1A70;
+extern void* D_004A28A8;
+extern char D_00461A70[];
+extern char D_00466940[];
+extern char D_00466950[];
+extern char D_00466968[];
+extern char D_00466988[];
+extern char D_004669A0[];
+extern char D_004669B8[];
+extern char D_004669D8[];
+
+struct sVEntryK1CDB98 {
+    short delta;
+    short index;
+    void* fn;
+};
+struct sColorK1CDB98 {
+    float a, r, g, b;
+    sColorK1CDB98(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
+};
+class cUIObjK1CDB98 {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void SetColor(const sColorK1CDB98& c);
+};
+struct sSndK1CDB98 {
+    sVEntryK1CDB98* vt;
+};
+extern sSndK1CDB98 D_004A5A58;
+
+typedef int (*FnIK1CDB98)(void*);
+
+static inline int InputK1CDB98(char* ev, int slot)
+{
+    sVEntryK1CDB98* vt = *(sVEntryK1CDB98**)(ev + 8);
+    return ((FnIK1CDB98)vt[slot].fn)(ev + vt[slot].delta);
+}
+
+static inline int isOnK1CDB98()
+{
+    return D_004A1A70 == 1;
+}
+
+extern "C" int func_001CDB98(void* self, char* ev)
+{
+    if (InputK1CDB98(ev, 8) != 0)
+        return 1;
+    {
+        char name[32];
+        int changed = 0;
+        int sound = 1;
+        cKeyboardPopup_getObjName(self, *(int*)((char*)self + 0x140), name, 1);
+        {
+            cUIObjK1CDB98* o = (cUIObjK1CDB98*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+            if (o != 0) {
+                o->SetColor(sColorK1CDB98(0.3f, 0.0f, 0.0f, 0.0f));
+            }
+        }
+        if (InputK1CDB98(ev, 19)) {
+            changed = 1;
+            func_001CB500(self, 1);
+        } else if (InputK1CDB98(ev, 20)) {
+            changed = 1;
+            func_001CB650(self, 1);
+        } else if (InputK1CDB98(ev, 17)) {
+            changed = 1;
+            func_001CB7F0(self, 1);
+        } else if (InputK1CDB98(ev, 18)) {
+            changed = 1;
+            func_001CB9B0(self, 1);
+        } else if (InputK1CDB98(ev, 5)) {
+            changed = 1;
+            func_001CC1E0(self, 0);
+        } else if (InputK1CDB98(ev, 7)) {
+            if (isOnK1CDB98()) {
+                if (*(int*)((char*)D_004A28A8 + 0x84) == 0) {
+                    changed = 1;
+                    void* p = func_001D9D48(cMemMan_alloc(0x140, D_00461A70, 0x100, 0), *(void**)((char*)self + 0x10), self);
+                    func_001DA528(p, 6);
+                    *(int*)((char*)p + 0x54) = GetHashValue32(D_00466940);
+                    func_001DA530(p, 0, GetHashValue32(D_00466950));
+                    func_001DA510(p, 0, GetHashValue32(D_00466968), 4);
+                    func_001DA510(p, 1, GetHashValue32(D_00466968), 3);
+                    func_001DA510(p, 2, GetHashValue32(D_00466988), 5);
+                    func_001DA510(p, 3, GetHashValue32(D_004669A0), 6);
+                    func_001DA510(p, 4, GetHashValue32(D_004669B8), 0);
+                    func_001DA510(p, 5, GetHashValue32(D_004669D8), 1);
+                    func_0039F290(*(char**)((char*)self + 0x10) + 0x18, p);
+                }
+                sound = 5;
+            }
+        } else if (InputK1CDB98(ev, 6)) {
+            changed = 1;
+            sound = 6;
+            func_0039F190(*(char**)((char*)self + 0x10) + 0x18, 1);
+            char* o = *(char**)((char*)self + 0x20);
+            sVEntryK1CDB98* vt = *(sVEntryK1CDB98**)(o + 8);
+            ((void (*)(void*, int, int))vt[19].fn)(o + vt[19].delta, 0, 0xE);
+        } else if (InputK1CDB98(ev, 25)) {
+            changed = 1;
+            *(int*)((char*)self + 0x68) ^= 1;
+            cKeyboardPopup_redrawScreen(self);
+        } else if (InputK1CDB98(ev, 27)) {
+            changed = 1;
+            *(int*)((char*)self + 0x6C) ^= 1;
+            cKeyboardPopup_redrawScreen(self);
+        } else {
+            int fail = 0;
+            if (InputK1CDB98(ev, 41)) {
+                int typed = 0;
+                switch (InputK1CDB98(ev, 42)) {
+                case 8:
+                    if (func_001CE560(self, 0x1B, 0)) *(int*)((char*)self + 0x140) = 0x1B;
+                    else fail = 1;
+                    break;
+                case 0xD:
+                    *(int*)((char*)self + 0x140) = 0x37;
+                    break;
+                case 0x10:
+                    if (func_001CE560(self, 0x38, 0)) *(int*)((char*)self + 0x140) = 0x38;
+                    else fail = 1;
+                    break;
+                case 0x14:
+                    if (func_001CE560(self, 0x2A, 0)) *(int*)((char*)self + 0x140) = 0x2A;
+                    else fail = 1;
+                    break;
+                case 0x1B:
+                    if (func_001CE560(self, 0, 0)) *(int*)((char*)self + 0x140) = 0;
+                    else fail = 1;
+                    break;
+                case 0x25:
+                    if (func_001CE560(self, 0x4C, 0)) *(int*)((char*)self + 0x140) = 0x4C;
+                    else fail = 1;
+                    break;
+                case 0x27:
+                    if (func_001CE560(self, 0x53, 0)) *(int*)((char*)self + 0x140) = 0x53;
+                    else fail = 1;
+                    break;
+                case 0x26:
+                    if (func_001CE560(self, 0x45, 0)) *(int*)((char*)self + 0x140) = 0x45;
+                    else fail = 1;
+                    break;
+                case 0x28:
+                    if (func_001CE560(self, 0x4F, 0)) *(int*)((char*)self + 0x140) = 0x4F;
+                    else fail = 1;
+                    break;
+                case 9:
+                    if (func_001CE560(self, 0x1C, 0)) *(int*)((char*)self + 0x140) = 0x1C;
+                    else fail = 1;
+                    break;
+                case 0x70: case 0x71: case 0x72: case 0x73: case 0x74:
+                case 0x75: case 0x76: case 0x77: case 0x78: case 0x79: {
+                    int key = InputK1CDB98(ev, 42) - 0x6C;
+                    if (func_001CE560(self, key, 0)) *(int*)((char*)self + 0x140) = key;
+                    else fail = 1;
+                    break;
+                }
+                default:
+                    if (InputK1CDB98(ev, 43) >= 0x20) {
+                        char c = InputK1CDB98(ev, 43);
+                        fail = !func_001CC6E8_b(self, c);
+                        if (!fail) {
+                            if (func_001CE560(self, *(int*)((char*)self + 0x140), 0)) {
+                                if (c == 0x60) func_001CC620(self, 0x7E);
+                                else func_001CC620(self, c);
+                            } else {
+                                fail = 1;
+                            }
+                        }
+                    }
+                    typed = 1;
+                    break;
+                }
+                if (!fail) {
+                    changed = 1;
+                    func_001CC1E0(self, typed);
+                }
+            }
+        }
+        cKeyboardPopup_getObjName(self, *(int*)((char*)self + 0x140), name, 1);
+        {
+            cUIObjK1CDB98* o = (cUIObjK1CDB98*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+            if (o != 0) {
+                o->SetColor(sColorK1CDB98(1.0f, 0.0f, 0.0f, 0.0f));
+            }
+        }
+        sSndK1CDB98* snd = *(sSndK1CDB98**)(*(char**)((char*)self + 0x10) + 0x14);
+        if (snd == 0)
+            snd = &D_004A5A58;
+        if (changed && snd != 0)
+            ((void (*)(void*, int))snd->vt[2].fn)((char*)snd + snd->vt[2].delta, sound);
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CE2A8);

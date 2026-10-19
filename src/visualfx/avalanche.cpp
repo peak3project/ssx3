@@ -2,7 +2,48 @@
 
 INCLUDE_ASM("visualfx/avalanche", tActiveAvalancheNode_getFrameData);
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D6290);
+#ifdef SKIP_ASM
+struct sVec4_6290 {
+    float x, y, z, w;
+    sVec4_6290() {}
+    sVec4_6290(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+extern float D_004A3AA8;
+extern sVec4_6290 D_004FF130;
+extern char D_00538450[];
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec4_6290 vScale_6290(const sVec4_6290& v, float s)
+{
+    sVec4_6290 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+extern "C" sVec4_6290 func_002D6290(void* self)
+{
+    char* node = ((char**)D_00538450)[*(unsigned short*)((char*)self + 0x92) >> 8];
+    char* p = *(char**)(node + 0x114);
+    if (p != 0) {
+        return sVec4_6290(*(float*)(p + 0xCC), *(float*)(p + 0xC0), *(float*)(p + 0xC4), *(float*)(p + 0xC8));
+    }
+    unsigned char* c = *(unsigned char**)(node + 0xFC);
+    if (c != 0) {
+        return vScale_6290(sVec4_6290(1.0f, (float)c[3] * 0.0078125f, (float)c[4] * 0.0078125f, (float)c[5] * 0.0078125f), D_004A3AA8);
+    }
+    return D_004FF130;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D6378);

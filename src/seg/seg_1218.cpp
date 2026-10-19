@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
@@ -2291,9 +2292,482 @@ extern "C" void func_00104DE0(char* self, cStream_4DE0* s) {
 
 INCLUDE_ASM("seg/seg_1218", func_00104E70);
 
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_1218", func_00105398);
+#ifdef SKIP_ASM
+struct sV4_5398 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
 
+struct sTri_5398 {
+    int a;
+    float b;
+    unsigned short flags;
+    unsigned short pad;
+};
+
+struct sMat_5398 {
+    char pad[0x10];
+    sTri_5398 tris[1];
+};
+
+struct sSurf_5398 {
+    char pad[8];
+    int flags;
+    char padC[0x88 - 0xC];
+    sMat_5398* mat;
+};
+
+struct sContact_5398 {
+    sV4_5398 pos;
+    sV4_5398 normal;
+    sV4_5398 vel;
+    char pad30[0x20];
+    sSurf_5398* surf;
+    int pad54;
+    int pad58;
+    int idx;
+    char pad60[0x20];
+} __attribute__((aligned(16)));
+
+struct sInfo_5398 {
+    sV4_5398 pos;
+    sV4_5398 dir;
+    sV4_5398 normal;
+    float speed;
+} __attribute__((aligned(16)));
+
+struct cScope_5398 {
+    char data[0x320];
+    cScope_5398(void* tree, int flag) __asm__("func_0032F650");
+};
+
+int func_0011FEE8_5398(void*) __asm__("func_0011FEE8__FPv");
+int func_0011FE98(void*);
+extern "C" void func_00106F78(void*);
+extern "C" float func_00104E70_5398(char*, cScope_5398*, sContact_5398*) __asm__("func_00104E70");
+extern "C" int func_001231A8(void*);
+extern "C" void func_001057B8_5398(char*, sSurf_5398*, sInfo_5398*, sContact_5398*, float) __asm__("func_001057B8");
+extern "C" void func_00296088_5398(void*, char*, sSurf_5398*, int) __asm__("func_00296088");
+extern "C" void func_0016D320(void*, void*);
+extern "C" void func_0032F708(void* self, int flags);
+extern char* D_004A3500_5398 __asm__("D_004A3500");
+extern char D_004C5830_5398[] __asm__("D_004C5830");
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_5398(const sV4_5398& a, const sV4_5398& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_5398(const sV4_5398& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_5398 Sub_5398(const sV4_5398& a, const sV4_5398& b)
+{
+    sV4_5398 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV4_5398 Scale_5398(const sV4_5398& v, float s)
+{
+    sV4_5398 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline sV4_5398 Div_5398(const sV4_5398& v, float s)
+{
+    sV4_5398 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sV4_5398 Norm_5398(const sV4_5398& v)
+{
+    sV4_5398 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v));
+    return r;
+}
+
+static inline unsigned short TriFlags_5398(sSurf_5398* s, int i)
+{
+    return ((sTri_5398*)(i * sizeof(sTri_5398) + (int)s->mat->tris))->flags; // PORT: pointer in int
+}
+
+extern "C" void func_00105398(char* self, sV4_5398* norm)
+{
+    sContact_5398 c;
+    sInfo_5398 info;
+    if (func_0011FEE8_5398(self) == 9)
+        return;
+    float zero = 0.0f;
+    func_00106F78(self);
+    cScope_5398 sc(*(void**)(self + 0xAA0), 1);
+    cScope_5398* ps = &sc;
+    float d = func_00104E70_5398(self, ps, &c);
+    if (d >= zero) {
+        if (func_001231A8(self))
+            norm = (sV4_5398*)(self + 0x370);
+        if (norm) {
+            sV4_5398 t = Sub_5398(c.normal, Scale_5398(*norm, Dot_5398(c.normal, *norm)));
+            float len = Len_5398(t);
+            if (len < 0.0010000000474974513f)
+                c.normal = *norm;
+            else
+                c.normal = Div_5398(t, len);
+        } else if (func_0011FE98(self) == 4) {
+            sV4_5398* up = (sV4_5398*)(*(char**)(self + 0x77C) + 0xB0);
+            if (Dot_5398(c.normal, *up) > zero)
+                c.normal = *up;
+            else
+                c.normal = Scale_5398(*up, -1.0f);
+        }
+        float k = Dot_5398(Scale_5398(c.normal, -1.0f), Sub_5398(*(sV4_5398*)(self + 0x1E0), c.vel)) >= 0.0f
+                      ? Dot_5398(Scale_5398(c.normal, -1.0f), Sub_5398(*(sV4_5398*)(self + 0x1E0), c.vel))
+                      : 0.0f;
+        info.pos = c.pos;
+        info.dir = Norm_5398(*(sV4_5398*)(self + 0x1E0));
+        info.normal = c.normal;
+        info.speed = k;
+        if ((TriFlags_5398(c.surf, c.idx) & 2) && !(c.surf->flags & 0x2000)) {
+            *(sContact_5398*)(self + 0x9E0) = c;
+            *(sInfo_5398*)(self + 0xA60) = info;
+        }
+        if (TriFlags_5398(c.surf, c.idx) & 1)
+            func_001057B8_5398(self, c.surf, &info, &c, d);
+        if (!(c.surf->flags & 0x2000))
+            func_00296088_5398(D_004A3500_5398, self, c.surf, c.idx);
+    }
+    func_0016D320(D_004C5830_5398, self);
+    func_0032F708(&sc, 2);
+}
+#endif
+
+//100%
 INCLUDE_ASM("seg/seg_1218", func_001057B8);
+#ifdef SKIP_ASM
+// Rider hits a surface: hit->n is the contact normal, hit->vel the surface velocity.
+int func_0011FEE8_57B8(void*) __asm__("func_0011FEE8__FPv");
+int func_0011FE98(void*);
+// PORT: the project names this func_0011FEC8__FPv (one param); callers pass a state too.
+void func_0011FEC8_57B8(void* self, int v) __asm__("func_0011FEC8__FPv");
+int func_00312AA0(void* anim, int ch);
+extern "C" float func_00312AB0(void* anim, int ch);
+extern "C" int func_00311AE8(void*, int);
+extern "C" void cRiderAnimBase_play(void*, int, int, float);
+extern "C" void cRider_updateOrientationImplicit(cRider* self);
+// The unit declares this later with its own vector type; bind it by asm label.
+extern "C" void cAirPredictor_startLaunchIntoAir_57B8(void*, t4Vector*, t4Vector*, float) __asm__("cAirPredictor_startLaunchIntoAir");
+extern "C" void func_00108388(char* self, char* info, int flag);
+extern "C" void func_00105D98(void* rider, void* info, int id);
+extern "C" void func_00106538_m2537(void* rider, const t4Vector& v) __asm__("func_00106538");
+extern "C" void func_001065B0(void* rider, void* hit);
+extern "C" void func_0010E910(void* rider, int a, int b, int c, void* hit, float speed);
+extern "C" void func_00119E38(void* metrix, int a, int b);
+
+struct sHit_57B8 {
+    char pad0[0x10];
+    t4Vector n;         // 0x10
+    t4Vector vel;       // 0x20
+    char pad30[0x1C];
+    int mat;            // 0x4C
+    char pad50[0xC];
+    int surf;           // 0x5C
+};
+
+struct sVE_57B8 { short delta; short index; int (*fn)(void*); };
+struct sVEf_57B8 { short delta; short index; void (*fn)(void*, float); };
+struct sVEv_57B8 { short delta; short index; t4Vector* (*fn)(void*); };
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_57B8(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_57B8(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline t4Vector Scale_57B8(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector * scalar).
+static inline void ScaleEq_57B8(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline t4Vector Add_57B8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq_57B8(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector Sub_57B8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline float DotV_57B8(t4Vector a, const t4Vector& b)
+{
+    return Dot_57B8(a, b);
+}
+
+// PORT: g++ minimum operator.
+static inline float Clamp_57B8(float x, float lo, float hi)
+{
+    if (lo <= x)
+        return x <? hi;
+    return lo;
+}
+
+static inline float Max_57B8(float x, float lo)
+{
+    if (lo < x)
+        return x;
+    return lo;
+}
+
+// PORT: PS2 FPU sqrt.s via inline asm; use sqrtf off-PS2.
+static inline float Sqrt_57B8(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* hit, float depth)
+{
+    if (func_0011FEE8_57B8(rider) == 9)
+        return;
+    int off = hit->surf * 12 + 0x10;
+    float* surf = (float*)(*(char**)(obj + 0x88) + off);
+    float grip = Clamp_57B8(surf[1], 0.0f, 1.0f);
+    float bounce = surf[0];
+    if (bounce == 0.0f) {
+        func_00108388((char*)rider, info, 1);
+        return;
+    }
+    float vn = Dot_57B8(hit->n, Sub_57B8(hit->vel, rider->mVelocity)) >= 0.0f
+                   ? Dot_57B8(hit->n, Sub_57B8(hit->vel, rider->mVelocity)) : 0.0f;
+    char* h = *(char**)(obj + 0xC);
+    if (h == 0 || (*(sVE_57B8**)(h + 0xC))[14].fn(h + (*(sVE_57B8**)(h + 0xC))[14].delta) != 0) {
+        func_00106538_m2537(rider, Scale_57B8(hit->n, depth * 1.100000023841858f));
+        if (vn < 0.0f)
+            vn = 0.0f;
+        bounce = vn + Clamp_57B8(grip * vn, 55.55555725097656f, 1388.888916015625f);
+        if (func_0011FE98(rider) == 0)
+            func_001065B0(rider, hit);
+        cRider_updateOrientationImplicit(rider);
+    } else {
+        float inv = 1.0f / (100.0f / bounce + 1.0f);
+        float b = vn * inv;
+        float c = (1.0f - grip) * inv;
+        bounce = Sqrt_57B8((b * b - c) >? 0.0f) - b; // PORT: g++ maximum operator
+    }
+    float facing = DotV_57B8(rider->unk_180, hit->n);
+    if (func_0011FE98(rider) == 1 || (func_0011FE98(rider) == 2 && *(int*)((char*)rider->mRiderHandler + 0x30) == 1)) {
+        if (Len_57B8(rider->mVelocity) < 833.3333740234375f) {
+            float* acc = &rider->unk_3F4;
+            *acc = *acc + (2.5f - facing) * (hit->n.z >= 0.20000000298023224f ? hit->n.z : 0.20000000298023224f);
+        }
+    }
+    int anim = func_00311AE8(rider->mRiderAnim, 2);
+    int state = func_0011FE98(rider);
+    if (state == 1 && (anim == 9 || anim == 2 || anim == 0xB || anim == state) && facing > 0.30000001192092896f) {
+        t4Vector w = Add_57B8(Sub_57B8(rider->mVelocity, hit->vel), Scale_57B8(hit->n, vn));
+        float speed = Len_57B8(w);
+        float out = Max_57B8(bounce - vn, 277.77777099609375f);
+        float f = (speed + 555.5555419921875f) * 0.5f;
+        if (speed <= 27.77777862548828f)
+            f = f / 27.77777862548828f;
+        else
+            f = f / speed;
+        ScaleEq_57B8(w, f);
+        rider->mVelocity = Add_57B8(w, Scale_57B8(hit->n, out));
+        sVEf_57B8* vt = *(sVEf_57B8**)&rider->mVtbl;
+        vt[kRiderVt_vibrationBump].fn((char*)rider + vt[kRiderVt_vibrationBump].delta, vn);
+        if (func_00312AA0(rider->mRiderAnim, 2) != 0x10C || func_00312AB0(rider->mRiderAnim, 2) > 0.20000000298023224f) {
+            rider->unk_438 = 0;
+            func_0010E910(rider, 0, 0, 0, hit, speed);
+            func_00119E38(rider->mMetrix, rider->unk_320 != rider->unk_324, 0);
+            func_0011FEC8_57B8(rider, 0xD);
+            func_0011FEC8_57B8(rider, 5);
+            cRiderAnimBase_play(rider->mRiderAnim, 0x10C, 1, -1.0f);
+        }
+        char* sub = (char*)&rider->mVtbl;
+        sVEv_57B8* vt2 = *(sVEv_57B8**)sub;
+        t4Vector* pos = vt2[kRiderVt_getPosition].fn(sub + vt2[kRiderVt_getPosition].delta);
+        sVEv_57B8* vt3 = *(sVEv_57B8**)sub;
+        t4Vector* vel = vt3[kRiderVt_getVelocity].fn(sub + vt3[kRiderVt_getVelocity].delta);
+        cAirPredictor_startLaunchIntoAir_57B8(rider->mAirPredictor, pos, vel, rider->unk_2E4);
+        return;
+    }
+    AddEq_57B8(rider->mVelocity, Scale_57B8(hit->n, bounce));
+    func_00105D98(rider, info, hit->mat);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_1218", func_00105D98);
 
@@ -2344,7 +2818,332 @@ extern "C" void func_00106828(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00106848);
+#ifdef SKIP_ASM
+// Rider touches down: kill the velocity into the ground, classify the landing from the board's
+// orientation against the ground normal (state at 0x328), and start the landing reaction.
+int func_0011FEE8_57B8(void*) __asm__("func_0011FEE8__FPv");
+int func_0011FE98(void*);
+// PORT: the project names these __FPv (one param); callers pass a state too.
+void func_0011FEC8_57B8(void* self, int v) __asm__("func_0011FEC8__FPv");
+void func_0011FE78_6848(void* self, int v) __asm__("func_0011FE78__FPv");
+extern "C" float func_0031C228(float);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" void cRiderAnimBase_play(void*, int, int, float);
+extern "C" void cRiderAnimBase_changeHeadingOffset(void* anim, float a);
+extern "C" void func_0011DFE0(cRider* self, const t4Vector& axis, float angle);
+extern "C" void func_0010E910(void* rider, int a, int b, int c, void* hit, float speed);
+extern "C" float func_00119D40(void* metrix, int a, int b, int c, int d);
+extern "C" void func_0010E098(cRider* self, int a, float f);
+extern "C" void func_00115358(cRider* self);
+extern "C" void func_001326C8(void*, int);
+extern "C" void func_0013ADC0(void* p, t4Vector* n);
+extern char* D_004A3500_6848 __asm__("D_004A3500");
+extern t4Vector D_004FF130_6848 __asm__("D_004FF130");
+
+struct sLand_6848 {
+    char pad0[0x10];
+    t4Vector n;         // 0x10
+    char pad20[0x2C];
+    int mat;            // 0x4C
+    char* obj;          // 0x50
+    char pad54[0x2C];
+} __attribute__((aligned(16)));
+
+// The unit defines this later with its own vector type; bind it by asm label.
+extern "C" int func_00108A48_6848(cRider* self, sLand_6848* land) __asm__("func_00108A48");
+
+struct sV_6848 {
+    float x, y, z, w;
+    sV_6848() {}
+    sV_6848(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+extern sV_6848 D_004FF160_6848 __asm__("D_004FF160");
+
+struct sQuat_6848 {
+    float x, y, z, w;
+    sQuat_6848() {}
+    sQuat_6848(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
+struct sVEH_6848 { short delta; short index; void (*fn)(void*, void*, const t4Vector&); };
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_6848(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_6848(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline t4Vector Scale_6848(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector * scalar).
+static inline void ScaleEq_6848(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector Sub_6848(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
+static inline float Abs_6848(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline float Atan2_6848(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+static inline t4Vector GetUp_6848(cRider* r)
+{
+    return r->mMatrix.row[2];
+}
+
+static inline float AtLeast_6848(float x, float lo)
+{
+    return x <= lo ? lo : x;
+}
+
+static inline float AtMost_6848(float x, float hi)
+{
+    return x <= hi ? x : hi;
+}
+
+static inline sV_6848 Side_6848(const sAnimModelBone* b)
+{
+    return sV_6848(1.0f - 2.0f * (b->rot.y * b->rot.y + b->rot.z * b->rot.z),
+                   2.0f * (b->rot.x * b->rot.y + b->rot.w * b->rot.z),
+                   2.0f * (b->rot.x * b->rot.z - b->rot.w * b->rot.y),
+                   0.0f);
+}
+
+static inline sV_6848 Front_6848(const sAnimModelBone* b)
+{
+    return sV_6848(2.0f * (b->rot.y * b->rot.x - b->rot.w * b->rot.z),
+                   1.0f - 2.0f * (b->rot.z * b->rot.z + b->rot.x * b->rot.x),
+                   2.0f * (b->rot.y * b->rot.z + b->rot.w * b->rot.x),
+                   0.0f);
+}
+
+static inline sV_6848 Up_6848(const sAnimModelBone* b)
+{
+    return sV_6848(2.0f * (b->rot.z * b->rot.x + b->rot.w * b->rot.y),
+                   2.0f * (b->rot.z * b->rot.y - b->rot.w * b->rot.x),
+                   1.0f - 2.0f * (b->rot.x * b->rot.x + b->rot.y * b->rot.y),
+                   0.0f);
+}
+
+static inline sQuat_6848 AxisAngle_6848(const sV_6848& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQuat_6848(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+#define LAND_STATE(r) ((r)->unk_328)
+#define LAND_KIND(r) ((r)->unk_330)
+
+extern "C" int func_00106848(cRider* self)
+{
+    sLand_6848 land;
+    if (!func_00108A48_6848(self, &land))
+        return 0;
+    float vn = Dot_6848(self->mVelocity, land.n);
+    if (vn < 0.0f) {
+        vn = -vn;
+        ScaleEq_6848(land.n, -1.0f);
+    }
+    vn = AtLeast_6848(vn, 555.5555419921875f);
+    float imp = AtMost_6848(Len_6848(self->mVelocity), vn);
+    t4Vector dv = self->mVelocity;
+    self->mVelocity = Scale_6848(land.n, imp);
+    self->mVelocity.z = self->mVelocity.z * 0.10000000149011612f;
+    dv = Sub_6848(self->mVelocity, dv);
+    if (land.obj != 0) {
+        char* h = *(char**)(land.obj + 0xC);
+        if (h != 0) {
+            sVEH_6848* vt = *(sVEH_6848**)(h + 0xC);
+            vt[43].fn(h + vt[43].delta, &land, Scale_6848(dv, -1.0f));
+        }
+    }
+    sAnimModelBone* bone = &self->mAnimModel->bones[self->unk_8A0];
+    sV_6848 side = Side_6848(bone);
+    sV_6848 up = Up_6848(bone);
+    float a = Dot_6848(*(t4Vector*)&side, land.n);
+    float b = Dot_6848(*(t4Vector*)&up, land.n);
+    float angle = Atan2_6848(b, a);
+    int prev = LAND_STATE(self);
+    if (func_0011FEE8_57B8(self) == 1) {
+        if (self->unk_320 == 0)
+            LAND_STATE(self) = 1;
+        else
+            LAND_STATE(self) = 2;
+    } else if (LAND_KIND(self) != 0) {
+        if (Abs_6848(angle) > 1.5707964897155762f)
+            LAND_STATE(self) = 2;
+        else
+            LAND_STATE(self) = 1;
+    } else if (func_0011FEE8_57B8(self) == 0xC) {
+        LAND_STATE(self) = 3;
+    } else {
+        sV_6848 front = Front_6848(bone);
+        if (front.z < 0.0f) {
+            if (b < 0.0f)
+                LAND_STATE(self) = 4;
+            else
+                LAND_STATE(self) = 3;
+        } else if (Abs_6848(angle) > 2.6179940700531006f) {
+            LAND_STATE(self) = 2;
+        } else if (Abs_6848(angle) < 0.523598849773407f) {
+            LAND_STATE(self) = 1;
+        } else if (angle < -0.523598849773407f) {
+            LAND_STATE(self) = 4;
+        } else {
+            LAND_STATE(self) = 3;
+        }
+    }
+    self->unk_438 = land.mat;
+    if (func_0011FE98(self) == 1) {
+        func_0010E910(self, 0, LAND_STATE(self), LAND_KIND(self), &land, imp);
+    } else {
+        func_0010E098(self, 1, func_00119D40(self->mMetrix, self->unk_320 != self->unk_324, 0, LAND_STATE(self), LAND_KIND(self)));
+    }
+    *(int*)(D_004A3500_6848 + 0x598C) = land.mat;
+    func_0011FE78_6848(self, 4);
+    int st = func_0011FEE8_57B8(self);
+    if (st == 0 || func_0011FEE8_57B8(self) == 4 || func_0011FEE8_57B8(self) == 5 || func_0011FEE8_57B8(self) == 0xB) {
+        int fall = 0;
+        if (func_0011FEE8_57B8(self) == 5 || func_0011FEE8_57B8(self) == 4)
+            fall = 1;
+        func_0011FEC8_57B8(self, 0xD);
+        func_00115358(self);
+        int kind = LAND_KIND(self);
+        if (kind != 0) {
+            if (kind == 1)
+                cRiderAnimBase_play(self->mRiderAnim, 0x1A, 0, -1.0f);
+            else
+                cRiderAnimBase_play(self->mRiderAnim, 0x22, 0, -1.0f);
+            func_0011FEC8_57B8(self, 1);
+        } else {
+            func_001326C8((char*)self->mRiderHandler + 0x2B0, fall);
+            func_0011FEC8_57B8(self, 7);
+        }
+    } else if (prev != LAND_STATE(self)) {
+        if (prev == 3) {
+            func_0011DFE0(self, GetUp_6848(self), 1.5707963705062866f);
+            cRiderAnimBase_changeHeadingOffset(self->mRiderAnim, 1.5707963705062866f);
+            float yaw = 0.0f;
+            char* ra = (char*)self->mRiderAnim;
+            *(t4Vector*)(ra + 0x30) = D_004FF130_6848;
+            *(sQuat_6848*)(ra + 0x40) = AxisAngle_6848(D_004FF160_6848, -yaw);
+        } else if (prev == 4) {
+            func_0011DFE0(self, GetUp_6848(self), -1.5707963705062866f);
+            cRiderAnimBase_changeHeadingOffset(self->mRiderAnim, -1.5707963705062866f);
+            float yaw = 0.0f;
+            char* ra = (char*)self->mRiderAnim;
+            *(t4Vector*)(ra + 0x30) = D_004FF130_6848;
+            *(sQuat_6848*)(ra + 0x40) = AxisAngle_6848(D_004FF160_6848, -yaw);
+        }
+        func_00115358(self);
+    }
+    func_0013ADC0((char*)self->mRiderHandler + 0xB0, &land.n);
+    return 1;
+}
+
+#undef LAND_STATE
+#undef LAND_KIND
+#endif
 
 INCLUDE_ASM("seg/seg_1218", func_00106F78);
 

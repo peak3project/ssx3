@@ -171,7 +171,89 @@ INCLUDE_ASM("render/bezierman", func_0038B370);
 
 INCLUDE_ASM("render/bezierman", func_0038C590);
 
+//100%
 INCLUDE_ASM("render/bezierman", func_0038C788);
+#ifdef SKIP_ASM
+// PORT: builds a DMA/VIF/GIF packet in uncached (0x30000000) memory; addresses held in int and packed into 64-bit words.
+extern "C" void func_0038C788(void* self, int type, int idx)
+{
+    char* s = (char*)self;
+    int n = type * 2 + 4;
+    int a;
+    switch (type) {
+    case 0:
+        a = *(int*)(s + 0x58) + idx * 0xC0;
+        break;
+    case 1:
+        a = *(int*)(s + 0x5C) + idx * 0x1B0;
+        break;
+    case 2:
+        a = *(int*)(s + 0x60) + idx * 0x300;
+        break;
+    default:
+        a = 0;
+        break;
+    }
+    int b;
+    switch (type) {
+    case 0:
+        b = *(int*)(s + 0x64) + idx * 0x80;
+        break;
+    case 1:
+        b = *(int*)(s + 0x68) + idx * 0x120;
+        break;
+    case 2:
+        b = *(int*)(s + 0x6C) + idx * 0x200;
+        break;
+    default:
+        b = 0;
+        break;
+    }
+    int c;
+    switch (type) {
+    case 0:
+        c = *(int*)(s + 0x70) + idx * 0x80;
+        break;
+    case 1:
+        c = *(int*)(s + 0x74) + idx * 0x120;
+        break;
+    case 2:
+        c = *(int*)(s + 0x78) + idx * 0x200;
+        break;
+    default:
+        c = 0;
+        break;
+    }
+    int nn = n * n;
+    long* p = (long*)((*(int*)(s + (type << 2) + 0x44C) + (idx << 8)) | 0x30000000);
+    p[0] = 0x10000003;
+    p[1] = 0;
+    p[2] = 0x3000000005000000;
+    p[3] = 0;
+    p[4] = 0x3F8000003F800000;
+    p[5] = 0x4040404020000000;
+    p[6] = 0;
+    p[7] = (long)((nn << 16) | 0x78008000) << 32;
+    p[8] = (((nn * 3) >> 2) | 0x30000000) | ((long)a << 32);
+    p[9] = 0;
+    p[10] = 0x10000001;
+    p[11] = 0;
+    p[12] = 0x5050505020000000;
+    p[13] = (long)((nn << 16) | 0x74008040) << 32;
+    p[14] = ((nn >> 1) | 0x30000000) | ((long)b << 32);
+    p[15] = 0;
+    p += 16;
+    p[0] = 0x10000001;
+    p[1] = 0;
+    p[2] = 0x5050505020000000;
+    p[3] = (long)((nn << 16) | 0x74008080) << 32;
+    p[4] = ((nn >> 1) | 0x30000000) | ((long)c << 32);
+    p[5] = 0;
+    p += 6;
+    p[0] = 0x60000000;
+    p[1] = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038CA08);
@@ -200,7 +282,151 @@ extern "C" void func_0038CA08(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/bezierman", func_0038CA70);
+#ifdef SKIP_ASM
+struct sRS_CA70 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short tex2;
+};
+struct sEnt_CA70 {
+    sRS_CA70 rs;                    // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+struct sRing_CA70 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sEnt_CA70 ents[1];              // 0x80
+};
+struct sGfx_CA70 {
+    char pad_0x0[0xE84];
+    sRS_CA70* top;                  // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sRing_CA70* ring;               // 0x18F0
+};
+struct sPatch_CA70 {
+    void* obj;
+    int extra;
+};
+struct sDefer_CA70 {
+    unsigned short tex;
+    unsigned short tex2;
+    int kind;
+    unsigned int addr;
+    sPatch_CA70* patch;
+};
+struct sBezMan_CA70 {
+    char pad_0x0[0x28];
+    int base28[(0x44C - 0x28) / 4]; // 0x28
+    unsigned int base44C[(0x5364 - 0x44C) / 4]; // 0x44C
+    int nDefer;                     // 0x5364
+    sDefer_CA70 defer[1];           // 0x5368
+};
+extern sGfx_CA70* D_004A5B80_CA70 __asm__("D_004A5B80");
+extern int D_004A44D8;
+extern int D_004A44DC;
+extern char* D_0044B9D0[];
+extern "C" int func_0038CA08_i(void* self, void* obj) __asm__("func_0038CA08");
+extern "C" void* func_0038F708(void* obj, int a1, int a2);
+extern "C" void func_0038D168(void* self, int a1, void* obj, int kind, void* tbl, void* patch, unsigned int* handle);
+extern "C" void func_0038D448(void* self, int kind, void* tbl, void* patch, int a4, unsigned int* handle);
+
+// PORT: uncached (0x30000000) pointers held in int.
+extern "C" void func_0038CA70(sBezMan_CA70* self, int kind, int sub, sPatch_CA70* patch, unsigned int* handle)
+{
+    int draw = 0;
+    int a1 = self->base28[kind] + sub * 12;
+    char* o = (char*)func_0038F708(patch->obj, 0x1B0, 2);
+    sGfx_CA70* gfx = D_004A5B80_CA70;
+    unsigned int addr = self->base44C[kind] + (sub << 8);
+    unsigned int n = kind * 2 + 4;
+    int doA = (*(int*)(o + 0xC) & 0x600000) && n;
+    if (doA) {
+        if (D_004A44D8 != 0)
+            doA = 0;
+        else
+            draw = doA != 0;
+    }
+    int res = 0;
+    if (kind == 2)
+        res = func_0038CA08_i(self, o);
+    int doB = res != 0;
+    if (doB) {
+        if (D_004A44DC != 0)
+            doB = 0;
+        else
+            draw |= doB;
+    }
+    switch (*(int*)(o + 0xC) & 0x180000) {
+    case 0x80000:
+        draw = 1;
+        gfx->top->f0 = (gfx->top->f0 & ~0xC) | 8;
+        break;
+    case 0x100000:
+        draw = 1;
+        gfx->top->f0 = (gfx->top->f0 & ~0xC) | 4;
+        break;
+    case 0x180000:
+        draw = 1;
+        gfx->top->f0 |= 0xC;
+        break;
+    default:
+        gfx->top->f0 &= ~0xC;
+        break;
+    }
+    if (draw) {
+        int tex = *(short*)(o + 0x1A0);
+        gfx->top->tex = tex;
+        int tex2 = *(short*)(o + 0x1A2);
+        gfx->top->tex2 = tex2;
+        unsigned int buf = *handle;
+        long* p = (long*)(buf | 0x30000000);
+        p[0] = ((long)addr << 32) | 0x50000000;
+        p[2] = 0x10000001;
+        p[1] = 0;
+        p[3] = 0;
+        char* tbl = D_0044B9D0[kind];
+        int extra = patch->extra;
+        p[4] = 0;
+        p[5] = (long)(*(int*)(tbl + extra * 8 + 0x10) | 0x14000000) << 32;
+        p += 6;
+        unsigned int next = (unsigned int)p & 0x0FFFFFFF;
+        *handle = next;
+        sRing_CA70* ring = gfx->ring;
+        sRS_CA70* rs = gfx->top;
+        if (ring->count < 0xA28) {
+            rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+            int key = *(int*)((char*)ring + 0x69CC0);
+            sEnt_CA70* e = (sEnt_CA70*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            e->rs = *rs;
+            e->buf = buf;
+            e->next = next;
+            e->key = key;
+            e->flag = 0;
+        }
+        *handle += 0x10;
+        if (doA)
+            func_0038D168(self, a1, o, kind, tbl, patch, handle);
+        if (doB)
+            func_0038D448(self, kind, tbl, patch, res, handle);
+    } else {
+        self->defer[self->nDefer].tex = *(unsigned short*)(o + 0x1A0);
+        self->defer[self->nDefer].tex2 = *(unsigned short*)(o + 0x1A2);
+        self->defer[self->nDefer].kind = kind;
+        self->defer[self->nDefer].addr = addr;
+        self->defer[self->nDefer].patch = patch;
+        self->nDefer++;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038CE20);
@@ -257,8 +483,8 @@ extern int D_004A44DC;
 extern sTbl_CE20 D_00504960[];
 extern "C" void* func_0038F708(void* obj, int a1, int a2);
 extern "C" unsigned int func_0038CA08_r(void* self, void* obj) __asm__("func_0038CA08");
-extern "C" void func_0038D168(void* self, int base, void* obj, int a3, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int* handle);
-extern "C" void func_0038D448(void* self, int a1, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int a4, unsigned int* handle);
+extern "C" void func_0038D168_m486(void* self, int base, void* obj, int a3, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int* handle) __asm__("func_0038D168");
+extern "C" void func_0038D448_m487(void* self, int a1, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int a4, unsigned int* handle) __asm__("func_0038D448");
 
 extern "C" void func_0038CE20(void* self, int idx, sPatch_CE20* patch, int* vals, unsigned int* handle)
 {
@@ -331,10 +557,10 @@ extern "C" void func_0038CE20(void* self, int idx, sPatch_CE20* patch, int* vals
     }
     *handle += 0x10;
     if (f18) {
-        func_0038D168(self, base, obj, 2, tbl, patch, handle);
+        func_0038D168_m486(self, base, obj, 2, tbl, patch, handle);
     }
     if (f23) {
-        func_0038D448(self, 2, tbl, patch, r, handle);
+        func_0038D448_m487(self, 2, tbl, patch, r, handle);
     }
 }
 #endif

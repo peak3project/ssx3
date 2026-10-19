@@ -813,7 +813,13 @@ extern "C" void func_003A84F8(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A8510);
+#ifdef SKIP_ASM
+extern "C" int func_003A8510(int arg0, int arg1) {
+    return (*(int *)((char*)(((arg1 * 0x18) + arg0)) + (0x3F4)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8528);
@@ -1418,7 +1424,118 @@ extern "C" void func_003A9188(func_003A9188_sCache* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A9258);
+#ifdef SKIP_ASM
+extern "C" int func_00416B18(const char* a, const char* b, int n);
+struct func_003A9558_sNode;
+extern "C" void func_003A9558(void** self, func_003A9558_sNode* node);
+extern "C" void func_003A95C0(void** self, void* node, int* ok);
+extern "C" void func_003AD1A8();
+extern "C" void func_003A9D60(void* self, int i);
+extern char D_004A47E8[];
+extern char D_004A47F0[];
+extern char D_004A47F8[];
+extern char D_004A4800[];
+extern char D_004A4808[];
+
+struct sWCSection_9258 {
+    char name[0x18];
+    int id;             // 0x18
+    void* tree;         // 0x1C
+    char pad20[0x58 - 0x20];
+};
+
+struct sWCInfo_9258 {
+    int f0;
+    int f4;
+    unsigned int count; // 0x8
+};
+
+struct sWCEntry_9258 {
+    int state;
+    float pri;
+};
+
+struct sWCLoader_9258 {
+    void* cache;                // 0x0
+    sWCInfo_9258* info;         // 0x4
+    sWCSection_9258* sections;  // 0x8
+    int fC;
+    int f10;
+    sWCEntry_9258 entries[64];  // 0x14
+    char pad214[0x2E0 - 0x214];
+    int f2E0;                   // 0x2E0
+    int f2E4;                   // 0x2E4
+};
+
+struct sVE_9258 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+extern "C" void func_003A9258(void* p)
+{
+    sWCLoader_9258* self = (sWCLoader_9258*)p;
+    if (self->info == 0)
+        return;
+    self->f2E0 = 0;
+    self->f2E4 = 0;
+    for (unsigned int i = 0; i < self->info->count; i++) {
+        switch (self->entries[i].state) {
+        case 0:
+            break;
+        case 1:
+            if (func_00416B18(self->sections[i].name, D_004A47E8, 4) == 0
+                || func_00416B18(self->sections[i].name, D_004A47F0, 4) == 0
+                || func_00416B18(self->sections[i].name, D_004A47F8, 4) == 0
+                || func_00416B18(self->sections[i].name, D_004A4800, 4) == 0
+                || func_00416B18(self->sections[i].name, D_004A4808, 4) == 0)
+                cWorldCache_activateSectionMem(self->cache, i, 0);
+            else
+                cWorldCache_activateSectionMem(self->cache, i, 2);
+            func_003A8448((sWCSlots*)self->cache, self->sections[i].id, self->entries[i].pri);
+            func_003A84F8(self->cache, self->sections[i].id, 1);
+            self->entries[i].state = 2;
+            break;
+        case 2:
+            if (func_003A8618(self->cache, self->sections[i].id)) {
+                self->entries[i].state = 5;
+                char* o = D_004A5B80;
+                sVE_9258* vt = *(sVE_9258**)(o + 0x10D8);
+                vt[102].fn(o + vt[102].delta, i);
+            }
+            break;
+        case 4:
+            if (func_003A8638(self->cache, self->sections[i].id)) {
+                int ok = 1;
+                func_003A95C0((void**)self, self->sections[i].tree, &ok);
+                if (ok) {
+                    self->entries[i].state = 0;
+                    func_003A8230(self->cache, i);
+                    func_003AD1A8();
+                }
+            }
+            break;
+        case 5:
+            self->f2E0++;
+            break;
+        case 6:
+            self->f2E0++;
+            self->f2E4++;
+            break;
+        case 3:
+            func_003A84C8_i((sWCSlots*)self->cache, self->sections[i].id);
+            func_003A9558((void**)self, (func_003A9558_sNode*)self->sections[i].tree);
+            self->entries[i].state = 4;
+            break;
+        }
+    }
+    for (int j = 0; j < 2; j++)
+        func_003A9D60(self, j);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("world/worldcache", func_003A9558);

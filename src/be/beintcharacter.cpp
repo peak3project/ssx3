@@ -100,6 +100,15 @@ extern "C" float func_0014EFA8(void* self, int riderIndex)
 }
 #endif
 
+
+//100%
+INCLUDE_ASM("be/beintcharacter", func_0014F100);
+#ifdef SKIP_ASM
+extern "C" void func_0014F100(void) {
+
+}
+#endif
+
 INCLUDE_ASM("be/beintcharacter", func_0014F108);
 
 INCLUDE_ASM("be/beintcharacter", func_0014F138);
@@ -111,4 +120,3 @@ INCLUDE_ASM("be/beintcharacter", func_0014F1B0);
 INCLUDE_ASM("be/beintcharacter", func_0014F1E0);
 
 INCLUDE_ASM("be/beintcharacter", func_0014F210);
-

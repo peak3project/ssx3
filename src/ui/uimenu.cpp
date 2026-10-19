@@ -112,7 +112,13 @@ extern "C" void func_0039B760(void* self, char a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uimenu", func_0039B7A8);
+#ifdef SKIP_ASM
+extern "C" void func_0039B7A8(void *arg0, int arg1) {
+    (*(int *)((char*)(arg0) + (0x9C))) = arg1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uimenu", func_0039B7B0);
@@ -147,7 +153,39 @@ extern "C" unsigned char func_0039B7B0(void* self, unsigned char start)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uimenu", func_0039B878);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" void* func_00397870_i(void*, int) __asm__("func_00397870");
+
+extern "C" unsigned char func_0039B878(char* self, unsigned char idx) {
+    short i;
+    unsigned char cnt;
+    char* obj;
+    char* vtbl;
+    char* item;
+
+    cnt = *(unsigned char*)(self + 0x96);
+    if (idx >= cnt) {
+        idx = cnt - 1;
+    }
+    i = idx;
+    for (; i >= 0; i--) {
+        item = (char*)func_00397870_i(self + 0x74, i);
+        if (*(int*)(self + 0x90) & 4) {
+            obj = *(char**)(*(char**)(self + 0x5C) + 0xD0);
+            vtbl = *(char**)(obj + 8);
+            if ((*(int (**)(void*, void*, int, int))(vtbl + 0xA4))(obj + *(short*)(vtbl + 0xA0), self, 1, i)) {
+                return i;
+            }
+        } else if (((*(int*)(item + 0x14) >> 5) & 1) == 0) {
+            return i;
+        }
+    }
+    return 0xFF;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uimenu", cUIMenu_setSelectedByIndex);

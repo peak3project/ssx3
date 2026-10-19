@@ -20,8 +20,24 @@ extern "C" void cInputMap_init(void* self, int count)
 #endif
 
 INCLUDE_ASM("input/inputmap", func_00320D08);
-
+//100%
 INCLUDE_ASM("input/inputmap", func_00320D50);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+void cInputMap_loadMapFile_vvi(void* self, void* data, int size) __asm__("cInputMap_loadMapFile");
+void cMemMan_free(void* p);
+extern "C" void* func_003E1A10(const char* path, int* size, int a2);
+
+extern "C" void func_00320D50(void* self, const char* path)
+{
+    int size;
+    void* data = func_003E1A10(path, &size, 0x100);
+    cInputMap_loadMapFile_vvi(self, data, size);
+    if (data != 0) {
+        cMemMan_free(data);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputmap", cInputMap_loadMapFile);
@@ -114,7 +130,35 @@ extern "C" float func_00320FA8(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputmap", func_00321010);
+#ifdef SKIP_ASM
+void* func_00325250(void* self);
+extern "C" float func_00325450(void* parser, void* a1, void* a2);
+
+struct sParser_1010 {
+    int f0;                 // 0x0
+    char pad4[0x108];
+    float v[8];             // 0x10C
+    char pad12C[0x190 - 0x12C];
+};
+
+extern "C" float func_00321010(void* self, void* a1, int a2, int a3, float f0, float f1, float f2, float f3, float f4, float f5, float f6, float f7)
+{
+    sParser_1010 parser;
+    func_00325250(&parser);
+    parser.f0 = a3;
+    parser.v[0] = f0;
+    parser.v[1] = f1;
+    parser.v[2] = f2;
+    parser.v[3] = f3;
+    parser.v[4] = f4;
+    parser.v[5] = f5;
+    parser.v[6] = f6;
+    parser.v[7] = f7;
+    return func_00325450(&parser, a1, (char*)*(void**)((char*)self + 0x14) + ((*(int**)((char*)self + 0x4))[a2] << 2));
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputmap", func_00321108);
@@ -130,7 +174,35 @@ extern "C" int func_00321108(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputmap", func_00321188);
+#ifdef SKIP_ASM
+void* func_00325250(void* self);
+extern "C" float func_00325450(void* parser, void* a1, void* a2);
+
+struct sParser_1188 {
+    int f0;                 // 0x0
+    char pad4[0x108];
+    float v[8];             // 0x10C
+    char pad12C[0x190 - 0x12C];
+};
+
+extern "C" int func_00321188(void* self, void* a1, int a2, int a3, float f0, float f1, float f2, float f3, float f4, float f5, float f6, float f7)
+{
+    sParser_1188 parser;
+    func_00325250(&parser);
+    parser.f0 = a3;
+    parser.v[0] = f0;
+    parser.v[1] = f1;
+    parser.v[2] = f2;
+    parser.v[3] = f3;
+    parser.v[4] = f4;
+    parser.v[5] = f5;
+    parser.v[6] = f6;
+    parser.v[7] = f7;
+    return func_00325450(&parser, a1, (char*)*(void**)((char*)self + 0x14) + ((*(int**)((char*)self + 0x4))[a2] << 2)) != 0.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputmap", func_00321298);

@@ -1,0 +1,6 @@
+/* Hand-written linker symbols that splat's undefined_syms_auto.txt can't produce. */
+
+/* render/particle (func_00380518, func_00381310): the VU1 microprogram entry at VU address 0, named by
+   config/reloc_addrs.txt. splat only lists symbols its reference tracking marks as referenced, which a
+   reloc_addrs-only name isn't, so it never appears in undefined_syms_auto.txt. */
+D_0 = 0x0;

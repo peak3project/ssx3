@@ -1347,7 +1347,28 @@ extern "C" void func_00345248(sDebTrack5248* self, float t, sDebVec4* pos, sDebV
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/debouncenode", func_00345320);
+#ifdef SKIP_ASM
+extern "C" int func_00345320(sTrackRef51C0* self)
+{
+    float* v = (float*)self->get();
+    sDfVec_343588 b[2];
+    b[0].x = v[1];
+    b[0].y = v[2];
+    b[0].z = v[3];
+    b[0].w = 1.0f;
+    b[1].x = v[4];
+    b[1].y = v[5];
+    b[1].z = v[6];
+    b[1].w = 1.0f;
+    cDfGfx_343588* gfx = D_004A5B80_343588;
+    sDfGfxVt_343588* vt = gfx->vt;
+    char* thisp = (char*)gfx + vt[93].delta;
+    int res = ((DfCullFn_343588)vt[93].fn)(thisp, &b[0], &b[1], ((DfViewFn_343588)gfx->vt[43].fn)((char*)gfx + gfx->vt[43].delta));
+    return res != 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/debouncenode", func_00345430);

@@ -449,9 +449,298 @@ extern "C" void cUIScreen_createAllObjects(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiscreen", func_0039D008);
+#ifdef SKIP_ASM
+struct sObjRec_0039D008 {
+    short pad0;
+    unsigned short size; // 0x2
+    int key;             // 0x4
+};
 
+extern "C" void* func_0039D008(void* self, int key)
+{
+    sObjRec_0039D008* e = (sObjRec_0039D008*)(*(char**)((char*)self + 0x38) + 4);
+    unsigned int i;
+    for (i = 0; i < *(*(unsigned int**)((char*)self + 0x38)); i++) {
+        if (e->key == key) {
+            char* obj = cUIScreen_createObjectByStruct(self, (char*)e);
+            *(int*)(obj + 0x38) = key;
+            return obj;
+        }
+        e = (sObjRec_0039D008*)((char*)e + e->size);
+    }
+    return 0;
+}
+#endif
+
+//100%
 INCLUDE_ASM("ui/uiscreen", cUIScreen_createObjectByStruct);
+#ifdef SKIP_ASM
+// PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
+// result as fresh memory (no aliasing with the record or the vtables).
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" void* func_0039FB30(void* self, void* screen, int a2);
+extern "C" void* func_0021CCC8(void* self);
+extern "C" void* func_003977E8(void* self);
+extern "C" void* func_003A5338(void* self);
+extern "C" void* func_003A5508(void* self);
+extern "C" void* func_00399768(void* mem, void* screen, int a2);
+extern "C" void* func_003A0348(void* mem, void* screen, int a2);
+extern "C" void* func_003A1148(void* mem, void* screen, int a2);
+extern "C" void* func_003A3280(void* mem, void* screen, int a2);
+extern char D_004A4788[];
+extern char D_004A4790[];
+extern char D_004A4798[];
+extern char D_004A47A0[];
+extern char D_00493F00[];
+extern char D_00493F10[];
+extern char D_00493F20[];
+extern char D_00493F30[];
+extern char D_00493F40[];
+extern char D_00493F50[];
+extern char D_00493F60[];
+extern void* D_00494348[];
+extern void* D_00494408[];
+extern void* D_004944C8[];
+extern void* D_00494868[];
+extern void* D_00494928[];
+extern void* D_004949E8[];
+extern void* D_00494AA8[];
+
+struct sUIVtRec_D078 { short delta; short index; void (*fn)(void*, char*); };
+struct sUIVtDel_D078 { short delta; short index; void (*fn)(void*, int); };
+
+// UI objects keep their vtable at +0x8; slot 10 builds the object from its screen record
+static inline void initFromRec_D078(char* o, char* rec)
+{
+    sUIVtRec_D078* vt = *(sUIVtRec_D078**)(o + 8);
+    vt[10].fn(o + vt[10].delta, rec);
+}
+
+// slot 1: deleting destructor
+static inline void deleteObj_D078(char* o)
+{
+    sUIVtDel_D078* vt = *(sUIVtDel_D078**)(o + 8);
+    vt[1].fn(o + vt[1].delta, 3);
+}
+
+static inline char* alloc_D078(unsigned int size, const char* tag)
+{
+    return (char*)operator new(size, tag, 0x20000000, 0);
+}
+
+extern "C" char* cUIScreen_createObjectByStruct(void* self, char* rec)
+{
+    switch (*(unsigned short*)rec) {
+    case 0x11: {
+        char* o = alloc_D078(0x88, D_004A4788);
+        func_0039FB30(o, self, 0);
+        *(void***)(o + 8) = D_00494AA8;
+        func_0021CCC8(o + 0x74);
+        *(int*)(o + 0x78) = -1;
+        *(int*)(o + 0x7C) = 0;
+        initFromRec_D078(o, rec);
+        return o;
+    }
+    case 0x10: {
+        char* o = alloc_D078(0x90, D_00493F00);
+        func_0039FB30(o, self, 0);
+        *(void***)(o + 8) = D_004949E8;
+        func_003977E8(o + 0x74);
+        int* h = (int*)(rec + 0x24);
+        for (unsigned int i = 0; i < *(unsigned int*)(rec + 0x20); i++, h++) {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *h);
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                cList_addToEnd((cList*)(o + 0x74), (cListNode*)c);
+            }
+        }
+        initFromRec_D078(o, rec);
+        return o;
+    }
+    case 0x12: {
+        char* o = (char*)func_00399768(alloc_D078(0x31C, D_00493F10), self, 0);
+        initFromRec_D078(o, rec);
+        return o;
+    }
+    case 0x13: {
+        char* o = alloc_D078(0xA8, D_004A4790);
+        func_0039FB30(o, self, 0);
+        *(void***)(o + 8) = D_004949E8;
+        func_003977E8(o + 0x74);
+        *(void***)(o + 8) = D_00494928;
+        func_003A5338(o + 0x90);
+        *(unsigned char*)(o + 0xA4) = 0xFF;
+        *(char*)(o + 0x95) = 0;
+        *(char*)(o + 0x96) = 0;
+        *(char*)(o + 0x97) = 0;
+        *(char*)(o + 0x98) = 0;
+        *(int*)(o + 0x9C) = 0;
+        *(int*)(o + 0xA0) = 0;
+        int* h = (int*)(rec + 0x24);
+        for (unsigned int i = 0; i < *(unsigned char*)(rec + 0x20); i++, h++) {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *h);
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                cList_addToEnd((cList*)(o + 0x74), (cListNode*)c);
+            }
+        }
+        initFromRec_D078(o, rec);
+        return o;
+    }
+    case 0x15: {
+        char* o = alloc_D078(0x80, D_004A4798);
+        int* h = (int*)(rec + 0x20);
+        func_0039FB30(o, self, 0);
+        *(void***)(o + 8) = D_00494868;
+        func_003A5508(o + 0x74);
+        *(int*)(o + 0x14) |= 2;
+        *(int*)(o + 0x78) = 0;
+        *(int*)(o + 0x7C) = 0;
+        initFromRec_D078(o, rec);
+        char* c = (char*)cUIScreen_getObjectByHashName(self, h[0]);
+        if (c != 0) {
+            cListNode_removeFromList(c);
+            *(char**)(c + 0x40) = o;
+            char* old = *(char**)(o + 0x78);
+            if (old != 0)
+                deleteObj_D078(old);
+            *(char**)(o + 0x78) = c;
+        }
+        c = (char*)cUIScreen_getObjectByHashName(self, h[1]);
+        if (c != 0) {
+            *(int*)(c + 0x14) &= ~1;
+            cListNode_removeFromList(c);
+            *(char**)(c + 0x40) = o;
+            char* old = *(char**)(o + 0x7C);
+            if (old != 0)
+                deleteObj_D078(old);
+            *(char**)(o + 0x7C) = c;
+        }
+        return o;
+    }
+    case 0x19: {
+        char* o = alloc_D078(0x88, D_00493F20);
+        func_0039FB30(o, self, 0);
+        *(int*)(o + 0x74) = 0;
+        *(int*)(o + 0x78) = 0;
+        *(int*)(o + 0x7C) = 0;
+        *(int*)(o + 0x80) = 0;
+        *(int*)(o + 0x84) = 0;
+        *(void***)(o + 8) = D_00494408;
+        initFromRec_D078(o, rec);
+        {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *(int*)(rec + 0x20));
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                *(char**)(o + 0x74) = c;
+            }
+        }
+        {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *(int*)(rec + 0x24));
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                *(char**)(o + 0x78) = c;
+            }
+        }
+        return o;
+    }
+    case 0x21: {
+        char* o = alloc_D078(0xCC, D_00493F30);
+        func_0039FB30(o, self, 0);
+        *(int*)(o + 0x74) = 0;
+        *(int*)(o + 0x78) = 0;
+        *(int*)(o + 0x7C) = 0;
+        *(int*)(o + 0x80) = 0;
+        *(int*)(o + 0x84) = 0;
+        *(int*)(o + 0x88) = 0;
+        *(int*)(o + 0xC0) = 0;
+        *(int*)(o + 0xC4) = 0;
+        *(int*)(o + 0xC8) = 0;
+        *(char*)(o + 0x8C) = 0;
+        *(char*)(o + 0xA5) = 0;
+        *(void***)(o + 8) = D_004944C8;
+        initFromRec_D078(o, rec);
+        {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *(int*)(rec + 0x20));
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                *(char**)(o + 0x74) = c;
+            }
+        }
+        {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *(int*)(rec + 0x24));
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                *(char**)(o + 0x78) = c;
+            }
+        }
+        return o;
+    }
+    case 0x16: {
+        char* o = alloc_D078(0x90, D_00493F40);
+        func_0039FB30(o, self, 0);
+        *(int*)(o + 0x74) = 0;
+        *(int*)(o + 0x78) = 0;
+        *(int*)(o + 0x7C) = 0;
+        *(int*)(o + 0x80) = 0;
+        *(int*)(o + 0x88) = 0;
+        *(int*)(o + 0x8C) = 0;
+        *(void***)(o + 8) = D_00494348;
+        initFromRec_D078(o, rec);
+        {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *(int*)(rec + 0x24));
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                *(char**)(o + 0x88) = c;
+            }
+        }
+        {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *(int*)(rec + 0x28));
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                *(char**)(o + 0x8C) = c;
+            }
+        }
+        return o;
+    }
+    case 0x17: {
+        char* o = (char*)func_003A0348(alloc_D078(0xBC, D_004A47A0), self, 0);
+        initFromRec_D078(o, rec);
+        return o;
+    }
+    case 0x20: {
+        char* o = (char*)func_003A1148(alloc_D078(0xD0, D_00493F50), self, 0);
+        int* h = (int*)(rec + 0x2C);
+        for (unsigned int i = 0; i < *(unsigned char*)(rec + 0x22); i++, h++) {
+            char* c = (char*)cUIScreen_getObjectByHashName(self, *h);
+            if (c != 0) {
+                cListNode_removeFromList(c);
+                *(char**)(c + 0x40) = o;
+                cList_addToEnd((cList*)(o + 0x8C), (cListNode*)c);
+            }
+        }
+        initFromRec_D078(o, rec);
+        return o;
+    }
+    case 0x18: {
+        char* o = (char*)func_003A3280(alloc_D078(0x90, D_00493F60), self, 0);
+        initFromRec_D078(o, rec);
+        return o;
+    }
+    }
+    return 0;
+}
+#endif
 
 extern "C" void* func_00398798(void*);
 
@@ -1018,12 +1307,21 @@ extern "C" void func_0039E390(void* self, int flags)
 }
 #endif
 
-INCLUDE_ASM("ui/uiscreen", func_0039E438);
-
-INCLUDE_ASM("ui/uiscreen", func_0039E470);
-
 extern "C" void* func_00397948(void*);
 
+//100%
+INCLUDE_ASM("ui/uiscreen", func_0039E438);
+#ifdef SKIP_ASM
+extern "C" void func_0039E438(void *arg0, signed char arg1) {
+    if (arg1 < 0) {
+        (*(unsigned char *)((char*)(arg0) + (0x15))) = 0xFFU;
+        return;
+    }
+    (*(unsigned char *)((char*)(arg0) + (0x15))) = (unsigned char) ((*(unsigned char *)((char*)(arg0) + (0x15))) | ((int) (0x01000000 << arg1) >> 0x18));
+}
+#endif
+
+INCLUDE_ASM("ui/uiscreen", func_0039E470);
 //100%
 INCLUDE_ASM("ui/uiscreen", func_0039E4A0__FPv);
 #ifdef SKIP_ASM
@@ -1204,9 +1502,64 @@ extern "C" void func_0039E758(void* self, cListNode* node)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiscreen", func_0039E778);
+#ifdef SKIP_ASM
+struct cList;
+struct cListNode;
+void* cList_first(cList*);
+int cListNode_isSentinel(cListNode*);
 
+struct sVEntry_func_0039E778 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+extern "C" void func_0039E778(void* self)
+{
+    void* n = cList_first((cList*)((char*)self + 0x24));
+    if (n != 0) {
+        do {
+            char* obj = (char*)n + 0x40;
+            if ((*(int*)((char*)n + 0x54) >> 6) & 1) {
+                sVEntry_func_0039E778* vt = *(sVEntry_func_0039E778**)((char*)n + 0x48);
+                vt[9].fn(obj + vt[9].delta, 0);
+            }
+            n = *(void**)((char*)n + 4);
+        } while (!cListNode_isSentinel((cListNode*)n));
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("ui/uiscreen", func_0039E7F0);
+#ifdef SKIP_ASM
+struct cList;
+struct cListNode;
+void* cList_first(cList*);
+int cListNode_isSentinel(cListNode*);
+
+struct sVEntry_func_0039E7F0 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+extern "C" void func_0039E7F0(void* self)
+{
+    void* n = cList_first((cList*)((char*)self + 0x24));
+    if (n != 0) {
+        do {
+            char* obj = (char*)n + 0x40;
+            if ((*(int*)((char*)n + 0x54) >> 6) & 1) {
+                sVEntry_func_0039E7F0* vt = *(sVEntry_func_0039E7F0**)((char*)n + 0x48);
+                vt[9].fn(obj + vt[9].delta, 1);
+            }
+            n = *(void**)((char*)n + 4);
+        } while (!cListNode_isSentinel((cListNode*)n));
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ui/uiscreen", func_0039E868);

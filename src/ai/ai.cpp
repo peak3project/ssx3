@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 //100%
 INCLUDE_ASM("ai/ai", cAI_cAI);
@@ -782,8 +783,13 @@ extern "C" int func_0012A180(sAiObj128A48* self)
 #endif
 
 INCLUDE_ASM("ai/ai", func_0012A1F0);
-
+//100%
 INCLUDE_ASM("ai/ai", func_0012A240);
+#ifdef SKIP_ASM
+extern "C" int func_0012A240(int *arg0) {
+    return *arg0 == 5;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012A250);
@@ -814,7 +820,22 @@ extern "C" int func_0012A250(sAiObj12A250* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012A2B0);
+#ifdef SKIP_ASM
+extern "C" void func_00112180(void* rider, int v);
+extern "C" void func_0026AF00(void* self);
+extern "C" void func_0026ADA8(void*, int);
+extern char D_004D33A0[];
+extern "C" void func_0012A2B0(void* self, int arg1) {
+    int i;
+    func_0026AF00(D_004D33A0);
+    func_0026ADA8(D_004D33A0, arg1);
+    for (i = 0; i < *(int*)((char*)self + 0x78); i++) {
+        func_00112180(*(void**)((char*)self + 0x28 + (i << 2)), 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012A340);
@@ -893,17 +914,106 @@ extern "C" void func_0012A490(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012A4D0);
+#ifdef SKIP_ASM
+extern "C" void func_0026ADE8(int *);
 
+extern "C" void func_0012A4D0(void) {
+    func_0026ADE8(&(*(int*)&D_004D33A0));
+}
+#endif
+//100%
 INCLUDE_ASM("ai/ai", func_0012A4F0);
+#ifdef SKIP_ASM
+extern "C" void func_0012A4F0(void* self) {
+    int i;
+    for (i = 0; i < *(int*)((char*)self + 0x78); i++) {
+        func_00112180(*(void**)((char*)self + 0x28 + (i << 2)), 0);
+    }
+}
+#endif
+//100%
+INCLUDE_ASM("ai/ai", func_0012A558);
+#ifdef SKIP_ASM
+extern "C" void func_0012A558(void) {
+
+}
+#endif
 
 INCLUDE_ASM("ai/ai", func_0012A560);
 
 INCLUDE_ASM("ai/ai", func_0012A768);
-
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/ai", func_0012A998);
+#ifdef SKIP_ASM
+// self is a cAI (no header yet): +0x48 is a list of rider objects (count at +0x80), each holding
+// its cRider virtual-base pointer at +0x18.
+struct sVEntry0012A998 { short delta; short index; int (*fn)(void*); };
 
+extern void* D_004A289C;
+extern "C" int func_0012A1F0(void*, int);
+
+extern "C" void func_0012A998(void* self)
+{
+    for (int i = 0; i < *(int*)((char*)self + 0x80); i++)
+    {
+        char** list = (char**)((char*)self + 0x48);
+        cRider* rider = *(cRider**)(list[i] + 0x18);
+        if (rider->mRenderFlag != 0)
+        {
+            char* sub = (char*)&rider->mVtbl;
+            sVEntry0012A998* vt = *(sVEntry0012A998**)sub;
+            if (func_0012A1F0(self, vt[kRiderVt_getAIIndex].fn(sub + vt[kRiderVt_getAIIndex].delta)) != 0)
+            {
+                cRider* r = *(cRider**)(list[i] + 0x18);
+                r->mRenderFlag = 0;
+                r->mSafeRenderTick = -1;
+                char* g = (char*)D_004A289C;
+                char* obj = list[i];
+                sVEntry0012A998* gvt = *(sVEntry0012A998**)(g + 0x10D8);
+                (*(cRider**)(obj + 0x18))->mSafeRenderTick = gvt[114].fn(g + gvt[114].delta) + 4;
+            }
+        }
+    }
+}
+#endif
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/ai", func_0012AA78);
+#ifdef SKIP_ASM
+extern "C" int func_0011C0E0(void*);
+struct sVE_0012AA78 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+struct sEnt_0012AA78 {
+    char pad[0x18];
+    cRider* rider;
+};
+struct sOwner_0012AA78 {
+    char pad[0x48];
+    sEnt_0012AA78* ent[8];
+    char pad2[0x80 - 0x68];
+    int count;
+};
+
+extern "C" int func_0012A1F0(void*, int);
+
+extern "C" int func_0012AA78(sOwner_0012AA78* self) {
+    int i;
+    int ok = 1;
+    for (i = 0; i < self->count; i++) {
+        if (func_0011C0E0(self->ent[i]->rider) == 0) {
+            char* obj = (char*)&self->ent[i]->rider->mVtbl;
+            sVE_0012AA78* vt = *(sVE_0012AA78**)obj;
+            if (func_0012A1F0(self, vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta)) != 0)
+                ok = 0;
+        }
+    }
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012AB20);
@@ -1027,9 +1137,39 @@ extern "C" int func_0012ACF8(sAiObj12ACF8* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012AD70);
-
+#ifdef SKIP_ASM
+// self is a cAI (no header yet); +0x70 is its list of rider objects (count at +0x88),
+// each holding its cRider virtual-base pointer at +0x18.
+extern "C" void func_0012AD70(void* self)
+{
+    for (int i = 0; i < *(int*)((char*)self + 0x88); i++)
+    {
+        char* obj = ((char**)((char*)self + 0x70))[i];
+        cRider* rider = *(cRider**)(obj + 0x18);
+        if (rider->mRenderFlag != 0)
+        {
+            rider->mRenderFlag = 0;
+            rider->mSafeRenderTick = -1;
+        }
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("ai/ai", func_0012ADC0);
+#ifdef SKIP_ASM
+extern "C" int func_0012ADC0(void* self) {
+    int i;
+    int ok = 1;
+    for (i = 0; i < *(int*)((char*)self + 0x88); i++) {
+        void* p = *(void**)((char*)self + 0x70 + (i << 2));
+        if (func_0011C0E0(*(void**)((char*)p + 0x18)) == 0)
+            ok = 0;
+    }
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012AE38);

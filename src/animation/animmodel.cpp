@@ -1,4 +1,5 @@
 #include "common.h"
+#include "animation/animmodel.h"
 
 //100%
 INCLUDE_ASM("animation/animmodel", cAnimModel_addModelPartLOD);
@@ -9,42 +10,10 @@ void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm
 extern char D_00489C80[];
 extern "C" void func_003E6448(void* dst, int c, int n);
 
-struct sLodRef_D8B8 {
-    char* part;     // 0x0
-    char* data;     // 0x4
-    int pad[2];
-};
-
-struct sLodSlot_D8B8 {
-    int used;               // 0x0
-    sLodRef_D8B8* refs;     // 0x4
-};
-
-struct sModelPart_D8B8 {
-    int id;                 // 0x00
-    char pad4[0x14];
-    sLodSlot_D8B8 lods[4];  // 0x18
-    char* p38;              // 0x38
-    char* p3C;              // 0x3C
-    char* p40;              // 0x40
-    int h44;                // 0x44
-    int h48;                // 0x48
-    int h4C;                // 0x4C
-    int index;              // 0x50
-    int pad54;
-};
-
-struct sAnimModel_D8B8 {
-    int f0;
-    int nrefs;                  // 0x4
-    int count;                  // 0x8
-    sModelPart_D8B8* parts;     // 0xC
-};
-
-extern "C" void cAnimModel_addModelPartLOD(sAnimModel_D8B8* self, int lod, char* part, int index)
+extern "C" void cAnimModel_addModelPartLOD(cAnimModel* self, int lod, char* part, int index)
 {
     char* data = part + 0x60;
-    for (int i = 0; i < self->count; i++) {
+    for (int i = 0; i < self->numParts; i++) {
         if (self->parts[i].id == *(signed char*)(part + 0x52)) {
             self->parts[i].lods[lod].used = 1;
             self->parts[i].lods[lod].refs[index].part = part;
@@ -53,21 +22,21 @@ extern "C" void cAnimModel_addModelPartLOD(sAnimModel_D8B8* self, int lod, char*
         }
     }
     for (int k = 0; k < 4; k++) {
-        self->parts[self->count].lods[k].refs = new (D_00489C80, 0, 0) sLodRef_D8B8[self->nrefs];
-        func_003E6448(self->parts[self->count].lods[k].refs, 0, self->nrefs << 4);
+        self->parts[self->numParts].lods[k].refs = new (D_00489C80, 0, 0) sAnimModelLodRef[self->numLodRefs];
+        func_003E6448(self->parts[self->numParts].lods[k].refs, 0, self->numLodRefs << 4);
     }
-    self->parts[self->count].id = *(signed char*)(part + 0x52);
-    self->parts[self->count].lods[lod].used = 1;
-    self->parts[self->count].lods[lod].refs[index].part = part;
-    self->parts[self->count].lods[lod].refs[index].data = data;
-    self->parts[self->count].p38 = data + *(int*)(part + 0x18);
-    self->parts[self->count].p40 = data + *(int*)(part + 0x2C);
-    self->parts[self->count].p3C = data + *(int*)(part + 0x1C);
-    self->parts[self->count].h44 = *(short*)(part + 0x4A);
-    self->parts[self->count].h48 = *(short*)(part + 0x4E);
-    self->parts[self->count].h4C = *(short*)(part + 0x50);
-    self->parts[self->count].index = index;
-    self->count++;
+    self->parts[self->numParts].id = *(signed char*)(part + 0x52);
+    self->parts[self->numParts].lods[lod].used = 1;
+    self->parts[self->numParts].lods[lod].refs[index].part = part;
+    self->parts[self->numParts].lods[lod].refs[index].data = data;
+    self->parts[self->numParts].boneNames = data + *(int*)(part + 0x18);
+    self->parts[self->numParts].unk_40 = data + *(int*)(part + 0x2C);
+    self->parts[self->numParts].unk_3C = data + *(int*)(part + 0x1C);
+    self->parts[self->numParts].numBones = *(short*)(part + 0x4A);
+    self->parts[self->numParts].unk_48 = *(short*)(part + 0x4E);
+    self->parts[self->numParts].unk_4C = *(short*)(part + 0x50);
+    self->parts[self->numParts].refIndex = index;
+    self->numParts++;
 }
 #endif
 
@@ -99,19 +68,14 @@ extern "C" int func_0030DB90(void* self, void* a1)
 //100%
 INCLUDE_ASM("animation/animmodel", func_0030DBA0);
 #ifdef SKIP_ASM
-struct sVec4_0030DBA0
+extern "C" void func_0030DBA0(cAnimModel* self, float a, float b)
 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-extern "C" void func_0030DBA0(void* self, float a, float b)
-{
-    sVec4_0030DBA0 v;
+    t4Vector v;
     v.x = a;
     v.y = b;
     v.z = b;
     v.w = 1.0f;
-    *(sVec4_0030DBA0*)((char*)self + 0x140) = v;
+    self->unk_140 = v;
 }
 #endif
 
@@ -120,63 +84,34 @@ INCLUDE_ASM("animation/animmodel", cAnimModel_compile);
 //100%
 INCLUDE_ASM("animation/animmodel", func_0030E9E0);
 #ifdef SKIP_ASM
-struct sAnimChannel_0030E9E0
-{
-    int active;
-    int pad;
-};
-
-struct sAnimEntry_0030E9E0
-{
-    char pad[0x10];
-    ulong mask;                          // 0x10
-    sAnimChannel_0030E9E0 channels[4];   // 0x18
-    char pad2[0x18];
-    int param;                           // 0x50
-    int pad3;
-};
-
-struct sAnimModel_0030E9E0
-{
-    char pad0[0x8];
-    int numEntries;               // 0x8
-    sAnimEntry_0030E9E0* entries; // 0xC
-    char pad1[0x4];
-    int count;                    // 0x14
-    char pad2[0x4];
-    int* indices;                 // 0x1C
-    char pad3[0x130];
-    ulong mask;                   // 0x150
-};
-
 // PORT: ulong is 64-bit here
-extern "C" void func_0030E9E0(sAnimModel_0030E9E0* self, int i, int channel)
+extern "C" void func_0030E9E0(cAnimModel* self, int i, int channel)
 {
-    if (i > self->count)
+    if (i > self->maxPartIndex)
     {
         return;
     }
-    if (self->indices == 0)
+    if (self->partIndex == 0)
     {
         return;
     }
-    int idx = self->indices[i];
+    int idx = self->partIndex[i];
     if (idx < 0)
     {
         return;
     }
-    sAnimEntry_0030E9E0* e = &self->entries[idx];
+    sAnimModelPart* e = &self->parts[idx];
     self->mask |= e->mask;
     if (channel < 0)
     {
         for (int k = 0; k < 4; k++)
         {
-            e->channels[k].active = 1;
+            e->lods[k].used = 1;
         }
     }
     else
     {
-        e->channels[channel].active = 1;
+        e->lods[channel].used = 1;
     }
 }
 #endif
@@ -185,36 +120,36 @@ extern "C" void func_0030E9E0(sAnimModel_0030E9E0* self, int i, int channel)
 INCLUDE_ASM("animation/animmodel", func_0030EA80);
 #ifdef SKIP_ASM
 // PORT: ulong is 64-bit here
-extern "C" void func_0030EA80(sAnimModel_0030E9E0* self, int i, int channel)
+extern "C" void func_0030EA80(cAnimModel* self, int i, int channel)
 {
-    if (i > self->count)
+    if (i > self->maxPartIndex)
     {
         return;
     }
-    if (self->indices == 0)
+    if (self->partIndex == 0)
     {
         return;
     }
-    int idx = self->indices[i];
+    int idx = self->partIndex[i];
     if (idx < 0)
     {
         return;
     }
-    sAnimEntry_0030E9E0* e = &self->entries[idx];
+    sAnimModelPart* e = &self->parts[idx];
     self->mask &= ~e->mask;
     if (channel < 0)
     {
         for (int k = 0; k < 4; k++)
         {
-            e->channels[k].active = 0;
+            e->lods[k].used = 0;
         }
     }
     else
     {
-        e->channels[channel].active = 0;
+        e->lods[channel].used = 0;
         for (int k = 0; k < 4; k++)
         {
-            if (e->channels[k].active)
+            if (e->lods[k].used)
             {
                 self->mask |= e->mask;
                 break;
@@ -228,13 +163,13 @@ extern "C" void func_0030EA80(sAnimModel_0030E9E0* self, int i, int channel)
 INCLUDE_ASM("animation/animmodel", func_0030EB60);
 #ifdef SKIP_ASM
 // PORT: ulong is 64-bit here
-extern "C" void func_0030EB60(sAnimModel_0030E9E0* self)
+extern "C" void func_0030EB60(cAnimModel* self)
 {
-    for (int j = 0; j < self->numEntries; j++)
+    for (int j = 0; j < self->numParts; j++)
     {
         for (int k = 0; k < 4; k++)
         {
-            self->entries[j].channels[k].active = 0;
+            self->parts[j].lods[k].used = 0;
         }
     }
     self->mask = 0;
@@ -244,14 +179,14 @@ extern "C" void func_0030EB60(sAnimModel_0030E9E0* self)
 //100%
 INCLUDE_ASM("animation/animmodel", func_0030EBC0);
 #ifdef SKIP_ASM
-extern "C" int func_0030EBC0(sAnimModel_0030E9E0* self, int i, int channel)
+extern "C" int func_0030EBC0(cAnimModel* self, int i, int channel)
 {
     int idx;
-    if (i > self->count || self->indices == 0 || (idx = self->indices[i]) < 0)
+    if (i > self->maxPartIndex || self->partIndex == 0 || (idx = self->partIndex[i]) < 0)
     {
         return 0;
     }
-    return self->entries[idx].channels[channel].active;
+    return self->parts[idx].lods[channel].used;
 }
 #endif
 
@@ -259,27 +194,27 @@ extern "C" int func_0030EBC0(sAnimModel_0030E9E0* self, int i, int channel)
 INCLUDE_ASM("animation/animmodel", func_0030EC18);
 #ifdef SKIP_ASM
 // PORT: ulong is 64-bit here
-extern "C" void func_0030EC18(sAnimModel_0030E9E0* self, int i, int param)
+extern "C" void func_0030EC18(cAnimModel* self, int i, int param)
 {
-    if (i > self->count)
+    if (i > self->maxPartIndex)
     {
         return;
     }
-    if (self->indices == 0)
+    if (self->partIndex == 0)
     {
         return;
     }
-    int idx = self->indices[i];
+    int idx = self->partIndex[i];
     if (idx < 0)
     {
         return;
     }
-    sAnimEntry_0030E9E0* e = &self->entries[idx];
-    e->param = param;
+    sAnimModelPart* e = &self->parts[idx];
+    e->refIndex = param;
     self->mask |= e->mask;
     for (int k = 0; k < 4; k++)
     {
-        e->channels[k].active = 1;
+        e->lods[k].used = 1;
     }
 }
 #endif
@@ -287,28 +222,11 @@ extern "C" void func_0030EC18(sAnimModel_0030E9E0* self, int i, int param)
 //100%
 INCLUDE_ASM("animation/animmodel", func_0030ECA0);
 #ifdef SKIP_ASM
-struct sAnimEntry_0030ECA0
-{
-    char pad[0x10];
-    ulong mask;
-    char pad2[0x40];
-};
-
-struct sAnimModel_0030ECA0
-{
-    char pad0[0xC];
-    sAnimEntry_0030ECA0* entries; // 0xC
-    char pad1[0xC];
-    int* indices;                 // 0x1C
-    char pad2[0x138];
-    ulong mask;                   // 0x158
-};
-
 // PORT: ulong is 64-bit here
-extern "C" void func_0030ECA0(sAnimModel_0030ECA0* self, int i)
+extern "C" void func_0030ECA0(cAnimModel* self, int i)
 {
-    sAnimEntry_0030ECA0* e = &self->entries[self->indices[i]];
-    self->mask |= e->mask;
+    sAnimModelPart* e = &self->parts[self->partIndex[i]];
+    self->unk_158 |= e->mask;
 }
 #endif
 
@@ -316,82 +234,292 @@ INCLUDE_ASM("animation/animmodel", func_0030ECD8);
 
 INCLUDE_ASM("animation/animmodel", func_0030F2B0);
 
+//100%
 INCLUDE_ASM("animation/animmodel", func_00310120);
-
-INCLUDE_ASM("animation/animmodel", func_00310200);
-
-//100% - objdiff report; single-function view differs only in a relocation name
-INCLUDE_ASM("animation/animmodel", func_003103F0);
 #ifdef SKIP_ASM
-struct sAm3103F0Pair
+// PORT: PS2-only VU0 macro-mode asm. Builds bone matrix unk_030[i] from the bone's quaternion
+// (rot, rows 0-2) and position (pos, row 3), then unk_034[i] = unk_030[i] with each row scaled
+// by the matching component of unk_140.
+// PORT: index-first (int) address arithmetic (pointer in int).
+extern "C" void func_00310120(cAnimModel* self, int i, sAnimModelBone* p)
 {
-    char pad[0x20];
+    __asm__ __volatile__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2       $vf4, 0x10(%0)\n"
+        "lqc2       $vf3, 0x0(%0)\n"
+        "vaddw.xyz  $vf1, $vf0, $vf0w\n"
+        "vadd.xyz   $vf5, $vf4, $vf4\n"
+        "vsub.w     $vf10, $vf10, $vf10\n"
+        "vsub.w     $vf11, $vf11, $vf11\n"
+        "vsub.w     $vf12, $vf12, $vf12\n"
+        "vmul.xyz   $vf6, $vf5, $vf4\n"
+        "vmulw.xyz  $vf7, $vf5, $vf4w\n"
+        "vopmula.xyz ACC, $vf5, $vf4\n"
+        "vmadd.xyz  $vf8, $vf0, $vf0\n"
+        "vsubay.x   ACC, $vf1, $vf6y\n"
+        "vmsubz.x   $vf10, $vf1, $vf6z\n"
+        "vsubaz.y   ACC, $vf1, $vf6z\n"
+        "vmsubx.y   $vf11, $vf1, $vf6x\n"
+        "vsubax.z   ACC, $vf1, $vf6x\n"
+        "vmsuby.z   $vf12, $vf1, $vf6y\n"
+        "vaddaz.y   ACC, $vf0, $vf8z\n"
+        "vmaddz.y   $vf10, $vf1, $vf7z\n"
+        "vaddax.z   ACC, $vf0, $vf8x\n"
+        "vmaddx.z   $vf11, $vf1, $vf7x\n"
+        "vaddax.y   ACC, $vf0, $vf8x\n"
+        "vmsubx.y   $vf12, $vf1, $vf7x\n"
+        "vadday.z   ACC, $vf0, $vf8y\n"
+        "vmsuby.z   $vf10, $vf1, $vf7y\n"
+        "vaddaz.x   ACC, $vf0, $vf8z\n"
+        "vmsubz.x   $vf11, $vf1, $vf7z\n"
+        "vadday.x   ACC, $vf0, $vf8y\n"
+        "vmaddy.x   $vf12, $vf1, $vf7y\n"
+        "sqc2       $vf3, 0x30(%1)\n"
+        "sqc2       $vf10, 0x0(%1)\n"
+        "sqc2       $vf11, 0x10(%1)\n"
+        "sqc2       $vf12, 0x20(%1)\n"
+        ".set pop\n"
+        :
+        : "r"(p), "r"((t4Matrix*)((i << 6) + (int)self->unk_030))
+        : "memory");
+    __asm__ __volatile__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2       $vf1, 0x140(%2)\n"
+        "lqc2       $vf4, 0x0(%0)\n"
+        "lqc2       $vf5, 0x10(%0)\n"
+        "lqc2       $vf6, 0x20(%0)\n"
+        "lqc2       $vf7, 0x30(%0)\n"
+        "vmulx.xyzw $vf8, $vf4, $vf1x\n"
+        "vmuly.xyzw $vf9, $vf5, $vf1y\n"
+        "vmulz.xyzw $vf10, $vf6, $vf1z\n"
+        "vmulw.xyzw $vf11, $vf7, $vf1w\n"
+        "sqc2       $vf8, 0x0(%1)\n"
+        "sqc2       $vf9, 0x10(%1)\n"
+        "sqc2       $vf10, 0x20(%1)\n"
+        "sqc2       $vf11, 0x30(%1)\n"
+        ".set pop\n"
+        :
+        : "r"((t4Matrix*)((i << 6) + (int)self->unk_030)), "r"((t4Matrix*)((i << 6) + (int)self->unk_034)), "r"(self)
+        : "memory");
+}
+#endif
+
+//100%
+INCLUDE_ASM("animation/animmodel", func_00310200);
+#ifdef SKIP_ASM
+// Vector/quaternion with constructors (the result temps go straight into the return slot).
+struct sAmQuat_0200
+{
+    float x, y, z, w;
+    sAmQuat_0200() {}
+    sAmQuat_0200(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+struct sAmXform_0200
+{
+    sAmQuat_0200 pos;
+    sAmQuat_0200 rot;
 };
 
-struct sAm3103F0
+extern t4Vector D_004FF130;
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sAmQuat_0200 amQuatMul_0200(const sAmQuat_0200& a, const sAmQuat_0200& b)
 {
-    char pad0[0x10];
-    int count;
-    char pad14[0x18];
-    sAm3103F0Pair* pairs;
+    sAmQuat_0200 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sAmQuat_0200 amSub_0200(const sAmQuat_0200& a, const sAmQuat_0200& b)
+{
+    sAmQuat_0200 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sAmQuat_0200 amAdd_0200(const sAmQuat_0200& a, const sAmQuat_0200& b)
+{
+    sAmQuat_0200 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
+static inline sAmQuat_0200 amRot_0200(const sAmQuat_0200& q, const sAmQuat_0200& v)
+{
+    sAmQuat_0200 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+// Child transform = parent transform a composed with local transform b.
+static inline sAmXform_0200 amCombine_0200(const sAmXform_0200& a, const sAmXform_0200& b)
+{
+    sAmXform_0200 r;
+    r.rot = amQuatMul_0200(a.rot, b.rot);
+    r.pos = amAdd_0200(amRot_0200(a.rot, amSub_0200(b.pos, *(const sAmQuat_0200*)&D_004FF130)), a.pos);
+    return r;
+}
+
+// One boneNames entry (0x50 bytes): the name, then the parent bone (< 0 = root).
+struct sAmBoneInfo_0200 {
+    char name[0x12];
+    short parent;
+    char pad[0x3C];
 };
 
-extern "C" void func_00310120(sAm3103F0* self, int i, sAm3103F0Pair* p);
-
-extern "C" void func_003103F0(sAm3103F0* self)
+// Rebuilds the world bones from the local pose: bone k = parent (or the next root transform) * local k.
+extern "C" void func_00310200(cAnimModel* self, sAnimModelBone* roots)
 {
-    int i;
-    for (i = 0; i < self->count; i++)
+    for (int i = 0; i < self->numParts; i++)
     {
-        func_00310120(self, i, &self->pairs[i]);
+        // PORT: pointer arithmetic through int (offset-first addu).
+        sAmBoneInfo_0200* info = (sAmBoneInfo_0200*)((sAnimModelPart*)(i * (int)sizeof(sAnimModelPart) + (int)self->parts))->boneNames;
+        for (int j = 0; j < ((sAnimModelPart*)(i * (int)sizeof(sAnimModelPart) + (int)self->parts))->numBones; j++)
+        {
+            int k = j + ((sAnimModelPart*)(i * (int)sizeof(sAnimModelPart) + (int)self->parts))->firstBone;
+            sAnimModelBone* parent;
+            sAmBoneInfo_0200* e = &info[j];
+            short p = e->parent;
+            if (p < 0)
+                parent = roots++;
+            else
+                parent = &self->bones[p];
+            t4Vector* lp = (t4Vector*)((k << 4) + (int)self->localPos);
+            sAmXform_0200 local;
+            local.pos = sAmQuat_0200(lp->x * self->unk_140.x, lp->y * self->unk_140.y, lp->z * self->unk_140.z, lp->w * self->unk_140.w);
+            local.rot = *(sAmQuat_0200*)((k << 4) + (int)self->localRot);
+            *(sAmXform_0200*)((k << 5) + (int)self->bones) = amCombine_0200(*(sAmXform_0200*)parent, local);
+        }
     }
 }
 #endif
 
+//100% - objdiff report; single-function view differs only in a relocation name
+INCLUDE_ASM("animation/animmodel", func_003103F0);
+#ifdef SKIP_ASM
+extern "C" void func_00310120(cAnimModel* self, int i, sAnimModelBone* p);
+
+extern "C" void func_003103F0(cAnimModel* self)
+{
+    int i;
+    for (i = 0; i < self->numBones; i++)
+    {
+        func_00310120(self, i, &self->bones[i]);
+    }
+}
+#endif
+
+//100%
 INCLUDE_ASM("animation/animmodel", func_00310458);
+#ifdef SKIP_ASM
+extern t4Vector D_004FF130;
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix * vector).
+static inline t4Vector amMulMat_0458(const t4Matrix* m, const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf8, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "m"(v)
+        : "memory");
+    return r;
+}
+
+struct sAmPoint_0458 {
+    float x, y, z;
+    int bone;
+};
+
+// Returns point `index` of the part with this id, transformed by its bone matrix (unk_034),
+// or D_004FF130 when no part has the id.
+extern "C" t4Vector func_00310458(cAnimModel* model, int id, int index)
+{
+    for (int i = 0; i < model->numParts; i++)
+    {
+        // PORT: pointer arithmetic through int (offset-first addu).
+        sAnimModelPart* part = (sAnimModelPart*)(i * (int)sizeof(sAnimModelPart) + (int)model->parts);
+        if (part->id == id)
+        {
+            sAmPoint_0458* pt = (sAmPoint_0458*)((index << 4) + (int)part->unk_3C);
+            t4Matrix* m = (t4Matrix*)(((pt->bone + part->firstBone) << 6) + (int)model->unk_034);
+            t4Vector v;
+            v.x = pt->x;
+            v.y = pt->y;
+            v.z = pt->z;
+            v.w = 1.0f;
+            return amMulMat_0458(m, v);
+        }
+    }
+    return D_004FF130;
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/animmodel", func_00310530);
 #ifdef SKIP_ASM
-struct sAmVec4
-{
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-struct sAmMtx
-{
-    sAmVec4 row[4];
-};
-
-struct sAmPair
-{
-    sAmVec4 a;
-    sAmVec4 b;
-};
-
-struct sAmEntry
-{
-    int unk0;
-    int start;
-    char pad8[0x3C];
-    int count;
-    char pad48[0x10];
-};
-
-struct sAmModel
-{
-    int unk0;
-    int unk4;
-    int numEntries;
-    sAmEntry* entries;
-    char pad10[0x1C];
-    sAmPair* pairs;
-    sAmMtx* mtxA;
-    sAmMtx* mtxB;
-};
-
 // PORT: PS2-only VU0 inline asm (vector add-assign).
-static inline void amVecAddEq(sAmVec4* dst, sAmVec4* v)
+static inline void amVecAddEq(t4Vector* dst, t4Vector* v)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -403,10 +531,10 @@ static inline void amVecAddEq(sAmVec4* dst, sAmVec4* v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sAmVec4 amVecAdd(const sAmVec4& src, sAmVec4* b)
+static inline t4Vector amVecAdd(const t4Vector& src, t4Vector* b)
 {
-    sAmVec4 a = src;
-    sAmVec4 r;
+    t4Vector a = src;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -418,19 +546,19 @@ static inline sAmVec4 amVecAdd(const sAmVec4& src, sAmVec4* b)
     return r;
 }
 
-extern "C" void func_00310530(sAmModel* self, sAmVec4* v)
+extern "C" void func_00310530(cAnimModel* self, t4Vector* v)
 {
-    for (int i = 0; i < self->numEntries; i++) {
-        for (int j = 0; j < self->entries[i].count; j++) {
-            int k = j + self->entries[i].start;
-            amVecAddEq(&self->pairs[k].a, v);
+    for (int i = 0; i < self->numParts; i++) {
+        for (int j = 0; j < self->parts[i].numBones; j++) {
+            int k = j + self->parts[i].firstBone;
+            amVecAddEq(&self->bones[k].pos, v);
             {
-                sAmVec4 t = amVecAdd(self->mtxA[k].row[3], v);
-                self->mtxA[k].row[3] = t;
+                t4Vector t = amVecAdd(self->unk_030[k].row[3], v);
+                self->unk_030[k].row[3] = t;
             }
             {
-                sAmVec4 t = amVecAdd(self->mtxB[k].row[3], v);
-                self->mtxB[k].row[3] = t;
+                t4Vector t = amVecAdd(self->unk_034[k].row[3], v);
+                self->unk_034[k].row[3] = t;
             }
         }
     }
@@ -516,49 +644,6 @@ static inline sAmMat_0640 mulMat_0640(const sAmMat_0640& a, const sAmMat_0640& b
     return t;
 }
 
-struct sAmRef_0640 {
-    char* part;     // 0x0
-    char* data;     // 0x4
-    int f8;         // 0x8
-    int fC;         // 0xC
-};
-
-struct sAmLod_0640 {
-    int used;               // 0x0
-    sAmRef_0640* refs;      // 0x4
-};
-
-struct sAmPart_0640 {
-    int id;                 // 0x00
-    char pad4[0x14];
-    sAmLod_0640 lods[4];    // 0x18
-    char pad38[0x18];
-    int index;              // 0x50
-    int pad54;
-};
-
-struct sAmLodInfo_0640 {
-    int a;      // 0x0
-    int b;      // 0x4
-};
-
-struct sAmModel_0640 {
-    int f0;
-    int f4;
-    int count;                  // 0x8
-    sAmPart_0640* parts;        // 0xC
-    int nmats;                  // 0x10
-    int f14;
-    int lodded;                 // 0x18
-    char pad1C[0x18];
-    sAmMat_0640* matsA;         // 0x34
-    sAmMat_0640* matsB;         // 0x38
-    int f3C;
-    sAmLodInfo_0640 info[4];    // 0x40
-    char pad60[0x144 - 0x60];
-    float alpha;                // 0x144
-};
-
 struct sAmVEnt_0640 {
     short delta;
     short index;
@@ -577,39 +662,39 @@ extern int D_004A5948;
 extern sAmCtx_0640* D_004A5B80_0640 __asm__("D_004A5B80");
 extern sAmMat_0640 D_004FC420[];
 
-extern "C" void func_00310640(sAmModel_0640* self, int lod, int x, int y)
+extern "C" void func_00310640(cAnimModel* self, int lod, int x, int y)
 {
     sAmCtx_0640* ctx = D_004A5B80_0640;
     if (D_004A5948 == 0) {
         new ((void*)D_004FC420) sAmMat_0640[64];
         D_004A5948 = 1;
     }
-    for (int i = 0; i < self->nmats; i++) {
-        D_004FC420[i] = mulMat_0640(self->matsA[i], self->matsB[i]);
+    for (int i = 0; i < self->numBones; i++) {
+        D_004FC420[i] = mulMat_0640(((sAmMat_0640*)self->unk_034)[i], ((sAmMat_0640*)self->unk_038)[i]);
     }
-    if (self->lodded != 0) {
-        for (int j = 0; j < self->count; j++) {
+    if (self->unk_018 != 0) {
+        for (int j = 0; j < self->numParts; j++) {
             // PORT: pointer arithmetic through int (offset-first addu).
-            sAmPart_0640* p = (sAmPart_0640*)(j * (int)sizeof(sAmPart_0640) + (int)self->parts);
+            sAnimModelPart* p = (sAnimModelPart*)(j * (int)sizeof(sAnimModelPart) + (int)self->parts);
             if (p->lods[lod].used != 0) {
-                sAmRef_0640* r = &p->lods[lod].refs[p->index];
+                sAnimModelLodRef* r = &p->lods[lod].refs[p->refIndex];
                 if (r->part != 0) {
-                    ((tSetMats_0640)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FC420, 0, r->fC, r->f8, 0);
+                    ((tSetMats_0640)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FC420, 0, r->unk_0C, r->unk_08, 0);
                     int m = self->parts[j].id == 2 ? x : y;
-                    ((tDraw_0640)ctx->vt[99].fn)((char*)ctx + ctx->vt[99].delta, r->part, r->data, m, 0, self->alpha);
+                    ((tDraw_0640)ctx->vt[99].fn)((char*)ctx + ctx->vt[99].delta, r->part, r->data, m, 0, self->unk_140.y);
                 }
             }
         }
     } else {
-        ((tSetMats_0640)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FC420, 0, self->info[lod].b, self->info[lod].a, 0);
-        for (int j = 0; j < self->count; j++) {
+        ((tSetMats_0640)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FC420, 0, self->lodInfo[lod].unk_04, self->lodInfo[lod].unk_00, 0);
+        for (int j = 0; j < self->numParts; j++) {
             // PORT: pointer arithmetic through int (offset-first addu).
-            sAmPart_0640* p = (sAmPart_0640*)(j * (int)sizeof(sAmPart_0640) + (int)self->parts);
+            sAnimModelPart* p = (sAnimModelPart*)(j * (int)sizeof(sAnimModelPart) + (int)self->parts);
             if (p->lods[lod].used != 0) {
-                sAmRef_0640* r = p->lods[lod].refs;
+                sAnimModelLodRef* r = p->lods[lod].refs;
                 if (r->part != 0) {
                     int m = p->id == 2 ? x : y;
-                    ((tDraw_0640)ctx->vt[99].fn)((char*)ctx + ctx->vt[99].delta, r->part, r->data, m, 0, self->alpha);
+                    ((tDraw_0640)ctx->vt[99].fn)((char*)ctx + ctx->vt[99].delta, r->part, r->data, m, 0, self->unk_140.y);
                 }
             }
         }
@@ -696,48 +781,6 @@ static inline sAmMat_0948 mulMat_0948(const sAmMat_0948& a, const sAmMat_0948& b
     return t;
 }
 
-struct sAmRef_0948 {
-    char* part;     // 0x0
-    char* data;     // 0x4
-    int f8;         // 0x8
-    int fC;         // 0xC
-};
-
-struct sAmLod_0948 {
-    int used;               // 0x0
-    sAmRef_0948* refs;      // 0x4
-};
-
-struct sAmPart_0948 {
-    int id;                 // 0x00
-    char pad4[0x14];
-    sAmLod_0948 lods[4];    // 0x18
-    char pad38[0x18];
-    int index;              // 0x50
-    int pad54;
-};
-
-struct sAmLodInfo_0948 {
-    int a;      // 0x0
-    int b;      // 0x4
-};
-
-struct sAmModel_0948 {
-    int f0;
-    int f4;
-    int count;                  // 0x8
-    sAmPart_0948* parts;        // 0xC
-    int nmats;                  // 0x10
-    int f14;
-    int lodded;                 // 0x18
-    char pad1C[0x14];
-    sAmMat_0948* matsA;         // 0x30
-    int f34;
-    sAmMat_0948* matsB;         // 0x38
-    int f3C;
-    sAmLodInfo_0948 info[4];    // 0x40
-};
-
 struct sAmVEnt_0948 {
     short delta;
     short index;
@@ -756,24 +799,24 @@ extern int D_004A594C;
 extern sAmCtx_0948* D_004A5B80_0948 __asm__("D_004A5B80");
 extern sAmMat_0948 D_004FD420[];
 
-extern "C" void func_00310948(sAmModel_0948* self, int lod, int x, int y)
+extern "C" void func_00310948(cAnimModel* self, int lod, int x, int y)
 {
     if (D_004A594C == 0) {
         new ((void*)D_004FD420) sAmMat_0948[64];
         D_004A594C = 1;
     }
     sAmCtx_0948* ctx = D_004A5B80_0948;
-    for (int i = 0; i < self->nmats; i++) {
-        D_004FD420[i] = mulMat_0948(self->matsA[i], self->matsB[i]);
+    for (int i = 0; i < self->numBones; i++) {
+        D_004FD420[i] = mulMat_0948(((sAmMat_0948*)self->unk_030)[i], ((sAmMat_0948*)self->unk_038)[i]);
     }
-    if (self->lodded != 0) {
-        for (int j = 0; j < self->count; j++) {
+    if (self->unk_018 != 0) {
+        for (int j = 0; j < self->numParts; j++) {
             // PORT: pointer arithmetic through int (offset-first addu).
-            sAmPart_0948* p = (sAmPart_0948*)(j * (int)sizeof(sAmPart_0948) + (int)self->parts);
+            sAnimModelPart* p = (sAnimModelPart*)(j * (int)sizeof(sAnimModelPart) + (int)self->parts);
             if (p->lods[lod].used != 0) {
-                sAmRef_0948* r = &p->lods[lod].refs[p->index];
+                sAnimModelLodRef* r = &p->lods[lod].refs[p->refIndex];
                 if (r->part != 0) {
-                    ((tSetMats_0948)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FD420, 0, r->fC, r->f8, 0);
+                    ((tSetMats_0948)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FD420, 0, r->unk_0C, r->unk_08, 0);
                     int ok = (unsigned)(self->parts[j].id - 1) < 2;
                     int m = ok ? x : y;
                     ((tDraw_0948)ctx->vt[100].fn)((char*)ctx + ctx->vt[100].delta, r->part, r->data, m);
@@ -781,12 +824,12 @@ extern "C" void func_00310948(sAmModel_0948* self, int lod, int x, int y)
             }
         }
     } else {
-        ((tSetMats_0948)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FD420, 0, self->info[lod].b, self->info[lod].a, 0);
-        for (int j = 0; j < self->count; j++) {
+        ((tSetMats_0948)ctx->vt[111].fn)((char*)ctx + ctx->vt[111].delta, D_004FD420, 0, self->lodInfo[lod].unk_04, self->lodInfo[lod].unk_00, 0);
+        for (int j = 0; j < self->numParts; j++) {
             // PORT: pointer arithmetic through int (offset-first addu).
-            sAmPart_0948* p = (sAmPart_0948*)(j * (int)sizeof(sAmPart_0948) + (int)self->parts);
+            sAnimModelPart* p = (sAnimModelPart*)(j * (int)sizeof(sAnimModelPart) + (int)self->parts);
             if (p->lods[lod].used != 0) {
-                sAmRef_0948* r = p->lods[lod].refs;
+                sAnimModelLodRef* r = p->lods[lod].refs;
                 if (r->part != 0) {
                     int ok = (unsigned)(p->id - 1) < 2;
                     int m = ok ? x : y;
@@ -807,24 +850,14 @@ struct sAmItem50 {
     char name[0x50];
 };
 
-struct sAmGroup58 {
-    int pad0;
-    int first;
-    char pad8[0x30];
-    sAmItem50* items;
-    char pad3C[0x8];
-    int count;
-    char pad48[0x10];
-};
-
-extern "C" int func_00310C48(void* self, int idx, const char* name)
+extern "C" int func_00310C48(cAnimModel* self, int idx, const char* name)
 {
-    sAmGroup58* g = &(*(sAmGroup58**)((char*)self + 0xC))[(*(int**)((char*)self + 0x1C))[idx]];
-    sAmItem50* items = g->items;
-    for (int i = 0; i < g->count; i++)
+    sAnimModelPart* g = &self->parts[self->partIndex[idx]];
+    sAmItem50* items = (sAmItem50*)g->boneNames;
+    for (int i = 0; i < g->numBones; i++)
     {
         if (func_004165A8(&items[i], name) == 0)
-            return g->first + i;
+            return g->firstBone + i;
     }
     return -1;
 }
@@ -836,29 +869,17 @@ INCLUDE_ASM("animation/animmodel", func_00310CE8);
 extern "C" int func_00416B18(const char* a, const char* b, int n);
 extern char D_004A3DF0[];
 
-struct sAnimPart_0CE8 {
-    int f0;
-    int firstBit;               // 0x4
-    int f8;
-    int chanBit;                // 0xC
-    char pad10[0x38 - 0x10];
-    char* names;                // 0x38 (0x50-byte entries)
-    char pad3C[0x44 - 0x3C];
-    int count;                  // 0x44
-    char pad48[0x58 - 0x48];
-};
-
 // PORT: returns a 64-bit mask (long is 8 bytes on the EE).
-extern "C" ulong func_00310CE8(char* self, int idx, char* names)
+extern "C" ulong func_00310CE8(cAnimModel* self, int idx, char* names)
 {
-    if (*(int*)(self + 0x14) < idx)
+    if (self->maxPartIndex < idx)
         return 0;
-    int* tbl = *(int**)(self + 0x1C);
+    int* tbl = self->partIndex;
     if (tbl == 0 || tbl[idx] < 0)
         return 0;
     char* p = names;
     ulong mask = 0;
-    sAnimPart_0CE8* part = &(*(sAnimPart_0CE8**)(self + 0xC))[tbl[idx]];
+    sAnimModelPart* part = &self->parts[tbl[idx]];
     while (*p) {
         char* q = p;
         if (*q != 0 && *q != ',') {
@@ -867,15 +888,15 @@ extern "C" ulong func_00310CE8(char* self, int idx, char* names)
             while (*q != 0 && *q != ',');
         }
         int len = q - p;
-        if (part->chanBit >= 0 && func_00416B18(p, D_004A3DF0, len) == 0) {
-            mask |= (ulong)1 << (part->chanBit + *(int*)(self + 0x10));
+        if (part->unk_0C >= 0 && func_00416B18(p, D_004A3DF0, len) == 0) {
+            mask |= (ulong)1 << (part->unk_0C + self->numBones);
         } else {
-            char* list = part->names;
+            char* list = part->boneNames;
             int j = 0;
             ulong one = 1;
-            for (; j < part->count; j++) {
+            for (; j < part->numBones; j++) {
                 if (func_00416B18(list + j * 0x50, p, len) == 0 && *(list + len + j * 0x50) == 0) {
-                    mask |= one << (part->firstBit + j);
+                    mask |= one << (part->firstBone + j);
                     break;
                 }
             }
@@ -895,18 +916,18 @@ public:
     virtual void write(void* data, int size);
 };
 
-extern "C" void func_00310EA8(void* self, cAmStream* s)
+extern "C" void func_00310EA8(cAnimModel* self, cAmStream* s)
 {
-    s->read(*(void**)((char*)self + 0x2C), *(int*)((char*)self + 0x10) << 5);
+    s->read(self->bones, self->numBones << 5);
 }
 #endif
 
 //100%
 INCLUDE_ASM("animation/animmodel", func_00310EE0);
 #ifdef SKIP_ASM
-extern "C" void func_00310EE0(void* self, cAmStream* s)
+extern "C" void func_00310EE0(cAnimModel* self, cAmStream* s)
 {
-    s->write(*(void**)((char*)self + 0x2C), *(int*)((char*)self + 0x10) << 5);
+    s->write(self->bones, self->numBones << 5);
 }
 #endif
 
@@ -970,7 +991,24 @@ extern "C" void* func_00311048(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animmodel", func_00311088);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+void operator_delete(int*);
+// func_00311110 ignores its argument (matched as (void)); the call here passes self in a0.
+extern "C" void func_00311110_self(void* self) __asm__("func_00311110");
+
+extern "C" void func_00311088(void* self, int flags)
+{
+    D_004A3DF8 = 0;
+    func_00311110_self(self);
+    if (flags & 1)
+    {
+        operator_delete((int*)self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/animmodel", func_003110D0);

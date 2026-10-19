@@ -1569,7 +1569,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00337A48);
 INCLUDE_ASM("intersect/worldsphtree", func_003388E0);
 
 INCLUDE_ASM("intersect/worldsphtree", func_00338920);
-
 INCLUDE_ASM("intersect/worldsphtree", func_00339598);
 
 INCLUDE_ASM("intersect/worldsphtree", func_0033A3D8);
@@ -1751,7 +1750,26 @@ extern "C" float func_00340A18(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340A40);
+#ifdef SKIP_ASM
+struct sSphNode_340A40 {
+    sSphNode_340A40* child[8];
+};
+
+extern "C" void func_00340A40(sSphNode_340A40* node, sCtx_3309D8* ctx)
+{
+    func_003309D8(ctx, node);
+    if (node->child[0] != 0) func_00340A40(node->child[0], ctx);
+    if (node->child[1] != 0) func_00340A40(node->child[1], ctx);
+    if (node->child[2] != 0) func_00340A40(node->child[2], ctx);
+    if (node->child[3] != 0) func_00340A40(node->child[3], ctx);
+    if (node->child[4] != 0) func_00340A40(node->child[4], ctx);
+    if (node->child[5] != 0) func_00340A40(node->child[5], ctx);
+    if (node->child[6] != 0) func_00340A40(node->child[6], ctx);
+    if (node->child[7] != 0) func_00340A40(node->child[7], ctx);
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340B18);
@@ -1778,7 +1796,55 @@ extern "C" void func_00340B18(void* self, sOctCollect* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340C20);
+#ifdef SKIP_ASM
+struct sObj_340C20 {
+    sObj_340C20* next;
+    char pad04[0x154];
+    float bmin[3];              // 0x158
+    float bmax[3];              // 0x164
+};
+
+struct sTree_340C20 {
+    sTree_340C20* child[8];
+    int pad20;
+    sObj_340C20* objs;          // 0x24
+};
+
+static inline int overlapObj_340C20(const sBox_3309D8* b, const sObj_340C20* n)
+{
+    int r = 0;
+    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
+        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
+        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
+        r = 1;
+    }
+    return r;
+}
+
+extern "C" void func_00340C20(sTree_340C20* tree, sCtx_3309D8* ctx)
+{
+    func_003309D8(ctx, tree);
+    sCtx_3309D8* q = (sCtx_3309D8*)((char*)ctx + 0x10);
+    for (sObj_340C20* p = tree->objs; p != 0; p = p->next) {
+        if (overlapObj_340C20(q->box, p)) {
+            int* cnt = q->count;
+            int n = *cnt;
+            q->list[n] = (sNode_3309D8*)p;
+            *cnt = n + 1;
+        }
+    }
+    if (tree->child[0] != 0) func_00340C20(tree->child[0], ctx);
+    if (tree->child[1] != 0) func_00340C20(tree->child[1], ctx);
+    if (tree->child[2] != 0) func_00340C20(tree->child[2], ctx);
+    if (tree->child[3] != 0) func_00340C20(tree->child[3], ctx);
+    if (tree->child[4] != 0) func_00340C20(tree->child[4], ctx);
+    if (tree->child[5] != 0) func_00340C20(tree->child[5], ctx);
+    if (tree->child[6] != 0) func_00340C20(tree->child[6], ctx);
+    if (tree->child[7] != 0) func_00340C20(tree->child[7], ctx);
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340DC0);
@@ -1909,9 +1975,50 @@ extern "C" void func_003410C0(void* self, void* ctx)
 }
 #endif
 
-INCLUDE_ASM("intersect/worldsphtree", func_003411B8);
-
 extern "C" void* func_003400D8(int, int);
+
+//100%
+INCLUDE_ASM("intersect/worldsphtree", func_003411B8);
+#ifdef SKIP_ASM
+struct sQuery_3411B8 {
+    sWsVec4* pos;               // 0x00
+    int a7;                     // 0x04
+    int mask;                   // 0x08
+    int* cnt;                   // 0x0C
+    float* dist;                // 0x10
+    sBox_00334680* box;         // 0x14
+};
+
+struct sTree_3411B8 {
+    sTree_3411B8* child[8];
+    int pad20[2];
+    char* objs;                 // 0x28
+};
+
+extern "C" void func_003411B8(sTree_3411B8* tree, sQuery_3411B8* q)
+{
+    for (char* o = tree->objs; o != 0; o = *(char**)o) {
+        int type = *(int*)(o + 8);
+        if (type == 2) {
+            func_0035C698(*(void**)(o + 0xC), q->box, q->box, q->pos, q->mask, q->cnt, q->dist, q->a7);
+        } else if (type == 3) {
+            func_00348290(*(void**)(o + 0xC), q->box, q->box, q->pos, q->mask, q->cnt, q->dist, q->a7);
+        } else if (type == 1) {
+            if (*(int*)(*(char**)(o + 0x68) + 0x1C) & q->mask) {
+                func_00335128(o, q->box, q->pos, q->cnt, q->dist, q->a7);
+            }
+        }
+    }
+    if (tree->child[0] != 0) func_003411B8(tree->child[0], q);
+    if (tree->child[1] != 0) func_003411B8(tree->child[1], q);
+    if (tree->child[2] != 0) func_003411B8(tree->child[2], q);
+    if (tree->child[3] != 0) func_003411B8(tree->child[3], q);
+    if (tree->child[4] != 0) func_003411B8(tree->child[4], q);
+    if (tree->child[5] != 0) func_003411B8(tree->child[5], q);
+    if (tree->child[6] != 0) func_003411B8(tree->child[6], q);
+    if (tree->child[7] != 0) func_003411B8(tree->child[7], q);
+}
+#endif
 
 //99.38%
 INCLUDE_ASM("intersect/worldsphtree", func_00341368__FPv);

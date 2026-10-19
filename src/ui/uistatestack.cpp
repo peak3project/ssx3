@@ -488,7 +488,17 @@ extern "C" void* func_0039FAE8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistatestack", func_0039FB08);
+#ifdef SKIP_ASM
+// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
+extern "C" void func_0039FB08(void *arg0, void *arg1) {
+    (*(long long *)((char*)(arg0) + (0))) = (long long) (*(long long *)((char*)(arg1) + (0)));
+    (*(long long *)((char*)(arg0) + (0x10))) = (long long) (*(long long *)((char*)(arg1) + (0x10)));
+    (*(long long *)((char*)(arg0) + (0x20))) = (long long) (*(long long *)((char*)(arg1) + (0x20)));
+    (*(long long *)((char*)(arg0) + (0x30))) = (long long) (*(long long *)((char*)(arg1) + (0x30)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uistatestack", func_0039FB30);
@@ -640,9 +650,37 @@ extern "C" void func_0039FD38(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistatestack", func_0039FD80);
+#ifdef SKIP_ASM
+extern "C" int func_00397458(void* obj);
 
+extern "C" void func_0039FD80(void* self, float f)
+{
+    void* obj = *(void**)((char*)self + 0xC);
+    if (obj != 0) {
+        float v = (float)func_00397458(obj) * f;
+        *(short*)((char*)*(void**)((char*)self + 0xC) + 0xA) = (short)v;
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("ui/uistatestack", func_0039FDD8);
+#ifdef SKIP_ASM
+extern "C" int func_00397440(int);
+
+extern "C" int func_0039FDD8(void *arg0) {
+    int temp_4;
+    int var_2;
+
+    temp_4 = (*(int *)((char*)(arg0) + (0xC)));
+    var_2 = 0;
+    if (temp_4 != 0) {
+        var_2 = func_00397440(temp_4);
+    }
+    return var_2;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uistatestack", func_0039FE00);

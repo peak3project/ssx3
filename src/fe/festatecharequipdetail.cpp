@@ -1,6 +1,222 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_cFEStateCharEquip);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" void* func_0039E2A0(void* self);
+extern "C" unsigned char func_001A1CD0(void* self, signed char a1);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+int cBELibrary_getRiderIndex(int index);
+int GetHashValue32(char* str);
+extern "C" void func_003E6448(void* dst, unsigned int value, int size);
+extern "C" int func_00398380(void* list, int hash);
+extern "C" void func_001A0508(void* mgr, int idx, int ch, int a3);
+extern "C" int func_00150928(void* iface, int idx, int ch);
+extern "C" void func_0014AEA8(void* self, int a1, int a2);
+extern "C" int func_0014B478(void* self, int a1, int a2);
+extern "C" char* func_0014B700(void* iface, int rider);
+extern "C" int func_00146D98(void* iface, int a1);
+extern "C" void func_0019B180(void* self, int id);
+extern "C" int func_0019DA10(void* self, int bank, void* name, int a3, int a4, int a5);
+extern void* D_004A28A8;
+extern const int D_004A11D0_c __asm__("D_004A11D0");
+extern void* D_0046A548[];
+extern char D_004607A8[];
+extern char D_004607B8[];
+extern char D_0045DA48[];
+extern char D_0045DA38[];
+
+struct sVec4_8DB8 {
+    float x, y, z, w;
+};
+
+struct sCharEquip_8DB8 {
+    char pad0[0x8];
+    void** vtbl;             // 0x8
+    int fC;                  // 0xC
+    char** mgr;              // 0x10
+    char pad14;
+    unsigned char f15;       // 0x15
+    char pad16[0x44 - 0x16];
+    signed char team;        // 0x44
+    char pad45[3];
+    int f48[11];             // 0x48..0x70
+    int f74;                 // 0x74
+    int f78;                 // 0x78
+    int f7C;                 // 0x7C
+    int f80;                 // 0x80
+    int f84;                 // 0x84
+    int f88;                 // 0x88
+    int a8C[6];              // 0x8C
+    int aA4[6];              // 0xA4
+    int slot;                // 0xBC
+    int fC0;                 // 0xC0
+    int fC4;                 // 0xC4
+    int fC8;                 // 0xC8
+    int fCC;                 // 0xCC
+    char bufD0[0x50];        // 0xD0
+    int f120;                // 0x120
+    char pad124[0x958 - 0x124];
+    int f958;                // 0x958
+    int f95C;                // 0x95C
+    char f960;               // 0x960
+    char pad961[0xA60 - 0x961];
+    int fA60;                // 0xA60
+    int fA64;                // 0xA64
+    int fA68;                // 0xA68
+    int fA6C;                // 0xA6C
+    int fA70;                // 0xA70
+    int fA74;                // 0xA74
+    int aA78[6];             // 0xA78
+    int fA90;                // 0xA90
+    int fA94;                // 0xA94
+    int fA98;                // 0xA98
+    int fA9C;                // 0xA9C
+    int fAA0;                // 0xAA0
+    char padAA4[0xAB0 - 0xAA4];
+    int fAB0;                // 0xAB0
+    char padAB4[0xAC0 - 0xAB4];
+    sVec4_8DB8 camPos;       // 0xAC0
+    sVec4_8DB8 camTarget;    // 0xAD0
+    int fAE0;                // 0xAE0
+    int fAE4;                // 0xAE4
+};
+
+static inline int BoardClass_8DB8(int kind)
+{
+    switch (kind) {
+    case 17:
+        return 1;
+    case 18:
+        return 1;
+    case 19:
+        return 2;
+    case 20:
+        return 2;
+    case 21:
+        return 3;
+    }
+    return 1;
+}
+
+static inline int Find_8DB8(char* mgr, int hash)
+{
+    return func_00398380(mgr + 0x58, hash);
+}
+
+extern "C" void* cFEStateCharEquip_cFEStateCharEquip(void* p, void* owner, signed char team, int a3, int a4)
+{
+    sCharEquip_8DB8* self = (sCharEquip_8DB8*)p;
+    func_0039E2A0(self);
+    self->vtbl = D_0046A548;
+    self->camPos.x = -105.0f;
+    self->camPos.y = -100.0f;
+    self->camPos.z = -80.0f;
+    self->camPos.w = 1.0f;
+    self->camTarget.x = 265.75f;
+    self->camTarget.y = -1073.5f;
+    self->camTarget.z = -232.0f;
+    self->camTarget.w = 1.0f;
+    self->fC = 0xE;
+    self->team = team;
+    self->f15 = func_001A1CD0(*self->mgr, team);
+    void* player = cBE_getInterface(cBE_getBE(), 1);
+    self->slot = cBENewPlayerInterface_getPlayerCharID(player, self->team);
+    if (a3 != 0) {
+        self->fC8 = 1;
+    } else {
+        self->fC8 = 0;
+    }
+    self->f958 = 0;
+    self->f960 = 0;
+    self->fA60 = 0;
+    self->f48[0] = 0;
+    self->f48[1] = 0;
+    self->f48[2] = 0;
+    self->f48[3] = 0;
+    self->f48[4] = 0;
+    self->f48[5] = 0;
+    self->f48[6] = 0;
+    self->f48[7] = 0;
+    self->f48[8] = 0;
+    self->f48[9] = 0;
+    self->f48[10] = 0;
+    self->f78 = 0;
+    self->f7C = 0;
+    self->fAB0 = 0;
+    self->f95C = -1;
+    self->fA64 = -1;
+    self->fA68 = -1;
+    self->fA6C = -1;
+    self->fA70 = -1;
+    self->fA74 = -1;
+    self->fAE0 = 1;
+    func_003E6448(self->bufD0, D_004A11D0_c, 0x50);
+    self->f120 = 0;
+    for (int i = 0; i < 6; i++) {
+        self->a8C[i] = 0;
+        self->aA4[i] = 0;
+        self->aA78[i] = -99999;
+    }
+    self->f80 = 0;
+    self->f84 = 0;
+    self->f88 = 0;
+    {
+        char* mgr = *(char**)&self->mgr;
+        self->fA90 = Find_8DB8(mgr, GetHashValue32(D_004607A8));
+    }
+    {
+        char* mgr = *(char**)&self->mgr;
+        self->fA94 = Find_8DB8(mgr, GetHashValue32(D_004607B8));
+    }
+    {
+        char* mgr = *(char**)&self->mgr;
+        self->fA98 = Find_8DB8(mgr, GetHashValue32(D_0045DA48));
+    }
+    {
+        char* mgr = *(char**)&self->mgr;
+        self->fA9C = Find_8DB8(mgr, GetHashValue32(D_0045DA38));
+    }
+    self->fAA0 = 0;
+    func_001A0508(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, self->team, self->slot, 1);
+    self->fC0 = func_00150928(cBE_getInterface(cBE_getBE(), 0xB), self->team, self->slot);
+    void* shop = cBE_getInterface(cBE_getBE(), 9);
+    func_0014AEA8(shop, self->team, self->slot);
+    self->fC4 = func_0014B478(shop, self->team, self->slot);
+    self->fAE4 = a4;
+    if (a3 != 0 || a4 != 0) {
+        switch (func_00146D98(player, cBELibrary_getRiderIndex(self->team))) {
+        case 17:
+            self->fCC = 1;
+            break;
+        case 18:
+            self->fCC = 1;
+            break;
+        case 19:
+            self->fCC = 2;
+            break;
+        case 20:
+            self->fCC = 2;
+            break;
+        case 21:
+            self->fCC = 3;
+            break;
+        default:
+            self->fCC = 1;
+            break;
+        }
+    } else {
+        self->fCC = -1;
+    }
+    func_0019B180(self, D_004A11D0_c);
+    char* name = func_0014B700(shop, self->slot);
+    self->fA64 = func_0019DA10(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70, self->slot, name, 9, 1, 0);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199148);
@@ -629,7 +845,24 @@ extern "C" int func_0019A098(void* self, const char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A1E0);
+#ifdef SKIP_ASM
+struct sEquipTable;
+extern "C" int func_0019E238(sEquipTable* self, int a1, int a2);
+extern "C" void func_0019A9B8(void* self);
+extern void* D_004A28A8;
+
+extern "C" void func_0019A1E0(void* self)
+{
+    if (*(int*)((char*)self + 0xA60) == 0
+        && func_0019E238((sEquipTable*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC),
+                         *(int*)((char*)self + 0xA64))) {
+        *(int*)((char*)self + 0xA60) = 1;
+        func_0019A9B8(self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A238);
@@ -1817,6 +2050,14 @@ extern "C" int func_0019BEE8(void* self)
 }
 #endif
 
+//100%
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019BFE0);
+#ifdef SKIP_ASM
+extern "C" void func_0019BFE0(void) {
+
+}
+#endif
+
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019BFE8);
 
 //100%
@@ -2876,7 +3117,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019E070);
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E1C0);
 
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E208);
-
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E238);
 #ifdef SKIP_ASM
@@ -2920,7 +3160,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019E330);
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E380);
 
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E3A8);
-
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E3D0);
 
 //100%

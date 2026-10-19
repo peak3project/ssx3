@@ -296,7 +296,24 @@ extern "C" void func_003A1030(void* self, func_003A1030_sVec3* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uitext", func_003A10F0);
+#ifdef SKIP_ASM
+struct func_003A10F0_sVEntry {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+extern "C" int func_003A10F0(void* self)
+{
+    if (*(int*)((char*)self + 0xB4) == 0 || ((*(int*)((char*)self + 0x14) >> 2) & 1) == 0) {
+        func_003A10F0_sVEntry* vt = *(func_003A10F0_sVEntry**)((char*)self + 8);
+        vt[16].fn((char*)self + vt[16].delta);
+    }
+    return *(int*)((char*)self + 0xA8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uitext", func_003A1148);
@@ -949,16 +966,252 @@ extern "C" int func_003A2068(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uitext", func_003A20A0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct sRect_20A0 {
+    float x, y, w, h;
+};
+struct sColor_20A0 {
+    float a, r, g, b;
+};
+struct sRS_20A0 {
+    char pad[0x10];
+    short tex;              // 0x10
+};
+struct sGfx_20A0 {
+    char pad[0xE84];
+    sRS_20A0* top;          // 0xE84
+};
+// One vertex of a submitted quad (stride 0x30).
+struct sQuadVtx_20A0 {
+    float s, t, q;
+    int pad;
+    int r, g, b, a;
+    float pos[4];
+    sQuadVtx_20A0() {}
+};
+struct sSprite_20A0 {
+    int tex;                // 0x0
+    char pad[8];
+    float v0;               // 0xC
+    float u0;               // 0x10
+    float u1;               // 0x14
+    float v1;               // 0x18
+};
+// The unit declares D_004A289C as char*; typed view by asm label.
+extern sGfx_20A0* D_004A289C_20A0 __asm__("D_004A289C");
+extern int D_004A28AC_20A0 __asm__("D_004A28AC");
+extern "C" void func_0038E118(int ctx, sQuadVtx_20A0* v, sRect_20A0* r);
+extern "C" void func_0038E200(int ctx, sQuadVtx_20A0* v, sRect_20A0* r);
 
+extern "C" void func_003A20A0(sSprite_20A0* o, sRect_20A0 r, sColor_20A0 c, int flags)
+{
+    int tex = o->tex;
+    if (tex < 0) {
+        return;
+    }
+    D_004A289C_20A0->top->tex = tex;
+    float v0 = o->v0;
+    float v1 = o->v1;
+    float u0 = o->u0;
+    float u1 = o->u1;
+    if (flags & 1) {
+        u0 = u1;
+        u1 = o->u0;
+    }
+    if (flags & 2) {
+        v0 = v1;
+        v1 = o->v0;
+    }
+    sQuadVtx_20A0 v[4];
+    for (int i = 0; i < 4; i++) {
+        sQuadVtx_20A0* p = &v[i];
+        p->a = (int)(c.a * 128.0f);
+        p->r = (int)(c.r * 128.0f);
+        p->g = (int)(c.g * 128.0f);
+        p->b = (int)(c.b * 128.0f);
+        p->q = 1.0f;
+    }
+    v[0].s = u0;
+    v[0].t = v0;
+    v[1].s = u1;
+    v[1].t = v0;
+    v[2].s = u0;
+    v[2].t = v1;
+    v[3].s = u1;
+    v[3].t = v1;
+    if (flags & 4) {
+        func_0038E200(D_004A28AC_20A0, v, &r);
+    } else {
+        func_0038E118(D_004A28AC_20A0, v, &r);
+    }
+}
+#endif
+//100%
 INCLUDE_ASM("ui/uitext", func_003A2220);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct sRect_2220 {
+    float x, y, w, h;
+};
+struct sColor_2220 {
+    float a, r, g, b;
+};
+struct sRS_2220 {
+    char pad[0x10];
+    short tex;              // 0x10
+};
+struct sGfx_2220 {
+    char pad[0xE84];
+    sRS_2220* top;          // 0xE84
+};
+// One vertex of a submitted quad (stride 0x30).
+struct sQuadVtx_2220 {
+    float s, t, q;
+    int pad;
+    int r, g, b, a;
+    float pos[4];
+    sQuadVtx_2220() {}
+};
+struct sSprite_2220 {
+    int tex;                // 0x0
+    char pad[8];
+    float v0;               // 0xC
+    float u0;               // 0x10
+    float u1;               // 0x14
+    float v1;               // 0x18
+};
+// The unit declares D_004A289C as char*; typed views by asm label.
+extern sGfx_2220* D_004A289C_2220 __asm__("D_004A289C");
+extern int D_004A28AC_2220 __asm__("D_004A28AC");
+extern void func_0038E118_2220(int ctx, sQuadVtx_2220* v, sRect_2220* r) __asm__("func_0038E118");
+extern void func_0038E200_2220(int ctx, sQuadVtx_2220* v, sRect_2220* r) __asm__("func_0038E200");
+
+extern "C" void func_003A2220(sSprite_2220* o, sRect_2220 r, sColor_2220 c, int flags, float t)
+{
+    float k = 1.0f - t;
+    int tex = o->tex;
+    D_004A289C_2220->top->tex = tex;
+    float v0 = o->v0;
+    float v1 = o->v1;
+    float u0 = o->u0;
+    float u1 = o->u1;
+    r.y += k * r.h;
+    r.h *= 1.0f - k;
+    v0 += k * (v1 - v0);
+    sQuadVtx_2220 v[4];
+    for (int i = 0; i < 4; i++) {
+        sQuadVtx_2220* p = &v[i];
+        p->a = (int)(c.a * 128.0f);
+        p->r = (int)(c.r * 255.0f);
+        p->g = (int)(c.g * 255.0f);
+        p->b = (int)(c.b * 255.0f);
+        p->q = 1.0f;
+    }
+    v[0].s = u0;
+    v[0].t = v0;
+    v[1].s = u1;
+    v[1].t = v0;
+    v[2].s = u0;
+    v[2].t = v1;
+    v[3].s = u1;
+    v[3].t = v1;
+    if (flags & 4) {
+        func_0038E200_2220(D_004A28AC_2220, v, &r);
+    } else {
+        func_0038E118_2220(D_004A28AC_2220, v, &r);
+    }
+}
+#endif
 
 INCLUDE_ASM("ui/uitext", func_003A23B8);
-
+//100%
 INCLUDE_ASM("ui/uitext", func_003A2A00);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct sRect_2A00 {
+    float x, y, w, h;
+};
+struct sColor_2A00 {
+    float a, r, g, b;
+};
+struct sMat3_2A00 {
+    float m[9];
+};
+struct sRS_2A00 {
+    char pad[0x10];
+    short tex;              // 0x10
+};
+struct sGfx_2A00 {
+    char pad[0xE84];
+    sRS_2A00* top;          // 0xE84
+};
+// One vertex of a submitted quad (stride 0x30).
+struct sQuadVtx_2A00 {
+    float s, t, q;
+    int pad;
+    int r, g, b, a;
+    float pos[4];
+    sQuadVtx_2A00() {}
+};
+struct sSprite_2A00 {
+    int tex;                // 0x0
+    char pad[8];
+    float v0;               // 0xC
+    float u0;               // 0x10
+    float u1;               // 0x14
+    float v1;               // 0x18
+};
+// The unit declares D_004A289C as char*; typed views by asm label.
+extern sGfx_2A00* D_004A289C_2A00 __asm__("D_004A289C");
+extern int D_004A28AC_2A00 __asm__("D_004A28AC");
+extern "C" void func_0038E2E8(int ctx, sQuadVtx_2A00* v, sRect_2A00* r, sMat3_2A00* m);
+extern "C" void func_0038E468(int ctx, sQuadVtx_2A00* v, sRect_2A00* r, sMat3_2A00* m);
+
+extern "C" void func_003A2A00(sSprite_2A00* o, sRect_2A00 r, sMat3_2A00 m, sColor_2A00 c, int flags)
+{
+    int tex = o->tex;
+    D_004A289C_2A00->top->tex = tex;
+    float v0 = o->v0;
+    float v1 = o->v1;
+    float u0 = o->u0;
+    float u1 = o->u1;
+    if (flags & 1) {
+        u0 = u1;
+        u1 = o->u0;
+    }
+    if (flags & 2) {
+        v0 = v1;
+        v1 = o->v0;
+    }
+    sQuadVtx_2A00 v[4];
+    for (int i = 0; i < 4; i++) {
+        sQuadVtx_2A00* p = &v[i];
+        p->a = (int)(c.a * 128.0f);
+        p->r = (int)(c.r * 255.0f);
+        p->g = (int)(c.g * 255.0f);
+        p->b = (int)(c.b * 255.0f);
+        p->q = 1.0f;
+    }
+    v[0].s = u0;
+    v[0].t = v0;
+    v[1].s = u1;
+    v[1].t = v0;
+    v[2].s = u0;
+    v[2].t = v1;
+    v[3].s = u1;
+    v[3].t = v1;
+    if (flags & 4) {
+        func_0038E468(D_004A28AC_2A00, v, &r, &m);
+    } else {
+        func_0038E2E8(D_004A28AC_2A00, v, &r, &m);
+    }
+}
+#endif
 
 INCLUDE_ASM("ui/uitext", func_003A2BC8);
-
 //100%
 INCLUDE_ASM("ui/uitext", func_003A3280);
 #ifdef SKIP_ASM

@@ -34,3 +34,6 @@ tools/objdiff/objdiff-cli-macos
 tools/cc/eegcc-2.95.3-V1.36-vecmark
 tools/cc/eegcc-2.95.3-114
 tools/cc/ee-gcc2.9-991111
+
+# Python bytecode (tools/jtbl_cc.py is imported by workspace tools)
+__pycache__/

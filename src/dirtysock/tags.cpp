@@ -19,19 +19,133 @@ char* cDirtysock_tag__TagFieldSetupAppend(char* buf, char* dst, char* name)
 
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag__TagFieldSetupTerm);
 
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003EB578);
+#ifdef SKIP_ASM
+extern signed char D_004A4A70;
+
+extern "C" signed char func_003EB578(signed char arg0) {
+    signed char temp_2;
+
+    temp_2 = D_004A4A70;
+    D_004A4A70 = arg0;
+    return temp_2;
+}
+#endif
 
 INCLUDE_ASM("dirtysock/tags", func_003EB588);
-
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldFind);
 
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", func_003EB840);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern char* cDirtysock_tag_TagFieldFind_B840(char* record, char* name) __asm__("cDirtysock_tag_TagFieldFind");
+extern "C" char* strcpy(char* dst, const char* src);
+extern "C" void func_004162D0_EB840(char* dst, const char* src) __asm__("func_004162D0");
 
+extern "C" char* func_003EB840(char* record, char* prefix, char* name)
+{
+    char buf[256];
+    char* r;
+    if (prefix == 0) {
+        r = cDirtysock_tag_TagFieldFind_B840(record, name);
+    } else if (name == 0) {
+        r = cDirtysock_tag_TagFieldFind_B840(record, prefix);
+    } else {
+        strcpy(buf, prefix);
+        func_004162D0_EB840(buf, name);
+        r = cDirtysock_tag_TagFieldFind_B840(record, buf);
+    }
+    return r;
+}
+#endif
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", func_003EB8B8);
+#ifdef SKIP_ASM
+extern "C" unsigned char* cDirtysock_tag_TagFieldFind(char* record, char* name);
+extern char D_004A4A78[];
+
+extern "C" unsigned char* func_003EB8B8(char* record)
+{
+    unsigned char* p = cDirtysock_tag_TagFieldFind(record, D_004A4A78);
+    if (p != 0) {
+        while ((unsigned int)(*p - 1) < 0x20U) {
+            p++;
+        }
+        if (*p == 0) {
+            p = 0;
+        }
+    }
+    return p;
+}
+#endif
 
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldDelete);
 
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", func_003EB9E8);
+#ifdef SKIP_ASM
+extern "C" unsigned char* cDirtysock_tag_TagFieldFind(char* record, char* name);
+extern "C" unsigned int strlen(const char* s);
+
+extern "C" int func_003EB9E8(unsigned char* record, int len, char* name, const signed char* value)
+{
+    unsigned char* p = cDirtysock_tag_TagFieldFind((char*)record, name);
+    unsigned char* start;
+    unsigned char* q;
+    int delta;
+
+    if (p == 0) {
+        return -1;
+    }
+    if (p[-1] == ' ') {
+        p--;
+    }
+    start = p - 1;
+    p = start;
+    while (start != record && start[-1] >= 0x21) {
+        start--;
+    }
+    delta = strlen((const char*)value) - (p - start);
+    if (delta < 0) {
+        unsigned char c = *p;
+        if (c != 0) {
+            unsigned char* dst = p + delta;
+            *dst = c;
+            while ((c = *p) != 0) {
+                *dst = c;
+            }
+        }
+        *p = 0;
+    }
+    if (delta > 0) {
+        q = p;
+        if (*q != 0) {
+            do {
+                q++;
+            } while (*q != 0);
+        }
+        if (q - record < len - delta) {
+            return -1;
+        }
+        if (q != p) {
+            do {
+                unsigned char t = *q;
+                unsigned char* d = q + delta;
+                q--;
+                *d = t;
+            } while (q != p);
+        }
+    }
+    while (*value != 0) {
+        *start = (unsigned char)*value;
+        value++;
+        start++;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldDupl);
@@ -51,10 +165,80 @@ extern "C" int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src)
 #endif
 
 INCLUDE_ASM("dirtysock/tags", func_003EBBA8);
-
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003EBCB0);
-
+#ifdef SKIP_ASM
+extern "C" int func_003EBCB0(char* record, int len, const char* value)
+{
+    char* p = record;
+    char* end;
+    for (;;) {
+        unsigned char c = *p;
+        if (c == 0) {
+            break;
+        }
+        if (c == '=' || c == ':') {
+            if ((unsigned char)p[1] < 0x20) {
+                break;
+            }
+        }
+        p++;
+    }
+    *p = 0;
+    if (value == 0) {
+        return 0;
+    }
+    end = record + len - 1;
+    if (end - p < 5) {
+        return -1;
+    }
+    *p++ = '=';
+    *p++ = '\n';
+    while (*value != 0 && p != end) {
+        *p++ = *value++;
+    }
+    *p = 0;
+    return 0;
+}
+#endif
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003EBD70);
+#ifdef SKIP_ASM
+extern signed char D_004A4A70;
+extern signed char D_004A4A80[];
+
+extern "C" int func_003EBD70(unsigned char* buf, int len)
+{
+    const signed char* s = D_004A4A80;
+    int ret = -1;
+    int n = 0;
+    if (*buf != 0) {
+        do {
+            n++;
+        } while (buf[n] != 0);
+    }
+    if (n > 0) {
+        if (buf[n - 1] >= 0x20) {
+            if (buf[n - 1] != D_004A4A70) {
+                if (n < len - 1) {
+                    buf[n] = (unsigned char)D_004A4A70;
+                    n++;
+                    buf[n] = 0;
+                }
+            }
+        }
+    }
+    if (n + 4 < len) {
+        while (*s != 0) {
+            buf[n++] = (unsigned char)*s;
+            s++;
+        }
+        ret = 0;
+        buf[n] = 0;
+    }
+    return ret;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldSetNumber);
@@ -235,11 +419,77 @@ extern "C" int cDirtysock_tag_TagFieldSetEpoch(char* record, int len, char* name
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003EC8B8);
+#ifdef SKIP_ASM
+extern "C" void* func_00416210(void* dst, int value, int size);
+// PORT: ds_tmtosecs returns a 64-bit `unsigned long`.
+extern "C" unsigned long func_003EB090(sDsTmK2* tm);
 
+extern "C" int func_003EC8B8(char* record, int len, char* name, int year, int mon, int day, int hour, int min, int sec, int adj)
+{
+    sDsTmK2 tm;
+    int secs;
+
+    func_00416210(&tm, 0, sizeof(tm));
+    tm.tm_isdst = -1;
+    tm.tm_year = year - 1900;
+    tm.tm_mon = mon - 1;
+    tm.tm_mday = day;
+    tm.tm_hour = hour;
+    tm.tm_min = min;
+    tm.tm_sec = sec;
+    secs = (int)func_003EB090(&tm);
+    return cDirtysock_tag_TagFieldSetEpoch(record, len, name, secs != 0 ? secs - adj : 0);
+}
+#endif
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003EC9A0);
+#ifdef SKIP_ASM
+extern "C" void* func_00416210(void* dst, int value, int size);
+// PORT: ds_tmtosecs returns a 64-bit `unsigned long`.
+extern "C" unsigned long func_003EB090(sDsTmK2* tm);
 
+extern "C" int func_003EC9A0(char* record, int len, char* name, int date, int time, int adj)
+{
+    sDsTmK2 tm;
+    int secs;
+
+    func_00416210(&tm, 0, sizeof(tm));
+    tm.tm_isdst = -1;
+    tm.tm_year = ((date >> 16) & 0xFFFF) - 1900;
+    tm.tm_mon = ((date >> 8) & 0xFF) - 1;
+    tm.tm_mday = date & 0xFF;
+    tm.tm_hour = (time >> 16) & 0xFF;
+    tm.tm_min = (time >> 8) & 0xFF;
+    tm.tm_sec = time & 0xFF;
+    secs = (int)func_003EB090(&tm);
+    return cDirtysock_tag_TagFieldSetEpoch(record, len, name, secs != 0 ? secs - adj : 0);
+}
+#endif
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", func_003ECA88);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern char* cDirtysock_tag_TagFieldFind_CA88(char* record, char* name) __asm__("cDirtysock_tag_TagFieldFind");
+extern "C" int cDirtysock_tag__TagFieldSetupTerm(char* record, int len, char* temp);
+
+extern "C" int func_003ECA88(char* record, int len, char* name, char* data)
+{
+    char* p = cDirtysock_tag_TagFieldFind_CA88(data, name);
+    int r = 0;
+    if (p != 0) {
+        while (p != data) {
+            if ((unsigned char)p[-1] < 0x20U) {
+                break;
+            }
+            p--;
+        }
+        r = cDirtysock_tag__TagFieldSetupTerm(record, len, p);
+    }
+    return r;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", func_003ECB00);
@@ -276,7 +526,6 @@ extern "C" int func_003ECB00(char* record, int len, unsigned char* data)
 INCLUDE_ASM("dirtysock/tags", func_003ECBD8);
 
 INCLUDE_ASM("dirtysock/tags", func_003ECE38);
-
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetNumber);
 #ifdef SKIP_ASM
@@ -364,7 +613,7 @@ INCLUDE_ASM("dirtysock/tags", func_003ED0F8);
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetString);
 #ifdef SKIP_ASM
-extern "C" int strlen(const char* s);
+extern "C" int strlen_m616(const char* s) __asm__("strlen");
 extern unsigned char D_004961C0[];
 extern unsigned char D_004962C0[];
 
@@ -381,7 +630,7 @@ extern "C" int cDirtysock_tag_TagFieldGetString(const char* data, char* buf, int
             return -1;
         }
         if (buf == 0) {
-            return strlen(defval);
+            return strlen_m616(defval);
         }
         for (count = 1; (count < len) && (*defval != 0); count++) {
             *buf++ = *defval++;
@@ -727,5 +976,24 @@ extern "C" int func_003EDD70(char* data, int* year, int* month, int* day, int* h
 }
 #endif
 
-INCLUDE_ASM("dirtysock/tags", func_003EDE80);
 
+//100%
+INCLUDE_ASM("dirtysock/tags", func_003EDE80);
+#ifdef SKIP_ASM
+extern "C" int func_003EDE80(char* data, unsigned int* date, unsigned int* time, int offset)
+{
+    sDsTmK2 tm;
+    sDsTmK2* t;
+    unsigned int secs = cDirtysock_tag_TagFieldGetTime(data, 1);
+    if (secs < 2)
+        return -1;
+    t = func_003EAEB8(&tm, secs + offset);
+    if (t == 0)
+        return -1;
+    if (date)
+        *date = ((t->tm_year + 1900) << 16) | ((t->tm_mon + 1) << 8) | t->tm_mday;
+    if (time)
+        *time = (t->tm_hour << 16) | (t->tm_min << 8) | t->tm_sec;
+    return 0;
+}
+#endif

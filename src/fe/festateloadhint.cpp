@@ -564,7 +564,205 @@ extern "C" void func_00246278(void* self, char* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateloadhint", func_002464E8);
+#ifdef SKIP_ASM
+extern "C" int func_00144BE0(void* iface);
+extern "C" int func_00144D18(void* iface, int idx);
+extern "C" int func_00146E98(void* iface, int a1);
+extern "C" const char* func_0014EE58(void* iface, int a1);
+extern "C" int func_00148950(void* iface, int id);
+extern "C" void* func_002C2508(void* dst, void* src);
+extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
+extern signed char D_00535BC8[];
+extern char D_0047BB70[];
+extern char D_0047BB80[];
+extern char D_0047BB98[];
+extern char D_0047BBA8[];
+extern char D_0047BBB8[];
+extern char D_0047BBC8[];
+extern char D_004A2BE0[];
+extern char D_004A2BE8[];
+extern char D_004A2BF0[];
+extern char D_004A2BF8[];
+extern char D_0047BBD8[];
+extern char D_0047BBE8[];
+extern char D_004A2C00[];
+extern char D_0047BBF8[];
+extern char D_0047BC08[];
+extern char D_0047BC18[];
+extern char D_0047BC30[];
+extern char D_0047BC48[];
+extern char D_0047BC60[];
+extern char D_0047BC70[];
+extern char D_0047BC80[];
+extern char D_004A2C08[];
+
+// 17 per-event values (two rodata tables copied to the stack)
+struct sTable17_2464E8 {
+    int v[17];
+};
+extern sTable17_2464E8 D_0047BAE0;
+extern sTable17_2464E8 D_0047BB28;
+
+struct sOptTriple_2464E8 {
+    unsigned int b0 : 1;
+    unsigned int b1 : 1;
+    int b;
+    int c;
+};
+extern sOptTriple_2464E8 D_005308B8[];
+
+struct sVEnt_2464E8 {
+    short delta;
+    short index;
+    void* (*fn)(void*, int);
+};
+
+struct sVEntV_2464E8 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+static inline void* Loc_2464E8(char* key)
+{
+    char* o = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEnt_2464E8* vt = *(sVEnt_2464E8**)(o + 4);
+    return vt[4].fn(o + vt[4].delta, GetHashValue32(key));
+}
+
+static inline bool IsId_2464E8(char* obj, char* key)
+{
+    int id = *(int*)(obj + 0x38);
+    return id == GetHashValue32(key);
+}
+
+static inline void Activate_2464E8(char* obj)
+{
+    sVEntV_2464E8* vt = *(sVEntV_2464E8**)(obj + 8);
+    vt[9].fn(obj + vt[9].delta, 1);
+}
+
+static inline void Fmt_2464E8(char* buf, char* fmt, char* key, void* iface)
+{
+    void* str = Loc_2464E8(key);
+    func_002C27C0(buf, fmt, str, func_00144BF0(iface));
+}
+
+extern "C" void func_002464E8(void* self, char* obj)
+{
+    sTable17_2464E8 tA = D_0047BAE0;
+    sTable17_2464E8 tB = D_0047BB28;
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
+    char buf[200];
+    unsigned short fmtA[100];
+    unsigned short fmtB[100];
+    if (IsId_2464E8(obj, D_0047BB70)) {
+        func_00416210(buf, 0, 200);
+        char* fmt = D_004A2BD8;
+        switch (func_00144C98(iface)) {
+        case 0:
+            Fmt_2464E8(buf, fmt, D_0047BA58, iface);
+            break;
+        case 1:
+            Fmt_2464E8(buf, fmt, D_0047BA68, iface);
+            break;
+        case 2:
+            Fmt_2464E8(buf, fmt, D_0047BA78, iface);
+            break;
+        }
+        func_003A0E90(obj, buf);
+        return;
+    }
+    switch (D_00535BC8[0x48]) {
+    case 0:
+        if (IsId_2464E8(obj, D_0047BB80)) { Activate_2464E8(obj); return; }
+        break;
+    case 1:
+        if (IsId_2464E8(obj, D_0047BB98)) { Activate_2464E8(obj); return; }
+        break;
+    case 2:
+        if (IsId_2464E8(obj, D_0047BBA8)) { Activate_2464E8(obj); return; }
+        break;
+    case 3:
+        if (IsId_2464E8(obj, D_0047BBB8)) { Activate_2464E8(obj); return; }
+        break;
+    case 4:
+        if (IsId_2464E8(obj, D_0047BB80)) { Activate_2464E8(obj); return; }
+        break;
+    case 5:
+        if (IsId_2464E8(obj, D_0047BBC8)) { Activate_2464E8(obj); return; }
+        break;
+    case 6:
+        if (IsId_2464E8(obj, D_0047BBC8)) { Activate_2464E8(obj); return; }
+        break;
+    }
+    switch (D_00535BC8[0x48]) {
+    case 0:
+        if (IsId_2464E8(obj, D_004A2BE0)) { Activate_2464E8(obj); return; }
+        break;
+    case 1:
+        if (IsId_2464E8(obj, D_004A2BE8)) { Activate_2464E8(obj); return; }
+        break;
+    case 2:
+        if (IsId_2464E8(obj, D_004A2BF0)) { Activate_2464E8(obj); return; }
+        break;
+    case 3:
+        if (IsId_2464E8(obj, D_004A2BF8)) { Activate_2464E8(obj); return; }
+        break;
+    case 5:
+        if (IsId_2464E8(obj, D_0047BBD8)) { Activate_2464E8(obj); return; }
+        break;
+    case 6:
+        if (IsId_2464E8(obj, D_0047BBE8)) { Activate_2464E8(obj); return; }
+        break;
+    case 7:
+        break;
+    }
+    switch (func_00144D18(iface, func_00144BE0(iface))) {
+    case 0:
+        if (IsId_2464E8(obj, D_004A2C00)) { Activate_2464E8(obj); return; }
+        break;
+    case 1:
+        if (IsId_2464E8(obj, D_0047BBF8)) { Activate_2464E8(obj); return; }
+        break;
+    case 2:
+        if (IsId_2464E8(obj, D_0047BC08)) { Activate_2464E8(obj); return; }
+        break;
+    }
+    if (IsId_2464E8(obj, D_0047BC18)) {
+        func_002C2508(fmtA, Loc_2464E8(D_0047BC30));
+        func_002C26D0((unsigned short*)buf, fmtA, tB.v[func_00144BE0(iface)]);
+        func_003A0E90(obj, buf);
+    } else if (IsId_2464E8(obj, D_0047BC48)) {
+        func_002C2508(fmtB, Loc_2464E8(D_0047BC30));
+        func_002C26D0((unsigned short*)buf, fmtB, tA.v[func_00144BE0(iface)]);
+        func_003A0E90(obj, buf);
+    } else if (IsId_2464E8(obj, D_0047BC60)) {
+        void* iface1 = cBE_getInterface_Fv(cBE_getBE(), 1);
+        void* iface2 = cBE_getInterface_Fv(cBE_getBE(), 2);
+        cUIText_setAsciiString((cUIText*)obj, func_0014EE58(iface2, func_00146E98(iface1, 0)));
+    } else if (IsId_2464E8(obj, D_0047BC70)) {
+        void* iface1 = cBE_getInterface_Fv(cBE_getBE(), 1);
+        void* iface3 = cBE_getInterface_Fv(cBE_getBE(), 3);
+        func_002C2508(fmtA, Loc_2464E8(D_0047BC80));
+        int v = func_00148950(iface3, func_00146E98(iface1, 0));
+        int idx = func_00146E98(iface1, 0);
+        func_002C26D0((unsigned short*)buf, fmtA, D_005308B8[idx].b1 ? 1 : v);
+        func_003A0E90(obj, buf);
+    } else if (IsId_2464E8(obj, D_004A2C08)) {
+        char* p = *(char**)((char*)self + 0x48);
+        if (p != 0) {
+            int v = *(int*)(p + 0x10);
+            if (v != 0) {
+                *(int*)(obj + 0x78) = v;
+                *(int*)(obj + 0x7C) = 0;
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/festateloadhint", func_00246CF8);
 

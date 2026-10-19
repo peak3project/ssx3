@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 //100%
 INCLUDE_ASM("ai/computer", cComputer_setIndividualRiderDifficulty);
@@ -777,9 +778,42 @@ extern "C" int func_0010D8F8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_0010D938);
+#ifdef SKIP_ASM
+extern "C" int func_0010DEB0(void* self);
+float func_00113128(void* self);
 
+extern "C" int func_0010D938(void* self)
+{
+    // PORT: func_0010DEB0 returns a pointer as int (unit declaration).
+    int p = func_0010DEB0(self);
+    if (p == 0)
+        return 0;
+    float d = func_00113128((void*)p) - (*(cRider**)((char*)self + 0x18))->unk_4D0;
+    if (d < *(float*)((char*)(*(cRider**)((char*)self + 0x18)) + 0xDC))
+        return 1;
+    return 0;
+}
+#endif
+//100%
 INCLUDE_ASM("ai/computer", func_0010D990);
+#ifdef SKIP_ASM
+extern "C" int func_0010DEB0(void* self);
+float func_00113128(void* self);
+
+extern "C" int func_0010D990(void* self)
+{
+    // PORT: func_0010DEB0 returns a pointer as int (unit declaration).
+    int p = func_0010DEB0(self);
+    if (p == 0)
+        return 0;
+    float d = func_00113128((void*)p) - (*(cRider**)((char*)self + 0x18))->unk_4D0;
+    if (*(float*)((char*)*(cRider**)((char*)self + 0x18) + 0xE0) < d)
+        return 1;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_0010D9E8);
@@ -2137,7 +2171,6 @@ extern "C" void func_00111728(void* self, int a1)
 INCLUDE_ASM("ai/computer", func_00111830);
 
 INCLUDE_ASM("ai/computer", func_00111860);
-
 //100%
 INCLUDE_ASM("ai/computer", func_00111890);
 #ifdef SKIP_ASM
@@ -2187,11 +2220,90 @@ extern "C" void func_00111890(void* self)
 }
 #endif
 
-INCLUDE_ASM("ai/computer", func_00111948);
-
-INCLUDE_ASM("ai/computer", func_001119F8);
-
 extern "C" void* func_002E23E0(void*);
+
+//100%
+INCLUDE_ASM("ai/computer", func_00111948);
+#ifdef SKIP_ASM
+extern "C" void func_002D4C08(void*);
+extern "C" void func_002DABC8(void*);
+extern "C" void func_002DD0B8(void*);
+extern "C" void func_002DF920(void*);
+extern "C" void func_002E39D8(void*);
+extern "C" void func_002E66B8(void*);
+extern "C" void func_002E8938(void*);
+extern "C" void func_002EADD0(void*);
+extern "C" void func_002EF6D0(void*);
+extern "C" void func_002F1150(void*);
+extern "C" void func_00392D18(void*);
+extern "C" void func_002F6518(void*);
+extern int D_004A4534;
+
+struct sVE_00111948 { short delta; short index; int (*fn)(void*); };
+
+extern "C" void func_00111948(void* self)
+{
+    if (D_004A4534 != 0) {
+        cRider* r = *(cRider**)((char*)self + 0x18);
+        char* o = (char*)&r->mVtbl;
+        sVE_00111948* e = &(*(sVE_00111948**)o)[kRiderVt_isComputer];
+        if (e->fn(o + e->delta) != 0)
+            return;
+    }
+    func_00392D18((char*)self + 0xD30);
+    func_002DD0B8((char*)self + 0x3B0);
+    func_002DABC8((char*)self + 0x470);
+    func_002E8938((char*)self + 0x520);
+    func_002E66B8((char*)self + 0x610);
+    func_002EADD0((char*)self + 0x9C0);
+    func_002EF6D0((char*)self + 0xAD0);
+    func_002D4C08((char*)self + 0xAF0);
+    func_002E39D8((char*)self + 0xB00);
+    func_002DF920((char*)self + 0xB40);
+    func_002F1150((char*)self + 0xC70);
+    func_002F6518((char*)self + 0xD20);
+}
+#endif
+//100%
+INCLUDE_ASM("ai/computer", func_001119F8);
+#ifdef SKIP_ASM
+extern "C" void func_002D5048(void*);
+extern "C" void func_002DB478(void*);
+extern "C" void func_002DDAB8(void*);
+extern "C" void func_002E24D0(void*);
+extern "C" void func_002E3AF8(void*);
+extern "C" void func_002E7A10(void*);
+extern "C" void func_002EA480(void*);
+extern "C" void func_002EB198(void*);
+extern "C" void func_002EF950(void*);
+extern "C" void func_002F1510(void*);
+void func_002F6908(void*);
+extern int D_004A4534;
+
+struct sVE_001119F8 { short delta; short index; int (*fn)(void*); };
+
+extern "C" void func_001119F8(void* self)
+{
+    if (D_004A4534 != 0) {
+        cRider* r = *(cRider**)((char*)self + 0x18);
+        char* o = (char*)&r->mVtbl;
+        sVE_001119F8* e = &(*(sVE_001119F8**)o)[kRiderVt_isComputer];
+        if (e->fn(o + e->delta) != 0)
+            return;
+    }
+    func_002DDAB8((char*)self + 0x3B0);
+    func_002DB478((char*)self + 0x470);
+    func_002EA480((char*)self + 0x520);
+    func_002E7A10((char*)self + 0x610);
+    func_002EB198((char*)self + 0x9C0);
+    func_002EF950((char*)self + 0xAD0);
+    func_002D5048((char*)self + 0xAF0);
+    func_002E3AF8((char*)self + 0xB00);
+    func_002E24D0((char*)self + 0xB40);
+    func_002F1510((char*)self + 0xC70);
+    func_002F6908((char*)self + 0xD20);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_00111AA0__FPv);

@@ -342,7 +342,15 @@ extern "C" void* func_00227F80()
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_00227FA0);
+#ifdef SKIP_ASM
+extern "C" void func_0023C850();
+
+extern "C" void func_00227FA0(void) {
+    func_0023C850();
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxapp", cSSXApp_purge);
@@ -1336,9 +1344,201 @@ extern "C" void func_00229F88(int index, void* v, void* m)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_00229FC8);
+#ifdef SKIP_ASM
+struct sVisEnt_9FC8 {
+    int a;
+    int f4;
+};
+struct sVisRec_9FC8 {
+    int f0;
+    int pad[5];
+};
+struct sVisTbl_9FC8 {
+    char pad0[0x20];
+    sVisEnt_9FC8 ent[0x7A];
+    sVisRec_9FC8 rec[1];
+};
 
+struct sVisOwner_9FC8 {
+    char pad0[0x90];
+    char **tblp;                  // 0x90
+    char pad94[0x209C - 0x94];
+    int countA;                   // 0x209C
+    void *nodesA[0x800];          // 0x20A0
+    int countB;                   // 0x40A0
+    void *nodesB[0x400];          // 0x40A4
+    void *last;                   // 0x50A4
+};
+
+static inline int visOk_9FC8(sVisOwner_9FC8 *self, char *node)
+{
+    if ((*(int *)(node + 8) & 3) != 3) {
+        return 0;
+    }
+    sVisTbl_9FC8 *tbl = (sVisTbl_9FC8 *)*self->tblp;
+    if (*(unsigned char *)(node + 0x7D) == 0xFF) {
+        return 1;
+    }
+    if ((tbl->ent[*(unsigned char *)(node + 0x7D)].f4 ^ 6) == 0) {
+        return tbl->rec[*(short *)(node + 0x7E)].f0 == 3;
+    }
+    return 0;
+}
+
+// PORT: PS2-only VU0 microprogram call (lqc2/ctc2/vcallms/cfc2); the PC port needs a C
+// version of the microprogram at 0xDB8 (box vs frustum test).
+extern "C" void func_00229FC8_impl(sVisOwner_9FC8 *self, void *vnode, int frustum) __asm__("func_00229FC8");
+extern "C" void func_00229FC8_impl(sVisOwner_9FC8 *self, void *vnode, int frustum)
+{
+    char *node = (char *)vnode;
+    unsigned int r;
+
+    if (node != 0) {
+        if (!visOk_9FC8(self, node)) {
+            return;
+        }
+        {
+            float lo[4] __attribute__((aligned(16)));
+            float hi[4] __attribute__((aligned(16)));
+            lo[0] = *(float *)(node + 0x60);
+            lo[1] = *(float *)(node + 0x64);
+            lo[2] = *(float *)(node + 0x68);
+            hi[0] = *(float *)(node + 0x6C);
+            hi[1] = *(float *)(node + 0x70);
+            hi[2] = *(float *)(node + 0x74);
+            lo[3] = 1.0f;
+            hi[3] = 1.0f;
+            __asm__ __volatile__("cfc2.i    %0, $vi1\n" : "=r"(r));
+            __asm__ __volatile__(
+                "lqc2      $vf20, 0x0(%0)\n"
+                "lqc2      $vf21, 0x0(%1)\n"
+                "lqc2      $vf22, 0x0(%2)\n"
+                "ctc2.ni   %3, $vi14\n"
+                "vcallms   0xDB8\n"
+                :
+                : "r"(lo), "r"(hi), "r"(node + 0x50), "r"(frustum));
+        }
+    } else {
+        __asm__ __volatile__("cfc2.i    %0, $vi1\n" : "=r"(r));
+    }
+    switch (r) {
+    case 0:
+    case 3:
+        if (self->last != 0) {
+            self->nodesA[self->countA++] = self->last;
+        }
+        break;
+    case 1:
+    case 2:
+        break;
+    case 4:
+        if (self->last != 0) {
+            self->nodesB[self->countB++] = self->last;
+        }
+        break;
+    }
+    self->last = node;
+}
+#endif
+
+//100%
 INCLUDE_ASM("main/ssxapp", func_0022A128);
+#ifdef SKIP_ASM
+struct sVisEnt_A128 {
+    int a;
+    int f4;
+};
+struct sVisRec_A128 {
+    int f0;
+    int pad[5];
+};
+struct sVisTbl_A128 {
+    char pad0[0x20];
+    sVisEnt_A128 ent[0x7A];
+    sVisRec_A128 rec[1];
+};
+
+struct sVisOwner_A128 {
+    char pad0[0x90];
+    char **tblp;                  // 0x90
+    char pad94[0x50A8 - 0x94];
+    int countA;                   // 0x50A8
+    void *nodesA[0x800];          // 0x50AC
+    int countB;                   // 0x70AC
+    void *nodesB[0x200];          // 0x70B0
+    void *last;                   // 0x78B0
+};
+
+static inline int visOk_A128(sVisOwner_A128 *self, char *node)
+{
+    int idx = *(short *)(node + 0x156);
+    sVisTbl_A128 *tbl = (sVisTbl_A128 *)*self->tblp;
+    if (idx < 0) {
+        return 0;
+    }
+    if ((tbl->ent[*(unsigned char *)(node + 0x155)].f4 ^ 6) == 0) {
+        return tbl->rec[idx].f0 == 3;
+    }
+    return 0;
+}
+
+// PORT: PS2-only VU0 microprogram call (lqc2/ctc2/vcallms/cfc2); the PC port needs a C
+// version of the microprogram at 0xDB8 (box vs frustum test).
+extern "C" void func_0022A128_impl(sVisOwner_A128 *self, void *vnode, int frustum) __asm__("func_0022A128");
+extern "C" void func_0022A128_impl(sVisOwner_A128 *self, void *vnode, int frustum)
+{
+    char *node = (char *)vnode;
+    unsigned int r;
+
+    if (node != 0) {
+        if (!visOk_A128(self, node)) {
+            return;
+        }
+        {
+            float lo[4] __attribute__((aligned(16)));
+            float hi[4] __attribute__((aligned(16)));
+            lo[0] = *(float *)(node + 0x158);
+            lo[1] = *(float *)(node + 0x15C);
+            lo[2] = *(float *)(node + 0x160);
+            hi[0] = *(float *)(node + 0x164);
+            hi[1] = *(float *)(node + 0x168);
+            hi[2] = *(float *)(node + 0x16C);
+            lo[3] = 1.0f;
+            hi[3] = 1.0f;
+            __asm__ __volatile__("cfc2.i    %0, $vi1\n" : "=r"(r));
+            __asm__ __volatile__(
+                "lqc2      $vf20, 0x0(%0)\n"
+                "lqc2      $vf21, 0x0(%1)\n"
+                "lqc2      $vf22, 0x0(%2)\n"
+                "ctc2.ni   %3, $vi14\n"
+                "vcallms   0xDB8\n"
+                :
+                : "r"(lo), "r"(hi), "r"(node + 0x140), "r"(frustum));
+        }
+    } else {
+        __asm__ __volatile__("cfc2.i    %0, $vi1\n" : "=r"(r));
+    }
+    switch (r) {
+    case 0:
+    case 3:
+        if (self->last != 0) {
+            self->nodesA[self->countA++] = self->last;
+        }
+        break;
+    case 1:
+    case 2:
+        break;
+    case 4:
+        if (self->last != 0) {
+            self->nodesB[self->countB++] = self->last;
+        }
+        break;
+    }
+    self->last = node;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxapp", func_0022A270);

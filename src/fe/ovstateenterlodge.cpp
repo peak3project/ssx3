@@ -399,7 +399,176 @@ extern "C" void func_001F7800(void* self, void* item, int msg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstateenterlodge", func_001F7958);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+// PORT: bound with an int return by asm label; the unit declares it void
+int cUIText_setAsciiString_i(cUIText* self, const char* str) __asm__("cUIText_setAsciiString__FP7cUITextPCc");
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" int func_00144BF0(void* iface);
+extern "C" char* func_00155130(void* iface, int i);
+extern "C" char* func_00155190(void* iface, int i);
+extern "C" char* func_00155208(void* iface, int i);
+extern "C" int func_001FD190();
+extern "C" char* func_0020A1A8(char* s);
+extern "C" void func_0020A380(void* self);
+extern "C" void* func_0028B180();
+extern "C" void func_00294F78(void* p, int id);
+extern "C" void func_002C2508(void* str, int a1);
+extern "C" void func_002C2540(void* str, const char* s);
+// PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...)
+extern "C" void func_002C26D0_1F7958(void* dst, void* fmt, ...) __asm__("func_002C26D0");
+extern "C" void func_003A0E90(void* text, void* str);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern void* D_004A28A8;
+extern int D_004A2700;
+extern char D_00535BC8[];
+extern char D_0046F510[];
+extern char D_0046E378[];
+extern char D_0046F520[];
+extern char D_0046F530[];
+extern char D_0046E548[];
+extern char D_0046E398[];
+extern char D_0046E3A8[];
+extern char D_0046E3C0[];
+extern char D_004A2400[];
+extern char D_004A2408[];
+extern char D_004A2410[];
+extern char D_0046F540[];
+extern char D_0046F550[];
+extern char D_0046E9F8[];
+extern char D_0046E9E8[];
+extern char D_004A2418[];
+extern char D_004A2420[];
+extern char D_004A2090[];
+extern char D_004A2428[];
+extern char D_004A2430[];
+extern char D_004A2438[];
+extern char D_004A2138[];
+
+struct sVEntry_1F7958 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+static inline int Loc1F7958(char* name)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry_1F7958* vt = *(sVEntry_1F7958**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
+}
+
+extern "C" void func_001F7958(char* self)
+{
+    char buf[0x40];
+    char line[0x40];
+    unsigned short wtext[0x68];
+    unsigned short wfmt[0x10];
+    int full;
+    *(int*)(self + 0xA0) = 0;
+    void* engine = *(void**)(self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0046F510), 0);
+    *(void**)(self + 0x40) = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    engine = *(void**)(self + 0x10);
+    screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0046E378), 0);
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    full = 1;
+    func_0020A380(self);
+    void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* stats = cBE_getInterface_Fv(cBE_getBE(), 8);
+    signed char* g = (signed char*)D_00535BC8;
+    int ev = g[0x4A];
+    int mode = g[0x48];
+    switch (ev) {
+    case 6 ... 11:
+        func_002C2508(wtext, func_001FD190());
+        break;
+    case 5:
+        func_002C2540(wfmt, D_0046F520);
+        func_002C26D0_1F7958(wtext, wfmt, func_00144BF0(race));
+        break;
+    default: {
+        int name = 0;
+        switch (mode) {
+        case 0:
+        case 5:
+            name = Loc1F7958(D_0046E548);
+            break;
+        case 1:
+            name = Loc1F7958(D_0046E398);
+            break;
+        case 2:
+            name = Loc1F7958(D_0046E3A8);
+            break;
+        case 3:
+            name = Loc1F7958(D_0046E3C0);
+            break;
+        }
+        func_002C2540(wfmt, D_004A2400);
+        func_002C26D0_1F7958(wtext, wfmt, func_00144BF0(race), name);
+        break;
+    }
+    }
+    func_003A0E90(cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0046F530)), wtext);
+    signed char* g2 = (signed char*)D_00535BC8;
+    int m = g2[0x48];
+    if (m == 0 || m == 5) {
+        cUIState_showObjSafe(self, D_004A2408);
+        cUIState_hideObjSafe(self, D_004A2410);
+        cUIState_showObjSafe(self, D_0046F540);
+        cUIState_hideObjSafe(self, D_0046F550);
+        cUIState_showObjSafe(self, D_0046E9F8);
+        cUIState_hideObjSafe(self, D_0046E9E8);
+    } else {
+        cUIState_hideObjSafe(self, D_004A2408);
+        cUIState_showObjSafe(self, D_004A2410);
+        cUIState_hideObjSafe(self, D_0046F540);
+        cUIState_showObjSafe(self, D_0046F550);
+        cUIState_hideObjSafe(self, D_0046E9F8);
+        cUIState_showObjSafe(self, D_0046E9E8);
+        full = 0;
+    }
+    cUIState_showObjSafe(self, D_004A2418);
+    cUIState_showObjSafe(self, D_004A2420);
+    cUIState_showObjSafe(self, D_004A2090);
+    if (D_004A2700 != 0) {
+        cUIState_hideObjSafe(self, D_0046E9F8);
+        cUIState_hideObjSafe(self, D_0046E9E8);
+    }
+    for (int i = 1; i < 6; i++) {
+        sprintf(buf, D_004A2428, i);
+        cUIText* t1 = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(buf));
+        cUIText_setAsciiString_i(t1, func_00155208(stats, i - 1));
+        sprintf(buf, D_004A2430, i);
+        cUIText* t2 = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(buf));
+        cUIText_setAsciiString_i(t2, func_00155190(stats, i - 1));
+        sprintf(buf, D_004A2438, i);
+        cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(buf));
+        if (full == 1) {
+            sprintf(line, func_0020A1A8(func_00155130(stats, i - 1)));
+        } else {
+            sprintf(line, D_004A2138, func_00155130(stats, i - 1));
+        }
+        cUIText_setAsciiString_i(t, line);
+    }
+    func_00294F78(func_0028B180(), 0xE);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstateenterlodge", cOVState_TOPTIMES_onWidgetCreate);

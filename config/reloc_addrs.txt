@@ -7,3 +7,54 @@ rom:0x28166C reloc:MIPS_HI16 symbol:D_0 // func_00380518
 rom:0x281674 reloc:MIPS_LO16 symbol:D_0 // func_00380518
 rom:0x282584 reloc:MIPS_HI16 symbol:D_0 // func_00381310
 rom:0x28258C reloc:MIPS_LO16 symbol:D_0 // func_00381310
+
+// Unpaired %lo uses: splat relocated some uses of a base register that holds %hi(SYM) and left later identical
+// instructions as raw immediates. Each entry below has the same bytes and base register as a relocated sibling.
+// be/beintecon func_00150C20: `addiu $4, $19, %lo(D_004A6CA8)` (siblings at rom 0x51CB0 and 0x51DF0 are paired).
+rom:0x51CD4 reloc:MIPS_LO16 symbol:D_004A6CA8
+rom:0x51CF8 reloc:MIPS_LO16 symbol:D_004A6CA8
+rom:0x51D1C reloc:MIPS_LO16 symbol:D_004A6CA8
+rom:0x51D40 reloc:MIPS_LO16 symbol:D_004A6CA8
+rom:0x51D64 reloc:MIPS_LO16 symbol:D_004A6CA8
+rom:0x51D88 reloc:MIPS_LO16 symbol:D_004A6CA8
+// ealib/seg_2DCAE8 iFILESYS_ExecCommand: `addiu $2, $20, %lo(D_00519AB0)` (siblings at rom 0x2DF028, 0x2DF0A4 are paired).
+rom:0x2DF24C reloc:MIPS_LO16 symbol:D_00519AB0
+// main/game func_0022D8D8: `addiu $2/$4, $19, %lo(D_00442168)` (sibling at rom 0x12E9D4 is paired).
+rom:0x12EA04 reloc:MIPS_LO16 symbol:D_00442168
+rom:0x12EA48 reloc:MIPS_LO16 symbol:D_00442168
+rom:0x12EA98 reloc:MIPS_LO16 symbol:D_00442168
+// fe/festateloadhint func_002464E8: `lui $16, %hi(D_0047BB70)` hoisted ahead of a loop (the relocated copy is at rom 0x147594),
+// and six `addiu $2, $17, %lo(D_00535BC8)` (the relocated sibling at rom 0x1478C0 has the same bytes).
+rom:0x147530 reloc:MIPS_HI16 symbol:D_0047BB70
+rom:0x1477FC reloc:MIPS_LO16 symbol:D_00535BC8
+rom:0x14781C reloc:MIPS_LO16 symbol:D_00535BC8
+rom:0x14783C reloc:MIPS_LO16 symbol:D_00535BC8
+rom:0x14785C reloc:MIPS_LO16 symbol:D_00535BC8
+rom:0x14787C reloc:MIPS_LO16 symbol:D_00535BC8
+rom:0x14789C reloc:MIPS_LO16 symbol:D_00535BC8
+// fe/ovstatepause func_001FD320: the bnel delay slot holds reorg's copy of the target's `lui $4, %hi(D_00470048)` (its %lo is at rom 0xFEA14).
+rom:0xFEA00 reloc:MIPS_HI16 symbol:D_00470048
+
+// Unpaired %hi/%lo uses found by diffing near-miss candidates (same text, value-checked).
+// main/game func_0022D598 (tools/gen/reloc_from_diff.py)
+rom:0x12E608 reloc:MIPS_LO16 symbol:D_00442168
+// fe/messagecenter func_00198AF0 (tools/gen/reloc_from_diff.py)
+rom:0x99B40 reloc:MIPS_HI16 symbol:D_004C6310
+rom:0x99B44 reloc:MIPS_HI16 symbol:D_004A12C0
+// object/splinemodifier func_0035BD70 (tools/gen/reloc_from_diff.py)
+rom:0x25CE9C reloc:MIPS_HI16 symbol:D_00491200
+// object/flexbridgenode func_003480C8 (tools/gen/reloc_from_diff.py)
+rom:0x24917C reloc:MIPS_LO16 symbol:D_004FF6C0
+// object/animnode func_0034EC58 (tools/gen/reloc_from_diff.py)
+rom:0x24FC84 reloc:MIPS_HI16 symbol:D_0048F858
+rom:0x24FC8C reloc:MIPS_LO16 symbol:D_0048F858
+// camera/camera func_0015E2A8 (tools/gen/reloc_from_diff.py)
+rom:0x5F30C reloc:MIPS_LO16 symbol:D_004C5430
+// be/belibrary func_0014A188 (tools/gen/reloc_from_diff.py)
+rom:0x4B1B0 reloc:MIPS_HI16 symbol:D_004A6CA8
+rom:0x4B1B4 reloc:MIPS_HI16 symbol:D_004BA348
+rom:0x4B1B8 reloc:MIPS_HI16 symbol:D_005308B8
+// main/game func_0022D3D8 (tools/gen/reloc_from_diff.py)
+rom:0x12E444 reloc:MIPS_LO16 symbol:D_00442168
+// render/lightman func_0038EE78 (tools/gen/reloc_from_diff.py)
+rom:0x28FFE0 reloc:MIPS_LO16 symbol:D_004FF160

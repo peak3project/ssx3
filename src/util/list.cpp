@@ -111,7 +111,16 @@ cListNode* cList_first(cList* list)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/list", func_00397858);
+#ifdef SKIP_ASM
+extern "C" int *func_00397858(void *arg0) {
+    int *temp_2;
+
+    temp_2 = (*(int **)((char*)(arg0) + (0xC)));
+    return ((*temp_2 ^ (int) temp_2) == 0) ? 0 : temp_2;
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/list", func_00397870);
@@ -135,7 +144,13 @@ extern "C" cListNode* func_00397870(cList* list, int count)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/list", func_003978E8);
+#ifdef SKIP_ASM
+extern "C" int func_003978E8(void) {
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/list", cList_addToFront__FP5cListP9cListNode);

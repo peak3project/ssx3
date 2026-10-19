@@ -566,6 +566,14 @@ extern "C" void func_001F5300(void* p)
 #endif
 
 //100%
+INCLUDE_ASM("fe/festatebuyattrib", func_001F54A8);
+#ifdef SKIP_ASM
+extern "C" void func_001F54A8(void) {
+
+}
+#endif
+
+//100%
 INCLUDE_ASM("fe/festatebuyattrib", func_001F54B0);
 #ifdef SKIP_ASM
 extern void* D_00473838[];

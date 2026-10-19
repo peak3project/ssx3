@@ -24,7 +24,6 @@ INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0AA0);
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0AF0);
 
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0B30);
-
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0B70);
 
 //100%
@@ -643,9 +642,36 @@ extern "C" void func_002C16B8(unsigned short* p, unsigned short a, unsigned shor
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C1718);
-
+#ifdef SKIP_ASM
+extern "C" void func_002C1718(void *arg0) {
+    (*(int *)((char*)(arg0) + (0))) = 0;
+    (*(int *)((char*)(arg0) + (4))) = 0;
+}
+#endif
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C1728);
+#ifdef SKIP_ASM
+extern "C" unsigned short cQuadTree_getFreeNode();
+extern "C" void func_002C16A8(int, int, int);
+
+extern "C" void *func_002C1728(void *arg0, int arg1, int arg2, float fparg0, float fparg1, float fparg2) {
+    (*(int *)((char*)(arg0) + (0x24))) = 0;
+    (*(int *)((char*)(arg0) + (0x20))) = 0;
+    (*(int *)((char*)(arg0) + (0x10))) = 0;
+    (*(int *)((char*)(arg0) + (0xC))) = 0;
+    (*(float *)((char*)(arg0) + (4))) = fparg0;
+    (*(float *)((char*)(arg0) + (8))) = fparg1;
+    (*(float *)((char*)(arg0) + (0))) = (float) (32768.0f / fparg2);
+    (*(unsigned short *)((char*)(arg0) + (0x14))) = cQuadTree_getFreeNode();
+    (*(short *)((char*)(arg0) + (0x16))) = 0;
+    func_002C16A8((*(int *)((char*)(arg0) + (0x20))) + ((*(unsigned short *)((char*)(arg0) + (0x14))) * 8), arg1, arg2);
+    (*(int *)((char*)(arg0) + (0x1C))) = arg1;
+    (*(int *)((char*)(arg0) + (0x18))) = arg2;
+    return arg0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C17C0__FPv);

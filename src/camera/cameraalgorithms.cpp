@@ -234,8 +234,44 @@ extern "C" void func_0015D700(void* self, float x, float y, float z)
 #endif
 
 INCLUDE_ASM("camera/cameraalgorithms", func_0015D780);
-
+//100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015D880);
+#ifdef SKIP_ASM
+struct func_0015D880_V { float x, y, z, w; } __attribute__((aligned(16)));
+
+extern "C" float func_0031C128(float x);
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float func_0015D880_Length(const func_0015D880_V& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+extern "C" float func_0015D880(void* self)
+{
+    func_0015D880_V v;
+    v.x = 2.0f * (*(float*)((char*)self + 0x34) * *(float*)((char*)self + 0x30) - *(float*)((char*)self + 0x3C) * *(float*)((char*)self + 0x38));
+    v.y = 1.0f - 2.0f * (*(float*)((char*)self + 0x38) * *(float*)((char*)self + 0x38) + *(float*)((char*)self + 0x30) * *(float*)((char*)self + 0x30));
+    v.z = 2.0f * (*(float*)((char*)self + 0x34) * *(float*)((char*)self + 0x38) + *(float*)((char*)self + 0x3C) * *(float*)((char*)self + 0x30));
+    v.w = 0;
+    return func_0031C128(v.z / func_0015D880_Length(v));
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015D928);
@@ -411,7 +447,26 @@ extern "C" void func_0015DAC0(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015DAE0);
+#ifdef SKIP_ASM
+struct func_0015DAE0_VE { short delta; short index; void (*fn)(void*); };
+
+extern "C" void func_0015DAE0(void)
+{
+    void* cam = *(void**)((char*)D_004A28A8 + 0x84);
+    char* ctx = *(char**)((char*)cam + 0x84);
+    int count = *(int*)ctx;
+    char* a = *(char**)(*(char**)(ctx + 4) + 0xA8);
+    func_0015DAE0_VE* e = &(*(func_0015DAE0_VE**)(a + 0x14))[4];
+    e->fn(a + e->delta);
+    if (count >= 2) {
+        char* b = *(char**)(*(char**)(ctx + 8) + 0xA8);
+        func_0015DAE0_VE* e2 = &(*(func_0015DAE0_VE**)(b + 0x14))[4];
+        e2->fn(b + e2->delta);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015DB58);

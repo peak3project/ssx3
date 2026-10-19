@@ -297,5 +297,27 @@ extern "C" void func_001561B0(void* self, void* stream)
 }
 #endif
 
-INCLUDE_ASM("be/beintaggression", func_001562B8);
 
+//100%
+INCLUDE_ASM("be/beintaggression", func_001562B8);
+#ifdef SKIP_ASM
+extern int D_004A11F4;
+extern char* D_005308A8[];
+
+extern "C" void func_001562B8(int *self) {
+    char* obj;
+    char* vtbl;
+    char* obj2;
+    char* vtbl2;
+    int next;
+
+    obj = D_005308A8[D_004A11F4];
+    vtbl = *(char**)(obj + 4);
+    (*(void (**)(void*))(vtbl + 0x1C))(obj + *(short*)(vtbl + 0x18));
+    next = *self;
+    D_004A11F4 = next;
+    obj2 = D_005308A8[next];
+    vtbl2 = *(char**)(obj2 + 4);
+    (*(void (**)(void*))(vtbl2 + 0x24))(obj2 + *(short*)(vtbl2 + 0x20));
+}
+#endif

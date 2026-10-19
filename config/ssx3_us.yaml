@@ -21,6 +21,9 @@ options:
   hasm_in_src_path: True
 
   rodata_string_guesser_level: 2
+  # spimdisasm's default rodata encoding is EUC-JP, which misread binary rodata (E0 FE 00 00) as text;
+  # re-assembled as UTF-8 that shifted everything after 0x483870 (full-ELF test, 2026-10-17).
+  string_encoding: ASCII
 
   find_file_boundaries: False
   disasm_unknown: True
@@ -43,7 +46,9 @@ options:
   extensions_path: tools/splat_ext
 
   section_order: [".text", ".vutext", ".data", ".rodata", ".lit4", ".sdata", ".sbss", ".bss"]
-  auto_link_sections: [".data", ".rodata", ".bss"]
+  # No ".data": a compiled unit's .data only holds g++ exception-frame tables (__FRAME_BEGIN__), which the
+  # retail .data (split as asm) already contains; linking them pushed .data by 0x1A08 (2026-10-17).
+  auto_link_sections: [".rodata", ".bss"]
 
   subalign: 4
 

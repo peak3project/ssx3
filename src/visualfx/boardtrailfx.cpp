@@ -953,7 +953,23 @@ extern "C" void func_002EBC40(char* self, float t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EBD88);
+#ifdef SKIP_ASM
+struct sTrailVec_002EBD88 { float x, y, z, w; };
+
+extern void* D_00488080[];
+
+extern "C" void* func_002EBD88(void* self, sTrailVec_002EBD88 v, float a, float b)
+{
+    func_002E4D70(self);
+    *(void***)self = D_00488080;
+    *(sTrailVec_002EBD88*)((char*)self + 4) = v;
+    *(float*)((char*)self + 0x14) = a;
+    *(float*)((char*)self + 0x18) = b;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EBE20);

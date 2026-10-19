@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_getGM);
@@ -370,7 +371,6 @@ extern "C" void func_00238590(void* self, int a, int b)
 INCLUDE_ASM("main/gamemode", func_002385D0);
 
 INCLUDE_ASM("main/gamemode", func_002388A0);
-
 //100%
 INCLUDE_ASM("main/gamemode", func_00238B70);
 #ifdef SKIP_ASM
@@ -695,7 +695,180 @@ extern "C" void func_00238E20(sScore_238E20* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamemode", func_00239230);
+#ifdef SKIP_ASM
+// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE();
+extern "C" int func_00122E50(void* self);
+extern "C" int func_0012A250(void* race);
+extern "C" int func_00146E98(void* iface, int a1);
+extern "C" void func_00147D20(void* iface, int a1);
+extern "C" void func_00147E18(void* iface, int a1);
+extern "C" void func_00238B70(void* self, int n);
+extern char* D_004A2C70;
+extern void* D_004A28A8;
+extern unsigned int D_00536640[];
+extern int D_005366A8[];
+extern int D_00536730[];
+extern signed char D_00535C11[];
+
+struct sGM_239230 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+    int a18[10];
+    int a40[10];
+    int f68;
+    int f6C;
+    int f70;
+    int f74;
+    int f78;
+    int f7C;
+    int f80;
+    int f84;
+    int f88;
+    int f8C;
+    int f90;
+    int f94;
+    int f98;
+    int f9C;
+};
+
+struct sScore_239230 {
+    void* vt;
+    int t[3][10];
+};
+
+// cRiderMetrix block copied out of the rider (0xAC bytes; finish time at 0x9C).
+struct sStats_239230 {
+    int v[0x9C / 4];
+    int time;           // 0x9C
+    int w[3];
+};
+
+// The race (*(D_004A28A8 + 0x84) + 0xC): rider list at 0x28, player objects at 0x40, last index at 0x80.
+struct sRace_239230 {
+    char pad_0x0[0x28];
+    cRider* riders[6];  // 0x28
+    char* players[16];  // 0x40: each holds its cRider virtual-base pointer at +0x18
+    int f80;            // 0x80
+};
+
+static inline sRace_239230* Race_239230()
+{
+    return *(sRace_239230**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
+}
+
+static inline cRider* Rider_239230(int i)
+{
+    return Race_239230()->riders[i];
+}
+
+extern "C" void func_00239230(sScore_239230* self, int idx)
+{
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
+    int quick = D_00535C11[0];
+    int n = func_00146E98(player, 0);
+    sStats_239230 st = *(sStats_239230*)((char*)Rider_239230(idx)->mMetrix + 0xFC);
+    if (Rider_239230(idx)->mDidNotFinish != 0) {
+        self->t[((sGM_239230*)D_004A2C70)->f0 - 1][idx] = 0;
+        D_005366A8[idx] = 1;
+    } else {
+        self->t[((sGM_239230*)D_004A2C70)->f0 - 1][idx] = st.time;
+        D_005366A8[idx] = 0;
+    }
+    if (func_0012A250(Race_239230()) == 0)
+        return;
+    sGM_239230* gm = (sGM_239230*)D_004A2C70;
+    switch (gm->f0) {
+    case 1:
+        gm->f74 = gm->f70;
+        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+            D_00536640[i] = self->t[0][i] + self->t[1][i];
+        func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
+        if (D_00536730[idx] < 3)
+            ((sGM_239230*)D_004A2C70)->f70 = 3;
+        else
+            ((sGM_239230*)D_004A2C70)->f70 = ((sGM_239230*)D_004A2C70)->f0 + 1;
+        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+            D_00536640[i] = self->t[0][i];
+        if (D_00536730[idx] >= 3) {
+            func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
+            if (D_00536730[idx] >= 3) {
+                Rider_239230(idx)->unk_100 = 0;
+                break;
+            }
+        }
+        Rider_239230(idx)->unk_100 = 1;
+        break;
+    case 2:
+        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+            D_00536640[i] = self->t[0][i] + self->t[1][i];
+        func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
+        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+            D_00536640[i] = self->t[1][i];
+        gm = (sGM_239230*)D_004A2C70;
+        gm->f74 = gm->f70;
+        if (D_00536730[idx] < 3) {
+            gm->f70 = 3;
+            Rider_239230(idx)->unk_100 = 1;
+            if (quick == 0 && D_00536730[idx] == 0)
+                func_00147D20(player, 0);
+        } else {
+            gm->f70 = 1;
+            Rider_239230(idx)->unk_100 = 0;
+            if (quick == 0)
+                func_00147E18(player, 0);
+        }
+        break;
+    case 3: {
+        gm->f9C = 1;
+        int last = Race_239230()->f80;
+        for (int i = 0; i < last + 1; i++) {
+            cRider* r = Rider_239230(i);
+            int done = r->mFinishTime >= 0.0f;
+            if (!done)
+                self->t[2][i] = func_00122E50(r);
+        }
+        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+            D_00536640[i] = self->t[2][i];
+        func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
+        gm = (sGM_239230*)D_004A2C70;
+        gm->f74 = gm->f70;
+        int lost = !(D_00536730[idx] < 3);
+        if (quick == 0 && !lost) {
+            gm->f70 = 0;
+            gm->f74 = 0;
+        } else {
+            gm->f70 = 3;
+        }
+        if (lost) {
+            Rider_239230(idx)->unk_100 = 0;
+            if (quick == 0)
+                func_00147E18(player, 0);
+        } else {
+            Rider_239230(idx)->unk_100 = 1;
+            if (quick == 0)
+                func_00147D20(player, 0);
+        }
+        break;
+    }
+    }
+    int place = D_00536730[n];
+    if (place == 0)
+        (*(cRider**)(Race_239230()->players[0] + 0x18))->unk_2F8 = 0.699999988079071f;
+    else if (place == 1)
+        (*(cRider**)(Race_239230()->players[0] + 0x18))->unk_2F8 = 0.3499999940395355f;
+    else
+        (*(cRider**)(Race_239230()->players[0] + 0x18))->unk_2F8 = 0.0f;
+}
+#endif
 
 INCLUDE_ASM("main/gamemode", func_002398E8);
 

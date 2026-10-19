@@ -120,7 +120,18 @@ extern "C" int func_00150A90(void* self, int a, int b, int amount)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00150AE0);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+int cBELibrary_getCharacterID(int);
+
+extern "C" int func_00150AE0(void* self, int rider, int a2)
+{
+    int profile = cBELibrary_getProfileIndex(rider);
+    return func_00150A90(self, profile, cBELibrary_getCharacterID(rider), a2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintecon", func_00150B48);
@@ -177,7 +188,70 @@ extern "C" int func_00150B88(void* self, int a, int b, int peak, int unlocked)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00150C20);
+#ifdef SKIP_ASM
+struct sEconRec_0C20 {
+    char pad0[0xAC4];
+    int unk_AC4;
+    char pad1[0xBDF - 0xAC8];
+    signed char f[7];
+    char pad2[0xF88 - 0xBDF - 7];
+};
+class cBEIface_0C20 {
+public:
+    char pad[0xC];
+    virtual void v1();
+    virtual void v2();
+};
+extern "C" cBEIface_0C20* func_00147F78();
+int func_00150E50(void* self, int a1);
+extern "C" int func_00150C20(void* self, int arg1, int arg2, unsigned int arg3) {
+    signed char *p;
+    int cur;
+    int cost;
+
+    if (arg1 >= 2) {
+        return 0;
+    }
+    {
+        p = 0;
+        cur = ((sEconRec_0C20*)((arg1 * 0x9B50 + arg2 * 0xF88) + (char*)D_004A6CA8))->unk_AC4;
+        switch (arg3) {
+        case 0:
+            p = &((sEconRec_0C20(*)[10])D_004A6CA8)[arg1][arg2].f[0];
+            break;
+        case 1:
+            p = &((sEconRec_0C20(*)[10])D_004A6CA8)[arg1][arg2].f[1];
+            break;
+        case 2:
+            p = &((sEconRec_0C20(*)[10])D_004A6CA8)[arg1][arg2].f[2];
+            break;
+        case 3:
+            p = &((sEconRec_0C20(*)[10])D_004A6CA8)[arg1][arg2].f[3];
+            break;
+        case 4:
+            p = &((sEconRec_0C20(*)[10])D_004A6CA8)[arg1][arg2].f[4];
+            break;
+        case 5:
+            p = &((sEconRec_0C20(*)[10])D_004A6CA8)[arg1][arg2].f[5];
+            break;
+        case 6:
+            p = &((sEconRec_0C20(*)[10])D_004A6CA8)[arg1][arg2].f[6];
+            break;
+        }
+        cost = func_00150E50(self, *p / 5 - 1);
+        if (cur < cost || *p == 0x37) {
+            return 0;
+        }
+        sEconRec_0C20* r = (sEconRec_0C20*)((arg2 * 0xF88 + arg1 * 0x9B50) + (char*)D_004A6CA8);
+        r->unk_AC4 = r->unk_AC4 - cost;
+        *p = (unsigned char)*p + 1;
+        func_00147F78()->v2();
+        return 1;
+    }
+}
+#endif
 
 extern void* D_00440550[];
 
@@ -298,7 +372,48 @@ extern "C" int func_001511B0(void* self, int level)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_001511E8);
+#ifdef SKIP_ASM
+struct sEconRec {
+    char pad0[0xBDF];
+    signed char f[7];
+    char pad1[0xF88 - 0xBDF - 7];
+};
+extern "C" int func_001511E8(void* self, int arg1, int arg2, unsigned int arg3) {
+    signed char *p;
+    if (arg1 >= 2) {
+        return 0;
+    }
+    {
+        p = 0;
+        switch (arg3) {
+        case 0:
+            p = &((sEconRec(*)[10])D_004A6CA8)[arg1][arg2].f[0];
+            break;
+        case 1:
+            p = &((sEconRec(*)[10])D_004A6CA8)[arg1][arg2].f[1];
+            break;
+        case 2:
+            p = &((sEconRec(*)[10])D_004A6CA8)[arg1][arg2].f[2];
+            break;
+        case 3:
+            p = &((sEconRec(*)[10])D_004A6CA8)[arg1][arg2].f[3];
+            break;
+        case 4:
+            p = &((sEconRec(*)[10])D_004A6CA8)[arg1][arg2].f[4];
+            break;
+        case 5:
+            p = &((sEconRec(*)[10])D_004A6CA8)[arg1][arg2].f[5];
+            break;
+        case 6:
+            p = &((sEconRec(*)[10])D_004A6CA8)[arg1][arg2].f[6];
+            break;
+        }
+        return ((sEconTable*)D_00440550)->entries[(*p + 1) / 5].value;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintecon", func_00151368);
@@ -574,7 +689,6 @@ extern "C" void func_00151A88(sEconItems_151A88* self, int k)
 INCLUDE_ASM("be/beintecon", func_00151BD0);
 
 INCLUDE_ASM("be/beintecon", func_00151C20);
-
 //100%
 INCLUDE_ASM("be/beintecon", func_00151C48);
 #ifdef SKIP_ASM
@@ -864,4 +978,3 @@ extern "C" int func_001521F0(sEconItems_1521F0* self)
 INCLUDE_ASM("be/beintecon", func_00152340);
 
 INCLUDE_ASM("be/beintecon", func_00152368);
-

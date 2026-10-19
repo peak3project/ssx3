@@ -370,7 +370,164 @@ extern "C" void func_00155390(char* self, int idx, int score)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintscore", func_00155420);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+extern "C" void func_00155390(char* self, int idx, int score);
+
+struct sRaceSettings_155420 {
+    char pad_0x00[0x40];
+    int event;          // 0x40
+    char pad_0x44[0x4];
+    signed char b48;    // 0x48
+    signed char b49;    // 0x49
+    signed char mode;   // 0x4A
+};
+extern sRaceSettings_155420 D_005305B0_r155420 __asm__("D_005305B0");
+
+struct sEvent_155420 {
+    int id;
+    char pad_0x4[0x60];
+};
+extern sEvent_155420 D_0043D950_r155420[] __asm__("D_0043D950");
+
+struct sRaceStats_155420 {
+    char pad_0x00[0x18];
+    int f18;            // 0x18
+    int f1C;            // 0x1C
+    int f20;            // 0x20
+    char pad_0x24[0x2C - 0x24];
+    int f2C;            // 0x2C
+    char pad_0x30[0x50 - 0x30];
+    float f50;          // 0x50
+    char pad_0x54[0x58 - 0x54];
+    float f58;          // 0x58
+    float f5C;          // 0x5C
+    char pad_0x60[0x88 - 0x60];
+    int f88;            // 0x88
+};
+
+struct sRecord_155420 {
+    int score;
+    int event;
+};
+
+// PORT: the unit declares this as (int, int, int, int) (func_00154A58 passes the stats pointer as int).
+extern "C" void func_00155420(int rider, int statsArg, int a2, int a3)
+{
+    sRaceStats_155420* stats = (sRaceStats_155420*)statsArg;
+    sRaceSettings_155420* rs = &D_005305B0_r155420;
+    if (rs->b49 != 0)
+        return;
+    int profile = cBELibrary_getProfileIndex(rider);
+    if ((unsigned int)profile > 2)
+        return;
+    int charID = cBELibrary_getCharacterID(rider);
+    char* rec = (char*)D_004A6CA8 + profile * 0x9B50 + charID * 0xF88;
+    int event = D_0043D950_r155420[rs->event].id;
+    int kind = rs->b48;
+    int mode = rs->mode;
+    if (event == 0x16)
+        event = 0;
+    sRecord_155420* best = (sRecord_155420*)(rec + 0xDE4);
+    int start = 0;
+    if (stats == 0 || mode == 12)
+        start = 8;
+    for (int i = start; i < 10; i++) {
+        sRecord_155420* slot = &best[i];
+        int v;
+        switch (i) {
+        case 0:
+            v = stats->f2C;
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+                func_00155390(rec, 3, v);
+            }
+            break;
+        case 1:
+            v = stats->f18;
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+            }
+            break;
+        case 2:
+            v = stats->f1C;
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+                func_00155390(rec, 5, v);
+            }
+            break;
+        case 3:
+            v = stats->f20;
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+                func_00155390(rec, 4, v);
+            }
+            break;
+        case 4:
+            v = stats->f88;
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+                func_00155390(rec, 7, v);
+            }
+            break;
+        case 5:
+            v = (int)(stats->f5C + 0.5f);
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+                func_00155390(rec, 1, v);
+            }
+            break;
+        case 6:
+            v = (int)(stats->f58 + 0.5f);
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+                func_00155390(rec, 0, v);
+            }
+            break;
+        case 7:
+            v = (int)(stats->f50 + 0.5f);
+            if (v >= slot->score) {
+                slot->score = v;
+                slot->event = event;
+                func_00155390(rec, 2, v);
+            }
+            break;
+        case 8:
+            if (a3 > 0 && mode == 0) {
+                if (slot->score == 0 || a3 <= slot->score) {
+                    slot->score = a3;
+                    slot->event = event;
+                }
+            }
+            break;
+        case 9:
+            if (a2 > 0) {
+                if ((mode >= 1 && mode <= 3) || kind == 6) {
+                    if (a2 >= slot->score) {
+                        slot->score = a2;
+                        slot->event = event;
+                        func_00155390(rec, 6, a2 / 100);
+                    }
+                }
+            }
+            break;
+        }
+    }
+    if (stats != 0) {
+        if (stats->f88 >= best[10].score)
+            best[10].score = stats->f88;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintscore", func_001557E0);
@@ -392,7 +549,27 @@ extern "C" bool func_001557E0(void* self, int rider)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintscore", func_00155848);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+void* cBECharProfileDB_getScoreStats(void* self, int a, int b);
+extern signed char D_005305F9[];
+
+extern "C" int func_00155848(void* self, int rider, int a, int b)
+{
+    if (D_005305F9[0] != 0)
+        return 0;
+    int profile = cBELibrary_getProfileIndex(rider);
+    if ((unsigned int)profile >= 3)
+        return 0;
+    int c = cBELibrary_getCharacterID(rider);
+    unsigned short* stats = (unsigned short*)cBECharProfileDB_getScoreStats(D_004A6CA8 + profile * 0x9b50 + c * 0xf88, a, b);
+    if (stats == 0)
+        return 0;
+    return stats[1];
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintscore", func_001558F8);
@@ -418,5 +595,22 @@ extern "C" int func_001558F8(void* self, int rider, int a, int b)
 }
 #endif
 
-INCLUDE_ASM("be/beintscore", func_001559A8);
 
+//100%
+INCLUDE_ASM("be/beintscore", func_001559A8);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+extern "C" void func_00152528(void* iface, int a, int b, int c);
+extern signed char D_005305F9[];
+
+extern "C" void func_001559A8(void* self, int rider, int a, int b, int c)
+{
+    if (D_005305F9[0] != 0)
+        return;
+    int profile = cBELibrary_getProfileIndex(rider);
+    if ((unsigned int)profile >= 3)
+        return;
+    int ch = cBELibrary_getCharacterID(rider);
+    func_00152528(D_004A6CA8 + profile * 0x9b50 + ch * 0xf88, a, b, c);
+}
+#endif

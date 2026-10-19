@@ -380,10 +380,31 @@ void func_001DA530(void* self, int i, int value)
 #endif
 
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA540);
-
+//100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA580);
-
+#ifdef SKIP_ASM
+extern "C" int func_001DA580(const char* first1, const char* last1, const char* first2, const char* last2)
+{
+    for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
+        if (*first1 < *first2) return 1;
+        if (*first2 < *first1) return 0;
+    }
+    return first1 == last1 && first2 != last2;
+}
+#endif
+//100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA5E8);
+#ifdef SKIP_ASM
+extern "C" int func_001DA5E8(const char* first1, const char* last1, const char* first2, const char* last2)
+{
+    for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
+        if (*first1 < *first2) return -1;
+        if (*first2 < *first1) return 1;
+    }
+    if (first2 == last2) return first1 != last1;
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA648);
