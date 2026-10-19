@@ -899,7 +899,25 @@ extern "C" void func_002D9660(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D96B0);
+#ifdef SKIP_ASM
+struct sAvNode96B0 {
+    char pad[0xF4];
+    sAvNode96B0* next;      // 0xF4
+    int id;                 // 0xF8
+};
+
+extern "C" sAvNode96B0* func_002D96B0(void* self, int id)
+{
+    sAvNode96B0* n = *(sAvNode96B0**)((char*)self + 0x4);
+    while (n != 0) {
+        if (n->id == id) return n;
+        n = n->next;
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/avalanche", func_002D96E0);
