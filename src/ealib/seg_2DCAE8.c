@@ -4615,7 +4615,20 @@ void func_003E4A30(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4AA0);
+#ifdef SKIP_ASM
+extern int D_00450C78_4AA0[] __asm__("D_00450C78");
+void func_003E4AA0(int a) {
+    int i;
+    for (i = 0; i < 0x40; i++) {
+        if (D_00450C78_4AA0[i] == a) {
+            D_00450C78_4AA0[i] = 0;
+            break;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4AF0);
 
