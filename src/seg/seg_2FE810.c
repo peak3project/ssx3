@@ -2299,7 +2299,38 @@ void func_0040A328(unsigned short a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A360);
+#ifdef SKIP_ASM
+extern int A_5271C0[] __asm__("D_005271C0");
+extern int A_528780[] __asm__("D_00528780");
+extern int A_4533C0[] __asm__("D_004533C0");
+extern int A_4533C4[] __asm__("D_004533C4");
+extern int poll_F08(int *) __asm__("func_00426F08");
+extern void func_00423DC0(int);
+extern void sleep_A328(int) __asm__("func_0040A328");
+int func_0040A360(int a, int *p, int *q) {
+    int r;
+    if (A_4533C0[0] == 0)
+        return -1;
+    r = poll_F08(A_5271C0);
+    if (a == 0 && r != 0) {
+        while (poll_F08(A_5271C0) != 0)
+            sleep_A328(60);
+        r = 0;
+    }
+    r = r == 0;
+    if (p)
+        *p = A_4533C0[0];
+    if (r) {
+        A_4533C0[0] = 0;
+        if (q)
+            *q = A_528780[0];
+        func_00423DC0(A_4533C4[0]);
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A440);
