@@ -10765,7 +10765,53 @@ done:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D0D70);
+#ifdef SKIP_ASM
+extern int func_003D5450_0D70(int) __asm__("func_003D5450");
+extern int D_0044F420_0D70[] __asm__("D_0044F420");
+struct P_0D70 { char pad[0x58]; unsigned char *a[24]; };
+extern unsigned char D_0044F42C_0D70[] __asm__("D_0044F42C");
+extern int D_0044F430_0D70[] __asm__("D_0044F430");
+extern char D_00517644_0D70[] __asm__("D_00517644");
+
+int func_003D0D70(unsigned int mask, unsigned int val) {
+    int i, j;
+    unsigned int fl, t, u;
+    if (D_0044F42C_0D70[0] == 0) {
+        return -18;
+    }
+    if (D_0044F430_0D70[0] != 0) {
+        return -18;
+    }
+    if (func_003D5450_0D70(-1) == 0) {
+        return -18;
+    }
+    if (val < 0x80) {
+        for (i = 0; i < 4; i++) {
+            if (*(int *)(D_00517644_0D70 + i * 0x928) != 0) {
+                fl = *(unsigned int *)(D_00517644_0D70 + i * 0x928 - 4);
+                t = fl & 0xF0000000;
+                if ((t & mask) != 0 && (u = fl & 0x0F000000, (u & mask) != 0)) {
+                    if (func_003D5450_0D70(i & 0xFF) != 0) {
+                        for (j = 0; j < 24; j++) {
+                            unsigned char *e = ((struct P_0D70 *)D_0044F420_0D70[0])->a[j];
+                            if (e != 0) {
+                                unsigned char t2 = e[1];
+                                e[1] = val;
+                                e[2] = t2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    D_0044F430_0D70[0] = 0;
+    D_0044F420_0D70[0] = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D0ED0);
