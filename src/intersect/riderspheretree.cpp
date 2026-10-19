@@ -215,7 +215,62 @@ extern "C" void func_00329B40(sSphereTreeNode* s, sSphereVec4* v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_00329B90);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 inline asm; the PC port needs a C fallback (4x4 matrix * vector).
+static inline sSphereVec4 mtxMulVec_9B90(sSphereVec4* m, sSphereVec4* v)
+{
+    sSphereVec4 r;
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        ".set pop\n"
+        : "=m"(r)
+        : "m"(*v), "r"(m)
+        : "memory");
+    return r;
+}
+
+struct sScale_9B90 {
+    float x, y, z, w;
+    sScale_9B90(float s) { x = s; y = s; z = s; w = 1.0f; }
+};
+
+struct sProd_9B90 : sSphereVec4 {
+    sProd_9B90(const sSphereVec4& a, const sScale_9B90& b)
+    {
+        x = a.x * b.x;
+        y = a.y * b.y;
+        z = a.z * b.z;
+        w = a.w * b.w;
+    }
+};
+
+// PORT: callers declare the matrix as sSphereMtx*.
+extern "C" void func_00329B90_impl(sSphereTreeNode* s, sSphereVec4* m, float scale) __asm__("func_00329B90");
+
+extern "C" void func_00329B90_impl(sSphereTreeNode* s, sSphereVec4* m, float scale)
+{
+    sScale_9B90 sc(scale);
+    s->center = sProd_9B90(mtxMulVec_9B90(m, &s->center), sc);
+    s->radius = s->radius * scale;
+    for (int i = 0; i < s->count; i++) {
+        s->children[i].pos = sProd_9B90(mtxMulVec_9B90(m, &s->children[i].pos), sc);
+        s->children[i].radius = s->children[i].radius * scale;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_00329CE0);
