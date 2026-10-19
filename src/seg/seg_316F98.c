@@ -919,6 +919,138 @@ INCLUDE_ASM("seg/seg_316F98", func_0041D990);
 INCLUDE_ASM("seg/seg_316F98", func_0041DBF8);
 
 INCLUDE_ASM("seg/seg_316F98", func_0041E340);
+#ifdef SKIP_ASM
+struct mchunk {
+    unsigned prev_size, size;
+    struct mchunk *fd, *bk;
+};
+typedef struct mchunk *mchunkptr;
+extern unsigned D_00454CE8[];
+extern unsigned long D_004550F0;
+extern unsigned D_004550F8;
+extern unsigned D_00454CF0[];
+#define bin_at(i) ((mchunkptr)((char *)&D_00454CE8[2 * (i) + 2] - 8))
+#define top (bin_at(0)->fd)
+#define last_remainder (bin_at(1))
+#define lr2 ((mchunkptr)D_00454CF0)
+#define binblocks (bin_at(0)->size)
+#define chunk_at_offset(p, s) ((mchunkptr)((char *)(p) + (s)))
+#define chunksize(p) ((p)->size & ~3u)
+#define inuse_bit_at_offset(p, s) (chunk_at_offset(p, s)->size & 1)
+#define unlink(P, BK, FD) \
+    { \
+        BK = (P)->bk; \
+        FD = (P)->fd; \
+        FD->bk = BK; \
+        BK->fd = FD; \
+    }
+#define set_head(p, s) ((p)->size = (s))
+#define set_foot(p, s) (chunk_at_offset(p, s)->prev_size = (s))
+#define idx2binblock(ix) ((unsigned long)1 << ((ix) / 4))
+#define mark_binblock(ii) (binblocks |= idx2binblock(ii))
+#define smallbin_index(sz) (((unsigned)(sz)) >> 3)
+#define bin_index(sz) \
+    ((((unsigned)(sz)) >> 9 == 0) ? (((unsigned)(sz)) >> 3) \
+    : (((unsigned)(sz)) >> 9 <= 4) ? 56 + (((unsigned)(sz)) >> 6) \
+    : (((unsigned)(sz)) >> 9 <= 20) ? 91 + (((unsigned)(sz)) >> 9) \
+    : (((unsigned)(sz)) >> 9 <= 84) ? 110 + (((unsigned)(sz)) >> 12) \
+    : (((unsigned)(sz)) >> 9 <= 340) ? 119 + (((unsigned)(sz)) >> 15) \
+    : (((unsigned)(sz)) >> 9 <= 1364) ? 124 + (((unsigned)(sz)) >> 18) \
+    : 126)
+#define frontlink(P, S, IDX, BK, FD) \
+    { \
+        if (S < 512) { \
+            IDX = smallbin_index(S); \
+            mark_binblock(IDX); \
+            BK = bin_at(IDX); \
+            FD = BK->fd; \
+            P->bk = BK; \
+            P->fd = FD; \
+            FD->bk = BK->fd = P; \
+        } else { \
+            IDX = bin_index(S); \
+            BK = bin_at(IDX); \
+            FD = BK->fd; \
+            if (FD == BK) { \
+                mark_binblock(IDX); \
+            } else { \
+                while (FD != BK && S < chunksize(FD)) \
+                    FD = FD->fd; \
+                BK = FD->bk; \
+            } \
+            P->bk = BK; \
+            P->fd = FD; \
+            FD->bk = BK->fd = P; \
+        } \
+    }
+#define link_last_remainder(P) \
+    { \
+        lr->fd = lr->bk = P; \
+        P->fd = P->bk = lr; \
+    }
+
+extern void func_00418CA8_lock(int) __asm__("func_00418CA8");
+extern void func_00418D08_unlock(int) __asm__("func_00418D08");
+extern int func_0041E638_trim(int, unsigned) __asm__("func_0041E638");
+void func_0041E340_(int ptr, void *mem) __asm__("func_0041E340");
+void func_0041E340_(int ptr, void *mem) {
+    mchunkptr p;
+    unsigned hd, sz;
+    int idx;
+    mchunkptr next;
+    unsigned nextsz, prevsz;
+    mchunkptr bck, fwd;
+    int islr;
+    mchunkptr lr;
+    if (mem == 0)
+        return;
+    func_00418CA8_lock(ptr);
+    p = (mchunkptr)((char *)mem - 8);
+    hd = p->size;
+    sz = hd & ~1u;
+    next = chunk_at_offset(p, sz);
+    nextsz = chunksize(next);
+    if (next == top) {
+        sz += nextsz;
+        if (!(hd & 1)) {
+            prevsz = p->prev_size;
+            p = chunk_at_offset(p, -(int)prevsz);
+            sz += prevsz;
+            unlink(p, bck, fwd);
+        }
+        set_head(p, sz | 1);
+        top = p;
+        if ((unsigned long)sz >= D_004550F0)
+            func_0041E638_trim(ptr, D_004550F8);
+        func_00418D08_unlock(ptr);
+        return;
+    }
+    set_head(next, nextsz);
+    islr = 0;
+    if (!(hd & 1)) {
+        prevsz = p->prev_size;
+        p = chunk_at_offset(p, -(int)prevsz);
+        sz += prevsz;
+        if (p->fd == last_remainder)
+            islr = 1;
+        else
+            unlink(p, bck, fwd);
+    }
+    if (!inuse_bit_at_offset(next, nextsz)) {
+        sz += nextsz;
+        if (!islr && next->fd == (lr = lr2)) {
+            islr = 1;
+            link_last_remainder(p);
+        } else
+            unlink(next, bck, fwd);
+    }
+    set_head(p, sz | 1);
+    set_foot(p, sz);
+    if (!islr)
+        frontlink(p, sz, idx, bck, fwd);
+    func_00418D08_unlock(ptr);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041E638);
 
