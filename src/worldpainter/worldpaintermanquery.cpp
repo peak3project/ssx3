@@ -19,7 +19,18 @@ void* cWorldPainterMan_getQuery(void* self, cWorldPainterManArg* x)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0AA0);
+#ifdef SKIP_ASM
+extern "C" void func_002C0AA0(void* self, int* dst, int* src, float t)
+{
+    if (t == 1.0f) {
+        *dst = *src;
+    } else {
+        *dst = (int)((float)*dst * (1.0f - t) + (float)*src * t);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0AF0);
