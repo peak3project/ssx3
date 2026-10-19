@@ -1923,7 +1923,48 @@ int func_003DA578(struct S_A578 *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DA5C8);
+#ifdef SKIP_ASM
+struct R_A5C8 { short a; short b; };
+struct T_A5C8 { unsigned short a; unsigned short b; };
+static __inline__ int gt_A5C8(int a, int b) { return a > b; }
+
+int func_003DA5C8(unsigned char *p, struct T_A5C8 *tbl, struct R_A5C8 *out) {
+    unsigned int idx = p[2];
+    unsigned int mode = p[3];
+    unsigned short v = *(unsigned short *)p;
+    int r;
+    out->b = -1;
+    out->a = -1;
+    switch (mode) {
+    case 0:
+        out->a = func_003D6D50(v);
+        break;
+    case 1:
+        if (idx >= 20) {
+            out->a = -1;
+        } else {
+            out->a = func_003D6DB8(v, tbl[idx].a);
+        }
+        break;
+    case 2: {
+        struct T_A5C8 *e;
+        int t = func_003D6D50(v);
+        e = (struct T_A5C8 *)(idx * 4 + (int)tbl);
+        if (func_003D6CF8(t, *(int *)e) != 0) {
+            out->b = e->a;
+        } else {
+            t = -1;
+        }
+        out->a = t;
+        break;
+    }
+    }
+    r = out->a;
+    return gt_A5C8(r, -1);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DA6B0);
