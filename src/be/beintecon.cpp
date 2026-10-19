@@ -1028,4 +1028,26 @@ extern "C" int func_00152340(sEconItems_00152340* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00152368);
+#ifdef SKIP_ASM
+struct sEconItem_00152368
+{
+    short id;
+    unsigned short flags;
+};
+
+struct sEconItems_00152368
+{
+    char pad[0x288];
+    short* lookup;
+    int count;
+    sEconItem_00152368 items[1];
+};
+
+extern "C" int func_00152368(sEconItems_00152368* self, int id, int mask)
+{
+    sEconItem_00152368* p = self->items + self->lookup[id];
+    return (p->flags & mask) == mask;
+}
+#endif
