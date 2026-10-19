@@ -5217,7 +5217,29 @@ int func_00412928(int *a, int (*fn)(void), short *c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00412998);
+#ifdef SKIP_ASM
+extern int *func_004128E0_a(int) __asm__("func_004128E0");
+extern int *func_00410490_l(void) __asm__("func_00410490");
+extern int func_00412928();
+void func_00412998(int a, int b, int c) {
+    int *p = func_004128E0_a(0x30);
+    int *l;
+    p[3] = b;
+    p[4] = c;
+    p[2] = a;
+    p[10] = a;
+    *(long long *)(p + 8) = 0;
+    p[5] = 0;
+    p[0] = (int)func_00412928;
+    ((short *)p)[2] = 4;
+    ((short *)p)[3] = 1;
+    l = func_00410490_l();
+    p[6] = *l;
+    *l = (int)p;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00412A28);
 
