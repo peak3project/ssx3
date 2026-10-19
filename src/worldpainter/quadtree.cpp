@@ -16,7 +16,23 @@ extern "C" void func_002C18E8(char *self, unsigned short a, unsigned short b, un
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C1950);
+#ifdef SKIP_ASM
+extern "C" void func_002C1A00(void* self, void* node, unsigned short x, unsigned short z, int size, int a5, int a6);
+
+extern "C" void func_002C1950(void* self, int a1, int a2, float fx, float fz, float fsize)
+{
+    int x = (int)((fx - *(float*)((char*)self + 4)) * *(float*)self);
+    int z = (int)((fz - *(float*)((char*)self + 8)) * *(float*)self);
+    fsize = fsize * *(float*)self;
+    if ((unsigned int)x > 0x7FFF || (unsigned int)z > 0x7FFF) {
+        return;
+    }
+    int size = 0x8000 / (int)fsize;
+    func_002C1A00(self, *(char**)((char*)self + 0x20) + *(unsigned short*)((char*)self + 0x14) * 8, (unsigned short)(x << 1), (unsigned short)(z << 1), size, a1, a2);
+}
+#endif
 
 INCLUDE_ASM("worldpainter/quadtree", func_002C1A00);
 //100%
