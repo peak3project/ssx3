@@ -41,7 +41,29 @@ int func_003F3AB8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3B18);
+#ifdef SKIP_ASM
+extern int D_004A4BA0;
+extern int D_004A4BA4;
+extern int f5470(void) __asm__("func_003F5470");
+extern void f5000(int) __asm__("func_003F5000");
+extern void f4D68(void) __asm__("func_003F4D68");
+extern int func_003F4C98(char *, int, int);
+extern int f4C68e(char *, int, int, int, int, int, int, int, int, int *) __asm__("func_003F4C68");
+int func_003F3B18(int a) {
+    char buf[16];
+    if (D_004A4BA0 != 0) return -1;
+    if (f5470() <= 0) {
+        f5000(0);
+        f4D68();
+    }
+    func_003F4C98(buf, 'netw', 'crea');
+    f4C68e(buf, 1, 0, '1731', a, -1, 0, 0, 1, &D_004A4BA4);
+    D_004A4BA0 = 1;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3BC8);
