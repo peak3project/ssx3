@@ -1941,7 +1941,38 @@ INCLUDE_ASM("seg/seg_2FE810", func_00406A78);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00406B00);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406CA0);
+#ifdef SKIP_ASM
+extern int func_00406F78();
+extern int func_004072E8();
+extern int func_00405E10();
+extern void func_00406A78();
+void func_00406CA0(int p, int *x, int *out, int n0, int n1, int f1, int f2, int z) {
+    int h;
+    int v;
+    h = func_00406F78(p, 2);
+    if (n0 != 0 && h != 0)
+        v = func_004072E8(p, n0);
+    else
+        v = 0;
+    func_00406A78(x, n0, h, v, z);
+    if (f1 != 0)
+        out[0] = func_00405E10(p);
+    h = func_00406F78(p, 2);
+    if (n1 != 0 && h != 0)
+        v = func_004072E8(p, n1);
+    else
+        v = 0;
+    if (f2 != 0)
+        x[1] = x[1] >> 1;
+    func_00406A78(x + 1, n1, h, v, z);
+    if (f2 != 0)
+        x[1] = x[1] * 2;
+    if (f1 != 0)
+        out[1] = func_00405E10(p);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406DF0);
