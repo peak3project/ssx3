@@ -3250,7 +3250,20 @@ extern "C" void* func_00274518(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00274578);
+#ifdef SKIP_ASM
+void operator_delete(int* p);
+extern "C" void func_002746F8(void* p);
+
+extern "C" void func_00274578(int* self, int flags)
+{
+    func_002746F8(self);
+    if (flags & 1) {
+        operator_delete(self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_002745C0);
