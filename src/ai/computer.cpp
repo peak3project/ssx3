@@ -2203,7 +2203,21 @@ extern "C" const char* func_00111830(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_00111860);
+#ifdef SKIP_ASM
+extern const char* D_00459DC8[];
+extern const char D_00456C48[];
+
+extern "C" const char* func_00111860(void* self)
+{
+    unsigned int i = *(unsigned int*)((char*)self + 0xDE4);
+    if (i >= 15) {
+        return D_00456C48;
+    }
+    return D_00459DC8[i];
+}
+#endif
 //100%
 INCLUDE_ASM("ai/computer", func_00111890);
 #ifdef SKIP_ASM
