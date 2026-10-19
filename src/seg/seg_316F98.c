@@ -658,6 +658,61 @@ void func_0041A818(void) {
 #endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041A840);
+#ifdef SKIP_ASM
+extern char D_00499C81[];
+extern long func_00411538_div(long, long) __asm__("func_00411538");
+extern long func_004114D0_mul(long, long) __asm__("func_004114D0");
+extern long func_0042DAD8_mod(long, long) __asm__("func_0042DAD8");
+#define XCT(c) (D_00499C81[(int)(c)])
+unsigned long func_0041A840_(int *ptr, char *nptr, char **endptr, int base) __asm__("func_0041A840");
+unsigned long func_0041A840_(int *ptr, char *nptr, char **endptr, int base) {
+    char *s = nptr;
+    unsigned long acc, cutoff;
+    int c, neg = 0, any, cutlim;
+    do {
+        c = *s++;
+    } while (XCT(c) & 8);
+    if (c == '-') {
+        neg = 1;
+        c = *s++;
+    } else if (c == '+')
+        c = *s++;
+    if ((base == 0 || base == 16) && c == '0' && (*s == 'x' || *s == 'X')) {
+        c = s[1];
+        s += 2;
+        base = 16;
+    }
+    if (base == 0)
+        base = c == '0' ? 8 : 10;
+    cutoff = func_00411538_div(-1, base);
+    cutlim = func_0042DAD8_mod(-1, base);
+    for (acc = 0, any = 0;; c = *s++) {
+        if (XCT(c) & 4)
+            c -= '0';
+        else if (XCT(c) & 3)
+            c -= (XCT(c) & 1) ? 'A' - 10 : 'a' - 10;
+        else
+            break;
+        if (c >= base)
+            break;
+        if (any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
+            any = -1;
+        else {
+            any = 1;
+            acc = func_004114D0_mul(acc, base);
+            acc += c;
+        }
+    }
+    if (any < 0) {
+        acc = -1;
+        *ptr = 34;
+    } else if (neg)
+        acc = -acc;
+    if (endptr != 0)
+        *endptr = any ? s - 1 : nptr;
+    return acc;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_0041AA50);
