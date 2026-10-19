@@ -915,10 +915,6 @@ void func_0041CA40(int *p, int b, int c) {
 INCLUDE_ASM("seg/seg_316F98", func_0041CA70);
 
 INCLUDE_ASM("seg/seg_316F98", func_0041D990);
-
-INCLUDE_ASM("seg/seg_316F98", func_0041DBF8);
-
-INCLUDE_ASM("seg/seg_316F98", func_0041E340);
 #ifdef SKIP_ASM
 struct mchunk {
     unsigned prev_size, size;
@@ -927,7 +923,7 @@ struct mchunk {
 typedef struct mchunk *mchunkptr;
 extern unsigned D_00454CE8[];
 extern unsigned long D_004550F0;
-extern unsigned D_004550F8;
+extern unsigned long D_004550F8;
 extern unsigned D_00454CF0[];
 #define bin_at(i) ((mchunkptr)((char *)&D_00454CE8[2 * (i) + 2] - 8))
 #define top (bin_at(0)->fd)
@@ -989,6 +985,77 @@ extern unsigned D_00454CF0[];
         P->fd = P->bk = lr; \
     }
 
+#define set_head_size(p, s) ((p)->size = (((p)->size & 1) | (s)))
+extern char *D_00455100;
+extern int D_00455118;
+extern unsigned long D_00455108;
+extern unsigned long D_00455110;
+extern char *func_0041FD70_sbrk(int, int) __asm__("func_0041FD70");
+extern void func_0041E340_free(int, void *) __asm__("func_0041E340");
+void func_0041D990_(int ptr, unsigned nb) __asm__("func_0041D990");
+void func_0041D990_(int ptr, unsigned nb) {
+    char *brk;
+    unsigned front_misalign;
+    unsigned correction;
+    char *new_brk;
+    unsigned top_size;
+    mchunkptr old_top = top;
+    unsigned old_top_size = chunksize(old_top);
+    char *old_end = (char *)chunk_at_offset(old_top, old_top_size);
+    unsigned sbrk_size = nb + D_004550F8 + 16;
+    unsigned long pagesz = 0x1000;
+    if (D_00455100 != (char *)-1)
+        sbrk_size = (sbrk_size + (pagesz - 1)) & ~(pagesz - 1);
+    brk = func_0041FD70_sbrk(ptr, sbrk_size);
+    if (brk == (char *)-1 || (brk < old_end && old_top != (mchunkptr)D_00454CE8))
+        return;
+    D_00455118 += sbrk_size;
+    if (brk == old_end) {
+        top_size = sbrk_size + old_top_size;
+        set_head(top, top_size | 1);
+    } else {
+        if (D_00455100 == (char *)-1)
+            D_00455100 = brk;
+        else
+            D_00455118 += brk - old_end;
+        front_misalign = (unsigned long)(brk + 8) & 15;
+        if (front_misalign > 0) {
+            correction = 16 - front_misalign;
+            brk += correction;
+        } else
+            correction = 0;
+        correction += pagesz - ((unsigned long)(brk + sbrk_size) & (pagesz - 1));
+        new_brk = func_0041FD70_sbrk(ptr, correction);
+        if (new_brk == (char *)-1)
+            return;
+        D_00455118 += correction;
+        top = (mchunkptr)brk;
+        top_size = new_brk - brk + correction;
+        set_head(top, top_size | 1);
+        if (old_top != (mchunkptr)D_00454CE8) {
+            if (old_top_size < 16) {
+                set_head(top, 1);
+                return;
+            }
+            old_top_size = (old_top_size - 12) & ~15u;
+            set_head_size(old_top, old_top_size);
+            chunk_at_offset(old_top, old_top_size)->size = 5;
+            chunk_at_offset(old_top, old_top_size + 4)->size = 5;
+            if (old_top_size >= 16)
+                func_0041E340_free(ptr, (char *)old_top + 8);
+        }
+    }
+    if ((unsigned long)D_00455118 > D_00455108)
+        D_00455108 = D_00455118;
+    if ((unsigned long)D_00455118 > D_00455110)
+        D_00455110 = D_00455118;
+}
+#endif
+
+INCLUDE_ASM("seg/seg_316F98", func_0041DBF8);
+
+INCLUDE_ASM("seg/seg_316F98", func_0041E340);
+#ifdef SKIP_ASM
 extern void func_00418CA8_lock(int) __asm__("func_00418CA8");
 extern void func_00418D08_unlock(int) __asm__("func_00418D08");
 extern int func_0041E638_trim(int, unsigned) __asm__("func_0041E638");
