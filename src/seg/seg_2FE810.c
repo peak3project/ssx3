@@ -1769,7 +1769,22 @@ int func_0040D010(int i) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D040);
+#ifdef SKIP_ASM
+struct E_D040 { char pad[0x22]; unsigned short buf[5]; int idx; };
+int func_0040D040(int a, unsigned short b) {
+    struct E_D040 *e = (struct E_D040 *)(D_00529004[0] + a * 0x38);
+    int *q = (int *)((char *)e + 0x10);
+    if (q[9] >= 4)
+        return -1;
+    e->buf[e->idx++] = b;
+    if (q[7] >= 4)
+        q[7] = 0;
+    q[9]++;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D0B0);
