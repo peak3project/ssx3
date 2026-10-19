@@ -1299,7 +1299,17 @@ int func_003FB558(int **out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB5B0);
+#ifdef SKIP_ASM
+extern int D_00451518[];
+int func_003FB5B0(int *out) {
+    if (D_00451518[0] == 0) return 6;
+    if (out == 0) return 2;
+    *out = 4;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB5E8);
