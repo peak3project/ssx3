@@ -1232,7 +1232,32 @@ int func_003F7F18(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7F48);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern void f7E90(char *, int, int) __asm__("func_003F7E90");
+extern int f7DE0(int) __asm__("func_003F7DE0");
+extern int f8258(int) __asm__("func_003F8258");
+extern int f6E98(int) __asm__("func_003F6E98");
+int func_003F7F48(int a, int b) {
+    int err = 0;
+    if (a == 0 && b == 0) {
+        err = 7;
+    } else {
+        f7E90(D_004A4BC4 + 0xA8, b, 0x11);
+        f7E90(D_004A4BC4 + 0xB9, b + 0x11, 0x11);
+    }
+    if (err == 0) {
+        err = f7DE0(a);
+        if (err == 0) {
+            err = f8258(a);
+            if (err == 0) err = f6E98(0);
+        }
+    }
+    return err;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8000);
