@@ -1966,7 +1966,33 @@ void func_00407630(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004076F8);
+#ifdef SKIP_ASM
+struct PT44 { int v[11]; };
+extern char D_00497FE0[];
+extern int func_004070F0(int, int);
+extern void func_004071F8(int, int);
+extern int func_004072E8();
+void func_004076F8(int p) {
+    struct PT44 t = *(struct PT44 *)D_00497FE0;
+    unsigned i;
+    int r;
+    func_00407438(p);
+    while ((r = func_004070F0(p, 32)) == 0x1B5 || r == 0x1B2) {
+        if (r == 0x1B5) {
+            func_004071F8(p, 32);
+            i = func_004072E8(p, 4);
+            i = i > 10 ? 0 : i;
+            ((void (*)(int))t.v[i])(p);
+            func_00407438(p);
+        } else {
+            func_004071F8(p, 32);
+            func_00407438(p);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00407820);
 
