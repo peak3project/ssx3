@@ -252,7 +252,16 @@ extern "C" signed char func_0015BBA8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015BBB8);
+#ifdef SKIP_ASM
+extern signed char D_00535C12[];
+
+extern "C" signed char func_0015BBB8(void)
+{
+    return D_00535C12[0];
+}
+#endif
 
 INCLUDE_ASM("be/bedbreward", func_0015BBC8);
 
