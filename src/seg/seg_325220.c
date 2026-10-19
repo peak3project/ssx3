@@ -1758,7 +1758,38 @@ int func_0042BBD0(int a0, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042BBF8);
+#ifdef SKIP_ASM
+struct B80 { union { unsigned char b; unsigned short h; int w; } f0; int f4; };
+extern struct B80 D_0052F080;
+extern char D_0052F280[];
+extern int func_0042B068(void);
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_0042BBF8(int a0, void *a1, unsigned a2) {
+    if (func_0042B068() < 0) {
+        return 0xFFFF0000;
+    }
+    if (a2 > 2) {
+        return 0xFFFEFFFE;
+    }
+    *(int *)&D_0052F080 = a0;
+    D_0052F080.f4 = a2;
+    if (func_00426D18_v(D_0052F280, 3, 0, &D_0052F080, 0x20, &D_0052F080, 0x20, 0, 0) < 0) {
+        return 0xFFFEFFFF;
+    }
+    if (a2 == 0) {
+        *(unsigned char *)a1 = D_0052F080.f0.b;
+    } else if (a2 == 1) {
+        *(unsigned short *)a1 = D_0052F080.f0.h;
+    } else if (a2 == 2) {
+        *(int *)a1 = D_0052F080.f0.w;
+    } else {
+        return 0xFFFEFFFE;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042BCE8);
 
