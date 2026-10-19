@@ -704,7 +704,21 @@ extern "C" int func_00314788(void* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animsequencer", func_003147B8);
+#ifdef SKIP_ASM
+extern "C" int func_003147B8(void* self, int id)
+{
+    int i = 0;
+    char* node;
+    for (node = *(char**)((char*)self + 4); node != 0; node = *(char**)(node + 0xC8)) {
+        if (*(int*)node == id)
+            return i;
+        i++;
+    }
+    return -1;
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("animation/animsequencer", func_003147F0);
 #ifdef SKIP_ASM
