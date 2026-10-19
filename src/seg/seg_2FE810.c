@@ -741,7 +741,30 @@ int func_004000D8(int a, int b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400190);
+#ifdef SKIP_ASM
+extern int *func_003FF9A8(int, int);
+extern int s0_F390(int, int) __asm__("func_003FF390");
+int func_00400190(int a, int b, unsigned char *src) {
+    int i;
+    int ok;
+    int *q;
+    char *d;
+    if (((unsigned char *)func_003FF9A8(a, b))[0x72] != 1)
+        return 0;
+    q = (int *)D_00526250[a].e[b].pad[1];
+    d = (char *)q + 0xC;
+    for (i = 0; i < 6; i++)
+        d[i] = src[i];
+    ok = 1;
+    q[1] = ok;
+    q[2] = 6;
+    if (s0_F390(a, b) != 1)
+        ok = 0;
+    return ok;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00400250);
 
