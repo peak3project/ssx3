@@ -838,7 +838,17 @@ INCLUDE_ASM("seg/seg_316F98", ungetc);
 
 INCLUDE_ASM("seg/seg_316F98", func_00420510);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004205B8);
+#ifdef SKIP_ASM
+void func_004205B8(int *self, int *p) {
+    if (p) {
+        int i = p[1];
+        p[0] = ((int *)self[0x4C / 4])[i];
+        ((int **)self[0x4C / 4])[i] = p;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_004205F0);
 
