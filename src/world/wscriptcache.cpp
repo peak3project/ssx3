@@ -1505,7 +1505,22 @@ extern "C" int func_003AF2F8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF300);
+#ifdef SKIP_ASM
+extern unsigned char D_00499C81[];
+static inline unsigned char ctype_3AF300(char c) { return D_00499C81[c]; }
+extern "C" void func_003AF300(char** pp, unsigned int* plen)
+{
+    unsigned int n;
+    char* p = *pp;
+    for (n = 0; n < *plen && (ctype_3AF300(p[n]) & 8); n++) {
+    }
+    *pp = p + n;
+    *plen = *plen - n;
+}
+
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AF378);
