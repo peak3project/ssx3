@@ -229,7 +229,74 @@ int func_003F0818(char* p, const char* src, int key, char* s, int x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F08E8);
+#ifdef SKIP_ASM
+extern char D_004A4AA0[];
+extern char D_004A4AE0[];
+extern char D_004A4B08[];
+extern char D_004A4B20[];
+extern char D_004A4B28[];
+extern char D_004A4B30[];
+extern char* strchr(const char* s, int c);
+extern char* strncpy(char* d, const char* s, int n);
+extern char* strcpy(char* d, const char* s);
+extern int strlen(const char* s);
+extern void f62D0(char*, const char*) __asm__("func_004162D0");
+extern int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src);
+extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key, const char* val);
+extern int func_003F3A98(int, int);
+extern int func_003F5D88(int);
+int func_003F08E8(char* self, int a1, int a2, int ms, char* host, char* nick, int cb, int ctx) {
+    char tag[0x100];
+    char tmp[0x100];
+    char* q;
+    char* buf = self + 0x394;
+    char* s;
+    func_003F0B50((struct S07A0*)self);
+    *(int*)(self + 0x4C0) = ctx;
+    *(int*)(self + 0x4C4) = cb;
+    *(int*)(self + 0x10) = a2;
+    *buf = 0;
+    cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B08, self + 0x314);
+    cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B20, self + 0x354);
+    cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B28, self + 0x2C8);
+    if (strchr(host, ':') == 0) {
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4AE0, nick);
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B30, host);
+    } else {
+        strncpy(tmp, host, 0xFF);
+        tmp[0xFF] = 0;
+        q = strchr(tmp, ':');
+        if (q) {
+            *q = 0;
+            cDirtysock_tag_TagFieldDupl(tag, 0x100, tmp);
+            q++;
+            if ((unsigned int)(strlen(tag) + strlen(nick)) < 0x100) {
+                f62D0(tag, nick);
+            }
+            cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4AE0, tag);
+            if (*q == '$') {
+                cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B30, q + 1);
+            } else {
+                cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4AA0, q);
+            }
+        }
+    }
+    s = self + 0x494;
+    cDirtysock_tag_TagFieldDupl(s, 0x10, nick);
+    if (*s == '/') {
+        strcpy(s, self + 0x495);
+    }
+    q = strchr(s, '/');
+    if (q) *q = 0;
+    *(int*)self = func_003F3A98(a1, ms * 1000);
+    func_003F0610((int*)self, 1);
+    *(int*)(self + 0xC) = func_003F5D88(*(int*)(self + 4)) + ms * 1000;
+    *(int*)(self + 0x2C4) = -1;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0B50);
