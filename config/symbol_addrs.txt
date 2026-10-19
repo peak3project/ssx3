@@ -875,3 +875,7 @@ D_C2AB = 0x0000C2AB; // ignore:true
 // ealib + loose asm: +0x20 / +0x140 offsets added to a 0x20000000 (scratchpad) pointer in copy loops, not addresses.
 D_20000020 = 0x20000020; // ignore:true
 D_20000140 = 0x20000140; // ignore:true
+D_20000010 = 0x20000010; // ignore:true
+D_20000050 = 0x20000050; // ignore:true
+D_20000400 = 0x20000400; // ignore:true
+D_20000800 = 0x20000800; // ignore:true
