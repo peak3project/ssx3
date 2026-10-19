@@ -3086,7 +3086,35 @@ int func_003FC4E8(char *x) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC548);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC708);
+#ifdef SKIP_ASM
+typedef struct { int w[25]; } B3FC708;
+typedef struct { B3FC708 b; char pad[0x74 - 0x64]; int f74; int f78; int f7C; int f80; int f84; int f88; int f8C; char pad2[0x14]; int fA4; } S3FC708;
+typedef struct { int f0; int f4; int f8; } R3FC708;
+extern S3FC708 *D_C708 __asm__("D_004A5B20");
+extern R3FC708 *c708_BA20(int, int) __asm__("func_003FBA20");
+extern int c708_9C48(void *, int, int) __asm__("func_003F9C48");
+extern int c708_B810(int) __asm__("func_003FB810");
+int func_003FC708_impl(B3FC708 *src, int a, int b, int c, int d) __asm__("func_003FC708");
+int func_003FC708_impl(B3FC708 *src, int a, int b, int c, int d) {
+    S3FC708 *s = D_C708;
+    R3FC708 *r;
+    int v;
+    s->f74 = 8;
+    s->f78 = 5;
+    s->b = *src;
+    D_C708->f7C = c;
+    D_C708->f8C = a;
+    D_C708->f84 = d;
+    r = c708_BA20(a, b);
+    if (r == 0) return 7;
+    if (d != r->f8) return 0x6E;
+    v = r->f4;
+    D_C708->fA4 = v;
+    return c708_B810(c708_9C48(src, v, 0));
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC850);
