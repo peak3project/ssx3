@@ -88,7 +88,88 @@ extern "C" void cFont_linkFont(void* vself, void* vdata, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_003919E8);
+#ifdef SKIP_ASM
+void cMemMan_free(void*);
+
+class sFontGfx_19E8 {
+public:
+    char pad_0x0[0x10D8];
+    virtual void v1(int);
+    virtual void v2(int);
+    virtual void v3(int);
+    virtual void v4(int);
+    virtual void v5(int);
+    virtual void v6(int);
+    virtual void v7(int);
+    virtual void v8(int);
+    virtual void v9(int);
+    virtual void v10(int);
+    virtual void v11(int);
+    virtual void v12(int);
+    virtual void v13(int);
+    virtual void v14(int);
+    virtual void v15(int);
+    virtual void v16(int);
+    virtual void v17(int);
+    virtual void v18(int);
+    virtual void v19(int);
+    virtual void v20(int);
+    virtual void v21(int);
+    virtual void v22(int);
+    virtual void v23(int);
+    virtual void v24(int);
+    virtual void v25(int);
+    virtual void v26(int);
+    virtual void v27(int);
+    virtual void v28(int);
+    virtual void v29(int);
+    virtual void v30(int);
+    virtual void v31(int);
+    virtual void v32(int);
+    virtual void v33(int);
+    virtual void v34(int);
+    virtual void v35(int);
+    virtual void v36(int);
+    virtual void v37(int);
+    virtual void v38(int);
+    virtual void v39(int);
+    virtual void v40(int);
+    virtual void v41(int);
+    virtual void v42(int);
+    virtual void v43(int);
+    virtual void v44(int);
+    virtual void v45(int);
+    virtual void v46(int);
+    virtual void v47(int);
+    virtual void v48(int);
+    virtual void v49(int);
+    virtual void v50(int);
+};
+
+extern sFontGfx_19E8* D_004A5B80_19E8 __asm__("D_004A5B80");
+
+struct sFont_19E8 {
+    int f0;
+    void* pix;          // 0x4
+    char pad_0x8[0x58];
+    int handle;         // 0x60
+};
+
+extern "C" void func_003919E8(sFont_19E8* self)
+{
+    if (self->pix != 0) {
+        cMemMan_free(self->pix);
+    }
+    self->pix = 0;
+    self->f0 = 0;
+    sFontGfx_19E8* g = D_004A5B80_19E8;
+    if (self->handle >= 0) {
+        g->v50(self->handle);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/font", cFont_downloadTexture);
