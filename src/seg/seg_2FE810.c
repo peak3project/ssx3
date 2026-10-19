@@ -5184,7 +5184,22 @@ void func_004104B8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004104E0);
+#ifdef SKIP_ASM
+extern int D_0052ADA0[];
+extern char D_0052ADB8[];
+extern int D_0052ADB0[];
+extern void *memset_4104E0(void *, int, int) __asm__("func_00416210");
+int func_004104E0(void) {
+    if (D_0052ADB0[0] == 0) {
+        D_0052ADB0[0] = 1;
+        memset_4104E0(D_0052ADA0, 0, 16);
+        *(char **)(D_0052ADA0 + 1) = D_0052ADB8;
+    }
+    return (int)D_0052ADA0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410548);
