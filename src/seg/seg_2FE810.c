@@ -3238,7 +3238,41 @@ int func_0040D0B0(int a, unsigned short *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D118);
+#ifdef SKIP_ASM
+struct En_D118 { int f0; int mode; int f8; char pad[0x2C]; };
+extern struct En_D118 *K_529004[] __asm__("D_00529004");
+extern short q_0040D268(int, int, int, unsigned short) __asm__("func_0040D268");
+int func_0040D118(int idx, unsigned char b, unsigned char c, int n, unsigned short *src, unsigned short *dst) {
+    struct En_D118 *e = &K_529004[0][idx];
+    int i;
+    int r = 0;
+    switch (e->mode) {
+    case 0:
+        i = 0;
+        if (n > 0 && src[0] != 0) {
+            do {
+                dst[i] = src[i];
+                i++;
+            } while (i < n && src[i] != 0);
+        }
+        r = i;
+        break;
+    case 1:
+        i = 0;
+        if (n > 0 && src[0] != 0) {
+            do {
+                dst[i] = q_0040D268(e->f8, b, c, src[i]);
+                i++;
+            } while (i < n && src[i] != 0);
+        }
+        r = i;
+        break;
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040D268);
 
