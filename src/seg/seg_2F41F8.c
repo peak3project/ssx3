@@ -1279,7 +1279,50 @@ int func_003F76D8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7708);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern int func_003FCA40(int *, int *);
+extern int func_003F8178(int);
+int func_003F7708(int *out) {
+    int st[2];
+    int err;
+    unsigned s;
+    st[0] = 0;
+    err = out ? 0 : 7;
+    if (err == 0)
+        err = func_003F8178(func_003FCA40(st, st + 1));
+    if (err == 0) {
+        s = st[0];
+        *out = 0;
+        switch (s) {
+        case 0:
+            err = 0x17;
+            break;
+        case 2:
+            if (*(int *)(D_004A4BC4 + 0xFC)) {
+                err = ((int (*)(void))*(int *)(D_004A4BC4 + 0xFC))();
+                *(int *)(D_004A4BC4 + 0xFC) = 0;
+            }
+            if (err != 0)
+                break;
+        case 1:
+            *out = s;
+            break;
+        default:
+            err = 0x12;
+            break;
+        }
+    } else {
+        if (*(int *)(D_004A4BC4 + 0x100)) {
+            err = ((int (*)(void))*(int *)(D_004A4BC4 + 0x100))();
+            *(int *)(D_004A4BC4 + 0x100) = 0;
+        }
+    }
+    return err;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F77F0);
