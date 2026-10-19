@@ -1818,7 +1818,17 @@ extern "C" void func_002729A8(sRcList272938* self, int i)
 
 INCLUDE_ASM("replay/replaycache", func_00272A50);
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272AA0);
+#ifdef SKIP_ASM
+extern "C" void* func_00272CC0(void* self, int a1);
+extern "C" void func_00274868(char* p, int a);
+
+extern "C" void func_00272AA0(void* self, int a1, int a2)
+{
+    func_00274868((char*)func_00272CC0(self, a1), a2);
+}
+#endif
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272AD0);
 #ifdef SKIP_ASM
