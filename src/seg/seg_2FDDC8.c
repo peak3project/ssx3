@@ -178,4 +178,27 @@ int func_003FD6E0(int* p, int idx, char* dst) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD758);
+#ifdef SKIP_ASM
+extern int func_004165A8(const char*, const char*);
+extern unsigned func_003FD2B8(int* p, unsigned n);
+int func_003FD758(int* p, char* name) {
+    int r = 0;
+    char* symtab = (char*)p[4];
+    if (symtab) {
+        if (p[8]) {
+            struct sSym* sym = (struct sSym*)symtab;
+            unsigned int i;
+            for (i = 0; i < (unsigned int)p[5]; i++) {
+                if (func_004165A8((char*)(p[8] + sym->name), name) == 0) {
+                    r = p[0] + func_003FD2B8(p, sym->shndx) + sym->val;
+                    break;
+                }
+                sym++;
+            }
+        }
+    }
+    return r;
+}
+#endif
