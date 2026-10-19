@@ -941,7 +941,22 @@ extern "C" int func_0038F4F8(void* self, unsigned int addr, int size, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_0038F560);
+#ifdef SKIP_ASM
+struct sLmDma_F560 {
+    char pad_0x00[0xC];
+    int cur;                // 0xC
+    char pad_0x10[0x1C];
+    int size[3];            // 0x2C
+};
+void func_0038F598_F560(void* self, int size, int flags) __asm__("func_0038F598");
+
+extern "C" void func_0038F560(sLmDma_F560* self, int flags)
+{
+    func_0038F598_F560(self, self->size[self->cur] << 4, flags);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/lightman", func_0038F598);
