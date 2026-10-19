@@ -166,7 +166,16 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F4528);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4A78);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4C68);
+#ifdef SKIP_ASM
+extern int func_003F4528(int, int, int, int, int, int, int, int, int, int, int);
+int func_003F4C68_impl(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9) __asm__("func_003F4C68");
+int func_003F4C68_impl(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9) {
+    int unused[12];
+    return func_003F4528(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a3);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4C98);
 
