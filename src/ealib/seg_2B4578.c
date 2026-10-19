@@ -1612,7 +1612,48 @@ int func_003B7B48_impl(int arg0, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7C40);
+#ifdef SKIP_ASM
+typedef struct { unsigned int lo, hi; } L64_7C40;
+extern char *f6A38_7C40(int) __asm__("func_003B6A38");
+extern char *f7A70_7C40(int) __asm__("func_003B7A70");
+extern L64_7C40 f6380_7C40(int, int) __asm__("func_003C6380");
+extern int f64A8_7C40(L64_7C40, int) __asm__("func_003C64A8");
+
+int func_003B7C40(int h, int *out) {
+    char *a;
+    char *b;
+    unsigned int d;
+    out[0] = 0;
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+    if (h < 0 || (a = f6A38_7C40(h & 0xFF)) == 0) {
+        return -8;
+    }
+    b = f7A70_7C40(h);
+    if (b != 0) {
+        if (*(unsigned char *)(b + 0x24) == 0) {
+            out[0] = 0;
+        } else {
+            if (*(char **)(a + 0x11C) == b) {
+                out[0] = 2;
+                d = *(unsigned short *)(a + 0x14);
+            } else {
+                out[0] = 1;
+                d = *(unsigned short *)(a + 0x18);
+            }
+            out[1] = f64A8_7C40(f6380_7C40(*(int *)(b + 0x14), 1000), d);
+            out[2] = f64A8_7C40(f6380_7C40(*(int *)(b + 0x18) - *(int *)(b + 0x14), 1000), d);
+            out[3] = (unsigned int)(*(int *)(b + 0x1C) * 1000) / d;
+        }
+    } else {
+        out[0] = 3;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7D80);
