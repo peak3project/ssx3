@@ -2223,6 +2223,86 @@ int _sliceA0(int *p, int unused, int *o1, int *o2, int *s) {
 #endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00406318);
+#ifdef SKIP_ASM
+extern char D_00497F70[];
+extern int _sliceA0(int *, int, int *, int *, int *);
+extern int func_00405B70(int *);
+extern int func_004070F0(int, int);
+extern int func_00405FB8(int *);
+extern void func_004034A8(int *, int);
+extern int func_004065D0(int *, int *, int *, int *, int *, int *, int *);
+extern int func_00406510(int *, int *, int *, int *, int *);
+extern int func_00403E00_k() __asm__("func_00403E00");
+extern void func_00404B78(int *, int);
+int func_00406318(int *p, int n) {
+    int a;
+    int b;
+    int c;
+    int d;
+    int e;
+    int s[8];
+    int q[4];
+    int r[4];
+    int v;
+    a = 0;
+    b = 0;
+    v = _sliceA0(p, n, &a, &b, s);
+    if (v != 0)
+        return v;
+    p[0x11C / 4] = 0;
+    for (;;) {
+        if (a >= n)
+            return 0;
+        p[(0x6CC + p[0x810 / 4] * 0x140) / 4] = 0;
+        if (func_00405B70(p) == 0) {
+            if (p[0x10A0 / 4] != 0) {
+                p[0x10A0 / 4] = 0;
+                return 4;
+            }
+            return 2;
+        }
+        if (b == 0) {
+            if (func_004070F0((int)p, 0x17) == 0) {
+                p[0x11C / 4] = 0;
+                return 3;
+            }
+            if (p[0x11C / 4] != 0) {
+                p[0x11C / 4] = 0;
+                return 3;
+            }
+            b = func_00405FB8(p);
+            if (p[0x11C / 4] != 0) {
+                p[0x11C / 4] = 0;
+                return 1;
+            }
+        }
+        if (a >= n) {
+            func_004034A8(p, (int)D_00497F70);
+            return 2;
+        }
+        if (b == 1) {
+            if (func_004065D0(p, &c, &d, &e, s, q, r) == 0) {
+                p[0x11C / 4] = 0;
+                return 1;
+            }
+        } else {
+            if (func_00406510(p, s, &d, q, &c) == 0) {
+                p[0x11C / 4] = 0;
+                return 2;
+            }
+        }
+        if (func_00403E00_k(p, a, b, c, d, s, q, r) == 0) {
+            p[0x11C / 4] = 0;
+            return 2;
+        }
+        if (a != 0)
+            func_00404B78(p, p[0x810 / 4] ^ 1);
+        a++;
+        p[0x810 / 4] ^= 1;
+        b--;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406510);
