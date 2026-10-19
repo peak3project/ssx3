@@ -1449,7 +1449,22 @@ extern "C" int cBERewardInterface_getEarningsMedal(void* self, int a, int b, int
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_00158B70);
+#ifdef SKIP_ASM
+extern int D_0045B018[];
+
+extern "C" int func_00158B70(void* self, int kind, int v)
+{
+    int* t = D_0045B018 + kind * 4;
+    for (int i = 0; i < 4; i++)
+    {
+        if (v >= t[i])
+            return i;
+    }
+    return -1;
+}
+#endif
 
 INCLUDE_ASM("be/beintreward", func_00158BB8);
 //100%
