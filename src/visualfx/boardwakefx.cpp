@@ -2612,7 +2612,16 @@ extern "C" int func_002E4370_def(void* self, int a1, void* o1, void* o2, float f
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E44C8);
+#ifdef SKIP_ASM
+extern "C" void func_002E4370(void* self, int a1, int a2, int a3, float f0, float f1, int a4, int a5, float f2);
+
+extern "C" void func_002E44C8(void* self, int a1, int a2, float f0, float f1)
+{
+    func_002E4370(self, a1, a2, 0, f0, f1, 0, 0, 0.0f);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/boardwakefx", func_002E44F0);
