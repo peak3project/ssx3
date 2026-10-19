@@ -605,7 +605,26 @@ int func_003F67E0(int a, unsigned int mode, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6838);
+#ifdef SKIP_ASM
+typedef struct { int a; int b; int pad; unsigned short t[1]; } S6838;
+extern int f6700(int, int, int *) __asm__("func_003F6700");
+extern int f67E0(int, int, int *) __asm__("func_003F67E0");
+extern void f65F8(char *, S6838 *, int, int) __asm__("func_003F65F8");
+int func_003F6838(S6838 *s, int b, int idx, int d) {
+    int res = 0;
+    char buf[8];
+    int key = s->t[idx];
+    if (f6700(s->b, d, &res) == 0) {
+        if (f67E0(s->a, d, &res) == 0) {
+            f65F8(buf, s, b, key);
+            if ((unsigned char)buf[0] == d) res = 1;
+        }
+    }
+    return res;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F68F0);
