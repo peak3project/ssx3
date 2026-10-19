@@ -1040,7 +1040,34 @@ struct Bigint *func_004205F0(int ptr, struct Bigint *b, int m, int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004206F8);
+#ifdef SKIP_ASM
+extern struct Bigint *func_004205F0(int, struct Bigint *, int, int);
+struct Bigint *func_004206F8(int ptr, char *s, int nd0, int nd, int y9) {
+    struct Bigint *b;
+    int i, k;
+    int x, y;
+    x = (nd + 8) / 9;
+    for (k = 0, y = 1; x > y; y <<= 1, k++)
+        ;
+    b = (struct Bigint *)func_00420510(ptr, k);
+    b->x[0] = y9;
+    b->wds = 1;
+    i = 9;
+    if (9 < nd0) {
+        s += 9;
+        do
+            b = func_004205F0(ptr, b, 10, *s++ - '0');
+        while (++i < nd0);
+        s++;
+    } else
+        s += 10;
+    for (; i < nd; i++)
+        b = func_004205F0(ptr, b, 10, *s++ - '0');
+    return b;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00420830);
