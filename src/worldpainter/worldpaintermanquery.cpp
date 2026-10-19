@@ -45,7 +45,14 @@ extern "C" void func_002C0AF0(void* self, float* dst, float* src, float t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0B30);
+#ifdef SKIP_ASM
+extern "C" void* func_002C0B30(void* a, ...)
+{
+    return a;
+}
+#endif
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C0B70);
 
 //100%
