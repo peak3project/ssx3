@@ -1541,7 +1541,16 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F9218);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9530);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F95E8);
+#ifdef SKIP_ASM
+extern char *D_95E8 __asm__("D_004A4BD8");
+int func_003F95E8(char *dst) {
+    if (dst == 0) return 0xC;
+    __builtin_memcpy(dst, D_95E8 + 0xC, 0x60);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9698);
 
