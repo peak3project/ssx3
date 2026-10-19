@@ -1479,7 +1479,22 @@ extern "C" void func_003AF0C8(void* vself, unsigned int count, int a2, int a3, i
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF230);
+#ifdef SKIP_ASM
+struct func_003AF230_sArr {
+    char* items;
+    unsigned int count;
+};
+
+extern "C" void* func_003AF230(func_003AF230_sArr* self, unsigned int idx)
+{
+    if (self->count < idx) {
+        return 0;
+    }
+    return self->items + idx * 0x34;
+}
+#endif
 
 INCLUDE_ASM("world/wscriptcache", func_003AF258);
 //100%
