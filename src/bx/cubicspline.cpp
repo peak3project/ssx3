@@ -1141,7 +1141,17 @@ int func_00320078(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_00320098);
+#ifdef SKIP_ASM
+extern "C" int func_00320098(void* self, unsigned int addr)
+{
+    unsigned int base = *(unsigned int*)((char*)self + 0x4);
+    unsigned int end = base + *(unsigned int*)((char*)self + 0xC);
+    int r = base < addr && addr < end;
+    return r;
+}
+#endif
 
 extern "C" int func_0031ED60(void* self);
 
