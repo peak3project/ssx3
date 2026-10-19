@@ -2,7 +2,57 @@
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EDF50);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE028);
+#ifdef SKIP_ASM
+extern int* func_002591E8(int);
+extern void func_00416210(void*, int, int);
+extern void func_0041605C(void*, void*, int);
+extern void func_00259210(void*);
+int func_003EE028(int* p) {
+    int k;
+    int bytes;
+    int* q;
+    int* r;
+    int* t;
+    if (p[1] <= 0) {
+        k = p[0] > 0 ? p[0] : 1;
+    } else if (p[0] == 0) {
+        k = p[6] * 100 / p[1];
+    } else {
+        k = (p[0] + p[6] * 100 / p[1]) / 2;
+    }
+    k = k > 1 ? k : 2;
+    k += 2;
+    bytes = k * 4;
+    q = func_002591E8(bytes);
+    if (!q) {
+        return 0;
+    }
+    func_00416210(q, 0, bytes);
+    k = 1;
+    q[0] = p[15];
+    *(unsigned*)(bytes + (int)q - 4) = 0xFFFFFFFF;
+    p[15] = (int)q;
+    if (q[1] == 0) {
+        r = q + 1;
+        do {
+            *r = p[14];
+            p[14] = (int)r;
+            r++;
+            k++;
+        } while (*r == 0);
+    }
+    p[4] += k - 1;
+    t = func_002591E8((p[6] + p[4]) * 8);
+    if (p[16]) {
+        func_0041605C(t, (void*)p[16], p[6] * 4);
+        func_00259210((void*)p[16]);
+    }
+    p[16] = (int)t;
+    return k - 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE1B0);
