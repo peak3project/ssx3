@@ -56,7 +56,23 @@ extern "C" sInstSlot* func_003512C0(sInstPool* self, unsigned int handle)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/instanceman", func_00351330);
+#ifdef SKIP_ASM
+extern void* D_00490AF0[];
+extern "C" void func_003513D0(void* self);
+extern "C" void func_00351398(void* self, float* src);
+void func_00351538_vf(void* self, float f) __asm__("func_00351538");
+
+extern "C" void* func_00351330(void* self, float* src, float f)
+{
+    *(void***)((char*)self + 0x84) = D_00490AF0;
+    func_003513D0(self);
+    func_00351398(self, src);
+    func_00351538_vf(self, f);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/instanceman", func_00351398);
