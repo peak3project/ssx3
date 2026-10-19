@@ -786,6 +786,31 @@ int func_0041B550_(int fd, char *buf, unsigned n, int mode) {
 #endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041B658);
+#ifdef SKIP_ASM
+extern int func_0041B728_f(int, int, char *, char *) __asm__("func_0041B728");
+extern int func_0041CA70_i(int, int, char *, char *) __asm__("func_0041CA70");
+int func_0041B658(int fp, int fmt, char *ap) {
+    char *p = (char *)fmt;
+    while (*p) {
+        if (*p == '%' && p[1]) {
+            p++;
+            while (*p < 'A' && p[1])
+                p++;
+            switch (*p) {
+            case 'E':
+            case 'G':
+            case 'L':
+            case 'e':
+            case 'f':
+            case 'g':
+                return func_0041B728_f(*(int *)(fp + 0x54), fp, (char *)fmt, ap);
+            }
+        }
+        p++;
+    }
+    return func_0041CA70_i(*(int *)(fp + 0x54), fp, (char *)fmt, ap);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041B728);
 
