@@ -739,7 +739,38 @@ INCLUDE_ASM("seg/seg_2FE810", func_004009A8);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00400A78);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400B48);
+#ifdef SKIP_ASM
+struct S0B48 { int n0; int n1; unsigned char *d0; unsigned char *d1; unsigned char b0[0x40]; unsigned char b1[0x40]; };
+extern char D_00451658[];
+extern void func_00400908(char *);
+void func_00400B48(unsigned a) {
+    struct S0B48 *s = (struct S0B48 *)(a | 0x20000000);
+    unsigned char *e;
+    int i;
+    unsigned char *d;
+    if (s->n0 > 0) {
+        e = (unsigned char *)((unsigned)s->d0 | 0x20000000);
+        d = s->d0;
+        for (i = 0; i < s->n0; i++) {
+            unsigned char c = s->b0[i];
+            e[i] = c;
+            d[i] = c;
+        }
+    }
+    if (s->n1 > 0) {
+        e = (unsigned char *)((unsigned)s->d1 | 0x20000000);
+        d = s->d1;
+        for (i = 0; i < s->n1; i++) {
+            unsigned char c = s->b1[i];
+            e[i] = c;
+            d[i] = c;
+        }
+    }
+    func_00400908(D_00451658);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00400C00);
 
