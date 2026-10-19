@@ -219,7 +219,23 @@ int func_003F43D0(int a, ...) { return 1; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4410);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4448);
+#ifdef SKIP_ASM
+typedef struct { int pad[7]; int v; } E4448;
+typedef struct { char pad[0x4D94]; E4448 *p94; char pad2[8]; E4448 *pA0; char pad3[0x2C]; int c0; int c4; char pad4[0x10]; int e8; int ec; int f0; } S4448;
+extern int f4C50(int) __asm__("func_00424C50");
+extern int f3B80(int, void *, void *) __asm__("func_00423B80");
+void func_003F4448(int a, int b, S4448 *s);
+void func_003F4448(int a, int b, S4448 *s) {
+    if (a == s->ec) s->ec = -1;
+    if (a == s->f0) s->f0 = -1;
+    if (s->c4 != s->c0) {
+        if (s->pA0[s->c4].v == s->p94[s->c4].v) f4C50(s->e8);
+        if (s->ec < 0 && s->f0 < 0) s->f0 = f3B80(0x10, (void *)func_003F4448, s);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F44F8);
