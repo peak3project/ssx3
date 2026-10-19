@@ -309,7 +309,41 @@ void func_003F1578(char* p, const char* val, const char* key) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F15C8);
+#ifdef SKIP_ASM
+extern int D_004512C0[];
+extern char D_004A4AF8[];
+extern char D_004A4B00[];
+extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key, const char* val);
+extern int func_003F5D88(int);
+extern void func_003F0568(char*);
+int func_003F15C8(char* p, char* s, int st, int d) {
+    unsigned int now = func_003F5D88(*(int*)(p + 4));
+    int v;
+    char* buf;
+    if ((unsigned int)(st - 1) < 5) {
+        v = D_004512C0[st];
+    } else {
+        v = D_004512C0[0];
+    }
+    buf = p + 0x240;
+    *buf = 0;
+    cDirtysock_tag_TagFieldSetString(buf, 0x80, D_004A4AF8, s);
+    cDirtysock_tag_TagFieldSetString(buf, 0x80, D_004A4B00, (char*)v);
+    if (*(unsigned int*)(p + 0x2C0) == 0) {
+        *(unsigned int*)(p + 0x2C0) = now + d;
+    }
+    if (*(int*)(p + 0x2C4) != st) {
+        *(int*)(p + 0x2C4) = st;
+        *(unsigned int*)(p + 0x2C0) = now;
+    }
+    if (now >= *(unsigned int*)(p + 0x2C0)) {
+        func_003F0568(p);
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F16D8);
