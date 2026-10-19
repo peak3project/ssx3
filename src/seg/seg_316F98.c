@@ -1526,6 +1526,28 @@ char *func_00421A50_(double value, int ndigit, int *decpt, int *sign, char *buf)
 INCLUDE_ASM("seg/seg_316F98", func_00421B98);
 
 INCLUDE_ASM("seg/seg_316F98", func_00421E60);
+#ifdef SKIP_ASM
+extern void func_00421530_f(int, char *, long, int, int, int, int) __asm__("func_00421530");
+extern void func_00421B98_g(int, long, int, char *, int, int) __asm__("func_00421B98");
+extern void func_004216E8_e(int, char *, long, int, int, int) __asm__("func_004216E8");
+char *func_00421E60(int ep, char *buf, long val, int nd, int unused, char fmt, int pad) {
+    switch (fmt) {
+    case 'f':
+    case 'F':
+        func_00421530_f(ep, buf, val, nd, fmt, nd ? 1 : pad, 3);
+        break;
+    case 'g':
+    case 'G':
+        func_00421B98_g(ep, val, nd ? nd : 1, buf, fmt, pad);
+        break;
+    case 'e':
+    case 'E':
+        func_004216E8_e(ep, buf, val, nd, fmt, pad);
+        break;
+    }
+    return buf;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00421F20);
 
