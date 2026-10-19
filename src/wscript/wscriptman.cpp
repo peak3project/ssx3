@@ -2691,7 +2691,13 @@ extern "C" int func_0030D330(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D348);
+#ifdef SKIP_ASM
+extern "C" cWScriptQueueEntry* func_0030D348(char* self) {
+    return func_0030C820((cWScriptQueue*)(self + 0x1C4));
+}
+#endif
 
 INCLUDE_ASM("wscript/wscriptman", func_0030D368);
 //100%
