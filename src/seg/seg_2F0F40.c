@@ -78,7 +78,26 @@ void func_003F0610(int* p, int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0658);
+#ifdef SKIP_ASM
+struct S0658E { int f0, f4, f8, fC, f10; };
+struct S0658 { int pad[5]; int f14; int pad2[(0x4C8-0x18)/4]; struct S0658E e[1]; };
+extern int D_004512B0[];
+extern int func_003F5D88(int);
+void func_003F0658(struct S0658* p, int idx, int a, int b, int ms) {
+    int t = 0;
+    if (ms > 0) {
+        t = func_003F5D88(((int*)p)[1]) + ms * 1000;
+    }
+    p->e[idx].f0 = D_004512B0[idx];
+    p->f14++;
+    p->e[idx].f4 = p->f14;
+    p->e[idx].fC = b;
+    p->e[idx].f10 = a;
+    p->e[idx].f8 = t;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0710);
