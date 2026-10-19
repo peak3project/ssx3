@@ -3816,7 +3816,22 @@ extern "C" int func_00274D70(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00274D90);
+#ifdef SKIP_ASM
+extern "C" int func_002743C0(int* p);
+extern "C" void* func_00274D90_impl(char* self, int n) __asm__("func_00274D90");
+
+extern "C" void* func_00274D90_impl(char* self, int n)
+{
+    char* p = self + *(unsigned short*)(self + 2);
+    while (n != 0) {
+        n--;
+        p += func_002743C0((int*)p);
+    }
+    return p;
+}
+#endif
 
 INCLUDE_ASM("replay/replaycache", func_00274DE0);
 
