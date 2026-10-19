@@ -380,7 +380,17 @@ extern "C" void func_00268E28(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_00268E50);
+#ifdef SKIP_ASM
+extern sShortPad16 D_004A31D0;
+extern "C" void func_0025EB00(int);
+
+extern "C" void func_00268E50(void* self, void* a1, int a2)
+{
+    func_0025EB00(a2 + D_004A31D0.v);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_00268E78);
