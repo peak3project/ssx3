@@ -359,7 +359,28 @@ extern int D_00526010[];
 int func_003F6348(void) { return D_00526010[0]; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6358);
+#ifdef SKIP_ASM
+extern int sceUsbKbSetLEDStatus(int, int);
+extern int sceUsbKbSetLEDMode(int, int);
+extern void func_0040C810(int, int *);
+extern void func_0040D4A0(int);
+extern void func_0040C728(int, int, int);
+extern void func_0040C770(int, int);
+void func_003F6358(int h, int on) {
+    int res;
+    if (on) {
+        res = sceUsbKbSetLEDStatus(h, 1);
+        if (res == 0) func_0040C810(0, &res);
+        res = sceUsbKbSetLEDMode(h, 1);
+        if (res == 0) func_0040C810(0, &res);
+        func_0040D4A0(h);
+        func_0040C728(h, 0x1E, 2);
+        func_0040C770(h, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F63E0);
