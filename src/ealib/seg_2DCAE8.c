@@ -273,7 +273,35 @@ void func_003DC038(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DC068);
+#ifdef SKIP_ASM
+extern char *func_00418D48_C068(int, int, int *, int *) __asm__("func_00418D48");
+extern int strlen_C068(char *) __asm__("strlen");
+
+short *func_003DC068(short *p, int a, int nd) {
+    int decpt;
+    int sign;
+    int i = 0;
+    int k = 0;
+    char *digits = func_00418D48_C068(a, nd, &decpt, &sign);
+    int len = strlen_C068(digits);
+    int top = decpt + nd;
+    for (; i != top + 1; i++) {
+        if (i == nd) {
+            *--p = '.';
+        } else {
+            if (len < top - k) {
+                *--p = '0';
+            } else {
+                *--p = digits[top - k - 1];
+            }
+            k++;
+        }
+    }
+    return p;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DC148);
 
