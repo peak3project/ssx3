@@ -2028,7 +2028,27 @@ extern "C" void func_0016BCB8(float* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BCE0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float ffloor_BCE0(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
+    if (x < t) {
+        t -= 1.0f;
+    }
+    return t;
+}
+
+extern "C" void func_0016BCE0(float* p)
+{
+    float a = *p;
+    float n = ffloor_BCE0(a * 0.15915493667125702f + 0.5f);
+    *p = a - n * 6.2831854820251465f;
+}
+#endif
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BD30);
 #ifdef SKIP_ASM
