@@ -97,6 +97,8 @@ extern "C" void func_0016C098(void** self)
 }
 #endif
 
+INCLUDE_ASM("camera/trigger/cameratriggerlist", func_0016C0D8);
+
 struct cCameraTriggerList2 {
     void** arr; // 0x0
     int count; // 0x4
@@ -203,6 +205,8 @@ extern "C" int cCameraTriggerList_loadFromBuffer(void* self_, void* buf)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("camera/trigger/cameratriggerlist", func_0016C388);
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerlist", cCameraTriggerList_initHeader__FP18cCameraTriggerList);

@@ -66,6 +66,8 @@ extern "C" void func_0034FC80(void* self, void* a1)
 }
 #endif
 
+INCLUDE_ASM("object/instancenode", func_0034FCA0);
+
 extern "C" void* func_002D19E8(int);
 
 //100%

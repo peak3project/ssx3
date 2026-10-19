@@ -376,6 +376,10 @@ extern "C" cBXString* func_003186D0(cBXString* self, const char* str, cBXString*
 }
 #endif
 
+INCLUDE_ASM("bx/bxstring", func_00318760);
+
+INCLUDE_ASM("bx/bxstring", func_003187C8);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("bx/bxstring", cBXString_ConcatImpl);
 #ifdef SKIP_ASM
@@ -431,6 +435,8 @@ extern "C" cBXString* cBXString_Concat(cBXString* self, const char* str)
     return self;
 }
 #endif
+
+INCLUDE_ASM("bx/bxstring", func_00318968);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("bx/bxstring", func_003189A0);
@@ -490,6 +496,14 @@ extern "C" void func_00318A88(cBXString* self, int len)
 }
 #endif
 
+INCLUDE_ASM("bx/bxstring", func_00318AF8);
+
+INCLUDE_ASM("bx/bxstring", func_00318B40);
+
+INCLUDE_ASM("bx/bxstring", func_00318BC0);
+
+INCLUDE_ASM("bx/bxstring", func_00318BF8);
+
 extern "C" char* strchr(char* str, int ch);
 
 struct cBXString {
@@ -509,6 +523,8 @@ int cBXString_FindLastOf(cBXString* self, char ch, int len)
 }
 #endif
 
+INCLUDE_ASM("bx/bxstring", func_00318C60);
+
 extern "C" char* func_0041ACC0(char* str, int ch);
 
 //100%
@@ -523,6 +539,8 @@ int cBXString_FindFirstOf(cBXString* self, char ch)
     return result - self->str;
 }
 #endif
+
+INCLUDE_ASM("bx/bxstring", func_00318CE8);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("bx/bxstring", func_00318D28);
@@ -544,6 +562,10 @@ extern "C" void func_00318D28(cBXString* self)
 }
 #endif
 
+INCLUDE_ASM("bx/bxstring", func_00318D90);
+
+INCLUDE_ASM("bx/bxstring", func_00318DF8);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("bx/bxstring", func_00318E68);
 #ifdef SKIP_ASM
@@ -555,6 +577,14 @@ extern "C" void func_00318E68(cBXString* self, int idx, char ch)
     self->str[idx] = ch;
 }
 #endif
+
+INCLUDE_ASM("bx/bxstring", func_00318EB8);
+
+INCLUDE_ASM("bx/bxstring", func_00318F20);
+
+INCLUDE_ASM("bx/bxstring", func_00318F58);
+
+INCLUDE_ASM("bx/bxstring", func_00318F90);
 
 //100%
 INCLUDE_ASM("bx/bxstring", func_00319028);
@@ -611,4 +641,8 @@ extern "C" cBXString* cBXString_cBXString5(cBXString* self, cBXString* other, in
     return self;
 }
 #endif
+
+INCLUDE_ASM("bx/bxstring", func_00319120);
+
+INCLUDE_ASM("bx/bxstring", func_00319170);
 

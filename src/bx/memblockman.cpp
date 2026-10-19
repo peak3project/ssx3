@@ -398,6 +398,8 @@ extern "C" void func_0031A200(void)
 }
 #endif
 
+INCLUDE_ASM("bx/memblockman", func_0031A258);
+
 //100%
 INCLUDE_ASM("bx/memblockman", func_0031A268);
 #ifdef SKIP_ASM

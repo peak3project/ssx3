@@ -112,6 +112,8 @@ extern "C" void func_0039B760(void* self, char a1)
 }
 #endif
 
+INCLUDE_ASM("ui/uimenu", func_0039B7A8);
+
 //100%
 INCLUDE_ASM("ui/uimenu", func_0039B7B0);
 #ifdef SKIP_ASM
@@ -144,6 +146,8 @@ extern "C" unsigned char func_0039B7B0(void* self, unsigned char start)
     return 0xFF;
 }
 #endif
+
+INCLUDE_ASM("ui/uimenu", func_0039B878);
 
 //100%
 INCLUDE_ASM("ui/uimenu", cUIMenu_setSelectedByIndex);

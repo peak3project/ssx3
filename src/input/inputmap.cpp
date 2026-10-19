@@ -19,6 +19,10 @@ extern "C" void cInputMap_init(void* self, int count)
 }
 #endif
 
+INCLUDE_ASM("input/inputmap", func_00320D08);
+
+INCLUDE_ASM("input/inputmap", func_00320D50);
+
 //100%
 INCLUDE_ASM("input/inputmap", cInputMap_loadMapFile);
 #ifdef SKIP_ASM
@@ -110,6 +114,8 @@ extern "C" float func_00320FA8(void* self, void* a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("input/inputmap", func_00321010);
+
 //100%
 INCLUDE_ASM("input/inputmap", func_00321108);
 #ifdef SKIP_ASM
@@ -123,6 +129,8 @@ extern "C" int func_00321108(void* self, void* a1, int a2)
     return func_00325450(parser, a1, (char*)*(void**)((char*)self + 0x14) + ((*(int**)((char*)self + 0x4))[a2] << 2)) != 0.0f;
 }
 #endif
+
+INCLUDE_ASM("input/inputmap", func_00321188);
 
 //100%
 INCLUDE_ASM("input/inputmap", func_00321298);

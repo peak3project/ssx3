@@ -315,6 +315,8 @@ extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int pe
 }
 #endif
 
+INCLUDE_ASM("be/beintplayer", func_00146070);
+
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146150);
 #ifdef SKIP_ASM
@@ -466,6 +468,10 @@ extern "C" int func_001464D0(void* self, int index, int c, int kind, int flag)
 }
 #endif
 
+INCLUDE_ASM("be/beintplayer", func_001466A0);
+
+INCLUDE_ASM("be/beintplayer", func_001468B0);
+
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146A70);
 #ifdef SKIP_ASM
@@ -512,6 +518,8 @@ extern "C" int func_00146A70(void* self, int index, int c, int kind)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_00146C10);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146D98);
@@ -580,6 +588,8 @@ extern "C" int func_00146E98(void* self, int second)
     return -1;
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_00146F40);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146F88);
@@ -943,6 +953,14 @@ extern "C" void func_00147658(void* self, int index, int value)
 }
 #endif
 
+INCLUDE_ASM("be/beintplayer", func_00147698);
+
+INCLUDE_ASM("be/beintplayer", func_001476D8);
+
+INCLUDE_ASM("be/beintplayer", func_00147718);
+
+INCLUDE_ASM("be/beintplayer", func_00147758);
+
 //100%
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_getPlayerID__Fi);
 #ifdef SKIP_ASM
@@ -951,6 +969,8 @@ int cBENewPlayerInterface_getPlayerID(int index)
     return D_005305B0[index];
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_001477B0);
 
 //100%
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_isMissionMan__Fi);
@@ -1054,6 +1074,12 @@ extern "C" void func_00147A30(void* self, int index, int bit, int on)
         *(unsigned int*)(p + (w << 2)) &= ~(1 << b);
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_00147B20);
+
+INCLUDE_ASM("be/beintplayer", func_00147BB0);
+
+INCLUDE_ASM("be/beintplayer", func_00147C40);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147CB8);
@@ -1173,6 +1199,8 @@ extern "C" void func_00147E18(void* self, int which)
     }
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_00147F10);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147F78);
@@ -1312,6 +1340,10 @@ extern "C" int func_00148158(void* self, int profile, unsigned int stat)
     return -1;
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_001482D0);
+
+INCLUDE_ASM("be/beintplayer", func_00148328);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_001483A0);
@@ -1615,6 +1647,8 @@ extern "C" void func_00148AA8(void* self, int rider, int value)
 }
 #endif
 
+INCLUDE_ASM("be/beintplayer", func_00148B50);
+
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148B78);
 #ifdef SKIP_ASM
@@ -1632,6 +1666,8 @@ extern "C" signed char func_00148B78(void* self, int a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("be/beintplayer", func_00148BA0);
+
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148BC8);
 #ifdef SKIP_ASM
@@ -1640,6 +1676,8 @@ extern "C" signed char func_00148BC8(void* self, int a1, int a2)
     return D_00535538[a1].e[a2].v[1];
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_00148BF0);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148C18);
@@ -1650,6 +1688,8 @@ extern "C" signed char func_00148C18(void* self, int a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("be/beintplayer", func_00148C40);
+
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148C68);
 #ifdef SKIP_ASM
@@ -1658,6 +1698,8 @@ extern "C" signed char func_00148C68(void* self, int a1, int a2)
     return D_00535538[a1].e[a2].v[3];
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_00148C90);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148CB8);
@@ -1668,6 +1710,8 @@ extern "C" signed char func_00148CB8(void* self, int a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("be/beintplayer", func_00148CE0);
+
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148D08);
 #ifdef SKIP_ASM
@@ -1676,6 +1720,8 @@ extern "C" signed char func_00148D08(void* self, int a1, int a2)
     return D_00535538[a1].e[a2].v[5];
 }
 #endif
+
+INCLUDE_ASM("be/beintplayer", func_00148D30);
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148D58);

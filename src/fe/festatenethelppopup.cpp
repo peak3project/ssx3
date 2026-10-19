@@ -379,6 +379,12 @@ void func_001DA530(void* self, int i, int value)
 }
 #endif
 
+INCLUDE_ASM("fe/festatenethelppopup", func_001DA540);
+
+INCLUDE_ASM("fe/festatenethelppopup", func_001DA580);
+
+INCLUDE_ASM("fe/festatenethelppopup", func_001DA5E8);
+
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA648);
 #ifdef SKIP_ASM

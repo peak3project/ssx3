@@ -233,6 +233,10 @@ extern "C" void func_0015D700(void* self, float x, float y, float z)
 }
 #endif
 
+INCLUDE_ASM("camera/cameraalgorithms", func_0015D780);
+
+INCLUDE_ASM("camera/cameraalgorithms", func_0015D880);
+
 //100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015D928);
 #ifdef SKIP_ASM
@@ -406,6 +410,8 @@ extern "C" void func_0015DAC0(void)
     *(int*)((char*)ctrl + 0x4A4) = 1;
 }
 #endif
+
+INCLUDE_ASM("camera/cameraalgorithms", func_0015DAE0);
 
 //100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015DB58);

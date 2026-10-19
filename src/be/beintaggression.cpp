@@ -297,3 +297,5 @@ extern "C" void func_001561B0(void* self, void* stream)
 }
 #endif
 
+INCLUDE_ASM("be/beintaggression", func_001562B8);
+

@@ -19,6 +19,14 @@ cStreamPause* cStreamPause_construct()
 }
 #endif
 
+INCLUDE_ASM("main/streampause", func_00242D50);
+
+INCLUDE_ASM("main/streampause", func_00242D90);
+
+INCLUDE_ASM("main/streampause", func_00242DF8);
+
+INCLUDE_ASM("main/streampause", func_00242E58);
+
 INCLUDE_ASM("main/streampause", func_00242EB8);
 
 //100%
@@ -53,4 +61,6 @@ extern "C" void func_00243838(void* self, int flags)
     }
 }
 #endif
+
+INCLUDE_ASM("main/streampause", func_002438B0);
 

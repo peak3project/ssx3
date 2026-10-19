@@ -1491,6 +1491,8 @@ float func_0011A0C0(void* self)
 }
 #endif
 
+INCLUDE_ASM("ai/ridermetrix", func_0011A0D0);
+
 //100%
 INCLUDE_ASM("ai/ridermetrix", func_0011A0E0);
 #ifdef SKIP_ASM

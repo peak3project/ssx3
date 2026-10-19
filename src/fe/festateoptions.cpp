@@ -2837,3 +2837,5 @@ extern "C" void func_0018E478(void* self)
 
 INCLUDE_ASM("fe/festateoptions", func_0018E510);
 
+INCLUDE_ASM("fe/festateoptions", func_0018EA98);
+

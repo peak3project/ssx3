@@ -519,6 +519,8 @@ extern "C" void* func_002EF198(int i)
 }
 #endif
 
+INCLUDE_ASM("visualfx/renderstateman", func_002EF1F0);
+
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EF248);
 #ifdef SKIP_ASM
@@ -1194,6 +1196,8 @@ extern "C" void func_002EF950(sTrail_EF950* self)
 }
 #endif
 
+INCLUDE_ASM("visualfx/renderstateman", func_002EFF90);
+
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002EFF98);
 #ifdef SKIP_ASM
@@ -1392,6 +1396,8 @@ extern "C" void func_002F00A0(void* self, int i)
     ctx->a24C[i] = func_002EED50(i);
 }
 #endif
+
+INCLUDE_ASM("visualfx/renderstateman", func_002F0360);
 
 //100%
 INCLUDE_ASM("visualfx/renderstateman", func_002F0368);

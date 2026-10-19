@@ -371,6 +371,10 @@ extern "C" void func_0036A2C0(void* self, sGmMtx_A2C0* m)
 }
 #endif
 
+INCLUDE_ASM("render/graphicsman", func_0036A3B0);
+
+INCLUDE_ASM("render/graphicsman", func_0036A3E0);
+
 INCLUDE_ASM("render/graphicsman", func_0036A428);
 
 //100%
@@ -591,6 +595,8 @@ extern "C" void func_0036AE20(void* vself, int idx, int a, int b, int n, char** 
 
 INCLUDE_ASM("render/graphicsman", func_0036B158);
 
+INCLUDE_ASM("render/graphicsman", func_0036B5E8);
+
 INCLUDE_ASM("render/graphicsman", func_0036B9D8);
 
 INCLUDE_ASM("render/graphicsman", func_0036C188);
@@ -730,6 +736,12 @@ extern "C" void func_0036CE28(void* self, float a, float b)
 }
 #endif
 
+INCLUDE_ASM("render/graphicsman", func_0036CE48);
+
+INCLUDE_ASM("render/graphicsman", func_0036CE58);
+
+INCLUDE_ASM("render/graphicsman", func_0036CE80);
+
 //100%
 INCLUDE_ASM("render/graphicsman", func_0036CEF8);
 #ifdef SKIP_ASM
@@ -788,6 +800,8 @@ extern "C" void func_0036CEF8(char* self, sGfxVec4* a, sGfxVec4* b, sGfxVec4* c)
 }
 #endif
 
+INCLUDE_ASM("render/graphicsman", func_0036CFA8);
+
 extern cQuad128 D_004FF120;
 
 //100%
@@ -798,6 +812,8 @@ extern "C" void func_0036D008(void* self)
     *(cQuad128*)((char*)self + 0xe0) = D_004FF120;
 }
 #endif
+
+INCLUDE_ASM("render/graphicsman", func_0036D020);
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_0036D1F0);
@@ -992,6 +1008,8 @@ extern "C" void func_003705E0(char* self, void* a1, char* d)
     func_00370058(self + 0x10, a1, d, self + 0x160, -1.0f);
 }
 #endif
+
+INCLUDE_ASM("render/graphicsman", func_00370708);
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_00370758);

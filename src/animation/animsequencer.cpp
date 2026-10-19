@@ -84,6 +84,8 @@ extern "C" void func_00313AD8(void* self, int key)
 }
 #endif
 
+INCLUDE_ASM("animation/animsequencer", func_00313B38);
+
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00313BA8);
 #ifdef SKIP_ASM
@@ -185,6 +187,8 @@ extern "C" void func_00313CF0(void* self, int a1, float val)
 }
 #endif
 
+INCLUDE_ASM("animation/animsequencer", func_00313D10);
+
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00313D28);
 #ifdef SKIP_ASM
@@ -204,6 +208,8 @@ extern "C" void func_00313D40(void* self, int a1, int val)
     *(int*)(p + 0x1c) = val;
 }
 #endif
+
+INCLUDE_ASM("animation/animsequencer", func_00313D58);
 
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00313D70);
@@ -428,6 +434,8 @@ extern "C" void func_00314368(sSequencer_00314368* self, sSeqNode_00314368* node
 }
 #endif
 
+INCLUDE_ASM("animation/animsequencer", func_003143C8);
+
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00314418);
 #ifdef SKIP_ASM
@@ -648,6 +656,10 @@ cAnimSequenceNode* cAnimSequencer_getSequence(cAnimSequencer* self, int index)
 }
 #endif
 
+INCLUDE_ASM("animation/animsequencer", func_00314788);
+
+INCLUDE_ASM("animation/animsequencer", func_003147B8);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("animation/animsequencer", func_003147F0);
 #ifdef SKIP_ASM
@@ -789,6 +801,8 @@ void* func_00314A40(void* self)
 }
 #endif
 
+INCLUDE_ASM("animation/animsequencer", func_00314A60);
+
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00314AA0);
 #ifdef SKIP_ASM
@@ -805,6 +819,12 @@ void func_00314AA0_impl(void* self, char* data)
     *(char**)((char*)self + 0xC) = data + *(int*)(data + 0x8);
 }
 #endif
+
+INCLUDE_ASM("animation/animsequencer", func_00314AC0);
+
+INCLUDE_ASM("animation/animsequencer", func_00314AE0);
+
+INCLUDE_ASM("animation/animsequencer", func_00314B70);
 
 //100%
 INCLUDE_ASM("animation/animsequencer", func_00314C00);
@@ -837,4 +857,6 @@ extern "C" void* func_00314C00(sMdfArchive* self, const char* name)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("animation/animsequencer", func_00314C98);
 

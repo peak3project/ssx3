@@ -112,6 +112,10 @@ INCLUDE_ASM("bx/cubicspline", func_0031D8B0);
 
 INCLUDE_ASM("bx/cubicspline", func_0031DEE0);
 
+INCLUDE_ASM("bx/cubicspline", func_0031E0E0);
+
+INCLUDE_ASM("bx/cubicspline", func_0031E190);
+
 INCLUDE_ASM("bx/cubicspline", func_0031E1D8);
 
 //100%
@@ -565,6 +569,8 @@ extern "C" void func_0031EEE8(void* ms, sMState_31EEE8* av)
 }
 #endif
 
+INCLUDE_ASM("bx/cubicspline", func_0031F018);
+
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031F2C8);
 #ifdef SKIP_ASM
@@ -732,6 +738,22 @@ extern "C" void* func_0031F4E8_memalign(void* ms, unsigned int alignment, unsign
 }
 #endif
 
+INCLUDE_ASM("bx/cubicspline", func_0031F718);
+
+INCLUDE_ASM("bx/cubicspline", func_0031F7F0);
+
+INCLUDE_ASM("bx/cubicspline", func_0031F810);
+
+INCLUDE_ASM("bx/cubicspline", func_0031F838);
+
+INCLUDE_ASM("bx/cubicspline", func_0031F858);
+
+INCLUDE_ASM("bx/cubicspline", func_0031FAA8);
+
+INCLUDE_ASM("bx/cubicspline", func_0031FB00);
+
+INCLUDE_ASM("bx/cubicspline", func_0031FB68);
+
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031FBB8__FPvT0);
 #ifdef SKIP_ASM
@@ -855,6 +877,8 @@ extern "C" sMallinfo_31FC20 func_0031FC20(void* ms)
 }
 #endif
 
+INCLUDE_ASM("bx/cubicspline", func_0031FE30);
+
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031FF20__FPv);
 #ifdef SKIP_ASM
@@ -918,6 +942,8 @@ extern "C" unsigned int func_0031FFD8(void* self, long incr) // PORT: 64-bit lon
 }
 #endif
 
+INCLUDE_ASM("bx/cubicspline", func_00320038);
+
 extern "C" int func_0031F2C8(void* self);
 
 //99.29%
@@ -939,6 +965,8 @@ int func_00320078(void* self)
     return func_0031F4E8(self);
 }
 #endif
+
+INCLUDE_ASM("bx/cubicspline", func_00320098);
 
 extern "C" int func_0031ED60(void* self);
 

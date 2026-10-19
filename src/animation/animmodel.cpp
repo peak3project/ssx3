@@ -348,6 +348,8 @@ extern "C" void func_003103F0(sAm3103F0* self)
 }
 #endif
 
+INCLUDE_ASM("animation/animmodel", func_00310458);
+
 //100%
 INCLUDE_ASM("animation/animmodel", func_00310530);
 #ifdef SKIP_ASM
@@ -967,6 +969,8 @@ extern "C" void* func_00311048(void* self)
     return self;
 }
 #endif
+
+INCLUDE_ASM("animation/animmodel", func_00311088);
 
 //100%
 INCLUDE_ASM("animation/animmodel", func_003110D0);

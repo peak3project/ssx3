@@ -860,6 +860,8 @@ extern "C" void func_001F22E8(void* ctx, sFont_001F22E8* font, sHudElemDef_001F1
 }
 #endif
 
+INCLUDE_ASM("fe/ovstatehud", func_001F25E0);
+
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F2AA0);
 #ifdef SKIP_ASM

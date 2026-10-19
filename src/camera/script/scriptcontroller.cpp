@@ -1992,6 +1992,26 @@ extern "C" sPair_B7B8 func_0016B7B8(char* p)
 }
 #endif
 
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BC88);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BCB8);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BCE0);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BD30);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BDA0);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BDE8);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE30);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE60);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BE90);
+
+INCLUDE_ASM("camera/script/scriptcontroller", func_0016BEC0);
+
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BEE8__FPv);
 #ifdef SKIP_ASM

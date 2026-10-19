@@ -32,6 +32,8 @@ void func_0016CA10(void* self)
 }
 #endif
 
+INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CA18);
+
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", cCameraTriggerMan_purge);
 #ifdef SKIP_ASM
@@ -178,6 +180,8 @@ extern "C" void cCameraTriggerMan_streamIn(void* self, void* stream)
     cCameraTriggerMan_setInGameTriggers(self);
 }
 #endif
+
+INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CEA8);
 
 extern void* D_004C5830[];
 extern "C" void* func_0016CEF0(void*, void*, int);
@@ -367,6 +371,8 @@ void* func_0016D1D8(void* self)
     return func_0016CF48(self, 1);
 }
 #endif
+
+INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016D1F8);
 
 struct cCameraTriggerStack {
     int field_0x0;

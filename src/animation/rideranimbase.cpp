@@ -47,6 +47,12 @@ extern "C" void func_00311958(void* self, int flags)
 }
 #endif
 
+INCLUDE_ASM("animation/rideranimbase", func_003119E8);
+
+INCLUDE_ASM("animation/rideranimbase", func_003119F8);
+
+INCLUDE_ASM("animation/rideranimbase", func_00311A30);
+
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00311A50);
 #ifdef SKIP_ASM
@@ -260,6 +266,10 @@ extern "C" void cRiderAnimBase_changeOrientationOffset(void* self, sRabXform_003
     }
 }
 #endif
+
+INCLUDE_ASM("animation/rideranimbase", func_00311D88);
+
+INCLUDE_ASM("animation/rideranimbase", func_00311E38);
 
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00311E88);

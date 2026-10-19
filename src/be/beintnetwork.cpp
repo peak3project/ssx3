@@ -477,3 +477,5 @@ extern "C" void* func_0014EEC8(void* self, int player, int index)
 }
 #endif
 
+INCLUDE_ASM("be/beintnetwork", func_0014EF00);
+

@@ -1230,6 +1230,8 @@ extern "C" void func_002E0EE8(sWakeFx0EE8* self)
 }
 #endif
 
+INCLUDE_ASM("visualfx/boardwakefx", func_002E10B8);
+
 INCLUDE_ASM("visualfx/boardwakefx", func_002E1120);
 
 //100%
@@ -2582,6 +2584,8 @@ extern "C" int func_002E4370_def(void* self, int a1, void* o1, void* o2, float f
     return 1;
 }
 #endif
+
+INCLUDE_ASM("visualfx/boardwakefx", func_002E44C8);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/boardwakefx", func_002E44F0);

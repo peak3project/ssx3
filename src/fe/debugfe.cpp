@@ -1635,6 +1635,8 @@ extern "C" void func_001804B8(sDebugFE1804B8* self)
 }
 #endif
 
+INCLUDE_ASM("fe/debugfe", func_00180508);
+
 //100%
 INCLUDE_ASM("fe/debugfe", func_001805D8);
 #ifdef SKIP_ASM
@@ -1735,6 +1737,8 @@ extern "C" int func_001807C8(void* self)
     return v;
 }
 #endif
+
+INCLUDE_ASM("fe/debugfe", func_001807D8);
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_00180840);

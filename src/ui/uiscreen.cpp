@@ -449,6 +449,8 @@ extern "C" void cUIScreen_createAllObjects(void* self)
 }
 #endif
 
+INCLUDE_ASM("ui/uiscreen", func_0039D008);
+
 INCLUDE_ASM("ui/uiscreen", cUIScreen_createObjectByStruct);
 
 extern "C" void* func_00398798(void*);
@@ -1016,6 +1018,10 @@ extern "C" void func_0039E390(void* self, int flags)
 }
 #endif
 
+INCLUDE_ASM("ui/uiscreen", func_0039E438);
+
+INCLUDE_ASM("ui/uiscreen", func_0039E470);
+
 extern "C" void* func_00397948(void*);
 
 //100%
@@ -1197,6 +1203,10 @@ extern "C" void func_0039E758(void* self, cListNode* node)
     cList_addToEnd((cList*)((char*)self + 0x24), node);
 }
 #endif
+
+INCLUDE_ASM("ui/uiscreen", func_0039E778);
+
+INCLUDE_ASM("ui/uiscreen", func_0039E7F0);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ui/uiscreen", func_0039E868);

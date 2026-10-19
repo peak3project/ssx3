@@ -46,6 +46,8 @@ extern "C" void* cBE_getBE()
 }
 #endif
 
+INCLUDE_ASM("be/be", func_0014DD48);
+
 struct sBEInterfaceVTable {
     char pad_0x00[0x8];
     short field_0x8;
@@ -148,6 +150,8 @@ extern "C" void cBE_setState(int state)
     }
 }
 #endif
+
+INCLUDE_ASM("be/be", func_0014DEE8);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/be", func_0014DF08);

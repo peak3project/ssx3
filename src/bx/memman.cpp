@@ -62,3 +62,7 @@ void cMemMan_free(void* ptr)
     MUTEX_unlock(D_00538B00);
 }
 #endif
+
+INCLUDE_ASM("bx/memman", func_00317EE0);
+
+INCLUDE_ASM("bx/memman", func_00317F18);

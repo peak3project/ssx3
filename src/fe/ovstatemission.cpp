@@ -132,6 +132,10 @@ void func_001A34A8(void* self)
 }
 #endif
 
+INCLUDE_ASM("fe/ovstatemission", func_001A34B0);
+
+INCLUDE_ASM("fe/ovstatemission", func_001A34B8);
+
 //100%
 INCLUDE_ASM("fe/ovstatemission", func_001A3590);
 #ifdef SKIP_ASM
@@ -199,4 +203,6 @@ extern "C" void func_001A3648(sMissionSlot* self)
     }
 }
 #endif
+
+INCLUDE_ASM("fe/ovstatemission", func_001A3698);
 

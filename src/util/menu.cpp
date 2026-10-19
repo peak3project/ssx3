@@ -120,6 +120,8 @@ extern "C" int func_002CA3B0(void* self)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002CA3C0);
+
 //100%
 INCLUDE_ASM("util/menu", func_002CA3E8);
 #ifdef SKIP_ASM
@@ -1166,6 +1168,12 @@ extern "C" void cMenu_addItem(cMenuList* menu, void** item, int index)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002CBD50);
+
+INCLUDE_ASM("util/menu", func_002CBE10);
+
+INCLUDE_ASM("util/menu", func_002CBE20);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CBE68);
 #ifdef SKIP_ASM
@@ -1627,6 +1635,8 @@ extern "C" void func_002CC460(void* p)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002CC500);
+
 //100%
 INCLUDE_ASM("util/menu", func_002CC578);
 #ifdef SKIP_ASM
@@ -1699,6 +1709,14 @@ extern "C" void func_002CC758(void* self, int a1)
     }
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002CC7B0);
+
+INCLUDE_ASM("util/menu", func_002CC7F8);
+
+INCLUDE_ASM("util/menu", func_002CC838);
+
+INCLUDE_ASM("util/menu", func_002CC8B0);
 
 //100%
 INCLUDE_ASM("util/menu", func_002CC8F0);
@@ -1994,6 +2012,8 @@ extern "C" s2CCF08Item* func_002CCF08(s2CCF08Item* self)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002CCF50);
+
 //100%
 INCLUDE_ASM("util/menu", func_002CCF98);
 #ifdef SKIP_ASM
@@ -2019,6 +2039,8 @@ extern "C" func_002CCF98_sItem* func_002CCF98(func_002CCF98_sItem* self, void* t
     return self;
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002CCFF8);
 
 //100%
 INCLUDE_ASM("util/menu", func_002CD008);
@@ -2078,6 +2100,12 @@ extern "C" void func_002CD0E8(void* self, int a1)
     }
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002CD128);
+
+INCLUDE_ASM("util/menu", func_002CD168);
+
+INCLUDE_ASM("util/menu", func_002CD1C0);
 
 //100%
 INCLUDE_ASM("util/menu", func_002CD1D0);
@@ -2239,6 +2267,14 @@ void func_002CD3F0(void* self)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002CD3F8);
+
+INCLUDE_ASM("util/menu", func_002CD450);
+
+INCLUDE_ASM("util/menu", func_002CD4A0);
+
+INCLUDE_ASM("util/menu", func_002CD528);
+
 //100%
 INCLUDE_ASM("util/menu", func_002CD578);
 #ifdef SKIP_ASM
@@ -2368,6 +2404,10 @@ extern "C" void func_002CD7F0(void* self, int a1)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002CD850);
+
+INCLUDE_ASM("util/menu", func_002CD8A8);
+
 //100%
 INCLUDE_ASM("util/menu", cIntMenuItem_cIntMenuItem);
 #ifdef SKIP_ASM
@@ -2399,6 +2439,8 @@ extern "C" cIntMenuItem_sItem* cIntMenuItem_cIntMenuItem(cIntMenuItem_sItem* sel
     return self;
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002CD978);
 
 //100%
 INCLUDE_ASM("util/menu", func_002CD9B8);
@@ -2530,6 +2572,8 @@ extern "C" void func_002CDC28(void* self, int a1)
     func_002CA988_5(self, a1, *(int*)((char*)self + 0x14), 0, buf);
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002CDC88);
 
 //100%
 INCLUDE_ASM("util/menu", cFloatMenuItem_cFloatMenuItem);
@@ -2669,6 +2713,8 @@ extern "C" void func_002CE100(void* self, int a1)
     cBXString__cBXString(&s, 2);
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002CE170);
 
 //100%
 INCLUDE_ASM("util/menu", func_002CE1F0);
@@ -3520,6 +3566,8 @@ extern "C" void func_002CF7B8(void* self, int a)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002CF7E8);
+
 //100%
 INCLUDE_ASM("util/menu", func_002CF860);
 #ifdef SKIP_ASM
@@ -3588,6 +3636,12 @@ void cExpandMenuItem_addItem(void* self, void* item)
     cMenu_addItem2((char*)self + 0x18, item);
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002CF928);
+
+INCLUDE_ASM("util/menu", func_002CF948);
+
+INCLUDE_ASM("util/menu", func_002CF988);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CFA08);
@@ -4093,6 +4147,8 @@ void* func_002D03D0(void* self)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002D03F0);
+
 //100%
 INCLUDE_ASM("util/menu", func_002D0448__FPv);
 #ifdef SKIP_ASM
@@ -4143,6 +4199,8 @@ extern "C" void func_002D0500(void* self, int a1)
     func_002CA988_5(self, a1, *(int*)((char*)self + 0x18), 0, buf);
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002D05A8);
 
 //100%
 INCLUDE_ASM("util/menu", func_002D06E8);
@@ -4205,6 +4263,8 @@ extern "C" void* func_002D06E8(sMenuColD6E8* self)
     return ret;
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002D0808);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002D08E0);
@@ -4396,6 +4456,10 @@ extern "C" sMenuRect_2D0D48* func_002D0D48(sMenuRect_2D0D48* ret, char* item)
 
 INCLUDE_ASM("util/menu", func_002D0EF8);
 
+INCLUDE_ASM("util/menu", func_002D1740);
+
+INCLUDE_ASM("util/menu", func_002D17F0);
+
 //100%
 INCLUDE_ASM("util/menu", func_002D18B0);
 #ifdef SKIP_ASM
@@ -4479,6 +4543,10 @@ extern "C" int func_002D1A30(int id)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002D1A78);
+
+INCLUDE_ASM("util/menu", func_002D1AA0);
 
 //100%
 INCLUDE_ASM("util/menu", func_002D1AC8);
@@ -4618,6 +4686,8 @@ extern "C" void* func_002D1C20(int i)
 }
 #endif
 
+INCLUDE_ASM("util/menu", func_002D1C40);
+
 //100%
 INCLUDE_ASM("util/menu", func_002D1C58);
 #ifdef SKIP_ASM
@@ -4639,6 +4709,8 @@ extern "C" float func_002D1C70()
     return *(float*)(D_004A28A8 + 0x14);
 }
 #endif
+
+INCLUDE_ASM("util/menu", func_002D1C80);
 
 //100%
 INCLUDE_ASM("util/menu", func_002D1C98);

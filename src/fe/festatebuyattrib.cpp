@@ -1314,6 +1314,8 @@ extern "C" void func_001F6840(void* self, char* name, const char* str)
 
 INCLUDE_ASM("fe/festatebuyattrib", cFEStateCareerStats_setupRidersBest);
 
+INCLUDE_ASM("fe/festatebuyattrib", func_001F6EE0);
+
 //100%
 INCLUDE_ASM("fe/festatebuyattrib", func_001F6F30);
 #ifdef SKIP_ASM

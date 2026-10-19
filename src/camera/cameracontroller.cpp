@@ -244,6 +244,8 @@ extern "C" void func_0015CF80(void* self, int msg)
 }
 #endif
 
+INCLUDE_ASM("camera/cameracontroller", func_0015CFD0);
+
 //100%
 INCLUDE_ASM("camera/cameracontroller", func_0015CFE8);
 #ifdef SKIP_ASM

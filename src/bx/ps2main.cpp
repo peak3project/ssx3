@@ -366,6 +366,8 @@ extern "C" sQuat_B7A8* func_0031B7A8(sQuat_B7A8* qu, sMtx_B7A8* mat)
 }
 #endif
 
+INCLUDE_ASM("bx/ps2main", func_0031B9B0);
+
 INCLUDE_ASM("bx/ps2main", func_0031BB30);
 
 //100%

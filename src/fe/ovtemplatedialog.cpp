@@ -169,6 +169,8 @@ extern "C" void func_0020A8F8(int mode)
 
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020AB50);
 
+INCLUDE_ASM("fe/ovtemplatedialog", func_0020BAB8);
+
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CA10);
 #ifdef SKIP_ASM
@@ -228,6 +230,8 @@ extern "C" void func_0020CA10(void)
     D_004A2468 = 0;
 }
 #endif
+
+INCLUDE_ASM("fe/ovtemplatedialog", func_0020CB58);
 
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CBA0);

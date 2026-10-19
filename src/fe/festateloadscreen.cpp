@@ -384,6 +384,8 @@ extern "C" void func_00233AA0(void* self)
 }
 #endif
 
+INCLUDE_ASM("fe/festateloadscreen", func_00233AD0);
+
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233AF0);
 #ifdef SKIP_ASM

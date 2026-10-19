@@ -953,6 +953,8 @@ extern "C" void func_002EBC40(char* self, float t)
 }
 #endif
 
+INCLUDE_ASM("visualfx/boardtrailfx", func_002EBD88);
+
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EBE20);
 #ifdef SKIP_ASM

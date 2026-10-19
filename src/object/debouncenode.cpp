@@ -1347,6 +1347,8 @@ extern "C" void func_00345248(sDebTrack5248* self, float t, sDebVec4* pos, sDebV
 }
 #endif
 
+INCLUDE_ASM("object/debouncenode", func_00345320);
+
 //100%
 INCLUDE_ASM("object/debouncenode", func_00345430);
 #ifdef SKIP_ASM

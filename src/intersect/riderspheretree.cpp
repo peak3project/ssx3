@@ -29,6 +29,8 @@ cRiderSphereTree* cRiderSphereTree_cRiderSphereTree(cRiderSphereTree* self)
 }
 #endif
 
+INCLUDE_ASM("intersect/riderspheretree", func_00329938);
+
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_00329970);
 #ifdef SKIP_ASM
@@ -41,6 +43,8 @@ extern "C" void func_00329970(void* self, int flags)
     }
 }
 #endif
+
+INCLUDE_ASM("intersect/riderspheretree", func_00329998);
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_003299C8);
@@ -185,6 +189,8 @@ extern "C" void func_00329B40(sSphereTreeNode* s, sSphereVec4* v)
 #endif
 
 INCLUDE_ASM("intersect/riderspheretree", func_00329B90);
+
+INCLUDE_ASM("intersect/riderspheretree", func_00329CE0);
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_00329DC8);
@@ -338,6 +344,8 @@ extern "C" int func_0032B2B8(void* tree, void* a, void* b, sSphereVec4* outPos, 
     return best != -1.0f;
 }
 #endif
+
+INCLUDE_ASM("intersect/riderspheretree", func_0032B468);
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032B620);
@@ -655,6 +663,8 @@ extern "C" float func_0032C5A8(void* self)
 }
 #endif
 
+INCLUDE_ASM("intersect/riderspheretree", func_0032C5E0);
+
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C630);
 #ifdef SKIP_ASM
@@ -710,6 +720,8 @@ extern "C" int func_0032C928(void* self, void* a1, void* a2, void* a3, void* a4)
     return func_0032D028(self, a1, a2, (char*)self + 0x80, 0, 0, a3, a4);
 }
 #endif
+
+INCLUDE_ASM("intersect/riderspheretree", func_0032C9B8);
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032CA78);
@@ -1081,6 +1093,8 @@ extern "C" int func_0032D028(void* selfp, void* a1, void* a2, void* pos, int dep
     return 1;
 }
 #endif
+
+INCLUDE_ASM("intersect/riderspheretree", func_0032D208);
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032D440);

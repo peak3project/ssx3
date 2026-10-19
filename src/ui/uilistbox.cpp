@@ -151,6 +151,8 @@ extern "C" void func_0039A7A8(void* self, int a1)
 }
 #endif
 
+INCLUDE_ASM("ui/uilistbox", func_0039A7C8);
+
 //100%
 INCLUDE_ASM("ui/uilistbox", cUIListBox_setEntryByAsciiString);
 #ifdef SKIP_ASM

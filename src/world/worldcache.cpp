@@ -813,6 +813,8 @@ extern "C" void func_003A84F8(void* self, int a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("world/worldcache", func_003A8510);
+
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8528);
 #ifdef SKIP_ASM
@@ -996,6 +998,8 @@ extern "C" void cWorldCache_updatePages(void* p)
 #endif
 
 INCLUDE_ASM("world/worldcache", func_003A88A8);
+
+INCLUDE_ASM("world/worldcache", func_003A89C8);
 
 //100%
 INCLUDE_ASM("world/worldcache", cWorldCache_addBxStreamDataTest);

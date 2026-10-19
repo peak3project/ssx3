@@ -278,6 +278,8 @@ extern "C" void func_00358380(sMultiPart_58380* self, void* stream)
 }
 #endif
 
+INCLUDE_ASM("object/multiparticle", func_00358468);
+
 //100%
 INCLUDE_ASM("object/multiparticle", func_003584B8);
 #ifdef SKIP_ASM

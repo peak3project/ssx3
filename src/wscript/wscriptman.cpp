@@ -39,6 +39,10 @@ extern "C" void* cWScriptMan_addProcess1(void* self, int a1, int a2, int a3, int
 }
 #endif
 
+INCLUDE_ASM("wscript/wscriptman", func_00309618);
+
+INCLUDE_ASM("wscript/wscriptman", func_003096F0);
+
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_00309750);
 #ifdef SKIP_ASM
@@ -765,6 +769,8 @@ extern "C" void func_0030A610(void* self, int id)
 }
 #endif
 
+INCLUDE_ASM("wscript/wscriptman", func_0030A660);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("wscript/wscriptman", func_0030A688);
 #ifdef SKIP_ASM
@@ -1275,6 +1281,8 @@ extern "C" void* func_0030B320(void* self, int id)
 }
 #endif
 
+INCLUDE_ASM("wscript/wscriptman", func_0030B350);
+
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B388);
 #ifdef SKIP_ASM
@@ -1304,6 +1312,8 @@ extern "C" func_0030B388_cObj* func_0030B388(void* self, unsigned int id)
 }
 #endif
 
+INCLUDE_ASM("wscript/wscriptman", func_0030B3F0);
+
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B428);
 #ifdef SKIP_ASM
@@ -1318,6 +1328,8 @@ extern "C" int func_0030B428(cWScriptListHead* self, cWScriptListNode* node)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("wscript/wscriptman", func_0030B458);
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B4B8__FPv);
@@ -1411,6 +1423,10 @@ extern "C" void func_0030B540(void* self)
     *(int*)((char*)self + 0x2B0) = *(int*)((char*)self + 0x2A0);
 }
 #endif
+
+INCLUDE_ASM("wscript/wscriptman", func_0030B590);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030B608);
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B658);
@@ -2165,7 +2181,91 @@ extern "C" cWScriptQueueEntry* func_0030C870(cWScriptQueue* self)
 }
 #endif
 
+INCLUDE_ASM("wscript/wscriptman", func_0030C898);
+
 INCLUDE_ASM("wscript/wscriptman", func_0030C8D8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D238);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D248);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D250);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D258);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D260);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D268);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D270);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D278);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D280);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D288);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D290);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D298);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2A0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2A8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2B0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2B8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2C0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2C8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2D0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2D8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2E0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2E8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2F0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D2F8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D300);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D308);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D318);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D320);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D328);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D330);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D348);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D368);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D388);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D390);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D398);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D3A0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D3A8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D3B0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D3B8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D3C8);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D3D0);
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3D8__FPv);
@@ -2175,6 +2275,10 @@ int func_0030D3D8(void* self)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D3E0);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D400);
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D420);
@@ -2192,6 +2296,14 @@ extern "C" void func_0030D420(void* self, int flags)
 }
 #endif
 
+INCLUDE_ASM("wscript/wscriptman", func_0030D450);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D460);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D468);
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D478);
+
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D480__FPv);
 #ifdef SKIP_ASM
@@ -2200,6 +2312,8 @@ int func_0030D480(void* self)
     return 0x1;
 }
 #endif
+
+INCLUDE_ASM("wscript/wscriptman", func_0030D488);
 
 extern "C" void* func_0030C8D8(int, int);
 

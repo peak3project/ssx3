@@ -2,6 +2,12 @@
 
 INCLUDE_ASM("worldpainter/quadtree", cQuadTree_getFreeNode);
 
+INCLUDE_ASM("worldpainter/quadtree", func_002C18E8);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C1950);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C1A00);
+
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C1CD8);
 #ifdef SKIP_ASM
@@ -122,6 +128,8 @@ extern "C" void func_002C2088(void* self, func_002C2088_sOut* out, int* count, i
     }
 }
 #endif
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2178);
 
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2210);
@@ -327,6 +335,10 @@ extern "C" unsigned short* func_002C25B8(unsigned short* dst, unsigned short* sr
 }
 #endif
 
+INCLUDE_ASM("worldpainter/quadtree", func_002C25F8);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2640);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/quadtree", func_002C2688);
 #ifdef SKIP_ASM
@@ -421,6 +433,44 @@ extern "C" void func_002C2868(char* s)
     }
 }
 #endif
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C28A0);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C28C0);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C28F8);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2918);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2940);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C29D0);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2AA8);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2B08);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2B28);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2B68);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2B98);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2BB8);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2BD8);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2D30);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2D68);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2D88);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2DB0);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2E40);
+
+INCLUDE_ASM("worldpainter/quadtree", func_002C2E78);
 
 INCLUDE_ASM("worldpainter/quadtree", func_002C2F18);
 

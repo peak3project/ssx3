@@ -781,6 +781,10 @@ extern "C" int func_0012A180(sAiObj128A48* self)
 }
 #endif
 
+INCLUDE_ASM("ai/ai", func_0012A1F0);
+
+INCLUDE_ASM("ai/ai", func_0012A240);
+
 //100%
 INCLUDE_ASM("ai/ai", func_0012A250);
 #ifdef SKIP_ASM
@@ -809,6 +813,8 @@ extern "C" int func_0012A250(sAiObj12A250* self)
     return 1;
 }
 #endif
+
+INCLUDE_ASM("ai/ai", func_0012A2B0);
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012A340);
@@ -886,6 +892,18 @@ extern "C" void func_0012A490(void)
     }
 }
 #endif
+
+INCLUDE_ASM("ai/ai", func_0012A4D0);
+
+INCLUDE_ASM("ai/ai", func_0012A4F0);
+
+INCLUDE_ASM("ai/ai", func_0012A560);
+
+INCLUDE_ASM("ai/ai", func_0012A768);
+
+INCLUDE_ASM("ai/ai", func_0012A998);
+
+INCLUDE_ASM("ai/ai", func_0012AA78);
 
 //100%
 INCLUDE_ASM("ai/ai", func_0012AB20);
@@ -1009,6 +1027,10 @@ extern "C" int func_0012ACF8(sAiObj12ACF8* self)
 }
 #endif
 
+INCLUDE_ASM("ai/ai", func_0012AD70);
+
+INCLUDE_ASM("ai/ai", func_0012ADC0);
+
 //100%
 INCLUDE_ASM("ai/ai", func_0012AE38);
 #ifdef SKIP_ASM
@@ -1123,6 +1145,8 @@ extern "C" void func_0012B030(void* self)
     *(int*)((char*)self + 0x10) = 0;
 }
 #endif
+
+INCLUDE_ASM("ai/ai", func_0012B060);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/ai", func_0012B090);

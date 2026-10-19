@@ -709,6 +709,8 @@ extern "C" void func_002EE368(void)
 }
 #endif
 
+INCLUDE_ASM("visualfx/lensfx", func_002EE390);
+
 //100%
 INCLUDE_ASM("visualfx/lensfx", func_002EE3B8);
 #ifdef SKIP_ASM

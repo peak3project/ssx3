@@ -37,6 +37,44 @@ void cExecutionMan_postpause()
 }
 #endif
 
+INCLUDE_ASM("bx/execman", func_00320960);
+
+INCLUDE_ASM("bx/execman", func_00320970);
+
+INCLUDE_ASM("bx/execman", func_00320978);
+
+INCLUDE_ASM("bx/execman", func_00320980);
+
+INCLUDE_ASM("bx/execman", func_00320988);
+
+INCLUDE_ASM("bx/execman", func_00320990);
+
+INCLUDE_ASM("bx/execman", func_00320998);
+
+INCLUDE_ASM("bx/execman", func_003209A0);
+
+INCLUDE_ASM("bx/execman", func_003209A8);
+
+INCLUDE_ASM("bx/execman", func_003209B0);
+
+INCLUDE_ASM("bx/execman", func_003209B8);
+
+INCLUDE_ASM("bx/execman", func_003209C0);
+
+INCLUDE_ASM("bx/execman", func_003209F0);
+
+INCLUDE_ASM("bx/execman", func_00320A20);
+
+INCLUDE_ASM("bx/execman", func_00320A60);
+
+INCLUDE_ASM("bx/execman", func_00320A90);
+
+INCLUDE_ASM("bx/execman", func_00320AC0);
+
+INCLUDE_ASM("bx/execman", func_00320AC8);
+
+INCLUDE_ASM("bx/execman", func_00320AD0);
+
 //100%
 INCLUDE_ASM("bx/execman", func_00320AD8);
 #ifdef SKIP_ASM
@@ -119,6 +157,8 @@ extern "C" void* func_00320BF0(void* self, int a1)
 }
 #endif
 
+INCLUDE_ASM("bx/execman", func_00320C18);
+
 extern "C" void* func_00321108(int, int, int);
 
 //100%
@@ -129,4 +169,6 @@ void* func_00320C48(void* self, int a1)
     return func_00321108(*(int*)((char*)self + 0x4), *(int*)self, a1);
 }
 #endif
+
+INCLUDE_ASM("bx/execman", func_00320C70);
 

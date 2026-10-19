@@ -169,6 +169,8 @@ extern "C" void func_0038B338(void* self, void* a, void* b, void* c, void* d)
 
 INCLUDE_ASM("render/bezierman", func_0038B370);
 
+INCLUDE_ASM("render/bezierman", func_0038C590);
+
 INCLUDE_ASM("render/bezierman", func_0038C788);
 
 //100%
@@ -381,6 +383,8 @@ void func_0038D660(void* self)
 {
 }
 #endif
+
+INCLUDE_ASM("render/bezierman", func_0038D668);
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038D690);

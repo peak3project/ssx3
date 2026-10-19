@@ -295,6 +295,8 @@ extern "C" int func_00352E50(tModifierBlock* self)
 }
 #endif
 
+INCLUDE_ASM("object/modifierblock", func_00352E98);
+
 //100%
 INCLUDE_ASM("object/modifierblock", func_00352ED0);
 #ifdef SKIP_ASM

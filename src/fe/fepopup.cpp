@@ -241,6 +241,8 @@ extern "C" void func_001C5DD8(void* self)
 }
 #endif
 
+INCLUDE_ASM("fe/fepopup", func_001C5E58);
+
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C5F20);
 #ifdef SKIP_ASM
@@ -1619,6 +1621,8 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
 
 INCLUDE_ASM("fe/fepopup", func_001C8A38);
 
+INCLUDE_ASM("fe/fepopup", func_001C8EF0);
+
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C9038);
 #ifdef SKIP_ASM
@@ -2032,6 +2036,8 @@ extern "C" void cScreenPopup_createConfirmationPopup(void* self, int idx)
 #endif
 
 INCLUDE_ASM("fe/fepopup", func_001C9CD0);
+
+INCLUDE_ASM("fe/fepopup", func_001CA0F0);
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA150);

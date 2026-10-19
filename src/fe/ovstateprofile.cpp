@@ -912,3 +912,11 @@ extern "C" void func_00212508(void* self)
 }
 #endif
 
+INCLUDE_ASM("fe/ovstateprofile", func_00212680);
+
+INCLUDE_ASM("fe/ovstateprofile", func_002126C0);
+
+INCLUDE_ASM("fe/ovstateprofile", func_00212728);
+
+INCLUDE_ASM("fe/ovstateprofile", func_00212788);
+

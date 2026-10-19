@@ -995,6 +995,8 @@ void* func_0024D6B0(void* self)
 }
 #endif
 
+INCLUDE_ASM("main/debugmenu", func_0024D6D0);
+
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024D710);
 #ifdef SKIP_ASM
@@ -2037,6 +2039,8 @@ void* func_00250A80(void* self)
 }
 #endif
 
+INCLUDE_ASM("main/debugmenu", func_00250AA0);
+
 //100%
 INCLUDE_ASM("main/debugmenu", func_00250AE0);
 #ifdef SKIP_ASM
@@ -2153,4 +2157,6 @@ extern "C" void* MEM_initblock(void* self, int p1, void* p2, int p3, short p4, i
     return (char*)p2 + 0x10;
 }
 #endif
+
+INCLUDE_ASM("main/debugmenu", func_002516F0);
 

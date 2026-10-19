@@ -19,9 +19,19 @@ char* cDirtysock_tag__TagFieldSetupAppend(char* buf, char* dst, char* name)
 
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag__TagFieldSetupTerm);
 
+INCLUDE_ASM("dirtysock/tags", func_003EB578);
+
+INCLUDE_ASM("dirtysock/tags", func_003EB588);
+
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldFind);
 
+INCLUDE_ASM("dirtysock/tags", func_003EB840);
+
+INCLUDE_ASM("dirtysock/tags", func_003EB8B8);
+
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldDelete);
+
+INCLUDE_ASM("dirtysock/tags", func_003EB9E8);
 
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldDupl);
@@ -39,6 +49,12 @@ extern "C" int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src)
     return len - left;
 }
 #endif
+
+INCLUDE_ASM("dirtysock/tags", func_003EBBA8);
+
+INCLUDE_ASM("dirtysock/tags", func_003EBCB0);
+
+INCLUDE_ASM("dirtysock/tags", func_003EBD70);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldSetNumber);
@@ -219,6 +235,12 @@ extern "C" int cDirtysock_tag_TagFieldSetEpoch(char* record, int len, char* name
 }
 #endif
 
+INCLUDE_ASM("dirtysock/tags", func_003EC8B8);
+
+INCLUDE_ASM("dirtysock/tags", func_003EC9A0);
+
+INCLUDE_ASM("dirtysock/tags", func_003ECA88);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", func_003ECB00);
 #ifdef SKIP_ASM
@@ -250,6 +272,10 @@ extern "C" int func_003ECB00(char* record, int len, unsigned char* data)
     return count;
 }
 #endif
+
+INCLUDE_ASM("dirtysock/tags", func_003ECBD8);
+
+INCLUDE_ASM("dirtysock/tags", func_003ECE38);
 
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetNumber);
@@ -332,6 +358,8 @@ extern "C" int cDirtysock_tag_TagFieldGetFourCC(const char* data, int defval)
     return token;
 }
 #endif
+
+INCLUDE_ASM("dirtysock/tags", func_003ED0F8);
 
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetString);
@@ -698,4 +726,6 @@ extern "C" int func_003EDD70(char* data, int* year, int* month, int* day, int* h
     return 0;
 }
 #endif
+
+INCLUDE_ASM("dirtysock/tags", func_003EDE80);
 

@@ -184,6 +184,8 @@ extern "C" sPathEntry* func_0026B5E0(sPathEntryList* list, int type, int id)
 }
 #endif
 
+INCLUDE_ASM("path/pathsys", func_0026B648);
+
 //100%
 INCLUDE_ASM("path/pathsys", func_0026B680);
 #ifdef SKIP_ASM
@@ -381,7 +383,15 @@ extern "C" void func_0026BA88(void* dst, void* src)
 }
 #endif
 
+INCLUDE_ASM("path/pathsys", func_0026BAA8);
+
 INCLUDE_ASM("path/pathsys", func_0026BAE8);
+
+INCLUDE_ASM("path/pathsys", func_0026C3D0);
+
+INCLUDE_ASM("path/pathsys", func_0026C400);
+
+INCLUDE_ASM("path/pathsys", func_0026C408);
 
 //100%
 INCLUDE_ASM("path/pathsys", func_0026C410__FPv);
@@ -398,6 +408,12 @@ void func_0026C418(void* self)
 {
 }
 #endif
+
+INCLUDE_ASM("path/pathsys", func_0026C420);
+
+INCLUDE_ASM("path/pathsys", func_0026C428);
+
+INCLUDE_ASM("path/pathsys", func_0026C430);
 
 extern "C" void* func_0026BAE8(int, int);
 

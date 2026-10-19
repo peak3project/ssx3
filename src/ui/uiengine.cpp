@@ -482,6 +482,8 @@ extern "C" s398380Item* func_00398380(void* self, int id)
 }
 #endif
 
+INCLUDE_ASM("ui/uiengine", func_003983B8);
+
 //100%
 INCLUDE_ASM("ui/uiengine", func_003983F0);
 #ifdef SKIP_ASM
@@ -530,6 +532,8 @@ extern "C" void func_00398438(s3983F0* self)
 #endif
 
 INCLUDE_ASM("ui/uiengine", func_003984B0);
+
+INCLUDE_ASM("ui/uiengine", func_003984E8);
 
 //100%
 INCLUDE_ASM("ui/uiengine", cUIFontInterface_loadFonts);

@@ -748,6 +748,8 @@ extern "C" void func_0034C898(sFlagSet_C898* self, void* arg)
 }
 #endif
 
+INCLUDE_ASM("object/flagset", func_0034C8E8);
+
 //100%
 INCLUDE_ASM("object/flagset", func_0034CAB8);
 #ifdef SKIP_ASM

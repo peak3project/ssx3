@@ -218,6 +218,8 @@ extern "C" void cGameModeMan_initGameMode(sGameModeMan* self, unsigned int type)
 }
 #endif
 
+INCLUDE_ASM("main/gamemode", func_002382B8);
+
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_restartHeat);
 #ifdef SKIP_ASM
@@ -364,6 +366,10 @@ extern "C" void func_00238590(void* self, int a, int b)
     vt[9].fn((char*)obj + vt[9].delta, a, b);
 }
 #endif
+
+INCLUDE_ASM("main/gamemode", func_002385D0);
+
+INCLUDE_ASM("main/gamemode", func_002388A0);
 
 //100%
 INCLUDE_ASM("main/gamemode", func_00238B70);

@@ -168,6 +168,10 @@ extern "C" void* func_00144BF0()
 }
 #endif
 
+INCLUDE_ASM("be/beintnewrace", func_00144C10);
+
+INCLUDE_ASM("be/beintnewrace", func_00144C30);
+
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00144C48);
 #ifdef SKIP_ASM
@@ -451,6 +455,8 @@ extern "C" void* func_00145340()
 }
 #endif
 
+INCLUDE_ASM("be/beintnewrace", func_00145360);
+
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00145378);
 #ifdef SKIP_ASM
@@ -674,6 +680,8 @@ extern "C" int func_00145750(void* self)
 }
 #endif
 
+INCLUDE_ASM("be/beintnewrace", func_00145818);
+
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00145870);
 #ifdef SKIP_ASM
@@ -707,4 +715,6 @@ extern "C" int func_00145870(void* self, int idx)
     return 12;
 }
 #endif
+
+INCLUDE_ASM("be/beintnewrace", func_001458C8);
 

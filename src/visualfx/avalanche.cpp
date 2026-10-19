@@ -2,6 +2,8 @@
 
 INCLUDE_ASM("visualfx/avalanche", tActiveAvalancheNode_getFrameData);
 
+INCLUDE_ASM("visualfx/avalanche", func_002D6290);
+
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D6378);
 #ifdef SKIP_ASM
@@ -855,6 +857,8 @@ extern "C" void func_002D9660(void* self)
     }
 }
 #endif
+
+INCLUDE_ASM("visualfx/avalanche", func_002D96B0);
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/avalanche", func_002D96E0);

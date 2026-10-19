@@ -56,6 +56,8 @@ extern "C" sInstSlot* func_003512C0(sInstPool* self, unsigned int handle)
 }
 #endif
 
+INCLUDE_ASM("object/instanceman", func_00351330);
+
 //100%
 INCLUDE_ASM("object/instanceman", func_00351398);
 #ifdef SKIP_ASM
@@ -83,6 +85,12 @@ extern "C" void func_003513D0(void* self)
     *(int*)((char*)self + 0x40) = 0;
 }
 #endif
+
+INCLUDE_ASM("object/instanceman", func_00351410);
+
+INCLUDE_ASM("object/instanceman", func_00351448);
+
+INCLUDE_ASM("object/instanceman", func_00351480);
 
 //100%
 INCLUDE_ASM("object/instanceman", func_00351508);
@@ -329,6 +337,8 @@ extern "C" void func_00351948(void* self, sImMat44* m)
     vu0CopyMatIM(dst, &t2);
 }
 #endif
+
+INCLUDE_ASM("object/instanceman", func_00351A10);
 
 extern "C" void* func_00351538(void* self);
 

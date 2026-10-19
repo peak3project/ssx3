@@ -272,6 +272,10 @@ extern "C" void func_0026C898(void* p)
 }
 #endif
 
+INCLUDE_ASM("replay/playbackman", func_0026C998);
+
+INCLUDE_ASM("replay/playbackman", func_0026C9F0);
+
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026CA90);
 #ifdef SKIP_ASM
@@ -291,6 +295,8 @@ extern "C" void func_0026CA90(void* self)
     }
 }
 #endif
+
+INCLUDE_ASM("replay/playbackman", func_0026CAF8);
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026CBB0__FPv);
@@ -396,6 +402,8 @@ extern "C" void func_0026CD20(void* self)
 }
 #endif
 
+INCLUDE_ASM("replay/playbackman", func_0026CD98);
+
 extern "C" void* func_0026CC18(void*);
 
 //100% - objdiff report; single-function view differs only in a relocation name
@@ -431,6 +439,10 @@ extern "C" void func_0026CDF8(void* self)
 #endif
 
 INCLUDE_ASM("replay/playbackman", func_0026CE50);
+
+INCLUDE_ASM("replay/playbackman", func_0026CFE8);
+
+INCLUDE_ASM("replay/playbackman", func_0026D020);
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026D0A0);
@@ -596,6 +608,8 @@ extern "C" int func_0026D2B0(sPbStream_D2B0* self, sPbChunk_D2B0* chunk)
     return 1;
 }
 #endif
+
+INCLUDE_ASM("replay/playbackman", func_0026D390);
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026D420);

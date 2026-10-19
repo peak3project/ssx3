@@ -738,6 +738,8 @@ int func_0011FE98(void* self)
 }
 #endif
 
+INCLUDE_ASM("ai/rider", func_0011FEA8);
+
 extern "C" void* func_00111538(int);
 
 //100%
@@ -758,6 +760,10 @@ int func_0011FEE8(void* self)
 }
 #endif
 
+INCLUDE_ASM("ai/rider", func_0011FEF8);
+
+INCLUDE_ASM("ai/rider", func_0011FF18);
+
 //100%
 INCLUDE_ASM("ai/rider", func_0011FF48);
 #ifdef SKIP_ASM
@@ -776,6 +782,8 @@ extern "C" void* func_0011FF48(void* dst, void* self)
     return dst;
 }
 #endif
+
+INCLUDE_ASM("ai/rider", func_0011FF70);
 
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv really takes (be, kind); bind the 2-arg form to that symbol.
@@ -968,6 +976,8 @@ extern "C" void func_00120E88(void* self)
     func_002ECF78(*(void**)((char*)self + 0x890));
 }
 #endif
+
+INCLUDE_ASM("ai/rider", func_00120EB8);
 
 //100%
 INCLUDE_ASM("ai/rider", func_00120ED8);
@@ -1411,6 +1421,8 @@ extern "C" void func_00121F30(char* self)
 }
 #endif
 
+INCLUDE_ASM("ai/rider", func_00122048);
+
 //100%
 INCLUDE_ASM("ai/rider", func_00122088);
 #ifdef SKIP_ASM
@@ -1660,6 +1672,8 @@ extern "C" void func_001225F0(void* self)
 }
 #endif
 
+INCLUDE_ASM("ai/rider", func_00122618);
+
 extern "C" void* func_002F2088(int);
 
 //100%
@@ -1682,6 +1696,8 @@ extern "C" void func_00122658(void* self)
     func_003E6448((char*)self + 0x794, 0, 0x20);
 }
 #endif
+
+INCLUDE_ASM("ai/rider", func_00122680);
 
 //100%
 INCLUDE_ASM("ai/rider", func_00122898);
@@ -1906,6 +1922,8 @@ extern "C" float* func_00122C28(float* out, void* rider)
     return out;
 }
 #endif
+
+INCLUDE_ASM("ai/rider", func_00122C88);
 
 //100%
 INCLUDE_ASM("ai/rider", func_00122C98);

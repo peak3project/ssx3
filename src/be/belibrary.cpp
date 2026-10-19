@@ -215,6 +215,8 @@ extern "C" int func_0014AC50(int a0)
 }
 #endif
 
+INCLUDE_ASM("be/belibrary", func_0014AC70);
+
 //100%
 INCLUDE_ASM("be/belibrary", func_0014ACB0);
 #ifdef SKIP_ASM
@@ -227,6 +229,8 @@ extern "C" void func_0014ACB0(void* self, int a1, int a2, void* src)
     func_003E6574(p + 0x290, src, 0x834);
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014ACF8);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014AD28);
@@ -248,6 +252,14 @@ extern "C" void* func_0014AD50(void* self, int rider)
     return func_0014AD28(self, profile, func_0014AC30(rider));
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014ADA8);
+
+INCLUDE_ASM("be/belibrary", func_0014ADD8);
+
+INCLUDE_ASM("be/belibrary", func_0014AE28);
+
+INCLUDE_ASM("be/belibrary", func_0014AE60);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014AEA8);
@@ -357,6 +369,20 @@ extern "C" int func_0014AFB0(void* self, int a, int b, int idx, int on)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014B0F0);
+
+INCLUDE_ASM("be/belibrary", func_0014B170);
+
+INCLUDE_ASM("be/belibrary", func_0014B1B0);
+
+INCLUDE_ASM("be/belibrary", func_0014B218);
+
+INCLUDE_ASM("be/belibrary", func_0014B290);
+
+INCLUDE_ASM("be/belibrary", func_0014B2F8);
+
+INCLUDE_ASM("be/belibrary", func_0014B378);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014B478);
@@ -497,6 +523,10 @@ extern "C" char* func_0014B700(void* self, unsigned int x)
 }
 #endif
 
+INCLUDE_ASM("be/belibrary", func_0014B7A8);
+
+INCLUDE_ASM("be/belibrary", func_0014B920);
+
 //100%
 INCLUDE_ASM("be/belibrary", func_0014B988);
 #ifdef SKIP_ASM
@@ -549,6 +579,10 @@ extern "C" int func_0014B988(void* self, int a, int b, sBEEntry38_14B988* e0, ch
 }
 #endif
 
+INCLUDE_ASM("be/belibrary", func_0014BBA0);
+
+INCLUDE_ASM("be/belibrary", func_0014BC18);
+
 extern void* D_004A6750[];
 extern "C" void* func_0014C6A0(void*);
 
@@ -580,6 +614,12 @@ void* func_0014BDB8(void* self)
     return (void*)D_004A6750;
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014BDC8);
+
+INCLUDE_ASM("be/belibrary", func_0014BE00);
+
+INCLUDE_ASM("be/belibrary", func_0014BE38);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014BE70);
@@ -658,6 +698,8 @@ extern "C" void func_0014BE70(void* vself)
     }
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014C068);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014C2B0);
@@ -807,6 +849,12 @@ extern "C" void func_0014C488(sBEKeyTableG2* self)
     }
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014C548);
+
+INCLUDE_ASM("be/belibrary", func_0014C590);
+
+INCLUDE_ASM("be/belibrary", func_0014C5D8);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014C620);
@@ -989,6 +1037,8 @@ extern "C" void func_0014D240(void* self)
     p->buf2 = 0;
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014D368);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014D448);
@@ -1216,6 +1266,16 @@ extern "C" void* func_0014D9D0(sBELibTables* self, int i)
     return self->field_0x4 + self->index0[i] * 0x38;
 }
 #endif
+
+INCLUDE_ASM("be/belibrary", func_0014DA08);
+
+INCLUDE_ASM("be/belibrary", func_0014DA18);
+
+INCLUDE_ASM("be/belibrary", func_0014DA28);
+
+INCLUDE_ASM("be/belibrary", func_0014DAA0);
+
+INCLUDE_ASM("be/belibrary", func_0014DAC0);
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014DB40);

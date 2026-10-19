@@ -979,6 +979,8 @@ extern "C" void func_00209E78(void* p)
 }
 #endif
 
+INCLUDE_ASM("fe/ovstatemap", func_00209FD0);
+
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A088);
 #ifdef SKIP_ASM

@@ -977,3 +977,5 @@ extern "C" void func_001A2F70(void* self, int sel)
 }
 #endif
 
+INCLUDE_ASM("fe/fereal", func_001A3050);
+

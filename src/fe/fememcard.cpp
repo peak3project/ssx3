@@ -848,3 +848,5 @@ int func_00187C10(void* self)
 }
 #endif
 
+INCLUDE_ASM("fe/fememcard", func_00187C18);
+

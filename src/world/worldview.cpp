@@ -143,6 +143,10 @@ extern "C" int func_003A99D8(func_003A99D8_sView* self, unsigned int i)
 }
 #endif
 
+INCLUDE_ASM("world/worldview", func_003A9A48);
+
+INCLUDE_ASM("world/worldview", func_003A9A90);
+
 //100%
 INCLUDE_ASM("world/worldview", func_003A9A98);
 #ifdef SKIP_ASM
@@ -160,6 +164,10 @@ int func_003A9AB0(void* self)
     return *(int*)((char*)*(void**)((char*)self + 0x4) + 0x10);
 }
 #endif
+
+INCLUDE_ASM("world/worldview", func_003A9AC0);
+
+INCLUDE_ASM("world/worldview", func_003A9BB8);
 
 //100%
 INCLUDE_ASM("world/worldview", func_003A9D60);
@@ -337,6 +345,8 @@ extern "C" void func_003AA028(void* self_, void* sec_, int cam, int loaded)
     }
 }
 #endif
+
+INCLUDE_ASM("world/worldview", func_003AA2D8);
 
 //100%
 INCLUDE_ASM("world/worldview", func_003AA2F0);
@@ -938,6 +948,8 @@ extern "C" int func_003AACA8(void* self, void* a1)
 }
 #endif
 
+INCLUDE_ASM("world/worldview", func_003AACE0);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("world/worldview", func_003AAD98);
 #ifdef SKIP_ASM
@@ -1228,6 +1240,8 @@ extern "C" int func_003AC358(void* self, void* a1)
     return 1;
 }
 #endif
+
+INCLUDE_ASM("world/worldview", func_003AC438);
 
 INCLUDE_ASM("world/worldview", func_003AC508);
 

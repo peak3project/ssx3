@@ -102,6 +102,22 @@ extern "C" char* func_00156B28(void* self, int a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("be/beintreward", func_00156B70);
+
+INCLUDE_ASM("be/beintreward", func_00156B90);
+
+INCLUDE_ASM("be/beintreward", func_00156BB0);
+
+INCLUDE_ASM("be/beintreward", func_00156BD0);
+
+INCLUDE_ASM("be/beintreward", func_00156BF0);
+
+INCLUDE_ASM("be/beintreward", func_00156C10);
+
+INCLUDE_ASM("be/beintreward", func_00156C30);
+
+INCLUDE_ASM("be/beintreward", func_00156C50);
+
 //100%
 INCLUDE_ASM("be/beintreward", func_00156C70);
 #ifdef SKIP_ASM
@@ -878,6 +894,8 @@ extern "C" int func_00157E60(void* self, int a1, int a2, int bit)
 }
 #endif
 
+INCLUDE_ASM("be/beintreward", func_00157EA0);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintreward", func_00157EE0);
 #ifdef SKIP_ASM
@@ -1209,6 +1227,8 @@ extern "C" long func_00158750(void* self, int a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("be/beintreward", func_00158778);
+
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintreward", func_001587B8);
 #ifdef SKIP_ASM
@@ -1292,6 +1312,8 @@ int func_001588B0(void* self, int a1)
     return *(int*)((char*)(void*)D_0045B048 + a1 * 4);
 }
 #endif
+
+INCLUDE_ASM("be/beintreward", func_001588C8);
 
 void* cBECharProfileDB_getScoreStats(void* self, int a, int b);
 extern int D_004A6CA8[];
@@ -1385,6 +1407,10 @@ extern "C" int cBERewardInterface_getEarningsMedal(void* self, int a, int b, int
     return -1;
 }
 #endif
+
+INCLUDE_ASM("be/beintreward", func_00158B70);
+
+INCLUDE_ASM("be/beintreward", func_00158BB8);
 
 //100%
 INCLUDE_ASM("be/beintreward", func_00158BE0);
@@ -1494,6 +1520,8 @@ void* func_00158F30(void* self)
     return func_0015A6F0((void*)D_004C3EF0);
 }
 #endif
+
+INCLUDE_ASM("be/beintreward", func_00158F50);
 
 //100%
 INCLUDE_ASM("be/beintreward", func_00158F60);
@@ -1730,6 +1758,8 @@ extern "C" void func_00159B08(void* self, int rider, int k)
 }
 #endif
 
+INCLUDE_ASM("be/beintreward", func_00159C68);
+
 INCLUDE_ASM("be/beintreward", func_00159CD0);
 
 //100%
@@ -1866,6 +1896,8 @@ extern "C" void func_0015A510(void* self)
     *(short*)((char*)self + 0x4) = -1;
 }
 #endif
+
+INCLUDE_ASM("be/beintreward", func_0015A548);
 
 //100%
 INCLUDE_ASM("be/beintreward", func_0015A5B0);

@@ -471,6 +471,10 @@ extern "C" void func_0019F3E8(void* self, sQuadRM* src)
 }
 #endif
 
+INCLUDE_ASM("fe/feridermanager", func_0019F418);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F488);
+
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F548);
 #ifdef SKIP_ASM
@@ -483,6 +487,22 @@ extern "C" void func_0019F548(void* self, sQuadRM* src)
     func_0019F2D0(self);
 }
 #endif
+
+INCLUDE_ASM("fe/feridermanager", func_0019F578);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F5E8);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F6A8);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F6C8);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F6F0);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F718);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F740);
+
+INCLUDE_ASM("fe/feridermanager", func_0019F760);
 
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F780);
@@ -1051,6 +1071,8 @@ extern "C" void* func_001A0548(void* self, int a1)
     return (char*)self + a1 * 0xce0;
 }
 #endif
+
+INCLUDE_ASM("fe/feridermanager", func_001A0558);
 
 //100%
 INCLUDE_ASM("fe/feridermanager", func_001A0570);

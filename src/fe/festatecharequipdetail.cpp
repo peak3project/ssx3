@@ -629,6 +629,8 @@ extern "C" int func_0019A098(void* self, const char* name)
 }
 #endif
 
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019A1E0);
+
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A238);
 #ifdef SKIP_ASM
@@ -874,6 +876,8 @@ extern "C" void func_0019A638(void* self)
     }
 }
 #endif
+
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019A758);
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A798);
@@ -1143,6 +1147,8 @@ extern "C" void func_0019ACA0(void* self)
     func_0019FBE0(rider, func_0014AD28(cBE_getInterface_Fv(cBE_getBE(), 9), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC)), 0, 1);
 }
 #endif
+
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019AD18);
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AFD0);
@@ -2867,6 +2873,10 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019DF20);
 
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E070);
 
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019E1C0);
+
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019E208);
+
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E238);
 #ifdef SKIP_ASM
@@ -2889,6 +2899,8 @@ extern "C" int func_0019E238(sEquipTable* self, int a1, int a2)
 }
 #endif
 
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019E268);
+
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E2B0);
 #ifdef SKIP_ASM
@@ -2900,6 +2912,14 @@ extern "C" int func_0019E2B0(sEquipTable* self, int a1, int a2)
     return self->rows[a1].slots[a2].value;
 }
 #endif
+
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019E2F0);
+
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019E330);
+
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019E380);
+
+INCLUDE_ASM("fe/festatecharequipdetail", func_0019E3A8);
 
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E3D0);
 

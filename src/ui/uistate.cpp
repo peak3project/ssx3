@@ -438,3 +438,5 @@ done:
 }
 #endif
 
+INCLUDE_ASM("ui/uistate", func_0039F200);
+

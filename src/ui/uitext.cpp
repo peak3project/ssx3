@@ -296,6 +296,8 @@ extern "C" void func_003A1030(void* self, func_003A1030_sVec3* out)
 }
 #endif
 
+INCLUDE_ASM("ui/uitext", func_003A10F0);
+
 //100%
 INCLUDE_ASM("ui/uitext", func_003A1148);
 #ifdef SKIP_ASM
@@ -795,6 +797,8 @@ extern "C" void cUITextScroll_addUnicodeString(void* self, unsigned short* str)
 }
 #endif
 
+INCLUDE_ASM("ui/uitext", func_003A1C80);
+
 //100%
 INCLUDE_ASM("ui/uitext", func_003A1CF0);
 #ifdef SKIP_ASM
@@ -944,6 +948,16 @@ extern "C" int func_003A2068(void* self, int i)
     return 0;
 }
 #endif
+
+INCLUDE_ASM("ui/uitext", func_003A20A0);
+
+INCLUDE_ASM("ui/uitext", func_003A2220);
+
+INCLUDE_ASM("ui/uitext", func_003A23B8);
+
+INCLUDE_ASM("ui/uitext", func_003A2A00);
+
+INCLUDE_ASM("ui/uitext", func_003A2BC8);
 
 //100%
 INCLUDE_ASM("ui/uitext", func_003A3280);

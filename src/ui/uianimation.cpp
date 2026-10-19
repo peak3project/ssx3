@@ -152,6 +152,10 @@ extern "C" void func_003973A8(void* self, int flags)
 }
 #endif
 
+INCLUDE_ASM("ui/uianimation", func_00397440);
+
+INCLUDE_ASM("ui/uianimation", func_00397458);
+
 //100%
 INCLUDE_ASM("ui/uianimation", func_00397468);
 #ifdef SKIP_ASM

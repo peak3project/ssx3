@@ -26,6 +26,10 @@ void* cBEMissionInterface_getThis()
 }
 #endif
 
+INCLUDE_ASM("be/beintmission", func_001532F0);
+
+INCLUDE_ASM("be/beintmission", func_00153330);
+
 //100%
 INCLUDE_ASM("be/beintmission", func_00153350);
 #ifdef SKIP_ASM
@@ -71,6 +75,8 @@ extern "C" int func_00153390(void* self, int owner)
     return sum;
 }
 #endif
+
+INCLUDE_ASM("be/beintmission", func_001533F8);
 
 //100%
 INCLUDE_ASM("be/beintmission", func_00153498);
@@ -198,6 +204,8 @@ extern "C" int func_00153688(void* self, int profile, int character, int owner)
 
 INCLUDE_ASM("be/beintmission", func_00153708);
 
+INCLUDE_ASM("be/beintmission", func_00153858);
+
 //100%
 INCLUDE_ASM("be/beintmission", func_001538E8);
 #ifdef SKIP_ASM
@@ -217,6 +225,8 @@ extern "C" int func_001538E8(void* self, int rider, int bit, int idx)
     return (*(unsigned int*)(p + 4) & mask) != 0;
 }
 #endif
+
+INCLUDE_ASM("be/beintmission", func_001539A8);
 
 INCLUDE_ASM("be/beintmission", func_00153B00);
 
@@ -250,6 +260,8 @@ extern "C" void func_00153C88(void* self, int id)
     ((cMissionObj_00153C88*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10_v00153C88[i].f4);
 }
 #endif
+
+INCLUDE_ASM("be/beintmission", func_00153CD8);
 
 //100%
 INCLUDE_ASM("be/beintmission", func_00153D28);
@@ -363,6 +375,10 @@ extern "C" int func_00153ED8(void* self, int id)
     return (*(unsigned int*)(p + 0x118) >> 4) & 1;
 }
 #endif
+
+INCLUDE_ASM("be/beintmission", func_00153F30);
+
+INCLUDE_ASM("be/beintmission", func_00153F68);
 
 //100%
 INCLUDE_ASM("be/beintmission", func_00153FA0);

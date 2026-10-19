@@ -227,6 +227,8 @@ extern "C" void func_00354E48(cBucketMan* self, sBucketNode* node)
 }
 #endif
 
+INCLUDE_ASM("object/bucketman", func_00354E78);
+
 //100%
 INCLUDE_ASM("object/bucketman", cBucketMan_first__FP10cBucketMani);
 #ifdef SKIP_ASM

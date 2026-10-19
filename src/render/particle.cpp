@@ -275,6 +275,8 @@ extern "C" void func_003710D0_impl(char* self, sPtQ10D0* pos, sPtQ10D0* vel, int
 }
 #endif
 
+INCLUDE_ASM("render/particle", func_00371268);
+
 //100%
 INCLUDE_ASM("render/particle", func_003712B8);
 #ifdef SKIP_ASM
@@ -613,6 +615,8 @@ extern "C" void func_003717C0(sPtObj17C0* self, int a1, int a2, sPtCol17C0* col,
 }
 #endif
 
+INCLUDE_ASM("render/particle", func_003718E8);
+
 //100%
 INCLUDE_ASM("render/particle", func_00371940);
 #ifdef SKIP_ASM
@@ -644,6 +648,12 @@ extern "C" void func_00371940(unsigned int madr, int qwc, int flags)
     }
 }
 #endif
+
+INCLUDE_ASM("render/particle", func_00371A58);
+
+INCLUDE_ASM("render/particle", func_00371B40);
+
+INCLUDE_ASM("render/particle", func_00371C28);
 
 //100%
 INCLUDE_ASM("render/particle", func_00371D10);
@@ -684,6 +694,18 @@ extern "C" void func_00371DD8(int sadr, unsigned int madr, int qwc, int flags)
     }
 }
 #endif
+
+INCLUDE_ASM("render/particle", func_00371EA0);
+
+INCLUDE_ASM("render/particle", func_00371F98);
+
+INCLUDE_ASM("render/particle", func_00372098);
+
+INCLUDE_ASM("render/particle", func_003720F0);
+
+INCLUDE_ASM("render/particle", func_00372198);
+
+INCLUDE_ASM("render/particle", func_00372348);
 
 extern "C" void* func_003725B0(void* self);
 
@@ -847,6 +869,8 @@ extern "C" void* func_00372AA0(sPtObj_2AA0* self)
 }
 #endif
 
+INCLUDE_ASM("render/particle", func_00372B20);
+
 //100%
 INCLUDE_ASM("render/particle", func_00372B30);
 #ifdef SKIP_ASM
@@ -873,6 +897,8 @@ extern "C" void* func_00372B30(void* self)
 #endif
 
 INCLUDE_ASM("render/particle", func_00372B78);
+
+INCLUDE_ASM("render/particle", func_003737D0);
 
 //100%
 INCLUDE_ASM("render/particle", func_003739D0);
@@ -947,6 +973,10 @@ extern "C" void func_003739D0(sPtPools39D0* self)
     }
 }
 #endif
+
+INCLUDE_ASM("render/particle", func_00373C28);
+
+INCLUDE_ASM("render/particle", func_00373EA8);
 
 //100%
 INCLUDE_ASM("render/particle", func_00374180);
@@ -2980,6 +3010,8 @@ extern "C" void func_0037C570(void* self, sPartColour_C570* c)
 }
 #endif
 
+INCLUDE_ASM("render/particle", func_0037C638);
+
 //100%
 INCLUDE_ASM("render/particle", func_0037C720);
 #ifdef SKIP_ASM
@@ -2995,6 +3027,8 @@ extern "C" void func_0037C720(void* self, float a)
     *(int*)((char*)self + 0x59F8) = func_004139F8((1.0f - clamp_C720(a, 1.0f)) * 128.0f);
 }
 #endif
+
+INCLUDE_ASM("render/particle", func_0037C770);
 
 //100%
 INCLUDE_ASM("render/particle", func_0037C7C0);
@@ -3374,6 +3408,8 @@ extern "C" int func_0037D348(sPtGfx_D348* self, int idx)
 #endif
 
 INCLUDE_ASM("render/particle", func_0037D450);
+
+INCLUDE_ASM("render/particle", func_0037D668);
 
 extern "C" void* func_00367CD0(int);
 
@@ -3826,6 +3862,8 @@ extern "C" sPartQVec func_0037DEE0(void* self, sPartQVec* v)
     return r;
 }
 #endif
+
+INCLUDE_ASM("render/particle", func_0037DF40);
 
 //100%
 INCLUDE_ASM("render/particle", func_0037DF88);
@@ -5088,6 +5126,10 @@ INCLUDE_ASM("render/particle", func_00382760);
 
 INCLUDE_ASM("render/particle", func_00382AF0);
 
+INCLUDE_ASM("render/particle", func_00383770);
+
+INCLUDE_ASM("render/particle", func_00383808);
+
 INCLUDE_ASM("render/particle", func_00383A10);
 
 //100%
@@ -5549,6 +5591,10 @@ INCLUDE_ASM("render/particle", func_00385EB0);
 
 INCLUDE_ASM("render/particle", func_00386128);
 
+INCLUDE_ASM("render/particle", func_003865D8);
+
+INCLUDE_ASM("render/particle", func_003865E8);
+
 //100%
 INCLUDE_ASM("render/particle", func_00386640);
 #ifdef SKIP_ASM
@@ -5782,6 +5828,8 @@ extern "C" void func_00389118(void* self)
 }
 #endif
 
+INCLUDE_ASM("render/particle", func_00389160);
+
 //100%
 INCLUDE_ASM("render/particle", func_00389260);
 #ifdef SKIP_ASM
@@ -5796,6 +5844,8 @@ extern "C" void func_00389260(sPartVec4* v)
     }
 }
 #endif
+
+INCLUDE_ASM("render/particle", func_00389290);
 
 INCLUDE_ASM("render/particle", func_00389308);
 
@@ -5858,6 +5908,10 @@ extern "C" void func_00389620(sVec4_9620* dst, sVec4_9620* src, float dt)
     }
 }
 #endif
+
+INCLUDE_ASM("render/particle", func_00389660);
+
+INCLUDE_ASM("render/particle", func_003896C0);
 
 //100%
 INCLUDE_ASM("render/particle", func_00389730);

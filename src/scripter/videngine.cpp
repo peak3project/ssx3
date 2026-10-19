@@ -166,6 +166,8 @@ extern "C" int func_00283BB8(void* self)
 }
 #endif
 
+INCLUDE_ASM("scripter/videngine", func_00283BE0);
+
 //100%
 INCLUDE_ASM("scripter/videngine", func_00283C20__FPv);
 #ifdef SKIP_ASM
