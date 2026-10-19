@@ -610,7 +610,31 @@ void func_0038D660(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/bezierman", func_0038D668);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 inline asm (seed the VU0 R register and read back the next random float).
+static inline float vu0Rand_D668(float seed)
+{
+    float r;
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vrinit    R, $vf3x\n"
+        "vrnext.x  $vf3, R\n"
+        "qmfc2.ni  %1, $vf3\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "f"(seed));
+    return r;
+}
+
+extern "C" void func_0038D668(float* p)
+{
+    *p = vu0Rand_D668(*p);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038D690);
