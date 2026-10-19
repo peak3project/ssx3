@@ -552,7 +552,21 @@ extern "C" int func_00282798(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_002827F8);
+#ifdef SKIP_ASM
+extern "C" void* func_00282CB0_v(void) __asm__("func_00282CB0");
+
+extern "C" int func_002827F8(void)
+{
+    char* e = (char*)func_00282CB0_v();
+    if (e == 0)
+        return -1;
+    if (*(int*)(e + 4) == 1)
+        return *(int*)(e + 0x14);
+    return *(int*)(e + 8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282838);
