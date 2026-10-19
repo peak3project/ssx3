@@ -478,7 +478,29 @@ int func_004187C0(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004187E8);
+#ifdef SKIP_ASM
+void *func_004187E8(void *key, char *base, unsigned nmemb, unsigned size, int (*compar)(void *, void *)) {
+    unsigned lo = 0, hi = nmemb, mid;
+    char *p;
+    int c;
+    if (nmemb == 0 || size == 0)
+        return 0;
+    while (lo < hi) {
+        mid = (lo + hi) >> 1;
+        p = base + mid * size;
+        c = compar(key, p);
+        if (c < 0)
+            hi = mid;
+        else if (c > 0)
+            lo = mid + 1;
+        else
+            return p;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_004188C0);
