@@ -234,7 +234,27 @@ extern int func_00424698(int, int);
 int func_003F4E80(int a0, int a1) { return func_00424698(a0, a0 + a1); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4EA0);
+#ifdef SKIP_ASM
+int func_003F4EA0(unsigned a, int *out) {
+    unsigned *p = (unsigned *)((a & 0xFFFFFFF) | 0x20000000);
+    unsigned x = p[0];
+    int sz;
+    int n;
+    unsigned *q;
+    unsigned h;
+    if (x == 0 || (sz = p[3]) < 0 || sz > 0x8000) return -1;
+    n = ((sz + 0xF) & 0x7FFFFFF0) + 0x10;
+    q = (unsigned *)((x & 0xFFFFFFF) | 0x20000000);
+    h = p[2];
+    if (q != (unsigned *)((char *)p + n)) return -2;
+    if ((((q[0]) & 0xFFFFFFF) | 0x20000000) != (unsigned)p) return -2;
+    if (h != q[2]) return -3;
+    if (out) *out = sz;
+    return h;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4F40);
 
