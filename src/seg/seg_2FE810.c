@@ -1178,7 +1178,22 @@ INCLUDE_ASM("seg/seg_2FE810", func_00403AD0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403BB0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403CE0);
+#ifdef SKIP_ASM
+extern int func_004072E8(int, int);
+void func_00403CE0(int *p) {
+    func_004072E8((int)p, 3);
+    if (func_004072E8((int)p, 1)) {
+        func_004072E8((int)p, 8);
+        func_004072E8((int)p, 8);
+        p[0x144 / 4] = func_004072E8((int)p, 8);
+    }
+    p[0x148 / 4] = func_004072E8((int)p, 0xE);
+    func_004072E8((int)p, 1);
+    p[0x14C / 4] = func_004072E8((int)p, 0xE);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", _sequenceScalableExtension);
