@@ -709,7 +709,17 @@ extern "C" void func_002EE368(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/lensfx", func_002EE390);
+#ifdef SKIP_ASM
+extern "C" void func_002EE010(void* p);
+extern "C" void* func_002EF1F0();
+
+extern "C" void func_002EE390()
+{
+    func_002EE010(func_002EF1F0());
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/lensfx", func_002EE3B8);
