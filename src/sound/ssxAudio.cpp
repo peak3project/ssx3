@@ -1234,7 +1234,14 @@ extern "C" void* func_00287968(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_002879A0);
+#ifdef SKIP_ASM
+extern "C" void* func_002879A0(void* self, int a1)
+{
+    return (char*)self + ((a1 << 4) + 0x62BC);
+}
+#endif
 
 INCLUDE_ASM("sound/ssxAudio", func_002879B0);
 
