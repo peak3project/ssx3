@@ -2714,7 +2714,13 @@ extern "C" void func_0030D388(int *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D390);
+#ifdef SKIP_ASM
+extern "C" int func_0030D390(int arg0, unsigned int arg1) {
+    return arg1 < 10;
+}
+#endif
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D398);
 #ifdef SKIP_ASM
