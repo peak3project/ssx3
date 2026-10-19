@@ -1798,7 +1798,26 @@ INCLUDE_ASM("seg/seg_2FE810", func_00409E70);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00409F28);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A000);
+#ifdef SKIP_ASM
+struct S0A000 { int n0; int n1; char *d0; char *d1; char b0[0x40]; char b1[0x40]; };
+void func_0040A000(unsigned a) {
+    struct S0A000 *s = (struct S0A000 *)(a | 0x20000000);
+    char *d;
+    int i;
+    if (s->n0 != 0) {
+        d = s->d0;
+        for (i = 0; i < s->n0; i++)
+            *d++ = s->b0[i];
+    }
+    if (s->n1 != 0) {
+        d = s->d1;
+        for (i = 0; i < s->n1; i++)
+            *d++ = s->b1[i];
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A090);
 
