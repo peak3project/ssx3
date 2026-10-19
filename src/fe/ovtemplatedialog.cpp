@@ -231,7 +231,20 @@ extern "C" void func_0020CA10(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CB58);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* func_0039F9D8_CB58(void* list, int hash) __asm__("func_0039F9D8");
+extern void* D_004A28A8;
+extern char D_00471A40[];
+
+extern "C" int func_0020CB58(void)
+{
+    char* list = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x48) + 0x18;
+    return func_0039F9D8_CB58(list, GetHashValue32(D_00471A40)) != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CBA0);
