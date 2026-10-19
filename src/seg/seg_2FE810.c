@@ -1822,7 +1822,49 @@ int func_004060C8(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", _sliceA0);
+#ifdef SKIP_ASM
+extern char D_00497F28[];
+extern char D_00497F50[];
+extern void func_00403470_k() __asm__("func_00403470");
+extern int func_004070F0(int, int);
+extern void func_004071F8(int, int);
+extern void func_00407438();
+extern int func_00405FB8(int *);
+int _sliceA0(int *p, int unused, int *o1, int *o2, int *s) {
+    int v;
+    int a;
+    int b;
+    p[0x11C / 4] = 0;
+    func_00407438();
+    v = func_004070F0((int)p, 32);
+    if ((unsigned)(v - 0x101) >= 0xAF) {
+        func_00403470_k(p, D_00497F28, v);
+        return 2;
+    }
+    func_004071F8((int)p, 32);
+    a = func_004074B8(p);
+    b = func_00405FB8(p);
+    *o2 = b;
+    if (p[0x11C / 4] != 0) {
+        func_004034A8(p, (int)D_00497F50);
+        return 1;
+    }
+    *o1 = ((((a << 7) + (v & 0xFF)) - 1) * p[0x12C / 4] + b) - 1;
+    *o2 = 1;
+    p[0x1B0 / 4] = 1;
+    s[5] = 0;
+    s[4] = 0;
+    s[1] = 0;
+    s[0] = 0;
+    s[7] = 0;
+    s[6] = 0;
+    s[3] = 0;
+    s[2] = 0;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00406318);
 
