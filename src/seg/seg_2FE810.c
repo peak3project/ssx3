@@ -2654,7 +2654,40 @@ int sceUsbKbRead(unsigned a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbGetLocation);
+#ifdef SKIP_ASM
+struct S_KbInfo3 { int cnt; char pad[0x8C]; int f90; int f94; int f98; };
+extern struct S_KbInfo3 G_KbInfo3[] __asm__("D_00529000");
+extern int G_KbRdy3[] __asm__("D_00453438");
+extern char G_KbName3[] __asm__("D_005290A0");
+extern char G_KbArg3[] __asm__("D_00529100");
+extern int G_KbBuf3[] __asm__("D_00529140");
+extern char D_00498320[];
+extern void func_0040C8B0(void);
+extern void func_00423DE0(int);
+extern int func_KbOpen3(char *, int, int, char *, int, int *, int, void (*)(void), int) __asm__("func_00426D18");
+extern void func_00425C60(char *, int);
+int sceUsbKbGetLocation(int a, int b) {
+    if (G_KbRdy3[0] == -1)
+        return -1;
+    if (a >= G_KbInfo3[0].cnt)
+        return -11;
+    G_KbArg3[0] = a;
+    func_00423DE0(G_KbRdy3[0]);
+    {
+        int r = func_KbOpen3(G_KbName3, 3, 1, G_KbArg3, 16, G_KbBuf3, 0x10, func_0040C8B0, 0);
+        if (r != 0) {
+            func_00425C60(D_00498320, r);
+            return -2;
+        }
+    }
+    G_KbInfo3[0].f90 = 3;
+    G_KbInfo3[0].f94 = a;
+    G_KbInfo3[0].f98 = b;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbSetLEDStatus);
 
