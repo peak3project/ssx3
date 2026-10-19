@@ -1913,7 +1913,22 @@ extern "C" void func_00245140(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxappdtor", func_00245168);
+#ifdef SKIP_ASM
+struct sApp245168 { int pad; int f4; };
+extern sApp245168* D_004A28A8;
+extern "C" void func_00231D18(void* self);
+
+extern "C" int func_00245168(int* self) {
+    func_00231D18(self);
+    if (D_004A28A8->f4 != 0) {
+        self[2] = 1;
+        return 0;
+    }
+    return 1;
+}
+#endif
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_002451B0);
 #ifdef SKIP_ASM
