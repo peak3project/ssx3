@@ -1957,7 +1957,29 @@ char *func_003FA7A0(char *dst, int unused, char *src) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA818);
+#ifdef SKIP_ASM
+typedef struct { char b[9]; } K9;
+extern K9 D_00497400;
+extern int strlen(const char *);
+extern void f6210(char *, int, int) __asm__("func_00416210");
+extern void f605C(char *, char *, int) __asm__("func_0041605C");
+void func_003FA818_impl(char *a, char *b, int unused, char *str) __asm__("func_003FA818");
+void func_003FA818_impl(char *a, char *b, int unused, char *str) {
+    char *p;
+    f6210(a, 0, 0x20);
+    *(K9 *)a = D_00497400;
+    p = a + 9;
+    f605C(p, str, strlen(str));
+    p = b + 9;
+    strlen(str);
+    f6210(b, 0, 0x20);
+    *(K9 *)b = D_00497400;
+    f605C(p, str, strlen(str));
+    strlen(str);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA8F8);
 
