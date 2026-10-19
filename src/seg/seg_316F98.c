@@ -944,6 +944,45 @@ int func_0041EA18(int a) {
 #endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041EA38);
+#ifdef SKIP_ASM
+extern char D_0049A7D0b[] __asm__("D_0049A7D0");
+extern char D_0049A7C0[], D_0049A7D0[], D_0049A7D8[], D_0049A7E0[], D_0049A7E8[];
+extern char D_00455140[], D_00455148[], D_00455150[];
+extern int func_004165A8_cmp(char *, char *) __asm__("func_004165A8");
+extern char *strcpy_(char *, char *) __asm__("strcpy");
+extern unsigned strlen_(char *) __asm__("strlen");
+char *func_0041EA38_(int *p, int category, char *locale) __asm__("func_0041EA38");
+char *func_0041EA38_(int *p, int category, char *locale) {
+    if (locale) {
+        if (category != 2) {
+            if (func_004165A8_cmp(locale, D_0049A7D0) && func_004165A8_cmp(locale, D_0049A7C0))
+                return 0;
+            if (category == 0) {
+                strcpy_(D_00455150, D_00455148);
+                strcpy_(D_00455148, locale);
+                *(int *)D_00455140 = 1;
+            }
+        } else {
+            if (func_004165A8_cmp(locale, D_0049A7D0) && func_004165A8_cmp(locale, D_0049A7C0) && func_004165A8_cmp(locale, D_0049A7D0) &&
+                func_004165A8_cmp(locale, D_0049A7D8) && func_004165A8_cmp(locale, D_0049A7E0) &&
+                func_004165A8_cmp(locale, D_0049A7E8))
+                return 0;
+            strcpy_(D_00455150, D_00455148);
+            strcpy_(D_00455148, locale);
+            if (func_004165A8_cmp(locale, D_0049A7D8) == 0)
+                *(int *)D_00455140 = 8;
+            else if (strlen_(locale) >= 2)
+                *(int *)D_00455140 = 2;
+            else
+                *(int *)D_00455140 = 1;
+        }
+        p[0xD] = (int)locale;
+        p[0xC] = category;
+        return category == 2 ? D_00455150 : D_0049A7D0b;
+    }
+    return category == 2 ? D_00455148 : D_0049A7D0b;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_0041EC08);
