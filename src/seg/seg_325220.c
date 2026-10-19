@@ -603,7 +603,51 @@ void func_00426050(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426078);
+#ifdef SKIP_ASM
+struct E6078 { int a; int b; int c; int d; };
+extern int D_0052BCE0;
+extern void func_00426358(int, int);
+extern int func_00424160(struct E6078 *, int);
+extern int func_00424170(struct E6078 *, int);
+int func_00426078_d(int, int, int *, unsigned, int, int, int) __asm__("func_00426078");
+int func_00426078_d(int a0, int a1, int *a2, unsigned a3, int a4, int a5, int a6) {
+    struct E6078 ent[2];
+    int n;
+    if (a3 - 0x10 > 0x60) {
+        return 0;
+    }
+    n = 0;
+    if (a6 > 0) {
+        ent[0].a = a4;
+        n = 1;
+        ent[0].b = a5;
+        a2[1] = a5;
+        a2[0] = *(unsigned char *)a2 | (a6 << 8);
+        ent[0].c = a6;
+        ent[0].d = 0;
+        if (a1 & 4) {
+            func_00426358(a4, a6);
+        }
+    } else {
+        a2[1] = 0;
+        a2[0] = *(unsigned char *)a2;
+    }
+    ent[n].a = (int)a2;
+    ent[n].b = D_0052BCE0;
+    ent[n].c = a3;
+    a2[2] = a0;
+    *(unsigned char *)a2 = a3;
+    ent[n].d = 0x44;
+    func_00426358((int)a2, a3);
+    n++;
+    if (a1 & 1) {
+        return func_00424170(ent, n);
+    }
+    return func_00424160(ent, n);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004261B0);
