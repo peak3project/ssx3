@@ -357,7 +357,19 @@ extern "C" int func_00282500(void* self, char* o, int v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282510);
+#ifdef SKIP_ASM
+extern "C" void* func_00282CB0_v(void) __asm__("func_00282CB0");
+
+extern "C" int func_00282510(void* self, int a, int v)
+{
+    char* e = (char*)func_00282CB0_v();
+    int old = *(int*)(e + 0xC);
+    *(int*)(e + 0xC) = v;
+    return old;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282540);
