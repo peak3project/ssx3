@@ -1953,7 +1953,35 @@ int func_0042BBF8(int a0, void *a1, unsigned a2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042BCE8);
+#ifdef SKIP_ASM
+struct S7080 { int f0; int f4; union { unsigned char b; unsigned short h; unsigned w; } f8; };
+extern struct S7080 D_F080 __asm__("D_0052F080");
+extern char D_0052F280[];
+extern int func_0042B068(void);
+extern int f6D18_b(void *a0, int a1, int a2, int a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_0042BCE8(int a0, void *a1, int a2) {
+    if (func_0042B068() < 0) {
+        return 0xFFFF0000;
+    }
+    D_F080.f0 = a0;
+    D_F080.f4 = a2;
+    if (a2 == 0) {
+        D_F080.f8.b = *(unsigned char *)a1;
+    } else if (a2 == 1) {
+        D_F080.f8.h = *(unsigned short *)a1;
+    } else if (a2 == 2) {
+        D_F080.f8.w = *(unsigned *)a1;
+    } else {
+        return 0xFFFEFFFE;
+    }
+    if (f6D18_b(D_0052F280, 2, 0, (int)&D_F080, 0x20, &D_F080, 0x10, 0, 0) < 0) {
+        return 0xFFFEFFFF;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042BDC8);
 
