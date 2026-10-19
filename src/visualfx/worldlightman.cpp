@@ -1011,7 +1011,19 @@ void func_002F7C30(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7C38);
+#ifdef SKIP_ASM
+extern "C" void func_002D6410(void* self);
+extern void* D_00488648[];
+
+extern "C" void* func_002F7C38(void* self)
+{
+    *(void***)self = D_00488648;
+    func_002D6410(self);
+    return self;
+}
+#endif
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7C70);
 #ifdef SKIP_ASM
