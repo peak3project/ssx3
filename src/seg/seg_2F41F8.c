@@ -464,7 +464,36 @@ int func_003F5738(int *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F57C8);
+#ifdef SKIP_ASM
+typedef struct { unsigned char b[0x18]; } B57C8;
+typedef struct { int f0; B57C8 *f4; int f8; int fC; int f10; } S57C8;
+extern char D_00525F40[];
+extern int func_003F4C98(char *, int, int);
+extern int c57_4C68(char *, int, int, int, int, int, B57C8 *, int, int, int) __asm__("func_003F4C68");
+int func_003F57C8_impl(S57C8 *self, int key) __asm__("func_003F57C8");
+int func_003F57C8_impl(S57C8 *self, int key) {
+    func_003F4C98(D_00525F40, 'sess', 'stat');
+    c57_4C68(D_00525F40, 0, self->f0, 0, 0, 0, self->f4, 0x20, 1, 0);
+    if (key == 'port') {
+        return (self->f4->b[2] << 8) | self->f4->b[3];
+    }
+    if (key == 'addr') {
+        return (((self->f4->b[4] << 8 | self->f4->b[5]) << 8 | self->f4->b[6]) << 8) | self->f4->b[7];
+    }
+    if (key == 'ladr') {
+        return (((self->f4->b[0x14] << 8 | self->f4->b[0x15]) << 8 | self->f4->b[0x16]) << 8) | self->f4->b[0x17];
+    }
+    if (key == 'lprt') {
+        return (self->f4->b[0x12] << 8) | self->f4->b[0x13];
+    }
+    if (key == 'ibuf') {
+        return self->f10;
+    }
+    return 0;
+}
+#endif
 
 void func_003F5908(void) {
 }
