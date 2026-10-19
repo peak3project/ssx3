@@ -592,7 +592,46 @@ extern "C" int func_002C2940(int block, int a, int size, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C29D0);
+#ifdef SKIP_ASM
+extern "C" int func_002C28C0(int, int, int);
+extern "C" void func_002C28F8(int);
+extern "C" int func_003E50C8(int* self, int a1, int a2, int a3, int a4, int a5);
+extern char D_00486088[];
+
+// Predicate helper; keeps p[0] in one register for both tests.
+inline int func_002C29D0_valid(int arg0)
+{
+    return arg0 != 0;
+}
+
+// PORT: the unit later declares func_002C29D0() for its address use; bound by asm label
+int* func_002C29D0_impl(int a0, int a1, int size) __asm__("func_002C29D0");
+
+int* func_002C29D0_impl(int a0, int a1, int size)
+{
+    int* p = (int*)func_002C28C0(0, 0xC, 0);
+    p[0] = 0;
+    p[0] = func_002C28C0((int)D_00486088, size, 0);
+    if (p[0] != 0) {
+        if (func_003E50C8(p + 1, a0, a1, p[0], size, 0x63) == 0) {
+            func_002C28F8(p[0]);
+            p[0] = 0;
+        }
+    }
+    if (func_002C29D0_valid(p[0])) {
+        return p;
+    }
+    if (p != 0) {
+        if (p[0] != 0) {
+            func_002C28F8(p[0]);
+        }
+        func_002C28F8((int)p);
+    }
+    return 0;
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/quadtree", func_002C2AA8);
 #ifdef SKIP_ASM
