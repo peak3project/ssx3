@@ -2127,7 +2127,19 @@ extern "C" void func_00288F60(void* self, int mode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00289398);
+#ifdef SKIP_ASM
+extern "C" void func_00289398(char* self)
+{
+    if (*(int*)(self + 0x6470) == 0) {
+        *(int*)(self + 0x6470) = 5;
+    } else {
+        *(int*)(self + 0x6470) = *(int*)(self + 0x6470) - 1;
+    }
+    func_00288F60(self, *(int*)(self + 0x6470));
+}
+#endif
 
 INCLUDE_ASM("sound/ssxAudio", func_002893C8);
 
