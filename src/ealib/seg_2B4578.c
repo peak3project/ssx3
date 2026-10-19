@@ -1522,7 +1522,60 @@ void func_003B78D8(int a, int b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B78F8);
+#ifdef SKIP_ASM
+struct O_78F8 { int f0; volatile int f4; volatile int f8; char pad0C[4]; char f10; volatile unsigned char f11; char pad12[8]; unsigned char f1A; char pad1B[0x81]; int f9C[1]; };
+extern struct O_78F8 *f_6A38_78F8(int) __asm__("func_003B6A38");
+extern void f_6CE8_78F8(int) __asm__("func_003C6CE8");
+extern void f_1110_78F8(int) __asm__("func_003E1110");
+extern void f_5E98_78F8(int) __asm__("func_003B5E98");
+extern void *f_62E8_78F8(void *) __asm__("func_003C62E8");
+extern void f_6288_78F8(void *, void *) __asm__("func_003C6288");
+extern void f_6210_78F8(void *, int, int) __asm__("func_00416210");
+
+int func_003B78F8(int arg0) {
+    struct O_78F8 *o;
+    void *s;
+    int i;
+    func_003B58A0();
+    o = f_6A38_78F8(arg0);
+    if (o == 0) {
+        func_003B58D8();
+        return -8;
+    }
+    if (o->f4 >= 0) {
+        f_6CE8_78F8(o->f8);
+    }
+    o->f4 = -1;
+    if (o->f11 == 0) {
+        f_1110_78F8(o->f0);
+    }
+    if (o->f9C[0] != 0) {
+        i = 0;
+        if (o->f1A != 0) {
+            int *p = &o->f9C[0];
+            do {
+                i++;
+                f_5E98_78F8(*p++);
+            } while (i < o->f1A);
+        }
+    }
+    do {
+        s = f_62E8_78F8((char *)o + 0x11C);
+        if (s == 0) break;
+        f_6288_78F8((char *)o + 0x128, s);
+    } while (1);
+    *(int *)((char *)o + 0x134) = 0;
+    o->f10 = 0;
+    f_6210_78F8((char *)o + 0x14, 0, 4);
+    f_6210_78F8((char *)o + 0x18, 0, 4);
+    f_6210_78F8((char *)o + 0x1C, 0, 0x68);
+    f_6210_78F8((char *)o + 0x84, 0, 0x68);
+    func_003B58D8();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7A70);
