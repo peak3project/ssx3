@@ -1736,7 +1736,19 @@ extern "C" int func_0030B590(char* self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B608);
+#ifdef SKIP_ASM
+void func_0026CBB0(void* self);
+
+extern "C" void func_0030B608(void* self)
+{
+    func_0026CDF8(*(void**)(*(char**)(D_004A28A8 + 0x84) + 0x34));
+    func_0026CBB0(*(void**)(*(char**)(D_004A28A8 + 0x84) + 0x34));
+    *(int*)((char*)self + 0x2AC) = 6;
+    *(int*)((char*)self + 0x2B0) = *(int*)((char*)self + 0x2A0);
+}
+#endif
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030B658);
 #ifdef SKIP_ASM
