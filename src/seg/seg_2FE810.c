@@ -1347,7 +1347,22 @@ INCLUDE_ASM("seg/seg_2FE810", func_004071F8);
 
 INCLUDE_ASM("seg/seg_2FE810", func_004072E8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407438);
+#ifdef SKIP_ASM
+extern void func_004071F8(int, int);
+extern int func_004070F0(int, int);
+extern void func_00406E20(int);
+void func_00407438(int p) {
+    int n;
+    func_00406E20(p);
+    n = -(*(volatile int *)0x10002020 & 7) & 7;
+    if (n)
+        func_004071F8(p, n);
+    while (func_004070F0(p, 0x18) != 1)
+        func_004071F8(p, 8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004074B8);
