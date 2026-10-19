@@ -521,7 +521,108 @@ void func_003F17C8(int* p, int a, int b) {
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F17D8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F2220);
+#ifdef SKIP_ASM
+
+#define MD5_F(x, y, z) ((z) ^ (((y) ^ (z)) & (x)))
+#define MD5_G(x, y, z) ((y) ^ (((x) ^ (y)) & (z)))
+#define MD5_H(x, y, z) ((x) ^ (y) ^ (z))
+#define MD5_I(x, y, z) ((y) ^ ((x) | ~(z)))
+#define MD5_STEP(f, a, b, c, d, x, s, ac)     { (a) += f((b), (c), (d)) + (x) + (unsigned int)(ac);       (a) = ((a) << (s)) | ((a) >> (32 - (s)));       (a) += (b); }
+struct Md5Ctx;
+void func_003F2220(struct Md5Ctx* ctx) {
+    unsigned int* st = (unsigned int*)ctx;
+    unsigned int x[16];
+    unsigned int a, b, c, d;
+    unsigned char* p;
+    unsigned int* o;
+    o = x + 16;
+    a = 16;
+    p = (unsigned char*)st + 0x54;
+    do {
+        o--;
+        b = *--p;
+        a--;
+        b = (b << 8) + *--p;
+        b = (b << 8) + *--p;
+        b = (b << 8) + *--p;
+        *o = b;
+    } while (a);
+    a = st[1];
+    b = st[2];
+    c = st[3];
+    d = st[4];
+    MD5_STEP(MD5_F, a, b, c, d, x[0], 7, 0xD76AA478U);
+    MD5_STEP(MD5_F, d, a, b, c, x[1], 12, 0xE8C7B756U);
+    MD5_STEP(MD5_F, c, d, a, b, x[2], 17, 0x242070DBU);
+    MD5_STEP(MD5_F, b, c, d, a, x[3], 22, 0xC1BDCEEEU);
+    MD5_STEP(MD5_F, a, b, c, d, x[4], 7, 0xF57C0FAFU);
+    MD5_STEP(MD5_F, d, a, b, c, x[5], 12, 0x4787C62AU);
+    MD5_STEP(MD5_F, c, d, a, b, x[6], 17, 0xA8304613U);
+    MD5_STEP(MD5_F, b, c, d, a, x[7], 22, 0xFD469501U);
+    MD5_STEP(MD5_F, a, b, c, d, x[8], 7, 0x698098D8U);
+    MD5_STEP(MD5_F, d, a, b, c, x[9], 12, 0x8B44F7AFU);
+    MD5_STEP(MD5_F, c, d, a, b, x[10], 17, 0xFFFF5BB1U);
+    MD5_STEP(MD5_F, b, c, d, a, x[11], 22, 0x895CD7BEU);
+    MD5_STEP(MD5_F, a, b, c, d, x[12], 7, 0x6B901122U);
+    MD5_STEP(MD5_F, d, a, b, c, x[13], 12, 0xFD987193U);
+    MD5_STEP(MD5_F, c, d, a, b, x[14], 17, 0xA679438EU);
+    MD5_STEP(MD5_F, b, c, d, a, x[15], 22, 0x49B40821U);
+    MD5_STEP(MD5_G, a, b, c, d, x[1], 5, 0xF61E2562U);
+    MD5_STEP(MD5_G, d, a, b, c, x[6], 9, 0xC040B340U);
+    MD5_STEP(MD5_G, c, d, a, b, x[11], 14, 0x265E5A51U);
+    MD5_STEP(MD5_G, b, c, d, a, x[0], 20, 0xE9B6C7AAU);
+    MD5_STEP(MD5_G, a, b, c, d, x[5], 5, 0xD62F105DU);
+    MD5_STEP(MD5_G, d, a, b, c, x[10], 9, 0x02441453U);
+    MD5_STEP(MD5_G, c, d, a, b, x[15], 14, 0xD8A1E681U);
+    MD5_STEP(MD5_G, b, c, d, a, x[4], 20, 0xE7D3FBC8U);
+    MD5_STEP(MD5_G, a, b, c, d, x[9], 5, 0x21E1CDE6U);
+    MD5_STEP(MD5_G, d, a, b, c, x[14], 9, 0xC33707D6U);
+    MD5_STEP(MD5_G, c, d, a, b, x[3], 14, 0xF4D50D87U);
+    MD5_STEP(MD5_G, b, c, d, a, x[8], 20, 0x455A14EDU);
+    MD5_STEP(MD5_G, a, b, c, d, x[13], 5, 0xA9E3E905U);
+    MD5_STEP(MD5_G, d, a, b, c, x[2], 9, 0xFCEFA3F8U);
+    MD5_STEP(MD5_G, c, d, a, b, x[7], 14, 0x676F02D9U);
+    MD5_STEP(MD5_G, b, c, d, a, x[12], 20, 0x8D2A4C8AU);
+    MD5_STEP(MD5_H, a, b, c, d, x[5], 4, 0xFFFA3942U);
+    MD5_STEP(MD5_H, d, a, b, c, x[8], 11, 0x8771F681U);
+    MD5_STEP(MD5_H, c, d, a, b, x[11], 16, 0x6D9D6122U);
+    MD5_STEP(MD5_H, b, c, d, a, x[14], 23, 0xFDE5380CU);
+    MD5_STEP(MD5_H, a, b, c, d, x[1], 4, 0xA4BEEA44U);
+    MD5_STEP(MD5_H, d, a, b, c, x[4], 11, 0x4BDECFA9U);
+    MD5_STEP(MD5_H, c, d, a, b, x[7], 16, 0xF6BB4B60U);
+    MD5_STEP(MD5_H, b, c, d, a, x[10], 23, 0xBEBFBC70U);
+    MD5_STEP(MD5_H, a, b, c, d, x[13], 4, 0x289B7EC6U);
+    MD5_STEP(MD5_H, d, a, b, c, x[0], 11, 0xEAA127FAU);
+    MD5_STEP(MD5_H, c, d, a, b, x[3], 16, 0xD4EF3085U);
+    MD5_STEP(MD5_H, b, c, d, a, x[6], 23, 0x04881D05U);
+    MD5_STEP(MD5_H, a, b, c, d, x[9], 4, 0xD9D4D039U);
+    MD5_STEP(MD5_H, d, a, b, c, x[12], 11, 0xE6DB99E5U);
+    MD5_STEP(MD5_H, c, d, a, b, x[15], 16, 0x1FA27CF8U);
+    MD5_STEP(MD5_H, b, c, d, a, x[2], 23, 0xC4AC5665U);
+    MD5_STEP(MD5_I, a, b, c, d, x[0], 6, 0xF4292244U);
+    MD5_STEP(MD5_I, d, a, b, c, x[7], 10, 0x432AFF97U);
+    MD5_STEP(MD5_I, c, d, a, b, x[14], 15, 0xAB9423A7U);
+    MD5_STEP(MD5_I, b, c, d, a, x[5], 21, 0xFC93A039U);
+    MD5_STEP(MD5_I, a, b, c, d, x[12], 6, 0x655B59C3U);
+    MD5_STEP(MD5_I, d, a, b, c, x[3], 10, 0x8F0CCC92U);
+    MD5_STEP(MD5_I, c, d, a, b, x[10], 15, 0xFFEFF47DU);
+    MD5_STEP(MD5_I, b, c, d, a, x[1], 21, 0x85845DD1U);
+    MD5_STEP(MD5_I, a, b, c, d, x[8], 6, 0x6FA87E4FU);
+    MD5_STEP(MD5_I, d, a, b, c, x[15], 10, 0xFE2CE6E0U);
+    MD5_STEP(MD5_I, c, d, a, b, x[6], 15, 0xA3014314U);
+    MD5_STEP(MD5_I, b, c, d, a, x[13], 21, 0x4E0811A1U);
+    MD5_STEP(MD5_I, a, b, c, d, x[4], 6, 0xF7537E82U);
+    MD5_STEP(MD5_I, d, a, b, c, x[11], 10, 0xBD3AF235U);
+    MD5_STEP(MD5_I, c, d, a, b, x[2], 15, 0x2AD7D2BBU);
+    MD5_STEP(MD5_I, b, c, d, a, x[9], 21, 0xEB86D391U);
+    st[1] += a;
+    st[2] += b;
+    st[3] += c;
+    st[4] += d;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F30F0);
