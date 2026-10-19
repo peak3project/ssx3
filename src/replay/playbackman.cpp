@@ -490,7 +490,32 @@ extern "C" void func_0026CDF8(void* self)
 
 INCLUDE_ASM("replay/playbackman", func_0026CE50);
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026CFE8);
+#ifdef SKIP_ASM
+struct sPbEntry_26CFE8 {
+    int key;
+    int a;
+    int b;
+};
+
+struct sPbMan_26CFE8 {
+    char pad[0x50];
+    int count;
+    int pad2;
+    sPbEntry_26CFE8* entries;
+};
+
+extern "C" int func_0026CFE8(sPbMan_26CFE8* self, int key)
+{
+    int i;
+    for (i = 0; i < self->count; i++) {
+        if (self->entries[i].key == key)
+            return i;
+    }
+    return -1;
+}
+#endif
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026D020);
 #ifdef SKIP_ASM
