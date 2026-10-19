@@ -2889,7 +2889,56 @@ void func_0040A440(unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A498);
+#ifdef SKIP_ASM
+extern int P498_5271C0[] __asm__("D_005271C0");
+extern int P498_5271E8[] __asm__("D_005271E8");
+extern int P498_5271EC[] __asm__("D_005271EC");
+extern int P498_5271F0[] __asm__("D_005271F0");
+extern int P498_527240[] __asm__("D_00527240");
+extern int P498_5276C0[] __asm__("D_005276C0");
+extern int P498_528780[] __asm__("D_00528780");
+extern int P498_4533C0[] __asm__("D_004533C0");
+extern int P498_4533C4[] __asm__("D_004533C4");
+extern int func_KbOpen498(int *, int, int, int *, int, int *, int, void (*)(void), int *) __asm__("func_00426D18");
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern void func_00426358(int, int);
+extern void cb_498(void) __asm__("func_0040A440");
+int func_0040A498(int a, int b, int c, int d, int e) {
+    int r;
+    if (P498_5271C0[9] == 0)
+        return -100;
+    if (func_00423DF0(P498_4533C4[0]) < 0)
+        return -200;
+    P498_527240[1] = a;
+    P498_527240[2] = b;
+    P498_527240[7] = (int)P498_5276C0;
+    if (c != 0)
+        P498_527240[5] = 1;
+    else
+        P498_527240[5] = 0;
+    if (d != 0)
+        P498_527240[4] = 1;
+    else
+        P498_527240[4] = 0;
+    if (e != 0)
+        P498_527240[3] = 1;
+    else
+        P498_527240[3] = 0;
+    P498_5271E8[0] = c;
+    P498_5271EC[0] = d;
+    P498_5271F0[0] = e;
+    func_00426358((int)P498_5276C0, 0xC0);
+    r = func_KbOpen498(P498_5271C0, 1, 1, P498_527240, 48, P498_528780, 4, cb_498, P498_5276C0);
+    if (r == 0)
+        P498_4533C0[0] = 1;
+    else
+        func_00423DC0(P498_4533C4[0]);
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A618);
