@@ -1562,7 +1562,20 @@ int func_003FB910(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB958);
+#ifdef SKIP_ASM
+typedef struct { char b[4]; } W3FB958;
+typedef struct { W3FB958 x, y; } V3FB958;
+void func_003FB958(W3FB958 *dst, int a, int b, W3FB958 *c) {
+    V3FB958 t;
+    *(int *)&t.x = a;
+    *(int *)&t.y = b;
+    dst[0] = t.x;
+    dst[1] = t.y;
+    dst[2] = *c;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB9A0);
