@@ -2066,7 +2066,18 @@ extern "C" void func_0016BD30(float* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BDA0);
+#ifdef SKIP_ASM
+extern "C" void func_0016BCE0(float* p);
+
+extern "C" void func_0016BDA0(float* p)
+{
+    float a = *p * 0.017453292f;
+    func_0016BCE0(&a);
+    *p = a * 57.295776f;
+}
+#endif
 
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016BDE8);
 
