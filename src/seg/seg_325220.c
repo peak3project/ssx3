@@ -260,7 +260,51 @@ void func_00424AA0(unsigned *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424B78);
+#ifdef SKIP_ASM
+extern int D_00455170;
+extern int D_0052B3A0;
+extern char D_0052AFA0[];
+extern char D_004A30F0[];
+extern int D_0052B3A8_a[] __asm__("D_0052B3A8");
+extern int func_00423DA0(int *p);
+extern int func_00423BA0(int *);
+extern void func_00423BC0(int, int *);
+extern int func_00423C90(void);
+extern void func_00423C30(int, int);
+extern void func_00423DB0(int);
+extern void func_00424AA0(unsigned *);
+int func_00424B78_i(void) __asm__("func_00424B78");
+int func_00424B78_i(void) {
+    int cfg[12];
+    int buf[8];
+    if (D_00455170 > 0) {
+        return -1;
+    }
+    buf[2] = 0;
+    buf[1] = 0xFF;
+    D_0052B3A0 = func_00423DA0(buf);
+    if (D_0052B3A0 < 0) {
+        return -1;
+    }
+    cfg[1] = (int)func_00424AA0;
+    cfg[2] = (int)D_0052AFA0;
+    cfg[3] = 0x400;
+    cfg[4] = (int)D_004A30F0;
+    cfg[5] = 0;
+    D_00455170 = func_00423BA0(cfg);
+    if (D_00455170 < 0) {
+        func_00423DB0(D_0052B3A0);
+        return -1;
+    }
+    D_0052B3A8_a[0] = 0;
+    D_0052B3A8_a[1] = 0;
+    func_00423BC0(D_00455170, D_0052B3A8_a);
+    func_00423C30(func_00423C90(), 1);
+    return D_00455170;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00424C50);
 
