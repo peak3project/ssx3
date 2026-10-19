@@ -343,7 +343,28 @@ int func_003F6040(int i) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F60B8);
+#ifdef SKIP_ASM
+typedef struct { char pad0[0x9C]; int state; unsigned char flag; char pad1[3]; int cur; int *ents; int a; int b; } Q60B8;
+extern Q60B8 D_60B8q __asm__("D_00525F80");
+extern int func_003F6040(int);
+extern int sceUsbKbRead(int, int *);
+void func_003F60B8(void) {
+    int id = func_003F6040(D_60B8q.cur + 1);
+    int *e;
+    if (id != -1) {
+        D_60B8q.cur = id;
+        e = (int *)((char *)D_60B8q.ents + id * 0x8C);
+        D_60B8q.a = e[0];
+        D_60B8q.b = e[1];
+        if (sceUsbKbRead(id, e) == 0) {
+            D_60B8q.state = 2;
+            D_60B8q.flag = 1;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6138);
 
