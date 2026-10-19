@@ -1546,7 +1546,23 @@ char *func_003FB840_impl(char *p) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB858);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB898);
+#ifdef SKIP_ASM
+extern void func_003FB858b(int, int *, int *) __asm__("func_003FB858");
+int func_003FB898(int a, int b);
+int func_003FB898(int a, int b) {
+    int x = 4;
+    unsigned y = 1;
+    unsigned r;
+    unsigned pad;
+    func_003FB858b(b, &x, (int *)&y);
+    r = a + 0xC;
+    if (r < y) return y;
+    pad = (y - r % y) % y;
+    return a + 0xC + pad;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB910);
