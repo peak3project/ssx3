@@ -738,7 +738,31 @@ int func_003FFD60(int a, int b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFE80);
+#ifdef SKIP_ASM
+struct Z_FE80 { unsigned char pad[0x40]; struct { unsigned char a, b, c, d; } e[8]; unsigned char pad2[4]; unsigned char f64; unsigned char pad3[6]; unsigned char f6B; unsigned char pad4[6]; unsigned char f72; };
+int func_003FFE80(int a, int b, int c, int d) {
+    struct Z_FE80 *p;
+    if (!D_00526250[a].e[b].f10) return 0;
+    p = (struct Z_FE80 *)func_003FF9A8(a, b);
+    if (p->f72 != 1) return 0;
+    if (p->f64 < 2) return 0;
+    if (c == -1) return p->f6B;
+    if (c >= p->f6B) return 0;
+    switch (d) {
+    case -1:
+        return p->e[c].a;
+    case 0:
+        return p->e[c].b;
+    case 1:
+        return p->e[c].c;
+    case 2:
+        return p->e[c].d;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFFA0);
 
