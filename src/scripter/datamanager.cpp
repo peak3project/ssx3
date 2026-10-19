@@ -176,7 +176,14 @@ extern "C" void func_00275B08(sDmTable275B08* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/datamanager", func_00275B78);
+#ifdef SKIP_ASM
+extern "C" int func_00275B78(void* self, int* p)
+{
+    return p[2];
+}
+#endif
 
 INCLUDE_ASM("scripter/datamanager", func_00275B80);
 //100%
