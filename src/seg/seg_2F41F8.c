@@ -661,7 +661,31 @@ void func_003F6670_impl(unsigned char *self, int *fl, int kb, unsigned code) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6700);
+#ifdef SKIP_ASM
+int func_003F6700_impl(unsigned flags, unsigned key, unsigned *out) __asm__("func_003F6700");
+int func_003F6700_impl(unsigned flags, unsigned key, unsigned *out) {
+    int ok = 1;
+    unsigned v = 0;
+    switch (key) {
+    case 0x5B: v = flags & 0x8; break;
+    case 0xA3: v = flags & 0x10; break;
+    case 0xA1: v = flags & 0x20; break;
+    case 0xA0:
+    case 0x10: v = flags & 0x2; break;
+    case 0x12:
+    case 0xA4: v = flags & 0x4; break;
+    case 0x11: v = flags & 0x11; break;
+    case 0x5C: v = flags & 0x80; break;
+    case 0xA2: v = flags & 0x1; break;
+    case 0xA5: v = flags & 0x40; break;
+    default: ok = 0; break;
+    }
+    if (ok) *out = v;
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F67E0);
