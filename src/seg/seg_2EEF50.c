@@ -277,7 +277,22 @@ void func_003EE878(int* p, int v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE880);
+#ifdef SKIP_ASM
+void func_003EE880(int* p) {
+    int i;
+    p[0] = 0;
+    for (i = 0; i < p[4]; i++) {
+        int* n;
+        while ((n = ((int**)p[5])[i]) != 0) {
+            ((int**)p[5])[i] = (int*)n[0];
+            n[0] = p[7];
+            p[7] = (int)n;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE900);
