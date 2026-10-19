@@ -1917,7 +1917,30 @@ done:
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A920);
+#ifdef SKIP_ASM
+struct sBXEnt16_A920 {
+    int key;
+    int key2;
+    int pad[2];
+};
+struct sBXTab_A920 {
+    int count;
+    sBXEnt16_A920* items;
+};
+
+extern "C" sBXEnt16_A920* func_0026A920(sBXTab_A920* self, int key, int key2)
+{
+    sBXEnt16_A920* e = self->items;
+    for (int i = 0; i < self->count; i++, e++) {
+        if (e->key == key && e->key2 == key2) {
+            return e;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A970);
