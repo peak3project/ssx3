@@ -1361,7 +1361,40 @@ extern int func_003F8178(int);
 int func_003F7958(int unused) { return func_003F8178(func_003FCF00(*(int *)(D_004A4BC4 + 0x144), *(int *)(D_004A4BC4 + 0x140), 0x11, 0)); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7990);
+#ifdef SKIP_ASM
+typedef struct { char pad0[0xD0]; unsigned f0D0; void *f0D4; int f0D8, f0DC, f0E0, f0E4; void *f0E8; int f0EC, f0F0, f0F4, f0F8, f0FC, f100; unsigned f104; } S7990;
+extern S7990 *D_7990 __asm__("D_004A4BC4");
+extern char fn6EE0[] __asm__("func_003F6EE0");
+extern char fn7328[] __asm__("func_003F7328");
+int f7990(unsigned a) __asm__("func_003F7990");
+int f7990(unsigned a) {
+    int r = 0;
+    unsigned i;
+    D_7990->f0D0 = a;
+    D_7990->f104 = a;
+    if (a < 4) {
+        D_7990->f0D4 = fn6EE0;
+    } else {
+        r = 0xF;
+    }
+    D_7990->f0D8 = 9;
+    D_7990->f0EC = 4;
+    D_7990->f0E8 = fn7328;
+    D_7990->f0E0 = 0;
+    D_7990->f0E4 = 0;
+    D_7990->f0DC = 0;
+    for (i = 0; i < 3; i++)
+        ;
+    D_7990->f0F0 = 0;
+    D_7990->f0F4 = 0;
+    D_7990->f0F8 = 0;
+    D_7990->f0FC = 0;
+    D_7990->f100 = 0;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7A30);
