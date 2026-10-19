@@ -501,7 +501,23 @@ int func_004007A8(int a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00400810);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400838);
+#ifdef SKIP_ASM
+extern int func_00423DA0(int *);
+extern void func_00400810(int, int, int);
+void func_00400838(unsigned short a) {
+    int s[6];
+    int h;
+    s[1] = 1;
+    s[2] = 0;
+    s[5] = 0;
+    h = func_00423DA0(s);
+    func_00423B20(a, func_00400810, h);
+    func_00423DE0(h);
+    func_00423DB0(h);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004008A0);
 
