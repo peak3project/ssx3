@@ -1785,7 +1785,26 @@ extern "C" void func_0010F878(sComputer_0010F878* self)
 
 INCLUDE_ASM("ai/computer", func_0010F998);
 
+//100%
 INCLUDE_ASM("ai/computer", func_0010FBF0);
+#ifdef SKIP_ASM
+struct sAi0010FBF0 {
+    char pad0[0x28];
+    char* mRiders[20];
+    int mCount;
+};
+
+extern "C" int func_0010FBF0(sAi0010FBF0* self, int team)
+{
+    int n = 0;
+    for (int i = 0; i < self->mCount; i++)
+    {
+        if (*(int*)(self->mRiders[i] + 0xAB8) == team)
+            n++;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_0010FC30);
