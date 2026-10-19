@@ -1,6 +1,31 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("be/bedbreward", cBERewardDB_init);
+#ifdef SKIP_ASM
+extern "C" int func_00317F60(const char* name);
+extern "C" int func_003E1BB8(const char* name, void* buf, int size);
+extern "C" int func_0019DA10(void* self, int bank, int id, int a3, int a4, int a5);
+extern "C" void func_0015A818(int* self, int v);
+extern "C" char* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
+extern void* D_004A28A8;
+extern const char* D_004A1270;
+extern const char D_0045AB78[];
+
+extern "C" void cBERewardDB_init(int* self, int mode)
+{
+    if (mode == 0)
+    {
+        int size = func_00317F60(D_004A1270);
+        char* buf = operator_new__FUi(size, D_0045AB78, 0, 0);
+        func_003E1BB8(D_004A1270, buf, size);
+        func_0015A818(self, (int)buf);
+        *self = -1;
+        return;
+    }
+    *self = func_0019DA10(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70, 0, (int)D_004A1270, 10, mode, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/bedbreward", func_0015AE00);
