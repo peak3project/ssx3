@@ -3654,7 +3654,21 @@ void* func_00144610(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00144630);
+#ifdef SKIP_ASM
+extern "C" void* cRiderAnimBase_cRiderAnimBase(void* self);
+extern void* D_00458458[];
+
+extern "C" void* func_00144630(void* self)
+{
+    cRiderAnimBase_cRiderAnimBase(self);
+    *(void***)((char*)self + 0x58) = D_00458458;
+    *(int*)((char*)self + 0x60) = 0;
+    *(int*)((char*)self + 0x64) = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00144670);
