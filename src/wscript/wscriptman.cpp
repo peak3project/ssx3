@@ -812,7 +812,16 @@ extern "C" void func_0030A610(void* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030A660);
+#ifdef SKIP_ASM
+extern "C" int func_003A6B78(void* world, int id, int flag);
+
+extern "C" int func_0030A660(void* self, int id)
+{
+    return func_003A6B78(*(void**)((char*)self + 0x28C), id, 5) != -1;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("wscript/wscriptman", func_0030A688);
