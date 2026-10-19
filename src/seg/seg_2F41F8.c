@@ -177,7 +177,30 @@ int func_003F4250(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F42A0);
+#ifdef SKIP_ASM
+extern int D_004A4BA0;
+extern unsigned D_004A4BAC;
+extern int f4DE8(void) __asm__("func_003F4DE8");
+extern void f4A78(void) __asm__("func_003F4A78");
+typedef struct { void (*fn)(int, int); int arg; } T42A0;
+extern T42A0 D_42A0t[] __asm__("D_0051F030");
+void func_003F42A0(void) {
+    int i;
+    T42A0 *p;
+    if (D_004A4BA0 != 0) {
+        if (f4DE8() < D_004A4BAC) return;
+        D_004A4BAC = f4DE8() + 5;
+    }
+    f4A78();
+    p = D_42A0t;
+    for (i = 0xF; i >= 0; i--) {
+        if (p->fn) p->fn(p->arg, f4DE8());
+        p++;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4330);
