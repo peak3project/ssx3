@@ -8,7 +8,13 @@ void cGameAnimMap_testResolve()
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/gameanimmap", func_003150B8);
+#ifdef SKIP_ASM
+extern "C" void* func_003150B8(void* self, ...) {
+    return self;
+}
+#endif
 
 INCLUDE_ASM("animation/gameanimmap", func_003150F8);
 
