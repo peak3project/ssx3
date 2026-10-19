@@ -131,7 +131,71 @@ int func_00413388(float x, float y) {
 
 INCLUDE_ASM("seg/seg_313E80", func_004133F0);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004135E8);
+#ifdef SKIP_ASM
+extern void func_00413068(float *, int *);
+extern float func_00412F58_f(int *) __asm__("func_00412F58");
+extern int D_0052ADD8[];
+
+float func_004135E8(float x, float y) {
+    int a[4];
+    int b[4];
+    float fx = x;
+    float fy = y;
+    int *r;
+    unsigned n, d, q, bit;
+    int *p;
+    func_00413068(&fx, a);
+    func_00413068(&fy, b);
+    p = a;
+    if ((unsigned)a[0] < 2) {
+        r = a;
+    } else if ((unsigned)b[0] < 2) {
+        r = b;
+    } else {
+        a[1] ^= b[1];
+        if ((a[0] ^ 4) == 0 || (a[0] ^ 2) == 0) {
+            r = a;
+            if (a[0] == b[0])
+                r = D_0052ADD8;
+        } else if ((b[0] ^ 4) == 0) {
+            a[3] = 0;
+            a[2] = 0;
+            r = a;
+        } else if ((b[0] ^ 2) == 0) {
+            a[0] = 4;
+            r = a;
+        } else {
+            a[2] = a[2] - b[2];
+            n = a[3];
+            d = b[3];
+            if (n < d) {
+                a[2]--;
+                n <<= 1;
+            }
+            bit = 0x40000000;
+            q = 0;
+            for (; bit != 0; bit >>= 1) {
+                if (n >= d) {
+                    q |= bit;
+                    n -= d;
+                }
+                n <<= 1;
+            }
+            if ((q & 0x7F) == 0x40) {
+                if (q & 0x80)
+                    q += 0x40;
+                else if (n != 0)
+                    q += 0x40;
+            }
+            p[3] = q;
+            r = p;
+        }
+    }
+    return func_00412F58_f(r);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_00413748);
 
