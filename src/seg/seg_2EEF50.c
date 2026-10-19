@@ -327,7 +327,29 @@ int func_003EE900(int* p, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE9A0);
+#ifdef SKIP_ASM
+int func_003EE9A0(int* p) {
+    int* n;
+    int** slot;
+    if (!p[0]) {
+        return 0;
+    }
+    if (!((int**)p[5])[p[1]]) {
+        do {
+            p[1] = (p[1] + 1) % p[4];
+        } while (!((int**)p[5])[p[1]]);
+    }
+    slot = (int**)(p[1] * 4 + p[5]);
+    n = *slot;
+    *slot = (int*)n[0];
+    n[0] = p[7];
+    p[7] = (int)n;
+    p[0]--;
+    return n[1];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEA48);
 
