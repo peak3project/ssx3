@@ -619,7 +619,20 @@ extern "C" int func_00278F68(void* self, int i, int a, int b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00278FF8);
+#ifdef SKIP_ASM
+extern "C" int func_00276198(void* a, void* b);
+
+extern "C" int func_00278FF8(void* self, int a, int b)
+{
+    if (a == b) {
+        return 1;
+    }
+    char* riders = *(char**)((char*)self + 0x54C);
+    return func_00276198(riders + a * 0xCC, riders + b * 0xCC);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279040);
