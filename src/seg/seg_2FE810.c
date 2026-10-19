@@ -1951,7 +1951,18 @@ int func_00402F80(struct A_2F80 *a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403098);
+#ifdef SKIP_ASM
+struct P_3098 { char pad[0x174]; int f174; };
+struct A_3098 { char pad[0x40]; struct P_3098 *f40; };
+extern int s98_30E0(struct A_3098 *, int, int) __asm__("func_004030E0");
+extern int s98_2F80(struct A_3098 *, int, int) __asm__("func_00402F80");
+int func_00403098(struct A_3098 *a, int b, int c) {
+    if (a->f40->f174 != 3) return s98_30E0(a, b, c);
+    return s98_2F80(a, b, c);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004030E0);
