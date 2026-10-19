@@ -455,7 +455,26 @@ void func_003F60B8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6138);
+#ifdef SKIP_ASM
+typedef struct { char pad0[0x9C]; int st; unsigned char flag; char p1[3]; int cur; char *ents; int a; int b; } Q6138;
+extern Q6138 D_6138q __asm__("D_00525F80");
+extern int f810(int, int *) __asm__("func_0040C810");
+int func_003F6138(void) {
+    int tmp;
+    int r;
+    r = f810(0, &tmp);
+    if (r != 0) return r;
+    {
+        int *e = (int *)(D_6138q.ents + D_6138q.cur * 0x8C);
+        if (e[2] > 0 || e[1] != D_6138q.b || e[0] != D_6138q.a) ((unsigned char *)e)[0x88] = 1;
+    }
+    D_6138q.flag = 0;
+    D_6138q.st = 0;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F61C8);
