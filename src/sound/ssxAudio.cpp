@@ -524,7 +524,17 @@ extern "C" void func_00285FB0(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_002861D0);
+#ifdef SKIP_ASM
+struct func_002861D0_vte { short delta; short index; int (*fn)(void*, int); };
+extern "C" void func_002861D0(char* self)
+{
+    func_002861D0_vte* vt = *(func_002861D0_vte**)(self + 0x5558);
+    char* mon = self + 0x118;
+    vt[4].fn(mon + vt[4].delta, 1);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/ssxAudio", func_00286200);
@@ -1229,6 +1239,7 @@ INCLUDE_ASM("sound/ssxAudio", func_002879A0);
 INCLUDE_ASM("sound/ssxAudio", func_002879B0);
 
 INCLUDE_ASM("sound/ssxAudio", func_002879E0);
+
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00287A10);
 #ifdef SKIP_ASM
