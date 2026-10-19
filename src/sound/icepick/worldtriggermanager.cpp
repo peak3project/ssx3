@@ -1491,7 +1491,14 @@ extern "C" float func_002B82B8(float curve, float t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B83B8);
+#ifdef SKIP_ASM
+extern "C" void* func_002B83B8(void* self, ...)
+{
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B83F8);
