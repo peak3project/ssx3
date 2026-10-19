@@ -386,7 +386,14 @@ extern "C" int func_0036A3B0(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036A3E0);
+#ifdef SKIP_ASM
+extern "C" int func_0036A3E0(unsigned short x, unsigned short y) {
+    int a = func_0036A3B0(x);
+    return a | (func_0036A3B0(y) << 1);
+}
+#endif
 INCLUDE_ASM("render/graphicsman", func_0036A428);
 
 //100%
