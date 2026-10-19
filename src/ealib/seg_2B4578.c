@@ -4423,97 +4423,54 @@ void func_003C07A8(int status);
 void func_003C08F8(void* buf)
 {
     __asm__ __volatile__(
-        ".set push
-"
-        ".set noreorder
-"
-        "daddu      $8, %0, $0
-"
-        "lqc2       $vf1, 0x1F0($8)
-"
-        "vaddax.xyzw ACC, $vf1, $vf0x
-"
-        "lqc2       $vf1, 0x0($8)
-"
-        "lqc2       $vf2, 0x10($8)
-"
-        "lqc2       $vf3, 0x20($8)
-"
-        "lqc2       $vf4, 0x30($8)
-"
-        "lqc2       $vf5, 0x40($8)
-"
-        "lqc2       $vf6, 0x50($8)
-"
-        ".set pop
-"
+        ".set push\n"
+        ".set noreorder\n"
+        "daddu      $8, %0, $0\n"
+        "lqc2       $vf1, 0x1F0($8)\n"
+        "vaddax.xyzw ACC, $vf1, $vf0x\n"
+        "lqc2       $vf1, 0x0($8)\n"
+        "lqc2       $vf2, 0x10($8)\n"
+        "lqc2       $vf3, 0x20($8)\n"
+        "lqc2       $vf4, 0x30($8)\n"
+        "lqc2       $vf5, 0x40($8)\n"
+        "lqc2       $vf6, 0x50($8)\n"
+        ".set pop\n"
         :
         : "r"(buf)
         : "$8", "$9", "memory");
     func_003C07A8(*(int*)((char*)buf + 0x200));
     __asm__ __volatile__(
-        ".set push
-"
-        ".set noreorder
-"
-        "daddu      $8, %0, $0
-"
-        "lqc2       $vf7, 0x60($8)
-"
-        "lqc2       $vf8, 0x70($8)
-"
-        "lqc2       $vf9, 0x80($8)
-"
-        "lqc2       $vf10, 0x90($8)
-"
-        "lqc2       $vf11, 0xA0($8)
-"
-        "lqc2       $vf12, 0xB0($8)
-"
-        "lw         $9, 0x204($8)
-"
-        "lqc2       $vf13, 0xC0($8)
-"
-        "lqc2       $vf14, 0xD0($8)
-"
-        "ctc2.ni    $9, $vi16
-"
-        "lqc2       $vf15, 0xE0($8)
-"
-        "lqc2       $vf16, 0xF0($8)
-"
-        "lqc2       $vf17, 0x100($8)
-"
-        "lqc2       $vf18, 0x110($8)
-"
-        "lqc2       $vf19, 0x120($8)
-"
-        "lqc2       $vf20, 0x130($8)
-"
-        "lqc2       $vf21, 0x140($8)
-"
-        "lqc2       $vf22, 0x150($8)
-"
-        "lqc2       $vf23, 0x160($8)
-"
-        "lqc2       $vf24, 0x170($8)
-"
-        "lqc2       $vf25, 0x180($8)
-"
-        "lqc2       $vf26, 0x190($8)
-"
-        "lqc2       $vf27, 0x1A0($8)
-"
-        "lqc2       $vf28, 0x1B0($8)
-"
-        "lqc2       $vf29, 0x1C0($8)
-"
-        "lqc2       $vf30, 0x1D0($8)
-"
-        "lqc2       $vf31, 0x1E0($8)
-"
-        ".set pop
-"
+        ".set push\n"
+        ".set noreorder\n"
+        "daddu      $8, %0, $0\n"
+        "lqc2       $vf7, 0x60($8)\n"
+        "lqc2       $vf8, 0x70($8)\n"
+        "lqc2       $vf9, 0x80($8)\n"
+        "lqc2       $vf10, 0x90($8)\n"
+        "lqc2       $vf11, 0xA0($8)\n"
+        "lqc2       $vf12, 0xB0($8)\n"
+        "lw         $9, 0x204($8)\n"
+        "lqc2       $vf13, 0xC0($8)\n"
+        "lqc2       $vf14, 0xD0($8)\n"
+        "ctc2.ni    $9, $vi16\n"
+        "lqc2       $vf15, 0xE0($8)\n"
+        "lqc2       $vf16, 0xF0($8)\n"
+        "lqc2       $vf17, 0x100($8)\n"
+        "lqc2       $vf18, 0x110($8)\n"
+        "lqc2       $vf19, 0x120($8)\n"
+        "lqc2       $vf20, 0x130($8)\n"
+        "lqc2       $vf21, 0x140($8)\n"
+        "lqc2       $vf22, 0x150($8)\n"
+        "lqc2       $vf23, 0x160($8)\n"
+        "lqc2       $vf24, 0x170($8)\n"
+        "lqc2       $vf25, 0x180($8)\n"
+        "lqc2       $vf26, 0x190($8)\n"
+        "lqc2       $vf27, 0x1A0($8)\n"
+        "lqc2       $vf28, 0x1B0($8)\n"
+        "lqc2       $vf29, 0x1C0($8)\n"
+        "lqc2       $vf30, 0x1D0($8)\n"
+        "lqc2       $vf31, 0x1E0($8)\n"
+        ".set pop\n"
         :
         : "r"(buf)
         : "$8", "$9", "memory");

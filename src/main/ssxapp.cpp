@@ -1598,16 +1598,11 @@ extern "C" void func_0022A270_impl(sVisOwner_A270* self, sVisObj_A270* obj, int 
         __asm__ __volatile__("cfc2.i    %0, $vi1
 " : "=r"(r));
         __asm__ __volatile__(
-            "lqc2      $vf20, 0x0(%0)
-"
-            "lqc2      $vf21, 0x0(%1)
-"
-            "lqc2      $vf22, 0x0(%2)
-"
-            "ctc2.ni   %3, $vi14
-"
-            "vcallms   0xDB8
-"
+            "lqc2      $vf20, 0x0(%0)\n"
+            "lqc2      $vf21, 0x0(%1)\n"
+            "lqc2      $vf22, 0x0(%2)\n"
+            "ctc2.ni   %3, $vi14\n"
+            "vcallms   0xDB8\n"
             :
             : "r"(lo), "r"(hi), "r"(obj->sphere), "r"(frustum));
     } else {

@@ -2101,24 +2101,15 @@ struct sMat4HP {
 static inline void vu0CopyMat_140928(sMat4HP& dst, const sMat4HP& src)
 {
     __asm__(
-        "lqc2      $vf1, 0x0(%1)
-"
-        "lqc2      $vf2, 0x10(%1)
-"
-        "lqc2      $vf3, 0x20(%1)
-"
-        "lqc2      $vf4, 0x30(%1)
-"
-        "sqc2      $vf1, 0x0(%0)
-"
-        "sqc2      $vf2, 0x10(%0)
-"
-        "sqc2      $vf3, 0x20(%0)
-"
-        "sqc2      $vf4, 0x30(%0)
-"
-        "1:
-"
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        "1:\n"
         : : "r"(&dst), "r"(&src) : "memory");
 }
 
