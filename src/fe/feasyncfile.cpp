@@ -21060,7 +21060,90 @@ extern "C" int func_001C32B8(cFEVObj_001C32B8* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C3310);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+struct cUIText;
+extern "C" cUIText* cUIScreen_getObjectByHashName(void* screen, int hash);
+void cUIText_setAsciiString(cUIText* self, const char* str);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int func_0025F338(void* self);
+extern "C" char* func_0025F388(void* self, int idx, int* a, int* b);
+extern "C" void func_0039B760(void* self, unsigned char a1);
+extern "C" void func_001C4F58(void* self, char* buf, int v);
+extern void* D_004A3028;
+extern char D_00465D50[];
+extern char D_00465D90[];
+extern char D_00465DA0[];
+extern char D_00465DB0[];
+extern char D_004A12C0[];
+extern char D_004A1390_s __asm__("D_004A1390");
+extern char D_004A1C20[];
+
+extern "C" void func_001C3310(void* self_)
+{
+    char* self = (char*)self_;
+    char name[32];
+    char txt[64];
+    int v0;
+    int v1;
+    if (*(void**)(self + 0x40) != 0) {
+        int n = func_0025F338(D_004A3028);
+        char* obj = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00465D50));
+        if (obj != 0) {
+            if (*(unsigned char*)(obj + 0x96) != n) {
+                func_0039B760(obj, n);
+                if (n == 0) {
+                    func_0039B760(obj, 1);
+                }
+            }
+        }
+        int idx = *(int*)(self + 0x6E8);
+        int rows = 10;
+        if (n >= 11) {
+            if (n - idx <= rows - 1) {
+                idx = n - rows;
+            }
+        }
+        int i;
+        int* pb;
+        int* pa;
+        pa = &v0;
+        pb = &v1;
+        for (i = 0; i < 10; i++, idx++) {
+            sprintf(name, D_00465D90, i);
+            cUIText* t0 = cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
+            sprintf(name, D_00465DA0, i);
+            cUIText* t1 = cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
+            sprintf(name, D_00465DB0, i);
+            cUIText* t2 = cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
+            char* e = func_0025F388(D_004A3028, idx, pa, pb);
+            if (e != 0 && n > 0) {
+                if (t2 != 0) {
+                    if (*(int*)(self + 0x6EC) != 0) {
+                        func_001C4F58(self, txt, v0);
+                    } else {
+                        sprintf(txt, D_004A12C0, v0);
+                    }
+                    cUIText_setAsciiString(t2, txt);
+                }
+                if (t0 != 0) {
+                    cUIText_setAsciiString(t0, e + 8);
+                }
+                if (t1 != 0) {
+                    sprintf(txt, D_004A1C20, *(int*)(e + 4));
+                    cUIText_setAsciiString(t1, txt);
+                }
+            } else {
+                cUIText_setAsciiString(t1, &D_004A1390_s);
+                cUIText_setAsciiString(t2, &D_004A1390_s);
+                cUIText_setAsciiString(t0, &D_004A1390_s);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C3570);
