@@ -603,7 +603,24 @@ void func_003F65F8(char *out, char *flags, int mode, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6670);
+#ifdef SKIP_ASM
+extern unsigned char D_00451458[];
+extern int f268(int, int, int, int) __asm__("func_0040D268");
+void func_003F6670_impl(unsigned char *self, int *fl, int kb, unsigned code) __asm__("func_003F6670");
+void func_003F6670_impl(unsigned char *self, int *fl, int kb, unsigned code) {
+    unsigned t = code - 0x54;
+    if (t < 0x10) {
+        if (code < 0x59 || (fl[0] & 1)) self[1] = D_00451458[t];
+        else self[1] = 0;
+    } else {
+        int r = f268(kb, fl[1], fl[0], code & 0xFFFF);
+        if (r < 0x100) self[1] = r;
+        else self[1] = 0;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6700);
 
