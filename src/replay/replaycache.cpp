@@ -1915,7 +1915,18 @@ extern "C" void func_00272BD0(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272BF8);
+#ifdef SKIP_ASM
+extern "C" void func_00272BD0(void* self, int a1);
+
+extern "C" void func_00272BF8(sRcList272938* self)
+{
+    for (sRcNode272938* n = self->usedHead; n != 0; n = n->next) {
+        func_00272BD0(self, n->id);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272C48);
