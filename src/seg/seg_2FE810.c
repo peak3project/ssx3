@@ -80,7 +80,20 @@ int func_003FE2A0(int v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE2B8);
+#ifdef SKIP_ASM
+extern unsigned func_003FDF28(unsigned);
+extern void func_003FDE30();
+void func_003FE2B8(int *p, unsigned a) {
+    unsigned v = func_003FDF28(a);
+    func_003FDE30(p);
+    if (p[12] != 0xFFFFFFFF)
+        p[12] = v;
+    p[8] = 0;
+    p[0] = (p[0] & ~0xC) | 0x105;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FE320);
 
