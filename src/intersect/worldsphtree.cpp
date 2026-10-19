@@ -3242,7 +3242,86 @@ extern "C" void func_003429E0(void* self, cMover_3429E0* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342A88);
+#ifdef SKIP_ASM
+struct sVec4_342A88 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec4_342A88 vu0Scale_342A88(const sVec4_342A88& v, float s)
+{
+    sVec4_342A88 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_342A88(const sVec4_342A88& a, const sVec4_342A88& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+class cMover_342A88 {
+public:
+    virtual void v01();
+    virtual sVec4_342A88* getVelocity();
+    virtual void v03();
+    virtual void setVelocity(sVec4_342A88* v);
+};
+
+extern "C" float func_002D1C70();
+
+static inline void setVel_342A88(cMover_342A88* o, sVec4_342A88* v)
+{
+    o->setVelocity(v);
+}
+
+struct sPlane_342A88 {
+    sVec4_342A88 n;
+    float d;
+    float k;
+};
+
+struct sSelf_342A88 {
+    char pad[0x10];
+    sPlane_342A88 plane;
+};
+
+extern "C" void func_00342A88(sSelf_342A88* self, cMover_342A88* obj)
+{
+    float d = self->plane.d - vu0Dot_342A88(*obj->getVelocity(), self->plane.n);
+    if (d > 0.0f) {
+        // PORT: takes the address of a temporary (g++ 2.95 accepts it).
+        sPlane_342A88* pl = &self->plane;
+        setVel_342A88(obj, &vu0Scale_342A88(vu0Scale_342A88(vu0Scale_342A88(pl->n, d), pl->k), func_002D1C70()));
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342B80);
