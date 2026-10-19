@@ -997,7 +997,21 @@ void func_00415820(int *p, int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00415840);
+#ifdef SKIP_ASM
+int func_00415840(int f0, char *f1, int a, char *b, char *f4, void *c) {
+    char *o = ((char *(*)(void))f0)();
+    int *vt = *(int **)(o + 4);
+    char *th = o + *(short *)((char *)vt + 0x10);
+    int r1;
+    int r4;
+    vt = (int *)((char *)vt + 0x10);
+    r1 = ((int (*)(void))f1)();
+    r4 = ((int (*)(void))f4)();
+    return ((int (*)(char *, int, int, char *, int, void *))vt[1])(th, r1, a, b, r4, c);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_004158F0);
 
