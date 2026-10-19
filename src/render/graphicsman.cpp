@@ -1090,7 +1090,20 @@ extern "C" void func_003705E0(char* self, void* a1, char* d)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_00370708);
+#ifdef SKIP_ASM
+extern "C" void func_0036D3D8(void* self, float val);
+extern "C" void func_00370708(float* self, float val)
+{
+    if (val == 0.0f) {
+        func_0036D3D8((char*)self + 0x10, 0.0f);
+    } else {
+        *self = val;
+        func_0036D3D8((char*)self + 0x10, val);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_00370758);
