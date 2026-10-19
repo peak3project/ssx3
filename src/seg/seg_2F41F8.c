@@ -2161,7 +2161,25 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003FC708);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC850);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC8F8);
+#ifdef SKIP_ASM
+extern int fC0D8(void) __asm__("func_003FC0D8");
+extern int *fBA20(int, int) __asm__("func_003FBA20");
+int func_003FC8F8_impl(int a, int b, int c, int *out) __asm__("func_003FC8F8");
+int func_003FC8F8_impl(int a, int b, int c, int *out) {
+    int err = 0;
+    int *e;
+    if (!fC0D8()) return 2;
+    if (a == 0) return 4;
+    if (out == 0) return 4;
+    *out = 0;
+    e = fBA20(b, c);
+    if (e) *out = e[2];
+    else err = 7;
+    return err;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC990);
 
