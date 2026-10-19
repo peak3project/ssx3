@@ -1767,7 +1767,31 @@ extern "C" int func_0026A0B8(sBXRangeList* self, float a, float b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A138);
+#ifdef SKIP_ASM
+struct sBXEnt16_A138 {
+    int key;
+    int pad4;
+    float value;
+    int padC;
+};
+struct sBXTab_A138 {
+    int count;
+    sBXEnt16_A138* items;
+};
+
+extern "C" float func_0026A138(sBXTab_A138* self)
+{
+    int n = self->count;
+    for (int i = 0; i < n; i++) {
+        if (self->items[i].key == 1) {
+            return self->items[i].value;
+        }
+    }
+    return -1.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A180);
