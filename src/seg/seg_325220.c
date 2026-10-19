@@ -1923,7 +1923,31 @@ int func_0042B640(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042B6D0);
+#ifdef SKIP_ASM
+struct B6D0 { int f0; int f4; char n1[0xFC]; };
+extern struct B6D0 D_G6D __asm__("D_0052F080");
+extern char D_0052F280[];
+extern int func_0042B068(void);
+extern int func_0042B168(void);
+extern char *strncpy(char *, const char *, int);
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_0042B6D0(char *a0) {
+    if (func_0042B068() < 0) {
+        return 0xFFFF0000;
+    }
+    if (func_0042B168() != 0) {
+        return 0xFFFEFFFC;
+    }
+    strncpy(D_G6D.n1, a0, 0xFC);
+    D_G6D.n1[0xFB] = 0;
+    if (func_00426D18_v(D_0052F280, 9, 0, &D_G6D, 0x200, &D_G6D, 4, 0, 0) < 0) {
+        return 0xFFFEFFFF;
+    }
+    return D_G6D.f0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042B770);
