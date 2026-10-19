@@ -1321,7 +1321,15 @@ extern "C" void func_0039E438(void *arg0, signed char arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiscreen", func_0039E470);
+#ifdef SKIP_ASM
+extern "C" void func_0039E470(void* self, signed char bit)
+{
+    signed char mask = ~(1 << bit);
+    *((unsigned char*)self + 0x15) &= mask;
+}
+#endif
 //100%
 INCLUDE_ASM("ui/uiscreen", func_0039E4A0__FPv);
 #ifdef SKIP_ASM
