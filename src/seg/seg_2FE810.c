@@ -1513,7 +1513,25 @@ void func_00406E20(int p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406EC8);
+#ifdef SKIP_ASM
+extern int func_00402C80(int *);
+long func_00406EC8(int p) {
+    int n = 0;
+    long v = *(volatile long *)0x10002000;
+    if (v < 0 && !(*(volatile unsigned *)0x10002010 & 0x4000)) {
+        do {
+            if (n++ >= 0x1389) {
+                func_00402C80(*(int **)(p + 0x858));
+                n = 0;
+            }
+            v = *(volatile long *)0x10002000;
+        } while (v < 0 && !(*(volatile unsigned *)0x10002010 & 0x4000));
+    }
+    return v;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00406F78);
 
