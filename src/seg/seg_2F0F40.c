@@ -33,7 +33,46 @@ void func_003F0150(char* s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0198);
+#ifdef SKIP_ASM
+extern char D_004A4AE0[];
+extern int D_004A4AE8[];
+extern char D_004A4AF0[];
+extern char D_004A4AF8[];
+extern char* strchr(const char* s, int c);
+extern int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src);
+extern char* cDirtysock_tag_TagFieldFind(const char* tag, const char* key);
+extern int cDirtysock_tag_TagFieldGetString(const char* data, char* buf, int len, const char* defval);
+extern int cDirtysock_tag_TagFieldDelete(char* tag, const char* key);
+extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key, const char* val);
+void func_003F0198(char* self, int* ev) {
+    char tag[0x800];
+    char name[0x100];
+    char* nm;
+    char* p;
+    char* q;
+    cDirtysock_tag_TagFieldDupl(tag, 0x800, (char*)ev[3]);
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(tag, D_004A4AE0), (char*)name, 0x100, (char*)D_004A4AE8);
+    nm = (char*)name;
+    cDirtysock_tag_TagFieldDelete(tag, D_004A4AE0);
+    p = strchr(nm, '@');
+    if (p) *p = 0;
+    cDirtysock_tag_TagFieldSetString(tag, 0x800, D_004A4AE0, nm);
+    if (p) {
+        nm = p + 1;
+        q = strchr(nm, '/');
+        if (q) *q = 0;
+        cDirtysock_tag_TagFieldSetString(tag, 0x800, D_004A4AF0, nm);
+        if (q) {
+            cDirtysock_tag_TagFieldSetString(tag, 0x800, D_004A4AF8, q + 1);
+        }
+    }
+    ev[3] = (int)tag;
+    ev[0] = 0x63686174;
+    (*(void (**)(char*, int*, int))(self + 0x4B0))(self, ev, *(int*)(self + 0x4AC));
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F0F40", func_003F02D0);
 
