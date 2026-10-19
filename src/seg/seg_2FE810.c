@@ -1956,7 +1956,32 @@ int *func_00409B60(int *a, int *b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409B90);
+#ifdef SKIP_ASM
+extern int D_005271C0[];
+extern int D_00527240[];
+extern int D_00528780[];
+extern int D_004533C0[];
+extern int D_004533C4[];
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+int func_00409B90(int a) {
+    int r;
+    if (D_005271C0[9] == 0)
+        return -100;
+    if (func_00423DF0(D_004533C4[0]) < 0)
+        return -200;
+    D_00527240[5] = a;
+    r = func_00426D18((char *)D_005271C0, 20, 1, D_00527240, 48, D_00528780, 4, 0, 0);
+    if (r == 0)
+        D_004533C0[0] = 20;
+    else
+        func_00423DC0(D_004533C4[0]);
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00409C48);
 
