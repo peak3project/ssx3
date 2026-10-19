@@ -1815,7 +1815,34 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F9B38);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9C48);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9DC0);
+#ifdef SKIP_ASM
+extern int f9208(void) __asm__("func_003F9208");
+extern void f86F0(int) __asm__("func_003F86F0");
+extern int *D_9DC0s __asm__("D_004A4BD8");
+typedef struct { char pad[0x2C]; void (*f2C)(int, int, int); } E9DC0;
+extern E9DC0 *D_9DC0e __asm__("D_004A4BDC");
+int func_003F9DC0_impl(int *src, int a, int b) __asm__("func_003F9DC0");
+int func_003F9DC0_impl(int *src, int a, int b) {
+    int *s;
+    int *t;
+    E9DC0 *e;
+    if (f9208() == 0) return 2;
+    if (src == 0) return 0xC;
+    s = D_9DC0s;
+    if (s[0] != 0) return 0xD;
+    s[0] = 0xA;
+    s[1] = 0x1D;
+    f86F0(0);
+    __builtin_memcpy((char *)D_9DC0s + 0xC, (char *)src, 0x60);
+    t = D_9DC0s;
+    e = D_9DC0e;
+    t[0x70 / 4] = b;
+    e->f2C(src[0], a, b);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9F00);
 
