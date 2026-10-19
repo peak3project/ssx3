@@ -1584,7 +1584,52 @@ int func_00403600(int *p, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403620);
+#ifdef SKIP_ASM
+extern char D_00453200[];
+extern char D_00453240[];
+extern char D_00497CF8[];
+extern int func_004072E8();
+extern void func_00403AD0();
+extern void func_00403748();
+extern void func_004076F8();
+void func_00403620(int *p) {
+    unsigned v;
+    int w;
+    int b;
+    p[0xD4 / 4] = 0;
+    v = func_004072E8(p, 32);
+    w = (v >> 8) & 0xFFF;
+    p[0x124 / 4] = v >> 20;
+    p[0x128 / 4] = w;
+    if (w >= 0xAF1)
+        func_004034A8(p, (int)D_00497CF8);
+    v = func_004072E8(p, 30);
+    p[0x134 / 4] = v >> 12;
+    p[0x138 / 4] = (v >> 1) & 0x3FF;
+    b = func_004072E8(p, 1);
+    p[0x840 / 4] = b;
+    if (b != 0) {
+        func_00406E20((int)p);
+        func_00406DF0(p, 0x50000000);
+        func_00406E20((int)p);
+    } else {
+        func_00403AD0(p, 0x50000000, D_00453200);
+    }
+    b = func_004072E8(p, 1);
+    p[0x844 / 4] = b;
+    if (b != 0) {
+        func_00406E20((int)p);
+        func_00406DF0(p, 0x58000000);
+        func_00406E20((int)p);
+    } else {
+        func_00403AD0(p, 0x58000000, D_00453240);
+    }
+    func_004076F8(p);
+    func_00403748(p[0x858 / 4]);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403748);
 
