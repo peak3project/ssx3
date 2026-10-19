@@ -185,7 +185,15 @@ extern "C" int func_00275B78(void* self, int* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/datamanager", func_00275B80);
+#ifdef SKIP_ASM
+extern "C" void func_00275B80(void* self, int* p, int* a, int* b)
+{
+    *a = p[0];
+    *b = p[1];
+}
+#endif
 //100%
 INCLUDE_ASM("scripter/datamanager", func_00275B98);
 #ifdef SKIP_ASM
