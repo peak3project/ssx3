@@ -4645,7 +4645,20 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040F9F8);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040FB58);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040FB88);
+#ifdef SKIP_ASM
+extern void (**D_0045343C[])(void);
+void func_0040FB88(int a) {
+    void (**p)(void);
+    while (*D_0045343C[0]) {
+        p = D_0045343C[0];
+        p++;
+        D_0045343C[0] = p;
+        p[-1]();
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040FBE0);
 
