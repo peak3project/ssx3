@@ -1881,7 +1881,36 @@ int func_0042C1B8(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C1F0);
+#ifdef SKIP_ASM
+extern int D_00455230;
+extern int D_00455238[];
+extern int func_0042C1A8(int, int, void *);
+extern void func_0042C2F0(int, int);
+void func_0042C1F0(void) {
+    int a;
+    int b;
+    unsigned x;
+    unsigned y;
+    func_0042C2F0(D_00455238[0], D_00455238[1]);
+    func_0042C2F0(D_00455238[2], D_00455238[3]);
+    a = func_0042C1A8(0x80000000, 0x80080000, (void *)func_0042C168);
+    x = a - 0x20C;
+    b = func_0042C1A8(0x80000000, 0x80080000, (void *)func_0042C130);
+    y = b - 0x168;
+    while (x != y) {
+        if (x < y) {
+            a = func_0042C1A8(a + 4, 0x80080000, (void *)func_0042C168);
+            x = a - 0x20C;
+        } else {
+            b = func_0042C1A8(b + 4, 0x80080000, (void *)func_0042C130);
+            y = b - 0x168;
+        }
+    }
+    D_00455230 = x;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C2F0);
 
