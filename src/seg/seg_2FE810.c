@@ -5137,7 +5137,34 @@ sat:
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004126A0);
+#ifdef SKIP_ASM
+extern void func_00411C38(long *, int *);
+struct S4126A0 { unsigned cls; int sign; int exp; int pad; unsigned long frac; };
+unsigned func_004126A0(long a) {
+    struct S4126A0 s;
+    func_00411C38(&a, (int *)&s);
+    if ((s.cls ^ 2) == 0)
+        return 0;
+    if (s.cls < 2)
+        return 0;
+    if (s.sign != 0)
+        return 0;
+    if ((s.cls ^ 4) == 0)
+        goto sat;
+    if (s.exp < 0)
+        return 0;
+    if (s.exp >= 32) {
+sat:
+        return 0xFFFFFFFF;
+    }
+    if (s.exp >= 61)
+        return s.frac << (s.exp - 60);
+    else
+        return s.frac >> (60 - s.exp);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00412740);
