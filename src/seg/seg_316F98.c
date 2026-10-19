@@ -1000,7 +1000,45 @@ void func_004205B8(int *self, int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004205F0);
+#ifdef SKIP_ASM
+struct Bigint {
+    struct Bigint *next;
+    int k, maxwds, sign, wds;
+    unsigned x[1];
+};
+extern int *func_00420510(int, int);
+extern void func_004205B8(int *, int *);
+extern void *func_0041605C(void *, void *, int);
+struct Bigint *func_004205F0(int ptr, struct Bigint *b, int m, int a) {
+    int i, wds;
+    unsigned *x, y, xi, z, carry;
+    struct Bigint *b1;
+    wds = b->wds;
+    x = b->x;
+    i = 0;
+    carry = a;
+    do {
+        xi = *x;
+        y = (xi & 0xffff) * m + carry;
+        z = (xi >> 16) * m + (y >> 16);
+        carry = z >> 16;
+        *x++ = (z << 16) + (y & 0xffff);
+    } while (++i < wds);
+    if (carry) {
+        if (wds >= b->maxwds) {
+            b1 = (struct Bigint *)func_00420510(ptr, b->k + 1);
+            func_0041605C(&b1->sign, &b->sign, b->wds * 4 + 8);
+            func_004205B8((int *)ptr, (int *)b);
+            b = b1;
+        }
+        b->x[wds++] = carry;
+        b->wds = wds;
+    }
+    return b;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_004206F8);
 
