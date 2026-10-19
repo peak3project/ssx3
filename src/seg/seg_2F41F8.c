@@ -10,7 +10,23 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F35D0);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3748);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3860);
+#ifdef SKIP_ASM
+extern char D_0051F000[];
+extern int func_003F4C98(char *, int, int);
+extern int f4C68g(char *, int, int, int, int, int, int, int, int, int *) __asm__("func_003F4C68");
+int func_003F3860(int *self) {
+    int id = self[0x58 / 4];
+    func_003F4C98(D_0051F000, 'name', 'done');
+    f4C68g(D_0051F000, 1, id, 0, 0, 0, 0, 0, 1, self);
+    if (self[0] > 0) {
+        func_003F4C98(D_0051F000, 'name', 'addr');
+        f4C68g(D_0051F000, 1, id, 0, 0, 0, 0, 0, 1, self + 1);
+    }
+    return self[0];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3940);
 
