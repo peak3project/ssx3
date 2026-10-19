@@ -3126,7 +3126,15 @@ int func_00274348(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00274358);
+#ifdef SKIP_ASM
+struct sC274358 { int pad0; char* base; int pad8[3]; int* offs; int cur; };
+
+extern "C" int func_00274358(sC274358* self) {
+    return *(int*)(self->base + self->offs[self->cur] + 4);
+}
+#endif
 //100%
 INCLUDE_ASM("replay/replaycache", func_00274380);
 #ifdef SKIP_ASM
