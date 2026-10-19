@@ -1853,7 +1853,26 @@ void* func_00288AC0(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00288AE0);
+#ifdef SKIP_ASM
+extern "C" int func_0028B1B0(void);
+extern "C" void* func_0028B1C8();
+
+extern "C" int func_00288AE0(void* self)
+{
+    if (func_0028B1B0() != 0) {
+        if (*(int**)((char*)func_0028B1C8() + 0x28) != 0) {
+            int v = **(int**)((char*)func_0028B1C8() + 0x28);
+            int busy = v != 0 && v < 10;
+            if (busy) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00288B40);
