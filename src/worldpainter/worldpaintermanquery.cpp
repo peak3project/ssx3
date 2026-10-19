@@ -650,7 +650,15 @@ void* func_002C1688(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C16A8);
+#ifdef SKIP_ASM
+extern "C" void func_002C16A8(int self, int a, int b)
+{
+    *(int*)(self + 4) = a;
+    *(int*)self = b;
+}
+#endif
 
 //100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C16B8);
