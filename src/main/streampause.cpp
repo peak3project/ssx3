@@ -106,7 +106,19 @@ extern "C" void func_00243838(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/streampause", func_002438B0);
+#ifdef SKIP_ASM
+void operator_delete(int*);
+extern void* D_0046D970[];
+
+extern "C" void func_002438B0(void *self, int flags) {
+    *(void***)((char*)self + 0) = D_0046D970;
+    if (flags & 1) {
+        operator_delete((int*)self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/streampause", func_002438E0);
