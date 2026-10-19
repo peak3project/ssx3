@@ -4240,7 +4240,16 @@ extern "C" void func_00261408(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261460);
+#ifdef SKIP_ASM
+extern "C" long f_261460(void* p) __asm__("func_00261460");
+extern "C" long f_261460(void* p)
+{
+    char* s = (char*)p;
+    return *(int*)(s + 0xC8) != 0 && (*(int*)(s + 0xD8) ^ 1) != 0 && *(int*)(s + 0xE0) != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261490);
