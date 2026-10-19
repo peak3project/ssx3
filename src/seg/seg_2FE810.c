@@ -27,7 +27,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FDEA0);
 #ifdef SKIP_ASM
 extern char D_004977D8[];
 extern void func_003FDEA0_log(char *) __asm__("func_00425C60");
-extern void func_003FE5C8();
+extern int func_003FE5C8();
 void func_003FDEA0(int *p, unsigned lim, int tmo) {
     int t = 0x1000000;
     if (tmo)
@@ -203,7 +203,27 @@ int func_003FE590(int *p, unsigned n, int m, int x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE5C8);
+#ifdef SKIP_ASM
+extern int func_0042C078();
+extern void func_0042C0C0(void);
+int func_003FE5C8(volatile unsigned *p) {
+    int x, r, s;
+    unsigned v;
+    s = func_0042C078();
+    r = *(volatile int *)0x1000F520;
+    if ((r & 0x10000) == 0)
+        *(volatile int *)0x1000F590 = r | 0x10000;
+    x = *(volatile int *)0x1000E000;
+    v = *p;
+    *p = v & 0xFFFFFEFF;
+    *(volatile int *)0x1000F590 = r;
+    if (s)
+        func_0042C0C0();
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE660);
