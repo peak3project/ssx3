@@ -152,7 +152,43 @@ int func_00413860(float x, float y) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004138B0);
+#ifdef SKIP_ASM
+extern float func_00412F58_f(int *) __asm__("func_00412F58");
+
+float func_004138B0(int x) {
+    int o[4];
+    unsigned m, t;
+    int e;
+    o[0] = 3;
+    o[1] = (unsigned)x >> 31;
+    if (x == 0) {
+        o[0] = 2;
+    } else {
+        o[2] = 0x1E;
+        if (o[1]) {
+            if (x == 0x80000000)
+                return -2147483648.0f;
+            o[3] = -x;
+        } else {
+            o[3] = x;
+        }
+        m = o[3];
+        if (m <= 0x3FFFFFFF) {
+            e = o[2];
+            do {
+                t = m << 1;
+                e--;
+                m = t;
+            } while (t <= 0x3FFFFFFF);
+            o[2] = e;
+            o[3] = t;
+        }
+    }
+    return func_00412F58_f(o);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00413968);
