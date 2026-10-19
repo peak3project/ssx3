@@ -2880,7 +2880,33 @@ void func_00407A10(int p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407A58);
+#ifdef SKIP_ASM
+struct S407A58 { char p0[0x150]; int f150; char p1[0x58]; int f1AC; char p2[0x69C]; int f84C; int f850; int f854; };
+int f_407A58(struct S407A58 *p, int n) __asm__("func_00407A58");
+int f_407A58(struct S407A58 *p, int n) {
+    int t = 0;
+    int m = 0;
+    int x;
+    if (p->f150 != 3) {
+        if (n != 0) {
+            if (n < 0)
+                t = p->f854 == 0;
+            p->f854 = 0;
+            m = n;
+        }
+    }
+    p->f1AC = p->f84C + n;
+    if (t && m >= n)
+        p->f1AC += 0x400;
+    x = p->f850;
+    if (x < p->f1AC)
+        x = p->f1AC;
+    p->f850 = x;
+    return x;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407AD0);
