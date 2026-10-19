@@ -2563,7 +2563,44 @@ void func_004096A0(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409708);
+#ifdef SKIP_ASM
+typedef int i128_9708 __attribute__((mode(TI)));
+extern volatile i128_9708 D_00453340[];
+extern i128_9708 D_00453390[];
+extern void func_004096A0(int);
+#define WAIT_9708() while (*(volatile int *)0x10002010 < 0)
+void func_00409708(void) {
+    func_004096A0(1);
+    *(volatile int *)0x10002010 = 0x40000000;
+    WAIT_9708();
+    *(volatile int *)0x10002000 = 0;
+    WAIT_9708();
+    *(volatile i128_9708 *)0x10007010 = D_00453340[0];
+    *(volatile i128_9708 *)0x10007010 = D_00453340[1];
+    *(volatile i128_9708 *)0x10007010 = D_00453340[2];
+    *(volatile i128_9708 *)0x10007010 = D_00453340[3];
+    *(volatile i128_9708 *)0x10007010 = D_00453340[4];
+    *(volatile i128_9708 *)0x10007010 = D_00453340[4];
+    *(volatile i128_9708 *)0x10007010 = D_00453340[4];
+    *(volatile i128_9708 *)0x10007010 = D_00453340[4];
+    *(volatile int *)0x10002000 = 0x50000000;
+    WAIT_9708();
+    *(volatile int *)0x10002000 = 0x58000000;
+    WAIT_9708();
+    *(volatile i128_9708 *)0x10007010 = D_00453390[0];
+    *(volatile i128_9708 *)0x10007010 = D_00453390[1];
+    *(volatile int *)0x10002000 = 0x60000000;
+    WAIT_9708();
+    *(volatile int *)0x10002000 = 0x90000000;
+    WAIT_9708();
+    *(volatile int *)0x10002010 = 0x40000000;
+    WAIT_9708();
+    *(volatile int *)0x10002000 = 0;
+    WAIT_9708();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409940);
