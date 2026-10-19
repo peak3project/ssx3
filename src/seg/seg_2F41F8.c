@@ -395,7 +395,34 @@ extern int func_003F4DE8(void);
 int func_003F5D88(void) { return func_003F4DE8(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5DA8);
+#ifdef SKIP_ASM
+extern int D_5DA8[] __asm__("D_00525F80");
+extern char *strcpy(char *, const char *);
+extern int strlen5(const char *) __asm__("strlen");
+extern void f62D0(char *, const char *) __asm__("func_004162D0");
+extern int fBA68(char *, int, const char *) __asm__("func_0042BA68");
+extern char D_00497038[], D_00497048[];
+int func_003F5DA8(char *name, char *str) {
+    char path[0x100];
+    if (name == 0) {
+        D_5DA8[0] = -1;
+        D_5DA8[1] = -1;
+        return 0;
+    }
+    if (str == 0) goto fail;
+    strcpy(path, name);
+    f62D0(path, D_00497038);
+    D_5DA8[0] = fBA68(path, 0, 0);
+    if (D_5DA8[0] < 0) goto fail;
+    strcpy(path, name);
+    f62D0(path, D_00497048);
+    D_5DA8[1] = fBA68(path, strlen5(str) + 1, str); if (D_5DA8[1] < 0) return -1; return 0;
+fail:
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5E90);
