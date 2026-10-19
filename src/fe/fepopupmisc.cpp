@@ -2673,7 +2673,28 @@ int func_001E0F58(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0F60);
+#ifdef SKIP_ASM
+extern "C" void* func_001A8500(void*, int, int);
+extern void* D_00467F28[];
+extern int D_004A3E90;
+
+extern "C" void* func_001E0F60(void* self)
+{
+    int unused[4];
+    func_001A8500(self, 0, 0);
+    int g = D_004A3E90;
+    *(void***)((char*)self + 0x8) = D_00467F28;
+    *(int*)((char*)self + 0x6D0) = g;
+    *(int*)((char*)self + 0x6D4) = g;
+    *(int*)((char*)self + 0x6E0) = g;
+    *(int*)((char*)self + 0x6E8) = 0;
+    *(int*)((char*)self + 0x6EC) = 0;
+    *(int*)((char*)self + 0x6F0) = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0FB8__FPv);
