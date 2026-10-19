@@ -573,7 +573,39 @@ void func_004147F8(void) {
 
 INCLUDE_ASM("seg/seg_313E80", func_00414818);
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_004149F0);
+#ifdef SKIP_ASM
+struct K { int f0; int f4; int key; };
+struct L { struct K **items; unsigned n; };
+struct M { struct K **arr; int n; };
+void func_004149F0(struct L *a, struct M *out) {
+    unsigned n = a->n;
+    unsigned link[n];
+    unsigned top = -1;
+    unsigned i;
+    unsigned p;
+    for (i = 0; i < n; i++) {
+        p = top;
+        if (p != -1 && a->items[i]->key - a->items[p]->key < 0) {
+            do {
+                out->arr[out->n++] = a->items[p];
+                a->items[p] = 0;
+                p = link[p];
+                if (p == -1) break;
+            } while (a->items[i]->key - a->items[p]->key < 0);
+        }
+        top = i;
+        link[i] = p;
+    }
+    p = 0;
+    for (i = 0; i < n; i++) {
+        struct K *k = a->items[i];
+        if (k) a->items[p++] = k;
+    }
+    a->n = p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_00414B68);
