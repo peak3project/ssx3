@@ -1804,7 +1804,31 @@ void func_00407AD0(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407B70);
+#ifdef SKIP_ASM
+extern int func_004072E8(int, int);
+extern void func_00406E20(int);
+extern void func_004034A8(int *, int);
+extern char D_00498010[];
+extern char D_00498038[];
+void func_00407B70(int *p) {
+    if ((p[0x840 / 4] = func_004072E8((int)p, 1)) != 0) {
+        func_00406E20((int)p);
+        func_00406DF0(p, 0x50000000);
+        func_00406E20((int)p);
+    }
+    if ((p[0x844 / 4] = func_004072E8((int)p, 1)) != 0) {
+        func_00406E20((int)p);
+        func_00406DF0(p, 0x58000000);
+        func_00406E20((int)p);
+    }
+    if (func_004072E8((int)p, 1) != 0)
+        func_004034A8(p, (int)D_00498010);
+    if (func_004072E8((int)p, 1) != 0)
+        func_004034A8(p, (int)D_00498038);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00407C38);
 
