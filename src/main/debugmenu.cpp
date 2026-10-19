@@ -995,7 +995,14 @@ void* func_0024D6B0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/debugmenu", func_0024D6D0);
+#ifdef SKIP_ASM
+extern "C" void* func_0024D6D0(void* fmt, ...)
+{
+    return fmt;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024D710);
