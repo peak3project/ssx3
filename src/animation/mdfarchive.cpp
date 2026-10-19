@@ -70,7 +70,20 @@ extern "C" void* func_00314D98(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/mdfarchive", func_00314DB0);
+#ifdef SKIP_ASM
+void operator_delete(int* ptr);
+extern void* D_004A3E7C;
+
+extern "C" void func_00314DB0(void* self, int flags)
+{
+    D_004A3E7C = 0;
+    if (flags & 1) {
+        operator_delete((int*)self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/mdfarchive", func_00314DD8);
