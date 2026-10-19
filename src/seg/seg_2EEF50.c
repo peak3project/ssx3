@@ -798,7 +798,29 @@ void func_003EFD30(unsigned int a, int b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFE20);
+#ifdef SKIP_ASM
+struct sE { int key; short code; short pad; char* name; };
+extern struct sE D_004512D8[];
+extern int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src);
+short func_003EFE20(void* self, int key, short* list, int n, char* x, int y) {
+    int i, j;
+    if (D_004512D8[0].key) {
+        for (i = 0; D_004512D8[i].key; i++) {
+            if (D_004512D8[i].key == key) {
+                for (j = 0; j < n; j++) {
+                    if (list[j] == D_004512D8[i].code) {
+                        cDirtysock_tag_TagFieldDupl(x, y, D_004512D8[i].name);
+                        return D_004512D8[i].code;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFED0);
