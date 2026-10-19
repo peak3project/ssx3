@@ -193,7 +193,20 @@ extern "C" void* func_002D21C0(void* p)
 
 INCLUDE_ASM("util/objectinterface", func_002D21D0);
 
+//100%
 INCLUDE_ASM("util/objectinterface", func_002D2210);
+#ifdef SKIP_ASM
+extern "C" int func_002D2210(signed char** self, unsigned int v)
+{
+    signed char* p = *self;
+    p[0] = v;
+    p[1] = v >> 8;
+    p[2] = v >> 16;
+    p[3] = v >> 24;
+    *self += 4;
+    return 4;
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/objectinterface", func_002D2248);
 #ifdef SKIP_ASM
