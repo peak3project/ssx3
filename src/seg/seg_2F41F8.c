@@ -1553,7 +1553,26 @@ void func_003FB358(unsigned int *t) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB3A0);
+#ifdef SKIP_ASM
+extern unsigned D_3A0[] __asm__("D_00451518");
+extern int func_00266728(int, int, int);
+extern void func_003FB358b(int) __asm__("func_003FB358");
+int func_003FB3A0(unsigned a) {
+    int r;
+    if (D_3A0[0] != 0) return 5;
+    r = func_00266728(a, 0x400, 4);
+    D_3A0[0] = r;
+    if (r == 0) return 1;
+    D_3A0[4] = a;
+    func_003FB358b(r);
+    D_3A0[1] = 4;
+    D_3A0[3] = 0xFFFFFFFF;
+    D_3A0[2] = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB430);
