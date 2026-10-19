@@ -1830,7 +1830,14 @@ void func_002FA5F8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002FA600);
+#ifdef SKIP_ASM
+extern "C" void* func_002FA600(void* self, ...)
+{
+    return self;
+}
+#endif
 
 INCLUDE_ASM("visualfx/worldlightman", func_002FA640);
 
