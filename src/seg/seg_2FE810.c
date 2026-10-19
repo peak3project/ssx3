@@ -1943,7 +1943,34 @@ void func_00408AF8(unsigned a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408B80);
+#ifdef SKIP_ASM
+extern int q8B80_C078() __asm__("func_0042C078");
+extern void q8B80_C0C0(void) __asm__("func_0042C0C0");
+extern void q8B80_6DF0(int *, int) __asm__("func_00406DF0");
+extern int q8B80_2C30(int *, int *) __asm__("func_00402C30");
+void q8B80(int *p, unsigned addr, int n) __asm__("func_00408B80");
+void q8B80(int *p, unsigned addr, int n) {
+    int s;
+    int sp[8];
+    while (*(volatile int *)0x10002010 < 0)
+        ;
+    s = q8B80_C078();
+    *(volatile int *)0x1000B010 = addr & 0x0FFFFFFF;
+    *(volatile int *)0x1000B020 = n << 6;
+    *(volatile int *)0x1000B000 = 0x100;
+    if (s)
+        q8B80_C0C0();
+    q8B80_6DF0(p, n | 0x70000000);
+    sp[0] = 4;
+    q8B80_2C30(*(int **)((char *)p + 0x858), sp);
+    while (((*(volatile unsigned *)0x1000B000 >> 8) & 1))
+        ;
+    while (*(volatile int *)0x10002010 < 0)
+        ;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00408CA8);
 
