@@ -1952,7 +1952,28 @@ void func_003FBBE0(S4 *out) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBC40);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBCD8);
+#ifdef SKIP_ASM
+typedef struct { char pad[0xC]; int (*f0)(int, int); int (*f1)(int, int); int (*f2)(int, int); int (*f3)(void); } V3FBCD8;
+typedef struct { char pad[0x64]; int a; int b; V3FBCD8 *vt; } S3FBCD8;
+extern S3FBCD8 *D_BCD8 __asm__("D_004A5B20");
+extern int fB828(int) __asm__("func_003FB828");
+int func_003FBCD8_impl(int x, int y) __asm__("func_003FBCD8");
+int func_003FBCD8_impl(int x, int y) {
+    int r;
+    if (D_BCD8->vt == 0) return 0;
+    r = D_BCD8->vt->f0(D_BCD8->a, D_BCD8->b);
+    if (r == 0) {
+        r = D_BCD8->vt->f2(x, y);
+        if (r == 0) {
+            r = D_BCD8->vt->f3();
+            if (r == 0) return 0;
+        }
+    }
+    return fB828(r);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBD70);
