@@ -661,7 +661,25 @@ extern "C" void func_00243F50(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxappdtor", func_00243F80);
+#ifdef SKIP_ASM
+extern char D_0047D3D0[];
+extern char D_0047D6E8[];
+extern char* D_004A2C68;
+
+extern "C" void* func_00243F80(int* self) {
+    self[0] = 0;
+    *(void**)(self + 3) = D_0047D6E8;
+    D_004A2C68 = 0;
+    *(void**)(self + 3) = D_0047D3D0;
+    self[0] = 1;
+    self[1] = 3;
+    self[5] = 0;
+    self[6] = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_00243FC0);
