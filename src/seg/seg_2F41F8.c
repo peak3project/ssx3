@@ -1555,7 +1555,25 @@ E3FBA20 *func_003FBA20(int key, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBA78);
+#ifdef SKIP_ASM
+typedef struct { int key; int a, b, c; } E3FBA78;
+typedef struct { char pad[0x94]; int count; int pad2; E3FBA78 *arr; } S3FBA78;
+extern S3FBA78 *D_5B20b __asm__("D_004A5B20");
+void func_003FBA78(int key, int n, int *val) {
+    S3FBA78 *s = D_5B20b;
+    E3FBA78 *end = s->arr + s->count;
+    E3FBA78 *e = s->arr;
+    int cnt = 0;
+    for (; e < end; e++) {
+        if (key == e->key) {
+            if (n == cnt) e->c = *val;
+            cnt++;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBAD0);
 
