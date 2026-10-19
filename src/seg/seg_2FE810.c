@@ -2565,7 +2565,82 @@ void func_004096A0(int a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00409708);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409940);
+#ifdef SKIP_ASM
+extern int Q_5271C0[] __asm__("D_005271C0");
+extern int Q_527240[] __asm__("D_00527240");
+extern int Q_528780[] __asm__("D_00528780");
+extern int Q_4533C4[] __asm__("D_004533C4");
+extern int Q_4533C8[] __asm__("D_004533C8");
+extern char Q_4980F0[] __asm__("D_004980F0");
+extern char Q_498108[] __asm__("D_00498108");
+extern char Q_498130[] __asm__("D_00498130");
+extern int Q_sema(int *) __asm__("func_00423DA0");
+extern void Q_wait(int) __asm__("func_00423DE0");
+extern void Q_sig(int) __asm__("func_00423DC0");
+extern void Q_log(char *) __asm__("func_00425C60");
+extern int Q_A360(int, int, int) __asm__("func_0040A360");
+extern void Q_6408(int) __asm__("func_00426408");
+extern int Q_6B48(int *, unsigned, int) __asm__("func_00426B48");
+extern int Q_6D18(int *, int, int, int *, int, int *, int, int, int) __asm__("func_00426D18");
+int func_00409940(void) {
+    int s[6];
+    int r;
+    int i;
+    if (Q_4533C4[0] < 0) {
+        s[5] = 0;
+        s[2] = 1;
+        s[1] = 1;
+        Q_4533C4[0] = Q_sema(s);
+        s[1] = 1;
+        s[2] = 0;
+        s[5] = 0;
+        Q_4533C8[0] = Q_sema(s);
+    }
+    Q_A360(0, 0, 0);
+    Q_wait(Q_4533C4[0]);
+    Q_6408(0);
+    for (;;) {
+        if (Q_6B48(Q_5271C0, 0x80000400, 0) < 0) {
+            Q_log(Q_4980F0);
+            for (;;)
+                __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+        }
+        if (Q_5271C0[9] != 0)
+            break;
+        i = 0x100000;
+        do {
+            i--;
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+        } while (i != 0);
+    }
+    r = Q_6D18(Q_5271C0, 0xFE, 0, Q_527240, 48, Q_528780, 12, 0, 0);
+    Q_sig(Q_4533C4[0]);
+    if (r < 0) {
+        Q_5271C0[9] = 0;
+        return r - 100;
+    }
+    if (Q_528780[1] < 0x20A) {
+        Q_log(Q_498108);
+        Q_5271C0[9] = 0;
+        return -120;
+    }
+    if (Q_528780[2] < 0x20E) {
+        Q_log(Q_498130);
+        Q_5271C0[9] = 0;
+        return -121;
+    }
+    return Q_528780[0];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409B10);
