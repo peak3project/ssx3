@@ -475,7 +475,40 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F5A50);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A70);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5C38);
+#ifdef SKIP_ASM
+typedef struct { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; char *f18; } S5C38;
+extern char D_00525F70[];
+extern int c38_5A70(S5C38 *, int, int, int) __asm__("func_003F5A70");
+extern void c38_605C(char *, char *, int) __asm__("func_0041605C");
+extern void c38_47D8(char *, char *) __asm__("func_004247D8");
+extern int func_003F4C98(char *, int, int);
+extern int c38_4C68(char *, int, int, int, int, int, char *, int, int, int) __asm__("func_003F4C68");
+extern int func_003F5A50(void);
+int func_003F5C38_impl(S5C38 *self, int a, int b, char *buf, int max) __asm__("func_003F5C38");
+int func_003F5C38_impl(S5C38 *self, int a, int b, char *buf, int max) {
+    int t;
+    int n = c38_5A70(self, a, b, 0);
+    if (n >= 0) {
+        if (n < max) max = n;
+        if (buf) c38_605C(buf, self->f18 + self->fC + 0xC, max);
+        t = self->fC + 0xC;
+        self->fC = t + n;
+        if (self->fC >= self->f10 && self->f8 == 0 && self->fC >= self->f10) {
+            self->f8 = 1;
+            if (self->f10 > 0) {
+                c38_47D8(self->f18, self->f18 + self->f14 - 1);
+                self->f10 = 0;
+                self->fC = self->f10;
+            }
+            func_003F4C98(D_00525F70, 'sess', 'recv');
+            c38_4C68(D_00525F70, 0, self->f0, 0, 0, 0, self->f18, self->f14, (int)func_003F5A50, (int)self);
+        }
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5D88);
