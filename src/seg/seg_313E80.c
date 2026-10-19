@@ -109,7 +109,25 @@ int func_00413330(float x, float y) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00413388);
+#ifdef SKIP_ASM
+extern void func_00413068(float *, int *);
+extern int *func_004130F8(int *, int *, int *);
+extern int func_00412F58(int *);
+
+int func_00413388(float x, float y) {
+    int a[4];
+    int b[4];
+    int c[4];
+    float fx = x;
+    float fy = y;
+    func_00413068(&fx, a);
+    func_00413068(&fy, b);
+    b[1] ^= 1;
+    return func_00412F58(func_004130F8(a, b, c));
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313E80", func_004133F0);
 
