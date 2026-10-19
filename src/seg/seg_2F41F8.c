@@ -28,7 +28,21 @@ int func_003F3860(int *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3940);
+#ifdef SKIP_ASM
+extern char D_0051F010[];
+extern int func_003F4C98(char *, int, int);
+extern int f4C68h(char *, int, int, int, int, int, int, int, int, int) __asm__("func_003F4C68");
+extern int func_00256BD8(int *);
+void func_003F3940(int *self) {
+    int v = self[0x58 / 4];
+    func_003F4C98(D_0051F010, 'name', 'free');
+    f4C68h(D_0051F010, 1, v, 0, 0, 0, 0, 0, 0, 0);
+    func_00256BD8(self);
+}
+
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F39C8);
 
