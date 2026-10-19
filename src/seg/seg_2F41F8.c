@@ -1672,7 +1672,26 @@ int func_003FB650(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB6A0);
+#ifdef SKIP_ASM
+extern int D_004A4BF0;
+extern unsigned char *pEC __asm__("D_004A4BEC");
+extern unsigned char *pE8 __asm__("D_004A4BE8");
+extern unsigned char *pE4 __asm__("D_004A4BE4");
+int func_003FB6A0(unsigned char *buf, unsigned n) {
+    unsigned i;
+    if (buf == 0 || n == 0) return 2;
+    if (D_004A4BF0 != 5 && D_004A4BF0 != 7) return D_004A4BF0;
+    for (i = 0; i < n; i++) {
+        buf[i] ^= *pEC;
+        if (pEC == pE8) pEC = pE4;
+        else pEC = pEC + 1;
+    }
+    D_004A4BF0 = 7;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB730);
 
