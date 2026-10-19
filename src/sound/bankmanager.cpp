@@ -1388,7 +1388,16 @@ extern "C" int func_0028DF18(void* self, int quiet)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028E068);
+#ifdef SKIP_ASM
+extern "C" int func_0028DF18(void* self, int quiet);
+
+extern "C" int func_0028E068(void* self)
+{
+    return func_0028DF18(self, 1) != 0;
+}
+#endif
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028E088);
 #ifdef SKIP_ASM
