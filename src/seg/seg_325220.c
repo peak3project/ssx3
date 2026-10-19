@@ -2139,7 +2139,34 @@ int func_0042C780(int *a0, int *a1, unsigned int a2) {
 
 INCLUDE_ASM("seg/seg_325220", func_0042C7B8);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C7C8);
+#ifdef SKIP_ASM
+extern int D_00456180[];
+extern char D_00455A18[];
+extern char D_00456158[];
+extern void func_00424020(int);
+extern int func_0042C7B8(int);
+extern void func_0042C760(int, int);
+extern void func_0042C770(int, char *, int);
+void func_0042C7C8(void) {
+    unsigned i;
+    int *p;
+    if (!(*(volatile int *)0x10001810 & 0x100)) {
+        func_0042C760(D_00456180[0], D_00456180[1]);
+        func_0042C770(0x80076000, D_00455A18, 0x740);
+        func_0042C770(0x82000, D_00456158, 0x28);
+        func_00424020(0);
+        func_00424020(2);
+        func_0042C760(D_00456180[2], D_00456180[3]);
+        p = &D_00456180[4];
+        for (i = 2; i < 8; i++) {
+            func_0042C760(p[0], func_0042C7B8(p[0]));
+            p += 2;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C8A0);
 
