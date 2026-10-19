@@ -985,7 +985,16 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F85C0);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F86B8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F86F0);
+#ifdef SKIP_ASM
+extern int *D_004A4BD8;
+void func_003F86F0_impl(int a) __asm__("func_003F86F0");
+void func_003F86F0_impl(int a) {
+    int *p = D_004A4BD8;
+    if ((unsigned)(p[0] - 11) >= 3) p[2] = a;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8710);
