@@ -1015,7 +1015,23 @@ extern "C" void func_0038F6A8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_0038F6D0);
+#ifdef SKIP_ASM
+struct sLmDma_F6D0 {
+    char pad_0x00[0xC];
+    int cur;                // 0xC
+    char pad_0x10[4];
+    int start[3];           // 0x14
+    unsigned int addr[3];   // 0x20
+};
+
+extern "C" unsigned int func_0038F6D0(sLmDma_F6D0* self, int pos)
+{
+    int size = pos - self->start[self->cur];
+    return self->addr[self->cur] + ((size + (-size & 0xF)) >> 4 << 4);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/lightman", func_0038F708);
