@@ -423,6 +423,60 @@ int func_003FF330(i128 *src, int n) {
 INCLUDE_ASM("seg/seg_2FE810", func_003FF390);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF4A8);
+#ifdef SKIP_ASM
+extern int D_004515C8[];
+extern int D_004515CC[];
+struct Q526200 { int pad[9]; int f24; };
+extern struct Q526200 Q_526200[] __asm__("D_00526200");
+extern char D_004978D0[];
+extern char D_004978F8[];
+extern int Q_6B48a(struct Q526200 *, unsigned, int) __asm__("func_00426B48");
+extern int func_00400740(void);
+extern void func_00425C60();
+extern int func_003FF5E8_a(int) __asm__("func_003FF5E8");
+int func_003FF4A8(int a) {
+    int i;
+    int v;
+    int h;
+    D_004515C8[0] = 1;
+    for (;;) {
+        Q_6B48a(&Q_526200[0], 0x80000100, 0);
+        if (Q_526200[0].f24 != 0)
+            break;
+        i = 0x10000;
+        do {
+            i--;
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+        } while (i != -1);
+    }
+    for (;;) {
+        Q_6B48a(&Q_526200[1], 0x80000101, 0);
+        if (Q_526200[1].f24 != 0)
+            break;
+        i = 0x10000;
+        do {
+            i--;
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+            __asm__ volatile("nop");
+        } while (i != -1);
+    }
+    v = func_00400740();
+    h = v >> 8;
+    if (h != 4) {
+        if (D_004515CC[0] != 0) {
+            func_00425C60(D_004978D0);
+            func_00425C60(D_004978F8, 4, 0, h, v & 0xFF);
+        }
+        return 0;
+    }
+    return func_003FF5E8_a(a);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF5E8);
