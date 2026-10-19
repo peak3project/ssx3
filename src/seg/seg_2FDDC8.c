@@ -107,6 +107,25 @@ INCLUDE_ASM("seg/seg_2FDDC8", func_003FD558);
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD660);
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD6E0);
+#ifdef SKIP_ASM
+extern char* strcpy(char* d, const char* s);
+extern unsigned func_003FD2B8(int* p, unsigned n);
+struct sSym { int name; int val; int size; unsigned char info; unsigned char other; unsigned short shndx; };
+int func_003FD6E0(int* p, int idx, char* dst) {
+    int r = 0;
+    int symtab = p[4];
+    if (symtab) {
+        int strtab = p[8];
+        if (strtab) {
+            struct sSym* sym = (struct sSym*)(idx * 16 + symtab);
+            strcpy(dst, (char*)(strtab + sym->name));
+            r = p[0] + func_003FD2B8(p, sym->shndx) + sym->val;
+        }
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD758);
