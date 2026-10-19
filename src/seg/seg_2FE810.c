@@ -6,6 +6,46 @@ void func_003FD908(void) {
 }
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FD910);
+#ifdef SKIP_ASM
+struct S3FD910 { short a; short b; short c; unsigned short d; int e; int f; };
+extern int func_00423AA0(int, int);
+extern void func_00424880(int);
+extern void func_004239A0(int, int, int);
+extern int func_004240E0(int);
+void func_003FD910(short a, short b, short c, short d) {
+    struct S3FD910 *p;
+    int e;
+    switch (a) {
+    case 0:
+        p = func_003FDAA0();
+        *(volatile long *)0x12001000 = 0x200;
+        p->a = b;
+        p->b = c;
+        p->d = (*(volatile unsigned long *)0x12001000 >> 16) & 0xFF;
+        func_004240E0(0xFF00);
+        p->c = !!d;
+        if (p->e) {
+            func_00424880(2);
+            func_00423AA0(2, p->f);
+            p->e = 0;
+            p->f = 0;
+        }
+        func_004239A0(b & 1, c & 0xFF, d & 1);
+        break;
+    case 1:
+        *(volatile long *)0x12001000 = 0x100;
+        break;
+    case 5:
+        p = func_003FDAA0();
+        p->c = d != 0;
+        p->a = b;
+        p->b = c;
+        p->d = (*(volatile unsigned long *)0x12001000 >> 16) & 0xFF;
+        func_004239A0(b & 1, c & 0xFF, d & 1);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDAA0);
