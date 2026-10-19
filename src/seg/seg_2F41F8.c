@@ -694,7 +694,28 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F7478);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7528);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F75D8);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern char fn7920[] __asm__("func_003F7920");
+extern char fn7840[] __asm__("func_003F7840");
+extern int func_003FCE10(char *, int, int, int);
+extern int func_003FC708(char *, int, int, int, int);
+extern int func_003F8178(int);
+int func_003F75D8(void) {
+    int r;
+    char *d = D_004A4BC4;
+    *(char **)(d + 0xFC) = fn7840;
+    *(char **)(d + 0x100) = fn7920;
+    r = func_003F8178(func_003FCE10(d + 0x144, *(int *)(d + 0x140), 0x11, 0));
+    if (r == 0) {
+        char *e = D_004A4BC4;
+        r = func_003F8178(func_003FC708(e + 0x44, 0x41434354, 0, *(int *)(e + 0x144), 0x11));
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7658);
 
