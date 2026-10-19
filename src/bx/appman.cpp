@@ -353,7 +353,22 @@ cExecutionMan* cExecutionMan_halt(cExecutionMan* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/appman", func_00317478);
+#ifdef SKIP_ASM
+// PORT: callers declare func_00317478 with one argument; the body takes (self, fn, arg).
+void func_00317478_impl(void* self, void* fn, void* arg) __asm__("func_00317478");
+
+void func_00317478_impl(void* self, void* fn, void* arg)
+{
+    *(void**)((char*)self + 0x4) = arg;
+    *(void**)self = fn;
+    void* vt = *(void**)((char*)self + 0x8);
+    short off = *(short*)((char*)vt + 0x68);
+    void (*f)(void*) = *(void (**)(void*))((char*)vt + 0x6C);
+    f((char*)self + off);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/appman", cExecutionMan_checkHalt__FPvi);
