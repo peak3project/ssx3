@@ -600,7 +600,45 @@ int func_003EF088(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF090);
+#ifdef SKIP_ASM
+typedef struct {
+    unsigned char stat;
+    unsigned char second;
+    unsigned char minute;
+    unsigned char hour;
+    unsigned char pad;
+    unsigned char day;
+    unsigned char month;
+    unsigned char year;
+} func_003EF090_clock;
+extern int D_004A4A94;
+extern void func_0040BFD8(void*);
+extern void func_0040BFE0(void*);
+#define BCD(x) (((x) >> 4) * 10 + ((x) & 0xF))
+int func_003EF090(void) {
+    func_003EF090_clock c;
+    int a;
+    int b;
+    if (D_004A4A94 == -1) {
+        *(long*)&c = 0;
+        c.day = 2;
+        c.month = 1;
+        c.year = 1;
+        func_0040BFD8(&c);
+        a = BCD(c.day) * 86400 + BCD(c.hour) * 3600 + BCD(c.minute) * 60 + BCD(c.second);
+        *(long*)&c = 0;
+        c.day = 2;
+        c.month = 1;
+        c.year = 1;
+        func_0040BFE0(&c);
+        b = BCD(c.day) * 86400 + BCD(c.hour) * 3600 + BCD(c.minute) * 60 + BCD(c.second);
+        D_004A4A94 = b - a;
+    }
+    return D_004A4A94;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF210);
 
