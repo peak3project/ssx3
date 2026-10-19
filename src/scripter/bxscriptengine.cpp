@@ -794,7 +794,17 @@ int func_00282BB0(void* self, void* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282BC0);
+#ifdef SKIP_ASM
+extern "C" void* func_00282CB0_v(void) __asm__("func_00282CB0");
+
+extern "C" int func_00282BC0(void)
+{
+    char* e = (char*)func_00282CB0_v();
+    return *(int*)(e + 0xC);
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282BE0__FPvT0);
