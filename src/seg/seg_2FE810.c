@@ -2649,7 +2649,44 @@ void func_0040B2B0(unsigned *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B2D0);
+#ifdef SKIP_ASM
+struct C_B2D0 { unsigned *f0; int pad4; int f8; int pad[2]; int f14; int f18; void (*f1C)(int); int f20; int f24; int f28; int f2C; };
+struct E_B2D0 { char pad[0x1C]; struct C_B2D0 *ctx; unsigned code; int f24; int f28; int f2C; };
+extern void func_00423DD0(int);
+extern void func_0040B2B0(unsigned *);
+void func_0040B2D0(struct E_B2D0 *e) {
+    struct C_B2D0 *c;
+    switch (e->code) {
+    case 0x8000001A:
+        c = e->ctx;
+        if (c->f1C)
+            c->f1C(c->f20);
+        func_00423DD0(c->f28);
+        break;
+    case 0x80000019:
+        c = e->ctx;
+        c->f24 = e->f24;
+        c->f14 = e->f28;
+        c->f18 = e->f2C;
+        func_00423DD0(c->f28);
+        break;
+    case 0x8000001C:
+        break;
+    case 0x8000001D:
+        c = e->ctx;
+        c->f2C = e->f24;
+        func_00423DD0(c->f28);
+        break;
+    }
+    c = e->ctx;
+    if (c->f8 >= 0)
+        func_00423DD0(c->f8);
+    func_0040B2B0(c->f0);
+    c->f0 = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B3D8);
