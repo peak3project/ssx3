@@ -987,7 +987,34 @@ void func_00420228(char *d, char *s, unsigned n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00420260);
+#ifdef SKIP_ASM
+extern void func_00420228(char *, char *, unsigned);
+extern int func_00417648(int *);
+unsigned func_00420260(char *buf, unsigned size, unsigned count, int *fp) {
+    unsigned resid, total, r;
+    char *p;
+    if ((resid = count * size) == 0)
+        return 0;
+    if (fp[1] < 0)
+        fp[1] = 0;
+    total = resid;
+    p = buf;
+    while (resid > (r = fp[1])) {
+        func_00420228(p, (char *)fp[0], r);
+        p += r;
+        fp[0] = fp[0] + r;
+        resid -= r;
+        if (func_00417648(fp))
+            return (total - resid) / size;
+    }
+    func_00420228(p, (char *)fp[0], resid);
+    fp[1] -= resid;
+    fp[0] += resid;
+    return count;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", ungetc);
 
