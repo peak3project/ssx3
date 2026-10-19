@@ -722,6 +722,22 @@ INCLUDE_ASM("seg/seg_316F98", func_0041AD80);
 INCLUDE_ASM("seg/seg_316F98", func_0041AE00);
 
 INCLUDE_ASM("seg/seg_316F98", func_0041AE70);
+#ifdef SKIP_ASM
+char *func_0041AE70(char *s) {
+    int i, j;
+    char t;
+    j = 0;
+    while (s[j])
+        j++;
+    j--;
+    for (i = 0; i < j; i++, j--) {
+        t = s[i];
+        s[i] = s[j];
+        s[j] = t;
+    }
+    return s;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041AEE8);
 
