@@ -3274,7 +3274,53 @@ int func_0040D118(int idx, unsigned char b, unsigned char c, int n, unsigned sho
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D268);
+#ifdef SKIP_ASM
+extern char T_4983B0[] __asm__("D_004983B0");
+extern char T_4983C8[] __asm__("D_004983C8");
+extern char T_4987C8[] __asm__("D_004987C8");
+extern char T_498BC8[] __asm__("D_00498BC8");
+extern void u268_00425C60(char *) __asm__("func_00425C60");
+extern unsigned short u268_0040D3C0(int, int) __asm__("func_0040D3C0");
+unsigned short func_0040D268(int mode, int a, int b, unsigned short ch) {
+    unsigned short *tbl = 0;
+    unsigned short v;
+    int up = (a & 0x22) != 0;
+    switch (mode) {
+    case 0:
+        tbl = (unsigned short *)(T_4983C8 + (up << 9));
+        break;
+    case 1:
+        tbl = (unsigned short *)(T_4987C8 + (up << 9));
+        break;
+    case 2:
+        tbl = (unsigned short *)(T_498BC8 + (up << 9));
+        break;
+    default:
+        u268_00425C60(T_4983B0);
+        break;
+    }
+    if (ch == 0)
+        return 0;
+    if (ch >= 0x100)
+        return ch;
+    v = tbl[ch];
+    if (v == 0x4000)
+        v = u268_0040D3C0(b & 0xFF, ch & 0xFF);
+    if (v == 0x8000)
+        v = ch | 0x8000;
+    if ((unsigned short)(v - 0x61) < 0x1A && (b & 2))
+        v -= 0x20;
+    if ((unsigned short)(v - 0x41) < 0x1A) {
+        if (b & 2) {
+            if (up)
+                v += 0x20;
+        }
+    }
+    return v;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040D3C0);
 
