@@ -123,7 +123,20 @@ extern "C" void* func_0014F108(void* self, int riderIndex)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintcharacter", func_0014F138);
+#ifdef SKIP_ASM
+struct sCharEntryView_F138 {
+    char pad_0x00[0x5C];
+    int field_0x5C;
+    char pad_0x60[0x88 - 0x60];
+};
+extern sCharEntryView_F138 D_00530970_F138[] __asm__("D_00530970");
+extern "C" bool func_0014F138(void* self, int riderIndex)
+{
+    return D_00530970_F138[cBELibrary_getCharacterID(riderIndex)].field_0x5C != 0;
+}
+#endif
 
 INCLUDE_ASM("be/beintcharacter", func_0014F170);
 
