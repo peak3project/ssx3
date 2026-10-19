@@ -1419,7 +1419,21 @@ void func_0040A440(unsigned a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A498);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A618);
+#ifdef SKIP_ASM
+extern int D_00528780[];
+extern void func_0040A618_log(char *) __asm__("func_00425C60");
+extern int D_00527240[];
+extern char D_00498158[];
+int func_0040A618(void) {
+    if (func_00426D18(D_005271C0, 53, 0, D_00527240, 48, D_00528780, 4, 0, 0)) {
+        func_0040A618_log(D_00498158);
+        return -1;
+    }
+    return D_00528780[0];
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040A688);
 
