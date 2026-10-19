@@ -22,7 +22,24 @@ INCLUDE_ASM("seg/seg_2FE810", sceGsSyncPath);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FDE30);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDEA0);
+#ifdef SKIP_ASM
+extern char D_004977D8[];
+extern void func_003FDEA0_log(char *) __asm__("func_00425C60");
+extern void func_003FE5C8();
+void func_003FDEA0(int *p, unsigned lim, int tmo) {
+    int t = 0x1000000;
+    if (tmo)
+        t = tmo;
+    while (*(volatile int *)(p + 4) < lim) {
+        if (--t < 0) {
+            func_003FDEA0_log(D_004977D8);
+            func_003FE5C8(p);
+        }
+        }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDF28);
