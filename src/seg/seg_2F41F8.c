@@ -2233,7 +2233,30 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003FC548);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC708);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC850);
+#ifdef SKIP_ASM
+typedef struct { int key; int a, b, c; } E3FC850;
+typedef struct { char pad[0x94]; int count; int pad2; E3FC850 *arr; } S3FC850;
+extern S3FC850 *D_C850 __asm__("D_004A5B20");
+extern int fC0D8(void) __asm__("func_003FC0D8");
+int func_003FC850_impl(int a, int key, int *out) __asm__("func_003FC850");
+int func_003FC850_impl(int a, int key, int *out) {
+    S3FC850 *s;
+    E3FC850 *e, *end;
+    if (!fC0D8()) return 2;
+    if (a == 0) return 4;
+    if (out == 0) return 4;
+    *out = 0;
+    s = D_C850;
+    end = s->arr + s->count;
+    e = s->arr;
+    for (; e < end; e++) {
+        if (key == e->key) *out = *out + 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC8F8);
