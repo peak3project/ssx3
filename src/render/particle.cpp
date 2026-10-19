@@ -855,7 +855,45 @@ extern "C" void func_00372098(int enable)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003720F0);
+#ifdef SKIP_ASM
+// PORT: walks a DMA tag chain, relocating `ref` tag addresses (id 3) and stopping at `ret` (id 6).
+extern "C" long* func_003720F0(long* chain)
+{
+    long* p = chain;
+    int done = 0;
+    long* base = p;
+    while (!done) {
+        long tag = *p;
+        int hi = (int)(tag >> 32);
+        int type = (int)(tag >> 28) & 7;
+        int qwc = (int)tag & 0xFFFF;
+        switch (type) {
+        case 0:
+        case 2:
+        case 4:
+        case 5:
+        case 7:
+            break;
+        case 1:
+            p += 2;
+            p += qwc * 2;
+            break;
+        case 3:
+            *p = ((long)((int)base + hi) << 32) | (*p & 0xFFFFFFFF);
+            p += 2;
+            break;
+        case 6:
+            p += 2;
+            p += qwc * 2;
+            done = 1;
+            break;
+        }
+    }
+    return p;
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_00372198);
 
