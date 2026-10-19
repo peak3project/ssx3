@@ -316,7 +316,27 @@ INCLUDE_ASM("seg/seg_2EEF50", func_003EE9A0);
 
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEA48);
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEAB8);
+#ifdef SKIP_ASM
+extern unsigned char D_00496A58[];
+int func_003EEAB8(unsigned char* a, unsigned char* b) {
+    int c1, c2, d;
+    do {
+        do {
+            c1 = D_00496A58[*a++];
+        } while (c1 == 1);
+        do {
+            c2 = D_00496A58[*b++];
+        } while (c2 == 1);
+        d = c1 - c2;
+        if (d != 0) {
+            return d;
+        }
+    } while (c1 != 0);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEB30);
