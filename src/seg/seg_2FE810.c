@@ -933,7 +933,22 @@ int func_00402D78(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402D88);
+#ifdef SKIP_ASM
+extern char D_00497C48[];
+extern void func_004034A8(int *, int);
+unsigned func_00402D88(int *a, unsigned *p, unsigned size, unsigned align) {
+    unsigned s = (p[2] + align - 1) / align * align;
+    unsigned e = s + size;
+    if (p[0] + p[1] >= e) {
+        p[2] = e;
+        return s;
+    }
+    func_004034A8(a, (int)D_00497C48);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402DF8);
