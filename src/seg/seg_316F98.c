@@ -876,7 +876,34 @@ INCLUDE_ASM("seg/seg_316F98", func_00420BC8);
 
 INCLUDE_ASM("seg/seg_316F98", func_00420CC8);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00420E28);
+#ifdef SKIP_ASM
+struct Bigint28 {
+    struct Bigint28 *next;
+    int k, maxwds, sign, wds;
+    unsigned x[1];
+};
+int func_00420E28(struct Bigint28 *a, struct Bigint28 *b) {
+    unsigned *xa, *xa0, *xb, *xb0;
+    int i, j;
+    i = a->wds;
+    j = b->wds;
+    if (i -= j)
+        return i;
+    xa0 = a->x;
+    xa = xa0 + j;
+    xb0 = b->x;
+    xb = xb0 + j;
+    for (;;) {
+        if (*--xa != *--xb)
+            return *xa < *xb ? -1 : 1;
+        if (xa <= xa0)
+            break;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00420E90);
 
