@@ -1063,7 +1063,32 @@ void func_00426FE0(struct N6FE0 *n, int a1, int a2, int a3, int a4, int a5, stru
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004270B0);
+#ifdef SKIP_ASM
+struct N70B0 { char pad[0x38]; struct N70B0 *next; };
+struct S70B0 { int f0; int f4; struct N70B0 *head; };
+extern int func_0042C078_r(void) __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+struct N70B0 *func_004270B0(struct N70B0 *x, struct S70B0 *s) {
+    struct N70B0 *p;
+    func_0042C078_r();
+    p = s->head;
+    if (p == x) {
+        s->head = p->next;
+    } else {
+        while (p != 0) {
+            if (p->next == x) {
+                p->next = x->next;
+                break;
+            }
+            p = p->next;
+        }
+    }
+    func_0042C0C0();
+    return p;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00427148);
 
