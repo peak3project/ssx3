@@ -2588,7 +2588,43 @@ int func_004074B8(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407520);
+#ifdef SKIP_ASM
+struct B7520 { int op; long l1; long l2; };
+struct S_7520 { char pad[0x150]; int f150; char pad2[0x6D4]; long f828; long f830; char pad3[0x20]; int f858; };
+extern void s7_7438(struct S_7520 *) __asm__("func_00407438");
+extern int s7_72E8(struct S_7520 *, int) __asm__("func_004072E8");
+extern void s7_3620(struct S_7520 *) __asm__("func_00403620");
+extern void s7_7AD0(struct S_7520 *) __asm__("func_00407AD0");
+extern void s7_7630(struct S_7520 *) __asm__("func_00407630");
+extern void s7_2C30(int, struct B7520 *) __asm__("func_00402C30");
+int func_00407520(struct S_7520 *a) {
+    struct B7520 b;
+    for (;;) {
+        s7_7438(a);
+        switch ((unsigned)s7_72E8(a, 0x20)) {
+        case 0x1B3:
+            s7_3620(a);
+            break;
+        case 0x1B8:
+            s7_7AD0(a);
+            break;
+        case 0x1B7:
+            return 0;
+        case 0x100:
+            s7_7630(a);
+            b.op = 5;
+            b.l1 = -1;
+            b.l2 = -1;
+            s7_2C30(a->f858, &b);
+            a->f830 = b.l2;
+            a->f828 = b.l1;
+            return a->f150;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407630);
