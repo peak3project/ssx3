@@ -120,7 +120,27 @@ int func_003FD1F0(int *p, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD210);
+#ifdef SKIP_ASM
+extern int func_004165A8(const char*, const char*);
+struct sShdr { int name; int type; int flags; int addr; int offset; int size; int link; int info; int align; int entsize; };
+struct sEhdr { char pad[0x20]; int shoff; char pad2[0xC]; unsigned short shnum; unsigned short shstrndx; };
+struct sShdr* func_003FD210(int* p, char* name) {
+    struct sEhdr* h = (struct sEhdr*)p[0];
+    struct sShdr* sh = (struct sShdr*)((char*)h + h->shoff);
+    int strtab = sh[h->shstrndx].offset;
+    unsigned int i = 0;
+    while (i < h->shnum) {
+        if (func_004165A8((char*)h + (strtab + sh->name), name) == 0) {
+            return sh;
+        }
+        i++;
+        sh++;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD2B8);
