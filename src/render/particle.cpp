@@ -3929,7 +3929,46 @@ extern "C" int func_0037D450(sPtGfx_D450* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037D668);
+#ifdef SKIP_ASM
+struct sPtGfx_D668 {
+    char pad_0x0[0x5A3C];
+    unsigned int psm;               // 0x5A3C
+    char pad_0x5A40[0x10];
+    unsigned int fbw;               // 0x5A50
+    char pad_0x5A54[0x30];
+    unsigned int fbp;               // 0x5A84
+};
+
+extern "C" void func_0037D668(sPtGfx_D668* self, ulong** pp, int a2, int mode)
+{
+    ulong* p = *pp;
+    switch (mode) {
+    case 0:
+        p[1] = ((ulong)0x50000001 << 32) | 0x11000000;
+        p[2] = ((ulong)0x10000000 << 32) | 0x8001;
+        p[3] = 0xE;
+        p[0] = 0;
+        p[4] = (ulong)self->fbp | ((ulong)self->fbw << 16) | ((ulong)self->psm << 24) | ((ulong)a2 << 32);
+        p[5] = 0x4C;
+        break;
+    case 1:
+        p[1] = ((ulong)0x50000002 << 32) | 0x11000000;
+        p[2] = ((ulong)0x10000000 << 32) | 0x8001;
+        p[3] = 0xE;
+        p[0] = 0;
+        p[4] = (ulong)self->fbp | ((ulong)self->fbw << 16) | ((ulong)self->psm << 24) | ((ulong)a2 << 32);
+        p[5] = 0x4D;
+        break;
+    default:
+        *pp = p;
+        return;
+    }
+    p += 6;
+    *pp = p;
+}
+#endif
 
 extern "C" void* func_00367CD0(int);
 
