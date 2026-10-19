@@ -1840,7 +1840,61 @@ int func_00402F80(struct A_2F80 *a, int b, int c) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403098);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004030E0);
+#ifdef SKIP_ASM
+struct P_30E0 { int f0; int f4; int f8; char padC[0xA0]; int fAC; char pad2[0x24]; int fD4; char pad3[0x40]; int f118; char pad4[4]; int f120; char pad5[0x50]; int f174; };
+struct A_30E0 { char pad[8]; int f8; char pad2[0x34]; struct P_30E0 *f40; };
+extern int s3_7F20(struct P_30E0 *, int) __asm__("func_00407F20");
+extern int s3_7DC0(struct P_30E0 *) __asm__("func_00407DC0");
+extern void s3_2C80(struct A_30E0 *) __asm__("func_00402C80");
+extern void s3_7E90(struct P_30E0 *, int, int) __asm__("func_00407E90");
+extern int s3_7520(struct P_30E0 *) __asm__("func_00407520");
+extern void s3_3240(struct A_30E0 *) __asm__("func_00403240");
+int func_004030E0(struct A_30E0 *a, int b, int c) {
+    struct P_30E0 *p = a->f40;
+    int flag = 0;
+    int ret, k, t;
+    p->f120 = 0;
+    if (c == -1 || b < c)
+        flag = 1;
+    if (p->f8 == 0) {
+        a->f8 = 0;
+        p->f8 = 1;
+    }
+    if (s3_7F20(p, 0)) {
+        if (flag)
+            s3_7DC0(p);
+    }
+    p->f120 = 1;
+    if (s3_7520(p) == 0) {
+        s3_3240(a);
+        p->f0 = 1;
+        return 0;
+    }
+    k = 2;
+    if (p->fD4 != 1)
+        k = 1;
+    if (p->f174 != k)
+        return -1;
+    ret = 0;
+    t = 0;
+    if (s3_7F20(p, 1))
+        t = 1;
+    if (t && flag) {
+        if (s3_7DC0(p))
+            ret = 1;
+    }
+    s3_7E90(p, p->f118, p->f4);
+    p->f120 = 0;
+    a->f8 = p->f118 - p->fAC;
+    p->f118++;
+    p->f4++;
+    if (!flag)
+        s3_2C80(a);
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403240);
