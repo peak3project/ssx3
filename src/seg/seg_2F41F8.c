@@ -371,7 +371,20 @@ int func_003F5470(void) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5478);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F55B8);
+#ifdef SKIP_ASM
+extern char D_00525F10[];
+extern int func_003F4C98(char *, int, int);
+extern int f4C68c(char *, int, int, int, int, int, int, int, int, int) __asm__("func_003F4C68");
+extern int func_00256BD8(int *);
+void func_003F55B8(int *p) {
+    func_003F4C98(D_00525F10, 'sess', 'dest');
+    f4C68c(D_00525F10, 1, *p, 0, 0, 0, 0, 0, 1, 0);
+    func_00256BD8(p);
+}
+
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5638);
 
