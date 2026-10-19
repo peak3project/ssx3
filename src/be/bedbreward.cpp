@@ -1060,7 +1060,16 @@ extern "C" void func_0015C418(void* self, sBEBlk_C418* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015C4D0);
+#ifdef SKIP_ASM
+extern sBEBlk_C418 D_00534E60;
+
+extern "C" void* func_0015C4D0(void)
+{
+    return &D_00534E60;
+}
+#endif
 //100%
 INCLUDE_ASM("be/bedbreward", func_0015C4E0);
 #ifdef SKIP_ASM
