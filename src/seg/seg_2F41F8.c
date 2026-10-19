@@ -1524,7 +1524,15 @@ void func_003FB9A0(char *dst) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB9D0);
+#ifdef SKIP_ASM
+void func_003FB9D0(char *src, char *d1, char *d2, char *d3) {
+    if (d1) __builtin_memcpy(d1, src, 4);
+    if (d2) __builtin_memcpy(d2, src + 4, 4);
+    if (d3) __builtin_memcpy(d3, src + 8, 4);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FBA20);
 
