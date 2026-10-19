@@ -808,7 +808,15 @@ extern "C" int func_0031F7F0(void* ms, void* mem)
 
 INCLUDE_ASM("bx/cubicspline", func_0031F810);
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031F838);
+#ifdef SKIP_ASM
+extern "C" void* func_0031F858_F838(void* ms, unsigned int n, void* sizes, int opts, void** chunks) __asm__("func_0031F858");
+extern "C" void* func_0031F838(void* ms, unsigned int n, void* sizes, void** chunks)
+{
+    return func_0031F858_F838(ms, n, sizes, 0, chunks);
+}
+#endif
 
 INCLUDE_ASM("bx/cubicspline", func_0031F858);
 //100%
