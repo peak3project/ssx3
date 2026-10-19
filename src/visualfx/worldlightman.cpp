@@ -779,7 +779,16 @@ INCLUDE_ASM("visualfx/worldlightman", func_002F6B48);
 
 INCLUDE_ASM("visualfx/worldlightman", func_002F6B88);
 
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7A50);
+#ifdef SKIP_ASM
+extern char D_004FF1A0[];
+
+extern "C" void* func_002F7A50()
+{
+    return D_004FF1A0;
+}
+#endif
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7A60);
 #ifdef SKIP_ASM
