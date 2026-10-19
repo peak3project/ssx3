@@ -1106,7 +1106,32 @@ int func_003F7D98(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7DE0);
+#ifdef SKIP_ASM
+typedef struct { int **p; } W7DE0;
+typedef struct { char pad[0xC]; int (*f0)(void); int (*f1)(int, int); int (*f2)(W7DE0 **); } V7DE0;
+extern V7DE0 *fB5E8(void) __asm__("func_003FB5E8");
+int func_003F7DE0(int a) {
+    int err = 0;
+    V7DE0 *o = fB5E8();
+    int r;
+    W7DE0 *w;
+    r = o->f0();
+    if (r == 0) {
+        r = o->f1(a, 0x296E);
+        if (r == 0) {
+            r = o->f2(&w);
+            if (r == 0) {
+                err = 0x15;
+                if (**(unsigned **)((char *)w + 4) == 0x836C71D) err = 0;
+            }
+        }
+    }
+    if (r != 0) return 0x18;
+    return err;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7E90);
