@@ -239,7 +239,24 @@ extern int func_003F4DE8(void);
 int func_003F4330(void) { return func_003F4DE8(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4350);
+#ifdef SKIP_ASM
+int func_003F4350(unsigned char *a, unsigned char *b, int n) {
+    int d;
+    if (n < 0) {
+        while (*a) {
+            if (*a != *b)
+                return *a - *b;
+            a++;
+            b++;
+        }
+        return 0;
+    }
+    while (n > 0) { d = *a++ - *b; if (d) return d; n--; b++; }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F43D0);
