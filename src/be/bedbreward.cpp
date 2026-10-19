@@ -756,7 +756,16 @@ extern "C" int func_0015C288(void)
 
 INCLUDE_ASM("be/bedbreward", func_0015C298);
 
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015C2A8);
+#ifdef SKIP_ASM
+extern int D_00534B34[];
+
+extern "C" int func_0015C2A8(void)
+{
+    return D_00534B34[0];
+}
+#endif
 
 INCLUDE_ASM("be/bedbreward", func_0015C2B8);
 
