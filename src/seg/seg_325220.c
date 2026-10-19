@@ -2014,7 +2014,47 @@ int func_0042C4D0(unsigned char *a0, unsigned char *a1, unsigned int a2) {
 
 INCLUDE_ASM("seg/seg_325220", func_0042C500);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C510);
+#ifdef SKIP_ASM
+extern int D_00456538;
+extern int D_00455A10[];
+extern int strlen(char *);
+extern int func_0042C4C0(int, void *, int);
+extern void func_0042C500(int, int);
+int func_0042C510_d(char *, int, char **) __asm__("func_0042C510");
+int func_0042C510_d(char *a0, int argc, char **argv) {
+    int pos;
+    int p = D_00456538;
+    int ret;
+    int len;
+    char **q;
+    pos = p + 0x40;
+    ret = pos;
+    func_0042C500(D_00455A10[0], D_00455A10[1]);
+    if (argc >= 0x10) {
+        argc = 0xF;
+    }
+    func_0042C4C0(p, &pos, 4);
+    p += 4;
+    len = strlen(a0) + 1;
+    func_0042C4C0(pos, a0, len);
+    pos += len;
+    if (argc > 0) {
+        q = argv;
+        do {
+            func_0042C4C0(p, &pos, 4);
+            p += 4;
+            argc--;
+            len = strlen(*q) + 1;
+            func_0042C4C0(pos, *q, len);
+            q++;
+            pos += len;
+        } while (argc != 0);
+    }
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042C628);
