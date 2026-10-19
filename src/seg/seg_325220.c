@@ -379,7 +379,31 @@ INCLUDE_ASM("seg/seg_325220", func_00424EA8);
 
 INCLUDE_ASM("seg/seg_325220", func_00425040);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425190);
+#ifdef SKIP_ASM
+struct S8D0 { int f0; int f4; int f8; int fC; int f10; int f14; struct Ring4E68 *f18; };
+extern struct S8D0 D_0052B8D0;
+extern struct Ring4E68 *D_0052B8E8;
+int func_00425190(int a0, int n) {
+    char *buf = (char *)a0;
+    int i;
+    int j;
+    char *p;
+    for (i = 0; i < n; i = j) {
+        p = buf + i;
+        j = i + 1;
+        while (*(volatile int *)&D_0052B8E8->count == 0) {
+        }
+        *p = *D_0052B8D0.f18->rd;
+        func_00424E68(D_0052B8D0.f18);
+        if (*p == '\n' || *p == '\r') {
+            return j;
+        }
+    }
+    return i;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00425260);
 
