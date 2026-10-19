@@ -286,7 +286,46 @@ void func_003F0BE0(struct S07A0* sp) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0C90);
+#ifdef SKIP_ASM
+extern char D_004A4B28[];
+extern char D_004A4B38[];
+extern char D_004A4B40[];
+extern char D_004A4B48[];
+extern char D_004A4B50[];
+extern char D_004A4B58[];
+extern char D_004A4B60[];
+extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key, const char* val);
+extern int cDirtysock_tag_TagFieldSetNumber(char* dst, int len, const char* key, int val);
+extern int func_003EE778(int, int);
+extern int func_003EE1E8(int, int, int);
+extern void func_003EE600(int, int);
+int func_003F0C90(char* self, int a, int b) {
+    char buf[0x100];
+    if (*(int*)(self + 0x4A8) == 0) {
+        char* s = self + 0x494;
+        *(int*)(self + 0x4B8) = a;
+        *(int*)(self + 0x4B4) = b;
+        *(int*)(self + 0x4A4) = func_003EE778(0x3E8, 0x7D0);
+        *(int*)(self + 0x4A8) = func_003EE1E8(0x64, 0x64, 0);
+        buf[0] = 0;
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B38, s);
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B40, D_004A4B48);
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B28, D_004A4B50);
+        cDirtysock_tag_TagFieldSetNumber(buf, 0x100, D_004A4B58, 1);
+        func_003F00D8((int*)self, 0x52474554, (int)buf);
+        buf[0] = 0;
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B38, s);
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B40, D_004A4B60);
+        cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4B28, D_004A4B50);
+        cDirtysock_tag_TagFieldSetNumber(buf, 0x100, D_004A4B58, 2);
+        func_003F00D8((int*)self, 0x52474554, (int)buf);
+        func_003EE600(*(int*)(self + 0x4A8), 1);
+    }
+    return *(int*)(self + 0x4A8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0E30);
