@@ -869,7 +869,20 @@ extern "C" void* func_0031FB00(void** ms, unsigned int bytes)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031FB68);
+#ifdef SKIP_ASM
+// dlmalloc 2.7 malloc_trim()
+struct sMState_31E6D8;
+extern "C" int func_0031E6D8(void* ms, unsigned int pad, sMState_31E6D8* av);
+
+extern "C" int func_0031FB68(void** ms, unsigned int pad)
+{
+    sMState_31E6D8* av = *(sMState_31E6D8**)ms;
+    func_0031EEE8(ms, (sMState_31EEE8*)av);
+    return func_0031E6D8(ms, pad, av);
+}
+#endif
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031FBB8__FPvT0);
 #ifdef SKIP_ASM
