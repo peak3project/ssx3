@@ -103,7 +103,49 @@ int func_00417418(int r_, void (*fn_)(void)) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004174B0);
+#ifdef SKIP_ASM
+struct F174B0 {
+    char *p;
+    int r;
+    int w;
+    unsigned short flags;
+    short file;
+    char *base;
+    int size;
+    char pad1[0x28 - 0x18];
+    void *seek;
+    char pad2[0x43 - 0x2C];
+    char nbuf[9];
+    int blksize;
+    int offset;
+    int data;
+};
+extern long func_00417A30();
+extern int func_0041FBF0(int *, int, int);
+void func_004174B0(struct F174B0 *f) {
+    int st[0x68 / 4];
+    if (f->flags & 2) {
+        f->p = f->nbuf;
+        f->base = f->nbuf;
+        f->size = 1;
+        return;
+    }
+    if (f->file < 0 || func_0041FBF0((int *)f->data, f->file, (int)st) < 0) {
+        f->flags |= 0x800;
+    } else if ((st[1] & 0xF000) == 0x8000 && f->seek == (void *)func_00417A30) {
+        f->blksize = 0x400;
+        f->flags |= 0x400;
+    } else {
+        f->flags |= 0x800;
+    }
+    f->flags |= 2;
+    f->size = 1;
+    f->p = f->nbuf;
+    f->base = f->nbuf;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00417578);
