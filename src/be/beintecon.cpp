@@ -999,6 +999,33 @@ extern "C" int func_001521F0(sEconItems_1521F0* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00152340);
+#ifdef SKIP_ASM
+struct sEconItem_00152340
+{
+    short id;
+    unsigned short flags;
+};
+
+struct sEconItems_00152340
+{
+    char pad[0x288];
+    short* lookup;
+    int count;
+    sEconItem_00152340 items[1];
+};
+
+static inline bool hasFlag_52340(sEconItem_00152340* p, int f)
+{
+    return (p->flags & f) != 0;
+}
+
+extern "C" int func_00152340(sEconItems_00152340* self, int id)
+{
+    sEconItem_00152340* p = self->items + self->lookup[id];
+    return hasFlag_52340(p, 0x10);
+}
+#endif
 
 INCLUDE_ASM("be/beintecon", func_00152368);
