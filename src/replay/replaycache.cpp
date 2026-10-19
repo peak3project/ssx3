@@ -1816,7 +1816,21 @@ extern "C" void func_002729A8(sRcList272938* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272A50);
+#ifdef SKIP_ASM
+extern "C" void func_002729A8(sRcList272938* self, int i);
+
+extern "C" void func_00272A50(sRcList272938* self)
+{
+    sRcNode272938* n = self->usedHead;
+    while (n != 0) {
+        int id = n->id;
+        n = n->next;
+        func_002729A8(self, id);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272AA0);
