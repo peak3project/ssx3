@@ -1886,6 +1886,25 @@ char *func_00421E60(int ep, char *buf, long val, int nd, int unused, char fmt, i
 INCLUDE_ASM("seg/seg_316F98", func_00421F20);
 
 INCLUDE_ASM("seg/seg_316F98", func_004224A0);
+#ifdef SKIP_ASM
+extern void *func_0041DBF8_malloc(int, int) __asm__("func_0041DBF8");
+extern void *func_00416210_memset(void *, int, unsigned) __asm__("func_00416210");
+#define MALLOC_ZERO(charp, nbytes)     do {         unsigned mctmp = (nbytes);         if (mctmp < 37) {             unsigned *mzp = (unsigned *)(charp);             if (mctmp >= 20) {                 *mzp++ = 0;                 *mzp++ = 0;                 if (mctmp >= 28) {                     *mzp++ = 0;                     *mzp++ = 0;                     if (mctmp >= 36) {                         *mzp++ = 0;                         *mzp++ = 0;                     }                 }             }             *mzp++ = 0;             *mzp++ = 0;             *mzp = 0;         } else             func_00416210_memset(charp, 0, mctmp);     } while (0)
+void *func_004224A0_(int ptr, int n, int elem_size) __asm__("func_004224A0");
+void *func_004224A0_(int ptr, int n, int elem_size) {
+    mchunkptr p;
+    unsigned csz;
+    unsigned sz = n * elem_size;
+    void *mem;
+    mem = func_0041DBF8_malloc(ptr, sz);
+    if (mem == 0)
+        return 0;
+    p = (mchunkptr)((char *)mem - 8);
+    csz = chunksize(p);
+    MALLOC_ZERO(mem, csz - 4);
+    return mem;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00422560);
 #ifdef SKIP_ASM
