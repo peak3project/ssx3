@@ -2478,7 +2478,18 @@ void func_003FC3C0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC3F0);
+#ifdef SKIP_ASM
+typedef struct { int w[25]; } K100b;
+extern K100b *D_C3F0 __asm__("D_004A5B20");
+extern int fBD70(char *, int, int, int) __asm__("func_003FBD70");
+int func_003FC3F0_impl(K100b *a) __asm__("func_003FC3F0");
+int func_003FC3F0_impl(K100b *a) {
+    *D_C3F0 = *a;
+    return fBD70((char *)a + 0x48, a->w[1], -1, 5);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC4C8);
