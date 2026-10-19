@@ -372,7 +372,19 @@ int func_003FFA08(int a, int b) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FFA58);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFBC0);
+#ifdef SKIP_ASM
+int func_003FFBC0(int a, int b) {
+    unsigned char *p;
+    if (!D_00526250[a].e[b].f10)
+        return 99;
+    p = (unsigned char *)func_003FF9A8(a, b);
+    if (p[0x70] == 6 && p[0x71] == 2)
+        return 5;
+    return p[0x70];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFC38);
