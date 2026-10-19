@@ -920,7 +920,66 @@ void func_003D7B98(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7C38);
+#ifdef SKIP_ASM
+struct E_7C38 {
+    char pad0[0x6A];
+    unsigned char flag;     // 0x6A
+    unsigned char bucket;   // 0x6B
+    short busy;             // 0x6C
+    short next;             // 0x6E
+};
+struct T_7C38 {
+    int a[8];
+    int b[8];
+    int c[8];
+};
+extern struct T_7C38 D_0044FFF8_7C38 __asm__("D_0044FFF8");
+#define T D_0044FFF8_7C38
+#define ENT(i) ((struct E_7C38 *)((char *)&T + (i) * 0x60))
+
+void func_003D7C38(unsigned int n) {
+    int nx = -1;
+    if (n < 16) {
+        struct E_7C38 *e = ENT(n);
+        if (e->busy == 0) {
+            int b;
+            e->flag = 0;
+            b = e->bucket;
+            if (n == T.c[b]) {
+                T.c[b] = -1;
+            }
+            if (n == T.b[b]) {
+                T.b[b] = -1;
+            }
+            nx = e->next;
+            while (nx != -1) {
+                struct E_7C38 *q;
+                if ((unsigned int)nx >= 16) {
+                    break;
+                }
+                q = ENT(nx);
+                if (q->busy != 0 && q->flag != 0) {
+                    if (nx == T.b[b]) {
+                        T.b[b] = -1;
+                    }
+                    q->flag = 0;
+                    nx = q->next;
+                } else {
+                    nx = -1;
+                }
+            }
+            if (ENT(n)->busy == 0) {
+                T.a[b]--;
+            }
+            if (T.a[b] < 0) {
+                T.a[b] = 0;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7D58);
