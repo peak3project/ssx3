@@ -379,7 +379,14 @@ void func_001DA530(void* self, int i, int value)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA540);
+#ifdef SKIP_ASM
+extern "C" void* func_001DA540(void* self, ...)
+{
+    return self;
+}
+#endif
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA580);
 #ifdef SKIP_ASM
