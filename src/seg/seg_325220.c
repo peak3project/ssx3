@@ -2838,7 +2838,24 @@ long func_0042D320(double a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042D380);
+#ifdef SKIP_ASM
+long func_0042D380(double a) {
+    unsigned long hi;
+    if (a < 0.0) {
+        return 0;
+    }
+    hi = (unsigned long)(unsigned)(a * 2.3283064365386963e-10) << 32;
+    a = a - (double)hi;
+    if (a < 0.0) {
+        hi -= (unsigned)(0.0 - a);
+    } else {
+        hi += (unsigned)a;
+    }
+    return hi;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042D470);
 
