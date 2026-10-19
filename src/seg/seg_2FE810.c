@@ -1350,7 +1350,20 @@ void func_00409310(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409388);
+#ifdef SKIP_ASM
+extern int func_0042C078();
+extern void func_0042C0C0(void);
+void func_00409388(int a) {
+    int s = func_0042C078();
+    *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 | 0x10000;
+    *(volatile int *)0x1000B400 = a;
+    *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 & 0xFFFEFFFF;
+    if (s)
+        func_0042C0C0();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00409400);
 
