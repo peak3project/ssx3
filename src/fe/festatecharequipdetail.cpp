@@ -3186,7 +3186,17 @@ extern "C" int func_0019E2B0(sEquipTable* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E2F0);
+#ifdef SKIP_ASM
+extern "C" int func_0019E2F0(sEquipTable* self, int a1, int a2)
+{
+    if (self->rows[a1].slots[a2].state != 1) {
+        return 0;
+    }
+    return self->rows[a1].slots[a2].value;
+}
+#endif
 
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E330);
 
