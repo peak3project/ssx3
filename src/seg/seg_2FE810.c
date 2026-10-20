@@ -977,7 +977,29 @@ void func_00400838(unsigned short a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004008A0);
+#ifdef SKIP_ASM
+extern int D_005264C0[];
+extern int D_005264C4[];
+extern int func_004013E8(int);
+extern int func_0042C078();
+extern void func_0042C0C0(void);
+int func_004008A0(int cb) {
+    int old;
+    int s;
+    register int gp __asm__("$28");
+    if (func_004013E8(1) != 0)
+        return 0;
+    s = func_0042C078();
+    old = D_005264C0[0];
+    D_005264C0[0] = cb;
+    *(volatile int *)D_005264C4 = gp;
+    if (s != 0)
+        func_0042C0C0();
+    return old;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400908);
