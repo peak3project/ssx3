@@ -73,7 +73,32 @@ void func_003F3940(int *self) {
 
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F39C8);
+#ifdef SKIP_ASM
+extern char D_0051F020[];
+extern int *RpcAlloc(int);
+extern void f6210k(int *, int, int) __asm__("func_00416210");
+extern int func_003F4C98(char *, int, int);
+extern int f4C68k(char *, int, int, int, int, int, int, int, int, int *) __asm__("func_003F4C68");
+extern int func_003F3860(int *);
+extern void func_003F3940(int *);
+int *f39C8impl(int a, int b) __asm__("func_003F39C8");
+int *f39C8impl(int a, int b) {
+    int f;
+    int *p = RpcAlloc(0x5C);
+    if (p) {
+        f6210k(p, 0, 0x5C);
+        f = (int)func_003F3860;
+        p[3] = (int)func_003F3940;
+        p[2] = f;
+        func_003F4C98(D_0051F020, 'name', 'look');
+        f = 1;
+        f4C68k(D_0051F020, f, 0, b, a, -f, 0, 0, f, p + 0x58 / 4);
+    }
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3A98);
