@@ -1769,7 +1769,100 @@ extern "C" void func_00122658(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00122680);
+#ifdef SKIP_ASM
+struct sV2_2680 {
+    float x, y;
+    sV2_2680(const float& ax, const float& ay) : x(ax), y(ay) {}
+};
+
+struct sGsState_2680 {
+    unsigned int w0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    unsigned int wC;
+    int f10 : 16;
+    unsigned int f10hi : 16;
+};
+
+extern sGsState_2680 D_00501420_2680 __asm__("D_00501420");
+extern char D_004FF1A0[];
+extern int D_004A4540;
+
+class cGfx_2680 {
+public:
+    char pad[0xE84];
+    sGsState_2680* stateTop;
+    char padE88[0x10D8 - 0xE88];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8(); virtual void v9(); virtual void v10(); virtual void v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
+    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
+    virtual void BeginScene();
+    virtual void EndScene();
+    virtual void v22(); virtual void v23(); virtual void v24();
+    virtual void SetViewport(float, float, float, float, int, int, float, float);
+    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void Begin2D();
+    virtual void End2D();
+    virtual void v32();
+    virtual void SetTexture(void*);
+};
+
+extern cGfx_2680* D_004A289C_2680 __asm__("D_004A289C");
+
+// PORT: second vec2 temp is built by a by-value ctor.
+struct sV2v_2680 {
+    float x, y;
+    sV2v_2680(float ax, float ay) { y = ay; x = ax; }
+};
+
+struct sOverlay_2680 {
+    char pad00[0x28];
+    sV2_2680 f28;
+    sV2_2680 f30;
+    sV2_2680 f38;
+};
+
+extern "C" void func_00122680(void)
+{
+    do { // PORT: wrapper stands in for a compiled-out release ASSERT macro (changes loop notes/scheduling)
+    if (D_004A4540 == 0) {
+        float zero = 0.0f;
+        sOverlay_2680* o = *(sOverlay_2680**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x24);
+        o->f38 = o->f30;
+        D_004A289C_2680->BeginScene();
+        D_004A289C_2680->Begin2D();
+        cGfx_2680* g = D_004A289C_2680;
+        g->stateTop[1] = g->stateTop[0];
+        g->stateTop++;
+        *D_004A289C_2680->stateTop = D_00501420_2680;
+        *(short*)(*(char**)((char*)D_004A289C_2680 + 0xE84) + 0x10) = -1;
+        D_004A289C_2680->SetViewport(zero, zero, 640.0f, 480.0f, 0, 0, zero, 1.0f);
+        D_004A289C_2680->SetTexture(D_004FF1A0);
+        D_004A289C_2680->stateTop->f8_5 = 24;
+        D_004A289C_2680->stateTop->f4_2 = 5;
+        o->f28 = sV2_2680(2.0f, 2.0f);
+        *(sV2v_2680*)&o->f28 = sV2v_2680(zero, zero);
+        D_004A289C_2680->End2D();
+        D_004A289C_2680->EndScene();
+        D_004A289C_2680->stateTop--;
+        int unused[4]; // PORT: stack padding (frame +16)
+    }
+    } while (0);}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_00122898);
