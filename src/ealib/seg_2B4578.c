@@ -9310,7 +9310,20 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003CAEA0);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAFD0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB110);
+#ifdef SKIP_ASM
+struct S_B110 { char pad[0x24]; float f24; };
+
+void func_003CB110(struct S_B110 *p, int v) {
+    p->f24 = (float)v * 0.000244140625f;
+    if ((double)p->f24 < 0.5) {
+        p->f24 = 0.5f;
+    } else if ((double)p->f24 > 2.0) {
+        p->f24 = 2.0f;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB1A8);
