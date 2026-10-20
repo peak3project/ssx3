@@ -2149,7 +2149,41 @@ struct Bigint *func_00420E90(int ptr, struct Bigint *a, struct Bigint *b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00421020);
+#ifdef SKIP_ASM
+union double_union {
+    double d;
+    struct {
+        unsigned long lo : 32;
+        unsigned long hi : 32;
+    } w;
+    long l;
+};
+#define word0(x) x.w.hi
+#define word1(x) x.w.lo
+double func_00421020(double _x) {
+    union double_union x, a;
+    int L;
+    x.d = _x;
+    L = (word0(x) & 0x7ff00000) - 52 * 0x100000;
+    if (L > 0) {
+        word0(a) = L;
+        word1(a) = 0;
+    } else {
+        L = -L >> 20;
+        if (L < 20) {
+            word0(a) = 0x80000 >> L;
+            word1(a) = 0;
+        } else {
+            word0(a) = 0;
+            L -= 20;
+            word1(a) = L >= 31 ? 1 : 1 << (31 - L);
+        }
+    }
+    return a.d;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_004210E8);
 
