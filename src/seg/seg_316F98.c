@@ -2280,7 +2280,53 @@ double func_004214C0(int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00421530);
+#ifdef SKIP_ASM
+struct R21530;
+extern char *g21530_dtoa(struct R21530 *, double, int, int, int *, int *, char **) __asm__("func_00422780");
+extern char *g21530_strcpy(char *, char *) __asm__("strcpy");
+void func_00421530_(struct R21530 *ptr, char *buf, double invalue, int ndigit, int type, int dot, int mode) __asm__("func_00421530");
+void func_00421530_(struct R21530 *ptr, char *buf, double invalue, int ndigit, int type, int dot, int mode) {
+    int decpt;
+    int sign;
+    char *p, *start, *end;
+    start = p = g21530_dtoa(ptr, invalue, mode, ndigit, &decpt, &sign, &end);
+    if (decpt == 9999) {
+        g21530_strcpy(buf, p);
+        return;
+    }
+    while (*p != '\0' && decpt > 0) {
+        *buf++ = *p++;
+        decpt--;
+    }
+    while (decpt > 0) {
+        *buf++ = '0';
+        decpt--;
+    }
+    if (dot == 0 && *p == '\0') {
+        *buf = '\0';
+        return;
+    }
+    if (p == start)
+        *buf++ = '0';
+    *buf++ = '.';
+    while (decpt < 0 && ndigit > 0) {
+        *buf++ = '0';
+        decpt++;
+        ndigit--;
+    }
+    while (*p && ndigit > 0) {
+        *buf++ = *p++;
+        ndigit--;
+    }
+    while (ndigit > 0) {
+        *buf++ = '0';
+        ndigit--;
+    }
+    *buf = '\0';
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_004216E8);
