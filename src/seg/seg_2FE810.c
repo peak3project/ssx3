@@ -4145,7 +4145,49 @@ int func_0040AC38(int a, int b, char *s, struct S40_AC38 *c, int e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AE00);
+#ifdef SKIP_ASM
+extern int A_5271C0[] __asm__("D_005271C0");
+extern int A_527270[] __asm__("D_00527270");
+extern char A_527220[] __asm__("D_00527220");
+extern int A_528780[] __asm__("D_00528780");
+extern int A_4533C0[] __asm__("D_004533C0");
+extern int A_4533C4[] __asm__("D_004533C4");
+extern int func_KbOpenA(int *, int, int, int *, int, int *, int, int, int) __asm__("func_00426D18");
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern char *strncpy(char *, const char *, int);
+extern void func_00424020(int);
+int func_0040AE00(int a, int b, char *s, char *t) {
+    int r;
+    char *p;
+    if (A_5271C0[9] == 0)
+        return -100;
+    if (func_00423DF0(A_4533C4[0]) < 0)
+        return -200;
+    if (s == 0 || s[0] == 0 || t == 0) {
+        func_00423DC0(A_4533C4[0]);
+        return -210;
+    }
+    A_527270[0] = a;
+    A_527270[1] = b;
+    A_527270[2] = 16;
+    strncpy((char *)(A_527270 + 5), s, 0x3FF);
+    ((char *)A_527270)[0x413] = 0;
+    strncpy(A_527220, t, 0x20);
+    p = A_527220 - 0x20;
+    p[0x3F] = 0;
+    A_527270[4] = (int)p;
+    func_00424020(0);
+    r = func_KbOpenA(A_5271C0, 14, 1, A_527270, 0x414, A_528780, 4, 0, 0);
+    if (r == 0)
+        A_4533C0[0] = 19;
+    else
+        func_00423DC0(A_4533C4[0]);
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AF58);
