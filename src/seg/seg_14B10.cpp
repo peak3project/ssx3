@@ -369,7 +369,95 @@ extern "C" void func_00114130(char* s, int a, int b)
 
 INCLUDE_ASM("seg/seg_14B10", func_00114298);
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", func_00114CC0);
+#ifdef SKIP_ASM
+struct Q_4CC0 {
+    float x, y, z, w;
+    Q_4CC0() {}
+    Q_4CC0(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+struct V3_4CC0 {
+    float x, y, z;
+    V3_4CC0() {}
+    V3_4CC0(float ax, float ay, float az) { x = ax; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
+static inline V3_4CC0 Vec3Of_4CC0(Q_4CC0 v)
+{
+    return V3_4CC0(v.x, v.y, v.z);
+}
+
+static inline Q_4CC0 Make_4CC0(const V3_4CC0& t)
+{
+    return Q_4CC0(t.x, t.y, t.z, 0.0f);
+}
+
+extern "C" void cRider_updateOrientationImplicit(void* self);
+extern "C" void func_00115168(char* s);
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_4CC0(const Q_4CC0& a, const Q_4CC0& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline Q_4CC0 QuatMul_4CC0(const Q_4CC0& a, const Q_4CC0& b)
+{
+    Q_4CC0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+extern "C" int func_00114CC0_i(char* s) __asm__("func_00114CC0");
+
+extern "C" int func_00114CC0_i(char* s)
+{
+    float k = 111.11111450195312f;
+    if (*(float*)(s + 0x214) != 0.0f) {
+        return 0;
+    }
+    float d = Dot_4CC0(*(Q_4CC0*)(s + 0x1E0), *(Q_4CC0*)(s + 0x3A0));
+    if (-k < d) {
+        return 0;
+    }
+    *(Q_4CC0*)(s + 0x120) = QuatMul_4CC0(Make_4CC0(Vec3Of_4CC0(*(Q_4CC0*)(s + 0x1C0))), *(Q_4CC0*)(s + 0x120));
+    cRider_updateOrientationImplicit(s);
+    func_00115168(s);
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_14B10", func_00114DB8);
 
