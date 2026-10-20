@@ -9,7 +9,7 @@ struct cObjNode {
     void* field_0xC;
 };
 
-//99.94%
+//100%
 INCLUDE_ASM("object/objnode", cObjNode_cObjNode__FP8cObjNodePv);
 #ifdef SKIP_ASM
 cObjNode* cObjNode_cObjNode(cObjNode* self, void* param2)
