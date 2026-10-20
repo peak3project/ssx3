@@ -2191,7 +2191,23 @@ INCLUDE_ASM("seg/seg_316F98", func_00421280);
 
 INCLUDE_ASM("seg/seg_316F98", func_00421400);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004214C0);
+#ifdef SKIP_ASM
+extern double D_0049A8F8[];
+extern double func_00411FD8(double, double);
+double func_004214C0(int n) {
+    double r = 1.0;
+    if (n < 24)
+        return D_0049A8F8[n];
+    if (n > 0) {
+        do {
+            r = func_00411FD8(r, 10.0);
+        } while (--n > 0);
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00421530);
 
