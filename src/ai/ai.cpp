@@ -962,7 +962,119 @@ extern "C" void func_0012A558(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012A560);
+#ifdef SKIP_ASM
+extern "C" void* func_0026AF70(void* tree, int id);
+extern "C" float func_0026A138(void* obj);
+extern "C" void func_0011FEC8_2A560(void* self, int v) __asm__("func_0011FEC8__FPv");
+extern "C" void func_0011FE78_2A560(void* self, int v) __asm__("func_0011FE78__FPv");
+struct sTree_2A560 { int pad[4]; int count; };
+extern sTree_2A560 D_tree_2A560 __asm__("D_004D33A0");
+
+struct sVec4_2A560
+{
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+sVec4_2A560 func_0026AB20_2A560(void* path, int* inRange, float t) __asm__("func_0026AB20");
+void func_0011D660_2A560(void* self, sVec4_2A560* a, sVec4_2A560* b, int n, float t) __asm__("func_0011D660");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4_2A560 vu0Sub_2A560(const sVec4_2A560& a, const sVec4_2A560& b)
+{
+    sVec4_2A560 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_2A560(const sVec4_2A560& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector *= 1/len).
+static inline void vu0Normalize_2A560(sVec4_2A560& v, float len)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(v), "=&r"(t)
+        : "m"(v), "f"(len));
+}
+
+struct sAi_2A560
+{
+    char pad00[0x28];
+    char* riders[1];
+};
+
+extern "C" void func_0012A560(char* self, int which)
+{
+    int n = D_tree_2A560.count;
+    int i;
+    for (i = 0; i < n; i++)
+    {
+        void* obj = func_0026AF70(&D_tree_2A560, i);
+        float f = func_0026A138(obj);
+        if (f == -1.0f)
+            continue;
+        float t = f - 1000.0f;
+        if (t < 0.0f)
+            t = 0.0f;
+        int j = 0;
+        sVec4_2A560 a = func_0026AB20_2A560(obj, 0, f);
+        sVec4_2A560 b = func_0026AB20_2A560(obj, 0, t);
+        for (j = 0; j < *(int*)(self + 0x78); j++)
+        {
+            if (which == -1 || which == j)
+            {
+                func_0011FEC8_2A560(((sAi_2A560*)self)->riders[j], 0);
+                func_0011FE78_2A560(((sAi_2A560*)self)->riders[j], 0);
+                sVec4_2A560 d = vu0Sub_2A560(a, b);
+                float len = vu0Length_2A560(d);
+                if (1.0f < len)
+                    vu0Normalize_2A560(d, len);
+                else
+                {
+                    sVec4_2A560 t2 = *(sVec4_2A560*)(((sAi_2A560*)self)->riders[j] + 0x1B0);
+                    d = t2;
+                }
+                func_0011D660_2A560(((sAi_2A560*)self)->riders[j], &b, &d, 5, 0.0f);
+            }
+        }
+        return;
+    }
+}
+#endif
 
 INCLUDE_ASM("ai/ai", func_0012A768);
 //100% - objdiff report; single-function view differs only in a relocation name
