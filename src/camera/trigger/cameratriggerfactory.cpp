@@ -1150,7 +1150,166 @@ extern "C" void* func_00174808(void* self, ...)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00174848);
+#ifdef SKIP_ASM
+struct sCell_1748 {
+    int level, x, y, z;
+};
+struct sVEnt1748 {
+    short delta;
+    short index;
+    int (*fn)(void*, ...);
+};
+
+extern "C" void* func_0016C6B0(void*, void*);
+extern "C" void cActiveTriggerList_add(void*, void*);
+extern "C" void func_00176890(void* node, void* ctx);
+
+// CameraCollisionCallback::operator()(cell)
+static inline void trigCb_1748(char* ctx, void** node)
+{
+    char* e;
+    for (e = (char*)node[10]; e != 0; e = *(char**)e) {
+        if (*(int*)(e + 8) == 4) {
+            char* trig = *(char**)(e + 0xC);
+            char* sub = *(char**)(ctx + 4) + 0x6C0;
+            char* bound = *(char**)(trig + 8);
+            sVEnt1748* cvt = *(sVEnt1748**)sub;
+            sVEnt1748* bvt = *(sVEnt1748**)(bound + 0x24);
+            char* bthis = bound + bvt[7].delta;
+            int r = cvt[5].fn(sub + cvt[5].delta);
+            if (bvt[7].fn(bthis, r)) {
+                void* f = func_0016C6B0(*(void**)ctx, trig);
+                if (f) {
+                    *(int*)((char*)f + 0xC) = 1;
+                } else {
+                    cActiveTriggerList_add(*(void**)ctx, trig);
+                }
+            }
+        }
+    }
+}
+
+// nash::Cell::descend<CameraCollisionCallback>, one level inlined
+static inline void descend_1748(void** n, char* cb)
+{
+    trigCb_1748(cb, n);
+    if (n[0] != 0) func_00176890(n[0], cb);
+    if (n[1] != 0) func_00176890(n[1], cb);
+    if (n[2] != 0) func_00176890(n[2], cb);
+    if (n[3] != 0) func_00176890(n[3], cb);
+    if (n[4] != 0) func_00176890(n[4], cb);
+    if (n[5] != 0) func_00176890(n[5], cb);
+    if (n[6] != 0) func_00176890(n[6], cb);
+    if (n[7] != 0) func_00176890(n[7], cb);
+}
+
+extern "C" void func_00174848(char* self, char* cb, char* cb2, float* box, void** node, sCell_1748* cell)
+{
+    trigCb_1748(cb, node);
+    if (cell->level == 11) {
+        return;
+    }
+    int bits = (cell->level + 0x7E) << 23;
+    float s = *(float*)&bits;
+    sCell_1748 k;
+    k.level = cell->level - 1;
+    k.x = cell->x * 2;
+    k.y = cell->y * 2;
+    k.z = cell->z * 2;
+    int ovLoX = 0;
+    float xLoA = ((float)k.x - 0.2f) * s;
+    float xLoB = ((float)(k.x + 1) + 0.2f) * s;
+    if (box[0] < xLoB && xLoA < box[4]) ovLoX = 1;
+    int ovHiX = 0;
+    float xHiB = ((float)(k.x + 2) + 0.2f) * s;
+    float xHiA = ((float)(k.x + 1) - 0.2f) * s;
+    if (box[0] < xHiB && xHiA < box[4]) ovHiX = 1;
+    if (ovLoX || ovHiX) {
+        int ovLoY = 0;
+        float yLoB = ((float)(k.y + 1) + 0.2f) * s;
+        float yLoA = ((float)k.y - 0.2f) * s;
+        if (box[1] < yLoB && yLoA < box[5]) ovLoY = 1;
+        int ovHiY = 0;
+        float yHiB = ((float)(k.y + 2) + 0.2f) * s;
+        float yHiA = ((float)(k.y + 1) - 0.2f) * s;
+        if (box[1] < yHiB && yHiA < box[5]) ovHiY = 1;
+        if (ovLoY || ovHiY) {
+            int ovLoZ = 0;
+            float zLoB = ((float)(k.z + 1) + 0.2f) * s;
+            float zLoA = ((float)k.z - 0.2f) * s;
+            if (box[2] < zLoB && zLoA < box[6]) ovLoZ = 1;
+            int ovHiZ = 0;
+            float zHiB = ((float)(k.z + 2) + 0.2f) * s;
+            float zHiA = ((float)(k.z + 1) - 0.2f) * s;
+            if (box[2] < zHiB && zHiA < box[6]) ovHiZ = 1;
+            if (ovLoZ || ovHiZ) {
+                int inLoX = 0;
+                if (box[0] < xLoA && xLoB < box[4]) inLoX = 1;
+                int inHiX = 0;
+                if (box[0] < xHiA && xHiB < box[4]) inHiX = 1;
+                int inLoY = 0;
+                if (box[1] < yLoA && yLoB < box[5]) inLoY = 1;
+                int inHiY = 0;
+                if (box[1] < yHiA && yHiB < box[5]) inHiY = 1;
+                int inLoZ = 0;
+                if (box[2] < zLoA && zLoB < box[6]) inLoZ = 1;
+                int inHiZ = 0;
+                if (box[2] < zHiA && zHiB < box[6]) inHiZ = 1;
+                void** c;
+                c = (void**)node[0];
+                if (c != 0 && ovLoX && ovLoY && ovLoZ) {
+                    if (inLoX && inLoY && inLoZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[1];
+                k.z++;
+                if (c != 0 && ovLoX && ovLoY && ovHiZ) {
+                    if (inLoX && inLoY && inHiZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[3];
+                k.y++;
+                if (c != 0 && ovLoX && ovHiY && ovHiZ) {
+                    if (inLoX && inHiY && inHiZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[2];
+                k.z--;
+                if (c != 0 && ovLoX && ovHiY && ovLoZ) {
+                    if (inLoX && inHiY && inLoZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[6];
+                k.x++;
+                if (c != 0 && ovHiX && ovHiY && ovLoZ) {
+                    if (inHiX && inHiY && inLoZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[7];
+                k.z++;
+                if (c != 0 && ovHiX && ovHiY && ovHiZ) {
+                    if (inHiX && inHiY && inHiZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[5];
+                k.y--;
+                if (c != 0 && ovHiX && ovLoY && ovHiZ) {
+                    if (inHiX && inLoY && inHiZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[4];
+                k.z--;
+                if (c != 0 && ovHiX && ovLoY && ovLoZ) {
+                    if (inHiX && inLoY && inLoZ) descend_1748(c, cb2);
+                    else func_00174848(self, cb, cb2, box, c, &k);
+                }
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00175A20);
 
