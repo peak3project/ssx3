@@ -2185,7 +2185,38 @@ double func_00421020(double _x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004210E8);
+#ifdef SKIP_ASM
+extern int func_00420830(unsigned);
+double func_004210E8(struct Bigint *a, int *e) {
+    unsigned *xa, *xa0, w, y, z;
+    int k;
+    union double_union d;
+    xa0 = a->x;
+    xa = xa0 + a->wds;
+    y = *--xa;
+    k = func_00420830(y);
+    *e = 32 - k;
+    if (k < 11) {
+        d.w.hi = 0x3ff00000 | y >> (11 - k);
+        w = xa > xa0 ? *--xa : 0;
+        d.w.lo = y << (21 + k) | w >> (11 - k);
+        goto ret_d;
+    }
+    z = xa > xa0 ? *--xa : 0;
+    if (k -= 11) {
+        d.w.hi = 0x3ff00000 | y << k | z >> (32 - k);
+        y = xa > xa0 ? *--xa : 0;
+        d.w.lo = z << k | y >> (32 - k);
+    } else {
+        d.w.hi = 0x3ff00000 | y;
+        d.w.lo = z;
+    }
+ret_d:
+    return d.d;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00421280);
 
