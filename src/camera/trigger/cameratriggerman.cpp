@@ -573,7 +573,162 @@ extern "C" int func_0016D260(sCamTrigStack* self, int key, int* changed, int* ou
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016D320);
+#ifdef SKIP_ASM
+struct sCell_D320 {
+    int level, x, y, z;
+    void** node;                    // 0x10
+};
+
+struct sRoot_D320 {
+    sCell_D320 cell[8];
+};
+
+struct sVEnt_D320 {
+    short delta;
+    short index;
+    int (*fn)(void*, ...);
+};
+
+struct sVec4_D320 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sQH_D320 {};
+
+struct sCtx_D320 {
+    void* list;                     // 0x0
+    char* cam;                      // 0x4
+};
+
+struct sLNode_D320 {
+    sLNode_D320* next;              // 0x0 (also data ptr in the active list)
+    sLNode_D320* link;              // 0x4
+    int f08;
+    int f0C;
+};
+
+extern "C" void* func_0016C6B0_D320(void*, void*) __asm__("func_0016C6B0");
+extern "C" void cActiveTriggerList_add(void*, void*);
+extern "C" void func_00176890(void* node, void* ctx);
+extern "C" void func_0016C678(void*);
+extern "C" int func_00328360(sCell_D320* c, void* box);
+extern "C" void helpX_D320(char* flag, sCtx_D320* ctx, sCtx_D320* ctx2, void* box, void** node, sCell_D320* cell) __asm__("func_00174848");
+extern "C" void* func_0016C6E0(void*, int);
+extern "C" void* func_0016C778(void*, void*);
+extern "C" void func_0016E1D8(void*, void*);
+void func_0016D238(void* self, int a1);
+
+// CameraCollisionCallback::operator()(cell)
+static inline void trigCb_D320(sCtx_D320* ctx, void** node)
+{
+    char* e;
+    for (e = (char*)node[10]; e != 0; e = *(char**)e) {
+        if (*(int*)(e + 8) == 4) {
+            char* trig = *(char**)(e + 0xC);
+            char* sub = ctx->cam + 0x6C0;
+            char* bound = *(char**)(trig + 8);
+            sVEnt_D320* cvt = *(sVEnt_D320**)sub;
+            sVEnt_D320* bvt = *(sVEnt_D320**)(bound + 0x24);
+            char* bthis = bound + bvt[7].delta;
+            int r = cvt[5].fn(sub + cvt[5].delta);
+            if (bvt[7].fn(bthis, r)) {
+                void* f = func_0016C6B0_D320(ctx->list, trig);
+                if (f) {
+                    *(int*)((char*)f + 0xC) = 1;
+                } else {
+                    cActiveTriggerList_add(ctx->list, trig);
+                }
+            }
+        }
+    }
+}
+
+static inline void visit_D320(sRoot_D320* t, int k, sCtx_D320* ctx, void* box)
+{
+    sQH_D320 h;
+    sCell_D320* c = (sCell_D320*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = c->node;
+        char* f = (char*)&h;
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            trigCb_D320(ctx, n);
+            if (n[0] != 0) func_00176890(n[0], ctx);
+            if (n[1] != 0) func_00176890(n[1], ctx);
+            if (n[2] != 0) func_00176890(n[2], ctx);
+            if (n[3] != 0) func_00176890(n[3], ctx);
+            if (n[4] != 0) func_00176890(n[4], ctx);
+            if (n[5] != 0) func_00176890(n[5], ctx);
+            if (n[6] != 0) func_00176890(n[6], ctx);
+            if (n[7] != 0) func_00176890(n[7], ctx);
+        } else if (r == 2) {
+            helpX_D320(f, ctx, ctx, box, n, c);
+        }
+    }
+}
+
+extern "C" void func_0016D320(char* self, char* cam)
+{
+    int ok = 0;
+    if (*(int*)(cam + 0x874) != 0) {
+        ok = *(int*)(cam + 0x87C) != 0;
+    }
+    if (!ok) return;
+    int idx = *(int*)(cam + 0x870);
+    func_0016C678(self + (idx * 4 + 0x14));
+    sRoot_D320* t = *(sRoot_D320**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x20);
+    sCtx_D320 ctx;
+    ctx.list = (char*)(idx * 4 + (int)self) + 0x14;
+    ctx.cam = cam;
+    char* sub = cam + 0x6C0;
+    sVEnt_D320* cvt = *(sVEnt_D320**)sub;
+    sVec4_D320* pmin = (sVec4_D320*)cvt[5].fn(sub + cvt[5].delta);
+    sVEnt_D320* cvt2 = *(sVEnt_D320**)sub;
+    sVec4_D320* pmax = (sVec4_D320*)cvt2[5].fn(sub + cvt2[5].delta);
+    sCtx_D320* c = &ctx;
+    sVec4_D320 box[2];
+    box[0] = *pmin;
+    box[1] = *pmax;
+    int changed;
+    int out;
+    visit_D320(t, 0, c, box);
+    visit_D320(t, 1, c, box);
+    visit_D320(t, 2, c, box);
+    visit_D320(t, 3, c, box);
+    visit_D320(t, 4, c, box);
+    visit_D320(t, 5, c, box);
+    visit_D320(t, 6, c, box);
+    visit_D320(t, 7, c, box);
+    sLNode_D320* p = *(sLNode_D320**)(self + idx * 4 + 0x14);
+    if (p) {
+        for (; p; ) {
+            if (p->f0C == 0) {
+                int* q = (int*)p->next;
+                if (func_0016D260((sCamTrigStack*)(self + (idx * 0x20 + 0x1c)), q[0], &changed, &out)) {
+                    func_0016E1D8((void*)q[4], cam);
+                } else if (changed) {
+                    int* e = (int*)func_0016C6E0(self + (idx * 4 + 0x14), out);
+                    if (e) func_0016E1D8((void*)e[3], cam);
+                }
+                p = (sLNode_D320*)func_0016C778(self + (idx * 4 + 0x14), p);
+            } else {
+                p = p->link;
+            }
+        }
+    }
+    sLNode_D320* p2 = *(sLNode_D320**)(self + idx * 4 + 0x14);
+    if (p2) {
+        for (; p2; p2 = p2->link) {
+            if (p2->f08) {
+                func_0016D238(self + (idx * 0x20 + 0x1c), **(int**)p2);
+                func_0016E1D8((void*)(*(int**)p2)[3], cam);
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016E1D8);
 
