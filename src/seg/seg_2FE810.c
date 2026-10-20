@@ -3156,7 +3156,42 @@ void func_00408508(int *p) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00408530);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004086C0);
+#ifdef SKIP_ASM
+struct S86C0 { char pad0[0x80]; int f80; int pad84; unsigned long f88; char pad90[0x20]; int fB0; int fB4; int fB8; int fBC; int fC0; int fC4; int fC8; int fCC; int fD0; char padD4[0x784]; int f858; };
+struct B86C0 { char pad0[0x28]; int f28; char pad2C[0x18]; int f44; int f48; int f4C; int f50; int f54; int f58; int f5C; int f60; };
+struct R86C0 { char pad[0x10]; int f10; int f14; int f18; int f1C; long f20; };
+extern unsigned D_004532E8[];
+extern void q86_8530(struct S86C0 *, struct B86C0 *, void *, void *, void *) __asm__("func_00408530");
+extern int q86_81D8(struct S86C0 *, struct B86C0 *) __asm__("func_004081D8");
+extern int q86_9088(struct S86C0 *, struct B86C0 *) __asm__("func_00409088");
+extern int q86_8278(struct S86C0 *, struct B86C0 *) __asm__("func_00408278");
+extern void q86_8508(struct S86C0 *) __asm__("func_00408508");
+void d86C0(struct S86C0 *a, struct B86C0 *b, int c) __asm__("func_004086C0");
+void d86C0(struct S86C0 *a, struct B86C0 *b, int c) {
+    struct R86C0 *r = (struct R86C0 *)a->f858;
+    int m;
+    q86_8530(a, b, &r->f10, &r->f18, &r->f20);
+    r = (struct R86C0 *)a->f858;
+    a->f80 = r->f10;
+    m = r->f20 >> 5;
+    a->f88 = D_004532E8[m & 0xF];
+    a->fCC = b->f5C;
+    a->fD0 = b->f60;
+    a->fB4 = b->f44;
+    a->fB8 = b->f48;
+    a->fBC = b->f4C;
+    a->fC0 = b->f50;
+    a->fC4 = b->f54;
+    a->fC8 = b->f58;
+    if (q86_81D8(a, b) && b->f28 == 1) {
+        if (a->fB0 != 0) q86_9088(a, b);
+        else q86_8278(a, b);
+        q86_8508(a);
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004087D0);
 
