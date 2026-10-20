@@ -3476,7 +3476,23 @@ float func_003BC770(float x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC840);
+#ifdef SKIP_ASM
+float func_003BC840(float x) {
+    float x2, x4, x6, x8, x10, x12;
+    while (x > 6.2831855f) {
+        x -= 6.2831855f;
+    }
+    x2 = x * x;
+    x4 = x2 * x2;
+    x6 = x2 * x4;
+    x8 = x4 * x4;
+    x10 = x2 * x8;
+    x12 = x6 * x6;
+    return 1.0f - x2 * 0.5f + x4 * 0.041666668f - x6 * 0.0013888889f + x8 * 2.4801588e-5f - x10 * 2.755732e-7f + x12 * 2.0876758e-9f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC910);
