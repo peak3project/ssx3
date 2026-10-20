@@ -6476,7 +6476,27 @@ int func_003C5998(int arg0, float f) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5A28);
+#ifdef SKIP_ASM
+extern void func_003B4DD8_5A28(void *) __asm__("func_003B4DD8");
+
+int func_003C5A28(int arg0, float *out) {
+    char sp[0xE0];
+    func_003B4DD8_5A28(sp);
+    switch (arg0) {
+    case 0:
+        *out = *(unsigned char *)(sp + 0x40) * 0.01f;
+        break;
+    case 1:
+        *out = *(unsigned char *)(sp + 0x41) * 0.01f;
+        break;
+    default:
+        return -5;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5AA0);
