@@ -366,7 +366,148 @@ extern "C" sQuat_B7A8* func_0031B7A8(sQuat_B7A8* qu, sMtx_B7A8* mat)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/ps2main", func_0031B9B0);
+#ifdef SKIP_ASM
+extern "C" float func_0031C128(float x);
+extern "C" void func_0031BE50(float* sout, float* cout, float x);
+
+struct sV4_B9B0 {
+    float x, y, z, w;
+    sV4_B9B0() {}
+    // PORT: this store order (w, x, y, z) reproduces the target float-register allocation
+    sV4_B9B0(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (cross product, w cleared).
+static inline sV4_B9B0 vu0Cross_B9B0(const sV4_B9B0& a, const sV4_B9B0& b)
+{
+    sV4_B9B0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w     $vf6, $vf6, $vf6\n"
+        "sqc2       $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector length via vsqrt).
+static inline float vu0Length_B9B0(const sV4_B9B0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar, in place).
+static inline void vu0DivEq_B9B0(sV4_B9B0& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %0\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_B9B0(const sV4_B9B0& a, const sV4_B9B0& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sV4_B9B0 vu0QuatMul_B9B0(const sV4_B9B0& a, const sV4_B9B0& b)
+{
+    sV4_B9B0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline sV4_B9B0 axisAngle_B9B0(const sV4_B9B0& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sV4_B9B0(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+static inline void rotate_B9B0(sV4_B9B0& q, const sV4_B9B0& axis, float angle)
+{
+    q = vu0QuatMul_B9B0(q, axisAngle_B9B0(axis, angle));
+}
+
+extern "C" void func_0031B9B0(sV4_B9B0* q, const sV4_B9B0* a, const sV4_B9B0* b)
+{
+    sV4_B9B0 axis = vu0Cross_B9B0(*a, *b);
+    float len = vu0Length_B9B0(axis);
+    if (len != 0.0f) {
+        vu0DivEq_B9B0(axis, len);
+        if (0.9999899864196777f < len) {
+            len = 0.9999899864196777f;
+        }
+        float angle;
+        if (vu0Dot_B9B0(*a, *b) < 0.0f) {
+            angle = 3.1415927410125732f - func_0031C128(len);
+        } else {
+            angle = func_0031C128(len);
+        }
+        rotate_B9B0(*q, axis, angle);
+    }
+}
+#endif
 
 INCLUDE_ASM("bx/ps2main", func_0031BB30);
 
