@@ -2290,7 +2290,194 @@ extern "C" void func_0033A3D8(char* self, sCb_A3D8* cb, sCb_A3D8* cb2, float* bo
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033B748);
+#ifdef SKIP_ASM
+struct sCell_B748 {
+    int level, x, y, z;
+};
+
+struct sOct_B748 {
+    void* child[8];                 // 0x00
+    int pad20;
+    void* objs;                     // 0x24
+    void** all;                     // 0x28
+};
+
+struct sObj_B748 {
+    sObj_B748* next;
+    char pad04[0x154];
+    float bmin[3];                  // 0x158
+    float bmax[3];                  // 0x164
+};
+
+struct sSub_B748 {
+    void** list;
+    int* count;
+};
+
+struct sCb_B748 {
+    sCtx_3309D8 a;
+    sCtx_3309D8 b;                  // 0x10
+    sSub_B748 c;                    // 0x20
+};
+
+extern "C" void descRec_B748(void* self, sCb_B748* cb) __asm__("func_00340DC0");
+
+static inline void gather_B748(sObj_B748* p, sCb_B748* cb)
+{
+    sCtx_3309D8* q = &cb->b;
+    for (; p != 0; p = p->next) {
+        const sBox_3309D8* bx = q->box;
+        int hit = 0;
+        if (bx->min[0] <= p->bmax[0] && bx->max[0] >= p->bmin[0] &&
+            bx->min[1] <= p->bmax[1] && bx->max[1] >= p->bmin[1] &&
+            bx->min[2] <= p->bmax[2] && bx->max[2] >= p->bmin[2]) {
+            hit = 1;
+        }
+        if (hit) {
+            int* cnt = q->count;
+            int n = *cnt;
+            q->list[n] = (sNode_3309D8*)p;
+            *cnt = n + 1;
+        }
+    }
+}
+
+static inline void gatherAll_B748(void** p, sCb_B748* cb)
+{
+    sSub_B748* s = &cb->c;
+    for (; p != 0; p = (void**)*p) {
+        int* cnt = s->count;
+        int n = *cnt;
+        s->list[n] = p;
+        *cnt = n + 1;
+    }
+}
+
+// nash::Cell::descend<OverlapAllCallback>
+static inline void descend_B748(void** n, sCb_B748* cb2)
+{
+    func_003309D8(&cb2->a, n);
+    gather_B748((sObj_B748*)((sOct_B748*)n)->objs, cb2);
+    gatherAll_B748(((sOct_B748*)n)->all, cb2);
+    if (n[0] != 0) descRec_B748(n[0], cb2);
+    if (n[1] != 0) descRec_B748(n[1], cb2);
+    if (n[2] != 0) descRec_B748(n[2], cb2);
+    if (n[3] != 0) descRec_B748(n[3], cb2);
+    if (n[4] != 0) descRec_B748(n[4], cb2);
+    if (n[5] != 0) descRec_B748(n[5], cb2);
+    if (n[6] != 0) descRec_B748(n[6], cb2);
+    if (n[7] != 0) descRec_B748(n[7], cb2);
+}
+
+extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* box, void** node, sCell_B748* cell)
+{
+    func_003309D8(&cb->a, node);
+    gather_B748((sObj_B748*)((sOct_B748*)node)->objs, cb);
+    gatherAll_B748(((sOct_B748*)node)->all, cb);
+    if (cell->level == 11) {
+        return;
+    }
+    int bits = (cell->level + 0x7E) << 23;
+    float s = *(float*)&bits;
+    sCell_B748 k;
+    k.level = cell->level - 1;
+    k.x = cell->x * 2;
+    k.y = cell->y * 2;
+    k.z = cell->z * 2;
+    int ovLoX = 0;
+    float xLoA = ((float)k.x - 0.2f) * s;
+    float xLoB = ((float)(k.x + 1) + 0.2f) * s;
+    if (box[0] < xLoB && xLoA < box[4]) ovLoX = 1;
+    int ovHiX = 0;
+    float xHiB = ((float)(k.x + 2) + 0.2f) * s;
+    float xHiA = ((float)(k.x + 1) - 0.2f) * s;
+    if (box[0] < xHiB && xHiA < box[4]) ovHiX = 1;
+    if (ovLoX || ovHiX) {
+        int ovLoY = 0;
+        float yLoB = ((float)(k.y + 1) + 0.2f) * s;
+        float yLoA = ((float)k.y - 0.2f) * s;
+        if (box[1] < yLoB && yLoA < box[5]) ovLoY = 1;
+        int ovHiY = 0;
+        float yHiB = ((float)(k.y + 2) + 0.2f) * s;
+        float yHiA = ((float)(k.y + 1) - 0.2f) * s;
+        if (box[1] < yHiB && yHiA < box[5]) ovHiY = 1;
+        if (ovLoY || ovHiY) {
+            int ovLoZ = 0;
+            float zLoB = ((float)(k.z + 1) + 0.2f) * s;
+            float zLoA = ((float)k.z - 0.2f) * s;
+            if (box[2] < zLoB && zLoA < box[6]) ovLoZ = 1;
+            int ovHiZ = 0;
+            float zHiB = ((float)(k.z + 2) + 0.2f) * s;
+            float zHiA = ((float)(k.z + 1) - 0.2f) * s;
+            if (box[2] < zHiB && zHiA < box[6]) ovHiZ = 1;
+            if (ovLoZ || ovHiZ) {
+                int inLoX = 0;
+                if (box[0] < xLoA && xLoB < box[4]) inLoX = 1;
+                int inHiX = 0;
+                if (box[0] < xHiA && xHiB < box[4]) inHiX = 1;
+                int inLoY = 0;
+                if (box[1] < yLoA && yLoB < box[5]) inLoY = 1;
+                int inHiY = 0;
+                if (box[1] < yHiA && yHiB < box[5]) inHiY = 1;
+                int inLoZ = 0;
+                if (box[2] < zLoA && zLoB < box[6]) inLoZ = 1;
+                int inHiZ = 0;
+                if (box[2] < zHiA && zHiB < box[6]) inHiZ = 1;
+                void** c;
+                c = (void**)node[0];
+                if (c != 0 && ovLoX && ovLoY && ovLoZ) {
+                    if (inLoX && inLoY && inLoZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[1];
+                k.z++;
+                if (c != 0 && ovLoX && ovLoY && ovHiZ) {
+                    if (inLoX && inLoY && inHiZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[3];
+                k.y++;
+                if (c != 0 && ovLoX && ovHiY && ovHiZ) {
+                    if (inLoX && inHiY && inHiZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[2];
+                k.z--;
+                if (c != 0 && ovLoX && ovHiY && ovLoZ) {
+                    if (inLoX && inHiY && inLoZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[6];
+                k.x++;
+                if (c != 0 && ovHiX && ovHiY && ovLoZ) {
+                    if (inHiX && inHiY && inLoZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[7];
+                k.z++;
+                if (c != 0 && ovHiX && ovHiY && ovHiZ) {
+                    if (inHiX && inHiY && inHiZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[5];
+                k.y--;
+                if (c != 0 && ovHiX && ovLoY && ovHiZ) {
+                    if (inHiX && inLoY && inHiZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[4];
+                k.z--;
+                if (c != 0 && ovHiX && ovLoY && ovLoZ) {
+                    if (inHiX && inLoY && inLoZ) descend_B748(c, cb2);
+                    else func_0033B748(self, cb, cb2, box, c, &k);
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033CCF8);
