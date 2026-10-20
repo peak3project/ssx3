@@ -2218,7 +2218,47 @@ ret_d:
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_00421280);
+#ifdef SKIP_ASM
+extern int *func_00420510(int, int);
+extern int func_004208B8(unsigned *);
+extern int func_00420830(unsigned);
+struct Bigint *func_00421280(int ptr, double _d, int *e, int *bits) {
+    struct Bigint *b;
+    int de, i, k;
+    unsigned *x, y, z;
+    union double_union d;
+    d.d = _d;
+    b = (struct Bigint *)func_00420510(ptr, 1);
+    x = b->x;
+    z = d.w.hi & 0xfffff;
+    d.w.hi &= 0x7fffffff;
+    if ((de = (int)(d.w.hi >> 20)))
+        z |= 0x100000;
+    if ((y = d.w.lo)) {
+        if ((k = func_004208B8(&y))) {
+            x[0] = y | z << (32 - k);
+            z >>= k;
+        } else
+            x[0] = y;
+        i = b->wds = (x[1] = z) ? 2 : 1;
+    } else {
+        k = func_004208B8(&z);
+        x[0] = z;
+        i = b->wds = 1;
+        k += 32;
+    }
+    if (de) {
+        *e = de - 1023 - 52 + k;
+        *bits = 53 - k;
+    } else {
+        *e = de - 1023 - 52 + 1 + k;
+        *bits = 32 * i - func_00420830(x[i - 1]);
+    }
+    return b;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_00421400);
 
