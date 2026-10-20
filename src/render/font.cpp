@@ -2990,7 +2990,48 @@ extern "C" float func_003955A8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_003955B0);
+#ifdef SKIP_ASM
+struct sGlyphSrc55B0 {
+    int w[5];
+};
+struct sGlyphDst55B0 {
+    sGlyphSrc55B0 src;      // 0x00
+    int a1;                 // 0x14
+    int a2;                 // 0x18
+    short h;                // 0x1C
+    short a3;               // 0x1E
+    char pad[0x80 - 0x20];
+};
+struct sGlyphCtx55B0 {
+    int count;                      // 0x0
+    char pad4[0x80 - 4];
+    int glyphsStart;
+};
+struct sGlyphSrcHdr55B0 {
+    char pad0[8];
+    int f8;
+};
+
+extern "C" void func_003955B0(void* self, int a1, int a2, int a3)
+{
+    sGlyphSrc55B0* src = *(sGlyphSrc55B0**)((char*)self + 0xE84);
+    sGlyphCtx55B0* ctx = *(sGlyphCtx55B0**)((char*)self + 0x18F0);
+    if (ctx->count < 0xA28) {
+        sGlyphSrcHdr55B0* hdr = (sGlyphSrcHdr55B0*)src;
+        hdr->f8 = (hdr->f8 & ~0x1F) | (*(int*)((char*)ctx + 0x69CC4) & 0x1F);
+        int h = *(int*)((char*)ctx + 0x69CC0);
+        unsigned int base = ((unsigned int)ctx + 0x80) | 0x30000000;
+        sGlyphDst55B0* d = (sGlyphDst55B0*)(ctx->count++ * 0x80 + base);
+        d->src = *src;
+        d->a1 = a1;
+        d->a2 = a2;
+        d->h = h;
+        d->a3 = a3;
+    }
+}
+#endif
 //100%
 INCLUDE_ASM("render/font", func_00395658);
 #ifdef SKIP_ASM
