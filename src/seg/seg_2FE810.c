@@ -764,7 +764,38 @@ int func_003FFE80(int a, int b, int c, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFFA0);
+#ifdef SKIP_ASM
+// scePadInfoMode(port, slot, term, offs)
+struct Z_FFA0 { unsigned char pad[0x50]; unsigned short t[8]; unsigned char pad2[4]; unsigned char f64; unsigned char f65; unsigned char pad3[2]; unsigned char f68; unsigned char f69; unsigned char pad4[7]; unsigned char f71; unsigned char f72; };
+int func_003FFFA0(int port, int slot, int term, int offs) {
+    struct Z_FFA0 *p;
+    int t;
+    if (!D_00526250[port].e[slot].f10) return 0;
+    p = (struct Z_FFA0 *)func_003FF9A8(port, slot);
+    if (p->f72 != 1) return 0;
+    if (p->f71 == 2) return 0;
+    switch (term) {
+    case 1:
+        t = p->f65;
+        if (t == 0xF3) return 0;
+        return t >> 4;
+    case 2:
+        if (p->f64 == 1) return 0;
+        return p->t[p->f69];
+    case 3:
+        if (p->f64 == 1) return 0;
+        return p->f69;
+    case 4:
+        if (p->f64 == 1) return 0;
+        if (offs == -1) return p->f68;
+        if (offs < p->f68) return p->t[offs];
+        return 0;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004000D8);
