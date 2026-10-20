@@ -984,7 +984,23 @@ char *func_0041ACC0(char *s, char c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041AD10);
+#ifdef SKIP_ASM
+int func_0041AD10(char *s1, char *s2) {
+    char *s = s1;
+    char *c;
+    while (*s1) {
+        for (c = s2; *c; c++)
+            if (*s1 == *c)
+                break;
+        if (*c == 0)
+            break;
+        s1++;
+    }
+    return s1 - s;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_316F98", func_0041AD80);
 
