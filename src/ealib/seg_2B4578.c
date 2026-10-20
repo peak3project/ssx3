@@ -2020,7 +2020,55 @@ int func_003B8290(unsigned long a) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B82B8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B83A0);
+#ifdef SKIP_ASM
+/* func_003B83A0: 100.00 in the diff build (12/12 blocks, 80 insns, relocs agree) but NOT committable: with this function in place the unit build fails (SIZE MISMATCH, .org backwards -12) because func_003D4C40 (matched, unrelated) gets 2 extra short-loop pad nops + 1 trailing nop (SN as pads the copy loop according to a sticky provisional address). Workaround that makes score work (not committable): a dummy C function with 1-3 nops placed after INCLUDE_ASM(func_003D4B00) (scratch/w4/padins.py). Tricks: integer-add struct views (struct W{char pad[0x1FA]; char b;} *)(id*0x14 + (int)&G) for idx-first addu, (struct Wd*)((int)e + id) for base-first, arg0 |= 0x1F8 in place, callee 88C8 declared int (sweep). */
+struct V_83Ab { float a; float b; };
+struct E_83Ab { int f0; char pad4[0x5D]; signed char b61; char pad62[0x8C - 0x62]; };
+struct Q_83Ab { char b; char pad[0x13]; };
+struct G_83Ab { char pad[0x17E]; short cnt; char pad180[0x1F0 - 0x180]; struct E_83Ab *tab; char pad1F4[6]; struct Q_83Ab qa[1]; struct Q_83Ab qb[1]; struct Q_83Ab qc[1]; };
+struct Wa_83Ab { char pad[0x1FA]; char b; };
+struct Wb_83Ab { char pad[0x20E]; char b; };
+struct Wc_83Ab { char pad[0x222]; char b; };
+struct Wd_83Ab { char pad[0x61]; signed char b; };
+extern struct G_83Ab D_0050A8E8_83Ab __asm__("D_0050A8E8");
+extern void f58A0_83Ab(void) __asm__("func_003B58A0");
+extern void f58D8_83Ab(void) __asm__("func_003B58D8");
+extern void f84E0_83Ab(int, int, int, struct V_83Ab *) __asm__("func_003B84E0");
+extern int f88C8_83Ab(int, int, int) __asm__("func_003B88C8");
+
+int func_003B83A0(int arg0, int arg1) {
+    int id = arg0 & ~0x1F8;
+    int i;
+    int f40;
+    if ((arg0 & 0x1F8) == 0) {
+        arg0 |= 0x1F8;
+    }
+    if (arg0 & 0x10) {
+        ((struct Wa_83Ab *)(id * 0x14 + (int)&D_0050A8E8_83Ab))->b = arg1;
+    }
+    if (arg0 & 0x20) {
+        ((struct Wb_83Ab *)(id * 0x14 + (int)&D_0050A8E8_83Ab))->b = arg1;
+    }
+    f40 = arg0 & 0x40;
+    if (f40) {
+        ((struct Wc_83Ab *)(id * 0x14 + (int)&D_0050A8E8_83Ab))->b = arg1;
+    }
+    f58A0_83Ab();
+    if (f40) {
+        struct V_83Ab v;
+        v.b = v.a = (float)arg1 * 0.007874016f;
+        f84E0_83Ab(id, 8, 0, &v);
+    }
+    for (i = 0; i < D_0050A8E8_83Ab.cnt; i++) {
+        struct E_83Ab *e = &D_0050A8E8_83Ab.tab[i];
+        f88C8_83Ab(e->f0, id, ((struct Wd_83Ab *)((int)e + id))->b);
+    }
+    f58D8_83Ab();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B84E0);
