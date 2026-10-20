@@ -42,6 +42,9 @@ __asm__(".include \"asm_offsets.inc\"\n");
         ".ifdef __off_" #NAME "\n" \
         ".org __off_" #NAME "\n" \
         ".endif\n" \
+        ".ifdef __size_" #NAME "\n" \
+        "__fill_" #NAME "\n" \
+        ".endif\n" \
         ".previous\n" \
     )
 #endif

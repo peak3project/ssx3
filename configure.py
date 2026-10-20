@@ -463,7 +463,7 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
         stem = obj.with_suffix("").stem if obj.suffix == ".o" else obj.stem
         src = str(entry.src_paths[0])
         inc = f"obj/offsets/{stem}/asm_offsets.inc"
-        ninja.build(outputs=[inc], rule="asmoff", inputs=[f"obj/target/{stem}.o"], implicit=[src],
+        ninja.build(outputs=[inc], rule="asmoff", inputs=[f"obj/target/{stem}.o"], implicit=[src, "tools/asm_offsets.py"],
                     variables={"src": src})
         return f"-DSKIP_ASM -DASM_OFFSETS -Wa,-Iobj/offsets/{stem}", [inc]
 
