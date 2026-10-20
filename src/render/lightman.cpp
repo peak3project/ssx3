@@ -1142,7 +1142,68 @@ extern "C" int func_0038F930(void* self, unsigned char* src, unsigned char* dst)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_0038F9C0);
+#ifdef SKIP_ASM
+struct sRow16_F9C0 {
+    unsigned char b[16];
+};
+
+struct sRow32_F9C0 {
+    unsigned char b[32];
+};
+
+extern int D_0044C060[];
+extern int D_0044BFE0[];
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" int func_0038F820(void* self, unsigned char* src, unsigned char* dst);
+
+extern "C" int func_0038F9C0(void* self, int w, int h, unsigned char* src, unsigned char* dst)
+{
+    int xmap[32];
+    int ymap[32];
+    unsigned char block[0x100];
+    unsigned char out[0x100];
+    int n = 0;
+    int i;
+    int j;
+    int k;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 8; j++) {
+            int t = D_0044C060[n++];
+            xmap[t] = j;
+            ymap[t] = i;
+        }
+    }
+    int bw = w / 32;
+    int bh = h / 16;
+    int spitch = 0x40;
+    int dpitch = 0x100;
+    func_00416210(block, 0, 0x100);
+    func_00416210(out, 0, 0x100);
+    for (i = 0; i < bh; i++) {
+        for (j = 0; j < bw; j++) {
+            int id = D_0044BFE0[i * bw + j];
+            sRow16_F9C0* s = (sRow16_F9C0*)(src + (i * 16) * spitch + j * 16);
+            sRow16_F9C0* d = (sRow16_F9C0*)block;
+            for (k = 0; k < 16; k++) {
+                *d = *s;
+                d++;
+                s += 4;
+            }
+            func_0038F820(self, block, out);
+            sRow32_F9C0* s2 = (sRow32_F9C0*)out;
+            sRow32_F9C0* d2 = (sRow32_F9C0*)(dst + (ymap[id] * 8) * dpitch + xmap[id] * 32);
+            for (k = 0; k < 8; k++) {
+                *d2 = *s2;
+                s2++;
+                d2 += 8;
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/lightman", func_0038FC48);
