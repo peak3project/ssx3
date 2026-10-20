@@ -1217,7 +1217,90 @@ int func_004271D8(int arg) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00427230);
+#ifdef SKIP_ASM
+struct W7230 { int f0; int (*f4)(int, int, int); int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; int f28; int f2C; int f30; int f34; };
+struct E7230 { int a; int b; int c; int d; };
+struct R7230 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; };
+extern char D_0052D680[];
+extern void func_00426358(int, int);
+extern void func_0042C078_w(void) __asm__("func_0042C078");
+extern int func_0042C0C0_w(void) __asm__("func_0042C0C0");
+extern struct R7230 *func_004266C8_w(char *, unsigned) __asm__("func_004266C8");
+extern struct R7230 *func_00426698_w(char *, unsigned) __asm__("func_00426698");
+extern int func_004261B0_w(int, void *, int, int, int, int) __asm__("func_004261B0");
+extern int func_00424160_w(struct E7230 *, int) __asm__("func_00424160");
+void func_00427230_d(struct W7230 *) __asm__("func_00427230");
+void func_00427230_d(struct W7230 *a0) {
+    int s4 = 0;
+    int t;
+    int n;
+    int i;
+    int r;
+    int fl;
+    int v;
+    int w;
+    int x4;
+    struct R7230 *e;
+    struct E7230 ent[2];
+    t = a0->f4(a0->f24, a0->f8, a0->fC);
+    if (t != 0) {
+        s4 = a0->f2C;
+    }
+    if (a0->fC > 0) {
+        func_00426358(a0->f8, a0->fC);
+    }
+    if (s4 > 0) {
+        func_00426358(t, s4);
+    }
+    func_0042C078_w();
+    fl = a0->f34;
+    x4 = fl & 4;
+    fl = (unsigned)fl >> 16;
+    if (x4) {
+        e = func_004266C8_w(D_0052D680, fl);
+    } else {
+        e = func_00426698_w(D_0052D680, fl);
+    }
+    do {
+        func_0042C0C0_w();
+    } while (0);
+    w = 0x8000000A;
+    v = a0->f1C;
+    e->f20 = w;
+    e->f1C = v;
+    if (a0->f30 != 0) {
+        while (func_004261B0_w(0x80000008, e, 0x40, t, a0->f28, s4) == 0) {
+        }
+        return;
+    }
+    e->f18 = 0;
+    n = 0;
+    e->f10 = 0;
+    if (s4 > 0) {
+        n = 1;
+        ent[0].a = t;
+        ent[0].b = a0->f28;
+        ent[0].c = s4;
+        ent[0].d = 0;
+    }
+    ent[n].a = (int)e;
+    ent[n].b = a0->f20;
+    ent[n].c = 0x40;
+    ent[n].d = 0;
+    n++;
+    do {
+        r = func_00424160_w(ent, n);
+        if (r == 0) {
+            i = 0x100000;
+            do {
+                i--;
+            } while (i != -1);
+        }
+    } while (r == 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004273F8);
