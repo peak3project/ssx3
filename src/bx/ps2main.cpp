@@ -509,7 +509,34 @@ extern "C" void func_0031B9B0(sV4_B9B0* q, const sV4_B9B0* a, const sV4_B9B0* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/ps2main", func_0031BB30);
+#ifdef SKIP_ASM
+static inline void premul_B9B0(sV4_B9B0& q, const sV4_B9B0& axis, float angle)
+{
+    q = vu0QuatMul_B9B0(axisAngle_B9B0(axis, angle), q);
+}
+
+// Same as func_0031B9B0, but the rotation is applied on the other side (rot * *q).
+extern "C" void func_0031BB30(sV4_B9B0* q, const sV4_B9B0* a, const sV4_B9B0* b)
+{
+    sV4_B9B0 axis = vu0Cross_B9B0(*a, *b);
+    float len = vu0Length_B9B0(axis);
+    if (len != 0.0f) {
+        vu0DivEq_B9B0(axis, len);
+        if (0.9999899864196777f < len) {
+            len = 0.9999899864196777f;
+        }
+        float angle;
+        if (vu0Dot_B9B0(*a, *b) < 0.0f) {
+            angle = 3.1415927410125732f - func_0031C128(len);
+        } else {
+            angle = func_0031C128(len);
+        }
+        premul_B9B0(*q, axis, angle);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/ps2main", func_0031BCB0);
