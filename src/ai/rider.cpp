@@ -398,7 +398,135 @@ extern "C" void cRider_initOnce(cRider* self, int immediate)
 
 INCLUDE_ASM("ai/rider", func_0011C298);
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011D390);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+extern signed char D_00535BC8[];
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv really takes (be, kind); bind the 2-arg form to that symbol.
+void* cBE_getInterface_11D390(void* be, int kind) __asm__("cBE_getInterface__Fv");
+// func_00117540 (cRiderMetrix reset) takes only the metrix; its $5 is left over from the store above.
+extern "C" void func_00117540(void* metrix);
+extern "C" void func_00311A50(void* anim);
+extern "C" int func_0014EF70(void* iface, int riderIndex);
+extern "C" void func_00112180(void* rider, int v);
+extern "C" int func_00145C38(void* iface, int index);
+extern "C" int* func_00144BC0(void* iface);
+extern "C" void func_0011DD98(cRider* self);
+extern "C" void func_00119E38(void* p, int flip, int c);
+extern "C" void func_0011DE60(cRider* self, int a1, int a2);
+extern "C" void func_0011DF18(cRider* self, int notify);
+extern "C" void func_00120D58(cRider* self);
+extern "C" void func_00111890(void* self);
+extern "C" void func_00125038(cRider* self);
+// PORT: prototype mismatch. The unit defines func_0011FEC8/func_0011FE78 with one
+// param, but their bodies forward $5 to func_00111538/func_001112B8 (int arg).
+void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
+void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
+
+struct sRiderVE_0011D390
+{
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+void func_0011D390_impl(cRider* self) __asm__("func_0011D390");
+void func_0011D390_impl(cRider* self)
+{
+    if (self->unk_880 == 7)
+    {
+        *(int*)((char*)self->mRiderHandler + 0xDE0) = 3;
+        *(int*)((char*)self->mRiderHandler + 0xDE4) = 0xD;
+        self->unk_0DC = 0;
+        self->unk_0E0 = 0;
+        self->unk_0D8 = -1;
+        func_00117540(self->mMetrix);
+        func_00311A50(self->mRiderAnim);
+        self->unk_324 = func_0014EF70(cBE_getInterface_11D390(cBE_getBE(), 2), self->mAIIndex);
+        func_00112180(self, 1);
+        void* iface = cBE_getInterface_11D390(cBE_getBE(), 0);
+        // PORT: the gotos reproduce the shared compare chain (mode 4, 5, 6) that two different entry conditions fall into.
+        if (func_00145C38(cBE_getInterface_11D390(cBE_getBE(), 1), self->mAIIndex) != 0
+            && D_00535BC8[0x49] == 0 && *func_00144BC0(iface) == 0xE)
+        {
+            if (D_00535BC8[0x48] == 4)
+            {
+                func_0011DD98(self);
+                func_0011FE78_impl(self, 1);
+                func_0011FEC8_impl(self, 4);
+                func_00119E38(self->mMetrix, 0, 0);
+                goto done;
+            }
+            goto m5;
+        }
+        if (D_00535BC8[0x48] == 4)
+            goto bb;
+    m5:
+        if (D_00535BC8[0x48] == 5)
+            goto bb;
+        if (D_00535BC8[0x48] == 6)
+        {
+        bb:
+            int v = *func_00144BC0(iface);
+            switch (v)
+            {
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+                func_0011DE60(self, 0, 2);
+                func_0011DF18(self, 0);
+                break;
+            case 14:
+            case 15:
+            case 16:
+                func_0011DE60(self, self->mAIIndex, 1);
+                func_0011DF18(self, 0);
+                break;
+            default:
+                func_0011DE60(self, 1, 2);
+                func_0011DF18(self, 0);
+                break;
+            }
+        }
+        else
+        {
+            func_0011FE78_impl(self, 3);
+            func_0011FEC8_impl(self, 6);
+        }
+    done:
+        if (D_00535BC8[0x49] != 0)
+            func_00120D58(self);
+        self->mFinishTime = -1.0f;
+        self->unk_3FC = 0;
+        self->unk_2F0 = 0;
+        self->unk_2F4 = 0;
+        self->mDidNotFinish = 0;
+        self->mStartTick = *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 8);
+        self->mFinishTick = 0;
+        self->mPenaltyTicks = 0;
+        self->unk_59C = 0;
+        self->unk_2E8 = 0;
+        self->unk_2EC = 0;
+        self->unk_5A0 = 0;
+        sRiderVE_0011D390* vt = *(sRiderVE_0011D390**)((char*)self + 0x6C0);
+        vt[kRiderVt_vibrationReset].fn((char*)self + vt[kRiderVt_vibrationReset].delta);
+        func_00111890(self->mRiderHandler);
+        self->unk_5A4 = 0;
+        self->unk_5A8 = 0;
+        self->unk_5AC = 0;
+        self->unk_0F0 = 0;
+        self->unk_0F4 = 0;
+        self->unk_0F8 = -1;
+        self->unk_100 = 1;
+        func_00125038(self);
+        self->unk_5B0 = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_0011D640);
