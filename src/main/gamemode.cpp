@@ -377,7 +377,84 @@ extern "C" void func_00238590(void* self, int a, int b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamemode", func_002385D0);
+#ifdef SKIP_ASM
+struct sGM002385D0 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+    int a18[10];
+    int a40[10];
+    int f68;
+    int f6C;
+    int f70;
+    int f74;
+    int f78;
+    int f7C;
+    int f80;
+    int f84;
+    int f88;
+    int f8C;
+    int f90;
+    int f94;
+    int f98;
+    int f9C;
+};
+struct sVEntry002385D0 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+struct sVEntry2002385D0 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*);
+};
+extern void* D_00536668[];
+extern int D_00536730[];
+extern int D_00536708[];
+extern unsigned int D_00536640[];
+
+static inline void io002385D0(void* s, void* p, int n)
+{
+    sVEntry002385D0* vt = *(sVEntry002385D0**)s;
+    vt[1].fn((char*)s + vt[1].delta, p, n);
+}
+
+extern "C" void func_002385D0(void* self, void* s)
+{
+    sGM002385D0* gm = (sGM002385D0*)self;
+    io002385D0(s, &gm->f4, 4);
+    io002385D0(s, &gm->f0, 4);
+    io002385D0(s, &gm->f8, 4);
+    io002385D0(s, &gm->f10, 4);
+    io002385D0(s, &gm->f14, 4);
+    io002385D0(s, gm->a18, 40);
+    io002385D0(s, &gm->f68, 4);
+    io002385D0(s, &gm->f6C, 4);
+    io002385D0(s, &gm->f70, 4);
+    io002385D0(s, D_00536730, 40);
+    io002385D0(s, D_00536708, 40);
+    io002385D0(s, &gm->f78, 4);
+    io002385D0(s, &gm->f7C, 4);
+    io002385D0(s, &gm->f80, 4);
+    io002385D0(s, D_00536640, 40);
+    io002385D0(s, &gm->f84, 4);
+    io002385D0(s, &gm->f88, 4);
+    io002385D0(s, &gm->f8C, 4);
+    io002385D0(s, &gm->f90, 4);
+    io002385D0(s, &gm->f94, 4);
+    io002385D0(s, &gm->f98, 4);
+    io002385D0(s, &gm->f9C, 4);
+    void* obj = D_00536668[gm->f4];
+    sVEntry2002385D0* vt = *(sVEntry2002385D0**)obj;
+    vt[10].fn((char*)obj + vt[10].delta, s);
+}
+#endif
 
 INCLUDE_ASM("main/gamemode", func_002388A0);
 //100%
