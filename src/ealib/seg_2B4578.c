@@ -3457,7 +3457,24 @@ int func_003BC6B8(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC770);
+#ifdef SKIP_ASM
+float func_003BC770(float x) {
+    float x2, x3, x5, x7, x9, x11, x13;
+    while (x > 6.2831855f) {
+        x -= 6.2831855f;
+    }
+    x2 = x * x;
+    x3 = x2 * x;
+    x5 = x2 * x3;
+    x7 = x2 * x5;
+    x9 = x2 * x7;
+    x11 = x2 * x9;
+    x13 = x2 * x11;
+    return x - x3 * 0.16666667f + x5 * 0.00833333f - x7 * 0.00019841270f + x9 * 2.7557319e-6f - x11 * 2.5052108e-8f + x13 * 1.6059e-10f;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC840);
 
