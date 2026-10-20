@@ -545,7 +545,50 @@ void func_00417A98(int *p) {
 
 INCLUDE_ASM("seg/seg_316F98", func_00417AB8);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004185D0);
+#ifdef SKIP_ASM
+char *func_004185D0(char *tab, char *fmt) {
+    int c, n, v;
+    c = *fmt++;
+    if (c == '^') {
+        v = 1;
+        c = *fmt++;
+    } else
+        v = 0;
+    for (n = 0; n < 256; n++)
+        tab[n] = v;
+    if (c == 0)
+        return fmt - 1;
+    v = 1 - v;
+    for (;;) {
+        tab[c] = v;
+    doswitch:
+        n = *fmt++;
+        switch (n) {
+        case 0:
+            return fmt - 1;
+        case '-':
+            n = *fmt;
+            if (n == ']' || n < c) {
+                c = '-';
+                break;
+            }
+            fmt++;
+            do {
+                tab[++c] = v;
+            } while (c < n);
+            goto doswitch;
+            break;
+        case ']':
+            return fmt;
+        default:
+            c = n;
+            break;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_004186C8);
