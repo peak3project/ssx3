@@ -4,7 +4,7 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 extern "C" void* func_002EC418(void* self);
 extern const char D_004A3B48[];
 
-//99.23%
+//100%
 INCLUDE_ASM("visualfx/lensfx", cLensFxMan_construct__Fv);
 #ifdef SKIP_ASM
 void* cLensFxMan_construct()
