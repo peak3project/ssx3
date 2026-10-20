@@ -562,7 +562,144 @@ extern "C" void func_00286200(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", cSSXAudio_FrontEndLoad);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int func_0041AA88(const char* a, const char* b);
+extern "C" int func_004165A8(const void* a, const void* b);
+extern "C" char* strcpy(char* d, const char* s);
+extern "C" int func_002A7F90(void* self);
+extern "C" int func_002A7FF8_r(void* self, const char* key, char* out) __asm__("func_002A7FF8");
+extern "C" char* func_002A7DA0(void* self);
+extern "C" void* func_002A77F8_r(void* self, char* name, int size) __asm__("func_002A77F8");
+extern "C" int func_002A7BF8(void* self, const char* name);
+extern "C" char* func_002A7B08(void*);
+extern "C" void func_002A7890(void* self, int flags);
+extern "C" void func_0028BC58(void* bank, int slot, char* name, int a3);
+extern "C" void func_0028BDA8(void* self, int i, int a, int b, int c);
+extern "C" void func_0029F3F8_2(char* self, int a) __asm__("func_0029F3F8");
+extern "C" void func_002A6D78(char* self, const char* name, const char* key, int n, int v);
+extern "C" void func_00288D18(void* self, int a1);
+void ASYNCSYS_Init_FE(void* self, unsigned int x, int flags) __asm__("cAsyncSys_ASYNCSYS_Init__FP9cAsyncSysUi");
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern char D_00535BC8[];
+extern unsigned char D_004A35A8[];
+extern char* D_004A3554;
+extern char* D_004A3558;
+extern char D_004A3570[];
+extern char D_004828C0[];
+extern char D_004A3580[];
+extern char D_004A3588[];
+extern char D_004A3590[];
+extern char D_004A35B0[];
+extern char D_004828D0[];
+extern char D_004A35B8[];
+extern char D_004A35C0[];
+extern char D_004A35C8[];
+extern char D_004828E0[];
+extern char D_004828F0[];
+extern char D_004A35D0[];
+
+struct sFeParser {
+    int size;
+    char* data;
+    char* cur;
+    char token[0x800];
+};
+
+static inline int sa_state_FE()
+{
+    signed char* g = (signed char*)D_00535BC8;
+    return g[0x49];
+}
+
+extern "C" void cSSXAudio_FrontEndLoad(char* self)
+{
+    char name[0x40];
+    strcpy(name, "WORLD");
+    func_00288D18(self, 1);
+    ASYNCSYS_Init_FE(**(void***)(self + 0x118), 0, 0);
+    *(char*)(self + 0x5838) = D_004A35A8[0];
+    *(int*)(self + 0x5878) = 0;
+    char buf40[0x80];
+    sFeParser p;
+    char dir[0x80];
+    char val[0x60];
+    char key[0x70];
+    func_002A77F8_r(&p, D_004A3554, 0x100);
+    p.cur = p.data;
+    if (func_002A7BF8(&p, D_004A3570)) {
+        while (!func_002A7F90(&p)) {
+            const char* t = func_002A7DA0(&p);
+            if (func_0041AA88(t, D_004828C0) == 0) {
+                func_002A7FF8_r(&p, D_004828C0, buf40);
+            }
+        }
+    }
+    p.cur = p.data;
+    char* tok;
+    while ((tok = func_002A7B08(&p)) != 0) {
+        if (func_004165A8(tok, name) == 0) {
+            strcpy(dir, buf40);
+            strcpy(self + 0x587C, dir);
+            while (!func_002A7F90(&p)) {
+                const char* t = func_002A7DA0(&p);
+                func_002A7FF8_r(&p, D_004828C0, dir);
+                if (func_0041AA88(t, D_004A3580) == 0) {
+                    func_002A7FF8_r(&p, D_004A3580, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 0, key, 0);
+                } else if (func_0041AA88(t, D_004A35B0) == 0) {
+                    func_002A7FF8_r(&p, D_004A35B0, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 1, key, 0);
+                } else if (func_0041AA88(t, D_004828D0) == 0) {
+                    func_002A7FF8_r(&p, D_004828D0, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 0x10, key, 0);
+                } else if (func_0041AA88(t, D_004A35B8) == 0) {
+                    func_002A7FF8_r(&p, D_004A35B8, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 5, key, 0);
+                } else if (func_0041AA88(t, D_004A35C0) == 0) {
+                    func_002A7FF8_r(&p, D_004A35C0, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 6, key, 0);
+                } else if (func_0041AA88(t, D_004A35C8) == 0) {
+                    func_002A7FF8_r(&p, D_004A35C8, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 7, key, 0);
+                } else if (func_0041AA88(t, D_004828E0) == 0) {
+                    func_002A7FF8_r(&p, D_004828E0, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 2, key, 0);
+                } else if (func_0041AA88(t, D_004828F0) == 0) {
+                    func_002A7FF8_r(&p, D_004828F0, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 4, key, 0);
+                } else if (func_0041AA88(t, D_004A35D0) == 0) {
+                    func_002A7FF8_r(&p, D_004A35D0, val);
+                    sprintf(key, D_004A3588, D_004A3590, dir, val);
+                    func_0028BC58(**(void***)(self + 0x118), 10, key, 0);
+                }
+            }
+        }
+    }
+    func_0028BDA8(**(void***)(self + 0x118), 3, 0x19000, 0, 0);
+    func_0028BDA8(**(void***)(self + 0x118), 12, 0x6A400, 0, 0);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (sa_state_FE() == 2) {
+        func_002A6D78(self, D_004A3558, name, 2, 5);
+    } else {
+        func_002A6D78(self, D_004A3558, name, 1, 5);
+    }
+    func_0029F3F8_2(self, 0);
+    *(int*)(self + 0x627C) = 1;
+    func_002A7890(&p, 2);
+}
+#endif
 
 INCLUDE_ASM("sound/ssxAudio", func_002867E8);
 
