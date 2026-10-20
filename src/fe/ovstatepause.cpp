@@ -2705,7 +2705,84 @@ extern "C" int func_001FF748(void* self, int id, int event, int arg)
 
 INCLUDE_ASM("fe/ovstatepause", func_001FF7B8);
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", func_001FFD08);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_003A0E90(void* text, unsigned short* str);
+extern "C" void func_001FF7B8_FD08(void* self, void* text, int idx) __asm__("func_001FF7B8");
+extern char D_004A2570[];
+extern char D_004A2578[];
+
+struct sColor_FD08 {
+    float r, g, b, a;
+    sColor_FD08(const float& ar, const float& ag, const float& ab, const float& aa) : r(ar), g(ag), b(ab), a(aa) {}
+};
+
+class cUIObjBase_FD08 {
+public:
+    int pad[2];
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04();
+    virtual void v05(); virtual void v06(); virtual void v07();
+    virtual void setEnabled(int v);
+    virtual void setVisible(int v);
+    virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13();
+    virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17();
+    virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21();
+    virtual void v22(); virtual void v23(); virtual void v24();
+    virtual void refreshColor(int v);
+};
+
+class cUIObj_FD08 : public cUIObjBase_FD08 {
+public:
+    char padC[0x88 - 0xC];
+    sColor_FD08 color;
+};
+
+extern "C" void func_001FFD08(void* vself, int which)
+{
+    char* self = (char*)vself;
+    char name[2] = "0";
+    unsigned short text[200];
+    int i;
+    for (i = 0; i < 9; i++) {
+        name[0] = '0' + i;
+        func_001FF7B8_FD08(self, text, i + which);
+        cUIObj_FD08* o = (cUIObj_FD08*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
+        if (o != 0) {
+            func_003A0E90(o, text);
+        }
+        if (*(int*)(self + 0x9C) < 10) {
+            o->color = sColor_FD08(1.0f, 0.3960784673690796f, 0.7215686440467834f, 0.7882353663444519f);
+            o->refreshColor(1);
+            o->setEnabled(1);
+        }
+    }
+    if (which == 0) {
+        cUIObj_FD08* o = (cUIObj_FD08*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A2570));
+        if (o != 0) {
+            o->setVisible(0);
+        }
+    } else {
+        cUIObj_FD08* o = (cUIObj_FD08*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A2570));
+        if (o != 0) {
+            o->setVisible(1);
+        }
+    }
+    if (which + 9 >= *(int*)(self + 0x9C)) {
+        cUIObj_FD08* o = (cUIObj_FD08*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A2578));
+        if (o != 0) {
+            o->setVisible(0);
+        }
+    } else {
+        cUIObj_FD08* o = (cUIObj_FD08*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A2578));
+        if (o != 0) {
+            o->setVisible(1);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_REWARDS_onGainTransition);
