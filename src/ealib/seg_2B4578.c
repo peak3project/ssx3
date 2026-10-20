@@ -3333,7 +3333,21 @@ void func_003BBDA0(int unused, int src, unsigned char *hdr, char *out, int *extr
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC000);
+#ifdef SKIP_ASM
+extern float func_003BC770(float);
+extern float func_003BC840(float);
+
+void func_003BC000(float *out, int arg1, int arg2, int arg3) {
+    float a = 2.0f * ((float)arg1 / 65535.0f) * 3.1415927f;
+    float b = 2.0f * ((float)arg2 / 65535.0f) * 3.1415927f;
+    float c = 2.0f * ((float)arg3 / 65535.0f) * 3.1415927f;
+    float t = (c - b) / (a - b) * 1.5707964f;
+    out[0] = func_003BC770(t);
+    out[1] = func_003BC840(t);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC0B0);
 
