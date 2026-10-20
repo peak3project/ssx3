@@ -2410,7 +2410,144 @@ extern "C" void* func_0018D7F0(void* self, int a1, int a2, int a3, int a4)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsDeviceSelect_onCreateScreen);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void func_003A0E90(void* obj, void* v);
+struct cUIText;
+void cUIText_setAsciiString(cUIText* text, const char* str);
+extern char D_0045E140[];
+extern char D_004A15D0[];
+extern char D_004A15D8[];
+extern char D_0045E150[];
+extern char D_0045E168[];
+extern char D_004A1460[];
+extern char D_004A1458[];
+extern char D_0045E178[];
+extern char D_0045E190[];
+extern char D_0045E1A0[];
+extern char D_0045E1B8[];
+extern char D_0045E1C8[];
+extern char D_0045E1D8[];
+extern char D_0045E1E8[];
+extern char D_0045E200[];
+extern char D_0045E210[];
+extern char D_004A12C0[];
+extern char D_004A1408[];
+extern void* D_004A28A8;
+struct sBlob16_DS { char b[16]; };
+extern sBlob16_DS D_004C66C8;
+
+class cUIObj_DS {
+public:
+    char pad0[8];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7(int);
+    virtual void v8(int); virtual void v9();
+    virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13();
+    virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17();
+    virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21();
+    virtual void v22(); virtual void v23(); virtual void v24(int);
+};
+
+struct sVE_DS {
+    short delta;
+    short index;
+    void* (*fn)(void*, int);
+};
+
+struct sDevSel_DS {
+    char pad0[0x10];
+    void* engine;               // 0x10
+    char pad14[0x2C];
+    void* screen;               // 0x40
+    char pad44[0x178];
+    int f1BC;                   // 0x1BC
+    char pad1C0[0x6C];
+    int f22C;                   // 0x22C
+};
+
+static inline cUIObj_DS* find_DS(sDevSel_DS* self, char* name)
+{
+    return (cUIObj_DS*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
+}
+
+static inline void* mgrLookup_DS(char* name)
+{
+    char* mgr = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVE_DS* vt = *(sVE_DS**)(mgr + 4);
+    return vt[4].fn(mgr + vt[4].delta, GetHashValue32(name));
+}
+
+extern "C" void cFEStateOptionsDeviceSelect_onCreateScreen(sDevSel_DS* self)
+{
+    char buf[0x20];
+    cUIObj_DS* o;
+    void* engine = self->engine;
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0045E140), 0);
+    self->screen = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+        o = find_DS(self, D_004A15D0);
+        o->v8(0);
+        o = find_DS(self, D_004A15D8);
+        o->v8(0);
+        void* v;
+        if (self->f1BC == 1) {
+            v = mgrLookup_DS(D_0045E150);
+            o = find_DS(self, D_004A15D8);
+            o->v8(1);
+            o = find_DS(self, D_0045E168);
+            find_DS(self, D_004A1460)->v8(0);
+            o->v8(1);
+            o = find_DS(self, D_004A1458);
+            o->v8(0);
+        } else if (self->f22C != 0) {
+            v = mgrLookup_DS(D_0045E178);
+            o = find_DS(self, D_004A15D0);
+            o->v8(1);
+            o = find_DS(self, D_0045E190);
+            o->v8(1);
+        } else {
+            v = mgrLookup_DS(D_0045E1A0);
+            o = find_DS(self, D_004A15D8);
+            o->v8(1);
+            o = find_DS(self, D_0045E1B8);
+            find_DS(self, D_004A1460)->v8(0);
+            o->v8(1);
+            o = find_DS(self, D_004A1458);
+            o->v8(0);
+        }
+        func_003A0E90(find_DS(self, D_0045E1C8), v);
+        cUIText_setAsciiString((cUIText*)find_DS(self, D_0045E1D8), D_004A1408);
+        cUIText_setAsciiString((cUIText*)find_DS(self, D_0045E1E8), D_004A1408);
+        void* w = mgrLookup_DS(D_0045E200);
+        for (int i = 1; i < 5; i++) {
+            sprintf(buf, D_0045E210, i);
+            o = find_DS(self, buf);
+            *(int*)((char*)o + 0x18) = i - 1;
+            func_003A0E90(o, w);
+            *(sBlob16_DS*)((char*)o + 0x88) = D_004C66C8;
+            o->v24(1);
+            if (self->f1BC != 1) {
+                if (i >= 2) {
+                    o->v7(1);
+                    (o)->v8(0);
+                    sprintf(buf, D_004A12C0, i);
+                    cUIObj_DS* t = find_DS(self, buf);
+                    (t)->v8(0);
+                    cUIText_setAsciiString((cUIText*)t, buf);
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018DDD0);
