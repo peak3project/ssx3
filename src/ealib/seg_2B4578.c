@@ -5039,7 +5039,44 @@ int func_003C2268(void) {
 void func_003C2438(void) {
 }
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2440);
+#ifdef SKIP_ASM
+struct E_2440 { char pad0[4]; short ids[15]; char pad22; unsigned char cnt; unsigned short flags; char pad26[0x8C - 0x26]; };
+struct G_2440 { char pad0[0x2F]; unsigned char f2F; unsigned char f30; char pad31[0x49 - 0x31]; unsigned char f49; char pad4A[0x1F0 - 0x4A]; struct E_2440 *tab; };
+struct H_2440 { char pad0[0xCB0]; char *tbl; };
+extern struct G_2440 D_0050A8E8_2440 __asm__("D_0050A8E8");
+extern struct H_2440 D_0050AD00_2440 __asm__("D_0050AD00");
+extern void f_A550_2440(int) __asm__("func_003BA550");
+extern void f_8468_2440(int) __asm__("func_003C8468");
+
+int func_003C2440(int arg0) {
+    struct E_2440 *e = &D_0050A8E8_2440.tab[arg0];
+    int i, k;
+    unsigned fl = e->flags;
+    if (fl & 8) {
+        for (i = 0; i < e->cnt; i++) {
+            *(int *)(D_0050AD00_2440.tbl + (e->ids[i] << 3) + 0x20) = 0;
+            f_A550_2440(e->ids[i]);
+            if (D_0050A8E8_2440.f49 == 2) {
+                k = e->ids[i] + 0x18;
+                *(int *)(D_0050AD00_2440.tbl + (k << 3) + 0x20) = 0;
+            }
+        }
+    } else if (fl & 0x100) {
+        for (i = 0; i < e->cnt; i++) {
+            *(int *)(D_0050AD00_2440.tbl + ((e->ids[i] - D_0050A8E8_2440.f30) << 4) + 0x1A0) = 0;
+            f_A550_2440(e->ids[i]);
+        }
+    } else {
+        for (i = 0; i < e->cnt; i++) {
+            f_8468_2440(e->ids[i] - (D_0050A8E8_2440.f30 + D_0050A8E8_2440.f2F));
+            f_A550_2440(e->ids[i]);
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C25E0);
