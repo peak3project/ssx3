@@ -2911,7 +2911,165 @@ extern "C" void func_0033DFD8(char* self, void* cb, void* cb2, float* box, void*
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033ED60);
+#ifdef SKIP_ASM
+struct sCell_ED60 {
+    int level, x, y, z;
+};
+
+struct sOct_ED60 {
+    void* child[8];                 // 0x00
+    int pad20[2];
+    char* objs;                     // 0x28
+};
+
+struct sQ_ED60 {
+    sWsVec4* pos;                   // 0x00
+    int a7;                         // 0x04
+    int mask;                       // 0x08
+    int* cnt;                       // 0x0C
+    float* dist;                    // 0x10
+    sBox_00334680* box;             // 0x14
+};
+
+extern "C" void descRec_ED60(void* self, sQ_ED60* q) __asm__("func_003411B8");
+
+static inline void dispatch_ED60(char* o, sQ_ED60* q)
+{
+    for (; o != 0; o = *(char**)o) {
+        int type = *(int*)(o + 8);
+        if (type == 2) {
+            func_0035C698(*(void**)(o + 0xC), q->box, q->box, q->pos, q->mask, q->cnt, q->dist, q->a7);
+        } else if (type == 3) {
+            func_00348290(*(void**)(o + 0xC), q->box, q->box, q->pos, q->mask, q->cnt, q->dist, q->a7);
+        } else if (type == 1) {
+            if (*(int*)(*(char**)(o + 0x68) + 0x1C) & q->mask) {
+                func_00335128(o, q->box, q->pos, q->cnt, q->dist, q->a7);
+            }
+        }
+    }
+}
+
+// nash::Cell::descend<SplineCallback>
+static inline void descend_ED60(void** n, sQ_ED60* cb2)
+{
+    dispatch_ED60(((sOct_ED60*)n)->objs, cb2);
+    if (n[0] != 0) descRec_ED60(n[0], cb2);
+    if (n[1] != 0) descRec_ED60(n[1], cb2);
+    if (n[2] != 0) descRec_ED60(n[2], cb2);
+    if (n[3] != 0) descRec_ED60(n[3], cb2);
+    if (n[4] != 0) descRec_ED60(n[4], cb2);
+    if (n[5] != 0) descRec_ED60(n[5], cb2);
+    if (n[6] != 0) descRec_ED60(n[6], cb2);
+    if (n[7] != 0) descRec_ED60(n[7], cb2);
+}
+
+extern "C" void func_0033ED60(char* self, sQ_ED60* cb, sQ_ED60* cb2, float* box, void** node, sCell_ED60* cell)
+{
+    dispatch_ED60(((sOct_ED60*)node)->objs, cb);
+    if (cell->level == 11) {
+        return;
+    }
+    int bits = (cell->level + 0x7E) << 23;
+    float s = *(float*)&bits;
+    sCell_ED60 k;
+    k.level = cell->level - 1;
+    k.x = cell->x * 2;
+    k.y = cell->y * 2;
+    k.z = cell->z * 2;
+    int ovLoX = 0;
+    float xLoA = ((float)k.x - 0.2f) * s;
+    float xLoB = ((float)(k.x + 1) + 0.2f) * s;
+    if (box[0] < xLoB && xLoA < box[4]) ovLoX = 1;
+    int ovHiX = 0;
+    float xHiB = ((float)(k.x + 2) + 0.2f) * s;
+    float xHiA = ((float)(k.x + 1) - 0.2f) * s;
+    if (box[0] < xHiB && xHiA < box[4]) ovHiX = 1;
+    if (ovLoX || ovHiX) {
+        int ovLoY = 0;
+        float yLoB = ((float)(k.y + 1) + 0.2f) * s;
+        float yLoA = ((float)k.y - 0.2f) * s;
+        if (box[1] < yLoB && yLoA < box[5]) ovLoY = 1;
+        int ovHiY = 0;
+        float yHiB = ((float)(k.y + 2) + 0.2f) * s;
+        float yHiA = ((float)(k.y + 1) - 0.2f) * s;
+        if (box[1] < yHiB && yHiA < box[5]) ovHiY = 1;
+        if (ovLoY || ovHiY) {
+            int ovLoZ = 0;
+            float zLoB = ((float)(k.z + 1) + 0.2f) * s;
+            float zLoA = ((float)k.z - 0.2f) * s;
+            if (box[2] < zLoB && zLoA < box[6]) ovLoZ = 1;
+            int ovHiZ = 0;
+            float zHiB = ((float)(k.z + 2) + 0.2f) * s;
+            float zHiA = ((float)(k.z + 1) - 0.2f) * s;
+            if (box[2] < zHiB && zHiA < box[6]) ovHiZ = 1;
+            if (ovLoZ || ovHiZ) {
+                int inLoX = 0;
+                if (box[0] < xLoA && xLoB < box[4]) inLoX = 1;
+                int inHiX = 0;
+                if (box[0] < xHiA && xHiB < box[4]) inHiX = 1;
+                int inLoY = 0;
+                if (box[1] < yLoA && yLoB < box[5]) inLoY = 1;
+                int inHiY = 0;
+                if (box[1] < yHiA && yHiB < box[5]) inHiY = 1;
+                int inLoZ = 0;
+                if (box[2] < zLoA && zLoB < box[6]) inLoZ = 1;
+                int inHiZ = 0;
+                if (box[2] < zHiA && zHiB < box[6]) inHiZ = 1;
+                void** c;
+                c = (void**)node[0];
+                if (c != 0 && ovLoX && ovLoY && ovLoZ) {
+                    if (inLoX && inLoY && inLoZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[1];
+                k.z++;
+                if (c != 0 && ovLoX && ovLoY && ovHiZ) {
+                    if (inLoX && inLoY && inHiZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[3];
+                k.y++;
+                if (c != 0 && ovLoX && ovHiY && ovHiZ) {
+                    if (inLoX && inHiY && inHiZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[2];
+                k.z--;
+                if (c != 0 && ovLoX && ovHiY && ovLoZ) {
+                    if (inLoX && inHiY && inLoZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[6];
+                k.x++;
+                if (c != 0 && ovHiX && ovHiY && ovLoZ) {
+                    if (inHiX && inHiY && inLoZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[7];
+                k.z++;
+                if (c != 0 && ovHiX && ovHiY && ovHiZ) {
+                    if (inHiX && inHiY && inHiZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[5];
+                k.y--;
+                if (c != 0 && ovHiX && ovLoY && ovHiZ) {
+                    if (inHiX && inLoY && inHiZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[4];
+                k.z--;
+                if (c != 0 && ovHiX && ovLoY && ovLoZ) {
+                    if (inHiX && inLoY && inLoZ) descend_ED60(c, cb2);
+                    else func_0033ED60(self, cb, cb2, box, c, &k);
+                }
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("intersect/worldsphtree", func_003400D8);
 
