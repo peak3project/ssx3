@@ -845,7 +845,30 @@ int func_00400190(int a, int b, unsigned char *src) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400250);
+#ifdef SKIP_ASM
+extern char D_00526200[];
+extern int D_00526440[];
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+extern int func_003FFC70(int, int, int);
+int func_00400250(int port, int slot, unsigned char *data) {
+    int i;
+    unsigned char *d;
+    int *p = D_00526440;
+    p[0] = 8;
+    p[1] = port;
+    p[2] = slot;
+    d = (unsigned char *)&p[3];
+    for (i = 0; i < 6; i++)
+        d[i] = data[i];
+    if (func_00426D18(D_00526200, 1, 0, p, 128, p, 128, 0, 0) < 0)
+        return 0;
+    if (p[5] == 1)
+        func_003FFC70(port, slot, 2);
+    return p[5];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400328);
