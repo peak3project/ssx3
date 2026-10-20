@@ -701,7 +701,107 @@ extern "C" void cSSXAudio_FrontEndLoad(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_002867E8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" char* func_0028B1D8();
+extern "C" void* func_00123128(void*);
+extern "C" int func_00158750(void* self, int a1, int a2);
+extern "C" int func_00158700(void* self, int a1, int a2);
+extern "C" void func_0028BF78(void* self, int a1);
+extern "C" void func_0028C2D0(void* self, int a1);
+extern "C" int func_002B49E0(void*);
+extern "C" void func_0028D488(void* self);
+extern "C" void func_0028CF98(void* self, int a1, int a2, int a3, int a4);
+extern "C" void func_002948A0(void* self);
+extern "C" void func_00287F00(void* self, int a1, float f0, float f1);
+extern "C" int func_00145D38(void* self, int index, int bit);
+void func_0028DF08_C7B0(void* p) __asm__("func_0028DF08__FPv");
+extern "C" void func_00286E20(void* self);
+extern "C" void func_002A4A78(void* self);
+struct cWorldPainterManArg;
+void* cWorldPainterMan_getQuery(void*, cWorldPainterManArg*);
+extern char D_004A5268;
+extern char D_004A5270;
+extern char D_004A5278;
+extern void* D_004A28A8;
+extern char D_00535BC8[];
+
+static inline int sa_state_867E8()
+{
+    signed char* g = (signed char*)D_00535BC8;
+    return g[0x49];
+}
+
+class func_002867E8_cObj {
+public:
+    virtual void v0();
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual int v6();
+};
+
+extern "C" void func_002867E8(char* self)
+{
+    void* be = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+    char* bm = func_0028B1D8();
+    void* rider = func_00123128(*(void**)(bm + 0x28));
+    int a = func_00158750(be, 0, (int)rider);
+    func_0028BF78(self, func_00158700(be, 0, (int)rider));
+    func_0028C2D0(self, a);
+    char* t118 = self + 0x118;
+    if (*(int*)(self + 0x530) == 0 || func_002B49E0(t118) != 0x191) {
+        func_0028D488(self);
+        cBE_getInterface_Fv(cBE_getBE(), 0);
+        if (sa_state_867E8() == 0) {
+            func_0028CF98(self, 0, 0, -1, 0);
+        } else {
+            func_0028CF98(self, 0x24, 0, -1, 0);
+        }
+    }
+    func_002948A0(self);
+    cWorldPainterManArg* pa = (cWorldPainterManArg*)&D_004A5268;
+    cWorldPainterManArg* pb = (cWorldPainterManArg*)&D_004A5278;
+    cWorldPainterManArg* pc = (cWorldPainterManArg*)&D_004A5270;
+    void* q = *(void**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x10) + 8);
+    *(void**)(self + 0x625C) = cWorldPainterMan_getQuery(q, pa);
+    *(void**)(self + 0x6260) = cWorldPainterMan_getQuery(q, pa);
+    *(void**)(self + 0x5FA0) = cWorldPainterMan_getQuery(q, pb);
+    *(void**)(self + 0x5FA4) = cWorldPainterMan_getQuery(q, pb);
+    *(void**)(self + 0x6C80) = cWorldPainterMan_getQuery(q, pc);
+    void* q2 = cWorldPainterMan_getQuery(q, pc);
+    *(int*)(self + 0x626C) = 0;
+    *(int*)(self + 0x6274) = 0;
+    *(int*)(self + 0x5FC4) = 0;
+    *(int*)(self + 0x6264) = -1;
+    *(int*)(self + 0x6268) = -1;
+    *(int*)(self + 0x6270) = 1;
+    *(char*)(self + 0x5FC0) = 50;
+    *(void**)(self + 0x6C84) = q2;
+    func_00287F00(self, 3, 0.5f, 1.0f);
+    *(int*)(self + 0x6288) = 0;
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (sa_state_867E8() == 0) {
+        int i = 0;
+        int* p = (int*)(self + 0x579C);
+        do {
+            void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
+            char* o = *(char**)(func_0028B1D8() + 0x28);
+            *p = func_00145D38(iface, ((func_002867E8_cObj*)(o + 0x6C0))->v6(), i);
+            i++;
+            p++;
+        } while (i < 23);
+    }
+    func_0028DF08_C7B0(self);
+    func_00286E20(self);
+    func_002A4A78(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00286A80);
