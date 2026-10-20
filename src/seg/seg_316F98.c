@@ -1355,7 +1355,59 @@ void func_0041E340_(int ptr, void *mem) {
 
 INCLUDE_ASM("seg/seg_316F98", func_0041E638);
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_0041E7A8);
+#ifdef SKIP_ASM
+long func_0041E7A8_(int *ptr, char *nptr, char **endptr, int base) __asm__("func_0041E7A8");
+long func_0041E7A8_(int *ptr, char *nptr, char **endptr, int base) {
+    char *s = nptr;
+    unsigned long acc, cutoff;
+    int c, neg = 0, any, cutlim;
+    do {
+        c = *s++;
+    } while (XCT(c) & 8);
+    if (c == '-') {
+        neg = 1;
+        c = *s++;
+    } else if (c == '+')
+        c = *s++;
+    if ((base == 0 || base == 16) && c == '0' && (*s == 'x' || *s == 'X')) {
+        c = s[1];
+        s += 2;
+        base = 16;
+    }
+    if (base == 0)
+        base = c == '0' ? 8 : 10;
+    cutoff = neg ? -(unsigned long)0x8000000000000000L : 0x7FFFFFFFFFFFFFFFL;
+    cutlim = func_0042DAD8_mod(cutoff, base);
+    cutoff = func_00411538_div(cutoff, base);
+    for (acc = 0, any = 0;; c = *s++) {
+        if (XCT(c) & 4)
+            c -= '0';
+        else if (XCT(c) & 3)
+            c -= (XCT(c) & 1) ? 'A' - 10 : 'a' - 10;
+        else
+            break;
+        if (c >= base)
+            break;
+        if (any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
+            any = -1;
+        else {
+            any = 1;
+            acc = func_004114D0_mul(acc, base);
+            acc += c;
+        }
+    }
+    if (any < 0) {
+        acc = neg ? 0x8000000000000000L : 0x7FFFFFFFFFFFFFFFL;
+        *ptr = 34;
+    } else if (neg)
+        acc = -acc;
+    if (endptr != 0)
+        *endptr = any ? s - 1 : nptr;
+    return acc;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_0041E9E0);
