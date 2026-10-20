@@ -3574,7 +3574,36 @@ extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* self, int idx, ch
 }
 #endif
 
+//100%
 INCLUDE_ASM("movie/movieplayer", func_00241928);
+#ifdef SKIP_ASM
+extern char D_004A2C90[];
+extern char D_004A2C98[];
+// PORT: this caller treats func_002C2540 (a string copy) as returning int.
+int func_002C2540_i(void*, void*) __asm__("func_002C2540");
+struct sMovieItem1928 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    char pad[0xE0 - 0x14];
+};
+struct sMovie1928 {
+    char pad[0x344];
+    sMovieItem1928 items[1];
+};
+extern "C" void func_00241928(sMovie1928* self, int idx, void* dst)
+{
+    char a[0x200];
+    char b[0x200];
+    if (self->items[idx].fC != 0 && self->items[idx].f0 != 0 && self->items[idx].f4 != 0 && self->items[idx].f8 != 0) {
+        func_002C2540_i(a, D_004A2C90);
+        func_002C2540_i(b, D_004A2C98);
+        func_002C26D0_v(dst, b, self->items[idx].f10, a);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("movie/movieplayer", func_002419D8);
