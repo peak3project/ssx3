@@ -2580,7 +2580,59 @@ void func_00162310(void* self, int val)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00162318);
+#ifdef SKIP_ASM
+extern void* D_0045BBC0[];
+extern cQuad128 D_004FF120;
+extern cQuad128 D_004FF130;
+extern "C" void* func_001622B0(void* self);
+extern "C" void func_0031D5E8(void* spline);
+extern "C" float func_00167D88(void);
+extern "C" float func_00167D98_v(void) __asm__("func_00167D98");
+extern "C" float func_00167DA8_v(void) __asm__("func_00167DA8");
+extern "C" void func_00167DB8_f(void* self, float value) __asm__("func_00167DB8");
+
+extern "C" void* func_00162318(void* self)
+{
+    func_001622B0(self);
+    char* filt = (char*)self + 0x340;
+    *(void***)((char*)self + 0x10) = D_0045BBC0;
+    func_0031D5E8((char*)self + 0x304);
+    func_0031D5E8((char*)self + 0x310);
+    func_0031D5E8((char*)self + 0x31C);
+    func_0031D5E8((char*)self + 0x328);
+    func_0031D5E8((char*)self + 0x334);
+    *(float*)((char*)self + 0x380) = func_00167D88();
+    *(float*)((char*)self + 0x384) = func_00167D98_v();
+    *(float*)((char*)self + 0x388) = func_00167DA8_v();
+    func_00167DB8_f(filt, 0.0f);
+    *(cQuad128*)((char*)self + 0x40) = D_004FF130;
+    *(int*)((char*)self + 0x54) = 0;
+    *(int*)((char*)self + 0xC) = 0x54;
+    *(int*)((char*)self + 0x50) = 0;
+    *(int*)((char*)self + 0x58) = 0;
+    float z = *(float*)((char*)self + 0x54);
+    *(cQuad128*)((char*)self + 0x90) = D_004FF120;
+    *(float*)((char*)self + 0x1D0) = 200.0f;
+    *(float*)((char*)self + 0x1DC) = 1.0f;
+    *(float*)((char*)self + 0x1E0) = 10.0f;
+    *(int*)((char*)self + 0x2C0) = 0x1388;
+    *(int*)((char*)self + 0x1D4) = 0;
+    *(float*)((char*)self + 0x1D8) = z;
+    *(float*)((char*)self + 0x1E4) = z;
+    *(int*)((char*)self + 0x2D0) = 0;
+    *(int*)((char*)self + 0x2D8) = 0;
+    *(cQuad128*)((char*)self + 0xC0) = D_004FF120;
+    *(cQuad128*)((char*)self + 0xD0) = D_004FF120;
+    *(cQuad128*)((char*)self + 0xE0) = D_004FF120;
+    *(float*)self = 0.7853981852531433f;
+    *(float*)((char*)self + 0x388) = 0.0012785084545612335f;
+    *(float*)((char*)self + 0x384) = z;
+    *(float*)((char*)self + 0x380) = 0.01139452401548624f;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_00162458);
