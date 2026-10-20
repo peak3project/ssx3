@@ -12567,7 +12567,61 @@ void func_003D54E8(void) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5508);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5698);
+#ifdef SKIP_ASM
+/* 99.39: remaining only callee-saved reg numbering (base644 $22, masks $30/$23) and const reg $2; twin 3D5800 (callee 3D6360), sibling 3D1038/3D5508 */
+extern int func_003D5450_5698(int) __asm__("func_003D5450");
+extern void func_003D6318_5698(int, int, int, int) __asm__("func_003D6318");
+struct P_5698 { char pad0[0x18]; int f18; char pad1C[0x3C]; int a[24]; };
+extern struct P_5698 *D_0044F420_5698 __asm__("D_0044F420");
+extern unsigned char D_0044F42C_5698 __asm__("D_0044F42C");
+extern int D_0044F430_5698 __asm__("D_0044F430");
+extern char D_00517640_5698[] __asm__("D_00517640");
+extern char D_00517644_5698[] __asm__("D_00517644");
+
+void func_003D5698(unsigned int mask, int a1, int a2) {
+    int i;
+    int j;
+    int next;
+    unsigned int fl, t, u;
+    struct P_5698 *g;
+    int off;
+    char *np;
+    char *b4;
+    unsigned int nv;
+    if (D_0044F42C_5698 == 0) return;
+    if (D_0044F430_5698 != 0) return;
+    if (func_003D5450_5698(-1) == 0) return;
+    do {
+    b4 = D_00517644_5698;
+    i = 0;
+    } while (0);
+    do {
+        off = (u = 0x928);
+        off = i * off;
+        np = D_00517640_5698;
+        next = i + 1;
+        if (*(int *)(off + (int)b4) != 0) {
+            fl = *(unsigned int *)(np + off);
+            nv = fl & 0xF0000000;
+            do { t = nv; } while (0);
+            if ((t & mask) != 0 && (u = fl & 0x0F000000, (u & mask) != 0)) {
+                if (func_003D5450_5698(i) != 0) {
+                    for (j = 0; j < 24; j++) {
+                        g = D_0044F420_5698;
+                        if (g->a[j] != 0 && (((mask >> j) ^ 1) & 1) == 0) {
+                            func_003D6318_5698(g->a[j], a1, a2, g->f18);
+                        }
+                    }
+                }
+            }
+        }
+        i = next;
+    } while (i < 4);
+    D_0044F420_5698 = 0;
+    D_0044F430_5698 = 0;}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5800);
 
