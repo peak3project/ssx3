@@ -956,7 +956,167 @@ extern "C" void func_00228238(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", cSSXApp_initload);
+#ifdef SKIP_ASM
+extern "C" void initOnline();
+extern "C" int BXFILE_exists(const char* name);
+extern "C" int func_003DED50(const char* name, int a, int b, void* dst);
+extern "C" void func_00256188();
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_00277F20(void* p);
+extern "C" void func_00278210(void* p);
+void func_00244400(void* p, int v);
+void func_00244408(void* p, int v);
+int GetHashValue32(char* s);
+extern "C" void func_003984B0(void* a, int idx, const char* s, int hash);
+extern "C" void cUIFontInterface_loadFonts(void* p);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_00228C08(void* self);
+extern "C" void cSSXApp_initLocale(void* self);
+extern "C" void func_00311870();
+extern "C" void* func_00314D98(void* p);
+extern "C" void func_00314DD8(void* p);
+extern "C" void* func_00311048(void* p);
+extern "C" void* func_0028B180();
+extern "C" void* func_00289D08(void* a, int b);
+extern "C" void SSXAUDIO_Init(void* p);
+extern "C" void func_0031A6B8();
+extern "C" void func_00287410(void* a, int b);
+extern "C" void func_00287488(void* a, int b);
+extern "C" void func_00287520(void* a, int b);
+extern "C" void func_00287558(void* a, int b);
+extern "C" void func_002875D0(void* a, int b);
+void WORLDTRIGGERMANAGER_Init();
+extern "C" int func_004165A8(int a, const char* s);
+
+extern char D_0047A828[];
+extern char D_0047A840[];
+extern char D_0047A858[];
+extern char D_0047A870[];
+extern char D_0047A888[];
+extern char D_0047A8D0[];
+extern char D_0047A8E0[];
+extern char D_0047A8F8[];
+extern char D_0047A910[];
+extern char D_0047A928[];
+extern char D_0047A940[];
+extern char D_0047A958[];
+extern char D_0047A968[];
+extern char D_004A29D0[];
+extern char D_004A29D8[];
+extern char D_004A29E0[];
+extern char D_004A29E8[];
+extern char* D_00442100[];
+extern char* D_004A29C8;
+extern char* D_004A29CC;
+extern void* D_004A28A4;
+extern int D_004A4CB8;
+
+struct sOpt_initload {
+    unsigned int f0 : 4;
+    unsigned char f4 : 4;
+    unsigned int f8 : 4;
+    unsigned int f12 : 2;
+    unsigned int f14 : 2;
+    unsigned int pad : 16;
+    int data[0x284 / 4];
+};
+extern sOpt_initload D_00535610_il __asm__("D_00535610");
+
+static inline int optA_il(sOpt_initload o) { return o.f0; }
+static inline int optB_il(sOpt_initload o) { return o.f8; }
+static inline int optC_il(sOpt_initload o) { return o.f4; }
+static inline int optD_il(sOpt_initload o) { return (((int*)&o)[0] >> 17) & 1; }
+static inline int optE_il(sOpt_initload o) { return ((short)(((int*)&o)[0] >> 16)) & 1; }
+
+struct sE_initload {
+    int a, b, c;
+    sE_initload() { a = 0; b = 0; c = 0; }
+};
+struct sTbl_initload {
+    int f0;
+    sE_initload e[4];
+    char f34;
+    int f38, f3C, f40;
+    sTbl_initload() : f0(0) { f34 = 0; f38 = 0; f3C = 0; f40 = 0; }
+};
+
+struct sSSXApp_initload {
+    char pad0[0x78];
+    void* f78;
+    char pad7C[0x88 - 0x7C];
+    sTbl_initload* f88;
+    void* f8C;
+    void* f90;
+    void* f94;
+    char pad98[0xA8 - 0x98];
+    int fA8[2];
+    void* fB0[2];
+    int fB8[2];
+    char padC0[0xCC - 0xC0];
+    int fCC;
+    char padD0[0xD4 - 0xD0];
+    int fD4, fD8, fDC, fE0, fE4, fE8;
+    int fEC[11];
+    int f118;
+};
+
+extern "C" void cSSXApp_initload(sSSXApp_initload* self)
+{
+    initOnline();
+    if (BXFILE_exists(D_0047A828)) func_003DED50(D_0047A828, 0, 100, &self->fD8);
+    if (BXFILE_exists(D_0047A840)) func_003DED50(D_0047A840, 0, 100, &self->fDC);
+    if (BXFILE_exists(D_0047A858)) func_003DED50(D_0047A858, 0, 100, &self->fD4);
+    if (BXFILE_exists(D_0047A870)) func_003DED50(D_0047A870, 0, 100, &self->fE0);
+    func_00256188();
+    func_003DED50(D_0047A888, 0, 100, &self->fE4);
+    func_003DED50(D_004A29C8, 0, 100, &self->fE8);
+    for (int i = 0; i < 11; i++) {
+        func_003DED50(D_00442100[i], 0, 100, &self->fEC[i]);
+    }
+    func_003DED50(D_004A29CC, 0, 100, &self->f118);
+    D_004A28A4 = func_00277F20(cMemMan_alloc(0xA50, D_0047A8D0, 0, 0));
+    func_00278210(D_004A28A4);
+    self->fB8[0] = (int)cSSXApp_loadInputMap(self, D_0047A8E0);
+    self->fB8[1] = (int)cSSXApp_loadInputMap(self, D_0047A8F8);
+    void** pb = self->fB0;
+    int* pa = self->fA8;
+    for (int j = 0; j < 2; j++) {
+        void* p = cMemMan_alloc(8, D_004A29D0, 0, 0);
+        int m = self->fB8[0];
+        func_00244400(p, pa[j]);
+        func_00244408(p, m);
+        pb[j] = p;
+    }
+    sTbl_initload** pp = &self->f88;
+    *pp = new (D_0047A910, 0, 0) sTbl_initload;
+    func_003984B0(self->f88, 0, D_0047A928, GetHashValue32(D_004A29D8));
+    func_003984B0(self->f88, 1, D_0047A940, GetHashValue32(D_004A29E0));
+    cUIFontInterface_loadFonts(self->f88);
+    self->f78 = cBE_getBE();
+    func_00228C08(self);
+    cSSXApp_initLocale(self);
+    func_00311870();
+    self->f94 = func_00314D98(cMemMan_alloc(0x1848, D_0047A958, 0, 0));
+    func_00314DD8(self->f94);
+    self->f90 = func_00311048(cMemMan_alloc(0x3FC, D_0047A968, 0, 0));
+    cBE_getInterface(cBE_getBE(), 4);
+    SSXAUDIO_Init(func_00289D08(func_0028B180(), D_00535610_il.f12));
+    func_0031A6B8();
+    func_00287410(func_0028B180(), optA_il(D_00535610_il));
+    func_00287488(func_0028B180(), optB_il(D_00535610_il));
+    func_00287520(func_0028B180(), optC_il(D_00535610_il));
+    func_00287558(func_0028B180(), optD_il(D_00535610_il));
+    func_002875D0(func_0028B180(), optE_il(D_00535610_il));
+    WORLDTRIGGERMANAGER_Init();
+    if (func_004165A8(self->fCC, D_004A29E8)) {
+        cBE_getInterface(cBE_getBE(), 0);
+        cBXString_cBXString4(&D_004A4CB8, (const char*)self->fCC);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxapp", cSSXApp_initLocale);
