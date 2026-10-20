@@ -1965,7 +1965,45 @@ extern "C" void func_001804B8(sDebugFE1804B8* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_00180508);
+#ifdef SKIP_ASM
+extern "C" unsigned short* func_001DD580(unsigned short* p);
+extern "C" int func_003977E8(void* p);
+extern "C" int func_0039FB30(void* p, int a1, int a2);
+extern int D_0046D1A0[];
+extern int D_00494670[];
+extern int D_004949E8[];
+
+extern "C" void* func_00180508(char* self, int a1)
+{
+    *(char**)(self + 4) = self;
+    *(char**)(self + 0) = self;
+    *(int*)(self + 0xC) = 0;
+    *(int*)(self + 0x10) = 0;
+    *(int**)(self + 8) = D_00494670;
+    func_001DD580((unsigned short*)(self + 0x14));
+    func_003977E8(self + 0x18);
+    *(int*)(self + 0x34) = 0;
+    *(int*)(self + 0x38) = 0;
+    *(int*)(self + 0x3C) = 0;
+    func_0039FB30(self + 0x40, 0, 0);
+    *(int**)(self + 0x48) = D_004949E8;
+    func_003977E8(self + 0xB4);
+    *(int*)(self + 0xD0) = a1;
+    *(int**)(self + 8) = D_0046D1A0;
+    *(int*)(self + 0xD8) = 0;
+    *(int*)(self + 0xDC) = 0;
+    *(int*)(self + 0xE0) = 0;
+    *(int*)(self + 0xE4) = 1;
+    *(int*)(self + 0xE8) = 1;
+    *(int*)(self + 0x170) = 10;
+    *(int*)(self + 0xD4) = 0x2D;
+    *(char*)(self + 0xEC) = 0;
+    *(int*)(self + 0x16C) = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_001805D8);
