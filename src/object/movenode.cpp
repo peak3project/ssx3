@@ -187,7 +187,7 @@ extern "C" void func_00355600(cMoveNode* self, void* v)
 struct cEffectLink;
 void cEffectLink_add(cEffectLink* link, cEffectLink* other);
 
-//99.74%
+//100%
 INCLUDE_ASM("object/movenode", cMoveNode_addEffectModifier__FP9cMoveNodePv);
 #ifdef SKIP_ASM
 void cMoveNode_addEffectModifier(cMoveNode* self, void* effect)
