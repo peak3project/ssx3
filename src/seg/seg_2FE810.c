@@ -1608,7 +1608,105 @@ int func_00402618(int a, int *out) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00402708);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004027B8);
+#ifdef SKIP_ASM
+extern char D_00497C20[];
+extern int i7B8_memset(int, int, int) __asm__("func_00416210");
+extern void i7B8_34A8(int *, char *) __asm__("func_004034A8");
+extern void i7B8_2D50(int *, int, int) __asm__("func_00402D50");
+extern unsigned i7B8_2D88(int *, int *, unsigned, unsigned) __asm__("func_00402D88");
+extern void i7B8_3338(int *) __asm__("func_00403338");
+extern int i7B8_2B58(int *) __asm__("func_00402B58");
+extern int i7B8_2BB0(int *) __asm__("func_00402BB0");
+extern void i7B8_2D68(int *) __asm__("func_00402D68");
+extern int i7B8_3DB0(int *) __asm__("func_00403DB0");
+extern int i7B8_3DD8(int *) __asm__("func_00403DD8");
+// sceMpegCreate(mp, buff, size)
+int func_004027B8(int *a, int buf, int size) {
+    int *p;
+    int *q;
+    int v;
+    int rem;
+    i7B8_memset(buf, 0, size);
+    p = (int *)(((unsigned)(buf + 3) >> 2) << 2);
+    rem = size - ((int)p - buf);
+    if ((unsigned)rem < 0x10C0) {
+        i7B8_34A8(p, D_00497C20);
+        return 0;
+    }
+    q = p + 0x108 / 4;
+    a[16] = (int)p;
+    i7B8_2D50(q, (int)p + 0x10C0, rem - 0x10C0);
+    v = -1;
+    a[0] = 0;
+    a[1] = 0;
+    a[2] = 0;
+    *(long *)&a[4] = -1;
+    *(long *)&a[6] = -1;
+    *(long *)&a[8] = 0;
+    *(long *)&a[10] = -1;
+    *(long *)&a[12] = -1;
+    *(long *)&a[14] = 0;
+    p[45] = 0;
+    p[46] = 0;
+    p[47] = 0;
+    p[48] = 0;
+    p[49] = 0;
+    p[50] = 0;
+    p[51] = 0;
+    p[52] = 0;
+    p[53] = 0;
+    p[54] = 0;
+    p[55] = 0;
+    p[56] = 0;
+    p[57] = 0;
+    p[58] = 0;
+    p[62] = 0;
+    p[3] = 0;
+    p[5] = 0;
+    p[11] = 0;
+    p[13] = 0;
+    p[15] = 0;
+    *(long *)&p[60] = -1;
+    p[7] = (int)i7B8_3DB0;
+    p[9] = (int)i7B8_3DD8;
+    p[17] = i7B8_2D88(p, q, 0x600, 8);
+    p[18] = 0;
+    p[63] = 0;
+    p[64] = 0;
+    p[65] = 0;
+    p[28] = 0;
+    *(long *)&p[30] = 0;
+    p[32] = v;
+    *(long *)&p[34] = 0;
+    p[36] = 0;
+    p[43] = 0;
+    p[37] = v;
+    p[38] = v;
+    p[39] = v;
+    p[534] = (int)a;
+    p[44] = 1;
+    i7B8_3338(p);
+    i7B8_2B58(a);
+    i7B8_2BB0(a);
+    p[110] = (int)p + 0x1E8;
+    p[111] = (int)p + 0x250;
+    p[113] = (int)p + 0x2B8;
+    p[114] = (int)p + 0x320;
+    p[115] = (int)p + 0x388;
+    p[117] = (int)p + 0x3F0;
+    p[118] = (int)p + 0x458;
+    p[119] = (int)p + 0x4C0;
+    p[121] = (int)p + 0x528;
+    i7B8_2D68(q);
+    p[532] = v;
+    p[533] = 0;
+    p[531] = 0;
+    p[519] = 0x70003600;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004029C8);
