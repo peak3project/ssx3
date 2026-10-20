@@ -5726,7 +5726,66 @@ void func_003C43C0(int arg0, int arg1, int arg2, int arg3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4450);
+#ifdef SKIP_ASM
+struct Ent_4450 { unsigned key; int f4; int f8; unsigned short hC; unsigned char bE; char pF; };
+struct Hd_4450 { char pad0[0xCC0]; volatile unsigned char cnt; volatile unsigned char sel; char f1CC2; char pad1CC3; int f1CC4; char pad1CC8[0xE8C - 0xCC8]; int fE8C; };
+struct Dst_4450 { char b0; char pad1[0xF]; int f10; int f14; int f18; int f1C; unsigned short h20; short h22; };
+extern struct Ent_4450 D_0050B9C8_4450[] __asm__("D_0050B9C8");
+extern struct Hd_4450 D_0050AD00_4450 __asm__("D_0050AD00");
+extern struct { char pad[0x180]; int f180; } D_0050A8E8_4450 __asm__("D_0050A8E8");
+extern struct Dst_4450 D_00515780_4450 __asm__("D_00515780");
+extern void f43C0_4450(int, int, int, int) __asm__("func_003C43C0");
+extern void f61B0_4450(int, void *, int, int, int, int) __asm__("func_004261B0");
+extern void f61F0_4450(int, void *, int, int, int, int) __asm__("func_004261F0");
+
+void func_003C4450(int arg0) {
+    struct Ent_4450 *t0 = D_0050B9C8_4450;
+    struct Hd_4450 *h = (struct Hd_4450 *)((char *)t0 - 0xCC8);
+    struct Ent_4450 *e = t0;
+    int cnt = 0;
+    unsigned best = 0xFFFFFFFF;
+    unsigned char pri = 0;
+    int i;
+    struct Ent_4450 *p;
+    signed char c;
+    i = 0;
+    do {
+        if (e->key != 0) {
+            cnt++;
+            if (pri < e->bE) {
+                h->sel = i;
+                best = e->key;
+                pri = e->bE;
+            } else if (e->bE == pri && e->key < best) {
+                h->sel = i;
+                best = e->key;
+            }
+            c = h->cnt;
+            if (cnt >= c) break;
+        }
+        i++;
+        e++;
+    } while (i < 0x1C);
+    D_0050AD00_4450.f1CC4 = D_0050A8E8_4450.f180;
+    p = &((struct Ent_4450 *)((char *)&D_0050AD00_4450 + 0xCC8))[(signed char)D_0050AD00_4450.sel];
+    f43C0_4450(p->f4, D_0050AD00_4450.fE8C, p->hC, arg0);
+    D_0050AD00_4450.f1CC2 = 1;
+    D_00515780_4450.b0 = 0x30;
+    D_00515780_4450.f10 = 1;
+    D_00515780_4450.f14 = p->key;
+    D_00515780_4450.f18 = D_0050AD00_4450.fE8C;
+    D_00515780_4450.f1C = p->f8;
+    D_00515780_4450.h20 = p->hC;
+    D_00515780_4450.h22 = p->bE;
+    if (arg0 != 0) {
+        f61F0_4450(0, &D_00515780_4450, 0x30, 0, 0, 0);
+        return;
+    }
+    f61B0_4450(0, &D_00515780_4450, 0x30, 0, 0, 0);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C45E8);
 
