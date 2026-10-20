@@ -1998,7 +1998,149 @@ extern "C" void func_0033DBE8(char* flag, sQuery_369D8* q, sQuery_369D8* q2, sCt
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033DFD8);
+#ifdef SKIP_ASM
+struct sCell_DFD8 {
+    int level, x, y, z;
+};
+
+struct sOct_DFD8 {
+    void* child[8];                 // 0x00
+    void** list;                    // 0x20
+};
+extern "C" void func_00336D40(void* ctx, void* obj);
+extern "C" void func_003410C0(void* self, void* ctx);
+
+// nash::Cell::descend<StaticObjectCallback>
+static inline void descend_DFD8(void** n, void* cb)
+{
+    sOct_DFD8* o = (sOct_DFD8*)n;
+    void** p;
+    for (p = o->list; p != 0; p = (void**)*p) {
+        func_00336D40(cb, p);
+    }
+    if (n[0] != 0) func_003410C0(n[0], cb);
+    if (n[1] != 0) func_003410C0(n[1], cb);
+    if (n[2] != 0) func_003410C0(n[2], cb);
+    if (n[3] != 0) func_003410C0(n[3], cb);
+    if (n[4] != 0) func_003410C0(n[4], cb);
+    if (n[5] != 0) func_003410C0(n[5], cb);
+    if (n[6] != 0) func_003410C0(n[6], cb);
+    if (n[7] != 0) func_003410C0(n[7], cb);
+}
+
+extern "C" void func_0033DFD8(char* self, void* cb, void* cb2, float* box, void** node, sCell_DFD8* cell)
+{
+    {
+        void** p;
+        sOct_DFD8* o = (sOct_DFD8*)node;
+        for (p = o->list; p != 0; p = (void**)*p) {
+            func_00336D40(cb, p);
+        }
+    }
+    if (cell->level == 11) {
+        return;
+    }
+    int bits = (cell->level + 0x7E) << 23;
+    float s = *(float*)&bits;
+    sCell_DFD8 k;
+    k.level = cell->level - 1;
+    k.x = cell->x * 2;
+    k.y = cell->y * 2;
+    k.z = cell->z * 2;
+    int ovLoX = 0;
+    float xLoA = ((float)k.x - 0.2f) * s;
+    float xLoB = ((float)(k.x + 1) + 0.2f) * s;
+    if (box[0] < xLoB && xLoA < box[4]) ovLoX = 1;
+    int ovHiX = 0;
+    float xHiB = ((float)(k.x + 2) + 0.2f) * s;
+    float xHiA = ((float)(k.x + 1) - 0.2f) * s;
+    if (box[0] < xHiB && xHiA < box[4]) ovHiX = 1;
+    if (ovLoX || ovHiX) {
+        int ovLoY = 0;
+        float yLoB = ((float)(k.y + 1) + 0.2f) * s;
+        float yLoA = ((float)k.y - 0.2f) * s;
+        if (box[1] < yLoB && yLoA < box[5]) ovLoY = 1;
+        int ovHiY = 0;
+        float yHiB = ((float)(k.y + 2) + 0.2f) * s;
+        float yHiA = ((float)(k.y + 1) - 0.2f) * s;
+        if (box[1] < yHiB && yHiA < box[5]) ovHiY = 1;
+        if (ovLoY || ovHiY) {
+            int ovLoZ = 0;
+            float zLoB = ((float)(k.z + 1) + 0.2f) * s;
+            float zLoA = ((float)k.z - 0.2f) * s;
+            if (box[2] < zLoB && zLoA < box[6]) ovLoZ = 1;
+            int ovHiZ = 0;
+            float zHiB = ((float)(k.z + 2) + 0.2f) * s;
+            float zHiA = ((float)(k.z + 1) - 0.2f) * s;
+            if (box[2] < zHiB && zHiA < box[6]) ovHiZ = 1;
+            if (ovLoZ || ovHiZ) {
+                int inLoX = 0;
+                if (box[0] < xLoA && xLoB < box[4]) inLoX = 1;
+                int inHiX = 0;
+                if (box[0] < xHiA && xHiB < box[4]) inHiX = 1;
+                int inLoY = 0;
+                if (box[1] < yLoA && yLoB < box[5]) inLoY = 1;
+                int inHiY = 0;
+                if (box[1] < yHiA && yHiB < box[5]) inHiY = 1;
+                int inLoZ = 0;
+                if (box[2] < zLoA && zLoB < box[6]) inLoZ = 1;
+                int inHiZ = 0;
+                if (box[2] < zHiA && zHiB < box[6]) inHiZ = 1;
+                void** c;
+                c = (void**)node[0];
+                if (c != 0 && ovLoX && ovLoY && ovLoZ) {
+                    if (inLoX && inLoY && inLoZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[1];
+                k.z++;
+                if (c != 0 && ovLoX && ovLoY && ovHiZ) {
+                    if (inLoX && inLoY && inHiZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[3];
+                k.y++;
+                if (c != 0 && ovLoX && ovHiY && ovHiZ) {
+                    if (inLoX && inHiY && inHiZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[2];
+                k.z--;
+                if (c != 0 && ovLoX && ovHiY && ovLoZ) {
+                    if (inLoX && inHiY && inLoZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[6];
+                k.x++;
+                if (c != 0 && ovHiX && ovHiY && ovLoZ) {
+                    if (inHiX && inHiY && inLoZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[7];
+                k.z++;
+                if (c != 0 && ovHiX && ovHiY && ovHiZ) {
+                    if (inHiX && inHiY && inHiZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[5];
+                k.y--;
+                if (c != 0 && ovHiX && ovLoY && ovHiZ) {
+                    if (inHiX && inLoY && inHiZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+                c = (void**)node[4];
+                k.z--;
+                if (c != 0 && ovHiX && ovLoY && ovLoZ) {
+                    if (inHiX && inLoY && inLoZ) descend_DFD8(c, cb2);
+                    else func_0033DFD8(self, cb, cb2, box, c, &k);
+                }
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("intersect/worldsphtree", func_0033ED60);
 
