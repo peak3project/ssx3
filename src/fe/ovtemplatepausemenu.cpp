@@ -1,6 +1,127 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", cOVTemplate_PauseMenu_onCreateScreen);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void cOVStateManager_addPDATemplate();
+extern "C" void func_0020A380(void* self);
+extern "C" void* func_00416210(void* dst, int c, int n);
+struct cUIText;
+void cUIText_setUnicodeStringByID(cUIText* self, int id);
+void cUIText_setAsciiString(cUIText* self, const char* str);
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, int idx);
+extern "C" int func_00231AB8(void* game);
+extern "C" void* func_0028B180();
+extern "C" void func_00289B70(void* audio);
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern void* D_004A28A8;
+extern char D_0046F818[];
+extern char D_0046F830[];
+extern char* D_00441BC0[];
+extern char D_004A2470[];
+extern unsigned char D_004A2468;
+extern int D_00534B30[];
+
+struct sVE_PM {
+    short delta;
+    short index;
+    void* (*fn)(void*, int);
+};
+
+class cUIObj_PM {
+public:
+    char pad0[8];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7(int);
+    virtual void v8(int);
+};
+
+struct sPauseMenu_PM {
+    char pad0[0xC];
+    int f0C;                    // 0xC
+    void* engine;               // 0x10
+    char pad14[0x88];
+    int a9C[8];                 // 0x9C
+    int fBC;                    // 0xBC
+    void* screen;               // 0xC0
+    char padC4[4];
+    int fC8;
+    float fCC;
+    int fD0;
+    int fD4;
+    int aD8[14];                // 0xD8
+    int fF0_unused;
+};
+
+extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
+{
+    sPauseMenu_PM* self = (sPauseMenu_PM*)arg0;
+    char name[2];
+    self->f0C = GetHashValue32(D_0046F818);
+    void* engine = self->engine;
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0046F830), 0);
+    self->screen = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    cOVStateManager_addPDATemplate();
+    func_0020A380(self);
+    func_00416210(name, 0, 2);
+    for (int i = 0; i < 8; i++) {
+        name[0] = '0' + i;
+        char* o = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
+        if (o != 0) {
+            if (i < self->fBC) {
+                int h = GetHashValue32(D_00441BC0[self->a9C[i]]);
+                char* mgr = *(char**)((char*)self->engine + 0x10);
+                sVE_PM* vt = *(sVE_PM**)(mgr + 4);
+                if (vt[4].fn(mgr + vt[4].delta, h) != 0) {
+                    cUIText_setUnicodeStringByID((cUIText*)o, h);
+                } else {
+                    cUIText_setAsciiString((cUIText*)o, D_00441BC0[self->a9C[i]]);
+                }
+                *(int*)(o + 0x18) = self->a9C[i];
+            } else {
+                ((cUIObj_PM*)o)->v8(0);
+                ((cUIObj_PM*)o)->v7(1);
+            }
+        }
+    }
+    self->fD4 = 1;
+    self->fCC = 0.05f;
+    self->fC8 = 0;
+    self->fD0 = 0;
+    int one = 1;
+    int i;
+    for (i = 13; i >= 0; i--) {
+        self->aD8[i] = one;
+    }
+    if (*(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x214) == 0xB) {
+        *(int*)((char*)self + 0xF0) = 0;
+    }
+    cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    if (D_00534B30[0] == 0) {
+        void* game = *(void**)((char*)D_004A28A8 + 0x84);
+        if (func_00231AB8(game) == 0 || *(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x224) != 0) {
+            for (i = 0; i < 14; i++) {
+                self->aD8[i] = 0;
+                if (i == 1) {
+                    self->aD8[1] = i;
+                }
+            }
+        }
+    }
+    void* menu = cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A2470));
+    if (menu != 0) {
+        cUIMenu_setSelectedByIndex(menu, D_004A2468);
+    }
+    func_00289B70(func_0028B180());
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F8448);
