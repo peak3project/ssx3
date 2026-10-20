@@ -1064,7 +1064,70 @@ extern "C" void func_00392E60(void *arg0, int arg1, int arg2, int arg3, int arg4
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_00392E98);
+#ifdef SKIP_ASM
+struct sFontPkt_2E98 {
+    char* cur;       // 0x00
+    int pad04;
+    char* start;     // 0x08
+    int pad0C[3];
+    int w;           // 0x18
+    int h;           // 0x1C
+    int mode;        // 0x20
+    int flagY;       // 0x24
+    int flagX;       // 0x28
+    int done;        // 0x2C
+};
+
+extern "C" void func_00392E98(sFontPkt_2E98* self, int a1)
+{
+    int fmask = 0x8000;
+    int n;
+    int t = a1;
+    if (t < 0) {
+        n = self->cur - self->start - 16;
+        switch (self->mode) {
+        case 8: {
+            int d = 12;
+            n /= d;
+            break;
+        }
+        case 9: {
+            int d = 6;
+            n /= d;
+            break;
+        }
+        case 10: {
+            int d = 3;
+            n /= d;
+            break;
+        }
+        case 12:
+            n /= 16;
+            break;
+        case 4: case 13:
+            n /= 8;
+            break;
+        case 0: case 5: case 14:
+            n /= 4;
+            break;
+        case 1: case 6: case 15:
+            n /= 2;
+            break;
+        }
+        // PORT: g++ `<?` / `>?` (min/max) operators, removed in GCC 4.3.
+        n = n / (self->w <? self->h) * (self->w >? self->h);
+    } else {
+        n = t;
+    }
+    n &= 0xFF;
+    self->done = 0;
+    *(long*)self->start = (long)(self->w | (self->h << 8) | 0x1000000) << 32;
+    long* q = (long*)(self->start + 8);
+    *q = (long)(self->flagY | ((n << 16) | (self->flagX ? fmask : 0)) | ((self->mode | 0x60) << 24)) << 32;
+}
+#endif
 //100%
 INCLUDE_ASM("render/font", func_00393008);
 #ifdef SKIP_ASM
