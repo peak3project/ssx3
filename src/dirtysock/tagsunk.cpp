@@ -3124,7 +3124,122 @@ extern "C" void func_0025EAA0(char* self, const char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025EB00);
+#ifdef SKIP_ASM
+extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
+extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
+extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" char* strcpy(char* dst, const char* src);
+extern char D_00480488[];
+extern char D_004804A8[];
+extern char D_004A2F30[];
+extern char D_004A2F38[];
+extern char D_004A2F40[];
+extern char D_004A3130[];
+extern char D_004A31D8[];
+extern char D_004A31E0[];
+extern char D_004A31E8[];
+extern char D_004A31F0[];
+extern char D_004A31F8[];
+extern "C" int cDirtysock_tag_TagFieldGetString4(const char* tag, char* buf, int size, const char* defval) __asm__("cDirtysock_tag_TagFieldGetString");
+extern void* D_00481110[];
+extern void* D_00481290[];
+
+struct sMsgListNode25EB00 {
+    sMsgListNode25EB00* next;
+    sMsgListNode25EB00* prev;
+    void* data;
+};
+
+struct sMsgListIter25EB00 {
+    sMsgListNode25EB00* node;
+    sMsgListIter25EB00(sMsgListNode25EB00* x) : node(x) {}
+    sMsgListIter25EB00(const sMsgListIter25EB00& x) : node(x.node) {}
+};
+
+static inline sMsgListIter25EB00 sMsgList25EB00_insert(sMsgListIter25EB00 pos, void* const& x)
+{
+    sMsgListNode25EB00* tmp = (sMsgListNode25EB00*)operator new(0xC, D_004804A8, 0x20000000, 0);
+    void** data = &tmp->data;
+    if (data != 0)
+        *data = x;
+    tmp->next = pos.node;
+    tmp->prev = pos.node->prev;
+    pos.node->prev->next = tmp;
+    pos.node->prev = tmp;
+    return tmp;
+}
+
+static inline void post_25EB00(char* self, void* msg)
+{
+    void* mp = msg;
+    sMsgList25EB00_insert(*(sMsgListNode25EB00**)(self + 0xF0), mp);
+}
+
+struct sRec25EB00 {
+    int id;
+    int start;
+    int end;
+    int len;
+    int extra;
+};
+
+struct sMsg25EB00 {
+    int type;
+    void** vt;
+    char name[0x20];    // 0x8
+    char b1[0x20];      // 0x28
+    char b2[0x20];      // 0x48
+    char pad68[0xE0];
+    int f148;
+    int f14C;
+    sRec25EB00 rec;     // 0x150
+};
+
+extern "C" void func_0025EB00(char* self, char* msg)
+{
+    int err = *(int*)(msg + 0x8);
+    if (err == 0) {
+        char name[0x100];
+        char b1[0x100];
+        char b2[0x100];
+        char buf[0x14];
+        int st[16];
+        sRec25EB00 rec;
+        cDirtysock_tag_TagFieldGetString4(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A31D8), name, 0x100, D_004A2F40);
+        cDirtysock_tag_TagFieldGetString4(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A2F38), b1, 0x100, D_004A2F40);
+        cDirtysock_tag_TagFieldGetString4(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A31E0), b2, 0x100, D_004A2F40);
+        int n1 = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A31E8), -1);
+        int n2 = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A31F0), -1);
+        cDirtysock_tag_TagFieldGetString4(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A31F8), buf, 0x14, D_004A2F40);
+        int n3 = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3130), 0);
+        cDirtysock_tag_TagFieldGetStructure(buf, st, 0x40, D_004A2F30);
+        rec.start = st[2];
+        rec.end = st[2] + st[3] + st[4];
+        rec.len = st[6];
+        rec.id = n3;
+        rec.extra = n1;
+        sMsg25EB00* m = (sMsg25EB00*)operator new(0x164, D_00480488, 0x20000000, 0);
+        m->type = 0x10D;
+        m->vt = D_00481110;
+        m->f148 = n2;
+        m->f14C = n1;
+        strcpy(m->name, name);
+        strcpy(m->b1, b1);
+        strcpy(m->b2, b2);
+        m->rec = rec;
+        post_25EB00(self, m);
+    } else if (err != 0x75757372) {
+        int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
+        m[0] = 0x102;
+        *(void***)((char*)m + 0x4) = D_00481290;
+        m[2] = err;
+        post_25EB00(self, m);
+    }
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025EE20);
 #ifdef SKIP_ASM
