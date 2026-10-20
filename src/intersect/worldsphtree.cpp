@@ -1255,7 +1255,110 @@ extern "C" void func_00335B90(void* vctx, void* vnode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00335D78);
+#ifdef SKIP_ASM
+struct sOct_5D78 {
+    void* child[8];                 // 0x00
+    void** listB;                   // 0x20
+    void** listA;                   // 0x24
+};
+
+struct sQH_5D78 {
+};
+
+struct sCb_5D78 {
+    void* q;                        // 0x00
+    int f04;
+    int f08;
+    int* result;                    // 0x0C
+    int f10;
+    int f14;
+};
+
+struct sQuad_5D78 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sBox_5D78 {
+    sQuad_5D78 a, b;
+} __attribute__((aligned(16)));
+
+struct sSelf_5D78 {
+    sCell_330BA8 cell[8];           // 0x00
+    char pad_A0[4];
+    int fA4;
+};
+
+extern "C" void func_00335960(void* ctx, void* obj);
+extern "C" void func_00335B90(void* ctx, void* obj);
+extern "C" void func_00340FA0(void* self, void* ctx);
+extern "C" void helpX_5D78(char* flag, sCb_5D78* cb, sCb_5D78* cb2, sBox_5D78* box, void** node, sCell_330BA8* cell) __asm__("func_0033CCF8");
+
+// nash::Cell::descend<TerrainCallback>
+static inline void descend_5D78(void** n, sCb_5D78* cb)
+{
+    sOct_5D78* o = (sOct_5D78*)n;
+    void** p;
+    for (p = o->listA; p != 0; p = (void**)*p) {
+        func_00335960(cb, p);
+    }
+    for (p = o->listB; p != 0; p = (void**)*p) {
+        func_00335B90(cb, p);
+    }
+    if (n[0] != 0) func_00340FA0(n[0], cb);
+    if (n[1] != 0) func_00340FA0(n[1], cb);
+    if (n[2] != 0) func_00340FA0(n[2], cb);
+    if (n[3] != 0) func_00340FA0(n[3], cb);
+    if (n[4] != 0) func_00340FA0(n[4], cb);
+    if (n[5] != 0) func_00340FA0(n[5], cb);
+    if (n[6] != 0) func_00340FA0(n[6], cb);
+    if (n[7] != 0) func_00340FA0(n[7], cb);
+}
+
+static inline void visit_5D78(sSelf_5D78* t, int k, sCb_5D78* cb, sBox_5D78* box)
+{
+    sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = c->node;
+        sQH_5D78 h;
+        char* f = (char*)&h;
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            descend_5D78(n, cb);
+        } else if (r == 2) {
+            helpX_5D78(f, cb, cb, box, n, c);
+        }
+    }
+}
+
+extern "C" int query_5D78(sSelf_5D78* self, char* q, int p3, int p4, int p5) __asm__("func_00335D78");
+extern "C" int query_5D78(sSelf_5D78* self, char* q, int p3, int p4, int p5)
+{
+    sCb_5D78 cb;
+    sBox_5D78 box;
+    int result;
+    sCb_5D78* pcb = &cb;
+    cb.q = q;
+    cb.f04 = p3;
+    cb.f08 = p4;
+    cb.result = &result;
+    cb.f10 = p5;
+    cb.f14 = self->fA4;
+    box.a = *(sQuad_5D78*)(q + 0x30);
+    box.b = *(sQuad_5D78*)(q + 0x20);
+    result = 0;
+    visit_5D78(self, 0, pcb, &box);
+    visit_5D78(self, 1, pcb, &box);
+    visit_5D78(self, 2, pcb, &box);
+    visit_5D78(self, 3, pcb, &box);
+    visit_5D78(self, 4, pcb, &box);
+    visit_5D78(self, 5, pcb, &box);
+    visit_5D78(self, 6, pcb, &box);
+    visit_5D78(self, 7, pcb, &box);
+    return result;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/worldsphtree", func_00336850);
