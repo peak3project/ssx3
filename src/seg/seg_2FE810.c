@@ -4557,7 +4557,50 @@ void func_0040B1F8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B208);
+#ifdef SKIP_ASM
+struct E0B208 { char pad[0x10]; int f10; int f14; int f18; char pad2[0x24]; };
+struct S0B208 { int f0; struct E0B208 *tab; int n; };
+extern int func_0042C078_rq(void) __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+struct E0B208 *f0B208(struct S0B208 *s) __asm__("func_0040B208");
+struct E0B208 *f0B208(struct S0B208 *s) {
+    struct E0B208 *e;
+    int i;
+    int n;
+    int c;
+    int id;
+    int seq;
+    func_0042C078_rq();
+    n = s->n;
+    i = 0;
+    e = s->tab;
+    while (i < n) {
+        if (!(e->f10 & 1)) {
+            e->f10 = (i << 16) | 5;
+            c = s->f0;
+            id = c + 1;
+            s->f0 = id;
+            if (id == 1) {
+                s->f0 = c + 2;
+                seq = 1;
+            } else {
+                seq = id;
+            }
+            id = seq;
+            e->f14 = (int)e;
+            e->f18 = id;
+            func_0042C0C0();
+            return e;
+        }
+        i++;
+        e++;
+    }
+    func_0042C0C0();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B2B0);
