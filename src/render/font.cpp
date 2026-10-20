@@ -2636,7 +2636,49 @@ extern "C" sGlyphEntry* func_00394ED0(sGlyphCache* self, sGlyphKey* key, unsigne
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_00395000);
+#ifdef SKIP_ASM
+struct sNode5000 {
+    int k0;
+    int k4;
+    int k8;
+    int padC[2];
+    int busy;
+    int pad18;
+    sNode5000* next;
+};
+
+struct sCache5000 {
+    char pad0[0x678A0];
+    sNode5000* buckets[256];
+};
+
+extern "C" sNode5000* func_00395000(sCache5000* self, int a, int b, unsigned char hash, int c)
+{
+    sNode5000** pp = &self->buckets[hash];
+    while (*pp != 0) {
+        sNode5000* e;
+        int hit = 0;
+        if ((*pp)->busy == 0) {
+            int t = (*pp)->k4 == b && (*pp)->k8 == c && (*pp)->k0 == a;
+            if (t) hit = 1;
+        }
+        e = *pp;
+        if (hit) {
+            if ((*pp) == self->buckets[hash]) {
+                return e;
+            }
+            *pp = e->next;
+            e->next = self->buckets[hash];
+            self->buckets[hash] = e;
+            return e;
+        }
+        pp = &e->next;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/font", func_003950C0);
