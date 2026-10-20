@@ -2732,7 +2732,50 @@ long func_00406EC8(int p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406F78);
+#ifdef SKIP_ASM
+extern int D_004532C0[];
+extern int func_00402C80(int *);
+int func_00406F78(int p, int cmd) {
+    int m = 0;
+    int n = 0;
+    int w;
+    long v;
+    long b;
+    int s;
+    if ((*(volatile int *)0x10002010 & 0x80004000) == 0x80000000) {
+        do {
+            if (n++ >= 0x1389) {
+                func_00402C80(*(int **)(p + 0x858));
+                n = 0;
+            }
+        } while ((*(volatile int *)0x10002010 & 0x80004000) == 0x80000000);
+    }
+    w = (cmd << 26) | 0x30000000;
+    *(volatile int *)0x10002000 = w;
+    *(int *)(p + 0x818) = D_004532C0[w >> 28];
+    v = *(volatile long *)0x10002000;
+    if (v < 0) {
+        do {
+            if (m++ >= 0x1389) {
+                func_00402C80(*(int **)(p + 0x858));
+                m = 0;
+            }
+            v = *(volatile long *)0x10002000;
+        } while (v < 0);
+    }
+    s = *(volatile int *)0x10002020;
+    b = *(long *)0x10002030;
+    *(int *)(p + 0x838) = (int)b;
+    if (b < 0)
+        *(int *)(p + 0x83C) = -(s & 0x1F) & 0x1F;
+    else
+        *(int *)(p + 0x83C) = 32;
+    *(int *)(p + 0x11C) = (int)v == 0;
+    return (short)v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004070F0);
