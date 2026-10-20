@@ -176,7 +176,126 @@ float func_001E9290(void* self, void* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatehud", func_001E92A8);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" float func_003921F0(void* self, const unsigned short* str, void* out, int n, float sx, float sy);
+
+struct sFont_92A8 {
+    char pad0[0x14];
+    int lineCount;      // 0x14
+    char pad18[0x18];
+    float f30;          // 0x30
+    float f34;          // 0x34
+    float f38;          // 0x38
+    float f3C;          // 0x3C
+};
+
+struct sTok_92A8 {
+    int hash;           // 0x00
+    char pad4[8];
+    float width;        // 0x0C
+    float height;       // 0x10
+    char pad14[0x24 - 0x14];
+};
+
+extern sTok_92A8 D_004C8980[];
+
+struct sLine_92A8 {
+    float w;
+    void* str;
+};
+
+struct sBox_92A8 {
+    float total;        // 0x00
+    float height;       // 0x04
+    sFont_92A8* font;   // 0x08
+    float pad0C;        // 0x0C
+    float scaleX;       // 0x10
+    float scaleY;       // 0x14
+    int count;          // 0x18
+    sLine_92A8 lines[6]; // 0x1C
+    unsigned short text[1]; // 0x4C
+};
+
+extern "C" void func_001E92A8(void* vself)
+{
+    sBox_92A8* self = (sBox_92A8*)vself;
+    sFont_92A8* font = self->font;
+    font->f38 = font->f30 * self->scaleX;
+    font->f3C = font->f34 * self->scaleY;
+    self->lines[0].w = 0;
+    int n = 0;
+    float maxH = self->lines[0].w;
+    self->count = 0;
+    self->lines[0].str = self->text;
+    unsigned short* p = self->text;
+    sLine_92A8* lines = self->lines;
+    float total = maxH;
+    unsigned short tmp[8];
+    if (*p != 0) {
+        do {
+            if (*p == '@') {
+                *p = 0;
+                sLine_92A8* l = (sLine_92A8*)(n * 8 + (int)lines);
+                p++;
+                if (*(unsigned short*)l->str != 0) {
+                    float w = func_003921F0(font, (unsigned short*)l->str, tmp, 1, font->f38, font->f3C);
+                    total += w;
+                    l->w = w;
+                }
+                n++;
+                char name[0x20];
+                char* d = name;
+                do {
+                    if (*p == 0x20) break;
+                    if (*p == 0) break;
+                    *d++ = *(char*)p;
+                    p++;
+                } while (1);
+                *d = 0;
+                int h = GetHashValue32(name);
+                sTok_92A8* found = 0;
+                sTok_92A8* t = D_004C8980;
+                while (t->hash != 0) {
+                    if (t->hash == h) {
+                        found = t;
+                        break;
+                    }
+                    t++;
+                }
+                lines[n].str = found;
+                float fw = found->width;
+                lines[n].w = fw;
+                total += fw;
+                n++;
+                if (maxH < found->height)
+                    maxH = found->height;
+                lines[n].str = p;
+                lines[n].w = 0;
+                if (*p != 0)
+                    p++;
+            } else {
+                p++;
+            }
+        } while (*p != 0);
+    }
+    sLine_92A8* l = (sLine_92A8*)(n * 8 + (int)lines);
+    if (*(unsigned short*)l->str != 0) {
+        float w = func_003921F0(font, (unsigned short*)l->str, tmp, 0, font->f38, font->f3C);
+        n++;
+        total += w;
+        l->w = w;
+    }
+    self->count = n;
+    float lineH = (float)font->lineCount * font->f34 * self->scaleY;
+    self->total = total;
+    float hh = lineH >? maxH;
+    self->height = hh;
+    self->pad0C = (hh - lineH) * 0.5f;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovstatehud", func_001E94E0);
