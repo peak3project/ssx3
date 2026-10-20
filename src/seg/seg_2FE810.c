@@ -2422,7 +2422,48 @@ void func_00405E30(int *p, int *o, int *in, int a, int b) {
 #undef H3
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00405FB8);
+#ifdef SKIP_ASM
+extern char D_00497ED0[];
+extern int lx5_6F78(int *, int) __asm__("func_00406F78");
+extern int lx5_70F0(int *, int) __asm__("func_004070F0");
+extern void lx5_71F8(int *, int) __asm__("func_004071F8");
+extern void lx5_3470(int *, char *, int) __asm__("func_00403470");
+int func_00405FB8(int *p) {
+    int sum = 0;
+    int c;
+    int t;
+    int again;
+    do {
+        c = lx5_6F78(p, 0);
+        switch ((unsigned)c) {
+        case 0x23:
+            again = 1;
+            sum += 0x21;
+            break;
+        case 0x22:
+            again = 1;
+            break;
+        case 0:
+            t = lx5_70F0(p, 11);
+            if (p[0x848 / 4] != 0 && t == 15) {
+                lx5_71F8(p, 11);
+                again = 1;
+                break;
+            }
+            lx5_3470(p, D_00497ED0, c);
+            p[0x11C / 4] = 1;
+            return 1;
+        default:
+            sum += c;
+            again = 0;
+            break;
+        }
+    } while (again);
+    return sum;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004060C8);
