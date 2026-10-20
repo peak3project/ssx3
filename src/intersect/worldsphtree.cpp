@@ -502,7 +502,79 @@ extern "C" void func_003309D8(sCtx_3309D8* ctx, void* tree)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00330BA8);
+#ifdef SKIP_ASM
+struct sCell_330BA8 {
+    int level, x, y, z;
+    void** node;                    // 0x10
+};
+
+struct sRoot_330BA8 {
+    sCell_330BA8 cell[8];           // 0x00
+    int fA0;
+};
+
+struct sSelf_330BA8 {
+    sRoot_330BA8* root;             // 0x00
+    int f04;
+    int count;                      // 0x08
+    void* list[0x41];               // 0x0C
+    void* list2[0x41];              // 0x110
+};
+
+struct sSphNode_340A40;
+extern "C" void func_00340A40(sSphNode_340A40* node, sCtx_3309D8* ctx);
+extern "C" int func_00328360(sCell_330BA8* c, void* box);
+extern "C" void helpX_330BA8(char* flag, sCtx_3309D8* ctx, sCtx_3309D8* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_00338920");
+
+static inline void visit_330BA8(sRoot_330BA8* t, int k, char* flags, sCtx_3309D8* ctx, void* box)
+{
+    sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = c->node;
+        char* f = &flags[k];
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            func_003309D8(ctx, n);
+            if (n[0] != 0) func_00340A40((sSphNode_340A40*)n[0], ctx);
+            if (n[1] != 0) func_00340A40((sSphNode_340A40*)n[1], ctx);
+            if (n[2] != 0) func_00340A40((sSphNode_340A40*)n[2], ctx);
+            if (n[3] != 0) func_00340A40((sSphNode_340A40*)n[3], ctx);
+            if (n[4] != 0) func_00340A40((sSphNode_340A40*)n[4], ctx);
+            if (n[5] != 0) func_00340A40((sSphNode_340A40*)n[5], ctx);
+            if (n[6] != 0) func_00340A40((sSphNode_340A40*)n[6], ctx);
+            if (n[7] != 0) func_00340A40((sSphNode_340A40*)n[7], ctx);
+        } else if (r == 2) {
+            helpX_330BA8(f, ctx, ctx, box, n, c);
+        }
+    }
+}
+
+extern "C" void func_00330BA8(sSelf_330BA8* self, void* box)
+{
+    sCtx_3309D8 ctx;
+    char flags[8];
+    sCtx_3309D8* c = &ctx;
+    sRoot_330BA8* t = self->root;
+    self->f04 = t->fA0;
+    ctx.list = (sNode_3309D8**)self->list;
+    ctx.count = &self->count;
+    *(int*)&ctx.pad08 = 0x40;
+    ctx.box = (sBox_3309D8*)box;
+    self->count = 0;
+    visit_330BA8(t, 0, flags, c, box);
+    visit_330BA8(t, 1, flags, c, box);
+    visit_330BA8(t, 2, flags, c, box);
+    visit_330BA8(t, 3, flags, c, box);
+    visit_330BA8(t, 4, flags, c, box);
+    visit_330BA8(t, 5, flags, c, box);
+    visit_330BA8(t, 6, flags, c, box);
+    visit_330BA8(t, 7, flags, c, box);
+    self->list[0x40] = (void*)-1;
+    self->list2[0x40] = (void*)-1;
+}
+#endif
 
 INCLUDE_ASM("intersect/worldsphtree", func_00331450);
 
