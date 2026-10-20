@@ -662,7 +662,76 @@ void func_004147F8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313E80", func_00414818);
+#ifdef SKIP_ASM
+// 96.79 (reg numbering: target &st=$20,start=$19,copyend=$21,pc=$22; ours &st=19,start=20,pc=21,copyend=22) - struct copy needs aligned(8)
+struct Ctx14818 {
+    char *aug;
+    int f4;
+    int f8;
+    int fC;
+    unsigned short f10;
+};
+struct St14818 {
+    char pad0[4];
+    unsigned f4;
+    char pad8[0x29A - 8];
+    unsigned short ra;
+    char rest[0x2F0 - 0x29C];
+} __attribute__((aligned(8)));
+struct SI14818 {
+    struct St14818 s;
+    int extra[2];
+};
+extern int *f14818_find(unsigned) __asm__("func_00414148");
+extern unsigned char *f14818_cie(int *, struct Ctx14818 *) __asm__("func_00414230");
+extern unsigned char *f14818_exec(unsigned char *, struct SI14818 *, struct Ctx14818 *, unsigned *) __asm__("func_00414338");
+extern unsigned char *f14818_leb(unsigned char *, int *) __asm__("func_00413B38");
+extern void f14818_memset(void *, int, int) __asm__("func_00416210");
+struct St14818 *func_00414818(unsigned pc, struct St14818 *out) {
+    struct Ctx14818 ctx;
+    struct SI14818 st;
+    int *fde;
+    int *cie;
+    unsigned char *insn;
+    unsigned char *end;
+    unsigned char *start;
+    int len;
+    unsigned fpc;
+    fde = f14818_find(pc);
+    if (fde == 0) return 0;
+    insn = f14818_cie(fde, &ctx);
+    if (insn == 0) return 0;
+    f14818_memset(&st, 0, sizeof(st));
+    st.s.ra = ctx.f10;
+    cie = (int *)((char *)fde - (fde[1] - 4));
+    end = (unsigned char *)cie + *cie + 4;
+    st.s.f4 = ctx.f4;
+    do {
+    if (insn < end) {
+        start = (unsigned char *)(fde + 4);
+        do {
+            insn = f14818_exec(insn, &st, &ctx, 0);
+        } while (insn < end);
+    } else {
+        start = (unsigned char *)(fde + 4);
+    }
+    } while (0);
+    insn = start;
+    if (*ctx.aug == 'z') {
+        insn = f14818_leb(insn, &len) + len;
+    }
+    end = (unsigned char *)fde + *fde + 4;
+    fpc = fde[2];
+    if (insn < end && pc >= fpc) {
+        do {
+            insn = f14818_exec(insn, &st, &ctx, &fpc);
+        } while (insn < end && pc >= fpc);
+    }
+    *out = st.s;
+    return out;}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313E80", func_004149F0);
