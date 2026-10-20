@@ -86,6 +86,17 @@ if not sys.platform.startswith("linux") or not os.path.isfile(f"{EE_GCC29_DIR}/b
     if UNIT_CC_NATIVE:
         print(f"warning: {EE_GCC29_DIR}/bin/ee-gcc missing or not on Linux; ee-gcc 2.9 units build with the default compiler")
     UNIT_CC_NATIVE = {}
+# Fork-only: units whose retail code was assembled with SN's own Ps2EeAs, not the driver's GNU as. In the newlib unit
+# only Ps2EeAs reproduces `li -1; dsrl32` for `dli 0xffffffff`, its ori/dsll16/dsll14 64-bit constant chains and its
+# short-loop nops in loops with an inner exit branch (all 23 retail `addiu -1; dsrl32 0` pairs are in this unit).
+# Affects obj/current only (tools/ps2eeas_cc.py); the linked build assembles these functions from their asm. Set
+# SSX3_NO_PS2EEAS=1 to use GNU as instead; if Ps2EeAs.exe is missing the unit uses GNU as (those functions don't match).
+PS2EEAS = os.environ.get("PS2EEAS", f"{STOCK_CC_DIR}/ee/bin/Ps2EeAs.exe")
+UNIT_PS2EEAS = {"seg/seg_316F98"}
+if os.environ.get("SSX3_NO_PS2EEAS") or not os.path.isfile(PS2EEAS):
+    if UNIT_PS2EEAS and not os.environ.get("SSX3_NO_PS2EEAS"):
+        print(f"warning: {PS2EEAS} missing; {', '.join(sorted(UNIT_PS2EEAS))} use GNU as")
+    UNIT_PS2EEAS = set()
 # The game was built without C++ exception support: its constructors and destructors have no EH cleanup
 # landing pads, which g++ 2.95 emits by default (e.g. cAngerFX_cAngerFX only matches with -fno-exceptions).
 COMMON_CXXFLAGS = "-fno-exceptions"
@@ -425,6 +436,12 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
         description="cc $in ($ccdir, jtbl)",
         command=f"{jt}{COMPILE_C_RULE.replace(CC_DIR, '$ccdir')} $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
     )
+    # (fork) units assembled with SN's Ps2EeAs (UNIT_PS2EEAS): the same compile, jump tables repointed, then Ps2EeAs
+    ninja.rule(
+        "cc_ps2as",
+        description="cc $in (jtbl, Ps2EeAs)",
+        command=f"python3 tools/ps2eeas_cc.py --unit $unit --as {PS2EEAS} -- {COMPILE_C_RULE} $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
+    )
     ninja.rule(
         "cpp_jt",
         description="cpp $in (jtbl)",
@@ -503,8 +520,12 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                 # (fork) tools/jtbl_cc.py drives the SN driver; the ee-gcc 2.9 wrapper isn't wired to it, so these units' switch
                 # functions keep their local jump tables (and stay below 100% in objdiff)
                 jt = task != "cc_native"
-                build(entry.object_path, entry.src_paths, task + "_jt" if jt else task, out_dir="obj/current",
-                      extra_flags=(flags + " " + unit_flags).strip(), implicit=inc + (["tools/jtbl_cc.py"] if jt else []),
+                cur_task = task + "_jt" if jt else task
+                tools_dep = ["tools/jtbl_cc.py"] if jt else []
+                if seg.name in UNIT_PS2EEAS and task == "cc":
+                    cur_task, tools_dep = "cc_ps2as", ["tools/jtbl_cc.py", "tools/ps2eeas_cc.py"]
+                build(entry.object_path, entry.src_paths, cur_task, out_dir="obj/current",
+                      extra_flags=(flags + " " + unit_flags).strip(), implicit=inc + tools_dep,
                       variables={**(tvars or {}), "unit": seg.name})
             else:
                 build(entry.object_path, entry.src_paths, task, extra_flags=unit_flags or None, variables=tvars)
