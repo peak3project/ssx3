@@ -250,7 +250,145 @@ extern "C" void func_00128AC0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_00128AF0);
+#ifdef SKIP_ASM
+extern void* D_004A28A8;
+extern int D_004A2A50;
+// PORT: func_0012BB20 takes self (the caller's $4 is still in place); other callers declare it without parameters.
+void func_0012BB20_28AF0(void* self) __asm__("func_0012BB20");
+extern "C" void func_00113C20(void* p);
+extern "C" void func_0010F560(void* p);
+extern "C" void func_00120E30(void* p);
+extern "C" void func_00120E88(void* p);
+extern "C" void func_00101B60(void* p);
+extern "C" void func_001013A8(void* p);
+extern "C" void func_00120ED8(void* p);
+extern "C" void func_00120F20(void* p);
+extern "C" void func_00121068(void* p);
+extern "C" void func_001210B0(void* p);
+extern "C" void func_001211F8(void* p);
+void func_001216E0_28AF0(void* p) __asm__("func_001216E0__FPv");
+extern "C" void func_00121700(void* p);
+extern "C" void func_00121728(void* p);
+extern "C" void func_00121750(void* p);
+void func_001217F8_28AF0(void* p) __asm__("func_001217F8__FPv");
+extern "C" void func_00121818(void* p);
+extern "C" void func_001218D0(void* p);
+extern "C" void func_00121950(void* p);
+extern "C" void func_002DD0B8(void* p);
+extern "C" void func_002DABC8(void* p);
+extern "C" void func_002E8938(void* p);
+extern "C" void func_002E66B8(void* p);
+extern "C" void func_002EADD0(void* p);
+extern "C" void func_002EF6D0(void* p);
+extern "C" void func_002D4C08(void* p);
+extern "C" void func_002E39D8(void* p);
+extern "C" void func_002DF920(void* p);
+extern "C" void func_002F1150(void* p);
+extern "C" void func_002F6518(void* p);
+
+static inline void* riderOf_28AF0(char* obj)
+{
+    return obj ? *(void**)(obj + 0x18) : 0;
+}
+
+// cAI update: gather the active riders into a local list, then run every update stage over the list.
+#define EACH_RIDER(fn) for (i = 0; i < n; i++) fn(riders[i])
+#define EACH_HANDLER(fn, off) for (i = 0; i < n; i++) fn((char*)handlers[i] + off)
+
+extern "C" void func_00128AF0(char* self)
+{
+    void* riders[8];
+    void* handlers[8];
+    int n = 0;
+    int i;
+    func_0012BB20_28AF0(self);
+    func_00113C20(self);
+    func_0010F560(self);
+    if (*(int*)(self + 0x88) > 0 && *(int*)(self + 0x7C) > 0)
+    {
+        char* mission = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x34);
+        if (mission != 0 && *(int*)(mission + 0x70) == 0)
+        {
+            n = 1;
+            riders[0] = riderOf_28AF0(*(char**)(self + 0x40));
+            func_00120E30(riderOf_28AF0(*(char**)(self + 0x70)));
+        }
+        else
+        {
+            void** slot = &riders[n];
+            *slot = riderOf_28AF0(*(char**)(self + 0x40));
+            n = 2;
+            riders[1] = riderOf_28AF0(*(char**)(self + 0x70));
+            func_00120E30(riderOf_28AF0(*(char**)(self + 0x40)));
+        }
+    }
+    else
+    {
+        int cnt = *(int*)(self + 0x7C);
+        for (int i = 0; i < cnt; i++)
+        {
+            int k = n++;
+            riders[k] = riderOf_28AF0(((char**)(self + 0x40))[i]);
+        }
+        if (*(int*)(self + 0x14) != 0)
+        {
+            int cnt2 = *(int*)(self + 0x80);
+            for (int i = 0; i < cnt2; i++)
+            {
+                int k = n++;
+                riders[k] = riderOf_28AF0(((char**)(self + 0x48))[i]);
+            }
+        }
+        if (*(int*)(self + 0x8C) != 0)
+        {
+            int cnt3 = *(int*)(self + 0x84);
+            for (int i = 0; i < cnt3; i++)
+            {
+                int k = n++;
+                riders[k] = riderOf_28AF0(((char**)(self + 0x5C))[i]);
+            }
+        }
+    }
+    if (D_004A2A50 & 1)
+    {
+        EACH_RIDER(func_00120ED8);
+    }
+    else
+    {
+        for (i = 0; i < n; i++)
+            handlers[i] = *(void**)((char*)riders[i] + 0x77C);
+        EACH_RIDER(func_00120F20);
+        EACH_RIDER(func_00121068);
+        EACH_RIDER(func_001210B0);
+        EACH_RIDER(func_001211F8);
+        EACH_RIDER(func_001216E0_28AF0);
+        EACH_RIDER(func_00121700);
+        EACH_RIDER(func_00121728);
+        EACH_RIDER(func_00121750);
+        EACH_RIDER(func_001217F8_28AF0);
+        EACH_RIDER(func_00121818);
+        EACH_RIDER(func_001218D0);
+        EACH_RIDER(func_00121950);
+        EACH_HANDLER(func_002DD0B8, 0x3B0);
+        EACH_HANDLER(func_002DABC8, 0x470);
+        EACH_HANDLER(func_002E8938, 0x520);
+        EACH_HANDLER(func_002E66B8, 0x610);
+        EACH_HANDLER(func_002EADD0, 0x9C0);
+        EACH_HANDLER(func_002EF6D0, 0xAD0);
+        EACH_HANDLER(func_002D4C08, 0xAF0);
+        EACH_HANDLER(func_002E39D8, 0xB00);
+        EACH_HANDLER(func_002DF920, 0xB40);
+        EACH_HANDLER(func_002F1150, 0xC70);
+        EACH_HANDLER(func_002F6518, 0xD20);
+        EACH_RIDER(func_00120E88);
+    }
+    func_00101B60(*(void**)(self + 0xA4));
+    func_001013A8(*(void**)(self + 0xA8));
+    *(int*)(self + 8) = *(int*)(self + 8) + 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_00129160);
