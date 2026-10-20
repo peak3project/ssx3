@@ -19235,7 +19235,103 @@ extern "C" void func_001C04A8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001C0540);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+int GetHashValue32(char* str);
+void cMemMan_free(void* p);
+void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern char D_00464860[];
+extern char D_00465590[];
+extern char D_004655A0[];
+extern char D_004655B0[];
+extern char D_004655C0[];
+extern char D_004655D0[];
+extern char D_004655E0[];
+extern char D_004655F0[];
+extern char D_00465600[];
+extern char D_00465610[];
+extern char D_00465620[];
+extern char D_00465630[];
+extern char D_00465640[];
+extern char D_00465650[];
+extern char D_00465660[];
+extern char D_00465670[];
+extern char D_00465680[];
+extern char D_00465690[];
+extern char D_004656A0[];
+extern char D_004656B0[];
+extern char D_004656C0[];
+extern char D_004656D0[];
+extern char D_004656E0[];
+extern char D_004656F0[];
+extern char D_00465700[];
+
+extern "C" void func_001C0540(void* self_)
+{
+    char* self = (char*)self_;
+    char buf[32];
+    int n;
+    int i;
+    *(int*)(self + 0x6D4) = 0xB2;
+    if (*(void**)(self + 0x6D0) != 0) {
+        cMemMan_free(*(void**)(self + 0x6D0));
+        *(void**)(self + 0x6D0) = 0;
+    }
+    if (*(int*)(self + 0x6D4) != 0) {
+        *(void**)(self + 0x6D0) = operator_new_tag(*(int*)(self + 0x6D4) << 2, D_00464860, 0x100, 0);
+        n = 0;
+        for (i = 0; i < 116; i++) {
+            sprintf(buf, D_00465590, i);
+            ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(buf);
+        }
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004655A0);
+        for (i = 116; i < 118; i++) {
+            sprintf(buf, D_00465590, i);
+            ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(buf);
+        }
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004655B0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004655C0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004655D0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004655E0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004655F0);
+        for (i = 122; i < 125; i++) {
+            sprintf(buf, D_00465590, i);
+            ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(buf);
+        }
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465600);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465610);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465620);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465630);
+        for (i = 126; i < 129; i++) {
+            sprintf(buf, D_00465590, i);
+            ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(buf);
+        }
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465640);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465650);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465660);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465670);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465680);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465690);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004656A0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004656B0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004656C0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004656D0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004656E0);
+        for (i = 131; i < 154; i++) {
+            sprintf(buf, D_00465590, i);
+            ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(buf);
+        }
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_004656F0);
+        ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(D_00465700);
+        for (i = 158; i < 166; i++) {
+            sprintf(buf, D_00465590, i);
+            ((int*)*(void**)(self + 0x6D0))[n++] = GetHashValue32(buf);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C0A28);
