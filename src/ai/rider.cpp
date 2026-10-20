@@ -1173,7 +1173,44 @@ extern "C" void func_001210B0(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_001211F8);
+#ifdef SKIP_ASM
+extern "C" void func_00120378(cRider* self);
+
+static inline float approach_1211F8(float cur, float target, float rate)
+{
+    if (target + rate < cur)
+        return cur - rate;
+    if (cur < target - rate)
+        return cur + rate;
+    return target;
+}
+
+extern "C" void func_001211F8(cRider* self)
+{
+    func_00120378(self);
+    { sRiderChannel* c = &self->unk_1F0[0]; c->cur = approach_1211F8(self->unk_1F0[0].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[1]; c->cur = approach_1211F8(self->unk_1F0[1].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[2]; c->cur = approach_1211F8(self->unk_1F0[2].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[3]; c->cur = approach_1211F8(self->unk_1F0[3].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[4]; c->cur = approach_1211F8(self->unk_1F0[4].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[5]; c->cur = approach_1211F8(self->unk_1F0[5].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[6]; c->cur = approach_1211F8(self->unk_1F0[6].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[7]; c->cur = approach_1211F8(self->unk_1F0[7].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[8]; c->cur = approach_1211F8(self->unk_1F0[8].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[9]; c->cur = approach_1211F8(self->unk_1F0[9].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[10]; c->cur = approach_1211F8(self->unk_1F0[10].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[11]; c->cur = approach_1211F8(self->unk_1F0[11].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[12]; c->cur = approach_1211F8(self->unk_1F0[12].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[13]; c->cur = approach_1211F8(self->unk_1F0[13].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[14]; c->cur = approach_1211F8(self->unk_1F0[14].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[15]; c->cur = approach_1211F8(self->unk_1F0[15].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[16]; c->cur = approach_1211F8(self->unk_1F0[16].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[17]; c->cur = approach_1211F8(self->unk_1F0[17].cur, c->target, c->rate); }
+    { sRiderChannel* c = &self->unk_1F0[18]; c->cur = approach_1211F8(self->unk_1F0[18].cur, c->target, c->rate); }
+}
+#endif
 
 extern "C" void* func_00111408(void* obj);
 
