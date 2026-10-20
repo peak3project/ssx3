@@ -2793,7 +2793,43 @@ void func_004071F8(int p, int v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004072E8);
+#ifdef SKIP_ASM
+extern int D_004532C0[];
+extern int func_00402C80(int *);
+extern long func_00406EC8_k() __asm__("func_00406EC8");
+int func_004072E8(int p, int n) {
+    int c = 0;
+    int w;
+    unsigned r;
+    int x;
+    int *e;
+    if ((*(volatile int *)0x10002010 & 0x80004000) == 0x80000000) {
+        do {
+            if (c++ >= 0x1389) {
+                func_00402C80(*(int **)(p + 0x858));
+                c = 0;
+            }
+        } while ((*(volatile int *)0x10002010 & 0x80004000) == 0x80000000);
+    }
+    if (*(int *)(p + 0x818) || *(int *)(p + 0x83C) < n) {
+        *(volatile int *)0x10002000 = 0x40000000;
+        *(int *)(p + 0x818) = D_004532C0[4];
+        x = (int)func_00406EC8_k(p);
+        *(int *)(p + 0x838) = x;
+    }
+    r = (unsigned)*(int *)(p + 0x838) >> (32 - n);
+    *(int *)(p + 0x83C) = 32;
+    w = n | 0x40000000;
+    *(volatile int *)0x10002000 = w;
+    e = &D_004532C0[(unsigned)w >> 28];
+    *(int *)(p + 0x818) = *e;
+    x = (int)func_00406EC8_k(p);
+    *(int *)(p + 0x838) = x;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407438);
