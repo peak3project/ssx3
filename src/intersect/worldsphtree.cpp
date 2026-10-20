@@ -1672,7 +1672,101 @@ extern "C" void func_00336D40(void* vctx, void* vnode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00336F30);
+#ifdef SKIP_ASM
+struct sOct_6F30 {
+    void* child[8];                 // 0x00
+    void** list;                    // 0x20
+};
+
+struct sQH_6F30 {
+};
+
+struct sCb_6F30 {
+    void* q;                        // 0x00
+    int f04;
+    int f08;
+    int* result;                    // 0x0C
+    int f10;
+};
+
+struct sQuad_6F30 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sBox_6F30 {
+    sQuad_6F30 a, b;
+} __attribute__((aligned(16)));
+
+struct sSelf_6F30 {
+    sCell_330BA8 cell[8];           // 0x00
+};
+
+extern "C" void func_00336D40(void* ctx, void* obj);
+extern "C" void func_003410C0(void* self, void* ctx);
+extern "C" void helpX_6F30(char* flag, sCb_6F30* cb, sCb_6F30* cb2, sBox_6F30* box, void** node, sCell_330BA8* cell) __asm__("func_0033DFD8");
+
+// nash::Cell::descend<StaticObjectCallback>
+static inline void descend_6F30(void** n, sCb_6F30* cb)
+{
+    sOct_6F30* o = (sOct_6F30*)n;
+    void** p;
+    for (p = o->list; p != 0; p = (void**)*p) {
+        func_00336D40(cb, p);
+    }
+    if (n[0] != 0) func_003410C0(n[0], cb);
+    if (n[1] != 0) func_003410C0(n[1], cb);
+    if (n[2] != 0) func_003410C0(n[2], cb);
+    if (n[3] != 0) func_003410C0(n[3], cb);
+    if (n[4] != 0) func_003410C0(n[4], cb);
+    if (n[5] != 0) func_003410C0(n[5], cb);
+    if (n[6] != 0) func_003410C0(n[6], cb);
+    if (n[7] != 0) func_003410C0(n[7], cb);
+}
+
+static inline void visit_6F30(sSelf_6F30* t, int k, sCb_6F30* cb, sBox_6F30* box)
+{
+    sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = c->node;
+        sQH_6F30 h;
+        char* f = (char*)&h;
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            descend_6F30(n, cb);
+        } else if (r == 2) {
+            helpX_6F30(f, cb, cb, box, n, c);
+        }
+    }
+}
+
+extern "C" int query_6F30(sSelf_6F30* self, char* q, int p3, int p4, int p5) __asm__("func_00336F30");
+extern "C" int query_6F30(sSelf_6F30* self, char* q, int p3, int p4, int p5)
+{
+    sCb_6F30 cb;
+    sBox_6F30 box;
+    int result;
+    sCb_6F30* pcb = &cb;
+    cb.q = q;
+    cb.f04 = p3;
+    cb.f08 = p4;
+    cb.result = &result;
+    cb.f10 = p5;
+    box.a = *(sQuad_6F30*)(q + 0x30);
+    box.b = *(sQuad_6F30*)(q + 0x20);
+    result = 0;
+    visit_6F30(self, 0, pcb, &box);
+    visit_6F30(self, 1, pcb, &box);
+    visit_6F30(self, 2, pcb, &box);
+    visit_6F30(self, 3, pcb, &box);
+    visit_6F30(self, 4, pcb, &box);
+    visit_6F30(self, 5, pcb, &box);
+    visit_6F30(self, 6, pcb, &box);
+    visit_6F30(self, 7, pcb, &box);
+    return result;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/worldsphtree", func_003378C0);
