@@ -3202,7 +3202,52 @@ int func_003FC0D8(void) { return D_004A5B20 != 0; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC0E8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC260);
+#ifdef SKIP_ASM
+// 99.47: only $2/$3 swap between D ptr and q (f6C) in blocks 3,7 (target D in $2). tried decl order sweep, q vs int v, permuter 4min nothing. Names prefixed c260_ in file to avoid clashes
+typedef struct { int (*f0)(void); int (*f4)(void); } V3FC260;
+typedef struct { char pad[0x64]; int f64; int f68; V3FC260 *f6C; V3FC260 *f70; char pad2[0xC]; int f80; char pad3[0xC]; int f90; int f94; int f98; int f9C; int fA0; } S3FC260;
+extern S3FC260 *D_C260 __asm__("D_004A5B20");
+extern int c260_C0D8(void) __asm__("func_003FC0D8");
+extern void c260_B9A0(int) __asm__("func_003FB9A0");
+extern int c260_CF00(int, int, int, int) __asm__("func_003FCF00");
+extern void c260_6760(int, int, int, int) __asm__("func_00266760");
+extern int c260_B828(int) __asm__("func_003FB828");
+extern int c260_B840(int) __asm__("func_003FB840");
+extern int c260_B810(int, S3FC260 *) __asm__("func_003FB810");
+extern int c260_9530(void) __asm__("func_003F9530");
+int func_003FC260_impl(void) __asm__("func_003FC260");
+int func_003FC260_impl(void) {
+    int r;
+    int v;
+    V3FC260 *q;
+    if (c260_C0D8() == 0) return 2;
+    c260_B9A0(D_C260->f80);
+    v = D_C260->f80 + 0xC;
+    D_C260->f80 = v;
+    r = c260_CF00(v, D_C260->fA0, 0, 1);
+    if (r != 0) return r;
+    c260_6760(D_C260->fA0, D_C260->f9C, D_C260->f90 * 16, 4);
+    q = D_C260->f6C;
+    D_C260->f9C = 0;
+    if (q != 0) {
+        r = q->f4();
+        if (r != 0) return c260_B828(r);
+        c260_6760(D_C260->fA0, D_C260->f64, D_C260->f68, 4);
+        D_C260->f64 = 0;
+    }
+    D_C260->f6C = 0;
+    r = D_C260->f70->f4();
+    if (r != 0) return c260_B840(r);
+    D_C260->f70 = 0;
+    r = c260_9530();
+    if (r != 0) return c260_B810(r, D_C260);
+    c260_6760(D_C260->fA0, (int)D_C260, 0xAC, 4);
+    D_C260 = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC390);
