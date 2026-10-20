@@ -2006,7 +2006,75 @@ int func_004298E8(char *a0, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00429A88);
+#ifdef SKIP_ASM
+struct V64 { int w[16]; };
+struct S9A88 { int f0; int f4; int f8; int fC; struct V64 v; char name[0x400]; };
+extern int D_0045520C;
+extern struct S9A88 D_9A88 __asm__("D_0052D700");
+extern char D_0052E340[];
+extern char D_0052EE00[];
+extern int func_00427988_b(int) __asm__("func_00427988");
+extern void func_00427A90(void);
+extern void func_004279B8(void);
+extern void func_00426358(int, int);
+extern int func_00423DA0(int *p);
+extern void func_00423DB0(int);
+extern int func_00423DE0_i(int) __asm__("func_00423DE0");
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+int func_00429A88_d(char *, struct V64 *, int) __asm__("func_00429A88");
+int func_00429A88_d(char *s, struct V64 *src, int a2) {
+    int buf[12];
+    int sem;
+    int v;
+    int n;
+    unsigned char c;
+    struct S9A88 *p = &D_9A88;
+    func_00427988_b(0xD);
+    if (D_0045520C == 0) {
+        func_00427A90();
+    }
+    c = (p->name[0] = s[0]);
+    n = 0;
+    if (c != 0) {
+        while (++n < 0x400) {
+            c = (p->name[n] = s[n]);
+            if (c == 0) {
+                break;
+            }
+        }
+    }
+    if (n == 0x400) {
+        p->name[0x3FF] = 0;
+        n = 0x3FF;
+    }
+    p->v = *src;
+    p->fC = a2;
+    buf[1] = 1;
+    buf[2] = 0;
+    buf[5] = 0;
+    sem = func_00423DA0(&buf[0]);
+    p->f0 = sem;
+    p->f4 = (int)&buf[8];
+    p->f8 = 4;
+    func_00426358((int)&D_9A88, 0x450);
+    if (func_00426D18_v(D_0052EE00, 0xD, 0, &D_9A88, n + 0x51, D_0052E340, 4, 0, 0) < 0) {
+        func_00423DB0(sem);
+        func_004279B8();
+        return -0xB;
+    }
+    v = *(int *)((int)D_0052E340 | 0x20000000);
+    func_004279B8();
+    if (v == 0) {
+        func_00423DB0(sem);
+        return -0xB;
+    }
+    func_00423DE0_i(sem);
+    func_00423DB0(sem);
+    return buf[8];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429CC8);
