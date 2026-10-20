@@ -1918,7 +1918,73 @@ int *func_00420978(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316F98", func_004209B0);
+#ifdef SKIP_ASM
+extern int *func_00420510(int, int);
+struct Bigint *func_004209B0(int ptr, struct Bigint *a, struct Bigint *b) {
+    struct Bigint *c;
+    int i, k, wa, wb, wc;
+    unsigned *x, *xa, *xae, *xb, *xbe, *xc, *xc0;
+    unsigned y, carry, z, z2;
+    if (a->wds < b->wds) {
+        c = a;
+        a = b;
+        b = c;
+    }
+    k = a->k;
+    wa = a->wds;
+    wb = b->wds;
+    wc = wa + wb;
+    if (wc > a->maxwds)
+        k++;
+    c = (struct Bigint *)func_00420510(ptr, k);
+    for (x = c->x, xa = x + wc; x < xa; x++)
+        *x = 0;
+    xa = a->x;
+    xae = xa + wa;
+    xb = b->x;
+    xbe = xb + wb;
+    xc0 = c->x;
+    for (; xb < xbe; xb++, xc0++) {
+        if ((y = *xb & 0xffff)) {
+            x = xa;
+            xc = xc0;
+            carry = 0;
+            do {
+                z = (*x & 0xffff) * y + (*xc & 0xffff) + carry;
+                carry = z >> 16;
+                z2 = (*x++ >> 16) * y + (*xc >> 16) + carry;
+                carry = z2 >> 16;
+                ((unsigned short *)xc)[1] = z2;
+                ((unsigned short *)xc)[0] = z;
+                xc++;
+            } while (x < xae);
+            *xc = carry;
+        }
+        if ((y = *xb >> 16)) {
+            x = xa;
+            xc = xc0;
+            carry = 0;
+            z2 = *xc;
+            do {
+                z = (*x & 0xffff) * y + (*xc >> 16) + carry;
+                carry = z >> 16;
+                ((unsigned short *)xc)[1] = z;
+                ((unsigned short *)xc)[0] = z2;
+                xc++;
+                z2 = (*x++ >> 16) * y + (*xc & 0xffff) + carry;
+                carry = z2 >> 16;
+            } while (x < xae);
+            *xc = z2;
+        }
+    }
+    for (xc0 = c->x, xc = xc0 + wc; wc > 0 && !*--xc; --wc)
+        ;
+    c->wds = wc;
+    return c;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316F98", func_00420BC8);
