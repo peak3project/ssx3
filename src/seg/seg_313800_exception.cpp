@@ -198,7 +198,19 @@ void throw_bad_cast_cd8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412D58);
+#ifdef SKIP_ASM
+__asm__("_vt$10bad_typeid = D_00499A18\n"
+        "_$_10bad_typeid = func_00415088");
+
+// __throw_bad_typeid()
+void throw_bad_typeid_d58(void) __asm__("func_00412D58");
+void throw_bad_typeid_d58(void)
+{
+    throw bad_typeid();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412DD8);
