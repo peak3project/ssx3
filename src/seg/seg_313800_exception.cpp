@@ -52,7 +52,18 @@ int func_00412838(int v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412848);
+#ifdef SKIP_ASM
+// __terminate_func / __unexpected_func (retail data D_00453440 / D_00453A38); never return
+extern sVfpNoRet D_00453A38_f __asm__("D_00453A38");
+// unexpected()
+void unexpected_848(void) __asm__("func_00412848") __attribute__((__noreturn__));
+void unexpected_848(void)
+{
+    D_00453A38_f();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313800_exception", func_00412860);
 
