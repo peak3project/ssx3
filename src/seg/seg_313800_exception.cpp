@@ -2,7 +2,19 @@
 
 extern "C" {
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412800);
+#ifdef SKIP_ASM
+// __terminate_func / __unexpected_func (retail data D_00453440 / D_00453A38); never return
+typedef void (*sVfpNoRet)(void) __attribute__((__noreturn__));
+extern sVfpNoRet D_00453440_f __asm__("D_00453440");
+// terminate()
+void terminate_800(void) __asm__("func_00412800") __attribute__((__noreturn__));
+void terminate_800(void)
+{
+    D_00453440_f();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313800_exception", func_00412818);
 
