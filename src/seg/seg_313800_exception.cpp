@@ -180,7 +180,19 @@ INCLUDE_ASM("seg/seg_313800_exception", func_00412CD8);
 
 INCLUDE_ASM("seg/seg_313800_exception", func_00412D58);
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412DD8);
+#ifdef SKIP_ASM
+struct sCpEhInfoDD8 { int pad[5]; int caught; };
+extern sCpEhInfoDD8** func_00410490_dd8(void) __asm__("func_00410490");
+// uncaught_exception(): an exception is being thrown and no handler has caught it yet
+bool uncaught_exception_dd8(void) __asm__("func_00412DD8");
+bool uncaught_exception_dd8(void)
+{
+    sCpEhInfoDD8* p = *func_00410490_dd8();
+    return p && !p->caught;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412E10);
