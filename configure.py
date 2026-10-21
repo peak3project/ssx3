@@ -56,7 +56,8 @@ UNIT_CFLAGS = {
     # strchr/strcpy/sprintf/ungetc) and seg_325220 reach .sdata/.sbss globals with lui/%lo and never via $gp.
     "seg/seg_2F0F40": "-G0",
     "seg/seg_313E80": "-G0",
-    "seg/seg_316F98": "-G0",
+    "seg/seg_315B68_tinfo": "-G0",
+    "seg/seg_316FB8": "-G0",
     "seg/seg_325220": "-G0",
     "seg/seg_32F020": "-G0",
     # Units whose retail code was compiled WITH exceptions (the default of g++ 2.95): their functions only match
@@ -84,6 +85,7 @@ EE_GCC29_DIR = os.environ.get("EE_GCC29_DIR", f"{TOOLS_DIR}/cc/ee-gcc2.9-991111"
 UNIT_CC_NATIVE = {
     "seg/seg_2FE810": EE_GCC29_DIR,
     "seg/seg_313E80": EE_GCC29_DIR,
+    "seg/seg_315B68_tinfo": EE_GCC29_DIR,
     "seg/seg_325220": EE_GCC29_DIR,
 }
 if not sys.platform.startswith("linux") or not os.path.isfile(f"{EE_GCC29_DIR}/bin/ee-gcc"):
@@ -96,7 +98,7 @@ if not sys.platform.startswith("linux") or not os.path.isfile(f"{EE_GCC29_DIR}/b
 # Affects obj/current only (tools/ps2eeas_cc.py); the linked build assembles these functions from their asm. Set
 # SSX3_NO_PS2EEAS=1 to use GNU as instead; if Ps2EeAs.exe is missing the unit uses GNU as (those functions don't match).
 PS2EEAS = os.environ.get("PS2EEAS", f"{STOCK_CC_DIR}/ee/bin/Ps2EeAs.exe")
-UNIT_PS2EEAS = {"seg/seg_316F98"}
+UNIT_PS2EEAS = {"seg/seg_316FB8"}
 if os.environ.get("SSX3_NO_PS2EEAS") or not os.path.isfile(PS2EEAS):
     if UNIT_PS2EEAS and not os.environ.get("SSX3_NO_PS2EEAS"):
         print(f"warning: {PS2EEAS} missing; {', '.join(sorted(UNIT_PS2EEAS))} use GNU as")

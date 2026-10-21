@@ -3,7 +3,7 @@
 
     python3 tools/ps2eeas_cc.py --unit UNIT --as PS2EEAS.exe -- <compiler argv with -c SRC ... -o OUT.o>
 
-Why (fork): the retail newlib unit (seg/seg_316F98) was assembled with SN's own Ps2EeAs, not GNU as. Only Ps2EeAs
+Why (fork): the retail newlib unit (seg/seg_316FB8) was assembled with SN's own Ps2EeAs, not GNU as. Only Ps2EeAs
 expands `dli 0xffffffff` as `li -1; dsrl32`, builds 64-bit constants with its ori/dsll16/dsll14 chain and pads
 short loops that contain an inner exit branch; with GNU as those functions can't reach 100% from any C. The
 normal (linked) build is not affected: it assembles every function from its asm.

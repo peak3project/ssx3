@@ -1,18 +1,7 @@
 #include "common.h"
 
-// defined in seg_313E80 (moved there with the ee-gcc 2.9 split)
-extern int func_00414B68(int *p, int flag);
-
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00415F98);
-#ifdef SKIP_ASM
-void func_00415F98(void) {
-    ((void (*)(void))func_00414B68)();
-}
-#endif
-
-//100%
-INCLUDE_ASM("seg/seg_316F98", func_00415FB8);
+INCLUDE_ASM("seg/seg_316FB8", func_00415FB8);
 #ifdef SKIP_ASM
 extern int D_00454944;
 int func_00415FB8(void) {
@@ -20,32 +9,32 @@ int func_00415FB8(void) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00415FC8);
+INCLUDE_ASM("seg/seg_316FB8", func_00415FC8);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041605C);
+INCLUDE_ASM("seg/seg_316FB8", func_0041605C);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041610C);
+INCLUDE_ASM("seg/seg_316FB8", func_0041610C);
 
-INCLUDE_ASM("seg/seg_316F98", func_00416210);
+INCLUDE_ASM("seg/seg_316FB8", func_00416210);
 
-INCLUDE_ASM("seg/seg_316F98", func_004162D0);
+INCLUDE_ASM("seg/seg_316FB8", func_004162D0);
 
-INCLUDE_ASM("seg/seg_316F98", strchr);
+INCLUDE_ASM("seg/seg_316FB8", strchr);
 
-INCLUDE_ASM("seg/seg_316F98", func_004165A8);
+INCLUDE_ASM("seg/seg_316FB8", func_004165A8);
 
-INCLUDE_ASM("seg/seg_316F98", strcpy);
+INCLUDE_ASM("seg/seg_316FB8", strcpy);
 
-INCLUDE_ASM("seg/seg_316F98", strlen);
+INCLUDE_ASM("seg/seg_316FB8", strlen);
 
-INCLUDE_ASM("seg/seg_316F98", func_00416958);
+INCLUDE_ASM("seg/seg_316FB8", func_00416958);
 
-INCLUDE_ASM("seg/seg_316F98", func_00416B18);
+INCLUDE_ASM("seg/seg_316FB8", func_00416B18);
 
-INCLUDE_ASM("seg/seg_316F98", strncpy);
+INCLUDE_ASM("seg/seg_316FB8", strncpy);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00416EB0);
+INCLUDE_ASM("seg/seg_316FB8", func_00416EB0);
 #ifdef SKIP_ASM
 extern int func_00420180(int, char *, int *);
 extern char *func_00420010(int);
@@ -79,7 +68,7 @@ char *func_00416EB0_(int ptr, char *file, char *mode) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00416F90);
+INCLUDE_ASM("seg/seg_316FB8", func_00416F90);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern void func_00416EB0(int, int, int);
@@ -89,7 +78,7 @@ void func_00416F90(int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00416FC0);
+INCLUDE_ASM("seg/seg_316FB8", func_00416FC0);
 #ifdef SKIP_ASM
 extern void func_0041FE30(void);
 extern int func_00417418(int, void (*)(void));
@@ -99,7 +88,7 @@ void func_00416FC0(int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00416FE0);
+INCLUDE_ASM("seg/seg_316FB8", func_00416FE0);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern void func_00416FC0(int);
@@ -109,7 +98,7 @@ void func_00416FE0(void) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00417008);
+INCLUDE_ASM("seg/seg_316FB8", func_00417008);
 #ifdef SKIP_ASM
 struct R17008 {
     int err;
@@ -265,7 +254,7 @@ dumb:
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00417418);
+INCLUDE_ASM("seg/seg_316FB8", func_00417418);
 #ifdef SKIP_ASM
 struct G17418 {
     struct G17418 *next;
@@ -290,7 +279,7 @@ int func_00417418(int r_, void (*fn_)(void)) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004174B0);
+INCLUDE_ASM("seg/seg_316FB8", func_004174B0);
 #ifdef SKIP_ASM
 struct F174B0 {
     char *p;
@@ -334,7 +323,7 @@ void func_004174B0(struct F174B0 *f) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00417578);
+INCLUDE_ASM("seg/seg_316FB8", func_00417578);
 #ifdef SKIP_ASM
 #define func_00417578_va_start(ap) \
     (ap = (char*)__builtin_next_arg() \
@@ -348,7 +337,7 @@ void func_00417578(int *p, int fmt, ...) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004175C8);
+INCLUDE_ASM("seg/seg_316FB8", func_004175C8);
 #ifdef SKIP_ASM
 #define func_004175C8_va_start(ap) \
     (ap = (char*)__builtin_next_arg() \
@@ -366,7 +355,7 @@ void func_004175C8(int fmt, ...) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00417628);
+INCLUDE_ASM("seg/seg_316FB8", func_00417628);
 #ifdef SKIP_ASM
 extern void func_0041FE30(void);
 void func_00417628(void) {
@@ -374,10 +363,10 @@ void func_00417628(void) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00417648);
+INCLUDE_ASM("seg/seg_316FB8", func_00417648);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004177B0);
+INCLUDE_ASM("seg/seg_316FB8", func_004177B0);
 #ifdef SKIP_ASM
 #define func_004177B0_va_start(ap) \
     (ap = (char*)__builtin_next_arg() \
@@ -408,7 +397,7 @@ void func_004177B0(int reent, char *buf, int fmt, ...) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", sprintf);
+INCLUDE_ASM("seg/seg_316FB8", sprintf);
 #ifdef SKIP_ASM
 #define sprintf_va_start(ap) \
     (ap = (char*)__builtin_next_arg() \
@@ -440,7 +429,7 @@ void sprintf(char *buf, int fmt, ...) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004178A8);
+INCLUDE_ASM("seg/seg_316FB8", func_004178A8);
 #ifdef SKIP_ASM
 int func_004178A8(void) {
     return 0;
@@ -448,7 +437,7 @@ int func_004178A8(void) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004178B0);
+INCLUDE_ASM("seg/seg_316FB8", func_004178B0);
 #ifdef SKIP_ASM
 #define func_004178B0_va_start(ap) \
     (ap = (char*)__builtin_next_arg() \
@@ -490,7 +479,7 @@ int func_004178B0(char *str, int fmt, ...) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00417948);
+INCLUDE_ASM("seg/seg_316FB8", func_00417948);
 #ifdef SKIP_ASM
 extern long func_0041FD10(int *, int, int, int);
 long func_00417948(int *f, int a, int b) {
@@ -505,7 +494,7 @@ long func_00417948(int *f, int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004179B0);
+INCLUDE_ASM("seg/seg_316FB8", func_004179B0);
 #ifdef SKIP_ASM
 extern long func_0041FDD0(int *, int, int, int);
 int func_004179B0_(int *f, int a, int b) __asm__("func_004179B0");
@@ -518,7 +507,7 @@ int func_004179B0_(int *f, int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00417A30);
+INCLUDE_ASM("seg/seg_316FB8", func_00417A30);
 #ifdef SKIP_ASM
 extern long func_0041FC50(int *, int, int, int);
 long func_00417A30(int *f, int a, int b) {
@@ -535,7 +524,7 @@ long func_00417A30(int *f, int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00417A98);
+INCLUDE_ASM("seg/seg_316FB8", func_00417A98);
 #ifdef SKIP_ASM
 extern int func_0041FB98(int, int);
 void func_00417A98(int *p) {
@@ -543,10 +532,10 @@ void func_00417A98(int *p) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00417AB8);
+INCLUDE_ASM("seg/seg_316FB8", func_00417AB8);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004185D0);
+INCLUDE_ASM("seg/seg_316FB8", func_004185D0);
 #ifdef SKIP_ASM
 char *func_004185D0(char *tab, char *fmt) {
     int c, n, v;
@@ -591,7 +580,7 @@ char *func_004185D0(char *tab, char *fmt) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004186C8);
+INCLUDE_ASM("seg/seg_316FB8", func_004186C8);
 #ifdef SKIP_ASM
 struct Fvsprintf {
     char *p;
@@ -619,7 +608,7 @@ void func_004186C8(char *buf, int fmt, char *ap) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418720);
+INCLUDE_ASM("seg/seg_316FB8", func_00418720);
 #ifdef SKIP_ASM
 struct F18720 {
     char *p;
@@ -649,7 +638,7 @@ int func_00418720(char *buf, unsigned n, int fmt, char *ap) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418790);
+INCLUDE_ASM("seg/seg_316FB8", func_00418790);
 #ifdef SKIP_ASM
 void func_001001C8(int) __attribute__((noreturn));
 void func_00418790(void) {
@@ -658,7 +647,7 @@ void func_00418790(void) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004187A0);
+INCLUDE_ASM("seg/seg_316FB8", func_004187A0);
 #ifdef SKIP_ASM
 extern void func_0041A7E8(int, int);
 void func_004187A0(int a) {
@@ -667,7 +656,7 @@ void func_004187A0(int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004187C0);
+INCLUDE_ASM("seg/seg_316FB8", func_004187C0);
 #ifdef SKIP_ASM
 extern long func_0041E9E0(int, int, int);
 int func_004187C0(int a) {
@@ -676,7 +665,7 @@ int func_004187C0(int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004187E8);
+INCLUDE_ASM("seg/seg_316FB8", func_004187E8);
 #ifdef SKIP_ASM
 void *func_004187E8(void *key, char *base, unsigned nmemb, unsigned size, int (*compar)(void *, void *)) {
     unsigned lo = 0, hi = nmemb, mid;
@@ -700,7 +689,7 @@ void *func_004187E8(void *key, char *base, unsigned nmemb, unsigned size, int (*
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004188C0);
+INCLUDE_ASM("seg/seg_316FB8", func_004188C0);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern void func_00418CA8(int);
@@ -716,7 +705,7 @@ int func_004188C0(int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418910);
+INCLUDE_ASM("seg/seg_316FB8", func_00418910);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern void func_00418CA8(int);
@@ -729,10 +718,10 @@ void func_00418910(int a) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00418958);
+INCLUDE_ASM("seg/seg_316FB8", func_00418958);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418CA8);
+INCLUDE_ASM("seg/seg_316FB8", func_00418CA8);
 #ifdef SKIP_ASM
 extern int func_00423C90(void);
 extern void func_00423DE0(int);
@@ -752,7 +741,7 @@ void func_00418CA8(int unused) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418D08);
+INCLUDE_ASM("seg/seg_316FB8", func_00418D08);
 #ifdef SKIP_ASM
 extern void func_00423DC0(int);
 extern int D_00454CA8;
@@ -767,7 +756,7 @@ void func_00418D08(int unused) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418D48);
+INCLUDE_ASM("seg/seg_316FB8", func_00418D48);
 #ifdef SKIP_ASM
 extern void func_004218D8(int, int, int, int, int);
 void func_00418D48(int a, int b, int c, int d) {
@@ -776,7 +765,7 @@ void func_00418D48(int a, int b, int c, int d) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418D68);
+INCLUDE_ASM("seg/seg_316FB8", func_00418D68);
 #ifdef SKIP_ASM
 extern int func_00413AF8(void);
 extern void func_00418D48(int, int, int, int);
@@ -786,7 +775,7 @@ void func_00418D68(int a, int b, int c) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418DB8);
+INCLUDE_ASM("seg/seg_316FB8", func_00418DB8);
 #ifdef SKIP_ASM
 extern int func_00413AF8(void);
 extern int func_00418E68(int, int, int);
@@ -796,7 +785,7 @@ void func_00418DB8(int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418DF8);
+INCLUDE_ASM("seg/seg_316FB8", func_00418DF8);
 #ifdef SKIP_ASM
 extern void func_00421A50(int, int, int, int, int);
 void func_00418DF8(int a, int b, int c, int d) {
@@ -805,7 +794,7 @@ void func_00418DF8(int a, int b, int c, int d) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418E18);
+INCLUDE_ASM("seg/seg_316FB8", func_00418E18);
 #ifdef SKIP_ASM
 extern int func_00413AF8(void);
 extern void func_00418DF8(int, int, int, int);
@@ -815,7 +804,7 @@ void func_00418E18(int a, int b, int c) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00418E68);
+INCLUDE_ASM("seg/seg_316FB8", func_00418E68);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern int func_00412500(int, int);
@@ -831,12 +820,12 @@ int func_00418E68(int a, int prec, int buf_) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00418EF8);
+INCLUDE_ASM("seg/seg_316FB8", func_00418EF8);
 
-INCLUDE_ASM("seg/seg_316F98", func_004198D8);
+INCLUDE_ASM("seg/seg_316FB8", func_004198D8);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041A7E8);
+INCLUDE_ASM("seg/seg_316FB8", func_0041A7E8);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern void func_004198D8(int, int, int);
@@ -846,7 +835,7 @@ void func_0041A7E8(int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041A818);
+INCLUDE_ASM("seg/seg_316FB8", func_0041A818);
 #ifdef SKIP_ASM
 extern void func_004127A8(int);
 void func_0041A818(void) {
@@ -855,7 +844,7 @@ void func_0041A818(void) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041A840);
+INCLUDE_ASM("seg/seg_316FB8", func_0041A840);
 #ifdef SKIP_ASM
 extern char D_00499C81[];
 extern long func_00411538_div(long, long) __asm__("func_00411538");
@@ -913,7 +902,7 @@ unsigned long func_0041A840_(int *ptr, char *nptr, char **endptr, int base) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041AA50);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AA50);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern void func_0041A840(int, int, int, int);
@@ -923,7 +912,7 @@ void func_0041AA50(int a, int b, int c) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041AA88);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AA88);
 #ifdef SKIP_ASM
 int func_0041AA88(char *a, char *b) {
     while (*a && func_0041EA18(*a) == func_0041EA18(*b)) {
@@ -935,7 +924,7 @@ int func_0041AA88(char *a, char *b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041AB08);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AB08);
 #ifdef SKIP_ASM
 int func_0041AB08(char *s1, char *s2) {
     char *s = s1;
@@ -953,7 +942,7 @@ int func_0041AB08(char *s1, char *s2) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041AB78);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AB78);
 #ifdef SKIP_ASM
 extern int func_0041EA18(int);
 int func_0041AB78(char *s1, char *s2, unsigned n) {
@@ -969,10 +958,10 @@ int func_0041AB78(char *s1, char *s2, unsigned n) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041AC40);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AC40);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041ACC0);
+INCLUDE_ASM("seg/seg_316FB8", func_0041ACC0);
 #ifdef SKIP_ASM
 char *func_0041ACC0(char *s, char c) {
     char *r = 0;
@@ -985,7 +974,7 @@ char *func_0041ACC0(char *s, char c) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041AD10);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AD10);
 #ifdef SKIP_ASM
 int func_0041AD10(char *s1, char *s2) {
     char *s = s1;
@@ -1002,12 +991,12 @@ int func_0041AD10(char *s1, char *s2) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041AD80);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AD80);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041AE00);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AE00);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041AE70);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AE70);
 #ifdef SKIP_ASM
 char *func_0041AE70(char *s) {
     int i, j;
@@ -1025,12 +1014,12 @@ char *func_0041AE70(char *s) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041AEE8);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AEE8);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041AF88);
+INCLUDE_ASM("seg/seg_316FB8", func_0041AF88);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041B528);
+INCLUDE_ASM("seg/seg_316FB8", func_0041B528);
 #ifdef SKIP_ASM
 extern void func_0041B550(int, int, int, int);
 void func_0041B528(short *p) {
@@ -1039,7 +1028,7 @@ void func_0041B528(short *p) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041B550);
+INCLUDE_ASM("seg/seg_316FB8", func_0041B550);
 #ifdef SKIP_ASM
 extern char *D_00454CDC;
 extern int D_00454CD8;
@@ -1072,7 +1061,7 @@ int func_0041B550_(int fd, char *buf, unsigned n, int mode) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041B658);
+INCLUDE_ASM("seg/seg_316FB8", func_0041B658);
 #ifdef SKIP_ASM
 extern int func_0041B728_f(int, int, char *, char *) __asm__("func_0041B728");
 extern int func_0041CA70_i(int, int, char *, char *) __asm__("func_0041CA70");
@@ -1099,12 +1088,12 @@ int func_0041B658(int fp, int fmt, char *ap) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041B728);
+INCLUDE_ASM("seg/seg_316FB8", func_0041B728);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041C788);
+INCLUDE_ASM("seg/seg_316FB8", func_0041C788);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041C938);
+INCLUDE_ASM("seg/seg_316FB8", func_0041C938);
 #ifdef SKIP_ASM
 extern char *D_00454CE4;
 extern int D_00454CE0;
@@ -1136,7 +1125,7 @@ int func_0041C938_(int fd, char *buf, unsigned n, int mode) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041CA40);
+INCLUDE_ASM("seg/seg_316FB8", func_0041CA40);
 #ifdef SKIP_ASM
 extern void func_0041CA70(int, int *, int, int);
 void func_0041CA40(int *p, int b, int c) {
@@ -1144,10 +1133,10 @@ void func_0041CA40(int *p, int b, int c) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041CA70);
+INCLUDE_ASM("seg/seg_316FB8", func_0041CA70);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041D990);
+INCLUDE_ASM("seg/seg_316FB8", func_0041D990);
 #ifdef SKIP_ASM
 struct mchunk {
     unsigned prev_size, size;
@@ -1285,10 +1274,10 @@ void func_0041D990_(int ptr, unsigned nb) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041DBF8);
+INCLUDE_ASM("seg/seg_316FB8", func_0041DBF8);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041E340);
+INCLUDE_ASM("seg/seg_316FB8", func_0041E340);
 #ifdef SKIP_ASM
 extern void func_00418CA8_lock(int) __asm__("func_00418CA8");
 extern void func_00418D08_unlock(int) __asm__("func_00418D08");
@@ -1353,10 +1342,10 @@ void func_0041E340_(int ptr, void *mem) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041E638);
+INCLUDE_ASM("seg/seg_316FB8", func_0041E638);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041E7A8);
+INCLUDE_ASM("seg/seg_316FB8", func_0041E7A8);
 #ifdef SKIP_ASM
 long func_0041E7A8_(int *ptr, char *nptr, char **endptr, int base) __asm__("func_0041E7A8");
 long func_0041E7A8_(int *ptr, char *nptr, char **endptr, int base) {
@@ -1410,7 +1399,7 @@ long func_0041E7A8_(int *ptr, char *nptr, char **endptr, int base) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041E9E0);
+INCLUDE_ASM("seg/seg_316FB8", func_0041E9E0);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern long func_0041E7A8(int, int, int, int);
@@ -1420,7 +1409,7 @@ long func_0041E9E0(int s, int end, int base) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041EA18);
+INCLUDE_ASM("seg/seg_316FB8", func_0041EA18);
 #ifdef SKIP_ASM
 extern char D_00499C81[];
 int func_0041EA18(int a) {
@@ -1429,7 +1418,7 @@ int func_0041EA18(int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041EA38);
+INCLUDE_ASM("seg/seg_316FB8", func_0041EA38);
 #ifdef SKIP_ASM
 extern char D_0049A7D0b[] __asm__("D_0049A7D0");
 extern char D_0049A7C0[], D_0049A7D0[], D_0049A7D8[], D_0049A7E0[], D_0049A7E8[];
@@ -1471,7 +1460,7 @@ char *func_0041EA38_(int *p, int category, char *locale) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041EC08);
+INCLUDE_ASM("seg/seg_316FB8", func_0041EC08);
 #ifdef SKIP_ASM
 extern char D_0049A790[];
 char *func_0041EC08(void) {
@@ -1480,7 +1469,7 @@ char *func_0041EC08(void) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041EC18);
+INCLUDE_ASM("seg/seg_316FB8", func_0041EC18);
 #ifdef SKIP_ASM
 extern int D_00454944;
 extern void func_0041EA38(int, int, int);
@@ -1490,7 +1479,7 @@ void func_0041EC18(int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041EC48);
+INCLUDE_ASM("seg/seg_316FB8", func_0041EC48);
 #ifdef SKIP_ASM
 extern int D_00454944;
 void func_0041EC48(void) {
@@ -1498,18 +1487,18 @@ void func_0041EC48(void) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041EC70);
+INCLUDE_ASM("seg/seg_316FB8", func_0041EC70);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041ED60);
+INCLUDE_ASM("seg/seg_316FB8", func_0041ED60);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041EF50);
+INCLUDE_ASM("seg/seg_316FB8", func_0041EF50);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041F3A8);
+INCLUDE_ASM("seg/seg_316FB8", func_0041F3A8);
 
-INCLUDE_ASM("seg/seg_316F98", func_0041F9D8);
+INCLUDE_ASM("seg/seg_316FB8", func_0041F9D8);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FB98);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FB98);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern int func_00424488(int);
@@ -1524,7 +1513,7 @@ int func_0041FB98(int err, int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FBF0);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FBF0);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern int func_00424558(int, int);
@@ -1539,7 +1528,7 @@ int func_0041FBF0(int *err, int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FC50);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FC50);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern int func_00424498(int, int, int);
@@ -1554,7 +1543,7 @@ long func_0041FC50(int *err, int a, int b, int c) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FCB0);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FCB0);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern int func_00424460(int, int, int);
@@ -1569,7 +1558,7 @@ int func_0041FCB0(int *err, int a, int b, int c) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FD10);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FD10);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern int func_004243E8(int, int, int);
@@ -1584,7 +1573,7 @@ long func_0041FD10(int *err, int a, int b, int c) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FD70);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FD70);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern unsigned func_004244A0(int);
@@ -1599,7 +1588,7 @@ unsigned func_0041FD70(int *err, int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FDD0);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FDD0);
 #ifdef SKIP_ASM
 extern int D_004A5BB8;
 extern int func_00424368(int, int, int);
@@ -1613,10 +1602,10 @@ long func_0041FDD0(int *err, int a, int b, int c) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_0041FE30);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FE30);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FF40);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FF40);
 #ifdef SKIP_ASM
 struct F41FF40 {
     int p, r, w;
@@ -1646,7 +1635,7 @@ void func_0041FF40(struct F41FF40 *f, short flags, short file, int ent) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_0041FF98);
+INCLUDE_ASM("seg/seg_316FB8", func_0041FF98);
 #ifdef SKIP_ASM
 extern void *func_00416210(void *, int, int);
 int *func_0041FF98(int a, int cnt) {
@@ -1662,10 +1651,10 @@ int *func_0041FF98(int a, int cnt) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00420010);
+INCLUDE_ASM("seg/seg_316FB8", func_00420010);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004200F0);
+INCLUDE_ASM("seg/seg_316FB8", func_004200F0);
 #ifdef SKIP_ASM
 void func_004200F0(char *r) {
     char *f0 = r + 0x1E4;
@@ -1680,10 +1669,10 @@ void func_004200F0(char *r) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00420180);
+INCLUDE_ASM("seg/seg_316FB8", func_00420180);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420228);
+INCLUDE_ASM("seg/seg_316FB8", func_00420228);
 #ifdef SKIP_ASM
 void func_00420228(char *d, char *s, unsigned n) {
     while (n--)
@@ -1692,7 +1681,7 @@ void func_00420228(char *d, char *s, unsigned n) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420260);
+INCLUDE_ASM("seg/seg_316FB8", func_00420260);
 #ifdef SKIP_ASM
 extern void func_00420228(char *, char *, unsigned);
 extern int func_00417648(int *);
@@ -1720,10 +1709,10 @@ unsigned func_00420260(char *buf, unsigned size, unsigned count, int *fp) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", ungetc);
+INCLUDE_ASM("seg/seg_316FB8", ungetc);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420510);
+INCLUDE_ASM("seg/seg_316FB8", func_00420510);
 #ifdef SKIP_ASM
 extern int *func_004224A0(int *, int, int);
 int *func_00420510(int ep_, int k) {
@@ -1752,7 +1741,7 @@ int *func_00420510(int ep_, int k) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004205B8);
+INCLUDE_ASM("seg/seg_316FB8", func_004205B8);
 #ifdef SKIP_ASM
 void func_004205B8(int *self, int *p) {
     if (p) {
@@ -1764,7 +1753,7 @@ void func_004205B8(int *self, int *p) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004205F0);
+INCLUDE_ASM("seg/seg_316FB8", func_004205F0);
 #ifdef SKIP_ASM
 struct Bigint {
     struct Bigint *next;
@@ -1804,7 +1793,7 @@ struct Bigint *func_004205F0(int ptr, struct Bigint *b, int m, int a) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004206F8);
+INCLUDE_ASM("seg/seg_316FB8", func_004206F8);
 #ifdef SKIP_ASM
 extern struct Bigint *func_004205F0(int, struct Bigint *, int, int);
 struct Bigint *func_004206F8(int ptr, char *s, int nd0, int nd, int y9) {
@@ -1833,7 +1822,7 @@ struct Bigint *func_004206F8(int ptr, char *s, int nd0, int nd, int y9) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420830);
+INCLUDE_ASM("seg/seg_316FB8", func_00420830);
 #ifdef SKIP_ASM
 int func_00420830(unsigned x) {
     int k = 0;
@@ -1863,7 +1852,7 @@ int func_00420830(unsigned x) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004208B8);
+INCLUDE_ASM("seg/seg_316FB8", func_004208B8);
 #ifdef SKIP_ASM
 int func_004208B8(unsigned *y) {
     int k;
@@ -1907,7 +1896,7 @@ int func_004208B8(unsigned *y) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420978);
+INCLUDE_ASM("seg/seg_316FB8", func_00420978);
 #ifdef SKIP_ASM
 extern int *func_00420510(int, int);
 int *func_00420978(int a, int b) {
@@ -1919,7 +1908,7 @@ int *func_00420978(int a, int b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004209B0);
+INCLUDE_ASM("seg/seg_316FB8", func_004209B0);
 #ifdef SKIP_ASM
 extern int *func_00420510(int, int);
 struct Bigint *func_004209B0(int ptr, struct Bigint *a, struct Bigint *b) {
@@ -1987,7 +1976,7 @@ struct Bigint *func_004209B0(int ptr, struct Bigint *a, struct Bigint *b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420BC8);
+INCLUDE_ASM("seg/seg_316FB8", func_00420BC8);
 #ifdef SKIP_ASM
 extern struct Bigint *func_004205F0(int, struct Bigint *, int, int);
 extern struct Bigint *func_004209B0(int, struct Bigint *, struct Bigint *);
@@ -2024,7 +2013,7 @@ struct Bigint *func_00420BC8(int ptr, struct Bigint *b, int k) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420CC8);
+INCLUDE_ASM("seg/seg_316FB8", func_00420CC8);
 #ifdef SKIP_ASM
 extern int *func_00420510(int, int);
 extern void func_004205B8(int *, int *);
@@ -2063,7 +2052,7 @@ struct Bigint *func_00420CC8(int ptr, struct Bigint *b, int k) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420E28);
+INCLUDE_ASM("seg/seg_316FB8", func_00420E28);
 #ifdef SKIP_ASM
 struct Bigint28 {
     struct Bigint28 *next;
@@ -2092,7 +2081,7 @@ int func_00420E28(struct Bigint28 *a, struct Bigint28 *b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00420E90);
+INCLUDE_ASM("seg/seg_316FB8", func_00420E90);
 #ifdef SKIP_ASM
 extern int *func_00420510(int, int);
 struct Bigint *func_00420E90(int ptr, struct Bigint *a, struct Bigint *b) {
@@ -2150,7 +2139,7 @@ struct Bigint *func_00420E90(int ptr, struct Bigint *a, struct Bigint *b) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00421020);
+INCLUDE_ASM("seg/seg_316FB8", func_00421020);
 #ifdef SKIP_ASM
 union double_union {
     double d;
@@ -2186,7 +2175,7 @@ double func_00421020(double _x) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004210E8);
+INCLUDE_ASM("seg/seg_316FB8", func_004210E8);
 #ifdef SKIP_ASM
 extern int func_00420830(unsigned);
 double func_004210E8(struct Bigint *a, int *e) {
@@ -2219,7 +2208,7 @@ ret_d:
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00421280);
+INCLUDE_ASM("seg/seg_316FB8", func_00421280);
 #ifdef SKIP_ASM
 extern int *func_00420510(int, int);
 extern int func_004208B8(unsigned *);
@@ -2260,10 +2249,10 @@ struct Bigint *func_00421280(int ptr, double _d, int *e, int *bits) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00421400);
+INCLUDE_ASM("seg/seg_316FB8", func_00421400);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004214C0);
+INCLUDE_ASM("seg/seg_316FB8", func_004214C0);
 #ifdef SKIP_ASM
 extern double D_0049A8F8[];
 extern double func_00411FD8(double, double);
@@ -2281,7 +2270,7 @@ double func_004214C0(int n) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00421530);
+INCLUDE_ASM("seg/seg_316FB8", func_00421530);
 #ifdef SKIP_ASM
 struct R21530;
 extern char *g21530_dtoa(struct R21530 *, double, int, int, int *, int *, char **) __asm__("func_00422780");
@@ -2329,7 +2318,7 @@ void func_00421530_(struct R21530 *ptr, char *buf, double invalue, int ndigit, i
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004216E8);
+INCLUDE_ASM("seg/seg_316FB8", func_004216E8);
 #ifdef SKIP_ASM
 struct R216E8;
 extern char *g216E8_dtoa(struct R216E8 *, double, int, int, int *, int *, char **) __asm__("func_00422780");
@@ -2385,7 +2374,7 @@ void func_004216E8_(struct R216E8 *ptr, char *buf, double invalue, int ndigit, c
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004218D8);
+INCLUDE_ASM("seg/seg_316FB8", func_004218D8);
 #ifdef SKIP_ASM
 struct R218D8 {
     int pad0[0x50 / 4];
@@ -2433,7 +2422,7 @@ char *func_004218D8_(double invalue, int ndigit, int *decpt, int *sign, char *bu
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00421A50);
+INCLUDE_ASM("seg/seg_316FB8", func_00421A50);
 #ifdef SKIP_ASM
 struct Reent51 {
     int pad0[0x50 / 4];
@@ -2477,10 +2466,10 @@ char *func_00421A50_(double value, int ndigit, int *decpt, int *sign, char *buf)
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00421B98);
+INCLUDE_ASM("seg/seg_316FB8", func_00421B98);
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00421E60);
+INCLUDE_ASM("seg/seg_316FB8", func_00421E60);
 #ifdef SKIP_ASM
 extern void func_00421530_f(int, char *, long, int, int, int, int) __asm__("func_00421530");
 extern void func_00421B98_g(int, long, int, char *, int, int) __asm__("func_00421B98");
@@ -2505,7 +2494,7 @@ char *func_00421E60(int ep, char *buf, long val, int nd, int unused, char fmt, i
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00421F20);
+INCLUDE_ASM("seg/seg_316FB8", func_00421F20);
 #ifdef SKIP_ASM
 extern void func_00418CA8_lock(int) __asm__("func_00418CA8");
 extern void func_00418D08_unlock(int) __asm__("func_00418D08");
@@ -2616,7 +2605,7 @@ split:
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_004224A0);
+INCLUDE_ASM("seg/seg_316FB8", func_004224A0);
 #ifdef SKIP_ASM
 extern void *func_0041DBF8_malloc(int, int) __asm__("func_0041DBF8");
 extern void *func_00416210_memset(void *, int, unsigned) __asm__("func_00416210");
@@ -2638,7 +2627,7 @@ void *func_004224A0_(int ptr, int n, int elem_size) {
 #endif
 
 //100%
-INCLUDE_ASM("seg/seg_316F98", func_00422560);
+INCLUDE_ASM("seg/seg_316FB8", func_00422560);
 #ifdef SKIP_ASM
 extern int func_00420E28_cmp(struct Bigint *, struct Bigint *) __asm__("func_00420E28");
 int func_00422560(struct Bigint *b, struct Bigint *S) {
@@ -2710,8 +2699,8 @@ int func_00422560(struct Bigint *b, struct Bigint *S) {
 }
 #endif
 
-INCLUDE_ASM("seg/seg_316F98", func_00422780);
+INCLUDE_ASM("seg/seg_316FB8", func_00422780);
 
-INCLUDE_ASM("seg/seg_316F98", func_00423980);
+INCLUDE_ASM("seg/seg_316FB8", func_00423980);
 
-INCLUDE_ASM("seg/seg_316F98", func_00423990);
+INCLUDE_ASM("seg/seg_316FB8", func_00423990);
