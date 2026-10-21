@@ -59,6 +59,10 @@ UNIT_CFLAGS = {
     "seg/seg_316F98": "-G0",
     "seg/seg_325220": "-G0",
     "seg/seg_32F020": "-G0",
+    # Units whose retail code was compiled WITH exceptions (the default of g++ 2.95): their functions only match
+    # with -fexceptions, and every already-matched function in them is unchanged by it (full-build check, 2026-10-21).
+    # Per-unit flags come after COMMON_CXXFLAGS, so this overrides the -fno-exceptions default.
+    "main/loadscreens_prestart": "-fexceptions",
 }
 # Fork-only: per-unit compiler. EA's embedded $gp module (ealib/seg_2D7498, 0x3D6498-0x3DBAE8) was built with an
 # older SN build, ee-gcc 2.95.3-114 (its non-leaf functions save ra with sq; 107 and 114 reproduce all 48 landed
@@ -506,7 +510,7 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
             unit_flags = UNIT_CFLAGS.get(seg.name, "")
             # .cpp sources are listed as c segments and go through the cc rule; give them the C++ flags here
             if any(str(p).endswith(".cpp") for p in entry.src_paths):
-                unit_flags = (unit_flags + " " + COMMON_CXXFLAGS).strip()
+                unit_flags = (COMMON_CXXFLAGS + " " + unit_flags).strip()
             if seg.name in UNIT_CC_NATIVE:
                 task, tvars = ("cc_native", {"ccdir": UNIT_CC_NATIVE[seg.name]})
             elif seg.name in UNIT_CC:
