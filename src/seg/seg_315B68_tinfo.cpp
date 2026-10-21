@@ -769,6 +769,12 @@ int *func_00415F48(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_315B68_tinfo", func_00415F98);
+#ifdef SKIP_ASM
+void func_00415F98(void) {
+    ((void (*)(void))func_00414B68)();
+}
+#endif
 
 }  // extern "C"
