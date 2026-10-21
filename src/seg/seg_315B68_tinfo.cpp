@@ -89,7 +89,58 @@ int func_00414C70(int *p, int a, int b, int c, int d, int e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_315B68_tinfo", func_00414D08);
+#ifdef SKIP_ASM
+struct dcVE { short d; short i; void *f; };
+struct dcTI { const char *name; dcVE *vt; };
+struct dcBI { dcTI *type; unsigned flags; };
+struct dcCT : dcTI { dcBI *bases; unsigned n; };
+static inline void *dcCall(dcTI *o, dcTI *desired, int pub, void *obj, dcTI *sub, void *subp) {
+    dcVE *v = o->vt + 2;
+    return ((void *(*)(void *, dcTI *, int, void *, dcTI *, void *))v->f)((char *)o + v->d, desired, pub, obj, sub, subp);
+}
+void *func_00414D08(dcCT *self, dcTI *desired, int pub, void *obj, dcTI *sub, void *subp) {
+    void *found;
+    void *r;
+    if (func_00414B98((int *)self, (int *)desired))
+        return obj;
+    found = 0;
+    for (unsigned i = 0; i < self->n; i++) {
+        if (pub && (self->bases[i].flags >> 30) != 1)
+            continue;
+        r = (char *)obj + (self->bases[i].flags & 0x1FFFFFFF);
+        if ((self->bases[i].flags >> 29) & 1)
+            r = *(void **)r;
+        r = dcCall(self->bases[i].type, desired, pub, r, sub, subp);
+        if (!r)
+            continue;
+        if (!found) {
+            found = r;
+            continue;
+        }
+        if (found != r) {
+            void *r1, *r2;
+            if (!sub)
+                return 0;
+            r1 = dcCall(desired, sub, 1, found, 0, 0);
+            r2 = dcCall(desired, sub, 1, r, 0, 0);
+            if (r1 == r2)
+                return 0;
+            if (r1 == subp)
+                continue;
+            if (r2 == subp)
+                found = r;
+            else
+                return 0;
+        }
+    }
+    // the do/while(0) around the final return keeps the loop's exit paths from being cross-jumped (sweep find)
+    do {
+        return found;
+    } while (0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_315B68_tinfo", func_00414EE0);
