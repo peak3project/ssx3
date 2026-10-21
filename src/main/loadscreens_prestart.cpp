@@ -438,7 +438,60 @@ extern "C" int func_002328A8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/loadscreens_prestart", func_00232930);
+#ifdef SKIP_ASM
+struct cAppMan;
+void cAppMan_setNextModule(cAppMan* self, unsigned int module);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_00231F80(void* fade);
+extern "C" int func_00231CD0_r(void* self) __asm__("func_00231CD0");
+extern void* D_004A28A8;
+extern char D_0047B8E8[];
+extern void* D_0047D788[];
+
+struct sModule_232930 {
+    void** vt;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+};
+
+// Matches only with exceptions enabled for this unit (UNIT_CFLAGS "-fexceptions" in configure.py).
+// `tmp` is reused for the fade direction and the module handle: one variable spanning both blocks is what
+// gives the retail register allocation (the handle is taken before the fields are filled in).
+extern "C" void func_00232930(void* self)
+{
+    int tmp;
+    func_00231F80(*(void**)((char*)D_004A28A8 + 0xA4));
+    tmp = *(int*)((char*)self + 4) != 0;
+    if (tmp) {
+        float* f = (float*)(*(char**)((char*)D_004A28A8 + 0xA4) + 4);
+        *f -= 0.0833333358168602f;
+        if (*f < 0.0f) {
+            *f = 0.0f;
+        }
+    } else {
+        float* f = (float*)(*(char**)((char*)D_004A28A8 + 0xA4) + 4);
+        *f += 0.0833333358168602f;
+        if (*f > 1.0f) {
+            *f = 1.0f;
+        }
+    }
+    if (*(int*)((char*)D_004A28A8 + 4) == 0) {
+        sModule_232930* m = (sModule_232930*)cMemMan_alloc(0x18, D_0047B8E8, 0x100, 0);
+        func_00231CD0_r(m);
+        tmp = (unsigned int)m;
+        m->vt = D_0047D788;
+        m->fC = 0;
+        m->f10 = 0;
+        m->f14 = 0;
+        cAppMan_setNextModule((cAppMan*)D_004A28A8, tmp);
+    }
+}
+#endif
 
 INCLUDE_ASM("main/loadscreens_prestart", cPreFELoadScreen_update);
 
