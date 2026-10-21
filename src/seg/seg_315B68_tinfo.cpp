@@ -510,7 +510,11 @@ INCLUDE_ASM("seg/seg_315B68_tinfo", func_00415928);
 BUILTIN(func_00415928, D_00454160, D_00499AE8)
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_315B68_tinfo", func_00415960);
+#ifdef SKIP_ASM
+BUILTIN(func_00415960, D_00454168, D_00499AF0)
+#endif
 
 INCLUDE_ASM("seg/seg_315B68_tinfo", func_00415998);
 
