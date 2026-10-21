@@ -27,7 +27,19 @@ void unexpected_dflt_818(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412828);
+#ifdef SKIP_ASM
+// set_terminate(): install a new terminate handler, return the old one
+extern void* D_00453440_p __asm__("D_00453440");
+void* set_terminate_828(void* f) __asm__("func_00412828");
+void* set_terminate_828(void* f)
+{
+    void* old = D_00453440_p;
+    D_00453440_p = f;
+    return old;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412838);
