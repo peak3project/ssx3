@@ -177,7 +177,26 @@ void func_00412AF0(void) {
 
 INCLUDE_ASM("seg/seg_313800_exception", func_00412B20);
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412CD8);
+#ifdef SKIP_ASM
+// g++ emits the throw machinery under fixed names; bind them to the retail functions and data (assembler
+// assignments, so the relocations name the retail symbols): __eh_alloc, __cp_push_exception and __throw are libgcc /
+// exception.cc functions, _vt$<class> and _$_<class> are the vtables and out-of-line destructors from tinfo.cc.
+__asm__("__eh_alloc = func_004128E0\n"
+        "__cp_push_exception = func_00412998\n"
+        "__throw = func_00410F48\n"
+        "_vt$9exception = D_004998B8\n"
+        "_vt$8bad_cast = D_00499A30\n"
+        "_$_8bad_cast = func_00415120");
+
+// __throw_bad_cast()
+void throw_bad_cast_cd8(void) __asm__("func_00412CD8");
+void throw_bad_cast_cd8(void)
+{
+    throw bad_cast();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313800_exception", func_00412D58);
 
