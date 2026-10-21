@@ -16,7 +16,16 @@ void terminate_800(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412818);
+#ifdef SKIP_ASM
+// __default_unexpected(): unexpected() falls back to terminate()
+void unexpected_dflt_818(void) __asm__("func_00412818") __attribute__((__noreturn__));
+void unexpected_dflt_818(void)
+{
+    terminate_800();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_313800_exception", func_00412828);
 
