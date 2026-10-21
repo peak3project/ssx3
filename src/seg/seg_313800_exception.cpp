@@ -1,4 +1,5 @@
 #include "common.h"
+#include "seg/seg_313800_exception.h"
 
 extern "C" {
 
