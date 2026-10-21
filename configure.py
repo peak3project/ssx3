@@ -52,10 +52,11 @@ COMMON_CFLAGS = "-O2"
 UNIT_CFLAGS = {
     "ealib/seg_2B4578": "-G0",
     "ealib/seg_2DCAE8": "-G0",
-    # Library tail of .text (0x3EDF50-0x42E590), split by the same evidence: seg_2F0F40, seg_313E80 (C library:
+    # Library tail of .text (0x3EDF50-0x42E590), split by the same evidence: seg_2F0F40, seg_313F58 (C library:
     # strchr/strcpy/sprintf/ungetc) and seg_325220 reach .sdata/.sbss globals with lui/%lo and never via $gp.
     "seg/seg_2F0F40": "-G0",
-    "seg/seg_313E80": "-G0",
+    "seg/seg_313800_exception": "-G0 -fexceptions",
+    "seg/seg_313F58": "-G0",
     "seg/seg_315B68_tinfo": "-G0",
     "seg/seg_316FB8": "-G0",
     "seg/seg_325220": "-G0",
@@ -84,7 +85,8 @@ for _u, _d in list(UNIT_CC.items()):
 EE_GCC29_DIR = os.environ.get("EE_GCC29_DIR", f"{TOOLS_DIR}/cc/ee-gcc2.9-991111")
 UNIT_CC_NATIVE = {
     "seg/seg_2FE810": EE_GCC29_DIR,
-    "seg/seg_313E80": EE_GCC29_DIR,
+    "seg/seg_313800_exception": EE_GCC29_DIR,
+    "seg/seg_313F58": EE_GCC29_DIR,
     "seg/seg_315B68_tinfo": EE_GCC29_DIR,
     "seg/seg_325220": EE_GCC29_DIR,
 }

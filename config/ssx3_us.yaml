@@ -540,8 +540,8 @@ segments:
       - [0x2f41f8, c, seg/seg_2F41F8]   # 0x3F31F8: dense $gp module (default flags)
       - [0x2fddc8, c, seg/seg_2FDDC8]   # 0x3FCDC8: SN 2.95.3 (sq register saves)
       - [0x2fe810, c, seg/seg_2FE810]   # 0x3FD810: Sony SDK area, ee-gcc 2.9 (sd register saves)
-      - [0x313e38, c, seg/seg_313E38]   # 0x412E38: SN 2.95.3
-      - [0x313e80, c, seg/seg_313E80]   # 0x412E80: ee-gcc 2.9, -G0 (exception.cc tail, libgcc fp-bit/frame)
+      - [0x313800, cpp, seg/seg_313800_exception]   # 0x412800-0x412F58: libstdc++-v2 exception.cc (g++ 2.9, -G0, -fexceptions)
+      - [0x313f58, c, seg/seg_313F58]   # 0x412F58: libgcc fp-bit (single float); ee-gcc 2.9, -G0
       - [0x315b68, cpp, seg/seg_315B68_tinfo]   # 0x414B68-0x415FB8: libstdc++-v2 tinfo/tinfo2 (g++ 2.9, -G0)
       - [0x316fb8, c, seg/seg_316FB8]   # 0x415FB8: C library (strchr, strcpy, sprintf, ungetc); SN 2.95.3, -G0
       - [0x3249a0, c, seg/seg_3249A0]   # 0x4239A0: 16-byte hand-written syscall stubs
