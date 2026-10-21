@@ -456,7 +456,7 @@ void func_00233B88(void* self)
 
 extern "C" void* func_00233AF0(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233B90__FPv);
 #ifdef SKIP_ASM
 void* func_00233B90(void* self)
@@ -467,7 +467,7 @@ void* func_00233B90(void* self)
 
 extern "C" void* func_00233B28(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233BB0__FPv);
 #ifdef SKIP_ASM
 void* func_00233BB0(void* self)
@@ -476,7 +476,7 @@ void* func_00233BB0(void* self)
 }
 #endif
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233BD0__FPv);
 #ifdef SKIP_ASM
 void* func_00233BD0(void* self)
@@ -485,7 +485,7 @@ void* func_00233BD0(void* self)
 }
 #endif
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233BF0__FPv);
 #ifdef SKIP_ASM
 void* func_00233BF0(void* self)

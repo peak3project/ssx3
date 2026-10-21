@@ -481,7 +481,7 @@ void cCameraTriggerMan_setInGameTriggers(void* self)
 }
 #endif
 
-//99.29%
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016D1D8__FPv);
 #ifdef SKIP_ASM
 void* func_0016D1D8(void* self)

@@ -11,7 +11,7 @@ extern const char D_0045A8A8[];
 extern void* D_0045ABB8[16];
 extern void* D_004A1254;
 
-//99.86%
+//100%
 INCLUDE_ASM("be/beprepoststate", cBEPostRaceState_getState__FPv);
 #ifdef SKIP_ASM
 void* cBEPostRaceState_getState(void* self)
@@ -157,7 +157,7 @@ extern "C" void func_00156510(void)
 extern void* D_0045AC18[16];
 extern void* D_004A1258;
 
-//99.86%
+//100%
 INCLUDE_ASM("be/beprepoststate", cBEPreRaceState_getState__FPv);
 #ifdef SKIP_ASM
 void* cBEPreRaceState_getState(void* self)

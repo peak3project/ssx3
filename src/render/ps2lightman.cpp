@@ -7,7 +7,7 @@ struct cPSPLightMan {
     void* vtable;
 };
 
-//99.83%
+//100%
 INCLUDE_ASM("render/ps2lightman", cPSPLightMan_cPSPLightMan__FP12cPSPLightMan);
 #ifdef SKIP_ASM
 cPSPLightMan* cPSPLightMan_cPSPLightMan(cPSPLightMan* self)

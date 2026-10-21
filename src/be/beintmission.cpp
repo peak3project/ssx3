@@ -11,7 +11,7 @@ struct cBEMissionInterface {
     void* vtable;
 };
 
-//99.58%
+//100%
 INCLUDE_ASM("be/beintmission", cBEMissionInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBEMissionInterface_getThis()

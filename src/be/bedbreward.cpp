@@ -1501,7 +1501,7 @@ extern "C" void* func_0015C8D8(void* self)
 }
 #endif
 
-//99.38%
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015C8F0__FPv);
 #ifdef SKIP_ASM
 void* func_0015C8F0(void* self)
@@ -1512,7 +1512,7 @@ void* func_0015C8F0(void* self)
 
 extern "C" void* func_0015B028(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("be/bedbreward", func_0015C910__FPv);
 #ifdef SKIP_ASM
 void* func_0015C910(void* self)

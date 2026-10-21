@@ -2878,7 +2878,7 @@ void* func_00250188(void* self)
 
 extern "C" void* func_0024E8D8(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("main/debugmenu", func_002501A8__FPv);
 #ifdef SKIP_ASM
 void* func_002501A8(void* self)
@@ -2889,7 +2889,7 @@ void* func_002501A8(void* self)
 
 extern "C" void* func_0024E8D8(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("main/debugmenu", func_002501C8__FPv);
 #ifdef SKIP_ASM
 void* func_002501C8(void* self)
@@ -3190,7 +3190,7 @@ extern "C" void func_00251630(void* self, int flags)
 
 extern "C" void* func_00250CB0(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("main/debugmenu", func_00251690__FPv);
 #ifdef SKIP_ASM
 void* func_00251690(void* self)
@@ -3201,7 +3201,7 @@ void* func_00251690(void* self)
 
 extern "C" void* func_00250CB0(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("main/debugmenu", func_002516B0__FPv);
 #ifdef SKIP_ASM
 void* func_002516B0(void* self)

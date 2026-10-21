@@ -54,7 +54,7 @@ extern sRaceEntry18 D_0043E250[];
 
 extern sPad16 D_0043E7D0;
 
-//99.58%
+//100%
 INCLUDE_ASM("be/beintnewrace", cBENewRaceInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBENewRaceInterface_getThis()

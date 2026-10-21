@@ -12,7 +12,7 @@ struct cBESaveInterface {
     void* vtable;
 };
 
-//99.8%
+//100%
 INCLUDE_ASM("be/beintsavefile", cBESaveInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBESaveInterface_getThis()

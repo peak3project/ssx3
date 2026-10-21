@@ -5,7 +5,7 @@ extern "C" void* cWorldTriggerManager_cWorldTriggerManager(void* self);
 extern const char D_00483588[];
 extern void* D_004A52D4;
 
-//99.88%
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", WORLDTRIGGERMANAGER_Init__Fv);
 #ifdef SKIP_ASM
 void WORLDTRIGGERMANAGER_Init()

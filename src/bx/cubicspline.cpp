@@ -37,7 +37,7 @@ extern "C" void cCubicSplineInterpolant_initCommon_impl(sCubicSpline* self, int 
 
 extern "C" void cCubicSplineInterpolant_initCommon(void* self);
 
-//99.62%
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031D700__FPv);
 #ifdef SKIP_ASM
 void func_0031D700(void* self)
@@ -47,7 +47,7 @@ void func_0031D700(void* self)
 }
 #endif
 
-//99.76%
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031D738__FPvff);
 #ifdef SKIP_ASM
 void func_0031D738(void* self, float a, float b)
@@ -1134,7 +1134,7 @@ extern "C" void* func_00320038(void* ms, unsigned int bytes)
 
 extern "C" int func_0031F2C8(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("bx/cubicspline", func_00320058__FPv);
 #ifdef SKIP_ASM
 int func_00320058(void* self)
@@ -1145,7 +1145,7 @@ int func_00320058(void* self)
 
 extern "C" int func_0031F4E8(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("bx/cubicspline", func_00320078__FPv);
 #ifdef SKIP_ASM
 int func_00320078(void* self)

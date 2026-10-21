@@ -11,7 +11,7 @@ struct cBEEconInterface {
     void* vtable;
 };
 
-//99.58%
+//100%
 INCLUDE_ASM("be/beintecon", cBEEconInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBEEconInterface_getThis()

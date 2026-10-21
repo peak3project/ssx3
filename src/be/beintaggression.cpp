@@ -11,7 +11,7 @@ struct cBEAggressionInterface {
     void* vtable;
 };
 
-//99.58%
+//100%
 INCLUDE_ASM("be/beintaggression", cBEAggressionInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBEAggressionInterface_getThis()

@@ -1836,7 +1836,7 @@ extern "C" int func_002C51D0_impl(sQTState* self, int i)
 
 extern "C" void* func_002C51D0(void*, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C5230__FPv);
 #ifdef SKIP_ASM
 int func_002C5230(void* self)
@@ -1902,7 +1902,7 @@ extern "C" void* func_002C5320(void* self, int a1)
 }
 #endif
 
-//99.29%
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C5338__FPv);
 #ifdef SKIP_ASM
 void* func_002C5338(void* self)
@@ -2022,7 +2022,7 @@ extern "C" void func_002C54D0(void* self, int a1, char* dst)
 
 extern "C" void* func_002C2580(void*);
 
-//99.29%
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C5500__FPv);
 #ifdef SKIP_ASM
 void* func_002C5500(void* self)

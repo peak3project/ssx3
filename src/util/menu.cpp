@@ -4559,7 +4559,7 @@ extern "C" void* cARGBMenuItem_cARGBMenuItem(void* self, void* name, void* title
 
 extern "C" void* func_002CFA08(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("util/menu", func_002D03D0__FPv);
 #ifdef SKIP_ASM
 void* func_002D03D0(void* self)

@@ -713,7 +713,7 @@ extern "C" void cSSXApp_parseCommandLine(char* self, int argc, char** argv)
 extern "C" int func_00326C60(void* mgr);
 extern void* D_004A28A0;
 
-//99.9%
+//100%
 INCLUDE_ASM("main/ssxapp", cSSXApp_flush__Fv);
 #ifdef SKIP_ASM
 int cSSXApp_flush()
@@ -761,7 +761,7 @@ extern "C" int cSSXApp_preUpdate(void* self)
 
 extern "C" void func_00326B88(void* mgr);
 
-//99.89%
+//100%
 INCLUDE_ASM("main/ssxapp", cSSXApp_timerCallback__Fv);
 #ifdef SKIP_ASM
 void cSSXApp_timerCallback()
@@ -1180,7 +1180,7 @@ struct sExecPurgeMgr {
 
 extern sExecPurgeMgr* D_004A5B80;
 
-//99.95%
+//100%
 INCLUDE_ASM("main/ssxapp", cSSXApp_loadexecpurge__FPv);
 #ifdef SKIP_ASM
 void cSSXApp_loadexecpurge(void* self)

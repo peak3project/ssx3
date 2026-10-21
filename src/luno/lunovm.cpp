@@ -741,7 +741,7 @@ extern "C" void func_00226768(void* self, int flags)
 
 extern "C" void* func_00225DE8(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("luno/lunovm", func_002267F0__FPv);
 #ifdef SKIP_ASM
 void* func_002267F0(void* self)
@@ -752,7 +752,7 @@ void* func_002267F0(void* self)
 
 extern "C" void* func_00225DE8(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("luno/lunovm", func_00226810__FPv);
 #ifdef SKIP_ASM
 void* func_00226810(void* self)

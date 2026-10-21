@@ -3374,7 +3374,7 @@ extern "C" void func_003411B8(sTree_3411B8* tree, sQuery_3411B8* q)
 }
 #endif
 
-//99.38%
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341368__FPv);
 #ifdef SKIP_ASM
 void* func_00341368(void* self)

@@ -150,7 +150,7 @@ extern "C" void* cSortObjNode_cSortObjNode(void* self, void* a, void* stream)
 extern void* D_00491E00[];
 extern "C" void* func_00354808(void*);
 
-//99.5%
+//100%
 INCLUDE_ASM("object/objnode", func_00354920__FPv);
 #ifdef SKIP_ASM
 void* func_00354920(void* self)

@@ -435,7 +435,7 @@ extern "C" void* func_00351A10(void* self, float* src, float f)
 
 extern "C" void* func_00351538(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("object/instanceman", func_00351A60__FPv);
 #ifdef SKIP_ASM
 void* func_00351A60(void* self)

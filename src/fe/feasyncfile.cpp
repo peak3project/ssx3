@@ -12764,7 +12764,7 @@ extern "C" void func_001B7030(void* self, int flags)
 
 extern "C" void* func_001ABFA8(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B7088__FPv);
 #ifdef SKIP_ASM
 void* func_001B7088(void* self)

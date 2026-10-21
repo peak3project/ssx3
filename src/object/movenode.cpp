@@ -1570,7 +1570,7 @@ extern "C" void* func_00356E60(void* self)
 
 extern "C" void* func_00356B30(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("object/movenode", func_00356E98__FPv);
 #ifdef SKIP_ASM
 void* func_00356E98(void* self)
@@ -2310,7 +2310,7 @@ extern "C" void func_00357950(void* self)
 }
 #endif
 
-//99.29%
+//100%
 INCLUDE_ASM("object/movenode", func_003579A8__FPv);
 #ifdef SKIP_ASM
 void* func_003579A8(void* self)

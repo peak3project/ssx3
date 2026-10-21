@@ -1490,7 +1490,7 @@ int func_002ABC18_impl(int vol, float dist, float range)
 
 extern "C" void* func_002ABC18(int);
 
-//99.29%
+//100%
 INCLUDE_ASM("sound/streamsys", func_002ABC80__FPvi);
 #ifdef SKIP_ASM
 void* func_002ABC80(void* self, int a1)

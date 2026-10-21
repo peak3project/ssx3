@@ -2923,7 +2923,7 @@ extern "C" void* func_00289D60(void* self, int a1)
 
 extern "C" void* func_00289D60(void*, int);
 
-//99.29%
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00289DC0__FPv);
 #ifdef SKIP_ASM
 void* func_00289DC0(void* self)

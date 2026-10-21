@@ -135,7 +135,7 @@ extern "C" int func_003159E8(long *self, int bit) {
     return testBits_59E8(self[0], 1L << bit);
 }
 #endif
-//99.38%
+//100%
 INCLUDE_ASM("animation/gameanimmap", func_00315A00__FPv);
 #ifdef SKIP_ASM
 void* func_00315A00(void* self)
@@ -148,7 +148,7 @@ INCLUDE_ASM("animation/gameanimmap", func_00315A20);
 
 extern "C" void* func_00315A20(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("animation/gameanimmap", func_00316878__FPv);
 #ifdef SKIP_ASM
 void* func_00316878(void* self)

@@ -588,7 +588,7 @@ extern "C" int func_003ADD70(void* self)
 
 extern "C" void* func_003AD290(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003ADDA0__FPv);
 #ifdef SKIP_ASM
 void* func_003ADDA0(void* self)
@@ -1222,7 +1222,7 @@ extern "C" void func_003AEAD0_impl(char* self, char* ctx, sChunk_AEAD0** out)
 
 extern "C" void* func_003AEAD0(int, void*);
 
-//99.44%
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AECB8__FPvT0);
 #ifdef SKIP_ASM
 void* func_003AECB8(void* self, void* a1)
@@ -1250,7 +1250,7 @@ extern "C" void* func_003AECE0(int self, int a1)
 
 extern "C" void* func_003AECE0(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AED20__FPvT0i);
 #ifdef SKIP_ASM
 void* func_003AED20(void* self, void* a1, int a2)
@@ -2018,7 +2018,7 @@ extern "C" void* func_003B0770(int init, int prio)
 
 extern "C" void* func_003B0770(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B07B8__FPv);
 #ifdef SKIP_ASM
 void* func_003B07B8(void* self)
@@ -2029,7 +2029,7 @@ void* func_003B07B8(void* self)
 
 extern "C" void* func_003B0770(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003B07D8__FPv);
 #ifdef SKIP_ASM
 void* func_003B07D8(void* self)

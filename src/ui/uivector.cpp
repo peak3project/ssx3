@@ -3071,7 +3071,7 @@ extern "C" void* func_003A6618(void* p)
 }
 #endif
 
-//99.38%
+//100%
 INCLUDE_ASM("ui/uivector", func_003A6648__FPv);
 #ifdef SKIP_ASM
 void* func_003A6648(void* self)
@@ -3082,7 +3082,7 @@ void* func_003A6648(void* self)
 
 extern "C" void* func_003A3F48(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("ui/uivector", func_003A6668__FPv);
 #ifdef SKIP_ASM
 void* func_003A6668(void* self)

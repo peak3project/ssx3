@@ -29,7 +29,7 @@ extern void* D_0048DBE8[16];
 extern void* D_004A5B64;
 void operator_delete(int* ptr);
 
-//99.92%
+//100%
 INCLUDE_ASM("bx/appman", cAppMan__cAppMan__FPvi);
 #ifdef SKIP_ASM
 void cAppMan__cAppMan(void* self, int flags)
@@ -388,7 +388,7 @@ int cExecutionMan_checkHalt(void* self, int flag)
 }
 #endif
 
-//99.25%
+//100%
 INCLUDE_ASM("bx/appman", func_00317500__Fv);
 #ifdef SKIP_ASM
 int func_00317500(void)
@@ -397,7 +397,7 @@ int func_00317500(void)
 }
 #endif
 
-//99.67%
+//100%
 INCLUDE_ASM("bx/appman", func_00317520__Fv);
 #ifdef SKIP_ASM
 int func_00317520(void)
@@ -421,7 +421,7 @@ void func_00317530(void* self, float arg)
 #endif
 
 
-//99.9%
+//100%
 INCLUDE_ASM("bx/appman", func_00317550__FPvf);
 #ifdef SKIP_ASM
 void func_00317550(void* self, float arg)
@@ -446,7 +446,7 @@ void func_00317550(void* self, float arg)
 
 extern "C" float func_0040D758(float);
 
-//99.96%
+//100%
 INCLUDE_ASM("bx/appman", func_003175A0__FPv);
 #ifdef SKIP_ASM
 void func_003175A0(void* self)

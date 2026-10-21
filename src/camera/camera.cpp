@@ -4752,7 +4752,7 @@ INCLUDE_ASM("camera/camera", func_00168150);
 
 extern "C" void* func_001673F8(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("camera/camera", func_00168298__FPv);
 #ifdef SKIP_ASM
 void* func_00168298(void* self)

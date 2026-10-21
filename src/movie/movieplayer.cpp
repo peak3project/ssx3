@@ -5,7 +5,7 @@ extern "C" void* func_00242288(void* self);
 extern const char D_0047C128[];
 extern void* D_004A2C74;
 
-//99.53%
+//100%
 INCLUDE_ASM("movie/movieplayer", cMCOverlayManager_getManager__Fv);
 #ifdef SKIP_ASM
 void* cMCOverlayManager_getManager()
@@ -283,7 +283,7 @@ extern "C" void func_0023CC20(void* self)
 
 extern "C" void* func_0023CAA0(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("movie/movieplayer", func_0023CC58__FPv);
 #ifdef SKIP_ASM
 void* func_0023CC58(void* self)
@@ -2904,7 +2904,7 @@ extern "C" void func_00240EE0(void* self)
 
 extern "C" void* func_0023FB58(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("movie/movieplayer", func_00240F10__FPv);
 #ifdef SKIP_ASM
 void* func_00240F10(void* self)

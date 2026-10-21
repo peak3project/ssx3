@@ -357,7 +357,7 @@ void MEM_printclass(void* thing)
 
 extern void* D_004A2E78;
 
-//99.25%
+//100%
 INCLUDE_ASM("mem/memstd", MEM_print__Fv);
 #ifdef SKIP_ASM
 void MEM_print()
@@ -1442,7 +1442,7 @@ void* func_00253AD0_impl(void* a0, int a1, int align, int a3, int a4)
 
 extern "C" void* func_002523A8(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("mem/memstd", func_00253AF8__FPv);
 #ifdef SKIP_ASM
 void* func_00253AF8(void* self)
@@ -1754,7 +1754,7 @@ void sti_00253B58(int init, int prio)
 
 extern "C" void* func_00253B58(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("mem/memstd", func_00254330__FPv);
 #ifdef SKIP_ASM
 void* func_00254330(void* self)
@@ -2158,7 +2158,7 @@ extern "C" void func_00254C48(sMesh_254C48* self, void* res)
 
 extern "C" void* func_002548D0(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("mem/memstd", func_00254DA0__FPv);
 #ifdef SKIP_ASM
 void* func_00254DA0(void* self)
@@ -2595,7 +2595,7 @@ extern "C" void func_002557B8(void) {
 }
 #endif
 
-//99.38%
+//100%
 INCLUDE_ASM("mem/memstd", func_002557C0__FPv);
 #ifdef SKIP_ASM
 void* func_002557C0(void* self)

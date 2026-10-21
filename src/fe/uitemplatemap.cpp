@@ -269,7 +269,7 @@ struct cUITemplate_MAP {
 };
 extern unsigned int D_004A2594;
 
-//99.9%
+//100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupEventUnlock__FP15cUITemplate_MAP);
 #ifdef SKIP_ASM
 void cUITemplate_MAP_setupEventUnlock(cUITemplate_MAP* self)
@@ -777,7 +777,7 @@ extern "C" void func_00208498(void* self)
 
 extern "C" void* func_002009D0(void*);
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/uitemplatemap", func_00208518__FPv);
 #ifdef SKIP_ASM
 void* func_00208518(void* self)
@@ -788,7 +788,7 @@ void* func_00208518(void* self)
 
 extern "C" void* func_00200A70(void*);
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/uitemplatemap", func_00208538__FPv);
 #ifdef SKIP_ASM
 void* func_00208538(void* self)
@@ -863,7 +863,7 @@ extern "C" void func_00208638(void* self)
 
 extern "C" void* func_00202770(void*);
 
-//99.29%
+//100%
 INCLUDE_ASM("fe/uitemplatemap", func_00208658__FPv);
 #ifdef SKIP_ASM
 void* func_00208658(void* self)

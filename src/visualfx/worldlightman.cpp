@@ -1780,7 +1780,7 @@ extern "C" void func_002F8340(void* self, int flags)
 
 extern "C" void* func_002F6B88(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F8370__FPv);
 #ifdef SKIP_ASM
 void* func_002F8370(void* self)
@@ -1791,7 +1791,7 @@ void* func_002F8370(void* self)
 
 extern "C" void* func_002F6B88(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F8390__FPv);
 #ifdef SKIP_ASM
 void* func_002F8390(void* self)
@@ -2113,7 +2113,7 @@ void sti_002F9040(int init, int prio)
 
 extern "C" void* func_002F9040(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F9818__FPv);
 #ifdef SKIP_ASM
 void* func_002F9818(void* self)
@@ -2435,7 +2435,7 @@ void sti_002FA640(int init, int prio)
 
 extern "C" void* func_002FA640(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002FAE18__FPv);
 #ifdef SKIP_ASM
 void* func_002FAE18(void* self)

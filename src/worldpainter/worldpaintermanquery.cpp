@@ -648,7 +648,7 @@ void* func_002C1680(void* self)
 
 extern "C" void* func_002C0B70(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("worldpainter/worldpaintermanquery", func_002C1688__FPv);
 #ifdef SKIP_ASM
 void* func_002C1688(void* self)

@@ -2896,7 +2896,7 @@ extern "C" int func_0030D488(void *arg0) {
 }
 #endif
 
-//99.38%
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D498__FPv);
 #ifdef SKIP_ASM
 void* func_0030D498(void* self)

@@ -585,7 +585,7 @@ extern "C" void func_002ADAC8(sSndPlayerDAC8* self, int flags)
 extern "C" void func_002AD998();
 extern "C" void* func_003B5910(void*);
 
-//98.75%
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADBF0__FPv);
 #ifdef SKIP_ASM
 void* func_002ADBF0(void* self)

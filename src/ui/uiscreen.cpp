@@ -174,7 +174,7 @@ extern "C" void* cUIScreen_getPrimaryThread(void* self);
 void cUIThread_deleteThread(void* self);
 extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
-//99.75%
+//100%
 INCLUDE_ASM("ui/uiscreen", cUIScreen_jumpToFrame__FPvUs);
 #ifdef SKIP_ASM
 void cUIScreen_jumpToFrame(void* self, unsigned short frame)

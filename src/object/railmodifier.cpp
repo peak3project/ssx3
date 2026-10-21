@@ -4303,7 +4303,7 @@ void* func_00361E08(void* self)
 
 extern "C" void* func_0035FE10(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("object/railmodifier", func_00361E10__FPv);
 #ifdef SKIP_ASM
 void* func_00361E10(void* self)
@@ -4364,7 +4364,7 @@ extern "C" void func_00361EB8(void* self)
 
 extern "C" void* func_00361E80(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("object/railmodifier", func_00361F40__FPv);
 #ifdef SKIP_ASM
 void* func_00361F40(void* self)

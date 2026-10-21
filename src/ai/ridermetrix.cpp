@@ -1147,7 +1147,7 @@ extern "C" float func_001198D8(void* self, float x)
 
 extern "C" void* func_00119898(void*);
 
-//99.29%
+//100%
 INCLUDE_ASM("ai/ridermetrix", func_00119918__FPvi);
 #ifdef SKIP_ASM
 void* func_00119918(void* self, int a1)

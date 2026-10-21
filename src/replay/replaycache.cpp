@@ -1345,7 +1345,7 @@ extern "C" void func_00272288(int* self)
 
 extern "C" void* func_002718E8(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("replay/replaycache", func_002722C0__FPv);
 #ifdef SKIP_ASM
 void* func_002722C0(void* self)
@@ -1506,7 +1506,7 @@ extern "C" void* func_00272488_impl(int size, void* heap)
 
 extern "C" void* func_00272488(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("replay/replaycache", func_002724C8__FPv);
 #ifdef SKIP_ASM
 void* func_002724C8(void* self)
@@ -1531,7 +1531,7 @@ extern "C" void func_002724E8_impl(void* p)
 
 extern "C" void* func_002724E8(void* self);
 
-//99.29%
+//100%
 INCLUDE_ASM("replay/replaycache", func_00272510__FPv);
 #ifdef SKIP_ASM
 void* func_00272510(void* self)

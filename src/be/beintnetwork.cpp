@@ -11,7 +11,7 @@ struct cBENetworkInterface {
     void* vtable;
 };
 
-//99.58%
+//100%
 INCLUDE_ASM("be/beintnetwork", cBENetworkInterface_getThis__Fv);
 #ifdef SKIP_ASM
 void* cBENetworkInterface_getThis()

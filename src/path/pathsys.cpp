@@ -477,7 +477,7 @@ extern "C" float func_0026C430(void *arg0) {
 }
 #endif
 
-//99.38%
+//100%
 INCLUDE_ASM("path/pathsys", func_0026C438__FPv);
 #ifdef SKIP_ASM
 void* func_0026C438(void* self)

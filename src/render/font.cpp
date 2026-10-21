@@ -5413,7 +5413,7 @@ extern "C" int *func_003970E8(void) {
 }
 #endif
 
-//99.38%
+//100%
 INCLUDE_ASM("render/font", func_003970F8__FPv);
 #ifdef SKIP_ASM
 void* func_003970F8(void* self)
@@ -5424,7 +5424,7 @@ void* func_003970F8(void* self)
 
 extern "C" void* func_00393048(int, int);
 
-//99.38%
+//100%
 INCLUDE_ASM("render/font", func_00397118__FPv);
 #ifdef SKIP_ASM
 void* func_00397118(void* self)

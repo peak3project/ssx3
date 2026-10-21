@@ -11,7 +11,7 @@ extern const char D_004A1230[];
 extern void* D_0045ABE8[16];
 extern void* D_004A122C;
 
-//99.86%
+//100%
 INCLUDE_ASM("be/bestate", cBERaceState_getState__FPv);
 #ifdef SKIP_ASM
 void* cBERaceState_getState(void* self)

@@ -8,7 +8,7 @@ struct cStreamPause {
     void* vtable;
 };
 
-//99.67%
+//100%
 INCLUDE_ASM("main/streampause", cStreamPause_construct__Fv);
 #ifdef SKIP_ASM
 cStreamPause* cStreamPause_construct()
