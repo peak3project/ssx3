@@ -65,7 +65,17 @@ void unexpected_848(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412860);
+#ifdef SKIP_ASM
+// __cp_exception_info(): address of the current exception's value in its cp_eh_info
+extern void* func_00410490_v(void) __asm__("func_00410490");
+void* cp_exception_info_860(void) __asm__("func_00412860");
+void* cp_exception_info_860(void)
+{
+    return (char*)*(void**)func_00410490_v() + 8;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412888);
