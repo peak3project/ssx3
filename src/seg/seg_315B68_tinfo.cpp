@@ -498,7 +498,11 @@ public:
         return *(const __builtin_ti*)ti;       \
     }
 
+//100%
 INCLUDE_ASM("seg/seg_315B68_tinfo", func_004158F0);
+#ifdef SKIP_ASM
+BUILTIN(func_004158F0, D_00454158, D_00499AE0)
+#endif
 
 INCLUDE_ASM("seg/seg_315B68_tinfo", func_00415928);
 
