@@ -159,7 +159,32 @@ void func_00412998(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412A28);
+#ifdef SKIP_ASM
+struct sCpEh { int (*match)(void); short lang, ver; int value; int type; void (*cleanup)(int, int); int caught; sCpEh *next; long handlers; int orig; };
+extern sCpEh **eh_get_a28(void) __asm__("func_00410490");
+extern int ptr_type_a28(int) __asm__("func_00415728");
+extern void eh_free_a28(void *) __asm__("func_00412908");
+extern int term_a28(void) __asm__("func_00412800") __attribute__((noreturn));
+void func_00412A28(sCpEh *p) {
+    sCpEh **q = eh_get_a28();
+    if (--p->handlers != 0)
+        return;
+    if (p == *q && !p->caught)
+        return;
+    for (; *q && *q != p; q = &(*q)->next)
+        ;
+    if (!*q)
+        term_a28();
+    *q = p->next;
+    if (p->cleanup)
+        p->cleanup(p->value, 2);
+    if (!ptr_type_a28(p->type))
+        eh_free_a28((void *)p->orig);
+    eh_free_a28(p);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412AF0);
