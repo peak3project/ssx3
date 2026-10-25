@@ -12841,7 +12841,75 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D5A98);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5CC0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5EE8);
+#ifdef SKIP_ASM
+struct V_5EE8 { char pad0[0x18]; int f18; char f1C; char f1D; char f1E; char pad1F[0x54 - 0x1F]; int f54; };
+struct G_5EE8 { char pad0[0x24]; unsigned short h24; char pad26[2]; unsigned f28; };
+extern struct G_5EE8 *D_0044F420_5EE8 __asm__("D_0044F420");
+extern int D_0044F438_5EE8 __asm__("D_0044F438");
+extern void func_002AF580_5EE8(int, int) __asm__("func_002AF580");
+
+void func_003D5EE8_impl(struct V_5EE8 *v) __asm__("func_003D5EE8");
+void func_003D5EE8_impl(struct V_5EE8 *v) {
+    struct {
+        unsigned mode : 7;
+        int neg : 1;
+        unsigned mid : 8;
+        unsigned dur : 16;
+    } l;
+    float r = -1.0f;
+    float diff;
+    float t;
+    float m;
+    int pos;
+    int none;
+    unsigned sel;
+    diff = (float)v->f1E - (float)v->f1C;
+    l.dur = D_0044F420_5EE8->h24;
+    l.mode = D_0044F420_5EE8->f28;
+    pos = 1;
+    if (diff < 0.0f) {
+        pos = 0;
+    }
+    l.neg = pos;
+    t = (float)(unsigned)(D_0044F438_5EE8 - v->f18) / (float)l.dur;
+    if (t >= 1.0f) {
+        func_002AF580_5EE8(v->f54, v->f1E);
+        none = -1;
+        v->f1C = none;
+        v->f1D = v->f1E = none;
+        v->f18 = 0;
+        return;
+    }
+    if (l.neg) {
+        t = 1.0f - t;
+    }
+    sel = l.mode;
+    switch (sel) {
+    case 1:
+        r = 1.0f - t;
+        break;
+    case 2:
+        r = 1.0f - t * t;
+        break;
+    case 3:
+        r = 1.0f / t / 25.0f;
+        break;
+    }
+    m = v->f1C;
+    if (v->f1E < v->f1C) {
+        m = v->f1E;
+    }
+    if (diff < 0.0f) {
+        diff = -diff;
+    }
+    if (r >= 0.0f && r <= 1.0f) {
+        r = m + diff * r;
+        func_002AF580_5EE8(v->f54, (int)r);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D6108);
