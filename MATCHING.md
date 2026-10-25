@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `665b5fb4`, generated 2026-10-25.
+Snapshot of commit `bb907893`, generated 2026-10-25.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,10 +11,10 @@ Snapshot of commit `665b5fb4`, generated 2026-10-25.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 13,795 | 91.27% |
+| Matching | 13,800 | 91.29% |
 | Partial | 7 | 0.05% |
-| Not started | 1,312 | 8.68% |
-| **Total** | **15,114** | |
+| Not started | 1,309 | 8.66% |
+| **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
 
@@ -25,7 +25,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | File | Matching | Partial | Not started | Total |
 |---|---|---|---|---|
 | `fe/feasyncfile` | 524 | 0 | 12 | 536 |
-| `ealib/seg_2B4578` | 467 | 1 | 137 | 605 |
+| `ealib/seg_2B4578` | 468 | 1 | 136 | 605 |
 | `render/font` | 431 | 0 | 2 | 433 |
 | `fe/fepopupmisc` | 375 | 1 | 5 | 381 |
 | `object/railmodifier` | 350 | 1 | 18 | 369 |
@@ -35,7 +35,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `sound/soundsys` | 290 | 0 | 15 | 305 |
 | `ui/uivector` | 287 | 0 | 2 | 289 |
 | `main/all_in_one_main` | 277 | 0 | 3 | 280 |
-| `seg/seg_2FE810` | 269 | 0 | 145 | 414 |
+| `seg/seg_2FE810` | 242 | 0 | 124 | 366 |
 | `ai/control/handplantcontrol` | 219 | 0 | 14 | 233 |
 | `camera/camera` | 213 | 0 | 25 | 238 |
 | `seg/seg_2F41F8` | 208 | 0 | 45 | 253 |
@@ -167,6 +167,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `fe/festateprofile` | 20 | 0 | 1 | 21 |
 | `fe/ovstatelodge` | 20 | 0 | 2 | 22 |
 | `fe/ovtemplatedialog` | 20 | 0 | 3 | 23 |
+| `seg/seg_3113A0_eh` | 20 | 0 | 9 | 29 |
 | `be/beintnetwork` | 19 | 0 | 0 | 19 |
 | `object/bucketman` | 19 | 0 | 0 | 19 |
 | `world/world` | 19 | 0 | 0 | 19 |
@@ -206,6 +207,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `fe/festateriderbio` | 11 | 0 | 0 | 11 |
 | `object/objnode` | 11 | 0 | 0 | 11 |
 | `scripter/scsndmgr` | 11 | 0 | 0 | 11 |
+| `seg/seg_312310` | 11 | 0 | 10 | 21 |
 | `ui/uianimation` | 11 | 0 | 0 | 11 |
 | `ui/uistate` | 11 | 0 | 0 | 11 |
 | `ui/uithing` | 11 | 0 | 1 | 12 |
@@ -3561,7 +3563,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ealib/seg_2B4578`
 
-467 matching, 1 partial, 137 not started (605 total)
+468 matching, 1 partial, 136 not started (605 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -3934,6 +3936,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003D16E8` | Matching | 100.00% | 8 |
 | `func_003D1940` | Matching | 100.00% | 328 |
 | `func_003D1A88` | Matching | 100.00% | 288 |
+| `func_003D1E80` | Matching | 100.00% | 256 |
 | `func_003D1F80` | Matching | 100.00% | 232 |
 | `PATHI_copyevent` | Matching | 100.00% | 204 |
 | `func_003D2138` | Matching | 100.00% | 136 |
@@ -3982,11 +3985,11 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003D3D20` | Matching | 99.98% | 816 |
 | `func_003C96F0` | Matching | 99.97% | 584 |
 | `func_003B6300` | Matching | 99.96% | 472 |
+| `func_003D1D28` | Matching | 99.94% | 340 |
 | `func_003BB588` | Matching | 99.94% | 664 |
 | `func_003B96B8` | Matching | 99.93% | 288 |
 | `func_003C9C08` | Matching | 99.93% | 288 |
 | `func_003B3BB0` | Matching | 99.93% | 284 |
-| `func_003D1E80` | Matching | 99.92% | 256 |
 | `func_003C5C30` | Matching | 99.91% | 448 |
 | `func_003CCF90` | Matching | 99.91% | 424 |
 | `func_003BF0F0` | Matching | 99.89% | 752 |
@@ -12077,7 +12080,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_2FE810`
 
-269 matching, 0 partial, 145 not started (414 total)
+242 matching, 0 partial, 124 not started (366 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -12299,6 +12302,37 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0040D4A0` | Matching | 100.00% | 232 |
 | `func_0040F878` | Matching | 100.00% | 36 |
 | `func_0040FB88` | Matching | 100.00% | 84 |
+| `func_004011E0` | Matching | 99.95% | 368 |
+| `func_004014F8` | Matching | 99.95% | 368 |
+| `func_00400190` | Matching | 99.90% | 192 |
+| `func_00402E10` | Matching | 99.89% | 368 |
+| `func_00406318` | Matching | 99.88% | 504 |
+| `func_00406CA0` | Matching | 99.88% | 332 |
+| `func_00409D10` | Matching | 99.86% | 292 |
+| `func_004060C8` | Matching | 99.86% | 288 |
+| `func_0040AA68` | Matching | 99.86% | 280 |
+| `func_004086C0` | Matching | 99.85% | 272 |
+| `func_003FE4D8` | Matching | 99.84% | 128 |
+| `func_003FE458` | Matching | 99.84% | 124 |
+| `func_003FE320` | Matching | 99.83% | 116 |
+| `func_003FE398` | Matching | 99.83% | 116 |
+| `func_003FE2B8` | Matching | 99.81% | 104 |
+| `func_003FE410` | Matching | 99.72% | 72 |
+| `func_003FE558` | Matching | 99.64% | 56 |
+| `func_00400838` | Matching | 99.62% | 104 |
+| `func_0040BEF0` | Matching | 99.58% | 48 |
+| `func_003FED60` | Matching | 99.44% | 36 |
+| `func_0040BF20` | Matching | 99.44% | 36 |
+| `func_0040FC90` | Matching | 99.38% | 32 |
+| `func_004011C0` | Matching | 99.29% | 28 |
+| `func_0040BCC0` | Matching | 98.85% | 104 |
+
+### `seg/seg_3113A0_eh`
+
+20 matching, 0 partial, 9 not started (29 total)
+
+| Function | Status | Match % | Size |
+|---|---|---|---|
 | `func_004103A0` | Matching | 100.00% | 16 |
 | `func_004103B0` | Matching | 100.00% | 36 |
 | `func_004103D8` | Matching | 100.00% | 44 |
@@ -12311,45 +12345,32 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00410548` | Matching | 100.00% | 40 |
 | `func_00410848` | Matching | 100.00% | 8 |
 | `func_00410850` | Matching | 100.00% | 8 |
+| `func_00410858` | Matching | 100.00% | 216 |
+| `func_00410930` | Matching | 100.00% | 324 |
 | `func_00410A78` | Matching | 100.00% | 136 |
 | `func_00410B00` | Matching | 100.00% | 124 |
 | `func_00410B80` | Matching | 100.00% | 140 |
 | `func_00410C10` | Matching | 100.00% | 8 |
+| `func_00411128` | Matching | 99.96% | 484 |
+| `func_00410F48` | Matching | 99.96% | 476 |
+
+### `seg/seg_312310`
+
+11 matching, 0 partial, 10 not started (21 total)
+
+| Function | Status | Match % | Size |
+|---|---|---|---|
 | `func_00411310` | Matching | 100.00% | 48 |
 | `func_00411438` | Matching | 100.00% | 152 |
 | `func_00411530` | Matching | 100.00% | 8 |
-| `func_004011E0` | Matching | 99.95% | 368 |
-| `func_004014F8` | Matching | 99.95% | 368 |
-| `func_00400190` | Matching | 99.90% | 192 |
-| `func_00402E10` | Matching | 99.89% | 368 |
-| `func_00406318` | Matching | 99.88% | 504 |
-| `func_00406CA0` | Matching | 99.88% | 332 |
 | `func_004126A0` | Matching | 99.88% | 160 |
 | `func_00412608` | Matching | 99.86% | 148 |
-| `func_00409D10` | Matching | 99.86% | 292 |
-| `func_004060C8` | Matching | 99.86% | 288 |
-| `func_0040AA68` | Matching | 99.86% | 280 |
-| `func_004086C0` | Matching | 99.85% | 272 |
-| `func_003FE4D8` | Matching | 99.84% | 128 |
-| `func_003FE458` | Matching | 99.84% | 124 |
 | `func_00412280` | Matching | 99.83% | 360 |
-| `func_003FE320` | Matching | 99.83% | 116 |
-| `func_003FE398` | Matching | 99.83% | 116 |
-| `func_003FE2B8` | Matching | 99.81% | 104 |
-| `func_003FE410` | Matching | 99.72% | 72 |
-| `func_003FE558` | Matching | 99.64% | 56 |
-| `func_00400838` | Matching | 99.62% | 104 |
-| `func_0040BEF0` | Matching | 99.58% | 48 |
 | `func_00412778` | Matching | 99.55% | 44 |
-| `func_003FED60` | Matching | 99.44% | 36 |
-| `func_0040BF20` | Matching | 99.44% | 36 |
-| `func_0040FC90` | Matching | 99.38% | 32 |
-| `func_004011C0` | Matching | 99.29% | 28 |
 | `func_00412740` | Matching | 99.29% | 56 |
 | `func_00412500` | Matching | 99.21% | 76 |
 | `func_00411F70` | Matching | 99.20% | 100 |
 | `func_00411F18` | Matching | 99.09% | 88 |
-| `func_0040BCC0` | Matching | 98.85% | 104 |
 
 ### `seg/seg_313800_exception`
 
