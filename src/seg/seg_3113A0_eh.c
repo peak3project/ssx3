@@ -247,4 +247,41 @@ INCLUDE_ASM("seg/seg_3113A0_eh", func_00410C18);
 
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410F48);
 
+//100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00411128);
+#ifdef SKIP_ASM
+struct S411128 { char b[0x2F0]; } __attribute__((aligned(8)));
+extern void func_004103B0(void);
+extern struct S411128 *get_411128(void *, void *) __asm__("func_00414818");
+extern void *func_00410C18(void *, int, void *, void *);
+void func_00411128(int val) {
+    struct S411128 ctx0;
+    struct S411128 buf;
+    struct S411128 *a;
+    int *info;
+    struct S411128 *pb;
+    void **pa;
+    void *pc;
+    __builtin_unwind_init();
+    info = (int *)D_00453444[0]();
+    pb = &buf;
+    a = &ctx0;
+    if (info[2] == 0)
+        func_004103B0();
+    info[3] = val;
+    pa = (void **)&a;
+lbl:
+    __asm__ volatile(".globl D_004111D4\n\t.type D_004111D4,@function\nD_004111D4:");
+    pc = (void *)&&lbl;
+    a = get_411128(pc, (void *)a);
+    if (a == 0)
+        func_004103B0();
+    *(void **)a = __builtin_dwarf_cfa();
+    buf = *a;
+    {
+        void *h = func_00410C18(info, (int)__builtin_return_address(0) - 1, pb, pa);
+        __builtin_eh_return(info, *(int *)a - *(int *)pb, h);
+    }
+}
+__asm__(".globl D_004112A0\n\t.type D_004112A0,@function\n\tD_004112A0 = func_00411128 + 0x178\n");
+#endif
