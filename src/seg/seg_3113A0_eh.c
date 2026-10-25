@@ -336,7 +336,118 @@ int *func_00410B80(int a, int *b, int c) {
 void func_00410C10(void) {
 }
 
+//100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410C18);
+#ifdef SKIP_ASM
+struct S410C18 { char b[0x2F0]; } __attribute__((aligned(8)));
+struct F410C18 { int f0; unsigned *p; char pad0[0x292]; unsigned short idx; signed char kind[0x50]; } __attribute__((aligned(8)));
+extern void func_004103B0(void);
+extern void func_00410C10(void);
+extern struct F410C18 *f_b80_410C18(int, struct F410C18 *, struct S410C18 *) __asm__("func_00410B80");
+extern long long *f_a78_410C18(int, struct F410C18 *, struct S410C18 *) __asm__("func_00410A78");
+extern void f_b00_410C18(int, struct F410C18 *, struct S410C18 *) __asm__("func_00410B00");
+extern int f_930_410C18(int, int, int, int, int *) __asm__("func_00410930");
+extern int f_858_410C18(int, int) __asm__("func_00410858");
+static inline void nop_410C18(void) {}
+int unwind_410C18(int *info, int pc, struct S410C18 *buf, struct F410C18 **pout) __asm__("func_00410C18");
+int unwind_410C18(int *info, int pc, struct S410C18 *buf, struct F410C18 **pout) {
+    struct S410C18 first;
+    struct S410C18 save;
+    struct F410C18 *cur;
+    struct F410C18 *t;
+    struct S410C18 *prev;
+    int flag;
+    int pc0, sres, spc, have2, have;
+    int result = 0;
+    int regs = info[2];
+    int fl3 = info[3] != 0;
+    have2 = 0;
+    have = 0;
+    pc0 = pc;
+    flag = 0;
+    cur = *pout;
+    prev = &first;
+    for (;;) {
+        t = cur;
+        cur = f_b80_410C18(pc, t, prev);
+        prev = (struct S410C18 *)t;
+        if (cur == 0)
+            break;
+        {
+            int m;
+            if (cur->p == 0)
+                m = 0;
+            else
+                m = *cur->p == 0xFFFFFFFE;
+            if (fl3) {
+                fl3 = 0;
+                result = f_930_410C18(info[3], (int)cur->p, regs, 1, &flag);
+                info[3] = 0;
+            } else if (m) {
+                result = f_930_410C18(pc, (int)cur->p, regs, 0, &flag);
+            } else {
+                result = f_858_410C18(pc, (int)cur->p);
+            }
+        }
+        if (result != 0) {
+            if (flag != 0) {
+                if (have == 0) {
+                    save = *(struct S410C18 *)cur;
+                    spc = pc;
+                    sres = result;
+                    have = 1;
+                    have2 = 1;
+                }
+            } else {
+                have2 = 0;
+                break;
+            }
+        }
+        {
+            long long v = *f_a78_410C18(cur->idx, cur, (struct S410C18 *)t);
+            pc = (int)v - 1;
+        }
+    }
+    if (have) {
+        cur = (struct F410C18 *)&save;
+        result = sres;
+        pc = spc;
+        if (have2)
+            func_00410C10();
+    }
+    if (result == 0)
+        func_004103B0();
+    *info = result;
+    {
+        int end = pc;
+        if (end == pc0) {
+            cur = (struct F410C18 *)buf;
+        } else {
+            int i;
+            int stop = end;
+            pc = pc0;
+            *cur = *(struct F410C18 *)buf;
+            while (pc != stop) {
+                t = cur;
+                cur = f_b80_410C18(pc, t, (struct S410C18 *)prev);
+                prev = (struct S410C18 *)t;
+                for (i = 0; i < 0x4F; i++) {
+                    if (i != cur->idx && cur->kind[i] != 0)
+                        f_b00_410C18(i, cur, buf);
+                }
+                {
+                    long long v = *f_a78_410C18(cur->idx, cur, (struct S410C18 *)t);
+                    pc = (int)v - 1;
+                }
+            }
+            if (cur->kind[cur->idx] == 2)
+                nop_410C18();
+        }
+        *pout = cur;
+    }
+    return result;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410F48);
