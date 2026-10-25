@@ -5741,7 +5741,27 @@ int func_00410850(short *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410858);
+#ifdef SKIP_ASM
+struct E410858 { unsigned start; unsigned end; int data; };
+int func_00410858(unsigned pc, struct E410858 *tab) {
+    int best, i;
+    if (tab) {
+        best = -1;
+        for (i = 0; tab[i].start != 0xFFFFFFFF; i++) {
+            if (pc >= tab[i].start && pc < tab[i].end) {
+                if (best == -1 || (tab[best].end >= tab[i].end && tab[best].start <= tab[i].start))
+                    best = i;
+            } else if (best >= 0 && pc < tab[i].start)
+                break;
+        }
+        if (best != -1)
+            return tab[best].data;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00410930);
 
