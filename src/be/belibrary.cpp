@@ -172,8 +172,7 @@ extern "C" signed char func_0014AC30(int a0)
 }
 #endif
 
-//99.29% - identical instructions; jal addend differs only because the
-// callee sits at a different .text offset in our object than in the target
+//100%
 INCLUDE_ASM("be/belibrary", func_0014AC50);
 #ifdef SKIP_ASM
 extern "C" int func_0014AC50(int a0)

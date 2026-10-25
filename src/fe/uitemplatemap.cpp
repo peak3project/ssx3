@@ -851,8 +851,7 @@ extern "C" int func_00208610(void* self, int a1, int a2)
 }
 #endif
 
-//99.29% - identical instructions; jal addend differs only because the
-// callee sits at a different .text offset in our object than in the target
+//100%
 INCLUDE_ASM("fe/uitemplatemap", func_00208638);
 #ifdef SKIP_ASM
 extern "C" void func_00208638(void* self)

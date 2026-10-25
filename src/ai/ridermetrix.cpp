@@ -887,8 +887,7 @@ extern "C" float func_00119368(void* self, int a1)
 
 extern "C" void func_00117718(void*);
 
-//99.38% - identical instructions; jal addend differs only because the
-// callee sits at a different .text offset in our object than in the target
+//100%
 INCLUDE_ASM("ai/ridermetrix", func_001193E0);
 #ifdef SKIP_ASM
 extern "C" float func_001193E0(void* self)

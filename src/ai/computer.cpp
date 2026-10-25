@@ -162,8 +162,7 @@ extern "C" void func_0010C9A8(void* self)
 
 extern "C" void cComputer_updateRiderDifficulty(void*);
 
-//99.29% - identical instructions; jal addend differs only because the
-// callee sits at a different .text offset in our object than in the target
+//100%
 INCLUDE_ASM("ai/computer", func_0010CAB8);
 #ifdef SKIP_ASM
 extern "C" void func_0010CAB8(void* self)
