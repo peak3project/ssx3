@@ -2562,7 +2562,98 @@ int func_0042A2E0(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042A300);
+#ifdef SKIP_ASM
+struct SA300 { int f0; int f4; int f8; int fC; long f10; int f18; int f1C; };
+extern int D_0045520C;
+extern int D_0045521C;
+extern volatile int D_00455188[];
+extern struct SA300 D_A300 __asm__("D_0052D700");
+extern char D_0052E340[];
+extern char D_0052EC00[];
+extern char D_0052EE00[];
+extern int *func_00427520_p(int) __asm__("func_00427520");
+extern int func_00427988_b(int) __asm__("func_00427988");
+extern void func_004279B8(void);
+extern int func_00423DA0(int *p);
+extern void func_00423DB0(int);
+extern void func_00423DC0(int);
+extern int func_00423DE0_i(int) __asm__("func_00423DE0");
+extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
+long func_0042A300(int a0, long a1, int a2)
+{
+  int buf[8];
+  long res;
+  int sem;
+  int v;
+  int i;
+  short flags;
+  int *t;
+  unsigned fl;
+  struct SA300 *p = &D_A300;
+  t = func_00427520_p(a0);
+  func_00427988_b(0x16);
+  if (D_0045520C == 0)
+  {
+    func_004279B8();
+    return -1;
+  }
+  if ((t == 0) || ((fl = t[1]) == 0))
+  {
+    func_004279B8();
+    return -9;
+  }
+  p->fC = t[0];
+  p->f10 = a1;
+  p->f18 = a2;
+  p->f1C = (((char *) t) - D_0052EC00) >> 4;
+  buf[1] = 1;
+  buf[2] = 0;
+  buf[5] = 0;
+  sem = func_00423DA0(&buf[0]);
+  p->f4 = (int) &res;
+  p->f8 = 8;
+  flags = fl;
+  D_A300.f0 = sem;
+  if (flags & 0x8000)
+  {
+    func_00423DE0_i(D_0045521C);
+    for (i = 0; i < 0x20; i++)
+    {
+      if (D_00455188[i] == (-1))
+      {
+        D_00455188[i] = p->f0;
+        p->f0 = -p->f0;
+        break;
+      }
+    }
+
+    func_00423DC0(D_0045521C);
+  }
+  if (func_00426D18_v(D_0052EE00, 0x16, 0, &D_A300, 0x20, D_0052E340, 4, 0, 0) < 0)
+  {
+    func_00423DB0(sem);
+    func_004279B8();
+    return -0xB;
+  }
+  v = *((int *) (((int) D_0052E340) | 0x20000000));
+  func_004279B8();
+  if (v == 0)
+  {
+    func_00423DB0(sem);
+    return -0xB;
+  }
+  if (fl & 0x8000)
+  {
+    func_00423DB0(sem);
+    return 0;
+  }
+  func_00423DE0_i(sem);
+  func_00423DB0(sem);
+  return res;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042A538);
