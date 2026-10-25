@@ -2047,7 +2047,44 @@ void func_00161720(void* self, void* other)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00161728);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 inline asm (vector at pointer times scalar).
+static inline sVec_001607E0 cmScaleP_1728(const sVec_001607E0* v, float s)
+{
+    sVec_001607E0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+extern "C" void func_00161728_v(char* self) __asm__("func_00161728");
+
+extern "C" void func_00161728_v(char* self)
+{
+    sCamInfo_001607E0 info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+                  0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
+                  0.6000000238418579f);
+    sVec_001607E0* p20 = (sVec_001607E0*)(self + 0x20);
+    sVec_001607E0* p40 = (sVec_001607E0*)(self + 0x40);
+    *p20 = cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1728(&D_004FF160_v1607E0, 13.495580673217773f));
+    sVec_001607E0 d = cmSub_00160BF8(*p20, *p40);
+    float len = cmLength_001607E0(d);
+    if (0.0f < len) {
+        *(float*)self = (531.6604614257812f / len <? 1.0f) * 0.7853981852531433f;
+    }
+}
+#endif
 
 INCLUDE_ASM("camera/camera", func_00161848);
 
