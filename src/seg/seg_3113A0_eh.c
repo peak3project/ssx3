@@ -102,7 +102,53 @@ int *func_00410548(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410570);
+#ifdef SKIP_ASM
+extern int (*D_00453444[])(void);
+extern void func_004103B0(void);
+struct N570 { int *next; int cleanup; void *jb[3]; char pad[0x62C]; };
+void sjthrow_410570(void) __asm__("func_00410570");
+void sjthrow_410570(void) {
+    struct N570 node;
+    int *eh;
+    int **pchain;
+    int *q;
+    int **pcl;
+    struct N570 *h;
+    eh = (int *)D_00453444[0]();
+    pchain = (int **)&eh[1];
+    q = (int *)eh[1];
+    pcl = (int **)&q[1];
+    if (q[1] != 0) {
+        node.next = q;
+        node.cleanup = 0;
+        h = &node;
+        if (__builtin_setjmp(node.jb) == 0) {
+            *pchain = (int *)h;
+                        {
+                int *n;
+                while (*pcl != 0) {
+                    n = *pcl;
+                    *pcl = (int *)n[0];
+                    ((void (*)(int, int))n[1])(n[2], 2);
+                }
+            }
+            *pchain = h->next;
+        } else {
+            func_004103B0();
+        }
+    }
+    if (eh[2] == 0 || ((int *)*pchain)[0] == 0)
+        func_004103B0();
+    {
+        int *r = *pchain;
+        *pchain = (int *)r[0];
+        __builtin_longjmp((void **)&r[2], 1);
+    }
+}
+__asm__(".globl D_00410628\n\t.type D_00410628,@function\n\tD_00410628 = func_00410570 + 0xB8\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_004106E8);
