@@ -1370,7 +1370,58 @@ extern "C" void func_00277400(void* self, int a1, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/datamanager", func_00277450);
+#ifdef SKIP_ASM
+extern "C" int func_00277DD8(void* self, void* a1);
+extern "C" int func_00279528(void* self, int category, int a, int b, int c);
+extern "C" int func_002795D0(void* self, int key, int a, int b, int c);
+extern "C" int cVidEngine_ReadyVideo(void** self, int file);
+extern "C" void* func_00283D70(void* list, int i);
+extern "C" int* func_00277DE8_p(void* self, void* ent) __asm__("func_00277DE8");
+int func_00283D28_count(void* list) __asm__("func_00283D28");
+
+struct sDmEnt7450 {
+    int f0;     // 0x0
+    int f4;     // 0x4
+    int flags;  // 0x8
+    int id;     // 0xC
+    int a;      // 0x10
+    int b;      // 0x14
+    int c;      // 0x18
+};
+
+extern "C" int func_00277450(void* vself, int index, int skipFlagged)
+{
+    char* self = (char*)vself;
+    int count = func_00283D28_count(self + 0xC);
+    int i = index;
+    for (; i < count; i++) {
+        sDmEnt7450* e = (sDmEnt7450*)func_00283D70(self + 0xC, i);
+        if (skipFlagged && (e->flags & 2))
+            continue;
+        if (e->id >= 0)
+            return i;
+        if (func_00277DD8(self, e) == 0) {
+            void* eng = *(void**)self;
+            if (e->f4 >= 0)
+                e->id = func_002795D0(eng, e->f4, e->a, e->b, e->c);
+            else
+                e->id = func_00279528(*(void**)self, e->f0, e->a, e->b, e->c);
+            if (e->id >= 0)
+                return i;
+        } else {
+            if (*(int*)(*(char**)self + 0x500) == 0) {
+                int* v = func_00277DE8_p(self, e);
+                if (cVidEngine_ReadyVideo((void**)(*(char**)self + 0x500), *v) != 0)
+                    e->id = 0;
+            }
+            return i;
+        }
+    }
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/datamanager", func_00277598);
