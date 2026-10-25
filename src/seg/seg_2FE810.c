@@ -5763,7 +5763,45 @@ int func_00410858(unsigned pc, struct E410858 *tab) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410930);
+#ifdef SKIP_ASM
+struct E410930 { unsigned start; unsigned end; int val; int cb; };
+struct C410930 { int (*match)(struct C410930 *, int, int); };
+int func_00410930(unsigned pc, int obj, struct C410930 *ctx, int flag, int *out) {
+    int r = 0;
+    *out = 1;
+    if (obj != 0) {
+        int idx = 0;
+        struct E410930 *tbl = (struct E410930 *)(obj + 8);
+        if (flag) {
+            idx = ((int)pc - (int)tbl) >> 4;
+            pc = ((unsigned *)pc)[1] - 1;
+            if (tbl[idx].start != 0xFFFFFFFF)
+                idx++;
+        } else {
+            pc = pc - 1;
+        }
+        for (; tbl[idx].start != 0xFFFFFFFF; idx++) {
+            if (pc >= tbl[idx].start && pc < tbl[idx].end) {
+                if (tbl[idx].cb) {
+                    if (ctx->match) {
+                        if (ctx->match(ctx, tbl[idx].cb, obj)) {
+                            if (r == 0)
+                                r = tbl[idx].val;
+                            *out = 0;
+                            break;
+                        }
+                    }
+                } else if (r == 0) {
+                    r = tbl[idx].val;
+                }
+            }
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00410A78);
