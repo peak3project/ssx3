@@ -3532,7 +3532,75 @@ extern "C" void func_00163158(void* self_, void* info, float a, float b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00163270);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 inline asm (dst -= b).
+static inline void SubTo_163270(sVec_162B90& dst, const sVec_162B90& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        "1:\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b));
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_163270(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+struct sCamSrc_163270 {
+    char pad00[0x44];
+    float f44;
+    char pad48[4];
+    float f4C;
+    char pad50[4];
+    float f54;
+    char pad58[8];
+    int f60;
+};
+
+struct sCam_163270 {
+    char pad00[0x40];
+    sVec_162B90 v40;
+    char pad50[0x184];
+    float f1D4;
+    char pad1D8[0x2C];
+    float f204;
+};
+
+extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamSrc_163270* src) __asm__("func_00163270");
+extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamSrc_163270* src)
+{
+    float zero = 0.0f;
+    float dist = ClampLo_162B90(src->f44 - 1388.888916015625f, zero);
+    float t;
+    if (src->f44 >= 833.3333740234375f) {
+        if (src->f44 <= 1666.666748046875f)
+            t = (src->f44 - 833.3333740234375f) / 833.3333740234375f;
+        else
+            t = 1.0f;
+    } else {
+        t = zero;
+    }
+    float tt = t * t;
+    float x;
+    if (src->f60 != 0) x = self->f204;
+    else x = tt * d * (src->f54 - 0.5f);
+    self->f204 = x;
+    float r = e * self->f1D4 + (1.0f - e) * (a * (dist * 9.999999747378752e-05f) * Sqrt_163270(dist) - b + (x >? (c * Sqrt_163270(src->f4C))));
+    self->f1D4 = r;
+    SubTo_163270(self->v40, Scale_162B90(D_004FF160_v162B90, r));
+    func_00168150_v(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_001633B0);
