@@ -104,7 +104,44 @@ int *func_00410548(void) {
 
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410570);
 
+//100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_004106E8);
+#ifdef SKIP_ASM
+extern int (*D_00453444[])(void);
+extern int func_00410570(void) __attribute__((noreturn));
+struct N6E8 { int *next; int cleanup; void *jb[3]; char pad[0x62C]; };
+int func_004106E8(void) {
+    struct N6E8 node;
+    int *eh;
+    int *q;
+    int **pchain;
+    int **pcl;
+    struct N6E8 *h;
+    eh = (int *)D_00453444[0]();
+    pchain = (int **)&eh[1];
+    q = (int *)eh[1];
+    pcl = (int **)&q[1];
+    if (q[1] != 0) {
+        node.next = q;
+        node.cleanup = 0;
+        h = &node;
+        __builtin_setjmp(node.jb);
+        *pchain = (int *)h;
+                {
+            int *n;
+            while (*pcl != 0) {
+                n = *pcl;
+                *pcl = (int *)n[0];
+                ((void (*)(int, int))n[1])(n[2], 2);
+            }
+        }
+        *pchain = h->next;
+    }
+    *pchain = (int *)(*pchain)[0];
+    return func_00410570();
+}
+__asm__(".globl D_00410790\n\t.type D_00410790,@function\n\tD_00410790 = func_004106E8 + 0xA8\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410800);
