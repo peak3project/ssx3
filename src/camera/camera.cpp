@@ -4034,7 +4034,120 @@ void* func_00166530(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00166550);
+#ifdef SKIP_ASM
+struct sV_166550 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVE_166550 {
+    short delta;
+    short index;
+    sV_166550 (*fn)(void*);
+};
+
+extern sV_166550 D_004FF160_166550 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV_166550 Scale_166550(const sV_166550& v, float s)
+{
+    sV_166550 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV_166550 Sub_166550(const sV_166550& a, const sV_166550& b)
+{
+    sV_166550 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_166550(const sV_166550& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
+static inline void DivEq_166550(sV_166550& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %0\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+static inline sV_166550 Get_166550(char* self, int slot)
+{
+    char* o = *(char**)(self + 0x30);
+    sVE_166550* e = &(*(sVE_166550**)o)[slot];
+    return e->fn(o + e->delta);
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract into destination).
+static inline void SubTo_166550(sV_166550& r, const sV_166550& a, const sV_166550& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+extern "C" void func_00166550(void* self_, float a, float b)
+{
+    char* self = (char*)self_;
+    sV_166550& v = *(sV_166550*)(self + 0x80);
+    v = Scale_166550(Get_166550(self, 4), a);
+    SubTo_166550(v, v, Scale_166550(D_004FF160_166550, b));
+    DivEq_166550(v, Length_166550(v));
+}
+#endif
 
 INCLUDE_ASM("camera/camera", func_00166640);
 
