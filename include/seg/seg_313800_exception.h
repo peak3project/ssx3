@@ -4,7 +4,7 @@
 // throw expressions here, while the out-of-line copies and the vtables are emitted by another object (tinfo.cc,
 // seg/seg_315B68_tinfo). Declaring the classes the same way makes this unit only reference them, as retail does.
 // Which class is which comes from the RTTI: the vtables' type_info functions name "9exception", "8bad_cast" and
-// "10bad_typeid".
+// "10bad_typeid", plus "13bad_exception" for the class the exception-specification check throws.
 #pragma interface
 
 class exception {
@@ -24,4 +24,10 @@ class bad_typeid : public exception {
 public:
     bad_typeid() {}
     virtual ~bad_typeid() {}
+};
+
+class bad_exception : public exception {
+public:
+    bad_exception() {}
+    virtual ~bad_exception() {}
 };
