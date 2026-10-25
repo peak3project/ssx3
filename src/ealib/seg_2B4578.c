@@ -11254,7 +11254,64 @@ done:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1470);
+#ifdef SKIP_ASM
+extern int func_003D5450_1470(int) __asm__("func_003D5450");
+extern void func_002AF838_1470(int) __asm__("func_002AF838");
+struct E_1470 { char pad0[0x36]; short h36; char pad38[0x1C]; int f54; };
+struct P_1470 { char pad0[0x58]; struct E_1470 *a[24]; };
+extern struct P_1470 *D_0044F420_1470 __asm__("D_0044F420");
+extern unsigned char D_0044F42C_1470 __asm__("D_0044F42C");
+extern int D_0044F430_1470 __asm__("D_0044F430");
+extern char D_00517640_1470[] __asm__("D_00517640");
+extern char D_00517644_1470[] __asm__("D_00517644");
+
+void func_003D1470_impl(unsigned int mask) __asm__("func_003D1470");
+void func_003D1470_impl(unsigned int mask) {
+    int i;
+    int j;
+    int next;
+    unsigned int fl, t, u;
+    struct P_1470 *g;
+    int off;
+    char *np;
+    char *b4;
+    unsigned int nv;
+    struct E_1470 *e;
+    if (D_0044F42C_1470 == 0) return;
+    if (D_0044F430_1470 != 0) return;
+    if (func_003D5450_1470(-1) == 0) return;
+    i = 0;
+    do { b4 = D_00517644_1470; } while (0);
+    do {
+        off = (u = 0x928);
+        off = i * off;
+        np = D_00517640_1470;
+        next = i + 1;
+        if (*(int *)(off + (int)b4) != 0) {
+            fl = *(unsigned int *)(np + off);
+            nv = fl & 0xF0000000;
+            do { t = nv; } while (0);
+            if ((t & mask) != 0 && (u = fl & 0x0F000000, (u & mask) != 0)) {
+                if (func_003D5450_1470(i) != 0) {
+                    for (j = 0; j < 24; j++) {
+                        g = D_0044F420_1470;
+                        e = g->a[j];
+                        if (e != 0) {
+                            func_002AF838_1470(e->f54);
+                            e->h36 = -1;
+                        }
+                    }
+                }
+            }
+        }
+        i = next;
+    } while (i < 4);
+    D_0044F420_1470 = 0;
+    D_0044F430_1470 = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D15C8);
