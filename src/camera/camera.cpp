@@ -3105,7 +3105,94 @@ extern "C" cQuad128 func_00162B80(void* self, void* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00162B90);
+#ifdef SKIP_ASM
+struct sVec_162B90 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+extern sVec_162B90 D_004FF160_v162B90 __asm__("D_004FF160");
+extern "C" void func_00168150_v(void* self) __asm__("func_00168150");
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec_162B90 Scale_162B90(const sVec_162B90& v, float s)
+{
+    sVec_162B90 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddTo_162B90(sVec_162B90& dst, const sVec_162B90& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        "1:\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b));
+}
+
+static inline float Min_162B90(float a, float b)
+{
+    return a <? b;
+}
+
+static inline float ClampLo_162B90(float v, float lo)
+{
+    if (v >= lo) {
+        return v;
+    }
+    return lo;
+}
+
+struct sCamSrc_162B90 {
+    char pad00[0x44];
+    float f44;
+    char pad48[4];
+    float f4C;
+    char pad50[4];
+    float f54;
+    char pad58[8];
+    int f60;
+};
+
+struct sCam_162B90 {
+    char pad00[0x20];
+    sVec_162B90 v20;
+    char pad30[0x1B4];
+    float f1E4;
+    char pad1E8[0x20];
+    float f208;
+};
+
+extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCam_162B90* self, sCamSrc_162B90* src) __asm__("func_00162B90");
+extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCam_162B90* self, sCamSrc_162B90* src)
+{
+    float dist = src->f44 - 1388.888916015625f;
+    float t = Min_162B90(ClampLo_162B90(dist, 0.0f) * 0.0005142856971360743f, 1.0f);
+    float x;
+    if (src->f60 != 0) x = self->f208;
+    else x = src->f54;
+    self->f208 = x;
+    float r = e * self->f1E4 + (1.0f - e) * (a + t * b + src->f4C * d + c * x);
+    self->f1E4 = r;
+    AddTo_162B90(self->v20, Scale_162B90(D_004FF160_v162B90, r));
+    func_00168150_v(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_00162C78);
