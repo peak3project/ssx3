@@ -2322,7 +2322,37 @@ void func_004034A8(int *p, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403500);
+#ifdef SKIP_ASM
+extern void func_00424020(int) __asm__("func_00424020");
+extern int func_0042C078();
+extern void func_0042C0C0(void);
+void q3500(int base, unsigned addr, int n) __asm__("func_00403500");
+void q3500(int base, unsigned addr, int n) {
+    unsigned t = ((unsigned)(base + 0x88F) >> 4) << 4;
+    long *tag = (long *)t;
+    int ret;
+    while (n > 0) {
+        int chunk = n > 0xFFF40 ? 0xFFF40 : n;
+        int id = 0;
+        long hi = addr & 0xFFFFFFF;
+        n -= chunk;
+        if (n != 0) id = 3;
+        *tag = (hi << 32) | ((long)id << 28) | (unsigned long)(unsigned)((chunk + 0xF) / 16);
+        __asm__ volatile("sync");
+        addr += chunk;
+        tag += 2;
+    }
+    func_00424020(0);
+    ret = func_0042C078();
+    *(volatile int *)0x1000B430 = t & 0xFFFFFFF;
+    *(volatile int *)0x1000B420 = 0;
+    *(volatile int *)0x1000B400 = 0x105;
+    if (ret)
+        func_0042C0C0();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403600);
