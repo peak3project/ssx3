@@ -10909,7 +10909,35 @@ void func_003D0B18(Q_0B18 *q, E_0B18 *src) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D0B78);
+#ifdef SKIP_ASM
+void func_003D0B78_impl(char *base, int n, char *lim) __asm__("func_003D0B78");
+void func_003D0B78_impl(char *base, int n, char *lim) {
+    int depth = 0;
+    char *e = base + 0x10;
+    while (e <= lim && n >= 0) {
+        if (((unsigned char *)e)[9] == 1) {
+            unsigned m = *(unsigned *)(e + 8) & 0x300000;
+            if (m == 0x100000) {
+                depth++;
+            } else if (m == 0x300000) {
+                if (depth-- < 1) {
+                    n--;
+                }
+            } else if (m == 0x200000) {
+                if (depth-- < 1) {
+                    n--;
+                }
+            }
+        }
+        if (n < 1) {
+            *(unsigned *)(e + 8) |= 0x4000000;
+        }
+        e += 0x10;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D0C20);
