@@ -3486,7 +3486,54 @@ void func_00408508(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408530);
+#ifdef SKIP_ASM
+// func_00408530 97.98 (sweep: schedule). IPU/MPEG picture-timestamp routine: a=decoder state, b=picture header, o1/o2/o3 -> r->f10/f18/f20 in caller func_004086C0. func_004114D0=__muldi3 (long*long). Only diff: 'move $4,$18' (4th muldi3 arg) placed before dsra32 in ours, after it in target. Tried named locals, bitfield union, w/z temps, sweep 716 variants, permuter 4min. Chain order f34|f38|f3c|f40|f30|f2c found by permutation search.
+struct S85 { char pad0[0x70]; int f70; int pad74; long f78; int f80; int pad84; long f88; int f90; char pad94[0x5C]; long fF0; int fF8; };
+struct B85 { char pad0[0x18]; long f18; long f20; int pad28; int f2c; int f30; int f34; int f38; int f3c; int f40; };
+extern long mul85(long, long) __asm__("func_004114D0");
+long func_00408530(struct S85 *a, struct B85 *b, long *o1, long *o2, long *o3) {
+    long r;
+    long v;
+    int x;
+    int e;
+    int s;
+    if (a->f70 != 0) {
+        v = b->f18;
+        if (v >= 0) {
+            *o1 = v;
+        } else {
+            s = a->f80;
+            if (s < 0) {
+                *o1 = v;
+            } else {
+                long t;
+                int y;
+                x = a->f88;
+
+                t = mul85(x & 1, a->f78 & 1);
+                e = a->f90;
+                y = mul85(t, e & 1);
+                *o1 = s + ((int)(mul85(a->f78, x) >> 1) + y);
+                if (mul85(x & 1, a->f78 & 1))
+                    a->f90 = e + 1;
+            }
+        }
+    } else {
+        *o1 = b->f18;
+    }
+    if (a->fF8 == 2 && a->fF0 >= 0) {
+        *o1 = a->fF0;
+        a->fF8 = 0;
+        a->fF0 = -1;
+    }
+    *o2 = b->f20;
+    r = (long)b->f34 << 8 | (long)b->f38 << 7 | (long)b->f3c << 6 | (long)b->f40 << 5 | (long)b->f30 << 3 | (long)b->f2c;
+    *o3 = r;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004086C0);
