@@ -1113,7 +1113,178 @@ void* func_001741D8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00174200);
+#ifdef SKIP_ASM
+struct sVec4_174200 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVE_174200 {
+    short delta;
+    short index;
+    sVec4_174200 (*fn)(void*);
+};
+
+extern "C" float func_0031C228(float x);
+extern sVec4_174200 D_004FF160_174200 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sVec4_174200 Add_174200(const sVec4_174200& a, const sVec4_174200& b)
+{
+    sVec4_174200 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (d = a + b).
+static inline void AddTo_174200(sVec4_174200& d, const sVec4_174200& a, const sVec4_174200& b)
+{
+    sVec4_174200 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    d = r;
+}
+
+// PORT: PS2-only VU0 inline asm (d = v * s).
+static inline void ScaleTo_174200(sVec4_174200& d, const sVec4_174200& v, float s)
+{
+    sVec4_174200 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    d = r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4_174200 Sub_174200(const sVec4_174200& a, const sVec4_174200& b)
+{
+    sVec4_174200 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sVec4_174200 Scale_174200(const sVec4_174200& v, float s)
+{
+    sVec4_174200 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_174200(float x)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+struct sVec2_174200 {
+    float x, y;
+    sVec2_174200(float ax, float ay) : x(ax), y(ay) {}
+};
+
+static inline float Len2_174200(const sVec2_174200& v)
+{
+    return Sqrt_174200(v.x * v.x + v.y * v.y);
+}
+
+static inline float Atan2_174200(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+extern "C" void func_00174200(char* self)
+{
+    char* act = *(char**)(self + 0x80);
+    *(float*)(self + 0x70) = *(float*)(act + 0x10);
+    *(float*)(self + 0x6C) = *(float*)(act + 0x18);
+    *(float*)(self + 0x78) = *(float*)(act + 0x1C);
+    *(float*)(self + 0x00) = *(float*)(act + 0x14);
+    *(float*)(self + 0x74) = *(float*)(act + 0x20);
+    sVec4_174200 p;
+    if (*(int*)(act + 0x24) == 1) {
+        p.x = *(float*)(act + 0x28);
+        p.y = *(float*)(act + 0x2C);
+        p.z = *(float*)(act + 0x30);
+        p.w = 1.0f;
+    } else {
+        sVec4_174200 c, a, t, b;
+        char* o = *(char**)(self + 0x30);
+        sVE_174200* e = &(*(sVE_174200**)o)[1];
+        ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
+        float k = *(float*)(self + 0x74);
+        o = *(char**)(self + 0x30);
+        e = &(*(sVE_174200**)o)[4];
+        ((void (*)(void*, void*))e->fn)(&b, o + e->delta);
+        ScaleTo_174200(t, b, k);
+        AddTo_174200(c, a, t);
+        sVec4_174200 t2;
+        ScaleTo_174200(t2, D_004FF160_174200, *(float*)(self + 0x6C));
+        AddTo_174200(p, c, t2);
+    }
+    *(sVec4_174200*)(self + 0x20) = p;
+    {
+        char* o = *(char**)(*(char**)(self + 0x80) + 8);
+        sVE_174200* e = &(*(sVE_174200**)(o + 0x24))[6];
+        ((void (*)(void*, void*))e->fn)(o + e->delta, self + 0x40);
+    }
+    sVec4_174200 d = Sub_174200(p, *(sVec4_174200*)(self + 0x40));
+    *(float*)(self + 0x50) = Atan2_174200(d.y, d.x);
+    *(float*)(self + 0x54) = Atan2_174200(d.z, Len2_174200(sVec2_174200(d.x, d.y)));
+}
+#endif
 
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001744B0);
 
