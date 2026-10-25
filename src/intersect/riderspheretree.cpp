@@ -471,7 +471,67 @@ extern "C" void func_0032B460(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032B468);
+#ifdef SKIP_ASM
+extern "C" void func_003E6448(void* dst, int c, int n);
+
+extern "C" int func_0032B468(unsigned char* start, unsigned char* in, int len, int minRun)
+{
+    unsigned char* out = start;
+    unsigned char* end = in + len;
+    int one = 1;
+    int min = 2;
+    if (one < minRun) {
+        min = minRun;
+    }
+    while (in < end) {
+        unsigned char* p = in;
+        int run = 0;
+        int lit = 0;
+        unsigned char* q;
+        while (run == 0 && lit < 0x7F && p < end) {
+            unsigned char c = *p;
+            run = 1;
+            q = p + 1;
+            if (c == p[1] && q < end) {
+                do {
+                    do {
+                        q++;
+                        run++;
+                    } while (c == *q && q < end && run < 0x7F);
+                } while (0);
+            }
+            if (q == end && 1 < run) {
+                run--;
+                q = end - 1;
+            }
+            if (run < min) {
+                lit += run;
+                run = 0;
+                p = q;
+            }
+        }
+        if (0x7F < lit) {
+            lit = 0x7F;
+        }
+        if (lit != 0) {
+            func_003E6448(out++, -lit, 1);
+            while (lit-- != 0) {
+                *out++ = *in++;
+            }
+        }
+        if (run != 0) {
+            run--;
+            func_003E6448(out++, run, 1);
+            *out++ = *in++;
+            in += run;
+        }
+    }
+    func_003E6448(out++, 0, 1);
+    return out - start;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032B620);
