@@ -181,6 +181,8 @@ cSpline_calcLength__FP7cSpline = 0x003454E8; //type:func
 // gp-relative globals discovered while reversing (need explicit symbols since
 // splat doesn't auto-label single-instruction $gp-relative accesses like it
 // does for lui/addiu absolute addressing).
+func_004106E8 = 0x004106E8; //type:func
+func_00410800 = 0x00410800; //type:func
 D_0049C968 = 0x0049C968; //type:f32
 D_0049C96C = 0x0049C96C; //type:f32
 D_0049C970 = 0x0049C970; //type:f32
