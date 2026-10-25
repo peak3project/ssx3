@@ -973,9 +973,7 @@ extern "C" int func_0031AD00(void* self)
 
 extern "C" unsigned int D_004A3ED0;
 
-//99.5% - single $gp-relative sw; SN's assembler doesn't support %gp_rel(),
-// so our object always carries a real relocation here while the target's
-// raw disassembly has the offset already baked in as a literal immediate.
+//100%
 INCLUDE_ASM("bx/memblockman", func_0031AD18);
 #ifdef SKIP_ASM
 extern "C" void func_0031AD18()
