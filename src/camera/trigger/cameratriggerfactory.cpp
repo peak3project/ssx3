@@ -2888,7 +2888,66 @@ extern "C" sVec4_1785F0 func_001785F0_impl(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178758);
+#ifdef SKIP_ASM
+struct sVec4_178758 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVE_178758 {
+    short delta;
+    short index;
+    sVec4_178758 (*fn)(void*);
+};
+
+extern sVec4_178758 D_004FF160_178758 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sVec4_178758 Add_178758(const sVec4_178758& a, const sVec4_178758& b)
+{
+    sVec4_178758 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (*v * s).
+static inline sVec4_178758 ScaleP_178758(const sVec4_178758* v, float s)
+{
+    sVec4_178758 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+static inline sVec4_178758 CallA_178758(char* self)
+{
+    char* o = *(char**)(self + 0x30);
+    sVE_178758* e = &(*(sVE_178758**)o)[1];
+    return e->fn(o + e->delta);
+}
+
+extern "C" sVec4_178758 f_178758(char* self) __asm__("func_00178758");
+extern "C" sVec4_178758 f_178758(char* self)
+{
+    return Add_178758(CallA_178758(self), ScaleP_178758(&D_004FF160_178758, -100.0f));
+}
+#endif
 
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001787E0);
 
