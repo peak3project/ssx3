@@ -106,7 +106,17 @@ INCLUDE_ASM("seg/seg_3113A0_eh", func_00410570);
 
 INCLUDE_ASM("seg/seg_3113A0_eh", func_004106E8);
 
+//100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410800);
+#ifdef SKIP_ASM
+int func_00410800(int a) {
+    int *o = *(int **)func_00410490();
+    int (*fn)(int *, int, int) = (int (*)(int *, int, int))o[0];
+    if (fn == 0)
+        return 0;
+    return fn(o, a, 0) != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410848);
