@@ -200,7 +200,59 @@ void func_00412AF0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412B20);
+#ifdef SKIP_ASM
+// NOTE: 100.00 (relocs agree) in the w2 tree ONLY with this class appended to include/seg/seg_313800_exception.h
+// (same style as bad_cast; defining it in the .cpp loses the vptr-reset landing pad, 95.55):
+//   class bad_exception : public exception {
+//   public:
+//       bad_exception() {}
+//       virtual ~bad_exception() {}
+//   };
+// Uses __exception_info (g++ 2.9's hidden catch(...) variable = __start_cp_handler result).
+struct sCpEhB20 { void* match; short lang, ver; void* value; const void* type; };
+extern sCpEhB20** eh_get_b20(void) __asm__("func_00410490");
+extern void* match_b20(const void*, const void*, void*) __asm__("func_00415260");
+extern void unexpected_b20(void) __asm__("func_00412848") __attribute__((noreturn));
+extern void terminate_b20(void) __asm__("func_00412800") __attribute__((noreturn));
+extern const void* tf_bad_exception_b20(void) __asm__("func_00412E80");
+__asm__("_vt$13bad_exception = D_004998A0\n"
+        "_$_13bad_exception = func_00412E38\n"
+        "__uncatch_exception = func_00412AF0
+"
+        "__start_cp_handler = func_004128A8
+"
+        "__cp_pop_exception = func_00412A28
+"
+        "terminate__Fv = func_00412800");
+// __check_eh_spec(): an exception escaped a function whose exception specification does not allow it
+void check_eh_spec_b20(int n, const void** spec) __asm__("func_00412B20");
+void check_eh_spec_b20(int n, const void** spec)
+{
+    sCpEhB20* p = *eh_get_b20();
+    int i;
+    for (i = 0; i < n; ++i)
+        if (match_b20(spec[i], p->type, p->value))
+            throw;
+    try {
+        unexpected_b20();
+    } catch (...) {
+        sCpEhB20* q = (sCpEhB20*)__exception_info;
+        if (p != q) {
+            p = q;
+            for (i = 0; i < n; ++i)
+                if (match_b20(spec[i], p->type, p->value))
+                    throw;
+        }
+        const void* bt = tf_bad_exception_b20();
+        for (i = 0; i < n; ++i)
+            if (match_b20(spec[i], bt, p->value))
+                throw bad_exception();
+        terminate_b20();
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_313800_exception", func_00412CD8);
