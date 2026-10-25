@@ -5,6 +5,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
 void func_003FD908(void) {
 }
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD910);
 #ifdef SKIP_ASM
 struct S3FD910 { short a; short b; short c; unsigned short d; int e; int f; };
@@ -477,6 +478,7 @@ int func_003FF330(i128 *src, int n) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF390);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF4A8);
 #ifdef SKIP_ASM
 extern int D_004515C8[];
@@ -1232,6 +1234,7 @@ int func_004011C0(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004011E0);
 #ifdef SKIP_ASM
 extern int D_00451610[];
@@ -1364,6 +1367,7 @@ int func_00401488(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004014F8);
 #ifdef SKIP_ASM
 extern int D_00451610[];
@@ -2031,6 +2035,7 @@ int func_00402DF8(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402E10);
 #ifdef SKIP_ASM
 extern char D_00497C68[];
@@ -2596,6 +2601,7 @@ int func_00405E10(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00405E30);
 #ifdef SKIP_ASM
 #define H1(x) (((x) + ((x) > 0)) >> 1)
@@ -2751,6 +2757,7 @@ int _sliceA0(int *p, int unused, int *o1, int *o2, int *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406318);
 #ifdef SKIP_ASM
 extern char D_00497F70[];
@@ -2870,6 +2877,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_004065D0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00406A78);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406B00);
 #ifdef SKIP_ASM
 extern int Q_72E8(int, int) __asm__("func_004072E8");

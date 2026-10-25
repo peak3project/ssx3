@@ -4,6 +4,7 @@
 //100%
 //https://decomp.me/scratch/pOTwa
 
+//100%
 INCLUDE_ASM("visualfx/crowdrender2d", cCrowdRender2D_cCrowdRender2D__Fi);
 #ifdef SKIP_ASM
 int cCrowdRender2D_cCrowdRender2D(int param_1) {

@@ -15,6 +15,7 @@ void BXsrand(uint seed)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxrandom", BXrand__Fv);
 #ifdef SKIP_ASM
 
@@ -50,6 +51,7 @@ float AIrandf(float a, float b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxrandom", func_00317890__Fff);
 #ifdef SKIP_ASM
 float func_00317890(float param_1, float param_2)
