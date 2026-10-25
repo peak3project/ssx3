@@ -9108,7 +9108,64 @@ void func_003CA388(int *self, int *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CA460);
+#ifdef SKIP_ASM
+extern int func_003CCF90_A460(int, int **, int) __asm__("func_003CCF90");
+extern void func_003C7010_A460(int, unsigned char, int) __asm__("func_003C7010");
+extern short *func_003C6DE0_A460(int, unsigned char, int *, int *) __asm__("func_003C6DE0");
+extern void func_00416210_A460(int *, int, int) __asm__("func_00416210");
+extern void func_003CD190_A460(int, float *) __asm__("func_003CD190");
+extern void func_003CCF60_A460(int, short *, int, int) __asm__("func_003CCF60");
+
+int func_003CA460(char *o, int n, int unused, int *buf) {
+    float f[2];
+    int *dst;
+    int sp14;
+    int used = 0;
+    int got;
+    int flag = 0;
+
+    dst = buf;
+
+    if (*(int *)(o + 0x34) != 0) {
+        func_003C7010_A460(*(int *)(o + 0x30), *(unsigned char *)(o + 0x38), *(int *)(o + 0x34));
+        *(int *)(o + 0x34) = 0;
+    }
+    while (n > 0) {
+        got = func_003CCF90_A460(*(int *)(o + 0x1C), &dst, n);
+        used += got;
+        *(int *)(o + 0x28) += got;
+        dst += got;
+        *(int *)(o + 0x34) += got;
+        if (got < n) {
+            short *p;
+            n -= got;
+            p = func_003C6DE0_A460(*(int *)(o + 0x30), *(unsigned char *)(o + 0x38), (int *)(o + 0x24), &sp14);
+            *(short **)(o + 0x20) = p;
+            if (p != 0) {
+                if (*(int *)(o + 0x2C) < 3) flag = 1;
+                if (flag) {
+                    f[0] = (float)p[0];
+                    f[1] = (float)p[1];
+                    func_003CD190_A460(*(int *)(o + 0x1C), f);
+                    *(short **)(o + 0x20) += 2;
+                }
+                *(int *)(o + 0x28) = 0;
+                func_003CCF60_A460(*(int *)(o + 0x1C), *(short **)(o + 0x20), *(int *)(o + 0x24) * 4, *(int *)(o + 0x24));
+            } else {
+                if (n > 0 && *(int *)(o + 0x34) != 0) {
+                    func_00416210_A460(dst, 0, n * 4);
+                }
+                n = 0;
+            }
+        } else {
+            n -= got;
+        }
+    }
+    return used;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CA5E8);
