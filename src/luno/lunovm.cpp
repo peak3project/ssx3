@@ -139,7 +139,48 @@ extern "C" void func_00224DF0(cLunoTableRef* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("luno/lunovm", luno_cLunoTable_constructTable);
+#ifdef SKIP_ASM
+// PORT: the game's operator new is cMemMan_alloc(size, tag, flags, 0); bound by asm label
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+extern char D_00479860[];
+extern char D_00479870[];
+extern char D_00479890[];
+
+struct cLunoNode_ct {
+    cLunoValue key;
+    cLunoValue val;
+    cLunoNode_ct* next;
+    void* vt;
+    cLunoNode_ct()
+    {
+        vt = D_00479890;
+        key.type = 0;
+        key.word0 = 0;
+        val.type = 0;
+        val.word0 = 0;
+        next = 0;
+    }
+    ~cLunoNode_ct() {}
+};
+
+extern "C" void ct_impl(cLunoTableRef* ref, int n) __asm__("luno_cLunoTable_constructTable");
+extern "C" void ct_impl(cLunoTableRef* ref, int n)
+{
+    cLunoTable* t = (cLunoTable*)new (D_00479860, 0xA0000000, 0) cLunoTable;
+    cLunoTableEntry** slot = &t->nodes;
+    t->nodes = 0;
+    t->refCount = 0;
+    t->modulus = 0;
+    ref->table = t;
+    *slot = (cLunoTableEntry*)new (D_00479870, 0xA0000000, 0) cLunoNode_ct[n];
+    ref->table->modulus = n - 1;
+    ref->table->refCount = 1;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("luno/lunovm", func_00224F30);
