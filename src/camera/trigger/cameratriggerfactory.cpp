@@ -3306,7 +3306,115 @@ extern "C" sVec4_178758 f_178758(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001787E0);
+#ifdef SKIP_ASM
+struct sVec4_1787E0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sCamInfo_1787E0 {
+    char data[0x68];
+} __attribute__((aligned(16)));
+
+extern sVec4_1787E0 D_004FF140_1787E0 __asm__("D_004FF140");
+extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+                              float e, float f, float g, float h);
+extern "C" sVec4_1787E0 f_1785F0_1787E0(void* self) __asm__("func_001785F0");
+extern "C" sVec4_1787E0 f_178758_1787E0(void* self) __asm__("func_00178758");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4_1787E0 Sub_1787E0(const sVec4_1787E0& a, const sVec4_1787E0& b)
+{
+    sVec4_1787E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (*v * s).
+static inline sVec4_1787E0 ScaleP_1787E0(const sVec4_1787E0* v, float s)
+{
+    sVec4_1787E0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void ScaleEq_1787E0(sVec4_1787E0& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2
+"
+        "lqc2      $vf4, %0
+"
+        "qmtc2.ni  %1, $vf3
+"
+        "vmulx.xyzw $vf5, $vf4, $vf3x
+"
+        "sqc2      $vf5, %0
+"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_1787E0(const sVec4_1787E0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+extern "C" void func_001787E0(char* self)
+{
+    sCamInfo_1787E0 info;
+    func_00162568(self, (sCamInfo_00178BB0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+                  0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
+                  0.6000000238418579f);
+    *(float*)self = 0.7853981852531433f;
+    *(sVec4_1787E0*)(self + 0x40) = f_1785F0_1787E0(self);
+    *(sVec4_1787E0*)(self + 0x20) = f_178758_1787E0(self);
+    sVec4_1787E0 d = Sub_1787E0(*(sVec4_1787E0*)(self + 0x20), *(sVec4_1787E0*)(self + 0x40));
+    float len = Length_1787E0(d);
+    if (len < 1.0f) {
+        d = ScaleP_1787E0(&D_004FF140_1787E0, 600.0f);
+    } else if (len > 600.0f) {
+        ScaleEq_1787E0(d, 600.0f / len);
+        *(sVec4_1787E0*)(self + 0x40) = Sub_1787E0(*(sVec4_1787E0*)(self + 0x20), d);
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178938);
