@@ -484,7 +484,22 @@ int func_003B4DD8_4DD8(struct Cfg_4DD8 *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4FC0);
+#ifdef SKIP_ASM
+typedef struct { int w[5]; } W14_4FC0;
+extern char D_0050A908[];
+extern W14_4FC0 D_0050A9A8;
+extern void f0E28(void) __asm__("func_003C0E28");
+int func_003B4FC0_impl(char *p) __asm__("func_003B4FC0");
+int func_003B4FC0_impl(char *p) {
+    __builtin_memcpy(D_0050A908, p + 0x20, 0xA0);
+    D_0050A9A8 = *(W14_4FC0 *)(p + 0xC0);
+    f0E28();
+    __builtin_memcpy((char *)&D_0050A9A8 + 0x14, (char *)&D_0050A9A8 - 0xA0, 0xA0);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5158);
 
