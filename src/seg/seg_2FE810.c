@@ -5901,7 +5901,47 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040F8E8);
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040F9D0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040F9F8);
+#ifdef SKIP_ASM
+extern float copysignf_F9F8(float, float) __asm__("func_0040FB58");
+typedef union { float value; int word; } F9F8_shape;
+#define F9F8_GET(i, d) do { F9F8_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
+#define F9F8_SET(d, i) do { F9F8_shape sf_u; sf_u.word = (i); (d) = sf_u.value; } while (0)
+static const float two25 = 3.3554432e+07f, twom25 = 2.9802322e-08f, huge = 1.0e+30f, tiny = 1.0e-30f;
+float func_0040F9F8(float x, int n) {
+    int k, ix;
+    F9F8_GET(ix, x);
+    k = (ix & 0x7f800000) >> 23;
+    if (k == 0) {
+        if ((ix & 0x7fffffff) == 0)
+            return x;
+        x *= two25;
+        F9F8_GET(ix, x);
+        k = ((ix & 0x7f800000) >> 23) - 25;
+        if (n < -50000)
+            return tiny * x;
+    }
+    if (k == 0xff)
+        return x + x;
+    k = k + n;
+    if (k > 0xfe)
+        return huge * copysignf_F9F8(huge, x);
+    if (k > 0) {
+        F9F8_SET(x, (ix & 0x807fffff) | (k << 23));
+        return x;
+    }
+    if (k <= -25) {
+        if (n > 50000)
+            return huge * copysignf_F9F8(huge, x);
+        else
+            return tiny * copysignf_F9F8(tiny, x);
+    }
+    k += 25;
+    F9F8_SET(x, (ix & 0x807fffff) | (k << 23));
+    return x * twom25;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040FB58);
 
