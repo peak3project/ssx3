@@ -13,7 +13,38 @@ void func_00411310(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_312310", func_00411340);
+#ifdef SKIP_ASM
+extern double a_411340(double) __asm__("func_00413AF8");
+extern int cmp_411340(double, double) __asm__("func_00412500");
+extern double mul_411340(double, double) __asm__("func_00411FD8");
+extern unsigned dtou_411340(double) __asm__("func_004126A0");
+extern double ltod_411340(long) __asm__("func_00411438");
+extern double add_411340(double, double) __asm__("func_00411F18");
+extern double sub_411340(double, double) __asm__("func_00411F70");
+unsigned long func_00411340(double a) {
+    unsigned long hi;
+    double v;
+    double d;
+    v = a_411340(a);
+    if (cmp_411340(v, 0.0) < 0)
+        return 0;
+    hi = (unsigned long)dtou_411340(mul_411340(v, 2.3283064365386963e-10)) << 32;
+    if ((long)hi >= 0) {
+        d = ltod_411340(hi);
+    } else {
+        d = ltod_411340((hi & 1) | (hi >> 1));
+        d = add_411340(d, d);
+    }
+    v = sub_411340(v, d);
+    if (cmp_411340(v, 0.0) < 0)
+        hi -= (unsigned long)dtou_411340(sub_411340(0.0, v));
+    else
+        hi += (unsigned long)dtou_411340(v);
+    return hi;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_312310", func_00411438);
