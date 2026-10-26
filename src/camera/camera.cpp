@@ -5240,7 +5240,139 @@ extern "C" int func_00168148(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00168150);
+#ifdef SKIP_ASM
+// PORT: the unit declares func_00168150 as returning void*; this is the real (void) definition.
+extern "C" void func_00168150_def(char* self) __asm__("func_00168150");
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sVec_001607E0 cmSub_168150(const sVec_001607E0& a, const sVec_001607E0& b)
+{
+    sVec_001607E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sVec_001607E0 cmSub2_168150(const sVec_001607E0& a, const sVec_001607E0& b)
+{
+    sVec_001607E0 r;
+    __asm__ __volatile__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sVec_001607E0 cmAdd_168150(const sVec_001607E0& a, const sVec_001607E0& b)
+{
+    sVec_001607E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec_001607E0 cmScale_168150(const sVec_001607E0& v, float s)
+{
+    sVec_001607E0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector at pointer times scalar).
+static inline sVec_001607E0 cmScaleP_168150(const sVec_001607E0* v, float s)
+{
+    sVec_001607E0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float cmLength_168150(const sVec_001607E0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+struct sVTbl_168150 {
+    short delta;
+    short index;
+    sVec_001607E0 (*fn)(void*);
+};
+
+// cLookAtChaseAlgorithm::verify(void): if the camera is closer to / farther from its target than the
+// allowed range, snap it back behind the target.
+extern "C" void func_00168150_def(char* self)
+{
+    float lo = 20.0f;
+    sVec_001607E0 d = cmSub_168150(*(sVec_001607E0*)(self + 0x20), *(sVec_001607E0*)(self + 0x40));
+    float len = cmLength_168150(d);
+    if (len < lo || len > 1.0000000200408773e+20f) {
+        char* o = *(char**)(self + 0x30);
+        sVec_001607E0 x = *(sVec_001607E0*)(*(char**)(o + 4) + 0x1B0);
+        sVTbl_168150* e = &(*(sVTbl_168150**)o)[1];
+        sVec_001607E0 p = e->fn(o + e->delta);
+        int one = 1;
+        float k50 = 50.0f;
+        sVec_001607E0 np = cmAdd_168150(cmSub2_168150(p, cmScale_168150(x, 200.0f)), cmScaleP_168150(&D_004FF160_v1607E0, k50));
+        *(sVec_001607E0*)(self + 0x40) = np;
+        *(sVec_001607E0*)(self + 0x20) = p;
+        *(int*)(self + 0x2F0) = one;
+    }
+}
+#endif
 
 extern "C" void* func_001673F8(int, int);
 
