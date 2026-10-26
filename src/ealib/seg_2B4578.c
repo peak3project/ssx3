@@ -4086,7 +4086,47 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BF6B0);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF800);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF8D0);
+#ifdef SKIP_ASM
+typedef struct { int w[4]; } __attribute__((aligned(16))) V4_F8D0;
+
+void func_003BF8D0(V4_F8D0 *src, V4_F8D0 *dst) {
+    int i = 4;
+    __asm__ volatile("vsub.xyzw  $vf1, $vf0, $vf0\n");
+    do {
+        __asm__ volatile(
+            "lqc2       $vf2, 0x0(%0)\n"
+            "lqc2       $vf3, 0x10(%0)\n"
+            "lqc2       $vf4, 0x20(%0)\n"
+            "lqc2       $vf5, 0x30(%0)\n"
+            "lqc2       $vf6, 0x40(%0)\n"
+            "lqc2       $vf7, 0x50(%0)\n"
+            "lqc2       $vf8, 0x60(%0)\n"
+            "lqc2       $vf9, 0x70(%0)\n"
+            "vadd.xyzw  $vf1, $vf1, $vf2\n"
+            "vadd.xyzw  $vf2, $vf2, $vf3\n"
+            "vadd.xyzw  $vf3, $vf3, $vf4\n"
+            "vadd.xyzw  $vf4, $vf4, $vf5\n"
+            "vadd.xyzw  $vf5, $vf5, $vf6\n"
+            "vadd.xyzw  $vf6, $vf6, $vf7\n"
+            "vadd.xyzw  $vf7, $vf7, $vf8\n"
+            "vadd.xyzw  $vf8, $vf8, $vf9\n"
+            "sqc2       $vf2, 0x0(%1)\n"
+            "sqc2       $vf4, 0x10(%1)\n"
+            "sqc2       $vf6, 0x20(%1)\n"
+            "sqc2       $vf8, 0x30(%1)\n"
+            "sqc2       $vf1, 0x100(%1)\n"
+            "sqc2       $vf3, 0x110(%1)\n"
+            : : "r"(src), "r"(dst) : "memory");
+        i--;
+        __asm__ volatile("sqc2       $vf5, 0x120(%0)\n" : : "r"(dst) : "memory");
+        src += 8;
+        __asm__ volatile("sqc2       $vf7, 0x130(%0)\n" "vmove.xyzw $vf1, $vf9\n" : : "r"(dst) : "memory");
+        dst += 4;
+    } while (i != 0);
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF960);
 
