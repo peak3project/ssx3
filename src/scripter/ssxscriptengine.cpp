@@ -1407,7 +1407,161 @@ extern "C" void* func_00279F18(void* self, int slot, int arg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027A0D8);
+#ifdef SKIP_ASM
+struct sQ_A0D8 {
+    float x, y, z, w;
+    sQ_A0D8() {}
+    sQ_A0D8(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+struct sV3_A0D8 {
+    float x, y, z;
+};
+
+extern "C" void* func_00279F18_A0D8(void* self, int slot, void* arg) __asm__("func_00279F18");
+extern "C" void func_0027B750_A0D8(void* self, void* obj, sQ_A0D8* pos, int* roll, float* pitch, float* yaw) __asm__("func_0027B750");
+extern "C" void func_0027B948_A0D8(void* self, void* obj, sQ_A0D8* pos, int* roll, float* pitch, float* yaw) __asm__("func_0027B948");
+extern "C" void func_0027BB08_A0D8(void* self, int slot, sQ_A0D8* pos, int* roll, float* pitch, float* yaw, int cat, const sQ_A0D8* off) __asm__("func_0027BB08");
+extern "C" char* func_0027C070_A0D8(void* self) __asm__("func_0027C070__FPv");
+extern "C" long func_003369D8(void* obj, sQ_A0D8* pos, sQ_A0D8* res, sQ_A0D8* extra);
+struct sG_A0D8 { char* app; };
+extern sG_A0D8 D_004A28A8_A0D8 __asm__("D_004A28A8");
+extern int D_004A51D8;
+extern sV3_A0D8 D_004D3680[];
+extern sV3_A0D8 D_004D3770[];
+
+extern "C" void func_0027A0D8(void* self, int type, void* a2, sQ_A0D8* out, int* roll, float* pitch, float* yaw)
+{
+    sQ_A0D8 q(0.0f, 0.0f, 0.0f, 1.0f);
+    sQ_A0D8 res;
+    *roll = 0;
+    *pitch = 0.0f;
+    *yaw = 0.0f;
+    *out = q;
+    switch (type) {
+    case 0x28: case 0x29: case 0x2a: case 0x2b: case 0x2c: case 0x2d: case 0x2e: case 0x2f:
+    case 0x30: case 0x31: case 0x32: case 0x33: case 0x34: case 0x35: case 0x36: case 0x37:
+    case 0x38: case 0x39: case 0x3a: case 0x3b: case 0x3c: {
+        void* o = func_00279F18_A0D8(self, type - 0x28, a2);
+        if (o != 0) {
+            func_0027B948_A0D8(self, o, out, roll, pitch, yaw);
+        }
+        return;
+    }
+    case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
+    case 10: case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18: {
+        void* o = func_00279F18_A0D8(self, type + 2, a2);
+        if (o == 0) {
+            return;
+        }
+        func_0027B750_A0D8(self, o, out, roll, pitch, yaw);
+        return;
+    }
+    case 0x19:
+        func_0027BB08_A0D8(self, 1, out, roll, pitch, yaw, 0x32, 0);
+        out->z = out->z - 1000.0f;
+        if (func_003369D8(*(void**)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x1a:
+        func_0027BB08_A0D8(self, 2, out, roll, pitch, yaw, 0x32, 0);
+        if (func_003369D8(*(void* volatile*)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x1b:
+        func_0027BB08_A0D8(self, 3, out, roll, pitch, yaw, 0x32, 0);
+        if (func_003369D8(*(void* volatile*)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x1c:
+        func_0027BB08_A0D8(self, 4, out, roll, pitch, yaw, 0x32, 0);
+        if (func_003369D8(*(void* volatile*)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x1d: {
+        int d = 0x32;
+        char* c = func_0027C070_A0D8(a2);
+        int cat = 0x2B;
+        if (*c == 0) cat = d;
+        func_0027BB08_A0D8(self, 5, out, roll, pitch, yaw, cat, 0);
+        return;
+    }
+    case 0x1e: {
+        int d = 0x32;
+        char* c = func_0027C070_A0D8(a2);
+        int cat = 0x2B;
+        if (*c == 0) cat = d;
+        func_0027BB08_A0D8(self, 6, out, roll, pitch, yaw, cat, 0);
+        return;
+    }
+    case 0x1f:
+        func_0027BB08_A0D8(self, 9, out, roll, pitch, yaw, 0x32, 0);
+        if (func_003369D8(*(void* volatile*)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x20:
+        func_0027BB08_A0D8(self, 10, out, roll, pitch, yaw, 0x32, 0);
+        return;
+    case 0x21:
+        func_0027BB08_A0D8(self, 11, out, roll, pitch, yaw, 0x32, 0);
+        return;
+    case 0x22: case 0x23: case 0x24:
+        func_0027BB08_A0D8(self, type - 0x16, out, roll, pitch, yaw, 0x32, 0);
+        if (func_003369D8(*(void* volatile*)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x25: case 0x26: case 0x27:
+        func_0027BB08_A0D8(self, type - 0x16, out, roll, pitch, yaw, 0x32, 0);
+        return;
+    case 0x13:
+        func_0027BB08_A0D8(self, 7, out, roll, pitch, yaw, 0x32, 0);
+        if (func_003369D8(*(void* volatile*)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x14: case 0x15: case 0x16: {
+        if (D_004A51D8 == 0) {
+            D_004D3770[0].x = -20.0f;
+            D_004D3770[0].y = 0.0f;
+            D_004D3770[0].z = 340.0f;
+            D_004D3770[1].x = -20.0f;
+            D_004D3770[1].y = -275.0f;
+            D_004D3770[1].z = 280.0f;
+            D_004D3770[2].x = -20.0f;
+            D_004D3770[2].y = 275.0f;
+            D_004D3770[2].z = 280.0f;
+            D_004A51D8 = 1;
+        }
+        q.w = 0.0f;
+        sV3_A0D8* v = &D_004D3680[type];
+        q.x = v->x;
+        q.y = v->y;
+        q.z = v->z;
+        func_0027BB08_A0D8(self, 0, out, roll, pitch, yaw, 0x32, &q);
+        return;
+    }
+    case 0x17:
+        func_0027BB08_A0D8(self, 0, out, roll, pitch, yaw, 0x32, 0);
+        if (func_003369D8(*(void* volatile*)(*(char* volatile*)(D_004A28A8_A0D8.app + 0x84) + 0x20), out, &res, &q) != 0) {
+            out->z = res.z;
+        }
+        return;
+    case 0x18:
+        func_0027BB08_A0D8(self, 8, out, roll, pitch, yaw, 0x32, 0);
+        return;
+    default:
+        return;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027A4A0);
