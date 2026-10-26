@@ -1073,5 +1073,178 @@ extern "C" void func_00399E28(func_00399E28_sObj* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiengine", func_00399F00);
+#ifdef SKIP_ASM
+extern "C" void* func_003921F0_f00(void* self, const void* str, float* out, int n, float sx, float sy) __asm__("func_003921F0");
+extern "C" void func_00391E30(void* self, float x, float y, const void* str);
+extern "C" void func_0039FEB8(void* self, void* a, void* b);
+extern "C" int func_00399920(void* self);
+
+struct sV2_F00 {
+    float x, y;
+    sV2_F00(float ax, float ay) : x(ax), y(ay) {}
+};
+struct sV3_F00 { float x, y, z; };
+struct sV4_F00 {
+    float x, y, z, w;
+};
+struct sV4C_F00 {
+    float x, y, z, w;
+    sV4C_F00() {}
+    sV4C_F00(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+struct sVtx_F00 {
+    float f0, f4, f8;
+    float pad0C;
+    int f10, f14, f18, f1C;
+    sV4C_F00 pos;
+};
+struct sFont_F00 {
+    char pad0[0x14];
+    int f14;
+    char pad18[0x28 - 0x18];
+    sV2_F00 f28;
+    float f30, f34, f38, f3C;
+    sV4_F00 color;     // 0x40
+    sV4_F00 f50;
+};
+struct sUIObj_F00 {
+    char pad0[0x14];
+    int flags14;
+    unsigned char f18[0x1C - 0x18];
+    sV4_F00 col1C;      // 0x1C
+    char pad2C[0x44 - 0x2C];
+    sV3_F00 pos44;
+    float f50, f54;
+    char pad58[0x5C - 0x58];
+    void* f5C;
+    float f60, f64;
+    char pad68[0x74 - 0x68];
+    int f74;
+    sV4_F00 col78;
+    sV4_F00 col88;
+};
+struct sRS_F00 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short f10;
+};
+struct sVE_F00 { short delta; short index; void (*fn)(void*, int, void*, int); };
+extern char* D_004A289C_F00 __asm__("D_004A289C");
+
+extern "C" void func_00399F00(sUIObj_F00* self, float x, float y)
+{
+    sFont_F00* font = (sFont_F00*)func_00399920(self);
+    if (font != 0 && *(unsigned char*)((char*)self + 0x318) != 0) {
+        float sc[2];
+        sc[0] = self->f50;
+        sc[1] = self->f54;
+        font->f38 = font->f30 * sc[0];
+        font->f3C = font->f34 * sc[1];
+        if (((self->flags14 >> 5) & 1) && ((self->f74 >> 5) & 1)) {
+            font->color = self->col88;
+        } else {
+            font->color = self->col1C;
+        }
+        if ((self->f74 >> 2) & 1) {
+            sV4_F00 t = self->col78;
+            t.x = self->col1C.x;
+            font->f50 = t;
+            font->f28 = sV2_F00(2.0f, 2.0f);
+        } else {
+            font->f28 = sV2_F00(0.0f, 0.0f);
+        }
+        const void* str;
+        if (self->f74 & 0x10) {
+            str = *(void**)((char*)self + 0x9C);
+        } else {
+            str = *(void**)((char*)self + 0x9C + *(unsigned char*)((char*)self + 0x319) * 0x14);
+        }
+        int* w = (int*)(*(char**)(D_004A289C_F00 + 0xE84) + 8);
+        *w = (*w & ~0x3E0) | ((((*(unsigned char*)((char*)self + 0x15) & 0x1F) + 9) << 5) & 0x3E0);
+        int below = 0;
+        float* sz = &self->f60;
+        {
+        float r[4];
+        sV3_F00 v;
+        sV3_F00 pos2;
+        func_003921F0_f00(font, str, r, 0, sc[0], sc[1]);
+        if (self->f60 < r[2]) {
+            below = 1;
+        }
+        v.y = self->f54 * ((float)font->f14 * font->f34);
+        v.z = 0;
+        v.x = r[2];
+        pos2.x = self->pos44.x + x;
+        pos2.y = self->pos44.y + y;
+        pos2.z = 0;
+        func_0039FEB8(self, &pos2, &v);
+        func_00391E30(font, pos2.x, pos2.y, str);
+        }
+        char* p = *(char**)(*(char**)(*(char**)((char*)self + 0x5C) + 0xD0) + 0x10);
+        int* loc = *(int**)(p + 0x10);
+        if (loc != 0 && ((*loc >> 26) & 1)) {
+            sV3_F00 q = self->pos44;
+            q.x += x;
+            q.y += y;
+            func_0039FEB8(self, &q, sz);
+            w = (int*)(*(char**)(D_004A289C_F00 + 0xE84) + 8);
+            *w = (*w & ~0x3E0) | ((((*(unsigned char*)((char*)self + 0x15) & 0x1F) + 9) << 5) & 0x3E0);
+            sVtx_F00 verts[5];
+            unsigned int i;
+            if (below == 0) {
+                for (i = 0; i < 5; i++) {
+                    sVtx_F00* p = &verts[i];
+                    p->f8 = 1.0f;
+                    p->f0 = 0;
+                    p->f4 = 0;
+                    p->f1C = 0xFF;
+                    p->f10 = 0xFF;
+                    p->f14 = 0;
+                    p->f18 = 0;
+                    sV4C_F00 tt;
+                    tt.x = q.x;
+                    tt.y = q.y;
+                    tt.z = q.z;
+                    tt.w = 1.0f;
+                    verts[i].pos = tt;
+                }
+                verts[1].pos.x += self->f60;
+                verts[2].pos.x += self->f60;
+                verts[2].pos.y += self->f64;
+                verts[3].pos.y += self->f64;
+                sVE_F00* vt = *(sVE_F00**)(D_004A289C_F00 + 0x10D8);
+                vt[0x248 / 8].fn(D_004A289C_F00 + vt[0x248 / 8].delta, 5, verts, 0);
+            } else {
+                *(short*)(*(char**)(D_004A289C_F00 + 0xE84) + 0x10) = -1;
+                for (i = 0; i < 4; i++) {
+                    sVtx_F00* p = &verts[i];
+                    p->f8 = 1.0f;
+                    p->f0 = 0;
+                    p->f4 = 0;
+                    p->f1C = 0x40;
+                    p->f10 = 0x80;
+                    p->f14 = 0;
+                    p->f18 = 0;
+                    sV4C_F00 tt;
+                    tt.x = q.x;
+                    tt.y = q.y;
+                    tt.z = q.z;
+                    tt.w = 1.0f;
+                    verts[i].pos = tt;
+                }
+                verts[1].pos.x += self->f60;
+                verts[2].pos.y += self->f64;
+                verts[3].pos.x += self->f60;
+                verts[3].pos.y += self->f64;
+                sVE_F00* vt = *(sVE_F00**)(D_004A289C_F00 + 0x10D8);
+                vt[0x238 / 8].fn(D_004A289C_F00 + vt[0x238 / 8].delta, 4, verts, 0);
+            }
+        }
+    }
+}
+#endif
 
