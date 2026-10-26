@@ -4086,9 +4086,10 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BF6B0);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF800);
 
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BF8D0);
-#ifdef SKIP_ASM
+/* Types and VU0 helpers shared by the func_003BF8D0 .. func_003C01A0 family (EA audio engine transform
+   routines). Kept in one unguarded block so that no function's block depends on another's (types and unused
+   static inline helpers emit no code when the functions are built from asm). */
+/* --- used by func_003BF8D0 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_F8D0;
 
 // PORT: PS2-only VU0 inline asm (clear running-sum register vf1).
@@ -4145,25 +4146,7 @@ static inline void vu0StoreSum7Carry(V4_F8D0 *d) {
     __asm__ volatile("sqc2       $vf7, 0x130(%0)\n" "vmove.xyzw $vf1, $vf9\n" : : "r"(d) : "memory");
 }
 
-void func_003BF8D0(V4_F8D0 *src, V4_F8D0 *dst) {
-    int i = 4;
-    vu0ClearSum();
-    do {
-        vu0LoadRows2to9(src);
-        vu0AddNext1to8();
-        vu0StoreSums(dst);
-        i--;
-        vu0StoreSum5(dst);
-        src += 8;
-        vu0StoreSum7Carry(dst);
-        dst += 4;
-    } while (i != 0);
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BF960);
-#ifdef SKIP_ASM
+/* --- used by func_003BF960 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_F960;
 
 // PORT: PS2-only VU0 inline asm (load sixteen consecutive vec4 rows into vf1..vf16).
@@ -4313,24 +4296,7 @@ static inline void vu0StoreSums7(V4_F960 *d) {
         : : "r"(d) : "memory");
 }
 
-void func_003BF960(V4_F960 *src, V4_F960 *dst) {
-    vu0LoadRows16(src);
-    vu0StoreFirstRow(dst);
-    vu0AddNext1to15();
-    vu0StoreOddSums(dst);
-    vu0StoreEvenSums(dst);
-    vu0LoadEvenRows(src);
-    vu0StoreCopy8(dst);
-    vu0LoadOddRows(src);
-    vu0StoreFirstRow2(dst);
-    vu0AddNext1to7();
-    vu0StoreSums7(dst);
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BFAC0);
-#ifdef SKIP_ASM
+/* --- used by func_003BFAC0 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FAC0;
 
 // PORT: PS2-only VU0 inline asm (load eight vec4 rows into vf1..vf8).
@@ -4404,34 +4370,7 @@ static inline void vu0StoreV5At70(V4_FAC0 *d) {
     __asm__ volatile("sqc2       $vf5, 0x70(%0)\n" : : "r"(d) : "memory");
 }
 
-void func_003BFAC0(V4_FAC0 *src, V4_FAC0 *dst) {
-    int i;
-    vu0LoadRows1to8(src);
-    vu0StoreRow1At40(dst);
-    vu0AddNext1to7();
-    vu0StoreHeadSums(dst);
-    i = 3;
-    vu0StoreV4At60(dst);
-    src += 8;
-    vu0StoreV6At70(dst);
-    dst += 8;
-    do {
-        vu0LoadRows1to8(src);
-        vu0StoreOddRows(dst);
-        vu0AddEvenPairs();
-        vu0StoreV2V3(dst);
-        i--;
-        vu0StoreV4At60(dst);
-        src += 8;
-        vu0StoreV5At70(dst);
-        dst += 8;
-    } while (i != 0);
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BFB90);
-#ifdef SKIP_ASM
+/* --- used by func_003BFB90 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FB90;
 
 // PORT: PS2-only VU0 inline asm (first-block sums: vf9 = vf1+vf2, vf10 = vf3+vf4, vf11 = vf2+vf3, vf12 = vf6+vf8).
@@ -4489,32 +4428,7 @@ static inline void vu0StoreV10At70(V4_FB90 *d) {
     __asm__ volatile("sqc2       $vf10, 0x70(%0)\n" : : "r"(d) : "memory");
 }
 
-void func_003BFB90(V4_FB90 *src, V4_FB90 *dst) {
-    int i;
-    vu0LoadRows1to8(src);
-    vu0AddHeadSums();
-    vu0StoreHeadRows(dst);
-    i = 3;
-    vu0StoreV6At60(dst);
-    src += 8;
-    vu0StoreV12At70(dst);
-    dst += 8;
-top:
-    vu0LoadRows1to8(src);
-    vu0AddLoopSums();
-    vu0StoreLoopRows(dst);
-    i--;
-    vu0StoreV6At60(dst);
-    src += 8;
-    vu0StoreV10At70(dst);
-    dst += 8;
-    if (i != 0) goto top;
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BFC50);
-#ifdef SKIP_ASM
+/* --- used by func_003BFC50 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FC50;
 
 // PORT: PS2-only VU0 inline asm (load the twiddle vector into vf16).
@@ -4610,32 +4524,7 @@ static inline void vu0StoreV8At70(void *p) {
     __asm__ volatile("sqc2       $vf8, 0x70(%0)\n" : : "r"(p) : "memory");
 }
 
-void func_003BFC50(V4_FC50 *src, V4_FC50 *dst) {
-    int i;
-    vu0LoadTwiddle(dst);
-    vu0LoadRows1to8(src);
-    vu0ScaleHead();
-    vu0ButterflyHead();
-    vu0ScaleY2Z1();
-    vu0StoreHeadInPlace(src);
-    i = 3;
-    vu0StoreV2At10(src);
-    src += 8;
-top:
-    vu0LoadRows1to8(src);
-    vu0ScaleEvenRows();
-    vu0ButterflyPairs();
-    vu0StoreRows1to7(src);
-    i--;
-    vu0StoreV8At70(src);
-    src += 8;
-    if (i != 0) goto top;
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BFD60);
-#ifdef SKIP_ASM
+/* --- used by func_003BFD60 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FD60;
 
 // PORT: PS2-only VU0 inline asm (load two twiddle vectors into vf15 and vf16).
@@ -4721,39 +4610,7 @@ static inline void vu0AddSubRows1to4Loop(void) {
         "vsub.xyzw  $vf12, $vf1, $vf3\n");
 }
 
-void func_003BFD60(V4_FD60 *src, V4_FD60 *dst, V4_FD60 *p6) {
-    int i;
-    vu0LoadTwiddles15and16(dst);
-    vu0LoadRows1to8(src);
-    vu0AddSubRows1to4Head();
-    vu0ScaleHeadLanes();
-    vu0StoreResults4(p6);
-    vu0AddSubRows5to8();
-    vu0StoreResults5and6(p6);
-    i = 3;
-    vu0StoreV11At60(p6);
-    src += 8;
-    vu0StoreV12At70Of(p6);
-    p6 += 8;
-top:
-    vu0LoadRows1to8(src);
-    vu0ScaleLoopRows();
-    vu0AddSubRows1to4Loop();
-    vu0StoreResults4(p6);
-    vu0AddSubRows5to8();
-    vu0StoreResults5and6(p6);
-    i--;
-    vu0StoreV11At60(p6);
-    src += 8;
-    vu0StoreV12At70Of(p6);
-    p6 += 8;
-    if (i != 0) goto top;
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BFE80);
-#ifdef SKIP_ASM
+/* --- used by func_003BFE80 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FE80;
 
 // PORT: PS2-only VU0 inline asm (add the upper four rows to the lower four: vf9..vf12 = vf1..vf4 + vf5..vf8).
@@ -4815,41 +4672,7 @@ static inline void vu0SubRowHalves(void) {
         "vsub.xyzw  $vf12, $vf1, $vf5\n");
 }
 
-void func_003BFE80(V4_FE80 *src, V4_FE80 *dst, V4_FE80 *p6) {
-    int i;
-    vu0LoadTwiddles15and16(dst);
-    vu0LoadRows1to8(src);
-    vu0AddRowHalves();
-    vu0ScaleResultsBy15();
-    vu0StoreResults4(p6);
-    vu0SubRowHalvesRev();
-    vu0ScaleResultsBy16();
-    vu0StoreResults5and6(p6);
-    i = 3;
-    vu0StoreV11At60(p6);
-    src += 8;
-    vu0StoreV12At70Of(p6);
-    p6 += 8;
-    vu0LoadTwiddle16At20(dst);
-top:
-    vu0LoadRows1to8(src);
-    vu0ScaleRows5to8By16();
-    vu0AddRowHalves();
-    vu0StoreResults4(p6);
-    vu0SubRowHalves();
-    vu0StoreResults5and6(p6);
-    i--;
-    vu0StoreV11At60(p6);
-    src += 8;
-    vu0StoreV12At70Of(p6);
-    p6 += 8;
-    if (i != 0) goto top;
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003BFFA0);
-#ifdef SKIP_ASM
+/* --- used by func_003BFFA0 and later family members --- */
 // PORT: PS2-only VU0 inline asm (load scale vectors 0 and 3 into vf15 and vf16).
 static inline void vu0LoadScale0and3(const void *s) {
     __asm__ volatile(
@@ -5034,38 +4857,7 @@ static inline void vu0StoreButterfly140(void *p) {
         : : "r"(p) : "memory");
 }
 
-void func_003BFFA0(void *in, void *scale, void *out) {
-    vu0LoadScale0and3(scale);
-    vu0LoadRowsLo0Hi8(in);
-    vu0AddRowHalves();
-    vu0ScaleResultsBy15();
-    vu0StoreResults4(out);
-    vu0SubRowHalvesRev();
-    vu0ScaleResultsBy16();
-    vu0StoreResultsC0(out);
-    vu0LoadScale1and2(scale);
-    vu0LoadRowsLo4Hi12(in);
-    vu0AddRowHalves();
-    vu0ScaleResultsBy15();
-    vu0StoreResults40(out);
-    vu0SubRowHalvesRev();
-    vu0ScaleResultsBy16();
-    vu0StoreResults80(out);
-    vu0LoadScale4and5(scale);
-    vu0LoadRows24to31(in);
-    vu0ScaleRows9to16();
-    vu0LoadRowsRev100(in);
-    vu0Butterfly1to4With9to12();
-    vu0StoreButterfly100(out);
-    vu0LoadRowsRev140(in);
-    vu0Butterfly1to4With13to16();
-    vu0StoreButterfly140(out);
-}
-#endif
-
-//100%
-INCLUDE_ASM("ealib/seg_2B4578", func_003C01A0);
-#ifdef SKIP_ASM
+/* --- used by func_003C01A0 and later family members --- */
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_01A0;
 
 // PORT: PS2-only VU0 inline asm (load one scale vector into vf16).
@@ -5168,6 +4960,230 @@ static inline void vu0StoreVf12Last(void *p) {
     __asm__ volatile("sqc2       $vf12, 0x0(%0)\n" "1:\n" : : "r"(p) : "memory");
 }
 
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BF8D0);
+#ifdef SKIP_ASM
+void func_003BF8D0(V4_F8D0 *src, V4_F8D0 *dst) {
+    int i = 4;
+    vu0ClearSum();
+    do {
+        vu0LoadRows2to9(src);
+        vu0AddNext1to8();
+        vu0StoreSums(dst);
+        i--;
+        vu0StoreSum5(dst);
+        src += 8;
+        vu0StoreSum7Carry(dst);
+        dst += 4;
+    } while (i != 0);
+}
+/* retail: two padding nops end this function's slot (the next VU0 routine starts after them) */
+__asm__("nop\n\tnop");
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BF960);
+#ifdef SKIP_ASM
+void func_003BF960(V4_F960 *src, V4_F960 *dst) {
+    vu0LoadRows16(src);
+    vu0StoreFirstRow(dst);
+    vu0AddNext1to15();
+    vu0StoreOddSums(dst);
+    vu0StoreEvenSums(dst);
+    vu0LoadEvenRows(src);
+    vu0StoreCopy8(dst);
+    vu0LoadOddRows(src);
+    vu0StoreFirstRow2(dst);
+    vu0AddNext1to7();
+    vu0StoreSums7(dst);
+}
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BFAC0);
+#ifdef SKIP_ASM
+void func_003BFAC0(V4_FAC0 *src, V4_FAC0 *dst) {
+    int i;
+    vu0LoadRows1to8(src);
+    vu0StoreRow1At40(dst);
+    vu0AddNext1to7();
+    vu0StoreHeadSums(dst);
+    i = 3;
+    vu0StoreV4At60(dst);
+    src += 8;
+    vu0StoreV6At70(dst);
+    dst += 8;
+    do {
+        vu0LoadRows1to8(src);
+        vu0StoreOddRows(dst);
+        vu0AddEvenPairs();
+        vu0StoreV2V3(dst);
+        i--;
+        vu0StoreV4At60(dst);
+        src += 8;
+        vu0StoreV5At70(dst);
+        dst += 8;
+    } while (i != 0);
+}
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BFB90);
+#ifdef SKIP_ASM
+void func_003BFB90(V4_FB90 *src, V4_FB90 *dst) {
+    int i;
+    vu0LoadRows1to8(src);
+    vu0AddHeadSums();
+    vu0StoreHeadRows(dst);
+    i = 3;
+    vu0StoreV6At60(dst);
+    src += 8;
+    vu0StoreV12At70(dst);
+    dst += 8;
+top:
+    vu0LoadRows1to8(src);
+    vu0AddLoopSums();
+    vu0StoreLoopRows(dst);
+    i--;
+    vu0StoreV6At60(dst);
+    src += 8;
+    vu0StoreV10At70(dst);
+    dst += 8;
+    if (i != 0) goto top;
+}
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BFC50);
+#ifdef SKIP_ASM
+void func_003BFC50(V4_FC50 *src, V4_FC50 *dst) {
+    int i;
+    vu0LoadTwiddle(dst);
+    vu0LoadRows1to8(src);
+    vu0ScaleHead();
+    vu0ButterflyHead();
+    vu0ScaleY2Z1();
+    vu0StoreHeadInPlace(src);
+    i = 3;
+    vu0StoreV2At10(src);
+    src += 8;
+top:
+    vu0LoadRows1to8(src);
+    vu0ScaleEvenRows();
+    vu0ButterflyPairs();
+    vu0StoreRows1to7(src);
+    i--;
+    vu0StoreV8At70(src);
+    src += 8;
+    if (i != 0) goto top;
+}
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BFD60);
+#ifdef SKIP_ASM
+void func_003BFD60(V4_FD60 *src, V4_FD60 *dst, V4_FD60 *p6) {
+    int i;
+    vu0LoadTwiddles15and16(dst);
+    vu0LoadRows1to8(src);
+    vu0AddSubRows1to4Head();
+    vu0ScaleHeadLanes();
+    vu0StoreResults4(p6);
+    vu0AddSubRows5to8();
+    vu0StoreResults5and6(p6);
+    i = 3;
+    vu0StoreV11At60(p6);
+    src += 8;
+    vu0StoreV12At70Of(p6);
+    p6 += 8;
+top:
+    vu0LoadRows1to8(src);
+    vu0ScaleLoopRows();
+    vu0AddSubRows1to4Loop();
+    vu0StoreResults4(p6);
+    vu0AddSubRows5to8();
+    vu0StoreResults5and6(p6);
+    i--;
+    vu0StoreV11At60(p6);
+    src += 8;
+    vu0StoreV12At70Of(p6);
+    p6 += 8;
+    if (i != 0) goto top;
+}
+/* retail: two padding nops end this function's slot (the next VU0 routine starts after them) */
+__asm__("nop\n\tnop");
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BFE80);
+#ifdef SKIP_ASM
+void func_003BFE80(V4_FE80 *src, V4_FE80 *dst, V4_FE80 *p6) {
+    int i;
+    vu0LoadTwiddles15and16(dst);
+    vu0LoadRows1to8(src);
+    vu0AddRowHalves();
+    vu0ScaleResultsBy15();
+    vu0StoreResults4(p6);
+    vu0SubRowHalvesRev();
+    vu0ScaleResultsBy16();
+    vu0StoreResults5and6(p6);
+    i = 3;
+    vu0StoreV11At60(p6);
+    src += 8;
+    vu0StoreV12At70Of(p6);
+    p6 += 8;
+    vu0LoadTwiddle16At20(dst);
+top:
+    vu0LoadRows1to8(src);
+    vu0ScaleRows5to8By16();
+    vu0AddRowHalves();
+    vu0StoreResults4(p6);
+    vu0SubRowHalves();
+    vu0StoreResults5and6(p6);
+    i--;
+    vu0StoreV11At60(p6);
+    src += 8;
+    vu0StoreV12At70Of(p6);
+    p6 += 8;
+    if (i != 0) goto top;
+}
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003BFFA0);
+#ifdef SKIP_ASM
+void func_003BFFA0(void *in, void *scale, void *out) {
+    vu0LoadScale0and3(scale);
+    vu0LoadRowsLo0Hi8(in);
+    vu0AddRowHalves();
+    vu0ScaleResultsBy15();
+    vu0StoreResults4(out);
+    vu0SubRowHalvesRev();
+    vu0ScaleResultsBy16();
+    vu0StoreResultsC0(out);
+    vu0LoadScale1and2(scale);
+    vu0LoadRowsLo4Hi12(in);
+    vu0AddRowHalves();
+    vu0ScaleResultsBy15();
+    vu0StoreResults40(out);
+    vu0SubRowHalvesRev();
+    vu0ScaleResultsBy16();
+    vu0StoreResults80(out);
+    vu0LoadScale4and5(scale);
+    vu0LoadRows24to31(in);
+    vu0ScaleRows9to16();
+    vu0LoadRowsRev100(in);
+    vu0Butterfly1to4With9to12();
+    vu0StoreButterfly100(out);
+    vu0LoadRowsRev140(in);
+    vu0Butterfly1to4With13to16();
+    vu0StoreButterfly140(out);
+}
+#endif
+
+//100%
+INCLUDE_ASM("ealib/seg_2B4578", func_003C01A0);
+#ifdef SKIP_ASM
 void func_003C01A0(void *in, void *scale, void *out, int stride) {
     const V4_01A0 *s = (const V4_01A0 *)scale;
     vu0LoadScaleVec16(&s[0]);
