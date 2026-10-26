@@ -1005,7 +1005,56 @@ extern "C" void cWorldCache_updatePages(void* p)
 
 INCLUDE_ASM("world/worldcache", func_003A88A8);
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A89C8);
+#ifdef SKIP_ASM
+struct sWcEnt_89C8 {
+    int state;
+    int f4;
+    int f8;
+    float fC;
+    int f10;
+    int f14;
+};
+
+struct sWc_89C8 {
+    char pad[0x3EC];
+    unsigned int count;         // 0x3EC
+    sWcEnt_89C8 ents[1];        // 0x3F0
+};
+
+extern "C" void func_003A8528(void* self, int i);
+
+extern "C" void func_003A89C8(void* vself)
+{
+    sWc_89C8* self = (sWc_89C8*)vself;
+    int best = -1;
+    float bestPri = 1.0f;
+    unsigned int i;
+    for (i = 0; i < self->count; i++) {
+        int st = self->ents[i].state;
+        if (st == 0)
+            continue;
+        if (st <= 0)
+            continue;
+        if (st < 3)
+            continue;
+        if (st >= 5)
+            continue;
+        if (self->ents[i].f4 != 0)
+            continue;
+        if (self->ents[i].fC < bestPri) {
+            bestPri = self->ents[i].fC;
+            best = i;
+        }
+    }
+    if (best >= 0) {
+        self->ents[best].state = 4;
+        func_003A8528(self, best);
+        self->ents[best].state = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", cWorldCache_addBxStreamDataTest);
