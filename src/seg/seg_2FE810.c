@@ -5960,7 +5960,30 @@ void func_0040FB88(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040FBE0);
+#ifdef SKIP_ASM
+// 98.52%: crt __do_global_ctors; only s0/s1 swapped in the final call loop (counter should be $17, ptr $16)
+typedef void (*func_ptr)(void);
+extern func_ptr D_0043CE38[0];
+
+
+
+void func_0040FBE0(void)
+{
+  unsigned long nptrs = (unsigned long) D_0043CE38[0];
+  unsigned i;
+  if (nptrs == (-1))
+  {
+    for (nptrs = 0; D_0043CE38[nptrs + 1] != 0; nptrs++)
+    {
+      ;
+    }
+
+  }
+ do { for (i = nptrs; i >= 1; i--) { D_0043CE38[i](); } } while (0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040FC90);
