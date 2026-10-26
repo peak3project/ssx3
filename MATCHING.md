@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `e94c7872`, generated 2026-10-26.
+Snapshot of commit `b1e900d2`, generated 2026-10-26.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `e94c7872`, generated 2026-10-26.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 13,828 | 91.48% |
+| Matching | 13,837 | 91.54% |
 | Partial | 7 | 0.05% |
-| Not started | 1,281 | 8.47% |
+| Not started | 1,272 | 8.41% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -36,8 +36,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ui/uivector` | 287 | 0 | 2 | 289 |
 | `main/all_in_one_main` | 277 | 0 | 3 | 280 |
 | `seg/seg_2FE810` | 244 | 0 | 122 | 366 |
+| `camera/camera` | 221 | 0 | 17 | 238 |
 | `ai/control/handplantcontrol` | 219 | 0 | 14 | 233 |
-| `camera/camera` | 219 | 0 | 19 | 238 |
 | `seg/seg_2F41F8` | 208 | 0 | 45 | 253 |
 | `sound/bankmonitor` | 205 | 0 | 8 | 213 |
 | `main/ssxappdtor` | 195 | 0 | 2 | 197 |
@@ -48,11 +48,11 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ai/ai` | 168 | 0 | 6 | 174 |
 | `seg/seg_325220` | 167 | 0 | 65 | 232 |
 | `wscript/wscriptman` | 148 | 0 | 4 | 152 |
-| `fe/all_in_one_fe` | 145 | 0 | 9 | 154 |
+| `fe/all_in_one_fe` | 146 | 0 | 8 | 154 |
 | `worldpainter/quadtree` | 145 | 0 | 6 | 151 |
 | `world/wscriptcache` | 144 | 0 | 10 | 154 |
 | `be/bedbreward` | 135 | 0 | 1 | 136 |
-| `camera/trigger/cameratriggerfactory` | 132 | 0 | 12 | 144 |
+| `camera/trigger/cameratriggerfactory` | 133 | 0 | 11 | 144 |
 | `visualfx/worldlightman` | 131 | 0 | 6 | 137 |
 | `movie/movieplayer` | 124 | 0 | 3 | 127 |
 | `fe/fepopup` | 117 | 0 | 5 | 122 |
@@ -60,7 +60,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `be/beintreward` | 112 | 0 | 1 | 113 |
 | `seg/seg_1D3510` | 111 | 0 | 2 | 113 |
 | `be/beintplayer` | 103 | 0 | 1 | 104 |
-| `ai/rider` | 101 | 0 | 14 | 115 |
+| `ai/rider` | 102 | 0 | 13 | 115 |
 | `ealib/seg_2D7498` | 100 | 0 | 12 | 112 |
 | `seg/seg_1218` | 97 | 0 | 13 | 110 |
 | `seg/seg_156860` | 97 | 0 | 4 | 101 |
@@ -73,7 +73,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `fe/debugfe` | 84 | 0 | 4 | 88 |
 | `sound/ssxAudio` | 84 | 0 | 4 | 88 |
 | `fe/festatecharequipdetail` | 81 | 0 | 8 | 89 |
-| `intersect/worldsphtree` | 77 | 0 | 9 | 86 |
+| `intersect/worldsphtree` | 78 | 0 | 8 | 86 |
 | `worldpainter/worldpaintermanquery` | 75 | 0 | 1 | 76 |
 | `fe/festaterewards` | 74 | 0 | 1 | 75 |
 | `ai/computer` | 73 | 0 | 5 | 78 |
@@ -118,13 +118,13 @@ Only files with at least one Matching or Partial function are listed here; files
 | `object/modifierblock` | 37 | 0 | 0 | 37 |
 | `replay/frameptr` | 37 | 0 | 2 | 39 |
 | `fe/festatetrophyroom` | 35 | 0 | 1 | 36 |
+| `ui/uitext` | 35 | 0 | 3 | 38 |
 | `animation/rideranimbase` | 34 | 0 | 1 | 35 |
 | `main/loadscreens_prestart` | 34 | 0 | 0 | 34 |
-| `ui/uitext` | 34 | 0 | 4 | 38 |
 | `main/gameload` | 33 | 0 | 6 | 39 |
+| `ui/uiengine` | 33 | 0 | 3 | 36 |
 | `object/flagset` | 32 | 0 | 4 | 36 |
 | `object/multiparticle` | 32 | 0 | 1 | 33 |
-| `ui/uiengine` | 32 | 0 | 4 | 36 |
 | `bx/execman` | 31 | 0 | 0 | 31 |
 | `object/flexrailnode` | 31 | 0 | 3 | 34 |
 | `object/splinemodifier` | 31 | 0 | 4 | 35 |
@@ -198,10 +198,10 @@ Only files with at least one Matching or Partial function are listed here; files
 | `be/beprepoststate` | 13 | 0 | 0 | 13 |
 | `fe/festateload` | 13 | 0 | 0 | 13 |
 | `fe/festatelodge` | 13 | 0 | 0 | 13 |
+| `object/flexbridgenode` | 13 | 0 | 4 | 17 |
 | `be/be` | 12 | 0 | 0 | 12 |
 | `fe/ovstatemission` | 12 | 0 | 0 | 12 |
 | `object/deadfadenode` | 12 | 0 | 1 | 13 |
-| `object/flexbridgenode` | 12 | 0 | 5 | 17 |
 | `be/beintsavefile` | 11 | 0 | 1 | 12 |
 | `camera/trigger/cameratriggerlist` | 11 | 0 | 0 | 11 |
 | `fe/festateriderbio` | 11 | 0 | 0 | 11 |
@@ -794,7 +794,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ai/rider`
 
-101 matching, 0 partial, 14 not started (115 total)
+102 matching, 0 partial, 13 not started (115 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -881,6 +881,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00125228` | Matching | 99.95% | 420 |
 | `func_001242B0` | Matching | 99.95% | 1240 |
 | `func_00120F20` | Matching | 99.94% | 328 |
+| `func_001234D0` | Matching | 99.93% | 296 |
 | `func_00121F30` | Matching | 99.93% | 276 |
 | `func_00123F38` | Matching | 99.91% | 644 |
 | `func_0011DF18` | Matching | 99.90% | 200 |
@@ -2685,7 +2686,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `camera/camera`
 
-219 matching, 0 partial, 19 not started (238 total)
+221 matching, 0 partial, 17 not started (238 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -2866,6 +2867,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_001656B0` | Matching | 99.97% | 648 |
 | `func_00162568` | Matching | 99.96% | 1072 |
 | `func_00163450` | Matching | 99.95% | 364 |
+| `func_00168150` | Matching | 99.94% | 328 |
 | `func_00160028` | Matching | 99.92% | 260 |
 | `func_00161AB0` | Matching | 99.92% | 260 |
 | `func_001643A8` | Matching | 99.92% | 760 |
@@ -2895,6 +2897,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_001604B8` | Matching | 99.52% | 540 |
 | `func_001621A8` | Matching | 99.44% | 108 |
 | `func_00168298(void*)` | Matching | 99.38% | 32 |
+| `func_00168338` | Matching | 99.35% | 464 |
 | `func_0015FFF0` | Matching | 99.29% | 56 |
 | `func_00161728` | Matching | 99.23% | 284 |
 | `func_001686D0` | Matching | 99.16% | 620 |
@@ -3006,7 +3009,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `camera/trigger/cameratriggerfactory`
 
-132 matching, 0 partial, 12 not started (144 total)
+133 matching, 0 partial, 11 not started (144 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -3121,6 +3124,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00174200` | Matching | 99.77% | 688 |
 | `func_001744B0` | Matching | 99.76% | 748 |
 | `func_00178BB0` | Matching | 99.65% | 736 |
+| `func_001787E0` | Matching | 99.47% | 340 |
 | `func_00176A28(void*)` | Matching | 99.38% | 32 |
 | `func_00176A48(void*)` | Matching | 99.38% | 32 |
 | `func_00179FA8(void*)` | Matching | 99.38% | 32 |
@@ -4460,7 +4464,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `fe/all_in_one_fe`
 
-145 matching, 0 partial, 9 not started (154 total)
+146 matching, 0 partial, 8 not started (154 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -4608,6 +4612,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00222648` | Matching | 100.00% | 388 |
 | `func_0021F660` | Matching | 99.95% | 844 |
 | `func_0021F9B0` | Matching | 99.89% | 900 |
+| `func_0021E1B0` | Matching | 99.86% | 1436 |
 | `func_00222428` | Matching | 99.38% | 32 |
 
 ### `fe/debugfe`
@@ -7256,7 +7261,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `intersect/worldsphtree`
 
-77 matching, 0 partial, 9 not started (86 total)
+78 matching, 0 partial, 8 not started (86 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -7312,6 +7317,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00342150` | Matching | 100.00% | 80 |
 | `func_003422E8` | Matching | 100.00% | 108 |
 | `func_003424D0` | Matching | 100.00% | 104 |
+| `func_00342538` | Matching | 100.00% | 480 |
 | `func_00342718` | Matching | 100.00% | 80 |
 | `func_00342768` | Matching | 100.00% | 156 |
 | `func_00342808` | Matching | 100.00% | 120 |
@@ -8730,12 +8736,13 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `object/flexbridgenode`
 
-12 matching, 0 partial, 5 not started (17 total)
+13 matching, 0 partial, 4 not started (17 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
 | `cFlexBridgeNode_setupGrid` | Matching | 100.00% | 1684 |
 | `func_00346D38` | Matching | 100.00% | 252 |
+| `func_003470D0` | Matching | 100.00% | 404 |
 | `func_003475A8` | Matching | 100.00% | 48 |
 | `func_00347B80` | Matching | 100.00% | 440 |
 | `func_00347D38` | Matching | 100.00% | 88 |
@@ -13756,7 +13763,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ui/uiengine`
 
-32 matching, 0 partial, 4 not started (36 total)
+33 matching, 0 partial, 3 not started (36 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -13791,6 +13798,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00399920` | Matching | 100.00% | 80 |
 | `func_00399D80` | Matching | 100.00% | 168 |
 | `func_00399E28` | Matching | 100.00% | 216 |
+| `func_00399F00` | Matching | 100.00% | 1272 |
 | `func_003984E8` | Matching | 99.84% | 124 |
 
 ### `ui/uilistbox`
@@ -13954,7 +13962,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ui/uitext`
 
-34 matching, 0 partial, 4 not started (38 total)
+35 matching, 0 partial, 3 not started (38 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -13992,6 +14000,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003A3280` | Matching | 100.00% | 112 |
 | `func_003A32F0` | Matching | 100.00% | 164 |
 | `func_003A3398` | Matching | 100.00% | 296 |
+| `cUIText_render2D` | Matching | 99.99% | 1356 |
 
 ### `ui/uithing`
 
