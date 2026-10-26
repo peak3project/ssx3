@@ -1,6 +1,163 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("ui/uitext", cUIText_render2D);
+#ifdef SKIP_ASM
+extern "C" void* func_003A04F0(void* self);
+extern "C" float func_00392BA8(void* font, int ch);
+extern "C" float func_003921F0_r2d(void* font, const void* str, void* out, int flags, float sx, float sy) __asm__("func_003921F0");
+extern "C" void func_0039FEB8_r2d(void* self, void* pos, void* size) __asm__("func_0039FEB8");
+extern "C" void func_00391E30_r2d(void* font, float x, float y, const void* str) __asm__("func_00391E30");
+extern "C" int USTR_length(unsigned short* s);
+extern "C" void func_002C2718(void* dst, const char* fmt, const void* s);
+void cMemMan_free(void*);
+void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern char* D_004A289C;
+extern char D_00494078[];
+extern char D_004A47B0[];
+extern unsigned short D_00508750[];
+
+struct sV2_R2D {
+    float x, y;
+    sV2_R2D() {}
+    sV2_R2D(float ax, float ay) : x(ax), y(ay) {}
+};
+struct sV3_R2D {
+    float x, y, z;
+    sV3_R2D() {}
+    sV3_R2D(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+};
+struct sCol_R2D {
+    float r, g, b, a;
+};
+struct sFont_R2D {
+    char pad0[0x14];
+    int height;             // 0x14
+    char pad18[0x10];
+    sV2_R2D shadowOfs;      // 0x28
+    sV2_R2D scale;          // 0x30
+    sV2_R2D cur;            // 0x38
+    sCol_R2D color;         // 0x40
+    sCol_R2D shadowColor;   // 0x50
+};
+struct sLayerBits_R2D {
+    unsigned char lo;
+    unsigned char layer : 5;
+};
+struct sVE_R2D { short delta; short index; void (*fn)(void*); };
+struct sText_R2D {
+    char pad0[0x8];
+    sVE_R2D* vt;            // 0x08
+    char padC[0x8];
+    int flags14;            // 0x14
+    char pad18[0x4];
+    sCol_R2D color;         // 0x1C
+    char pad2C[0x18];
+    float x;                // 0x44
+    float y;                // 0x48
+    char pad4C[0x4];
+    float sx;               // 0x50
+    float sy;               // 0x54
+    char pad58[0x4];
+    char* parent;           // 0x5C
+    float width;            // 0x60
+    char pad64[0x10];
+    int flags;              // 0x74
+    sCol_R2D shadowColor;   // 0x78
+    sCol_R2D colA;          // 0x88
+    sCol_R2D colB;          // 0x98
+    int count;              // 0xA8
+    unsigned short** lines; // 0xAC
+    char padB0[0x4];
+    unsigned short* text;   // 0xB4
+};
+extern sV2_R2D D_004A5A60;
+
+extern "C" void cUIText_render2D(sText_R2D* self, float x, float y)
+{
+    if (self->text == 0 || ((self->flags14 >> 2) & 1) == 0) {
+        self->vt[16].fn((char*)self + self->vt[16].delta);
+    }
+    int* loc = *(int**)(*(char**)(*(char**)(self->parent + 0xD0) + 0x10) + 0x10);
+    if (loc != 0 && ((*loc >> 27) & 1)) {
+        void* f = func_003A04F0(self);
+        if (f == 0) {
+            return;
+        }
+        int n = (int)(self->width / (func_00392BA8(f, 0x57) * self->sx));
+        int k = 0;
+        if (n < 0x400) {
+            for (k = 0; k < n; k++) {
+                D_00508750[k] = 0x57;
+            }
+        }
+        D_00508750[k] = 0;
+    }
+    if (self->text == 0) {
+        return;
+    }
+    sFont_R2D* font = (sFont_R2D*)func_003A04F0(self);
+    if (font == 0) {
+        return;
+    }
+    sV2_R2D s(self->sx, self->sy);
+    font->cur.x = font->scale.x * s.x;
+    font->cur.y = font->scale.y * s.y;
+    if (((self->flags14 >> 5) & 1) && ((self->flags >> 4) & 1)) {
+        font->color = self->colA;
+    } else if (((self->flags14 >> 3) & 1) == 0 && ((self->flags >> 5) & 1)) {
+        font->color = self->colB;
+    } else {
+        font->color = self->color;
+    }
+    if ((self->flags >> 2) & 1) {
+        sCol_R2D c = self->shadowColor;
+        c.r = self->color.r;
+        font->shadowColor = c;
+        font->shadowOfs = D_004A5A60;
+    } else {
+        font->shadowOfs = sV2_R2D(0.0f, 0.0f);
+    }
+    int* d = (int*)(*(char**)(D_004A289C + 0xE84) + 8);
+    *d = (*d & ~0x3E0) | (((((sLayerBits_R2D*)&self->flags14)->layer + 9) << 5) & 0x3E0);
+    sV3_R2D pos(self->x + x, self->y + y, 0.0f);
+    int i = 0;
+    if (self->count > 0) do {
+        unsigned short* str;
+        if (i != 0) {
+            str = self->lines[i];
+        } else {
+            str = self->text;
+        }
+        if (loc != 0 && ((*loc >> 27) & 1)) {
+            str = D_00508750;
+        }
+        if (((self->flags >> 6) & 1) && self->count > 1) {
+            unsigned short* buf = (unsigned short*)operator_new_tag((USTR_length(str) + 5) * 2, D_00494078, 0x100, 0);
+            func_002C2718(buf, D_004A47B0, str);
+            float r[4];
+            func_003921F0_r2d(font, buf, r, 0, s.x, s.y);
+            sV3_R2D size(r[2], self->sy * ((float)font->height * font->scale.y), 0.0f);
+            sV3_R2D p = pos;
+            func_0039FEB8_r2d(self, &p, &size);
+            pos.y += ((float)font->height * font->scale.y) * s.y + 3.0f;
+            func_00391E30_r2d(font, p.x, p.y, buf);
+            if (buf != 0) {
+                cMemMan_free(buf);
+            }
+            return;
+        }
+        float r[4];
+        func_003921F0_r2d(font, str, r, 0, s.x, s.y);
+        i++;
+        sV3_R2D size(r[2], self->sy * ((float)font->height * font->scale.y), 0.0f);
+        sV3_R2D p = pos;
+        func_0039FEB8_r2d(self, &p, &size);
+        pos.y += ((float)font->height * font->scale.y) * s.y + 3.0f;
+        func_00391E30_r2d(font, p.x, p.y, str);
+    } while (i < self->count);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uitext", cUIText_deleteText);
