@@ -4166,7 +4166,8 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BF960);
 #ifdef SKIP_ASM
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_F960;
 
-void func_003BF960(V4_F960 *src, V4_F960 *dst) {
+// PORT: PS2-only VU0 inline asm (load sixteen consecutive vec4 rows into vf1..vf16).
+static inline void vu0LoadRows16(const V4_F960 *p) {
     __asm__ volatile(
         "lqc2       $vf1, 0x0(%0)\n"
         "lqc2       $vf2, 0x10(%0)\n"
@@ -4184,7 +4185,17 @@ void func_003BF960(V4_F960 *src, V4_F960 *dst) {
         "lqc2       $vf14, 0xD0(%0)\n"
         "lqc2       $vf15, 0xE0(%0)\n"
         "lqc2       $vf16, 0xF0(%0)\n"
-        "sqc2       $vf1, 0x80(%1)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store the first row unchanged to the middle of the output).
+static inline void vu0StoreFirstRow(V4_F960 *d) {
+    __asm__ volatile("sqc2       $vf1, 0x80(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (add each row to its successor: vf1..vf15 += vf2..vf16).
+static inline void vu0AddNext1to15(void) {
+    __asm__ volatile(
         "vadd.xyzw  $vf1, $vf1, $vf2\n"
         "vadd.xyzw  $vf2, $vf2, $vf3\n"
         "vadd.xyzw  $vf3, $vf3, $vf4\n"
@@ -4199,22 +4210,39 @@ void func_003BF960(V4_F960 *src, V4_F960 *dst) {
         "vadd.xyzw  $vf12, $vf12, $vf13\n"
         "vadd.xyzw  $vf13, $vf13, $vf14\n"
         "vadd.xyzw  $vf14, $vf14, $vf15\n"
-        "vadd.xyzw  $vf15, $vf15, $vf16\n"
-        "sqc2       $vf1, 0x0(%1)\n"
-        "sqc2       $vf3, 0x10(%1)\n"
-        "sqc2       $vf5, 0x20(%1)\n"
-        "sqc2       $vf7, 0x30(%1)\n"
-        "sqc2       $vf9, 0x40(%1)\n"
-        "sqc2       $vf11, 0x50(%1)\n"
-        "sqc2       $vf13, 0x60(%1)\n"
-        "sqc2       $vf15, 0x70(%1)\n"
-        "sqc2       $vf2, 0x90(%1)\n"
-        "sqc2       $vf4, 0xA0(%1)\n"
-        "sqc2       $vf6, 0xB0(%1)\n"
-        "sqc2       $vf8, 0xC0(%1)\n"
-        "sqc2       $vf10, 0xD0(%1)\n"
-        "sqc2       $vf12, 0xE0(%1)\n"
-        "sqc2       $vf14, 0xF0(%1)\n"
+        "vadd.xyzw  $vf15, $vf15, $vf16\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store the odd-numbered sums to the low half of the output).
+static inline void vu0StoreOddSums(V4_F960 *d) {
+    __asm__ volatile(
+        "sqc2       $vf1, 0x0(%0)\n"
+        "sqc2       $vf3, 0x10(%0)\n"
+        "sqc2       $vf5, 0x20(%0)\n"
+        "sqc2       $vf7, 0x30(%0)\n"
+        "sqc2       $vf9, 0x40(%0)\n"
+        "sqc2       $vf11, 0x50(%0)\n"
+        "sqc2       $vf13, 0x60(%0)\n"
+        "sqc2       $vf15, 0x70(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store the even-numbered sums to the upper half of the output).
+static inline void vu0StoreEvenSums(V4_F960 *d) {
+    __asm__ volatile(
+        "sqc2       $vf2, 0x90(%0)\n"
+        "sqc2       $vf4, 0xA0(%0)\n"
+        "sqc2       $vf6, 0xB0(%0)\n"
+        "sqc2       $vf8, 0xC0(%0)\n"
+        "sqc2       $vf10, 0xD0(%0)\n"
+        "sqc2       $vf12, 0xE0(%0)\n"
+        "sqc2       $vf14, 0xF0(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (load every other row of the second block, vf1..vf8).
+static inline void vu0LoadEvenRows(const V4_F960 *p) {
+    __asm__ volatile(
         "lqc2       $vf1, 0x100(%0)\n"
         "lqc2       $vf2, 0x120(%0)\n"
         "lqc2       $vf3, 0x140(%0)\n"
@@ -4223,14 +4251,26 @@ void func_003BF960(V4_F960 *src, V4_F960 *dst) {
         "lqc2       $vf6, 0x1A0(%0)\n"
         "lqc2       $vf7, 0x1C0(%0)\n"
         "lqc2       $vf8, 0x1E0(%0)\n"
-        "sqc2       $vf1, 0x100(%1)\n"
-        "sqc2       $vf2, 0x110(%1)\n"
-        "sqc2       $vf3, 0x120(%1)\n"
-        "sqc2       $vf4, 0x130(%1)\n"
-        "sqc2       $vf5, 0x140(%1)\n"
-        "sqc2       $vf6, 0x150(%1)\n"
-        "sqc2       $vf7, 0x160(%1)\n"
-        "sqc2       $vf8, 0x170(%1)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (copy vf1..vf8 to eight consecutive output rows).
+static inline void vu0StoreCopy8(V4_F960 *d) {
+    __asm__ volatile(
+        "sqc2       $vf1, 0x100(%0)\n"
+        "sqc2       $vf2, 0x110(%0)\n"
+        "sqc2       $vf3, 0x120(%0)\n"
+        "sqc2       $vf4, 0x130(%0)\n"
+        "sqc2       $vf5, 0x140(%0)\n"
+        "sqc2       $vf6, 0x150(%0)\n"
+        "sqc2       $vf7, 0x160(%0)\n"
+        "sqc2       $vf8, 0x170(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (load the other interleaved rows of the second block, vf1..vf8).
+static inline void vu0LoadOddRows(const V4_F960 *p) {
+    __asm__ volatile(
         "lqc2       $vf1, 0x110(%0)\n"
         "lqc2       $vf2, 0x130(%0)\n"
         "lqc2       $vf3, 0x150(%0)\n"
@@ -4239,23 +4279,52 @@ void func_003BF960(V4_F960 *src, V4_F960 *dst) {
         "lqc2       $vf6, 0x1B0(%0)\n"
         "lqc2       $vf7, 0x1D0(%0)\n"
         "lqc2       $vf8, 0x1F0(%0)\n"
-        "sqc2       $vf1, 0x180(%1)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store the first row unchanged).
+static inline void vu0StoreFirstRow2(V4_F960 *d) {
+    __asm__ volatile("sqc2       $vf1, 0x180(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (add each row to its successor: vf1..vf7 += vf2..vf8).
+static inline void vu0AddNext1to7(void) {
+    __asm__ volatile(
         "vadd.xyzw  $vf1, $vf1, $vf2\n"
         "vadd.xyzw  $vf2, $vf2, $vf3\n"
         "vadd.xyzw  $vf3, $vf3, $vf4\n"
         "vadd.xyzw  $vf4, $vf4, $vf5\n"
         "vadd.xyzw  $vf5, $vf5, $vf6\n"
         "vadd.xyzw  $vf6, $vf6, $vf7\n"
-        "vadd.xyzw  $vf7, $vf7, $vf8\n"
-        "sqc2       $vf1, 0x190(%1)\n"
-        "sqc2       $vf2, 0x1A0(%1)\n"
-        "sqc2       $vf3, 0x1B0(%1)\n"
-        "sqc2       $vf4, 0x1C0(%1)\n"
-        "sqc2       $vf5, 0x1D0(%1)\n"
-        "sqc2       $vf6, 0x1E0(%1)\n"
-        "sqc2       $vf7, 0x1F0(%1)\n"
+        "vadd.xyzw  $vf7, $vf7, $vf8\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store sums vf1..vf7; trailing label keeps gas from filling a delay slot).
+static inline void vu0StoreSums7(V4_F960 *d) {
+    __asm__ volatile(
+        "sqc2       $vf1, 0x190(%0)\n"
+        "sqc2       $vf2, 0x1A0(%0)\n"
+        "sqc2       $vf3, 0x1B0(%0)\n"
+        "sqc2       $vf4, 0x1C0(%0)\n"
+        "sqc2       $vf5, 0x1D0(%0)\n"
+        "sqc2       $vf6, 0x1E0(%0)\n"
+        "sqc2       $vf7, 0x1F0(%0)\n"
         "1:\n"
-        : : "r"(src), "r"(dst) : "memory");
+        : : "r"(d) : "memory");
+}
+
+void func_003BF960(V4_F960 *src, V4_F960 *dst) {
+    vu0LoadRows16(src);
+    vu0StoreFirstRow(dst);
+    vu0AddNext1to15();
+    vu0StoreOddSums(dst);
+    vu0StoreEvenSums(dst);
+    vu0LoadEvenRows(src);
+    vu0StoreCopy8(dst);
+    vu0LoadOddRows(src);
+    vu0StoreFirstRow2(dst);
+    vu0AddNext1to7();
+    vu0StoreSums7(dst);
 }
 #endif
 
