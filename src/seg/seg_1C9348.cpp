@@ -189,7 +189,33 @@ extern "C" void func_002C86F8(HS_86F8 *self, unsigned i, int d) {
 
 INCLUDE_ASM("seg/seg_1C9348", func_002C8770);
 
+//100%
 INCLUDE_ASM("seg/seg_1C9348", func_002C8970);
+#ifdef SKIP_ASM
+struct S8970 { char pad[0x100]; int a[0x311]; int c[0x608]; int b[0x21A]; int base; };
+int func_002C8970_impl(struct S8970 *s, unsigned n, int k) __asm__("func_002C8970");
+int func_002C8970_impl(struct S8970 *s, unsigned n, int k) {
+    int hdr = 3;
+    int best, cand;
+    unsigned q;
+    if (k != 0) {
+        best = func_002C8970_impl(s, n, k - 1);
+        if (s->a[s->base + k] != 0) {
+            q = n / k;
+            cand = func_002C8970_impl(s, n - q * k, k - 1) + s->b[s->base + k] * q;
+            if (cand < best) best = cand;
+        }
+    } else {
+        best = 0;
+        if (n != 0) {
+            best = 0x14;
+            if (n < 0xFC)
+                best = s->b[s->base] + (s->c[n] * 2 + hdr);
+        }
+    }
+    return best;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1C9348", func_002C8A78);
