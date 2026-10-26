@@ -1420,7 +1420,137 @@ extern "C" void func_00231F80(float* t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_00231FC0);
+#ifdef SKIP_ASM
+extern "C" float func_0031C040(float);
+extern char D_004FF1A0[];
+
+struct sV2_1FC0 {
+    float x, y;
+    sV2_1FC0() {}
+    sV2_1FC0(const float& ax, const float& ay) : x(ax), y(ay) {}
+};
+
+struct sV4_1FC0 {
+    float x, y, z, w;
+    sV4_1FC0(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+};
+
+struct sCol_1FC0 {
+    float r, g, b, a;
+};
+
+struct sFade_1FC0 {
+    float t;            // 0x0
+    float f4;           // 0x4
+    float f8;           // 0x8
+    sCol_1FC0 col;      // 0xC
+};
+
+struct sGs_1FC0 {
+    unsigned int w0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    unsigned int wC;
+    unsigned int f10 : 16;
+    unsigned int f10hi : 16;
+    void SetF10(int v) { f10 = v; }
+};
+
+extern sGs_1FC0 D_00501420_1FC0 __asm__("D_00501420");
+
+class cGfx_1FC0 {
+public:
+    char pad[0xE84];
+    sGs_1FC0* stateTop;
+    char padE88[0x10D8 - 0xE88];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8();
+    virtual unsigned int GetWidth();
+    virtual unsigned int GetHeight();
+    virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14();
+    virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18();
+    virtual void v19();
+    virtual void BeginScene();
+    virtual void EndScene();
+    virtual void v22(float, float, float, float, int);
+    virtual void v23(); virtual void v24();
+    virtual void SetViewport(float, float, float, float, int, int, float, float);
+    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void Begin2D();
+    virtual void End2D();
+    virtual void v32();
+    virtual void SetTexture(void*);
+    virtual void v34(); virtual void v35(); virtual void v36(); virtual void v37();
+    virtual void v38(); virtual void v39(); virtual void v40(); virtual void v41();
+    virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45();
+    virtual void v46(); virtual void v47(); virtual void v48(); virtual void v49();
+    virtual void v50(); virtual void v51(); virtual void v52(); virtual void v53();
+    virtual void v54(); virtual void v55(); virtual void v56(); virtual void v57();
+    virtual void v58(); virtual void v59(); virtual void v60(); virtual void v61();
+    virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
+    virtual void v66(); virtual void v67(); virtual void v68(); virtual void v69();
+    virtual void v70(); virtual void v71(); virtual void v72(); virtual void v73();
+    virtual void v74(); virtual void v75(); virtual void v76();
+    virtual void DrawSprite(const sV4_1FC0&, const sV2_1FC0&, const sV2_1FC0&, const sV2_1FC0&, const sCol_1FC0&);
+};
+
+struct sVE_1FC0 {
+    short delta;
+    short index;
+    void (*fn)(void*, float, float, float, float, int);
+};
+
+extern cGfx_1FC0* D_004A289C_1FC0 __asm__("D_004A289C");
+extern char* D_004A28A8_1FC0 __asm__("D_004A28A8");
+
+extern "C" void func_00231FC0(sFade_1FC0* self)
+{
+    cGfx_1FC0* g = D_004A289C_1FC0;
+    g->stateTop[1] = g->stateTop[0];
+    g->stateTop++;
+    D_004A289C_1FC0->BeginScene();
+    D_004A289C_1FC0->Begin2D();
+    *D_004A289C_1FC0->stateTop = D_00501420_1FC0;
+    D_004A289C_1FC0->stateTop->f4_23 = 2;
+    D_004A289C_1FC0->stateTop->f4_20 = 0;
+    D_004A289C_1FC0->stateTop->f4_12 = 0x14;
+    D_004A289C_1FC0->stateTop->f4_2 = 5;
+    D_004A289C_1FC0->stateTop->f8_5 = 0x1F;
+    D_004A289C_1FC0->SetTexture(D_004FF1A0);
+    {
+        sVE_1FC0* vt = *(sVE_1FC0**)((char*)D_004A289C_1FC0 + 0x10D8);
+        char* thisp = (char*)D_004A289C_1FC0 + vt[23].delta;
+        void (**pfn)(void*, float, float, float, float, int) = &vt[23].fn;
+        (*pfn)(thisp, 0.0f, 0.0f, (float)D_004A289C_1FC0->GetWidth(), (float)D_004A289C_1FC0->GetHeight(), 1);
+    }
+    D_004A289C_1FC0->SetViewport(0.0f, 0.0f, 640.0f, 480.0f, 1, 0, 0.0f, 1.0f);
+    float s = func_0031C040(self->t * 6.2831854820251465f);
+    sV2_1FC0 size((s + 1.0f) * 9.0f, 18.0f);
+    sV4_1FC0 pos(599.0f, 445.0f, 0.0f, 1.0f);
+    int f10v = *(int*)(D_004A28A8_1FC0 + 0xA0);
+    *(short*)((char*)D_004A289C_1FC0->stateTop + 0x10) = f10v;
+    self->col.r = self->f4;
+    sV2_1FC0 uv0(0.0f, 0.0f);
+    sV2_1FC0 uv1(1.0f, 1.0f);
+    D_004A289C_1FC0->DrawSprite(pos, size, uv0, uv1, self->col);
+    D_004A289C_1FC0->End2D();
+    D_004A289C_1FC0->EndScene();
+    D_004A289C_1FC0->stateTop--;
+}
+#endif
 
 extern void* D_0047D938[];
 
