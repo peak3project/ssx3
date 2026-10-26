@@ -4517,23 +4517,24 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BFC50);
 #ifdef SKIP_ASM
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FC50;
 
-void func_003BFC50(V4_FC50 *src, V4_FC50 *dst) {
-    int i;
+// PORT: PS2-only VU0 inline asm (load the twiddle vector into vf16).
+static inline void vu0LoadTwiddle(const V4_FC50 *p) {
+    __asm__ volatile("lqc2       $vf16, 0x0(%0)\n" : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (head: vf9 = (vf1+vf2)*w.x, vf10/vf11/vf12 = vf4/vf6/vf8 * w.x).
+static inline void vu0ScaleHead(void) {
     __asm__ volatile(
-        "lqc2       $vf16, 0x0(%1)\n"
-        "lqc2       $vf1, 0x0(%0)\n"
-        "lqc2       $vf2, 0x10(%0)\n"
-        "lqc2       $vf3, 0x20(%0)\n"
-        "lqc2       $vf4, 0x30(%0)\n"
-        "lqc2       $vf5, 0x40(%0)\n"
-        "lqc2       $vf6, 0x50(%0)\n"
-        "lqc2       $vf7, 0x60(%0)\n"
-        "lqc2       $vf8, 0x70(%0)\n"
         "vadd.xyzw  $vf9, $vf1, $vf2\n"
         "vmulx.xyzw $vf10, $vf4, $vf16x\n"
         "vmulx.xyzw $vf11, $vf6, $vf16x\n"
         "vmulx.xyzw $vf12, $vf8, $vf16x\n"
-        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
+        "vmulx.xyzw $vf9, $vf9, $vf16x\n");
+}
+
+// PORT: PS2-only VU0 inline asm (head butterfly: sub/add of rows against the scaled terms).
+static inline void vu0ButterflyHead(void) {
+    __asm__ volatile(
         "vsub.xyzw  $vf4, $vf3, $vf10\n"
         "vadd.xyzw  $vf3, $vf3, $vf10\n"
         "vsub.xyzw  $vf6, $vf5, $vf11\n"
@@ -4541,9 +4542,19 @@ void func_003BFC50(V4_FC50 *src, V4_FC50 *dst) {
         "vsub.xyzw  $vf2, $vf1, $vf9\n"
         "vadd.xyzw  $vf1, $vf1, $vf9\n"
         "vsub.xyzw  $vf8, $vf7, $vf12\n"
-        "vadd.xyzw  $vf7, $vf7, $vf12\n"
+        "vadd.xyzw  $vf7, $vf7, $vf12\n");
+}
+
+// PORT: PS2-only VU0 inline asm (scale vf2 by w.y and vf1 by w.z).
+static inline void vu0ScaleY2Z1(void) {
+    __asm__ volatile(
         "vmuly.xyzw $vf2, $vf2, $vf16y\n"
-        "vmulz.xyzw $vf1, $vf1, $vf16z\n"
+        "vmulz.xyzw $vf1, $vf1, $vf16z\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store head results in place, vf3..vf8 then vf1).
+static inline void vu0StoreHeadInPlace(void *p) {
+    __asm__ volatile(
         "sqc2       $vf3, 0x20(%0)\n"
         "sqc2       $vf4, 0x30(%0)\n"
         "sqc2       $vf5, 0x40(%0)\n"
@@ -4551,26 +4562,26 @@ void func_003BFC50(V4_FC50 *src, V4_FC50 *dst) {
         "sqc2       $vf7, 0x60(%0)\n"
         "sqc2       $vf8, 0x70(%0)\n"
         "sqc2       $vf1, 0x0(%0)\n"
-        : : "r"(src), "r"(dst) : "memory");
-    i = 3;
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf2 to row 1).
+static inline void vu0StoreV2At10(void *p) {
+    __asm__ volatile("sqc2       $vf2, 0x10(%0)\n" : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (scale even rows vf2/vf4/vf6/vf8 by w.x).
+static inline void vu0ScaleEvenRows(void) {
     __asm__ volatile(
-        "sqc2       $vf2, 0x10(%0)\n"
-        : : "r"(src) : "memory");
-    src += 8;
-top:
-    __asm__ volatile(
-        "lqc2       $vf1, 0x0(%0)\n"
-        "lqc2       $vf2, 0x10(%0)\n"
-        "lqc2       $vf3, 0x20(%0)\n"
-        "lqc2       $vf4, 0x30(%0)\n"
-        "lqc2       $vf5, 0x40(%0)\n"
-        "lqc2       $vf6, 0x50(%0)\n"
-        "lqc2       $vf7, 0x60(%0)\n"
-        "lqc2       $vf8, 0x70(%0)\n"
         "vmulx.xyzw $vf9, $vf2, $vf16x\n"
         "vmulx.xyzw $vf10, $vf4, $vf16x\n"
         "vmulx.xyzw $vf11, $vf6, $vf16x\n"
-        "vmulx.xyzw $vf12, $vf8, $vf16x\n"
+        "vmulx.xyzw $vf12, $vf8, $vf16x\n");
+}
+
+// PORT: PS2-only VU0 inline asm (butterfly of row pairs against the scaled terms).
+static inline void vu0ButterflyPairs(void) {
+    __asm__ volatile(
         "vsub.xyzw  $vf2, $vf1, $vf9\n"
         "vadd.xyzw  $vf1, $vf1, $vf9\n"
         "vsub.xyzw  $vf4, $vf3, $vf10\n"
@@ -4578,7 +4589,12 @@ top:
         "vsub.xyzw  $vf6, $vf5, $vf11\n"
         "vadd.xyzw  $vf5, $vf5, $vf11\n"
         "vsub.xyzw  $vf8, $vf7, $vf12\n"
-        "vadd.xyzw  $vf7, $vf7, $vf12\n"
+        "vadd.xyzw  $vf7, $vf7, $vf12\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store butterfly rows vf1..vf7 in place).
+static inline void vu0StoreRows1to7(void *p) {
+    __asm__ volatile(
         "sqc2       $vf1, 0x0(%0)\n"
         "sqc2       $vf2, 0x10(%0)\n"
         "sqc2       $vf3, 0x20(%0)\n"
@@ -4586,11 +4602,32 @@ top:
         "sqc2       $vf5, 0x40(%0)\n"
         "sqc2       $vf6, 0x50(%0)\n"
         "sqc2       $vf7, 0x60(%0)\n"
-        : : "r"(src) : "memory");
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf8 to row 7).
+static inline void vu0StoreV8At70(void *p) {
+    __asm__ volatile("sqc2       $vf8, 0x70(%0)\n" : : "r"(p) : "memory");
+}
+
+void func_003BFC50(V4_FC50 *src, V4_FC50 *dst) {
+    int i;
+    vu0LoadTwiddle(dst);
+    vu0LoadRows1to8(src);
+    vu0ScaleHead();
+    vu0ButterflyHead();
+    vu0ScaleY2Z1();
+    vu0StoreHeadInPlace(src);
+    i = 3;
+    vu0StoreV2At10(src);
+    src += 8;
+top:
+    vu0LoadRows1to8(src);
+    vu0ScaleEvenRows();
+    vu0ButterflyPairs();
+    vu0StoreRows1to7(src);
     i--;
-    __asm__ volatile(
-        "sqc2       $vf8, 0x70(%0)\n"
-        : : "r"(src) : "memory");
+    vu0StoreV8At70(src);
     src += 8;
     if (i != 0) goto top;
 }
