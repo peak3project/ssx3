@@ -168,7 +168,34 @@ void func_00412500(long a, long b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_312310", func_00412550);
+#ifdef SKIP_ASM
+struct S412550 { unsigned cls; int sign; int exp; int pad; unsigned long frac; };
+extern void pk_412550(struct S412550 *) __asm__("func_00411B08");
+double func_00412550(int x) {
+    struct S412550 s;
+    s.cls = 3;
+    s.sign = (unsigned)x >> 31;
+    if (x == 0) {
+        s.cls = 2;
+    } else {
+        s.exp = 60;
+        if (s.sign) {
+            if (x == (-2147483647 - 1))
+                return -2147483648.0;
+            s.frac = -x;
+        } else {
+            s.frac = x;
+        }
+        while (s.frac <= (~0UL >> 4)) {
+            s.frac <<= 1;
+            s.exp--;
+        }
+    }
+    pk_412550(&s);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_312310", func_00412608);
