@@ -324,7 +324,29 @@ int func_003FE678(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE690);
+#ifdef SKIP_ASM
+// VU0 control: set bit 0x2 in $vi28 (read-modify-write).
+// PORT: PS2-only VU0 control-register access. The EE interlocks COP2 moves, so no hazard nop follows.
+static inline unsigned int vu0_cfc2_vi28_690(void)
+{
+    unsigned int v;
+    __asm__ volatile(".set noreorder
+	cfc2.ni %0, $vi28
+	.set reorder" : "=r"(v));
+    return v;
+}
+static inline void vu0_ctc2_vi28_690(unsigned int v)
+{
+    __asm__ volatile(".set noreorder
+	ctc2.ni %0, $vi28
+	.set reorder" : : "r"(v));
+}
+void func_003FE690(void) {
+    vu0_ctc2_vi28_690(vu0_cfc2_vi28_690() | 0x2);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FE6A8);
 
