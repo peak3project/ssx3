@@ -610,7 +610,44 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F5910);
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A50);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A70);
+#ifdef SKIP_ASM
+typedef struct { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; unsigned char *f18; } S5A70;
+extern char D_00525F60[];
+extern char D_004A4BB8[];
+extern int func_003F4C98(char *, int, int);
+extern void a70_47D8(unsigned char *, unsigned char *) __asm__("func_004247D8");
+extern int a70_4C68(char *, int, int, int, int, int, unsigned char *, int, int, int) __asm__("func_003F4C68");
+extern int func_003F5A50(void);
+int func_003F5A70(S5A70 *self, unsigned *o1, unsigned *o2, char **o3) {
+    int n;
+    if (self->fC >= self->f10) {
+        if (self->f8 == 0 && self->fC >= self->f10) {
+            self->f8 = 1;
+            if (self->f10 > 0) {
+                a70_47D8(self->f18, self->f18 + self->f14 - 1);
+                self->f10 = 0;
+                self->fC = self->f10;
+            }
+            func_003F4C98(D_00525F60, 'sess', 'recv');
+            a70_4C68(D_00525F60, 0, self->f0, 0, 0, 0, self->f18, self->f14, (int)func_003F5A50, (int)self);
+        }
+        return -1;
+    } else {
+        unsigned char *e = self->f18 + self->fC;
+        char *u = (char *)(self->f18 + self->fC) + 0xC;
+        n = e[8] << 24 | e[9] << 16 | e[10] << 8 | e[11];
+        n -= 0xC;
+        if (n < 1) u = D_004A4BB8;
+        else u[n - 1] = 0;
+        if (o1) *o1 = e[0] << 24 | e[1] << 16 | e[2] << 8 | e[3];
+        if (o2) *o2 = e[4] << 24 | e[5] << 16 | e[6] << 8 | e[7];
+        if (o3) *o3 = u;
+        return n;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5C38);
