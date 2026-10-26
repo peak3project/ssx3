@@ -5431,7 +5431,60 @@ void func_00168330(void* self, void* other)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00168338);
+#ifdef SKIP_ASM
+struct sCamInfo_8338 {
+    char pad0[0x10];
+    sVec_001607E0 pos;  // 0x10
+    char pad20[0x48];
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void cmScaleEq_8338(sVec_001607E0& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+extern "C" void func_00168338_v(char* self) __asm__("func_00168338");
+
+extern "C" void func_00168338_v(char* self)
+{
+    sCamInfo_8338 info;
+    func_00162568(self, (sCamInfo_001607E0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+                  0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
+                  0.6000000238418579f);
+    *(sVec_001607E0*)(self + 0x20) = cmAdd_001607E0(info.pos, cmScaleP_1848(&D_004FF160_v1607E0, 2.3602666854858398f));
+    sVec_001607E0 d = cmSub_168150(*(sVec_001607E0*)(self + 0x20), *(sVec_001607E0*)(self + 0x40));
+    float len = cmLength_168150(d);
+    float zero = 0.0f;
+    if (len > zero) {
+        cmScaleEq_8338(d, 180.19183349609375f / len);
+        sVec_001607E0 e = cmSub_168150(*(sVec_001607E0*)(self + 0x20), d);
+        float t;
+        if (len >= 188.07302856445312f) {
+            if (len <= 775.4580078125f) {
+                t = (len - 188.07302856445312f) / 587.385009765625f;
+            } else {
+                t = 1.0f;
+            }
+        } else {
+            t = zero;
+        }
+        float f = (1.0f - t) * 0.9916903972625732f + t * 0.8601375222206116f;
+        *(sVec_001607E0*)(self + 0x40) = cmAdd_001607E0(cmScale_001607E0(*(sVec_001607E0*)(self + 0x40), f), cmScale_001607E0(e, 1.0f - f));
+    }
+}
+#endif
 
 INCLUDE_ASM("camera/camera", func_00168508);
 
