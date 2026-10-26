@@ -1345,7 +1345,140 @@ extern "C" int func_0032D028(void* selfp, void* a1, void* a2, void* pos, int dep
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032D208);
+#ifdef SKIP_ASM
+struct sVec4_2D208 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sLevel_2D208 {
+    float scale;   // 0x0
+    float child;   // 0x4
+    int stride;    // 0x8
+};
+struct sGrid_2D208 {
+    char pad0[0xC];
+    int maxLevel;         // 0xC
+    char pad10[0x10];
+    sLevel_2D208* levels; // 0x20
+    char pad24[4];
+    unsigned char* bits;  // 0x28
+};
+struct sTree_2D208 {
+    sVec4_2D208 dirs[8];   // 0x0
+    char pad80[0x10];
+    float unit;            // 0x90
+    float radius;          // 0x94
+    sGrid_2D208* grid;     // 0x98
+    int order[8];          // 0x9C
+};
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_2D208(const sVec4_2D208& a, const sVec4_2D208& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline void vu0Scale_2D208(sVec4_2D208& r, const sVec4_2D208& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline void vu0Add_2D208(sVec4_2D208& r, const sVec4_2D208& a, const sVec4_2D208& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline void vu0Sub_2D208(sVec4_2D208& r, const sVec4_2D208& a, const sVec4_2D208& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+extern "C" void func_2D208(sTree_2D208* self, sVec4_2D208* a, sVec4_2D208* pos, int level, int off, sVec4_2D208* o1, sVec4_2D208* o2) __asm__("func_0032D208");
+extern "C" void func_2D208(sTree_2D208* self, sVec4_2D208* a, sVec4_2D208* pos, int level, int off, sVec4_2D208* o1, sVec4_2D208* o2)
+{
+    float fv;
+    sVec4_2D208 sum;
+    sVec4_2D208 d;
+    sVec4_2D208 t;
+    sVec4_2D208 t2;
+    float dot = vu0Dot_2D208(*a, *pos);
+    sLevel_2D208* lv = (sLevel_2D208*)(level * 12 + (int)self->grid->levels);
+    float edge = lv->scale * self->unit;
+    if (dot < edge + self->radius) {
+        int bits = self->grid->bits[off];
+        if (level < self->grid->maxLevel && bits != 0) {
+            fv = ((float*)lv)[4];
+            int* p = self->order;
+            for (int j = 7; j >= 0; j--, p++) {
+                int idx = *p;
+                if ((bits >> idx) & 1) {
+                    vu0Scale_2D208(t, self->dirs[idx], fv);
+                    d = t;
+                    vu0Add_2D208(t, *pos, d);
+                    sum = t;
+                    func_2D208(self, a, &sum, level + 1, (idx + 1) * self->grid->levels[level].stride + off, o1, o2);
+                }
+            }
+        } else {
+            fv = dot - edge;
+            if (fv < self->radius) {
+                d = *a;
+                d.w = 0.0f;
+                sum = d;
+                vu0Scale_2D208(t, sum, fv);
+                *o1 = t;
+                d = t;
+                vu0Scale_2D208(t2, sum, dot);
+                t = t2;
+                vu0Sub_2D208(t2, *pos, t);
+                d = *o2 = t2;
+                self->radius = fv;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032D440);
