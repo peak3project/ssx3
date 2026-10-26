@@ -1760,7 +1760,120 @@ extern "C" void func_002AC180(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/streamsys", func_002AC220);
+#ifdef SKIP_ASM
+struct sSsEntry {
+    signed char first;          // 0x0
+    char rest[0x17];
+};
+struct sSs4 {
+    int a, b, c, d;
+};
+struct sSsMgr {
+    int pad0;
+    sSsEntry proto;             // 0x4
+    volatile int idx;           // 0x1C
+    sSsEntry* entries;          // 0x20
+    int a24[4];                 // 0x24
+    int* p34;                   // 0x34
+    int* p38;                   // 0x38
+    int* p3C;                   // 0x3C
+    char a40[4][8];             // 0x40
+    int* p60;
+    int* p64;
+    int* p68;
+    int* p6C;
+    sSs4* p70;
+    int* p74;
+    int* p78;
+    int* p7C;
+    int* p80;
+    int* p84;
+};
+struct sSsPlay {
+    int kind;                   // 0x0
+    int result;                 // 0x4
+    int f8;                     // 0x8
+    int f0C;
+    int f10;
+    char pad14[0x54 - 0x14];
+    int f54;
+    char pad58[0x60 - 0x58];
+    int f60;
+};
+extern "C" void* func_00416210(void* p, int v, int n);
+extern "C" void func_003B58A0();
+extern "C" void func_003B58D8();
+extern "C" int func_003B6820(int a, int b, void* e);
+extern "C" int func_003B9A00(void* e, int a, int b, int c);
+
+static inline void ssAlloc_C220(sSsPlay* p, sSsMgr* m)
+{
+    m->idx++;
+    m->entries[m->idx] = m->proto;
+    m->a24[m->idx] = 0;
+    m->p34[m->idx] = 0;
+    m->p38[m->idx] = m->entries[m->idx].first;
+    m->p3C[m->idx] = 0;
+    func_00416210((char*)m + m->idx * 8 + 0x40, 0, 8);
+    m->p60[m->idx] = 0;
+    m->p64[m->idx] = 0;
+    m->p68[m->idx] = 0;
+    m->p6C[m->idx] = 0;
+    m->p70[m->idx].b = 0;
+    m->p70[m->idx].a = 100;
+    m->p70[m->idx].c = 90;
+    m->p70[m->idx].d = 50;
+    m->p74[m->idx] = 0;
+    m->p80[m->idx] = 0;
+    m->p84[m->idx] = 0;
+    m->p78[m->idx] = 0x7F;
+    m->p7C[m->idx] = 1;
+    m->p3C[m->idx] = p->f60;
+    m->p38[m->idx] = 0;
+    sSsEntry* e = (sSsEntry*)(m->idx * 0x18 + (int)m->entries);
+    unsigned char c;
+    if (m->p38[m->idx] >= 0x7F || m->p38[m->idx] >= 0) {
+        if (m->p38[m->idx] < 0x7F)
+            c = m->p38[m->idx];
+        else
+            c = 0x7F;
+    } else {
+        c = 0;
+    }
+    e->first = c;
+}
+
+extern "C" void func_002AC220_impl(sSsPlay* p, sSsMgr* m) __asm__("func_002AC220");
+
+void func_002AC220_impl(sSsPlay* p, sSsMgr* m)
+{
+    int r;
+    p->f8 = 1;
+    p->f54 = 0;
+    switch (p->kind) {
+    case 1: {
+        ssAlloc_C220(p, m);
+        func_003B58A0();
+        r = func_003B6820(p->f0C, p->f10, &m->entries[m->idx]);
+        break;
+    }
+    case 2: {
+        ssAlloc_C220(p, m);
+        func_003B58A0();
+        r = func_003B9A00(&m->entries[m->idx], p->f0C, p->f10, -1);
+        break;
+    }
+    case 3:
+    default:
+        return;
+    }
+    p->result = r;
+    func_003B58D8();
+    m->idx--;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/streamsys", func_002AC7F0);
