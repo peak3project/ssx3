@@ -5066,155 +5066,180 @@ void func_003BFFA0(void *in, void *scale, void *out) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C01A0);
 #ifdef SKIP_ASM
-// PORT: PS2-only VU0 inline asm (8 vec4 pairs: sums and differences scaled per lane, strided stores).
-void func_003C01A0(void *in, void *scale, void *out, int stride) {
+typedef struct { int w[4]; } __attribute__((aligned(16))) V4_01A0;
+
+// PORT: PS2-only VU0 inline asm (load one scale vector into vf16).
+static inline void vu0LoadScaleVec16(const V4_01A0 *v) {
+    __asm__ volatile("lqc2       $vf16, %0\n" : : "m"(*v));
+}
+
+// PORT: PS2-only VU0 inline asm (load rows 0..3 into vf1..vf4 and rows 16..19 into vf5..vf8).
+static inline void vu0LoadRowsG0(const void *p) {
     __asm__ volatile(
-        "lqc2       $vf16, 0x0(%2)\n"
-        "lqc2       $vf1, 0x0(%1)\n"
-        "lqc2       $vf2, 0x10(%1)\n"
-        "lqc2       $vf3, 0x20(%1)\n"
-        "lqc2       $vf4, 0x30(%1)\n"
-        "lqc2       $vf5, 0x100(%1)\n"
-        "lqc2       $vf6, 0x110(%1)\n"
-        "lqc2       $vf7, 0x120(%1)\n"
-        "lqc2       $vf8, 0x130(%1)\n"
-        "vadd.xyzw  $vf9, $vf1, $vf5\n"
-        "vadd.xyzw  $vf10, $vf2, $vf6\n"
-        "vadd.xyzw  $vf11, $vf3, $vf7\n"
-        "vadd.xyzw  $vf12, $vf4, $vf8\n"
-        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
-        "vmuly.xyzw $vf10, $vf10, $vf16y\n"
-        "vmulz.xyzw $vf11, $vf11, $vf16z\n"
-        "vmulw.xyzw $vf12, $vf12, $vf16w\n"
-        "sqc2       $vf9, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf10, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf11, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf12, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "lqc2       $vf16, 0x10(%2)\n"
-        "lqc2       $vf1, 0x40(%1)\n"
-        "lqc2       $vf2, 0x50(%1)\n"
-        "lqc2       $vf3, 0x60(%1)\n"
-        "lqc2       $vf4, 0x70(%1)\n"
-        "lqc2       $vf5, 0x140(%1)\n"
-        "lqc2       $vf6, 0x150(%1)\n"
-        "lqc2       $vf7, 0x160(%1)\n"
-        "lqc2       $vf8, 0x170(%1)\n"
-        "vadd.xyzw  $vf9, $vf1, $vf5\n"
-        "vadd.xyzw  $vf10, $vf2, $vf6\n"
-        "vadd.xyzw  $vf11, $vf3, $vf7\n"
-        "vadd.xyzw  $vf12, $vf4, $vf8\n"
-        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
-        "vmuly.xyzw $vf10, $vf10, $vf16y\n"
-        "vmulz.xyzw $vf11, $vf11, $vf16z\n"
-        "vmulw.xyzw $vf12, $vf12, $vf16w\n"
-        "sqc2       $vf9, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf10, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf11, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf12, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "lqc2       $vf16, 0x20(%2)\n"
-        "lqc2       $vf1, 0x80(%1)\n"
-        "lqc2       $vf2, 0x90(%1)\n"
-        "lqc2       $vf3, 0xA0(%1)\n"
-        "lqc2       $vf4, 0xB0(%1)\n"
-        "lqc2       $vf5, 0x180(%1)\n"
-        "lqc2       $vf6, 0x190(%1)\n"
-        "lqc2       $vf7, 0x1A0(%1)\n"
-        "lqc2       $vf8, 0x1B0(%1)\n"
-        "vadd.xyzw  $vf9, $vf1, $vf5\n"
-        "vadd.xyzw  $vf10, $vf2, $vf6\n"
-        "vadd.xyzw  $vf11, $vf3, $vf7\n"
-        "vadd.xyzw  $vf12, $vf4, $vf8\n"
-        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
-        "vmuly.xyzw $vf10, $vf10, $vf16y\n"
-        "vmulz.xyzw $vf11, $vf11, $vf16z\n"
-        "vmulw.xyzw $vf12, $vf12, $vf16w\n"
-        "sqc2       $vf9, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf10, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf11, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf12, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "lqc2       $vf16, 0x30(%2)\n"
-        "lqc2       $vf1, 0xC0(%1)\n"
-        "lqc2       $vf2, 0xD0(%1)\n"
-        "lqc2       $vf3, 0xE0(%1)\n"
-        "lqc2       $vf4, 0xF0(%1)\n"
-        "lqc2       $vf5, 0x1C0(%1)\n"
-        "lqc2       $vf6, 0x1D0(%1)\n"
-        "lqc2       $vf7, 0x1E0(%1)\n"
-        "lqc2       $vf8, 0x1F0(%1)\n"
-        "vadd.xyzw  $vf9, $vf1, $vf5\n"
-        "vadd.xyzw  $vf10, $vf2, $vf6\n"
-        "vadd.xyzw  $vf11, $vf3, $vf7\n"
-        "vadd.xyzw  $vf12, $vf4, $vf8\n"
-        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
-        "vmuly.xyzw $vf10, $vf10, $vf16y\n"
-        "vmulz.xyzw $vf11, $vf11, $vf16z\n"
-        "vmulw.xyzw $vf12, $vf12, $vf16w\n"
-        "sqc2       $vf9, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf10, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf11, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf12, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "lqc2       $vf16, 0x40(%2)\n"
-        "vsub.xyzw  $vf9, $vf8, $vf4\n"
-        "vsub.xyzw  $vf10, $vf7, $vf3\n"
-        "vsub.xyzw  $vf11, $vf6, $vf2\n"
-        "vsub.xyzw  $vf12, $vf5, $vf1\n"
-        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
-        "vmuly.xyzw $vf10, $vf10, $vf16y\n"
-        "vmulz.xyzw $vf11, $vf11, $vf16z\n"
-        "vmulw.xyzw $vf12, $vf12, $vf16w\n"
-        "sqc2       $vf9, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf10, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf11, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf12, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "lqc2       $vf16, 0x50(%2)\n"
-        "lqc2       $vf8, 0x1B0(%1)\n"
-        "lqc2       $vf7, 0x1A0(%1)\n"
-        "lqc2       $vf6, 0x190(%1)\n"
-        "lqc2       $vf5, 0x180(%1)\n"
-        "lqc2       $vf4, 0xB0(%1)\n"
-        "lqc2       $vf3, 0xA0(%1)\n"
-        "lqc2       $vf2, 0x90(%1)\n"
-        "lqc2       $vf1, 0x80(%1)\n"
-        "vsub.xyzw  $vf9, $vf8, $vf4\n"
-        "vsub.xyzw  $vf10, $vf7, $vf3\n"
-        "vsub.xyzw  $vf11, $vf6, $vf2\n"
-        "vsub.xyzw  $vf12, $vf5, $vf1\n"
-        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
-        "vmuly.xyzw $vf10, $vf10, $vf16y\n"
-        "vmulz.xyzw $vf11, $vf11, $vf16z\n"
-        "vmulw.xyzw $vf12, $vf12, $vf16w\n"
-        "sqc2       $vf9, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf10, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf11, 0x0(%0)\n"
-        "addu       %0, %0, %3\n"
-        "sqc2       $vf12, 0x0(%0)\n"
-        ".set noreorder\n"
-        ".set reorder\n"
-        : "+r"(out)
-        : "r"(in), "r"(scale), "r"(stride)
-        : "memory");
+        "lqc2       $vf1, 0x0(%0)\n"
+        "lqc2       $vf2, 0x10(%0)\n"
+        "lqc2       $vf3, 0x20(%0)\n"
+        "lqc2       $vf4, 0x30(%0)\n"
+        "lqc2       $vf5, 0x100(%0)\n"
+        "lqc2       $vf6, 0x110(%0)\n"
+        "lqc2       $vf7, 0x120(%0)\n"
+        "lqc2       $vf8, 0x130(%0)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (load rows 4..7 into vf1..vf4 and rows 20..23 into vf5..vf8).
+static inline void vu0LoadRowsG1(const void *p) {
+    __asm__ volatile(
+        "lqc2       $vf1, 0x40(%0)\n"
+        "lqc2       $vf2, 0x50(%0)\n"
+        "lqc2       $vf3, 0x60(%0)\n"
+        "lqc2       $vf4, 0x70(%0)\n"
+        "lqc2       $vf5, 0x140(%0)\n"
+        "lqc2       $vf6, 0x150(%0)\n"
+        "lqc2       $vf7, 0x160(%0)\n"
+        "lqc2       $vf8, 0x170(%0)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (load rows 8..11 into vf1..vf4 and rows 24..27 into vf5..vf8).
+static inline void vu0LoadRowsG2(const void *p) {
+    __asm__ volatile(
+        "lqc2       $vf1, 0x80(%0)\n"
+        "lqc2       $vf2, 0x90(%0)\n"
+        "lqc2       $vf3, 0xA0(%0)\n"
+        "lqc2       $vf4, 0xB0(%0)\n"
+        "lqc2       $vf5, 0x180(%0)\n"
+        "lqc2       $vf6, 0x190(%0)\n"
+        "lqc2       $vf7, 0x1A0(%0)\n"
+        "lqc2       $vf8, 0x1B0(%0)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (load rows 12..15 into vf1..vf4 and rows 28..31 into vf5..vf8).
+static inline void vu0LoadRowsG3(const void *p) {
+    __asm__ volatile(
+        "lqc2       $vf1, 0xC0(%0)\n"
+        "lqc2       $vf2, 0xD0(%0)\n"
+        "lqc2       $vf3, 0xE0(%0)\n"
+        "lqc2       $vf4, 0xF0(%0)\n"
+        "lqc2       $vf5, 0x1C0(%0)\n"
+        "lqc2       $vf6, 0x1D0(%0)\n"
+        "lqc2       $vf7, 0x1E0(%0)\n"
+        "lqc2       $vf8, 0x1F0(%0)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (load rows 27..24 and 11..8 reversed into vf8..vf1).
+static inline void vu0LoadRowsRevG2(const void *p) {
+    __asm__ volatile(
+        "lqc2       $vf8, 0x1B0(%0)\n"
+        "lqc2       $vf7, 0x1A0(%0)\n"
+        "lqc2       $vf6, 0x190(%0)\n"
+        "lqc2       $vf5, 0x180(%0)\n"
+        "lqc2       $vf4, 0xB0(%0)\n"
+        "lqc2       $vf3, 0xA0(%0)\n"
+        "lqc2       $vf2, 0x90(%0)\n"
+        "lqc2       $vf1, 0x80(%0)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf9).
+static inline void vu0StoreVf9(void *p) {
+    __asm__ volatile("sqc2       $vf9, 0x0(%0)\n" : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf10).
+static inline void vu0StoreVf10(void *p) {
+    __asm__ volatile("sqc2       $vf10, 0x0(%0)\n" : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf11).
+static inline void vu0StoreVf11(void *p) {
+    __asm__ volatile("sqc2       $vf11, 0x0(%0)\n" : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf12).
+static inline void vu0StoreVf12(void *p) {
+    __asm__ volatile("sqc2       $vf12, 0x0(%0)\n" : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (final store of vf12; trailing label keeps gas from filling the return delay slot).
+static inline void vu0StoreVf12Last(void *p) {
+    __asm__ volatile("sqc2       $vf12, 0x0(%0)\n" "1:\n" : : "r"(p) : "memory");
+}
+
+void func_003C01A0(void *in, void *scale, void *out, int stride) {
+    const V4_01A0 *s = (const V4_01A0 *)scale;
+    vu0LoadScaleVec16(&s[0]);
+    vu0LoadRowsG0(in);
+    vu0AddRowHalves();
+    vu0ScaleResultsBy16();
+    vu0StoreVf9(out);
+    out = (char *)out + stride;
+    vu0StoreVf10(out);
+    out = (char *)out + stride;
+    vu0StoreVf11(out);
+    out = (char *)out + stride;
+    vu0StoreVf12(out);
+    out = (char *)out + stride;
+    vu0LoadScaleVec16(&s[1]);
+    vu0LoadRowsG1(in);
+    vu0AddRowHalves();
+    vu0ScaleResultsBy16();
+    vu0StoreVf9(out);
+    out = (char *)out + stride;
+    vu0StoreVf10(out);
+    out = (char *)out + stride;
+    vu0StoreVf11(out);
+    out = (char *)out + stride;
+    vu0StoreVf12(out);
+    out = (char *)out + stride;
+    vu0LoadScaleVec16(&s[2]);
+    vu0LoadRowsG2(in);
+    vu0AddRowHalves();
+    vu0ScaleResultsBy16();
+    vu0StoreVf9(out);
+    out = (char *)out + stride;
+    vu0StoreVf10(out);
+    out = (char *)out + stride;
+    vu0StoreVf11(out);
+    out = (char *)out + stride;
+    vu0StoreVf12(out);
+    out = (char *)out + stride;
+    vu0LoadScaleVec16(&s[3]);
+    vu0LoadRowsG3(in);
+    vu0AddRowHalves();
+    vu0ScaleResultsBy16();
+    vu0StoreVf9(out);
+    out = (char *)out + stride;
+    vu0StoreVf10(out);
+    out = (char *)out + stride;
+    vu0StoreVf11(out);
+    out = (char *)out + stride;
+    vu0StoreVf12(out);
+    out = (char *)out + stride;
+    vu0LoadScaleVec16(&s[4]);
+    vu0SubRowHalvesRev();
+    vu0ScaleResultsBy16();
+    vu0StoreVf9(out);
+    out = (char *)out + stride;
+    vu0StoreVf10(out);
+    out = (char *)out + stride;
+    vu0StoreVf11(out);
+    out = (char *)out + stride;
+    vu0StoreVf12(out);
+    out = (char *)out + stride;
+    vu0LoadScaleVec16(&s[5]);
+    vu0LoadRowsRevG2(in);
+    vu0SubRowHalvesRev();
+    vu0ScaleResultsBy16();
+    vu0StoreVf9(out);
+    out = (char *)out + stride;
+    vu0StoreVf10(out);
+    out = (char *)out + stride;
+    vu0StoreVf11(out);
+    out = (char *)out + stride;
+    vu0StoreVf12Last(out);
 }
 #endif
 
