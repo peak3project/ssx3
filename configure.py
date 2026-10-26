@@ -55,6 +55,10 @@ UNIT_CFLAGS = {
     # Library tail of .text (0x3EDF50-0x42E590), split by the same evidence: seg_2F0F40, seg_313F58 (C library:
     # strchr/strcpy/sprintf/ungetc) and seg_325220 reach .sdata/.sbss globals with lui/%lo and never via $gp.
     "seg/seg_2F0F40": "-G0",
+    # Sony SDK area (ee-gcc 2.9). Its libm block loads float constants inline (li.s through $at, no $gp pool) and
+    # its assembler did not pad lwc1/mtc1 hazards (the EE interlocks them); -Wa,-mips4 drops that padding. Every
+    # matched function of the unit is unchanged by both flags (full-unit check, 2026-10-26).
+    "seg/seg_2FE810": "-G0 -Wa,-mips4",
     "seg/seg_3113A0_eh": "-fexceptions",
     "seg/seg_313800_exception": "-G0 -fexceptions",
     "seg/seg_313F58": "-G0",
