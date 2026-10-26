@@ -805,5 +805,94 @@ extern "C" void func_00328F28(sCell_8F28* c, sBox_8F28* b)
 
 INCLUDE_ASM("intersect/aifwddiff", func_003291E0);
 
+//100%
 INCLUDE_ASM("intersect/aifwddiff", func_00329590);
+#ifdef SKIP_ASM
+struct sVec4_29590 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+extern sVec4_29590 D_004FF140;
+extern sVec4_29590 D_004FF150;
+extern sVec4_29590 D_004FF160;
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec4_29590 vu0Scale_29590(const sVec4_29590& v, float s)
+{
+    sVec4_29590 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s));
+    return r;
+}
+
+extern "C" int func_00329590(float m, sVec4_29590* mn, sVec4_29590* mx, sVec4_29590* p, sVec4_29590* hp, sVec4_29590* nrm, float* t)
+{
+    *t = 1e30f;
+    if (mn->y <= p->y && p->y <= mx->y && p->z >= mn->z && p->z <= mx->z) {
+        float d1 = (p->x - mn->x) + m;
+        float d2 = (mx->x - p->x) + m;
+        if (0.0f <= d1 && 0.0f <= d2) {
+            if (d1 < *t) {
+                *hp = *p;
+                hp->x = mn->x;
+                *t = d1;
+                sVec4_29590 n = vu0Scale_29590(D_004FF140, -1.0f);
+                *nrm = n;
+            }
+            if (d2 < *t) {
+                *hp = *p;
+                hp->x = mx->x;
+                *t = d2;
+                *nrm = D_004FF140;
+            }
+        }
+    }
+    if (p->x >= mn->x && p->x <= mx->x && p->z >= mn->z && p->z <= mx->z) {
+        float d1 = (p->y - mn->y) + m;
+        float d2 = (mx->y - p->y) + m;
+        if (0.0f <= d1 && 0.0f <= d2) {
+            if (d1 < *t) {
+                *hp = *p;
+                hp->y = mn->y;
+                *t = d1;
+                sVec4_29590 n = vu0Scale_29590(D_004FF150, -1.0f);
+                *nrm = n;
+            }
+            if (d2 < *t) {
+                *hp = *p;
+                hp->y = mx->y;
+                *t = d2;
+                *nrm = D_004FF150;
+            }
+        }
+    }
+    if (p->y >= mn->y && p->y <= mx->y && p->x >= mn->x && p->x <= mx->x) {
+        float d1 = (p->z - mn->z) + m;
+        float d2 = (mx->z - p->z) + m;
+        if (0.0f <= d1 && 0.0f <= d2) {
+            if (d1 < *t) {
+                *hp = *p;
+                hp->z = mn->z;
+                *t = d1;
+                sVec4_29590 n = vu0Scale_29590(D_004FF160, -1.0f);
+                *nrm = n;
+            }
+            if (d2 < *t) {
+                *hp = *p;
+                hp->z = mx->z;
+                *t = d2;
+                *nrm = D_004FF160;
+            }
+        }
+    }
+    return *t != 1e30f;
+}
+#endif
 
