@@ -3499,7 +3499,46 @@ int func_003FC4E8(char *x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC548);
+#ifdef SKIP_ASM
+typedef struct { int w[25]; } __attribute__((aligned(8))) S64C548;
+typedef struct { char b[4]; } B4C548;
+typedef struct { char pad[0x74]; int f74; int f78; int f7C; int f80; int f84; B4C548 f88; int f8C; int f90; int f94; int f98; } G5B20;
+extern G5B20 *D_C548 __asm__("D_004A5B20");
+extern int fBA20w(int, int) __asm__("func_003FBA20");
+extern int fBB50w(int, int, int *) __asm__("func_003FBB50");
+extern void fBAD0w(int, int, void *) __asm__("func_003FBAD0");
+extern void fBA78w(int, int, void *) __asm__("func_003FBA78");
+extern void fBBE0w(void *) __asm__("func_003FBBE0");
+extern int f9C48w(void *, int, int) __asm__("func_003F9C48");
+extern void fB810w(int) __asm__("func_003FB810");
+void func_003FC548(S64C548 *p, int a, int b, int c, int d) {
+    int *r[4];
+    int v;
+    int k;
+    r[0] = 0;
+    D_C548->f74 = 6;
+    D_C548->f78 = 5;
+    __builtin_memcpy(D_C548, p, 0x64);
+    D_C548->f84 = d;
+    D_C548->f7C = c;
+    D_C548->f8C = a;
+    k = fBA20w(a, b);
+    if (fBB50w(D_C548->f7C, D_C548->f84, (int *)r) == 0) {
+        D_C548->f88 = *(B4C548 *)((int *)r[0])[1];
+        if (k == 0) {
+            v = D_C548->f98;
+            fBAD0w(a, D_C548->f84, &D_C548->f88);
+        } else {
+            v = ((int *)k)[1];
+            fBA78w(a, b, &D_C548->f88);
+        }
+        fBBE0w((char *)p + 0x60);
+        fB810w(f9C48w(p, v, 0));
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC708);
