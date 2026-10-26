@@ -4333,8 +4333,8 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BFAC0);
 #ifdef SKIP_ASM
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FAC0;
 
-void func_003BFAC0(V4_FAC0 *src, V4_FAC0 *dst) {
-    int i;
+// PORT: PS2-only VU0 inline asm (load eight vec4 rows into vf1..vf8).
+static inline void vu0LoadRows1to8(const void *p) {
     __asm__ volatile(
         "lqc2       $vf1, 0x0(%0)\n"
         "lqc2       $vf2, 0x10(%0)\n"
@@ -4344,58 +4344,87 @@ void func_003BFAC0(V4_FAC0 *src, V4_FAC0 *dst) {
         "lqc2       $vf6, 0x50(%0)\n"
         "lqc2       $vf7, 0x60(%0)\n"
         "lqc2       $vf8, 0x70(%0)\n"
-        "sqc2       $vf1, 0x40(%1)\n"
-        "vadd.xyzw  $vf1, $vf1, $vf2\n"
-        "vadd.xyzw  $vf2, $vf2, $vf3\n"
-        "vadd.xyzw  $vf3, $vf3, $vf4\n"
-        "vadd.xyzw  $vf4, $vf4, $vf5\n"
-        "vadd.xyzw  $vf5, $vf5, $vf6\n"
-        "vadd.xyzw  $vf6, $vf6, $vf7\n"
-        "vadd.xyzw  $vf7, $vf7, $vf8\n"
-        "sqc2       $vf1, 0x0(%1)\n"
-        "sqc2       $vf3, 0x10(%1)\n"
-        "sqc2       $vf5, 0x20(%1)\n"
-        "sqc2       $vf7, 0x30(%1)\n"
-        "sqc2       $vf2, 0x50(%1)\n"
-        : : "r"(src), "r"(dst) : "memory");
-    i = 3;
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store row vf1 unchanged).
+static inline void vu0StoreRow1At40(V4_FAC0 *d) {
+    __asm__ volatile("sqc2       $vf1, 0x40(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store sums vf1, vf3, vf5, vf7 and vf2).
+static inline void vu0StoreHeadSums(V4_FAC0 *d) {
     __asm__ volatile(
-        "sqc2       $vf4, 0x60(%0)\n"
-        : : "r"(dst) : "memory");
-    src += 8;
+        "sqc2       $vf1, 0x0(%0)\n"
+        "sqc2       $vf3, 0x10(%0)\n"
+        "sqc2       $vf5, 0x20(%0)\n"
+        "sqc2       $vf7, 0x30(%0)\n"
+        "sqc2       $vf2, 0x50(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf4 to row 6).
+static inline void vu0StoreV4At60(void *d) {
+    __asm__ volatile("sqc2       $vf4, 0x60(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf6 to row 7).
+static inline void vu0StoreV6At70(void *d) {
+    __asm__ volatile("sqc2       $vf6, 0x70(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf1, vf3, vf5, vf7 to rows 0..3).
+static inline void vu0StoreOddRows(V4_FAC0 *d) {
     __asm__ volatile(
-        "sqc2       $vf6, 0x70(%0)\n"
-        : : "r"(dst) : "memory");
-    dst += 8;
-    do {
+        "sqc2       $vf1, 0x0(%0)\n"
+        "sqc2       $vf3, 0x10(%0)\n"
+        "sqc2       $vf5, 0x20(%0)\n"
+        "sqc2       $vf7, 0x30(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (pairwise sums of even rows: vf3 = vf2+vf4, vf4 = vf4+vf6, vf5 = vf6+vf8).
+static inline void vu0AddEvenPairs(void) {
     __asm__ volatile(
-        "lqc2       $vf1, 0x0(%0)\n"
-        "lqc2       $vf2, 0x10(%0)\n"
-        "lqc2       $vf3, 0x20(%0)\n"
-        "lqc2       $vf4, 0x30(%0)\n"
-        "lqc2       $vf5, 0x40(%0)\n"
-        "lqc2       $vf6, 0x50(%0)\n"
-        "lqc2       $vf7, 0x60(%0)\n"
-        "lqc2       $vf8, 0x70(%0)\n"
-        "sqc2       $vf1, 0x0(%1)\n"
-        "sqc2       $vf3, 0x10(%1)\n"
-        "sqc2       $vf5, 0x20(%1)\n"
-        "sqc2       $vf7, 0x30(%1)\n"
         "vadd.xyzw  $vf3, $vf2, $vf4\n"
         "vadd.xyzw  $vf4, $vf4, $vf6\n"
-        "vadd.xyzw  $vf5, $vf6, $vf8\n"
-        "sqc2       $vf2, 0x40(%1)\n"
-        "sqc2       $vf3, 0x50(%1)\n"
-        : : "r"(src), "r"(dst) : "memory");
-    i--;
+        "vadd.xyzw  $vf5, $vf6, $vf8\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf2 and vf3 to rows 4 and 5).
+static inline void vu0StoreV2V3(V4_FAC0 *d) {
     __asm__ volatile(
-        "sqc2       $vf4, 0x60(%0)\n"
-        : : "r"(dst) : "memory");
+        "sqc2       $vf2, 0x40(%0)\n"
+        "sqc2       $vf3, 0x50(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf5 to row 7).
+static inline void vu0StoreV5At70(V4_FAC0 *d) {
+    __asm__ volatile("sqc2       $vf5, 0x70(%0)\n" : : "r"(d) : "memory");
+}
+
+void func_003BFAC0(V4_FAC0 *src, V4_FAC0 *dst) {
+    int i;
+    vu0LoadRows1to8(src);
+    vu0StoreRow1At40(dst);
+    vu0AddNext1to7();
+    vu0StoreHeadSums(dst);
+    i = 3;
+    vu0StoreV4At60(dst);
     src += 8;
-    __asm__ volatile(
-        "sqc2       $vf5, 0x70(%0)\n"
-        : : "r"(dst) : "memory");
+    vu0StoreV6At70(dst);
     dst += 8;
+    do {
+        vu0LoadRows1to8(src);
+        vu0StoreOddRows(dst);
+        vu0AddEvenPairs();
+        vu0StoreV2V3(dst);
+        i--;
+        vu0StoreV4At60(dst);
+        src += 8;
+        vu0StoreV5At70(dst);
+        dst += 8;
     } while (i != 0);
 }
 #endif
