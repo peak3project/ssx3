@@ -1669,7 +1669,44 @@ int func_003F7BD0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7C00);
+#ifdef SKIP_ASM
+typedef struct { unsigned char b[0x18]; } B7C00;
+typedef struct { char pad0[0xD8]; unsigned mode; char pad1[0xEC - 0xDC]; int fEC; int fF0; int fF4; int fF8; int fFC; int f100; } S7C00;
+extern S7C00 *D_7C00 __asm__("D_004A4BC4");
+int func_003F7C00(void) {
+    int r;
+    unsigned i;
+    i = r = 0;
+    D_7C00->fEC = 4;
+    *(B7C00 *)((char *)D_7C00 + 0x120) = *(B7C00 *)&D_7C00->fEC;
+    for (i = 0; i < 3; i++) ;
+    switch (D_7C00->mode) {
+    case 0: D_7C00->fF0 = (int)func_003F73A8; break;
+    case 1: D_7C00->fF0 = (int)func_003F73F0; break;
+    case 2: D_7C00->fF0 = (int)func_003F7478; break;
+    case 3: D_7C00->fF0 = (int)func_003F7528; break;
+    case 4: D_7C00->fF0 = (int)func_003F75D8; break;
+    case 5: D_7C00->fF0 = (int)func_003F7658; break;
+    case 6:
+    case 7: D_7C00->fF0 = (int)func_003F76D8; break;
+    case 8: D_7C00->fF0 = (int)func_003F7438; break;
+    default: r = 0xD;
+    }
+    if (r == 0) {
+        if (D_7C00->mode < 9) D_7C00->fF4 = (int)func_003F7708;
+        else r = 0xD;
+        if (r == 0) {
+            if (D_7C00->mode < 9) D_7C00->fF8 = (int)func_003F77F0;
+            else r = 0xD;
+        }
+    }
+    D_7C00->fFC = 0;
+    D_7C00->f100 = 0;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7D98);
