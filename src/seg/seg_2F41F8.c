@@ -2499,7 +2499,44 @@ int func_003F9F00_impl(int *src, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA040);
+#ifdef SKIP_ASM
+extern int *D_004A4BD8;
+extern int *D_4BDCw __asm__("D_004A4BDC");
+extern int f9208w(void) __asm__("func_003F9208");
+extern void fB2F8w(int) __asm__("func_003FB2F8");
+int func_003FA040(int *p, int *q) {
+    int r;
+    if (f9208w() == 0) return 2;
+    if (D_4BDCw[0x40 / 4] == 0) return 0xD;
+    if (p == 0) return 0xC;
+    if (q == 0) return 0xC;
+    r = ((int (*)(int *, int *))D_4BDCw[0x40 / 4])(p, q);
+    if (p[0] == 0) {
+        if (D_004A4BD8[0] != 0) return 0xF;
+    }
+    if (p[0] != 2) return r;
+    r = ((int (*)(int, int, int))((int *)D_4BDCw[0x4C / 4])[D_004A4BD8[1]])(r, 2, q[0]);
+    if (r == 10) {
+        int *g = D_004A4BD8;
+        g[0] = 0;
+        g[1] = 0;
+        return 10;
+    }
+    if (r == 0x10) return 0x10;
+    r = ((int (*)(int, int *, int *))((int *)D_4BDCw[0x48 / 4])[D_004A4BD8[0]])(r, p, q);
+    if (p[0] == 2) {
+        int s = D_004A4BD8[0];
+        int *g;
+        if (s == 5 || s == 2 || s == 7 || s == 0xB || s == 0xC || s == 0xD) fB2F8w(0);
+        g = D_004A4BD8;
+        g[0] = 0;
+        g[1] = 0;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA1D0);
