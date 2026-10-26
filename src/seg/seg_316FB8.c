@@ -363,7 +363,90 @@ void func_00417628(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_00417648);
+#ifdef SKIP_ASM
+struct R7648 {
+    int err;
+    char pad[0x38 - 4];
+    int didinit;
+};
+struct F7648 {
+    unsigned char *p;
+    int r;
+    int w;
+    unsigned short flags;
+    short file;
+    unsigned char *base;
+    int size;
+    int lbfsize;
+    int cookie;
+    int (*rd)(int, unsigned char *, int);
+    int pad24;
+    int pad28;
+    int pad2C;
+    unsigned char *ubbase;
+    int ubsize;
+    unsigned char *up;
+    int ur;
+    char pad40[0x54 - 0x40];
+    struct R7648 *data;
+};
+extern struct R7648 *g7648_impure __asm__("D_00454944");
+extern void g7648_init(struct R7648 *) __asm__("func_004200F0");
+extern int g7648_fflush(struct F7648 *) __asm__("func_0041FE30");
+extern void g7648_smakebuf(struct F7648 *) __asm__("func_004174B0");
+extern int g7648_fwalk(struct R7648 *, void *) __asm__("func_00417418");
+extern void g7648_lflush(void) __asm__("func_00417628");
+int func_00417648_impl(struct F7648 *fp) __asm__("func_00417648");
+int func_00417648_impl(struct F7648 *fp) {
+    int n;
+    do {
+        if (fp->data == 0)
+            fp->data = g7648_impure;
+        if (fp->data->didinit == 0)
+            g7648_init(fp->data);
+    } while (0);
+    fp->r = 0;
+    if (fp->flags & 0x20)
+        return -1;
+    if ((fp->flags & 4) == 0) {
+        if ((fp->flags & 0x10) == 0)
+            return -1;
+        if (fp->flags & 8) {
+            if (g7648_fflush(fp))
+                return -1;
+            fp->flags &= ~8;
+            fp->w = 0;
+            fp->lbfsize = 0;
+        }
+        fp->flags |= 4;
+    } else if (fp->ubbase != 0) {
+        if ((fp->r = fp->ur) != 0) {
+            fp->p = fp->up;
+            return 0;
+        }
+    }
+    if (fp->base == 0)
+        g7648_smakebuf(fp);
+    if (fp->flags & 3)
+        g7648_fwalk(fp->data, g7648_lflush);
+    fp->p = fp->base;
+    n = fp->rd(fp->cookie, fp->base, fp->size);
+    fp->r = n;
+    fp->flags &= ~0x2000;
+    if (n <= 0) {
+        if (n == 0) {
+            fp->flags |= 0x20;
+        } else {
+            fp->r = 0;
+            fp->flags |= 0x40;
+        }
+        return -1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_004177B0);
