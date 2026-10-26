@@ -899,7 +899,138 @@ extern "C" int func_00116938(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", gGenTrickName);
+#ifdef SKIP_ASM
+struct sTrickName_6950 {
+    unsigned int a : 3;
+    unsigned int b : 4;
+    unsigned int c : 3;
+    unsigned int d : 2;
+    unsigned int e : 4;
+    unsigned short f : 3;
+    unsigned int g : 3;
+    unsigned int h : 6;
+    unsigned int i : 4;
+    unsigned int j : 3;
+    unsigned int k : 7;
+    unsigned int l : 1;
+    unsigned int m : 7;
+    unsigned short n : 2;
+    unsigned int o : 4;
+    unsigned char p : 3;
+    unsigned int q : 5;
+};
+
+extern char* D_0043D118[];
+extern char* D_0043D130[];
+extern char* D_0043CF40[];
+extern char* D_0043CF60[];
+extern char* D_0043CF70[];
+extern char* D_0043CFB0[];
+extern char* D_0043CFC8[];
+extern char* D_0043CFE0[];
+extern char* D_0043D0C0[];
+extern char* D_0043D160_s[] __asm__("D_0043D160");
+extern char* D_004A0FF0[2];
+extern char* D_0043D2B8[];
+extern char* D_0043D2D0[];
+extern char* D_0043D2E0[];
+extern char* D_0043D100[];
+extern char* D_0043D320[];
+
+extern "C" void gGenTrickName_6950(char* buf, sTrickName_6950* id) __asm__("gGenTrickName");
+extern "C" void gGenTrickName_6950(char* buf, sTrickName_6950* id)
+{
+    const char* s;
+    s = D_0043D118[id->a];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D130[id->b];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043CF40[id->c];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043CF60[id->d];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043CF70[id->e];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043CFB0[id->f];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043CFC8[id->g];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043CFE0[id->h];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D0C0[id->i];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D160_s[id->k];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_004A0FF0[id->l];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D160_s[id->m];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D2B8[id->j];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D2D0[id->n];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D2E0[id->o];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D100[id->p];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    s = D_0043D320[id->q];
+    while (*s != 0) {
+        *buf++ = *(const unsigned char*)s;
+        s++;
+    }
+    *buf = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", gGenMonsterTrickReqName);
