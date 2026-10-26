@@ -348,7 +348,42 @@ void func_003FE690(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE6A8);
+#ifdef SKIP_ASM
+// Act on the VU0 status decode: case 4 sets bit 0x1 in $vi28; returns 1 for cases 0, 3 and 4.
+// PORT: PS2-only VU0 control-register access. The EE interlocks COP2 moves, so no hazard nop follows.
+extern int func_003FE7D8_6A8(void) __asm__("func_003FE7D8");
+static inline unsigned int vu0_cfc2_vi28_6A8(void)
+{
+    unsigned int v;
+    __asm__ volatile(".set noreorder
+	cfc2.ni %0, $vi28
+	.set reorder" : "=r"(v));
+    return v;
+}
+static inline void vu0_ctc2_vi28_6A8(unsigned int v)
+{
+    __asm__ volatile(".set noreorder
+	ctc2.ni %0, $vi28
+	.set reorder" : : "r"(v));
+}
+int func_003FE6A8(void) {
+    int r = 0;
+    switch (func_003FE7D8_6A8()) {
+    case 4:
+        vu0_ctc2_vi28_6A8(vu0_cfc2_vi28_6A8() | 0x1);
+    case 0:
+    case 3:
+        r = 1;
+        break;
+    case 1:
+    case 2:
+        break;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE708);
