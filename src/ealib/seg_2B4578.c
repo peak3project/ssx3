@@ -2033,7 +2033,37 @@ int func_003B8290(unsigned long a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B82B8);
+#ifdef SKIP_ASM
+struct Q_82B8 { short c; short pad2; int d; int e; };
+extern int f8290_82B8(int) __asm__("func_003B8290");
+extern struct Q_82B8 *f8218_82B8(int, int) __asm__("func_003B8218");
+extern int f36A8_82B8(int, int) __asm__("func_003C36A8");
+extern int f83A0_82B8(int, int) __asm__("func_003B83A0");
+
+int func_003B82B8(int a, int b, int c, int d, int e) {
+    int m;
+    int bit = 4;
+    int id;
+    if ((a & 0x1F8) == 0) a |= 0x1F8;
+    m = f8290_82B8(a);
+    id = a & ~0x1F8;
+    while (m != 0) {
+        if (bit & m) {
+            struct Q_82B8 *q = f8218_82B8(id, bit);
+            q->c = c;
+            q->d = d;
+            q->e = e;
+            f36A8_82B8(id, bit);
+            m &= ~bit;
+        }
+        bit <<= 1;
+    }
+    f83A0_82B8(a, c ? b : 0);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B83A0);
