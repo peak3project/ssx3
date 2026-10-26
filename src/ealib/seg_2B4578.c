@@ -4270,7 +4270,89 @@ top:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BFC50);
+#ifdef SKIP_ASM
+typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FC50;
+
+void func_003BFC50(V4_FC50 *src, V4_FC50 *dst) {
+    int i;
+    __asm__ volatile(
+        "lqc2       $vf16, 0x0(%1)\n"
+        "lqc2       $vf1, 0x0(%0)\n"
+        "lqc2       $vf2, 0x10(%0)\n"
+        "lqc2       $vf3, 0x20(%0)\n"
+        "lqc2       $vf4, 0x30(%0)\n"
+        "lqc2       $vf5, 0x40(%0)\n"
+        "lqc2       $vf6, 0x50(%0)\n"
+        "lqc2       $vf7, 0x60(%0)\n"
+        "lqc2       $vf8, 0x70(%0)\n"
+        "vadd.xyzw  $vf9, $vf1, $vf2\n"
+        "vmulx.xyzw $vf10, $vf4, $vf16x\n"
+        "vmulx.xyzw $vf11, $vf6, $vf16x\n"
+        "vmulx.xyzw $vf12, $vf8, $vf16x\n"
+        "vmulx.xyzw $vf9, $vf9, $vf16x\n"
+        "vsub.xyzw  $vf4, $vf3, $vf10\n"
+        "vadd.xyzw  $vf3, $vf3, $vf10\n"
+        "vsub.xyzw  $vf6, $vf5, $vf11\n"
+        "vadd.xyzw  $vf5, $vf5, $vf11\n"
+        "vsub.xyzw  $vf2, $vf1, $vf9\n"
+        "vadd.xyzw  $vf1, $vf1, $vf9\n"
+        "vsub.xyzw  $vf8, $vf7, $vf12\n"
+        "vadd.xyzw  $vf7, $vf7, $vf12\n"
+        "vmuly.xyzw $vf2, $vf2, $vf16y\n"
+        "vmulz.xyzw $vf1, $vf1, $vf16z\n"
+        "sqc2       $vf3, 0x20(%0)\n"
+        "sqc2       $vf4, 0x30(%0)\n"
+        "sqc2       $vf5, 0x40(%0)\n"
+        "sqc2       $vf6, 0x50(%0)\n"
+        "sqc2       $vf7, 0x60(%0)\n"
+        "sqc2       $vf8, 0x70(%0)\n"
+        "sqc2       $vf1, 0x0(%0)\n"
+        : : "r"(src), "r"(dst) : "memory");
+    i = 3;
+    __asm__ volatile(
+        "sqc2       $vf2, 0x10(%0)\n"
+        : : "r"(src) : "memory");
+    src += 8;
+top:
+    __asm__ volatile(
+        "lqc2       $vf1, 0x0(%0)\n"
+        "lqc2       $vf2, 0x10(%0)\n"
+        "lqc2       $vf3, 0x20(%0)\n"
+        "lqc2       $vf4, 0x30(%0)\n"
+        "lqc2       $vf5, 0x40(%0)\n"
+        "lqc2       $vf6, 0x50(%0)\n"
+        "lqc2       $vf7, 0x60(%0)\n"
+        "lqc2       $vf8, 0x70(%0)\n"
+        "vmulx.xyzw $vf9, $vf2, $vf16x\n"
+        "vmulx.xyzw $vf10, $vf4, $vf16x\n"
+        "vmulx.xyzw $vf11, $vf6, $vf16x\n"
+        "vmulx.xyzw $vf12, $vf8, $vf16x\n"
+        "vsub.xyzw  $vf2, $vf1, $vf9\n"
+        "vadd.xyzw  $vf1, $vf1, $vf9\n"
+        "vsub.xyzw  $vf4, $vf3, $vf10\n"
+        "vadd.xyzw  $vf3, $vf3, $vf10\n"
+        "vsub.xyzw  $vf6, $vf5, $vf11\n"
+        "vadd.xyzw  $vf5, $vf5, $vf11\n"
+        "vsub.xyzw  $vf8, $vf7, $vf12\n"
+        "vadd.xyzw  $vf7, $vf7, $vf12\n"
+        "sqc2       $vf1, 0x0(%0)\n"
+        "sqc2       $vf2, 0x10(%0)\n"
+        "sqc2       $vf3, 0x20(%0)\n"
+        "sqc2       $vf4, 0x30(%0)\n"
+        "sqc2       $vf5, 0x40(%0)\n"
+        "sqc2       $vf6, 0x50(%0)\n"
+        "sqc2       $vf7, 0x60(%0)\n"
+        : : "r"(src) : "memory");
+    i--;
+    __asm__ volatile(
+        "sqc2       $vf8, 0x70(%0)\n"
+        : : "r"(src) : "memory");
+    src += 8;
+    if (i != 0) goto top;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BFD60);
 
