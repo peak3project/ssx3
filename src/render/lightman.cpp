@@ -1506,7 +1506,155 @@ extern "C" int func_00390EF8()
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_00390F20);
+#ifdef SKIP_ASM
+struct sGs_0F20 {
+    unsigned int w0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    unsigned int wC;
+    unsigned int f10 : 16;
+    unsigned int f10hi : 16;
+    void SetF22(int v) { f4_22 = v; }
+    void SetF2(int v) { int* w = (int*)((char*)this + 4); *w = (*w & ~0x7C) | ((v << 2) & 0x7C); }
+};
+
+struct sPos_0F20 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sHudVert_0F20 {
+    float u, v, q, f0C;
+    int r, g, b, a;
+    sPos_0F20 pos;
+    sHudVert_0F20() {}
+};
+
+extern sGs_0F20 D_00501420_0F20 __asm__("D_00501420");
+extern int D_004A460C_i __asm__("D_004A460C");
+extern float D_004A469C_f __asm__("D_004A469C");
+extern float D_004A46A0_f __asm__("D_004A46A0");
+extern float D_004A46A4_f __asm__("D_004A46A4");
+extern float D_004A46A8_f __asm__("D_004A46A8");
+extern int D_004A46AC_i __asm__("D_004A46AC");
+
+class cGfx_0F20 {
+public:
+    char pad[0x270];
+    int f270;
+    int f274;
+    char pad278[0xE84 - 0x278];
+    sGs_0F20* stateTop;
+    char padE88[0x10D8 - 0xE88];
+    void PushState() { stateTop[1] = stateTop[0]; stateTop++; }
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8(); virtual unsigned int v9(); virtual unsigned int v10(); virtual void v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
+    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
+    virtual void v20(); virtual void v21(); virtual void v22(float, float, float, float, int);
+    virtual void v23(); virtual void v24(); virtual void v25(float, float, float, float, float, float, int, int);
+    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(char*);
+    virtual void v34(); virtual void v35(); virtual void v36(); virtual void v37();
+    virtual void v38(); virtual void v39(); virtual void v40(); virtual void v41();
+    virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45();
+    virtual void v46(); virtual void v47(); virtual void v48(); virtual void v49();
+    virtual void v50(); virtual void v51(); virtual void v52(); virtual void v53();
+    virtual void v54(); virtual void v55(); virtual void v56(); virtual void v57();
+    virtual void v58(); virtual void v59(); virtual void v60(); virtual void v61();
+    virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
+    virtual void v66(); virtual void v67(); virtual void v68(); virtual void v69();
+    virtual void v70(int, sHudVert_0F20*, int);
+};
+extern cGfx_0F20* D_004A5B80_g __asm__("D_004A5B80");
+
+extern "C" void func_00390F20()
+{
+    int flag = 0;
+    if (D_004A460C_i != 0) {
+        if (D_004A469C_f != 0.0f) {
+            flag = 1;
+        }
+    }
+    if (flag) {
+        cGfx_0F20* g = D_004A5B80_g;
+        g->PushState();
+        g->v20();
+        g->v30();
+        g->v36();
+        float a;
+        float b;
+        if (g->f270 == 1) {
+            a = 640.0f;
+            b = 0.0f;
+        } else {
+            a = 320.0f;
+            b = 0.0f;
+            if (g->f274 != 0) {
+                b = a;
+            }
+        }
+        g->v25(b, 0.0f, a, 480.0f, 0.0f, 1.0f, 0, 0);
+        *g->stateTop = D_00501420_0F20;
+        g->stateTop->f8_5 = 5;
+        g->stateTop->SetF22(1);
+        g->stateTop->f4_23 = 2;
+        g->stateTop->f4_20 = 0;
+        g->stateTop->f4_12 = 0x14;
+        g->stateTop->SetF2(D_004A46AC_i);
+        *(short*)((char*)g->stateTop + 0x10) = -1;
+        sHudVert_0F20 v[4];
+        sPos_0F20 p;
+        p.x = b;
+        p.z = 0.0f;
+        p.y = 0.0f;
+        p.w = 1.0f;
+        v[0].pos = p;
+        p.x = b + a;
+        p.z = 0.0f;
+        p.y = 0.0f;
+        v[1].pos = p;
+        p.x = b;
+        p.z = 0.0f;
+        p.y = 480.0f;
+        v[2].pos = p;
+        p.x = b + a;
+        p.z = 0.0f;
+        p.y = 480.0f;
+        v[3].pos = p;
+        if (flag) {
+            float al = D_004A469C_f;
+            int r = (int)(al * D_004A46A0_f * 255.0f);
+            int gg = (int)(al * D_004A46A4_f * 255.0f);
+            int bb = (int)(al * D_004A46A8_f * 255.0f);
+            int aa = (int)(al * 255.0f);
+            for (int i = 0; i < 4; i++) {
+                v[i].r = r;
+                v[i].g = gg;
+                v[i].b = bb;
+                v[i].a = aa;
+                v[i].q = 1.0f;
+            }
+            g->v70(4, v, 0);
+        }
+        g->v31();
+        g->v21();
+        g->stateTop--;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/lightman", func_003912A8);
