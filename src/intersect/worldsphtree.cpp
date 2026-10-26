@@ -4403,7 +4403,181 @@ extern "C" float func_003424D0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342538);
+#ifdef SKIP_ASM
+struct sVec4_342538 {
+    float x, y, z, w;
+    sVec4_342538() {}
+} __attribute__((aligned(16)));
+
+struct sVEnt_342538 { short delta; short index; void* fn; };
+typedef char* (*GetMat_342538)(void*, int);
+
+
+struct sBodyTbl_342538 { char pad00[8]; char* ents; };
+struct sBodyInf_342538 { char pad00[0x80]; sBodyTbl_342538* tbl; };
+struct sSub_342538 { char pad00[0x18]; sBodyInf_342538* inf; };
+
+struct sSelf_342538 {
+    float sum;                      // 0x00
+    char pad04[4];
+    float dir;                      // 0x08
+    char pad0C[0x20];
+    int mask;                       // 0x2C
+    char pad30[0x2C];
+    sBodyInf_342538* inf;            // 0x5C
+};
+
+struct sObj_342538 {
+    sVec4_342538 pos;               // 0x00
+    char pad10[0x4C];
+    int idx;                        // 0x5C
+};
+
+extern sVec4_342538 D_004FF150_342538[] __asm__("D_004FF150");
+
+// PORT: PS2-only VU0 inline asm (vector length via vsqrt).
+static inline float vu0Length_342538(const sVec4_342538& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline void vu0Sub_342538(sVec4_342538& r, const sVec4_342538& a, const sVec4_342538& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline void vu0Scale_342538(sVec4_342538& r, const sVec4_342538& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (matrix times vector).
+static inline void vu0Xform_342538(sVec4_342538& r, const sVec4_342538& v, const char* m)
+{
+    __asm__(
+        "lqc2      $vf8, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "o"(v)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (cross product xyz).
+static inline void vu0Cross_342538(sVec4_342538& r, const sVec4_342538& a, const sVec4_342538& b)
+{
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_342538(const sVec4_342538& a, const sVec4_342538& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+extern "C" void func_00342538(sSelf_342538* self, sObj_342538* o, sVec4_342538* p)
+{
+    int idx = o->idx;
+    if (idx >= 0) {
+        sSub_342538* sub = (sSub_342538*)((char*)self + 0x44);
+        char* ents = sub->inf->tbl->ents;
+        if (*(int*)(ents + idx * 16 + 8) != 0) {
+            sVEnt_342538* vt = *(sVEnt_342538**)((char*)self + 0x50);
+            char* m = ((GetMat_342538)vt[29].fn)((char*)sub + vt[29].delta, idx);
+            char* m2 = m;
+            if (vu0Length_342538(*p) > 100.0f) {
+                sVec4_342538 d;
+                sVec4_342538 a;
+                sVec4_342538 t;
+                sVec4_342538 u;
+                a = *(sVec4_342538*)(m + 0x30);
+                vu0Sub_342538(t, o->pos, a);
+                d = t;
+                if (self->dir < 0.0f) {
+                    vu0Scale_342538(t, d, -1.0f);
+                    a = t;
+                    d = t;
+                }
+                if ((self->mask >> o->idx) & 1) {
+                    vu0Scale_342538(t, d, -1.0f);
+                    a = t;
+                    d = t;
+                }
+                vu0Xform_342538(t, D_004FF150_342538[0], m2);
+                a = t;
+                vu0Cross_342538(u, d, *p);
+                t = u;
+                self->sum += vu0Dot_342538(a, t);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342718);
