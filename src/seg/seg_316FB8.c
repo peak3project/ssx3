@@ -1173,7 +1173,61 @@ int func_0041B658(int fp, int fmt, char *ap) {
 
 INCLUDE_ASM("seg/seg_316FB8", func_0041B728);
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_0041C788);
+#ifdef SKIP_ASM
+extern void *g_c788_memcpy(void *, const void *, unsigned) __asm__("func_0041605C");
+char *func_0041C788_impl(char *dest, char *start, char *end, int *outlen) __asm__("func_0041C788");
+char *func_0041C788_impl(char *dest, char *start, char *end, int *outlen) {
+    int len = end - start + 10;
+    char *buf = __builtin_alloca(len);
+    char *w = buf + len - 1;
+    int cnt = 0;
+    int st[2];
+    char *p;
+    if (dest == 0 || start == 0 || end == 0) return 0;
+    st[0] = 0;
+    st[1] = (int)end;
+    p = start;
+    if (!(end < p)) {
+        do {
+            switch (*p) {
+            case '.':
+                st[1] = (int)p;
+                if (st[0] == 0) st[0] = 1;
+                break;
+            case 'E':
+            case 'e':
+                st[0] = 2;
+                break;
+            }
+            p++;
+        } while (!(end < p) && st[0] != 2);
+    }
+    if (st[0] == 2) return start;
+    p = end;
+    if (start < p) {
+        do {
+            *w = *p;
+            w--;
+            if (!((char *)st[1] < p)) {
+                if (cnt % 3 == 0 && cnt != 0) {
+                    *w = ',';
+                    len++;
+                    w--;
+                }
+                cnt++;
+            }
+            p--;
+        } while (start < p);
+    }
+    *w = *p;
+    len -= 10;
+    g_c788_memcpy(dest, w, len);
+    *outlen = len;
+    return dest;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_0041C938);
