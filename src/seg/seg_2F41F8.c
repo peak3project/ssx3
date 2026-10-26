@@ -57,7 +57,39 @@ void func_003F33B0(unsigned char *s, unsigned char *key, int klen, int rounds) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3530);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F35D0);
+#ifdef SKIP_ASM
+extern void f33B0w(void *, int, int, int) __asm__("func_003F33B0");
+extern void f3530w(void *, unsigned char *, int) __asm__("func_003F3530");
+extern char D_0051EEF8[];
+extern char D_00497018[];
+int func_003F35D0(char *out, int n, unsigned char *in, int a, int b, int c) {
+    unsigned char ctx[0x110];
+    unsigned char ch;
+    unsigned char k;
+    k = 0;
+    f33B0w(ctx, a, b, c);
+    f33B0w(D_0051EEF8, a, b, -c);
+    f33B0w(D_0051EEF8, (int)D_00497018, -1, -1);
+    for (; n > 1; n--) {
+        if (in == 0) {
+            f3530w(D_0051EEF8, &ch, 1);
+            ch = (ch & 0x3F) + 0x20;
+        } else {
+            ch = *in;
+            in++;
+            if (ch == 0) in = 0;
+        }
+        if ((unsigned)(ch - 0x20) > 0x5E) ch = 0x7F;
+        f3530w(ctx, &k, 1);
+        *out = (ch + 0x40 + (int)(k % 0x60U)) % 0x60 + 0x20;
+        out++;
+    }
+    if (n > 0) *out = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3748);
