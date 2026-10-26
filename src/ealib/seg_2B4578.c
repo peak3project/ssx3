@@ -4091,38 +4091,71 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BF8D0);
 #ifdef SKIP_ASM
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_F8D0;
 
+// PORT: PS2-only VU0 inline asm (clear running-sum register vf1).
+static inline void vu0ClearSum(void) {
+    __asm__ volatile("vsub.xyzw  $vf1, $vf0, $vf0\n");
+}
+
+// PORT: PS2-only VU0 inline asm (load eight vec4 rows into vf2..vf9).
+static inline void vu0LoadRows2to9(const V4_F8D0 *p) {
+    __asm__ volatile(
+        "lqc2       $vf2, 0x0(%0)\n"
+        "lqc2       $vf3, 0x10(%0)\n"
+        "lqc2       $vf4, 0x20(%0)\n"
+        "lqc2       $vf5, 0x30(%0)\n"
+        "lqc2       $vf6, 0x40(%0)\n"
+        "lqc2       $vf7, 0x50(%0)\n"
+        "lqc2       $vf8, 0x60(%0)\n"
+        "lqc2       $vf9, 0x70(%0)\n"
+        : : "r"(p) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (add each row to its successor: vf1..vf8 += vf2..vf9).
+static inline void vu0AddNext1to8(void) {
+    __asm__ volatile(
+        "vadd.xyzw  $vf1, $vf1, $vf2\n"
+        "vadd.xyzw  $vf2, $vf2, $vf3\n"
+        "vadd.xyzw  $vf3, $vf3, $vf4\n"
+        "vadd.xyzw  $vf4, $vf4, $vf5\n"
+        "vadd.xyzw  $vf5, $vf5, $vf6\n"
+        "vadd.xyzw  $vf6, $vf6, $vf7\n"
+        "vadd.xyzw  $vf7, $vf7, $vf8\n"
+        "vadd.xyzw  $vf8, $vf8, $vf9\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store first six sums).
+static inline void vu0StoreSums(V4_F8D0 *d) {
+    __asm__ volatile(
+        "sqc2       $vf2, 0x0(%0)\n"
+        "sqc2       $vf4, 0x10(%0)\n"
+        "sqc2       $vf6, 0x20(%0)\n"
+        "sqc2       $vf8, 0x30(%0)\n"
+        "sqc2       $vf1, 0x100(%0)\n"
+        "sqc2       $vf3, 0x110(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store sum vf5).
+static inline void vu0StoreSum5(V4_F8D0 *d) {
+    __asm__ volatile("sqc2       $vf5, 0x120(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store sum vf7, carry last row vf9 into vf1).
+static inline void vu0StoreSum7Carry(V4_F8D0 *d) {
+    __asm__ volatile("sqc2       $vf7, 0x130(%0)\n" "vmove.xyzw $vf1, $vf9\n" : : "r"(d) : "memory");
+}
+
 void func_003BF8D0(V4_F8D0 *src, V4_F8D0 *dst) {
     int i = 4;
-    __asm__ volatile("vsub.xyzw  $vf1, $vf0, $vf0\n");
+    vu0ClearSum();
     do {
-        __asm__ volatile(
-            "lqc2       $vf2, 0x0(%0)\n"
-            "lqc2       $vf3, 0x10(%0)\n"
-            "lqc2       $vf4, 0x20(%0)\n"
-            "lqc2       $vf5, 0x30(%0)\n"
-            "lqc2       $vf6, 0x40(%0)\n"
-            "lqc2       $vf7, 0x50(%0)\n"
-            "lqc2       $vf8, 0x60(%0)\n"
-            "lqc2       $vf9, 0x70(%0)\n"
-            "vadd.xyzw  $vf1, $vf1, $vf2\n"
-            "vadd.xyzw  $vf2, $vf2, $vf3\n"
-            "vadd.xyzw  $vf3, $vf3, $vf4\n"
-            "vadd.xyzw  $vf4, $vf4, $vf5\n"
-            "vadd.xyzw  $vf5, $vf5, $vf6\n"
-            "vadd.xyzw  $vf6, $vf6, $vf7\n"
-            "vadd.xyzw  $vf7, $vf7, $vf8\n"
-            "vadd.xyzw  $vf8, $vf8, $vf9\n"
-            "sqc2       $vf2, 0x0(%1)\n"
-            "sqc2       $vf4, 0x10(%1)\n"
-            "sqc2       $vf6, 0x20(%1)\n"
-            "sqc2       $vf8, 0x30(%1)\n"
-            "sqc2       $vf1, 0x100(%1)\n"
-            "sqc2       $vf3, 0x110(%1)\n"
-            : : "r"(src), "r"(dst) : "memory");
+        vu0LoadRows2to9(src);
+        vu0AddNext1to8();
+        vu0StoreSums(dst);
         i--;
-        __asm__ volatile("sqc2       $vf5, 0x120(%0)\n" : : "r"(dst) : "memory");
+        vu0StoreSum5(dst);
         src += 8;
-        __asm__ volatile("sqc2       $vf7, 0x130(%0)\n" "vmove.xyzw $vf1, $vf9\n" : : "r"(dst) : "memory");
+        vu0StoreSum7Carry(dst);
         dst += 4;
     } while (i != 0);
 }
