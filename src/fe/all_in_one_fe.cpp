@@ -761,7 +761,116 @@ INCLUDE_ASM("fe/all_in_one_fe", func_0021D1A0);
 
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D9A0);
 
+//100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021E1B0);
+#ifdef SKIP_ASM
+struct V2_E1B0 { float x, y; };
+struct V4_E1B0 { float x, y, z, w; };
+struct Ctx_E1B0 { char pad[0xE84]; char* e84; };
+extern Ctx_E1B0* D_004A289C_E1B0 __asm__("D_004A289C");
+extern char* D_004A28A8_E1B0 __asm__("D_004A28A8");
+extern float D_00504FB8_E1B0[] __asm__("D_00504FB8");
+extern char D_00477F30[];
+extern int D_00535BF8[];
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv_E1B0(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_001E91F8(void*, void*);
+extern "C" void func_001E9220(void*, void*, int);
+void func_001E9290_E1B0(void*, void*) __asm__("func_001E9290__FPvT0");
+void func_001E91A8_E1B0(void*, void*) __asm__("func_001E91A8__FPvT0");
+extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
+extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
+extern "C" void func_0021E7E0_E1B0(char* self, V4_E1B0* colp, V2_E1B0* pos, V2_E1B0* size,
+                                   float t, float sx, float sy, float amin, float amax) __asm__("func_0021E7E0");
+
+extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
+{
+    V2_E1B0 scale;
+    V4_E1B0 col;
+    V2_E1B0 sc;
+    V4_E1B0 a;
+    V2_E1B0 size1;
+    V2_E1B0 size2;
+    V2_E1B0 dim;
+    V2_E1B0 p;
+    V4_E1B0 c2;
+    V2_E1B0 size3;
+    V2_E1B0 tmp;
+    V2_E1B0 pa;
+    V2_E1B0 sa;
+    V2_E1B0 sb;
+    scale.x = 1.0f;
+    scale.y = 1.0f;
+    float k = 1.0f;
+    char* r = *(char**)(*(char**)(*(char**)(D_004A28A8_E1B0 + 0x84) + 0xC) + (rider[0] << 2) + 0x28);
+    func_001E91A8_E1B0(D_00477F30 + *(int*)(r + 0xEC) * 0x24, &col);
+    float t = ((float*)rider)[0x12];
+    if (t >= 0.0f) {
+        if (*(int*)(r + 0xEC) == 0) {
+            k = D_00504FB8_E1B0[(int)(t * 12.566370964050293f * 81.4873275756836f) & 0x1FF] * 0.199636310338974f * (1.0f - t * t) + k;
+        } else {
+            col.x = col.x * (t * 0.5f + 0.5f);
+        }
+    }
+    func_001E9290_E1B0(obj + 0x360, &sc);
+    int* tex = (int*)(self + 0x444);
+    func_001E91F8(obj + 0x360, &a);
+    func_001E9220(D_00477F30 + 0xD8, &size1, 0);
+    size1.x *= sc.x;
+    size1.y *= sc.y;
+    int off = *(int*)(r + 0xEC) << 2;
+    func_001E9220(D_00477F30 + *(int*)(r + 0xEC) * 0x24, &size2, *(int*)((char*)tex + off));
+    size2.x *= sc.x;
+    size2.y *= sc.y;
+    dim.x = size2.x + size1.x;
+    dim.y = size2.y;
+    func_001F10F8(self, &p, &a, &dim, &scale, obj[0x380], obj[0x381], x);
+    p.x += size2.x;
+    p.y += size1.y;
+    int* w = (int*)(D_004A289C_E1B0->e84 + 8);
+    *w = (*w & ~0x3E0) | ((obj[0x382] << 5) & 0x3E0);
+    func_001E91A8_E1B0(D_00477F30 + 0xFC, &c2);
+    func_001E9220(D_00477F30 + 0xFC, &size3, 0);
+    size3.x *= sc.x;
+    size3.y *= sc.y;
+    func_001F1190(self, *(int*)(self + 0x46C), &p, &size3, &scale, &c2);
+    p.x += size3.x;
+    func_001E91A8_E1B0(D_00477F30 + 0x120, &c2);
+    func_001E9220(D_00477F30 + 0x120, &size3, 0);
+    cBE_getInterface_Fv_E1B0(cBE_getBE(), 0);
+    int off3 = (D_00535BF8[0] - 1) << 2;
+    func_001F1190(self, *(int*)((char*)tex + off3), &p, &size3, &sc, &c2);
+    if (k != 1.0f) {
+        size2.x *= k;
+        size2.y *= k;
+        size1.x *= k;
+        size1.y *= k;
+        dim.x *= k;
+        dim.y *= k;
+    }
+    func_001F10F8(self, &p, &a, &dim, &scale, obj[0x380], obj[0x381], x);
+    w = (int*)(D_004A289C_E1B0->e84 + 8);
+    *w = (*w & ~0x3E0) | ((obj[0x382] << 5) & 0x3E0);
+    int off4 = *(int*)(r + 0xEC) << 2;
+    func_001F1190(self, *(int*)((char*)tex + off4), &p, &size2, &scale, &col);
+    signed char n = *(int*)(r + 0xEC) < 4 ? *(int*)(r + 0xEC) : 3;
+    tmp = p;
+    int off5 = n * 4;
+    int tx = *(int*)(self + off5 + 0x45C);
+    tmp.x += size2.x;
+    func_001F1190(self, tx, &tmp, &size1, &scale, &col);
+    if (((float*)rider)[0x13] >= 0.0f) {
+        w = (int*)(D_004A289C_E1B0->e84 + 8);
+        *w = (*w & ~0x3E0) | (((obj[0x382] - 1) << 5) & 0x3E0);
+        pa = p;
+        sa = size2;
+        func_0021E7E0_E1B0(self, &col, &pa, &sa, ((float*)rider)[0x13], 1.8101750612258911f, 1.8101750612258911f, 0.5f, 1.0f);
+        pa = tmp;
+        sb = size1;
+        func_0021E7E0_E1B0(self, &col, &pa, &sb, ((float*)rider)[0x13], 1.8101750612258911f, 1.8101750612258911f, 0.5f, 1.0f);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021E750);
