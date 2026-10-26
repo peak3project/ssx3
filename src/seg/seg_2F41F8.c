@@ -249,7 +249,57 @@ int func_003F3BC8(int self, int a, int b) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3C50);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3CC0);
+#ifdef SKIP_ASM
+extern int D_004A4BA0;
+extern int D_004A4BA4;
+extern int func_003F4C98(char *, int, int);
+extern int f4C68m(char *, int, int, int, int, int, int, int, int, int *) __asm__("func_003F4C68");
+extern int f4C68n(char *, int, int, int, int, int, int, int, int, int) __asm__("func_003F4C68");
+int func_003F3CC0(int tag, int a, int b) {
+    char buf[16];
+    int o20;
+    int o24;
+    if (tag == 'open') {
+        return D_004A4BA0;
+    }
+    if (tag == 'onln') {
+        func_003F4C98(buf, 'netw', 'stat');
+        f4C68m(buf, 1, D_004A4BA4, 'host', 0, 0, 0, 0, 1, &o20);
+        return o20 != 0;
+    }
+    if (tag == 'conn') {
+        func_003F4C98(buf, 'netw', 'stat');
+        f4C68m(buf, 5, D_004A4BA4, 'conn', 0, 0, a, b, 1, &o20);
+        return o20;
+    }
+    if (tag == 'host') {
+        func_003F4C98(buf, 'netw', 'stat');
+        f4C68m(buf, 1, D_004A4BA4, 'host', 0, 0, 0, 0, 1, &o24);
+        return o24;
+    }
+    if (tag == 'addr') {
+        func_003F4C98(buf, 'netw', 'stat');
+        f4C68m(buf, 1, D_004A4BA4, 'addr', 0, 0, 0, 0, 1, &o24);
+        return o24;
+    }
+    if (tag == 'macx') {
+        func_003F4C98(buf, 'netw', 'stat');
+        f4C68n(buf, 5, D_004A4BA4, 'macx', 0, 0, a, b, 1, 0);
+        return 0;
+    }
+    if (tag == 'bbnd' || tag == 'type') {
+        func_003F4C98(buf, 'netw', 'stat');
+        f4C68m(buf, 1, D_004A4BA4, 'type', 0, 0, a, b, 1, &o20);
+        if (tag == 'bbnd') {
+            o20 = (o20 >> 2) & 1;
+        }
+        return o20;
+    }
+    return -1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3F78);
 
