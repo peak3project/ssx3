@@ -997,7 +997,57 @@ extern "C" void* func_002EBE20(void* self, sBtRectBE20 rect)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EBF48);
+#ifdef SKIP_ASM
+struct sBTFVec4_BF48 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sBTFDev_BF48 {
+    char pad_0x0[0xE84];
+    char* state;            // 0xE84
+};
+
+struct sBTFState_BF48 {
+    char pad_0x0[0x10];
+    short mode;             // 0x10
+};
+
+extern sBTFDev_BF48* D_004A5B80_d __asm__("D_004A5B80");
+extern float D_004A3B30;
+extern float D_004A3B38;
+extern float D_004A3B3C;
+extern float D_004A3B44;
+
+extern "C" void func_002EBF48(float u, float v, float* out, float* col)
+{
+    if (((sBTFState_BF48*)D_004A5B80_d->state)->mode != -1) {
+        ((int*)out)[4] = (int)(col[1] * 128.0f);
+        ((int*)out)[5] = (int)(col[2] * 128.0f);
+        ((int*)out)[6] = (int)(col[3] * 128.0f);
+        ((int*)out)[7] = (int)(col[0] * 128.0f);
+    } else {
+        ((int*)out)[4] = (int)(col[1] * 255.0f);
+        ((int*)out)[5] = (int)(col[2] * 255.0f);
+        ((int*)out)[6] = (int)(col[3] * 255.0f);
+        ((int*)out)[7] = (int)(col[0] * 128.0f);
+    }
+    {
+        sBTFVec4_BF48 t;
+        float x = D_004A3B30 + D_004A3B38 * 0.0015625f * u;
+        float y = D_004A3B3C + D_004A3B44 * 0.0020833334f * v;
+        out[2] = 1.0f;
+        t.w = 1.0f;
+        t.x = u;
+        t.y = v;
+        t.z = 0.0f;
+        out[0] = x;
+        *(sBTFVec4_BF48*)(out + 8) = t;
+        out[1] = y;
+    }
+}
+#endif
 
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EC060);
 
