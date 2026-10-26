@@ -451,7 +451,48 @@ void func_00425408(int c) {
 
 INCLUDE_ASM("seg/seg_325220", func_00425440);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004254D0);
+#ifdef SKIP_ASM
+extern long func_00412500(double, double);
+extern double func_00411F70(double, double);
+extern double func_00411FD8(double, double);
+extern double func_00412280(double, double);
+extern double func_0042D380_d(double) __asm__("func_0042D380");
+extern double func_00425440_d(double) __asm__("func_00425440");
+extern void (*D_00455178)(int);
+extern char D_0049AB80[];
+extern char D_0049AB88[];
+extern char D_0049AB90[];
+void func_004254D0(double x) {
+    int n = 0;
+    double z = 0.0;
+    if (func_00412500(x, z) < 0) {
+        x = func_00411F70(z, x);
+        D_00455178(0x2D);
+    }
+    if (func_00412500(x, 0.1) < 0) {
+        while (func_00412500(x, 0.1) < 0) {
+            n--;
+            x = func_00411FD8(x, 10.0);
+        }
+    } else if (func_00412500(x, 1.0) >= 0) {
+        while (func_00412500(x, 1.0) >= 0) {
+            n++;
+            x = func_00412280(x, 10.0);
+        }
+    }
+    x = func_00411FD8(x, 1000000.0);
+    {
+        double r = func_00425440_d(func_0042D380_d(x));
+        func_00425C28((int)D_0049AB80, r);
+    }
+    if (n >= 0)
+        func_00425C28((int)D_0049AB88, n);
+    else
+        func_00425C28((int)D_0049AB90, n);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00425638);
 
