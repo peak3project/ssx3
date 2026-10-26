@@ -7235,7 +7235,72 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C6620);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6760);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6AB8);
+#ifdef SKIP_ASM
+/* 97.69: only missing "move $5,$2" copy of lbu result before loop (n vs r pseudo); volatile f48/f46/f4/f40/a[] needed */
+struct A_6AB8 { char pad0[4]; unsigned int sz : 31; unsigned int flag : 1; char pad8[4]; int w[6]; };
+struct R_6AB8 { int id; unsigned int sz : 31; unsigned int flag : 1; int w[6]; };
+struct S_6AB8 {
+    char pad0[4];
+    volatile int f4;
+    char pad8[0x2C];
+    volatile unsigned short a[6];
+    volatile unsigned short f40;
+    char pad42[4];
+    volatile unsigned short f46;
+    volatile int f48;
+    char pad4C[0x16];
+    unsigned char f62;
+    char pad63[0x19];
+    struct R_6AB8 recs[1];
+};
+struct G_6AB8 { char pad[0x304]; struct S_6AB8 *p[1]; };
+extern struct G_6AB8 D_005157B8_6AB8 __asm__("D_005157B8");
+
+
+
+
+
+
+int func_003C6AB8(int arg0, struct A_6AB8 *arg1)
+{
+  struct S_6AB8 *s = D_005157B8_6AB8.p[arg0];
+  struct R_6AB8 *e;
+  int i;
+  int r;
+  for (i = 0; i < s->f62; i++)
+  {
+    if (((short) s->a[i]) >= (((short) s->f40) - 1))
+    {
+      r = -13;
+      goto done;
+    }
+  }
+
+  e = (struct R_6AB8 *) ((((char *) s) + 0x7C) + (((short) s->f46) << 5));
+  e->sz = arg1->sz;
+  e->flag = arg1->flag;
+  e->id = s->f4;
+  for (i = 0; i < s->f62; i++)
+  {
+    e->w[i] = arg1->w[i];
+    s->a[i] += 1;
+  }
+
+  s->f48 += arg1->sz;
+  r = s->f4;
+  s->f4 = s->f4 + 1;
+  s->f46 = s->f46 + 1;
+  if (((short) s->f46) >= ((short) s->f40))
+  {
+    s->f46 = 0;
+  }
+  done:
+  return r;
+
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6C28);
 
