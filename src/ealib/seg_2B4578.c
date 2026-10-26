@@ -4313,9 +4313,6 @@ static inline void vu0StoreSums7(V4_F960 *d) {
         : : "r"(d) : "memory");
 }
 
-// The retail object starts this VU0 routine on a 16-byte boundary (two padding nops follow the previous
-// function); keep that when the previous function is built from C (full C link).
-void func_003BF960(V4_F960 *src, V4_F960 *dst) __attribute__((aligned(16)));
 void func_003BF960(V4_F960 *src, V4_F960 *dst) {
     vu0LoadRows16(src);
     vu0StoreFirstRow(dst);
@@ -4818,9 +4815,6 @@ static inline void vu0SubRowHalves(void) {
         "vsub.xyzw  $vf12, $vf1, $vf5\n");
 }
 
-// The retail object starts this VU0 routine on a 16-byte boundary (two padding nops follow the previous
-// function); keep that when the previous function is built from C (full C link).
-void func_003BFE80(V4_FE80 *src, V4_FE80 *dst, V4_FE80 *p6) __attribute__((aligned(16)));
 void func_003BFE80(V4_FE80 *src, V4_FE80 *dst, V4_FE80 *p6) {
     int i;
     vu0LoadTwiddles15and16(dst);
