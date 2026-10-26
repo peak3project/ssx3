@@ -495,7 +495,78 @@ extern "C" int func_001464D0(void* self, int index, int c, int kind, int flag)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintplayer", func_001466A0);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+int cBENewPlayerInterface_getPlayerID(int index);
+extern int D_004A6CA8[];
+struct sSel_66A0 {
+    char pad_0x0[0x40];
+    int idx;                // 0x40
+    char pad_0x44[4];
+    signed char mode;       // 0x48
+};
+struct sEnt_66A0 {
+    char pad_0x0[0x54];
+    int kind;               // 0x54
+    char pad_0x58[0xC];
+};
+extern sEnt_66A0 D_0043D950_t[] __asm__("D_0043D950");
+extern sSel_66A0 D_005305B0_s __asm__("D_005305B0");
+
+extern "C" int func_001466A0(void* self, int index)
+{
+    int profile = cBELibrary_getProfileIndex(index);
+    int id = cBENewPlayerInterface_getPlayerID(index);
+    signed char c = D_00534FE0[id].mCharID;
+    int kind = D_0043D950_t[D_005305B0_s.idx].kind;
+    if (D_005305B0_s.mode == 5) {
+        switch (kind) {
+        case 0:
+            {
+            int off = c * 0xF88 + profile * 0x9B50;
+            char* p = (char*)D_004A6CA8 + off;
+            return (int)(*(long*)(p + 0x278) >> 6) & 1;
+        }
+        case 1:
+            {
+            int off = c * 0xF88 + profile * 0x9B50;
+            char* p = (char*)D_004A6CA8 + off;
+            return (int)(*(long*)(p + 0x278) >> 7) & 1;
+        }
+        case 2:
+            {
+            int off = c * 0xF88 + profile * 0x9B50;
+            char* p = (char*)D_004A6CA8 + off;
+            return (int)(*(long*)(p + 0x278) >> 8) & 1;
+        }
+        }
+    } else {
+        switch (kind) {
+        case 0:
+            {
+            int off = c * 0xF88 + profile * 0x9B50;
+            char* p = (char*)D_004A6CA8 + off;
+            return (int)(*(long*)(p + 0x278) >> 9) & 1;
+        }
+        case 1:
+            {
+            int off = c * 0xF88 + profile * 0x9B50;
+            char* p = (char*)D_004A6CA8 + off;
+            return (int)(*(long*)(p + 0x278) >> 10) & 1;
+        }
+        case 2:
+            {
+            int off = c * 0xF88 + profile * 0x9B50;
+            char* p = (char*)D_004A6CA8 + off;
+            return (int)(*(long*)(p + 0x278) >> 11) & 1;
+        }
+        }
+    }
+    return 0;
+}
+#endif
 //100%
 INCLUDE_ASM("be/beintplayer", func_001468B0);
 #ifdef SKIP_ASM
