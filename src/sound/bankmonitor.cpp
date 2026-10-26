@@ -3900,7 +3900,90 @@ extern "C" void func_002B35A0(sBmTrack35A0*** self, int a1, int a2, int a3, int 
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3838);
+#ifdef SKIP_ASM
+extern "C" int func_004165A8(void*, void*);
+extern "C" void func_002B3AC0(void* self);
+extern "C" void func_002B43D8(void* self);
+extern "C" void* func_002B1B98(int a0, int a1, int a2, int a3, char a4, int a5, int a6, int a7);
+
+struct sBMon3838 {
+    sBmTrack35A0** pp;          // 0x000
+    int arr[64];                // 0x004
+    char obj[0x20];             // 0x104
+    char names[64][11];         // 0x124
+    int count;                  // 0x3E4
+    int pad3E8[2];
+    int cur;                    // 0x3F0
+    int pad3F4[6];
+    int res;                    // 0x40C - see below
+};
+
+// PORT: g++ >?/<? (min/max) operator, removed in GCC 4.3.
+static inline float bmMin3838(float a, float b)
+{
+    return a <? b;
+}
+static inline float bmMax3838(float a, float b)
+{
+    return a >? b;
+}
+
+extern "C" void func_002B3838(void* self_, int a1, int a2, int a3)
+{
+    sBMon3838* self = (sBMon3838*)self_;
+    sBmTrack35A0* t;
+    sBmSub35A0* sub;
+    float* pf;
+    char c;
+    int arg;
+    int name;
+    int base;
+    func_002B3AC0(self);
+    t = *self->pp;
+    sub = &t->sub;
+    c = sub->p38[sub->cur];
+    pf = (float*)sub->p3C[sub->cur];
+    if (pf != 0) {
+        float f = (float)c * *pf;
+        f = bmMax3838(bmMin3838(f, 127.0f), 0.0f);
+        sub->p38[t->sub.cur] = (char)(int)f;
+        {
+            signed char* d = &((sBmEnt35A0*)(t->sub.cur * 24 + (int)sub->ents))->b0;
+            unsigned char r;
+            if (sub->p38[sub->cur] > 0x7E || sub->p38[sub->cur] >= 0) {
+                r = sub->p38[sub->cur] < 0x7F ? (unsigned char)sub->p38[sub->cur] : 0x7F;
+            } else {
+                r = 0;
+            }
+            *d = r;
+        }
+    }
+    if (a1 != 0) {
+        int idx = self->count - 1;
+        while (idx >= 0) {
+            if (func_004165A8(self->names[idx], (void*)a1) == 0) {
+                break;
+            }
+            idx--;
+        }
+        self->cur = idx;
+        name = a1;
+        base = (int)&(*self->pp)->sub;
+        *(int*)((char*)self + 0x408) = (int)func_002B1B98((int)self->obj, name, self->arr[idx], base, c, (int)pf, a2, a3);
+    } else {
+        int k = self->cur;
+        name = (int)self->names[k];
+        arg = self->arr[k];
+        base = (int)&(*self->pp)->sub;
+        *(int*)((char*)self + 0x408) = (int)func_002B1B98((int)self->obj, name, arg, base, c, (int)pf, a2, a3);
+    }
+    func_002B43D8(self);
+    *(int*)((char*)self + 0x41C) = -1;
+    *(int*)((char*)self + 0x418) = 1;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B3A70);
