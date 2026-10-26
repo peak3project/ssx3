@@ -2453,7 +2453,68 @@ extern "C" int func_001231A8(cRider* self)
 
 INCLUDE_ASM("ai/rider", func_00123210);
 
+//100%
 INCLUDE_ASM("ai/rider", func_001234D0);
+#ifdef SKIP_ASM
+extern "C" void func_00270970(int a, int b);
+extern "C" void func_00125038(cRider* self);
+extern "C" void func_002F1A00(void* a);
+void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
+void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
+
+struct sV_34D0
+{
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+void func_0011D660_34D0(void* self, sV_34D0* a, sV_34D0* b, int n, float t) __asm__("func_0011D660");
+extern sV_34D0 D_004FF140_34D0 __asm__("D_004FF140");
+
+// PORT: PS2-only VU0 macro-mode asm (4x4 matrix times vector).
+// PORT: g++ named-return-value extension.
+static inline sV_34D0 MatMulV_34D0(const char* m, const sV_34D0& v) return r
+{
+    __asm__(
+        "lqc2       $vf8, %2\n"
+        "lqc2       $vf4, 0x0(%1)\n"
+        "lqc2       $vf5, 0x10(%1)\n"
+        "lqc2       $vf6, 0x20(%1)\n"
+        "lqc2       $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2       $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "o"(v)
+        : "memory");
+}
+
+struct sVEntryA_34D0 { short delta; short index; void (*fn)(void*); };
+
+extern "C" void func_001234D0(cRider* self, char* m)
+{
+    sV_34D0 pos;
+    sV_34D0 dir;
+    func_00270970(*(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28), self->mAIIndex);
+    pos = *(sV_34D0*)(m + 0x30);
+    dir = MatMulV_34D0(m, D_004FF140_34D0);
+    func_00119368(self->mMetrix, 1);
+    func_0011FE78_impl(self, 3);
+    func_0011FEC8_impl(self, 0xD);
+    func_0011D660_34D0(self, &pos, &dir, 5, 0.0f);
+    *(int*)((char*)self->mRiderHandler + 0x290) = 2;
+    func_0011FEC8_impl(self, 6);
+    func_00125038(self);
+    func_00111890(self->mRiderHandler);
+    func_002F1A00(self->unk_88C);
+    if ((unsigned int)self->mViewIndex < 2) {
+        char* obj = *(char**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84) + (self->mViewIndex << 2) + 4) + 0xA8);
+        sVEntryA_34D0* vt = *(sVEntryA_34D0**)(obj + 0x14);
+        vt[4].fn(obj + vt[4].delta);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_001235F8);
