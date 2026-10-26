@@ -285,7 +285,63 @@ int func_00150E50(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00150E68);
+#ifdef SKIP_ASM
+struct sEconRec_0E68 {
+    char pad0[0xAC4];
+    int unk_AC4;
+    char pad1[0xBDF - 0xAC8];
+    signed char f[7];
+    char pad2[0xF88 - 0xBDF - 7];
+};
+struct sEconEntry_0E68 {
+    int key;
+    int value;
+};
+extern sEconEntry_0E68 D_00440550_e[] __asm__("D_00440550");
+extern "C" int func_00150E68(void* self, int arg1, int arg2, unsigned int arg3) {
+    signed char *p;
+
+    if (arg1 >= 2) {
+        return 0;
+    }
+    p = 0;
+    switch (arg3) {
+    case 0:
+        p = &((sEconRec_0E68(*)[10])D_004A6CA8)[arg1][arg2].f[0];
+        break;
+    case 1:
+        p = &((sEconRec_0E68(*)[10])D_004A6CA8)[arg1][arg2].f[1];
+        break;
+    case 2:
+        p = &((sEconRec_0E68(*)[10])D_004A6CA8)[arg1][arg2].f[2];
+        break;
+    case 3:
+        p = &((sEconRec_0E68(*)[10])D_004A6CA8)[arg1][arg2].f[3];
+        break;
+    case 4:
+        p = &((sEconRec_0E68(*)[10])D_004A6CA8)[arg1][arg2].f[4];
+        break;
+    case 5:
+        p = &((sEconRec_0E68(*)[10])D_004A6CA8)[arg1][arg2].f[5];
+        break;
+    case 6:
+        p = &((sEconRec_0E68(*)[10])D_004A6CA8)[arg1][arg2].f[6];
+        break;
+    }
+    if (*p == 5) {
+        return 0;
+    }
+    {
+        int add = D_00440550_e[(*p - 1) / 5].value;
+        sEconRec_0E68* r = (sEconRec_0E68*)((arg2 * 0xF88 + arg1 * 0x9B50) + (char*)D_004A6CA8);
+        r->unk_AC4 = r->unk_AC4 + add;
+        *p = (unsigned char)*p + 1;
+        return 1;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintecon", func_00151040);
