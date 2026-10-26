@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `0d413590`, generated 2026-10-26.
+Snapshot of commit `e94c7872`, generated 2026-10-26.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `0d413590`, generated 2026-10-26.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 13,827 | 91.47% |
+| Matching | 13,828 | 91.48% |
 | Partial | 7 | 0.05% |
-| Not started | 1,282 | 8.48% |
+| Not started | 1,281 | 8.47% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -88,8 +88,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `scripter/bxscriptengine` | 65 | 0 | 0 | 65 |
 | `bx/cubicspline` | 61 | 2 | 7 | 70 |
 | `wscript/wscriptprocess` | 62 | 0 | 0 | 62 |
+| `render/lightman` | 59 | 0 | 4 | 63 |
 | `fe/festateoptions` | 57 | 1 | 1 | 59 |
-| `render/lightman` | 58 | 0 | 5 | 63 |
 | `fe/fememcardcallbacks` | 57 | 0 | 0 | 57 |
 | `scripter/datamanager` | 57 | 0 | 0 | 57 |
 | `input/inputparse` | 56 | 0 | 3 | 59 |
@@ -10028,7 +10028,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `render/lightman`
 
-58 matching, 0 partial, 5 not started (63 total)
+59 matching, 0 partial, 4 not started (63 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -10080,6 +10080,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00390C60` | Matching | 100.00% | 616 |
 | `func_00390EC8` | Matching | 100.00% | 48 |
 | `func_00390EF8` | Matching | 100.00% | 40 |
+| `func_00390F20` | Matching | 100.00% | 904 |
 | `func_003912A8` | Matching | 100.00% | 184 |
 | `func_00391360` | Matching | 100.00% | 184 |
 | `func_00391418` | Matching | 100.00% | 100 |
