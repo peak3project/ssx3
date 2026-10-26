@@ -284,7 +284,152 @@ extern "C" void func_00346D38(sFlexBridge* self)
 
 INCLUDE_ASM("object/flexbridgenode", func_00346E38);
 
+//100%
 INCLUDE_ASM("object/flexbridgenode", func_003470D0);
+#ifdef SKIP_ASM
+struct sV4_70D0 {
+    float x, y, z, w;
+    sV4_70D0() {}
+    sV4_70D0(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+extern sV4_70D0 D_004FF140_70D0 __asm__("D_004FF140");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sV4_70D0 vu0Sub_70D0(const sV4_70D0& a, const sV4_70D0& b)
+{
+    sV4_70D0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sV4_70D0 vu0Add_70D0(const sV4_70D0& a, const sV4_70D0& b)
+{
+    sV4_70D0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void vu0AddEq_70D0(sV4_70D0& a, const sV4_70D0& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (*v * s).
+static inline sV4_70D0 vu0ScaleP_70D0(const sV4_70D0* v, float s)
+{
+    sV4_70D0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector).
+static inline sV4_70D0 vu0MtxMul_70D0(const sV4_70D0* m, const sV4_70D0& v)
+{
+    sV4_70D0 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sV4_70D0 vu0Cross_70D0(const sV4_70D0& a, const sV4_70D0& b)
+{
+    sV4_70D0 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+struct sFlVE_70D0 {
+    short delta;
+    short index;
+    sV4_70D0* (*fn)(void*);
+};
+
+struct sFlEnt_70D0 {
+    sV4_70D0 a;         // 0x00
+    sV4_70D0 b;         // 0x10
+    char pad_0x20[4];
+    float f24;          // 0x24
+    char pad_0x28[0x28];
+};
+
+struct sFlBridge_70D0 {
+    char pad_0x00[0xC];
+    sFlVE_70D0* vt;     // 0x0C
+    char pad_0x10[0x64];
+    sFlEnt_70D0* ents;  // 0x74
+};
+
+struct sFlState_70D0 {
+    sV4_70D0 v[6];
+    int idx;            // 0x60
+};
+
+extern "C" void func_003470D0(sFlBridge_70D0* self, sFlState_70D0* p)
+{
+    int idx = p->idx;
+    if (idx >= 0) {
+        int h = idx / 2;
+        sFlEnt_70D0* ents = self->ents;
+        sFlVE_70D0* vt = self->vt;
+        sV4_70D0* m = vt[24].fn((char*)self + vt[24].delta);
+        sFlEnt_70D0* e = (sFlEnt_70D0*)(h * 0x50 + (int)ents);
+        sV4_70D0 r = vu0MtxMul_70D0(m, vu0ScaleP_70D0(&D_004FF140_70D0, e->f24));
+        sV4_70D0 d = vu0Sub_70D0(p->v[0], vu0MtxMul_70D0(m, e->a));
+        sV4_70D0 t = vu0Add_70D0(vu0MtxMul_70D0(m, e->b), vu0Cross_70D0(d, r));
+        vu0AddEq_70D0(p->v[2], t);
+        vu0AddEq_70D0(p->v[3], r);
+    }
+}
+#endif
 
 INCLUDE_ASM("object/flexbridgenode", func_00347268);
 
