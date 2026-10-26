@@ -902,7 +902,170 @@ void func_001732B8_impl(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001732E8);
+#ifdef SKIP_ASM
+struct sVec4_1732E8 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVL_1732E8 {
+    short delta;
+    short index;
+    long (*fn)(void*);
+};
+
+struct sVV_1732E8 {
+    short delta;
+    short index;
+    sVec4_1732E8 (*fn)(void*);
+};
+
+struct sVN_1732E8 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sVec2_1732E8 {
+    float x, y;
+    sVec2_1732E8(float ax, float ay) : x(ax), y(ay) {}
+};
+
+extern "C" float func_0031C228(float x);
+extern "C" void func_0031BE50(float* sout, float* cout, float x);
+extern sVec4_1732E8 D_004FF160_1732E8 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddEq_1732E8(sVec4_1732E8& dst, const sVec4_1732E8& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4_1732E8 Sub_1732E8(const sVec4_1732E8& a, const sVec4_1732E8& b)
+{
+    sVec4_1732E8 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sVec4_1732E8 Scale_1732E8(const sVec4_1732E8& v, float s)
+{
+    sVec4_1732E8 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_1732E8(float x)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float ffloor_1732E8(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
+    if (x < t) {
+        t -= 1.0f;
+    }
+    return t;
+}
+
+static inline float wrap_1732E8(float x)
+{
+    return x - ffloor_1732E8(x * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
+}
+
+static inline float Len2_1732E8(const sVec2_1732E8& v)
+{
+    return Sqrt_1732E8(v.x * v.x + v.y * v.y);
+}
+
+static inline float Atan2_1732E8(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+extern "C" void func_001732E8_x(char* self, long key) __asm__("func_001732E8");
+extern "C" void func_001732E8_x(char* self, long key)
+{
+    char* o = *(char**)(self + 0x30);
+    char* r = *(char**)(o + 4) + 0x6C0;
+    sVL_1732E8* e = &(*(sVL_1732E8**)r)[7];
+    if (key != e->fn(r + e->delta))
+        return;
+    sVec4_1732E8 a, b, dir;
+    {
+        char* o1 = *(char**)(self + 0x30);
+        sVV_1732E8* e1 = &(*(sVV_1732E8**)o1)[1];
+        a = e1->fn(o1 + e1->delta);
+    }
+    {
+        char* o2 = *(char**)(self + 0x30);
+        sVV_1732E8* e2 = &(*(sVV_1732E8**)o2)[4];
+        b = e2->fn(o2 + e2->delta);
+    }
+    AddEq_1732E8(a, Scale_1732E8(D_004FF160_1732E8, *(float*)(self + 0x6C)));
+    AddEq_1732E8(a, Scale_1732E8(b, *(float*)(self + 0x74)));
+    *(float*)(self + 0x50) = wrap_1732E8(Atan2_1732E8(b.y, b.x));
+    float p = Atan2_1732E8(b.z, Len2_1732E8(sVec2_1732E8(b.x, b.y)));
+    float mm = -*(float*)(self + 0x78) * 0.01745329424738884f;
+    *(float*)(self + 0x54) = wrap_1732E8(p * -*(float*)(self + 0x58) + mm);
+    float s0, c0, s1, c1;
+    func_0031BE50(&s0, &c0, *(float*)(self + 0x50));
+    func_0031BE50(&s1, &c1, -*(float*)(self + 0x54));
+    dir.x = c1 * c0;
+    dir.y = c1 * s0;
+    dir.z = -s1;
+    dir.w = 0.0f;
+    *(sVec4_1732E8*)(self + 0x40) = Sub_1732E8(a, Scale_1732E8(dir, *(float*)(self + 0x70)));
+    sVN_1732E8* v = &(*(sVN_1732E8**)(self + 0x10))[5];
+    v->fn(self + v->delta);
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00173678);
