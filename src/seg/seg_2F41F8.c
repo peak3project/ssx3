@@ -2,7 +2,58 @@
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F33B0);
+#ifdef SKIP_ASM
+extern int D_004A4B9C;
+extern unsigned D_00496C08[];
+extern char D_00497008[];
+extern char D_0051EEF8[];
+void func_003F33B0(unsigned char *s, unsigned char *key, int klen, int rounds) {
+    int i;
+    int lim;
+    unsigned crc;
+
+    if (D_004A4B9C == 0) {
+        D_004A4B9C = 1;
+        func_003F33B0((unsigned char *)D_0051EEF8, (unsigned char *)D_00497008, -1, 10);
+    }
+    i = 0xFF;
+    if (rounds < 0) {
+        rounds = -rounds;
+    } else {
+        unsigned char *p = s + 0xFF;
+        for (; i >= 0; i--) *p-- = i;
+        s[0x100] = 0;
+        *(int *)(s + 0x104) = 0;
+    }
+    if (klen < 0) {
+        klen = 0;
+        while (key[klen] != 0) klen++;
+    }
+    if (klen > 0) {
+        crc = 0;
+        i = 0;
+        lim = rounds << 8;
+        if (lim > 0) {
+            do {
+                unsigned char *p;
+                unsigned char *q;
+                unsigned char t;
+                int r = i % klen;
+                p = s + (i & 0xFF);
+                t = *p;
+                i++;
+                crc = (crc >> 8) ^ D_00496C08[(crc & 0xFF) ^ key[r]];
+                crc = (crc >> 8) ^ D_00496C08[(crc & 0xFF) ^ t];
+                q = s + (crc & 0xFF);
+                *p = *q;
+                *q = t;
+            } while (i < lim);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3530);
 
