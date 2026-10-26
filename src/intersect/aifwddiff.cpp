@@ -419,7 +419,95 @@ extern "C" void func_00328170(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/aifwddiff", func_003281D0);
+#ifdef SKIP_ASM
+struct sVec4_281D0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sLevel_281D0 {
+    float scale;   // 0x0
+    float child;   // 0x4
+    int stride;    // 0x8
+};
+struct sGrid_281D0 {
+    char pad0[0x8];
+    int pad8;
+    char padC[0x14];
+    sLevel_281D0* levels; // 0x20
+    char pad24[4];
+    unsigned char* bits;  // 0x28
+};
+struct sAI_281D0 {
+    sVec4_281D0 dirs[8];   // 0x0
+    char pad80[0x10];
+    float unit;            // 0x90
+    char pad94[4];
+    sGrid_281D0* grid;     // 0x98
+};
+struct sVE87_281D0 { short delta; short index; void (*fn)(void*, float, void*, void*, int); };
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline void vu0Scale_281D0(sVec4_281D0& r, const sVec4_281D0& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline void vu0Add_281D0(sVec4_281D0& r, const sVec4_281D0& a, const sVec4_281D0& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+extern char* D_004A5B80;
+
+extern "C" void func_281D0(sAI_281D0* self, int end, sVec4_281D0* pos, int level, int off) __asm__("func_003281D0");
+extern "C" void func_281D0(sAI_281D0* self, int end, sVec4_281D0* pos, int level, int off)
+{
+    if (level < end) {
+        float s = *(float*)((char*)self->grid->levels + level * 12 + 0x10);
+        for (int i = 0; i < 8; i++) {
+            if ((self->grid->bits[off] >> i) & 1) {
+                sVec4_281D0 sum;
+                sVec4_281D0 d;
+                sVec4_281D0 t;
+                vu0Scale_281D0(t, self->dirs[i], s);
+                d = t;
+                vu0Add_281D0(t, *pos, d);
+                sum = t;
+                int st = self->grid->levels[level].stride;
+                func_281D0(self, end, &sum, level + 1, (i + 1) * st + off);
+            }
+        }
+    } else {
+        char* w = D_004A5B80;
+        sVE87_281D0* vt = &(*(sVE87_281D0**)(w + 0x10D8))[87];
+        char* thisp = w + vt->delta;
+        sVec4_281D0 v;
+        float f = self->grid->levels[level].scale * self->unit;
+        v.x = 1.0f;
+        v.y = 0.0f;
+        v.z = 1.0f;
+        v.w = 0.0f;
+        vt->fn(thisp, f, pos, &v, 4);
+    }
+}
+#endif
 //100%
 INCLUDE_ASM("intersect/aifwddiff", func_00328360);
 #ifdef SKIP_ASM
