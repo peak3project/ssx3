@@ -4434,64 +4434,79 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BFB90);
 #ifdef SKIP_ASM
 typedef struct { int w[4]; } __attribute__((aligned(16))) V4_FB90;
 
-void func_003BFB90(V4_FB90 *src, V4_FB90 *dst) {
-    int i;
+// PORT: PS2-only VU0 inline asm (first-block sums: vf9 = vf1+vf2, vf10 = vf3+vf4, vf11 = vf2+vf3, vf12 = vf6+vf8).
+static inline void vu0AddHeadSums(void) {
     __asm__ volatile(
-        "lqc2       $vf1, 0x0(%0)\n"
-        "lqc2       $vf2, 0x10(%0)\n"
-        "lqc2       $vf3, 0x20(%0)\n"
-        "lqc2       $vf4, 0x30(%0)\n"
-        "lqc2       $vf5, 0x40(%0)\n"
-        "lqc2       $vf6, 0x50(%0)\n"
-        "lqc2       $vf7, 0x60(%0)\n"
-        "lqc2       $vf8, 0x70(%0)\n"
         "vadd.xyzw  $vf9, $vf1, $vf2\n"
         "vadd.xyzw  $vf10, $vf3, $vf4\n"
         "vadd.xyzw  $vf11, $vf2, $vf3\n"
-        "vadd.xyzw  $vf12, $vf6, $vf8\n"
-        "sqc2       $vf9, 0x0(%1)\n"
-        "sqc2       $vf10, 0x10(%1)\n"
-        "sqc2       $vf1, 0x20(%1)\n"
-        "sqc2       $vf11, 0x30(%1)\n"
-        "sqc2       $vf5, 0x40(%1)\n"
-        "sqc2       $vf7, 0x50(%1)\n"
-        : : "r"(src), "r"(dst) : "memory");
+        "vadd.xyzw  $vf12, $vf6, $vf8\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store first-block results to rows 0..5).
+static inline void vu0StoreHeadRows(V4_FB90 *d) {
+    __asm__ volatile(
+        "sqc2       $vf9, 0x0(%0)\n"
+        "sqc2       $vf10, 0x10(%0)\n"
+        "sqc2       $vf1, 0x20(%0)\n"
+        "sqc2       $vf11, 0x30(%0)\n"
+        "sqc2       $vf5, 0x40(%0)\n"
+        "sqc2       $vf7, 0x50(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf6 to row 6).
+static inline void vu0StoreV6At60(V4_FB90 *d) {
+    __asm__ volatile("sqc2       $vf6, 0x60(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf12 to row 7).
+static inline void vu0StoreV12At70(V4_FB90 *d) {
+    __asm__ volatile("sqc2       $vf12, 0x70(%0)\n" : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (loop sums: vf9 = vf2+vf4, vf10 = vf6+vf8).
+static inline void vu0AddLoopSums(void) {
+    __asm__ volatile(
+        "vadd.xyzw  $vf9, $vf2, $vf4\n"
+        "vadd.xyzw  $vf10, $vf6, $vf8\n");
+}
+
+// PORT: PS2-only VU0 inline asm (store loop results to rows 0..5).
+static inline void vu0StoreLoopRows(V4_FB90 *d) {
+    __asm__ volatile(
+        "sqc2       $vf1, 0x0(%0)\n"
+        "sqc2       $vf3, 0x10(%0)\n"
+        "sqc2       $vf2, 0x20(%0)\n"
+        "sqc2       $vf9, 0x30(%0)\n"
+        "sqc2       $vf5, 0x40(%0)\n"
+        "sqc2       $vf7, 0x50(%0)\n"
+        : : "r"(d) : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (store vf10 to row 7).
+static inline void vu0StoreV10At70(V4_FB90 *d) {
+    __asm__ volatile("sqc2       $vf10, 0x70(%0)\n" : : "r"(d) : "memory");
+}
+
+void func_003BFB90(V4_FB90 *src, V4_FB90 *dst) {
+    int i;
+    vu0LoadRows1to8(src);
+    vu0AddHeadSums();
+    vu0StoreHeadRows(dst);
     i = 3;
-    __asm__ volatile(
-        "sqc2       $vf6, 0x60(%0)\n"
-        : : "r"(dst) : "memory");
+    vu0StoreV6At60(dst);
     src += 8;
-    __asm__ volatile(
-        "sqc2       $vf12, 0x70(%0)\n"
-        : : "r"(dst) : "memory");
+    vu0StoreV12At70(dst);
     dst += 8;
 top:
-    __asm__ volatile(
-        "lqc2       $vf1, 0x0(%0)\n"
-        "lqc2       $vf2, 0x10(%0)\n"
-        "lqc2       $vf3, 0x20(%0)\n"
-        "lqc2       $vf4, 0x30(%0)\n"
-        "lqc2       $vf5, 0x40(%0)\n"
-        "lqc2       $vf6, 0x50(%0)\n"
-        "lqc2       $vf7, 0x60(%0)\n"
-        "lqc2       $vf8, 0x70(%0)\n"
-        "vadd.xyzw  $vf9, $vf2, $vf4\n"
-        "vadd.xyzw  $vf10, $vf6, $vf8\n"
-        "sqc2       $vf1, 0x0(%1)\n"
-        "sqc2       $vf3, 0x10(%1)\n"
-        "sqc2       $vf2, 0x20(%1)\n"
-        "sqc2       $vf9, 0x30(%1)\n"
-        "sqc2       $vf5, 0x40(%1)\n"
-        "sqc2       $vf7, 0x50(%1)\n"
-        : : "r"(src), "r"(dst) : "memory");
+    vu0LoadRows1to8(src);
+    vu0AddLoopSums();
+    vu0StoreLoopRows(dst);
     i--;
-    __asm__ volatile(
-        "sqc2       $vf6, 0x60(%0)\n"
-        : : "r"(dst) : "memory");
+    vu0StoreV6At60(dst);
     src += 8;
-    __asm__ volatile(
-        "sqc2       $vf10, 0x70(%0)\n"
-        : : "r"(dst) : "memory");
+    vu0StoreV10At70(dst);
     dst += 8;
     if (i != 0) goto top;
 }
