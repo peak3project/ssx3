@@ -331,7 +331,90 @@ extern "C" void func_0015E360(char* self, int type, float amount, float dist)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_0015E460);
+#ifdef SKIP_ASM
+struct sV4_15E460 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVEF_15E460 {
+    short delta;
+    short index;
+    float (*fn)(void*);
+};
+
+struct sVEV_15E460 {
+    short delta;
+    short index;
+    sV4_15E460 (*fn)(void*);
+};
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_15E460(const sV4_15E460& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+extern int D_004A2A50;
+extern "C" void func_00165938(char* self, int flag, int sel, float base, float spread, float r);
+extern "C" void func_001656B0(char* self, float base, float spread, float r);
+extern "C" void func_0015E360(char* self, int type, float amount, float dist);
+
+extern "C" void func_0015E460(char* self)
+{
+    char* tgt = *(char**)(*(char**)(self + 0xA8) + 0x20);
+    sVEF_15E460* vf = *(sVEF_15E460**)tgt;
+    float spd = vf[0x11].fn(tgt + vf[0x11].delta);
+    if (((D_004A2A50 & 1) ^ 1) != 0 && spd > 0.10000000149011612f) {
+        sVEV_15E460* vv = *(sVEV_15E460**)tgt;
+        sV4_15E460 v = vv[3].fn(tgt + vv[3].delta);
+        float a = Length_15E460(v) * 0.035999998450279236f;
+        float k;
+        if (60.0f <= a) {
+            if (a <= 120.0f)
+                k = (a - 60.0f) / 60.0f;
+            else
+                k = 1.0f;
+        } else {
+            k = 0.0f;
+        }
+        if (spd > 0.699999988079071f)
+            func_0015E360(self, 3, k, 0.0f);
+        else if (spd > 0.4000000059604645f)
+            func_0015E360(self, 2, k, 0.0f);
+        else
+            func_0015E360(self, 1, k, 0.0f);
+    }
+    int idx = *(int*)(self + 0x450);
+    float f21 = D_004C53E0_E360[idx].f0;
+    float f22 = D_004C53E0_E360[idx].f4;
+    int sel = D_004C5430[idx];
+    char* p = self + 0xC0;
+    float t = *(float*)(self + 0x454);
+    if (*(int*)(self + 0x458) != 0 && *(int*)(self + 0x45C) == 0)
+        func_001656B0(p, f21, f22, t);
+    func_00165938(p, *(int*)(self + 0x458), sel, f21, f22, t);
+    *(int*)(self + 0x45C) = *(int*)(self + 0x458);
+    *(int*)(self + 0x458) = 0;
+    *(int*)(self + 0x454) = 0;
+}
+#endif
 
 INCLUDE_ASM("camera/camera", func_0015E668);
 
