@@ -136,7 +136,69 @@ extern "C" void func_00197500(void* p, void* item, unsigned int msg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/messagecenter", func_001977D0);
+#ifdef SKIP_ASM
+extern "C" void func_00197E70(void* self);
+extern "C" void func_00197B88(void* self);
+extern "C" void func_0028CF98(void* p, int a, int b, long c, int d);
+extern "C" void func_002B4978(void* list, int idx);
+
+extern "C" int func_001977D0(void* p, void* item, unsigned int msg, int k)
+{
+    sReqLine_7500* self = (sReqLine_7500*)p;
+    switch (msg) {
+    case 6: {
+        int idx = self->list[self->top + k];
+        if (onlyBit_7500(self->done, idx)) {
+            if (self->f16C != 0) {
+                if (!isSet_7500(self->sel, idx))
+                    return 0x101;
+            }
+            return 0x10;
+        }
+        if (self->f16C == 0) {
+            if (isSet_7500(self->sel, idx))
+                return 0x101;
+        } else {
+            if (self->limit < func_00198AE8(self, idx)) {
+                if (countSel_7500(self) >= 6)
+                    goto ret10;
+            }
+            break;
+        }
+        goto ret10;
+    }
+    case 9:
+        return 0;
+    case 8: {
+        int n;
+        int idx;
+        n = self->top + k;
+        if (n < self->count) {
+            idx = self->list[n];
+            if (*(int*)(D_004A28A8 + 0x84) != 0) {
+                if (!isSet_7500(self->sel, idx)) {
+                ret10:
+                    return 0x10;
+                }
+                *(int*)((char*)func_0028B180() + 0x508) = idx;
+                func_0028CF98(func_0028B180(), 0, 0, -1, 1);
+                func_00197E70(self);
+            } else {
+                func_002B4978((char*)func_0028B180() + 0x118, idx);
+            }
+        }
+        break;
+    }
+    case 4:
+        self->top = k;
+        func_00197B88(self);
+        break;
+    }
+    return 0x101;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/messagecenter", func_001979D8);
