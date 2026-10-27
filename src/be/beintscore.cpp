@@ -303,13 +303,15 @@ signed char cBELibrary_getCharacterID(int index);
 extern char D_004A6CA8[];
 
 //97.94%
+//100%
 INCLUDE_ASM("be/beintscore", cBEScoreInterface_getCurrentHighlightLevel__FPvi);
 #ifdef SKIP_ASM
+struct sHL { char pad[0xBB8]; signed char lv[1]; };
 signed char cBEScoreInterface_getCurrentHighlightLevel(void* self, int riderIndex)
 {
     int charID = cBELibrary_getCharacterID(0);
-    char* p = D_004A6CA8 + riderIndex + charID * 0xF88;
-    return p[0xBB8];
+    int s = riderIndex + charID * 0xF88;
+    return ((sHL*)D_004A6CA8)->lv[s];
 }
 #endif
 
