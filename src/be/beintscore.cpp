@@ -302,7 +302,6 @@ extern "C" void* func_00155288(void* self, int a1, int a2)
 signed char cBELibrary_getCharacterID(int index);
 extern char D_004A6CA8[];
 
-//97.94%
 //100%
 INCLUDE_ASM("be/beintscore", cBEScoreInterface_getCurrentHighlightLevel__FPvi);
 #ifdef SKIP_ASM
