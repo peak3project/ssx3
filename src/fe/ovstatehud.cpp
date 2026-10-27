@@ -1159,7 +1159,179 @@ extern "C" void func_001F22E8(void* ctx, sFont_001F22E8* font, sHudElemDef_001F1
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatehud", func_001F25E0);
+#ifdef SKIP_ASM
+extern "C" float func_003921F0(void* self, const unsigned short* str, void* out, int n, float sx, float sy);
+
+struct sV4_001F25E0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sCol_001F25E0 {
+    float r, g, b, a;
+    sCol_001F25E0() {}
+    sCol_001F25E0(float ar, float ag, float ab, float aa) : r(ar), g(ag), b(ab), a(aa) {}
+};
+
+struct sFont_001F25E0 {
+    char pad0[0x30];
+    float f30;          // 0x30
+    float f34;          // 0x34
+    float f38;          // 0x38
+    float f3C;          // 0x3C
+    sCol_001F25E0 color; // 0x40
+};
+
+struct sRS_001F25E0 {
+    int f0;
+    int f4;
+    int f8;
+};
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_001F25E0 vu0Sub_25E0(const sV4_001F25E0& a, const sV4_001F25E0& b)
+{
+    sV4_001F25E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sV4_001F25E0 vu0Add_25E0(const sV4_001F25E0& a, const sV4_001F25E0& b)
+{
+    sV4_001F25E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV4_001F25E0 vu0Scale_25E0(const sV4_001F25E0& v, float s)
+{
+    sV4_001F25E0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// Draws text blended between two HUD element layouts (t = 0 is element idx1, t = 1 is element idx2).
+extern "C" void func_001F25E0(void* ctx, float t, sFont_001F25E0* font, sHudElemDef_001F16C0* defs, int idx1, int idx2, const unsigned short* str, int a5, float* scaleMul, float* posOff, sColor_001F16C0* color, float* rect, int align, int flags)
+{
+    float scale[2];
+    float r[4];
+    float pos1[4];
+    float esc1[2];
+    float pos2[4];
+    float esc2[2];
+    float out1[2];
+    float out2[2];
+    float size1[2];
+    float size2[2];
+    float resEsc[2];
+    float resPos[2];
+    float dEsc[2];
+    scale[0] = 1.0f;
+    scale[1] = 1.0f;
+    font->f38 = font->f30;
+    font->f3C = font->f34;
+    func_003921F0(font, str, r, 0, font->f38, font->f3C);
+    sHudElemDef_001F16C0* e1 = &defs[idx1];
+    func_001E91F8(e1, pos1);
+    func_001E9290(e1, esc1);
+    if (scaleMul != 0) {
+        esc1[0] *= scaleMul[0];
+        esc1[1] *= scaleMul[1];
+    }
+    sHudElemDef_001F16C0* e2 = &defs[idx2];
+    func_001E91F8(e2, pos2);
+    func_001E9290(e2, esc2);
+    if (scaleMul != 0) {
+        esc2[0] *= scaleMul[0];
+        esc2[1] *= scaleMul[1];
+    }
+    size1[0] = r[2] * esc1[0];
+    size1[1] = r[3] * esc1[1];
+    size2[0] = r[2] * esc2[0];
+    size2[1] = r[3] * esc2[1];
+    int ax1 = (align == 0x7F) ? e1->align : (signed char)align;
+    int ay1 = (flags == 0x7F) ? defs[idx1].flags : (signed char)flags;
+    int ax2 = (align == 0x7F) ? defs[idx2].align : (signed char)align;
+    int ay2 = (flags == 0x7F) ? defs[idx2].flags : (signed char)flags;
+    func_001F10F8(ctx, out1, pos1, size1, scale, ax1, ay1, a5);
+    func_001F10F8(ctx, out2, pos2, size2, scale, ax2, ay2, a5);
+    dEsc[0] = esc2[0] - esc1[0];
+    dEsc[1] = esc2[1] - esc1[1];
+    {
+        float dOutT[2];
+        float dOut[2];
+        dOut[0] = out2[0] - out1[0];
+        dOut[1] = out2[1] - out1[1];
+        dOutT[0] = dOut[0] * t;
+        dOutT[1] = dOut[1] * t;
+        resPos[0] = dOutT[0] + out1[0];
+        resPos[1] = dOutT[1] + out1[1];
+        resEsc[0] = dEsc[0] * t + esc1[0];
+        resEsc[1] = dEsc[1] * t + esc1[1];
+    }
+    if (posOff != 0) {
+        resPos[0] = resPos[0] + posOff[0];
+        resPos[1] = resPos[1] + posOff[1];
+    }
+    if (rect != 0) {
+        rect[0] = resPos[0];
+        rect[1] = resPos[1];
+        rect[2] = r[2] * resEsc[0];
+        rect[3] = r[3] * resEsc[1];
+    }
+    sCol_001F25E0 col;
+    if (color == 0) {
+        sV4_001F25E0 c1;
+        sV4_001F25E0 c2;
+        func_001E91D0(&defs[idx1], &c1);
+        func_001E91D0(&defs[idx2], &c2);
+        c2.w = 0.0f;
+        sV4_001F25E0 v = vu0Add_25E0(vu0Scale_25E0(vu0Sub_25E0(c2, c1), t), c1);
+        col = sCol_001F25E0(v.w, v.x, v.y, v.z);
+    } else {
+        col = *(sCol_001F25E0*)color;
+        col.r = col.r * (1.0f - t);
+    }
+    sRS_001F25E0* rs = *(sRS_001F25E0**)(D_004A289C + 0xE84);
+    rs->f8 = (rs->f8 & ~0x3E0) | ((defs[26].pad22[0] << 5) & 0x3E0);
+    font->color = col;
+    float g0 = font->f30;
+    float q0 = resEsc[0];
+    float q1 = resEsc[1];
+    float g1 = font->f34;
+    font->f3C = g1 * q1;
+    font->f38 = g0 * q0;
+    func_00391E30(font, resPos[0], resPos[1], str);
+    font->f38 = font->f30 * scale[0];
+    font->f3C = font->f34 * scale[1];
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F2AA0);
