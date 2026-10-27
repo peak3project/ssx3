@@ -4,7 +4,258 @@
 // single lq/sq pair instead of word-by-word.
 typedef int cQuad128 __attribute__((mode(TI)));
 
+//100%
 INCLUDE_ASM("object/railmodifier", cRailModifier_buildXform);
+#ifdef SKIP_ASM
+struct sVec4_C0E8 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVecK_C0E8 : public sVec4_C0E8 {
+    sVecK_C0E8(float ax, float ay, float az, float aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+};
+
+struct sMat_C0E8 {
+    sVec4_C0E8 r[4];
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_C0E8(sMat_C0E8* d, const sMat_C0E8* a, const sMat_C0E8* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_C0E8(sMat_C0E8* d, const sMat_C0E8* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
+static inline sVec4_C0E8 vu0MtxMul_C0E8(const sMat_C0E8* m, const sVec4_C0E8& v)
+{
+    sVec4_C0E8 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sVec4_C0E8 vu0Scale_C0E8(const sVec4_C0E8& v, float s)
+{
+    sVec4_C0E8 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+struct sLink_C0E8 {
+    int next;               // 0x0
+    char pad_0x4[0x8];
+    sMat_C0E8* mat;         // 0xC
+};
+
+struct sLinkTbl_C0E8 {
+    char pad_0x0[0x8];
+    sLink_C0E8* links;      // 0x8
+};
+
+struct sModel_C0E8 {
+    char pad_0x0[0x10];
+    sMat_C0E8 mat;          // 0x10
+    char pad_0x50[0x30];
+    sLinkTbl_C0E8* tbl;     // 0x80
+    float scale;            // 0x84
+};
+
+struct cRailModifier_C0E8 {
+    char pad_0x0[0x34];
+    int idx;                // 0x34
+    char pad_0x38[0x8];
+    sModel_C0E8* model;     // 0x40
+    void* node;             // 0x44
+    char pad_0x48[0x8];
+    sMat_C0E8 mat;          // 0x50
+};
+
+extern char D_0048EA60[];
+extern "C" void* cMemMan_alloc(unsigned int size, const char* tag, int flags, int d);
+
+static inline sVecK_C0E8 mulVec_C0E8(const sVec4_C0E8& a, const sVec4_C0E8& b)
+{
+    return sVecK_C0E8(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+}
+
+static inline sVec4_C0E8 row_C0E8(const sMat_C0E8* m, int i)
+{
+    return m->r[i];
+}
+
+static inline sMat_C0E8 scaled_C0E8(const sMat_C0E8* src, const sVec4_C0E8& s)
+{
+    sMat_C0E8 r;
+    r.r[0] = row_C0E8(src, 0);
+    r.r[1] = row_C0E8(src, 1);
+    r.r[2] = row_C0E8(src, 2);
+    r.r[3] = mulVec_C0E8(row_C0E8(src, 3), s);
+    return r;
+}
+
+extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
+{
+    sModel_C0E8* model = self->model;
+    sLink_C0E8* links = model->tbl->links;
+    sMat_C0E8* m;
+    if (self->idx < 0) {
+        sMat_C0E8* p = &self->mat;
+        vu0CopyMat_C0E8(p, &model->mat);
+        m = p;
+    } else {
+        float s = model->scale;
+        sVec4_C0E8 scl;
+        scl.x = s;
+        scl.y = s;
+        scl.z = s;
+        scl.w = 1.0f;
+        sMat_C0E8* p = &self->mat;
+        sLink_C0E8* l = (sLink_C0E8*)(self->idx * 16 + (int)links);
+        vu0CopyMat_C0E8(p, l->mat);
+        m = p;
+        {
+        sVec4_C0E8 rr;
+        sVec4_C0E8 r3 = self->mat.r[3];
+        rr.x = r3.x * scl.x;
+        rr.y = r3.y * scl.y;
+        rr.z = r3.z * scl.z;
+        rr.w = r3.w * scl.w;
+        self->mat.r[3] = rr;
+        int i = l->next;
+        while (i != -1) {
+            sLink_C0E8* l2 = (sLink_C0E8*)(i * 16 + (int)links);
+            sMat_C0E8* mm = m;
+            sMat_C0E8 t2;
+            sMat_C0E8 a;
+            sVec4_C0E8 res;
+            sVec4_C0E8 r3b;
+            sMat_C0E8* lm = l2->mat;
+            res = lm->r[0];
+            a.r[0] = res;
+            res = lm->r[1];
+            a.r[1] = res;
+            res = lm->r[2];
+            a.r[2] = res;
+            r3b = lm->r[3];
+            res.x = r3b.x * scl.x;
+            res.y = r3b.y * scl.y;
+            res.z = r3b.z * scl.z;
+            res.w = r3b.w * scl.w;
+            a.r[3] = res;
+            sMat_C0E8 t;
+            sMat_C0E8* pt2 = &t2;
+            sMat_C0E8* pt = &t;
+            vu0MulMat_C0E8(pt, &a, mm);
+            vu0CopyMat_C0E8(pt2, pt);
+            vu0CopyMat_C0E8(mm, pt2);
+            i = l2->next;
+        }
+        }
+        sMat_C0E8 t4;
+        sMat_C0E8 t3;
+        sMat_C0E8* pt3 = &t3;
+        sMat_C0E8* pt4 = &t4;
+        vu0MulMat_C0E8(pt3, &self->model->mat, m);
+        vu0CopyMat_C0E8(pt4, &t3);
+        vu0CopyMat_C0E8(m, pt4);
+    }
+    float f;
+    f = self->mat.r[0].y;
+    self->mat.r[0].y = self->mat.r[1].x;
+    self->mat.r[1].x = f;
+    f = self->mat.r[0].z;
+    self->mat.r[0].z = self->mat.r[2].x;
+    self->mat.r[2].x = f;
+    f = self->mat.r[1].z;
+    self->mat.r[1].z = self->mat.r[2].y;
+    self->mat.r[2].y = f;
+    sVec4_C0E8 v = vu0Scale_C0E8(row_C0E8(&self->mat, 3), -1.0f);
+    v.w = 0.0f;
+    v = vu0MtxMul_C0E8(m, v);
+    v.w = 1.0f;
+    self->mat.r[3] = v;
+    void* n = cMemMan_alloc(0x10, D_0048EA60, 0x20000000, 0);
+    ((void**)n)[3] = self;
+    ((int*)n)[2] = 2;
+    self->node = n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035C4E0);
