@@ -80,7 +80,25 @@ void func_0042E1C0(int a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_32F020", func_0042E200);
+#ifdef SKIP_ASM
+extern int D_0053EA00;
+extern int D_004A5BA0;
+extern char D_00495410[];
+extern char D_00495420[];
+extern void func_00414C20(void *a0, void *a1);
+extern void func_00414C00(void *a0, void *a1, void *a2);
+int *func_0042E200(void) {
+    if (D_0053EA00 == 0) {
+        if (D_004A5BA0 == 0) {
+            func_00414C20(&D_004A5BA0, D_00495410);
+        }
+        func_00414C00(&D_0053EA00, D_00495420, &D_004A5BA0);
+    }
+    return &D_0053EA00;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_32F020", func_0042E278);
