@@ -1267,7 +1267,80 @@ extern "C" int func_0038FC48(void* self, int w, int h, unsigned char* src, unsig
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_0038FED0);
+#ifdef SKIP_ASM
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" void* func_0041605C(void* dst, void* src, int n);
+extern "C" int func_0038F9C0(void* self, int w, int h, unsigned char* src, unsigned char* dst);
+
+extern "C" int func_0038FED0(void* self, int w, int h, unsigned char* src, unsigned char* dst)
+{
+    unsigned char bufA[0x2000];
+    unsigned char bufB[0x2000];
+    int i;
+    int j;
+    int k;
+    for (i = 0; i < 11; i++) {
+        if (w == (0x400 >> i))
+            break;
+    }
+    if (i == 11)
+        return -1;
+    func_00416210(bufA, 0, 0x2000);
+    func_00416210(bufB, 0, 0x2000);
+    for (i = 0; i < 11; i++) {
+        if (h == (0x400 >> i))
+            break;
+    }
+    if (i == 11)
+        return -1;
+    int ww = (w - 1) / 128;
+    int rows = (h - 1) / 128 + 1;
+    int cols = ww + 1;
+    int rowsA;
+    int rowsB;
+    int pw;
+    int ph;
+    if (ww == 0) {
+        pw = w / 2;
+        rowsB = w / 4;
+    } else {
+        pw = 0x40;
+        rowsB = 0x20;
+    }
+    if (rows == 1) {
+        ph = h << 1;
+        rowsA = h;
+    } else {
+        ph = 0x100;
+        rowsA = 0x80;
+    }
+    for (i = 0; i < rows; i++) {
+        int c128 = cols << 7;
+        int c32 = cols << 5;
+        int sstep = pw * c128;
+        for (j = 0; j < cols; j++) {
+            unsigned char* p = (unsigned char*)((int)src + sstep * i + pw * j);
+            unsigned char* a = bufA;
+            for (k = 0; k < rowsA; k++) {
+                func_0041605C(a, p, pw);
+                p += pw * cols;
+                a += 0x40;
+            }
+            func_0038F9C0(self, 0x80, 0x80, bufA, bufB);
+            unsigned char* q = (unsigned char*)((int)dst + ph * c32 * i + ph * j);
+            unsigned char* b = bufB;
+            for (k = 0; k < rowsB; k++) {
+                func_0041605C(q, b, ph);
+                q += ph * cols;
+                b += 0x100;
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("render/lightman", func_00390198);
 
