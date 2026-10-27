@@ -826,7 +826,114 @@ extern "C" void* func_0031F838(void* ms, unsigned int n, void* sizes, void** chu
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031F858);
+#ifdef SKIP_ASM
+struct sMChunk_31F858
+{
+    unsigned int prev_size;
+    unsigned int size;
+};
+
+struct sMState_31F858
+{
+    unsigned int max_fast;      // 0x0
+    char pad[0x354 - 4];
+    unsigned int n_mmaps_max;   // 0x354
+};
+
+// PORT: the unit declares func_0031F858(void*); the body really takes (ms, n, sizes, opts, chunks).
+extern "C" void* func_0031F858_ialloc(void* ms, unsigned int n_elements, unsigned int* sizes, int opts, void** chunks) __asm__("func_0031F858");
+extern "C" void func_003E6448_F858(void* dst, int c, unsigned int n) __asm__("func_003E6448");
+
+extern "C" void* func_0031F858_ialloc(void* ms, unsigned int n_elements, unsigned int* sizes, int opts, void** chunks)
+{
+    sMState_31F858* av = *(sMState_31F858**)ms;
+    unsigned int element_size;
+    unsigned int contents_size;
+    unsigned int array_size;
+    void* mem;
+    sMChunk_31F858* p;
+    unsigned int remainder_size;
+    void** marray;
+    sMChunk_31F858* array_chunk;
+    unsigned int mmx;
+    unsigned int size;
+    unsigned int i;
+
+    if (av->max_fast == 0)
+        func_0031EEE8(ms, (sMState_31EEE8*)av);
+
+    if (chunks != 0) {
+        if (n_elements == 0)
+            return chunks;
+        marray = chunks;
+        array_size = 0;
+    } else {
+        if (n_elements == 0)
+            return func_0031E818(ms, 0);
+        marray = 0;
+        unsigned int r = n_elements * 4 + 4 + 15;
+        array_size = r < 16 ? 16 : r & ~15U;
+    }
+
+    if (opts & 1) {
+        unsigned int r = *sizes + 4 + 15;
+        element_size = r < 16 ? 16 : r & ~15U;
+        contents_size = n_elements * element_size;
+    } else {
+        element_size = 0;
+        contents_size = 0;
+        for (i = 0; i != n_elements; ++i) {
+            unsigned int r = sizes[i] + 4 + 15;
+            contents_size += r < 16 ? 16 : r & ~15U;
+        }
+    }
+
+    size = contents_size + array_size - 15;
+
+    mmx = av->n_mmaps_max;
+    av->n_mmaps_max = 0;
+    mem = func_0031E818(ms, size);
+    av->n_mmaps_max = mmx;
+    if (mem == 0)
+        return 0;
+
+    p = (sMChunk_31F858*)((char*)mem - 8);
+    remainder_size = ((sMChunk_31F858*)((int)mem - 8))->size & ~3U;
+
+    if (opts & 2) {
+        unsigned int t = array_size + 4;
+        func_003E6448_F858(mem, 0, remainder_size - t);
+    }
+
+    if (marray == 0) {
+        array_chunk = (sMChunk_31F858*)((char*)p + contents_size);
+        marray = (void**)((char*)array_chunk + 8);
+        array_chunk->size = (remainder_size - contents_size) | 1;
+        remainder_size = contents_size;
+    }
+
+    for (i = 0;; ++i) {
+        marray[i] = (char*)p + 8;
+        if (i != n_elements - 1) {
+            if (element_size != 0)
+                size = element_size;
+            else {
+                unsigned int r = sizes[i] + 4 + 15;
+                size = r < 16 ? 16 : r & ~15U;
+            }
+            remainder_size -= size;
+            p->size = size | 1;
+            p = (sMChunk_31F858*)((char*)p + size);
+        } else {
+            p->size = remainder_size | 1;
+            break;
+        }
+    }
+    return marray;
+}
+#endif
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031FAA8);
 #ifdef SKIP_ASM
