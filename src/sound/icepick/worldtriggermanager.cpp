@@ -1340,7 +1340,99 @@ extern "C" void func_002B7410(void* self, sWtmEnt18* e)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B75D0);
+#ifdef SKIP_ASM
+struct sV4_75D0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sOctRoot_75D0 {
+    int lvl;
+    int x;
+    int y;
+    int z;
+    void* node;     // 0x10
+};
+
+struct sWtm_75D0 {
+    int count;
+    char pad4[0x10C];
+    sV4_75D0 last;  // 0x110
+};
+
+struct sQH_75D0 {};
+
+extern "C" void* func_0028B1C8(void);
+extern "C" void wtq_75D0(sQH_75D0* h, void* partial, void* inside, void* pos, void* node, void* key) __asm__("func_002B83F8");
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_75D0 Sub_75D0(const sV4_75D0& a, const sV4_75D0& b)
+{
+    sV4_75D0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_75D0(const sV4_75D0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+extern "C" void func_002B75D0(sWtm_75D0* self, const sV4_75D0* pos)
+{
+    if (self->last.w == 0.0f || Length_75D0(Sub_75D0(*pos, self->last)) > 10.0f) {
+        self->count = 0;
+        sOctRoot_75D0* root = *(sOctRoot_75D0**)((char*)func_0028B1C8() + 0x20);
+        sWtm_75D0* l[1];
+        l[0] = self;
+        const sV4_75D0* p = pos;
+        sWtm_75D0** pl = l;
+        const sV4_75D0** pp = &p;
+        sQH_75D0 h0, h1, h2, h3, h4, h5, h6, h7;
+        sOctRoot_75D0* k;
+        if (root[0].node) wtq_75D0(&h0, pl, pl, pp, root[0].node, &root[0]);
+        k = &root[1];
+        if (root[1].node) wtq_75D0(&h1, pl, pl, pp, k->node, k);
+        k = &root[2];
+        if (root[2].node) wtq_75D0(&h2, pl, pl, pp, k->node, k);
+        k = &root[3];
+        if (root[3].node) wtq_75D0(&h3, pl, pl, pp, k->node, k);
+        k = &root[4];
+        if (root[4].node) wtq_75D0(&h4, pl, pl, pp, k->node, k);
+        k = &root[5];
+        if (root[5].node) wtq_75D0(&h5, pl, pl, pp, k->node, k);
+        k = &root[6];
+        if (root[6].node) wtq_75D0(&h6, pl, pl, pp, k->node, k);
+        k = &root[7];
+        if (root[7].node) wtq_75D0(&h7, pl, pl, pp, k->node, k);
+        self->last = *pos;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B77C0);
