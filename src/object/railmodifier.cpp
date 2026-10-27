@@ -5671,8 +5671,6 @@ struct sRailLink {
     char pad_0x14[0x8];
 };
 
-//95.0% - logic verified correct; the target puts the mult result in v1 and
-// ours lands in v0. Reordering the locals does not shift the allocation.
 //100%
 INCLUDE_ASM("object/railmodifier", func_00365FE8);
 #ifdef SKIP_ASM
