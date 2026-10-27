@@ -663,7 +663,103 @@ extern "C" void func_00182420(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharselect", cFEStateCheatCharSelect_onWidgetCreate);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern char D_004A1400[];
+extern char D_0045D790[];
+extern char D_0045D7A0[];
+extern char D_0045D7B0[];
+extern char D_004A1408[];
+extern char D_004C66B8[];
+extern char* D_00440FA0[];
+extern "C" void func_0039B760_u(void* self, unsigned char a1) __asm__("func_0039B760");
+void cUIText_setAsciiString(void* text, const char* str) __asm__("cUIText_setAsciiString__FP7cUITextPCc");
+
+struct sVE_CCW {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+struct sWidget_CCW {
+    char pad_0x0[0x8];
+    sVE_CCW* vt;                    // 0x8
+    char pad_0xC[0x8];
+    int flags;                      // 0x14
+    int idx;                        // 0x18
+    char pad_0x1C[0x5C];
+    int state;                      // 0x78
+    int color;                      // 0x7C
+};
+
+struct sCharSelect_CCW {
+    char pad_0x0[0x48];
+    sWidget_CCW* f48;               // 0x48
+    sWidget_CCW* f4C;               // 0x4C
+    sWidget_CCW* f50;               // 0x50
+    sWidget_CCW* items[6];          // 0x54
+    sWidget_CCW* f6C;               // 0x6C
+    char pad_0x70[0x8];
+    int sel;                        // 0x78
+    char pad_0x7C[0x78];
+    int colors[6];                  // 0xF4
+};
+
+static inline void vcallI_CCW(sWidget_CCW* o, int slot, int arg)
+{
+    sVE_CCW* vt = o->vt;
+    vt[slot].fn((char*)o + vt[slot].delta, arg);
+}
+
+extern "C" void cFEStateCheatCharSelect_onWidgetCreate(sCharSelect_CCW* self, sWidget_CCW* w)
+{
+    int id = *(int*)((char*)w + 0x38);
+    if (id == GetHashValue32(D_004A1400)) {
+        self->f6C = w;
+        w->idx = 0;
+        self->f6C->flags &= ~1;
+        if (self->sel > 5)
+            func_0039B760_u(self->f6C, (unsigned char)self->sel);
+    } else if (id == GetHashValue32(D_0045D790)) {
+        self->f48 = w;
+        sVE_CCW* vt = w->vt;
+        vt[9].fn((char*)w + vt[9].delta, self->sel > 6);
+    } else if (id == GetHashValue32(D_0045D7A0)) {
+        self->f4C = w;
+        sVE_CCW* vt = w->vt;
+        vt[9].fn((char*)w + vt[9].delta, self->sel > 6);
+    } else if (id == GetHashValue32(D_0045D7B0)) {
+        self->f50 = w;
+        cUIText_setAsciiString(w, D_004A1408);
+    } else {
+        int i = 0;
+        sWidget_CCW** p = &self->items[0];
+        char** np = &D_00440FA0[0];
+        for (; i < 6; p++, np++, i++) {
+            if (id == GetHashValue32(*np)) {
+                *p = w;
+                w->idx = i;
+                if (i == 0) {
+                    sVE_CCW* vt = self->items[0]->vt;
+                    vt[21].fn((char*)self->items[0] + vt[21].delta, D_004C66B8);
+                }
+                if (i >= self->sel) {
+                    vcallI_CCW(*p, 9, 0);
+                    vcallI_CCW(*p, 8, 1);
+                } else {
+                    sWidget_CCW* o = *p;
+                    int m = -1;
+                    int c = self->colors[i];
+                    o->state = m;
+                    o->color = c;
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00182690);
