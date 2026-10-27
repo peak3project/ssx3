@@ -6887,7 +6887,186 @@ extern "C" void func_00134CB0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_00134DD0);
+#ifdef SKIP_ASM
+extern "C" float func_00135180(void* self);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern sQuat_12BE20 D_004FF140_134DD0 __asm__("D_004FF140");
+extern sQuat_12BE20 D_004FF150_134DD0 __asm__("D_004FF150");
+
+struct sXf_134DD0
+{
+    sQuat_12BE20 pos;
+    sQuat_12BE20 rot;
+};
+
+// PORT: PS2-only VU0 inline asm (vector times scalar, constant vector through a register).
+static inline sQuat_12BE20 ScaleO_134DD0(const sQuat_12BE20& v, float s)
+{
+    sQuat_12BE20 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b, constant b through a register).
+static inline sQuat_12BE20 SubO_134DD0(const sQuat_12BE20& a, const sQuat_12BE20& b)
+{
+    sQuat_12BE20 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "o"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst = a - b).
+static inline void SubTo_134DD0(sQuat_12BE20& dst, const sQuat_12BE20& a, const sQuat_12BE20& b)
+{
+    sQuat_12BE20 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    dst = r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst = normalize via rsqrt).
+static inline void NormTo_134DD0(sQuat_12BE20& dst, const sQuat_12BE20& v)
+{
+    sQuat_12BE20 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    dst = r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddTo_134DD0(sQuat_12BE20& dst, const sQuat_12BE20& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b, label before a call).
+static inline void AddToL_134DD0(sQuat_12BE20& dst, const sQuat_12BE20& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        "1:\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sQuat_12BE20 Norm_134DD0(const sQuat_12BE20& v)
+{
+    sQuat_12BE20 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+static inline sQuat_12BE20 AxisAngleB_134DD0(const sQuat_12BE20& axis, float angle) return r
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    r.w = c;
+    r.x = s * axis.x;
+    r.y = s * axis.y;
+    r.z = s * axis.z;
+}
+
+extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf) __asm__("func_00134DD0");
+extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf)
+{
+    char* rd = *(char**)((char*)self + 0x58);
+    char* trk = *(char**)(rd + 0x780);
+    sQuat_12BE20* n = (sQuat_12BE20*)((*(int*)(rd + 0x89C) << 4) + *(int*)(trk + 0x24));
+    float a1 = -(*(float*)((char*)self + 0x20) + *(float*)((char*)self + 0x28));
+    float a2 = *(float*)((char*)self + 0x24) + *(float*)((char*)self + 0x2C);
+    sQuat_12BE20 d = SubO_134DD0(sQuat_12BE20(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
+                                              n->z * *(float*)(trk + 0x148), n->w * *(float*)(trk + 0x14C)),
+                                 D_004FF130_12BE20);
+    {
+        sQuat_12BE20 v = Rot_12E010(xf->rot, d);
+        AddToL_134DD0(xf->pos, v);
+        sQuat_12BE20 pad;
+        sQuat_12BE20 q1;
+        (q1 = AxisAngle_12BE20(D_004FF160_12BE20, a1)), (xf->rot = QuatMul_12E010(xf->rot, q1));
+    }
+    float cur = func_00135180(self);
+    float old = *(float*)((char*)self + 0x40);
+    float delta = __builtin_fabsf(old - cur) * 0.03333333507180214f;
+    float nv;
+    if (cur + delta < old)
+        nv = old - delta;
+    else if (old < cur - delta)
+        nv = old + delta;
+    else
+        nv = cur;
+    *(float*)((char*)self + 0x40) = nv;
+    sQuat_12BE20 ax = Norm_134DD0(Sub_12E010(ScaleO_134DD0(D_004FF150_134DD0, nv),
+                                             ScaleO_134DD0(D_004FF140_134DD0, 1.0f - *(float*)((char*)self + 0x40))));
+    {
+        sQuat_12BE20 q3;
+        (q3 = AxisAngleB_134DD0(ax, a2)), (xf->rot = QuatMul_12E010(xf->rot, q3));
+    }
+    sQuat_12BE20 w = Scale_12E010(d, -1.0f);
+    sQuat_12BE20 u = Rot_12E010(xf->rot, w);
+    AddTo_134DD0(xf->pos, u);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_00135180);
