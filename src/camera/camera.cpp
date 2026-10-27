@@ -653,7 +653,86 @@ int func_0015F770(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_0015F780);
+#ifdef SKIP_ASM
+extern "C" float func_0031C128(float x);
+
+struct sVec_15F780 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sVec_15F780 Scale_15F780(const sVec_15F780& v, float s)
+{
+    sVec_15F780 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_15F780(const sVec_15F780& a, const sVec_15F780& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2 sqrt.s asm helper; use sqrtf on PC.
+static inline float Sqrt_15F780(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+extern "C" float func_0015F780(void* self)
+{
+    char* o = *(char**)((char*)*(void**)((char*)self + 4) + 0x788);
+    sVec_15F780 a = *(sVec_15F780*)(o + 0x20);
+    sVec_15F780 b = *(sVec_15F780*)(o + 0x10);
+    int ok = 0;
+    if (Dot_15F780(a, a) > 0.0f) {
+        if (Dot_15F780(b, b) > 0.0f)
+            ok = 1;
+    }
+    if (ok) {
+        sVec_15F780 n = Scale_15F780(b, -1.0f);
+        float l = Sqrt_15F780(Dot_15F780(a, a) * Dot_15F780(n, n));
+        if (l < 0.0010000000474974513f)
+            return 0.0f;
+        float q = Dot_15F780(a, n) / l;
+        float c;
+        if (q >= -1.0f)
+            c = q <? 1.0f;
+        else
+            c = -1.0f;
+        return 1.5707963705062866f - func_0031C128(c);
+    }
+    return 0.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_0015F908__FPv);
