@@ -260,7 +260,113 @@ extern "C" int func_002854F8(void* vself, int a1, const char* a2, int a3, int a4
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00285930);
+#ifdef SKIP_ASM
+extern "C" void* func_0028B1C0();
+extern "C" void* func_0028B1C8();
+extern "C" float func_0031C228(float);
+
+// PORT: PS2-only vector layout (16-byte aligned quads, copied with lq/sq).
+struct sV4_5930 {
+    float x, y, z, w;
+    sV4_5930() {}
+    sV4_5930(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sObjList_5930 {
+    int count;
+    char* items[1];
+};
+
+struct sV3_5930 {
+    float x, y, z;
+};
+
+// PORT: PS2-only VU0 inline asm (matrix * vector).
+static inline sV4_5930 vu0MtxApply_5930(char* m, const sV4_5930& v)
+{
+    sV4_5930 out;
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf8, %1\n"
+        "lqc2      $vf4, 0x0(%2)\n"
+        "lqc2      $vf5, 0x10(%2)\n"
+        "lqc2      $vf6, 0x20(%2)\n"
+        "lqc2      $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        ".set pop\n"
+        : "=m"(out)
+        : "m"(v), "r"(m)
+        : "memory");
+    return out;
+}
+
+// PORT: PS2 sqrt.s asm helper.
+static inline float sqrt_5930(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline float Atan2_5930(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float r = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            r += 3.1415927410125732f;
+        else
+            r -= 3.1415927410125732f;
+    }
+    return r;
+}
+
+extern "C" float func_00285930(char* a1, char* a2, char* a3)
+{
+    if (*(int*)((char*)func_0028B1C0() + 0x84) == 0)
+        return 1.0f;
+    char* g = (char*)func_0028B1C8();
+    char* obj = (*(sObjList_5930**)(g + 0x84))->items[*(int*)(a2 + 0x84)];
+    float* src = *(float**)(a2 + 0x68);
+    sV3_5930 d;
+    sV4_5930 tp = vu0MtxApply_5930(obj + 0x40, sV4_5930(src[0], src[1], src[2], 1.0f));
+    float cy;
+    float cz = -100.0f;
+    d.x = tp.x * 0.009999999776482582f;
+    cy = 25.0f;
+    d.y = (tp.y + cy) * 0.009999999776482582f;
+    d.z = (tp.z + cz) * 0.009999999776482582f;
+    if (*(int*)(a1 + 0x62B0) == 0) {
+        *(short*)(a3 + 8) = 0;
+        *(short*)(a3 + 10) = 0;
+    } else {
+        if (*(int*)(a2 + 0xA0) != 0) {
+            if (*(int*)(a2 + 0xA4) != 0)
+                *(short*)(a3 + 8) = 0x4000;
+            else
+                *(unsigned short*)(a3 + 8) = 0xC000;
+        } else {
+            *(short*)(a3 + 8) = (int)(Atan2_5930(d.x, d.z) * 10430.3779296875f);
+        }
+        float len = sqrt_5930(d.x * d.x + d.z * d.z);
+        *(short*)(a3 + 10) = (int)(Atan2_5930(d.y, len) * 10430.3779296875f);
+    }
+    return d.x * d.x + d.y * d.y + d.z * d.z;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00285BE0);
