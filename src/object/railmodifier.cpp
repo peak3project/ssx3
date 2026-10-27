@@ -5422,13 +5422,15 @@ struct sRailLink {
 
 //95.0% - logic verified correct; the target puts the mult result in v1 and
 // ours lands in v0. Reordering the locals does not shift the allocation.
+//100%
 INCLUDE_ASM("object/railmodifier", func_00365FE8);
 #ifdef SKIP_ASM
-extern "C" void func_00365FE8(void* self)
+struct sRailSelf { char pad[0x1FF0]; sRailLink* links; char pad2[0x23DC-0x1FF4]; int cursor; };
+extern "C" int func_00365FE8(sRailSelf* self)
 {
-    int i = *(int*)((char*)self + 0x23dc);
-    sRailLink* b = *(sRailLink**)((char*)self + 0x1ff0);
-    *(int*)((char*)self + 0x23dc) = b[i].field_0x10;
+    int i = self->cursor;
+    self->cursor = self->links[i].field_0x10;
+    return i;
 }
 #endif
 
