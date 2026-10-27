@@ -5534,7 +5534,46 @@ int sceUsbKbSetLEDStatus(int a, unsigned char b) {
 
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbSetLEDMode);
+#ifdef SKIP_ASM
+struct S_Ent5 { int mode; char pad[0x34]; };
+struct S_KbInfo5 { int cnt; struct S_Ent5 *ents; char pad[0x88]; int f90; int f94; int f98; };
+extern struct S_KbInfo5 G_KbInfo5[] __asm__("D_00529000");
+extern int G_KbRdy5[] __asm__("D_00453438");
+extern char G_KbName5[] __asm__("D_005290A0");
+extern char G_KbArg5[] __asm__("D_00529100");
+extern int G_KbBuf5[] __asm__("D_00529140");
+extern char D_00498380[];
+extern void func_0040C8B0(void);
+extern void func_00423DE0(int);
+extern int func_KbOpen5(char *, int, int, char *, int, int *, int, void (*)(void), int) __asm__("func_00426D18");
+extern void func_00425C60(char *, int);
+int sceUsbKbSetLEDMode(int a, unsigned b) {
+    int h = G_KbRdy5[0];
+    if (h == -1)
+        return -1;
+    if (a >= G_KbInfo5[0].cnt)
+        return -11;
+    if (b > 2)
+        return -12;
+    G_KbInfo5[0].ents[a].mode = b;
+    G_KbArg5[0] = a;
+    G_KbArg5[1] = b;
+    func_00423DE0(h);
+    {
+        int r = func_KbOpen5(G_KbName5, 5, 1, G_KbArg5, 16, G_KbBuf5, 0x10, func_0040C8B0, 0);
+        if (r != 0) {
+            func_00425C60(D_00498380, r);
+            return -2;
+        }
+    }
+    G_KbInfo5[0].f90 = 5;
+    G_KbInfo5[0].f98 = 0;
+    G_KbInfo5[0].f94 = a;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040C728);
 
