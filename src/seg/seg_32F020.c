@@ -291,4 +291,6 @@ void func_0042E508(sClk *c) {
     }
     c->last = now;
 }
+/* retail: two padding nops end the unit's .text (the next section starts 16-byte aligned after them) */
+__asm__("nop\n\tnop");
 #endif
