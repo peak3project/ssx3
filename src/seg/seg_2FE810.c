@@ -5879,7 +5879,51 @@ float func_0040D588(float x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D610);
+#ifdef SKIP_ASM
+struct E40D610 { int type; char *name; double arg1; double arg2; double retval; int err; };
+extern int D_00499688[];
+extern char D_00499070[];
+extern double D_00499680[];
+extern double core_40D610(double) __asm__("func_0040DB58");
+extern int isn_40D610(double) __asm__("func_0040F840");
+extern int cmp_40D610(double, double) __asm__("func_00412500");
+extern double sub_40D610(double, double) __asm__("func_00411F70");
+extern int matherr_40D610(struct E40D610 *) __asm__("func_0040F878");
+extern int *errno_40D610(void) __asm__("func_00415FB8");
+double func_0040D610(double x) {
+    struct E40D610 e;
+    double zero;
+    double z = core_40D610(x);
+    int ver = D_00499688[0];
+    if (ver == -1 || isn_40D610(x) || (zero = 0.0, cmp_40D610(x, zero) > 0))
+        return z;
+    e.err = 0;
+    e.name = D_00499070;
+    e.arg2 = e.arg1 = x;
+    if (ver == 0)
+        e.retval = -3.4028234663852886e+38;
+    else
+        e.retval = sub_40D610(zero, D_00499680[0]);
+    if (cmp_40D610(x, 0.0) == 0) {
+        e.type = 2;
+        if (D_00499688[0] == 2)
+            *errno_40D610() = 34;
+        else if (!matherr_40D610(&e))
+            *errno_40D610() = 33;
+    } else {
+        e.type = 1;
+        if (D_00499688[0] == 2)
+            *errno_40D610() = 33;
+        else if (!matherr_40D610(&e))
+            *errno_40D610() = 33;
+    }
+    if (e.err != 0)
+        *errno_40D610() = e.err;
+    return e.retval;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040D758);
 
