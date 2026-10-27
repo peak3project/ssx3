@@ -5856,7 +5856,28 @@ int func_0040D4A0(unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D588);
+#ifdef SKIP_ASM
+extern int func_0040E878(float x, float *y);
+extern float func_0040F5A8(float x, float y, int iy);
+typedef union { float value; int word; } D588_shape;
+#define D588_GET(i, d) do { D588_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
+float func_0040D588(float x) {
+    float y[2];
+    int hx, ix;
+    D588_GET(hx, x);
+    ix = hx & 0x7fffffff;
+    if (ix <= 0x3f490fda) {
+        return func_0040F5A8(x, 0.0f, 1);
+    } else if (ix > 0x7f7fffff) {
+        return x - x;
+    } else {
+        int n = func_0040E878(x, y);
+        return func_0040F5A8(y[0], y[1], 1 - ((n & 1) << 1));
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040D610);
 
