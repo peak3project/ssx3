@@ -1091,7 +1091,232 @@ extern "C" void* func_00173678(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001736E0);
+#ifdef SKIP_ASM
+struct sVec4_1736E0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVE_1736E0 {
+    short delta;
+    short index;
+    sVec4_1736E0 (*fn)(void*);
+};
+
+extern "C" float func_0031C228(float x);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern sVec4_1736E0 D_004FF160_1736E0 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (d += b).
+static inline void AddEq_1736E0(sVec4_1736E0& d, const sVec4_1736E0& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(d)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (d = v * s).
+static inline void ScaleTo_1736E0(sVec4_1736E0& d, const sVec4_1736E0& v, float s)
+{
+    sVec4_1736E0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    d = r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4_1736E0 Sub_1736E0(const sVec4_1736E0& a, const sVec4_1736E0& b)
+{
+    sVec4_1736E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b); g++ named-return-value extension.
+static inline sVec4_1736E0 SubN_1736E0(const sVec4_1736E0& a, const sVec4_1736E0& b) return r
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_1736E0(const sVec4_1736E0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_1736E0(float x)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only inline asm (float absolute value).
+static inline float Abs_1736E0(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float ffloor_1736E0(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
+    if (x < t) {
+        t -= 1.0f;
+    }
+    return t;
+}
+
+struct sVec2_1736E0 {
+    float x, y;
+    sVec2_1736E0(float ax, float ay) : x(ax), y(ay) {}
+};
+
+static inline float Len2_1736E0(const sVec2_1736E0& v)
+{
+    return Sqrt_1736E0(v.x * v.x + v.y * v.y);
+}
+
+static inline float Atan2_1736E0(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+static inline float Wrap_1736E0(float v)
+{
+    return v - ffloor_1736E0(v * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
+}
+
+extern "C" void func_001736E0(char* self)
+{
+    sVec4_1736E0 a, b, c;
+    char* o = *(char**)(self + 0x30);
+    sVE_1736E0* e = &(*(sVE_1736E0**)o)[1];
+    ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
+    o = *(char**)(self + 0x30);
+    e = &(*(sVE_1736E0**)o)[3];
+    ((void (*)(void*, void*))e->fn)(&b, o + e->delta);
+    o = *(char**)(self + 0x30);
+    e = &(*(sVE_1736E0**)o)[4];
+    ((void (*)(void*, void*))e->fn)(&c, o + e->delta);
+    {
+        sVec4_1736E0 t;
+        ScaleTo_1736E0(t, D_004FF160_1736E0, *(float*)(self + 0x6C));
+        AddEq_1736E0(a, t);
+        ScaleTo_1736E0(t, c, *(float*)(self + 0x74));
+        AddEq_1736E0(a, t);
+    }
+    *(sVec4_1736E0*)(self + 0x20) = a;
+    sVec4_1736E0 d = Sub_1736E0(a, *(sVec4_1736E0*)(self + 0x40));
+    float yawD = Atan2_1736E0(d.y, d.x);
+    float yawC = Atan2_1736E0(c.y, c.x);
+    float diff = Wrap_1736E0(yawC) - yawD;
+    float wd = Wrap_1736E0(diff);
+    float len3 = Length_1736E0(d);
+    float dd = *(float*)(self + 0x70) - len3;
+    float yawN = yawD + wd * *(float*)(self + 0x5C) * 0.01666666753590107f;
+    float dist;
+    if (Abs_1736E0(dd) > 5000.0f) {
+        dist = len3 + dd;
+    } else {
+        float k = Length_1736E0(b) * 0.007199999410659075f + 8.0f;
+        float x;
+        if (k >= 20.0f) {
+            x = dd * k * 0.01666666753590107f;
+        } else {
+            x = dd * 0.3333333432674408f;
+        }
+        dist = len3 + x;
+    }
+    float pitchD = Atan2_1736E0(-d.z, Len2_1736E0(sVec2_1736E0(d.x, d.y)));
+    float pitchC = Atan2_1736E0(c.z, Len2_1736E0(sVec2_1736E0(c.x, c.y)));
+    float tp = pitchC * -*(float*)(self + 0x58) + *(float*)(self + 0x78) * 0.01745329424738884f;
+    float pitchN = pitchD + (Wrap_1736E0(tp) - pitchD) * *(float*)(self + 0x60) * 0.01666666753590107f;
+    sVec4_1736E0 dir;
+    sVec4_1736E0 n;
+    float sc0, sc1, sc2, sc3;
+    func_0031BE50(&sc0, &sc1, yawN);
+    func_0031BE50(&sc2, &sc3, pitchN);
+    dir.x = sc3 * sc1;
+    dir.y = sc3 * sc0;
+    dir.z = -sc2;
+    dir.w = 0.0f;
+    {
+        sVec4_1736E0 t;
+        ScaleTo_1736E0(t, dir, dist);
+        n = SubN_1736E0(a, t);
+    }
+    *(sVec4_1736E0*)(self + 0x40) = n;
+    n = SubN_1736E0(a, *(sVec4_1736E0*)(self + 0x40));
+    float yawE = Atan2_1736E0(n.y, n.x);
+    float oy = *(float*)(self + 0x50);
+    *(float*)(self + 0x50) = oy + Wrap_1736E0(yawE - oy) * *(float*)(self + 0x64) * 0.01666666753590107f;
+    float pitchE = Atan2_1736E0(n.z, Len2_1736E0(sVec2_1736E0(n.x, n.y)));
+    float op = *(float*)(self + 0x54);
+    *(float*)(self + 0x54) = op + (pitchE - op) * *(float*)(self + 0x68) * 0.01666666753590107f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00173E40);
