@@ -3751,7 +3751,93 @@ void func_003BD078(int a0, signed char *out, signed char *out8) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BD220);
+#ifdef SKIP_ASM
+struct S_D220 { char pad[4]; unsigned short w4; };
+struct C_D220 { char pad0[0x600]; char b600[0x200]; char b800[0x220]; int *pA20; int *pA24; int *pA28; int *pA2C; int *pA30; int *pA34; int *pA38; unsigned char padA3C; };
+extern struct S_D220 *D_0050AC68_D220 __asm__("D_0050AC68");
+extern struct C_D220 *D_0050AC6C_D220 __asm__("D_0050AC6C");
+extern void fC968_D220(int, int, int, int) __asm__("func_003BC968");
+extern void fCA28_D220(int, int, int, int) __asm__("func_003BCA28");
+extern void fF3E0_D220(int, int, int) __asm__("func_003BF3E0");
+extern void fF440_D220(int, int, int) __asm__("func_003BF440");
+extern void fF4C0_D220(int, int, void *) __asm__("func_003BF4C0");
+extern void fF5A0_D220(int, int, void *) __asm__("func_003BF5A0");
+extern void fF6B0_D220(int, int, void *) __asm__("func_003BF6B0");
+extern void fF800_D220(void *) __asm__("func_003BF800");
+extern void fF8D0_D220(void *, void *) __asm__("func_003BF8D0");
+extern void fF960_D220(void *, void *) __asm__("func_003BF960");
+extern void fFAC0_D220(void *, void *) __asm__("func_003BFAC0");
+extern void fFB90_D220(void *, void *) __asm__("func_003BFB90");
+extern void fFC50_D220(void *, int) __asm__("func_003BFC50");
+extern void fFD60_D220(void *, int, void *) __asm__("func_003BFD60");
+extern void fFE80_D220(void *, int, void *) __asm__("func_003BFE80");
+extern void fFFA0_D220(void *, int, void *) __asm__("func_003BFFA0");
+extern void f01A0_D220(void *, int, int, int) __asm__("func_003C01A0");
+void func_003BD220(unsigned int a0, int a1, unsigned int a2) {
+    short b;
+    int i;
+    if (!(D_0050AC6C_D220->padA3C == 0)) {
+        b = 0;
+        if ((a0 & 0x70000000) != 0x70000000) {
+            b = (a2 & 0x70000000) != 0x70000000;
+        }
+    } else {
+        b = 0;
+    }
+    if (b) {
+        fC968_D220(a2, (int)D_0050AC6C_D220->pA20, D_0050AC68_D220->w4 >> 2, 0);
+        fF440_D220(a0, (int)D_0050AC6C_D220->pA20 + D_0050AC68_D220->w4 * 4, 0x200);
+        if (*(volatile int *)0x1000D400 & 0x100) {
+            do {
+            } while (*(volatile int *)0x1000D400 & 0x100);
+        }
+    } else {
+        fF3E0_D220(a2, (int)D_0050AC6C_D220->pA20, D_0050AC68_D220->w4);
+    }
+    i = 0;
+    do {
+        if (b) {
+            if (D_0050AC68_D220->w4 == 0xE0) {
+                fF4C0_D220((int)D_0050AC6C_D220->pA20 + i * 0x200, (int)D_0050AC6C_D220->pA24, D_0050AC6C_D220->b600);
+            } else if (D_0050AC68_D220->w4 == 0x160) {
+                fF5A0_D220((int)D_0050AC6C_D220->pA20 + i * 0x200, (int)D_0050AC6C_D220->pA24, D_0050AC6C_D220->b600);
+            } else {
+                fF6B0_D220((int)D_0050AC6C_D220->pA20 + i * 0x200, (int)D_0050AC6C_D220->pA24, D_0050AC6C_D220->b600);
+            }
+        } else {
+            fF440_D220(a0, (int)D_0050AC6C_D220->pA20 + D_0050AC68_D220->w4 * 4, 0x80);
+            if (D_0050AC68_D220->w4 == 0xE0) {
+                fF4C0_D220((int)D_0050AC6C_D220->pA20, (int)D_0050AC6C_D220->pA24, D_0050AC6C_D220->b600);
+            } else if (D_0050AC68_D220->w4 == 0x160) {
+                fF5A0_D220((int)D_0050AC6C_D220->pA20, (int)D_0050AC6C_D220->pA24, D_0050AC6C_D220->b600);
+            } else {
+                fF6B0_D220((int)D_0050AC6C_D220->pA20, (int)D_0050AC6C_D220->pA24, D_0050AC6C_D220->b600);
+            }
+            fF3E0_D220((int)D_0050AC6C_D220->pA20 + 0x200, (int)D_0050AC6C_D220->pA20, D_0050AC68_D220->w4);
+        }
+        i++;
+        a0 += 0x100;
+        fF800_D220(D_0050AC6C_D220->b600);
+        fF8D0_D220(D_0050AC6C_D220->b600, D_0050AC6C_D220->b800);
+        fF960_D220(D_0050AC6C_D220->b800, D_0050AC6C_D220->b600);
+        fFAC0_D220(D_0050AC6C_D220->b600, D_0050AC6C_D220->b800);
+        fFB90_D220(D_0050AC6C_D220->b800, D_0050AC6C_D220->b600);
+        fFC50_D220(D_0050AC6C_D220->b600, (int)D_0050AC6C_D220->pA28);
+        fFD60_D220(D_0050AC6C_D220->b600, (int)D_0050AC6C_D220->pA2C, D_0050AC6C_D220->b800);
+        fFE80_D220(D_0050AC6C_D220->b800, (int)D_0050AC6C_D220->pA30, D_0050AC6C_D220->b600);
+        fFFA0_D220(D_0050AC6C_D220->b600, (int)D_0050AC6C_D220->pA34, D_0050AC6C_D220->b800);
+        f01A0_D220(D_0050AC6C_D220->b800, (int)D_0050AC6C_D220->pA38, a1, 0x40);
+        a1 += 0x10;
+    } while (i < 4);
+    if (b) {
+        fCA28_D220((int)D_0050AC6C_D220->pA20 + 0x800, a2, D_0050AC68_D220->w4 >> 2, 0x10000);
+    } else {
+        fF3E0_D220((int)D_0050AC6C_D220->pA20, a2, D_0050AC68_D220->w4);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BD5B8);
