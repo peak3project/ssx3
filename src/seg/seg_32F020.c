@@ -1,6 +1,21 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_32F020", func_0042E020);
+#ifdef SKIP_ASM
+extern int (*D_00509430)(int a0, int a1, int a2, int a3, int a4);
+extern char D_004953E8[];
+extern int *func_003B07F8_x(int a0, int a1, int a2) __asm__("func_003B07F8");
+void func_0042E020(int *a0, int a1, int a2) {
+    int *n = func_003B07F8_x(D_00509430((int)D_004953E8, 0x14, 0, 0, ((int *)&D_00509430)[2]), a1, a2);
+    int *node = n ? n + 2 : 0;
+    int *head = (int *)a0[8];
+    a0[8] = (int)node;
+    head[1] = (int)node;
+    node[1] = (int)(a0 + 8);
+    node[0] = (int)head;
+}
+#endif
 
 void func_0042E0B0(void) {
 }
