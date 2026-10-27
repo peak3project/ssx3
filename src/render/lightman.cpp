@@ -1342,7 +1342,79 @@ extern "C" int func_0038FED0(void* self, int w, int h, unsigned char* src, unsig
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/lightman", func_00390198);
+#ifdef SKIP_ASM
+extern "C" void* func_0041605C(void* dst, void* src, int n);
+extern "C" void* func_00416210(void* dst, int c, int n);
+
+extern "C" int func_00390198(void* self, int w, int h, unsigned char* src, unsigned char* dst)
+{
+    unsigned char bufA[0x2000];
+    unsigned char bufB[0x2000];
+    int i;
+    int j;
+    int k;
+    for (i = 0; i < 11; i++) {
+        if (w == (0x400 >> i))
+            break;
+    }
+    if (i == 11)
+        return -1;
+    for (i = 0; i < 11; i++) {
+        if (h == (0x400 >> i))
+            break;
+    }
+    if (i == 11)
+        return -1;
+    func_00416210(bufA, 0, 0x2000);
+    func_00416210(bufB, 0, 0x2000);
+    int qw = (w - 1) / 128;
+    int rows = (h - 1) / 64 + 1;
+    int cols = qw + 1;
+    int bw;
+    int bs;
+    int th;
+    int th2;
+    if (qw == 0) {
+        bw = w;
+        bs = bw * 2;
+    } else {
+        bw = 0x80;
+        bs = 0x100;
+    }
+    if (rows == 1) {
+        th = h;
+        th2 = h / 2;
+    } else {
+        th = 0x40;
+        th2 = 0x20;
+    }
+    for (i = 0; i < rows; i++) {
+        int c64 = cols << 6;
+        int sstep = bw * c64;
+        for (j = 0; j < cols; j++) {
+            unsigned char* p = (unsigned char*)((int)src + sstep * i + bw * j);
+            unsigned char* a = bufA;
+            for (k = 0; k < th; k++) {
+                func_0041605C(a, p, bw);
+                p += bw * cols;
+                a += 0x80;
+            }
+            func_0038FC48(self, 0x80, 0x40, bufA, bufB);
+            int dstep = bs * th2 * cols;
+            unsigned char* q = (unsigned char*)((int)dst + dstep * i + bs * j);
+            unsigned char* b = bufB;
+            for (k = 0; k < th2; k++) {
+                func_0041605C(q, b, bs);
+                q += bs * cols;
+                b += 0x100;
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/lightman", func_00390458);
