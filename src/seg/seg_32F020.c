@@ -262,4 +262,18 @@ int *func_0042E4C8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_32F020", func_0042E508);
+#ifdef SKIP_ASM
+typedef struct { unsigned last; unsigned pad; unsigned long acc; unsigned rate; } sClk;
+extern unsigned func_003E4E98(void);
+void func_0042E508(sClk *c) {
+    unsigned now = func_003E4E98();
+    if (c->rate == 0x1000) {
+        c->acc += now - c->last;
+    } else {
+        c->acc += ((unsigned long)c->rate * (unsigned long)(now - c->last)) >> 12;
+    }
+    c->last = now;
+}
+#endif
