@@ -584,7 +584,129 @@ extern "C" void func_0031EEE8(void* ms, sMState_31EEE8* av)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031F018);
+#ifdef SKIP_ASM
+struct sMChunk_31F018
+{
+    unsigned int prev_size;      // 0x0
+    unsigned int size;           // 0x4
+    sMChunk_31F018* fd;          // 0x8
+    sMChunk_31F018* bk;          // 0xC
+};
+
+struct sMState_31F018
+{
+    unsigned int max_fast;       // 0x0
+    char pad[0x30 - 4];
+    sMChunk_31F018* top;         // 0x30
+};
+
+extern "C" void func_003E6574_F018(void* dst, const void* src, unsigned int n) __asm__("func_003E6574");
+// PORT: the unit declares func_0031ED60(void*); the body really takes (ms, mem).
+extern "C" void func_0031ED60_F018(void* ms, void* mem) __asm__("func_0031ED60");
+extern "C" void* func_0031F018_realloc(void* ms, unsigned int* oldmem, unsigned int bytes) __asm__("func_0031F018");
+
+extern "C" void* func_0031F018_realloc(void* ms, unsigned int* oldmem, unsigned int bytes)
+{
+    sMState_31F018* av = *(sMState_31F018**)ms;
+    unsigned int nb;
+    sMChunk_31F018* oldp;
+    unsigned int oldsize;
+    sMChunk_31F018* newp;
+    unsigned int newsize;
+    unsigned int* newmem;
+    sMChunk_31F018* next;
+    sMChunk_31F018* remainder;
+    unsigned int remainder_size;
+    sMChunk_31F018* bck;
+    sMChunk_31F018* fwd;
+    unsigned int copysize;
+    unsigned int ncopies;
+    unsigned int* s;
+    unsigned int* d;
+
+    if (oldmem == 0)
+        return func_0031E818(ms, bytes);
+    if (bytes < (unsigned int)-32) {
+        nb = bytes + 4 + 15;
+        nb = nb < 16 ? 16 : nb & ~15U;
+        oldp = (sMChunk_31F018*)((char*)oldmem - 8);
+        oldsize = ((sMChunk_31F018*)((int)oldmem - 8))->size & ~3U;
+        if (!(((sMChunk_31F018*)((int)oldmem - 8))->size & 2)) {
+            if (oldsize >= nb) {
+                newp = oldp;
+                newsize = oldsize;
+            } else {
+                next = (sMChunk_31F018*)((char*)oldp + oldsize);
+                if (next == av->top && (newsize = oldsize + (next->size & ~3U)) >= nb + 16) {
+                    ((sMChunk_31F018*)((int)oldmem - 8))->size = (((sMChunk_31F018*)((int)oldmem - 8))->size & 1) | nb;
+                    av->top = (sMChunk_31F018*)((char*)oldp + nb);
+                    av->top->size = (newsize - nb) | 1;
+                    return (char*)oldp + 8;
+                } else if (next != av->top && !(((sMChunk_31F018*)((char*)next + (next->size & ~1U)))->size & 1)
+                           && (newsize = oldsize + (next->size & ~3U)) >= nb) {
+                    newp = oldp;
+                    fwd = next->fd;
+                    bck = next->bk;
+                    fwd->bk = bck;
+                    bck->fd = fwd;
+                } else {
+                    newmem = (unsigned int*)func_0031E818(ms, nb - 15);
+                    if (newmem == 0)
+                        return 0;
+                    newp = (sMChunk_31F018*)((char*)newmem - 8);
+                    newsize = ((sMChunk_31F018*)((int)newmem - 8))->size & ~3U;
+                    if (newp == next) {
+                        newsize += oldsize;
+                        newp = oldp;
+                    } else {
+                        copysize = oldsize - 4;
+                        s = oldmem;
+                        d = newmem;
+                        ncopies = copysize >> 2;
+                        if (ncopies > 9)
+                            func_003E6574_F018(d, s, copysize);
+                        else {
+                            d[0] = s[0];
+                            d[1] = s[1];
+                            d[2] = s[2];
+                            if (ncopies > 4) {
+                                d[3] = s[3];
+                                d[4] = s[4];
+                                if (ncopies > 6) {
+                                    d[5] = s[5];
+                                    d[6] = s[6];
+                                    if (ncopies > 8) {
+                                        d[7] = s[7];
+                                        d[8] = s[8];
+                                    }
+                                }
+                            }
+                        }
+                        func_0031ED60_F018(ms, oldmem);
+                        return (char*)newp + 8;
+                    }
+                }
+            }
+            remainder_size = newsize - nb;
+            if (remainder_size < 16) {
+                newp->size = (newp->size & 1) | newsize;
+                ((sMChunk_31F018*)((char*)newp + newsize))->size |= 1;
+            } else {
+                remainder = (sMChunk_31F018*)((char*)newp + nb);
+                newp->size = (newp->size & 1) | nb;
+                remainder->size = remainder_size | 1;
+                ((sMChunk_31F018*)((char*)remainder + remainder_size))->size |= 1;
+                func_0031ED60_F018(ms, (char*)remainder + 8);
+            }
+            return (char*)newp + 8;
+        }
+    }
+    *func_00415FB8() = 12;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031F2C8);
