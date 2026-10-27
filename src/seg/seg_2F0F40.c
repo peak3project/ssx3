@@ -1,6 +1,65 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003EFF40);
+#ifdef SKIP_ASM
+extern char D_00496B58_FF40[] __asm__("D_00496B58");
+extern char D_00496B70_FF40[] __asm__("D_00496B70");
+extern char D_00496B80_FF40[] __asm__("D_00496B80");
+extern char D_00496B90_FF40[] __asm__("D_00496B90");
+extern char D_004A4AD0_FF40[] __asm__("D_004A4AD0");
+extern void func_003EFED0(char *, const char *, ...);
+struct I_FF40 { int f0; int f4; int f8; char *fC; };
+
+void func_003EFF40_impl(char *self, char *x, struct I_FF40 *info) __asm__("func_003EFF40");
+void func_003EFF40_impl(char *self, char *x, struct I_FF40 *info) {
+    int a, b;
+    int n, flag;
+    int cr;
+    char *p;
+    char *s = info->fC;
+
+    b = info->f8;
+    if (b == 0) b = 0x2D2D2D2D;
+    a = info->f4;
+    if (a == -1) {
+        a = 0x2A2A2A2A;
+        if (b == -1) {
+            b = 0x636F6E6E;
+        } else if (b == (int)0xFEFEFEFE) {
+            b = 0x64697363;
+        } else {
+            b = 0x2D2D2D2D;
+        }
+    }
+    func_003EFED0(self, D_00496B58_FF40, x, a >> 24, a >> 16, a >> 8, a, b >> 24, b >> 16, b >> 8, b);
+    n = 0;
+    flag = 0;
+    if (*s != 0 && *s < 0x7F) {
+        cr = 13;
+        p = s;        do {
+            unsigned char c = *p;
+            char ch = *p;
+            if (ch < 0x20) {
+                if ((unsigned)(c - 9) < 2) continue;
+                if (ch != cr) {
+                    flag = 1;
+                    break;
+                }
+            }
+        } while (p++, n++, *p != 0 && *p < 0x7F);
+    }
+    if (n == 0) {
+        func_003EFED0(self, D_00496B70_FF40);
+    } else if (flag == 1) {
+        func_003EFED0(self, D_00496B80_FF40);
+    } else if (n >= 0x201) {
+        func_003EFED0(self, D_00496B90_FF40);
+    } else {
+        func_003EFED0(self, D_004A4AD0_FF40, s);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F00D8);
