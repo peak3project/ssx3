@@ -1887,7 +1887,112 @@ extern "C" int func_00244A40(void *self) {
 
 INCLUDE_ASM("main/ssxappdtor", func_00244B48);
 
+//100%
 INCLUDE_ASM("main/ssxappdtor", func_00244E60);
+#ifdef SKIP_ASM
+struct sVE_244E60 { short delta; short index; void* fn; };
+extern "C" int func_00237950(int);
+extern "C" int func_002379C8(int);
+extern "C" int func_00270280(int);
+extern "C" void func_0026F4A8(int);
+extern "C" int func_0026CE50(int);
+extern "C" void func_00354F98(void*, int);
+extern "C" void func_00354C98(void*, int);
+extern "C" void func_00355028(void*, int);
+extern "C" void func_00309270(int);
+extern "C" void func_002294C8(int);
+extern "C" void func_003440C8(int);
+extern "C" void func_00357BF8(int);
+extern "C" void func_002B7848(int, int, int);
+extern "C" void cGameViewMan_updateAll(int);
+extern "C" void func_00230F40(void*);
+extern char D_004A5988[8];
+extern int D_004A2A50;
+extern char* D_004A28A4;
+struct sList_244E60 { int pad0; int items[3]; unsigned int count; };
+struct sApp_244E60 { char pad0[0x4C]; int f4C; char pad1[0x84-0x50]; sList_244E60* list; };
+
+extern "C" void func_00244E60(void* self)
+{
+    char* s = (char*)self;
+    char* obj;
+    int skip;
+    if (*(int*)(s + 0x7C) == 0 || func_00237950(*(int*)(s + 0x7C)) != 0) {
+        if (*(int*)(s + 0x214) == 3) {
+            obj = D_004A5988;
+            func_00230F40(self);
+            func_00354C98(obj, 1);
+        } else {
+            obj = D_004A5988;
+            func_00230F40(self);
+        }
+        if ((D_004A2A50 & 1) == 0)
+            func_0026F4A8(*(int*)(s + 0x28));
+        if (func_00270280(*(int*)(s + 0x28)) == 0 && (D_004A2A50 & 8) == 0) {
+            sVE_244E60* vt = *(sVE_244E60**)(D_004A28A4 + 0x2A8);
+            ((void (*)(void*))vt[5].fn)(D_004A28A4 + vt[5].delta);
+        }
+    }
+    obj = D_004A5988;
+    skip = 0;
+    if ((D_004A2A50 & 1) != 0 || func_00270280(*(int*)(s + 0x28)) != 0)
+        skip = 1;
+    if (skip == 0) {
+        if (*(int*)(s + 0x7C) == 0 || func_002379C8(*(int*)(s + 0x7C)) != 0) {
+            if (func_0026CE50(*(int*)(s + 0x34)) != 0)
+                goto setskip;
+        } else {
+            setskip:
+            skip = 1;
+        }
+    }
+    if (!skip) {
+        if ((D_004A2A50 & 2) == 0)
+            func_00354F98(obj, 1);
+        func_00354F98(obj, 5);
+        func_00354F98(obj, 6);
+        if ((D_004A2A50 & 2) == 0)
+            func_00355028(obj, 1);
+        {
+            char* c = *(char**)(s + 0xC);
+            sVE_244E60* vt = *(sVE_244E60**)(c + 0xCC);
+            ((void (*)(void*))vt[3].fn)(c + vt[3].delta);
+        }
+        if ((D_004A2A50 & 0x10) == 0)
+            func_00354F98(obj, 2);
+        if ((D_004A2A50 & 4) == 0)
+            func_00354F98(obj, 3);
+        func_00309270(*(int*)(s + 0x30));
+        func_002294C8(*(int*)(s + 0x38));
+        func_003440C8(*(int*)(s + 0x3C));
+        func_00357BF8(*(int*)(s + 0x40));
+        func_00354C98(obj, 1);
+    } else {
+        func_00354F98(obj, 5);
+        if ((D_004A2A50 & 4) == 0)
+            func_00354F98(obj, 3);
+    }
+    func_00354F98(obj, 4);
+    {
+        int m = **(int**)(s + 0x28);
+        int ok = m != 0 && m < 10;
+        int x3 = m ^ 3;
+        if (!ok || x3 != 0)
+            cGameViewMan_updateAll(*(int*)(s + 0x84));
+    }
+    *(int*)(s + 0xAC) = *(int*)(s + 0xAC) + 1;
+    {
+        sList_244E60* l = *(sList_244E60**)(s + 0x84);
+        if (l->count != 0) {
+            unsigned int i = 0;
+            do {
+                func_002B7848(*(int*)(s + 0x4C), ((sApp_244E60*)s)->list->items[i] + 0x20, i);
+                i++;
+            } while (i < ((sList_244E60*)*(char**)(s + 0x84))->count);
+        }
+    }
+}
+#endif
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_00245118);
 #ifdef SKIP_ASM
