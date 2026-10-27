@@ -1315,7 +1315,99 @@ extern "C" void func_0034D6F0(void* vself, float v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flagset", func_0034D778);
+#ifdef SKIP_ASM
+struct sRS_D778 {
+    unsigned int f0_0 : 12;
+    unsigned int f0_12 : 8;
+    unsigned int f0_20 : 12;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 25;
+    int f8;
+    int fC;
+    int f10;
+};
+
+struct sVec4_D778 {
+    float x, y, z, w;
+    sVec4_D778() {}
+    sVec4_D778(const float& a, const float& b, const float& c, const float& d) : x(a), y(b), z(c), w(d) {}
+} __attribute__((aligned(16)));
+
+struct sRow_D778 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sMat_D778 {
+    sRow_D778 r[4];
+};
+
+struct sModel_D778 {
+    char pad_0x0[0x7D];
+    unsigned char page;     // 0x7D
+    short slot;             // 0x7E
+};
+
+static inline int IsLoaded_D778(sModel_D778* m)
+{
+    char* wc = *(char**)D_004A47B8;
+    if (m->page == 0xFF)
+        return 1;
+    int ok = *(int*)(wc + (m->page << 3) + 0x24) == 6;
+    return ok ? *(int*)(wc + m->slot * 0x18 + 0x3F0) == 3 : 0;
+}
+
+struct sPair_D778 { sRow_D778 r[4]; };
+struct sVE43_D778 { short delta; short index; sPair_D778 (*fn)(void*); };
+struct sPair_D778;
+struct sVE93_D778 { short delta; short index; int (*fn)(void*, sVec4_D778*, sVec4_D778*, sPair_D778*); };
+struct sVE96_D778 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
+struct sVE7_D778 { short delta; short index; void (*fn)(void*, void*, void*, sMat_D778*); };
+
+static inline void SetF0_12_D778(sRS_D778* rs, int v) { rs->f0_12 = v; }
+static inline void SetF4_2_D778(sRS_D778* rs, int v) { rs->f4_2 = v; }
+
+#define TOP_D778(c) (*(sRS_D778**)((c) + 0xE84))
+
+extern "C" void func_0034D778(void* vself)
+{
+    char* self = (char*)vself;
+    if (!IsLoaded_D778(*(sModel_D778**)(self + 0x18))) {
+        return;
+    }
+    char* ctx = D_004A5B80;
+    {
+        sModel_D778* m = *(sModel_D778**)(self + 0x18);
+        sVE93_D778* vt = *(sVE93_D778**)(ctx + 0x10D8);
+        char* thisp = ctx + vt[93].delta;
+        sVec4_D778 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
+        sVec4_D778 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
+        sVec4_D778* pb = &b;
+        sVE43_D778* vt43 = *(sVE43_D778**)(ctx + 0x10D8);
+        sPair_D778 c = vt43[43].fn(ctx + vt43[43].delta);
+        if (vt[93].fn(thisp, &a, pb, &c) == 1) {
+            return;
+        }
+    }
+    TOP_D778(ctx)[1] = TOP_D778(ctx)[0];
+    sRS_D778* t = TOP_D778(ctx);
+    TOP_D778(ctx) = t + 1;
+    t[1].f4_2 = 5;
+    sModel_D778* m = *(sModel_D778**)(self + 0x18);
+    char* pos = (char*)m + 0x10;
+    char* h = *(char**)(self + 0x40);
+    if (h != 0) {
+        sVE7_D778* hv = *(sVE7_D778**)(h + 4);
+        hv[7].fn(h + hv[7].delta, pos, *(void**)((char*)m + 0x94), 0);
+    } else {
+        sVE96_D778* v96 = *(sVE96_D778**)(ctx + 0x10D8);
+        v96[96].fn(ctx + v96[96].delta, m, 0, 0, 0);
+    }
+    TOP_D778(ctx)--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flagset", func_0034D960);
