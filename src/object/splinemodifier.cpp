@@ -689,7 +689,129 @@ void* func_0035A5D8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/splinemodifier", cMultiSplineModifier_setupOverlapSystem);
+#ifdef SKIP_ASM
+struct sSmVec4_A5F8 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sSmBox_A5F8 {
+    char pad_0x00[0x30];
+    sSmVec4_A5F8 min;       // 0x30
+    sSmVec4_A5F8 max;       // 0x40
+    char pad_0x50[0x10];
+};
+
+struct sSmCell_A5F8 {
+    int level;
+    int x, y, z;
+};
+
+struct sSmRoot_A5F8 {
+    sSmCell_A5F8 cell;
+    void* node;
+};
+
+struct sSmInst_A5F8 {
+    char pad_0x00[0x40];
+    sSmVec4_A5F8 pos;       // 0x40
+};
+
+struct sSub_A5F8 {
+    int count;              // 0x4
+    char pad_0x8[0x10];
+    float radius;           // 0x18
+};
+
+struct cMultiSpline_A5F8 {
+    int pad_0x0;
+    sSub_A5F8 sub;          // 0x4
+    char pad_0x1c[0x20];
+    sSmBox_A5F8* boxes;     // 0x3C
+    char** model;           // 0x40
+    sSmInst_A5F8** insts;   // 0x44
+};
+
+extern "C" void cInstanceNode_getBoundBoxInfo(void* self, void* box, float* radius);
+extern "C" void* func_002D1BE0();
+extern "C" void func_00328F28(void* out, const void* box);
+extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline void vu0Sub_A5F8(sSmVec4_A5F8& out, const sSmVec4_A5F8& a, const sSmVec4_A5F8& b)
+{
+    sSmVec4_A5F8 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    out = r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline void vu0Add_A5F8(sSmVec4_A5F8& out, const sSmVec4_A5F8& a, const sSmVec4_A5F8& b)
+{
+    sSmVec4_A5F8 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    out = r;
+}
+
+static inline sSmVec4_A5F8 instPos_A5F8(cMultiSpline_A5F8* self, int i)
+{
+    return self->insts[i]->pos;
+}
+
+static inline sSmRoot_A5F8* findRoot_A5F8(char* w, int x, int y, int z)
+{
+    sSmRoot_A5F8* r = (sSmRoot_A5F8*)w;
+    sSmRoot_A5F8* rx = x >= 0 ? r : r + 4;
+    sSmRoot_A5F8* ry = y >= 0 ? rx : rx + 2;
+    sSmRoot_A5F8* rz = z >= 0 ? ry : ry + 1;
+    return rz;
+}
+
+static inline void insert_A5F8(char* w, void* item, const void* box)
+{
+    sSmCell_A5F8 c;
+    func_00328F28(&c, box);
+    func_00328C20(findRoot_A5F8(w, c.x, c.y, c.z), 0, item, &c);
+}
+
+extern "C" void cMultiSplineModifier_setupOverlapSystem(void* vself)
+{
+    cMultiSpline_A5F8* self = (cMultiSpline_A5F8*)vself;
+    char bound[0x20];
+    cInstanceNode_getBoundBoxInfo(((void**)self->model)[3], bound, &self->sub.radius);
+    sSub_A5F8* sub = &self->sub;
+    for (int i = 1; i < self->sub.count; i++) {
+        sSmVec4_A5F8 ext;
+        ext.x = sub->radius;
+        ext.y = sub->radius;
+        ext.z = sub->radius;
+        ext.w = 0.0f;
+        {
+            sSmVec4_A5F8 v;
+            vu0Sub_A5F8(v, instPos_A5F8(self, i), ext);
+            self->boxes[i].min = v;
+            vu0Add_A5F8(v, instPos_A5F8(self, i), ext);
+            self->boxes[i].max = v;
+        }
+        void* item = self->insts[i];
+        char* w = (char*)func_002D1BE0();
+        insert_A5F8(w, item, &self->boxes[i].min);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035A780);
