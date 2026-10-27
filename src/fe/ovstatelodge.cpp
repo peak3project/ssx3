@@ -1,6 +1,101 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_cFEStateMountainRoom);
+#ifdef SKIP_ASM
+extern "C" void* func_0039E2A0_3(void* self, void* a1, int a2) __asm__("func_0039E2A0");
+extern "C" unsigned char func_001A1CD0(void* self, int a1);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+extern "C" int cBENewPlayerInterface_isPeakLocked(void* self, int a, int b, int peak);
+int cBELibrary_getRiderIndex(int rider) __asm__("cBELibrary_getRiderIndex__Fi");
+extern "C" int func_00148950(void* iface, int rider);
+extern "C" char* func_00156B28(void* self, int a1, int a2);
+extern "C" int func_00398380(void* self, int id);
+extern "C" void func_001D3160(void* self);
+int GetHashValue32(char* str);
+extern void* D_00469858[];
+extern char D_00467208[];
+extern char D_00467218[];
+
+struct sMountainRoomK2678 {
+    char pad_0x00[0x44];
+    signed char player;      // 0x44
+    char pad_0x45[0x3];
+    int f48;
+    int f4C;
+    int f50;
+    int f54;
+    int a[5];                // 0x58
+    int b[5][3];             // 0x6C
+    int fA8;
+    int fAC;
+    int charID;              // 0xB0
+    int fB4;
+    int fB8;
+    int fBC;
+    char* fC0;
+    int fC4;
+};
+
+extern "C" void* cFEStateMountainRoom_cFEStateMountainRoom(void* self, void* ui, int idx)
+{
+    signed char pl = idx;
+    func_0039E2A0_3(self, ui, idx);
+    *(int*)((char*)self + 0xC) = 0x2B;
+    *(void***)((char*)self + 0x8) = D_00469858;
+    sMountainRoomK2678* s = (sMountainRoomK2678*)self;
+    s->player = pl;
+    *(char*)((char*)self + 0x15) = func_001A1CD0(**(void***)((char*)self + 0x10), pl);
+    s->f48 = 0;
+    s->f50 = 0;
+    s->f54 = 0;
+    for (int i = 4; i >= 0; i--) {
+        s->a[i] = 0;
+    }
+    int* r1 = s->b[1];
+    int* r2 = s->b[2];
+    int* r3 = s->b[3];
+    int* r4 = s->b[4];
+    for (int i = 2; i >= 0; i--) {
+        s->b[0][i] = 0;
+    }
+    for (int i = 2; i >= 0; i--) {
+        r1[i] = 0;
+    }
+    for (int i = 2; i >= 0; i--) {
+        r2[i] = 0;
+    }
+    for (int i = 2; i >= 0; i--) {
+        r3[i] = 0;
+    }
+    for (int i = 2; i >= 0; i--) {
+        r4[i] = 0;
+    }
+    s->fA8 = 0;
+    s->fAC = 0;
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
+    s->charID = cBENewPlayerInterface_getPlayerCharID(iface, s->player);
+    for (int i = 0; i < 3; i++) {
+        if (cBENewPlayerInterface_isPeakLocked(iface, s->player, s->charID, i) == 0) {
+            s->fB4 = i;
+        }
+    }
+    void* iface3 = cBE_getInterface_Fv(cBE_getBE(), 3);
+    s->fB8 = func_00148950(iface3, cBELibrary_getRiderIndex(s->player));
+    void* iface13 = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+    char* item = func_00156B28(iface13, s->fB4, s->charID);
+    s->fBC = -1;
+    s->fC4 = -1;
+    s->fC0 = item;
+    s->fAC = func_00398380((char*)ui + 0x58, GetHashValue32(D_00467208));
+    s->fA8 = func_00398380((char*)ui + 0x58, GetHashValue32(D_00467218));
+    func_001D3160(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D28F8);
