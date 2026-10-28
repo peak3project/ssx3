@@ -13220,7 +13220,96 @@ int func_003CF7B0(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CF7D0);
+#ifdef SKIP_ASM
+struct S3CF7D0 { char p0[8]; int *obj; char p1[0xE]; unsigned char f1A; char p2[1]; float *f1C; int f20; int f24; int f28; int f2C; float f30[4]; };
+int func_003CF7D0_C(struct S3CF7D0 *self, int n, float *a2, float *a3) __asm__("func_003CF7D0");
+int func_003CF7D0_C(struct S3CF7D0 *self, int n, float *a2, float *a3) {
+    float *src;
+    float *dst;
+    int rem;
+    int chunk;
+    if (self->obj) {
+        chunk = ((int (*)(int *, int, float *, float *, int))*self->obj)(self->obj, n, a3, a2, self->f1A);
+        if (chunk <= 0) return chunk;
+    }
+    src = a2;
+    dst = a3;
+    rem = n;
+    src = a2;
+    dst = a3;
+    rem = n;
+    if (rem > 0) {
+        int size = self->f28;
+        do {
+            int pos;
+            if (!(self->f24 < size)) self->f24 = 0;
+            pos = self->f24;
+            chunk = self->f28 - pos;
+            if (rem < chunk) chunk = rem;
+            // PORT: PS2-only VU0 hand-written loop (blend two 4x4 float blocks with a 2-term factor); one inline asm block.
+            __asm__ volatile(
+                ".set push\n\t"
+                ".set noreorder\n\t"
+                ".set noat\n\t"
+                "move $6, %0\n\t"
+                "move $4, %1\n\t"
+                "move $5, %2\n\t"
+                "sll $6, $6, 2\n\t"
+                "move $7, %3\n\t"
+                "move $8, %4\n\t"
+                "add $6, $6, $7\n\t"
+                "lqc2 $vf1, 0x0($4)\n"
+                "1:\n\t"
+                "lqc2 $vf4, 0x0($5)\n\t"
+                "lqc2 $vf5, 0x10($5)\n\t"
+                "lqc2 $vf6, 0x20($5)\n\t"
+                "lqc2 $vf7, 0x30($5)\n\t"
+                "lqc2 $vf8, 0x0($7)\n\t"
+                "lqc2 $vf9, 0x10($7)\n\t"
+                "lqc2 $vf10, 0x20($7)\n\t"
+                "lqc2 $vf11, 0x30($7)\n\t"
+                "vmulx.xyzw $vf12, $vf4, $vf1x\n\t"
+                "vmulx.xyzw $vf13, $vf5, $vf1x\n\t"
+                "vmulx.xyzw $vf14, $vf6, $vf1x\n\t"
+                "vmulx.xyzw $vf15, $vf7, $vf1x\n\t"
+                "vadd.xyzw $vf12, $vf12, $vf8\n\t"
+                "vadd.xyzw $vf13, $vf13, $vf9\n\t"
+                "vadd.xyzw $vf14, $vf14, $vf10\n\t"
+                "vadd.xyzw $vf15, $vf15, $vf11\n\t"
+                "vmuly.xyzw $vf8, $vf12, $vf1y\n\t"
+                "vmuly.xyzw $vf9, $vf13, $vf1y\n\t"
+                "vmuly.xyzw $vf10, $vf14, $vf1y\n\t"
+                "vmuly.xyzw $vf11, $vf15, $vf1y\n\t"
+                "vadd.xyzw $vf8, $vf8, $vf4\n\t"
+                "vadd.xyzw $vf9, $vf9, $vf5\n\t"
+                "vadd.xyzw $vf10, $vf10, $vf6\n\t"
+                "vadd.xyzw $vf11, $vf11, $vf7\n\t"
+                "addi $7, $7, 0x40\n\t"
+                "addi $8, $8, 0x40\n\t"
+                "sqc2 $vf12, 0x0($5)\n\t"
+                "sqc2 $vf13, 0x10($5)\n\t"
+                "sqc2 $vf14, 0x20($5)\n\t"
+                "sqc2 $vf15, 0x30($5)\n\t"
+                "sqc2 $vf8, -0x40($8)\n\t"
+                "sqc2 $vf9, -0x30($8)\n\t"
+                "sqc2 $vf10, -0x20($8)\n\t"
+                "sqc2 $vf11, -0x10($8)\n\t"
+                "bne $6, $7, 1b\n\t"
+                "addi $5, $5, 0x40\n\t"
+                ".set pop\n"
+                : : "r"(chunk), "r"(self->f30), "r"(self->f1C + pos), "r"(src), "r"(dst)
+                : "$4", "$5", "$6", "$7", "$8", "memory");
+            self->f24 = pos + chunk;
+            rem -= chunk;
+            src += chunk;
+            dst += chunk;
+        } while (rem > 0);
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CF958);
