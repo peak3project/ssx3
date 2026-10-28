@@ -543,7 +543,25 @@ int func_00424CE8(unsigned a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424D68);
+#ifdef SKIP_ASM
+extern int func_00423D20(void);
+int func_00424D68_r(int a0) __asm__("func_00424D68");
+int func_00424D68_r(int a0) {
+    int id;
+    unsigned i;
+    SYSCALL_RET_4C50(-0x2F, id);
+    if (id != a0) return func_00423D20();
+    if ((unsigned)id >= 0x100 || D_00455170 == 0) return -1;
+    i = G_52B3A8.idx & 0x1FF;
+    G_52B3A8.idx = i + 1;
+    G_52B3A8.e[i].a = 2;
+    G_52B3A8.e[i].b = id;
+    func_00423DD0(D_0052B3A0);
+    return id;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424E00);
