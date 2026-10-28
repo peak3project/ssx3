@@ -4103,7 +4103,251 @@ extern "C" void func_001278E8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00127998);
+#ifdef SKIP_ASM
+extern "C" void* func_003E6448(void* dst, int c, int n);
+int func_0011FEE8(void* self);
+int func_00320C48(void*, int);
+extern "C" float func_00320BF0(void* pad, int axis);
+extern "C" int func_001276F0(char* self);
+extern "C" int func_00127848(void* self);
+extern "C" void func_0026D178(void* replay, void* data);
+
+// The 8-byte packed pad record: the layout after the first flag depends on the rider mode.
+union sPadRec_127998 {
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned f15 : 1;
+        unsigned f16 : 1;
+        unsigned f17 : 1;
+        unsigned f18 : 1;
+        unsigned f19 : 1;
+        unsigned a20 : 6;
+        unsigned a26 : 6;
+        unsigned b0 : 6;
+        unsigned b6 : 6;
+    } m0;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned f15 : 1;
+        unsigned f16 : 1;
+        unsigned f17 : 1;
+        unsigned a18 : 6;
+        unsigned a24 : 6;
+        unsigned pad30 : 2;
+        unsigned b0 : 6;
+        unsigned b6 : 6;
+    } m1;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned a15 : 6;
+        unsigned a21 : 6;
+        unsigned pad27 : 5;
+        unsigned b0 : 6;
+        unsigned b6 : 6;
+    } m2;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned a15 : 6;
+        unsigned a21 : 6;
+    } m3;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned f15 : 1;
+        unsigned c16 : 8;
+        unsigned a24 : 6;
+        unsigned pad30 : 2;
+        unsigned b0 : 6;
+    } m4;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned f15 : 1;
+        unsigned c16 : 8;
+        unsigned a24 : 6;
+        unsigned pad30 : 2;
+        unsigned b0 : 6;
+        unsigned b6 : 6;
+        unsigned b12 : 6;
+        unsigned b18 : 2;
+    } m5;
+    struct {
+        unsigned pad0 : 12;
+        unsigned a12 : 6;
+    } m6;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned f15 : 1;
+        unsigned f16 : 1;
+        unsigned c17 : 8;
+        unsigned a25 : 6;
+        unsigned pad31 : 1;
+        unsigned b0 : 6;
+        unsigned b6 : 6;
+    } m7;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+    } m8;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned a14 : 6;
+    } m11;
+    struct {
+        unsigned pad0 : 12;
+        unsigned f12 : 1;
+        unsigned f13 : 1;
+        unsigned f14 : 1;
+        unsigned c15 : 8;
+        unsigned a23 : 6;
+    } m12;
+};
+
+extern "C" void func_00127998_impl(char* self, sPadRec_127998* out) __asm__("func_00127998");
+extern "C" void func_00127998_impl(char* self, sPadRec_127998* out)
+{
+    func_003E6448(out, 0, 8);
+    switch (func_0011FEE8(*(void**)(self + 0x18)))
+    {
+    case 0:
+        out->m0.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m0.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x19);
+        out->m0.f14 = func_00320C48(*(void**)(self + 0xDF0), 0x11);
+        out->m0.f15 = func_00320C48(*(void**)(self + 0xDF0), 0x12);
+        out->m0.f16 = func_00320C48(*(void**)(self + 0xDF0), 0x13);
+        out->m0.f17 = func_00320C48(*(void**)(self + 0xDF0), 0x14);
+        out->m0.f18 = func_00320C48(*(void**)(self + 0xDF0), 5);
+        out->m0.f19 = func_00320C48(*(void**)(self + 0xDF0), 6);
+        out->m0.a20 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0) * 31.0f);
+        out->m0.a26 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 1) * 31.0f);
+        out->m0.b0 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 2) * 31.0f);
+        out->m0.b6 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 3) * 31.0f);
+        break;
+    case 11:
+        out->m11.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m11.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x19);
+        out->m11.a14 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0x18) * 31.0f);
+        break;
+    case 1:
+        out->m1.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m1.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x13);
+        out->m1.f14 = func_00320C48(*(void**)(self + 0xDF0), 0x14);
+        out->m1.f16 = func_00320C48(*(void**)(self + 0xDF0), 0x11);
+        out->m1.f15 = func_00320C48(*(void**)(self + 0xDF0), 0x12);
+        out->m1.f17 = func_00320C48(*(void**)(self + 0xDF0), 0x16);
+        out->m1.a24 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0x17) * 31.0f);
+        out->m1.a18 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0) * 31.0f);
+        out->m1.b0 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 3) * 31.0f);
+        out->m1.b6 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 4) * 31.0f);
+        break;
+    case 6:
+        out->m6.a12 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0x1A) * 31.0f);
+        break;
+    case 7:
+        out->m7.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m7.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x11);
+        out->m7.f14 = func_00320C48(*(void**)(self + 0xDF0), 0x12);
+        out->m7.f15 = func_00320C48(*(void**)(self + 0xDF0), 0x13);
+        out->m7.f16 = func_00320C48(*(void**)(self + 0xDF0), 0x14);
+        out->m7.c17 = func_00127848(self);
+        out->m7.a25 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0x17) * 31.0f);
+        out->m7.b0 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0xD) * 31.0f);
+        out->m7.b6 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 3) * 31.0f);
+        break;
+    case 12:
+        out->m12.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m12.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x13);
+        out->m12.f14 = func_00320C48(*(void**)(self + 0xDF0), 0x14);
+        out->m12.c15 = func_00127848(self);
+        out->m12.a23 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0x17) * 31.0f);
+        break;
+    case 2:
+        out->m2.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m2.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x12);
+        out->m2.f14 = func_00320C48(*(void**)(self + 0xDF0), 0x14);
+        out->m2.a15 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 8) * 31.0f);
+        out->m2.a21 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 9) * 31.0f);
+        out->m2.b0 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 7) * 31.0f);
+        out->m2.b6 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0x17) * 31.0f);
+        break;
+    case 3:
+        out->m3.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m3.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x13);
+        out->m3.f14 = func_00320C48(*(void**)(self + 0xDF0), 0x14);
+        out->m3.a15 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0) * 31.0f);
+        out->m3.a21 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0x17) * 31.0f);
+        break;
+    case 4:
+        out->m4.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m4.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x19);
+        out->m4.f14 = func_00320C48(*(void**)(self + 0xDF0), 5);
+        out->m4.f15 = func_00320C48(*(void**)(self + 0xDF0), 6);
+        out->m4.c16 = func_001276F0(self);
+        out->m4.a24 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0) * 31.0f);
+        out->m4.b0 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 1) * 31.0f);
+        break;
+    case 5:
+    {
+        out->m5.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m5.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x19);
+        out->m5.f14 = func_00320C48(*(void**)(self + 0xDF0), 0x15);
+        out->m5.f15 = func_00320C48(*(void**)(self + 0xDF0), 0xC);
+        out->m5.c16 = func_001276F0(self);
+        out->m5.a24 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0xE) * 31.0f);
+        out->m5.b0 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0xF) * 31.0f);
+        out->m5.b12 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0xB) * 31.0f);
+        out->m5.b6 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 10) * 31.0f);
+        float v = func_00320BF0(*(void**)(self + 0xDF0), 3);
+        int d = -1;
+        if (-0.5f <= v)
+        {
+            d = 1;
+            if (!(0.5f < v))
+                d = 0;
+        }
+        out->m5.b18 = d;
+        break;
+    }
+    case 8:
+        out->m8.f12 = func_00320C48(*(void**)(self + 0xDF0), 0x2E);
+        out->m8.f13 = func_00320C48(*(void**)(self + 0xDF0), 0x10);
+        break;
+    case 10:
+        out->m6.a12 = (int)(func_00320BF0(*(void**)(self + 0xDF0), 0) * 31.0f);
+        break;
+    case 9:
+    case 13:
+    default:
+        break;
+    }
+    if (*(void**)(self + 0xDF8) != 0)
+        func_0026D178(*(void**)(self + 0xDF8), out);
+}
+#endif
 
 extern "C" void* func_00111AC0(void* self);
 
