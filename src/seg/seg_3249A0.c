@@ -634,7 +634,11 @@ INCLUDE_ASM("seg/seg_3249A0", func_00424020);
 SYSCALL_STUB(func_00424020, 0x64)
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_3249A0", func_00424030);
+#ifdef SKIP_ASM
+SYSCALL_STUB(func_00424030, 0x66)
+#endif
 
 INCLUDE_ASM("seg/seg_3249A0", func_00424040);
 
