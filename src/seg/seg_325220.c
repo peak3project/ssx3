@@ -4460,7 +4460,11 @@ int func_0042CB78(int *a0, int *a1, unsigned int a2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042CBB0);
+#ifdef SKIP_ASM
+SYSCALL_STUB(func_0042CBB0, 0x5B)
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042CBC0);
 
