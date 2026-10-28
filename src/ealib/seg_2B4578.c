@@ -10755,7 +10755,65 @@ void func_003CA610(void *arg0, void *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CA6A8);
+#ifdef SKIP_ASM
+struct S3CA6A8 { char p0[8]; int *obj; char p1[0xE]; unsigned char f1A; };
+int func_003CA6A8_C(struct S3CA6A8 *self, int n, float *src, short *dst) __asm__("func_003CA6A8");
+int func_003CA6A8_C(struct S3CA6A8 *self, int n, float *src, short *dst) {
+    if (self->obj) {
+        int r = ((int (*)(int *, int, short *, float *, int))*self->obj)(self->obj, n, dst, src, self->f1A);
+        if (r <= 0) return r;
+    }
+    // PORT: PS2-only VU0 hand-written loop (clamp floats to the 16-bit range and pack); one inline asm block.
+    __asm__ volatile(
+        ".set push\n\t"
+        ".set noreorder\n\t"
+        ".set noat\n\t"
+        "move $4, %0\n\t"
+        "move $5, %1\n\t"
+        "move $6, %2\n\t"
+        "addiu $8, $0, -0x8000\n\t"
+        "addiu $9, $0, 0x7FFF\n\t"
+        "qmtc2.ni $8, $vf1\n\t"
+        "qmtc2.ni $9, $vf2\n\t"
+        "vitof0.xyzw $vf1, $vf1\n\t"
+        "vitof0.xyzw $vf2, $vf2\n"
+        "1:\n\t"
+        "lqc2 $vf3, 0x0($5)\n\t"
+        "lqc2 $vf4, 0x10($5)\n\t"
+        "lqc2 $vf5, 0x20($5)\n\t"
+        "lqc2 $vf6, 0x30($5)\n\t"
+        "vmaxx.xyzw $vf3, $vf3, $vf1x\n\t"
+        "vmaxx.xyzw $vf4, $vf4, $vf1x\n\t"
+        "vmaxx.xyzw $vf5, $vf5, $vf1x\n\t"
+        "vmaxx.xyzw $vf6, $vf6, $vf1x\n\t"
+        "vminix.xyzw $vf3, $vf3, $vf2x\n\t"
+        "vminix.xyzw $vf4, $vf4, $vf2x\n\t"
+        "vminix.xyzw $vf5, $vf5, $vf2x\n\t"
+        "vminix.xyzw $vf6, $vf6, $vf2x\n\t"
+        "vftoi0.xyzw $vf3, $vf3\n\t"
+        "vftoi0.xyzw $vf4, $vf4\n\t"
+        "vftoi0.xyzw $vf5, $vf5\n\t"
+        "vftoi0.xyzw $vf6, $vf6\n\t"
+        "addi $4, $4, -0x10\n\t"
+        "addi $5, $5, 0x40\n\t"
+        "qmfc2.ni $7, $vf3\n\t"
+        "qmfc2.ni $8, $vf4\n\t"
+        "qmfc2.ni $9, $vf5\n\t"
+        "qmfc2.ni $10, $vf6\n\t"
+        "ppach $7, $8, $7\n\t"
+        "ppach $9, $10, $9\n\t"
+        "sq $7, 0x0($6)\n\t"
+        "sq $9, 0x10($6)\n\t"
+        "bgtzl $4, 1b\n\t"
+        "addi $6, $6, 0x20\n\t"
+        ".set pop\n"
+        : : "r"(n), "r"(src), "r"(dst)
+        : "$4", "$5", "$6", "$7", "$8", "$9", "$10", "memory");
+    return n;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003CA7A0);
