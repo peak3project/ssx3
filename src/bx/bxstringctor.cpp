@@ -2193,7 +2193,19 @@ extern "C" int func_0026AC88(sBXRangeList* self, float lo, float hi)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_0026AD00);
+#ifdef SKIP_ASM
+struct B_AD00 { char p[0x1C]; float x0; float y0; char q[4]; float x1; float y1; };
+extern "C" int func_0026AD00(B_AD00* self, float* a, float* b)
+{
+    if (b[0] < self->x0) return 0;
+    if (b[1] < self->y0) return 0;
+    if (a[0] > self->x1) return 0;
+    if (a[1] > self->y1) return 0;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026AD70);
