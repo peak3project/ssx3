@@ -4318,6 +4318,8 @@ void func_003BF4C0(char *a, char *b, char *out) {
         ".set reorder\n"
         : : : "memory");
 }
+// the retail object pads this hand-scheduled loop to 16 bytes: two nops after jr/nop
+__asm__("nop\n\tnop");
 #endif
 
 //100%
@@ -4490,6 +4492,8 @@ void func_003BF6B0(char *a, char *b, char *out) {
         ".set reorder\n"
         : : : "memory");
 }
+// the retail object pads this hand-scheduled loop to 16 bytes: two nops after jr/nop
+__asm__("nop\n\tnop");
 #endif
 
 //100%
