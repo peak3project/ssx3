@@ -1,6 +1,57 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
+#ifdef SKIP_ASM
+extern char *D_004A4B98;
+extern void f2220(void *) __asm__("func_003F2220");
+typedef struct { unsigned count; unsigned st[4]; unsigned char buf[64]; } sMd5;
+void func_003F31F8(sMd5 *ctx, unsigned char *out, int n) {
+    unsigned char c = 0x80;
+    unsigned w = 0;
+    int i;
+    i = ctx->count & 0x3F;
+    do {
+        ctx->buf[i] = c;
+        i++;
+        c = 0;
+        if (i == 0x40) {
+            f2220(ctx);
+            i = 0;
+        }
+    } while (i != 0x38);
+    ctx->buf[0x3D] = 0;
+    ctx->buf[0x38] = (unsigned char)ctx->count << 3;
+    ctx->buf[0x3E] = 0;
+    ctx->buf[0x3F] = 0;
+    ctx->buf[0x39] = ctx->count >> 5;
+    ctx->buf[0x3A] = ctx->count >> 13;
+    ctx->buf[0x3B] = ctx->count >> 21;
+    ctx->buf[0x3C] = ctx->count >> 29;
+    f2220(ctx);
+    for (i = 0; i < 16; i++) {
+        if ((i & 3) == 0) w = ctx->st[i >> 2];
+        if (n == 16) {
+            *out = w;
+            out++;
+        } else if (n > 32) {
+            *out = D_004A4B98[(w >> 4) & 0xF];
+            out++;
+            *out = D_004A4B98[w & 0xF];
+            out++;
+        }
+        w >>= 8;
+    }
+    if (n > 32) {
+        *out = 0;
+    } else if (n != 16) {
+        while (n > 0) {
+            *out = 0;
+            out++;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F33B0);
