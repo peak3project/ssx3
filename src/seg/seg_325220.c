@@ -4500,7 +4500,11 @@ void func_0042CBD0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042CC98);
+#ifdef SKIP_ASM
+SYSCALL_STUB(func_0042CC98, 0x55)
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042CCA8);
 
