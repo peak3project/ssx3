@@ -6689,7 +6689,19 @@ void func_003C36C8(int arg0, int flags) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3728);
+#ifdef SKIP_ASM
+extern short D_0044DD78[];
+void func_003C3728(unsigned x, float* out)
+{
+    short* p = D_0044DD78;
+    int i;
+    p = (short*)((char*)p + ((x >> 6) & 0x3FC));
+    for (i = 0; i < 2; i++)
+        out[i] = p[i] / 32767.0f;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3780);
 
