@@ -1,6 +1,75 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
+#ifdef SKIP_ASM
+// Not code: a table read by the loader in seg_2FDDC8 (func_003FD908): the addresses of 59 functions/data objects,
+// an end word and a 0. Written as plain words because splat emits the retail table without relocations, so a
+// pointer initialiser cannot match yet; the comment on each entry names its symbol (for a port, or a later splat fix).
+const unsigned int func_003FD810[] __attribute__((section(".text"), aligned(8))) = {
+    0x00425C28, /* func_00425C28 */
+    0x00425C60, /* func_00425C60 */
+    0x0040B6D0, /* func_0040B6D0 */
+    0x0040B400, /* func_0040B400 */
+    0x0040B5B0, /* func_0040B5B0 */
+    0x00401718, /* func_00401718 */
+    0x00402268, /* func_00402268 */
+    0x00402520, /* func_00402520 */
+    0x00402450, /* func_00402450 */
+    0x00401350, /* func_00401350 */
+    0x00401BF0, /* func_00401BF0 */
+    0x004014F8, /* func_004014F8 */
+    0x00451680, /* D_00451680 */
+    0x00451628, /* D_00451628 */
+    0x004527D0, /* D_004527D0 */
+    0x004011E0, /* func_004011E0 */
+    0x00452800, /* D_00452800 */
+    0x00453180, /* D_00453180 */
+    0x0045162C, /* D_0045162C */
+    0x00423BA0, /* func_00423BA0 */
+    0x00423BC0, /* func_00423BC0 */
+    0x00423BB0, /* func_00423BB0 */
+    0x00423C30, /* func_00423C30 */
+    0x00423CA0, /* func_00423CA0 */
+    0x00423BF0, /* func_00423BF0 */
+    0x00423C90, /* func_00423C90 */
+    0x00423DA0, /* func_00423DA0 */
+    0x00423DE0, /* func_00423DE0 */
+    0x00423DB0, /* func_00423DB0 */
+    0x00423DC0, /* func_00423DC0 */
+    0x00423DF0, /* func_00423DF0 */
+    0x00424020, /* func_00424020 */
+    0x00426D18, /* func_00426D18 */
+    0x00427D60, /* func_00427D60 */
+    0x00427FE8, /* func_00427FE8 */
+    0x004283A0, /* func_004283A0 */
+    0x00428600, /* func_00428600 */
+    0x00428168, /* func_00428168 */
+    0x00424570, /* func_00424570 */
+    0x004245A0, /* func_004245A0 */
+    0x00426B48, /* func_00426B48 */
+    0x00423DD0, /* func_00423DD0 */
+    0x00423B80, /* func_00423B80 */
+    0x00423B20, /* func_00423B20 */
+    0x00423B30, /* func_00423B30 */
+    0x00424880, /* func_00424880 */
+    0x00423AA0, /* func_00423AA0 */
+    0x004240E0, /* func_004240E0 */
+    0x004239A0, /* func_004239A0 */
+    0x00424558, /* func_00424558 */
+    0x00424550, /* func_00424550 */
+    0x00424460, /* func_00424460 */
+    0x00424368, /* func_00424368 */
+    0x00424488, /* func_00424488 */
+    0x00424498, /* func_00424498 */
+    0x004243E8, /* func_004243E8 */
+    0x00423A80, /* func_00423A80 */
+    0x004248E8, /* func_004248E8 */
+    0x00455248, /* D_00455248 */
+    0x03E00008, /* end word */
+    0x00000000, /* terminator */
+};
+#endif
 
 void func_003FD908(void) {
 }
