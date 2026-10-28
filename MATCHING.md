@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `6d13a12f`, generated 2026-10-28.
+Snapshot of commit `b103c444`, generated 2026-10-28.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `6d13a12f`, generated 2026-10-28.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,177 | 93.79% |
+| Matching | 14,178 | 93.79% |
 | Partial | 5 | 0.03% |
-| Not started | 934 | 6.18% |
+| Not started | 933 | 6.17% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -33,8 +33,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ealib/seg_2DCAE8` | 299 | 0 | 30 | 329 |
 | `bx/seg_1BA100` | 297 | 0 | 2 | 299 |
 | `sound/soundsys` | 291 | 0 | 14 | 305 |
+| `seg/seg_2FE810` | 288 | 0 | 78 | 366 |
 | `ui/uivector` | 288 | 0 | 1 | 289 |
-| `seg/seg_2FE810` | 287 | 0 | 79 | 366 |
 | `main/all_in_one_main` | 277 | 0 | 3 | 280 |
 | `camera/camera` | 224 | 0 | 14 | 238 |
 | `ai/control/handplantcontrol` | 219 | 0 | 14 | 233 |
@@ -12202,10 +12202,11 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_2FE810`
 
-287 matching, 0 partial, 79 not started (366 total)
+288 matching, 0 partial, 78 not started (366 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
+| `func_003FD810` | Matching | 100.00% | 244 |
 | `func_003FD908` | Matching | 100.00% | 8 |
 | `func_003FD910` | Matching | 100.00% | 400 |
 | `func_003FDAA0` | Matching | 100.00% | 12 |
