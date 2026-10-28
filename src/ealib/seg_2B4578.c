@@ -4179,7 +4179,39 @@ int func_003BF0F0(int *data, int key, char *buf) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF3E0);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0/MMI hand-written routine; whole body as one asm block (no C equivalent that keeps the register use).
+void func_003BF3E0(char *src, char *dst, unsigned bytes) {
+    __asm__ volatile(
+        ".set noreorder\n"
+        "srl $2, $6, 5\n"
+        "1:\n"
+        "lqc2 $vf1, 0x0($4)\n"
+        "lqc2 $vf2, 0x10($4)\n"
+        "lqc2 $vf3, 0x20($4)\n"
+        "lqc2 $vf4, 0x30($4)\n"
+        "lqc2 $vf5, 0x40($4)\n"
+        "lqc2 $vf6, 0x50($4)\n"
+        "lqc2 $vf7, 0x60($4)\n"
+        "lqc2 $vf8, 0x70($4)\n"
+        "sqc2 $vf1, 0x0($5)\n"
+        "sqc2 $vf2, 0x10($5)\n"
+        "sqc2 $vf3, 0x20($5)\n"
+        "sqc2 $vf4, 0x30($5)\n"
+        "sqc2 $vf5, 0x40($5)\n"
+        "sqc2 $vf6, 0x50($5)\n"
+        "addiu $2, $2, -0x1\n"
+        "sqc2 $vf7, 0x60($5)\n"
+        "addiu $4, $4, 0x80\n"
+        "sqc2 $vf8, 0x70($5)\n"
+        "bnez $2, 1b\n"
+        "addiu $5, $5, 0x80\n"
+        ".set reorder\n"
+        : : : "memory");
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF440);
 
