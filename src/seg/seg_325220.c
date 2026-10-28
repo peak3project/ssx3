@@ -11,6 +11,8 @@
 // PORT: PS2-only COP0 (enable / disable interrupts).
 #define EI_4248() __asm__ volatile("ei")
 #define DI_4248() __asm__ volatile("di")
+// PORT: PS2-only memory barrier.
+#define SYNC_4248() __asm__ volatile("sync")
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424220);
@@ -221,7 +223,22 @@ int func_00424870(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424880);
+#ifdef SKIP_ASM
+extern void func_0042C078(void);
+extern int func_00423AF0(int);
+int func_00424880(int a) {
+    int s, r;
+    MFC0_STATUS_4248(s);
+    s &= 0x10000;
+    if (s) func_0042C078();
+    r = func_00423AF0(a);
+    SYNC_4248();
+    if (s) func_0042C0C0();
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_004248E8);
 
