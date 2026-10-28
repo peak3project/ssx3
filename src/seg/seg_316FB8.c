@@ -1,5 +1,11 @@
 #include "common.h"
 
+// PORT: PS2 kernel syscall stub: the syscall number goes in $3. Defined under a second C name with an
+// asm label because this file declares these symbols with their argument lists elsewhere.
+#define SYSCALL_STUB(name, n) \
+    void name##_syscall(void) __asm__(#name); \
+    void name##_syscall(void) { register int v __asm__("$3") = (n); __asm__ volatile("syscall" : : "r"(v)); }
+
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_00415FB8);
 #ifdef SKIP_ASM
@@ -2855,4 +2861,8 @@ INCLUDE_ASM("seg/seg_316FB8", func_00422780);
 
 INCLUDE_ASM("seg/seg_316FB8", func_00423980);
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_00423990);
+#ifdef SKIP_ASM
+SYSCALL_STUB(func_00423990, 0x1)
+#endif
