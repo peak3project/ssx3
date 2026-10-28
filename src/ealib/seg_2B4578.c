@@ -1,5 +1,11 @@
 #include "common.h"
 
+// PORT: PS2-only COP0 (disable / enable interrupts, pipeline sync, read the Status register).
+#define DI_2B45() __asm__ volatile("di")
+#define EI_2B45() __asm__ volatile("ei")
+#define SYNCP_2B45() __asm__ volatile("sync.p")
+#define MFC0_STATUS_2B45(v) __asm__ volatile("mfc0 %0, $12" : "=r"(v))
+
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
 
 //100%
@@ -6913,7 +6919,28 @@ void func_003C4450(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C45E8);
+#ifdef SKIP_ASM
+extern volatile unsigned char D_0050AD00_45E8[] __asm__("D_0050AD00");
+extern void func_003C4450_45E8(int) __asm__("func_003C4450");
+void func_003C45E8(int arg0) {
+    int s;
+    if (arg0 == 0) {
+        do {
+            DI_2B45();
+            SYNCP_2B45();
+            MFC0_STATUS_2B45(s);
+        } while (s & 0x10000);
+    }
+    if (D_0050AD00_45E8[0xCC2] == 0 && (D_0050AD00_45E8[0xCC0] << 24) > 0) {
+        func_003C4450_45E8(arg0);
+    }
+    if (arg0 == 0) {
+        EI_2B45();
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4668);
 
