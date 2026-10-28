@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `ab9afda5`, generated 2026-10-28.
+Snapshot of commit `ac54b95b`, generated 2026-10-28.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `ab9afda5`, generated 2026-10-28.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,137 | 93.52% |
+| Matching | 14,139 | 93.54% |
 | Partial | 5 | 0.03% |
-| Not started | 974 | 6.44% |
+| Not started | 972 | 6.43% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -25,7 +25,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | File | Matching | Partial | Not started | Total |
 |---|---|---|---|---|
 | `fe/feasyncfile` | 524 | 0 | 12 | 536 |
-| `ealib/seg_2B4578` | 491 | 1 | 113 | 605 |
+| `ealib/seg_2B4578` | 493 | 1 | 111 | 605 |
 | `render/font` | 432 | 0 | 1 | 433 |
 | `fe/fepopupmisc` | 375 | 1 | 5 | 381 |
 | `object/railmodifier` | 354 | 0 | 15 | 369 |
@@ -3597,7 +3597,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ealib/seg_2B4578`
 
-491 matching, 1 partial, 113 not started (605 total)
+493 matching, 1 partial, 111 not started (605 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -3918,6 +3918,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003C9BC8` | Matching | 100.00% | 64 |
 | `func_003C9C08` | Matching | 100.00% | 288 |
 | `func_003C9D28` | Matching | 100.00% | 116 |
+| `func_003C9DA0` | Matching | 100.00% | 172 |
 | `func_003C9F58` | Matching | 100.00% | 160 |
 | `func_003C9FF8` | Matching | 100.00% | 8 |
 | `func_003CA000` | Matching | 100.00% | 40 |
@@ -3940,6 +3941,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003CBC00` | Matching | 100.00% | 12 |
 | `func_003CBC10` | Matching | 100.00% | 12 |
 | `func_003CBC20` | Matching | 100.00% | 56 |
+| `func_003CC878` | Matching | 100.00% | 156 |
 | `func_003CC918` | Matching | 100.00% | 12 |
 | `func_003CC928` | Matching | 100.00% | 12 |
 | `func_003CC938` | Matching | 100.00% | 204 |
