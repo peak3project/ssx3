@@ -404,7 +404,30 @@ int func_003FE708(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE758);
+#ifdef SKIP_ASM
+// VU0 status flag set/clear: bit 2 of the VU0 status register ($vi28).
+// PORT: PS2-only VU0 control-register access.
+static inline unsigned int vu0_cfc2_758(void)
+{
+    unsigned int v;
+    __asm__ volatile(".set noreorder\n\tcfc2.ni %0, $vi28\n\t.set reorder" : "=r"(v));
+    return v;
+}
+static inline void vu0_ctc2_758(unsigned int v)
+{
+    __asm__ volatile(".set noreorder\n\tctc2.ni %0, $vi28\n\t.set reorder" : : "r"(v));
+}
+void func_003FE758(int a) {
+    unsigned int s = vu0_cfc2_758();
+    if (a == 1)
+        s |= 0x4;
+    else
+        s &= ~0x4;
+    vu0_ctc2_758(s);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FE788);
 
