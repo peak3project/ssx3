@@ -274,7 +274,22 @@ int func_00424950(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004249B8);
+#ifdef SKIP_ASM
+extern void func_0042C078(void);
+extern int func_00423B00(int);
+int func_004249B8(int a) {
+    int s, r;
+    MFC0_STATUS_4248(s);
+    s &= 0x10000;
+    if (s) func_0042C078();
+    r = func_00423B00(a);
+    SYNC_4248();
+    if (s) func_0042C0C0();
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424A20);
