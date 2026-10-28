@@ -4226,7 +4226,11 @@ void func_0042C710(int a0, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C760);
+#ifdef SKIP_ASM
+SYSCALL_STUB(func_0042C760, 0x74)
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_0042C770);
 
