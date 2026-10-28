@@ -628,7 +628,36 @@ int func_003F4EA0(unsigned a, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4F40);
+#ifdef SKIP_ASM
+extern char D_0051F0C0[];
+extern struct { unsigned char b; char pad[11]; int w; } D_00451340;
+extern void func_00424020(int);
+extern void func_004261B0(int, void *, int, int, int, int);
+int func_003F4F40(void) {
+    int r;
+    unsigned start;
+    unsigned c;
+    char *flag = D_0051F0C0;
+    unsigned limit = 0x2FAF080;
+    *flag = 0;
+    D_00451340.w = (int)flag + 1;
+    func_00424020(0);
+    func_004261B0(1, &D_00451340, D_00451340.b, 0, 0, 0);
+    r = 1;
+    MFC0_COUNT_2F41(start);
+    while (*flag == 0) {
+        MFC0_COUNT_2F41(c);
+        if (c - start > limit) {
+            r = 0;
+            break;
+        }
+        func_00424020(0);
+    }
+    return r;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5000);
 
