@@ -2,6 +2,10 @@
 
 // PORT: PS2-only COP0 (read the Count register).
 #define MFC0_COUNT_2F41(v) __asm__ volatile("mfc0 %0, $9" : "=r"(v))
+#define MFC0_COUNT_STMT_2F41(v) do { __asm__ volatile("mfc0 %0, $9" : "=r"(v)); } while (0)
+// PORT: PS2-only COP0 (enable interrupts) and memory barrier.
+#define EI_2F41() __asm__ volatile("ei")
+#define SYNC_2F41() __asm__ volatile("sync")
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
@@ -505,7 +509,23 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F43D0);
 int func_003F43D0(int a, ...) { return 1; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4410);
+#ifdef SKIP_ASM
+struct T_4410 { char pad[0x4DF8]; volatile unsigned last; int pad2; volatile unsigned long total; };
+int func_003F4410(int a0, struct T_4410 *d) {
+    unsigned c;
+    unsigned last = d->last;
+    unsigned long total;
+    MFC0_COUNT_STMT_2F41(c);
+    total = d->total;
+    d->total = total + (unsigned)(c - last);
+    d->last = c;
+    SYNC_2F41();
+    EI_2F41();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4448);
