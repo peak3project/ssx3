@@ -3450,7 +3450,20 @@ void func_003BC000(float *out, int arg1, int arg2, int arg3) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC0B0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC4C0);
+#ifdef SKIP_ASM
+extern char D_0050A8E8_4C0[] __asm__("D_0050A8E8");
+extern unsigned char* D_0050AC38[];
+void func_003BC4C0(int a, float* out)
+{
+    int idx = (a & 0xFFFF) >> 8;
+    int i;
+    for (i = 0; i < (unsigned char)D_0050A8E8_4C0[0x47]; i++) {
+        out[i] = (float)D_0050AC38[i][idx] / 255.0f;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC530);
