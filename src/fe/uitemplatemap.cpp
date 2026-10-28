@@ -513,7 +513,167 @@ extern "C" void cUITemplate_MAP_onUpdate(void* vself)
 
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupLayout);
 
+//100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupMenuFocus);
+#ifdef SKIP_ASM
+struct cUIText;
+int GetHashValue32(char* str);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" void cUITemplate_MAP_setShowInfo(void* self, int show);
+extern "C" void cUITemplate_MAP_setupPeakInfo(void* self);
+extern "C" void cUITemplate_MAP_setupPeakGoals(void* self);
+extern char D_00470600[];
+extern char D_00470918[];
+extern char D_00470928[];
+extern char D_00470938[];
+extern char D_00470948[];
+extern char D_00470960[];
+extern char D_00470978[];
+extern char D_00470990[];
+extern char D_004709A8[];
+extern char D_004709C0[];
+extern char D_004709D8[];
+extern char D_004709F0[];
+extern char D_00470A08[];
+extern char D_00470A20[];
+extern char D_00470518[];
+extern char D_004706C8[];
+extern char D_004707C0[];
+extern char D_00470A30[];
+extern char D_00470A48[];
+extern char D_004A2610[];
+extern int D_004A259C;
+extern int D_004A25A0;
+extern int D_004A25A4;
+extern unsigned int D_004A2594;
+
+class cUIObj_MFocusB {
+public:
+    int pad[2];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07(int on);
+    virtual void v08(int on);
+    virtual void v09(int on);
+};
+class cUIObj_MFocus : public cUIObj_MFocusB {
+public:
+    int f0C;
+    int f10;
+    unsigned flags;
+};
+
+static inline cUIObj_MFocus* hideObj(char* self, char* name)
+{
+    cUIObj_MFocus* o = (cUIObj_MFocus*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(name));
+    if (o != 0) {
+        o->v07(0);
+        o->v09(0);
+    }
+    return o;
+}
+
+static inline void showObj(cUIObj_MFocus* o)
+{
+    o->flags |= 1;
+    o->v09(1);
+    o->v07(1);
+}
+
+extern "C" void cUITemplate_MAP_setupMenuFocus(void* self_, int mode)
+{
+    char* self = (char*)self_;
+    cUITemplate_MAP_setShowInfo(self, 0);
+    D_004A259C = mode;
+    cUIObj_MFocus* o0 = hideObj(self, D_00470600);
+    cUIObj_MFocus* o1 = hideObj(self, D_00470918);
+    cUIObj_MFocus* o2 = hideObj(self, D_00470928);
+    cUIObj_MFocus* o3 = hideObj(self, D_00470938);
+    cUIObj_MFocus* o4 = hideObj(self, D_00470948);
+    cUIObj_MFocus* o5 = hideObj(self, D_00470960);
+    cUIObj_MFocus* o6 = hideObj(self, D_00470978);
+    cUIObj_MFocus* o7 = hideObj(self, D_00470990);
+    cUIObj_MFocus* o8 = hideObj(self, D_004709A8);
+    cUIObj_MFocus* o9 = hideObj(self, D_004709C0);
+    cUIObj_MFocus* o10 = hideObj(self, D_004709D8);
+    cUIObj_MFocus* o11 = hideObj(self, D_004709F0);
+    cUIObj_MFocus* o12 = hideObj(self, D_00470A08);
+    cUIObj_MFocus* o13 = hideObj(self, D_00470A20);
+    if (*(int*)(self + 0x2CC) != 0) {
+        cUIState_hideObjSafe(*(void**)(self + 0x2EC), D_004A2610);
+        o13->v07(1);
+        o13->v09(1);
+        if (*(int*)(self + 0x2D0) == 0) {
+            cUIObj_MFocus* o = (cUIObj_MFocus*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_004706C8));
+            o->v09(1);
+            o->v08(0);
+        } else {
+            cUIObj_MFocus* o = (cUIObj_MFocus*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_004706C8));
+            o->v09(0);
+            o->v08(1);
+        }
+        return;
+    }
+    switch (D_004A259C) {
+    case 0:
+        cUITemplate_MAP_setupPeakInfo(self);
+        if (o0 != 0) {
+            o0->flags |= 1;
+            o0->v07(1);
+            o0->v09(1);
+        }
+        if (D_004A2594 < 2) {
+            cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00470518));
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_004707C0));
+        }
+        break;
+    case 1:
+        cUITemplate_MAP_setupPeakGoals(self);
+        if (D_004A25A4 == 0 && o1 != 0) {
+            showObj(o1);
+        } else if (D_004A25A4 == 1 && o2 != 0) {
+            showObj(o2);
+        } else if (o3 != 0) {
+            showObj(o3);
+        }
+        if (D_004A2594 < 2) {
+            cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00470518));
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_00470A30));
+        }
+        break;
+    case 2: {
+        cUIObj_MFocus* sel = 0;
+        if (D_004A25A4 == 0) {
+            if (D_004A25A0 == 0) sel = o4;
+            else if (D_004A25A0 == 1) sel = o5;
+            else if (D_004A25A0 == 2) sel = o6;
+        } else if (D_004A25A4 == 1) {
+            if (D_004A25A0 == 0) sel = o7;
+            else if (D_004A25A0 == 1) sel = o8;
+            else if (D_004A25A0 == 2) sel = o9;
+        } else if (D_004A25A4 == 2) {
+            if (D_004A25A0 == 0) sel = o10;
+            else if (D_004A25A0 == 1) sel = o11;
+            else if (D_004A25A0 == 2) sel = o12;
+        }
+        if (sel != 0) {
+            showObj(sel);
+        }
+        if (D_004A2594 < 2) {
+            cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00470518));
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_00470A48));
+        }
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupMapPic);
