@@ -982,7 +982,139 @@ void func_002917D0_17D0(void* vself, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00291C88);
+#ifdef SKIP_ASM
+extern sSndKey8_17D0 D_004A3690_17D0[] __asm__("D_004A3690");
+extern sSndKey8_17D0 D_004A3698_17D0[] __asm__("D_004A3698");
+
+void func_00291C88_impl(void* vself, void* obj, int n) __asm__("func_00291C88");
+void func_00291C88_impl(void* vself, void* obj, int n)
+{
+    sSnd17D0Sys* self = (sSnd17D0Sys*)vself;
+    bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
+    if (ok) {
+        int flag = 0;
+        cBE_getInterface_Fv(cBE_getBE(), 0);
+        if (D_00535C11[0] == 2) {
+            flag = func_00288AE0(self) == 0;
+        }
+        int a = func_002917B8(self, n);
+        int v = n * 8 + 4;
+        sSnd17D0Mgr* m = self->mgr;
+        sSnd17D0Sub* s = &m->sub;
+        m->sub.cur++;
+        s->ch[m->sub.cur] = m->sub.def;
+        m->sub.tgt[m->sub.cur] = 0;
+        s->p34[m->sub.cur] = 0;
+        s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+        s->p3C[m->sub.cur] = 0;
+        func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+        s->p60[m->sub.cur] = 0;
+        s->p64[m->sub.cur] = 0;
+        s->p68[m->sub.cur] = 0;
+        s->p6C[m->sub.cur] = 0;
+        s->p70[m->sub.cur].f4 = 0;
+        s->p70[m->sub.cur].f0 = 100;
+        s->p70[m->sub.cur].f8 = 90;
+        s->p70[m->sub.cur].fC = 50;
+        s->p74[m->sub.cur] = 0;
+        s->p80[m->sub.cur] = 0;
+        s->p84[m->sub.cur] = 0;
+        s->p78[m->sub.cur] = 0x7F;
+        s->p7C[m->sub.cur] = 1;
+        self->a4[self->mgr->sub.cur] = a;
+        self->a8[self->mgr->sub.cur] = v;
+        sSnd17D0Mgr* m3 = *self->p118;
+        sSnd17D0Sub* s3 = &m3->sub;
+        s3->vals[m3->sub.cur] = 0;
+        s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
+        sSnd17D0Mgr** pp = self->p118;
+        int r = (int)func_00287968(self, 6, 0);
+        (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+        {
+            sSnd17D0Mgr* m2 = *self->p118;
+            m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
+        }
+        {
+            sSnd17D0Mgr* m2 = *self->p118;
+            sSndKey8_17D0 k = D_004A3690_17D0[0];
+            sSnd17D0Sub* s2 = &m2->sub;
+            *(sSndKey8_17D0*)((char*)s2 + (m2->sub.cur << 3) + 0x40) = k;
+        }
+        {
+            sSnd17D0Mgr* m2 = *self->p118;
+            m2->sub.p60[m2->sub.cur] = (int)obj;
+        }
+        {
+            sSnd17D0Mgr** pq = self->p118;
+            int q = func_00288A20(self, obj);
+            (*pq)->sub.p64[(*pq)->sub.cur] = q;
+        }
+        (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
+        func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
+        if (flag) {
+            (*self->p118)->sub.p80[(*self->p118)->sub.cur] = 1;
+            (*self->p118)->sub.p84[(*self->p118)->sub.cur] = *(int*)((char*)obj + 0x870);
+        }
+        func_002906B8(self);
+    } else {
+        int a = func_002917B8(self, n);
+        int v = n * 8 + 6;
+        sSnd17D0Mgr* m = self->mgr;
+        sSnd17D0Sub* s = &m->sub;
+        m->sub.cur++;
+        s->ch[m->sub.cur] = m->sub.def;
+        m->sub.tgt[m->sub.cur] = 0;
+        s->p34[m->sub.cur] = 0;
+        s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+        s->p3C[m->sub.cur] = 0;
+        func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+        s->p60[m->sub.cur] = 0;
+        s->p64[m->sub.cur] = 0;
+        s->p68[m->sub.cur] = 0;
+        s->p6C[m->sub.cur] = 0;
+        s->p70[m->sub.cur].f4 = 0;
+        s->p70[m->sub.cur].f0 = 100;
+        s->p70[m->sub.cur].f8 = 90;
+        s->p70[m->sub.cur].fC = 50;
+        s->p74[m->sub.cur] = 0;
+        s->p80[m->sub.cur] = 0;
+        s->p84[m->sub.cur] = 0;
+        s->p78[m->sub.cur] = 0x7F;
+        s->p7C[m->sub.cur] = 1;
+        self->a4[self->mgr->sub.cur] = a;
+        self->a8[self->mgr->sub.cur] = v;
+        sSnd17D0Mgr* m3 = *self->p118;
+        sSnd17D0Sub* s3 = &m3->sub;
+        s3->vals[m3->sub.cur] = 0;
+        s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
+        sSnd17D0Mgr** pp = self->p118;
+        int r = (int)func_00287968(self, 6, 0);
+        (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+        {
+            sSnd17D0Mgr* m2 = *self->p118;
+            m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
+        }
+        {
+            sSnd17D0Mgr* m2 = *self->p118;
+            sSndKey8_17D0 k = D_004A3698_17D0[0];
+            sSnd17D0Sub* s2 = &m2->sub;
+            *(sSndKey8_17D0*)((char*)s2 + (m2->sub.cur << 3) + 0x40) = k;
+        }
+        {
+            sSnd17D0Mgr* m2 = *self->p118;
+            m2->sub.p7C[m2->sub.cur] = 0;
+        }
+        {
+            sSnd17D0Mgr* m2 = *self->p118;
+            m2->sub.p60[m2->sub.cur] = (int)obj;
+        }
+        func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
+        func_002906B8(self);
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00292508);
