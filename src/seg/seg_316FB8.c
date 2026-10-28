@@ -2859,7 +2859,20 @@ int func_00422560(struct Bigint *b, struct Bigint *S) {
 
 INCLUDE_ASM("seg/seg_316FB8", func_00422780);
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_00423980);
+#ifdef SKIP_ASM
+// PORT: PS2-only kernel syscall 0 stub (gcc writes the zero as move $3,$0, the stub has li $3,0); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+void func_00423980(void) {
+    __asm__ volatile(
+        ".set push\n.set noreorder\n.set noat\n"
+        "addiu $3, $0, 0x0\n"
+        "syscall 0\n"
+        ".set pop\n"
+        : : : "memory");
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_00423990);
