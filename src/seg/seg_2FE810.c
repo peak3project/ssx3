@@ -1348,7 +1348,19 @@ int func_004007A8(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400810);
+#ifdef SKIP_ASM
+// PORT: PS2-only COP0 (enable interrupts) and memory barrier.
+#define SYNC_0810() __asm__ volatile("sync")
+#define EI_0810() __asm__ volatile("ei")
+extern void func_00423DD0(int);
+void func_00400810(int a, int b, int c) {
+    func_00423DD0(c);
+    SYNC_0810();
+    EI_0810();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400838);
