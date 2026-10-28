@@ -962,7 +962,45 @@ extern "C" sMemNode_251718* func_00253100(sMemClass_251718* cls, int size, int b
 }
 #endif
 
+//100%
 INCLUDE_ASM("mem/memstd", func_00253170);
+#ifdef SKIP_ASM
+extern "C" sMemNode_251718* func_00253170(sMemClass_251718* cls, int min, int back)
+{
+    int v = min - 1;
+    if (v < 0) {
+        v = 0;
+    }
+    sMemNode_251718* best = 0;
+    sMemNode_251718* n;
+    if (back == 0) {
+        n = cls->head.next;
+        for (;;) {
+            if (v < n->size - 0x10) {
+                if (n->tag == 0x4253) {
+                    break;
+                }
+                best = n;
+                v = best->size - 0x10;
+            }
+            n = n->next;
+        }
+    } else {
+        n = cls->head.prev;
+        for (;;) {
+            if (v < n->size - 0x10) {
+                if (n->tag == 0x4253) {
+                    break;
+                }
+                best = n;
+                v = best->size - 0x10;
+            }
+            n = n->prev;
+        }
+    }
+    return best;
+}
+#endif
 //100%
 INCLUDE_ASM("mem/memstd", func_00253230);
 #ifdef SKIP_ASM
