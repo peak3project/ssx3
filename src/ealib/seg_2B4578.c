@@ -10467,7 +10467,53 @@ void func_003C9D28(void *arg0, void *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9DA0);
+#ifdef SKIP_ASM
+void func_003C9DA0(int n, short *src, float *dst) {
+    float *d = dst;
+    int r = n & 3;
+    float *end = d + n;
+    short *s = src;
+    if (r != 0) {
+        int c = r;
+        do {
+            *d++ = (float)*s++;
+        } while (--c != 0);
+    }
+    if (n >= 4) {
+        // PORT: PS2-only hand-written inner loop (4 int16 -> float per iteration), one inline asm block.
+        __asm__ volatile(
+            ".set noreorder\n\t"
+            "move $4, %0\n\t"
+            "move $5, %1\n\t"
+            "move $6, %2\n"
+            "1:\n\t"
+            "lh $8, 0x0($4)\n\t"
+            "lh $9, 0x2($4)\n\t"
+            "lh $10, 0x4($4)\n\t"
+            "lh $11, 0x6($4)\n\t"
+            "mtc1 $8, $f0\n\t"
+            "mtc1 $9, $f1\n\t"
+            "mtc1 $10, $f2\n\t"
+            "mtc1 $11, $f3\n\t"
+            "addi $5, $5, 0x10\n\t"
+            "cvt.s.w $f0, $f0\n\t"
+            "cvt.s.w $f1, $f1\n\t"
+            "cvt.s.w $f2, $f2\n\t"
+            "cvt.s.w $f3, $f3\n\t"
+            "swc1 $f0, -0x10($5)\n\t"
+            "swc1 $f1, -0xC($5)\n\t"
+            "swc1 $f2, -0x8($5)\n\t"
+            "swc1 $f3, -0x4($5)\n\t"
+            "bne $5, $6, 1b\n\t"
+            "addi $4, $4, 0x8\n\t"
+            ".set reorder\n"
+            : : "r"(s), "r"(d), "r"(end)
+            : "$4", "$5", "$6", "$8", "$9", "$10", "$11", "$f0", "$f1", "$f2", "$f3", "memory");
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9E50);
 
