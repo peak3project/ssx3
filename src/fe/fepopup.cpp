@@ -1645,7 +1645,69 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001C8A38);
+#ifdef SKIP_ASM
+extern "C" void func_001C9CD0(void* self, int v);
+extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t);
+
+static inline void Place_8A38(char* self, int off, int src)
+{
+    if (*(char**)(self + off) != 0) {
+        *(sVec3_58E8*)(*(char**)(self + off) + 0x50) = sVec3_58E8(1.0f, 1.0f, 1.0f);
+        *(sVec3_7258*)(*(char**)(self + off) + 0x44) = *(sVec3_7258*)(self + src);
+    }
+}
+
+static inline void Move_8A38(char* self, int off, int src)
+{
+    if (*(char**)(self + off) != 0)
+        *(sVec3_7258*)(*(char**)(self + off) + 0x44) = *(sVec3_7258*)(self + src);
+}
+
+extern "C" void func_001C8A38(void* self_)
+{
+    char* self = (char*)self_;
+    Place_8A38(self, 0x48, 0x188);
+    Place_8A38(self, 0x4C, 0x194);
+    Place_8A38(self, 0x50, 0x224);
+    Place_8A38(self, 0x54, 0x230);
+    Place_8A38(self, 0x58, 0x23C);
+    Place_8A38(self, 0x5C, 0x248);
+    Place_8A38(self, 0x60, 0x254);
+    Place_8A38(self, 0x8C, 0x200);
+    Move_8A38(self, 0x6C, 0x1A0);
+    Move_8A38(self, 0x70, 0x1AC);
+    if (*(char**)(self + 0x74) != 0) {
+        *(sVec3_7258*)(*(char**)(self + 0x74) + 0x44) = *(sVec3_7258*)(self + 0x1C4);
+        func_001C8930(self, *(char**)(self + 0x74), 9, 0.0f);
+    }
+    if (*(char**)(self + 0x7C) != 0) {
+        *(sVec3_7258*)(*(char**)(self + 0x7C) + 0x44) = *(sVec3_7258*)(self + 0x1B8);
+        func_001C8930(self, *(char**)(self + 0x74), 9, 0.0f);
+    }
+    if (*(char**)(self + 0x78) != 0) {
+        *(sVec3_7258*)(*(char**)(self + 0x78) + 0x44) = *(sVec3_7258*)(self + 0x1D0);
+        func_001C8930(self, *(char**)(self + 0x74), 9, 0.0f);
+    }
+    Move_8A38(self, 0x80, 0x1DC);
+    Move_8A38(self, 0x88, 0x1E8);
+    for (int i = 0; i < 5; i++) {
+        char* o = *(char**)(self + 0x90 + i * 4);
+        if (o != 0)
+            func_001C8930(self, o, 10, *(float*)(self + 0x29C) * 0.5f);
+    }
+    sVec3_7258 vp = D_004FF0D8;
+    vp.x = 472.0f;
+    func_001C70F0(self, &vp);
+    sVec3_7258 one;
+    one.x = 1.0f;
+    one.y = 1.0f;
+    one.z = 1.0f;
+    *(sVec3_7258*)(self + 0x278) = one;
+    func_001C9CD0(self, -*(int*)(self + 0x314));
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C8EF0);
