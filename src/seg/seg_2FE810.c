@@ -3041,7 +3041,70 @@ void func_00404EA8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00404F60);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written MMI routine (no compiler emits its addi/mtsab/fixed-register code); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function body.
+void func_00404F60(void) {
+    __asm__ volatile(
+        ".set push\n.set noreorder\n.set noat\n"
+        "pnor $25, $0, $0\n"
+        "psrlh $25, $25, 15\n"
+        "lw $5, 0x14($4)\n"
+        "lw $6, 0x18($4)\n"
+        "lw $14, 0x0($4)\n"
+        "lw $13, 0x4($4)\n"
+        "lw $12, 0x10($4)\n"
+        "addiu $11, $0, 0x1\n"
+        "sll $24, $12, 1\n"
+        "mtsab $13, 0x0\n"
+        "1:\n"
+        "lw $7, 0x8($4)\n"
+        "ld $8, 0x0($5)\n"
+        "ld $9, 0x0($6)\n"
+        "pcpyld $8, $9, $8\n"
+        "qfsrv $8, $8, $8\n"
+        "ori $11, $11, 0x8000\n"
+        "beqz $7, 3f\n"
+        "pextlb $15, $0, $8\n"
+        "2:\n"
+        "addu $5, $5, $12\n"
+        "addu $6, $6, $12\n"
+        "ld $8, 0x0($5)\n"
+        "ld $9, 0x0($6)\n"
+        "pcpyld $8, $9, $8\n"
+        "qfsrv $8, $8, $8\n"
+        "pextlb $10, $0, $8\n"
+        "addi $7, $7, -0x1\n"
+        "paddh $9, $10, $15\n"
+        "por $15, $10, $0\n"
+        "paddh $10, $9, $25\n"
+        "psrlh $10, $10, 1\n"
+        "sq $10, 0x0($14)\n"
+        "bgtz $7, 2b\n"
+        "addu $14, $14, $24\n"
+        "3:\n"
+        "psrah $10, $11, 15\n"
+        "addiu $5, $5, 0x140\n"
+        "lw $7, 0xC($4)\n"
+        "addiu $6, $6, 0x140\n"
+        "and $10, $10, $7\n"
+        "bnez $10, 2b\n"
+        "andi $11, $11, 0x7FFF\n"
+        "lw $5, 0x14($4)\n"
+        "lw $6, 0x18($4)\n"
+        "lw $14, 0x0($4)\n"
+        "addiu $5, $5, 0x40\n"
+        "addiu $6, $6, 0x40\n"
+        "addiu $14, $14, 0x80\n"
+        "andi $10, $11, 0x1\n"
+        "bnez $10, 1b\n"
+        "andi $11, $11, 0xFFFE\n"
+        ".set pop\n"
+        : : : "memory");
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00405030);
 
