@@ -13,6 +13,7 @@
 #define DI_4248() __asm__ volatile("di")
 // PORT: PS2-only memory barrier.
 #define SYNC_4248() __asm__ volatile("sync")
+#define SYNCP_4248() __asm__ volatile("sync.p")
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424220);
@@ -101,7 +102,38 @@ int func_00424498(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004244A0);
+#ifdef SKIP_ASM
+extern unsigned D_0045516C;
+extern unsigned func_00423D80(void);
+extern int *func_00415FB8(void);
+unsigned func_004244A0(unsigned n) {
+    int s, st;
+    unsigned end;
+    MFC0_STATUS_4248(s);
+    s &= 0x10000;
+    if (s) {
+        do {
+            DI_4248();
+            SYNCP_4248();
+            MFC0_STATUS_4248(st);
+        } while (st & 0x10000);
+    }
+    end = D_0045516C + n;
+    if (func_00423D80() < end) {
+        *func_00415FB8() = 12;
+        if (s) EI_4248();
+        return 0xFFFFFFFF;
+    }
+    {
+        unsigned old = D_0045516C;
+        D_0045516C = end;
+        if (s) EI_4248();
+        return old;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424550);
