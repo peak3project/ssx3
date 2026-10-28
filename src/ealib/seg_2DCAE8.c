@@ -3790,7 +3790,58 @@ void func_003E22F0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", FILE_loadpackatz);
+#ifdef SKIP_ASM
+extern int FILE_loadsizez(int, int *, int);
+extern int func_003B4818_2190(int) __asm__("func_003B4818");
+extern int func_003B4740_2190(int, int) __asm__("func_003B4740");
+extern void func_003E6574_2190(int, int, int) __asm__("func_003E6574");
+extern int (*D_00450C10_2190[])(int, int, int) __asm__("D_00450C10");
+// PORT: PS2-only data-cache index writeback loop (sync + cache op 0x14, way 0/1, 64 sets of 64 bytes).
+#define DCACHE_WB_ALL_2310() __asm__ volatile( \
+    ".set push\n\t" \
+    ".set noreorder\n\t" \
+    "li $8, 0\n" \
+    "1:\n\t" \
+    "sync\n\t" \
+    "cache 0x14, 0($8)\n\t" \
+    "sync\n\t" \
+    "cache 0x14, 1($8)\n\t" \
+    "sync\n\t" \
+    "addiu $8, $8, 0x40\n\t" \
+    "slti $9, $8, 0x1000\n\t" \
+    "bnez $9, 1b\n\t" \
+    "nop\n\t" \
+    "nop\n\t" \
+    ".set pop" : : : "$8", "$9", "memory")
+int FILE_loadpackatz_d(int a, int dst, int max) __asm__("FILE_loadpackatz");
+int FILE_loadpackatz_d(int a, int dst, int max) {
+    int sz[1];
+    int h, buf, t;
+    h = FILE_loadsizez(a, sz, 0x100);
+    if (h == 0) return 0;
+    buf = func_003B4818_2190(h);
+    if (sz[0] > 0 && buf > 0) {
+        t = D_00450C10_2190[1](a, buf, 0x100);
+        if (t != 0) {
+            if (func_003B4740_2190(h, t) == 0) {
+                ((void (*)(int))D_00450C10_2190[2])(t);
+                t = 0;
+            }
+        }
+        ((void (*)(int))D_00450C10_2190[2])(h);
+        if (t == 0) return 0;
+        sz[0] = buf;
+        h = t;
+    }
+    if (max > 0 && max < sz[0]) sz[0] = max;
+    func_003E6574_2190(dst, h, sz[0]);
+    ((void (*)(int))D_00450C10_2190[2])(h);
+    DCACHE_WB_ALL_2310();
+    return sz[0];
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", FILE_loadpackat);
