@@ -8,6 +8,9 @@
 
 // PORT: PS2-only COP0 (read the Status register; ee-gcc 2.9 needs noreorder so gas adds no nop).
 #define MFC0_STATUS_4248(v) __asm__ volatile(".set push\n\t.set noreorder\n\tmfc0 %0, $12\n\t.set pop" : "=r"(v))
+// PORT: PS2-only COP0 (enable / disable interrupts).
+#define EI_4248() __asm__ volatile("ei")
+#define DI_4248() __asm__ volatile("di")
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424220);
@@ -3908,7 +3911,18 @@ INCLUDE_ASM("seg/seg_325220", func_0042BF68);
 
 INCLUDE_ASM("seg/seg_325220", func_0042C078);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C0C0);
+#ifdef SKIP_ASM
+int func_0042C0C0_r(void) __asm__("func_0042C0C0");
+int func_0042C0C0_r(void) {
+    int s, eie;
+    MFC0_STATUS_4248(s);
+    eie = s & 0x10000;
+    EI_4248();
+    return eie != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042C0D8);
