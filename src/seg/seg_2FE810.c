@@ -6163,7 +6163,20 @@ float func_0040F9F8(float x, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040FB58);
+#ifdef SKIP_ASM
+typedef union { float value; int word; } FB58_shape;
+#define FB58_GET(i, d) do { FB58_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
+#define FB58_SET(d, i) do { FB58_shape sf_u; sf_u.word = (i); (d) = sf_u.value; } while (0)
+float func_0040FB58(float x, float y) {
+    int ix, iy;
+    FB58_GET(ix, x);
+    FB58_GET(iy, y);
+    FB58_SET(x, (ix & 0x7fffffff) | (iy & 0x80000000));
+    return x;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040FB88);
