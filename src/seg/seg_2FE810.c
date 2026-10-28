@@ -3916,7 +3916,40 @@ void func_00405970(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00405A88);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written MMI routine (no compiler emits its addi/mtsab/fixed-register code); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function body.
+void func_00405A88(void) {
+    __asm__ volatile(
+        ".set push\n.set noreorder\n.set noat\n"
+        "addiu $12, $0, 0x18\n"
+        "lui $10, %%hi(D_00405B30)\n"
+        "addiu $10, $10, %%lo(D_00405B30)\n"
+        "lq $11, 0x0($10)\n"
+        "1:\n"
+        "lq $8, 0x0($5)\n"
+        "addi $12, $12, -0x1\n"
+        "lq $13, 0x0($6)\n"
+        "addiu $4, $4, 0x10\n"
+        "lq $9, 0x10($5)\n"
+        "paddh $8, $8, $13\n"
+        "lq $2, 0x10($6)\n"
+        "pminh $8, $8, $11\n"
+        "paddh $9, $9, $2\n"
+        "pmaxh $8, $8, $0\n"
+        "pminh $9, $9, $11\n"
+        "addiu $5, $5, 0x20\n"
+        "pmaxh $9, $9, $0\n"
+        "addiu $6, $6, 0x20\n"
+        "ppacb $10, $9, $8\n"
+        "bnez $12, 1b\n"
+        "sq $10, -0x10($4)\n"
+        ".set pop\n"
+        : : : "memory");
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00405AE8);
 
