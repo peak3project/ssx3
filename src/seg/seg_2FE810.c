@@ -3479,7 +3479,73 @@ void func_00405430(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004054E0);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written MMI routine (no compiler emits its addi/mtsab/fixed-register code); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function body.
+void func_004054E0(void) {
+    __asm__ volatile(
+        ".set push\n.set noreorder\n.set noat\n"
+        "pnor $25, $0, $0\n"
+        "psrlh $25, $25, 15\n"
+        "lw $5, 0x14($4)\n"
+        "lw $6, 0x18($4)\n"
+        "lw $7, 0x8($4)\n"
+        "lw $14, 0x0($4)\n"
+        "lw $13, 0x4($4)\n"
+        "lw $12, 0x10($4)\n"
+        "lq $8, 0x0($5)\n"
+        "lq $9, 0x0($6)\n"
+        "mtsab $13, 0x0\n"
+        "qfsrv $10, $9, $8\n"
+        "sll $24, $12, 1\n"
+        "pextlb $8, $0, $10\n"
+        "addiu $11, $0, -0x1\n"
+        "beqz $7, 2f\n"
+        "pextub $9, $0, $10\n"
+        "1:\n"
+        "addu $5, $5, $12\n"
+        "addu $6, $6, $12\n"
+        "lq $10, 0x0($5)\n"
+        "lq $15, 0x0($6)\n"
+        "qfsrv $2, $15, $10\n"
+        "pextlb $10, $0, $2\n"
+        "addi $7, $7, -0x1\n"
+        "pextub $15, $0, $2\n"
+        "paddh $2, $8, $10\n"
+        "paddh $3, $9, $15\n"
+        "por $8, $10, $0\n"
+        "por $9, $15, $0\n"
+        "paddh $2, $2, $25\n"
+        "paddh $3, $3, $25\n"
+        "psrlh $2, $2, 1\n"
+        "psrlh $3, $3, 1\n"
+        "lq $10, 0x0($14)\n"
+        "lq $15, 0x10($14)\n"
+        "paddh $2, $2, $10\n"
+        "paddh $3, $3, $15\n"
+        "paddh $10, $2, $25\n"
+        "psrlh $2, $10, 1\n"
+        "pcgth $10, $3, $0\n"
+        "psrlh $10, $10, 15\n"
+        "paddh $10, $3, $10\n"
+        "psrlh $3, $10, 1\n"
+        "sq $2, 0x0($14)\n"
+        "sq $3, 0x10($14)\n"
+        "bgtz $7, 1b\n"
+        "addu $14, $14, $24\n"
+        "2:\n"
+        "addiu $5, $5, 0x80\n"
+        "addiu $6, $6, 0x80\n"
+        "lw $7, 0xC($4)\n"
+        "and $10, $11, $7\n"
+        "bnez $10, 1b\n"
+        "daddu $11, $0, $0\n"
+        ".set pop\n"
+        : : : "memory");
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_004055C0);
 
