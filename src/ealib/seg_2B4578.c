@@ -11223,7 +11223,57 @@ void func_003CC848(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CC878);
+#ifdef SKIP_ASM
+extern int *D_00515B54_CC78 __asm__("D_00515B54");
+extern int D_00515D80_CC78[] __asm__("D_00515D80");
+void func_003CC878(int n) {
+    int *dst = D_00515B54_CC78;
+    if (dst != 0) {
+        // PORT: PS2-only VU0 hand-written loop (scale by 127, convert, clear source); one inline asm block.
+        __asm__ volatile(
+            ".set push\n\t"
+            ".set noreorder\n\t"
+            ".set noat\n\t"
+            "move $4, %0\n\t"
+            "move $5, %1\n\t"
+            "move $6, %2\n\t"
+            "addiu $8, $0, 0x7F\n\t"
+            "sll $4, $4, 2\n\t"
+            "qmtc2.ni $8, $vf1\n\t"
+            "add $4, $4, $5\n\t"
+            "vitof0.xyzw $vf1, $vf1\n"
+            "1:\n\t"
+            "lqc2 $vf2, 0x0($5)\n\t"
+            "lqc2 $vf3, 0x10($5)\n\t"
+            "lqc2 $vf4, 0x20($5)\n\t"
+            "lqc2 $vf5, 0x30($5)\n\t"
+            "vmulx.xyzw $vf2, $vf2, $vf1x\n\t"
+            "sq $0, 0x0($5)\n\t"
+            "vmulx.xyzw $vf3, $vf3, $vf1x\n\t"
+            "sq $0, 0x10($5)\n\t"
+            "vmulx.xyzw $vf4, $vf4, $vf1x\n\t"
+            "sq $0, 0x20($5)\n\t"
+            "vmulx.xyzw $vf5, $vf5, $vf1x\n\t"
+            "sq $0, 0x30($5)\n\t"
+            "addi $5, $5, 0x40\n\t"
+            "addi $6, $6, 0x40\n\t"
+            "vftoi0.xyzw $vf2, $vf2\n\t"
+            "vftoi0.xyzw $vf3, $vf3\n\t"
+            "vftoi0.xyzw $vf4, $vf4\n\t"
+            "vftoi0.xyzw $vf5, $vf5\n\t"
+            "sqc2 $vf2, -0x40($6)\n\t"
+            "sqc2 $vf3, -0x30($6)\n\t"
+            "sqc2 $vf4, -0x20($6)\n\t"
+            "bne $4, $5, 1b\n\t"
+            "sqc2 $vf5, -0x10($6)\n\t"
+            ".set pop\n"
+            : : "r"(n), "r"(D_00515D80_CC78), "r"(dst)
+            : "$4", "$5", "$6", "$8", "memory");
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CC918);
