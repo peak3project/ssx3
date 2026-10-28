@@ -3161,7 +3161,64 @@ void func_00405030(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004050E0);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written MMI routine (no compiler emits its addi/mtsab/fixed-register code); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function body.
+void func_004050E0(void) {
+    __asm__ volatile(
+        ".set push\n.set noreorder\n.set noat\n"
+        "pnor $25, $0, $0\n"
+        "psrlh $25, $25, 15\n"
+        "lw $5, 0x14($4)\n"
+        "lw $6, 0x18($4)\n"
+        "lw $14, 0x0($4)\n"
+        "lw $13, 0x4($4)\n"
+        "addiu $24, $0, 0x1\n"
+        "addiu $12, $0, -0x1\n"
+        "lw $3, 0x10($4)\n"
+        "sll $2, $3, 1\n"
+        "1:\n"
+        "lw $7, 0x8($4)\n"
+        "addiu $11, $0, -0x1\n"
+        "2:\n"
+        "ld $8, 0x0($5)\n"
+        "ld $9, 0x0($6)\n"
+        "pcpyld $8, $9, $8\n"
+        "mtsab $13, 0x0\n"
+        "qfsrv $8, $8, $8\n"
+        "pextlb $9, $0, $8\n"
+        "addi $7, $7, -0x1\n"
+        "addu $5, $5, $3\n"
+        "addu $6, $6, $3\n"
+        "mtsab $24, 0x0\n"
+        "qfsrv $10, $0, $8\n"
+        "pextlb $8, $0, $10\n"
+        "paddh $10, $9, $8\n"
+        "paddh $10, $10, $25\n"
+        "psrlh $10, $10, 1\n"
+        "sq $10, 0x0($14)\n"
+        "bgtz $7, 2b\n"
+        "addu $14, $14, $2\n"
+        "addiu $5, $5, 0x140\n"
+        "addiu $6, $6, 0x140\n"
+        "lw $7, 0xC($4)\n"
+        "and $10, $11, $7\n"
+        "bnez $10, 2b\n"
+        "daddu $11, $0, $0\n"
+        "lw $5, 0x14($4)\n"
+        "lw $6, 0x18($4)\n"
+        "lw $14, 0x0($4)\n"
+        "addiu $5, $5, 0x40\n"
+        "addiu $6, $6, 0x40\n"
+        "addiu $14, $14, 0x80\n"
+        "bnez $12, 1b\n"
+        "daddu $12, $0, $0\n"
+        ".set pop\n"
+        : : : "memory");
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00405198);
 
