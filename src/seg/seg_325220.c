@@ -6,6 +6,9 @@
     void name##_syscall(void) __asm__(#name); \
     void name##_syscall(void) { register int v __asm__("$3") = (n); __asm__ volatile("syscall" : : "r"(v)); }
 
+// PORT: PS2-only COP0 (read the Status register; ee-gcc 2.9 needs noreorder so gas adds no nop).
+#define MFC0_STATUS_4248(v) __asm__ volatile(".set push\n\t.set noreorder\n\tmfc0 %0, $12\n\t.set pop" : "=r"(v))
+
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424220);
 #ifdef SKIP_ASM
@@ -179,7 +182,15 @@ void func_00424858(unsigned a, unsigned b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424870);
+#ifdef SKIP_ASM
+int func_00424870(void) {
+    int s;
+    MFC0_STATUS_4248(s);
+    return (s ^ 1) & 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00424880);
 
