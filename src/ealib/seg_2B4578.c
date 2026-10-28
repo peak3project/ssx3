@@ -11458,7 +11458,29 @@ void func_003CC938(S_C938 *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CCA08);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written entry stub that falls through into func_003CCA38; the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_003CCA08\n.type func_003CCA08, @function\nfunc_003CCA08:\n"
+    "lui $2, %hi(D_0044E8A0)\n"
+    "daddu $3, $4, $0\n"
+    "addiu $2, $2, %lo(D_0044E8A0)\n"
+    "daddu $4, $3, $0\n"
+    "daddu $5, $2, $0\n"
+    "addi $29, $29, -0x10\n"
+    "sw $31, 0x0($29)\n"
+    "lw $6, 0x0($4)\n"
+    "lwc1 $f10, 0x4($4)\n"
+    "lwc1 $f11, 0x8($4)\n"
+    "lw $7, 0xC($4)\n"
+    "lw $8, 0x10($4)\n"
+    ".size func_003CCA08, . - func_003CCA08\n"
+    ".set pop\n");
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CCA38);
