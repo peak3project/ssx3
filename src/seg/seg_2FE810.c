@@ -6874,7 +6874,25 @@ int func_0040CF68(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040CF88);
+#ifdef SKIP_ASM
+struct S40CF88V { int f0; int f4; int f8; int fC; };
+struct S40CF88 { int n; char *e; };
+extern struct S40CF88 G_40CF88[] __asm__("D_00529000");
+int func_0040CF88(void) {
+    int i;
+
+    for (i = 0; i < G_40CF88[0].n; i++) {
+        struct S40CF88V *v = (struct S40CF88V *)(G_40CF88[0].e + i * 0x38 + 0x10);
+        if (v->f8 > 0 && v->fC > 0 && v->f0 != 0 && v->f0 >= 0 && v->f0 < 3)
+            v->f4++;
+    }
+    SYNC_0810();
+    EI_0810();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D010);
