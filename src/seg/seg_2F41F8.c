@@ -1,5 +1,8 @@
 #include "common.h"
 
+// PORT: PS2-only COP0 (read the Count register).
+#define MFC0_COUNT_2F41(v) __asm__ volatile("mfc0 %0, $9" : "=r"(v))
+
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 #ifdef SKIP_ASM
@@ -571,7 +574,30 @@ int func_003F4D68(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4DE8);
+#ifdef SKIP_ASM
+struct T_4DE8 { char pad[0x4DF8]; volatile unsigned last; int pad2; volatile unsigned long total; };
+extern struct T_4DE8 D_0051F0C0_4DE8 __asm__("D_0051F0C0");
+extern long func_00411538_4DE8(long, long) __asm__("func_00411538");
+int func_003F4DE8(void) {
+    volatile unsigned cnt;
+    volatile unsigned last;
+    volatile unsigned long total;
+    volatile unsigned long sum;
+    unsigned c, t;
+    do {
+        last = D_0051F0C0_4DE8.last;
+        total = D_0051F0C0_4DE8.total;
+        MFC0_COUNT_2F41(c);
+        cnt = c;
+        t = cnt;
+        t = last;
+    } while (t != D_0051F0C0_4DE8.last || total != D_0051F0C0_4DE8.total);
+    sum = total + (unsigned)(cnt - last);
+    return (int)func_00411538_4DE8(sum, 0x48000);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4E80);
