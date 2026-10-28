@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="840" height="196" viewBox="0 0 840 196" role="img" aria-labelledby="t d">
 <title id="t">SSX 3 decompilation progress</title>
-<desc id="d">13,941 of 15,107 functions match (92.3%); 67.1% of code bytes (2026-10-28).</desc>
+<desc id="d">13,942 of 15,107 functions match (92.3%); 67.1% of code bytes (2026-10-28).</desc>
 <style>
   .surface { fill: #fcfcfb; } text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: #0b0b0b; }
   .ink2 { fill: #52514e; } .muted { fill: #898781; } .track { fill: #c3c2b7; } .num { font-variant-numeric: tabular-nums; }
@@ -12,19 +12,19 @@
 <rect class="surface" width="840" height="196" rx="8"/>
 <text x="20" y="34" font-size="14" font-weight="600">Functions</text>
 <text x="124" y="34" font-size="14" font-weight="600">92.3% matched</text>
-<text x="820" y="34" font-size="13" class="ink2 num" text-anchor="end">13,941 / 15,107 functions</text>
-<clipPath id="clip20_44_800"><rect x="20" y="44" width="800" height="20" rx="4"/></clipPath><g clip-path="url(#clip20_44_800)"><rect class="matched" x="20.00" y="44" width="732.72" height="20"><title>Functions · Matched (100%): 13,941 functions (92.3%)</title></rect><rect class="close" x="754.72" y="44" width="0.21" height="20"><title>Functions · Close (90-99%): 4 functions (0.0%)</title></rect><rect class="partial" x="756.93" y="44" width="0.05" height="20"><title>Functions · Partial (&lt;90%): 1 functions (0.0%)</title></rect><rect class="track" x="758.98" y="44" width="61.02" height="20"><title>Functions · Not attempted: 1,161 functions (7.7%)</title></rect></g>
+<text x="820" y="34" font-size="13" class="ink2 num" text-anchor="end">13,942 / 15,107 functions</text>
+<clipPath id="clip20_44_800"><rect x="20" y="44" width="800" height="20" rx="4"/></clipPath><g clip-path="url(#clip20_44_800)"><rect class="matched" x="20.00" y="44" width="732.77" height="20"><title>Functions · Matched (100%): 13,942 functions (92.3%)</title></rect><rect class="close" x="754.77" y="44" width="0.21" height="20"><title>Functions · Close (90-99%): 4 functions (0.0%)</title></rect><rect class="partial" x="756.98" y="44" width="0.05" height="20"><title>Functions · Partial (&lt;90%): 1 functions (0.0%)</title></rect><rect class="track" x="759.03" y="44" width="60.97" height="20"><title>Functions · Not attempted: 1,160 functions (7.7%)</title></rect></g>
 <text x="20" y="96" font-size="14" font-weight="600">Code bytes</text>
 <text x="124" y="96" font-size="14" font-weight="600">67.1% matched</text>
 <text x="820" y="96" font-size="13" class="ink2 num" text-anchor="end">2.26 / 3.37 MB of code</text>
-<clipPath id="clip20_106_800"><rect x="20" y="106" width="800" height="20" rx="4"/></clipPath><g clip-path="url(#clip20_106_800)"><rect class="matched" x="20.00" y="106" width="532.77" height="20"><title>Code bytes · Matched (100%): 2,259,628 bytes (67.1%)</title></rect><rect class="close" x="554.77" y="106" width="0.75" height="20"><title>Code bytes · Close (90-99%): 3,180 bytes (0.1%)</title></rect><rect class="partial" x="557.52" y="106" width="0.01" height="20"><title>Code bytes · Partial (&lt;90%): 32 bytes (0.0%)</title></rect><rect class="track" x="559.53" y="106" width="260.47" height="20"><title>Code bytes · Not attempted: 1,104,716 bytes (32.8%)</title></rect></g>
+<clipPath id="clip20_106_800"><rect x="20" y="106" width="800" height="20" rx="4"/></clipPath><g clip-path="url(#clip20_106_800)"><rect class="matched" x="20.00" y="106" width="532.88" height="20"><title>Code bytes · Matched (100%): 2,260,068 bytes (67.1%)</title></rect><rect class="close" x="554.88" y="106" width="0.75" height="20"><title>Code bytes · Close (90-99%): 3,180 bytes (0.1%)</title></rect><rect class="partial" x="557.63" y="106" width="0.01" height="20"><title>Code bytes · Partial (&lt;90%): 32 bytes (0.0%)</title></rect><rect class="track" x="559.63" y="106" width="260.37" height="20"><title>Code bytes · Not attempted: 1,104,276 bytes (32.8%)</title></rect></g>
 <rect class="matched" x="20" y="162" width="12" height="12" rx="3"/>
-<text x="38" y="172" font-size="12"><tspan>Matched (100%)</tspan><tspan class="muted num"> · 13,941</tspan></text>
+<text x="38" y="172" font-size="12"><tspan>Matched (100%)</tspan><tspan class="muted num"> · 13,942</tspan></text>
 <rect class="close" x="220" y="162" width="12" height="12" rx="3"/>
 <text x="238" y="172" font-size="12"><tspan>Close (90-99%)</tspan><tspan class="muted num"> · 4</tspan></text>
 <rect class="partial" x="420" y="162" width="12" height="12" rx="3"/>
 <text x="438" y="172" font-size="12"><tspan>Partial (&lt;90%)</tspan><tspan class="muted num"> · 1</tspan></text>
 <rect class="track" x="620" y="162" width="12" height="12" rx="3"/>
-<text x="638" y="172" font-size="12"><tspan>Not attempted</tspan><tspan class="muted num"> · 1,161</tspan></text>
+<text x="638" y="172" font-size="12"><tspan>Not attempted</tspan><tspan class="muted num"> · 1,160</tspan></text>
 <text x="820" y="190" font-size="10" class="muted" text-anchor="end">updated 2026-10-28</text>
 </svg>
