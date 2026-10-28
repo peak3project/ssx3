@@ -12900,7 +12900,62 @@ void func_003CF158(void *arg0, int *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CF178);
+#ifdef SKIP_ASM
+struct S3CF178 { char p0[8]; int *f8; int *fC; char p1[0xC]; void *f1C; int f20; };
+extern void ff_F178(void *) __asm__("func_003B5E98");
+extern void *fa_F178(int) __asm__("func_003B5C60");
+int func_003CF178_C(struct S3CF178 *self, int n, int a2, float *a3) __asm__("func_003CF178");
+int func_003CF178_C(struct S3CF178 *self, int n, int a2, float *a3) {
+    int r;
+    if (self->f20 < n) {
+        if (self->f1C) ff_F178(self->f1C);
+        self->f20 = n;
+        self->f1C = fa_F178(n << 2);
+    }
+    r = ((int (*)(int *, int, int, float *, int))*self->f8)(self->f8, n, a2, a3, 1);
+    if (r <= 0) return r;
+    r = ((int (*)(int *, int, int, void *, int))*self->fC)(self->fC, n, a2, self->f1C, 2);
+    if (r <= 0) return r;
+    {
+            // PORT: PS2-only VU0 hand-written loop (add a scratch buffer into the destination, 4x4 floats per step).
+            __asm__ volatile(
+                ".set push\n\t"
+                ".set noreorder\n\t"
+                ".set noat\n\t"
+                "move $4, %0\n\t"
+                "sll $4, $4, 2\n\t"
+                "move $5, %1\n\t"
+                "move $6, %2\n\t"
+                "add $4, $4, $5\n"
+                "1:\n\t"
+                "lqc2 $vf2, 0x0($5)\n\t"
+                "lqc2 $vf3, 0x10($5)\n\t"
+                "lqc2 $vf4, 0x20($5)\n\t"
+                "lqc2 $vf5, 0x30($5)\n\t"
+                "lqc2 $vf6, 0x0($6)\n\t"
+                "lqc2 $vf7, 0x10($6)\n\t"
+                "lqc2 $vf8, 0x20($6)\n\t"
+                "lqc2 $vf9, 0x30($6)\n\t"
+                "addi $5, $5, 0x40\n\t"
+                "vadd.xyzw $vf6, $vf6, $vf2\n\t"
+                "vadd.xyzw $vf7, $vf7, $vf3\n\t"
+                "vadd.xyzw $vf8, $vf8, $vf4\n\t"
+                "vadd.xyzw $vf9, $vf9, $vf5\n\t"
+                "sqc2 $vf6, 0x0($6)\n\t"
+                "sqc2 $vf7, 0x10($6)\n\t"
+                "sqc2 $vf8, 0x20($6)\n\t"
+                "sqc2 $vf9, 0x30($6)\n\t"
+                "bne $4, $5, 1b\n\t"
+                "addi $6, $6, 0x40\n\t"
+                ".set pop\n"
+                : : "r"(n), "r"(self->f1C), "r"(a3)
+                : "$4", "$5", "$6", "memory");
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CF298);
