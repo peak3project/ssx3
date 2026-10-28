@@ -161,7 +161,20 @@ int func_004245C8(void) {
 
 INCLUDE_ASM("seg/seg_325220", func_004245F0);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424698);
+#ifdef SKIP_ASM
+extern void func_0042C078(void);
+extern void func_004245F0(unsigned, unsigned);
+void func_00424698(unsigned a, unsigned b) {
+    int s;
+    MFC0_STATUS_4248(s);
+    s &= 0x10000;
+    if (s) func_0042C078();
+    func_004245F0(a & ~63, b & ~63);
+    if (s) func_0042C0C0();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424718);
