@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `0ed09295`, generated 2026-10-28.
+Snapshot of commit `0f032191`, generated 2026-10-28.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `0ed09295`, generated 2026-10-28.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 13,942 | 92.23% |
+| Matching | 13,944 | 92.25% |
 | Partial | 5 | 0.03% |
-| Not started | 1,169 | 7.73% |
+| Not started | 1,167 | 7.72% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -26,7 +26,7 @@ Only files with at least one Matching or Partial function are listed here; files
 |---|---|---|---|---|
 | `fe/feasyncfile` | 524 | 0 | 12 | 536 |
 | `ealib/seg_2B4578` | 480 | 1 | 124 | 605 |
-| `render/font` | 431 | 0 | 2 | 433 |
+| `render/font` | 432 | 0 | 1 | 433 |
 | `fe/fepopupmisc` | 375 | 1 | 5 | 381 |
 | `object/railmodifier` | 353 | 0 | 16 | 369 |
 | `dirtysock/tagsunk` | 307 | 0 | 10 | 317 |
@@ -55,7 +55,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `be/bedbreward` | 135 | 0 | 1 | 136 |
 | `visualfx/worldlightman` | 131 | 0 | 6 | 137 |
 | `movie/movieplayer` | 124 | 0 | 3 | 127 |
-| `fe/fepopup` | 117 | 0 | 5 | 122 |
+| `fe/fepopup` | 118 | 0 | 4 | 122 |
 | `seg/seg_1FBE38` | 116 | 0 | 9 | 125 |
 | `be/beintreward` | 112 | 0 | 1 | 113 |
 | `seg/seg_1D3510` | 112 | 0 | 1 | 113 |
@@ -5371,7 +5371,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `fe/fepopup`
 
-117 matching, 0 partial, 5 not started (122 total)
+118 matching, 0 partial, 4 not started (122 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -5410,6 +5410,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_001C8758` | Matching | 100.00% | 364 |
 | `func_001C88C8` | Matching | 100.00% | 100 |
 | `func_001C8930` | Matching | 100.00% | 260 |
+| `func_001C8A38` | Matching | 100.00% | 1208 |
 | `func_001C8EF0` | Matching | 100.00% | 328 |
 | `func_001C9038` | Matching | 100.00% | 468 |
 | `func_001C9210` | Matching | 100.00% | 416 |
@@ -9586,7 +9587,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `render/font`
 
-431 matching, 0 partial, 2 not started (433 total)
+432 matching, 0 partial, 1 not started (433 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -9817,6 +9818,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003956E0(void*, int)` | Matching | 100.00% | 8 |
 | `func_003956E8` | Matching | 100.00% | 68 |
 | `func_00395730(void*)` | Matching | 100.00% | 32 |
+| `func_00395750` | Matching | 100.00% | 1252 |
 | `func_00395C38` | Matching | 100.00% | 44 |
 | `func_00395C68(void*)` | Matching | 100.00% | 8 |
 | `func_00395C70` | Matching | 100.00% | 124 |
