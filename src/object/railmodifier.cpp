@@ -4046,7 +4046,79 @@ extern "C" int func_003615C0(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_003615D8);
+#ifdef SKIP_ASM
+struct sSpV4_15D8 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sSpM_15D8 {
+    sSpV4_15D8 r[4];
+};
+
+// PORT: PS2-only VU0 inline asm (vector * 4x4 basis matrix, row-vector convention).
+static inline void vu0BasisMul_15D8(sSpV4_15D8& dst, const sSpV4_15D8& g, const float* b)
+{
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(dst)
+        : "m"(g), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only MMI inline asm (4x4 transpose in place, as sceVu0TransposeMatrix).
+static inline void mmiTranspose_15D8(sSpM_15D8* m)
+{
+    __asm__ __volatile__(
+        "lq      $11, 0x0(%0)\n"
+        "lq      $10, 0x10(%0)\n"
+        "lq      $9, 0x20(%0)\n"
+        "lq      $8, 0x30(%0)\n"
+        "pextlw  $7, $10, $11\n"
+        "pextuw  $4, $10, $11\n"
+        "pextlw  $3, $8, $9\n"
+        "pextuw  $2, $8, $9\n"
+        "pcpyld  $11, $3, $7\n"
+        "pcpyud  $10, $7, $3\n"
+        "pcpyld  $9, $2, $4\n"
+        "pcpyud  $8, $4, $2\n"
+        "sq      $11, 0x0(%0)\n"
+        "sq      $10, 0x10(%0)\n"
+        "sq      $9, 0x20(%0)\n"
+        "sq      $8, 0x30(%0)\n"
+        :
+        : "r"(m)
+        : "memory", "$2", "$3", "$4", "$7", "$8", "$9", "$10", "$11");
+}
+
+extern "C" void func_003615D8(void* self, sSpM_15D8* out, const float* a, const float* b, const float* c, const float* d)
+{
+    sSpM_15D8 L;
+    sSpV4_15D8 v;
+    L.r[1].x = a[0]; L.r[1].y = b[0]; L.r[1].z = c[0]; L.r[1].w = d[0];
+    vu0BasisMul_15D8(L.r[2], L.r[1], D_004FFAC0);
+    L.r[0] = L.r[2];
+    L.r[2].x = a[1]; L.r[2].y = b[1]; L.r[2].z = c[1]; L.r[2].w = d[1];
+    vu0BasisMul_15D8(L.r[3], L.r[2], D_004FFAC0);
+    L.r[1] = L.r[3];
+    L.r[3].x = a[2]; L.r[3].y = b[2]; L.r[3].z = c[2]; L.r[3].w = d[2];
+    vu0BasisMul_15D8(v, L.r[3], D_004FFAC0);
+    L.r[2] = v;
+    L.r[3].x = 0.0f; L.r[3].y = 0.0f; L.r[3].z = 0.0f; L.r[3].w = 1.0f;
+    *out = L;
+    mmiTranspose_15D8(out);
+}
+#endif
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361750);
 #ifdef SKIP_ASM
