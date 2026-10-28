@@ -1062,7 +1062,223 @@ extern "C" void func_001200D0(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00120378);
+#ifdef SKIP_ASM
+extern "C" char* func_00311B20(void*, int);
+int func_00312AA0(void* self, int i) __asm__("func_00312AA0__FPvi");
+extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int func_001298C8();
+int func_0011FEE8(void* self);
+
+struct sQ_L378 {
+    float x, y, z, w;
+    sQ_L378() {}
+    sQ_L378(float ax, float ay, float az, float aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sQ_L378 Sub_L378(const sQ_L378& a, const sQ_L378& b)
+{
+    sQ_L378 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector add).
+static inline float clampF_L378(float v, float lo, float hi)
+{
+    if (lo <= v)
+        return v <? hi;
+    return lo;
+}
+
+static inline void AddTo_L378(sQ_L378& a, const sQ_L378& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector length).
+static inline float Length_L378(const sQ_L378& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_L378(const sQ_L378& a, const sQ_L378& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQ_L378 QuatMul_L378(const sQ_L378& a, const sQ_L378& b)
+{
+    sQ_L378 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: SN abs.s asm helper (PS2 FPU).
+static inline float Abs_L378(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// Local X axis of a unit quaternion.
+static inline sQ_L378 AxisX_L378(const sQ_L378& q)
+{
+    return sQ_L378(1.0f - 2.0f * (q.y * q.y + q.z * q.z), 2.0f * (q.x * q.y + q.w * q.z), 2.0f * (q.x * q.z - q.w * q.y), 0.0f);
+}
+
+// Local Z axis of a unit quaternion.
+static inline sQ_L378 AxisZ_L378(const sQ_L378& q)
+{
+    return sQ_L378(2.0f * (q.x * q.z + q.w * q.y), 2.0f * (q.z * q.y - q.w * q.x), 1.0f - 2.0f * (q.x * q.x + q.y * q.y), 0.0f);
+}
+
+// Local Y axis of a unit quaternion.
+static inline sQ_L378 AxisY_L378(const sQ_L378& q)
+{
+    return sQ_L378(2.0f * (q.y * q.x - q.w * q.z), 1.0f - 2.0f * (q.z * q.z + q.x * q.x), 2.0f * (q.y * q.z + q.w * q.x), 0.0f);
+}
+
+#define LEAN_L378(K, H, BONEOFF, BASE) \
+    if (*(int*)((char*)self + (H)) != 0) \
+    { \
+        int cur = func_00312AA0(self->mRiderAnim, (K)); \
+        int id; \
+        if (slow) \
+            id = (BASE); \
+        else \
+        { \
+            sQ_L378 q; \
+            if (self->unk_320 != 0) \
+                q = QuatMul_L378(((sQ_L378*)((char*)self->mAnimModel->bones + (*(int*)((char*)self + (BONEOFF)) << 5)))[1], *(sQ_L378*)((char*)self + (H) + 0x20)); \
+            else \
+                q = QuatMul_L378(((sQ_L378*)((char*)self->mAnimModel->bones + (*(int*)((char*)self + (BONEOFF)) << 5)))[1], *(sQ_L378*)((char*)self + (H) + 0x10)); \
+            float dA = Dot_L378(p0, AxisX_L378(q)); \
+            float dB = Dot_L378(p0, AxisZ_L378(q)); \
+            if (lim1 < Abs_L378(dB) && Abs_L378(dA) < Abs_L378(dB)) \
+            { \
+                id = (BASE) + 2; \
+                if (0.0f < dB) \
+                    id = (BASE) + 1; \
+            } \
+            else if (lim2 < Abs_L378(dA)) \
+            { \
+                id = (BASE) + 3; \
+                if (dA < 0.0f) \
+                    id = (BASE) + 4; \
+            } \
+            else \
+            { \
+                id = (BASE) + 5; \
+                if (Dot_L378(p0, AxisY_L378(q)) < 0.0f) \
+                    id = (BASE) + 6; \
+            } \
+        } \
+        if (id != cur) \
+            cRiderAnimBase_play(self->mRiderAnim, id, 0, -1.0f); \
+    }
+
+extern "C" void func_00120378_impl(cRider* self) __asm__("func_00120378");
+extern "C" void func_00120378_impl(cRider* self)
+{
+    sQ_L378 p0 = Sub_L378(*(sQ_L378*)&self->mVelocity, *(sQ_L378*)&self->unk_3D0);
+    float lim2 = 416.66668701171875f;
+    float spd = Length_L378(p0);
+    float lim1 = 888.888916015625f;
+    float r = spd / 1666.666748046875f;
+    float s = clampF_L378(r, 0.5f, 2.0f);
+    if (func_00311B20(self->mRiderAnim, 3))
+        *(float*)(func_00311B20(self->mRiderAnim, 3) + 0x90) = s;
+    if (func_00311B20(self->mRiderAnim, 4))
+        *(float*)(func_00311B20(self->mRiderAnim, 4) + 0x90) = s;
+    if (func_00311B20(self->mRiderAnim, 5))
+        *(float*)(func_00311B20(self->mRiderAnim, 5) + 0x90) = s;
+    if (func_001298C8() % 6 == self->mAIIndex)
+    {
+        int slow = 1;
+        if (!(spd <= 138.88888549804688f))
+            slow = 0;
+        if (func_0011FEE8(self) == 11)
+        {
+            slow = 0;
+            sQ_L378 up = sQ_L378(0.0f, 0.0f, 1000.0f, 0.0f);
+            AddTo_L378(p0, up);
+        }
+        LEAN_L378(3, 0x940, 0x8A8, 0x19B)
+        LEAN_L378(4, 0x970, 0x8AC, 0x1A2)
+        LEAN_L378(5, 0x9A0, 0x89C, 0x1A9)
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_00120D58);
