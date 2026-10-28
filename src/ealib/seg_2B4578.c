@@ -4255,7 +4255,70 @@ void func_003BF440(char *src, char *dst, unsigned bytes) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF4C0);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0/MMI hand-written routine; whole body as one asm block (no C equivalent that keeps the register use).
+void func_003BF4C0(char *a, char *b, char *out) {
+    __asm__ volatile(
+        ".set noreorder\n"
+        "addiu $2, $0, 0x10\n"
+        "1:\n"
+        "lqc2 $vf1, 0x0($5)\n"
+        "lqc2 $vf2, 0x100($5)\n"
+        "lqc2 $vf3, 0x200($5)\n"
+        "lqc2 $vf4, 0x300($5)\n"
+        "lqc2 $vf5, 0x0($4)\n"
+        "lqc2 $vf6, 0x80($4)\n"
+        "lqc2 $vf7, 0x100($4)\n"
+        "lqc2 $vf8, 0x180($4)\n"
+        "lqc2 $vf9, 0x200($4)\n"
+        "lqc2 $vf10, 0x280($4)\n"
+        "lqc2 $vf11, 0x300($4)\n"
+        "lqc2 $vf12, 0x380($4)\n"
+        "lqc2 $vf13, 0x400($4)\n"
+        "lqc2 $vf14, 0x480($4)\n"
+        "vmula.xyzw ACC, $vf1, $vf5\n"
+        "vmadda.xyzw ACC, $vf2, $vf7\n"
+        "vmadda.xyzw ACC, $vf3, $vf9\n"
+        "vmadd.xyzw $vf5, $vf4, $vf11\n"
+        "vmula.xyzw ACC, $vf1, $vf6\n"
+        "vmadda.xyzw ACC, $vf2, $vf8\n"
+        "vmadda.xyzw ACC, $vf3, $vf10\n"
+        "vmadd.xyzw $vf6, $vf4, $vf12\n"
+        "vmula.xyzw ACC, $vf1, $vf7\n"
+        "vmadda.xyzw ACC, $vf2, $vf9\n"
+        "vmadda.xyzw ACC, $vf3, $vf11\n"
+        "vmadd.xyzw $vf7, $vf4, $vf13\n"
+        "vmula.xyzw ACC, $vf1, $vf8\n"
+        "vmadda.xyzw ACC, $vf2, $vf10\n"
+        "vmadda.xyzw ACC, $vf3, $vf12\n"
+        "vmadd.xyzw $vf8, $vf4, $vf14\n"
+        "qmfc2.ni $7, $vf5\n"
+        "qmfc2.ni $8, $vf6\n"
+        "qmfc2.ni $9, $vf7\n"
+        "qmfc2.ni $10, $vf8\n"
+        "pextlw $11, $8, $7\n"
+        "pextuw $8, $8, $7\n"
+        "pextlw $12, $10, $9\n"
+        "pextuw $10, $10, $9\n"
+        "pcpyld $7, $12, $11\n"
+        "pcpyud $9, $11, $12\n"
+        "pcpyld $11, $10, $8\n"
+        "pcpyud $12, $8, $10\n"
+        "sq $7, 0x0($6)\n"
+        "addiu $2, $2, -0x1\n"
+        "sq $9, 0x10($6)\n"
+        "addiu $4, $4, 0x10\n"
+        "sq $11, 0x20($6)\n"
+        "addiu $5, $5, 0x10\n"
+        "sq $12, 0x30($6)\n"
+        "bnez $2, 1b\n"
+        "addiu $6, $6, 0x40\n"
+        ".set reorder\n"
+        : : : "memory");
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF5A0);
 
