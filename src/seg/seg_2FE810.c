@@ -6101,7 +6101,19 @@ int func_0040F878(long *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040F8A0);
+#ifdef SKIP_ASM
+typedef union { float value; int word; } F8A0_shape;
+#define F8A0_GET(i, d) do { F8A0_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
+#define F8A0_SET(d, i) do { F8A0_shape sf_u; sf_u.word = (i); (d) = sf_u.value; } while (0)
+float func_0040F8A0(float x) {
+    int ix;
+    F8A0_GET(ix, x);
+    F8A0_SET(x, ix & 0x7fffffff);
+    return x;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040F8C0);
 
