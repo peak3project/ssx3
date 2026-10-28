@@ -1680,7 +1680,16 @@ int func_004279C8(int a0, int a1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00427A60);
+#ifdef SKIP_ASM
+void func_00427A60(int a, int *p) {
+    if (p[0])
+        ((void (*)(int))p[0])(p[1]);
+    SYNC_4248();
+    EI_4248();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00427A90);
 
