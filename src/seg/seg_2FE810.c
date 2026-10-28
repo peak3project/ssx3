@@ -711,7 +711,19 @@ int func_003FECF8(void) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FED08);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FED50);
+#ifdef SKIP_ASM
+// Write the VU0 control register $vi31 (low 16 bits).
+// PORT: PS2-only VU0 control-register write.
+static inline void vu0_ctc2_D50(unsigned int v)
+{
+    __asm__ volatile(".set noreorder\n\tctc2.ni %0, $vi31\n\t.set reorder" : : "r"(v));
+}
+void func_003FED50(int v) {
+    vu0_ctc2_D50(v & 0xFFFF);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FED60);
