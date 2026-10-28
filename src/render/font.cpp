@@ -3231,7 +3231,166 @@ void func_00395730(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/font", func_00395750);
+#ifdef SKIP_ASM
+struct sFontRotMat_5750 {
+    float m[4][4];
+} __attribute__((aligned(16)));
+
+struct sFontVec4_5750 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern char D_004FF1A0_5750[] __asm__("D_004FF1A0");
+extern float D_004FF140_5750[] __asm__("D_004FF140");
+extern float D_004FF150_5750[] __asm__("D_004FF150");
+extern float D_004FF160_5750[] __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply: top = top * r).
+static inline void MulTop_5750(char* top, sFontRotMat_5750* r)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, 0x0(%1)\n"
+        "lqc2      $vf9, 0x10(%1)\n"
+        "lqc2      $vf10, 0x20(%1)\n"
+        "lqc2      $vf11, 0x30(%1)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(top), "r"(r)
+        : "memory");
+}
+
+// Multiply the top of the matrix stack by a rotation of `angle` about `axis`.
+static inline void Rotate_5750(char* self, float* axis, float angle)
+{
+    sFontRotMat_5750 r;
+    float s;
+    float c;
+    char* top = *(char**)(self + 0x13e4);
+    func_0031BE50(&s, &c, angle);
+    float t = 1.0f - c;
+    float x = axis[0];
+    float y = axis[1];
+    float z = axis[2];
+    float tx = t * x;
+    float ty = t * y;
+    float tz = t * z;
+    float sx = s * x;
+    float sy = s * y;
+    float sz = s * z;
+    r.m[0][0] = tx * x + c;
+    r.m[1][0] = tx * y + sz;
+    r.m[2][0] = tx * z - sy;
+    r.m[0][1] = ty * x - sz;
+    r.m[1][1] = ty * y + c;
+    r.m[2][1] = ty * z + sx;
+    r.m[0][2] = tz * x + sy;
+    r.m[1][2] = tz * y - sx;
+    r.m[2][2] = tz * z + c;
+    r.m[3][0] = 0.0f;
+    r.m[3][1] = 0.0f;
+    r.m[3][2] = 0.0f;
+    r.m[0][3] = 0.0f;
+    r.m[1][3] = 0.0f;
+    r.m[2][3] = 0.0f;
+    r.m[3][3] = 1.0f;
+    MulTop_5750(top, &r);
+}
+
+// PORT: PS2-only VU0 inline asm (vector scale).
+static inline sFontVec4_5750 Neg_5750(float* v)
+{
+    sFontVec4_5750 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, 0x0(%2)\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "r"(v), "f"(-1.0f)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (matrix * vector into row 3).
+static inline void Translate_5750(char* top, sFontVec4_5750* v)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2         $vf4, 0x0(%0)\n"
+        "lqc2         $vf5, 0x10(%0)\n"
+        "lqc2         $vf6, 0x20(%0)\n"
+        "lqc2         $vf7, 0x30(%0)\n"
+        "lqc2         $vf8, 0x0(%1)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(top), "r"(v)
+        : "memory");
+}
+
+extern "C" void func_00395750(char* self, float* v, float ax, float ay, float az)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(*(char**)(self + 0x13e4)), "r"(D_004FF1A0_5750)
+        : "memory");
+    *(float*)(*(char**)(self + 0x13e4) + 0x14) = 0.0f;
+    *(float*)(*(char**)(self + 0x13e4) + 0x24) = 1.0f;
+    *(float*)(*(char**)(self + 0x13e4) + 0x18) = 1.0f;
+    *(float*)(*(char**)(self + 0x13e4) + 0x28) = 0.0f;
+    Rotate_5750(self, D_004FF140_5750, -ax);
+    Rotate_5750(self, D_004FF160_5750, -ay);
+    Rotate_5750(self, D_004FF150_5750, -az);
+    sFontVec4_5750 nv = Neg_5750(v);
+    nv.w = -nv.w;
+    Translate_5750(*(char**)(self + 0x13e4), &nv);
+    *(int*)(self + 0x6b90) = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/font", func_00395C38);
