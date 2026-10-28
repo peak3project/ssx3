@@ -5884,7 +5884,79 @@ void func_003C0640(void *in, void *out, float s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C06B0);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written FPU filter (mula.s/madda.s accumulator ops no compiler emits); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+void func_003C06B0(void) {
+    __asm__ volatile(
+        ".set push\n.set noreorder\n.set noat\n"
+        "addi $8, $5, 0x20\n"
+        "mtc1 $0, $f0\n"
+        "lwc1 $f1, 0x0($7)\n"
+        "lwc1 $f2, 0x4($7)\n"
+        "lwc1 $f3, 0x8($7)\n"
+        "lwc1 $f4, 0xC($7)\n"
+        "lwc1 $f5, 0x10($7)\n"
+        "lwc1 $f6, 0x14($7)\n"
+        "lwc1 $f7, 0x18($7)\n"
+        "lwc1 $f8, 0x1C($7)\n"
+        "lwc1 $f9, 0x20($7)\n"
+        "lwc1 $f10, 0x24($7)\n"
+        "lwc1 $f11, 0x28($7)\n"
+        "lwc1 $f12, 0x2C($7)\n"
+        "lwc1 $f13, 0x30($7)\n"
+        "lwc1 $f20, 0x0($6)\n"
+        "lwc1 $f21, 0x4($6)\n"
+        "lwc1 $f22, 0x8($6)\n"
+        "lwc1 $f23, 0xC($6)\n"
+        "lwc1 $f24, 0x10($6)\n"
+        "lwc1 $f25, 0x14($6)\n"
+        "1:\n"
+        "addi $9, $4, 0x80\n"
+        "2:\n"
+        "lh $12, 0x0($4)\n"
+        "mtc1 $12, $f31\n"
+        "cvt.s.w $f31, $f31\n"
+        "mula.s $f1, $f31\n"
+        "madda.s $f20, $f2\n"
+        "madda.s $f21, $f3\n"
+        "addi $4, $4, 0x2\n"
+        "madd.s $f31, $f0, $f0\n"
+        "madda.s $f20, $f4\n"
+        "madda.s $f21, $f5\n"
+        "mov.s $f20, $f21\n"
+        "mov.s $f21, $f31\n"
+        "madda.s $f22, $f6\n"
+        "madda.s $f23, $f7\n"
+        "madd.s $f31, $f0, $f0\n"
+        "madda.s $f22, $f8\n"
+        "madda.s $f23, $f9\n"
+        "mov.s $f22, $f23\n"
+        "mov.s $f23, $f31\n"
+        "madda.s $f24, $f10\n"
+        "madda.s $f25, $f11\n"
+        "madd.s $f31, $f0, $f0\n"
+        "madda.s $f24, $f12\n"
+        "madda.s $f25, $f13\n"
+        "mov.s $f24, $f25\n"
+        "bne $9, $4, 2b\n"
+        "mov.s $f25, $f31\n"
+        "addi $5, $5, 0x4\n"
+        "madd.s $f31, $f0, $f0\n"
+        "bne $8, $5, 1b\n"
+        "swc1 $f31, -0x4($5)\n"
+        "swc1 $f20, 0x0($6)\n"
+        "swc1 $f21, 0x4($6)\n"
+        "swc1 $f22, 0x8($6)\n"
+        "swc1 $f23, 0xC($6)\n"
+        "swc1 $f24, 0x10($6)\n"
+        "swc1 $f25, 0x14($6)\n"
+        ".set pop\n"
+        : : : "memory");
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C07A8);
