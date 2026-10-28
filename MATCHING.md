@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `02db1b6c`, generated 2026-10-27.
+Snapshot of commit `ccf63546`, generated 2026-10-28.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `02db1b6c`, generated 2026-10-27.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 13,936 | 92.19% |
+| Matching | 13,940 | 92.22% |
 | Partial | 5 | 0.03% |
-| Not started | 1,175 | 7.77% |
+| Not started | 1,171 | 7.75% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -25,7 +25,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | File | Matching | Partial | Not started | Total |
 |---|---|---|---|---|
 | `fe/feasyncfile` | 524 | 0 | 12 | 536 |
-| `ealib/seg_2B4578` | 479 | 1 | 125 | 605 |
+| `ealib/seg_2B4578` | 480 | 1 | 124 | 605 |
 | `render/font` | 431 | 0 | 2 | 433 |
 | `fe/fepopupmisc` | 375 | 1 | 5 | 381 |
 | `object/railmodifier` | 353 | 0 | 16 | 369 |
@@ -59,8 +59,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `seg/seg_1FBE38` | 116 | 0 | 9 | 125 |
 | `be/beintreward` | 112 | 0 | 1 | 113 |
 | `seg/seg_1D3510` | 112 | 0 | 1 | 113 |
+| `ai/rider` | 104 | 0 | 11 | 115 |
 | `be/beintplayer` | 104 | 0 | 0 | 104 |
-| `ai/rider` | 102 | 0 | 13 | 115 |
 | `ealib/seg_2D7498` | 100 | 0 | 12 | 112 |
 | `seg/seg_316FB8` | 99 | 0 | 38 | 137 |
 | `seg/seg_1218` | 97 | 0 | 13 | 110 |
@@ -134,10 +134,10 @@ Only files with at least one Matching or Partial function are listed here; files
 | `be/beintecon` | 30 | 0 | 2 | 32 |
 | `dirtysock/tags` | 30 | 0 | 10 | 40 |
 | `fe/festatebuyattrib` | 30 | 0 | 1 | 31 |
+| `fe/uitemplatemap` | 30 | 0 | 8 | 38 |
 | `object/effectlink` | 30 | 0 | 0 | 30 |
 | `seg/seg_32F020` | 30 | 0 | 0 | 30 |
 | `fe/festateloadscreen` | 29 | 0 | 0 | 29 |
-| `fe/uitemplatemap` | 29 | 0 | 9 | 38 |
 | `main/game` | 28 | 0 | 4 | 32 |
 | `seg/seg_2F0F40` | 28 | 0 | 3 | 31 |
 | `luno/lunovm` | 27 | 0 | 1 | 28 |
@@ -795,7 +795,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ai/rider`
 
-102 matching, 0 partial, 13 not started (115 total)
+104 matching, 0 partial, 11 not started (115 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -829,6 +829,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00120EB8` | Matching | 100.00% | 28 |
 | `func_00120ED8` | Matching | 100.00% | 72 |
 | `func_00121068` | Matching | 100.00% | 72 |
+| `func_001211F8` | Matching | 100.00% | 1252 |
 | `func_001216E0(void*)` | Matching | 100.00% | 28 |
 | `func_00121700` | Matching | 100.00% | 40 |
 | `func_00121728` | Matching | 100.00% | 40 |
@@ -873,10 +874,11 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_001278D0` | Matching | 100.00% | 16 |
 | `func_001278E0(void*, float)` | Matching | 100.00% | 8 |
 | `func_001278E8` | Matching | 100.00% | 176 |
+| `func_00127998` | Matching | 100.00% | 3268 |
 | `func_00128660(void*)` | Matching | 100.00% | 28 |
 | `func_00128680(void*)` | Matching | 100.00% | 28 |
-| `func_001211F8` | Matching | 99.98% | 1252 |
 | `func_00123640` | Matching | 99.97% | 1288 |
+| `func_00120378` | Matching | 99.97% | 2528 |
 | `func_00125C70` | Matching | 99.97% | 584 |
 | `func_00122898` | Matching | 99.96% | 912 |
 | `func_00125228` | Matching | 99.95% | 420 |
@@ -3593,7 +3595,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ealib/seg_2B4578`
 
-479 matching, 1 partial, 125 not started (605 total)
+480 matching, 1 partial, 124 not started (605 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -3729,6 +3731,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003BCA28` | Matching | 100.00% | 188 |
 | `func_003BCAE8` | Matching | 100.00% | 180 |
 | `func_003BD078` | Matching | 100.00% | 420 |
+| `func_003BD220` | Matching | 100.00% | 916 |
 | `func_003BD5B8` | Matching | 100.00% | 1032 |
 | `func_003BD9C0` | Matching | 100.00% | 1096 |
 | `func_003BECA0` | Matching | 100.00% | 140 |
@@ -4050,8 +4053,8 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003B96B8` | Matching | 99.93% | 288 |
 | `func_003C9C08` | Matching | 99.93% | 288 |
 | `func_003B3BB0` | Matching | 99.93% | 284 |
+| `func_003BF0F0` | Matching | 99.92% | 752 |
 | `func_003CCF90` | Matching | 99.91% | 424 |
-| `func_003BF0F0` | Matching | 99.89% | 752 |
 | `func_003CAC88` | Matching | 99.89% | 360 |
 | `func_003CC630` | Matching | 99.89% | 532 |
 | `func_003B6788` | Matching | 99.87% | 152 |
@@ -7061,7 +7064,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `fe/uitemplatemap`
 
-29 matching, 0 partial, 9 not started (38 total)
+30 matching, 0 partial, 8 not started (38 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -7078,6 +7081,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00202768(void*)` | Matching | 100.00% | 8 |
 | `func_00202770` | Matching | 100.00% | 180 |
 | `cUITemplate_MAP_onUpdate` | Matching | 100.00% | 688 |
+| `cUITemplate_MAP_setupMenuFocus` | Matching | 100.00% | 2284 |
 | `cUITemplate_MAP_setupMapPic` | Matching | 100.00% | 200 |
 | `cUITemplate_MAP_setupPopup` | Matching | 100.00% | 608 |
 | `cUITemplate_MAP_setShowInfo` | Matching | 100.00% | 136 |
