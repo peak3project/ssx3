@@ -4492,7 +4492,68 @@ void func_003BF6B0(char *a, char *b, char *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF800);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0/MMI hand-written routine; whole body as one asm block (no C equivalent that keeps the register use).
+void func_003BF800(char *p) {
+    __asm__ volatile(
+        ".set noreorder\n"
+        "addiu $2, $0, 0x4\n"
+        "addiu $5, $4, 0x1F0\n"
+        "1:\n"
+        "lqc2 $vf9, 0x200($4)\n"
+        "lqc2 $vf10, 0x210($4)\n"
+        "lqc2 $vf11, 0x220($4)\n"
+        "lqc2 $vf12, 0x230($4)\n"
+        "lqc2 $vf13, 0x1D0($5)\n"
+        "lqc2 $vf14, 0x1E0($5)\n"
+        "lqc2 $vf15, 0x1F0($5)\n"
+        "lqc2 $vf16, 0x200($5)\n"
+        "lqc2 $vf1, 0x0($4)\n"
+        "lqc2 $vf2, 0x10($4)\n"
+        "lqc2 $vf3, 0x20($4)\n"
+        "lqc2 $vf4, 0x30($4)\n"
+        "lqc2 $vf5, -0x30($5)\n"
+        "lqc2 $vf6, -0x20($5)\n"
+        "lqc2 $vf7, -0x10($5)\n"
+        "lqc2 $vf8, 0x0($5)\n"
+        "vadd.xyzw $vf16, $vf9, $vf16\n"
+        "vadd.xyzw $vf15, $vf10, $vf15\n"
+        "vadd.xyzw $vf14, $vf11, $vf14\n"
+        "vadd.xyzw $vf13, $vf12, $vf13\n"
+        "vsub.xyzw $vf9, $vf1, $vf8\n"
+        "vsub.xyzw $vf10, $vf2, $vf7\n"
+        "vsub.xyzw $vf11, $vf3, $vf6\n"
+        "vsub.xyzw $vf12, $vf4, $vf5\n"
+        "vsub.xyzw $vf8, $vf8, $vf1\n"
+        "vsub.xyzw $vf7, $vf7, $vf2\n"
+        "vsub.xyzw $vf6, $vf6, $vf3\n"
+        "vsub.xyzw $vf5, $vf5, $vf4\n"
+        "vsub.xyzw $vf1, $vf9, $vf16\n"
+        "vsub.xyzw $vf2, $vf10, $vf15\n"
+        "vsub.xyzw $vf3, $vf11, $vf14\n"
+        "vsub.xyzw $vf4, $vf12, $vf13\n"
+        "vsub.xyzw $vf8, $vf8, $vf16\n"
+        "vsub.xyzw $vf7, $vf7, $vf15\n"
+        "vsub.xyzw $vf6, $vf6, $vf14\n"
+        "vsub.xyzw $vf5, $vf5, $vf13\n"
+        "sqc2 $vf1, 0x0($4)\n"
+        "sqc2 $vf2, 0x10($4)\n"
+        "sqc2 $vf3, 0x20($4)\n"
+        "sqc2 $vf4, 0x30($4)\n"
+        "sqc2 $vf5, -0x30($5)\n"
+        "sqc2 $vf6, -0x20($5)\n"
+        "addiu $2, $2, -0x1\n"
+        "sqc2 $vf7, -0x10($5)\n"
+        "addiu $4, $4, 0x40\n"
+        "sqc2 $vf8, 0x0($5)\n"
+        "bnez $2, 1b\n"
+        "addiu $5, $5, -0x40\n"
+        ".set reorder\n"
+        : : : "memory");
+}
+#endif
 
 /* Types and VU0 helpers shared by the func_003BF8D0 .. func_003C01A0 family (EA audio engine transform
    routines). Kept in one unguarded block so that no function's block depends on another's (types and unused
