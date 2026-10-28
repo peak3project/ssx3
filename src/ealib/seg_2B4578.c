@@ -10576,7 +10576,25 @@ int func_003CB280(void *arg0, void *arg1, int arg2) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB328);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB4A8);
+#ifdef SKIP_ASM
+struct P { char pad[0x20]; short A[8]; short B[8]; short C[8]; };
+void func_003CB4A8(struct P* p, int x)
+{
+    int t = (x * 0x7D00) >> 15;
+    int b = 0x7FFF - t;
+    int i;
+    p->A[0] = t - 0x8000;
+    p->B[0] = b;
+    p->C[0] = 0x3FDE00 / (short)b;
+    for (i = 1; i < 8; i++) {
+        p->A[i] = p->A[0];
+        p->B[i] = p->B[0];
+        p->C[i] = p->C[0];
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB528);
