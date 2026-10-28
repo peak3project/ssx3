@@ -193,7 +193,29 @@ int func_004245C8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004245F0);
+#ifdef SKIP_ASM
+// PORT: PS2-only cache op wrapped in sync (cache instruction: op, byte offset, address).
+#define CACHE_4248(op, off, p) __asm__ volatile("sync\n\tcache " #op ", " #off "(%0)\n\tsync" : : "r"(p))
+// PORT: PS2-only COP0 (read TagLo).
+#define MFC0_TAGLO_4248(v) __asm__ volatile(".set push\n\t.set noreorder\n\tmfc0 %0, $28\n\t.set pop" : "=r"(v))
+void func_004245F0(unsigned lo, unsigned hi) {
+    int i;
+    for (i = 0; i < 0x1000; i += 0x40) {
+        unsigned t;
+        CACHE_4248(0x10, 0, i);
+        MFC0_TAGLO_4248(t);
+        t = (t & 0xFFFFF000) + i;
+        if (!(t < lo) && !(hi < t)) CACHE_4248(0x14, 0, i);
+        CACHE_4248(0x10, 1, i);
+        MFC0_TAGLO_4248(t);
+        t = (t & 0xFFFFF000) + i;
+        if (!(t < lo) && !(hi < t)) CACHE_4248(0x14, 1, i);
+        SYNC_4248();
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424698);
