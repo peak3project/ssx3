@@ -200,7 +200,46 @@ extern "C" int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003EBBA8);
+#ifdef SKIP_ASM
+extern "C" int func_003EBBA8(unsigned char* rec, char* out, int size)
+{
+    unsigned char* p;
+    unsigned char* s;
+    unsigned int c;
+    unsigned int next;
+    int n;
+
+    n = 0;
+    if (size > 0) {
+        *out = 0;
+    }
+    if (rec == 0 || *rec == 0) {
+        return 0;
+    }
+    for (p = rec; ; p++) {
+        c = *p;
+        if (c == 0) {
+            break;
+        }
+        if (c == '=' || c == ':') {
+            next = p[1];
+            if (next < 0x20 && p[-1] < 0x21) {
+                break;
+            }
+            for (s = p; s != rec && s[-1] > 0x20; s--) {
+            }
+            while (s != p && n + 1 < size) {
+                out[n++] = *s++;
+            }
+            out[n] = 0;
+            break;
+        }
+    }
+    return n;
+}
+#endif
 //100%
 INCLUDE_ASM("dirtysock/tags", func_003EBCB0);
 #ifdef SKIP_ASM
