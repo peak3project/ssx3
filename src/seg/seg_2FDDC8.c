@@ -17,7 +17,34 @@ int func_003FCDC8(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCE10);
+#ifdef SKIP_ASM
+extern void func_003FB858_v(int, int*, int*) __asm__("func_003FB858");
+extern int func_003FB898(int, int);
+extern char* func_00266728(int, int, int);
+extern void func_00416210(char*, int, int);
+extern char D_00497550[];
+int func_003FCE10(char** out, int a, int b, int c) {
+    int v[2];
+    int n;
+    v[0] = 4;
+    v[1] = 1;
+    func_003FB858_v(c, v, &v[1]);
+    n = func_003FB898(b, c);
+    if (out == 0) {
+        return 4;
+    }
+    *out = func_00266728(a, n, v[0]);
+    if (*out != 0) {
+        func_00416210(*out, 0, n);
+        __builtin_memcpy(*out, D_00497550, 12);
+        *out += 12;
+        return 0;
+    }
+    return 6;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCF00);
