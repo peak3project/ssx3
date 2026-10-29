@@ -15,7 +15,59 @@ int func_00415FB8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_00415FC8);
+#ifdef SKIP_ASM
+// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_00415FC8\n.ent func_00415FC8\nfunc_00415FC8:\n"
+    "sltiu $2, $6, 0x10\n"
+    "bnez $2, 2f\n"
+    "or $2, $4, $5\n"
+    "andi $2, $2, 0xF\n"
+    "bnez $2, 2f\n"
+    "nop\n"
+    "1:\n"
+    "lq $3, 0x0($4)\n"
+    "sltiu $7, $6, 0x20\n"
+    "lq $2, 0x0($5)\n"
+    "addiu $4, $4, 0x10\n"
+    "pxor $8, $2, $3\n"
+    "addiu $2, $5, 0x10\n"
+    "pcpyud $10, $8, $7\n"
+    "or $9, $10, $8\n"
+    "movz $5, $2, $9\n"
+    "bnel $9, $0, 2f\n"
+    "addiu $4, $4, -0x10\n"
+    "beqz $7, 1b\n"
+    "addiu $6, $6, -0x10\n"
+    "2:\n"
+    "lui $2, (0xFFFFFFFF >> 16)\n"
+    "addiu $6, $6, -0x1\n"
+    "ori $2, $2, (0xFFFFFFFF & 0xFFFF)\n"
+    "beq $6, $2, 5f\n"
+    "nop\n"
+    "lui $7, (0xFFFFFFFF >> 16)\n"
+    "ori $7, $7, (0xFFFFFFFF & 0xFFFF)\n"
+    "3:\n"
+    "lbu $3, 0x0($4)\n"
+    "lbu $2, 0x0($5)\n"
+    "beq $3, $2, 4f\n"
+    "addiu $4, $4, 0x1\n"
+    "jr $31\n"
+    "subu $2, $3, $2\n"
+    "4:\n"
+    "addiu $6, $6, -0x1\n"
+    "bne $6, $7, 3b\n"
+    "addiu $5, $5, 0x1\n"
+    "5:\n"
+    "jr $31\n"
+    "daddu $2, $0, $0\n"
+    ".end func_00415FC8\n"
+    ".set at\n.set reorder\n");
+#endif
 
 INCLUDE_ASM("seg/seg_316FB8", func_0041605C);
 
