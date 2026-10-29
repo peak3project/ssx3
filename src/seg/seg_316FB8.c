@@ -3969,7 +3969,49 @@ __asm__(
     ".set at\n.set reorder\n");
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_0041AE00);
+#ifdef SKIP_ASM
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_0041AE00\n.ent func_0041AE00\nfunc_0041AE00:\n"
+    "blez $5, 4f\n"
+    "addiu $5, $5, -0x1\n"
+    "addu $3, $4, $5\n"
+    "lb $2, 0x0($3)\n"
+    "slti $2, $2, 0x35\n"
+    "bnez $2, 4f\n"
+    "addiu $7, $0, 0x30\n"
+    "addiu $6, $0, 0x39\n"
+    "sb $7, 0x0($3)\n"
+    "nop\n"
+    "1:\n"
+    "addiu $5, $5, -0x1\n"
+    "blez $5, 2f\n"
+    "addiu $3, $3, -0x1\n"
+    "lb $2, 0x0($3)\n"
+    "nop\n"
+    "beql $2, $6, 1b\n"
+    "sb $7, 0x0($3)\n"
+    "2:\n"
+    "addu $4, $4, $5\n"
+    "addiu $3, $0, 0x39\n"
+    "lb $2, 0x0($4)\n"
+    "bne $2, $3, 3f\n"
+    "lbu $5, 0x0($4)\n"
+    "jr $31\n"
+    "daddu $2, $0, $0\n"
+    "3:\n"
+    "addiu $2, $5, 0x1\n"
+    "sb $2, 0x0($4)\n"
+    "4:\n"
+    "jr $31\n"
+    "addiu $2, $0, 0x1\n"
+    ".end func_0041AE00\n"
+    ".set at\n.set reorder\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_0041AE70);
