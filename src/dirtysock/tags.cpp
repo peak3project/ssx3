@@ -720,7 +720,71 @@ extern "C" int func_003ECB00(char* record, int len, unsigned char* data)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003ECBD8);
+#ifdef SKIP_ASM
+extern "C" int cDirtysock_tag_TagFieldSetString(char* record, int len, char* name, const char* value);
+extern "C" int cDirtysock_tag_TagFieldSetNumber(char* record, int len, char* name, int value);
+extern "C" int cDirtysock_tag_TagFieldSetAddress(char* record, int len, char* name, unsigned int addr);
+extern "C" int cDirtysock_tag_TagFieldSetFlags(char* record, int len, char* name, int value);
+extern "C" int cDirtysock_tag_TagFieldSetEpoch(char* record, int len, char* name, unsigned int epoch);
+extern signed char D_004A4A70;
+extern char D_004A4A90[];
+
+// Formats a tag record: %s %d %a %f %e %r each append one field.
+// PORT: SN-specific va_start (gcc 2.95 EE EABI form); use <stdarg.h> off-PS2.
+extern "C" int func_003ECBD8(char* buf, int len, const char* fmt, ...)
+{
+    char* ap;
+    int orig = len;
+    unsigned int c;
+    ap = (char*)__builtin_next_arg() - (__builtin_args_info(2) < 8 ? (8 - __builtin_args_info(2)) * 8 : 0);
+    while ((c = *(const unsigned char*)fmt++) != 0 && len >= 2) {
+        if (c <= ' ') {
+            len--;
+            *buf++ = D_004A4A70;
+            if (*fmt != 0) {
+                while (*fmt != 0 && *fmt <= ' ')
+                    fmt++;
+            }
+        } else if (c != '%') {
+            *buf++ = c;
+            len--;
+        } else if (*fmt != 0) {
+            int n = 0;
+            c = *(const unsigned char*)fmt++;
+            if (buf[-1] == '=') {
+                buf--;
+                len++;
+            }
+            *buf = 0;
+            if (c == 's') {
+                n = cDirtysock_tag_TagFieldSetString(buf, len, D_004A4A90, (ap += 8, *(const char**)(ap - 8)));
+            } else if (c == 'd') {
+                n = cDirtysock_tag_TagFieldSetNumber(buf, len, D_004A4A90, (ap += 8, *(int*)(ap - 8)));
+            } else if (c == 'a') {
+                n = cDirtysock_tag_TagFieldSetAddress(buf, len, D_004A4A90, (ap += 8, *(unsigned int*)(ap - 8)));
+            } else if (c == 'f') {
+                n = cDirtysock_tag_TagFieldSetFlags(buf, len, D_004A4A90, (ap += 8, *(int*)(ap - 8)));
+            } else if (c == 'e') {
+                n = cDirtysock_tag_TagFieldSetEpoch(buf, len, D_004A4A90, (ap += 8, *(unsigned int*)(ap - 8)));
+            } else if (c == 'r') {
+                ap += 8;
+                const char* s = *(const char**)(ap - 8);
+                for (; *s != 0 && len > 0; len--)
+                    *buf++ = *s++;
+            }
+            if (n > 0) {
+                buf += n;
+                len -= n;
+            }
+        }
+    }
+    if (len > 0)
+        *buf = 0;
+    return orig - len;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tags", func_003ECE38);
