@@ -133,7 +133,71 @@ __asm__(
 
 INCLUDE_ASM("seg/seg_316FB8", func_0041610C);
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_00416210);
+#ifdef SKIP_ASM
+// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_00416210\n.ent func_00416210\nfunc_00416210:\n"
+    "sltiu $2, $6, 0x8\n"
+    "bnez $2, 4f\n"
+    "daddu $3, $4, $0\n"
+    "andi $2, $4, 0xF\n"
+    "bnez $2, 4f\n"
+    "daddu $7, $4, $0\n"
+    "andi $9, $5, 0xFF\n"
+    "sltiu $10, $6, 0x20\n"
+    "daddu $8, $9, $0\n"
+    "dsll $3, $8, 8\n"
+    "or $8, $3, $9\n"
+    "pcpyh $3, $8\n"
+    "bnez $10, 3f\n"
+    "sltiu $2, $6, 0x8\n"
+    "pcpyld $8, $3, $3\n"
+    "1:\n"
+    "sq $8, 0x0($7)\n"
+    "addiu $6, $6, -0x20\n"
+    "addiu $7, $7, 0x10\n"
+    "sltiu $2, $6, 0x20\n"
+    "sq $8, 0x0($7)\n"
+    "beqz $2, 1b\n"
+    "addiu $7, $7, 0x10\n"
+    "b 3f\n"
+    "sltiu $2, $6, 0x8\n"
+    "2:\n"
+    "addiu $6, $6, -0x8\n"
+    "addiu $7, $7, 0x8\n"
+    "sltiu $2, $6, 0x8\n"
+    "3:\n"
+    "nop\n"
+    "nop\n"
+    "beql $2, $0, 2b\n"
+    "sd $3, 0x0($7)\n"
+    "daddu $3, $7, $0\n"
+    "4:\n"
+    "lui $2, (0xFFFFFFFF >> 16)\n"
+    "addiu $6, $6, -0x1\n"
+    "ori $2, $2, (0xFFFFFFFF & 0xFFFF)\n"
+    "beq $6, $2, 6f\n"
+    "nop\n"
+    "lui $2, (0xFFFFFFFF >> 16)\n"
+    "ori $2, $2, (0xFFFFFFFF & 0xFFFF)\n"
+    "5:\n"
+    "sb $5, 0x0($3)\n"
+    "addiu $6, $6, -0x1\n"
+    "nop\n"
+    "nop\n"
+    "nop\n"
+    "bne $6, $2, 5b\n"
+    "addiu $3, $3, 0x1\n"
+    "6:\n"
+    "jr $31\n"
+    "daddu $2, $4, $0\n"
+    ".end func_00416210\n"
+    ".set at\n.set reorder\n");
+#endif
 
 INCLUDE_ASM("seg/seg_316FB8", func_004162D0);
 
