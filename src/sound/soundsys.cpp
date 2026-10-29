@@ -401,9 +401,11 @@ static inline float sndVu0Length(const sSndVec4& v)
         "vmaddw.x  $vf4, $vf6, $vf4w\n"
         "vsqrt     Q, $vf4x\n"
         "vwaitq\n"
-        "cfc2.ni   %0, $vi22\n"
-        : "=r"(r)
-        : "m"(v));
+        "cfc2.ni   $3, $vi22\n"
+        "mtc1      $3, %0\n"
+        : "=f"(r)
+        : "m"(v)
+        : "$3");
     return r;
 }
 
@@ -3303,7 +3305,101 @@ extern "C" void func_00298138(void* self, void* obj, void* obj2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00298488);
+#ifdef SKIP_ASM
+extern "C" int func_00288B40(void* self, int which, float f);
+extern "C" int func_00288C08(void* self, int which, float f);
+extern "C" void func_002A9988(void* self, float a, float b);
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sSndVec4 sndVu0Add(const sSndVec4& a, const sSndVec4& b)
+{
+    sSndVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+#define SND_8488_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_8488_MAX(a, b) ((a) < (b) ? (b) : (a))
+
+static inline int vcall_8488(char* obj, int slot)
+{
+    char* o = obj + 0x6C0;
+    sSndVEntryVec* vt = *(sSndVEntryVec**)o;
+    return ((int (*)(void*))vt[slot].fn)(o + vt[slot].delta);
+}
+
+static inline sSndVec4* vcallv_8488(char* obj, int slot)
+{
+    char* o = obj + 0x6C0;
+    sSndVEntryVec* vt = *(sSndVEntryVec**)o;
+    return vt[slot].fn(o + vt[slot].delta);
+}
+
+static inline int snd8488AddVoice(void* vself, void* obj, int a, int b, int type, int v)
+{
+    sSnd8138Sys* self = (sSnd8138Sys*)vself;
+    sSnd8138Mgr* m = self->mgr;
+    sSnd8138Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+    sSnd8138Mgr* m3 = *self->p118;
+    sSnd8138Sub* s3 = &m3->sub;
+    s3->vals[m3->sub.cur] = v;
+    s3->ch[m3->sub.cur].vol = SND_8488_MAX(SND_8488_MIN(s3->vals[s3->cur], 127), 0);
+    sSnd8138Mgr** pp = self->p118;
+    int r = (int)func_00287968(self, type, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+    func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
+    pp = self->p118;
+    r = func_00288A20(self, obj);
+    (*pp)->sub.p64[(*pp)->sub.cur] = r;
+    sSnd8138Mgr* m2 = *self->p118;
+    m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
+    return func_002906B8(self);
+}
+
+extern "C" void func_00298488(void* vself, char* obj, char* obj2)
+{
+    sSnd8138Sys* self = (sSnd8138Sys*)vself;
+    if (func_00288B40(self, vcall_8488(obj, 5), 100.0f) < 0) return;
+    if (func_00288C08(self, vcall_8488(obj, 5), 100.0f) == 0) return;
+    if (!snd8138Active(obj) && !snd8138Active(obj2)) return;
+    if (func_00295028(self, 7, 0) != 0) return;
+    sSndVec4* p1 = vcallv_8488(obj, 2);
+    sSndVec4* p2 = vcallv_8488(obj2, 2);
+    int v = (int)func_00290C10(1, (float)(int)sndVu0Length(sndVu0Add(*p1, *p2)));
+    int h = snd8488AddVoice(self, obj, 0, 0x36, 5, v);
+    func_00295628(self, (void*)7, h, *(int*)(**(char***)((char*)self + 0x118) + 0x260) + 50, 0, 0);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002989A8);
