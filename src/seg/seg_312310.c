@@ -1374,4 +1374,35 @@ void func_00412778(int a, int b, int c, long d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_312310", func_004127A8);
+#ifdef SKIP_ASM
+// PORT: PS2-only libgcc library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_004127A8\n.type func_004127A8, @function\nfunc_004127A8:\n"
+    "addiu $29, $29, -0x40\n"
+    "sd $4, 0x20($29)\n"
+    "daddu $5, $29, $0\n"
+    "sd $31, 0x30($29)\n"
+    "jal func_00411C38\n"
+    "addiu $4, $29, 0x20\n"
+    "ld $2, 0x10($29)\n"
+    "lui $3, (0x3FFFFFFF >> 16)\n"
+    "ori $3, $3, (0x3FFFFFFF & 0xFFFF)\n"
+    "lw $4, 0x0($29)\n"
+    "dsll $8, $2, 2\n"
+    "dsra32 $8, $8, 0\n"
+    "lw $5, 0x4($29)\n"
+    "and $2, $2, $3\n"
+    "ori $7, $8, 0x1\n"
+    "lw $6, 0x8($29)\n"
+    "jal func_00413AC8\n"
+    "movz $7, $8, $2\n"
+    "ld $31, 0x30($29)\n"
+    "jr $31\n"
+    "addiu $29, $29, 0x40\n"
+    ".size func_004127A8, . - func_004127A8\n"
+    ".set pop\n");
+#endif
