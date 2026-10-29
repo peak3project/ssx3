@@ -7735,7 +7735,67 @@ struct Bigint *func_00421280(int ptr, double _d, int *e, int *bits) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_316FB8", func_00421400);
+#ifdef SKIP_ASM
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_00421400\n.ent func_00421400\nfunc_00421400:\n"
+    "addiu $29, $29, -0x50\n"
+    "sq $16, 0x40($29)\n"
+    "sq $17, 0x30($29)\n"
+    "daddu $16, $4, $0\n"
+    "daddu $17, $5, $0\n"
+    "sq $18, 0x20($29)\n"
+    "sd $31, 0x10($29)\n"
+    "jal func_004210E8\n"
+    "daddu $5, $29, $0\n"
+    "daddu $4, $17, $0\n"
+    "ori $5, $29, 0x4\n"
+    "jal func_004210E8\n"
+    "daddu $18, $2, $0\n"
+    "lw $3, 0x10($16)\n"
+    "daddu $6, $2, $0\n"
+    "lw $4, 0x10($17)\n"
+    "lw $2, 0x0($29)\n"
+    "lw $5, 0x4($29)\n"
+    "subu $3, $3, $4\n"
+    "sll $3, $3, 5\n"
+    "subu $2, $2, $5\n"
+    "addu $2, $2, $3\n"
+    "blez $2, 1f\n"
+    "sll $2, $2, 20\n"
+    "dsra32 $3, $18, 0\n"
+    "addu $3, $3, $2\n"
+    "addiu $4, $0, -0x1\n"
+    "dsrl32 $4, $4, 0\n"
+    "dsll32 $3, $3, 0\n"
+    "and $18, $18, $4\n"
+    "b 2f\n"
+    "or $18, $18, $3\n"
+    "1:\n"
+    "dsra32 $3, $6, 0\n"
+    "subu $3, $3, $2\n"
+    "addiu $4, $0, -0x1\n"
+    "dsrl32 $4, $4, 0\n"
+    "dsll32 $3, $3, 0\n"
+    "and $6, $6, $4\n"
+    "or $6, $6, $3\n"
+    "2:\n"
+    "daddu $4, $18, $0\n"
+    "jal func_00412280\n"
+    "daddu $5, $6, $0\n"
+    "lq $16, 0x40($29)\n"
+    "lq $17, 0x30($29)\n"
+    "lq $18, 0x20($29)\n"
+    "ld $31, 0x10($29)\n"
+    "jr $31\n"
+    "addiu $29, $29, 0x50\n"
+    ".end func_00421400\n"
+    ".set at\n.set reorder\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_004214C0);
