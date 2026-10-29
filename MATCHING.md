@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `b4e77969`, generated 2026-10-29.
+Snapshot of commit `eba73898`, generated 2026-10-30.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `b4e77969`, generated 2026-10-29.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,239 | 94.20% |
+| Matching | 14,240 | 94.20% |
 | Partial | 5 | 0.03% |
-| Not started | 872 | 5.77% |
+| Not started | 871 | 5.76% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -39,7 +39,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `camera/camera` | 224 | 0 | 14 | 238 |
 | `ai/control/handplantcontrol` | 219 | 0 | 14 | 233 |
 | `seg/seg_2F41F8` | 219 | 0 | 34 | 253 |
-| `seg/seg_325220` | 209 | 0 | 23 | 232 |
+| `seg/seg_325220` | 210 | 0 | 22 | 232 |
 | `sound/bankmonitor` | 206 | 0 | 7 | 213 |
 | `main/ssxappdtor` | 196 | 0 | 1 | 197 |
 | `util/menu` | 193 | 0 | 4 | 197 |
@@ -12993,7 +12993,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_325220`
 
-209 matching, 0 partial, 23 not started (232 total)
+210 matching, 0 partial, 22 not started (232 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -13157,6 +13157,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0042CD38` | Matching | 100.00% | 16 |
 | `func_0042CD48` | Matching | 100.00% | 16 |
 | `func_0042CD58` | Matching | 100.00% | 64 |
+| `func_0042CD98` | Matching | 100.00% | 500 |
 | `func_0042CFC0` | Matching | 100.00% | 860 |
 | `func_0042D320` | Matching | 100.00% | 92 |
 | `func_0042D470` | Matching | 100.00% | 1640 |
