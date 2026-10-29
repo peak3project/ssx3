@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `57e6c234`, generated 2026-10-29.
+Snapshot of commit `9dd49cba`, generated 2026-10-29.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `57e6c234`, generated 2026-10-29.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,181 | 93.81% |
+| Matching | 14,182 | 93.82% |
 | Partial | 5 | 0.03% |
-| Not started | 930 | 6.15% |
+| Not started | 929 | 6.15% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -51,7 +51,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `fe/all_in_one_fe` | 146 | 0 | 8 | 154 |
 | `world/wscriptcache` | 145 | 0 | 9 | 154 |
 | `worldpainter/quadtree` | 145 | 0 | 6 | 151 |
-| `camera/trigger/cameratriggerfactory` | 139 | 0 | 5 | 144 |
+| `camera/trigger/cameratriggerfactory` | 140 | 0 | 4 | 144 |
 | `seg/seg_3249A0` | 136 | 0 | 0 | 136 |
 | `be/bedbreward` | 135 | 0 | 1 | 136 |
 | `visualfx/worldlightman` | 133 | 0 | 4 | 137 |
@@ -3023,7 +3023,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `camera/trigger/cameratriggerfactory`
 
-139 matching, 0 partial, 5 not started (144 total)
+140 matching, 0 partial, 4 not started (144 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -3040,6 +3040,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `get_camspline` | Matching | 100.00% | 592 |
 | `func_00171FA8` | Matching | 100.00% | 536 |
 | `func_001721C0` | Matching | 100.00% | 184 |
+| `func_00172278` | Matching | 100.00% | 1476 |
 | `func_00172840` | Matching | 100.00% | 184 |
 | `get_camvolume` | Matching | 100.00% | 456 |
 | `get_cCTVolumeEllipse` | Matching | 100.00% | 236 |
