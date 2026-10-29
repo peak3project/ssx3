@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `eba73898`, generated 2026-10-30.
+Snapshot of commit `f429bdc1`, generated 2026-10-30.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `eba73898`, generated 2026-10-30.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,240 | 94.20% |
+| Matching | 14,243 | 94.22% |
 | Partial | 5 | 0.03% |
-| Not started | 871 | 5.76% |
+| Not started | 868 | 5.74% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -122,6 +122,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ui/uitext` | 35 | 0 | 3 | 38 |
 | `animation/rideranimbase` | 34 | 0 | 1 | 35 |
 | `main/loadscreens_prestart` | 34 | 0 | 0 | 34 |
+| `dirtysock/tags` | 33 | 0 | 7 | 40 |
 | `main/gameload` | 33 | 0 | 6 | 39 |
 | `object/flagset` | 33 | 0 | 3 | 36 |
 | `seg/seg_313F58` | 33 | 0 | 0 | 33 |
@@ -129,7 +130,6 @@ Only files with at least one Matching or Partial function are listed here; files
 | `object/multiparticle` | 32 | 0 | 1 | 33 |
 | `object/splinemodifier` | 32 | 0 | 3 | 35 |
 | `bx/execman` | 31 | 0 | 0 | 31 |
-| `dirtysock/tags` | 31 | 0 | 9 | 40 |
 | `fe/ovstatehud` | 31 | 0 | 5 | 36 |
 | `object/flexrailnode` | 31 | 0 | 3 | 34 |
 | `render/ps2graphicsman` | 31 | 0 | 1 | 32 |
@@ -180,13 +180,13 @@ Only files with at least one Matching or Partial function are listed here; files
 | `be/beintoption` | 17 | 0 | 0 | 17 |
 | `fe/festatecharselect` | 17 | 0 | 1 | 18 |
 | `input/inputmap` | 17 | 0 | 0 | 17 |
+| `seg/seg_2FDDC8` | 17 | 0 | 1 | 18 |
 | `bx/ps2main` | 16 | 0 | 2 | 18 |
 | `fe/festatebigradio` | 16 | 0 | 1 | 17 |
 | `fe/ovstates` | 16 | 0 | 0 | 16 |
 | `fe/ovtemplatepausemenu` | 16 | 0 | 0 | 16 |
 | `object/instancenode` | 16 | 0 | 1 | 17 |
 | `scripter/videngine` | 16 | 0 | 0 | 16 |
-| `seg/seg_2FDDC8` | 16 | 0 | 2 | 18 |
 | `ui/uilistbox` | 16 | 0 | 0 | 16 |
 | `util/list` | 16 | 0 | 0 | 16 |
 | `util/locale` | 16 | 0 | 0 | 16 |
@@ -3247,17 +3247,19 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `dirtysock/tags`
 
-31 matching, 0 partial, 9 not started (40 total)
+33 matching, 0 partial, 7 not started (40 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
 | `cDirtysock_tag__TagFieldSetupAppend(char *, char *, char *)` | Matching | 100.00% | 72 |
 | `func_003EB578` | Matching | 100.00% | 12 |
 | `cDirtysock_tag_TagFieldDupl` | Matching | 100.00% | 72 |
+| `func_003EBBA8` | Matching | 100.00% | 264 |
 | `func_003EBCB0` | Matching | 100.00% | 192 |
 | `func_003EBD70` | Matching | 100.00% | 208 |
 | `func_003EC8B8` | Matching | 100.00% | 232 |
 | `func_003EC9A0` | Matching | 100.00% | 228 |
+| `func_003ECE38` | Matching | 100.00% | 248 |
 | `cDirtysock_tag_TagFieldGetNumber` | Matching | 100.00% | 124 |
 | `cDirtysock_tag_TagFieldGetFlags` | Matching | 100.00% | 72 |
 | `cDirtysock_tag_TagFieldGetAddr` | Matching | 100.00% | 120 |
@@ -12182,11 +12184,12 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_2FDDC8`
 
-16 matching, 0 partial, 2 not started (18 total)
+17 matching, 0 partial, 1 not started (18 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
 | `func_003FCDC8` | Matching | 100.00% | 68 |
+| `func_003FCE10` | Matching | 100.00% | 236 |
 | `func_003FCF00` | Matching | 100.00% | 148 |
 | `func_003FCF98` | Matching | 100.00% | 60 |
 | `func_003FCFD8` | Matching | 100.00% | 256 |
