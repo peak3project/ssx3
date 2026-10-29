@@ -14,6 +14,8 @@
 // PORT: PS2-only memory barrier.
 #define SYNC_4248() __asm__ volatile("sync")
 #define SYNCP_4248() __asm__ volatile("sync.p")
+// PORT: PS2-only COP0 (write the TLB Wired register).
+#define MTC0_WIRED_4248(v) __asm__ volatile("mtc0 %z0, $6\n\tsync.p" : : "rJ"(v))
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424220);
@@ -4877,7 +4879,62 @@ int func_0042CD58(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042CD98);
+#ifdef SKIP_ASM
+struct sTlbCfg_4248 { int a, b, c, cnt; int *t1; int *t2; int *t3; };
+extern struct sTlbCfg_4248 D_004567F0;
+extern char D_0049AD98[], D_0049ADD0[], D_0049ADE8[], D_0049AE00[];
+extern int func_00425C28_pf(const char *, ...) __asm__("func_00425C28");
+extern void func_0042C6E8(int);
+extern int func_0042CCB8_tlb(int, int, int, int, int) __asm__("func_0042CCB8");
+int func_0042CD98(void) {
+    struct sTlbCfg_4248 *c = &D_004567F0;
+    register int i __asm__("$25");
+    int n, k, *p;
+    func_00425C28_pf(D_0049AD98, c->a - 1, c->a, c->a + c->b - 1, c->a + c->b, c->a + c->b + c->c - 1);
+    MTC0_WIRED_4248(0);
+    n = c->a;
+    i = 0;
+    if (n > 48) {
+        func_00425C28_pf(D_0049ADD0);
+        func_0042C6E8(1);
+    }
+    p = c->t1;
+    for (; i < n; i++, p += 4) func_0042CCB8_tlb(i, p[0], p[1], p[2], p[3]);
+    c = &D_004567F0;
+    n = i + c->b;
+    if (n > 48) {
+        func_00425C28_pf(D_0049ADE8);
+        func_0042C6E8(1);
+    }
+    p = c->t2;
+    for (; i < n; i++, p += 4) func_0042CCB8_tlb(i, p[0], p[1], p[2], p[3]);
+    c = &D_004567F0;
+    c->cnt = i;
+    MTC0_WIRED_4248(i);
+    if (c->c > 0) {
+        n = i + c->c;
+        if (n > 48) {
+            func_00425C28_pf(D_0049AE00);
+            func_0042C6E8(1);
+        }
+        p = c->t3;
+        for (; i < n; i++, p += 4) func_0042CCB8_tlb(i, p[0], p[1], p[2], p[3]);
+    }
+    k = i;
+    i <<= 13;
+    if (k < 48) {
+        int addr = i + 0xE0000000;
+        do {
+            func_0042CCB8_tlb(k, 0, addr, 0, 0);
+            k++;
+            addr += 0x2000;
+        } while (k < 48);
+    }
+    return i;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042CFC0);
