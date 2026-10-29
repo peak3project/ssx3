@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `b103c444`, generated 2026-10-28.
+Snapshot of commit `57e6c234`, generated 2026-10-29.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `b103c444`, generated 2026-10-28.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,178 | 93.79% |
+| Matching | 14,181 | 93.81% |
 | Partial | 5 | 0.03% |
-| Not started | 933 | 6.17% |
+| Not started | 930 | 6.15% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -54,7 +54,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `camera/trigger/cameratriggerfactory` | 139 | 0 | 5 | 144 |
 | `seg/seg_3249A0` | 136 | 0 | 0 | 136 |
 | `be/bedbreward` | 135 | 0 | 1 | 136 |
-| `visualfx/worldlightman` | 131 | 0 | 6 | 137 |
+| `visualfx/worldlightman` | 133 | 0 | 4 | 137 |
 | `movie/movieplayer` | 124 | 0 | 3 | 127 |
 | `fe/fepopup` | 118 | 0 | 4 | 122 |
 | `seg/seg_1FBE38` | 116 | 0 | 9 | 125 |
@@ -69,7 +69,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `bx/bxstringctor` | 95 | 0 | 4 | 99 |
 | `object/movenode` | 95 | 0 | 1 | 96 |
 | `main/debugmenu` | 94 | 0 | 0 | 94 |
-| `mem/memstd` | 90 | 0 | 6 | 96 |
+| `mem/memstd` | 91 | 0 | 5 | 96 |
 | `sound/streamsys` | 87 | 0 | 0 | 87 |
 | `sound/ssxAudio` | 85 | 0 | 3 | 88 |
 | `fe/debugfe` | 84 | 0 | 4 | 88 |
@@ -8399,7 +8399,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `mem/memstd`
 
-90 matching, 0 partial, 6 not started (96 total)
+91 matching, 0 partial, 5 not started (96 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -8407,6 +8407,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00251998` | Matching | 100.00% | 112 |
 | `func_00251A08` | Matching | 100.00% | 120 |
 | `func_00251A80` | Matching | 100.00% | 64 |
+| `func_00251AC0` | Matching | 100.00% | 144 |
 | `func_00251C38` | Matching | 100.00% | 184 |
 | `func_00251CF0` | Matching | 100.00% | 8 |
 | `func_00251CF8` | Matching | 100.00% | 8 |
@@ -15247,7 +15248,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `visualfx/worldlightman`
 
-131 matching, 0 partial, 6 not started (137 total)
+133 matching, 0 partial, 4 not started (137 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -15377,6 +15378,8 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_002FA600` | Matching | 100.00% | 60 |
 | `func_002FAE18(void*)` | Matching | 100.00% | 32 |
 | `func_002F6518` | Matching | 99.96% | 1004 |
+| `func_002F83B0` | Matching | 99.83% | 3144 |
+| `func_002F9838` | Matching | 99.54% | 3516 |
 | `func_002F6388` | Matching | 99.43% | 348 |
 | `func_002F8370(void*)` | Matching | 99.38% | 32 |
 | `func_002F8390(void*)` | Matching | 99.38% | 32 |
