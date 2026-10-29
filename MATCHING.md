@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `11cec1a9`, generated 2026-10-29.
+Snapshot of commit `b4e77969`, generated 2026-10-29.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `11cec1a9`, generated 2026-10-29.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,237 | 94.18% |
+| Matching | 14,239 | 94.20% |
 | Partial | 5 | 0.03% |
-| Not started | 874 | 5.78% |
+| Not started | 872 | 5.77% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -40,7 +40,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ai/control/handplantcontrol` | 219 | 0 | 14 | 233 |
 | `seg/seg_2F41F8` | 219 | 0 | 34 | 253 |
 | `seg/seg_325220` | 209 | 0 | 23 | 232 |
-| `sound/bankmonitor` | 205 | 0 | 8 | 213 |
+| `sound/bankmonitor` | 206 | 0 | 7 | 213 |
 | `main/ssxappdtor` | 196 | 0 | 1 | 197 |
 | `util/menu` | 193 | 0 | 4 | 197 |
 | `replay/replaycache` | 192 | 0 | 6 | 198 |
@@ -129,12 +129,12 @@ Only files with at least one Matching or Partial function are listed here; files
 | `object/multiparticle` | 32 | 0 | 1 | 33 |
 | `object/splinemodifier` | 32 | 0 | 3 | 35 |
 | `bx/execman` | 31 | 0 | 0 | 31 |
+| `dirtysock/tags` | 31 | 0 | 9 | 40 |
 | `fe/ovstatehud` | 31 | 0 | 5 | 36 |
 | `object/flexrailnode` | 31 | 0 | 3 | 34 |
 | `render/ps2graphicsman` | 31 | 0 | 1 | 32 |
 | `animation/animmodel` | 30 | 0 | 4 | 34 |
 | `be/beintecon` | 30 | 0 | 2 | 32 |
-| `dirtysock/tags` | 30 | 0 | 10 | 40 |
 | `fe/festatebuyattrib` | 30 | 0 | 1 | 31 |
 | `fe/uitemplatemap` | 30 | 0 | 8 | 38 |
 | `object/effectlink` | 30 | 0 | 0 | 30 |
@@ -3247,7 +3247,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `dirtysock/tags`
 
-30 matching, 0 partial, 10 not started (40 total)
+31 matching, 0 partial, 9 not started (40 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -3269,6 +3269,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `cDirtysock_tag_TagFieldGetTime` | Matching | 100.00% | 612 |
 | `func_003EDD70` | Matching | 100.00% | 268 |
 | `func_003EDE80` | Matching | 100.00% | 204 |
+| `cDirtysock_tag_TagFieldSetStructure` | Matching | 99.97% | 780 |
 | `func_003EB9E8` | Matching | 99.95% | 376 |
 | `cDirtysock_tag_TagFieldSetAddress` | Matching | 99.93% | 304 |
 | `cDirtysock_tag_TagFieldSetNumber` | Matching | 99.91% | 232 |
@@ -13370,7 +13371,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `sound/bankmonitor`
 
-205 matching, 0 partial, 8 not started (213 total)
+206 matching, 0 partial, 7 not started (213 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -13399,6 +13400,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_002AD980(void*)` | Matching | 100.00% | 12 |
 | `func_002AD990(void*)` | Matching | 100.00% | 8 |
 | `func_002AD998` | Matching | 100.00% | 44 |
+| `func_002AD9C8` | Matching | 100.00% | 256 |
 | `func_002ADAC8` | Matching | 100.00% | 296 |
 | `func_002ADBF0(void*)` | Matching | 100.00% | 32 |
 | `func_002ADC10` | Matching | 100.00% | 32 |
