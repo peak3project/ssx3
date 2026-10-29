@@ -923,3 +923,5 @@ func_00412860 = 0x00412860; //type:func
 func_00412CD8 = 0x00412CD8; //type:func
 func_00412D58 = 0x00412D58; //type:func
 func_00412DD8 = 0x00412DD8; //type:func
+// seg/seg_325220 func_0042CD98: 0xE0002000 is a scratch-address constant (lui 0xE000; addiu 0x2000), not a symbol.
+D_E0002000 = 0xE0002000; // ignore:true
