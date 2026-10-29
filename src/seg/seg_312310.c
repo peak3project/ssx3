@@ -64,7 +64,41 @@ double func_00411438(long a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_312310", func_004114D0);
+#ifdef SKIP_ASM
+// PORT: PS2-only libgcc library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_004114D0\n.type func_004114D0, @function\nfunc_004114D0:\n"
+    "dsra32 $6, $4, 0\n"
+    "dsra32 $3, $5, 0\n"
+    "dsll32 $4, $4, 0\n"
+    "dsra32 $4, $4, 0\n"
+    "dsll32 $5, $5, 0\n"
+    "dsra32 $5, $5, 0\n"
+    "mult $3, $4, $3\n"
+    "mult1 $6, $6, $5\n"
+    "multu $4, $5\n"
+    "mflo $4\n"
+    "mfhi $2\n"
+    "dsll32 $4, $4, 0\n"
+    "dsll32 $2, $2, 0\n"
+    "dsrl32 $4, $4, 0\n"
+    "addu $3, $3, $6\n"
+    "or $4, $4, $2\n"
+    "lui $5, (0xFFFF0000 >> 16)\n"
+    "dsrl32 $5, $5, 0\n"
+    "dsra32 $2, $4, 0\n"
+    "addu $2, $2, $3\n"
+    "and $4, $4, $5\n"
+    "dsll32 $2, $2, 0\n"
+    "jr $31\n"
+    "or $2, $4, $2\n"
+    ".size func_004114D0, . - func_004114D0\n"
+    ".set pop\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_312310", func_00411530);
