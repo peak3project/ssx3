@@ -628,7 +628,61 @@ __asm__(
     ".set pop\n");
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_312310", func_00411C38);
+#ifdef SKIP_ASM
+// PORT: PS2-only libgcc library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_00411C38\n.type func_00411C38, @function\nfunc_00411C38:\n"
+    "ld $2, 0x0($4)\n"
+    "addiu $3, $0, -0x1\n"
+    "dsrl $3, $3, 12\n"
+    "dsrl32 $4, $2, 31\n"
+    "and $3, $2, $3\n"
+    "dsrl32 $2, $2, 20\n"
+    "sw $4, 0x4($5)\n"
+    "andi $4, $2, 0x7FF\n"
+    "bnez $4, 1f\n"
+    "addiu $2, $0, 0x7FF\n"
+    "addiu $2, $0, 0x2\n"
+    "jr $31\n"
+    "sw $2, 0x0($5)\n"
+    "nop\n"
+    "1:\n"
+    "bnel $4, $2, 5f\n"
+    "dsll $3, $3, 8\n"
+    "bnez $3, 2f\n"
+    "addiu $2, $0, 0x4\n"
+    "jr $31\n"
+    "sw $2, 0x0($5)\n"
+    "2:\n"
+    "ori $2, $0, 0x8000\n"
+    "dsll32 $2, $2, 4\n"
+    "and $2, $3, $2\n"
+    "beqz $2, 3f\n"
+    "addiu $2, $0, 0x1\n"
+    "b 4f\n"
+    "sw $2, 0x0($5)\n"
+    "3:\n"
+    "sw $0, 0x0($5)\n"
+    "4:\n"
+    "jr $31\n"
+    "sd $3, 0x10($5)\n"
+    "5:\n"
+    "ori $2, $0, 0x8000\n"
+    "dsll32 $2, $2, 13\n"
+    "or $3, $3, $2\n"
+    "addiu $4, $4, -0x3FF\n"
+    "addiu $2, $0, 0x3\n"
+    "sd $3, 0x10($5)\n"
+    "sw $4, 0x8($5)\n"
+    "jr $31\n"
+    "sw $2, 0x0($5)\n"
+    ".size func_00411C38, . - func_00411C38\n"
+    ".set pop\n");
+#endif
 
 INCLUDE_ASM("seg/seg_312310", func_00411CD8);
 
