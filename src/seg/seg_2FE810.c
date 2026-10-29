@@ -7164,12 +7164,12 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040D588);
 #ifdef SKIP_ASM
 extern int func_0040E878(float x, float *y);
 extern float func_0040F5A8(float x, float y, int iy);
-typedef union { float value; int word; } D588_shape;
-#define D588_GET(i, d) do { D588_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
+typedef union { float f; int bits; } FloatBits_D588;
+#define FLOAT_TO_BITS_D588(i, d) do { FloatBits_D588 fb_; fb_.f = (d); (i) = fb_.bits; } while (0)
 float func_0040D588(float x) {
     float y[2];
     int hx, ix;
-    D588_GET(hx, x);
+    FLOAT_TO_BITS_D588(hx, x);
     ix = hx & 0x7fffffff;
     if (ix <= 0x3f490fda) {
         return func_0040F5A8(x, 0.0f, 1);
@@ -7264,13 +7264,13 @@ int func_0040F878(long *p) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040F8A0);
 #ifdef SKIP_ASM
-typedef union { float value; int word; } F8A0_shape;
-#define F8A0_GET(i, d) do { F8A0_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
-#define F8A0_SET(d, i) do { F8A0_shape sf_u; sf_u.word = (i); (d) = sf_u.value; } while (0)
+typedef union { float f; int bits; } FloatBits_F8A0;
+#define FLOAT_TO_BITS_F8A0(i, d) do { FloatBits_F8A0 fb_; fb_.f = (d); (i) = fb_.bits; } while (0)
+#define BITS_TO_FLOAT_F8A0(d, i) do { FloatBits_F8A0 fb_; fb_.bits = (i); (d) = fb_.f; } while (0)
 float func_0040F8A0(float x) {
     int ix;
-    F8A0_GET(ix, x);
-    F8A0_SET(x, ix & 0x7fffffff);
+    FLOAT_TO_BITS_F8A0(ix, x);
+    BITS_TO_FLOAT_F8A0(x, ix & 0x7fffffff);
     return x;
 }
 #endif
@@ -7285,55 +7285,55 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040F9D0);
 INCLUDE_ASM("seg/seg_2FE810", func_0040F9F8);
 #ifdef SKIP_ASM
 extern float copysignf_F9F8(float, float) __asm__("func_0040FB58");
-typedef union { float value; int word; } F9F8_shape;
-#define F9F8_GET(i, d) do { F9F8_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
-#define F9F8_SET(d, i) do { F9F8_shape sf_u; sf_u.word = (i); (d) = sf_u.value; } while (0)
-static const float two25 = 3.3554432e+07f, twom25 = 2.9802322e-08f, huge = 1.0e+30f, tiny = 1.0e-30f;
+typedef union { float f; int bits; } FloatBits_F9F8;
+#define FLOAT_TO_BITS_F9F8(i, d) do { FloatBits_F9F8 fb_; fb_.f = (d); (i) = fb_.bits; } while (0)
+#define BITS_TO_FLOAT_F9F8(d, i) do { FloatBits_F9F8 fb_; fb_.bits = (i); (d) = fb_.f; } while (0)
+static const float k_2pow25_F9F8 = 3.3554432e+07f, k_2powm25_F9F8 = 2.9802322e-08f, k_big_F9F8 = 1.0e+30f, k_small_F9F8 = 1.0e-30f;
 float func_0040F9F8(float x, int n) {
     int k, ix;
-    F9F8_GET(ix, x);
+    FLOAT_TO_BITS_F9F8(ix, x);
     k = (ix & 0x7f800000) >> 23;
     if (k == 0) {
         if ((ix & 0x7fffffff) == 0)
             return x;
-        x *= two25;
-        F9F8_GET(ix, x);
+        x *= k_2pow25_F9F8;
+        FLOAT_TO_BITS_F9F8(ix, x);
         k = ((ix & 0x7f800000) >> 23) - 25;
         if (n < -50000)
-            return tiny * x;
+            return k_small_F9F8 * x;
     }
     if (k == 0xff)
         return x + x;
     k = k + n;
     if (k > 0xfe)
-        return huge * copysignf_F9F8(huge, x);
+        return k_big_F9F8 * copysignf_F9F8(k_big_F9F8, x);
     if (k > 0) {
-        F9F8_SET(x, (ix & 0x807fffff) | (k << 23));
+        BITS_TO_FLOAT_F9F8(x, (ix & 0x807fffff) | (k << 23));
         return x;
     }
     if (k <= -25) {
         if (n > 50000)
-            return huge * copysignf_F9F8(huge, x);
+            return k_big_F9F8 * copysignf_F9F8(k_big_F9F8, x);
         else
-            return tiny * copysignf_F9F8(tiny, x);
+            return k_small_F9F8 * copysignf_F9F8(k_small_F9F8, x);
     }
     k += 25;
-    F9F8_SET(x, (ix & 0x807fffff) | (k << 23));
-    return x * twom25;
+    BITS_TO_FLOAT_F9F8(x, (ix & 0x807fffff) | (k << 23));
+    return x * k_2powm25_F9F8;
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040FB58);
 #ifdef SKIP_ASM
-typedef union { float value; int word; } FB58_shape;
-#define FB58_GET(i, d) do { FB58_shape gf_u; gf_u.value = (d); (i) = gf_u.word; } while (0)
-#define FB58_SET(d, i) do { FB58_shape sf_u; sf_u.word = (i); (d) = sf_u.value; } while (0)
+typedef union { float f; int bits; } FloatBits_FB58;
+#define FLOAT_TO_BITS_FB58(i, d) do { FloatBits_FB58 fb_; fb_.f = (d); (i) = fb_.bits; } while (0)
+#define BITS_TO_FLOAT_FB58(d, i) do { FloatBits_FB58 fb_; fb_.bits = (i); (d) = fb_.f; } while (0)
 float func_0040FB58(float x, float y) {
     int ix, iy;
-    FB58_GET(ix, x);
-    FB58_GET(iy, y);
-    FB58_SET(x, (ix & 0x7fffffff) | (iy & 0x80000000));
+    FLOAT_TO_BITS_FB58(ix, x);
+    FLOAT_TO_BITS_FB58(iy, y);
+    BITS_TO_FLOAT_FB58(x, (ix & 0x7fffffff) | (iy & 0x80000000));
     return x;
 }
 #endif
