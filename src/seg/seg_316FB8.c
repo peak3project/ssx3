@@ -18,7 +18,7 @@ int func_00415FB8(void) {
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_00415FC8);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -72,7 +72,7 @@ __asm__(
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_0041605C);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -219,7 +219,7 @@ __asm__(
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_00416210);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -285,7 +285,7 @@ __asm__(
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_004162D0);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -502,7 +502,7 @@ __asm__(
 //100%
 INCLUDE_ASM("seg/seg_316FB8", func_004165A8);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -605,7 +605,7 @@ __asm__(
 //100%
 INCLUDE_ASM("seg/seg_316FB8", strcpy);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -693,7 +693,7 @@ __asm__(
 //100%
 INCLUDE_ASM("seg/seg_316FB8", strlen);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -918,6 +918,7 @@ __asm__(
     "jr $31\n"
     "daddu $2, $8, $0\n"
     ".end func_00416958\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -1061,7 +1062,7 @@ __asm__(
 //100%
 INCLUDE_ASM("seg/seg_316FB8", strncpy);
 #ifdef SKIP_ASM
-// PORT: PS2-only library string/memory routine (MMI); kept as the binary's own instructions rather than rewriting library source; the whole
+// PORT: PS2-only newlib C library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
 // body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
 __asm__(
     ".set noreorder\n.set noat\n"
@@ -1188,6 +1189,7 @@ __asm__(
     "jr $31\n"
     "daddu $2, $8, $0\n"
     ".end strncpy\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -2782,6 +2784,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0xF0\n"
     ".end func_00418EF8\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -4088,6 +4091,7 @@ __asm__(
     "jr $31\n"
     "daddu $2, $0, $0\n"
     ".end func_0041AD80\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -4207,6 +4211,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x10\n"
     ".end func_0041AEE8\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -5466,6 +5471,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x60\n"
     ".end func_0041DBF8\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -5638,6 +5644,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x60\n"
     ".end func_0041E638\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -6005,6 +6012,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x60\n"
     ".end func_0041ED60\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -6331,6 +6339,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x40\n"
     ".end func_0041EF50\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -6752,6 +6761,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0xA0\n"
     ".end func_0041F3A8\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -7077,6 +7087,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x40\n"
     ".end func_0041FE30\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -7436,6 +7447,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x30\n"
     ".end ungetc\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 
@@ -9965,6 +9977,13 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x100\n"
     ".end func_00422780\n"
+    ".word 0x00000000\n"
+    ".word 0x00000000\n"
+    ".word 0x00000000\n"
+    ".word 0x00000000\n"
+    ".word 0x00000000\n"
+    ".word 0x00000000\n"
+    ".word 0x00000000\n"
     ".set at\n.set reorder\n");
 #endif
 

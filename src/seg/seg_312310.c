@@ -625,6 +625,7 @@ __asm__(
     "jr $31\n"
     "or $2, $6, $2\n"
     ".size func_00411B08, . - func_00411B08\n"
+    ".word 0x00000000\n"
     ".set pop\n");
 #endif
 
@@ -681,6 +682,7 @@ __asm__(
     "jr $31\n"
     "sw $2, 0x0($5)\n"
     ".size func_00411C38, . - func_00411C38\n"
+    ".word 0x00000000\n"
     ".set pop\n");
 #endif
 
@@ -1246,6 +1248,7 @@ __asm__(
     "jr $31\n"
     "daddu $2, $0, $0\n"
     ".size func_004123E8, . - func_004123E8\n"
+    ".word 0x00000000\n"
     ".set pop\n");
 #endif
 
@@ -1404,5 +1407,6 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x40\n"
     ".size func_004127A8, . - func_004127A8\n"
+    ".word 0x00000000\n"
     ".set pop\n");
 #endif

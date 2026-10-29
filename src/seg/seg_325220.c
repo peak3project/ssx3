@@ -5990,5 +5990,7 @@ __asm__(
     "jr $31\n"
     "addiu $29, $29, 0x30\n"
     ".size func_0042DAD8, . - func_0042DAD8\n"
+    ".word 0x00000000\n"
+    ".word 0x00000000\n"
     ".set pop\n");
 #endif
