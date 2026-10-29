@@ -722,7 +722,56 @@ extern "C" int func_003ECB00(char* record, int len, unsigned char* data)
 
 INCLUDE_ASM("dirtysock/tags", func_003ECBD8);
 
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003ECE38);
+#ifdef SKIP_ASM
+extern "C" char* func_003ECE38(unsigned char* rec, int unused, char* out, int size, char* def)
+{
+    unsigned char* p;
+    unsigned char* s;
+    int c;
+    unsigned int next;
+    int i;
+    int n;
+
+    for (p = rec; ; p++) {
+        c = *p;
+        if (c == 0) {
+            break;
+        }
+        if (c == '=' || c == ':') {
+            next = p[1];
+            if (next < 0x20) {
+                if (next == 0) {
+                    break;
+                }
+                p += 2;
+                if (out != 0) {
+                    n = size - 1;
+                    i = 0;
+                    if (n > 0 && *p != 0) {
+                        s = p;
+                        do {
+                            out[i++] = *s++;
+                        } while (i < n && *s != 0);
+                    }
+                    out[i] = 0;
+                }
+                return (char*)p;
+            }
+        }
+    }
+    if (out != 0 && def != 0) {
+        n = size - 1;
+        i = 0;
+        for (; i < n && def[i] != 0; i++) {
+            out[i] = def[i];
+        }
+        out[i] = 0;
+    }
+    return 0;
+}
+#endif
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetNumber);
 #ifdef SKIP_ASM
