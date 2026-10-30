@@ -6049,7 +6049,69 @@ void func_003E6428(int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6448);
+#ifdef SKIP_ASM
+void func_003E6448_memset(char *p, int c, int n) __asm__("func_003E6448");
+void func_003E6448_memset(char *p, int c, int n) {
+    if (n > 0 && ((int)p & 1)) {
+        *p = c;
+        n--;
+        p++;
+    }
+    if (n >= 2 && ((int)p & 2)) {
+        *(short *)p = c;
+        n -= 2;
+        p += 2;
+    }
+    if (n >= 4 && ((int)p & 4)) {
+        *(int *)p = c;
+        n -= 4;
+        p += 4;
+    }
+    if (n >= 64) {
+        long d;
+        int *q = (int *)&d;
+        q[1] = c;
+        q[0] = c;
+        do {
+            ((long *)p)[0] = d;
+            n -= 64;
+            ((long *)p)[1] = d;
+            ((long *)p)[2] = d;
+            ((long *)p)[3] = d;
+            ((long *)p)[4] = d;
+            ((long *)p)[5] = d;
+            ((long *)p)[6] = d;
+            ((long *)p)[7] = d;
+            p += 64;
+        } while (n >= 64);
+    }
+    if (n >= 16) {
+        do {
+            ((int *)p)[0] = c;
+            n -= 16;
+            ((int *)p)[1] = c;
+            ((int *)p)[2] = c;
+            ((int *)p)[3] = c;
+            p += 16;
+        } while (n >= 16);
+    }
+    while (n >= 4) {
+        *(int *)p = c;
+        n -= 4;
+        p += 4;
+    }
+    if (n >= 2) {
+        *(short *)p = c;
+        n -= 2;
+        p += 2;
+    }
+    if (n > 0) {
+        *p = c;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6574);
