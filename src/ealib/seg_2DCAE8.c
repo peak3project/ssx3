@@ -2700,7 +2700,78 @@ dec:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E0270);
+#ifdef SKIP_ASM
+extern void MUTEX_lock_0270(void *) __asm__("MUTEX_lock");
+extern void MUTEX_unlock_0270(void *) __asm__("MUTEX_unlock");
+extern int func_004165A8_0270(char *, char *) __asm__("func_004165A8");
+extern char *strcpy_0270(char *, char *) __asm__("strcpy");
+extern int func_003DD4E8_0270(char *, int, int, void *) __asm__("func_003DD4E8");
+extern int func_003DD5A0_0270(int, int, void *) __asm__("func_003DD5A0");
+extern void func_003DCF70_0270(int, void *) __asm__("func_003DCF70");
+extern void cb_00D8_0270(void) __asm__("func_003E00D8");
+extern void cb_0118_0270(void) __asm__("func_003E0118");
+extern void func_003E03D0_0270(char *, int) __asm__("func_003E03D0");
+
+void func_003E0270(char *self, int arg1) {
+    char *job;
+    int none;
+    int tk;
+    job = 0;
+    MUTEX_lock_0270(self + 4);
+    if (*(char **)(self + 0x60) == 0) {
+        none = 1;
+    } else {
+        char *cur = *(char **)(self + 0x60);
+        none = 0;
+        if (*(int *)(cur + 4) != 1) {
+            if (*(int *)(cur + 0xC) == 0) {
+                none = 1;
+            } else {
+                *(int *)(self + 0x60) = *(int *)(cur + 0xC);
+            }
+        }
+    }
+    if (none) {
+        *(volatile int *)(self + 0x38) = 0;
+    } else {
+        job = *(char **)(self + 0x60);
+        tk = *(int *)(self + 0x54);
+        *(int *)(job + 4) = 2;
+        *(int *)(job + 0x120) = tk;
+    }
+    MUTEX_unlock_0270(self + 4);
+    if (!none) {
+        *(int *)(self + 0x58) = *(int *)(self + 0x54);
+        if (*(int *)(job + 0x10) == 1) {
+            *(int *)(self + 0x170) = 0;
+        } else {
+            char *nm = self + 0x6C;
+            int h;
+            *(int *)(self + 0x170) = *(int *)(job + 0x118);
+            if (func_004165A8_0270(job + 0x14, nm) != 0) {
+                strcpy_0270(nm, job + 0x14);
+                if (*(int *)(self + 0x16C) == 0) {
+                    h = func_003DD4E8_0270(nm, 1, arg1, self);
+                    *(int *)(self + 0x174) = h;
+                    if (h != 0) {
+                        func_003DCF70_0270(h, cb_00D8_0270);
+                    }
+                } else {
+                    h = func_003DD5A0_0270(*(int *)(self + 0x16C), arg1, self);
+                    *(int *)(self + 0x174) = h;
+                    if (h != 0) {
+                        func_003DCF70_0270(h, cb_0118_0270);
+                    }
+                }
+                return;
+            }
+        }
+        func_003E03D0_0270(self, arg1);
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E03D0);
 
