@@ -9826,7 +9826,31 @@ __asm__(
     ".set pop\n");
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040F840);
+#ifdef SKIP_ASM
+// PORT: PS2-only newlib libm (isnan) library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_0040F840\n.type func_0040F840, @function\nfunc_0040F840:\n"
+    "dsll32 $2, $4, 0\n"
+    "dsra32 $2, $2, 0\n"
+    "dsra32 $4, $4, 0\n"
+    "lui $3, (0x7FFFFFFF >> 16)\n"
+    "negu $5, $2\n"
+    "ori $3, $3, (0x7FFFFFFF & 0xFFFF)\n"
+    "or $2, $2, $5\n"
+    "and $4, $4, $3\n"
+    "srl $2, $2, 31\n"
+    "lui $3, (0x7FF00000 >> 16)\n"
+    "or $4, $4, $2\n"
+    "subu $4, $3, $4\n"
+    "jr $31\n"
+    "srl $2, $4, 31\n"
+    ".size func_0040F840, . - func_0040F840\n"
+    ".set pop\n");
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040F878);
