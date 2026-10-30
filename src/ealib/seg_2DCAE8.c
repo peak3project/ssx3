@@ -6508,7 +6508,16 @@ int func_003E7450_impl(char *o, int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E74E8);
+#ifdef SKIP_ASM
+int func_003E74E8(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, volatile int *out)
+{
+    out[0] = a7;
+    out[1] = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E7500);
