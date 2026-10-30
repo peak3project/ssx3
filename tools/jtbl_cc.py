@@ -149,18 +149,14 @@ def main() -> None:
         c = list(asm_base)
         c[c.index(src)] = str(path)
         c[c.index("-o") + 1] = str(dest)
-        c[c.index("-c"):c.index("-c") + 1] = ["-c", *extra]
+        # Always pass a gas listing option (-an: no source, no forms; the listing itself is discarded). With
+        # INCLUDE_ASM `.org` slots (-DASM_OFFSETS) gas otherwise lays relaxation frags out on stale addresses: it can
+        # add a padding nop after a function that fills its slot exactly, or fail with "attempt to .org backwards",
+        # depending only on how much C precedes it in the file. With a listing the layout is consistent.
+        lst = Path(str(dest) + ".lst")
+        c[c.index("-c"):c.index("-c") + 1] = ["-c", "-Wa,-an=" + str(lst), *extra]
         rr = subprocess.run(c, capture_output=True, text=True)
-        if rr.returncode and ".org" in rr.stderr and "backwards" in rr.stderr:
-            # gas relaxation with INCLUDE_ASM `.org` slots (-DASM_OFFSETS): a function that fills its slot exactly can
-            # make the second relax pass grow (R5900 short-loop nop / alignment decided on stale frag addresses) and
-            # then fail with "attempt to .org backwards" depending only on how much C precedes it in the file. Any
-            # listing option (-an: no source, no forms) makes gas lay the frags out consistently; retry with it.
-            lst = Path(str(dest) + ".lst")
-            c2 = list(c)
-            c2[c2.index("-c") + 1:c2.index("-c") + 1] = ["-Wa,-an=" + str(lst)]
-            rr = subprocess.run(c2, capture_output=True, text=True)
-            lst.unlink(missing_ok=True)
+        lst.unlink(missing_ok=True)
         if rr.returncode:
             sys.stderr.write(rr.stderr)
             sys.exit(rr.returncode)
