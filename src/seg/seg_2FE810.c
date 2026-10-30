@@ -6985,7 +6985,35 @@ int func_0040C7C0(int a, unsigned b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C810);
+#ifdef SKIP_ASM
+extern int G_KbRdy4[] __asm__("D_00453438");
+extern char G_KbName4[] __asm__("D_005290A0");
+extern void kb_wait4(int) __asm__("func_00423DE0");
+extern void kb_signal4(int) __asm__("func_00423DC0");
+extern int kb_poll4(char *) __asm__("func_00426F08");
+extern int kb_read4(void) __asm__("func_0040C8C0");
+int func_0040C810(int mode, int *out) {
+    if (G_KbRdy4[0] == -1)
+        return -1;
+    switch (mode) {
+    case 0:
+        kb_wait4(G_KbRdy4[0]);
+        *out = kb_read4();
+        kb_signal4(G_KbRdy4[0]);
+        return 0;
+    case 1:
+        if (kb_poll4(G_KbName4) == 0) {
+            *out = kb_read4();
+            return 0;
+        }
+        return 1;
+    default:
+        return -11;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C8B0);
