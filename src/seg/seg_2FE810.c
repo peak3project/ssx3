@@ -9675,7 +9675,27 @@ float func_0040F8A0(float x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040F8C0);
+#ifdef SKIP_ASM
+// PORT: PS2-only newlib libm library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_0040F8C0\n.type func_0040F8C0, @function\nfunc_0040F8C0:\n"
+    "mfc1 $3, $f12\n"
+    "daddu $2, $3, $0\n"
+    "lui $4, (0x7FFFFFFF >> 16)\n"
+    "ori $4, $4, (0x7FFFFFFF & 0xFFFF)\n"
+    "lui $3, (0x80800000 >> 16)\n"
+    "and $2, $2, $4\n"
+    "addu $2, $2, $3\n"
+    "jr $31\n"
+    "srl $2, $2, 31\n"
+    ".size func_0040F8C0, . - func_0040F8C0\n"
+    ".word 0x00000000\n"
+    ".set pop\n");
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040F8E8);
 
