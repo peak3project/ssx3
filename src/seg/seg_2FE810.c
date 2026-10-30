@@ -6569,7 +6569,31 @@ void func_0040BD28(unsigned char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BD90);
+#ifdef SKIP_ASM
+typedef struct { char b[12]; } sDaysTbl;
+typedef struct { unsigned char stat, sec, min, hour, pad, day, month, year; } sClk;
+extern sDaysTbl D_00498230;
+void func_0040BD90(unsigned char *a) {
+    sClk *c = (sClk *)a;
+    sDaysTbl days = D_00498230;
+    c->day++;
+    if ((c->year % 4) == 0)
+        days.b[1] = 29;
+    if (days.b[c->month - 1] < c->day) {
+        c->day = 1;
+        c->month++;
+        if (c->month == 13) {
+            if (c->year == 99)
+                c->year = 0;
+            else
+                c->year++;
+            c->month = 1;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040BE48);
 
