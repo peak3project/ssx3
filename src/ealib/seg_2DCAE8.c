@@ -4555,7 +4555,46 @@ int func_003E3968(unsigned int *a, unsigned int *b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E39A8);
+#ifdef SKIP_ASM
+extern int func_003E36F8_39A8(char *, int) __asm__("func_003E36F8");
+extern void func_00418EF8_39A8(char *, int, int, void *) __asm__("func_00418EF8");
+extern void func_003E3968_39A8(void) __asm__("func_003E3968");
+extern char *strcpy_39A8(char *, char *) __asm__("strcpy");
+extern int D_00450C58_39A8[] __asm__("D_00450C58");
+extern int D_0051ED80_39A8[] __asm__("D_0051ED80");
+
+int func_003E39A8(char *src, char *dst, int n, int seed) {
+    int done = 0;
+    do {
+        char *d = dst;
+        char *s = src;
+        if (n > 0) {
+            int i = n;
+            do {
+                *(int *)d = func_003E36F8_39A8(s, seed);
+                *(int *)(d + 4) = *(int *)(s + 0x100);
+                *(int *)(d + 8) = *(int *)(s + 0x104);
+                if (D_00450C58_39A8[1] > 0) {
+                    strcpy_39A8(d + 0xC, s);
+                }
+                i--;
+                s += 0x108;
+                d += D_00450C58_39A8[1] + 0xC;
+            } while (i != 0);
+        }
+        D_0051ED80_39A8[0] = 0;
+        func_00418EF8_39A8(dst, n, D_00450C58_39A8[1] + 0xC, (void *)func_003E3968_39A8);
+        if (D_0051ED80_39A8[0] != 0) {
+            seed = seed * 0x65 + 7;
+        } else {
+            done = 1;
+        }
+    } while (!done);
+    return seed;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3AD8);
