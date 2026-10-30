@@ -576,7 +576,40 @@ int func_003F4C68_impl(int a0, int a1, int a2, int a3, int a4, int a5, int a6, i
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4C98);
+#ifdef SKIP_ASM
+typedef struct { int idx; int k1; int k2; int v; } C4C98;
+typedef struct { int idx; int k1; int k2; int v; } Ent;
+typedef struct { char pad[0x4D88]; Ent *beg; Ent *end; } G4C98;
+extern G4C98 D_4C98 __asm__("D_0051F0C0");
+int f4C98impl(C4C98 *c, int k1, int k2) __asm__("func_003F4C98");
+int f4C98impl(C4C98 *c, int k1, int k2) {
+    G4C98 *g = &D_4C98;
+    Ent *e;
+    if (k1 == c->k1 && k2 == c->k2) {
+        int i = c->idx;
+        if (i >= 0) {
+            if (i < 0x81) {
+                Ent *ent = (Ent *)(i * 16 + (int)g->beg);
+                if (ent->v == c->v && ent->k1 == k1) return 0;
+            }
+        }
+    }
+    c->k2 = k2;
+    c->k1 = k1;
+    for (e = g->beg; e != g->end; e++) {
+        if (e->k1 == c->k1 && e->k2 == c->k2) {
+            c->idx = e->idx;
+            c->v = e->v;
+            return 1;
+        }
+    }
+    c->idx = 0;
+    c->v = 0;
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4D68);
