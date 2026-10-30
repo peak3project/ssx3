@@ -7136,7 +7136,41 @@ void func_003C2A50(int id) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2EC8);
+#ifdef SKIP_ASM
+struct Ch_2EC8 { char pad0[4]; short ids[1]; char pad6[0x1D]; unsigned char n; unsigned short flags; char pad26[0x39]; char b5F; };
+struct G_2EC8 { char pad[0x49]; unsigned char b49; char pad4A[0x1F0 - 0x4A]; char *chans; };
+struct A_2EC8 { char pad[0xCB0]; struct { char pad[8]; unsigned long mask; } *bits; };
+extern struct G_2EC8 D_0050A8E8_2EC8 __asm__("D_0050A8E8");
+extern struct A_2EC8 D_0050AD00_2EC8 __asm__("D_0050AD00");
+extern void f_2A50_2EC8(int) __asm__("func_003C2A50");
+
+void func_003C2EC8(int id) {
+    struct Ch_2EC8 *ch = (struct Ch_2EC8 *)(D_0050A8E8_2EC8.chans + id * 0x8C);
+    int i;
+    if (ch->flags & 8) {
+        for (i = 0; i < ch->n; i++) {
+            if (ch->b5F) {
+                D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask | (1L << ch->ids[i]);
+            } else {
+                D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask & ~(1L << ch->ids[i]);
+            }
+            if (D_0050A8E8_2EC8.b49 == 2) {
+                if (ch->b5F) {
+                    D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask | (1L << (ch->ids[i] + 0x18));
+                } else {
+                    D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask & ~(1L << (ch->ids[i] + 0x18));
+                }
+            }
+        }
+    } else if (ch->flags & 0x100) {   /* the two arms are identical in the release build (two separate calls in the binary) */
+        f_2A50_2EC8(id);
+    } else {
+        f_2A50_2EC8(id);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3010);
