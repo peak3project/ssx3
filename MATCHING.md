@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `f429bdc1`, generated 2026-10-30.
+Snapshot of commit `965b02ed`, generated 2026-10-30.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `f429bdc1`, generated 2026-10-30.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,243 | 94.22% |
+| Matching | 14,245 | 94.24% |
 | Partial | 5 | 0.03% |
-| Not started | 868 | 5.74% |
+| Not started | 866 | 5.73% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -118,11 +118,11 @@ Only files with at least one Matching or Partial function are listed here; files
 | `object/debouncenode` | 38 | 0 | 6 | 44 |
 | `object/modifierblock` | 37 | 0 | 0 | 37 |
 | `replay/frameptr` | 37 | 0 | 2 | 39 |
+| `dirtysock/tags` | 35 | 0 | 5 | 40 |
 | `fe/festatetrophyroom` | 35 | 0 | 1 | 36 |
 | `ui/uitext` | 35 | 0 | 3 | 38 |
 | `animation/rideranimbase` | 34 | 0 | 1 | 35 |
 | `main/loadscreens_prestart` | 34 | 0 | 0 | 34 |
-| `dirtysock/tags` | 33 | 0 | 7 | 40 |
 | `main/gameload` | 33 | 0 | 6 | 39 |
 | `object/flagset` | 33 | 0 | 3 | 36 |
 | `seg/seg_313F58` | 33 | 0 | 0 | 33 |
@@ -3247,12 +3247,13 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `dirtysock/tags`
 
-33 matching, 0 partial, 7 not started (40 total)
+35 matching, 0 partial, 5 not started (40 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
 | `cDirtysock_tag__TagFieldSetupAppend(char *, char *, char *)` | Matching | 100.00% | 72 |
 | `func_003EB578` | Matching | 100.00% | 12 |
+| `func_003EB588` | Matching | 100.00% | 336 |
 | `cDirtysock_tag_TagFieldDupl` | Matching | 100.00% | 72 |
 | `func_003EBBA8` | Matching | 100.00% | 264 |
 | `func_003EBCB0` | Matching | 100.00% | 192 |
@@ -3272,6 +3273,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003EDD70` | Matching | 100.00% | 268 |
 | `func_003EDE80` | Matching | 100.00% | 204 |
 | `cDirtysock_tag_TagFieldSetStructure` | Matching | 99.97% | 780 |
+| `func_003ECBD8` | Matching | 99.97% | 608 |
 | `func_003EB9E8` | Matching | 99.95% | 376 |
 | `cDirtysock_tag_TagFieldSetAddress` | Matching | 99.93% | 304 |
 | `cDirtysock_tag_TagFieldSetNumber` | Matching | 99.91% | 232 |
