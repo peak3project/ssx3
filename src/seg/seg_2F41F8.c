@@ -782,7 +782,45 @@ int func_003F57C8_impl(S57C8 *self, int key) {
 void func_003F5908(void) {
 }
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5910);
+#ifdef SKIP_ASM
+typedef struct { int n0; unsigned char *p; int n; char *s; int z; } IO5910;
+extern char D_00525F50[];
+extern int func_003F4C98(char *, int, int);
+extern int c59_4C68(char *, int, int, int, IO5910 *, int, int, int, int, int) __asm__("func_003F4C68");
+extern void c59_5908(int *) __asm__("func_003F5908");
+extern int strlen(const char *);
+int func_003F5910(int *self, int a, int b, char *str, int len) {
+    unsigned char hdr[12];
+    IO5910 io;
+    c59_5908(self);
+    if (len < 0) {
+        len = strlen(str) + 1;
+    }
+    len += 0xC;
+    hdr[8] = len >> 24;
+    hdr[9] = len >> 16;
+    hdr[10] = len >> 8;
+    hdr[11] = len;
+    hdr[0] = a >> 24;
+    hdr[1] = a >> 16;
+    hdr[2] = a >> 8;
+    hdr[3] = a;
+    hdr[4] = b >> 24;
+    hdr[5] = b >> 16;
+    hdr[6] = b >> 8;
+    hdr[7] = b;
+    io.n0 = 0xC;
+    io.p = hdr;
+    io.n = len - 0xC;
+    io.s = str;
+    io.z = 0;
+    func_003F4C98(D_00525F50, 'sess', 'send');
+    c59_4C68(D_00525F50, 2, self[0], 0, &io, 0, 0, 0, 0, 0);
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A50);
 
