@@ -6843,7 +6843,170 @@ extern "C" void func_00386DD0(void* self, sPartStrip_6DD0* strips, int n, void* 
 
 INCLUDE_ASM("render/particle", func_00386E78);
 
+//100%
 INCLUDE_ASM("render/particle", func_00387EC0);
+#ifdef SKIP_ASM
+struct sPtGfx_7EC0 {
+    char pad_0x0[0x5A00];
+    unsigned int bufAddr;           // 0x5A00
+};
+
+struct sPair_7EC0 {
+    int a;
+    int b;
+};
+
+struct sQuad_7EC0 {
+    unsigned int w[4];
+} __attribute__((aligned(16)));
+
+struct sVtx_7EC0 {
+    sQuad_7EC0 q[3];                // 0x30 bytes
+};
+
+extern int D_004A43A0;
+extern sPair_7EC0 D_004A43A8[];
+extern char D_3A00[];
+extern char D_3A08[];
+
+// PORT: uncached (0x30000000) GIF/DMA packet pointers; 64-bit GS words are `ulong`.
+void func_00387EC0_impl(sPtGfx_7EC0* self, sVtx_7EC0** tbl, int start, int n, int ia, int ib, int flag, float fa, float fb) __asm__("func_00387EC0");
+void func_00387EC0_impl(sPtGfx_7EC0* self, sVtx_7EC0** tbl, int start, int n, int ia, int ib, int flag, float fa, float fb)
+{
+    unsigned int addr = (D_004A43A0 ? (unsigned int)D_3A00 : (unsigned int)D_3A08) >> 3;
+    int a;
+    long b;
+    D_004A43A0 = 0;
+    if (flag) {
+        a = 0x5C;
+        b = 0x412;
+    } else {
+        a = 4;
+        b = 0x41F;
+    }
+    unsigned long* p = (unsigned long*)(self->bufAddr | 0x30000000);
+    if (n != 0) {
+        do {
+            unsigned long prim = ((unsigned long)a << 47) | ((unsigned long)0x8000 << 31);
+            int c = n < 0x25 ? n : 0x24;
+            int lim = 0x36 - start;
+            int m = c < lim ? c : lim;
+            int r = c - m;
+            sPair_7EC0 q = D_004A43A8[0];
+            if (r < 0) {
+                r = 0;
+            }
+            if (n <= c) {
+                q.a = (start + c - 2) % 0x36;
+                q.b = (start + c - 1) % 0x36;
+                if (r >= 2) {
+                    r -= 2;
+                } else {
+                    int m2 = m - 2;
+                    m = m2 + r;
+                    r = 0;
+                }
+            }
+            unsigned int unpackCmd = 0x6C000000;
+            p[0] = 0x10000003;
+            p[3] = (unsigned long)0xD805 << 47;
+            p[4] = (unsigned long)((c * 2) | 0x8000) | prim | ((unsigned long)0xC000 << 46);
+            p[6] = (long)(c * 3) | ((long)c << 32);
+            p[7] = *(unsigned int*)&fb | ((unsigned long)*(unsigned int*)&fa << 32);
+            p[1] = 0;
+            p[2] = (unsigned long)0x1000101 << 32;
+            p[5] = b;
+            p += 8;
+            unsigned int t = 2;
+            if (m != 0) {
+                p[0] = 0x10000001;
+                p[1] = 0;
+                p[2] = (unsigned long)0x1000101 << 32;
+                int m3 = m * 3;
+                unsigned int hm = (m3 << 16) | 0x8000;
+                p[3] = (unsigned long)((t | hm) | unpackCmd) << 32;
+                p[4] = (unsigned long)(m3 | 0x30000000) | ((unsigned long)(unsigned int)((int)tbl[ia] + start * 0x30) << 32);
+                p[5] = 0;
+                t = m3 + 2;
+                p += 6;
+            }
+            if (r != 0) {
+                p[0] = 0x10000001;
+                p[1] = 0;
+                p[2] = (unsigned long)0x1000101 << 32;
+                int r3 = r * 3;
+                unsigned int hr = (r3 << 16) | 0x8000;
+                p[3] = (unsigned long)((t | hr) | unpackCmd) << 32;
+                p[4] = (unsigned long)(r3 | 0x30000000) | ((unsigned long)(unsigned int)tbl[ia] << 32);
+                p[5] = 0;
+                t += r3;
+                p += 6;
+            }
+            if (q.a >= 0) {
+                p[0] = 0x10000007;
+                p[1] = 0;
+                p[2] = (unsigned long)0x1000101 << 32;
+                unsigned int lo = t | 0x68000;
+                p[3] = (unsigned long)(lo | unpackCmd) << 32;
+                t += 6;
+                p += 4;
+                *(sVtx_7EC0*)p = tbl[ia][q.a];
+                p += 6;
+                *(sVtx_7EC0*)p = tbl[ia][q.b];
+                p += 6;
+            }
+            if (m != 0) {
+                p[0] = 0x10000001;
+                p[1] = 0;
+                p[2] = (unsigned long)0x1000101 << 32;
+                int m3 = m * 3;
+                unsigned int hm = (m3 << 16) | 0x8000;
+                p[3] = (unsigned long)((t | hm) | unpackCmd) << 32;
+                p[4] = (unsigned long)(m3 | 0x30000000) | ((unsigned long)(unsigned int)((int)tbl[ib] + start * 0x30) << 32);
+                p[5] = 0;
+                t += m3;
+                p += 6;
+            }
+            if (r != 0) {
+                p[0] = 0x10000001;
+                p[1] = 0;
+                p[2] = (unsigned long)0x1000101 << 32;
+                int r3 = r * 3;
+                unsigned int hr = (r3 << 16) | 0x8000;
+                p[3] = (unsigned long)((t | hr) | unpackCmd) << 32;
+                p[4] = (unsigned long)(r3 | 0x30000000) | ((unsigned long)(unsigned int)tbl[ib] << 32);
+                p[5] = 0;
+                t += r3;
+                p += 6;
+            }
+            if (q.a >= 0) {
+                p[0] = 0x10000007;
+                p[1] = 0;
+                p[2] = (unsigned long)0x1000101 << 32;
+                unsigned int lo2 = t | 0x68000;
+                p[3] = (unsigned long)(lo2 | unpackCmd) << 32;
+                p += 4;
+                *(sVtx_7EC0*)p = tbl[ib][q.a];
+                p += 6;
+                *(sVtx_7EC0*)p = tbl[ib][q.b];
+                p += 6;
+            }
+            p[0] = 0x10000001;
+            p[1] = 0;
+            p[2] = 0;
+            p[3] = (unsigned long)(addr | 0x14000000) << 32;
+            p += 4;
+            fa += fb * (float)c;
+            n -= c;
+            if (n > 0) {
+                n += 1;
+                start = (start + c - 1) % 0x36;
+            }
+        } while (n != 0);
+    }
+    self->bufAddr = (unsigned int)p & 0x0FFFFFFF;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_003883B8);
