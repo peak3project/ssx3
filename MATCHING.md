@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `51dd4869`, generated 2026-10-30.
+Snapshot of commit `d2b1d195`, generated 2026-10-30.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `51dd4869`, generated 2026-10-30.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,295 | 94.57% |
+| Matching | 14,302 | 94.61% |
 | Partial | 4 | 0.03% |
-| Not started | 817 | 5.40% |
+| Not started | 810 | 5.36% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -29,9 +29,9 @@ Only files with at least one Matching or Partial function are listed here; files
 | `render/font` | 432 | 0 | 1 | 433 |
 | `fe/fepopupmisc` | 375 | 1 | 5 | 381 |
 | `object/railmodifier` | 354 | 0 | 15 | 369 |
+| `seg/seg_2FE810` | 308 | 0 | 58 | 366 |
 | `dirtysock/tagsunk` | 307 | 0 | 10 | 317 |
 | `ealib/seg_2DCAE8` | 307 | 0 | 22 | 329 |
-| `seg/seg_2FE810` | 301 | 0 | 65 | 366 |
 | `bx/seg_1BA100` | 297 | 0 | 2 | 299 |
 | `sound/soundsys` | 292 | 0 | 13 | 305 |
 | `ui/uivector` | 288 | 0 | 1 | 289 |
@@ -12246,7 +12246,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_2FE810`
 
-301 matching, 0 partial, 65 not started (366 total)
+308 matching, 0 partial, 58 not started (366 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -12279,6 +12279,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003FECB8` | Matching | 100.00% | 48 |
 | `func_003FECE8` | Matching | 100.00% | 16 |
 | `func_003FECF8` | Matching | 100.00% | 16 |
+| `func_003FED08` | Matching | 100.00% | 72 |
 | `func_003FED50` | Matching | 100.00% | 16 |
 | `func_003FF088` | Matching | 100.00% | 104 |
 | `func_003FF0F0` | Matching | 100.00% | 60 |
@@ -12323,6 +12324,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00401350` | Matching | 100.00% | 152 |
 | `func_004013E8` | Matching | 100.00% | 160 |
 | `func_00401488` | Matching | 100.00% | 108 |
+| `func_00401668` | Matching | 100.00% | 176 |
 | `func_00402268` | Matching | 100.00% | 152 |
 | `func_00402300` | Matching | 100.00% | 152 |
 | `func_00402398` | Matching | 100.00% | 180 |
@@ -12342,6 +12344,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00402B48` | Matching | 100.00% | 16 |
 | `func_00402B58` | Matching | 100.00% | 88 |
 | `func_00402BB0` | Matching | 100.00% | 84 |
+| `func_00402C08` | Matching | 100.00% | 36 |
 | `func_00402C30` | Matching | 100.00% | 80 |
 | `func_00402C80` | Matching | 100.00% | 40 |
 | `func_00402CA8` | Matching | 100.00% | 24 |
@@ -12480,6 +12483,10 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0040BC08` | Matching | 100.00% | 104 |
 | `func_0040BC70` | Matching | 100.00% | 44 |
 | `func_0040BD28` | Matching | 100.00% | 104 |
+| `func_0040BD90` | Matching | 100.00% | 180 |
+| `func_0040BE48` | Matching | 100.00% | 164 |
+| `func_0040BEF0` | Matching | 100.00% | 48 |
+| `func_0040BF20` | Matching | 100.00% | 36 |
 | `func_0040BF48` | Matching | 100.00% | 140 |
 | `func_0040BFD8` | Matching | 100.00% | 8 |
 | `func_0040BFE0` | Matching | 100.00% | 72 |
@@ -12489,8 +12496,10 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `sceUsbKbGetLocation` | Matching | 100.00% | 220 |
 | `sceUsbKbSetLEDStatus` | Matching | 100.00% | 216 |
 | `sceUsbKbSetLEDMode` | Matching | 100.00% | 252 |
+| `func_0040C728` | Matching | 100.00% | 68 |
 | `func_0040C770` | Matching | 100.00% | 76 |
 | `func_0040C7C0` | Matching | 100.00% | 76 |
+| `func_0040C810` | Matching | 100.00% | 160 |
 | `func_0040C8B0` | Matching | 100.00% | 12 |
 | `func_0040C8C0` | Matching | 100.00% | 100 |
 | `func_0040C928` | Matching | 100.00% | 88 |
@@ -12546,9 +12555,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003FE558` | Matching | 99.64% | 56 |
 | `func_003FE6A8` | Matching | 99.58% | 96 |
 | `func_003FEBD8` | Matching | 99.58% | 96 |
-| `func_0040BEF0` | Matching | 99.58% | 48 |
 | `func_003FED60` | Matching | 99.44% | 36 |
-| `func_0040BF20` | Matching | 99.44% | 36 |
 | `func_004011C0` | Matching | 99.29% | 28 |
 | `func_0040BCC0` | Matching | 98.85% | 104 |
 
