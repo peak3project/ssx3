@@ -11357,7 +11357,51 @@ void func_003CBB28(int *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CBB78);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written VU0 loop (add/addi, no compiler emits them); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+void func_003CBB78(void) {
+    __asm__ volatile(
+        ".set push\n.set noreorder\n.set noat\n"
+        "daddu $3, $4, $0\n"
+        "daddu $2, $6, $0\n"
+        "mfc1 $8, $f12\n"
+        "daddu $4, $3, $0\n"
+        "qmtc2.ni $8, $vf1\n"
+        "sll $4, $4, 2\n"
+        "daddu $6, $5, $0\n"
+        "daddu $7, $2, $0\n"
+        "add $4, $4, $6\n"
+        "1:\n"
+        "lqc2 $vf2, 0x0($6)\n"
+        "lqc2 $vf3, 0x10($6)\n"
+        "lqc2 $vf4, 0x20($6)\n"
+        "lqc2 $vf5, 0x30($6)\n"
+        "lqc2 $vf6, 0x0($7)\n"
+        "lqc2 $vf7, 0x10($7)\n"
+        "lqc2 $vf8, 0x20($7)\n"
+        "lqc2 $vf9, 0x30($7)\n"
+        "vmulx.xyzw $vf2, $vf2, $vf1x\n"
+        "vmulx.xyzw $vf3, $vf3, $vf1x\n"
+        "vmulx.xyzw $vf4, $vf4, $vf1x\n"
+        "vmulx.xyzw $vf5, $vf5, $vf1x\n"
+        "vadd.xyzw $vf6, $vf6, $vf2\n"
+        "vadd.xyzw $vf7, $vf7, $vf3\n"
+        "addi $6, $6, 0x40\n"
+        "vadd.xyzw $vf8, $vf8, $vf4\n"
+        "vadd.xyzw $vf9, $vf9, $vf5\n"
+        "sqc2 $vf6, 0x0($7)\n"
+        "sqc2 $vf7, 0x10($7)\n"
+        "sqc2 $vf8, 0x20($7)\n"
+        "sqc2 $vf9, 0x30($7)\n"
+        "bne $4, $6, 1b\n"
+        "addi $7, $7, 0x40\n"
+        ".set pop\n"
+        : : : "memory");
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CBC00);
