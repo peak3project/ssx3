@@ -2910,7 +2910,60 @@ out:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9C20);
+#ifdef SKIP_ASM
+struct Ch_9C20 {
+    char pad00[0x20];
+    unsigned short f20;
+    char pad22[6];
+    signed char f28;
+    char pad29[7];
+    unsigned int w30[1];
+};
+struct V_9C20 {
+    int h;
+    signed char ch;
+    signed char x;
+    char pad[2];
+};
+extern char D_0050A120_9C20[] __asm__("D_0050A120");
+extern int func_003B8D98_9C20(int) __asm__("func_003B8D98");
+extern int func_003B8C00_9C20(int, int, int) __asm__("func_003B8C00");
+
+int func_003B9C20_9C20(int, int) __asm__("func_003B9C20");
+int func_003B9C20_9C20(int arg0, int arg1) {
+    struct Ch_9C20 *e;
+    int r = -1;
+    int id = func_003B8D98_9C20(arg0);
+    if (id < 0) {
+        return id;
+    }
+    e = (struct Ch_9C20 *)(D_0050A120_9C20 + id * 0x70);
+    if (arg1 != e->f20) {
+        struct V_9C20 *p;
+        int i;
+        if (e->f28 != 3) {
+            goto out;
+        }
+        e->f20 = arg1;
+        p = (struct V_9C20 *)(D_0050A120_9C20 + 0x700);
+        i = 0x17;
+        do {
+            if (p->ch == id && p->h >= 0) {
+                int k4 = p->x * 4;
+                arg1 = e->f20 + ((*(unsigned int *)((char *)e + k4 + 0x30) & 0x3FF) << 6);
+                func_003B8C00_9C20(p->h, arg1 & 0xFFFF, 0);
+            }
+            i--;
+            p++;
+        } while (i >= 0);
+    }
+    r = 0;
+out:
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9D00);
