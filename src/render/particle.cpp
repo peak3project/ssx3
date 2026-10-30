@@ -3625,7 +3625,111 @@ extern "C" void func_0037C8A0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037C8C0);
+#ifdef SKIP_ASM
+struct sTexHdr_C8C0 {
+    int f0;                         // 0x0: low byte = type, upper 24 bits = offset to base header
+    short s4;                       // 0x4
+    short s6;                       // 0x6
+    short s8;                       // 0x8
+    char pad_0xA[2];
+    unsigned int fC;                // 0xC
+    int f10;                        // 0x10
+};
+
+struct sVEntry0037C8C0 {
+    short delta;
+    short index;
+    int (*fn)(void*, void*, int, int, int, int, int, int, void*, int, int, int);
+};
+
+extern "C" double func_00413AF8(float f);
+extern "C" double dlog_C8C0(double) __asm__("func_0040D610");
+extern "C" double dmul_C8C0(double, double) __asm__("func_00411FD8");
+extern "C" double dsub_C8C0(double, double) __asm__("func_00411F70");
+extern "C" int dtoi_C8C0(double) __asm__("func_00412608");
+extern "C" void func_0037D090_C8C0(void* self, int h, int a, int b, int c, int d) __asm__("func_0037D090__FPv");
+
+static inline int clampX_C8C0(int v, int lo, int hi)
+{
+    if (v < lo) return lo;
+    if (v > hi) return hi;
+    return v;
+}
+static inline int clampY_C8C0(int v, int lo, int hi)
+{
+    int r;
+    if (v < lo) r = lo;
+    else { r = hi; if (v <= hi) r = v; }
+    return r;
+}
+static inline int clampZ_C8C0(int v, int lo, int hi)
+{
+    return v < lo ? lo : (v > hi ? hi : v);
+}
+static inline int clampW_C8C0(int v, int lo, int hi)
+{
+    return v < lo ? lo : (v <= hi ? v : hi);
+}
+extern "C" int func_0037C8C0(char* self, sTexHdr_C8C0* src, int a2, int a3, int a4, int a5)
+{
+    int fmt = 0;
+    int cls = 0;
+    void* pal = 0;
+    void* data;
+    unsigned int type = *(unsigned char*)src;
+    switch (type) {
+    case 1: {
+        sTexHdr_C8C0* base = src->f0 >> 8 ? (sTexHdr_C8C0*)((char*)src + (src->f0 >> 8)) : 0;
+        fmt = 0xB;
+        if (src->fC & 0x2000) fmt = 0xC;
+        cls = 1;
+        if (base->fC & 0x1000)
+            pal = (char*)base + base->f10;
+        else
+            pal = (char*)base + 0x10;
+        break;
+    }
+    case 2: {
+        sTexHdr_C8C0* base = src->f0 >> 8 ? (sTexHdr_C8C0*)((char*)src + (src->f0 >> 8)) : 0;
+        fmt = 9;
+        if (src->fC & 0x2000) fmt = 10;
+        cls = 1;
+        if (base->fC & 0x1000)
+            pal = (char*)base + base->f10;
+        else
+            pal = (char*)base + 0x10;
+        break;
+    }
+    case 3:
+        fmt = 2;
+        break;
+    case 5:
+        fmt = 0;
+        break;
+    default:
+        break;
+    }
+    unsigned int flags = src->fC;
+    data = (char*)src + 0x10;
+    if (flags & 0x1000)
+        data = (char*)src + src->f10;
+    sVEntry0037C8C0* vt = *(sVEntry0037C8C0**)(self + 0x10D8);
+    int h = vt[47].fn(self + vt[47].delta, data, a2, src->s4, src->s6, flags >> 28, fmt, cls, pal, a3, a4, a5);
+    if ((src->fC & 0xF0000000) != 0 && src->s8 != 0) {
+        double d = func_00413AF8(240.0f / ((float)src->s8 * 6.1035156e-05f));
+        d = dlog_C8C0(d);
+        d = dmul_C8C0(d, 1.4426950408889634);
+        d = dsub_C8C0(0.0, d);
+        d = dmul_C8C0(d, 16.0);
+        int k = dtoi_C8C0(d);
+        k = clampZ_C8C0(k, -0x7FF, -0x87);
+        func_0037D090_C8C0(self, h, 5, 1, 0, k);
+    }
+    return h;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0037CAF8);
