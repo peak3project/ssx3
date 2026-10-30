@@ -8887,7 +8887,24 @@ int func_003C6AB8(int arg0, struct A_6AB8 *arg1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6C28);
+#ifdef SKIP_ASM
+struct E_6C28 { char pad0[0x34]; volatile unsigned short v[6]; volatile unsigned short f40; char pad42[0x20]; unsigned char n; };
+struct G_6C28 { char pad[0x304]; struct E_6C28 *p[1]; };
+extern struct G_6C28 D_005157B8_6C28 __asm__("D_005157B8");
+
+int func_003C6C28(int arg0) {
+    struct E_6C28 *e = D_005157B8_6C28.p[arg0];
+    int m = 0;
+    int i;
+    for (i = 0; i < e->n; i++) {
+        if (!((short)e->v[i] < m))
+            m = (short)e->v[i];
+    }
+    return (short)e->f40 - m - 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6C98);
