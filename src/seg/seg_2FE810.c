@@ -1850,7 +1850,55 @@ int func_004014F8(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401668);
+#ifdef SKIP_ASM
+extern int D_00451628[];
+extern volatile int D_0045162C_v[] __asm__("D_0045162C");
+extern int D_00451680[];
+extern int D_00451700[];
+extern char D_004527D0[];
+extern int D_00452800[];
+extern int D_00452C40[];
+extern char D_00453180[];
+int func_00401668(long id, int *out) {
+    int v;
+    if (id != 0x8001) {
+        if (id != 0x8003) {
+            if (id != 0x8002) {
+                if (id != 0x8004) {
+                    if (id != 0x8011) {
+                        if (id != 0x8013) {
+                            if (id != 0x8012) {
+                                if (id == 0x8014)
+                                    v = (int)D_00453180;
+                                else
+                                    v = 0;
+                            } else {
+                                v = (int)D_00452C40;
+                            }
+                        } else {
+                            v = (int)D_00452800;
+                        }
+                    } else {
+                        v = D_0045162C_v[0];
+                    }
+                } else {
+                    v = (int)D_004527D0;
+                }
+            } else {
+                v = (int)D_00451700;
+            }
+        } else {
+            v = (int)D_00451680;
+        }
+    } else {
+        v = D_00451628[0];
+    }
+    *out = v;
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00401718);
 
