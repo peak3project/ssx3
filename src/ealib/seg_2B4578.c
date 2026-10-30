@@ -7921,9 +7921,106 @@ int func_003C51E0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C51E8);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written memcpy (16-byte lq/sq blocks of 0x80, ld/sd and byte tails, unfilled delay slots; it branches into func_003C52C8, which loops back into it); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_003C51E8\n.type func_003C51E8, @function\nfunc_003C51E8:\n"
+    "slti $8, $6, 0x12\n"
+    ".word 0x15000029 /* bnez $8, .L003C5294: raw word */\n"
+    "andi $8, $4, 0xF\n"
+    "bnez $8, func_003C52C8\n"
+    "nop\n"
+    ".L003C51FC:\n"
+    "andi $8, $5, 0xF\n"
+    ".word 0x15000024 /* bnez $8, .L003C5294: raw word */\n"
+    "nop\n"
+    "addiu $6, $6, -0x80\n"
+    ".word 0x04C00015 /* bltz $6, .L003C5264: raw word */\n"
+    "nop\n"
+    ".L003C5214:\n"
+    "lq $9, 0x0($5)\n"
+    "lq $10, 0x10($5)\n"
+    "lq $11, 0x20($5)\n"
+    "lq $12, 0x30($5)\n"
+    "sq $9, 0x0($4)\n"
+    "sq $10, 0x10($4)\n"
+    "sq $11, 0x20($4)\n"
+    "sq $12, 0x30($4)\n"
+    "lq $9, 0x40($5)\n"
+    "lq $10, 0x50($5)\n"
+    "lq $11, 0x60($5)\n"
+    "lq $12, 0x70($5)\n"
+    "sq $9, 0x40($4)\n"
+    "sq $10, 0x50($4)\n"
+    "sq $11, 0x60($4)\n"
+    "sq $12, 0x70($4)\n"
+    "addiu $6, $6, -0x80\n"
+    "addiu $5, $5, 0x80\n"
+    ".word 0x04C1FFED /* bgez $6, .L003C5214: raw word */\n"
+    "addiu $4, $4, 0x80\n"
+    ".L003C5264:\n"
+    "addiu $6, $6, 0x78\n"
+    ".word 0x04C00009 /* bltz $6, .L003C5290: raw word */\n"
+    "nop\n"
+    ".L003C5270:\n"
+    "ld $9, 0x0($5)\n"
+    "addiu $5, $5, 0x8\n"
+    "sd $9, 0x0($4)\n"
+    "addiu $6, $6, -0x8\n"
+    ".word 0x04C1FFFB\n"
+    "addiu $4, $4, 0x8\n"
+    ".word 0x04C1FFF9 /* bgez $6, .L003C5270: raw word */\n"
+    "nop\n"
+    ".L003C5290:\n"
+    "addiu $6, $6, 0x8\n"
+    ".L003C5294:\n"
+    "addiu $6, $6, -0x1\n"
+    ".word 0x04C00009 /* bltz $6, .L003C52C0: raw word */\n"
+    "nop\n"
+    ".L003C52A0:\n"
+    "addiu $6, $6, -0x1\n"
+    "lbu $9, 0x0($5)\n"
+    "addiu $5, $5, 0x1\n"
+    "sb $9, 0x0($4)\n"
+    ".word 0x04C1FFFB\n"
+    "addiu $4, $4, 0x1\n"
+    ".word 0x04C1FFF9 /* bgez $6, .L003C52A0: raw word */\n"
+    "nop\n"
+    ".L003C52C0:\n"
+    "jr $31\n"
+    "nop\n"
+    ".size func_003C51E8, . - func_003C51E8\n"
+    ".set pop\n");
+#endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C52C8);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written byte-align head of the memcpy above (jumps back into func_003C51E8 once the destination is 16-byte aligned); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_003C52C8\n.type func_003C52C8, @function\nfunc_003C52C8:\n"
+    "andi $8, $4, 0xF\n"
+    "beqz $8, .L003C51FC\n"
+    "nop\n"
+    "addiu $6, $6, -0x1\n"
+    ".word 0x18C00005 /* blez $6, .L003C52F0: raw word */\n"
+    "lbu $9, 0x0($5)\n"
+    "addiu $5, $5, 0x1\n"
+    "sb $9, 0x0($4)\n"
+    "j func_003C52C8\n"
+    "addiu $4, $4, 0x1\n"
+    ".L003C52F0:\n"
+    "jr $31\n"
+    "nop\n"
+    ".size func_003C52C8, . - func_003C52C8\n"
+    ".set pop\n");
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003C52F8);
