@@ -130,7 +130,26 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FDAB0);
 
 INCLUDE_ASM("seg/seg_2FE810", sceGsSyncPath);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDE30);
+#ifdef SKIP_ASM
+extern void func_00425C60();
+extern char D_004977D8[];
+void func_003FDE30(p, m)
+    volatile int *p;
+    int m;
+{
+    int n = 0x1000000;
+    if (*p & 0x100) {
+        do {
+            if (--n < 0) {
+                func_00425C60(D_004977D8);
+                func_003FE5C8(p);
+            }
+        } while (*p & 0x100);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDEA0);
