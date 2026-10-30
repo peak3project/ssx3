@@ -6595,7 +6595,28 @@ void func_0040BD90(unsigned char *a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BE48);
+#ifdef SKIP_ASM
+void func_0040BE48(unsigned char *a) {
+    sClk *c = (sClk *)a;
+    sDaysTbl days = D_00498230;
+    c->day--;
+    if ((c->year % 4) == 0)
+        days.b[1] = 29;
+    if (c->day == 0) {
+        c->month--;
+        if (c->month == 0) {
+            if (c->year == 0)
+                c->year = 99;
+            else
+                c->year--;
+            c->month = 12;
+        }
+        c->day = days.b[c->month - 1];
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BEF0);
