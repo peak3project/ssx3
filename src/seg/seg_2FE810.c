@@ -6954,7 +6954,24 @@ int sceUsbKbSetLEDMode(int a, unsigned b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C728);
+#ifdef SKIP_ASM
+struct E_C728 { char pad[0x14]; int f14; int f18; int f1C; char pad2[0x18]; };
+extern struct E_C728 *D_00529004_c[] __asm__("D_00529004");
+int func_0040C728(int a, int b, int c) {
+    int r;
+    r = -11;
+    if (b < 0)
+        return r;
+    if (c < 0)
+        return -12;
+    D_00529004_c[0][a].f1C = c;
+    D_00529004_c[0][a].f18 = b;
+    D_00529004_c[0][a].f14 = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C770);
