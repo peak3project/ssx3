@@ -2326,7 +2326,21 @@ int func_00402BB0(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402C08);
+#ifdef SKIP_ASM
+int func_00402C08(int *p, int n, int fn, void *arg) {
+    char *q = (char *)p[16];
+    char *tbl = q + 0xC;
+    char *ea = q + n * 8;
+    char *eb = tbl + n * 8;
+    int old;
+    old = *(int *)eb;
+    *(int *)eb = fn;
+    *(void **)(ea + 0x10) = arg;
+    return old;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402C30);
