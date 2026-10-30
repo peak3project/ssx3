@@ -2015,7 +2015,36 @@ extern "C" int func_0032E4D0(void* self, sSphereVec4* p, sSphereVec4* b, sSphere
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032E5E8);
+#ifdef SKIP_ASM
+struct sVE_E5E8 {
+    short delta;
+    short pad;
+    int (*fn)(void* self, void* a, void* b, void* c, sSphereVec4* v, void* d, void* e, void* f);
+};
+
+struct sCapsuleV_E5E8 {
+    char pad_0x00[0x50];
+    sVE_E5E8* vt; // 0x50
+    char pad_0x54[0x1C];
+    sSphereVec4 dir; // 0x70
+};
+
+extern "C" int func_0032E5E8(sCapsuleV_E5E8* self, void* a, void* b, void* c, sSphereVec4* v, void* d, void* e, void* f)
+{
+    float dp = vu0Dot_E4D0(self->dir, *v);
+    sVE_E5E8* vt;
+    if (dp < 0.0f) {
+        vt = self->vt;
+        char* t = (char*)self + vt[4].delta;
+        sSphereVec4 n = vu0Scale_E4D0(*v, -1.0f);
+        return vt[4].fn(t, a, b, c, &n, d, e, f);
+    }
+    vt = self->vt;
+    return vt[4].fn((char*)self + vt[4].delta, a, b, c, v, d, e, f);
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032E688__FPv);
