@@ -2265,7 +2265,47 @@ int func_003DF980(int h) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", ASYNCFILE_release);
+#ifdef SKIP_ASM
+extern void MUTEX_unlock_AR(void *) __asm__("MUTEX_unlock");
+extern char D_00519C08_AR[] __asm__("D_00519C08");
+extern char *func_003DEF70_AR(int) __asm__("func_003DEF70");
+extern int func_003DD1D8_AR(int) __asm__("func_003DD1D8");
+extern void releaserequest_AR(void *) __asm__("releaserequest");
+struct AF_AR { int w0; int w4; int w8; int wC; int w10; int w14; int w18; volatile int w1C; int w20; int w24; int w28; int w2C; };
+
+int ASYNCFILE_release_impl(int h, int *a, int *b) __asm__("ASYNCFILE_release");
+int ASYNCFILE_release_impl(int h, int *a, int *b) {
+    struct AF_AR *f;
+    int busy = 0;
+    MUTEX_lock(D_00519C08_AR);
+    f = (struct AF_AR *)func_003DEF70_AR(h);
+    if (f != 0) {
+        busy = f->w10;
+        if (busy == 0) {
+            f->wC = 1;
+        }
+    }
+    MUTEX_unlock_AR(D_00519C08_AR);
+    if (f == 0 || busy != 0) {
+        return -1;
+    }
+    while (f->w1C != 0) {
+        func_003DD1D8_AR(f->w1C);
+    }
+    if (f->w10 != 0) {
+        if (a != 0) *a = 0;
+        if (b != 0) *b = 0;
+        releaserequest_AR(f);
+        return -1;
+    }
+    if (a != 0) *a = f->w2C - f->w8;
+    if (b != 0) *b = f->w8;
+    releaserequest_AR(f);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DFAF0);
