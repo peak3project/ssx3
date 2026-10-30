@@ -3225,7 +3225,74 @@ extern "C" void* func_001A8500_impl(void* self, void* engine, void* owner)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A85D0);
+#ifdef SKIP_ASM
+extern "C" void cBXString__cBXString(void* self, int flags);
+void cMemMan_free(void* p);
+extern "C" void func_001DB718(void* self);
+extern "C" void func_0039E390(void* self, int flags);
+void operator_delete(int*);
+extern void* D_0046B808[];
+
+struct cObj_1A85D0 {
+    int pad;
+    virtual ~cObj_1A85D0();
+};
+
+struct sNode1A85D0 {
+    sNode1A85D0* next;
+    sNode1A85D0* prev;
+    cObj_1A85D0* data;
+};
+
+struct sIter1A85D0 {
+    sNode1A85D0* node;
+    sIter1A85D0(sNode1A85D0* x) : node(x) {}
+    sIter1A85D0(const sIter1A85D0& x) : node(x.node) {}
+    cObj_1A85D0*& operator*() const { return node->data; }
+};
+
+struct sList1A85D0 {
+    int alloc;
+    sNode1A85D0* node;
+    sIter1A85D0 begin() { return node->next; }
+    cObj_1A85D0*& front() { return *begin(); }
+    sIter1A85D0 erase(sIter1A85D0 pos)
+    {
+        sNode1A85D0* next = pos.node->next;
+        sNode1A85D0* prev = pos.node->prev;
+        prev->next = next;
+        next->prev = prev;
+        operator_delete((int*)pos.node);
+        return sIter1A85D0(next);
+    }
+    void pop_front() { erase(begin()); }
+    sNode1A85D0* first() { return node->next; }
+};
+
+extern "C" void f_1A85D0(char* self, int flags) __asm__("func_001A85D0");
+extern "C" void f_1A85D0(char* self, int flags)
+{
+    *(void**)(self + 8) = (void*)D_0046B808;
+    while (((sList1A85D0*)(self + 0x6C8))->first() != *(sNode1A85D0**)(self + 0x6CC)) {
+        cObj_1A85D0* d = ((sList1A85D0*)(self + 0x6C8))->front();
+        ((sList1A85D0*)(self + 0x6C8))->pop_front();
+        if (d) {
+            delete d;
+        }
+    }
+    if (*(void**)(self + 0x6B8)) {
+        cMemMan_free(*(void**)(self + 0x6B8));
+        *(void**)(self + 0x6B8) = 0;
+    }
+    sList1A85D0* l = (sList1A85D0*)(self + 0x6C8);
+    func_001DB718(l);
+    operator_delete((int*)l->node);
+    cBXString__cBXString(self + 0x6C0, 2);
+    func_0039E390(self, flags);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A86E8);
