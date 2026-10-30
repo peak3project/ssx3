@@ -1430,7 +1430,34 @@ extern char D_004A4BC0;
 int func_003F6C60(void) { D_004A4BC0 = 0; return 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6C70);
+#ifdef SKIP_ASM
+typedef struct { int w[17]; } B6C70;
+typedef struct { B6C70 b; char pad[0xD0 - 0x44 - 0]; int fD0; int fD4; int fD8; int fDC; char pad2[0xC]; int fEC; char pad3[0x10]; int f100; int f104; char pad4[0x30]; int f138; int f13C; int f140; int f144; int f148; } S6C70;
+extern S6C70 *D_6C70 __asm__("D_004A4BC4");
+extern S6C70 *f6728(int, int, int) __asm__("func_00266728");
+extern unsigned f6210x(S6C70 *, int, int) __asm__("func_00416210");
+int func_003F6C70_impl(int *arg) __asm__("func_003F6C70");
+int func_003F6C70_impl(int *arg) {
+    S6C70 *d;
+    S6C70 *e;
+    D_6C70 = f6728(arg[1], 0x14C, 4);
+    f6210x(D_6C70, 0, 0x14C);
+    d = D_6C70;
+    d->f140 = arg[1];
+    d->b = *(B6C70 *)arg[0];
+    e = D_6C70;
+    e->fD0 = 4;
+    e->f104 = 4;
+    e->f148 = 0;
+    e->f138 = 0;
+    e->fD8 = 0xA;
+    e->fEC = 5;
+    e->f13C = -1;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6D98);
