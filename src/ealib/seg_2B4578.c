@@ -200,7 +200,34 @@ __asm__(
     ".set pop\n");
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3D00);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written bounds-checked unaligned store: the assembler bgeu macro (sltu $1 + beqz $1), an explicit load-delay nop, swr/swl; the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_003B3D00\n.type func_003B3D00, @function\nfunc_003B3D00:\n"
+    "lw $9, 0x8($4)\n"
+    "sll $11, $5, 3\n"
+    "sltu $1, $5, $9\n"
+    "beqz $1, .L003B3D2C\n"
+    "addu $11, $4, $11\n"
+    "lw $2, 0x10($11)\n"
+    "nop\n"
+    "swr $2, 0x0($6)\n"
+    "swl $2, 0x3($6)\n"
+    "jr $31\n"
+    "daddu $2, $6, $0\n"
+    ".L003B3D2C:\n"
+    "addiu $2, $0, 0x0\n"
+    "swr $2, 0x0($6)\n"
+    "swl $2, 0x3($6)\n"
+    "jr $31\n"
+    "daddu $2, $6, $0\n"
+    ".size func_003B3D00, . - func_003B3D00\n"
+    ".set pop\n");
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3D40);
 
