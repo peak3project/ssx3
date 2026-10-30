@@ -985,7 +985,28 @@ int func_003B5F60(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5F98);
+#ifdef SKIP_ASM
+struct Ev_5F98 { int a; int b; int c; int rest[5]; };
+struct G_5F98 { char pad[0x179]; signed char n; char pad2[0x1C8 - 0x17A]; void (*cb[8])(struct Ev_5F98 *); };
+struct Obj_5F98 { char pad[0x17]; signed char cnt; char pad2[0x34 - 0x18]; int a[4]; int b[4]; };
+extern struct G_5F98 D_0050A8E8_5F98 __asm__("D_0050A8E8");
+
+void func_003B5F98(struct Obj_5F98 *o, int arg) {
+    struct Ev_5F98 ev;
+    int i;
+    while (o->cnt > 0) {
+        o->cnt--;
+        ev.a = arg;
+        ev.b = o->a[o->cnt];
+        ev.c = o->b[o->cnt];
+        for (i = 0; i < D_0050A8E8_5F98.n; i++) {
+            D_0050A8E8_5F98.cb[i](&ev);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6098);
