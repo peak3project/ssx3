@@ -903,7 +903,40 @@ extern "C" void func_0032C630(void* self, void* v)
 
 INCLUDE_ASM("intersect/riderspheretree", func_0032C648);
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C770);
+#ifdef SKIP_ASM
+struct sOct_C770 {
+    sSphereVec4 dirs[8];    // 0x00
+    sSphereVec4 center;     // 0x80
+    float radius;           // 0x90
+};
+
+struct sSc_C770 { float x, y, z, w; };
+
+extern "C" void func_0032C770_i(sOct_C770* self, sSphereVec4* m, float scale) __asm__("func_0032C770");
+
+extern "C" void func_0032C770_i(sOct_C770* self, sSphereVec4* m, float scale)
+{
+    for (int i = 0; i < 4; i++) {
+        self->dirs[i] = Scale_B2B8(mtxMulVec_9B90(m, &self->dirs[i]), scale);
+        self->dirs[7 - i] = Scale_B2B8(self->dirs[i], -1.0f);
+    }
+    sSphereVec4 r;
+    sSphereVec4 t = mtxMulVec_9B90(m, &self->center);
+    sSc_C770 sc;
+    sc.w = 1.0f;
+    sc.x = scale;
+    sc.y = scale;
+    sc.z = scale;
+    r.x = t.x * sc.x;
+    r.y = t.y * sc.y;
+    r.z = t.z * sc.z;
+    r.w = t.w * sc.w;
+    self->center = r;
+    self->radius = self->radius * scale;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C898);
