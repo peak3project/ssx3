@@ -1998,7 +1998,30 @@ int func_003B8010(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8050);
+#ifdef SKIP_ASM
+struct sTrk_8050 {
+    int f0;
+    volatile int handle;    /* 0x04: written by the sound thread */
+    char pad8[0xF1 - 0x8];
+    char fF1;
+};
+struct sTrk_8050 *func_003B6A38_8050(void) __asm__("func_003B6A38");
+int func_003B88C8_8050(int, int, int) __asm__("func_003B88C8");
+
+int func_003B8050(int arg0, int arg1, int arg2) {
+    struct sTrk_8050 *p;
+
+    p = func_003B6A38_8050();
+    if (p == 0) {
+        return -8;
+    }
+    p->fF1 = arg2;
+    func_003B88C8_8050(p->handle, arg1, arg2);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B80A0);
