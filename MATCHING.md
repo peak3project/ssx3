@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `f7d4bf39`, generated 2026-10-30.
+Snapshot of commit `f508993b`, generated 2026-10-30.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `f7d4bf39`, generated 2026-10-30.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,263 | 94.36% |
+| Matching | 14,266 | 94.38% |
 | Partial | 4 | 0.03% |
-| Not started | 849 | 5.62% |
+| Not started | 846 | 5.60% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -30,7 +30,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `fe/fepopupmisc` | 375 | 1 | 5 | 381 |
 | `object/railmodifier` | 354 | 0 | 15 | 369 |
 | `dirtysock/tagsunk` | 307 | 0 | 10 | 317 |
-| `ealib/seg_2DCAE8` | 303 | 0 | 26 | 329 |
+| `ealib/seg_2DCAE8` | 306 | 0 | 23 | 329 |
 | `bx/seg_1BA100` | 297 | 0 | 2 | 299 |
 | `sound/soundsys` | 292 | 0 | 13 | 305 |
 | `seg/seg_2FE810` | 288 | 0 | 78 | 366 |
@@ -4232,7 +4232,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ealib/seg_2DCAE8`
 
-303 matching, 0 partial, 26 not started (329 total)
+306 matching, 0 partial, 23 not started (329 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -4465,6 +4465,8 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003E62D0` | Matching | 100.00% | 84 |
 | `func_003E6328` | Matching | 100.00% | 252 |
 | `func_003E6428` | Matching | 100.00% | 28 |
+| `func_003E6574` | Matching | 100.00% | 232 |
+| `func_003E665C` | Matching | 100.00% | 48 |
 | `func_003E6690` | Matching | 100.00% | 96 |
 | `func_003E67F8` | Matching | 100.00% | 128 |
 | `func_003E6878` | Matching | 100.00% | 220 |
@@ -4487,6 +4489,8 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003E7340` | Matching | 100.00% | 156 |
 | `func_003E73E0` | Matching | 100.00% | 112 |
 | `func_003E7450` | Matching | 100.00% | 148 |
+| `func_003E74E8` | Matching | 100.00% | 24 |
+| `func_003E7500` | Matching | 100.00% | 420 |
 | `func_003E76A8` | Matching | 100.00% | 108 |
 | `func_003E7718` | Matching | 100.00% | 212 |
 | `func_003E77F0` | Matching | 100.00% | 292 |
@@ -4526,7 +4530,6 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_003EB190` | Matching | 100.00% | 8 |
 | `USTR_vsprintf` | Matching | 99.99% | 1448 |
 | `ASYNCFILE_release` | Matching | 99.93% | 280 |
-| `func_003E7500` | Matching | 99.90% | 420 |
 | `func_003DEB50` | Matching | 99.87% | 156 |
 | `func_003DEBF0` | Matching | 99.82% | 112 |
 | `func_003DED50` | Matching | 99.82% | 112 |
