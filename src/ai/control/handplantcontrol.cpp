@@ -1651,7 +1651,14 @@ extern "C" void func_0013F880(void* self, void* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013F8B8);
+#ifdef SKIP_ASM
+extern "C" void* func_0013F8B8(void* self, ...)
+{
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013F8F8);
