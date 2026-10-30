@@ -927,3 +927,8 @@ func_00412DD8 = 0x00412DD8; //type:func
 D_E0002000 = 0xE0002000; // ignore:true
 // seg/seg_2FE810 func_003FDE30 (a 0x1000000 timeout counter: lui 0x100; addiu -1) and one .rodata word: 0xFFFFFF is a value, not a symbol.
 D_FFFFFF = 0x00FFFFFF; // ignore:true
+// render/particle func_00383808: EE scratchpad addresses (0x70000000 + offset) written as constants, not symbols.
+D_70000080 = 0x70000080; // ignore:true
+D_70000090 = 0x70000090; // ignore:true
+// seg/seg_2F41F8 func_003F5000: an uncached (kseg1) hardware address constant, not a symbol.
+D_A0000040 = 0xA0000040; // ignore:true
