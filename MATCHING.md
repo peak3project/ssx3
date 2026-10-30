@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `b167df62`, generated 2026-10-30.
+Snapshot of commit `360a5f47`, generated 2026-10-30.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `b167df62`, generated 2026-10-30.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,280 | 94.47% |
+| Matching | 14,282 | 94.48% |
 | Partial | 4 | 0.03% |
-| Not started | 832 | 5.50% |
+| Not started | 830 | 5.49% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -81,10 +81,10 @@ Only files with at least one Matching or Partial function are listed here; files
 | `be/belibrary` | 70 | 0 | 10 | 80 |
 | `main/gamestate` | 70 | 0 | 3 | 73 |
 | `scripter/all_in_one_scripter` | 70 | 0 | 0 | 70 |
+| `intersect/riderspheretree` | 69 | 0 | 8 | 77 |
 | `visualfx/boardwakefx` | 69 | 0 | 15 | 84 |
 | `seg/seg_315B68_tinfo` | 68 | 0 | 0 | 68 |
 | `sound/bankmanager` | 68 | 0 | 5 | 73 |
-| `intersect/riderspheretree` | 67 | 0 | 10 | 77 |
 | `ai/ridermetrix` | 65 | 0 | 3 | 68 |
 | `bx/cubicspline` | 63 | 2 | 5 | 70 |
 | `scripter/bxscriptengine` | 65 | 0 | 0 | 65 |
@@ -7286,7 +7286,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `intersect/riderspheretree`
 
-67 matching, 0 partial, 10 not started (77 total)
+69 matching, 0 partial, 8 not started (77 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -7313,6 +7313,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0032C5A8` | Matching | 100.00% | 52 |
 | `func_0032C5E0` | Matching | 100.00% | 80 |
 | `func_0032C630` | Matching | 100.00% | 24 |
+| `func_0032C770` | Matching | 100.00% | 296 |
 | `func_0032C898` | Matching | 100.00% | 144 |
 | `func_0032C928` | Matching | 100.00% | 144 |
 | `func_0032C9B8` | Matching | 100.00% | 192 |
@@ -7330,6 +7331,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0032E100` | Matching | 100.00% | 388 |
 | `func_0032E288` | Matching | 100.00% | 268 |
 | `func_0032E4B8` | Matching | 100.00% | 24 |
+| `func_0032E5E8` | Matching | 100.00% | 156 |
 | `func_0032E688(void*)` | Matching | 100.00% | 8 |
 | `func_0032F650` | Matching | 100.00% | 184 |
 | `func_0032F708` | Matching | 100.00% | 88 |
