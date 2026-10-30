@@ -6486,7 +6486,105 @@ void func_003866E0(void* self, int a1, int a2)
 
 INCLUDE_ASM("render/particle", func_003866F0);
 
+//100%
 INCLUDE_ASM("render/particle", func_00386BD0);
+#ifdef SKIP_ASM
+struct sBlendMtx_6BD0 {
+    float m[16];
+} __attribute__((aligned(16)));
+
+struct sBlendLink_6BD0 {
+    short w;
+    unsigned char idx;
+    unsigned char pad;
+};
+
+struct sBlendEnt_6BD0 {
+    int count;
+    sBlendLink_6BD0* links;
+    int pad;
+};
+
+// PORT: PS2-only VU0 inline asm (set the I register).
+static inline void setI_6BD0(int bits)
+{
+    __asm__ volatile("ctc2.ni    %0, $vi21\n" : : "r"(bits) : "$21");
+}
+
+// PORT: PS2-only VU0 inline asm (first weighted matrix, kept in vf1-vf4).
+static inline void blendFirst_6BD0(const sBlendMtx_6BD0* m, int w)
+{
+    __asm__ volatile(
+        "qmtc2.ni   %4, $vf5\n"
+        "vitof0.x   $vf5, $vf5\n"
+        "lqc2       $vf1, %0\n"
+        "lqc2       $vf2, %1\n"
+        "vmuli.x    $vf5, $vf5, I\n"
+        "lqc2       $vf3, %2\n"
+        "lqc2       $vf4, %3\n"
+        "vmulx.xyzw $vf1, $vf1, $vf5x\n"
+        "vmulx.xyzw $vf2, $vf2, $vf5x\n"
+        "vmulx.xyzw $vf3, $vf3, $vf5x\n"
+        "vmulx.xyzw $vf4, $vf4, $vf5x\n"
+        : : "m"(m->m[0]), "m"(m->m[4]), "m"(m->m[8]), "m"(m->m[12]), "r"(w));
+}
+
+// PORT: PS2-only VU0 inline asm (accumulate next weighted matrix into vf1-vf4).
+static inline void blendAdd_6BD0(const sBlendMtx_6BD0* m, int w)
+{
+    __asm__ volatile(
+        "qmtc2.ni   %4, $vf5\n"
+        "vitof0.x   $vf5, $vf5\n"
+        "lqc2       $vf6, %0\n"
+        "lqc2       $vf7, %1\n"
+        "vmuli.x    $vf5, $vf5, I\n"
+        "lqc2       $vf8, %2\n"
+        "lqc2       $vf9, %3\n"
+        "vmulaw.xyzw ACC, $vf1, $vf0w\n"
+        "vmaddx.xyzw $vf1, $vf6, $vf5x\n"
+        "vmulaw.xyzw ACC, $vf2, $vf0w\n"
+        "vmaddx.xyzw $vf2, $vf7, $vf5x\n"
+        "vmulaw.xyzw ACC, $vf3, $vf0w\n"
+        "vmaddx.xyzw $vf3, $vf8, $vf5x\n"
+        "vmulaw.xyzw ACC, $vf4, $vf0w\n"
+        "vmaddx.xyzw $vf4, $vf9, $vf5x\n"
+        : : "m"(m->m[0]), "m"(m->m[4]), "m"(m->m[8]), "m"(m->m[12]), "r"(w));
+}
+
+// PORT: PS2-only VU0 inline asm (store vf1-vf4).
+static inline void blendStore_6BD0(sBlendMtx_6BD0* d)
+{
+    __asm__ volatile(
+        "sqc2       $vf1, %0\n"
+        "sqc2       $vf2, %1\n"
+        "sqc2       $vf3, %2\n"
+        "sqc2       $vf4, %3\n"
+        : "=m"(d->m[0]), "=m"(d->m[4]), "=m"(d->m[8]), "=m"(d->m[12]));
+}
+
+extern "C" void func_00386BD0(char* self, sBlendMtx_6BD0* mats, int unused, sBlendEnt_6BD0* ents, int n, sBlendMtx_6BD0* out)
+{
+    if (out == 0) {
+        out = *(sBlendMtx_6BD0**)(self + 0x13E8);
+    }
+    setI_6BD0(0x3C23D70A);
+    int i;
+    for (i = 0; i < n; i++) {
+        sBlendMtx_6BD0* dst = out++;
+        sBlendEnt_6BD0* e = &ents[i];
+        sBlendLink_6BD0* l = e->links;
+        blendFirst_6BD0((sBlendMtx_6BD0*)((char*)mats + (l->idx << 6)), l->w);
+        int cnt = e->count;
+        l++;
+        int k;
+        for (k = 1; k < cnt; k++) {
+            blendAdd_6BD0((sBlendMtx_6BD0*)((char*)mats + (l->idx << 6)), l->w);
+            l++;
+        }
+        blendStore_6BD0(dst);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00386CF0);
