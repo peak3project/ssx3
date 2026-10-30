@@ -33,7 +33,56 @@ extern "C" signed char func_003EB578(signed char arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003EB588);
+#ifdef SKIP_ASM
+extern "C" void func_003EB588(unsigned char* out, unsigned char sep)
+{
+    unsigned char* start = out;
+    unsigned char* s = out;
+    unsigned int c;
+    unsigned int d;
+
+    while (*s != 0) {
+        c = *s;
+        if (c < 0x20) {
+            *out++ = sep;
+            while ((unsigned int)(*s - 1) < 0x1F) {
+                s++;
+            }
+            if (*s == '=' || *s == ':') {
+                if (s[1] < 0x20) {
+                    break;
+                }
+            }
+        } else {
+            *out++ = c;
+            s++;
+        }
+    }
+    if (out != start && out[-1] == sep) {
+        out[-1] = (sep == 10 || *s != 0) ? 10 : 0;
+    }
+    c = *s;
+    while (c != 0) {
+        if (c < 0x20) {
+            *out = 10;
+            d = *s++;
+            c = *s;
+            out++;
+            while ((unsigned int)(c - 1) < 0x1F && c != d) {
+                s++;
+                c = *s;
+            }
+        } else {
+            *out++ = c;
+            s++;
+        }
+        c = *s;
+    }
+    *out = 0;
+}
+#endif
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldFind);
 
 //100% - objdiff report; single-function view differs only in a relocation name
