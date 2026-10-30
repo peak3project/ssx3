@@ -1133,5 +1133,104 @@ extern "C" void func_003112C8(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/animmodel", func_00311318);
+#ifdef SKIP_ASM
+struct sSeqAM {
+    char pad_0x0[0x4];
+    int base;                       // 0x4
+    char pad_0x8[0x2];
+    unsigned short a;               // 0xA
+    unsigned short n;               // 0xC
+    unsigned short b;               // 0xE
+    char pad_0x10[4];
+};
+struct sEntAM {
+    int off;                        // 0x0
+    unsigned char kind;             // 0x4
+    unsigned char slot;             // 0x5
+    unsigned short len;             // 0x6
+};
+struct sNodeAM {
+    sEntAM* owner;                  // 0x00
+    void* data;                     // 0x04
+    char pad_0x8[0x14];
+    sNodeAM* prev;                  // 0x1C
+    sNodeAM* next;                  // 0x20
+};
+struct sModelAM {
+    char pad_0x0[0x8];
+    char* seqs;                     // 0x8
+    char* ents;                     // 0xC
+    char pad_0x10[4];
+    char* data;                     // 0x14
+};
+extern sNodeAM* D_pool_AM[] __asm__("D_004FE7A0");
+extern sNodeAM* D_head_AM[] __asm__("D_004FE860");
+sNodeAM* func_00310F18_AM(int kind, long n) __asm__("func_00310F18");
+extern "C" void func_003130A8(void* dst, void* src, int len);
+extern "C" void func_00312C20(void* node, float t, void* a, long b, void* c);
+
+void func_00311318_AM(sModelAM* self, void* p2, unsigned int* p3, int p4, void* p5, long p6) __asm__("func_00311318");
+void func_00311318_AM(sModelAM* self, void* p2, unsigned int* p3, int p4, void* p5, long p6)
+{
+    float t = *(float*)(p3 + 1) * 30.0f;
+    sSeqAM* seq = (sSeqAM*)(self->seqs + (p3[0] >> 8) * 0x14);
+    float lim = (float)(seq->n - 1);
+    int idx;
+    int a;
+    int b;
+    if (lim <= t) {
+        idx = seq->a - 1;
+        t = lim;
+        b = seq->b;
+        a = seq->a;
+    } else {
+        idx = (int)t / (seq->b - 1);
+        b = seq->b;
+        a = seq->a;
+    }
+    sNodeAM* node;
+    sEntAM* ent = (sEntAM*)(self->ents + seq->base * 8 + p4 * a * 8 + idx * 8);
+    t = t - (float)(idx * (b - 1));
+    long v = *(unsigned char*)(self->data + ent->off);
+    int kind = ent->kind;
+    if (v < p6) {
+        p6 = v;
+    }
+    if (ent->slot != 0xFF) {
+        node = D_pool_AM[kind] + ent->slot;
+        sNodeAM** head = &D_head_AM[kind];
+        if (node == *head) {
+            *head = node->next;
+        } else if ((*head)->prev != node) {
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
+            node->prev = (*head)->prev;
+            node->next = *head;
+            (*head)->prev->next = node;
+            (*head)->prev = node;
+        }
+        func_00312C20((char*)node + 4, t, p5, p6, p2);
+    } else {
+        int slot;
+        node = D_head_AM[kind];
+        if (node == 0) {
+            node = func_00310F18_AM(kind, v);
+        } else if (node->owner != 0) {
+            slot = node->owner->slot;
+            node->owner->slot = 0xFF;
+            goto have_slot;
+        }
+        slot = (node - D_pool_AM[kind]);
+have_slot:
+        ent->slot = slot;
+        node->owner = ent;
+        D_head_AM[kind] = node->next;
+        char* np = (char*)node + 4;
+        func_003130A8(np, self->data + ent->off, ent->len);
+        func_00312C20(np, t, p5, p6, p2);
+    }
+}
+#endif
 
