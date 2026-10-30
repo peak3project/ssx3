@@ -7558,7 +7558,27 @@ int func_003C4898_4898(int key) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4918);
+#ifdef SKIP_ASM
+struct Ent_4918 { int key; int val; int pad[2]; };
+struct D_4918 { char pad[0xCC0]; volatile unsigned char count; char pad1; volatile unsigned char f2; char pad2; int f4; struct Ent_4918 e[28]; };
+extern struct D_4918 D_0050AD00_4918 __asm__("D_0050AD00");
+extern void func_003C45E8_4918(int) __asm__("func_003C45E8");
+
+void func_003C4918(int key) {
+    int i;
+    for (i = 0; i < 28; i++) {
+        if (D_0050AD00_4918.e[i].key == key) {
+            D_0050AD00_4918.f2 = 0;
+            D_0050AD00_4918.count--;
+            D_0050AD00_4918.e[i].key = 0;
+            func_003C45E8_4918(1);
+            return;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4978);
