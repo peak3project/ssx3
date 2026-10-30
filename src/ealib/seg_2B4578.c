@@ -177,7 +177,28 @@ __asm__(
     ".set pop\n");
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3CD8);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written bounds-checked table lookup: the assembler bgeu macro (sltu $1 + beqz $1) and li as addiu $0; the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_003B3CD8\n.type func_003B3CD8, @function\nfunc_003B3CD8:\n"
+    "lw $9, 0x8($4)\n"
+    "sll $11, $5, 3\n"
+    "sltu $1, $5, $9\n"
+    "beqz $1, .L003B3CF8\n"
+    "addu $11, $4, $11\n"
+    "lw $2, 0x14($11)\n"
+    "jr $31\n"
+    "addu $2, $4, $2\n"
+    ".L003B3CF8:\n"
+    "jr $31\n"
+    "addiu $2, $0, 0x0\n"
+    ".size func_003B3CD8, . - func_003B3CD8\n"
+    ".set pop\n");
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3D00);
 
