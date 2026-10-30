@@ -2867,7 +2867,48 @@ int func_003B9920_9920(int arg0) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9A00);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9B68);
+#ifdef SKIP_ASM
+struct E_9B68 { char pad0[0x22]; unsigned short f22; char pad24[4]; signed char f28; char pad29[0x47]; };
+struct V_9B68 { int id; signed char owner; signed char s5; signed char s6; signed char s7; };
+extern struct E_9B68 D_0050A120_9B68[] __asm__("D_0050A120");
+extern int f_8D98_9B68(int) __asm__("func_003B8D98");
+extern void f_8790_9B68(int, int) __asm__("func_003B8790");
+
+int func_003B9B68_9B68(int, int) __asm__("func_003B9B68");
+int func_003B9B68_9B68(int arg0, int arg1) {
+    int r = -1;
+    int idx = f_8D98_9B68(arg0);
+    struct E_9B68 *e;
+    struct V_9B68 *vt;
+    int i;
+    if (idx < 0) {
+        return idx;
+    }
+    e = &D_0050A120_9B68[idx];
+    if (arg1 != e->f22) {
+        if (e->f28 != 3) {
+            goto out;
+        }
+        e->f22 = arg1;
+        vt = (struct V_9B68 *)&D_0050A120_9B68[16];
+        i = 0x17;
+        do {
+            if (vt->owner == idx) {
+                if (vt->id >= 0) {
+                    f_8790_9B68(vt->id, arg1);
+                }
+            }
+            i--;
+            vt++;
+        } while (i >= 0);
+    }
+    r = 0;
+out:
+    return r;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9C20);
 
