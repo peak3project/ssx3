@@ -162,7 +162,20 @@ int func_003B3BB0(char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3CCC);
+#ifdef SKIP_ASM
+// PORT: PS2-only hand-written accessor (starts 4 mod 8, so file-scope asm); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 2\n.globl func_003B3CCC\n.type func_003B3CCC, @function\nfunc_003B3CCC:\n"
+    "lw $2, 0x8($4)\n"
+    "jr $31\n"
+    "nop\n"
+    ".size func_003B3CCC, . - func_003B3CCC\n"
+    ".set pop\n");
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3CD8);
 
