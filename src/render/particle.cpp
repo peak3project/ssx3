@@ -6026,7 +6026,101 @@ void* func_00382740(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00382760);
+#ifdef SKIP_ASM
+typedef int u128 __attribute__((mode(TI)));
+extern "C" void func_00423DE0(int);
+extern "C" void func_00423DC0(int);
+extern "C" void func_00424020(int);
+extern "C" void func_00382AF0(void* self, int arg1, int arg2);
+extern "C" char D_0044B9C0[] __attribute__((aligned(16)));
+
+struct sParticleDma_382760 {
+    char pad0[0x5A8C];
+    volatile int state;
+    volatile int slot[2];
+    volatile int cur;
+    int f5A9C;
+    int f5AA0;
+    volatile int next;
+    int f5AA8;
+    int f5AAC;
+    int f5AB0;
+    int f5AB4;
+    char pad5AB8[0x10];
+    int sema0;
+    int sema1;
+    char pad5AD0[0x123C];
+    void (*cb)(int);
+    int cbArg;
+};
+
+extern "C" void* func_00382760(void* arg)
+{
+    sParticleDma_382760* self = (sParticleDma_382760*)arg;
+    for (;;) {
+        func_00423DE0(self->sema0);
+        func_00423DE0(self->sema1);
+        if (self->state == 5) {
+            self->slot[self->cur] = 0;
+            self->state = 0;
+            func_00382AF0(self, 1, 0);
+        }
+        if (self->state == 0 && self->slot[self->next] == 2) {
+            if (*(volatile int*)0x10009000 & 0x100) {
+                do {
+                } while (*(volatile int*)0x10009000 & 0x100);
+            }
+            do {
+            } while (*(volatile int*)0x1000A000 & 0x100);
+            do {
+            } while (*(volatile int*)0x10003C00 & 0x1F000003);
+            do {
+            } while ((*(volatile long*)0x12001000 & 0xC000) != 0x4000);
+            self->cur = self->next;
+            self->slot[self->cur] = 3;
+            self->state = 1;
+            self->f5A9C = self->f5AAC;
+            self->f5AA0 = self->f5AB4;
+            func_00424020(0);
+            if (*(volatile int*)0x1000D000 & 0x100) {
+                do {
+                } while (*(volatile int*)0x1000D000 & 0x100);
+            }
+            *(u128*)0x10005000 = *(u128*)D_0044B9C0;
+            *(volatile int*)0x10003010 = 4;
+            if (*(volatile int*)0x10003C00 & 0x1F000003) {
+                do {
+                } while (*(volatile int*)0x10003C00 & 0x1F000003);
+            }
+            do {
+            } while ((*(volatile long*)0x12001000 & 0xC000) != 0x4000);
+            *(volatile int*)0x1000A030 = self->f5AB0;
+            *(volatile int*)0x1000A000 = 0x105;
+            *(volatile int*)0x10009030 = self->f5AA8;
+            *(volatile int*)0x10009000 = 0x185;
+        } else if (self->state == 2) {
+            if (self->cb)
+                self->cb(self->cbArg);
+            *(u128*)0x10005000 = *(u128*)D_0044B9C0;
+            *(volatile int*)0x10003010 = 4;
+            if (*(volatile int*)0x10003C00 & 0x1F000003) {
+                do {
+                } while (*(volatile int*)0x10003C00 & 0x1F000003);
+            }
+            do {
+            } while ((*(volatile long*)0x12001000 & 0xC000) != 0x4000);
+            *(volatile int*)0x1000A030 = self->f5AA0;
+            *(volatile int*)0x1000A000 = 0x105;
+            self->state = 3;
+            *(volatile int*)0x10009030 = self->f5A9C;
+            *(volatile int*)0x10009000 = 0x185;
+        }
+        func_00423DC0(self->sema1);
+    }
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_00382AF0);
 
