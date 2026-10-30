@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `ff588f54`, generated 2026-10-30.
+Snapshot of commit `d0a45f4d`, generated 2026-10-30.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `ff588f54`, generated 2026-10-30.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,305 | 94.63% |
+| Matching | 14,307 | 94.65% |
 | Partial | 4 | 0.03% |
-| Not started | 807 | 5.34% |
+| Not started | 805 | 5.33% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -45,7 +45,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `util/menu` | 193 | 0 | 4 | 197 |
 | `replay/replaycache` | 192 | 0 | 6 | 198 |
 | `scripter/ssxscriptengine` | 181 | 0 | 6 | 187 |
-| `render/particle` | 174 | 0 | 41 | 215 |
+| `render/particle` | 175 | 0 | 40 | 215 |
 | `ai/ai` | 169 | 0 | 5 | 174 |
 | `wscript/wscriptman` | 149 | 0 | 3 | 152 |
 | `fe/all_in_one_fe` | 146 | 0 | 8 | 154 |
@@ -129,11 +129,11 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ui/uiengine` | 33 | 0 | 3 | 36 |
 | `object/multiparticle` | 32 | 0 | 1 | 33 |
 | `object/splinemodifier` | 32 | 0 | 3 | 35 |
+| `animation/animmodel` | 31 | 0 | 3 | 34 |
 | `bx/execman` | 31 | 0 | 0 | 31 |
 | `fe/ovstatehud` | 31 | 0 | 5 | 36 |
 | `object/flexrailnode` | 31 | 0 | 3 | 34 |
 | `render/ps2graphicsman` | 31 | 0 | 1 | 32 |
-| `animation/animmodel` | 30 | 0 | 4 | 34 |
 | `be/beintecon` | 30 | 0 | 2 | 32 |
 | `fe/festatebuyattrib` | 30 | 0 | 1 | 31 |
 | `fe/uitemplatemap` | 30 | 0 | 8 | 38 |
@@ -980,7 +980,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `animation/animmodel`
 
-30 matching, 0 partial, 4 not started (34 total)
+31 matching, 0 partial, 3 not started (34 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -1014,6 +1014,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00311250` | Matching | 100.00% | 64 |
 | `func_00311290` | Matching | 100.00% | 52 |
 | `func_003112C8` | Matching | 100.00% | 80 |
+| `func_00311318` | Matching | 100.00% | 688 |
 
 ### `animation/animsequencer`
 
@@ -10220,7 +10221,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `render/particle`
 
-174 matching, 0 partial, 41 not started (215 total)
+175 matching, 0 partial, 40 not started (215 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -10373,6 +10374,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00386CF0` | Matching | 100.00% | 28 |
 | `func_00386D10` | Matching | 100.00% | 188 |
 | `func_00386DD0` | Matching | 100.00% | 164 |
+| `func_00387EC0` | Matching | 100.00% | 1268 |
 | `func_003883B8` | Matching | 100.00% | 548 |
 | `func_00389098` | Matching | 100.00% | 128 |
 | `func_00389118` | Matching | 100.00% | 72 |
