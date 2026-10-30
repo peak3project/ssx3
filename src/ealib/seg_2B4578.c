@@ -10800,7 +10800,63 @@ void func_003C9DA0(int n, short *src, float *dst) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9E50);
+#ifdef SKIP_ASM
+extern void func_003C9DA0(int n, short *src, float *dst);
+
+void func_003C9E50(int n, short *src, float *dst) {
+    int rem;
+    if (((int)src & 7) != 0 || ((int)dst & 0xF) != 0) {
+        func_003C9DA0(n, src, dst);
+        return;
+    }
+    rem = n & 0xF;
+    if (rem != 0) {
+        n &= 0x7FF0;
+        func_003C9DA0(rem, src + n, dst + n);
+        if (n <= 0) return;
+    }
+    // PORT: PS2-only MMI/VU0 inline asm loop (16 int16 -> float per iteration).
+    __asm__ volatile(
+        ".set noreorder\n\t"
+        "move $4, %0\n\t"
+        "move $5, %1\n\t"
+        "move $6, %2\n"
+        "1:\n\t"
+        "ld $8, 0x0($5)\n\t"
+        "ld $9, 0x8($5)\n\t"
+        "ld $10, 0x10($5)\n\t"
+        "ld $11, 0x18($5)\n\t"
+        "pextlh $8, $8, $0\n\t"
+        "pextlh $9, $9, $0\n\t"
+        "pextlh $10, $10, $0\n\t"
+        "pextlh $11, $11, $0\n\t"
+        "psraw $8, $8, 16\n\t"
+        "psraw $9, $9, 16\n\t"
+        "psraw $10, $10, 16\n\t"
+        "psraw $11, $11, 16\n\t"
+        "qmtc2.ni $8, $vf1\n\t"
+        "qmtc2.ni $9, $vf2\n\t"
+        "qmtc2.ni $10, $vf3\n\t"
+        "qmtc2.ni $11, $vf4\n\t"
+        "vitof0.xyzw $vf1, $vf1\n\t"
+        "vitof0.xyzw $vf2, $vf2\n\t"
+        "vitof0.xyzw $vf3, $vf3\n\t"
+        "vitof0.xyzw $vf4, $vf4\n\t"
+        "sqc2 $vf1, 0x0($6)\n\t"
+        "sqc2 $vf2, 0x10($6)\n\t"
+        "addiu $4, $4, -0x10\n\t"
+        "sqc2 $vf3, 0x20($6)\n\t"
+        "addiu $5, $5, 0x20\n\t"
+        "sqc2 $vf4, 0x30($6)\n\t"
+        "bgtzl $4, 1b\n\t"
+        "addiu $6, $6, 0x40\n\t"
+        ".set reorder\n"
+        : : "r"(n), "r"(src), "r"(dst)
+        : "$4", "$5", "$6", "$8", "$9", "$10", "$11", "memory");
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9F58);
