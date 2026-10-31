@@ -5,7 +5,7 @@ INCLUDE_ASM("ui/uimenu", cUIMenu_setSelected);
 #ifdef SKIP_ASM
 struct cUIThing;
 unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 void cUIScreen_jumpToFrame(void* self, unsigned short frame);
 
 struct cUIMenu_sVEntryA {
@@ -302,7 +302,7 @@ INCLUDE_ASM("ui/uimenu", func_0039BBD8);
 #ifdef SKIP_ASM
 struct cUIThing;
 unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 struct func_0039BBD8_sVEntryA {
     short delta;
@@ -486,7 +486,7 @@ INCLUDE_ASM("ui/uimenu", func_0039BED8);
 #ifdef SKIP_ASM
 struct cUIThing;
 unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 void* func_0039FF50(void* self);
 extern "C" int func_003A0318(void* self, int a);
 extern char D_004A5A58[4];
