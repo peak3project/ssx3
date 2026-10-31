@@ -419,8 +419,7 @@ extern char* D_004A289C_8138 __asm__("D_004A289C");
 extern "C" sUIFsh8138* func_003E22F0(char* name, int flags);
 extern "C" void* func_002523A8(void* p);
 extern "C" void* func_00416210(void* dst, int c, int n);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
 
 extern "C" void cUITextureBank_setData(void* vbank, int id, void* vdata)
@@ -432,7 +431,7 @@ extern "C" void cUITextureBank_setData(void* vbank, int id, void* vdata)
     sprintf(name, D_00493D90, id);
     sUIFsh8138* fsh = func_003E22F0(name, 0x3000100);
     self->texCount = fsh->count;
-    self->texIds = (int*)operator_new_tag(self->texCount * 4, D_00493DA0, 0, 0);
+    self->texIds = (int*)operator_new__FUi(self->texCount * 4, D_00493DA0, 0, 0);
     func_00416210(self->texIds, 0xFF, self->texCount * 4);
     for (; i < self->texCount; i++) {
         char* shape = (char*)fsh + fsh->dir[i].offset;
@@ -999,7 +998,7 @@ INCLUDE_ASM("ui/uiengine", func_00399D80);
 #ifdef SKIP_ASM
 void cMemMan_free(void*);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int USTR_length(unsigned short* s);
 extern "C" void USTR_copy(unsigned short* dst, unsigned short* src);
 extern char D_00493DC0[];
@@ -1020,7 +1019,7 @@ extern "C" void func_00399D80(void* self, unsigned char idx, unsigned short* str
         if (e->str) {
             cMemMan_free(e->str);
         }
-        unsigned short* s = (unsigned short*)operator_new_tag((USTR_length(str) + 1) * 2, D_00493DC0, 0x100, 0);
+        unsigned short* s = (unsigned short*)operator_new__FUi((USTR_length(str) + 1) * 2, D_00493DC0, 0x100, 0);
         USTR_copy(s, str);
         e->str = s;
     }
