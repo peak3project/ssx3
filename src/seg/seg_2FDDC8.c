@@ -20,7 +20,7 @@ int func_003FCDC8(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCE10);
 #ifdef SKIP_ASM
-extern void func_003FB858_v(int, int*, int*) __asm__("func_003FB858");
+extern void func_003FB858(int, int*, int*);
 extern int func_003FB898(int, int);
 extern char* func_00266728(int, int, int);
 extern void func_00416210(char*, int, int);
@@ -30,7 +30,7 @@ int func_003FCE10(char** out, int a, int b, int c) {
     int n;
     v[0] = 4;
     v[1] = 1;
-    func_003FB858_v(c, v, &v[1]);
+    func_003FB858(c, v, &v[1]);
     n = func_003FB898(b, c);
     if (out == 0) {
         return 4;
@@ -49,9 +49,9 @@ int func_003FCE10(char** out, int a, int b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCF00);
 #ifdef SKIP_ASM
-extern int func_003FB858(int, int*, int*);
+extern void func_003FB858(int, int*, int*);
 extern int func_003FB898(int, int);
-extern int func_00266760(int, int, int, int);
+extern void func_00266760(int, int, int, int);
 int func_003FCF00(int a, int b, int c, int d) {
     int v[2];
     int r;
