@@ -142,7 +142,7 @@ void operator_delete(int*);
 extern void* D_00536668[];
 extern int* D_004A2C6C;
 
-extern "C" void func_002380E8(void)
+extern "C" void func_002380E8(void* p)
 {
     int i;
     for (i = 0; i < 10; i++) {
@@ -541,7 +541,7 @@ extern int D_00536730[];
 extern int D_00536708[];
 extern "C" int func_00245E30(const void* a, const void* b);
 extern "C" int func_00245EC0(const void* a, const void* b);
-extern "C" void func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
 
 extern "C" void func_00238B70(void* self, int n)
 {
@@ -562,7 +562,7 @@ extern int D_00536730[];
 extern int D_00536708[];
 extern "C" int func_00245E78(const void* a, const void* b);
 extern "C" int func_00245EC0(const void* a, const void* b);
-extern "C" void func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
 
 extern "C" void func_00238BF8(void* self, int n)
 {
@@ -689,7 +689,7 @@ extern "C" void* cBE_getBE();
 extern "C" int func_001454F8(void* iface, int a1);
 extern "C" void func_00238B70(void* self, int n);
 // PORT: func_00239938 is defined as (void); this caller passes self.
-extern "C" void func_00239938_self(void* self) __asm__("func_00239938");
+extern "C" void func_00239938(void* self);
 struct sScore_239AA0;
 extern "C" void func_00239AA0(sScore_239AA0* self);
 extern "C" void* func_00416210(void* dst, int c, int n);
@@ -772,7 +772,7 @@ extern "C" void func_00238E20(sScore_238E20* self)
         func_00416210(self->t, 0, 0x78);
         self->vt[4].fn((char*)self + self->vt[4].delta);
         if (((sGM_238E20*)D_004A2C70)->f84 == 1) {
-            func_00239938_self(self);
+            func_00239938(self);
         }
         sGM_238E20* g2 = (sGM_238E20*)D_004A2C70;
         g2->f70 = 3;
@@ -810,7 +810,7 @@ extern "C" void func_00238E20(sScore_238E20* self)
         if (g->f84 == 1) {
             func_00416210(t0, 0, 0x78);
             self->vt[4].fn((char*)self + self->vt[4].delta);
-            func_00239938_self(self);
+            func_00239938(self);
             func_00239AA0((sScore_239AA0*)self);
         }
         D_00536640[0] = 0;
@@ -1059,7 +1059,7 @@ struct sGM_239938 {
     int a40[10];
 };
 
-extern "C" void func_00239938(void)
+extern "C" void func_00239938(void* self)
 {
     int n = 0;
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
