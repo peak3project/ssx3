@@ -336,9 +336,9 @@ extern "C" int func_003A6BA8(void* self, int i)
 //100%
 INCLUDE_ASM("world/world", func_003A6BD8);
 #ifdef SKIP_ASM
-extern "C" int func_003ADCB0(func_003A6BA8_sEntry* e);
+extern "C" int* func_003ADCB0(func_003A6BA8_sEntry* e);
 
-extern "C" int func_003A6BD8(void* self, int i)
+extern "C" int* func_003A6BD8(void* self, int i)
 {
     return func_003ADCB0(&(*(func_003A6BA8_sTable**)((char*)self + 0x4))->entries[i]);
 }
@@ -358,9 +358,9 @@ extern "C" int func_003A6C08(void* self, int i)
 //100%
 INCLUDE_ASM("world/world", func_003A6C38);
 #ifdef SKIP_ASM
-extern "C" int func_003ADD10(func_003A6BA8_sEntry* e);
+extern "C" void* func_003ADD10(func_003A6BA8_sEntry* e);
 
-extern "C" int func_003A6C38(void* self, int i)
+extern "C" void* func_003A6C38(void* self, int i)
 {
     return func_003ADD10(&(*(func_003A6BA8_sTable**)((char*)self + 0x4))->entries[i]);
 }
@@ -380,9 +380,9 @@ extern "C" int func_003A6C68(void* self, int i)
 //100%
 INCLUDE_ASM("world/world", func_003A6C98);
 #ifdef SKIP_ASM
-extern "C" int func_003ADD70(func_003A6BA8_sEntry* e);
+extern "C" void* func_003ADD70(func_003A6BA8_sEntry* e);
 
-extern "C" int func_003A6C98(void* self, int i)
+extern "C" void* func_003A6C98(void* self, int i)
 {
     return func_003ADD70(&(*(func_003A6BA8_sTable**)((char*)self + 0x4))->entries[i]);
 }
