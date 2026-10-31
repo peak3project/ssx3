@@ -9,7 +9,7 @@ INCLUDE_ASM("object/deadfadenode", func_00350B98);
 void* cInstanceNode_ctor_v(void* self) __asm__("cInstanceNode_cInstanceNode");
 extern char D_00491980[];
 
-extern "C" void* func_00350B98(void* self)
+extern "C" void* func_00350B98(void* self, void* bucket, void* stream)
 {
     cInstanceNode_ctor_v(self);
     *(void**)((char*)self + 0xC) = D_00491980;
@@ -234,7 +234,7 @@ INCLUDE_ASM("object/deadfadenode", func_00350F08);
 extern "C" void cInstanceNode_cInstanceNode(void* self);
 extern char D_00491800[];
 
-extern "C" void* func_00350F08(void* self)
+extern "C" void* func_00350F08(void* self, void* bucket, void* stream)
 {
     cInstanceNode_cInstanceNode(self);
     *(void**)((char*)self + 0xC) = D_00491800;
@@ -275,7 +275,7 @@ INCLUDE_ASM("object/deadfadenode", func_00350FD8);
 extern "C" void cInstanceNode_cInstanceNode(void* self);
 extern char D_00491680[];
 
-extern "C" void* func_00350FD8(void* self)
+extern "C" void* func_00350FD8(void* self, void* bucket, void* stream)
 {
     cInstanceNode_cInstanceNode(self);
     *(void**)((char*)self + 0xC) = D_00491680;
