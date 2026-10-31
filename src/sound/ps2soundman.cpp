@@ -6,7 +6,7 @@ INCLUDE_ASM("sound/ps2soundman", cSndPlayOpts_cSndPlayOpts);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator_new_9350(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" void* func_002ADE88(void* self, int heap);
-extern "C" void func_003BA020(void* desc);
+extern "C" int func_003BA020(void* desc);
 extern "C" void* func_00416210(void* dst, int v, int n);
 extern char D_00483178[];
 extern char D_00483188[];
