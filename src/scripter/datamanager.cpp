@@ -277,7 +277,7 @@ void* func_00275CF8(void* self)
 //100%
 INCLUDE_ASM("scripter/datamanager", func_00275D10);
 #ifdef SKIP_ASM
-extern "C" void func_00283C30(void* self);
+extern "C" void* func_00283C30(void* self);
 void func_00283C20(void* self);
 
 extern "C" void* func_00275D10(void* self)
@@ -1875,11 +1875,11 @@ void func_00277F08(void* self)
 //100%
 INCLUDE_ASM("scripter/datamanager", func_00277F20);
 #ifdef SKIP_ASM
-extern "C" void func_00281E80(void* self);
-extern "C" void func_00283798(void* self);
+extern "C" void* func_00281E80(void* self);
+extern "C" void* func_00283798(void* self);
 extern "C" void func_00281018(void* self);
-extern "C" void func_0027BFD0(void* self);
-extern "C" void func_002805B8(void* self);
+extern "C" void* func_0027BFD0(void* self);
+extern "C" void* func_002805B8(void* self);
 extern "C" void cScriptAnimBankManager_cScriptAnimBankManager(void* self, int flags, int a2, int a3);
 extern "C" void cScriptSoundBankManager_cScriptSoundBankManager(void* self, int flags, int a2, int a3);
 void func_00281160(void* self, int i);
