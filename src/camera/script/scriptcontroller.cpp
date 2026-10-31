@@ -7,8 +7,7 @@ extern "C" void* cCameraController_cCameraController(void* self, void* arg);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_0027D5E8(void* mem, void* script);
 extern "C" void func_00283298(void* p);
-// PORT: operator_new__FUi takes (size, tag, flags, align) here.
-void* operator_new_K2(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern void* D_0045C428[];
 extern char D_0045BE88[];
 extern char D_0045BEA0[];
@@ -19,7 +18,7 @@ extern "C" void* cScriptCameraController_cScriptCameraController(void* self, voi
     cCameraController_cCameraController(self, arg);
     *(void***)((char*)self + 0x14) = D_0045C428;
     *(int*)self = 3;
-    *(void***)((char*)self + 0x1C) = (void**)operator_new_K2(8, D_0045BE88, 0, 0);
+    *(void***)((char*)self + 0x1C) = (void**)operator_new__FUi(8, D_0045BE88, 0, 0);
     for (i = 0; i < 2; i++) {
         void** slot = (void**)((i << 2) + *(int*)((char*)self + 0x1C));
         *slot = func_0027D5E8(cMemMan_alloc(0x80, D_0045BEA0, 0, 0), script);
