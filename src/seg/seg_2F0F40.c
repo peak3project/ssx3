@@ -427,7 +427,7 @@ extern int cDirtysock_tag_TagFieldSetNumber(char* dst, int len, const char* key,
 extern int func_003EE778(int, int);
 extern int func_003EE1E8(int, int, int);
 extern int func_003EE600(int, int);
-int func_003F0C90(char* self, int a, int b) {
+void* func_003F0C90(char* self, int a, int b) {
     char buf[0x100];
     if (*(int*)(self + 0x4A8) == 0) {
         char* s = self + 0x494;
@@ -449,7 +449,7 @@ int func_003F0C90(char* self, int a, int b) {
         func_003F00D8((int*)self, 0x52474554, (int)buf);
         func_003EE600(*(int*)(self + 0x4A8), 1);
     }
-    return *(int*)(self + 0x4A8);
+    return *(void**)(self + 0x4A8);
 }
 #endif
 
