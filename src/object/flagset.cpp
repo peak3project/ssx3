@@ -1476,7 +1476,7 @@ extern "C" void* func_0034D9B0(char* self, void* a1, int a2, void* a3, int force
 //100%
 INCLUDE_ASM("object/flagset", func_0034DAC8);
 #ifdef SKIP_ASM
-extern "C" void* cMoveNode_cMoveNode_3(void* self, void* a1, void* stream) __asm__("cMoveNode_cMoveNode");
+extern "C" void* cMoveNode_cMoveNode(void* self, void* a1, void* stream);
 
 struct sStreamVE_DAC8 {
     short delta;
@@ -1495,7 +1495,7 @@ extern "C" void* func_0034DAC8(char* self, void* a1, void* stream)
     int unusedFlag;
     char* node = self + 0x14;
     sFlagSlot_34DAC8** slot = (sFlagSlot_34DAC8**)(self + 0x44);
-    cMoveNode_cMoveNode_3(node, a1, stream);
+    cMoveNode_cMoveNode(node, a1, stream);
     *(void***)(self + 0x20) = D_00490CC8;
     *slot = new (D_0048E758, 0x20000000, 0) sFlagSlot_34DAC8[*(int*)(*(char**)(*(char**)(node + 0x18) + 0x80) + 4)];
     cAnimNode_setAnimMeshCache(self);
