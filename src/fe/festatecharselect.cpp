@@ -53,7 +53,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* func_001A0548(void* self, int a1);
 extern "C" void func_0019E538(void* self, int a1);
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 
 extern "C" void func_00181238(void* self)
 {
@@ -123,14 +123,14 @@ extern "C" void func_00181308(void* self, int a1)
 }
 #endif
 
-extern "C" void* func_0039E6B8(void* self);
+extern "C" void func_0039E6B8(void* self);
 
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00181400__FPv);
 #ifdef SKIP_ASM
-void* func_00181400(void* self)
+void func_00181400(void* self)
 {
-    return func_0039E6B8(self);
+    func_0039E6B8(self);
 }
 #endif
 
@@ -138,7 +138,7 @@ void* func_00181400(void* self)
 INCLUDE_ASM("fe/festatecharselect", func_00181420);
 #ifdef SKIP_ASM
 extern "C" void func_00181EF0(void* self);
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 extern "C" void func_00181420(void* self)
 {
