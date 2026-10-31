@@ -314,13 +314,13 @@ public:
     virtual void v1();
     virtual void v2();
     virtual void v3();
-    virtual void v4(int a);
+    virtual void* v4(int a);
 };
 
-extern "C" void func_00153C88(void* self, int id)
+extern "C" void* func_00153C88(void* self, int id)
 {
     int i = func_00154240(self, id);
-    ((cMissionObj_00153C88*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10_v00153C88[i].f4);
+    return ((cMissionObj_00153C88*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10_v00153C88[i].f4);
 }
 #endif
 
@@ -379,13 +379,13 @@ public:
     virtual void v1();
     virtual void v2();
     virtual void v3();
-    virtual void v4(int a);
+    virtual void* v4(int a);
 };
 
-extern "C" void func_00153D28(void* self, int id)
+extern "C" void* func_00153D28(void* self, int id)
 {
     int i = func_00154240(self, id);
-    ((cMissionObj_00153D28*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10_v00153D28[i].fC);
+    return ((cMissionObj_00153D28*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10_v00153D28[i].fC);
 }
 #endif
 
