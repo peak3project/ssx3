@@ -36,7 +36,7 @@ void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __a
 extern const char D_0045A7F0[];
 extern char* D_004A1224;
 
-extern "C" char* func_00152688(void)
+extern "C" char* func_00152688(void* iface)
 {
     D_004A1228 = 1;
     if (D_004A1224 == 0)
@@ -64,7 +64,7 @@ INCLUDE_ASM("be/beintsavefile", func_00152700);
 void cMemMan_free(void*);
 extern void* D_004A1220;
 
-extern "C" void func_00152700(void)
+extern "C" void func_00152700(void* self)
 {
     if (D_004A1220)
         cMemMan_free(D_004A1220);
@@ -92,7 +92,7 @@ INCLUDE_ASM("be/beintsavefile", func_00152758);
 #ifdef SKIP_ASM
 int func_00152948(void* self);
 // PORT: the unit defines func_00152700(void); this caller passes self in $a0.
-void func_00152700_s(void* self) __asm__("func_00152700");
+void func_00152700(void* self);
 extern "C" void* func_0041605C(void* dst, const void* src, int n);
 extern "C" int func_003E62D0(void* buf, int n, int seed);
 extern void* D_004A1220;
@@ -107,7 +107,7 @@ struct sSaveBits6_2758 { sSaveBits_2758 e[6]; };
 extern "C" void* func_00152758(void* self)
 {
     int size = func_00152948(self);
-    func_00152700_s(self);
+    func_00152700(self);
     D_004A1220 = operator_new_tag(size, D_0045A7F0, 0x100, 0);
     char* p = (char*)D_004A1220;
     *(sSaveHdr_2758*)p = D_00535898;
