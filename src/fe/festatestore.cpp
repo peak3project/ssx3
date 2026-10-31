@@ -284,7 +284,7 @@ INCLUDE_ASM("fe/festatestore", func_00184C60);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void* func_001A0548(void* self, int idx);
 extern "C" void func_00311A50(void* anim);
-extern "C" void cRiderAnimBase_play(void* anim, int id, int a2, float t);
+extern "C" int cRiderAnimBase_play(void* anim, int id, int a2, float t);
 extern "C" void func_0039E510(void* self);
 extern void* D_004A28A8;
 
@@ -515,7 +515,7 @@ void cUIText_setUnicodeStringByID(cUIText* t, int id);
 extern "C" void cFEStateUberTrick_costVisible(void* self, int on);
 extern "C" void cFEStateUberTrick_trickVisible(void* self, int on);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void cRiderAnimBase_play(void* anim, int id, int a2, float t);
+extern "C" int cRiderAnimBase_play(void* anim, int id, int a2, float t);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" void cUIStateBuyPopup_initBuyTrick(void* popup, int trick, int cost, int points);
 extern "C" void cWScriptMan_checkGate(void* self);
