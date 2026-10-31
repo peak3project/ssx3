@@ -54,7 +54,6 @@ INCLUDE_ASM("fe/fepopupmisc", func_001DEC68);
 int GetHashValue32(char* str);
 struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* t, int id);
-extern "C" void* cUIScreen_getObjectByHashName_EC68(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
 extern char* D_004A1540;
 // PORT: the target re-reads this name pointer without filling the call delay slot; volatile view.
 extern char* volatile D_004A1544_EC68 __asm__("D_004A1544");
@@ -91,7 +90,7 @@ extern sSnd_EC68 D_004A5A58_EC68 __asm__("D_004A5A58");
 
 static inline void show_EC68(char* self, char* name, int on)
 {
-    sObj_EC68* o = (sObj_EC68*)cUIScreen_getObjectByHashName_EC68(*(void**)(self + 0x40), GetHashValue32(name));
+    sObj_EC68* o = (sObj_EC68*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
     if (o != 0) {
         o->vt[9].fn((char*)o + o->vt[9].delta, on);
     }
@@ -104,7 +103,7 @@ extern "C" int func_001DEC68(char* self, sWidget_EC68* w)
         if (*(signed char*)(self + 0x48) == 0) {
             show_EC68(self, D_004A1540, 0);
             show_EC68(self, D_004A1544_EC68, 1);
-            cUIText* t = (cUIText*)cUIScreen_getObjectByHashName_EC68(*(void**)(self + 0x40), GetHashValue32(D_0045DD90));
+            cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0045DD90));
             if (t != 0) {
                 cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DDB8));
             }
@@ -5616,14 +5615,11 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E48B0);
 #ifdef SKIP_ASM
 extern "C" void cUIState_showObjSafe_48B0(void* self, char* name) __asm__("cUIState_showObjSafe");
 extern "C" void cUIState_hideObjSafe_48B0(void* self, char* name) __asm__("cUIState_hideObjSafe");
-extern "C" int func_001E2BB8_48B0(int kind, int online) __asm__("func_001E2BB8");
 extern "C" int func_001E33E8_48B0() __asm__("func_001E33E8__FPv");
 extern "C" void func_001E4840_48B0(void* self, int obj) __asm__("func_001E4840");
 extern "C" void func_001E4878_48B0(void* self, int obj) __asm__("func_001E4878");
-extern "C" int func_001E3620_48B0(int idx) __asm__("func_001E3620");
 extern "C" unsigned char func_001E3650(int idx);
 extern "C" void func_001E4C78_48B0(void* self, int idx, int row, int a3, int a4) __asm__("func_001E4C78");
-extern "C" int func_001E2C80_48B0(int kind, int idx, int local) __asm__("func_001E2C80");
 extern "C" int func_001E4B80_48B0(void* self, int entry) __asm__("func_001E4B80");
 extern "C" void func_0039B760_48B0(void* menu, unsigned char n) __asm__("func_0039B760");
 extern int D_004A20C4;
@@ -5658,9 +5654,9 @@ extern "C" void func_001E48B0(void* selfp)
     sList_48B0* self = (sList_48B0*)selfp;
     int online;
     if (D_004A20C4) {
-        online = func_001E2BB8_48B0(4, 1);
+        online = func_001E2BB8(4, 1);
     } else {
-        online = func_001E2BB8_48B0(4, 0);
+        online = func_001E2BB8(4, 0);
     }
     int local = func_001E33E8_48B0();
     int total = local + online;
@@ -5690,15 +5686,15 @@ extern "C" void func_001E48B0(void* selfp)
             int n = i + 1;
             int k = local - self->scroll - n;
             if (k >= 0) {
-                int r1 = func_001E3620_48B0(k);
+                int r1 = func_001E3620(k);
                 func_001E4C78_48B0(self, k, i, r1, func_001E3650(k));
             } else if (k + online >= 0) {
                 int nk = ~k;
                 int r;
                 if (D_004A20C4) {
-                    r = func_001E2C80_48B0(4, nk, 0);
+                    r = func_001E2C80(4, nk, 0);
                 } else {
-                    r = func_001E2C80_48B0(4, nk, 1);
+                    r = func_001E2C80(4, nk, 1);
                 }
                 func_001E4C78_48B0(self, -1, i, r, (unsigned char)func_001E4B80_48B0(self, r));
             } else {
