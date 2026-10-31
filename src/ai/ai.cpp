@@ -2112,7 +2112,7 @@ INCLUDE_ASM("ai/ai", func_0012BE20);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void func_00311A50(void* anim);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 struct sQuat_12BE20
 {
@@ -2225,8 +2225,6 @@ extern "C" int func_0012C078(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_0012C0C0);
 #ifdef SKIP_ASM
-// PORT: cRiderAnimBase_play returns a value here (the target uses v1 after the call); the unit declares it void.
-extern "C" int cRiderAnimBase_play_i(void* self, int anim, int flags, float blend) __asm__("cRiderAnimBase_play");
 struct sAiBits0012C0C0
 {
     int pad : 12;
@@ -2237,7 +2235,7 @@ extern "C" void func_0012C0C0(void* self, void* a1)
 {
     if (((sAiBits0012C0C0*)a1)->v * 0.032258063554763794f > 0.0f)
     {
-        cRiderAnimBase_play_i(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 2, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 2, 0, -1.0f);
         *(int*)self = 3;
     }
 }
@@ -2383,7 +2381,7 @@ extern "C" void func_0012C230(void* self, void* a1)
 INCLUDE_ASM("ai/ai", func_0012C408);
 #ifdef SKIP_ASM
 extern "C" float func_00115AB0(void* rider);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" void func_0012C408(void* self, void* a1)
 {
@@ -2523,7 +2521,7 @@ extern "C" void func_0012C5C8(sAiObj12C5C8* self)
 //100%
 INCLUDE_ASM("ai/ai", func_0012C678);
 #ifdef SKIP_ASM
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0010E028(void* self, int mode, float t);
 extern "C" void func_00113E80(void*, float);
 extern "C" void func_00113F88(void* rider, float a, float b);
@@ -3309,7 +3307,7 @@ INCLUDE_ASM("ai/ai", func_0012D848);
 extern "C" int func_00312AE8(void* self, int i);
 extern "C" void func_002948D0(void* mgr, void* rider, float v);
 extern "C" void func_00119E38(void* p, int flip, int c);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 struct sVEntry12D848 { short delta; short index; void (*fn)(void*, float); };
 
@@ -3382,7 +3380,7 @@ extern "C" void func_0012D9D8(void* self)
 INCLUDE_ASM("ai/ai", func_0012DA88);
 #ifdef SKIP_ASM
 int func_00312AA0(void* anim, int layer);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 // Maps the rider's layer-2 animation to its base (or alternate) variant and replays it.
 extern "C" void func_0012DA88(void* self)
 {
@@ -3501,7 +3499,7 @@ extern "C" void func_0012DA88(void* self)
 INCLUDE_ASM("ai/ai", func_0012DCB0);
 #ifdef SKIP_ASM
 int func_00312AA0(void* anim, int layer);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 // Picks the rider's layer-2 follow-up animation and replays it.
 extern "C" void func_0012DCB0(void* self)
 {
@@ -3572,7 +3570,7 @@ extern "C" void func_0012DD98(void* self)
 INCLUDE_ASM("ai/ai", func_0012DE80);
 #ifdef SKIP_ASM
 int func_00312AA0(void* anim, int layer);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 // Remaps the rider's current layer-2 animation to its follow-up and plays it.
 extern "C" void func_0012DE80(void* self)
 {
@@ -3620,7 +3618,7 @@ extern "C" void func_0012DE80(void* self)
 INCLUDE_ASM("ai/ai", func_0012DF48);
 #ifdef SKIP_ASM
 int func_00312AA0(void* anim, int layer);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 // Remaps the rider's current layer-2 animation to its follow-up and plays it.
 extern "C" void func_0012DF48(void* self)
 {
@@ -3836,7 +3834,7 @@ extern "C" void func_0012E010(void* self)
 INCLUDE_ASM("ai/ai", func_0012E468);
 #ifdef SKIP_ASM
 int func_00312AA0(void* anim, int layer);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" void func_0012E468(void* self)
 {
@@ -4096,7 +4094,7 @@ void func_0012E9B0(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_0012E9B8);
 #ifdef SKIP_ASM
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" int func_00106848(void*);
 extern "C" void func_00113E80(void*, float);
 extern "C" void func_00113F38(void*, float);
@@ -4259,7 +4257,7 @@ INCLUDE_ASM("ai/ai", func_0012EE30);
 #ifdef SKIP_ASM
 extern "C" float func_0031C228(float x);
 int func_00312AA0(void* self, int i);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 static inline float aiAtan2_12EE30(float y, float x)
 {
@@ -4596,7 +4594,7 @@ extern "C" void func_0012F620(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_0012F730);
 #ifdef SKIP_ASM
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" int func_00106848(void*);
 extern "C" int func_00107578(void* rider, int on);
 extern "C" void func_00114130(void* rider, int a, int b);
@@ -4987,7 +4985,7 @@ INCLUDE_ASM("ai/ai", func_0012FFF8);
 int func_00312AA0(void* self, int i);
 int func_0011FE98(void* self);
 void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0010E098(void*, int, float);
 extern "C" void func_00116930(void* rider);
 extern "C" float func_00119A38(void*);
@@ -5067,7 +5065,7 @@ extern "C" int func_0012FFF8(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_00130228);
 #ifdef SKIP_ASM
-extern "C" int cRiderAnimBase_play_i(void* self, int anim, int flags, float blend) __asm__("cRiderAnimBase_play");
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0010E098(void*, int, float);
 extern "C" float func_001199F8(void*, int);
 
@@ -5099,11 +5097,11 @@ extern "C" void func_00130228(void* self, sPadIn_130228* in)
         char* r2 = *(char**)((char*)self + 0x14);
         if (*(int*)(r2 + 0x330) == 2)
         {
-            cRiderAnimBase_play_i(*(void**)(r2 + 0x784), 0x21, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r2 + 0x784), 0x21, 0, -1.0f);
         }
         else
         {
-            cRiderAnimBase_play_i(*(void**)(r2 + 0x784), 0x19, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r2 + 0x784), 0x19, 0, -1.0f);
         }
         return;
     }
@@ -5121,7 +5119,7 @@ extern "C" void func_00130228(void* self, sPadIn_130228* in)
         char* r4 = *(char**)((char*)self + 0x14);
         if (*(int*)(r4 + 0x330) == 2)
         {
-            cRiderAnimBase_play_i(*(void**)(r4 + 0x784), 0x24, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r4 + 0x784), 0x24, 0, -1.0f);
             char* r5 = *(char**)((char*)self + 0x14);
             *(float*)(r5 + 0x284) = 0.0f;
             *(float*)(r5 + 0x288) = 1.0f;
@@ -5129,7 +5127,7 @@ extern "C" void func_00130228(void* self, sPadIn_130228* in)
         }
         else
         {
-            cRiderAnimBase_play_i(*(void**)(r4 + 0x784), 0x1C, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r4 + 0x784), 0x1C, 0, -1.0f);
             char* r5 = *(char**)((char*)self + 0x14);
             *(float*)(r5 + 0x288) = 0.0f;
             *(float*)(r5 + 0x280) = 0.0f;
@@ -5147,7 +5145,7 @@ extern "C" int func_001307B8(void* self, void* a1);
 extern "C" int func_001308D8(void* self, void* a1);
 extern "C" int func_00130DD0(void* self, void* a1);
 extern "C" int func_00131200(void* self, void* a1);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" void func_001303E0(void* self, void* a1)
 {
@@ -5190,7 +5188,7 @@ INCLUDE_ASM("ai/ai", func_001304E0);
 int func_00312AA0(void* self, int i);
 int func_0011FE98(void* self);
 void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0010E098(void*, int, float);
 extern "C" void func_00115640(void* rider);
 extern "C" float func_00119A38(void*);
@@ -5254,7 +5252,7 @@ int func_00312AA0(void* self, int i);
 int func_0011FE98(void* self);
 extern "C" int func_00114CC0(void* rider);
 // PORT: cRiderAnimBase_play returns a value (the unit declares it void); int-returning view bound by asm label.
-extern "C" int cRiderAnimBase_play_i(void* self, int anim, int flags, float blend) __asm__("cRiderAnimBase_play");
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" int func_001306B0(void* self)
 {
@@ -5269,12 +5267,12 @@ extern "C" int func_001306B0(void* self)
         char* r2 = *(char**)((char*)self + 0x14);
         if (*(int*)(r2 + 0x330) == 1)
         {
-            cRiderAnimBase_play_i(*(void**)(r2 + 0x784), 0x17, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r2 + 0x784), 0x17, 0, -1.0f);
             *(int*)(*(char**)((char*)self + 0x14) + 0x330) = 2;
         }
         else
         {
-            cRiderAnimBase_play_i(*(void**)(r2 + 0x784), 0x1F, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r2 + 0x784), 0x1F, 0, -1.0f);
             *(int*)(*(char**)((char*)self + 0x14) + 0x330) = 1;
         }
         return 1;
@@ -5336,7 +5334,7 @@ extern "C" int func_001307B8(void* self, void* a1)
 //100%
 INCLUDE_ASM("ai/ai", func_001308D8);
 #ifdef SKIP_ASM
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0012FEC8(void* self);
 extern "C" void func_001313A8(void*);
 extern "C" void func_00131428(void*);
@@ -5782,7 +5780,7 @@ INCLUDE_ASM("ai/ai", func_00131428);
 #ifdef SKIP_ASM
 extern "C" void func_0010E098(void*, int, float);
 extern "C" float func_00119AD8(void* p, int v);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" void func_00131428(void* self)
 {
@@ -5865,7 +5863,7 @@ void func_00131608(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_00131620);
 #ifdef SKIP_ASM
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" int func_00116378(void*);
 extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_00131CC0(void* self);
@@ -6308,7 +6306,6 @@ INCLUDE_ASM("ai/ai", func_00132060);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" int cRiderAnimBase_play_2060(void* self, int anim, int flags, float blend) __asm__("cRiderAnimBase_play");
 extern "C" void func_0010E098(void*, int, float);
 extern "C" void func_00116930(void* rider);
 float func_00119918_2060(void* p, int st, float h) __asm__("func_00119918__FPvi");
@@ -6352,24 +6349,24 @@ extern "C" void func_00132060(void* self, int dir)
         switch (*(int*)(RIDER_2060 + 0x328)) {
     case 1:
         setRot_2060(*(char**)(RIDER_2060 + 0x784), -1.5707963705062866f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x31, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x31, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 3;
         break;
     case 2:
         flip_2060(self, 0);
         setRot_2060(*(char**)(RIDER_2060 + 0x784), 1.5707963705062866f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x35, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x35, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 4;
         break;
     case 3:
         flip_2060(self, 1);
         setRot_2060(*(char**)(RIDER_2060 + 0x784), 3.1415927410125732f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x33, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x33, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 2;
         break;
     case 4:
         setRot_2060(*(char**)(RIDER_2060 + 0x784), 0.0f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x36, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x36, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 1;
         break;
         }
@@ -6378,24 +6375,24 @@ extern "C" void func_00132060(void* self, int dir)
         switch (*(int*)(RIDER_2060 + 0x328)) {
     case 1:
         setRot_2060(*(char**)(RIDER_2060 + 0x784), 1.5707963705062866f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x32, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x32, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 4;
         break;
     case 2:
         flip_2060(self, 0);
         setRot_2060(*(char**)(RIDER_2060 + 0x784), -1.5707963705062866f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x34, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x34, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 3;
         break;
     case 3:
         setRot_2060(*(char**)(RIDER_2060 + 0x784), 0.0f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x33, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x33, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 1;
         break;
     case 4:
         flip_2060(self, 1);
         setRot_2060(*(char**)(RIDER_2060 + 0x784), 3.1415927410125732f);
-        cRiderAnimBase_play_2060(*(void**)(RIDER_2060 + 0x784), 0x36, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(RIDER_2060 + 0x784), 0x36, 0, -1.0f);
         *(int*)(RIDER_2060 + 0x328) = 2;
         break;
         }
@@ -6439,7 +6436,7 @@ extern "C" int func_00132620(void* self, int id)
 //100%
 INCLUDE_ASM("ai/ai", func_001326C8);
 #ifdef SKIP_ASM
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" void func_001326C8(void* self, int alt)
 {
@@ -7157,7 +7154,7 @@ extern "C" void func_00135B30(void* self, float a, float b)
 INCLUDE_ASM("ai/ai", func_00135BE0);
 #ifdef SKIP_ASM
 extern "C" int func_00114DB8(void* rider);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float aiFloor_135BE0(float x)
@@ -7458,8 +7455,6 @@ extern "C" void func_00136268(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_00136508);
 #ifdef SKIP_ASM
-// PORT: the unit declares cRiderAnimBase_play as void, but it returns the new anim index.
-extern "C" int cRiderAnimBase_play_i136508(void* self, int anim, int flags, float blend) __asm__("cRiderAnimBase_play");
 extern "C" int func_00106848(void*);
 extern "C" void func_0010E098(void*, int, float);
 extern "C" void func_00113F38(void*, float);
@@ -7513,7 +7508,7 @@ extern "C" void func_00136508(sAiObj136508* self, void* in)
     if (func_00106848(self->mRider))
     {
         if (self->mState == 1)
-            cRiderAnimBase_play_i136508(*(void**)(self->mRider + 0x784), *(int*)(tbl + 0x18), 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(self->mRider + 0x784), *(int*)(tbl + 0x18), 0, -1.0f);
         return;
     }
     int w = *(int*)in;
@@ -7528,7 +7523,7 @@ extern "C" void func_00136508(sAiObj136508* self, void* in)
         *(float*)(r0 + 0x23C) = 0.05833333730697632f;
         if (func_00312AE8(*(void**)(self->mRider + 0x784), 2))
         {
-            cRiderAnimBase_play_i136508(*(void**)(self->mRider + 0x784), *(int*)(tbl + 0x10), 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(self->mRider + 0x784), *(int*)(tbl + 0x10), 0, -1.0f);
             *(float*)(func_00311B20(*(void**)(self->mRider + 0x784), 2) + 0x90) = 1.0f;
             self->mState = 1;
         }
@@ -7537,7 +7532,7 @@ extern "C" void func_00136508(sAiObj136508* self, void* in)
     {
         if (((sAiBitsB_136508*)in)->v != self->mIndex || func_0011FE98(self->mRider) == 0)
         {
-            cRiderAnimBase_play_i136508(*(void**)(self->mRider + 0x784), *(int*)(tbl + 0x1C), 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(self->mRider + 0x784), *(int*)(tbl + 0x1C), 0, -1.0f);
             *(float*)(func_00311B20(*(void**)(self->mRider + 0x784), 2) + 0x90) = 1.0f;
             self->mState = 2;
         }
@@ -7563,7 +7558,7 @@ extern "C" void func_00136508(sAiObj136508* self, void* in)
             else
                 a = *(int*)(tbl + 0x14);
             if (a != cur)
-                cRiderAnimBase_play_i136508(*(void**)(self->mRider + 0x784), a, 0, -1.0f);
+                cRiderAnimBase_play(*(void**)(self->mRider + 0x784), a, 0, -1.0f);
         }
     }
     if (self->mState == 2)
