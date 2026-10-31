@@ -487,7 +487,7 @@ INCLUDE_ASM("be/beintstat", func_00149BB8);
 //100%
 INCLUDE_ASM("be/beintstat", func_0014A078);
 #ifdef SKIP_ASM
-extern "C" void func_0014A078(void) {
+extern "C" void func_0014A078(int a0) {
 
 }
 #endif
