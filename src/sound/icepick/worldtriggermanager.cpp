@@ -175,8 +175,7 @@ extern "C" void func_002B5898(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/icepick/worldtriggermanager", cWorldTriggerManager_cWorldTriggerManager);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* func_002B4B70(void* self);
 extern "C" int cWorldTriggerManager_LoadTriggerInfo(void* self);
 extern const char D_004835A0[];
@@ -192,7 +191,7 @@ extern "C" void* cWorldTriggerManager_cWorldTriggerManager(void* self)
     *(int*)((char*)self + 0x328) = -1;
     *(int*)((char*)self + 0x32C) = -1;
     *(int*)((char*)self + 0x334) = 1;
-    int* mem = (int*)operator_new_tag(0x1190, D_004835A0, 0, 0);
+    int* mem = (int*)operator_new__FUi(0x1190, D_004835A0, 0, 0);
     mem[0] = 40;
     sWorldTrigger58D0* arr = (sWorldTrigger58D0*)((char*)mem + 0x10);
     sWorldTrigger58D0* p = arr;
@@ -235,7 +234,7 @@ INCLUDE_ASM("sound/icepick/worldtriggermanager", cWorldTriggerManager_LoadTrigge
 extern "C" int BXFILE_exists(const char* name);
 extern "C" char* func_003E22F0(const char* name, int a1);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char* D_004A3858;
 extern char D_004835C0[];
 
@@ -253,7 +252,7 @@ int cWorldTriggerManager_LoadTriggerInfo(void* self)
             return 0;
         }
         *(int*)((char*)self + 0x340) = *(int*)(data + 8) + 2;
-        *(sTrigInfoEnt**)((char*)self + 0x33C) = (sTrigInfoEnt*)operator_new_tag(*(int*)((char*)self + 0x340) * 8, D_004835C0, 0, 0);
+        *(sTrigInfoEnt**)((char*)self + 0x33C) = (sTrigInfoEnt*)operator_new__FUi(*(int*)((char*)self + 0x340) * 8, D_004835C0, 0, 0);
         int* p = (int*)(data + 0xC);
         for (int i = 2; i < *(int*)((char*)self + 0x340); i++) {
             (*(sTrigInfoEnt**)((char*)self + 0x33C))[i].type = *p;
@@ -580,7 +579,7 @@ extern "C" int func_002B5F60(char* self, void* evt, int id, char* rider, int vol
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B63D0);
 #ifdef SKIP_ASM
 extern "C" void* func_0028B180();
-extern "C" int func_002ADF60(int a);
+extern "C" int func_002ADF60(void* a);
 extern "C" int func_002B6550(void* self, int type, int* a, int* b, int* c, int arg);
 
 struct sWTMObj {
@@ -621,7 +620,7 @@ extern "C" int func_002B63D0(void* self, int idx, int* type, int* a, int* b, int
     } else if (t == 2) {
         *type = (*(sWTMEntry**)((char*)self + 0x33C))[idx].obj->f10;
         void* p = func_0028B180();
-        int rnd = func_002ADF60(*(int*)(*(char**)*(void**)((char*)p + 0x118) + 0x1D8));
+        int rnd = func_002ADF60(*(void**)(*(char**)*(void**)((char*)p + 0x118) + 0x1D8));
         sWTMObj* o = (*(sWTMEntry**)((char*)self + 0x33C))[idx].obj;
         int v = (unsigned)((rnd & 0x7FFF) * o->f34) / 0x7FFF;
         if (v < o->f24) *a = o->f14;
