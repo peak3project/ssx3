@@ -1120,8 +1120,6 @@ extern "C" int func_00146A70(void* iface, int a1, int charId, int item);
 extern "C" int func_00157B08(void* iface, int a1, int a2);
 extern "C" void* func_004139F8(float x);
 extern "C" void func_003A0D00(void* obj, unsigned short* s);
-// func_002C2540 returns dst (the unit declares it void)
-unsigned short* func_002C2540_r(unsigned short* dst, char* src) __asm__("func_002C2540");
 extern char D_0046E5F0[];
 extern char D_0046FF68[];
 extern char D_0046FF80[];
@@ -1182,14 +1180,14 @@ extern "C" int func_001FD320(void* self, void* msg)
         o = getObj_1FD320(self, D_004A21B8);
         switch (mode) {
         case 4:
-            func_002C2540_r(title, func_00144BF0(iface0));
-            func_002C2540_r(fmt, (char*)D_004A2140);
+            func_002C2540(title, func_00144BF0(iface0));
+            func_002C2540(fmt, (char*)D_004A2140);
             func_002C26D0(out, fmt, title, lookupString_1FD320(D_0046E548));
             func_003A0E90(o, out);
             break;
         case 5:
-            func_002C2540_r(title, func_00144BF0(iface0));
-            func_002C2540_r(fmt, (char*)D_0046E558);
+            func_002C2540(title, func_00144BF0(iface0));
+            func_002C2540(fmt, (char*)D_0046E558);
             func_002C26D0(out, fmt, title);
             func_003A0E90(o, out);
             break;
@@ -1206,7 +1204,7 @@ extern "C" int func_001FD320(void* self, void* msg)
         cUIText* statusB = (cUIText*)getObj_1FD320(self, D_004A2530);
         o = getObj_1FD320(self, D_004A21B0);
         cUIText_setUnicodeStringByID((cUIText*)o, GetHashValue32(D_0046E5F0));
-        func_002C2540_r(name, func_0014EEC8(iface2, func_00145750(iface0), 0));
+        func_002C2540(name, func_0014EEC8(iface2, func_00145750(iface0), 0));
         unsigned short* lineFmt;
         if (mode >= 4 && mode <= 5)
             lineFmt = lookupString_1FD320(D_0046FF68);
@@ -1247,9 +1245,9 @@ extern "C" int func_001FD320(void* self, void* msg)
             o = getObj_1FD320(self, D_0046FFD0);
             float mins = (float)*(unsigned int*)(stats + 0x78) * 0.01666666753590107f;
             void* r = func_004139F8(mins);
-            func_002C2540_r(num, func_0020A1A8(r));
+            func_002C2540(num, func_0020A1A8(r));
             unsigned short* f = lookupString_1FD320(D_0046E918);
-            func_002C2540_r(title, D_004A2550);
+            func_002C2540(title, D_004A2550);
             func_002C26D0(text, title, f, num);
             func_003A0D00(o, text);
             cUIText_setUnicodeStringByID(statusA, GetHashValue32(D_00470018));
@@ -1264,7 +1262,7 @@ extern "C" int func_001FD320(void* self, void* msg)
         case 11: {
             int n = *(int*)(stats + 0x7C);
             unsigned short* f = lookupString_1FD320(D_0046E950);
-            func_002C2540_r(title, D_004A2558);
+            func_002C2540(title, D_004A2558);
             func_002C26D0(num, title, f, n);
             func_003A0D00(getObj_1FD320(self, D_0046FFD0), num);
             cUIText_setUnicodeStringByID(statusA, GetHashValue32(D_00470068));
@@ -1343,7 +1341,6 @@ void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame_DC30(void* self, unsigned short frame, int flag) __asm__("cUIScreen_playFrame");
-extern "C" void* cUIScreen_getObjectByHashName_DC30(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
 extern "C" void func_0020A380_DC30(void* self) __asm__("func_0020A380");
 extern int D_004A2A50;
 extern int D_004A2A54;
@@ -1374,7 +1371,7 @@ struct cUIObj_DC30 {
 
 static inline cUIObj_DC30* getObj_DC30(char* self, char* name)
 {
-    return (cUIObj_DC30*)cUIScreen_getObjectByHashName_DC30(*(void**)(self + 0x40), GetHashValue32(name));
+    return (cUIObj_DC30*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
 }
 
 // Builds the memory-card device-select overlay and pushes its menu state.
