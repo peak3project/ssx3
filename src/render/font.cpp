@@ -7,8 +7,7 @@ typedef int cQuad128 __attribute__((mode(TI)));
 //100%
 INCLUDE_ASM("render/font", cFont_linkFont);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 struct sFontTexHdr;
 extern "C" void cFont_downloadTexture(char* self, sFontTexHdr* img);
 extern char D_004A46F8[];
@@ -49,7 +48,7 @@ extern "C" void cFont_linkFont(void* vself, void* vdata, int flags)
     p.y = (float)data[0x11];
     self->pad = p;
     self->count = *(short*)(data + 0xA);
-    self->table = (sGlyph_1788*)operator_new_tag(self->count * 12, D_004A46F8, flags, 0);
+    self->table = (sGlyph_1788*)operator_new__FUi(self->count * 12, D_004A46F8, flags, 0);
     int space = 0;
     self->maxH = 0;
     self->last = self->first = src->code;
@@ -175,7 +174,7 @@ extern "C" void func_003919E8(sFont_19E8* self)
 INCLUDE_ASM("render/font", cFont_downloadTexture);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void func_003E6448(void* dst, int c, int n);
 extern "C" void func_003E6574(void* dst, const void* src, int n);
 extern char D_00492F40[];
@@ -219,8 +218,8 @@ extern "C" void cFont_downloadTexture(char* self, sFontTexHdr* img)
     uv.v = 1.0f / p2;
     uv.u = 1.0f / img->w;
     *(sFontUV*)(self + 0x20) = uv;
-    unsigned char* pix = (unsigned char*)operator_new_tag((img->w * p2) >> 1, D_00492F40, 0x100, 0);
-    unsigned char* pal = (unsigned char*)operator_new_tag(0x40, D_00492F50, 0x100, 0);
+    unsigned char* pix = (unsigned char*)operator_new__FUi((img->w * p2) >> 1, D_00492F40, 0x100, 0);
+    unsigned char* pal = (unsigned char*)operator_new__FUi(0x40, D_00492F50, 0x100, 0);
     func_003E6448(pix, 0, (img->w * p2) >> 1);
     func_003E6448(pal, 0, 0x40);
     char* src;
@@ -2446,7 +2445,7 @@ void* func_00394C88(void* self, int a1)
 INCLUDE_ASM("render/font", func_00394C98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern const char D_00491FA0[];
 
 extern "C" void func_00394C98(void* self, int n)
@@ -2454,7 +2453,7 @@ extern "C" void func_00394C98(void* self, int n)
     *(int*)((char*)self + 0x8) = n;
     *(int*)((char*)self + 0xC) = 0;
     *(int*)((char*)self + 0x10) = n + 0x32;
-    *(void**)((char*)self + 0x4) = operator_new_tag((n + 0x32) * 4, D_00491FA0, 0, 0);
+    *(void**)((char*)self + 0x4) = operator_new__FUi((n + 0x32) * 4, D_00491FA0, 0, 0);
 }
 #endif
 
