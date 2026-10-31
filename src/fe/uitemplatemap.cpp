@@ -988,7 +988,7 @@ INCLUDE_ASM("fe/uitemplatemap", func_002085B8);
 #ifdef SKIP_ASM
 extern "C" int func_002018A8(void* p, void* obj, int msg);
 // PORT: returns int (value unused here); the int return type keeps the target's register choice after the call.
-extern "C" int func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_002085B8(char* self, void* obj, int msg)
 {
