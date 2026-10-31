@@ -1843,12 +1843,12 @@ INCLUDE_ASM("ai/computer", func_0010FCD8);
 //100%
 INCLUDE_ASM("ai/computer", func_001112B8);
 #ifdef SKIP_ASM
-extern "C" void func_001112F8();
+extern "C" void func_001112F8(void* self, int a1);
 extern "C" void func_00111380(void*, int);
 
 extern "C" void func_001112B8(void* self, int v)
 {
-    func_001112F8();
+    func_001112F8(self, v);
     int old = *(int*)((char*)self + 0xDE0);
     *(int*)((char*)self + 0xDE0) = v;
     func_00111380(self, old);
@@ -2001,12 +2001,12 @@ extern "C" void func_001114A0(void* self)
 //100%
 INCLUDE_ASM("ai/computer", func_00111538);
 #ifdef SKIP_ASM
-extern "C" void func_00111578();
+extern "C" void func_00111578(void* self, int a1);
 extern "C" void func_00111630(void*, int);
 
 extern "C" void func_00111538(void* self, int v)
 {
-    func_00111578();
+    func_00111578(self, v);
     int old = *(int*)((char*)self + 0xDE4);
     *(int*)((char*)self + 0xDE4) = v;
     func_00111630(self, old);
