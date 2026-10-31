@@ -426,7 +426,7 @@ extern "C" int func_0022D390(void* self)
 //100%
 INCLUDE_ASM("main/game", func_0022D3D8);
 #ifdef SKIP_ASM
-extern "C" void func_0022E298(void* self);
+extern "C" void func_0022E298(void* self, int id);
 
 extern "C" void func_0022D3D8(void* self, int idx)
 {
@@ -445,7 +445,7 @@ extern "C" void func_0022D3D8(void* self, int idx)
             break;
         }
         if (changed) {
-            func_0022E298(self);
+            func_0022E298(self, idx);
         }
     }
 }
@@ -454,8 +454,7 @@ extern "C" void func_0022D3D8(void* self, int idx)
 //100%
 INCLUDE_ASM("main/game", func_0022D478);
 #ifdef SKIP_ASM
-// PORT: the unit declares func_0022E298 with one arg; this caller passes the index too.
-extern "C" void func_0022E298_2(void* self, int idx) __asm__("func_0022E298");
+extern "C" void func_0022E298(void* self, int idx);
 extern "C" void func_003A99D8(void* self, int a1);
 
 // Advances a game-entry state (finishing transitions), notifying the world view where needed.
@@ -489,7 +488,7 @@ extern "C" void func_0022D478(void* self, int idx)
             break;
         }
         if (changed) {
-            func_0022E298_2(self, idx);
+            func_0022E298(self, idx);
         }
     }
 }
@@ -498,7 +497,7 @@ extern "C" void func_0022D478(void* self, int idx)
 //100%
 INCLUDE_ASM("main/game", func_0022D598);
 #ifdef SKIP_ASM
-extern "C" void func_0022E298(void* self);
+extern "C" void func_0022E298(void* self, int id);
 
 extern "C" void func_0022D598(void* self, int idx)
 {
@@ -517,7 +516,7 @@ extern "C" void func_0022D598(void* self, int idx)
             break;
         }
         if (changed) {
-            func_0022E298(self);
+            func_0022E298(self, idx);
         }
     }
 }
