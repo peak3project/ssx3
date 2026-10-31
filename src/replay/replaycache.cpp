@@ -2292,28 +2292,28 @@ extern "C" void* func_00272CC0(void* self, int a1)
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272CE0);
 #ifdef SKIP_ASM
-extern "C" void func_00274C58();
+extern "C" int func_00274C58(void *arg0);
 
-extern "C" void func_00272CE0(void) {
-    func_00274C58();
+extern "C" void func_00272CE0(void *arg0) {
+    func_00274C58(arg0);
 }
 #endif
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272D00);
 #ifdef SKIP_ASM
-extern "C" void func_00274C60();
+extern "C" int func_00274C60(void *arg0);
 
-extern "C" void func_00272D00(void) {
-    func_00274C60();
+extern "C" void func_00272D00(void *arg0) {
+    func_00274C60(arg0);
 }
 #endif
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272D20);
 #ifdef SKIP_ASM
-extern "C" void func_00274C68();
+extern "C" unsigned char func_00274C68(void *arg0);
 
-extern "C" void func_00272D20(void) {
-    func_00274C68();
+extern "C" void func_00272D20(void *arg0) {
+    func_00274C68(arg0);
 }
 #endif
 //100%
@@ -4113,27 +4113,24 @@ extern "C" void* func_00274C38(void* self)
 //100%
 INCLUDE_ASM("replay/replaycache", func_00274C58);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00274C58_impl(void *arg0) __asm__("func_00274C58");
-extern "C" int func_00274C58_impl(void *arg0) {
+extern "C" int func_00274C58(void *arg0);
+extern "C" int func_00274C58(void *arg0) {
     return (*(int *)((char*)(arg0) + (4)));
 }
 #endif
 //100%
 INCLUDE_ASM("replay/replaycache", func_00274C60);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00274C60_impl(void *arg0) __asm__("func_00274C60");
-extern "C" int func_00274C60_impl(void *arg0) {
+extern "C" int func_00274C60(void *arg0);
+extern "C" int func_00274C60(void *arg0) {
     return (*(int *)((char*)(arg0) + (8)));
 }
 #endif
 //100%
 INCLUDE_ASM("replay/replaycache", func_00274C68);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" unsigned char func_00274C68_impl(void *arg0) __asm__("func_00274C68");
-extern "C" unsigned char func_00274C68_impl(void *arg0) {
+extern "C" unsigned char func_00274C68(void *arg0);
+extern "C" unsigned char func_00274C68(void *arg0) {
     return (*(unsigned char *)((char*)(arg0) + (1)));
 }
 #endif
