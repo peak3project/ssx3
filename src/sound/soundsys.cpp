@@ -2578,7 +2578,170 @@ extern "C" void func_00296308(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00296310);
+#ifdef SKIP_ASM
+extern "C" {
+void* func_00416210(void* dst, int c, int n);
+void* func_00287968(void* self, int a1, int a2);
+int func_002906B8(void* self);
+int func_00288A20(void* self, void* obj);
+int func_00288AE0(void* self);
+int func_00288B40(void* self, int which, float f);
+float func_00290B58(struct func_00290B58_sCurve* c, float v);
+unsigned int func_002ADF60(void* rng);
+void* cBE_getBE(void);
+void* cBE_getInterface__Fv(void* be, int kind);
+extern signed char D_00535C11[];
+extern struct func_00290B58_sCurve D_00482DA0;
+
+}
+struct sVE_6310 { short delta; short index; int (*fn)(void*); };
+
+struct sSnd6310Ch {
+    signed char vol;
+    char pad1[0x17];
+};
+struct sSnd6310E16 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+struct sSnd6310Sub {
+    void* rng;               // 0x00
+    struct sSnd6310Ch def;          // 0x04
+    volatile int cur;        // 0x1C
+    struct sSnd6310Ch* ch;          // 0x20
+    void* tgt[4];            // 0x24
+    int* p34;                // 0x34
+    int* vals;               // 0x38
+    int* p3C;                // 0x3C
+    char e40[4][8];          // 0x40
+    int* p60;                // 0x60
+    int* p64;                // 0x64
+    int* p68;                // 0x68
+    int* p6C;                // 0x6C
+    struct sSnd6310E16* p70;        // 0x70
+    int* p74;                // 0x74
+    int* p78;                // 0x78
+    int* p7C;                // 0x7C
+    int* p80;                // 0x80
+    int* p84;                // 0x84
+};
+struct sSnd6310Mgr {
+    char pad0[0x1D8];
+    struct sSnd6310Sub sub;         // 0x1D8
+};
+struct sSnd6310Sys {
+    struct sSnd6310Mgr* mgr;
+    int* a4;                 // 0x4
+    int* a8;                 // 0x8
+    char padC[0x118 - 0xC];
+    struct sSnd6310Mgr** p118;      // 0x118
+};
+
+static inline int vcall_6310(char* o, int slot)
+{
+    struct sVE_6310* vt = *(struct sVE_6310**)o;
+    return vt[slot].fn(o + vt[slot].delta);
+}
+
+#define SND_6310_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_6310_MAX(a, b) ((a) > (b) ? (a) : (b))
+
+static inline void optsVol_6310(struct sSnd6310Mgr* m, int v)
+{
+    struct sSnd6310Sub* o = &m->sub;
+    o->vals[m->sub.cur] = v;
+    o->ch[m->sub.cur].vol = SND_6310_MAX(0, SND_6310_MIN(o->vals[o->cur], 0x7F));
+}
+
+static inline void sfxBegin_6310(struct sSnd6310Sys* self, int a, int b)
+{
+    struct sSnd6310Mgr* m = self->mgr;
+    struct sSnd6310Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+}
+
+extern "C" void func_00296310(void* vself, char* obj)
+{
+    struct sSnd6310Sys* self = (struct sSnd6310Sys*)vself;
+    if (vcall_6310(obj + 0x6C0, 9) != 0 || *(int*)(obj + 0x87C) == 0) {
+        if (func_00288B40(self, vcall_6310(obj + 0x6C0, 5), 100.0f) < 0) {
+            return;
+        }
+    }
+    struct func_00290B58_sCurve curve = D_00482DA0;
+    int vol = (int)func_00290B58(&curve, *(float*)(obj + 0x770));
+    int a = 0;
+    int b;
+    if (vol > 0x7F) {
+        vol = 0x7F;
+    }
+    if (vol < 0) {
+        vol = 0;
+    }
+    int st = *(int*)(obj + 0x438);
+    if (st == 2)
+        goto state23;
+    if (st == 3) {
+state23:
+        a = 10;
+        b = 9;
+    } else {
+        b = (func_002ADF60((*self->p118)->sub.rng) & 0x7FFF) * 3 / 0x7FFF + 0x30;
+    }
+    int flag = 0;
+    int ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
+    if (ok) {
+        cBE_getInterface__Fv(cBE_getBE(), 0);
+        if (D_00535C11[0] == 2) {
+            flag = func_00288AE0(self) == 0;
+        }
+    }
+    sfxBegin_6310(self, a, b);
+    optsVol_6310(*self->p118, vol);
+    struct sSnd6310Mgr** pp = self->p118;
+    int r = (int)func_00287968(self, 5, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+    {
+        struct sSnd6310Mgr* m2 = *self->p118;
+        m2->sub.tgt[m2->sub.cur] = obj + 0x110;
+    }
+    {
+        struct sSnd6310Mgr** pq = self->p118;
+        int q = func_00288A20(self, obj);
+        (*pq)->sub.p64[(*pq)->sub.cur] = q;
+    }
+    if (flag) {
+        (*self->p118)->sub.p80[(*self->p118)->sub.cur] = 1;
+        (*self->p118)->sub.p84[(*self->p118)->sub.cur] = *(int*)(obj + 0x870);
+    }
+    func_002906B8(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00296868);
