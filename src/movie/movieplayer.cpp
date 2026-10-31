@@ -35,7 +35,7 @@ struct sMovieObj_23C860 {
     virtual ~sMovieObj_23C860();
 };
 
-extern "C" void func_0023C860()
+extern "C" void func_0023C860(void* self)
 {
     delete (sMovieObj_23C860*)D_004A2C74;
     D_004A2C74 = 0;
@@ -101,8 +101,8 @@ extern "C" int func_00152BA8();
 extern "C" void* func_0023D570(void* self, int mode);
 extern "C" void func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
-extern "C" void func_00241D40_r(void* self, int mode, void* buf, int size) __asm__("func_00241D40");
-extern "C" void func_00241AA0_r(void* buf, int size) __asm__("func_00241AA0");
+extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
+extern "C" void func_00241AA0(void* buf, int size);
 extern "C" void func_002C26D0_v(void* dst, void* fmt, ...) __asm__("func_002C26D0");
 extern char D_004A2C80[];
 
@@ -144,8 +144,8 @@ extern "C" void func_0023C8F0(void* self, int mode)
         vt[19].fn(o + vt[19].delta, v);
     }
     func_002C2540(fmt, D_004A2C80);
-    func_00241AA0_r(desc, 0x200);
-    func_00241D40_r(self, *(int*)(s + 0xB4), name, 0x100);
+    func_00241AA0(desc, 0x200);
+    func_00241D40(self, *(int*)(s + 0xB4), name, 0x100);
     func_002C26D0_v(s + 0x1B4, fmt, desc, name);
 }
 #endif
@@ -219,8 +219,8 @@ extern "C" int func_00152BA8();
 extern "C" void* func_0023D570(void* self, int mode);
 extern "C" void func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
-extern "C" void func_00241D40_r(void* self, int mode, void* buf, int size) __asm__("func_00241D40");
-extern "C" void func_00241AA0_r(void* buf, int size) __asm__("func_00241AA0");
+extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
+extern "C" void func_00241AA0(void* buf, int size);
 extern "C" void func_002C26D0_v(void* dst, void* fmt, ...) __asm__("func_002C26D0");
 extern char D_004A2C80[];
 
@@ -262,8 +262,8 @@ extern "C" void func_0023CAE8(void* self, int mode, int a2)
         vt[19].fn(o + vt[19].delta, v);
     }
     func_002C2540(fmt, D_004A2C80);
-    func_00241AA0_r(desc, 0x200);
-    func_00241D40_r(self, *(int*)(s + 0xB4), name, 0x100);
+    func_00241AA0(desc, 0x200);
+    func_00241D40(self, *(int*)(s + 0xB4), name, 0x100);
     func_002C26D0_v(s + 0x1B4, fmt, desc, name);
 }
 #endif
@@ -297,7 +297,7 @@ INCLUDE_ASM("movie/movieplayer", func_0023CC78);
 #ifdef SKIP_ASM
 extern "C" void func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
-extern "C" void func_00241D40_r(void* self, int mode, void* buf, int size) __asm__("func_00241D40");
+extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
 extern "C" void func_002C26D0_v(void* dst, void* fmt, ...) __asm__("func_002C26D0");
 extern "C" void* func_002C2508(void* dst, void* src);
 int GetHashValue32(char* s);
@@ -318,7 +318,7 @@ extern "C" void func_0023CC78(void* self, int n, char* dst)
     switch (*(int*)((char*)self + 0xB4)) {
     case 0:
         func_002C2540(fmt, D_004A2C88);
-        func_00241D40_r(self, *(int*)((char*)self + 0xB4), name, 0x80);
+        func_00241D40(self, *(int*)((char*)self + 0xB4), name, 0x80);
         func_002C26D0_v(dst, fmt, name, n + 1);
         break;
     case 2: {
@@ -330,7 +330,7 @@ extern "C" void func_0023CC78(void* self, int n, char* dst)
     }
     case 1:
         func_002C2540(fmt, D_004A2C88);
-        func_00241D40_r(self, *(int*)((char*)self + 0xB4), name, 0x80);
+        func_00241D40(self, *(int*)((char*)self + 0xB4), name, 0x80);
         func_002C26D0_v(dst, fmt, name, n + 1);
         break;
     }
@@ -3145,8 +3145,8 @@ extern "C" int func_00152758(void* iface);
 int func_00152948_r() __asm__("func_00152948__FPv");
 extern "C" void func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
-extern "C" void func_00241D40_r(void* self, int mode, void* buf, int size) __asm__("func_00241D40");
-extern "C" void func_00241AA0_r(void* buf, int size) __asm__("func_00241AA0");
+extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
+extern "C" void func_00241AA0(void* buf, int size);
 extern "C" void func_002C26D0_v(void* dst, void* fmt, ...) __asm__("func_002C26D0");
 extern "C" void func_00241000_r(void* self, char* text, int a, int b) __asm__("func_00241000");
 extern int D_004A2C78;
@@ -3162,8 +3162,8 @@ extern "C" void func_002412A0(void* self)
     int a = func_00152758(cBE_getInterface_Fv(cBE_getBE(), 5));
     int b = func_00152948_r();
     func_002C2540(fmt, D_0047C178);
-    func_00241D40_r(self, 2, name, 0x82);
-    func_00241AA0_r(desc, 0x200);
+    func_00241D40(self, 2, name, 0x82);
+    func_00241AA0(desc, 0x200);
     func_002C26D0_v(text, fmt, desc, name, *(int*)((char*)self + 0xF8) + 1);
     func_00241000_r(self, text, a, b);
 }
@@ -3541,7 +3541,7 @@ static inline void* Loc_241710(char* key)
     return vt[4].fn(thisp, GetHashValue32(key));
 }
 
-extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* self, int idx, char* dst)
+extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* self, int idx, char* dst, int len)
 {
     char buf[0x200];
     if ((*(cMovieSub434_1710**)((char*)self + 0x434))->v52(idx))
@@ -3658,7 +3658,7 @@ extern "C" void func_002C2540(void*, void*);
 //100%
 INCLUDE_ASM("movie/movieplayer", func_00241AA0);
 #ifdef SKIP_ASM
-extern "C" void func_00241AA0(void* self)
+extern "C" void func_00241AA0(void* self, int n)
 {
     func_002C2540(self, &D_0047C3A8);
 }
@@ -3814,7 +3814,7 @@ extern char D_004A2CA8[];
 extern char D_004A2CB0[];
 extern char D_004A2CB8[];
 
-extern "C" void func_00241D40(void* self, int mode, void* buf)
+extern "C" void func_00241D40(void* self, int mode, void* buf, int n)
 {
     switch (mode) {
     case 0:
@@ -3886,7 +3886,7 @@ static inline void SetText_00241E18(void* out, char* key, void* arg)
     func_002C26D0_v(out, (void*)str, arg);
 }
 
-extern "C" void func_00241E18(char* self, void* out)
+extern "C" void func_00241E18(char* self, void* out, int n)
 {
     unsigned short num[256];
     unsigned short num2[256];
@@ -4225,7 +4225,7 @@ INCLUDE_ASM("movie/movieplayer", func_002425C0);
 #ifdef SKIP_ASM
 extern "C" void func_002429B0(void* self, const void* eye, void* frustum);
 extern "C" void func_00229F88(int index, void* v, void* m);
-extern "C" void func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
 extern "C" int func_00242978(const void* a, const void* b);
 
 struct sVec4_25C0 {
