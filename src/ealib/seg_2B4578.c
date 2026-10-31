@@ -14862,7 +14862,7 @@ void func_003D1470_impl(unsigned int mask) {
         if (*(int *)(off + (int)b4) != 0) {
             fl = *(unsigned int *)(np + off);
             nv = fl & 0xF0000000;
-            do { t = nv; } while (0);
+            t = nv;
             if ((t & mask) != 0 && (u = fl & 0x0F000000, (u & mask) != 0)) {
                 if (func_003D5450_1470(i) != 0) {
                     for (j = 0; j < 24; j++) {
@@ -16343,7 +16343,7 @@ void func_003D5698(unsigned int mask, int a1, int a2) {
         if (*(int *)(off + (int)b4) != 0) {
             fl = *(unsigned int *)(np + off);
             nv = fl & 0xF0000000;
-            do { t = nv; } while (0);
+            t = nv;
             if ((t & mask) != 0 && (u = fl & 0x0F000000, (u & mask) != 0)) {
                 if (func_003D5450_5698(i) != 0) {
                     for (j = 0; j < 24; j++) {
@@ -16398,7 +16398,7 @@ void func_003D5800(unsigned int mask, int a1, int a2) {
         if (*(int *)(off + (int)b4) != 0) {
             fl = *(unsigned int *)(np + off);
             nv = fl & 0xF0000000;
-            do { t = nv; } while (0);
+            t = nv;
             if ((t & mask) != 0 && (u = fl & 0x0F000000, (u & mask) != 0)) {
                 if (func_003D5450_5800(i) != 0) {
                     for (j = 0; j < 24; j++) {
