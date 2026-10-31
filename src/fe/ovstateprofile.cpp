@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/ovstateprofile", cOVState_PROFILE_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void cOVStateManager_addPDATemplate();
 extern "C" void func_0020A380(void* self);
 extern "C" void func_00212080(void* self);
@@ -592,7 +592,7 @@ extern "C" void func_00211AA8(void* self)
 }
 #endif
 
-extern "C" void* func_001D58B8(void*);
+extern "C" void func_001D58B8(void*);
 
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_00211B10__FPv);
@@ -705,8 +705,8 @@ extern "C" void func_001CE3C8(void* kb, int key, int a2, int a3);
 extern "C" void func_001CE408(void* kb, int a1);
 extern "C" void cKeyboardPopup_setStatic(void* kb, void* text);
 extern "C" void func_0023D570(void* mp, int a1);
-extern "C" void func_002C2540(void* dst, char* src);
-extern "C" void func_002C2580(char* dst, void* src);
+extern "C" unsigned short* func_002C2540(void* dst, char* src);
+extern "C" char* func_002C2580(char* dst, void* src);
 extern "C" void func_0039F290(void* list, void* item);
 extern void* D_004A28A8;
 extern char D_00471DC0[];
@@ -916,7 +916,7 @@ INCLUDE_ASM("fe/ovstateprofile", cOVState_AUTOSAVE_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void func_0020A380(void* self);
 extern char D_00471E28[];
 
@@ -1064,8 +1064,8 @@ extern "C" void* func_00194738(void* self, void* mgr);
 extern "C" void* func_001F3700(void* self, void* mgr);
 void* func_00232720(void* self);
 void cAppMan_setNextModule(cAppMan* self, unsigned int module);
-extern "C" void cBENewRaceInterface_setGameMode(void* iface, int mode);
-extern "C" void cBENewRaceInterface_setGameEvent(void* iface, int ev);
+extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
+extern "C" int cBENewRaceInterface_setGameEvent(void* iface, int ev);
 extern "C" int func_00146D98(void* self, int index);
 extern "C" void func_0039F400(void* list, void* item);
 
