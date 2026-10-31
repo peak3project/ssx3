@@ -2543,7 +2543,7 @@ extern "C" int func_00289448(void) {
 INCLUDE_ASM("sound/ssxAudio", func_00289470);
 #ifdef SKIP_ASM
 extern "C" int BXFILE_exists(char* name);
-extern "C" void func_002A77F8(void* self, char* name, int size);
+extern "C" void* func_002A77F8(void* self, char* name, int size);
 extern "C" char* func_002A7B08(void* self);
 extern "C" void func_002A7890(void* self, int flags);
 extern "C" char* strcpy(char* dst, const char* src);
@@ -2574,7 +2574,7 @@ extern "C" void func_00289470(void* self)
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00289520);
 #ifdef SKIP_ASM
-extern "C" void func_002A77F8(void* self, char* name, int size);
+extern "C" void* func_002A77F8(void* self, char* name, int size);
 extern "C" void func_002A7890(void* self, int flags);
 extern "C" int func_002A7C68(void* self, const char* section);
 extern "C" void func_002A7A20(void* self);
@@ -3054,8 +3054,7 @@ INCLUDE_ASM("sound/ssxAudio", func_00289DF0);
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_0028A058);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00483B10[];
 extern char D_00482820[];
 extern void* D_004A3610;
@@ -3068,19 +3067,19 @@ extern "C" void* func_0028A058(void* self)
     *(int*)((char*)self + 0x194) = 0;
     *(int*)((char*)self + 0x198) = 0;
     *(void**)((char*)self + 0x1D4) = D_00483B10;
-    *(void**)((char*)self + 0x190) = operator_new_tag(0x18, D_00482820, 0, 0);
+    *(void**)((char*)self + 0x190) = operator_new__FUi(0x18, D_00482820, 0, 0);
     *(int*)((char*)self + 0x19C) = 6;
     *(int*)((char*)self + 0x1A4) = 0;
     *(int*)((char*)self + 0x1A8) = 0;
-    *(void**)((char*)self + 0x1A0) = operator_new_tag(0x18, D_00482820, 0, 0);
+    *(void**)((char*)self + 0x1A0) = operator_new__FUi(0x18, D_00482820, 0, 0);
     *(int*)((char*)self + 0x1AC) = 6;
     *(int*)((char*)self + 0x1B4) = 0;
     *(int*)((char*)self + 0x1B8) = 0;
-    *(void**)((char*)self + 0x1B0) = operator_new_tag(0x18, D_00482820, 0, 0);
+    *(void**)((char*)self + 0x1B0) = operator_new__FUi(0x18, D_00482820, 0, 0);
     *(int*)((char*)self + 0x1BC) = 6;
     *(int*)((char*)self + 0x1C4) = 0;
     *(int*)((char*)self + 0x1C8) = 0;
-    *(void**)((char*)self + 0x1C0) = operator_new_tag(0x18, D_00482820, 0, 0);
+    *(void**)((char*)self + 0x1C0) = operator_new__FUi(0x18, D_00482820, 0, 0);
     *(int*)((char*)self + 0x1CC) = 0;
     *(int*)((char*)self + 0x1D0) = 0;
     D_004A3610 = self;
