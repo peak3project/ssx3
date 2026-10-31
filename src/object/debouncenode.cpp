@@ -96,7 +96,7 @@ void func_00342E78(void* self)
 //100%
 INCLUDE_ASM("object/debouncenode", func_00342E98);
 #ifdef SKIP_ASM
-int func_0034FCC0(void* self);
+void* func_0034FCC0(void* self);
 extern "C" void* func_00350F60(void* self, void* parent);
 extern const char D_0048E748[];
 
