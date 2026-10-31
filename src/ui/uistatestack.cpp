@@ -619,7 +619,7 @@ INCLUDE_ASM("ui/uistatestack", func_0039FCC8);
 extern "C" void func_0039FD38(void* self);
 extern "C" void func_00397468(void* self, int mode, unsigned short v);
 
-extern "C" void func_0039FCC8(void* self, void* anim, unsigned char mode, unsigned short v)
+extern "C" void func_0039FCC8(void* self, void* anim, unsigned char mode, unsigned short v, int x)
 {
     if (*(void**)((char*)self + 0xC) != anim) {
         func_0039FD38(self);
