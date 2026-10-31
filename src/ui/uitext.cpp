@@ -11,7 +11,7 @@ extern "C" void func_00391E30_r2d(void* font, float x, float y, const void* str)
 extern "C" int USTR_length(unsigned short* s);
 extern "C" void func_002C2718(void* dst, const char* fmt, const void* s);
 void cMemMan_free(void*);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char* D_004A289C;
 extern char D_00494078[];
 extern char D_004A47B0[];
@@ -133,7 +133,7 @@ extern "C" void cUIText_render2D(sText_R2D* self, float x, float y)
             str = D_00508750;
         }
         if (((self->flags >> 6) & 1) && self->count > 1) {
-            unsigned short* buf = (unsigned short*)operator_new_tag((USTR_length(str) + 5) * 2, D_00494078, 0x100, 0);
+            unsigned short* buf = (unsigned short*)operator_new__FUi((USTR_length(str) + 5) * 2, D_00494078, 0x100, 0);
             func_002C2718(buf, D_004A47B0, str);
             float r[4];
             func_003921F0_r2d(font, buf, r, 0, s.x, s.y);
@@ -314,7 +314,7 @@ extern "C" void USTR_copy(unsigned short* dst, unsigned short* src);
 extern "C" void cUIText_setUnicodeStringPrivate(void* self, const unsigned short* str);
 void cMemMan_free(void*);
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00494078[];
 extern unsigned short D_004A47A8;
 
@@ -328,7 +328,7 @@ extern "C" void func_003A0D00(void* self, unsigned short* str)
     int last = -1;
     float w = 0.0f;
     int len = USTR_length(str);
-    unsigned short* buf = (unsigned short*)operator_new_tag((len + 1) * 2, D_00494078, 0x100, 0);
+    unsigned short* buf = (unsigned short*)operator_new__FUi((len + 1) * 2, D_00494078, 0x100, 0);
     int i = 0;
     USTR_copy(buf, str);
     while (i < len) {
@@ -376,7 +376,7 @@ extern "C" int USTR_length(unsigned short* s);
 extern "C" void USTR_copy(unsigned short* dst, unsigned short* src);
 extern "C" void cUIText_deleteText(void* self);
 extern "C" int cUIText_getNumTextLines(void* self);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00494088[];
 extern char D_00494098[];
 extern unsigned short D_004A47A8;
@@ -391,12 +391,12 @@ extern "C" void cUIText_setUnicodeStringPrivate(void* self_, const unsigned shor
     int len = USTR_length((unsigned short*)str);
     if (len < 0x321) {
         *(short*)(self + 0xB8) = len + 1;
-        *(unsigned short**)(self + 0xB4) = (unsigned short*)operator_new_tag((len + 1) * 2, D_00494088, 0x100, 0);
+        *(unsigned short**)(self + 0xB4) = (unsigned short*)operator_new__FUi((len + 1) * 2, D_00494088, 0x100, 0);
         USTR_copy(*(unsigned short**)(self + 0xB4), (unsigned short*)str);
         int n = cUIText_getNumTextLines(self);
         *(int*)(self + 0xA8) = n;
         if (n >= 2) {
-            unsigned short** lines = (unsigned short**)operator_new_tag(n * 4, D_00494098, 0x100, 0);
+            unsigned short** lines = (unsigned short**)operator_new__FUi(n * 4, D_00494098, 0x100, 0);
             unsigned short* text = *(unsigned short**)(self + 0xB4);
             *(unsigned short***)(self + 0xAC) = lines;
             *(short*)(self + 0xBA) = *(unsigned short*)(self + 0xA8);
@@ -892,14 +892,14 @@ INCLUDE_ASM("ui/uitext", func_003A1958);
 #ifdef SKIP_ASM
 extern "C" void* func_0041605C(void* dst, const void* src, int n);
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_004940A8[];
 
 extern "C" int func_003A1958(void* self)
 {
     unsigned short old = *(unsigned short*)((char*)self + 0xC8);
     *(unsigned short*)((char*)self + 0xC8) = old + 1;
-    void** arr = (void**)operator_new_tag(*(unsigned short*)((char*)self + 0xC8) * 4, D_004940A8, 0x100, 0);
+    void** arr = (void**)operator_new__FUi(*(unsigned short*)((char*)self + 0xC8) * 4, D_004940A8, 0x100, 0);
     if (*(void***)((char*)self + 0xBC) != 0) {
         func_0041605C(arr, *(void***)((char*)self + 0xBC), old * 4);
         void** prev = *(void***)((char*)self + 0xBC);
@@ -929,7 +929,7 @@ extern "C" void func_003A19F8(void* self, char* str)
     int last = -1;
     int len = strlen(str);
     int i = 0;
-    unsigned short* buf = (unsigned short*)operator_new_tag((len + 1) * 2, D_00494078, 0x100, 0);
+    unsigned short* buf = (unsigned short*)operator_new__FUi((len + 1) * 2, D_00494078, 0x100, 0);
     float w = 0.0f;
     int start = 0;
     func_002C2540(buf, str);
@@ -985,13 +985,13 @@ extern "C" int func_003A1958(void* self);
 extern "C" int USTR_length(unsigned short* s);
 extern "C" void USTR_copy(unsigned short* dst, unsigned short* src);
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_004940B8[];
 
 extern "C" void cUITextScroll_addUnicodeString(void* self, unsigned short* str)
 {
     int idx = func_003A1958(self);
-    unsigned short* copy = (unsigned short*)operator_new_tag((USTR_length(str) + 1) * 2, D_004940B8, 0x100, 0);
+    unsigned short* copy = (unsigned short*)operator_new__FUi((USTR_length(str) + 1) * 2, D_004940B8, 0x100, 0);
     USTR_copy(copy, str);
     (*(unsigned short***)((char*)self + 0xBC))[idx] = copy;
 }
@@ -1028,7 +1028,7 @@ extern "C" void func_003A1D30(void* self, void* vstr)
     int last = -1;
     int len = USTR_length(str);
     int i = 0;
-    unsigned short* buf = (unsigned short*)operator_new_tag((len + 1) * 2, D_00494078, 0x100, 0);
+    unsigned short* buf = (unsigned short*)operator_new__FUi((len + 1) * 2, D_00494078, 0x100, 0);
     float w = 0.0f;
     int start = 0;
     USTR_copy(buf, str);
@@ -1118,7 +1118,7 @@ extern "C" void func_003A1F90(void* self, int idx)
     if (*(void***)((char*)self + 0xBC) != 0) {
         unsigned short n = *(unsigned short*)((char*)self + 0xC8);
         if (idx < n) {
-            void** arr = (void**)operator_new_tag((n - 1) * 4, D_004940A8, 0x100, 0);
+            void** arr = (void**)operator_new__FUi((n - 1) * 4, D_004940A8, 0x100, 0);
             if (idx > 0) {
                 func_0041605C(arr, *(void***)((char*)self + 0xBC), idx * 4);
             }
