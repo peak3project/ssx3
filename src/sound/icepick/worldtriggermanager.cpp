@@ -1561,16 +1561,15 @@ extern "C" void func_002B7410(void* self, sWtmEnt18* e)
     sVec3_2B6CF8 max;
     func_002B6CF8_7410(self, trig, &min, &max);
     sHashCellR_7410* cell = ((sHashCellR_7410**)func_0028B1C8())[8];
-    float one = 1.0f;
     sWtBox_7410 box;
     box.min.x = min.x;
     box.min.y = min.y;
     box.min.z = min.z;
-    box.min.w = one;
+    box.min.w = 1.0f;
     box.max.x = max.x;
     box.max.y = max.y;
     box.max.z = max.z;
-    box.max.w = one;
+    box.max.w = 1.0f;
     wtRemove_7410(cell, trig, &box);
     func_002B77C0((sTriggerIdSlot120*)self, (int)trig);
 }
