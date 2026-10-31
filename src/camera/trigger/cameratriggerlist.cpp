@@ -152,8 +152,7 @@ extern "C" int BXFILE_exists(const char* name);
 extern "C" int func_00317F98(const char* name);
 extern "C" void FILE_loadpackat(const char* name, void* buf, int size);
 extern "C" int cCameraTriggerList_loadFromBuffer(void* self, void* buf);
-// PORT: operator_new__FUi takes (size, tag, flags, align) here.
-void* operator_new_K2(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_0045BF30[];
 
 extern "C" int cCameraTriggerList_loadFromFile(void* self, const char* name)
@@ -162,7 +161,7 @@ extern "C" int cCameraTriggerList_loadFromFile(void* self, const char* name)
         return 1;
     func_0016BF40(self);
     int size = func_00317F98(name);
-    void* buf = operator_new_K2(size, D_0045BF30, 0x100, 0);
+    void* buf = operator_new__FUi(size, D_0045BF30, 0x100, 0);
     FILE_loadpackat(name, buf, size);
     if (buf != 0) {
         int r = cCameraTriggerList_loadFromBuffer(self, buf);
@@ -183,8 +182,6 @@ extern "C" int readTrigger(void* buffer, void* trigger, int version);
 // PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
 // result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
 void* operator new(unsigned int size, const char* tag, int flags, int d) __asm__("cMemMan_alloc");
-// PORT: operator_new__FUi takes (size, tag, flags, align) here.
-void* operator_new_K3(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern char D_0045BF40[];
 extern char D_0045BF58[];
 
@@ -213,7 +210,7 @@ extern "C" int cCameraTriggerList_loadFromBuffer(void* self_, void* buf)
     int r = cCameraTriggerList_readHeader(self, &cur, 7);
     if (r != 0)
         return r;
-    self->field_0x0 = (int)operator_new_K3(self->field_0x4 * 4, D_0045BF40, 0, 0);
+    self->field_0x0 = (int)operator_new__FUi(self->field_0x4 * 4, D_0045BF40, 0, 0);
     for (int i = 0; i < self->field_0x4; i++) {
         tCameraTrigger_K3* t = new (D_0045BF58, 0, 0) tCameraTrigger_K3;
         r = readTrigger(&cur, &t, self->field_0xC);
