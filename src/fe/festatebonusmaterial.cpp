@@ -62,14 +62,14 @@ extern "C" int func_001955B8(void* self, int a1, unsigned int key)
 }
 #endif
 
-extern "C" void* func_0039E4C0(void* self);
+extern "C" void func_0039E4C0(void* self);
 
 //100%
 INCLUDE_ASM("fe/festatebonusmaterial", func_001955E0__FPv);
 #ifdef SKIP_ASM
-void* func_001955E0(void* self)
+void func_001955E0(void* self)
 {
-    return func_0039E4C0(self);
+    func_0039E4C0(self);
 }
 #endif
 
