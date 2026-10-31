@@ -93,12 +93,12 @@ void func_00245B50(void* self)
 INCLUDE_ASM("fe/festateloadhint", func_00245B58);
 #ifdef SKIP_ASM
 extern void* D_0047C608[];
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
-extern "C" void* func_00245B58(void* self)
+extern "C" void func_00245B58(void* self, int flags)
 {
     *(void**)((char*)self + 0x8) = D_0047C608;
-    return func_0039E390(self);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -184,12 +184,12 @@ extern "C" void func_00245CD0(void* self, void* widget)
 INCLUDE_ASM("fe/festateloadhint", func_00245D28);
 #ifdef SKIP_ASM
 extern void* D_0047C538[];
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
-extern "C" void* func_00245D28(void* self)
+extern "C" void func_00245D28(void* self, int flags)
 {
     *(void**)((char*)self + 0x8) = D_0047C538;
-    return func_0039E390(self);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -306,14 +306,16 @@ extern "C" void func_00245F00(void* self, int flags)
 }
 #endif
 
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245F30__FPv);
 #ifdef SKIP_ASM
-void* func_00245F30(void* self)
+// func_00245F30 is matched under the C++ symbol func_00245F30__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_00245F30(void* self)
 {
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -379,7 +381,7 @@ extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 struct cUIText;
 void cUIText_setAsciiString(cUIText* text, const char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 extern void* D_004A5B80;
 extern char D_004A2AC0[];
 extern char D_004A2AC8[];
@@ -781,7 +783,7 @@ extern "C" int func_00146E98(void* iface, int a1);
 extern "C" char* func_00155270(void* iface, int a1);
 extern "C" const char* func_0014EE58(void* iface, int a1);
 extern "C" int func_00148950(void* iface, int id);
-extern "C" void func_002C2540(void* dst, const char* s);
+extern "C" unsigned short* func_002C2540(void* dst, const char* s);
 extern "C" void* func_002C2508(void* dst, void* src);
 extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern "C" void func_003A0E90(void* obj, char* text);
