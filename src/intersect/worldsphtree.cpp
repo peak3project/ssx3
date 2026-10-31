@@ -666,7 +666,116 @@ extern "C" void func_00331450(sSelf_1450* self, void* box)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00331E90);
+#ifdef SKIP_ASM
+struct sSelf_1E90 {
+    sRoot_330BA8* root;             // 0x00
+    int f04;
+    int count;                      // 0x08
+    void* list[0x40];               // 0x0C
+    int count2;                     // 0x10C
+    void* list2[0x41];              // 0x110
+};
+
+struct sPatch_1E90 {
+    sPatch_1E90* next;              // 0x00
+    char pad04[0x154];
+    float bmin[3];                  // 0x158
+    float bmax[3];                  // 0x164
+};
+
+struct sCtx2_1E90 {
+    sCtx_3309D8 a;
+    sCtx_3309D8 b;
+};
+
+extern "C" void descendRec_1E90(void* self, sCtx2_1E90* ctx) __asm__("func_00340C20");
+extern "C" void helpX_1E90(char* flag, sCtx2_1E90* ctx, sCtx2_1E90* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033A3D8");
+
+static inline int overlapPatch_1E90(const sBox_3309D8* b, const sPatch_1E90* n)
+{
+    int r = 0;
+    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
+        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
+        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
+        r = 1;
+    }
+    return r;
+}
+
+static inline void addPatches_1E90(sCtx_3309D8* cb, sPatch_1E90* first)
+{
+    for (sPatch_1E90* p = first; p != 0; p = p->next) {
+        if (overlapPatch_1E90(cb->box, p)) {
+            int* cnt = cb->count;
+            int idx = *cnt;
+            cb->list[idx] = (sNode_3309D8*)p;
+            *cnt = idx + 1;
+        }
+    }
+}
+
+static inline void reset_1E90(sCtx_3309D8* cb)
+{
+    *cb->count = 0;
+}
+
+struct sQH_1E90 {};
+
+static inline void visit_1E90(sRoot_330BA8* t, int k, sCtx2_1E90* ctx, void* box)
+{
+    sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = c->node;
+        sQH_1E90 h;
+        char* f = (char*)&h;
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            func_003309D8(&ctx->a, n);
+            addPatches_1E90(&ctx->b, *(sPatch_1E90**)((char*)n + 0x24));
+            if (n[0] != 0) descendRec_1E90(n[0], ctx);
+            if (n[1] != 0) descendRec_1E90(n[1], ctx);
+            if (n[2] != 0) descendRec_1E90(n[2], ctx);
+            if (n[3] != 0) descendRec_1E90(n[3], ctx);
+            if (n[4] != 0) descendRec_1E90(n[4], ctx);
+            if (n[5] != 0) descendRec_1E90(n[5], ctx);
+            if (n[6] != 0) descendRec_1E90(n[6], ctx);
+            if (n[7] != 0) descendRec_1E90(n[7], ctx);
+        } else if (r == 2) {
+            helpX_1E90(f, ctx, ctx, box, n, c);
+        }
+    }
+}
+
+extern "C" void func_00331E90(sSelf_1E90* self, void* box)
+{
+    sCtx2_1E90 ctx;
+    sCtx2_1E90* c = &ctx;
+    self->f04 = self->root->fA0;
+    ctx.a.list = (sNode_3309D8**)self->list;
+    ctx.a.count = &self->count;
+    ctx.b.list = (sNode_3309D8**)self->list2;
+    ctx.b.count = &self->count2;
+    *(int*)&ctx.a.pad08 = 0x40;
+    *(int*)&ctx.b.pad08 = 0x40;
+    ctx.a.box = (sBox_3309D8*)box;
+    ctx.b.box = (sBox_3309D8*)box;
+    self->count = 0;
+    sCtx_3309D8* c2 = &ctx.b;
+    *c2->count = 0;
+    sRoot_330BA8* t = self->root;
+    visit_1E90(t, 0, c, box);
+    visit_1E90(t, 1, c, box);
+    visit_1E90(t, 2, c, box);
+    visit_1E90(t, 3, c, box);
+    visit_1E90(t, 4, c, box);
+    visit_1E90(t, 5, c, box);
+    visit_1E90(t, 6, c, box);
+    visit_1E90(t, 7, c, box);
+    self->list2[0x40] = (void*)-1;
+}
+#endif
 
 INCLUDE_ASM("intersect/worldsphtree", func_00332DB8);
 
