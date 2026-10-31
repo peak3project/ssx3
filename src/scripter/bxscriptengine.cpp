@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", cBXScriptEngine_SetupBXEngine);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00272788(void* obj, void* buf, int size, int a3, void* out);
 extern char D_00481F48[];
@@ -18,11 +17,11 @@ struct sBXSlot {
 
 extern "C" void cBXScriptEngine_SetupBXEngine(void* self, int count, int a2, int size)
 {
-    *(void**)((char*)self + 0x2BC) = operator_new_tag(size, D_00481F48, 0, 0);
+    *(void**)((char*)self + 0x2BC) = operator_new__FUi(size, D_00481F48, 0, 0);
     *(void**)((char*)self + 0x2B8) = func_00272788(cMemMan_alloc(0x20, D_004A34F0, 0, 0),
         *(void**)((char*)self + 0x2BC), size, a2, (char*)self + 0x2AC);
     *(int*)((char*)self + 0x2B4) = count;
-    *(sBXSlot**)((char*)self + 0x2B0) = (sBXSlot*)operator_new_tag(count * 8, D_00481F58, 0, 0);
+    *(sBXSlot**)((char*)self + 0x2B0) = (sBXSlot*)operator_new__FUi(count * 8, D_00481F58, 0, 0);
     for (int i = 0; i < *(int*)((char*)self + 0x2B4); i++) {
         (*(sBXSlot**)((char*)self + 0x2B0))[i].a = 0;
         (*(sBXSlot**)((char*)self + 0x2B0))[i].b = 0;
@@ -278,7 +277,7 @@ extern "C" void func_00282390(sScriptEngine282390* self)
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_002823F0);
 #ifdef SKIP_ASM
-extern "C" void func_00282540(void* self, int id);
+extern "C" int func_00282540(void* self, int id);
 
 struct sScriptSlot2823F0 {
     int active;
@@ -704,7 +703,7 @@ struct sVEntry282A18 {
     void (*fn)(void*, void*, int, int);
 };
 
-extern "C" void func_00282540(void* self, int id);
+extern "C" int func_00282540(void* self, int id);
 
 extern "C" void func_00282A18(void* self, void* msg)
 {
@@ -830,14 +829,14 @@ extern "C" int func_00282BF0(void* self, int a1)
 }
 #endif
 
-extern "C" void* func_00272CC0(int);
+extern "C" void* func_00272CC0(void*);
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282C18__FPv);
 #ifdef SKIP_ASM
 void* func_00282C18(void* self)
 {
-    return func_00272CC0(*(int*)((char*)self + 0x2b8));
+    return func_00272CC0(*(void**)((char*)self + 0x2b8));
 }
 #endif
 
@@ -1081,7 +1080,7 @@ int func_00282F80(void* self)
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00282F90);
 #ifdef SKIP_ASM
-extern "C" void func_00274240(void* p, int a1);
+extern "C" void func_00274240(void* p, void* a1);
 
 extern "C" void func_00282F90(void* self)
 {
