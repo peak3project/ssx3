@@ -4,7 +4,7 @@
 INCLUDE_ASM("replay/frameptr", cReplayFramePtr_initBlock);
 #ifdef SKIP_ASM
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern const char D_00481730[];
 
 // same body as func_0026E950 (setBlock), inlined here
@@ -18,7 +18,7 @@ static inline void cReplayFramePtr_setBlockInl(void* self, char* buf, int size)
 
 extern "C" void cReplayFramePtr_initBlock(void* self, unsigned int size)
 {
-    cReplayFramePtr_setBlockInl(self, (char*)operator_new_tag(size, D_00481730, 0, 0), 0);
+    cReplayFramePtr_setBlockInl(self, (char*)operator_new__FUi(size, D_00481730, 0, 0), 0);
 }
 #endif
 
