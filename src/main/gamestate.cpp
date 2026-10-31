@@ -860,7 +860,6 @@ extern "C" void func_00236058(void* self)
 {
     void* gm = *(void**)((char*)D_004A28A8 + 0xC0);
     func_0030B7F8(D_004A3DD8);
-    float one = 1.0f;
     cGameModeMan_initGameMode(gm, 0xC);
     char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 0xA);
     func_00230180(*(void**)((char*)D_004A28A8 + 0x84));
@@ -869,14 +868,14 @@ extern "C" void func_00236058(void* self)
     void* r = func_00230698(*(void**)((char*)D_004A28A8 + 0x84), 0);
     char* o = (char*)func_002E4CE8(0x14);
     sColor_236058 c;
-    c.r = one;
-    c.g = one;
-    c.b = one;
-    c.a = one;
+    c.r = 1.0f;
+    c.g = 1.0f;
+    c.b = 1.0f;
+    c.a = 1.0f;
     func_002E4D70(o);
     *(void***)o = D_004880C0;
     *(sColor_236058*)(o + 4) = c;
-    func_002E4370(r, 1, 0, o, 0.0f, 0.0f, 0, 0, one);
+    func_002E4370(r, 1, 0, o, 0.0f, 0.0f, 0, 0, 1.0f);
 }
 #endif
 
