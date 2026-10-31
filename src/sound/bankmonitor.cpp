@@ -4697,13 +4697,12 @@ int func_002B4620(void* self);
 
 int func_002B4620(void* self)
 {
-    int one = 1;
     if (*(char**)((char*)self + 0x408) == 0) return 0;
-    *(int*)(*(char**)((char*)self + 0x408) + 0x4C) = one;
+    *(int*)(*(char**)((char*)self + 0x408) + 0x4C) = 1;
     int r = 0;
     char* m = *(char**)((char*)self + 0x408);
     int st = *(int*)(m + 0x38);
-    if (st == one) {
+    if (st == 1) {
         // PORT: pointer arithmetic through int
         sBmStream4620* e = (sBmStream4620*)(*(int*)(m + 0x34) * 0x60 + *(int*)(**(char***)self + 0xACC));
         if (func_002B4620_ready(e)) {
@@ -4712,7 +4711,7 @@ int func_002B4620(void* self)
             r = 1;
         }
     } else if (st == 2) {
-        r = one;
+        r = 1;
     }
     return r;
 }
