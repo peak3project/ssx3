@@ -84,11 +84,13 @@ extern "C" int func_0031A130(void* self);
 unsigned int func_0031FBB8(void* list, void* item);
 extern char D_004FF250[];
 
-extern "C" void func_00319B98(void* self)
+extern "C" unsigned int func_00319B98(void* self)
 {
-    if (func_0031A130(self) == 0) {
-        func_0031FBB8(D_004FF250, self);
+    unsigned int r = func_0031A130(self);
+    if (r == 0) {
+        r = func_0031FBB8(D_004FF250, self);
     }
+    return r;
 }
 #endif
 
@@ -101,13 +103,11 @@ extern "C" void* func_0041605C(void* dst, const void* src, int n);
 extern void* D_00538B00[16];
 extern char D_0048DA08[];
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-// PORT: func_00319B98 returns the block size; the unit declares it void.
-extern "C" unsigned int func_00319B98_K2(void* p) __asm__("func_00319B98");
 
 static inline unsigned int cMemMan_blockSizeK2(void* p)
 {
     MUTEX_lock(D_00538B00);
-    unsigned int n = func_00319B98_K2(p);
+    unsigned int n = func_00319B98(p);
     MUTEX_unlock(D_00538B00);
     return n;
 }
