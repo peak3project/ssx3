@@ -1622,19 +1622,19 @@ extern "C" int func_002447D8(void *arg0) {
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_002447F0);
 #ifdef SKIP_ASM
-extern "C" void func_002C2508(int);
+extern "C" unsigned short* func_002C2508(int, unsigned short*);
 
-extern "C" void func_002447F0(int arg0) {
-    func_002C2508(arg0 + 0x276);
+extern "C" void func_002447F0(int arg0, unsigned short* src) {
+    func_002C2508(arg0 + 0x276, src);
 }
 #endif
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_00244810);
 #ifdef SKIP_ASM
-extern "C" void func_002C2540(int);
+extern "C" unsigned short* func_002C2540(int, char*);
 
-extern "C" void func_00244810(int arg0) {
-    func_002C2540(arg0 + 0x276);
+extern "C" void func_00244810(int arg0, char* src) {
+    func_002C2540(arg0 + 0x276, src);
 }
 #endif
 //100%
@@ -1831,7 +1831,7 @@ extern "C" void func_00244A18(void* self)
 }
 #endif
 
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_00244A38);
@@ -2057,9 +2057,11 @@ extern "C" void func_002451B0(void *self) {
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_00245228__FPv);
 #ifdef SKIP_ASM
-void* func_00245228(void* self)
+// func_00245228 is matched under the C++ symbol func_00245228__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_00245228(void* self)
 {
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -2069,7 +2071,7 @@ INCLUDE_ASM("main/ssxappdtor", func_00245248);
 struct cUIText;
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setAsciiString(cUIText* text, const char* str);
 extern char D_004A2AD8[];
@@ -2096,7 +2098,7 @@ INCLUDE_ASM("main/ssxappdtor", func_002452D8);
 #ifdef SKIP_ASM
 // PORT: cMemMan_alloc bound as a placement operator new (gcc then treats the result as unaliased)
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_0039E2A0(void* self, void* owner);
+extern "C" void* func_0039E2A0(void* self, void* parent);
 extern "C" void func_0039F400(void* list, void* item);
 extern char D_0047B9C0[];
 extern char D_004A2AC8[];
@@ -2168,12 +2170,12 @@ extern "C" int func_002453E0(void* self, int a1, int a2)
 INCLUDE_ASM("main/ssxappdtor", func_002453F0);
 #ifdef SKIP_ASM
 extern void* D_0047C948[];
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
-extern "C" void* func_002453F0(void* self)
+extern "C" void func_002453F0(void* self, int flags)
 {
     *(void**)((char*)self + 0x8) = D_0047C948;
-    return func_0039E390(self);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -2185,7 +2187,7 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void func_00246CF8(void* self, int a1);
 extern signed char D_00535C11[];
 extern char D_0047BA28[];
@@ -2265,12 +2267,12 @@ extern "C" void func_00245598(void* self, int a1)
 INCLUDE_ASM("main/ssxappdtor", func_00245600);
 #ifdef SKIP_ASM
 extern void* D_0047C878[];
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
-extern "C" void* func_00245600(void* self)
+extern "C" void func_00245600(void* self, int flags)
 {
     *(void**)((char*)self + 0x8) = D_0047C878;
-    return func_0039E390(self);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -2279,7 +2281,7 @@ INCLUDE_ASM("main/ssxappdtor", func_00245628);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_0047BCC8[];
 
 extern "C" void func_00245628(void* self)
@@ -2326,12 +2328,12 @@ extern "C" int func_00245698(void* self)
 INCLUDE_ASM("main/ssxappdtor", func_00245708);
 #ifdef SKIP_ASM
 extern void* D_0047C7A8[];
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
-extern "C" void* func_00245708(void* self)
+extern "C" void func_00245708(void* self, int flags)
 {
     *(void**)((char*)self + 0x8) = D_0047C7A8;
-    return func_0039E390(self);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -2427,12 +2429,12 @@ extern "C" int func_002458B8(void* self)
 INCLUDE_ASM("main/ssxappdtor", func_00245928);
 #ifdef SKIP_ASM
 extern void* D_0047C6D8[];
-extern "C" void* func_0039E390(void* self);
+extern "C" void func_0039E390(void *, int);
 
-extern "C" void* func_00245928(void* self)
+extern "C" void func_00245928(void* self, int flags)
 {
     *(void**)((char*)self + 0x8) = D_0047C6D8;
-    return func_0039E390(self);
+    func_0039E390(self, flags);
 }
 #endif
 
