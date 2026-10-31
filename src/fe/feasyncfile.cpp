@@ -331,8 +331,7 @@ struct sFEAsyncFiles {
 };
 
 extern char D_00461430[];
-// PORT: operator_new__FUi really takes (size, tag, flags, d)
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_003DF748(void* file, void* data, int size);
 extern "C" int func_003E1BB8(void* file, void* data, int size);
 
@@ -344,7 +343,7 @@ extern "C" void cFEAsyncManager_LoadDataFile(cFEAsyncManager* self, int idx)
     m->files[idx].size = 0x109A0;
     base = (char*)self + 0x100;
     pData = (void**)(base + idx * 0x11C);
-    *pData = operator_new_tag(0x109A0, D_00461430, 0x25000000, 0);
+    *pData = operator_new__FUi(0x109A0, D_00461430, 0x25000000, 0);
     cFEAsyncManager_SetFileStatus(self, idx, 2);
     if (m->files[idx].async != 0) {
         cFEAsyncManager_SetFileStatus(self, idx, 2);
@@ -4078,7 +4077,7 @@ extern "C" void func_001A92D8(void* self, int a1, unsigned int kind)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A93D0);
 #ifdef SKIP_ASM
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 
 // PORT: the unit declares this with a 4th arg; defined under an asm label with its real type
 extern "C" void func_001A93D0_impl(void* self, int id, int event) __asm__("func_001A93D0");
@@ -6395,7 +6394,7 @@ extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001BFBB8(void* mem, int a1);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 extern "C" void func_001ADC30(void* self, int a2);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void func_001A9BC0(void* self, void* popup);
@@ -11880,9 +11879,9 @@ extern "C" void* func_001A9C50(void* self);
 extern "C" int func_001AAF90(void* self, void* msg);
 void func_001C57C0(void* self, int a1, int a2);
 extern "C" unsigned short* func_002C2508(void* dst, int src);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 // PORT: operator_new__FUi really takes (size, tag, flags, d)
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_001A8E40_3i(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern void* D_004A28A8;
 extern char D_004641B0[];
@@ -11937,10 +11936,10 @@ extern "C" int func_001B5E28(void* self, int id, int a2)
                         }
                         void* u = (void*)func_001AAF90(self, msg);
                         if (u != 0) {
-                            *(void**)((char*)self + 0x704) = operator_new_tag((USTR_length(u) + 1) * 2, D_00460688, 0x100, 0);
+                            *(void**)((char*)self + 0x704) = operator_new__FUi((USTR_length(u) + 1) * 2, D_00460688, 0x100, 0);
                             USTR_copy(*(void**)((char*)self + 0x704), u);
                         } else {
-                            *(void**)((char*)self + 0x704) = operator_new_tag((USTR_length((void*)str) + 1) * 2, D_00460688, 0x100, 0);
+                            *(void**)((char*)self + 0x704) = operator_new__FUi((USTR_length((void*)str) + 1) * 2, D_00460688, 0x100, 0);
                             func_002C2508(*(void**)((char*)self + 0x704), str);
                         }
                         int one = 1;
@@ -12082,7 +12081,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001B6288);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 void cMemMan_free(void* p);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int USTR_length(void* s);
 // PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
 void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
@@ -12132,7 +12131,7 @@ extern "C" sFEObj_001B6288* func_001B6288(sFEObj_001B6288* self, int a1, int a2)
         cMemMan_free(self->f6FC);
         self->f6FC = 0;
     }
-    self->f6FC = operator_new_tag((n + 5) * 2, D_00464220, 0x100, 0);
+    self->f6FC = operator_new__FUi((n + 5) * 2, D_00464220, 0x100, 0);
     self->f6A8 = 0;
     return self;
 }
@@ -12379,7 +12378,7 @@ extern "C" void* func_001A8770(void* self);
 extern "C" void func_002562D0(void* self);
 extern "C" void func_002563F8(void* self);
 // PORT: operator_new__FUi really takes (size, tag, flags, d)
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00464208[];
 extern char D_00464220[];
 extern char D_00464250[];
@@ -12444,17 +12443,17 @@ extern "C" void func_001B6798(void* self)
                 cMemMan_free(*(void**)(o + 0x710));
                 *(void**)(o + 0x710) = 0;
             }
-            *(void**)(o + 0x710) = operator_new_tag((USTR_length(a) + 1) * 2, D_00464220, 0x100, 0);
+            *(void**)(o + 0x710) = operator_new__FUi((USTR_length(a) + 1) * 2, D_00464220, 0x100, 0);
             if (*(void**)(o + 0x714) != 0) {
                 cMemMan_free(*(void**)(o + 0x714));
                 *(void**)(o + 0x714) = 0;
             }
-            *(void**)(o + 0x714) = operator_new_tag((USTR_length(b) + 1) * 2, D_00464220, 0x100, 0);
+            *(void**)(o + 0x714) = operator_new__FUi((USTR_length(b) + 1) * 2, D_00464220, 0x100, 0);
             if (*(void**)(o + 0x718) != 0) {
                 cMemMan_free(*(void**)(o + 0x718));
                 *(void**)(o + 0x718) = 0;
             }
-            *(void**)(o + 0x718) = operator_new_tag((USTR_length(c) + 1) * 2, D_00464220, 0x100, 0);
+            *(void**)(o + 0x718) = operator_new__FUi((USTR_length(c) + 1) * 2, D_00464220, 0x100, 0);
             USTR_copy(*(void**)(o + 0x710), a);
             USTR_copy(*(void**)(o + 0x714), b);
             USTR_copy(*(void**)(o + 0x718), c);
@@ -12872,7 +12871,7 @@ extern "C" unsigned short* func_002C2508(void* str, int a1);
 // PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...); the unit declares a 3-arg view
 extern "C" void func_002C26D0_1B70D0(void* str, int fmt, ...) __asm__("func_002C26D0");
 extern "C" void func_002C2718(char* buf, const char* fmt, int a2);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 extern void* D_004A28A8;
 extern int* D_004A33D0;
 extern char D_004A12C0[];
@@ -16337,7 +16336,7 @@ extern "C" void* func_001AD130(void* self, int a1);
 extern "C" void func_001BC400(void* self);
 void func_001C57C0(void* self, int a1, int a2);
 extern "C" void func_00260F10(void* self);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 extern "C" int func_001A8E40_3i(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern void* D_004A3028;
 extern const char D_00462D68[];
@@ -18734,7 +18733,7 @@ extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 void cMemMan_free(void* p);
 // PORT: operator_new__FUi really takes (size, tag, flags, d)
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void func_001A8918(void* self, int a1, int msg);
 extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
@@ -18810,7 +18809,7 @@ extern "C" void func_001BF758(void* self, void* a1, unsigned int kind)
         int b = Loc1BF758(title);
         char* sep = D_00465398;
         int len = USTR_length((void*)a) + USTR_length((void*)b) + strlen(sep) + 1;
-        *(void**)((char*)self + 0x6D0) = operator_new_tag(len * 2, D_00461CD8, 0x100, 0);
+        *(void**)((char*)self + 0x6D0) = operator_new__FUi(len * 2, D_00461CD8, 0x100, 0);
         void* p = func_001A9C50(self);
         char* sub = (char*)p + 0xBC;
         if (*(void**)((char*)self + 0x6D0) != 0) {
@@ -19303,7 +19302,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C0540);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 int GetHashValue32(char* str);
 void cMemMan_free(void* p);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00464860[];
 extern char D_00465590[];
 extern char D_004655A0[];
@@ -19342,7 +19341,7 @@ extern "C" void func_001C0540(void* self_)
         *(void**)(self + 0x6D0) = 0;
     }
     if (*(int*)(self + 0x6D4) != 0) {
-        *(void**)(self + 0x6D0) = operator_new_tag(*(int*)(self + 0x6D4) << 2, D_00464860, 0x100, 0);
+        *(void**)(self + 0x6D0) = operator_new__FUi(*(int*)(self + 0x6D4) << 2, D_00464860, 0x100, 0);
         n = 0;
         for (i = 0; i < 116; i++) {
             sprintf(buf, D_00465590, i);
