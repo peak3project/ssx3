@@ -11569,7 +11569,46 @@ int func_003CADF0(void *arg0, int *arg1, int *arg2) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAEA0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAFD0);
+#ifdef SKIP_ASM
+extern int fADF0_AFD0(void *, int *, int *) __asm__("func_003CADF0");
+extern void fAC88_AFD0(void *, char **, long) __asm__("func_003CAC88");
+extern long fAB28_AFD0(float, int, void *, void *) __asm__("func_003CAB28");
+extern void f51E8_AFD0(void *, void *, int) __asm__("func_003C51E8");
+
+int func_003CAFD0(char *self, int cnt, char *buf, char *dst) {
+    int r = fADF0_AFD0(self, &cnt, (int *)&dst);
+    long t;
+    if (cnt == 0) return r;
+    t = 0;
+    while (cnt > 0) {
+        int hi = *(int *)(self + 0x30);
+        int lo = *(int *)(self + 0x2C);
+        if (hi < lo)
+            break;
+        t = 0;
+        if (*(int *)(self + 0x30) >= *(int *)(self + 0x2C) * 2)
+            t = fAB28_AFD0(*(float *)(self + 0x24), *(int *)(self + 0x2C), self + 0x1C, self + 0x28);
+        fAC88_AFD0(self, &buf, t);
+        r += fADF0_AFD0(self, &cnt, (int *)&dst);
+    }
+    if (t > 0) {
+        f51E8_AFD0(self + 0x40, buf, *(int *)(self + 0x2C) * 4);
+        *(int *)(self + 0x34) = *(int *)(self + 0x2C);
+        buf += *(int *)(self + 0x2C) * 4;
+    }
+    if (cnt > 0) {
+        int n = *(int *)(self + 0x30);
+        if (n >= cnt)
+            n = cnt;
+        r += n;
+        f51E8_AFD0(dst, buf, n * 4);
+        *(int *)(self + 0x30) -= n;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB110);
