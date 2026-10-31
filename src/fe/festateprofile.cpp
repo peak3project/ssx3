@@ -170,14 +170,14 @@ extern "C" void cFEStateProfileLoad_onCreateScreen(void* self)
 }
 #endif
 
-extern "C" void* func_0039E6B8(void* self);
+extern "C" void func_0039E6B8(void* self);
 
 //100%
 INCLUDE_ASM("fe/festateprofile", func_0018EE98__FPv);
 #ifdef SKIP_ASM
-void* func_0018EE98(void* self)
+void func_0018EE98(void* self)
 {
-    return func_0039E6B8(self);
+    func_0039E6B8(self);
 }
 #endif
 
@@ -569,8 +569,8 @@ struct cAppMan;
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cBENewRaceInterface_setGameMode(void* iface, int mode);
-extern "C" void cBENewRaceInterface_setGameEvent(void* iface, int ev);
+extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
+extern "C" int cBENewRaceInterface_setGameEvent(void* iface, int ev);
 extern "C" int func_00146D98(void* iface, int a1);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 void* func_00232720(void* self);
@@ -627,7 +627,7 @@ extern "C" void func_0018FAF0(void* self)
 }
 #endif
 
-extern "C" void* func_001D58B8(void*);
+extern "C" void func_001D58B8(void*);
 
 //100%
 INCLUDE_ASM("fe/festateprofile", func_0018FC70__FPv);
@@ -737,8 +737,8 @@ extern "C" void func_001CE408(void* kb, int a1);
 extern "C" void cKeyboardPopup_setStatic(void* kb, void* text);
 extern "C" void func_0023C8F0(void* mp, int a1);
 extern "C" void func_0023D570(void* mp, int a1);
-extern "C" void func_002C2540(void* dst, char* src);
-extern "C" void func_002C2580(char* dst, void* src);
+extern "C" unsigned short* func_002C2540(void* dst, char* src);
+extern "C" char* func_002C2580(char* dst, void* src);
 extern "C" void func_0039F290(void* list, void* item);
 extern void* D_004A28A8;
 extern int D_004A15E8;
@@ -1107,13 +1107,13 @@ extern "C" void func_00190768(void* self)
 INCLUDE_ASM("fe/festateprofile", func_00190858);
 #ifdef SKIP_ASM
 extern void* D_0046B160[];
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 
 extern "C" void* func_00190858(void* self, int a1, int a2)
 {
     signed char idx = a2;
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_0046B160;
     *(int*)((char*)self + 0xC) = 0xF;
     *(signed char*)((char*)self + 0x44) = idx;
