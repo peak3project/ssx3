@@ -1121,13 +1121,12 @@ static inline float ftrunc_0035F0B8(float x)
 extern "C" sRailTimer* func_0035F0B8(sRailTimer* self, void* def, void* owner)
 {
     char* d = (char*)def;
-    float one = 1.0f;
     self->f18 = owner;
     self->f14 = 0;
     self->f1C = 0;
     self->f20 = 0;
     self->f0 = *(int*)(d + 0x4);
-    float rate = *(float*)(d + 0x10) * (one / (float)*(int*)(D_004A5B64 + 0x10));
+    float rate = *(float*)(d + 0x10) * (1.0f / (float)*(int*)(D_004A5B64 + 0x10));
     self->f8 = rate;
     self->f10 = *(int*)(d + 0xC);
     self->fC = rate;
@@ -1136,10 +1135,10 @@ extern "C" sRailTimer* func_0035F0B8(sRailTimer* self, void* def, void* owner)
     if ((float)n < *(float*)&self->f4) {
         union { int i; float f; } u;
         u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
-        float x = (u.f - one) * 8.0f;
+        float x = (u.f - 1.0f) * 8.0f;
         float t = ftrunc_0035F0B8(x);
         if (t < x) {
-            t += one;
+            t += 1.0f;
         }
         self->f14 = (int)t;
     } else {
@@ -1232,13 +1231,12 @@ extern "C" void func_0035F410(sRailTimer* self)
     if (!(0.0f < self->f8)) {
         return;
     }
-    float one = 1.0f;
     float* acc = (float*)&self->f4;
     *acc += self->f8;
-    if (!(one <= *acc)) {
+    if (!(1.0f <= *acc)) {
         return;
     }
-    *acc -= one;
+    *acc -= 1.0f;
     if (self->f0 == 0) {
         if (self->f10 == 0) {
             if (++self->f14 >= self->f20) {
@@ -1258,7 +1256,7 @@ extern "C" void func_0035F410(sRailTimer* self)
         float base = 0.25f;
         u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
         self->f0 = 1;
-        self->f8 = self->fC * ((u.f - one) * 0.75f + base);
+        self->f8 = self->fC * ((u.f - 1.0f) * 0.75f + base);
         if (++self->f14 >= self->f20) {
             self->f14 = 0;
         }
@@ -1574,13 +1572,11 @@ extern sRmMtx_35FC20 D_004FF1A0_35FC20[] __asm__("D_004FF1A0");
 
 extern "C" sRmMtx_35FC20* func_0035FC20(sRmAxisRot_35FC20* self, sRmMtx_35FC20* m)
 {
-    float zero = 0.0f;
-    if (self->angle != zero) {
+    if (self->angle != 0.0f) {
         float s;
         float c;
         func_0031BE50(&s, &c, self->angle);
-        float one = 1.0f;
-        float t = one - c;
+        float t = 1.0f - c;
         float tx = t * self->ax;
         float sy = s * self->ay;
         float sz = s * self->az;
@@ -1590,19 +1586,19 @@ extern "C" sRmMtx_35FC20* func_0035FC20(sRmAxisRot_35FC20* self, sRmMtx_35FC20* 
         m->m[0][0] = tx * self->ax + c;
         m->m[1][0] = tx * self->ay + sz;
         m->m[2][0] = tx * self->az - sy;
-        m->m[3][0] = zero;
+        m->m[3][0] = 0.0f;
         m->m[0][1] = ty * self->ax - sz;
         m->m[1][1] = ty * self->ay + c;
         m->m[2][1] = ty * self->az + sx;
-        m->m[3][1] = zero;
+        m->m[3][1] = 0.0f;
         m->m[0][2] = tz * self->ax + sy;
         m->m[1][2] = tz * self->ay - sx;
         m->m[2][2] = tz * self->az + c;
-        m->m[3][2] = zero;
-        m->m[0][3] = zero;
-        m->m[1][3] = zero;
-        m->m[2][3] = zero;
-        m->m[3][3] = one;
+        m->m[3][2] = 0.0f;
+        m->m[0][3] = 0.0f;
+        m->m[1][3] = 0.0f;
+        m->m[2][3] = 0.0f;
+        m->m[3][3] = 1.0f;
         } else {
         // PORT: PS2-only VU0 inline asm (4x4 matrix copy, identity -> m).
         __asm__ __volatile__(
