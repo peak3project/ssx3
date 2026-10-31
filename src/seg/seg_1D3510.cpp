@@ -534,10 +534,10 @@ extern "C" int func_002D3A58(void **arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3A68);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
+extern "C" void func_002CA280(int, int);
 
-extern "C" void func_002D3A68(void) {
-    func_002CA280();
+extern "C" void func_002D3A68(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -560,10 +560,8 @@ extern "C" void func_002D3A90(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3A98);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3A98(void) {
-    func_002CA280();
+extern "C" void func_002D3A98(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -603,10 +601,8 @@ extern "C" int func_002D3AD8(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3AE0);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3AE0(void) {
-    func_002CA280();
+extern "C" void func_002D3AE0(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -629,10 +625,8 @@ extern "C" int func_002D3B08(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3B10);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3B10(void) {
-    func_002CA280();
+extern "C" void func_002D3B10(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -647,10 +641,8 @@ extern "C" void func_002D3B30(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3B38);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3B38(void) {
-    func_002CA280();
+extern "C" void func_002D3B38(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -697,10 +689,8 @@ extern "C" int func_002D3B78(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3B80);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3B80(void) {
-    func_002CA280();
+extern "C" void func_002D3B80(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -723,10 +713,8 @@ extern "C" int func_002D3BA8(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3BB0);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3BB0(void) {
-    func_002CA280();
+extern "C" void func_002D3BB0(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -749,20 +737,16 @@ extern "C" void func_002D3BD8(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3BE0);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3BE0(void) {
-    func_002CA280();
+extern "C" void func_002D3BE0(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3C00);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3C00(void) {
-    func_002CA280();
+extern "C" void func_002D3C00(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -785,10 +769,8 @@ extern "C" void func_002D3C28(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3C30);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3C30(void) {
-    func_002CA280();
+extern "C" void func_002D3C30(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -811,10 +793,8 @@ extern "C" void func_002D3C58(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3C60);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3C60(void) {
-    func_002CA280();
+extern "C" void func_002D3C60(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -871,10 +851,8 @@ extern "C" float func_002D3CC0(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3CE0);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3CE0(void) {
-    func_002CA280();
+extern "C" void func_002D3CE0(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -906,10 +884,8 @@ extern "C" void func_002D3D18(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3D20);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3D20(void) {
-    func_002CA280();
+extern "C" void func_002D3D20(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -936,43 +912,35 @@ extern "C" int func_002D3D48(char *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3D70);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3D70(void) {
-    func_002CA280();
+extern "C" void func_002D3D70(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3D90);
 #ifdef SKIP_ASM
-extern "C" void func_002CAA80();
+extern "C" void func_002CAA80(int, int);
 
-extern "C" void func_002D3D90(void) {
-    func_002CAA80();
+extern "C" void func_002D3D90(int arg0, int arg1) {
+    func_002CAA80(arg0, arg1);
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3DB0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void func_002CA280_3DB0(int, int) __asm__("func_002CA280");
-extern "C" void func_002CAA80(int, int);
-
 extern "C" void func_002D3DB0(int arg0, int arg1) {
     func_002CAA80(arg0 + 0x18, 2);
-    func_002CA280_3DB0(arg0, arg1);
+    func_002CA280(arg0, arg1);
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3DF8);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3DF8(void) {
-    func_002CA280();
+extern "C" void func_002D3DF8(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -987,18 +955,14 @@ extern "C" void func_002D3E18(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3E20);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void func_002CA280_3E20(int, int) __asm__("func_002CA280");
-extern "C" void func_002CAA80(int, int);
-
 extern "C" void func_002D3E20(int arg0, int arg1) {
-    func_002CA280_3E20(arg0 + 0x640, 2);
-    func_002CA280_3E20(arg0 + 0x61C, 2);
-    func_002CA280_3E20(arg0 + 0x5F8, 2);
-    func_002CA280_3E20(arg0 + 0x5D4, 2);
-    func_002CA280_3E20(arg0 + 0x5B0, 2);
+    func_002CA280(arg0 + 0x640, 2);
+    func_002CA280(arg0 + 0x61C, 2);
+    func_002CA280(arg0 + 0x5F8, 2);
+    func_002CA280(arg0 + 0x5D4, 2);
+    func_002CA280(arg0 + 0x5B0, 2);
     func_002CAA80(arg0 + 0x18, 2);
-    func_002CA280_3E20(arg0, arg1);
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -1013,10 +977,8 @@ extern "C" void func_002D3EA0(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3EA8);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3EA8(void) {
-    func_002CA280();
+extern "C" void func_002D3EA8(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -1031,17 +993,13 @@ extern "C" void func_002D3EC8(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3ED0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void func_002CA280_3ED0(int, int) __asm__("func_002CA280");
-extern "C" void func_002CAA80(int, int);
-
 extern "C" void func_002D3ED0(int arg0, int arg1) {
-    func_002CA280_3ED0(arg0 + 0x654, 2);
-    func_002CA280_3ED0(arg0 + 0x620, 2);
-    func_002CA280_3ED0(arg0 + 0x5EC, 2);
-    func_002CA280_3ED0(arg0 + 0x5B8, 2);
+    func_002CA280(arg0 + 0x654, 2);
+    func_002CA280(arg0 + 0x620, 2);
+    func_002CA280(arg0 + 0x5EC, 2);
+    func_002CA280(arg0 + 0x5B8, 2);
     func_002CAA80(arg0 + 0x18, 2);
-    func_002CA280_3ED0(arg0, arg1);
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -1056,10 +1014,8 @@ extern "C" void func_002D3F48(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3F50);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280();
-
-extern "C" void func_002D3F50(void) {
-    func_002CA280();
+extern "C" void func_002D3F50(int arg0, int arg1) {
+    func_002CA280(arg0, arg1);
 }
 #endif
 
@@ -1074,8 +1030,6 @@ extern "C" void func_002D3F70(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3F78);
 #ifdef SKIP_ASM
-extern "C" void func_002CA280(int, int);
-extern "C" void func_002CAA80(int, int);
 
 extern "C" void func_002D3F78(int arg0, int arg1) {
     func_002CA280(arg0 + 0x164, 2);
