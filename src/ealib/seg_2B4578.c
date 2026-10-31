@@ -11644,7 +11644,47 @@ int func_003CB280(void *arg0, void *arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB328);
+#ifdef SKIP_ASM
+struct O_B328 {
+    char pad0[8]; int (**f8)(); char padC[0x1A - 0xC]; unsigned char b1A; char pad1B[0x20 - 0x1B];
+    short s20; char pad22[0x30 - 0x22]; short s30; char pad32[0x40 - 0x32]; short s40;
+};
+
+int func_003CB328(struct O_B328 *o, int n, short *src, short *dst) {
+    int i;
+    short *sp;
+    short *dp;
+    int r;
+    if (o->f8) {
+        r = (*o->f8)(o->f8, n, dst, src, o->b1A);
+        if (r <= 0) {
+            return r;
+        }
+    }
+    sp = src;
+    dp = dst;
+    for (i = 0; i < n; i += 4) {
+        int a, b, c, d; short t0, t1, t2, t3;
+        a = sp[0];
+        if (a > o->s30) t0 = o->s30; else if (a < o->s20) t0 = o->s20; else t0 = a;
+        b = sp[1];
+        if (b > o->s30) t1 = o->s30; else if (b < o->s20) t1 = o->s20; else t1 = b;
+        c = sp[2];
+        if (c > o->s30) t2 = o->s30; else if (c < o->s20) t2 = o->s20; else t2 = c;
+        d = sp[3];
+        if (d > o->s30) t3 = o->s30; else if (d < o->s20) t3 = o->s20; else t3 = d;
+        dp[0] = (t0 * o->s40) >> 7;
+        dp[1] = (t1 * o->s40) >> 7;
+        dp[2] = (t2 * o->s40) >> 7;
+        dp[3] = (t3 * o->s40) >> 7;
+        sp += 4;
+        dp += 4;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CB4A8);
