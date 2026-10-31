@@ -45,7 +45,7 @@ void cAppMan__cAppMan(void* self, int flags)
 //100%
 INCLUDE_ASM("bx/appman", cAppMan_run);
 #ifdef SKIP_ASM
-extern "C" void SYNCTASK_run(int a);
+extern "C" int SYNCTASK_run(int a);
 extern "C" void cAppMan_mainLoop(void* self);
 struct cAppMan;
 int cAppMan_checkHalt(cAppMan* self);
