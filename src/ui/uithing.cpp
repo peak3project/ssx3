@@ -222,7 +222,7 @@ extern "C" void func_003A0330(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("ui/uithing", func_003A0348);
 #ifdef SKIP_ASM
-extern "C" void* func_0039FB30(void* self);
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 extern void* D_00494588[];
 
 struct func_003A0348_sQuad {
@@ -244,9 +244,9 @@ struct func_003A0348_sObj {
     short fBA;
 };
 
-extern "C" func_003A0348_sObj* func_003A0348(func_003A0348_sObj* self)
+extern "C" func_003A0348_sObj* func_003A0348(func_003A0348_sObj* self, int a1, int a2)
 {
-    func_0039FB30(self);
+    func_0039FB30(self, a1, a2);
     *(void***)((char*)self + 8) = D_00494588;
     self->flags = (self->flags | 4) & 0x87;
     self->fA8 = 0;
