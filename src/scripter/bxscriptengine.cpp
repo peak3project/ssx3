@@ -181,10 +181,9 @@ extern "C" int func_002821A0(void* self, int idx, int arg)
     sBXSlot21A0* s = &(*(sBXSlot21A0**)((char*)self + 0x2B0))[idx];
     sBXThread21A0* t = (sBXThread21A0*)func_00282C38(self, 1);
     if (s->data == 0) {
-        int one = 1;
         t->pending = idx;
-        t->state = one;
-        t->f12 = one;
+        t->state = 1;
+        t->f12 = 1;
         sBxsVEntry21A0* e = &(*(sBxsVEntry21A0**)((char*)self + 0x2A8))[7];
         if (e->fn((char*)self + e->delta, idx) == 0) {
             t->state = 7;
