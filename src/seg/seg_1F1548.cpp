@@ -405,7 +405,7 @@ INCLUDE_ASM("seg/seg_1F1548", func_002F1150);
 int func_00312AA0(void* self, int i);
 extern "C" int func_00311AE8(void*, int);
 extern "C" char* func_00311B20(void*, int);
-extern "C" int func_001446A0(void*, int);
+extern "C" bool func_001446A0(void*, int);
 extern int D_004A3AFC;
 
 struct sVec4_1150 {
@@ -670,12 +670,12 @@ extern "C" void *func_002F1768(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F17A8);
 #ifdef SKIP_ASM
-extern "C" void func_00370C08(void *);
+extern "C" void func_00370C08(void *, int);
 extern char D_004881E8[];
 
-extern "C" void func_002F17A8(void *arg0) {
+extern "C" void func_002F17A8(void *arg0, int flags) {
     *(char **)((char*)arg0 + 0x1F8) = D_004881E8;
-    func_00370C08(arg0);
+    func_00370C08(arg0, flags);
 }
 #endif
 
@@ -684,13 +684,12 @@ INCLUDE_ASM("seg/seg_1F1548", func_002F17D0);
 #ifdef SKIP_ASM
 extern "C" void func_002F83B0();
 extern "C" void func_002F9838();
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi_17D0(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00487C98[];
 extern int D_004A3BB0;
 
 extern "C" void func_002F17D0(void) {
-    D_004A3BB0 = (int)operator_new__FUi_17D0(0x1540, D_00487C98, 0, 0);
+    D_004A3BB0 = (int)operator_new__FUi(0x1540, D_00487C98, 0, 0);
     func_002F83B0();
     func_002F9838();
 }
@@ -1288,12 +1287,12 @@ extern "C" void* func_002F3550(void* p, void* a1, int a2)
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F3618);
 #ifdef SKIP_ASM
-extern "C" void func_003546C8(void *);
+extern "C" void func_003546C8(void *, int);
 extern char D_00488230[];
 
-extern "C" void func_002F3618(void *arg0) {
+extern "C" void func_002F3618(void *arg0, int flags) {
     *(char **)((char*)arg0 + 0xC) = D_00488230;
-    func_003546C8(arg0);
+    func_003546C8(arg0, flags);
 }
 #endif
 
@@ -1567,7 +1566,7 @@ extern "C" void func_002F4330(void *arg0, float arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F4380);
 #ifdef SKIP_ASM
-extern void func_002E2860(void *);
+extern void* func_002E2860(void *);
 extern "C" void func_002F43E0(void *);
 inline void* operator new[](unsigned int, void* p) { return p; }
 struct Elem4380 { Elem4380() {} };
