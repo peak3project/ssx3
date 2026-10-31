@@ -22,8 +22,7 @@ extern void* D_00487F00[];
 
 // PORT: asm label because the unit's forward declaration above has C++ linkage;
 // fix that declaration to extern "C" and this can be a plain extern "C" definition.
-void* func_002EC418_impl(void* self) __asm__("func_002EC418");
-void* func_002EC418_impl(void* self)
+void* func_002EC418(void* self)
 {
     func_002E2E18(self);
     *(int*)((char*)self + 0x649c) = (int)(void*)D_00487F00;
