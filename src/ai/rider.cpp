@@ -2220,7 +2220,6 @@ extern "C" void func_00122680(void)
 {
     do { // PORT: wrapper stands in for a compiled-out release ASSERT macro (changes loop notes/scheduling)
     if (D_004A4540 == 0) {
-        float zero = 0.0f;
         sOverlay_2680* o = *(sOverlay_2680**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x24);
         o->f38 = o->f30;
         D_004A289C_2680->BeginScene();
@@ -2230,12 +2229,12 @@ extern "C" void func_00122680(void)
         g->stateTop++;
         *D_004A289C_2680->stateTop = D_00501420_2680;
         *(short*)(*(char**)((char*)D_004A289C_2680 + 0xE84) + 0x10) = -1;
-        D_004A289C_2680->SetViewport(zero, zero, 640.0f, 480.0f, 0, 0, zero, 1.0f);
+        D_004A289C_2680->SetViewport(0.0f, 0.0f, 640.0f, 480.0f, 0, 0, 0.0f, 1.0f);
         D_004A289C_2680->SetTexture(D_004FF1A0);
         D_004A289C_2680->stateTop->f8_5 = 24;
         D_004A289C_2680->stateTop->f4_2 = 5;
         o->f28 = sV2_2680(2.0f, 2.0f);
-        *(sV2v_2680*)&o->f28 = sV2v_2680(zero, zero);
+        *(sV2v_2680*)&o->f28 = sV2v_2680(0.0f, 0.0f);
         D_004A289C_2680->End2D();
         D_004A289C_2680->EndScene();
         D_004A289C_2680->stateTop--;
@@ -2891,7 +2890,6 @@ extern "C" void func_00123640(cRider* self)
     for (j = 3; j >= 0; j--)
         self->unk_B08[j] = -1;
     float zero;
-    float one = 1.0f;
     // PORT: func_0027C958 returns a record pointer as int
     char* rec = func_0027C958(self->unk_6D8);
     zero = 0.0f;
@@ -2904,7 +2902,7 @@ extern "C" void func_00123640(cRider* self)
     q.x = fb[6];
     q.y = fb[7];
     q.z = fb[8];
-    q.w = one;
+    q.w = 1.0f;
     *(float*)((char*)self + 0xAF0) = fb[9] * 0.01745329424738884f;
     *(float*)((char*)self + 0xAF4) = fb[10] * 0.01745329424738884f;
     *(float*)((char*)self + 0xAF8) = fb[11] * 0.01745329424738884f;
@@ -2932,7 +2930,7 @@ extern "C" void func_00123640(cRider* self)
     initTrack_3640(self, 0x238, zero, zero);
     initTrack_3640(self, 0x244, zero, zero);
     initTrack_3640(self, 0x250, zero, zero);
-    initTrack_3640(self, 0x25C, one, zero);
+    initTrack_3640(self, 0x25C, 1.0f, zero);
     initTrack_3640(self, 0x268, zero, zero);
     initTrack_3640(self, 0x274, zero, zero);
     initTrack_3640(self, 0x280, zero, zero);
@@ -3739,12 +3737,11 @@ extern "C" int func_00125228(cRider* self)
     sVE_125228* vt = *(sVE_125228**)obj;
     if (vt[kRiderVt_isHuman].fn(obj + vt[kRiderVt_isHuman].delta)) {
         float h = self->mFinishTime;
-        float zero = 0.0f;
-        int done = h >= zero;
+        int done = h >= 0.0f;
         if (!done) {
             cBE_getInterface(cBE_getBE(), 0);
             if (D_00535C10[0] == 4)
-                return self->mFinishTime >= zero;
+                return self->mFinishTime >= 0.0f;
             char* g = (char*)D_004A28A8;
             char* p = *(char**)(g + 0xC0);
             if (*(int*)(p + 0x88) != 0 && ((D_005308D0[0] >> 9) & 1) == 0) {
