@@ -889,7 +889,7 @@ extern "C" void func_0019F718(void* arg0, int arg1, cQuad128_F718* src)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F740);
 #ifdef SKIP_ASM
-extern "C" void func_00312AA0__FPvi(int, int);
+extern "C" int func_00312AA0__FPvi(int, int);
 
 extern "C" void func_0019F740(void *arg0) {
     func_00312AA0__FPvi((*(int *)((char*)(arg0) + (0xC))), 2);
@@ -1216,7 +1216,7 @@ extern "C" void func_0019CD38(void* self, int bit, int a2, int val);
 extern "C" void func_0019DC20(void* self, int bank, int i);
 extern "C" int func_0019E238(void* mgr, int bank, int i);
 extern "C" void* func_0019E2B0(void* mgr, int bank, int i);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 extern void* D_004A28A8;
 extern void* D_004A1968;
 
