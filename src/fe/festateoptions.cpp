@@ -2236,7 +2236,7 @@ INCLUDE_ASM("fe/festateoptions", func_0018D460);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0039F190(void* list, int a1);
+extern "C" void* func_0039F190(void* list, int a1);
 extern "C" void func_0039F400(void* list, void* item);
 extern "C" void func_00147138(void* self, int a1, const char* name);
 extern "C" void func_0014DE28(void* self, int c);
