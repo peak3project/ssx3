@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/ovstates", cFEStateTitle_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
 extern char D_004A17C8[];
@@ -189,12 +189,12 @@ extern "C" int func_00194A48(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00194A60);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void*);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046B9E8[];
 
-extern "C" void* func_00194A60(void* self)
+extern "C" void* func_00194A60(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 2;
     *(void***)((char*)self + 0x8) = D_0046B9E8;
     *(int*)((char*)self + 0x48) = 0;
@@ -208,7 +208,7 @@ INCLUDE_ASM("fe/ovstates", cFEStateMainMenu_onCreateScreen);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_003E6448(void* p, int v, int n);
+extern "C" void* func_003E6448(void* p, int v, int n);
 extern "C" void func_00266CD8();
 extern "C" void func_00261008();
 extern "C" void func_0025B688();
@@ -459,7 +459,7 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 // PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
 // result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" void func_0039F290(void* stack, void* state);
 extern "C" void* func_001887A0(void* mem, void* engine, int a2);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
@@ -663,12 +663,12 @@ extern "C" void func_00195328(void* self, char* obj, int msg)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00195498);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void*);
+extern "C" void* func_0039E2A0(void *, int);
 extern char D_0046B918[];
 
-extern "C" void* func_00195498(void* self)
+extern "C" void* func_00195498(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void**)((char*)self + 0x8) = D_0046B918;
     *(int*)((char*)self + 0xC) = 5;
     return self;
