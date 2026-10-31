@@ -275,11 +275,12 @@ extern "C" void func_0026C898(void* p)
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026C998);
 #ifdef SKIP_ASM
-extern "C" int func_0026CFE8();
+struct sPbMan_26CFE8;
+extern "C" int func_0026CFE8(sPbMan_26CFE8* self, int key);
 
 extern "C" int func_0026C998(void* self, int a1)
 {
-    int idx = func_0026CFE8();
+    int idx = func_0026CFE8((sPbMan_26CFE8*)self, a1);
     if (idx >= 0) {
         if (*(int*)(*(char**)((char*)self + 0x58) + idx * 0xC + 4) != 0)
             return 1;
@@ -293,7 +294,6 @@ extern "C" int func_0026C998(void* self, int a1)
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026C9F0);
 #ifdef SKIP_ASM
-extern "C" int func_0026CFE8_k(void* self, int key) __asm__("func_0026CFE8");
 extern "C" int func_003DF690(char* path, int flags);
 extern char* D_004A3414;
 extern char D_004A3430[];
@@ -312,7 +312,7 @@ extern "C" int func_0026C9F0(void* self_, int key)
 {
     sPb_26C9F0* self = (sPb_26C9F0*)self_;
     char path[0x100];
-    int idx = func_0026CFE8_k(self, key);
+    int idx = func_0026CFE8((sPbMan_26CFE8*)self, key);
     if (idx >= 0) {
         sPbEntry_26C9F0* entry = (sPbEntry_26C9F0*)(idx * 0xC + self->entries);
         if (entry->used != 0)
@@ -357,13 +357,12 @@ extern "C" void SYNCTASK_run(int);
 extern "C" void THREAD_yieldticks(int);
 extern "C" int func_0026C998(void* self, int a1);
 extern "C" int func_0026C9F0(void* self, int a1);
-extern "C" int func_0026CFE8();
 extern "C" int func_0026D020(void* self, int idx);
 
 extern "C" int func_0026CAF8(void* self, int a1)
 {
     int idx;
-    if (*(int*)((char*)self + 0x70) == 0 && (idx = func_0026CFE8()) >= 0 && func_0026C9F0(self, a1) != 0) {
+    if (*(int*)((char*)self + 0x70) == 0 && (idx = func_0026CFE8((sPbMan_26CFE8*)self, a1)) >= 0 && func_0026C9F0(self, a1) != 0) {
         while (func_0026C998(self, a1) == 0) {
             cPlaybackMan_update((cPlaybackMan_C5F8*)self);
             SYNCTASK_run(0);
