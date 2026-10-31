@@ -252,7 +252,7 @@ INCLUDE_ASM("fe/festatecharsetup", func_00182EC0);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void* func_001A0548(void* self, int idx);
 extern "C" void func_00311A50(void* anim);
-extern "C" void cRiderAnimBase_play(void* anim, int id, int a2, float t);
+extern "C" int cRiderAnimBase_play(void* anim, int id, int a2, float t);
 extern "C" void func_001A0358(void* rider);
 extern "C" void func_0019E538(void* self, int a1);
 extern void* D_004A28A8;
