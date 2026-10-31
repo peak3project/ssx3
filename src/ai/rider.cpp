@@ -187,7 +187,7 @@ INCLUDE_ASM("ai/rider", func_0011BD60);
 extern "C" int func_004165A8(const void* a, const void* b);
 extern "C" char* strcpy(char* dst, const char* src);
 void* func_0011B678(void* self);
-extern "C" void func_00418EF8(void* base, int n, int size, void* (*cmp)(void*));
+extern "C" int func_00418EF8(void* base, int n, int size, void* (*cmp)(void*));
 
 struct sAnimName_11BD60
 {
@@ -238,7 +238,7 @@ void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_004165A8(const void* a, const void* b);
 extern "C" char* strcpy(char* dst, const char* src);
 void* func_0011B678(void* self);
-extern "C" void func_00418EF8(void* base, int n, int size, void* (*cmp)(void*));
+extern "C" int func_00418EF8(void* base, int n, int size, void* (*cmp)(void*));
 extern "C" int func_0014AC30(int c);
 extern "C" int func_0014A0B0(int c);
 extern "C" int func_0014AC50(int c);
@@ -409,7 +409,7 @@ void* cBE_getInterface_11D390(void* be, int kind) __asm__("cBE_getInterface__Fv"
 // func_00117540 (cRiderMetrix reset) takes only the metrix; its $5 is left over from the store above.
 extern "C" void func_00117540(void* metrix);
 extern "C" void func_00311A50(void* anim);
-extern "C" int func_0014EF70(void* iface, int riderIndex);
+extern "C" bool func_0014EF70(void* iface, int riderIndex);
 extern "C" void func_00112180(void* rider, int v);
 extern "C" int func_00145C38(void* iface, int index);
 extern "C" int* func_00144BC0(void* iface);
@@ -861,7 +861,7 @@ extern "C" void* func_00111538(void* obj);
 //100%
 INCLUDE_ASM("ai/rider", func_0011FEA8);
 #ifdef SKIP_ASM
-extern "C" void func_00111830(int);
+extern "C" const char* func_00111830(int);
 
 extern "C" void func_0011FEA8(void *arg0) {
     func_00111830((*(int *)((char*)(arg0) + (0x77C))));
@@ -891,7 +891,7 @@ int func_0011FEE8(void* vself)
 //100%
 INCLUDE_ASM("ai/rider", func_0011FEF8);
 #ifdef SKIP_ASM
-extern "C" void func_00111860(int);
+extern "C" const char* func_00111860(int);
 
 extern "C" void func_0011FEF8(void *arg0) {
     func_00111860((*(int *)((char*)(arg0) + (0x77C))));
@@ -1469,7 +1469,7 @@ extern "C" void func_00121068(cRider* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/rider", func_001210B0);
 #ifdef SKIP_ASM
-extern "C" void func_00116120(void* rider, int a, int b);
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" void func_001200D0(cRider* self);
 extern "C" void func_00120D90(cRider* self);
 
@@ -1556,15 +1556,15 @@ extern "C" void func_001211F8(cRider* self)
 }
 #endif
 
-extern "C" void* func_00111408(void* obj);
+extern "C" void func_00111408(void* obj);
 
 //100%
 INCLUDE_ASM("ai/rider", func_001216E0__FPv);
 #ifdef SKIP_ASM
-void* func_001216E0(void* vself)
+void func_001216E0(void* vself)
 {
     cRider* self = (cRider*)vself;
-    return func_00111408(self->mRiderHandler);
+    func_00111408(self->mRiderHandler);
 }
 #endif
 
@@ -1624,15 +1624,15 @@ extern "C" void func_00121750(cRider* self)
 }
 #endif
 
-extern "C" void* func_003103F0(void* obj);
+extern "C" void func_003103F0(void* obj);
 
 //100%
 INCLUDE_ASM("ai/rider", func_001217F8__FPv);
 #ifdef SKIP_ASM
-void* func_001217F8(void* vself)
+void func_001217F8(void* vself)
 {
     cRider* self = (cRider*)vself;
-    return func_003103F0(self->mAnimModel);
+    func_003103F0(self->mAnimModel);
 }
 #endif
 
@@ -2116,7 +2116,7 @@ extern "C" void func_001225F0(cRider* self)
 }
 #endif
 
-extern "C" void* func_002F2088(void* obj);
+extern "C" void func_002F2088(void* obj);
 
 //100%
 INCLUDE_ASM("ai/rider", func_00122618);
@@ -2131,10 +2131,10 @@ extern "C" void func_00122618(void *arg0) {
 //100%
 INCLUDE_ASM("ai/rider", func_00122638__FPv);
 #ifdef SKIP_ASM
-void* func_00122638(void* vself)
+void func_00122638(void* vself)
 {
     cRider* self = (cRider*)vself;
-    return func_002F2088(self->unk_88C);
+    func_002F2088(self->unk_88C);
 }
 #endif
 
@@ -2979,7 +2979,7 @@ INCLUDE_ASM("ai/rider", func_00123B48);
 extern "C" void func_002803F0(void* self);
 extern "C" void func_0011D390(void* self);
 extern "C" void* func_0028B180();
-void func_002A1BD0(void* p);
+int func_002A1BD0(void* p);
 extern "C" void func_0030EA80(void* model, int i, int channel);
 extern "C" void func_0030E9E0(void* model, int i, int channel);
 int func_0027C958(void* self);
@@ -4120,7 +4120,7 @@ extern const sVt22_125C70 D_004583A8;
 extern char D_00459B90[];
 extern char D_00458338[];
 extern void* D_004A28A8;
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 extern "C" void func_0010FCD8(void* self, int inChrg);
 extern "C" void* cReplay_addCache(void* p);
 
@@ -4328,7 +4328,7 @@ int func_00320C48(void*, int);
 extern "C" float func_00320BF0(void* pad, int axis);
 extern "C" int func_001276F0(char* self);
 extern "C" int func_00127848(void* self);
-extern "C" void func_0026D178(void* replay, void* data);
+extern "C" int func_0026D178(void* replay, void* data);
 
 // The 8-byte packed pad record: the layout after the first flag depends on the rider mode.
 union sPadRec_127998 {
