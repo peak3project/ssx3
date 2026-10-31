@@ -283,7 +283,7 @@ int func_00410930(unsigned pc, int obj, struct C410930 *ctx, int flag, int *out)
 INCLUDE_ASM("seg/seg_3113A0_eh", func_00410A78);
 #ifdef SKIP_ASM
 struct S410A78 { int base; char pad[0x14]; long e[0x50]; unsigned short n; short pad2; signed char kind[1]; };
-extern int nr_410A78(void) __asm__("func_00418790");
+extern int func_00418790(void);
 int func_00410A78(int idx, struct S410A78 *s, int z) {
     if (s->kind[idx] == 2) {
         do {
@@ -292,7 +292,7 @@ int func_00410A78(int idx, struct S410A78 *s, int z) {
     }
     if (s->kind[idx] == 1)
         return s->base + (int)s->e[idx];
-    return nr_410A78();
+    return func_00418790();
 }
 #endif
 
