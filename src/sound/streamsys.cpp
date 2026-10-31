@@ -133,7 +133,7 @@ INCLUDE_ASM("sound/streamsys", func_002A9ED8);
 #ifdef SKIP_ASM
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B7F60(int h, int a, int b);
+extern "C" int func_003B7F60(int h, int a, int b);
 
 extern "C" void func_002A9ED8(void* self, int a, int b)
 {
@@ -157,7 +157,7 @@ INCLUDE_ASM("sound/streamsys", func_002A9F38);
 #ifdef SKIP_ASM
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B7FB8(int h, int v);
+extern "C" int func_003B7FB8(int h, int v);
 
 extern "C" void func_002A9F38(void* self, int v)
 {
@@ -174,7 +174,7 @@ int func_0028B240(void* self);
 void* func_002AA408(void* self);
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B7E70(int h, int vol);
+extern "C" int func_003B7E70(int h, int vol);
 
 extern "C" void func_002A9F80(void* self)
 {
@@ -350,7 +350,7 @@ extern "C" int func_002AA1B8(void* self)
 //100%
 INCLUDE_ASM("sound/streamsys", func_002AA1E8);
 #ifdef SKIP_ASM
-extern "C" void func_003B7D80(int, int);
+extern "C" int func_003B7D80(int, int);
 
 extern "C" void func_002AA1E8(void* self)
 {
@@ -381,7 +381,7 @@ extern "C" int func_002AA210(void* self)
 //100%
 INCLUDE_ASM("sound/streamsys", func_002AA240);
 #ifdef SKIP_ASM
-extern "C" void func_003B7D80(int, int);
+extern "C" int func_003B7D80(int, int);
 
 extern "C" void func_002AA240(void* self, int arg1)
 {
@@ -1054,7 +1054,7 @@ int func_002AB188(void* self, int a1)
 //100%
 INCLUDE_ASM("sound/streamsys", func_002AB1A0);
 #ifdef SKIP_ASM
-extern "C" void func_003B7D80(int, int);
+extern "C" int func_003B7D80(int, int);
 
 extern "C" int func_002AB1A0(void* self, void* arg1)
 {
@@ -1381,7 +1381,7 @@ extern "C" void func_002ABA18(int* self, int flags)
 //100%
 INCLUDE_ASM("sound/streamsys", func_002ABA40);
 #ifdef SKIP_ASM
-extern "C" int func_003B8AB8(int h);
+extern "C" unsigned int func_003B8AB8(int h);
 extern "C" int func_003B9FC8(int h);
 // PORT: the unit declares func_003B7C40(int, int); its second argument is a status buffer here.
 int func_003B7C40_st(int h, int* st) __asm__("func_003B7C40");
@@ -1579,8 +1579,8 @@ INCLUDE_ASM("sound/streamsys", func_002ABD90);
 extern "C" void func_002A9ED8(void* s, int pos, int a2);
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B8C00(int h, int pos, int a2);
-extern "C" void func_003B9C20(int h, int pos);
+extern "C" int func_003B8C00(int h, int pos, int a2);
+extern "C" int func_003B9C20(int h, int pos);
 
 extern "C" void func_002ABD90(void* self, int pos, int a2)
 {
@@ -1613,8 +1613,8 @@ INCLUDE_ASM("sound/streamsys", func_002ABE78);
 extern "C" void func_002A9F38(void* s, int vol);
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B8790(int h, int vol);
-extern "C" void func_003B9B68(int h, int vol);
+extern "C" int func_003B8790(int h, int vol);
+extern "C" int func_003B9B68(int h, int vol);
 
 extern "C" void func_002ABE78(void* self, int vol)
 {
@@ -1654,10 +1654,10 @@ void func_002A9F30(void* self, int val);
 void* func_002AA408(void* self);
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B85F0(int h, int a);
+extern "C" int func_003B85F0(int h, int a);
 extern "C" void func_003B89E0(int h);
-extern "C" void func_003B9920(int h);
-extern "C" void func_003B9E48(int h, int a);
+extern "C" int func_003B9920(int h);
+extern "C" int func_003B9E48(int h, int a);
 
 extern "C" void func_002ABF60(void* self, int vol)
 {
@@ -1736,8 +1736,8 @@ INCLUDE_ASM("sound/streamsys", func_002AC180);
 #ifdef SKIP_ASM
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B8530(int h, int a, int b);
-extern "C" void func_003B9F38(int h, int a, int b);
+extern "C" int func_003B8530(int h, int a, int b);
+extern "C" int func_003B9F38(int h, int a, int b);
 
 extern "C" void func_002AC180(void* self)
 {
@@ -2027,7 +2027,7 @@ INCLUDE_ASM("sound/streamsys", func_002ACAC8);
 extern "C" int func_002ABB80(void* self);
 extern "C" void func_002ABE78(void* self, int a1);
 extern "C" void func_002ABF60(void* self, int a1);
-extern "C" void func_003B9D00(int h);
+extern "C" int func_003B9D00(int h);
 
 extern "C" void func_002ACAC8(void* self)
 {
@@ -2046,7 +2046,7 @@ INCLUDE_ASM("sound/streamsys", func_002ACB30);
 #ifdef SKIP_ASM
 extern "C" int func_002ABB80(void* self);
 extern "C" void func_002ABE78(void* self, int a1);
-extern "C" void func_003B9DC8(int h);
+extern "C" int func_003B9DC8(int h);
 
 extern "C" void func_002ACB30(void* self)
 {
@@ -2064,10 +2064,10 @@ INCLUDE_ASM("sound/streamsys", func_002ACB80);
 #ifdef SKIP_ASM
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" void func_003B8530(int h, int a, int b);
-extern "C" void func_003B85F0(int h, int a);
-extern "C" void func_003B9E48(int h, int a);
-extern "C" void func_003B9F38(int h, int a, int b);
+extern "C" int func_003B8530(int h, int a, int b);
+extern "C" int func_003B85F0(int h, int a);
+extern "C" int func_003B9E48(int h, int a);
+extern "C" int func_003B9F38(int h, int a, int b);
 void* func_002AA408(void* self);
 void func_002A9F30(void* self, int val);
 
