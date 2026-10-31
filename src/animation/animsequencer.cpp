@@ -785,7 +785,7 @@ INCLUDE_ASM("animation/animsequencer", func_00314880);
 #ifdef SKIP_ASM
 // PORT: cMemMan_alloc is the game's tagged operator new(size, tag, flags, d); bound by asm label.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_003E6448(void* dst, int value, int size);
+extern "C" void* func_003E6448(void* dst, int value, int size);
 extern "C" void func_00314050(void* node, void* stream);
 extern const char D_0048A5C0[];
 
