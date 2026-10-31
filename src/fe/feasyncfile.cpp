@@ -334,7 +334,7 @@ extern char D_00461430[];
 // PORT: operator_new__FUi really takes (size, tag, flags, d)
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" int func_003DF748(void* file, void* data, int size);
-extern "C" void func_003E1BB8(void* file, void* data, int size);
+extern "C" int func_003E1BB8(void* file, void* data, int size);
 
 extern "C" void cFEAsyncManager_LoadDataFile(cFEAsyncManager* self, int idx)
 {
@@ -667,7 +667,7 @@ extern "C" void func_001A9890_4330(void* self, void* entry) __asm__("func_001A98
 extern "C" void* func_001A98B0_4330(void* self) __asm__("func_001A98B0__FPv");
 extern "C" void func_001AB370_4330(void* self, void* a1, int a2) __asm__("func_001AB370");
 extern "C" void func_001A4750_4330(void* self) __asm__("func_001A4750");
-extern "C" void func_001A6070_4330(void* self, int idx) __asm__("func_001A6070");
+extern "C" int func_001A6070(void* self, int idx);
 extern "C" void func_001A5FB8_4330(void* self, int idx) __asm__("func_001A5FB8");
 extern "C" void func_001A5128_4330(void* self, int idx, int n) __asm__("func_001A5128");
 extern "C" void func_001A66A8_4330(void* self, int idx, int on) __asm__("func_001A66A8");
@@ -746,7 +746,7 @@ extern "C" void func_001A4330(char* self, sObj_4330* w, int msg)
             sprintf(buf, D_004615A0, i);
             int id = *(int*)((char*)w + 0x38);
             if (id == GetHashValue32(buf)) {
-                func_001A6070_4330(self, i + *(int*)(self + 0x6F4));
+                func_001A6070(self, i + *(int*)(self + 0x6F4));
                 func_001A5FB8_4330(self, i);
                 func_001A5128_4330(self, i + *(int*)(self + 0x6F4), *(int**)(self + 0x6EC) - *(int**)(self + 0x6E8));
                 func_001A66A8_4330(self, i, 1);
@@ -2307,16 +2307,16 @@ void cUIText_setUnicodeStringByID(cUIText* self, int id);
 int UIAsciiToUnicode_i(unsigned short* dst, const char* src) __asm__("UIAsciiToUnicode__FPUsPCc");
 extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
 extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-extern "C" int cDirtysock_tag_TagFieldGetString4(const char* tag, char* buf, int size, const char* defval) __asm__("cDirtysock_tag_TagFieldGetString");
+extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
 extern "C" void func_001B25E0(const char* src, void* out);
-extern "C" void func_002C2508(void* str, int a1);
-extern "C" void func_002C2688(void* str, unsigned short* s);
+extern "C" unsigned short* func_002C2508(void* str, int a1);
+extern "C" unsigned short* func_002C2688(void* str, unsigned short* s);
 // PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...); the unit declares a 3-arg view
 extern "C" void func_002C26D0_1A7390(void* str, int fmt, ...) __asm__("func_002C26D0");
 extern "C" unsigned short* func_00392680(void* f, const unsigned short* str, unsigned short* dst, int max, float sx, float width);
 extern "C" char* func_003A04F0(void* text);
 extern "C" void func_003A0E90(cUIText* text, char* str);
-extern "C" void func_003EFA48(unsigned short* dst, int n, const char* src);
+extern "C" int func_003EFA48(unsigned short* dst, int n, const char* src);
 extern "C" char* func_004162D0(char*, const char*);
 extern "C" char* strcpy(char* dst, const char* src);
 extern void* D_004A28A8;
@@ -2386,9 +2386,9 @@ extern "C" void func_001A7390(void* self, const char* name, int mode)
     const char* tags = name + 0x54;
     unsigned int state = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(tags, D_004A1A28), -1);
     cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(tags, D_004A1A30), -1);
-    cDirtysock_tag_TagFieldGetString4(cDirtysock_tag_TagFieldFind(tags, D_004A1A38), s1, 0x20, D_004A1408);
-    cDirtysock_tag_TagFieldGetString4(cDirtysock_tag_TagFieldFind(tags, D_004A1A40), s2, 0x20, D_004A1408);
-    cDirtysock_tag_TagFieldGetString4(cDirtysock_tag_TagFieldFind(tags, D_004A1A48), s3, 0x20, D_004A1408);
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(tags, D_004A1A38), s1, 0x20, D_004A1408);
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(tags, D_004A1A40), s2, 0x20, D_004A1408);
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(tags, D_004A1A48), s3, 0x20, D_004A1408);
     if (mode == 0) {
         char buf[0x60];
         unsigned short wide[0x60];
@@ -3595,14 +3595,13 @@ struct cUIScreen;
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0039F4C0(void* list, void* item);
-// PORT: the unit declares func_001A8A40 as returning void; the body returns 0/1
-extern "C" int func_001A8A40_r(void* self, void* obj) __asm__("func_001A8A40");
+extern "C" int func_001A8A40(void* self, void* obj);
 
-extern "C" int func_001A8A40_r(void* self, void* obj)
+extern "C" int func_001A8A40(void* self, void* obj)
 {
     void* child = *(void**)((char*)self + 0x20);
     if (child != 0) {
-        return func_001A8A40_r(child, obj);
+        return func_001A8A40(child, obj);
     }
     void* item = ((cFEVObj_001A8A40*)self)->v26(obj);
     if (item != 0) {
@@ -3831,7 +3830,7 @@ extern "C" int func_0025DA90(void* self);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001BCB58_v(void* mem, int a1) __asm__("func_001BCB58");
 extern "C" void* func_001BFBB8(void* mem, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A8F98(void* self);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void func_001A9CC0(void* self, void** popup, void* owner, void* data);
@@ -4014,7 +4013,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001A9268);
 void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B0F60(void* self, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern const char D_00461C60[];
 
 extern "C" void func_001A9268(void* self, int a1, int a2)
@@ -4146,7 +4145,7 @@ public:
 void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001BEE30(void* mem, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern const char D_00461CA0[];
 
 extern "C" void func_001A9438(void* self, int a1, int a2)
@@ -4240,7 +4239,7 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 struct sFEObj_001B1F88; // defined with func_001B1F88 (its ctor)
 extern "C" sFEObj_001B1F88* func_001B1F88(sFEObj_001B1F88* mem, int a1);
 extern "C" void* func_001BFBB8(void* mem, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_0025DA90(void* self);
 extern void* D_004A3028;
 extern int D_004A4E88;
@@ -4291,7 +4290,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001A9668);
 void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001BEE30(void* mem, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_0039F698(void* p);
 extern "C" void* cUIStateStack_getCurrentState(void* stack);
 extern const char D_00461CD8[];
@@ -4320,7 +4319,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001A9710);
 void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B3F78(void* mem, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_0039F698(void* p);
 extern "C" void* cUIStateStack_getCurrentState(void* stack);
 extern const char D_00460BF0[];
@@ -5784,7 +5783,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001ACB48);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void* func_001AD130(void* self, int a1);
@@ -5835,7 +5834,7 @@ extern "C" void func_001ACB48(void* self, void* a1, int kind)
 INCLUDE_ASM("fe/feasyncfile", func_001ACCD0);
 #ifdef SKIP_ASM
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001AD130(void* self, int a1);
 extern "C" void* func_001B6ED0(void* mem, int a1, void* owner, int a3, int a4, int a5);
 extern "C" void func_0039F290(void* list, void* item);
@@ -6394,7 +6393,7 @@ struct cUIText;
 extern "C" cUIText* cUIScreen_getObjectByHashName(void* screen, int hash);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001BFBB8(void* mem, int a1);
 extern "C" void func_0039F190(void* self, int a1);
 extern "C" void func_001ADC30(void* self, int a2);
@@ -6484,7 +6483,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001ADC30);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void* func_001BBD08(void* self, int a1, int a2);
@@ -6548,8 +6547,8 @@ INCLUDE_ASM("fe/feasyncfile", func_001ADDD0);
 extern "C" void* func_001A8500_DDD0(void* self, void* engine, void* owner) __asm__("func_001A8500");
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int cBENewRaceInterface_setGameMode_DDD0(void* iface, int mode) __asm__("cBENewRaceInterface_setGameMode");
-extern "C" void cBENewRaceInterface_setGameEvent_DDD0(void* iface, int ev) __asm__("cBENewRaceInterface_setGameEvent");
+extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
+extern "C" int cBENewRaceInterface_setGameEvent(void* iface, int ev);
 extern int D_004A4E88;
 extern int D_004A11B8;
 extern int D_00535C08[];
@@ -6576,8 +6575,8 @@ extern "C" void* func_001ADDD0(void* self, void* engine, void* owner)
     cRace_DDD0* race = (cRace_DDD0*)cBE_getInterface_Fv(cBE_getBE(), 0);
     D_004A11B8 = 1;
     D_00535C08[0] = 0;
-    cBENewRaceInterface_setGameMode_DDD0(race, 0);
-    cBENewRaceInterface_setGameEvent_DDD0(race, 0);
+    cBENewRaceInterface_setGameMode(race, 0);
+    cBENewRaceInterface_setGameEvent(race, 0);
     race->reset();
     *(int*)(s + 0x6D4) = 1;
     return self;
@@ -6596,7 +6595,7 @@ extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern "C" void func_001AF728(void* self, void* iface, void* screen);
 extern "C" void func_001AF688(void* self);
 extern "C" void func_001AF930(void* screen);
@@ -6782,7 +6781,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001AE680);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern "C" int func_0039A738(void* a);
 extern void* D_004A28A8;
 // D_00534B34 is a splat label inside D_00534B30
@@ -6832,14 +6831,14 @@ extern "C" void func_001AE680(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AE7A0);
 #ifdef SKIP_ASM
-extern "C" int cBENewRaceInterface_setNumberAI_E7A0(void* iface, int n) __asm__("cBENewRaceInterface_setNumberAI");
+extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern "C" void func_001AE680_E7A0(void* self) __asm__("func_001AE680");
 extern "C" void func_001AF568_E7A0(void* self) __asm__("func_001AF568");
 extern "C" int func_0039A738_E7A0(void* item) __asm__("func_0039A738");
 extern "C" void func_0025F4C0_E7A0(void* self, int a1, int a2) __asm__("func_0025F4C0");
 extern "C" void func_0025F628_E7A0(void* self, int a1, int a2) __asm__("func_0025F628");
 extern "C" void func_0039F600_E7A0(void* list) __asm__("func_0039F600");
-extern "C" void* func_00186610_E7A0(void* mem, int a1, int a2) __asm__("func_00186610");
+extern "C" void* func_00186610(void* mem, int a1, int a2);
 extern "C" void cUIStateStack_pushSpecial_E7A0(void* stack, void* state, int a2, int a3) __asm__("cUIStateStack_pushSpecial");
 extern "C" void func_001AF098_E7A0(void* self, int on) __asm__("func_001AF098");
 extern "C" void func_001AEC60_E7A0(void* self, int v) __asm__("func_001AEC60");
@@ -6900,7 +6899,7 @@ extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
             D_004A25A4 = 1;
             D_004A2594 = 0;
             D_004A2598 = 0;
-            char* p = (char*)func_00186610_E7A0(cMemMan_alloc(0x33C, D_00460C38, 0x100, 0), *(int*)&self->engine, 1);
+            char* p = (char*)func_00186610(cMemMan_alloc(0x33C, D_00460C38, 0x100, 0), *(int*)&self->engine, 1);
             *(int*)(p + 0x1C) = (*(int*)(p + 0x1C) & ~0x3F00) | 0x100;
             cUIStateStack_pushSpecial_E7A0(self->engine + 0x18, p, 0, 0);
             break;
@@ -6919,14 +6918,14 @@ extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
                 D_005308B8_E7A0.bit7 = 1;
                 D_005308B8_E7A0.bit8 = 1;
                 char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
-                cBENewRaceInterface_setNumberAI_E7A0(race, 0);
+                cBENewRaceInterface_setNumberAI(race, 0);
                 commit_E7A0(race);
             } else {
                 D_005308B8_E7A0.bit6 = func_0039A738_E7A0(self->opt6);
                 D_005308B8_E7A0.bit8 = func_0039A738_E7A0(self->opt8);
                 D_005308B8_E7A0.bit7 = func_0039A738_E7A0(self->opt7);
                 char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
-                cBENewRaceInterface_setNumberAI_E7A0(race, func_0039A738_E7A0(self->numAI));
+                cBENewRaceInterface_setNumberAI(race, func_0039A738_E7A0(self->numAI));
                 commit_E7A0(race);
             }
             func_0025F4C0_E7A0(D_004A3028, *(int*)((char*)D_004A3028 + 0x98), self->f14);
@@ -6959,7 +6958,7 @@ extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
             D_005308B8_E7A0.bit7 = func_0039A738_E7A0(a1);
         } else if (a1 == self->numAI) {
             char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
-            cBENewRaceInterface_setNumberAI_E7A0(race, func_0039A738_E7A0(self->numAI));
+            cBENewRaceInterface_setNumberAI(race, func_0039A738_E7A0(self->numAI));
             D_004A4E8C = func_0039A738_E7A0(self->numAI);
             commit_E7A0(race);
         }
@@ -7136,7 +7135,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001AF098);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0039A7A8(void* item, int enable);
-extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern int D_005308D0[];
 extern signed char D_00535C12_1AF098[] __asm__("D_00535C12");
 // PORT: a volatile view keeps the flag load ahead of the item load.
@@ -7345,7 +7344,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001AF470);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B0F60(void* self, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001AF688(void* self);
 extern "C" void func_001AB178(void* self, int err);
 extern "C" void func_001AB108(void* self);
@@ -7479,7 +7478,7 @@ void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern "C" int func_00144C98(void* track);
 extern "C" const char* func_00145340(void* track);
 extern "C" const char* func_00144BF0(void* track);
@@ -7758,9 +7757,9 @@ extern "C" char* func_00263270(void* self, int id);
 extern "C" void* cBXString_operatorE(void* self, void* other);
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void func_003E6448(void* dst, int c, int n);
-extern "C" int cBENewRaceInterface_setGameMode_FE68(void* iface, int mode) __asm__("cBENewRaceInterface_setGameMode");
-extern "C" void cBENewRaceInterface_setGameEvent_FE68(void* iface, int ev) __asm__("cBENewRaceInterface_setGameEvent");
-extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
+extern "C" int cBENewRaceInterface_setGameEvent(void* iface, int ev);
+extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern "C" void func_001B0850(void* self, void* iface, void* screen);
 extern "C" void func_0025E6D0(void* self, const char* str);
 extern "C" void func_001AF930(void* screen);
@@ -7844,8 +7843,8 @@ extern "C" void func_001AFE68(char* self)
     void* be = cBE_getInterface_Fv_FE68(cBE_getBE(), 0);
     D_00535C08[0] = r->f8;
     D_004A11B8 = 1;
-    cBENewRaceInterface_setGameMode_FE68(be, r->mode);
-    cBENewRaceInterface_setGameEvent_FE68(be, r->event);
+    cBENewRaceInterface_setGameMode(be, r->mode);
+    cBENewRaceInterface_setGameEvent(be, r->event);
     cBENewRaceInterface_setNumberAI(be, r->numAI);
     vcall_FE68(be);
     void* net = cBE_getInterface_Fv_FE68(*(void**)((char*)D_004A28A8 + 0x78), 7);
@@ -8214,7 +8213,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001B0708);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B0F60(void* self, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001B0C08(void* self);
 extern "C" void func_001AB178(void* self, int err);
 extern "C" void func_001AB108(void* self);
@@ -8864,7 +8863,7 @@ struct sFEObj_001B1F88;
 extern "C" sFEObj_001B1F88* func_001B1F88(sFEObj_001B1F88* mem, int a1);
 extern "C" void* func_001BFBB8(void* mem, int a1);
 extern "C" void* func_00192D00(void* mem, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_0025DA90(void* self);
 extern "C" void func_001B1760(void* self, int index);
 extern "C" void func_001B1B10(void* self, int sel, int flag);
@@ -9417,7 +9416,7 @@ extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void cBXString__cBXString(void* self, int flags);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001B3978(void* self, void* a1);
 extern "C" void func_001B3BF0(void* self);
 extern "C" void func_001B3D20(void* self, int idx, int on);
@@ -9519,9 +9518,9 @@ INCLUDE_ASM("fe/feasyncfile", func_001B25E0);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 void UIAsciiToUnicode(unsigned short* dst, const char* src);
-extern "C" void func_002C2508(void* str, int a1);
-extern "C" void func_002C2540(void* str, const char* s);
-extern "C" void func_002C2688(void* str, unsigned short* s);
+extern "C" unsigned short* func_002C2508(void* str, int a1);
+extern "C" unsigned short* func_002C2540(void* str, const char* s);
+extern "C" unsigned short* func_002C2688(void* str, unsigned short* s);
 extern "C" int func_004165A8(const char* a, const char* b);
 extern void* D_004A28A8;
 extern const char* D_004A1A60;
@@ -10181,7 +10180,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001B3760);
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B0F60(void* self, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_0039F600(void* p);
 extern const char D_00461C60[];
 
@@ -10202,7 +10201,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001B37D8);
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B0F60(void* self, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_0039F600(void* p);
 extern const char D_00461C60[];
 
@@ -10308,7 +10307,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001B3A30);
 int GetHashValue32(char* str);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" char* strcpy(char* dst, const char* src);
 extern "C" void func_001B2378(void* self, int a1);
 extern "C" void func_001B3978(void* self, void* a1);
@@ -10651,7 +10650,7 @@ extern "C" void func_001B40D0(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B4168);
 #ifdef SKIP_ASM
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 extern "C" void* func_0028B180();
 extern "C" void func_0028FC58(void*);
 
@@ -11669,7 +11668,7 @@ extern "C" void func_001B5830(void* self, void* a1, unsigned int kind)
 INCLUDE_ASM("fe/feasyncfile", func_001B5A58);
 #ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 // PORT: the unit declares func_001A97B8 as returning int; this caller ignores the result.
 extern "C" void func_001A97B8_v(void* self, void* a1, int a2) __asm__("func_001A97B8");
 extern "C" void* func_001BEE30(void* mem, int a1);
@@ -11880,7 +11879,7 @@ extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 extern "C" int func_001AAF90(void* self, void* msg);
 void func_001C57C0(void* self, int a1, int a2);
-extern "C" void func_002C2508(void* dst, int src);
+extern "C" unsigned short* func_002C2508(void* dst, int src);
 extern "C" void func_0039F190(void* self, int a1);
 // PORT: operator_new__FUi really takes (size, tag, flags, d)
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
@@ -11998,7 +11997,7 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 extern "C" void* func_00194A60(void* mem, int a1);
 extern "C" void func_001A86E8(int on);
 extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 void func_001B4198(void* self);
@@ -12869,7 +12868,7 @@ void func_00265E00(void* p);
 void func_00265E10(void* p);
 void func_00265E20(void* p);
 void func_00265E30(void* p);
-extern "C" void func_002C2508(void* str, int a1);
+extern "C" unsigned short* func_002C2508(void* str, int a1);
 // PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...); the unit declares a 3-arg view
 extern "C" void func_002C26D0_1B70D0(void* str, int fmt, ...) __asm__("func_002C26D0");
 extern "C" void func_002C2718(char* buf, const char* fmt, int a2);
@@ -14019,7 +14018,7 @@ extern "C" void* func_001BA3E0_8C38(void* mem, int a1) __asm__("func_001BA3E0");
 extern "C" void func_001BA280_8C38(void* self) __asm__("func_001BA280");
 extern "C" void func_001BA218_8C38(void* self) __asm__("func_001BA218");
 extern "C" void func_001B9820_8C38(void* self) __asm__("func_001B9820");
-extern "C" int func_001B9558_8C38(void* self) __asm__("func_001B9558");
+extern "C" bool func_001B9558(void* self);
 extern "C" void* func_001C0418_8C38(void* mem, int a1) __asm__("func_001C0418");
 extern char D_00464768[];
 extern char D_00464780[];
@@ -14136,7 +14135,7 @@ extern "C" void func_001B8C38(cState_8C38* self, char* a1, int msg)
         if (o == 0) {
             break;
         }
-        o->vt[8].fn((char*)o + o->vt[8].delta, func_001B9558_8C38(self) ^ 1);
+        o->vt[8].fn((char*)o + o->vt[8].delta, func_001B9558(self) ^ 1);
         break;
     }
     case 8: {
@@ -14196,7 +14195,7 @@ extern "C" void func_001B9088(void* self, void* menu)
 INCLUDE_ASM("fe/feasyncfile", func_001B91C8);
 #ifdef SKIP_ASM
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001AD130(void* self, int a1);
 extern "C" void* func_001B6ED0(void* mem, int a1, void* owner, int a3, int a4, int a5);
 extern "C" void func_0039F290(void* list, void* item);
@@ -14230,7 +14229,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001B92C8);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void func_001A9BC0(void* self, void* popup);
@@ -14915,7 +14914,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001BA280);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001AD130(void* self, int a1);
@@ -15082,7 +15081,7 @@ extern "C" void cBXString_Reset(void* self);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void cUIListBox_setEntryByAsciiString(void* box, int index, const char* str, int a3);
 extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001B88F0(void* self, int a1, int a2);
 extern "C" void func_001BA9F8(void* self, int a1);
 extern "C" void func_001BB840(void* self, void* box, int a2, int a3, int a4);
@@ -15265,7 +15264,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001BAB28);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void* func_001AD130(void* self, int a1);
@@ -15318,11 +15317,11 @@ INCLUDE_ASM("fe/feasyncfile", func_001BAC90);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 void func_001C57C0(void* self, int a1, int a2);
-extern "C" void func_001BBAC8(void* self, int state);
+extern "C" int func_001BBAC8(void* self, int state);
 extern "C" void* func_001BBD08(void* self, int a1, int a2);
 // PORT: unit declares func_001A8E40 with one arg; the real handler takes (self, id, msg)
 extern "C" void* func_001A8E40_msg(void* self, int id, void* msg) __asm__("func_001A8E40");
@@ -15477,7 +15476,7 @@ extern "C" void func_001BAED8(void* self, void* a1, int a2)
 INCLUDE_ASM("fe/feasyncfile", func_001BB098);
 #ifdef SKIP_ASM
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
-extern "C" void func_001BBAC8(void* self, int state);
+extern "C" int func_001BBAC8(void* self, int state);
 
 extern "C" void func_001BB098(void* self, void* a1, int a2)
 {
@@ -15910,10 +15909,8 @@ struct sObj1BBAC8 {
     char data[0xD0];
 };
 
-// Shows the error popup for a failed network operation; returns 1 if the code needs no popup.
-// PORT: callers declare func_001BBAC8 as void; defined under an asm label with its int result.
-extern "C" int func_001BBAC8_impl(void* self, int code) __asm__("func_001BBAC8");
-extern "C" int func_001BBAC8_impl(void* self, int code)
+extern "C" int func_001BBAC8(void* self, int code);
+extern "C" int func_001BBAC8(void* self, int code)
 {
     sObj1BBAC8 o;
     func_001C55F8(&o);
@@ -16091,7 +16088,7 @@ extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void* cBXString_operatorE(void* self, void* other);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9150(void* self, int a1, int a2, int a3, int a4, int a5, int a6);
 extern "C" void* func_001AD130(void* self, int a1);
 extern "C" void* func_001B6ED0(void* mem, int a1, void* owner, int a3, int a4, int a5);
@@ -16333,7 +16330,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001BC4F0);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void* func_001AD130(void* self, int a1);
@@ -17178,7 +17175,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001BD738);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 // PORT: func_001BE510 is defined as (self) in this unit, but this caller passes a second arg.
 void func_001BE510_BD738(void* self, int a1) __asm__("func_001BE510");
 extern "C" const char* func_0039A708(void* a);
@@ -17620,7 +17617,7 @@ struct sFELists1BE038;
 extern "C" int func_0025F120(void* self);
 extern "C" const char* func_0025F150(void* self, int a1);
 extern "C" int func_0025F180(void* self, int idx);
-extern "C" void func_00319028(void* ret, void* src, int n);
+extern "C" cBXString* func_00319028(void* ret, void* src, int n);
 extern "C" void func_0039A670(void* self);
 extern "C" int func_004165A8(const char* a, const char* b);
 extern void* D_004A3028;
@@ -18449,7 +18446,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001BF228);
 int GetHashValue32(char* str);
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void* func_001AD130(void* self, int a1);
@@ -18612,9 +18609,8 @@ extern "C" void func_001BF438(void* self, void* a1, int kind)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BF5A8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
-extern "C" int func_001A8A40_r(void* self, void* obj) __asm__("func_001A8A40");
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001B3F78(void* mem, int a1);
 extern "C" void func_00260F80();
 extern "C" int func_00261460(void* self);
@@ -18646,7 +18642,7 @@ extern "C" void func_001BF5A8(void* self, void* a1, int kind)
     switch ((unsigned int)kind) {
     case 15:
         *(int*)((char*)self + 0x6B0) = 1;
-        if (func_001A8A40_r(self, func_001B3F78(cMemMan_alloc(0x91C, D_00460BF0, 0, 0), *(int*)((char*)self + 0x10))) != 0) {
+        if (func_001A8A40(self, func_001B3F78(cMemMan_alloc(0x91C, D_00460BF0, 0, 0), *(int*)((char*)self + 0x10))) != 0) {
             func_00261408(GetSession_001BF5A8());
             func_0025B800(D_004A3028);
             func_002636F0(func_002591B8(), 0);
@@ -18740,7 +18736,7 @@ void cMemMan_free(void* p);
 // PORT: operator_new__FUi really takes (size, tag, flags, d)
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9BC0(void* self, void* popup);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void* func_001AC010(void* self, int a1);
@@ -19090,8 +19086,7 @@ extern "C" void func_0025B800(void* self);
 extern "C" void func_00261408(void* self);
 // func_001A97B8 returns void (its asm never sets $2); the unit declares it int
 extern "C" void func_001A97B8_v(void* self, void* a1, int a2) __asm__("func_001A97B8");
-// PORT: the unit declares func_001A8A40 as returning void; the body returns 0/1
-extern "C" int func_001A8A40_r(void* self, void* obj) __asm__("func_001A8A40");
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00194A60(void* mem, int a1);
 extern "C" int* func_002591B8();
@@ -19119,7 +19114,7 @@ extern "C" void func_001C0138(void* self, void* a1, int a2)
     if (a2 == 0xF) {
         func_001A97B8_v(self, a1, 0xF);
         *(int*)((char*)self + 0x6B0) = 1;
-        if (func_001A8A40_r(self, func_00194A60(cMemMan_alloc(0x58, D_00460BA8, 0, 0), *(int*)((char*)self + 0x10))) != 0) {
+        if (func_001A8A40(self, func_00194A60(cMemMan_alloc(0x58, D_00460BA8, 0, 0), *(int*)((char*)self + 0x10))) != 0) {
             func_00261408(GetSession_001C0138());
             func_0025B800(D_004A3028);
             func_002636F0(func_002591B8(), 0);
@@ -19205,7 +19200,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C0358);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B0F60(void* self, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern const char D_00461C60[];
 
 extern "C" void* func_001C0358(void* self, int a1, int a2)
@@ -19560,7 +19555,7 @@ extern "C" void func_001C0CE0(void* self, void* item)
 INCLUDE_ASM("fe/feasyncfile", func_001C0D28);
 #ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A8918(void* self, int a1, int msg);
 extern "C" void* func_001BEE30(void* mem, int a1);
 extern "C" void* func_001B88F0(void* self, int a1, int a2);
@@ -19896,7 +19891,7 @@ struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* self, int id);
 // PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cBENewRaceInterface_setNumberAI(void* iface, int n);
+extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern "C" void func_001A8918(void* self, int a1, int msg);
 extern "C" void func_001C13E0(void* self, int show);
 extern "C" void func_001C17F8(void* self, int a1);
@@ -20063,7 +20058,7 @@ int GetHashValue32(char* str);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B0F60(void* self, int a1);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001AB178(void* self, int err);
 extern "C" int func_0039F698(void* p);
 extern "C" void* func_001A9C50(void* self);
@@ -20921,7 +20916,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C2C50);
 #ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_0018D7F0(void* mem, int engine, int a2, int a3, int a4);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 extern "C" void* func_001C1C50(void* self, int a1);
 extern const char D_00460D90[];
@@ -21344,7 +21339,7 @@ extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* cUIScreen_getObjectByHashName_3668(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
 extern "C" void func_001A8918_3668(void* self, void* w, int msg) __asm__("func_001A8918");
-extern "C" void func_001A8A40_3668(void* self, void* obj) __asm__("func_001A8A40");
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001BFBB8_3668(void* mem, void* a1) __asm__("func_001BFBB8");
 extern "C" void func_001C49C8_3668(void* self) __asm__("func_001C49C8");
 extern "C" int func_0039A738_3668(void* w) __asm__("func_0039A738");
@@ -21353,7 +21348,7 @@ extern "C" void func_001C3310_3668(void* self) __asm__("func_001C3310");
 extern "C" void func_001C3EE8_3668(void* self, int mode) __asm__("func_001C3EE8");
 extern "C" void func_001A9B58_3668(void* self) __asm__("func_001A9B58");
 extern "C" void func_003A0290_3668(void* w, void* pos) __asm__("func_003A0290");
-extern "C" int func_0025F338_3668(void* p) __asm__("func_0025F338");
+extern "C" int func_0025F338(void* p);
 extern "C" void func_001C3D68_3668(void* self, int idx, int count) __asm__("func_001C3D68");
 extern void* D_004A3028;
 extern const char D_0045FF28[];
@@ -21431,7 +21426,7 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
     }
     switch (msg) {
     case 6:
-        func_001A8A40_3668(self, func_001BFBB8_3668(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(void**)(self + 0x10)));
+        func_001A8A40(self, func_001BFBB8_3668(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(void**)(self + 0x10)));
         return;
     case 9:
         if (isButton_3668(w, D_00465C78)) {
@@ -21480,7 +21475,7 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
                     pos.x = pos.x + -40.0f;
                     *(cPos_3668*)((char*)t + 0x44) = pos;
                     t->setVisible(1);
-                    func_001C3D68_3668(self, i + *(int*)(self + 0x6E8), func_0025F338_3668(D_004A3028));
+                    func_001C3D68_3668(self, i + *(int*)(self + 0x6E8), func_0025F338(D_004A3028));
                     break;
                 }
             }
@@ -22300,7 +22295,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C5368);
 #ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_001A8918(void* self, int a1, int msg);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void func_001A9B58(void* self);
 extern "C" void* func_001C1C50(void* self, int a1);
 extern const char D_004611A8[];
