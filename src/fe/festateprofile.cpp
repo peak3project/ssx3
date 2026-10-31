@@ -646,8 +646,7 @@ extern "C" void* func_00227F80(void* app);
 extern "C" void func_0023CAE8(void* app, int a1, int a2);
 extern "C" void func_00241E18(void*, unsigned short*, int);
 void cMemMan_free(void* p);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern void* D_004A28A8;
 extern char D_0045E2A0[];
 
@@ -702,7 +701,7 @@ extern "C" void func_0018FC98(void* p)
         *(int*)((char*)self + 0x1DC) = 1;
         if (*(int*)((char*)self + 0x210) == 0 && *(int*)((char*)self + 0x204) == 0) {
             *(int*)((char*)self + 0x19C) = 0x16;
-            unsigned short* buf = (unsigned short*)operator_new_tag(0x640, D_0045E2A0, 0x100, 0);
+            unsigned short* buf = (unsigned short*)operator_new__FUi(0x640, D_0045E2A0, 0x100, 0);
             func_00241E18(func_00227F80(D_004A28A8), buf, 0x320);
             self->showMessage(buf, 1, 1, 0, 0, 1);
             *(int*)((char*)self + 0x210) = 1;
