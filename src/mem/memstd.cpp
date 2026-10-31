@@ -858,7 +858,7 @@ extern "C" int func_00252960(int unused, int id)
 INCLUDE_ASM("mem/memstd", func_00252980);
 #ifdef SKIP_ASM
 extern "C" int func_00320B68(int);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 
 // PORT: the unit declares func_00252980 as `void* (void*)`; existing callers bind the
 // 6-argument form below by asm label (the 6th argument is unused).
@@ -867,7 +867,7 @@ void* func_00252980_6(void*, int, int, int, int, int) __asm__("func_00252980");
 void* func_00252980_6(void* tag, int size, int align, int d, int flags, int unused)
 {
     int lvl = func_00320B68(align) - 2 < 0 ? 0 : func_00320B68(align) - 2;
-    return operator_new_tag(size, (const char*)tag, flags | (lvl << 24) | 0x10000000, d);
+    return operator_new__FUi(size, (const char*)tag, flags | (lvl << 24) | 0x10000000, d);
 }
 #endif
 
