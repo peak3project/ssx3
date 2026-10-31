@@ -323,7 +323,7 @@ extern const sVt9_6238 D_004886E0;
 extern const sVt22_6238 D_00488728;
 extern char D_00459B90[];
 
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 void* func_002F64F0(void* self);
 
 // PORT: hand-written form of g++ 2.95's constructor for a class with a virtual base
@@ -855,10 +855,10 @@ extern "C" void func_002F7AD8(void) {
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7AE0);
 #ifdef SKIP_ASM
-extern "C" void func_002DAA78();
+extern "C" void func_002DAA78(void* vself);
 
-extern "C" void func_002F7AE0(void) {
-    func_002DAA78();
+extern "C" void func_002F7AE0(void* vself) {
+    func_002DAA78(vself);
 }
 #endif
 //100%
@@ -887,10 +887,10 @@ extern "C" void func_002F7B28(void) {
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7B30);
 #ifdef SKIP_ASM
-extern "C" void func_002D4BE0();
+extern "C" void func_002D4BE0(void* self);
 
-extern "C" void func_002F7B30(void) {
-    func_002D4BE0();
+extern "C" void func_002F7B30(void* self) {
+    func_002D4BE0(self);
 }
 #endif
 //100%
@@ -919,10 +919,10 @@ extern "C" void func_002F7B78(void) {
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7B80);
 #ifdef SKIP_ASM
-extern "C" void func_002EF6A0();
+extern "C" void func_002EF6A0(void* self);
 
-extern "C" void func_002F7B80(void) {
-    func_002EF6A0();
+extern "C" void func_002F7B80(void* self) {
+    func_002EF6A0(self);
 }
 #endif
 //100%
@@ -935,10 +935,10 @@ extern "C" void func_002F7BA0(void) {
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7BA8);
 #ifdef SKIP_ASM
-extern "C" void func_002F1148();
+extern "C" void func_002F1148(void *arg0);
 
-extern "C" void func_002F7BA8(void) {
-    func_002F1148();
+extern "C" void func_002F7BA8(void *arg0) {
+    func_002F1148(arg0);
 }
 #endif
 //100%
@@ -1315,10 +1315,10 @@ extern "C" int *func_002F7E60(void) {
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7E70);
 #ifdef SKIP_ASM
-extern "C" void func_002D9B40();
+extern "C" void func_002D9B40(void* self);
 
-extern "C" void func_002F7E70(void) {
-    func_002D9B40();
+extern "C" void func_002F7E70(void* self) {
+    func_002D9B40(self);
 }
 #endif
 //100%
@@ -1349,10 +1349,10 @@ extern "C" void func_002F7EA0(void) {
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F7EA8);
 #ifdef SKIP_ASM
-extern "C" void func_002E6640();
+extern "C" void func_002E6640(void* self);
 
-extern "C" void func_002F7EA8(void) {
-    func_002E6640();
+extern "C" void func_002F7EA8(void* self) {
+    func_002E6640(self);
 }
 #endif
 //100%
@@ -1542,7 +1542,7 @@ INCLUDE_ASM("visualfx/worldlightman", func_002F8060);
 struct sLightVec_002F8060 { float x, y, z, w; };
 
 extern void* D_004880C0[];
-void func_002E4D70(void* self);
+void* func_002E4D70(void* self);
 
 extern "C" void* func_002F8060(void* self, sLightVec_002F8060 v)
 {
