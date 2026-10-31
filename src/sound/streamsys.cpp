@@ -1,5 +1,7 @@
 #include "common.h"
 
+extern "C" char* strcpy(char* dst, const char* src);
+
 //100%
 INCLUDE_ASM("sound/streamsys", cStreamInstance_cStreamInstance);
 #ifdef SKIP_ASM
@@ -1526,7 +1528,6 @@ void func_002ABCE8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("sound/streamsys", func_002ABCF8);
 #ifdef SKIP_ASM
-extern "C" char* strcpy(char* dst, const char* src);
 
 extern "C" void func_002ABCF8(void* self, int a, const char* name, int b)
 {
