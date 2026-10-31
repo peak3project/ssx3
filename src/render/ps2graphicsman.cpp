@@ -95,21 +95,21 @@ extern "C" void func_003672C0(sGmPtrTable* self, int idx)
 //100%
 INCLUDE_ASM("render/ps2graphicsman", func_00367310);
 #ifdef SKIP_ASM
-extern "C" void func_00367310(void)
+extern "C" void func_00367310(void* self)
 {
     for (int i = 0; i < 1500; i++) {
     }
 }
 #endif
 
-extern "C" void* func_00365E40(void*, int, int, void*);
+extern "C" void func_00365E40(void*, int, int, void*);
 
 //100%
 INCLUDE_ASM("render/ps2graphicsman", func_00367340__FPvii);
 #ifdef SKIP_ASM
-void* func_00367340(void* self, int a1, int a2)
+void func_00367340(void* self, int a1, int a2)
 {
-    return func_00365E40((char*)self + 0x4350, a1, a2, (char*)self + 0x8);
+    func_00365E40((char*)self + 0x4350, a1, a2, (char*)self + 0x8);
 }
 #endif
 
@@ -118,13 +118,13 @@ INCLUDE_ASM("render/ps2graphicsman", func_00367360);
 #ifdef SKIP_ASM
 extern "C" void func_00366548(void* p);
 // PORT: the unit defines func_00367310(void), but this caller passes self.
-void func_00367310_1(void* self) __asm__("func_00367310");
+void func_00367310(void* self);
 
 extern "C" void func_00367360(void* self)
 {
     int i;
     func_00367230();
-    func_00367310_1(self);
+    func_00367310(self);
     func_00366548((char*)self + 0x1F60);
     func_00366548((char*)self + 0x4350);
     for (i = 1; i >= 0; i--) {
@@ -164,7 +164,7 @@ INCLUDE_ASM("render/ps2graphicsman", func_00367440);
 extern "C" void cPSPGraphicsMan_NewBindTexID(void* self, int id);
 extern "C" int func_00366CE0(void* heap, int size, int idx, int other, int a4, int a5);
 extern "C" void func_00366E90(void* self, void* tex);
-extern "C" void* func_003E6574(void*, void*, int);
+extern "C" void func_003E6574(void*, void*, int);
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
 // PORT: operator_new__FUi is the game's tagged allocator (size, tag, flags, d); bound by asm label
 void* operator_new_7440(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
@@ -503,7 +503,7 @@ extern "C" int func_00367CD0(void* self, int a, int b, int c)
 //100%
 INCLUDE_ASM("render/ps2graphicsman", func_00367D20);
 #ifdef SKIP_ASM
-extern "C" void* func_003E6574(void*, void*, int);
+extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00369098(void* self, int idx);
 
 extern "C" void func_00367D20(void* self, int idx, void* data, int a3, int a4, int a5, int a6,
@@ -1086,7 +1086,7 @@ extern "C" void func_003691B0(sGfxTexTable* self, int idx, int tfx)
 INCLUDE_ASM("render/ps2graphicsman", func_003691F8);
 #ifdef SKIP_ASM
 extern "C" void func_00416210(void* dst, int c, int n);
-extern "C" void func_003E6448(void* dst, unsigned int value, int size);
+extern "C" void* func_003E6448(void* dst, unsigned int value, int size);
 extern void* D_004A5B80;
 extern void* D_00493950[];
 
@@ -1243,7 +1243,7 @@ extern "C" void func_00369610(void* self, int* mask)
 //100%
 INCLUDE_ASM("render/ps2graphicsman", func_00369690);
 #ifdef SKIP_ASM
-extern "C" void* func_003E6574(void*, void*, int);
+extern "C" void func_003E6574(void*, void*, int);
 
 extern "C" void func_00369690(void* self, int count, void* src)
 {
