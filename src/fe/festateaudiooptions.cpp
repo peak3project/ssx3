@@ -233,14 +233,14 @@ extern "C" int func_00196B08(void* self, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("fe/festateaudiooptions", func_00196B90);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, signed char a1);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 int GetHashValue32(char* str);
-extern "C" void func_003E6448(void* p, int c, int n);
+extern "C" void* func_003E6448(void* p, int c, int n);
 extern "C" int func_00398380(void* list, int hash);
 extern "C" int func_00150928(void* iface, int idx, int ch);
 // PORT: 64-bit results (long is 8 bytes on the EE).
@@ -295,7 +295,7 @@ static inline int Find_196B90(char* mgr, int hash)
 extern "C" void* func_00196B90(void* p, int a1, signed char idx, int a3)
 {
     sAudioState_196B90* self = (sAudioState_196B90*)p;
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 0x11;
     *(void***)((char*)self + 0x8) = D_00469378;
     *(signed char*)((char*)self + 0x44) = idx;
@@ -401,7 +401,7 @@ struct sVEntry00196E80 {
 };
 
 int GetHashValue32(char* str);
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 extern "C" void* func_0039F9D8(void* self, int id);
 extern char D_004A18A8[];
 extern void* D_004A28A8;
@@ -422,15 +422,15 @@ extern "C" void func_00196E80(void* self)
 //100%
 INCLUDE_ASM("fe/festateaudiooptions", func_00196F00);
 #ifdef SKIP_ASM
-extern "C" void func_00186518(void* self);
+extern "C" void func_00186518(void* self, void* a1);
 extern "C" void func_00197B88(void* self);
 extern "C" void func_00197E70(void* self);
 extern "C" void cFEStateRequestLine_updateButtonsText(void* self, int a1);
 extern "C" void cFEStateRequestLine_updateHelpText(void* self, int a1);
 
-extern "C" void func_00196F00(void* self)
+extern "C" void func_00196F00(void* self, void* a1)
 {
-    func_00186518(self);
+    func_00186518(self, a1);
     *(int*)((char*)self + 0x150) = 0;
     func_00197B88(self);
     func_00197E70(self);
