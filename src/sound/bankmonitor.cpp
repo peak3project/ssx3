@@ -2256,7 +2256,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002B0088);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void func_002A77F8(void* parser, void* src, int n);
+extern "C" void* func_002A77F8(void* parser, void* src, int n);
 extern "C" void func_002A7890(void* parser, int flags);
 extern "C" void func_002A7A20(void* parser);
 extern "C" int func_002A7C68(void* parser, int file);
@@ -2710,7 +2710,7 @@ INCLUDE_ASM("sound/bankmonitor", SPCH_Init);
 #ifdef SKIP_ASM
 extern "C" int func_003D6778(int a, int b, int c);
 // PORT: the unit defines func_002ADF60() with no args; this caller passes one.
-int func_002ADF60_a(int seed) __asm__("func_002ADF60");
+int func_002ADF60_a(void* seed) __asm__("func_002ADF60");
 extern "C" void bxLogPrint(const char* fmt, ...);
 extern "C" int func_003D6840(void* fn, int seed, int buf);
 extern "C" int func_003D6C58(int n);
@@ -2725,7 +2725,7 @@ extern char D_004833A8[];
 extern "C" void SPCH_Init(void* self)
 {
     int buf = func_003D6778(0x5622, 0x10, 1);
-    int seed = func_002ADF60_a(*(int*)(**(char***)self + 0x1D8));
+    int seed = func_002ADF60_a(*(void**)(**(char***)self + 0x1D8));
     bxLogPrint(D_00483390, seed);
     func_003D6840((void*)func_002AF8A8, seed, buf);
     int n = func_003D6C58(500);
@@ -2954,7 +2954,7 @@ struct sPacked8_1268 { long v; } __attribute__((packed));
 extern const sPacked8_1268 D_004A37E0_2B1268[] __asm__("D_004A37E0");
 extern "C" int func_002AB150(void* self, int i);
 extern "C" void func_002AB0D0(void* self, int i, int val);
-extern "C" void func_002ADCA0(int a, int b, long t, void* c, int d, int e, int f, int g);
+extern "C" int func_002ADCA0(int a, int b, long t, void* c, int d, int e, int f, int g);
 extern "C" int func_002B1248_pp(void* self, void* msg) __asm__("func_002B1248");
 struct sVE1268 { short delta; short index; int (*fn)(void*, int, int, int); };
 
@@ -2984,7 +2984,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002B1348);
 struct sPacked8_1348 { long v; } __attribute__((packed));
 extern const sPacked8_1348 D_004A37D8_2B1348[] __asm__("D_004A37D8");
 extern "C" int func_002AB150(void* self, int i);
-extern "C" void func_002ADCA0(int a, int b, long t, void* c, int d, int e, int f, int g);
+extern "C" int func_002ADCA0(int a, int b, long t, void* c, int d, int e, int f, int g);
 extern "C" int func_002B1268(void* self, void* msg);
 
 extern "C" int func_002B1348(void* self, void* msg)
@@ -3124,7 +3124,7 @@ extern "C" void func_002B1720(sBankSlots* self)
 }
 #endif
 
-extern "C" void* func_002AFD10(int);
+extern "C" void* func_002AFD10(void*);
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1758__FPvi);
@@ -3219,8 +3219,7 @@ extern "C" void* func_002B1B98(int a0, int a1, int a2, int a3, char a4, int a5, 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1C50);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* bmNew_1C50(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_003D3058(int a, int b);
 extern "C" void func_002B4A20(void* self, void* name, int sync);
 extern "C" void func_002B21E0(void*, int);
@@ -3303,8 +3302,8 @@ extern "C" void* func_002B1C50_body(sBankMon_1C50* self, int a0, int a1, int a2,
     self->f58 = -1;
     self->f5C = 0;
     self->f44 = bankCur_1C50(def)->f14;
-    self->buf24 = bmNew_1C50(0x37000, D_004833F0, 0, 0);
-    self->buf28 = bmNew_1C50(func_003D3058(1, 0), D_00483408, 0, 0);
+    self->buf24 = operator_new__FUi(0x37000, D_004833F0, 0, 0);
+    self->buf28 = operator_new__FUi(func_003D3058(1, 0), D_00483408, 0, 0);
     float scale = (float)*(int*)(snd + 0x88) * 0.01f;
     def->vols[def->cur] = (int)BM_MAX_1C50(BM_MIN_1C50((float)def->vols[def->cur] * scale, 127.0f), 0.0f);
     def->entries[def->cur].vol = BM_MAX_1C50(BM_MIN_1C50(def->vols[def->cur], 127), 0);
@@ -3634,7 +3633,7 @@ int func_002B2578_impl(void* self, void* out)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B25C8);
 #ifdef SKIP_ASM
-extern "C" void func_002B2578(void* self, void* out);
+extern "C" int func_002B2578(void* self, void* out);
 extern "C" int func_003B7C40(int h, int v);
 
 struct sBmInfo {
@@ -4267,7 +4266,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002B3D80);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct sPacked8_3D80 { long v; } __attribute__((packed));
 extern const sPacked8_3D80 D_004A3850_3D80[] __asm__("D_004A3850");
-extern void func_002ADCA0_3D80(int a, int b, long t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+extern int func_002ADCA0_3D80(int a, int b, long t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 
 extern "C" void func_002B3D80(void* self, signed char target, float duration)
 {
@@ -4318,7 +4317,7 @@ extern "C" void func_002B3EB0(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3EE8);
 #ifdef SKIP_ASM
-extern "C" int func_0041AD80(const char* a, const char* b);
+extern "C" char* func_0041AD80(const char* a, const char* b);
 
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 struct sBankMonFind {
@@ -4608,7 +4607,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002B4470);
 #ifdef SKIP_ASM
 struct sPacked8_4470 { long v; } __attribute__((packed));
 extern const sPacked8_4470 D_004A3838_4470[] __asm__("D_004A3838");
-extern void func_002ADCA0_4470(int a, int b, long t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+extern int func_002ADCA0_4470(int a, int b, long t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 
 // PORT: 64-bit long sound key, read unaligned from a const table
 extern "C" void func_002B4470(void* self)
@@ -4664,7 +4663,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002B4568);
 extern const sPacked8 D_004A3840_2B4568[] __asm__("D_004A3840");
 extern "C" int func_002B2778(void* ent);
 extern "C" int func_002B2500(void* ent);
-extern "C" void func_002ADCA0(int a, int b, long t, void* c, int d, int e, int f, int g);
+extern "C" int func_002ADCA0(int a, int b, long t, void* c, int d, int e, int f, int g);
 
 extern "C" void func_002B4568(void* self, void* ent)
 {
