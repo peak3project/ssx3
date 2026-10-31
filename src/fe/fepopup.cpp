@@ -4,7 +4,7 @@
 INCLUDE_ASM("fe/fepopup", cScreenPopup_cScreenPopup);
 #ifdef SKIP_ASM
 extern "C" void* func_0039E318(void* self, void* engine, void* owner);
-extern "C" void func_001C55F8(void* self);
+extern "C" void* func_001C55F8(void* self);
 extern "C" void func_00416210(void* dst, int c, int n);
 extern void* D_0046CBD8[];
 extern int D_004A3E90;
@@ -103,15 +103,15 @@ extern "C" void cScreenPopup_onCreateScreen(void* self)
 }
 #endif
 
-void* func_0039E4A0(void*);
+void func_0039E4A0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C5B68__FPv);
 #ifdef SKIP_ASM
-void* func_001C5B68(void* self)
+void func_001C5B68(void* self)
 {
     *(int*)((char*)self + 0x2b8) = 0;
-    return func_0039E4A0(self);
+    func_0039E4A0(self);
 }
 #endif
 
@@ -2453,14 +2453,14 @@ extern "C" void func_001CA528(void* self)
 }
 #endif
 
-extern "C" void* func_0039E6B8(void* self);
+extern "C" void func_0039E6B8(void* self);
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA578__FPv);
 #ifdef SKIP_ASM
-void* func_001CA578(void* self)
+void func_001CA578(void* self)
 {
-    return func_0039E6B8(self);
+    func_0039E6B8(self);
 }
 #endif
 
@@ -2585,7 +2585,7 @@ extern "C" void cScreenPopup_checkAndFixTextEntry(void* self, cUIText* text, con
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA8A0);
 #ifdef SKIP_ASM
-extern "C" void func_003E6448(void* dst, int value, int size);
+extern "C" void* func_003E6448(void* dst, int value, int size);
 
 extern "C" void func_001CA8A0(void* self)
 {
