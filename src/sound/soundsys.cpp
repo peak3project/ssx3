@@ -7221,8 +7221,7 @@ extern "C" void func_0029FCC8(void* self, void* vrider)
     if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
     float v = rider->f470;
-    float zero = 0.0f;
-    int pos2 = v >= zero;
+    int pos2 = v >= 0.0f;
     if (pos2) return;
     char* snd = (char*)self + 0x5560;
     if (func_002B0E28(snd, 0) == 0) return;
@@ -7230,15 +7229,15 @@ extern "C" void func_0029FCC8(void* self, void* vrider)
     if (func_00288B40(self, rider->v05(), D_004A36D8) < 0) return;
     int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
-        if (func_002B1458(snd, 0, 0x2084, (int)rider, func_00123128(rider), 0, 0, zero) != 0) {
+        if (func_002B1458(snd, 0, 0x2084, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
             D_004A482C_4(func_003D8008(1, 0, 0x2084), 2, r, 3);
         }
     } else if (sel == 2) {
-        if (func_002B1458(snd, 0, 0x2083, (int)rider, func_00123128(rider), 0, 0, zero) != 0) {
+        if (func_002B1458(snd, 0, 0x2083, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
             D_004A482C_4(func_003D8008(1, 0, 0x2083), 2, r, 3);
         }
     } else {
-        if (func_002B1458(snd, 0, 0x2091, (int)rider, func_00123128(rider), 0, 0, zero) != 0) {
+        if (func_002B1458(snd, 0, 0x2091, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
             D_004A482C_4(func_003D8008(1, 0, 0x2091), 2, r, 3);
         }
     }
