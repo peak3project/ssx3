@@ -3646,7 +3646,7 @@ struct sVEntry0037C8C0 {
 
 extern "C" double func_00413AF8(float f);
 extern "C" double dlog_C8C0(double) __asm__("func_0040D610");
-extern "C" double dmul_C8C0(double, double) __asm__("func_00411FD8");
+extern "C" double func_00411FD8(double, double);
 extern "C" double func_00411F70(double, double);
 extern "C" int dtoi_C8C0(double) __asm__("func_00412608");
 extern "C" void func_0037D090_C8C0(void* self, int h, int a, int b, int c, int d) __asm__("func_0037D090__FPv");
@@ -3720,9 +3720,9 @@ extern "C" int func_0037C8C0(char* self, sTexHdr_C8C0* src, int a2, int a3, int 
     if ((src->fC & 0xF0000000) != 0 && src->s8 != 0) {
         double d = func_00413AF8(240.0f / ((float)src->s8 * 6.1035156e-05f));
         d = dlog_C8C0(d);
-        d = dmul_C8C0(d, 1.4426950408889634);
+        d = func_00411FD8(d, 1.4426950408889634);
         d = func_00411F70(0.0, d);
-        d = dmul_C8C0(d, 16.0);
+        d = func_00411FD8(d, 16.0);
         int k = dtoi_C8C0(d);
         k = clampZ_C8C0(k, -0x7FF, -0x87);
         func_0037D090_C8C0(self, h, 5, 1, 0, k);
