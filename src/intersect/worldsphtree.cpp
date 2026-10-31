@@ -4126,7 +4126,7 @@ INCLUDE_ASM("intersect/worldsphtree", func_00341AA0);
 #ifdef SKIP_ASM
 extern char* D_004A5B64;
 extern void* D_00490B10[];
-extern "C" void func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
+extern "C" void* func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
 extern "C" float func_00351508(void* inst);
 float AIrandf(float lo, float hi);
 float func_00317890(float a, float b);
@@ -4435,7 +4435,7 @@ extern "C" void func_00341F38(sClampFloat_1F38* s)
 }
 #endif
 
-void func_0034FCC0(void*);
+void* func_0034FCC0(void*);
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341FC8);
@@ -4523,7 +4523,7 @@ INCLUDE_ASM("intersect/worldsphtree", func_003421A0);
 #ifdef SKIP_ASM
 extern char* D_004A5B64;
 extern void* D_004908F8[];
-extern "C" void func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
+extern "C" void* func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
 extern "C" float func_00351508(void* inst);
 
 struct sSphCtl_003421A0 {
