@@ -117,7 +117,7 @@ extern "C" void func_00180678(void* self);
 extern "C" void func_001806D8(void* self);
 extern "C" void func_00180768(void* self);
 extern "C" void func_00180840(void* self);
-extern "C" void func_001807C8(void* self);
+extern "C" int func_001807C8(void* self);
 
 struct sDbgObj_180EF0 {
     char pad0[0x8];
