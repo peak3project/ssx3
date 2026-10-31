@@ -10,9 +10,9 @@ extern char D_00489618_AE38[] __asm__("D_00489618");
 extern char D_00489628_AE38[] __asm__("D_00489628");
 extern char D_00489638_AE38[] __asm__("D_00489638");
 extern char D_00489648_AE38[] __asm__("D_00489648");
-extern "C" void func_003578A8_AE38(void*, int, void*, void*, void*) __asm__("func_003578A8");
-extern "C" void func_00351B40_AE38(void*, int, void*, void*, int, void*) __asm__("func_00351B40");
-extern "C" void func_00342C08_AE38(void*, int, void*, void*, void*) __asm__("func_00342C08");
+extern "C" void* func_003578A8_AE38(void*, int, void*, void*, void*) __asm__("func_003578A8");
+extern "C" void func_00351B40_AE38(void*, int, void*, void*, void*, void*) __asm__("func_00351B40");
+extern "C" void* func_00342C08_AE38(void*, int, void*, void*, void*) __asm__("func_00342C08");
 extern "C" void cDeadFadeNode_cDeadFadeNode_AE38(void*, int, void*, void*, void*) __asm__("cDeadFadeNode_cDeadFadeNode");
 struct N_AE38 { int p0, p1, p2; virtual ~N_AE38(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35(); virtual void v36(); virtual void v37(); };
 extern "C" int checkActiveNode(void *a, int type, void *buf) {
@@ -31,7 +31,7 @@ extern "C" int checkActiveNode(void *a, int type, void *buf) {
         return -1;
     case 11:
         *(int*)(o + 0xC) = 0;
-        func_00351B40_AE38(cMemMan_alloc(0x6C0, D_00489628_AE38, 0x20000000, 0), 1, o, buf, *(int*)(D_004A3DD8_AE38 + 0x294), n);
+        func_00351B40_AE38(cMemMan_alloc(0x6C0, D_00489628_AE38, 0x20000000, 0), 1, o, buf, *(void**)(D_004A3DD8_AE38 + 0x294), n);
         return -1;
     case 0:
         *(int*)(o + 0xC) = 0;
@@ -930,7 +930,7 @@ static inline char *refToPtr_C7D0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_C7D0(unsigned i) { if (i == 0) return 0; return refToPtr_C7D0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void func_00342C08_C7D0(void*, int, void*, void*, int) __asm__("func_00342C08");
+extern "C" void* func_00342C08_C7D0(void*, int, void*, void*, void*) __asm__("func_00342C08");
 extern char D_004896E8_C7D0[] __asm__("D_004896E8");
 struct V3_C7D0 { float x, y, z; };
 extern V3_C7D0 D_004C9098_C7D0 __asm__("D_004C9098");
@@ -1237,7 +1237,7 @@ static inline char *refToPtr_CFF0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_CFF0(unsigned i) { if (i == 0) return 0; return refToPtr_CFF0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void func_00351B40_CFF0(void*, int, void*, void*, int, int) __asm__("func_00351B40");
+extern "C" void func_00351B40_CFF0(void*, int, void*, void*, void*, void*) __asm__("func_00351B40");
 extern char D_00489708_CFF0[] __asm__("D_00489708");
 struct V3_CFF0 { float x, y, z; };
 extern V3_CFF0 D_004C9098_CFF0 __asm__("D_004C9098");
@@ -1306,7 +1306,7 @@ extern "C" V3_CFF0 func_002FCFF0(int n, Ent_CFF0 *e) {
     void *p = *(void**)(obj + 0xC);
     if (p && checkActiveNode(p, 11, buf))
         return D_004C9098_CFF0;
-    func_00351B40_CFF0(cMemMan_alloc(0x6C0, D_00489708_CFF0, 0x20000000, 0), 1, obj, buf, *(int*)(D_004A3DD8_CFF0 + 0x294), 0);
+    func_00351B40_CFF0(cMemMan_alloc(0x6C0, D_00489708_CFF0, 0x20000000, 0), 1, obj, buf, *(void**)(D_004A3DD8_CFF0 + 0x294), 0);
     return D_004C9098_CFF0;
 }
 #endif
@@ -1383,7 +1383,7 @@ static inline char *refToPtr_D420(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_D420(unsigned i) { if (i == 0) return 0; return refToPtr_D420(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void func_003578A8_D420(void*, int, void*, void*, int) __asm__("func_003578A8");
+extern "C" void* func_003578A8_D420(void*, int, void*, void*, void*) __asm__("func_003578A8");
 void operator_delete(int*);
 extern char D_00489718_D420[] __asm__("D_00489718");
 extern char D_00489730_D420[] __asm__("D_00489730");
@@ -2170,7 +2170,7 @@ static inline char *refToPtr_E840(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_E840(unsigned i) { if (i == 0) return 0; return refToPtr_E840(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void func_003578A8_E840(void*, int, void*, void*, int) __asm__("func_003578A8");
+extern "C" void* func_003578A8_E840(void*, int, void*, void*, void*) __asm__("func_003578A8");
 void operator_delete(int*);
 extern char D_00489740_E840[] __asm__("D_00489740");
 extern char D_00489730_E840[] __asm__("D_00489730");
@@ -4610,7 +4610,7 @@ struct R12_2BD8 { int a; int b; int c; };
 extern R12_2BD8 D_004C9098_2BD8 __asm__("D_004C9098");
 
 extern int D_004A3CF8_2BD8[2] __asm__("D_004A3CF8");
-extern "C" void func_0030A868(int, int, int, int);
+extern "C" int func_0030A868(int, int, int, int);
 extern int D_004A3DD8_2BD8 __asm__("D_004A3DD8");
 extern int D_004A5780_2BD8 __asm__("D_004A5780");
 extern unsigned D_004A5778_2BD8 __asm__("D_004A5778");
@@ -5277,8 +5277,8 @@ extern "C" void func_00303D88(void) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00303D90);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" int cBE_getBE_3D90(void) __asm__("cBE_getBE");
-void* cBE_getInterface_Fv_3D90(int be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE_3D90(void) __asm__("cBE_getBE");
+void* cBE_getInterface_Fv_3D90(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern const int D_004465E8_3D90[] __asm__("D_004465E8");
 extern signed char D_00535C11_3D90[] __asm__("D_00535C11");
 extern "C" int func_00303D90(unsigned i) {
@@ -5294,8 +5294,8 @@ extern "C" int func_00303D90(unsigned i) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00303DF8);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" int cBE_getBE_3DF8(void) __asm__("cBE_getBE");
-void* cBE_getInterface_Fv_3DF8(int be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE_3DF8(void) __asm__("cBE_getBE");
+void* cBE_getInterface_Fv_3DF8(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern const int D_004465F8_3DF8[] __asm__("D_004465F8");
 extern signed char D_00535C10_3DF8[] __asm__("D_00535C10");
 extern "C" int func_00303DF8(unsigned i) {
@@ -5311,8 +5311,8 @@ extern "C" int func_00303DF8(unsigned i) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00303E60);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" int cBE_getBE_3E60(void) __asm__("cBE_getBE");
-void* cBE_getInterface_Fv_3E60(int be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE_3E60(void) __asm__("cBE_getBE");
+void* cBE_getInterface_Fv_3E60(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern const int D_00446618_3E60[] __asm__("D_00446618");
 extern signed char D_00535C12_3E60[] __asm__("D_00535C12");
 extern "C" int func_00303E60(unsigned i) {
@@ -6342,7 +6342,7 @@ extern R12_6300 D_004C9098_6300 __asm__("D_004C9098");
 extern int D_004A3DB0_6300[2] __asm__("D_004A3DB0");
 extern "C" void func_001E3510(int, int);
 extern int D_00534B30_6300[] __asm__("D_00534B30");
-extern "C" void* cBE_getInterface_6300(int, int) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getInterface_6300(void*, int) __asm__("cBE_getInterface__Fv");
 extern char* D_004A28A8_6300 __asm__("D_004A28A8");
 extern int D_004A588C_6300 __asm__("D_004A588C");
 struct T12_6300 { int a; int b; Flag_6300 f; };
@@ -6369,7 +6369,7 @@ extern "C" R12_6300 func_00306300(int n, Ent_6300* e) {
     }
     int x = vp[0];
     int y = vp[1];
-    cBE_getInterface_6300(*(int*)(D_004A28A8_6300 + 0x78), 7);
+    cBE_getInterface_6300(*(void**)(D_004A28A8_6300 + 0x78), 7);
     if (D_00534B30_6300[0] == 0)
         func_001E3510(x, y);
     return D_004C9098_6300;
@@ -6903,14 +6903,14 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00307128);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char D_00489A30_7128[] __asm__("D_00489A30");
 extern "C" void* cWScriptProcess_cWScriptProcess(void* self, void* man, int a1, int a2);
-extern "C" int func_00309B70(int, int);
+extern "C" int func_00309B70(void*, int);
 extern "C" void* func_00307128(void* self, void* man, int a1, char* a2, int a3) {
     cWScriptProcess_cWScriptProcess(self, man, a1, (int)a2);
     *(void**)((char*)self + 0x5C) = D_00489A30_7128;
     *(int*)((char*)self + 0x60) = *(int*)(a2 + 0x50);
     *(int*)((char*)self + 0x64) = a3;
     for (int i = 0; i < 4; i++)
-        ((int*)((char*)self + 0x68))[i] = func_00309B70(*(int*)((char*)self + 0x10), ((int*)(a2 + 0x40))[i]);
+        ((int*)((char*)self + 0x68))[i] = func_00309B70(*(void**)((char*)self + 0x10), ((int*)(a2 + 0x40))[i]);
     return self;
 }
 #endif
@@ -7036,15 +7036,15 @@ extern "C" void func_00307308(char* self)
 INCLUDE_ASM("seg/seg_1FBE38", func_003074C0);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" int cBE_getBE_74C0(void) __asm__("cBE_getBE");
-int cBE_getInterface_Fv_74C0(int be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE_74C0(void) __asm__("cBE_getBE");
+extern "C" int cBE_getInterface__Fv(void* be, int kind);
 extern "C" int func_00153E80_74C0(int, int) __asm__("func_00153E80");
 extern "C" void func_001540F0_74C0(int, int, int) __asm__("func_001540F0");
 extern "C" void func_00307D78_74C0(void*) __asm__("func_00307D78");
 extern "C" void func_0030AC98(int, void *, int);
 struct P_74C0 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); };
 extern "C" void func_003074C0(P_74C0* self) {
-    int iface = cBE_getInterface_Fv_74C0(cBE_getBE_74C0(), 10);
+    int iface = cBE_getInterface__Fv(cBE_getBE_74C0(), 10);
     if (!func_00153E80_74C0(iface, *(int*)((char*)self + 0x20)))
         func_001540F0_74C0(iface, *(int*)((char*)self + 0x20), 1);
     int h = *(int*)((char*)self + 0x70);
