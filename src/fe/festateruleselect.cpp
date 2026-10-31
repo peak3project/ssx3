@@ -194,7 +194,7 @@ extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void cFEStateRuleSelect_setupMenu(void* self, signed char a1);
 extern "C" void func_0039B760(void* menu, int count);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045FB10[];
 extern char D_0045FB20[];
 extern char D_004A1398[];
@@ -320,14 +320,14 @@ extern "C" void cFEStateRuleSelect_onCreateScreen(sRuleSel_19188* self)
 }
 #endif
 
-extern "C" void* func_0039E4C0(void* self);
+extern "C" void func_0039E4C0(void* self);
 
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00191C48__FPv);
 #ifdef SKIP_ASM
-void* func_00191C48(void* self)
+void func_00191C48(void* self)
 {
-    return func_0039E4C0(self);
+    func_0039E4C0(self);
 }
 #endif
 
@@ -342,7 +342,7 @@ struct sRuleSel_2380;
 extern "C" void func_00192380(sRuleSel_2380* self, void* item);
 extern "C" int func_0039A738(void* self);
 extern "C" void func_0039F400(void* stack, void* state);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045D698[];
 extern char D_005308B8[];
 
