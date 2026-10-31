@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/festatetrophyroom", cFEStateTrophyRoom_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_004676C8[];
 
 extern "C" void cFEStateTrophyRoom_onCreateScreen(void* self)
@@ -19,14 +19,14 @@ extern "C" void cFEStateTrophyRoom_onCreateScreen(void* self)
 }
 #endif
 
-extern "C" void* func_0039E4C0(void* self);
+extern "C" void func_0039E4C0(void* self);
 
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D43D0__FPv);
 #ifdef SKIP_ASM
-void* func_001D43D0(void* self)
+void func_001D43D0(void* self)
 {
-    return func_0039E4C0(self);
+    func_0039E4C0(self);
 }
 #endif
 
@@ -204,7 +204,7 @@ extern "C" void func_001D4698(void* self, void* item, int msg)
 INCLUDE_ASM("fe/festatetrophyroom", func_001D4760);
 #ifdef SKIP_ASM
 extern "C" void func_001D4A20(void* self);
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001D4760(void* self)
 {
@@ -524,7 +524,7 @@ extern "C" void func_001D4B20(sSelf001D4B20* self)
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D4BC8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, signed char a1);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
@@ -534,7 +534,7 @@ extern void* D_004695E8[];
 
 extern "C" void* func_001D4BC8(void* self, int a1, signed char idx, int a3)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 0x2E;
     *(void***)((char*)self + 0x8) = D_004695E8;
     *(signed char*)((char*)self + 0x44) = idx;
@@ -550,7 +550,7 @@ INCLUDE_ASM("fe/festatetrophyroom", cFEStateRewardsRoom_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
 extern char D_00467738[];
@@ -699,12 +699,12 @@ extern "C" void func_001D4F90(void* self, int index, cUIText* text)
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D5038);
 #ifdef SKIP_ASM
-extern "C" void* func_001BEE30(void* self);
+extern "C" void* func_001BEE30(void* self, int a1);
 extern void* D_00468050[];
 
-extern "C" void* func_001D5038(void* self)
+extern "C" void* func_001D5038(void* self, int a1)
 {
-    func_001BEE30(self);
+    func_001BEE30(self, a1);
     *(void***)((char*)self + 0x8) = D_00468050;
     *(int*)((char*)self + 0xC) = 0x34;
     return self;
@@ -716,7 +716,7 @@ INCLUDE_ASM("fe/festatetrophyroom", func_001D5078);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_00467778[];
 
 extern "C" void func_001D5078(void* self)
@@ -754,7 +754,7 @@ INCLUDE_ASM("fe/festatetrophyroom", func_001D5138);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_001BF228(void* self, int msg);
 extern "C" void* func_001BFBB8(void* mem, int a1);
 extern "C" void func_0025C610(void* mgr);
@@ -818,7 +818,7 @@ extern "C" void* func_002591B8();
 extern "C" void func_002636F0(void* p, int a1);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001B3F78(void* mem, void* owner);
-extern "C" void func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8A40(void* self, void* obj);
 extern char D_00460BF0[];
 
 extern "C" void func_001D5280(void* self, void* item, int msg)
@@ -839,7 +839,7 @@ extern "C" void func_001D5280(void* self, void* item, int msg)
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D5330);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" void func_001D5488(void* self, int a1);
 extern void* D_00474E08[];
 extern void* D_0046C980[];
@@ -847,7 +847,7 @@ extern unsigned short D_004A1390[];
 
 extern "C" void* func_001D5330(void* self, int a1, int a2, int a3)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0x98) = a3;
     *(void***)((char*)self + 0x8) = D_00474E08;
     *(int*)((char*)self + 0x48) = 0;
@@ -863,7 +863,7 @@ extern "C" void* func_001D5330(void* self, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D53B0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" void func_001D5488(void* self, int a1);
 extern void* D_00474E08[];
 extern void* D_0046C980[];
@@ -871,7 +871,7 @@ extern unsigned short D_004A1390[];
 
 extern "C" void* func_001D53B0(void* self, int a1, int a2)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0x98) = 0;
     *(void***)((char*)self + 0x8) = D_00474E08;
     *(int*)((char*)self + 0x48) = 0;
