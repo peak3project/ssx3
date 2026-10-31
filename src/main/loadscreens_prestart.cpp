@@ -445,7 +445,7 @@ struct cAppMan;
 void cAppMan_setNextModule(cAppMan* self, unsigned int module);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_00231F80(void* fade);
-extern "C" int func_00231CD0_r(void* self) __asm__("func_00231CD0");
+extern "C" void* func_00231CD0_r(void* self) __asm__("func_00231CD0");
 extern void* D_004A28A8;
 extern char D_0047B8E8[];
 extern void* D_0047D788[];
@@ -544,7 +544,7 @@ extern "C" void cPreFELoadScreen_update(void* self)
 //100%
 INCLUDE_ASM("main/loadscreens_prestart", func_00232AE0);
 #ifdef SKIP_ASM
-extern "C" void func_00231CD0(void* self);
+extern "C" void* func_00231CD0(void* self);
 extern void* D_0047D7D0[];
 
 extern "C" void* func_00232AE0(void* self, int arg)
