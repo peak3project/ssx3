@@ -211,13 +211,14 @@ extern "C" void func_00136DE0(char* self, sVec4WM* a, sVec4WM* b)
 //100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00136E98);
 #ifdef SKIP_ASM
-extern "C" void func_00136F30();
+struct sWipeout_6F30;
+extern "C" void func_00136F30(sWipeout_6F30* self);
 extern "C" void func_00137D18(void*);
 extern "C" void func_00137750(void*);
 
 extern "C" void func_00136E98(int* self)
 {
-    func_00136F30();
+    func_00136F30((sWipeout_6F30*)self);
     if (*self == 0)
     {
         func_00137D18(self);
@@ -232,13 +233,13 @@ extern "C" void func_00136E98(int* self)
 //100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00136EE0);
 #ifdef SKIP_ASM
-extern "C" void func_00137138();
+extern "C" void func_00137138(void*);
 extern "C" void func_00138640(void*);
 extern "C" void func_00137860(void*);
 
 extern "C" void func_00136EE0(int* self)
 {
-    func_00137138();
+    func_00137138(self);
     if (*self == 0)
     {
         func_00138640(self);
