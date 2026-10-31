@@ -451,7 +451,7 @@ INCLUDE_ASM("replay/frameptr", func_0026EFB8);
 #ifdef SKIP_ASM
 extern "C" void* func_0026D5E8(void* self);
 void* func_0026E5A8(void* self);
-extern "C" void* func_00272288(void* self);
+extern "C" void func_00272288(void* self);
 void func_0026F4A0(void* self, int state);
 
 extern "C" void* func_0026EFB8(void* self)
@@ -554,7 +554,7 @@ struct cReplayFramePtr_F180 {
 };
 
 extern "C" void cReplayFramePtr_initBlock(void* self, unsigned int size);
-extern "C" void func_0026F228(void* self);
+extern "C" void* func_0026F228(void* self);
 void func_0026F4A0(void* self, int state);
 
 extern "C" void func_0026F180(cReplayFramePtr_F180* self)
