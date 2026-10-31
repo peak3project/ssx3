@@ -1090,7 +1090,7 @@ extern "C" float func_003AACE0(void* self, void* p, float arg)
 INCLUDE_ASM("world/worldview", func_003AAD98);
 #ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_003AA2F0(void* self);
+extern "C" func_003AA2F0_sView* func_003AA2F0(void* self);
 extern char D_00494F70[];
 extern void* D_00495090[];
 
@@ -1410,7 +1410,7 @@ extern "C" int func_003ABE40(func_003ABE40_cObj* self, void* a1)
 //100%
 INCLUDE_ASM("world/worldview", func_003ABF20);
 #ifdef SKIP_ASM
-extern "C" void func_003ABF50(void* self, void* a1);
+extern "C" int func_003ABF50(void* self, void* a1);
 
 // PORT: adds a pointer to an int field (offset -> pointer fixup); not 64-bit safe.
 extern "C" int func_003ABF20(void* self, void* a1)
