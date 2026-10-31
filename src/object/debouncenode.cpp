@@ -82,14 +82,14 @@ extern "C" void func_00342DD8(void* self)
 }
 #endif
 
-extern "C" void* func_00356B08(void* self);
+extern "C" void func_00356B08(void* self);
 
 //100%
 INCLUDE_ASM("object/debouncenode", func_00342E78__FPv);
 #ifdef SKIP_ASM
-void* func_00342E78(void* self)
+void func_00342E78(void* self)
 {
-    return func_00356B08(self);
+    func_00356B08(self);
 }
 #endif
 
