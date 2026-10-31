@@ -100,8 +100,7 @@ extern "C" void MUTEX_unlock(void* mutex);
 extern "C" void* func_0041605C(void* dst, const void* src, int n);
 extern void* D_00538B00[16];
 extern char D_0048DA08[];
-// PORT: operator_new__FUi takes (size, tag, flags, align) here.
-void* operator_new_K2(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 // PORT: func_00319B98 returns the block size; the unit declares it void.
 extern "C" unsigned int func_00319B98_K2(void* p) __asm__("func_00319B98");
 
@@ -122,7 +121,7 @@ static inline void cMemMan_freeBlockK2(void* p)
 
 extern "C" void* cMemMan_internalResizeBlock(void* old, unsigned int size)
 {
-    void* p = operator_new_K2(size, D_0048DA08, 0x100, 0);
+    void* p = operator_new__FUi(size, D_0048DA08, 0x100, 0);
     func_0041605C(p, old, size < cMemMan_blockSizeK2(old) ? size : cMemMan_blockSizeK2(old));
     cMemMan_freeBlockK2(old);
     return p;
