@@ -165,19 +165,19 @@ extern "C" void* func_0034AE68_RO(void* self, void* bucket, void* stream) __asm_
 extern char D_00481650[];
 extern "C" void* func_00352168_RO(void* self, void* bucket, void* stream) __asm__("func_00352168");
 extern char D_00481660[];
-extern "C" void* func_00357918_RO(void* self, void* bucket, void* stream) __asm__("func_00357918");
+extern "C" void* func_00357918(void* self, void* bucket, void* stream);
 extern char D_004A3460[];
 extern "C" void* func_00358588_RO(void* self, void* bucket, void* stream) __asm__("func_00358588");
 extern char D_004A3468[];
-extern "C" void* func_00350FD8_RO(void* self, void* bucket, void* stream) __asm__("func_00350FD8");
+extern "C" void* func_00350FD8(void* self, void* bucket, void* stream);
 extern char D_00481670[];
 extern "C" void* func_0034ED88_RO(void* self, void* bucket, void* stream) __asm__("func_0034ED88");
 extern char D_00481680[];
 extern "C" void* func_003430D0_RO(void* self, void* bucket, void* stream) __asm__("func_003430D0");
 extern char D_004A3470[];
-extern "C" void* func_00350F08_RO(void* self, void* bucket, void* stream) __asm__("func_00350F08");
+extern "C" void* func_00350F08(void* self, void* bucket, void* stream);
 extern char D_004A3478[];
-extern "C" void* func_00356E60_RO(void* self, void* bucket, void* stream) __asm__("func_00356E60");
+extern "C" void* func_00356E60(void* self, void* bucket, void* stream);
 extern char D_00481690[];
 extern "C" void* func_00348FA0_RO(void* self, void* bucket, void* stream) __asm__("func_00348FA0");
 extern char D_004816A0[];
@@ -185,7 +185,7 @@ extern "C" void* func_00349DB0_RO(void* self, void* bucket, void* stream) __asm_
 extern char D_004816B0[];
 struct sVE_RO { short delta; short index; void (*fn)(void*, int); };
 struct sObj_RO { int pad[3]; sVE_RO* vt; };
-extern "C" sObj_RO* func_00350B98_RO(void* self, void* bucket, void* stream) __asm__("func_00350B98");
+extern "C" sObj_RO* func_00350B98(void* self, void* bucket, void* stream);
 
 // Recreates a replay object of the recorded type and links it into the bucket.
 extern "C" void cReplay_restoreObject(void* self, void* bucket, cStreamRB* stream)
@@ -225,13 +225,13 @@ extern "C" void cReplay_restoreObject(void* self, void* bucket, cStreamRB* strea
         func_00352168_RO(cMemMan_alloc(0x6C0, D_00481650, 0x20000000, 0), bucket, stream);
         break;
     case 13:
-        func_00357918_RO(cMemMan_alloc(0x2C, D_00481660, 0x20000000, 0), bucket, stream);
+        func_00357918(cMemMan_alloc(0x2C, D_00481660, 0x20000000, 0), bucket, stream);
         break;
     case 18:
         func_00358588_RO(cMemMan_alloc(0x218, D_004A3460, 0x20000000, 0), bucket, stream);
         break;
     case 19:
-        func_00350FD8_RO(cMemMan_alloc(0x1C, D_004A3468, 0x20000000, 0), bucket, stream);
+        func_00350FD8(cMemMan_alloc(0x1C, D_004A3468, 0x20000000, 0), bucket, stream);
         break;
     case 14:
         func_0034ED88_RO(cMemMan_alloc(0x7C, D_00481670, 0x20000000, 0), bucket, stream);
@@ -240,10 +240,10 @@ extern "C" void cReplay_restoreObject(void* self, void* bucket, cStreamRB* strea
         func_003430D0_RO(cMemMan_alloc(0x48, D_00481680, 0x20000000, 0), bucket, stream);
         break;
     case 16:
-        func_00350F08_RO(cMemMan_alloc(0x1C, D_004A3470, 0x20000000, 0), bucket, stream);
+        func_00350F08(cMemMan_alloc(0x1C, D_004A3470, 0x20000000, 0), bucket, stream);
         break;
     case 17:
-        func_00356E60_RO(cMemMan_alloc(0x2C, D_004A3478, 0x20000000, 0), bucket, stream);
+        func_00356E60(cMemMan_alloc(0x2C, D_004A3478, 0x20000000, 0), bucket, stream);
         break;
     case 20:
         func_00348FA0_RO(cMemMan_alloc(0x80, D_00481690, 0x20000000, 0), bucket, stream);
@@ -252,7 +252,7 @@ extern "C" void cReplay_restoreObject(void* self, void* bucket, cStreamRB* strea
         func_00349DB0_RO(cMemMan_alloc(0x80, D_004816A0, 0x20000000, 0), bucket, stream);
         break;
     case 22: {
-        sObj_RO* o = func_00350B98_RO(cMemMan_alloc(0x3C, D_004816B0, 0x20000000, 0), bucket, stream);
+        sObj_RO* o = func_00350B98(cMemMan_alloc(0x3C, D_004816B0, 0x20000000, 0), bucket, stream);
         if (o != 0) {
             o->vt[1].fn((char*)o + o->vt[1].delta, 3);
         }
@@ -340,7 +340,7 @@ void* func_0026E448(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/replay", func_0026E468);
 #ifdef SKIP_ASM
-extern "C" void* func_0026E468(void* self)
+extern "C" void* func_0026E468(void* self, int idx)
 {
     void* p = func_0026E448(self);
     void* q = *(void**)((char*)p + 0x14);
@@ -354,7 +354,7 @@ extern "C" void* func_0026E468(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/replay", func_0026E490);
 #ifdef SKIP_ASM
-extern "C" void* func_0026E490(void* self)
+extern "C" void* func_0026E490(void* self, int idx)
 {
     void* p = func_0026E448(self);
     void* q = *(void**)((char*)p + 0x18);
@@ -398,13 +398,12 @@ extern "C" void func_0026E4B8(void* self_)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/replay", func_0026E528);
 #ifdef SKIP_ASM
-// PORT: func_0026E468 really takes (self, index); the unit declares it with 1 arg
-void* func_0026E468_2(void* self, int idx) __asm__("func_0026E468");
+void* func_0026E468(void* self, int idx);
 extern "C" void func_0026E4B8(void* self);
 
 extern "C" void func_0026E528(void* self)
 {
-    void* p = func_0026E468_2(self, *(int*)((char*)self + 0x484));
+    void* p = func_0026E468(self, *(int*)((char*)self + 0x484));
     *(void**)((char*)self + 0x488) = p;
     *(int*)((char*)self + 0x484) = *(int*)((char*)p + 0x30);
     func_0026E4B8(self);
@@ -414,13 +413,12 @@ extern "C" void func_0026E528(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/replay", func_0026E568);
 #ifdef SKIP_ASM
-// PORT: func_0026E490 really takes (self, index); the unit declares it with 1 arg
-void* func_0026E490_2(void* self, int idx) __asm__("func_0026E490");
+void* func_0026E490(void* self, int idx);
 extern "C" void func_0026E4B8(void* self);
 
 extern "C" void func_0026E568(void* self)
 {
-    void* p = func_0026E490_2(self, *(int*)((char*)self + 0x484));
+    void* p = func_0026E490(self, *(int*)((char*)self + 0x484));
     *(void**)((char*)self + 0x488) = p;
     *(int*)((char*)self + 0x484) = *(int*)((char*)p + 0x30);
     func_0026E4B8(self);
