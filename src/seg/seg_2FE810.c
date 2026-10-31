@@ -82,6 +82,7 @@ extern int func_00423AA0(int, int);
 extern void func_00424880(int);
 extern void func_004239A0(int, int, int);
 extern int func_004240E0(int);
+void *func_003FDAA0(void);
 void func_003FD910(short a, short b, short c, short d) {
     struct S3FD910 *p;
     int e;
