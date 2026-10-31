@@ -2117,7 +2117,7 @@ extern "C" void func_002583A8(S83A8 *self, int arg1, int arg2) {
 INCLUDE_ASM("seg/seg_156860", cGameComm_syncGame);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-void* operator_new_8448(unsigned int size, const char* tag, int flags, int align) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int align);
 void cMemMan_free_8448(void* p) __asm__("cMemMan_free__FPv");
 extern "C" void func_0014E9F8(void* iface);
 extern "C" void func_0014EA90(void* iface);
@@ -2155,7 +2155,7 @@ static inline int ggDropped_8448(char* s) { return *(int*)(s + 4); }
 extern "C" void cGameComm_syncGame(char* self)
 {
     void* iface = cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
-    *(void**)(self + 0x3EC) = operator_new_8448(*(unsigned int*)(self + 0x3F0), D_004805B8, 0x100, 0);
+    *(void**)(self + 0x3EC) = operator_new__FUi(*(unsigned int*)(self + 0x3F0), D_004805B8, 0x100, 0);
     func_0014E9F8(iface);
     if (ggHost_8448(D_00534B30) != 0) {
         func_003E6448_8448(self + 0xF0, 0, 0x10);
@@ -2205,8 +2205,8 @@ extern "C" void cGameComm_syncGame(char* self)
 INCLUDE_ASM("seg/seg_156860", func_002586B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-void* cBE_getInterface_86B0(int, int) __asm__("cBE_getInterface__Fv");
-extern "C" void func_00257E98(void *, int, int, int);
+void* cBE_getInterface_86B0(void*, int) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00257E98(void *, int, int, int);
 extern "C" void func_00258870(void *, int, int);
 extern "C" void func_002570D8(void *);
 extern "C" void THREAD_yieldticks(int);
@@ -2215,7 +2215,7 @@ extern char D_00534B30[];
 static inline int rd8(char *p) { return *(int*)(p + 8); }
 extern "C" void func_002586B0(void *self) {
     char buf[12];
-    cBE_getInterface_86B0(*(int*)((char*)D_004A28A8 + 0x78), 7);
+    cBE_getInterface_86B0(*(void**)((char*)D_004A28A8 + 0x78), 7);
     if (rd8(D_00534B30) != 0) {
         buf[0] = 3;
         func_00257E98(self, 3, (int)buf, 0xC);
@@ -2238,7 +2238,7 @@ extern "C" void func_002586B0(void *self) {
 INCLUDE_ASM("seg/seg_156860", func_00258790);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00257E98(void *, int, int, int);
+extern "C" int func_00257E98(void *, int, int, int);
 extern "C" void func_00258870(void *, int, int);
 extern void func_002588A8_8790(void *) __asm__("func_002588A8");
 extern "C" void func_00258790(void *self, int arg1) {
@@ -2390,7 +2390,7 @@ INCLUDE_ASM("seg/seg_156860", func_00258AE0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 class cIface_AE0 { public: int f0, f4, f8; virtual void v0(); virtual void v1(); };
-void* cBE_getInterface_8AE0(int, int) __asm__("cBE_getInterface__Fv");
+void* cBE_getInterface_8AE0(void*, int) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00260F80();
 extern "C" int func_00261460(int);
 extern "C" void func_002613C8(int);
@@ -2420,10 +2420,10 @@ extern "C" void func_00258AE0(void *self) {
     }
     func_00258BC8(self);
     func_00258A48(self);
-    void *i = cBE_getInterface_8AE0(*(int*)((char*)D_004A28A8 + 0x78), 7);
+    void *i = cBE_getInterface_8AE0(*(void**)((char*)D_004A28A8 + 0x78), 7);
     if (D_00534B38[0] == 0) {
         func_0014E9C0(i, 1, 0);
-        cIface_AE0 *o = (cIface_AE0*)cBE_getInterface_8AE0((int)cBE_getBE(), 3);
+        cIface_AE0 *o = (cIface_AE0*)cBE_getInterface_8AE0(cBE_getBE(), 3);
         o->v1();
     }
 }
@@ -2433,7 +2433,7 @@ extern "C" void func_00258AE0(void *self) {
 INCLUDE_ASM("seg/seg_156860", func_00258BC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00257E98_8BC8(void *, int, void *, int) __asm__("func_00257E98");
+extern "C" int func_00257E98_8BC8(void *, int, void *, int) __asm__("func_00257E98");
 
 extern "C" void func_00258BC8(void *arg0) {
     if ((*(int *)((char*)(arg0) + (4))) == 0) {
@@ -2448,7 +2448,7 @@ extern "C" void func_00258BC8(void *arg0) {
 INCLUDE_ASM("seg/seg_156860", func_00258C00);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00257E98_8C00(void *, int, void *, int) __asm__("func_00257E98");
+extern "C" int func_00257E98_8C00(void *, int, void *, int) __asm__("func_00257E98");
 
 extern "C" void func_00258C00(void *arg0) {
     if (*(int *)((char*)arg0 + 4) == 0 && *(int *)((char*)arg0 + 0) != 0) {
@@ -2463,7 +2463,7 @@ extern "C" void func_00258C00(void *arg0) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_156860", func_00258C50);
 #ifdef SKIP_ASM
-extern "C" void func_00257E98(void *, int, int, int);
+extern "C" int func_00257E98(void *, int, int, int);
 extern "C" int strlen(int);
 
 extern "C" void func_00258C50(void *arg0, int arg1) {
