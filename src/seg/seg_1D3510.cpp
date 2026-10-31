@@ -131,7 +131,7 @@ extern "C" int func_002D2790(unsigned char **arg0, unsigned char *arg1) {
 INCLUDE_ASM("seg/seg_1D3510", get_string);
 #ifdef SKIP_ASM
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-extern "C" int func_002D2790_27B0(unsigned char **, unsigned char *) __asm__("func_002D2790");
+extern "C" int func_002D2790(unsigned char **, unsigned char *);
 extern "C" char *strcpy(char *, const char *);
 extern char D_004D49B8[];
 extern char D_00486768[];
@@ -139,7 +139,7 @@ extern "C" int get_string(unsigned char **src, char **out) {
     int n = 0;
     char c = 1;
     do {
-        n += func_002D2790_27B0(src, (unsigned char*)&c);
+        n += func_002D2790(src, (unsigned char*)&c);
         D_004D49B8[n - 1] = c;
     } while (c != 0 && n < 1000);
     if (n == 1000) D_004D49B8[999] = 0;
@@ -154,7 +154,6 @@ extern "C" int get_string(unsigned char **src, char **out) {
 INCLUDE_ASM("seg/seg_1D3510", get_data);
 #ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int, const char*, int, int);
-extern "C" int func_002D2790_2868(unsigned char **, unsigned char *) __asm__("func_002D2790");
 extern "C" int get_uint_2868(unsigned char **, void *) __asm__("get_uint");
 extern char D_00486778[];
 extern char D_00486788[];
@@ -170,7 +169,7 @@ extern "C" int get_data(unsigned char **src, Data_2868 **out) {
     e->data = (unsigned char*)operator_new__FUi(e->n, D_00486788, 0x100, 0);
     Data_2868 *t = *out;
     for (i = 0; i < t->n; i++) {
-        total += func_002D2790_2868(src, t->data + i);
+        total += func_002D2790(src, t->data + i);
         t = *out;
     }
     return total;
@@ -1049,8 +1048,8 @@ INCLUDE_ASM("seg/seg_1D3510", func_002D4008);
 #ifdef SKIP_ASM
 extern int (*D_004A54BC)(int, int);
 
-extern "C" void func_002D4008(int *arg0, int *arg1) {
-    D_004A54BC(*arg0, *arg1);
+extern "C" int func_002D4008(int *arg0, int *arg1) {
+    return D_004A54BC(*arg0, *arg1);
 }
 #endif
 
