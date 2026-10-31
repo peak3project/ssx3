@@ -144,7 +144,7 @@ extern "C" void func_00144B20(void* self, const char* name)
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00144BC0);
 #ifdef SKIP_ASM
-extern "C" void* func_00144BC0()
+extern "C" void* func_00144BC0(void* iface)
 {
     return (char*)&D_0043D950[0] + D_00535C08.value * 0x64;
 }
@@ -153,7 +153,7 @@ extern "C" void* func_00144BC0()
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00144BE0);
 #ifdef SKIP_ASM
-extern "C" int func_00144BE0()
+extern "C" int func_00144BE0(void* iface)
 {
     return D_00535C08.value;
 }
@@ -162,7 +162,7 @@ extern "C" int func_00144BE0()
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00144BF0);
 #ifdef SKIP_ASM
-extern "C" void* func_00144BF0()
+extern "C" void* func_00144BF0(void* iface)
 {
     return (char*)&D_0043D954 + D_00535C08.value * 0x64;
 }
@@ -219,7 +219,7 @@ extern "C" int func_00144C78(void* self, int a1)
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00144C98);
 #ifdef SKIP_ASM
-extern "C" int func_00144C98()
+extern "C" int func_00144C98(void* iface)
 {
     return D_0043D950[D_00535C08.value].field_0x54;
 }
@@ -286,11 +286,10 @@ extern "C" int func_00144D50(void* self, int a1)
 //100%
 INCLUDE_ASM("be/beintnewrace", func_00144D70__FPvii);
 #ifdef SKIP_ASM
-void* func_00144D70(void* self, int a1, int a2)
+void func_00144D70(void* self, int a1, int a2)
 {
     *(int*)((char*)(void*)&D_00535BC8 + a1 * 4) = a2;
     *(int*)((char*)((char*)(void*)&D_00535BC8 + a2 * 4) + 0x18) = a1;
-    return ((char*)(void*)&D_00535BC8 + a1 * 4);
 }
 #endif
 
