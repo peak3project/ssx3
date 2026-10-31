@@ -900,7 +900,7 @@ INCLUDE_ASM("render/particle", func_00372198);
 //100%
 INCLUDE_ASM("render/particle", func_00372348);
 #ifdef SKIP_ASM
-extern "C" void* func_003E6574_cp(void* dst, void* src, int n) __asm__("func_003E6574");
+extern "C" void func_003E6574(void* dst, void* src, int n);
 // PORT: copies a DMA tag chain, merging runs into `cnt` tags and rebasing `ref` tags that point at a3.
 extern "C" void func_00372348(long* chain, int a1, int a2, int a3)
 {
@@ -922,7 +922,7 @@ extern "C" void func_00372348(long* chain, int a1, int a2, int a3)
             break;
         case 1:
             src += 2;
-            func_003E6574_cp(dst, src, qwc * 16);
+            func_003E6574(dst, src, qwc * 16);
             src = (long*)((char*)src + qwc * 16);
             dst = (long*)((char*)dst + qwc * 16);
             count += qwc;
@@ -954,7 +954,7 @@ extern "C" void func_00372348(long* chain, int a1, int a2, int a3)
                 pend[0] = count | 0x10000000;
                 count = 0;
             }
-            func_003E6574_cp(dst, src, (qwc + 1) * 16);
+            func_003E6574(dst, src, (qwc + 1) * 16);
             src += 2;
             dst += 2;
             src = (long*)((char*)src + qwc * 16);
@@ -3270,7 +3270,7 @@ INCLUDE_ASM("render/particle", func_0037BD98);
 #ifdef SKIP_ASM
 extern "C" void func_00424020(int);
 extern "C" void func_00367078(int gs);
-void* func_00367340(void* self, int a1, int a2);
+void func_00367340(void* self, int a1, int a2);
 extern "C" int func_003673D8(int gs, int size);
 extern "C" void func_00382AF0(void* self, int arg1, int arg2);
 extern "C" void func_003E6690(int a);
@@ -3580,14 +3580,14 @@ extern "C" void func_0037C7C0(void* self, int a1)
 }
 #endif
 
-extern "C" void* func_003E6574(void*, void*, int);
+extern "C" void func_003E6574(void*, void*, int);
 
 //100%
 INCLUDE_ASM("render/particle", func_0037C808__FPv);
 #ifdef SKIP_ASM
-void* func_0037C808(void* self)
+void func_0037C808(void* self)
 {
-    return func_003E6574((char*)self + 0x18f8, (char*)self + 0x3838, 0x1f40);
+    func_003E6574((char*)self + 0x18f8, (char*)self + 0x3838, 0x1f40);
 }
 #endif
 
@@ -3890,9 +3890,9 @@ struct sGfxView_D0B0 {
 
 extern char D_004A4390[];
 void* operator_new_D0B0(unsigned int, char*, unsigned int, int) __asm__("operator_new__FUi");
-extern "C" void func_003E6188(void* dst, void* src, int n);
+extern "C" int func_003E6188(void* dst, void* src, int n);
 extern "C" unsigned int func_003B47F8(void* src, void* dst);
-extern "C" void func_002523A8(void* p);
+extern "C" void* func_002523A8(void* p);
 
 extern "C" void func_0037D0B0(void* selfp, int a1, void* objp, int a3)
 {
