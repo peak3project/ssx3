@@ -1044,22 +1044,21 @@ int func_00150540(void* iface, int id);
 
 extern "C" float func_00119708(char* self, int id)
 {
-    float zero = 0.0f;
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 6);
     float a = func_00150528(iface, id) * 9.999999747378752e-05f;
     float b = func_00150540(iface, id) * 1.6666666624587378e-06f;
     *(float*)(self + 0x14) += a;
     *(float*)(self + 0x3C) = b;
-    if (*(float*)(self + 0x40) < zero)
+    if (*(float*)(self + 0x40) < 0.0f)
     {
-        *(float*)(self + 0x40) = zero;
+        *(float*)(self + 0x40) = 0.0f;
     }
     if (id >= 0x23)
     {
         *(int*)(self + 0x5C) = 1;
     }
     func_001176F8(self);
-    return zero;
+    return 0.0f;
 }
 #endif
 
