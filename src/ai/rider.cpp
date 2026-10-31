@@ -1067,7 +1067,7 @@ INCLUDE_ASM("ai/rider", func_00120378);
 #ifdef SKIP_ASM
 extern "C" char* func_00311B20(void*, int);
 int func_00312AA0(void* self, int i) __asm__("func_00312AA0__FPvi");
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" int func_001298C8();
 int func_0011FEE8(void* self);
 
@@ -1247,8 +1247,7 @@ static inline sQ_L378 AxisY_L378(const sQ_L378& q)
             cRiderAnimBase_play(self->mRiderAnim, id, 0, -1.0f); \
     }
 
-extern "C" void func_00120378_impl(cRider* self) __asm__("func_00120378");
-extern "C" void func_00120378_impl(cRider* self)
+extern "C" void func_00120378(cRider* self)
 {
     sQ_L378 p0 = Sub_L378(*(sQ_L378*)&self->mVelocity, *(sQ_L378*)&self->unk_3D0);
     float lim2 = 416.66668701171875f;
@@ -1640,7 +1639,7 @@ void func_001217F8(void* vself)
 INCLUDE_ASM("ai/rider", func_00121818);
 #ifdef SKIP_ASM
 extern void* D_004A3DD8;
-extern "C" int func_0030A060(void* mgr, void* a, void* b, void* c);
+extern "C" void* func_0030A060(void* mgr, void* a, void* b, void* c);
 void func_00125AD0(void* self);
 extern "C" void func_00112338(void* self);
 extern "C" void func_001125C0(void* self);
@@ -2756,7 +2755,7 @@ extern "C" void func_0027F9F8(void* self);
 void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
 void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
 extern "C" void func_00311A50(void* anim);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 char* func_0027C958(void* self);
 extern "C" void func_0027C9B0(int, void*);
 struct sQuat_001241C0;
