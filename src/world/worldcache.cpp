@@ -427,8 +427,8 @@ extern "C" void func_003A7D80(int* self, int flags)
 //100%
 INCLUDE_ASM("world/worldcache", func_003A7DD0);
 #ifdef SKIP_ASM
-extern "C" void func_003A8F80(void* self);
-extern "C" void cStreamMan_cStreamMan(void* self);
+extern "C" void* func_003A8F80(void* self);
+extern "C" void* cStreamMan_cStreamMan(void* self);
 extern char* D_004A5B64;
 
 extern "C" void* func_003A7DD0(void* self)
@@ -907,7 +907,7 @@ INCLUDE_ASM("world/worldcache", cWorldCache_updatePages);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* cHullPage_cHullPage(void* self, unsigned short* data);
 extern "C" void* func_003A9A98(void* self, int i);
-extern "C" void func_003A6F88(void* self, int i, int a, int b);
+extern "C" int func_003A6F88(void* self, int i, int a, int b);
 extern "C" void func_003A8528(void* self, int i);
 extern char* D_004A5B64;
 extern char* D_004A5B80;
@@ -1288,8 +1288,8 @@ struct sCacheHead_3A8F80 {
 extern "C" void func_003A9188_8F80(void* self) __asm__("func_003A9188");
 
 // PORT: the unit declares this as void(void*); defined under an asm label with its real type
-extern "C" void* func_003A8F80_impl(void* self) __asm__("func_003A8F80");
-extern "C" void* func_003A8F80_impl(void* self)
+extern "C" void* func_003A8F80(void* self);
+extern "C" void* func_003A8F80(void* self)
 {
     new (self) sCacheHead_3A8F80[2];
     func_003A9188_8F80(self);
