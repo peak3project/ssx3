@@ -777,7 +777,135 @@ extern "C" void func_00331E90(sSelf_1E90* self, void* box)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00332DB8);
+#ifdef SKIP_ASM
+struct sSelf_2DB8 {
+    sRoot_330BA8* root;             // 0x00
+    int f04;
+    int count;                      // 0x08
+    void* list[0x40];               // 0x0C
+    int count2;                     // 0x10C
+    void* list2[0x40];              // 0x110
+    int count3;                     // 0x210
+    void* list3[0x80];              // 0x214
+};
+
+struct sPatch_2DB8 {
+    sPatch_2DB8* next;              // 0x00
+    char pad04[0x154];
+    float bmin[3];                  // 0x158
+    float bmax[3];                  // 0x164
+};
+
+struct sCtx2_2DB8 {
+    sCtx_3309D8 a;
+    sCtx_3309D8 b;
+    sCtx_3309D8 c;
+};
+
+extern "C" void descendRec_2DB8(void* self, sCtx2_2DB8* ctx) __asm__("func_00340DC0");
+extern "C" void helpX_2DB8(char* flag, sCtx2_2DB8* ctx, sCtx2_2DB8* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033B748");
+
+static inline int overlapPatch_2DB8(const sBox_3309D8* b, const sPatch_2DB8* n)
+{
+    int r = 0;
+    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
+        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
+        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
+        r = 1;
+    }
+    return r;
+}
+
+static inline void addPatches_2DB8(sCtx_3309D8* cb, sPatch_2DB8* first)
+{
+    for (sPatch_2DB8* p = first; p != 0; p = p->next) {
+        if (overlapPatch_2DB8(cb->box, p)) {
+            int* cnt = cb->count;
+            int idx = *cnt;
+            cb->list[idx] = (sNode_3309D8*)p;
+            *cnt = idx + 1;
+        }
+    }
+}
+
+static inline void addAll_2DB8(sCtx_3309D8* cb, sPatch_2DB8* first)
+{
+    for (sPatch_2DB8* p = first; p != 0; p = p->next) {
+        int* cnt = cb->count;
+        int idx = *cnt;
+        cb->list[idx] = (sNode_3309D8*)p;
+        *cnt = idx + 1;
+    }
+}
+
+static inline void reset_2DB8(sCtx_3309D8* cb)
+{
+    *cb->count = 0;
+}
+
+struct sQH_2DB8 {};
+
+static inline void visit_2DB8(sRoot_330BA8* t, int k, sCtx2_2DB8* ctx, void* box)
+{
+    sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = c->node;
+        sQH_2DB8 h;
+        char* f = (char*)&h;
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            func_003309D8(&ctx->a, n);
+            addPatches_2DB8(&ctx->b, *(sPatch_2DB8**)((char*)n + 0x24));
+            addAll_2DB8(&ctx->c, *(sPatch_2DB8**)((char*)n + 0x28));
+            if (n[0] != 0) descendRec_2DB8(n[0], ctx);
+            if (n[1] != 0) descendRec_2DB8(n[1], ctx);
+            if (n[2] != 0) descendRec_2DB8(n[2], ctx);
+            if (n[3] != 0) descendRec_2DB8(n[3], ctx);
+            if (n[4] != 0) descendRec_2DB8(n[4], ctx);
+            if (n[5] != 0) descendRec_2DB8(n[5], ctx);
+            if (n[6] != 0) descendRec_2DB8(n[6], ctx);
+            if (n[7] != 0) descendRec_2DB8(n[7], ctx);
+        } else if (r == 2) {
+            helpX_2DB8(f, ctx, ctx, box, n, c);
+        }
+    }
+}
+
+extern "C" void func_00332DB8(sSelf_2DB8* self, void* box)
+{
+    sCtx2_2DB8 ctx;
+    sCtx2_2DB8* c = &ctx;
+    self->f04 = self->root->fA0;
+    ctx.a.list = (sNode_3309D8**)self->list;
+    ctx.a.count = &self->count;
+    ctx.b.list = (sNode_3309D8**)self->list2;
+    ctx.b.count = &self->count2;
+    *(int*)&ctx.a.pad08 = 0x40;
+    *(int*)&ctx.b.pad08 = 0x40;
+    ctx.a.box = (sBox_3309D8*)box;
+    ctx.b.box = (sBox_3309D8*)box;
+    self->count = 0;
+    sCtx_3309D8* c2 = &ctx.b;
+    *c2->count = 0;
+    ctx.c.list = (sNode_3309D8**)self->list3;
+    ctx.c.count = &self->count3;
+    *(int*)&ctx.c.pad08 = 0x200;
+    ctx.c.box = (sBox_3309D8*)box;
+    sCtx_3309D8* c3 = &ctx.c;
+    *c3->count = 0;
+    sRoot_330BA8* t = self->root;
+    visit_2DB8(t, 0, c, box);
+    visit_2DB8(t, 1, c, box);
+    visit_2DB8(t, 2, c, box);
+    visit_2DB8(t, 3, c, box);
+    visit_2DB8(t, 4, c, box);
+    visit_2DB8(t, 5, c, box);
+    visit_2DB8(t, 6, c, box);
+    visit_2DB8(t, 7, c, box);
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00333EF8);
