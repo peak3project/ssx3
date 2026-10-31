@@ -317,12 +317,12 @@ extern "C" void func_001F3CF0(char* self, char* msg, unsigned int id)
 INCLUDE_ASM("fe/festatelodge", func_001F3FF8);
 #ifdef SKIP_ASM
 extern void* D_004739D8[];
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 
-extern "C" void* func_001F3FF8(void* self)
+extern "C" void* func_001F3FF8(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_004739D8;
     *(int*)((char*)self + 0xC) = 0x28;
     *(char*)((char*)self + 0x44) = 0;
@@ -596,10 +596,10 @@ extern "C" void func_001F4400(char* self, char* w, int event)
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F4728);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0_4728(void* self, int a1) __asm__("func_0039E2A0");
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" unsigned char func_001A1CD0_4728(void* p, int a1) __asm__("func_001A1CD0");
+extern "C" unsigned char func_001A1CD0(void* p, int a1);
 extern "C" int func_00148158_4728(void* iface, int a1, int stat) __asm__("func_00148158");
 extern "C" void func_003E6448(void* dst, int c, int n);
 extern void* D_00473908[];
@@ -617,11 +617,11 @@ extern "C" void* func_001F4728(void* p, int a1)
 {
     sLodgeStats_4728* self = (sLodgeStats_4728*)p;
     char* s = (char*)p;
-    func_0039E2A0_4728(self, a1);
+    func_0039E2A0(self, a1);
     *(int*)(s + 0xC) = 0x29;
     *(void***)(s + 0x8) = D_00473908;
     *(signed char*)(s + 0x44) = 0;
-    *(unsigned char*)(s + 0x15) = func_001A1CD0_4728(**(void***)(s + 0x10), 0);
+    *(unsigned char*)(s + 0x15) = func_001A1CD0(**(void***)(s + 0x10), 0);
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 3);
     func_003E6448(s + 0x84, 0, 0x1C);
     for (int i = 0; i < 7; i++) {
