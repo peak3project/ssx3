@@ -164,14 +164,14 @@ extern "C" void cWorld_resetMap(void* selfp)
 }
 #endif
 
-extern "C" void* func_003A8290(int);
+extern "C" void func_003A8290(int);
 
 //100%
 INCLUDE_ASM("world/world", func_003A6928__FPv);
 #ifdef SKIP_ASM
-void* func_003A6928(void* self)
+void func_003A6928(void* self)
 {
-    return func_003A8290(*(int*)self);
+    func_003A8290(*(int*)self);
 }
 #endif
 
@@ -268,7 +268,7 @@ struct cWorldView;
 extern "C" void* cBXString_cBXString2(void* self, const char* str);
 extern "C" void cBXString__cBXString(void* self, int flags);
 extern "C" void func_003A7F90(void* cache);
-extern "C" void cWorldCache_init(void* cache, const char* name, int a2);
+extern "C" int cWorldCache_init(void* cache, const char* name, int a2);
 int cWorldView_getNumSections(cWorldView* view);
 extern "C" void cWScriptCache_init(void* cache, int n);
 extern "C" void func_002BB1D0(void* p, int n);
