@@ -17,7 +17,7 @@ void* cLensFxMan_construct()
 //100%
 INCLUDE_ASM("visualfx/lensfx", func_002EC418);
 #ifdef SKIP_ASM
-extern "C" void func_002E2E18(void* self);
+extern "C" void* func_002E2E18(void* self);
 extern void* D_00487F00[];
 
 // PORT: asm label because the unit's forward declaration above has C++ linkage;
@@ -503,12 +503,11 @@ extern "C" void func_002EDFD0(void* self)
 //100%
 INCLUDE_ASM("visualfx/lensfx", func_002EE010);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void* func_0038ABF8(void* self, int i);
 extern int D_004A43C4;
 
-extern "C" void* func_002EE010_r(void* self) __asm__("func_002EE010");
-extern "C" void* func_002EE010_r(void* self)
+extern "C" void* func_002EE010(void* self);
+extern "C" void* func_002EE010(void* self)
 {
     if (*(int*)((char*)self + 4) != 0x123400) {
         if (*(signed char*)self == 0) {
@@ -662,7 +661,7 @@ extern "C" float func_002EE2B0(int i)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/lensfx", func_002EE2F8);
 #ifdef SKIP_ASM
-extern "C" void func_002EE010(void* p);
+extern "C" void* func_002EE010(void* p);
 
 // $gp-relative object at gp+0x24C0 (no symbol in the target)
 extern int D_004A55B0;
@@ -676,7 +675,7 @@ extern "C" void func_002EE2F8(void)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/lensfx", func_002EE318);
 #ifdef SKIP_ASM
-extern "C" void func_002EE010(void* p);
+extern "C" void* func_002EE010(void* p);
 extern "C" void* func_002EF0E8(void);
 
 extern "C" void func_002EE318(void)
@@ -688,7 +687,7 @@ extern "C" void func_002EE318(void)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/lensfx", func_002EE340);
 #ifdef SKIP_ASM
-extern "C" void func_002EE010(void* p);
+extern "C" void* func_002EE010(void* p);
 extern "C" void* func_002EF140(void);
 
 extern "C" void func_002EE340(void)
@@ -700,7 +699,7 @@ extern "C" void func_002EE340(void)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/lensfx", func_002EE368);
 #ifdef SKIP_ASM
-extern "C" void func_002EE010(void* p);
+extern "C" void* func_002EE010(void* p);
 extern "C" void* func_002EF198(void);
 
 extern "C" void func_002EE368(void)
@@ -712,7 +711,7 @@ extern "C" void func_002EE368(void)
 //100%
 INCLUDE_ASM("visualfx/lensfx", func_002EE390);
 #ifdef SKIP_ASM
-extern "C" void func_002EE010(void* p);
+extern "C" void* func_002EE010(void* p);
 extern "C" void* func_002EF1F0();
 
 extern "C" void func_002EE390()
