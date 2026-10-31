@@ -12,14 +12,14 @@ extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag)
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 // PORT: several callees are declared with other parameter types elsewhere; bind local views by asm label
-extern "C" void func_00192740_2DB0(void* panel, int on) __asm__("func_00192740");
+extern "C" void func_00192740(void* panel, int on);
 void func_00192968(void* panel, int mask);
 extern "C" void func_00192970_2DB0(void* panel, void* screen) __asm__("func_00192970");
 extern "C" int func_00193F38(void* self, int player, int which);
 extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
-extern "C" unsigned char cUIListBox_addEntryByAsciiString_2DB0(void* box, const char* str, int data) __asm__("cUIListBox_addEntryByAsciiString");
-extern "C" int func_0039A768_2DB0(void* item, int key, unsigned char* out) __asm__("func_0039A768");
-extern "C" void func_0039A7A8_2DB0(void* item, int v) __asm__("func_0039A7A8");
+extern "C" unsigned char cUIListBox_addEntryByAsciiString(void* box, const char* str, int data);
+extern "C" int func_0039A768(void* item, int key, unsigned char* out);
+extern "C" void func_0039A7A8(void* item, int v);
 extern int D_004A1A70;
 extern signed char D_00535C12[];
 extern signed char D_004A1710[6];
@@ -103,8 +103,8 @@ extern "C" void cFEStateBraggingRights_onCreateScreen(sBragging_2DB0* self)
     sRadioPanel_2DB0* a = &self->panels[0];
     sRadioPanel_2DB0* b = &self->panels[1];
     if ((self->flags >> 4) & 1) {
-        func_00192740_2DB0(a, 0);
-        func_00192740_2DB0(b, 0);
+        func_00192740(a, 0);
+        func_00192740(b, 0);
     }
     int n = 0;
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -159,26 +159,26 @@ extern "C" void cFEStateBraggingRights_onCreateScreen(sBragging_2DB0* self)
             case 6:
                 cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045FCD8), 0);
                 cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DCC8), 1);
-                func_0039A768_2DB0(lb, func_00193F38(self, p, self->rules[row]), &out);
-                func_0039A7A8_2DB0(lb, out);
+                func_0039A768(lb, func_00193F38(self, p, self->rules[row]), &out);
+                func_0039A7A8(lb, out);
                 break;
             case 0:
                 cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A16E0, 5);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A16D8, 10);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1758, 15);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1760, 20);
-                func_0039A768_2DB0(lb, func_00193F38(self, p, self->rules[row]), &out);
-                func_0039A7A8_2DB0(lb, out);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16E0, 5);
+                cUIListBox_addEntryByAsciiString(lb, D_004A16D8, 10);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1758, 15);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1760, 20);
+                func_0039A768(lb, func_00193F38(self, p, self->rules[row]), &out);
+                func_0039A7A8(lb, out);
                 break;
             case 7:
                 cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1768, 3000);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1770, 5000);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1778, 10000);
-                cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1780, 15000);
-                func_0039A768_2DB0(lb, func_00193F38(self, p, self->rules[row]), &out);
-                func_0039A7A8_2DB0(lb, out);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1768, 3000);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1770, 5000);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1778, 10000);
+                cUIListBox_addEntryByAsciiString(lb, D_004A1780, 15000);
+                func_0039A768(lb, func_00193F38(self, p, self->rules[row]), &out);
+                func_0039A7A8(lb, out);
                 break;
             }
         }
@@ -384,8 +384,7 @@ extern "C" void func_001927B0(void* p);
 extern "C" void func_00194080(void* self);
 extern "C" void func_00193DE0(void* self, int player, int which, int value);
 extern "C" int func_00192918_38F8(void* panel, void* item) __asm__("func_00192918");
-extern "C" int func_0039A738_38F8(void* item) __asm__("func_0039A738");
-extern "C" void func_00192740_38F8(void* panel, int on) __asm__("func_00192740");
+extern "C" int func_0039A738(void* item);
 extern "C" void func_00265688(void* snd);
 extern "C" void func_00265568(void* snd, int slot, int value);
 extern "C" void func_0039F400(void* list, void* obj);
@@ -437,7 +436,7 @@ extern "C" void func_001938F8(char* self, sWidget_38F8* w, int event)
             if (func_00192918_38F8(self + 0x6D0 + i * 0x34, w) != -1) {
                 if (isOn_38F8() && i == 0)
                     func_00265688(D_004A33CC);
-                func_00192740_38F8(self + 0x6D0 + i * 0x34, 1);
+                func_00192740(self + 0x6D0 + i * 0x34, 1);
                 func_00194080(self);
                 break;
             }
@@ -486,13 +485,13 @@ extern "C" void func_001938F8(char* self, sWidget_38F8* w, int event)
         if (isOn_38F8()) {
             void* snd = D_004A33CC;
             int slot = func_00192918_38F8(self + 0x6D0, w);
-            func_00265568(snd, slot, func_0039A738_38F8(w));
+            func_00265568(snd, slot, func_0039A738(w));
         } else {
             panel = w->panel;
             int slot = func_00192918_38F8(self + 0x6D0 + panel * 0x34, w);
             int which = (*(signed char**)(self + 0x738))[slot];
             if (which != -1)
-                func_00193DE0(self, panel, which, func_0039A738_38F8(w));
+                func_00193DE0(self, panel, which, func_0039A738(w));
         }
         break;
     }
@@ -704,16 +703,12 @@ INCLUDE_ASM("fe/festatebigradio", func_001941B0);
 #ifdef SKIP_ASM
 // PORT: several callees are declared with other parameter types elsewhere; bind local views by asm label
 extern "C" void cUIMenu_setSelectedByIndex_41B0(void* menu, int idx) __asm__("cUIMenu_setSelectedByIndex");
-extern "C" int func_0039A768_41B0(void* item, int key, unsigned char* out) __asm__("func_0039A768");
-extern "C" void func_0039A7A8_41B0(void* item, int v) __asm__("func_0039A7A8");
 extern "C" int func_00192918_41B0(void* panel, void* item) __asm__("func_00192918");
-extern "C" int func_0039A738_41B0(void* item) __asm__("func_0039A738");
-extern "C" void func_00192740_41B0(void* panel, int on) __asm__("func_00192740");
 extern "C" void func_00192970_41B0(void* panel, void* screen) __asm__("func_00192970");
 extern "C" void func_001AB288(void* self, int err);
 extern "C" int func_0025DA90(void* self);
 extern "C" void* func_001B1F88_41B0(void* mem, int a1) __asm__("func_001B1F88");
-extern "C" void* func_001BFBB8_41B0(void* mem, int a1) __asm__("func_001BFBB8");
+extern "C" void* func_001BFBB8(void* mem, int a1);
 extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" int func_001A8E40(void* self, int msg, void* data);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
@@ -745,21 +740,21 @@ extern "C" int func_001941B0(char* self, int msg, sRadioMsg_41B0* data)
     case 252: {
         unsigned char out;
         void* item = ((sRadioPanel_41B0*)(self + 0x6D0))[data->panel].items[data->idx];
-        if (!func_0039A768_41B0(item, data->key, &out)) {
+        if (!func_0039A768(item, data->key, &out)) {
             break;
         }
-        func_0039A7A8_41B0(item, out);
+        func_0039A7A8(item, out);
         int slot = func_00192918_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], item);
         int which = (*(signed char**)(self + 0x738))[slot];
         if (which == -1) {
             break;
         }
         int panel = data->panel;
-        func_00193DE0(self, panel, which, func_0039A738_41B0(item));
+        func_00193DE0(self, panel, which, func_0039A738(item));
         break;
     }
     case 253:
-        func_00192740_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], 1);
+        func_00192740(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], 1);
         func_00194080(self);
         break;
     case 238: case 241: case 248: case 250: case 274: case 275:
@@ -769,11 +764,11 @@ extern "C" int func_001941B0(char* self, int msg, sRadioMsg_41B0* data)
         if (func_0025DA90(D_004A3028)) {
             func_001A8A40(self, func_001B1F88_41B0(cMemMan_alloc(0x73C, D_0045FF10, 0, 0), *(int*)(self + 0x10)));
         } else {
-            func_001A8A40(self, func_001BFBB8_41B0(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(int*)(self + 0x10)));
+            func_001A8A40(self, func_001BFBB8(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(int*)(self + 0x10)));
         }
         break;
     case 254: {
-        func_00192740_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], 0);
+        func_00192740(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], 0);
         func_00192970_41B0(&((sRadioPanel_41B0*)(self + 0x6D0))[data->panel], *(void**)(self + 0x40));
         cUIMenu_setSelectedByIndex_41B0(((sRadioPanel_41B0*)(self + 0x6D0))[data->panel].menu, 0);
         int frame = data->panel == 0 ? cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_004A1788)) : cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_004A17B0));
