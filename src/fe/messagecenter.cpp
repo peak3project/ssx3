@@ -17,7 +17,7 @@ extern "C" void func_00158848(void* iface, int a, int b, unsigned long m);
 extern "C" void func_00158820(void* iface, int a, int b, unsigned long m);
 extern "C" void* func_0028B180();
 extern "C" void func_0028C2D0(void* p, unsigned long m);
-extern "C" void func_0039F190(void* list, int a);
+extern "C" void* func_0039F190(void* list, int a);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00195FF0(void* mem, void* engine, int a, int b);
 extern "C" void func_0039F400(void* list, void* item);
@@ -461,7 +461,7 @@ extern "C" int strlen(const char* s);
 void cMemMan_free(void* p);
 extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, int n);
 extern "C" void func_003A0E90(void* text, void* p);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* func_0028B180();
 extern "C" void* func_002B40F0(void* self, int i);
 extern "C" void* func_002B4120(void* self, int i);
@@ -512,7 +512,7 @@ extern "C" void func_00197E70(void* vself)
             sVtEntry_197E70* vt = *(sVtEntry_197E70**)(db + 4);
             unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_00460668));
             int len = USTR_length(fmt) + strlen(name) + 1;
-            unsigned short* buf = (unsigned short*)operator_new_tag(len * 2, D_00460470, 0x100, 0);
+            unsigned short* buf = (unsigned short*)operator_new__FUi(len * 2, D_00460470, 0x100, 0);
             // PORT: the format argument is a string pointer passed through an int parameter
             func_002C26D0(buf, fmt, (int)name);
             func_003A0E90(self->title, buf);
@@ -528,7 +528,7 @@ extern "C" void func_00197E70(void* vself)
             sVtEntry_197E70* vt = *(sVtEntry_197E70**)(db + 4);
             unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_00460678));
             int len = USTR_length(fmt) + strlen(artist) + 1;
-            unsigned short* buf = (unsigned short*)operator_new_tag(len * 2, D_00460470, 0x100, 0);
+            unsigned short* buf = (unsigned short*)operator_new__FUi(len * 2, D_00460470, 0x100, 0);
             // PORT: the format argument is a string pointer passed through an int parameter
             func_002C26D0(buf, fmt, (int)artist);
             func_003A0E90(self->artist, buf);
@@ -553,7 +553,7 @@ extern "C" int USTR_length(unsigned short* s);
 void cMemMan_free(void* p);
 extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, int n);
 extern "C" void func_003A0E90(void* text, void* p);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_004605D8[];
 extern char D_00460688[];
 extern char* D_004A28A8;
@@ -578,7 +578,7 @@ extern "C" void func_00198118(void* p)
     char* db = *(char**)(D_004A28A8 + 0x8C);
     sVtEntry_00198118* vt = *(sVtEntry_00198118**)(db + 4);
     unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_004605D8));
-    unsigned short* buf = (unsigned short*)operator_new_tag((USTR_length(fmt) + 5) * 2, D_00460688, 0x100, 0);
+    unsigned short* buf = (unsigned short*)operator_new__FUi((USTR_length(fmt) + 5) * 2, D_00460688, 0x100, 0);
     int n = 0;
     int j;
     for (j = 0; j < 64; j++) {
@@ -835,7 +835,7 @@ extern "C" int strlen(const char* s);
 void cMemMan_free(void* p);
 extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, int n);
 extern "C" void func_003A0E90(void* text, void* p);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* func_00198AB8(void* self, int i);
 // PORT: func_00198AE8__FPv is called with (self, idx) here; bind the 2-arg form to that symbol.
 int func_00198AE8_2(void* self, int idx) __asm__("func_00198AE8__FPv");
@@ -890,7 +890,7 @@ extern "C" void cFEStateRequestLine_updateHilightedSongInfo(void* vself, int idx
         unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_00460770));
         char* name = (char*)func_00198AB8(self, idx);
         int len = USTR_length(fmt) + strlen(name) + 1;
-        unsigned short* buf = (unsigned short*)operator_new_tag(len * 2, D_00460688, 0x100, 0);
+        unsigned short* buf = (unsigned short*)operator_new__FUi(len * 2, D_00460688, 0x100, 0);
         // PORT: the format argument is a string pointer passed through an int parameter
         func_002C26D0(buf, fmt, (int)name);
         self->title->show(1);
