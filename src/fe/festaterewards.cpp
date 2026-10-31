@@ -88,7 +88,7 @@ INCLUDE_ASM("fe/festaterewards", func_001CF238);
 #ifdef SKIP_ASM
 extern "C" void func_001D0238(void* self);
 extern "C" void func_001CFF10(void* self);
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001CF238(void* self)
 {
@@ -727,7 +727,7 @@ INCLUDE_ASM("fe/festaterewards", func_001D0320);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_00157F20(void* iface, int player, int a2, int a3, int a4, int a5);
+extern "C" int func_00157F20(void* iface, int player, int a2, int a3, int a4, int a5);
 extern "C" int func_00150928(void* iface, int a1, int charID);
 struct sVE_0320a {
     short delta;
@@ -742,10 +742,8 @@ struct sVE_0320b {
 
 extern "C" void func_001D0320(void* self, int a1)
 {
-    func_00157F20(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(signed char*)((char*)self + 0x44),
-                  *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x4C), a1, 1);
-    *(int*)((char*)self + 0x54) = func_00150928(cBE_getInterface_Fv(cBE_getBE(), 0xB), *(signed char*)((char*)self + 0x44),
-                                                *(int*)((char*)self + 0x50));
+    func_00157F20(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x4C), a1, 1);
+    *(int*)((char*)self + 0x54) = func_00150928(cBE_getInterface_Fv(cBE_getBE(), 0xB), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0x50));
     sVE_0320a* vt = *(sVE_0320a**)((char*)self + 8);
     vt[42].fn((char*)self + vt[42].delta);
     sVE_0320b* vt2 = *(sVE_0320b**)((char*)self + 8);
@@ -841,12 +839,11 @@ INCLUDE_ASM("fe/festaterewards", func_001D05F0);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_00157468(void* iface, int a, int b, int c, int d);
+extern "C" int func_00157468(void* iface, int a, int b, int c, int d);
 
 extern "C" void func_001D05F0(void* self, int arg)
 {
-    func_00157468(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(signed char*)((char*)self + 0x44),
-                  *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x4C), arg);
+    func_00157468(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x4C), arg);
 }
 #endif
 
@@ -2133,7 +2130,7 @@ extern "C" int func_001D1F78(void* self, int a1, unsigned int a2)
 INCLUDE_ASM("fe/festaterewards", func_001D1FB0);
 #ifdef SKIP_ASM
 extern "C" void func_001D2198(void* self);
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001D1FB0(void* self)
 {
@@ -2375,7 +2372,7 @@ extern "C" void func_001D2430(void* self)
 INCLUDE_ASM("fe/festaterewards", func_001D2468);
 #ifdef SKIP_ASM
 extern "C" void func_00253890(void* p, int a1);
-extern "C" void* func_0039E6B8(void* self);
+extern "C" void func_0039E6B8(void* self);
 
 extern "C" void func_001D2468(void* self)
 {
@@ -2393,7 +2390,7 @@ INCLUDE_ASM("fe/festaterewards", func_001D24A8);
 #ifdef SKIP_ASM
 extern "C" void func_00253938(void* p);
 extern "C" void func_001D2638(void* self);
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001D24A8(void* self)
 {
@@ -2459,7 +2456,7 @@ INCLUDE_ASM("fe/festaterewards", func_001D25E8);
 extern "C" void* func_0028B180();
 extern "C" void func_002B3A70(void* p);
 extern "C" int func_002534A8(void* p, void* q);
-extern "C" void func_00253860(void* p);
+extern "C" int func_00253860(void* p);
 
 extern "C" void func_001D25E8(void* self)
 {
