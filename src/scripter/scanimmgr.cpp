@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("scripter/scanimmgr", cScriptAnimBankManager_cScriptAnimBankManager);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_004825D8[];
 extern const char D_00481A80[];
 
@@ -31,7 +30,7 @@ extern "C" cScriptAnimBankManager53B8* cScriptAnimBankManager_cScriptAnimBankMan
     self->flags = flags;
     self->count = count;
     //E
-    self->banks = (sScAnimBank53B8*)operator_new_tag(count * sizeof(sScAnimBank53B8), D_00481A80, flags, 0);
+    self->banks = (sScAnimBank53B8*)operator_new__FUi(count * sizeof(sScAnimBank53B8), D_00481A80, flags, 0);
     int idx = base;
     for (int i = 0; i < self->count; i++) {
         self->banks[i].id = -1;
@@ -70,7 +69,7 @@ extern "C" void func_00275498(void* self, int flags)
 INCLUDE_ASM("scripter/scanimmgr", cScriptAnimBankManager_LinkBank);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00311220(void* mem, void* data);
 extern const char D_00481A98[];
@@ -127,7 +126,7 @@ extern "C" int cScriptAnimBankManager_LinkBank(sScLinkList* self, int id, void* 
             }
         }
         if (e->used != 0) {
-            e->map = (int*)operator_new_tag(e->used * 4, D_00481AA8, self->flags, 0);
+            e->map = (int*)operator_new__FUi(e->used * 4, D_00481AA8, self->flags, 0);
             int k = 0;
             for (int i = 0; i < n; i++) {
                 if (bank->items[i].ptr != 0) {
