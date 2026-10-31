@@ -119,7 +119,7 @@ INCLUDE_ASM("ui/uiengine", cUIEngine_addScreenByHashName);
 // PORT: cMemMan_alloc is the game's tagged operator new(size, tag, flags, d); bound by asm label.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
 extern "C" void* func_003977E8(void* self);
-extern "C" void func_001DD580(void* self);
+extern "C" unsigned short* func_001DD580(void* self);
 extern "C" void cUIScreen_setData(void* self, char* data);
 extern "C" void func_0039E758(void* self, void* node);
 extern "C" void cUIScreen_createAllObjects(void* self);
@@ -417,7 +417,7 @@ extern char D_00493DB0[];
 extern char D_004A4778[];
 extern char* D_004A289C_8138 __asm__("D_004A289C");
 extern "C" sUIFsh8138* func_003E22F0(char* name, int flags);
-extern "C" void func_002523A8(void* p);
+extern "C" void* func_002523A8(void* p);
 extern "C" void* func_00416210(void* dst, int c, int n);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
@@ -904,7 +904,7 @@ struct func_00399768_sObj {
     char c319;
 };
 
-extern "C" func_00399768_sObj* func_00399768(func_00399768_sObj* self)
+extern "C" func_00399768_sObj* func_00399768(func_00399768_sObj* self, void* screen, int a2)
 {
     func_0039FB30(self);
     *(void***)((char*)self + 8) = D_00494798;
