@@ -1085,8 +1085,8 @@ extern "C" int func_00308798(void* a, func_00308798_cObj* obj)
 INCLUDE_ASM("wscript/wscriptprocess", func_003087D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_0030C738(void* p);
-void func_0030B058(void* p);
+extern "C" void* func_0030C738(void* p);
+void* func_0030B058(void* p);
 extern "C" void func_0030C390(void* p);
 extern "C" void func_003E6448(void* dst, int value, int size);
 extern "C" void func_00308988(void* self);
@@ -1284,7 +1284,7 @@ INCLUDE_ASM("wscript/wscriptprocess", func_00308BE0);
 #ifdef SKIP_ASM
 extern "C" int func_003A6C08(void* self, int i);
 extern "C" void* func_003A6C38(void* self, int i);
-extern "C" void cWScriptMan_addProcess(void* self, int section, void* def, int flags);
+extern "C" void* cWScriptMan_addProcess(void* self, int section, void* def, int flags);
 
 struct func_00308BE0_sDef {
     char pad[0x40];
@@ -1316,7 +1316,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0026C898(void* pb);
 extern "C" int func_003A6C68(void* world, int i);
 extern "C" void* func_003A6C98(void* world, int i);
-extern "C" void cWScriptMan_addProcess1(void* self, int section, void* def, int id, int flags);
+extern "C" void* cWScriptMan_addProcess1(void* self, int section, void* def, int id, int flags);
 extern "C" char* func_00144BC0(void* iface);
 extern "C" void cPlaybackMan_initLocation(void* pb, void* loc);
 extern "C" void func_00308DB8(void* self);
@@ -1511,7 +1511,7 @@ extern "C" void func_00309030(void* self)
 INCLUDE_ASM("wscript/wscriptprocess", func_00309118);
 #ifdef SKIP_ASM
 extern "C" void func_00308DB8(void* self);
-extern "C" void func_0030A868(void* self, int id, int a2, int a3);
+extern "C" int func_0030A868(void* self, int id, int a2, int a3);
 extern "C" void* func_0028B180();
 extern "C" void func_0029D6E0(void* snd, int a1);
 extern "C" void func_0029DBB0(void* snd, int a1);
