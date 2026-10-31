@@ -462,7 +462,7 @@ extern "C" void func_00308C60(void* a);
 extern "C" void func_0026F228(void* p);
 extern "C" void func_0026F7B8(void* p);
 extern "C" void func_00145DD0(void* iface, int a1, int a2, int a3);
-extern "C" void func_00238510(void* gm, int a1, int a2);
+extern "C" int func_00238510(void* gm, int a1, int a2);
 
 struct sRace_235868 {
     char pad0[0x48];
