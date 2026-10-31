@@ -6,8 +6,7 @@ INCLUDE_ASM("world/wscriptcache", cWScriptCache_init);
 void cMemMan_free(void* p);
 void* func_003ACA50(void* self);
 extern "C" void func_003ACA70(int* self, int flags);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00495070[];
 
 // PORT: array cookie arithmetic through int (pointer in int).
@@ -24,7 +23,7 @@ extern "C" void cWScriptCache_init(void* self, int count)
     }
     *(int*)((char*)self + 0x8) = count;
     char** slot = (char**)((char*)self + 0x4);
-    char* mem = (char*)operator_new_tag(count * 0xC + 0x10, D_00495070, 0x20000000, 0);
+    char* mem = (char*)operator_new__FUi(count * 0xC + 0x10, D_00495070, 0x20000000, 0);
     char* arr = mem + 0x10;
     *(int*)mem = count;
     char* q = arr;
@@ -1560,14 +1559,14 @@ extern "C" void func_003AEAD0_impl(char* self, char* ctx, sChunk_AEAD0** out)
 }
 #endif
 
-extern "C" void* func_003AEAD0(int, void*);
+extern "C" void* func_003AEAD0(char*, void*);
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AECB8__FPvT0);
 #ifdef SKIP_ASM
 void* func_003AECB8(void* self, void* a1)
 {
-    return func_003AEAD0(*(int*)a1, self);
+    return func_003AEAD0(*(char**)a1, self);
 }
 #endif
 
