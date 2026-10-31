@@ -1859,22 +1859,22 @@ extern "C" void func_001112B8(void* self, int v)
 INCLUDE_ASM("ai/computer", func_001112F8);
 #ifdef SKIP_ASM
 // Motion-state dispatch: the second argument is passed through to the handler.
-extern "C" void func_0013F410(void* self, int a1);
+extern "C" void func_0013F410(void* self);
 void func_00139A18_a1(void* motion, int a1) __asm__("func_00139A18__FPv");
 void func_00136F28_a1(void* motion, int a1) __asm__("func_00136F28__FPv");
-extern "C" void func_0013C5A0(void* motion, int a1);
-extern "C" void func_00139178(void* motion, int a1);
-extern "C" void func_0013C7A8(void* self, int a1);
+extern "C" void func_0013C5A0(void* motion);
+extern "C" void func_00139178(void* motion);
+extern "C" void func_0013C7A8(void* self);
 extern "C" void func_001399E0(void* motion, int a1);
 extern "C" void cWipeoutMotion_gainFocus(void* motion, int a1);
-extern "C" void func_0013AD20(void* motion, int a1);
-extern "C" void cHandplantMotion_gainFocus(void* motion, int a1);
+extern "C" void func_0013AD20(void* motion);
+extern "C" void cHandplantMotion_gainFocus(void* motion);
 
 extern "C" void func_001112F8(void* self, int a1)
 {
     switch (*(int*)((char*)self + 0xDE0)) {
     case 0:
-        func_0013F410(self, a1);
+        func_0013F410(self);
         break;
     case 1:
         func_00139A18_a1((char*)self + 0x20, a1);
@@ -1883,10 +1883,10 @@ extern "C" void func_001112F8(void* self, int a1)
         func_00136F28_a1((char*)self + 0x30, a1);
         break;
     case 4:
-        func_0013C5A0((char*)self + 0xB0, a1);
+        func_0013C5A0((char*)self + 0xB0);
         break;
     case 5:
-        func_00139178((char*)self + 0x110, a1);
+        func_00139178((char*)self + 0x110);
         break;
     }
 }
@@ -1895,22 +1895,22 @@ extern "C" void func_001112F8(void* self, int a1)
 //100%
 INCLUDE_ASM("ai/computer", func_00111380);
 #ifdef SKIP_ASM
-extern "C" void func_0013F410(void* self, int a1);
+extern "C" void func_0013F410(void* self);
 void func_00139A18_a1(void* motion, int a1) __asm__("func_00139A18__FPv");
 void func_00136F28_a1(void* motion, int a1) __asm__("func_00136F28__FPv");
-extern "C" void func_0013C5A0(void* motion, int a1);
-extern "C" void func_00139178(void* motion, int a1);
-extern "C" void func_0013C7A8(void* self, int a1);
+extern "C" void func_0013C5A0(void* motion);
+extern "C" void func_00139178(void* motion);
+extern "C" void func_0013C7A8(void* self);
 extern "C" void func_001399E0(void* motion, int a1);
 extern "C" void cWipeoutMotion_gainFocus(void* motion, int a1);
-extern "C" void func_0013AD20(void* motion, int a1);
-extern "C" void cHandplantMotion_gainFocus(void* motion, int a1);
+extern "C" void func_0013AD20(void* motion);
+extern "C" void cHandplantMotion_gainFocus(void* motion);
 
 extern "C" void func_00111380(void* self, int a1)
 {
     switch (*(int*)((char*)self + 0xDE0)) {
     case 0:
-        func_0013C7A8(self, a1);
+        func_0013C7A8(self);
         break;
     case 1:
         func_001399E0((char*)self + 0x20, a1);
@@ -1919,10 +1919,10 @@ extern "C" void func_00111380(void* self, int a1)
         cWipeoutMotion_gainFocus((char*)self + 0x30, a1);
         break;
     case 4:
-        func_0013AD20((char*)self + 0xB0, a1);
+        func_0013AD20((char*)self + 0xB0);
         break;
     case 5:
-        cHandplantMotion_gainFocus((char*)self + 0x110, a1);
+        cHandplantMotion_gainFocus((char*)self + 0x110);
         break;
     }
 }
@@ -2017,13 +2017,13 @@ extern "C" void func_00111538(void* self, int v)
 INCLUDE_ASM("ai/computer", func_00111578);
 #ifdef SKIP_ASM
 extern "C" void func_00131C30(void* m, int a1);
-extern "C" void func_0012FE98(void* m, int a1);
+extern "C" void func_0012FE98(void* m);
 void func_0012E9B0_a1(void* m, int a1) __asm__("func_0012E9B0__FPv");
 extern "C" void func_0012FB68(void* m, int a1);
-extern "C" void func_00134CB0(void* m, int a1);
-extern "C" void func_00132048(void* m, int a1);
-extern "C" void func_0012E690(void* m, int a1);
-extern "C" void func_00132F98(void* m, int a1);
+extern "C" void func_00134CB0(void* m);
+extern "C" void func_00132048(void* m);
+extern "C" void func_0012E690(void* m);
+extern "C" void func_00132F98(void* m);
 
 // Controller-state dispatch: the second argument is passed through to the handler.
 extern "C" void func_00111578(void* self, int a1)
@@ -2033,7 +2033,7 @@ extern "C" void func_00111578(void* self, int a1)
         func_00131C30((char*)self + 0x1C0, a1);
         break;
     case 1:
-        func_0012FE98((char*)self + 0x1D0, a1);
+        func_0012FE98((char*)self + 0x1D0);
         break;
     case 2:
         func_0012E9B0_a1((char*)self + 0x1F0, a1);
@@ -2042,16 +2042,16 @@ extern "C" void func_00111578(void* self, int a1)
         func_0012FB68((char*)self + 0x210, a1);
         break;
     case 5:
-        func_00134CB0((char*)self + 0x230, a1);
+        func_00134CB0((char*)self + 0x230);
         break;
     case 7:
-        func_00132048((char*)self + 0x2B0, a1);
+        func_00132048((char*)self + 0x2B0);
         break;
     case 8:
-        func_0012E690((char*)self + 0x2C0, a1);
+        func_0012E690((char*)self + 0x2C0);
         break;
     case 11:
-        func_00132F98((char*)self + 0x370, a1);
+        func_00132F98((char*)self + 0x370);
         break;
     case 3: case 6: case 9: case 10: case 12: case 13:
         break;
@@ -2064,15 +2064,15 @@ INCLUDE_ASM("ai/computer", func_00111630);
 #ifdef SKIP_ASM
 void func_00131608(void* p);
 void func_0012FC60(void* p);
-extern "C" void func_0012E980(void* p, int a1);
-extern "C" void func_0012F620(void* p, int a1);
-extern "C" void func_00133128(void* p, int a1);
-extern "C" void func_0012BE20(void* p, int a1);
-extern "C" void func_00131D08(void* p, int a1);
-extern "C" void func_0012CA30(void* p, int a1);
-extern "C" void func_0012F230(void* p, int a1);
-extern "C" void func_0012C5C8(void* p, int a1);
-extern "C" void func_001328B0(void* p, int a1);
+extern "C" void func_0012E980(void* p);
+extern "C" void func_0012F620(void* p);
+extern "C" void func_00133128(void* p);
+extern "C" void func_0012BE20(void* p);
+extern "C" void func_00131D08(void* p);
+extern "C" void func_0012CA30(void* p);
+extern "C" void func_0012F230(void* p);
+extern "C" void func_0012C5C8(void* p);
+extern "C" void func_001328B0(void* p);
 extern "C" void func_00136268(void* p, int a1);
 // Forwards to the handler for the AI's current state.
 extern "C" void func_00111630(void* self, int a1)
@@ -2085,31 +2085,31 @@ extern "C" void func_00111630(void* self, int a1)
         func_0012FC60((char*)self + 0x1D0);
         break;
     case 2:
-        func_0012E980((char*)self + 0x1F0, a1);
+        func_0012E980((char*)self + 0x1F0);
         break;
     case 4:
-        func_0012F620((char*)self + 0x210, a1);
+        func_0012F620((char*)self + 0x210);
         break;
     case 5:
-        func_00133128((char*)self + 0x230, a1);
+        func_00133128((char*)self + 0x230);
         break;
     case 6:
-        func_0012BE20((char*)self + 0x290, a1);
+        func_0012BE20((char*)self + 0x290);
         break;
     case 7:
-        func_00131D08((char*)self + 0x2B0, a1);
+        func_00131D08((char*)self + 0x2B0);
         break;
     case 8:
-        func_0012CA30((char*)self + 0x2C0, a1);
+        func_0012CA30((char*)self + 0x2C0);
         break;
     case 9:
-        func_0012F230((char*)self + 0x350, a1);
+        func_0012F230((char*)self + 0x350);
         break;
     case 10:
-        func_0012C5C8((char*)self + 0x360, a1);
+        func_0012C5C8((char*)self + 0x360);
         break;
     case 11:
-        func_001328B0((char*)self + 0x370, a1);
+        func_001328B0((char*)self + 0x370);
         break;
     case 12:
         func_00136268((char*)self + 0x390, a1);
@@ -2133,8 +2133,8 @@ extern "C" void func_00133308(void* p, int a1);
 extern "C" void func_0012BF68(void* p, int a1);
 extern "C" void func_00131D30(void* p, int a1);
 extern "C" void func_0012CB68(void* p, int a1);
-extern "C" void func_0012F398(void* p, int a1);
-extern "C" void func_0012C678(void* p, int a1);
+extern "C" void func_0012F398(void* p);
+extern "C" void func_0012C678(void* p);
 extern "C" void func_00132A30(void* p, int a1);
 extern "C" void func_00136508(void* p, int a1);
 // Forwards to the second handler for the AI's current state.
@@ -2169,10 +2169,10 @@ extern "C" void func_00111728(void* self, int a1)
         func_0012CB68((char*)self + 0x2C0, a1);
         break;
     case 9:
-        func_0012F398((char*)self + 0x350, a1);
+        func_0012F398((char*)self + 0x350);
         break;
     case 10:
-        func_0012C678((char*)self + 0x360, a1);
+        func_0012C678((char*)self + 0x360);
         break;
     case 11:
         func_00132A30((char*)self + 0x370, a1);
