@@ -25,7 +25,7 @@ extern char D_00487588[];
 extern char D_00487598[];
 extern char D_004875A8[];
 
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_003714B8(void* self);
 void* func_002F7A68(void* self);
