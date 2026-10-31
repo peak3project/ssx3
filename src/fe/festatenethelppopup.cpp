@@ -46,7 +46,7 @@ INCLUDE_ASM("fe/festatenethelppopup", func_001D9E68);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
 extern "C" float func_00320BF0(void* self, int id);
-extern "C" void func_0039F190(void*, int);
+extern "C" void* func_0039F190(void*, int);
 
 extern "C" void func_001D9E68(void* self)
 {
@@ -303,7 +303,7 @@ extern "C" int func_001DA238(sNetHelp_1DA238* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA478);
 #ifdef SKIP_ASM
-extern "C" void func_0039F190(void*, int);
+extern "C" void* func_0039F190(void*, int);
 
 extern "C" void func_001DA478(void* self, int a1, int msg)
 {
