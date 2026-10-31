@@ -126,15 +126,17 @@ extern "C" int func_001DEC68(char* self, sWidget_EC68* w)
 #endif
 
 extern void* D_0046B230[];
-extern "C" void* func_0039E390(void*);
+extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DEDE8__FPv);
 #ifdef SKIP_ASM
-void* func_001DEDE8(void* self)
+// func_001DEDE8 is matched under the C++ symbol func_001DEDE8__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001DEDE8(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046B230;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -343,7 +345,7 @@ int func_001DF378(void* self)
 #endif
 
 extern void* D_0046D0D0[];
-extern "C" void* func_0039E390(void*);
+extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF380);
@@ -362,14 +364,16 @@ extern "C" void* func_001DF380(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF3B8__FPv);
 #ifdef SKIP_ASM
-void* func_001DF3B8(void* self)
+// func_001DF3B8 is matched under the C++ symbol func_001DF3B8__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001DF3B8(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
-extern "C" void* func_0039E390(void*);
+extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF3E0);
@@ -388,10 +392,12 @@ extern "C" void* func_001DF3E0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF418__FPv);
 #ifdef SKIP_ASM
-void* func_001DF418(void* self)
+// func_001DF418 is matched under the C++ symbol func_001DF418__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001DF418(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -416,7 +422,7 @@ INCLUDE_ASM("fe/fepopupmisc", func_001DF470);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 inline void* operator new[](unsigned int, void* p) { return p; }
 extern "C" void* func_001A8500(void*, int, int);
-extern "C" void func_001926F0(void* self);
+extern "C" void* func_001926F0(void* self);
 extern void* D_0046AF68[];
 
 // Element type of an inline-constructed array (0x34 bytes, constructed by func_001926F0).
@@ -701,7 +707,7 @@ int func_001DF8E0(void* self)
 #endif
 
 extern void* D_0046A618[];
-extern "C" void* func_0039E390(void*);
+extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF8E8);
@@ -749,10 +755,12 @@ extern "C" void* func_001DF900(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF960__FPv);
 #ifdef SKIP_ASM
-void* func_001DF960(void* self)
+// func_001DF960 is matched under the C++ symbol func_001DF960__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001DF960(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046A618;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -842,8 +850,7 @@ extern void* D_0046A3C8[];
 extern void* D_0046D0D0[];
 void func_001DFAC8(void* self);
 extern "C" void func_001D00C0(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001DFA10(void* self, int flags)
 {
@@ -851,7 +858,7 @@ extern "C" void func_001DFA10(void* self, int flags)
     func_001DFAC8(self);
     func_001D00C0(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -986,8 +993,7 @@ extern void* D_0046A3C8[];
 extern void* D_0046D0D0[];
 void func_001DFAC8(void* self);
 extern "C" void func_001D00C0(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001DFB28(void* self, int flags)
 {
@@ -995,7 +1001,7 @@ extern "C" void func_001DFB28(void* self, int flags)
     func_001DFAC8(self);
     func_001D00C0(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -1058,8 +1064,7 @@ extern void* D_0046A3C8[];
 extern void* D_0046D0D0[];
 void func_001DFAC8(void* self);
 extern "C" void func_001D00C0(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001DFBF8(void* self, int flags)
 {
@@ -1067,7 +1072,7 @@ extern "C" void func_001DFBF8(void* self, int flags)
     func_001DFAC8(self);
     func_001D00C0(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -1130,8 +1135,7 @@ extern void* D_0046A3C8[];
 extern void* D_0046D0D0[];
 void func_001DFAC8(void* self);
 extern "C" void func_001D00C0(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001DFCC8(void* self, int flags)
 {
@@ -1139,7 +1143,7 @@ extern "C" void func_001DFCC8(void* self, int flags)
     func_001DFAC8(self);
     func_001D00C0(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -1202,8 +1206,7 @@ extern void* D_0046A3C8[];
 extern void* D_0046D0D0[];
 void func_001DFAC8(void* self);
 extern "C" void func_001D00C0(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001DFD98(void* self, int flags)
 {
@@ -1211,7 +1214,7 @@ extern "C" void func_001DFD98(void* self, int flags)
     func_001DFAC8(self);
     func_001D00C0(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -1274,8 +1277,7 @@ extern void* D_0046A3C8[];
 extern void* D_0046D0D0[];
 void func_001DFAC8(void* self);
 extern "C" void func_001D00C0(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001DFE68(void* self, int flags)
 {
@@ -1283,7 +1285,7 @@ extern "C" void func_001DFE68(void* self, int flags)
     func_001DFAC8(self);
     func_001D00C0(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -1346,8 +1348,7 @@ extern void* D_0046A3C8[];
 extern void* D_0046D0D0[];
 void func_001DFAC8(void* self);
 extern "C" void func_001D00C0(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001DFF38(void* self, int flags)
 {
@@ -1355,7 +1356,7 @@ extern "C" void func_001DFF38(void* self, int flags)
     func_001DFAC8(self);
     func_001D00C0(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -1582,10 +1583,12 @@ extern "C" void* func_001E0178(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E01B0__FPv);
 #ifdef SKIP_ASM
-void* func_001E01B0(void* self)
+// func_001E01B0 is matched under the C++ symbol func_001E01B0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001E01B0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -1609,15 +1612,14 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E0210);
 extern void* D_004696B8[];
 extern void* D_0046D0D0[];
 extern "C" void func_001D4B20(void* self);
-// PORT: unit declares func_0039E390 with one arg; the body takes (self, flags)
-extern "C" void func_0039E390_dtor(void* self, int flags) __asm__("func_0039E390");
+extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001E0210(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_004696B8;
     func_001D4B20(self);
     *(void***)((char*)self + 0x8) = D_0046D0D0;
-    func_0039E390_dtor(self, flags);
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -1638,15 +1640,17 @@ extern "C" void* func_001E0268(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E02A0__FPv);
 #ifdef SKIP_ASM
-void* func_001E02A0(void* self)
+// func_001E02A0 is matched under the C++ symbol func_001E02A0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001E02A0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
 extern void* D_00469518[];
-extern "C" void* func_0039E390(void*);
+extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E02C8);
@@ -1659,10 +1663,12 @@ extern "C" int func_001E02C8(void *arg0) {
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E02D0__FPv);
 #ifdef SKIP_ASM
-void* func_001E02D0(void* self)
+// func_001E02D0 is matched under the C++ symbol func_001E02D0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001E02D0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_00469518;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -1814,10 +1820,12 @@ extern "C" void* func_001E0510(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0548__FPv);
 #ifdef SKIP_ASM
-void* func_001E0548(void* self)
+// func_001E0548 is matched under the C++ symbol func_001E0548__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001E0548(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -1845,10 +1853,12 @@ extern "C" void* func_001E0578(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E05B0__FPv);
 #ifdef SKIP_ASM
-void* func_001E05B0(void* self)
+// func_001E05B0 is matched under the C++ symbol func_001E05B0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001E05B0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -2058,10 +2068,12 @@ extern "C" void* func_001E07C0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E07F8__FPv);
 #ifdef SKIP_ASM
-void* func_001E07F8(void* self)
+// func_001E07F8 is matched under the C++ symbol func_001E07F8__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001E07F8(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -2082,10 +2094,12 @@ extern "C" void* func_001E0820(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0858__FPv);
 #ifdef SKIP_ASM
-void* func_001E0858(void* self)
+// func_001E0858 is matched under the C++ symbol func_001E0858__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_001E0858(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
@@ -5607,7 +5621,7 @@ extern "C" int func_001E33E8_48B0() __asm__("func_001E33E8__FPv");
 extern "C" void func_001E4840_48B0(void* self, int obj) __asm__("func_001E4840");
 extern "C" void func_001E4878_48B0(void* self, int obj) __asm__("func_001E4878");
 extern "C" int func_001E3620_48B0(int idx) __asm__("func_001E3620");
-extern "C" int func_001E3650_48B0(int idx) __asm__("func_001E3650");
+extern "C" unsigned char func_001E3650(int idx);
 extern "C" void func_001E4C78_48B0(void* self, int idx, int row, int a3, int a4) __asm__("func_001E4C78");
 extern "C" int func_001E2C80_48B0(int kind, int idx, int local) __asm__("func_001E2C80");
 extern "C" int func_001E4B80_48B0(void* self, int entry) __asm__("func_001E4B80");
@@ -5677,7 +5691,7 @@ extern "C" void func_001E48B0(void* selfp)
             int k = local - self->scroll - n;
             if (k >= 0) {
                 int r1 = func_001E3620_48B0(k);
-                func_001E4C78_48B0(self, k, i, r1, func_001E3650_48B0(k));
+                func_001E4C78_48B0(self, k, i, r1, func_001E3650(k));
             } else if (k + online >= 0) {
                 int nk = ~k;
                 int r;
@@ -6034,14 +6048,14 @@ extern "C" void func_001E5248(void* self)
 }
 #endif
 
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E52B0__FPv);
 #ifdef SKIP_ASM
-void* func_001E52B0(void* self)
+void func_001E52B0(void* self)
 {
-    return func_0039E510(self);
+    func_0039E510(self);
 }
 #endif
 
@@ -6428,14 +6442,14 @@ extern "C" unsigned char func_001E5AA0(void* self, int idx)
 
 INCLUDE_ASM("fe/fepopupmisc", func_001E5B80);
 
-extern "C" void* func_0020E900(void* self);
+extern "C" void func_0020E900(void* self);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E64A8__FPv);
 #ifdef SKIP_ASM
-void* func_001E64A8(void* self)
+void func_001E64A8(void* self)
 {
-    return func_0020E900(self);
+    func_0020E900(self);
 }
 #endif
 
@@ -7356,9 +7370,9 @@ done:
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8E70__FPv);
 #ifdef SKIP_ASM
-void* func_001E8E70(void* self)
+void func_001E8E70(void* self)
 {
-    return func_0020E900(self);
+    func_0020E900(self);
 }
 #endif
 
