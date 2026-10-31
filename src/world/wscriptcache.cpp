@@ -155,9 +155,9 @@ INCLUDE_ASM("world/wscriptcache", func_003ACAD0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void ASYNCFILE_release_CAD0(int, int *, int *) __asm__("ASYNCFILE_release");
 extern "C" void* func_002523A8(int);
-extern "C" void func_003B47F8(int, int);
+extern "C" void* func_003B47F8(int, int);
 extern "C" int func_003B4818_CAD0(int) __asm__("func_003B4818");
-extern "C" int func_003DF980_CAD0(int) __asm__("func_003DF980");
+extern "C" int func_003DF980(int);
 extern "C" void func_003E6574_CAD0(int, int, int) __asm__("func_003E6574");
 int operator_new_CAD0(unsigned int, void*, int, int) __asm__("operator_new__FUi");
 extern char D_00495080[];
@@ -165,7 +165,7 @@ extern "C" void func_003ACAD0_impl(void *self_) __asm__("func_003ACAD0");
 extern "C" void func_003ACAD0_impl(void *self_) {
     char *self = (char*)self_;
     short st = *(short*)self;
-    if (st == 1 && func_003DF980_CAD0(*(int*)(self + 4)) == st) {
+    if (st == 1 && func_003DF980(*(int*)(self + 4)) == st) {
         int sp0 = 0;
         int sp4 = 0;
         ASYNCFILE_release_CAD0(*(int*)(self + 4), &sp0, &sp4);
@@ -853,12 +853,12 @@ extern "C" int func_003ADC80(void* self)
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003ADCB0);
 #ifdef SKIP_ASM
-extern "C" int func_003ADCB0(void* self)
+extern "C" int* func_003ADCB0(void* self)
 {
     if (*(short*)self == 3) {
         void* data = *(void**)((char*)self + 0x8);
         if (data != 0) {
-            return *(int*)((char*)data + 0x14);
+            return *(int**)((char*)data + 0x14);
         }
     }
     return 0;
@@ -883,12 +883,12 @@ extern "C" int func_003ADCE0(void* self)
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003ADD10);
 #ifdef SKIP_ASM
-extern "C" int func_003ADD10(void* self)
+extern "C" void* func_003ADD10(void* self)
 {
     if (*(short*)self == 3) {
         void* data = *(void**)((char*)self + 0x8);
         if (data != 0) {
-            return *(int*)((char*)data + 0x2C);
+            return *(void**)((char*)data + 0x2C);
         }
     }
     return 0;
@@ -913,12 +913,12 @@ extern "C" int func_003ADD40(void* self)
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003ADD70);
 #ifdef SKIP_ASM
-extern "C" int func_003ADD70(void* self)
+extern "C" void* func_003ADD70(void* self)
 {
     if (*(short*)self == 3) {
         void* data = *(void**)((char*)self + 0x8);
         if (data != 0) {
-            return *(int*)((char*)data + 0x24);
+            return *(void**)((char*)data + 0x24);
         }
     }
     return 0;
@@ -1765,11 +1765,11 @@ INCLUDE_ASM("world/wscriptcache", func_003AF0C8);
 #ifdef SKIP_ASM
 extern "C" void* func_003B0340(void*);
 extern "C" void f03A8_F0C8(void*, int) __asm__("func_003B03A8");
-extern "C" void f03B0_F0C8(void*, int) __asm__("func_003B03B0");
-extern "C" void f03B8_F0C8(void*, int) __asm__("func_003B03B8");
-extern "C" void f03C0_F0C8(void*, int) __asm__("func_003B03C0");
+extern "C" void func_003B03B0(void*, int);
+extern "C" void func_003B03B8(void*, int);
+extern "C" void func_003B03C0(void*, int);
 extern "C" void f03C8_F0C8(void*, unsigned int) __asm__("func_003B03C8");
-extern "C" void f03D0_F0C8(void*, int) __asm__("func_003B03D0");
+extern "C" void func_003B03D0(void*, int);
 extern char D_00495260[];
 struct sAlloc_F0C8 {
     void* (*alloc)(const char* tag, int size, int align, int d, int flags);
@@ -1806,13 +1806,13 @@ extern "C" void func_003AF0C8(void* vself, unsigned int count, int a2, int a3, i
     self->arr = (sElem_F0C8*)arr;
     self->count = count;
     if (count != 0) {
-        f03D0_F0C8(arr, 0);
+        func_003B03D0(arr, 0);
     }
     for (k = 0; k < self->count; k++) {
         f03A8_F0C8(&self->arr[k], a2);
-        f03B0_F0C8(&self->arr[k], a3);
-        f03B8_F0C8(&self->arr[k], a4);
-        f03C0_F0C8(&self->arr[k], a5);
+        func_003B03B0(&self->arr[k], a3);
+        func_003B03B8(&self->arr[k], a4);
+        func_003B03C0(&self->arr[k], a5);
         f03C8_F0C8(&self->arr[k], k);
     }
 }
@@ -1890,7 +1890,7 @@ struct sNames_F428 { const char* e[5]; };
 struct sVals_F428 { unsigned int e[5]; };
 extern const sNames_F428 D_00495290;
 extern const sVals_F428 D_004952A8;
-extern "C" int func_003AF378(const char*, const char*) __asm__("func_003AF378");
+extern "C" int func_003AF378(const char*, const char*);
 
 extern "C" unsigned int func_003AF428(char* s, unsigned int len)
 {
@@ -2144,11 +2144,11 @@ public:
     virtual float v05();
 };
 
-extern "C" void func_003B04F8(void* self, func_003B04F8_cObj* obj, int a2)
+extern "C" int func_003B04F8(void* self, func_003B04F8_cObj* obj, int a2)
 {
     *(func_003B04F8_cObj**)((char*)self + 0x14) = obj;
     *(int*)self = a2;
-    obj->v02(self, a2);
+    return obj->v02(self, a2);
 }
 #endif
 
