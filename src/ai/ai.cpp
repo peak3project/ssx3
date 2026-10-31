@@ -2607,17 +2607,16 @@ extern "C" void func_0012C678(sAiObj12C678* self)
         {
             if (func_0011FE98(self->mRider) != 0)
                 break;
-            float zero = 0.0f;
             float t = -0.10000000149011612f;
-            if (zero < *(float*)(self->mRider + 0x1F0))
+            if (0.0f < *(float*)(self->mRider + 0x1F0))
                 t = 0.10000000149011612f;
             anim = 0xB;
             func_00113E80(self->mRider, t);
             func_00114130(self->mRider, 0, 0);
-            *(float*)(self->mRider + 0x2DC) = zero;
+            *(float*)(self->mRider + 0x2DC) = 0.0f;
             if (*(float*)(self->mRider + 0x378) < 0.800000011920929f)
             {
-                func_00113F88(self->mRider, zero, zero);
+                func_00113F88(self->mRider, 0.0f, 0.0f);
             }
             else
             {
@@ -2629,26 +2628,25 @@ extern "C" void func_0012C678(sAiObj12C678* self)
                 }
                 else
                 {
-                    func_00113F88(self->mRider, zero, 1.0f);
+                    func_00113F88(self->mRider, 0.0f, 1.0f);
                 }
             }
         }
         break;
     case 1:
     {
-        float zero = 0.0f;
-        func_00113F88(self->mRider, zero, zero);
-        func_00113E80(self->mRider, zero);
+        func_00113F88(self->mRider, 0.0f, 0.0f);
+        func_00113E80(self->mRider, 0.0f);
         vu0ScaleEq_12C678(*(sVec4_12C678*)(self->mRider + 0x1E0), 0.9300000071525574f);
         if (aiAbs_12C678(*(float*)(self->mRider + 0x214)) < 0.20000000298023224f &&
-            *(float*)(self->mRider + 0x1F0) == zero)
+            *(float*)(self->mRider + 0x1F0) == 0.0f)
         {
             self->mState = 2;
             anim = 4;
             if (*(int*)(self->mRider + 0x100) == 1)
-                func_0010E028(self->mRider, 1, zero);
+                func_0010E028(self->mRider, 1, 0.0f);
             else
-                func_0010E028(self->mRider, 4, zero);
+                func_0010E028(self->mRider, 4, 0.0f);
         }
         break;
     }
@@ -4174,15 +4172,13 @@ extern "C" void func_0012E9B8(void* self, void* in)
             func_0011FE78_impl(*(void**)self, 1);
             func_00294170(D_004A3500, *(void**)self);
         }
-        float z = 0.0f;
-        func_00113E80(*(void**)self, z);
-        func_00113F88(*(void**)self, z, z);
+        func_00113E80(*(void**)self, 0.0f);
+        func_00113F88(*(void**)self, 0.0f, 0.0f);
         func_0011FEC8_impl(*(void**)self, 5);
         return;
     }
     func_00114130(*(void**)self, (w >> 14) & 1, 0);
-    float zero = 0.0f;
-    func_00113F88(*(void**)self, 1.0f, zero);
+    func_00113F88(*(void**)self, 1.0f, 0.0f);
     float sx = aiClamp_12E9B8(((sAiBits0_12E9B8*)((char*)in + 4))->v * 0.032258063554763794f, -0.5f, 0.5f);
     float sy = aiClamp_12E9B8(((sAiBits6_12E9B8*)((char*)in + 4))->v * 0.032258063554763794f, -0.5f, 0.5f);
     if (func_00311AE8(*(void**)(*(char**)self + 0x784), 2) == 10)
@@ -4202,17 +4198,17 @@ extern "C" void func_0012E9B8(void* self, void* in)
     }
     if (func_00312AA0(*(void**)(*(char**)self + 0x784), 2) == 0x15)
     {
-        func_00113E80(*(void**)self, zero);
+        func_00113E80(*(void**)self, 0.0f);
         char* r1 = *(char**)self;
-        *(float*)(r1 + 0x2AC) = zero;
+        *(float*)(r1 + 0x2AC) = 0.0f;
         *(float*)(r1 + 0x2A8) = 0.08333379030227661f;
         char* r2 = *(char**)self;
-        *(float*)(r2 + 0x2B8) = zero;
+        *(float*)(r2 + 0x2B8) = 0.0f;
         *(float*)(r2 + 0x2B4) = 0.08333379030227661f;
         return;
     }
     char* r = *(char**)self;
-    if (*(int*)(r + 0x328) == 0 && *(float*)(r + 0x2DC) == zero && func_00114CC0(r))
+    if (*(int*)(r + 0x328) == 0 && *(float*)(r + 0x2DC) == 0.0f && func_00114CC0(r))
     {
         cRiderAnimBase_play(*(void**)(*(char**)self + 0x784), 0x15, 0, -1.0f);
         return;
@@ -5303,9 +5299,8 @@ static inline float aiAbs_1307B8(float x)
 
 extern "C" int func_001307B8(void* self, void* a1)
 {
-    int mask = 0x20000;
-    if (*(int*)a1 & mask) *(int*)((char*)self + 0x10) = 1;
-    int ok = *(int*)((char*)self + 0x10) != 0 && (*(int*)a1 & mask) == 0;
+    if (*(int*)a1 & 0x20000) *(int*)((char*)self + 0x10) = 1;
+    int ok = *(int*)((char*)self + 0x10) != 0 && (*(int*)a1 & 0x20000) == 0;
     float speed = aiAbs_1307B8(*(float*)(*(char**)((char*)self + 0x14) + 0x280));
     if (!ok) return 0;
     func_00131428(self);
@@ -5970,13 +5965,12 @@ static inline float aiClamp_1620(float v, float lo, float hi)
 
 extern "C" void func_00131620(void* self, void* in)
 {
-    float zero = 0.0f;
     float x = ((sAiBitsX_1620*)in)->v * 0.032258063554763794f;
     float y = ((sAiBitsY_1620*)in)->v * 0.032258063554763794f;
     float c = ((sAiBitsC_1620*)((char*)in + 4))->v * 0.032258063554763794f;
     char* r = *(char**)self;
-    if (aiDot_1620(*(sAiVec4_1620*)(r + 0x1E0), *(sAiVec4_1620*)(r + 0x3A0)) < zero)
-        c = zero;
+    if (aiDot_1620(*(sAiVec4_1620*)(r + 0x1E0), *(sAiVec4_1620*)(r + 0x3A0)) < 0.0f)
+        c = 0.0f;
     if (func_00116378(r))
         return;
     if (func_00116120(*(void**)self, (*(int*)in >> 12) & 1, 0))
@@ -5989,7 +5983,7 @@ extern "C" void func_00131620(void* self, void* in)
             return;
         x = aiClamp_1620(x, -0.5f, 0.5f);
         y = 1.0f;
-        c = zero;
+        c = 0.0f;
     }
     else
     {
@@ -6233,31 +6227,29 @@ extern "C" void func_00131D30(void* self, void* in)
     if (func_00132620(self, ((sPadA_131D30*)in)->id))
         return;
     int w2 = *(int*)in;
-    float k = 0.032258063554763794f;
-    float zero = 0.0f;
     func_00114130(*(void**)((char*)self + 0x8), (w2 >> 16) & 1, (w2 >> 15) & 1);
-    func_00113F38(*(void**)((char*)self + 0x8), ((sPadB_131D30*)in)->v * k);
-    func_00113F88(*(void**)((char*)self + 0x8), zero, zero);
+    func_00113F38(*(void**)((char*)self + 0x8), ((sPadB_131D30*)in)->v * 0.032258063554763794f);
+    func_00113F88(*(void**)((char*)self + 0x8), 0.0f, 0.0f);
     func_00115B58(*(void**)((char*)self + 0x8));
     func_00115D48(*(void**)((char*)self + 0x8));
     sPadC_131D30* in2 = (sPadC_131D30*)((char*)in + 4);
     if (func_00311AE8(*(void**)(*(char**)((char*)self + 0x8) + 0x784), 2) == 0xE) {
         if (!func_001446A0(func_00311B20(*(void**)(*(char**)((char*)self + 0x8) + 0x784), 2) + 0xB0, 0))
             return;
-        if (func_001161D0(*(void**)((char*)self + 0x8), in2->y * k))
+        if (func_001161D0(*(void**)((char*)self + 0x8), in2->y * 0.032258063554763794f))
             return;
-        float fy = in2->x * k;
-        if (fy == zero)
+        float fy = in2->x * 0.032258063554763794f;
+        if (fy == 0.0f)
             return;
-        func_00132060(self, fy < zero);
+        func_00132060(self, fy < 0.0f);
         return;
     }
-    if (func_001161D0(*(void**)((char*)self + 0x8), in2->y * k))
+    if (func_001161D0(*(void**)((char*)self + 0x8), in2->y * 0.032258063554763794f))
         return;
-    float fx = in2->y * k;
-    float fy = in2->x * k;
+    float fx = in2->y * 0.032258063554763794f;
+    float fy = in2->x * 0.032258063554763794f;
     float v = fy;
-    if (fx != zero && fy == zero)
+    if (fx != 0.0f && fy == 0.0f)
         v = fx;
     if (v != 0.0f) {
         char* r = *(char**)((char*)self + 0x8);
@@ -7512,14 +7504,13 @@ extern "C" void func_00136508(sAiObj136508* self, void* in)
         return;
     }
     int w = *(int*)in;
-    float zero = 0.0f;
     func_00114130(self->mRider, (w >> 14) & 1, (w >> 13) & 1);
     func_00113F38(self->mRider, ((sAiBitsA_136508*)in)->v * 0.032258063554763794f);
-    func_00113F88(self->mRider, zero, zero);
+    func_00113F88(self->mRider, 0.0f, 0.0f);
     if (self->mState == 0)
     {
         char* r0 = self->mRider;
-        *(float*)(r0 + 0x240) = zero;
+        *(float*)(r0 + 0x240) = 0.0f;
         *(float*)(r0 + 0x23C) = 0.05833333730697632f;
         if (func_00312AE8(*(void**)(self->mRider + 0x784), 2))
         {
