@@ -288,7 +288,7 @@ extern "C" void func_002D7DD8(void* self, int force)
 INCLUDE_ASM("visualfx/avalanche", tActiveAvalanche_buildArray);
 #ifdef SKIP_ASM
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00487548[];
 
 struct tActiveAvalanche_node {
@@ -309,7 +309,7 @@ extern "C" void tActiveAvalanche_buildArray(tActiveAvalanche* self)
     for (p = self->head; p != 0; p = p->next) {
         n++;
     }
-    self->array = (tActiveAvalanche_node**)operator_new_tag(n * 4, D_00487548, 0, 0);
+    self->array = (tActiveAvalanche_node**)operator_new__FUi(n * 4, D_00487548, 0, 0);
     int i = 0;
     for (p = self->head; p != 0; p = p->next) {
         self->array[i++] = p;
@@ -371,7 +371,7 @@ INCLUDE_ASM("visualfx/avalanche", func_002D82A0);
 void cMemMan_free(void*);
 extern "C" void func_003DEC80(void* a, void* b, void* data, int size, int prio);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_004A3AE8[];
 
 extern "C" int func_002D82A0(int direct, void* a, void* b, char* src, int stride, int rows)
@@ -379,7 +379,7 @@ extern "C" int func_002D82A0(int direct, void* a, void* b, char* src, int stride
     if (direct) {
         func_003DEC80(a, b, src, stride * rows, 100);
     } else {
-        char* buf = (char*)operator_new_tag(stride * rows, D_004A3AE8, 0, 0);
+        char* buf = (char*)operator_new__FUi(stride * rows, D_004A3AE8, 0, 0);
         char* d = buf;
         for (int i = 0; i < rows; i++) {
             char* end = src + stride;
@@ -532,7 +532,7 @@ extern "C" void func_002D87D0(void)
         if (D_004A3AB4 != 0 && D_004A3AB8 != 0) {
             cMemMan_free(D_004A3AB4);
         }
-        int* hdr = (int*)operator_new_tag(8, buf, 0, 0);
+        int* hdr = (int*)operator_new__FUi(8, buf, 0, 0);
         func_003DEC60_i(fd, 0, hdr, 8, 0x64);
         if (hdr[0] != 0x2BEEF00) {
             if (hdr != 0) {
@@ -545,7 +545,7 @@ extern "C" void func_002D87D0(void)
             if (hdr != 0) {
                 cMemMan_free(hdr);
             }
-            void* data = operator_new_tag(size, buf, 0, 0);
+            void* data = operator_new__FUi(size, buf, 0, 0);
             D_004A3AB8 = 1;
             D_004A3AB4 = data;
             func_003DEC60_i(fd, 0, data, size + 8, 0x64);
