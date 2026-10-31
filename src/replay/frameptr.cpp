@@ -439,7 +439,7 @@ extern void* D_004C5830[];
 void cCameraTriggerMan_setInGameTriggers(void* self);
 extern "C" void func_0015DFD8(void* self, int mode);
 
-extern "C" void func_0026EF80()
+extern "C" void func_0026EF80(void* self)
 {
     cCameraTriggerMan_setInGameTriggers(D_004C5830);
     func_0015DFD8(*(void**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0x84) + 0x4), 2);
