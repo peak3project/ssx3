@@ -1732,12 +1732,12 @@ extern "C" int func_002AF2F0(int idx, int* a, int* b)
 INCLUDE_ASM("sound/bankmonitor", func_002AF370);
 #ifdef SKIP_ASM
 extern "C" int func_003E4E98();
-extern "C" void func_004139F8(float);
+extern "C" int func_004139F8(float);
 extern int D_00450DC8[];
 
-extern "C" void func_002AF370(void)
+extern "C" int func_002AF370(void)
 {
-    func_004139F8((float)func_003E4E98() / (float)D_00450DC8[0] * 1000.0f);
+    return func_004139F8((float)func_003E4E98() / (float)D_00450DC8[0] * 1000.0f);
 }
 #endif
 
@@ -2525,9 +2525,9 @@ extern "C" int func_002B04D8_impl(sBmList_04D8* self, sBmArgs_04D8* a)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B07C0);
 #ifdef SKIP_ASM
-extern "C" void func_002B07C0(void* self)
+extern "C" int func_002B07C0(void* self)
 {
-    func_002AB028(*(void**)D_004A37B4, *(int*)((char*)self + 4));
+    return func_002AB028(*(void**)D_004A37B4, *(int*)((char*)self + 4));
 }
 #endif
 //100%
@@ -2941,8 +2941,8 @@ INCLUDE_ASM("sound/bankmonitor", func_002B1248);
 #ifdef SKIP_ASM
 extern "C" int func_002AB1A0(int, void*);
 
-extern "C" void func_002B1248(int *arg0, void* arg1) {
-    func_002AB1A0(*arg0, arg1);
+extern "C" int func_002B1248(int *arg0, void* arg1) {
+    return func_002AB1A0(*arg0, arg1);
 }
 #endif
 //100% - objdiff report; single-function view differs only in a relocation name
