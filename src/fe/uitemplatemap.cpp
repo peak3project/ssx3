@@ -917,7 +917,7 @@ INCLUDE_ASM("fe/uitemplatemap", func_00208498);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void func_0020A380(void* self);
 extern "C" void cUITemplate_MAP_onCreateScreen(void* tmpl, void* screen, void* owner);
 extern char D_004A26E8[];
@@ -960,12 +960,12 @@ void* func_00208538(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/uitemplatemap", func_00208558);
 #ifdef SKIP_ASM
-extern "C" void func_0039E4C0(void* self);
+extern "C" void func_0039E4C0(void* self, int a1);
 extern "C" void func_00200AC0(void* self);
 
-extern "C" void func_00208558(void* self)
+extern "C" void func_00208558(void* self, int a1)
 {
-    func_0039E4C0(self);
+    func_0039E4C0(self, a1);
     func_00200AC0((char*)self + 0x9C);
 }
 #endif
@@ -986,14 +986,14 @@ extern "C" void func_00208588(void* self)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_002085B8);
 #ifdef SKIP_ASM
-extern "C" int func_002018A8(void* p);
+extern "C" int func_002018A8(void* p, void* obj, int msg);
 // PORT: returns int (value unused here); the int return type keeps the target's register choice after the call.
-extern "C" int func_0039F190_85B8(void* self, int a1) __asm__("func_0039F190");
+extern "C" int func_0039F190(void* self, int a1);
 
-extern "C" void func_002085B8(char* self)
+extern "C" void func_002085B8(char* self, void* obj, int msg)
 {
-    if (func_002018A8(self + 0x9C) == 1) {
-        func_0039F190_85B8(*(char**)(self + 0x10) + 0x18, 1);
+    if (func_002018A8(self + 0x9C, obj, msg) == 1) {
+        func_0039F190(*(char**)(self + 0x10) + 0x18, 1);
         *(int*)(self + 0x1C) = (*(int*)(self + 0x1C) & ~0x3F00) | 0x780;
     }
 }
