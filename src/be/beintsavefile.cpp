@@ -31,8 +31,7 @@ void* cBESaveInterface_getThis()
 //100%
 INCLUDE_ASM("be/beintsavefile", func_00152688);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern const char D_0045A7F0[];
 extern char* D_004A1224;
 
@@ -40,7 +39,7 @@ extern "C" char* func_00152688(void* iface)
 {
     D_004A1228 = 1;
     if (D_004A1224 == 0)
-        D_004A1224 = (char*)operator_new_tag(0x80000, D_0045A7F0, 0x100, 0);
+        D_004A1224 = (char*)operator_new__FUi(0x80000, D_0045A7F0, 0x100, 0);
     return D_004A1224;
 }
 #endif
@@ -108,7 +107,7 @@ extern "C" void* func_00152758(void* self)
 {
     int size = func_00152948(self);
     func_00152700(self);
-    D_004A1220 = operator_new_tag(size, D_0045A7F0, 0x100, 0);
+    D_004A1220 = operator_new__FUi(size, D_0045A7F0, 0x100, 0);
     char* p = (char*)D_004A1220;
     *(sSaveHdr_2758*)p = D_00535898;
     p += sizeof(sSaveHdr_2758);
