@@ -49,7 +49,7 @@ extern "C" void func_00289650(void* msg);
 extern "C" void func_0028F730(void* self);
 extern "C" void func_003B5A60(void (*cb)(void*));
 extern "C" void func_002B0DA0(void* p);
-extern "C" void func_003DEDC0(void* h, int a);
+extern "C" int func_003DEDC0(void* h, int a);
 extern "C" void func_002AB478(void* self, int flags);
 extern "C" void func_002AA648(void* self, int flags);
 extern "C" void func_0028BB10(void* self, int flags);
@@ -559,7 +559,7 @@ extern "C" void* func_002A77F8_r(void* self, char* name, int size) __asm__("func
 extern "C" int func_002A7BF8(void* self, const char* section);
 extern "C" int func_002A7F90(void* self);
 extern "C" char* func_002A7DA0(void* self);
-extern "C" int func_002A7FF8_r(void* self, const char* key, char* out) __asm__("func_002A7FF8");
+extern "C" int func_002A7FF8(void* self, const char* key, char* out);
 extern "C" int func_0041AA88(const char* a, const char* b);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" char* strcpy(char* dst, const char* src);
@@ -601,7 +601,7 @@ extern "C" void func_00285FB0(char* self)
     if (func_002A7BF8(&parser, D_004A3570)) {
         while (func_002A7F90(&parser) == 0) {
             func_002A7DA0(&parser);
-            func_002A7FF8_r(&parser, D_004828C0, key);
+            func_002A7FF8(&parser, D_004828C0, key);
         }
     }
     parser.cur = parser.start;
@@ -609,9 +609,9 @@ extern "C" void func_00285FB0(char* self)
         strcpy(name, key);
         while (func_002A7F90(&parser) == 0) {
             char* k = func_002A7DA0(&parser);
-            func_002A7FF8_r(&parser, D_004828C0, name);
+            func_002A7FF8(&parser, D_004828C0, name);
             if (func_0041AA88(k, D_004A3580) == 0) {
-                func_002A7FF8_r(&parser, D_004A3580, val);
+                func_002A7FF8(&parser, D_004A3580, val);
                 sprintf(msg, D_004A3588, D_004A3590, name, val);
                 func_0028BC58(**(void***)(self + 0x118), 0, msg, 0);
             }
@@ -676,7 +676,7 @@ extern "C" int func_0041AA88(const char* a, const char* b);
 extern "C" int func_004165A8(const void* a, const void* b);
 extern "C" char* strcpy(char* d, const char* s);
 extern "C" int func_002A7F90(void* self);
-extern "C" int func_002A7FF8_r(void* self, const char* key, char* out) __asm__("func_002A7FF8");
+extern "C" int func_002A7FF8(void* self, const char* key, char* out);
 extern "C" char* func_002A7DA0(void* self);
 extern "C" void* func_002A77F8_r(void* self, char* name, int size) __asm__("func_002A77F8");
 extern "C" int func_002A7BF8(void* self, const char* name);
@@ -684,7 +684,7 @@ extern "C" char* func_002A7B08(void*);
 extern "C" void func_002A7890(void* self, int flags);
 extern "C" void func_0028BC58(void* bank, int slot, char* name, int a3);
 extern "C" void func_0028BDA8(void* self, int i, int a, int b, int c);
-extern "C" void func_0029F3F8_2(char* self, int a) __asm__("func_0029F3F8");
+extern "C" void func_0029F3F8(char* self, int a);
 extern "C" void func_002A6D78(char* self, const char* name, const char* key, int n, int v);
 extern "C" void func_00288D18(void* self, int a1);
 void ASYNCSYS_Init_FE(void* self, unsigned int x, int flags) __asm__("cAsyncSys_ASYNCSYS_Init__FP9cAsyncSysUi");
@@ -740,7 +740,7 @@ extern "C" void cSSXAudio_FrontEndLoad(char* self)
         while (!func_002A7F90(&p)) {
             const char* t = func_002A7DA0(&p);
             if (func_0041AA88(t, D_004828C0) == 0) {
-                func_002A7FF8_r(&p, D_004828C0, buf40);
+                func_002A7FF8(&p, D_004828C0, buf40);
             }
         }
     }
@@ -752,41 +752,41 @@ extern "C" void cSSXAudio_FrontEndLoad(char* self)
             strcpy(self + 0x587C, dir);
             while (!func_002A7F90(&p)) {
                 const char* t = func_002A7DA0(&p);
-                func_002A7FF8_r(&p, D_004828C0, dir);
+                func_002A7FF8(&p, D_004828C0, dir);
                 if (func_0041AA88(t, D_004A3580) == 0) {
-                    func_002A7FF8_r(&p, D_004A3580, val);
+                    func_002A7FF8(&p, D_004A3580, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 0, key, 0);
                 } else if (func_0041AA88(t, D_004A35B0) == 0) {
-                    func_002A7FF8_r(&p, D_004A35B0, val);
+                    func_002A7FF8(&p, D_004A35B0, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 1, key, 0);
                 } else if (func_0041AA88(t, D_004828D0) == 0) {
-                    func_002A7FF8_r(&p, D_004828D0, val);
+                    func_002A7FF8(&p, D_004828D0, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 0x10, key, 0);
                 } else if (func_0041AA88(t, D_004A35B8) == 0) {
-                    func_002A7FF8_r(&p, D_004A35B8, val);
+                    func_002A7FF8(&p, D_004A35B8, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 5, key, 0);
                 } else if (func_0041AA88(t, D_004A35C0) == 0) {
-                    func_002A7FF8_r(&p, D_004A35C0, val);
+                    func_002A7FF8(&p, D_004A35C0, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 6, key, 0);
                 } else if (func_0041AA88(t, D_004A35C8) == 0) {
-                    func_002A7FF8_r(&p, D_004A35C8, val);
+                    func_002A7FF8(&p, D_004A35C8, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 7, key, 0);
                 } else if (func_0041AA88(t, D_004828E0) == 0) {
-                    func_002A7FF8_r(&p, D_004828E0, val);
+                    func_002A7FF8(&p, D_004828E0, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 2, key, 0);
                 } else if (func_0041AA88(t, D_004828F0) == 0) {
-                    func_002A7FF8_r(&p, D_004828F0, val);
+                    func_002A7FF8(&p, D_004828F0, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 4, key, 0);
                 } else if (func_0041AA88(t, D_004A35D0) == 0) {
-                    func_002A7FF8_r(&p, D_004A35D0, val);
+                    func_002A7FF8(&p, D_004A35D0, val);
                     sprintf(key, D_004A3588, D_004A3590, dir, val);
                     func_0028BC58(**(void***)(self + 0x118), 10, key, 0);
                 }
@@ -801,7 +801,7 @@ extern "C" void cSSXAudio_FrontEndLoad(char* self)
     } else {
         func_002A6D78(self, D_004A3558, name, 1, 5);
     }
-    func_0029F3F8_2(self, 0);
+    func_0029F3F8(self, 0);
     *(int*)(self + 0x627C) = 1;
     func_002A7890(&p, 2);
 }
@@ -1096,7 +1096,7 @@ extern "C" int func_002A4078(void* self);
 extern "C" int func_0012A250(void* p);
 extern "C" char* func_0028B1D8();
 extern "C" void func_002A3708(void* self, void* rider);
-extern "C" void func_002A34D0(void* self, void* rider, int a2, int a3);
+extern "C" int func_002A34D0(void* self, void* rider, int a2, int a3);
 extern "C" void func_002A45C0(void* self);
 extern char* D_004A3500;
 extern void* D_004A28A8;
@@ -1444,7 +1444,7 @@ extern float D_004A3548;
 extern float D_004A354C;
 extern float D_004A3550;
 extern "C" void func_002B4388(void* mon);
-extern "C" void func_003B8160(signed char vol);
+extern "C" int func_003B8160(signed char vol);
 
 struct sSaChan7700 {
     float user;     // +0x0
@@ -2580,7 +2580,7 @@ extern "C" int func_002A7C68(void* self, const char* section);
 extern "C" void func_002A7A20(void* self);
 extern "C" int func_002A7F90(void* self);
 extern "C" char* func_002A7DA0(void* self);
-extern "C" void func_002A7FF8(void* self, const char* key, char* out);
+extern "C" int func_002A7FF8(void* self, const char* key, char* out);
 extern "C" int func_0041AA88(const char* a, const char* b);
 extern "C" int func_004165A8(const void* a, const void* b);
 extern "C" void func_002B3EB0(void* self);
