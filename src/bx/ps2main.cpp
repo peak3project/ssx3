@@ -12,7 +12,7 @@ extern char D_0048DAC8[];
 extern char D_0048DAD8[];
 extern char D_004A3ED8[];
 extern "C" void func_00319610(void* io);
-extern "C" void func_00319718(void* io, const char* module, int a, int b, int c);
+extern "C" int func_00319718(void* io, const char* module, int a, int b, int c);
 extern "C" void func_00409940(void);
 extern "C" void func_003FF4A8(int a);
 extern "C" void func_00402520(int* clock);
@@ -26,20 +26,20 @@ extern "C" void func_003E6690(int a);
 extern "C" void func_003E4AF0(int hz);
 extern "C" int func_003DE928(void* cfg);
 extern "C" int func_003DE9B8(void* cfg);
-extern "C" void func_003DCBD8(int a, int b, int c);
+extern "C" int func_003DCBD8(int a, int b, int c);
 extern "C" void func_003DF488(int a, int b);
 extern "C" void func_003E4000(void);
 extern "C" void func_0031AD20(void);
 extern "C" void SYNCTASK_del(void (*fn)(void));
 extern "C" void SYNCTASK_add(void (*fn)(void), int a, int b);
 extern "C" void func_003DDE78(void* p);
-extern "C" void func_00252FA0(void);
-extern "C" void func_002523A8(void);
+extern "C" void* func_00252FA0(void* a0, int a1, int a2);
+extern "C" void* func_002523A8(void* p);
 
 struct sIoCfg_SysInit {
     int size;               // 0x0
-    void (*fnA)(void);      // 0x4
-    void (*fnB)(void);      // 0x8
+    void* (*fnA)(void*, int, int); // 0x4
+    void* (*fnB)(void*);    // 0x8
     int mode;               // 0xC
     char pad_0x10[0x14];
 };
