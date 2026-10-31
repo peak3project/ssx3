@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/ovstaterewardslist", cOVStateRewardsList_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void func_0020A380(void* self);
 extern char D_004704B8[];
 
@@ -116,7 +116,7 @@ extern "C" void* func_00144BC0(void* iface);
 extern unsigned int D_004A2594;
 extern int D_004A25A4;
 
-extern "C" void func_002006B8(void)
+extern "C" void func_002006B8(void* self)
 {
     if (D_004A2594 >= 2) {
         D_004A25A4 = *(int*)((char*)func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)) + 0x54);
