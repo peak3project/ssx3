@@ -34,13 +34,13 @@ INCLUDE_ASM("seg/seg_156860", cCommSystem_cCommSystem);
 INCLUDE_ASM("seg/seg_156860", cCommSystem__cCommSystem);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E56E0_59B0(void *) __asm__("func_003E56E0");
+extern "C" void func_003E56E0(void *);
 extern "C" void cMemMan_free__FPv_59B0(void *) __asm__("cMemMan_free__FPv");
 extern "C" void operator_delete__FPi_59B0(void *) __asm__("operator_delete__FPi");
 
 extern "C" void cCommSystem__cCommSystem_59B0(void *self, int flags) __asm__("cCommSystem__cCommSystem");
 extern "C" void cCommSystem__cCommSystem_59B0(void *self, int flags) {
-    func_003E56E0_59B0((char*)self + 4);
+    func_003E56E0((char*)self + 4);
     void *p = *(void **)((char*)self + 0x14);
     if (p != 0) {
         cMemMan_free__FPv_59B0(p);
@@ -331,7 +331,7 @@ extern "C" void func_00255F50(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00255FA0);
 #ifdef SKIP_ASM
-extern "C" void func_003F40B8();
+extern "C" int func_003F40B8();
 
 extern "C" void func_00255FA0(void *arg0) {
     if ((*(int *)((char*)(arg0) + (0x1C))) >= 0) {
@@ -347,7 +347,7 @@ extern "C" void func_00255FA0(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00255FE8);
 #ifdef SKIP_ASM
-extern "C" void func_003F40B8();
+extern "C" int func_003F40B8();
 
 extern "C" void func_00255FE8(void *arg0, int arg1) {
     if ((*(int *)((char*)(arg0) + (0x1C))) >= 0) {
@@ -401,7 +401,7 @@ extern "C" void func_00256258_60B0(int *, int) __asm__("func_00256258");
 extern "C" void func_002562D0_60B0(int *) __asm__("func_002562D0");
 extern "C" void func_002563A8_60B0(int *) __asm__("func_002563A8");
 extern "C" void func_002563F8_60B0(int *) __asm__("func_002563F8");
-extern "C" void SYNCTASK_run_60B0(int) __asm__("SYNCTASK_run");
+extern "C" int SYNCTASK_run(int);
 extern "C" void THREAD_yieldticks_60B0(int) __asm__("THREAD_yieldticks");
 extern char D_004A2EC8[];
 
@@ -412,13 +412,13 @@ extern "C" void func_002560B0(void) {
     func_00256258_60B0(o, 0);
     while (!ge3_60B0(o)) {
         func_002563F8_60B0(o);
-        SYNCTASK_run_60B0(0);
+        SYNCTASK_run(0);
         THREAD_yieldticks_60B0(1);
     }
     func_002562D0_60B0(o);
     while ((*o ^ 5) != 0) {
         func_002563F8_60B0(o);
-        SYNCTASK_run_60B0(0);
+        SYNCTASK_run(0);
         THREAD_yieldticks_60B0(1);
     }
     func_002563A8_60B0(o);
@@ -431,13 +431,12 @@ extern "C" void func_002560B0(void) {
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00256188);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003DED50_6188(void *, int, int, void *) __asm__("func_003DED50");
+extern "C" int func_003DED50(void *, int, int, void *);
 extern char D_004803D0[];
 extern int D_004A2ED4;
 
 extern "C" void func_00256188(void) {
-    func_003DED50_6188(D_004803D0, 0, 0x64, &D_004A2ED4);
+    func_003DED50(D_004803D0, 0, 0x64, &D_004A2ED4);
 }
 #endif
 
@@ -455,12 +454,11 @@ extern "C" void *func_002561B8(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_156860", func_002561E0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00256250_61E0(int *) __asm__("func_00256250");
+extern "C" void func_00256250(int *);
 extern "C" void operator_delete__FPi(int *);
 
 extern "C" void func_002561E0(int *arg0, int arg1) {
-    func_00256250_61E0(arg0);
+    func_00256250(arg0);
     if (arg1 & 1) {
         operator_delete__FPi(arg0);
     }
@@ -481,7 +479,7 @@ extern "C" void func_00256228(void *arg0) {
 }
 #endif
 
-extern "C" void func_00256250(void) {
+extern "C" void func_00256250(int * a0) {
 }
 
 //100%
@@ -561,7 +559,7 @@ INCLUDE_ASM("seg/seg_156860", func_00256460);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_003DF980_6460(int) __asm__("func_003DF980");
-extern "C" void ASYNCFILE_release_6460(int, int, void *) __asm__("ASYNCFILE_release");
+extern "C" int ASYNCFILE_release(int, int, void *);
 extern "C" int func_003FCFD8_6460(int, int) __asm__("func_003FCFD8");
 extern "C" void *operator_new__FUi_6460(unsigned int, char *, int, int) __asm__("operator_new__FUi");
 extern "C" int func_003DF748_6460(char *, void *, int) __asm__("func_003DF748");
@@ -571,7 +569,7 @@ extern char D_00480438[];
 extern "C" void func_00256460(char *self) {
     if (func_003DF980_6460(*(int *)(self + 0x18)) == 1) {
         *(int *)(self + 8) = 0;
-        ASYNCFILE_release_6460(*(int *)(self + 0x18), 0, self + 8);
+        ASYNCFILE_release(*(int *)(self + 0x18), 0, self + 8);
         int a = *(int *)(self + 4);
         if (a != 0) {
             int b = *(int *)(self + 8);
@@ -591,14 +589,14 @@ INCLUDE_ASM("seg/seg_156860", func_00256510);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_003DF980_6510(int) __asm__("func_003DF980");
-extern "C" void ASYNCFILE_release_6510(int, int, void *) __asm__("ASYNCFILE_release");
+extern "C" int ASYNCFILE_release(int, int, void *);
 struct K6510 { unsigned char b[4]; };
 extern K6510 D_004A2EE8[];
 
 extern "C" void func_00256510(char *self) {
     if (func_003DF980_6510(*(int *)(self + 0x18)) == 1) {
         *(int *)(self + 0x10) = 0;
-        ASYNCFILE_release_6510(*(int *)(self + 0x18), 0, self + 0x10);
+        ASYNCFILE_release(*(int *)(self + 0x18), 0, self + 0x10);
         unsigned char *d = *(unsigned char **)(self + 0xC);
         if (d != 0) {
             int n = *(int *)(self + 0x10);
@@ -651,7 +649,7 @@ extern "C" void func_002565E0(char *self) {
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00256698);
 #ifdef SKIP_ASM
-void func_002557E0(void *);
+void* func_002557E0(void *);
 extern char D_004812D0[];
 
 extern "C" void *func_00256698(void *arg0) {
@@ -734,7 +732,7 @@ INCLUDE_ASM("seg/seg_156860", func_00256860);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00255830__FPv_6860(void *) __asm__("func_00255830__FPv");
-extern "C" int func_003E6E08_6860() __asm__("func_003E6E08");
+extern "C" int func_003E6E08();
 extern "C" int func_003E6F40_6860(int, int, void *) __asm__("func_003E6F40");
 extern "C" int sprintf_6860(char *, const char *, ...) __asm__("sprintf");
 extern char D_00480448[];
@@ -745,7 +743,7 @@ extern "C" void func_00256860(char *self, int a1, int a2) {
     char *vt = *(char **)(self + 8);
     (*(void (**)(void *))(vt + 0x14))(self + *(short *)(vt + 0x10));
     func_00255830__FPv_6860(self);
-    int h = func_003E6E08_6860();
+    int h = func_003E6E08();
     *(int *)(self + 0x18) = h;
     if (h != 0) {
         sprintf_6860(buf, D_00480448, a1, n, n);
@@ -760,7 +758,7 @@ INCLUDE_ASM("seg/seg_156860", func_002568F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00255830__FPv_68F8(void *) __asm__("func_00255830__FPv");
-extern "C" int func_003E6E08_68F8() __asm__("func_003E6E08");
+extern "C" int func_003E6E08();
 extern "C" int func_003E6F40_68F8(int, int, void *) __asm__("func_003E6F40");
 extern "C" int sprintf_68F8(char *, const char *, ...) __asm__("sprintf");
 extern char D_00480448[];
@@ -772,7 +770,7 @@ extern "C" void func_002568F8(char *self, int a1, int a2) {
     char *vt = *(char **)(self + 8);
     (*(void (**)(void *))(vt + 0x14))(self + *(short *)(vt + 0x10));
     func_00255830__FPv_68F8(self);
-    int h = func_003E6E08_68F8();
+    int h = func_003E6E08();
     *(int *)(self + 0x18) = h;
     if (h != 0) {
         sprintf_68F8(buf, D_00480448, a1, n, n);
@@ -785,7 +783,7 @@ extern "C" void func_002568F8(char *self, int a1, int a2) {
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00256998);
 #ifdef SKIP_ASM
-extern "C" void func_00255840();
+extern "C" void func_00255840(void* self);
 extern "C" void func_003E67F8(int);
 extern "C" void func_003E6E70(int);
 
@@ -794,7 +792,7 @@ extern "C" void func_00256998(void *arg0) {
     int temp_4_2;
 
     if ((*(int *)((char*)(arg0) + (0xC))) != 0) {
-        func_00255840();
+        func_00255840(arg0);
         temp_4 = (*(int *)((char*)(arg0) + (0x1C)));
         if (temp_4 != 0) {
             func_003E67F8(temp_4);
@@ -2135,7 +2133,7 @@ extern "C" void func_00237CB0(unsigned int seed);
 extern "C" void THREAD_yieldticks(int);
 unsigned int AIrand();
 void func_003178E0_8448(void* self) __asm__("func_003178E0__FPv");
-void* func_00317908(void* self);
+void func_00317908(void* self);
 
 struct sVEnt_8448 {
     short delta;
