@@ -193,7 +193,7 @@ INCLUDE_ASM("main/game", func_0022C410);
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("main/game", cGame_renderPatches);
 #ifdef SKIP_ASM
-extern "C" void func_0022C1B0(void* ctx);
+extern "C" sRenderCam_C1B0* func_0022C1B0(void* ctx);
 extern "C" void func_0022C410(void* ctx, int patch, int flag);
 extern "C" void func_0022C3B8(void* self, int flags);
 extern void* D_004A4248;
@@ -455,7 +455,7 @@ extern "C" void func_0022D3D8(void* self, int idx)
 INCLUDE_ASM("main/game", func_0022D478);
 #ifdef SKIP_ASM
 extern "C" void func_0022E298(void* self, int idx);
-extern "C" void func_003A99D8(void* self, int a1);
+extern "C" int func_003A99D8(void* self, int a1);
 
 // Advances a game-entry state (finishing transitions), notifying the world view where needed.
 extern "C" void func_0022D478(void* self, int idx)
@@ -658,7 +658,7 @@ extern "C" void func_003A7058(void* p, int v);
 extern "C" int func_003A9890(cWorldView* view, int section);
 extern "C" int func_003A98C8(cWorldView* view, int section, float f);
 extern "C" int func_003A9958(cWorldView* view, int section);
-extern "C" void func_003A99D8_m662(cWorldView* view, int section) __asm__("func_003A99D8");
+extern "C" int func_003A99D8_m662(cWorldView* view, int section) __asm__("func_003A99D8");
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern int D_00442150[];
 extern float D_0044C208[];
@@ -903,14 +903,14 @@ extern "C" void func_0022DF50(void* self)
 }
 #endif
 
-extern "C" void* func_002312D8(int);
+extern "C" void* func_002312D8(void*);
 
 //100%
 INCLUDE_ASM("main/game", func_0022DFD0__FPv);
 #ifdef SKIP_ASM
 void* func_0022DFD0(void* self)
 {
-    return func_002312D8(*(int*)((char*)self + 0x1b0));
+    return func_002312D8(*(void**)((char*)self + 0x1b0));
 }
 #endif
 
