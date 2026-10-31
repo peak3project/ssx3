@@ -6,7 +6,7 @@ INCLUDE_ASM("be/bedbreward", cBERewardDB_init);
 extern "C" int func_00317F60(const char* name);
 extern "C" int func_003E1BB8(const char* name, void* buf, int size);
 extern "C" int func_0019DA10(void* self, int bank, int id, int a3, int a4, int a5);
-extern "C" void func_0015A818(int* self, int v);
+extern "C" void func_0015A818(int* self, void* v);
 extern "C" char* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern void* D_004A28A8;
 extern const char* D_004A1270;
@@ -19,7 +19,7 @@ extern "C" void cBERewardDB_init(int* self, int mode)
         int size = func_00317F60(D_004A1270);
         char* buf = operator_new__FUi(size, D_0045AB78, 0, 0);
         func_003E1BB8(D_004A1270, buf, size);
-        func_0015A818(self, (int)buf);
+        func_0015A818(self, buf);
         *self = -1;
         return;
     }
@@ -97,8 +97,8 @@ extern "C" void func_0015AE00(sBEDB_0015AE00* self)
 INCLUDE_ASM("be/bedbreward", func_0015AEC0);
 #ifdef SKIP_ASM
 extern "C" int func_0019E238(void* self, int bank, int i);
-extern "C" int func_0019E330(void* self, int bank, int i);
-extern "C" void func_0015A818(int* self, int v);
+extern "C" void* func_0019E330(void* self, int bank, int i);
+extern "C" void func_0015A818(int* self, void* v);
 
 extern "C" void func_0015AEC0(int* self)
 {
