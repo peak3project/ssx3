@@ -1608,8 +1608,7 @@ extern "C" void func_002370A0(sObj_func_002370A0* self, int flags)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237140);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_003E6448(void* dst, int value, int size);
 // PORT: func_00244400__FPvi takes the 0x2A4-byte block as an int (pointer in int)
@@ -1651,7 +1650,7 @@ static inline void* initObj_237140(void* o, int a, int b)
 extern "C" void* func_00237140(sOwner_237140* self, int* a1)
 {
     sEntry_237140* e = &self->entries[self->n++];
-    e->recs = (sRec_237140*)operator_new_tag(self->count * 100, D_0047C078, 0, 0);
+    e->recs = (sRec_237140*)operator_new__FUi(self->count * 100, D_0047C078, 0, 0);
     func_003E6448(e->recs, 0, self->count * 100);
     for (int i = 0; i < self->count; i++) {
         e->recs[i].type = 0x18;
@@ -1671,7 +1670,7 @@ extern "C" void* func_00237140(sOwner_237140* self, int* a1)
 INCLUDE_ASM("main/gamestate", func_00237280);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_003E6448(void* dst, int value, int size);
 // PORT: func_00244400__FPvi takes the 0x2A4-byte block as an int (pointer in int)
@@ -1713,7 +1712,7 @@ static inline void* initObj_237280(void* o, int a, int b)
 extern "C" void* func_00237280(sOwner_237280* self, int a1)
 {
     sEntry_237280* e = &self->entries[self->n++];
-    e->recs = (sRec_237280*)operator_new_tag(self->count * 100, D_0047C078, 0, 0);
+    e->recs = (sRec_237280*)operator_new__FUi(self->count * 100, D_0047C078, 0, 0);
     func_003E6448(e->recs, 0, self->count * 100);
     for (int i = 0; i < self->count; i++) {
         e->recs[i].type = 0x18;
