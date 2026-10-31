@@ -178,7 +178,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerlist", cCameraTriggerList_loadFromBuffe
 #ifdef SKIP_ASM
 void cCameraTriggerList_readCookie(cCameraTriggerList* self, void* buffer);
 // readHeader is called with the expected version as a third argument here.
-extern "C" int cCameraTriggerList_readHeader_K3(cCameraTriggerList* self, void* buffer, int version) __asm__("cCameraTriggerList_readHeader");
+extern "C" int cCameraTriggerList_readHeader(cCameraTriggerList* self, void* buffer, int version);
 extern "C" int readTrigger(void* buffer, void* trigger, int version);
 // PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
 // result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
@@ -210,7 +210,7 @@ extern "C" int cCameraTriggerList_loadFromBuffer(void* self_, void* buf)
         self->field_0xC = 7;
         return 3;
     }
-    int r = cCameraTriggerList_readHeader_K3(self, &cur, 7);
+    int r = cCameraTriggerList_readHeader(self, &cur, 7);
     if (r != 0)
         return r;
     self->field_0x0 = (int)operator_new_K3(self->field_0x4 * 4, D_0045BF40, 0, 0);
@@ -263,15 +263,13 @@ void cCameraTriggerList_readCookie(cCameraTriggerList* self, void* buffer)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerlist", cCameraTriggerList_readHeader);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// The unit declares get_uint with C++ linkage; the target calls the unmangled symbol.
-int get_uint_c(void* buffer, void* dest) __asm__("get_uint");
+int get_uint(void* buffer, void* dest);
 
-extern "C" int cCameraTriggerList_readHeader(cCameraTriggerList* self, void* buffer)
+extern "C" int cCameraTriggerList_readHeader(cCameraTriggerList* self, void* buffer, int version)
 {
-    get_uint_c(buffer, &self->field_0x10);
-    get_uint_c(buffer, &self->field_0x4);
-    get_uint_c(buffer, &self->field_0x8);
+    get_uint(buffer, &self->field_0x10);
+    get_uint(buffer, &self->field_0x4);
+    get_uint(buffer, &self->field_0x8);
     return 0;
 }
 #endif
