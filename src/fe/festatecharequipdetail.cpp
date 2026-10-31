@@ -4,7 +4,7 @@
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_cFEStateCharEquip);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void* self, void* parent);
 extern "C" unsigned char func_001A1CD0(void* self, signed char a1);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -110,7 +110,7 @@ static inline int Find_8DB8(char* mgr, int hash)
 extern "C" void* cFEStateCharEquip_cFEStateCharEquip(void* p, void* owner, signed char team, int a3, int a4)
 {
     sCharEquip_8DB8* self = (sCharEquip_8DB8*)p;
-    func_0039E2A0(self);
+    func_0039E2A0(self, owner);
     self->vtbl = D_0046A548;
     self->camPos.x = -105.0f;
     self->camPos.y = -100.0f;
@@ -311,7 +311,7 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_00199350);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
 extern "C" void* func_001A0548(void* self, int a1);
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 
 extern "C" void func_00199350(void* self)
 {
@@ -815,8 +815,7 @@ extern "C" int func_0019A098(void* self, const char* name)
 {
     if (*(int*)((char*)self + 0xA60) == 0)
         return -1;
-    sPkgK19A098* pkg = (sPkgK19A098*)func_0019E2B0((sEquipTable*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70),
-                                                  *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA64));
+    sPkgK19A098* pkg = (sPkgK19A098*)func_0019E2B0((sEquipTable*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA64));
     if (pkg == 0)
         return -1;
     int n = pkg->count;
@@ -1678,7 +1677,7 @@ extern "C" void func_0019B618(void* self, int reset, int select)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B7E0);
 #ifdef SKIP_ASM
 extern "C" int func_0014AFB0(void* self, int a1, int a2, int id, int locked);
-extern "C" void* func_003E6574(void* dst, void* src, int n);
+extern "C" void func_003E6574(void* dst, void* src, int n);
 extern "C" void func_0014ACB0(void* self, int a1, int a2, void* src);
 extern "C" int func_0014B478(void* self, int a1, int a2);
 
@@ -2572,7 +2571,7 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019D250);
 struct sEquipTable_DC20;
 struct sEquipSlot_DC20;
 extern "C" int func_003DF980(int handle);
-extern "C" void ASYNCFILE_release(int handle, int a1, void* status);
+extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20* slot);
 extern "C" void func_0019D140(void* self, int bank);
 extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i);
@@ -2691,7 +2690,7 @@ extern "C" int func_0019D428(sEquipTable_D428* self, int bank, const char* name)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D4B8);
 #ifdef SKIP_ASM
-extern "C" void ASYNCFILE_release(int handle, int a1, void* status);
+extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 void cMemMan_free(void* ptr);
 struct sEquipSlot_D4B8 {
     int state;
@@ -2926,7 +2925,7 @@ extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i);
 extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i);
 extern "C" int func_0019D3B0(void* self, int bank);
 extern "C" int func_0019D428(sEquipTable_D428* self, int bank, const char* name);
-extern "C" void ASYNCFILE_release(int handle, int a1, void* status);
+extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 extern "C" char* strcpy(char* dst, const char* src);
 
 struct sSlotK19DA10 {
@@ -3000,7 +2999,7 @@ extern "C" int func_0019DA10(void* p, int bank, void* namep, int a3, int a4, int
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DC20);
 #ifdef SKIP_ASM
-extern "C" void ASYNCFILE_release(int handle, int a1, void* status);
+extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 extern "C" int func_003DF980(int handle);
 struct sEquipSlot_DC20 {
     int state;
