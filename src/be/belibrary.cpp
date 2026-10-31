@@ -195,7 +195,7 @@ extern "C" int func_0014AC70(void* self, int rider, int* outChar)
 INCLUDE_ASM("be/belibrary", func_0014ACB0);
 #ifdef SKIP_ASM
 extern int D_004A6CA8[];
-extern "C" void* func_003E6574(void* dst, void* src, int n);
+extern "C" void func_003E6574(void* dst, void* src, int n);
 
 extern "C" void func_0014ACB0(void* self, int a1, int a2, void* src)
 {
@@ -307,7 +307,7 @@ INCLUDE_ASM("be/belibrary", func_0014AF10);
 #ifdef SKIP_ASM
 extern int D_004A6CA8[];
 
-extern "C" void func_0014AF10(void)
+extern "C" void func_0014AF10(void* iface)
 {
     int a;
     int b;
@@ -400,7 +400,7 @@ extern "C" void func_0014B0F0(void* self, int a, int b, int idx)
 //100%
 INCLUDE_ASM("be/belibrary", func_0014B170);
 #ifdef SKIP_ASM
-extern "C" void func_00152368(void*, int, int);
+extern "C" int func_00152368(void*, int, int);
 
 extern "C" void func_0014B170(void* self, int a1, int a2, int a3, int a4)
 {
@@ -411,7 +411,7 @@ extern "C" void func_0014B170(void* self, int a1, int a2, int a3, int a4)
 INCLUDE_ASM("be/belibrary", func_0014B1B0);
 #ifdef SKIP_ASM
 extern "C" int func_0014AC70(void* self, int rider, int* outChar);
-extern "C" void func_00152368(void*, int, int);
+extern "C" int func_00152368(void*, int, int);
 
 extern "C" void func_0014B1B0(void* self, int rider, int b, int c)
 {
@@ -537,8 +537,8 @@ void* func_0014BDB8_0() __asm__("func_0014BDB8__FPv");
 struct sBEGroupTable;
 extern "C" int func_0014D448(sBEGroupTable* self, int g, int key);
 extern "C" void func_00151C48(void* prof, int idx, int on);
-extern "C" void func_00150B48(void* iface, int a, int b, int v);
-extern "C" void func_00150928(void* iface, int a, int b);
+extern "C" int func_00150B48(void* iface, int a, int b, int v);
+extern "C" int func_00150928(void* iface, int a, int b);
 
 struct sBEEntry38_14B560 {
     signed char group;  // 0x0
