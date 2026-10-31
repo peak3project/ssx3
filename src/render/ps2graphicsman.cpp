@@ -166,8 +166,7 @@ extern "C" int func_00366CE0(void* heap, int size, int idx, int other, int a4, i
 extern "C" void func_00366E90(void* self, void* tex);
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-// PORT: operator_new__FUi is the game's tagged allocator (size, tag, flags, d); bound by asm label
-void* operator_new_7440(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 
 // PORT: PS2-only MMI count-leading-sign-bits (plzcw) = floor(log2(x)); off-PS2 use a clz builtin.
 // Volatile: the target keeps each log2 in order (zero-extend, plzcw, truncate).
@@ -333,7 +332,7 @@ extern "C" int func_00367440(void* self, int a1, void* a2, int a3, int a4, int a
         *(int*)(t + 0x14) = vram;
         *(int*)(t + 0x10) = size;
         if (*(int*)(t + 0x0) != 0) {
-            void* p = operator_new_7440(size, name, *(int*)(s + 0x1F58) | 0x05000000, 0);
+            void* p = operator_new__FUi(size, name, *(int*)(s + 0x1F58) | 0x05000000, 0);
             *(void**)(t + 0x1C) = p;
             func_003E6574(p, data, size);
         } else {
@@ -348,7 +347,7 @@ extern "C" int func_00367440(void* self, int a1, void* a2, int a3, int a4, int a
     if (clut != 0 && (esz = clutEntryBytes_7440(clutFmt)) != 0) {
         int entries = (unsigned int)(*(int*)(t + 0xC) - 0xB) <= 1 ? 0x10 : 0x100;
         if (*(int*)(t + 0x0) != 0) {
-            void* p = operator_new_7440(0x400, name, *(int*)(s + 0x1F58) | 0x05000000, 0);
+            void* p = operator_new__FUi(0x400, name, *(int*)(s + 0x1F58) | 0x05000000, 0);
             *(void**)(t + 0x20) = p;
             func_003E6574(p, clut, entries * esz);
         } else {
