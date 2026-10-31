@@ -371,7 +371,7 @@ extern "C" void func_0015BC10(void) {
 //100%
 INCLUDE_ASM("be/bedbreward", func_0015BC30);
 #ifdef SKIP_ASM
-extern "C" void cBXString_cBXString1(void*, int*);
+extern "C" void* cBXString_cBXString1(void*, int*);
 
 extern "C" void* func_0015BC30(void* self)
 {
