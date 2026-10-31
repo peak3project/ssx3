@@ -1921,7 +1921,104 @@ extern "C" float func_003378C0(void* self, char* q, sHit_003378C0* out, int a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00337A48);
+#ifdef SKIP_ASM
+struct sOct_7A48 {
+    void* child[8];                 // 0x00
+    void* pad20[2];
+    void** list;                    // 0x28
+};
+
+struct sCb_7A48 {
+    sWsVec4* pos;                   // 0x00
+    int a2;
+    int mask;
+    int* cnt;
+    float* dist;
+    sBox_00334680* box;
+};
+
+struct sNodeEnt_7A48 {
+    sNodeEnt_7A48* next;            // 0x00
+    int pad04;
+    int type;                       // 0x08
+    void* obj;                      // 0x0C
+};
+
+extern "C" void descendRec_7A48(void* self, sCb_7A48* cb) __asm__("func_003411B8");
+extern "C" void helpX_7A48(char* flag, sCb_7A48* cb, sCb_7A48* cb2, sBox_00334680* box, void** node, sCell_330BA8* cell) __asm__("func_0033ED60");
+
+static inline void visit_7A48(sSelf_6F30* t, int k, sCb_7A48* cb, sBox_00334680* box)
+{
+    sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = c->node;
+        sQH_6F30 h;
+        char* f = (char*)&h;
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            for (sNodeEnt_7A48* o = *(sNodeEnt_7A48**)((char*)n + 0x28); o != 0; o = o->next) {
+                int type = o->type;
+                if (type == 2) {
+                    func_0035C698(o->obj, cb->box, cb->box, cb->pos, cb->mask, cb->cnt, cb->dist, cb->a2);
+                } else if (type == 3) {
+                    func_00348290(o->obj, cb->box, cb->box, cb->pos, cb->mask, cb->cnt, cb->dist, cb->a2);
+                } else if (type == 1) {
+                    if (*(int*)(*(char**)((char*)o + 0x68) + 0x1C) & cb->mask) {
+                        func_00335128(o, cb->box, cb->pos, cb->cnt, cb->dist, cb->a2);
+                    }
+                }
+            }
+            if (n[0] != 0) descendRec_7A48(n[0], cb);
+            if (n[1] != 0) descendRec_7A48(n[1], cb);
+            if (n[2] != 0) descendRec_7A48(n[2], cb);
+            if (n[3] != 0) descendRec_7A48(n[3], cb);
+            if (n[4] != 0) descendRec_7A48(n[4], cb);
+            if (n[5] != 0) descendRec_7A48(n[5], cb);
+            if (n[6] != 0) descendRec_7A48(n[6], cb);
+            if (n[7] != 0) descendRec_7A48(n[7], cb);
+        } else if (r == 2) {
+            helpX_7A48(f, cb, cb, box, n, c);
+        }
+    }
+}
+
+extern "C" int func_00337A48(sSelf_6F30* self, sWsVec4* pos, int a2, int mask, float r)
+{
+    sBox_00334680 box;
+    sWsVec4 ext;
+    int cnt;
+    float dist;
+    sCb_7A48 cb;
+    sBox_00334680* pbox = &box;
+    box.min = *pos;
+    box.max = *pos;
+    ext.x = r;
+    ext.y = r;
+    ext.z = r;
+    ext.w = 0.0f;
+    wsSubEq_334680(box.min, ext);
+    wsAddEq_334680(box.max, ext);
+    cb.pos = pos;
+    cb.a2 = a2;
+    cb.mask = mask;
+    cb.cnt = &cnt;
+    cb.dist = &dist;
+    cb.box = &box;
+    dist = 0.0f;
+    cnt = 0;
+    visit_7A48(self, 0, &cb, pbox);
+    visit_7A48(self, 1, &cb, pbox);
+    visit_7A48(self, 2, &cb, pbox);
+    visit_7A48(self, 3, &cb, pbox);
+    visit_7A48(self, 4, &cb, pbox);
+    visit_7A48(self, 5, &cb, pbox);
+    visit_7A48(self, 6, &cb, pbox);
+    visit_7A48(self, 7, &cb, pbox);
+    return cnt;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003388E0);
