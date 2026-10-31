@@ -3747,8 +3747,6 @@ extern "C" void func_00299368(sSnd9368Sys* self, char* obj)
 INCLUDE_ASM("sound/soundsys", func_00299638);
 #ifdef SKIP_ASM
 extern "C" void func_002A3C00(void* self, void* obj, int flags);
-// PORT: func_002ADCA0 returns int; the unit declares it void elsewhere.
-extern "C" int func_002ADCA0_9638(void*, int, long, int, int, int, int, int) __asm__("func_002ADCA0");
 
 // PORT: 64-bit long sound keys
 // Plays the landing thud for a rider that is airborne-and-dropping, sets its board effect and restarts the ambient loop.
@@ -3768,7 +3766,7 @@ extern "C" void func_00299638(void* self, char* obj)
     char* p = **(char***)((char*)self + 0x118) + 0x1D8;
     sSndKey8* key = D_004A3678;
     int r = (int)func_00287968(self, 9, 0);
-    func_002ADCA0_9638(p, 400, key->v, r, 0, 0x6B, 0x7F, 0);
+    func_002ADCA0(p, 400, key->v, r, 0, 0x6B, 0x7F, 0);
     int m = *(int*)(obj + 0x2F4);
     if (m == 10) {
         func_002A3C00(self, obj, 0x10);
@@ -3782,7 +3780,7 @@ extern "C" void func_00299638(void* self, char* obj)
     if (*(int*)((char*)self + 0x59E4) != 0) {
         return;
     }
-    func_002ADCA0_9638(**(char***)((char*)self + 0x118) + 0x1D8, 3000, id, (int)obj, 0, 0, 0, 0);
+    func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 3000, id, (int)obj, 0, 0, 0, 0);
 }
 #endif
 
@@ -5194,7 +5192,7 @@ extern "C" void* func_0028B1C8();
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00295028(void* self, int a, int b);
-void func_002B3A98_C7B0(void* p) __asm__("func_002B3A98");
+extern "C" void func_002B3A98(void* p);
 void func_0028DF08_C7B0(void* p) __asm__("func_0028DF08__FPv");
 void func_002B1758(void* self, int a1);
 int func_002B4908(void* self);
@@ -5303,7 +5301,7 @@ extern "C" void func_0029C7B0(void* vself)
 {
     sSnd7B0Sys* self = (sSnd7B0Sys*)vself;
     char* base = (char*)vself;
-    func_002B3A98_C7B0(base + 0x118);
+    func_002B3A98(base + 0x118);
     func_0028DF08_C7B0(vself);
     *(int*)(base + 0x582C) = *(int*)(*(int*)((char*)func_0028B1C8() + 0xC) + 8);
     ((sSs7B0Self*)vself)->v01(0, 0x62);
@@ -6790,10 +6788,10 @@ extern "C" int func_00123128(void*);
 extern "C" int func_00123168(void*);
 extern "C" int func_0029F2B0(int, int);
 
-extern "C" void func_0029F330(void* self)
+extern "C" int func_0029F330(void* self)
 {
     int a = func_00123128(self);
-    func_0029F2B0(a, func_00123168(self));
+    return func_0029F2B0(a, func_00123168(self));
 }
 #endif
 
@@ -7016,8 +7014,7 @@ extern "C" int func_002B0E28(void* self, int i);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" void* func_003D8008(int a, int b, int c);
 extern "C" int func_00123128(void*);
-// PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
+extern "C" int func_0029F330(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 // PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
@@ -7066,7 +7063,7 @@ extern "C" void func_0029FCC8(void* self, void* vrider)
     if (pos2) return;
     char* snd = (char*)self + 0x5560;
     if (func_002B0E28(snd, 0) == 0) return;
-    int r = func_0029F330_i(rider);
+    int r = func_0029F330(rider);
     if (func_00288B40(self, rider->v05(), D_004A36D8) < 0) return;
     int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
@@ -7098,7 +7095,7 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" void* func_003D8008(int a, int b, int c);
 extern "C" int func_00123128(void*);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
+extern "C" int func_0029F330(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern void (*D_004A482C)(void*, int, int);
@@ -7135,7 +7132,7 @@ extern "C" void func_0029FF80(void* self, sSsFF80Rider* rider, int alt)
     int chk = 0;
     if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
-    int r = func_0029F330_i(rider);
+    int r = func_0029F330(rider);
     if (func_00288B40(self, rider->v05(), D_004A36D8) < 0) return;
     if (alt != 0) {
         int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
@@ -7185,7 +7182,7 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" void* func_003D8008(int a, int b, int c);
 extern "C" int func_00123128(void*);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
+extern "C" int func_0029F330(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 // PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
@@ -7224,7 +7221,7 @@ extern "C" void func_002A02D8(void* self, sSs02D8Rider* rider)
     if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
     if (func_002B0E28((char*)self + 0x5560, 0) == 0) return;
-    int r = func_0029F330_i(rider);
+    int r = func_0029F330(rider);
     int mode;
     if (func_002A3F90(self) != 0 || func_002A4040(self) != 0) {
         mode = 1;
@@ -7262,8 +7259,8 @@ extern "C" void* func_003D8008(int a, int b, int c);
 extern "C" int func_00123128(void*);
 extern "C" void* func_0028B1C8();
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
-int func_002A1D48_i(void* self, void* obj) __asm__("func_002A1D48");
+extern "C" int func_0029F330(void* self);
+extern "C" int func_002A1D48(void* self, void* obj);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 unsigned func_002A1820_0560(void* self, void* a, void* b) __asm__("func_002A1820");
 void func_0031BE50_0560(float a, float* x, float* y) __asm__("func_0031BE50");
@@ -7362,9 +7359,9 @@ void func_002A0560_0560(void* self, sSs0560Rider* a, sSs0560Rider* b)
     if (!(d > 670.55999755859375f)) return;
     if (!(d < 1788.159912109375f)) return;
     int mode = 1;
-    int rA = func_0029F330_i(a);
-    int s = func_002A1D48_i(self, b);
-    int rB = func_0029F330_i(b);
+    int rA = func_0029F330(a);
+    int s = func_002A1D48(self, b);
+    int rB = func_0029F330(b);
     if (d >= 1341.1199951171875f) mode = 2;
     unsigned sel = func_002A1820_0560(self, a, b);
     if (sel == 2) {
@@ -7402,7 +7399,7 @@ extern "C" void* func_003D8008(int a, int b, int c);
 extern "C" int func_00123128(void*);
 extern "C" void func_0029F660(void* self, void* rider, int a, int b);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
+extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 // PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
 extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
@@ -7460,8 +7457,8 @@ extern "C" void func_002A0A30(void* self, sSs0A30Rider* a, sSs0A30Rider* b, int 
     int okB = func_00288B40(self, b->v05(), D_004A36D8) >= 0;
     int okA = func_00288B40(self, a->v05(), D_004A36D8) >= 0;
     if (!okB && !okA) return;
-    int rA = func_0029F330_i(a);
-    int rB = func_0029F330_i(b);
+    int rA = func_0029F330(a);
+    int rB = func_0029F330(b);
     if (p8 != 0) return;
     if (p7 != 0) return;
     int sel = func_002A1820(self, (sSs1820Rider*)a, (sSs1820Rider*)b);
@@ -7500,7 +7497,7 @@ extern "C" void* func_003D8008(int a, int b, int c);
 extern "C" int func_00123128(void*);
 extern "C" void func_0029F660(void* self, void* rider, int a, int b);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
+extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern void (*D_004A482C)(void*, int, int);
 extern float D_004A36D8;
@@ -7547,7 +7544,7 @@ extern "C" void func_002A0E70(void* self, sSs0E70Rider* rider, int play)
     if (play == 0) return;
     int ok = rider->f874 != 0 && rider->f87C != 0;
     if (!ok) return;
-    int r = func_0029F330_i(rider);
+    int r = func_0029F330(rider);
     if (func_002B1458(snd, 0, 0x2077, (int)rider, func_00123128(rider), 0, 0, zero) == 0) return;
     D_004A482C(func_003D8008(1, 0, 0x2077), 1, r);
 }
@@ -7607,8 +7604,8 @@ extern "C" int func_00288B40(void* self, int which, float f);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" void* func_003D8008(int a, int b, int c);
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
-int func_002A1D48_i(void* self, void* obj) __asm__("func_002A1D48");
+extern "C" int func_0029F330(void* self);
+extern "C" int func_002A1D48(void* self, void* obj);
 // PORT: D_004A482C is called with 5 args here (the unit's later declaration has 3).
 extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
@@ -7629,8 +7626,8 @@ void func_002A1138_impl(void* self, char* rider, void* obj)
     sSsVt1138* e = &(*(sSsVt1138**)o)[5];
     if (func_00288B40(self, e->fn(o + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20D3, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
-    int r = func_0029F330_i(rider);
-    int s = func_002A1D48_i(self, obj);
+    int r = func_0029F330(rider);
+    int s = func_002A1D48(self, obj);
     D_004A482C_5(func_003D8008(1, 0, 0x20D3), 3, r, s, 4);
 }
 #endif
@@ -7642,8 +7639,8 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" void* func_003D8008(int a, int b, int c);
 extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
-int func_0029F330_i(void* self) __asm__("func_0029F330");
-int func_002A1D48_i(void* self, void* obj) __asm__("func_002A1D48");
+extern "C" int func_0029F330(void* self);
+extern "C" int func_002A1D48(void* self, void* obj);
 // PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
 extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
@@ -7661,8 +7658,8 @@ void func_002A1280_impl(void* self, char* rider, void* obj)
     sSsVt1280* e = &(*(sSsVt1280**)o)[5];
     if (func_00288B40(self, e->fn(o + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20D4, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
-    int r = func_0029F330_i(rider);
-    int s = func_002A1D48_i(self, obj);
+    int r = func_0029F330(rider);
+    int s = func_002A1D48(self, obj);
     D_004A482C_4(func_003D8008(1, 0, 0x20D4), 2, r, s);
 }
 #endif
@@ -7706,7 +7703,7 @@ void func_002A1400_impl(void* self, char* rider)
     sSsVt1280* e = &(*(sSsVt1280**)o)[5];
     if (func_00288B40(self, e->fn(o + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20B9, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
-    int r = func_0029F330_i(rider);
+    int r = func_0029F330(rider);
     int k = func_002A1E68(self, rider);
     cBE_getInterface_Fv(cBE_getBE(), 0);
     int v;
@@ -7746,7 +7743,7 @@ extern "C" void func_002A1560(void* self, char* rider)
     sSsVt1280* e = &(*(sSsVt1280**)o2)[5];
     if (func_00288B40(self, e->fn(o2 + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458(bm, 0, 0x20B8, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
-    int r = func_0029F330_i(rider);
+    int r = func_0029F330(rider);
     D_004A482C(func_003D8008(1, 0, 0x20B8), 1, r);
 }
 #endif
@@ -7761,7 +7758,6 @@ extern "C" int func_0029F0A0(void* self);
 extern "C" int func_002B0E28(void* self, int i);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 // func_0029F2B0 returns a value (the unit's earlier declaration says void).
-int func_0029F2B0_r(int a, int b) __asm__("func_0029F2B0");
 extern "C" void* func_003D8008(int a, int b, int c);
 extern void (*D_004A482C)(void*, int, int);
 extern signed char D_00535C11[];
@@ -7774,7 +7770,7 @@ extern "C" void func_002A16B0(void* self, int a1)
             cBE_getInterface_Fv(cBE_getBE(), 0);
             if (D_00535C11[0] != 0) {
                 if (func_002B1458(bm, 0, 0x20BC, 0, a1, 0, 1, 0.0f) != 0) {
-                    int r = func_0029F2B0_r(a1, 0);
+                    int r = func_0029F2B0(a1, 0);
                     D_004A482C(func_003D8008(1, 0, 0x20BC), 1, r);
                 }
             }
@@ -7791,7 +7787,7 @@ extern "C" int func_0029F0A0(void* self);
 extern "C" int func_002B0E28(void* self, int i);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 // func_0029F2B0 returns a value (the unit's earlier declaration says void).
-int func_0029F2B0_r(int a, int b) __asm__("func_0029F2B0");
+extern "C" int func_0029F2B0(int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
 extern void (*D_004A482C)(void*, int, int);
 
@@ -7801,7 +7797,7 @@ extern "C" void func_002A1778(void* self, int a1)
         char* bm = (char*)self + 0x5560;
         if (func_002B0E28(bm, 0) != 0) {
             if (func_002B1458(bm, 0, 0x20BD, 0, a1, 0, 1, 0.0f) != 0) {
-                int r = func_0029F2B0_r(a1, 0);
+                int r = func_0029F2B0(a1, 0);
                 D_004A482C(func_003D8008(1, 0, 0x20BD), 1, r);
             }
         }
@@ -8011,10 +8007,10 @@ extern "C" int func_00123128(void*);
 extern "C" int func_00123168(void*);
 extern "C" int func_002A1DA0(void* self, int a, int b);
 
-extern "C" void func_002A1D48(void* self, void* obj)
+extern "C" int func_002A1D48(void* self, void* obj)
 {
     int a = func_00123128(obj);
-    func_002A1DA0(self, a, func_00123168(obj));
+    return func_002A1DA0(self, a, func_00123168(obj));
 }
 #endif
 
@@ -8151,7 +8147,6 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_0028B1D8();
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
-int func_002A1D48_r(void* self, void* obj) __asm__("func_002A1D48");
 extern "C" void* func_0028B1E8();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -8166,7 +8161,7 @@ extern "C" void func_002A2188(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20CA, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int a = func_002A1D48_r(self, *(void**)((char*)func_0028B1D8() + 0x28));
+            int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
             D_004A482C_5(func_003D8008(1, 0, 0x20CA), 3, r, a, m);
         }
@@ -8430,7 +8425,7 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_0028B1D8();
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
-int func_002A1D48_r(void* self, void* obj) __asm__("func_002A1D48");
+extern "C" int func_002A1D48(void* self, void* obj);
 extern "C" void* func_0028B1E8();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -8445,7 +8440,7 @@ extern "C" void func_002A2938(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x2102, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int a = func_002A1D48_r(self, *(void**)((char*)func_0028B1D8() + 0x28));
+            int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
             D_004A482C_5(func_003D8008(1, 0, 0x2102), 3, r, a, m);
         }
@@ -8463,8 +8458,6 @@ extern "C" void* func_0028B1E8();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00145750(void*);
-// func_002A1DA0 returns a value (the unit declares it void).
-int func_002A1DA0_r(void* self, int a, int b) __asm__("func_002A1DA0");
 extern "C" void* func_003D8008(int a, int b, int c);
 // 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
 extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
@@ -8474,7 +8467,7 @@ extern "C" void func_002A2A10(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x210B, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1DA0_r(self, func_00145750(cBE_getInterface_Fv(func_0028B1E8(), 0)), 0);
+            int m = func_002A1DA0(self, func_00145750(cBE_getInterface_Fv(func_0028B1E8(), 0)), 0);
             D_004A482C_4(func_003D8008(1, 0, 0x210B), 2, r, m);
         }
     }
@@ -8768,7 +8761,7 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_0028B1D8();
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
-int func_002A1D48_r(void* self, void* obj) __asm__("func_002A1D48");
+extern "C" int func_002A1D48(void* self, void* obj);
 extern "C" void* func_003D8008(int a, int b, int c);
 // 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
 extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
@@ -8778,7 +8771,7 @@ extern "C" void func_002A32B0(void* self)
     if (func_0029F128(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C1, 0, 0xB, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int a = func_002A1D48_r(self, *(void**)((char*)func_0028B1D8() + 0x28));
+            int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
             D_004A482C_4(func_003D8008(1, 0, 0x20C1), 2, r, a);
         }
     }
@@ -8794,7 +8787,7 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_0028B1D8();
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
-int func_002A1D48_r(void* self, void* obj) __asm__("func_002A1D48");
+extern "C" int func_002A1D48(void* self, void* obj);
 extern "C" void* func_003D8008(int a, int b, int c);
 // 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
 extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
@@ -8804,7 +8797,7 @@ extern "C" void func_002A3358(void* self)
     if (func_0029F128(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C2, 0, 0xB, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int a = func_002A1D48_r(self, *(void**)((char*)func_0028B1D8() + 0x28));
+            int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
             D_004A482C_4(func_003D8008(1, 0, 0x20C2), 2, r, a);
         }
     }
@@ -8857,7 +8850,7 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
         sSsVt1280* e = &(*(sSsVt1280**)o)[7];
         char* bank = **(char***)((char*)self + 0x118) + 0x1D8;
         int v = e->fn(o + e->delta);
-        func_002ADCA0_9638(bank, 1000, key->v, 0, v, 0, 0, 0);
+        func_002ADCA0(bank, 1000, key->v, 0, v, 0, 0, 0);
         return 1;
     }
     if (func_002A42C8_s(self) != 0) return 1;
@@ -8874,7 +8867,7 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
     if (func_00123168(rider) != 0) return 1;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20C4, 0, 0xB, 0, 0, 0.0f) == 0) return 1;
     int r = func_0029F198(self);
-    int s = func_002A1D48_i(self, rider);
+    int s = func_002A1D48(self, rider);
     int v;
     if (given) {
         v = func_002A1E68(self, rider);
@@ -8924,7 +8917,7 @@ extern "C" void func_002A3708(void* self, char* rider)
     }
     if (func_002B1458((char*)self + 0x5560, 0, 0x20C5, 0, 0xB, 0, 0, 0.0f) == 0) return;
     int a = func_0029F198(self);
-    int b = func_002A1D48_i(self, rider);
+    int b = func_002A1D48(self, rider);
     int c = func_002A1E68(self, rider);
     D_004A482C_5(func_003D8008(1, 0, 0x20C5), 3, a, b, c);
 }
