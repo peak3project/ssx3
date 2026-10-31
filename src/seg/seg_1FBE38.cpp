@@ -3492,7 +3492,7 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300C78);
 extern int D_004A28A4_0C78 __asm__("D_004A28A4");
 extern "C" void func_00278E50_0C78(int, int, int, int, int, int, int, int) __asm__("func_00278E50");
 extern "C" void func_00278ED0_0C78(int, int, int, int, int, int, int) __asm__("func_00278ED0");
-extern "C" void func_00278F38(int, int);
+extern "C" int func_00278F38(int, int);
 extern "C" int func_00278F68(int, int, int, int);
 struct V3_0C78 { float x, y, z; };
 extern V3_0C78 D_004C9098_0C78 __asm__("D_004C9098");
@@ -4255,7 +4255,7 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302048);
 extern int *D_004A3DD8_2048 __asm__("D_004A3DD8");
 extern char *D_004A28A8_2048 __asm__("D_004A28A8");
 extern int D_00445E40_2048[] __asm__("D_00445E40");
-extern "C" void func_0030B7F8_2048(int*, int) __asm__("func_0030B7F8");
+extern "C" void func_0030B7F8(int*);
 extern "C" void func_0022D6C8_2048(int, int) __asm__("func_0022D6C8");
 struct Sh_2048 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual int v09(); };
 struct V3_2048 { float x, y, z; };
@@ -4308,7 +4308,7 @@ extern "C" V3_2048 func_00302048(int n, Ent_2048 *e) {
             v16 = D_00445E40_2048[id];
         if (b1 == 0) {
             if (v16 != 1)
-                func_0030B7F8_2048(D_004A3DD8_2048, id);
+                func_0030B7F8(D_004A3DD8_2048);
             func_0022D6C8_2048(w, v16);
         }
     }
@@ -4332,10 +4332,10 @@ struct V3_2210 { float x, y, z; };
 extern V3_2210 D_004C9098_2210 __asm__("D_004C9098");
 extern "C" void* cBE_getBE_2210() __asm__("cBE_getBE");
 extern "C" void* cBE_getInterface_2210(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00144CE0_2210(void* iface, int id) __asm__("func_00144CE0");
+extern "C" int func_00144CE0(void* iface, int id);
 extern "C" void func_0022CEA8_2210(void* self, int hash, char* name) __asm__("func_0022CEA8");
 extern "C" void func_0022D088_2210(void* self, int hash, char* name) __asm__("func_0022D088");
-extern "C" void func_00231250_2210(void* self, int a, int b, int refresh) __asm__("func_00231250");
+extern "C" void func_00231250(void* self, int a, int b, int refresh);
 extern "C" void* func_0028B180();
 extern "C" void func_002A49E8_2210(void* self) __asm__("func_002A49E8");
 
@@ -4391,7 +4391,7 @@ extern "C" V3_2210 func_00302210(int n, Ent_2210* e)
         if ((unsigned int)sel < 8) {
             name = D_00445E40_2210[sel];
         }
-        int hash = func_00144CE0_2210(iface, id);
+        int hash = func_00144CE0(iface, id);
         switch ((unsigned int)action) {
         case 0:
             func_0022CEA8_2210(ui, hash, name);
@@ -4402,11 +4402,11 @@ extern "C" V3_2210 func_00302210(int n, Ent_2210* e)
             func_0022D088_2210(ui, hash, name);
             break;
         case 3:
-            func_00231250_2210(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 2, 0);
+            func_00231250(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 2, 0);
             func_002A49E8_2210(func_0028B180());
             break;
         case 4:
-            func_00231250_2210(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 0, 0);
+            func_00231250(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 0, 0);
             break;
         case 5:
             *(int*)(ui + 0x1A4) = 1;
@@ -4733,7 +4733,7 @@ extern int D_004A57B0_2EF8 __asm__("D_004A57B0");
 extern int D_004A3D10_2EF8[2] __asm__("D_004A3D10");
 extern int* D_004A3DD8_2EF8 __asm__("D_004A3DD8");
 extern char* D_004A28A8_2EF8 __asm__("D_004A28A8");
-extern "C" int func_00122EE8_2EF8(char* rider, int which) __asm__("func_00122EE8");
+extern "C" int func_00122EE8(char* rider, int which);
 
 struct Ent_2EF8 { int idx; int val; int pad; int kind; };
 
@@ -4763,25 +4763,25 @@ extern "C" void* func_00302EF8(void* self, int n, Ent_2EF8* e)
     char* r = a ? a - 0x6C0 : 0;
     int res;
     switch (vp[0]) {
-    case 3: res = func_00122EE8_2EF8(r, 0); break;
-    case 4: res = func_00122EE8_2EF8(r, 1); break;
-    case 1: res = func_00122EE8_2EF8(r, 2); break;
-    case 0: res = func_00122EE8_2EF8(r, 3); break;
-    case 2: res = func_00122EE8_2EF8(r, 4); break;
-    case 5: res = func_00122EE8_2EF8(r, 5); break;
-    case 6: res = func_00122EE8_2EF8(r, 6); break;
-    case 7: res = func_00122EE8_2EF8(r, 7); break;
-    case 9: res = func_00122EE8_2EF8(r, 8); break;
-    case 10: res = func_00122EE8_2EF8(r, 9); break;
-    case 11: res = func_00122EE8_2EF8(r, 10); break;
-    case 12: res = func_00122EE8_2EF8(r, 11); break;
-    case 13: res = func_00122EE8_2EF8(r, 12); break;
-    case 14: res = func_00122EE8_2EF8(r, 13); break;
-    case 15: res = func_00122EE8_2EF8(r, 14); break;
-    case 16: res = func_00122EE8_2EF8(r, 15); break;
-    case 17: res = func_00122EE8_2EF8(r, 16); break;
-    case 8: res = func_00122EE8_2EF8(r, 17); break;
-    case 18: res = func_00122EE8_2EF8(r, 18); break;
+    case 3: res = func_00122EE8(r, 0); break;
+    case 4: res = func_00122EE8(r, 1); break;
+    case 1: res = func_00122EE8(r, 2); break;
+    case 0: res = func_00122EE8(r, 3); break;
+    case 2: res = func_00122EE8(r, 4); break;
+    case 5: res = func_00122EE8(r, 5); break;
+    case 6: res = func_00122EE8(r, 6); break;
+    case 7: res = func_00122EE8(r, 7); break;
+    case 9: res = func_00122EE8(r, 8); break;
+    case 10: res = func_00122EE8(r, 9); break;
+    case 11: res = func_00122EE8(r, 10); break;
+    case 12: res = func_00122EE8(r, 11); break;
+    case 13: res = func_00122EE8(r, 12); break;
+    case 14: res = func_00122EE8(r, 13); break;
+    case 15: res = func_00122EE8(r, 14); break;
+    case 16: res = func_00122EE8(r, 15); break;
+    case 17: res = func_00122EE8(r, 16); break;
+    case 8: res = func_00122EE8(r, 17); break;
+    case 18: res = func_00122EE8(r, 18); break;
     default: res = 0; break;
     }
     *(int*)((char*)self + 8) = 1;
@@ -5078,7 +5078,6 @@ extern int D_004A57D8_37B0 __asm__("D_004A57D8");
 extern int D_004A3D30_37B0[2] __asm__("D_004A3D30");
 extern int* D_004A3DD8_37B0 __asm__("D_004A3DD8");
 extern char* D_004A28A8_37B0 __asm__("D_004A28A8");
-extern "C" int func_00122EE8_37B0(char* rider, int which) __asm__("func_00122EE8");
 
 struct Ent_37B0 { int idx; int val; int pad; int kind; };
 
@@ -5108,25 +5107,25 @@ extern "C" void* func_003037B0(void* self, int n, Ent_37B0* e)
     char* r = a ? a - 0x6C0 : 0;
     int res;
     switch (vp[0]) {
-    case 3: res = func_00122EE8_37B0(r, 0); break;
-    case 4: res = func_00122EE8_37B0(r, 1); break;
-    case 1: res = func_00122EE8_37B0(r, 2); break;
-    case 0: res = func_00122EE8_37B0(r, 3); break;
-    case 2: res = func_00122EE8_37B0(r, 4); break;
-    case 5: res = func_00122EE8_37B0(r, 5); break;
-    case 6: res = func_00122EE8_37B0(r, 6); break;
-    case 7: res = func_00122EE8_37B0(r, 7); break;
-    case 9: res = func_00122EE8_37B0(r, 8); break;
-    case 10: res = func_00122EE8_37B0(r, 9); break;
-    case 11: res = func_00122EE8_37B0(r, 10); break;
-    case 12: res = func_00122EE8_37B0(r, 11); break;
-    case 13: res = func_00122EE8_37B0(r, 12); break;
-    case 14: res = func_00122EE8_37B0(r, 13); break;
-    case 15: res = func_00122EE8_37B0(r, 14); break;
-    case 16: res = func_00122EE8_37B0(r, 15); break;
-    case 17: res = func_00122EE8_37B0(r, 16); break;
-    case 8: res = func_00122EE8_37B0(r, 17); break;
-    case 18: res = func_00122EE8_37B0(r, 18); break;
+    case 3: res = func_00122EE8(r, 0); break;
+    case 4: res = func_00122EE8(r, 1); break;
+    case 1: res = func_00122EE8(r, 2); break;
+    case 0: res = func_00122EE8(r, 3); break;
+    case 2: res = func_00122EE8(r, 4); break;
+    case 5: res = func_00122EE8(r, 5); break;
+    case 6: res = func_00122EE8(r, 6); break;
+    case 7: res = func_00122EE8(r, 7); break;
+    case 9: res = func_00122EE8(r, 8); break;
+    case 10: res = func_00122EE8(r, 9); break;
+    case 11: res = func_00122EE8(r, 10); break;
+    case 12: res = func_00122EE8(r, 11); break;
+    case 13: res = func_00122EE8(r, 12); break;
+    case 14: res = func_00122EE8(r, 13); break;
+    case 15: res = func_00122EE8(r, 14); break;
+    case 16: res = func_00122EE8(r, 15); break;
+    case 17: res = func_00122EE8(r, 16); break;
+    case 8: res = func_00122EE8(r, 17); break;
+    case 18: res = func_00122EE8(r, 18); break;
     default: res = 0; break;
     }
     *(int*)((char*)self + 8) = 1;
@@ -5214,8 +5213,8 @@ extern int D_57E0_3BA0 __asm__("D_004A57E0");
 extern const int D_004465D8_3BA0[] __asm__("D_004465D8");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00229820_3BA0(int, unsigned, int, int) __asm__("func_00229820");
-extern "C" void func_00229788_3BA0(int, unsigned, int, int) __asm__("func_00229788");
-extern "C" void func_002297D8_3BA0(int, unsigned, int, int) __asm__("func_002297D8");
+extern "C" void func_00229788(int, unsigned);
+extern "C" void func_002297D8(int, unsigned);
 struct Ent_3BA0 { int idx; int val; int pad; int type; };
 extern "C" V3_3BA0 func_00303BA0(int n, Ent_3BA0 *e) {
     if (D_57E0_3BA0 == 0) {
@@ -5262,9 +5261,9 @@ extern "C" V3_3BA0 func_00303BA0(int n, Ent_3BA0 *e) {
             func_00229820_3BA0(D_004A2A00_3BA0, h, a, b);
         else if (mode == 1) {
         } else if (mode == 2)
-            func_00229788_3BA0(D_004A2A00_3BA0, h, a, b);
+            func_00229788(D_004A2A00_3BA0, h);
         else if (mode == 3)
-            func_002297D8_3BA0(D_004A2A00_3BA0, h, a, b);
+            func_002297D8(D_004A2A00_3BA0, h);
     }
     return D_004C9098_3BA0;
 }
@@ -5823,7 +5822,7 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304E38);
 extern char *D_004A3DD8_4E38 __asm__("D_004A3DD8");
 extern char **D_004A47B8_4E38 __asm__("D_004A47B8");
 extern char *D_004A28A8_4E38 __asm__("D_004A28A8");
-extern "C" void func_00355888_4E38(void*, void*) __asm__("func_00355888");
+extern "C" void func_00355888(void*, void*);
 struct O_4E38 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_4E38 { float x, y, z; };
 extern V3_4E38 D_004C9098_4E38 __asm__("D_004C9098");
@@ -5870,7 +5869,7 @@ extern "C" V3_4E38 func_00304E38(int n, Ent_4E38 *e) {
     if (p == 0)
         return D_004C9098_4E38;
     if (p->v16())
-        func_00355888_4E38(p, buf);
+        func_00355888(p, buf);
     return D_004C9098_4E38;
 }
 #endif
@@ -5986,7 +5985,7 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00305660);
 extern int *D_004A3DD8_5660 __asm__("D_004A3DD8");
 extern char *D_004A28A8_5660 __asm__("D_004A28A8");
 struct Sh_5660 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual int v08(); };
-extern "C" void func_00390EC8_5660(float) __asm__("func_00390EC8");
+extern "C" void func_00390EC8(float);
 struct V3_5660 { float x, y, z; };
 extern V3_5660 D_004C9098_5660 __asm__("D_004C9098");
 struct Tag_5660 { char c; Tag_5660() {} Tag_5660(const Tag_5660 &o) : c(o.c) {} };
@@ -6023,7 +6022,7 @@ extern "C" V3_5660 func_00305660(int n, Ent_5660 *e) {
         char *q = *(char**)(lvl + k4 + 0x28);
         Sh_5660 *sh = q ? (Sh_5660*)(q + 0x6C0) : 0;
         if (sh->v08())
-            func_00390EC8_5660(0.0f);
+            func_00390EC8(0.0f);
     }
     return D_004C9098_5660;
 }
@@ -6948,12 +6947,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00307240);
 struct P_7240 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); };
 int func_0030B898_7240(void*, void*) __asm__("func_0030B898__FPvT0");
 extern "C" void *func_0028B180(void);
-extern "C" void func_0029D8E0_7240(void*) __asm__("func_0029D8E0");
+extern "C" void func_0029D8E0(void*);
 extern "C" void func_00307240(P_7240* self) {
     if (func_0030B898_7240(*(void**)((char*)self + 0x10), self)) {
         self->v06();
         self->v18();
-        func_0029D8E0_7240(func_0028B180());
+        func_0029D8E0(func_0028B180());
     }
 }
 #endif
@@ -7036,15 +7035,14 @@ extern "C" void func_00307308(char* self)
 INCLUDE_ASM("seg/seg_1FBE38", func_003074C0);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" void* cBE_getBE_74C0(void) __asm__("cBE_getBE");
 extern "C" int cBE_getInterface__Fv(void* be, int kind);
 extern "C" int func_00153E80_74C0(int, int) __asm__("func_00153E80");
 extern "C" void func_001540F0_74C0(int, int, int) __asm__("func_001540F0");
-extern "C" void func_00307D78_74C0(void*) __asm__("func_00307D78");
+extern "C" void func_00307D78(void*);
 extern "C" void func_0030AC98(int, void *, int);
 struct P_74C0 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); };
 extern "C" void func_003074C0(P_74C0* self) {
-    int iface = cBE_getInterface__Fv(cBE_getBE_74C0(), 10);
+    int iface = cBE_getInterface__Fv(cBE_getBE(), 10);
     if (!func_00153E80_74C0(iface, *(int*)((char*)self + 0x20)))
         func_001540F0_74C0(iface, *(int*)((char*)self + 0x20), 1);
     int h = *(int*)((char*)self + 0x70);
@@ -7053,7 +7051,7 @@ extern "C" void func_003074C0(P_74C0* self) {
     else
         self->v20();
     if (self->state == 2)
-        func_00307D78_74C0(self);
+        func_00307D78(self);
 }
 #endif
 
