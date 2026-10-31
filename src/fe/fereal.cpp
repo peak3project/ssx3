@@ -280,8 +280,8 @@ extern "C" unsigned char func_001A1CD0(void* self, int a1)
 INCLUDE_ASM("fe/fereal", func_001A1CE8);
 #ifdef SKIP_ASM
 extern "C" void* cFE_cFE(void* self);
-void func_00263660(void* p);
-void func_00263998(void* p);
+void* func_00263660(void* p);
+void* func_00263998(void* p);
 extern void* D_0046D7C0[];
 
 extern "C" void* func_001A1CE8(void* self)
@@ -319,7 +319,7 @@ INCLUDE_ASM("fe/fereal", func_001A1DC0);
 #ifdef SKIP_ASM
 extern "C" void* cBE_getBE();
 extern "C" void func_0014DE28(void* be, int slot);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 extern "C" void cBE_setState(int state);
 extern "C" void func_00369FF8(void* world);
 extern "C" void func_00195E58(void* p);
@@ -393,12 +393,11 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 void func_00317530(void* self, float t);
 void func_00317550(void* self, float t);
-void func_0014BD78(void* iface);
+void* func_0014BD78(void* iface);
 extern "C" void func_0014AF10(void* iface);
 extern "C" void func_00195BE0(void* self);
-extern "C" void cUIEngine_loadFile(void* engine, const char* path);
-// PORT: the unit declares cRealFE_loadCharAnimations without parameters; this caller passes self.
-extern "C" void cRealFE_loadCharAnimations_1(void* self) __asm__("cRealFE_loadCharAnimations");
+extern "C" int cUIEngine_loadFile(void* engine, const char* path);
+extern "C" void cRealFE_loadCharAnimations(void* self);
 extern "C" void func_0019CE68(void* self);
 extern "C" void func_001A0498(void* self);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
@@ -483,7 +482,7 @@ extern "C" void cRealFE_load(sRealFE_1E80* self)
         cUIEngine_loadFile(ui, D_00461278);
     } while (0);
     progress_1E80(75.0f);
-    cRealFE_loadCharAnimations_1(self);
+    cRealFE_loadCharAnimations(self);
     func_0019CE68((char*)self + 0x1A70);
     func_001A0498((char*)self + 0xB0);
     sCam_1E80* cam = *(sCam_1E80**)((char*)D_004A28A8 + 0x7C);
@@ -935,8 +934,8 @@ noh:
 //100%
 INCLUDE_ASM("fe/fereal", cRealFE_loadCharAnimations);
 #ifdef SKIP_ASM
-extern "C" void func_003DED50(char* name, int a1, int a2, void* out);
-extern "C" void func_003DEDC0(void* handle, int arg);
+extern "C" int func_003DED50(char* name, int a1, int a2, void* out);
+extern "C" int func_003DEDC0(void* handle, int arg);
 extern "C" void* func_00311250(void* self, void* src);
 extern "C" void func_00314F30(void* self, int kind, void* list);
 // PORT: cGameAnimMap_testResolve__Fv is called with the map in $a0; bind the 1-arg form to that symbol.
@@ -950,7 +949,7 @@ struct sAnimTableK1A2B00 {
 extern sAnimTableK1A2B00* D_004A3DF8_K1A2B00 __asm__("D_004A3DF8");
 extern void* D_004A3E7C;
 
-extern "C" void cRealFE_loadCharAnimations(void)
+extern "C" void cRealFE_loadCharAnimations(void* self)
 {
     void* handle;
     int i;
