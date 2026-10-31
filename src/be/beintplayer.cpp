@@ -62,7 +62,7 @@ extern sRecords_59B8 D_00535B20_59B8 __asm__("D_00535B20");
 extern sRecords_59B8 D_00534FE0_59B8 __asm__("D_00534FE0");
 extern void* D_004A11C0;
 // PORT: func_00145A98 takes no arguments; this caller passes its own self through untouched in $a0.
-extern "C" void func_00145A98_59B8(void* self) __asm__("func_00145A98");
+extern "C" void func_00145A98(void* self);
 
 // Copies the 0xA8-byte character table from its backup when D_004A11C0 says so, otherwise rebuilds it.
 extern "C" void func_001459B8(void* self)
@@ -70,7 +70,7 @@ extern "C" void func_001459B8(void* self)
     if (*(int*)((char*)D_004A11C0 + 8) != 0) {
         D_00535B20_59B8 = D_00534FE0_59B8;
     } else {
-        func_00145A98_59B8(self);
+        func_00145A98(self);
     }
 }
 #endif
@@ -94,7 +94,7 @@ struct sCharEntryBits_00145A98 {
 extern sCharEntryBits_00145A98 D_00534FE0_bits[] __asm__("D_00534FE0");
 extern sCharEntryBits_00145A98 D_00535B20_bits[] __asm__("D_00535B20");
 
-extern "C" void func_00145A98(void)
+extern "C" void func_00145A98(void* self)
 {
     for (int i = 0; i < 6; i++)
     {
