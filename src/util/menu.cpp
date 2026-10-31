@@ -5037,10 +5037,10 @@ extern "C" float func_002D1928(int n, float x)
 //100%
 INCLUDE_ASM("util/menu", func_002D19B8);
 #ifdef SKIP_ASM
-extern "C" int func_0030A060(void* self, int a, int b, int c);
+extern "C" void* func_0030A060(void* self, int a, int b, int c);
 extern void* D_004A3DD8;
 
-extern "C" int func_002D19B8(int a, int b, int c)
+extern "C" void* func_002D19B8(int a, int b, int c)
 {
     return func_0030A060(D_004A3DD8, a, b, c);
 }
@@ -5149,9 +5149,9 @@ public:
     virtual int v07();
 };
 
-extern "C" void func_002D1B30(func_002D1B30_cObj* obj)
+extern "C" int func_002D1B30(func_002D1B30_cObj* obj)
 {
-    obj->v07();
+    return obj->v07();
 }
 #endif
 
@@ -5164,16 +5164,16 @@ public:
     virtual void v02();
     virtual void v03();
     virtual void v04();
-    virtual int v05();
+    virtual void* v05();
 };
 
 extern char* D_004A28A8;
 
-extern "C" void func_002D1B58(int i)
+extern "C" void* func_002D1B58(int i)
 {
     char* base = *(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC);
     char* p = *(char**)(base + (i << 2) + 0x28);
-    ((func_002D1B58_cObj*)(p + 0x6C0))->v05();
+    return ((func_002D1B58_cObj*)(p + 0x6C0))->v05();
 }
 #endif
 
