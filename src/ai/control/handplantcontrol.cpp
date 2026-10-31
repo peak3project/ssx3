@@ -68,14 +68,14 @@ extern "C" void func_00139178(void* self)
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_001391A8);
 
-extern "C" void* func_0011E150(int, int);
+extern "C" void* func_0011E150(void*, int);
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139528__FPv);
 #ifdef SKIP_ASM
 void* func_00139528(void* self)
 {
-    return func_0011E150(*(int*)((char*)self + 0xa0), 0);
+    return func_0011E150(*(void**)((char*)self + 0xa0), 0);
 }
 #endif
 
@@ -2666,11 +2666,11 @@ extern "C" int func_00140CE8(void *arg0) {
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00140CF0);
 #ifdef SKIP_ASM
-extern "C" void func_00120D58();
+extern "C" void func_00120D58(void * self);
 
 extern "C" void func_00140CF0(void *arg0, int arg1) {
     (*(int *)((char*)(arg0) + (0x304))) = arg1;
-    func_00120D58();
+    func_00120D58(arg0);
 }
 #endif
 //100%
