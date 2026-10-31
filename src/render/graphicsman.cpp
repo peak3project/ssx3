@@ -121,7 +121,7 @@ fail:
 INCLUDE_ASM("render/graphicsman", func_00369C28);
 #ifdef SKIP_ASM
 extern char* D_004A5B64;
-extern "C" void SYNCTASK_run(int a);
+extern "C" int SYNCTASK_run(int a);
 extern "C" void func_003E5398(int a);
 
 struct sGmVEntryI_9C28 {
@@ -1046,7 +1046,7 @@ INCLUDE_ASM("render/graphicsman", func_0036D500);
 INCLUDE_ASM("render/graphicsman", func_00370018);
 #ifdef SKIP_ASM
 extern char D_00493160[];
-void func_002F7A68(void*);
+void* func_002F7A68(void*);
 
 extern "C" void* func_00370018(void* self)
 {
@@ -1310,7 +1310,7 @@ extern "C" void func_00370AF8(void* self, cStream00370AF8* stream)
 //100%
 INCLUDE_ASM("render/graphicsman", func_00370B60);
 #ifdef SKIP_ASM
-void func_002F7A68(void*);
+void* func_002F7A68(void*);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern void* D_00493118[];
 
