@@ -86,7 +86,7 @@ struct cUIScreen;
 int cUIScreen_getFrameByLabel(cUIScreen* self, int hash);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" int func_002018A8(void* tmpl, void* obj, int msg);
-extern "C" void func_0039F190(void* list, int a1);
+extern "C" void* func_0039F190(void* list, int a1);
 extern "C" void func_0039F400(void* list, void* item);
 extern int D_004A1A70;
 
