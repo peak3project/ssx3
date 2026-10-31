@@ -1915,7 +1915,7 @@ extern "C" void func_00391480(void* self, sQuad16* dst)
 INCLUDE_ASM("render/lightman", func_003914F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 integer register read (vi1); the PC port needs a C fallback.
-extern "C" int func_003914F8(void)
+extern "C" int func_003914F8(void* t)
 {
     int r;
     __asm__ __volatile__("cfc2.i %0, $vi1" : "=r"(r));
