@@ -58,7 +58,7 @@ INCLUDE_ASM("seg/seg_2125C8", func_00311860);
 #ifdef SKIP_ASM
 extern char D_0048A4C0[];
 
-extern "C" void *func_00311860(void) {
+extern "C" void *func_00311860(int anim) {
     return D_0048A4C0;
 }
 #endif
