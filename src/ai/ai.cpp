@@ -188,9 +188,9 @@ extern "C" void* func_001297C8(void*, int);
 //100%
 INCLUDE_ASM("ai/ai", func_001289F0__FPv);
 #ifdef SKIP_ASM
-void* func_001289F0(void* self)
+void func_001289F0(void* self)
 {
-    return func_001297C8(self, 0);
+    func_001297C8(self, 0);
 }
 #endif
 
@@ -415,7 +415,7 @@ extern void* D_004A289C;
 extern void* D_004A28A8;
 extern "C" int func_00122278(void*);
 extern "C" void func_00122448(void*);
-extern "C" void func_001225C0(void*);
+extern "C" int func_001225C0(void*);
 extern "C" void func_001225F0(void*);
 void func_00122638(void*);
 extern "C" void func_002D5048(void*);
@@ -647,8 +647,8 @@ INCLUDE_ASM("ai/ai", cAI_initMissionRiders);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void cRider_cRider(void* self);
-extern "C" void func_00125C70(void* self, int inChrg);
+extern "C" void* cRider_cRider(void* self);
+extern "C" void* func_00125C70(void* self, int inChrg);
 extern "C" void func_0030DBA0(void* self, float a, float b);
 extern "C" void func_00148AA8(void* self, int rider, int value);
 extern "C" void cRider_addFocusBox(void* self);
@@ -1064,7 +1064,7 @@ extern "C" int func_0022E0E0(void* self);
 void func_0026ADA0(void* self);
 extern char D_004D33A0[];
 
-extern "C" void func_0012A490(void)
+extern "C" void func_0012A490(void* p, unsigned char id)
 {
     if (func_0022E0E0(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78)) < 0x16)
     {
@@ -1076,7 +1076,7 @@ extern "C" void func_0012A490(void)
 //100%
 INCLUDE_ASM("ai/ai", func_0012A4D0);
 #ifdef SKIP_ASM
-extern "C" void func_0026ADE8(int *);
+extern "C" int func_0026ADE8(int *);
 
 extern "C" void func_0012A4D0(void) {
     func_0026ADE8(&(*(int*)&D_004D33A0));
@@ -1534,7 +1534,7 @@ extern "C" void cAI_purgeMissionRiders(void* p)
 INCLUDE_ASM("ai/ai", func_0012B000);
 #ifdef SKIP_ASM
 extern "C" void func_0012AED0(void*);
-extern "C" void func_0010F3B8(void*);
+extern "C" void* func_0010F3B8(void*);
 
 extern "C" void func_0012B000(void* self)
 {
@@ -1547,7 +1547,7 @@ extern "C" void func_0012B000(void* self)
 INCLUDE_ASM("ai/ai", func_0012B030);
 #ifdef SKIP_ASM
 extern "C" void func_0012AE38(void*);
-extern "C" void func_0010F3B8(void*);
+extern "C" void* func_0010F3B8(void*);
 
 extern "C" void func_0012B030(void* self)
 {
@@ -1560,7 +1560,7 @@ extern "C" void func_0012B030(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_0012B060);
 #ifdef SKIP_ASM
-extern "C" void func_0010F3B8(void*);
+extern "C" void* func_0010F3B8(void*);
 
 extern "C" void func_0012B060(void* self)
 {
@@ -1660,8 +1660,8 @@ extern "C" void func_0012B200(void* self)
 //100%
 INCLUDE_ASM("ai/ai", cAI_loadAnims);
 #ifdef SKIP_ASM
-extern "C" void func_003DED50(char* name, int a1, int a2, void* out);
-extern "C" void func_003DEDC0(void* handle, int arg);
+extern "C" int func_003DED50(char* name, int a1, int a2, void* out);
+extern "C" int func_003DEDC0(void* handle, int arg);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00311250(void* mem, char* name);
 extern "C" void func_00314F30(void* map, int i, void* anim);
@@ -2785,7 +2785,7 @@ extern "C" void func_0012CA30(sAiObj12CA30* self)
 INCLUDE_ASM("ai/ai", func_0012CB68);
 #ifdef SKIP_ASM
 extern "C" void func_00114130(void* rider, int a, int b);
-extern "C" int func_00116120_CB68(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" void* func_0028B180();
 extern "C" void func_0029E970(void* snd, void* rider);
 extern "C" void func_0029E590(void* snd, void* rider, float t);
@@ -2808,7 +2808,7 @@ struct sAiObj12CB68
 extern "C" void func_0012CB68(sAiObj12CB68* self, int* input)
 {
     func_00114130(self->mRider, 0, 0);
-    if (func_00116120_CB68(self->mRider, (*input >> 12) & 1, 0)) {
+    if (func_00116120(self->mRider, (*input >> 12) & 1, 0)) {
         return;
     }
     bool b = self->f0 == 3;
@@ -3026,7 +3026,7 @@ extern "C" void func_0012CD20(sAiObj12CD20* self)
 INCLUDE_ASM("ai/ai", func_0012D160);
 #ifdef SKIP_ASM
 extern "C" void func_0010F280(void* rider, int flag);
-extern "C" void func_00116120(void* rider, int a, int b);
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" void func_0012DCB0(void* self);
 extern "C" void func_0012DD98(void* self);
 extern "C" void func_0012DF48(void* self);
@@ -3157,7 +3157,7 @@ extern "C" void func_0012D160(void* self)
 INCLUDE_ASM("ai/ai", func_0012D4E8);
 #ifdef SKIP_ASM
 extern "C" void func_0010F280(void* rider, int flag);
-extern "C" void func_00116120(void* rider, int a, int b);
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" void func_0012DCB0(void* self);
 extern "C" void func_0012DD98(void* self);
 extern "C" void func_0012DE80(void* self);
@@ -3355,7 +3355,7 @@ extern "C" void func_0012D848(void* self)
 INCLUDE_ASM("ai/ai", func_0012D9D8);
 #ifdef SKIP_ASM
 extern "C" void func_0010F280(void* rider, int flag);
-extern "C" void func_00116120(void* rider, int a, int b);
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_00312AE8(void* self, int i);
 
 static inline int AiCheck_0012D9D8(char* rider)
@@ -3968,8 +3968,7 @@ extern "C" void func_0012E740(void* self, void* obj)
 INCLUDE_ASM("ai/ai", func_0012E778);
 #ifdef SKIP_ASM
 extern "C" int func_00116378(void*);
-// The unit declares func_00116120 as void, but this caller tests its result: bind an int view by asm label.
-extern "C" int func_00116120_i(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_00106848(void*);
 int func_0011FE98(void* self);
 void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
@@ -4022,7 +4021,7 @@ extern "C" void func_0012E778(void* self, void* in)
 {
     if (func_00116378(*(void**)self))
         return;
-    if (func_00116120_i(*(void**)self, (*(int*)in >> 12) & 1, 0))
+    if (func_00116120(*(void**)self, (*(int*)in >> 12) & 1, 0))
         return;
     if (func_00106848(*(void**)self))
         return;
@@ -4106,7 +4105,7 @@ extern "C" void func_00114130(void* rider, int a, int b);
 extern "C" void func_00114298(void* rider, float v);
 extern "C" int func_00114CC0(void* rider);
 extern "C" void func_001158B8(void* rider, void* a, void* b, float c, float d);
-extern "C" int func_00116120_i(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_00116378(void*);
 extern "C" void func_00116930(void* rider);
 void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
@@ -4151,7 +4150,7 @@ extern "C" void func_0012E9B8(void* self, void* in)
 {
     if (func_00116378(*(void**)self))
         return;
-    if (func_00116120_i(*(void**)self, (*(int*)in >> 12) & 1, 0))
+    if (func_00116120(*(void**)self, (*(int*)in >> 12) & 1, 0))
         return;
     if (func_00106848(*(void**)self))
         return;
@@ -4396,7 +4395,7 @@ struct sFx_12F230
 };
 
 // PORT: the wake-fx pool allocator ignores its argument; callers pass the object size.
-extern "C" void* func_002E4CE8_sz(unsigned size) __asm__("func_002E4CE8");
+extern "C" void* func_002E4CE8(unsigned size);
 
 static inline sFx_12F230* initFx_12F230(sFx_12F230* p, const sColor_12F230& col)
 {
@@ -4416,14 +4415,14 @@ extern "C" void func_0012F230(void* self)
         char* obj = (char*)func_00230698(*(void**)((char*)D_004A28A8 + 0x84), *(int*)(*(char**)((char*)self + 8) + 0x870));
         if (*(int*)(obj + 0x44))
             func_002E4578(obj);
-        sFx_12F230* a = (sFx_12F230*)func_002E4CE8_sz(0x14);
+        sFx_12F230* a = (sFx_12F230*)func_002E4CE8(0x14);
         sColor_12F230 ca;
         ca.r = 1.0f;
         ca.g = 1.0f;
         ca.b = 1.0f;
         ca.a = 1.0f;
         initFx_12F230(a, ca);
-        sFx_12F230* b = (sFx_12F230*)func_002E4CE8_sz(0x14);
+        sFx_12F230* b = (sFx_12F230*)func_002E4CE8(0x14);
         sColor_12F230 cb;
         cb.r = 1.0f;
         cb.g = 1.0f;
@@ -4601,7 +4600,7 @@ extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend
 extern "C" int func_00106848(void*);
 extern "C" int func_00107578(void* rider, int on);
 extern "C" void func_00114130(void* rider, int a, int b);
-extern "C" int func_00116120_i(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_001163B0(void* rider, int a, int b);
 void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
 extern "C" int func_00311AE8(void*, int);
@@ -4673,7 +4672,7 @@ struct sAiObj12F730
 
 extern "C" void func_0012F730(sAiObj12F730* self, void* in)
 {
-    if (func_00116120_i(self->mRider, (*(int*)in >> 12) & 1, 0))
+    if (func_00116120(self->mRider, (*(int*)in >> 12) & 1, 0))
         return;
     if (self->mFlag != 0)
     {
@@ -4821,8 +4820,7 @@ void func_0012FC60(void* self)
 INCLUDE_ASM("ai/ai", func_0012FC80);
 #ifdef SKIP_ASM
 extern "C" int func_00116378(void*);
-// The unit declares func_00116120 as void, but this caller tests its result: bind an int view by asm label.
-extern "C" int func_00116120_i(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_00106848(void*);
 extern "C" int func_0012FFF8(void*);
 extern "C" int func_001162C8(void*, int, int);
@@ -4871,7 +4869,7 @@ extern "C" void func_0012FC80(void* self, void* in)
 {
     if (func_00116378(*(void**)((char*)self + 0x14)))
         return;
-    if (func_00116120_i(*(void**)((char*)self + 0x14), (*(int*)in >> 12) & 1, 0))
+    if (func_00116120(*(void**)((char*)self + 0x14), (*(int*)in >> 12) & 1, 0))
         return;
     if (func_00106848(*(void**)((char*)self + 0x14)))
         return;
@@ -5869,7 +5867,7 @@ INCLUDE_ASM("ai/ai", func_00131620);
 #ifdef SKIP_ASM
 extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" int func_00116378(void*);
-extern "C" int func_00116120_1620(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_00131CC0(void* self);
 extern "C" int func_00106848(void*);
 extern "C" int func_00107578(void* rider, int on);
@@ -5983,7 +5981,7 @@ extern "C" void func_00131620(void* self, void* in)
         c = zero;
     if (func_00116378(r))
         return;
-    if (func_00116120_1620(*(void**)self, (*(int*)in >> 12) & 1, 0))
+    if (func_00116120(*(void**)self, (*(int*)in >> 12) & 1, 0))
         return;
     if (func_00131CC0(self))
         return;
@@ -6193,9 +6191,8 @@ extern "C" void func_00131D08(void* self)
 INCLUDE_ASM("ai/ai", func_00131D30);
 #ifdef SKIP_ASM
 // PORT: g++ >?/<? (min/max) operator, removed in GCC 4.3.
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" bool func_001446A0(void* self, int bit);
-extern "C" int func_00116120_i(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" int func_001161D0(void* rider, float v);
 extern "C" void func_00132060(void* self, int neg);
 extern "C" int func_00132620(void* self, int id);
@@ -6228,7 +6225,7 @@ static inline float clamp_131D30(float v, float lo, float hi)
 
 extern "C" void func_00131D30(void* self, void* in)
 {
-    if (func_00116120_i(*(void**)((char*)self + 0x8), (*(int*)in >> 12) & 1, 0))
+    if (func_00116120(*(void**)((char*)self + 0x8), (*(int*)in >> 12) & 1, 0))
         return;
     if (func_00132770(self, in))
         return;
@@ -7469,7 +7466,7 @@ extern "C" void func_00113F38(void*, float);
 extern "C" void func_00113F88(void* rider, float a, float b);
 extern "C" void func_00114130(void* rider, int a, int b);
 extern "C" void func_00115640(void* rider);
-extern "C" int func_00116120_i(void* rider, int a, int b) __asm__("func_00116120");
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" float func_00119958(void* p, int v);
 int func_0011FE98(void* self);
 void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
@@ -7510,7 +7507,7 @@ struct sAiObj136508
 
 extern "C" void func_00136508(sAiObj136508* self, void* in)
 {
-    if (func_00116120_i(self->mRider, (*(int*)in >> 12) & 1, 0))
+    if (func_00116120(self->mRider, (*(int*)in >> 12) & 1, 0))
         return;
     char* tbl = (char*)D_0045A038 + self->mIndex * 0x24;
     if (func_00106848(self->mRider))
@@ -7657,7 +7654,7 @@ void func_00136978(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_00136980);
 #ifdef SKIP_ASM
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 
 struct sVEntry_136980 { short delta; short index; void* fn; };
 struct sVtbl9_136980 { sVEntry_136980 e[9]; } __attribute__((aligned(8)));
