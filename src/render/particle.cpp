@@ -3647,7 +3647,7 @@ struct sVEntry0037C8C0 {
 extern "C" double func_00413AF8(float f);
 extern "C" double dlog_C8C0(double) __asm__("func_0040D610");
 extern "C" double dmul_C8C0(double, double) __asm__("func_00411FD8");
-extern "C" double dsub_C8C0(double, double) __asm__("func_00411F70");
+extern "C" double func_00411F70(double, double);
 extern "C" int dtoi_C8C0(double) __asm__("func_00412608");
 extern "C" void func_0037D090_C8C0(void* self, int h, int a, int b, int c, int d) __asm__("func_0037D090__FPv");
 
@@ -3721,7 +3721,7 @@ extern "C" int func_0037C8C0(char* self, sTexHdr_C8C0* src, int a2, int a3, int 
         double d = func_00413AF8(240.0f / ((float)src->s8 * 6.1035156e-05f));
         d = dlog_C8C0(d);
         d = dmul_C8C0(d, 1.4426950408889634);
-        d = dsub_C8C0(0.0, d);
+        d = func_00411F70(0.0, d);
         d = dmul_C8C0(d, 16.0);
         int k = dtoi_C8C0(d);
         k = clampZ_C8C0(k, -0x7FF, -0x87);
@@ -4179,14 +4179,14 @@ extern "C" void func_0037D668(sPtGfx_D668* self, ulong** pp, int a2, int mode)
 }
 #endif
 
-extern "C" void* func_00367CD0(int);
+extern "C" void* func_00367CD0(void*);
 
 //100%
 INCLUDE_ASM("render/particle", func_0037D738__FPv);
 #ifdef SKIP_ASM
 void* func_0037D738(void* self)
 {
-    return func_00367CD0(*(int*)((char*)self + 0x18f4));
+    return func_00367CD0(*(void**)((char*)self + 0x18f4));
 }
 #endif
 
