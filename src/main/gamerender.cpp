@@ -326,12 +326,12 @@ extern char D_0047D690[];
 extern char D_0047D6E8[];
 extern char* D_004A2C68;
 extern int D_004A2A54;
-extern "C" void func_00231CD0(void* self);
+extern "C" void* func_00231CD0(void* self);
 extern "C" void* func_00233C10(void* self);
-extern "C" void func_00234188(void* self);
+extern "C" void* func_00234188(void* self);
 extern "C" void* func_00234EF8(void* self);
-extern "C" void func_00236208(void* self);
-extern "C" void func_00236868(void* self);
+extern "C" void* func_00236208(void* self);
+extern "C" void* func_00236868(void* self);
 extern "C" void func_00244240(int a);
 
 struct sArr_22E968 {
