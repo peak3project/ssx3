@@ -1139,9 +1139,9 @@ extern "C" void func_003A1F90(void* self, int idx)
 //100%
 INCLUDE_ASM("ui/uitext", func_003A2068);
 #ifdef SKIP_ASM
-extern "C" int func_003A2068(void* self, int i)
+extern "C" void* func_003A2068(void* self, int i)
 {
-    int* arr = *(int**)((char*)self + 0xBC);
+    void** arr = *(void***)((char*)self + 0xBC);
     if (arr != 0 && i >= 0 && i < *(unsigned short*)((char*)self + 0xC8)) {
         return arr[i];
     }
