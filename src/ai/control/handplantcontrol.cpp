@@ -334,19 +334,18 @@ extern "C" float func_0013A7B0(void* self, char* hit)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013A8F8);
 #ifdef SKIP_ASM
-// PORT: cRiderAnimBase_play is declared void elsewhere; callers here match only with an int return.
-extern "C" int cRiderAnimBase_play_i(void* self, int anim, int flags, float blend) __asm__("cRiderAnimBase_play");
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" void func_0013A8F8(void* self, float v)
 {
     if (v < -2222.22216796875f)
     {
-        cRiderAnimBase_play_i(*(void**)(*(char**)((char*)self + 0x4) + 0x784), 0x41, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x4) + 0x784), 0x41, 0, -1.0f);
         *(int*)(*(char**)((char*)self + 0x4) + 0x2DC) = 0;
     }
     else
     {
-        cRiderAnimBase_play_i(*(void**)(*(char**)((char*)self + 0x4) + 0x784), 0x40, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x4) + 0x784), 0x40, 0, -1.0f);
     }
 }
 #endif
@@ -358,7 +357,7 @@ extern "C" void func_0013A968(void* self, float v)
 {
     if (v < -2222.22216796875f)
     {
-        cRiderAnimBase_play_i(*(void**)(*(char**)((char*)self + 0x4) + 0x784), 0x3F, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x4) + 0x784), 0x3F, 0, -1.0f);
         *(int*)(*(char**)((char*)self + 0x4) + 0x2DC) = 0;
     }
     else
@@ -367,13 +366,13 @@ extern "C" void func_0013A968(void* self, float v)
         float pi = 3.1415929794311523f;
         float a = *(float*)(r + 0x2DC);
         if (a < -pi)
-            cRiderAnimBase_play_i(*(void**)(r + 0x784), 0x42, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r + 0x784), 0x42, 0, -1.0f);
         else if (a > pi)
-            cRiderAnimBase_play_i(*(void**)(r + 0x784), 0x43, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r + 0x784), 0x43, 0, -1.0f);
         else if (v < -1250.0f)
-            cRiderAnimBase_play_i(*(void**)(r + 0x784), 0x3E, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r + 0x784), 0x3E, 0, -1.0f);
         else
-            cRiderAnimBase_play_i(*(void**)(r + 0x784), 0x3D, 0, -1.0f);
+            cRiderAnimBase_play(*(void**)(r + 0x784), 0x3D, 0, -1.0f);
     }
 }
 #endif
