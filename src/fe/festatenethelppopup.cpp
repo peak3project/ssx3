@@ -168,7 +168,7 @@ INCLUDE_ASM("fe/festatenethelppopup", func_001DA110);
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" void cMemMan_free__FPv(void* p);
 extern "C" int USTR_length(unsigned short* s);
-extern "C" void func_002C2688(unsigned short* dst, unsigned short* src);
+extern "C" unsigned short* func_002C2688(unsigned short* dst, unsigned short* src);
 extern "C" void func_003A0D00(void* text, unsigned short* str);
 extern char D_00461A70[];
 
@@ -628,8 +628,8 @@ cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
 cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
 extern "C" void* cSubMenuItem_cSubMenuItem(void* self, void* a1, void* a2);
 // PORT: the member ctors return self, but this caller treats them as void
-void func_001DAAC8_v(void* self, int* info) __asm__("func_001DAAC8");
-void func_001DABD0_v(void* self, int* info) __asm__("func_001DABD0");
+void* func_001DAAC8(void* self, int* info);
+void* func_001DABD0(void* self, int* info);
 extern "C" void* func_002CCF08(void* self);
 extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D530[];
@@ -642,8 +642,8 @@ extern "C" void* func_001DACB8(void* self, int* info, int* a2, int* a3)
 {
     func_002CAA58(self);
     *(void***)((char*)self + 0x12C) = D_0046D530;
-    func_001DAAC8_v((char*)self + 0x130, a2);
-    func_001DABD0_v((char*)self + 0x2E8, a3);
+    func_001DAAC8((char*)self + 0x130, a2);
+    func_001DABD0((char*)self + 0x2E8, a3);
     *(int*)((char*)self + 0x4E0) = *info;
     cNullMenuItem_cNullMenuItem((cNullMenuItem*)((char*)self + 0x4E4), D_00467AA8);
     cSpaceMenuItem_cSpaceMenuItem((cSpaceMenuItem*)((char*)self + 0x500), (void*)0xE);
