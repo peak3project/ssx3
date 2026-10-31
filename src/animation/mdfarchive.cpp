@@ -92,7 +92,7 @@ int GetHashValue32(char* str);
 extern char* D_0048CFC0[];
 extern unsigned int* D_004A3E78;
 extern "C" int func_00314D60(int* a, int* b);
-extern "C" void func_00418EF8(void* base, int n, int size, int (*cmp)(int*, int*));
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(int*, int*));
 extern "C" void* func_00416210(void* dst, int c, int n);
 
 struct sMdfHashTable_00314DD8
