@@ -90,8 +90,7 @@ struct cSplineModifier_9698 {
 
 extern "C" void func_00359698(cSplineModifier_9698* self)
 {
-    float zero = 0.0f;
-    if (zero < self->accelTime) {
+    if (0.0f < self->accelTime) {
         self->accelTime -= func_002D1C70();
         self->speed += self->accel * func_002D1C70();
     }
@@ -103,11 +102,11 @@ extern "C" void func_00359698(cSplineModifier_9698* self)
     }
     float pos = self->pos + self->speed * func_002D1C70();
     self->pos = pos;
-    if (pos < zero) {
+    if (pos < 0.0f) {
         int mode = self->mode;
         if (mode == 0) {
             self->speed = -self->speed;
-            self->pos = zero;
+            self->pos = 0.0f;
             self->stopped = 1;
             self->active = 0;
         } else if (mode == 2) {
@@ -115,7 +114,7 @@ extern "C" void func_00359698(cSplineModifier_9698* self)
             self->pos = -pos;
         } else if (mode == 4) {
             self->speed = -self->speed;
-            self->pos = zero;
+            self->pos = 0.0f;
             self->stopped = 1;
             self->active = 0;
         } else {
@@ -659,14 +658,13 @@ extern "C" void* func_00359F88(char* self, char* desc, char* model)
         *(float*)(self + 0x10) = *(float*)(self + 0x54);
     }
     *(int*)(self + 0x1C) = *(int*)(desc + 0x28) != 0;
-    float zero = 0.0f;
     *(sSmQuad4_359F88*)(self + 0x20) = sSmQuad4_359F88(*(float*)(desc + 0x18), *(float*)(desc + 0x1C),
                                                        *(float*)(desc + 0x20), *(float*)(desc + 0x24));
-    if (*(float*)(desc + 0x14) != zero) {
+    if (*(float*)(desc + 0x14) != 0.0f) {
         *(float*)(self + 0x10) = *(float*)(desc + 0x14);
     }
-    if (*(float*)(self + 0x10) < zero || *(float*)(self + 0x54) < *(float*)(self + 0x10)) {
-        *(float*)(self + 0x10) = zero;
+    if (*(float*)(self + 0x10) < 0.0f || *(float*)(self + 0x54) < *(float*)(self + 0x10)) {
+        *(float*)(self + 0x10) = 0.0f;
     }
     cMultiSplineModifier_allocNodes(self);
     func_0035A3F0(self);
