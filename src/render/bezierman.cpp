@@ -265,7 +265,7 @@ struct sBezVec4_CA08 {
     float x, y, z, w;
 };
 
-extern "C" void func_0038CA08(void* self, void* obj)
+extern "C" int func_0038CA08(void* self, void* obj)
 {
     char* o = (char*)obj;
     sBezVec4_CA08 a;
@@ -278,7 +278,7 @@ extern "C" void func_0038CA08(void* self, void* obj)
     b.y = *(float*)(o + 0x168);
     b.z = *(float*)(o + 0x16C);
     b.w = 1.0f;
-    func_0037DF88(D_004A5B80, &a, &b);
+    return func_0037DF88(D_004A5B80, &a, &b);
 }
 #endif
 
@@ -334,7 +334,7 @@ extern sGfx_CA70* D_004A5B80_CA70 __asm__("D_004A5B80");
 extern int D_004A44D8;
 extern int D_004A44DC;
 extern char* D_0044B9D0[];
-extern "C" int func_0038CA08_i(void* self, void* obj) __asm__("func_0038CA08");
+extern "C" int func_0038CA08(void* self, void* obj);
 extern "C" void* func_0038F708(void* obj, int a1, int a2);
 extern "C" void func_0038D168(void* self, int a1, void* obj, int kind, void* tbl, void* patch, unsigned int* handle);
 extern "C" void func_0038D448(void* self, int kind, void* tbl, void* patch, int a4, unsigned int* handle);
@@ -357,7 +357,7 @@ extern "C" void func_0038CA70(sBezMan_CA70* self, int kind, int sub, sPatch_CA70
     }
     int res = 0;
     if (kind == 2)
-        res = func_0038CA08_i(self, o);
+        res = func_0038CA08(self, o);
     int doB = res != 0;
     if (doB) {
         if (D_004A44DC != 0)
@@ -482,7 +482,7 @@ extern int D_004A44D8;
 extern int D_004A44DC;
 extern sTbl_CE20 D_00504960[];
 extern "C" void* func_0038F708(void* obj, int a1, int a2);
-extern "C" unsigned int func_0038CA08_r(void* self, void* obj) __asm__("func_0038CA08");
+extern "C" int func_0038CA08(void* self, void* obj);
 extern "C" void func_0038D168_m486(void* self, int base, void* obj, int a3, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int* handle) __asm__("func_0038D168");
 extern "C" void func_0038D448_m487(void* self, int a1, sTbl_CE20* tbl, sPatch_CE20* patch, unsigned int a4, unsigned int* handle) __asm__("func_0038D448");
 
@@ -497,7 +497,7 @@ extern "C" void func_0038CE20(void* self, int idx, sPatch_CE20* patch, int* vals
         if (D_004A44D8 != 0)
             f18 = 0;
     }
-    unsigned int r = func_0038CA08_r(self, obj);
+    unsigned int r = func_0038CA08(self, obj);
     int f23 = r != 0;
     int tex = obj->tex;
     gfx->top->tex = tex;
