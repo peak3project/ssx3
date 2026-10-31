@@ -380,7 +380,7 @@ extern char D_00460410[];
 class func_00196228_cObj;
 extern "C" func_00196228_cObj* func_0039F9D8(void* list, int hash);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
 
@@ -440,7 +440,7 @@ extern "C" void func_00196148(void* self)
 INCLUDE_ASM("util/locale", func_00196228);
 #ifdef SKIP_ASM
 int GetHashValue32(char*);
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 extern char D_004A18A8[];
 extern char* D_004A28A8;
 
