@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("main/loadscreens", cBackgroundMan_loadImages);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void* ptr);
 extern "C" void* func_003E1908(const char* name, int flags);
 extern "C" void* SHAPE_unpack(void* shape);
@@ -49,7 +48,7 @@ extern "C" int cBackgroundMan_loadImages(sBgMan_17ACC8* self)
     }
     int n = file->count;
     self->count = n;
-    self->images = (int*)operator_new_tag(n * 4, D_004A12A0, 0, 0);
+    self->images = (int*)operator_new__FUi(n * 4, D_004A12A0, 0, 0);
     for (int i = 0; i < self->count; i++) {
         char* shape = (char*)file + file->shapes[i].offset;
         void* img = SHAPE_unpack(shape);
