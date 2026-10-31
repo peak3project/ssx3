@@ -193,25 +193,25 @@ void* func_002CA468(void* self)
 }
 #endif
 
-extern "C" void* func_002CC2E0(int);
+extern "C" void* func_002CC2E0(void*);
 
 //100%
 INCLUDE_ASM("util/menu", func_002CA488__FPv);
 #ifdef SKIP_ASM
 void* func_002CA488(void* self)
 {
-    return func_002CC2E0(*(int*)((char*)*(void**)self + 0x124));
+    return func_002CC2E0(*(void**)((char*)*(void**)self + 0x124));
 }
 #endif
 
-extern "C" void* func_002CC318(int);
+extern "C" void* func_002CC318(void*);
 
 //100%
 INCLUDE_ASM("util/menu", func_002CA4A8__FPv);
 #ifdef SKIP_ASM
 void* func_002CA4A8(void* self)
 {
-    return func_002CC318(*(int*)((char*)*(void**)self + 0x124));
+    return func_002CC318(*(void**)((char*)*(void**)self + 0x124));
 }
 #endif
 
@@ -2981,7 +2981,7 @@ INCLUDE_ASM("util/menu", func_002CDFD8);
 #ifdef SKIP_ASM
 extern void* D_004A3E90;
 extern "C" void cBXString__cBXString(void* self, int flags);
-extern "C" void cBXString_cBXString1(void* self, void* src);
+extern "C" void* cBXString_cBXString1(void* self, void* src);
 extern "C" int func_003194A8(void* str, const char* fmt, ...);
 extern "C" float func_0040DA10(float x);
 extern "C" int func_00413AF8(float f);
