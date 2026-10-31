@@ -25,7 +25,7 @@ void cUIThread_deleteThread(void* self)
 //100%
 INCLUDE_ASM("ui/uiscreen", func_0039C558);
 #ifdef SKIP_ASM
-extern "C" void func_00397948_C558(void*) __asm__("func_00397948");
+extern "C" void func_00397948(void*);
 extern "C" void func_003A4868(void*);
 extern "C" void func_0039FC48(void* self, int flags);
 extern "C" void cMemMan_free__FPv(void* p);
@@ -48,7 +48,7 @@ extern "C" void func_0039C558(void* p, int flags)
     }
     *(void***)(self + 0xCC) = D_00494C98;
     *(void***)(self + 0x48) = D_004949E8;
-    func_00397948_C558(self + 0xB4);
+    func_00397948(self + 0xB4);
     char* m40 = self + 0x40;
     *(void***)(self + 0xC8) = D_00494CC0;
     func_003A4868(self + 0xC0);
@@ -56,7 +56,7 @@ extern "C" void func_0039C558(void* p, int flags)
     func_003A4868(self + 0xB4);
     func_0039FC48(m40, 2);
     *(void***)(self + 0x30) = D_00494C98;
-    func_00397948_C558(self + 0x18);
+    func_00397948(self + 0x18);
     *(void***)(self + 0x2C) = D_00494CC0;
     func_003A4868(self + 0x24);
     *(void***)(self + 0x20) = D_00494CC0;
@@ -172,7 +172,7 @@ extern "C" void* cUIScreen_getPrimaryThread(void* self)
 
 extern "C" void* cUIScreen_getPrimaryThread(void* self);
 void cUIThread_deleteThread(void* self);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 //100%
 INCLUDE_ASM("ui/uiscreen", cUIScreen_jumpToFrame__FPvUs);
@@ -879,7 +879,7 @@ INCLUDE_ASM("ui/uiscreen", func_0039DA20);
 extern "C" int strlen(const char*);
 int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0039DE68(void* self, int a);
 
 struct sV3_DA20 {
@@ -1108,7 +1108,7 @@ INCLUDE_ASM("ui/uiscreen", func_0039DFE8);
 #ifdef SKIP_ASM
 struct cUIThing;
 unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 void* func_0039FF50(void* self);
 extern char D_004A5A58;
 
@@ -1281,8 +1281,7 @@ extern "C" void* func_0039E318(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("ui/uiscreen", func_0039E390);
 #ifdef SKIP_ASM
-// PORT: unit declares func_00397948 as returning void*; called here as void (bound by asm label).
-extern "C" void func_00397948_v(void*) __asm__("func_00397948");
+extern "C" void func_00397948(void*);
 extern "C" void func_003A4868(void*);
 void operator_delete(int*);
 extern void* D_004946C8[];
@@ -1292,9 +1291,9 @@ extern void* D_00494CC0[];
 extern "C" void func_0039E390(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_004946C8;
-    func_00397948_v((char*)self + 0x24);
+    func_00397948((char*)self + 0x24);
     *(void***)((char*)self + 0x3C) = D_00494C98;
-    func_00397948_v((char*)self + 0x24);
+    func_00397948((char*)self + 0x24);
     *(void***)((char*)self + 0x38) = D_00494CC0;
     func_003A4868((char*)self + 0x30);
     *(void***)((char*)self + 0x2C) = D_00494CC0;
@@ -1307,7 +1306,7 @@ extern "C" void func_0039E390(void* self, int flags)
 }
 #endif
 
-extern "C" void* func_00397948(void*);
+extern "C" void func_00397948(void*);
 
 //100%
 INCLUDE_ASM("ui/uiscreen", func_0039E438);
@@ -1333,9 +1332,9 @@ extern "C" void func_0039E470(void* self, signed char bit)
 //100%
 INCLUDE_ASM("ui/uiscreen", func_0039E4A0__FPv);
 #ifdef SKIP_ASM
-void* func_0039E4A0(void* self)
+void func_0039E4A0(void* self)
 {
-    return func_00397948(((char*)self + 0x24));
+    func_00397948(((char*)self + 0x24));
 }
 #endif
 
@@ -1351,7 +1350,7 @@ struct sVEntry39E4C0 {
     void (*fn)(void*, void*);
 };
 
-extern "C" void func_0039E4C0(void* self)
+extern "C" void func_0039E4C0(void* self, int a1)
 {
     void* n = cList_first((cList*)((char*)self + 0x24));
     if (n != 0) {
