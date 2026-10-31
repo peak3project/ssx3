@@ -1529,7 +1529,7 @@ INCLUDE_ASM("seg/seg_1218", func_00103CC8);
 #ifdef SKIP_ASM
 extern char* D_004A3E7C;
 extern "C" void func_00313D40(void*, int, int);
-extern "C" void func_003135B0(void*, int, float);
+extern "C" int func_003135B0(void*, int, float);
 extern "C" void func_00313C50(void*, int, int);
 extern "C" void func_00313CF0(void*, int, float);
 extern "C" void func_00313D28(void*, int, float);
@@ -1564,7 +1564,7 @@ INCLUDE_ASM("seg/seg_1218", func_00103E28);
 #ifdef SKIP_ASM
 extern char* D_004A3E7C;
 extern "C" void func_00313D40(void*, int, int);
-extern "C" void func_003135B0(void*, int, float);
+extern "C" int func_003135B0(void*, int, float);
 extern "C" void func_00313C50(void*, int, int);
 extern "C" void func_00313CF0(void*, int, float);
 extern "C" void func_00313D28(void*, int, float);
@@ -1617,7 +1617,7 @@ INCLUDE_ASM("seg/seg_1218", func_00103FF8);
 #ifdef SKIP_ASM
 extern char* D_004A3E7C;
 extern "C" void func_00313D40(void*, int, int);
-extern "C" void func_003135B0(void*, int, float);
+extern "C" int func_003135B0(void*, int, float);
 extern "C" void func_00313C50(void*, int, int);
 extern "C" void func_00313CF0(void*, int, float);
 extern "C" int func_00313800(void*, float);
@@ -1853,7 +1853,7 @@ extern "C" int func_001043F8(char* self, void* x, char* anim, float dt)
 INCLUDE_ASM("seg/seg_1218", func_001045B8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00103FF8_45B8(int, int, int, int, int) __asm__("func_00103FF8");
+extern "C" int func_00103FF8_45B8(int, int, int, int, int) __asm__("func_00103FF8");
 
 extern "C" void func_001045B8(int a, int b, int c) {
     func_00103FF8_45B8(a, b, c, 0x89, 0x8A);
@@ -2041,9 +2041,9 @@ extern "C" int func_001049C0(void* self, void* x, void* anim, float dt) {
 INCLUDE_ASM("seg/seg_1218", func_00104A40);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312B18_4A40(int, int, int, int) __asm__("func_00312B18");
+extern "C" int func_00312B18_4A40(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104A40(int a, int b, int c) {
+extern "C" void func_00104A40(int a, int b, int* c) {
     func_00312B18_4A40(a, b, c, 0x11F);
 }
 #endif
@@ -2082,9 +2082,9 @@ extern "C" int func_00104A60(void* a, void* b, int* c)
 INCLUDE_ASM("seg/seg_1218", func_00104B48);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00312BD0_4B48(void*, int, int, int) __asm__("func_00312BD0");
+extern "C" int func_00312BD0_4B48(void*, void*, int, int) __asm__("func_00312BD0");
 
-extern "C" int func_00104B48(void *arg0, int b, int c) {
+extern "C" int func_00104B48(void *arg0, void* b, int c) {
     if (*(int *)((char*)arg0 + 0x64) != 0) {
         return func_00312BD0_4B48(arg0, b, c, 0x1B4);
     }
@@ -2096,9 +2096,9 @@ extern "C" int func_00104B48(void *arg0, int b, int c) {
 INCLUDE_ASM("seg/seg_1218", func_00104B78);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312B18_4B78(int, int, int, int) __asm__("func_00312B18");
+extern "C" int func_00312B18_4B78(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104B78(int a, int b, int c) {
+extern "C" void func_00104B78(int a, int b, int* c) {
     func_00312B18_4B78(a, b, c, 5);
 }
 #endif
@@ -2107,9 +2107,9 @@ extern "C" void func_00104B78(int a, int b, int c) {
 INCLUDE_ASM("seg/seg_1218", func_00104B98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312B18_4B98(int, int, int, int) __asm__("func_00312B18");
+extern "C" int func_00312B18_4B98(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104B98(int a, int b, int c) {
+extern "C" void func_00104B98(int a, int b, int* c) {
     func_00312B18_4B98(a, b, c, 3);
 }
 #endif
@@ -2118,9 +2118,9 @@ extern "C" void func_00104B98(int a, int b, int c) {
 INCLUDE_ASM("seg/seg_1218", func_00104BB8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312B18_4BB8(int, int, int, int) __asm__("func_00312B18");
+extern "C" int func_00312B18_4BB8(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104BB8(int a, int b, int c) {
+extern "C" void func_00104BB8(int a, int b, int* c) {
     func_00312B18_4BB8(a, b, c, 0x13);
 }
 #endif
@@ -2129,9 +2129,9 @@ extern "C" void func_00104BB8(int a, int b, int c) {
 INCLUDE_ASM("seg/seg_1218", func_00104BD8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00312BD0_4BD8(void *, int, int, int) __asm__("func_00312BD0");
+extern "C" int func_00312BD0_4BD8(void *, void*, int, int) __asm__("func_00312BD0");
 
-extern "C" int func_00104BD8(void *arg0, int a1, int a2) {
+extern "C" int func_00104BD8(void *arg0, void* a1, int a2) {
     if ((*(int *)((char*)((*(void **)((char*)(arg0) + (0x60)))) + (0x330))) == 1) {
         return func_00312BD0_4BD8(arg0, a1, a2, 0x1C);
     }
@@ -2143,9 +2143,9 @@ extern "C" int func_00104BD8(void *arg0, int a1, int a2) {
 INCLUDE_ASM("seg/seg_1218", func_00104C18);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312BD0_4C18(int, int, int, int) __asm__("func_00312BD0");
+extern "C" void func_00312BD0_4C18(void*, void*, int, int) __asm__("func_00312BD0");
 
-extern "C" void func_00104C18(int a, int b, int c) {
+extern "C" void func_00104C18(void* a, void* b, int c) {
     func_00312BD0_4C18(a, b, c, 5);
 }
 #endif
@@ -2154,9 +2154,9 @@ extern "C" void func_00104C18(int a, int b, int c) {
 INCLUDE_ASM("seg/seg_1218", func_00104C38);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312BD0_4C38(int, int, int*, int) __asm__("func_00312BD0");
+extern "C" void func_00312BD0_4C38(void*, void*, int*, int) __asm__("func_00312BD0");
 
-extern "C" void func_00104C38(int a0, int a1, int *arg2) {
+extern "C" void func_00104C38(void* a0, void* a1, int *arg2) {
     int var_7;
     switch (*arg2) {
     case 0x45:
@@ -2177,9 +2177,9 @@ extern "C" void func_00104C38(int a0, int a1, int *arg2) {
 INCLUDE_ASM("seg/seg_1218", func_00104C80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312BD0_4C80(int, int, int, int) __asm__("func_00312BD0");
+extern "C" void func_00312BD0_4C80(void*, void*, int, int) __asm__("func_00312BD0");
 
-extern "C" void func_00104C80(int a, int b, int c) {
+extern "C" void func_00104C80(void* a, void* b, int c) {
     func_00312BD0_4C80(a, b, c, 0x1B2);
 }
 #endif
