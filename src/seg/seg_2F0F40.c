@@ -133,7 +133,90 @@ void func_003F0198(char* self, int* ev) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F02D0);
+#ifdef SKIP_ASM
+// Fills the output record from the event tag fields.
+extern int D_004512C0[];
+extern int D_004A4AE8[];
+extern char D_004A4B00[];
+extern char D_004A4B08[];
+extern char D_004A4B10[];
+extern char D_004A4B18[];
+extern char* cDirtysock_tag_TagFieldFind(const char* tag, const char* key);
+extern int cDirtysock_tag_TagFieldGetString(const char* data, char* buf, int len, const char* defval);
+extern int cDirtysock_tag_TagFieldGetFourCC(const char* data, int def);
+extern int func_004165A8(const char*, const char*);
+extern int func_003EFE20(char*, int, short*, int, char*, int);
+void func_003F02D0(char* self, char* ev, char* out) {
+    char key[3];
+    char buf[0x100];
+    short v;
+    int w;
+    int i = 0;
+    int fourcc;
+    char* f;
+    char* p;
+    out[0xA7] = 0;
+    out[0xA4] = 0;
+    out[0x54] = 0;
+    out[0x40] = 0;
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(ev + 0xC), D_004A4B00), buf, 0x100, (char*)D_004A4AE8);
+    while (i < 6) {
+        if (func_004165A8((const char*)D_004512C0[i], buf) == 0) {
+            out[0xA7] = i;
+            break;
+        }
+        i++;
+    }
+    f = cDirtysock_tag_TagFieldFind(*(char**)(ev + 0xC), D_004A4B08);
+    if (f) {
+        *(int*)(out + 0xA8) |= 0x2000;
+    }
+    cDirtysock_tag_TagFieldGetString(f, out + 0x54, 0x50, (char*)D_004A4AE8);
+    if (out[0x54] != 0) {
+        func_003EFE20(self, *(int*)(self + 0x1C), (short*)(self + 0x30C), 1, out + 0x40, 0x14);
+        out[0xA4] = *(unsigned short*)(self + 0x30C) >> 8;
+        w = *(short*)(self + 0x30C);
+        out[0xA6] = 0;
+        out[0xA5] = w;
+    } else {
+        i = 0;
+        cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(ev + 0xC), D_004A4B10), buf, 0x100, (char*)D_004A4AE8);
+        fourcc = cDirtysock_tag_TagFieldGetFourCC(cDirtysock_tag_TagFieldFind(buf, D_004A4B18), 0);
+        if (*(int*)(self + 0x308) > 0) {
+            p = self + 0x30C;
+            for (; i < *(int*)(self + 0x308); i++, p += 2) {
+                short w = *(short*)p;
+                key[0] = w >> 8;
+                key[1] = w;
+                key[2] = 0;
+                f = cDirtysock_tag_TagFieldFind(buf, key);
+                if (f) {
+                    unsigned char b0, b1;
+                    cDirtysock_tag_TagFieldGetString(f, out + 0x54, 0x50, (char*)D_004A4AE8);
+                    b1 = key[1];
+                    b0 = key[0];
+                    out[0xA4] = b0;
+                    out[0xA5] = b1;
+                    out[0xA6] = 0;
+                    v = (short)((((int)(b1 << 24) >> 8) | (b0 << 24)) >> 16);
+                    func_003EFE20(self, fourcc, &v, 1, out + 0x40, 0x14);
+                    break;
+                }
+            }
+        }
+        if (out[0xA4] == 0) {
+            int r = func_003EFE20(self, fourcc, (short*)(self + 0x30C), *(int*)(self + 0x308), out + 0x40, 0x14);
+            short s = r;
+            out[0xA6] = 0;
+            v = r;
+            out[0xA4] = s >> 8;
+            out[0xA5] = s;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0568);
