@@ -1061,8 +1061,7 @@ INCLUDE_ASM("world/worldcache", cWorldCache_addBxStreamDataTest);
 #ifdef SKIP_ASM
 struct sWCPool_7878;
 extern "C" char* func_003A7878(sWCPool_7878* self, int size, unsigned int flags);
-// PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
-void* operator_new_bx(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00494D40[];
 extern char D_00494E98[];
 
@@ -1109,7 +1108,7 @@ struct sWorldCache_8AA8 {
 static inline void* bxAlloc_8AA8(sBxPools_8AA8* pl, int bank, int size, unsigned int flags)
 {
     if (bank == 0xFF)
-        return operator_new_bx(size, D_00494D40, flags, 0);
+        return operator_new__FUi(size, D_00494D40, flags, 0);
     return func_003A7878(pl->pools[bank], size, flags);
 }
 
@@ -1163,7 +1162,7 @@ extern "C" unsigned int cWorldCache_addBxStreamDataTest(sWorldCache_8AA8* self, 
         p = bxAlloc_8AA8(self->pools, bank, size, 0x22000000);
         break;
     case 14:
-        p = operator_new_bx(size, D_00494E98, 0, 0);
+        p = operator_new__FUi(size, D_00494E98, 0, 0);
         break;
     default:
         p = bxAlloc_8AA8(self->pools, bank, size, 0);
