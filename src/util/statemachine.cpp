@@ -4,7 +4,7 @@
 INCLUDE_ASM("util/statemachine", cConsoleConfig_setTimeString);
 #ifdef SKIP_ASM
 extern "C" int func_002C27C0(char* buf, const char* fmt, ...);
-extern "C" void func_002C25B8(char* dst, const char* src, int size);
+extern "C" unsigned short* func_002C25B8(char* dst, const char* src, int size);
 extern char D_00486500[];
 extern char D_00486510[];
 extern char D_00486528[];
