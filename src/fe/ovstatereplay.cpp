@@ -191,14 +191,14 @@ extern "C" void cOVState_REPLAY_setupTicker(void* self)
 }
 #endif
 
-extern "C" void* func_0039E6B8(void* self);
+extern "C" void func_0039E6B8(void* self);
 
 //100%
 INCLUDE_ASM("fe/ovstatereplay", func_0020E8E0__FPv);
 #ifdef SKIP_ASM
-void* func_0020E8E0(void* self)
+void func_0020E8E0(void* self)
 {
-    return func_0039E6B8(self);
+    func_0039E6B8(self);
 }
 #endif
 
@@ -206,7 +206,7 @@ void* func_0020E8E0(void* self)
 INCLUDE_ASM("fe/ovstatereplay", func_0020E900);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
-extern "C" void func_00231840(void* game, int a);
+extern "C" int func_00231840(void* game, int a);
 extern "C" void func_0039E510(void* self);
 
 extern "C" void func_0020E900(void* self)
