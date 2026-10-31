@@ -5418,7 +5418,6 @@ extern char Q_4980F0[] __asm__("D_004980F0");
 extern char Q_498108[] __asm__("D_00498108");
 extern char Q_498130[] __asm__("D_00498130");
 extern int Q_sema(int *) __asm__("func_00423DA0");
-extern void Q_wait(int) __asm__("func_00423DE0");
 extern void Q_sig(int) __asm__("func_00423DC0");
 extern void Q_log(char *) __asm__("func_00425C60");
 extern int Q_A360(int, int, int) __asm__("func_0040A360");
@@ -5440,7 +5439,7 @@ int func_00409940(void) {
         Q_4533C8[0] = Q_sema(s);
     }
     Q_A360(0, 0, 0);
-    Q_wait(Q_4533C4[0]);
+    func_00423DE0(Q_4533C4[0]);
     Q_6408(0);
     for (;;) {
         if (Q_6B48(Q_5271C0, 0x80000400, 0) < 0) {
@@ -7027,7 +7026,6 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040C810);
 #ifdef SKIP_ASM
 extern int G_KbRdy4[] __asm__("D_00453438");
 extern char G_KbName4[] __asm__("D_005290A0");
-extern void kb_wait4(int) __asm__("func_00423DE0");
 extern void kb_signal4(int) __asm__("func_00423DC0");
 extern int kb_poll4(char *) __asm__("func_00426F08");
 extern int kb_read4(void) __asm__("func_0040C8C0");
@@ -7036,7 +7034,7 @@ int func_0040C810(int mode, int *out) {
         return -1;
     switch (mode) {
     case 0:
-        kb_wait4(G_KbRdy4[0]);
+        func_00423DE0(G_KbRdy4[0]);
         *out = kb_read4();
         kb_signal4(G_KbRdy4[0]);
         return 0;
@@ -7329,7 +7327,6 @@ extern char K_529100[] __asm__("D_00529100");
 extern int K_529140[] __asm__("D_00529140");
 extern char K_4982F8[] __asm__("D_004982F8");
 extern void cb_C8B0(void) __asm__("func_0040C8B0");
-extern void q_00423DE0(int) __asm__("func_00423DE0");
 extern int q_00426D18(char *, int, int, char *, int, int *, int, void (*)(void), int) __asm__("func_00426D18");
 extern void q_00425C60(char *, int) __asm__("func_00425C60");
 int func_0040D4A0(unsigned a) {
@@ -7340,7 +7337,7 @@ int func_0040D4A0(unsigned a) {
     if (a >= K_529000[0].cnt)
         return -11;
     K_529100[0] = a;
-    q_00423DE0(K_453438[0]);
+    func_00423DE0(K_453438[0]);
     r = q_00426D18(K_5290A0, 6, 1, K_529100, 16, K_529140, 0, cb_C8B0, 0);
     if (r != 0) {
         q_00425C60(K_4982F8, r);
@@ -7390,9 +7387,9 @@ extern double D_00499680[];
 extern double core_40D610(double) __asm__("func_0040DB58");
 extern int isn_40D610(double) __asm__("func_0040F840");
 extern int cmp_40D610(double, double) __asm__("func_00412500");
-extern double sub_40D610(double, double) __asm__("func_00411F70");
+extern double func_00411F70(double, double);
 extern int matherr_40D610(struct E40D610 *) __asm__("func_0040F878");
-extern int *errno_40D610(void) __asm__("func_00415FB8");
+extern int *func_00415FB8(void);
 double func_0040D610(double x) {
     struct E40D610 e;
     double zero;
@@ -7406,22 +7403,22 @@ double func_0040D610(double x) {
     if (ver == 0)
         e.retval = -3.4028234663852886e+38;
     else
-        e.retval = sub_40D610(zero, D_00499680[0]);
+        e.retval = func_00411F70(zero, D_00499680[0]);
     if (cmp_40D610(x, 0.0) == 0) {
         e.type = 2;
         if (D_00499688[0] == 2)
-            *errno_40D610() = 34;
+            *func_00415FB8() = 34;
         else if (!matherr_40D610(&e))
-            *errno_40D610() = 33;
+            *func_00415FB8() = 33;
     } else {
         e.type = 1;
         if (D_00499688[0] == 2)
-            *errno_40D610() = 33;
+            *func_00415FB8() = 33;
         else if (!matherr_40D610(&e))
-            *errno_40D610() = 33;
+            *func_00415FB8() = 33;
     }
     if (e.err != 0)
-        *errno_40D610() = e.err;
+        *func_00415FB8() = e.err;
     return e.retval;
 }
 #endif
