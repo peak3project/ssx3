@@ -764,8 +764,7 @@ extern "C" void func_002EADD0(sTrail_2EADD0* self)
     float speed = *(float*)(self->rider + 0x2EC);
     if (D_004A4720 != 0)
         speed = 10.0f;
-    float zero = 0.0f;
-    if (zero < speed)
+    if (0.0f < speed)
     {
         func_00392DE8(*(char**)(self->rider + 0x77C) + 0xD30, 1);
         char* r0 = self->rider;
@@ -775,13 +774,13 @@ extern "C" void func_002EADD0(sTrail_2EADD0* self)
         sz.z = 2.0f;
         char* fs = *(char**)(r0 + 0x77C) + 0xD30;
         sV4_2EADD0 col;
-        col.x = zero;
-        col.y = zero;
+        col.x = 0.0f;
+        col.y = 0.0f;
         col.z = 1.0f;
-        col.w = zero;
+        col.w = 0.0f;
         func_00392D90(fs, &col, &sz);
     }
-    if (zero < speed && func_0011FE98(self->rider) == 1)
+    if (0.0f < speed && func_0011FE98(self->rider) == 1)
     {
         self->cur = (self->cur + 2) % 3;
         int n = self->count + 1;
