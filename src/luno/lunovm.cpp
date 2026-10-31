@@ -104,7 +104,7 @@ INCLUDE_ASM("luno/lunovm", func_00224DA0);
 #ifdef SKIP_ASM
 extern "C" void luno_cLunoTable_constructTable(cLunoTableRef* self);
 
-extern "C" cLunoTableRef* func_00224DA0(cLunoTableRef* self)
+extern "C" cLunoTableRef* func_00224DA0(cLunoTableRef* self, int a1)
 {
     self->table = 0;
     luno_cLunoTable_constructTable(self);
