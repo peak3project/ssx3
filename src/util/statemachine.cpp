@@ -164,7 +164,7 @@ extern "C" int func_002C7328(void* self, int* sec, int* min, int* hour, int add)
 INCLUDE_ASM("util/statemachine", func_002C73C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_002C7328_v(void*, int*, int*, int*, int) __asm__("func_002C7328");
+extern "C" int func_002C7328(void*, int*, int*, int*, int);
 extern "C" void func_002C7260_v(void*, int*, int*, int*, int) __asm__("func_002C7260");
 extern char* D_004A28A8;
 
@@ -177,7 +177,7 @@ extern "C" void func_002C73C0(void* self) {
     ticks = (now - *(int*)((char*)self + 0x20)) / *(int*)(D_004A28A8 + 0x10);
     if (ticks != 0) {
         *(int*)((char*)self + 0x20) = now;
-        rem = func_002C7328_v(self, (int*)((char*)self + 0x10), (int*)((char*)self + 0xC), (int*)((char*)self + 8), ticks);
+        rem = func_002C7328(self, (int*)((char*)self + 0x10), (int*)((char*)self + 0xC), (int*)((char*)self + 8), ticks);
         if (rem != 0) {
             func_002C7260_v(self, (int*)((char*)self + 0x1C), (int*)((char*)self + 0x18), (int*)((char*)self + 0x14), rem);
         }
