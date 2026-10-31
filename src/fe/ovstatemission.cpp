@@ -6,7 +6,7 @@ INCLUDE_ASM("fe/ovstatemission", cFEStateMPCircuit_onCreateScreen);
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 // PORT: func_001A34A0__FPv is called with (self, obj) here; bind the 2-arg form to that symbol.
 void func_001A34A0_2(void* self, void* obj) __asm__("func_001A34A0__FPv");
 extern char D_004613C8[];
@@ -43,7 +43,7 @@ struct cUIScreen;
 int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" char* func_0039A708(void* self);
 extern "C" void func_0039E4C0(void* self, int a1);
 void func_001A34A8(void* self);
@@ -69,7 +69,7 @@ INCLUDE_ASM("fe/ovstatemission", func_001A33A0);
 struct cUIScreen;
 int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" char* func_0039A708(void* self);
 extern "C" void func_0039F400(void* list, void* item);
 void func_001A34A8(void* self);
@@ -172,7 +172,7 @@ extern "C" unsigned int func_001A34B8(void)
 INCLUDE_ASM("fe/ovstatemission", func_001A3590);
 #ifdef SKIP_ASM
 extern "C" int BXFILE_exists(char* name);
-extern "C" void func_003DED50(char* name, int a1, int a2, void* out);
+extern "C" int func_003DED50(char* name, int a1, int a2, void* out);
 extern char D_00461418[];
 
 extern "C" void* func_001A3590(void* self)
@@ -188,7 +188,7 @@ extern "C" void* func_001A3590(void* self)
 INCLUDE_ASM("fe/ovstatemission", func_001A35E8);
 #ifdef SKIP_ASM
 extern "C" int BXFILE_exists(char* name);
-extern "C" void func_003DEDC0(void* handle, int arg);
+extern "C" int func_003DEDC0(void* handle, int arg);
 void operator_delete(int* p);
 extern char D_00461418[];
 
