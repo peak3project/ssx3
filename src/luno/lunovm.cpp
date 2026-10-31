@@ -102,12 +102,12 @@ extern "C" void func_00224D00(cLunoTable* self, int flags)
 //100%
 INCLUDE_ASM("luno/lunovm", func_00224DA0);
 #ifdef SKIP_ASM
-extern "C" void luno_cLunoTable_constructTable(cLunoTableRef* self);
+extern "C" void luno_cLunoTable_constructTable(cLunoTableRef* self, int n);
 
 extern "C" cLunoTableRef* func_00224DA0(cLunoTableRef* self, int a1)
 {
     self->table = 0;
-    luno_cLunoTable_constructTable(self);
+    luno_cLunoTable_constructTable(self, a1);
     return self;
 }
 #endif
@@ -167,8 +167,8 @@ struct cLunoNode_ct {
     ~cLunoNode_ct() {}
 };
 
-extern "C" void ct_impl(cLunoTableRef* ref, int n) __asm__("luno_cLunoTable_constructTable");
-extern "C" void ct_impl(cLunoTableRef* ref, int n)
+extern "C" void luno_cLunoTable_constructTable(cLunoTableRef* ref, int n);
+extern "C" void luno_cLunoTable_constructTable(cLunoTableRef* ref, int n)
 {
     cLunoTable* t = (cLunoTable*)new (D_00479860, 0xA0000000, 0) cLunoTable;
     cLunoTableEntry** slot = &t->nodes;
