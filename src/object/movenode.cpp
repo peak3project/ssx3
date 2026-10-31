@@ -248,7 +248,7 @@ INCLUDE_ASM("object/movenode", func_00355770);
 #ifdef SKIP_ASM
 extern char* D_004A5B64;
 extern "C" int func_002D1B30(int);
-void func_0034FE00(void*, int, int, int);
+void* func_0034FE00(void*, int, int, int);
 
 struct cMN_355770_Obj {
     virtual void v01();
@@ -1349,12 +1349,12 @@ extern "C" int func_00356A70(void* self, int a, int b, int c, int d)
 //100%
 INCLUDE_ASM("object/movenode", func_00356AB8);
 #ifdef SKIP_ASM
-extern "C" void func_00353020(void*);
+extern "C" void func_00353020(void*, int, int);
 
-extern "C" void func_00356AB8(cMoveNode* self)
+extern "C" void func_00356AB8(cMoveNode* self, int a1, int a2)
 {
     if (self->field_0x1C != 0) {
-        func_00353020(self->field_0x1C);
+        func_00353020(self->field_0x1C, a1, a2);
     }
 }
 #endif
@@ -1362,12 +1362,12 @@ extern "C" void func_00356AB8(cMoveNode* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00356AE0);
 #ifdef SKIP_ASM
-extern "C" void func_00353098(void*);
+extern "C" void func_00353098(void*, void*);
 
-extern "C" void func_00356AE0(cMoveNode* self)
+extern "C" void func_00356AE0(cMoveNode* self, void* out)
 {
     if (self->field_0x1C != 0) {
-        func_00353098(self->field_0x1C);
+        func_00353098(self->field_0x1C, out);
     }
 }
 #endif
@@ -1560,7 +1560,7 @@ INCLUDE_ASM("object/movenode", func_00356E60);
 extern "C" void* cMoveNode_cMoveNode(void* self);
 extern void* D_00490E80[];
 
-extern "C" void* func_00356E60(void* self)
+extern "C" void* func_00356E60(void* self, void* bucket, void* stream)
 {
     cMoveNode_cMoveNode(self);
     *(void***)((char*)self + 0xC) = D_00490E80;
@@ -1658,8 +1658,8 @@ struct sMnVEntrySer6F68 {
 };
 
 // PORT: callers declare this void; the body returns self, so bind it via an asm label.
-extern "C" void* func_00356F68_ret(void* self, void* stream) __asm__("func_00356F68");
-extern "C" void* func_00356F68_ret(void* self, void* stream)
+extern "C" void* func_00356F68(void* self, void* stream);
+extern "C" void* func_00356F68(void* self, void* stream)
 {
     *(void***)self = D_0048F5F0;
     sMnVEntrySer6F68* vt = *(sMnVEntrySer6F68**)stream;
@@ -1742,7 +1742,7 @@ struct sMnVEntryRd7090 {
     void* (*fn)(void*);
 };
 
-extern "C" void func_00356F68(void* self, void* stream);
+extern "C" void* func_00356F68(void* self, void* stream);
 extern char D_0048F508[];
 
 extern "C" void* func_00357090(void* self, void* stream)
@@ -2277,7 +2277,7 @@ INCLUDE_ASM("object/movenode", func_00357918);
 extern "C" void* cMoveNode_cMoveNode(void* self);
 extern void* D_0048EE60[];
 
-extern "C" void* func_00357918(void* self)
+extern "C" void* func_00357918(void* self, void* bucket, void* stream)
 {
     cMoveNode_cMoveNode(self);
     *(void***)((char*)self + 0xC) = D_0048EE60;
@@ -2373,25 +2373,25 @@ extern "C" void func_00357A78(void* self, int i, void* a2, void* a3)
 }
 #endif
 
-extern "C" void* func_003581B8(int, int);
+extern "C" void func_003581B8(int, int);
 
 //100%
 INCLUDE_ASM("object/movenode", func_00357AE8__FPvii);
 #ifdef SKIP_ASM
-void* func_00357AE8(void* self, int a1, int a2)
+void func_00357AE8(void* self, int a1, int a2)
 {
-    return func_003581B8(*(int*)((char*)self + (a1 << 2)), a2);
+    func_003581B8(*(int*)((char*)self + (a1 << 2)), a2);
 }
 #endif
 
-extern "C" void* func_003581F0(int, int);
+extern "C" void func_003581F0(int, int);
 
 //100%
 INCLUDE_ASM("object/movenode", func_00357B10__FPvii);
 #ifdef SKIP_ASM
-void* func_00357B10(void* self, int a1, int a2)
+void func_00357B10(void* self, int a1, int a2)
 {
-    return func_003581F0(*(int*)((char*)self + (a1 << 2)), a2);
+    func_003581F0(*(int*)((char*)self + (a1 << 2)), a2);
 }
 #endif
 
