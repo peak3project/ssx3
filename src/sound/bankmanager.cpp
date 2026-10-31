@@ -1580,7 +1580,7 @@ struct sSndKey8_EF90 {
     long v;
 } __attribute__((packed));
 extern sSndKey8_EF90 D_004A3648[];
-extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
 
 // PORT: 64-bit long sound key
 extern "C" void func_0028EF90(void* self)
@@ -2073,7 +2073,7 @@ extern sSndKey8_FAE0 D_004A3648_FAE0[] __asm__("D_004A3648");
 extern sSndKey8_FAE0 D_004A3650_FAE0[] __asm__("D_004A3650");
 extern sSndKey8_FAE0 D_004A3658_FAE0[] __asm__("D_004A3658");
 extern "C" void func_002ADDE0(void* bank, long id);
-extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
 extern "C" int func_0028DEF0(void* self, int a1);
 extern "C" void func_002B3AC0(void* monitor);
 
