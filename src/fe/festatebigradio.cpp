@@ -392,7 +392,7 @@ extern "C" void func_0039F400(void* list, void* obj);
 extern "C" void* func_001A9C50(void* self);
 extern "C" void func_001A9BC0(void* self, void* popup);
 void func_001C57C0(void* self, int a1, int a2);
-extern "C" void func_001A8918(void* self, void* widget);
+extern "C" void func_001A8918(void* self, void* widget, int msg);
 extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045FD98[];
 extern char D_0045DCC8[];
@@ -480,7 +480,7 @@ extern "C" void func_001938F8(char* self, sWidget_38F8* w, int event)
         break;
     case 7:
         if (isOn_38F8())
-            func_001A8918(self, w);
+            func_001A8918(self, w, event);
         break;
     case 9:
         if (isOn_38F8()) {
@@ -710,7 +710,7 @@ extern "C" int func_00192918_41B0(void* panel, void* item) __asm__("func_0019291
 extern "C" int func_0039A738_41B0(void* item) __asm__("func_0039A738");
 extern "C" void func_00192740_41B0(void* panel, int on) __asm__("func_00192740");
 extern "C" void func_00192970_41B0(void* panel, void* screen) __asm__("func_00192970");
-extern "C" void func_001AB288_41B0(void* self) __asm__("func_001AB288");
+extern "C" void func_001AB288(void* self, int err);
 extern "C" int func_0025DA90(void* self);
 extern "C" void* func_001B1F88_41B0(void* mem, int a1) __asm__("func_001B1F88");
 extern "C" void* func_001BFBB8_41B0(void* mem, int a1) __asm__("func_001BFBB8");
@@ -763,7 +763,7 @@ extern "C" int func_001941B0(char* self, int msg, sRadioMsg_41B0* data)
         func_00194080(self);
         break;
     case 238: case 241: case 248: case 250: case 274: case 275:
-        func_001AB288_41B0(self);
+        func_001AB288(self, msg);
         break;
     case 268:
         if (func_0025DA90(D_004A3028)) {
