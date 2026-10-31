@@ -6402,7 +6402,95 @@ int func_0040B400(int cc, int a, int flag, int d, int e, int f) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_0040B5B0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B6D0);
+#ifdef SKIP_ASM
+struct N_B6D0 { int f0; int f4; int f8; char padC[8]; int f14; int f18; int f1C; int f20; int f24; int f28; int f2C; int f30; int f34; };
+extern void lg3_B6D0(char *, char *, int) __asm__("func_00425C60");
+extern void lg1_B6D0(char *) __asm__("func_00425C60");
+extern int wt_B6D0(int) __asm__("func_00423DE0");
+extern int fr_B6D0(int) __asm__("func_00423DB0");
+extern int sm_B6D0(int *) __asm__("func_00423DA0");
+extern struct N_B6D0 *al_B6D0(char *) __asm__("func_0040B208");
+extern void rl_B6D0(struct N_B6D0 *) __asm__("func_0040B2B0");
+extern void sz_B6D0(int, int) __asm__("func_00426358");
+extern int st_B6D0(unsigned, struct N_B6D0 *, int, int, int, int) __asm__("func_004261B0");
+extern char E_498178[] __asm__("D_00498178");
+extern char E_4981A0[] __asm__("D_004981A0");
+extern char E_4981D8[] __asm__("D_004981D8");
+extern char E_4981E8[] __asm__("D_004981E8");
+extern char E_528FC0[] __asm__("D_00528FC0");
+int func_0040B6D0(struct N_B6D0 *c, int a, int flag, int d, int e, int f, int g, int h, int i) {
+    int s[6];
+    int sem;
+    struct N_B6D0 *n;
+    if (flag != 0) {
+        lg1_B6D0(E_498178);
+        return -1;
+    }
+    wt_B6D0(c->f28);
+    if (d & 0x3F) {
+        lg3_B6D0(E_4981A0, E_4981D8, d);
+        return -1;
+    }
+    if (f & 0x3F) {
+        lg3_B6D0(E_4981E8, E_4981D8, f);
+        return -1;
+    }
+    n = al_B6D0(E_528FC0);
+    if (n == 0)
+        return -1;
+    c->f4 = n->f18;
+    c->f20 = i;
+    c->f0 = (int)n;
+    c->f1C = h;
+    n->f20 = a;
+    n->f14 = (int)n;
+    n->f24 = e;
+    n->f28 = f;
+    n->f2C = g;
+    n->f1C = (int)c;
+    n->f34 = c->f24;
+    if (d == f) {
+        sz_B6D0(d, e >= g ? e : g);
+    } else {
+        if (e > 0)
+            sz_B6D0(d, e);
+        if (g > 0)
+            sz_B6D0(f, g);
+    }
+    if (flag & 1) {
+        if (h == 0)
+            n->f30 = 0;
+        else
+            n->f30 = 1;
+        c->f8 = -1;
+        if (st_B6D0(0x8000001A, n, 0x40, d, c->f14, e) == 0) {
+            rl_B6D0(n);
+            return -2;
+        }
+        return 0;
+    }
+    s[2] = 0;
+    s[1] = 1;
+    s[5] = 0;
+    sem = sm_B6D0(s);
+    c->f8 = sem;
+    if (sem < 0) {
+        rl_B6D0(n);
+        return -3;
+    }
+    n->f30 = 1;
+    if (st_B6D0(0x8000001A, n, 0x40, d, c->f14, e) == 0) {
+        rl_B6D0(n);
+        fr_B6D0(sem);
+        return -2;
+    }
+    wt_B6D0(sem);
+    fr_B6D0(sem);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B938);
