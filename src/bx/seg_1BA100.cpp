@@ -1656,16 +1656,16 @@ INCLUDE_ASM("bx/seg_1BA100", func_002BB3F0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int ASYNCFILE_release(int, int *, int *);
 extern "C" void* func_002523A8(int);
-extern "C" void func_003B47F8(int, int);
+extern "C" void* func_003B47F8(int, int);
 extern "C" int func_003B4818_B3F0(int) __asm__("func_003B4818");
-extern "C" int func_003DF980_B3F0(int) __asm__("func_003DF980");
+extern "C" int func_003DF980(int);
 extern "C" void func_003E6574(int, int, int);
 int operator_new_B3F0(unsigned int, void*, int, int) __asm__("operator_new__FUi");
 extern char D_004A3868[];
 extern "C" void func_002BB3F0(void *self_) {
     char *self = (char*)self_;
     short st = *(short*)self;
-    if (st == 1 && func_003DF980_B3F0(*(int*)(self + 4)) == st) {
+    if (st == 1 && func_003DF980(*(int*)(self + 4)) == st) {
         int sp0 = 0;
         int sp4 = 0;
         ASYNCFILE_release(*(int*)(self + 4), &sp0, &sp4);
@@ -1799,14 +1799,14 @@ extern "C" void func_002BB5F0(void* vself)
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB6B8);
 #ifdef SKIP_ASM
-extern "C" void func_002BB6E0(int, void *);
+extern "C" void* func_002BB6E0(int, void *);
 extern void *D_004A28A8;
 
-extern "C" void func_002BB6B8(void) {
+extern "C" void* func_002BB6B8(void) {
     void *temp_5;
 
     temp_5 = (*(void **)((char*)((*(void **)((char*)(D_004A28A8) + (0x84)))) + (0x10)));
-    func_002BB6E0((*(int *)((char*)(temp_5) + (8))), temp_5);
+    return func_002BB6E0((*(int *)((char*)(temp_5) + (8))), temp_5);
 }
 #endif
 
