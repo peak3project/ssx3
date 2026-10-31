@@ -36,7 +36,7 @@ extern "C" sBXStr_F6B0* func_003186D0(sBXStr_F6B0* self, const char* str, sBXStr
 extern "C" void cBXString__cBXString(sBXStr_F6B0* self, int flags);
 extern "C" sBXStr_F6B0* cBXString_operatorE(sBXStr_F6B0* self, sBXStr_F6B0* o);
 extern "C" char* func_00144BC0(void* iface);
-extern "C" void cBigFile_open(void* bf, const char* name, int flags);
+extern "C" int cBigFile_open(void* bf, const char* name, int flags);
 extern "C" void func_003A6AE0(void* a, const char* name, void* b);
 void* func_00353AC0(void* p);
 extern "C" void* func_0022CCE8(void* p, void* game);
@@ -50,7 +50,7 @@ void func_003A6928(void* p);
 extern "C" void func_003E5398(int a);
 // PORT: func_0016CA10__FPv also receives the path string (passed through in $5)
 void func_0016CA10_F6B0(void* p, const char* s) __asm__("func_0016CA10__FPv");
-extern "C" void func_002DBF80(void* p);
+extern "C" void* func_002DBF80(void* p);
 void* cLensFxMan_construct();
 extern "C" void func_002ED048();
 
@@ -254,7 +254,7 @@ extern "C" void func_002300F0(void* self)
 INCLUDE_ASM("main/gameload", func_00230180);
 #ifdef SKIP_ASM
 extern "C" void func_0022E7C8(void* self);
-extern "C" void func_0026F228(void* self);
+extern "C" void* func_0026F228(void* self);
 extern "C" void func_002789E0(void* self);
 extern "C" void func_0015DB58(void);
 extern "C" void func_00229498(void* self);
@@ -345,7 +345,7 @@ extern "C" void cGame_restart(void* self)
 //100%
 INCLUDE_ASM("main/gameload", func_00230338);
 #ifdef SKIP_ASM
-extern "C" void func_00230338(void* self)
+extern "C" void func_00230338(void* self, int section)
 {
     void* a = *(void**)((char*)self + 0xC);
     if (a != 0) {
@@ -1129,7 +1129,7 @@ static inline char* At_1840(char* self, int i)
     return *(char**)(*(char**)(self + 0xC) + (i << 2) + 0x40);
 }
 
-extern "C" int func_00231840(char* self)
+extern "C" int func_00231840(char* self, int a)
 {
     if (D_004A2EEC != 0 && *(int*)((char*)D_004A2EEC + 0x8) > 0) {
         return 0;
@@ -1235,14 +1235,14 @@ extern "C" int func_00231C70(void* self)
 }
 #endif
 
-extern "C" void* func_00231D18(void* self);
+extern "C" void func_00231D18(void* self);
 
 //100%
 INCLUDE_ASM("main/gameload", func_00231CB0__FPv);
 #ifdef SKIP_ASM
-void* func_00231CB0(void* self)
+void func_00231CB0(void* self)
 {
-    return func_00231D18(self);
+    func_00231D18(self);
 }
 #endif
 
@@ -1274,7 +1274,7 @@ extern "C" int func_00231CF0(void* self)
 INCLUDE_ASM("main/gameload", func_00231D18);
 #ifdef SKIP_ASM
 // PORT: the unit declares this void*-returning; the body returns nothing meaningful.
-extern "C" void* func_00231D18(void* self)
+extern "C" void func_00231D18(void* self)
 {
     if (*(int*)((char*)self + 8) != 0) {
         *(float*)((char*)self + 4) += 0.01666666753590107f;
