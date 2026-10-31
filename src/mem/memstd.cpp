@@ -1164,7 +1164,7 @@ struct func_00253460_sInfo {
     char pad[0x20];
 };
 
-extern "C" void func_002534A8(void* self, void* info);
+extern "C" int func_002534A8(void* self, void* info);
 
 extern "C" void func_00253460(void* self, int v)
 {
@@ -1290,7 +1290,7 @@ INCLUDE_ASM("mem/memstd", func_00253748);
 extern "C" int func_003AE6C8(void* p, float f);
 extern "C" int func_003AE780(void* p);
 extern "C" int func_003AE860(void* p);
-extern "C" void SYNCTASK_run(int);
+extern "C" int SYNCTASK_run(int);
 extern "C" void func_003E5398(int);
 
 struct sVE0_253748 {
@@ -1455,7 +1455,7 @@ extern "C" void func_002539E0(void* self)
 //100%
 INCLUDE_ASM("mem/memstd", func_00253A40);
 #ifdef SKIP_ASM
-void func_003AE958(void*);
+void* func_003AE958(void*);
 
 extern "C" void func_00253A40(void* self)
 {
