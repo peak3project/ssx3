@@ -250,7 +250,7 @@ extern "C" int func_0020CB58(void)
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CBA0);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
-extern "C" int func_0039F9D8(void* stack, int hash);
+extern "C" void* func_0039F9D8(void* stack, int hash);
 extern void* D_004A28A8;
 extern char D_0046F818[];
 
@@ -780,7 +780,7 @@ int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0020E900(void* self);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 extern char* D_004A2EEC;
 extern char D_0046E050[];
 
