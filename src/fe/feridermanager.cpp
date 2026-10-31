@@ -483,7 +483,7 @@ extern "C" void func_0019EE88(void* selfp)
 INCLUDE_ASM("fe/feridermanager", func_0019F138);
 #ifdef SKIP_ASM
 extern void* D_004A289C;
-extern "C" void cFERider_init(void* self, int a1, int a2, int a3);
+extern "C" int cFERider_init(void* self, int a1, int a2, int a3);
 extern "C" int func_001A0100(int* self);
 extern "C" int func_0019FD58(int* self);
 extern "C" void func_0019F780(int* self);
