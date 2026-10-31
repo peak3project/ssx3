@@ -82,7 +82,7 @@ INCLUDE_ASM("fe/ovstateenterlodge", func_001F72E0);
 extern void* D_004A28A8;
 extern int D_004A19C4;
 extern "C" void cGame_exit(void* game, int a);
-extern "C" void func_0039F190(void*, int);
+extern "C" void* func_0039F190(void*, int);
 struct sFlag001F72E0 {
     int f0;
     int f4;
@@ -414,7 +414,7 @@ extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
 extern "C" void cUIState_hideObjSafe(void* self, char* name);
-extern "C" int func_00144BF0(void* iface);
+extern "C" const char* func_00144BF0(void* iface);
 extern "C" char* func_00155130(void* iface, int i);
 extern "C" char* func_00155190(void* iface, int i);
 extern "C" char* func_00155208(void* iface, int i);
