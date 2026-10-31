@@ -1091,21 +1091,20 @@ extern "C" void func_0010E098(void* self, int mask, float amt)
 {
     if (*(int*)((char*)self + 0x304) == 3)
         return;
-    float zero = 0.0f;
-    if (amt == zero)
+    if (amt == 0.0f)
         return;
-    if (amt > zero)
+    if (amt > 0.0f)
     {
         func_00149690(cBE_getInterface_Fv(cBE_getBE(), 3), *(int*)((char*)self + 0x86C), *(int*)((char*)self + 0xB34));
         if ((mask & *(int*)((char*)self + 0xB28)) == 0)
             return;
     }
     func_0029AB08(func_0028B180(), self, *(float*)((char*)self + 0x2F8), amt);
-    *(float*)((char*)self + 0x2F8) = clamp_10E098(*(float*)((char*)self + 0x2F8) + amt, zero, 1.0f);
-    if (*(float*)((char*)self + 0x2F8) == 1.0f && amt > zero && *(int*)((char*)self + 0xB2C) != 0)
+    *(float*)((char*)self + 0x2F8) = clamp_10E098(*(float*)((char*)self + 0x2F8) + amt, 0.0f, 1.0f);
+    if (*(float*)((char*)self + 0x2F8) == 1.0f && amt > 0.0f && *(int*)((char*)self + 0xB2C) != 0)
     {
-        if (*(float*)((char*)self + 0x2F0) == zero)
-            func_0010E028(self, 5, zero);
+        if (*(float*)((char*)self + 0x2F0) == 0.0f)
+            func_0010E028(self, 5, 0.0f);
         if (*(int*)((char*)self + 0x2F4) <= 0)
             *(int*)((char*)self + 0x2F4) += 1;
         if (*(int*)((char*)self + 0x2F4) >= 1 && *(int*)((char*)self + 0x2F4) <= 9)
