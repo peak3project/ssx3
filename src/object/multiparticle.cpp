@@ -1219,15 +1219,14 @@ extern "C" void* func_00359460(char* self, char* desc)
     } else {
         *(float*)(self + 0x3C) = *(float*)(self + 0xE4);
     }
-    float zero = 0.0f;
     *(int*)(self + 0x54) = *(int*)(desc + 0x20) != 0;
     *(int*)(self + 0x50) = 0;
-    if (*(float*)(desc + 0x18) != zero) {
+    if (*(float*)(desc + 0x18) != 0.0f) {
         *(float*)(self + 0x3C) = *(float*)(desc + 0x18);
     }
     *(float*)(self + 0x3C) += AIrandf(-1.0f, 1.0f) * *(float*)(desc + 0x1C);
-    if (*(float*)(self + 0x3C) < zero || *(float*)(self + 0xE4) < *(float*)(self + 0x3C)) {
-        *(float*)(self + 0x3C) = zero;
+    if (*(float*)(self + 0x3C) < 0.0f || *(float*)(self + 0xE4) < *(float*)(self + 0x3C)) {
+        *(float*)(self + 0x3C) = 0.0f;
     }
     *(sMpQuad*)(self + 0xB0) = D_004FF120;
     *(sMpQuad*)(self + 0xC0) = D_004FF120;
