@@ -232,7 +232,7 @@ INCLUDE_ASM("ui/uilistbox", func_0039A928);
 #ifdef SKIP_ASM
 struct cUIThing;
 unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
-extern "C" void cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" unsigned char func_0039B7B0(void* self, int a1);
 
