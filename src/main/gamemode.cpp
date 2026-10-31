@@ -326,16 +326,16 @@ INCLUDE_ASM("main/gamemode", func_00238510);
 struct sVEntry_00238510 {
     short delta;
     short index;
-    void (*fn)(void*, int, int);
+    int (*fn)(void*, int, int);
 };
 
 extern void* D_00536668[];
 
-extern "C" void func_00238510(void* self, int a, int b)
+extern "C" int func_00238510(void* self, int a, int b)
 {
     void* obj = D_00536668[*(int*)((char*)self + 0x4)];
     sVEntry_00238510* vt = *(sVEntry_00238510**)obj;
-    vt[6].fn((char*)obj + vt[6].delta, a, b);
+    return vt[6].fn((char*)obj + vt[6].delta, a, b);
 }
 #endif
 
