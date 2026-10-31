@@ -144,7 +144,238 @@ extern "C" void func_00359698(cSplineModifier_9698* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/splinemodifier", func_00359830);
+#ifdef SKIP_ASM
+extern "C" float func_0031C228(float);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" void func_00345248(void* follow, float t, void* pos, void* vel, void* acc);
+
+struct sSmV4_9830 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sSmV3_9830 {
+    float x, y, z;
+};
+
+struct sSmM44_9830 {
+    float m[4][4];
+} __attribute__((aligned(16)));
+
+struct cSplineModifier_9830 {
+    char pad_0x0[0x34];
+    int mode;               // 0x34
+    float angle;            // 0x38
+    float pos;              // 0x3C
+    char pad_0x40[0x18];
+    int dirty;              // 0x58
+    char pad_0x5c[0x4];
+    sSmM44_9830 mat;        // 0x60
+    sSmV4_9830 origin;      // 0xA0
+    sSmV4_9830 dir;         // 0xB0
+    sSmV4_9830 q;           // 0xC0
+    float fD0;              // 0xD0
+    float fD4;              // 0xD4
+    char follow[0x10];      // 0xD8
+};
+
+extern sSmV3_9830 D_004FF160;
+
+// PORT: PS2 sqrt.s asm helper; use sqrtf on PC.
+static inline float Sqrt_9830(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline float Atan2_9830(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize).
+static inline sSmV4_9830 vu0Normalize_9830(const sSmV4_9830& v)
+{
+    sSmV4_9830 r;
+    __asm__(
+        "lqc2       $vf3, %1\n"
+        "vaddw.x    $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw  $vf4, $vf3, $vf3\n"
+        "vadday.x   ACC, $vf4, $vf4y\n"
+        "vmaddaz.x  ACC, $vf6, $vf4z\n"
+        "vmaddw.x   $vf4, $vf6, $vf4w\n"
+        "vrsqrt     Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2       $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_9830(sSmM44_9830* d, const sSmM44_9830* a, const sSmM44_9830* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_9830(sSmM44_9830* d, const sSmM44_9830* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+extern "C" void func_00359830(cSplineModifier_9830* self)
+{
+    float rx = 0.0f;
+    float ry = 0.0f;
+    float rz = 0.0f;
+    func_00345248(self->follow, self->pos, &self->origin, &self->dir, &self->q);
+    self->fD0 = self->dir.x * self->dir.x;
+    self->fD4 = self->dir.y * self->dir.y;
+    sSmV4_9830 n = vu0Normalize_9830(self->dir);
+    if ((unsigned)(self->mode - 2) < 2) {
+        rz = ry - Atan2_9830(n.y, n.x);
+    }
+    if (self->mode == 1 || self->mode == 3) {
+        float len = Sqrt_9830(self->fD0 + self->fD4);
+        ry += Atan2_9830(self->dir.z, len);
+    }
+    sSmV3_9830 rot;
+    rot.x = rx;
+    rot.y = ry;
+    rot.z = rz;
+    sSmV3_9830 pos;
+    pos.x = self->origin.x;
+    pos.y = self->origin.y;
+    pos.z = self->origin.z;
+    sSmM44_9830 R;
+    sSmM44_9830 t2;
+    sSmM44_9830 t;
+    sSmM44_9830* m = &self->mat;
+    float sc[4][2];
+    func_0031BE50(&sc[0][0], &sc[0][1], rot.x);
+    func_0031BE50(&sc[1][0], &sc[1][1], rot.y);
+    func_0031BE50(&sc[2][0], &sc[2][1], rot.z);
+    float sx = sc[0][0];
+    float sy = sc[1][0];
+    float cx = sc[0][1];
+    float sz = sc[2][0];
+    float cz = sc[2][1];
+    float cy = sc[1][1];
+    float sxsy = sx * sy;
+    float cxsy = cx * sy;
+    float cxsz = cx * sz;
+    self->mat.m[0][0] = cy * cz;
+    self->mat.m[0][1] = -cy * sz;
+    self->mat.m[0][2] = sy;
+    self->mat.m[0][3] = 0.0f;
+    self->mat.m[1][0] = sxsy * cz + cxsz;
+    self->mat.m[1][1] = cx * cz - sxsy * sz;
+    self->mat.m[1][2] = -sx * cy;
+    self->mat.m[1][3] = 0.0f;
+    self->mat.m[2][0] = sx * sz - cxsy * cz;
+    self->mat.m[2][1] = cxsz * sy + sx * cz;
+    self->mat.m[2][2] = cx * cy;
+    self->mat.m[2][3] = 0.0f;
+    self->mat.m[3][0] = pos.x;
+    self->mat.m[3][1] = pos.y;
+    self->mat.m[3][2] = pos.z;
+    self->mat.m[3][3] = 1.0f;
+    char* sub = (char*)self + 0x10;
+    if (self->angle != 0.0f) {
+        const sSmV3_9830* a = &D_004FF160;
+        func_0031BE50(&sc[3][0], &sc[3][1], *(float*)(sub + 0x28));
+        float k = 1.0f - sc[3][1];
+        float kx = k * a->x;
+        float ky = k * a->y;
+        float kz = k * a->z;
+        float sX = sc[3][0] * a->x;
+        float sY = sc[3][0] * a->y;
+        float sZ = sc[3][0] * a->z;
+        R.m[0][0] = kx * a->x + sc[3][1];
+        R.m[1][0] = kx * a->y + sZ;
+        R.m[2][0] = kx * a->z - sY;
+        R.m[3][0] = 0.0f;
+        R.m[0][1] = ky * a->x - sZ;
+        R.m[1][1] = ky * a->y + sc[3][1];
+        R.m[2][1] = ky * a->z + sX;
+        R.m[3][1] = 0.0f;
+        R.m[0][2] = kz * a->x + sY;
+        R.m[1][2] = kz * a->y - sX;
+        R.m[2][2] = kz * a->z + sc[3][1];
+        R.m[3][2] = 0.0f;
+        R.m[0][3] = 0.0f;
+        R.m[1][3] = 0.0f;
+        R.m[2][3] = 0.0f;
+        R.m[3][3] = 1.0f;
+        sSmM44_9830* tp = &t2;
+        vu0MulMat_9830(&t, m, &R);
+        vu0CopyMat_9830(tp, &t);
+        vu0CopyMat_9830(m, tp);
+    }
+    self->dirty = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/splinemodifier", func_00359CF8);
