@@ -8,7 +8,7 @@ struct cSpaceMenuItem;
 
 void* func_002CAA58(void*);
 extern "C" void cMenu_addItem(void *, char*, int);
-extern "C" void func_002CCF98(char*, int, int *, int);
+extern "C" void* func_002CCF98(char*, int, int *, int);
 void cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* label);
 void cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* height);
 
@@ -51,7 +51,7 @@ extern "C" char* __sti__all_in_one_main_cpp(char* self, int* a, int* b)
 INCLUDE_ASM("main/all_in_one_main", func_001DB2B0);
 #ifdef SKIP_ASM
 void* func_002CAA58(void*);
-extern "C" void func_002CCF98(char*, int, int *, int);
+extern "C" void* func_002CCF98(char*, int, int *, int);
 extern "C" void cMenu_addItem(void *, char*, int);
 extern int D_00467DE0[];
 extern int D_0046D378[];
@@ -224,8 +224,7 @@ extern "C" void func_001DB718(L_B718 *self) {
 //100%
 INCLUDE_ASM("main/all_in_one_main", func_001DB778);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tagDB778(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
 void* cMemMan_free(void* ptr);
@@ -243,7 +242,7 @@ static inline void** sPtrVecDB778_allocate(unsigned int n)
 {
     if (n == 1)
         return (void**)cMemMan_alloc(4, D_0045CDE8, 0x20000000, 0);
-    return (void**)operator_new_tagDB778(n * 4, D_0045CDE8, 0x20000000, 0);
+    return (void**)operator_new__FUi(n * 4, D_0045CDE8, 0x20000000, 0);
 }
 
 static inline void sPtrVecDB778_deallocate(void** p, unsigned int n)
@@ -309,8 +308,6 @@ extern "C" void func_001DB778(sPtrVecDB778* self, void** pos, void* const& x)
 //100%
 INCLUDE_ASM("main/all_in_one_main", func_001DB918);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tagDB918(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
 void* cMemMan_free(void* ptr);
@@ -328,7 +325,7 @@ static inline void** sPtrVecDB918_allocate(unsigned int n)
 {
     if (n == 1)
         return (void**)cMemMan_alloc(4, D_0045CDE8, 0x20000000, 0);
-    return (void**)operator_new_tagDB918(n * 4, D_0045CDE8, 0x20000000, 0);
+    return (void**)operator_new__FUi(n * 4, D_0045CDE8, 0x20000000, 0);
 }
 
 static inline void sPtrVecDB918_deallocate(void** p, unsigned int n)
@@ -436,7 +433,7 @@ extern "C" int func_001DBB20(void *arg0, void *arg1) {
 INCLUDE_ASM("main/all_in_one_main", func_001DBB48);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_0017E368_BB48(int, int) __asm__("func_0017E368");
+extern "C" void func_0017E368_BB48(void*, int) __asm__("func_0017E368");
 extern "C" void func_0017E3B8_BB48(int) __asm__("func_0017E3B8");
 
 extern "C" int func_001DBB48(void *arg0, void *arg1) {
@@ -444,7 +441,7 @@ extern "C" int func_001DBB48(void *arg0, void *arg1) {
     if (t == -2) {
         func_0017E3B8_BB48(*(int *)((char *)arg0 + 0x134));
     } else if (t != -1) {
-        func_0017E368_BB48(*(int *)((char *)arg0 + 0x130), t);
+        func_0017E368_BB48(*(void**)((char *)arg0 + 0x130), t);
     }
     return 0;
 }
@@ -3103,11 +3100,11 @@ extern "C" int func_001DE8A8(void *arg0) {
 INCLUDE_ASM("main/all_in_one_main", func_001DE8C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void *func_001A8500_E8C8(void *, int, int) __asm__("func_001A8500");
+extern "C" void *func_001A8500(void *, int, int);
 extern int D_0046B6F8_E8C8[] __asm__("D_0046B6F8");
 
 extern "C" void *func_001DE8C8(void *self) {
-    func_001A8500_E8C8(self, 0, 0);
+    func_001A8500(self, 0, 0);
     *(int **)((char *)self + 8) = D_0046B6F8_E8C8;
     return self;
 }
@@ -3207,14 +3204,14 @@ INCLUDE_ASM("main/all_in_one_main", func_001DEA20);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int GetHashValue32_EA20(char *) __asm__("GetHashValue32__FPc");
-extern "C" int cUIEngine_addScreenByHashName(int, void *, int, int);
+extern "C" int cUIEngine_addScreenByHashName(void*, void *, int, int);
 extern "C" void* cUIScreen_playFrame(int, int, int);
 extern char D_0045DD20[];
 
 extern "C" void func_001DEA20(void *self) {
     int h = GetHashValue32_EA20(D_0045DD20);
     *(int *)((char *)self + 0xC) = h;
-    int s = cUIEngine_addScreenByHashName(*(int *)((char *)self + 0x10), self, h, 0);
+    int s = cUIEngine_addScreenByHashName(*(void**)((char *)self + 0x10), self, h, 0);
     *(int *)((char *)self + 0x40) = s;
     if (s != 0) {
         cUIScreen_playFrame(s, 0, 0);
@@ -3244,7 +3241,7 @@ extern "C" int func_001DEA80(void* self, int a1, unsigned int key)
 INCLUDE_ASM("main/all_in_one_main", func_001DEAA8);
 #ifdef SKIP_ASM
 int GetHashValue32(char*);
-extern "C" void func_0039F190(int, int);
+extern "C" void* func_0039F190(int, int);
 extern char D_004A14E8[];
 extern char D_004A14F0[];
 
