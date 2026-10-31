@@ -1219,7 +1219,7 @@ extern "C" void func_002CBE10(void *self) {
 INCLUDE_ASM("util/menu", func_002CBE20);
 #ifdef SKIP_ASM
 extern int (*D_004A54BC)(int, int);
-extern "C" void func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
 extern "C" int func_002D4008(const void*, const void*);
 
 extern "C" void func_002CBE20(void* self, int (*cmp)(int, int))
@@ -5102,12 +5102,12 @@ extern "C" void func_002D1AA0(int arg0, int arg1) {
 //100%
 INCLUDE_ASM("util/menu", func_002D1AC8);
 #ifdef SKIP_ASM
-extern "C" int func_0030A688(void* self, int id);
+extern "C" void func_0030A688(void* self, int id);
 extern void* D_004A3DD8;
 
-extern "C" int func_002D1AC8(int id)
+extern "C" void func_002D1AC8(int id)
 {
-    return func_0030A688(D_004A3DD8, id);
+    func_0030A688(D_004A3DD8, id);
 }
 #endif
 
@@ -5216,12 +5216,12 @@ extern "C" void* func_002D1BE0()
 //100%
 INCLUDE_ASM("util/menu", func_002D1BF0);
 #ifdef SKIP_ASM
-extern "C" int func_001032C0(void* self, int a);
+extern "C" void func_001032C0(void* self, int a);
 extern char* D_004A28A8;
 
-extern "C" int func_002D1BF0(int a)
+extern "C" void func_002D1BF0(int a)
 {
-    return func_001032C0(*(void**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + 0xA4), a);
+    func_001032C0(*(void**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + 0xA4), a);
 }
 #endif
 
