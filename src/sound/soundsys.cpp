@@ -3517,7 +3517,7 @@ struct sSndKey8 {
 } __attribute__((packed));
 extern sSndKey8 D_004A3678[];
 extern "C" void* func_00287968(void* self, int a1, int a2);
-extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
 
 // PORT: 64-bit long sound key
 extern "C" void func_00298D00(void* self, void* obj)
@@ -5362,7 +5362,7 @@ INCLUDE_ASM("sound/soundsys", func_0029CCA8);
 extern "C" int func_00288AE0(void* self);
 extern "C" void* func_0028B1D8();
 extern "C" void* func_00287968(void* self, int a1, int a2);
-extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
 // PORT: func_004139F8 is libgcc's float -> unsigned conversion (__fixunssfsi).
 extern "C" int func_004139F8(float f);
 extern char* D_004A28A8;
@@ -6788,7 +6788,7 @@ INCLUDE_ASM("sound/soundsys", func_0029F330);
 #ifdef SKIP_ASM
 extern "C" int func_00123128(void*);
 extern "C" int func_00123168(void*);
-extern "C" void func_0029F2B0(int, int);
+extern "C" int func_0029F2B0(int, int);
 
 extern "C" void func_0029F330(void* self)
 {
@@ -8009,7 +8009,7 @@ INCLUDE_ASM("sound/soundsys", func_002A1D48);
 #ifdef SKIP_ASM
 extern "C" int func_00123128(void*);
 extern "C" int func_00123168(void*);
-extern "C" void func_002A1DA0(void* self, int a, int b);
+extern "C" int func_002A1DA0(void* self, int a, int b);
 
 extern "C" void func_002A1D48(void* self, void* obj)
 {
@@ -9668,7 +9668,7 @@ struct sSndId2A49E8 {
     long v;
 } __attribute__((packed));
 extern sSndId2A49E8 D_004A36F0[];
-extern "C" void func_002ADCA0(void* bank, int a1, long id, int a3, int a4, int a5, int a6, int a7);
+extern "C" int func_002ADCA0(void* bank, int a1, long id, int a3, int a4, int a5, int a6, int a7);
 
 // Flags the transition and fades the ambient stream back in.
 // PORT: the 8-byte stream id is passed by value from an unaligned global (64-bit `long`).
@@ -9709,7 +9709,7 @@ struct sSndKey8_4A78 {
     long v;
 } __attribute__((packed));
 extern sSndKey8_4A78 D_004A3650[];
-extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
 extern "C" int func_0028DEF0(void* self, int a1);
 
 // PORT: 64-bit long sound key
@@ -11027,8 +11027,7 @@ INCLUDE_ASM("sound/soundsys", func_002A77F8);
 #ifdef SKIP_ASM
 extern "C" int func_00317F98(const char* name);
 extern "C" int func_003E1B68(const char* name, void* buf, int size);
-// PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 
 struct sSndFileBuf {
     int size;
@@ -11042,7 +11041,7 @@ extern "C" sSndFileBuf* func_002A77F8(sSndFileBuf* self, const char* name, int f
     self->cur = 0;
     self->size = func_00317F98(name);
     if (self->size != 0) {
-        self->data = (char*)operator_new_tag(self->size + 1, name, flags, 0);
+        self->data = (char*)operator_new__FUi(self->size + 1, name, flags, 0);
         func_003E1B68(name, self->data, self->size + 1);
         self->cur = self->data;
         self->data[self->size] = 0;
@@ -11237,7 +11236,7 @@ extern "C" int func_002A7C68(void* self, char* name)
 INCLUDE_ASM("sound/soundsys", func_002A7CF0);
 #ifdef SKIP_ASM
 signed char func_002A78E0(void* self);
-extern "C" void func_002A78F8(void*);
+extern "C" int func_002A78F8(void*);
 extern "C" int func_002A7EF0(void* self, const char* s);
 extern const char D_004A3728[];
 
@@ -11265,8 +11264,8 @@ INCLUDE_ASM("sound/soundsys", func_002A7DA0);
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A7E60);
 #ifdef SKIP_ASM
-extern "C" void func_002A78F8(void*);
-extern "C" void func_002A7DA0(void*);
+extern "C" int func_002A78F8(void*);
+extern "C" char* func_002A7DA0(void*);
 extern "C" int func_004178B0(const char* s, const char* fmt, ...);
 extern char D_004A3730[];
 
@@ -11283,8 +11282,8 @@ extern "C" float func_002A7E60(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A7EA8);
 #ifdef SKIP_ASM
-extern "C" void func_002A78F8(void*);
-extern "C" void func_002A7DA0(void*);
+extern "C" int func_002A78F8(void*);
+extern "C" char* func_002A7DA0(void*);
 extern "C" int func_004178B0(const char* s, const char* fmt, ...);
 extern char D_004A3738[];
 
@@ -11676,7 +11675,7 @@ extern "C" void func_002A8C50(void* self, int flags)
 INCLUDE_ASM("sound/soundsys", func_002A8CB0);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_003B5478();
 extern "C" int func_003B5158(void* buf, int size, int flags);
 extern "C" int func_003B5B68(int* out);
@@ -11711,7 +11710,7 @@ struct sSndSys8CB0 {
 
 extern "C" void func_002A8CB0(sSndSys8CB0* self, int a1)
 {
-    self->buf = operator_new_tag(0x32000, D_00483158, 0, 0);
+    self->buf = operator_new__FUi(0x32000, D_00483158, 0, 0);
     func_003B5478();
     sSndVtE8CB0* vt = self->vt;
     vt[2].fn((char*)self + vt[2].delta, a1);
