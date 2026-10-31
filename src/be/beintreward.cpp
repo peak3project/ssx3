@@ -32,7 +32,7 @@ INCLUDE_ASM("be/beintreward", func_00156A10);
 extern "C" void cBERewardDB_init(void* db, int flag);
 extern void* D_004C3E98[];
 
-extern "C" void func_00156A10()
+extern "C" void func_00156A10(void* iface)
 {
     cBERewardDB_init(D_004C3E98, 1);
 }
@@ -1197,7 +1197,7 @@ extern "C" int func_00150928(void* self, int a, int b);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 
 // PORT: 64-bit ulong bit set (sd/ld).
-extern "C" void func_00158558(void* self, int profile, int c, int bit, int award)
+extern "C" int func_00158558(void* self, int profile, int c, int bit, int award)
 {
     void* econ = cBE_getInterface_Fv(cBE_getBE(), 0xB);
     char* p = (char*)D_004A6CA8 + profile * 0x9b50 + c * 0xf88;
@@ -1206,7 +1206,7 @@ extern "C" void func_00158558(void* self, int profile, int c, int bit, int award
     {
         func_00150B48(econ, profile, c, 5000);
     }
-    func_00150928(econ, profile, c);
+    return func_00150928(econ, profile, c);
 }
 #endif
 
@@ -1755,7 +1755,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBEEconInterface_getTotalMoneyEarned(void* self, int a, int b);
 extern "C" int func_00157BF0(void* self, int a, int b, int c, int i);
-extern "C" void func_00150A90(void* econ, int a, int b, int amount);
+extern "C" int func_00150A90(void* econ, int a, int b, int amount);
 extern "C" void* func_00158BE0(void* self, int a, int b);
 extern "C" void func_00159170(void* self, int a1, int a2, int kind, int tier);
 extern void* D_004A1260;
