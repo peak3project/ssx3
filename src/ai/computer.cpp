@@ -1364,13 +1364,13 @@ extern "C" void func_0010E830(void* self, float value)
 INCLUDE_ASM("ai/computer", func_0010E8B8);
 #ifdef SKIP_ASM
 extern "C" void func_0010E098(void*, int, float);
-extern "C" float func_00119608(int);
+extern "C" float func_00119608(void*);
 extern "C" void* func_0028B180();
 extern "C" void func_0029CED8(void*, int, void*, float);
 
 extern "C" void func_0010E8B8(void* self, int v)
 {
-    func_0010E098(self, 0x10, func_00119608(*(int*)((char*)self + 0x790)));
+    func_0010E098(self, 0x10, func_00119608(*(void**)((char*)self + 0x790)));
     func_0029CED8(func_0028B180(), 3, self, 1.0f);
 }
 #endif
@@ -1489,23 +1489,23 @@ extern "C" void func_0010F1C0(char* self, int kind, float amt)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/computer", func_0010F280);
 #ifdef SKIP_ASM
-extern "C" float func_00119BB0(int);
+extern "C" float func_00119BB0(void*);
 extern "C" void func_0010E098(void*, int, float);
 
 extern "C" void func_0010F280(void* self, int flag)
 {
-    func_0010E098(self, 1, func_00119BB0(*(int*)((char*)self + 0x790)));
+    func_0010E098(self, 1, func_00119BB0(*(void**)((char*)self + 0x790)));
 }
 #endif
 
-extern "C" void* func_0011A0E0(int);
+extern "C" void* func_0011A0E0(void*);
 
 //100%
 INCLUDE_ASM("ai/computer", func_0010F2B8__FPv);
 #ifdef SKIP_ASM
 void* func_0010F2B8(void* self)
 {
-    return func_0011A0E0(*(int*)((char*)self + 0x790));
+    return func_0011A0E0(*(void**)((char*)self + 0x790));
 }
 #endif
 
@@ -1515,12 +1515,12 @@ INCLUDE_ASM("ai/computer", func_0010F2D8);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0011A110(int, int);
+extern "C" void func_0011A110(void*, int);
 extern "C" void func_00159B08(void*, int, int);
 
 extern "C" void func_0010F2D8(void* self, int a, int b)
 {
-    func_0011A110(*(int*)((char*)self + 0x790), b);
+    func_0011A110(*(void**)((char*)self + 0x790), b);
     func_00159B08(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(int*)((char*)self + 0x86C), a);
 }
 #endif
@@ -1531,12 +1531,12 @@ INCLUDE_ASM("ai/computer", func_0010F338);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_00119EF8(int, int);
+extern "C" void func_00119EF8(void*, int);
 extern "C" void func_001599A0(void*, int, int);
 
 extern "C" void func_0010F338(void* self, int a, int a2)
 {
-    func_00119EF8(*(int*)((char*)self + 0x790), 3);
+    func_00119EF8(*(void**)((char*)self + 0x790), 3);
     func_001599A0(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(int*)((char*)self + 0x86C), a);
 }
 #endif
