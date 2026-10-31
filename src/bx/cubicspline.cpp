@@ -4,7 +4,7 @@
 INCLUDE_ASM("bx/cubicspline", cCubicSplineInterpolant_initCommon);
 #ifdef SKIP_ASM
 void func_0031D790(void* self);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_0048DB38[];
 
 struct sCubicSplineFlags {
@@ -29,7 +29,7 @@ extern "C" void cCubicSplineInterpolant_initCommon_impl(sCubicSpline* self, int 
         func_0031D790(self);
     }
     self->flags.count = n - 1;
-    self->data = operator_new_tag(self->flags.count * 0x14, D_0048DB38, 0, 0);
+    self->data = operator_new__FUi(self->flags.count * 0x14, D_0048DB38, 0, 0);
     self->flags.b1 = 1;
     self->flags.f3 = 0;
 }
@@ -1361,23 +1361,23 @@ extern "C" void* func_00320038(void* ms, unsigned int bytes)
 }
 #endif
 
-extern "C" int func_0031F2C8(void* self);
+extern "C" void* func_0031F2C8(void* self);
 
 //100%
 INCLUDE_ASM("bx/cubicspline", func_00320058__FPv);
 #ifdef SKIP_ASM
-int func_00320058(void* self)
+void* func_00320058(void* self)
 {
     return func_0031F2C8(self);
 }
 #endif
 
-extern "C" int func_0031F4E8(void* self);
+extern "C" void* func_0031F4E8(void* self);
 
 //100%
 INCLUDE_ASM("bx/cubicspline", func_00320078__FPv);
 #ifdef SKIP_ASM
-int func_00320078(void* self)
+void* func_00320078(void* self)
 {
     return func_0031F4E8(self);
 }
