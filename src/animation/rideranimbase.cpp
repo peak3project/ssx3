@@ -639,7 +639,7 @@ INCLUDE_ASM("animation/rideranimbase", func_00312B18);
 struct cAnimSequence;
 void cAnimSequence_fadeWeight(cAnimSequence* self, float weight, float target);
 extern "C" void func_003145F8(void* seq, void* node);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
 extern "C" int func_00312B18(void* self, cAnimSequencer* seq, char* node, int anim)
 {
@@ -663,12 +663,12 @@ extern "C" int func_00312B18(void* self, cAnimSequencer* seq, char* node, int an
 INCLUDE_ASM("animation/rideranimbase", func_00312BD0);
 #ifdef SKIP_ASM
 extern "C" void func_00144670(void* self, int bit);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
-extern "C" void func_00312BD0(void* self, void* unused, void* rider, int anim)
+extern "C" int func_00312BD0(void* self, void* unused, void* rider, int anim)
 {
     func_00144670((char*)rider + 0xB0, 0x3F);
-    cRiderAnimBase_play(self, anim, 0, -1.0f);
+    return cRiderAnimBase_play(self, anim, 0, -1.0f);
 }
 #endif
 
