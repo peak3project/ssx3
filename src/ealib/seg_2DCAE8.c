@@ -7611,7 +7611,83 @@ void func_003E8FD0(char *self, struct I_8FD0 *info) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E9160);
+#ifdef SKIP_ASM
+extern void *func_002591E8_9160(int) __asm__("func_002591E8");
+extern void func_00259210_9160(void *) __asm__("func_00259210");
+extern void func_00416210_9160(void *, int, int) __asm__("func_00416210");
+extern int *func_003EE560_9160(int, int) __asm__("func_003EE560");
+extern int func_003EE550_9160(int) __asm__("func_003EE550");
+extern int func_003EED08_9160(int, void *) __asm__("func_003EED08");
+extern void *func_003EE480_9160(int, int) __asm__("func_003EE480");
+extern char D_004A48F8_9160[] __asm__("D_004A48F8") __attribute__((aligned(8)));
+
+int func_003E9160(char *self, int limit) {
+    int b = *(int *)(self + 0x33C);
+    int a = *(int *)(self + 0x338);
+    int k, sum, res;
+    short *hist;
+    short *p;
+    int *e;
+    if (a == 0 || b == 0) {
+        return -1;
+    }
+    k = 0;
+    hist = (short *)func_002591E8_9160(0x4000);
+    func_00416210_9160(hist, 0, 0x4000);
+    while ((e = func_003EE560_9160(b, k)) != 0) {
+        if ((unsigned)(e[0] - 1) >= 0x1FFF) {
+            e[0] = 500;
+            __builtin_memcpy(e + 2, D_004A48F8_9160, 6);
+        }
+        k++;
+        hist[e[0]]++;
+    }
+    sum = 1;
+    k = 0x1FFF;
+    p = hist + 0x1FFF;
+    do {
+        res = *p;
+        *p = sum;
+        sum += res;
+        if (sum > limit) {
+            int cnt = func_003EE550_9160(b);
+            if (cnt >= sum) {
+                int i = 0;
+                while ((e = func_003EE560_9160(b, i)) != 0) {
+                    if (e[0] <= k) {
+                        e[0] = 0;
+                    }
+                    i++;
+                }
+            }
+            break;
+        }
+        k--;
+        p--;
+    } while (k >= 0);
+    res = 0;
+    k = 0;
+    while ((e = func_003EE560_9160(b, k)) != 0) {
+        if (e[0] > 0) {
+            res++;
+            e[1] = hist[e[0]];
+        }
+        k++;
+    }
+    k = 0;
+    while ((e = func_003EE560_9160(b, k)) != 0) {
+        if (e[0] == 0) {
+            func_00259210_9160(func_003EE480_9160(b, func_003EED08_9160(a, e + 2)));
+        } else {
+            k++;
+        }
+    }
+    func_00259210_9160(hist);
+    return res;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E9378);
