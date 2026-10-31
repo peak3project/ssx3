@@ -29,7 +29,7 @@ struct cUIScreen;
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0039E510(void* self);
-extern "C" void func_0039F190(void* list, int a1);
+extern "C" void* func_0039F190(void* list, int a1);
 
 extern "C" void func_00187CB8(void* self)
 {
