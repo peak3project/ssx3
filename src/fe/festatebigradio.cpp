@@ -16,7 +16,7 @@ extern "C" void func_00192740_2DB0(void* panel, int on) __asm__("func_00192740")
 void func_00192968(void* panel, int mask);
 extern "C" void func_00192970_2DB0(void* panel, void* screen) __asm__("func_00192970");
 extern "C" int func_00193F38(void* self, int player, int which);
-extern "C" unsigned char cUIListBox_addEntryByStringID_2DB0(void* box, int id, int idx) __asm__("cUIListBox_addEntryByStringID");
+extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
 extern "C" unsigned char cUIListBox_addEntryByAsciiString_2DB0(void* box, const char* str, int data) __asm__("cUIListBox_addEntryByAsciiString");
 extern "C" int func_0039A768_2DB0(void* item, int key, unsigned char* out) __asm__("func_0039A768");
 extern "C" void func_0039A7A8_2DB0(void* item, int v) __asm__("func_0039A7A8");
@@ -157,13 +157,13 @@ extern "C" void cFEStateBraggingRights_onCreateScreen(sBragging_2DB0* self)
             case 4:
             case 5:
             case 6:
-                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045FCD8), 0);
-                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045DCC8), 1);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045FCD8), 0);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DCC8), 1);
                 func_0039A768_2DB0(lb, func_00193F38(self, p, self->rules[row]), &out);
                 func_0039A7A8_2DB0(lb, out);
                 break;
             case 0:
-                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045DF40), 0);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
                 cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A16E0, 5);
                 cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A16D8, 10);
                 cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1758, 15);
@@ -172,7 +172,7 @@ extern "C" void cFEStateBraggingRights_onCreateScreen(sBragging_2DB0* self)
                 func_0039A7A8_2DB0(lb, out);
                 break;
             case 7:
-                cUIListBox_addEntryByStringID_2DB0(lb, GetHashValue32(D_0045DF40), 0);
+                cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0045DF40), 0);
                 cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1768, 3000);
                 cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1770, 5000);
                 cUIListBox_addEntryByAsciiString_2DB0(lb, D_004A1778, 10000);
@@ -217,14 +217,14 @@ int func_00193310(void* self)
 }
 #endif
 
-extern "C" void* func_0039E6B8(void* self);
+extern "C" void func_0039E6B8(void* self);
 
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00193318__FPv);
 #ifdef SKIP_ASM
-void* func_00193318(void* self)
+void func_00193318(void* self)
 {
-    return func_0039E6B8(self);
+    func_0039E6B8(self);
 }
 #endif
 
@@ -393,7 +393,7 @@ extern "C" void* func_001A9C50(void* self);
 extern "C" void func_001A9BC0(void* self, void* popup);
 void func_001C57C0(void* self, int a1, int a2);
 extern "C" void func_001A8918(void* self, void* widget);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045FD98[];
 extern char D_0045DCC8[];
 extern char D_0045FCD8[];
@@ -711,12 +711,12 @@ extern "C" int func_0039A738_41B0(void* item) __asm__("func_0039A738");
 extern "C" void func_00192740_41B0(void* panel, int on) __asm__("func_00192740");
 extern "C" void func_00192970_41B0(void* panel, void* screen) __asm__("func_00192970");
 extern "C" void func_001AB288_41B0(void* self) __asm__("func_001AB288");
-extern "C" int func_0025DA90_41B0(void* self) __asm__("func_0025DA90");
+extern "C" int func_0025DA90(void* self);
 extern "C" void* func_001B1F88_41B0(void* mem, int a1) __asm__("func_001B1F88");
 extern "C" void* func_001BFBB8_41B0(void* mem, int a1) __asm__("func_001BFBB8");
-extern "C" void func_001A8A40_41B0(void* self, void* obj) __asm__("func_001A8A40");
-extern "C" int func_001A8E40_41B0(void* self, int msg, void* data) __asm__("func_001A8E40");
-extern "C" void* cMemMan_alloc_41B0(int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" int func_001A8A40(void* self, void* obj);
+extern "C" int func_001A8E40(void* self, int msg, void* data);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern void* D_004A3028;
 extern char D_0045FF10[];
 extern char D_0045FF28[];
@@ -766,10 +766,10 @@ extern "C" int func_001941B0(char* self, int msg, sRadioMsg_41B0* data)
         func_001AB288_41B0(self);
         break;
     case 268:
-        if (func_0025DA90_41B0(D_004A3028)) {
-            func_001A8A40_41B0(self, func_001B1F88_41B0(cMemMan_alloc_41B0(0x73C, D_0045FF10, 0, 0), *(int*)(self + 0x10)));
+        if (func_0025DA90(D_004A3028)) {
+            func_001A8A40(self, func_001B1F88_41B0(cMemMan_alloc(0x73C, D_0045FF10, 0, 0), *(int*)(self + 0x10)));
         } else {
-            func_001A8A40_41B0(self, func_001BFBB8_41B0(cMemMan_alloc_41B0(0x6D0, D_0045FF28, 0, 0), *(int*)(self + 0x10)));
+            func_001A8A40(self, func_001BFBB8_41B0(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(int*)(self + 0x10)));
         }
         break;
     case 254: {
@@ -784,7 +784,7 @@ extern "C" int func_001941B0(char* self, int msg, sRadioMsg_41B0* data)
         break;
     }
     default:
-        return func_001A8E40_41B0(self, msg, data);
+        return func_001A8E40(self, msg, data);
     }
     return 0;
 }
