@@ -18,7 +18,7 @@ extern "C" void* func_0028B180();
 extern "C" void func_0028BF78(void* audio, int a1);
 extern "C" void* func_00196B90(void* p, int a1, signed char idx, int a3);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
-extern "C" void func_0039F190(void* stack, int a1);
+extern "C" void* func_0039F190(void* stack, int a1);
 extern "C" void func_0039F400(void* stack, void* state);
 extern void* D_004A28A8;
 extern char D_00460470[];
