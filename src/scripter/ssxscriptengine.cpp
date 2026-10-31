@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", cSSXScriptEngine_Load);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 // PORT: func_0027B268 is defined with six params; this caller passes a seventh (0) in $t2.
 extern "C" void func_0027B268_7(void* self, int i, const char* name, int flags, int key, int* buf, int x)
     __asm__("func_0027B268");
@@ -52,7 +51,7 @@ struct sSse278358
 
 extern "C" void cSSXScriptEngine_Load(sSse278358* self)
 {
-    self->links = (sLink_278358*)operator_new_tag(0xC8, D_00481BD8, 0, 0);
+    self->links = (sLink_278358*)operator_new__FUi(0xC8, D_00481BD8, 0, 0);
     for (int i = 0; i < 10; i++)
     {
         self->links[i].a = -1;
@@ -729,7 +728,7 @@ extern "C" int func_002791D8(void* self, int i)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279220);
 #ifdef SKIP_ASM
-extern "C" void func_00276BD8(void*);
+extern "C" int func_00276BD8(void*);
 
 extern "C" void func_00279220(void* self, int i)
 {
@@ -1097,7 +1096,7 @@ INCLUDE_ASM("scripter/ssxscriptengine", func_00279A70);
 unsigned int BXrand();
 unsigned char func_002743C8(void* self);
 int func_00274388(void* self);
-int func_0027C958(void* self);
+char* func_0027C958(void* self);
 // PORT: func_0027C960 forwards (self, index) to func_002742E0; the unit declares it with one arg.
 void* func_0027C960_9A70(void* self, int i) __asm__("func_0027C960__FPv");
 // PORT: callers elsewhere declare func_0027BDB8 with two args; it takes the three player slots too.
@@ -1238,7 +1237,7 @@ extern "C" int func_00279D00(sSsxEngine9D00* self, cScriptOwner9D00* obj)
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279DA8);
 #ifdef SKIP_ASM
 int func_0027D320(void* self, int i);
-extern "C" void func_002811E8(void* slot, void* obj);
+extern "C" int func_002811E8(void* slot, void* obj);
 extern "C" int func_002812E0(void* self, void* obj);
 extern "C" int func_0027CF88(void* self, int idx);
 
@@ -2847,9 +2846,9 @@ extern "C" void func_0027C050(void* self, void* a1)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C070__FPv);
 #ifdef SKIP_ASM
-int func_0027C070(void* self)
+char* func_0027C070(void* self)
 {
-    return *(int*)((char*)self + 0x14);
+    return *(char**)((char*)self + 0x14);
 }
 #endif
 
@@ -2867,9 +2866,9 @@ void* func_0027C078(void* self)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C098__FPv);
 #ifdef SKIP_ASM
-int func_0027C098(void* self)
+char* func_0027C098(void* self)
 {
-    return *(int*)((char*)self + 0x20);
+    return *(char**)((char*)self + 0x20);
 }
 #endif
 
@@ -2929,9 +2928,9 @@ extern "C" void func_0027C0F0(void* self, float* out)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C2A8__FPv);
 #ifdef SKIP_ASM
-int func_0027C2A8(void* self)
+char* func_0027C2A8(void* self)
 {
-    return *(int*)((char*)self + 0x20);
+    return *(char**)((char*)self + 0x20);
 }
 #endif
 
@@ -2991,9 +2990,9 @@ extern "C" void func_0027C300(void* self, float* out)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C4B8__FPv);
 #ifdef SKIP_ASM
-int func_0027C4B8(void* self)
+char* func_0027C4B8(void* self)
 {
-    return *(int*)((char*)self + 0x20);
+    return *(char**)((char*)self + 0x20);
 }
 #endif
 
@@ -3052,9 +3051,9 @@ extern "C" void func_0027C510(void* self, float* out)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C6A0__FPv);
 #ifdef SKIP_ASM
-int func_0027C6A0(void* self)
+char* func_0027C6A0(void* self)
 {
-    return *(int*)((char*)self + 0x20);
+    return *(char**)((char*)self + 0x20);
 }
 #endif
 
@@ -3113,9 +3112,9 @@ extern "C" void func_0027C6F8(void* self, float* out)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C888__FPv);
 #ifdef SKIP_ASM
-int func_0027C888(void* self)
+char* func_0027C888(void* self)
 {
-    return *(int*)((char*)self + 0x20);
+    return *(char**)((char*)self + 0x20);
 }
 #endif
 
@@ -3166,9 +3165,9 @@ extern "C" void func_0027C8E0(void* self, int* out)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027C958__FPv);
 #ifdef SKIP_ASM
-int func_0027C958(void* self)
+char* func_0027C958(void* self)
 {
-    return *(int*)((char*)self + 0x20);
+    return *(char**)((char*)self + 0x20);
 }
 #endif
 
@@ -4047,7 +4046,7 @@ extern "C" int func_00280458(cScriptCtx0458* self, void* msg, int type)
     int team = func_00123128(rider);
     int mask = D_00481BB0[team];
     // PORT: func_0027C958 returns a record pointer as int
-    char* info = (char*)func_0027C958(msg);
+    char* info = func_0027C958(msg);
     short m = *(short*)(info + 2);
     if (m == 0 || (m & mask) != 0) {
         return func_00280560(self, rider, *(signed char*)info, *(int*)((char*)msg + 0x8));
@@ -4145,7 +4144,7 @@ INCLUDE_ASM("scripter/ssxscriptengine", func_00280640);
 #ifdef SKIP_ASM
 extern void* D_004A28A4;
 extern "C" void func_002AD5F0(void* bank, int id, int a, float f);
-extern "C" int func_002AD550(void* bank, int id, int a);
+extern "C" void* func_002AD550(void* bank, int id, int a);
 extern "C" int func_002B0E28(void* p, int i);
 
 extern "C" void func_00280640(sScrObj05B8* self)
@@ -4197,7 +4196,7 @@ extern "C" void func_00280730(void* self)
     *(int*)((char*)self + 0xF0) = 0;
     *(int*)((char*)self + 0xF4) = 0;
     // PORT: func_0027C070 returns a pointer as int
-    char* info = (char*)func_0027C070(*(void**)(*(char**)((char*)self + 0x8) + 0x8));
+    char* info = func_0027C070(*(void**)(*(char**)((char*)self + 0x8) + 0x8));
     int key = *(int*)(info + 0x1C);
     *(void**)((char*)self + 0xF8) = func_00279EF8_2(D_004A28A4, key);
     sScrTrig_0730* t = (sScrTrig_0730*)((char*)self + 0xBC);
