@@ -770,7 +770,7 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001474A8(void* iface, int rider, int id);
-extern "C" void func_0039F190(void*, int);
+extern "C" void* func_0039F190(void*, int);
 extern char D_004C66A8[];
 extern char D_004C66B8[];
 
