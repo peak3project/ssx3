@@ -3,15 +3,14 @@
 //100%
 INCLUDE_ASM("input/inputmap", cInputMap_init);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void func_003E6448(void* dst, unsigned int value, int size);
 extern char D_0048DD00[];
 
 extern "C" void cInputMap_init(void* self, int count)
 {
     *(int*)((char*)self + 0x0) = count;
-    *(void**)((char*)self + 0x4) = operator_new_tag(count * 4, D_0048DD00, 0, 0);
+    *(void**)((char*)self + 0x4) = operator_new__FUi(count * 4, D_0048DD00, 0, 0);
     func_003E6448(*(void**)((char*)self + 0x4), 0xFFFFFFFF, *(int*)((char*)self + 0x0) * 4);
     *(int*)((char*)self + 0x14) = 0;
     *(int*)((char*)self + 0xC) = 0;
@@ -72,7 +71,7 @@ INCLUDE_ASM("input/inputmap", cInputMap_compileMap);
 void cMemMan_free(void* p);
 extern "C" void func_003E6574(void* dst, void* src, int size);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int cInputMapParser_compileStatement(void* parser, char* src, int* dst, int room, int a4);
 extern char D_0048DD20[];
 
@@ -89,7 +88,7 @@ extern "C" void cInputMap_compileMap(sInputMap_0E18* self, int idx, char* src)
 {
     if (self->cap - self->used < 0x100) {
         int newCap = self->cap + 0x400;
-        int* buf = (int*)operator_new_tag(newCap * 4, D_0048DD20, 0x100, 0);
+        int* buf = (int*)operator_new__FUi(newCap * 4, D_0048DD20, 0x100, 0);
         if (self->code != 0) {
             func_003E6574(buf, self->code, self->cap * 4);
             if (self->code != 0) {
@@ -108,7 +107,7 @@ extern "C" void cInputMap_compileMap(sInputMap_0E18* self, int idx, char* src)
 INCLUDE_ASM("input/inputmap", cInputMap_purgeMapFile);
 #ifdef SKIP_ASM
 // PORT: operator new with tag args bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void operator_delete(int* p);
 void cMemMan_free(void* p);
 extern "C" void func_003E6574(void* dst, void* src, int size);
@@ -120,7 +119,7 @@ extern "C" void cInputMap_purgeMapFile(void* self)
         operator_delete(*(int**)((char*)self + 0x8));
     }
     *(int**)((char*)self + 0x8) = 0;
-    void* p = operator_new_tag(*(int*)((char*)self + 0x10) << 2, D_0048DD30, 0, 0);
+    void* p = operator_new__FUi(*(int*)((char*)self + 0x10) << 2, D_0048DD30, 0, 0);
     func_003E6574(p, *(void**)((char*)self + 0x14), *(int*)((char*)self + 0x10) << 2);
     if (*(void**)((char*)self + 0x14) != 0) {
         cMemMan_free(*(void**)((char*)self + 0x14));
