@@ -178,7 +178,7 @@ INCLUDE_ASM("sound/icepick/worldtriggermanager", cWorldTriggerManager_cWorldTrig
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" void* func_002B4B70(void* self);
-extern "C" void cWorldTriggerManager_LoadTriggerInfo(void* self);
+extern "C" int cWorldTriggerManager_LoadTriggerInfo(void* self);
 extern const char D_004835A0[];
 
 struct sWorldTrigger58D0 {
@@ -242,9 +242,9 @@ extern char D_004835C0[];
 struct sTrigInfoEnt { int type; int* data; };
 
 // PORT: the unit declares LoadTriggerInfo as void (the ctor ignores it); the body returns 0/1. Bound by asm label.
-int cWorldTriggerManager_LoadTriggerInfo_impl(void* self) __asm__("cWorldTriggerManager_LoadTriggerInfo");
+int cWorldTriggerManager_LoadTriggerInfo(void* self);
 
-int cWorldTriggerManager_LoadTriggerInfo_impl(void* self)
+int cWorldTriggerManager_LoadTriggerInfo(void* self)
 {
     if (BXFILE_exists(D_004A3858) != 0) {
         char* data = func_003E22F0(D_004A3858, 0);
@@ -282,7 +282,7 @@ int cWorldTriggerManager_LoadTriggerInfo_impl(void* self)
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B5B40);
 #ifdef SKIP_ASM
 extern "C" void cMemMan_free__FPv(int);
-extern "C" void func_002523A8(int);
+extern "C" void* func_002523A8(int);
 
 extern "C" void func_002B5B40(void *arg0) {
     int temp_4;
@@ -927,7 +927,7 @@ struct sTriggerSlots {
     sTriggerSlot120 slots[2];
 };
 
-extern "C" sTriggerSlots* func_002B6AA0(sTriggerSlots* self)
+extern "C" sTriggerSlots* func_002B6AA0(sTriggerSlots* self, int a)
 {
     sTriggerSlot120* p = self->slots;
     for (int i = 1; i != -1; i--, p++) {
@@ -970,7 +970,7 @@ extern "C" void func_002B6C20(void*);
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B6B30);
 #ifdef SKIP_ASM
-extern "C" void func_002B6B30(void* self, int a1)
+extern "C" void func_002B6B30(void* self, int a1, unsigned int param)
 {
     if (a1 != 0) {
         func_002B6C20(self);
