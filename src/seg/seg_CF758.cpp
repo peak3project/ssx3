@@ -214,27 +214,32 @@ struct sReq_ED90
 };
 extern sReq_ED90 D_0045AAD8_ED90[][4][5] __asm__("D_0045AAD8");
 
-extern "C" void func_001CED90(int arg0, int arg1, int arg2, int arg3, int arg4)
+extern "C" int func_001CED90(int arg0, int arg1, int arg2, int arg3, int arg4)
 {
     void* r = cBE_getInterface_ED90(cBE_getBE(), 0xD);
+    int result;
     if (arg3 == 2)
     {
         if (arg4 == 0)
         {
-            func_001589B0(r, arg0, arg1, arg2);
-            return;
+            result = func_001589B0(r, arg0, arg1, arg2);
         }
-        func_00158A50(r, arg0, arg1, arg2);
-        return;
+        else
+        {
+            result = func_00158A50(r, arg0, arg1, arg2);
+        }
     }
-    if (arg3 != 3)
+    else if (arg3 != 3)
     {
         int kind = D_0045AAD8_ED90[arg2][arg3][arg4].kind;
         int track = D_0045AAD8_ED90[arg2][arg3][arg4].track;
-        cBERewardInterface_getTrackMedal(r, arg0, arg1, track, kind);
-        return;
+        result = cBERewardInterface_getTrackMedal(r, arg0, arg1, track, kind);
     }
-    cBERewardInterface_getEarningsMedal(r, arg0, arg1, arg2);
+    else
+    {
+        result = cBERewardInterface_getEarningsMedal(r, arg0, arg1, arg2);
+    }
+    return result;
 }
 #endif
 
