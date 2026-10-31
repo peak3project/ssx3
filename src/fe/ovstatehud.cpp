@@ -332,8 +332,8 @@ INCLUDE_ASM("fe/ovstatehud", func_001E95A0);
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001E9A30);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0_9A30(void* self, int a1) __asm__("func_0039E2A0");
-extern "C" void func_0020EAA0(void*);
+extern "C" void* func_0039E2A0(void *, int);
+extern "C" void* func_0020EAA0(void*);
 extern char D_00474160[];
 
 struct sElem_9A30 {
@@ -347,7 +347,7 @@ struct sElem_9A30 {
 extern "C" void* func_001E9A30(void* arg0, int a1)
 {
     char* self = (char*)arg0;
-    func_0039E2A0_9A30(self, a1);
+    func_0039E2A0(self, a1);
     *(char**)(self + 8) = D_00474160;
     new (self + 0x48) sElem_9A30[2];
     *(int*)(self + 0x474) = -1;
@@ -1631,7 +1631,7 @@ extern "C" void func_001F36D8(void* self, int bit)
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F3700);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -1639,9 +1639,9 @@ extern "C" int func_00147318(void* self, int a1);
 extern "C" void func_001A1CB8(void* self, int a1, int val);
 extern void* D_00473AA8[];
 
-extern "C" void* func_001F3700(void* self)
+extern "C" void* func_001F3700(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 0x27;
     *(void***)((char*)self + 0x8) = D_00473AA8;
     int idx = func_00147318(cBE_getInterface_Fv(cBE_getBE(), 1), 0);
