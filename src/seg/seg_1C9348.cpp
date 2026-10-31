@@ -434,8 +434,7 @@ extern "C" int func_002C9F60(HuffState_9F60* s, HuffBuf_9F60* in, HuffBuf_9F60* 
 INCLUDE_ASM("seg/seg_1C9348", HUFF_encode);
 #ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int size, const char* name, int flags, int align);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void*);
 void operator_delete(int* ptr);
 extern "C" void func_002C85C0(unsigned char *src, unsigned char *dst, int n);
@@ -461,12 +460,12 @@ extern "C" int HUFF_encode(void* src, int len, void* dst, int* opts)
         HuffBuf_A100 out;
         switch (mode) {
         case 1:
-            tmp = operator_new_tag(len, D_00486618, 0x20000000, 0);
+            tmp = operator_new__FUi(len, D_00486618, 0x20000000, 0);
             func_002C85C0((unsigned char*)src, (unsigned char*)tmp, len);
             in.buf = tmp;
             break;
         case 2:
-            tmp = operator_new_tag(len, D_00486618, 0x20000000, 0);
+            tmp = operator_new__FUi(len, D_00486618, 0x20000000, 0);
             func_002C85C0((unsigned char*)src, (unsigned char*)tmp, len);
             func_002C85C0((unsigned char*)tmp, (unsigned char*)tmp, len);
             in.buf = tmp;
