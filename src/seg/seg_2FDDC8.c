@@ -3,12 +3,12 @@
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FCDC8);
 #ifdef SKIP_ASM
-extern int func_003FC0D8(int);
+extern int func_003FC0D8(void);
 extern int func_003FA240(int);
 extern int func_003FB810(int);
 int func_003FCDC8(int a) {
     int r;
-    if (func_003FC0D8(a)) {
+    if (func_003FC0D8()) {
         r = func_003FB810(func_003FA240(a));
     } else {
         r = 2;
@@ -151,8 +151,8 @@ void func_003FD0D8(int a) {
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD100);
 #ifdef SKIP_ASM
 extern int (*D_00451530[])(void);
-void func_003FD100(void) {
-    D_00451530[0]();
+int func_003FD100(void) {
+    return D_00451530[0]();
 }
 #endif
 
@@ -160,8 +160,8 @@ void func_003FD100(void) {
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD128);
 #ifdef SKIP_ASM
 extern int (*D_00451534[])(void);
-void func_003FD128(void) {
-    D_00451534[0]();
+int func_003FD128(void) {
+    return D_00451534[0]();
 }
 #endif
 
