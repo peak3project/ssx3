@@ -10,7 +10,7 @@ void* cBE_getInterface_CE758(void* be, int kind) __asm__("cBE_getInterface__Fv")
 void cUIText_setAsciiString(cUIText* text, const char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" const char* func_00144C60(void* iface, int track);
-extern "C" void func_002C2540(void* dst, void* src);
+extern "C" unsigned short* func_002C2540(void* dst, void* src);
 // PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...)
 extern "C" void func_002C26D0_CE758(void* dst, void* fmt, ...) __asm__("func_002C26D0");
 extern "C" void func_003A0E90(cUIText* text, void* str);
@@ -121,7 +121,7 @@ extern "C" int func_00153390(void* iface, int peak);
 extern "C" int func_00153688(void* iface, int a, int b, int peak);
 extern "C" int func_00154368(void* iface, int peak);
 extern "C" int func_001544D0(void* iface, int a, int b, int peak);
-extern "C" unsigned int func_00158960(void* self, int b, int c, int d, int e);
+extern "C" int func_00158960(void* self, int b, int c, int d, int e);
 extern char D_004A1EE0[];
 extern char D_00466CE0[];
 extern char D_00466CF8[];
@@ -242,7 +242,7 @@ extern "C" void func_001CED90(int arg0, int arg1, int arg2, int arg3, int arg4)
 INCLUDE_ASM("seg/seg_CF758", func_001CEEA0);
 #ifdef SKIP_ASM
 extern "C" void* func_0039E2A0(void* self, void* parent);
-extern "C" signed char func_001A1CD0(void* mgr, int player);
+extern "C" unsigned char func_001A1CD0(void* mgr, int player);
 signed char cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 int cBELibrary_getRiderIndex(int flag);
 extern "C" int func_00146D98(void* self, int index);
