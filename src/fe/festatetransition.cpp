@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/festatetransition", cFEStateBackground_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_0045FFD8[];
 
 extern "C" void cFEStateBackground_onCreateScreen(void* self)
@@ -61,7 +61,7 @@ extern "C" int cFEStateTransition_onScreenEvent(void* self, void* screen, int id
 //100%
 INCLUDE_ASM("fe/festatetransition", func_001946A8);
 #ifdef SKIP_ASM
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* func_0028B180();
 extern "C" void func_00294F78(void*, int);
 
@@ -88,12 +88,12 @@ extern "C" int func_001946A8(void* self, int which)
 //100%
 INCLUDE_ASM("fe/festatetransition", func_00194738);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046BAB8[];
 
-extern "C" void* func_00194738(void* self)
+extern "C" void* func_00194738(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_0046BAB8;
     *(int*)((char*)self + 0x48) = 0;
     *(int*)((char*)self + 0xC) = 0;
