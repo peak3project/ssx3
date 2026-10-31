@@ -1267,7 +1267,7 @@ struct sVE_228C08 {
 
 extern cGfx_228C08* D_004A5B80_228C08 __asm__("D_004A5B80");
 
-extern "C" void func_00228C08()
+extern "C" void func_00228C08(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 4);
     switch (GetOptions_228C08().mode) {
