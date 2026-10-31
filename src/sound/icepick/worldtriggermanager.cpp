@@ -87,7 +87,244 @@ extern "C" int func_002B4C08(void* self, int a1, int a2, int a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B4C38);
+#ifdef SKIP_ASM
+struct sWorldTrigger70;
+struct sTriggerIdCache;
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" void* func_0028B180();
+extern "C" int func_00287968(void* self, int a1, int a2);
+extern "C" int func_002906B8(void* self);
+extern "C" char* func_00285D98(void* self, int which);
+extern "C" int func_004165A8(const void* a, const void* b);
+extern "C" int func_0029B818(void* sys, void* name, int* rec);
+extern "C" void func_002A7468(void* sys);
+extern "C" int func_002A7678(void* sys, int a);
+extern "C" void func_002A7340(void* sys, int idx, int v);
+extern "C" void* func_002AD550(void* sub, int idx, int a2);
+extern "C" void func_002AD5F0(void* self, int idx, int a2, float v);
+extern "C" int func_002B5838(void* self, int idx);
+extern "C" int func_002B5818(void* self, int idx, int* type, int* a, int* b, int c, int d);
+extern "C" int func_002B5878(void* self, int idx, char* dst);
+extern "C" void func_002B5898(void* self);
+extern "C" int func_002B66E8(sWorldTrigger70** self, int a1, int a2, sWorldTrigger70* except);
+extern "C" int func_002B6630(sWorldTrigger70** self, int id);
+extern "C" int func_002B67D8(void* self, unsigned int i);
+extern "C" int func_002B6808(sTriggerIdCache* self, int id);
+extern "C" int func_002B6988(void* self, unsigned int i);
+extern "C" int func_002B69B8(void* self, void* src, void* state);
+extern unsigned char D_004A35A8[];
+
+struct sSnd4C38Ch {
+    signed char vol;
+    char pad1[0x17];
+};
+struct sSnd4C38E16 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+struct sSnd4C38Sub {
+    void* rng;               // 0x00
+    struct sSnd4C38Ch def;          // 0x04
+    volatile int cur;        // 0x1C (volatile: the prototype's out-of-line OPTS_Vol reloads it at every use)
+    struct sSnd4C38Ch* ch;          // 0x20
+    void* tgt[4];            // 0x24
+    int* p34;                // 0x34
+    int* vals;               // 0x38
+    int* p3C;                // 0x3C
+    char e40[4][8];          // 0x40
+    int* p60;                // 0x60
+    int* p64;                // 0x64
+    int* p68;                // 0x68
+    int* p6C;                // 0x6C
+    struct sSnd4C38E16* p70;        // 0x70
+    int* p74;                // 0x74
+    int* p78;                // 0x78
+    int* p7C;                // 0x7C
+    int* p80;                // 0x80
+    int* p84;                // 0x84
+};
+struct sSnd4C38Mgr {
+    char pad0[0x1D8];
+    struct sSnd4C38Sub sub;         // 0x1D8
+};
+struct sSnd4C38Sys {
+    struct sSnd4C38Mgr* mgr;
+    int* a4;                 // 0x4
+    int* a8;                 // 0x8
+    char padC[0x118 - 0xC];
+    struct sSnd4C38Mgr** p118;      // 0x118
+};
+struct sWt4C38 {
+    int f0, f4, f8, fC;
+    float f10;
+    int f14;
+    int pad18[2];
+    char f20[0x10];
+    int f30;
+    int pad34;
+    int f38;
+    int f3C;
+    char f40[0x20];
+    int f60;
+    int f64;
+};
+
+#define SND_4C38_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_4C38_MAX(a, b) ((a) > (b) ? (a) : (b))
+
+static inline void optsVol_4C38(struct sSnd4C38Mgr* m, int v)
+{
+    struct sSnd4C38Sub* o = &m->sub;
+    o->vals[m->sub.cur] = v;
+    o->ch[m->sub.cur].vol = SND_4C38_MAX(0, SND_4C38_MIN(o->vals[o->cur], 0x7F));
+}
+
+static inline void sfxBegin_4C38(struct sSnd4C38Sys* self, int a, int b)
+{
+    struct sSnd4C38Mgr* m = self->mgr;
+    struct sSnd4C38Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+}
+
+// vol/target/handle set-up shared by the play paths (SFX_Play2DVol tail)
+static inline void voiceTail_4C38(struct sWt4C38* t)
+{
+    optsVol_4C38(*((struct sSnd4C38Sys*)func_0028B180())->p118, (int)(t->f10 * 127.0f));
+    struct sSnd4C38Mgr** pp = ((struct sSnd4C38Sys*)func_0028B180())->p118;
+    int r = func_00287968(func_0028B180(), 5, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+    if (t->f14 != 0) {
+        struct sSnd4C38Mgr** p1 = ((struct sSnd4C38Sys*)func_0028B180())->p118;
+        (*p1)->sub.tgt[(*p1)->sub.cur] = t->f20;
+        struct sSnd4C38Mgr** p2 = ((struct sSnd4C38Sys*)func_0028B180())->p118;
+        (*p2)->sub.p74[(*p2)->sub.cur] = 1;
+        struct sSnd4C38Mgr** p3 = ((struct sSnd4C38Sys*)func_0028B180())->p118;
+        (*p3)->sub.p7C[(*p3)->sub.cur] = 0;
+    }
+    struct sSnd4C38Mgr** p4 = ((struct sSnd4C38Sys*)func_0028B180())->p118;
+    (*p4)->sub.p64[(*p4)->sub.cur] = t->f3C;
+}
+
+extern "C" void func_002B4C38(sWorldTrigger70* tt)
+{
+    struct sWt4C38* t = (struct sWt4C38*)tt;
+    int rec[3];
+    int r;
+    if (t->f30 == -1) {
+        if (func_002B5838(t, t->fC) != 0)
+            t->f38 = 1;
+        else
+            t->f38 = 0;
+        if (t->f38 == 0) {
+            if (func_002B66E8((sWorldTrigger70**)D_004A52D4, t->f4, t->f8, tt) != 0) {
+                func_002B5898(t);
+                return;
+            }
+        }
+        {
+            int ok = func_002B5818(t, t->fC, &rec[0], &rec[1], &rec[2], t->f3C, 0);
+            t->f60 = rec[0];
+            t->f64 = rec[1];
+            if (!ok) {
+                func_002B5898(t);
+                return;
+            }
+        }
+        if (rec[2] != 0) {
+            t->f30 = -9999;
+            return;
+        }
+        r = -1;
+        if (rec[0] == 3) {
+            if (*(int*)(func_00285D98(func_0028B180(), -1) + 0x870) != t->f3C) {
+                func_002B5898(t);
+                return;
+            }
+            r = func_002B6630((sWorldTrigger70**)D_004A52D4, t->fC);
+            if (r > 0) {
+                func_002B5898(t);
+                return;
+            }
+            if (func_004165A8(t->f40, D_004A35A8) == 0) {
+                if (func_002B5878(t, t->fC, t->f40) == 0) {
+                    func_002B5898(t);
+                    return;
+                }
+            }
+            r = func_0029B818(func_0028B180(), t->f40, rec);
+        }
+        if (func_002B67D8(D_004A52D4, t->fC) == 0 || func_002B6808((sTriggerIdCache*)D_004A52D4, t->f4) != 0) {
+            if (rec[0] == 3 && r != 1)
+                return;
+            if (func_002B6988(D_004A52D4, t->fC) != 0) {
+                if (func_002B69B8(D_004A52D4, (void*)t->f4, tt) == 0) {
+                    t->f30 = -9999;
+                    return;
+                }
+            }
+            if (t->f38 != 0) {
+                func_002A7468(func_0028B180());
+                voiceTail_4C38(t);
+                t->f30 = func_002A7678(func_0028B180(), rec[1]);
+                return;
+            }
+            sfxBegin_4C38((struct sSnd4C38Sys*)func_0028B180(), rec[0], rec[1]);
+            voiceTail_4C38(t);
+            t->f30 = func_002906B8(func_0028B180());
+            return;
+        }
+        func_002B5898(t);
+        return;
+    }
+    if (func_002B6988(D_004A52D4, t->fC) != 0 && func_002B69B8(D_004A52D4, (void*)t->f4, tt) != 0) {
+        if (t->f30 != -9999)
+            func_002AD5F0(&(*((struct sSnd4C38Sys*)func_0028B180())->p118)->sub, t->f30, 1, 0.1f);
+        sfxBegin_4C38((struct sSnd4C38Sys*)func_0028B180(), t->f60, t->f64);
+        voiceTail_4C38(t);
+        t->f30 = func_002906B8(func_0028B180());
+        return;
+    }
+    if (t->f38 != 0) {
+        if (t->f30 == -9999)
+            return;
+        func_002A7340(func_0028B180(), t->f30, (int)(t->f10 * 127.0f));
+        return;
+    }
+    if (t->f30 == -9999)
+        return;
+    {
+        char* h = (char*)func_002AD550(&(*((struct sSnd4C38Sys*)func_0028B180())->p118)->sub, t->f30, 1);
+        if (h == 0)
+            return;
+        *(int*)(h + 100) = (int)(t->f10 * 127.0f);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B5758);
