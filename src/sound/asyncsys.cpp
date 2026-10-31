@@ -490,7 +490,7 @@ extern "C" void func_0028B2D0(void* self);
 extern "C" void func_0028B528(void* self);
 extern "C" int func_003B6098(void* sema, int a1);
 extern "C" int func_003B6528(int id);
-extern "C" void func_003B6548(void* data, int id);
+extern "C" int func_003B6548(void* data, int id);
 extern "C" int func_003E1BB8(const char* name, void* data, int size);
 extern char* D_004A3614;
 
