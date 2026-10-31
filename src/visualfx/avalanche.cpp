@@ -93,7 +93,7 @@ extern char D_00538450[];
 extern int D_004A3AC0;
 extern "C" void func_00416210(void* dst, int c, int n);
 
-extern "C" void func_002D6410(void)
+extern "C" void func_002D6410(void* self)
 {
     int i;
     for (i = 0; i < 0x800; i++) {
@@ -411,7 +411,7 @@ extern "C" int func_00144BE0(void* iface);
 extern "C" char* func_00144C48(void* iface, int i);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" int func_003DEBF0(char* name, int mode, int prio, int* fd);
-extern "C" void func_003DECA0(int fd, int prio);
+extern "C" int func_003DECA0(int fd, int prio);
 extern "C" int func_002D82A0(int direct, void* a, void* b, char* src, int stride, int rows);
 
 struct sAvPart_83B8 {
