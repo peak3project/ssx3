@@ -302,10 +302,10 @@ extern "C" void func_0021CA60(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CA88);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390();
+extern "C" void func_0039E390(void *, int);
 
-extern "C" void func_0021CA88(void) {
-    func_0039E390();
+extern "C" void func_0021CA88(void *self, int flags) {
+    func_0039E390(self, flags);
 }
 #endif
 
@@ -436,7 +436,6 @@ extern "C" void *func_0021CBA0(void *arg0) {
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CC40);
 #ifdef SKIP_ASM
 extern "C" void func_0020EB08(void *, int);
-extern "C" void func_0039E390(void *, int);
 extern char D_00474160[];
 
 extern "C" void func_0021CC40(void *arg0, int arg1) {
