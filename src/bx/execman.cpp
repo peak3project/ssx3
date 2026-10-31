@@ -376,7 +376,7 @@ void* func_00320C48(void* self, int a1)
 //100%
 INCLUDE_ASM("bx/execman", func_00320C70);
 #ifdef SKIP_ASM
-extern "C" void func_00321188(int, int, int, int);
+extern "C" int func_00321188(int, int, int, int);
 
 extern "C" void func_00320C70(void *arg0, int arg1, int arg2) {
     func_00321188((*(int *)((char*)(arg0) + (4))), (*(int *)((char*)(arg0) + (0))), arg1, arg2);
