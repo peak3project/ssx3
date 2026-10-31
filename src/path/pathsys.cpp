@@ -360,7 +360,7 @@ extern "C" int func_0026B880(sPathSys_B880* self, char* p)
 }
 #endif
 
-extern "C" void* func_003E6574(void*, void*, int);
+extern "C" void func_003E6574(void*, void*, int);
 
 //100%
 INCLUDE_ASM("path/pathsys", func_0026BA48);
