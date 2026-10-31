@@ -1645,14 +1645,13 @@ struct sVEntry_23AC88 {
 
 extern "C" void func_0023AC88(void* self)
 {
-    int one = 1;
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     sGM_23AC88* gm = (sGM_23AC88*)D_004A2C70;
     gm->fC = 2;
     gm->f94 = 0;
     gm->f90 = 0;
     gm->f9C = 0;
-    gm->f98 = one;
+    gm->f98 = 1;
     gm->f88 = 0;
     gm->f8 = 0;
     gm->f0 = 3;
@@ -1678,7 +1677,7 @@ extern "C" void func_0023AC88(void* self)
     ((sGM_23AC88*)D_004A2C70)->a18[1] = cBENewPlayerInterface_getPlayerCharID(player, 1);
     ((sGM_23AC88*)D_004A2C70)->a40[0] = func_001474C8(player, 0);
     ((sGM_23AC88*)D_004A2C70)->a40[1] = func_001474C8(player, 1);
-    if (((sGM_23AC88*)D_004A2C70)->f84 == one) {
+    if (((sGM_23AC88*)D_004A2C70)->f84 == 1) {
         func_0023B0A8(self);
     }
     ((sGM_23AC88*)D_004A2C70)->f84 = 0;
@@ -1832,11 +1831,10 @@ struct sVEntry_23B170 {
 
 extern "C" void func_0023B170(void* self)
 {
-    int one = 1;
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
     sGM_23B170* gm = (sGM_23B170*)D_004A2C70;
-    gm->f0 = one;
-    gm->f98 = one;
+    gm->f0 = 1;
+    gm->f98 = 1;
     gm->f10 = 0;
     gm->f14 = 0;
     func_00416210(gm->a18, -1, 0x28);
@@ -1845,9 +1843,9 @@ extern "C" void func_0023B170(void* self)
     sVEntry_23B170* e = &(*(sVEntry_23B170**)self)[4];
     e->fn((char*)self + e->delta);
     sGM_23B170* gm2 = (sGM_23B170*)D_004A2C70;
-    gm2->f70 = one;
-    gm2->f74 = one;
-    gm2->f9C = one;
+    gm2->f70 = 1;
+    gm2->f74 = 1;
+    gm2->f9C = 1;
     gm2->f78 = 0;
     gm2->f7C = 0;
     gm2->f80 = 0;
@@ -2013,33 +2011,32 @@ static inline char* rider_23B468(char* g, int off)
 
 extern "C" void func_0023B468(void* self, int p)
 {
-    int one = 1;
     int off = p << 2;
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     char* g = (char*)D_004A28A8;
     sGM_23B468* gm = (sGM_23B468*)D_004A2C70;
     unsigned int* t = &D_00536640[p];
     *t = *(unsigned int*)(rider_23B468(g, off) + 0x478);
-    gm->f9C = one;
+    gm->f9C = 1;
     char* r = rider_23B468(g, off);
     if (*(int*)(r + 0x480) != 0) {
         *t = 0x57E40;
         *(int*)(rider_23B468(g, off) + 0x100) = 0;
-        gm->f70 = one;
-        D_005366A8[p] = one;
+        gm->f70 = 1;
+        D_005366A8[p] = 1;
     } else if (*(unsigned int*)((char*)self + 4) < *t) {
         *(int*)(r + 0x100) = 0;
-        gm->f70 = one;
+        gm->f70 = 1;
         D_005366A8[p] = 0;
     } else {
-        *(int*)(r + 0x100) = one;
-        gm->f84 = one;
+        *(int*)(r + 0x100) = 1;
+        gm->f84 = 1;
         unsigned int a = func_001455D0(race, gm->f8, 2) * 60;
         unsigned int b = func_001455D0(race, ((sGM_23B468*)D_004A2C70)->f8, 1) * 60;
         if (a >= *t) {
             D_00536730[p] = 0;
         } else if (b >= *t) {
-            D_00536730[p] = one;
+            D_00536730[p] = 1;
         } else {
             D_00536730[p] = 2;
         }
@@ -2130,14 +2127,13 @@ extern "C" void func_0023B6C0(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
-    int one = 1;
     sGM_23B6C0* gm = (sGM_23B6C0*)D_004A2C70;
-    gm->f0 = one;
-    gm->f10 = one;
+    gm->f0 = 1;
+    gm->f10 = 1;
     gm->f14 = 0;
     gm->f68 = -1;
-    gm->f70 = one;
-    gm->f74 = one;
+    gm->f70 = 1;
+    gm->f74 = 1;
     gm->f78 = 0;
     gm->f7C = 0;
     gm->f80 = 0;
@@ -2147,7 +2143,7 @@ extern "C" void func_0023B6C0(void* self)
     gm->f90 = 0;
     gm->f94 = 0;
     gm->f6C = -1;
-    gm->f98 = one;
+    gm->f98 = 1;
     gm->f9C = 0;
     sVEntry_23B6C0* vt = *(sVEntry_23B6C0**)self;
     vt[5].fn((char*)self + vt[5].delta);
@@ -2338,16 +2334,15 @@ struct sVEntry_23BB98 {
 
 extern "C" void func_0023BB98(void* self)
 {
-    int one = 1;
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     sGM_23BB98* gm = (sGM_23BB98*)D_004A2C70;
     gm->f68 = -1;
-    gm->f74 = one;
-    gm->f0 = one;
-    gm->f10 = one;
+    gm->f74 = 1;
+    gm->f0 = 1;
+    gm->f10 = 1;
     gm->f14 = 0;
-    gm->f70 = one;
+    gm->f70 = 1;
     gm->f6C = -1;
     int t = func_001454F8(race, 1);
     sGM_23BB98* gm2 = (sGM_23BB98*)D_004A2C70;
@@ -2356,11 +2351,11 @@ extern "C" void func_0023BB98(void* self)
     gm2->f78 = t * 60;
     gm2->f80 = 0;
     gm2->f84 = 0;
-    gm2->f88 = one;
+    gm2->f88 = 1;
     gm2->f8C = 0;
     gm2->f90 = 0;
     gm2->f94 = 0;
-    gm2->f98 = one;
+    gm2->f98 = 1;
     sVEntry_23BB98* vt = *(sVEntry_23BB98**)self;
     vt[4].fn((char*)self + vt[4].delta);
     if (D_00535C11[0] == 2) {
