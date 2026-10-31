@@ -755,7 +755,7 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_001A8A40(void* self, void* obj);
-extern "C" int func_001BF228(void* self, int msg);
+extern "C" int func_001BF228(void* self, int msg, int a2);
 extern "C" void* func_001BFBB8(void* mem, int a1);
 extern "C" void func_0025C610(void* mgr);
 extern "C" void* func_0025CD50(void*, int);
@@ -765,7 +765,7 @@ extern void* D_004A3028;
 extern char D_0045FF28[];
 extern char D_00534B30[];
 
-extern "C" int func_001D5138(void* self, int msg)
+extern "C" int func_001D5138(void* self, int msg, int a2)
 {
     switch (msg) {
     case 0xC9:
@@ -784,7 +784,7 @@ extern "C" int func_001D5138(void* self, int msg)
         break;
     }
     default:
-        return func_001BF228(self, msg);
+        return func_001BF228(self, msg, a2);
     }
     return 0;
 }
