@@ -7,8 +7,7 @@ typedef int cQuad128 __attribute__((mode(TI)));
 //100%
 INCLUDE_ASM("render/graphicsman", cGraphicsMan_AddBlendedMatrix);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00492638[];
 
 struct sBlendWeight {
@@ -33,7 +32,7 @@ extern "C" int func_00369A78(void* a, void* b, int tol0, int tol1, int tol2);
 extern "C" void cGraphicsMan_AddBlendedMatrix(sGfxManBlend* self, sBlendMatrix* m)
 {
     if (self->blend == 0) {
-        sBlendMatrix* mem = (sBlendMatrix*)operator_new_tag(0x3000, D_00492638, 0x100, 0);
+        sBlendMatrix* mem = (sBlendMatrix*)operator_new__FUi(0x3000, D_00492638, 0x100, 0);
         self->blend = mem;
         sBlendWeight* w = (sBlendWeight*)(mem + 0x200);
         for (int k = 0; k < 0x200; k++) {
