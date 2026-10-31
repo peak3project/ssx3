@@ -1668,8 +1668,7 @@ extern "C" void func_002ABF60(void* self, int vol)
             vol = (int)(*(float*)((char*)self + 0x90) * (float)vol);
         if (vol > 127)
             vol = 127;
-        int none = -1;
-        if (vol <= none)
+        if (vol <= -1)
             vol = 0;
         if (*(int*)((char*)self + 0xB4) >= 0) {
             int d = vol - *(int*)((char*)self + 0xB4);
@@ -1678,7 +1677,7 @@ extern "C" void func_002ABF60(void* self, int vol)
         }
         *(int*)((char*)self + 0xB4) = vol;
         func_003B58A0();
-        if (orig == none)
+        if (orig == -1)
             func_003B89E0(*(int*)((char*)self + 0x4));
         else
             func_003B85F0(*(int*)((char*)self + 0x4), vol);
@@ -1690,8 +1689,7 @@ extern "C" void func_002ABF60(void* self, int vol)
             vol = (int)(*(float*)((char*)self + 0x90) * (float)vol);
         if (vol > 127)
             vol = 127;
-        int none = -1;
-        if (vol <= none)
+        if (vol <= -1)
             vol = 0;
         if (*(int*)((char*)self + 0xB4) >= 0) {
             int d = vol - *(int*)((char*)self + 0xB4);
@@ -1700,7 +1698,7 @@ extern "C" void func_002ABF60(void* self, int vol)
         }
         *(int*)((char*)self + 0xB4) = vol;
         func_003B58A0();
-        if (orig == none)
+        if (orig == -1)
             func_003B9920(*(int*)((char*)self + 0x4));
         else
             func_003B9E48(*(int*)((char*)self + 0x4), vol);
@@ -1712,8 +1710,7 @@ extern "C" void func_002ABF60(void* self, int vol)
             vol = (int)(*(float*)((char*)self + 0x90) * (float)vol);
         if (vol > 127)
             vol = 127;
-        int none = -1;
-        if (vol <= none)
+        if (vol <= -1)
             vol = 0;
         if (*(int*)((char*)self + 0xB4) >= 0) {
             int d = vol - *(int*)((char*)self + 0xB4);
@@ -1721,7 +1718,7 @@ extern "C" void func_002ABF60(void* self, int vol)
                 return;
         }
         *(int*)((char*)self + 0xB4) = vol;
-        if (orig == none)
+        if (orig == -1)
             func_002AA408(*(void**)((char*)self + 0xC));
         else
             func_002A9F30(*(void**)((char*)self + 0xC), vol);
