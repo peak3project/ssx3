@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("world/streamman", cStreamMan_cStreamMan);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_003E06B0(int a, int b, int c);
 extern "C" void* func_003E06D8(int a, int b, int c, void* buf, int size);
 extern "C" void func_003A6ED8(void* self);
@@ -23,11 +22,11 @@ extern "C" void* cStreamMan_cStreamMan(void* self)
     size += 0x18000;
     size += 0x50000;
     size = cStreamMan_min(0x80000, size);
-    void* buf = operator_new_tag(size, D_00494D90, 0, 0);
+    void* buf = operator_new__FUi(size, D_00494D90, 0, 0);
     *(void**)((char*)self + 0x84) = buf;
     *(void**)((char*)self + 0x88) = func_003E06D8(2, 1, 1, buf, size);
     *(int*)((char*)self + 0x9C) = 0;
-    *(void**)((char*)self + 0x8C) = operator_new_tag(0x14000, D_00494DA8, 0, 0);
+    *(void**)((char*)self + 0x8C) = operator_new__FUi(0x14000, D_00494DA8, 0, 0);
     func_003A6ED8(self);
     return self;
 }
