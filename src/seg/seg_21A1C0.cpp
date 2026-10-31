@@ -8,7 +8,7 @@ struct cBXString_91C0 {
 };
 extern "C" long func_0041E9E0(const char* s, char** end, int base);
 extern "C" int strlen(const char* s);
-extern "C" void func_003189D0(cBXString_91C0* self, int len);
+extern "C" char* func_003189D0(cBXString_91C0* self, int len);
 extern "C" int func_004186C8(char* buf, const char* fmt, char* ap);
 extern "C" void func_00318A88(cBXString_91C0* self, int len);
 
