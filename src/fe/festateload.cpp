@@ -301,14 +301,13 @@ struct sMemCardK186A08 {
 extern "C" sFEStateLoadK186A08* func_00186A08(sFEStateLoadK186A08* self, void* engine)
 {
     func_001D53B0(self, engine, 2);
-    int one = 1;
     self->vtbl = D_0046B570;
     D_004A14B8_K186A08 = self;
     D_004A14B4 = 0;
     D_004A14BC = 0;
-    self->f204 = one;
-    self->fC = one;
-    self->f23C = one;
+    self->f204 = 1;
+    self->fC = 1;
+    self->f23C = 1;
     self->f230 = 0;
     self->f234 = 0;
     self->f240 = 0;
@@ -317,9 +316,9 @@ extern "C" sFEStateLoadK186A08* func_00186A08(sFEStateLoadK186A08* self, void* e
     self->f22C = -1;
     self->f238 = -1;
     sMemCardK186A08* mc = (sMemCardK186A08*)func_00227F80(D_004A28A8);
-    mc->f12C = one;
-    mc->f124 = one;
-    mc->f120 = one;
+    mc->f12C = 1;
+    mc->f124 = 1;
+    mc->f120 = 1;
     mc->cbA4 = (void*)func_00186F90;
     mc->cb38 = (void*)func_00187148;
     mc->cb94 = (void*)func_00187180;
