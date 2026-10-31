@@ -1558,10 +1558,10 @@ extern "C" void func_003A5120(int arg0) {
 //100%
 INCLUDE_ASM("ui/uivector", func_003A5140);
 #ifdef SKIP_ASM
-extern "C" void func_00397870(int);
+extern "C" void* func_00397870(int, int);
 
-extern "C" void func_003A5140(int arg0) {
-    func_00397870(arg0 + 0x74);
+extern "C" void func_003A5140(int arg0, int count) {
+    func_00397870(arg0 + 0x74, count);
 }
 #endif
 //100%
@@ -3156,10 +3156,10 @@ extern "C" void func_003A6400(int arg0) {
 //100%
 INCLUDE_ASM("ui/uivector", func_003A6420);
 #ifdef SKIP_ASM
-extern "C" void func_00397870(int);
+extern "C" void* func_00397870(int, int);
 
-extern "C" void func_003A6420(int arg0) {
-    func_00397870(arg0 + 0x8C);
+extern "C" void func_003A6420(int arg0, int count) {
+    func_00397870(arg0 + 0x8C, count);
 }
 #endif
 //100%
