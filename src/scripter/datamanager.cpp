@@ -1561,7 +1561,7 @@ extern "C" void func_00276868(void* self, int a1);
 extern "C" int func_00277450(void* self, int index, int a2);
 extern "C" void func_00277598(void* self, int index);
 extern "C" int func_00277DD8(void* self, void* a1);
-extern "C" void func_00279720(void* self, int val, int key, int b, int c);
+extern "C" void* func_00279720(void* self, int val, int key, int b, int c);
 extern "C" int func_002839A8(void* self);
 extern "C" void* func_00283D70(void* list, int i);
 extern "C" float func_002E4678(void* self);
