@@ -3132,7 +3132,7 @@ extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
-extern "C" void func_00162B80(void* self, void* info);
+extern "C" cQuad128 func_00162B80(void* self, void* info);
 extern "C" void func_00162C78(void* self, void* info);
 extern "C" void func_00163010(void* self, void* info, float a, float b, float c, float d, float e, float f, float g);
 extern "C" void func_00163270(void* self, void* info, float a, float b, float c, float d, float e);
@@ -3273,7 +3273,7 @@ extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
-extern "C" void func_00162B80(void* self, void* info);
+extern "C" cQuad128 func_00162B80(void* self, void* info);
 extern "C" void func_00162C78(void* self, void* info);
 extern "C" void func_00163010(void* self, void* info, float a, float b, float c, float d, float e, float f, float g);
 extern "C" void func_00163270(void* self, void* info, float a, float b, float c, float d, float e);
@@ -3394,7 +3394,7 @@ extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
-extern "C" void func_00162B80(void* self, void* info);
+extern "C" cQuad128 func_00162B80(void* self, void* info);
 extern "C" void func_00162C78(void* self, void* info);
 extern "C" void func_00163010(void* self, void* info, float a, float b, float c, float d, float e, float f, float g);
 extern "C" void func_00163270(void* self, void* info, float a, float b, float c, float d, float e);
@@ -3465,7 +3465,7 @@ extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
-extern "C" void func_00162B80(void* self, void* info);
+extern "C" cQuad128 func_00162B80(void* self, void* info);
 extern "C" void func_00162C78(void* self, void* info);
 extern "C" void func_00163010(void* self, void* info, float a, float b, float c, float d, float e, float f, float g);
 extern "C" void func_00163270(void* self, void* info, float a, float b, float c, float d, float e);
