@@ -713,7 +713,6 @@ INCLUDE_ASM("worldpainter/quadtree", func_002C2BD8);
 extern "C" void func_004165A8();
 extern "C" char* strcpy(char* dst, const char* src);
 extern "C" void func_002C29D0();
-extern "C" void func_002C2AA8();
 extern "C" void func_002C2B08();
 extern "C" void func_002C2B28();
 extern void func_002C28C0_2BD8() __asm__("func_002C28C0");
@@ -766,13 +765,11 @@ extern "C" int func_002C2D30(int unused, int size, int zeroFlag)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2D68);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// Unit declares func_002523A8 / func_002C2D68 later with void return; keep the int-returning
-// signatures under asm labels. The argument passes straight through in a0.
+// Unit declares func_002523A8 later with void return; keep the int-returning
+// signature under an asm label. The argument passes straight through in a0.
 extern "C" int func_002523A8_ret(void* p) __asm__("func_002523A8");
-extern "C" int func_002C2D68_impl(void* p) __asm__("func_002C2D68");
 
-extern "C" int func_002C2D68_impl(void* p)
+extern "C" int func_002C2D68(void* p)
 {
     return func_002523A8_ret(p) != 0;
 }
@@ -795,7 +792,6 @@ extern "C" void MUTEX_lock_p(void*) __asm__("MUTEX_lock");
 extern "C" void MUTEX_unlock_p(void*) __asm__("MUTEX_unlock");
 extern "C" int cMemMan_internalResizeBlock(int, int);
 extern "C" int func_002C2D30(int, int, int);
-extern "C" void func_002C2D68(int);
 extern char D_00538B00[];
 
 extern "C" int func_002C2DB0(int block, int a, int size, int c) {
@@ -803,7 +799,7 @@ extern "C" int func_002C2DB0(int block, int a, int size, int c) {
         return func_002C2D30(a, size, c);
     }
     if (size == 0) {
-        func_002C2D68(block);
+        func_002C2D68((void*)block);
         return 0;
     } else {
         int r;
@@ -835,7 +831,6 @@ INCLUDE_ASM("worldpainter/quadtree", func_002C2E78);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_002C2D30_2E78() __asm__("func_002C2D30");
-extern "C" void func_002C2D68();
 extern void func_002C2DB0_2E78() __asm__("func_002C2DB0");
 extern "C" void func_002C2E40();
 extern "C" void func_00415FC8();
