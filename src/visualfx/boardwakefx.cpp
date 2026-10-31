@@ -24,7 +24,7 @@ extern const sVt22_BW D_00488DF0;
 extern char D_00459B90[];
 extern char D_00487968[];
 extern char D_00487980[];
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 struct sWakeDCF28;
 extern "C" void func_002DCF28(sWakeDCF28* self);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
@@ -2109,7 +2109,7 @@ extern char* D_004A5B80;
 extern int D_004A3B18;
 void* func_002E2860(void* self);
 void* func_002E3110(void* self);
-extern "C" void func_002F4380(void* self);
+extern "C" void* func_002F4380(void* self);
 
 // PORT: hand-written g++ 2.95 member-array construction loops (vptr at 0x649C).
 extern "C" void* func_002E2E18(void* self)
@@ -2353,7 +2353,7 @@ extern const sVt22_3680 D_00488A10;
 extern char D_00459B90[];
 
 struct sWakeFade_3930;
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 extern "C" void func_002E3930(sWakeFade_3930* self);
 
 // PORT: hand-written form of g++ 2.95's constructor for a class with a virtual base
@@ -3008,7 +3008,7 @@ extern int D_00538850[];
 extern sWakePoolEntry D_wakePool[] __asm__("D_005382C0");
 extern sWakePoolEntry* D_004A3B1C;
 
-extern "C" sWakePoolEntry* func_002E4CE8(void)
+extern "C" sWakePoolEntry* func_002E4CE8(int size)
 {
     for (int i = 0; i < 4; i++) {
         if (D_00538850[i] == 0) {
