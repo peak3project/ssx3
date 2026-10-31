@@ -546,7 +546,7 @@ extern "C" void cRiderAnimBase_changeHeadingOffset(void* self, float angle);
 extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0011DFE0(void* self, Q_5640 dir, float angle);
 // PORT: the unit defines func_00116930 with no parameters; this caller passes the rider.
-extern "C" void func_00116930_p(void* self) __asm__("func_00116930");
+extern "C" void func_00116930(void* self);
 int func_0011FE98(void* self);
 extern Q_5640 D_004FF130_5640 __asm__("D_004FF130");
 extern Q_5640 D_004FF160_5640 __asm__("D_004FF160");
@@ -591,7 +591,7 @@ extern "C" void func_00115640(char* self)
         cRiderAnimBase_play(*(void**)(self + 0x784), 5, 0, -1.0f);
     }
     *(int*)(self + 0x328) = 0;
-    func_00116930_p(self);
+    func_00116930(self);
 }
 #endif
 
@@ -886,7 +886,7 @@ extern "C" int func_00116378(void *arg0) {
 
 INCLUDE_ASM("seg/seg_14B10", func_001163B0);
 
-extern "C" void func_00116930(void) {
+extern "C" void func_00116930(void* self) {
 }
 
 //100%
