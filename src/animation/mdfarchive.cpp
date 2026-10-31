@@ -5,7 +5,7 @@ INCLUDE_ASM("animation/mdfarchive", cMdfArchive_getModelPartByIndex);
 #ifdef SKIP_ASM
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_003E6574(void*, void*, int);
-extern "C" void func_003B47F8(void* src, void* dst);
+extern "C" void* func_003B47F8(void* src, void* dst);
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern const char D_0048A5D0[];
 
