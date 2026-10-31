@@ -676,11 +676,11 @@ extern "C" void func_002EE2F8(void)
 INCLUDE_ASM("visualfx/lensfx", func_002EE318);
 #ifdef SKIP_ASM
 extern "C" void* func_002EE010(void* p);
-extern "C" void* func_002EF0E8(void);
+extern "C" void* func_002EF0E8(int i);
 
-extern "C" void func_002EE318(void)
+extern "C" void func_002EE318(int i)
 {
-    func_002EE010(func_002EF0E8());
+    func_002EE010(func_002EF0E8(i));
 }
 #endif
 
@@ -688,11 +688,11 @@ extern "C" void func_002EE318(void)
 INCLUDE_ASM("visualfx/lensfx", func_002EE340);
 #ifdef SKIP_ASM
 extern "C" void* func_002EE010(void* p);
-extern "C" void* func_002EF140(void);
+extern "C" void* func_002EF140(int i);
 
-extern "C" void func_002EE340(void)
+extern "C" void func_002EE340(int i)
 {
-    func_002EE010(func_002EF140());
+    func_002EE010(func_002EF140(i));
 }
 #endif
 
@@ -700,11 +700,11 @@ extern "C" void func_002EE340(void)
 INCLUDE_ASM("visualfx/lensfx", func_002EE368);
 #ifdef SKIP_ASM
 extern "C" void* func_002EE010(void* p);
-extern "C" void* func_002EF198(void);
+extern "C" void* func_002EF198(int i);
 
-extern "C" void func_002EE368(void)
+extern "C" void func_002EE368(int i)
 {
-    func_002EE010(func_002EF198());
+    func_002EE010(func_002EF198(i));
 }
 #endif
 
@@ -712,11 +712,11 @@ extern "C" void func_002EE368(void)
 INCLUDE_ASM("visualfx/lensfx", func_002EE390);
 #ifdef SKIP_ASM
 extern "C" void* func_002EE010(void* p);
-extern "C" void* func_002EF1F0();
+extern "C" void* func_002EF1F0(int i);
 
-extern "C" void func_002EE390()
+extern "C" void func_002EE390(int i)
 {
-    func_002EE010(func_002EF1F0());
+    func_002EE010(func_002EF1F0(i));
 }
 #endif
 
