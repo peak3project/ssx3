@@ -4,8 +4,7 @@
 INCLUDE_ASM("ai/ridermetrix", cRiderMetrix_linkToRider);
 #ifdef SKIP_ASM
 extern "C" int* func_00116FA8(void* p);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_004A1078[];
 
 inline void* operator new[](unsigned int, void* p) { return p; }
@@ -25,7 +24,7 @@ extern "C" void cRiderMetrix_linkToRider(char* self, char* rider)
     {
         sMetrixEntry_001172E0** slot = (sMetrixEntry_001172E0**)(self + 0x1B0);
         *(int*)(self + 0x1B4) = 0x2C;
-        *slot = new (operator_new_tag(0x2C * sizeof(sMetrixEntry_001172E0), D_004A1078, 0, 0)) sMetrixEntry_001172E0[0x2C];
+        *slot = new (operator_new__FUi(0x2C * sizeof(sMetrixEntry_001172E0), D_004A1078, 0, 0)) sMetrixEntry_001172E0[0x2C];
         for (int i = 0; i < *(int*)(self + 0x1B4); i++)
         {
             ((sMetrixEntry_001172E0*)(i * 0x9C + *(int*)(self + 0x1B0)))->index = i;
