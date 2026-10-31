@@ -774,7 +774,7 @@ struct sEffVE_346350 {
 };
 
 extern "C" void* func_0034FB00(void* self, int a1, int a2, int a3);
-void func_00353DA8(void* self);
+void* func_00353DA8(void* self);
 extern "C" void func_00353E08(void* self, int a1, float len);
 extern "C" void func_00346D38(void* self);
 extern char* D_004A5B80;
