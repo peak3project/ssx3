@@ -654,11 +654,11 @@ extern "C" void func_002F1510(sFx_1150* self)
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F1768);
 #ifdef SKIP_ASM
-extern "C" void func_00370B60();
+extern "C" void* func_00370B60(void * self);
 extern char D_004881E8[];
 
 extern "C" void *func_002F1768(void *arg0) {
-    func_00370B60();
+    func_00370B60(arg0);
     *(int *)((char*)arg0 + 0x200) = 0;
     *(char **)((char*)arg0 + 0x1F8) = D_004881E8;
     *(int *)((char*)arg0 + 0x204) = 0;
