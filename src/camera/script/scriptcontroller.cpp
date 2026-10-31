@@ -62,7 +62,7 @@ extern "C" void func_001690D0(void* self, int flags)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", cScriptCameraController_addCamera);
 #ifdef SKIP_ASM
-int func_002743C8(void* self);
+unsigned char func_002743C8(void* self);
 void func_001694A8(void* self, int val);
 extern "C" void* func_001694B8(void* self);
 extern "C" void* func_00169CF8(void* self);
