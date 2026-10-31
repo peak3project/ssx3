@@ -472,18 +472,18 @@ extern "C" void func_00230640(void)
 //100%
 INCLUDE_ASM("main/gameload", func_00230698__FPvi);
 #ifdef SKIP_ASM
-int func_00230698(void* self, int i)
+void* func_00230698(void* self, int i)
 {
-    return *(int*)((char*)self + (i << 2) + 0x5C);
+    return *(void**)((char*)self + (i << 2) + 0x5C);
 }
 #endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_002306A8__FPvi);
 #ifdef SKIP_ASM
-int func_002306A8(void* self, int i)
+void* func_002306A8(void* self, int i)
 {
-    return *(int*)((char*)self + (i << 2) + 0x68);
+    return *(void**)((char*)self + (i << 2) + 0x68);
 }
 #endif
 
