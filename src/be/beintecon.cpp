@@ -695,8 +695,7 @@ INCLUDE_ASM("be/beintecon", func_00151A88);
 int func_0014D988(void* self, int i);
 extern "C" void* func_0014D998(void* self, int i);
 extern "C" void func_001513B8(void* self);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern int D_004A11E8;
 extern const char D_0045A7A8[];
 extern char D_004A6750[];
@@ -732,7 +731,7 @@ extern "C" void func_00151A88(sEconItems_151A88* self, int k)
     self->kind = k;
     self->count = n;
     if (self->lookup == 0)
-        self->lookup = (short*)operator_new_tag(D_004A11E8 * 2, D_0045A7A8, 0, 0);
+        self->lookup = (short*)operator_new__FUi(D_004A11E8 * 2, D_0045A7A8, 0, 0);
     int i;
     for (i = 0; i < D_004A11E8; i++)
         self->lookup[i] = -1;
