@@ -6,7 +6,7 @@ INCLUDE_ASM("fe/festatecharsetup", cFEStateCharSetup_onCreateScreen);
 struct cUIText;
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void* cBE_getBE();
@@ -113,7 +113,7 @@ extern "C" void cFEStateCharSetup_onCreateScreen(sCharSetup_182928* self)
 INCLUDE_ASM("fe/festatecharsetup", func_00182C08);
 #ifdef SKIP_ASM
 extern "C" void func_001831D0(void* self, int a1);
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 
 extern "C" void func_00182C08(void* self)
 {
@@ -125,7 +125,7 @@ extern "C" void func_00182C08(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharsetup", func_00182C38);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 extern "C" void func_00182EC0(void* self);
 
 extern "C" void func_00182C38(void* self)
