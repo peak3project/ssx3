@@ -1310,15 +1310,14 @@ extern "C" int func_00334680(char* self, sWsVec4* pos, int a2, int mask, float r
     sWsVec4 ext;
     int cnt;
     float dist;
-    float zero = 0.0f;
     cnt = 0;
-    dist = zero;
+    dist = 0.0f;
     box.min = *pos;
     box.max = *pos;
     ext.x = r;
     ext.y = r;
     ext.z = r;
-    ext.w = zero;
+    ext.w = 0.0f;
     wsSubEq_334680(box.min, ext);
     wsAddEq_334680(box.max, ext);
     for (unsigned int i = 0; i < *(unsigned int*)(self + 0x210); i++) {
