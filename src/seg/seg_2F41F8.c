@@ -7,6 +7,8 @@
 #define EI_2F41() __asm__ volatile("ei")
 #define SYNC_2F41() __asm__ volatile("sync")
 
+extern unsigned int strlen(const char *);
+
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 #ifdef SKIP_ASM
@@ -823,7 +825,6 @@ extern char D_00525F50[];
 extern int func_003F4C98(char *, int, int);
 extern int c59_4C68(char *, int, int, int, IO5910 *, int, int, int, int, int) __asm__("func_003F4C68");
 extern void c59_5908(int *) __asm__("func_003F5908");
-extern int strlen(const char *);
 int func_003F5910(int *self, int a, int b, char *str, int len) {
     unsigned char hdr[12];
     IO5910 io;
@@ -943,7 +944,6 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F5DA8);
 #ifdef SKIP_ASM
 extern int D_5DA8[] __asm__("D_00525F80");
 extern char *strcpy(char *, const char *);
-extern int strlen5(const char *) __asm__("strlen");
 extern void f62D0(char *, const char *) __asm__("func_004162D0");
 extern int fBA68(char *, int, const char *) __asm__("func_0042BA68");
 extern char D_00497038[], D_00497048[];
@@ -961,7 +961,7 @@ int func_003F5DA8(char *name, char *str) {
     if (D_5DA8[0] < 0) goto fail;
     strcpy(path, name);
     f62D0(path, D_00497048);
-    D_5DA8[1] = fBA68(path, strlen5(str) + 1, str); if (D_5DA8[1] < 0) return -1; return 0;
+    D_5DA8[1] = fBA68(path, strlen(str) + 1, str); if (D_5DA8[1] < 0) return -1; return 0;
 fail:
     return -1;
 }
@@ -2629,7 +2629,6 @@ extern int c9818_8588(int) __asm__("func_003F8588");
 extern void c9818_86F0(int) __asm__("func_003F86F0");
 extern void c9818_B2F8(int) __asm__("func_003FB2F8");
 extern unsigned c9818_6210(void *, int, int) __asm__("func_00416210");
-extern unsigned strlen(const char *);
 extern char *strcpy(char *, const char *);
 extern int *D_9818s __asm__("D_004A4BD8");
 extern E9818 *D_9818e __asm__("D_004A4BDC");
@@ -2971,7 +2970,6 @@ void func_003FA708_impl(unsigned a, unsigned char *p) {
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA7A0);
 #ifdef SKIP_ASM
 extern unsigned char D_004A4BE0[];
-extern int strlen(const char *);
 extern void func_00416210(char *, int, int);
 extern void func_0041605C(char *, char *, int);
 char *func_003FA7A0(char *dst, int unused, char *src) {
@@ -2988,7 +2986,6 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003FA818);
 #ifdef SKIP_ASM
 typedef struct { char b[9]; } K9;
 extern K9 D_00497400;
-extern int strlen(const char *);
 extern void f6210(char *, int, int) __asm__("func_00416210");
 extern void f605C(char *, char *, int) __asm__("func_0041605C");
 void func_003FA818_impl(char *a, char *b, int unused, char *str) __asm__("func_003FA818");
