@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("wscript/wscriptcompile", cWScriptCompile_parseKeywords);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_0048E8C0[];
 
 struct cWScriptKeyword {
@@ -30,7 +29,7 @@ extern "C" cWScriptCompileKw* cWScriptCompile_parseKeywords(cWScriptCompileKw* s
     self->f0 = a1;
     self->count = n;
     cWScriptKeyword** slot = &self->pool;
-    cWScriptKeyword* mem = (cWScriptKeyword*)operator_new_tag(n * 0xB0, D_0048E8C0, 0x20000000, 0);
+    cWScriptKeyword* mem = (cWScriptKeyword*)operator_new__FUi(n * 0xB0, D_0048E8C0, 0x20000000, 0);
     cWScriptKeyword* q = mem;
     int j;
     for (j = n - 1; j != -1; j--, q++) {
