@@ -150,7 +150,7 @@ extern int D_004A4FE0[2];
 extern char D_004C9428[];
 extern char D_004C9548[];
 extern "C" void* cSSXApp_cSSXApp(void*);
-void* func_00317930(void*);
+void func_00317930(void*);
 extern "C" void cBXString__cBXString(void*, int);
 void cAppMan__cAppMan(void*, int);
 static inline void initE(int* p, int n)
