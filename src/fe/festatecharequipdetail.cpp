@@ -2514,7 +2514,7 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019D000);
 struct sEquipTable_DC20;
 struct sEquipSlot_DC20;
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void* ptr);
 extern "C" int func_003B4818(void* data);
 extern "C" void func_003B47F8(void* src, void* dst);
@@ -2547,12 +2547,12 @@ extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20*
     if (size <= 0)
         return;
     func_0019D578(self, bank, size);
-    void* buf = operator_new_tag(size, D_004609D8, 0x60000000, 0);
+    void* buf = operator_new__FUi(size, D_004609D8, 0x60000000, 0);
     while (buf == 0) {
         MUTEX_lock(D_00538B00);
         MUTEX_unlock(D_00538B00);
         func_0019D738(self, bank, size);
-        buf = operator_new_tag(size, D_004609D8, 0x60000000, 0);
+        buf = operator_new__FUi(size, D_004609D8, 0x60000000, 0);
     }
     func_003B47F8(slot->data, buf);
     if (slot->data != 0)
@@ -2866,7 +2866,7 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019D8B8);
 #ifdef SKIP_ASM
 struct sEquipTable_DC20;
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_00317F60(const char* name);
 extern "C" int func_003DF748(const char* name, void* data, int size);
 extern "C" int func_003E1BB8(const char* name, void* data, int size);
@@ -2894,12 +2894,12 @@ extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i)
     sSlotK19D8B8* s = &((sSlotK19D8B8*)((char*)self + bank * 0x12000))[i];
     int size = func_00317F60(s->name);
     func_0019D578(self, bank, size);
-    s->data = operator_new_tag(size, D_004609F0, 0x60000000, 0);
+    s->data = operator_new__FUi(size, D_004609F0, 0x60000000, 0);
     while (s->data == 0) {
         MUTEX_lock(D_00538B00);
         MUTEX_unlock(D_00538B00);
         func_0019D738(self, bank, size);
-        s->data = operator_new_tag(size, D_004609F0, 0x60000000, 0);
+        s->data = operator_new__FUi(size, D_004609F0, 0x60000000, 0);
     }
     *(int*)((char*)self + 0xB4000) += size;
     if (s->pending != 0) {
