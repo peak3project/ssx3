@@ -602,7 +602,7 @@ struct sMState_31F018
     sMChunk_31F018* top;         // 0x30
 };
 
-extern "C" void func_003E6574_F018(void* dst, const void* src, unsigned int n) __asm__("func_003E6574");
+extern "C" void func_003E6574(void* dst, const void* src, unsigned int n);
 // PORT: the unit declares func_0031ED60(void*); the body really takes (ms, mem).
 extern "C" void func_0031ED60_F018(void* ms, void* mem) __asm__("func_0031ED60");
 extern "C" void* func_0031F018_realloc(void* ms, unsigned int* oldmem, unsigned int bytes) __asm__("func_0031F018");
@@ -666,7 +666,7 @@ extern "C" void* func_0031F018_realloc(void* ms, unsigned int* oldmem, unsigned 
                         d = newmem;
                         ncopies = copysize >> 2;
                         if (ncopies > 9)
-                            func_003E6574_F018(d, s, copysize);
+                            func_003E6574(d, s, copysize);
                         else {
                             d[0] = s[0];
                             d[1] = s[1];
@@ -1782,7 +1782,7 @@ void func_00320548(void)
 INCLUDE_ASM("bx/cubicspline", func_00320550);
 #ifdef SKIP_ASM
 void* func_00316A00(void* self);
-void* func_00317930(void* self);
+void func_00317930(void* self);
 void* func_0031FF20(void* self);
 void func_0031FF38(void* self, int flags);
 
