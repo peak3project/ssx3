@@ -400,9 +400,9 @@ int func_00317500(void)
 //100%
 INCLUDE_ASM("bx/appman", func_00317520__Fv);
 #ifdef SKIP_ASM
-int func_00317520(void)
+void* func_00317520(void)
 {
-    return *(int*)((char*)D_004A5B64 + 0x8);
+    return *(void**)((char*)D_004A5B64 + 0x8);
 }
 #endif
 
