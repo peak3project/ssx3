@@ -89,8 +89,7 @@ extern "C" void *func_002DBF80(int *self) {
 //100%
 INCLUDE_ASM("seg/seg_1DCD10", func_002DBF98);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00418EF8_BF98(void* base, int n, int size, int (*cmp)(void*, void*)) __asm__("func_00418EF8");
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(void*, void*));
 extern "C" int func_002DC168(void* arg0, void* arg1);
 struct RS_BF98 {
     unsigned int w0_lo : 2;
@@ -136,7 +135,7 @@ static inline void G3_BF98(int c, int f, int g, int e, int d) {
 
 extern "C" void func_002DBF98(Obj_BF98* self) {
     if (self->n) {
-        func_00418EF8_BF98(D_00537AC0, self->n, 8, func_002DC168);
+        func_00418EF8(D_00537AC0, self->n, 8, func_002DC168);
         Push_BF98();
         {
             Ctx_BF98* ctx = D_004A289C;
