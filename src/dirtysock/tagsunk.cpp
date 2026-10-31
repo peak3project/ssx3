@@ -7280,7 +7280,6 @@ extern "C" void func_00265568(void* self, int a, int b)
 INCLUDE_ASM("dirtysock/tagsunk", func_00265688);
 #ifdef SKIP_ASM
 // PORT: really returns int (the unit declares it void); the int return keeps the target's store scheduling.
-extern "C" int func_00264BE8_5688(void* self, void* msg, int size) __asm__("func_00264BE8");
 struct sMsg_5688 {
     int code;
     int state;
@@ -7312,7 +7311,7 @@ send:
     m.code = code;
     m.state = self[0];
     m.arg = 0xFFFFFFFF;
-    func_00264BE8_5688(self, &m, 0x14);
+    func_00264BE8(self, &m, 0x14);
 }
 #endif
 
@@ -8885,12 +8884,12 @@ extern "C" void func_00266D58(void* self, void* a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266DF8);
 #ifdef SKIP_ASM
-extern "C" void func_003F6AF0(void* self);
+extern "C" int func_003F6AF0();
 
 extern "C" void func_00266DF8(void* self)
 {
     if (*(void**)self != 0) {
-        func_003F6AF0(self);
+        func_003F6AF0();
         *(void**)self = 0;
     }
 }
@@ -8914,18 +8913,18 @@ extern "C" void func_00266E30(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266E88);
 #ifdef SKIP_ASM
-extern "C" void func_003F6B50(void* self);
+extern "C" int func_003F6B50();
 
 extern "C" void func_00266E88(void* self)
 {
     if (*(int*)self != 0 && *(int*)((char*)self + 0x4) != 0) {
-        func_003F6B50(self);
+        func_003F6B50();
         *(int*)((char*)self + 0x4) = 0;
     }
 }
 #endif
 
-extern "C" void* func_003F6C40(void* self);
+extern "C" void* func_003F6C40();
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266ED0);
@@ -8942,11 +8941,11 @@ extern "C" void func_00266ED0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266F08);
 #ifdef SKIP_ASM
-extern "C" int func_003F6B80(void*);
+extern "C" int func_003F6B80();
 
 extern "C" int func_00266F08(int* self)
 {
-    return *self != 0 ? func_003F6B80(self) : 0;
+    return *self != 0 ? func_003F6B80() : 0;
 }
 #endif
 
@@ -8955,7 +8954,7 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00266F38__FPv);
 #ifdef SKIP_ASM
 void* func_00266F38(void* self)
 {
-    return func_003F6C40(self);
+    return func_003F6C40();
 }
 #endif
 
