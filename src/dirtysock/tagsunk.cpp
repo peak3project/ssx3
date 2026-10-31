@@ -6146,7 +6146,6 @@ extern sNetCfg_002639E0 D_00534B30_002639E0[] __asm__("D_00534B30");
 extern "C" void func_002639E0(int* self, unsigned int ip, int chan, int a3, int a4)
 {
     char buf[256];
-    int one = 1;
     self[3] = a4;
     sIf_002639E0* p = (sIf_002639E0*)cBE_getInterface_Fv(cBE_getBE(), 1);
     sIf_002639E0* q = (sIf_002639E0*)cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -6156,7 +6155,7 @@ extern "C" void func_002639E0(int* self, unsigned int ip, int chan, int a3, int 
     func_001472C8(p, 1, 0);
     p->vt[1].fn((char*)p + p->vt[1].delta);
     sIf_002639E0* r = (sIf_002639E0*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
-    D_00534B30_002639E0[0].active = one;
+    D_00534B30_002639E0[0].active = 1;
     D_00534B30_002639E0[0].rate = 0.01666666753590107f;
     D_00534B30_002639E0[0].port = 0xE4A;
     D_00534B30_002639E0[0].chan = chan;
@@ -6171,7 +6170,7 @@ extern "C" void func_002639E0(int* self, unsigned int ip, int chan, int a3, int 
         func_00266E30(D_004A33F4);
     }
     *(float*)&self[4] = D_004A2F14;
-    self[0] = one;
+    self[0] = 1;
 }
 #endif
 
