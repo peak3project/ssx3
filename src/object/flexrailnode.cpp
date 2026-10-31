@@ -98,7 +98,7 @@ extern "C" void func_00348C48(void* self)
 //100%
 INCLUDE_ASM("object/flexrailnode", func_00348D98);
 #ifdef SKIP_ASM
-extern "C" void func_00347D90(void* self, int type, void* a1, void* desc);
+extern "C" void* func_00347D90(void* self, int type, void* a1, void* desc);
 extern "C" void func_003492A8(void* self);
 struct sFrBoxRail;
 extern "C" void func_00349110(sFrBoxRail* self);
@@ -577,7 +577,7 @@ extern "C" void func_00349AD0(void* self, void* stream)
 //100%
 INCLUDE_ASM("object/flexrailnode", func_00349B48);
 #ifdef SKIP_ASM
-extern "C" void func_00347D90(void* self, int type, void* a1, void* desc);
+extern "C" void* func_00347D90(void* self, int type, void* a1, void* desc);
 extern "C" void func_0034A0B0(void* self);
 struct sFrBoxRail60;
 extern "C" void func_00349F18(sFrBoxRail60* self);
@@ -1257,12 +1257,12 @@ extern "C" void* func_0034ADD8(void* self, void* a1, void* node, void* src)
 //100%
 INCLUDE_ASM("object/flexrailnode", func_0034AE68);
 #ifdef SKIP_ASM
-extern "C" void cInstanceNode_cInstanceNode(void* self);
+extern "C" void* cInstanceNode_cInstanceNode(void* self, void* a1, void* stream);
 extern char D_0048FC10[];
 
-extern "C" void* func_0034AE68(void* self)
+extern "C" void* func_0034AE68(void* self, void* a1, void* stream)
 {
-    cInstanceNode_cInstanceNode(self);
+    cInstanceNode_cInstanceNode(self, a1, stream);
     *(void**)((char*)self + 0xC) = D_0048FC10;
     return self;
 }
