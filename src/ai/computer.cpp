@@ -265,7 +265,7 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" unsigned short func_001500D8(void* self, int a1, int a2);
-extern "C" int func_00150138(void* self, int a1, int a2);
+extern "C" unsigned short func_00150138(void* self, int a1, int a2);
 extern "C" int func_00150198(void* self, int a1, int a2, int a3);
 extern "C" float func_00120038(void* self);
 extern "C" float func_00312820(char* self, int a1, int frame);
@@ -1368,7 +1368,7 @@ extern "C" float func_00119608(int);
 extern "C" void* func_0028B180();
 extern "C" void func_0029CED8(void*, int, void*, float);
 
-extern "C" void func_0010E8B8(void* self)
+extern "C" void func_0010E8B8(void* self, int v)
 {
     func_0010E098(self, 0x10, func_00119608(*(int*)((char*)self + 0x790)));
     func_0029CED8(func_0028B180(), 3, self, 1.0f);
@@ -1447,8 +1447,8 @@ INCLUDE_ASM("ai/computer", func_0010F1C0);
 #ifdef SKIP_ASM
 struct sVE_0010F1C0 { short delta; short index; int (*fn)(void*); };
 extern "C" void func_0010E098(void*, int, float);
-extern "C" void func_0010E8B8_i(void* self, int v) __asm__("func_0010E8B8");
-extern "C" void func_00116120(void* rider, int a, int b);
+extern "C" void func_0010E8B8(void* self, int v);
+extern "C" int func_00116120(void* rider, int a, int b);
 
 static inline void computerV_0010F1C0(char* self, int i)
 {
@@ -1475,7 +1475,7 @@ extern "C" void func_0010F1C0(char* self, int kind, float amt)
         func_0010E098(self, 8, amt);
         break;
     case 6:
-        func_0010E8B8_i(self, (int)amt);
+        func_0010E8B8(self, (int)amt);
         break;
     case 5:
         func_00116120(self, 0, 4);
@@ -1492,7 +1492,7 @@ INCLUDE_ASM("ai/computer", func_0010F280);
 extern "C" float func_00119BB0(int);
 extern "C" void func_0010E098(void*, int, float);
 
-extern "C" void func_0010F280(void* self)
+extern "C" void func_0010F280(void* self, int flag)
 {
     func_0010E098(self, 1, func_00119BB0(*(int*)((char*)self + 0x790)));
 }
@@ -1534,7 +1534,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00119EF8(int, int);
 extern "C" void func_001599A0(void*, int, int);
 
-extern "C" void func_0010F338(void* self, int a)
+extern "C" void func_0010F338(void* self, int a, int a2)
 {
     func_00119EF8(*(int*)((char*)self + 0x790), 3);
     func_001599A0(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(int*)((char*)self + 0x86C), a);
@@ -1971,7 +1971,7 @@ extern "C" void func_00139C88(void* motion);
 extern "C" void func_00136EE0(void* motion);
 void func_00136978(void* motion);
 extern "C" void func_0013BFA8(void* motion);
-void func_00139528(void* motion);
+void* func_00139528(void* motion);
 
 extern "C" void func_001114A0(void* self)
 {
@@ -2698,7 +2698,7 @@ struct sVE_00112338 { short delta; short index; int (*fn)(void*, float, float); 
 
 extern sEnt_00112338 D_004A5D60[];
 extern void* D_004A28A8;
-extern "C" void* func_003E6574(void*, void*, int);
+extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00112FB0(void* self, float* a, float* b, sVec4_00112338* c);
 extern "C" void func_001127F0(void* self, int a);
 extern "C" float func_0026AC48(void* self);
