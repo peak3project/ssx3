@@ -543,7 +543,7 @@ struct Q_5640 {
 
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void cRiderAnimBase_changeHeadingOffset(void* self, float angle);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0011DFE0(void* self, Q_5640 dir, float angle);
 // PORT: the unit defines func_00116930 with no parameters; this caller passes the rider.
 extern "C" void func_00116930(void* self);
@@ -695,7 +695,7 @@ INCLUDE_ASM("seg/seg_14B10", func_00115B58);
 #ifdef SKIP_ASM
 extern "C" int func_00311AE8(void*, int);
 extern "C" int func_001298C8();
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0029FF80(void* snd, void* rider, int side);
 int func_0011FEE8(void* self);
 
@@ -821,7 +821,6 @@ static inline float Dot4_61D0(const V4_61D0& a, const V4_61D0& b)
 }
 
 // PORT: returns a value (target keeps the state in v1 across the call)
-extern "C" int cRiderAnimBase_play_61D0(void* self, int anim, int flags, float blend) __asm__("cRiderAnimBase_play");
 int func_0011FE98(void* self);
 // PORT: func_0011FEC8__FPv takes a second argument; bound by asm label
 void func_0011FEC8_61D0(void* self, int on) __asm__("func_0011FEC8__FPv");
@@ -835,10 +834,10 @@ extern "C" int func_001161D0(char* s, float dir)
         if (Dot4_61D0(*(V4_61D0*)(s + 0x1E0), *(V4_61D0*)(s + 0x3A0)) < 0.0f) return 0;
     }
     if (dir > 0.0f) {
-        cRiderAnimBase_play_61D0(*(void**)(s + 0x784), 0x18, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(s + 0x784), 0x18, 0, -1.0f);
         *(int*)(s + 0x330) = 1;
     } else {
-        cRiderAnimBase_play_61D0(*(void**)(s + 0x784), 0x20, 0, -1.0f);
+        cRiderAnimBase_play(*(void**)(s + 0x784), 0x20, 0, -1.0f);
         *(int*)(s + 0x330) = 2;
     }
     func_0011FEC8_61D0(s, 1);
