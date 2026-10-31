@@ -908,6 +908,8 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DD4E8);
 #ifdef SKIP_ASM
 extern int func_003DE800();
 extern void func_003DE668();
+extern int *func_003DE670(void);
+extern void iFILESYS_ExecCommand(int);
 
 int func_003DD4E8(char *arg0, int arg1, int arg2, int arg3) {
     char *p = (char *)func_003DE670();
@@ -923,7 +925,7 @@ int func_003DD4E8(char *arg0, int arg1, int arg2, int arg3) {
         func_003DE668(p);
     }
     strncpy(*(char **)(p + 0x24) + 0x10, arg0, 0x100);
-    iFILESYS_ExecCommand(p);
+    iFILESYS_ExecCommand((int)p);
     return *(int *)p;
 }
 #endif
@@ -1011,7 +1013,7 @@ int func_003DD720(int a0, int a1, int a2, int a3, int a4, int a5) {
     *(int *)(p + 0x1C) = a3;
     *(int *)(p + 0x18) = a1;
     *(int *)(p + 0x20) = a2;
-    iFILESYS_ExecCommand(p);
+    iFILESYS_ExecCommand((int)p);
     return *(int *)p;
 }
 #endif
@@ -1044,9 +1046,6 @@ int func_003DD7E0(int *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DD878);
 #ifdef SKIP_ASM
-extern int *func_003DE670();
-extern void iFILESYS_ExecCommand(int);
-
 int func_003DD878(int a0, int a1, int a2) {
     int *p = func_003DE670();
     p[5] = a2;
@@ -1169,7 +1168,6 @@ int func_003DDAC0(char *name, int a1, int a2, int a3) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDC00);
 #ifdef SKIP_ASM
 extern void func_003DD310();
-extern void iFILESYS_ExecCommand(int);
 
 void func_003DDC00(int arg0, int arg1, int arg2) {
     func_003DD310();
@@ -1239,7 +1237,6 @@ int func_003DDC30(char *a0, int a1, int a2) {
 INCLUDE_ASM("ealib/seg_2DCAE8", FILESYS_atomic);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void iFILESYS_ExecCommand(int);
 extern int D_00519AB0_9AB0[] __asm__("D_00519AB0");
 
 int FILESYS_atomic_DDF0(int (*arg0)(int, int), int arg1, int arg2, int arg3) __asm__("FILESYS_atomic");
