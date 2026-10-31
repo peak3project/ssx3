@@ -210,7 +210,7 @@ extern "C" int func_002821A0(void* self, int idx, int arg)
 INCLUDE_ASM("scripter/bxscriptengine", func_002822A0);
 #ifdef SKIP_ASM
 extern "C" void* func_00282CB0(void* self, int a1);
-extern "C" void func_00272AD0(void* cache, void* data, int a2);
+extern "C" void* func_00272AD0(void* cache, void* data, int a2);
 
 extern "C" int func_002822A0(void* self, int id, int value, int arg)
 {
@@ -557,7 +557,7 @@ INCLUDE_ASM("scripter/bxscriptengine", func_002827F8);
 #ifdef SKIP_ASM
 extern "C" void* func_00282CB0_v(void) __asm__("func_00282CB0");
 
-extern "C" int func_002827F8(void)
+extern "C" int func_002827F8(void* self, int id)
 {
     char* e = (char*)func_00282CB0_v();
     if (e == 0)
@@ -1166,7 +1166,7 @@ extern "C" void* func_00283088(void* self)
 INCLUDE_ASM("scripter/bxscriptengine", func_002830C8);
 #ifdef SKIP_ASM
 extern "C" void func_00282FB8(void* self, void* a1);
-int func_002743C8(void* self);
+unsigned char func_002743C8(void* self);
 char* func_0027C098(void* self);
 char* func_0027C2A8(void* self);
 char* func_0027C4B8(void* self);
@@ -1349,22 +1349,20 @@ extern "C" void func_002833A8(cScriptOwner33A8* self)
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00283430__FPv);
 #ifdef SKIP_ASM
-void* func_00283430(void* self)
+void func_00283430(void* self)
 {
     void* t0 = (char*)*(void**)((char*)self + 0x8) + 0x1;
     *(int*)((char*)self + 0x8) = (int)t0;
-    return t0;
 }
 #endif
 
 //100%
 INCLUDE_ASM("scripter/bxscriptengine", func_00283440__FPv);
 #ifdef SKIP_ASM
-void* func_00283440(void* self)
+void func_00283440(void* self)
 {
     void* t0 = (char*)*(void**)((char*)self + 0x8) - 0x1;
     *(int*)((char*)self + 0x8) = (int)t0;
-    return t0;
 }
 #endif
 
