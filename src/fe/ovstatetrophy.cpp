@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/ovstatetrophy", cOVStateTrophy_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_00471CD8[];
 
 extern "C" void cOVStateTrophy_onCreateScreen(void* self)
@@ -279,7 +279,7 @@ extern char* D_004A2750;
 extern char* D_004A2754;
 extern char* D_004A2758;
 
-extern "C" void func_00210608(void)
+extern "C" void func_00210608(void* data)
 {
     D_004A2750 = 0;
     D_004A2754 = 0;
@@ -486,7 +486,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 void cUIText_setAsciiString(cUIText* text, const char* s);
 extern "C" void func_0020A380(void* self);
 extern "C" void func_003A1310(void* self, int a1);
@@ -623,7 +623,7 @@ INCLUDE_ASM("fe/ovstatetrophy", func_00210D20);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_004A2EEC;
 extern char* D_net210D20 __asm__("D_004A2EEC");
-extern "C" void* func_0020E900(void* self);
+extern "C" void func_0020E900(void* self);
 extern "C" void* func_0039F698(void* list);
 extern "C" int func_00258160(int a, char* name, int len);
 extern "C" void func_00210BD8(void* self, char* name, int a);
