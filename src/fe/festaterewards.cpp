@@ -1380,7 +1380,7 @@ void* func_001D1198(void* self)
 INCLUDE_ASM("fe/festaterewards", func_001D11A8);
 #ifdef SKIP_ASM
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" void func_001CFDD0(void* self, char* name);
+extern "C" int func_001CFDD0(void* self, char* name);
 
 extern "C" void func_001D11A8(void* self, int i)
 {
@@ -1467,7 +1467,7 @@ void* func_001D1330(void* self)
 INCLUDE_ASM("fe/festaterewards", func_001D1340);
 #ifdef SKIP_ASM
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" void func_001CFDD0(void* self, char* name);
+extern "C" int func_001CFDD0(void* self, char* name);
 
 extern "C" void func_001D1340(void* self, int i)
 {
@@ -1554,7 +1554,7 @@ void* func_001D14C8(void* self)
 INCLUDE_ASM("fe/festaterewards", func_001D14D8);
 #ifdef SKIP_ASM
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" void func_001CFDD0(void* self, char* name);
+extern "C" int func_001CFDD0(void* self, char* name);
 
 extern "C" void func_001D14D8(void* self, int i)
 {
@@ -1641,7 +1641,7 @@ void* func_001D1660(void* self)
 INCLUDE_ASM("fe/festaterewards", func_001D1670);
 #ifdef SKIP_ASM
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" void func_001CFDD0(void* self, char* name);
+extern "C" int func_001CFDD0(void* self, char* name);
 
 extern "C" void func_001D1670(void* self, int i)
 {
@@ -1728,7 +1728,7 @@ void* func_001D17F8(void* self)
 INCLUDE_ASM("fe/festaterewards", func_001D1808);
 #ifdef SKIP_ASM
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" void func_001CFDD0(void* self, char* name);
+extern "C" int func_001CFDD0(void* self, char* name);
 
 extern "C" void func_001D1808(void* self, int i)
 {
@@ -2148,7 +2148,7 @@ struct cUIScreen;
 int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 extern char D_0045DC60[];
 struct sVE_1FF0a {
     short delta;
@@ -2474,7 +2474,7 @@ INCLUDE_ASM("fe/festaterewards", func_001D2638);
 #ifdef SKIP_ASM
 extern "C" void* func_0028B180();
 extern "C" void func_002B3A98(void* self);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_001D2638(void* self)
 {
