@@ -757,7 +757,7 @@ INCLUDE_ASM("object/railmodifier", func_0035DA70);
 extern void* D_004913F8[];
 extern void* D_0048F080[];
 void* func_0035CFE8(void* self);
-extern "C" void func_0032C508(void* p);
+extern "C" void* func_0032C508(void* p);
 extern "C" void* func_00327CC8(void* self, void* src);
 extern "C" void func_0035E248(void* self);
 
@@ -6610,7 +6610,7 @@ INCLUDE_ASM("object/railmodifier", func_00366E90);
 void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
 void cMemMan_free(void* p);
 extern "C" void func_003E6574(void* dst, void* src, int size);
-extern "C" void func_00390198(void* self, int w, int h, void* buf, char* src);
+extern "C" int func_00390198(void* self, int w, int h, void* buf, char* src);
 extern char D_004A4060[];
 
 struct sRmTex_366E90 {
