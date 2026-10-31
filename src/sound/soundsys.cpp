@@ -783,7 +783,7 @@ static inline int snd1438AddVoice(void* vself, int a, int b, int type)
 }
 
 extern "C" void func_003B58A0();
-extern "C" int func_003B8AB8(int id);
+extern "C" unsigned int func_003B8AB8(int id);
 extern "C" void func_003B58D8();
 extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
 
@@ -1996,7 +1996,7 @@ extern "C" int func_00288AE0(void* self);
 extern "C" int func_00285D98(void* self, int which);
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
-extern "C" int func_003B8AB8(int id);
+extern "C" unsigned int func_003B8AB8(int id);
 extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
 extern "C" int func_00291710(void* self, int id);
 extern "C" void* cBE_getBE();
@@ -4416,7 +4416,7 @@ static inline int sndA7D8AddVoice(void* vself, int a, int b, int type)
 
 extern "C" int func_00288AE0(void* self);
 extern "C" void func_003B58A0();
-extern "C" int func_003B8AB8(int id);
+extern "C" unsigned int func_003B8AB8(int id);
 extern "C" void func_003B58D8();
 extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
 
@@ -5696,7 +5696,7 @@ INCLUDE_ASM("sound/soundsys", func_0029D610);
 #ifdef SKIP_ASM
 extern "C" void func_003B58A0(void);
 extern "C" void func_003B58D8(void);
-extern "C" int func_003B8AB8(int h);
+extern "C" unsigned int func_003B8AB8(int h);
 extern "C" void func_0029D678(void* self, float v);
 extern "C" void func_0029D370(void* self);
 
@@ -6561,8 +6561,8 @@ extern "C" int BXFILE_exists(const char* name);
 extern "C" void SPCH_Init(void* self);
 extern "C" void func_002B0DA0(void* self);
 extern "C" void func_002B0E60(void* self, int a, int b, char* name, int c, int d, int e);
-extern "C" void func_003DED50(const char* name, int a, int b, void** h);
-extern "C" void func_003DEDC0(void* h, int a);
+extern "C" int func_003DED50(const char* name, int a, int b, void** h);
+extern "C" int func_003DEDC0(void* h, int a);
 extern char D_00482DF8[];
 extern char D_00482E10[];
 extern char D_00482E28[];
@@ -6835,7 +6835,7 @@ extern char D_00482F28[];
 extern char D_00482F38[];
 extern char D_00482F48[];
 
-extern "C" void func_0029F3F8(char* self)
+extern "C" void func_0029F3F8(char* self, int a)
 {
     char buf[64];
     switch (func_0029F378(self, *(void**)((char*)func_0028B1D8() + 0x28))) {
@@ -9355,7 +9355,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C12[];
 
-extern "C" int func_002A4318(void)
+extern "C" int func_002A4318(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (D_00535C12[0] >= 6) {
@@ -9375,7 +9375,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C12[];
 
-extern "C" int func_002A4368(void)
+extern "C" int func_002A4368(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (D_00535C12[0] >= 9) {
@@ -10409,7 +10409,7 @@ extern "C" void func_002A6848(void* self)
 INCLUDE_ASM("sound/soundsys", func_002A68B0);
 #ifdef SKIP_ASM
 extern "C" void func_002ABB38(void*);
-extern "C" void func_003BC6B8(int, int);
+extern "C" int func_003BC6B8(int, int);
 
 extern "C" void func_002A68B0(char* self, char* obj, float dt) {
     if (*(int*)(obj + 4) < 0) {
@@ -11414,7 +11414,7 @@ INCLUDE_ASM("sound/soundsys", func_002A8140);
 extern "C" void* func_002ADE88(void* self, int heap);
 extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, int heap);
 extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap);
-extern "C" void func_003B97D8();
+extern "C" int func_003B97D8();
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
@@ -11479,7 +11479,7 @@ void operator_delete(int*);
 extern "C" void func_0028BB10(void* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 extern "C" void func_0028FEA0(char* self, int flags);
-extern "C" void func_003B9880();
+extern "C" int func_003B9880();
 
 struct sSndDtBVtEnt {
     short delta;
@@ -11677,8 +11677,8 @@ INCLUDE_ASM("sound/soundsys", func_002A8CB0);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
-extern "C" void func_003B5478();
-extern "C" void func_003B5158(void* buf, int size, int flags);
+extern "C" int func_003B5478();
+extern "C" int func_003B5158(void* buf, int size, int flags);
 extern "C" int func_003B5B68(int* out);
 extern const char D_00483158[];
 
@@ -11736,8 +11736,8 @@ extern "C" void func_002A8CB0(sSndSys8CB0* self, int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A8D90);
 #ifdef SKIP_ASM
-extern "C" void func_003B4DD8(void* cfg);
-extern "C" void func_003B4FC0(void* cfg);
+extern "C" int func_003B4DD8(void* cfg);
+extern "C" int func_003B4FC0(void* cfg);
 extern "C" void func_003BC930();
 
 struct sSnd8D90Cfg {
@@ -11832,8 +11832,8 @@ extern "C" int func_002A8D90(char* self, int mode)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A8F50);
 #ifdef SKIP_ASM
-extern "C" void func_003B5B20(int a, int b);
-extern "C" void func_003B5320();
+extern "C" int func_003B5B20(int a, int b);
+extern "C" int func_003B5320();
 void cMemMan_free(void*);
 
 extern "C" void func_002A8F50(void* self)
@@ -11866,7 +11866,7 @@ extern "C" void* func_002A8FA0()
 INCLUDE_ASM("sound/soundsys", func_002A8FD8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003B5B20(int a, int b);
+extern "C" int func_003B5B20(int a, int b);
 extern "C" int func_003B5B68(int* out);
 // The unit defines func_002A92B8 with its own entry/pool view types; bind this unit's struct view.
 sSndVoice8CB0* func_002A92B8_v(sSndSys8CB0* self) __asm__("func_002A92B8");
@@ -11927,7 +11927,7 @@ INCLUDE_ASM("sound/soundsys", func_002A9128);
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A9250);
 #ifdef SKIP_ASM
-extern "C" void func_003B5B20(int a, int b);
+extern "C" int func_003B5B20(int a, int b);
 
 struct sSndPoolEntry2A9250 {
     int unk0;
@@ -11957,7 +11957,7 @@ extern "C" void func_002A9250(sSndPool2A9250* self, int i)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A9288);
 #ifdef SKIP_ASM
-extern "C" void func_003B5B20(int a, int b);
+extern "C" int func_003B5B20(int a, int b);
 
 extern "C" void func_002A9288(void* self)
 {
@@ -11997,7 +11997,7 @@ extern "C" s2A92B8Entry* func_002A92B8(s2A92B8* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A92F8);
 #ifdef SKIP_ASM
-extern "C" void func_003B5B20(int a, int b);
+extern "C" int func_003B5B20(int a, int b);
 
 struct s2A92F8Entry {
     int index;
