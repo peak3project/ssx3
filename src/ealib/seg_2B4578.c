@@ -1499,7 +1499,60 @@ int func_003B7080(int arg0, int *arg1) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B70F8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B71D8);
+#ifdef SKIP_ASM
+typedef struct { char b[4]; } W4_71D8;
+struct P_71D8 { int f0; int p4; volatile int f8; int pC; volatile signed char b10; char pad11[3]; W4_71D8 f14; W4_71D8 f18; char pad1C[0x9C - 0x1C]; int f9C; char padA0[0x124 - 0xA0]; int f124; };
+struct G_71D8 { char pad[0x46]; unsigned char n46; };
+extern struct G_71D8 D_0050A8E8_71D8[] __asm__("D_0050A8E8");
+extern struct P_71D8 *D_0050A0A0_71D8[] __asm__("D_0050A0A0");
+extern void func_003B58A0_71D8(void) __asm__("func_003B58A0");
+extern void func_003B58D8_71D8(void) __asm__("func_003B58D8");
+extern int func_003C6C98_71D8(int) __asm__("func_003C6C98");
+extern void func_003C6CE8_71D8(int) __asm__("func_003C6CE8");
+extern void func_003B68B8_71D8(void *) __asm__("func_003B68B8");
+extern int func_003B70F8_71D8(void *) __asm__("func_003B70F8");
+extern int func_003C6C28_71D8(int) __asm__("func_003C6C28");
+extern int func_003E12E0_71D8(int) __asm__("func_003E12E0");
+extern int func_003B7080_71D8(int, int) __asm__("func_003B7080");
+
+void func_003B71D8(void) {
+    int i = 0;
+    struct P_71D8 *p;
+    int n;
+    int r;
+    int q;
+    func_003B58A0_71D8();
+    for (; i < D_0050A8E8_71D8[0].n46; i++) {
+        p = D_0050A0A0_71D8[i];
+        if (p == 0 || p->f124 == 0) continue;
+        if (p->b10 == 2) {
+            if (func_003C6C98_71D8(p->f8) > 0) continue;
+            p->f14 = p->f18;
+            __builtin_memcpy((char *)p + 0x1C, (char *)p + 0x84, 0x68);
+            p->f9C = 0;
+            func_003C6CE8_71D8(p->f8);
+            func_003B68B8_71D8(p);
+        }
+        if (func_003B70F8_71D8(p) == 0) {
+            if (p->b10 == 1) {
+                n = func_003C6C28_71D8(p->f8);
+                if (n <= 0) continue;
+            } else {
+                n = 8;
+            }
+            r = 0;
+            do {
+                n--;
+                q = func_003E12E0_71D8(p->f0);
+                if (q != 0) r = func_003B7080_71D8(i, q);
+            } while (r != 0 && n > 0);
+        }
+    }
+    func_003B58D8_71D8();
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7410);
