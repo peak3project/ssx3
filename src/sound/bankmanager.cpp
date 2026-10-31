@@ -1253,12 +1253,11 @@ int func_0028D7D8(void* self, void* obj)
         ok = 1;
         *(int*)((char*)self + 0x62A0) = -1;
     } else {
-        int none = -1;
-        if (*(int*)((char*)self + 0x62A0) != none) {
+        if (*(int*)((char*)self + 0x62A0) != -1) {
             char* o = (char*)obj + 0x6C0;
             sVtEnt* e = &(*(sVtEnt**)o)[7];
             if (e->fn(o + e->delta) == *(int*)((char*)self + 0x62A0)) {
-                *(int*)((char*)self + 0x62A0) = none;
+                *(int*)((char*)self + 0x62A0) = -1;
                 ok = 1;
             }
         }
