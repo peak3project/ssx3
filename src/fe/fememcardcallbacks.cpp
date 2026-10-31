@@ -435,7 +435,7 @@ struct sVEntry001D72A8 {
 extern void* D_004A2028;
 extern void* D_004A28A8;
 extern "C" void* func_00227F80(void* app);
-extern "C" void func_0023D570(void*, int);
+extern "C" void* func_0023D570(void*, int);
 
 extern "C" void func_001D72A8(void)
 {
@@ -1480,7 +1480,7 @@ int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void* func_00227F80(void* app);
 extern "C" void func_00241E18(void*, unsigned short*, int);
-extern "C" void func_0020E900(void);
+extern "C" void func_0020E900(void* self);
 extern "C" void func_0039E510(void*);
 extern "C" void func_00241380(void*);
 extern "C" int func_0023C898(void*);
@@ -1570,7 +1570,7 @@ extern "C" void func_001D8DE0(cMemCardK1D8DE0* card)
     char* self = (char*)card;
     if (*(void**)(self + 0x218) == 0 && *(int*)(self + 0x1A4) == 0) {
         if (*(int*)((char*)D_004A28A8 + 0x84) != 0) {
-            func_0020E900();
+            func_0020E900(card);
         } else {
             func_0039E510(self);
         }
@@ -1935,14 +1935,14 @@ struct sVEntry001D9818 {
     void (*fn)(void*, int);
 };
 
-extern "C" void* func_0039E4C0(void* self);
+extern "C" void func_0039E4C0(void* self, int a1);
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char D_004678B0[];
 
-extern "C" void func_001D9818(void* self)
+extern "C" void func_001D9818(void* self, int a1)
 {
-    func_0039E4C0(self);
+    func_0039E4C0(self, a1);
     void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004678B0));
     if (obj != 0) {
         sVEntry001D9818* vt = *(sVEntry001D9818**)((char*)obj + 8);
@@ -2072,7 +2072,7 @@ void func_001C57C0(void* self, int a1, int a2);
 // PORT: func_001C5DD8 takes only self; the unit's later (void*, int) declaration is a guess. Bound by asm label.
 void func_001C5DD8_self(void* self) __asm__("func_001C5DD8");
 extern "C" void* func_002C2508(void* dst, void* src);
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 extern char D_0045DCC8[];
 extern char D_0045FCD8[];
 extern char D_004A1408[];
