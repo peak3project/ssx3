@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/ovstateenterlodge", cOVState_ENTERLODGE_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void cOVStateManager_addPDATemplate();
 extern "C" void func_0020A380(void* self);
 extern char D_0046F4D0[];
@@ -46,15 +46,15 @@ extern "C" void func_001F7210(void* self, void* a1)
 }
 #endif
 
-extern "C" void* func_0020A430(void*);
+extern "C" void func_0020A430(void*);
 
 //100%
 INCLUDE_ASM("fe/ovstateenterlodge", func_001F7298__FPv);
 #ifdef SKIP_ASM
-void* func_001F7298(void* self)
+void func_001F7298(void* self)
 {
     *(int*)((char*)self + 0x50) = 0;
-    return func_0020A430(self);
+    func_0020A430(self);
 }
 #endif
 
@@ -134,7 +134,7 @@ INCLUDE_ASM("fe/ovstateenterlodge", cOVState_BIGCHALLENGE_START_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void func_0020A380(void* self);
 extern char D_0046F4E0[];
 
@@ -284,7 +284,7 @@ INCLUDE_ASM("fe/ovstateenterlodge", func_001F76B8);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void func_0020A380(void* self);
 extern char D_0046F500[];
 
@@ -411,7 +411,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
 extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern "C" int func_00144BF0(void* iface);
@@ -423,8 +423,8 @@ extern "C" char* func_0020A1A8(char* s);
 extern "C" void func_0020A380(void* self);
 extern "C" void* func_0028B180();
 extern "C" void func_00294F78(void* p, int id);
-extern "C" void func_002C2508(void* str, int a1);
-extern "C" void func_002C2540(void* str, const char* s);
+extern "C" unsigned short* func_002C2508(void* str, int a1);
+extern "C" unsigned short* func_002C2540(void* str, const char* s);
 // PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...)
 extern "C" void func_002C26D0_1F7958(void* dst, void* fmt, ...) __asm__("func_002C26D0");
 extern "C" void func_003A0E90(void* text, void* str);
