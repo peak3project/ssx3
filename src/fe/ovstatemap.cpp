@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/ovstatemap", cOVState_MAP_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 struct sSelf0020A380;
 extern "C" void func_0020A380(sSelf0020A380* self);
@@ -865,7 +865,7 @@ void cList_addToEnd(cList* list, cListNode* node);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_00154678(sBounds_96A8* out, void* iface, int id);
 extern "C" void* func_0039FB30(void* self, void* parent, int a2);
-extern "C" void func_0021CCC8(void* p);
+extern "C" unsigned char* func_0021CCC8(void* p);
 extern "C" void func_00399730(void* obj, int hash);
 extern void* D_004A28A8;
 extern char D_004718F0[];
@@ -1159,7 +1159,7 @@ extern void* D_004A28A8;
 extern "C" void func_002EA860(void* self);
 extern "C" void* func_0039F9D8(void* list, int hash);
 extern "C" void func_0020D190();
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 struct sVEntry0020A430 {
     short delta;
     short index;
