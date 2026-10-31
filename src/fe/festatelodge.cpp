@@ -207,7 +207,7 @@ INCLUDE_ASM("fe/festatelodge", func_001F3CF0);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001D99C8(void* self, void* engine, void* owner, unsigned short* text, int a4, int a5, int a6, int a7, int a8);
 extern "C" void* func_0018ECA0(void* self, void* engine, int a2, unsigned char mask);
-extern "C" void func_0039F190(void* list, int a1);
+extern "C" void* func_0039F190(void* list, int a1);
 extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F4C0(void* list, void* item);
 extern "C" void cUIStateStack_pushSpecial(void* list, void* item, int a2, int a3);
