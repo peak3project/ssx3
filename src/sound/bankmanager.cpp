@@ -456,9 +456,9 @@ INCLUDE_ASM("sound/bankmanager", func_0028BDA8);
 #ifdef SKIP_ASM
 extern "C" void* cBankInstance_AllocMem(void* inst, int a, int b, int c);
 
-extern "C" void* func_0028BDA8(void* self, int i, int a, int b, int c)
+extern "C" void func_0028BDA8(void* self, int i, int a, int b, int c)
 {
-    return cBankInstance_AllocMem((char*)*(void**)((char*)self + 0xACC) + i * 0x60, a, b, c);
+    cBankInstance_AllocMem((char*)*(void**)((char*)self + 0xACC) + i * 0x60, a, b, c);
 }
 #endif
 
@@ -1209,7 +1209,7 @@ extern "C" void func_0028D630(void* self, int id, void* obj)
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028D740);
 #ifdef SKIP_ASM
-extern "C" void func_0028D7D8(void* self, void* a1);
+extern "C" int func_0028D7D8(void* self, void* a1);
 
 struct sVtEnt { short delta; short index; int (*fn)(void*); };
 
@@ -1244,10 +1244,9 @@ struct sBmVtD7D8 {
     int (*fn)(void*, int);
 };
 
-// PORT: the unit declares func_0028D7D8 as returning void; it really returns 0/1.
-int func_0028D7D8_impl(void* self, void* obj) __asm__("func_0028D7D8");
+int func_0028D7D8(void* self, void* obj);
 
-int func_0028D7D8_impl(void* self, void* obj)
+int func_0028D7D8(void* self, void* obj)
 {
     int ok = 0;
     if (obj == 0) {
@@ -1707,7 +1706,7 @@ extern "C" void func_0028F200(void* self)
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028F2C0);
 #ifdef SKIP_ASM
-extern "C" void* func_002B3AC0(void*);
+extern "C" void func_002B3AC0(void*);
 
 struct sBankMgrVEntry {
     short delta;
@@ -1816,13 +1815,13 @@ public:
 int GetHashValue32(char*);
 extern char D_004A3660[];
 extern char* D_004A28A8;
-extern "C" void func_002B35A0(void* monitor);
+extern "C" void func_002B35A0(void* monitor, int a1, int a2, int a3, int a4);
 extern "C" float func_00287930(void* self, int a, int b);
 extern "C" cUiObj_F478* func_0039F9D8(void* list, int hash);
 
-extern "C" void func_0028F478(void* self)
+extern "C" void func_0028F478(void* self, int a1, int a2, int a3, int a4)
 {
-    func_002B35A0((char*)self + 0x118);
+    func_002B35A0((char*)self + 0x118, a1, a2, a3, a4);
     if (func_00287930(self, 1, 0) > 0.0f) {
         char* game = *(char**)(D_004A28A8 + 0x84);
         if (game != 0) {
@@ -1845,7 +1844,7 @@ extern "C" void func_0028F478(void* self)
 INCLUDE_ASM("sound/bankmanager", func_0028F520);
 #ifdef SKIP_ASM
 extern "C" int func_0028D960(void* self);
-extern "C" void* func_002B3AC0(void*);
+extern "C" void func_002B3AC0(void*);
 
 extern "C" void func_0028F520(void* self)
 {
@@ -2076,7 +2075,7 @@ extern sSndKey8_FAE0 D_004A3658_FAE0[] __asm__("D_004A3658");
 extern "C" void func_002ADDE0(void* bank, long id);
 extern "C" void func_002ADCA0(void*, int, long, int, int, int, int, int);
 extern "C" int func_0028DEF0(void* self, int a1);
-extern "C" void* func_002B3AC0(void* monitor);
+extern "C" void func_002B3AC0(void* monitor);
 
 // PORT: 64-bit long sound keys
 // Stops the three menu loops, and unless a bank load is pending, switches to the front-end bank and starts its music.
@@ -2106,14 +2105,14 @@ extern "C" void func_0028FAE0(char* self)
 }
 #endif
 
-extern "C" void* func_002B3AC0(void*);
+extern "C" void func_002B3AC0(void*);
 
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028FC38__FPv);
 #ifdef SKIP_ASM
-void* func_0028FC38(void* self)
+void func_0028FC38(void* self)
 {
-    return func_002B3AC0((char*)self + 0x118);
+    func_002B3AC0((char*)self + 0x118);
 }
 #endif
 
