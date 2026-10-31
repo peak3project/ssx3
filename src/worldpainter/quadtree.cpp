@@ -2970,7 +2970,7 @@ INCLUDE_ASM("worldpainter/quadtree", func_002C6DE0);
 #ifdef SKIP_ASM
 struct func_002C6DE0_sEntry {
     unsigned int key;
-    int value;
+    const char* value;
 };
 
 struct func_002C6DE0_sMap {
@@ -2981,7 +2981,7 @@ struct func_002C6DE0_sMap {
     func_002C6DE0_sEntry* entries;
 };
 
-extern "C" int func_002C6DE0(func_002C6DE0_sMap* self, unsigned int key)
+extern "C" const char* func_002C6DE0(func_002C6DE0_sMap* self, unsigned int key)
 {
     int lo = 0;
     int hi = self->last;
