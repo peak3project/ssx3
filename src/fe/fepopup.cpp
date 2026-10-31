@@ -1295,8 +1295,7 @@ extern "C" int USTR_length(unsigned short* s);
 extern "C" char* func_002C2580(char* dst, unsigned short* src);
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
 void cMemMan_free(void* ptr);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern void* D_004A28A8;
 extern char D_00466098[];
@@ -1314,7 +1313,7 @@ extern "C" void func_001C80E8(void* self, void* dst, int* info)
     switch (info[0]) {
     case 1: {
         unsigned short* u = (unsigned short*)info[1];
-        char* buf = (char*)operator_new_tag(USTR_length(u) + 1, D_00466098, 0x100, 0);
+        char* buf = (char*)operator_new__FUi(USTR_length(u) + 1, D_00466098, 0x100, 0);
         func_002C2580(buf, (unsigned short*)info[1]);
         cBXString_cBXString4(dst, buf);
         if (buf != 0) {
@@ -1330,7 +1329,7 @@ extern "C" void func_001C80E8(void* self, void* dst, int* info)
         sVEntry_80E8* vt = *(sVEntry_80E8**)(o + 4);
         unsigned short* str = vt[4].fn(o + vt[4].delta, info[1]);
         if (str) {
-            char* buf = (char*)operator_new_tag(USTR_length(str) + 1, D_00466098, 0x100, 0);
+            char* buf = (char*)operator_new__FUi(USTR_length(str) + 1, D_00466098, 0x100, 0);
             func_002C2580(buf, str);
             cBXString_cBXString4(dst, buf);
             if (buf != 0) {
@@ -1361,7 +1360,7 @@ extern "C" char* func_002C2580(char* dst, unsigned short* src);
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
 void cMemMan_free(void* ptr);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_004660B8[];
 extern char D_004A1408[];
 
@@ -1374,7 +1373,7 @@ extern "C" void cScreenPopup_setTextString(void* self, void* dst, cUIText* text)
     }
     unsigned short* u = func_003A0C28(text);
     if (u != 0) {
-        char* buf = (char*)operator_new_tag(USTR_length(u) + 1, D_004660B8, 0x100, 0);
+        char* buf = (char*)operator_new__FUi(USTR_length(u) + 1, D_004660B8, 0x100, 0);
         func_002C2580(buf, u);
         cBXString_cBXString4(dst, buf);
         if (buf != 0) {
@@ -2470,7 +2469,7 @@ INCLUDE_ASM("fe/fepopup", func_001CA598);
 extern "C" void func_001CB418(void* popup, const char* a1);
 extern "C" void func_001CCF00(void* popup, const char* a1);
 // PORT: the unit declares func_0039F190 as void; it returns a value this caller ignores.
-extern "C" int func_0039F190_i(void* self, int a1) __asm__("func_0039F190");
+extern "C" void* func_0039F190_i(void* self, int a1) __asm__("func_0039F190");
 
 struct sVE1CA598 {
     short delta;
@@ -3036,7 +3035,7 @@ struct sVEntry001CB208 {
 extern void* D_004A2EEC;
 extern void* D_004A28A8;
 extern "C" void func_0039E510(void*);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_001CB208(void* self)
 {
@@ -3057,7 +3056,7 @@ extern "C" void func_001CB208(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CB290);
 #ifdef SKIP_ASM
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_001CB290(void* self, void* a1, unsigned int a2)
 {
@@ -4206,7 +4205,7 @@ void cMemMan_free(void* ptr);
 extern "C" int USTR_length(unsigned short* s);
 extern "C" void USTR_copy(unsigned short* dst, unsigned short* src);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00466580[];
 extern char D_00466590[];
 
@@ -4218,7 +4217,7 @@ extern "C" void cKeyboardPopup_setStatic(void* self, unsigned short* str)
             cMemMan_free(p);
             *(void**)((char*)self + 0x428) = 0;
         }
-        unsigned short* copy = (unsigned short*)operator_new_tag((USTR_length(str) + 1) * 2, D_00466590, 0x100, 0);
+        unsigned short* copy = (unsigned short*)operator_new__FUi((USTR_length(str) + 1) * 2, D_00466590, 0x100, 0);
         *(unsigned short**)((char*)self + 0x428) = copy;
         USTR_copy(copy, str);
     } else {
@@ -4736,7 +4735,7 @@ extern "C" void* func_001D9D48(void* mem, void* engine, void* owner);
 void func_001DA510(void* self, int i, int a, int b);
 void func_001DA528(void* self, int val);
 void func_001DA530(void* self, int i, int value);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 extern "C" void func_0039F290(void* list, void* item);
 extern int D_004A1A70;
 extern void* D_004A28A8;
