@@ -124,8 +124,8 @@ static inline void remove_CA18(char* w, void* item, const sCtBox_CA18* box)
     }
 }
 
-extern "C" void func_0016CA18_impl(void* vself) __asm__("func_0016CA18");
-extern "C" void func_0016CA18_impl(void* vself)
+extern "C" void func_0016CA18(void* vself);
+extern "C" void func_0016CA18(void* vself)
 {
     sCtMan_CA18* self = (sCtMan_CA18*)vself;
     for (int i = 0; i < self->count; i++) {
@@ -294,10 +294,10 @@ extern "C" void* func_0016CEF0(void*, void*, int);
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016CEA8);
 #ifdef SKIP_ASM
-extern "C" void func_0016CA18();
+extern "C" void func_0016CA18(void* vself);
 
-extern "C" void func_0016CEA8(void) {
-    func_0016CA18();
+extern "C" void func_0016CEA8(void* vself) {
+    func_0016CA18(vself);
 }
 #endif
 
