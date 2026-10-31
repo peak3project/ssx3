@@ -1784,8 +1784,8 @@ static inline void initE(int* p, int n)
     *(char*)p = n;
     *p = (*p & 0xFF) | (n << 8);
 }
-void sti_002B8818(int init, int prio) __asm__("func_002B8818");
-void sti_002B8818(int init, int prio)
+extern "C" void func_002B8818(int init, int prio);
+void func_002B8818(int init, int prio)
 {
     if (prio == 0xFFFF && init) {
         D_004D3B18[0] = 1.0f;
