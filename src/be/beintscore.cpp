@@ -1,7 +1,7 @@
 #include "common.h"
 
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_001549A8(void* self);
+extern "C" void* func_001549A8(void* self);
 extern const char D_0045A858[];
 extern void* D_004A1248;
 
@@ -18,14 +18,13 @@ struct cBEScoreInterface {
 //100%
 INCLUDE_ASM("be/beintscore", cBEScoreInterface_getThis__Fv);
 #ifdef SKIP_ASM
-// PORT: the unit declares func_001549A8 as returning void; the body returns self.
-void* func_001549A8_impl(void* self) __asm__("func_001549A8");
+void* func_001549A8(void* self);
 
 void* cBEScoreInterface_getThis()
 {
     if (D_004A1248 == 0) {
         void* mem = cMemMan_alloc(0x230, D_0045A858, 0, 0);
-        cBEScoreInterface* s = (cBEScoreInterface*)func_001549A8_impl(mem);
+        cBEScoreInterface* s = (cBEScoreInterface*)func_001549A8(mem);
         D_004A1248 = s;
         s->field_0x8 = 0;
         s->field_0x10 = 0;
@@ -43,11 +42,9 @@ INCLUDE_ASM("be/beintscore", func_001549A8);
 extern "C" void func_001549E8(void* self);
 extern void* D_0045ACA8[];
 
-// PORT: the unit declares func_001549A8 as returning void (used by getThis);
-// the body returns self, so it is bound to the symbol with an asm label.
-void* func_001549A8_impl(void* self) __asm__("func_001549A8");
+void* func_001549A8(void* self);
 
-void* func_001549A8_impl(void* self)
+void* func_001549A8(void* self)
 {
     *(void***)((char*)self + 0xC) = D_0045ACA8;
     func_001549E8(self);
@@ -66,7 +63,7 @@ void func_001549E0(void* self)
 //100%
 INCLUDE_ASM("be/beintscore", func_001549E8);
 #ifdef SKIP_ASM
-extern "C" void func_003E6448(void* dst, int value, int size);
+extern "C" void* func_003E6448(void* dst, int value, int size);
 
 struct sScoreSlot_001549E8 {
     char pad_0x00[0xAC];
@@ -612,7 +609,7 @@ extern "C" int func_001558F8(void* self, int rider, int a, int b)
 INCLUDE_ASM("be/beintscore", func_001559A8);
 #ifdef SKIP_ASM
 int cBELibrary_getProfileIndex(int);
-extern "C" void func_00152528(void* iface, int a, int b, int c);
+extern "C" int func_00152528(void* iface, int a, int b, int c);
 extern signed char D_005305F9[];
 
 extern "C" void func_001559A8(void* self, int rider, int a, int b, int c)
