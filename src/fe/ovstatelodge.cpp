@@ -3,7 +3,7 @@
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_cFEStateMountainRoom);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0_3(void* self, void* a1, int a2) __asm__("func_0039E2A0");
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
@@ -43,7 +43,7 @@ struct sMountainRoomK2678 {
 extern "C" void* cFEStateMountainRoom_cFEStateMountainRoom(void* self, void* ui, int idx)
 {
     signed char pl = idx;
-    func_0039E2A0_3(self, ui, idx);
+    func_0039E2A0(self, (int)ui);
     *(int*)((char*)self + 0xC) = 0x2B;
     *(void***)((char*)self + 0x8) = D_00469858;
     sMountainRoomK2678* s = (sMountainRoomK2678*)self;
@@ -137,7 +137,7 @@ INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 struct cUIText;
 void cUIText_setAsciiString(cUIText* self, const char* str);
@@ -548,7 +548,7 @@ extern "C" void cFEStateMountainRoom_onWidgetEvent(char* self, char* w, unsigned
 INCLUDE_ASM("fe/ovstatelodge", func_001D3120);
 #ifdef SKIP_ASM
 extern "C" void func_001D31C0(void* self);
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001D3120(void* self)
 {
@@ -666,7 +666,7 @@ INCLUDE_ASM("fe/ovstatelodge", func_001D3340);
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3780);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
@@ -687,7 +687,7 @@ struct sLodge_3780 {
 extern "C" void* func_001D3780(void* self, int a1, int a2, int a3)
 {
     signed char idx = a2;
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 0x2C;
     *(void***)((char*)self + 0x8) = D_00469788;
     *(signed char*)((char*)self + 0x44) = idx;
@@ -716,7 +716,7 @@ INCLUDE_ASM("fe/ovstatelodge", cFEStatePeakRoom_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_00467648[];
 
 extern "C" void cFEStatePeakRoom_onCreateScreen(void* self)
@@ -880,14 +880,14 @@ extern "C" void cFEStatePeakRoom_onWidgetCreate(sPeak_38F8* self, sWidget_38F8* 
 }
 #endif
 
-extern "C" void* func_0039E4C0(void* self);
+extern "C" void func_0039E4C0(void* self);
 
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3C60__FPv);
 #ifdef SKIP_ASM
-void* func_001D3C60(void* self)
+void func_001D3C60(void* self)
 {
-    return func_0039E4C0(self);
+    func_0039E4C0(self);
 }
 #endif
 
@@ -1024,7 +1024,7 @@ int GetHashValue32(char* str);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv_3F80(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_001CE6F0(int mountain);
+extern "C" int func_001CE6F0(int mountain, int b);
 extern "C" int func_001CED90(int player, int charId, int mountain, int peak, int i);
 extern "C" void setChallengeName(void* text, int mountain, int peak, int i);
 extern "C" char* func_00156AE0(void* iface, int peak, int ch);
@@ -1073,7 +1073,7 @@ extern "C" void func_001D3F80(void* vself, int peak)
     cWidget_3F80** bar = self->bar;
     cWidget_3F80** medal = self->medal;
     cWidget_3F80** lock = self->lock;
-    n = func_001CE6F0(self->mountain);
+    n = func_001CE6F0(self->mountain, peak);
     for (int j = 0; j < 5; j++) {
         self->icon[j]->show(0);
         self->box[j]->show(0);
@@ -1109,7 +1109,7 @@ extern "C" void func_001D3F80(void* vself, int peak)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D4268);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
@@ -1141,7 +1141,7 @@ struct sTrophy_4268 {
 extern "C" void* func_001D4268(void* self, int a1, int a2, int a3, int a4)
 {
     signed char idx = a2;
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 0x2D;
     *(void***)((char*)self + 0x8) = D_004696B8;
     *(signed char*)((char*)self + 0x44) = idx;
