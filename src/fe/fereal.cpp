@@ -477,10 +477,8 @@ extern "C" void cRealFE_load(sRealFE_1E80* self)
     }
     sUI_1E80* ui = self->ui;
     // Looks like a macro expansion: a local copy of the path plus the load call.
-    do {
-        sStr11_1E80 path = *(sStr11_1E80*)D_00461278;
-        cUIEngine_loadFile(ui, D_00461278);
-    } while (0);
+    sStr11_1E80 path = *(sStr11_1E80*)D_00461278;
+    cUIEngine_loadFile(ui, D_00461278);
     progress_1E80(75.0f);
     cRealFE_loadCharAnimations(self);
     func_0019CE68((char*)self + 0x1A70);
