@@ -1161,7 +1161,7 @@ extern "C" void cSSXApp_initLocale(void* self)
 }
 #endif
 
-extern "C" void func_002B4B48(void* self);
+extern "C" void func_002B4B48();
 extern "C" void func_00284C28();
 extern "C" void cAppMan_loadexecpurge(void* self);
 
@@ -1184,7 +1184,7 @@ INCLUDE_ASM("main/ssxapp", cSSXApp_loadexecpurge__FPv);
 #ifdef SKIP_ASM
 void cSSXApp_loadexecpurge(void* self)
 {
-    func_002B4B48(self);
+    func_002B4B48();
     func_00284C28();
     cAppMan_loadexecpurge(self);
     sExecPurgeVTable* vt = D_004A5B80->vtable;
