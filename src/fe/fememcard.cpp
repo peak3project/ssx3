@@ -735,20 +735,19 @@ struct sVtEntK187920 {
 
 extern "C" void func_00187920(void)
 {
-    int two = 2;
     D_004A14BC = 4;
     *(int*)((char*)D_004A14B8 + 0x1C0) = 5;
     cBE_getInterface_Fv(cBE_getBE(), 5);
     void* mp = func_00227F80(D_004A28A8);
     void* s1 = D_004A14B8;
-    *(int*)((char*)s1 + 0x1BC) = two;
+    *(int*)((char*)s1 + 0x1BC) = 2;
     *(int*)((char*)s1 + 0x1C4) = 0;
     func_0023CAA0(mp, func_00152948_K187920());
     func_0023C8F0(mp, 2);
     sVtEntK187920* vt = *(sVtEntK187920**)((char*)mp + 0x748);
     vt[1].fn((char*)mp + vt[1].delta, 0x35);
     void* st = D_004A14B8;
-    *(int*)((char*)st + 0x1BC) = two;
+    *(int*)((char*)st + 0x1BC) = 2;
     void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)st + 0x40), GetHashValue32(D_004A14C0));
     if (obj) {
         void* bank = (char*)*(void**)((char*)D_004A14B8 + 0x10) + 0x50;
