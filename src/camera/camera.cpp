@@ -1370,10 +1370,9 @@ static inline sVec_00160228 Cross_00160228(const sVec_00160228& a, const sVec_00
 
 extern "C" sVec_00160228 func_00160228(char* p, float a, float b)
 {
-    float zero = 0.0f;
-    if (*(float*)(p + 0x18) == zero) return D_004FF120_v160228;
-    sVec_00160228 fwd(func_0031C040(b) * func_0031C040(a), func_0031C040(b) * func_0031BF60(a), -func_0031BF60(b), zero);
-    sVec_00160228 right(func_0031BF60(a), -func_0031C040(a), zero, zero);
+    if (*(float*)(p + 0x18) == 0.0f) return D_004FF120_v160228;
+    sVec_00160228 fwd(func_0031C040(b) * func_0031C040(a), func_0031C040(b) * func_0031BF60(a), -func_0031BF60(b), 0.0f);
+    sVec_00160228 right(func_0031BF60(a), -func_0031C040(a), 0.0f, 0.0f);
     sVec_00160228 up = Cross_00160228(fwd, right);
     float k = *(float*)(p + 0x20) / *(float*)(p + 0x28);
     float sx = k * (*(float*)(p + 0xC) - *(float*)(p + 0x0));
@@ -3741,8 +3740,7 @@ struct sCam_163270 {
 extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamSrc_163270* src) __asm__("func_00163270");
 extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamSrc_163270* src)
 {
-    float zero = 0.0f;
-    float dist = ClampLo_162B90(src->f44 - 1388.888916015625f, zero);
+    float dist = ClampLo_162B90(src->f44 - 1388.888916015625f, 0.0f);
     float t;
     if (src->f44 >= 833.3333740234375f) {
         if (src->f44 <= 1666.666748046875f)
@@ -3750,7 +3748,7 @@ extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCa
         else
             t = 1.0f;
     } else {
-        t = zero;
+        t = 0.0f;
     }
     float tt = t * t;
     float x;
@@ -4719,8 +4717,7 @@ static inline void Rotate_1668B8(sM_1668B8* m, const sV_1668B8& axis, float angl
     float s;
     float c;
     SinCos_1668B8(&s, &c, angle);
-    float one = 1.0f;
-    float t = one - c;
+    float t = 1.0f - c;
     float x = axis.x;
     float y = axis.y;
     float z = axis.z;
@@ -4742,7 +4739,7 @@ static inline void Rotate_1668B8(sM_1668B8* m, const sV_1668B8& axis, float angl
     m->m[3][0] = 0.0f;
     m->m[3][1] = 0.0f;
     m->m[3][2] = 0.0f;
-    m->m[3][3] = one;
+    m->m[3][3] = 1.0f;
     m->m[0][3] = 0.0f;
     m->m[1][3] = 0.0f;
     m->m[2][3] = 0.0f;
@@ -6026,10 +6023,9 @@ struct sVTbl_168150 {
 // allowed range, snap it back behind the target.
 extern "C" void func_00168150_def(char* self)
 {
-    float lo = 20.0f;
     sVec_001607E0 d = cmSub_168150(*(sVec_001607E0*)(self + 0x20), *(sVec_001607E0*)(self + 0x40));
     float len = cmLength_168150(d);
-    if (len < lo || len > 1.0000000200408773e+20f) {
+    if (len < 20.0f || len > 1.0000000200408773e+20f) {
         char* o = *(char**)(self + 0x30);
         sVec_001607E0 x = *(sVec_001607E0*)(*(char**)(o + 4) + 0x1B0);
         sVTbl_168150* e = &(*(sVTbl_168150**)o)[1];
@@ -6136,8 +6132,7 @@ extern "C" void func_00168338_v(char* self)
     *(sVec_001607E0*)(self + 0x20) = cmAdd_001607E0(info.pos, cmScaleP_1848(&D_004FF160_v1607E0, 2.3602666854858398f));
     sVec_001607E0 d = cmSub_168150(*(sVec_001607E0*)(self + 0x20), *(sVec_001607E0*)(self + 0x40));
     float len = cmLength_168150(d);
-    float zero = 0.0f;
-    if (len > zero) {
+    if (len > 0.0f) {
         cmScaleEq_8338(d, 180.19183349609375f / len);
         sVec_001607E0 e = cmSub_168150(*(sVec_001607E0*)(self + 0x20), d);
         float t;
@@ -6148,7 +6143,7 @@ extern "C" void func_00168338_v(char* self)
                 t = 1.0f;
             }
         } else {
-            t = zero;
+            t = 0.0f;
         }
         float f = (1.0f - t) * 0.9916903972625732f + t * 0.8601375222206116f;
         *(sVec_001607E0*)(self + 0x40) = cmAdd_001607E0(cmScale_001607E0(*(sVec_001607E0*)(self + 0x40), f), cmScale_001607E0(e, 1.0f - f));
