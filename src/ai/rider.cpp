@@ -1640,7 +1640,7 @@ void func_001217F8(void* vself)
 INCLUDE_ASM("ai/rider", func_00121818);
 #ifdef SKIP_ASM
 extern void* D_004A3DD8;
-extern "C" void func_0030A060(void* mgr, void* a, void* b, void* c);
+extern "C" int func_0030A060(void* mgr, void* a, void* b, void* c);
 void func_00125AD0(void* self);
 extern "C" void func_00112338(void* self);
 extern "C" void func_001125C0(void* self);
@@ -2757,7 +2757,7 @@ void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
 void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
 extern "C" void func_00311A50(void* anim);
 extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
-int func_0027C958(void* self);
+char* func_0027C958(void* self);
 extern "C" void func_0027C9B0(int, void*);
 struct sQuat_001241C0;
 extern "C" void func_001241C0(cRider* self, sQuat_001241C0* out, float rx, float ry, float rz);
@@ -2894,7 +2894,7 @@ extern "C" void func_00123640(cRider* self)
     float zero;
     float one = 1.0f;
     // PORT: func_0027C958 returns a record pointer as int
-    char* rec = (char*)func_0027C958(self->unk_6D8);
+    char* rec = func_0027C958(self->unk_6D8);
     zero = 0.0f;
     self->unk_AFC = rec[7] != 0;
     self->unk_B00 = 1;
@@ -2982,7 +2982,7 @@ extern "C" void* func_0028B180();
 int func_002A1BD0(void* p);
 extern "C" void func_0030EA80(void* model, int i, int channel);
 extern "C" void func_0030E9E0(void* model, int i, int channel);
-int func_0027C958(void* self);
+char* func_0027C958(void* self);
 // PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
 void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
 extern "C" void* func_0014AD50(void* iface, int id);
@@ -3071,7 +3071,7 @@ extern "C" void func_00123B48(cRider* self)
     func_0030E9E0(self->mAnimModel, 4, 0);
     func_0030E9E0(self->mAnimModel, 7, 0);
     // PORT: func_0027C958 returns a record pointer as int
-    if (*(signed char*)((char*)func_0027C958(self->unk_6D8) + 6) != 0) {
+    if (*(signed char*)(func_0027C958(self->unk_6D8) + 6) != 0) {
         void* iface = cBE_getInterface(cBE_getBE(), 9);
         void* tbl = func_0014BDB8_noarg();
         sDb_123B48* db = (sDb_123B48*)func_0014AD50(iface, self->mAIIndex);
@@ -3179,7 +3179,7 @@ INCLUDE_ASM("ai/rider", func_00123F38);
 #ifdef SKIP_ASM
 extern "C" void* func_0026B5E0(void*, int, int);
 extern char D_004D33A0[];
-int func_0027C958(void* self);
+char* func_0027C958(void* self);
 
 struct sV_3F38 {
     float x, y, z, w;
@@ -3196,7 +3196,7 @@ struct sHit_3F38 {
     char pad[0x70];
 } __attribute__((aligned(16)));
 
-extern "C" void func_0032E100_3F38(sRay_3F38* ray, const sV_3F38& a, const sV_3F38& b, int n, float t) __asm__("func_0032E100");
+extern "C" void* func_0032E100_3F38(sRay_3F38* ray, const sV_3F38& a, const sV_3F38& b, int n, float t) __asm__("func_0032E100");
 extern "C" float func_00336850(void* self, sRay_3F38* ray, sHit_3F38* out, int a3);
 
 // PORT: PS2-only VU0 inline asm (vector * scalar).
@@ -3250,7 +3250,7 @@ extern "C" sV_3F38 func_00123F38(cRider* self)
         return *(sV_3F38*)&self->mPosition;
     float lift = 0.0f;
     // PORT: func_0027C958 returns a record pointer as int
-    char* rec = (char*)func_0027C958(self->unk_6D8);
+    char* rec = func_0027C958(self->unk_6D8);
     sV_3F38 pos = *(sV_3F38*)&self->mPosition;
     switch (*(signed char*)(rec + 5)) {
     case 0:
@@ -3402,7 +3402,7 @@ struct sHit_42B0 {
 
 struct sVE_42B0 { short delta; short index; sV_42B0* (*fn)(void*); };
 
-extern "C" void func_0032E100(sRay_42B0* ray, const sV_42B0& a, const sV_42B0& b, int n, float t);
+extern "C" void* func_0032E100(sRay_42B0* ray, const sV_42B0& a, const sV_42B0& b, int n, float t);
 extern "C" float func_003342D0(void* coll, sRay_42B0* ray, sHit_42B0* hit, int flags);
 void func_00111AA0_42B0(void* self, void* a, void* b, int c, float x) __asm__("func_00111AA0__FPv");
 
@@ -3804,7 +3804,7 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 extern "C" int func_00288A20(void* self, void* obj);
-extern "C" int func_002AD550(void* bank, int id, int a);
+extern "C" void* func_002AD550(void* bank, int id, int a);
 extern "C" void func_002AD5F0(void* bank, int id, int a, float f);
 void func_00280548(void* self, int a1, void* a2, void* a3);
 
