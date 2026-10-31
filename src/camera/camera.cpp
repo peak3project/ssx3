@@ -4766,7 +4766,163 @@ extern "C" void func_001668B8_impl(char* self, sV_1668B8* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00166C60);
+#ifdef SKIP_ASM
+extern cQuad128 D_004FF120;
+extern "C" void f_6C60_def(void* self, long id) __asm__("func_00166C60");
+
+struct sVec_6C60 {
+    float x, y, z, w;
+    sVec_6C60() {}
+} __attribute__((aligned(16)));
+
+extern sVec_6C60 D_004FF160_v6C60 __asm__("D_004FF160");
+
+struct sVE_6C60 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+typedef long (*LongFn_6C60)(void*);
+typedef sVec_6C60 (*VecFn_6C60)(void*);
+typedef void (*VecFn2_6C60)(sVec_6C60*, void*);
+typedef float (*FloatFn_6C60)(void*);
+typedef void (*VoidFn_6C60)(void*);
+typedef void (*IntFn_6C60)(void*, int);
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline void Scale_6C60(sVec_6C60& r, const sVec_6C60& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline void Cross_6C60(sVec_6C60& r, const sVec_6C60& a, const sVec_6C60& b)
+{
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "o"(a), "m"(b)
+        : "memory");
+}
+
+static inline sVec_6C60 getVec_6C60(char* self, int slot)
+{
+    char* cam = *(char**)(self + 0x30);
+    sVE_6C60* cvt = *(sVE_6C60**)cam;
+    return ((VecFn_6C60)cvt[slot].fn)(cam + cvt[slot].delta);
+}
+
+extern "C" void f_6C60_def(void* p, long id)
+{
+    char* self = (char*)p;
+    char* mgr = *(char**)(*(char**)(self + 0x30) + 4) + 0x6C0;
+    sVE_6C60* mvt = *(sVE_6C60**)mgr;
+    if (id == ((LongFn_6C60)mvt[7].fn)(mgr + mvt[7].delta)) {
+        sVec_6C60 pos = getVec_6C60(self, 4);
+        sVec_6C60 dir = getVec_6C60(self, 3);
+        sVec_6C60 v;
+        sVec_6C60 t;
+        sVec_6C60 u;
+        *(int*)(self + 0x2C0) = 5000;
+        *(float*)(self + 0x1E0) = 10.0f;
+        *(float*)(self + 0x1DC) = 1.0f;
+        *(int*)(self + 0x1E4) = 0;
+        *(int*)(self + 0x2D0) = 0;
+        *(int*)(self + 0x2D8) = 0;
+        *(cQuad128*)(self + 0xC0) = D_004FF120;
+        *(cQuad128*)(self + 0xD0) = D_004FF120;
+        *(cQuad128*)(self + 0xE0) = D_004FF120;
+        *(sVec_6C60*)(self + 0x80) = pos;
+        sVE_6C60* svt1 = *(sVE_6C60**)(self + 0x10);
+        *(float*)(self + 0x1D4) = ((FloatFn_6C60)svt1[13].fn)(self + svt1[13].delta);
+        *(int*)(self + 0x1E8) = 0;
+        *(int*)(self + 0x1EC) = 0;
+        Cross_6C60(t, D_004FF160_v6C60, pos);
+        v = t;
+        *(float*)(self + 0x224) = 0.92f;
+        *(sVec_6C60*)(self + 0xF0) = t;
+        *(int*)(self + 0x2E4) = 1;
+        *(int*)(self + 0x2C4) = -1;
+        *(float*)(self + 0x228) = 1.0f;
+        *(int*)(self + 0x1F0) = 0;
+        *(int*)(self + 0x2C8) = 0;
+        *(int*)(self + 0x2DC) = 0;
+        *(int*)(self + 0x1F8) = 0;
+        *(int*)(self + 0x2E0) = 0;
+        *(int*)(self + 0x204) = 0;
+        *(int*)(self + 0x208) = 0;
+        *(int*)(self + 0x210) = 0;
+        *(int*)(self + 0x20C) = 0;
+        *(int*)(self + 0x220) = 0;
+        *(int*)(self + 0x21C) = 0;
+        *(int*)(self + 0x214) = 0;
+        *(int*)(self + 0x2E8) = 0;
+        *(int*)(self + 0x2CC) = 0;
+        *(int*)(self + 0x23C) = 0;
+        *(cQuad128*)(self + 0x170) = D_004FF120;
+        *(int*)(self + 0x244) = 0;
+        *(int*)(self + 0x240) = 0;
+        *(sVec_6C60*)(self + 0x190) = dir;
+        Scale_6C60(t, pos, 250.0f);
+        *(int*)(self + 0x300) = 1;
+        v = t;
+        *(sVec_6C60*)(self + 0x1A0) = t;
+        *(float*)(self + 0x248) = 0.5f;
+        *(int*)(self + 0x24C) = 0;
+        *(int*)(self + 0x250) = 0;
+        {
+            char* cam = *(char**)(self + 0x30);
+            sVE_6C60* cvt = *(sVE_6C60**)cam;
+            ((VecFn2_6C60)cvt[4].fn)(&v, cam + cvt[4].delta);
+        }
+        *(int*)(self + 0x2EC) = 0;
+        *(sVec_6C60*)(self + 0x1B0) = v;
+        *(int*)(self + 0x2B4) = 0;
+        *(int*)(self + 0x2B8) = 0;
+        *(int*)(self + 0x2F0) = 0;
+        *(int*)(self + 0x2BC) = 0;
+        *(int*)(self + 0x37C) = 0;
+        int* q = (int*)(self + 0x340);
+        for (int i = 4; i >= 0; i--) {
+            q[0] = 0;
+            q[5] = 0;
+            q[10] = 0;
+            q++;
+        }
+        {
+            char* cam = *(char**)(self + 0x30);
+            sVE_6C60* cvt = *(sVE_6C60**)cam;
+            ((VecFn2_6C60)cvt[4].fn)(&t, cam + cvt[4].delta);
+        }
+        Scale_6C60(u, t, 2.0f);
+        v = u;
+        *(sVec_6C60*)(self + 0x1C0) = u;
+        *(sVec_6C60*)(self + 0x100) = dir;
+        *(int*)(self + 0x108) = 0;
+        sVE_6C60* svt2 = *(sVE_6C60**)(self + 0x10);
+        ((VoidFn_6C60)svt2[5].fn)(self + svt2[5].delta);
+        sVE_6C60* svt3 = *(sVE_6C60**)(self + 0x10);
+        ((IntFn_6C60)svt3[8].fn)(self + svt3[8].delta, 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_00166F28);
