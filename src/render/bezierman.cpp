@@ -37,14 +37,14 @@ extern "C" void func_0038B0F8(void* self)
 }
 #endif
 
-extern "C" void* func_003739D0(void*);
+extern "C" void func_003739D0(void*);
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038B158__FPv);
 #ifdef SKIP_ASM
-void* func_0038B158(void* self)
+void func_0038B158(void* self)
 {
-    return func_003739D0((char*)self + 0x10);
+    func_003739D0((char*)self + 0x10);
 }
 #endif
 
