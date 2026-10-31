@@ -801,8 +801,7 @@ extern "C" void func_00398438(void* p);
 extern "C" void func_00326A68(void* p);
 extern "C" void func_00278308(void* p);
 extern "C" int func_003DEDC0(void* handle, int arg);
-// PORT: func_002B4B48 is declared (void*) but never reads it; this caller passes nothing.
-extern "C" void func_002B4B48_noarg() __asm__("func_002B4B48");
+extern "C" void func_002B4B48();
 extern "C" void func_00284C28();
 extern "C" void func_0014DD98(void* p);
 extern "C" void func_002380E8(void* p);
@@ -894,7 +893,7 @@ extern "C" void cSSXApp_purge(sSSXAppPurge* self)
         }
     }
     if (self->f118) func_003DEDC0(self->f118, 100);
-    func_002B4B48_noarg();
+    func_002B4B48();
     func_00284C28();
     if (self->fD4) func_003DEDC0(self->fD4, 100);
     if (self->fD8) func_003DEDC0(self->fD8, 100);
