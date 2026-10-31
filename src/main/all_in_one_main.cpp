@@ -786,11 +786,11 @@ extern "C" void func_001DCBD8(void *self, int flags) {
 INCLUDE_ASM("main/all_in_one_main", func_001DCC08);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_001E1090_CC08(void*, int) __asm__("func_001E1090");
+extern "C" void func_001E1090(void*, int);
 
 extern "C" void func_001DCC08(signed char *self, signed char v) {
     *self = v;
-    func_001E1090_CC08(self, v == 2);
+    func_001E1090(self, v == 2);
 }
 #endif
 
@@ -1993,13 +1993,13 @@ INCLUDE_ASM("main/all_in_one_main", func_001DDC48);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void *func_0039E318(void *, int, int);
-extern "C" void func_001CA8A0_DC48(void *) __asm__("func_001CA8A0");
+extern "C" void func_001CA8A0(void *);
 extern int D_0046CB08[];
 
 extern "C" void *func_001DDC48(void *self) {
     func_0039E318(self, 0, 0);
     *(int **)((char *)self + 8) = D_0046CB08;
-    func_001CA8A0_DC48((char *)self + 0x48);
+    func_001CA8A0((char *)self + 0x48);
     return self;
 }
 #endif
@@ -2451,11 +2451,11 @@ extern "C" void func_001DE150(void *self, int flags) {
 INCLUDE_ASM("main/all_in_one_main", func_001DE178);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void *func_001D53B0_E178(void *, int, int) __asm__("func_001D53B0");
+extern "C" void *func_001D53B0(void *, int, int);
 extern int D_0046C228_E178[] __asm__("D_0046C228");
 
 extern "C" void *func_001DE178(void *self) {
-    func_001D53B0_E178(self, 0, 0);
+    func_001D53B0(self, 0, 0);
     *(int **)((char *)self + 8) = D_0046C228_E178;
     return self;
 }
@@ -2502,11 +2502,10 @@ extern "C" void func_001DE218(void *self, int flags) {
 INCLUDE_ASM("main/all_in_one_main", func_001DE240);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void *func_001D53B0_E240(void *, int, int) __asm__("func_001D53B0");
 extern int D_0046BFD0_E240[] __asm__("D_0046BFD0");
 
 extern "C" void *func_001DE240(void *self) {
-    func_001D53B0_E240(self, 0, 0);
+    func_001D53B0(self, 0, 0);
     *(int **)((char *)self + 8) = D_0046BFD0_E240;
     return self;
 }
@@ -3143,11 +3142,10 @@ extern "C" void func_001DE948(void) {
 INCLUDE_ASM("main/all_in_one_main", func_001DE950);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void *func_001D53B0_E950(void *, int, int) __asm__("func_001D53B0");
 extern int D_0046B570[];
 
 extern "C" void *func_001DE950(void *self) {
-    func_001D53B0_E950(self, 0, 0);
+    func_001D53B0(self, 0, 0);
     *(int **)((char *)self + 8) = D_0046B570;
     return self;
 }
