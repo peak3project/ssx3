@@ -845,13 +845,13 @@ extern "C" void func_0030A688(void* self, int id)
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030A6D8);
 #ifdef SKIP_ASM
-extern "C" void func_00307EC0(void* p);
+extern "C" void func_00307EC0(void* p, int id);
 
-extern "C" void func_0030A6D8(void* self)
+extern "C" void func_0030A6D8(void* self, int id)
 {
     void* p = *(void**)((char*)self + 0x2A4);
     if (p != 0) {
-        func_00307EC0(p);
+        func_00307EC0(p, id);
     }
 }
 #endif
@@ -859,13 +859,13 @@ extern "C" void func_0030A6D8(void* self)
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030A700);
 #ifdef SKIP_ASM
-extern "C" void func_00307F58(void* p);
+extern "C" void func_00307F58(void* p, int id);
 
-extern "C" void func_0030A700(void* self)
+extern "C" void func_0030A700(void* self, int id)
 {
     void* p = *(void**)((char*)self + 0x2A4);
     if (p != 0) {
-        func_00307F58(p);
+        func_00307F58(p, id);
     }
 }
 #endif
@@ -3158,18 +3158,18 @@ int func_0030D3D8(void* self)
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D3E0);
 #ifdef SKIP_ASM
-extern "C" void func_0030AC98_1(void* arg0) __asm__("func_0030AC98");
-extern "C" void func_0030D3E0(char* self) {
-    func_0030AC98_1(*(void**)(self + 0x10));
+extern "C" void func_0030AC98(void* arg0, void* obj, int a2);
+extern "C" void func_0030D3E0(char* self, void* obj, int a2) {
+    func_0030AC98(*(void**)(self + 0x10), obj, a2);
 }
 #endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D400);
 #ifdef SKIP_ASM
-extern "C" void func_0030ADA8_1(void* arg0) __asm__("func_0030ADA8");
-extern "C" void func_0030D400(char* self) {
-    func_0030ADA8_1(*(void**)(self + 0x10));
+extern "C" void func_0030ADA8(void* arg0, void* obj, int a2);
+extern "C" void func_0030D400(char* self, void* obj, int a2) {
+    func_0030ADA8(*(void**)(self + 0x10), obj, a2);
 }
 #endif
 //100%
