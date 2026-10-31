@@ -458,7 +458,7 @@ extern "C" void* func_003AA2D8(void* self)
 //100%
 INCLUDE_ASM("world/worldview", func_003AA2F0);
 #ifdef SKIP_ASM
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 
 struct func_003AA2F0_sEntry {
     float dist;
@@ -1424,7 +1424,7 @@ extern "C" int func_003ABF20(void* self, void* a1)
 //100%
 INCLUDE_ASM("world/worldview", func_003ABF50);
 #ifdef SKIP_ASM
-extern "C" void func_003ABFC0(void* self, void* item, void* list);
+extern "C" int func_003ABFC0(void* self, void* item, void* list);
 
 struct func_003ABF50_sEntry {
     int field_0x0;
@@ -1462,11 +1462,9 @@ INCLUDE_ASM("world/worldview", func_003ABFC0);
 #ifdef SKIP_ASM
 extern "C" void func_003AC048(void* self, void* obj, void* list, int index);
 
-// PORT: the unit declares func_003ABFC0 as returning void (func_003ABF50 calls it that way),
-// but the body returns 1; bind the int-returning body to the symbol with an asm label.
-int func_003ABFC0_impl(void* self, void* item, void* list) __asm__("func_003ABFC0");
+int func_003ABFC0(void* self, void* item, void* list);
 
-int func_003ABFC0_impl(void* self, void* item, void* list)
+int func_003ABFC0(void* self, void* item, void* list)
 {
     void** p = *(void***)((char*)item + 0x20);
     int i;
