@@ -2586,7 +2586,7 @@ extern "C" int func_002224A0(void) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002224A8);
 #ifdef SKIP_ASM
-extern "C" int func_002224A8(int arg0) {
+extern "C" void* func_002224A8(void* arg0) {
     return arg0;
 }
 #endif
