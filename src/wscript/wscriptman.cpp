@@ -1618,7 +1618,7 @@ extern "C" int func_0030B428(cWScriptListHead* self, cWScriptListNode* node)
 INCLUDE_ASM("wscript/wscriptman", func_0030B458);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_0030B388_vv(void* self, void* node) __asm__("func_0030B388");
+extern "C" void* func_0030B388_vv(void* self, void* node) __asm__("func_0030B388");
 extern "C" void func_0030B458(char* self, void* node) {
     if (func_0030B388_vv(self + 0x2B8, node) == 0 &&
         func_0030B388_vv(self + 0x2B4, node) == 0) {
@@ -3290,8 +3290,7 @@ INCLUDE_ASM("wscript/wscriptman", func_0030D540);
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D840);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void func_003E6448(void* dst, int value, int size);
 extern char D_00489C70[];
 
@@ -3308,7 +3307,7 @@ extern "C" void func_0030D840(func_0030D840_sPool* self, int count, int a2)
 {
     self->field_0x4 = a2;
     self->count = count;
-    self->items = operator_new_tag(count * 0x58, D_00489C70, 0, 0);
+    self->items = operator_new__FUi(count * 0x58, D_00489C70, 0, 0);
     func_003E6448(self->items, 0, self->count * 0x58);
     self->field_0x8 = 0;
     self->field_0x60 = 0;
