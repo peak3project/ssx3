@@ -155,8 +155,8 @@ INCLUDE_ASM("world/wscriptcache", func_003ACAD0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void ASYNCFILE_release_CAD0(int, int *, int *) __asm__("ASYNCFILE_release");
-extern "C" void func_002523A8_CAD0(int) __asm__("func_002523A8");
-extern "C" void func_003B47F8_CAD0(int, int) __asm__("func_003B47F8");
+extern "C" void* func_002523A8(int);
+extern "C" void func_003B47F8(int, int);
 extern "C" int func_003B4818_CAD0(int) __asm__("func_003B4818");
 extern "C" int func_003DF980_CAD0(int) __asm__("func_003DF980");
 extern "C" void func_003E6574_CAD0(int, int, int) __asm__("func_003E6574");
@@ -176,13 +176,13 @@ extern "C" void func_003ACAD0_impl(void *self_) {
                 if (t > 0) {
                     int r = operator_new_CAD0(t, D_00495080, 0x20000000, 0);
                     *(int*)(self + 8) = r;
-                    func_003B47F8_CAD0(sp0, r);
+                    func_003B47F8(sp0, r);
                 } else {
                     int r = operator_new_CAD0(sp4, D_00495080, 0x20000000, 0);
                     *(int*)(self + 8) = r;
                     func_003E6574_CAD0(r, sp0, sp4);
                 }
-                func_002523A8_CAD0(sp0);
+                func_002523A8(sp0);
             }
         }
         *(short*)self = 2;
@@ -1216,7 +1216,7 @@ extern "C" int func_003E0D80(int h, int a, int b, int c);
 extern "C" void ASYNCFILE_release(int h, void* data, int* size);
 extern "C" int func_003B0600(void* p, int a1);
 extern "C" unsigned int func_003E4E98();
-extern "C" unsigned int func_003E5008();
+extern "C" int func_003E5008();
 extern "C" void func_0042E508(void* timer);
 extern "C" void* func_003AE888(void*, int);
 
@@ -1416,7 +1416,7 @@ extern "C" void func_003B58D8();
 extern "C" int func_003B5F60();
 extern "C" int func_003B7B48(int id, void* out);
 extern "C" int func_003B7C40(int id, void* out);
-extern "C" unsigned int func_003E5008();
+extern "C" int func_003E5008();
 extern "C" void func_0042E508(void* timer);
 
 // PORT: accum is a 64-bit ulong
@@ -1492,7 +1492,7 @@ extern sAlloc_AEAD0 D_00509430_AEAD0 __asm__("D_00509430");
 extern char D_00495210[];
 
 extern "C" unsigned char* func_003E12E0(void* q);
-extern "C" void SYNCTASK_run(int a);
+extern "C" int SYNCTASK_run(int a);
 extern "C" int func_003B11F0(int v);
 void* func_003B0720(void* self);
 extern "C" void* func_003B11A0();
@@ -1643,7 +1643,7 @@ extern "C" void* func_003AED40(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AEE30);
 #ifdef SKIP_ASM
-extern "C" void func_003B7838(void* a);
+extern "C" int func_003B7838(void* a);
 extern void* (*D_00509434[])(void*);
 
 extern "C" void func_003AEE30(void* self, int flags)
@@ -3613,30 +3613,28 @@ struct func_003B2528_sKey {
 };
 
 extern "C" char func_003B3DA8(int key);
-extern "C" void func_003B39D8(func_003B2528_sKey* k);
+extern "C" unsigned char func_003B39D8(func_003B2528_sKey* k);
 
-extern "C" void func_003B2528(int key)
+extern "C" int func_003B2528(int key)
 {
     func_003B2528_sKey k;
     if (key == 0) {
         key = 0x20;
     }
     k.c = func_003B3DA8(key);
-    func_003B39D8(&k);
+    return func_003B39D8(&k);
 }
 #endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003B2558);
 #ifdef SKIP_ASM
-// PORT: the unit declares func_003B2528 `void`, but it returns func_003B39D8's result
-// (the format's bits per pixel); bound via asm label.
-extern "C" int func_003B2528_bits(int fmt) __asm__("func_003B2528");
+extern "C" int func_003B2528(int fmt);
 
 extern "C" int func_003B2558(int w, int h, int fmt, int maxLevel)
 {
     int total = 0;
-    int c = func_003B2528_bits(fmt);
+    int c = func_003B2528(fmt);
     int bpp = 0x10;
     if (c != 0xF) bpp = c;
     if (w < 1 || w > 0x10000 || h < 1) return 0;
@@ -3676,13 +3674,12 @@ extern "C" int func_003B2688(int v)
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003B26B8);
 #ifdef SKIP_ASM
-// PORT: the unit declares func_003B2528 `void`, but it returns the format's bits per pixel.
-extern "C" int func_003B2528_bits(int fmt) __asm__("func_003B2528");
+extern "C" int func_003B2528(int fmt);
 extern "C" int func_003B2558(int w, int h, int fmt, int maxLevel);
 
 extern "C" int func_003B26B8(int w, int h, int fmt, int clut, int maxLevel, int extra1, int extra2)
 {
-    int c = func_003B2528_bits(fmt);
+    int c = func_003B2528(fmt);
     int size = func_003B2558(w, h, fmt, maxLevel);
     size += 0x10;
     if (c < 9 && clut != 0) {
