@@ -92,8 +92,7 @@ void func_00397298(void* self, int val)
 //100%
 INCLUDE_ASM("ui/uianimation", cUIAnimation_cUIAnimation);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void func_00397298(void* self, int val);
 extern char D_00493D60[];
 extern void* D_00494D08[];
@@ -109,7 +108,7 @@ extern "C" void* cUIAnimation_cUIAnimation(void* self, void* data)
     int** slot = (int**)((char*)self + 0x4);
     unsigned int n = *(unsigned int*)((char*)data + 4);
     if (n != 0) {
-        int* p = (int*)operator_new_tag(n * 4 + 0x10, D_00493D60, 0x100, 0);
+        int* p = (int*)operator_new__FUi(n * 4 + 0x10, D_00493D60, 0x100, 0);
         p[0] = n;
         int* arr = p + 4;
         int* e = arr;
