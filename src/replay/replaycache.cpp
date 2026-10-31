@@ -760,14 +760,14 @@ INCLUDE_ASM("replay/replaycache", func_00270F20);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern const char D_00481800[];
 extern const char D_00481810[];
 
 extern "C" void func_00270F20(void* self)
 {
     *(void**)((char*)self + 0x63C) = cMemMan_alloc(0x4000, D_00481800, 0x20000000, 0);
-    *(void**)((char*)self + 0x640) = operator_new_tag(0xC800, D_00481810, 0x20000000, 0);
+    *(void**)((char*)self + 0x640) = operator_new__FUi(0xC800, D_00481810, 0x20000000, 0);
 }
 #endif
 
@@ -2319,7 +2319,7 @@ extern "C" void func_00272D20(void *arg0) {
 //100%
 INCLUDE_ASM("replay/replaycache", func_00272D40);
 #ifdef SKIP_ASM
-extern "C" void func_00274398(int);
+extern "C" int func_00274398(int);
 extern "C" int func_00274D90();
 
 extern "C" void func_00272D40(void) {
@@ -3485,9 +3485,9 @@ extern "C" cRcListener4240* func_00274240(void* self, cRcListener4240* l)
 //100%
 INCLUDE_ASM("replay/replaycache", func_002742C8__FPvi);
 #ifdef SKIP_ASM
-int func_002742C8(void* self, int a1)
+void* func_002742C8(void* self, int a1)
 {
-    return *(int*)((char*)*(void**)((char*)self + 0x24) + a1 * 4);
+    return *(void**)((char*)*(void**)((char*)self + 0x24) + a1 * 4);
 }
 #endif
 
