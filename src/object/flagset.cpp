@@ -353,7 +353,6 @@ extern "C" void func_0034B9B0(sFlagSetEntry* e)
     } else {
         SetF4_2_34B9B0(TOP_34B9B0(ctx), 5);
     }
-    float one = 1.0f;
     for (int i = 0; i < *(int*)(self + 0x5C); i++) {
         sModel_34B9B0* m = ((sFSE_34B9B0*)self)->models[i];
         if (!IsLoaded_34B9B0(m)) {
@@ -362,8 +361,8 @@ extern "C" void func_0034B9B0(sFlagSetEntry* e)
         {
             sVE93_34B9B0* vt = *(sVE93_34B9B0**)(ctx + 0x10D8);
             char* thisp = ctx + vt[93].delta;
-            sVec4_34B9B0 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), one);
-            sVec4_34B9B0 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), one);
+            sVec4_34B9B0 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
+            sVec4_34B9B0 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
             sVec4_34B9B0* pb = &b;
             sVE43_34B9B0* vt43 = *(sVE43_34B9B0**)(ctx + 0x10D8);
             sPair_34B9B0 c = vt43[43].fn(ctx + vt43[43].delta);
