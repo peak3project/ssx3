@@ -165,7 +165,7 @@ INCLUDE_ASM("intersect/aifwddiff", func_00327C00);
 #ifdef SKIP_ASM
 extern "C" void func_00391418(void* t, void* a);
 extern "C" void func_00327C68(void* self, void* a);
-extern "C" void func_003914F8(void* t);
+extern "C" int func_003914F8(void* t);
 extern "C" void func_00391480(void* t, void* a);
 struct sGp2930 { int a, b; };
 extern sGp2930 D_004A5A20; // placeholder: target is a raw $gp+0x2930 reference
@@ -646,7 +646,7 @@ INCLUDE_ASM("intersect/aifwddiff", func_00328660);
 #ifdef SKIP_ASM
 // PORT: cMemMan_alloc is the game's operator new(size, tag, flags, align).
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_003E6448(void* p, int v, int n);
+extern "C" void* func_003E6448(void* p, int v, int n);
 extern char D_004A3FC0[];
 
 struct sItem_00328660 {
