@@ -665,10 +665,10 @@ extern "C" void* func_002625C8_4330(void* session, int idx) __asm__("func_002625
 extern "C" void func_001A9890_4330(void* self, void* entry) __asm__("func_001A9890");
 extern "C" void* func_001A98B0_4330(void* self) __asm__("func_001A98B0__FPv");
 extern "C" void func_001AB370_4330(void* self, void* a1, int a2) __asm__("func_001AB370");
-extern "C" void func_001A4750_4330(void* self) __asm__("func_001A4750");
+extern "C" void func_001A4750(void* self);
 extern "C" int func_001A6070(void* self, int idx);
 extern "C" void func_001A5FB8_4330(void* self, int idx) __asm__("func_001A5FB8");
-extern "C" void func_001A5128_4330(void* self, int idx, int n) __asm__("func_001A5128");
+extern "C" void func_001A5128(void* self, int idx, int n);
 extern "C" void func_001A66A8_4330(void* self, int idx, int on) __asm__("func_001A66A8");
 extern char D_00461540[];
 extern char D_004615A0[];
@@ -738,7 +738,7 @@ extern "C" void func_001A4330(char* self, sObj_4330* w, int msg)
         break;
     }
     case 13:
-        func_001A4750_4330(self);
+        func_001A4750(self);
         break;
     case 1:
         for (int i = 0; i < 15; i++) {
@@ -747,7 +747,7 @@ extern "C" void func_001A4330(char* self, sObj_4330* w, int msg)
             if (id == GetHashValue32(buf)) {
                 func_001A6070(self, i + *(int*)(self + 0x6F4));
                 func_001A5FB8_4330(self, i);
-                func_001A5128_4330(self, i + *(int*)(self + 0x6F4), *(int**)(self + 0x6EC) - *(int**)(self + 0x6E8));
+                func_001A5128(self, i + *(int*)(self + 0x6F4), *(int**)(self + 0x6EC) - *(int**)(self + 0x6E8));
                 func_001A66A8_4330(self, i, 1);
                 break;
             }
@@ -5563,9 +5563,8 @@ extern char D_00461618[];
 extern char D_00462C88[];
 extern char D_00462D10[];
 extern "C" void* cUIScreen_getObjectByHashName_C5C0(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
-extern "C" int func_001AC408_C5C0(void* self) __asm__("func_001AC408");
-extern "C" int func_001AC360_C5C0(void* self) __asm__("func_001AC360");
-extern "C" void func_001ACDD0_C5C0(void* self) __asm__("func_001ACDD0");
+extern "C" int func_001AC408(void* self);
+extern "C" void func_001ACDD0(void* self);
 extern "C" void func_0025B6D8_C5C0(void* self, int a1) __asm__("func_0025B6D8");
 extern char D_00462B88[];
 extern char D_00462BA0[];
@@ -5588,7 +5587,7 @@ extern "C" void func_001AC5C0(char* self, void* a1, unsigned int msg)
     case 5:
         switch (*(unsigned int*)((char*)a1 + 0x18)) {
         case 4: {
-            if (!func_001AC408_C5C0(self)) {
+            if (!func_001AC408(self)) {
                 break;
             }
             void* p = func_001A9C50(self);
@@ -5604,7 +5603,7 @@ extern "C" void func_001AC5C0(char* self, void* a1, unsigned int msg)
             break;
         }
         case 2: {
-            if (!func_001AC360_C5C0(self)) {
+            if (!func_001AC360(self)) {
                 break;
             }
             void* p = func_001A9C50(self);
@@ -5663,7 +5662,7 @@ extern "C" void func_001AC5C0(char* self, void* a1, unsigned int msg)
         break;
     }
     case 13:
-        func_001ACDD0_C5C0(self);
+        func_001ACDD0(self);
         break;
     default:
         func_001A8918(self, (int)a1, msg);
@@ -6201,8 +6200,8 @@ INCLUDE_ASM("fe/feasyncfile", func_001AD5E8);
 #ifdef SKIP_ASM
 extern char D_00462C88[];
 extern "C" void* func_001B88F0_D5E8(void* mem, int a1, int a2) __asm__("func_001B88F0");
-extern "C" void func_001AD208_D5E8(void* self, const char* name) __asm__("func_001AD208");
-extern "C" void func_001C5878_D5E8(void* self, int a1, int a2, int a3) __asm__("func_001C5878");
+extern "C" void func_001AD208(void* self, const char* name);
+extern "C" void func_001C5878(void* self, int a1, int a2, int a3);
 void func_0025CD28(void* self, int a1);
 extern char D_00462ED0[];
 extern char D_00462E58[];
@@ -6264,7 +6263,7 @@ extern "C" void func_001AD5E8(void* selfp, void* a1, int a2)
             *(int*)((char*)p + 0xC0) = 3;
             func_001C57C0(sub, 0, GetHashValue32(D_00462F08));
             func_001C57C0(sub, 1, GetHashValue32(D_00462C88));
-            func_001C5878_D5E8(sub, 0, GetHashValue32(D_00462F18), 1);
+            func_001C5878(sub, 0, GetHashValue32(D_00462F18), 1);
             *(int*)((char*)p + 0x168) = 1;
             *(int*)((char*)p + 0x150) = 0x816;
             func_001A9BC0(self, p);
@@ -6272,7 +6271,7 @@ extern "C" void func_001AD5E8(void* selfp, void* a1, int a2)
         break;
     }
     case 13:
-        func_001AD208_D5E8(self, *(char**)(self + 0x69C) + 0x74);
+        func_001AD208(self, *(char**)(self + 0x69C) + 0x74);
         break;
     case 14:
         break;
@@ -6831,16 +6830,13 @@ extern "C" void func_001AE680(void* self)
 INCLUDE_ASM("fe/feasyncfile", func_001AE7A0);
 #ifdef SKIP_ASM
 extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
-extern "C" void func_001AE680_E7A0(void* self) __asm__("func_001AE680");
-extern "C" void func_001AF568_E7A0(void* self) __asm__("func_001AF568");
-extern "C" int func_0039A738_E7A0(void* item) __asm__("func_0039A738");
+extern "C" void func_001AE680(void* self);
+extern "C" void func_001AF568(void* self);
 extern "C" void func_0025F4C0_E7A0(void* self, int a1, int a2) __asm__("func_0025F4C0");
-extern "C" void func_0025F628_E7A0(void* self, int a1, int a2) __asm__("func_0025F628");
+extern "C" void func_0025F628(void* self, int a1, int a2);
 extern "C" void func_0039F600_E7A0(void* list) __asm__("func_0039F600");
 extern "C" void* func_00186610(void* mem, int a1, int a2);
 extern "C" void cUIStateStack_pushSpecial_E7A0(void* stack, void* state, int a2, int a3) __asm__("cUIStateStack_pushSpecial");
-extern "C" void func_001AF098_E7A0(void* self, int on) __asm__("func_001AF098");
-extern "C" void func_001AEC60_E7A0(void* self, int v) __asm__("func_001AEC60");
 extern "C" void func_001AF208_E7A0(void* self, void* item, int on) __asm__("func_001AF208");
 extern int D_004A25A4;
 extern int D_004A2594;
@@ -6894,7 +6890,7 @@ extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
     case 5:
         switch (*(int*)((char*)a1 + 0x18)) {
         case 7: {
-            func_001AE680_E7A0(self);
+            func_001AE680(self);
             D_004A25A4 = 1;
             D_004A2594 = 0;
             D_004A2598 = 0;
@@ -6907,12 +6903,12 @@ extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
             if (self->f6D0) {
                 break;
             }
-            func_001AE680_E7A0(self);
-            func_001AF568_E7A0(self);
+            func_001AE680(self);
+            func_001AF568(self);
             char* opts = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
-            D_00534B34[0] = func_0039A738_E7A0(self->aiOn) != 0;
+            D_00534B34[0] = func_0039A738(self->aiOn) != 0;
             commit_E7A0(opts);
-            if (func_0039A738_E7A0(self->aiOn)) {
+            if (func_0039A738(self->aiOn)) {
                 D_005308B8_E7A0.bit6 = 1;
                 D_005308B8_E7A0.bit7 = 1;
                 D_005308B8_E7A0.bit8 = 1;
@@ -6920,11 +6916,11 @@ extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
                 cBENewRaceInterface_setNumberAI(race, 0);
                 commit_E7A0(race);
             } else {
-                D_005308B8_E7A0.bit6 = func_0039A738_E7A0(self->opt6);
-                D_005308B8_E7A0.bit8 = func_0039A738_E7A0(self->opt8);
-                D_005308B8_E7A0.bit7 = func_0039A738_E7A0(self->opt7);
+                D_005308B8_E7A0.bit6 = func_0039A738(self->opt6);
+                D_005308B8_E7A0.bit8 = func_0039A738(self->opt8);
+                D_005308B8_E7A0.bit7 = func_0039A738(self->opt7);
                 char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
-                cBENewRaceInterface_setNumberAI(race, func_0039A738_E7A0(self->numAI));
+                cBENewRaceInterface_setNumberAI(race, func_0039A738(self->numAI));
                 commit_E7A0(race);
             }
             func_0025F4C0_E7A0(D_004A3028, *(int*)((char*)D_004A3028 + 0x98), self->f14);
@@ -6932,33 +6928,33 @@ extern "C" void func_001AE7A0(cState_E7A0* self, void* a1, int msg)
         }
         case 10:
             if (self->f6D0) {
-                func_0025F628_E7A0(D_004A3028, 0, 1);
+                func_0025F628(D_004A3028, 0, 1);
             }
             func_0039F600_E7A0(self->engine + 0x18);
             break;
         }
         break;
     case 6:
-        func_0025F628_E7A0(D_004A3028, 0, self->f6D0);
+        func_0025F628(D_004A3028, 0, self->f6D0);
         func_0039F600_E7A0(self->engine + 0x18);
         break;
     case 9:
         if (a1 == self->aiOn) {
             char* opts = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
-            D_00534B34[0] = func_0039A738_E7A0(self->aiOn) != 0;
+            D_00534B34[0] = func_0039A738(self->aiOn) != 0;
             commit_E7A0(opts);
-            func_001AF098_E7A0(self, func_0039A738_E7A0(self->aiOn) != 0);
-            func_001AEC60_E7A0(self, self->f6D0);
+            func_001AF098(self, func_0039A738(self->aiOn) != 0);
+            func_001AEC60(self, self->f6D0);
         } else if (a1 == self->opt6) {
-            D_005308B8_E7A0.bit6 = func_0039A738_E7A0(a1);
+            D_005308B8_E7A0.bit6 = func_0039A738(a1);
         } else if (a1 == self->opt8) {
-            D_005308B8_E7A0.bit8 = func_0039A738_E7A0(a1);
+            D_005308B8_E7A0.bit8 = func_0039A738(a1);
         } else if (a1 == self->opt7) {
-            D_005308B8_E7A0.bit7 = func_0039A738_E7A0(a1);
+            D_005308B8_E7A0.bit7 = func_0039A738(a1);
         } else if (a1 == self->numAI) {
             char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
-            cBENewRaceInterface_setNumberAI(race, func_0039A738_E7A0(self->numAI));
-            D_004A4E8C = func_0039A738_E7A0(self->numAI);
+            cBENewRaceInterface_setNumberAI(race, func_0039A738(self->numAI));
+            D_004A4E8C = func_0039A738(self->numAI);
             commit_E7A0(race);
         }
         break;
@@ -14011,12 +14007,11 @@ extern "C" void func_001B8AA0(void* self, cUIText* text)
 INCLUDE_ASM("fe/feasyncfile", func_001B8C38);
 #ifdef SKIP_ASM
 extern "C" void* cUIScreen_getObjectByHashName_8C38(void* self, int hash) __asm__("cUIScreen_getObjectByHashName");
-extern "C" int func_0039A738_8C38(void* item) __asm__("func_0039A738");
-extern "C" int func_001BA110_8C38(void* self) __asm__("func_001BA110");
+extern "C" int func_001BA110(void* self);
 extern "C" void* func_001BA3E0_8C38(void* mem, int a1) __asm__("func_001BA3E0");
-extern "C" void func_001BA280_8C38(void* self) __asm__("func_001BA280");
-extern "C" void func_001BA218_8C38(void* self) __asm__("func_001BA218");
-extern "C" void func_001B9820_8C38(void* self) __asm__("func_001B9820");
+extern "C" void func_001BA280(void* self);
+extern "C" void func_001BA218(void* self);
+extern "C" void func_001B9820(void* self);
 extern "C" bool func_001B9558(void* self);
 extern "C" void* func_001C0418_8C38(void* mem, int a1) __asm__("func_001C0418");
 extern char D_00464768[];
@@ -14070,10 +14065,10 @@ extern "C" void func_001B8C38(cState_8C38* self, char* a1, int msg)
     switch (msg) {
     case 9:
         if (isButton_8C38(a1, D_00464780) && a1 != 0) {
-            self->settings[14] = func_0039A738_8C38(a1) == 1;
+            self->settings[14] = func_0039A738(a1) == 1;
         }
         if (isButton_8C38(a1, D_00464790) && a1 != 0) {
-            self->settings[15] = func_0039A738_8C38(a1) == 1;
+            self->settings[15] = func_0039A738(a1) == 1;
         }
         break;
     case 5:
@@ -14108,13 +14103,13 @@ extern "C" void func_001B8C38(cState_8C38* self, char* a1, int msg)
             func_001A9150(self, (int)obj, GetHashValue32(D_00462CD0), self->settings[3], 0, 13, 0x32);
             func_001CE3C8(self->menu, 0x35, 0, 2);
         } else if (isButton_8C38(a1, D_004647A8)) {
-            if (!func_001BA110_8C38(self)) {
+            if (!func_001BA110(self)) {
                 break;
             }
             if (self->online) {
                 func_001A8A40(self, func_001BA3E0_8C38(cMemMan_alloc(0x6E0, D_00464848, 0, 0), self->engine));
             } else {
-                func_001BA280_8C38(self);
+                func_001BA280(self);
             }
         }
         break;
@@ -14124,12 +14119,12 @@ extern "C" void func_001B8C38(cState_8C38* self, char* a1, int msg)
             *(int*)((char*)p + 0x18) = 0x832;
             func_0039F290(*(char**)(*(char**)(self->screen + 0xD0) + 0x10) + 0x18, p);
         } else {
-            func_001BA218_8C38(self);
+            func_001BA218(self);
             func_001A8A40(self, func_001AD130(cMemMan_alloc(0x6D8, D_00462D68, 0, 0), self->engine));
         }
         break;
     case 13: {
-        func_001B9820_8C38(self);
+        func_001B9820(self);
         sObj_8C38* o = self->toggle;
         if (o == 0) {
             break;
@@ -16919,9 +16914,8 @@ extern "C" void func_001BCE38(void* self, cFEVObj_001BCE38* obj)
 INCLUDE_ASM("fe/feasyncfile", func_001BD1B8);
 #ifdef SKIP_ASM
 extern "C" void* func_001BE7D8_D1B8(void* mem, int a1, void* owner) __asm__("func_001BE7D8");
-extern "C" int func_0039A738_D1B8(void* item) __asm__("func_0039A738");
 extern "C" void func_001BD460_D1B8(void* self, int id, int a2) __asm__("func_001BD460");
-extern "C" void func_001BD428_D1B8(void* self) __asm__("func_001BD428");
+extern "C" void func_001BD428(void* self);
 extern "C" int func_0025F180_D1B8(void* self, int id) __asm__("func_0025F180");
 extern "C" void func_0025D770_D1B8(void* self, int id) __asm__("func_0025D770");
 extern char D_00464F60[];
@@ -16971,7 +16965,7 @@ extern "C" void func_001BD1B8(cState_D1B8* self, char* a1, int msg)
             if (a1 == self->items[i]) {
                 self->vals[i] = (unsigned char)a1[0x319];
                 self->busy = 0;
-                int id = func_0039A738_D1B8(a1);
+                int id = func_0039A738(a1);
                 self->curId = id;
                 int r = func_0025F180_D1B8(D_004A3028, id);
                 sObj_D1B8* t = self->texts[i];
@@ -16997,10 +16991,10 @@ extern "C" void func_001BD1B8(cState_D1B8* self, char* a1, int msg)
         if (item == 0) {
             break;
         }
-        if (func_0039A738_D1B8(item) == -1) {
+        if (func_0039A738(item) == -1) {
             break;
         }
-        func_001BD460_D1B8(self, func_0039A738_D1B8(item), 0);
+        func_001BD460_D1B8(self, func_0039A738(item), 0);
         break;
     }
     case 6:
@@ -17022,7 +17016,7 @@ extern "C" void func_001BD1B8(cState_D1B8* self, char* a1, int msg)
         }
         break;
     case 13:
-        func_001BD428_D1B8(self);
+        func_001BD428(self);
         break;
     default:
         func_001A8918(self, (int)a1, msg);
@@ -18986,7 +18980,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001BFE70);
 #ifdef SKIP_ASM
 extern "C" void* func_001C0F40_FE70(void* mem, int a1, void* owner) __asm__("func_001C0F40");
 extern "C" void* func_001BCB58_FE70(void* mem, int a1) __asm__("func_001BCB58");
-extern "C" void* func_001C2D18_FE70(void* mem, int a1) __asm__("func_001C2D18");
+extern "C" void* func_001C2D18(void* mem, int a1);
 extern "C" void* func_001C1C50_FE70(void* mem, int a1) __asm__("func_001C1C50");
 extern char D_004654E0[];
 extern char D_00465500[];
@@ -19024,7 +19018,7 @@ extern "C" void func_001BFE70(void* self, void* a1, unsigned int a2)
             func_001A8A40(self, func_001BCB58_FE70(cMemMan_alloc(0xB84, D_00461B30, 0, 0), *(int*)(s + 0x10)));
             break;
         case 3:
-            func_001A8A40(self, func_001C2D18_FE70(cMemMan_alloc(0x6F0, D_00465500, 0, 0), *(int*)(s + 0x10)));
+            func_001A8A40(self, func_001C2D18(cMemMan_alloc(0x6F0, D_00465500, 0, 0), *(int*)(s + 0x10)));
             break;
         case 0: {
             void* obj = (*(cFEFactory_001BFE70**)*(void**)(s + 0x10))->create(self, 0);
@@ -20719,7 +20713,6 @@ extern "C" void func_001C2578(void* self, void* vtext, char* str)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C2740);
 #ifdef SKIP_ASM
-extern "C" void* func_001C1C50_2740(void* mem, int a1) __asm__("func_001C1C50");
 extern "C" void func_001C2A18(void* self);
 extern char D_00465BC0[];
 extern char D_00465BE0[];
@@ -20770,7 +20763,7 @@ extern "C" void func_001C2740(void* selfp, void* a1, int a2)
             *(int*)((char*)p + 0x150) = 0x83A;
             func_001A9BC0(self, p);
         } else {
-            func_001A8A40(self, func_001C1C50_2740(cMemMan_alloc(0x6D0, D_004611A8, 0, 0), *(int*)(self + 0x10)));
+            func_001A8A40(self, func_001C1C50(cMemMan_alloc(0x6D0, D_004611A8, 0, 0), *(int*)(self + 0x10)));
         }
         break;
     case 8:
@@ -21341,14 +21334,10 @@ extern "C" void func_001A8918_3668(void* self, void* w, int msg) __asm__("func_0
 extern "C" int func_001A8A40(void* self, void* obj);
 extern "C" void* func_001BFBB8_3668(void* mem, void* a1) __asm__("func_001BFBB8");
 extern "C" void func_001C49C8_3668(void* self) __asm__("func_001C49C8");
-extern "C" int func_0039A738_3668(void* w) __asm__("func_0039A738");
 extern "C" void func_001C4B78_3668(void* self, int v) __asm__("func_001C4B78");
-extern "C" void func_001C3310_3668(void* self) __asm__("func_001C3310");
-extern "C" void func_001C3EE8_3668(void* self, int mode) __asm__("func_001C3EE8");
-extern "C" void func_001A9B58_3668(void* self) __asm__("func_001A9B58");
 extern "C" void func_003A0290_3668(void* w, void* pos) __asm__("func_003A0290");
 extern "C" int func_0025F338(void* p);
-extern "C" void func_001C3D68_3668(void* self, int idx, int count) __asm__("func_001C3D68");
+extern "C" void func_001C3D68(void* self, int idx, int count);
 extern void* D_004A3028;
 extern const char D_0045FF28[];
 extern char D_00465C78[];
@@ -21431,19 +21420,19 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
         if (isButton_3668(w, D_00465C78)) {
             func_001C49C8_3668(self);
         } else if (isButton_3668(w, D_00465C88)) {
-            func_001C4B78_3668(self, func_0039A738_3668(w));
-            func_001C3310_3668(self);
+            func_001C4B78_3668(self, func_0039A738(w));
+            func_001C3310(self);
         }
     case 1:
         if (*(void**)(self + 0x40) == 0) {
             return;
         }
         if (isButton_3668(w, D_00465CF0)) {
-            func_001C3EE8_3668(self, 0);
+            func_001C3EE8(self, 0);
         } else if (isButton_3668(w, D_00465D10)) {
-            func_001C3EE8_3668(self, 2);
+            func_001C3EE8(self, 2);
         } else if (isButton_3668(w, D_00465D00)) {
-            func_001C3EE8_3668(self, 1);
+            func_001C3EE8(self, 1);
         } else if (isButton_3668(w, D_00465C78)) {
             w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
             o = getObj_3668(self, D_00465CA8);
@@ -21474,7 +21463,7 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
                     pos.x = pos.x + -40.0f;
                     *(cPos_3668*)((char*)t + 0x44) = pos;
                     t->setVisible(1);
-                    func_001C3D68_3668(self, i + *(int*)(self + 0x6E8), func_0025F338(D_004A3028));
+                    func_001C3D68(self, i + *(int*)(self + 0x6E8), func_0025F338(D_004A3028));
                     break;
                 }
             }
@@ -21516,7 +21505,7 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
         break;
     case 8:
         if ((*(int*)(self + 0x1C) & 6) == 0) {
-            func_001A9B58_3668(self);
+            func_001A9B58(self);
         }
         return;
     case 5:
