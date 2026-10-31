@@ -543,15 +543,11 @@ extern "C" int func_002C28C0(int unused, int size, int zeroFlag)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C28F8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// Unit declares func_002523A8 / func_002C28F8 later with void return; keep the int-returning
-// signatures under asm labels. The argument passes straight through in a0.
-extern "C" int func_002523A8_ret(void* p) __asm__("func_002523A8");
-extern "C" int func_002C28F8_impl(void* p) __asm__("func_002C28F8");
+extern "C" void* func_002523A8(void* p);
 
-extern "C" int func_002C28F8_impl(void* p)
+extern "C" int func_002C28F8(int block)
 {
-    return func_002523A8_ret(p) != 0;
+    return func_002523A8((void*)block) != 0;
 }
 #endif
 //100%
@@ -567,12 +563,11 @@ extern "C" int func_002C2918(int arg0) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/quadtree", func_002C2940);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void MUTEX_lock_p(void*) __asm__("MUTEX_lock");
-extern "C" void MUTEX_unlock_p(void*) __asm__("MUTEX_unlock");
+extern "C" void MUTEX_lock(void*);
+extern "C" void MUTEX_unlock(void*);
 extern "C" int cMemMan_internalResizeBlock(int, int);
 extern "C" int func_002C28C0(int, int, int);
-extern "C" void func_002C28F8(int);
+extern "C" int func_002C28F8(int);
 extern char D_00538B00[];
 
 extern "C" int func_002C2940(int block, int a, int size, int c) {
@@ -584,9 +579,9 @@ extern "C" int func_002C2940(int block, int a, int size, int c) {
         return 0;
     } else {
         int r;
-        MUTEX_lock_p(D_00538B00);
+        MUTEX_lock(D_00538B00);
         r = cMemMan_internalResizeBlock(block, size);
-        MUTEX_unlock_p(D_00538B00);
+        MUTEX_unlock(D_00538B00);
         return r;
     }
 }
@@ -596,7 +591,7 @@ extern "C" int func_002C2940(int block, int a, int size, int c) {
 INCLUDE_ASM("worldpainter/quadtree", func_002C29D0);
 #ifdef SKIP_ASM
 extern "C" int func_002C28C0(int, int, int);
-extern "C" void func_002C28F8(int);
+extern "C" int func_002C28F8(int);
 extern "C" int func_003E50C8(int* self, int a1, int a2, int a3, int a4, int a5);
 extern char D_00486088[];
 
@@ -635,7 +630,7 @@ int* func_002C29D0_impl(int a0, int a1, int size)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/quadtree", func_002C2AA8);
 #ifdef SKIP_ASM
-extern "C" void func_002C28F8(int);
+extern "C" int func_002C28F8(int);
 
 extern "C" void func_002C2AA8(int *self) {
     if (*self != 0) {
@@ -653,24 +648,22 @@ extern "C" void func_002C2AA8(int *self) {
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2B08);
 #ifdef SKIP_ASM
-extern "C" void func_003E5398();
+extern "C" void func_003E5398(int a);
 
-extern "C" void func_002C2B08(void) {
-    func_003E5398();
+extern "C" void func_002C2B08(int a) {
+    func_003E5398(a);
 }
 #endif
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2B28);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_002C28C0(int, int, int);
-extern "C" void func_003E5698(int);
+extern "C" int func_003E5698(int);
 extern char D_004A3898[];
 
-// The unit declares func_002C2B28 later as void(); keep the real signature under an asm label.
-extern "C" int func_002C2B28_impl(void) __asm__("func_002C2B28");
+extern "C" int func_002C2B28(void);
 
-extern "C" int func_002C2B28_impl(void)
+extern "C" int func_002C2B28(void)
 {
     int p = func_002C28C0((int)D_004A3898, 0x10, 0);
     func_003E5698(p);
@@ -680,7 +673,7 @@ extern "C" int func_002C2B28_impl(void)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/quadtree", func_002C2B68);
 #ifdef SKIP_ASM
-extern "C" void func_002C28F8(int);
+extern "C" int func_002C28F8(int);
 extern "C" void func_003E56E0();
 
 extern "C" void func_002C2B68(int arg0) {
@@ -691,19 +684,19 @@ extern "C" void func_002C2B68(int arg0) {
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2B98);
 #ifdef SKIP_ASM
-extern "C" void MUTEX_lock();
+extern "C" void MUTEX_lock(void *arg0);
 
-extern "C" void func_002C2B98(void) {
-    MUTEX_lock();
+extern "C" void func_002C2B98(void *arg0) {
+    MUTEX_lock(arg0);
 }
 #endif
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2BB8);
 #ifdef SKIP_ASM
-extern "C" void MUTEX_unlock();
+extern "C" void MUTEX_unlock(void* mutex);
 
-extern "C" void func_002C2BB8(void) {
-    MUTEX_unlock();
+extern "C" void func_002C2BB8(void* mutex) {
+    MUTEX_unlock(mutex);
 }
 #endif
 //100% - objdiff report; single-function view differs only in a relocation name
@@ -713,18 +706,18 @@ INCLUDE_ASM("worldpainter/quadtree", func_002C2BD8);
 extern "C" void func_004165A8();
 extern "C" char* strcpy(char* dst, const char* src);
 extern "C" void func_002C29D0();
-extern "C" void func_002C2B08();
-extern "C" void func_002C2B28();
+extern "C" void func_002C2B08(int a);
+extern "C" int func_002C2B28();
 extern void func_002C28C0_2BD8() __asm__("func_002C28C0");
 extern void func_002C2940_2BD8() __asm__("func_002C2940");
-extern "C" void func_0041610C();
+extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
 extern "C" void func_00415FC8();
 extern "C" void func_0041605C();
 extern "C" void func_002C28A0();
 extern "C" void func_004187A0();
 extern "C" void func_004187C0();
 extern "C" void func_004187E8();
-extern "C" void func_00418EF8();
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
 extern "C" void func_002C2BD8(char* self) {
     *(void**)(self + 0x3C) = (void*)&func_002C28C0_2BD8;
     *(void**)(self + 0x40) = (void*)&func_002C2940_2BD8;
@@ -765,13 +758,11 @@ extern "C" int func_002C2D30(int unused, int size, int zeroFlag)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2D68);
 #ifdef SKIP_ASM
-// Unit declares func_002523A8 later with void return; keep the int-returning
-// signature under an asm label. The argument passes straight through in a0.
-extern "C" int func_002523A8_ret(void* p) __asm__("func_002523A8");
+extern "C" void* func_002523A8(void* p);
 
 extern "C" int func_002C2D68(void* p)
 {
-    return func_002523A8_ret(p) != 0;
+    return func_002523A8(p) != 0;
 }
 #endif
 //100%
@@ -787,9 +778,8 @@ extern "C" int func_002C2D88(int arg0) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/quadtree", func_002C2DB0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void MUTEX_lock_p(void*) __asm__("MUTEX_lock");
-extern "C" void MUTEX_unlock_p(void*) __asm__("MUTEX_unlock");
+extern "C" void MUTEX_lock(void*);
+extern "C" void MUTEX_unlock(void*);
 extern "C" int cMemMan_internalResizeBlock(int, int);
 extern "C" int func_002C2D30(int, int, int);
 extern char D_00538B00[];
@@ -803,9 +793,9 @@ extern "C" int func_002C2DB0(int block, int a, int size, int c) {
         return 0;
     } else {
         int r;
-        MUTEX_lock_p(D_00538B00);
+        MUTEX_lock(D_00538B00);
         r = cMemMan_internalResizeBlock(block, size);
-        MUTEX_unlock_p(D_00538B00);
+        MUTEX_unlock(D_00538B00);
         return r;
     }
 }
@@ -813,11 +803,9 @@ extern "C" int func_002C2DB0(int block, int a, int size, int c) {
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C2E40);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// The unit declares func_002C2E40 later as void(); keep the real signature under an asm label.
-extern "C" int func_002C2E40_impl(unsigned short* s) __asm__("func_002C2E40");
+extern "C" int func_002C2E40(unsigned short* s);
 
-extern "C" int func_002C2E40_impl(unsigned short* s)
+extern "C" int func_002C2E40(unsigned short* s)
 {
     int n = 0;
     while (*s++) {
@@ -832,10 +820,10 @@ INCLUDE_ASM("worldpainter/quadtree", func_002C2E78);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_002C2D30_2E78() __asm__("func_002C2D30");
 extern void func_002C2DB0_2E78() __asm__("func_002C2DB0");
-extern "C" void func_002C2E40();
+extern "C" int func_002C2E40(unsigned short* s);
 extern "C" void func_00415FC8();
-extern "C" void func_0041610C();
-extern "C" void func_004162D0();
+extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
+extern "C" char* func_004162D0(char* dst, const char* src);
 extern "C" void func_004187C0();
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" char* strcpy(char* dst, const char* src);
@@ -885,7 +873,7 @@ extern "C" void* func_002C3FA8(void* self)
 INCLUDE_ASM("worldpainter/quadtree", func_002C3FE0);
 #ifdef SKIP_ASM
 void operator_delete(int* ptr);
-extern "C" void func_002523A8(void* p);
+extern "C" void* func_002523A8(void* p);
 extern "C" void func_002C6360(void* self);
 extern void* D_00486F78[];
 extern void* D_004871E8[];
@@ -1359,7 +1347,7 @@ void* func_002C48A0(void* self)
 INCLUDE_ASM("worldpainter/quadtree", func_002C48C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_002523A8(void* p);
+extern "C" void* func_002523A8(void* p);
 extern "C" void func_002C2210(void* self, short* dst, const char* src);
 extern "C" int func_002C50E0(void* self);
 extern "C" void func_002C5570(void* self, int a1);
@@ -2641,11 +2629,11 @@ int func_002C67E0(void* self)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C67E8__FPvi);
 #ifdef SKIP_ASM
-void* func_002C67E8(void* self, int a1)
+void func_002C67E8(void* self, int a1)
 {
     *(int*)((char*)self + 0xc) = a1;
     *(int*)((char*)self + 0x10) = a1;
-    return func_002C48C0(self, 3);
+    func_002C48C0(self, 3);
 }
 #endif
 
@@ -2755,9 +2743,9 @@ extern "C" void func_002C69A0(void* self)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6A08__FPv);
 #ifdef SKIP_ASM
-void* func_002C6A08(void* self)
+void func_002C6A08(void* self)
 {
-    return func_002C48C0(self, 0x49);
+    func_002C48C0(self, 0x49);
 }
 #endif
 
@@ -2780,11 +2768,11 @@ extern "C" void func_002C6A28(void* self)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6A60__FPvii);
 #ifdef SKIP_ASM
-void* func_002C6A60(void* self, int a1, int a2)
+void func_002C6A60(void* self, int a1, int a2)
 {
     *(int*)((char*)self + 0x14e4) = a1;
     *(int*)((char*)self + 0x14e8) = a2;
-    return func_002C48C0(self, 0x41);
+    func_002C48C0(self, 0x41);
 }
 #endif
 
@@ -2809,9 +2797,9 @@ extern "C" void func_002C6A88(void* self)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6AE0__FPv);
 #ifdef SKIP_ASM
-void* func_002C6AE0(void* self)
+void func_002C6AE0(void* self)
 {
-    return func_002C48C0(self, 0x47);
+    func_002C48C0(self, 0x47);
 }
 #endif
 
@@ -2836,11 +2824,11 @@ extern "C" void func_002C6B00(void* self)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6B50__FPvii);
 #ifdef SKIP_ASM
-void* func_002C6B50(void* self, int a1, int a2)
+void func_002C6B50(void* self, int a1, int a2)
 {
     *(int*)((char*)self + 0x2c) = a1;
     *(int*)((char*)self + 0x24) = a2;
-    return func_002C48C0(self, 0x43);
+    func_002C48C0(self, 0x43);
 }
 #endif
 
@@ -2865,11 +2853,11 @@ extern "C" void func_002C6B78(void* self)
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6BD0__FPvii);
 #ifdef SKIP_ASM
-void* func_002C6BD0(void* self, int a1, int a2)
+void func_002C6BD0(void* self, int a1, int a2)
 {
     *(int*)((char*)self + 0x2c) = a1;
     *(int*)((char*)self + 0x24) = a2;
-    return func_002C48C0(self, 0x45);
+    func_002C48C0(self, 0x45);
 }
 #endif
 
@@ -2952,7 +2940,7 @@ extern "C" void func_002C6D18(void* self)
 INCLUDE_ASM("worldpainter/quadtree", func_002C6D70);
 #ifdef SKIP_ASM
 void operator_delete(int* ptr);
-extern "C" void func_002523A8(void* p);
+extern "C" void* func_002523A8(void* p);
 
 extern "C" void func_002C6D70(void* self, int flags)
 {
