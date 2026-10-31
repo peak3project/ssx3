@@ -92,11 +92,11 @@ struct sVEntry001F49F8 {
     void (*fn)(void*, int);
 };
 
-extern "C" void func_00186518(void* self);
+extern "C" void func_00186518(void* self, void* a1);
 
-extern "C" void func_001F49F8(void* self)
+extern "C" void func_001F49F8(void* self, void* a1)
 {
-    func_00186518(self);
+    func_00186518(self, a1);
     void* obj = *(void**)((char*)self + 0xAC);
     sVEntry001F49F8* vt = *(sVEntry001F49F8**)((char*)obj + 8);
     vt[7].fn((char*)obj + vt[7].delta, 1);
@@ -577,12 +577,12 @@ extern "C" void func_001F54A8(void) {
 INCLUDE_ASM("fe/festatebuyattrib", func_001F54B0);
 #ifdef SKIP_ASM
 extern void* D_00473838[];
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 
-extern "C" void* func_001F54B0(void* self)
+extern "C" void* func_001F54B0(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_00473838;
     *(int*)((char*)self + 0xC) = 0x2A;
     *(char*)((char*)self + 0x44) = 0;
@@ -646,12 +646,12 @@ extern "C" int func_001F55C0(void* self, int on)
 //100%
 INCLUDE_ASM("fe/festatebuyattrib", func_001F55E8);
 #ifdef SKIP_ASM
-extern "C" void func_00186518(void* self);
+extern "C" void func_00186518(void* self, void* a1);
 extern "C" void cFEStateCareerStats_setupMenuFocus(void* self, int focus);
 
-extern "C" void func_001F55E8(void* self)
+extern "C" void func_001F55E8(void* self, void* a1)
 {
-    func_00186518(self);
+    func_00186518(self, a1);
     cFEStateCareerStats_setupMenuFocus(self, *(int*)((char*)self + 0x48));
 }
 #endif
