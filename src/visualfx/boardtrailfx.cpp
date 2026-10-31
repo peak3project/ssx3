@@ -4,7 +4,7 @@
 INCLUDE_ASM("visualfx/boardtrailfx", cBoardTrailFX_initialize);
 #ifdef SKIP_ASM
 extern "C" void* cRider_cRider(void* self);
-extern "C" void func_003E6448(void* p, int c, int n);
+extern "C" void* func_003E6448(void* p, int c, int n);
 struct func_002E8560_sTrail;
 extern "C" void func_002E8560(func_002E8560_sTrail* self);
 extern char D_00459B90[];
@@ -220,7 +220,7 @@ INCLUDE_ASM("visualfx/boardtrailfx", func_002E87E8);
 int func_0011FE98(void* self);
 int func_00312AA0(void* self, int a1);
 extern "C" char* func_00311B20(void* self, int a1);
-extern "C" int func_001446A0(void* self, int a1);
+extern "C" bool func_001446A0(void* self, int a1);
 extern float D_004A4590;
 extern float D_004A4594;
 extern float D_004A4598;
@@ -389,12 +389,12 @@ extern "C" void func_002EA538(char** trails, int n)
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EA670);
 #ifdef SKIP_ASM
 extern void* D_00487F30[];
-extern "C" void* func_00354648(void* self);
+extern "C" void* func_00354648(void* self, void* param2);
 extern "C" void func_002EAA28(void* self);
 
-extern "C" void* func_002EA670(void* self)
+extern "C" void* func_002EA670(void* self, void* param2)
 {
-    func_00354648(self);
+    func_00354648(self, param2);
     *(void***)((char*)self + 0xC) = D_00487F30;
     *(int*)((char*)self + 0x10) = 0;
     *(int*)((char*)self + 0x1C) = 0;
@@ -871,7 +871,7 @@ extern "C" void func_002EBB10(void* self, float s)
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EBBA8);
 #ifdef SKIP_ASM
-void func_002E4D70(void* self);
+void* func_002E4D70(void* self);
 extern void* D_004880A0[];
 
 struct func_002EBBA8_sVec4 {
