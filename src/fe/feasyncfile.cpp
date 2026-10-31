@@ -1175,34 +1175,31 @@ extern "C" void func_001A4E28(void* self, void* msg)
     switch (*(int*)((char*)msg + 8)) {
     case 0x69706572: {
         char* buf = (char*)self + 0x9C;
-        int one = 1;
-        int three = 3;
         char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
         sVEntry_001A4E28* vt = *(sVEntry_001A4E28**)(obj + 4);
         func_002C26D0(buf, vt[4].fn(obj + vt[4].delta, GetHashValue32(D_00461678)), *(char**)((char*)self + 0x6D4));
         void* p = func_001A9C50(self);
-        *(int*)((char*)p + 0xBC) = one;
+        *(int*)((char*)p + 0xBC) = 1;
         char* sub = (char*)p + 0xBC;
         int h = GetHashValue32(D_00461690);
         *(char**)((char*)p + 0xC4) = buf;
-        *(int*)((char*)p + 0xC0) = one;
-        *(int*)((char*)p + 0xC8) = three;
+        *(int*)((char*)p + 0xC0) = 1;
+        *(int*)((char*)p + 0xC8) = 3;
         *(int*)((char*)p + 0xCC) = h;
         func_001C57C0(sub, 0, GetHashValue32(D_00461618));
-        *(int*)((char*)p + 0x14C) = three;
+        *(int*)((char*)p + 0x14C) = 3;
         *(int*)((char*)p + 0x150) = 0x80A;
         func_001A9BC0(self, p);
         break;
     }
     case 0x696E616D: {
         void* p = func_001A9C50(self);
-        int three = 3;
         char* sub = (char*)p + 0xBC;
         *(int*)((char*)p + 0xBC) = 1;
         *(int*)((char*)p + 0xC4) = GetHashValue32(D_004615F8);
-        *(int*)((char*)p + 0xC0) = three;
+        *(int*)((char*)p + 0xC0) = 3;
         func_001C57C0(sub, 0, GetHashValue32(D_00461618));
-        *(int*)((char*)p + 0x14C) = three;
+        *(int*)((char*)p + 0x14C) = 3;
         *(int*)((char*)p + 0x150) = 0x806;
         func_001A9BC0(self, p);
         break;
@@ -4454,14 +4451,13 @@ extern char D_00461D28[];
 extern "C" void func_001A9930(void* self)
 {
     if (*(int*)((char*)self + 0x6AC) == 0) {
-        int one = 1;
-        *(int*)((char*)self + 0x6AC) = one;
+        *(int*)((char*)self + 0x6AC) = 1;
         func_0039F698(*(char**)((char*)self + 0x10) + 0x18);
         void* p = func_001A9C50(self);
         char* sub = (char*)p + 0xBC;
-        *(int*)((char*)p + 0xBC) = one;
+        *(int*)((char*)p + 0xBC) = 1;
         func_001C57C0(sub, 0, GetHashValue32(D_00461618));
-        *(int*)((char*)p + 0x170) = one;
+        *(int*)((char*)p + 0x170) = 1;
         *(int*)((char*)p + 0x164) = 0;
         *(int*)((char*)p + 0x14C) = 6;
         if (*func_002591B8() == 0) {
@@ -9338,16 +9334,15 @@ extern "C" void func_001B2070(void* self)
             strcpy(o + 0xA5, D_004A1B50);
         }
     }
-    int two = 2;
     *(cUIText**)(*(char**)((char*)self + 0x6F4) + 0x84) = c;
-    *(int*)(*(char**)((char*)self + 0x6F4) + 0x88) = two;
+    *(int*)(*(char**)((char*)self + 0x6F4) + 0x88) = 2;
     cUIText* d = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A1B58));
     cUIText* e = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00463A18));
     cUIText* f = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00463A28));
     *(cUIText**)(*(char**)((char*)self + 0x6EC) + 0x7C) = d;
     *(cUIText**)(*(char**)((char*)self + 0x6EC) + 0x80) = e;
     *(cUIText**)(*(char**)((char*)self + 0x6EC) + 0x84) = f;
-    *(int*)(*(char**)((char*)self + 0x6EC) + 0x88) = two;
+    *(int*)(*(char**)((char*)self + 0x6EC) + 0x88) = 2;
 }
 #endif
 
@@ -11938,14 +11933,13 @@ extern "C" int func_001B5E28(void* self, int id, int a2)
                             *(void**)((char*)self + 0x704) = operator_new__FUi((USTR_length((void*)str) + 1) * 2, D_00460688, 0x100, 0);
                             func_002C2508(*(void**)((char*)self + 0x704), str);
                         }
-                        int one = 1;
                         void* p = func_001A9C50(self);
-                        *(int*)((char*)p + 0xBC) = one;
+                        *(int*)((char*)p + 0xBC) = 1;
                         char* sub = (char*)p + 0xBC;
                         func_001C57C0(sub, 0, GetHashValue32(D_00461618));
                         *(void**)((char*)p + 0xC4) = *(void**)((char*)self + 0x704);
                         *(int*)((char*)p + 0x150) = 0x81C;
-                        *(int*)((char*)p + 0xC0) = one;
+                        *(int*)((char*)p + 0xC0) = 1;
                         func_001A9BC0(self, p);
                     }
                     return 0;
