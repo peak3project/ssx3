@@ -1883,14 +1883,14 @@ void* func_0024D690(void* self)
 }
 #endif
 
-extern "C" void* func_002CBFD0(void* self);
+extern "C" void func_002CBFD0(void* self);
 
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024D6B0__FPv);
 #ifdef SKIP_ASM
-void* func_0024D6B0(void* self)
+void func_0024D6B0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -2863,9 +2863,9 @@ void* func_0024F7E0(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024F800__FPv);
 #ifdef SKIP_ASM
-void* func_0024F800(void* self)
+void func_0024F800(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -2881,9 +2881,9 @@ void* func_0024F820(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024F840__FPv);
 #ifdef SKIP_ASM
-void* func_0024F840(void* self)
+void func_0024F840(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -2925,9 +2925,9 @@ void* func_0024F940(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024F960__FPv);
 #ifdef SKIP_ASM
-void* func_0024F960(void* self)
+void func_0024F960(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -2943,9 +2943,9 @@ void* func_0024F980(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024F9A0__FPv);
 #ifdef SKIP_ASM
-void* func_0024F9A0(void* self)
+void func_0024F9A0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -2961,9 +2961,9 @@ void* func_0024F9C0(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024F9E0__FPv);
 #ifdef SKIP_ASM
-void* func_0024F9E0(void* self)
+void func_0024F9E0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -2996,9 +2996,9 @@ void* func_0024FA78(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FA98__FPv);
 #ifdef SKIP_ASM
-void* func_0024FA98(void* self)
+void func_0024FA98(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3038,9 +3038,9 @@ void* func_0024FB80(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FBA0__FPv);
 #ifdef SKIP_ASM
-void* func_0024FBA0(void* self)
+void func_0024FBA0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3079,9 +3079,9 @@ void* func_0024FC80(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FCA0__FPv);
 #ifdef SKIP_ASM
-void* func_0024FCA0(void* self)
+void func_0024FCA0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3097,9 +3097,9 @@ void* func_0024FCC0(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FCE0__FPv);
 #ifdef SKIP_ASM
-void* func_0024FCE0(void* self)
+void func_0024FCE0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3138,9 +3138,9 @@ void* func_0024FDC0(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FDE0__FPv);
 #ifdef SKIP_ASM
-void* func_0024FDE0(void* self)
+void func_0024FDE0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3177,9 +3177,9 @@ void* func_0024FEA8(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FEC8__FPv);
 #ifdef SKIP_ASM
-void* func_0024FEC8(void* self)
+void func_0024FEC8(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3195,9 +3195,9 @@ void* func_0024FEE8(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FF08__FPv);
 #ifdef SKIP_ASM
-void* func_0024FF08(void* self)
+void func_0024FF08(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3229,9 +3229,9 @@ void* func_0024FF90(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FFB0__FPv);
 #ifdef SKIP_ASM
-void* func_0024FFB0(void* self)
+void func_0024FFB0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3247,9 +3247,9 @@ void* func_0024FFD0(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_0024FFF0__FPv);
 #ifdef SKIP_ASM
-void* func_0024FFF0(void* self)
+void func_0024FFF0(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3265,9 +3265,9 @@ void* func_00250010(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_00250030__FPv);
 #ifdef SKIP_ASM
-void* func_00250030(void* self)
+void func_00250030(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3283,9 +3283,9 @@ void* func_00250050(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_00250070__FPv);
 #ifdef SKIP_ASM
-void* func_00250070(void* self)
+void func_00250070(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3318,9 +3318,9 @@ void* func_00250128(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_00250148__FPv);
 #ifdef SKIP_ASM
-void* func_00250148(void* self)
+void func_00250148(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3336,9 +3336,9 @@ void* func_00250168(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_00250188__FPv);
 #ifdef SKIP_ASM
-void* func_00250188(void* self)
+void func_00250188(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3558,9 +3558,9 @@ void* func_00250A60(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_00250A80__FPv);
 #ifdef SKIP_ASM
-void* func_00250A80(void* self)
+void func_00250A80(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
@@ -3960,9 +3960,9 @@ void* func_002515F0(void* self)
 //100%
 INCLUDE_ASM("main/debugmenu", func_00251610__FPv);
 #ifdef SKIP_ASM
-void* func_00251610(void* self)
+void func_00251610(void* self)
 {
-    return func_002CBFD0(self);
+    func_002CBFD0(self);
 }
 #endif
 
