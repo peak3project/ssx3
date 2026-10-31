@@ -208,7 +208,7 @@ struct cUIScreen;
 // PORT: the unit declares cUIScreen_getFrameByLabel as returning int; the frame id is an unsigned short.
 unsigned short cUIScreen_getFrameByLabel_us(cUIScreen* screen, int hash) __asm__("cUIScreen_getFrameByLabel__FP9cUIScreeni");
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 extern char* D_004A289C;
 extern char D_004A1550[];
 extern char D_004A1558[];
@@ -1726,7 +1726,7 @@ extern "C" void cFEPopupSelectMultiplayerMode_onWidgetCreate(void* self, void* i
 INCLUDE_ASM("fe/fepopupmisc", func_001E03F8);
 #ifdef SKIP_ASM
 extern int D_004A19D4;
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_001E03F8(void* self, void* a1, int a2)
 {
@@ -3510,7 +3510,7 @@ extern "C" int func_001E1A30(int x, int y)
 INCLUDE_ASM("fe/fepopupmisc", func_001E1AD0);
 #ifdef SKIP_ASM
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void* p);
 unsigned int BXrand();
 extern "C" int func_001E1A30(int kind, int arg);
@@ -3535,7 +3535,7 @@ struct sRangeK1E1AD0 {
 
 extern "C" int func_001E1AD0(sRangeK1E1AD0* r, int arg)
 {
-    int* list = (int*)operator_new_tag(r->count * 4, D_0046DDF8, 0x100, 0);
+    int* list = (int*)operator_new__FUi(r->count * 4, D_0046DDF8, 0x100, 0);
     int n = 0;
     int i;
     for (i = r->start; i < r->count + r->start; i++) {
@@ -5481,7 +5481,7 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E4610);
 #ifdef SKIP_ASM
 extern "C" void func_001E48B0(void*);
 extern "C" void func_001E4758(void*);
-extern "C" void func_0039F190(void* self, int a1);
+extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_001E4610(void* self, int a1, int a2)
 {
