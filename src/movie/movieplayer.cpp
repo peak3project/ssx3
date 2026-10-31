@@ -99,7 +99,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00152948_r() __asm__("func_00152948__FPv");
 extern "C" int func_00152BA8();
 extern "C" void* func_0023D570(void* self, int mode);
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
 extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
 extern "C" void func_00241AA0(void* buf, int size);
@@ -217,7 +217,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00152948_r() __asm__("func_00152948__FPv");
 extern "C" int func_00152BA8();
 extern "C" void* func_0023D570(void* self, int mode);
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
 extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
 extern "C" void func_00241AA0(void* buf, int size);
@@ -295,7 +295,7 @@ void* func_0023CC58(void* self)
 //100%
 INCLUDE_ASM("movie/movieplayer", func_0023CC78);
 #ifdef SKIP_ASM
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
 extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
 extern "C" void func_002C26D0_v(void* dst, void* fmt, ...) __asm__("func_002C26D0");
@@ -3143,7 +3143,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00152758(void* iface);
 // PORT: func_00152948__FPv ignores its argument; this caller passes none.
 int func_00152948_r() __asm__("func_00152948__FPv");
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
 extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
 extern "C" void func_00241AA0(void* buf, int size);
@@ -3580,7 +3580,7 @@ INCLUDE_ASM("movie/movieplayer", func_00241928);
 extern char D_004A2C90[];
 extern char D_004A2C98[];
 // PORT: this caller treats func_002C2540 (a string copy) as returning int.
-int func_002C2540_i(void*, void*) __asm__("func_002C2540");
+unsigned short* func_002C2540_i(void*, void*) __asm__("func_002C2540");
 struct sMovieItem1928 {
     int f0;
     int f4;
@@ -3653,7 +3653,7 @@ extern "C" void cMCOverlayManager_GetDeviceTotalString(sMCOverlayMgr* self, int 
 
 struct sPad16 { char x; int pad[3]; };
 extern sPad16 D_0047C3A8;
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 
 //100%
 INCLUDE_ASM("movie/movieplayer", func_00241AA0);
@@ -3809,7 +3809,7 @@ extern "C" int func_00241CD8(void* self)
 //100%
 INCLUDE_ASM("movie/movieplayer", func_00241D40);
 #ifdef SKIP_ASM
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 extern char D_004A2CA8[];
 extern char D_004A2CB0[];
 extern char D_004A2CB8[];
