@@ -1574,9 +1574,8 @@ static inline float wakeLimit2260()
 // PORT: g++ maximum operator (>?).
 extern "C" void func_002E2260(sWakeFx2260* self)
 {
-    float zero = 0.0f;
     void* em = self->p28 + 0x1290;
-    if (zero < self->f4 && wakeLimit2260() < self->fB8) {
+    if (0.0f < self->f4 && wakeLimit2260() < self->fB8) {
         float dt;
         float a;
         sWakeVecE398 col;
@@ -1586,7 +1585,7 @@ extern "C" void func_002E2260(sWakeFx2260* self)
         char* obj;
         sWakeMtx2260* m;
         int k;
-        a = wakeClamp2260(self->f4 * 1.5f, zero, 1.0f);
+        a = wakeClamp2260(self->f4 * 1.5f, 0.0f, 1.0f);
         col = self->col;
         col.w = a;
         dt = 0.01666666753590107f;
@@ -1602,7 +1601,7 @@ extern "C" void func_002E2260(sWakeFx2260* self)
             self->i78 = 0;
         }
         if (self->iD4 != 2) {
-            self->f4 = (self->f4 - dt) >? zero;
+            self->f4 = (self->f4 - dt) >? 0.0f;
         }
     } else {
         char* obj = self->obj;
