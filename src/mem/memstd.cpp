@@ -681,7 +681,7 @@ INCLUDE_ASM("mem/memstd", func_002525F8);
 #ifdef SKIP_ASM
 extern "C" void MUTEX_lock(void* mutex);
 extern "C" void MUTEX_unlock(void* mutex);
-extern "C" int func_00319B98(int);
+extern "C" unsigned int func_00319B98(int);
 extern void* D_00538B00[16];
 
 extern "C" int func_002525F8(int arg0) {
