@@ -444,10 +444,10 @@ extern "C" void func_00256188(void) {
 //100%
 INCLUDE_ASM("seg/seg_156860", func_002561B8);
 #ifdef SKIP_ASM
-extern "C" void func_00256228();
+extern "C" void func_00256228(void *arg0);
 
-extern "C" int func_002561B8(int arg0) {
-    func_00256228();
+extern "C" void *func_002561B8(void *arg0) {
+    func_00256228(arg0);
     return arg0;
 }
 #endif
