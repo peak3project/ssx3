@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("intersect/aifwddiff", cAIFwdDiffCache_Init);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void func_00340970(void* self);
 extern char D_0048E4F8[];
 extern char D_0048E508[];
@@ -24,7 +23,7 @@ struct sCache_7890 {
 
 extern "C" void cAIFwdDiffCache_Init(sCache_7890* self, int n)
 {
-    sCacheEntry_7890* mem = (sCacheEntry_7890*)operator_new_tag(n * sizeof(sCacheEntry_7890), D_0048E4F8, 0, 0);
+    sCacheEntry_7890* mem = (sCacheEntry_7890*)operator_new__FUi(n * sizeof(sCacheEntry_7890), D_0048E4F8, 0, 0);
     sCacheEntry_7890* p = mem;
     for (int k = n - 1; k != -1; k--, p++) {
         func_00340970(p);
@@ -39,7 +38,7 @@ extern "C" void cAIFwdDiffCache_Init(sCache_7890* self, int n)
     self->entries[n - 1].next = self->entries;
     self->count = n * 2 + 13;
     self->lru = self->entries;
-    self->buckets = (sCacheEntry_7890**)operator_new_tag(self->count * 4, D_0048E508, 0x80000000, 0);
+    self->buckets = (sCacheEntry_7890**)operator_new__FUi(self->count * 4, D_0048E508, 0x80000000, 0);
 }
 #endif
 
