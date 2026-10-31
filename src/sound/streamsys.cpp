@@ -222,7 +222,7 @@ int func_002AA020_impl(void* self, void* out)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/streamsys", func_002AA068);
 #ifdef SKIP_ASM
-extern "C" void func_002AA020(void*, void*);
+extern "C" int func_002AA020(void*, void*);
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
 extern "C" int func_003B7C40(int h, int a1);
@@ -255,7 +255,7 @@ struct func_002AA0C0_sStatus {
 };
 
 // the unit declares func_002AA068 later with a different pointer type; alias it
-void func_002AA068_status(void* self, func_002AA0C0_sStatus* out, int flags) __asm__("func_002AA068");
+int func_002AA068_status(void* self, func_002AA0C0_sStatus* out, int flags) __asm__("func_002AA068");
 
 extern "C" float func_002AA0C0(void* self)
 {
@@ -272,7 +272,7 @@ extern "C" float func_002AA0C0(void* self)
 INCLUDE_ASM("sound/streamsys", func_002AA108);
 #ifdef SKIP_ASM
 struct func_002AA1B8_sStatus;
-extern "C" void func_002AA068(void* self, func_002AA1B8_sStatus* out, int flags);
+extern "C" int func_002AA068(void* self, func_002AA1B8_sStatus* out, int flags);
 
 struct func_002AA108_sStatus {
     int state;
@@ -337,7 +337,7 @@ struct func_002AA1B8_sStatus {
     int c;
 };
 
-extern "C" void func_002AA068(void* self, func_002AA1B8_sStatus* out, int flags);
+extern "C" int func_002AA068(void* self, func_002AA1B8_sStatus* out, int flags);
 
 extern "C" int func_002AA1B8(void* self)
 {
@@ -399,7 +399,7 @@ struct func_002AA260_sStatus {
     int c;
 };
 
-void func_002AA068_status(void* self, func_002AA260_sStatus* out, int flags) __asm__("func_002AA068");
+int func_002AA068_status(void* self, func_002AA260_sStatus* out, int flags) __asm__("func_002AA068");
 
 extern "C" float func_002AA260(void* self)
 {
@@ -474,7 +474,7 @@ void* func_002AA408(void* self)
 }
 #endif
 
-extern "C" void func_002AA020(void*, void*);
+extern "C" int func_002AA020(void*, void*);
 
 //100%
 INCLUDE_ASM("sound/streamsys", func_002AA428);
