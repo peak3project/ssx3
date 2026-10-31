@@ -423,7 +423,7 @@ struct sBXStr_8B98 {
 };
 sBXStr_8B98 operator+(const char* a, const sBXStr_8B98& b) __asm__("func_003186D0");
 sBXStr_8B98 operator+(const sBXStr_8B98& a, const char* b) __asm__("func_00318630");
-extern "C" void* func_003DF690_8B98(const char* name, int flags) __asm__("func_003DF690");
+extern "C" void* func_003DF690(const char* name, int flags);
 extern "C" void func_0027B370(void* self, int slot, const char* name, int flags, int key, int a, int b);
 extern const char D_00481C08[];
 extern const char D_004A34B8[];
@@ -435,7 +435,7 @@ extern "C" void func_00278B98(char* self)
 {
     sBXStr_8B98 name((char*)func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)) + 0x34);
     sBXStr_8B98 path = D_00481C08 + name + D_004A34B8;
-    void* h = func_003DF690_8B98(path.p, 0);
+    void* h = func_003DF690(path.p, 0);
     *(void**)(self + 0x538) = h;
     if (h != 0) {
         *(int*)(self + 0x620) += 1;
@@ -591,9 +591,9 @@ INCLUDE_ASM("scripter/ssxscriptengine", func_00278F38);
 #ifdef SKIP_ASM
 extern "C" int func_00276270(sSsxScriptRider* r, int a);
 
-extern "C" void func_00278F38(void* self, int i)
+extern "C" int func_00278F38(void* self, int i)
 {
-    func_00276270(&(*(sSsxScriptRider**)((char*)self + 0x54C))[i], 0);
+    return func_00276270(&(*(sSsxScriptRider**)((char*)self + 0x54C))[i], 0);
 }
 #endif
 
@@ -730,9 +730,9 @@ INCLUDE_ASM("scripter/ssxscriptengine", func_00279220);
 #ifdef SKIP_ASM
 extern "C" int func_00276BD8(void*);
 
-extern "C" void func_00279220(void* self, int i)
+extern "C" int func_00279220(void* self, int i)
 {
-    func_00276BD8((char*)*(void**)((char*)self + 0x54C) + i * 0xCC);
+    return func_00276BD8((char*)*(void**)((char*)self + 0x54C) + i * 0xCC);
 }
 #endif
 
@@ -741,22 +741,22 @@ INCLUDE_ASM("scripter/ssxscriptengine", func_00279248);
 #ifdef SKIP_ASM
 void* func_00276CA8(void*);
 
-extern "C" void func_00279248(void* self, int i)
+extern "C" void* func_00279248(void* self, int i)
 {
-    func_00276CA8((char*)*(void**)((char*)self + 0x54C) + i * 0xCC);
+    return func_00276CA8((char*)*(void**)((char*)self + 0x54C) + i * 0xCC);
 }
 #endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00279270);
 #ifdef SKIP_ASM
-extern "C" void func_00277100(int, int);
+extern "C" int func_00277100(int);
 
 extern "C" void func_00279270(void *arg0, int arg1) {
     int temp_5;
 
     temp_5 = arg1 * 0xCC;
-    func_00277100((*(int *)((char*)(arg0) + (0x54C))) + temp_5, temp_5);
+    func_00277100((*(int *)((char*)(arg0) + (0x54C))) + temp_5);
 }
 #endif
 
@@ -968,10 +968,10 @@ extern "C" void* func_002822A0(void* self, int key, int b, int c);
 // (self, index); bind the 2-arg form to the symbol.
 void* func_0027A668_2(void* self, int idx) __asm__("func_0027A668__FPv");
 
-extern "C" void func_00279720(void* self, int val, int key, int b, int c)
+extern "C" void* func_00279720(void* self, int val, int key, int b, int c)
 {
     *(int*)((char*)func_0027A668_2(self, func_00282BF0(self, key)) + 0xC) = val;
-    func_002822A0(self, key, b, c);
+    return func_002822A0(self, key, b, c);
 }
 #endif
 
@@ -1735,7 +1735,7 @@ INCLUDE_ASM("scripter/ssxscriptengine", func_0027A860);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00278E50(void* self, int i, int a, int b, int c, int d, int f, int g);
-extern "C" void func_00278F38(void* self, int i);
+extern "C" int func_00278F38(void* self, int i);
 extern "C" int func_00278F68(void* self, int i, int a, int b);
 extern "C" void* func_0028B180();
 extern "C" void func_0028E8C0(void* self, int id, int a2);
@@ -2164,7 +2164,7 @@ extern "C" void func_0027B268(char* self, int i, const char* name, int flags, in
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027B370);
 #ifdef SKIP_ASM
 extern "C" void* func_003DF748(const char* name, int a, int b);
-extern "C" void* func_003DF690(const char* name, int flags, int b);
+extern "C" void* func_003DF690(const char* name, int flags);
 void func_00277F08(void* slot);
 
 extern "C" void func_0027B370(void* self, int i, const char* name, int flags, int key, int a, int b)
@@ -2175,7 +2175,7 @@ extern "C" void func_0027B370(void* self, int i, const char* name, int flags, in
         *(void**)(slot + 0x8) = func_003DF748(name, a, b);
         *(int*)(slot + 0xC) = 0;
     } else {
-        *(void**)(slot + 0x8) = func_003DF690(name, flags, b);
+        *(void**)(slot + 0x8) = func_003DF690(name, flags);
         *(int*)(slot + 0xC) = 1;
     }
     if (*(void**)(slot + 0x8) != 0) {
@@ -4481,7 +4481,7 @@ extern "C" void* func_0027D2E8(void);
 extern "C" void func_0027D170(void* mgr, int id);
 extern "C" void func_0027D688(char* self, void* anim);
 extern "C" void func_00281A50(void* self);
-extern "C" void func_001033F8(void* a, void* b, void* c);
+extern "C" void func_001033F8(void* a, void* b);
 // PORT: func_00282DB0's mangled signature is (void*, int, int); it also takes four floats (same alias as func_002812E0).
 void* func_00282DB0_f(void* self, int a1, int a2, float f0, float f1, float f2, float f3)
     __asm__("func_00282DB0__FPvii");
@@ -4515,7 +4515,7 @@ extern "C" void func_00281400(sSeEng1400* self, int a1)
     }
     if (self->pending != 0) {
         char* lvl = *(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC);
-        func_001033F8(*(void**)(lvl + 0xA4), self->area, lvl);
+        func_001033F8(*(void**)(lvl + 0xA4), self->area);
         self->pending = 0;
     }
     func_00281A50(self);
