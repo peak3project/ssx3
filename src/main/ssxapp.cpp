@@ -4,7 +4,7 @@
 INCLUDE_ASM("main/ssxapp", cSSXApp_cSSXApp);
 #ifdef SKIP_ASM
 extern "C" void* cAppMan_cAppMan(void* self);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 extern int D_004A3E90;
 extern void* D_0047D9C8[];
 
@@ -777,7 +777,7 @@ void* cMCOverlayManager_getManager();
 //100%
 INCLUDE_ASM("main/ssxapp", func_00227F80);
 #ifdef SKIP_ASM
-extern "C" void* func_00227F80()
+extern "C" void* func_00227F80(void* app)
 {
     return cMCOverlayManager_getManager();
 }
@@ -786,7 +786,7 @@ extern "C" void* func_00227F80()
 //100%
 INCLUDE_ASM("main/ssxapp", func_00227FA0);
 #ifdef SKIP_ASM
-extern "C" void func_0023C850();
+extern "C" int func_0023C850();
 
 extern "C" void func_00227FA0(void) {
     func_0023C850();
@@ -800,7 +800,7 @@ void operator_delete(int* p);
 extern "C" void func_00398438(void* p);
 extern "C" void func_00326A68(void* p);
 extern "C" void func_00278308(void* p);
-extern "C" void func_003DEDC0(void* handle, int arg);
+extern "C" int func_003DEDC0(void* handle, int arg);
 // PORT: func_002B4B48 is declared (void*) but never reads it; this caller passes nothing.
 extern "C" void func_002B4B48_noarg() __asm__("func_002B4B48");
 extern "C" void func_00284C28();
@@ -1469,7 +1469,7 @@ extern "C" void func_00229278(void* self, int flags)
 //100%
 INCLUDE_ASM("main/ssxapp", func_002292E0);
 #ifdef SKIP_ASM
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 unsigned int BXrand();
 
 struct sCrowdSlot_2292E0 {
