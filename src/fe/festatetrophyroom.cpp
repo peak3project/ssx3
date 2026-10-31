@@ -935,7 +935,7 @@ extern "C" void func_0023C8F0(void* app, int mode);
 extern "C" void func_0023D5A8(void* app);
 extern "C" void func_00241D40(void* app, int a, char* buf, int n);
 extern "C" void func_00241AA0(char* buf, int n);
-extern "C" void func_002C2540(char* buf, char* s);
+extern "C" unsigned short* func_002C2540(char* buf, char* s);
 extern "C" void func_002C26D0(void* dst, char* a, char* b, char* c);
 extern void* D_004A28A8;
 extern void* D_004A2028;
@@ -1161,7 +1161,7 @@ extern "C" unsigned short* func_002C2540_59A0(char* buf, const char* s) __asm__(
 extern "C" void func_002C26D0_59A0(char* dst, char* fmt, char* a, char* b, int n) __asm__("func_002C26D0");
 extern "C" void func_00241000(void* app, char* name, int a, int b);
 extern "C" void func_00241E18(void* app, char* buf, int n);
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void* p);
 extern void* D_004A28A8;
 extern void* D_004A2028;
@@ -1212,7 +1212,7 @@ extern "C" void func_001D59A0(void)
     char* fe = (char*)D_004A2028;
     if (*(int*)(fe + 0x210) == 0 && *(int*)(fe + 0x208) == 0) {
         *(int*)(fe + 0x19C) = 0x16;
-        char* buf = (char*)operator_new_tag(0x640, D_0045E2A0, 0x100, 0);
+        char* buf = (char*)operator_new__FUi(0x640, D_0045E2A0, 0x100, 0);
         func_00241E18(app, buf, 0x320);
         sVE_59A0* vt = *(sVE_59A0**)((char*)D_004A2028 + 8);
         vt[36].fn((char*)D_004A2028 + vt[36].delta, buf, 1, 1, 0, 0, 1);
