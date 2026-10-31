@@ -3,7 +3,7 @@
 //100%
 INCLUDE_ASM("ai/ridermetrix", cRiderMetrix_linkToRider);
 #ifdef SKIP_ASM
-extern "C" void func_00116FA8(void* p);
+extern "C" int* func_00116FA8(void* p);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern char D_004A1078[];
