@@ -3046,9 +3046,8 @@ struct sMovieVEntry1138 {
 extern "C" void func_00241138(void* self, int a, int b)
 {
     void* o = *(void**)((char*)self + 0x434);
-    int one = 1;
     *(int*)((char*)self + 0xE4) += b;
-    D_004A2C78 = one;
+    D_004A2C78 = 1;
     sMovieVEntry1138* vt = *(sMovieVEntry1138**)o;
     vt[41].fn((char*)o + vt[41].delta, a, b);
 }
@@ -3180,10 +3179,9 @@ struct sMovieVEntry1380 {
 
 extern "C" void func_00241380(void* self)
 {
-    int one = 1;
     void* o;
     sMovieVEntry1380* vt;
-    *(int*)((char*)self + 0x340) = one;
+    *(int*)((char*)self + 0x340) = 1;
     *(int*)((char*)self + 0xDC) = 0;
     *(int*)((char*)self + 0x42C) = 0;
     *(int*)((char*)self + 0xF8) = 0;
@@ -3192,7 +3190,7 @@ extern "C" void func_00241380(void* self)
     *(int*)((char*)self + 0x444) = -1;
     func_0023FB18(self, 0);
     func_0023FAE0(self);
-    *(int*)((char*)self + 0x338) = one;
+    *(int*)((char*)self + 0x338) = 1;
     *(int*)((char*)self + 0x130) = 2;
     o = *(void**)((char*)self + 0x434);
     vt = *(sMovieVEntry1380**)o;
