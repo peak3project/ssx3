@@ -942,7 +942,7 @@ void* func_00353AE8(void* self)
 INCLUDE_ASM("object/modifierblock", func_00353B10);
 #ifdef SKIP_ASM
 // PORT: func_002D1C58 is defined returning void*, but its value is the rider index passed to func_002D1C20(int).
-extern "C" int func_002D1C58_i() __asm__("func_002D1C58");
+extern "C" int func_002D1C58();
 extern "C" void* func_002D1C20(int i);
 extern int D_004A452C;
 extern char D_004FF1A0[];
@@ -1012,7 +1012,7 @@ extern "C" void func_00353B10(void* self)
         return;
     sMat_53B10 m;
     vu0CopyMatrix_53B10(&m, D_004FF1A0);
-    sVec4_53B10 pos = *(sVec4_53B10*)func_002D1C20(func_002D1C58_i());
+    sVec4_53B10 pos = *(sVec4_53B10*)func_002D1C20(func_002D1C58());
     *(sVec4_53B10*)&m.m[12] = pos;
     ctx->top[1] = ctx->top[0];
     sRS_53B10* t = ctx->top;
@@ -1066,7 +1066,7 @@ struct sMbWorld3CF0 {
 };
 
 extern "C" sMbWorld3CF0** func_002D1BD8();
-int func_00353D98(void* self);
+void func_00353D98(void* self);
 
 static inline void* refToPtr3CF0(unsigned int p)
 {
@@ -1115,12 +1115,11 @@ extern "C" void func_00353CF0(sMbTrackRef3CF0* self, int id)
 //100%
 INCLUDE_ASM("object/modifierblock", func_00353D98__FPv);
 #ifdef SKIP_ASM
-int func_00353D98(void* self)
+void func_00353D98(void* self)
 {
     int t0 = -1;
     *(int*)((char*)self + 0x14) = 0;
     *(int*)((char*)self + 0x10) = t0;
-    return t0;
 }
 #endif
 
