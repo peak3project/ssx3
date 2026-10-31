@@ -567,7 +567,7 @@ static inline int scale10_14B560(int v)
     return v;
 }
 
-extern "C" void func_0014B560(void* self, int a1, int a2, int key, int flag)
+extern "C" int func_0014B560(void* self, int a1, int a2, int key, int flag)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 0xB);
     char* p = (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
@@ -582,9 +582,9 @@ extern "C" void func_0014B560(void* self, int a1, int a2, int key, int flag)
     sBETbl_14B560* tbl = (sBETbl_14B560*)func_0014BDB8_0();
     e = entry_14B560(tbl, func_0014D448((sBEGroupTable*)tbl, a2, key));
     if (flag) {
-        func_00150B48(iface, a1, a2, scale10_14B560(e->field_0xE));
+        return func_00150B48(iface, a1, a2, scale10_14B560(e->field_0xE));
     } else {
-        func_00150928(iface, a1, a2);
+        return func_00150928(iface, a1, a2);
     }
 }
 #endif
