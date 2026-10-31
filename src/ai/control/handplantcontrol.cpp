@@ -605,7 +605,7 @@ extern "C" void func_0013C618(void* self, void* obj)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C650);
 #ifdef SKIP_ASM
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 
 struct sVEntry_13C650 { short delta; short index; void* fn; };
 struct sVtbl9_13C650 { sVEntry_13C650 e[9]; } __attribute__((aligned(8)));
@@ -1214,7 +1214,7 @@ extern "C" void func_00114298(void* rider, float v);
 extern "C" void func_0011E150_v13F178(void* rider, int a1) __asm__("func_0011E150");
 extern "C" void func_00105398(void* rider, int a1);
 extern "C" void func_00107888(void* rider);
-extern "C" void func_00116120(void* rider, int a, int b);
+extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" void func_0013F488(void* self);
 extern "C" void func_00294170(void* snd, void* rider);
 int func_0011FE98(void* rider);
@@ -2918,7 +2918,7 @@ __asm__(".globl func_00141320\n.type func_00141320,@function\nfunc_00141320 = _$
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00141480);
 #ifdef SKIP_ASM
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 
 struct sVEntry_00141480 { short delta; short index; void* fn; };
 struct sVtblA_00141480 { sVEntry_00141480 e[9]; } __attribute__((aligned(8)));
@@ -3148,7 +3148,7 @@ __asm__(".globl func_00142228\n.type func_00142228,@function\nfunc_00142228 = _$
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00142388);
 #ifdef SKIP_ASM
-extern "C" void cRider_cRider(void* self);
+extern "C" void* cRider_cRider(void* self);
 
 struct sVEntry_00142388 { short delta; short index; void* fn; };
 struct sVtblA_00142388 { sVEntry_00142388 e[9]; } __attribute__((aligned(8)));
