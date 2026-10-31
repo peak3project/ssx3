@@ -69,13 +69,12 @@ extern "C" int func_003119F8(void* self, int anim)
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00311A30);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 // func_00311860 is matched as (void) but this caller passes the anim in $4.
-extern "C" const char* func_00311860_anim(int anim) __asm__("func_00311860");
+extern "C" const char* func_00311860(int anim);
 
 extern "C" const char* func_00311A30(void* self, int anim)
 {
-    return func_00311860_anim(anim);
+    return func_00311860(anim);
 }
 #endif
 
@@ -370,7 +369,7 @@ extern "C" void func_003123C0(char* self, int a1, float t)
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_00312490);
 #ifdef SKIP_ASM
-extern "C" int func_001446A0(void* self, int mask);
+extern "C" bool func_001446A0(void* self, int mask);
 
 struct sVEntry00312490 {
     short delta;
