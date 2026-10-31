@@ -291,7 +291,7 @@ void* operator new(unsigned int size, const char* tag, unsigned int flags, int d
 struct sAnimMemED80 { char d[0x70]; };
 extern "C" void* cRiderAnimBase_cRiderAnimBase(void* self);
 extern "C" void func_00104D50(void* anim, void* rider);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_00312598(void* self, int a1);
 extern "C" void cFERider_initBoneMap(void* self);
 extern char D_00460B28[];
