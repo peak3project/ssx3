@@ -1071,7 +1071,7 @@ struct sInstanceManVEntry2708 {
     void (*fn)(void*, int);
 };
 
-int func_0034FCC0(void* self);
+void* func_0034FCC0(void* self);
 extern "C" void func_0034FE28(void* self);
 
 extern "C" void func_00352708(void* self, int check)
