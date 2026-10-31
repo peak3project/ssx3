@@ -126,12 +126,11 @@ extern "C" sWSNode* func_003511D0(sWSPool* self, unsigned int id)
 //100%
 INCLUDE_ASM("wscript/wscriptcompile", func_00351260__FPvT0);
 #ifdef SKIP_ASM
-int func_00351260(void* self, void* a1)
+void func_00351260(void* self, void* a1)
 {
     int t0 = *(int*)((char*)self + 0x8);
     *(int*)a1 = t0;
     *(int*)((char*)self + 0x8) = (int)a1;
-    return t0;
 }
 #endif
 
