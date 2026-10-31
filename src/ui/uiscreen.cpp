@@ -75,14 +75,14 @@ INCLUDE_ASM("ui/uiscreen", cUIScreen_setData);
 extern "C" int func_003B4818(void* data);
 extern "C" void* func_003B47F8(void* src, void* dst);
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern char D_00493E00[];
 
 extern "C" void cUIScreen_setData(void* self, char* data)
 {
     int size = func_003B4818(data);
     if (size != 0) {
-        char* buf = (char*)operator_new_tag(size, D_00493E00, 0x100, 0);
+        char* buf = (char*)operator_new__FUi(size, D_00493E00, 0x100, 0);
         *(char**)((char*)self + 0xC) = buf;
         char* old = data;
         data = buf;
@@ -413,7 +413,7 @@ struct cList;
 struct cListNode;
 void cList_addToEnd(cList*, cListNode*);
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" char* cUIScreen_createObjectByStruct(void* self, char* rec);
 extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_00493EF0[];
@@ -425,7 +425,7 @@ extern "C" void cUIScreen_createAllObjects(void* self)
     char* data = *(char**)((char*)self + 0x38);
     char* rec = data + 4;
     if (*(unsigned int*)data != 0) {
-        *(void***)((char*)self + 0x3C) = (void**)operator_new_tag(*(unsigned int*)data * 4, D_00493EF0, 0x20000000, 0);
+        *(void***)((char*)self + 0x3C) = (void**)operator_new__FUi(*(unsigned int*)data * 4, D_00493EF0, 0x20000000, 0);
         func_003E6448(*(void***)((char*)self + 0x3C), 0, **(unsigned int**)((char*)self + 0x38) * 4);
     }
     void** out = *(void***)((char*)self + 0x3C);
