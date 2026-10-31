@@ -5,7 +5,7 @@ INCLUDE_ASM("fe/festateselectmp", cFEStateSelectMultiplayerMode_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_004613B8[];
 
 extern "C" void cFEStateSelectMultiplayerMode_onCreateScreen(void* self)
@@ -81,12 +81,12 @@ extern "C" void func_001A3160(void* self, void* item, int msg)
 //100%
 INCLUDE_ASM("fe/festateselectmp", func_001A3218);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_00469178[];
 
-extern "C" void* func_001A3218(void* self)
+extern "C" void* func_001A3218(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_00469178;
     *(int*)((char*)self + 0xC) = 0x17;
     return self;
