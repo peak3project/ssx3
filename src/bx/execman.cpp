@@ -293,25 +293,25 @@ void* func_00320B08(void* self)
 }
 #endif
 
-extern "C" void* func_00320550(int, int);
+extern "C" void func_00320550(int, int);
 
 //100%
 INCLUDE_ASM("bx/execman", func_00320B28__FPv);
 #ifdef SKIP_ASM
-void* func_00320B28(void* self)
+void func_00320B28(void* self)
 {
-    return func_00320550(1, 0xffff);
+    func_00320550(1, 0xffff);
 }
 #endif
 
-extern "C" void* func_00320550(int, int);
+extern "C" void func_00320550(int, int);
 
 //100%
 INCLUDE_ASM("bx/execman", func_00320B48__FPv);
 #ifdef SKIP_ASM
-void* func_00320B48(void* self)
+void func_00320B48(void* self)
 {
-    return func_00320550(0, 0xffff);
+    func_00320550(0, 0xffff);
 }
 #endif
 
