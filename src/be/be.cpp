@@ -107,7 +107,7 @@ extern int D_004A11F0;
 extern "C" void func_001499A8(void* p, int a);
 void operator_delete(int* ptr);
 
-extern "C" void func_0014DD98(void)
+extern "C" void func_0014DD98(void* p)
 {
     if (D_004A11F8)
         func_001499A8(D_004A11F8, 3);
@@ -221,7 +221,7 @@ extern "C" void cBE_readFromReplayFrame(void* self, cBEReplayStream* s)
 //100%
 INCLUDE_ASM("be/be", func_0014E048);
 #ifdef SKIP_ASM
-extern "C" int func_0014E048()
+extern "C" int func_0014E048(void* be)
 {
     return 0xBB78;
 }
@@ -231,16 +231,15 @@ extern "C" int func_0014E048()
 INCLUDE_ASM("be/be", func_0014E050);
 #ifdef SKIP_ASM
 extern "C" void func_0014A188(void* buf);
-// PORT: func_0014E048 is declared () in this unit but called with the BE object here.
-int func_0014E048_self(void* be) __asm__("func_0014E048");
+int func_0014E048(void* be);
 extern "C" int func_003E62D0(void* buf, int size, int seed);
 extern "C" void* memcpy(void*, const void*, unsigned int);
 
 extern "C" void func_0014E050(void* self, char* buf)
 {
     func_0014A188(buf);
-    int crc = func_003E62D0(buf, func_0014E048_self(self) - 4, 0xFBEA);
-    char* p = buf + (func_0014E048_self(self) - 4);
+    int crc = func_003E62D0(buf, func_0014E048(self) - 4, 0xFBEA);
+    char* p = buf + (func_0014E048(self) - 4);
     memcpy(p, &crc, 4);
 }
 #endif
