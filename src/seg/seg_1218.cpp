@@ -389,7 +389,7 @@ extern "C" float func_00100348_0680(void*, sV4_0680*) __asm__("func_00100348");
 extern "C" int func_0010BB18_0680(void*, float*, int*) __asm__("func_0010BB18");
 extern "C" int func_0010BBF8_0680(void*, int*) __asm__("func_0010BBF8");
 extern "C" void func_0010C140_0680(void*, void*) __asm__("func_0010C140");
-extern "C" void func_0010C0A8_0680(void*, void*) __asm__("func_0010C0A8");
+extern "C" void func_0010C0A8(void*, void*);
 extern "C" int func_0010B980_0680(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6) __asm__("func_0010B980");
 extern "C" int func_0010BD10_0680(char* self, int* out) __asm__("func_0010BD10");
 extern "C" void func_00100680_0680(char* self, sPad_0680* pad) __asm__("func_00100680");
@@ -434,7 +434,7 @@ extern "C" void func_00100680_0680(char* self, sPad_0680* pad)
             if (x)
                 func_0010C140_0680(self, pad);
             else
-                func_0010C0A8_0680(self, pad);
+                func_0010C0A8(self, pad);
         }
     } else if (func_0010BBF8_0680(self, &y)) {
         float s = 1.0f;
@@ -457,7 +457,7 @@ extern "C" void func_00100680_0680(char* self, sPad_0680* pad)
         char* r = *(char**)(self + 0x18);
         if (*(float*)(r + 0x2F8) >= 0.8999999761581421f && *(float*)(r + 0x2F0) > 0.0f && *(float*)(self + 0xDF8) > 50.0f)
             pad->b17 = 1;
-        func_0010C0A8_0680(self, pad);
+        func_0010C0A8(self, pad);
     }
     float* spd = (float*)(self + 0xDF0);
     z = 0;
@@ -635,9 +635,6 @@ extern sWorld_0F88* D_004A28A8_0F88 __asm__("D_004A28A8");
 
 extern "C" void func_00100610_0F88(sV4_0F88*, void*) __asm__("func_00100610");
 extern "C" float func_00100348_0F88(void*, sV4_0F88*) __asm__("func_00100348");
-extern "C" void func_0010C140_0F88(void*, void*) __asm__("func_0010C140");
-extern "C" void func_0010C0A8_0F88(void*, void*) __asm__("func_0010C0A8");
-extern "C" int func_0010B980_0F88(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6) __asm__("func_0010B980");
 extern "C" int func_0010BD10_0F88(char* self, int* out) __asm__("func_0010BD10");
 extern "C" float func_0031C228(float);
 extern "C" void func_00112A50(void*, int);
@@ -706,9 +703,9 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
         func_00100610_0F88(&v, self);
         steer = func_00100348_0F88(self, &v);
         if (mySpd < hisSpd)
-            func_0010C140_0F88(self, pad);
+            func_0010C140(self, pad);
         else
-            func_0010C0A8_0F88(self, pad);
+            func_0010C0A8(self, pad);
     } else {
         float d = Rec_0F88(self)->dist;
         float lim;
@@ -722,18 +719,18 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
         if (Abs_0F88(ang) > lim || mySpd <= hisSpd) {
             func_00100610_0F88(&v, self);
             steer = func_00100348_0F88(self, &v);
-            func_0010C0A8_0F88(self, pad);
+            func_0010C0A8(self, pad);
         } else if (tgt->Ready()) {
             if (*(int*)((char*)tgt + 0xAB8) == *(int*)(*(char**)(self + 0x18) + 0xAB8))
                 func_00112A50(*(char**)(self + 0x18), 0);
             func_00100610_0F88(&v, self);
             steer = func_00100348_0F88(self, &v);
-            func_0010C0A8_0F88(self, pad);
+            func_0010C0A8(self, pad);
         }
     }
     pad->b20 = (int)(steer * 31.0f);
     z = 0;
-    if (func_0010B980_0F88(self, (float*)(self + 0xDF0), &below, &o3, &o4, &o5, &o6)) {
+    if (func_0010B980(self, (float*)(self + 0xDF0), &below, &o3, &o4, &o5, &o6)) {
         *(int*)(self + 0xE70) = -1;
         *(Fn_0F88*)(self + 0xF44) = D_0043CF20_0F88[0];
         *(short*)(self + 0xF38) = 0;
@@ -1290,9 +1287,9 @@ INCLUDE_ASM("seg/seg_1218", func_001036A0);
 #ifdef SKIP_ASM
 extern "C" char* cAIAnimEventMap_getBlendInTime(int id);
 // PORT: the handlers are defined later in the unit with mixed parameter/return types; bind uniform views by asm label
-extern "C" int f_001048C0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001048C0");
-extern "C" int f_00104940_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104940");
-extern "C" int f_001049C0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001049C0");
+extern "C" int func_001048C0(void* self, void* x, void* anim, float dt);
+extern "C" int func_00104940(void* self, void* x, void* anim, float dt);
+extern "C" int func_001049C0(void* self, void* x, void* anim, float dt);
 extern "C" int f_00104110_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104110");
 extern "C" int f_00104178_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104178");
 extern "C" int f_00104238_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104238");
@@ -1313,13 +1310,13 @@ extern "C" void func_001036A0(char* self, void* x, int* anim, float dt)
     int done = 0;
     switch (*(int*)(cAIAnimEventMap_getBlendInTime(*anim) + 4)) {
     case 0:
-        done = f_001048C0_36A0(self, x, anim, dt);
+        done = func_001048C0(self, x, anim, dt);
         break;
     case 1:
-        done = f_00104940_36A0(self, x, anim, dt);
+        done = func_00104940(self, x, anim, dt);
         break;
     case 2:
-        done = f_001049C0_36A0(self, x, anim, dt);
+        done = func_001049C0(self, x, anim, dt);
         break;
     case 3:
         done = f_00104110_36A0(self, x, anim, dt);
@@ -1702,7 +1699,7 @@ INCLUDE_ASM("seg/seg_1218", func_00104238);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00103CC8_4238(void*, void*, int*, int, int, int, float, float) __asm__("func_00103CC8");
 
-extern "C" void func_00104238(void *arg0, void *a1, int *arg2, float f12) {
+extern "C" int func_00104238(void *arg0, void *a1, int *arg2, float f12) {
     int var_7;
     int var_8;
     int var_9;
@@ -1731,7 +1728,7 @@ extern "C" void func_00104238(void *arg0, void *a1, int *arg2, float f12) {
         var_9 = 0x43;
         break;
     }
-    func_00103CC8_4238(arg0, a1, arg2, var_7, var_8, var_9, f12, var_f13);
+    return func_00103CC8_4238(arg0, a1, arg2, var_7, var_8, var_9, f12, var_f13);
 }
 #endif
 
@@ -1741,7 +1738,7 @@ INCLUDE_ASM("seg/seg_1218", func_001042A8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00103CC8_42A8(void*, void*, char*, int, int, int, float, float) __asm__("func_00103CC8");
 
-extern "C" void func_001042A8(void *arg0, void *a1, char *a2, float dt) {
+extern "C" int func_001042A8(void *arg0, void *a1, char *a2, float dt) {
     float var_f13;
     void *temp_3;
 
@@ -1750,7 +1747,7 @@ extern "C" void func_001042A8(void *arg0, void *a1, char *a2, float dt) {
     if ((*(int *)((char*)(temp_3) + (0x320))) == 0) {
         var_f13 = -var_f13;
     }
-    func_00103CC8_42A8(arg0, a1, a2, 0x24, 0x21, 0x22, dt, var_f13);
+    return func_00103CC8_42A8(arg0, a1, a2, 0x24, 0x21, 0x22, dt, var_f13);
 }
 #endif
 
@@ -1855,8 +1852,8 @@ INCLUDE_ASM("seg/seg_1218", func_001045B8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00103FF8_45B8(int, int, int, int, int) __asm__("func_00103FF8");
 
-extern "C" void func_001045B8(int a, int b, int c) {
-    func_00103FF8_45B8(a, b, c, 0x89, 0x8A);
+extern "C" int func_001045B8(int a, int b, int c) {
+    return func_00103FF8_45B8(a, b, c, 0x89, 0x8A);
 }
 #endif
 
@@ -2043,8 +2040,8 @@ INCLUDE_ASM("seg/seg_1218", func_00104A40);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00312B18_4A40(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104A40(int a, int b, int* c) {
-    func_00312B18_4A40(a, b, c, 0x11F);
+extern "C" int func_00104A40(int a, int b, int* c) {
+    return func_00312B18_4A40(a, b, c, 0x11F);
 }
 #endif
 
@@ -2098,8 +2095,8 @@ INCLUDE_ASM("seg/seg_1218", func_00104B78);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00312B18_4B78(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104B78(int a, int b, int* c) {
-    func_00312B18_4B78(a, b, c, 5);
+extern "C" int func_00104B78(int a, int b, int* c) {
+    return func_00312B18_4B78(a, b, c, 5);
 }
 #endif
 
@@ -2109,8 +2106,8 @@ INCLUDE_ASM("seg/seg_1218", func_00104B98);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00312B18_4B98(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104B98(int a, int b, int* c) {
-    func_00312B18_4B98(a, b, c, 3);
+extern "C" int func_00104B98(int a, int b, int* c) {
+    return func_00312B18_4B98(a, b, c, 3);
 }
 #endif
 
@@ -2120,8 +2117,8 @@ INCLUDE_ASM("seg/seg_1218", func_00104BB8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00312B18_4BB8(int, int, int*, int) __asm__("func_00312B18");
 
-extern "C" void func_00104BB8(int a, int b, int* c) {
-    func_00312B18_4BB8(a, b, c, 0x13);
+extern "C" int func_00104BB8(int a, int b, int* c) {
+    return func_00312B18_4BB8(a, b, c, 0x13);
 }
 #endif
 
@@ -2143,10 +2140,10 @@ extern "C" int func_00104BD8(void *arg0, void* a1, int a2) {
 INCLUDE_ASM("seg/seg_1218", func_00104C18);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312BD0_4C18(void*, void*, int, int) __asm__("func_00312BD0");
+extern "C" int func_00312BD0_4C18(void*, void*, int, int) __asm__("func_00312BD0");
 
-extern "C" void func_00104C18(void* a, void* b, int c) {
-    func_00312BD0_4C18(a, b, c, 5);
+extern "C" int func_00104C18(void* a, void* b, int c) {
+    return func_00312BD0_4C18(a, b, c, 5);
 }
 #endif
 
@@ -2154,9 +2151,9 @@ extern "C" void func_00104C18(void* a, void* b, int c) {
 INCLUDE_ASM("seg/seg_1218", func_00104C38);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312BD0_4C38(void*, void*, int*, int) __asm__("func_00312BD0");
+extern "C" int func_00312BD0_4C38(void*, void*, int*, int) __asm__("func_00312BD0");
 
-extern "C" void func_00104C38(void* a0, void* a1, int *arg2) {
+extern "C" int func_00104C38(void* a0, void* a1, int *arg2) {
     int var_7;
     switch (*arg2) {
     case 0x45:
@@ -2169,7 +2166,7 @@ extern "C" void func_00104C38(void* a0, void* a1, int *arg2) {
         var_7 = 0x12;
         break;
     }
-    func_00312BD0_4C38(a0, a1, arg2, var_7);
+    return func_00312BD0_4C38(a0, a1, arg2, var_7);
 }
 #endif
 
@@ -2177,10 +2174,10 @@ extern "C" void func_00104C38(void* a0, void* a1, int *arg2) {
 INCLUDE_ASM("seg/seg_1218", func_00104C80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00312BD0_4C80(void*, void*, int, int) __asm__("func_00312BD0");
+extern "C" int func_00312BD0_4C80(void*, void*, int, int) __asm__("func_00312BD0");
 
-extern "C" void func_00104C80(void* a, void* b, int c) {
-    func_00312BD0_4C80(a, b, c, 0x1B2);
+extern "C" int func_00104C80(void* a, void* b, int c) {
+    return func_00312BD0_4C80(a, b, c, 0x1B2);
 }
 #endif
 
@@ -2528,7 +2525,7 @@ void func_0011FEC8_57B8(void* self, int v) __asm__("func_0011FEC8__FPv");
 int func_00312AA0(void* anim, int ch);
 extern "C" float func_00312AB0(void* anim, int ch);
 extern "C" int func_00311AE8(void*, int);
-extern "C" void cRiderAnimBase_play(void*, int, int, float);
+extern "C" int cRiderAnimBase_play(void*, int, int, float);
 extern "C" void cRider_updateOrientationImplicit(cRider* self);
 // The unit declares this later with its own vector type; bind it by asm label.
 extern "C" void cAirPredictor_startLaunchIntoAir_57B8(void*, t4Vector*, t4Vector*, float) __asm__("cAirPredictor_startLaunchIntoAir");
@@ -2830,7 +2827,7 @@ void func_0011FEC8_57B8(void* self, int v) __asm__("func_0011FEC8__FPv");
 void func_0011FE78_6848(void* self, int v) __asm__("func_0011FE78__FPv");
 extern "C" float func_0031C228(float);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" void cRiderAnimBase_play(void*, int, int, float);
+extern "C" int cRiderAnimBase_play(void*, int, int, float);
 extern "C" void cRiderAnimBase_changeHeadingOffset(void* anim, float a);
 extern "C" void func_0011DFE0(cRider* self, const t4Vector& axis, float angle);
 extern "C" void func_0010E910(void* rider, int a, int b, int c, void* hit, float speed);
@@ -3429,7 +3426,7 @@ int func_0011FEE8_8388(void*) __asm__("func_0011FEE8__FPv");
 void func_0011FEC8_8388(void* self, int v) __asm__("func_0011FEC8__FPv");
 int AIrand();
 extern "C" void func_00131348(void*);
-extern "C" void cRiderAnimBase_play(void*, int, int, float);
+extern "C" int cRiderAnimBase_play(void*, int, int, float);
 extern "C" void* func_0028B180();
 extern "C" void func_002A0E70(void*, void*, int);
 
