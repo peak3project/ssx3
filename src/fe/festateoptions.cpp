@@ -1734,9 +1734,8 @@ extern "C" void cFEStateOptionsController_onCreateScreen(void* self)
         cUIListBox_addEntryByStringID(o, GetHashValue32(D_0045E078), 0);
         cUIListBox_addEntryByStringID(o, GetHashValue32(D_0045E090), 1);
     }
-    float zero = 0.0f;
-    func_0018D108(self, 0, zero, zero);
-    func_0018D108(self, 1, zero, zero);
+    func_0018D108(self, 0, 0.0f, 0.0f);
+    func_0018D108(self, 1, 0.0f, 0.0f);
     func_0018CDC0(self);
 }
 #endif
@@ -1803,9 +1802,8 @@ extern "C" void func_0018C910(void* self, cUIObj_18C910* obj, int msg)
     void* pi = cBE_getInterface_Fv(cBE_getBE(), 1);
     switch (msg) {
     case 0x15: {
-        float zero = 0.0f;
-        func_0018D108(self, 0, zero, zero);
-        func_0018D108(self, 1, zero, zero);
+        func_0018D108(self, 0, 0.0f, 0.0f);
+        func_0018D108(self, 1, 0.0f, 0.0f);
         break;
     }
     case 0x16:
