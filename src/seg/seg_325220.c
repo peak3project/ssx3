@@ -1180,7 +1180,6 @@ extern char D_0052D680[];
 extern struct S68F0 *func_004265D0_p(char *) __asm__("func_004265D0");
 extern void func_00426678_j(struct S68F0 *) __asm__("func_00426678");
 extern int func_00423DA0_j(int *) __asm__("func_00423DA0");
-extern void func_00423DB0_j(int) __asm__("func_00423DB0");
 extern int func_00423DE0_j(int) __asm__("func_00423DE0");
 extern int func_004261B0_j(int, int, int, int, int, int) __asm__("func_004261B0");
 int func_004268F0_d(struct S68F0 *, int, int, int, int) __asm__("func_004268F0");
@@ -1208,11 +1207,11 @@ int func_004268F0_d(struct S68F0 *a0, int a1, int a2, int a3, int a4) {
         }
         if (func_004261B0_j(0x8000000C, (int)t, 0x40, 0, 0, 0) == 0) {
             func_00426678_j(t);
-            func_00423DB0_j(a0->f8);
+            func_00423DB0(a0->f8);
             return -2;
         }
         func_00423DE0_j(a0->f8);
-        func_00423DB0_j(a0->f8);
+        func_00423DB0(a0->f8);
         return 0;
     }
     a0->f8 = -1;
