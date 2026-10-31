@@ -103,7 +103,7 @@ INCLUDE_ASM("replay/playbackman", cPlaybackMan_update);
 #ifdef SKIP_ASM
 extern "C" int func_003DF980(int handle);
 extern "C" int ASYNCFILE_release(int handle, void** data, int* size);
-extern "C" void func_002523A8(void* p);
+extern "C" void* func_002523A8(void* p);
 extern "C" void func_003E6574(void* dst, void* src, int size);
 extern const char D_00481560[];
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
@@ -154,9 +154,9 @@ extern "C" void* cMemMan_alloc(unsigned int size, const char* tag, int flags, in
 void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" void func_0026D628(void* self);
 extern "C" void func_0026E950(void* self, void* buf, int a2);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 extern "C" int func_00154278(void* iface);
-extern "C" unsigned int func_00154588(void* iface, int i);
+extern "C" int func_00154588(void* iface, int i);
 extern char D_00481570[];
 extern char D_00481580[];
 extern char D_00481590[];
@@ -215,7 +215,7 @@ extern "C" void cPlaybackMan_initLocation(cPlaybackMan_C6E8* self, const char* n
 INCLUDE_ASM("replay/playbackman", func_0026C898);
 #ifdef SKIP_ASM
 void cMemMan_free(void* p);
-extern "C" void func_003DFAF0(int handle);
+extern "C" int func_003DFAF0(int handle);
 
 struct sPbEntryC898 {
     int field_0x0;
@@ -334,7 +334,7 @@ extern "C" int func_0026C9F0(void* self_, int key)
 INCLUDE_ASM("replay/playbackman", func_0026CA90);
 #ifdef SKIP_ASM
 extern "C" void func_0026CDF8(void* self);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 
 extern "C" void func_0026CA90(void* self)
 {
@@ -353,7 +353,7 @@ extern "C" void func_0026CA90(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/playbackman", func_0026CAF8);
 #ifdef SKIP_ASM
-extern "C" void SYNCTASK_run(int);
+extern "C" int SYNCTASK_run(int);
 extern "C" void THREAD_yieldticks(int);
 extern "C" int func_0026C998(void* self, int a1);
 extern "C" int func_0026C9F0(void* self, int a1);
@@ -416,14 +416,12 @@ extern "C" void func_0026CBB8(void* self)
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026CC18);
 #ifdef SKIP_ASM
-// PORT: func_0026DBD0 is declared in this unit with one parameter, but it passes a
-// second one ($5) through to cReplay_restoreFrame; bind the 2-arg form to the symbol.
-extern "C" void func_0026DBD0_2(void* replay, void* frame) __asm__("func_0026DBD0");
+extern "C" void func_0026DBD0(void* replay, void* frame);
 
 extern "C" void* func_0026CC18(void* self)
 {
     if (*(int*)((char*)self + 0x10)) {
-        func_0026DBD0_2(*(void**)(*(char**)((char*)self + 0x5C) + 0x28), (char*)self + 0x14);
+        func_0026DBD0(*(void**)(*(char**)((char*)self + 0x5C) + 0x28), (char*)self + 0x14);
     }
 }
 #endif
@@ -558,7 +556,7 @@ extern "C" int func_0026CFE8(sPbMan_26CFE8* self, int key)
 INCLUDE_ASM("replay/playbackman", func_0026D020);
 #ifdef SKIP_ASM
 extern "C" int func_002C85A0(void* src, int a, int dst);
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 
 extern "C" int func_0026D020(void* self, int idx)
 {
@@ -796,7 +794,7 @@ struct sPbStream_D420 {
     sPbChunk_D420* chunks;  // 0xC
 };
 
-extern "C" void func_003E6448(void* dst, int c, int n);
+extern "C" void* func_003E6448(void* dst, int c, int n);
 
 extern "C" int func_0026D420(sPbStream_D420* self, sPbChunk_D420* out)
 {
@@ -1081,7 +1079,7 @@ struct sPbTime {
 };
 
 int func_0026E9C0(void* self);
-void* func_003178E0(void* self);
+void func_003178E0(void* self);
 extern "C" void* cBE_getBE();
 extern "C" void func_0014DF08(void* self, cPbStream* s);
 extern "C" void func_002D9CB0(cPbStream* s);
@@ -1142,12 +1140,12 @@ INCLUDE_ASM("replay/playbackman", func_0026DB88);
 // PORT: cReplayFramePtr_getFrameBlock is mangled with no parameters (__Fv) but is
 // called here with (frame, 1); bind the 2-arg form to the symbol.
 void cReplayFramePtr_getFrameBlock_2(void* frame, int n) __asm__("cReplayFramePtr_getFrameBlock__Fv");
-extern "C" void func_0026DBD0_2(void* replay, void* frame) __asm__("func_0026DBD0");
+extern "C" void func_0026DBD0(void* replay, void* frame);
 
 extern "C" void func_0026DB88(void* self, void* frame)
 {
     cReplayFramePtr_getFrameBlock_2(frame, 1);
-    func_0026DBD0_2(self, frame);
+    func_0026DBD0(self, frame);
 }
 #endif
 
@@ -1156,7 +1154,7 @@ extern "C" void cReplay_restoreFrame(void*);
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026DBD0);
 #ifdef SKIP_ASM
-extern "C" void func_0026DBD0(void* self)
+extern "C" void func_0026DBD0(void* self, void* frame)
 {
     cReplay_restoreFrame(self);
 }
