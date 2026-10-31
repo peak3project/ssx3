@@ -164,7 +164,7 @@ extern "C" int func_002B9320(void *p) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9338);
 #ifdef SKIP_ASM
-extern "C" void func_003BA020(int);
+extern "C" int func_003BA020(int);
 
 extern "C" void func_002B9338(void *arg0) {
     func_003BA020((*(int *)((char*)(arg0) + (0x20))) + ((*(int *)((char*)(arg0) + (0x1C))) * 0x18));
@@ -970,7 +970,7 @@ struct Obj_A6B0 {
 extern "C" void* func_00416210(void*, int, unsigned int);
 
 
-extern "C" void func_002906B8(void*);
+extern "C" int func_002906B8(void*);
 struct Outer_A6B0 { char pad[0x1D8]; Obj_A6B0 sub; };
 struct Arg_A6B0 { Outer_A6B0* o; int* vals; int* vals2; };
 extern "C" void func_002BA6B0(Arg_A6B0* arg, int v, int v2) {
@@ -1035,7 +1035,7 @@ struct Outer_A920 { char pad[0x1D8]; Obj_A920 sub; };
 struct Arg_A920 { Outer_A920* o; int* vals; int* vals2; };
 #define MIN_A920(a,b) ((a) < (b) ? (a) : (b))
 #define MAX_A920(a,b) ((a) < (b) ? (b) : (a))
-extern "C" void func_002906B8(void*);
+extern "C" int func_002906B8(void*);
 extern "C" void func_002BA920(Arg_A920* arg, int v, int v2, int v3) {
     Outer_A920* o = arg->o;
     Obj_A920* p = &o->sub;
@@ -1654,12 +1654,12 @@ extern "C" void func_002BB390(void *self, int flags) {
 INCLUDE_ASM("bx/seg_1BA100", func_002BB3F0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void ASYNCFILE_release_B3F0(int, int *, int *) __asm__("ASYNCFILE_release");
-extern "C" void func_002523A8_B3F0(int) __asm__("func_002523A8");
-extern "C" void func_003B47F8_B3F0(int, int) __asm__("func_003B47F8");
+extern "C" int ASYNCFILE_release(int, int *, int *);
+extern "C" void* func_002523A8(int);
+extern "C" void func_003B47F8(int, int);
 extern "C" int func_003B4818_B3F0(int) __asm__("func_003B4818");
 extern "C" int func_003DF980_B3F0(int) __asm__("func_003DF980");
-extern "C" void func_003E6574_B3F0(int, int, int) __asm__("func_003E6574");
+extern "C" void func_003E6574(int, int, int);
 int operator_new_B3F0(unsigned int, void*, int, int) __asm__("operator_new__FUi");
 extern char D_004A3868[];
 extern "C" void func_002BB3F0(void *self_) {
@@ -1668,20 +1668,20 @@ extern "C" void func_002BB3F0(void *self_) {
     if (st == 1 && func_003DF980_B3F0(*(int*)(self + 4)) == st) {
         int sp0 = 0;
         int sp4 = 0;
-        ASYNCFILE_release_B3F0(*(int*)(self + 4), &sp0, &sp4);
+        ASYNCFILE_release(*(int*)(self + 4), &sp0, &sp4);
         if (sp0 != 0) {
             if (sp4 > 0) {
                 int t = func_003B4818_B3F0(sp0);
                 if (t > 0) {
                     int r = operator_new_B3F0(t, D_004A3868, 0x20000000, 0);
                     *(int*)(self + 8) = r;
-                    func_003B47F8_B3F0(sp0, r);
+                    func_003B47F8(sp0, r);
                 } else {
                     int r = operator_new_B3F0(sp4, D_004A3868, 0x20000000, 0);
                     *(int*)(self + 8) = r;
-                    func_003E6574_B3F0(r, sp0, sp4);
+                    func_003E6574(r, sp0, sp4);
                 }
-                func_002523A8_B3F0(sp0);
+                func_002523A8(sp0);
             }
         }
         *(short*)self = 2;
@@ -1696,7 +1696,7 @@ INCLUDE_ASM("bx/seg_1BA100", func_002BB4D8);
 struct sBXStr_B4D8 { char *p; int pad[3]; sBXStr_B4D8() {} };
 extern "C" void func_003186D0_B4D8(sBXStr_B4D8*, const char*, int) __asm__("func_003186D0");
 extern "C" void func_00318630_B4D8(sBXStr_B4D8*, sBXStr_B4D8*, const char*) __asm__("func_00318630");
-extern "C" int func_003DF690_B4D8(const char*, int) __asm__("func_003DF690");
+extern "C" int func_003DF690(const char*, int);
 extern "C" void cBXString_dt_B4D8(sBXStr_B4D8*, int) __asm__("cBXString__cBXString");
 extern char D_004A3870[];
 extern char D_004A3878[];
@@ -1707,7 +1707,7 @@ extern "C" void func_002BB4D8_B4D8(void *self, int arg) {
     *(short*)((char*)self + 2) = 0;
     func_003186D0_B4D8(&b, D_004A3870, arg);
     func_00318630_B4D8(&a, &b, D_004A3878);
-    *(int*)((char*)self + 4) = func_003DF690_B4D8(a.p, 0);
+    *(int*)((char*)self + 4) = func_003DF690(a.p, 0);
     cBXString_dt_B4D8(&a, 2);
     cBXString_dt_B4D8(&b, 2);
     int n = *(int*)((char*)self + 4);
