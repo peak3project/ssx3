@@ -79,7 +79,214 @@ void* func_00139528(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139548);
+#ifdef SKIP_ASM
+extern sVec4HP D_004FF120_9548 __asm__("D_004FF120");
+extern sVec4HP D_004FF160_9548 __asm__("D_004FF160");
+
+struct sHP_9548 {
+    char pad0[0x10];
+    float fx, fy, fz, fw; // 0x10
+    sVec4HP v20;     // 0x20
+    sVec4HP pad30;   // 0x30
+    sVec4HP v40;     // 0x40
+    char pad50[0x3C];
+    float m8C;       // 0x8C
+    int m90;         // 0x90
+    char pad94[0xC];
+    char* rider;     // 0xA0
+};
+
+static inline int neq_9548(sHP_9548* a, const sVec4HP& b)
+{
+    return a->fx != b.x || a->fy != b.y || a->fz != b.z || a->fw != b.w;
+}
+
+// PORT: PS2-only VU0 inline asm (dst = a x b, w = 0).
+static inline void vu0CrossTo_9548(sVec4HP& dst, const sVec4HP& a, const sVec4HP& b)
+{
+    sVec4HP r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "o"(a), "o"(b)
+        : "memory");
+    dst = r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst = normalized v via rsqrt).
+static inline void vu0NormTo_9548(sVec4HP& dst, const sVec4HP& v)
+{
+    sVec4HP r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    dst = r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_9548(const sVec4HP& a, const sVec4HP& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst = v * s).
+static inline void vu0ScaleTo_9548(sVec4HP& dst, const sVec4HP& v, float s)
+{
+    sVec4HP r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    dst = r;
+}
+
+// PORT: PS2-only VU0 inline asm (v *= s).
+static inline void vu0ScaleEq_9548(sVec4HP& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(v), "=&r"(t)
+        : "m"(v), "f"(s));
+}
+
+// PORT: PS2-only VU0 inline asm (dst = a - b).
+static inline void vu0SubTo_9548(sVec4HP& dst, const sVec4HP& a, const sVec4HP& b)
+{
+    sVec4HP r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    dst = r;
+}
+
+extern "C" int func_00139548_x(sHP_9548* s) __asm__("func_00139548");
+extern "C" int func_00139548_x(sHP_9548* s)
+{
+    if (neq_9548(s, D_004FF120_9548))
+        return 1;
+    int kind = *(int*)(s->rider + 0x32C);
+    sVec4HP n;
+    if (kind == 3) {
+        sVec4HP c;
+        vu0CrossTo_9548(c, D_004FF160_9548, s->v20);
+        vu0NormTo_9548(n, c);
+        float a = s->m8C * 0.699999988079071f;
+        float k = 2.0f;
+        if (s->m90 != 0)
+            k = 15.0f;
+        float d = vu0Dot_9548(s->v40, n);
+        float f = k * 27.77777862548828f;
+        if (d < 0.0f)
+            f = -f;
+        sVec4HP u;
+        vu0ScaleTo_9548(u, s->v20, a);
+        sVec4HP v;
+        vu0ScaleTo_9548(v, n, f);
+        vu0SubTo_9548(c, u, v);
+        *(sVec4HP*)&s->fx = c;
+        float z = 0.0f;
+        if (s->m90 != 0)
+            z = 10.0f;
+        *(float*)((char*)s + 0x18) = z * 27.77777862548828f;
+        return 1;
+    }
+    if (kind == 4) {
+        sVec4HP c;
+        vu0CrossTo_9548(c, s->v20, D_004FF160_9548);
+        vu0NormTo_9548(n, c);
+        float z = 0.0f;
+        float d = vu0Dot_9548(n, s->v40);
+        if (d < z)
+            vu0ScaleEq_9548(n, -1.0f);
+        float k = 5.0f;
+        if (s->m90 != 0)
+            k = 15.0f;
+        float g = 27.77777862548828f;
+        vu0ScaleTo_9548(c, n, k * g);
+        *(sVec4HP*)&s->fx = c;
+        if (s->m90 != 0)
+            z = 5.0f;
+        k = z * g;
+        *(float*)((char*)s + 0x18) = k;
+        return 1;
+    }
+    if (kind == 5) {
+        sVec4HP c;
+        vu0CrossTo_9548(c, s->v20, D_004FF160_9548);
+        vu0NormTo_9548(n, c);
+        float z = 0.0f;
+        float d = vu0Dot_9548(n, s->v40);
+        if (z < d)
+            vu0ScaleEq_9548(n, -1.0f);
+        float k = 5.0f;
+        if (s->m90 != 0)
+            k = 15.0f;
+        float g = 27.77777862548828f;
+        vu0ScaleTo_9548(c, n, k * g);
+        *(sVec4HP*)&s->fx = c;
+        if (s->m90 != 0)
+            z = 5.0f;
+        k = z * g;
+        *(float*)((char*)s + 0x18) = k;
+        return 1;
+    }
+    if (kind == 6) {
+        vu0ScaleTo_9548(n, s->v20, 833.3333740234375f);
+        *(sVec4HP*)&s->fx = n;
+        *(float*)((char*)s + 0x18) += 416.66668701171875f;
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139970);
