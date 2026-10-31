@@ -474,14 +474,14 @@ int func_00157330(void* self)
 }
 #endif
 
-extern "C" void* func_0028B180(void* self);
+extern "C" void* func_0028B180();
 
 //100%
 INCLUDE_ASM("be/beintreward", func_00157350__FPv);
 #ifdef SKIP_ASM
 int func_00157350(void* self)
 {
-    return *(int*)((char*)func_0028B180(self) + 0x504);
+    return *(int*)((char*)func_0028B180() + 0x504);
 }
 #endif
 
@@ -963,23 +963,22 @@ extern "C" int func_00157EE0(void* self, int a1, int a2, int bit)
 //100%
 INCLUDE_ASM("be/beintreward", func_00157F20);
 #ifdef SKIP_ASM
-// The award handlers are declared void elsewhere in this unit; their results are returned here.
-int func_00157FD0_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00157FD0");
-int func_001580F8_r(void* self, int a1, int a2, int bit, int give) __asm__("func_001580F8");
-int func_00158220_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158220");
-int func_00158470_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158470");
-int func_00158348_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158348");
-int func_00158618_r(void* self, int a1, int a2, int bit, int give) __asm__("func_00158618");
+extern "C" int func_00157FD0(void* self, int a1, int a2, int bit, int give);
+extern "C" int func_001580F8(void* self, int a1, int a2, int bit, int give);
+extern "C" int func_00158220(void* self, int a1, int a2, int bit, int give);
+extern "C" int func_00158470(void* self, int a1, int a2, int bit, int give);
+extern "C" int func_00158348(void* self, int a1, int a2, int bit, int give);
+extern "C" int func_00158618(void* self, int a1, int a2, int bit, int give);
 
 extern "C" int func_00157F20(void* self, int a1, int a2, int kind, int bit, int give)
 {
     switch (kind) {
-    case 3: return func_00157FD0_r(self, a1, a2, bit, give);
-    case 4: return func_001580F8_r(self, a1, a2, bit, give);
-    case 5: return func_00158220_r(self, a1, a2, bit, give);
-    case 6: return func_00158470_r(self, a1, a2, bit, give);
-    case 7: return func_00158348_r(self, a1, a2, bit, give);
-    case 8: return func_00158618_r(self, a1, a2, bit + 10, give);
+    case 3: return func_00157FD0(self, a1, a2, bit, give);
+    case 4: return func_001580F8(self, a1, a2, bit, give);
+    case 5: return func_00158220(self, a1, a2, bit, give);
+    case 6: return func_00158470(self, a1, a2, bit, give);
+    case 7: return func_00158348(self, a1, a2, bit, give);
+    case 8: return func_00158618(self, a1, a2, bit + 10, give);
     }
     return 0;
 }
@@ -996,7 +995,7 @@ extern "C" int func_00150928(void* self, int a, int b);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 extern "C" int func_001575C0(void* self, int a1, int a2);
 int func_001572B0(void* self);
-extern "C" void func_00158618(void* self, int a1, int a2, int a3, int a4);
+extern "C" int func_00158618(void* self, int a1, int a2, int a3, int a4);
 extern int D_004A6CA8[];
 // PORT: the unit declares func_0015A478(void*), but it takes no args (returns &D_004C3E98).
 void* func_0015A478_noargs() __asm__("func_0015A478");
@@ -1008,7 +1007,7 @@ struct sRewardDef_157FD0
     short padE;
 };
 
-extern "C" void func_00157FD0(void* self, int a1, int a2, int bit, int give)
+extern "C" int func_00157FD0(void* self, int a1, int a2, int bit, int give)
 {
     void* econ = cBE_getInterface_Fv(cBE_getBE(), 0xB);
     char* p = (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
@@ -1024,7 +1023,7 @@ extern "C" void func_00157FD0(void* self, int a1, int a2, int bit, int give)
     {
         func_00158618(self, a1, a2, 0x14, 0);
     }
-    func_00150928(econ, a1, a2);
+    return func_00150928(econ, a1, a2);
 }
 #endif
 
@@ -1039,7 +1038,7 @@ extern "C" int func_00150928(void* self, int a, int b);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 extern "C" int func_00157620(void* self, int a1, int a2);
 int func_001572D0(void* self);
-extern "C" void func_00158618(void* self, int a1, int a2, int a3, int a4);
+extern "C" int func_00158618(void* self, int a1, int a2, int a3, int a4);
 extern int D_004A6CA8[];
 // PORT: the unit declares func_0015A478(void*), but it takes no args (returns &D_004C3E98).
 void* func_0015A478_noargs() __asm__("func_0015A478");
@@ -1051,7 +1050,7 @@ struct sRewardDef_1580F8
     short padE;
 };
 
-extern "C" void func_001580F8(void* self, int a1, int a2, int bit, int give)
+extern "C" int func_001580F8(void* self, int a1, int a2, int bit, int give)
 {
     void* econ = cBE_getInterface_Fv(cBE_getBE(), 0xB);
     char* p = (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
@@ -1067,7 +1066,7 @@ extern "C" void func_001580F8(void* self, int a1, int a2, int bit, int give)
     {
         func_00158618(self, a1, a2, 0x11, 0);
     }
-    func_00150928(econ, a1, a2);
+    return func_00150928(econ, a1, a2);
 }
 #endif
 
@@ -1082,7 +1081,7 @@ extern "C" int func_00150928(void* self, int a, int b);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 extern "C" int func_00157680(void* self, int a1, int a2);
 int func_001572F0(void* self);
-extern "C" void func_00158618(void* self, int a1, int a2, int a3, int a4);
+extern "C" int func_00158618(void* self, int a1, int a2, int a3, int a4);
 extern int D_004A6CA8[];
 // PORT: the unit declares func_0015A478(void*), but it takes no args (returns &D_004C3E98).
 void* func_0015A478_noargs() __asm__("func_0015A478");
@@ -1094,7 +1093,7 @@ struct sRewardDef_158220
     short padE;
 };
 
-extern "C" void func_00158220(void* self, int a1, int a2, int bit, int give)
+extern "C" int func_00158220(void* self, int a1, int a2, int bit, int give)
 {
     void* econ = cBE_getInterface_Fv(cBE_getBE(), 0xB);
     char* p = (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
@@ -1110,7 +1109,7 @@ extern "C" void func_00158220(void* self, int a1, int a2, int bit, int give)
     {
         func_00158618(self, a1, a2, 0x16, 0);
     }
-    func_00150928(econ, a1, a2);
+    return func_00150928(econ, a1, a2);
 }
 #endif
 
@@ -1125,7 +1124,7 @@ extern "C" int func_00150928(void* self, int a, int b);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 extern "C" int func_001576E0(void* self, int a1, int a2);
 int func_00157310(void* self);
-extern "C" void func_00158618(void* self, int a1, int a2, int a3, int a4);
+extern "C" int func_00158618(void* self, int a1, int a2, int a3, int a4);
 extern int D_004A6CA8[];
 // PORT: the unit declares func_0015A478(void*), but it takes no args (returns &D_004C3E98).
 void* func_0015A478_noargs() __asm__("func_0015A478");
@@ -1137,7 +1136,7 @@ struct sRewardDef_158348
     short padE;
 };
 
-extern "C" void func_00158348(void* self, int a1, int a2, int bit, int give)
+extern "C" int func_00158348(void* self, int a1, int a2, int bit, int give)
 {
     void* econ = cBE_getInterface_Fv(cBE_getBE(), 0xB);
     char* p = (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
@@ -1153,7 +1152,7 @@ extern "C" void func_00158348(void* self, int a1, int a2, int bit, int give)
     {
         func_00158618(self, a1, a2, 0x13, 0);
     }
-    func_00150928(econ, a1, a2);
+    return func_00150928(econ, a1, a2);
 }
 #endif
 
@@ -1170,7 +1169,7 @@ extern "C" void func_001573F0(void* self, int bit, char* bits);
 extern "C" int func_00150928(void* self, int a, int b);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 
-extern "C" void func_00158470(void* self, int profile, int c, int idx, int award)
+extern "C" int func_00158470(void* self, int profile, int c, int idx, int award)
 {
     void* econ = cBE_getInterface_Fv(cBE_getBE(), 0xB);
     char* p = (char*)D_004A6CA8 + profile * 0x9b50 + c * 0xf88;
@@ -1182,7 +1181,7 @@ extern "C" void func_00158470(void* self, int profile, int c, int idx, int award
             v *= 10;
         func_00150B48(econ, profile, c, v);
     }
-    func_00150928(econ, profile, c);
+    return func_00150928(econ, profile, c);
 }
 #endif
 
@@ -1223,7 +1222,7 @@ extern "C" void func_001573F0(void* self, int bit, char* bits);
 extern "C" int func_00150928(void* self, int a, int b);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 
-extern "C" void func_00158618(void* self, int profile, int c, int idx, int award)
+extern "C" int func_00158618(void* self, int profile, int c, int idx, int award)
 {
     idx -= 10;
     void* econ = cBE_getInterface_Fv(cBE_getBE(), 0xB);
@@ -1236,7 +1235,7 @@ extern "C" void func_00158618(void* self, int profile, int c, int idx, int award
             v *= 10;
         func_00150B48(econ, profile, c, v);
     }
-    func_00150928(econ, profile, c);
+    return func_00150928(econ, profile, c);
 }
 #endif
 
@@ -1884,7 +1883,7 @@ INCLUDE_ASM("be/beintreward", func_00159CD0);
 #ifdef SKIP_ASM
 extern "C" int func_0015A2E0(void* self, int a1, int a2, int bit);
 extern "C" void func_0015A358(void* self, int bit, unsigned char* bits);
-extern "C" void func_0014B560(void* stats, int profile, int c, int value, int flag);
+extern "C" int func_0014B560(void* stats, int profile, int c, int value, int flag);
 extern "C" void func_001E2428(int which);
 extern "C" void func_001E2518();
 extern "C" void func_001E2578();
