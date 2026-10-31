@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("scripter/datamanager", cDataManager_cDataManager);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void func_00275CD0(void* self, void* node);
 extern char D_004825A0[];
 extern const char D_00481AB8[];
@@ -24,7 +23,7 @@ extern "C" cDataManager5828* cDataManager_cDataManager(cDataManager5828* self, i
 {
     self->vtable = D_004825A0;
     self->count = count;
-    self->nodes = (sDataNode5828*)operator_new_tag(count * sizeof(sDataNode5828), D_00481AB8, flags, 0);
+    self->nodes = (sDataNode5828*)operator_new__FUi(count * sizeof(sDataNode5828), D_00481AB8, flags, 0);
     self->field_0x8 = 0;
     for (int i = 0; i < count; i++) {
         func_00275CD0(self, &self->nodes[i]);
@@ -1032,11 +1031,11 @@ void* func_00276CA8(void* self)
 INCLUDE_ASM("scripter/datamanager", func_00276CC8);
 #ifdef SKIP_ASM
 void* func_00230698(void* self, int a1);
-extern "C" void func_00276388(void* self, int a1, int a2);
+extern "C" int func_00276388(void* self, int a1, int a2);
 extern "C" void func_00277778(void* self);
 extern "C" void func_00277800(void* self);
 extern "C" void func_00277838(void* self);
-extern "C" void func_00277980(void* self);
+extern "C" int func_00277980(void* self);
 extern "C" int func_00277DD8(void* self, void* a1);
 extern "C" void func_00282720(void* self, int a1);
 extern "C" int func_00282798(void* self, int a1);
@@ -1321,7 +1320,7 @@ INCLUDE_ASM("scripter/datamanager", func_00277310);
 extern "C" int func_002771C8(void* self, void* obj);
 char* func_0027C070(void* obj);
 extern "C" int func_00274D08(void* obj);
-extern "C" void func_00277980(void* self);
+extern "C" int func_00277980(void* self);
 
 extern "C" void func_00277310(void* self, int a1, void* obj)
 {
@@ -1634,7 +1633,7 @@ extern "C" void* func_00283D70(void* list, int i);
 extern "C" void func_002E4578(void* p);
 extern "C" int func_0027A4A0(void* self, int a1, int a2);
 extern "C" void func_002E4370(void* snd, int a1, int h, int h2, int a4, int a5, float t0, float t1, float t2);
-extern "C" void func_002E44F0(void* snd, int a1, int h, float t);
+extern "C" int func_002E44F0(void* snd, int a1, int h, float t);
 extern "C" void func_002E4540(void* snd, int a1, int h, int a3, float t);
 extern char* D_004A28A8;
 extern void* D_004A28A4;
