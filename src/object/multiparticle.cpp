@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("object/multiparticle", cMultiParticle_setupMultiParticle);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* cMemMan_alloc(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* func_00370018(void* p);
 extern "C" void func_003705E0(void* sys, void* data, int n);
@@ -794,7 +793,7 @@ extern "C" void func_00358E50(void* self, int flags)
 //100%
 INCLUDE_ASM("object/multiparticle", func_00358EB8);
 #ifdef SKIP_ASM
-extern "C" void func_00341D48(void* p);
+extern "C" int func_00341D48(void* p);
 extern "C" int func_0034EBA0(void* p);
 
 extern "C" int func_00358EB8(void* self)
@@ -1069,7 +1068,7 @@ extern "C" void func_00359140(sMp_9140* self)
 //100%
 INCLUDE_ASM("object/multiparticle", func_00359228);
 #ifdef SKIP_ASM
-extern "C" void func_00341AA0(void* self, int a, int type, int b, int c);
+extern "C" void* func_00341AA0(void* self, int a, int type, int b, int c);
 extern void* D_0048EA70[];
 
 extern "C" void* func_00359228(void* self, int a, int b, int c)
@@ -1107,7 +1106,7 @@ extern "C" void* func_00359270(void* self, void* a, void* stream)
 //100%
 INCLUDE_ASM("object/multiparticle", func_003592D0);
 #ifdef SKIP_ASM
-extern "C" void func_00341D48(void* p);
+extern "C" int func_00341D48(void* p);
 
 struct sVEntry_3592D0 {
     short delta;
