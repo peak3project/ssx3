@@ -8,7 +8,7 @@ void* cBE_getInterface_3438(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cBE_getBE();
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00397B08(void* mem);
-extern "C" void cUIEngine_loadFile(void* engine, const char* name);
+extern "C" int cUIEngine_loadFile(void* engine, const char* name);
 extern "C" void* func_0039E2A0(void* self, void* engine);
 extern "C" void func_00233640(void* self, int type);
 extern "C" void func_0039F400(void* list, void* screen);
@@ -360,7 +360,7 @@ extern "C" int func_002339F8(void* self)
 INCLUDE_ASM("fe/festateloadscreen", func_00233A70);
 #ifdef SKIP_ASM
 extern "C" void func_00398038(void*);
-void func_00231CB0(void*);
+void* func_00231CB0(void*);
 
 extern "C" void func_00233A70(void* self)
 {
@@ -555,7 +555,7 @@ extern "C" void func_00155E58(void* p);
 extern "C" void func_001F36D8(void* hud, int a);
 extern "C" void func_0020CC60();
 extern "C" void func_00233AA0(void* self);
-extern "C" int func_00278F38(void* self, int i);
+extern "C" void func_00278F38(void* self, int i);
 extern "C" void func_002790A0(void* self, int i);
 extern "C" int func_002791D8(void* self, int i);
 extern "C" int func_00279248(void* self, int i);
@@ -830,14 +830,14 @@ extern "C" void* cBE_getBE();
 extern "C" void cBE_setState(int state);
 extern "C" void cAI_setAIState(void*, int);
 extern "C" void func_001F36D8(void* hud, int a);
-extern "C" void func_0026F228(void* p);
+extern "C" void* func_0026F228(void* p);
 extern "C" int cBENewRaceInterface_setNumberAI(void* self, int count);
 extern "C" void cBENewPlayerInterface_setRiderCharID(void* player, int i, int id);
 extern "C" void func_001473D0(void* player, int i, int v);
 extern "C" void func_002790A0(void* self, int i);
 extern "C" void func_0027AAF8(void* a, int b);
 // PORT: func_00278F38 returns func_00276270's result (ssxscriptengine defines it void).
-extern "C" int func_00278F38(void* self, int i);
+extern "C" void func_00278F38(void* self, int i);
 extern void* D_004A2C68;
 extern void* D_004A28A4;
 extern void* D_004A28A8;
