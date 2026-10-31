@@ -468,7 +468,7 @@ INCLUDE_ASM("fe/festateloadhint", func_00246278);
 #ifdef SKIP_ASM
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_00144C98(void* iface);
-extern "C" int func_00144BF0(void* iface);
+extern "C" const char* func_00144BF0(void* iface);
 extern char* D_004A28A8;
 extern signed char D_00535C10[];
 extern char D_004A2BD8[];
