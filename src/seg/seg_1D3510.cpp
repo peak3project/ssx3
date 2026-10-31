@@ -130,8 +130,7 @@ extern "C" int func_002D2790(unsigned char **arg0, unsigned char *arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", get_string);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag_27B0(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_002D2790_27B0(unsigned char **, unsigned char *) __asm__("func_002D2790");
 extern "C" char *strcpy(char *, const char *);
 extern char D_004D49B8[];
@@ -144,7 +143,7 @@ extern "C" int get_string(unsigned char **src, char **out) {
         D_004D49B8[n - 1] = c;
     } while (c != 0 && n < 1000);
     if (n == 1000) D_004D49B8[999] = 0;
-    char *p = (char*)operator_new_tag_27B0(n, D_00486768, 0x100, 0);
+    char *p = (char*)operator_new__FUi(n, D_00486768, 0x100, 0);
     *out = p;
     strcpy(p, D_004D49B8);
     return n;
@@ -154,8 +153,6 @@ extern "C" int get_string(unsigned char **src, char **out) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", get_data);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_tag_2868(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern "C" void* cMemMan_alloc(int, const char*, int, int);
 extern "C" int func_002D2790_2868(unsigned char **, unsigned char *) __asm__("func_002D2790");
 extern "C" int get_uint_2868(unsigned char **, void *) __asm__("get_uint");
@@ -170,7 +167,7 @@ extern "C" int get_data(unsigned char **src, Data_2868 **out) {
     *out = d;
     int total = get_uint_2868(src, d);
     Data_2868 *e = *out;
-    e->data = (unsigned char*)operator_new_tag_2868(e->n, D_00486788, 0x100, 0);
+    e->data = (unsigned char*)operator_new__FUi(e->n, D_00486788, 0x100, 0);
     Data_2868 *t = *out;
     for (i = 0; i < t->n; i++) {
         total += func_002D2790_2868(src, t->data + i);
@@ -898,8 +895,8 @@ extern "C" int func_002D3D40(int arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3D48);
 #ifdef SKIP_ASM
-extern "C" int func_00416958(char*, int, int);
-extern "C" int func_002D3D48(char *arg0, int arg1) {
+extern "C" char* func_00416958(char*, int, int);
+extern "C" char* func_002D3D48(char *arg0, int arg1) {
     char *p = arg0 + 0x18;
     *p = 0;
     return func_00416958(p, arg1, 0xF);
