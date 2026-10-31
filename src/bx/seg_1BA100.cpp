@@ -3003,11 +3003,10 @@ INCLUDE_ASM("bx/seg_1BA100", func_002BC980);
 #ifdef SKIP_ASM
 extern char D_004844C8[];
 extern "C" void *func_002BC980(void *arg0) {
-    float one = 1.0f;
     *(char **)((char *)arg0 + 4) = D_004844C8;
-    *(float *)((char *)arg0 + 0xC) = one;
+    *(float *)((char *)arg0 + 0xC) = 1.0f;
     *(float *)((char *)arg0 + 0) = -99999.0f;
-    *(float *)((char *)arg0 + 8) = one;
+    *(float *)((char *)arg0 + 8) = 1.0f;
     return arg0;
 }
 #endif
@@ -3090,13 +3089,11 @@ INCLUDE_ASM("bx/seg_1BA100", func_002BCBD0);
 #ifdef SKIP_ASM
 extern char D_00483E20[];
 extern "C" void *func_002BCBD0(void *arg0) {
-    float zero = 0.0f;
     *(char **)((char *)arg0 + 4) = D_00483E20;
     *(int *)((char *)arg0 + 0xC) = 0;
     *(int *)((char *)arg0 + 0x8) = 0;
     *(float *)((char *)arg0 + 0) = -99999.0f;
-    *(float *)((char *)arg0 + 0x14) = zero;
-    *(float *)((char *)arg0 + 0x10) = zero;
+    *(float *)((char *)arg0 + 0x10) = *(float *)((char *)arg0 + 0x14) = 0.0f;
     return arg0;
 }
 #endif
