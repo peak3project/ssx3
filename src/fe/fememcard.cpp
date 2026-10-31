@@ -580,7 +580,7 @@ INCLUDE_ASM("fe/fememcard", func_001874E8);
 extern void* D_004A28A8;
 extern int D_004A14BC;
 extern "C" void* func_00227F80(void* p);
-extern "C" void func_0023FB58(void* mp);
+extern "C" void* func_0023FB58(void* mp);
 extern "C" void func_001877B0(void);
 extern "C" void func_00187318(void* self);
 
@@ -660,10 +660,10 @@ extern "C" int func_00152BA8();
 extern "C" void* func_00227F80(void* p);
 extern "C" void func_0023CAA0(void* mp, int a);
 extern "C" void func_0023C8F0(void* mp, int mode);
-extern "C" void func_002C2540(void*, void*);
+extern "C" unsigned short* func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
-extern "C" void func_00241D40_r(void* self, int mode, void* buf, int size) __asm__("func_00241D40");
-extern "C" void func_00241AA0_r(void* buf, int size) __asm__("func_00241AA0");
+extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
+extern "C" void func_00241AA0(void* buf, int size);
 extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
 extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
@@ -697,9 +697,9 @@ extern "C" void func_001877B0(void)
     *(int*)((char*)s1 + 0x1BC) = 0;
     sVtEnt_001877B0* vt = *(sVtEnt_001877B0**)((char*)mp + 0x748);
     vt[1].fn((char*)mp + vt[1].delta, 0x35);
-    func_00241D40_r(mp, 1, name, 0x14);
+    func_00241D40(mp, 1, name, 0x14);
     func_002C2540(fmt, D_004A14C8);
-    func_00241AA0_r(desc, 0x10);
+    func_00241AA0(desc, 0x10);
     func_002C26D0((unsigned short*)((char*)D_004A14B8 + 0x11C), fmt, desc, name);
     func_001D9308(D_004A14B8, 1);
     void* st = D_004A14B8;
