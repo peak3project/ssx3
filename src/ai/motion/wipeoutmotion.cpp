@@ -608,7 +608,7 @@ extern "C" float func_00138960(void* self, char* hit, sVec4WG* dir);
 void func_00113998_137860(void* ap, void* pos, void* vel) __asm__("func_00113998__FPv");
 void func_00111AA0_137860(void* self, void* a, void* b, int c, float x) __asm__("func_00111AA0__FPv");
 extern "C" void func_00106538(void* rider, const t4Vector& v);
-extern "C" void func_0011E150(void* rider, int a1);
+extern "C" void* func_0011E150(void* rider, int a1);
 extern "C" void func_00105398(void* rider, int a1);
 extern "C" void func_00107888(void* rider);
 extern char* D_004A28A8;
