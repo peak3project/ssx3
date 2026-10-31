@@ -2917,13 +2917,12 @@ extern char D_004A1408[];
 extern "C" void func_001CAFC0(void* self, int a1, int a2, int a3)
 {
     char* s = D_004A1408;
-    int two = 2;
     *(char**)((char*)self + 0x58) = s;
-    *(int*)((char*)self + 0x54) = two;
+    *(int*)((char*)self + 0x54) = 2;
     *(int*)((char*)self + 0x48) = a2;
     *(int*)((char*)self + 0x4C) = a3;
     int h = GetHashValue32(D_00466368);
-    *(int*)((char*)self + 0x64) = two;
+    *(int*)((char*)self + 0x64) = 2;
     *(char**)((char*)self + 0x68) = s;
     *(int*)((char*)self + 0x5C) = 3;
     *(int*)((char*)self + 0x60) = h;
