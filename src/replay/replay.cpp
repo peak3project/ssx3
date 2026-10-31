@@ -143,27 +143,27 @@ class cStreamRB;
 extern "C" void* cMemMan_alloc(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_0026EA68(void* stream);
 extern char D_004815F0[];
-extern "C" void* cDebounceNode_cDebounceNode_RO(void* self, void* bucket, void* stream) __asm__("cDebounceNode_cDebounceNode");
+extern "C" void* cDebounceNode_cDebounceNode(void* self, void* bucket, void* stream);
 extern char D_00481600[];
 extern "C" void* func_00341C80_RO(void* self, void* bucket, void* stream) __asm__("func_00341C80");
 extern char D_00481610[];
-extern "C" void* func_00359270_RO(void* self, void* bucket, void* stream) __asm__("func_00359270");
+extern "C" void* func_00359270(void* self, void* bucket, void* stream);
 extern char D_00481620[];
-extern "C" void* func_00358DB0_RO(void* self, void* bucket, void* stream) __asm__("func_00358DB0");
+extern "C" void* func_00358DB0(void* self, void* bucket, void* stream);
 extern char D_00481630[];
 extern "C" void* func_003422E8_RO(void* self, void* bucket, void* stream) __asm__("func_003422E8");
 extern char D_00481640[];
-extern "C" void* func_003464E0_RO(void* self, void* bucket, void* stream) __asm__("func_003464E0");
+extern "C" void* func_003464E0(void* self, void* bucket, void* stream);
 extern char D_004A3440[];
-extern "C" void* func_003437C0_RO(void* self, void* bucket, void* stream) __asm__("func_003437C0");
+extern "C" void* func_003437C0(void* self, void* bucket, void* stream);
 extern char D_004A3448[];
-extern "C" void* func_00341548_RO(void* self, void* bucket, void* stream) __asm__("func_00341548");
+extern "C" void* func_00341548(void* self, void* bucket, void* stream);
 extern char D_004A3450[];
-extern "C" void* func_0034CBE8_RO(void* self, void* bucket, void* stream) __asm__("func_0034CBE8");
+extern "C" void* func_0034CBE8(void* self, void* bucket, void* stream);
 extern char D_004A3458[];
-extern "C" void* func_0034AE68_RO(void* self, void* bucket, void* stream) __asm__("func_0034AE68");
+extern "C" void* func_0034AE68(void* self, void* bucket, void* stream);
 extern char D_00481650[];
-extern "C" void* func_00352168_RO(void* self, void* bucket, void* stream) __asm__("func_00352168");
+extern "C" void* func_00352168(void* self, void* bucket, void* stream);
 extern char D_00481660[];
 extern "C" void* func_00357918(void* self, void* bucket, void* stream);
 extern char D_004A3460[];
@@ -171,9 +171,9 @@ extern "C" void* func_00358588_RO(void* self, void* bucket, void* stream) __asm_
 extern char D_004A3468[];
 extern "C" void* func_00350FD8(void* self, void* bucket, void* stream);
 extern char D_00481670[];
-extern "C" void* func_0034ED88_RO(void* self, void* bucket, void* stream) __asm__("func_0034ED88");
+extern "C" void* func_0034ED88(void* self, void* bucket, void* stream);
 extern char D_00481680[];
-extern "C" void* func_003430D0_RO(void* self, void* bucket, void* stream) __asm__("func_003430D0");
+extern "C" void* func_003430D0(void* self, void* bucket, void* stream);
 extern char D_004A3470[];
 extern "C" void* func_00350F08(void* self, void* bucket, void* stream);
 extern char D_004A3478[];
@@ -192,37 +192,37 @@ extern "C" void cReplay_restoreObject(void* self, void* bucket, cStreamRB* strea
 {
     switch (func_0026EA68(stream)) {
     case 0:
-        cDebounceNode_cDebounceNode_RO(cMemMan_alloc(0x34, D_004815F0, 0x20000000, 0), bucket, stream);
+        cDebounceNode_cDebounceNode(cMemMan_alloc(0x34, D_004815F0, 0x20000000, 0), bucket, stream);
         break;
     case 1:
         func_00341C80_RO(cMemMan_alloc(0x6C, D_00481600, 0x20000000, 0), bucket, stream);
         break;
     case 2:
-        func_00359270_RO(cMemMan_alloc(0x70, D_00481610, 0x20000000, 0), bucket, stream);
+        func_00359270(cMemMan_alloc(0x70, D_00481610, 0x20000000, 0), bucket, stream);
         break;
     case 3:
-        func_00358DB0_RO(cMemMan_alloc(0x88, D_00481620, 0x20000000, 0), bucket, stream);
+        func_00358DB0(cMemMan_alloc(0x88, D_00481620, 0x20000000, 0), bucket, stream);
         break;
     case 4:
         func_003422E8_RO(cMemMan_alloc(0x80, D_00481630, 0x20000000, 0), bucket, stream);
         break;
     case 5:
-        func_003464E0_RO(cMemMan_alloc(0xB0, D_00481640, 0x20000000, 0), bucket, stream);
+        func_003464E0(cMemMan_alloc(0xB0, D_00481640, 0x20000000, 0), bucket, stream);
         break;
     case 7:
-        func_003437C0_RO(cMemMan_alloc(0x24, D_004A3440, 0x20000000, 0), bucket, stream);
+        func_003437C0(cMemMan_alloc(0x24, D_004A3440, 0x20000000, 0), bucket, stream);
         break;
     case 8:
-        func_00341548_RO(cMemMan_alloc(0x50, D_004A3448, 0x20000000, 0), bucket, stream);
+        func_00341548(cMemMan_alloc(0x50, D_004A3448, 0x20000000, 0), bucket, stream);
         break;
     case 9:
-        func_0034CBE8_RO(cMemMan_alloc(0x10C, D_004A3450, 0x20000000, 0), bucket, stream);
+        func_0034CBE8(cMemMan_alloc(0x10C, D_004A3450, 0x20000000, 0), bucket, stream);
         break;
     case 10:
-        func_0034AE68_RO(cMemMan_alloc(0x1C, D_004A3458, 0x20000000, 0), bucket, stream);
+        func_0034AE68(cMemMan_alloc(0x1C, D_004A3458, 0x20000000, 0), bucket, stream);
         break;
     case 11:
-        func_00352168_RO(cMemMan_alloc(0x6C0, D_00481650, 0x20000000, 0), bucket, stream);
+        func_00352168(cMemMan_alloc(0x6C0, D_00481650, 0x20000000, 0), bucket, stream);
         break;
     case 13:
         func_00357918(cMemMan_alloc(0x2C, D_00481660, 0x20000000, 0), bucket, stream);
@@ -234,10 +234,10 @@ extern "C" void cReplay_restoreObject(void* self, void* bucket, cStreamRB* strea
         func_00350FD8(cMemMan_alloc(0x1C, D_004A3468, 0x20000000, 0), bucket, stream);
         break;
     case 14:
-        func_0034ED88_RO(cMemMan_alloc(0x7C, D_00481670, 0x20000000, 0), bucket, stream);
+        func_0034ED88(cMemMan_alloc(0x7C, D_00481670, 0x20000000, 0), bucket, stream);
         break;
     case 15:
-        func_003430D0_RO(cMemMan_alloc(0x48, D_00481680, 0x20000000, 0), bucket, stream);
+        func_003430D0(cMemMan_alloc(0x48, D_00481680, 0x20000000, 0), bucket, stream);
         break;
     case 16:
         func_00350F08(cMemMan_alloc(0x1C, D_004A3470, 0x20000000, 0), bucket, stream);
