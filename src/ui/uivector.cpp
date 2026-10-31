@@ -778,7 +778,7 @@ extern "C" void func_003A4868(void* self)
 //100%
 INCLUDE_ASM("ui/uivector", func_003A4888);
 #ifdef SKIP_ASM
-extern "C" void* func_00397948(void*);
+extern "C" void func_00397948(void*);
 extern void* D_00494C98[];
 extern void* D_00494CC0[];
 
@@ -1321,14 +1321,13 @@ extern "C" void* func_003A4DF0(char* self)
 //100%
 INCLUDE_ASM("ui/uivector", func_003A4E38);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* func_0039FB30_self(void* self) __asm__("func_0039FB30");
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 extern "C" void* func_0021CCC8(void* p);
 extern void* D_00494AA8[];
 
-extern "C" void* func_003A4E38(char* self)
+extern "C" void* func_003A4E38(char* self, int a1, int a2)
 {
-    func_0039FB30_self(self);
+    func_0039FB30(self, a1, a2);
     *(void***)(self + 0x8) = D_00494AA8;
     func_0021CCC8(self + 0x74);
     *(int*)(self + 0x78) = -1;
@@ -1490,14 +1489,13 @@ extern "C" void* func_003A4FE0(char* self)
 //100%
 INCLUDE_ASM("ui/uivector", func_003A5028);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* func_0039FB30_self(void* self) __asm__("func_0039FB30");
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 extern "C" void* func_003977E8(void* p);
 extern void* D_004949E8[];
 
-extern "C" void* func_003A5028(char* self)
+extern "C" void* func_003A5028(char* self, int a1, int a2)
 {
-    func_0039FB30_self(self);
+    func_0039FB30(self, a1, a2);
     *(void***)(self + 0x8) = D_004949E8;
     func_003977E8(self + 0x74);
     return self;
@@ -1511,7 +1509,7 @@ extern void* D_004949E8[];
 extern void* D_00494C98[];
 extern void* D_00494CC0[];
 // PORT: called here for its side effect only; declared void so the scheduling matches.
-extern "C" void func_00397948_v(void* p) __asm__("func_00397948");
+extern "C" void func_00397948(void* p);
 extern "C" void func_003A4868(void* p);
 // PORT: the unit declares func_0039FC48 with one argument; the dtor chain passes the delete flag too.
 extern "C" void func_0039FC48_2(void* self, int flag) __asm__("func_0039FC48");
@@ -1521,7 +1519,7 @@ extern "C" void func_003A5068(char* self, int flag)
 {
     *(void***)(self + 0x8) = D_004949E8;
     *(void***)(self + 0x8C) = D_00494C98;
-    func_00397948_v(self + 0x74);
+    func_00397948(self + 0x74);
     *(void***)(self + 0x88) = D_00494CC0;
     func_003A4868(self + 0x80);
     *(void***)(self + 0x7C) = D_00494CC0;
@@ -1551,7 +1549,7 @@ extern "C" void func_003A5100(int arg0) {
 //100%
 INCLUDE_ASM("ui/uivector", func_003A5120);
 #ifdef SKIP_ASM
-extern "C" void func_00397858(int);
+extern "C" int* func_00397858(int);
 
 extern "C" void func_003A5120(int arg0) {
     func_00397858(arg0 + 0x74);
@@ -1627,13 +1625,13 @@ INCLUDE_ASM("ui/uivector", func_003A5230);
 #ifdef SKIP_ASM
 extern void* D_00494928[];
 // PORT: the other ctor in the unit calls this base ctor with (self, 0, 0)
-extern "C" void* func_0039FB30_self(void* self) __asm__("func_0039FB30");
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 extern "C" void* func_003977E8(void* p);
 extern "C" void* func_003A5338(void* self);
 
-extern "C" void* func_003A5230(char* self)
+extern "C" void* func_003A5230(char* self, int a1, int a2)
 {
-    func_0039FB30_self(self);
+    func_0039FB30(self, a1, a2);
     *(void***)(self + 0x8) = D_004949E8;
     func_003977E8(self + 0x74);
     *(void***)(self + 0x8) = D_00494928;
@@ -1656,7 +1654,7 @@ extern void* D_004949E8[];
 extern void* D_00494C98[];
 extern void* D_00494CC0[];
 // PORT: called here for its side effect only; declared void so the scheduling matches.
-extern "C" void func_00397948_v(void* p) __asm__("func_00397948");
+extern "C" void func_00397948(void* p);
 extern "C" void func_003A4868(void* p);
 // PORT: the unit declares func_0039FC48 with one argument; the dtor chain passes the delete flag too.
 extern "C" void func_0039FC48_2(void* self, int flag) __asm__("func_0039FC48");
@@ -1666,7 +1664,7 @@ extern "C" void func_003A52A0(char* self, int flag)
 {
     *(void***)(self + 0x8) = D_004949E8;
     *(void***)(self + 0x8C) = D_00494C98;
-    func_00397948_v(self + 0x74);
+    func_00397948(self + 0x74);
     *(void***)(self + 0x88) = D_00494CC0;
     func_003A4868(self + 0x80);
     *(void***)(self + 0x7C) = D_00494CC0;
@@ -1812,14 +1810,13 @@ extern "C" void* func_003A5420(char* self)
 //100%
 INCLUDE_ASM("ui/uivector", func_003A5468);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* func_0039FB30_self(void* self) __asm__("func_0039FB30");
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 extern "C" void* func_003A5508(void* self);
 extern void* D_00494868[];
 
-extern "C" void* func_003A5468(char* self)
+extern "C" void* func_003A5468(char* self, int a1, int a2)
 {
-    func_0039FB30_self(self);
+    func_0039FB30(self, a1, a2);
     *(void***)(self + 0x8) = D_00494868;
     func_003A5508(self + 0x74);
     *(int*)(self + 0x78) = 0;
@@ -2781,11 +2778,11 @@ INCLUDE_ASM("ui/uivector", func_003A5FA0);
 #ifdef SKIP_ASM
 extern void* D_004944C8[];
 // PORT: the other ctors in the unit call this base ctor with (self, 0, 0)
-extern "C" void* func_0039FB30_self(void* self) __asm__("func_0039FB30");
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 
-extern "C" void* func_003A5FA0(char* self)
+extern "C" void* func_003A5FA0(char* self, int a1, int a2)
 {
-    func_0039FB30_self(self);
+    func_0039FB30(self, a1, a2);
     *(int*)(self + 0x74) = 0;
     *(void***)(self + 0x8) = D_004944C8;
     *(int*)(self + 0x78) = 0;
@@ -2906,13 +2903,12 @@ extern "C" void* func_003A60E0(char* self)
 //100%
 INCLUDE_ASM("ui/uivector", func_003A6120);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* func_0039FB30_self(void* self) __asm__("func_0039FB30");
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 extern void* D_00494408[];
 
-extern "C" void* func_003A6120(char* self)
+extern "C" void* func_003A6120(char* self, int a1, int a2)
 {
-    func_0039FB30_self(self);
+    func_0039FB30(self, a1, a2);
     *(void***)(self + 0x8) = D_00494408;
     *(int*)(self + 0x74) = 0;
     *(int*)(self + 0x78) = 0;
@@ -2976,13 +2972,12 @@ extern "C" void* func_003A6190(char* self)
 //100%
 INCLUDE_ASM("ui/uivector", func_003A61D0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* func_0039FB30_self(void* self) __asm__("func_0039FB30");
+extern "C" void* func_0039FB30(void* self, int a1, int a2);
 extern void* D_00494348[];
 
-extern "C" void* func_003A61D0(char* self)
+extern "C" void* func_003A61D0(char* self, int a1, int a2)
 {
-    func_0039FB30_self(self);
+    func_0039FB30(self, a1, a2);
     *(void***)(self + 0x8) = D_00494348;
     *(int*)(self + 0x74) = 0;
     *(int*)(self + 0x78) = 0;
@@ -3064,8 +3059,7 @@ extern void* D_00494C98[];
 extern void* D_00494CC0[];
 extern "C" void func_003A4868(void* self);
 extern "C" void func_003A18C0(void* self);
-// PORT: the unit declares func_00397948 as returning void*; its body (util/list) is void.
-extern "C" void func_00397948_v(void* self) __asm__("func_00397948");
+extern "C" void func_00397948(void* self);
 // PORT: the unit declares func_0039FC48 with one parameter; the real body is a
 // destructor taking (self, flags). Bound to the same symbol with an asm label.
 extern "C" void* func_0039FC48_dtor(void* self, int flags) __asm__("func_0039FC48");
@@ -3075,7 +3069,7 @@ extern "C" void func_003A62A0(void* self, int flags)
     *(void***)((char*)self + 0x8) = D_00494278;
     func_003A18C0(self);
     *(void***)((char*)self + 0xA4) = D_00494C98;
-    func_00397948_v((char*)self + 0x8C);
+    func_00397948((char*)self + 0x8C);
     *(void***)((char*)self + 0xA0) = D_00494CC0;
     func_003A4868((char*)self + 0x98);
     *(void***)((char*)self + 0x94) = D_00494CC0;
@@ -3153,7 +3147,7 @@ extern "C" void func_003A63E0(int arg0) {
 //100%
 INCLUDE_ASM("ui/uivector", func_003A6400);
 #ifdef SKIP_ASM
-extern "C" void func_00397858(int);
+extern "C" int* func_00397858(int);
 
 extern "C" void func_003A6400(int arg0) {
     func_00397858(arg0 + 0x8C);
