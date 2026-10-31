@@ -3515,10 +3515,9 @@ struct sPartColour_C570 {
 
 extern "C" void func_0037C570(void* self, sPartColour_C570* c)
 {
-    float one = 1.0f;
-    *(int*)((char*)self + 0x59EC) = func_004139F8(clamp_C570(c->r, one) * 128.0f);
-    *(int*)((char*)self + 0x59F0) = func_004139F8(clamp_C570(c->g, one) * 128.0f);
-    *(int*)((char*)self + 0x59F4) = func_004139F8(clamp_C570(c->b, one) * 128.0f);
+    *(int*)((char*)self + 0x59EC) = func_004139F8(clamp_C570(c->r, 1.0f) * 128.0f);
+    *(int*)((char*)self + 0x59F0) = func_004139F8(clamp_C570(c->g, 1.0f) * 128.0f);
+    *(int*)((char*)self + 0x59F4) = func_004139F8(clamp_C570(c->b, 1.0f) * 128.0f);
 }
 #endif
 
