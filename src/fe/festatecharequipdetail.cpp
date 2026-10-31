@@ -273,7 +273,7 @@ extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int ha
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* func_001A0548(void* self, int a1);
 extern "C" void func_00311A50(void* self);
-extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 extern "C" void func_0019BFE8(void* self);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
@@ -781,7 +781,7 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019A098);
 #ifdef SKIP_ASM
 struct sEquipTable;
 // PORT: func_0019E2B0 returns a pointer through int (the unit defines it as int).
-extern "C" int func_0019E2B0(sEquipTable* self, int a1, int a2);
+extern "C" void* func_0019E2B0(sEquipTable* self, int a1, int a2);
 extern "C" void func_003B3D00(void* pkg, int i, char* name);
 extern "C" int func_004165A8(const void* a, const void* b);
 extern void* D_004A28A8;
@@ -1066,7 +1066,7 @@ struct sEquipTable_DC20;
 extern "C" void func_0019DC20(sEquipTable_DC20* self, int bank, int i);
 extern "C" int func_0019E238(sEquipTable* self, int a1, int a2);
 // PORT: func_0019E2B0 returns a pointer through int (the unit defines it as int).
-extern "C" int func_0019E2B0(sEquipTable* self, int a1, int a2);
+extern "C" void* func_0019E2B0(sEquipTable* self, int a1, int a2);
 extern "C" int func_0019DA10(void* self, int bank, void* name, int a3, int a4, int a5);
 extern "C" void func_0019A9B8(void* self);
 extern void* D_004A28A8;
@@ -2002,13 +2002,13 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019BE80);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014B560(void* iface, int a1, int a2, int a3, int a4);
+extern "C" int func_0014B560(void* iface, int a1, int a2, int a3, int a4);
 
 extern "C" void func_0019BE80(void* self)
 {
     int idx = *(unsigned char*)(*(char**)((char*)self + 0x5C) + 0x95);
     char* item = *(char**)((char*)self + (idx << 2) + 0x124);
-    *(void**)((char*)self + 0xC0) = func_0014B560(cBE_getInterface_Fv(cBE_getBE(), 9),
+    *(int*)((char*)self + 0xC0) = func_0014B560(cBE_getInterface_Fv(cBE_getBE(), 9),
         *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC), *(short*)(item + 4), 1);
 }
 #endif
@@ -2517,7 +2517,7 @@ struct sEquipSlot_DC20;
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void* ptr);
 extern "C" int func_003B4818(void* data);
-extern "C" void func_003B47F8(void* src, void* dst);
+extern "C" void* func_003B47F8(void* src, void* dst);
 extern "C" void func_0019D578(sEquipTable_DC20* self, int bank, int size);
 extern "C" void func_0019D738(sEquipTable_DC20* self, int bank, int size);
 extern "C" void MUTEX_lock(void* mutex);
@@ -3179,7 +3179,7 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019E238);
 struct sEquipSlot120 {
     int state;
     char pad04[0x100];
-    int value;
+    void* value;
     char pad108[8];
     int f110;
     int f114;
@@ -3214,7 +3214,7 @@ extern "C" void* func_0019E268(sEquipTable* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E2B0);
 #ifdef SKIP_ASM
-extern "C" int func_0019E2B0(sEquipTable* self, int a1, int a2)
+extern "C" void* func_0019E2B0(sEquipTable* self, int a1, int a2)
 {
     if (self->rows[a1].slots[a2].state != 1) {
         return 0;
@@ -3226,7 +3226,7 @@ extern "C" int func_0019E2B0(sEquipTable* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E2F0);
 #ifdef SKIP_ASM
-extern "C" int func_0019E2F0(sEquipTable* self, int a1, int a2)
+extern "C" void* func_0019E2F0(sEquipTable* self, int a1, int a2)
 {
     if (self->rows[a1].slots[a2].state != 1) {
         return 0;
@@ -3238,9 +3238,9 @@ extern "C" int func_0019E2F0(sEquipTable* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E330);
 #ifdef SKIP_ASM
-extern "C" int func_0019E330(sEquipTable* self, int a1, int a2)
+extern "C" void* func_0019E330(sEquipTable* self, int a1, int a2)
 {
-    int v = self->rows[a1].slots[a2].value;
+    void* v = self->rows[a1].slots[a2].value;
     self->rows[a1].slots[a2].value = 0;
     *(int*)((char*)self + 0xB4000) -= self->rows[a1].slots[a2].f118;
     self->rows[a1].slots[a2].f118 = 0;
