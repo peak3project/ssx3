@@ -301,7 +301,7 @@ extern char* strchr(const char* s, int c);
 extern char* strncpy(char* d, const char* s, int n);
 extern char* strcpy(char* d, const char* s);
 extern int strlen(const char* s);
-extern void f62D0(char*, const char*) __asm__("func_004162D0");
+extern char* func_004162D0(char*, const char*);
 extern int cDirtysock_tag_TagFieldDupl(char* dst, int len, const char* src);
 extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key, const char* val);
 extern int func_003F3A98(int, int);
@@ -332,7 +332,7 @@ int func_003F08E8(char* self, int a1, int a2, int ms, char* host, char* nick, in
             cDirtysock_tag_TagFieldDupl(tag, 0x100, tmp);
             q++;
             if ((unsigned int)(strlen(tag) + strlen(nick)) < 0x100) {
-                f62D0(tag, nick);
+                func_004162D0(tag, nick);
             }
             cDirtysock_tag_TagFieldSetString(buf, 0x100, D_004A4AE0, tag);
             if (*q == '$') {
@@ -361,7 +361,7 @@ int func_003F08E8(char* self, int a1, int a2, int ms, char* host, char* nick, in
 INCLUDE_ASM("seg/seg_2F0F40", func_003F0B50);
 #ifdef SKIP_ASM
 extern int D_004A4AE8[];
-extern void func_003F5738(int);
+extern int func_003F5738(int);
 int func_003F0B50(struct S07A0* p) {
     if (p->obj) {
         p->obj->fn(p->obj);
@@ -426,7 +426,7 @@ extern int cDirtysock_tag_TagFieldSetString(char* dst, int len, const char* key,
 extern int cDirtysock_tag_TagFieldSetNumber(char* dst, int len, const char* key, int val);
 extern int func_003EE778(int, int);
 extern int func_003EE1E8(int, int, int);
-extern void func_003EE600(int, int);
+extern int func_003EE600(int, int);
 int func_003F0C90(char* self, int a, int b) {
     char buf[0x100];
     if (*(int*)(self + 0x4A8) == 0) {
