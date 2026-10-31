@@ -576,7 +576,95 @@ extern "C" void func_00330BA8(sSelf_330BA8* self, void* box)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00331450);
+#ifdef SKIP_ASM
+struct sSelf_1450 {
+    sRoot_330BA8* root;             // 0x00
+    int f04;
+    void* f08;
+    int pad0C[0x40];
+    void* f10C;                     // 0x10C
+    int pad110[0x40];
+    int count;                      // 0x210
+    void* arr[0x80];                // 0x214
+};
+
+struct sOct_1450 {
+    void* child[8];                 // 0x00
+    int pad20[2];
+    void** all;                     // 0x28
+};
+
+extern "C" void descRec_1450(void* self, sCtx_3309D8* out) __asm__("func_00340B18");
+extern "C" void helpX_1450(char* flag, sCtx_3309D8* ctx, sCtx_3309D8* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_00339598");
+
+// nash::Cell::descend<OverlapListCallback>
+static inline void descend_1450(void** n, sCtx_3309D8* ctx)
+{
+    void** p;
+    for (p = ((sOct_1450*)n)->all; p != 0; p = (void**)*p) {
+        int* cnt = ctx->count;
+        int idx = *cnt;
+        ctx->list[idx] = (sNode_3309D8*)p;
+        *cnt = idx + 1;
+    }
+    if (n[0] != 0) descRec_1450(n[0], ctx);
+    if (n[1] != 0) descRec_1450(n[1], ctx);
+    if (n[2] != 0) descRec_1450(n[2], ctx);
+    if (n[3] != 0) descRec_1450(n[3], ctx);
+    if (n[4] != 0) descRec_1450(n[4], ctx);
+    if (n[5] != 0) descRec_1450(n[5], ctx);
+    if (n[6] != 0) descRec_1450(n[6], ctx);
+    if (n[7] != 0) descRec_1450(n[7], ctx);
+}
+
+struct sQH_1450 {};
+
+static inline void** cellNode_1450(sCell_330BA8* c)
+{
+    return c->node;
+}
+
+static inline void visit_1450(sRoot_330BA8* t, int k, sCtx_3309D8* ctx, void* box)
+{
+    sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
+    if (t->cell[k].node) {
+        void** n = cellNode_1450(c);
+        sQH_1450 h;
+        char* f = (char*)&h;
+        int r = func_00328360(c, box);
+        if (r == 0) {
+            descend_1450(n, ctx);
+        } else if (r == 2) {
+            helpX_1450(f, ctx, ctx, box, n, c);
+        }
+    }
+}
+
+extern "C" void func_00331450(sSelf_1450* self, void* box)
+{
+    sCtx_3309D8 ctx;
+    sCtx_3309D8* c = &ctx;
+    sRoot_330BA8* t = self->root;
+    self->f04 = t->fA0;
+    ctx.list = (sNode_3309D8**)self->arr;
+    ctx.count = &self->count;
+    *(int*)&ctx.pad08 = 0x200;
+    ctx.box = (sBox_3309D8*)box;
+    self->count = 0;
+    visit_1450(t, 0, c, box);
+    visit_1450(t, 1, c, box);
+    visit_1450(t, 2, c, box);
+    visit_1450(t, 3, c, box);
+    visit_1450(t, 4, c, box);
+    visit_1450(t, 5, c, box);
+    visit_1450(t, 6, c, box);
+    visit_1450(t, 7, c, box);
+    self->f10C = (void*)-1;
+    self->f08 = (void*)-1;
+}
+#endif
 
 INCLUDE_ASM("intersect/worldsphtree", func_00331E90);
 
