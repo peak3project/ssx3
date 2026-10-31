@@ -142,7 +142,7 @@ INCLUDE_ASM("world/streamman", func_003A7010);
 #ifdef SKIP_ASM
 extern "C" void func_003E0E90(int, int);
 
-extern "C" void func_003A7010(void* self)
+extern "C" void func_003A7010(void* self, int i)
 {
     if (*(int*)((char*)self + 0x90) != 0) {
         func_003E0E90(*(int*)((char*)self + 0x88), *(int*)((char*)self + 0x9C));
