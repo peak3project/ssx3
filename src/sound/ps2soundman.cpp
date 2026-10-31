@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("sound/ps2soundman", cSndPlayOpts_cSndPlayOpts);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator_new_9350(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* func_002ADE88(void* self, int heap);
 extern "C" int func_003BA020(void* desc);
 extern "C" void* func_00416210(void* dst, int v, int n);
@@ -83,20 +82,20 @@ extern "C" sSndPlayOpts9350* cSndPlayOpts_cSndPlayOpts(sSndPlayOpts9350* self, i
         t1.e[1].delta = D_00483BE0_9350.e[1].delta + d;
     }
     self->depth = -1;
-    self->descs = (sSndDesc9350*)operator_new_9350(0x60, D_00483178, 0, 0);
-    self->f34 = (int*)operator_new_9350(0x10, D_00483188, 0, 0);
-    self->f38 = (int*)operator_new_9350(0x10, D_00483198, 0, 0);
-    self->f3C = (int*)operator_new_9350(0x10, D_004831A8, 0, 0);
-    self->f60 = (int*)operator_new_9350(0x10, D_004A3750, 0, 0);
-    self->f64 = (int*)operator_new_9350(0x10, D_004831B8, 0, 0);
-    self->f68 = (int*)operator_new_9350(0x10, D_004A3758, 0, 0);
-    self->f6C = (int*)operator_new_9350(0x10, D_004A3760, 0, 0);
-    self->env = (sSndEnv9350*)operator_new_9350(0x40, D_004A3768, 0, 0);
-    self->f74 = (int*)operator_new_9350(0x10, D_004831C8, 0, 0);
-    self->f78 = (int*)operator_new_9350(0x10, D_004831D8, 0, 0);
-    self->f7C = (int*)operator_new_9350(0x10, D_004831E8, 0, 0);
-    self->f80 = (int*)operator_new_9350(0x10, D_004831F8, 0, 0);
-    self->f84 = (int*)operator_new_9350(0x10, D_00483208, 0, 0);
+    self->descs = (sSndDesc9350*)operator_new__FUi(0x60, D_00483178, 0, 0);
+    self->f34 = (int*)operator_new__FUi(0x10, D_00483188, 0, 0);
+    self->f38 = (int*)operator_new__FUi(0x10, D_00483198, 0, 0);
+    self->f3C = (int*)operator_new__FUi(0x10, D_004831A8, 0, 0);
+    self->f60 = (int*)operator_new__FUi(0x10, D_004A3750, 0, 0);
+    self->f64 = (int*)operator_new__FUi(0x10, D_004831B8, 0, 0);
+    self->f68 = (int*)operator_new__FUi(0x10, D_004A3758, 0, 0);
+    self->f6C = (int*)operator_new__FUi(0x10, D_004A3760, 0, 0);
+    self->env = (sSndEnv9350*)operator_new__FUi(0x40, D_004A3768, 0, 0);
+    self->f74 = (int*)operator_new__FUi(0x10, D_004831C8, 0, 0);
+    self->f78 = (int*)operator_new__FUi(0x10, D_004831D8, 0, 0);
+    self->f7C = (int*)operator_new__FUi(0x10, D_004831E8, 0, 0);
+    self->f80 = (int*)operator_new__FUi(0x10, D_004831F8, 0, 0);
+    self->f84 = (int*)operator_new__FUi(0x10, D_00483208, 0, 0);
     self->depth++;
     self->descs[self->depth] = self->cur;
     self->f24[self->depth] = 0;
