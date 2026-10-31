@@ -298,7 +298,7 @@ INCLUDE_ASM("fe/festateoptions", func_00188E58);
 #ifdef SKIP_ASM
 // PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" void func_0039F290(void* list, void* item);
 extern char D_0045DD68[];
 extern void* D_0046B3D0[];
@@ -327,12 +327,12 @@ extern "C" void func_00188E58(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00188EE8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C6F0[];
 
-extern "C" void* func_00188EE8(void* self)
+extern "C" void* func_00188EE8(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_0046C6F0;
     *(int*)((char*)self + 0xC) = 0x1C;
     return self;
@@ -499,14 +499,14 @@ extern "C" void cFEStateOptionsGame_onCreateScreen(sOptGame_OGCS* self)
 }
 #endif
 
-extern "C" void* func_0039E4C0(void* self);
+extern "C" void func_0039E4C0(void* self);
 
 //100%
 INCLUDE_ASM("fe/festateoptions", func_001895F0__FPv);
 #ifdef SKIP_ASM
-void* func_001895F0(void* self)
+void func_001895F0(void* self)
 {
-    return func_0039E4C0(self);
+    func_0039E4C0(self);
 }
 #endif
 
@@ -642,7 +642,7 @@ extern "C" void func_00228C08(void* p);
 extern "C" void* func_0028B180();
 extern "C" void func_0029ED90(void* p, int a);
 extern "C" int func_0039A738(void* self);
-extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F400(void* list, void* item);
 extern char D_0045DD68[];
@@ -882,13 +882,13 @@ extern "C" void func_00189D60(void* self_)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018A258);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C620[];
 extern int D_004A14D4;
 
-extern "C" void* func_0018A258(void* self)
+extern "C" void* func_0018A258(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 8) = D_0046C620;
     *(int*)((char*)self + 0xC) = 0x1D;
     D_004A14D4 = 0;
@@ -1032,9 +1032,9 @@ extern "C" void func_0018A3D8(void* self, char* popup, int event)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018A870__FPv);
 #ifdef SKIP_ASM
-void* func_0018A870(void* self)
+void func_0018A870(void* self)
 {
-    return func_0039E4C0(self);
+    func_0039E4C0(self);
 }
 #endif
 
@@ -1070,7 +1070,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 // PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F400(void* list, void* item);
 extern "C" int func_0039A738(void* self);
@@ -1420,13 +1420,13 @@ extern "C" void func_0018BEF8(void* self, unsigned int mode)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C0E8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C550[];
 extern int D_004A14D8;
 
-extern "C" void* func_0018C0E8(void* self)
+extern "C" void* func_0018C0E8(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 8) = D_0046C550;
     *(int*)((char*)self + 0xC) = 0x1E;
     D_004A14D8 = 0;
@@ -1458,9 +1458,9 @@ extern "C" void func_0018C128(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C198__FPv);
 #ifdef SKIP_ASM
-void* func_0018C198(void* self)
+void func_0018C198(void* self)
 {
-    return func_0039E4C0(self);
+    func_0039E4C0(self);
 }
 #endif
 
@@ -1525,7 +1525,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 // PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F400(void* list, void* item);
 extern char D_0045DD68[];
@@ -1673,13 +1673,13 @@ extern "C" void func_0018C478(void* vself)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C658);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C480[];
 extern int D_004A14DC;
 
-extern "C" void* func_0018C658(void* self)
+extern "C" void* func_0018C658(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 8) = D_0046C480;
     *(int*)((char*)self + 0xC) = 0x1F;
     *(char*)((char*)self + 0x50) = 0;
@@ -1745,13 +1745,13 @@ extern "C" void cFEStateOptionsController_onCreateScreen(void* self)
 INCLUDE_ASM("fe/festateoptions", func_0018C8B8);
 #ifdef SKIP_ASM
 extern "C" void func_0018D108(void* self, int idx, float x, float y);
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 
-extern "C" void* func_0018C8B8(void* self)
+extern "C" void func_0018C8B8(void* self)
 {
     func_0018D108(self, 0, 0.0f, 0.0f);
     func_0018D108(self, 1, 0.0f, 0.0f);
-    return func_0039E4A0(self);
+    func_0039E4A0(self);
 }
 #endif
 
@@ -1830,7 +1830,7 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 // PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_0039E318(void* self, void* engine, void* owner);
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F400(void* list, void* item);
 extern "C" int func_0039A738(void* self);
@@ -2060,7 +2060,7 @@ extern "C" void func_0018CF50(void* self, int on)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018D058);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 extern "C" void func_0018D108(void* self, int idx, float x, float y);
 
 extern "C" void func_0018D058(void* self)
@@ -2124,12 +2124,12 @@ extern "C" void func_0018D108(void* self, int idx, float x, float y)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018D240);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C3B0[];
 
-extern "C" void* func_0018D240(void* self)
+extern "C" void* func_0018D240(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 0x20;
     *(void***)((char*)self + 0x8) = D_0046C3B0;
     *(char*)((char*)self + 0x48) = 0;
@@ -2977,12 +2977,12 @@ INCLUDE_ASM("fe/festateoptions", func_0018E510);
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018EA98);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C158[];
 
-extern "C" void* func_0018EA98(void* self)
+extern "C" void* func_0018EA98(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_0046C158;
     *(int*)((char*)self + 0xC) = 8;
     return self;
