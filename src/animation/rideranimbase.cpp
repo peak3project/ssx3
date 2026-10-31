@@ -3,8 +3,7 @@
 //100%
 INCLUDE_ASM("animation/rideranimbase", cRiderAnimBase_cRiderAnimBase);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d), like cMemMan_alloc.
-void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void func_003142E8(void* self);
 extern "C" void func_00311A50(void* self);
 extern char D_0048D7D8[];
@@ -14,7 +13,7 @@ extern "C" void* cRiderAnimBase_cRiderAnimBase(void* self)
 {
     *(int*)((char*)self + 0x54) = 0;
     *(void**)((char*)self + 0x58) = D_0048D7D8;
-    *(void**)((char*)self + 0x50) = operator_new_tag(0x30, D_0048A4E0, 0, 0);
+    *(void**)((char*)self + 0x50) = operator_new__FUi(0x30, D_0048A4E0, 0, 0);
     for (int i = 0; i < 6; i++)
     {
         func_003142E8(*(char**)((char*)self + 0x50) + (i << 3));
