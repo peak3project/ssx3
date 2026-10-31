@@ -8,7 +8,7 @@ extern char D_004FF250[];
 extern unsigned int D_004A3EBC;
 extern unsigned int D_004A3EC0;
 extern int D_004A3EB8;
-extern "C" void func_003E5698(void* mutex);
+extern "C" int func_003E5698(void* mutex);
 extern "C" void func_0031FF60(void* heap, unsigned int base, unsigned int size);
 extern "C" void cMemBlockMan_initialize(void);
 
@@ -26,7 +26,7 @@ extern "C" void cMemMan_initialize(unsigned int base, unsigned int size)
 //100%
 INCLUDE_ASM("bx/memblockman", func_00319A90);
 #ifdef SKIP_ASM
-extern "C" void* func_00319E48(unsigned int size);
+extern "C" void* func_00319E48(unsigned int size, unsigned int align);
 extern "C" void func_003E6220(void* p, unsigned int n);
 extern char D_004FF250[];
 // PORT: func_00320058__FPv / func_00320078__FPv take (heap, align, size); the defining unit declares 1 arg.
@@ -37,7 +37,7 @@ extern "C" void* func_00319A90(unsigned int size, unsigned int align, int flags,
 {
     void* p;
     if (top == 0 && size != 0 && size <= 0x200) {
-        p = func_00319E48(size);
+        p = func_00319E48(size, align);
     } else {
         if (align <= 15)
             align = 16;
@@ -81,7 +81,7 @@ extern "C" void func_00319B48(void* p)
 INCLUDE_ASM("bx/memblockman", func_00319B98);
 #ifdef SKIP_ASM
 extern "C" int func_0031A130(void* self);
-void func_0031FBB8(void* list, void* item);
+unsigned int func_0031FBB8(void* list, void* item);
 extern char D_004FF250[];
 
 extern "C" void func_00319B98(void* self)
@@ -233,8 +233,8 @@ extern void* D_004A5B58;
 extern int D_004A3EC8;
 
 // PORT: binds the real 2-arg body; the unit declares a 1-arg prototype used by callers
-extern "C" void* func_00319E48_impl(unsigned int size, unsigned int align) __asm__("func_00319E48");
-extern "C" void* func_00319E48_impl(unsigned int size, unsigned int align)
+extern "C" void* func_00319E48(unsigned int size, unsigned int align);
+extern "C" void* func_00319E48(unsigned int size, unsigned int align)
 {
     size = size > align ? size : align;
     if (D_004A3EC8) {
