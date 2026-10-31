@@ -337,11 +337,11 @@ INCLUDE_ASM("seg/seg_14B10", func_00113F88);
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00114130);
 #ifdef SKIP_ASM
-extern "C" int func_0028B180();
+extern "C" void* func_0028B180();
 extern "C" void func_002F6AC8(char *, int);
-extern "C" void func_00298D90(int mgr, char* rider, int b);
-extern "C" void func_00299368(int mgr, char* rider);
-extern "C" void func_002992D8(int mgr, char* rider);
+extern "C" void func_00298D90(void* mgr, char* rider, int b);
+extern "C" void func_00299368(void* mgr, char* rider);
+extern "C" void func_002992D8(void* mgr, char* rider);
 
 extern "C" void func_00114130(char* s, int a, int b)
 {
@@ -669,8 +669,8 @@ extern "C" void func_001158B8(void* self, float* y, float* x, float step, float 
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00115AB0);
 #ifdef SKIP_ASM
-extern "C" int cBE_getBE();
-extern "C" int cBE_getInterface__Fv(int, int);
+extern "C" void* cBE_getBE();
+extern "C" int cBE_getInterface__Fv(void*, int);
 extern "C" float func_0014EFA8(int, int);
 
 extern "C" float func_00115AB0(void *arg0) {
@@ -681,8 +681,8 @@ extern "C" float func_00115AB0(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00115B08);
 #ifdef SKIP_ASM
-extern "C" int cBE_getBE();
-extern "C" int cBE_getInterface__Fv(int, int);
+extern "C" void* cBE_getBE();
+extern "C" int cBE_getInterface__Fv(void*, int);
 extern "C" float func_0014EFA8(int, int);
 
 extern "C" float func_00115B08(void *arg0) {
@@ -696,7 +696,7 @@ INCLUDE_ASM("seg/seg_14B10", func_00115B58);
 extern "C" int func_00311AE8(void*, int);
 extern "C" int func_001298C8();
 extern "C" void cRiderAnimBase_play(void* self, int anim, int flags, float blend);
-extern "C" void func_0029FF80(int snd, void* rider, int side);
+extern "C" void func_0029FF80(void* snd, void* rider, int side);
 int func_0011FEE8(void* self);
 
 // PORT: PS2-only abs.s asm helper (fabsf off-PS2).
@@ -771,8 +771,8 @@ INCLUDE_ASM("seg/seg_14B10", func_00116120);
 void cRiderMetrix_evAutoResetSurface(void *);
 extern "C" void func_0011FE78_6120(void *, int) __asm__("func_0011FE78__FPv");
 extern "C" void func_0011FEC8_6120(void *, int) __asm__("func_0011FEC8__FPv");
-extern "C" int func_0028B180();
-extern "C" void func_0029A220(int, void *);
+extern "C" void* func_0028B180();
+extern "C" void func_0029A220(void*, void *);
 extern "C" void func_00270970(int, int);
 extern void *D_004A28A8;
 
