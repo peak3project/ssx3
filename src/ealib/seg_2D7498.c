@@ -111,7 +111,7 @@ int func_003D66F0(int arg0, int arg1) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6748);
 #ifdef SKIP_ASM
-extern void func_003D6498(int, int);
+extern int func_003D6498(int, int);
 
 void func_003D6748(int a) {
     func_003D6498(a, 0);
@@ -1076,12 +1076,12 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D8008);
 #ifdef SKIP_ASM
 typedef struct { short a; signed char b; signed char c; } D8008_S;
 
-int func_003D8008(int arg0, int arg1, int arg2) {
+void* func_003D8008(int arg0, int arg1, int arg2) {
     D8008_S u;
     u.c = arg0;
     u.b = arg1;
     u.a = arg2;
-    return *(int *)&u;
+    return *(void**)&u;
 }
 #endif
 
