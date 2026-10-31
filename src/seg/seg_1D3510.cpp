@@ -156,7 +156,7 @@ INCLUDE_ASM("seg/seg_1D3510", get_data);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator_new_tag_2868(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
-extern "C" void* cMemMan_alloc_2868(int, const char*, int, int) __asm__("cMemMan_alloc");
+extern "C" void* cMemMan_alloc(int, const char*, int, int);
 extern "C" int func_002D2790_2868(unsigned char **, unsigned char *) __asm__("func_002D2790");
 extern "C" int get_uint_2868(unsigned char **, void *) __asm__("get_uint");
 extern char D_00486778[];
@@ -164,7 +164,7 @@ extern char D_00486788[];
 struct Data_2868 { unsigned int n; unsigned char *data; };
 extern "C" int get_data(unsigned char **src, Data_2868 **out) {
     unsigned int i = 0;
-    Data_2868 *d = (Data_2868*)cMemMan_alloc_2868(8, D_00486778, 0x100, 0);
+    Data_2868 *d = (Data_2868*)cMemMan_alloc(8, D_00486778, 0x100, 0);
     d->n = 0;
     d->data = 0;
     *out = d;
@@ -350,10 +350,9 @@ extern "C" int func_002D3928(void) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3930);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_002C53C8_3930(void*, int) __asm__("func_002C53C8");
+extern "C" int func_002C53C8(void*, int);
 extern "C" void func_002D3930(void *arg0) {
-    func_002C53C8_3930(arg0, (*(int *)((char*)(arg0) + (0xC))));
+    func_002C53C8(arg0, (*(int *)((char*)(arg0) + (0xC))));
 }
 #endif
 
@@ -412,10 +411,9 @@ extern "C" int func_002D39B0(void *arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D39B8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_002C51D0_39B8(void*, int) __asm__("func_002C51D0");
+extern "C" int func_002C51D0(void*, int);
 extern "C" void func_002D39B8(void *arg0) {
-    func_002C51D0_39B8(arg0, (*(int *)((char*)(arg0) + (0xC))));
+    func_002C51D0(arg0, (*(int *)((char*)(arg0) + (0xC))));
 }
 #endif
 
@@ -900,12 +898,11 @@ extern "C" int func_002D3D40(int arg0) {
 //100%
 INCLUDE_ASM("seg/seg_1D3510", func_002D3D48);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00416958_3D48(char*, int, int) __asm__("func_00416958");
+extern "C" int func_00416958(char*, int, int);
 extern "C" int func_002D3D48(char *arg0, int arg1) {
     char *p = arg0 + 0x18;
     *p = 0;
-    return func_00416958_3D48(p, arg1, 0xF);
+    return func_00416958(p, arg1, 0xF);
 }
 #endif
 
