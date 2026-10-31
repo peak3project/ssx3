@@ -950,7 +950,7 @@ struct sLmDma_F560 {
     char pad_0x10[0x1C];
     int size[3];            // 0x2C
 };
-void func_0038F598_F560(void* self, int size, int flags) __asm__("func_0038F598");
+unsigned int func_0038F598_F560(void* self, int size, int flags) __asm__("func_0038F598");
 
 extern "C" void func_0038F560(sLmDma_F560* self, int flags)
 {
@@ -1011,13 +1011,13 @@ struct sLmStack {
     int marks[1];       // 0x14
 };
 
-extern "C" void func_0038F598(sLmStack* self, int size, int arg, int base);
+extern "C" unsigned int func_0038F598(sLmStack* self, int size, int arg, int base);
 
-extern "C" void func_0038F668(sLmStack* self, int end, int arg)
+extern "C" unsigned int func_0038F668(sLmStack* self, int end, int arg)
 {
     int base = self->marks[self->depth];
     int size = end - base;
-    func_0038F598(self, size + (-size & 0xF), arg, base);
+    return func_0038F598(self, size + (-size & 0xF), arg, base);
 }
 #endif
 
@@ -1103,14 +1103,14 @@ void func_0038F7F8(void* self)
 }
 #endif
 
-extern "C" void* func_002BB6B8(void* self);
+extern "C" void* func_002BB6B8();
 
 //100%
 INCLUDE_ASM("render/lightman", func_0038F800__FPv);
 #ifdef SKIP_ASM
-void* func_0038F800(void* self)
+void func_0038F800(void* self)
 {
-    return func_002BB6B8(self);
+    func_002BB6B8();
 }
 #endif
 
