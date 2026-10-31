@@ -709,7 +709,7 @@ extern "C" void func_003A9658(void* cache, int idx, const sVec4_236960* pos, flo
 extern "C" int func_003A9770(void* cache, int idx, sVec4_236960* pos, float* dist);
 extern "C" int func_002791D8(void* p, int a);
 extern "C" int func_00279298(void* p);
-extern "C" void func_0027A9F0(void* p);
+extern "C" bool func_0027A9F0(void* p);
 extern "C" void func_00233AA0(void* self);
 void* func_00230698(void* self, int id);
 extern char* D_004A2C68;
@@ -847,7 +847,7 @@ extern "C" void func_0011DE60(void* self, int a1, int a2);
 extern "C" void func_0011DF18(void* self, int notify);
 void* func_00230698(void* self, int id);
 // PORT: func_002E4CE8 is the wake pool's allocator; it ignores the size the caller passes
-extern "C" void* func_002E4CE8_sz(int size) __asm__("func_002E4CE8");
+extern "C" void* func_002E4CE8(int size);
 void* func_002E4D70(void* self);
 extern "C" void func_002E4370(void* self, int a1, int a2, void* a3, float f0, float f1, int a4, int a5, float f2);
 extern void* D_004880C0[];
@@ -867,7 +867,7 @@ extern "C" void func_00236058(void* self)
     func_0011DE60(*(void**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40) + 0x18), *(int*)(iface + 0x10), 2);
     func_0011DF18(*(void**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40) + 0x18), 1);
     void* r = func_00230698(*(void**)((char*)D_004A28A8 + 0x84), 0);
-    char* o = (char*)func_002E4CE8_sz(0x14);
+    char* o = (char*)func_002E4CE8(0x14);
     sColor_236058 c;
     c.r = one;
     c.g = one;
@@ -1127,7 +1127,7 @@ extern "C" sVec4_236960 func_00123F38(void* rider);
 extern "C" void func_003A9658(void* cache, int idx, const sVec4_236960* pos, float radius);
 extern "C" int func_003A9770(void* cache, int idx, sVec4_236960* pos, float* dist);
 extern "C" int func_00279298(void* p);
-extern "C" void func_0027A9F0(void* p);
+extern "C" bool func_0027A9F0(void* p);
 extern void* D_004A28A4;
 
 extern "C" void func_00236960(void* self)
@@ -1828,7 +1828,7 @@ struct sPackSrc_7B28;
 struct sPackDst_7B28;
 extern "C" int func_00237B28(void* self, sPackSrc_7B28* src, sPackDst_7B28* dst);
 extern "C" void func_00237BE8(void* self, sPackSrc_7B28* src, char* buf);
-extern "C" void func_00257E98(void* mgr, int a, char* buf, int len);
+extern "C" int func_00257E98(void* mgr, int a, char* buf, int len);
 extern char* D_004A2EEC;
 
 extern "C" void func_00237A98(void* self, sPackSrc_7B28* src)
