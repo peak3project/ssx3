@@ -156,7 +156,7 @@ INCLUDE_ASM("fe/festatecredits", func_00185F40);
 #ifdef SKIP_ASM
 extern "C" void func_00391E30(void* self, float x, float y, void* m);
 extern "C" float func_003921F0(void* f_, const unsigned short* s, void* r_, int mono, float sx, float sy);
-extern "C" void* func_0039E6B8(void* self);
+extern "C" void func_0039E6B8(void* self);
 extern "C" char* func_003A12D0(void* self);
 extern "C" unsigned short* func_003A2068(void* self, int idx);
 extern void* D_004A289C;
@@ -314,7 +314,7 @@ extern "C" void func_00185F40(char* self)
 //100%
 INCLUDE_ASM("fe/festatecredits", func_001863B8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E510(void* self);
+extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001863B8(void* self)
 {
@@ -448,13 +448,13 @@ extern "C" void func_001865A8(void* self)
 //100%
 INCLUDE_ASM("fe/festatecredits", func_00186610);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern "C" void func_002006B8(void* self);
 extern void* D_0046BD28[];
 
-extern "C" void* func_00186610(void* self)
+extern "C" void* func_00186610(void* self, int a1, int a2)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(int*)((char*)self + 0xC) = 0x13;
     *(void***)((char*)self + 0x8) = D_0046BD28;
     func_002006B8((char*)self + 0x48);
