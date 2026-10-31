@@ -434,7 +434,7 @@ extern "C" void func_002AA2E8(void *arg0) {
 INCLUDE_ASM("sound/streamsys", func_002AA320);
 #ifdef SKIP_ASM
 extern "C" int func_003B78D8(int h, int a, int buf, int off);
-extern "C" void func_003E2CE0(void* dec, int src, int a, int* out, int b);
+extern "C" int func_003E2CE0(void* dec, int src, int a, int* out, int b);
 
 // PORT: buf is a pointer carried in an int (the unit's caller declares this function with int params).
 extern "C" int func_002AA320(void* self, int a, int buf, int off)
