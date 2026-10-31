@@ -219,7 +219,7 @@ INCLUDE_ASM("fe/festatestore", func_00184B70);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
 extern "C" void func_001A0570(void* self, int a1, int a2);
-void* func_0039E4A0(void* self);
+void func_0039E4A0(void* self);
 
 extern "C" void func_00184B70(void* self)
 {
@@ -520,7 +520,7 @@ extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" void cUIStateBuyPopup_initBuyTrick(void* popup, int trick, int cost, int points);
 extern "C" void cWScriptMan_checkGate(void* self);
 extern "C" int func_00116938(int id);
-extern "C" void func_0014FD80(void* iface, int rider, int a, int b);
+extern "C" int func_0014FD80(void* iface, int rider, int a, int b);
 struct sTrick_185268;
 extern "C" sTrick_185268* func_0014FF90(void* iface, int rider, int a, int* out);
 extern "C" int func_0014FFB8(void* iface, int rider, int a, int b);
@@ -779,12 +779,12 @@ extern "C" int func_001859D8(void* self, int a1, unsigned int a2)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00185A18);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self);
+extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046BDF8[];
 
-extern "C" void* func_00185A18(void* self)
+extern "C" void* func_00185A18(void* self, int a1)
 {
-    func_0039E2A0(self);
+    func_0039E2A0(self, a1);
     *(void***)((char*)self + 0x8) = D_0046BDF8;
     *(int*)((char*)self + 0x60) = -100;
     *(int*)((char*)self + 0x64) = 1;
@@ -797,15 +797,16 @@ extern "C" void* func_00185A18(void* self)
 #endif
 
 extern void* D_0046D0D0[];
-extern "C" void* func_0039E390(void*);
 
 //100%
 INCLUDE_ASM("fe/festatestore", func_00185A70__FPv);
 #ifdef SKIP_ASM
-void* func_00185A70(void* self)
+// func_00185A70 is matched under the C++ symbol func_00185A70__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+void func_00185A70(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
-    return func_0039E390(self);
+    func_0039E390_noflags(self);
 }
 #endif
 
