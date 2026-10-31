@@ -723,7 +723,7 @@ extern "C" void* func_00356128(char* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00356198);
 #ifdef SKIP_ASM
-int func_0034FCE0(void* self);
+void* func_0034FCE0(void* self);
 extern "C" int func_00352ED0(void* block);
 extern "C" void func_00352F08(void* block);
 
