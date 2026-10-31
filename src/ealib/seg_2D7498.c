@@ -1036,8 +1036,8 @@ void func_003D7D58(int idx);
 void func_003D9A40(void);
 int func_003DA418(int);
 
-int func_003D7EC8_7EC8(int a) __asm__("func_003D7EC8");
-int func_003D7EC8_7EC8(int a) {
+int func_003D7EC8(int a);
+int func_003D7EC8(int a) {
     int r = 0;
     int done = 0;
     int idx, t, s;
@@ -1101,16 +1101,16 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D8040);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_004A484C_8040 __asm__("D_004A484C");
-int func_003DA3F0_8040(void) __asm__("func_003DA3F0");
-int func_003D7EC8_8040(int) __asm__("func_003D7EC8");
-int func_003D9BD8_8040(int) __asm__("func_003D9BD8");
+int func_003DA3F0(int x);
+int func_003D7EC8(int);
+int func_003D9BD8(int);
 
 int func_003D8040(int arg0) {
     int r = 0;
     if (D_004A484C_8040 == 0) {
         D_004A484C_8040 = 1;
-        if (func_003DA3F0_8040() != 0 || func_003D7EC8_8040(arg0) != 0) {
-            r = func_003D9BD8_8040(arg0);
+        if (func_003DA3F0(arg0) != 0 || func_003D7EC8(arg0) != 0) {
+            r = func_003D9BD8(arg0);
         }
     }
     D_004A484C_8040 = 0;
@@ -1128,7 +1128,7 @@ extern int D_004A484C_80B0 __asm__("D_004A484C");
 void func_003D9A40(void);
 int func_003DA418(int);
 void func_003D7C38(unsigned int);
-void func_003D9BD8(int);
+int func_003D9BD8(int);
 
 void func_003D80B0(int x) {
     if (D_004A484C_80B0 == 0) {
@@ -1167,7 +1167,7 @@ void func_003D8158(int arg0, int arg1) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8170);
 #ifdef SKIP_ASM
-extern void func_003D7EC8(int);
+extern int func_003D7EC8(int);
 
 void func_003D8170(void) {
     func_003D7EC8(0);
@@ -1178,8 +1178,8 @@ void func_003D8170(void) {
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8190);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int func_003D7EC8_8190(int) __asm__("func_003D7EC8");
-extern void func_003D9BD8(int);
+extern int func_003D7EC8(int);
+extern int func_003D9BD8(int);
 extern int func_003DA3F0(int);
 extern int D_004A484C_484C __asm__("D_004A484C");
 
@@ -1188,7 +1188,7 @@ void func_003D8190(void) {
         D_004A484C_484C = 1;
         if (func_003DA3F0(0) != 0) {
             func_003D9BD8(0);
-        } else if (func_003D7EC8_8190(0) != 0) {
+        } else if (func_003D7EC8(0) != 0) {
             func_003D9BD8(0);
         }
     }
