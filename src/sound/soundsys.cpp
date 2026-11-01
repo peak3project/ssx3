@@ -6205,6 +6205,11 @@ void func_0029D6D0(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029D6E0);
 #ifdef SKIP_ASM
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_D6E0)(cController*, cBankMonitorInstance*, float);
+extern "C" void func_002ADDE0_D6E0(void* bank, sSndCallback_D6E0 key) __asm__("func_002ADDE0");
 extern "C" void func_00296E20(void* self, void* obj);
 extern "C" void func_00297438(void* self, void* obj);
 extern "C" void func_0029B3C0(void* self, void* obj);
@@ -6217,9 +6222,9 @@ extern "C" void func_0028CF98(void* self, int a1, int a2, int a3, int a4);
 extern "C" void func_0028D488(void* self);
 extern "C" int func_002B49E0(void*);
 extern "C" int func_0028DEF0_D6E0(void* self, int a1) __asm__("func_0028DEF0");
-extern sSndKey8 D_004A3648_D6E0[] __asm__("D_004A3648");
-extern sSndKey8 D_004A3650_D6E0[] __asm__("D_004A3650");
-extern sSndKey8 D_004A3658_D6E0[] __asm__("D_004A3658");
+extern sSndCallback_D6E0 D_004A3648_D6E0[] __asm__("D_004A3648");
+extern sSndCallback_D6E0 D_004A3650_D6E0[] __asm__("D_004A3650");
+extern sSndCallback_D6E0 D_004A3658_D6E0[] __asm__("D_004A3658");
 
 struct sSndVE_D6E0 {
     short delta;
@@ -6227,7 +6232,6 @@ struct sSndVE_D6E0 {
     void (*fn)(void*, int);
 };
 
-// PORT: 64-bit long sound keys
 // Mission start: resets the rider sounds, stops the front-end bank loops and picks the mission's music track.
 extern "C" void func_0029D6E0(char* self, int mission)
 {
@@ -6248,9 +6252,9 @@ extern "C" void func_0029D6E0(char* self, int mission)
     }
     char*** mgr = (char***)(self + 0x118);
     if ((unsigned int)(func_002B49E0(self + 0x118) - 1) < 3) {
-        func_002ADDE0(**mgr + 0x1D8, D_004A3648_D6E0[0].v);
-        func_002ADDE0(**mgr + 0x1D8, D_004A3650_D6E0[0].v);
-        func_002ADDE0(**mgr + 0x1D8, D_004A3658_D6E0[0].v);
+        func_002ADDE0_D6E0(**mgr + 0x1D8, D_004A3648_D6E0[0]);
+        func_002ADDE0_D6E0(**mgr + 0x1D8, D_004A3650_D6E0[0]);
+        func_002ADDE0_D6E0(**mgr + 0x1D8, D_004A3658_D6E0[0]);
         func_0028DEF0_D6E0(self, 0x12);
         func_0028D488(self);
         func_0028CF98(self, 0, 0, -1, 0);
