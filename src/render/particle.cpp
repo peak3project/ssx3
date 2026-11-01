@@ -2918,7 +2918,139 @@ extern "C" void func_003779E0(void* self, sPart20* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00377A10);
+#ifdef SKIP_ASM
+struct sPtRS_7A10 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sVE_7A10 {
+    short delta;
+    short index;
+    unsigned int (*fn)(void*);
+};
+
+struct sVE2_7A10 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
+struct sVE3_7A10 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sRect_7A10 {
+    int x;
+    int y;
+    float w;
+    float h;
+};
+
+struct sGfx_7A10 {
+    char pad0[0xE84];
+    sPtRS_7A10* top;            // 0xE84
+    char pad1[0x10D8 - 0xE88];
+    char* vt;                   // 0x10D8
+    char pad2[0x18F0 - 0x10DC];
+    void* ring;                 // 0x18F0
+    void* sys;                  // 0x18F4
+    char pad3[0x5A00 - 0x18F8];
+    int f5A00;
+    int f5A04;
+    int f5A08;
+    int f5A0C;
+    int f5A10;
+    int f5A14;
+    int f5A18;
+    int f5A1C;
+    int f5A20;
+    int f5A24;
+    char pad4[0x5A90 - 0x5A28];
+    volatile int slot[2];              // 0x5A90
+    volatile int cur;                  // 0x5A98
+    int f5A9C;
+    int f5AA0;
+    volatile int next;                 // 0x5AA4
+    int f5AA8;
+    int f5AAC;
+    int f5AB0;
+    int f5AB4;
+    char pad5[0x5AC8 - 0x5AB8];
+    int f5AC8;
+    int f5ACC;
+};
+
+extern sPtRS_7A10 D_00501420_7A10 __asm__("D_00501420");
+extern char D_005059D8[];
+extern "C" void func_00363490(void* ring, void* a, void* b, void* c, void* d);
+extern "C" int func_00423DE0_i(int a) __asm__("func_00423DE0");
+extern "C" void func_00423DC0(int a);
+extern "C" void func_004247D8(int a, int b);
+extern "C" void func_00362CC8(void* ring);
+extern "C" void func_003673D0(void* sys) __asm__("func_003673D0__FPv");
+extern "C" void func_00361F90(void* p) __asm__("func_00361F90__FPv");
+
+static inline void setView_7A10(sGfx_7A10* self)
+{
+    sVE2_7A10* v2 = (sVE2_7A10*)(self->vt + 0xC0);
+    void (**fnp)(void*, void*, int) = &v2->fn;
+    char* th = (char*)self + v2->delta;
+    float fw = (float)((sVE_7A10*)(self->vt + 0x50))->fn((char*)self + ((sVE_7A10*)(self->vt + 0x50))->delta);
+    float fh = (float)((sVE_7A10*)(self->vt + 0x58))->fn((char*)self + ((sVE_7A10*)(self->vt + 0x58))->delta);
+    sRect_7A10 r;
+    r.w = fw;
+    r.h = fh;
+    r.x = 0;
+    r.y = 0;
+    (*fnp)(th, &r, 1);
+}
+
+extern "C" void func_00377A10(sGfx_7A10* self)
+{
+    setView_7A10(self);
+    ((sVE3_7A10*)(self->vt + 0x1B0))->fn((char*)self + ((sVE3_7A10*)(self->vt + 0x1B0))->delta);
+    int old0 = self->f5A00;
+    int old1 = self->f5A14;
+    int l1;
+    int l2;
+    func_00363490(self->ring, &self->f5A00, &l1, &self->f5A14, &l2);
+    func_00423DE0_i(self->f5ACC);
+    self->next = self->f5A10;
+    self->f5AA8 = old0;
+    self->f5AAC = l1;
+    self->f5AB0 = old1;
+    self->f5AB4 = l2;
+    self->slot[self->next] = 2;
+    func_00423DC0(self->f5ACC);
+    func_00423DC0(self->f5AC8);
+    int x1 = self->f5A10 == 0;
+    int x2 = self->f5A24 == 0;
+    int b = self->f5A0C + x1 * 0xCCC80;
+    int c = self->f5A20 + x2 * 0x26600;
+    self->f5A10 = x1;
+    self->f5A24 = x2;
+    self->f5A04 = b;
+    self->f5A00 = b;
+    self->f5A18 = c;
+    self->f5A14 = c;
+    func_004247D8(b, b + 0xCCC80);
+    func_004247D8(self->f5A14, self->f5A14 + 0x26600);
+    *self->top = D_00501420_7A10;
+    func_00362CC8(self->ring);
+    func_003673D0(self->sys);
+    setView_7A10(self);
+    func_00361F90(D_005059D8);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00377CF0);
