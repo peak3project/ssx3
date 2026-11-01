@@ -961,14 +961,13 @@ have:
             } else {
                 hi = self->f624C;
             }
-            float vmax = 127.0f;
             float inv = 0.007874015718698502f;
-            float vol = ((1.0f - spd * 0.8425197005271912f * 0.5f) * vmax <? vmax) >? 20.0f;
+            float vol = ((1.0f - spd * 0.8425197005271912f * 0.5f) * 127.0f <? 127.0f) >? 20.0f;
             if (lo < hi) {
                 float ratio = lo / hi;
                 int full = 127;
-                float t = vmax - ratio * 107.0f;
-                char v = (int)((t <? vmax) >? 20.0f);
+                float t = 127.0f - ratio * 107.0f;
+                char v = (int)((t <? 127.0f) >? 20.0f);
                 if (play) {
                     float k = *(float*)func_00287968(self, 1, 0);
                     int d = v - 20;
@@ -976,13 +975,13 @@ have:
                     self->f60A0 = f;
                     func_002B3D10(self->mon, (int)(f * 100.0f));
                 }
-                t = vmax - (vmax - vol) * ratio;
-                v = (int)((t <? vmax) >? vol);
+                t = 127.0f - (127.0f - vol) * ratio;
+                v = (int)((t <? 127.0f) >? vol);
                 self->f5830 = (float)(full - v) * inv;
                 if (play)
                     func_002B3C98(self->mon, v);
             } else {
-                self->f5830 = (vmax - vol) * inv;
+                self->f5830 = (127.0f - vol) * inv;
                 if (play) {
                     func_002B3C98(self->mon, (int)vol);
                     float k = *(float*)func_00287968(self, 1, 0);
