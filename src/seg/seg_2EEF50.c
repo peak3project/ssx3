@@ -936,7 +936,18 @@ char* func_003EFC68(char* s, int* out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFCD8);
+#ifdef SKIP_ASM
+char* func_003EFCD8_p(char* s, int* lo, int* hi) __asm__("func_003EFCD8");
+char* func_003EFCD8_p(char* s, int* lo, int* hi) {
+    s = func_003EFC68(s, lo);
+    if (*s++ != ':') return 0;
+    s = func_003EFC68(s, hi);
+    if (*s == ',') s++;
+    return s;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EFD30);
