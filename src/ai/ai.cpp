@@ -7235,11 +7235,10 @@ static inline float aiAbs_135DB0(float x)
 
 extern "C" void func_00135DB0(void* self, float* a, float* b)
 {
-    float twopi = 6.283185958862305f;
     float d = aiAbs_135DB0(*(float*)((char*)self + 0x18) - *(float*)((char*)self + 0x10));
-    if (d > twopi) d -= twopi;
+    if (d > 6.283185958862305f) d -= 6.283185958862305f;
     *a = d / *(float*)((char*)self + 0x3C);
-    *b = twopi / *(float*)((char*)self + 0x3C);
+    *b = 6.283185958862305f / *(float*)((char*)self + 0x3C);
     if (*(float*)(*(char**)((char*)self + 0x58) + 0x2EC) > 0.0f)
     {
         *b *= 0.5000624656677246f;
