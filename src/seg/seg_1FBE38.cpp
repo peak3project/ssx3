@@ -3763,7 +3763,59 @@ extern "C" void* func_003012F0(void* self, int n, Ent_12F0* e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00301440);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern char *D_004A3DD8_1440 __asm__("D_004A3DD8");
+extern char **D_004A47B8_1440 __asm__("D_004A47B8");
+struct T12_1440 { unsigned a; int b; sBindEnd_1FBE38 f; };
+struct R12_1440 { int a; int b; int c; };
+extern R12_1440 D_004C9098_1440 __asm__("D_004C9098");
+extern T12_1440 D_004FBBF0_1440 __asm__("D_004FBBF0");
+extern int D_004A56BC_1440 __asm__("D_004A56BC");
+extern int D_004A3C78_1440[2] __asm__("D_004A3C78");
+#define ASSERT_1440(c) do { } while (0)
+extern "C" R12_1440 func_00301440(int n, sBindArg_1FBE38* e) {
+    if (D_004A56BC_1440 == 0) {
+        D_004FBBF0_1440.a = 0xFFFFFFFF;
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBBF0_1440.b = 1;
+        D_004FBBF0_1440.f = sBindEnd_1FBE38();
+        D_004A56BC_1440 = 1;
+    }
+    unsigned buf64[3] __attribute__((aligned(16)));
+    unsigned* buf = buf64;
+    buf64[0] = 0xFFFFFFFF;
+    func_003E6574(buf, &D_004FBBF0_1440, 12);
+    sBindArg_1FBE38* x = e;
+    for (int i = 0; i < n; i++, x++) {
+        int idx = x->idx;
+        int t = D_004A3C78_1440[idx];
+        unsigned* d = (unsigned*)((idx << 2) + (int)buf);
+        if (x->kind != t && t == 2)
+            *(float*)d = (float)x->val;
+        else
+            *d = x->val;
+    }
+    unsigned id = buf[0];
+    char *obj;
+    if (~id == 0) {
+        obj = *(char**)(D_004A3DD8_1440 + 0x290);
+    } else {
+        char *s = (*(char***)((char*)*D_004A47B8_1440 + 8))[id & 0xFF];
+        unsigned i;
+        if (!s || (i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8) == 0)
+            obj = 0;
+        else
+            obj = (char*)(i << 2);
+    }
+    // NOTE: in the release build the looked-up object is consumed by debug code only, so the lookup is dead and just
+    // the id test's operands survive (lw; nor) once the branch is removed after register allocation.
+    ASSERT_1440(obj != 0);
+    return D_004C9098_1440;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00301560);
