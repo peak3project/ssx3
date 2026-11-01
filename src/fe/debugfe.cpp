@@ -1457,7 +1457,7 @@ extern "C" void func_0017FB98(void* self)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/debugfe", func_0017FBF0);
 #ifdef SKIP_ASM
 extern char* D_004A289C;

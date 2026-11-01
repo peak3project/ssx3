@@ -3987,7 +3987,7 @@ extern "C" void func_00274A08(void* self)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/replaycache", func_00274A30);
 #ifdef SKIP_ASM
 extern "C" int func_00274C70(void* self);

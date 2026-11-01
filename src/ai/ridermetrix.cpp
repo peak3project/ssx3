@@ -1310,7 +1310,7 @@ extern "C" float func_00119C38(void* self)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/ridermetrix", func_00119C98);
 #ifdef SKIP_ASM
 extern "C" void func_0011A168(void* self, int a, int b, int c, int d);

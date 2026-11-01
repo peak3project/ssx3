@@ -2289,7 +2289,7 @@ extern "C" void func_00104DE0(char* self, cStream_4DE0* s) {
 
 INCLUDE_ASM("seg/seg_1218", func_00104E70);
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_1218", func_00105398);
 #ifdef SKIP_ASM
 struct sV4_5398 {

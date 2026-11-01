@@ -7804,7 +7804,7 @@ extern "C" void func_002A0A30(void* self, sSs0A30Rider* a, sSs0A30Rider* b, int 
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A0E70);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);

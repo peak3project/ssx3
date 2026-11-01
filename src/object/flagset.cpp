@@ -601,7 +601,7 @@ extern "C" void func_0034C600(sFlagSet_C600* self, void* arg)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/flagset", func_0034C668);
 #ifdef SKIP_ASM
 struct sFlagSetElem_C668 {

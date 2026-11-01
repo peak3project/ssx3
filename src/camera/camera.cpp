@@ -6714,7 +6714,7 @@ void func_001686C8(void* self, void* other)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/camera", func_001686D0);
 #ifdef SKIP_ASM
 extern "C" void func_00162C78(void* self, void* info);
@@ -6957,7 +6957,7 @@ extern "C" void func_00168A40(void* self, void* out)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/camera", func_00168A70);
 #ifdef SKIP_ASM
 extern "C" void func_00162C78(void* self, void* info);
@@ -7066,7 +7066,7 @@ extern "C" void func_00168D50(void* self, void* out)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/camera", func_00168D80);
 #ifdef SKIP_ASM
 extern "C" void func_00162C78(void* self, void* info);
