@@ -7056,6 +7056,15 @@ static inline sMsgListIter5190 sMsgList5190_insert(sMsgListIter5190 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_5190(char* g, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgList5190_insert(*(sMsgListNode5190**)(g + 0xF0), mp);
+}
+
 extern "C" void func_00265190(void* self, int rider, sName7_00264D80* name)
 {
     int st = *(int*)self;
@@ -7066,15 +7075,10 @@ extern "C" void func_00265190(void* self, int rider, sName7_00264D80* name)
         }
     }
     func_00264D80(self, rider, name);
-    int type = 0xF3;
     func_00264E50(self, 1, rider, *(int*)self);
     {
         char* g = (char*)D_004A3028;
-        int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-        m[0] = type;
-        *(void***)((char*)m + 0x4) = D_004812B0;
-        void* mp = m;
-        sMsgList5190_insert(*(sMsgListNode5190**)(g + 0xF0), mp);
+        postMsg_5190(g, 0xF3);
     }
 }
 #endif
