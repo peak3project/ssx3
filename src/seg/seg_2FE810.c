@@ -4727,7 +4727,76 @@ void func_00405B48(unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00405B70);
+#ifdef SKIP_ASM
+extern void func_00406E20(int);
+extern int func_00402C30(int *, int *);
+extern void func_004034A8(int *, int);
+extern int func_0042C078();
+extern void func_0042C0C0(void);
+extern char D_00497EB0[];
+struct M5B70 { char pad0[0x838]; int f838; int f83C; char pad840[0x18]; int *f858; char pad85C[0x10A0 - 0x85C]; int f10A0; };
+int f5B70(struct M5B70 *p) __asm__("func_00405B70");
+int f5B70(struct M5B70 *p) {
+    int cmd[8];
+    int cmd2[8];
+    int ret = 1;
+    int st;
+    long top;
+    int bp;
+    int n;
+    func_00406E20((int)p);
+    while (*(volatile int *)0x1000B020 != 0 && !(*(volatile int *)0x10002010 & 0x4000)) {
+        if (*(volatile int *)0x1000B420 == 0 && !(*(volatile int *)0x1000B400 & 0x100)) {
+            cmd[0] = 1;
+            func_00402C30(p->f858, cmd);
+        }
+    }
+    if (p->f10A0 != 0) {
+        st = func_0042C078();
+        *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 | 0x10000;
+        *(volatile int *)0x1000B400 = 0;
+        *(volatile int *)0x1000B000 = 0;
+        *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 & ~0x10000;
+        if (st)
+            func_0042C0C0();
+        *(volatile int *)0x1000B020 = 0;
+        *(volatile int *)0x1000B420 = 0;
+        *(volatile int *)0x10002010 = 0x40000000;
+        return 0;
+    }
+    bp = *(volatile int *)0x10002020;
+    top = *(long *)0x10002030;
+    p->f838 = (int)top;
+    if (top < 0) {
+        if (bp & 0x1F)
+            n = 0x20 - (bp & 0x1F);
+        else
+            n = 0;
+        p->f83C = n;
+    } else {
+        p->f83C = 0x20;
+    }
+    if (*(volatile int *)0x10002010 & 0x4000) {
+        func_004034A8((int *)p, (int)D_00497EB0);
+        cmd2[0] = 2;
+        func_00402C30(p->f858, cmd2);
+        *(int *)0x10002010 = 0x40000000;
+        cmd2[0] = 3;
+        func_00402C30(p->f858, cmd2);
+        st = func_0042C078();
+        *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 | 0x10000;
+        *(volatile int *)0x1000B000 = 0;
+        *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 & ~0x10000;
+        if (st)
+            func_0042C0C0();
+        ret = 0;
+        *(volatile int *)0x1000B020 = 0;
+    }
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00405E10);
