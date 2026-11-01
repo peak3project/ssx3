@@ -2857,12 +2857,10 @@ extern "C" int func_003B26B8(int w, int h, int fmt, int clut, int maxLevel, int 
         size = ((size + 0xF) & ~0xF) + n;
     }
     if (extra1 != 0) {
-        int t = size + 8;
-        size = t + extra1;
+        size += 8 + extra1;
     }
     if (extra2 != 0) {
-        int t = size + 0x10;
-        size = t + extra2;
+        size += 0x10 + extra2;
     }
     return size;
 }
