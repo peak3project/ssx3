@@ -177,7 +177,156 @@ INCLUDE_ASM("object/floatingnode", func_0034F120);
 
 INCLUDE_ASM("object/floatingnode", func_0034F600);
 
+//100%
 INCLUDE_ASM("object/floatingnode", func_0034F790);
+#ifdef SKIP_ASM
+struct sV4_F790 {
+    float x, y, z, w;
+    sV4_F790() {}
+    sV4_F790(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+extern sV4_F790 D_004FF140_F790[] __asm__("D_004FF140");
+extern sV4_F790 D_004FF150_F790[] __asm__("D_004FF150");
+extern "C" void func_00356AE0(void* self, void* a);
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sV4_F790 vu0Sub_F790(const sV4_F790& a, const sV4_F790& b)
+{
+    sV4_F790 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sV4_F790 vu0Add_F790(const sV4_F790& a, const sV4_F790& b)
+{
+    sV4_F790 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void vu0AddEq_F790(sV4_F790& a, const sV4_F790& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+static inline sV4_F790 pos_F790(sV4_F790* m)
+{
+    return m[3];
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sV4_F790 vu0Scale_F790(const sV4_F790& v, float s)
+{
+    sV4_F790 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector).
+static inline sV4_F790 vu0MtxMul_F790(const sV4_F790* m, const sV4_F790* v)
+{
+    sV4_F790 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "o"(*v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sV4_F790 vu0Cross_F790(const sV4_F790& a, const sV4_F790& b)
+{
+    sV4_F790 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+struct sFlVE_F790 {
+    short delta;
+    short index;
+    sV4_F790* (*fn)(void*);
+};
+
+struct sFlBase_F790 {
+    char pad_0x00[0x1C];
+    float f1C;
+    char pad_0x20[0x10];
+    float f30;
+    char pad_0x34[0xC];
+    float f40;
+};
+
+struct sFloat_F790 {
+    char pad_0x00[0xC];
+    sFlVE_F790* vt;     // 0x0C
+};
+
+extern "C" void func_0034F790(sFloat_F790* self, sV4_F790* a)
+{
+    func_00356AE0(self, a);
+    sFlVE_F790* vt = self->vt;
+    sV4_F790* m = vt[24].fn((char*)self + vt[24].delta);
+    sFlBase_F790* b = (sFlBase_F790*)((char*)self + 0x2C);
+    sV4_F790 d = vu0Sub_F790(a[0], pos_F790(m));
+    sV4_F790 u = vu0MtxMul_F790(m, &D_004FF140_F790[0]);
+    sV4_F790 v = vu0MtxMul_F790(m, &D_004FF150_F790[0]);
+    sV4_F790 s = vu0Add_F790(vu0Scale_F790(u, b->f30), vu0Scale_F790(v, b->f40));
+    vu0AddEq_F790(a[2], vu0Add_F790(sV4_F790(0.0f, 0.0f, b->f1C, 0.0f), vu0Cross_F790(d, s)));
+    vu0AddEq_F790(a[3], s);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/floatingnode", func_0034F930);
