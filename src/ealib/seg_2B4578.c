@@ -9018,7 +9018,31 @@ void func_003C6320(void *arg0, void *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6380);
+#ifdef SKIP_ASM
+typedef struct { unsigned int lo, hi; } L64_6380;
+extern unsigned long f14D0_6380(unsigned long, unsigned long) __asm__("func_004114D0");
+
+L64_6380 func_003C6380(unsigned int a, unsigned int b) {
+    unsigned long al = a & 0xFFFF;
+    unsigned long bl = b & 0xFFFF;
+    unsigned long ah = (a >> 16) & 0xFFFF;
+    unsigned long bh = (b >> 16) & 0xFFFF;
+    unsigned long ll, lh, hl, hh, mid;
+    L64_6380 t;
+    L64_6380 r;
+    ll = f14D0_6380(al, bl);
+    lh = f14D0_6380(al, bh);
+    hl = f14D0_6380(ah, bl);
+    hh = f14D0_6380(ah, bh);
+    mid = (ll >> 16) + (lh & 0xFFFF) + (hl & 0xFFFF);
+    t.lo = ll + (lh << 16) + (hl << 16);
+    t.hi = (lh >> 16) + (hl >> 16) + hh + (mid >> 16);
+    r = t;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C64A8);
