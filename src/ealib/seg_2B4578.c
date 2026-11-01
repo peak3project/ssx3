@@ -11603,7 +11603,46 @@ void func_003CA9D8(char *arg0, int *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAA28);
+#ifdef SKIP_ASM
+void func_003CAA28(float* a, float* b, float* d, int n, int m)
+{
+    float t, step;
+    int i;
+    if (m > 0) {
+        step = -1.0f / (float)n;
+        t = 1.0f;
+    } else {
+        m = -m;
+        step = 1.0f / (float)n;
+        t = 0.0f;
+    }
+    if (m < n) {
+        float* pd = d;
+        float* pa = a;
+        int k = 0;
+        i = n - m;
+        do {
+            *pd = t * a[m + k] + (1.0f - t) * *pa;
+            t += step;
+            k++;
+            pa++;
+            pd++;
+        } while (--i != 0);
+    }
+    if (m > 0) {
+        int k = 0;
+        int j = n - m;
+        i = m;
+        do {
+            d[j + k] = t * b[k] + (1.0f - t) * a[j + k];
+            t += step;
+            k++;
+        } while (--i != 0);
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAB28);
 
