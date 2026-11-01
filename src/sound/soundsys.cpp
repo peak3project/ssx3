@@ -9306,10 +9306,15 @@ extern "C" void func_002A3400(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A34D0);
 #ifdef SKIP_ASM
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_34D0)(cController*, cBankMonitorInstance*, float);
+extern "C" int func_002ADCA0_34D0(void*, int, sSndCallback_34D0, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: callers pass self to func_002A42C8 (the unit's later definition takes no args).
 int func_002A42C8_s(void* self) __asm__("func_002A42C8");
 extern "C" int func_002A4040(void* self);
-extern sSndKey8 D_004A36E8[];
+extern sSndCallback_34D0 D_004A36E8_34D0[] __asm__("D_004A36E8");
 
 // Rider trick-landing cheer: queued with the rider's trick class (or the stored landing quality when looked up).
 extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
@@ -9317,12 +9322,12 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
     if (func_0029F128(self) == 0) return 1;
     if (func_00288AE0(self) != 0) return 1;
     if (func_002A4248_s(self) != 0 && rider != 0) {
-        sSndKey8* key = D_004A36E8;
+        sSndCallback_34D0* key = D_004A36E8_34D0;
         char* o = rider + 0x6C0;
         sSsVt1280* e = &(*(sSsVt1280**)o)[7];
         char* bank = **(char***)((char*)self + 0x118) + 0x1D8;
         int v = e->fn(o + e->delta);
-        func_002ADCA0(bank, 1000, key->v, 0, v, 0, 0, 0);
+        func_002ADCA0_34D0(bank, 1000, *key, 0, v, 0, 0, 0);
         return 1;
     }
     if (func_002A42C8_s(self) != 0) return 1;
