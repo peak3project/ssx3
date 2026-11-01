@@ -1638,7 +1638,70 @@ extern "C" void* func_003B0948(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B09A0);
+#ifdef SKIP_ASM
+extern void* D_00456810[];
+extern "C" void func_003B08E0(void* self, int flags);
+struct sB09A0 {
+    void** vt;          // 0x0
+    char pad04[0x14];
+    sWSNode2 l18;       // 0x18
+    sWSNode2 l20;       // 0x20
+    char pad28[0x4];
+    void* p2C;          // 0x2C
+    char pad30[0x48];
+    void* p78;          // 0x78
+};
+static inline void wsListDone(sWSNode2* h)
+{
+    h->next = (sWSNode2*)7;
+    h->prev = (sWSNode2*)7;
+}
+static inline int wsEmpty(sWSNode2* h) { return h->next == h; }
+static inline void* wsItem(sWSNode2* n) { return n ? (char*)n - 8 : 0; }
+static inline void wsUnlink(sWSNode2* n)
+{
+    sWSNode2* next = n->next;
+    sWSNode2* prev = n->prev;
+    prev->next = next;
+    next->prev = prev;
+    n->prev = (sWSNode2*)0xB;
+    n->next = (sWSNode2*)0xB;
+}
+extern "C" void func_003B09A0(sB09A0* self, int flags)
+{
+    self->vt = D_00456850;
+    if (self->p2C != 0) {
+        D_00509434[0](self->p2C);
+        self->p2C = 0;
+    }
+    if (self->p78 != 0) {
+        D_00509434[0](self->p78);
+        self->p78 = 0;
+    }
+    while (!wsEmpty(&self->l18)) {
+        sWSNode2* n = self->l18.next;
+        void* e = wsItem(n);
+        wsUnlink(n);
+        if (e != 0)
+            func_003B08E0(e, 3);
+    }
+    while (!wsEmpty(&self->l20)) {
+        sWSNode2* n = self->l20.next;
+        void* e = wsItem(n);
+        wsUnlink(n);
+        if (e != 0)
+            func_003B08E0(e, 3);
+    }
+    wsListDone(&self->l20);
+    wsListDone(&self->l18);
+    self->vt = D_00456810;
+    if (flags & 1) {
+        D_00509434[0](self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B0B10);
