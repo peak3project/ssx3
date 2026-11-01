@@ -1516,7 +1516,7 @@ extern "C" void* func_003B0758(void* self, int a1, int a2, int a3, int a4)
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B0770);
 #ifdef SKIP_ASM
 extern char D_00509430[];
-extern void* D_0050943C[];
+extern void* D_0050943C;
 
 extern "C" void* func_003B0770(int init, int prio)
 {
@@ -1524,7 +1524,7 @@ extern "C" void* func_003B0770(int init, int prio)
         if (init != 0) {
             func_003B0410(D_00509430);
         } else {
-            D_0050943C[0] = (void*)D_00456890;
+            D_0050943C = (void*)D_00456890;
         }
     }
 }
