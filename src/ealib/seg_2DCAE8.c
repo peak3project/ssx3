@@ -1943,14 +1943,14 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DEF70);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_00450C34_0C34[] __asm__("D_00450C34");
-extern int D_00519BF0_9BF0[] __asm__("D_00519BF0");
+extern int D_00519BF0;
 
 int *func_003DEF70(int arg0) {
     int *temp_2;
     int temp_6;
 
     temp_6 = arg0 & 0xFF;
-    if ((arg0 < 0x100) || (temp_6 >= D_00519BF0_9BF0[0])) {
+    if ((arg0 < 0x100) || (temp_6 >= D_00519BF0)) {
         return 0;
     }
     temp_2 = (int*)((char*)D_00450C34_0C34[0] + (temp_6 * 0x30));
@@ -2159,7 +2159,7 @@ struct L_F488 { struct E_F488 *a; struct E_F488 *b; };
 extern struct E_F488 *D_00450C34_F488[] __asm__("D_00450C34");
 extern void *(*D_00450C14_F488)(void *, int, int) __asm__("D_00450C14");
 extern char D_00495DB8_F488[] __asm__("D_00495DB8");
-extern int D_00519BF0_F488[] __asm__("D_00519BF0");
+extern int D_00519BF0;
 extern struct L_F488 D_00519BF8_F488 __asm__("D_00519BF8");
 extern char D_00519C08_F488[] __asm__("D_00519C08");
 extern void func_003E5698_F488(void *) __asm__("func_003E5698");
@@ -2171,7 +2171,7 @@ void func_003DF488(int n, int arg1) {
         struct L_F488 *l;
         int i;
         struct E_F488 *e;
-        D_00519BF0_F488[0] = n;
+        D_00519BF0 = n;
         base = (struct E_F488 *)D_00450C14_F488(D_00495DB8_F488, size, arg1);
         l = &D_00519BF8_F488;
         l->b = (struct E_F488 *)((char *)base + (size - 0x30));
