@@ -54,7 +54,6 @@ struct sPauseMenu_PM {
     int fD0;
     int fD4;
     int aD8[14];                // 0xD8
-    int fF0_unused;
 };
 
 extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
@@ -100,7 +99,7 @@ extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
         self->aD8[i] = 1;
     }
     if (*(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x214) == 0xB) {
-        *(int*)((char*)self + 0xF0) = 0;
+        self->aD8[6] = 0;
     }
     cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
     if (D_00534B30[0] == 0) {
@@ -109,7 +108,7 @@ extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
             for (i = 0; i < 14; i++) {
                 self->aD8[i] = 0;
                 if (i == 1) {
-                    self->aD8[1] = i;
+                    self->aD8[i] = 1;
                 }
             }
         }
