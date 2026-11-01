@@ -169,7 +169,68 @@ extern "C" void func_0038B338(void* self, void* a, void* b, void* c, void* d)
 
 INCLUDE_ASM("render/bezierman", func_0038B370);
 
+//100%
 INCLUDE_ASM("render/bezierman", func_0038C590);
+#ifdef SKIP_ASM
+struct sV4_C590 {
+    float x, y, z, w;
+    sV4_C590() {}
+    sV4_C590(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sV3_C590 {
+    float x, y, z;
+};
+
+struct sUV_C590 {
+    float u, v;
+};
+
+struct sBezVert_C590 {
+    float st[4];                    // 0x00
+    int rgba[4];                    // 0x10
+    sV4_C590 pos;                   // 0x20
+};
+
+struct sGmVE_C590 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, sBezVert_C590*, int);
+};
+
+extern char* D_004A5B80_C590 __asm__("D_004A5B80");
+
+static inline void setVert_C590(sBezVert_C590* v, const sV3_C590& p, const sUV_C590& uv)
+{
+    v->pos = sV4_C590(p.x, p.y, p.z, 1.0f);
+    v->st[0] = uv.u;
+    v->st[1] = uv.v;
+    v->st[2] = 1.0f;
+    v->rgba[0] = v->rgba[1] = v->rgba[2] = 0x80;
+    v->rgba[3] = 0x80;
+}
+
+// Draws the n x n patch grid as strips: rows, then columns.
+extern "C" void func_0038C590(sV3_C590* pts, sUV_C590* uvs, int n)
+{
+    sBezVert_C590 verts[64];
+    char* gfx = D_004A5B80_C590;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            setVert_C590(&verts[j], pts[i * n + j], uvs[i * n + j]);
+        }
+        sGmVE_C590* vt = *(sGmVE_C590**)(gfx + 0x10D8);
+        vt[73].fn(gfx + vt[73].delta, n, verts, 0);
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            setVert_C590(&verts[j], pts[j * n + i], uvs[j * n + i]);
+        }
+        sGmVE_C590* vt = *(sGmVE_C590**)(gfx + 0x10D8);
+        vt[73].fn(gfx + vt[73].delta, n, verts, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038C788);
