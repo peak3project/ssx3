@@ -197,7 +197,27 @@ extern "C" int func_00251AC0(int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("mem/memstd", func_00251B50);
+#ifdef SKIP_ASM
+// Release-build assert (compiled out); EA code asserts its pointers
+#define ASSERT_1B50(cond) do { } while (0)
+extern "C" int func_00251B50(int id)
+{
+    if (id == 0) {
+        id = D_004A2E78_1AC0;
+    }
+    sMemClass_251718* cls = (sMemClass_251718*)D_004D2438[id & 0x3F];
+    int total = 0;
+    sMemNode_251718* n = cls->head.next;
+    while (n->tag != 0x4253) {
+        ASSERT_1B50(n != 0);
+        total += n->size - 0x10;
+        n = n->next;
+    }
+    return total;
+}
+#endif
 
 INCLUDE_ASM("mem/memstd", func_00251BB0);
 //100%
