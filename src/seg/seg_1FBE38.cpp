@@ -1,5 +1,34 @@
 #include "common.h"
 
+// Script-binding layer shared by the bound functions of this unit. Every binding unpacks its argument list the same
+// way (the binding's defaults record is copied into a local record, then each passed argument is stored by index,
+// with an int->float conversion when the binding's type table says the slot is a float) and reports an int result
+// through the same two stores. Both are statement macros (do { } while (0)); the loop notes they leave weight the
+// register references inside them, which is why the bodies must stay macro expansions.
+struct sBindArg_1FBE38 { int idx; int val; int pad; int kind; };
+struct sBindEnd_1FBE38 {};  // empty trailing member of a defaults record; value-init copies its byte through a stack temp
+extern "C" void func_003E6574(void*, void*, int);
+int* func_00226610(void*);
+#define BIND_UNPACK_ARGS_1FBE38(vp, rec, defaults, size, types, n, args) do { \
+        vp = rec; \
+        func_003E6574(vp, defaults, size); \
+        sBindArg_1FBE38* p_ = args; \
+        for (int i_ = 0; i_ < n; i_++, p_++) { \
+            int k_ = p_->idx; \
+            int* d_ = (int*)((k_ << 2) + (int)vp); \
+            if (p_->kind != (types)[k_] && (types)[k_] == 2) \
+                *(float*)d_ = (float)p_->val; \
+            else \
+                *d_ = p_->val; \
+        } \
+    } while (0)
+#define BIND_SET_RESULT_1FBE38(self, value) do { \
+        int r_ = (value); \
+        *(int*)((char*)(self) + 8) = 1; \
+        *func_00226610(self) = r_; \
+    } while (0)
+
+
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", checkActiveNode);
 #ifdef SKIP_ASM
@@ -4498,7 +4527,29 @@ extern "C" V3_2490 func_00302490(int n, Ent_2490 *e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00302680);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int D_004A3CD0_2680[2] __asm__("D_004A3CD0");
+extern "C" int func_00303D90(unsigned);
+extern int D_004A5740_2680 __asm__("D_004A5740");
+extern int D_004A5738_2680 __asm__("D_004A5738");
+extern sBindEnd_1FBE38 D_004A573C_2680 __asm__("D_004A573C");
+extern "C" void* func_00302680(void* self, int n, sBindArg_1FBE38* e) {
+    if (D_004A5740_2680 == 0) {
+        // NOTE: guarded static-local init (defaults record = { int, sBindEnd_1FBE38 }).
+        D_004A5738_2680 = -1;
+        D_004A573C_2680 = sBindEnd_1FBE38();
+        D_004A5740_2680 = 1;
+    }
+    int v[4];
+    int* vp;
+    BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A5738_2680, 8, D_004A3CD0_2680, n, e);
+    BIND_SET_RESULT_1FBE38(self, func_00303D90(vp[0]));
+    return self;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_1FBE38", func_00302778);
 
