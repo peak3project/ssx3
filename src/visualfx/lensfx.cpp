@@ -455,6 +455,11 @@ static inline float clamp_DF00(float f, float lo, float hi)
     return lo;
 }
 
+static inline float pow_DF00(float x, float y)
+{
+    return func_0040D758(func_0040DA10(x) * y);
+}
+
 extern "C" float func_002EDF00(void* self)
 {
     float lum = *(float*)((char*)self + 0x4) * 0.29899999499320984f
@@ -466,9 +471,8 @@ extern "C" float func_002EDF00(void* self)
     if (lum >= 0.44999998807907104f) {
         return 1.0f;
     }
-    float k = 0.600117564201355f;
     float t = (lum - 0.10000000149011612f) / absf_DF00(0.3499999940395355f);
-    return clamp_DF00(func_0040D758(func_0040DA10(t) * k), 0.0f, 1.0f);
+    return clamp_DF00(pow_DF00(t, 0.600117564201355f), 0.0f, 1.0f);
 }
 #endif
 
