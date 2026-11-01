@@ -10702,9 +10702,8 @@ extern char** D_004A36F8;
 
 extern "C" void func_002A6848(void* self)
 {
-    float lim = 0.25f;
-    if (lim < *(float*)((char*)self + 0x188)) {
-        *(float*)((char*)self + 0x188) = lim;
+    if (0.25f < *(float*)((char*)self + 0x188)) {
+        *(float*)((char*)self + 0x188) = 0.25f;
     }
     *(int*)((char*)self + 0x180) = 0;
     if (*(int*)((char*)self + 0x174) >= 0) {
