@@ -185,7 +185,6 @@ struct sWSMemIfE300 {
     int pad[5];
 };
 
-extern void* (*D_00509434)(void*);
 extern "C" void func_003AEE30(void* self, int flags);
 extern "C" int func_003DE928(sWSMemIfE300* mi);
 extern "C" void func_003E0A28(void* p);
@@ -203,7 +202,7 @@ extern "C" void func_003AE300(char* self, int flags)
         *(void**)(self + 0x0) = 0;
     }
     if (*(void**)(self + 0x5C) != 0) {
-        D_00509434(*(void**)(self + 0x5C));
+        D_00509430.free(*(void**)(self + 0x5C));
         *(void**)(self + 0x5C) = 0;
     }
     func_003E0A28(*(void**)(self + 0x30));
@@ -233,15 +232,15 @@ extern "C" void func_003AE300(char* self, int flags)
         }
     }
     if (*(void**)(self + 0x4) != 0) {
-        D_00509434(*(void**)(self + 0x4));
+        D_00509430.free(*(void**)(self + 0x4));
         *(void**)(self + 0x4) = 0;
     }
     if (*(void**)(self + 0x8) != 0) {
-        D_00509434(*(void**)(self + 0x8));
+        D_00509430.free(*(void**)(self + 0x8));
         *(void**)(self + 0x8) = 0;
     }
     if (flags & 1) {
-        D_00509434(self);
+        D_00509430.free(self);
     }
 }
 #endif
@@ -635,14 +634,13 @@ void* func_003AECB8(void* self, void* a1)
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AECE0);
 #ifdef SKIP_ASM
 extern "C" void* func_003E13E8(void* p, int a1);
-extern void* (*D_00509434)(void*);
 
 extern "C" void* func_003AECE0(int self, int a1)
 {
     int* obj = (int*)a1;
     void* r = func_003E13E8(*(void**)(self + 0x30), *obj);
     if (obj != 0) {
-        r = D_00509434(obj);
+        r = D_00509430.free(obj);
     }
     return r;
 }
@@ -697,17 +695,16 @@ extern "C" void* func_003AED40(void* self, int a1, int a2)
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AEE30);
 #ifdef SKIP_ASM
 extern "C" int func_003B7838(void* a);
-extern void* (*D_00509434)(void*);
 
 extern "C" void func_003AEE30(void* self, int flags)
 {
     if (*(void**)((char*)self + 0x4) != 0) {
         func_003B7838(*(void**)((char*)self + 0xC));
-        D_00509434(*(void**)((char*)self + 0x4));
+        D_00509430.free(*(void**)((char*)self + 0x4));
         *(void**)((char*)self + 0x4) = 0;
     }
     if (flags & 1) {
-        D_00509434(self);
+        D_00509430.free(self);
     }
 }
 #endif
@@ -816,7 +813,6 @@ extern "C" void *func_003AF010(void *arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AF020);
 #ifdef SKIP_ASM
-extern void* (*D_00509434)(void*);
 
 struct sElem_F020 {
     char pad[0x34];
@@ -833,7 +829,7 @@ extern "C" void func_003AF020(sSelf_F020* self, int flags)
     }
     self->count = 0;
     if (flags & 1) {
-        D_00509434(self);
+        D_00509430.free(self);
     }
 }
 #endif
@@ -1256,7 +1252,6 @@ extern "C" func_003B0430_sObj* func_003B0430(func_003B0430_sObj* self, func_003B
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B04A0);
 #ifdef SKIP_ASM
 extern "C" void func_003B0538(void* self);
-extern void* (*D_00509434)(void*);
 extern void* D_004568A8[];
 
 extern "C" void func_003B04A0(void* self, int flags)
@@ -1264,7 +1259,7 @@ extern "C" void func_003B04A0(void* self, int flags)
     *(void***)((char*)self + 0x18) = D_004568A8;
     func_003B0538(self);
     if (flags & 1) {
-        D_00509434(self);
+        D_00509430.free(self);
     }
 }
 #endif
@@ -1551,7 +1546,6 @@ extern "C" void* func_003B07F8(void* self, unsigned int w, int h)
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B08E0);
 #ifdef SKIP_ASM
 extern "C" void func_003B2B68(char* buf);
-extern void* (*D_00509434)(void*);
 
 extern "C" void func_003B08E0(void* self, int flags)
 {
@@ -1562,7 +1556,7 @@ extern "C" void func_003B08E0(void* self, int flags)
     *(int*)((char*)self + 0x8) = 7;
     *(int*)((char*)self + 0xC) = 7;
     if (flags & 1) {
-        D_00509434(self);
+        D_00509430.free(self);
     }
 }
 #endif
@@ -1633,11 +1627,11 @@ extern "C" void func_003B09A0(sB09A0* self, int flags)
 {
     self->vt = D_00456850;
     if (self->p2C != 0) {
-        D_00509434(self->p2C);
+        D_00509430.free(self->p2C);
         self->p2C = 0;
     }
     if (self->p78 != 0) {
-        D_00509434(self->p78);
+        D_00509430.free(self->p78);
         self->p78 = 0;
     }
     while (!wsEmpty(&self->l18)) {
@@ -1658,7 +1652,7 @@ extern "C" void func_003B09A0(sB09A0* self, int flags)
     wsListDone(&self->l18);
     self->vt = D_00456810;
     if (flags & 1) {
-        D_00509434(self);
+        D_00509430.free(self);
     }
 }
 #endif
