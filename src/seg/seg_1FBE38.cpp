@@ -4551,7 +4551,29 @@ extern "C" void* func_00302680(void* self, int n, sBindArg_1FBE38* e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00302778);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern int D_004A3CD8_2778[2] __asm__("D_004A3CD8");
+extern "C" int func_00303DF8(unsigned);
+extern int D_004A5750_2778 __asm__("D_004A5750");
+extern int D_004A5748_2778 __asm__("D_004A5748");
+extern sBindEnd_1FBE38 D_004A574C_2778 __asm__("D_004A574C");
+extern "C" void* func_00302778(void* self, int n, sBindArg_1FBE38* e) {
+    if (D_004A5750_2778 == 0) {
+        // NOTE: guarded static-local init (defaults record = { int, sBindEnd_1FBE38 }).
+        D_004A5748_2778 = -1;
+        D_004A574C_2778 = sBindEnd_1FBE38();
+        D_004A5750_2778 = 1;
+    }
+    int v[4];
+    int* vp;
+    BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A5748_2778, 8, D_004A3CD8_2778, n, e);
+    BIND_SET_RESULT_1FBE38(self, func_00303DF8(vp[0]));
+    return self;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_1FBE38", func_00302870);
 
