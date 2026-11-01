@@ -2152,21 +2152,25 @@ static inline sMsgListIterD428 sMsgListD428_insert(sMsgListIterD428 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_D428(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListD428_insert(*(sMsgListNodeD428**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025D428(char* self, int idx)
 {
     if (*(int*)self != 0) {
         char buf[0x200];
         buf[0] = 0;
         cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3108, *(const char**)(self + 0x70 + (idx << 2)));
-        int type = 0xD7;
         // PORT: function pointer passed through func_0025B608's int parameter.
         func_0025B608(self, 0xB, 0x64706572, buf, (int)func_00268D10, 20.0f);
         *(int*)(self + 0x50) = idx;
-        int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-        m[0] = type;
-        *(void***)((char*)m + 0x4) = D_004812B0;
-        void* mp = m;
-        sMsgListD428_insert(*(sMsgListNodeD428**)(self + 0xF0), mp);
+        postMsg_D428(self, 0xD7);
     }
 }
 #endif
