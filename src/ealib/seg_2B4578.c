@@ -16490,7 +16490,52 @@ void func_003D54E8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5508);
+#ifdef SKIP_ASM
+extern int func_003D5450_5508(int) __asm__("func_003D5450");
+extern void func_003D62C8_5508(int, int) __asm__("func_003D62C8");
+struct P_5508 { char pad0[0x58]; int a[24]; };
+extern struct P_5508 *D_0044F420_5508 __asm__("D_0044F420");
+extern unsigned char D_0044F42C_5508 __asm__("D_0044F42C");
+extern unsigned char D_0044F42E_5508 __asm__("D_0044F42E");
+extern int D_0044F430_5508 __asm__("D_0044F430");
+extern char D_00517644_5508[] __asm__("D_00517644");
+
+static inline int isOff(unsigned int m, int b) { return ((m >> b) & 1) == 0; }
+void func_003D5508(unsigned int mask, signed char val) {
+    int i;
+    int j;
+    unsigned int fl, t, u;
+    int e;
+    if (D_0044F42C_5508 == 0) return;
+    if (D_0044F430_5508 != 0) return;
+    if (func_003D5450_5508(-1) == 0) return;
+    if (val > 100) val = 100;
+    if (val < 0) val = 0;
+    if (mask == 0xFFFFFFFF) {
+        D_0044F42E_5508 = val;
+    }
+    for (i = 0; i < 4; i++) {
+        if (*(int *)(D_00517644_5508 + i * 0x928) != 0) {
+            fl = *(unsigned int *)(D_00517644_5508 + i * 0x928 - 4);
+            t = fl & 0xF0000000;
+            if ((t & mask) != 0) {
+                u = fl & 0x0F000000;
+                if ((u & mask) != 0 && func_003D5450_5508(i) != 0) {
+                    for (j = 0; j < 24; j++) {
+                        e = D_0044F420_5508->a[j];
+                        if (e == 0 || isOff(mask, j)) continue;
+                        func_003D62C8_5508(e, val);
+                    }
+                }
+            }
+        }
+    }
+    D_0044F420_5508 = 0;
+    D_0044F430_5508 = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5698);
