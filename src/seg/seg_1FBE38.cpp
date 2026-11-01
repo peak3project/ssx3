@@ -5547,7 +5547,68 @@ extern "C" R12_4210 func_00304210(int n, Ent_4210* e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00304320);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern unsigned D_004A57F0_4320 __asm__("D_004A57F0");
+extern sBindEnd_1FBE38 D_004A57F4_4320 __asm__("D_004A57F4");
+extern int D_004A57F8_4320 __asm__("D_004A57F8");
+extern int D_004A3D58_4320[2] __asm__("D_004A3D58");
+extern char *D_004A3DD8_4320 __asm__("D_004A3DD8");
+extern char **D_004A47B8_4320 __asm__("D_004A47B8");
+// Inline accessor of the current script process (wscript/wscriptman func_0030D2D8 is its out-of-line copy). Calling it
+// at each use gives the shared copy of the pointer the target keeps (lw; move) instead of one cached local.
+static inline char *curProcess_4320() { return D_004A3DD8_4320; }
+static inline char *refToPtr_4320(unsigned i) { return (char*)(i << 2); }
+static inline char *conv_4320(unsigned i) { if (i == 0) return 0; return refToPtr_4320(i); }
+void func_0030B508(void*, int, void*);
+struct R12_4320 { int a; int b; int c; };
+extern R12_4320 D_004C9098_4320 __asm__("D_004C9098");
+extern "C" R12_4320 func_00304320(int n, sBindArg_1FBE38* e) {
+    if (D_004A57F8_4320 == 0) {
+        D_004A57F0_4320 = 0xFFFFFFFF;
+        D_004A57F8_4320 = 1;
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A57F4_4320 = sBindEnd_1FBE38();
+    }
+    unsigned buf64[2];
+    unsigned* buf = buf64;
+    buf64[0] = 0xFFFFFFFF;
+    func_003E6574(buf, &D_004A57F0_4320, 8);
+    sBindArg_1FBE38* x = e;
+    for (int i = 0; i < n; i++, x++) {
+        int idx = x->idx;
+        int t = D_004A3D58_4320[idx];
+        unsigned* d = (unsigned*)((idx << 2) + (int)buf);
+        if (x->kind != t && t == 2)
+            *(float*)d = (float)x->val;
+        else
+            *d = x->val;
+    }
+    int gv = *(int*)curProcess_4320();
+    unsigned id = buf[0];
+    char *obj;
+    if (~id == 0) {
+        obj = *(char**)(curProcess_4320() + 0x290);
+    } else {
+        char *s = (*(char***)((char*)*D_004A47B8_4320 + 8))[id & 0xFF];
+        unsigned i;
+        char *r;
+        if (!s)
+            r = 0;
+        else {
+            i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8;
+            char *t = conv_4320(i);
+            r = t;
+        }
+        obj = r;
+    }
+    if (obj)
+        func_0030B508(curProcess_4320(), gv, obj);
+    return D_004C9098_4320;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003044A8);
