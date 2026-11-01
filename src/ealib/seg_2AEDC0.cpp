@@ -418,9 +418,8 @@ extern "C" void* func_003AE888(void* self, int speed)
     if ((unsigned int)speed > 0x4000) {
         speed = 0x4000;
     }
-    int s = speed;
     if (*(void**)self != 0) {
-        func_003AEE98(*(void**)self, s);
+        func_003AEE98(*(void**)self, speed);
     }
     func_003AE888_sTimer* t = *(func_003AE888_sTimer**)((char*)self + 0x5C);
     unsigned int now = func_003E4E98();
@@ -429,7 +428,7 @@ extern "C" void* func_003AE888(void* self, int speed)
     } else {
         t->accum += ((ulong)t->rate * (ulong)(now - t->last)) >> 12;
     }
-    t->rate = s;
+    t->rate = speed;
     t->last = now;
     return 0;
 }
