@@ -6549,13 +6549,11 @@ extern char D_00459FC8[];
 
 extern "C" void func_001328B0(void* self)
 {
-    float k = 0.05000000447034836f;
-    float blend = 0.33000001311302185f;
     char* r = *(char**)((char*)self + 0x14);
-    *(float*)(r + 0x200) = k;
+    *(float*)(r + 0x200) = 0.05000000447034836f;
     *(int*)(r + 0x204) = 0;
     char* r2 = *(char**)((char*)self + 0x14);
-    *(float*)(r2 + 0x1F4) = k;
+    *(float*)(r2 + 0x1F4) = 0.05000000447034836f;
     *(int*)(r2 + 0x1F8) = 0;
     *(int*)(*(char**)((char*)self + 0x14) + 0x32C) = 1;
     func_0029DC48(func_0028B180(), *(void**)((char*)self + 0x14));
@@ -6565,8 +6563,8 @@ extern "C" void func_001328B0(void* self)
     func_00132FB8(self, *(int*)(*(char**)((char*)self + 0x14) + 0x32C), *(int*)((char*)self + 0x10));
     *(float*)(*(char**)(*(char**)((char*)self + 0x14) + 0x784) + 0x1C) = 1.0f;
     *(int*)((char*)self + 0x4) = 0;
-    func_00311E88(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 1, blend);
-    func_00311E88(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 0, blend);
+    func_00311E88(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 1, 0.33000001311302185f);
+    func_00311E88(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 0, 0.33000001311302185f);
 }
 #endif
 
