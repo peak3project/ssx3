@@ -14801,8 +14801,9 @@ int func_003D0D70(unsigned int mask, unsigned int val) {
             if (*(int *)(D_00517644_0D70 + i * 0x928) != 0) {
                 fl = *(unsigned int *)(D_00517644_0D70 + i * 0x928 - 4);
                 t = fl & 0xF0000000;
-                if ((t & mask) != 0 && (u = fl & 0x0F000000, (u & mask) != 0)) {
-                    if (func_003D5450_0D70(i & 0xFF) != 0) {
+                if ((t & mask) != 0) {
+                    u = fl & 0x0F000000;
+                    if ((u & mask) != 0 && func_003D5450_0D70(i & 0xFF) != 0) {
                         for (j = 0; j < 24; j++) {
                             unsigned char *e = ((struct P_0D70 *)D_0044F420_0D70[0])->a[j];
                             if (e != 0) {
