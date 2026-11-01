@@ -3650,7 +3650,19 @@ int func_003BA6E8(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA740);
+#ifdef SKIP_ASM
+struct E_A740 { char pad0[0x24]; unsigned short f24; char pad1[0x3A]; signed char v[1]; signed char w[1]; short s[8]; };
+struct Q_A740 { char pad[2]; signed char b2; };
+extern struct E_A740 *D_0050AAD8_A740 __asm__("D_0050AAD8");
+extern struct Q_A740 *f8218_A740(int, int) __asm__("func_003B8218");
+void func_003BA740(int a, int i) {
+    struct E_A740 *e = (struct E_A740 *)((char *)D_0050AAD8_A740 + i * 0x8C);
+    struct Q_A740 *q = f8218_A740(a, e->f24);
+    e->s[a] = (e->v[a] * e->w[a] * q->b2) >> 6;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA7B0);
 
