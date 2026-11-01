@@ -45,7 +45,29 @@ void func_00424230(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_004242C0);
+#ifdef SKIP_ASM
+extern void func_0042C0C0(void);
+extern void func_00424110_vs(volatile int *, volatile unsigned long *) __asm__("func_00424110");
+unsigned long func_004242C0(void) {
+    volatile int flag;
+    volatile unsigned long t;
+    int s;
+    flag = 0;
+    func_00424110_vs(&flag, &t);
+    s = func_0042C078_r();
+    *(volatile int *)0x1000F000 = 4;
+    SYNC_4248();
+    if (s) func_0042C0C0();
+    while (!(*(volatile int *)0x1000F000 & 4) && flag == 0);
+    s = func_0042C078_r();
+    *(volatile int *)0x1000F000 = 4;
+    SYNC_4248();
+    if (s) func_0042C0C0();
+    return t;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424368);
