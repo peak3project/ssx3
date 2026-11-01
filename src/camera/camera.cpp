@@ -6658,11 +6658,10 @@ extern "C" void func_00168508_v(char* self, long id)
     sCamVEntryInt_8508* vt = *(sCamVEntryInt_8508**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
-        float k = 100.0f;
-        sVec_001607E0 nv = cmSub_168150(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160_v1607E0, k)), cmScale_001607E0(cmGet_001607E0(self, 4), 200.0f));
+        sVec_001607E0 nv = cmSub_168150(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160_v1607E0, 100.0f)), cmScale_001607E0(cmGet_001607E0(self, 4), 200.0f));
         *(sVec_001607E0*)(self + 0x40) = nv;
         f_6C60_8508(self, id);
-        func_00166550(self, k, k);
+        func_00166550(self, 100.0f, 100.0f);
         sCamVEntryVoid_8508* vt2 = *(sCamVEntryVoid_8508**)(self + 0x10);
         vt2[5].fn(self + vt2[5].delta);
     }
