@@ -4,3 +4,9 @@
    config/reloc_addrs.txt. splat only lists symbols its reference tracking marks as referenced, which a
    reloc_addrs-only name isn't, so it never appears in undefined_syms_auto.txt. */
 D_0 = 0x0;
+
+/* render/bezierman (func_0038AF30): the two UV grids (6x6 and 8x8 {float u, v}) in .bss. The target loads their
+   addresses with a lui in a branch delay slot that splat does not pair with its addiu, so it emits raw immediates
+   and never names the symbols. */
+D_00504A00 = 0x504A00;
+D_00504B80 = 0x504B80;

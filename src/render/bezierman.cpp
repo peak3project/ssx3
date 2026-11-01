@@ -14,7 +14,59 @@ void* cBezierMan_construct()
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/bezierman", func_0038AF30);
+#ifdef SKIP_ASM
+extern "C" void func_00372B78(void* self, int a, int b, int c, int d, int e, int f);
+extern "C" void func_38D638v(void* self) __asm__("func_0038D638");
+void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+extern char D_00492EB0[];
+extern char D_00492EC0[];
+extern char D_00492ED0[];
+
+struct sUV_8AF30 {
+    float u, v;
+};
+
+extern sUV_8AF30 D_00504A00[6][6];
+extern sUV_8AF30 D_00504B80[8][8];
+
+extern "C" void func_0038AF30(char* self)
+{
+    func_00372B78(self + 0x10, 900, 0xDC, 0x8C, 0, 0x92, 0x5D);
+    *(void**)(self + 0x440) = operator_new_tag(0x38400, D_00492EB0, 0, 0);
+    *(void**)(self + 0x444) = operator_new_tag(0xDC00, D_00492EC0, 0, 0);
+    *(void**)(self + 0x448) = operator_new_tag(0x8C00, D_00492ED0, 0, 0);
+    *(int*)(self + 0x344) = 1;
+    *(int*)(self + 0x348) = 1;
+    *(int*)(self + 0x34C) = 1;
+    *(void**)(self + 0x44C) = *(void**)(self + 0x440);
+    *(void**)(self + 0x450) = *(void**)(self + 0x444);
+    *(void**)(self + 0x454) = *(void**)(self + 0x448);
+    *(int*)(self + 0x350) = 1;
+    *(int*)(self + 0x354) = 0;
+    *(float*)(self + 0x358) = 8.0f;
+    *(float*)(self + 0x33C) = 3000.0f;
+    *(float*)(self + 0x340) = 15000.0f;
+    func_38D638v(self);
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 6; j++) {
+            sUV_8AF30 uv;
+            uv.u = (float)j * 0.2f;
+            uv.v = (float)i * 0.2f;
+            D_00504A00[j][i] = uv;
+        }
+    }
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            sUV_8AF30 uv;
+            uv.u = (float)j * (1.0f / 7.0f);
+            uv.v = (float)i * (1.0f / 7.0f);
+            D_00504B80[j][i] = uv;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038B0F8);
