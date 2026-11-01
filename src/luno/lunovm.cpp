@@ -377,6 +377,9 @@ struct cLunoNode_set {
 };
 
 // cLunoValue::operator= (inline Clear of the destination, then copy by type)
+// Clear(): the release build keeps the macro's do/while(0) wrapper.
+#define LUNO_CLEAR_SET(V) do { (V).word0 = 0; } while (0)
+
 #define LUNO_ASSIGN_SET(D, S)                                              \
     {                                                                      \
         cLunoValue* d = &(D);                                              \
@@ -438,10 +441,7 @@ extern "C" void luno_cLunoTable_set(cLunoTableRef* self, cLunoValue* key, cLunoV
                     func_00224DF0((cLunoTableRef*)d, 2);
                 }
                 d->type = 0;
-                // Expanded Clear(); the do/while(0) is the original macro's wrapper (changes scheduling).
-                do {
-                    n->value.word0 = 0;
-                } while (0);
+                LUNO_CLEAR_SET(n->value);
                 if (val->type == 4) {
                     func_00225068((cLunoTableRef*)d, (cLunoTableRef*)val);
                 } else if (val->type == 5) {
