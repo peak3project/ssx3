@@ -5031,10 +5031,9 @@ struct sVec4_1A50 {
 extern "C" void func_00281A50(void* self)
 {
     int i;
-    int v = -1;
     int* ids = (int*)((char*)self + 0xDC);
-    for (i = 1; i >= 0; i--) {
-        ids[i] = v;
+    for (i = 0; i < 2; i++) {
+        ids[i] = -1;
     }
     *(int*)((char*)self + 0xF0) = 1;
     *(float*)((char*)self + 0xF4) = 1000000000.0f;
