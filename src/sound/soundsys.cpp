@@ -3864,15 +3864,16 @@ extern "C" int func_00298D88(void) {
 //100%
 INCLUDE_ASM("sound/soundsys", func_00298D90);
 #ifdef SKIP_ASM
-struct sSndId292AE8 {
-    long v;
-} __attribute__((packed));
-extern sSndId292AE8 D_004A36A8[];
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_8D90)(cController*, cBankMonitorInstance*, float);
+extern sSndCallback_8D90 D_004A36A8_8D90[] __asm__("D_004A36A8");
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 extern "C" int func_00288AE0(void* self);
-extern "C" void func_002ADDE0(void* bank, long id);
+extern "C" void func_002ADDE0_8D90(void* bank, sSndCallback_8D90 key) __asm__("func_002ADDE0");
 
 struct sSnd8D90Self {
     sSnd74A0Sys sys;
@@ -3920,7 +3921,7 @@ extern "C" void func_00298D90(sSnd8D90Self* self, char* obj, int extra)
     if (func_00288AE0(self) == 0) {
         bool ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
         if (ok) {
-            func_002ADDE0(&(*self->sys.p118)->sub, D_004A36A8[0].v);
+            func_002ADDE0_8D90(&(*self->sys.p118)->sub, D_004A36A8_8D90[0]);
             if (self->count == 0) {
                 snd8D90AddVoice(self, 0, b7);
                 self->handle = func_002906B8(self);
@@ -4071,6 +4072,11 @@ extern "C" void func_00299368(sSnd9368Sys* self, char* obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00299638);
 #ifdef SKIP_ASM
+struct sSndId292AE8 {
+    long v;
+} __attribute__((packed));
+extern sSndId292AE8 D_004A36A8[];
+extern "C" void func_002ADDE0(void* bank, long id);
 struct sSndKey8 {
     long v;
 } __attribute__((packed));
