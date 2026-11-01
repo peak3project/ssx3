@@ -1950,7 +1950,89 @@ INCLUDE_ASM("seg/seg_2FE810", func_00401718);
 
 INCLUDE_ASM("seg/seg_2FE810", func_004019F8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401BF0);
+#ifdef SKIP_ASM
+extern int B1_451610[] __asm__("D_00451610");
+extern int B1_451630[] __asm__("D_00451630");
+extern int B1_451648[] __asm__("D_00451648");
+extern char B1_526710[] __asm__("D_00526710");
+extern int B1_526750[] __asm__("D_00526750");
+extern int B1_453080[] __asm__("D_00453080");
+extern char B1_497B98[] __asm__("D_00497B98");
+extern char B1_497B60[] __asm__("D_00497B60");
+extern char B1_497B80[] __asm__("D_00497B80");
+extern void b1_log() __asm__("func_00425C60");
+extern void b1_0C00() __asm__("func_00400C00");
+extern int b1_3DF0(int) __asm__("func_00423DF0");
+extern void b1_3DC0(int) __asm__("func_00423DC0");
+extern void b1_6408(int) __asm__("func_00426408");
+extern int b1_6B48(char *, unsigned, int) __asm__("func_00426B48");
+extern void b1_6358(int *, int) __asm__("func_00426358");
+extern int b1_6D18(char *, int, int, int *, int, int *, int, int, int) __asm__("func_00426D18");
+extern int b1_19F8(int) __asm__("func_004019F8");
+/* The sema id passed to the Sema calls is read volatile throughout libcdvd (see the retail delay slots). */
+static inline int semaId1BF0(void) {
+    return *(volatile int *)B1_451630;
+}
+int func_00401BF0(int a) {
+    int i;
+    int r;
+    int v;
+    if (B1_451610[0] > 0)
+        b1_log(B1_497B98);
+    b1_0C00();
+    if (B1_451630[0] != b1_3DF0(semaId1BF0()))
+        return a != 8 ? 6 : -1;
+    b1_6408(0);
+    i = 0;
+    if (B1_451648[0] < 0) {
+        for (;;) {
+            if (b1_6B48(B1_526710, 0x8000059C, 0) < 0) {
+                if (B1_451610[0] > 0)
+                    b1_log(B1_497B60);
+                r = 0x100000;
+                do {
+                    r--;
+                    __asm__ volatile("nop");
+                    __asm__ volatile("nop");
+                    __asm__ volatile("nop");
+                    __asm__ volatile("nop");
+                } while (r != -1);
+                continue;
+            }
+            if (*(int *)(B1_526710 + 0x24) != 0) {
+                B1_451648[0] = 0;
+                break;
+            }
+            if (i >= 0x11) {
+                b1_3DC0(semaId1BF0());
+                return b1_19F8(a);
+            }
+            r = 0x100000;
+            do {
+                r--;
+                __asm__ volatile("nop");
+                __asm__ volatile("nop");
+                __asm__ volatile("nop");
+                __asm__ volatile("nop");
+            } while (r != -1);
+            i++;
+        }
+    }
+    B1_526750[0] = a;
+    b1_6358(B1_526750, 4);
+    if (b1_6D18(B1_526710, 0, 0, B1_526750, 4, B1_453080, 4, 0, 0) < 0) {
+        b1_3DC0(semaId1BF0());
+        return a != 8 ? 6 : -1;
+    }
+    if (B1_451610[0] > 0)
+        b1_log(B1_497B80);
+    v = *(int *)((unsigned)B1_453080 | 0x20000000);
+    b1_3DC0(semaId1BF0());
+    return v;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00401DF8);
 
