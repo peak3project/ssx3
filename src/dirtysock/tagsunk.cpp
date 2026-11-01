@@ -3982,16 +3982,20 @@ static inline sMsgListIter_0025FC70 sMsgList_0025FC70_insert(sMsgListIter_0025FC
     return tmp;
 }
 
-extern "C" void func_0025FC70(void* self, int a1, int a2)
+static inline void postMsg_FC70(void* self, int kind)
 {
-    func_0025FB80(self, a1, D_00480910);
-    int kind = 0x110;
-    *(int*)self = a2;
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
     m[0] = kind;
     *(void***)((char*)m + 0x4) = D_004812B0;
     void* mp = m;
     sMsgList_0025FC70_insert(*(sMsgListNode_0025FC70**)((char*)self + 0xF0), mp);
+}
+
+extern "C" void func_0025FC70(void* self, int a1, int a2)
+{
+    func_0025FB80(self, a1, D_00480910);
+    *(int*)self = a2;
+    postMsg_FC70(self, 0x110);
     *(float*)((char*)self + 0xE0) = 20.0f;
     D_004A5154 = 21.0f;
 }
