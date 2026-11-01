@@ -5226,7 +5226,43 @@ void func_004076F8(int p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407820);
+#ifdef SKIP_ASM
+extern int Q_72E8(int, int) __asm__("func_004072E8");
+void func_00407820(int *p) {
+    p[0x164 / 4] = Q_72E8((int)p, 4);
+    p[0x168 / 4] = Q_72E8((int)p, 4);
+    p[0x16C / 4] = Q_72E8((int)p, 4);
+    p[0x170 / 4] = Q_72E8((int)p, 4);
+    {
+        int v = Q_72E8((int)p, 2);
+        *(volatile unsigned *)0x10002010 = (*(volatile unsigned *)0x10002010 & 0xFFFCFFFF) | (v << 16);
+    }
+    {
+        int v = Q_72E8((int)p, 2);
+        p[0x174 / 4] = v;
+        if (p[0xD4 / 4] == 0)
+            p[0xD4 / 4] = v;
+    }
+    p[0x178 / 4] = Q_72E8((int)p, 1);
+    p[0x17C / 4] = Q_72E8((int)p, 1);
+    p[0x180 / 4] = Q_72E8((int)p, 1);
+    *(volatile unsigned *)0x10002010 = (*(volatile unsigned *)0x10002010 & 0xFFBFFFFF) | (Q_72E8((int)p, 1) << 22);
+    *(volatile unsigned *)0x10002010 = (*(volatile unsigned *)0x10002010 & 0xFFDFFFFF) | (Q_72E8((int)p, 1) << 21);
+    *(volatile unsigned *)0x10002010 = (*(volatile unsigned *)0x10002010 & 0xFFEFFFFF) | (Q_72E8((int)p, 1) << 20);
+    p[0x184 / 4] = Q_72E8((int)p, 1);
+    Q_72E8((int)p, 1);
+    p[0x188 / 4] = Q_72E8((int)p, 1);
+    if (Q_72E8((int)p, 1)) {
+        Q_72E8((int)p, 1);
+        Q_72E8((int)p, 3);
+        Q_72E8((int)p, 1);
+        Q_72E8((int)p, 7);
+        Q_72E8((int)p, 8);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407A10);
