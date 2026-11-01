@@ -10673,7 +10673,36 @@ int func_003C8A40(int idx) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8A88);
+#ifdef SKIP_ASM
+struct O_8A88 { int f0; int f4; char pad8[0x10]; short f18; char f1A; };
+struct E_8A88 { char pad0[0x40]; int f40; char pad44[0xC]; struct O_8A88 *f50; char pad54[0xC]; };
+struct T_8A88 { char pad0[0xE]; unsigned char fE; char padF[0x1DC - 0xF]; struct E_8A88 *ents; };
+extern struct T_8A88 D_00515B40_8A88 __asm__("D_00515B40");
+extern unsigned char D_0050AA62_8A88 __asm__("D_0050AA62");
+extern struct O_8A88 *func_003B5C60_8A88(int) __asm__("func_003B5C60");
+extern void func_003CBB28_8A88(struct O_8A88 *, int, int) __asm__("func_003CBB28");
+extern void func_003C8F48_8A88(int *, struct O_8A88 *) __asm__("func_003C8F48");
+extern void func_003CB538_8A88(struct O_8A88 *, int) __asm__("func_003CB538");
+
+void func_003C8A88(int idx, int n) {
+    struct E_8A88 *e;
+    if (n > 0x20000) n = 0x20000;
+    e = &D_00515B40_8A88.ents[idx];
+    if (e->f50 == 0) {
+        int big;
+        e->f50 = func_003B5C60_8A88(0x38);
+        big = D_00515B40_8A88.fE >= 0x32;
+        e->f50->f4 = 0;
+        e->f50->f18 = 0xA0;
+        e->f50->f1A = 0;
+        func_003CBB28_8A88(e->f50, D_0050AA62_8A88, big);
+        func_003C8F48_8A88(&e->f40, e->f50);
+    }
+    func_003CB538_8A88(e->f50, n);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8B40);
