@@ -524,6 +524,8 @@ segments:
 
       - [0x2ad800, cpp, world/wscriptcache]
 
+      - [0x2aedc0, cpp, ealib/seg_2AEDC0]
+
       - [0x2b4578, c, ealib/seg_2B4578]
 
       - [0x2d7498, c, ealib/seg_2D7498]

@@ -50,6 +50,9 @@ COMMON_CFLAGS = "-O2"
 # globals and float constants are addressed with lui/%lo and lui/ori/mtc1), except one embedded module at
 # 0x3D6498-0x3DBAE8 (ealib/seg_2D7498) that uses $gp and default flags. Evidence: notes/stuck.md "ealib".
 UNIT_CFLAGS = {
+    # EA media library (AV::/RCMP:: streaming, MPEG-2 decoder) after wscriptcache.cpp, whose last function is its
+    # global ctor at 0x3ADDA0: no $gp users, li.s through $at (func_003AE780), small globals in .bss.
+    "ealib/seg_2AEDC0": "-G0",
     "ealib/seg_2B4578": "-G0",
     "ealib/seg_2DCAE8": "-G0",
     # Library tail of .text (0x3EDF50-0x42E590), split by the same evidence: seg_2F0F40, seg_313F58 (C library:
