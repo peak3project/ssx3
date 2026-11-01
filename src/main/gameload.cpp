@@ -393,7 +393,43 @@ extern "C" void func_00230360(void* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_00230430);
+#ifdef SKIP_ASM
+// PORT: func_00308B58 is declared with one argument; it forwards the section id in $a1 to func_00308B78
+void* func_00308B58_2(void* self, int sectionId) __asm__("func_00308B58__FPv");
+
+struct sScriptSection_0430 {
+    short state;
+    short pad;
+    int f4;
+    void* data;
+};
+
+struct sScriptCache_0430 {
+    int f0;
+    sScriptSection_0430* sections;
+};
+
+struct sWorldCache_0430 {
+    int f0;
+    sScriptCache_0430* scripts;
+};
+
+extern sWorldCache_0430* D_004A47B8_0430 __asm__("D_004A47B8");
+
+static inline bool isSectionLoaded_0430(sScriptCache_0430* c, int sectionId)
+{
+    return c->sections[sectionId].state >= 2 && c->sections[sectionId].data != 0;
+}
+
+extern "C" void func_00230430(void* self, int sectionId)
+{
+    if (isSectionLoaded_0430(D_004A47B8_0430->scripts, sectionId)) {
+        func_00308B58_2(D_004A3DD8, sectionId);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", cGame_exit);
