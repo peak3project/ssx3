@@ -4752,7 +4752,136 @@ extern "C" void func_00166550(void* self_, float a, float b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00166640);
+#ifdef SKIP_ASM
+extern "C" float func_0031C228(float x);
+extern "C" float func_0031C128(float x);
+
+struct sVec_166640 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+extern sVec_166640 D_004FF140_166640 __asm__("D_004FF140");
+extern sVec_166640 D_004FF150_166640 __asm__("D_004FF150");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec_166640 Sub_166640(const sVec_166640& a, const sVec_166640& b)
+{
+    sVec_166640 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_166640(const sVec_166640& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_166640(const sVec_166640& a, const sVec_166640& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product, second vector through an address register).
+static inline float DotP_166640(const sVec_166640& a, const sVec_166640& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "o"(b));
+    return r;
+}
+
+// PORT: PS2 sqrt.s asm helper; use sqrtf on PC.
+static inline float Sqrt_166640(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline float Angle_166640(const sVec_166640& a, const sVec_166640& b)
+{
+    float l = Sqrt_166640(Dot_166640(a, a) * Dot_166640(b, b));
+    if (l < 0.0010000000474974513f)
+        return 0.0f;
+    float c = Dot_166640(a, b) / l;
+    c = (c >= -1.0f) ? (c <? 1.0f) : -1.0f;
+    return 1.5707963705062866f - func_0031C128(c);
+}
+
+extern "C" void func_00166640_def(char* self) __asm__("func_00166640");
+extern "C" void func_00166640_def(char* self)
+{
+    const sVec_166640& off0 = Sub_166640(*(sVec_166640*)(self + 0x20), *(sVec_166640*)(self + 0x40));
+    sVec_166640 off = off0;
+    float* p = (float*)(self + 0x50);
+    float z = off.z;
+    off.z = 0.0f;
+    float len = Length_166640(off);
+    *(float*)(self + 0x54) = -func_0031C228(z / len);
+    if (0.0f < len) {
+        float r;
+        if (0.0f < DotP_166640(off, D_004FF150_166640)) {
+            r = Angle_166640(off, D_004FF140_166640);
+        } else {
+            r = 6.2831854820251465f - Angle_166640(off, D_004FF140_166640);
+        }
+        *p = r;
+    } else {
+        *p = 0.0f;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_001668B8);
