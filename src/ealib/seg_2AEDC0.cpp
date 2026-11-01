@@ -1097,7 +1097,43 @@ extern "C" int func_003AF560(unsigned char **pp, unsigned int *plen, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AF670);
+#ifdef SKIP_ASM
+extern "C" void func_003AF300(char** pp, unsigned int* plen);
+
+extern "C" void func_003AF670(char** pp, unsigned int* plen, char** keys, unsigned int* keyLens,
+                              unsigned int nkeys, unsigned int* index)
+{
+    char* s = *pp;
+    unsigned int i;
+    unsigned int k;
+    unsigned int j;
+
+    if (s == 0) {
+        *pp = 0;
+        *plen = 0;
+        *index = 0xFFFFFFFF;
+        return;
+    }
+    func_003AF300(&s, plen);
+    for (i = 0; i < *plen; i++) {
+        for (k = 0; k < nkeys; k++) {
+            for (j = 0; j < keyLens[k] && i + j < *plen && keys[k][j] == s[i + j]; j++) {
+            }
+            if (j == keyLens[k]) {
+                *pp = s + (i + j);
+                *plen = *plen - (i + j);
+                *index = k;
+                return;
+            }
+        }
+    }
+    *pp = 0;
+    *plen = 0;
+    *index = 0xFFFFFFFF;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AF7F0);
 //100%
