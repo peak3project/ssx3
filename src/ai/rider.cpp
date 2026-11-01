@@ -2572,11 +2572,14 @@ extern "C" float func_00122C88(void) {
 //100%
 INCLUDE_ASM("ai/rider", func_00122C98);
 #ifdef SKIP_ASM
+static inline int outsideRange_122C98(float v, const float& lim)
+{
+    return v >= lim || v < -lim;
+}
+
 extern "C" int func_00122C98(cRider* self)
 {
-    float v = self->unk_5B4;
-    float k = 0.9250819683074951f;
-    return v >= k || v < -k;
+    return outsideRange_122C98(self->unk_5B4, 0.9250819683074951f);
 }
 #endif
 
