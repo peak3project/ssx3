@@ -1896,13 +1896,8 @@ extern "C" V3_E0C0 func_002FE0C0(int n, Ent_E0C0 *e) {
         D_E0C0[1] = 0xFFFFFFFF;
         ((int*)D_E0C0)[2] = 3;
         *(float*)&D_E0C0[3] = 20.0f;
-        float z = 0.0f;
-        *(float*)&D_E0C0[4] = z;
-        *(float*)&D_E0C0[5] = z;
         *(float*)&D_E0C0[6] = 1.0f;
-        *(float*)&D_E0C0[7] = z;
-        *(float*)&D_E0C0[8] = z;
-        *(float*)&D_E0C0[9] = z;
+        *(float*)&D_E0C0[9] = *(float*)&D_E0C0[8] = *(float*)&D_E0C0[7] = *(float*)&D_E0C0[5] = *(float*)&D_E0C0[4] = 0.0f;
         ((int*)D_E0C0)[10] = 1;
         ((int*)D_E0C0)[11] = 2;
         D_004A5618 = 1;
