@@ -2153,8 +2153,7 @@ extern "C" unsigned int func_003B13A8(void)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B13D8);
 #ifdef SKIP_ASM
-// PORT: func_003B1498 takes no arguments (the unit declares it void*(void*)); bound by asm label
-extern "C" void func_003B1498_noarg(void) __asm__("func_003B1498");
+extern "C" void func_003B1498(void);
 extern "C" void func_003B14F0(void);
 extern "C" void group_of_pictures_header(void);
 extern "C" void func_003B17A8(void);
@@ -2162,7 +2161,7 @@ extern "C" void func_003B17A8(void);
 extern "C" int func_003B13D8(void)
 {
     for (;;) {
-        func_003B1498_noarg();
+        func_003B1498();
         switch ((int)func_003B13A8()) {
         case 0x1B3:
             func_003B14F0();
@@ -2185,10 +2184,7 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1498);
 #ifdef SKIP_ASM
 extern "C" void func_003B1290(int n);
 
-// PORT: no return value here; the unit declares it void* and callers forward $v0.
-void func_003B1498_impl(void* self) __asm__("func_003B1498");
-
-void func_003B1498_impl(void* self)
+extern "C" void func_003B1498(void)
 {
     func_003B1290(D_0050A088->count & 7);
     while (func_003B1258(0x18) != 1) {
@@ -2316,7 +2312,7 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1988);
 #ifdef SKIP_ASM
 extern "C" unsigned int func_003B1258(int a0);
 extern "C" void func_003B1340(void);
-extern "C" void func_003B1498_v(void) __asm__("func_003B1498");
+extern "C" void func_003B1498(void);
 extern "C" void func_003B2380_v(void) __asm__("func_003B2380__FPv");
 extern "C" void func_003B1AB0(void);
 extern "C" void func_003B1CC0(void);
@@ -2332,7 +2328,7 @@ extern "C" void copyright_extension(void);
 extern "C" void func_003B1988(void)
 {
     unsigned int tok;
-    func_003B1498_v();
+    func_003B1498();
     while ((tok = func_003B1258(0x20)) == 0x1B5 || tok == 0x1B2) {
         if (tok == 0x1B5) {
             func_003B1340();
@@ -2348,7 +2344,7 @@ extern "C" void func_003B1988(void)
             case 4: copyright_extension(); break;
             case 6: break;
             }
-            func_003B1498_v();
+            func_003B1498();
         } else {
             func_003B1340();
             func_003B2380_v();
@@ -2695,15 +2691,14 @@ int func_003B2360(void* self)
 }
 #endif
 
-extern "C" void* func_003B1498(void* self);
-
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B2380__FPv);
 #ifdef SKIP_ASM
-void* func_003B2380(void* self)
+void func_003B2380(void* self)
 {
-    return func_003B1498(self);
+    func_003B1498();
 }
+
 #endif
 
 //100%
