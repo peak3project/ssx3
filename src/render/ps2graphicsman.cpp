@@ -995,10 +995,9 @@ extern "C" void func_00369098(void* self, int idx)
             func_00366E30((char*)self + 0x4350, idx);
         }
     }
-    int v = -1;
     int* a = (int*)((char*)self + 0x1F4C);
-    for (int i = 1; i >= 0; i--) {
-        a[i] = v;
+    for (int i = 0; i < 2; i++) {
+        a[i] = -1;
     }
     *(int*)((char*)self + 0x1F54) = -1;
 }
