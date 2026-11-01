@@ -2474,11 +2474,10 @@ INCLUDE_ASM("input/inputparse", func_00327810__FPv);
 #ifdef SKIP_ASM
 void* func_00327810(void* self)
 {
-    int t0 = 0;
-    *(int*)self = t0;
-    *(int*)((char*)self + 0x4) = t0;
-    *(int*)((char*)self + 0x8) = t0;
-    *(int*)((char*)self + 0xc) = t0;
+    *(int*)self = 0;
+    *(int*)((char*)self + 0x4) = 0;
+    *(int*)((char*)self + 0x8) = 0;
+    *(int*)((char*)self + 0xc) = 0;
     return self;
 }
 #endif
