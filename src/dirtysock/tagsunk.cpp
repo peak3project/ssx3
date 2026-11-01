@@ -498,6 +498,14 @@ struct sAppA1D0 { char pad[0x78]; void* mBE; };
 
 struct sVEntryA1D0 { short delta; short index; int (*fn)(void*); };
 
+static inline void postMsg_A1D0(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    post_A1D0(self, m);
+}
+
 extern "C" void func_0025A1D0(char* self, char* msg)
 {
     char name[0x100];
@@ -577,12 +585,8 @@ extern "C" void func_0025A1D0(char* self, char* msg)
             vt[1].fn(ri + vt[1].delta);
         }
     }
-    int type = 0xEF;
     func_00259098(func_002591D0(), *(int*)(self + 0xA4), 0);
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    post_A1D0(self, m);
+    postMsg_A1D0(self, 0xEF);
 }
 #endif
 
