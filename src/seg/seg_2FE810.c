@@ -7946,7 +7946,151 @@ int func_0040C928(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C980);
+#ifdef SKIP_ASM
+struct KbData_C980 { int led; int mod; int n; unsigned short keys[62]; };
+struct KbRep_C980 { int state; int cnt; int delay; int rate; unsigned short last; };
+struct KbEnt_C980 { int f0; int f4; int f8; int mode; struct KbRep_C980 rep; char pad[0x38 - 0x24]; };
+struct KbG_C980 { int n; struct KbEnt_C980 *e; struct KbData_C980 prev; int f90; int idx; struct KbData_C980 *out; };
+extern struct KbG_C980 G_C980 __asm__("D_00529000");
+extern unsigned char D_00529140[];
+extern unsigned char D_00529008[];
+extern int func_0040D010(int);
+extern int func_0040D040(int, unsigned short);
+extern int func_0040D0B0(int, unsigned short *);
+extern int func_0040D118(int, unsigned char, unsigned char, int, unsigned short *, unsigned short *);
+int func_0040C980(void) {
+    struct KbData_C980 cur;
+    unsigned short tmp[64];
+    unsigned short key;
+    unsigned char *s = D_00529140;
+    struct KbData_C980 *out = G_C980.out;
+    struct KbEnt_C980 *e = &G_C980.e[G_C980.idx];
+    struct KbRep_C980 *r = &e->rep;
+    int i, j, k;
+    if (s[1] == 0xFF)
+        return -1;
+    if (e->mode == 1) {
+        out->led = s[0];
+        out->n = s[1];
+        out->mod = s[2];
+        if (out->n == 0)
+            return 0;
+        j = 0;
+        for (i = 0; i < out->n; i++) {
+            if (s[4 + i])
+                out->keys[j++] = s[4 + i];
+        }
+        out->n = j;
+        if (j == 0) {
+            out->keys[0] = 0;
+            out->n = 1;
+        }
+        func_0040D118(G_C980.idx, out->mod, out->led, out->n, out->keys, out->keys);
+        return 0;
+    }
+    switch (r->state) {
+    case 1:
+        if (r->cnt >= r->delay) {
+            r->cnt = 0;
+            func_0040D010(G_C980.idx);
+            if (r->delay >= 2)
+                func_0040D040(G_C980.idx, 0);
+            func_0040D040(G_C980.idx, r->last);
+            if (r->rate >= 2)
+                func_0040D040(G_C980.idx, 0);
+            r->state = 2;
+        }
+        break;
+    case 2:
+        if (r->cnt >= r->rate) {
+            r->cnt = 0;
+            func_0040D040(G_C980.idx, r->last);
+            if (r->rate >= 2)
+                func_0040D040(G_C980.idx, 0);
+        }
+        break;
+    case 0:
+        break;
+    }
+    if (s[1] == 0) {
+        if (func_0040D0B0(G_C980.idx, &key) == 0) {
+            out->n = 1;
+            out->keys[0] = key;
+            out->led = G_C980.prev.led;
+            out->mod = G_C980.prev.mod;
+        } else {
+            out->n = 0;
+        }
+        return 0;
+    }
+    if (s[4] == 1) {
+        r->state = 0;
+        out->n = 0;
+        return 0;
+    }
+    cur.led = s[0];
+    cur.n = s[1];
+    cur.mod = s[2];
+    j = 0;
+    for (i = 0; i < cur.n; i++) {
+        if (s[4 + i])
+            cur.keys[j++] = s[4 + i];
+    }
+    cur.n = j;
+    func_0040D010(G_C980.idx);
+    if (cur.keys[0] == 0 || cur.mod != G_C980.prev.mod) {
+        out->keys[0] = 0;
+        out->n = 1;
+        r->last = 0;
+        out->led = cur.led;
+        out->mod = cur.mod;
+        r->state = 0;
+    } else {
+        if (G_C980.prev.keys[0] != 0) {
+            k = 0;
+            for (i = 0; i < cur.n; i++) {
+                for (j = 0; j < G_C980.prev.n && cur.keys[i] != G_C980.prev.keys[j]; j++)
+                    ;
+                if (j == G_C980.prev.n)
+                    out->keys[k++] = cur.keys[i];
+            }
+            out->n = k;
+        } else {
+            for (i = 0; i < cur.n; i++)
+                out->keys[i] = cur.keys[i];
+            out->n = i;
+        }
+        out->led = cur.led;
+        out->mod = cur.mod;
+        func_0040D118(G_C980.idx, out->mod, out->led, out->n, out->keys, out->keys);
+        if (out->n > 0) {
+            r->last = out->keys[out->n - 1];
+            if (r->delay > 0 && r->rate > 0)
+                r->state = 1;
+        } else {
+            func_0040D118(G_C980.idx, cur.mod, cur.led, cur.n, cur.keys, tmp);
+            for (i = 0; i < cur.n && tmp[i] != r->last; i++)
+                ;
+            if (i == cur.n) {
+                r->state = 0;
+                out->n = 1;
+                out->keys[0] = 0;
+                out->led = cur.led;
+                out->mod = cur.mod;
+            }
+        }
+    }
+    {
+        unsigned char *src = (unsigned char *)&cur;
+        unsigned char *dst = D_00529008;
+        for (i = 0; i < sizeof(cur); i++)
+            *dst++ = *src++;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040CEF8);
