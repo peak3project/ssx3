@@ -5565,7 +5565,64 @@ int func_004081D8(int *p, int *q) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408278);
+#ifdef SKIP_ASM
+// Scratchpad DMA copy: per pass, move p[3] blocks of p[4]*0x180 bytes to the scratchpad (ch 9) and back out (ch 8).
+struct S8278 { char pad0[0xD8]; unsigned fD8; int padDC; int fE0; int fE4; char padE8[0x174 - 0xE8]; int f174; };
+extern int func_0042C078();
+extern void func_0042C0C0(void);
+void func_00408278(struct S8278 *s, unsigned *p) {
+    int n;
+    unsigned src = p[0] & 0x0FFFFFFF;
+    unsigned dst = s->fD8 & 0x0FFFFFFF;
+    int size, stride, qwc;
+    int i, j, st;
+    unsigned d;
+    if (s->f174 == 3 || s->fE0 == 0) {
+        size = p[4] * 0x180;
+        qwc = size >> 4;
+        if (s->fE0 != 0)
+            stride = (s->fE0 >> 4) * 0x180;
+        else
+            stride = size;
+        n = 1;
+    } else {
+        stride = (s->fE0 >> 4) * 0xC0;
+        size = ((int)p[4] >> 1) * 0x180;
+        n = 2;
+        qwc = size >> 4;
+    }
+    for (j = 0; j < n; j++) {
+        d = dst;
+        for (i = 0; i < (int)p[3]; i++) {
+            st = func_0042C078();
+            *(volatile int *)0x1000D480 = 0;
+            *(volatile int *)0x1000D410 = src;
+            *(volatile int *)0x1000D420 = qwc;
+            *(volatile int *)0x1000D400 = 0x101;
+            if (st)
+                func_0042C0C0();
+            while (*(volatile int *)0x1000D400 & 0x100)
+                ;
+            st = func_0042C078();
+            *(volatile int *)0x1000D080 = 0;
+            *(volatile int *)0x1000D010 = d;
+            *(volatile int *)0x1000D020 = qwc;
+            *(volatile int *)0x1000D000 = 0x100;
+            if (st)
+                func_0042C0C0();
+            while (*(volatile int *)0x1000D000 & 0x100)
+                ;
+            while (*(volatile int *)0x1000D020 != 0)
+                ;
+            d += stride;
+            src += size;
+        }
+        dst += s->fE4 * 0xC0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408508);
