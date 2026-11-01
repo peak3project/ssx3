@@ -7674,7 +7674,7 @@ extern int f_72F8_3450(void *, int) __asm__("func_003C72F8");
 extern char D_0050AAF4_3450[] __asm__("D_0050AAF4");
 struct G_3450 { char pad[0xF]; char c; void *fn; };
 extern struct G_3450 D_00515B40_3450[] __asm__("D_00515B40");
-extern char D_00515B4F_3450[] __asm__("D_00515B4F");
+extern char D_00515B4F;
 extern char D_0044DD70_3450[] __asm__("D_0044DD70");
 extern char f_C878_3450[] __asm__("func_003CC878");
 
@@ -7689,11 +7689,11 @@ void func_003C3450(int arg0) {
     if (arg0 != 1) {
         func_003C0B10(2, D_0044DD70_3450, 4);
         if (*(unsigned char *)(t + 0x42) != 0)
-            D_00515B4F_3450[0] = 0;
+            D_00515B4F = 0;
     } else {
         q = *(char **)(b + 4);
         if (*(unsigned char *)(t + 0x42) != 0)
-            D_00515B4F_3450[0] = arg0;
+            D_00515B4F = arg0;
         func_003C0B10(2, q, f_72F8_3450(q + 4, 4));
     }
 }
