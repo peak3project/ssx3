@@ -1305,6 +1305,15 @@ static inline sMsgListIterBF18 sMsgListBF18_insert(sMsgListIterBF18 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_BF18(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListBF18_insert(*(sMsgListNodeBF18**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025BF18(char* self, char* msg)
 {
     char buf[0x200];
@@ -1324,12 +1333,7 @@ extern "C" void func_0025BF18(char* self, char* msg)
     }
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 5, 0x65646974, buf, (int)func_00268BF8, 20.0f);
-    int type = 0xCD;
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgListBF18_insert(*(sMsgListNodeBF18**)(self + 0xF0), mp);
+    postMsg_BF18(self, 0xCD);
 }
 #endif
 
