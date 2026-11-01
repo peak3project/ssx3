@@ -2487,7 +2487,7 @@ void func_003DFC48(char *arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DFCD8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00519C18_FCD8[] __asm__("D_00519C18");
+extern int D_00519C18;
 extern void *func_003DFCD8_impl(char *arg0) __asm__("func_003DFCD8");
 
 void *func_003DFCD8_impl(char *arg0) {
@@ -2497,13 +2497,13 @@ void *func_003DFCD8_impl(char *arg0) {
     r = 0;
     if (*(char **)(arg0 + 0x68) != 0) {
         r = *(char **)(arg0 + 0x68);
-        t = D_00519C18_FCD8[0] + 0x100;
+        t = D_00519C18 + 0x100;
         *(char **)(arg0 + 0x68) = *(char **)(r + 0xC);
-        D_00519C18_FCD8[0] = t;
+        D_00519C18 = t;
         if (t == 0) {
-            D_00519C18_FCD8[0] = 0x100;
+            D_00519C18 = 0x100;
         }
-        *(int *)r = *(unsigned char *)r | D_00519C18_FCD8[0];
+        *(int *)r = *(unsigned char *)r | D_00519C18;
     }
     MUTEX_unlock((int *)(arg0 + 4));
     return r;
