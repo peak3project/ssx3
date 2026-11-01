@@ -856,7 +856,12 @@ void cRider_addRiderMetrix(cRider* rider);
 extern char D_00457F40[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
-struct sRiderCA { char pad[0x86C]; int mIndex; int mCtrl; };
+struct sRiderCA {
+    char pad[0x86C];
+    int mIndex;
+    int mCtrl;
+    void setCtrl(int c) { mCtrl = c; }
+};
 struct sVEntryCA { short delta; short index; void (*fn)(void*); };
 
 struct sAiObj129FF8
@@ -890,9 +895,7 @@ extern "C" void cAI_initComputerActors(void* p)
         func_001473D0(iface, idx, 0);
         sVEntryCA* vt = *(sVEntryCA**)(iface + 0xC);
         vt[1].fn(iface + vt[1].delta);
-        sRiderCA* r2 = self->mRiders[idx];
-        int m1 = -1;
-        r2->mCtrl = m1;
+        self->mRiders[idx]->setCtrl(-1);
         cRider_addRiderMetrix(*(cRider**)(obj + 0x18));
         self->mObjs[self->mNumActors] = obj;
         self->mNumActors++;
