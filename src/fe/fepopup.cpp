@@ -2703,15 +2703,14 @@ extern char D_004661F8[];
 
 extern "C" void cBuyPopupInfo_initBuyBolt(int* self, int a1, int a2, int a3)
 {
-    int three = 3;
     int h = GetHashValue32(D_004662B8);
     self[4] = a1;
-    self[5] = three;
+    self[5] = 3;
     self[3] = 2;
     self[6] = h;
     h = GetHashValue32(D_004661F8);
     self[1] = a3;
-    self[7] = three;
+    self[7] = 3;
     self[0] = a2;
     self[2] = -1;
     self[8] = h;
