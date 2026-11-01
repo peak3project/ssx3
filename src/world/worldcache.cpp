@@ -1305,7 +1305,65 @@ extern "C" void func_003A8CD0(sWorldCache8CD0* self, int group, int id, unsigned
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A8E20);
+#ifdef SKIP_ASM
+struct sWCVt_8E20 {
+    short delta;
+    short index;
+    void* (*fn)(void*, int, unsigned int, char*);
+};
+
+struct sWCObj_8E20 {
+    int f0;
+    int f4;
+    sWCVt_8E20* vt;             // 0x8
+};
+
+struct sWorldCache_8E20 {
+    int f0;
+    sBxBank_8AA8* global;       // 0x4
+    sBxBank_8AA8** banks;       // 0x8
+    char padC[0x3E8 - 0xC];
+    sWCObj_8E20* obj;           // 0x3E8
+};
+
+// Drops one reference; on the last one returns the stored data pointer and clears it.
+static inline char* release_8E20(sBxRef_8AA8* r)
+{
+    if (--r->refs == 0) {
+        unsigned int v = *(unsigned int*)r;
+        char* d = (char*)((v >> 8) << 2);
+        *(unsigned int*)r = v & 0xFF;
+        return d;
+    }
+    return 0;
+}
+
+extern "C" void rel_8E20(sWorldCache_8E20* self, int cell, int type, unsigned int key) __asm__("func_003A8E20");
+extern "C" void rel_8E20(sWorldCache_8E20* self, int cell, int type, unsigned int key)
+{
+    int bank = key & 0xFF;
+    unsigned int id = key >> 8;
+    sBxBank_8AA8* b;
+    if (bank == 0xFF)
+        b = self->global;
+    else
+        b = self->banks[bank];
+    char* p = release_8E20(&b->types[type].refs[id]);
+    if (p != 0) {
+        if (p == (char*)&D_004A47D0) {
+            sWCObj_8E20* o = self->obj;
+            p = (char*)o->vt[4].fn((char*)o + o->vt[4].delta, type, key, 0);
+        } else {
+            sWCObj_8E20* o = self->obj;
+            p = (char*)o->vt[4].fn((char*)o + o->vt[4].delta, type, key, p);
+        }
+        if (p != 0 && bank == 0xFF)
+            cMemMan_free(p);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A8F10);
