@@ -377,7 +377,22 @@ extern "C" int func_003AE718(void *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AE780);
+#ifdef SKIP_ASM
+extern "C" unsigned int func_003AE9A0_E780(void* self) __asm__("func_003AE9A0");
+extern "C" float func_003B05C0(void*);
+
+extern "C" int func_003AE780(char* self)
+{
+    unsigned int t = func_003AE9A0_E780(self);
+    float s = func_003B05C0(*(void**)(self + 0x64));
+    *(float*)(self + 0x48) = (float)(t + *(unsigned int*)(self + 0x40)) * 0.001f * s;
+    if (*(float*)(self + 0x48) < (float)*(unsigned int*)(self + 0x44) + 1.0f)
+        return 0;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AE860);
