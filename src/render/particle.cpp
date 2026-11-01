@@ -7418,10 +7418,9 @@ extern "C" int func_004139F8(float f);
 
 extern "C" void func_00389098(void* self, const float* c)
 {
-    float k = 255.0f;
-    int r = func_004139F8(c[0] * k);
-    r |= func_004139F8(c[1] * k) << 8;
-    r |= func_004139F8(c[2] * k) << 16;
+    int r = func_004139F8(c[0] * 255.0f);
+    r |= func_004139F8(c[1] * 255.0f) << 8;
+    r |= func_004139F8(c[2] * 255.0f) << 16;
     *(int*)((char*)self + 0x6AE0) = r;
 }
 #endif
