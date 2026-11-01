@@ -2389,6 +2389,22 @@ INCLUDE_ASM("ai/ai", func_0012C408);
 extern "C" float func_00115AB0(void* rider);
 extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
+static inline float approach_C408(float v, float target, float step)
+{
+    float n;
+    if (v > target + step)
+    {
+        n = v - step;
+    }
+    else
+    {
+        n = target;
+        if (v < target - step)
+            n = v + step;
+    }
+    return n;
+}
+
 extern "C" void func_0012C408(void* self, void* a1)
 {
     float v = func_00115AB0(*(void**)((char*)self + 0x14));
@@ -2396,20 +2412,7 @@ extern "C" void func_0012C408(void* self, void* a1)
     *(float*)(r + 0x2CC) = 0.0f;
     *(float*)(r + 0x2D0) = v;
     *(float*)(r + 0x2C8) = v;
-    float d = 0.015000001527369022f;
-    float t = *(float*)((char*)self + 0x10);
-    float n;
-    if (t > 1.0149999856948853f)
-    {
-        n = t - d;
-    }
-    else
-    {
-        n = 1.0f;
-        if (t < 0.9850000143051147f)
-            n = t + d;
-    }
-    *(float*)((char*)self + 0x10) = n;
+    *(float*)((char*)self + 0x10) = approach_C408(*(float*)((char*)self + 0x10), 1.0f, 0.015000001527369022f);
     func_00113F88(*(void**)((char*)self + 0x14), 1.0f, 0.0f);
     if (func_0011FE98(*(void**)((char*)self + 0x14)) == 3 && *(float*)((char*)self + 0x10) >= 0.6200000047683716f)
     {
