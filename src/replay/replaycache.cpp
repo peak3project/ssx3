@@ -128,7 +128,41 @@ extern "C" void func_00270238(void* self, void* node)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00270280);
+#ifdef SKIP_ASM
+struct sS270280 {
+    int state;
+    char pad4[0x3CC - 4];
+    int f3CC;
+    char pad3D0[0x484 - 0x3D0];
+    int f484;
+    char pad488[0x604 - 0x488];
+    int f604;
+};
+extern "C" int func_00270280(sS270280* self)
+{
+    int r = 0;
+    switch (self->state) {
+    case 0: case 2: case 10: case 11: case 12: case 13: case 14: case 15:
+        break;
+    case 1:
+    case 7:
+        if (self->f604 == 0)
+            r = 1;
+        if (self->f484 >= self->f3CC)
+            r = 1;
+        break;
+    case 4:
+        r = self->f484 >= self->f3CC;
+        break;
+    case 3: case 5: case 6: case 8: case 9:
+        r = 1;
+        break;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_002702F8);
