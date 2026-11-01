@@ -681,13 +681,12 @@ extern "C" void func_001877B0(void)
     unsigned short name[0x14];
     unsigned short desc[0x10];
     unsigned short fmt[8];
-    int five = 5;
-    D_004A14BC = five;
-    *(int*)((char*)D_004A14B8 + 0x1C0) = five;
+    D_004A14BC = 5;
+    *(int*)((char*)D_004A14B8 + 0x1C0) = 5;
     cBE_getInterface_Fv(cBE_getBE(), 5);
     void* mp = func_00227F80(D_004A28A8);
     *(int*)((char*)D_004A14B8 + 0x1BC) = 0;
-    D_004A14BC = five;
+    D_004A14BC = 5;
     func_0023CAA0(mp, func_00152BA8());
     func_0023C8F0(mp, 1);
     void* s1 = D_004A14B8;
