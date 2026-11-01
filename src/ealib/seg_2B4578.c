@@ -281,7 +281,17 @@ int func_003B4218(int a0, int a1, int a2, int a3, int kind) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B42B0);
+#ifdef SKIP_ASM
+int func_003B42B0(int x, int y, int w) {
+    int c = ((y & 0x70) >> 1) + ((x & 7) ^ ((y & 2) << 1) ^ (y & 4));
+    int lo = (x & 0x18) + ((y & 2) << 1);
+    y = ((y >> 7) << 5) + (((x & 0x60) >> 2) + ((y & 0xC) >> 1) + (y & 1));
+    x = ((x >> 7) << 6) + c;
+    return ((y * w / 2 + x) << 5) + lo;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4338);
 
