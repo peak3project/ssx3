@@ -101,6 +101,21 @@ if not sys.platform.startswith("linux") or not os.path.isfile(f"{EE_GCC29_DIR}/b
     if UNIT_CC_NATIVE:
         print(f"warning: {EE_GCC29_DIR}/bin/ee-gcc missing or not on Linux; ee-gcc 2.9 units build with the default compiler")
     UNIT_CC_NATIVE = {}
+# Fork-only: ee-gcc 2.9 units whose retail objects were assembled by a reorder-mode assembler that moves the previous
+# instruction into an unfilled branch delay slot (gas 2.9-era behaviour). The ee-as of 2.9-ee-991111 never does, so
+# cc1's `lw; jal; nop` after a volatile access (libcdvd sema reads) stays one instruction longer than retail. For these
+# units tools/cc_native.py runs its opt-in fill pass (flag --fill-delay-slots, passed in the unit's cflags and consumed
+# there) on the compiler's assembly before assembling it. Default off; every function already matched in the seven
+# ee-gcc 2.9 units is unchanged by the pass (full-unit check, 2026-11-01).
+UNIT_AS_SWAP = {
+    "seg/seg_2FE810",
+    "seg/seg_3113A0_eh",
+    "seg/seg_312310",
+    "seg/seg_313800_exception",
+    "seg/seg_313F58",
+    "seg/seg_315B68_tinfo",
+    "seg/seg_325220",
+} & set(UNIT_CC_NATIVE)
 # Fork-only: units whose retail code was assembled with SN's own Ps2EeAs, not the driver's GNU as. In the newlib unit
 # only Ps2EeAs reproduces `li -1; dsrl32` for `dli 0xffffffff`, its ori/dsll16/dsll14 64-bit constant chains and its
 # short-loop nops in loops with an inner exit branch (all 23 retail `addiu -1; dsrl32 0` pairs are in this unit).
@@ -524,6 +539,8 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                 unit_flags = (COMMON_CXXFLAGS + " " + unit_flags).strip()
             if seg.name in UNIT_CC_NATIVE:
                 task, tvars = ("cc_native", {"ccdir": UNIT_CC_NATIVE[seg.name]})
+                if seg.name in UNIT_AS_SWAP:
+                    unit_flags = (unit_flags + " --fill-delay-slots").strip()
             elif seg.name in UNIT_CC:
                 task, tvars = ("cc_unit", {"ccdir": UNIT_CC[seg.name]})
             else:
