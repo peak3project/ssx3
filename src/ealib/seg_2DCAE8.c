@@ -1357,22 +1357,22 @@ extern char *strcpy_DE78(char *, char *) __asm__("strcpy");
 extern int func_00416B18_DE78(char *, char *, int) __asm__("func_00416B18");
 extern char* func_004162D0(char *, char *);
 extern char *D_00450C50_DE78[] __asm__("D_00450C50");
-extern char *D_00450C08_DE78[] __asm__("D_00450C08");
-extern int D_00450C44_DE78[] __asm__("D_00450C44");
-extern int D_00450C48_DE78[] __asm__("D_00450C48");
+extern char *D_00450C08;
+extern int D_00450C44;
+extern int D_00450C48;
 extern char D_00519AF0_DE78[] __asm__("D_00519AF0");
 extern char D_00495D78_DE78[] __asm__("D_00495D78");
 
 void func_003DDE78(char *a) {
     int n, len;
     n = strlen_DE78(D_00450C50_DE78[0]);
-    if (func_00416B18_DE78(a, D_00450C08_DE78[0], 3) == 0) {
-        if ((D_00450C48_DE78[0] & 3) == 2) return;
-        D_00450C44_DE78[0] = 1;
+    if (func_00416B18_DE78(a, D_00450C08, 3) == 0) {
+        if ((D_00450C48 & 3) == 2) return;
+        D_00450C44 = 1;
         a += 3;
     } else if (func_00416B18_DE78(a, D_00450C50_DE78[0], n) == 0) {
-        if (!(D_00450C48_DE78[0] & 2)) return;
-        D_00450C44_DE78[0] = 2;
+        if (!(D_00450C48 & 2)) return;
+        D_00450C44 = 2;
         a += n;
     }
     strcpy_DE78(D_00519AF0_DE78, a);
@@ -4356,22 +4356,22 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3020);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void SYNCTASK_add(void (*)(void), int, int);
 extern int func_003E33B0(void);
-extern int D_00450C44_3020[] __asm__("D_00450C44");
-extern int D_00450C48_3020[] __asm__("D_00450C48");
+extern int D_00450C44;
+extern int D_00450C48;
 
 void func_003E3020(int arg0, int arg1) {
     int temp_3;
 
-    D_00450C48_3020[0] = 0;
+    D_00450C48 = 0;
     SYNCTASK_add(func_003E33B0, 0, 0);
-    temp_3 = D_00450C48_3020[0];
-    D_00450C48_3020[0] = temp_3 | 2;
+    temp_3 = D_00450C48;
+    D_00450C48 = temp_3 | 2;
     if (arg1 != 0) {
-        D_00450C48_3020[0] = temp_3 | 3;
-        D_00450C44_3020[0] = 1;
+        D_00450C48 = temp_3 | 3;
+        D_00450C44 = 1;
         return;
     }
-    D_00450C44_3020[0] = 2;
+    D_00450C44 = 2;
 }
 #endif
 
@@ -4383,24 +4383,24 @@ extern int strlen_3098(char *) __asm__("strlen");
 extern int func_00416B18_3098(char *, char *, int) __asm__("func_00416B18");
 extern char *func_004162D0(char *, char *);
 extern char *D_00450C50_3098[] __asm__("D_00450C50");
-extern char *D_00450C3C_3098[] __asm__("D_00450C3C");
-extern int D_00450C44_3098[] __asm__("D_00450C44");
+extern char *D_00450C3C;
+extern int D_00450C44;
 extern char D_00519AF0_3098[] __asm__("D_00519AF0");
 
 void func_003E3098(char *path, char *out, int *kind) {
     int k;
     out[0] = 0;
-    k = D_00450C44_3098[0];
+    k = D_00450C44;
     if (strchr_3098(path, 0x3A) != 0) {
         int n = strlen_3098(D_00450C50_3098[0]);
-        if (func_00416B18_3098(path, D_00450C3C_3098[0], 3) == 0) {
+        if (func_00416B18_3098(path, D_00450C3C, 3) == 0) {
             k = 1;
             path += 3;
         } else if (func_00416B18_3098(path, D_00450C50_3098[0], n) == 0) {
             path += n;
             k = 2;
         } else {
-            if (D_00450C44_3098[0] == 1) return;
+            if (D_00450C44 == 1) return;
             if (path[2] != 0x3A) return;
         }
     }
