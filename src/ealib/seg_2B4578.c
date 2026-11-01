@@ -687,14 +687,14 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B5478);
 extern void func_003BC910(void);
 extern void SYNCTASK_add_5478(void *, int, int) __asm__("SYNCTASK_add");
 extern void func_003E4A30_5478(void *) __asm__("func_003E4A30");
-extern int D_0044C464_C464[] __asm__("D_0044C464");
+extern int D_0044C464;
 extern void (*D_0050A9B0_A9B0[])() __asm__("D_0050A9B0");
 
 int func_003B5478(void) {
     D_0050A9B0_A9B0[0] = func_003B5470;
-    if (D_0044C464_C464[0] == 0) {
+    if (D_0044C464 == 0) {
         SYNCTASK_add_5478(func_003B5450, 0, 1);
-        D_0044C464_C464[0] = 1;
+        D_0044C464 = 1;
     }
     func_003E4A30_5478(func_003BC910);
     return 0;
