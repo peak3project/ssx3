@@ -1035,7 +1035,73 @@ extern "C" void func_0032C630(void* self, void* v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C648);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 inline asm; the PC port needs a C fallback (4x4 matrix * vector).
+static inline sSphereVec4 mtxMulVec_C648(sSphereVec4* m, const sSphereVec4& v)
+{
+    sSphereVec4 r;
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        ".set pop\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sSphereVec4 scale_C648(const sSphereVec4& v, float s)
+{
+    sSphereVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+struct sVec3_C648 {
+    float x, y, z;
+    sVec3_C648(float a, float b, float c) { x = a; y = b; z = c; }
+};
+
+struct sVec4_C648 : sSphereVec4 {
+    sVec4_C648(const sVec3_C648& v, const float& ww) { x = v.x; y = v.y; z = v.z; w = ww; }
+};
+
+extern sSphereVec4 D_004FF640[8];
+
+extern "C" void func_0032C648(void* self, sSphereVec4* m, float scale)
+{
+    sSphereVec4* pos = (sSphereVec4*)self;
+    sSphereVec4* neg = (sSphereVec4*)((char*)self + 0x70);
+    for (int i = 0; i < 4; i++) {
+        pos[i] = mtxMulVec_C648(m, scale_C648(D_004FF640[i], scale));
+        neg[-i] = scale_C648(pos[i], -1.0f);
+    }
+    float* n = *(float**)((char*)self + 0x98);
+    *(sSphereVec4*)((char*)self + 0x80) = mtxMulVec_C648(m, sVec4_C648(sVec3_C648(n[5] * scale, n[6] * scale, n[7] * scale), 1.0f));
+    *(float*)((char*)self + 0x90) = scale;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C770);
