@@ -234,7 +234,67 @@ unsigned func_003FD2B8(int *p, unsigned n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD2F8);
+#ifdef SKIP_ASM
+struct sHiEnt { unsigned int idx; unsigned int val; };
+extern int func_003FD6E0(int*, int, char*);
+void func_003FD2F8(int oi, char* n1, char* n2, int ci) {
+    int* o = (int*)oi;
+    int* ctx = (int*)ci;
+    char tmp[0x100];
+    struct sHiEnt hi[31];
+    struct sShdr* tsec;
+    struct sShdr* rsec;
+    tsec = func_003FD210(o, n1);
+    rsec = func_003FD210(o, n2);
+    if (tsec != 0 && rsec != 0) {
+        unsigned int cnt = 0;
+        unsigned int n = (unsigned int)rsec->size >> 3;
+        unsigned int* ent = (unsigned int*)(o[0] + rsec->offset);
+        unsigned int* data = (unsigned int*)(o[0] + tsec->offset);
+        unsigned int i;
+        for (i = 0; i < n; i++, ent += 2) {
+            unsigned int idx = ent[0] >> 2;
+            unsigned int type = ent[1] & 0xFF;
+            unsigned int val = data[idx];
+            unsigned int sym = func_003FD6E0(o, ent[1] >> 8, tmp);
+            if (sym >= (unsigned int)ctx[1] && sym < (unsigned int)ctx[1] + ctx[0]) {
+                sym = *(unsigned int*)(sym - ctx[1] + ctx[2]);
+            }
+            switch (type) {
+            case 2:
+                val += sym;
+                data[idx] = val;
+                break;
+            case 4:
+                val += sym >> 2;
+                data[idx] = val;
+                break;
+            case 5:
+                if (cnt < 31) {
+                    hi[cnt].idx = idx;
+                    hi[cnt].val = val;
+                    cnt++;
+                }
+                break;
+            case 6: {
+                unsigned int j;
+                unsigned int carry;
+                sym += ((hi[0].val & 0xFFFF) << 16) + (short)val;
+                data[idx] = (val & 0xFFFF0000) | (sym & 0xFFFF);
+                carry = (sym & 0x8000) != 0;
+                for (j = 0; j < cnt; j++) {
+                    data[hi[j].idx] = (hi[j].val & 0xFFFF0000) | ((sym >> 16) + carry);
+                }
+                cnt = 0;
+                break;
+            }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FDDC8", func_003FD558);
