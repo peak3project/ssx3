@@ -206,7 +206,76 @@ extern "C" void func_0036A020(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036A048);
+#ifdef SKIP_ASM
+struct sV4_A048 {
+    float x, y, z, w;
+    sV4_A048() {}
+    sV4_A048(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sBezVert_A048 {
+    float st[4];                    // 0x00
+    int rgba[4];                    // 0x10
+    sV4_A048 pos;                   // 0x20
+};
+
+struct sGmVE_A048 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, sBezVert_A048*, int);
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector).
+static inline sV4_A048 vu0MtxMul_A048(const sV4_A048* m, const sV4_A048& v)
+{
+    sV4_A048 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, %2\n"
+        "lqc2         $vf5, %3\n"
+        "lqc2         $vf6, %4\n"
+        "lqc2         $vf7, %5\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "m"(m[0]), "m"(m[1]), "m"(m[2]), "m"(m[3])
+        : "memory");
+    return r;
+}
+
+// Evaluates the cubic (t^3, t^2, t, 1) * m at n evenly spaced t in [0, 1] and draws the points as one strip.
+extern "C" void func_0036A048(void* self, sV4_A048* m, float* color, int n)
+{
+    float step = 1.0f / ((float)n - 1.0f);
+    int c0 = (int)(color[1] * 128.0f);
+    int c1 = (int)(color[2] * 128.0f);
+    int c2 = (int)(color[3] * 128.0f);
+    int c3 = (int)(color[0] * 128.0f);
+    float t = 0.0f;
+    sV4_A048 pos;
+    sBezVert_A048 verts[20];
+    for (int i = 0; i < n; i++) {
+        float t2 = t * t;
+        pos = vu0MtxMul_A048(m, sV4_A048(t * t2, t2, t, 1.0f));
+        verts[i].st[0] = 0.0f;
+        verts[i].st[1] = 0.0f;
+        verts[i].st[2] = 1.0f;
+        verts[i].rgba[0] = c0;
+        verts[i].rgba[1] = c1;
+        verts[i].rgba[2] = c2;
+        verts[i].rgba[3] = c3;
+        verts[i].pos = pos;
+        t += step;
+    }
+    sGmVE_A048* vt = *(sGmVE_A048**)((char*)self + 0x10D8);
+    vt[73].fn((char*)self + vt[73].delta, n, verts, 0);
+}
+#endif
 
 extern "C" void* func_0036A1C0(int);
 
