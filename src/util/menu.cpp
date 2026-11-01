@@ -2946,7 +2946,73 @@ extern "C" cFloatMenuItem_sItem* cFloatMenuItem_cFloatMenuItem(cFloatMenuItem_sI
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/menu", func_002CDD78);
+#ifdef SKIP_ASM
+extern "C" int func_002CA2B0(void* self);
+extern "C" int func_002CA3B0(void* self);
+
+// PORT: uses g++'s >? (max) operator.
+extern "C" int func_002CDD78(void* self)
+{
+    char* s = (char*)self;
+    int r = func_002CA2B0(self);
+    if (func_002CA3B0(self) != 0) {
+        return r;
+    }
+    if (r != 0) {
+        return r;
+    }
+    float d = func_002CA428_f(self) - func_002CA408_f(self);
+    int dir;
+    if (d <= -0.1f || d >= 0.1f) {
+        dir = 1;
+        if (d < 0.0f) {
+            dir = -1;
+        }
+    } else {
+        dir = 0;
+    }
+    if (dir == *(int*)(s + 0x30)) {
+        *(int*)(s + 0x2C) += 1;
+    } else {
+        *(int*)(s + 0x2C) = 0;
+        *(int*)(s + 0x30) = dir;
+    }
+    if (dir != 0) {
+        float div = 1.0f;
+        if (func_002CA488(self) != 0 && func_002CA4A8(self) != 0) {
+            div = 50.0f;
+        } else if (func_002CA488(self) != 0) {
+            div = 20.0f;
+        } else if (func_002CA4A8(self) != 0) {
+            div = 5.0f;
+        }
+        int n = *(int*)(s + 0x2C);
+        float k = (float)(n * n) * 50.0f;
+        k /= div;
+        k *= 6.944444612599909e-05f;
+        k = k >? 1.0f;
+        float step = 4.999999873689376e-05f;
+        step = k * step;
+        step /= div;
+        float* p = *(float**)(s + 0x18);
+        float v = *(float*)(s + 0x24) * *p + *(float*)(s + 0x28);
+        v += d * step * (*(float*)(s + 0x20) - *(float*)(s + 0x1C));
+        if (v < *(float*)(s + 0x1C)) {
+            v = *(float*)(s + 0x1C);
+        }
+        if (*(float*)(s + 0x20) < v) {
+            v = *(float*)(s + 0x20);
+        }
+        **(float**)(s + 0x18) = (v - *(float*)(s + 0x28)) / *(float*)(s + 0x24);
+        char* menu = *(char**)s;
+        sVEntry002CD9D8* vt = *(sVEntry002CD9D8**)(menu + 0x12C);
+        vt[4].fn(menu + vt[4].delta, self);
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/menu", func_002CDF78);
