@@ -956,7 +956,90 @@ extern "C" void func_0034A568(sFrRailA568* self, sFrNodeA568* node, sV4_A568* di
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flexrailnode", func_0034A838);
+#ifdef SKIP_ASM
+struct sFrV_A838 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sFrE_A838 {
+    sFrV_A838 pos;      // 0x00
+    char pad10[0x20];
+    sFrV_A838 axis;     // 0x30
+    char pad40[0x20];
+};
+
+struct sFrN_A838 {
+    sFrV_A838 pos;      // 0x00
+    char pad10[0x10];
+    sFrV_A838 acc;      // 0x20
+    char pad30[0x34];
+    int idx;            // 0x64
+};
+
+struct sFrR_A838 {
+    char pad0[0x70];
+    sFrE_A838* elems;   // 0x70
+};
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sFrV_A838 vu0Sub_A838(const sFrV_A838& a, const sFrV_A838& b)
+{
+    sFrV_A838 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product into dst, w = 0).
+static inline void vu0CrossTo_A838(sFrV_A838& dst, const sFrV_A838& a, const sFrV_A838& b)
+{
+    sFrV_A838 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    dst = r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add-assign).
+static inline void vu0AddEq_A838(sFrV_A838& dst, const sFrV_A838& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+extern "C" void func_0034A838(sFrR_A838* self, sFrN_A838* node)
+{
+    if (node->idx < 0)
+        return;
+    for (int i = 0; i <= node->idx; i++) {
+        sFrV_A838 c;
+        sFrV_A838 d = vu0Sub_A838(node->pos, self->elems[i].pos);
+        vu0CrossTo_A838(c, d, self->elems[i].axis);
+        vu0AddEq_A838(node->acc, c);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flexrailnode", func_0034A8C8);
