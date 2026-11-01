@@ -332,7 +332,88 @@ extern "C" void func_00113F38(void *self, float arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", func_00113F88);
+#ifdef SKIP_ASM
+// PORT: PS2-only FPU asm (absolute value).
+static inline float Abs_3F88(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: `<?` is the g++ minimum operator (EE min.s).
+static inline float Clamp_3F88(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo;
+}
+
+struct sVec4_3F88 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_3F88(const sVec4_3F88& a, const sVec4_3F88& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// Steering flips when the board points backwards: |dir| within th while tilting back, or dir < -th while tilt < th.
+static inline float flipBackwards_3F88(float b, char *self, float th)
+{
+    if (Abs_3F88(*(float *)(self + 0x214)) <= th && *(float *)(self + 0x1F0) < 0.0f)
+        return -b;
+    if (*(float *)(self + 0x214) < -th && *(float *)(self + 0x1F0) < th)
+        return -b;
+    return b;
+}
+
+extern "C" void func_00113F88(char *self, float a, float b) {
+    if (0.0f < a && *(float *)(self + 0x214) != 0.0f) {
+        *(float *)(self + 0x21C) = 0.0f;
+        *(float *)(self + 0x218) = 0.04166241362690926f;
+        return;
+    }
+    if (0.0f < b && *(float *)(self + 0x220) != 0.0f) {
+        *(float *)(self + 0x228) = 0.0f;
+        *(float *)(self + 0x224) = 0.10000182688236237f;
+        return;
+    }
+    if (0.0f < a && *(float *)(self + 0x214) != 0.0f) {
+        a = 0.0f;
+    }
+    float d = Abs_3F88(a - *(float *)(self + 0x220));
+    float v = (0.1f <= d) ? d * 0.10000182688236237f : 0.010000183247029781f;
+    *(float *)(self + 0x228) = a;
+    *(float *)(self + 0x224) = v;
+    if (0.0f < b) {
+        if (0.0f < *(float *)(self + 0x220)) {
+            b = 0.0f;
+        } else if (vu0Dot_3F88(*(sVec4_3F88 *)(self + 0x1E0), *(sVec4_3F88 *)(self + 0x3A0)) < 0.0f) {
+            b = 0.0f;
+        }
+    }
+    b = flipBackwards_3F88(b, self, 0.1f);
+    float e = Clamp_3F88(Abs_3F88(b - *(float *)(self + 0x214)), 0.1f, 1.0f);
+    *(float *)(self + 0x21C) = b;
+    *(float *)(self + 0x218) = e * 0.04166241362690926f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00114130);
