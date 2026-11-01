@@ -10342,11 +10342,12 @@ void func_003C83A0(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8430);
 #ifdef SKIP_ASM
 extern void func_003C8468();
-extern int (*D_00515B48[])(int);
+extern int (*D_00515B48)(int);
 
 void func_003C8430(int arg0) {
     func_003C8468();
-    D_00515B48[0](arg0);
+    D_00515B48(arg0);
+
 }
 #endif
 
