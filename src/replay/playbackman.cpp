@@ -396,19 +396,16 @@ struct sFrameDesc26CBB8 {
     short type;
     char a;
     char b;
+    sFrameDesc26CBB8(short t, char a_, char b_) : type(t), a(a_), b(b_) {}  // the inline ctor keeps the type in a register
 };
 
 extern "C" void func_0026CBB8(void* self)
 {
     if (*(int*)((char*)self + 0x10) == 0) {
-        int one = 1;
-        sFrameDesc26CBB8 desc;
-        desc.type = one;
-        desc.a = 0;
-        desc.b = 0;
+        sFrameDesc26CBB8 desc(1, 0, 0);
         func_0026D7D0(*(void**)(*(char**)((char*)self + 0x5C) + 0x28), (char*)self + 0x14,
                       (sPbBytes4*)&desc);
-        *(int*)((char*)self + 0x10) = one;
+        *(int*)((char*)self + 0x10) = 1;
     }
 }
 #endif
