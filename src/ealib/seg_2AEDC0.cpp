@@ -3028,7 +3028,7 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B2A68);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" int func_003B26B8(int w, int h, int fmt, int clut, int maxLevel, int extra1, int extra2);
 extern "C" void func_003B27C8(void* tex, int w, int h, int fmt, int clut, int maxLevel, int extra1, int extra2);
-extern void* (*D_0044C454[])(char* name, int size, int a2, int align, int heap);
+extern void* (*D_0044C454)(char* name, int size, int a2, int align, int heap);
 extern char D_004956B0[];
 
 extern "C" void* func_003B2A68(unsigned int w, int h, int fmt, int clut, int maxLevel, int heap, int extra1, int extra2)
@@ -3038,7 +3038,7 @@ extern "C" void* func_003B2A68(unsigned int w, int h, int fmt, int clut, int max
     int size = func_003B26B8(w, h, fmt, clut, maxLevel, extra1, extra2);
     if (size != 0) {
         sprintf(name, D_004956B0, w, h, fmt);
-        tex = D_0044C454[0](name, size, 0, 0x10, heap);
+        tex = D_0044C454(name, size, 0, 0x10, heap);
         if (tex != 0) {
             func_003B27C8(tex, w, h, fmt, clut, maxLevel, extra1, extra2);
         }
