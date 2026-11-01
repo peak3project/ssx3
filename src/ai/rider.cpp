@@ -2288,6 +2288,8 @@ struct sGsState_2680 {
 extern sGsState_2680 D_00501420_2680 __asm__("D_00501420");
 extern char D_004FF1A0[];
 extern int D_004A4540;
+// Release build: the assert compiles to nothing (gcc still emits its loop notes).
+#define ASSERT_2680(cond) do { } while (0)
 
 class cGfx_2680 {
 public:
@@ -2327,7 +2329,7 @@ struct sOverlay_2680 {
 
 extern "C" void func_00122680(void)
 {
-    do { // PORT: wrapper stands in for a compiled-out release ASSERT macro (changes loop notes/scheduling)
+    ASSERT_2680(D_004A28A8 != 0);
     if (D_004A4540 == 0) {
         sOverlay_2680* o = *(sOverlay_2680**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x24);
         o->f38 = o->f30;
@@ -2349,7 +2351,7 @@ extern "C" void func_00122680(void)
         D_004A289C_2680->stateTop--;
         int unused[4]; // PORT: stack padding (frame +16)
     }
-    } while (0);}
+}
 #endif
 
 //100%
