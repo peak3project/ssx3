@@ -21239,10 +21239,9 @@ extern "C" void func_001C3310(void* self_)
             }
         }
         int idx = *(int*)(self + 0x6E8);
-        int rows = 10;
         if (n >= 11) {
-            if (n - idx <= rows - 1) {
-                idx = n - rows;
+            if (n - idx <= 10 - 1) {
+                idx = n - 10;
             }
         }
         int i;
