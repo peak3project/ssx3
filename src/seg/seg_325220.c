@@ -734,9 +734,8 @@ extern char D_0049AB88[];
 extern char D_0049AB90[];
 void func_004254D0(double x) {
     int n = 0;
-    double z = 0.0;
-    if (func_00412500(x, z) < 0) {
-        x = func_00411F70(z, x);
+    if (func_00412500(x, 0.0) < 0) {
+        x = func_00411F70(0.0, x);
         D_00455178(0x2D);
     }
     if (func_00412500(x, 0.1) < 0) {
