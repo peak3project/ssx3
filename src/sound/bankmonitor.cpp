@@ -896,12 +896,8 @@ static inline int func_002ADDE0_match(sBmSlotDDE0* e, sBmCallbackDDE0 k)
     return k == e->callback;
 }
 
-
-// PORT: callers in this unit declare func_002ADDE0(void*, long) (the same 8 bytes as a 64-bit integer).
-void func_002ADDE0_impl(void* self, sBmCallbackDDE0 key) __asm__("func_002ADDE0");
-
 // Stops every one of the 48 monitored sounds that plays with the given callback.
-void func_002ADDE0_impl(void* self, sBmCallbackDDE0 key)
+extern "C" void func_002ADDE0(void* self, sBmCallbackDDE0 key)
 {
     for (int i = 0; i < 48; i++) {
         if (func_002ADDE0_match((sBmSlotDDE0*)((char*)self + 0x98 + i * 0x2C), key)) {
