@@ -551,6 +551,11 @@ static inline void vu0ScaleEqW7(sVec4W7& v, float s)
         : "m"(v), "f"(s));
 }
 
+static inline float scale_7750(float v, const float& k)
+{
+    return v * k;
+}
+
 extern "C" void func_00137750(void* p)
 {
     char* self = (char*)p;
@@ -571,8 +576,7 @@ extern "C" void func_00137750(void* p)
         else
             x *= 59.999996185302734f;
         char* r3 = *(char**)(self + 0x40);
-        float k = 6.632251739501953f;
-        func_00121AA0(r3, *(char**)(r3 + 0x788) + 0x20, *(char**)(r3 + 0x788) + 0x10, x, *(float*)(r3 + 0x300) * k);
+        func_00121AA0(r3, *(char**)(r3 + 0x788) + 0x20, *(char**)(r3 + 0x788) + 0x10, x, scale_7750(*(float*)(r3 + 0x300), 6.632251739501953f));
     }
     vu0ScaleEqW7(*(sVec4W7*)(self + 0x30), 1.0f - dt * 1.5f);
     cRider_updateOrientationImplicit(*(void**)(self + 0x40));
