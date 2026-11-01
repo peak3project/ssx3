@@ -6190,7 +6190,69 @@ extern "C" V3_57C0 func_003057C0(int n, Ent_57C0 *e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003059A0);
+#ifdef SKIP_ASM
+struct R12_59A0 { int a; int b; int c; };
+struct Rec_59A0 { int head; unsigned id[8]; int cnt[8]; float f0[8]; float f1[8]; float f2[8]; float f3[8]; sBindEnd_1FBE38 f; };
+extern Rec_59A0 D_004FBD90_59A0 __asm__("D_004FBD90");
+extern R12_59A0 D_004C9098_59A0 __asm__("D_004C9098");
+extern const int D_004466D8_59A0[] __asm__("D_004466D8");
+extern int D_004A5858_59A0 __asm__("D_004A5858");
+extern char **D_004A47B8_59A0 __asm__("D_004A47B8");
+static inline char *refToPtr_59A0(unsigned i) { return (char*)(i << 2); }
+static inline char *conv_59A0(unsigned i) { return i ? refToPtr_59A0(i) : 0; }
+extern "C" void cAvalanche_addAvalancheNode(int, void*, float, float, float, float, int);
+extern "C" R12_59A0 func_003059A0(int n, sBindArg_1FBE38* e) {
+    if (D_004A5858_59A0 == 0) {
+        D_004FBD90_59A0.head = 0;
+        D_004FBD90_59A0.id[7] = D_004FBD90_59A0.id[6] = D_004FBD90_59A0.id[5] = D_004FBD90_59A0.id[4] = D_004FBD90_59A0.id[3] = D_004FBD90_59A0.id[2] = D_004FBD90_59A0.id[1] = D_004FBD90_59A0.id[0] = 0xFFFFFFFF;
+        D_004FBD90_59A0.cnt[7] = D_004FBD90_59A0.cnt[6] = D_004FBD90_59A0.cnt[5] = D_004FBD90_59A0.cnt[4] = D_004FBD90_59A0.cnt[3] = D_004FBD90_59A0.cnt[2] = D_004FBD90_59A0.cnt[1] = D_004FBD90_59A0.cnt[0] = 0;
+        D_004FBD90_59A0.f0[7] = D_004FBD90_59A0.f0[6] = D_004FBD90_59A0.f0[5] = D_004FBD90_59A0.f0[4] = D_004FBD90_59A0.f0[3] = D_004FBD90_59A0.f0[2] = D_004FBD90_59A0.f0[1] = D_004FBD90_59A0.f0[0] = 10.0f;
+        D_004FBD90_59A0.f1[7] = D_004FBD90_59A0.f1[6] = D_004FBD90_59A0.f1[5] = D_004FBD90_59A0.f1[4] = D_004FBD90_59A0.f1[3] = D_004FBD90_59A0.f1[2] = D_004FBD90_59A0.f1[1] = D_004FBD90_59A0.f1[0] = 0.0f;
+        D_004FBD90_59A0.f2[7] = D_004FBD90_59A0.f2[6] = D_004FBD90_59A0.f2[5] = D_004FBD90_59A0.f2[4] = D_004FBD90_59A0.f2[3] = D_004FBD90_59A0.f2[2] = D_004FBD90_59A0.f2[1] = D_004FBD90_59A0.f2[0] = 3.0f;
+        D_004FBD90_59A0.f3[7] = D_004FBD90_59A0.f3[6] = D_004FBD90_59A0.f3[5] = D_004FBD90_59A0.f3[4] = D_004FBD90_59A0.f3[3] = D_004FBD90_59A0.f3[2] = D_004FBD90_59A0.f3[1] = D_004FBD90_59A0.f3[0] = 1.0f;
+        D_004A5858_59A0 = 1;
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBD90_59A0.f = sBindEnd_1FBE38();
+    }
+    Rec_59A0 rec;
+    Rec_59A0* vp = &rec;
+    rec.id[7] = rec.id[6] = rec.id[5] = rec.id[4] = rec.id[3] = rec.id[2] = rec.id[1] = rec.id[0] = 0xFFFFFFFF;
+    func_003E6574(vp, &D_004FBD90_59A0, 0xC8);
+    sBindArg_1FBE38* x = e;
+    for (int i = 0; i < n; i++, x++) {
+        int k = x->idx;
+        int* d = (int*)((k << 2) + (int)vp);
+        if (x->kind != D_004466D8_59A0[k] && D_004466D8_59A0[k] == 2)
+            *(float*)d = (float)x->val;
+        else
+            *d = x->val;
+    }
+    int head = vp->head;
+    int* cp = vp->cnt;
+    float* f3 = vp->f3;
+    float* f2 = vp->f2;
+    float* f1 = vp->f1;
+    float* f0 = vp->f0;
+    for (int i = 0; i < 8; i++) {
+        unsigned id = vp->id[i];
+        if (id != 0xFFFFFFFF) {
+            char *s = (*(char***)(*D_004A47B8_59A0 + 8))[id & 0xFF];
+            char *r;
+            if (!s)
+                r = 0;
+            else {
+                unsigned j = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8;
+                r = conv_59A0(j);
+            }
+            cAvalanche_addAvalancheNode(head, r, *f0, *f1, *f2, *f3, *cp);
+        }
+        cp++; f3++; f2++; f1++; f0++;
+    }
+    return D_004C9098_59A0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00305C88);
