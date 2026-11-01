@@ -567,7 +567,114 @@ extern "C" void func_0038CE20(void* self, int idx, sPatch_CE20* patch, int* vals
 
 INCLUDE_ASM("render/bezierman", func_0038D168);
 
+//100%
 INCLUDE_ASM("render/bezierman", func_0038D448);
+#ifdef SKIP_ASM
+struct sRS_D448 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short tex2;
+};
+struct sEnt_D448 {
+    sRS_D448 rs;                    // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+struct sRing_D448 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sEnt_D448 ents[1];              // 0x80
+};
+struct sView_D448 {
+    char pad_0x0[0x50];
+    char mat[0x40];                 // 0x50
+    int pad_0x90;
+    int tex2;                       // 0x94
+    char pad_0x98[8];
+};
+struct sGfx_D448 {
+    char pad_0x0[0xE84];
+    sRS_D448* top;                  // 0xE84
+    char pad_0xE88[0x13EC - 0xE88];
+    unsigned int nViews;            // 0x13EC
+    sView_D448 views[1];            // 0x13F0
+};
+struct sPatch_D448 {
+    void* obj;
+    int extra;
+    int kind;
+};
+extern sGfx_D448* D_004A5B80_D448 __asm__("D_004A5B80");
+
+// PORT: PS2-only VU0 inline asm (64-byte matrix copy through vf1-vf4).
+static inline void vu0CopyMat_D448(void* dst, const void* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0(%1)\n"
+        "lqc2      $vf2, 16(%1)\n"
+        "lqc2      $vf3, 32(%1)\n"
+        "lqc2      $vf4, 48(%1)\n"
+        "sqc2      $vf1, 0(%0)\n"
+        "sqc2      $vf2, 16(%0)\n"
+        "sqc2      $vf3, 32(%0)\n"
+        "sqc2      $vf4, 48(%0)\n"
+        : : "r"(dst), "r"(src) : "memory");
+}
+
+// Queues the packet [buf, next) on the graphics manager's DMA ring.
+static inline void Submit_D448(sGfx_D448* gfx, unsigned int buf, unsigned int next, int flag)
+{
+    sRing_D448* ring = *(sRing_D448**)((char*)gfx + 0x18F0);
+    sRS_D448* rs = gfx->top;
+    if (ring->count < 0xA28) {
+        int layer = *(int*)((char*)ring + 0x69CC4);
+        rs->f8 = (rs->f8 & ~0x1F) | (layer & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sEnt_D448* e = (sEnt_D448*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = flag;
+    }
+}
+
+extern "C" void func_0038D448_m(void* self, int kind, void* tbl, sPatch_D448* patch, int mask, unsigned int* handle) __asm__("func_0038D448");
+
+extern "C" void func_0038D448_m(void* self, int kind, void* tbl, sPatch_D448* patch, int mask, unsigned int* handle)
+{
+    int extra = patch->extra;
+    sGfx_D448* gfx = D_004A5B80_D448;
+    for (unsigned int i = 0; i < gfx->nViews; i++) {
+        sView_D448* vw = &gfx->views[i];
+        if ((mask >> i) & 1) {
+            int t2 = vw->tex2;
+            unsigned int buf = *handle;
+            gfx->top->tex2 = t2;
+            long* p = (long*)(buf | 0x30000000);
+            gfx->top->f0 = (gfx->top->f0 & ~0x30) | 0x30;
+            p[0] = 0x10000006;
+            p[1] = 0;
+            p[2] = 0x20000000;
+            p[3] = 0x6C04808000000000L;
+            vu0CopyMat_D448(p + 4, vw->mat);
+            p[12] = 0;
+            p[13] = (long)(*(int*)((char*)tbl + extra * 8 + 0x30) | 0x14000000) << 32;
+            p += 14;
+            unsigned int next = (unsigned int)p & 0x0FFFFFFF;
+            *handle = next;
+            Submit_D448(gfx, buf, next, 1);
+            *handle += 0x10;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/bezierman", func_0038D638);
