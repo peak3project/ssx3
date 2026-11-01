@@ -4992,12 +4992,12 @@ int func_003E4E98(void)
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4EA8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450DEC_4EA8[] __asm__("D_00450DEC");
+extern int D_00450DEC;
 
 int func_003E4EA8(void) {
-    int old = D_00450DEC_4EA8[0];
+    int old = D_00450DEC;
     int now = func_003E4E98();
-    D_00450DEC_4EA8[0] = now;
+    D_00450DEC = now;
     return now - old;
 }
 #endif
@@ -5006,13 +5006,13 @@ int func_003E4EA8(void) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4EE8);
 #ifdef SKIP_ASM
 extern int D_00450DE8_4EE8[] __asm__("D_00450DE8");
-extern int D_00450DEC_4EE8[] __asm__("D_00450DEC");
+extern int D_00450DEC;
 extern int D_00450DCC_4EE8[] __asm__("D_00450DCC");
 
 // Resets the timer state.
 void func_003E4EE8(void) {
     int *p = D_00450DE8_4EE8;
-    D_00450DEC_4EE8[0] = 0;
+    D_00450DEC = 0;
     D_00450DCC_4EE8[0] = 0;
     p[0] = 0;
 }
