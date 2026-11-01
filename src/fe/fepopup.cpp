@@ -2890,16 +2890,15 @@ extern char D_00466350[];
 
 extern "C" void cUIStateBuyPopup_initBuyTrick(void* self, int trick, int a2, int a3)
 {
-    int three = 3;
     *(int*)((char*)self + 0x48) = a2;
     *(int*)((char*)self + 0x4C) = a3;
     *(int*)((char*)self + 0x58) = trick;
     *(int*)((char*)self + 0x54) = 2;
     int h = GetHashValue32(D_00466338);
-    *(int*)((char*)self + 0x5C) = three;
+    *(int*)((char*)self + 0x5C) = 3;
     *(int*)((char*)self + 0x60) = h;
     h = GetHashValue32(D_00466350);
-    *(int*)((char*)self + 0x64) = three;
+    *(int*)((char*)self + 0x64) = 3;
     *(int*)((char*)self + 0x68) = h;
 }
 #endif
