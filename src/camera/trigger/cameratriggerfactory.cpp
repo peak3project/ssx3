@@ -4175,7 +4175,93 @@ extern "C" void func_00178208_v(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001783E0);
+#ifdef SKIP_ASM
+struct sVec4_1783E0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVE_1783E0 {
+    short delta;
+    short index;
+    sVec4_1783E0 (*fn)(void*);
+};
+
+extern sVec4_1783E0 D_004FF160_1783E0 __asm__("D_004FF160");
+extern "C" void f_166C60_1783E0(void* self, long id) __asm__("func_00166C60");
+extern "C" sVec4_1783E0 f_177FC0_1783E0(void* self, const sVec4_1783E0& v) __asm__("func_00177FC0");
+extern "C" sVec4_1783E0 f_177EF8_1783E0(void* self) __asm__("func_00177EF8");
+
+class cCamTarget_1783E0 {
+public:
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual long v07();
+};
+class cCamCtrl_1783E0 {
+public:
+    char pad_0x00[0x10];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+};
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sVec4_1783E0 Add_1783E0(const sVec4_1783E0& a, const sVec4_1783E0& b)
+{
+    sVec4_1783E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (*v * s).
+static inline sVec4_1783E0 ScaleP_1783E0(const sVec4_1783E0* v, float s)
+{
+    sVec4_1783E0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+extern "C" void func_001783E0(cCamCtrl_1783E0* self, long id)
+{
+    char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
+    if (id == ((cCamTarget_1783E0*)(rider + 0x6C0))->v07()) {
+        char* o = *(char**)((char*)self + 0x30);
+        sVE_1783E0* e = &(*(sVE_1783E0**)o)[4];
+        *(sVec4_1783E0*)((char*)self + 0x390) = e->fn(o + e->delta);
+        o = *(char**)((char*)self + 0x30);
+        e = &(*(sVE_1783E0**)o)[3];
+        *(sVec4_1783E0*)((char*)self + 0x40) = f_177FC0_1783E0(self, e->fn(o + e->delta));
+        *(sVec4_1783E0*)((char*)self + 0x20) = Add_1783E0(f_177EF8_1783E0(self), ScaleP_1783E0(&D_004FF160_1783E0, 37.0f));
+        f_166C60_1783E0(self, id);
+        func_00166550(self, 559.7440185546875f, 300.0f);
+        self->v05();
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178520);
