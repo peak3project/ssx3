@@ -1436,19 +1436,23 @@ static inline sMsgListIterC1E0 sMsgListC1E0_insert(sMsgListIterC1E0 pos, void* c
     return tmp;
 }
 
-extern "C" void func_0025C1E0(char* self, const char* value)
+static inline void postMsg_C1E0(char* self, int type)
 {
-    char buf[0x200];
-    buf[0] = 0;
-    cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3050, value);
-    int type = 0xD1;
-    // PORT: function pointer passed through func_0025B608's int parameter.
-    func_0025B608(self, 6, 0x6C6F7374, buf, (int)func_00268C20, 20.0f);
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
     m[0] = type;
     *(void***)((char*)m + 0x4) = D_004812B0;
     void* mp = m;
     sMsgListC1E0_insert(*(sMsgListNodeC1E0**)(self + 0xF0), mp);
+}
+
+extern "C" void func_0025C1E0(char* self, const char* value)
+{
+    char buf[0x200];
+    buf[0] = 0;
+    cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3050, value);
+    // PORT: function pointer passed through func_0025B608's int parameter.
+    func_0025B608(self, 6, 0x6C6F7374, buf, (int)func_00268C20, 20.0f);
+    postMsg_C1E0(self, 0xD1);
 }
 #endif
 
