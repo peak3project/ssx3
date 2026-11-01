@@ -816,7 +816,36 @@ extern "C" int func_002ADC30(void* self, int n)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADCA0);
+#ifdef SKIP_ASM
+extern "C" int func_002ADC30(void* self, int n);
+
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sBmCallbackDCA0)(cController*, cBankMonitorInstance*, float);
+
+void func_002AD888_cb(void* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f) __asm__("func_002AD888");
+
+struct sSndPlayerDCA0 {
+    char pad_0x00[0x90];
+    volatile int busy;          // 0x90
+};
+
+int func_002ADCA0_impl(sSndPlayerDCA0* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f) __asm__("func_002ADCA0");
+
+int func_002ADCA0_impl(sSndPlayerDCA0* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f)
+{
+    self->busy = self->busy + 1;
+    int idx = func_002ADC30(self, self->busy);
+    if (idx >= 0) {
+        func_002AD888_cb((char*)self + 0x98 + idx * 0x2C, a1, cb, b, c, d, e, f);
+    }
+    self->busy = self->busy - 1;
+    return idx;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADD78);
