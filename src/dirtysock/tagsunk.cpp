@@ -4767,6 +4767,15 @@ static inline void post_1CD0(char* owner, void* msg)
 }
 
 // PORT: name pointers passed through int parameters of some callees.
+static inline void postMsg_1CD0(int type)
+{
+    char* owner = (char*)D_004A3028;
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    post_1CD0(owner, m);
+}
+
 extern "C" void func_00261CD0(char* self, char* name, char* a2, char* a3)
 {
     if (func_00262360(self, (int)name) == 0
@@ -4782,12 +4791,7 @@ extern "C" void func_00261CD0(char* self, char* name, char* a2, char* a3)
                 }
             }
             func_002620D8(self, name, 2, &err, 0);
-            int type = 0x108;
-            char* owner = (char*)D_004A3028;
-            int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-            m[0] = type;
-            *(void***)((char*)m + 0x4) = D_004812B0;
-            post_1CD0(owner, m);
+            postMsg_1CD0(0x108);
         }
     }
     char* obj = (char*)cMemMan_alloc(0x10, D_00480E98, 0x20000000, 0);
