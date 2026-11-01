@@ -5621,7 +5621,120 @@ void func_00407E90(int *p, int n, int flag) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00407F20);
+#ifdef SKIP_ASM
+struct F7F20 {
+    char pad0[0x18];
+    long t18;
+    long t20;
+    int state;
+    int f2C, f30, f34, f38, f3C, f40, f44, f48, f4C, f50, f54, f58, f5C, f60;
+};
+struct C7F20 { struct F7F20 *ref0; struct F7F20 *ref1; struct F7F20 *cur; struct F7F20 *next; };
+struct M7F20 {
+    char pad0[0xA0];
+    int fA0, fA4;
+    char padA8[0xE8 - 0xA8];
+    int fE8;
+    char padEC[0x13C - 0xEC];
+    int f13C;
+    int pad140[2];
+    int f148, f14C, f150;
+    int pad154[8];
+    int f174, f178;
+    int pad17C[2];
+    int f184, f188, f18C, f190, f194, f198, f19C, f1A0, f1A4, f1A8;
+    int pad1AC[3];
+    struct C7F20 c[3];
+    char pad1E8[0x828 - 0x1E8];
+    long t828;
+    long t830;
+};
+int func_00407F20(struct M7F20 *m, int a1) {
+    int lim = 4;
+    struct F7F20 *x;
+    struct F7F20 *f = 0;
+    int r = 0;
+    if (m->f174 == 3)
+        lim = 2;
+    if (m->f150 == 3) {
+        m->c[0].cur = m->c[0].next;
+        m->c[1].cur = m->c[1].next;
+        m->c[2].cur = m->c[2].next;
+        if (m->fA0 + m->fA4 >= lim) {
+            m->fE8 = 0;
+            m->f1A8 = 0;
+            m->f1A4 = 0;
+        }
+        if ((m->fE8 != 0 || m->f1A8 != 0) && m->f1A4 == 0) {
+            m->c[0].ref0->state = 0;
+            m->c[1].ref0->state = 0;
+            m->c[2].ref0->state = 0;
+        }
+        m->fE8 = 0;
+        m->f1A8 = 0;
+        if (m->f174 == 3) {
+            if (m->c[0].ref0->state == 1 || m->f1A4 != 0)
+                if (m->c[0].ref1->state == 1)
+                    r = 1;
+        } else {
+            if ((m->c[1].ref0->state == 1 && m->c[2].ref0->state == 1) || m->f1A4 != 0) {
+                if (m->c[1].ref1->state == 1)
+                    if (m->c[2].ref1->state == 1)
+                        r = 1;
+            }
+        }
+    } else {
+        if (a1 == 0) {
+            struct F7F20 *t;
+            t = m->c[0].ref0; m->c[0].ref0 = m->c[0].ref1; m->c[0].ref1 = t;
+            t = m->c[1].ref0; m->c[1].ref0 = m->c[1].ref1; m->c[1].ref1 = t;
+            t = m->c[2].ref0; m->c[2].ref0 = m->c[2].ref1; m->c[2].ref1 = t;
+        }
+        m->c[0].cur = m->c[0].ref1;
+        m->c[1].cur = m->c[1].ref1;
+        m->c[2].cur = m->c[2].ref1;
+        if (m->f174 == 3) {
+            if (m->f150 != 2 || m->c[0].ref0->state == 1)
+                r = 1;
+        } else {
+            x = m->f174 == 1 ? m->c[2].ref1 : m->c[1].ref1;
+            if (m->f150 != 2 || (a1 != 0 && x->state == 1) || (m->c[1].ref0->state == 1 && m->c[2].ref0->state == 1))
+                r = 1;
+        }
+    }
+    switch (m->f174) {
+    case 3:
+        f = m->c[0].cur;
+        break;
+    case 1:
+        f = m->c[1].cur;
+        break;
+    case 2:
+        f = m->c[2].cur;
+        break;
+    }
+    f->state = 0;
+    f->t18 = m->t828;
+    f->f2C = m->f150;
+    f->t20 = m->t830;
+    f->f30 = m->f174;
+    f->f34 = m->f13C;
+    f->f38 = m->f188;
+    f->f3C = m->f178;
+    f->f40 = m->f184;
+    f->f44 = m->f18C;
+    f->f48 = m->f190;
+    f->f4C = m->f194;
+    f->f50 = m->f198;
+    f->f54 = m->f19C;
+    f->f58 = m->f1A0;
+    f->f5C = m->f148;
+    f->f60 = m->f14C;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004081D8);
