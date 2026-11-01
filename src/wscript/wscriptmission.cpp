@@ -174,7 +174,6 @@ extern "C" void cWScriptMan_checkGate(void* vself)
         ca = c2;
         break;
     }
-    float gap = 10.0f;
     char* t0 = getObj_3DE0(screen, D_0045D960);
     setTab_3DE0(t0, ca);
     char* t1 = getObj_3DE0(screen, D_0045D970);
@@ -185,10 +184,10 @@ extern "C" void cWScriptMan_checkGate(void* vself)
     char* w1 = getObj_3DE0(screen, D_004A1448);
     char* w2 = getObj_3DE0(screen, D_004A1450);
     func_003A1030(w0, &s0);
-    s0.x += gap;
+    s0.x += 10.0f;
     func_003A1030(w1, &s1);
     func_003A1030(w2, &s2);
-    s2.x += gap;
+    s2.x += 10.0f;
     func_003A0290(w0, &o0);
     func_003A0290(w2, &o2);
     p0 = *(sGateVec_3DE0*)(t0 + 0x44);
@@ -204,8 +203,8 @@ extern "C" void cWScriptMan_checkGate(void* vself)
     p0.x = x;
     p1.x = x;
     if (*(int*)(t1 + 0x7C) != 0) {
-        e1.x += gap;
-        p1.x = x + (e0.x + gap);
+        e1.x += 10.0f;
+        p1.x = x + (e0.x + 10.0f);
     } else {
         e1 = D_004FF0D8;
     }
