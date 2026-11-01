@@ -529,7 +529,6 @@ extern "C" void func_00181BD0_impl(void* self, signed char rider, signed char ch
     func_00416210(bar + 4, 0, 4);
     char buf[100];
     int stats[7];
-    float k = 0.2f;
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 3);
     stats[0] = func_00148BC8(iface, rider, charID);
     stats[1] = func_00148C68(iface, rider, charID);
@@ -549,7 +548,7 @@ extern "C" void func_00181BD0_impl(void* self, signed char rider, signed char ch
             // PORT: g++ minimum/maximum operator
             int c = v >? 0;
             total += v;
-            sprintf(buf, &D_004A13B0, func_00413AF8((float)v * k));
+            sprintf(buf, &D_004A13B0, func_00413AF8((float)v * 0.2f));
             t->v09(1);
             cUIText_setAsciiString((cUIText*)t, buf);
             *(int*)(b + 0x80) = 0x37;
