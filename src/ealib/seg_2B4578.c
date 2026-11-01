@@ -12261,7 +12261,45 @@ int func_003CADF0(void *arg0, int *arg1, int *arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAEA0);
+#ifdef SKIP_ASM
+struct S_AEA0 { char pad[0x1C]; int w1C; char pad20[4]; float f24; float f28; int w2C; int w30; int w34; int w38; };
+extern int func_003CAB28_AEA0(float, int, int *, float *) __asm__("func_003CAB28");
+int func_003CAEA0(struct S_AEA0 *p, int n) {
+    int pos;
+    float err;
+    int tot;
+    int t;
+    int avail;
+    int step;
+    int used;
+    if (p->w38 < n) {
+        n -= p->w38;
+        pos = p->w1C;
+        err = p->f28;
+        tot = 0;
+        t = 0;
+        avail = p->w30;
+        while (n > 0) {
+            int lo = p->w2C;
+            if (avail < lo) break;
+            t = 0;
+            if (avail >= p->w2C * 2) t = func_003CAB28_AEA0(p->f24, p->w2C, &pos, &err);
+            if (t >= 0) { step = p->w2C; used = step + t; } else { step = p->w2C * 2; used = step + t; }
+            tot += step;
+            avail -= step;
+            if (used >= n) n = 0; else n -= used;
+        }
+        if (t > 0) tot += p->w2C;
+        if (n > 0) {
+            if (avail < n) tot += avail; else tot += n;
+        }
+        if (p->w34 < tot) return tot - p->w34;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAFD0);
