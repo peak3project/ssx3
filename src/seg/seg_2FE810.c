@@ -5576,7 +5576,71 @@ INCLUDE_ASM("seg/seg_2FE810", func_00408DF0);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00408FB0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409088);
+#ifdef SKIP_ASM
+struct L9 { int ev; int pad[7]; unsigned cnt; unsigned addr; };
+extern int E_2C30(int, void *) __asm__("func_00402C30");
+extern void E_6DF0(char *, int) __asm__("func_00406DF0");
+extern int E_AddH(int, void *, int, void *) __asm__("func_00423AC0");
+extern int E_RemH(int, int) __asm__("func_00423AD0");
+extern void E_49B8(int) __asm__("func_004249B8");
+extern void E_4950(int) __asm__("func_00424950");
+extern int E_C078() __asm__("func_0042C078");
+extern void E_C0C0() __asm__("func_0042C0C0");
+extern void E_8B80(char *, int, int) __asm__("func_00408B80");
+extern void E_8DF0(char *, int, int) __asm__("func_00408DF0");
+extern void E_8FB0(void) __asm__("func_00408FB0");
+void q9088(char *d, unsigned *b) __asm__("func_00409088");
+void q9088(char *d, unsigned *b) {
+    struct L9 s;
+    int n = b[3] * b[4];
+    int h;
+    s.ev = 2;
+    E_2C30(*(int *)(d + 0x858), &s);
+    if (*(volatile unsigned *)0x10002010 & 0x4000)
+        *(volatile unsigned *)0x10002010 = 0x40000000;
+    while ((int)*(volatile unsigned *)0x10002010 < 0);
+    E_6DF0(d, 0);
+    while ((int)*(volatile unsigned *)0x10002010 < 0);
+    s.cnt = n * 0x18;
+    s.addr = b[0] & 0xFFFFFFF;
+    if (s.cnt > 0xFFFF) {
+        int r;
+        h = E_AddH(4, E_8FB0, 0, &s.cnt);
+        *(volatile unsigned *)0x1000E010 = 0x10;
+        E_49B8(4);
+        r = E_C078();
+        *(volatile unsigned *)0x1000B410 = s.addr;
+        *(volatile unsigned *)0x1000B420 = 0xFFFF;
+        *(volatile unsigned *)0x1000B400 = 0x101;
+        if (r)
+            E_C0C0();
+        s.addr = (s.addr + 0xFFFF0) & 0xFFFFFFF;
+        s.cnt -= 0xFFFF;
+        if (n < 0x400)
+            E_8B80(d, *(int *)(d + 0xD8), n);
+        else
+            E_8DF0(d, *(int *)(d + 0xD8), n);
+        E_4950(4);
+        E_RemH(4, h);
+    } else {
+        int r = E_C078();
+        *(volatile unsigned *)0x1000B410 = b[0] & 0xFFFFFFF;
+        *(volatile unsigned *)0x1000B420 = s.cnt;
+        *(volatile unsigned *)0x1000B400 = 0x101;
+        if (r)
+            E_C0C0();
+        s.cnt = 0;
+        if (n < 0x400)
+            E_8B80(d, *(int *)(d + 0xD8), n);
+        else
+            E_8DF0(d, *(int *)(d + 0xD8), n);
+    }
+    s.ev = 3;
+    E_2C30(*(int *)(d + 0x858), &s);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409310);
