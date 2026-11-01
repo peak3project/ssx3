@@ -893,7 +893,114 @@ extern "C" void func_002C3FE0(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C4050);
+#ifdef SKIP_ASM
+extern "C" void func_003E6448_4050(void* dst, int c, int n) __asm__("func_003E6448");
+extern int D_004A3938;
+extern int D_004A393C;
+extern int D_004A3940;
+extern int D_004A3944;
+
+struct func_002C4050_sSlot {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+};
+
+struct func_002C4050_sSelf {
+    int vtbl;                        // 0x00
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+    int f18;
+    int f1C;
+    int f20;
+    int f24;
+    int f28;
+    int f2C;
+    int f30;
+    int f34;
+    int f38;
+    int f3C;
+    int f40;
+    int f44;
+    int f48;
+    int f4C;
+    int f50;
+    int f54;
+    char pad_0x58[0x21];
+    char buf79[0x40];                // 0x79
+    char bufB9[0x40];                // 0xB9
+    char bufF9[0x40];                // 0xF9
+    char buf139[0x40];               // 0x139
+    char pad_0x179[3];
+    func_002C4050_sSlot slots[2];    // 0x17C
+    char buf1A4[0x2D0];              // 0x1A4
+    char buf474[0xC];
+    char buf480[0x40];               // 0x480
+    char pad_0x4C0[0];
+    char buf4C0[0x1000];             // 0x4C0
+    char buf14C0[0x20];              // 0x14C0
+    int f14E0;
+    int f14E4;
+    int f14E8;
+};
+
+// PORT: the unit declares func_002C4050(void*) earlier; bound by asm label
+void func_002C4050_impl(func_002C4050_sSelf* self) __asm__("func_002C4050");
+
+void func_002C4050_impl(func_002C4050_sSelf* self)
+{
+    self->f8 = 0x1C;
+    self->f4 = 0;
+    self->fC = 0;
+    self->f10 = 0;
+    self->f40 = 0;
+    self->f4C = 0;
+    D_004A3938 = 0;
+    D_004A393C = 0;
+    D_004A3940 = 0;
+    self->f18 = -1;
+    self->f1C = -1;
+    self->f38 = -1;
+    self->f14 = 6;
+    self->f50 = 0;
+    self->f54 = 0;
+    self->f20 = 0;
+    self->f24 = 0;
+    self->f2C = 0;
+    self->f30 = 0;
+    self->f34 = 0;
+    self->f44 = 0;
+    self->f48 = 0;
+    D_004A3944 = 0;
+    self->f28 = 0;
+    self->f14E0 = 0;
+    self->f14E8 = 0;
+    self->f14E4 = 0;
+    self->f3C = 0;
+    func_003E6448_4050(self->bufB9, 0, 0x40);
+    func_003E6448_4050(self->bufF9, 0, 0x40);
+    func_003E6448_4050(self->buf79, 0, 0x40);
+    func_003E6448_4050(self->buf139, 0, 0x40);
+    for (int i = 0; i < 2; i++) {
+        self->slots[i].f0 = 0;
+        self->slots[i].f4 = 0;
+        self->slots[i].f8 = 0;
+        self->slots[i].fC = 0;
+        self->slots[i].f10 = 0;
+    }
+    func_003E6448_4050(self->buf480, 0, 0x40);
+    func_003E6448_4050(self->buf1A4, 0, 0x2D0);
+    func_003E6448_4050(self->buf4C0, 0, 0x1000);
+    func_003E6448_4050(self->buf14C0, 0, 0x20);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("worldpainter/quadtree", func_002C4198);
