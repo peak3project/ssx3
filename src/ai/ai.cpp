@@ -6763,7 +6763,6 @@ extern "C" void func_00135B30(void* self, float a, float b);
 
 extern "C" void func_00133128(void* self)
 {
-    float lo = 4.499661445617676f;
     *(int*)((char*)self + 0x8) = -1;
     *(int*)((char*)self + 0x4) = 0;
     *(int*)((char*)self + 0x18) = 0;
@@ -6776,8 +6775,8 @@ extern "C" void func_00133128(void* self)
     *(int*)((char*)self + 0x2C) = 0;
     *(int*)((char*)self + 0x30) = 0;
     *(int*)((char*)self + 0x34) = 0;
-    *(float*)((char*)self + 0x38) = lo;
-    *(float*)((char*)self + 0x3C) = lo;
+    *(float*)((char*)self + 0x38) = 4.499661445617676f;
+    *(float*)((char*)self + 0x3C) = 4.499661445617676f;
     *(float*)((char*)self + 0x40) = 0.0f;
     *(float*)((char*)self + 0x44) = 0.0f;
     *(float*)(*(char**)((char*)self + 0x58) + 0x2DC) = 0.0f;
@@ -6800,14 +6799,14 @@ extern "C" void func_00133128(void* self)
             m = b;
         if (x != 0.0f)
         {
-            float v = m * 7.00038480758667f >? lo;
+            float v = m * 7.00038480758667f >? 4.499661445617676f;
             *(float*)((char*)self + 0x38) = v;
             *(float*)(r + 0x2DC) = v;
         }
         r = *(char**)((char*)self + 0x58);
         if (*(float*)(r + 0x2B0) != 0.0f)
         {
-            float v = (m * 7.00038480758667f >? lo) * 0.6666666865348816f;
+            float v = (m * 7.00038480758667f >? 4.499661445617676f) * 0.6666666865348816f;
             *(float*)((char*)self + 0x3C) = v;
             *(float*)(r + 0x2E0) = v;
         }
