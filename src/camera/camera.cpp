@@ -6714,7 +6714,7 @@ void func_001686C8(void* self, void* other)
 }
 #endif
 
-//100% - objdiff report; single-function view differs only in a relocation name
+//100%
 INCLUDE_ASM("camera/camera", func_001686D0);
 #ifdef SKIP_ASM
 extern "C" void func_00162C78(void* self, void* info);
@@ -6849,14 +6849,13 @@ extern "C" void func_001686D0(char* self)
     sCamInfo_001607E0 info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f, 0.8513929843902588f,
                   0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f, 0.6000000238418579f);
-    float zero = 0.0f;
     func_00162A20(self, (char*)&info);
     func_00162B80(self, &info);
     func_00162C78(self, &info);
-    func_00163010(self, &info, 193.1998291015625f, zero, 76.68663024902344f, zero, 1.7668397426605225f,
+    func_00163010(self, &info, 193.1998291015625f, 0.0f, 76.68663024902344f, 0.0f, 1.7668397426605225f,
                   0.9239780306816101f, 0.907414972782135f);
-    func_00163270(self, &info, zero, 1.2432044744491577f, zero, zero, 0.9783917665481567f);
-    func_001633B0(self, &info, zero, 0.9927757978439331f, 1.0f, 0.949999988079071f);
+    func_00163270(self, &info, 0.0f, 1.2432044744491577f, 0.0f, 0.0f, 0.9783917665481567f);
+    func_001633B0(self, &info, 0.0f, 0.9927757978439331f, 1.0f, 0.949999988079071f);
     func_00162B90(self, &info, 0.721226155757904f, 0.01082259975373745f, 0.22186216711997986f, 0.5425665378570557f,
                   0.9241908192634583f);
     func_001643A8(self, &info, 15.0f, 1.5f, 1.5f);
