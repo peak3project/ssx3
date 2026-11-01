@@ -6503,7 +6503,51 @@ extern "C" void func_00385410(sPartGrid_5410* self, float* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00385530);
+#ifdef SKIP_ASM
+struct sPartRow_5530 {
+    int f0;
+    void* verts;                    // 0x4
+    int f8;
+    void* colors;                   // 0xC
+};
+
+struct sPartGrid_5530 {
+    char pad_0x0[0x190];
+    unsigned short width;           // 0x190
+    char pad_0x192[0x1A0 - 0x192];
+    int sel;                        // 0x1A0
+    int done;                       // 0x1A4
+    char pad_0x1A8[0xC];
+    sPartRow_5530* rows[2];         // 0x1B4
+    int height;                     // 0x1BC
+};
+
+extern "C" void func_00385A38_vt(void* self, void* dst, int idx, float* src) __asm__("func_00385A38");
+extern "C" void func_00385AA0_col(void* self, void* dst, int idx, float* src) __asm__("func_00385AA0");
+
+extern "C" void func_00385530(sPartGrid_5530* self, float* verts, float* colors)
+{
+    int z = self->sel == 0;
+    for (int r = 0; r < self->height; r++) {
+        sPartRow_5530* strip = &self->rows[z][r];
+        int i0 = r * self->width;
+        int i1 = i0 + self->width;
+        int idx = 0;
+        for (int c = 0; c < self->width; c++) {
+            func_00385AA0_col(self, strip->colors, idx, colors + i0 * 4);
+            func_00385A38_vt(self, strip->verts, idx, verts + i0 * 3);
+            func_00385AA0_col(self, strip->colors, idx + 1, colors + i1 * 4);
+            func_00385A38_vt(self, strip->verts, idx + 1, verts + i1 * 3);
+            idx += 2;
+            i0++;
+            i1++;
+        }
+    }
+    self->done = 1;
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_003856B8);
 
