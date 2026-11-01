@@ -2560,11 +2560,12 @@ extern "C" int func_002B03B8(const char* name)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B04D8);
 #ifdef SKIP_ASM
-struct sSndKey8_04D8 {
-    long v;
-} __attribute__((packed));
-extern sSndKey8_04D8 D_004A37D8[];
-extern sSndKey8_04D8 D_004A37E0[];
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_04D8)(cController*, cBankMonitorInstance*, float);
+extern sSndCallback_04D8 D_004A37D8_04D8[] __asm__("D_004A37D8");
+extern sSndCallback_04D8 D_004A37E0_04D8[] __asm__("D_004A37E0");
 extern char* D_004A37B4;
 extern char D_004832F8[];
 extern char D_004A3590[];
@@ -2576,8 +2577,7 @@ extern "C" int func_002AAE08(void* self, int i);
 extern "C" float func_002AAE78(void* self, int i);
 extern "C" int func_002AB028(void* self, int i);
 extern "C" void func_002AB0D0(void* self, int i, int w);
-// PORT: func_002ADCA0 takes a 64-bit sound key by value and returns int.
-extern "C" int func_002ADCA0_04D8(void*, int, long, void*, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_04D8(void*, int, sSndCallback_04D8, void*, int, int, int, int) __asm__("func_002ADCA0");
 
 typedef int (*Fn1_04D8)(void*, int, char*, int, int, int, int, float, int, int);
 
@@ -2644,7 +2644,7 @@ extern "C" int func_002B04D8_impl(sBmList_04D8* self, sBmArgs_04D8* a)
                 vt = *(sBmVE_04D8**)(d + 0x1BC);
                 r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
                 if (r >= 0) {
-                    func_002ADCA0_04D8(**(char***)D_004A37B4 + 0x1D8, t, D_004A37D8[0].v, self, r, h, 0, 0);
+                    func_002ADCA0_04D8(**(char***)D_004A37B4 + 0x1D8, t, D_004A37D8_04D8[0], self, r, h, 0, 0);
                 }
                 return r;
             }
@@ -2652,7 +2652,7 @@ extern "C" int func_002B04D8_impl(sBmList_04D8* self, sBmArgs_04D8* a)
             vt = *(sBmVE_04D8**)(d + 0x1BC);
             r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
             if (r >= 0) {
-                func_002ADCA0_04D8(**(char***)D_004A37B4 + 0x1D8, 0xC8, D_004A37E0[0].v, self, r, h, 0, 0);
+                func_002ADCA0_04D8(**(char***)D_004A37B4 + 0x1D8, 0xC8, D_004A37E0_04D8[0], self, r, h, 0, 0);
             }
             return r;
         }
