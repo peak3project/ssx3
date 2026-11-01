@@ -1649,10 +1649,7 @@ extern "C" V3_D9F8 func_002FD9F8(int n, Ent_D9F8 *e) {
         D_D9F8[0] = 0xFFFFFFFF;
         D_D9F8[1] = 0xFFFFFFFF;
         ((int*)D_D9F8)[2] = 0;
-        float z = 0.0f;
-        *(float*)&D_D9F8[3] = z;
-        *(float*)&D_D9F8[4] = z;
-        *(float*)&D_D9F8[5] = z;
+        *(float*)&D_D9F8[5] = *(float*)&D_D9F8[4] = *(float*)&D_D9F8[3] = 0.0f;
         D_004A560C = 1;
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         *(sBindEnd_1FBE38*)((char*)D_D9F8 + 24) = sBindEnd_1FBE38();
