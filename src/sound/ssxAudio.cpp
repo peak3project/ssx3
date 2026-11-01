@@ -2792,14 +2792,13 @@ extern "C" void func_002898A8(void* self, char* rider)
         pos = *vt[5].fn(o + vt[5].delta);
     }
     if (func_0028D960(self) != 0) {
-        float k = -99999.0f;
         char* a = ((sSaObjs98A8*)self)->a[idx];
         sSaVt98A8b* va = *(sSaVt98A8b**)(a + 4);
-        func_0028D988(self, rider, va[2].fn(a + va[2].delta, pos.x, pos.y, k));
+        func_0028D988(self, rider, va[2].fn(a + va[2].delta, pos.x, pos.y, (-99999.0f)));
         char* b = ((sSaObjs98A8*)self)->b[idx];
         sSaVt98A8b* vb = *(sSaVt98A8b**)(b + 4);
         // PORT: func_00289C98's unit declaration takes the rider as int
-        func_00289C98(self, (int)rider, vb[2].fn(b + vb[2].delta, pos.x, pos.y, k));
+        func_00289C98(self, (int)rider, vb[2].fn(b + vb[2].delta, pos.x, pos.y, (-99999.0f)));
     }
     if (func_002899E8(self) != 0) {
         char* c = ((sSaObjs98A8*)self)->c[idx];
