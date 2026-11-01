@@ -855,7 +855,206 @@ extern "C" void func_00344368(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/debouncenode", func_003443A8);
+#ifdef SKIP_ASM
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+struct sTrackWorld51C0;
+extern "C" sTrackWorld51C0** func_002D1BD8();
+extern "C" void func_003513D0(void* self);
+extern "C" void func_003612C0(void* self);
+extern "C" void func_00351398(void* self, void* src);
+extern "C" void func_003E6448(void* p, int v, int n);
+extern char D_0048E758[];
+extern char D_0048E768[];
+extern void* D_00490AD0[];
+extern void* D_00490AF0[];
+
+struct sDbVEntry_43A8 {
+    short delta;
+    short index;
+    void (*fn)(void*, float);
+};
+
+struct sDbMesh_43A8 {
+    char pad_0x0[0x84];
+    void** vtable;                  // 0x84
+    char pad_0x88[0x48];
+    sDbMesh_43A8()
+    {
+        vtable = D_00490AF0;
+        func_003513D0(this);
+        vtable = D_00490AD0;
+        func_003612C0(this);
+    }
+    void operator delete[](void* p, unsigned int size);
+};
+
+struct sDbPad_43A8 {
+    char data[0x40];
+    sDbPad_43A8() {}
+};
+
+struct sDbEntry_43A8 {
+    int pad_0x0[2];
+    void* src;                      // 0x8
+    int pad_0xC;
+};
+
+struct sDbDef_43A8 {
+    int pad_0x0;
+    int count;                      // 0x4
+    sDbEntry_43A8* entries;         // 0x8
+    int pad_0xC[2];
+    float period;                   // 0x14
+};
+
+struct sDbItem_43A8 {
+    char pad_0x0[0xC];
+    int fC;                         // 0xC
+    char* data;                     // 0x10
+};
+
+struct sDbList_43A8 {
+    int count;                      // 0x0
+    sDbItem_43A8* items[1];         // 0x4
+};
+
+struct sDbModel_43A8 {
+    char pad_0x0[0x80];
+    sDbDef_43A8* def;               // 0x80
+    char pad_0x84[0x10];
+    sDbList_43A8* list;             // 0x94
+};
+
+struct sDbSlot_43A8 {
+    unsigned short value;           // 0x0
+    short ids[3];                   // 0x2
+    int f8;
+    int fC;
+    int f10;
+};
+
+static inline sDbModel_43A8* refToPtr_43A8(unsigned int p)
+{
+    return (sDbModel_43A8*)(p << 2);
+}
+
+struct sDbModelSet_43A8 {
+    char pad_0x0[0x1C];
+    unsigned int* refs;             // 0x1C
+
+    sDbModel_43A8* lookup(unsigned int idx)
+    {
+        unsigned int p = refs[idx] >> 8;
+        if (p == 0) {
+            return 0;
+        }
+        return refToPtr_43A8(p);
+    }
+};
+
+struct sDbWorld_43A8 {
+    char pad_0x0[0x8];
+    sDbModelSet_43A8** sets;        // 0x8
+};
+
+struct sDbModelRef_43A8 {
+    unsigned int id;
+
+    sDbModel_43A8* get()
+    {
+        sDbModelSet_43A8* set = (*(sDbWorld_43A8**)func_002D1BD8())->sets[id & 0xFF];
+        if (set == 0) {
+            return 0;
+        }
+        return set->lookup(id >> 8);
+    }
+};
+
+struct sDbOwner_43A8 {
+    int field_0x0;
+    sDbModelRef_43A8 model;         // 0x4
+    char pad_0x8[0x104];
+    int nActive;                    // 0x10C
+    int count;                      // 0x110
+    int first;                      // 0x114
+    int total;                      // 0x118
+    sDbSlot_43A8* ptrs[8];          // 0x11C
+    sDbSlot_43A8 slots[8];          // 0x13C
+    float time;                     // 0x1DC
+    float period;                   // 0x1E0
+    float step;                     // 0x1E4
+    sDbPad_43A8* buf;               // 0x1E8
+    sDbMesh_43A8* meshes;           // 0x1EC
+    sDbDef_43A8* def;               // 0x1F0
+};
+
+extern "C" void func_00344AA0_43A8(void* self) __asm__("func_00344AA0");
+
+
+
+extern "C" void func_003443A8_impl(sDbOwner_43A8* self) __asm__("func_003443A8");
+extern "C" void func_003443A8_impl(sDbOwner_43A8* self)
+{
+    sDbModel_43A8* m = self->model.get();
+    int i;
+    self->def = m->def;
+    self->period = self->def->period;
+    sDbPad_43A8*& buf = self->buf;
+    buf = new (D_0048E758, 0x20000000, 0) sDbPad_43A8[self->def->count];
+    sDbEntry_43A8* e = self->def->entries;
+    self->nActive = 0;
+    for (i = 0; i < self->def->count; i++, e++) {
+        if (e->src != 0)
+            self->nActive++;
+    }
+    if (self->nActive != 0) {
+        sDbMesh_43A8*& meshes = self->meshes;
+        meshes = new (D_0048E768, 0x20000000, 0) sDbMesh_43A8[self->nActive];
+    } else {
+        self->meshes = 0;
+    }
+    e = self->def->entries;
+    int k = 0;
+    for (i = 0; i < self->def->count; i++, e++) {
+        if (e->src != 0) {
+            func_00351398(&self->meshes[k++], e->src);
+        }
+    }
+    for (i = 0; i < self->nActive; i++) {
+        sDbMesh_43A8* p = (sDbMesh_43A8*)(i * 0xD0 + (int)self->meshes);
+        ((sDbVEntry_43A8*)p->vtable)[2].fn((char*)p + ((sDbVEntry_43A8*)p->vtable)[2].delta, self->time);
+    }
+    func_00344AA0_43A8(self);
+    self->first = 0;
+    self->count = m->list->count;
+    for (i = 0; i < self->count; i++) {
+        char* d = m->list->items[i]->data;
+        if (d != 0) {
+            self->first = *(int*)d;
+            break;
+        }
+    }
+    func_003E6448(&self->total, 0, 0xC4);
+    self->total = self->count;
+    for (i = 0; i < self->count; i++) {
+        sDbItem_43A8* item = m->list->items[i];
+        if (item->data != 0) {
+            self->ptrs[i] = &self->slots[i];
+            self->ptrs[i]->fC = item->fC;
+            short* p = (short*)self->slots;
+            for (int j = 1; j < 4; j++) {
+                p[j] = -1;
+            }
+            self->slots[i].value = *(unsigned short*)(item->data + 4);
+        } else {
+            self->ptrs[i] = (sDbSlot_43A8*)item;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/debouncenode", func_00344730);
