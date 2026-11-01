@@ -28,7 +28,48 @@ extern "C" void func_00255898(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", cCommSystem_cCommSystem);
+#ifdef SKIP_ASM
+extern "C" void ccs_5698(void *) __asm__("func_003E5698");
+extern "C" void ccs_6448(void *, int, int) __asm__("func_003E6448");
+extern "C" void *ccs_new(unsigned int, void *, unsigned int, int) __asm__("operator_new__FUi");
+extern "C" void ccs_3B18(void *) __asm__("func_003F3B18");
+extern char D_00480310[];
+extern char D_00480320[];
+extern int D_004A2EBC;
+extern "C" int *cCommSystem_cCommSystem_(int *self) __asm__("cCommSystem_cCommSystem");
+extern "C" int *cCommSystem_cCommSystem_(int *self) {
+    int a, b, n;
+    int i;
+    ccs_5698(self + 1);
+    ccs_6448(self, 0, 4);
+    self[5] = (int)ccs_new(0xFC00, D_00480310, 0x20000000, 0);
+    ccs_6448((void *)self[5], 0, 0xFC00);
+    self[6] = self[5];
+    a = 0xFC;
+    b = 0;
+    n = 0xFE;
+    do {
+        n--;
+        *(int *)(b + self[5]) = self[5] + a;
+        a += 0xFC;
+        b += 0xFC;
+    } while (n >= 0);
+    for (i = 0; i < 1; i++) {
+        self[i] = 0;
+    }
+    D_004A2EBC = 0;
+    self[7] = -1;
+    self[9] = 0;
+    self[10] = 0;
+    self[11] = 0;
+    self[12] = 1;
+    self[8] = 1;
+    ccs_3B18(D_00480320);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", cCommSystem__cCommSystem);
