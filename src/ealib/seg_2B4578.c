@@ -708,15 +708,15 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B54E0);
 typedef struct N_54E0 { struct N_54E0 *next; int pad; void (*fn)(int); int arg; } N_54E0;
 typedef struct { char pad[0x1B4]; N_54E0 *list; int pad2[2]; int cnt; } G_54E0;
 extern int D_0050A8E8_A8E8_54E0[] __asm__("D_0050A8E8");
-extern int D_0044C468_C468[] __asm__("D_0044C468");
+extern int D_0044C468;
 
 void func_003B54E0(void) {
     N_54E0 *n;
     G_54E0 *g = (G_54E0 *)D_0050A8E8_A8E8_54E0;
 
-    if (g->cnt != D_0044C468_C468[0]) {
+    if (g->cnt != D_0044C468) {
         n = g->list;
-        D_0044C468_C468[0] = g->cnt;
+        D_0044C468 = g->cnt;
         if (n != 0) {
             do {
                 n->fn(n->arg);
