@@ -472,5 +472,116 @@ int func_00150540(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintbagt", func_00150558);
+#ifdef SKIP_ASM
+struct sBagRec { unsigned char a, b; unsigned short m2, m4; };
+struct sBagInfo_0558 {
+    char pad[0xC];
+    unsigned short count;  // 0xC
+    short pad2;
+    int value;             // 0x10
+};
+extern const sBagInfo_0558 D_0045AEB8_0558[] __asm__("D_0045AEB8");
+extern "C" void func_003E6448(void* dst, int value, int size);
+
+extern "C" void func_00150558(int charID, sBagRec* r)
+{
+    func_003E6448(r, 0, 0x5A);
+    switch (charID)
+    {
+    case 0:
+        r[0].a = 1; r[0].b = 3;
+        r[1].a = 0; r[1].b = 2;
+        r[2].a = 0; r[2].b = 2;
+        r[3].a = 1; r[3].b = 2;
+        r[4].a = 0; r[4].b = 7;
+        r[9].a = 1; r[9].b = 3;
+        break;
+    case 1:
+        r[0].a = 0; r[0].b = 2;
+        r[1].a = 0; r[1].b = 2;
+        r[2].a = 1; r[2].b = 3;
+        r[3].a = 0; r[3].b = 3;
+        r[4].a = 1; r[4].b = 2;
+        r[9].a = 0; r[9].b = 9;
+        break;
+    case 2:
+        r[0].a = 1; r[0].b = 3;
+        r[1].a = 1; r[1].b = 3;
+        r[2].a = 0; r[2].b = 2;
+        r[3].a = 0; r[3].b = 2;
+        r[4].a = 0; r[4].b = 8;
+        r[9].a = 1; r[9].b = 3;
+        break;
+    case 3:
+        r[0].a = 1; r[0].b = 2;
+        r[1].a = 0; r[1].b = 3;
+        r[2].a = 0; r[2].b = 3;
+        r[3].a = 1; r[3].b = 2;
+        r[4].a = 0; r[4].b = 2;
+        r[9].a = 1; r[9].b = 6;
+        break;
+    case 4:
+        r[0].a = 1; r[0].b = 3;
+        r[1].a = 1; r[1].b = 2;
+        r[2].a = 0; r[2].b = 2;
+        r[3].a = 1; r[3].b = 2;
+        r[4].a = 1; r[4].b = 10;
+        r[9].a = 1; r[9].b = 3;
+        break;
+    case 5:
+        r[0].a = 0; r[0].b = 2;
+        r[1].a = 0; r[1].b = 3;
+        r[2].a = 0; r[2].b = 2;
+        r[3].a = 0; r[3].b = 2;
+        r[4].a = 0; r[4].b = 3;
+        r[9].a = 1; r[9].b = 7;
+        break;
+    case 6:
+        r[0].a = 0; r[0].b = 2;
+        r[1].a = 0; r[1].b = 2;
+        r[2].a = 1; r[2].b = 3;
+        r[3].a = 0; r[3].b = 3;
+        r[4].a = 1; r[4].b = 2;
+        r[9].a = 0; r[9].b = 8;
+        break;
+    case 7:
+        r[0].a = 1; r[0].b = 3;
+        r[1].a = 1; r[1].b = 2;
+        r[2].a = 0; r[2].b = 2;
+        r[3].a = 1; r[3].b = 3;
+        r[4].a = 0; r[4].b = 9;
+        r[9].a = 0; r[9].b = 2;
+        break;
+    case 8:
+        r[0].a = 1; r[0].b = 3;
+        r[1].a = 1; r[1].b = 2;
+        r[2].a = 0; r[2].b = 3;
+        r[3].a = 1; r[3].b = 2;
+        r[4].a = 0; r[4].b = 3;
+        r[9].a = 0; r[9].b = 10;
+        break;
+    default:
+        r[0].a = 0; r[0].b = 2;
+        r[1].a = 1; r[1].b = 3;
+        r[2].a = 0; r[2].b = 3;
+        r[3].a = 1; r[3].b = 3;
+        r[4].a = 1; r[4].b = 6;
+        r[9].a = 1; r[9].b = 2;
+        break;
+    }
+    for (int i = 0; i < 15; i++) {
+        r[i].m2 = 0;
+        r[i].m4 = 0;
+        for (int k = 0; k < D_0045AEB8_0558[i].count; k++) {
+            r[i].m2 |= 1 << k;
+            r[i].m4 |= 1 << k;
+        }
+        r[i].m2 &= 0xFFFC;
+        r[i].m4 &= 0xFFFC;
+        r[i].m2 &= ~(1 << r[i].b);
+    }
+}
+#endif
 
