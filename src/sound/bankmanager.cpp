@@ -1778,13 +1778,13 @@ INCLUDE_ASM("sound/bankmanager", func_0028E8C0);
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028EF90);
 #ifdef SKIP_ASM
-struct sSndKey8_EF90 {
-    long v;
-} __attribute__((packed));
-extern sSndKey8_EF90 D_004A3648[];
-extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_EF90)(cController*, cBankMonitorInstance*, float);
+extern sSndCallback_EF90 D_004A3648_EF90[] __asm__("D_004A3648");
+extern "C" int func_002ADCA0_EF90(void*, int, sSndCallback_EF90, int, int, int, int, int) __asm__("func_002ADCA0");
 
-// PORT: 64-bit long sound key
 extern "C" void func_0028EF90(void* self)
 {
     *(int*)((char*)self + 0x6258) = 0;
@@ -1792,7 +1792,7 @@ extern "C" void func_0028EF90(void* self)
     func_0028DF08(self);
     *(int*)((char*)self + 0x578C) = 0;
     func_0028D488(self);
-    func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 0xA, D_004A3648->v, 0, 2, 1, 0, 0);
+    func_002ADCA0_EF90(**(char***)((char*)self + 0x118) + 0x1D8, 0xA, D_004A3648_EF90[0], 0, 2, 1, 0, 0);
 }
 #endif
 
@@ -1881,6 +1881,11 @@ extern "C" void func_0028F140(void* self, int mode)
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028F200);
 #ifdef SKIP_ASM
+struct sSndKey8_EF90 {
+    long v;
+} __attribute__((packed));
+extern sSndKey8_EF90 D_004A3648[];
+extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
 extern "C" int func_002B49E0(void* stream);
 extern "C" int func_0028D960(void* self);
 
