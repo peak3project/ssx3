@@ -6073,10 +6073,9 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017ABC8__FPv);
 #ifdef SKIP_ASM
 void* func_0017ABC8(void* self)
 {
-    int t0 = 0;
-    *(int*)((char*)self + 0x4) = t0;
+    *(int*)((char*)self + 0x4) = 0;
     *(int*)((char*)self + 0x8) = -1;
-    *(int*)self = t0;
+    *(int*)self = 0;
     return self;
 }
 #endif
