@@ -1777,14 +1777,14 @@ struct sMpegLayer {
     unsigned int bits;          // 0x004
     int count;                  // 0x008
     int f00C;
-    void* a010[64];             // 0x010
-    void* a110[64];             // 0x110
-    void* a210[64];             // 0x210
-    void* a310[64];             // 0x310
-    void* f410;
-    void* f414;
-    void* f418;
-    void* f41C;
+    int a010[64];               // 0x010
+    int a110[64];               // 0x110
+    int a210[64];               // 0x210
+    int a310[64];               // 0x310
+    int f410;
+    int f414;
+    int f418;
+    int f41C;
     int f420;
     int f424;
     int f428;
@@ -1807,21 +1807,19 @@ struct sAlloc_B0C58 {
 };
 // PORT: the unit declares D_00509430 as char[] later; view bound by asm label
 extern sAlloc_B0C58 D_00509430_B0C58 __asm__("D_00509430");
-// MPEG decoder globals: plain scalars outside small data (the original TU kept them out of $gp)
-#define BSS_B0C58 __attribute__((section(".bss")))
-extern int D_005094F4_s __asm__("D_005094F4") BSS_B0C58;
-extern int D_005094F8_s __asm__("D_005094F8") BSS_B0C58;
-extern int D_005094FC_s __asm__("D_005094FC") BSS_B0C58;
-extern int D_00509500_s __asm__("D_00509500") BSS_B0C58;
-extern int D_00509524_s __asm__("D_00509524") BSS_B0C58;
-extern int D_00509548_s __asm__("D_00509548") BSS_B0C58;
-extern int D_00509584_s __asm__("D_00509584") BSS_B0C58;
-extern int D_0050958C_s __asm__("D_0050958C") BSS_B0C58;
-extern int D_005095A0_s __asm__("D_005095A0") BSS_B0C58;
-extern int D_005094D4_s __asm__("D_005094D4") BSS_B0C58;
-extern int D_005094D8_s __asm__("D_005094D8") BSS_B0C58;
-extern int D_005094DC_s __asm__("D_005094DC") BSS_B0C58;
-extern int D_005094E0_s __asm__("D_005094E0") BSS_B0C58;
+extern int D_005094F4;
+extern int D_005094F8;
+extern int D_005094FC;
+extern int D_00509500;
+extern int D_00509524;
+extern int D_00509548;
+extern int D_00509584;
+extern int D_0050958C;
+extern int D_005095A0;
+extern int D_005094D4;
+extern int D_005094D8;
+extern int D_005094DC;
+extern int D_005094E0;
 extern char D_004953E8[];
 extern char D_004953F0[];
 extern char D_00495400[];
@@ -1884,22 +1882,22 @@ extern "C" int func_003B0C58(sPlayer_B0C58* self, sScript_B0C58* script, sData_B
     func_003B13D8();
     int mode = D_00509648.f420;
     if (mode == 0) {
-        D_00509524_s = 1;
-        D_005095A0_s = 1;
-        D_00509584_s = 3;
-        D_0050958C_s = 1;
-        D_00509548_s = 5;
+        D_00509524 = 1;
+        D_005095A0 = 1;
+        D_00509584 = 3;
+        D_0050958C = 1;
+        D_00509548 = 5;
     }
-    D_005094FC_s = (D_005094F4_s + 15) / 16;
-    D_00509500_s = (mode != 0 && D_00509524_s == 0) ? (D_005094F8_s + 31) / 32 * 2 : (D_005094F8_s + 15) / 16;
-    int w = D_005094FC_s * 16;
-    D_005094D4_s = w;
+    D_005094FC = (D_005094F4 + 15) / 16;
+    D_00509500 = (mode != 0 && D_00509524 == 0) ? (D_005094F8 + 31) / 32 * 2 : (D_005094F8 + 15) / 16;
+    int w = D_005094FC * 16;
+    D_005094D4 = w;
     self->w = w;
-    int h = D_00509500_s * 16;
-    D_005094D8_s = h;
+    int h = D_00509500 * 16;
+    D_005094D8 = h;
     self->h = h;
-    D_005094DC_s = w >> 1;
-    D_005094E0_s = h >> 1;
+    D_005094DC = w >> 1;
+    D_005094E0 = h >> 1;
     int n = self->script->count;
     for (int i = 0; i < n; i++) {
         int cw = self->w;
@@ -2138,12 +2136,12 @@ extern "C" unsigned int func_003B1258(int a0)
 }
 #endif
 
-extern "C" void* func_003B1300(int);
+extern "C" int func_003B1300(int);
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1270__FPv);
 #ifdef SKIP_ASM
-void* func_003B1270(void* self)
+int func_003B1270(void* self)
 {
     return func_003B1300(1);
 }
@@ -2177,13 +2175,11 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1300);
 #ifdef SKIP_ASM
 extern "C" void func_003B1290(int n);
 
-// PORT: returns a bit-field value as void* to fit the unit's existing
-// `extern "C" void* func_003B1300(int)` declaration (really unsigned int).
-extern "C" void* func_003B1300(int n)
+extern "C" int func_003B1300(int n)
 {
     unsigned int v = func_003B1258(n);
     func_003B1290(n);
-    return (void*)v;
+    return v;
 }
 #endif
 
@@ -2269,34 +2265,34 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B14F0);
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", group_of_pictures_header);
 #ifdef SKIP_ASM
-extern int D_0044C378[];
-extern int D_0044C37C[];
-extern int D_0044C380[];
-extern void* D_00509628[];
-extern void* D_0050962C[];
-extern void* D_00509630[];
-extern void* D_00509634[];
-extern void* D_00509638[];
-extern void* D_0050963C[];
-extern void* D_00509640[];
+extern int D_0044C378;
+extern int D_0044C37C;
+extern int D_0044C380;
+extern int D_00509628;
+extern int D_0050962C;
+extern int D_00509630;
+extern int D_00509634;
+extern int D_00509638;
+extern int D_0050963C;
+extern int D_00509640;
 extern char D_00495468[];
-void* func_003B2360(void* self);
+int func_003B2360(void* self);
 extern "C" void func_003B1988(void);
 
 extern "C" void group_of_pictures_header(void)
 {
     if (D_0050A088 == &D_00509648) {
-        D_0044C378[0] = D_0044C37C[0] + 1;
-        D_0044C380[0] = 1;
+        D_0044C378 = D_0044C37C + 1;
+        D_0044C380 = 1;
     }
-    D_00509628[0] = func_003B1300(1);
-    D_0050962C[0] = func_003B1300(5);
-    D_00509630[0] = func_003B1300(6);
+    D_00509628 = func_003B1300(1);
+    D_0050962C = func_003B1300(5);
+    D_00509630 = func_003B1300(6);
     func_003B2360(D_00495468);
-    D_00509634[0] = func_003B1300(6);
-    D_00509638[0] = func_003B1300(6);
-    D_0050963C[0] = func_003B1300(1);
-    D_00509640[0] = func_003B1300(1);
+    D_00509634 = func_003B1300(6);
+    D_00509638 = func_003B1300(6);
+    D_0050963C = func_003B1300(1);
+    D_00509640 = func_003B1300(1);
     func_003B1988();
 }
 #endif
@@ -2304,31 +2300,30 @@ extern "C" void group_of_pictures_header(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B17A8);
 #ifdef SKIP_ASM
-extern int D_00509554[];
-extern int D_00509558[];
-extern void* D_0050955C[];
-extern void* D_00509560[];
-extern void* D_00509564[];
-extern void* D_00509568[];
-extern void* D_0050956C[];
+extern int D_00509554;
+extern int D_00509558;
+extern int D_0050955C;
+extern int D_00509560;
+extern int D_00509564;
+extern int D_00509568;
+extern int D_0050956C;
 extern "C" void func_003B1988(void);
 extern "C" int func_003B2318(void);
 extern "C" void func_003B2440(void);
 
-// PORT: func_003B1300 really returns unsigned int (unit declares void*)
 extern "C" void func_003B17A8(void)
 {
     D_0050A088->f430 = 0;
-    D_00509554[0] = (int)func_003B1300(0xA);
-    D_00509558[0] = (int)func_003B1300(3);
-    D_0050955C[0] = func_003B1300(0x10);
-    if (D_00509558[0] == 2 || D_00509558[0] == 3) {
-        D_00509560[0] = func_003B1300(1);
-        D_00509564[0] = func_003B1300(3);
+    D_00509554 = func_003B1300(0xA);
+    D_00509558 = func_003B1300(3);
+    D_0050955C = func_003B1300(0x10);
+    if (D_00509558 == 2 || D_00509558 == 3) {
+        D_00509560 = func_003B1300(1);
+        D_00509564 = func_003B1300(3);
     }
-    if (D_00509558[0] == 3) {
-        D_00509568[0] = func_003B1300(1);
-        D_0050956C[0] = func_003B1300(3);
+    if (D_00509558 == 3) {
+        D_00509568 = func_003B1300(1);
+        D_0050956C = func_003B1300(3);
     }
     func_003B2318();
     func_003B1988();
@@ -2341,7 +2336,7 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1878);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern unsigned char D_0044C2D8[];
-extern int D_005094F8_B1878[] __asm__("D_005094F8");
+extern int D_005094F8;
 
 extern "C" int func_003B1878(void)
 {
@@ -2351,16 +2346,16 @@ extern "C" int func_003B1878(void)
 
     if (D_0050A088->f420 != 0) {
         r = 0;
-        if (D_005094F8_B1878[0] >= 0xAF1) {
-            r = (int)func_003B1300(3);
+        if (D_005094F8 >= 0xAF1) {
+            r = func_003B1300(3);
         }
     } else {
         r = 0;
     }
     if (D_0050A088->f424 == 1) {
-        D_0050A088->f434 = (int)func_003B1300(7);
+        D_0050A088->f434 = func_003B1300(7);
     }
-    t = (int)func_003B1300(5);
+    t = func_003B1300(5);
     {
         sMpegLayer* p = D_0050A088;
         p->f438 = p->f420 != 0
@@ -2368,7 +2363,7 @@ extern "C" int func_003B1878(void)
             : t;
     }
     if (func_003B1300(1) != 0) {
-        D_0050A088->f43C = (int)func_003B1300(1);
+        D_0050A088->f43C = func_003B1300(1);
         func_003B1300(1);
         func_003B1300(6);
         func_003B2318();
@@ -2383,7 +2378,6 @@ extern "C" int func_003B1878(void)
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1988);
 #ifdef SKIP_ASM
 extern "C" unsigned int func_003B1258(int a0);
-extern "C" unsigned int func_003B1300_u(int n) __asm__("func_003B1300");
 extern "C" void func_003B1340(void);
 extern "C" void func_003B1498_v(void) __asm__("func_003B1498");
 extern "C" void func_003B2380_v(void) __asm__("func_003B2380__FPv");
@@ -2405,7 +2399,7 @@ extern "C" void func_003B1988(void)
     while ((tok = func_003B1258(0x20)) == 0x1B5 || tok == 0x1B2) {
         if (tok == 0x1B5) {
             func_003B1340();
-            switch (func_003B1300_u(4)) {
+            switch (func_003B1300(4)) {
             case 1: func_003B1AB0(); break;
             case 2: func_003B1CC0(); break;
             case 3: func_003B1D58(); break;
@@ -2429,25 +2423,25 @@ extern "C" void func_003B1988(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1AB0);
 #ifdef SKIP_ASM
-extern int D_005095DC[];
-extern int D_00509520[];
-extern int D_00509524[];
-extern int D_00509528[];
-extern int D_0050952C[];
-extern int D_00509530[];
-extern int D_00509534[];
-extern int D_00509510[];
-extern int D_00509514[];
-extern int D_00509518[];
-extern int D_005094EC[];
-extern int D_005094F0[];
-extern int D_005094F4[];
-extern int D_005094F8[];
-extern float D_00509504[];
+extern int D_005095DC;
+extern int D_00509520;
+extern int D_00509524;
+extern int D_00509528;
+extern int D_0050952C;
+extern int D_00509530;
+extern int D_00509534;
+extern int D_00509510;
+extern int D_00509514;
+extern int D_00509518;
+extern int D_005094EC;
+extern int D_005094F0;
+extern int D_005094F4;
+extern int D_005094F8;
+extern float D_00509504;
 extern float D_00509508;
 extern float D_0044C388[];
 extern char D_004954B8[];
-void* func_003B2360(void* self);
+int func_003B2360(void* self);
 
 // Parse an MPEG-2 sequence extension.
 extern "C" void func_003B1AB0(void)
@@ -2455,61 +2449,61 @@ extern "C" void func_003B1AB0(void)
     sMpegLayer* g = D_0050A088;
     g->f420 = 1;
     g->f424 = 0;
-    D_005095DC[0] = 0;
-    D_00509520[0] = (int)func_003B1300(8);
-    D_00509524[0] = (int)func_003B1300(1);
-    D_00509528[0] = (int)func_003B1300(2);
-    int hext = (int)func_003B1300(2);
-    int vext = (int)func_003B1300(2);
-    int brext = (int)func_003B1300(0xC);
+    D_005095DC = 0;
+    D_00509520 = func_003B1300(8);
+    D_00509524 = func_003B1300(1);
+    D_00509528 = func_003B1300(2);
+    int hext = func_003B1300(2);
+    int vext = func_003B1300(2);
+    int brext = func_003B1300(0xC);
     func_003B2360(D_004954B8);
-    int vbvext = (int)func_003B1300(8);
-    D_0050952C[0] = (int)func_003B1300(1);
-    D_00509530[0] = (int)func_003B1300(2);
-    D_00509534[0] = (int)func_003B1300(5);
-    D_00509508 = D_0044C388[D_00509510[0]] * ((float)(D_00509530[0] + 1) / (float)(D_00509534[0] + 1));
-    if ((D_00509520[0] >> 7) & 1) {
-        if ((D_00509520[0] & 0xF) == 5) {
-            D_005094EC[0] = 0x85;
-            D_005094F0[0] = 8;
+    int vbvext = func_003B1300(8);
+    D_0050952C = func_003B1300(1);
+    D_00509530 = func_003B1300(2);
+    D_00509534 = func_003B1300(5);
+    D_00509508 = D_0044C388[D_00509510] * ((float)(D_00509530 + 1) / (float)(D_00509534 + 1));
+    if ((D_00509520 >> 7) & 1) {
+        if ((D_00509520 & 0xF) == 5) {
+            D_005094EC = 0x85;
+            D_005094F0 = 8;
         }
     } else {
-        D_005094EC[0] = D_00509520[0] >> 4;
-        D_005094F0[0] = D_00509520[0] & 0xF;
+        D_005094EC = D_00509520 >> 4;
+        D_005094F0 = D_00509520 & 0xF;
     }
-    D_005094F4[0] = (hext << 12) | (D_005094F4[0] & 0xFFF);
-    D_005094F8[0] = (vext << 12) | (D_005094F8[0] & 0xFFF);
-    D_00509514[0] = D_00509514[0] + (brext << 18);
-    D_00509504[0] = D_00509514[0] * 400.0f;
-    D_00509518[0] = D_00509518[0] + (vbvext << 10);
+    D_005094F4 = (hext << 12) | (D_005094F4 & 0xFFF);
+    D_005094F8 = (vext << 12) | (D_005094F8 & 0xFFF);
+    D_00509514 = D_00509514 + (brext << 18);
+    D_00509504 = D_00509514 * 400.0f;
+    D_00509518 = D_00509518 + (vbvext << 10);
 }
 #endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1CC0);
 #ifdef SKIP_ASM
-extern void* D_00509538[];
-extern void* D_0050953C[];
-extern void* D_00509540[];
-extern void* D_00509544[];
-extern void* D_00509548[];
-extern void* D_0050954C[];
-extern void* D_00509550[];
+extern int D_00509538;
+extern int D_0050953C;
+extern int D_00509540;
+extern int D_00509544;
+extern int D_00509548;
+extern int D_0050954C;
+extern int D_00509550;
 extern char D_004954D0[];
-void* func_003B2360(void* self);
+int func_003B2360(void* self);
 
 extern "C" void func_003B1CC0(void)
 {
-    D_00509538[0] = func_003B1300(3);
-    D_0050953C[0] = func_003B1300(1);
-    if (D_0050953C[0] != 0) {
-        D_00509540[0] = func_003B1300(8);
-        D_00509544[0] = func_003B1300(8);
-        D_00509548[0] = func_003B1300(8);
+    D_00509538 = func_003B1300(3);
+    D_0050953C = func_003B1300(1);
+    if (D_0050953C != 0) {
+        D_00509540 = func_003B1300(8);
+        D_00509544 = func_003B1300(8);
+        D_00509548 = func_003B1300(8);
     }
-    D_0050954C[0] = func_003B1300(0xE);
+    D_0050954C = func_003B1300(0xE);
     func_003B2360(D_004954D0);
-    D_00509550[0] = func_003B1300(0xE);
+    D_00509550 = func_003B1300(0xE);
 }
 #endif
 
@@ -2522,12 +2516,12 @@ extern "C" void func_003B1D58(void)
 {
     sMpegLayer** cur = &D_0050A088;
     {
-        void* p = func_003B1300(1);
+        int p = func_003B1300(1);
         (*cur)->f410 = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
-                void* q = func_003B1300(8);
+                int q = func_003B1300(8);
                 int k = D_0044C218[i];
                 D_0050A088->a010[k] = q;
                 D_0050A088->a210[k] = q;
@@ -2535,12 +2529,12 @@ extern "C" void func_003B1D58(void)
         }
     }
     {
-        void* p = func_003B1300(1);
+        int p = func_003B1300(1);
         D_0050A088->f414 = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
-                void* q = func_003B1300(8);
+                int q = func_003B1300(8);
                 int k = D_0044C218[i];
                 D_0050A088->a110[k] = q;
                 D_0050A088->a310[k] = q;
@@ -2548,24 +2542,24 @@ extern "C" void func_003B1D58(void)
         }
     }
     {
-        void* p = func_003B1300(1);
+        int p = func_003B1300(1);
         D_0050A088->f418 = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
-                void* q = func_003B1300(8);
+                int q = func_003B1300(8);
                 int k = D_0044C218[i];
                 D_0050A088->a210[k] = q;
             }
         }
     }
     {
-        void* p = func_003B1300(1);
+        int p = func_003B1300(1);
         D_0050A088->f41C = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
-                void* q = func_003B1300(8);
+                int q = func_003B1300(8);
                 int k = D_0044C218[i];
                 D_0050A088->a310[k] = q;
             }
@@ -2577,33 +2571,33 @@ extern "C" void func_003B1D58(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", sequence_scalable_extension);
 #ifdef SKIP_ASM
-extern void* D_sseDC __asm__("D_005095DC");
-extern void* D_sseE0 __asm__("D_005095E0");
-extern void* D_sseE4 __asm__("D_005095E4");
-extern void* D_sseE8 __asm__("D_005095E8");
-extern void* D_sseEC __asm__("D_005095EC");
-extern void* D_sseF0 __asm__("D_005095F0");
-extern void* D_sseF4 __asm__("D_005095F4");
-extern char D_sseA[] __asm__("D_004954F0");
-extern char D_sseB[] __asm__("D_00495510");
-void* func_003B2360(void* self);
+extern int D_005095DC;
+extern int D_005095E0;
+extern int D_005095E4;
+extern int D_005095E8;
+extern int D_005095EC;
+extern int D_005095F0;
+extern int D_005095F4;
+extern char D_004954F0[];
+extern char D_00495510[];
+int func_003B2360(void* self);
 void func_003B11E8(void* self);
 
 extern "C" void sequence_scalable_extension(void)
 {
-    D_0050A088->f424 = (int)func_003B1300(2) + 1;
-    D_sseDC = func_003B1300(4);
+    D_0050A088->f424 = func_003B1300(2) + 1;
+    D_005095DC = func_003B1300(4);
     if (D_0050A088->f424 == 2) {
-        D_sseE0 = func_003B1300(0xE);
-        func_003B2360(D_sseA);
-        D_sseE4 = func_003B1300(0xE);
-        D_sseE8 = func_003B1300(5);
-        D_sseEC = func_003B1300(5);
-        D_sseF0 = func_003B1300(5);
-        D_sseF4 = func_003B1300(5);
+        D_005095E0 = func_003B1300(0xE);
+        func_003B2360(D_004954F0);
+        D_005095E4 = func_003B1300(0xE);
+        D_005095E8 = func_003B1300(5);
+        D_005095EC = func_003B1300(5);
+        D_005095F0 = func_003B1300(5);
+        D_005095F4 = func_003B1300(5);
     }
     if (D_0050A088->f424 == 4) {
-        func_003B11E8(D_sseB);
+        func_003B11E8(D_00495510);
     }
 }
 #endif
@@ -2611,30 +2605,30 @@ extern "C" void sequence_scalable_extension(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1FC8);
 #ifdef SKIP_ASM
-extern int D_00509524[];
-extern int D_00509584[];
-extern int D_00509588[];
-extern int D_00509598[];
-extern void* D_005095C0[];
-extern void* D_005095D0[];
+extern int D_00509524;
+extern int D_00509584;
+extern int D_00509588;
+extern int D_00509598;
+extern int D_005095C0[];
+extern int D_005095D0[];
 extern char D_00495538[];
 extern char D_00495568[];
-void* func_003B2360(void* self);
+int func_003B2360(void* self);
 
 extern "C" void func_003B1FC8(void)
 {
     int n;
     int i;
-    if (D_00509524[0] != 0) {
-        if (D_00509598[0] == 0) {
+    if (D_00509524 != 0) {
+        if (D_00509598 == 0) {
             n = 1;
         } else {
-            n = D_00509588[0] != 0 ? 3 : 2;
+            n = D_00509588 != 0 ? 3 : 2;
         }
-    } else if (D_00509584[0] != 3) {
+    } else if (D_00509584 != 3) {
         n = 1;
     } else {
-        n = D_00509598[0] != 0 ? 3 : 2;
+        n = D_00509598 != 0 ? 3 : 2;
     }
     for (i = 0; i < n; i++) {
         D_005095C0[i] = func_003B1300(0x10);
@@ -2648,22 +2642,22 @@ extern "C" void func_003B1FC8(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B20B8);
 #ifdef SKIP_ASM
-extern void* D_00509570[];
-extern void* D_00509580[];
-extern int D_00509584[];
-extern int D_00509588[];
-extern void* D_0050958C[];
-extern void* D_00509590[];
-extern void* D_00509594[];
-extern int D_00509598[];
-extern void* D_0050959C[];
-extern void* D_005095A0[];
-extern void* D_005095A4[];
-extern void* D_005095A8[];
-extern void* D_005095AC[];
-extern void* D_005095B0[];
-extern void* D_005095B4[];
-extern void* D_005095B8[];
+extern int D_00509570[];
+extern int D_00509580;
+extern int D_00509584;
+extern int D_00509588;
+extern int D_0050958C;
+extern int D_00509590;
+extern int D_00509594;
+extern int D_00509598;
+extern int D_0050959C;
+extern int D_005095A0;
+extern int D_005095A4;
+extern int D_005095A8;
+extern int D_005095AC;
+extern int D_005095B0;
+extern int D_005095B4;
+extern int D_005095B8;
 
 extern "C" void func_003B20B8(void)
 {
@@ -2671,24 +2665,24 @@ extern "C" void func_003B20B8(void)
     D_00509570[1] = func_003B1300(4);
     D_00509570[2] = func_003B1300(4);
     D_00509570[3] = func_003B1300(4);
-    D_00509580[0] = func_003B1300(2);
-    D_00509584[0] = (int)func_003B1300(2);
-    D_00509588[0] = (int)func_003B1300(1);
-    D_0050958C[0] = func_003B1300(1);
-    D_00509590[0] = func_003B1300(1);
-    D_0050A088->f428 = (int)func_003B1300(1);
-    D_00509594[0] = func_003B1300(1);
-    D_0050A088->f42C = (int)func_003B1300(1);
-    D_00509598[0] = (int)func_003B1300(1);
-    D_0050959C[0] = func_003B1300(1);
-    D_005095A0[0] = func_003B1300(1);
-    D_005095A4[0] = func_003B1300(1);
-    if (D_005095A4[0] != 0) {
-        D_005095A8[0] = func_003B1300(1);
-        D_005095AC[0] = func_003B1300(3);
-        D_005095B0[0] = func_003B1300(1);
-        D_005095B4[0] = func_003B1300(7);
-        D_005095B8[0] = func_003B1300(8);
+    D_00509580 = func_003B1300(2);
+    D_00509584 = func_003B1300(2);
+    D_00509588 = func_003B1300(1);
+    D_0050958C = func_003B1300(1);
+    D_00509590 = func_003B1300(1);
+    D_0050A088->f428 = func_003B1300(1);
+    D_00509594 = func_003B1300(1);
+    D_0050A088->f42C = func_003B1300(1);
+    D_00509598 = func_003B1300(1);
+    D_0050959C = func_003B1300(1);
+    D_005095A0 = func_003B1300(1);
+    D_005095A4 = func_003B1300(1);
+    if (D_005095A4 != 0) {
+        D_005095A8 = func_003B1300(1);
+        D_005095AC = func_003B1300(3);
+        D_005095B0 = func_003B1300(1);
+        D_005095B4 = func_003B1300(7);
+        D_005095B8 = func_003B1300(8);
     }
 }
 #endif
@@ -2696,34 +2690,33 @@ extern "C" void func_003B20B8(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", picture_spatial_scalable_extension);
 #ifdef SKIP_ASM
-extern void* D_005095F8[];
-extern int D_005095FC[];
-extern int D_00509600[];
-extern void* D_00509604[];
-extern void* D_00509608[];
-extern void* D_0050960C[];
+extern int D_005095F8;
+extern int D_005095FC;
+extern int D_00509600;
+extern int D_00509604;
+extern int D_00509608;
+extern int D_0050960C;
 extern char D_00495598[];
 extern char D_004955D0[];
-void* func_003B2360(void* self);
+int func_003B2360(void* self);
 
-// PORT: func_003B1300 really returns unsigned int (unit declares void*)
 extern "C" void picture_spatial_scalable_extension(void)
 {
     D_0050A088->f430 = 1;
-    D_005095F8[0] = func_003B1300(0xA);
+    D_005095F8 = func_003B1300(0xA);
     func_003B2360(D_00495598);
-    D_005095FC[0] = (int)func_003B1300(0xF);
-    if (D_005095FC[0] >= 0x4000) {
-        D_005095FC[0] -= 0x8000;
+    D_005095FC = func_003B1300(0xF);
+    if (D_005095FC >= 0x4000) {
+        D_005095FC -= 0x8000;
     }
     func_003B2360(D_004955D0);
-    D_00509600[0] = (int)func_003B1300(0xF);
-    if (D_00509600[0] >= 0x4000) {
-        D_00509600[0] -= 0x8000;
+    D_00509600 = func_003B1300(0xF);
+    if (D_00509600 >= 0x4000) {
+        D_00509600 -= 0x8000;
     }
-    D_00509604[0] = func_003B1300(2);
-    D_00509608[0] = func_003B1300(1);
-    D_0050960C[0] = func_003B1300(1);
+    D_00509604 = func_003B1300(2);
+    D_00509608 = func_003B1300(1);
+    D_0050960C = func_003B1300(1);
 }
 #endif
 
@@ -2743,7 +2736,7 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B2318);
 #ifdef SKIP_ASM
 // PORT: func_003B1270 takes a void* it never reads; this caller passes nothing, so it binds
 // a no-argument declaration to the mangled symbol.
-void* func_003B1270_noarg() __asm__("func_003B1270__FPv");
+int func_003B1270_noarg() __asm__("func_003B1270__FPv");
 
 extern "C" int func_003B2318(void)
 {
@@ -2759,7 +2752,7 @@ extern "C" int func_003B2318(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B2360__FPv);
 #ifdef SKIP_ASM
-void* func_003B2360(void* self)
+int func_003B2360(void* self)
 {
     return func_003B1300(1);
 }
@@ -2779,43 +2772,43 @@ void* func_003B2380(void* self)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", copyright_extension);
 #ifdef SKIP_ASM
-extern void* D_00509610[];
-extern void* D_00509614[];
-extern void* D_00509618[];
-extern void* D_0050961C[];
-extern void* D_00509620[];
-extern void* D_00509624[];
+extern int D_00509610;
+extern int D_00509614;
+extern int D_00509618;
+extern int D_0050961C;
+extern int D_00509620;
+extern int D_00509624;
 extern char D_00495630[];
 extern char D_00495658[];
 extern char D_00495688[];
-void* func_003B2360(void* self);
+int func_003B2360(void* self);
 
 extern "C" void copyright_extension(void)
 {
-    D_00509610[0] = func_003B1300(1);
-    D_00509614[0] = func_003B1300(8);
-    D_00509618[0] = func_003B1300(1);
+    D_00509610 = func_003B1300(1);
+    D_00509614 = func_003B1300(8);
+    D_00509618 = func_003B1300(1);
     func_003B1300(7);
     func_003B2360(D_00495630);
-    D_0050961C[0] = func_003B1300(0x14);
+    D_0050961C = func_003B1300(0x14);
     func_003B2360(D_00495658);
-    D_00509620[0] = func_003B1300(0x16);
+    D_00509620 = func_003B1300(0x16);
     func_003B2360(D_00495688);
-    D_00509624[0] = func_003B1300(0x16);
+    D_00509624 = func_003B1300(0x16);
 }
 #endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B2440);
 #ifdef SKIP_ASM
-extern int D_00509554[];
-extern int D_00509558[];
-extern int D_0044C378[];
-extern int D_0044C37C[];
-extern int D_0044C380[];
-extern int D_0044C3C8[];
-extern int D_0044C3CC[];
-extern int D_0050A098[];
+extern int D_00509554;
+extern int D_00509558;
+extern int D_0044C378;
+extern int D_0044C37C;
+extern int D_0044C380;
+extern int D_0044C3C8;
+extern int D_0044C3CC;
+extern int D_0050A098;
 
 extern "C" void func_003B2440(void)
 {
@@ -2824,22 +2817,22 @@ extern "C" void func_003B2440(void)
         return;
     }
     int last;
-    if (D_00509558[0] != 3 && D_00509554[0] != (last = D_0044C3CC[0])) {
-        if (D_0044C3C8[0] != 0) {
-            D_0044C3C8[0] = 0;
-            D_0044C378[0] += 0x400;
+    if (D_00509558 != 3 && D_00509554 != (last = D_0044C3CC)) {
+        if (D_0044C3C8 != 0) {
+            D_0044C3C8 = 0;
+            D_0044C378 += 0x400;
         }
-        if (D_00509554[0] < last && D_0044C380[0] == 0) {
-            D_0044C3C8[0] = 1;
+        if (D_00509554 < last && D_0044C380 == 0) {
+            D_0044C3C8 = 1;
         }
-        D_0044C380[0] = 0;
-        D_0044C3CC[0] = D_00509554[0];
+        D_0044C380 = 0;
+        D_0044C3CC = D_00509554;
     }
-    D_0050A098[0] = D_0044C378[0] + D_00509554[0];
-    if (D_0044C3C8[0] != 0 && D_0044C3CC[0] >= D_00509554[0]) {
-        D_0050A098[0] += 0x400;
+    D_0050A098 = D_0044C378 + D_00509554;
+    if (D_0044C3C8 != 0 && D_0044C3CC >= D_00509554) {
+        D_0050A098 += 0x400;
     }
-    D_0044C37C[0] = (D_0044C37C[0] < D_0050A098[0]) ? D_0050A098[0] : D_0044C37C[0];
+    D_0044C37C = (D_0044C37C < D_0050A098) ? D_0050A098 : D_0044C37C;
 }
 #endif
 
