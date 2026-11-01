@@ -121,7 +121,94 @@ extern "C" void cComputer_setIndividualRiderDifficulty(cComputer_SIRD* self, int
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", cComputer_updateRiderDifficulty);
+#ifdef SKIP_ASM
+struct sVEntry_UR {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+struct sComp_UR {
+    char pad_0x0[0x18];
+    sAiTune_SIRD* tune;             // 0x18
+    char pad_0x1C[0xDF8 - 0x1C];
+    float skillA;                   // 0xDF8
+    float skillB;                   // 0xDFC
+    short diff;                     // 0xE00
+    short pad_0xE02;
+    int f4;                         // 0xE04
+    int f8;                         // 0xE08
+};
+extern void* D_004A28A8;
+extern signed char D_00535BC8[];
+extern int D_005308D0[];
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" short func_0010C450(void* self, int level, int mode);
+extern "C" int func_00144BE0(void* iface);
+extern "C" int func_00147CB8(void* iface, int flag);
+void cComputer_setIndividualRiderDifficulty_UR(void* self, int level, int mode) __asm__("cComputer_setIndividualRiderDifficulty");
+
+static inline int ValidOr_UR(int v, int invalid, int def)
+{
+    if (v <= invalid)
+        v = def;
+    return v;
+}
+
+void cComputer_updateRiderDifficulty_UR(sComp_UR* self) __asm__("cComputer_updateRiderDifficulty");
+void cComputer_updateRiderDifficulty_UR(sComp_UR* self)
+{
+    char* rider = *(char**)((char*)self + 0x18);
+    int mode = **(int**)((char*)D_004A28A8 + 0xC0);
+    char* obj = rider + 0x6C0;
+    sVEntry_UR* vt = *(sVEntry_UR**)obj;
+    int r = vt[7].fn(obj + vt[7].delta);
+    int level = ValidOr_UR(r, -1, 1);
+    self->diff = func_0010C450(self, level, mode);
+    if (level == 1 && mode == 3) {
+        self->f4 = 1;
+    } else {
+        self->f4 = 0;
+    }
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (D_00535BC8[0x48] == 1 || D_00535BC8[0x48] == 6 || D_00535BC8[0x48] == 5) {
+        self->f8 = 1;
+    } else {
+        self->f8 = 0;
+    }
+    cComputer_setIndividualRiderDifficulty_UR(self, level, func_00147CB8(cBE_getInterface_Fv(cBE_getBE(), 1), D_00535BC8[0x48] == 0));
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (D_00535BC8[0x4A] == 4) {
+        self->diff = 0;
+    } else if (D_00535BC8[0x4A] == 5) {
+        self->diff = 2;
+    }
+    if ((D_005308D0[0] >> 2) & 1) {
+        self->skillB = 1.0f;
+        self->skillA = 100.0f;
+        self->f4 = 1;
+        self->tune->accel = -100.0f;
+        self->tune->speed = 100.0f;
+        self->tune->boost = 2;
+        if (level == 1 || level == 2) {
+            self->diff = 2;
+        } else {
+            self->diff = 1;
+        }
+        return;
+    }
+    if (func_00144BE0(iface) == 4) {
+        self->skillB += self->skillB * 0.25f;
+    } else if (func_00144BE0(iface) == 2 || func_00144BE0(iface) == 3) {
+        self->skillB += self->skillB * 0.10000000149011612f;
+    }
+    if (self->skillB > 1.0f) {
+        self->skillB = 1.0f;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_0010C9A8);
