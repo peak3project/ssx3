@@ -2738,7 +2738,26 @@ int func_003F99B8_impl(char *str, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9B38);
+#ifdef SKIP_ASM
+extern int f9208(void) __asm__("func_003F9208");
+typedef struct { int f0; int f4; int f8; char body[0x60]; } S9B38;
+extern S9B38 *D_9B38s __asm__("D_004A4BD8");
+typedef struct { char pad[0x38]; void (*f38)(int); } E9B38;
+extern E9B38 *D_9B38e __asm__("D_004A4BDC");
+int func_003F9B38_impl(int *src) __asm__("func_003F9B38");
+int func_003F9B38_impl(int *src) {
+    if (f9208() == 0) return 2;
+    if (src == 0) return 0xC;
+    if (D_9B38s->f0 != 0) return 0xD;
+    __builtin_memcpy(D_9B38s->body, src, 0x60);
+    D_9B38s->f0 = 7;
+    D_9B38s->f4 = 0x18;
+    D_9B38e->f38(src[0]);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9C48);
