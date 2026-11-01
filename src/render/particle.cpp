@@ -6415,7 +6415,48 @@ extern "C" void func_00385290(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003852E8);
+#ifdef SKIP_ASM
+struct sPartRow_52E8 {
+    int f0;
+    void* uv;                       // 0x4
+    int f8;
+    int fC;
+};
+
+struct sPartGrid_52E8 {
+    char pad_0x0[0x190];
+    unsigned short width;           // 0x190
+    char pad_0x192[0x1A0 - 0x192];
+    int sel;                        // 0x1A0
+    int done;                       // 0x1A4
+    char pad_0x1A8[0xC];
+    sPartRow_52E8* rows[2];         // 0x1B4
+    int height;                     // 0x1BC
+};
+
+extern "C" void func_00385A38_uv(void* self, void* dst, int idx, float* src) __asm__("func_00385A38");
+
+extern "C" void func_003852E8(sPartGrid_52E8* self, float* src)
+{
+    int z = self->sel == 0;
+    for (int r = 0; r < self->height; r++) {
+        sPartRow_52E8* strip = &self->rows[z][r];
+        int i0 = r * self->width;
+        int i1 = i0 + self->width;
+        int idx = 0;
+        for (int c = 0; c < self->width; c++) {
+            func_00385A38_uv(self, strip->uv, idx, src + i0 * 3);
+            func_00385A38_uv(self, strip->uv, idx + 1, src + i1 * 3);
+            idx += 2;
+            i0++;
+            i1++;
+        }
+    }
+    self->done = 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00385410);
