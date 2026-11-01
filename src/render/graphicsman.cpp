@@ -552,11 +552,10 @@ static inline unsigned int gmCall_AE20(char* self, int slot)
 extern "C" void func_0036AE20(void* vself, int idx, int a, int b, int n, char** pp)
 {
     char* self = (char*)vself;
-    unsigned int full = 0x1000;
     int w = *(int*)(self + 0x5A30);
     int h = *(int*)(self + 0x5A34);
-    int offX = ((full - gmCall_AE20(self, 10)) >> 1) << 4;
-    int offY = ((full - gmCall_AE20(self, 11)) >> 1) << 4;
+    int offX = ((0x1000 - gmCall_AE20(self, 10)) >> 1) << 4;
+    int offY = ((0x1000 - gmCall_AE20(self, 11)) >> 1) << 4;
     int cols = w / 8;
     int zbp = *(int*)(self + 0x5A80);
     ulong* p = (ulong*)*pp;
