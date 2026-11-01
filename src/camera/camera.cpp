@@ -2622,12 +2622,16 @@ static inline float vlength_161AB0(const sCamVec4_161AB0& v)
     return r;
 }
 
-extern "C" void func_00161AB0(char* self)
+static inline void setMode_161AB0(char* self, int mode)
 {
-    int mode = 0x3D;
     if (*(int*)(self + 0x1C) != mode && *(int*)(self + 0x18) != 0x4A)
         func_00161EF0(self, mode);
     *(int*)(self + 0x1C) = mode;
+}
+
+extern "C" void func_00161AB0(char* self)
+{
+    setMode_161AB0(self, 0x3D);
     float speed = vlength_161AB0((*(cCamRider_161AB0**)(self + 0x20))->getVelocity()) * 0.035999998450279236f;
     int boarding = func_0011FE98(*(void**)(*(char**)(self + 0x20) + 4)) == 5;
     if (*(int*)(self + 0x3C) == 0) {
