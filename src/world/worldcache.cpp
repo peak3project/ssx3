@@ -110,12 +110,11 @@ INCLUDE_ASM("world/worldcache", func_003A77B0__FPvii);
 #ifdef SKIP_ASM
 void* func_003A77B0(void* self, int a1, int a2)
 {
-    int t0 = 0;
     *(int*)((char*)self + 0x4) = a2;
     *(int*)self = a1;
-    *(int*)((char*)self + 0x8) = t0;
-    *(int*)((char*)self + 0xc) = t0;
-    *(int*)((char*)self + 0x10) = t0;
+    *(int*)((char*)self + 0x8) = 0;
+    *(int*)((char*)self + 0xc) = 0;
+    *(int*)((char*)self + 0x10) = 0;
     return self;
 }
 #endif
