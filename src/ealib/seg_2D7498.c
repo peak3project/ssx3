@@ -1627,7 +1627,99 @@ out:
 
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9088);
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D93C0);
+#ifdef SKIP_ASM
+/* Combination search: reset every entry, then advance the odometer until the usage
+   percentage fits under `thr` and the constraints (func_003D8E58) hold, or the odometer
+   wraps. The helpers are the inline bodies of func_003DA910 (usage percent) and
+   func_003DAC20 (next combination); the retail TU keeps their out-of-line copies at the
+   end of the file. */
+struct E_93C0 { short x; char pad[2]; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
+struct H_93C0 { struct E_93C0 ent[12]; char pad[2]; unsigned char tbl[1]; };
+struct O_93C0 { int len; int start; int n; unsigned char col[4]; };
+struct L_93C0 { char pad[4]; unsigned char cnt; unsigned char n5; char pad2[2]; unsigned char list[1]; };
+extern int func_003DB838_93C0(unsigned char *, int, struct O_93C0 *) __asm__("func_003DB838");
+extern int func_003D8E58_93C0(struct H_93C0 *, struct L_93C0 *) __asm__("func_003D8E58");
+extern unsigned char **D_004A4824_93C0 __asm__("D_004A4824");
+extern int D_004A4838;
+
+/* same body as func_003DA910 */
+static inline int usage_93C0(unsigned char *a0, struct H_93C0 *h) {
+    struct O_93C0 o;
+    int total = 0;
+    int i;
+    int r;
+    int cnt = a0[4] >> 2;
+
+    for (i = 0; i < cnt; i++) {
+        if (func_003DB838_93C0(D_004A4824_93C0[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
+            total += o.len;
+        }
+    }
+    r = 0;
+    if (D_004A4838 != 0) {
+        r = total * 100 / D_004A4838;
+    }
+    return r;
+}
+
+/* same body as func_003DAC20 */
+static inline int next_93C0(unsigned char *h, struct E_93C0 *e) {
+    int wrap = 0;
+    int done = 0;
+    int i = (h[4] >> 2) - 1;
+    struct E_93C0 *p = &e[i];
+    int t = p->len;
+    int limit = p->start + t;
+    do {
+        if (++p->cur < limit) {
+            done = 1;
+        } else {
+            p->cur = p->start;
+            if (--i < 0) {
+                done = 1;
+                wrap = 1;
+            }
+            p = &e[i];
+            t = p->len;
+            limit = p->start + t;
+        }
+    } while (!done);
+    return wrap;
+}
+
+int func_003D93C0_impl(struct L_93C0 *l, struct H_93C0 *h, int thr) __asm__("func_003D93C0");
+int func_003D93C0_impl(struct L_93C0 *l, struct H_93C0 *h, int thr) {
+    int ok = 0;
+    int of = 0;
+    int i;
+    int n;
+    int pct;
+
+    n = l->cnt >> 2;
+    for (i = 0; i < n; i++) {
+        h->ent[i].cur = h->ent[i].start;
+    }
+    do {
+        ok = 1;
+        pct = 0;
+        if (thr != 0) {
+            pct = usage_93C0((unsigned char *)l, h);
+            if (thr < pct) ok = 0;
+        }
+        if (ok) {
+            if (l->n5 != 0) {
+                if (func_003D8E58_93C0(h, l) == 0) ok = 0;
+            }
+        }
+        if (!ok) {
+            of = next_93C0((unsigned char *)l, h->ent);
+        }
+    } while (!of && !ok);
+    return ok;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2D7498", func_003D95B8);
