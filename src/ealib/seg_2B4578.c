@@ -4172,14 +4172,15 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BC930);
 extern void func_003BECA0_C930(void) __asm__("func_003BECA0");
 extern void func_003BED30_C930(void) __asm__("func_003BED30");
 extern void func_003BF0F0_C930(void) __asm__("func_003BF0F0");
-extern void *D_0050C840[];
-extern void *D_0050C844[];
-extern void *D_0050C848[];
+extern void *D_0050C840;
+extern void *D_0050C844;
+extern void *D_0050C848;
 
 void func_003BC930(void) {
-    D_0050C840[0] = func_003BECA0_C930;
-    D_0050C844[0] = func_003BED30_C930;
-    D_0050C848[0] = func_003BF0F0_C930;
+    D_0050C840 = func_003BECA0_C930;
+    D_0050C844 = func_003BED30_C930;
+    D_0050C848 = func_003BF0F0_C930;
+
 }
 #endif
 
