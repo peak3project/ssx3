@@ -5903,8 +5903,8 @@ extern void func_003E5D30_60E8(int, char *, ...) __asm__("func_003E5D30");
 extern int func_004186C8_60E8(char *, char *, char *) __asm__("func_004186C8");
 extern char D_00495EF0[];
 extern char D_00495F00[];
-extern char *D_0045100C_100C[] __asm__("D_0045100C");
-extern int D_00451010_1010[] __asm__("D_00451010");
+extern char *D_0045100C;
+extern int D_00451010;
 
 void SYSTEM_abortmessage(char *fmt, ...) {
     char buf[512];
@@ -5915,8 +5915,8 @@ void SYSTEM_abortmessage(char *fmt, ...) {
         buf[0] = 0;
     }
     func_003E5D30_60E8(2, D_00495EF0, buf);
-    if (D_0045100C_100C[0] != 0) {
-        func_003E5D30_60E8(2, D_00495F00, D_0045100C_100C[0], D_00451010_1010[0]);
+    if (D_0045100C != 0) {
+        func_003E5D30_60E8(2, D_00495F00, D_0045100C, D_00451010);
     }
     func_003E4A10();
 }
