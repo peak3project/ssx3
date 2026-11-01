@@ -777,17 +777,21 @@ static inline sMsgListIter_00269300 sMsgList_00269300_insert(sMsgListIter_002693
     return tmp;
 }
 
-extern "C" void func_00269300(void* self, int a1, int a2)
+static inline void postMsg_269300(char* g, int kind)
 {
-    int kind = 0xF5;
-    *(int*)self = a2;
-    func_00264D80(self, a1, 0);
-    char* g = D_004A3028;
     int* m = (int*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
     m[0] = kind;
     *(void***)((char*)m + 0x4) = D_004812B0;
     void* mp = m;
     sMsgList_00269300_insert(*(sMsgListNode_00269300**)(g + 0xF0), mp);
+}
+
+extern "C" void func_00269300(void* self, int a1, int a2)
+{
+    *(int*)self = a2;
+    func_00264D80(self, a1, 0);
+    char* g = D_004A3028;
+    postMsg_269300(g, 0xF5);
 }
 #endif
 
