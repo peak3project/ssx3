@@ -3637,7 +3637,6 @@ extern "C" unsigned char func_002743D8(void *arg0) {
 //100%
 INCLUDE_ASM("replay/replaycache", func_002743E8);
 #ifdef SKIP_ASM
-// 99.87%: only `or $19,$2,$19` operand order differs (we emit or $19,$19,$2)
 struct sInfo2743E8 {
     char pad0[2];
     unsigned char count;
@@ -3648,7 +3647,7 @@ public:
     int pad0;
     virtual void a1();
     virtual void a2();
-    virtual int a3(float t, float dt, int* out);
+    virtual bool a3(float t, float dt, int* out);
 };
 struct sSelf2743E8;
 class cB2743E8 {
@@ -3667,23 +3666,15 @@ struct sSelf2743E8 {
     cB2743E8* sink;
 };
 
-static inline int orBool_2743E8(int a, int b) { return a | b; }
-
 extern "C" int func_002743E8(void* p, float t, float dt)
 {
     sSelf2743E8* self = (sSelf2743E8*)p;
     int flags = 0;
-    int any = 0;
-    int i = 0;
-    if (self->info->count != 0) {
-        do {
-            int out = 0;
-            cA2743E8* o = self->objs[i];
-            i++;
-            int r = o->a3(t, dt, &out);
-            any = orBool_2743E8(r != 0, any);
-            flags |= out;
-        } while (i < self->info->count);
+    bool any = false;
+    for (int i = 0; i < self->info->count; i++) {
+        int out = 0;
+        any = self->objs[i]->a3(t, dt, &out) | any;
+        flags |= out;
     }
     cB2743E8* s = self->sink;
     if (s != 0) {
@@ -3694,7 +3685,6 @@ extern "C" int func_002743E8(void* p, float t, float dt)
     }
     return any;
 }
-// w1 session2: tried any|=, any=any|.., nz temp, r declared at top, unsigned types, decl order, ternary: all 99.87. Permuter (hand-vtable C base, 16 threads 5 min) found nothing better than base.
 #endif
 
 //100%
