@@ -1746,7 +1746,46 @@ void func_00400908(char *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004009A8);
+#ifdef SKIP_ASM
+extern int D_00451610[];
+extern int D_00451614[];
+extern int D_00451620[];
+extern int D_00451634[];
+extern char D_00451658[];
+extern int D_0045165C[];
+extern int D_005264C0[];
+extern int D_005264C4[];
+extern int D_005264D4[];
+extern char D_004979E0[];
+extern void func_00423DE0(int);
+extern int func_00423BE0(void);
+extern void func_00425C60();
+void func_004009A8(void) {
+    void (*fn)(int);
+    for (;;) {
+        func_00423DE0(D_00451620[0]);
+        if (*(volatile int *)D_00451658 == -1) {
+            *(volatile int *)D_00451634 = 0;
+            *(volatile int *)D_00451658 = 0;
+            D_00451614[0] = 0;
+            *(volatile int *)D_005264D4 = 0;
+            func_00423BE0();
+        }
+        if (D_00451610[0] > 0)
+            func_00425C60(D_004979E0, D_005264C0[0], *(volatile int *)D_0045165C);
+        fn = (void (*)(int))D_005264C0[0];
+        if (fn != 0 && *(volatile int *)D_0045165C != 0) {
+            int saved;
+            __asm__ volatile("move %0,$28\n\tlw $28,%1" : "=r"(saved) : "m"(D_005264C4[0]));
+            fn(*(volatile int *)D_0045165C);
+            __asm__ volatile("move $28,%0" : : "r"(saved));
+        }
+        *(volatile int *)D_00451634 = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400A78);
