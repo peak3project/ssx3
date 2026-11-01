@@ -63,7 +63,25 @@ extern "C" int func_002B91B0(void *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B91C8);
+#ifdef SKIP_ASM
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_91C8)(cController*, cBankMonitorInstance*, float);
+struct sSndPlayOpts_91C8 {
+    char pad00[0x1C];
+    int cur;                            // 0x1C
+    char pad20[0x40 - 0x20];
+    sSndCallback_91C8 callbacks[4];     // 0x40
+};
+
+// cSndPlayOpts::OPTS_GetCallback (prototype name)
+extern "C" sSndCallback_91C8 func_002B91C8(sSndPlayOpts_91C8* s) {
+    return s->callbacks[s->cur];
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9208);
