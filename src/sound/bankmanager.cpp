@@ -2268,27 +2268,27 @@ extern "C" void func_0028FA98(void* self, float v)
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028FAE0);
 #ifdef SKIP_ASM
-struct sSndKey8_FAE0 {
-    long v;
-} __attribute__((packed));
-extern sSndKey8_FAE0 D_004A3648_FAE0[] __asm__("D_004A3648");
-extern sSndKey8_FAE0 D_004A3650_FAE0[] __asm__("D_004A3650");
-extern sSndKey8_FAE0 D_004A3658_FAE0[] __asm__("D_004A3658");
-extern "C" void func_002ADDE0(void* bank, long id);
-extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_FAE0)(cController*, cBankMonitorInstance*, float);
+extern sSndCallback_FAE0 D_004A3648_FAE0[] __asm__("D_004A3648");
+extern sSndCallback_FAE0 D_004A3650_FAE0[] __asm__("D_004A3650");
+extern sSndCallback_FAE0 D_004A3658_FAE0[] __asm__("D_004A3658");
+extern "C" void func_002ADDE0_FAE0(void* bank, sSndCallback_FAE0 id) __asm__("func_002ADDE0");
+extern "C" int func_002ADCA0_FAE0(void*, int, sSndCallback_FAE0, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" int func_0028DEF0(void* self, int a1);
 extern "C" void func_002B3AC0(void* monitor);
 
-// PORT: 64-bit long sound keys
 // Stops the three menu loops, and unless a bank load is pending, switches to the front-end bank and starts its music.
 extern "C" void func_0028FAE0(char* self)
 {
     if (func_0028D960(self) == 0) {
         return;
     }
-    func_002ADDE0(**(char***)(self + 0x118) + 0x1D8, D_004A3648_FAE0->v);
-    func_002ADDE0(**(char***)(self + 0x118) + 0x1D8, D_004A3650_FAE0->v);
-    func_002ADDE0(**(char***)(self + 0x118) + 0x1D8, D_004A3658_FAE0->v);
+    func_002ADDE0_FAE0(**(char***)(self + 0x118) + 0x1D8, D_004A3648_FAE0[0]);
+    func_002ADDE0_FAE0(**(char***)(self + 0x118) + 0x1D8, D_004A3650_FAE0[0]);
+    func_002ADDE0_FAE0(**(char***)(self + 0x118) + 0x1D8, D_004A3658_FAE0[0]);
     int st = func_002B49E0(self + 0x118);
     if ((unsigned int)(st - 1) >= 3 && st != 0x191) {
         if (*(int*)(self + 0x530) != 0) {
@@ -2301,9 +2301,9 @@ extern "C" void func_0028FAE0(char* self)
     func_0028D488(self);
     func_0028CF98(self, 0, 0, -1, 0);
     char* p = **(char***)(self + 0x118) + 0x1D8;
-    sSndKey8_FAE0* key = D_004A3650_FAE0;
+    sSndCallback_FAE0* key = D_004A3650_FAE0;
     int r = func_002B4908(self + 0x118);
-    func_002ADCA0(p, 3000, key->v, 0, 4, r, 0, 0);
+    func_002ADCA0_FAE0(p, 3000, *key, 0, 4, r, 0, 0);
 }
 #endif
 
