@@ -1129,7 +1129,43 @@ extern "C" void func_0026D818(void* self, void* stream)
 
 INCLUDE_ASM("replay/playbackman", func_0026D988);
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026DA88);
+#ifdef SKIP_ASM
+struct cBucketMan;
+void* cBucketMan_first(cBucketMan* self, int index);
+void* cBucketMan_next(cBucketMan* self, void* node, int index);
+extern char D_004A5988;
+struct sVEntryDA88 {
+    short delta;
+    short index;
+    void (*fn)(void* self, ...);
+};
+static inline cBucketMan* bucketMan_DA88() { return (cBucketMan*)&D_004A5988; }
+extern "C" void func_0026DA88(void* self, cPbStream* s)
+{
+    int hdr[2];
+    void* node;
+
+    hdr[0] = 0;
+    hdr[1] = 0;
+    for (node = cBucketMan_first(bucketMan_DA88(), 8); node != 0; node = cBucketMan_next(bucketMan_DA88(), node, 8)) {
+        hdr[0]++;
+    }
+    {
+        sVEntryDA88* vt = *(sVEntryDA88**)s;
+        vt[1].fn((char*)s + vt[1].delta, hdr, 8);
+    }
+    if (hdr[0] > 0) {
+        for (node = cBucketMan_first(bucketMan_DA88(), 8); node != 0; node = cBucketMan_next(bucketMan_DA88(), node, 8)) {
+            int id[1];
+            id[0] = *(int*)(*(char**)((char*)node + 0x18) + 0x78);
+            sVEntryDA88* vt = *(sVEntryDA88**)s;
+            vt[1].fn((char*)s + vt[1].delta, id, 4);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026DB88);
