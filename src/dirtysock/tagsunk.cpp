@@ -2524,19 +2524,23 @@ static inline void post_DB80(char* self, void* msg)
     sMsgListDB80_insert(*(sMsgListNodeDB80**)(self + 0xF0), mp);
 }
 
+static inline void postMsg_DB80(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    post_DB80(self, m);
+}
+
 extern "C" void func_0025DB80(char* self, char* msg)
 {
     *(int*)self = 1;
     int v = *(int*)(msg + 0x8);
     if (v == 0) {
-        int type = 0xE4;
         char buf[0x100];
         cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A2F58), buf, 0x100, D_004A2F40);
         cBXString_cBXString4(self + 0x84, buf);
-        int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-        m[0] = type;
-        *(void***)((char*)m + 0x4) = D_004812B0;
-        post_DB80(self, m);
+        postMsg_DB80(self, 0xE4);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
