@@ -1295,10 +1295,9 @@ extern "C" void func_003739D0(sPtPools39D0* self)
     int n0 = self->cnt[0];
     int n1 = self->cnt[1];
     int n2 = self->cnt[2];
-    int size = 0xC;
-    func_003E6448(self->elems[0], 0, n0 * size);
-    func_003E6448(self->elems[1], 0, n1 * size);
-    func_003E6448(self->elems[2], 0, n2 * size);
+    func_003E6448(self->elems[0], 0, n0 * 0xC);
+    func_003E6448(self->elems[1], 0, n1 * 0xC);
+    func_003E6448(self->elems[2], 0, n2 * 0xC);
     self->freeCount[0] = 0;
     self->freeCount[1] = 0;
     self->freeCount[2] = 0;
