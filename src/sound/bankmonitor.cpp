@@ -874,41 +874,32 @@ INCLUDE_ASM("sound/bankmonitor", func_002ADDE0);
 #ifdef SKIP_ASM
 extern "C" void func_002AD940(void*);
 
-struct sBmKeyDDE0 {
-    short a;
-    short id;
-    union {
-        int v;
-        short s;
-    };
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sBmCallbackDDE0)(cController*, cBankMonitorInstance*, float);
+struct sBmSlotDDE0 {
+    char pad00[0xC];
+    sBmCallbackDDE0 callback;   // 0x0C
+    char pad14[0x2C - 0x14];
 };
 
-static inline int func_002ADDE0_match(char* e, sBmKeyDDE0 k)
+static inline int func_002ADDE0_match(sBmSlotDDE0* e, sBmCallbackDDE0 k)
 {
-    int r = 0;
-    if (k.id == *(short*)(e + 0xE)) {
-        if ((k.id != -1 && k.s == *(short*)(e + 0x10)) || k.v == *(int*)(e + 0x10)) {
-            r = 1;
-        }
-    }
-    return r;
+    return k == e->callback;
 }
 
-// Release-build assert: expands to an empty do { } while (0). Its loop notes keep GCC from reversing the
-// slot loop into a count-down, as in the target.
-#define ASSERT_DDE0(cond) do { } while (0)
 
-// PORT: callers in this unit declare func_002ADDE0(void*, long); the key is the same 8 bytes viewed as a struct.
-void func_002ADDE0_impl(void* self, sBmKeyDDE0 key) __asm__("func_002ADDE0");
+// PORT: callers in this unit declare func_002ADDE0(void*, long) (the same 8 bytes as a 64-bit integer).
+void func_002ADDE0_impl(void* self, sBmCallbackDDE0 key) __asm__("func_002ADDE0");
 
-// Stops every one of the 48 monitored sounds that matches the key.
-void func_002ADDE0_impl(void* self, sBmKeyDDE0 key)
+// Stops every one of the 48 monitored sounds that plays with the given callback.
+void func_002ADDE0_impl(void* self, sBmCallbackDDE0 key)
 {
     for (int i = 0; i < 48; i++) {
-        if (func_002ADDE0_match((char*)self + 0x98 + i * 0x2C, key)) {
+        if (func_002ADDE0_match((sBmSlotDDE0*)((char*)self + 0x98 + i * 0x2C), key)) {
             func_002AD940((char*)self + 0x98 + i * 0x2C);
         }
-        ASSERT_DDE0(i < 48);
     }
 }
 #endif
