@@ -6286,7 +6286,48 @@ int func_0040A090(int a, int b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A1A8);
+#ifdef SKIP_ASM
+struct S1A8 { int a; int p4; int p8; int c; int p10; int n; int ptr; int p1C; unsigned char buf[16]; };
+extern int S1A8_5271C0[] __asm__("D_005271C0");
+extern struct S1A8 S1A8_527240 __asm__("D_00527240");
+extern int S1A8_528780[] __asm__("D_00528780");
+extern int S1A8_4533C0[] __asm__("D_004533C0");
+extern int S1A8_4533C4[] __asm__("D_004533C4");
+extern int func_rpc1A8(int *, int, int, struct S1A8 *, int, int *, int, int, int) __asm__("func_00426D18");
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern void func_00424020(int);
+int func_0040A1A8(int a, unsigned char *p, int n) {
+    int r;
+    unsigned i;
+    if (S1A8_5271C0[9] == 0)
+        return -100;
+    if (func_00423DF0(S1A8_4533C4[0]) < 0)
+        return -200;
+    S1A8_527240.a = a;
+    if (n < 17) {
+        S1A8_527240.n = n;
+        S1A8_527240.ptr = S1A8_527240.c = 0;
+    } else {
+        int q = (int)p - 16;
+        int d = (((unsigned)p - 1) & 0xFFFFFFF0u) - q;
+        S1A8_527240.c = n - d;
+        S1A8_527240.n = d;
+        S1A8_527240.ptr = (int)p + d;
+    }
+    for (i = 0; i < S1A8_527240.n; i++)
+        S1A8_527240.buf[i] = p[i];
+    func_00424020(0);
+    r = func_rpc1A8(S1A8_5271C0, 6, 1, &S1A8_527240, 48, S1A8_528780, 4, 0, 0);
+    if (r == 0)
+        S1A8_4533C0[0] = 6;
+    else
+        func_00423DC0(S1A8_4533C4[0]);
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A320);
