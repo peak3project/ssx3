@@ -8322,7 +8322,33 @@ void func_003C4AF8(int *arg0, int *arg1) {
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4B70);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4D78);
+#ifdef SKIP_ASM
+struct S_4D78 { unsigned short a; unsigned short b; };
+struct G_4D78 { char pad[0x1A98]; unsigned short n; unsigned short lo; unsigned short hi; unsigned short max; struct S_4D78 *segs; };
+extern struct G_4D78 D_0050AD00_4D78 __asm__("D_0050AD00");
+extern int func_0042AD08_4D78(unsigned int) __asm__("func_0042AD08");
+int func_003C4D78(int type, unsigned int addr) {
+    struct S_4D78 *s;
+    int i;
+    if (type == 0x100) {
+        return func_0042AD08_4D78(addr);
+    }
+    addr >>= 6;
+    for (i = 0; i < D_0050AD00_4D78.n; i++) {
+        s = &D_0050AD00_4D78.segs[i];
+        if (s->a == addr) {
+            D_0050AD00_4D78.n--;
+            for (; i < D_0050AD00_4D78.n; i++) {
+                D_0050AD00_4D78.segs[i] = D_0050AD00_4D78.segs[i + 1];
+            }
+            return 0;
+        }
+    }
+    return -8;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4E50);
