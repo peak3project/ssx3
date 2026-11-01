@@ -692,7 +692,23 @@ int func_003FEB08(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FEB38);
+#ifdef SKIP_ASM
+typedef int Q3EB38_i __attribute__((mode(TI)));
+typedef union { Q3EB38_i q; unsigned long d[2]; int w[4]; short h[8]; } Q3EB38;
+// PORT: PS2-only VU0 data-memory write: store the qword `v` at VU0 address `addr` through $vi1/$vf1, restoring both.
+static inline void vu0_write_qword_EB38(unsigned int addr, Q3EB38_i v)
+{
+    unsigned int vi;
+    Q3EB38_i vf;
+    __asm__ volatile(".set noreorder\n\tcfc2.ni %0, $vi1\n\tqmfc2.ni %1, $vf1\n\tqmtc2.ni %2, $vf1\n\tctc2.ni %3, $vi1\n\tvsqi.xyzw $vf1, ($vi1++)\n\tctc2.ni %0, $vi1\n\tqmtc2.ni %1, $vf1\n\t.set reorder"
+                     : "=&r"(vi), "=&r"(vf) : "r"(v), "r"(addr));
+}
+void func_003FEB38(unsigned short addr, Q3EB38 v) {
+    vu0_write_qword_EB38(addr, v.q);
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FEB78);
 
