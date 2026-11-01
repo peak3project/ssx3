@@ -2649,7 +2649,61 @@ extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20*
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D140);
+#ifdef SKIP_ASM
+struct sEquipTable_DC20;
+extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i);
+
+struct sSlotK19D140 {
+    int state;
+    char pad[0x118];
+    unsigned int stamp; // 0x11C
+};
+struct sBankK19D140 {
+    sSlotK19D140 e[256];
+};
+struct sTableK19D140 {
+    sBankK19D140 banks[10];
+};
+
+extern "C" void func_0019D140(void* p, int bank)
+{
+    sTableK19D140* self = (sTableK19D140*)p;
+    unsigned int oldest = 0;
+    int best = -1;
+    int i;
+    int b;
+    sSlotK19D140* s = self->banks[bank].e;
+    int found = bank;
+    for (i = 0; i < 256; i++) {
+        if (s->state == 3 && (oldest == 0 || s->stamp < oldest)) {
+            oldest = s->stamp;
+            best = i;
+        }
+        s++;
+    }
+    if (best == -1) {
+        for (b = 0; b < 10; b++) {
+            if (b != bank) {
+                s = self->banks[b].e;
+                for (i = 0; i < 256; i++) {
+                    if (s->state == 3 && (oldest == 0 || s->stamp < oldest)) {
+                        oldest = s->stamp;
+                        found = b;
+                        best = i;
+                    }
+                    s++;
+                }
+                if (best >= 0)
+                    break;
+            }
+        }
+    }
+    if (best >= 0)
+        func_0019D8B8((sEquipTable_DC20*)self, found, best);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D250);
