@@ -691,13 +691,13 @@ int func_003DCC88(int a, int b, int c, int d) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCD98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450C5C_CD98[] __asm__("D_00450C5C");
+extern int D_00450C5C;
 
 int func_003DCD98(int a, int b, int c) {
     int x = a ? a : 0x10;
     int y = b ? b : 0x3E8;
     int z = c ? c : 0x20;
-    int sz = D_00450C5C_CD98[0] + 0xC;
+    int sz = D_00450C5C + 0xC;
     return z * 0x30 + x * 0x110 + y * sz + 0x40;
 }
 #endif
@@ -4843,7 +4843,7 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4648);
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E48D8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450C5C_48D8[] __asm__("D_00450C5C");
+extern int D_00450C5C;
 extern char *D_00519C78_48D8[] __asm__("D_00519C78");
 extern char *strncpy(char *, const char *, int);
 
@@ -4851,9 +4851,9 @@ int func_003E48D8_48D8(int, char *, int *, int *) __asm__("func_003E48D8");
 
 int func_003E48D8_48D8(int arg0, char *arg1, int *arg2, int *arg3) {
     char *e;
-    e = D_00519C78_48D8[0] + (arg0 - 1) * (D_00450C5C_48D8[0] + 0xC);
+    e = D_00519C78_48D8[0] + (arg0 - 1) * (D_00450C5C + 0xC);
     if (arg1 != 0) {
-        strncpy(arg1, e + 0xC, D_00450C5C_48D8[0]);
+        strncpy(arg1, e + 0xC, D_00450C5C);
     }
     if (arg2 != 0) {
         *arg2 = *(int *)(e + 8);
@@ -4870,7 +4870,7 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4968);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003E4508(int, int, int *);
-extern int D_00450C5C_0C5C[] __asm__("D_00450C5C");
+extern int D_00450C5C;
 extern int D_00519C78_9C78[] __asm__("D_00519C78");
 
 int func_003E4968(int a0) {
@@ -4880,7 +4880,7 @@ int func_003E4968(int a0) {
     if (func_003E4508(a0, 0, &sp0) == 0) {
         r = 0;
     } else {
-        r = D_00519C78_9C78[0] + (sp0 - 1) * (D_00450C5C_0C5C[0] + 0xC);
+        r = D_00519C78_9C78[0] + (sp0 - 1) * (D_00450C5C + 0xC);
     }
     return r;
 }
