@@ -2074,7 +2074,84 @@ int func_00401BF0(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401DF8);
+#ifdef SKIP_ASM
+// func_00401DF8 sceCdRead (w8 2026-11-01, round 2): both fail-path flag stores volatile and the SignalSema argument read
+// volatile. gcc 2.9 then schedules the fail block sw658; lui; sw634; lw; jal like the target (the volatile load depends on
+// the volatile stores; a loop-note/asm barrier cannot give this order). The only residual in the project pipeline is the
+// jal delay slot: gcc never fills a slot with a volatile load and ee-as never swaps, so `lw; jal; nop` (+1 insn, SIZE
+// MISMATCH). Assembled by a swapping GNU as (-march=r5900 -mabi=eabi -O2, `move`->`daddu`) the ee-gcc output is 120/120
+// words identical to the target (scratch/w8/prove2.sh).
+struct S1DF8 { int lsn; int sectors; int buf; unsigned char trycount; unsigned char spindlctrl; unsigned char datapattern; char *ebuf; int *res; };
+extern struct S1DF8 D_00451700_s __asm__("D_00451700");
+extern char D_00452700[];
+extern int D_004527C0[];
+extern char D_004527D0[];
+extern int D_00451638[];
+extern int D_00451610[];
+extern char D_00451658[];
+extern int D_00451634[];
+extern int D_00451628[];
+extern char D_00497BB0[];
+extern char D_00497BC8[];
+extern int func_00401350(void);
+extern int func_004011E0();
+extern void func_00400B48(unsigned);
+extern void func_00425C60();
+extern void func_00423DC0(int);
+extern void func_00426358(int, int);
+extern int func_00426D18_r(char *, int, int, void *, int, int, int, void (*)(unsigned), void *) __asm__("func_00426D18");
+int func_00401DF8(int lsn, int sectors, int buf, unsigned char *mode) {
+    int size;
+    struct S1DF8 *p = &D_00451700_s;
+    if ((*(volatile int *)D_00451638 & 1) == 0) {
+        if (func_00401350() == 6)
+            return 0;
+    }
+    if (func_004011E0(4) == 0)
+        return 0;
+    p->lsn = lsn;
+    p->sectors = sectors;
+    p->buf = buf;
+    p->trycount = mode[0];
+    p->spindlctrl = mode[1];
+    p->datapattern = mode[2];
+    p->ebuf = D_00452700;
+    p->res = D_004527C0;
+    switch (mode[2]) {
+    case 1:
+        size = sectors * 0x918;
+        break;
+    case 2:
+        size = sectors * 0x924;
+        break;
+    case 0:
+    default:
+        size = sectors << 11;
+        break;
+    }
+    D_004527C0[0] = 0;
+    if ((*(volatile int *)D_00451638 & 2) == 0)
+        func_00426358(buf, size);
+    func_00426358((int)D_00452700, 0x90);
+    func_00426358((int)p, 0x18);
+    func_00426358((int)D_004527C0, 4);
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497BB0);
+    *(volatile int *)D_00451658 = 1;
+    *(volatile int *)D_00451634 = 1;
+    if (func_00426D18_r(D_004527D0, 1, 1, p, 0x18, 0, 0, func_00400B48, D_00452700) < 0) {
+        *(volatile int *)D_00451658 = 0;
+        *(volatile int *)D_00451634 = 0;
+        func_00423DC0(*(volatile int *)D_00451628);
+        return 0;
+    }
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497BC8);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401FD8);
