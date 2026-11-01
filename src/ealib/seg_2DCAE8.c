@@ -3299,7 +3299,86 @@ void func_003E0E90(int hnd, int id) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1110);
+#ifdef SKIP_ASM
+extern int func_003DFBD0(int, void *, void *);
+struct E_1110 { int f0; int f4; int f8; int fC; };
+struct B_1110 { int f0; int f4; };
+struct Q_1110 { int f0; int f4; };
+struct O_1110 {
+    char pad0[0x24];
+    struct E_1110 * volatile f24;
+    int f28;
+    char *f2C;
+    char * volatile f30;
+    char pad34[4];
+    volatile int f38;
+    char pad3C[0x10];
+    volatile int f4C;
+    char *f50;
+    char * volatile f54;
+    char pad58[4];
+    char * volatile f5C;
+    struct B_1110 * volatile f60;
+    struct Q_1110 *f64;
+};
+extern void func_003E0E90(int, int);
+extern void func_003DFE18(char *, char *);
+extern void func_003DFC48(char *, int);
+
+void func_003E1110(int arg0) {
+    struct O_1110 *loc[2];
+    unsigned int n = 0;
+
+    if (func_003DFBD0(arg0, &loc[0], &loc[1]) == 0) {
+        struct Q_1110 *q = loc[0]->f64;
+        char *p;
+        int i;
+        if (q == 0) {
+            return;
+        }
+        while ((unsigned int)(q->f4 - 1) < 2) {
+            func_003E0E90(arg0, q->f0);
+            q = loc[0]->f64;
+        }
+        while (loc[0]->f5C != (char *)loc[0]->f60) {
+            func_003DFE18((char *)loc[0], loc[0]->f5C);
+        }
+        loc[0]->f60->f4 = 4;
+        for (i = 0; i < loc[0]->f28; i++) {
+            loc[0]->f24[i].f8 = 0;
+        }
+        func_003DFC48((char *)loc[0], loc[0]->f4C);
+        p = loc[0]->f50;
+        while (p != loc[0]->f54) {
+            if (((struct B_1110 *)p)->f0 == -1) {
+                p = loc[0]->f30;
+            } else {
+                n = ((struct B_1110 *)p)->f4 & 0xFFFFFF;
+                ((struct B_1110 *)p)->f0 = -2;
+                ((struct B_1110 *)p)->f4 = n;
+                p += n;
+            }
+        }
+        if (loc[0]->f38 == 2) {
+            if (p == loc[0]->f30) {
+                loc[0]->f30 = loc[0]->f54 = loc[0]->f2C;
+            } else {
+                int pad = 0x40 - ((int)loc[0]->f54 & 0x3F);
+                if (pad == 0x40) {
+                    pad = 0;
+                }
+                p = loc[0]->f54 - n;
+                n += pad;
+                ((struct B_1110 *)p)->f4 = n;
+                loc[0]->f54 += pad;
+            }
+            loc[0]->f38 = 0;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E12E0);
