@@ -25,7 +25,49 @@ extern "C" void cUIStateStack_pushExplicit(void* self, cUIStateStack_pushExplici
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uistatestack", func_0039F290);
+#ifdef SKIP_ASM
+struct cList;
+void* cList_first(cList*);
+struct cListNode;
+void cList_addToFront(cList*, cListNode*);
+
+struct func_0039F290_sState {
+    char pad0[0x1C];
+    unsigned int b0 : 1;
+    unsigned int level : 2;
+    unsigned int b3 : 1;
+    unsigned int b4 : 1;
+    unsigned int b5 : 1;
+    unsigned int rest : 26;
+    func_0039F290_sState* parent;   // 0x20
+};
+
+// A state gets covered by a newly pushed one: it is no longer on top and sits one level deeper.
+static inline void func_0039F290_cover(func_0039F290_sState* st)
+{
+    st->b5 = 0;
+    st->level = st->level + 1;
+}
+
+// Pushes a state, covering its parent if it has one, else the current top of the stack.
+extern "C" void func_0039F290(cList* self, func_0039F290_sState* st)
+{
+    func_0039F290_sState* top = st->parent;
+    if (top != 0) {
+        func_0039F290_cover(top);
+    } else {
+        top = (func_0039F290_sState*)cList_first(self);
+        if (top != 0) {
+            func_0039F290_cover(top);
+        }
+    }
+    st->b0 = 1;
+    st->b5 = 1;
+    cList_addToFront(self, (cListNode*)st);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uistatestack", cUIStateStack_pushSpecial);
