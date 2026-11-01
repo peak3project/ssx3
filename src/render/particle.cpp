@@ -895,7 +895,70 @@ extern "C" long* func_003720F0(long* chain)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00372198);
+#ifdef SKIP_ASM
+extern "C" void* func_003E6574_cp(void* dst, void* src, int n) __asm__("func_003E6574");
+
+// PORT: copies a DMA tag chain, replacing `ref` tags (id 3) that point at a1/a2/a3 by nop/end packets.
+extern "C" void func_00372198(long* chain, int a1, int a2, int a3)
+{
+    long* src = chain;
+    long* dst = chain + 2;
+    int count = 0;
+    int done = 0;
+    long tag;
+    while (!done) {
+        tag = *src;
+        int qwc = (int)tag & 0xFFFF;
+        int hi = (int)(tag >> 32);
+        switch ((int)(tag >> 28) & 7) {
+        case 0:
+        case 2:
+        case 4:
+        case 5:
+        case 7:
+            break;
+        case 1:
+            src += 2;
+            func_003E6574_cp(dst, src, qwc * 16);
+            src = (long*)((char*)src + qwc * 16);
+            dst = (long*)((char*)dst + qwc * 16);
+            count += qwc;
+            break;
+        case 3:
+            // The a1 and a2 arms are identical; the binary keeps the a2 compare and both copies.
+            if (hi == a1) {
+                *dst++ = 0;
+                count++;
+                src += 2;
+                *dst++ = 0;
+            } else if (hi == a2) {
+                *dst++ = 0;
+                count++;
+                src += 2;
+                *dst++ = 0;
+            } else if (hi == a3) {
+                *dst++ = 0x3000000005000001L;
+                count++;
+                src += 2;
+                *dst++ = 0;
+            }
+            break;
+        case 6:
+            func_003E6574_cp(dst, src, (qwc + 1) * 16);
+            src += 2;
+            dst += 2;
+            src = (long*)((char*)src + qwc * 16);
+            dst = (long*)((char*)dst + qwc * 16);
+            done = 1;
+            break;
+        }
+    }
+    tag = *chain;
+    *chain = (tag & 0xFFFF0000) | (count & 0xFFFF);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00372348);
