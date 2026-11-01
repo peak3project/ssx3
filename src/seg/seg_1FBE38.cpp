@@ -90,7 +90,6 @@ extern "C" void* func_00359228(void*, int, void*, void*);
 extern char D_00489658_B060[] __asm__("D_00489658");
 struct V3_B060 { float x, y, z; };
 extern V3_B060 D_004C9098_B060 __asm__("D_004C9098");
-struct Tag_B060 { char c; Tag_B060() {} Tag_B060(const Tag_B060 &o) : c(o.c) {} };
 extern unsigned D_B060[] __asm__("D_004FB390");
 extern int D_004A55C0;
 extern const int D_00445E70[];
@@ -109,8 +108,8 @@ extern "C" V3_B060 func_002FB060(int n, Ent_B060 *e) {
         ((int*)D_B060)[8] = 0;
         ((int*)D_B060)[9] = 0;
         D_004A55C0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_B060*)((char*)D_B060 + 40)) = Tag_B060((*(Tag_B060*)((char*)D_B060 + 40)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_B060 + 40) = sBindEnd_1FBE38();
     }
     unsigned buf64[11];
     unsigned *buf = buf64;
@@ -167,7 +166,6 @@ extern "C" void func_00358C80_B270(void*, int, void*, void*) __asm__("func_00358
 extern char D_00489668_B270[] __asm__("D_00489668");
 struct V3_B270 { float x, y, z; };
 extern V3_B270 D_004C9098_B270 __asm__("D_004C9098");
-struct Tag_B270 { char c; Tag_B270() {} Tag_B270(const Tag_B270 &o) : c(o.c) {} };
 extern unsigned D_B270[] __asm__("D_004FB3C0");
 extern int D_004A55C4;
 extern const int D_00445E98[];
@@ -190,8 +188,8 @@ extern "C" V3_B270 func_002FB270(int n, Ent_B270 *e) {
         *(float*)&D_B270[12] = 30.0f;
         ((int*)D_B270)[13] = 0;
         D_004A55C4 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_B270*)((char*)D_B270 + 56)) = Tag_B270((*(Tag_B270*)((char*)D_B270 + 56)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_B270 + 56) = sBindEnd_1FBE38();
     }
     unsigned buf64[15];
     unsigned *buf = buf64;
@@ -248,7 +246,6 @@ extern "C" void* func_003421A0(void*, int, void*, void*);
 extern char D_00489678_B498[] __asm__("D_00489678");
 struct V3_B498 { float x, y, z; };
 extern V3_B498 D_004C9098_B498 __asm__("D_004C9098");
-struct Tag_B498 { char c; Tag_B498() {} Tag_B498(const Tag_B498 &o) : c(o.c) {} };
 extern unsigned D_B498[] __asm__("D_004FB400");
 extern int D_004A55C8;
 extern const int D_00445ED0[];
@@ -267,8 +264,8 @@ extern "C" V3_B498 func_002FB498(int n, Ent_B498 *e) {
         *(float*)&D_B498[8] = -1.0f;
         *(float*)&D_B498[9] = -1.0f;
         D_004A55C8 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_B498*)((char*)D_B498 + 40)) = Tag_B498((*(Tag_B498*)((char*)D_B498 + 40)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_B498 + 40) = sBindEnd_1FBE38();
     }
     unsigned buf64[11];
     unsigned *buf = buf64;
@@ -325,7 +322,6 @@ extern "C" void* func_00343010(void*, int, void*, void*);
 extern char D_00489688_B6B8[] __asm__("D_00489688");
 struct V3_B6B8 { float x, y, z; };
 extern V3_B6B8 D_004C9098_B6B8 __asm__("D_004C9098");
-struct Tag_B6B8 { char c; Tag_B6B8() {} Tag_B6B8(const Tag_B6B8 &o) : c(o.c) {} };
 extern unsigned D_B6B8[] __asm__("D_004FB430");
 extern int D_004A55CC;
 extern const int D_00445EF8[];
@@ -347,8 +343,8 @@ extern "C" V3_B6B8 func_002FB6B8(int n, Ent_B6B8 *e) {
         ((int*)D_B6B8)[10] = 0;
         ((int*)D_B6B8)[11] = 0;
         D_004A55CC = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_B6B8*)((char*)D_B6B8 + 48)) = Tag_B6B8((*(Tag_B6B8*)((char*)D_B6B8 + 48)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_B6B8 + 48) = sBindEnd_1FBE38();
     }
     unsigned buf64[13];
     unsigned *buf = buf64;
@@ -405,7 +401,6 @@ extern "C" void* func_00343768(void*, int, void*, void*);
 extern char D_004A3BE8_B8D0[] __asm__("D_004A3BE8");
 struct V3_B8D0 { float x, y, z; };
 extern V3_B8D0 D_004C9098_B8D0 __asm__("D_004C9098");
-struct Tag_B8D0 { char c; Tag_B8D0() {} Tag_B8D0(const Tag_B8D0 &o) : c(o.c) {} };
 extern unsigned D_B8D0[] __asm__("D_004FB468");
 extern int D_004A55D0;
 extern int D_004A3BE0_B8D0[2] __asm__("D_004A3BE0");
@@ -416,8 +411,8 @@ extern "C" V3_B8D0 func_002FB8D0(int n, Ent_B8D0 *e) {
         D_B8D0[0] = 0xFFFFFFFF;
         ((int*)D_B8D0)[1] = 3;
         D_004A55D0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_B8D0*)((char*)D_B8D0 + 8)) = Tag_B8D0((*(Tag_B8D0*)((char*)D_B8D0 + 8)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_B8D0 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -474,7 +469,6 @@ extern "C" void* func_0034EC58(void*, int, void*, void*);
 extern char D_00489698_BAB0[] __asm__("D_00489698");
 struct V3_BAB0 { float x, y, z; };
 extern V3_BAB0 D_004C9098_BAB0 __asm__("D_004C9098");
-struct Tag_BAB0 { char c; Tag_BAB0() {} Tag_BAB0(const Tag_BAB0 &o) : c(o.c) {} };
 extern unsigned D_BAB0[] __asm__("D_004FB478");
 extern int D_004A55D4;
 extern const int D_00445F28[];
@@ -490,8 +484,8 @@ extern "C" V3_BAB0 func_002FBAB0(int n, Ent_BAB0 *e) {
         *(float*)&D_BAB0[5] = 0.20000000298023224f;
         *(float*)&D_BAB0[6] = 10.0f;
         D_004A55D4 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_BAB0*)((char*)D_BAB0 + 28)) = Tag_BAB0((*(Tag_BAB0*)((char*)D_BAB0 + 28)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_BAB0 + 28) = sBindEnd_1FBE38();
     }
     unsigned buf64[8];
     unsigned *buf = buf64;
@@ -548,7 +542,6 @@ extern "C" void* func_00341AA0(void*, int, int, void*, void*);
 extern char D_004896A8_BCB8[] __asm__("D_004896A8");
 struct V3_BCB8 { float x, y, z; };
 extern V3_BCB8 D_004C9098_BCB8 __asm__("D_004C9098");
-struct Tag_BCB8 { char c; Tag_BCB8() {} Tag_BCB8(const Tag_BCB8 &o) : c(o.c) {} };
 extern unsigned D_BCB8[] __asm__("D_004FB498");
 extern int D_004A55D8;
 extern const int D_00445F48[];
@@ -567,8 +560,8 @@ extern "C" V3_BCB8 func_002FBCB8(int n, Ent_BCB8 *e) {
         ((int*)D_BCB8)[8] = 0;
         ((int*)D_BCB8)[9] = 0;
         D_004A55D8 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_BCB8*)((char*)D_BCB8 + 40)) = Tag_BCB8((*(Tag_BCB8*)((char*)D_BCB8 + 40)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_BCB8 + 40) = sBindEnd_1FBE38();
     }
     unsigned buf64[11];
     unsigned *buf = buf64;
@@ -625,7 +618,6 @@ extern "C" void func_00341388_BEC8(void*, int, int, void*, void*) __asm__("func_
 extern char D_004A3BF0_BEC8[] __asm__("D_004A3BF0");
 struct V3_BEC8 { float x, y, z; };
 extern V3_BEC8 D_004C9098_BEC8 __asm__("D_004C9098");
-struct Tag_BEC8 { char c; Tag_BEC8() {} Tag_BEC8(const Tag_BEC8 &o) : c(o.c) {} };
 extern unsigned D_BEC8[] __asm__("D_004FB4C8");
 extern int D_004A55DC;
 extern const int D_00445F70[];
@@ -643,8 +635,8 @@ extern "C" V3_BEC8 func_002FBEC8(int n, Ent_BEC8 *e) {
         *(float*)&D_BEC8[6] = 1.0f;
         *(float*)&D_BEC8[7] = z;
         D_004A55DC = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_BEC8*)((char*)D_BEC8 + 32)) = Tag_BEC8((*(Tag_BEC8*)((char*)D_BEC8 + 32)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_BEC8 + 32) = sBindEnd_1FBE38();
     }
     unsigned buf64[9];
     unsigned *buf = buf64;
@@ -701,7 +693,6 @@ extern "C" void* func_00356DB0(void*, int, void*, int, bool);
 extern char D_004A3BF8_C0D0[] __asm__("D_004A3BF8");
 struct V3_C0D0 { float x, y, z; };
 extern V3_C0D0 D_004C9098_C0D0 __asm__("D_004C9098");
-struct Tag_C0D0 { char c; Tag_C0D0() {} Tag_C0D0(const Tag_C0D0 &o) : c(o.c) {} };
 extern unsigned D_C0D0[] __asm__("D_004FB4F0");
 extern int D_004A55E0;
 extern const int D_00445F90[];
@@ -713,8 +704,8 @@ extern "C" V3_C0D0 func_002FC0D0(int n, Ent_C0D0 *e) {
         ((int*)D_C0D0)[1] = 0;
         ((int*)D_C0D0)[2] = 0;
         D_004A55E0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_C0D0*)((char*)D_C0D0 + 12)) = Tag_C0D0((*(Tag_C0D0*)((char*)D_C0D0 + 12)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_C0D0 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -825,7 +816,6 @@ extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void func_002FC2C0_C420(void*, void*) __asm__("func_002FC2C0");
 struct V3_C420 { float x, y, z; };
 extern V3_C420 D_004C9098_C420 __asm__("D_004C9098");
-struct Tag_C420 { char c; Tag_C420() {} Tag_C420(const Tag_C420 &o) : c(o.c) {} };
 extern unsigned D_C420[] __asm__("D_004FB500");
 extern int D_004A55E4;
 extern int D_004A3C00;
@@ -836,7 +826,7 @@ extern "C" V3_C420 func_002FC420(int n, Ent_C420 *e) {
         D_C420[0] = 0xFFFFFFFF;
         ((int*)D_C420)[1] = 0;
         D_004A55E4 = 1;
-        (*(Tag_C420*)((char*)D_C420 + 8)) = Tag_C420((*(Tag_C420*)((char*)D_C420 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_C420 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -892,7 +882,6 @@ extern "C" void cDeadFadeNode_cDeadFadeNode_C5D8(void*, int, void*, void*, int) 
 extern char D_004896D8_C5D8[] __asm__("D_004896D8");
 struct V3_C5D8 { float x, y, z; };
 extern V3_C5D8 D_004C9098_C5D8 __asm__("D_004C9098");
-struct Tag_C5D8 { char c; Tag_C5D8() {} Tag_C5D8(const Tag_C5D8 &o) : c(o.c) {} };
 extern unsigned D_C5D8[] __asm__("D_004FB510");
 extern int D_004A55E8;
 extern const int D_00445FA0[];
@@ -905,8 +894,8 @@ extern "C" V3_C5D8 func_002FC5D8(int n, Ent_C5D8 *e) {
         *(float*)&D_C5D8[2] = 2.0f;
         *(float*)&D_C5D8[3] = 25.0f;
         D_004A55E8 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_C5D8*)((char*)D_C5D8 + 16)) = Tag_C5D8((*(Tag_C5D8*)((char*)D_C5D8 + 16)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_C5D8 + 16) = sBindEnd_1FBE38();
     }
     unsigned buf64[5];
     unsigned *buf = buf64;
@@ -963,7 +952,6 @@ extern "C" void* func_00342C08_C7D0(void*, int, void*, void*, void*) __asm__("fu
 extern char D_004896E8_C7D0[] __asm__("D_004896E8");
 struct V3_C7D0 { float x, y, z; };
 extern V3_C7D0 D_004C9098_C7D0 __asm__("D_004C9098");
-struct Tag_C7D0 { char c; Tag_C7D0() {} Tag_C7D0(const Tag_C7D0 &o) : c(o.c) {} };
 extern unsigned D_C7D0[] __asm__("D_004FB528");
 extern int D_004A55EC;
 extern const int D_00445FB0[];
@@ -976,8 +964,8 @@ extern "C" V3_C7D0 func_002FC7D0(int n, Ent_C7D0 *e) {
         ((int*)D_C7D0)[2] = 1;
         ((int*)D_C7D0)[3] = -1;
         D_004A55EC = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_C7D0*)((char*)D_C7D0 + 16)) = Tag_C7D0((*(Tag_C7D0*)((char*)D_C7D0 + 16)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_C7D0 + 16) = sBindEnd_1FBE38();
     }
     unsigned buf64[5];
     unsigned *buf = buf64;
@@ -1034,7 +1022,6 @@ extern "C" void* func_0034ADD8(void*, int, void*, void*);
 extern char D_004A3C08_C9C8[] __asm__("D_004A3C08");
 struct V3_C9C8 { float x, y, z; };
 extern V3_C9C8 D_004C9098_C9C8 __asm__("D_004C9098");
-struct Tag_C9C8 { char c; Tag_C9C8() {} Tag_C9C8(const Tag_C9C8 &o) : c(o.c) {} };
 extern unsigned D_C9C8[] __asm__("D_004FB540");
 extern int D_004A55F0;
 extern const int D_00445FC0[];
@@ -1070,8 +1057,8 @@ extern "C" V3_C9C8 func_002FC9C8(int n, Ent_C9C8 *e) {
         *(float*)&D_C9C8[24] = z;
         ((int*)D_C9C8)[25] = 0;
         D_004A55F0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_C9C8*)((char*)D_C9C8 + 104)) = Tag_C9C8((*(Tag_C9C8*)((char*)D_C9C8 + 104)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_C9C8 + 104) = sBindEnd_1FBE38();
     }
     unsigned buf64[27];
     unsigned *buf = buf64;
@@ -1122,7 +1109,6 @@ extern char *D_004A3DD8_CC20 __asm__("D_004A3DD8");
 extern char **D_004A47B8_CC20 __asm__("D_004A47B8");
 struct V3_CC20 { float x, y, z; };
 extern V3_CC20 D_004C9098_CC20 __asm__("D_004C9098");
-struct Tag_CC20 { char c; Tag_CC20() {} Tag_CC20(const Tag_CC20 &o) : c(o.c) {} };
 extern unsigned D_CC20[] __asm__("D_004FB5B0");
 extern int D_004A55F4;
 extern const int D_00446028[];
@@ -1138,7 +1124,7 @@ extern "C" V3_CC20* func_002FCC20(V3_CC20* ret, int n, Ent_CC20 *e) {
         *(float*)&D_CC20[2] = 0.5f;
         ((int*)D_CC20)[1] = 0;
         D_004A55F4 = 1;
-        (*(Tag_CC20*)((char*)D_CC20 + 12)) = Tag_CC20((*(Tag_CC20*)((char*)D_CC20 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_CC20 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -1194,7 +1180,6 @@ extern "C" void* func_00346350(void*, int, void*, void*);
 extern char D_004896F8_CDC8[] __asm__("D_004896F8");
 struct V3_CDC8 { float x, y, z; };
 extern V3_CDC8 D_004C9098_CDC8 __asm__("D_004C9098");
-struct Tag_CDC8 { char c; Tag_CDC8() {} Tag_CDC8(const Tag_CDC8 &o) : c(o.c) {} };
 extern unsigned D_CDC8[] __asm__("D_004FB5C0");
 extern int D_004A55F8;
 extern const int D_00446038[];
@@ -1212,8 +1197,8 @@ extern "C" V3_CDC8 func_002FCDC8(int n, Ent_CDC8 *e) {
         ((int*)D_CDC8)[7] = 16;
         D_CDC8[8] = 0xFFFFFFFF;
         D_004A55F8 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_CDC8*)((char*)D_CDC8 + 36)) = Tag_CDC8((*(Tag_CDC8*)((char*)D_CDC8 + 36)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_CDC8 + 36) = sBindEnd_1FBE38();
     }
     unsigned buf64[10];
     unsigned *buf = buf64;
@@ -1270,7 +1255,6 @@ extern "C" void func_00351B40_CFF0(void*, int, void*, void*, void*, void*) __asm
 extern char D_00489708_CFF0[] __asm__("D_00489708");
 struct V3_CFF0 { float x, y, z; };
 extern V3_CFF0 D_004C9098_CFF0 __asm__("D_004C9098");
-struct Tag_CFF0 { char c; Tag_CFF0() {} Tag_CFF0(const Tag_CFF0 &o) : c(o.c) {} };
 extern unsigned D_CFF0[] __asm__("D_004FB5E8");
 extern int D_004A55FC;
 extern const int D_00446060[];
@@ -1295,8 +1279,8 @@ extern "C" V3_CFF0 func_002FCFF0(int n, Ent_CFF0 *e) {
         D_CFF0[13] = 0xFFFFFFFF;
         ((int*)D_CFF0)[14] = -1;
         D_004A55FC = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_CFF0*)((char*)D_CFF0 + 60)) = Tag_CFF0((*(Tag_CFF0*)((char*)D_CFF0 + 60)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_CFF0 + 60) = sBindEnd_1FBE38();
     }
     unsigned buf64[16];
     unsigned *buf = buf64;
@@ -1351,7 +1335,6 @@ extern "C" void func_00355DB8_D250(void*, void*, int, int) __asm__("func_00355DB
 struct O_D250 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_D250 { float x, y, z; };
 extern V3_D250 D_004C9098_D250 __asm__("D_004C9098");
-struct Tag_D250 { char c; Tag_D250() {} Tag_D250(const Tag_D250 &o) : c(o.c) {} };
 extern unsigned D_D250[] __asm__("D_004FB628");
 extern int D_004A5600;
 extern const int D_004460A0[];
@@ -1364,8 +1347,8 @@ extern "C" V3_D250 func_002FD250(int n, Ent_D250 *e) {
         *(float*)&D_D250[2] = 0.699999988079071f;
         *(float*)&D_D250[3] = 0.5f;
         D_004A5600 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_D250*)((char*)D_D250 + 16)) = Tag_D250((*(Tag_D250*)((char*)D_D250 + 16)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_D250 + 16) = sBindEnd_1FBE38();
     }
     unsigned buf64[5];
     unsigned *buf = buf64;
@@ -1418,7 +1401,6 @@ extern char D_00489718_D420[] __asm__("D_00489718");
 extern char D_00489730_D420[] __asm__("D_00489730");
 struct V3_D420 { float x, y, z; };
 extern V3_D420 D_004C9098_D420 __asm__("D_004C9098");
-struct Tag_D420 { char c; Tag_D420() {} Tag_D420(const Tag_D420 &o) : c(o.c) {} };
 extern unsigned D_D420[] __asm__("D_004FB640");
 extern int D_004A5604;
 extern const int D_004460B0[];
@@ -1483,8 +1465,8 @@ extern "C" V3_D420 func_002FD420(int n, Ent_D420 *e) {
         *(float*)&D_D420[53] = 20.0f;
         D_D420[54] = 0xFFFFFFFF;
         D_004A5604 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_D420*)((char*)D_D420 + 0xDC)) = Tag_D420((*(Tag_D420*)((char*)D_D420 + 0xDC)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_D420 + 0xDC) = sBindEnd_1FBE38();
     }
     unsigned *buf = (unsigned*)cMemMan_alloc(0xE0, D_00489718_D420, 0x20000000, 0);
     buf[54] = 0xFFFFFFFF;
@@ -1592,7 +1574,6 @@ static inline void vAddTo_D758(V4_D758 &a, const V4_D758 &b) {
 struct O_D758 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_D758 { float x, y, z; };
 extern V3_D758 D_004C9098_D758 __asm__("D_004C9098");
-struct Tag_D758 { char c; Tag_D758() {} Tag_D758(const Tag_D758 &o) : c(o.c) {} };
 extern unsigned D_D758[] __asm__("D_004FB720");
 extern int D_004A5608;
 extern const int D_00446190[];
@@ -1607,8 +1588,8 @@ extern "C" V3_D758 func_002FD758(int n, Ent_D758 *e) {
         *(float*)&D_D758[3] = z;
         *(float*)&D_D758[4] = z;
         D_004A5608 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_D758*)((char*)D_D758 + 20)) = Tag_D758((*(Tag_D758*)((char*)D_D758 + 20)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_D758 + 20) = sBindEnd_1FBE38();
     }
     unsigned buf64[6];
     unsigned *buf = buf64;
@@ -1666,7 +1647,6 @@ static inline char *refToPtr_D9F8(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_D9F8(unsigned i) { if (i == 0) return 0; return refToPtr_D9F8(i); }
 struct V3_D9F8 { float x, y, z; };
 extern V3_D9F8 D_004C9098_D9F8 __asm__("D_004C9098");
-struct Tag_D9F8 { char c; Tag_D9F8() {} Tag_D9F8(const Tag_D9F8 &o) : c(o.c) {} };
 extern unsigned D_D9F8[] __asm__("D_004FB738");
 extern int D_004A560C;
 extern const int D_004461A8[];
@@ -1682,8 +1662,8 @@ extern "C" V3_D9F8 func_002FD9F8(int n, Ent_D9F8 *e) {
         *(float*)&D_D9F8[4] = z;
         *(float*)&D_D9F8[5] = z;
         D_004A560C = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_D9F8*)((char*)D_D9F8 + 24)) = Tag_D9F8((*(Tag_D9F8*)((char*)D_D9F8 + 24)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_D9F8 + 24) = sBindEnd_1FBE38();
     }
     unsigned buf64[7];
     unsigned *buf = buf64;
@@ -1754,7 +1734,6 @@ static inline char *refToPtr_DC60(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_DC60(unsigned i) { if (i == 0) return 0; return refToPtr_DC60(i); }
 struct V3_DC60 { float x, y, z; };
 extern V3_DC60 D_004C9098_DC60 __asm__("D_004C9098");
-struct Tag_DC60 { char c; Tag_DC60() {} Tag_DC60(const Tag_DC60 &o) : c(o.c) {} };
 extern unsigned D_DC60[] __asm__("D_004FB758");
 extern int D_004A5610;
 extern const int D_004461C0[];
@@ -1770,8 +1749,8 @@ extern "C" V3_DC60 func_002FDC60(int n, Ent_DC60 *e) {
         *(float*)&D_DC60[4] = z;
         *(float*)&D_DC60[5] = z;
         D_004A5610 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_DC60*)((char*)D_DC60 + 24)) = Tag_DC60((*(Tag_DC60*)((char*)D_DC60 + 24)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_DC60 + 24) = sBindEnd_1FBE38();
     }
     unsigned buf64[7];
     unsigned *buf = buf64;
@@ -1841,7 +1820,6 @@ static inline char *refToPtr_DED0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_DED0(unsigned i) { if (i == 0) return 0; return refToPtr_DED0(i); }
 struct V3_DED0 { float x, y, z; };
 extern V3_DED0 D_004C9098_DED0 __asm__("D_004C9098");
-struct Tag_DED0 { char c; Tag_DED0() {} Tag_DED0(const Tag_DED0 &o) : c(o.c) {} };
 extern unsigned D_DED0[] __asm__("D_004FB778");
 extern int D_004A5614;
 extern const int D_004461D8[];
@@ -1862,8 +1840,8 @@ extern "C" V3_DED0 func_002FDED0(int n, Ent_DED0 *e) {
         *(float*)&D_DED0[9] = z;
         *(float*)&D_DED0[10] = z;
         D_004A5614 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_DED0*)((char*)D_DED0 + 44)) = Tag_DED0((*(Tag_DED0*)((char*)D_DED0 + 44)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_DED0 + 44) = sBindEnd_1FBE38();
     }
     unsigned buf64[12];
     unsigned *buf = buf64;
@@ -1921,7 +1899,6 @@ static inline char *refToPtr_E0C0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_E0C0(unsigned i) { if (i == 0) return 0; return refToPtr_E0C0(i); }
 struct V3_E0C0 { float x, y, z; };
 extern V3_E0C0 D_004C9098_E0C0 __asm__("D_004C9098");
-struct Tag_E0C0 { char c; Tag_E0C0() {} Tag_E0C0(const Tag_E0C0 &o) : c(o.c) {} };
 extern unsigned D_E0C0[] __asm__("D_004FB7A8");
 extern int D_004A5618;
 extern const int D_00446208[];
@@ -1943,8 +1920,8 @@ extern "C" V3_E0C0 func_002FE0C0(int n, Ent_E0C0 *e) {
         ((int*)D_E0C0)[10] = 1;
         ((int*)D_E0C0)[11] = 2;
         D_004A5618 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_E0C0*)((char*)D_E0C0 + 48)) = Tag_E0C0((*(Tag_E0C0*)((char*)D_E0C0 + 48)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_E0C0 + 48) = sBindEnd_1FBE38();
     }
     unsigned buf64[13];
     unsigned *buf = buf64;
@@ -2000,7 +1977,6 @@ extern "C" void func_00355B90_E2C0(void*, void*) __asm__("func_00355B90");
 struct O_E2C0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_E2C0 { float x, y, z; };
 extern V3_E2C0 D_004C9098_E2C0 __asm__("D_004C9098");
-struct Tag_E2C0 { char c; Tag_E2C0() {} Tag_E2C0(const Tag_E2C0 &o) : c(o.c) {} };
 extern unsigned D_E2C0[] __asm__("D_004FB7E0");
 extern int D_004A561C;
 extern const int D_00446238[];
@@ -2022,8 +1998,8 @@ extern "C" V3_E2C0 func_002FE2C0(int n, Ent_E2C0 *e) {
         *(float*)&D_E2C0[10] = z;
         *(float*)&D_E2C0[11] = 1.0f;
         D_004A561C = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_E2C0*)((char*)D_E2C0 + 48)) = Tag_E2C0((*(Tag_E2C0*)((char*)D_E2C0 + 48)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_E2C0 + 48) = sBindEnd_1FBE38();
     }
     unsigned buf64[13];
     unsigned *buf = buf64;
@@ -2071,7 +2047,6 @@ extern "C" void func_00355BF0_E4A8(void*, void*) __asm__("func_00355BF0");
 struct O_E4A8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_E4A8 { float x, y, z; };
 extern V3_E4A8 D_004C9098_E4A8 __asm__("D_004C9098");
-struct Tag_E4A8 { char c; Tag_E4A8() {} Tag_E4A8(const Tag_E4A8 &o) : c(o.c) {} };
 extern unsigned D_E4A8[] __asm__("D_004FB818");
 extern int D_004A5620;
 extern const int D_00446268[];
@@ -2085,7 +2060,7 @@ extern "C" V3_E4A8 func_002FE4A8(int n, Ent_E4A8 *e) {
         ((int*)D_E4A8)[3] = 0;
         *(float*)&D_E4A8[4] = 2.0f;
         D_004A5620 = 1;
-        (*(Tag_E4A8*)((char*)D_E4A8 + 20)) = Tag_E4A8((*(Tag_E4A8*)((char*)D_E4A8 + 20)));
+        *(sBindEnd_1FBE38*)((char*)D_E4A8 + 20) = sBindEnd_1FBE38();
     }
     unsigned buf64[6];
     unsigned *buf = buf64;
@@ -2133,7 +2108,6 @@ extern "C" void func_00355C50_E668(void*, void*) __asm__("func_00355C50");
 struct O_E668 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_E668 { float x, y, z; };
 extern V3_E668 D_004C9098_E668 __asm__("D_004C9098");
-struct Tag_E668 { char c; Tag_E668() {} Tag_E668(const Tag_E668 &o) : c(o.c) {} };
 extern unsigned D_E668[] __asm__("D_004FB830");
 extern int D_004A5624;
 extern const int D_00446280[];
@@ -2151,8 +2125,8 @@ extern "C" V3_E668 func_002FE668(int n, Ent_E668 *e) {
         *(float*)&D_E668[6] = z;
         *(float*)&D_E668[7] = 1.0f;
         D_004A5624 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_E668*)((char*)D_E668 + 32)) = Tag_E668((*(Tag_E668*)((char*)D_E668 + 32)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_E668 + 32) = sBindEnd_1FBE38();
     }
     unsigned buf64[9];
     unsigned *buf = buf64;
@@ -2402,7 +2376,6 @@ void operator_delete(int*);
 extern char D_00489750_EE98[] __asm__("D_00489750");
 struct V3_EE98 { float x, y, z; };
 extern V3_EE98 D_004C9098_EE98 __asm__("D_004C9098");
-struct Tag_EE98 { char c; Tag_EE98() {} Tag_EE98(const Tag_EE98 &o) : c(o.c) {} };
 extern unsigned D_EE98[] __asm__("D_004FB938");
 extern int D_004A562C;
 extern const int D_00446380[];
@@ -2471,8 +2444,8 @@ extern "C" V3_EE98 func_002FEE98(int n, Ent_EE98 *e) {
         *(float*)&D_EE98[57] = z;
         *(float*)&D_EE98[58] = z;
         D_004A562C = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_EE98*)((char*)D_EE98 + 0xEC)) = Tag_EE98((*(Tag_EE98*)((char*)D_EE98 + 0xEC)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_EE98 + 0xEC) = sBindEnd_1FBE38();
     }
     unsigned *buf = (unsigned*)cMemMan_alloc(0xF0, D_00489750_EE98, 0x20000000, 0);
     buf[54] = 0xFFFFFFFF;
@@ -2524,7 +2497,6 @@ extern "C" void func_00355E38_F1C8(void*, void*) __asm__("func_00355E38");
 struct O_F1C8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_F1C8 { float x, y, z; };
 extern V3_F1C8 D_004C9098_F1C8 __asm__("D_004C9098");
-struct Tag_F1C8 { char c; Tag_F1C8() {} Tag_F1C8(const Tag_F1C8 &o) : c(o.c) {} };
 extern unsigned D_F1C8[] __asm__("D_004FBA28");
 extern int D_004A5630;
 extern const int D_00446470[];
@@ -2536,7 +2508,7 @@ extern "C" V3_F1C8 func_002FF1C8(int n, Ent_F1C8 *e) {
         D_F1C8[1] = 0xFFFFFFFF;
         ((int*)D_F1C8)[2] = -1;
         D_004A5630 = 1;
-        (*(Tag_F1C8*)((char*)D_F1C8 + 12)) = Tag_F1C8((*(Tag_F1C8*)((char*)D_F1C8 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_F1C8 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -2592,7 +2564,6 @@ extern "C" void* func_00348D98(void*, void*, void*);
 extern char D_00489768_F390[] __asm__("D_00489768");
 struct V3_F390 { float x, y, z; };
 extern V3_F390 D_004C9098_F390 __asm__("D_004C9098");
-struct Tag_F390 { char c; Tag_F390() {} Tag_F390(const Tag_F390 &o) : c(o.c) {} };
 extern unsigned D_F390[] __asm__("D_004FBA38");
 extern int D_004A5634;
 extern const int D_00446480[];
@@ -2622,8 +2593,8 @@ extern "C" V3_F390 func_002FF390(int n, Ent_F390 *e) {
         *(float*)&D_F390[19] = 0.5f;
         *(float*)&D_F390[20] = 1.0f;
         D_004A5634 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_F390*)((char*)D_F390 + 84)) = Tag_F390((*(Tag_F390*)((char*)D_F390 + 84)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_F390 + 84) = sBindEnd_1FBE38();
     }
     unsigned buf64[22];
     unsigned *buf = buf64;
@@ -2688,7 +2659,6 @@ extern "C" void* func_00349B48(void*, void*, void*);
 extern char D_00489778_F5E8[] __asm__("D_00489778");
 struct V3_F5E8 { float x, y, z; };
 extern V3_F5E8 D_004C9098_F5E8 __asm__("D_004C9098");
-struct Tag_F5E8 { char c; Tag_F5E8() {} Tag_F5E8(const Tag_F5E8 &o) : c(o.c) {} };
 extern unsigned D_F5E8[] __asm__("D_004FBA90");
 extern int D_004A5638;
 extern const int D_004464D8[];
@@ -2718,8 +2688,8 @@ extern "C" V3_F5E8 func_002FF5E8(int n, Ent_F5E8 *e) {
         *(float*)&D_F5E8[19] = 0.5f;
         *(float*)&D_F5E8[20] = 1.0f;
         D_004A5638 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_F5E8*)((char*)D_F5E8 + 84)) = Tag_F5E8((*(Tag_F5E8*)((char*)D_F5E8 + 84)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_F5E8 + 84) = sBindEnd_1FBE38();
     }
     unsigned buf64[22];
     unsigned *buf = buf64;
@@ -2777,7 +2747,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FF850);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_F850 { char c; Flag_F850() {} Flag_F850(const Flag_F850& o) : c(o.c) {} };
 struct Ent_F850 { int idx; int val; int pad; int kind; };
 struct R12_F850 { int a; int b; int c; };
 extern R12_F850 D_004C9098_F850 __asm__("D_004C9098");
@@ -2787,7 +2756,7 @@ extern "C" void func_0010F1C0(int, int, float);
 extern int* D_004A3DD8_F850 __asm__("D_004A3DD8");
 extern char* D_004A28A8_F850 __asm__("D_004A28A8");
 extern int D_004A563C_F850 __asm__("D_004A563C");
-struct T12_F850 { int a; int b; int e; Flag_F850 f; };
+struct T12_F850 { int a; int b; int e; sBindEnd_1FBE38 f; };
 extern T12_F850 D_004FBAE8_F850 __asm__("D_004FBAE8");
 extern "C" R12_F850 func_002FF850(int n, Ent_F850* e) {
     if (D_004A563C_F850 == 0) {
@@ -2795,8 +2764,8 @@ extern "C" R12_F850 func_002FF850(int n, Ent_F850* e) {
         D_004A563C_F850 = 1;
         D_004FBAE8_F850.b = 0;
         D_004FBAE8_F850.e = 0;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBAE8_F850.f = Flag_F850(D_004FBAE8_F850.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBAE8_F850.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -2839,7 +2808,6 @@ static inline char *look_F9A8(unsigned id) {
 struct O_F9A8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35(); virtual void v36(int, float); };
 struct V3_F9A8 { float x, y, z; };
 extern V3_F9A8 D_004C9098_F9A8 __asm__("D_004C9098");
-struct Tag_F9A8 { char c; Tag_F9A8() {} Tag_F9A8(const Tag_F9A8 &o) : c(o.c) {} };
 extern unsigned D_F9A8[] __asm__("D_004FBAF8");
 extern int D_004A5640;
 extern const int D_00446540[];
@@ -2851,7 +2819,7 @@ extern "C" V3_F9A8 func_002FF9A8(int n, Ent_F9A8 *e) {
         ((int*)D_F9A8)[1] = -1;
         ((int*)D_F9A8)[2] = 0;
         D_004A5640 = 1;
-        (*(Tag_F9A8*)((char*)D_F9A8 + 12)) = Tag_F9A8((*(Tag_F9A8*)((char*)D_F9A8 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_F9A8 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -2879,9 +2847,8 @@ extern "C" V3_F9A8 func_002FF9A8(int n, Ent_F9A8 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FFB50);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_FB50 { char c; Flag_FB50() {} Flag_FB50(const Flag_FB50& o) : c(o.c) {} };
 extern unsigned D_004A5648_FB50 __asm__("D_004A5648");
-extern Flag_FB50 D_004A564C_FB50 __asm__("D_004A564C");
+extern sBindEnd_1FBE38 D_004A564C_FB50 __asm__("D_004A564C");
 extern int D_004A5650_FB50 __asm__("D_004A5650");
 extern int D_004A3C10_FB50[2] __asm__("D_004A3C10");
 extern char *D_004A3DD8_FB50 __asm__("D_004A3DD8");
@@ -2901,7 +2868,7 @@ extern "C" V3_FB50 func_002FFB50(int n, Ent_FB50 *e) {
         D_004A5648_FB50 = 0xFFFFFFFF;
         D_004A5650_FB50 = 1;
         // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb 0(sp)).
-        D_004A564C_FB50 = Flag_FB50(D_004A564C_FB50);
+        D_004A564C_FB50 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -2967,9 +2934,8 @@ static inline char *look_FD58(unsigned id) {
 struct O_FD58 { int p0, p1, p2; virtual void v01(int); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); };
 struct V3_FD58 { float x, y, z; };
 extern V3_FD58 D_004C9098_FD58 __asm__("D_004C9098");
-struct Tag_FD58 { char c; Tag_FD58() {} Tag_FD58(const Tag_FD58 &o) : c(o.c) {} };
 extern unsigned D_FD58 __asm__("D_004A5658");
-extern Tag_FD58 D_004A565C;
+extern sBindEnd_1FBE38 D_004A565C;
 extern int D_004A5660;
 extern int D_004A3C20;
 extern "C" void func_003E6574(void*, void*, int);
@@ -2978,7 +2944,7 @@ extern "C" V3_FD58 func_002FFD58(int n, Ent_FD58 *e) {
     if (D_004A5660 == 0) {
         D_FD58 = 0xFFFFFFFF;
         D_004A5660 = 1;
-        D_004A565C = Tag_FD58(D_004A565C);
+        D_004A565C = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -3019,7 +2985,6 @@ extern "C" void *func_0028B180(void);
 extern "C" void func_002974A0_FF00(void*, void*, int) __asm__("func_002974A0");
 struct V3_FF00 { float x, y, z; };
 extern V3_FF00 D_004C9098_FF00 __asm__("D_004C9098");
-struct Tag_FF00 { char c; Tag_FF00() {} Tag_FF00(const Tag_FF00 &o) : c(o.c) {} };
 extern unsigned D_FF00[] __asm__("D_004FBB08");
 extern int D_004A5664;
 extern int D_004A3C28;
@@ -3030,7 +2995,7 @@ extern "C" V3_FF00 func_002FFF00(int n, Ent_FF00 *e) {
         D_FF00[0] = 0xFFFFFFFF;
         D_FF00[1] = 0xFFFFFFFF;
         D_004A5664 = 1;
-        (*(Tag_FF00*)((char*)D_FF00 + 8)) = Tag_FF00((*(Tag_FF00*)((char*)D_FF00 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_FF00 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -3084,7 +3049,6 @@ extern "C" void *func_0028B180(void);
 extern "C" void func_00297950_00A8(void*, void*, int, int) __asm__("func_00297950");
 struct V3_00A8 { float x, y, z; };
 extern V3_00A8 D_004C9098_00A8 __asm__("D_004C9098");
-struct Tag_00A8 { char c; Tag_00A8() {} Tag_00A8(const Tag_00A8 &o) : c(o.c) {} };
 extern unsigned D_00A8[] __asm__("D_004FBB18");
 extern int D_004A5668;
 extern const int D_00446550[];
@@ -3096,7 +3060,7 @@ extern "C" V3_00A8 func_003000A8(int n, Ent_00A8 *e) {
         D_00A8[1] = 0xFFFFFFFF;
         ((int*)D_00A8)[2] = -1;
         D_004A5668 = 1;
-        (*(Tag_00A8*)((char*)D_00A8 + 12)) = Tag_00A8((*(Tag_00A8*)((char*)D_00A8 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_00A8 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -3151,7 +3115,6 @@ extern "C" void *func_0028B180(void);
 extern "C" void func_00297EB8_0260(void*, void*, int, int) __asm__("func_00297EB8");
 struct V3_0260 { float x, y, z; };
 extern V3_0260 D_004C9098_0260 __asm__("D_004C9098");
-struct Tag_0260 { char c; Tag_0260() {} Tag_0260(const Tag_0260 &o) : c(o.c) {} };
 extern unsigned D_0260[] __asm__("D_004FBB28");
 extern int D_004A566C;
 extern const int D_00446560[];
@@ -3163,7 +3126,7 @@ extern "C" V3_0260 func_00300260(int n, Ent_0260 *e) {
         D_0260[1] = 0xFFFFFFFF;
         ((int*)D_0260)[2] = -1;
         D_004A566C = 1;
-        (*(Tag_0260*)((char*)D_0260 + 12)) = Tag_0260((*(Tag_0260*)((char*)D_0260 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_0260 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -3215,7 +3178,6 @@ extern char *D_004A28A8_0418 __asm__("D_004A28A8");
 struct O_0418 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(int); };
 struct V3_0418 { float x, y, z; };
 extern V3_0418 D_004C9098_0418 __asm__("D_004C9098");
-struct Tag_0418 { char c; Tag_0418() {} Tag_0418(const Tag_0418 &o) : c(o.c) {} };
 extern unsigned D_0418[] __asm__("D_004FBB38");
 extern int D_004A5670;
 extern int D_004A3C30;
@@ -3226,7 +3188,7 @@ extern "C" V3_0418 func_00300418(int n, Ent_0418 *e) {
         D_0418[0] = 0xFFFFFFFF;
         ((int*)D_0418)[1] = 0;
         D_004A5670 = 1;
-        (*(Tag_0418*)((char*)D_0418 + 8)) = Tag_0418((*(Tag_0418*)((char*)D_0418 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_0418 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -3275,9 +3237,8 @@ extern char *D_004A47B8_05E8 __asm__("D_004A47B8");
 struct O_05E8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35(); };
 struct V3_05E8 { float x, y, z; };
 extern V3_05E8 D_004C9098_05E8 __asm__("D_004C9098");
-struct Tag_05E8 { char c; Tag_05E8() {} Tag_05E8(const Tag_05E8 &o) : c(o.c) {} };
 extern unsigned D_05E8 __asm__("D_004A5678");
-extern Tag_05E8 D_004A567C;
+extern sBindEnd_1FBE38 D_004A567C;
 extern int D_004A5680;
 extern int D_004A3C38;
 extern "C" void func_003E6574(void*, void*, int);
@@ -3286,7 +3247,7 @@ extern "C" V3_05E8 func_003005E8(int n, Ent_05E8 *e) {
     if (D_004A5680 == 0) {
         D_05E8 = 0xFFFFFFFF;
         D_004A5680 = 1;
-        D_004A567C = Tag_05E8(D_004A567C);
+        D_004A567C = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -3326,9 +3287,8 @@ extern "C" V3_05E8 func_003005E8(int n, Ent_05E8 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300770);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_0770 { char c; Flag_0770() {} Flag_0770(const Flag_0770& o) : c(o.c) {} };
 extern unsigned D_004A5688_0770 __asm__("D_004A5688");
-extern Flag_0770 D_004A568C_0770 __asm__("D_004A568C");
+extern sBindEnd_1FBE38 D_004A568C_0770 __asm__("D_004A568C");
 extern int D_004A5690_0770 __asm__("D_004A5690");
 extern int D_004A3C40_0770[2] __asm__("D_004A3C40");
 extern int *D_004A3DD8_0770 __asm__("D_004A3DD8");
@@ -3348,7 +3308,7 @@ extern "C" V3_0770 func_00300770(int n, Ent_0770 *e) {
         D_004A5688_0770 = 0xFFFFFFFF;
         D_004A5690_0770 = 1;
         // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb 0(sp)).
-        D_004A568C_0770 = Flag_0770(D_004A568C_0770);
+        D_004A568C_0770 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -3398,9 +3358,8 @@ extern "C" V3_0770 func_00300770(int n, Ent_0770 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300948);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_0948 { char c; Flag_0948() {} Flag_0948(const Flag_0948& o) : c(o.c) {} };
 extern unsigned D_004A5698_0948 __asm__("D_004A5698");
-extern Flag_0948 D_004A569C_0948 __asm__("D_004A569C");
+extern sBindEnd_1FBE38 D_004A569C_0948 __asm__("D_004A569C");
 extern int D_004A56A0_0948 __asm__("D_004A56A0");
 extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
 extern int *D_004A3DD8_0948 __asm__("D_004A3DD8");
@@ -3420,7 +3379,7 @@ extern "C" V3_0948 func_00300948(int n, Ent_0948 *e) {
         D_004A5698_0948 = 0xFFFFFFFF;
         D_004A56A0_0948 = 1;
         // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb 0(sp)).
-        D_004A569C_0948 = Flag_0948(D_004A569C_0948);
+        D_004A569C_0948 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -3472,7 +3431,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300B20);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_0B20 { char c; Flag_0B20() {} Flag_0B20(const Flag_0B20& o) : c(o.c) {} };
 struct Ent_0B20 { int idx; int val; int pad; int kind; };
 struct R12_0B20 { int a; int b; int c; };
 extern R12_0B20 D_004C9098_0B20 __asm__("D_004C9098");
@@ -3480,15 +3438,15 @@ extern R12_0B20 D_004C9098_0B20 __asm__("D_004C9098");
 extern int D_004A3C50_0B20[2] __asm__("D_004A3C50");
 extern "C" void func_00358B28(unsigned, int);
 extern int D_004A56A4_0B20 __asm__("D_004A56A4");
-struct T12_0B20 { unsigned a; int b; Flag_0B20 f; };
+struct T12_0B20 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_0B20 D_004FBB48_0B20 __asm__("D_004FBB48");
 extern "C" R12_0B20 func_00300B20(int n, Ent_0B20* e) {
     if (D_004A56A4_0B20 == 0) {
         D_004FBB48_0B20.a = -1;
         D_004FBB48_0B20.b = 1;
         D_004A56A4_0B20 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBB48_0B20.f = Flag_0B20(D_004FBB48_0B20.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBB48_0B20.f = sBindEnd_1FBE38();
     }
     unsigned v[4] __attribute__((aligned(16)));
     unsigned* vp = v;
@@ -3525,7 +3483,6 @@ extern "C" int func_00278F38(int, int);
 extern "C" int func_00278F68(int, int, int, int);
 struct V3_0C78 { float x, y, z; };
 extern V3_0C78 D_004C9098_0C78 __asm__("D_004C9098");
-struct Tag_0C78 { char c; Tag_0C78() {} Tag_0C78(const Tag_0C78 &o) : c(o.c) {} };
 extern unsigned D_0C78[] __asm__("D_004FBB58");
 extern int D_004A56A8;
 extern int D_004A3C58;
@@ -3536,7 +3493,7 @@ extern "C" V3_0C78 func_00300C78(int n, Ent_0C78 *e) {
         D_0C78[0] = 0xFFFFFFFF;
         ((int*)D_0C78)[1] = 0;
         D_004A56A8 = 1;
-        (*(Tag_0C78*)((char*)D_0C78 + 8)) = Tag_0C78((*(Tag_0C78*)((char*)D_0C78 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_0C78 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -3577,21 +3534,20 @@ extern "C" void func_003E6574(void*, void*, int);
 struct Ent_0E28 { int idx; int val; int pad; int kind; };
 struct R12_0E28 { int a; int b; int c; };
 extern R12_0E28 D_004C9098_0E28 __asm__("D_004C9098");
-struct Flag_0E28 { char c; Flag_0E28() {} Flag_0E28(const Flag_0E28& o) : c(o.c) {} };
 
 extern int D_004A3C60_0E28[2] __asm__("D_004A3C60");
 extern "C" void func_0030B928(int, unsigned, int);
 extern int D_004A3DD8_0E28 __asm__("D_004A3DD8");
 extern int D_004A56AC_0E28 __asm__("D_004A56AC");
-struct T12u_0E28 { unsigned a; int b; Flag_0E28 f; };
+struct T12u_0E28 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12u_0E28 D_004FBB68_0E28 __asm__("D_004FBB68");
 extern "C" R12_0E28 func_00300E28(int n, Ent_0E28* e) {
     if (D_004A56AC_0E28 == 0) {
         D_004FBB68_0E28.a = 0xFFFFFFFFu;
         D_004FBB68_0E28.b = 1;
         D_004A56AC_0E28 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBB68_0E28.f = Flag_0E28(D_004FBB68_0E28.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBB68_0E28.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -3619,7 +3575,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300F50);
 extern char *D_004A3DD8_0F50 __asm__("D_004A3DD8");
 struct V3_0F50 { float x, y, z; };
 extern V3_0F50 D_004C9098_0F50 __asm__("D_004C9098");
-struct Tag_0F50 { char c; Tag_0F50() {} Tag_0F50(const Tag_0F50 &o) : c(o.c) {} };
 extern unsigned D_0F50[] __asm__("D_004FBB78");
 extern int D_56B0_0F50 __asm__("D_004A56B0");
 extern const int D_00446570_0F50[] __asm__("D_00446570");
@@ -3650,8 +3605,8 @@ extern "C" V3_0F50 func_00300F50(int n, Ent_0F50 *e) {
         D_0F50[19] = 0xFFFFFFFF;
         D_0F50[20] = 0xFFFFFFFF;
         D_56B0_0F50 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        (*(Tag_0F50*)((char*)D_0F50 + 0x54)) = Tag_0F50((*(Tag_0F50*)((char*)D_0F50 + 0x54)));
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        *(sBindEnd_1FBE38*)((char*)D_0F50 + 0x54) = sBindEnd_1FBE38();
     }
     unsigned buf64[22];
     unsigned *buf = buf64;
@@ -3698,14 +3653,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301120);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_1120 { char c; Flag_1120() {} Flag_1120(const Flag_1120& o) : c(o.c) {} };
 struct Ent_1120 { int idx; int val; int pad; int kind; };
 extern int D_004A3C68_1120[2] __asm__("D_004A3C68");
 extern "C" void func_0030B9A0(char*, int, unsigned, unsigned);
 extern char *D_004A3DD8_1120 __asm__("D_004A3DD8");
 extern char *D_004A28A8_1120 __asm__("D_004A28A8");
 extern int D_004A56B4_1120 __asm__("D_004A56B4");
-struct T12_1120 { unsigned a; unsigned b; Flag_1120 f; };
+struct T12_1120 { unsigned a; unsigned b; sBindEnd_1FBE38 f; };
 extern T12_1120 D_004FBBD0_1120 __asm__("D_004FBBD0");
 struct A_1120 { char pad[0x6C0]; };
 struct B_1120 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual bool v09(); };
@@ -3727,8 +3681,8 @@ extern "C" void* func_00301120(void* self, int n, Ent_1120* e) {
             D_004FBBD0_1120.a = 0xFFFFFFFF;
             D_004FBBD0_1120.b = 0xFFFFFFFF;
             D_004A56B4_1120 = 1;
-            // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-            D_004FBBD0_1120.f = Flag_1120(D_004FBBD0_1120.f);
+            // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+            D_004FBBD0_1120.f = sBindEnd_1FBE38();
         }
         unsigned v[4] __attribute__((aligned(16)));
         unsigned* vp = v;
@@ -3767,7 +3721,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003012F0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_12F0 { char c; Flag_12F0() {} Flag_12F0(const Flag_12F0& o) : c(o.c) {} };
 struct Ent_12F0 { int idx; int val; int pad; int kind; };
 struct R12_12F0 { int a; int b; int c; };
 extern R12_12F0 D_004C9098_12F0 __asm__("D_004C9098");
@@ -3776,15 +3729,15 @@ extern int D_004A3C70_12F0[2] __asm__("D_004A3C70");
 extern "C" int func_0030A868_12F0(int, unsigned, int, int) __asm__("func_0030A868");
 extern int D_004A3DD8_12F0 __asm__("D_004A3DD8");
 extern int D_004A56B8_12F0 __asm__("D_004A56B8");
-struct T12_12F0 { unsigned a; int b; Flag_12F0 f; };
+struct T12_12F0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_12F0 D_004FBBE0_12F0 __asm__("D_004FBBE0");
 extern "C" void* func_003012F0(void* self, int n, Ent_12F0* e) {
     if (D_004A56B8_12F0 == 0) {
         D_004FBBE0_12F0.a = -1;
         D_004FBBE0_12F0.b = -1;
         D_004A56B8_12F0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBBE0_12F0.f = Flag_12F0(D_004FBBE0_12F0.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBBE0_12F0.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -3817,8 +3770,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301560);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
-struct Flag_1560 { char c; Flag_1560() {} Flag_1560(const Flag_1560& o) : c(o.c) {} };
 struct Ent_1560 { int idx; int val; int pad; int kind; };
 struct R12_1560 { int a; int b; int c; };
 extern R12_1560 D_004C9098_1560 __asm__("D_004C9098");
@@ -3828,11 +3779,11 @@ extern "C" int func_0030BA80(int, unsigned);
 extern int D_004A3DD8_1560 __asm__("D_004A3DD8");
 extern int D_004A56C8_1560 __asm__("D_004A56C8");
 extern unsigned D_004A56C0_1560 __asm__("D_004A56C0");
-extern Flag_1560 D_004A56C4_1560 __asm__("D_004A56C4");
+extern sBindEnd_1FBE38 D_004A56C4_1560 __asm__("D_004A56C4");
 extern "C" void* func_00301560(void* self, int n, Ent_1560* e) {
     if (D_004A56C8_1560 == 0) {
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A56C4_1560 = Flag_1560(D_004A56C4_1560);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A56C4_1560 = sBindEnd_1FBE38();
         D_004A56C0_1560 = -1;
         D_004A56C8_1560 = 1;
     }
@@ -3850,12 +3801,9 @@ extern "C" void* func_00301560(void* self, int n, Ent_1560* e) {
     }
     unsigned x = vp[0];
     if (x != 0xFFFFFFFFu) {
-        int r = func_0030BA80(D_004A3DD8_1560, x);
-        *(int*)((char*)self + 8) = 1;
-        *func_00226610(self) = r;
+        BIND_SET_RESULT_1FBE38(self, func_0030BA80(D_004A3DD8_1560, x));
     } else {
-        *(int*)((char*)self + 8) = 1;
-        *func_00226610(self) = 0;
+        BIND_SET_RESULT_1FBE38(self, 0);
     }
     return self;
 }
@@ -3881,9 +3829,8 @@ static inline char *look_1680(unsigned id) {
 float *func_00226618_1680(void*) __asm__("func_00226618__FPv");
 struct O_1680 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual float v30(); };
 struct V3_1680 { int w0, w1, w2; };
-struct Tag_1680 { char c; Tag_1680() {} Tag_1680(const Tag_1680 &o) : c(o.c) {} };
 extern unsigned D_1680 __asm__("D_004A56D0");
-extern Tag_1680 D_004A56D4;
+extern sBindEnd_1FBE38 D_004A56D4;
 extern int D_004A56D8;
 extern int D_004A3C88;
 extern "C" void func_003E6574(void*, void*, int);
@@ -3892,7 +3839,7 @@ extern "C" V3_1680* func_00301680(V3_1680 *ret, int n, Ent_1680 *e) {
     if (D_004A56D8 == 0) {
         D_1680 = 0xFFFFFFFF;
         D_004A56D8 = 1;
-        D_004A56D4 = Tag_1680(D_004A56D4);
+        D_004A56D4 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -3947,9 +3894,8 @@ static inline char *look_1830(unsigned id) {
 int *func_00226610(void*);
 struct O_1830 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual int v31(); };
 struct V3_1830 { int w0, w1, w2; };
-struct Tag_1830 { char c; Tag_1830() {} Tag_1830(const Tag_1830 &o) : c(o.c) {} };
 extern unsigned D_1830 __asm__("D_004A56E0");
-extern Tag_1830 D_004A56E4;
+extern sBindEnd_1FBE38 D_004A56E4;
 extern int D_004A56E8;
 extern int D_004A3C90;
 extern "C" void func_003E6574(void*, void*, int);
@@ -3958,7 +3904,7 @@ extern "C" V3_1830* func_00301830(V3_1830 *ret, int n, Ent_1830 *e) {
     if (D_004A56E8 == 0) {
         D_1830 = 0xFFFFFFFF;
         D_004A56E8 = 1;
-        D_004A56E4 = Tag_1830(D_004A56E4);
+        D_004A56E4 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -4015,7 +3961,6 @@ extern char *D_004A28A8_19C8 __asm__("D_004A28A8");
 int *func_00226610(void*);
 struct O_19C8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual int v32(float); };
 struct V3_19C8 { int w0, w1, w2; };
-struct Tag_19C8 { char c; Tag_19C8() {} Tag_19C8(const Tag_19C8 &o) : c(o.c) {} };
 extern unsigned D_19C8[] __asm__("D_004FBC00");
 extern int D_004A56EC;
 extern int D_004A3C98;
@@ -4026,7 +3971,7 @@ extern "C" V3_19C8* func_003019C8(V3_19C8 *ret, int n, Ent_19C8 *e) {
         D_19C8[0] = 0xFFFFFFFF;
         *(float*)&D_19C8[1] = -1.0f;
         D_004A56EC = 1;
-        (*(Tag_19C8*)((char*)D_19C8 + 8)) = Tag_19C8((*(Tag_19C8*)((char*)D_19C8 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_19C8 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -4076,9 +4021,8 @@ extern "C" V3_19C8* func_003019C8(V3_19C8 *ret, int n, Ent_19C8 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00301B88);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_1B88 { char c; Flag_1B88() {} Flag_1B88(const Flag_1B88& o) : c(o.c) {} };
 extern unsigned D_004A56F0_1B88 __asm__("D_004A56F0");
-extern Flag_1B88 D_004A56F4_1B88 __asm__("D_004A56F4");
+extern sBindEnd_1FBE38 D_004A56F4_1B88 __asm__("D_004A56F4");
 extern int D_004A56F8_1B88 __asm__("D_004A56F8");
 extern int D_004A3CA0_1B88[2] __asm__("D_004A3CA0");
 extern int D_004A3DD8_1B88 __asm__("D_004A3DD8");
@@ -4090,8 +4034,8 @@ struct Ent_1B88 { int idx; int val; int pad; int kind; };
 
 extern "C" void* func_00301B88(void* self, int n, Ent_1B88* e) {
     if (D_004A56F8_1B88 == 0) {
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A56F4_1B88 = Flag_1B88(D_004A56F4_1B88);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A56F4_1B88 = sBindEnd_1FBE38();
         D_004A56F0_1B88 = -1;
         D_004A56F8_1B88 = 1;
     }
@@ -4118,9 +4062,8 @@ extern "C" void* func_00301B88(void* self, int n, Ent_1B88* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00301C80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_1C80 { char c; Flag_1C80() {} Flag_1C80(const Flag_1C80& o) : c(o.c) {} };
 extern unsigned D_004A5700_1C80 __asm__("D_004A5700");
-extern Flag_1C80 D_004A5704_1C80 __asm__("D_004A5704");
+extern sBindEnd_1FBE38 D_004A5704_1C80 __asm__("D_004A5704");
 extern int D_004A5708_1C80 __asm__("D_004A5708");
 extern int D_004A3CA8_1C80[2] __asm__("D_004A3CA8");
 extern int D_004A3DD8_1C80 __asm__("D_004A3DD8");
@@ -4132,8 +4075,8 @@ struct Ent_1C80 { int idx; int val; int pad; int kind; };
 
 extern "C" void* func_00301C80(void* self, int n, Ent_1C80* e) {
     if (D_004A5708_1C80 == 0) {
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A5704_1C80 = Flag_1C80(D_004A5704_1C80);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A5704_1C80 = sBindEnd_1FBE38();
         D_004A5700_1C80 = -1;
         D_004A5708_1C80 = 1;
     }
@@ -4160,9 +4103,8 @@ extern "C" void* func_00301C80(void* self, int n, Ent_1C80* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00301D78);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_1D78 { char c; Flag_1D78() {} Flag_1D78(const Flag_1D78& o) : c(o.c) {} };
 extern unsigned D_004A5710_1D78 __asm__("D_004A5710");
-extern Flag_1D78 D_004A5714_1D78 __asm__("D_004A5714");
+extern sBindEnd_1FBE38 D_004A5714_1D78 __asm__("D_004A5714");
 extern int D_004A5718_1D78 __asm__("D_004A5718");
 extern int D_004A3CB0_1D78[2] __asm__("D_004A3CB0");
 extern int *D_004A3DD8_1D78 __asm__("D_004A3DD8");
@@ -4184,7 +4126,7 @@ extern "C" void* func_00301D78(void* self, int n, Ent_1D78 *e) {
         D_004A5710_1D78 = 0xFFFFFFFF;
         D_004A5718_1D78 = 1;
         // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb 0(sp)).
-        D_004A5714_1D78 = Flag_1D78(D_004A5714_1D78);
+        D_004A5714_1D78 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -4241,9 +4183,8 @@ done:
 INCLUDE_ASM("seg/seg_1FBE38", func_00301F48);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_1F48 { char c; Flag_1F48() {} Flag_1F48(const Flag_1F48& o) : c(o.c) {} };
 extern int D_004A5720_1F48 __asm__("D_004A5720");
-extern Flag_1F48 D_004A5724_1F48 __asm__("D_004A5724");
+extern sBindEnd_1FBE38 D_004A5724_1F48 __asm__("D_004A5724");
 extern int D_004A5728_1F48 __asm__("D_004A5728");
 extern int D_004A3CB8_1F48[2] __asm__("D_004A3CB8");
 extern "C" void func_003E6574(void*, void*, int);
@@ -4257,8 +4198,8 @@ extern "C" R12_1F48 func_00301F48(int n, Ent_1F48* e) {
     if (D_004A5728_1F48 == 0) {
         D_004A5720_1F48 = -1;
         D_004A5728_1F48 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A5724_1F48 = Flag_1F48(D_004A5724_1F48);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A5724_1F48 = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -4289,7 +4230,6 @@ extern "C" void func_0022D6C8_2048(int, int) __asm__("func_0022D6C8");
 struct Sh_2048 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual int v09(); };
 struct V3_2048 { float x, y, z; };
 extern V3_2048 D_004C9098_2048 __asm__("D_004C9098");
-struct Tag_2048 { char c; Tag_2048() {} Tag_2048(const Tag_2048 &o) : c(o.c) {} };
 extern unsigned D_2048[] __asm__("D_004FBC10");
 extern int D_004A572C;
 extern int D_004A3CC0;
@@ -4300,7 +4240,7 @@ extern "C" V3_2048 func_00302048(int n, Ent_2048 *e) {
         ((int*)D_2048)[0] = -1;
         ((int*)D_2048)[1] = -1;
         D_004A572C = 1;
-        (*(Tag_2048*)((char*)D_2048 + 8)) = Tag_2048((*(Tag_2048*)((char*)D_2048 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_2048 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -4349,8 +4289,7 @@ extern "C" V3_2048 func_00302048(int n, Ent_2048 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00302210);
 #ifdef SKIP_ASM
 extern "C" void func_003E6574(void*, void*, int);
-struct Flag_2210 { char c; Flag_2210() {} Flag_2210(const Flag_2210& o) : c(o.c) {} };
-struct Defaults_2210 { int v[3]; Flag_2210 flag; };
+struct Defaults_2210 { int v[3]; sBindEnd_1FBE38 flag; };
 extern Defaults_2210 D_004FBC20_2210 __asm__("D_004FBC20");
 extern int D_004A5730_2210 __asm__("D_004A5730");
 extern const int D_004465C8_2210[] __asm__("D_004465C8");
@@ -4384,8 +4323,8 @@ extern "C" V3_2210 func_00302210(int n, Ent_2210* e)
         D_004FBC20_2210.v[1] = -1;
         D_004FBC20_2210.v[2] = -1;
         D_004A5730_2210 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBC20_2210.flag = Flag_2210(D_004FBC20_2210.flag);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBC20_2210.flag = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -4455,8 +4394,7 @@ extern char **D_004A47B8_2490 __asm__("D_004A47B8");
 struct O_2490 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_2490 { float x, y, z; };
 extern V3_2490 D_004C9098_2490 __asm__("D_004C9098");
-struct Tag_2490 { char c; Tag_2490() {} Tag_2490(const Tag_2490 &o) : c(o.c) {} };
-struct T12_2490 { unsigned a; int b; Tag_2490 f; };
+struct T12_2490 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2490 D_4FBC30_2490 __asm__("D_004FBC30");
 extern int D_5734_2490 __asm__("D_004A5734");
 extern int D_3CC8_2490 __asm__("D_004A3CC8");
@@ -4469,8 +4407,8 @@ extern "C" V3_2490 func_00302490(int n, Ent_2490 *e) {
         D_4FBC30_2490.a = 0xFFFFFFFF;
         D_4FBC30_2490.b = -1;
         D_5734_2490 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_4FBC30_2490.f = Tag_2490(D_4FBC30_2490.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_4FBC30_2490.f = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -4605,7 +4543,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302968);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_2968 { char c; Flag_2968() {} Flag_2968(const Flag_2968& o) : c(o.c) {} };
 struct Ent_2968 { int idx; int val; int pad; int kind; };
 struct R12_2968 { int a; int b; int c; };
 extern R12_2968 D_004C9098_2968 __asm__("D_004C9098");
@@ -4615,11 +4552,11 @@ extern char** D_004A47B8_2968 __asm__("D_004A47B8");
 extern char* D_004A3DD8_2968 __asm__("D_004A3DD8");
 extern int D_004A5770_2968 __asm__("D_004A5770");
 extern unsigned D_004A5768_2968 __asm__("D_004A5768");
-extern Flag_2968 D_004A576C_2968 __asm__("D_004A576C");
+extern sBindEnd_1FBE38 D_004A576C_2968 __asm__("D_004A576C");
 extern "C" R12_2968 func_00302968(int n, Ent_2968* e) {
     if (D_004A5770_2968 == 0) {
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A576C_2968 = Flag_2968(D_004A576C_2968);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A576C_2968 = sBindEnd_1FBE38();
         D_004A5768_2968 = -1;
         D_004A5770_2968 = 1;
     }
@@ -4657,7 +4594,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302AC0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_2AC0 { char c; Flag_2AC0() {} Flag_2AC0(const Flag_2AC0& o) : c(o.c) {} };
 struct Ent_2AC0 { int idx; int val; int pad; int kind; };
 struct R12_2AC0 { int a; int b; int c; };
 extern R12_2AC0 D_004C9098_2AC0 __asm__("D_004C9098");
@@ -4666,14 +4602,14 @@ extern int D_004A3CF0_2AC0[2] __asm__("D_004A3CF0");
 extern "C" void func_0030A728(int, int, int);
 extern int D_004A3DD8_2AC0 __asm__("D_004A3DD8");
 extern int D_004A5774_2AC0 __asm__("D_004A5774");
-struct T12_2AC0 { unsigned a; int b; Flag_2AC0 f; };
+struct T12_2AC0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2AC0 D_004FBC40_2AC0 __asm__("D_004FBC40");
 extern "C" R12_2AC0 func_00302AC0(int n, Ent_2AC0* e) {
     if (D_004A5774_2AC0 == 0) {
         D_004FBC40_2AC0.a = -1;
         D_004FBC40_2AC0.b = 0;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBC40_2AC0.f = Flag_2AC0(D_004FBC40_2AC0.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBC40_2AC0.f = sBindEnd_1FBE38();
         D_004A5774_2AC0 = 1;
     }
     int v[4] __attribute__((aligned(16)));
@@ -4699,7 +4635,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302BD8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_2BD8 { char c; Flag_2BD8() {} Flag_2BD8(const Flag_2BD8& o) : c(o.c) {} };
 struct Ent_2BD8 { int idx; int val; int pad; int kind; };
 struct R12_2BD8 { int a; int b; int c; };
 extern R12_2BD8 D_004C9098_2BD8 __asm__("D_004C9098");
@@ -4709,11 +4644,11 @@ extern "C" int func_0030A868(int, int, int, int);
 extern int D_004A3DD8_2BD8 __asm__("D_004A3DD8");
 extern int D_004A5780_2BD8 __asm__("D_004A5780");
 extern unsigned D_004A5778_2BD8 __asm__("D_004A5778");
-extern Flag_2BD8 D_004A577C_2BD8 __asm__("D_004A577C");
+extern sBindEnd_1FBE38 D_004A577C_2BD8 __asm__("D_004A577C");
 extern "C" R12_2BD8 func_00302BD8(int n, Ent_2BD8* e) {
     if (D_004A5780_2BD8 == 0) {
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A577C_2BD8 = Flag_2BD8(D_004A577C_2BD8);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A577C_2BD8 = sBindEnd_1FBE38();
         D_004A5778_2BD8 = -1;
         D_004A5780_2BD8 = 1;
     }
@@ -4740,7 +4675,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302CE8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_2CE8 { char c; Flag_2CE8() {} Flag_2CE8(const Flag_2CE8& o) : c(o.c) {} };
 struct Ent_2CE8 { int idx; int val; int pad; int kind; };
 struct R12_2CE8 { int a; int b; int c; };
 extern R12_2CE8 D_004C9098_2CE8 __asm__("D_004C9098");
@@ -4750,11 +4684,11 @@ extern "C" void func_0030A728(int, int, int);
 extern int D_004A3DD8_2CE8 __asm__("D_004A3DD8");
 extern int D_004A5790_2CE8 __asm__("D_004A5790");
 extern unsigned D_004A5788_2CE8 __asm__("D_004A5788");
-extern Flag_2CE8 D_004A578C_2CE8 __asm__("D_004A578C");
+extern sBindEnd_1FBE38 D_004A578C_2CE8 __asm__("D_004A578C");
 extern "C" R12_2CE8 func_00302CE8(int n, Ent_2CE8* e) {
     if (D_004A5790_2CE8 == 0) {
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A578C_2CE8 = Flag_2CE8(D_004A578C_2CE8);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A578C_2CE8 = sBindEnd_1FBE38();
         D_004A5788_2CE8 = -1;
         D_004A5790_2CE8 = 1;
     }
@@ -4781,7 +4715,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302DF0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_2DF0 { char c; Flag_2DF0() {} Flag_2DF0(const Flag_2DF0& o) : c(o.c) {} };
 struct Ent_2DF0 { int idx; int val; int pad; int kind; };
 struct R12_2DF0 { int a; int b; int c; };
 extern R12_2DF0 D_004C9098_2DF0 __asm__("D_004C9098");
@@ -4791,11 +4724,11 @@ extern "C" void func_0030A728(int, int, int);
 extern int D_004A3DD8_2DF0 __asm__("D_004A3DD8");
 extern int D_004A57A0_2DF0 __asm__("D_004A57A0");
 extern unsigned D_004A5798_2DF0 __asm__("D_004A5798");
-extern Flag_2DF0 D_004A579C_2DF0 __asm__("D_004A579C");
+extern sBindEnd_1FBE38 D_004A579C_2DF0 __asm__("D_004A579C");
 extern "C" R12_2DF0 func_00302DF0(int n, Ent_2DF0* e) {
     if (D_004A57A0_2DF0 == 0) {
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A579C_2DF0 = Flag_2DF0(D_004A579C_2DF0);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A579C_2DF0 = sBindEnd_1FBE38();
         D_004A5798_2DF0 = -1;
         D_004A57A0_2DF0 = 1;
     }
@@ -4819,39 +4752,26 @@ extern "C" R12_2DF0 func_00302DF0(int n, Ent_2DF0* e) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00302EF8);
 #ifdef SKIP_ASM
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
-struct Flag_2EF8 { char c; Flag_2EF8() {} Flag_2EF8(const Flag_2EF8& o) : c(o.c) {} };
 extern int D_004A57A8_2EF8 __asm__("D_004A57A8");
-extern Flag_2EF8 D_004A57AC_2EF8 __asm__("D_004A57AC");
+extern sBindEnd_1FBE38 D_004A57AC_2EF8 __asm__("D_004A57AC");
 extern int D_004A57B0_2EF8 __asm__("D_004A57B0");
 extern int D_004A3D10_2EF8[2] __asm__("D_004A3D10");
 extern int* D_004A3DD8_2EF8 __asm__("D_004A3DD8");
 extern char* D_004A28A8_2EF8 __asm__("D_004A28A8");
 extern "C" int func_00122EE8(char* rider, int which);
 
-struct Ent_2EF8 { int idx; int val; int pad; int kind; };
 
-extern "C" void* func_00302EF8(void* self, int n, Ent_2EF8* e)
+extern "C" void* func_00302EF8(void* self, int n, sBindArg_1FBE38 *e)
 {
     if (D_004A57B0_2EF8 == 0) {
         D_004A57A8_2EF8 = 0;
         D_004A57B0_2EF8 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A57AC_2EF8 = Flag_2EF8(D_004A57AC_2EF8);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A57AC_2EF8 = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
-    int* vp = v;
-    func_003E6574(vp, &D_004A57A8_2EF8, 8);
-    Ent_2EF8* p = e;
-    for (int i = 0; i < n; i++, p++) {
-        int k = p->idx;
-        int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D10_2EF8[k] && D_004A3D10_2EF8[k] == 2)
-            *(float*)d = (float)p->val;
-        else
-            *d = p->val;
-    }
+    int *vp;
+    BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A57A8_2EF8, 8, D_004A3D10_2EF8, n, e);
     char* lvl = *(char**)(*(char**)(D_004A28A8_2EF8 + 0x84) + 0xC);
     char* q = *(char**)(lvl + (*D_004A3DD8_2EF8 << 2) + 0x28);
     char* a = q ? q + 0x6C0 : 0;
@@ -4879,8 +4799,7 @@ extern "C" void* func_00302EF8(void* self, int n, Ent_2EF8* e)
     case 18: res = func_00122EE8(r, 18); break;
     default: res = 0; break;
     }
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = res;
+    BIND_SET_RESULT_1FBE38(self, res);
     return self;
 }
 #endif
@@ -4904,7 +4823,6 @@ static inline char *look_3130(unsigned id) {
 
 int *func_00226610(void*);
 struct V3_3130 { int w0, w1, w2; };
-struct Tag_3130 { char c; Tag_3130() {} Tag_3130(const Tag_3130 &o) : c(o.c) {} };
 extern unsigned D_3130[] __asm__("D_004FBC50");
 extern int D_004A57B4;
 extern int D_004A3D18;
@@ -4915,7 +4833,7 @@ extern "C" V3_3130* func_00303130(V3_3130 *ret, int n, Ent_3130 *e) {
         D_3130[0] = 0xFFFFFFFF;
         D_3130[1] = 1;
         D_004A57B4 = 1;
-        (*(Tag_3130*)((char*)D_3130 + 8)) = Tag_3130((*(Tag_3130*)((char*)D_3130 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_3130 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -5052,7 +4970,6 @@ extern "C" void* func_00303490(void* self) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003034F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int* func_00226610(void*);
 extern char *D_004A3DD8_34F8 __asm__("D_004A3DD8");
 extern char *D_004A28A8_34F8 __asm__("D_004A28A8");
 struct A_34F8 { char pad[0x6C0]; };
@@ -5069,8 +4986,7 @@ extern "C" void* func_003034F8(void* self) {
         v = *(unsigned*)(*(char**)((char*)d + 0x77C) + 0xD4);
     else
         v = 0xFFFFFFFF;
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = v;
+    BIND_SET_RESULT_1FBE38(self, v);
     return self;
 }
 #endif
@@ -5081,7 +4997,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303598);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_3598 { char c; Flag_3598() {} Flag_3598(const Flag_3598& o) : c(o.c) {} };
 struct Ent_3598 { int idx; int val; int pad; int kind; };
 struct R12_3598 { int a; int b; int c; };
 extern R12_3598 D_004C9098_3598 __asm__("D_004C9098");
@@ -5090,15 +5005,15 @@ extern int D_004A3D20_3598[2] __asm__("D_004A3D20");
 float AIrandf(float, float);
 void* func_00226618(void*);
 extern int D_004A57B8_3598 __asm__("D_004A57B8");
-struct T12_3598 { float a; float b; Flag_3598 f; };
+struct T12_3598 { float a; float b; sBindEnd_1FBE38 f; };
 extern T12_3598 D_004FBC60_3598 __asm__("D_004FBC60");
 extern "C" void* func_00303598(void* self, int n, Ent_3598* e) {
     if (D_004A57B8_3598 == 0) {
         D_004FBC60_3598.a = 0;
         D_004FBC60_3598.b = 1.0f;
         D_004A57B8_3598 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBC60_3598.f = Flag_3598(D_004FBC60_3598.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBC60_3598.f = sBindEnd_1FBE38();
     }
     float v[4] __attribute__((aligned(16)));
     float* vp = v;
@@ -5123,9 +5038,8 @@ extern "C" void* func_00303598(void* self, int n, Ent_3598* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003036B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Flag_36B0 { char c; Flag_36B0() {} Flag_36B0(const Flag_36B0& o) : c(o.c) {} };
 extern int D_004A57C0_36B0 __asm__("D_004A57C0");
-extern Flag_36B0 D_004A57C4_36B0 __asm__("D_004A57C4");
+extern sBindEnd_1FBE38 D_004A57C4_36B0 __asm__("D_004A57C4");
 extern int D_004A57C8_36B0 __asm__("D_004A57C8");
 extern int D_004A3D28_36B0[2] __asm__("D_004A3D28");
 extern "C" void func_003E6574(void*, void*, int);
@@ -5139,8 +5053,8 @@ extern "C" void* func_003036B0(void* self, int n, Ent_36B0* e) {
     if (D_004A57C8_36B0 == 0) {
         D_004A57C0_36B0 = -1;
         D_004A57C8_36B0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A57C4_36B0 = Flag_36B0(D_004A57C4_36B0);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A57C4_36B0 = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -5164,38 +5078,25 @@ extern "C" void* func_003036B0(void* self, int n, Ent_36B0* e) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003037B0);
 #ifdef SKIP_ASM
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
-struct Flag_37B0 { char c; Flag_37B0() {} Flag_37B0(const Flag_37B0& o) : c(o.c) {} };
 extern int D_004A57D0_37B0 __asm__("D_004A57D0");
-extern Flag_37B0 D_004A57D4_37B0 __asm__("D_004A57D4");
+extern sBindEnd_1FBE38 D_004A57D4_37B0 __asm__("D_004A57D4");
 extern int D_004A57D8_37B0 __asm__("D_004A57D8");
 extern int D_004A3D30_37B0[2] __asm__("D_004A3D30");
 extern int* D_004A3DD8_37B0 __asm__("D_004A3DD8");
 extern char* D_004A28A8_37B0 __asm__("D_004A28A8");
 
-struct Ent_37B0 { int idx; int val; int pad; int kind; };
 
-extern "C" void* func_003037B0(void* self, int n, Ent_37B0* e)
+extern "C" void* func_003037B0(void* self, int n, sBindArg_1FBE38 *e)
 {
     if (D_004A57D8_37B0 == 0) {
         D_004A57D0_37B0 = -1;
         D_004A57D8_37B0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A57D4_37B0 = Flag_37B0(D_004A57D4_37B0);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A57D4_37B0 = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
-    int* vp = v;
-    func_003E6574(vp, &D_004A57D0_37B0, 8);
-    Ent_37B0* p = e;
-    for (int i = 0; i < n; i++, p++) {
-        int k = p->idx;
-        int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D30_37B0[k] && D_004A3D30_37B0[k] == 2)
-            *(float*)d = (float)p->val;
-        else
-            *d = p->val;
-    }
+    int *vp;
+    BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A57D0_37B0, 8, D_004A3D30_37B0, n, e);
     char* lvl = *(char**)(*(char**)(D_004A28A8_37B0 + 0x84) + 0xC);
     char* q = *(char**)(lvl + (*D_004A3DD8_37B0 << 2) + 0x28);
     char* a = q ? q + 0x6C0 : 0;
@@ -5223,8 +5124,7 @@ extern "C" void* func_003037B0(void* self, int n, Ent_37B0* e)
     case 18: res = func_00122EE8(r, 18); break;
     default: res = 0; break;
     }
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = res;
+    BIND_SET_RESULT_1FBE38(self, res);
     return self;
 }
 #endif
@@ -5241,7 +5141,6 @@ extern "C" void func_00343C60_39F0(int, int) __asm__("func_00343C60");
 extern "C" void func_00343F38_39F0(int, int) __asm__("func_00343F38");
 struct V3_39F0 { float x, y, z; };
 extern V3_39F0 D_004C9098_39F0 __asm__("D_004C9098");
-struct Tag_39F0 { char c; Tag_39F0() {} Tag_39F0(const Tag_39F0 &o) : c(o.c) {} };
 extern unsigned D_39F0[] __asm__("D_004FBC70");
 extern int D_004A57DC;
 extern int D_004A3D38;
@@ -5252,7 +5151,7 @@ extern "C" V3_39F0 func_003039F0(int n, Ent_39F0 *e) {
         D_39F0[0] = 0xFFFFFFFF;
         ((int*)D_39F0)[1] = -1;
         D_004A57DC = 1;
-        (*(Tag_39F0*)((char*)D_39F0 + 8)) = Tag_39F0((*(Tag_39F0*)((char*)D_39F0 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_39F0 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -5301,8 +5200,7 @@ extern char **D_004A47B8_3BA0 __asm__("D_004A47B8");
 extern int D_004A2A00_3BA0 __asm__("D_004A2A00");
 struct V3_3BA0 { float x, y, z; };
 extern V3_3BA0 D_004C9098_3BA0 __asm__("D_004C9098");
-struct Tag_3BA0 { char c; Tag_3BA0() {} Tag_3BA0(const Tag_3BA0 &o) : c(o.c) {} };
-struct T20_3BA0 { unsigned a; int b; int c; int d; Tag_3BA0 f; };
+struct T20_3BA0 { unsigned a; int b; int c; int d; sBindEnd_1FBE38 f; };
 extern T20_3BA0 D_4FBC80_3BA0 __asm__("D_004FBC80");
 extern int D_57E0_3BA0 __asm__("D_004A57E0");
 extern const int D_004465D8_3BA0[] __asm__("D_004465D8");
@@ -5318,8 +5216,8 @@ extern "C" V3_3BA0 func_00303BA0(int n, Ent_3BA0 *e) {
         D_4FBC80_3BA0.c = 0;
         D_4FBC80_3BA0.d = 0;
         D_57E0_3BA0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_4FBC80_3BA0.f = Tag_3BA0(D_4FBC80_3BA0.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_4FBC80_3BA0.f = sBindEnd_1FBE38();
     }
     unsigned buf64[5];
     unsigned *buf = buf64;
@@ -5480,7 +5378,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303FF0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_3FF0 { char c; Flag_3FF0() {} Flag_3FF0(const Flag_3FF0& o) : c(o.c) {} };
 struct Ent_3FF0 { int idx; int val; int pad; int kind; };
 struct R12_3FF0 { int a; int b; int c; };
 extern R12_3FF0 D_004C9098_3FF0 __asm__("D_004C9098");
@@ -5489,15 +5386,15 @@ extern int D_004A3D40_3FF0[2] __asm__("D_004A3D40");
 void func_0030B4C0(void*, int, int);
 extern void* D_004A3DD8_3FF0 __asm__("D_004A3DD8");
 extern int D_004A57E4_3FF0 __asm__("D_004A57E4");
-struct T12_3FF0 { int a; int b; Flag_3FF0 f; };
+struct T12_3FF0 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_3FF0 D_004FBC98_3FF0 __asm__("D_004FBC98");
 extern "C" R12_3FF0 func_00303FF0(int n, Ent_3FF0* e) {
     if (D_004A57E4_3FF0 == 0) {
         D_004FBC98_3FF0.a = 0;
         D_004FBC98_3FF0.b = -1;
         D_004A57E4_3FF0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBC98_3FF0.f = Flag_3FF0(D_004FBC98_3FF0.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBC98_3FF0.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -5522,7 +5419,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304100);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_4100 { char c; Flag_4100() {} Flag_4100(const Flag_4100& o) : c(o.c) {} };
 struct Ent_4100 { int idx; int val; int pad; int kind; };
 struct R12_4100 { int a; int b; int c; };
 extern R12_4100 D_004C9098_4100 __asm__("D_004C9098");
@@ -5531,15 +5427,15 @@ extern int D_004A3D48_4100[2] __asm__("D_004A3D48");
 void func_0030B4D8(void*, int, int);
 extern void* D_004A3DD8_4100 __asm__("D_004A3DD8");
 extern int D_004A57E8_4100 __asm__("D_004A57E8");
-struct T12_4100 { int a; int b; Flag_4100 f; };
+struct T12_4100 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4100 D_004FBCA8_4100 __asm__("D_004FBCA8");
 extern "C" R12_4100 func_00304100(int n, Ent_4100* e) {
     if (D_004A57E8_4100 == 0) {
         D_004FBCA8_4100.a = 0;
         D_004A57E8_4100 = 1;
         D_004FBCA8_4100.b = 0;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBCA8_4100.f = Flag_4100(D_004FBCA8_4100.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBCA8_4100.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -5564,7 +5460,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304210);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_4210 { char c; Flag_4210() {} Flag_4210(const Flag_4210& o) : c(o.c) {} };
 struct Ent_4210 { int idx; int val; int pad; int kind; };
 struct R12_4210 { int a; int b; int c; };
 extern R12_4210 D_004C9098_4210 __asm__("D_004C9098");
@@ -5573,15 +5468,15 @@ extern int D_004A3D50_4210[2] __asm__("D_004A3D50");
 void func_0030B4F0(void*, int, int);
 extern void* D_004A3DD8_4210 __asm__("D_004A3DD8");
 extern int D_004A57EC_4210 __asm__("D_004A57EC");
-struct T12_4210 { int a; int b; Flag_4210 f; };
+struct T12_4210 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4210 D_004FBCB8_4210 __asm__("D_004FBCB8");
 extern "C" R12_4210 func_00304210(int n, Ent_4210* e) {
     if (D_004A57EC_4210 == 0) {
         D_004FBCB8_4210.a = 0;
         D_004FBCB8_4210.b = -1;
         D_004A57EC_4210 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBCB8_4210.f = Flag_4210(D_004FBCB8_4210.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBCB8_4210.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -5608,7 +5503,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003044A8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_44A8 { char c; Flag_44A8() {} Flag_44A8(const Flag_44A8& o) : c(o.c) {} };
 struct Ent_44A8 { int idx; int val; int pad; int kind; };
 struct R12_44A8 { int a; int b; int c; };
 extern R12_44A8 D_004C9098_44A8 __asm__("D_004C9098");
@@ -5619,13 +5513,13 @@ extern int* D_004A3DD8_44A8 __asm__("D_004A3DD8");
 extern char* D_004A28A8_44A8 __asm__("D_004A28A8");
 extern int D_004A5808_44A8 __asm__("D_004A5808");
 extern int D_004A5800_44A8 __asm__("D_004A5800");
-extern Flag_44A8 D_004A5804_44A8 __asm__("D_004A5804");
+extern sBindEnd_1FBE38 D_004A5804_44A8 __asm__("D_004A5804");
 extern "C" R12_44A8 func_003044A8(int n, Ent_44A8* e) {
     if (D_004A5808_44A8 == 0) {
         D_004A5800_44A8 = -1;
         D_004A5808_44A8 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A5804_44A8 = Flag_44A8(D_004A5804_44A8);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A5804_44A8 = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -5652,13 +5546,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003045B8);
 extern char *D_004A3DD8_45B8 __asm__("D_004A3DD8");
 struct V3_45B8 { float x, y, z; };
 extern V3_45B8 D_004C9098_45B8 __asm__("D_004C9098");
-struct Tag_45B8 { char c; Tag_45B8() {} Tag_45B8(const Tag_45B8 &o) : c(o.c) {} };
 struct Rec_45B8 {
     unsigned a0; int a1; int a2; int a3;
     unsigned a4; unsigned a5; unsigned a6; unsigned a7;
     unsigned a8; unsigned a9; unsigned a10; unsigned a11;
     unsigned a12; unsigned a13; unsigned a14; unsigned a15;
-    Tag_45B8 f;
+    sBindEnd_1FBE38 f;
 };
 extern Rec_45B8 D_4FBCC8_45B8 __asm__("D_004FBCC8");
 extern int D_580C_45B8 __asm__("D_004A580C");
@@ -5692,8 +5585,8 @@ extern "C" V3_45B8 func_003045B8(int n, Ent_45B8 *e) {
         D_4FBCC8_45B8.a14 = 0;
         D_4FBCC8_45B8.a15 = 0;
         D_580C_45B8 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_4FBCC8_45B8.f = Tag_45B8(D_4FBCC8_45B8.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_4FBCC8_45B8.f = sBindEnd_1FBE38();
     }
     Rec_45B8 rec;
     Rec_45B8 *buf = &rec;
@@ -5742,7 +5635,6 @@ void func_00355878(void*, void*);
 struct O_4980 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_4980 { float x, y, z; };
 extern V3_4980 D_004C9098_4980 __asm__("D_004C9098");
-struct Tag_4980 { char c; Tag_4980() {} Tag_4980(const Tag_4980 &o) : c(o.c) {} };
 extern unsigned D_4980[] __asm__("D_004FBD10");
 extern int D_004A5810;
 extern int D_004A3D68;
@@ -5753,7 +5645,7 @@ extern "C" V3_4980 func_00304980(int n, Ent_4980 *e) {
         D_4980[0] = 0xFFFFFFFF;
         *(float*)&D_4980[1] = 1.0f;
         D_004A5810 = 1;
-        (*(Tag_4980*)((char*)D_4980 + 8)) = Tag_4980((*(Tag_4980*)((char*)D_4980 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_4980 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -5796,7 +5688,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304B38);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_4B38 { char c; Flag_4B38() {} Flag_4B38(const Flag_4B38& o) : c(o.c) {} };
 struct Ent_4B38 { int idx; int val; int pad; int kind; };
 struct R12_4B38 { int a; int b; int c; };
 extern R12_4B38 D_004C9098_4B38 __asm__("D_004C9098");
@@ -5807,13 +5698,13 @@ extern int* D_004A3DD8_4B38 __asm__("D_004A3DD8");
 extern char* D_004A28A8_4B38 __asm__("D_004A28A8");
 extern int D_004A5820_4B38 __asm__("D_004A5820");
 extern int D_004A5818_4B38 __asm__("D_004A5818");
-extern Flag_4B38 D_004A581C_4B38 __asm__("D_004A581C");
+extern sBindEnd_1FBE38 D_004A581C_4B38 __asm__("D_004A581C");
 extern "C" R12_4B38 func_00304B38(int n, Ent_4B38* e) {
     if (D_004A5820_4B38 == 0) {
         D_004A5818_4B38 = -1;
         D_004A5820_4B38 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A581C_4B38 = Flag_4B38(D_004A581C_4B38);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A581C_4B38 = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -5838,13 +5729,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304C50);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 void* func_00226618(void*);
 extern "C" void func_003E6574(void*, void*, int);
-struct Tag_4C50 { char c; Tag_4C50() {} Tag_4C50(const Tag_4C50 &o) : c(o.c) {} };
 struct Ent_4C50 { int idx; int val; int pad; int type; };
 extern char *D_004A3DD8_4C50 __asm__("D_004A3DD8");
 extern char **D_004A47B8_4C50 __asm__("D_004A47B8");
 extern char *D_004A28A8_4C50 __asm__("D_004A28A8");
 extern unsigned D_5828_4C50 __asm__("D_004A5828");
-extern Tag_4C50 D_582C_4C50 __asm__("D_004A582C");
+extern sBindEnd_1FBE38 D_582C_4C50 __asm__("D_004A582C");
 extern int D_5830_4C50 __asm__("D_004A5830");
 extern int D_3D78_4C50 __asm__("D_004A3D78");
 struct Vec_4C50 { float x, y, z, w; } __attribute__((aligned(16)));
@@ -5857,8 +5747,8 @@ extern "C" void* func_00304C50(void* self, int n, Ent_4C50 *e) {
     if (D_5830_4C50 == 0) {
         D_5828_4C50 = 0xFFFFFFFF;
         D_5830_4C50 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_582C_4C50 = Tag_4C50(D_582C_4C50);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_582C_4C50 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -5921,7 +5811,6 @@ extern "C" void func_00355888(void*, void*);
 struct O_4E38 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_4E38 { float x, y, z; };
 extern V3_4E38 D_004C9098_4E38 __asm__("D_004C9098");
-struct Tag_4E38 { char c; Tag_4E38() {} Tag_4E38(const Tag_4E38 &o) : c(o.c) {} };
 extern unsigned D_4E38[] __asm__("D_004FBD20");
 extern int D_004A5834;
 extern int D_004A3D80;
@@ -5932,7 +5821,7 @@ extern "C" V3_4E38 func_00304E38(int n, Ent_4E38 *e) {
         D_4E38[0] = 0xFFFFFFFF;
         *(float*)&D_4E38[1] = 1.0f;
         D_004A5834 = 1;
-        (*(Tag_4E38*)((char*)D_4E38 + 8)) = Tag_4E38((*(Tag_4E38*)((char*)D_4E38 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_4E38 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -5977,10 +5866,9 @@ extern int D_004A5838_4FF0 __asm__("D_004A5838");
 extern int D_004A3D88_4FF0[2] __asm__("D_004A3D88");
 extern "C" void func_003E6574(void*, void*, int);
 
-struct Flag_4FF0 { char c; Flag_4FF0() {} Flag_4FF0(const Flag_4FF0& o) : c(o.c) {} };
 struct Ent_4FF0 { int idx; int val; int pad; int kind; };
 struct R12_4FF0 { int a; int b; int c; };
-struct T12_4FF0 { int a; int b; Flag_4FF0 f; };
+struct T12_4FF0 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4FF0 D_004FBD30_4FF0 __asm__("D_004FBD30");
 extern R12_4FF0 D_004C9098_4FF0 __asm__("D_004C9098");
 
@@ -5989,8 +5877,8 @@ extern "C" R12_4FF0 func_00304FF0(int n, Ent_4FF0* e) {
         D_004FBD30_4FF0.a = 0;
         D_004A5838_4FF0 = 1;
         D_004FBD30_4FF0.b = 0;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBD30_4FF0.f = Flag_4FF0(D_004FBD30_4FF0.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBD30_4FF0.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -6019,8 +5907,7 @@ extern char **D_004A47B8_5478 __asm__("D_004A47B8");
 struct O_5478 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct V3_5478 { float x, y, z; };
 extern V3_5478 D_004C9098_5478 __asm__("D_004C9098");
-struct Tag_5478 { char c; Tag_5478() {} Tag_5478(const Tag_5478 &o) : c(o.c) {} };
-struct Rec_5478 { unsigned id; float a; float b; Tag_5478 f; };
+struct Rec_5478 { unsigned id; float a; float b; sBindEnd_1FBE38 f; };
 extern Rec_5478 D_4FBD58_5478 __asm__("D_004FBD58");
 extern int D_5840_5478 __asm__("D_004A5840");
 extern const int D_004466A0_5478[] __asm__("D_004466A0");
@@ -6033,8 +5920,8 @@ extern "C" V3_5478 func_00305478(int n, Ent_5478 *e) {
         D_4FBD58_5478.a = 400.0f;
         D_4FBD58_5478.b = 30.0f;
         D_5840_5478 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_4FBD58_5478.f = Tag_5478(D_4FBD58_5478.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_4FBD58_5478.f = sBindEnd_1FBE38();
     }
     Rec_5478 rec;
     Rec_5478 *buf = &rec;
@@ -6083,9 +5970,8 @@ struct Sh_5660 { virtual void v01(); virtual void v02(); virtual void v03(); vir
 extern "C" void func_00390EC8(float);
 struct V3_5660 { float x, y, z; };
 extern V3_5660 D_004C9098_5660 __asm__("D_004C9098");
-struct Tag_5660 { char c; Tag_5660() {} Tag_5660(const Tag_5660 &o) : c(o.c) {} };
 extern unsigned D_5660 __asm__("D_004A5848");
-extern Tag_5660 D_004A584C;
+extern sBindEnd_1FBE38 D_004A584C;
 extern int D_004A5850;
 extern int D_004A3D90;
 extern "C" void func_003E6574(void*, void*, int);
@@ -6094,7 +5980,7 @@ extern "C" V3_5660 func_00305660(int n, Ent_5660 *e) {
     if (D_004A5850 == 0) {
         D_5660 = 0xFFFFFFFF;
         D_004A5850 = 1;
-        D_004A584C = Tag_5660(D_004A584C);
+        D_004A584C = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -6132,8 +6018,7 @@ extern char **D_004A47B8_57C0 __asm__("D_004A47B8");
 struct O_57C0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct V3_57C0 { float x, y, z; };
 extern V3_57C0 D_004C9098_57C0 __asm__("D_004C9098");
-struct Tag_57C0 { char c; Tag_57C0() {} Tag_57C0(const Tag_57C0 &o) : c(o.c) {} };
-struct Rec_57C0 { unsigned id; int a; int b; float c; float d; float e; float g; float h; int k; Tag_57C0 f; };
+struct Rec_57C0 { unsigned id; int a; int b; float c; float d; float e; float g; float h; int k; sBindEnd_1FBE38 f; };
 extern Rec_57C0 D_4FBD68_57C0 __asm__("D_004FBD68");
 extern int D_5854_57C0 __asm__("D_004A5854");
 extern const int D_004466B0_57C0[] __asm__("D_004466B0");
@@ -6152,8 +6037,8 @@ extern "C" V3_57C0 func_003057C0(int n, Ent_57C0 *e) {
         D_4FBD68_57C0.h = 100.0f;
         D_4FBD68_57C0.k = 0;
         D_5854_57C0 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_4FBD68_57C0.f = Tag_57C0(D_4FBD68_57C0.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_4FBD68_57C0.f = sBindEnd_1FBE38();
     }
     Rec_57C0 rec;
     Rec_57C0 *buf = &rec;
@@ -6200,7 +6085,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00305C88);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_5C88 { char c; Flag_5C88() {} Flag_5C88(const Flag_5C88& o) : c(o.c) {} };
 struct Ent_5C88 { int idx; int val; int pad; int kind; };
 struct R12_5C88 { int a; int b; int c; };
 extern R12_5C88 D_004C9098_5C88 __asm__("D_004C9098");
@@ -6210,13 +6094,13 @@ extern "C" int cAvalanche_triggerAvalanche(int);
 extern int D_004A3AC4_5C88 __asm__("D_004A3AC4");
 extern int D_004A5868_5C88 __asm__("D_004A5868");
 extern int D_004A5860_5C88 __asm__("D_004A5860");
-extern Flag_5C88 D_004A5864_5C88 __asm__("D_004A5864");
+extern sBindEnd_1FBE38 D_004A5864_5C88 __asm__("D_004A5864");
 extern "C" R12_5C88 func_00305C88(int n, Ent_5C88* e) {
     if (D_004A5868_5C88 == 0) {
         D_004A5868_5C88 = 1;
         D_004A5860_5C88 = 0;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004A5864_5C88 = Flag_5C88(D_004A5864_5C88);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A5864_5C88 = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -6250,9 +6134,8 @@ extern "C" void func_00355A78_5D90(void*, void*) __asm__("func_00355A78");
 struct O_5D90 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct V3_5D90 { float x, y, z; };
 extern V3_5D90 D_004C9098_5D90 __asm__("D_004C9098");
-struct Tag_5D90 { char c; Tag_5D90() {} Tag_5D90(const Tag_5D90 &o) : c(o.c) {} };
 extern unsigned D_5D90 __asm__("D_004A5870");
-extern Tag_5D90 D_004A5874;
+extern sBindEnd_1FBE38 D_004A5874;
 extern int D_004A5878;
 extern int D_004A3DA0;
 extern "C" void func_003E6574(void*, void*, int);
@@ -6261,7 +6144,7 @@ extern "C" V3_5D90 func_00305D90(int n, Ent_5D90 *e) {
     if (D_004A5878 == 0) {
         D_5D90 = 0xFFFFFFFF;
         D_004A5878 = 1;
-        D_004A5874 = Tag_5D90(D_004A5874);
+        D_004A5874 = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -6312,13 +6195,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00305F40);
 extern char **D_004A47B8_5F40 __asm__("D_004A47B8");
 struct V3_5F40 { float x, y, z; };
 extern V3_5F40 D_004C9098_5F40 __asm__("D_004C9098");
-struct Tag_5F40 { char c; Tag_5F40() {} Tag_5F40(const Tag_5F40 &o) : c(o.c) {} };
 struct Rec_5F40 {
     int a; int b; float c; float d; float e;
     float m[28];
     float v[16];
     int k; int l; float n; int o; float p; unsigned id;
-    Tag_5F40 f;
+    sBindEnd_1FBE38 f;
 };
 extern Rec_5F40 D_4FBE58_5F40 __asm__("D_004FBE58");
 extern int D_587C_5F40 __asm__("D_004A587C");
@@ -6388,8 +6270,8 @@ extern "C" V3_5F40 func_00305F40(int n, Ent_5F40 *e) {
         r.p = 20.0f;
         r.id = 0xFFFFFFFF;
         D_587C_5F40 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        r.f = Tag_5F40(r.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        r.f = sBindEnd_1FBE38();
     }
     Rec_5F40 rec;
     Rec_5F40 *buf = &rec;
@@ -6423,10 +6305,6 @@ extern "C" V3_5F40 func_00305F40(int n, Ent_5F40 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003061B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
-struct Flag_61B0 {};
-struct Ent_61B0 { int idx; int val; int pad; int kind; };
 struct R12_61B0 { int a; int b; int c; };
 extern R12_61B0 D_004C9098_61B0 __asm__("D_004C9098");
 
@@ -6434,26 +6312,17 @@ extern int D_004A3DA8_61B0[2] __asm__("D_004A3DA8");
 extern int D_005308D0_61B0[] __asm__("D_005308D0");
 extern int D_004A5888_61B0 __asm__("D_004A5888");
 extern int D_004A5880_61B0 __asm__("D_004A5880");
-extern Flag_61B0 D_004A5884_61B0 __asm__("D_004A5884");
-extern "C" void* func_003061B0(void* self, int n, Ent_61B0* e) {
+extern sBindEnd_1FBE38 D_004A5884_61B0 __asm__("D_004A5884");
+extern "C" void* func_003061B0(void* self, int n, sBindArg_1FBE38 *e) {
     if (D_004A5888_61B0 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A5880_61B0 = 0;
-        D_004A5884_61B0 = Flag_61B0();
+        D_004A5884_61B0 = sBindEnd_1FBE38();
         D_004A5888_61B0 = 1;
     }
     int v[4];
-    int* vp = v;
-    func_003E6574(vp, &D_004A5880_61B0, 8);
-    Ent_61B0* p = e;
-    for (int i = 0; i < n; i++, p++) {
-        int k = p->idx;
-        int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3DA8_61B0[k] && D_004A3DA8_61B0[k] == 2)
-            *(float*)d = (float)p->val;
-        else
-            *d = p->val;
-    }
+    int *vp;
+    BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A5880_61B0, 8, D_004A3DA8_61B0, n, e);
     int r;
     switch (vp[0]) {
     case 0: {
@@ -6481,8 +6350,7 @@ extern "C" void* func_003061B0(void* self, int n, Ent_61B0* e) {
         r = 1;
         break;
     }
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = r;
+    BIND_SET_RESULT_1FBE38(self, r);
     return self;
 }
 #endif
@@ -6493,7 +6361,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00306300);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Flag_6300 { char c; Flag_6300() {} Flag_6300(const Flag_6300& o) : c(o.c) {} };
 struct Ent_6300 { int idx; int val; int pad; int kind; };
 struct R12_6300 { int a; int b; int c; };
 extern R12_6300 D_004C9098_6300 __asm__("D_004C9098");
@@ -6504,15 +6371,15 @@ extern int D_00534B30_6300[] __asm__("D_00534B30");
 extern "C" void* cBE_getInterface_6300(void*, int) __asm__("cBE_getInterface__Fv");
 extern char* D_004A28A8_6300 __asm__("D_004A28A8");
 extern int D_004A588C_6300 __asm__("D_004A588C");
-struct T12_6300 { int a; int b; Flag_6300 f; };
+struct T12_6300 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_6300 D_004FBF38_6300 __asm__("D_004FBF38");
 extern "C" R12_6300 func_00306300(int n, Ent_6300* e) {
     if (D_004A588C_6300 == 0) {
         D_004FBF38_6300.a = 0;
         D_004A588C_6300 = 1;
         D_004FBF38_6300.b = 0;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FBF38_6300.f = Flag_6300(D_004FBF38_6300.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBF38_6300.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -6545,7 +6412,6 @@ extern char *D_004A28A8_6438 __asm__("D_004A28A8");
 extern "C" void func_00101728_6438(void*, void*, float, float) __asm__("func_00101728");
 struct V3_6438 { float x, y, z; };
 extern V3_6438 D_004C9098_6438 __asm__("D_004C9098");
-struct Tag_6438 { char c; Tag_6438() {} Tag_6438(const Tag_6438 &o) : c(o.c) {} };
 extern unsigned D_6438[] __asm__("D_004FBF48");
 extern int D_004A5890;
 extern const int D_00446880[];
@@ -6557,7 +6423,7 @@ extern "C" V3_6438 func_00306438(int n, Ent_6438 *e) {
         *(float*)&D_6438[1] = 1000.0f;
         ((int*)D_6438)[2] = 0;
         D_004A5890 = 1;
-        (*(Tag_6438*)((char*)D_6438 + 12)) = Tag_6438((*(Tag_6438*)((char*)D_6438 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_6438 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -6616,9 +6482,8 @@ static inline char *look_65E8(unsigned id) {
 extern "C" void func_00101888_65E8(void*, void*) __asm__("func_00101888");
 struct V3_65E8 { float x, y, z; };
 extern V3_65E8 D_004C9098_65E8 __asm__("D_004C9098");
-struct Tag_65E8 { char c; Tag_65E8() {} Tag_65E8(const Tag_65E8 &o) : c(o.c) {} };
 extern unsigned D_65E8 __asm__("D_004A5898");
-extern Tag_65E8 D_004A589C;
+extern sBindEnd_1FBE38 D_004A589C;
 extern int D_004A58A0;
 extern int D_004A3DB8;
 extern "C" void func_003E6574(void*, void*, int);
@@ -6627,7 +6492,7 @@ extern "C" V3_65E8 func_003065E8(int n, Ent_65E8 *e) {
     if (D_004A58A0 == 0) {
         D_65E8 = 0xFFFFFFFF;
         D_004A58A0 = 1;
-        D_004A589C = Tag_65E8(D_004A589C);
+        D_004A589C = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -6672,7 +6537,6 @@ static inline char *look_6770(unsigned id) {
 extern "C" void func_00101900_6770(void*, void*, int) __asm__("func_00101900");
 struct V3_6770 { float x, y, z; };
 extern V3_6770 D_004C9098_6770 __asm__("D_004C9098");
-struct Tag_6770 { char c; Tag_6770() {} Tag_6770(const Tag_6770 &o) : c(o.c) {} };
 extern unsigned D_6770[] __asm__("D_004FBF58");
 extern int D_004A58A4;
 extern int D_004A3DC0;
@@ -6683,7 +6547,7 @@ extern "C" V3_6770 func_00306770(int n, Ent_6770 *e) {
         D_6770[0] = 0xFFFFFFFF;
         D_6770[1] = 0;
         D_004A58A4 = 1;
-        (*(Tag_6770*)((char*)D_6770 + 8)) = Tag_6770((*(Tag_6770*)((char*)D_6770 + 8)));
+        *(sBindEnd_1FBE38*)((char*)D_6770 + 8) = sBindEnd_1FBE38();
     }
     unsigned buf64[3];
     unsigned *buf = buf64;
@@ -6732,9 +6596,8 @@ extern char *D_004A28A8_6908 __asm__("D_004A28A8");
 extern "C" void func_00101970_6908(void*, void*) __asm__("func_00101970");
 struct V3_6908 { float x, y, z; };
 extern V3_6908 D_004C9098_6908 __asm__("D_004C9098");
-struct Tag_6908 { char c; Tag_6908() {} Tag_6908(const Tag_6908 &o) : c(o.c) {} };
 extern unsigned D_6908 __asm__("D_004A58A8");
-extern Tag_6908 D_004A58AC;
+extern sBindEnd_1FBE38 D_004A58AC;
 extern int D_004A58B0;
 extern int D_004A3DC8;
 extern "C" void func_003E6574(void*, void*, int);
@@ -6743,7 +6606,7 @@ extern "C" V3_6908 func_00306908(int n, Ent_6908 *e) {
     if (D_004A58B0 == 0) {
         D_6908 = 0xFFFFFFFF;
         D_004A58B0 = 1;
-        D_004A58AC = Tag_6908(D_004A58AC);
+        D_004A58AC = sBindEnd_1FBE38();
     }
     unsigned buf64[2];
     unsigned *buf = buf64;
@@ -6785,13 +6648,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00306A90);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct V3_6A90 { float x, y, z; };
 extern V3_6A90 D_004C9098_6A90 __asm__("D_004C9098");
-struct Tag_6A90 { char c; Tag_6A90() {} Tag_6A90(const Tag_6A90 &o) : c(o.c) {} };
 struct Rec_6A90 {
     int a; int b; float c; float d; float e;
     float m[28];
     float v[16];
     int k; int l; float n; int o; float p; int q; int w;
-    Tag_6A90 f;
+    sBindEnd_1FBE38 f;
 };
 extern Rec_6A90 D_4FBF68_6A90 __asm__("D_004FBF68");
 extern int D_58B4_6A90 __asm__("D_004A58B4");
@@ -6861,8 +6723,8 @@ extern "C" V3_6A90 func_00306A90(int n, Ent_6A90 *e) {
         r.q = 0;
         r.w = 0x80;
         D_58B4_6A90 = 1;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        r.f = Tag_6A90(r.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        r.f = sBindEnd_1FBE38();
     }
     Rec_6A90 rec;
     Rec_6A90 *buf = &rec;
@@ -6894,7 +6756,6 @@ void func_00357AE8(void*, int, int);
 void func_00357B10(void*, int, int);
 struct V3_6CB0 { float x, y, z; };
 extern V3_6CB0 D_004C9098_6CB0 __asm__("D_004C9098");
-struct Tag_6CB0 { char c; Tag_6CB0() {} Tag_6CB0(const Tag_6CB0 &o) : c(o.c) {} };
 extern unsigned D_6CB0[] __asm__("D_004FC050");
 extern int D_004A58B8;
 extern const int D_00446970[];
@@ -6906,7 +6767,7 @@ extern "C" V3_6CB0 func_00306CB0(int n, Ent_6CB0 *e) {
         D_6CB0[1] = 0xFFFFFFFF;
         ((int*)D_6CB0)[2] = 0;
         D_004A58B8 = 1;
-        (*(Tag_6CB0*)((char*)D_6CB0 + 12)) = Tag_6CB0((*(Tag_6CB0*)((char*)D_6CB0 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_6CB0 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -6959,7 +6820,6 @@ int *func_00226610(void*);
 static inline char *refToPtr_6E68(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_6E68(unsigned i) { if (i == 0) return 0; return refToPtr_6E68(i); }
 struct V3_6E68 { int w0, w1, w2; };
-struct Tag_6E68 { char c; Tag_6E68() {} Tag_6E68(const Tag_6E68 &o) : c(o.c) {} };
 extern unsigned D_6E68[] __asm__("D_004FC060");
 extern int D_004A58BC;
 extern const int D_00446980[];
@@ -6971,7 +6831,7 @@ extern "C" V3_6E68* func_00306E68(V3_6E68 *ret, int n, Ent_6E68 *e) {
         D_6E68[1] = 0xFFFFFFFF;
         D_6E68[2] = 0xFFFFFFFF;
         D_004A58BC = 1;
-        (*(Tag_6E68*)((char*)D_6E68 + 12)) = Tag_6E68((*(Tag_6E68*)((char*)D_6E68 + 12)));
+        *(sBindEnd_1FBE38*)((char*)D_6E68 + 12) = sBindEnd_1FBE38();
     }
     unsigned buf64[4];
     unsigned *buf = buf64;
@@ -7017,8 +6877,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00307020);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
-struct Flag_7020 { char c; Flag_7020() {} Flag_7020(const Flag_7020& o) : c(o.c) {} };
 struct Ent_7020 { int idx; int val; int pad; int kind; };
 struct R12_7020 { int a; int b; int c; };
 extern R12_7020 D_004C9098_7020 __asm__("D_004C9098");
@@ -7026,15 +6884,15 @@ extern R12_7020 D_004C9098_7020 __asm__("D_004C9098");
 extern int D_004A3DD0_7020[2] __asm__("D_004A3DD0");
 extern "C" int func_001E3570(int, int);
 extern int D_004A58C0_7020 __asm__("D_004A58C0");
-struct T12_7020 { int a; int b; Flag_7020 f; };
+struct T12_7020 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_7020 D_004FC070_7020 __asm__("D_004FC070");
 extern "C" void* func_00307020(void* self, int n, Ent_7020* e) {
     if (D_004A58C0_7020 == 0) {
         D_004FC070_7020.a = 0;
         D_004A58C0_7020 = 1;
         D_004FC070_7020.b = 0;
-        // NOTE: guarded static-local init; the target copies the trailing byte through its copy ctor (lbu; sb back; sb 0(sp)).
-        D_004FC070_7020.f = Flag_7020(D_004FC070_7020.f);
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FC070_7020.f = sBindEnd_1FBE38();
     }
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
@@ -7048,9 +6906,7 @@ extern "C" void* func_00307020(void* self, int n, Ent_7020* e) {
         else
             *d = p->val;
     }
-    bool r = func_001E3570(vp[0], vp[1]) != 0;
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = r;
+    BIND_SET_RESULT_1FBE38(self, func_001E3570(vp[0], vp[1]) != 0);
     return self;
 }
 #endif
