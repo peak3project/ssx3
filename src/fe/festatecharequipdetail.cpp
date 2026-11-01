@@ -2124,6 +2124,11 @@ static inline sItemK19BEE8* getItemK19BEE8(sItemListK19BEE8* l, int id)
     return 0;
 }
 
+static inline bool flagClear_19BEE8(const sItemK19BEE8* e, int mask)
+{
+    return (e->flags & mask) == 0;
+}
+
 extern "C" int func_0019BEE8(void* self)
 {
     if (*(int*)((char*)self + 0x958) <= 0)
@@ -2135,9 +2140,8 @@ extern "C" int func_0019BEE8(void* self)
     sItemListK19BEE8* list = (sItemListK19BEE8*)func_0014AD28(iface, *(signed char*)((char*)self + 0x44),
                                                               *(int*)((char*)self + 0xBC));
     sItemK19BEE8* e = getItemK19BEE8(list, *(short*)(item + 4));
-    int mask = 4;
     if (func_0014AFB0(iface, *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC), *(short*)(item + 4),
-                      (e->flags & mask) == 0)) {
+                      flagClear_19BEE8(e, 4))) {
         func_0014AEA8(iface, *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC));
         return 1;
     }
