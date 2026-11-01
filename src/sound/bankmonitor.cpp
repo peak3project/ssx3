@@ -1048,7 +1048,6 @@ extern "C" int func_002AE020()
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AE048);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void REAL_abortmessage();
 extern "C" void func_004175C8();
 extern "C" void* func_00252FA0(void* a0, int a1, int a2);
@@ -1219,7 +1218,6 @@ extern "C" int func_002AE290(void) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE298);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct sBankMonSlot28v {
     int f0;
     int f4;
@@ -2396,7 +2394,6 @@ INCLUDE_ASM("sound/bankmonitor", func_002AFD40);
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B0088);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void* func_002A77F8(void* parser, void* src, int n);
 extern "C" void func_002A7890(void* parser, int flags);
@@ -3052,7 +3049,6 @@ extern "C" void func_002B11B0(void* self, int i)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B11E8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_002B07C0_11E8(void* self) __asm__("func_002B07C0");
 
 extern "C" int func_002B11E8(void* self, int i)
@@ -3090,7 +3086,6 @@ extern "C" int func_002B1248(int *arg0, void* arg1) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B1268);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 class cController;
 class cBankMonitorInstance;
 // Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
@@ -3123,7 +3118,6 @@ extern "C" int func_002B1268(void* self, void* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B1348);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 class cController;
 class cBankMonitorInstance;
 // Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
@@ -3800,7 +3794,6 @@ extern "C" void func_002B25C8(void* self, int v)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B2600);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 // The unit declares func_002B25C8(void*, int); its second arg is really an out pointer.
 void func_002B25C8_out(void* self, void* out) __asm__("func_002B25C8");
 
@@ -4408,7 +4401,6 @@ extern "C" void func_002B3D48(void* self, float v)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B3D80);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 class cController;
 class cBankMonitorInstance;
 // Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
@@ -4627,7 +4619,6 @@ extern "C" sBankEntry64* func_002B4150(sBankMonitor934* self, int i)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B4180);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_002B42B8_vii(void* self, int filter, int kind) __asm__("func_002B42B8");
 
 extern "C" void func_002B4180(void* self, int n)
@@ -4772,7 +4763,6 @@ extern "C" void func_002B4470(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B44D8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 class cController;
 class cBankMonitorInstance;
 // Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
@@ -4814,7 +4804,6 @@ class cController;
 class cBankMonitorInstance;
 // Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
 typedef void (cController::*sSndCallback_4568)(cController*, cBankMonitorInstance*, float);
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern const sSndCallback_4568 D_004A3840_2B4568[] __asm__("D_004A3840");
 extern "C" int func_002B2778(void* ent);
 extern "C" int func_002B2500(void* ent);
