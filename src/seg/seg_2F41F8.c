@@ -1086,7 +1086,42 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F61C8);
 int func_003F61C8(void) { return 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F61D0);
+#ifdef SKIP_ASM
+typedef struct { char pad0[16]; unsigned char v[128]; int cnt; unsigned char prev[8]; int st; unsigned char flag; char p1[3]; int cur; char *ents; char p2[8]; int t1; int t2; void (*cb1)(int, int); void (*cb2)(int, int); } U61D0;
+extern int D_00526010[];
+extern U61D0 D_61D0q __asm__("D_00525F80");
+extern int func_003F5DA8(char *, char *);
+extern int f0C028(int *) __asm__("func_0040C028");
+extern void f5F08(void) __asm__("func_003F5F08");
+extern int f5F88(void) __asm__("func_003F5F88");
+extern void f6358(int, int) __asm__("func_003F6358");
+extern void f61C8(int, int) __asm__("func_003F61C8");
+// The keyboard state block sits 0x90 bytes below the max-connect word passed to func_0040C028.
+static inline U61D0 *ctl(void) { return (U61D0 *)((char *)D_00526010 - 0x90); }
+int func_003F61D0(char *name, char *str, char *ents, void (*cb1)(int, int), void (*cb2)(int, int)) {
+    int i;
+    if (func_003F5DA8(name, str) < 0) return -1;
+    if (f0C028(D_00526010) == -1) return -1;
+    if (ctl()->cnt > 8) ctl()->cnt = 8;
+    ctl()->ents = ents;
+    for (i = 0; i < ctl()->cnt; i++) {
+        ctl()->v[i] = 0;
+        ctl()->prev[i] = 0;
+        ents[i * 0x8C + 0x88] = 0;
+    }
+    D_61D0q.cur = 0;
+    D_61D0q.t2 = 0x3C;
+    D_61D0q.t1 = 0x3C;
+    D_61D0q.flag = 0;
+    D_61D0q.cb1 = cb1 ? cb1 : f6358;
+    D_61D0q.cb2 = cb2 ? cb2 : f61C8;
+    f5F08();
+    while (f5F88()) ;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F62F8);
