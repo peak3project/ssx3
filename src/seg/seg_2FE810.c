@@ -2348,7 +2348,26 @@ int func_00402618(int a, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402708);
+#ifdef SKIP_ASM
+extern int func_0042C078();
+extern void func_0042C0C0(void);
+extern void func_00409708(void);
+int func_00402708(void) {
+    int s = func_0042C078();
+    *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 | 0x10000;
+    *(volatile int *)0x1000B000 &= 0xFFFFFEFF;
+    *(volatile int *)0x1000B400 &= 0xFFFFFEFF;
+    *(volatile int *)0x1000F590 = *(volatile int *)0x1000F520 & 0xFFFEFFFF;
+    if (s)
+        func_0042C0C0();
+    *(volatile int *)0x1000B020 = 0;
+    *(volatile int *)0x1000B420 = 0;
+    func_00409708();
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004027B8);
