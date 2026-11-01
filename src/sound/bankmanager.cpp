@@ -1103,7 +1103,109 @@ extern "C" void func_0028CDF8(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028CF98);
+#ifdef SKIP_ASM
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_8CF98(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int* func_00144BC0(void*);
+extern "C" void* func_00287968(void* self, int a1, int a2);
+extern "C" int func_00288AE0_8CF98(void* self) __asm__("func_00288AE0");
+extern "C" void* func_0028B1E8();
+extern "C" int func_002A1E20(void* self, int id);
+extern "C" int func_002A42C8(void* self);
+extern "C" void func_002B3C28(void* self, int a1);
+extern "C" void func_002B3CC0_8CF98(void* self, int a1) __asm__("func_002B3CC0");
+extern "C" void func_002B46D0_8CF98(void* self) __asm__("func_002B46D0");
+extern "C" void* func_002B4908_8CF98(void* self) __asm__("func_002B4908__FPv");
+extern "C" void func_002B49C0(void* self, int a1);
+extern "C" int func_00285D98_8CF98(void* self, int a1) __asm__("func_00285D98");
+extern "C" void func_0028F108_8CF98(void* self, int a1) __asm__("func_0028F108");
+extern char D_00482A38[];
+extern char D_00482A48[];
+extern char D_00482A58[];
+extern char D_004A3630[];
+extern char D_004A3638[];
+extern char D_004A3640[];
+
+struct sBmVt8CF98 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+typedef void (*tBmLoad8CF98)(void*, void*, int, void*, int);
+typedef int (*tBmSet8CF98)(void*, int);
+
+static inline void bmLoad_8CF98(char* self, char* bank, int n, int kind)
+{
+    char* mon = self + 0x118;
+    sBmVt8CF98* vt = *(sBmVt8CF98**)(self + 0x5558);
+    ((tBmLoad8CF98)vt[2].fn)(mon + vt[2].delta, bank, 0xC, func_00287968(self, kind, 0), 0);
+    func_002B49C0(mon, n);
+}
+
+struct sCfg8CF98 {
+    int w[25];
+} __attribute__((aligned(8)));
+
+extern "C" void func_0028CF98(void* selfv, int def, int a2, int mode, int a4)
+{
+    char* self = (char*)selfv;
+    sCfg8CF98 cfg;
+    if (func_00288AE0_8CF98(self) != 0 && *(int*)(self + 0x6294) == 0) {
+        return;
+    }
+    *(int*)(self + 0x6280) = 0;
+    *(int*)(self + 0x62A0) = -1;
+    *(int*)(self + 0x623C) = 0;
+    *(int*)(self + 0x6240) = 0;
+    if (*(int*)(self + 0x608C) == 2) {
+        int t = (mode == -1) ? func_002A1E20(self, *func_00144BC0(cBE_getInterface_8CF98(func_0028B1E8(), 0))) : mode;
+        if (t == 1) {
+            bmLoad_8CF98(self, D_00482A38, 0x65, 8);
+        } else if (t == 2) {
+            bmLoad_8CF98(self, D_00482A48, 0x66, 8);
+        } else {
+            bmLoad_8CF98(self, D_00482A58, 0x67, 8);
+        }
+        char* mon = self + 0x118;
+        func_002B46D0_8CF98(mon);
+        *(int*)(self + 0x6280) = 1;
+        func_002B3CC0_8CF98(mon, 0);
+        func_002B3C28(mon, 0x7F);
+    } else {
+        __builtin_memcpy(&cfg, func_00144BC0(cBE_getInterface_8CF98(cBE_getBE(), 0)), 100);
+        char* mon = self + 0x118;
+        if (cfg.w[0] > 0x10 && a2 == 0 && a4 == 0 && func_002A42C8(self) == 0) {
+            int t = func_002A1E20(self, *func_00144BC0(cBE_getInterface_8CF98(func_0028B1E8(), 0)));
+            if (t == 1) {
+                bmLoad_8CF98(self, D_004A3630, 1, 1);
+            } else if (t == 2) {
+                bmLoad_8CF98(self, D_004A3638, 2, 1);
+            } else {
+                bmLoad_8CF98(self, D_004A3640, 3, 1);
+            }
+            func_002B3CC0_8CF98(mon, 1);
+            sBmVt8CF98* vt2 = *(sBmVt8CF98**)(self + 0x5558);
+            ((tBmSet8CF98)vt2[4].fn)(mon + vt2[4].delta, 0xC);
+            func_002B3C28(mon, 0x7F);
+            return;
+        }
+        sBmVt8CF98* vt = *(sBmVt8CF98**)(self + 0x5558);
+        ((tBmLoad8CF98)vt[2].fn)(mon + vt[2].delta, 0, 0xC, func_00287968(self, 1, 0), 0);
+        *(int*)(self + 0x62A4) = *(int*)(self + 0x508);
+        *(void**)(self + 0x5778) = func_002B4908_8CF98(mon);
+        func_002B3CC0_8CF98(mon, 1);
+        if (a4 != 0 && cfg.w[0] > 0x10) {
+            def = 0x24;
+        }
+        sBmVt8CF98* vt2 = *(sBmVt8CF98**)(self + 0x5558);
+        ((tBmSet8CF98)vt2[4].fn)(mon + vt2[4].delta, def);
+        func_0028F108_8CF98(self, func_00285D98_8CF98(self, -1));
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028D488);
