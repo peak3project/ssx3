@@ -1205,10 +1205,9 @@ INCLUDE_ASM("replay/replaycache", func_002716F0__FPv);
 #ifdef SKIP_ASM
 void* func_002716F0(void* self)
 {
-    int t0 = 0;
     void* t1 = (char*)*(void**)((char*)self + 0x638) + 0x1;
-    *(int*)((char*)self + 0x644) = t0;
-    *(int*)((char*)self + 0x648) = t0;
+    *(int*)((char*)self + 0x644) = 0;
+    *(int*)((char*)self + 0x648) = 0;
     *(int*)((char*)self + 0x638) = (int)t1;
     return t1;
 }
