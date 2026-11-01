@@ -5984,10 +5984,10 @@ int func_003E6240(unsigned int a) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E62B0);
 #ifdef SKIP_ASM
-extern int D_00450DA4[];
+extern int D_00450DA4;
 
 void func_003E62B0(void) {
-    if (D_00450DA4[0] != 0) {
+    if (D_00450DA4 != 0) {
         __asm__ volatile("break 6");  // PORT: trap
     }
 }
