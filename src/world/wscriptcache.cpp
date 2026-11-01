@@ -1758,7 +1758,37 @@ extern "C" void *func_003AF010(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF020);
+#ifdef SKIP_ASM
+struct sAlloc_F020 {
+    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
+    int (*free)(void* p);
+    int flags;
+};
+// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
+extern sAlloc_F020 D_00509430_F020 __asm__("D_00509430");
+extern void* (*D_00509434[])(void*);
+
+struct sElem_F020 {
+    char pad[0x34];
+    ~sElem_F020() {}
+    static void operator delete[](void* p) { D_00509430_F020.free(p); }
+};
+struct sSelf_F020 { sElem_F020* arr; unsigned int count; };
+
+extern "C" void func_003AF020(sSelf_F020* self, int flags)
+{
+    if (self->arr != 0) {
+        delete[] self->arr;
+        self->arr = 0;
+    }
+    self->count = 0;
+    if (flags & 1) {
+        D_00509434[0](self);
+    }
+}
+#endif
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AF0C8);
 #ifdef SKIP_ASM
