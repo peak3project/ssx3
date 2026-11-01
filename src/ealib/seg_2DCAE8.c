@@ -5585,7 +5585,32 @@ void SYNCTASK_del(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", SYNCTASK_run);
+#ifdef SKIP_ASM
+typedef int (*SyncFn_5928)(int, int);
+struct T_5928 { SyncFn_5928 fn; int period; int due; int busy; };
+extern struct T_5928 D_0051ED98_5928[16] __asm__("D_0051ED98");
+extern volatile int D_00450DD0_5928 __asm__("D_00450DD0");
+extern int D_00450E04_5928 __asm__("D_00450E04");
+
+int SYNCTASK_run(int arg) {
+    int i;
+    int r = 0;
+
+    D_00450E04_5928 = D_00450DD0_5928;
+    for (i = 0; i < 16; i++) {
+        SyncFn_5928 fn = D_0051ED98_5928[i].fn;
+        if (fn != 0 && D_00450DD0_5928 >= D_0051ED98_5928[i].due && D_0051ED98_5928[i].busy == 0) {
+            D_0051ED98_5928[i].busy = 1;
+            r |= fn(arg, D_00450DD0_5928 - D_0051ED98_5928[i].due);
+            D_0051ED98_5928[i].busy = 0;
+            D_0051ED98_5928[i].due = D_00450DD0_5928 + D_0051ED98_5928[i].period;
+        }
+    }
+    return r;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5A10);
