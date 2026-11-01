@@ -7433,13 +7433,12 @@ extern "C" void func_00136268(void* self)
         *(sQuat_12FEC8*)(anim + 0x40) = AxisAngle_12FEC8(D_004FF160, 1.5707963705062866f);
         cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x8) + 0x784), e->anims[3], 0, -1.0f);
     }
-    float k = 0.33000001311302185f;
     func_0010E098(*(void**)((char*)self + 0x8), 1, func_00119938(*(void**)(*(char**)((char*)self + 0x8) + 0x790), e->x20, *(int*)(*(char**)((char*)self + 0x8) + 0x328)));
     *(int*)(*(char**)((char*)self + 0x8) + 0x328) = 3;
     *(int*)self = 0;
     func_00116930(*(void**)((char*)self + 0x8));
-    func_00311E88(*(void**)(*(char**)((char*)self + 0x8) + 0x784), 1, k);
-    func_00311E88(*(void**)(*(char**)((char*)self + 0x8) + 0x784), 0, k);
+    func_00311E88(*(void**)(*(char**)((char*)self + 0x8) + 0x784), 1, 0.33000001311302185f);
+    func_00311E88(*(void**)(*(char**)((char*)self + 0x8) + 0x784), 0, 0.33000001311302185f);
 }
 #endif
 
