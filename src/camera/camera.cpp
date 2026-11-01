@@ -2007,13 +2007,12 @@ extern "C" void func_001607E0(char* self)
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
-    float eps = 0.0010000000474974513f;
     sVec_001607E0 dir;
-    if (__builtin_fabsf(info.dir.x) > eps || __builtin_fabsf(info.dir.y) > eps) {
+    if (__builtin_fabsf(info.dir.x) > 0.0010000000474974513f || __builtin_fabsf(info.dir.y) > 0.0010000000474974513f) {
         dir = info.dir;
     } else {
         dir = cmGet_001607E0(self, 4);
-        if (__builtin_fabsf(dir.x) < eps && __builtin_fabsf(dir.y) < eps) {
+        if (__builtin_fabsf(dir.x) < 0.0010000000474974513f && __builtin_fabsf(dir.y) < 0.0010000000474974513f) {
             dir = D_004FF140_v1607E0;
         }
     }
