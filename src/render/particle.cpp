@@ -4160,7 +4160,152 @@ extern "C" void func_0037CC30(void* self, void* item)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037CC98);
+#ifdef SKIP_ASM
+typedef int cQuad128_CC98 __attribute__((mode(TI)));
+union uF_CC98 { float f; int i; };
+
+struct sPtRS_CC98 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short pad;
+};
+
+struct sPtEnt_CC98 {
+    sPtRS_CC98 rs;                  // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+
+struct sPtRing_CC98 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sPtEnt_CC98 ents[1];            // 0x80
+};
+
+struct sPtTex_CC98 {
+    char pad_0x0[0x28];
+    int size;                       // 0x28
+};
+
+struct sPtTexTbl_CC98 {
+    int pad[2];
+    sPtTex_CC98* entries[1];        // 0x8
+};
+
+struct sPtGfxB_CC98 {
+    char pad_0x0[0xE84];
+    sPtRS_CC98* top;                // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sPtRing_CC98* ring;             // 0x18F0
+    sPtTexTbl_CC98* tbl;            // 0x18F4
+    char pad_0x18F8[0x5900 - 0x18F8];
+    unsigned short vx;              // 0x5900
+    unsigned short vy;              // 0x5902
+    unsigned short vw;              // 0x5904
+    unsigned short vh;              // 0x5906
+    char pad_0x5908[0x5A00 - 0x5908];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x5A54 - 0x5A04];
+    int f5A54;
+    int f5A58;
+    int f5A5C;
+    char pad_0x5A60[0x5A80 - 0x5A60];
+    unsigned int f5A80;
+    char pad_0x5A84[4];
+    int f5A88;
+};
+
+extern int D_004A4474;
+extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
+extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
+
+extern "C" void func_0037CC98(sPtGfxB_CC98* self, int* obj)
+{
+    self->top[1] = *self->top;
+    self->top++;
+    sPtTex_CC98* tex = self->tbl->entries[obj[1]];
+    self->top->f0 &= ~0x3C0;
+    self->top->fC &= 0xC0000000;
+    unsigned int buf = self->bufAddr;
+    int sz = tex->size / 32;
+    int w5A88 = self->f5A88 << 5;
+    int h5A5C = self->f5A5C;
+    unsigned int f80 = self->f5A80;
+    unsigned long* p = func_0038F460(D_004A4474, buf, -1, 0);
+    *(cQuad128_CC98*)p = 0x10000013;
+    p[2] = 0;
+    p[3] = 0x5000001200000000UL;
+    p += 4;
+    p[0] = 0x1000000000008011UL;
+    p[1] = 0xE;
+    p[2] = (long)sz | 0x40000;
+    p[3] = 0x4C;
+    p[4] = (unsigned long)(f80 | 0x1000000) | 0x100000000UL;
+    p[5] = 0x4E;
+    p[6] = 0xff000000ff0000UL;
+    p[7] = 0x40;
+    p[8] = 0x30000;
+    p[9] = 0x47;
+    p[10] = 0;
+    p[11] = 0x18;
+    p[12] = 0x2a;
+    p[13] = 0x42;
+    p[14] = 0x8000000080UL;
+    p[15] = 0x3b;
+    p[16] = 0;
+    p[17] = 0x14;
+    p[18] = (long)w5A88 | (long)h5A5C << 14 | 0x2a8000000L;
+    p[19] = 6;
+    p[20] = 0x116;
+    p[21] = 0;
+    uF_CC98 one;
+    one.f = 1.0f;
+    p[22] = ((unsigned long)one.i << 32) | 0x80808080UL;
+    p[23] = 1;
+    p += 24;
+    int f58 = self->f5A58;
+    int f54 = self->f5A54;
+    p[0] = 0x80008;
+    p[1] = 3;
+    p[2] = 0xffff00000000UL;
+    p[3] = 5;
+    p[4] = (long)(f54 * 16 - 8) | (long)(f58 * 16 - 8) << 16;
+    p[5] = 3;
+    p[6] = 0xffff10001000UL;
+    p[7] = 5;
+    p += 8;
+    p[0] = 0;
+    p[1] = 0x3f;
+    p[2] = (unsigned long)self->vx | (unsigned long)(self->vx + (self->vw - 1)) << 16 | (unsigned long)self->vy << 32 | (unsigned long)(self->vy + (self->vh - 1)) << 48;
+    p[3] = 0x40;
+    p += 4;
+    unsigned int next = func_0038F668(D_004A4474, p, 4);
+    self->bufAddr = next;
+    sPtRing_CC98* ring = self->ring;
+    sPtRS_CC98* rs = self->top;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sPtEnt_CC98* e = (sPtEnt_CC98*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 0;
+    }
+    *(int*)((char*)self + 0xF44) = 1;
+    self->bufAddr += 0x10;
+    self->top--;
+}
+#endif
 
 extern "C" void* func_00369130(int);
 
