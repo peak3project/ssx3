@@ -1524,7 +1524,44 @@ extern "C" int func_0014DA18(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014DA28);
+#ifdef SKIP_ASM
+struct sBEEntry_DA28 {
+    char field_0x0;
+    signed char flag; // 0x1
+    short key; // 0x2
+    char pad_0x4[8];
+};
+
+struct sBEKeyTable_DA28 {
+    char pad_0x00[8];
+    sBEEntry_DA28* entries; // 0x8
+    char pad_0x0C[0x20C - 0xC];
+    int count[30]; // 0x20C
+    int first[30]; // 0x284
+};
+
+extern "C" int func_0014DA28(void* self_, int g, int key)
+{
+    sBEKeyTable_DA28* self = (sBEKeyTable_DA28*)self_;
+    int n;
+    int i;
+    if (self->count[g] <= 0) {
+        return 0;
+    }
+    n = 0;
+    int end = self->first[g] + self->count[g];
+    for (i = self->first[g]; i < end; i++) {
+        if (self->entries[i].key == key) {
+            n++;
+        } else if (key < self->entries[i].key) {
+            break;
+        }
+    }
+    return n;
+}
+#endif
 //100%
 INCLUDE_ASM("be/belibrary", func_0014DAA0);
 #ifdef SKIP_ASM
