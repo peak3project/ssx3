@@ -275,6 +275,11 @@ extern char* D_004A5B64;
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void func_00351660(void* node, sVec4_E798* pos, sVec4_E798* rot, float t);
 
+static inline float Scale_E798(float v, float k)
+{
+    return v * k;
+}
+
 // PORT: PS2-only VU0 inline asm (vector times-assign scalar).
 static inline void vu0ScaleEq_E798(sVec4_E798& v, float s)
 {
@@ -389,7 +394,6 @@ extern "C" void func_0034E798(char* self)
     for (int i = 0; i < *(int*)(info + 4); i++, ent++) {
         ((sDelta_E798*)*(char**)(self + 0x4C))[i].pos = D_004FF120;
         ((sDelta_E798*)*(char**)(self + 0x4C))[i].rot = D_004FF120;
-        float d2r = 0.01745329424738884f;
         if (ent->active == 0) continue;
         char* node = *(char**)(self + 0x48) + k * 0xD0;
         k++;
@@ -401,7 +405,7 @@ extern "C" void func_0034E798(char* self)
         sVec4_E798 rot;
         rot = sVec4_E798(-*(float*)(node + 0x50), -*(float*)(node + 0x54), -*(float*)(node + 0x58), 0.0f);
         vu0ScaleEq_E798(pos, t * (float)*(int*)(D_004A5B64 + 0x10));
-        vu0ScaleEq_E798(rotv, t * (float)*(int*)(D_004A5B64 + 0x10) * d2r);
+        vu0ScaleEq_E798(rotv, Scale_E798(t * (float)*(int*)(D_004A5B64 + 0x10), 0.01745329424738884f));
         sMat_E798 m;
         {
             sVec3_E798 e;
