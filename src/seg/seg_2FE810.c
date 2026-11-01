@@ -8463,7 +8463,23 @@ unsigned short func_0040D268(int mode, int a, int b, unsigned short ch) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D3C0);
+#ifdef SKIP_ASM
+struct K_D3C0 { unsigned char k; unsigned char p; unsigned short v; };
+extern struct K_D3C0 D_00498FC8[2][21];
+unsigned short func_0040D3C0(int a, unsigned char b) {
+    unsigned i;
+    int r = b;
+    for (i = 0; i < 21; i++) {
+        if (b == D_00498FC8[a & 1][i].k) {
+            r = D_00498FC8[a & 1][i].v | 0x4000;
+            break;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D430);
