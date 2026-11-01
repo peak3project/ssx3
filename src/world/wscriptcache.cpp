@@ -123,11 +123,10 @@ INCLUDE_ASM("world/wscriptcache", func_003ACA50__FPv);
 #ifdef SKIP_ASM
 void* func_003ACA50(void* self)
 {
-    int t0 = 0;
-    *(short*)self = (short)t0;
+    *(short*)self = (short)0;
     *(int*)((char*)self + 0x4) = -1;
-    *(int*)((char*)self + 0x8) = t0;
-    *(short*)((char*)self + 0x2) = (short)t0;
+    *(int*)((char*)self + 0x8) = 0;
+    *(short*)((char*)self + 0x2) = (short)0;
     return self;
 }
 #endif
