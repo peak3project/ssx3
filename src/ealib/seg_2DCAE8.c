@@ -303,7 +303,103 @@ short *func_003DC068(short *p, int a, int nd) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DC148);
+#ifdef SKIP_ASM
+extern unsigned short *f068_C148(unsigned short *, double, int) __asm__("func_003DC068");
+extern unsigned short *f038_C148(unsigned short *, int, int, unsigned short *) __asm__("func_003DC038");
+extern unsigned short *fBFD8_C148(unsigned short *, unsigned int, int, unsigned short *) __asm__("func_003DBFD8");
+extern int f608_C148(double) __asm__("func_00412608");
+extern unsigned int f6A0_C148(double) __asm__("func_004126A0");
+extern int f500_C148(double, double) __asm__("func_00412500");
+extern int ulen_C148(unsigned short *) __asm__("USTR_length");
+extern void ucopy_C148(unsigned short *, unsigned short *) __asm__("USTR_copy");
+
+/* fill char ch in front of the text at p until it is width chars long */
+#define PAD_LEFT_C148(p, ch, width) \
+    { \
+        unsigned short c_ = (ch); \
+        int n_ = ulen_C148(p); \
+        if (n_ < (width)) { \
+            n_ = (width) - n_; \
+            do { \
+                *--(p) = c_; \
+            } while (--n_ != 0); \
+        } \
+    }
+
+/* append char ch at q until the length n reaches width; n becomes width */
+#define PAD_RIGHT_C148(q, ch, n, width) \
+    { \
+        unsigned short c_ = (ch); \
+        if ((n) < (width)) { \
+            (n) = (width) - (n); \
+            do { \
+                *(q)++ = c_; \
+            } while (--(n) != 0); \
+            (n) = (width); \
+        } \
+    }
+
+int func_003DC148_impl(unsigned short **pp, double val, int base, unsigned int flags, int width, int prec, unsigned short *digits) __asm__("func_003DC148");
+int func_003DC148_impl(unsigned short **pp, double val, int base, unsigned int flags, int width, int prec, unsigned short *digits) {
+    unsigned short *out = *pp;
+    unsigned short buf[128];
+    unsigned short *p = &buf[127];
+    int len;
+    *p = 0;
+    if (flags & 0x40) {
+        // the 0x80 / 0x100 / default arms are identical in the release build, but the binary keeps the
+        // two tests and three separate call copies (the prototype likely differed in a debug-only detail)
+        if (flags & 0x80) {
+            p = f068_C148(p, val, prec);
+        } else if (flags & 0x100) {
+            p = f068_C148(p, val, prec);
+        } else {
+            p = f068_C148(p, val, prec);
+        }
+    } else if (flags & 0x20) {
+        p = fBFD8_C148(p, f6A0_C148(val), base, digits);
+    } else {
+        p = f038_C148(p, f608_C148(val), base, digits);
+    }
+    if ((flags & 0x18) == 8) {
+        PAD_LEFT_C148(p, 0x30, width);
+    }
+    if (base == 10 && !(flags & 0x20)) {
+        if (f500_C148(val, 0.0) < 0) {
+            *--p = 0x2D;
+        }
+        if (f500_C148(val, 0.0) > 0 && (flags & 1)) {
+            *--p = 0x2B;
+        }
+        if (f500_C148(val, 0.0) == 0 && (flags & 1)) {
+            *--p = 0x20;
+        }
+        if (f500_C148(val, 0.0) >= 0 && (flags & 5) == 4) {
+            *--p = 0x20;
+        }
+    }
+    if (base == 8 && (flags & 2)) {
+        *--p = 0x30;
+    }
+    if (base == 16 && (flags & 2)) {
+        *--p = 0x78;
+        *--p = 0x30;
+    }
+    if (!(flags & 0x10)) {
+        PAD_LEFT_C148(p, (flags & 8) ? 0x30 : 0x20, width);
+    }
+    len = ulen_C148(p);
+    ucopy_C148(out, p);
+    out += len;
+    if (flags & 0x10) {
+        PAD_RIGHT_C148(out, 0x20, len, width);
+    }
+    *pp = out;
+    return len;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", USTR_vsprintf);
