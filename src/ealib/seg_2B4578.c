@@ -1237,10 +1237,10 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B6528);
 #ifdef SKIP_ASM
 typedef struct { int a; int b; int c; } B6528_inner;
 typedef struct { B6528_inner *p; int pad[3]; } B6528_ent;
-extern B6528_ent *D_0050AADC[];
+extern B6528_ent *D_0050AADC;
 
 int func_003B6528(int arg0) {
-    return D_0050AADC[0][arg0].p->c;
+    return D_0050AADC[arg0].p->c;
 }
 #endif
 
@@ -1356,15 +1356,15 @@ int func_003B6788(int arg0, char *arg1, int arg2, int arg3) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6820);
 #ifdef SKIP_ASM
-typedef struct { void *p; int pad[3]; } B6820_ent;
-extern B6820_ent *D_0050AADC_6820[] __asm__("D_0050AADC");
+extern B6528_ent *D_0050AADC;
 extern void *f_6540_6820(void *, int) __asm__("func_003C6540");
 extern int f_B588_6820(void *, void *, int, int, int) __asm__("func_003BB588");
 
 int func_003B6820(int a, int b, int c) {
     char *obj;
     if (func_003B64D8(a) < 0) return -8;
-    obj = D_0050AADC_6820[0][a].p;
+    obj = (char *)D_0050AADC[a].p;
+
     if (b < 0 || b >= *(unsigned short *)(obj + 6)) return -8;
     return f_B588_6820(obj, f_6540_6820(obj, b), a, b, c);
 }
