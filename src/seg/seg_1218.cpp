@@ -3981,6 +3981,8 @@ extern sQ_8E88 D_004FF130_8E88 __asm__("D_004FF130");
 extern "C" void func_0010CAB8(void* self);
 extern "C" void func_0010D170(void* self);
 extern "C" void* func_003E6448(void* dst, int value, int size);
+// Release build: the assert compiles to nothing (gcc still emits its loop notes).
+#define ASSERT_8E88(cond) do { } while (0)
 
 // PORT: the unit later declares func_00108E88 without parameters; it takes the rider.
 void func_00108E88_self(char* self) __asm__("func_00108E88");
@@ -4014,11 +4016,10 @@ void func_00108E88_self(char* self)
     *(float*)(self + 0xDF4) = 1.0f;
     *(Fn_8E88b*)(self + 0xF44) = D_0043CF20_8E88b[1];
     *(short*)(self + 0xF38) = 1;
-    do {
-        func_003E6448(self + 0xE7C, 0, 0x3C);
-        func_003E6448(self + 0xEB8, 0, 0x3C);
-        func_003E6448(self + 0xEF4, 0, 0x3C);
-    } while (0);
+    ASSERT_8E88(self != 0);
+    func_003E6448(self + 0xE7C, 0, 0x3C);
+    func_003E6448(self + 0xEB8, 0, 0x3C);
+    func_003E6448(self + 0xEF4, 0, 0x3C);
     func_0010D170(self);
 }
 #endif
