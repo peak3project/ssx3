@@ -4268,14 +4268,19 @@ static inline sVec4_125970 Scale_125970(const sVec4_125970& v, float s)
     return r;
 }
 
+static inline float cappedSpeed_125970(cRider* self, float maxSpeed)
+{
+    float speed = func_002EF0A0(self->mAIIndex) * 27.77777862548828f;
+    if (speed > maxSpeed)
+        speed = maxSpeed;
+    return speed;
+}
+
 extern "C" void func_00125970(cRider* self)
 {
     if (self->mIsHuman == 0)
         return;
-    float maxSpeed = 1388.888916015625f;
-    float speed = func_002EF0A0(self->mAIIndex) * 27.77777862548828f;
-    if (speed > maxSpeed)
-        speed = maxSpeed;
+    float speed = cappedSpeed_125970(self, 1388.888916015625f);
     if (speed >= 277.77777099609375f)
     {
         float ang = func_002EE570(self->mAIIndex) * 0.01745329424738884f;
