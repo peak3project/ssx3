@@ -4302,7 +4302,52 @@ void func_00281000(void* self, int a1, void* a2, void* a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00281018);
+#ifdef SKIP_ASM
+extern "C" void func_00283088(void*);
+extern "C" void func_00281A50(void* self);
+extern void* D_00482360[];
+extern void* D_00482398[];
+struct Slot_1018 {
+    char pad[0x10];
+    void* owner;
+    void setOwner(void* o) { owner = o; }
+};
+struct sObj_1018 {
+    char pad0[0x1C];
+    Slot_1018 slots[9];
+    int f[2];
+    int fD8;
+    char padDC[0x1C];
+    int fF8;
+};
+extern "C" void* func_00281018(void* self_)
+{
+    sObj_1018* self = (sObj_1018*)self_;
+    char* p = (char*)self + 0x1C;
+    int n = 8;
+    func_00283200(self, 0);
+    func_00282F60((char*)self + 0x10);
+    *(void***)((char*)self + 0x10) = D_00482360;
+    *(void***)((char*)self + 0xC) = D_00482398;
+    do {
+        func_00283088(p);
+        n--;
+        p += 0x14;
+    } while (n != -1);
+    for (int i = 1; i >= 0; i--) {
+        self->f[i] = 0;
+    }
+    for (int i = 0; i < 9; i++) {
+        self->slots[i].setOwner(self);
+    }
+    self->fD8 = 0;
+    self->fF8 = -1;
+    func_00281A50(self);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_00281100);
