@@ -2606,15 +2606,14 @@ extern char D_004661C8[];
 
 extern "C" void cBuyPopupInfo_initBuySongByCredit(void* self, int song, int credit)
 {
-    int three = 3;
     int h = GetHashValue32(D_004661B8);
     *(int*)((char*)self + 0x10) = song;
-    *(int*)((char*)self + 0x14) = three;
+    *(int*)((char*)self + 0x14) = 3;
     *(int*)((char*)self + 0xC) = 2;
     *(int*)((char*)self + 0x18) = h;
     h = GetHashValue32(D_004661C8);
     *(int*)((char*)self + 0x8) = credit;
-    *(int*)((char*)self + 0x1C) = three;
+    *(int*)((char*)self + 0x1C) = 3;
     *(int*)((char*)self + 0x20) = h;
 }
 #endif
