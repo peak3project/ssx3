@@ -4960,17 +4960,17 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4D68);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_00423AA0(int, int);
 extern void func_00424880(int);
-extern int D_00450DDC_0DDC[] __asm__("D_00450DDC");
+extern int D_00450DDC;
 
 void func_003E4D68(void) {
     volatile int *reg;
 
-    if (D_00450DDC_0DDC[0] != 0) {
+    if (D_00450DDC != 0) {
         reg = (volatile int *)0x10000810;
         *reg = 0;
         func_00424880(0xA);
-        func_00423AA0(0xA, D_00450DDC_0DDC[0]);
-        D_00450DDC_0DDC[0] = 0;
+        func_00423AA0(0xA, D_00450DDC);
+        D_00450DDC = 0;
     }
 }
 #endif
