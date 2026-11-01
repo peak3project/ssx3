@@ -932,3 +932,6 @@ D_70000080 = 0x70000080; // ignore:true
 D_70000090 = 0x70000090; // ignore:true
 // seg/seg_2F41F8 func_003F5000: an uncached (kseg1) hardware address constant, not a symbol.
 D_A0000040 = 0xA0000040; // ignore:true
+// seg/seg_1DCD10 func_002DBD10: gFXShape (prototype assert "strlen( gFXShape[i].Name ) == 4"), 0x51 entries of
+// 12 bytes { char Name[8]; int tex; }; the +8 field reference is D_004891B0 + 0x8, not a separate symbol.
+D_004891B0 = 0x004891B0; // size:0x3CC
