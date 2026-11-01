@@ -1512,7 +1512,6 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B07F8);
 extern "C" void* func_003B2A68(unsigned int w, int h, int bpp, int a3, int a4, int flags, int a6, int a7);
 extern "C" void* func_003B3D40(void* img);
 extern "C" void func_003E6448(void* dst, int value, int size);
-extern int D_00509438;
 
 static inline char* func_003B07F8_data(char* p)
 {
@@ -1528,7 +1527,7 @@ extern "C" void* func_003B07F8(void* self, unsigned int w, int h)
     *(int*)((char*)self + 0x8) = 3;
     *(int*)((char*)self + 0xC) = 3;
     *(int*)((char*)self + 0x10) = 0;
-    char* img = (char*)func_003B2A68(w, h, 0x20, 0, 0, D_00509438, 0, 0xF0);
+    char* img = (char*)func_003B2A68(w, h, 0x20, 0, 0, D_00509430.flags, 0, 0xF0);
     *(char**)((char*)self + 0x4) = img;
     char* hdr = (char*)func_003B3D40(img);
     hdr[4] = 0x32;
