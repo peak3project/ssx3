@@ -2993,16 +2993,20 @@ static inline sMsgListIterE6D0 sMsgListE6D0_insert(sMsgListIterE6D0 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_E6D0(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListE6D0_insert(*(sMsgListNodeE6D0**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025E6D0(char* self, const char* name)
 {
     if (*(int*)self != 0) {
         if (func_0041AA88(*(void**)(self + 0x80), (void*)name) == 0) {
-            int type = 0x10E;
-            int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-            m[0] = type;
-            *(void***)((char*)m + 0x4) = D_004812B0;
-            void* mp = m;
-            sMsgListE6D0_insert(*(sMsgListNodeE6D0**)(self + 0xF0), mp);
+            postMsg_E6D0(self, 0x10E);
         } else {
             char buf[0x100];
             buf[0] = 0;
