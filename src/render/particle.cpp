@@ -4834,17 +4834,16 @@ struct sPtGfxDD20 {
 // func_0037DEE0 is defined later in this unit with its own vector type; bind a view.
 extern "C" sPtVecDD20 func_0037DEE0_DD20(void* self, const sPtVecDD20* p) __asm__("func_0037DEE0");
 
-static inline int clampDD20(int n)
+static inline int clampDD20(int n, int lo, int hi)
 {
-    int hi = 0xFFFFFF;
     int r;
-    if (n >= 0) {
+    if (n >= lo) {
         r = n;
         if (r > hi) {
             r = hi;
         }
     } else {
-        r = 0;
+        r = lo;
     }
     return r;
 }
@@ -4857,7 +4856,7 @@ extern "C" sPtVecDD20 func_0037DD20(sPtGfxDD20* self, const sPtVecDD20* p)
     sPtVecDD20 v = func_0037DEE0_DD20(self, p);
     v.X() = (float)(int)(v.X() - (2048.0f - (float)(self->width >> 1)));
     v.Y() = (float)(int)(v.Y() - (2048.0f - (float)(self->height >> 1)));
-    v.Z() = (float)clampDD20((int)v.Z());
+    v.Z() = (float)clampDD20((int)v.Z(), 0, 0xFFFFFF);
     return v;
 }
 #endif
