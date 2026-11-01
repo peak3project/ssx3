@@ -601,7 +601,7 @@ extern "C" void func_0034C600(sFlagSet_C600* self, void* arg)
 }
 #endif
 
-//100% - objdiff report; single-function view differs only in a relocation name
+//100%
 INCLUDE_ASM("object/flagset", func_0034C668);
 #ifdef SKIP_ASM
 struct sFlagSetElem_C668 {
@@ -648,18 +648,17 @@ extern "C" void func_0034C668(sFlagSet_C668* self)
         amp = 0.45f;
         break;
     }
-    float one = 1.0f;
-    self->t += one / (float)*(int*)(D_004A5B64 + 0x10);
-    if (one <= self->t) {
-        self->t -= one;
+    self->t += 1.0f / (float)*(int*)(D_004A5B64 + 0x10);
+    if (1.0f <= self->t) {
+        self->t -= 1.0f;
         self->base += self->delta;
         float lo = -amp;
         self->delta = lo + (amp - lo) * randf_34C668();
         if (self->base + self->delta < 0.0f) {
             self->delta = -self->base;
         }
-        if (one < self->base + self->delta) {
-            self->delta = one - self->base;
+        if (1.0f < self->base + self->delta) {
+            self->delta = 1.0f - self->base;
         }
     }
     self->level = self->base + self->delta * self->t;
