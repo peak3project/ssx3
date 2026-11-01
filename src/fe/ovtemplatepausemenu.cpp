@@ -95,10 +95,9 @@ extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
     self->fCC = 0.05f;
     self->fC8 = 0;
     self->fD0 = 0;
-    int one = 1;
     int i;
-    for (i = 13; i >= 0; i--) {
-        self->aD8[i] = one;
+    for (i = 0; i < 14; i++) {
+        self->aD8[i] = 1;
     }
     if (*(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x214) == 0xB) {
         *(int*)((char*)self + 0xF0) = 0;
