@@ -1293,7 +1293,102 @@ extern "C" void func_002D9C00(int id, sAvMatrix* out)
 
 INCLUDE_ASM("visualfx/avalanche", func_002D9CB0);
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", cAvalanche_readFromReplayFrame);
+#ifdef SKIP_ASM
+struct sVEntry_RR {
+    short delta;
+    short index;
+    void (*fn)(void*, int*, int);
+};
+struct sFrame_RR {
+    char b[96];
+};
+struct sActRR {
+    char pad_0x0[0x2E0];
+    char* data;                     // 0x2E0
+    sActRR* next;                   // 0x2E4
+    int pad_0x2E8;
+    int f2EC;                       // 0x2EC
+};
+struct sKeyRR { float t; int v; };
+struct sKey2RR { unsigned short t; unsigned short v; };
+struct sDataRR {
+    char pad_0x0[0xC];
+    unsigned short n0;              // 0xC
+    unsigned short n1;              // 0xE
+    sKeyRR a[32];                   // 0x10
+    sKey2RR b[1];                   // 0x110
+};
+struct sSlotRR {
+    sDataRR* group;                    // 0x0
+    sActRR* active;                 // 0x4
+    int pad_0x8;
+    int pad_0xC;
+    int cur0;                       // 0x10
+    int cur1;                       // 0x14
+    float time;                     // 0x18
+};
+extern sSlotRR D_slots_RR[] __asm__("D_00538938");
+extern "C" int cAvalanche_triggerAvalanche(int id);
+extern "C" void func_002D81B0(void* slot);
+extern "C" void tActiveAvalancheNode_calculateScale(void* self, float t);
+sFrame_RR getFrameData_RR(void* self, float t) __asm__("tActiveAvalancheNode_getFrameData");
+
+static inline sSlotRR* slots_RR()
+{
+    return D_slots_RR;
+}
+
+static inline void clearSlot_RR(sSlotRR* s)
+{
+    if (s->group != 0) {
+        func_002D81B0(s);
+    }
+}
+
+extern "C" void cAvalanche_readFromReplayFrame(int* self)
+{
+    struct {
+        int ids[16];
+        float times[16];
+    } buf;
+    int i;
+    for (i = 0; i < 16; i++) {
+        clearSlot_RR(&slots_RR()[i]);
+    }
+    {
+        sVEntry_RR* e = &(*(sVEntry_RR**)self)[2];
+        e->fn((char*)self + e->delta, buf.ids, 0x80);
+    }
+    for (i = 0; i < 16; i++) {
+        if (buf.ids[i] >= 0) {
+            int n = cAvalanche_triggerAvalanche(buf.ids[i]);
+            if (n >= 0) {
+                sSlotRR* s = &slots_RR()[n];
+                s->time = buf.times[i];
+                if (buf.times[i] != 0.0f) {
+                    sActRR* a = s->active;
+                    while (a != 0) {
+                        if (*(unsigned char*)(a->data + 0xF2) != 0) {
+                            a->f2EC = 1;
+                        }
+                        tActiveAvalancheNode_calculateScale(a, buf.times[i]);
+                        getFrameData_RR(a, s->time);
+                        a = a->next;
+                    }
+                    while (s->cur0 < s->group->n0 && s->group->a[s->cur0].t <= s->time) {
+                        s->cur0++;
+                    }
+                    while (s->cur1 < s->group->n1 && (float)s->group->b[s->cur1].t <= s->time) {
+                        s->cur1++;
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D9FB8);
