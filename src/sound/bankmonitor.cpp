@@ -147,7 +147,133 @@ extern "C" int func_002ACF60(void* self, int n)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", cBankMonitor_BANKMONITOR_Create);
+#ifdef SKIP_ASM
+extern "C" int func_002ACF60(void* self, int n);
+extern "C" void func_002ABB38(void*);
+extern "C" void func_002ABD48(void* voice, void* mon);
+extern "C" void bxLogPrint(const char* fmt, ...);
+extern "C" void func_003B89E0(int h);
+extern "C" int func_003B9920(int h);
+extern char D_00483250[];
+
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sBmCallbackCreate)(cController*, cBankMonitorInstance*, float);
+struct sBmQuadCreate {
+    int w[4];
+} __attribute__((aligned(16)));
+struct sBmVoiceCreate {
+    int kind;                   // 0x00
+    int id;                     // 0x04
+    int valid;                  // 0x08
+    char pad0C[0x58 - 0xC];
+    int f58;                    // 0x58
+    int f5C;                    // 0x5C
+    int f60;                    // 0x60
+    int vol;                    // 0x64
+    sBmQuadCreate* tgt;         // 0x68
+    int f6C;                    // 0x6C
+    sBmQuadCreate tgtCopy;      // 0x70
+    int f80;                    // 0x80
+    int f84;                    // 0x84
+    float f88;                  // 0x88
+    float f8C;                  // 0x8C
+    float f90;                  // 0x90
+    int f94;                    // 0x94
+    int f98;                    // 0x98
+    int f9C;                    // 0x9C
+    int fA0;                    // 0xA0
+    int fA4;                    // 0xA4
+    sBmCallbackCreate callback;      // 0xA8
+    char padB0[0xC0 - 0xB0];
+};
+struct sBankMonitorCreate {
+    char pad00[0x1C];
+    volatile int cur;           // 0x1C
+    void* ch;                   // 0x20
+    sBmQuadCreate* tgt[4];      // 0x24
+    int* p34;                   // 0x34
+    int* vals;                  // 0x38
+    int* p3C;                   // 0x3C
+    sBmCallbackCreate callbacks[4];  // 0x40
+    int* p60;                   // 0x60
+    int* p64;                   // 0x64
+    float* p68;                 // 0x68
+    float* p6C;                 // 0x6C
+    void* p70;                  // 0x70
+    int* p74;                   // 0x74
+    int* p78;                   // 0x78
+    int* p7C;                   // 0x7C
+    int* p80;                   // 0x80
+    int* p84;                   // 0x84
+    char pad88[0x8DC - 0x88];
+    volatile int busy;          // 0x8DC
+    char pad8E0[0x8EC - 0x8E0];
+    sBmVoiceCreate* voices;     // 0x8EC
+};
+
+// cSndPlayOpts::OPTS_GetCallback (prototype name; out-of-line copy in bx is func_002B91C8)
+static inline sBmCallbackCreate OPTS_GetCallback_Create(sBankMonitorCreate* s)
+{
+    return s->callbacks[s->cur];
+}
+
+static inline void setCallback_Create(sBmVoiceCreate* v, sBmCallbackCreate k)
+{
+    v->callback = k;
+}
+
+extern "C" sBmVoiceCreate* cBankMonitor_BANKMONITOR_Create(sBankMonitorCreate* self, int id, int vol, int kind)
+{
+    sBmVoiceCreate* v = 0;
+    self->busy++;
+    int idx = func_002ACF60(self, self->busy);
+    if (idx >= 0) {
+        v = &self->voices[idx];
+        func_002ABB38(v);
+        v->kind = kind;
+        v->id = id;
+        v->f60 = self->p3C[self->cur];
+        v->vol = vol;
+        v->tgt = self->tgt[self->cur];
+        setCallback_Create(v, OPTS_GetCallback_Create(self));
+        v->f80 = self->p60[self->cur];
+        v->f84 = self->p64[self->cur];
+        if (self->p34[self->cur] != 0) {
+            v->tgtCopy = *v->tgt;
+            v->tgt = &v->tgtCopy;
+        }
+        v->f88 = self->p68[self->cur];
+        v->f8C = self->p6C[self->cur];
+        v->f94 = self->p74[self->cur];
+        v->f98 = self->p78[self->cur];
+        int f9C = self->p7C[self->cur];
+        if (v->f58 == 0)
+            v->f9C = f9C;
+        v->f90 = -1.0f;
+        v->fA0 = self->p80[self->cur];
+        v->fA4 = self->p84[self->cur];
+        if (self->tgt[self->cur] != 0)
+            func_002ABD48(v, self);
+        v->valid = id >= 0;
+    } else {
+        bxLogPrint(D_00483250);
+        switch (kind) {
+        case 1:
+            func_003B89E0(id);
+            break;
+        case 2:
+            func_003B9920(id);
+            break;
+        }
+    }
+    self->busy--;
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD2A8);
