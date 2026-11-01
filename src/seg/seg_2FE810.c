@@ -992,7 +992,39 @@ int func_003FF160(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF1B0);
+#ifdef SKIP_ASM
+struct S3FF1B0 { int w[11]; short h[4]; char c[4]; };
+extern int func_003FF160(void);
+#define R(a) (*(volatile int *)(a))
+int func_003FF1B0(struct S3FF1B0 *p) {
+    unsigned v = *(volatile unsigned *)0x10003840;
+    if ((unsigned)func_003FF160() >= 2)
+        return 0;
+    p->w[0] = R(0x10003900);
+    p->w[1] = R(0x10003910);
+    p->w[2] = R(0x10003920);
+    p->w[3] = R(0x10003930);
+    p->w[4] = R(0x10003940);
+    p->w[5] = R(0x10003950);
+    p->w[6] = R(0x10003960);
+    p->w[7] = R(0x10003970);
+    p->w[8] = R(0x10003870);
+    p->w[9] = R(0x10003880);
+    p->w[10] = R(0x10003800);
+    p->h[0] = R(0x100038D0);
+    p->h[1] = R(0x10003890);
+    p->h[2] = R(0x10003830);
+    p->h[3] = R(0x10003860);
+    p->c[0] = R(0x10003820);
+    p->c[1] = v;
+    p->c[2] = v >> 8;
+    p->c[3] = R(0x10003850);
+    return 1;
+}
+#undef R
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF330);
