@@ -4759,17 +4759,19 @@ extern "C" void func_002B43D8(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B4470);
 #ifdef SKIP_ASM
-struct sPacked8_4470 { long v; } __attribute__((packed));
-extern const sPacked8_4470 D_004A3838_4470[] __asm__("D_004A3838");
-extern int func_002ADCA0_4470(int a, int b, long t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_4470)(cController*, cBankMonitorInstance*, float);
+extern const sSndCallback_4470 D_004A3838_4470[] __asm__("D_004A3838");
+extern int func_002ADCA0_4470(int a, int b, sSndCallback_4470 t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 
-// PORT: 64-bit long sound key, read unaligned from a const table
 extern "C" void func_002B4470(void* self)
 {
     void* p = *(void**)((char*)self + 0x408);
     if (p != 0 && *(int*)((char*)p + 0x4C) == 0) {
         *(int*)((char*)p + 0x4C) = 1;
-        func_002ADCA0_4470(*(int*)(*(int*)self) + 0x1D8, 0, D_004A3838_4470[0].v, 0, 0, 0, 0, 0);
+        func_002ADCA0_4470(*(int*)(*(int*)self) + 0x1D8, 0, D_004A3838_4470[0], 0, 0, 0, 0, 0);
     }
 }
 #endif
