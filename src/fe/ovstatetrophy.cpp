@@ -313,6 +313,16 @@ struct sTrophySeg_210618 {
 // The unit declares D_004C8BC8 as a 16-byte pad struct; view it as the per-rider table by asm label.
 extern sTrophyEntry_210618 D_004C8BC8_210618[] __asm__("D_004C8BC8");
 
+static inline float limitStep_210618(float v, float prev, const float& lim)
+{
+    float dd = v - prev;
+    if (dd > lim)
+        v = prev + lim;
+    else if (dd < -lim)
+        v = prev - lim;
+    return v;
+}
+
 extern "C" void func_00210618(int i)
 {
     char* course = D_004A2750;
@@ -325,13 +335,7 @@ extern "C" void func_00210618(int i)
     float d = *(float*)(course + 0x10) - func_00113128(*(void**)(race + (i << 2) + 0x28));
     if (D_004C8BC8_210618[i].active == 0)
     {
-        float prev = D_004C8BC8_210618[i].dist;
-        float dd = d - prev;
-        float lim = 138.88890075683594f;
-        if (dd > lim)
-            d = prev + lim;
-        else if (dd < -lim)
-            d = prev - lim;
+        d = limitStep_210618(d, D_004C8BC8_210618[i].dist, 138.88890075683594f);
     }
     if (d <= 0.0f)
     {
