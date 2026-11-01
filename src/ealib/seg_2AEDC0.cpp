@@ -52,16 +52,17 @@ extern "C" void* func_003ADE90(void* self, int a1, int a2, int a3, int a4, int a
 }
 #endif
 
-//100%
-INCLUDE_ASM("ealib/seg_2AEDC0", func_003ADEC8);
-#ifdef SKIP_ASM
-struct sAlloc_ADEC8 {
+// Memory allocator interface (alloc/free callbacks and the default allocation flags).
+struct sAllocator {
     void* (*alloc)(const char* tag, int size, int align, int d, int flags);
     void* (*free)(void* p);
     int flags;
 };
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern sAlloc_ADEC8 D_00509430_ADEC8 __asm__("D_00509430");
+extern sAllocator D_00509430;
+
+//100%
+INCLUDE_ASM("ealib/seg_2AEDC0", func_003ADEC8);
+#ifdef SKIP_ASM
 extern char D_00495218[];
 extern char D_00495230[];
 extern "C" signed char func_003B5440();
@@ -75,7 +76,7 @@ extern "C" void func_003E0948(int h, int a, int b, int c, int d);
 extern "C" int func_003E0BF8(int h, int a);
 extern "C" int func_003E0C88(int h, int a, int b, int c);
 
-static inline bool wsCanAlloc_ADEC8(sAlloc_ADEC8* a)
+static inline bool wsCanAlloc(sAllocator* a)
 {
     return a->alloc != 0 && a->free != 0;
 }
@@ -101,14 +102,14 @@ extern "C" void func_003ADEC8(void* selfp, int a1, int a2, int a3, int a4, int a
     *(int*)(self + 0x74) = 0;
     *(int*)(self + 0xC) = a1;
     *(int*)(self + 0x10) = a4;
-    if (!wsCanAlloc_ADEC8(&D_00509430_ADEC8)) {
+    if (!wsCanAlloc(&D_00509430)) {
         func_003E62B0();
         return;
     }
     if (a4 != 0) {
         *(int*)(self + 0x14) = 1;
-        *(void**)(self + 0x4) = D_00509430_ADEC8.alloc(D_00495218, a3, 0, 0, D_00509430_ADEC8.flags);
-        *(void**)(self + 0x8) = D_00509430_ADEC8.alloc(D_00495230, a6, 0, 0, D_00509430_ADEC8.flags);
+        *(void**)(self + 0x4) = D_00509430.alloc(D_00495218, a3, 0, 0, D_00509430.flags);
+        *(void**)(self + 0x8) = D_00509430.alloc(D_00495230, a6, 0, 0, D_00509430.flags);
         *(int*)(self + 0x30) = func_003E06D8(2, 2, 1, *(void**)(self + 0x4), a3);
         *(int*)(self + 0x34) = func_003E06D8(2, 2, 1, *(void**)(self + 0x8), a6);
         func_003E0AD8(*(int*)(self + 0x34), 0x98, 0x34);
@@ -123,8 +124,8 @@ extern "C" void func_003ADEC8(void* selfp, int a1, int a2, int a3, int a4, int a
         func_003E0948(*(int*)(self + 0x34), 2, 0, 0, -2);
         int type = *(int*)(self + 0x18);
         if (type == 1) {
-            *(int*)(self + 0x2C) = func_003DF690(a4, D_00509430_ADEC8.flags);
-            *(int*)(self + 0x24) = func_003DF690(a1, D_00509430_ADEC8.flags);
+            *(int*)(self + 0x2C) = func_003DF690(a4, D_00509430.flags);
+            *(int*)(self + 0x24) = func_003DF690(a1, D_00509430.flags);
         } else if (type == 0) {
             *(int*)(self + 0x3C) = func_003E0C88(*(int*)(self + 0x34), a4, 0, 0);
             *(int*)(self + 0x38) = func_003E0C88(*(int*)(self + 0x30), a1, 0, 0);
@@ -134,7 +135,7 @@ extern "C" void func_003ADEC8(void* selfp, int a1, int a2, int a3, int a4, int a
         }
     } else {
         *(int*)(self + 0x14) = 0;
-        *(void**)(self + 0x4) = D_00509430_ADEC8.alloc(D_00495218, a3, 0, 0, D_00509430_ADEC8.flags);
+        *(void**)(self + 0x4) = D_00509430.alloc(D_00495218, a3, 0, 0, D_00509430.flags);
         *(void**)(self + 0x8) = 0;
         *(int*)(self + 0x30) = func_003E06D8(2, 3, 2, *(void**)(self + 0x4), a3);
         *(int*)(self + 0x34) = func_003E0BF8(*(int*)(self + 0x30), 2);
@@ -149,7 +150,7 @@ extern "C" void func_003ADEC8(void* selfp, int a1, int a2, int a3, int a4, int a
         }
         int type = *(int*)(self + 0x18);
         if (type == 1) {
-            *(int*)(self + 0x24) = func_003DF690(a1, D_00509430_ADEC8.flags);
+            *(int*)(self + 0x24) = func_003DF690(a1, D_00509430.flags);
         } else if (type == 0) {
             *(int*)(self + 0x38) = func_003E0C88(*(int*)(self + 0x30), a1, 0, 0);
         } else if (type == 2) {
@@ -248,13 +249,6 @@ extern "C" void func_003AE300(char* self, int flags)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AE450);
 #ifdef SKIP_ASM
-struct sAlloc_AE450 {
-    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
-    void* free;
-    int flags;
-};
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern sAlloc_AE450 D_00509430_AE450 __asm__("D_00509430");
 extern char D_00495210[];
 
 struct sTimer_AE450 {
@@ -283,14 +277,9 @@ extern "C" int func_003E5008();
 extern "C" void func_0042E508(void* timer);
 extern "C" void* func_003AE888(void*, int);
 
-static inline void* wsAlloc_AE450(sAlloc_AE450* a, int size)
+static inline void* wsAlloc(sAllocator* a, int size)
 {
     return a->alloc(D_00495210, size, 0, 0, a->flags);
-}
-
-static inline bool wsCanAlloc_AE450(sAlloc_AE450* a)
-{
-    return a->alloc != 0 && a->free != 0;
 }
 
 // PORT: 64-bit long tick counter
@@ -312,21 +301,21 @@ extern "C" int func_003AE450(char* self, int a1, int a2)
         *(int*)(self + 0x3C) = *(int*)(self + 0x38);
     }
     if (*(int*)(self + 0x1C) == 0) {
-        char* s = (char*)func_003AED40(wsAlloc_AE450(&D_00509430_AE450, 0x14), *(int*)(self + 0x34), *(int*)(self + 0x3C));
+        char* s = (char*)func_003AED40(wsAlloc(&D_00509430, 0x14), *(int*)(self + 0x34), *(int*)(self + 0x3C));
         *(char**)(self + 0x0) = s;
         *(unsigned int*)(self + 0x54) = *(int*)(s + 0xC) >= 0;
     } else {
         *(unsigned int*)(self + 0x54) = 0;
     }
     *(void**)(self + 0x64) = 0;
-    if (wsCanAlloc_AE450(&D_00509430_AE450)) {
+    if (wsCanAlloc(&D_00509430)) {
         char key[0x10];
         *(char**)(self + 0x60) = self;
         func_003B0758_AE450(key, self + 0x60, (void*)func_003AECB8, (void*)func_003AED20, a1);
-        *(func_003B0430_sObj**)(self + 0x64) = func_003B0430((func_003B0430_sObj*)wsAlloc_AE450(&D_00509430_AE450, 0x1C), (func_003B0430_sKey*)key);
+        *(func_003B0430_sObj**)(self + 0x64) = func_003B0430((func_003B0430_sObj*)wsAlloc(&D_00509430, 0x1C), (func_003B0430_sKey*)key);
     }
     *(int*)(self + 0x74) = func_003B0600(*(void**)(self + 0x64), 0);
-    sTimer_AE450* t = (sTimer_AE450*)wsAlloc_AE450(&D_00509430_AE450, 0x18);
+    sTimer_AE450* t = (sTimer_AE450*)wsAlloc(&D_00509430, 0x18);
     t->ticks = 0;
     t->start = func_003E4E98();
     t->period = 0x1000;
@@ -560,13 +549,6 @@ extern "C" int func_003AE9A0(func_003AE9A0_sSync* self)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AEAD0);
 #ifdef SKIP_ASM
-struct sAlloc_AEAD0 {
-    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
-    void* free;
-    int flags;
-};
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern sAlloc_AEAD0 D_00509430_AEAD0 __asm__("D_00509430");
 extern char D_00495210[];
 
 extern "C" unsigned char* func_003E12E0(void* q);
@@ -607,7 +589,7 @@ extern "C" void func_003AEAD0_impl(char* self, char* ctx, sChunk_AEAD0** out)
             if (func_003B11F0(tag))
                 kind = 3;
             if (kind != 0) {
-                sChunk_AEAD0* c = (sChunk_AEAD0*)func_003B0720(D_00509430_AEAD0.alloc(D_00495210, 0xC, 0, 0, D_00509430_AEAD0.flags));
+                sChunk_AEAD0* c = (sChunk_AEAD0*)func_003B0720(D_00509430.alloc(D_00495210, 0xC, 0, 0, D_00509430.flags));
                 *out = c;
                 c->data = p;
                 if (kind == 2) {
@@ -680,13 +662,6 @@ void* func_003AED20(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AED40);
 #ifdef SKIP_ASM
-struct func_003AED40_sAlloc {
-    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
-    void* free;
-    int flags;
-};
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern func_003AED40_sAlloc D_00509430_v __asm__("D_00509430");
 extern char D_00495250[];
 
 extern "C" signed char func_003B5440();
@@ -707,7 +682,7 @@ extern "C" void* func_003AED40(void* self, int a1, int a2)
         *(int*)((char*)self + 0xC) = -1;
         func_003BA020(desc);
         int size = func_003B7AC8(1, 0x1E);
-        void* mem = D_00509430_v.alloc(D_00495250, size, 0, 0, D_00509430_v.flags);
+        void* mem = D_00509430.alloc(D_00495250, size, 0, 0, D_00509430.flags);
         *(void**)((char*)self + 0x4) = mem;
         int h = func_003B7E38(a1, desc, 1, 0x1E, mem, size);
         *(int*)((char*)self + 0xC) = h;
@@ -841,19 +816,12 @@ extern "C" void *func_003AF010(void *arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003AF020);
 #ifdef SKIP_ASM
-struct sAlloc_F020 {
-    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
-    int (*free)(void* p);
-    int flags;
-};
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern sAlloc_F020 D_00509430_F020 __asm__("D_00509430");
 extern void* (*D_00509434)(void*);
 
 struct sElem_F020 {
     char pad[0x34];
     ~sElem_F020() {}
-    static void operator delete[](void* p) { D_00509430_F020.free(p); }
+    static void operator delete[](void* p) { D_00509430.free(p); }
 };
 struct sSelf_F020 { sElem_F020* arr; unsigned int count; };
 
@@ -880,13 +848,6 @@ extern "C" void func_003B03C0(void*, int);
 extern "C" void f03C8_F0C8(void*, unsigned int) __asm__("func_003B03C8");
 extern "C" void func_003B03D0(void*, int);
 extern char D_00495260[];
-struct sAlloc_F0C8 {
-    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
-    void (*free)(void* p);
-    int flags;
-};
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern sAlloc_F0C8 D_00509430_F0C8 __asm__("D_00509430");
 
 struct sElem_F0C8 { char pad[0x34]; };
 struct sSelf_F0C8 { sElem_F0C8* arr; unsigned int count; };
@@ -901,7 +862,7 @@ extern "C" void func_003AF0C8(void* vself, unsigned int count, int a2, int a3, i
     unsigned int k;
 
     i = count - 1;
-    raw = (unsigned int*)D_00509430_F0C8.alloc(D_00495260, count * 0x34 + 0x10, 0, 0, D_00509430_F0C8.flags);
+    raw = (unsigned int*)D_00509430.alloc(D_00495260, count * 0x34 + 0x10, 0, 0, D_00509430.flags);
     arr = (char*)raw + 0x10;
     *raw = count;
     p = arr;
@@ -1515,14 +1476,13 @@ extern "C" void* func_003B0758(void* self, int a1, int a2, int a3, int a4)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B0770);
 #ifdef SKIP_ASM
-extern char D_00509430[];
 extern void* D_0050943C;
 
 extern "C" void* func_003B0770(int init, int prio)
 {
     if (prio == 0xFFFF) {
         if (init != 0) {
-            func_003B0410(D_00509430);
+            func_003B0410(&D_00509430);
         } else {
             D_0050943C = (void*)D_00456890;
         }
@@ -1800,13 +1760,6 @@ extern sMpegLayer D_00509648;
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B0C58);
 #ifdef SKIP_ASM
-struct sAlloc_B0C58 {
-    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
-    void* (*free)(void* p);
-    int flags;
-};
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern sAlloc_B0C58 D_00509430_B0C58 __asm__("D_00509430");
 extern int D_005094F4;
 extern int D_005094F8;
 extern int D_005094FC;
@@ -1868,11 +1821,11 @@ extern "C" int func_003B0C58(sPlayer_B0C58* self, sScript_B0C58* script, sData_B
     self->f10 = 0;
     self->f14 = 0;
     if (self->work != 0) {
-        D_00509430_B0C58.free(self->work);
+        D_00509430.free(self->work);
         self->work = 0;
     }
     if (self->ipuBuf != 0) {
-        D_00509430_B0C58.free(self->ipuBuf);
+        D_00509430.free(self->ipuBuf);
         self->ipuBuf = 0;
     }
     self->state = 1;
@@ -1902,7 +1855,7 @@ extern "C" int func_003B0C58(sPlayer_B0C58* self, sScript_B0C58* script, sData_B
     for (int i = 0; i < n; i++) {
         int cw = self->w;
         int ch = self->h;
-        char* r = (char*)func_003B07F8(D_00509430_B0C58.alloc(D_004953E8, 0x14, 0, 0, D_00509430_B0C58.flags), cw, ch);
+        char* r = (char*)func_003B07F8(D_00509430.alloc(D_004953E8, 0x14, 0, 0, D_00509430.flags), cw, ch);
         sWSNode_B0C58* node = r ? (sWSNode_B0C58*)(r + 8) : 0;
         sWSNode_B0C58* head = &self->frames;
         sWSNode_B0C58* old = head->next;
@@ -1911,8 +1864,8 @@ extern "C" int func_003B0C58(sPlayer_B0C58* self, sScript_B0C58* script, sData_B
         node->next = old;
         node->prev = head;
     }
-    self->work = D_00509430_B0C58.alloc(D_004953F0, self->w * self->h * 9 / 2 + 0x176C, 0, 0, D_00509430_B0C58.flags | 0x400);
-    self->ipuBuf = D_00509430_B0C58.alloc(D_00495400, 0x32000, 0, 0, D_00509430_B0C58.flags | 0x400);
+    self->work = D_00509430.alloc(D_004953F0, self->w * self->h * 9 / 2 + 0x176C, 0, 0, D_00509430.flags | 0x400);
+    self->ipuBuf = D_00509430.alloc(D_00495400, 0x32000, 0, 0, D_00509430.flags | 0x400);
     self->ipuBufUc = (void*)(((unsigned int)self->ipuBuf & 0x0FFFFFFF) | 0x30000000);
     func_00402708();
     func_004027B8(self->mpeg, self->work, self->w * self->h * 9 / 2 + 0x176C);
@@ -2074,16 +2027,9 @@ extern "C" void func_003B1140(sWSPool* self, sWSItem* item)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B11A0);
 #ifdef SKIP_ASM
-struct sAlloc_11A0 {
-    void* (*alloc)(const char* tag, int size, int align, int d, int flags);
-    void* (*free)(void* p);
-    int flags;
-};
-// PORT: the unit declares D_00509430 as char[] later; view bound by asm label
-extern sAlloc_11A0 D_00509430_11A0 __asm__("D_00509430");
 extern "C" void* func_003B11A0(void)
 {
-    return func_003B0948(D_00509430_11A0.alloc(D_004953E8, 0x80, 0, 0, D_00509430_11A0.flags));
+    return func_003B0948(D_00509430.alloc(D_004953E8, 0x80, 0, 0, D_00509430.flags));
 }
 #endif
 
