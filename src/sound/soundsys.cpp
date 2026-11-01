@@ -6612,14 +6612,40 @@ static inline void OPTS_Callback_DEF0(sSndDEF0Mgr* m, sSndCallback_DEF0 cb)
     s->callbacks[m->sub.cur] = cb;
 }
 
+static inline void sndDEF0Init(sSndDEF0Sys* self, int a, int b)
+{
+    sSndDEF0Mgr* m = self->mgr;
+    sSndDEF0Sub* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+}
+
 // Grind/ride loop sound: reference-counted start (pushes the voice at the rider's position) and stop.
 extern "C" void func_0029DEF0(void* vself, int on)
 {
     sSndDEF0Sys* self = (sSndDEF0Sys*)vself;
     if (on != 0) {
         if (++self->users == 1) {
-            int a = 8;
-            int b = 2;
             int id = -1;
             if (func_00288AE0(self) != 0) {
                 id = 0;
@@ -6636,30 +6662,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 func_002DA1C0(&out, &pos);
                 *(sOutDEF0*)self->blk = out;
             }
-        sSndDEF0Mgr* m = self->mgr;
-        sSndDEF0Sub* s = &m->sub;
-        m->sub.cur++;
-        s->ch[m->sub.cur] = m->sub.def;
-        m->sub.tgt[m->sub.cur] = 0;
-        s->p34[m->sub.cur] = 0;
-        s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-        s->p3C[m->sub.cur] = 0;
-        func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-        s->p60[m->sub.cur] = 0;
-        s->p64[m->sub.cur] = 0;
-        s->p68[m->sub.cur] = 0;
-        s->p6C[m->sub.cur] = 0;
-        s->p70[m->sub.cur].f4 = 0;
-        s->p70[m->sub.cur].f0 = 100;
-        s->p70[m->sub.cur].f8 = 90;
-        s->p70[m->sub.cur].fC = 50;
-        s->p74[m->sub.cur] = 0;
-        s->p80[m->sub.cur] = 0;
-        s->p84[m->sub.cur] = 0;
-        s->p78[m->sub.cur] = 0x7F;
-        s->p7C[m->sub.cur] = 1;
-        self->a4[self->mgr->sub.cur] = a;
-        self->a8[self->mgr->sub.cur] = b;
+            sndDEF0Init(self, 8, 2);
             sSndDEF0Mgr** p0 = self->p118;
             int v = func_0029E438(self, (char*)self->blk);
             sSndDEF0Mgr* m3 = *p0;
