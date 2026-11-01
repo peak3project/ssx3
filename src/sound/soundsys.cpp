@@ -5817,17 +5817,20 @@ extern "C" void func_0029C7B0(void* vself)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029CCA8);
 #ifdef SKIP_ASM
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_CCA8)(cController*, cBankMonitorInstance*, float);
 extern "C" int func_00288AE0(void* self);
 extern "C" void* func_0028B1D8();
 extern "C" void* func_00287968(void* self, int a1, int a2);
-extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_002ADCA0_CCA8(void*, int, sSndCallback_CCA8, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: func_004139F8 is libgcc's float -> unsigned conversion (__fixunssfsi).
 extern "C" int func_004139F8(float f);
 extern char* D_004A28A8;
 extern int D_005308D0[];
-extern sSndKey8 D_004A3678[];
+extern sSndCallback_CCA8 D_004A3678_CCA8[] __asm__("D_004A3678");
 
-// PORT: 64-bit long sound key
 extern "C" void func_0029CCA8(char* self)
 {
     if (func_00288AE0(self) != 0) {
@@ -5851,9 +5854,9 @@ extern "C" void func_0029CCA8(char* self)
     }
     if (m != *(int*)(self + 0x607C) && m < 11 && (m == 10 || m == 8 || m == 6 || m < 5)) {
         char* p = **(char***)(self + 0x118) + 0x1D8;
-        sSndKey8* key = D_004A3678;
+        sSndCallback_CCA8* key = D_004A3678_CCA8;
         int r = (int)func_00287968(self, 9, 0);
-        func_002ADCA0(p, 0x1C2, key->v, r, 0, 0x4E, 0x7F, 0);
+        func_002ADCA0_CCA8(p, 0x1C2, *key, r, 0, 0x4E, 0x7F, 0);
     }
     *(int*)(self + 0x607C) = m;
 }
