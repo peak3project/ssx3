@@ -1127,7 +1127,53 @@ extern "C" void func_0026D818(void* self, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026D988);
+#ifdef SKIP_ASM
+struct cBucketMan;
+void* cBucketMan_first(cBucketMan* self, int index);
+void* cBucketMan_next(cBucketMan* self, void* node, int index);
+// small-data alias of the bucket manager global (its real type is declared elsewhere; see gameload.cpp)
+extern char D_004A5988;
+static inline cBucketMan* bucketMan_D988() { return (cBucketMan*)&D_004A5988; }
+
+// bucket node: 12 bytes of list links, then the polymorphic part (save is the 12th vtable entry)
+class cPbBucketNodeD988 {
+public:
+    char links[0xC];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void save(cPbStream* s);
+};
+
+// Writes the bucket's node count (8-byte header) and then each node's serialised form to the stream.
+extern "C" void func_0026D988(void* self, cPbStream* s, int bucket)
+{
+    int hdr[2];
+    void* node;
+
+    hdr[0] = 0;
+    hdr[1] = 0;
+    for (node = cBucketMan_first(bucketMan_D988(), bucket); node != 0; node = cBucketMan_next(bucketMan_D988(), node, bucket)) {
+        hdr[0]++;
+    }
+    s->write(hdr, 8);
+    if (hdr[0] > 0) {
+        for (node = cBucketMan_first(bucketMan_D988(), bucket); node != 0; node = cBucketMan_next(bucketMan_D988(), node, bucket)) {
+            ((cPbBucketNodeD988*)node)->save(s);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026DA88);
