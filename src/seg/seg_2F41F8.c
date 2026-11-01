@@ -1605,7 +1605,18 @@ int func_003F6EE0(int *out) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6F68);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F71B8);
+#ifdef SKIP_ASM
+extern char *D_004A4BC4;
+extern int f7A60c(int, int) __asm__("func_003F7A60");
+int func_003F71B8(int *a, int *b) {
+    *a = 1;
+    *(int *)(D_004A4BC4 + 0x148) = *b;
+    *b = 0;
+    return f7A60c(7, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F71F8);
