@@ -1787,6 +1787,15 @@ static inline sMsgListIterCD50 sMsgListCD50_insert(sMsgListIterCD50 pos, void* c
 }
 
 // PORT: the unit declares func_0025CD50 as void* (void*, int) (a caller tail-calls it); the body takes (self, name).
+static inline void postMsg_CD50(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListCD50_insert(*(sMsgListNodeCD50**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025CD50_impl(char* self, const char* name) __asm__("func_0025CD50");
 
 extern "C" void func_0025CD50_impl(char* self, const char* name)
@@ -1802,12 +1811,7 @@ extern "C" void func_0025CD50_impl(char* self, const char* name)
         cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3110, self + 0x1C);
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 9, 0x70657273, buf, (int)func_00268C98, 20.0f);
-    int type = 0xD9;
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgListCD50_insert(*(sMsgListNodeCD50**)(self + 0xF0), mp);
+    postMsg_CD50(self, 0xD9);
 }
 #endif
 
