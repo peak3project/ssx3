@@ -1320,7 +1320,166 @@ extern "C" void func_001F6840(void* self, char* name, const char* str)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatebuyattrib", cFEStateCareerStats_setupRidersBest);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* func_00155288(void* iface, int a1, int charId);
+extern "C" char* func_00144C60(void* iface, int track);
+extern "C" double func_00413AF8_d(float f) __asm__("func_00413AF8");
+extern "C" char* strcpy(char* d, const char* s);
+struct cUIText;
+int GetHashValue32(char* str);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+int cBELibrary_getCharacterID(int);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_001F6840(void* self, char* name, const char* str);
+extern char D_004A2108[];
+extern char D_004A2168[];
+extern char D_004A2138[];
+extern char D_004A23C0[];
+extern char D_004A23C8[];
+extern char D_004A23B8[];
+extern char D_004A23D0[];
+extern char D_004A23D8[];
+extern char D_0046F3B8[];
+extern char D_0046F3C8[];
+extern char D_0046F3D8[];
+extern char D_0046F3F0[];
+extern char D_0046F400[];
+extern char D_0046F410[];
+extern char D_0046F428[];
+extern char D_0046F438[];
+extern char D_0046F450[];
+extern char D_0046F460[];
+extern char D_0046F470[];
+extern char D_0046F480[];
+extern char D_0046F490[];
+extern char D_0046F4A8[];
+extern char D_0046F4C0[];
+
+struct sRidersBest {
+    int f00;
+    int f04;
+    int f08;
+    int f0C;
+    int f10;
+    int f14;
+    int f18;
+    int f1C;
+    int f20;
+    int f24;
+    int f28;
+    int f2C;
+    int f30;
+    int f34;
+    int f38;
+    int f3C;
+    int f40;
+    int f44;
+    int f48;
+    int f4C;
+    int f50;
+};
+
+extern "C" void cFEStateCareerStats_setupRidersBest(void* self)
+{
+    char buf[0x70];
+    int id;
+    int n;
+    sRidersBest s;
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* p = func_00155288(cBE_getInterface_Fv(cBE_getBE(), 8), 0, cBELibrary_getCharacterID(0));
+    s = *(sRidersBest*)p;
+    id = s.f04;
+    n = s.f00;
+    if (n > 0) {
+        sprintf(buf, D_004A2138, n);
+        func_001F6840(self, D_004A23B8, buf);
+        sprintf(buf, D_004A23C0, func_00144C60(iface, id));
+        func_001F6840(self, D_0046F3B8, buf);
+    } else {
+        func_001F6840(self, D_004A23B8, D_004A2108);
+        func_001F6840(self, D_0046F3B8, D_004A2168);
+    }
+    id = s.f2C;
+    n = s.f28;
+    if (n > 0) {
+        sprintf(buf, D_004A23C8, n);
+        func_001F6840(self, D_0046F3C8, buf);
+        sprintf(buf, D_004A23C0, func_00144C60(iface, id));
+        func_001F6840(self, D_0046F3D8, buf);
+    } else {
+        func_001F6840(self, D_0046F3C8, D_004A2108);
+        func_001F6840(self, D_0046F3D8, D_004A2168);
+    }
+    id = s.f0C;
+    n = s.f08;
+    if (n > 0) {
+        sprintf(buf, D_004A2138, n);
+        func_001F6840(self, D_004A23D0, buf);
+        sprintf(buf, D_004A23C0, func_00144C60(iface, id));
+        func_001F6840(self, D_0046F3F0, buf);
+    } else {
+        func_001F6840(self, D_004A23D0, D_004A2108);
+        func_001F6840(self, D_0046F3F0, D_004A2168);
+    }
+    id = s.f14;
+    n = s.f10;
+    if (n > 0) {
+        sprintf(buf, D_004A2138, n);
+        func_001F6840(self, D_0046F400, buf);
+        sprintf(buf, D_004A23C0, func_00144C60(iface, id));
+        func_001F6840(self, D_0046F410, buf);
+    } else {
+        func_001F6840(self, D_0046F400, D_004A2108);
+        func_001F6840(self, D_0046F410, D_004A2168);
+    }
+    id = s.f1C;
+    n = s.f18;
+    if (n > 0) {
+        sprintf(buf, D_004A2138, n);
+        func_001F6840(self, D_0046F428, buf);
+        sprintf(buf, D_004A23C0, func_00144C60(iface, id));
+        func_001F6840(self, D_0046F438, buf);
+    } else {
+        func_001F6840(self, D_0046F428, D_004A2108);
+        func_001F6840(self, D_0046F438, D_004A2168);
+    }
+    id = s.f34;
+    n = s.f30;
+    if (n > 0) {
+        sprintf(buf, D_0046F450, func_00413AF8_d((float)n * 0.01f));
+        func_001F6840(self, D_0046F460, buf);
+        sprintf(buf, D_004A23C0, func_00144C60(iface, id));
+        func_001F6840(self, D_0046F470, buf);
+    } else {
+        func_001F6840(self, D_0046F460, D_004A2108);
+        func_001F6840(self, D_0046F470, D_004A2168);
+    }
+    id = s.f3C;
+    n = s.f38;
+    if (n > 0) {
+        sprintf(buf, D_004A23C8, n);
+        func_001F6840(self, D_004A23D8, buf);
+        sprintf(buf, D_004A23C0, func_00144C60(iface, id));
+        func_001F6840(self, D_0046F480, buf);
+    } else {
+        func_001F6840(self, D_004A23D8, D_004A2108);
+        func_001F6840(self, D_0046F480, D_004A2168);
+    }
+    cUIText_setUnicodeStringByID((cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046F490)), GetHashValue32(D_0046F4A8));
+    n = s.f20;
+    if (n > 0) {
+        sprintf(buf, D_004A2138, n);
+    } else {
+        strcpy(buf, "-");
+    }
+    func_001F6840(self, D_0046F4C0, buf);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatebuyattrib", func_001F6EE0);
