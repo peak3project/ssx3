@@ -2341,7 +2341,15 @@ int func_003F8588(unsigned v) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F85C0);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F86B8);
+#ifdef SKIP_ASM
+int func_003F86B8(unsigned short v) {
+    int r = 0; int i = 0;
+    for (i = 0; i < 8; i++) { int bit = 1 << i; if (v & bit) r++; }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F86F0);
