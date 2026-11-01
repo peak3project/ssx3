@@ -2289,7 +2289,7 @@ extern "C" void func_00104DE0(char* self, cStream_4DE0* s) {
 
 INCLUDE_ASM("seg/seg_1218", func_00104E70);
 
-//100% - objdiff report; single-function view differs only in a relocation name
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00105398);
 #ifdef SKIP_ASM
 struct sV4_5398 {
@@ -2471,12 +2471,11 @@ extern "C" void func_00105398(char* self, sV4_5398* norm)
     sInfo_5398 info;
     if (func_0011FEE8_5398(self) == 9)
         return;
-    float zero = 0.0f;
     func_00106F78(self);
     cScope_5398 sc(*(void**)(self + 0xAA0), 1);
     cScope_5398* ps = &sc;
     float d = func_00104E70_5398(self, ps, &c);
-    if (d >= zero) {
+    if (d >= 0.0f) {
         if (func_001231A8(self))
             norm = (sV4_5398*)(self + 0x370);
         if (norm) {
@@ -2488,7 +2487,7 @@ extern "C" void func_00105398(char* self, sV4_5398* norm)
                 c.normal = Div_5398(t, len);
         } else if (func_0011FE98(self) == 4) {
             sV4_5398* up = (sV4_5398*)(*(char**)(self + 0x77C) + 0xB0);
-            if (Dot_5398(c.normal, *up) > zero)
+            if (Dot_5398(c.normal, *up) > 0.0f)
                 c.normal = *up;
             else
                 c.normal = Scale_5398(*up, -1.0f);
