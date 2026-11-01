@@ -4978,20 +4978,22 @@ typedef int cQuad128_6B40 __attribute__((mode(TI)));
 extern char D_1150[];
 
 struct sRS_6B40 {
-    int f0;
+    unsigned int f0_lo : 6;
+    unsigned int mode : 4;
+    unsigned int f0_hi : 22;
     int f4;
     int f8;
-    int fC;
+    unsigned int addr : 30;
+    unsigned int fC_hi : 2;
 };
 
 // Emits the font's GS setup packet (register set + the 10 cached qwords) and a VU call for the glyph program.
 extern "C" void func_00396B40(char* self)
 {
     sRS_6B40* rs = *(sRS_6B40**)(self + 0xE84);
-    unsigned int addrMask = 0x3FFFFFFF;
-    rs->f0 = (rs->f0 & ~0x3C0) | 0x180;
+    rs->mode = 6;
     sRS_6B40* rs2 = *(sRS_6B40**)(self + 0xE84);
-    rs2->fC = (rs2->fC & 0xC0000000) | (*(unsigned int*)(self + 0x5A00) & addrMask);
+    rs2->addr = *(unsigned int*)(self + 0x5A00);
     unsigned long* p = (unsigned long*)(*(unsigned int*)(self + 0x5A00) | 0x30000000);
     p[0] = 0x6000000C;
     p[2] = (unsigned long)0x8000 << 45;
