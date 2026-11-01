@@ -1909,17 +1909,14 @@ int func_003B0FA0(void* self)
 }
 #endif
 
-// padded past the 8-byte gp-relative threshold so the compiler emits
-// absolute lui/lo addressing like the target, instead of assuming small data
-struct sD_00509508 { float value; int pad[2]; };
-extern sD_00509508 D_00509508;
-
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B0FA8);
 #ifdef SKIP_ASM
+extern float D_00509508;
+
 extern "C" float func_003B0FA8()
 {
-    return D_00509508.value;
+    return D_00509508;
 }
 #endif
 
@@ -2452,7 +2449,7 @@ extern int D_005094F0[];
 extern int D_005094F4[];
 extern int D_005094F8[];
 extern float D_00509504[];
-struct sD_00509508;
+extern float D_00509508;
 extern float D_0044C388[];
 extern char D_004954B8[];
 void* func_003B2360(void* self);
@@ -2481,7 +2478,7 @@ extern "C" void func_003B1AB0(void)
     D_0050952C[0] = (int)func_003B1300(1);
     D_00509530[0] = (int)func_003B1300(2);
     D_00509534[0] = (int)func_003B1300(5);
-    D_00509508.value = D_0044C388[D_00509510[0]] * ((float)(D_00509530[0] + 1) / (float)(D_00509534[0] + 1));
+    D_00509508 = D_0044C388[D_00509510[0]] * ((float)(D_00509530[0] + 1) / (float)(D_00509534[0] + 1));
     if ((D_00509520[0] >> 7) & 1) {
         if ((D_00509520[0] & 0xF) == 5) {
             D_005094EC[0] = 0x85;
