@@ -3758,7 +3758,57 @@ extern int D_004A5B20;
 int func_003FC0D8(void) { return D_004A5B20 != 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC0E8);
+#ifdef SKIP_ASM
+typedef struct { int (*fn)(int); } V0E8;
+typedef struct { int f0; int f4; int f8; char *fC; int f10; V0E8 *f14; int f18; } P0E8;
+typedef struct { char pad[0x64]; char *f64; int f68; V0E8 *f6C; V0E8 *f70; char pad74[0xC]; int f80; char pad84[0xC]; int f90; int f94; int f98; char *f9C; int fA0; int padA4; char fA8; } G0E8;
+extern G0E8 *D_C0E8 __asm__("D_004A5B20");
+extern int func_003FC0D8(void);
+extern int func_003F9218(int, int, int);
+extern int func_003FB810(int);
+extern int func_003FB840c(int) __asm__("func_003FB840");
+extern int fB828(int) __asm__("func_003FB828");
+extern char *c0e8_6728(int, int, int) __asm__("func_00266728");
+extern void c0e8_A6C8(V0E8 **) __asm__("func_003FA6C8");
+extern int func_003FCE10(char *, int, int, int);
+extern void func_0041605C(char *, char *, int);
+int func_003FC0E8(P0E8 *p) {
+    int r;
+    V0E8 *cb;
+    if (func_003FC0D8() != 0) return 1;
+    r = func_003F9218(p->f4, p->f8, p->f18);
+    if (r != 0) return func_003FB810(r);
+    D_C0E8 = (G0E8 *)c0e8_6728(p->f18, 0xAC, 4);
+    if (D_C0E8 == 0) return 6;
+    c0e8_A6C8(&D_C0E8->f70);
+    r = D_C0E8->f70->fn(p->f18);
+    if (r != 0) return func_003FB840c(r);
+    D_C0E8->f6C = cb = p->f14;
+    if (cb != 0) {
+        int n;
+        r = cb->fn(p->f18);
+        if (r != 0) return fB828(r);
+        n = p->f10;
+        D_C0E8->f68 = n;
+        D_C0E8->f64 = c0e8_6728(p->f18, n, 4);
+        if (D_C0E8->f64 == 0) return 6;
+        func_0041605C(D_C0E8->f64, p->fC, D_C0E8->f68);
+    }
+    D_C0E8->f90 = p->f0;
+    D_C0E8->f94 = 0;
+    D_C0E8->f98 = 0;
+    D_C0E8->f9C = c0e8_6728(p->f18, p->f0 << 4, 4);
+    if (D_C0E8->f9C == 0) return 6;
+    r = func_003FCE10((char *)&D_C0E8->f80, D_C0E8->fA0, 0, 1);
+    if (r != 0) return r;
+    D_C0E8->f80 -= 0xC;
+    D_C0E8->fA0 = p->f18;
+    D_C0E8->fA8 = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FC260);
