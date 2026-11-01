@@ -10470,6 +10470,10 @@ struct sSnd5D08E16 {
     int f8;
     int fC;
 };
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_5D08)(cController*, cBankMonitorInstance*, float);
 struct sSnd5D08Sub {
     char pad0[4];
     sSnd5D08Ch def;          // 0x04
@@ -10479,7 +10483,7 @@ struct sSnd5D08Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
+    sSndCallback_5D08 callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -10500,16 +10504,19 @@ struct sSnd5D08Sys {
     int* a4;                 // 0x4
     int* a8;                 // 0x8
 };
-struct sSndKey8_5D08 {
-    long v;
-} __attribute__((packed));
-extern sSndKey8_5D08 D_004A3700_5D08[] __asm__("D_004A3700");
+extern sSndCallback_5D08 D_004A3700_5D08[] __asm__("D_004A3700");
 extern sSnd5D08Sys* D_004A36F8_5D08 __asm__("D_004A36F8");
 
 #define SND_5D08_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_5D08_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-// PORT: 64-bit long sound key
+// cSndPlayOpts::OPTS_Callback (prototype name)
+static inline void OPTS_Callback_5D08(sSnd5D08Mgr* m, sSndCallback_5D08 cb)
+{
+    sSnd5D08Sub* s = &m->sub;
+    s->callbacks[m->sub.cur] = cb;
+}
+
 int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key) __asm__("func_002A5D08");
 int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key)
 {
@@ -10602,12 +10609,7 @@ int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key)
             sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
             m2->sub.p64[m2->sub.cur] = self->f0;
         }
-        {
-            sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
-            sSndKey8_5D08 k = D_004A3700_5D08[0];
-            sSnd5D08Sub* s4 = &m2->sub;
-            *(sSndKey8_5D08*)((char*)s4 + (m2->sub.cur << 3) + 0x40) = k;
-        }
+        OPTS_Callback_5D08(D_004A36F8_5D08->mgr, D_004A3700_5D08[0]);
         {
             sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
             m2->sub.p60[m2->sub.cur] = (int)self;
