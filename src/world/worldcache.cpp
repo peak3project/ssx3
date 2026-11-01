@@ -1003,7 +1003,58 @@ extern "C" void cWorldCache_updatePages(void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A88A8);
+#ifdef SKIP_ASM
+struct sWcEnt_88A8 {
+    int state;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+};
+
+struct sWc_88A8 {
+    char pad[0x3EC];
+    unsigned int count;         // 0x3EC
+    sWcEnt_88A8 ents[1];        // 0x3F0
+};
+
+extern char* D_004A5B64;
+extern "C" void func_003A8528(void* self, int i);
+
+extern "C" void func_003A88A8(void* vself)
+{
+    sWc_88A8* self = (sWc_88A8*)vself;
+    int now = *(int*)(D_004A5B64 + 0x1C);
+    unsigned int i = 0;
+    if (self->count != 0) {
+        do {
+            if (self->ents[i].state != 0) {
+                int expired = self->ents[i].f4 == 0 && now > self->ents[i].f10;
+                switch (self->ents[i].state) {
+                case 1:
+                    if (expired)
+                        self->ents[i].state = 0;
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    if (!expired)
+                        break;
+                    self->ents[i].state = 4;
+                case 4:
+                    func_003A8528(self, i);
+                    self->ents[i].state = 0;
+                    break;
+                }
+            }
+            i++;
+        } while (i < self->count);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A89C8);
