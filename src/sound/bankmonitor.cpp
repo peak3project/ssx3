@@ -2003,11 +2003,10 @@ INCLUDE_ASM("sound/bankmonitor", func_002AF8E0__FPv);
 #ifdef SKIP_ASM
 void* func_002AF8E0(void* self)
 {
-    int t0 = 0;
-    *(int*)((char*)self + 0x48) = t0;
+    *(int*)((char*)self + 0x48) = 0;
     *(int*)self = -1;
-    *(int*)((char*)self + 0x44) = t0;
-    *(signed char*)((char*)self + 0x4) = (signed char)t0;
+    *(int*)((char*)self + 0x44) = 0;
+    *(signed char*)((char*)self + 0x4) = (signed char)0;
     return self;
 }
 #endif
