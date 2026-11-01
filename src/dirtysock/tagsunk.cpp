@@ -6969,6 +6969,15 @@ static inline sMsgListIter5018 sMsgList5018_insert(sMsgListIter5018 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_5018(char* g, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgList5018_insert(*(sMsgListNode5018**)(g + 0xF0), mp);
+}
+
 extern "C" void func_00265018(void* self, int rider)
 {
     if (*(int*)((char*)self + 0x124) != 0) {
@@ -6980,14 +6989,9 @@ extern "C" void func_00265018(void* self, int rider)
                 *(int*)self = 5;
         }
         func_00264CF0(self, rider);
-        int type = 0xF4;
         func_00264E50(self, 2, rider, *(int*)self);
         char* g = (char*)D_004A3028;
-        int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-        m[0] = type;
-        *(void***)((char*)m + 0x4) = D_004812B0;
-        void* mp = m;
-        sMsgList5018_insert(*(sMsgListNode5018**)(g + 0xF0), mp);
+        postMsg_5018(g, 0xF4);
     } else {
         func_00264E50(self, 3, rider, *(int*)self);
     }
