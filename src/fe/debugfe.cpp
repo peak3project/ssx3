@@ -1457,7 +1457,7 @@ extern "C" void func_0017FB98(void* self)
 }
 #endif
 
-//100% - objdiff report; single-function view differs only in a relocation name
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017FBF0);
 #ifdef SKIP_ASM
 extern char* D_004A289C;
@@ -1512,8 +1512,7 @@ extern "C" int func_0017FBF0(char* self)
         sVEnt_17FBF0* vt1 = *(sVEnt_17FBF0**)(m1 + 0x10D8);
         char* this1 = m1 + vt1[15].delta;
         sVec4_17FBF0 pos;
-        float one = 1.0f;
-        sVec4_17FBF0 col(one, 0.0f, 0.0f, 0.0f);
+        sVec4_17FBF0 col(1.0f, 0.0f, 0.0f, 0.0f);
         float zero = 0.0f;
         pos.x = zero;
         pos.y = zero;
@@ -1521,7 +1520,7 @@ extern "C" int func_0017FBF0(char* self)
         ((FnP_17FBF0)vt1[15].fn)(this1, &pos);
         char* m2 = D_004A289C;
         sVEnt_17FBF0* vt2 = *(sVEnt_17FBF0**)(m2 + 0x10D8);
-        ((FnView_17FBF0)vt2[26].fn)(m2 + vt2[26].delta, 0, 0, zero, zero, 640.0f, 480.0f, -1.0f, one);
+        ((FnView_17FBF0)vt2[26].fn)(m2 + vt2[26].delta, 0, 0, zero, zero, 640.0f, 480.0f, -1.0f, 1.0f);
         char* m3 = D_004A289C;
         sVEnt_17FBF0* vt3 = *(sVEnt_17FBF0**)(m3 + 0x10D8);
         ((FnP_17FBF0)vt3[34].fn)(m3 + vt3[34].delta, D_004FF1A0);
