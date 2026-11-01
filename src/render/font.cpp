@@ -1079,29 +1079,27 @@ struct sFontPkt_2E98 {
     int done;        // 0x2C
 };
 
+static inline long packWord_2E98(int y, int n, int x, int mode, int mask)
+{
+    return (long)(y | ((n << 16) | (x ? mask : 0)) | ((mode | 0x60) << 24)) << 32;
+}
+
 extern "C" void func_00392E98(sFontPkt_2E98* self, int a1)
 {
-    int fmask = 0x8000;
     int n;
     int t = a1;
     if (t < 0) {
         n = self->cur - self->start - 16;
         switch (self->mode) {
-        case 8: {
-            int d = 12;
-            n /= d;
+        case 8:
+            n /= 12;
             break;
-        }
-        case 9: {
-            int d = 6;
-            n /= d;
+        case 9:
+            n /= 6;
             break;
-        }
-        case 10: {
-            int d = 3;
-            n /= d;
+        case 10:
+            n /= 3;
             break;
-        }
         case 12:
             n /= 16;
             break;
@@ -1124,7 +1122,7 @@ extern "C" void func_00392E98(sFontPkt_2E98* self, int a1)
     self->done = 0;
     *(long*)self->start = (long)(self->w | (self->h << 8) | 0x1000000) << 32;
     long* q = (long*)(self->start + 8);
-    *q = (long)(self->flagY | ((n << 16) | (self->flagX ? fmask : 0)) | ((self->mode | 0x60) << 24)) << 32;
+    *q = packWord_2E98(self->flagY, n, self->flagX, self->mode, 0x8000);
 }
 #endif
 //100%
