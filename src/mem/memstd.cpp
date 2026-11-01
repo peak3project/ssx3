@@ -2677,10 +2677,9 @@ INCLUDE_ASM("mem/memstd", func_002557E0__FPv);
 #ifdef SKIP_ASM
 void* func_002557E0(void* self)
 {
-    int t0 = 0;
-    *(int*)self = t0;
+    *(int*)self = 0;
     *(int*)((char*)self + 0x8) = (int)(void*)D_00481320;
-    *(int*)((char*)self + 0x4) = t0;
+    *(int*)((char*)self + 0x4) = 0;
     return self;
 }
 #endif
