@@ -3050,12 +3050,12 @@ extern "C" void* func_003B2A68(unsigned int w, int h, int fmt, int clut, int max
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B2B68);
 #ifdef SKIP_ASM
-extern void (*D_0044C458[])(char* buf);
+extern void (*D_0044C458)(char* buf);
 
 extern "C" void func_003B2B68(char* buf)
 {
     buf[0] = 0;
-    D_0044C458[0](buf);
+    D_0044C458(buf);
 }
 #endif
 
