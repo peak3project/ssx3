@@ -5081,7 +5081,159 @@ extern "C" void func_001AB3D0(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001AB478);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" int f_263490_AB478(void* session, const char* name) __asm__("func_00263490");
+extern "C" int f_2633C8_AB478(void* session, const char* name) __asm__("func_002633C8");
+extern "C" int func_00263128(void* session, const char* name);
+extern "C" int f_262A38(void* self, const char* name) __asm__("func_00262A38");
+extern "C" int f_262360_AB478(void* session, const char* name) __asm__("func_00262360");
+extern "C" int func_002623B0(void* self, const char* name);
+extern "C" void* cBXString_cBXString2(void* self, const char* str);
+extern "C" void* cBXString_operatorE(void* self, void* other);
+extern "C" void cBXString__cBXString(void* self, int flags);
+void func_001C57C0(void* self, int a1, int a2);
+extern "C" void f_1C5860_AB478(void* self, int a1) __asm__("func_001C5860");
+extern "C" void f_1C5838_AB478(void* self, int a1, char* str, int a3) __asm__("func_001C5838");
+extern "C" void func_001A9BC0(void* self, void* popup);
+extern "C" void func_002C26D0_1AB478(void* str, int fmt, ...) __asm__("func_002C26D0");
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern void* D_004A28A8;
+extern char D_00462938[];
+extern char D_00462958[];
+extern char D_00462988[];
+extern char D_00462970[];
+extern char D_004629E8[];
+extern char D_00462A08[];
+extern char D_004629A0[];
+extern char D_004629C8[];
+extern char D_00462A58[];
+extern char D_00462A78[];
+extern char D_00462A20[];
+extern char D_00462A40[];
+extern char D_00462A90[];
+
+struct sBXString1AB478 {
+    char* str;
+    sBXString1AB478() {}
+    sBXString1AB478(const sBXString1AB478& o);
+};
+
+struct sVEntry_001AB478 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+static inline int Loc1AB478(char* name)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry_001AB478* vt = *(sVEntry_001AB478**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
+}
+static inline void* GetSession_1AB478()
+{
+    if (D_004A3328 == 0) {
+        func_00260F80();
+    }
+    if (func_00261460(D_004A3328) == 0) {
+        func_002613C8(D_004A3328);
+    }
+    if (D_004A3328 == 0) {
+        func_0025B800(D_004A3028);
+    }
+    return D_004A3328;
+}
+
+extern "C" void f_AB478(char* self, char* pop, char* name, int flag, int val) __asm__("func_001AB478");
+extern "C" void f_AB478(char* self, char* pop, char* name, int flag, int val)
+{
+    if (pop == 0) {
+        return;
+    }
+    int a = f_263490_AB478(GetSession_1AB478(), name);
+    int b = f_2633C8_AB478(GetSession_1AB478(), name);
+    int k = 0;
+    char* p = pop + 0xBC;
+    {
+        char* g = (char*)D_004A3028;
+        sBXString1AB478 s;
+        cBXString_cBXString2(&s, name);
+        cBXString_operatorE(g + 0x98, &s);
+        cBXString__cBXString(&s, 2);
+    }
+    *(int*)(pop + 0xC8) = 2;
+    *(int*)(pop + 0x14C) = 3;
+    *(char**)(pop + 0xCC) = name;
+    if (flag != 0) {
+        *(int*)(pop + 0xBC) = 5;
+        *(int*)(pop + 0x150) = 0x80B;
+        f_1C5860_AB478(p, 0);
+        if (func_00263128(GetSession_1AB478(), name) != 0) {
+            func_001C57C0(p, 0, GetHashValue32(D_00462938));
+        } else {
+            func_001C57C0(p, 0, GetHashValue32(D_00462958));
+        }
+        k = 1;
+    } else if (b != 0 && (a != 0 || func_00263128(GetSession_1AB478(), name) != 0)) {
+        *(int*)p = 4;
+        f_1C5860_AB478(p, 0);
+        if (func_00263128(GetSession_1AB478(), name) != 0) {
+            func_001C57C0(p, 0, GetHashValue32(D_00462938));
+        } else {
+            func_001C57C0(p, 0, GetHashValue32(D_00462958));
+        }
+        k = 1;
+        *(int*)(p + 0x94) = 0x80B;
+    } else {
+        *(int*)p = 3;
+        *(int*)(p + 0x94) = 0x80C;
+    }
+    if (f_262A38(GetSession_1AB478(), name) != 0) {
+        f_1C5860_AB478(p, k);
+        func_001C57C0(p, k++, GetHashValue32(D_00462970));
+    } else {
+        f_1C5860_AB478(p, k);
+        func_001C57C0(p, k++, GetHashValue32(D_00462988));
+    }
+    if (f_262360_AB478(GetSession_1AB478(), name) != 0) {
+        func_002C26D0_1AB478(self + 0x49C, Loc1AB478(D_004629A0), name);
+        f_1C5838_AB478(p, k, self + 0x49C, 0);
+        func_001C57C0(p, k, GetHashValue32(D_004629C8));
+        k++;
+    } else {
+        func_002C26D0_1AB478(self + 0x49C, Loc1AB478(D_004629E8), name);
+        f_1C5838_AB478(p, k, self + 0x49C, 0);
+        func_001C57C0(p, k, GetHashValue32(D_00462A08));
+        k++;
+    }
+    if (func_002623B0(GetSession_1AB478(), name) != 0) {
+        func_002C26D0_1AB478(self + 0x59C, Loc1AB478(D_00462A20), name);
+        f_1C5838_AB478(p, k, self + 0x59C, 0);
+        func_001C57C0(p, k, GetHashValue32(D_00462A40));
+        k++;
+    } else {
+        func_002C26D0_1AB478(self + 0x59C, Loc1AB478(D_00462A58), name);
+        f_1C5838_AB478(p, k, self + 0x59C, 0);
+        func_001C57C0(p, k, GetHashValue32(D_00462A78));
+        k++;
+    }
+    if (flag != 0) {
+        f_1C5860_AB478(p, k);
+        func_001C57C0(p, k, GetHashValue32(D_00462A90));
+    }
+    *(int*)(p + 0xAC) = val;
+    *(int*)(p + 0xB8) = 1;
+    func_001A9BC0(self, pop);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001ABB30);
