@@ -1394,7 +1394,89 @@ extern "C" void func_0019ACA0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AD18);
+#ifdef SKIP_ASM
+extern "C" int func_0019B518(void* self);
+extern "C" int func_0019B598(void* self);
+extern "C" void func_0019B7E0(void* self, int idx);
+extern "C" void func_0019BA60(void* self, int idx);
+extern "C" int func_003A0C28(void* self);
+extern "C" void func_003A0E90(void* self, int str);
+
+struct sVE_AD18 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+struct sW_AD18 {
+    char pad_0x0[0x8];
+    sVE_AD18* vt;                   // 0x8
+    char pad_0xC[0x8];
+    int flags;                      // 0x14
+};
+
+struct sEquip_AD18 {
+    char pad_0x0[0x5C];
+    int f5C;                        // 0x5C
+    char pad_0x60[0x2C];
+    sW_AD18* w[12];                 // 0x8C
+    char pad_0xBC[0xC];
+    int mode;                       // 0xC8
+};
+
+static inline int is_AD18(int m, int v)
+{
+    return m == v;
+}
+
+static inline void vcall_AD18(sW_AD18* o, int slot, int arg)
+{
+    sVE_AD18* vt = o->vt;
+    vt[slot].fn((char*)o + vt[slot].delta, arg);
+}
+
+static inline void move_AD18(sW_AD18** a, sW_AD18** b)
+{
+    vcall_AD18(*a, 11, (int)*b + 0x1C);
+    func_003A0E90(*a, func_003A0C28(*b));
+    vcall_AD18(a[6], 9, (b[6]->flags >> 6) & 1);
+}
+
+// Scrolls the equipment widgets by n slots and refills the slots that became empty.
+extern "C" void func_0019AD18(sEquip_AD18* self, int n)
+{
+    if (self->f5C == 0)
+        return;
+    if ((unsigned)(n + 6) >= 13) {
+        if (is_AD18(self->mode, 1))
+            func_0019B598(self);
+        else
+            func_0019B518(self);
+    } else if (n < 0) {
+        for (int i = 5; i >= -n; i--)
+            move_AD18(&self->w[i], &self->w[i + n]);
+        if (is_AD18(self->mode, 1)) {
+            for (int i = 0; i < -n; i++)
+                func_0019BA60(self, i);
+        } else {
+            for (int i = 0; i < -n; i++)
+                func_0019B7E0(self, i);
+        }
+    } else if (n > 0) {
+        for (int i = n; i < 6; i++)
+            move_AD18(&self->w[i - n], &self->w[i]);
+        if (is_AD18(self->mode, 1)) {
+            for (int i = 6 - n; i < 6; i++)
+                func_0019BA60(self, i);
+        } else {
+            for (int i = 6 - n; i < 6; i++)
+                func_0019B7E0(self, i);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AFD0);
