@@ -2338,7 +2338,109 @@ extern "C" void func_0022A4A8(sWorld_22A4A8* self, sItem_22A4A8* items, int n)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_0022A5A0);
+#ifdef SKIP_ASM
+struct sVisNode_A5A0 {
+    sVisNode_A5A0* next;    // 0x00
+    int pad_0x4;
+    unsigned int flags;     // 0x08
+    char pad_0xC[0x44];
+    int sphere[4];          // 0x50
+    char pad_0x60[0x1D];
+    unsigned char slot;     // 0x7D
+    short path;             // 0x7E
+};
+
+struct sVisSrc_A5A0 {
+    char pad_0x0[0x20];
+    sVisNode_A5A0* head;    // 0x20
+};
+
+struct sVisList_A5A0 {
+    sVisSrc_A5A0* src;
+    int vuFrustum;
+};
+
+struct sVisSlot_A5A0 {
+    int f0;
+    int type;
+};
+
+struct sVisCam_A5A0 {
+    char pad_0x0[0x20];
+    sVisSlot_A5A0 slots[(0x3F0 - 0x20) / 8];  // 0x20
+    struct {
+        int kind;
+        char pad[0x14];
+    } paths[1];                     // 0x3F0
+};
+
+struct sVisOwner_A5A0 {
+    char pad_0x0[0x90];
+    sVisCam_A5A0** cam;             // 0x90
+    char pad_0x94[0x209C - 0x94];
+    int count;                      // 0x209C
+    sVisNode_A5A0* nodes[1];        // 0x20A0
+};
+
+// PORT: PS2-only VU0 microprogram call (lqc2/ctc2/vcallms/cfc2); the PC port needs a C
+// version of the microprogram at 0xEF0 (sphere vs frustum test; 2 = outside).
+static inline int visSphereTest_A5A0(int* sphere, int frustum)
+{
+    int r;
+    __asm__ __volatile__(
+        "lqc2      $vf22, 0x0(%1)\n"
+        "ctc2.ni   %2, $vi14\n"
+        "vcallms   0xEF0\n"
+        "cfc2.i    %0, $vi1\n"
+        : "=&r"(r)
+        : "r"(sphere), "r"(frustum));
+    return r;
+}
+
+static inline bool IsT6_A5A0(sVisCam_A5A0* c, int i)
+{
+    return c->slots[i].type == 6;
+}
+
+// Path-bound nodes are usable when unassigned (slot 0xFF) or when their slot is a type-6 camera slot on a kind-3 path.
+static inline int visOnPath_A5A0(sVisCam_A5A0* cam, sVisNode_A5A0* n)
+{
+    if (n->slot == 0xFF)
+        return 1;
+    if (IsT6_A5A0(cam, n->slot))
+        return cam->paths[n->path].kind == 3;
+    return 0;
+}
+
+static inline int visUsable_A5A0(sVisOwner_A5A0* self, sVisNode_A5A0* n)
+{
+    if ((n->flags & 3) != 3)
+        return 0;
+    return visOnPath_A5A0(*self->cam, n);
+}
+
+extern "C" void func_0022A5A0(void* self_, void* list_, int count)
+{
+    sVisOwner_A5A0* self = (sVisOwner_A5A0*)self_;
+    sVisList_A5A0* list = (sVisList_A5A0*)list_;
+    for (; count > 0; count--, list++) {
+        sVisNode_A5A0* n = list->src->head;
+        while (n != 0) {
+
+                int frustum = list->vuFrustum;
+                if (visUsable_A5A0(self, n)) {
+                    if (frustum == 0 || visSphereTest_A5A0(n->sphere, frustum) != 2) {
+                        self->nodes[self->count++] = n;
+                    }
+                }
+                n = n->next;
+
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxapp", func_0022A698);
