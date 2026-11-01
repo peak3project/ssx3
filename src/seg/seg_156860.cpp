@@ -542,7 +542,35 @@ extern "C" void func_00256258(char *self, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_002562D0);
+#ifdef SKIP_ASM
+struct sKey_62D0 { int a; int b; };
+extern sKey_62D0 D_004A2ED8;
+extern "C" void func_003E6448_62D0(void *, int, int) __asm__("func_003E6448");
+extern "C" char *func_003F3F78();
+extern "C" void func_003FD0D8(void *);
+extern "C" char *strcpy(char *, const char *);
+
+extern "C" void func_002562D0(int *self)
+{
+    self[7] = 0;
+    func_003E6448_62D0(self + 9, 0, 0xA0);
+    self[0x1B] = self[3];
+    self[0x1C] = self[4];
+    self[0x24] = 0;
+    self[0x23] = 0;
+    *(sKey_62D0 *)(self + 0x1D) = D_004A2ED8;
+    self[0x21] = 8;
+    strcpy((char *)(self + 0x26), func_003F3F78());
+    strcpy((char *)(self + 0x2A), "SLUS_20772");
+    self[0x2E] = 0;
+    self[0x2F] = self[8];
+    self[0x30] = 1;
+    self[0] = 4;
+    func_003FD0D8(self + 9);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", func_002563A8);
