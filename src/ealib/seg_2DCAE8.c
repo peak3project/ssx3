@@ -4686,13 +4686,13 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3968);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0051ED80_3968[] __asm__("D_0051ED80");
+extern int D_0051ED80;
 
 int func_003E3968(unsigned int *a, unsigned int *b) {
     long d = (long)*a - (long)*b;
     if (d < 0) return -1;
     if (d > 0) return 1;
-    D_0051ED80_3968[0]++;
+    D_0051ED80++;
     return 0;
 }
 #endif
@@ -4705,7 +4705,7 @@ extern void func_00418EF8_39A8(char *, int, int, void *) __asm__("func_00418EF8"
 extern void func_003E3968_39A8(void) __asm__("func_003E3968");
 extern char *strcpy_39A8(char *, char *) __asm__("strcpy");
 extern int D_00450C58_39A8[] __asm__("D_00450C58");
-extern int D_0051ED80_39A8[] __asm__("D_0051ED80");
+extern int D_0051ED80;
 
 int func_003E39A8(char *src, char *dst, int n, int seed) {
     int done = 0;
@@ -4726,9 +4726,9 @@ int func_003E39A8(char *src, char *dst, int n, int seed) {
                 d += D_00450C58_39A8[1] + 0xC;
             } while (i != 0);
         }
-        D_0051ED80_39A8[0] = 0;
+        D_0051ED80 = 0;
         func_00418EF8_39A8(dst, n, D_00450C58_39A8[1] + 0xC, (void *)func_003E3968_39A8);
-        if (D_0051ED80_39A8[0] != 0) {
+        if (D_0051ED80 != 0) {
             seed = seed * 0x65 + 7;
         } else {
             done = 1;
