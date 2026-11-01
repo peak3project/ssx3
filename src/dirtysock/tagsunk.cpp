@@ -3665,6 +3665,15 @@ static inline sMsgListIterF628 sMsgListF628_insert(sMsgListIterF628 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_F628(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListF628_insert(*(sMsgListNodeF628**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025F628(void* selfp, int notify, int flag)
 {
     char* self = (char*)selfp;
@@ -3679,12 +3688,7 @@ extern "C" void func_0025F628(void* selfp, int notify, int flag)
             func_0025F740(self, 0);
         }
         if (notify) {
-            int type = 0xEE;
-            int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-            m[0] = type;
-            *(void***)((char*)m + 0x4) = D_004812B0;
-            void* mp = m;
-            sMsgListF628_insert(*(sMsgListNodeF628**)(self + 0xF0), mp);
+            postMsg_F628(self, 0xEE);
         }
     }
 }
