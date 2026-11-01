@@ -18154,14 +18154,13 @@ extern char D_00461618[];
 extern "C" int func_001BEC78(void* self)
 {
     if (strlen(*(const char**)((char*)self + 0x6DC)) == 0) {
-        int three = 3;
         void* p = func_001A9C50(self);
         char* sub = (char*)p + 0xBC;
         *(int*)((char*)p + 0xBC) = 1;
         *(int*)((char*)p + 0xC4) = GetHashValue32(D_00464FC0);
-        *(int*)((char*)p + 0xC0) = three;
+        *(int*)((char*)p + 0xC0) = 3;
         func_001C57C0(sub, 0, GetHashValue32(D_00461618));
-        *(int*)((char*)p + 0x14C) = three;
+        *(int*)((char*)p + 0x14C) = 3;
         *(int*)((char*)p + 0x150) = 0x847;
         func_001A9BC0(self, p);
         return 0;
