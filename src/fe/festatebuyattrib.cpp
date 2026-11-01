@@ -1330,8 +1330,8 @@ extern "C" int func_001F6EE0(void* self, int mask, int n, int count)
     int c = -1;
     int i;
     for (i = 0; i < count; i++) {
-        int one = 1;
-        if (mask & (one << i)) {
+        int bit = 1 << i;
+        if (mask & bit) {
             c++;
             if (c == n)
                 return i;
