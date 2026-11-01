@@ -2458,16 +2458,15 @@ extern "C" void func_002E39D8(sWkCol39D8* self)
     char* o = self->rider + 0x6C0;
     sWkVt39D8* vt = *(sWkVt39D8**)o;
     if (vt[8].fn(o + vt[8].delta) == 0) return;
-    float half = 0.5f;
     float p = self->phase + D_004A55AC * 0.01666666753590107f;
-    float t = p * 0.15915493667125702f + half;
+    float t = p * 0.15915493667125702f + 0.5f;
     float f;
     // PORT: FPU-only float->int->float round trip (floor helper); no C cast reproduces it.
     __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(f) : "f"(t));
     if (t < f) f -= 1.0f;
     float q = p - f * 6.2831854820251465f;
     self->phase = q;
-    float s = func_0031C040(q) * half + half;
+    float s = func_0031C040(q) * 0.5f + 0.5f;
     float u = 1.0f - s;
     self->out[0] = s * self->a[0] + u * self->b[0];
     self->out[1] = s * self->a[1] + u * self->b[1];
