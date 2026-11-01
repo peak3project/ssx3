@@ -851,7 +851,34 @@ unsigned short func_003FED60(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FED88);
+#ifdef SKIP_ASM
+typedef int Q3ED88_i __attribute__((mode(TI)));
+typedef union { Q3ED88_i q; int w[4]; short h[8]; } Q3ED88;
+typedef struct { Q3ED88 a[32]; int b[7]; short c[16]; } S3ED88;
+extern int e3ED88_a(void) __asm__("func_003FEB08");
+extern Q3ED88 e3ED88_b(unsigned short) __asm__("func_003FEB78");
+int func_003FED88_impl(S3ED88 *s) __asm__("func_003FED88");
+int func_003FED88_impl(S3ED88 *s) {
+    unsigned i;
+    if (e3ED88_a() != 0)
+        return 0;
+    for (i = 0; i < 0x20; i++) {
+        s->a[i].q = e3ED88_b(0x400 + i).q;
+    }
+    s->b[0] = e3ED88_b(0x430).w[0];
+    s->b[1] = e3ED88_b(0x431).w[0];
+    s->b[2] = e3ED88_b(0x432).w[0];
+    s->b[3] = e3ED88_b(0x434).w[0];
+    s->b[4] = e3ED88_b(0x435).w[0];
+    s->b[5] = e3ED88_b(0x436).w[0];
+    s->b[6] = e3ED88_b(0x437).w[0];
+    for (i = 0; i < 0x10; i++)
+        s->c[i] = e3ED88_b(0x420 + i).h[0];
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FEF18);
 
