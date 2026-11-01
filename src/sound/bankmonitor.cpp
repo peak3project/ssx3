@@ -348,30 +348,26 @@ INCLUDE_ASM("sound/bankmonitor", func_002AD410);
 #ifdef SKIP_ASM
 extern "C" void func_002ABB38(void*);
 
-struct sBmKeyD410 {
-    short a;
-    short id;
-    union {
-        int v;
-        short s;
-    };
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sBmCallbackD410)(cController*, cBankMonitorInstance*, float);
+struct sBmVoiceD410 {
+    char pad00[0xA8];
+    sBmCallbackD410 callback;   // 0xA8
+    char padB0[0xC0 - 0xB0];
 };
 
-static inline int func_002AD410_match(char* e, sBmKeyD410 k)
+static inline int func_002AD410_match(sBmVoiceD410* v, sBmCallbackD410 k)
 {
-    int r = 0;
-    if (k.id == *(short*)(e + 0xAA)) {
-        if ((k.id != -1 && k.s == *(short*)(e + 0xAC)) || k.v == *(int*)(e + 0xAC)) {
-            r = 1;
-        }
-    }
-    return r;
+    return k == v->callback;
 }
 
-extern "C" void func_002AD410(void* self, sBmKeyD410 key)
+// Stops every voice playing with the given callback.
+extern "C" void func_002AD410(void* self, sBmCallbackD410 key)
 {
     for (int i = 0; i < 64; i++) {
-        if (func_002AD410_match((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0, key)) {
+        if (func_002AD410_match((sBmVoiceD410*)((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0), key)) {
             func_002ABB38((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0);
         }
     }
