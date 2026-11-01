@@ -1061,6 +1061,11 @@ INCLUDE_ASM("world/worldview", func_003AACE0);
 extern "C" float func_0040D758(float);
 extern "C" float func_0040DA10(float);
 
+static inline float pow_ACE0(float x, float y)
+{
+    return func_0040D758(func_0040DA10(x) * y);
+}
+
 extern "C" float func_003AACE0(void* self, void* p, float arg)
 {
     float prod = *(float*)((char*)p + 0x14) * *(float*)((char*)p + 0x18);
@@ -1076,9 +1081,7 @@ extern "C" float func_003AACE0(void* self, void* p, float arg)
     }
     case 3:
     {
-        float third = 0.33333334f;
-        float l = func_0040DA10(v);
-        return func_0040D758(l * third) * 100.0f;
+        return pow_ACE0(v, 0.33333334f) * 100.0f;
     }
     default:
         return 1e7f;
