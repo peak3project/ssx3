@@ -2776,7 +2776,150 @@ extern "C" int func_001231A8(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00123210);
+#ifdef SKIP_ASM
+extern "C" void func_00270970(int a, int b);
+extern "C" void func_00125038(cRider* self);
+extern "C" void func_00111890(void* self);
+extern "C" void func_002F1A00(void* a);
+extern "C" void func_00119368(void* metrix, int flag);
+void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
+void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
+
+struct sV_3210
+{
+    float x, y, z, w;
+    sV_3210() {}
+    sV_3210(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+void func_0011D660_3210(void* self, sV_3210* a, sV_3210* b, int n, float t) __asm__("func_0011D660");
+extern sV_3210 D_004FF140_3210 __asm__("D_004FF140");
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector).
+static inline sV_3210 MatMulV_3210(const char* m, const sV_3210& v)
+{
+    sV_3210 r;
+    __asm__(
+        "lqc2       $vf8, %2\n"
+        "lqc2       $vf4, 0x0(%1)\n"
+        "lqc2       $vf5, 0x10(%1)\n"
+        "lqc2       $vf6, 0x20(%1)\n"
+        "lqc2       $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2       $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "o"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sV_3210 Scale_3210(const sV_3210& v, float s)
+{
+    sV_3210 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq_3210(sV_3210& a, const sV_3210& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_3210(const sV_3210& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+struct sVEntryA_3210 { short delta; short index; int (*fn)(void*); };
+struct sVEntryB_3210 { short delta; short index; void (*fn)(void*, int); };
+
+// Inline wrapper: the vector addresses reach func_0011D660 through inline parameters,
+// so they are not CSE'd with the if-chain's temporaries (the target recomputes sp+0x20).
+static inline void SetPath_3210(void* self, sV_3210* p, sV_3210* d)
+{
+    func_0011D660_3210(self, p, d, 5, 0.0f);
+}
+
+extern "C" void func_00123210_v(cRider* self, char* m) __asm__("func_00123210");
+
+extern "C" void func_00123210_v(cRider* self, char* m)
+{
+    func_00270970(*(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28), self->mAIIndex);
+    sV_3210 pos = *(sV_3210*)(m + 0x30);
+    sV_3210 off(0.0f, 0.0f, 0.0f, 0.0f);
+    int i = self->mAIIndex;
+    if (i == 0) {
+        off = sV_3210(2.0f, 0.0f, 0.0f, 0.0f);
+    } else if (i == 1) {
+        off = sV_3210(1.0f, 0.0f, 0.0f, 0.0f);
+    } else if (i == 2) {
+        off = sV_3210(2.0f, -2.0f, 0.0f, 0.0f);
+    } else if (i == 3) {
+        off = sV_3210(2.0f, 2.0f, 0.0f, 0.0f);
+    } else if (i == 4) {
+        off = sV_3210(1.0f, -2.0f, 0.0f, 0.0f);
+    } else if (i == 5) {
+        off = sV_3210(2.0f, 1.0f, 0.0f, 0.0f);
+    }
+    off = Scale_3210(MatMulV_3210(m, off), 100.0f);
+    AddEq_3210(pos, off);
+    sV_3210 dir = MatMulV_3210(m, D_004FF140_3210);
+    func_00119368(self->mMetrix, 1);
+    func_0011FE78_impl(self, 0);
+    func_0011FEC8_impl(self, 0);
+    func_00125038(self);
+    char* sub = (char*)&self->mVtbl;
+    sVEntryA_3210* vtA = *(sVEntryA_3210**)sub;
+    char* obj = *(char**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84) + 0x4) + 0xA0);
+    sVEntryB_3210* vtB = *(sVEntryB_3210**)(obj + 0x14);
+    char* objB = obj + vtB[3].delta;
+    vtB[3].fn(objB, vtA[kRiderVt_getAIIndex].fn(sub + vtA[kRiderVt_getAIIndex].delta));
+    float len = Length_3210(*(sV_3210*)&self->mVelocity);
+    SetPath_3210(self, &pos, &dir);
+    *(sV_3210*)&self->mVelocity = Scale_3210(sV_3210(*(sV_3210*)&self->mMatrix.row[1]), len);
+    func_00111890(self->mRiderHandler);
+    func_002F1A00(self->unk_88C);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_001234D0);
