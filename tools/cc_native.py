@@ -70,7 +70,9 @@ def expand_includes(text, dirs, depth=0):
 #    previous instruction; branch-likely slots are never filled (they are annulled when not taken);
 #  * the moved instruction is the one directly before the branch; it must be a single real instruction (no macro:
 #    li/dli/li.s/la/div with 3 operands/... expand inside the assembler and act like a `.set noreorder` block), not a
-#    branch, nop, sync, break, syscall, trap, cache, eret, ei/di or COP0 move;
+#    branch, nop, sync, break, syscall, trap, cache, eret, ei/di or COP0 move; the exception is a GPR store to an
+#    absolute address (`sw $6,ADDR` = `lui $1,%hi(ADDR); sw $6,%lo(ADDR)($1)`), whose second half is moved and the
+#    lui stays before the branch (retail func_00407820: `li $5,1; lui $1; jal; sw $6,%lo($1)`);
 #  * neither the previous instruction nor the one before it may have been emitted in `.set noreorder` mode (the
 #    assembler clears its history at `.set reorder`; the first instruction after a noreorder block is never moved);
 #  * no hazard: the branch does not read a GPR the moved instruction writes; a linking branch (jal/bal/jalr/bXzal)
@@ -133,6 +135,24 @@ def insn_regs(mn, ops):
     return dest - {0}, reads
 
 
+ABS_STORES = {"sb", "sh", "sw", "sd"}
+
+
+def abs_mem(mn, ops):
+    """A GPR store to an absolute address or symbol (`sw $6,268443664`, `sw $2,D_x+4`): a lui/sw macro."""
+    return mn in ABS_STORES and len(ops) == 2 and "(" not in ops[1] and not ops[1].startswith("$")
+
+
+def split_abs(addr):
+    """(%hi part, %lo part) operands for the lui/store pair of an absolute-address store."""
+    try:
+        v = int(addr, 0) & 0xFFFFFFFF
+    except ValueError:
+        return "%hi(" + addr + ")", "%lo(" + addr + ")"
+    lo = v & 0xFFFF
+    return str(((v + 0x8000) >> 16) & 0xFFFF), str(lo - 0x10000 if lo & 0x8000 else lo)
+
+
 def li_is_macro(ops):
     """`li rd,imm` is one instruction when imm fits addiu/ori or is a lui constant; otherwise lui+ori."""
     try:
@@ -182,6 +202,11 @@ def fill_delay_slots(text, log=None):
         ops = [o.strip() for o in parts[1].split(",")] if len(parts) > 1 else []
         macro = mn in MACROS or (mn == "li" and li_is_macro(ops)) or \
             (mn in ("div", "divu", "ddiv", "ddivu") and len(ops) == 3)
+        if not noreorder and abs_mem(mn, ops):
+            # `sw $6,ADDR` expands to `lui $1,%hi(ADDR); sw $6,%lo(ADDR)($1)`; its second half can be moved
+            pp_flag, prev_flag = 0, 0
+            prev, pending = (i, mn, ops), False
+            continue
         if noreorder or macro:
             pp_flag, prev_flag = prev_flag, 1
             prev, pending = None if macro else (i, mn, ops), False
@@ -196,6 +221,8 @@ def fill_delay_slots(text, log=None):
                 likely = mn in LIKELY_BRANCHES
                 if movable and not likely:
                     pw, pr = insn_regs(pmn, pops)
+                    if abs_mem(pmn, pops):
+                        pr = pr | {1}
                     if mn in ("jr", "jalr"):
                         breads = set(gprs(ops[-1]))
                     elif mn in COND_BRANCHES:
@@ -225,6 +252,14 @@ def fill_delay_slots(text, log=None):
         prev, pending = (i, mn, ops), False
     for p, b in swaps:
         label, insn = re.match(r"^(\s*(?:[\w$.]+:)?)\s*(.*)$", lines[p]).groups()
+        parts = insn.split("#", 1)[0].split(None, 1)
+        ops = [o.strip() for o in parts[1].split(",")] if len(parts) > 1 else []
+        if abs_mem(parts[0], ops):
+            hi, lo = split_abs(ops[1])
+            lines[p] = (label + "\n\t.set\tnoreorder\n\t.set\tnoat\n\tlui\t$1," + hi + "\n" + lines[b] + "\n\t" +
+                        parts[0] + "\t" + ops[0] + "," + lo + "($1)\n\t.set\tat\n\t.set\treorder")
+            lines[b] = None
+            continue
         lines[p] = label + "\n\t.set\tnoreorder\n" + lines[b] + "\n\t" + insn + "\n\t.set\treorder"
         lines[b] = None
     return "\n".join(l for l in lines if l is not None)
