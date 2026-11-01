@@ -925,7 +925,7 @@ extern "C" void func_0025B688(void)
 }
 #endif
 
-//100%
+//100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B6D8);
 #ifdef SKIP_ASM
 extern char D_00480488[];
