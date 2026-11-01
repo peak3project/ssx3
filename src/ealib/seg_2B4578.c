@@ -3517,7 +3517,46 @@ int func_003BA888(int x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA938);
+#ifdef SKIP_ASM
+struct E_A938 {
+    char pad0[0x64];
+    signed char c64;
+    char pad65[3];
+    unsigned char c68;
+    char pad69[0xB];
+    signed char *p74;
+    char pad78[4];
+    signed char *p7C;
+    short s80;
+    short s82;
+    short s84;
+    unsigned short u86;
+    unsigned short u88;
+    short s8A;
+};
+extern struct E_A938 *D_0050AAD8_A938 __asm__("D_0050AAD8");
+extern short f_A888_A938(int) __asm__("func_003BA888");
+
+void func_003BA938(int idx) {
+    struct E_A938 *e = (struct E_A938 *)((char *)D_0050AAD8_A938 + idx * 0x8C);
+    int v;
+    if (e->u86 == 0) {
+        int a = e->s84;
+        if (e->s82 != 0) {
+            int c = e->p74 != 0 ? e->p74[e->c64] : e->c64;
+            a += ((c - 0x40) * e->s82) >> 6;
+        }
+        if (e->p7C != 0) {
+            a += ((e->p7C[e->c68] - 0x40) * e->s80) >> 6;
+        }
+        e->u86 = f_A888_A938(a);
+    }
+    v = e->u86;
+    e->s8A = (v * e->u88) >> 12;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BAA00);
