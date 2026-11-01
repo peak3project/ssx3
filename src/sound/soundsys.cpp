@@ -3266,7 +3266,127 @@ extern "C" void func_002974A0(void* self, char* evt, int n)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00297950);
+#ifdef SKIP_ASM
+extern "C" void* func_00287968(void* self, int a1, int a2);
+extern "C" int func_002906B8(void* self);
+extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
+extern "C" void func_002A9988(void* self, float a, float b);
+extern "C" void* func_0028B1E8();
+extern "C" int* func_00144BC0(void* p);
+extern "C" void* cBE_getBE(void);
+extern "C" void* cBE_getInterface__Fv(void* be, int kind);
+
+struct sSs7950Vec4 {
+    float x, y, z, w;
+    sSs7950Vec4() {}
+} __attribute__((aligned(16)));
+
+struct sSs7950Vt { short delta; short index; char* (*fn)(void*, ...); };
+
+struct sSs7950Sys {
+    sSnd0018Mgr* mgr;
+    int* a4;
+    int* a8;
+    char padC[0x118 - 0xC];
+    sSnd0018Mgr** p118;      // 0x118
+};
+
+static inline int snd7950Commit(void* vself, void* tgt, float f, int pri)
+{
+    sSs7950Sys* self = (sSs7950Sys*)vself;
+    (*self->p118)->sub.tgt[(*self->p118)->sub.cur] = tgt;
+    func_002A9988(&(*self->p118)->sub, f, -1.0f);
+    (*self->p118)->sub.p78[(*self->p118)->sub.cur] = pri;
+    return func_002906B8(self);
+}
+
+extern "C" void func_00297950(sSs7950Sys* self, char* obj, int type, int id)
+{
+    if (type == 0)
+        return;
+    if (type == 0x66) {
+        if (*func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0)) == 0)
+            return;
+    }
+    if (*(int*)((char*)self + 0x62A8) >= 0)
+        return;
+    if (*(int*)(obj + 0xC) == 0)
+        return;
+    char* sl;
+    int i;
+    for (i = 0; i < 30; i++) {
+        if (*(int*)((char*)self + i * 0x30 + 0x5A00) == 1 && *(char**)((char*)self + i * 0x30 + 0x5A04) == obj &&
+            *(int*)((char*)self + i * 0x30 + 0x5A20) == type) {
+            func_002AD5F0((char*)*(char**)self->p118 + 0x1D8, *(int*)((char*)self + i * 0x30 + 0x5A24), 1, 0.0f);
+            *(int*)((char*)self + i * 0x30 + 0x5A00) = 0;
+            break;
+        }
+    }
+    for (i = 0; i < 30; i++) {
+        if (*(int*)((char*)self + i * 0x30 + 0x5A00) == 0) {
+            *(int*)((char*)self + i * 0x30 + 0x5A00) = 1;
+            break;
+        }
+    }
+    if (i == 30)
+        return;
+    sl = (char*)self + i * 0x30;
+    *(char**)(sl + 0x5A04) = obj;
+    if (id == -1) {
+        char* inner = *(char**)(obj + 0xC);
+        sSs7950Vt* vt = *(sSs7950Vt**)(inner + 0xC);
+        sSs7950Vec4 p;
+        p = *(sSs7950Vec4*)(vt[24].fn(inner + vt[24].delta) + 0x30);
+        *(sSs7950Vec4*)(sl + 0x5A10) = p;
+    } else {
+        char* inner = *(char**)(obj + 0xC);
+        sSs7950Vt* vt = *(sSs7950Vt**)(inner + 0xC);
+        if (vt[26].fn(inner + vt[26].delta) != 0) {
+            char* o = *(char**)(obj + 0xC);
+            sSs7950Vt* vt2 = *(sSs7950Vt**)(o + 0xC);
+            sSs7950Vec4 p;
+            p = *(sSs7950Vec4*)(vt2[29].fn(o + vt2[29].delta, id) + 0x30);
+            *(sSs7950Vec4*)(sl + 0x5A10) = p;
+        } else {
+            sSs7950Vec4 p;
+            p = *(sSs7950Vec4*)(obj + 0x40);
+            *(sSs7950Vec4*)(sl + 0x5A10) = p;
+        }
+    }
+    *(int*)((char*)self + i * 0x30 + 0x5A08) = id;
+    int a;
+    int b;
+    if (type < 100) {
+        a = 2;
+        b = type;
+    } else if (type < 150) {
+        a = 8;
+        b = type - 100;
+    } else if (type < 200) {
+        a = 9;
+        b = type - 150;
+    } else {
+        a = 4;
+        b = type - 200;
+    }
+    float f = 300.0f;
+    int pri = 0x50;
+    *(int*)((char*)self + i * 0x30 + 0x5A20) = type;
+    if (type == 0xC9) {
+        if (*func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)) == 8) {
+            f = 400.0f;
+            pri = 0x32;
+        }
+    }
+    snd0018AddVoice(self, a, b);
+    sSnd0018Mgr** pp = self->p118;
+    int r = (int)func_00287968(self, 5, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+    *(int*)((char*)self + i * 0x30 + 0x5A24) = snd7950Commit(self, (char*)self + i * 0x30 + 0x5A10, f, pri);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00297EB8);
