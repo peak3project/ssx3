@@ -532,7 +532,119 @@ extern "C" void func_0035D288(sRmBody* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035D340);
+#ifdef SKIP_ASM
+struct sRmVec4_D340 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sRmBody_D340 {
+    sRmVec4_D340 pos;       // 0x00
+    sRmVec4_D340 quat;      // 0x10
+    sRmVec4_D340 acc0;      // 0x20
+    sRmVec4_D340 acc1;      // 0x30
+    char pad_0x40[0x40];
+    sRmVec4_D340 vel;       // 0x80
+    sRmVec4_D340 angVel;    // 0x90
+};
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline void ScaleD340(sRmVec4_D340& out, const sRmVec4_D340& v, float s)
+{
+    sRmVec4_D340 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    out = r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEqD340(sRmVec4_D340& a, const sRmVec4_D340& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (quaternion derivative 0.5 * (0, w) * q).
+static inline void QuatDerivD340(sRmVec4_D340& out, const sRmVec4_D340& q, const sRmVec4_D340& w)
+{
+    sRmVec4_D340 r;
+    __asm__(
+        "qmtc2.ni   %3, $vf1\n"
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vsuba.w    ACC, $vf0, $vf0\n"
+        "vmsubx.w   $vf2, $vf0, $vf1x\n"
+        "vmul.xyz   $vf7, $vf4, $vf5\n"
+        "vmulw.xyz  $vf3, $vf5, $vf4w\n"
+        "vopmula.xyz ACC, $vf5, $vf4\n"
+        "vopmsub.xyz $vf6, $vf4, $vf5\n"
+        "vmulax.w   ACC, $vf2, $vf7x\n"
+        "vmadday.w  ACC, $vf2, $vf7y\n"
+        "vmaddz.w   $vf8, $vf2, $vf7z\n"
+        "vmulax.xyz ACC, $vf3, $vf1x\n"
+        "vmaddx.xyz $vf8, $vf6, $vf1x\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(w), "r"(0x3F000000)
+        : "memory");
+    out = r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalise a 4-vector in place).
+static inline void NormalizeD340(sRmVec4_D340& v)
+{
+    __asm__(
+        "lqc2       $vf3, %0\n"
+        "vaddw.x    $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw  $vf4, $vf3, $vf3\n"
+        "vadday.x   ACC, $vf4, $vf4y\n"
+        "vmaddaz.x  ACC, $vf6, $vf4z\n"
+        "vmaddw.x   $vf4, $vf6, $vf4w\n"
+        "vrsqrt     Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2       $vf5, %0\n"
+        : "+m"(v)
+        :
+        : "memory");
+}
+
+extern "C" void func_0035D340(sRmBody_D340* b, const sRmVec4_D340* a, const sRmVec4_D340* c, float dt)
+{
+    sRmVec4_D340 tmp;
+    ScaleD340(tmp, b->vel, dt);
+    AddEqD340(b->pos, tmp);
+    {
+        sRmVec4_D340 d;
+        QuatDerivD340(d, b->quat, b->angVel);
+        ScaleD340(tmp, d, dt);
+    }
+    b->quat.x += tmp.x;
+    b->quat.y += tmp.y;
+    b->quat.z += tmp.z;
+    b->quat.w += tmp.w;
+    NormalizeD340(b->quat);
+    ScaleD340(tmp, *a, dt);
+    AddEqD340(b->acc0, tmp);
+    ScaleD340(tmp, *c, dt);
+    AddEqD340(b->acc1, tmp);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035D4A0);
