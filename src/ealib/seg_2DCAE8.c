@@ -638,13 +638,13 @@ extern int func_003DCD98(int, int, int);
 extern int (*D_00450C10_CBD8[])(char *, int, int) __asm__("D_00450C10");
 extern char D_00495D28_CBD8[] __asm__("D_00495D28");
 extern int D_00519AB0_CBD8[] __asm__("D_00519AB0");
-extern int D_00519AE8_CBD8[] __asm__("D_00519AE8");
+extern int D_00519AE8;
 
 int func_003DCBD8(int arg0, int arg1, int arg2) {
     int r;
     if (D_00519AB0_CBD8[0] == 0) {
         r = D_00450C10_CBD8[1](D_00495D28_CBD8, func_003DCD98(arg0, arg1, arg2), 0x100);
-        D_00519AE8_CBD8[0] = r;
+        D_00519AE8 = r;
         return func_003DCC88(arg0, arg1, arg2, r);
     }
     return 0;
@@ -714,7 +714,7 @@ extern void (*D_00450C10_CDE0[])(int) __asm__("D_00450C10");
 extern void (*D_00450C18_CDE0[])(int) __asm__("D_00450C18");
 extern char D_00519AC4_CDE0[] __asm__("D_00519AC4");
 extern int *D_00519AE4_CDE0[] __asm__("D_00519AE4");
-extern int D_00519AE8_CDE0[] __asm__("D_00519AE8");
+extern int D_00519AE8;
 
 void func_003DCDE0(void) {
     int *n;
@@ -725,9 +725,9 @@ void func_003DCDE0(void) {
     }
     func_003E56E0_CDE0(D_00519AC4_CDE0);
     func_003E6220_CDE0(D_00519AC4_CDE0 - 0x14, 0x38);
-    if (D_00519AE8_CDE0[0] != 0) {
-        D_00450C18_CDE0[0](D_00519AE8_CDE0[0]);
-        D_00519AE8_CDE0[0] = 0;
+    if (D_00519AE8 != 0) {
+        D_00450C18_CDE0[0](D_00519AE8);
+        D_00519AE8 = 0;
     }
 }
 #endif
