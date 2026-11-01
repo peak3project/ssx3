@@ -985,7 +985,143 @@ extern "C" void func_0026FA78(int* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/frameptr", func_0026FB88);
+#ifdef SKIP_ASM
+struct sRep_FB88 {
+    int state;              // 0x0
+    char pad4[0x18];
+    int f1C;                // 0x1C
+    int f20;                // 0x20
+    char pad24[4];
+    int player;             // 0x28
+    char pad2C[0x3A0];
+    int seconds;            // 0x3CC
+    char pad3D0[0xB4];
+    int last;               // 0x484
+    char pad488[0x190];
+    int f618;               // 0x618
+    int f61C;               // 0x61C
+    int f620;               // 0x620
+};
+
+struct sGuiVE_FB88 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sGui_FB88 {
+    sGuiVE_FB88* vt;
+};
+
+extern char D_004A5A58[8];
+extern "C" void func_002305C8(void* a);
+extern "C" int func_0026FB88_impl(sRep_FB88* self, int a1) __asm__("func_0026FB88");
+
+static inline bool isState_FB88(sRep_FB88* self, int s)
+{
+    return self->state == s;
+}
+
+static inline bool isPlaying_FB88(sRep_FB88* self)
+{
+    return self->state != 0 && self->state < 10;
+}
+
+static inline bool atEnd_FB88(sRep_FB88* self)
+{
+    return isPlaying_FB88(self) && self->last == self->seconds;
+}
+
+static inline bool atStart_FB88(sRep_FB88* self)
+{
+    return isPlaying_FB88(self) && self->last == 0;
+}
+
+static inline void notify_FB88(sGui_FB88* gui, int ev)
+{
+    gui->vt[2].fn((char*)gui + gui->vt[2].delta, ev);
+}
+
+extern "C" int func_0026FB88_impl(sRep_FB88* self, int a1)
+{
+    sGui_FB88* gui = (sGui_FB88*)D_004A5A58;
+    sGui_FB88* ui = *(sGui_FB88**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0x48) + 0x14);
+    if (ui != 0) {
+        gui = ui;
+    }
+    if (self->f618 != 0) {
+        return 0;
+    }
+    int st = 0;
+    void* pad = *(void**)(D_004A28A8 + (self->player << 2) + 0xB0);
+    if (self->f61C == 0 && self->f620 == 0) {
+        if (func_00320C48(pad, 0x6A)) {
+            self->f1C = 10;
+            self->f20 = 0;
+            if (isState_FB88(self, 3)) {
+                st = atEnd_FB88(self) ? 0 : 5;
+            } else {
+                st = 7;
+            }
+        } else if (func_00320C48(pad, 0x6B)) {
+            if (self->f1C > 0) {
+                self->f1C--;
+            }
+            self->f20 ^= 1;
+            if (self->f1C <= 0 && self->f20 == 0) {
+                if (isState_FB88(self, 3)) {
+                    st = atEnd_FB88(self) ? 0 : 5;
+                } else {
+                    st = 7;
+                }
+            }
+        } else if (func_00320C48(pad, 0x67)) {
+            if (isState_FB88(self, 3)) {
+                st = atEnd_FB88(self) ? 0 : 6;
+            } else {
+                st = 7;
+            }
+        } else if (func_00320C48(pad, 0x66)) {
+            if (a1 != 0) {
+                func_002305C8(*(void**)(D_004A28A8 + 0x84));
+                self->f618 = 8;
+            } else if (!isState_FB88(self, 3)) {
+                self->f618 = 7;
+            }
+            return 0;
+        } else if (func_00320C48(pad, 0x68)) {
+            if (isState_FB88(self, 3)) {
+                if (!atEnd_FB88(self)) {
+                    notify_FB88(gui, 2);
+                    st = 4;
+                } else {
+                    notify_FB88(gui, 4);
+                }
+            } else {
+                st = 7;
+            }
+        } else if (func_00320C48(pad, 0x69)) {
+            if (isState_FB88(self, 3)) {
+                if (!atStart_FB88(self)) {
+                    notify_FB88(gui, 2);
+                    st = 3;
+                } else {
+                    notify_FB88(gui, 4);
+                }
+            } else {
+                st = 7;
+            }
+        } else if (func_00320C48(pad, 0x6C)) {
+            notify_FB88(gui, 2);
+            func_0026ED98(self);
+        }
+    }
+    self->f618 = st;
+    return st != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/frameptr", func_0026FE50);
