@@ -224,10 +224,9 @@ INCLUDE_ASM("render/graphicsman", func_0036A1B0__FPvT0);
 #ifdef SKIP_ASM
 int func_0036A1B0(void* self, void* a1)
 {
-    int t0 = -1;
     *(int*)a1 = 0;
-    *(int*)((char*)a1 + 0x4) = t0;
-    return t0;
+    *(int*)((char*)a1 + 0x4) = (-1);
+    return (-1);
 }
 #endif
 
