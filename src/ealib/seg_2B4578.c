@@ -15596,11 +15596,11 @@ void func_003D16C8(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D16D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044F43C_16D0[4] __asm__("D_0044F43C");
+extern int D_0044F43C;
 
 int func_003D16D0_16D0(void) __asm__("func_003D16D0");
 int func_003D16D0_16D0(void) {
-    return D_0044F43C_16D0[0];
+    return D_0044F43C;
 }
 #endif
 
@@ -15862,7 +15862,7 @@ INCLUDE_ASM("ealib/seg_2B4578", PATHI_copyevent);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_0044F420_2068[] __asm__("D_0044F420");
-extern int D_0044F43C_2068[] __asm__("D_0044F43C");
+extern int D_0044F43C;
 extern char D_00495B48_2068[] __asm__("D_00495B48");
 extern void func_0041605C_2068(unsigned int, void *, int) __asm__("func_0041605C");
 
@@ -15891,7 +15891,7 @@ unsigned int PATHI_copyevent(void *arg0) {
         func_0041605C_2068(cur, arg0, temp_9);
         return cur;
     }
-    if (D_0044F43C_2068[0] & 0x120) {
+    if (D_0044F43C & 0x120) {
         func_003D1658(D_00495B48_2068, temp_9, temp_6 - cur);
     }
     return 0;
