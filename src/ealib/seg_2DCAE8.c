@@ -2869,7 +2869,130 @@ void func_003E0270(char *self, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E03D0);
+#ifdef SKIP_ASM
+struct Q_03D0 { int f0; int f4; char pad8[0xC - 0x8]; struct Q_03D0 *fC; int f10; char pad14[0x114 - 0x14]; char *f114; int f118; char pad11C[0x120 - 0x11C]; int f120; };
+struct S_03D0 {
+    int f0;
+    char f4[0x2C - 0x4];
+    char *f2C;
+    char *f30;
+    char *f34;
+    volatile int f38;
+    int f3C;
+    int f40;
+    char pad44[0x50 - 0x44];
+    char *f50;
+    char *f54;
+    char *f58;
+    struct Q_03D0 *f5C;
+    struct Q_03D0 *f60;
+    char pad64[0x16C - 0x64];
+    int f16C;
+    int f170;
+    int f174;
+    int f178;
+    int f17C;
+};
+extern void MUTEX_lock(void *);
+extern void MUTEX_unlock_03D0(void *) __asm__("MUTEX_unlock");
+extern int func_003DFC08(unsigned int, unsigned int, unsigned int);
+extern void func_003DFE18_03D0(struct S_03D0 *, struct Q_03D0 *) __asm__("func_003DFE18");
+extern void func_003E6574_03D0(char *, char *, int) __asm__("func_003E6574");
+extern void func_003E0170_03D0(int, int, struct S_03D0 *) __asm__("func_003E0170");
+extern int func_003DD648_03D0(int, int, char *, int, int, struct S_03D0 *) __asm__("func_003DD648");
+extern void func_003DCF70_03D0(int, void (*)(int, int, struct S_03D0 *)) __asm__("func_003DCF70");
+
+void func_003E03D0(struct S_03D0 *self, int arg1) {
+    int *p;
+    char *rd;
+    char *wr;
+    int avail;
+    struct Q_03D0 *cur;
+
+    while (self->f50 != self->f54) {
+        p = (int *)self->f50;
+        if (*p == -1) {
+            self->f50 = self->f30;
+        } else if (*p == -2) {
+            self->f50 = (char *)p + p[1];
+        } else {
+            break;
+        }
+    }
+    MUTEX_lock(self->f4);
+    for (;;) {
+        struct Q_03D0 *n = self->f5C;
+        struct Q_03D0 *q = n->fC;
+        if (q == 0 || q->f4 == 1 || func_003DFC08((unsigned int)self->f50, (unsigned int)self->f58, q->f120 - 1)) {
+            break;
+        }
+        func_003DFE18_03D0(self, n);
+    }
+    MUTEX_unlock_03D0(self->f4);
+    rd = self->f50;
+    wr = self->f58;
+    if (wr < rd) {
+        avail = rd - wr - 0x41;
+    } else {
+        int used;
+        avail = self->f34 - wr - 0x40;
+        if (avail >= self->f17C) {
+            goto fill;
+        }
+        used = wr - self->f54;
+        if (self->f60->f10 == 1) {
+            if (rd - self->f30 < used + 1) {
+                self->f38 = 2;
+                return;
+            }
+        } else if (rd - self->f30 - 0x40 < used + 1) {
+            self->f38 = 2;
+            return;
+        }
+        if ((used & 0x3F) == 0 || self->f60->f10 == 1) {
+            self->f30 = self->f2C;
+        } else {
+            self->f30 = self->f2C - (used % 0x40 - 0x40);
+        }
+        func_003E6574_03D0(self->f30, self->f54, used);
+        p = (int *)self->f54;
+        p[0] = -1;
+        p[1] = 8;
+        self->f54 = self->f30;
+        self->f58 = self->f30 + used;
+        if (*(int *)self->f50 == -1) {
+            self->f50 = self->f30;
+            avail = self->f34 - self->f58 - 0x40;
+        } else {
+            avail = self->f50 - self->f58 - 1;
+        }
+    }
+    if (avail < self->f17C) {
+        self->f38 = 2;
+        return;
+    }
+fill:
+    cur = self->f60;
+    if (cur->f10 == 1) {
+        if (cur->f118 < self->f170 + avail) {
+            self->f178 = cur->f118 - self->f170;
+        } else {
+            self->f178 = avail;
+        }
+        func_003E6574_03D0(self->f58, cur->f114, self->f178);
+        cur->f114 += self->f178;
+        func_003E0170_03D0(0, 0, self);
+    } else {
+        self->f178 = self->f17C;
+        self->f174 = func_003DD648_03D0(self->f16C, self->f170, self->f58, self->f17C, arg1, self);
+        if (self->f174 != 0) {
+            func_003DCF70_03D0(self->f174, func_003E0170_03D0);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E06B0);
