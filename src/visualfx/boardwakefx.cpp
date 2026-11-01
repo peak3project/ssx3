@@ -1354,6 +1354,11 @@ static inline sWakeVecE398* wakeVel1598(sWakeFx1598* self)
     return vt[2].fn(sub + vt[2].delta);
 }
 
+static inline float wakeRatio1598(float range, float v)
+{
+    return wakeClamp1598(v / range, 0.0f, 1.0f);
+}
+
 // PORT: g++ minimum operator (<?).
 extern "C" void func_002E1598(sWakeFx1598* self)
 {
@@ -1376,8 +1381,7 @@ extern "C" void func_002E1598(sWakeFx1598* self)
         } else {
             wakeAddE398(pos, wakeScale0EE8(self->dir, 45.0f));
         }
-        float lim = 3333.33349609375f;
-        float r = wakeClamp1598(self->fE0 / lim, 0.0f, 1.0f);
+        float r = wakeRatio1598(3333.33349609375f, self->fE0);
         float f = self->f4;
         if (f < 1.0f || a == 5) {
             if (self->iD4 == 2) {
