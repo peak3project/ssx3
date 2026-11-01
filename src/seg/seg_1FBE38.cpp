@@ -1268,10 +1268,7 @@ extern "C" V3_CFF0 func_002FCFF0(int n, Ent_CFF0 *e) {
         *(float*)&D_CFF0[5] = 600.0f;
         *(float*)&D_CFF0[6] = 600.0f;
         *(float*)&D_CFF0[7] = 300.0f;
-        float z = 0.0f;
-        *(float*)&D_CFF0[8] = z;
-        *(float*)&D_CFF0[9] = z;
-        *(float*)&D_CFF0[10] = z;
+        *(float*)&D_CFF0[10] = *(float*)&D_CFF0[9] = *(float*)&D_CFF0[8] = 0.0f;
         *(float*)&D_CFF0[11] = 360.0f;
         *(float*)&D_CFF0[12] = -1.0f;
         D_CFF0[13] = 0xFFFFFFFF;
