@@ -4142,6 +4142,13 @@ static inline float aiAbs_12E9B8(float x)
     return r;
 }
 
+// Resets the animation's rotation pair: identity, and a yaw of -heading about the Y axis.
+static inline void ResetAnimRot_12E9B8(char* anim, float heading)
+{
+    *(sQuat_12BE20*)(anim + 0x30) = D_004FF130_12BE20;
+    *(sQuat_12BE20*)(anim + 0x40) = AxisAngle_12BE20(D_004FF160_12BE20, -heading);
+}
+
 extern "C" void func_0012E9B8(void* self, void* in)
 {
     if (func_00116378(*(void**)self))
@@ -4158,10 +4165,7 @@ extern "C" void func_0012E9B8(void* self, void* in)
         char* r = *(char**)self;
         if (*(int*)(r + 0x328) == 3 || *(int*)(r + 0x328) == 4)
         {
-            float a = 0.0f;
-            char* anim = *(char**)(r + 0x784);
-            *(sQuat_12BE20*)(anim + 0x30) = D_004FF130_12BE20;
-            *(sQuat_12BE20*)(anim + 0x40) = AxisAngle_12BE20(D_004FF160_12BE20, -a);
+            ResetAnimRot_12E9B8(*(char**)(r + 0x784), 0.0f);
         }
         func_0012EE30(self, D_0043D840);
         *(int*)(*(char**)self + 0x328) = 0;
