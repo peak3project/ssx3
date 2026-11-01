@@ -243,7 +243,194 @@ void* func_0015E030(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_0015E050);
+#ifdef SKIP_ASM
+struct sV_E050 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sM_E050 {
+    float m[4][4];
+} __attribute__((aligned(16)));
+
+struct sObj_E050 {
+    char pad[0x390];
+} __attribute__((aligned(16)));
+
+struct sPair_E050 {
+    sV_E050 a;
+    sV_E050 b;
+};
+
+extern sM_E050 D_004C53A0_E050 __asm__("D_004C53A0");
+extern "C" void* func_00176D68(void* self);
+extern "C" void func_00166640(void* self, int a1);
+extern "C" void func_00166F90(void* self);
+extern "C" sPair_E050 func_001673A0_E050(void* a1) __asm__("func_001673A0");
+void func_00176DA8_E050(void* self, int flags) __asm__("func_00176DA8__FPv");
+
+// PORT: PS2-only VU0 inline asm (64-byte matrix copy).
+static inline void vu0CopyMtx_E050(sM_E050* dst, const sM_E050* src)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (unit quaternion -> 3x3 rotation, row 3 = (0,0,0,1)).
+static inline void vu0QuatToMtx_E050(sM_E050* m, const sV_E050* q)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2       $vf4, 0x0(%1)\n"
+        "vaddw.xyz  $vf1, $vf0, $vf0w\n"
+        "vadd.xyz   $vf5, $vf4, $vf4\n"
+        "vsub.w     $vf10, $vf10, $vf10\n"
+        "vsub.w     $vf11, $vf11, $vf11\n"
+        "vsub.w     $vf12, $vf12, $vf12\n"
+        "vmul.xyz   $vf6, $vf5, $vf4\n"
+        "vmulw.xyz  $vf7, $vf5, $vf4w\n"
+        "vopmula.xyz ACC, $vf5, $vf4\n"
+        "vmadd.xyz  $vf8, $vf0, $vf0\n"
+        "vsubay.x   ACC, $vf1, $vf6y\n"
+        "vmsubz.x   $vf10, $vf1, $vf6z\n"
+        "vsubaz.y   ACC, $vf1, $vf6z\n"
+        "vmsubx.y   $vf11, $vf1, $vf6x\n"
+        "vsubax.z   ACC, $vf1, $vf6x\n"
+        "vmsuby.z   $vf12, $vf1, $vf6y\n"
+        "vaddaz.y   ACC, $vf0, $vf8z\n"
+        "vmaddz.y   $vf10, $vf1, $vf7z\n"
+        "vaddax.z   ACC, $vf0, $vf8x\n"
+        "vmaddx.z   $vf11, $vf1, $vf7x\n"
+        "vaddax.y   ACC, $vf0, $vf8x\n"
+        "vmsubx.y   $vf12, $vf1, $vf7x\n"
+        "vadday.z   ACC, $vf0, $vf8y\n"
+        "vmsuby.z   $vf10, $vf1, $vf7y\n"
+        "vaddaz.x   ACC, $vf0, $vf8z\n"
+        "vmsubz.x   $vf11, $vf1, $vf7z\n"
+        "vadday.x   ACC, $vf0, $vf8y\n"
+        "vmaddy.x   $vf12, $vf1, $vf7y\n"
+        "sqc2       $vf0, 0x30(%0)\n"
+        "sqc2       $vf10, 0x0(%0)\n"
+        "sqc2       $vf11, 0x10(%0)\n"
+        "sqc2       $vf12, 0x20(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(m), "r"(q)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply in place, m = m * b).
+static inline void vu0MulEqMtx_E050(sM_E050* m, const sM_E050* b)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, 0x0(%1)\n"
+        "lqc2      $vf9, 0x10(%1)\n"
+        "lqc2      $vf10, 0x20(%1)\n"
+        "lqc2      $vf11, 0x30(%1)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(m), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
+static inline void vu0TransMtx_E050(sM_E050* m, const sV_E050& v)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2         $vf4, 0x0(%0)\n"
+        "lqc2         $vf5, 0x10(%0)\n"
+        "lqc2         $vf6, 0x20(%0)\n"
+        "lqc2         $vf7, 0x30(%0)\n"
+        "lqc2         $vf8, %1\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(m), "m"(v)
+        : "memory");
+}
+
+extern "C" void func_0015E050_impl(char* self, char* a1, char* a2) __asm__("func_0015E050");
+extern "C" void func_0015E050_impl(char* self, char* a1, char* a2)
+{
+    sObj_E050 o;
+    func_00176D68(&o);
+    *(cQuad128*)((char*)&o + 0x20) = *(cQuad128*)a2;
+    *(cQuad128*)((char*)&o + 0x40) = *(cQuad128*)a1;
+    *(float*)((char*)&o + 0x4C) = 1.0f;
+    *(float*)((char*)&o + 0x2C) = 1.0f;
+    func_00166640(&o, 1);
+    func_00166F90(&o);
+    sPair_E050 out = func_001673A0_E050(&o);
+    sV_E050* q = (sV_E050*)(self + 0x30);
+    sM_E050* m = (sM_E050*)(self + 0x40);
+    *(sPair_E050*)(self + 0x20) = out;
+    vu0CopyMtx_E050(m, &D_004C53A0_E050);
+    sM_E050 rot;
+    vu0QuatToMtx_E050(&rot, q);
+    vu0MulEqMtx_E050(m, &rot);
+    sV_E050 p;
+    p.x = *(float*)(self + 0x20);
+    p.y = *(float*)(self + 0x24);
+    p.z = *(float*)(self + 0x28);
+    out.b.x = -p.x;
+    out.b.y = -p.y;
+    out.b.z = -p.z;
+    out.a.x = -p.x;
+    out.a.y = -p.y;
+    out.a.z = -p.z;
+    out.a.w = 1.0f;
+    vu0TransMtx_E050(m, out.a);
+    out.a.x = *(float*)(self + 0x48);
+    out.a.y = *(float*)(self + 0x58);
+    out.a.z = *(float*)(self + 0x68);
+    out.a.w = 0.0f;
+    *(sV_E050*)(self + 0x80) = out.a;
+    func_00176DA8_E050(&o, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_0015E2A8);
