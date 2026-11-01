@@ -837,16 +837,20 @@ struct sMsgSelf_002693C0 {
     int f0;
 };
 
-extern "C" void func_002693C0(void* self, int a1)
+static inline void postMsg_2693C0(char* g, int kind)
 {
-    int kind = 0xF7;
-    ((sMsgSelf_002693C0*)self)->f0 = a1;
-    char* g = D_004A3028;
     int* m = (int*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
     m[0] = kind;
     *(void***)((char*)m + 0x4) = D_004812B0;
     void* mp = m;
     sMsgList_002693C0_insert(*(sMsgListNode_002693C0**)(g + 0xF0), mp);
+}
+
+extern "C" void func_002693C0(void* self, int a1)
+{
+    ((sMsgSelf_002693C0*)self)->f0 = a1;
+    char* g = D_004A3028;
+    postMsg_2693C0(g, 0xF7);
 }
 #endif
 
