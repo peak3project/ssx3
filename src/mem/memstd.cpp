@@ -2703,10 +2703,9 @@ INCLUDE_ASM("mem/memstd", func_00255830__FPv);
 #ifdef SKIP_ASM
 int func_00255830(void* self)
 {
-    int t0 = 1;
     *(int*)((char*)self + 0x4) = 0;
-    *(int*)self = t0;
-    return t0;
+    *(int*)self = 1;
+    return 1;
 }
 #endif
 
