@@ -367,6 +367,7 @@ struct sFloatingNode_34F930 {
 
 // PORT: g++ >?/<? (min/max) operator, removed in GCC 4.3.
 // Steps the float spring (bob height plus two tilt axes) by one frame.
+static inline float clamp_34F930(float v, float lo, float hi) { return v >= lo ? v <? hi : lo; }
 extern "C" int func_0034F930(sFloatingNode_34F930* self)
 {
     float dt = 1.0f / (float)*(int*)(D_004A5B64 + 0x10);
@@ -380,10 +381,9 @@ extern "C" int func_0034F930(sFloatingNode_34F930* self)
     self->pos3 += self->vel3 * dt;
     self->vel3 += a3 * dt;
     sFloatTilt_34F930* t = (sFloatTilt_34F930*)&self->k;
-    float lo = -1.3962635f;    // +-80 degrees
-    float hi = 1.3962635f;
-    self->pos2 = t->pos2 >= lo ? t->pos2 <? hi : lo;
-    self->pos3 = t->pos3 >= lo ? t->pos3 <? hi : lo;
+    // +-80 degrees
+    self->pos2 = clamp_34F930(t->pos2, -1.3962635f, 1.3962635f);
+    self->pos3 = clamp_34F930(t->pos3, -1.3962635f, 1.3962635f);
     self->in1 = 0.0f;
     self->in2 = 0.0f;
     self->in3 = 0.0f;
