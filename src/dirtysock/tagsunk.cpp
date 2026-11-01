@@ -8826,9 +8826,8 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00266D00__FPv);
 #ifdef SKIP_ASM
 void* func_00266D00(void* self)
 {
-    int t0 = 0;
-    *(int*)self = t0;
-    *(int*)((char*)self + 0x4) = t0;
+    *(int*)self = 0;
+    *(int*)((char*)self + 0x4) = 0;
     return self;
 }
 #endif
