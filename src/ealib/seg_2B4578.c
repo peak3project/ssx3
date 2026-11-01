@@ -7983,7 +7983,7 @@ extern int func_00424140(int);
 extern int func_00424150(int);
 extern int func_00424160(void *, int);
 extern int func_00424170(void *, int);
-extern int D_0044E178_43C0[] __asm__("D_0044E178");
+extern int D_0044E178;
 
 void func_003C43C0(int arg0, int arg1, int arg2, int arg3) {
     struct S_43C0 s;
@@ -7993,12 +7993,12 @@ void func_003C43C0(int arg0, int arg1, int arg2, int arg3) {
     s.d = 0;
     if (arg3 != 0) {
         func_00424050(0);
-        while (func_00424150(D_0044E178_43C0[0]) >= 0) {}
-        D_0044E178_43C0[0] = func_00424170(&s, 1);
+        while (func_00424150(D_0044E178) >= 0) {}
+        D_0044E178 = func_00424170(&s, 1);
     } else {
         func_00424020(0);
-        while (func_00424140(D_0044E178_43C0[0]) >= 0) {}
-        D_0044E178_43C0[0] = func_00424160(&s, 1);
+        while (func_00424140(D_0044E178) >= 0) {}
+        D_0044E178 = func_00424160(&s, 1);
     }
 }
 #endif
