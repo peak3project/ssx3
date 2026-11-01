@@ -684,7 +684,56 @@ INCLUDE_ASM("render/graphicsman", func_0036B5E8);
 
 INCLUDE_ASM("render/graphicsman", func_0036B9D8);
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036C188);
+#ifdef SKIP_ASM
+extern void* D_004A4474;
+extern "C" char* func_0038F460(void* self, unsigned int addr, int size, int flags);
+extern "C" int func_0038F668(void* self, char* end, int arg);
+
+extern "C" void func_0036C188(void* self, int fbp, int w, int y, int gray, int alpha, int* handle)
+{
+    int n = w / 32;
+    int step = (w / n) << 4;
+    void* dma = D_004A4474;
+    ulong* p = (ulong*)func_0038F460(dma, *handle, -1, 0);
+    int fbw = w / 64;
+    if (fbw <= 0) {
+        fbw = 1;
+    }
+    p[0] = (n * 2 + 7) | 0x10000000;
+    p[1] = 0;
+    p += 2;
+    p[0] = (n * 2 + 6) | ((ulong)0x8000 << 45);
+    p[1] = 0xE;
+    p[2] = (fbp >> 5) | ((ulong)fbw << 16) | 0xFF00000001000000UL;
+    p[3] = 0x4C;
+    p[4] = 0;
+    p[5] = 0x18;
+    p[6] = ((ulong)alpha << 32) | 0xA1;
+    p[7] = 0x42;
+    p[8] = 0;
+    p[9] = 0x3F;
+    p += 10;
+    p[0] = 0x146;
+    p[1] = 0;
+    p[2] = (ulong)gray | ((ulong)gray << 8) | ((ulong)gray << 16) | 0x3F80000080000000UL;
+    p[3] = 1;
+    p += 4;
+    int x0 = 0;
+    int x1 = step;
+    for (int i = 0; i < n; i++) {
+        p[0] = x0;
+        p[1] = 5;
+        p[2] = x1 | ((ulong)(y * 16) << 16);
+        p[3] = 5;
+        x0 += step;
+        x1 += step;
+        p += 4;
+    }
+    *handle = func_0038F668(dma, (char*)p, 4);
+}
+#endif
 
 INCLUDE_ASM("render/graphicsman", func_0036C398);
 
