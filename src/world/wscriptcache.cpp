@@ -1834,7 +1834,40 @@ extern "C" void* func_003AF230(func_003AF230_sArr* self, unsigned int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AF258);
+#ifdef SKIP_ASM
+struct sElem_F258 { char pad[0x14]; unsigned int key; char pad18[0x1C]; };
+struct sSelf_F258 { sElem_F258* arr; int count; };
+
+static inline int clamp_F258(int i, int n)
+{
+    if (i < 0) {
+        i = 0;
+    }
+    return i < n - 1 ? i : n - 1;
+}
+
+extern "C" sElem_F258* func_003AF258_impl(sSelf_F258* self, unsigned int key) __asm__("func_003AF258");
+extern "C" sElem_F258* func_003AF258_impl(sSelf_F258* self, unsigned int key)
+{
+    if (self->count == 0) {
+        return 0;
+    }
+    int lo = -1;
+    int hi = self->count;
+    sElem_F258* arr = self->arr;
+    while (hi - lo >= 2) {
+        int mid = (hi + lo) / 2;
+        if (arr[mid].key >= key) {
+            hi = mid;
+        } else {
+            lo = mid;
+        }
+    }
+    return &arr[clamp_F258(hi - 1, self->count)];
+}
+#endif
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AF2F8);
 #ifdef SKIP_ASM
