@@ -7050,7 +7050,15 @@ int func_0040B9E8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA48);
+#ifdef SKIP_ASM
+typedef struct { int a; int b; } U64;
+extern U64 D_004533F8[];
+void func_0040BA48(U64 *p) {
+    D_004533F8[0] = *p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA68);
