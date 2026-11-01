@@ -550,24 +550,31 @@ extern "C" void func_002AD940(void*);
 void func_002AD970(void* self, int a1);
 void func_002AD980(void* self);
 
-struct sBmKeyD888 {
-    short a;
-    short id;
-    int v;
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sBmCallbackD888)(cController*, cBankMonitorInstance*, float);
+struct sBmSlotD888 {
+    char pad00[0xC];
+    sBmCallbackD888 callback;   // 0x0C
+    char pad14[0x18 - 0x14];
+    int f18;                    // 0x18
+    int f1C;                    // 0x1C
+    int f20;                    // 0x20
+    int f24;                    // 0x24
+    int f28;                    // 0x28
 };
 
-// PORT: 64-bit long sound key
-extern "C" void func_002AD888(void* self, int a1, long key, int b, int c, int d, int e, int f)
+extern "C" void func_002AD888(sBmSlotD888* self, int a1, sBmCallbackD888 key, int b, int c, int d, int e, int f)
 {
     func_002AD940(self);
     func_002AD970(self, a1);
-    // PORT: the 8-byte key is copied through its in-memory layout
-    *(sBmKeyD888*)((char*)self + 0xC) = *(sBmKeyD888*)&key;
-    *(int*)((char*)self + 0x18) = b;
-    *(int*)((char*)self + 0x1C) = c;
-    *(int*)((char*)self + 0x20) = d;
-    *(int*)((char*)self + 0x24) = e;
-    *(int*)((char*)self + 0x28) = f;
+    self->callback = key;
+    self->f18 = b;
+    self->f1C = c;
+    self->f20 = d;
+    self->f24 = e;
+    self->f28 = f;
     func_002AD980(self);
 }
 #endif
