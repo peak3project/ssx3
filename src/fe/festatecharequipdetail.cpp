@@ -3290,14 +3290,13 @@ extern "C" void func_0019E498(void* self, int flags)
     sSlot0019E498* s = (sSlot0019E498*)((char*)self + 0x1C);
     func_0019EBA0(self);
     int i;
-    int none = -1;
-    for (i = 0xFF; i >= 0; i--, s++) {
+    for (i = 0; i < 0x100; i++, s++) {
         if (s->id >= 0) {
             char* g = (char*)D_004A289C;
             sVEntry0019E498* vt = *(sVEntry0019E498**)(g + 0x10D8);
             vt[50].fn(g + vt[50].delta, s->id);
         }
-        s->id = none;
+        s->id = -1;
         s->flag = 0;
     }
     if (flags & 1) {
