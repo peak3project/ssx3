@@ -15186,7 +15186,7 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D0CC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003D32B8_0CC8(char *, int *) __asm__("func_003D32B8");
-extern int D_0044F438_0CC8[] __asm__("D_0044F438");
+extern int D_0044F438;
 extern char *D_0044F420_0CC8[] __asm__("D_0044F420");
 int func_003D0CC8_0CC8(char *arg0) __asm__("func_003D0CC8");
 
@@ -15201,7 +15201,7 @@ int func_003D0CC8_0CC8(char *arg0) {
         t = *(unsigned int *)(arg0 + 0x4C);
         *(int *)(arg0 + 0x100) = 2;
         if (t != 0) {
-            if ((unsigned int)D_0044F438_0CC8[0] >= t) {
+            if ((unsigned int)D_0044F438 >= t) {
                 *(int *)(arg0 + 0x100) = 4;
             } else {
                 *(int *)(arg0 + 0x100) = 3;
@@ -17598,13 +17598,13 @@ void func_003D6360(void *arg0, int arg1, int arg2, int arg3) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D6378);
 #ifdef SKIP_ASM
-extern int D_0044F438_6378[] __asm__("D_0044F438");
+extern int D_0044F438;
 extern int func_002AF428(int);
 
 void func_003D6378(char *self, int a, int b) {
     int t;
     int q, d;
-    *(int *)(self + 8) = D_0044F438_6378[0];
+    *(int *)(self + 8) = D_0044F438;
     self[0xD] = b;
     t = func_002AF428(*(int *)(self + 0x54));
     self[0xC] = (int)(float)t;
@@ -17619,12 +17619,12 @@ void func_003D6378(char *self, int a, int b) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D63F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044F438_63F8[] __asm__("D_0044F438");
+extern int D_0044F438;
 extern signed char f_63F8_cb(int) __asm__("func_002AF4B0");
 
 void func_003D63F8(char *self, int a, int b) {
     signed char t;
-    *(int *)(self + 0x10) = D_0044F438_63F8[0];
+    *(int *)(self + 0x10) = D_0044F438;
     self[0x15] = b;
     t = f_63F8_cb(*(int *)(self + 0x54));
     self[0x16] = a;
@@ -17636,12 +17636,12 @@ void func_003D63F8(char *self, int a, int b) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D6448);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044F438_6448[] __asm__("D_0044F438");
+extern int D_0044F438;
 extern signed char f_6448_cb(int) __asm__("func_002AF480");
 
 void func_003D6448(char *self, int a, int b) {
     signed char t;
-    *(int *)(self + 0x18) = D_0044F438_6448[0];
+    *(int *)(self + 0x18) = D_0044F438;
     self[0x1D] = b;
     t = f_6448_cb(*(int *)(self + 0x54));
     self[0x1E] = a;
