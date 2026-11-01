@@ -979,7 +979,13 @@ int func_003FF0F0(void) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF130);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF150);
+#ifdef SKIP_ASM
+int func_003FF150(void) {
+    return *(volatile int *)0x10003820;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF160);
