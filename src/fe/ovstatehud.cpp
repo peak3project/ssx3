@@ -1590,15 +1590,19 @@ void func_001F3170(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F3188);
 #ifdef SKIP_ASM
+static inline void wrap_1F3188(float* t, float range)
+{
+    while (*t > range) {
+        *t -= range;
+    }
+}
+
 extern "C" void func_001F3188(void* self)
 {
     if (*(int*)((char*)self + 4) != 0) {
         float* t = (float*)((char*)self + 8);
-        float two = 2.0f;
         *t += 0.01666666753590107f;
-        while (*t > two) {
-            *t -= two;
-        }
+        wrap_1F3188(t, 2.0f);
     }
 }
 #endif
