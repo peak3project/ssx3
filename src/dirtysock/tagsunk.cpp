@@ -1123,6 +1123,15 @@ static inline sMsgListIterB9C8 sMsgListB9C8_insert(sMsgListIterB9C8 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_B9C8(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListB9C8_insert(*(sMsgListNodeB9C8**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025B9C8(char* self, char* msg)
 {
     char buf[0x200];
@@ -1141,7 +1150,6 @@ extern "C" void func_0025B9C8(char* self, char* msg)
     // PORT: string length read from the header before the characters.
     if (*(int*)((int)email - 8) != 0)
         cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3058, email);
-    int type = 0xCA;
     cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3060, mf);
     cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3068, ver);
     cDirtysock_tag_TagFieldSetNumber(buf, 0x200, D_004A3070, 0);
@@ -1150,11 +1158,7 @@ extern "C" void func_0025B9C8(char* self, char* msg)
     cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A2FE0, func_00259198());
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 4, 0x61636374, buf, (int)func_00268BD0, 20.0f);
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgListB9C8_insert(*(sMsgListNodeB9C8**)(self + 0xF0), mp);
+    postMsg_B9C8(self, 0xCA);
 }
 #endif
 
