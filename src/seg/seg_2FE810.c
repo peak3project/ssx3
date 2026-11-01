@@ -7858,7 +7858,105 @@ void func_0040BFE0(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C028);
+#ifdef SKIP_ASM
+struct KbEnt_C028 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; short f20; char pad22[0xA]; int f2C; int f30; int f34; };
+struct KbG_C028 { int n; struct KbEnt_C028 *e; char pad8[8]; int f10; char pad14[0x88]; int f9C; };
+struct KbInfo_C028 { int n; char pad[0x8C]; };
+extern struct KbG_C028 G_C028 __asm__("D_00529000");
+extern struct KbEnt_C028 D_005291D0[];
+extern char D_005290A0[];
+extern int D_00453438[];
+extern char D_00498240[];
+extern char D_00498258[];
+extern void k_6408(int) __asm__("func_00426408");
+extern int k_6B48(char *, unsigned, int) __asm__("func_00426B48");
+extern int k_sema(struct QSema *) __asm__("func_00423DA0");
+extern int k_dsema(int) __asm__("func_00423DB0");
+extern void k_log(char *) __asm__("func_00425C60");
+extern int k_gi(struct KbInfo_C028 *) __asm__("sceUsbKbGetInfo");
+extern int k_C810(int, int *) __asm__("func_0040C810");
+extern int k_3A80(int, int (*)(void), int) __asm__("func_00423A80");
+extern int k_48E8(int) __asm__("func_004248E8");
+extern int func_0040CF88(void);
+int func_0040C028(int *out) {
+    struct KbInfo_C028 info;
+    struct QSema s;
+    int st;
+    unsigned i;
+    k_6408(0);
+    for (;;) {
+        if (k_6B48(D_005290A0, 0x80000211, 0) < 0) {
+            k_log(D_00498240);
+            return -1;
+        }
+        if (*(int *)(D_005290A0 + 0x24) != 0)
+            break;
+        i = 0x10000;
+        while (i--);
+    }
+    s.init_count = 1;
+    s.max_count = 1;
+    D_00453438[0] = k_sema(&s);
+    if (D_00453438[0] == -1) {
+        k_log(D_00498258);
+        return -1;
+    }
+    if (k_gi(&info) != 0) {
+        k_dsema(D_00453438[0]);
+        D_00453438[0] = -1;
+        return -1;
+    }
+    k_C810(0, &st);
+    if (st != 0) {
+        k_dsema(D_00453438[0]);
+        D_00453438[0] = -1;
+        return -1;
+    }
+    if (info.n <= 0) {
+        k_dsema(D_00453438[0]);
+        D_00453438[0] = -1;
+        return -1;
+    }
+    if (info.n >= 0x80) {
+        k_dsema(D_00453438[0]);
+        D_00453438[0] = -1;
+        return -1;
+    }
+    G_C028.n = info.n;
+    *out = info.n;
+    G_C028.e = D_005291D0;
+    if (G_C028.e == 0) {
+        k_dsema(D_00453438[0]);
+        D_00453438[0] = -1;
+        return -1;
+    }
+    for (i = 0; i < info.n; i++) {
+        G_C028.e[i].f34 = 0;
+        G_C028.e[i].f0 = 1;
+        G_C028.e[i].f4 = 1;
+        G_C028.e[i].f8 = 1;
+        G_C028.e[i].fC = 0;
+        G_C028.e[i].f10 = 0;
+        G_C028.e[i].f14 = 0;
+        G_C028.e[i].f18 = 0;
+        G_C028.e[i].f1C = 0;
+        G_C028.e[i].f2C = 0;
+        G_C028.e[i].f30 = 0;
+        G_C028.e[i].f20 = 0;
+    }
+    G_C028.f10 = 0;
+    G_C028.f9C = k_3A80(3, func_0040CF88, -1);
+    if (G_C028.f9C < 0) {
+        k_dsema(D_00453438[0]);
+        D_00453438[0] = -1;
+        return -1;
+    }
+    k_48E8(3);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C220);
