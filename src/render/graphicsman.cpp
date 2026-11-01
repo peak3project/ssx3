@@ -770,7 +770,129 @@ extern "C" void func_0036C740(void* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036C790);
+#ifdef SKIP_ASM
+extern int D_004A43C8;
+extern int D_004A43CC;
+extern int D_004A43D0;
+extern float D_004A43E8;
+extern float D_004A43EC;
+extern float D_004A43F8;
+extern float D_004A43D8;
+extern "C" void func_0036C740(void* self, int idx);
+extern "C" void func_0036B9D8(void* self, int src, int n, int c0, int c1, int c2, int c3, int dst, int w, int h, int x, int y, int* handle, float alpha);
+extern "C" void func_0036C398(void* self, int fbp, int w, int h, int src, int c0, int c1, int c2, int c3, int level, int amount, int* handle);
+extern "C" void func_0036C188(void* self, int fbp, int w, int y, int gray, int alpha, int* handle);
+extern "C" void func_00368138(void* self, void* pkt);
+
+// PORT: ulong is 64-bit here (GIF/DMA packet words).
+struct sGmVE_C790 {
+    short delta;
+    short index;
+    unsigned int (*fn)(void*);
+};
+
+static inline unsigned int gmCall_C790(char* self, int slot)
+{
+    sGmVE_C790* vt = *(sGmVE_C790**)(self + 0x10D8);
+    return vt[slot].fn(self + vt[slot].delta);
+}
+
+struct sGmGlow_C790 {
+    float v[7];
+};
+
+struct sGmCol_C790 {
+    unsigned short c[4];
+};
+
+struct sGmOwner_C790 {
+    char pad0[0x59B0];
+    sGmCol_C790 cols[1];        // 0x59B0
+    char pad59B8[0x5A80 - 0x59B8];
+    int zbp;                    // 0x5A80
+    int tbp;                    // 0x5A84
+    char pad5A88[0x6CD4 - 0x5A88];
+    sGmGlow_C790 glows[1];      // 0x6CD4
+};
+
+struct sGmI4_C790 {
+    int v[4];
+};
+
+static inline sGmI4_C790 makeI4_C790(int a, int b, int c, int d)
+{
+    sGmI4_C790 r;
+    r.v[0] = a;
+    r.v[1] = b;
+    r.v[2] = c;
+    r.v[3] = d;
+    return r;
+}
+
+extern "C" void func_0036C790(char* self, int idx, void* pkt2, int* handle)
+{
+    if (D_004A43C8 == 0) {
+        return;
+    }
+    if (D_004A43CC != 0) {
+        func_0036C740(self, idx);
+    }
+    sGmOwner_C790* o = (sGmOwner_C790*)self;
+    sGmGlow_C790* g = &o->glows[idx];
+    sGmI4_C790 levels = makeI4_C790((int)(D_004A43E8 * 127.5f), (int)(D_004A43EC * 127.5f), (int)(g->v[5] * 127.5f), (int)(g->v[6] * 127.5f));
+    if (levels.v[3] == 0 && levels.v[2] == 0 && levels.v[1] == 0 && levels.v[0] == 0) {
+        return;
+    }
+    int fb[2];
+    fb[0] = o->zbp << 5;
+    fb[1] = (o->zbp << 5) + 0x400;
+    int blur = (int)(D_004A43F8 * 16.0f);
+    int w = 1 << D_004A43D0;
+    int h = w;
+    int c0 = o->cols[idx].c[0];
+    int c1 = o->cols[idx].c[1];
+    int c2 = o->cols[idx].c[2];
+    int tbp = o->tbp;
+    int c3 = o->cols[idx].c[3];
+    int src = fb[0];
+    unsigned int n = gmCall_C790(self, 10);
+    int tb = tbp << 5;
+    func_0036B9D8(self, tb, n, c0, c1, c2, c3, src, w, w, 0, 1, handle, g->v[3] * 127.5f);
+    func_0036C188(self, src, w, w, (int)(g->v[0] * 127.5f), (int)(D_004A43D8 * 127.5f), handle);
+    for (int i = 0; i < 3; i++) {
+        if (levels.v[i] != 0) {
+            func_0036C398(self, src, h, w, tb, c0, c1, c2, c3, levels.v[i], (int)(g->v[4] * 127.5f), handle);
+        }
+        // Downsample the previous level into the other buffer at half size.
+        int prevSrc = src;
+        int prevH = h;
+        int prevW = w;
+        src = fb[(i + 1) & 1];
+        h >>= 1;
+        w >>= 1;
+        func_0036B9D8(self, prevSrc, prevH, 0, 0, prevH, prevW, src, h, w, blur, 4, handle, g->v[2] * 127.5f);
+    }
+    if (levels.v[3] != 0) {
+        func_0036C398(self, src, h, w, tb, c0, c1, c2, c3, levels.v[3], (int)(g->v[4] * 127.5f), handle);
+    }
+    ulong* p = (ulong*)(*handle | 0x30000000);
+    int offX = ((0x1000 - gmCall_C790(self, 10)) >> 1) << 4;
+    int offY = ((0x1000 - gmCall_C790(self, 11)) >> 1) << 4;
+    p[0] = 0x10000003;
+    p[1] = 0;
+    p[2] = 0x1000000000008002;
+    p[3] = 0xE;
+    p[4] = tbp | ((ulong)(gmCall_C790(self, 10) >> 6) << 16);
+    p[5] = 0x4C;
+    p[6] = offX | ((ulong)offY << 32);
+    p[7] = 0x18;
+    p += 8;
+    *handle = (unsigned int)p & 0x0FFFFFFF;
+    func_00368138(*(char**)(self + 0x18F4), pkt2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_0036CBF8);
