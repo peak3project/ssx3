@@ -880,7 +880,46 @@ int func_003FED88_impl(S3ED88 *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FEF18);
+#ifdef SKIP_ASM
+typedef int Q3EF18_i __attribute__((mode(TI)));
+typedef union { Q3EF18_i q; unsigned long d[2]; int w[4]; short h[8]; } Q3EF18;
+typedef struct { Q3EF18 a[32]; unsigned b[7]; unsigned short c[16]; } S3EF18;
+extern int e3EF18_a(void) __asm__("func_003FEB08");
+extern void e3EF18_b(unsigned short, Q3EF18) __asm__("func_003FEB38");
+int func_003FEF18_impl(S3EF18 *s) __asm__("func_003FEF18");
+int func_003FEF18_impl(S3EF18 *s) {
+    unsigned i;
+    Q3EF18 t;
+    if (e3EF18_a() != 0)
+        return 0;
+    for (i = 0; i < 0x20; i++) {
+        t.q = s->a[i].q;
+        e3EF18_b(0x400 + i, t);
+    }
+    t.q = 0;
+    t.d[0] = s->b[0];
+    e3EF18_b(0x430, t);
+    t.d[0] = s->b[1];
+    e3EF18_b(0x431, t);
+    t.d[0] = s->b[2];
+    e3EF18_b(0x432, t);
+    t.d[0] = s->b[3];
+    e3EF18_b(0x434, t);
+    t.d[0] = s->b[4];
+    e3EF18_b(0x435, t);
+    t.d[0] = s->b[5];
+    e3EF18_b(0x436, t);
+    t.d[0] = s->b[6];
+    e3EF18_b(0x437, t);
+    for (i = 0; i < 0x10; i++) {
+        t.d[0] = s->c[i];
+        e3EF18_b(0x420 + i, t);
+    }
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FF060);
 
