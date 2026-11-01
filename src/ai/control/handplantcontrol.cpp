@@ -1537,6 +1537,18 @@ static inline float absf_13F178(float x)
 
 #define RIDER_13F178 (*(char**)((char*)self + 0x18))
 
+static inline float Fraction_13F178(float v, float max)
+{
+    float k = 0.0f;
+    if (0.0f <= v) {
+        k = 1.0f;
+        if (v <= max) {
+            k = v / max;
+        }
+    }
+    return k;
+}
+
 extern "C" void func_0013F178(void* self)
 {
     if (*(int*)((char*)self + 0xC) != 0) {
@@ -1574,15 +1586,7 @@ extern "C" void func_0013F178(void* self)
     if (*(float*)(r3 + 0x2E4) < len) {
         vu0ScaleEq_13F178(*(sVec4HP*)(r3 + 0x1E0), *(float*)(r3 + 0x2E4) / len);
     }
-    float k = 0.0f;
-    float vmax = 3333.33349609375f;
-    if (0.0f <= len) {
-        k = 1.0f;
-        if (len <= vmax) {
-            k = len / vmax;
-        }
-    }
-    *(float*)(RIDER_13F178 + 0x75C) = k;
+    *(float*)(RIDER_13F178 + 0x75C) = Fraction_13F178(len, 3333.33349609375f);
     char* r4 = RIDER_13F178;
     *(float*)(r4 + 0x754) = absf_13F178(*(float*)(r4 + 0x1F0));
     char* r5 = RIDER_13F178;
