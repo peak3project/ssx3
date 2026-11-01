@@ -1929,16 +1929,11 @@ extern "C" V3_E2C0 func_002FE2C0(int n, Ent_E2C0 *e) {
     if (D_004A561C == 0) {
         D_E2C0[0] = 0xFFFFFFFF;
         ((int*)D_E2C0)[1] = 5;
-        float z = 0.0f;
-        *(float*)&D_E2C0[2] = z;
-        *(float*)&D_E2C0[3] = z;
+        *(float*)&D_E2C0[3] = *(float*)&D_E2C0[2] = 0.0f;
         *(float*)&D_E2C0[4] = 0.016666699200868607f;
         *(float*)&D_E2C0[5] = 0.016666699200868607f;
         *(float*)&D_E2C0[6] = 1.0f;
-        *(float*)&D_E2C0[7] = z;
-        *(float*)&D_E2C0[8] = z;
-        *(float*)&D_E2C0[9] = z;
-        *(float*)&D_E2C0[10] = z;
+        *(float*)&D_E2C0[10] = *(float*)&D_E2C0[9] = *(float*)&D_E2C0[8] = *(float*)&D_E2C0[7] = 0.0f;
         *(float*)&D_E2C0[11] = 1.0f;
         D_004A561C = 1;
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
