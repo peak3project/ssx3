@@ -1,6 +1,109 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_1DCD10", func_002DBD10);
+#ifdef SKIP_ASM
+struct Pre_BD10 { char pad0[0xF50]; int texmap[0x51]; char pad1[0x10B0 - 0x1094]; int dst[10]; };
+class Mgr_BD10 : public Pre_BD10 {
+public:
+  void SetEffectTexMap(int effectID, int tex) {
+    texmap[effectID] = tex;
+  }
+  int GetEffectTexMap(int effectID) {
+    return texmap[effectID];
+  }
+  virtual void v1();
+  virtual void v2();
+  virtual void v3();
+  virtual void v4();
+  virtual void v5();
+  virtual void v6();
+  virtual void v7();
+  virtual void v8();
+  virtual void v9();
+  virtual void v10();
+  virtual void v11();
+  virtual void v12();
+  virtual void v13();
+  virtual void v14();
+  virtual void v15();
+  virtual void v16();
+  virtual void v17();
+  virtual void v18();
+  virtual void v19();
+  virtual void v20();
+  virtual void v21();
+  virtual void v22();
+  virtual void v23();
+  virtual void v24();
+  virtual void v25();
+  virtual void v26();
+  virtual void v27();
+  virtual void v28();
+  virtual void v29();
+  virtual void v30();
+  virtual void v31();
+  virtual void v32();
+  virtual void v33();
+  virtual void v34();
+  virtual void v35();
+  virtual void v36();
+  virtual void v37();
+  virtual void v38();
+  virtual void v39();
+  virtual void v40();
+  virtual void v41();
+  virtual void v42();
+  virtual void v43();
+  virtual void v44();
+  virtual void v45();
+  virtual int v46(long, char*, int, int, long);
+};
+extern Mgr_BD10 *D_BD10 __asm__("D_004A5B80");
+extern "C" int FILE_load(char*, int);
+extern "C" long func_003B3900(int, char*);
+extern "C" void func_002523A8(int);
+extern char D_00487918[];
+extern char D_00487938[];
+struct sFXShape_BD10 { char name[8]; int tex; };
+extern sFXShape_BD10 gFXShape_BD10[] __asm__("D_004891B0");
+extern "C" int func_002DBD10(int a0, long a1) {
+    int files[2];
+    int v;
+    long r;
+    int n = 2;
+    if (a1)
+        n = 1;
+    for (int i = 0; i < n; i++) {
+        switch (i) {
+        case 0:
+            files[i] = FILE_load(D_00487918, 0x100);
+            break;
+        case 1:
+            files[i] = FILE_load(D_00487938, 0x100);
+            break;
+        }
+    }
+    Mgr_BD10* m = D_BD10;
+    for (int k = 0; k < 0x51; k++) {
+        r = 0;
+        for (int i = 0; i < n; i++) {
+            r = func_003B3900(files[i], gFXShape_BD10[k].name);
+            if (r != 0)
+                break;
+        }
+        v = -1;
+        if (r != 0)
+            v = D_BD10->v46(r, gFXShape_BD10[k].name, gFXShape_BD10[k].tex, 1, -1);
+        m->SetEffectTexMap(k, v);
+    }
+    for (int i = 0; i < n; i++)
+        func_002523A8(files[i]);
+    for (int i = 0; i < 10; i++)
+        m->dst[i] = m->GetEffectTexMap(0x47 + i);
+    return a0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1DCD10", func_002DBEE0);
