@@ -1537,7 +1537,49 @@ extern "C" void* func_0014DAA0(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014DAC0);
+#ifdef SKIP_ASM
+struct sBEEntry_DAC0 {
+    char field_0x0;
+    signed char flag; // 0x1
+    short key; // 0x2
+    char pad_0x4[8];
+};
+
+struct sBEKeyTable_DAC0 {
+    char pad_0x00[8];
+    sBEEntry_DAC0* entries; // 0x8
+    char pad_0x0C[0x20C - 0xC];
+    int count[30]; // 0x20C
+    int first[30]; // 0x284
+};
+
+extern "C" void* func_0014DAC0(void* self_, int g, int key, int* out)
+{
+    sBEKeyTable_DAC0* self = (sBEKeyTable_DAC0*)self_;
+    sBEEntry_DAC0* result;
+    int i;
+    *out = 0;
+    if (self->count[g] <= 0) {
+        return 0;
+    }
+    result = 0;
+    int end = self->first[g] + self->count[g];
+    for (i = self->first[g]; i < end; i++) {
+        if (self->entries[i].key == key) {
+            if (result == 0) {
+                result = &self->entries[i];
+            }
+            (*out)++;
+        } else if (key < self->entries[i].key) {
+            goto done;
+        }
+    }
+done:
+    return result;
+}
+#endif
 //100%
 INCLUDE_ASM("be/belibrary", func_0014DB40);
 #ifdef SKIP_ASM
