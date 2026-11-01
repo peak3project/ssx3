@@ -2193,7 +2193,41 @@ void func_003DF488(int n, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF570);
+#ifdef SKIP_ASM
+struct E_F570 { int f0; int f4; char pad8[0x14]; volatile int f1C; char pad20[0x10]; };
+extern struct E_F570 *D_00450C34_F570 __asm__("D_00450C34");
+extern int D_00519BF0;
+extern int (*D_00450C10_F570[])(void *) __asm__("D_00450C10");
+extern char D_00519C08_F570[] __asm__("D_00519C08");
+extern int func_003DFAF0(int);
+extern int func_003E5440(char *);
+extern void func_003E5398(int);
+extern int SYNCTASK_run(int);
+extern void func_003E56E0_F570(char *) __asm__("func_003E56E0");
+
+void func_003DF570(void) {
+    if (D_00450C34_F570 != 0) {
+        int i;
+        for (i = 0; i < D_00519BF0; i++) {
+            func_003DFAF0(D_00450C34_F570[i].f0);
+        }
+        for (;;) {
+            int busy = 0;
+            for (i = 0; i < D_00519BF0; i++) {
+                if (D_00450C34_F570[i].f1C != 0) busy = 1;
+            }
+            if (!busy) break;
+            if (func_003E5440(0) != 0) SYNCTASK_run(0);
+            func_003E5398(0);
+        }
+        D_00450C10_F570[2](D_00450C34_F570);
+        func_003E56E0_F570(D_00519C08_F570);
+        D_00450C34_F570 = 0;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF690);
