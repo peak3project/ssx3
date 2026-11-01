@@ -9853,7 +9853,76 @@ void func_003C8148(signed char arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8158);
+#ifdef SKIP_ASM
+struct R_8158 { int w0; int w4; int w8; int wC; int w10; int w14; int w18; int w1C; int w20; int w24; int w28; };
+struct O_8158 { int f0; int f4; char pad8[0x10]; short f18; char f1A; };
+struct E_8158 { char flag; char pad[0x3F]; int f40; int f44; struct O_8158 *f48; struct O_8158 *f4C; int f50; int f54; int f58; int f5C; };
+struct T_8158 { char pad[0x18]; void (*fn[6][3])(struct O_8158 *, struct R_8158 *); int sz[6][3]; char pad2[0x1DC - 0x18 - 0x48 - 0x48]; struct E_8158 *ents; };
+extern struct T_8158 D_00515B40_8158[] __asm__("D_00515B40");
+extern unsigned char D_0050AA62_8158[] __asm__("D_0050AA62");
+extern struct O_8158 *func_003B5C60_8158(int) __asm__("func_003B5C60");
+extern void func_003C8F48_8158(int *, struct O_8158 *) __asm__("func_003C8F48");
+extern void func_003CB280_8158(struct O_8158 *, int, int) __asm__("func_003CB280");
+
+void func_003C8158(int idx, int type, int p2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13) {
+    struct E_8158 *e = &D_00515B40_8158[0].ents[idx];
+    struct R_8158 r;
+    int k;
+    short sel;
+
+    e->f40 = 0;
+    e->f48 = 0;
+    e->f50 = 0;
+    e->f58 = 0;
+    e->f5C = 0;
+    e->f4C = 0;
+    r.w18 = 1;
+    r.w28 = 0;
+    k = -1;
+    if (type == 8) k = 0;
+    else if (type == 10) k = 1;
+    else if (type == 4) k = 2;
+    else if (type == 0x16) k = 3;
+    else if (type == 0x10) k = 4;
+    else if (type == 0x17) k = 5;
+    if (p2 == 1) {
+        sel = (a9 < 1) ? 0 : p2;
+    } else {
+        sel = 2;
+        if (p2 != 0) sel = 0;
+    }
+    if (D_00515B40_8158[0].fn[k][sel] != 0) {
+        e->f48 = func_003B5C60_8158(D_00515B40_8158[0].sz[k][sel]);
+        r.w0 = a3;
+        r.w4 = a4;
+        r.w8 = a6;
+        r.w24 = a12;
+        r.wC = a7;
+        r.w10 = a8;
+        r.w14 = a9;
+        r.w20 = D_0050AA62_8158[0];
+        r.w1C = idx;
+        e->f48->f4 = 0;
+        e->f48->f18 = 0xF0;
+        e->f48->f1A = a13;
+        D_00515B40_8158[0].fn[k][sel](e->f48, &r);
+        e->f44 = r.w28;
+        func_003C8F48_8158(&e->f40, e->f48);
+    }
+    if (a5 != 0) {
+        if (p2 != 0) idx = -1;
+        e->f4C = func_003B5C60_8158(0x1828);
+        e->f4C->f4 = 0;
+        e->f4C->f18 = 200;
+        e->f4C->f1A = a13;
+        func_003CB280_8158(e->f4C, a5, idx);
+        func_003C8F48_8158(&e->f40, e->f4C);
+    }
+    e->flag = 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C83A0);
