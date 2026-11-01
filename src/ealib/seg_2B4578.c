@@ -319,7 +319,39 @@ void func_003B4458(int arg0, int arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4478);
+#ifdef SKIP_ASM
+extern int func_003B3BB0(char *);
+extern int func_003B4708(int);
+
+int func_003B4478(char *p) {
+    int total = 0;
+    int base = (((int)p + 0xF) & ~0xF) - (int)p;
+    if (p != 0) {
+        do {
+            int sz = func_003B3BB0(p);
+            int off;
+            char *n;
+            if (total != 0) {
+                if (func_003B4708(*(unsigned char *)p) != 0) {
+                    int aligned = ((total - base) + 0x1F) & ~0xF;
+                    int base16 = base - 0x10;
+                    total = aligned + base16;
+                } else {
+                    int aligned = ((total - base) + 0xF) & ~0xF;
+                    total = aligned + base;
+                }
+            }
+            off = *(int *)p >> 8;
+            n = p + off;
+            p = off ? n : 0;
+            total += sz;
+        } while (p != 0);
+    }
+    return total;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_cloneat);
