@@ -16407,7 +16407,30 @@ int func_003D5290(unsigned arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5330);
+#ifdef SKIP_ASM
+struct E_5330 { unsigned int f0; int f4; char pad[0x20]; int w[24]; char pad2[0x928 - 0x28 - 24 * 4]; };
+extern struct E_5330 D_00517640_5330[] __asm__("D_00517640");
+
+int func_003D5330(unsigned int mask) {
+    int n = 0;
+    int i;
+    int j;
+    for (i = 0; i < 4; i++) {
+        if (mask & (0x1000000 << i)) {
+            if (D_00517640_5330[i].f4 != 0) {
+                for (j = 0; j < 24; j++) {
+                    if (D_00517640_5330[i].w[j] != 0) {
+                        n++;
+                    }
+                }
+            }
+        }
+    }
+    return n;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003D53B8);
