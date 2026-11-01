@@ -445,7 +445,22 @@ int func_003EE9A0(int* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEA48);
+#ifdef SKIP_ASM
+int func_003EEA48(int* p, int key) {
+    char* s = (char*)key;
+    int h = 0;
+    while (*s) {
+        if (*s > 32) {
+            h = h * 131 + (*s & 0x5F);
+        }
+        s++;
+    }
+    h &= 0x7FFFFFFF;
+    return h % p[4];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEAB8);
