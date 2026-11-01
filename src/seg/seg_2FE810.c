@@ -7356,7 +7356,57 @@ int func_0040B400(int cc, int a, int flag, int d, int e, int f) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B5B0);
+#ifdef SKIP_ASM
+struct O_B5B0 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; int f28; int f2C; };
+extern char D_00498178[];
+extern char D_00528FC0[];
+extern void b5_00425C60(char *, ...) __asm__("func_00425C60");
+extern int b5_00423DE0(int) __asm__("func_00423DE0");
+extern int b5_00423DB0(int) __asm__("func_00423DB0");
+extern struct O_B5B0 *b5_0040B208(char *) __asm__("func_0040B208");
+extern void b5_0040B2B0(struct O_B5B0 *) __asm__("func_0040B2B0");
+extern int b5_00423DA0(struct QSema *) __asm__("func_00423DA0");
+extern int b5_004261B0(int, struct O_B5B0 *, int, int, int, int) __asm__("func_004261B0");
+int func_0040B5B0(struct O_B5B0 *a, int b) {
+    struct O_B5B0 *t;
+    struct QSema s;
+    int h;
+    if (b) {
+        b5_00425C60(D_00498178);
+        return -1;
+    }
+    b5_00423DE0(a->f28);
+    t = b5_0040B208(D_00528FC0);
+    if (t == 0)
+        return -1;
+    a->f4 = t->f18;
+    a->f0 = (int)t;
+    t->f20 = a->f10;
+    t->f14 = (int)t;
+    t->f1C = (int)a;
+    t->f24 = a->f24;
+    s.max_count = 1;
+    s.init_count = 0;
+    s.option = 0;
+    h = b5_00423DA0(&s);
+    a->f8 = h;
+    if (h < 0) {
+        b5_0040B2B0(t);
+        return -3;
+    }
+    if (b5_004261B0(0x8000001D, t, 0x40, 0, 0, 0) == 0) {
+        b5_0040B2B0(t);
+        b5_00423DB0(h);
+        return -2;
+    }
+    b5_00423DE0(h);
+    b5_00423DB0(h);
+    b5_00423DB0(a->f28);
+    return a->f2C;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B6D0);
