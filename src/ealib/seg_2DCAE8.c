@@ -3371,7 +3371,18 @@ int func_003E14F8(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1530);
+#ifdef SKIP_ASM
+int func_003E1530(int arg0) {
+    int loc[2];
+
+    if (func_003DFBD0(arg0, &loc[0], &loc[1]) != 0) {
+        return 0;
+    }
+    return *(volatile int *)((char*)loc[0] + 0x38) == 0 && *(int *)((char*)loc[1] + 8) == 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1580);
