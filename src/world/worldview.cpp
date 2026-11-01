@@ -1229,6 +1229,11 @@ static inline sWVRoot_B498* findRoot_B498(char* w, int x, int y, int z)
     (box).max.z = *(float*)((base) + (off) + 0x14);    \
     (box).max.w = 1.0f
 
+static inline void setState_B498(char* e, int st)
+{
+    *(int*)(e + 0x8) = st;
+}
+
 static inline void update_B498(char* w, int idx, void* item, const sWVBox_B498* box)
 {
     (*(int*)(w + 0xA0))++;
@@ -1272,18 +1277,13 @@ extern "C" void* func_003AB498(char* self, unsigned int msg, unsigned int param,
         break;
     }
     case 8: {
-        int i = 0;
         char* e = *(char**)(data + 0x24);
-        if (i < *(int*)(data + 0x20)) {
-            int one = 1;
-            do {
-                *(int*)(e + 0x8) = one;
-                sWVBox_B498 box;
-                WV_MAKEBOX_B498(box, e, 0x6C);
-                update_B498(*(char**)(self + 0xC), 2, e, &box);
-                e = *(char**)(e + 0x64);
-                i++;
-            } while (i < *(int*)(data + 0x20));
+        for (int i = 0; i < *(int*)(data + 0x20); i++) {
+            setState_B498(e, 1);
+            sWVBox_B498 box;
+            WV_MAKEBOX_B498(box, e, 0x6C);
+            update_B498(*(char**)(self + 0xC), 2, e, &box);
+            e = *(char**)(e + 0x64);
         }
         break;
     }
