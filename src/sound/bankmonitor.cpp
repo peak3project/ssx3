@@ -3096,13 +3096,15 @@ extern "C" int func_002B1248(int *arg0, void* arg1) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B1268);
 #ifdef SKIP_ASM
-// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPacked8_1268 { long v; } __attribute__((packed));
-extern const sPacked8_1268 D_004A37E0_2B1268[] __asm__("D_004A37E0");
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_1268)(cController*, cBankMonitorInstance*, float);
+extern const sSndCallback_1268 D_004A37E0_2B1268[] __asm__("D_004A37E0");
 extern "C" int func_002AB150(void* self, int i);
 extern "C" void func_002AB0D0(void* self, int i, int val);
-extern "C" int func_002ADCA0(int a, int b, long t, void* c, int d, int e, int f, int g);
+extern "C" int func_002ADCA0_1268(int a, int b, sSndCallback_1268 t, void* c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 extern "C" int func_002B1248_pp(void* self, void* msg) __asm__("func_002B1248");
 struct sVE1268 { short delta; short index; int (*fn)(void*, int, int, int); };
 
@@ -3110,7 +3112,7 @@ extern "C" int func_002B1268(void* self, void* msg)
 {
     char* ent = *(char**)((char*)msg + 0x18);
     if (func_002AB150(*(void**)self, func_002B1220(D_004A37B4, *(int*)ent)) != *(int*)((char*)msg + 0x1C)) {
-        func_002ADCA0(**(int**)D_004A37B4 + 0x1D8, 0xC8, D_004A37E0_2B1268[0].v, *(void**)((char*)msg + 0x18), *(int*)((char*)msg + 0x1C), *(int*)((char*)msg + 0x20), 0, 0);
+        func_002ADCA0_1268(**(int**)D_004A37B4 + 0x1D8, 0xC8, D_004A37E0_2B1268[0], *(void**)((char*)msg + 0x18), *(int*)((char*)msg + 0x1C), *(int*)((char*)msg + 0x20), 0, 0);
         return 1;
     }
     int slot = *(int*)((char*)msg + 0x20);
