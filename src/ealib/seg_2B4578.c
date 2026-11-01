@@ -7146,7 +7146,7 @@ typedef struct {
 } H_2268;
 extern volatile G_2268 D_0050A8E8_2268 __asm__("D_0050A8E8");
 extern H_2268 D_0050AD00_2268 __asm__("D_0050AD00");
-extern int D_00512B20_2268[] __asm__("D_00512B20");
+extern int D_00512B20;
 extern void func_003C0B10_2268(int, int, int) __asm__("func_003C0B10");
 extern void func_003C8018(void);
 extern void func_003CBC00(int);
@@ -7178,12 +7178,12 @@ int func_003C2268(void) {
         }
     }
     func_003C0B10_2268(1, 0, 0);
-    func_00423CA0(D_00512B20_2268[0], st);
+    func_00423CA0(D_00512B20, st);
     if (st[0] == 0x10) {
-        func_00423BB0(D_00512B20_2268[0]);
+        func_00423BB0(D_00512B20);
     } else {
-        func_00423BF0(D_00512B20_2268[0]);
-        func_00423BB0(D_00512B20_2268[0]);
+        func_00423BF0(D_00512B20);
+        func_00423BB0(D_00512B20);
     }
     func_00423DB0(D_0050AD00_2268.f1AA4);
     for (i = 0; i < 1; i++) {
