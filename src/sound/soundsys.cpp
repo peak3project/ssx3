@@ -2792,10 +2792,11 @@ extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
-struct sSndKey8_6868 {
-    long v;
-} __attribute__((packed));
-extern sSndKey8_6868 D_004A36B0_6868[] __asm__("D_004A36B0");
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_6868)(cController*, cBankMonitorInstance*, float);
+extern sSndCallback_6868 D_004A36B0_6868[] __asm__("D_004A36B0");
 struct sSndOwner_6868 {
     char pad0[0x80];
     char* rider;             // 0x80
@@ -2823,7 +2824,7 @@ struct sSnd6868Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
+    sSndCallback_6868 callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -2851,6 +2852,13 @@ static inline int vcall_6868(char* o, int slot)
 {
     sVE_6868* vt = *(sVE_6868**)o;
     return vt[slot].fn(o + vt[slot].delta);
+}
+
+// cSndPlayOpts::OPTS_Callback (prototype name)
+static inline void OPTS_Callback_6868(sSnd6868Mgr* m, sSndCallback_6868 cb)
+{
+    sSnd6868Sub* s = &m->sub;
+    s->callbacks[m->sub.cur] = cb;
 }
 
 // Board slide sound of an owner's rider: started once per rider, volume from the speed curve.
@@ -2926,12 +2934,7 @@ extern "C" void func_00296868(void* vself, sSndOwner_6868* t)
         sSnd6868Mgr* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)t;
     }
-    {
-        sSnd6868Mgr* m2 = *self->p118;
-        sSndKey8_6868 k = D_004A36B0_6868[0];
-        sSnd6868Sub* s2 = &m2->sub;
-        *(sSndKey8_6868*)((char*)s2 + (m2->sub.cur << 3) + 0x40) = k;
-    }
+    OPTS_Callback_6868(*self->p118, D_004A36B0_6868[0]);
     (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
     if (flag) {
         (*self->p118)->sub.p80[(*self->p118)->sub.cur] = 1;
