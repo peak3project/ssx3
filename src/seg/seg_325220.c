@@ -636,7 +636,17 @@ int func_00425190(int a0, int n) {
 
 INCLUDE_ASM("seg/seg_325220", func_00425260);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425320);
+#ifdef SKIP_ASM
+int func_00425320_i(int a0) __asm__("func_00425320");
+int func_00425320_i(int a0) {
+    while (*(volatile int *)0x1000F130 & 0x8000)
+        ;
+    *(volatile char *)0x1000F180 = a0;
+    return a0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425358);
