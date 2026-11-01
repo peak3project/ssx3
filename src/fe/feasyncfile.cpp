@@ -1112,13 +1112,12 @@ extern "C" void func_001A4CE8(void* self, void* src)
     cBXString_operatorE((char*)self + 0x6D0, (char*)src + 0x8);
     *(int*)((char*)self + 0x6D8) = *(int*)((char*)src + 0x10);
     void* p = func_001A9C50(self);
-    int three = 3;
     char* sub = (char*)p + 0xBC;
     *(int*)((char*)p + 0xBC) = 1;
     *(int*)((char*)p + 0xCC) = GetHashValue32(D_00461648);
-    *(int*)((char*)p + 0xC8) = three;
+    *(int*)((char*)p + 0xC8) = 3;
     func_001C5780(sub, 0, *(int*)((char*)self + 0x6D0));
-    *(int*)((char*)p + 0x14C) = three;
+    *(int*)((char*)p + 0x14C) = 3;
     *(int*)((char*)p + 0x150) = 0x809;
     func_001A9BC0(self, p);
 }
