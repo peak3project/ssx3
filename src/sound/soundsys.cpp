@@ -4008,11 +4008,12 @@ struct sSnd9368Sys {
     sSnd9368Mgr** p118;      // 0x118
 };
 
-struct sSndId299368 {
-    long v;
-} __attribute__((packed));
-extern sSndId299368 D_004A36A8_9368[] __asm__("D_004A36A8");
-extern "C" void func_002ADDE0(void* bank, long id);
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_9368)(cController*, cBankMonitorInstance*, float);
+extern sSndCallback_9368 D_004A36A8_9368[] __asm__("D_004A36A8");
+extern "C" void func_002ADDE0_9368(void* bank, sSndCallback_9368 id) __asm__("func_002ADDE0");
 extern "C" int func_00288AE0(void* self);
 
 static inline int IsReady299368(char* obj)
@@ -4052,7 +4053,6 @@ static inline void AddVoice299368(sSnd9368Sys* self, int a, int bb, int type)
 }
 
 // Starts the "crowd cheer" voice for the object if the bank is ready and nothing else is playing.
-// PORT: the 8-byte stream id is passed by value from an unaligned global (64-bit `long`).
 extern "C" void func_00299368(sSnd9368Sys* self, char* obj)
 {
     if (func_00288AE0(self) != 0) {
@@ -4061,7 +4061,7 @@ extern "C" void func_00299368(sSnd9368Sys* self, char* obj)
     if (!IsReady299368(obj)) {
         return;
     }
-    func_002ADDE0(&(*self->p118)->sub, D_004A36A8_9368[0].v);
+    func_002ADDE0_9368(&(*self->p118)->sub, D_004A36A8_9368[0]);
     AddVoice299368(self, 0, 0x6C, 9);
     func_002906B8(self);
 }
