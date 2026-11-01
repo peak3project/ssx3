@@ -1714,7 +1714,93 @@ end:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9830);
+#ifdef SKIP_ASM
+struct Ent_9830 { short x; short idx; unsigned short y; short pad; };
+struct O_9830 { int len; int start; int n; unsigned char col[4]; };
+struct K4_9830 { char b[4]; };
+struct M_9830 { int id; int start; int len; struct K4_9830 k; int w20; int w24; int w28; };
+extern int (*D_0044FF90_9830[])(struct M_9830 *) __asm__("D_0044FF90");
+extern struct Ent_9830 D_0045070C_9830[] __asm__("D_0045070C");
+extern unsigned char **D_004A4824_9830 __asm__("D_004A4824");
+extern int D_004A4830;
+extern int D_004A4838;
+extern int func_003D8330_9830(struct K4_9830 *, int *) __asm__("func_003D8330");
+extern int func_003D81F0_9830(struct K4_9830 *, int *) __asm__("func_003D81F0");
+extern int func_003DB838_9830(unsigned char *, int, struct O_9830 *) __asm__("func_003DB838");
+extern void func_003D6EE8_9830(unsigned char *, int) __asm__("func_003D6EE8");
+
+static __inline__ void clearBit_9830(unsigned char *s, int bit) {
+    int n = s[4] & 0xF;
+    int q = bit / 8;
+    unsigned char *p = s + ((s[5] * (n + 2) + 0xF) & 0x3FFC) + n * 4 + (q + 1);
+    *p &= ~(1 << (bit - q * 8));
+}
+
+int func_003D9830_impl(unsigned char *h, struct K4_9830 *k, int a2) __asm__("func_003D9830");
+int func_003D9830_impl(unsigned char *h, struct K4_9830 *k, int a2) {
+    struct O_9830 o;
+    struct M_9830 m;
+    int w30;
+    int w34;
+    int sum;
+    int cnt;
+    int n;
+    int r;
+    int st;
+    int t;
+    int x;
+    int y;
+    struct Ent_9830 *e;
+    unsigned char *s;
+
+    sum = 0;
+    r = 0;
+    w34 = 0;
+    if (D_0044FF90_9830[0] != 0) {
+        func_003D8330_9830(k, &w30);
+        func_003D81F0_9830(k, &w34);
+        n = h[4] >> 2;
+        if (n != 0) {
+            cnt = n;
+            e = D_0045070C_9830 + a2;
+            do {
+                x = e->x;
+                s = D_004A4824_9830[x];
+                y = e->y;
+                if ((s[4] & 0x80) && D_004A4830 != 0) {
+                    clearBit_9830(s, y);
+                }
+                if (func_003DB838_9830(s, y, &o)) {
+                    t = *(unsigned short *)(s + 8) * ((s[7] + 1) << 8);
+                    st = o.start;
+                    if (e->idx != -1) {
+                        st = e->idx * t + st;
+                    }
+                    m.start = st;
+                    m.id = x;
+                    sum += o.len;
+                    m.len = o.len;
+                    m.k = *k;
+                    m.w28 = w30;
+                    m.w20 = w34;
+                    m.w24 = *(unsigned short *)(s + 2);
+                    D_0044FF90_9830[0](&m);
+                    func_003D6EE8_9830(s, y);
+                }
+                cnt--;
+                e++;
+            } while (cnt != 0);
+        }
+        r = 0;
+        if (D_004A4838 != 0) {
+            r = sum * 100 / D_004A4838;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9A40);
