@@ -2098,12 +2098,9 @@ extern "C" V3_E668 func_002FE668(int n, Ent_E668 *e) {
     if (D_004A5624 == 0) {
         D_E668[0] = 0xFFFFFFFF;
         ((int*)D_E668)[1] = 1;
-        float z = 0.0f;
-        *(float*)&D_E668[2] = z;
         *(float*)&D_E668[3] = 0.10000000149011612f;
         *(float*)&D_E668[4] = 20.0f;
-        *(float*)&D_E668[5] = z;
-        *(float*)&D_E668[6] = z;
+        *(float*)&D_E668[6] = *(float*)&D_E668[5] = *(float*)&D_E668[2] = 0.0f;
         *(float*)&D_E668[7] = 1.0f;
         D_004A5624 = 1;
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
