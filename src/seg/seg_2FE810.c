@@ -3309,7 +3309,33 @@ INCLUDE_ASM("seg/seg_2FE810", func_00403748);
 
 INCLUDE_ASM("seg/seg_2FE810", func_004039F0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403AD0);
+#ifdef SKIP_ASM
+extern int f3AD0_DI() __asm__("func_0042C078");
+extern void f3AD0_EI(void) __asm__("func_0042C0C0");
+extern int f3AD0_2C30(int, int *) __asm__("func_00402C30");
+extern void f3AD0_6E20(int *) __asm__("func_00406E20");
+extern void f3AD0_6DF0(int *, int) __asm__("func_00406DF0");
+void func_00403AD0(int *a, int b, int c) {
+    int v[8];
+    int s;
+    v[0] = 2;
+    f3AD0_2C30(a[534], v);
+    f3AD0_6E20(a);
+    *(volatile int *)0x10002000 = 0;
+    f3AD0_6E20(a);
+    s = f3AD0_DI();
+    *(volatile int *)0x1000B410 = c & 0xFFFFFFF;
+    *(volatile int *)0x1000B420 = 4;
+    *(volatile int *)0x1000B400 = 0x101;
+    if (s) f3AD0_EI();
+    f3AD0_6DF0(a, b);
+    f3AD0_6E20(a);
+    v[0] = 3;
+    f3AD0_2C30(a[534], v);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403BB0);
