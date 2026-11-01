@@ -782,7 +782,12 @@ extern char D_00457F30[];
 extern int D_00535C04[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
-struct sRiderCR { char pad[0x86C]; int mIndex; int mCtrl; };
+struct sRiderCR {
+    char pad[0x86C];
+    int mIndex;
+    int mCtrl;
+    void setCtrl(int c) { mCtrl = c; }
+};
 struct sVEntryCR { short delta; short index; void (*fn)(void*); };
 class cBEIfaceCR {
 public:
@@ -820,9 +825,7 @@ extern "C" void cAI_initComputerRiders(void* p)
         cBENewPlayerInterface_setRiderCtrlID(iface, idx, -1);
         cBENewPlayerInterface_setRiderCharID(iface, idx, ch);
         ((cBEIfaceCR*)iface)->update();
-        sRiderCR* r2 = *slot;
-        int m1 = -1;
-        r2->mCtrl = m1;
+        (*slot)->setCtrl(-1);
         cRider_addRiderMetrix(*(cRider**)(obj + 0x18));
         func_0010C9A8(obj);
         cComputer_updateRiderDifficulty(obj);
