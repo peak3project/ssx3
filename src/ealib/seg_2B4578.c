@@ -15538,7 +15538,24 @@ void func_003D21C0(char *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2218);
+#ifdef SKIP_ASM
+struct E_2218 { int w0; int w4; int w8; unsigned int wC; };
+struct H_2218 { char pad[0xF]; unsigned char n; };
+struct G_2218 { char pad[0x34]; struct H_2218 *t; char pad38[8]; short *idx; };
+extern struct G_2218 *D_0044F420_2218 __asm__("D_0044F420");
+
+void func_003D2218(void) {
+    int i;
+    for (i = 0; i < D_0044F420_2218->t->n; i++) {
+        struct E_2218 *p = (struct E_2218 *)((char *)D_0044F420_2218->t + D_0044F420_2218->idx[i] * 4);
+        if (p != 0) {
+            p->wC &= 0xDFFFFFFF;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2290);
