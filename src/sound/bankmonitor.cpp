@@ -836,9 +836,7 @@ struct sSndPlayerDCA0 {
     volatile int busy;          // 0x90
 };
 
-int func_002ADCA0_impl(sSndPlayerDCA0* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f) __asm__("func_002ADCA0");
-
-int func_002ADCA0_impl(sSndPlayerDCA0* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f)
+extern "C" int func_002ADCA0(sSndPlayerDCA0* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f)
 {
     self->busy = self->busy + 1;
     int idx = func_002ADC30(self, self->busy);
