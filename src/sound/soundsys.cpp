@@ -8324,6 +8324,11 @@ extern "C" int func_002A1820(void* self, sSs1820Rider* a, sSs1820Rider* b)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A19D8);
 #ifdef SKIP_ASM
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_19D8)(cController*, cBankMonitorInstance*, float);
+extern "C" int func_002ADCA0_19D8(void*, int, sSndCallback_19D8, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" void func_002A31C0(void* self);
 extern "C" void func_002A32B0(void* self);
 extern "C" void func_002A3358(void* self);
@@ -8334,9 +8339,8 @@ extern "C" void func_002A2568(void* self, int a1);
 extern "C" void func_002A2638(void* self);
 extern "C" void func_002A39E0(void* self);
 extern "C" void func_002A3708(void* self, char* rider);
-extern sSndKey8 D_004A3648_19D8[] __asm__("D_004A3648");
+extern sSndCallback_19D8 D_004A3648_19D8[] __asm__("D_004A3648");
 
-// PORT: 64-bit long sound key
 // Front-end sound event dispatcher; returns 1 if the event was handled.
 extern "C" int func_002A19D8(void* self, int ev)
 {
@@ -8344,7 +8348,7 @@ extern "C" int func_002A19D8(void* self, int ev)
         func_002A31C0(self);
         if (*(int*)((char*)self + 0x530) == 0) {
             func_0028D488(self);
-            func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 10, D_004A3648_19D8[0].v, 0, 3, 1, 0, 0);
+            func_002ADCA0_19D8(**(char***)((char*)self + 0x118) + 0x1D8, 10, D_004A3648_19D8[0], 0, 3, 1, 0, 0);
         }
     } else if (ev == 1) {
         func_002A32B0(self);
