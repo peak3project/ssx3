@@ -626,7 +626,25 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FE838);
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FE998);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FEB08);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 control-register read. The EE interlocks COP2 moves, so no hazard nop follows.
+static inline unsigned int vu0_cfc2_vi29_EB08(void)
+{
+    unsigned int v;
+    __asm__ volatile(".set noreorder\n\tcfc2.ni %0, $vi29\n\t.set reorder" : "=r"(v));
+    return v;
+}
+int func_003FEB08(void) {
+    unsigned int s = vu0_cfc2_vi29_EB08();
+    if ((s & 0xF) == 1)
+        return 1;
+    else if ((s & 0xF00) == 0x100)
+        return 1;
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FEB38);
 
