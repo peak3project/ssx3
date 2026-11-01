@@ -2029,22 +2029,26 @@ struct sDsNamesD1B8 {
     char* names[8];     // 0x70 (cBXString)
 };
 
+static inline void postMsg_D1B8(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListD1B8_insert(*(sMsgListNodeD1B8**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025D1B8(char* self, const char* name)
 {
     if (*(int*)self != 0) {
         char buf[0x200];
         buf[0] = 0;
         cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3108, name);
-        int type = 0xD5;
         // PORT: function pointer passed through func_0025B608's int parameter.
         func_0025B608(self, 0xA, 0x63706572, buf, (int)func_00268CE8, 20.0f);
         sDsNamesD1B8* s = (sDsNamesD1B8*)self;
         cBXString_cBXString4(&s->names[s->count], name);
-        int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-        m[0] = type;
-        *(void***)((char*)m + 0x4) = D_004812B0;
-        void* mp = m;
-        sMsgListD1B8_insert(*(sMsgListNodeD1B8**)(self + 0xF0), mp);
+        postMsg_D1B8(self, 0xD5);
     }
 }
 #endif
