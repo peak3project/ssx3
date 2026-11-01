@@ -887,13 +887,12 @@ extern "C" void func_001A4810(void* self, void* a1)
     const char* name = (const char*)a1;
     if (strlen(name) < 3) {
         void* p = func_001A9C50(self);
-        int three = 3;
         char* sub = (char*)p + 0xBC;
         *(int*)((char*)p + 0xBC) = 1;
         *(int*)((char*)p + 0xC4) = GetHashValue32(D_004615F8);
-        *(int*)((char*)p + 0xC0) = three;
+        *(int*)((char*)p + 0xC0) = 3;
         func_001C57C0(sub, 0, GetHashValue32(D_00461618));
-        *(int*)((char*)p + 0x14C) = three;
+        *(int*)((char*)p + 0x14C) = 3;
         *(int*)((char*)p + 0x150) = 0x806;
         func_001A9BC0(self, p);
     } else {
