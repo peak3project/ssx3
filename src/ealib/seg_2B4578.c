@@ -13094,7 +13094,43 @@ void func_003CD690(char *arg0, int arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CD6F0);
+#ifdef SKIP_ASM
+struct S_D6F0 {
+    unsigned char *src; int w4; int w8; int wC; int w10; float tab[64];
+    int z1[12]; int z2[12]; int z3[0x144];
+};
+
+void func_003CD6F0(char *arg0, unsigned char *arg1, char *arg2, int arg3) {
+    struct S_D6F0 *s = (struct S_D6F0 *)arg2;
+    int n;
+    float m;
+    int i;
+
+    s->w8 = 8;
+    s->src = arg1 + 1;
+    s->w4 = *arg1;
+    if (arg3 != 0) {
+        s->wC = func_003CD1F8((BS_D1F8 *)s, 1);
+        s->w10 = 0x20 - func_003CD1F8((BS_D1F8 *)s, 4);
+        n = func_003CD1F8((BS_D1F8 *)s, 4);
+        s->tab[0] = (float)(unsigned)(n + 1) * 8.0f;
+        i = func_003CD1F8((BS_D1F8 *)s, 6);
+        m = (float)(unsigned)i * 0.001f + 1.04f;
+        for (i = 1; i < 64; i++) {
+            s->tab[i] = s->tab[i - 1] * m;
+        }
+        for (i = 0; i < 12; i++) {
+            s->z1[i] = 0;
+            s->z2[i] = 0;
+        }
+        for (i = 0x143; i >= 0; i--) {
+            s->z3[i] = 0;
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CD878);
 
