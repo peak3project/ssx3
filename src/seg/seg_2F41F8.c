@@ -851,7 +851,18 @@ int func_003F5910(int *self, int a, int b, char *str, int len) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A50);
+#ifdef SKIP_ASM
+typedef struct { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; char *f18; } S5A50;
+int func_003F5A50_cb(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int len, S5A50 *self) __asm__("func_003F5A50");
+int func_003F5A50_cb(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int len, S5A50 *self) {
+    self->f10 = len;
+    self->fC = 0;
+    self->f8 = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A70);
