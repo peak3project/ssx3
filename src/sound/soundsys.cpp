@@ -1806,7 +1806,42 @@ extern "C" void func_00293B90(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_00293BB0);
+#ifdef SKIP_ASM
+struct sSsVt_3BB0 { short delta; short index; int (*fn)(void*); };
+extern const func_00290B58_sCurve D_00482C68;
+extern const func_00290B58_sCurve D_00482C90;
+
+static inline float* getLevels_3BB0(void* self) { return (float*)((char*)self + 0x5990); }
+
+extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch)
+{
+    float pressure = rider->mAudioPressure;
+    float level = rider->mAudioEdging + rider->mAudioBraking;
+    char* obj = (char*)&rider->mVtbl;
+    sSsVt_3BB0* vt = *(sSsVt_3BB0**)obj;
+    int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
+    float prev = *(float*)((char*)getLevels_3BB0(self) + (idx << 2));
+    float d = prev - level;
+    if (__builtin_fabsf(d) > 0.1f) {
+        if (level < prev) {
+            level = prev - d * 0.5f;
+        } else if (prev < level) {
+            level = prev + (level - prev) * 0.125f;
+        }
+    }
+    func_00290B58_sCurve c1 = D_00482C68;
+    *(float*)((char*)getLevels_3BB0(self) + (idx << 2)) = level;
+    func_00290B58_sCurve c2 = D_00482C90;
+    *volume = (int)func_00290B58(&c1, level);
+    *pitch = (int)(func_00290B58(&c2, pressure) * 4096.0f);
+    float speed = rider->mAudioSpeed;
+    if (speed < 0.1f) {
+        *volume = (int)((float)*volume * speed * 10.0f);
+    }
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00293DC0);
 #ifdef SKIP_ASM
