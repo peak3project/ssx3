@@ -315,12 +315,11 @@ INCLUDE_ASM("util/menu", func_002CAA58__FPv);
 #ifdef SKIP_ASM
 void* func_002CAA58(void* self)
 {
-    int t0 = 0;
-    *(int*)self = t0;
+    *(int*)self = 0;
     *(int*)((char*)self + 0x12c) = (int)(void*)D_00486ED0;
-    *(int*)((char*)self + 0x4) = t0;
-    *(int*)((char*)self + 0x8) = t0;
-    *(int*)((char*)self + 0x124) = t0;
+    *(int*)((char*)self + 0x4) = 0;
+    *(int*)((char*)self + 0x8) = 0;
+    *(int*)((char*)self + 0x124) = 0;
     return self;
 }
 #endif
