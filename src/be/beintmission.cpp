@@ -289,7 +289,66 @@ extern "C" int func_001538E8(void* self, int rider, int bit, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintmission", func_001539A8);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+int cBELibrary_getCharacterID(int);
+
+struct sMissionBits_9A8 {
+    unsigned int w[2];
+};
+
+struct sMission_9A8 {
+    unsigned char collected;
+    char pad1[3];
+    sMissionBits_9A8 bits;
+};
+
+struct sMissionProfile_9A8 {
+    int pad0;
+    sMission_9A8 missions[(0xF88 - 4) / 12];
+};
+
+struct sRaceSettings_9A8 {
+    char pad_0x00[0x40];
+    int missionBase;    // 0x40
+};
+
+// Second view of the same profile table, based at the first mission's bit words (D_004A6CB0 = D_004A6CA8 + 8):
+// one slot per mission, indexed as missions[block].m[i].
+struct sBitsSlot_9A8 {
+    sMissionBits_9A8 bits;
+    char next[4];
+};
+struct sBitsBlock_9A8 {
+    sBitsSlot_9A8 m[1];
+};
+struct sBitsProfile_9A8 {
+    sBitsBlock_9A8 missions[(0xF88 - 4) / 12];
+    char pad[4];
+};
+
+struct sMask8_9A8 { char b[8]; };
+
+extern sMissionProfile_9A8 D_004A6CA8_9A8[][10] __asm__("D_004A6CA8");
+extern sBitsProfile_9A8 D_004A6CB0_bits[][10] __asm__("D_004A6CB0");
+extern sRaceSettings_9A8 D_005305B0_9A8 __asm__("D_005305B0");
+
+extern "C" void func_001539A8(void* self, int rider, int idx, sMask8_9A8* mask)
+{
+    int profile = cBELibrary_getProfileIndex(rider);
+    int c = cBELibrary_getCharacterID(rider);
+    int off = profile * 0x9B50 + c * 0xF88 + D_005305B0_9A8.missionBase * 12;
+    int count = 0;
+    *(sMask8_9A8*)((char*)D_004A6CB0_bits + (idx * 12 + off)) = *mask;
+    for (int k = 0; k < 64; k++) {
+        if (D_004A6CB0_bits[profile][c].missions[D_005305B0_9A8.missionBase].m[idx].bits.w[k / 32] & (1 << k))
+            count++;
+    }
+    D_004A6CA8_9A8[profile][c].missions[idx + D_005305B0_9A8.missionBase].collected = count;
+}
+#endif
 
 INCLUDE_ASM("be/beintmission", func_00153B00);
 
