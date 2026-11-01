@@ -68,10 +68,9 @@ extern "C" void* cBoardTrailFX_initialize(cBoardTrailFX* self, int inChrg)
         t2.e[1].delta = D_00488C00.e[1].delta + vc;
     }
     self->f28 = 0;
-    short neg = -1;
     int i;
-    for (i = 47; i >= 0; i--) {
-        self->ids[i] = neg;
+    for (i = 0; i < 48; i++) {
+        self->ids[i] = -1;
     }
     sBTTrailVtx** s = self->strip;
     s[0] = new (D_00487B20, 0, 0) sBTTrailVtx[324];
