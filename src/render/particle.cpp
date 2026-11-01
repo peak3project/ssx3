@@ -3208,7 +3208,121 @@ extern "C" void func_00377CF0(sPtGfx_CF0* self, sPt7278* pos, float* size, int* 
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003781A0);
+#ifdef SKIP_ASM
+struct sVE_81A0 {
+    short delta;
+    short index;
+    sPt7278 (*fn)(void*, const sPt7278*);
+};
+
+struct sGfx_81A0 {
+    char pad_0x0[0xE84];
+    sRS_CF0* top;                   // 0xE84
+    char pad_0xE88[0x10D8 - 0xE88];
+    sVE_81A0* vt;                   // 0x10D8
+    char pad_0x10DC[0x13E4 - 0x10DC];
+    float* cam;                     // 0x13E4
+    char pad_0x13E8[0x18F0 - 0x13E8];
+    sRing_CF0* ring;                // 0x18F0
+    char pad_0x18F4[0x5A00 - 0x18F4];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x5A30 - 0x5A04];
+    unsigned int vpW;               // 0x5A30
+    unsigned int vpH;               // 0x5A34
+    char pad_0x5A38[0x6B90 - 0x5A38];
+    int texReady;                   // 0x6B90
+};
+
+// Rotates the xy part of a by the 4x4 matrix m (columns 0 and 1) into r.
+static inline void Rot_81A0(sPt7278& r, float* m, const sPt7278& a)
+{
+    float x = a.x * m[0] + a.y * m[1];
+    float y = a.x * m[4] + a.y * m[5];
+    float z = a.x * m[8] + a.y * m[9];
+    float w = a.x * m[12] + a.y * m[13];
+    r.x = x;
+    r.y = y;
+    r.z = z;
+    r.w = w;
+}
+
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+// PORT: PS2-only GS packet build; uncached (0x30000000) pointers.
+extern "C" void func_003781A0(sGfx_81A0* self, float ang, sPt7278* pos, float* size, int* uvA, int* uvB, float* color, int n)
+{
+    if (self->texReady == 0) {
+        func_0037D968(self);
+    }
+    sPt7278 t0 = self->vt[92].fn((char*)self + self->vt[92].delta, pos);
+    float s, c;
+    func_0031BE50(&s, &c, ang);
+    float* m = self->cam;
+    sPt7278 v1;
+    sPt7278 v2(c, s, 0.0f, 0.0f);
+    Rot_81A0(v1, m, v2);
+    Rot_81A0(v2, m, sPt7278(-v2.y, v2.x, v2.z, v2.w));
+    sPt7278 p1 = Add7278(*pos, Scale7278(v1, size[0]));
+    sPt7278 p2 = Add7278(*pos, Scale7278(v2, size[1]));
+    p1.w = 1.0f;
+    p2.w = 1.0f;
+    sPt7278 q1 = Sub_CF0(self->vt[92].fn((char*)self + self->vt[92].delta, &p1), t0);
+    sPt7278 q2 = Sub_CF0(self->vt[92].fn((char*)self + self->vt[92].delta, &p2), t0);
+    sPt7278 c0 = Sub_CF0(Sub_CF0(t0, q1), q2);
+    sPt7278 c1 = Sub_CF0(Add7278(t0, q1), q2);
+    sPt7278 c2 = Add7278(Sub_CF0(t0, q1), q2);
+    sPt7278 c3 = Add7278(Add7278(t0, q1), q2);
+    unsigned int buf = self->bufAddr;
+    long* q = (long*)(buf | 0x30000000);
+    int ox = (0x800 - (self->vpW >> 1)) * 16;
+    int oy = (0x800 - (self->vpH >> 1)) * 16;
+    int x0 = ox + (int)(c0.x * 16.0f), y0 = oy + (int)(c0.y * 16.0f);
+    int x1 = ox + (int)(c1.x * 16.0f), y1 = oy + (int)(c1.y * 16.0f);
+    int x2 = ox + (int)(c2.x * 16.0f), y2 = oy + (int)(c2.y * 16.0f);
+    int x3 = ox + (int)(c3.x * 16.0f), y3 = oy + (int)(c3.y * 16.0f);
+    int z = (int)t0.z;
+    int cg = (int)(color[1] * 128.0f);
+    int cb = (int)(color[2] * 128.0f);
+    int ca = (int)(color[3] * 128.0f);
+    int cr = (int)(color[0] * 128.0f);
+    for (int i = 0; i < n; i++) {
+        q[0] = 0x10000007;
+        q[1] = 0;
+        q[2] = 0;
+        q[3] = (long)0x50000006 << 32;
+        q[4] = ((long)0xA4000000 << 32) | 0x8001;
+        q[5] = 0x5252525210L;
+        q[6] = 0x54;
+        q[7] = (long)cg | ((long)cb << 8) | ((long)ca << 16) | ((long)cr << 24) | ((long)Bits_CF0(1.0f) << 32);
+        q[8] = uvA[0] | ((long)uvA[1] << 32);
+        q[9] = (long)x0 | ((long)y0 << 16) | ((long)z << 32);
+        q[10] = uvB[0] | ((long)uvA[1] << 32);
+        q[11] = (long)x1 | ((long)y1 << 16) | ((long)z << 32);
+        q[12] = uvA[0] | ((long)uvB[1] << 32);
+        q[13] = (long)x2 | ((long)y2 << 16) | ((long)z << 32);
+        q[14] = uvB[0] | ((long)uvB[1] << 32);
+        q[15] = (long)x3 | ((long)y3 << 16) | ((long)z << 32);
+        q += 16;
+    }
+    unsigned int next = (unsigned int)q & 0x0FFFFFFF;
+    sRing_CF0* ring = self->ring;
+    self->bufAddr = next;
+    sRS_CF0* rs = self->top;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sEnt_CF0* e = (sEnt_CF0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 0;
+    }
+    self->bufAddr += 0x10;
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_00378808);
 
