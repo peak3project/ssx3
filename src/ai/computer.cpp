@@ -1556,7 +1556,14 @@ INCLUDE_ASM("ai/computer", func_0010F3B8);
 #ifdef SKIP_ASM
 struct sVE_0010F3B8 { short delta; short index; int (*fn)(void*); };
 struct sEnt_0010F3B8 { int vis; int val; float dist; int c; int d; int e; int f; int g; int h; };
-struct sRider_0010F3B8 { sEnt_0010F3B8 ent[6]; char pad[0x10]; int fE8; char pad2[0x4D8 - 0xEC]; float f4D8; };
+struct sRider_0010F3B8 {
+    sEnt_0010F3B8 ent[6];
+    char pad[0x10];
+    int fE8;
+    char pad2[0x4D8 - 0xEC];
+    float f4D8;
+    void setTarget(int t) { fE8 = t; }
+};
 struct sAI_0010F3B8 { char pad[0x28]; sRider_0010F3B8* riders[20]; int count; };
 extern "C" int func_0011D640(void*);
 float func_00113128(void* self);
@@ -1590,9 +1597,8 @@ extern "C" void func_0010F3B8_impl(sAI_0010F3B8* self)
             self->riders[i]->ent[j].g = 0;
             self->riders[i]->ent[j].h = 0;
         }
-        int none = -1;
         self->riders[i]->f4D8 = func_00113128(self->riders[i]);
-        self->riders[i]->fE8 = none;
+        self->riders[i]->setTarget(-1);
     }
 }
 #endif
