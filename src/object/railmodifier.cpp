@@ -1224,6 +1224,14 @@ extern "C" void func_0035F3A8(sRailModSelect* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F410);
 #ifdef SKIP_ASM
+// Random float in [lo, hi): BXrand's low 23 bits as the mantissa of a float in [1, 2).
+static inline float RandRange_35F410(float lo, float hi)
+{
+    union { int i; float f; } u;
+    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
+    return (u.f - 1.0f) * (hi - lo) + lo;
+}
+
 // Advances the rail timer; each whole step moves to the next/previous frame (mode 0), or alternates between a
 // fixed 10-per-second step (mode 1) and a random 25..100% rate (mode 2).
 extern "C" void func_0035F410(sRailTimer* self)
@@ -1252,11 +1260,8 @@ extern "C" void func_0035F410(sRailTimer* self)
             self->f14 = 0;
         }
     } else if (self->f0 == 2) {
-        union { int i; float f; } u;
-        float base = 0.25f;
-        u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
+        self->f8 = self->fC * RandRange_35F410(0.25f, 1.0f);
         self->f0 = 1;
-        self->f8 = self->fC * ((u.f - 1.0f) * 0.75f + base);
         if (++self->f14 >= self->f20) {
             self->f14 = 0;
         }
