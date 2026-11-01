@@ -919,7 +919,71 @@ extern "C" void func_0014BE70(void* vself)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014C068);
+#ifdef SKIP_ASM
+extern "C" void func_003E6448(void* dst, int c, int n);
+extern const char D_0045A610[];
+
+struct sBEEntry38_C068 {
+    signed char group;  // 0x0
+    char pad_0x01[3];
+    short slot;         // 0x4
+    short key;          // 0x6
+    char pad_0x08[0x30];
+};
+
+struct sBETables_C068 {
+    char pad_0x00[4];
+    sBEEntry38_C068* entries;   // 0x4
+    char pad_0x08[0x10];
+    short* buf;                 // 0x18
+    int count;                  // 0x1C
+    char pad_0x20[0x11C - 0x20];
+    short* keyCount[30];        // 0x11C
+    short* keyFirst[30];        // 0x194
+    char pad_0x20C[0x4DC - 0x20C];
+    short* slotIndex[30];       // 0x4DC
+};
+
+extern "C" void func_0014C068(sBETables_C068* self)
+{
+    int last = D_004A11E8;
+    self->buf = new (D_0045A610, 0, 0) short[D_004A11E8 * 90];
+    short* p = self->buf;
+    for (int i = 0; i < 30; i++) {
+        self->keyCount[i] = p;
+        p += D_004A11E8;
+    }
+    for (int i = 0; i < 30; i++) {
+        self->keyFirst[i] = p;
+        p += D_004A11E8;
+    }
+    for (int i = 0; i < 30; i++) {
+        self->slotIndex[i] = p;
+        p += D_004A11E8;
+        func_003E6448(self->slotIndex[i], 0, D_004A11E8 * 2);
+    }
+    for (int i = 0; i < self->count; i++) {
+        self->slotIndex[self->entries[i].group][self->entries[i].slot] = i;
+    }
+    for (int i = 0; i < 30; i++) {
+        func_003E6448(self->keyFirst[i], 0, D_004A11E8 * 2);
+        func_003E6448(self->keyCount[i], 0, D_004A11E8 * 2);
+    }
+    for (int i = 0; i < self->count; i++) {
+        int k = self->entries[i].key;
+        int g = self->entries[i].group;
+        if (k != -1) {
+            self->keyCount[g][k]++;
+            if (last != k) {
+                last = k;
+                self->keyFirst[g][k] = i;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014C2B0);
