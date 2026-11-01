@@ -395,7 +395,141 @@ extern "C" void func_00329DC8(void* tree, sVec4_2F650* mnp, sVec4_2F650* mxp)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_00329F98);
+#ifdef SKIP_ASM
+struct sElem_9F98 {
+    sSphereVec4 pos;    // 0x00
+    float r;            // 0x10
+    char pad_0x14[0xC];
+};
+
+struct sNode_9F98 {
+    char pad_0x00[0x10];
+    sSphereVec4 pos;    // 0x10
+    float r;            // 0x20
+    char pad_0x24[0x8];
+    int count;          // 0x2C
+    sElem_9F98 e[1];    // 0x30
+};
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sSphereVec4 Sub_9F98(const sSphereVec4& a, const sSphereVec4& b)
+{
+    sSphereVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sSphereVec4 Scale_9F98(const sSphereVec4& v, float s)
+{
+    sSphereVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_9F98(const sSphereVec4& a, const sSphereVec4& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v / |v|).
+static inline sSphereVec4 Normalize_9F98(const sSphereVec4& v)
+{
+    sSphereVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_9F98(float v)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(v));
+    return r;
+}
+
+extern "C" int func_00329F98(sNode_9F98* a, sNode_9F98* b, sSphereVec4* outA, sSphereVec4* outB)
+{
+    sSphereVec4 d;
+    float sum;
+    float ss;
+    float dd;
+    sum = b->r + a->r;
+    d = Sub_9F98(b->pos, a->pos);
+    ss = sum * sum;
+    dd = Dot_9F98(d, d);
+    if (ss < dd)
+        return 0;
+    for (int i = 0; i < a->count; i++) {
+        sum = b->r + a->e[i].r;
+        d = Sub_9F98(b->pos, a->e[i].pos);
+        ss = sum * sum;
+        dd = Dot_9F98(d, d);
+        if (ss < dd)
+            continue;
+        for (int j = 0; j < b->count; j++) {
+            sum = b->e[j].r + a->e[i].r;
+            d = Sub_9F98(b->e[j].pos, a->e[i].pos);
+            ss = sum * sum;
+            dd = Dot_9F98(d, d);
+            if (!(ss < dd)) {
+                sSphereVec4 n = Normalize_9F98(d);
+                float f = sum - Sqrt_9F98(dd);
+                *outA = Scale_9F98(n, f);
+                *outB = Sub_9F98(a->e[i].pos, Scale_9F98(n, a->e[i].r - f));
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("intersect/riderspheretree", func_0032A1C0);
 
