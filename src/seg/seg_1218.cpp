@@ -3330,13 +3330,17 @@ static inline float Clamp_7E70(float v, float lo, float hi)
 
 static inline sV4_7E70 Get_7E70(char* p) { return *(sV4_7E70*)p; }
 
+static inline float ClampAbs_7E70(float v, const float& lim)
+{
+    return Clamp_7E70(v, -lim, lim);
+}
+
 extern "C" void func_00107E70(char* self, char* other, sV4_7E70* n, int flag, float speed)
 {
     if (func_0011FEE8_7E70(self) == 10)
         return;
     float absSpd = Abs_7E70(speed);
-    float lim = 555.5555419921875f;
-    float s = Clamp_7E70(speed, -lim, lim);
+    float s = ClampAbs_7E70(speed, 555.5555419921875f);
     sV4_7E70 imp = Scale_7E70(*n, s);
     if (func_001231A8(self)) {
         AddEq_7E70(*(sV4_7E70*)(self + 0x1E0),
