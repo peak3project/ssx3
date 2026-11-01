@@ -813,7 +813,116 @@ extern "C" void cRider_updateOrientationImplicit(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011E150);
+#ifdef SKIP_ASM
+struct sQ_E150 {
+    float x, y, z, w;
+    sQ_E150() {}
+    sQ_E150(float ax, float ay, float az, float aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline sQ_E150 Scale_E150(const sQ_E150& v, float s)
+{
+    sQ_E150 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sQ_E150 Add_E150(const sQ_E150& a, const sQ_E150& b)
+{
+    sQ_E150 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sQ_E150 Sub_E150(const sQ_E150& a, const sQ_E150& b)
+{
+    sQ_E150 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+struct sBox_E150 {
+    sQ_E150 min;
+    sQ_E150 max;
+};
+
+static inline void SetMin_E150(float& m, float v)
+{
+    if (v < m)
+        m = v;
+}
+
+static inline void SetMax_E150(float& m, float v)
+{
+    if (v > m)
+        m = v;
+}
+
+// Grows the box to contain c.
+static inline void Grow_E150(sBox_E150& b, const sQ_E150& c)
+{
+    SetMin_E150(b.min.x, c.x);
+    SetMin_E150(b.min.y, c.y);
+    SetMin_E150(b.min.z, c.z);
+    SetMax_E150(b.max.x, c.x);
+    SetMax_E150(b.max.y, c.y);
+    SetMax_E150(b.max.z, c.z);
+}
+
+extern "C" void func_0011E150_impl(cRider* self, sQ_E150* pin) __asm__("func_0011E150");
+extern "C" void func_0011E150_impl(cRider* self, sQ_E150* pin)
+{
+    sQ_E150 up = *(sQ_E150*)&self->mMatrix.row[2];
+    sQ_E150 side = *(sQ_E150*)&self->mMatrix.row[0];
+    sQ_E150 front = *(sQ_E150*)&self->mMatrix.row[1];
+    sQ_E150* p = pin ? pin : (sQ_E150*)&self->mPosition;
+    *(sQ_E150*)&self->unk_400 = *(sQ_E150*)&self->unk_410 = *p;
+    Grow_E150(*(sBox_E150*)&self->unk_400, Add_E150(Add_E150(Add_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 250.0f)));
+    Grow_E150(*(sBox_E150*)&self->unk_400, Sub_E150(Add_E150(Add_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 50.0f)));
+    Grow_E150(*(sBox_E150*)&self->unk_400, Add_E150(Sub_E150(Add_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 250.0f)));
+    Grow_E150(*(sBox_E150*)&self->unk_400, Sub_E150(Sub_E150(Add_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 50.0f)));
+    Grow_E150(*(sBox_E150*)&self->unk_400, Add_E150(Add_E150(Sub_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 250.0f)));
+    Grow_E150(*(sBox_E150*)&self->unk_400, Sub_E150(Add_E150(Sub_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 50.0f)));
+    Grow_E150(*(sBox_E150*)&self->unk_400, Add_E150(Sub_E150(Sub_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 250.0f)));
+    Grow_E150(*(sBox_E150*)&self->unk_400, Sub_E150(Sub_E150(Sub_E150(*p, Scale_E150(front, 150.0f)), Scale_E150(side, 100.0f)), Scale_E150(up, 50.0f)));
+    *(sQ_E150*)&self->unk_420 = *p;
+    self->unk_420.w = 250.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_0011EB60);
