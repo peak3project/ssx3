@@ -2672,16 +2672,20 @@ static inline void post_DF98(char* self, void* msg)
     sMsgListDF98_insert(*(sMsgListNodeDF98**)(self + 0xF0), mp);
 }
 
+static inline void postMsg_DF98(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    post_DF98(self, m);
+}
+
 extern "C" void func_0025DF98(char* self, char* msg)
 {
     *(int*)self = 1;
     int v = *(int*)(msg + 0x8);
     if (v == 0) {
-        int type = 0xE8;
-        int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-        m[0] = type;
-        *(void***)((char*)m + 0x4) = D_004812B0;
-        post_DF98(self, m);
+        postMsg_DF98(self, 0xE8);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
