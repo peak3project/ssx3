@@ -187,7 +187,74 @@ extern "C" void func_002C86F8(HS_86F8 *self, unsigned i, int d) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1C9348", func_002C8770);
+#ifdef SKIP_ASM
+struct HS_8770 { char pad0[0x100]; unsigned freq[256]; char pad1[0x1524 - 0x500]; int l[0x208]; int r[0x208]; int a[256]; char pad2[0x2DC4 - 0x2964]; int count; };
+extern "C" void func_002C86F8_8770(struct HS_8770 *self, unsigned i, int d) __asm__("func_002C86F8");
+extern "C" void func_002C8770(struct HS_8770 *self) {
+    unsigned w[260];
+    unsigned id[260];
+    unsigned n = 1;
+    int node = 256;
+    unsigned i;
+    w[0] = 0;
+    for (i = 0; i < 256; i++) {
+        self->a[i] = 99;
+        if (self->freq[i]) {
+            w[n] = self->freq[i];
+            id[n] = i;
+            n++;
+        }
+    }
+    self->count = n - 1;
+    if (n >= 3) {
+        do {
+            i = n - 1;
+            unsigned mx = w[i];
+            int imax = i;
+            i--;
+            unsigned mn = w[i];
+            int imin = i;
+            if (mx < mn) {
+                mn = mx;
+                mx = w[i];
+                imin = imax;
+                imax = i;
+            }
+            if (i != 0)
+                for (;;) {
+                    while (mx < w[--i]) ;
+                    if (i == 0)
+                        break;
+                    mx = w[i];
+                    if (mn < mx) {
+                        imax = i;
+                    } else {
+                        mx = mn;
+                        imax = imin;
+                        mn = w[i];
+                        imin = i;
+                    }
+                }
+
+            unsigned a = id[imax];
+            unsigned b = id[imin];
+            w[imax] = mx + mn;
+            id[imax] = node;
+            self->l[node] = a;
+            n--;
+            w[imin] = w[n];
+            self->r[node] = b;
+            node++;
+            id[imin] = id[n];
+        } while (n >= 3);
+        func_002C86F8_8770(self, node - 1, 0);
+    } else {
+        func_002C86F8_8770(self, id[n - 1], 1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1C9348", func_002C8970);
