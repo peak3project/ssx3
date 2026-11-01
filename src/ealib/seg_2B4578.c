@@ -3466,7 +3466,7 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BA0B0);
 struct E_A0B0 { int w0; short h4[18]; short h28; unsigned char b2A; char pad2B; unsigned int w2C; char pad30[0x69 - 0x30]; signed char b69; char pad6A[0x8C - 0x6A]; };
 struct G_A0B0 { char pad[0x3C]; unsigned char b3C; char pad3D[0x180 - 0x3D]; int w180; char pad184[0x1F0 - 0x184]; struct E_A0B0 *tab; };
 extern short D_0050AC20_A0B0[] __asm__("D_0050AC20");
-extern int D_0044C478_A0B0[] __asm__("D_0044C478");
+extern int D_0044C478;
 extern struct G_A0B0 D_0050A8E8_A0B0[] __asm__("D_0050A8E8");
 extern int f_A078_A0B0(int, int) __asm__("func_003BA078");
 extern void f_89E0_A0B0(int) __asm__("func_003B89E0");
@@ -3484,9 +3484,9 @@ short func_003BA0B0(int n, int tag, unsigned int *out, int lo, int hi) {
     for (i = 0; i < n; i++) {
         D_0050AC20_A0B0[i] = -1;
     }
-    D_0044C478_A0B0[0] += 0x100;
-    if (D_0044C478_A0B0[0] < 0) {
-        D_0044C478_A0B0[0] = 0;
+    D_0044C478 += 0x100;
+    if (D_0044C478 < 0) {
+        D_0044C478 = 0;
     }
     for (i = 0; i < n; i++) {
         best = -1;
@@ -3542,7 +3542,7 @@ short func_003BA0B0(int n, int tag, unsigned int *out, int lo, int hi) {
                 }
             }
         } while (!sorted);
-        *out = D_0044C478_A0B0[0] | D_0050AC20_A0B0[0];
+        *out = D_0044C478 | D_0050AC20_A0B0[0];
         result = D_0050AC20_A0B0[0];
         for (i = 0; i < sel; i++) {
             int w;
