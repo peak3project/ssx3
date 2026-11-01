@@ -3690,9 +3690,7 @@ extern "C" sRect_2CEEE8* func_002CEEE8(sRect_2CEEE8* ret, sMenuValueItem_2CEEE8*
     sRect_2CEEE8 r;
     char buf[64];
     sprintf(buf, D_00486700, func_00413AF8(*(float*)((char*)item->values + (item->index << 2))));
-    float z = 0.0f;
-    r.y = z;
-    r.x = z;
+    r.x = r.y = 0.0f;
     sFont_2CEEE8* font = font_2CEEE8(item);
     r.h = (float)font->lineHeight * font->scaleY + 12.0f;
     r.w = MAX_2CEEE8(MAX_2CEEE8(textWidth_2CEEE8(item, D_00487470[0]), textWidth_2CEEE8(item, D_00487470[1])),
