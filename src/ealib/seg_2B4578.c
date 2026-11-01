@@ -13512,7 +13512,74 @@ int func_003CDDE8(char *arg0, unsigned char *arg1, int arg2, int arg3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CDE68);
+#ifdef SKIP_ASM
+struct S_DE68 {
+    unsigned char *src; int w4; int w8; char pad[0x684 - 0xC]; float buf[0x1B0];
+    int cnt; unsigned char *p48; char *out; short n; short idx; int rem; int w58; int w5C; int flag; int mode;
+};
+extern int func_0041605C_DE68(void *, void *, int) __asm__("func_0041605C");
+extern void func_003CD878_DE68(void *) __asm__("func_003CD878");
+int func_003CDE68(struct S_DE68 *s, char **arg1, int max) {
+    int chunk = s->cnt;
+    int n, rem;
+    if (s->rem == 0) {
+        return 0;
+    }
+    n = s->rem;
+    if (max < n) n = max;
+    s->out = *arg1;
+    rem = n;
+    while (rem > 0) {
+        int bytes;
+        if (rem < chunk) chunk = rem;
+        bytes = chunk * 4;
+        rem -= chunk;
+        func_0041605C_DE68(s->out, (char *)((0x1B0 - s->cnt) * 4 + (int)s) + 0x684, bytes);
+        s->out += bytes;
+        s->cnt -= chunk;
+        if (rem > 0) {
+            func_003CD878_DE68(s);
+            s->cnt = 0x1B0;
+            chunk = 0x1B0;
+            if (s->mode == 1) {
+                unsigned char *src = s->src;
+                unsigned char *p;
+                p = s->p48 = src - 1;
+                if (s->flag != 0) {
+                    unsigned char *pi = (unsigned char *)&s->idx;
+                    unsigned char *pn = (unsigned char *)&s->n;
+                    float *fp;
+                    short j;
+                    char b[2];
+                    pi[0] = p[1];
+                    pi[1] = p[0];
+                    pn[0] = src[2];
+                    pn[1] = src[1];
+                    p += 4;
+                    s->p48 = s->p48 + s->n * 2 + 4;
+                    fp = &s->buf[s->idx];
+                    s->src = s->p48 + 1;
+                    for (j = 0; j < s->n; j++) {
+                        b[0] = p[1];
+                        b[1] = p[0];
+                        p += 2;
+                        *fp++ = (float)*(short *)b;
+                    }
+                    s->flag = 0;
+                }
+                if (*s->p48 == 0xEE) s->flag = 1;
+                s->w8 = 8;
+                s->w4 = *s->src;
+                s->src++;
+            }
+        }
+    }
+    s->rem -= n;
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CE078);
