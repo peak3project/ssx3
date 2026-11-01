@@ -5194,7 +5194,7 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E51A0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_00423C00_51A0(int) __asm__("func_00423C00");
-extern int D_00450DE4_51A0[] __asm__("D_00450DE4");
+extern int D_00450DE4;
 
 void func_003E51A0_51A0(char *arg0) __asm__("func_003E51A0");
 void func_003E51A0_51A0(char *arg0) {
@@ -5206,13 +5206,13 @@ void func_003E51A0_51A0(char *arg0) {
     } else {
         h = *(int*)(arg0 + 4);
     }
-    if (D_00450DE4_51A0[0] != 0) {
+    if (D_00450DE4 != 0) {
         func_00423CB0(h, st);
     } else {
         func_00423CA0(h, st);
     }
     if (st[0] & 0xF) {
-        if (D_00450DE4_51A0[0] != 0) {
+        if (D_00450DE4 != 0) {
             func_00423C00_51A0(h);
         } else {
             func_00423BF0(h);
@@ -5261,8 +5261,8 @@ extern void f3CA0_YT(int, int *) __asm__("func_00423CA0");
 extern void f3CB0_YT(int, int *) __asm__("func_00423CB0");
 extern void func_00423CC0(void);
 extern void f4CE8_YT(int) __asm__("func_00424CE8");
-extern int D_0DA0_YT[] __asm__("D_00450DA0");
-extern int D_0DE4_YT[] __asm__("D_00450DE4");
+extern int D_00450DA0;
+extern int D_00450DE4;
 extern char D_5E20_YT[] __asm__("D_00495E20");
 extern char fE5290_YT[] __asm__("func_003E5290");
 
@@ -5270,14 +5270,14 @@ void THREAD_yieldticks(int a0) {
     int buf[12];
     int t16;
     if (a0 > 0) {
-        t16 = ((a0 * D_0DA0_YT[0]) / func_003E5008()) & 0xFFFF;
+        t16 = ((a0 * D_00450DA0) / func_003E5008()) & 0xFFFF;
         if (f3B20_YT(t16, fE5290_YT, func_00423C90()) < 0) {
             abm_YT(D_5E20_YT);
         }
         func_00423CC0();
         return;
     }
-    if (D_0DE4_YT[0] != 0) {
+    if (D_00450DE4 != 0) {
         f3CB0_YT(func_00423C90(), buf);
         f4CE8_YT(buf[6]);
         return;
@@ -5320,12 +5320,12 @@ void func_003E5398(int ms) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5440);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450DFC_0DFC[] __asm__("D_00450DFC");
+extern int D_00450DFC;
 
 int func_003E5440(char *arg0) {
     int cur = func_00423C90();
     if (arg0 == 0) {
-        return cur == D_00450DFC_0DFC[0];
+        return cur == D_00450DFC;
     }
     if (arg0 == (char *)-1) {
         return 1;
@@ -5341,20 +5341,20 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5498);
 extern int func_00423C90();
 extern void func_00423CA0(int, void *);
 extern void func_00423CB0(int, void *);
-extern int D_00450DE4_5498[] __asm__("D_00450DE4");
-extern int D_00450DFC_5498[] __asm__("D_00450DFC");
+extern int D_00450DE4;
+extern int D_00450DFC;
 
 int func_003E5498(int *a0) {
     int sp[12];
     int t;
     if (a0 == 0) {
-        t = D_00450DFC_5498[0];
+        t = D_00450DFC;
     } else if (a0 == (int *)-1) {
         t = func_00423C90();
     } else {
         t = a0[1];
     }
-    if (D_00450DE4_5498[0] != 0) {
+    if (D_00450DE4 != 0) {
         func_00423CB0(t, sp);
     } else {
         func_00423CA0(t, sp);
@@ -5368,20 +5368,20 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5508);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_00423C40_5508(int, int) __asm__("func_00423C40");
-extern int D_00450DE4_5508[] __asm__("D_00450DE4");
-extern int D_00450DFC_5508[] __asm__("D_00450DFC");
+extern int D_00450DE4;
+extern int D_00450DFC;
 
 int func_003E5508(void *arg0, int arg1) {
     int var_4;
 
     if (arg0 == 0) {
-        var_4 = D_00450DFC_5508[0];
+        var_4 = D_00450DFC;
     } else if (arg0 == (void *)0xFFFFFFFF) {
         var_4 = func_00423C90();
     } else {
         var_4 = (*(int *)((char*)(arg0) + (4)));
     }
-    if (D_00450DE4_5508[0] != 0) {
+    if (D_00450DE4 != 0) {
         func_00423C40_5508(var_4, arg1);
     } else {
         func_00423C30(var_4, arg1);
@@ -5396,14 +5396,14 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5580);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_00423CA0(int, void *);
 extern void func_00423CB0(int, void *);
-extern int D_00450DE4_0DE4[] __asm__("D_00450DE4");
+extern int D_00450DE4;
 typedef struct { int pad; int f4; } A_5580;
 
 int func_003E5580(A_5580 *arg0) {
     struct { int v; char rest[0x2C]; } st;
     int r;
 
-    if (D_00450DE4_0DE4[0] != 0) {
+    if (D_00450DE4 != 0) {
         func_00423CB0(arg0->f4, &st);
     } else {
         func_00423CA0(arg0->f4, &st);
@@ -5499,7 +5499,7 @@ INCLUDE_ASM("ealib/seg_2DCAE8", MUTEX_unlock);
 extern int func_00423C90();
 extern void func_00423DC0(int);
 extern void func_00423DD0(int);
-extern int D_00450DE4_5760[] __asm__("D_00450DE4");
+extern int D_00450DE4;
 
 void MUTEX_unlock_5760(void *arg0) __asm__("MUTEX_unlock");
 void MUTEX_unlock_5760(void *arg0) {
@@ -5508,7 +5508,7 @@ void MUTEX_unlock_5760(void *arg0) {
         if (--p[2] != 0) return;
         p[1] = 0;
     }
-    if (D_00450DE4_5760[0] != 0) {
+    if (D_00450DE4 != 0) {
         func_00423DD0(p[3]);
     } else {
         func_00423DC0(p[3]);
@@ -6235,18 +6235,18 @@ __asm__(
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E6690);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450DA0_0DA0[] __asm__("D_00450DA0");
+extern int D_00450DA0;
 
 void func_003E6690(int arg0) {
     switch (arg0) {
     case 1:
-        D_00450DA0_0DA0[0] = 0x3D86;
+        D_00450DA0 = 0x3D86;
         return;
     case 2:
-        D_00450DA0_0DA0[0] = 0x3D09;
+        D_00450DA0 = 0x3D09;
         return;
     case 3:
-        D_00450DA0_0DA0[0] = 0x7080;
+        D_00450DA0 = 0x7080;
         return;
     }
 }
