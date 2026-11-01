@@ -8083,7 +8083,52 @@ void func_003C45E8(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4668);
+#ifdef SKIP_ASM
+struct Ent_4668 { int key; int a; int b; short c; char d; char pad; };
+struct D_4668 { char pad[0xCBC]; volatile int id; volatile unsigned char count; char pad2[7]; struct Ent_4668 e[28]; };
+extern struct D_4668 D_0050AD00_4668 __asm__("D_0050AD00");
+extern void func_003C45E8_4668(int) __asm__("func_003C45E8");
+extern void func_003C43C0_4668(int, int, int, int) __asm__("func_003C43C0");
+int func_003C4668(int op, int a, int b, int size, int d) {
+    int s, i;
+    if (size & 0x3F) {
+        size += 0x40;
+        size &= 0xFFFFFFC0;
+    }
+    do {
+        DI_2B45();
+        SYNCP_2B45();
+        MFC0_STATUS_2B45(s);
+    } while (s & 0x10000);
+    D_0050AD00_4668.id++;
+    if (D_0050AD00_4668.id == 0) {
+        D_0050AD00_4668.id = 1;
+    }
+    if (op == 0x100) {
+        func_003C43C0_4668(a, b, size, 0);
+        EI_2B45();
+        return D_0050AD00_4668.id;
+    }
+    for (i = 0; i < 28; i++) {
+        struct Ent_4668 *e = &D_0050AD00_4668.e[i];
+        if (e->key == 0) {
+            D_0050AD00_4668.count++;
+            e->key = D_0050AD00_4668.id;
+            e->a = a;
+            e->b = b;
+            e->c = size;
+            e->d = d;
+            EI_2B45();
+            func_003C45E8_4668(0);
+            return D_0050AD00_4668.id;
+        }
+    }
+    EI_2B45();
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4788);
