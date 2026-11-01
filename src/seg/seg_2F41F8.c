@@ -562,7 +562,61 @@ void func_003F44F8(void) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4528);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4A78);
+#ifdef SKIP_ASM
+typedef struct { int f0; int f4; int pad[5]; int key; } A4A78;
+typedef struct { int pad[2]; int f8; int fC; int f10; int f14; int pad2; int key; } B4A78;
+typedef struct { int (*fn)(int, int, int, int, int, int, int, int, int *); int *out; int arg; int th; } C4A78;
+typedef struct { char pad[0x4D94]; A4A78 *a; int pad98[2]; B4A78 *b; int padA4[2]; int base2; int padB0; int base1; int padB8[3]; C4A78 *c; int padC8[2]; int head; int tail; int cnt; int padDC; int pos; int padE4[9]; int sema; } G4A78;
+extern G4A78 D_4A78 __asm__("D_0051F0C0");
+extern volatile int D_004A5B00;
+extern int func_00423DE0(int);
+extern int func_00423DC0(int);
+extern int func_00423CD0(int);
+int func_003F4A78(void) {
+    G4A78 *g = &D_4A78;
+    int n = 0;
+    while (g->tail != g->head && g->b[g->tail].key == g->a[g->tail].key) {
+        int th, key, kind, arg, p10, p14, addr, len, p8, pC;
+        D_004A5B00 = 1;
+        func_00423DE0(g->sema);
+        D_004A5B00 = 0;
+        key = g->b[g->tail].key;
+        if (key != g->a[g->tail].key) {
+            func_00423DC0(g->sema);
+            return n;
+        }
+        th = 0;
+        addr = g->base2 + (g->a[g->tail].f0 - g->base1);
+        p8 = g->b[g->tail].f8;
+        pC = g->b[g->tail].fC;
+        p10 = g->b[g->tail].f10;
+        p14 = g->b[g->tail].f14;
+        kind = (int)g->c[g->tail].fn;
+        arg = g->c[g->tail].arg;
+        len = g->a[g->tail].f4;
+        if (kind != 0) {
+            if (kind == 1) {
+                if (g->c[g->tail].out != 0) *g->c[g->tail].out = p14;
+                th = g->c[g->tail].th;
+            } else {
+                g->c[g->tail].fn(key, arg, p10, p14, addr, len, p8, pC, g->c[g->tail].out);
+                SYNC_2F41();
+            }
+        }
+        if (g->a[g->tail].f4 > 0) {
+            g->pos = g->a[g->tail].f0 - g->base1;
+            g->pos += (g->a[g->tail].f4 + 0x3F) & ~0x3F;
+        }
+        g->tail = (g->tail + 1) % g->cnt;
+        func_00423DC0(g->sema);
+        if (th != 0) func_00423CD0(th);
+        n++;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4C68);
