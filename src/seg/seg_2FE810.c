@@ -1643,14 +1643,13 @@ extern void func_0042C0C0(void);
 void func_00400CB8(void) {
     int s;
     if (D_00451614[0] != 0) {
-        *(int *)D_00451658 = -1;
-        do { } while (0);
-        cb_DC0(D_00451620[0]);
+        *(volatile int *)D_00451658 = -1;
+        cb_DC0(*(volatile int *)D_00451620);
     }
-    cb_DB0(D_00451628[0]);
-    cb_DB0(D_0045162C[0]);
-    cb_DB0(D_00451630[0]);
-    cb_DB0(D_00451620[0]);
+    cb_DB0(*(volatile int *)D_00451628);
+    cb_DB0(*(volatile int *)D_0045162C);
+    cb_DB0(*(volatile int *)D_00451630);
+    cb_DB0(*(volatile int *)D_00451620);
     s = cb_078();
     func_00426050(0x80000012);
     if (s)
@@ -2077,12 +2076,6 @@ int func_00401BF0(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401DF8);
 #ifdef SKIP_ASM
-// func_00401DF8 sceCdRead (w8 2026-11-01, round 2): both fail-path flag stores volatile and the SignalSema argument read
-// volatile. gcc 2.9 then schedules the fail block sw658; lui; sw634; lw; jal like the target (the volatile load depends on
-// the volatile stores; a loop-note/asm barrier cannot give this order). The only residual in the project pipeline is the
-// jal delay slot: gcc never fills a slot with a volatile load and ee-as never swaps, so `lw; jal; nop` (+1 insn, SIZE
-// MISMATCH). Assembled by a swapping GNU as (-march=r5900 -mabi=eabi -O2, `move`->`daddu`) the ee-gcc output is 120/120
-// words identical to the target (scratch/w8/prove2.sh).
 struct S1DF8 { int lsn; int sectors; int buf; unsigned char trycount; unsigned char spindlctrl; unsigned char datapattern; char *ebuf; int *res; };
 extern struct S1DF8 D_00451700_s __asm__("D_00451700");
 extern char D_00452700[];
@@ -2156,13 +2149,6 @@ int func_00401DF8(int lsn, int sectors, int buf, unsigned char *mode) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401FD8);
 #ifdef SKIP_ASM
-// func_00401FD8 (w8 2026-11-01, round 2): natural source = volatile sema-id read as the SignalSema argument (same idiom as
-// the committed func_004011E0/func_00402618/func_00400908/func_00401BF0). With it gcc 2.9 orders the fail block
-// sw658; lui; lw; jal exactly like the target (the volatile load depends on the volatile flag store), BUT gcc's reorg never
-// puts a volatile load into the jal delay slot and the project's ee-as (2.9-ee-991111) never swaps anything into a delay
-// slot, so this scores 98.78 here (two `lw; jal; nop` instead of `jal; lw`). The retail object was assembled by a
-// reorder-mode swapping assembler: ee-gcc -S of this file + `move`->`daddu` + GNU as (-march=r5900 -mabi=eabi -O2) gives
-// 164/164 words identical to the target (scratch/w8/prove2.sh). Needs a pipeline change (assembler swap pass) to commit.
 extern char D_00526780[];
 extern int D_00451700[];
 extern char D_004527D0[];
