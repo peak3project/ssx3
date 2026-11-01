@@ -4008,7 +4008,118 @@ extern "C" sVec_00177EF8 func_00177EF8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00177FC0);
+#ifdef SKIP_ASM
+int func_0011FE98_7FC0(void*) __asm__("func_0011FE98__FPv");
+extern sVec_00177EF8 D_004FF160_7FC0 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sVec_00177EF8 ctSub_7FC0(const sVec_00177EF8& a, const sVec_00177EF8& b)
+{
+    sVec_00177EF8 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float ctLength_7FC0(const sVec_00177EF8& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector *= 1/len).
+static inline void ctDivEq_7FC0(sVec_00177EF8& v, float len)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(v), "=&r"(t)
+        : "m"(v), "f"(len));
+}
+
+static inline sVec_00177EF8* ctGetA_7FC0(void* self)
+{
+    char* o = *(char**)((char*)self + 0x30);
+    sVEa_00177EF8* e = &(*(sVEa_00177EF8**)o)[10];
+    return e->fn(o + e->delta);
+}
+
+static inline sVec_00177EF8 ctGetC_7FC0(void* self)
+{
+    char* o = *(char**)((char*)self + 0x30);
+    sVEb_00177EF8* e = &(*(sVEb_00177EF8**)o)[4];
+    return e->fn(o + e->delta);
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar, vector by address).
+static inline sVec_00177EF8 ctScaleP_7FC0(const sVec_00177EF8* v, float s)
+{
+    sVec_00177EF8 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+extern "C" sVec_00177EF8 func_00177FC0(void* self, const sVec_00177EF8& in)
+{
+    sVec_00177EF8 dir;
+    if (func_0011FE98_7FC0(*(void**)(*(char**)((char*)self + 0x30) + 4)) == 5)
+        dir = *ctGetA_7FC0(self);
+    else
+        dir = in;
+    float len = ctLength_7FC0(dir);
+    if (len < 0.009999999776482582f)
+        dir = ctGetC_7FC0(self);
+    else
+        ctDivEq_7FC0(dir, len);
+    sVec_00177EF8 v = ctAdd_00177EF8(ctScale_00177EF8(*(sVec_00177EF8*)((char*)self + 0x390), 0.9599999785423279f), ctScale_00177EF8(dir, 0.04000002145767212f));
+    len = ctLength_7FC0(v);
+    if (len < 0.019999999552965164f)
+        v = dir;
+    else
+        ctDivEq_7FC0(v, len);
+    *(sVec_00177EF8*)((char*)self + 0x390) = v;
+    sVec_00177EF8 r = ctSub_7FC0(ctAdd_00177EF8(func_00177EF8(self), ctScaleP_7FC0(&D_004FF160_7FC0, 30.0f)), ctScale_00177EF8(v, 250.0f));
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178208);
