@@ -3336,6 +3336,14 @@ static inline void post_EED8(char* self, void* msg)
     sMsgListEED8_insert(*(sMsgListNodeEED8**)(self + 0xF0), mp);
 }
 
+static inline void postMsg_EED8(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    post_EED8(self, m);
+}
+
 extern "C" void func_0025EED8(char* self)
 {
     int st = *(int*)self;
@@ -3353,11 +3361,7 @@ extern "C" void func_0025EED8(char* self)
         *(int*)(self + 0x40) = func_003E8B10(*(void**)(self + 0x54), 0x7175696B, buf, (int)func_00268E78, self);
     }
     *(int*)self = 1;
-    int type = 0xE7;
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    post_EED8(self, m);
+    postMsg_EED8(self, 0xE7);
 }
 #endif
 
