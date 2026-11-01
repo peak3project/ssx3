@@ -659,7 +659,89 @@ extern "C" void func_0013AD20(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013ADC0);
+#ifdef SKIP_ASM
+extern "C" float func_0031C228(float);
+extern "C" sVec4HP func_0013BD80(char* p, const sVec4HP& n);
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sVec4HP vu0Cross_ADC0(const sVec4HP& a, const sVec4HP& b)
+{
+    sVec4HP r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_ADC0(const sVec4HP& a, const sVec4HP& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+static inline float Atan2_ADC0(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+// PORT: `<?` is the g++ minimum operator (EE min.s).
+static inline float Clamp_ADC0(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo;
+}
+
+static inline float ClampAbs_ADC0(float v, const float& lim)
+{
+    return Clamp_ADC0(v, -lim, lim);
+}
+
+static inline sVec4HP fwd_ADC0(char* p) { return *(sVec4HP*)(*(char**)(p + 0x50) + 0x1B0); }
+
+extern "C" void func_0013ADC0(char* self, sVec4HP* v)
+{
+    sVec4HP d = func_0013BD80(self, *v);
+    sVec4HP c = vu0Cross_ADC0(d, *v);
+    *(float*)(self + 0x1C) = Atan2_ADC0(vu0Dot_ADC0(fwd_ADC0(self), c), vu0Dot_ADC0(fwd_ADC0(self), *v));
+    *(float*)(self + 0x1C) = ClampAbs_ADC0(*(float*)(self + 0x1C), 0.7853982448577881f);
+}
+#endif
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013AF28);
 
