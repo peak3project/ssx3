@@ -582,6 +582,10 @@ struct sSnd10E0E16 {
     int f8;
     int fC;
 };
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_10E0)(cController*, cBankMonitorInstance*, float);
 struct sSnd10E0Sub {
     char pad0[4];
     sSnd10E0Ch def;          // 0x04
@@ -591,7 +595,7 @@ struct sSnd10E0Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
+    sSndCallback_10E0 callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -645,12 +649,16 @@ static inline void snd10E0Init(void* vself, int a, int b)
 }
 
 
-struct sSndKey8_10E0 {
-    long v;
-} __attribute__((packed));
-extern sSndKey8_10E0 D_004A3680[];
+extern sSndCallback_10E0 D_004A3680[];
 
-// PORT: 64-bit long sound key; voice target stored as int
+// cSndPlayOpts::OPTS_Callback (prototype name)
+static inline void OPTS_Callback_10E0(sSnd10E0Mgr* m, sSndCallback_10E0 cb)
+{
+    sSnd10E0Sub* s = &m->sub;
+    s->callbacks[m->sub.cur] = cb;
+}
+
+// PORT: voice target stored as int
 extern "C" void func_002910E0(void* vself)
 {
     sSnd10E0Sys* self = (sSnd10E0Sys*)vself;
@@ -660,10 +668,7 @@ extern "C" void func_002910E0(void* vself)
     snd10E0Init(self, 0, 0x20);
     (*self->p118)->sub.p3C[(*self->p118)->sub.cur] = (int)((char*)self + 0x5830);
     (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
-    sSnd10E0Mgr* m = *self->p118;
-    sSndKey8_10E0 k = D_004A3680[0];
-    sSnd10E0Sub* s = &m->sub;
-    *(sSndKey8_10E0*)((char*)s + (m->sub.cur << 3) + 0x40) = k;
+    OPTS_Callback_10E0(*self->p118, D_004A3680[0]);
     func_002906B8(self);
     *(int*)((char*)self + 0x5834) = 1;
 }
@@ -675,17 +680,16 @@ INCLUDE_ASM("sound/soundsys", func_002913D8);
 struct sVE_13D8 {
     short delta;
     short index;
-    void (*fn)(void*, long);
+    void (*fn)(void*, sSndCallback_10E0);
 };
 
-// PORT: 64-bit long sound key
 extern "C" void func_002913D8(void* self)
 {
     char* s = (char*)self;
     char* sys = **(char***)(s + 0x118);
     sVE_13D8* vt = *(sVE_13D8**)(sys + 0xAB0);
     char* obj = sys + 0x1D8;
-    vt[3].fn(obj + vt[3].delta, D_004A3680->v);
+    vt[3].fn(obj + vt[3].delta, D_004A3680[0]);
     *(int*)(s + 0x5830) = 0;
     *(int*)(s + 0x5834) = 0;
 }
