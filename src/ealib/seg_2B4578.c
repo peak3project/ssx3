@@ -1474,26 +1474,28 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B6BD0);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6EA8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7080);
 #ifdef SKIP_ASM
 extern int *D_0050A0A0_7080[] __asm__("D_0050A0A0");
-extern void func_003B6EA8_7080(int *) __asm__("func_003B6EA8");
+extern void func_003B6EA8_7080(int *, int *) __asm__("func_003B6EA8");
 extern void func_003B6BD0_7080(int) __asm__("func_003B6BD0");
-extern void func_003E13E8_7080(int) __asm__("func_003E13E8");
+extern void func_003E13E8_7080(int, int *) __asm__("func_003E13E8");
 
 int func_003B7080(int arg0, int *arg1) {
     int *o = D_0050A0A0_7080[arg0];
-    int tag = *arg1;
-    if (tag == 0x6C444353) {
-        func_003B6EA8_7080(o);
-        return 1;
+    int r;
+    if (*arg1 == 0x6C444353) {
+        func_003B6EA8_7080(o, arg1);
+        r = 1;
+    } else if (*arg1 == 0x6C484353) {
+        func_003B6BD0_7080(arg0);
+        r = 0;
+    } else {
+        func_003E13E8_7080(*o, arg1);
+        r = 1;
     }
-    if (*arg1 != 0x6C484353) {
-        func_003E13E8_7080(*o);
-        return 1;
-    }
-    func_003B6BD0_7080(arg0);
-    return 0;
+    return r;
 }
 #endif
 
