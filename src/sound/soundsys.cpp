@@ -6519,13 +6519,14 @@ struct sOutDEF0 {
     sQDEF0 q[2];
 };
 extern "C" void func_002DA1C0(sOutDEF0* out, sV3DEF0* in);
-struct sSndKey8_DEF0 {
-    long v;
-} __attribute__((packed));
-extern sSndKey8_DEF0 D_004A36D0_DEF0[] __asm__("D_004A36D0");
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_DEF0)(cController*, cBankMonitorInstance*, float);
+extern sSndCallback_DEF0 D_004A36D0_DEF0[] __asm__("D_004A36D0");
 
 struct sVE_DEF0 { short delta; short index; int (*fn)(void*); };
-struct sVEk_DEF0 { short delta; short index; void (*fn)(void*, long); };
+struct sVEk_DEF0 { short delta; short index; void (*fn)(void*, sSndCallback_DEF0); };
 
 static inline int vcall_DEF0(char* o, int slot)
 {
@@ -6552,7 +6553,7 @@ struct sSndDEF0Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
+    sSndCallback_DEF0 callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -6584,6 +6585,13 @@ struct sSndDEF0Sys {
     sQDEF0 blk[2];           // 0x6050
     int f6070;               // 0x6070
 };
+
+// cSndPlayOpts::OPTS_Callback (prototype name)
+static inline void OPTS_Callback_DEF0(sSndDEF0Mgr* m, sSndCallback_DEF0 cb)
+{
+    sSndDEF0Sub* s = &m->sub;
+    s->callbacks[m->sub.cur] = cb;
+}
 
 // Grind/ride loop sound: reference-counted start (pushes the voice at the rider's position) and stop.
 extern "C" void func_0029DEF0(void* vself, int on)
@@ -6647,12 +6655,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 m2->sub.tgt[m2->sub.cur] = self->blk;
             }
             func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
-            {
-                sSndDEF0Mgr* m2 = *self->p118;
-                sSndKey8_DEF0 k = D_004A36D0_DEF0[0];
-                sSndDEF0Sub* s2 = &m2->sub;
-                *(sSndKey8_DEF0*)((char*)s2 + (m2->sub.cur << 3) + 0x40) = k;
-            }
+            OPTS_Callback_DEF0(*self->p118, D_004A36D0_DEF0[0]);
             {
                 sSndDEF0Mgr** pq = self->p118;
                 int q = func_00288A20(self, obj);
@@ -6667,7 +6670,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
             sSndDEF0Mgr* mg = *self->p118;
             sVEk_DEF0* vt = *(sVEk_DEF0**)((char*)mg + 0xAB0);
             char* sub = (char*)&mg->sub;
-            vt[3].fn(sub + vt[3].delta, D_004A36D0_DEF0[0].v);
+            vt[3].fn(sub + vt[3].delta, D_004A36D0_DEF0[0]);
             for (int i = 2; i >= 0; i--) {
                 self->slots[i] = -1;
             }
