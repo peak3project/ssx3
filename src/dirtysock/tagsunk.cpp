@@ -7119,6 +7119,15 @@ static inline sMsgListIter5290 sMsgList5290_insert(sMsgListIter5290 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_5290(char* g, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgList5290_insert(*(sMsgListNode5290**)(g + 0xF0), mp);
+}
+
 extern "C" void func_00265290(void* self, int rider)
 {
     int st = *(int*)self;
@@ -7128,16 +7137,11 @@ extern "C" void func_00265290(void* self, int rider)
         else if (st == 4)
             *(int*)self = 5;
     }
-    int type = 0xF5;
     func_00264D80(self, rider, 0);
     func_00264E50(self, 3, rider, *(int*)self);
     {
         char* g = (char*)D_004A3028;
-        int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-        m[0] = type;
-        *(void***)((char*)m + 0x4) = D_004812B0;
-        void* mp = m;
-        sMsgList5290_insert(*(sMsgListNode5290**)(g + 0xF0), mp);
+        postMsg_5290(g, 0xF5);
     }
 }
 #endif
