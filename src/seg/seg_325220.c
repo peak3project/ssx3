@@ -26,7 +26,24 @@ void func_00424220(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424230);
+#ifdef SKIP_ASM
+extern int func_0042C078_r(void) __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+void func_00424230(void) {
+    int s;
+    s = func_0042C078_r();
+    *(volatile int *)0x1000F000 = 4;
+    SYNC_4248();
+    if (s) func_0042C0C0();
+    while (!(*(volatile int *)0x1000F000 & 4));
+    s = func_0042C078_r();
+    *(volatile int *)0x1000F000 = 4;
+    SYNC_4248();
+    if (s) func_0042C0C0();
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_004242C0);
 
