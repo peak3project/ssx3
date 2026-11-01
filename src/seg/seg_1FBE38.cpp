@@ -1784,13 +1784,9 @@ extern "C" V3_DED0 func_002FDED0(int n, Ent_DED0 *e) {
         ((int*)D_DED0)[2] = 1;
         ((int*)D_DED0)[3] = 3;
         *(float*)&D_DED0[4] = 20.0f;
-        float z = 0.0f;
-        *(float*)&D_DED0[5] = z;
-        *(float*)&D_DED0[6] = z;
-        *(float*)&D_DED0[7] = z;
+        *(float*)&D_DED0[7] = *(float*)&D_DED0[6] = *(float*)&D_DED0[5] = 0.0f;
         ((int*)D_DED0)[8] = 1;
-        *(float*)&D_DED0[9] = z;
-        *(float*)&D_DED0[10] = z;
+        *(float*)&D_DED0[10] = *(float*)&D_DED0[9] = 0.0f;
         D_004A5614 = 1;
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         *(sBindEnd_1FBE38*)((char*)D_DED0 + 44) = sBindEnd_1FBE38();
