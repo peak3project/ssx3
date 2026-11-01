@@ -1117,9 +1117,8 @@ INCLUDE_ASM("object/modifierblock", func_00353D98__FPv);
 #ifdef SKIP_ASM
 void func_00353D98(void* self)
 {
-    int t0 = -1;
     *(int*)((char*)self + 0x14) = 0;
-    *(int*)((char*)self + 0x10) = t0;
+    *(int*)((char*)self + 0x10) = (-1);
 }
 #endif
 
