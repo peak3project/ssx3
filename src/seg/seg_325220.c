@@ -678,7 +678,36 @@ void func_00425408(int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425440);
+#ifdef SKIP_ASM
+int f5440(long a0) __asm__("func_00425440");
+int f5440(long a0) {
+    unsigned long m = a0;
+    long e = m << 1 >> 53;
+    e -= 0x433;
+    if (e < -0x35) {
+        return 0;
+    }
+    if (e >= 0xD) {
+        return 0x270F;
+    }
+    m = m << 12 >> 12;
+    m = m | 0x10000000000000UL;
+    if (e < 0) {
+        e = -e;
+        m >>= (int)(e - 2);
+        if ((m & 3) == 3) {
+            m = (m >> 2) + 1;
+        } else {
+            m >>= 2;
+        }
+    } else {
+        m <<= (int)e;
+    }
+    return (int)m;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004254D0);
