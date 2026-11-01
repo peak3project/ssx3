@@ -256,16 +256,20 @@ INCLUDE_ASM("visualfx/angerfx", func_002D55C0);
 extern float D_004A3A38;
 
 // PORT: <? (g++ min operator)
+static inline float Clamp_2D55C0(float v, float lo, float hi)
+{
+    if (v >= lo) return v <? hi;
+    return lo;
+}
+
 extern "C" void func_002D55C0(unsigned char* p, float r, float g, float b)
 {
-    float one = 1.0f;
     r *= D_004A3A38;
     g *= D_004A3A38;
     b *= D_004A3A38;
-    float cr, cg, cb;
-    if (r >= 0.0f) cr = r <? one; else cr = 0.0f;
-    if (g >= 0.0f) cg = g <? one; else cg = 0.0f;
-    if (b >= 0.0f) cb = b <? one; else cb = 0.0f;
+    float cr = Clamp_2D55C0(r, 0.0f, 1.0f);
+    float cg = Clamp_2D55C0(g, 0.0f, 1.0f);
+    float cb = Clamp_2D55C0(b, 0.0f, 1.0f);
     p[3] = (int)(cr * 255.0f);
     p[4] = (int)(cg * 255.0f);
     p[5] = (int)(cb * 255.0f);
