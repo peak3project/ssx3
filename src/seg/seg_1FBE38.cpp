@@ -1578,10 +1578,7 @@ extern "C" V3_D758 func_002FD758(int n, Ent_D758 *e) {
     if (D_004A5608 == 0) {
         D_D758[0] = 0xFFFFFFFF;
         ((int*)D_D758)[1] = -1;
-        float z = 0.0f;
-        *(float*)&D_D758[2] = z;
-        *(float*)&D_D758[3] = z;
-        *(float*)&D_D758[4] = z;
+        *(float*)&D_D758[4] = *(float*)&D_D758[3] = *(float*)&D_D758[2] = 0.0f;
         D_004A5608 = 1;
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         *(sBindEnd_1FBE38*)((char*)D_D758 + 20) = sBindEnd_1FBE38();
