@@ -331,9 +331,7 @@ extern "C" V3_B6B8 func_002FB6B8(int n, Ent_B6B8 *e) {
     if (D_004A55CC == 0) {
         D_B6B8[0] = 0xFFFFFFFF;
         *(float*)&D_B6B8[1] = 100.0f;
-        float z = 0.0f;
-        *(float*)&D_B6B8[2] = z;
-        *(float*)&D_B6B8[3] = z;
+        *(float*)&D_B6B8[3] = *(float*)&D_B6B8[2] = 0.0f;
         ((int*)D_B6B8)[4] = 0;
         ((int*)D_B6B8)[5] = 0;
         ((int*)D_B6B8)[6] = 0;
