@@ -663,7 +663,144 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_0013ADC0);
 
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013AF28);
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013BD80);
+#ifdef SKIP_ASM
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern sVec4HP D_004FF160_BD80 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec4HP vu0Scale_BD80(const sVec4HP& v, float s)
+{
+    sVec4HP r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void vu0ScaleEq_BD80(sVec4HP& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s));
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sVec4HP vu0Sub_BD80(const sVec4HP& a, const sVec4HP& b)
+{
+    sVec4HP r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "o"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_BD80(const sVec4HP& a, const sVec4HP& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sVec4HP vu0Normalize_BD80(const sVec4HP& v)
+{
+    sVec4HP r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sVec4HP vu0Cross_BD80(const sVec4HP& a, const sVec4HP& b)
+{
+    sVec4HP r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
+static inline float absf_BD80(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline sVec4HP up_BD80(char* p) { return *(sVec4HP*)(*(char**)(p + 0x50) + 0x1C0); }
+
+extern "C" sVec4HP func_0013BD80(char* p, const sVec4HP& n)
+{
+    float s, c;
+    func_0031BE50(&s, &c, *(float*)(p + 0x10));
+    bool steep = absf_BD80(n.z) > 0.92f;
+    sVec4HP r;
+    if (!steep) {
+        r = vu0Normalize_BD80(vu0Sub_BD80(D_004FF160_BD80, vu0Scale_BD80(n, n.z)));
+        if (vu0Dot_BD80(r, up_BD80(p)) < 0.0f)
+            vu0ScaleEq_BD80(r, -1.0f);
+    } else {
+        sVec4HP a = vu0Normalize_BD80(vu0Cross_BD80(up_BD80(p), n));
+        sVec4HP b = vu0Cross_BD80(n, a);
+        r = vu0Sub_BD80(vu0Scale_BD80(b, c), vu0Scale_BD80(a, s));
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013BFA8);
