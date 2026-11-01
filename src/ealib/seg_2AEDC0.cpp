@@ -1771,6 +1771,32 @@ extern "C" void func_003B0B40(void* a, void* b, void* c)
 }
 #endif
 
+// MPEG decoder layer state: bit reader at the start; D_0050A088 points at the active layer.
+struct sMpegLayer {
+    unsigned char* p;           // 0x000
+    unsigned int bits;          // 0x004
+    int count;                  // 0x008
+    int f00C;
+    void* a010[64];             // 0x010
+    void* a110[64];             // 0x110
+    void* a210[64];             // 0x210
+    void* a310[64];             // 0x310
+    void* f410;
+    void* f414;
+    void* f418;
+    void* f41C;
+    int f420;
+    int f424;
+    int f428;
+    int f42C;
+    int f430;
+    int f434;
+    int f438;
+    int f43C;
+};
+extern sMpegLayer* D_0050A088;
+extern sMpegLayer D_00509648;
+
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B0C58);
 #ifdef SKIP_ASM
@@ -1781,9 +1807,6 @@ struct sAlloc_B0C58 {
 };
 // PORT: the unit declares D_00509430 as char[] later; view bound by asm label
 extern sAlloc_B0C58 D_00509430_B0C58 __asm__("D_00509430");
-struct sD_0050A088;
-extern sD_0050A088 D_0050A088;
-extern int D_00509648[];
 // MPEG decoder globals: plain scalars outside small data (the original TU kept them out of $gp)
 #define BSS_B0C58 __attribute__((section(".bss")))
 extern int D_005094F4_s __asm__("D_005094F4") BSS_B0C58;
@@ -1856,10 +1879,10 @@ extern "C" int func_003B0C58(sPlayer_B0C58* self, sScript_B0C58* script, sData_B
     }
     self->state = 1;
     void* data = d->data;
-    *(void**)&D_0050A088 = D_00509648;
+    D_0050A088 = &D_00509648;
     func_003B1228(data);
     func_003B13D8();
-    int mode = D_00509648[0x420 / 4];
+    int mode = D_00509648.f420;
     if (mode == 0) {
         D_00509524_s = 1;
         D_005095A0_s = 1;
@@ -2094,33 +2117,24 @@ extern "C" int func_003B11F0(int v)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1228);
 #ifdef SKIP_ASM
-// defined (padded) later in the unit; incomplete here keeps lui/lo addressing
-struct sD_0050A088;
-extern sD_0050A088 D_0050A088;
-
 extern "C" void func_003B1290(int n);
 
 extern "C" void func_003B1228(void* data)
 {
-    char* r = *(char**)&D_0050A088;
-    *(void**)(r + 0x0) = data;
-    *(int*)(r + 0x8) = 0;
-    *(int*)(r + 0x4) = 0;
+    sMpegLayer* r = D_0050A088;
+    r->p = (unsigned char*)data;
+    r->count = 0;
+    r->bits = 0;
     func_003B1290(0);
 }
 #endif
-
-// padded past the 8-byte gp-relative threshold so the compiler emits
-// absolute lui/lo addressing like the target
-struct sD_0050A088 { void* ptr; int pad[2]; };
-extern sD_0050A088 D_0050A088;
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1258);
 #ifdef SKIP_ASM
 extern "C" unsigned int func_003B1258(int a0)
 {
-    return *(unsigned int*)((char*)D_0050A088.ptr + 0x4) >> (unsigned int)(-a0);
+    return D_0050A088->bits >> (unsigned int)(-a0);
 }
 #endif
 
@@ -2138,14 +2152,8 @@ void* func_003B1270(void* self)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1290);
 #ifdef SKIP_ASM
-struct sBitReader_1290 {
-    unsigned char* p;   // 0x0
-    unsigned int bits;  // 0x4
-    int count;          // 0x8
-};
-
 // Reads the next byte into the bit buffer; taking the reader by reference matches the target's register copy.
-static inline void FillByte_1290(sBitReader_1290*& r, int c)
+static inline void FillByte(sMpegLayer*& r, int c)
 {
     r->bits |= *r->p++ << (24 - c);
 }
@@ -2153,14 +2161,14 @@ static inline void FillByte_1290(sBitReader_1290*& r, int c)
 // Drops n bits from the bit buffer and refills it a byte at a time.
 extern "C" void func_003B1290(int n)
 {
-    sBitReader_1290* r = (sBitReader_1290*)D_0050A088.ptr;
+    sMpegLayer* r = D_0050A088;
     r->bits <<= n;
     int c = r->count - n;
     while (c < 25) {
-        FillByte_1290(r, c);
+        FillByte(r, c);
         c += 8;
     }
-    ((sBitReader_1290*)D_0050A088.ptr)->count = c;
+    D_0050A088->count = c;
 }
 #endif
 
@@ -2182,29 +2190,17 @@ extern "C" void* func_003B1300(int n)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1340);
 #ifdef SKIP_ASM
-struct sBitReader_1340 {
-    unsigned char* p;   // 0x0
-    unsigned int bits;  // 0x4
-    int count;          // 0x8
-};
-
-// Reads the next byte into the bit buffer; taking the reader by reference matches the target's register copy.
-static inline void FillByte_1340(sBitReader_1340*& r, int c)
-{
-    r->bits |= *r->p++ << (24 - c);
-}
-
 // Drops the whole 32-bit buffer and refills it a byte at a time.
 extern "C" void func_003B1340(void)
 {
-    sBitReader_1340* r = (sBitReader_1340*)D_0050A088.ptr;
+    sMpegLayer* r = D_0050A088;
     r->bits = 0;
     int c = r->count - 32;
     while (c < 25) {
-        FillByte_1340(r, c);
+        FillByte(r, c);
         c += 8;
     }
-    ((sBitReader_1340*)D_0050A088.ptr)->count = c;
+    D_0050A088->count = c;
 }
 #endif
 
@@ -2261,7 +2257,7 @@ void func_003B1498_impl(void* self) __asm__("func_003B1498");
 
 void func_003B1498_impl(void* self)
 {
-    func_003B1290(*(int*)((char*)D_0050A088.ptr + 0x8) & 7);
+    func_003B1290(D_0050A088->count & 7);
     while (func_003B1258(0x18) != 1) {
         func_003B1290(8);
     }
@@ -2273,7 +2269,6 @@ INCLUDE_ASM("ealib/seg_2AEDC0", func_003B14F0);
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", group_of_pictures_header);
 #ifdef SKIP_ASM
-extern int D_00509648[];
 extern int D_0044C378[];
 extern int D_0044C37C[];
 extern int D_0044C380[];
@@ -2290,7 +2285,7 @@ extern "C" void func_003B1988(void);
 
 extern "C" void group_of_pictures_header(void)
 {
-    if (D_0050A088.ptr == D_00509648) {
+    if (D_0050A088 == &D_00509648) {
         D_0044C378[0] = D_0044C37C[0] + 1;
         D_0044C380[0] = 1;
     }
@@ -2323,7 +2318,7 @@ extern "C" void func_003B2440(void);
 // PORT: func_003B1300 really returns unsigned int (unit declares void*)
 extern "C" void func_003B17A8(void)
 {
-    *(int*)((char*)D_0050A088.ptr + 0x430) = 0;
+    D_0050A088->f430 = 0;
     D_00509554[0] = (int)func_003B1300(0xA);
     D_00509558[0] = (int)func_003B1300(3);
     D_0050955C[0] = func_003B1300(0x10);
@@ -2354,7 +2349,7 @@ extern "C" int func_003B1878(void)
     int v;
     int t;
 
-    if (*(int*)((char*)D_0050A088.ptr + 0x420) != 0) {
+    if (D_0050A088->f420 != 0) {
         r = 0;
         if (D_005094F8_B1878[0] >= 0xAF1) {
             r = (int)func_003B1300(3);
@@ -2362,23 +2357,23 @@ extern "C" int func_003B1878(void)
     } else {
         r = 0;
     }
-    if (*(int*)((char*)D_0050A088.ptr + 0x424) == 1) {
-        *(int*)((char*)D_0050A088.ptr + 0x434) = (int)func_003B1300(7);
+    if (D_0050A088->f424 == 1) {
+        D_0050A088->f434 = (int)func_003B1300(7);
     }
     t = (int)func_003B1300(5);
     {
-        char *p = (char*)D_0050A088.ptr;
-        *(int*)(p + 0x438) = *(int*)(p + 0x420) != 0
-            ? (*(int*)(p + 0x428) != 0 ? (int)D_0044C2D8[t] : t * 2)
+        sMpegLayer* p = D_0050A088;
+        p->f438 = p->f420 != 0
+            ? (p->f428 != 0 ? (int)D_0044C2D8[t] : t * 2)
             : t;
     }
     if (func_003B1300(1) != 0) {
-        *(int*)((char*)D_0050A088.ptr + 0x43C) = (int)func_003B1300(1);
+        D_0050A088->f43C = (int)func_003B1300(1);
         func_003B1300(1);
         func_003B1300(6);
         func_003B2318();
     } else {
-        *(int*)((char*)D_0050A088.ptr + 0x43C) = 0;
+        D_0050A088->f43C = 0;
     }
     return r;
 }
@@ -2454,16 +2449,10 @@ extern float D_0044C388[];
 extern char D_004954B8[];
 void* func_003B2360(void* self);
 
-struct sMpegCtx1AB0 {
-    char pad[0x420];
-    int f420;
-    int f424;
-};
-
 // Parse an MPEG-2 sequence extension.
 extern "C" void func_003B1AB0(void)
 {
-    sMpegCtx1AB0* g = (sMpegCtx1AB0*)D_0050A088.ptr;
+    sMpegLayer* g = D_0050A088;
     g->f420 = 1;
     g->f424 = 0;
     D_005095DC[0] = 0;
@@ -2527,75 +2516,58 @@ extern "C" void func_003B1CC0(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1D58);
 #ifdef SKIP_ASM
-struct sWSTables1D58 {
-    char pad0[0x10];
-    void* a10[64];              // 0x010
-    void* a110[64];             // 0x110
-    void* a210[64];             // 0x210
-    void* a310[64];             // 0x310
-    void* p410;                 // 0x410
-    void* p414;                 // 0x414
-    void* p418;                 // 0x418
-    void* p41C;                 // 0x41C
-};
-
 extern unsigned char D_0044C218[];
-
 
 extern "C" void func_003B1D58(void)
 {
-    sD_0050A088* gd = &D_0050A088;
+    sMpegLayer** cur = &D_0050A088;
     {
         void* p = func_003B1300(1);
-        ((sWSTables1D58*)gd->ptr)->p410 = p;
+        (*cur)->f410 = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
                 void* q = func_003B1300(8);
                 int k = D_0044C218[i];
-                sWSTables1D58* g = ((sWSTables1D58*)D_0050A088.ptr);
-                g->a10[k] = q;
-                g->a210[k] = q;
+                D_0050A088->a010[k] = q;
+                D_0050A088->a210[k] = q;
             }
         }
     }
     {
         void* p = func_003B1300(1);
-        ((sWSTables1D58*)D_0050A088.ptr)->p414 = p;
+        D_0050A088->f414 = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
                 void* q = func_003B1300(8);
                 int k = D_0044C218[i];
-                sWSTables1D58* g = ((sWSTables1D58*)D_0050A088.ptr);
-                g->a110[k] = q;
-                g->a310[k] = q;
+                D_0050A088->a110[k] = q;
+                D_0050A088->a310[k] = q;
             }
         }
     }
     {
         void* p = func_003B1300(1);
-        ((sWSTables1D58*)D_0050A088.ptr)->p418 = p;
+        D_0050A088->f418 = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
                 void* q = func_003B1300(8);
                 int k = D_0044C218[i];
-                sWSTables1D58* g = ((sWSTables1D58*)D_0050A088.ptr);
-                g->a210[k] = q;
+                D_0050A088->a210[k] = q;
             }
         }
     }
     {
         void* p = func_003B1300(1);
-        ((sWSTables1D58*)D_0050A088.ptr)->p41C = p;
+        D_0050A088->f41C = p;
         if (p != 0) {
             int i;
             for (i = 0; i < 64; i++) {
                 void* q = func_003B1300(8);
                 int k = D_0044C218[i];
-                sWSTables1D58* g = ((sWSTables1D58*)D_0050A088.ptr);
-                g->a310[k] = q;
+                D_0050A088->a310[k] = q;
             }
         }
     }
@@ -2614,16 +2586,14 @@ extern void* D_sseF0 __asm__("D_005095F0");
 extern void* D_sseF4 __asm__("D_005095F4");
 extern char D_sseA[] __asm__("D_004954F0");
 extern char D_sseB[] __asm__("D_00495510");
-struct sSSE_Hdr { char pad[0x424]; int mode; };
-extern sSSE_Hdr* D_sseG __asm__("D_0050A088");
 void* func_003B2360(void* self);
 void func_003B11E8(void* self);
 
 extern "C" void sequence_scalable_extension(void)
 {
-    D_sseG->mode = (int)func_003B1300(2) + 1;
+    D_0050A088->f424 = (int)func_003B1300(2) + 1;
     D_sseDC = func_003B1300(4);
-    if (D_sseG->mode == 2) {
+    if (D_0050A088->f424 == 2) {
         D_sseE0 = func_003B1300(0xE);
         func_003B2360(D_sseA);
         D_sseE4 = func_003B1300(0xE);
@@ -2632,7 +2602,7 @@ extern "C" void sequence_scalable_extension(void)
         D_sseF0 = func_003B1300(5);
         D_sseF4 = func_003B1300(5);
     }
-    if (D_sseG->mode == 4) {
+    if (D_0050A088->f424 == 4) {
         func_003B11E8(D_sseB);
     }
 }
@@ -2706,9 +2676,9 @@ extern "C" void func_003B20B8(void)
     D_00509588[0] = (int)func_003B1300(1);
     D_0050958C[0] = func_003B1300(1);
     D_00509590[0] = func_003B1300(1);
-    *(void**)((char*)D_0050A088.ptr + 0x428) = func_003B1300(1);
+    D_0050A088->f428 = (int)func_003B1300(1);
     D_00509594[0] = func_003B1300(1);
-    *(void**)((char*)D_0050A088.ptr + 0x42C) = func_003B1300(1);
+    D_0050A088->f42C = (int)func_003B1300(1);
     D_00509598[0] = (int)func_003B1300(1);
     D_0050959C[0] = func_003B1300(1);
     D_005095A0[0] = func_003B1300(1);
@@ -2739,7 +2709,7 @@ void* func_003B2360(void* self);
 // PORT: func_003B1300 really returns unsigned int (unit declares void*)
 extern "C" void picture_spatial_scalable_extension(void)
 {
-    *(int*)((char*)D_0050A088.ptr + 0x430) = 1;
+    D_0050A088->f430 = 1;
     D_005095F8[0] = func_003B1300(0xA);
     func_003B2360(D_00495598);
     D_005095FC[0] = (int)func_003B1300(0xF);
@@ -2838,7 +2808,6 @@ extern "C" void copyright_extension(void)
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B2440);
 #ifdef SKIP_ASM
-extern int D_00509648[];
 extern int D_00509554[];
 extern int D_00509558[];
 extern int D_0044C378[];
@@ -2850,7 +2819,8 @@ extern int D_0050A098[];
 
 extern "C" void func_003B2440(void)
 {
-    if (D_0050A088.ptr != D_00509648) {
+    if (D_0050A088 != &D_00509648) {
+
         return;
     }
     int last;
