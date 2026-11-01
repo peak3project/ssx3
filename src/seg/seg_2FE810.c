@@ -1549,7 +1549,47 @@ void func_00400908(char *p) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_004009A8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400A78);
+#ifdef SKIP_ASM
+struct TP0A78 {
+    int status;
+    void (*entry)(void);
+    int stack;
+    int stackSize;
+    int gpReg;
+    int initPriority;
+};
+extern int D_00451614[];
+extern int D_005264D8[];
+extern int D_005264E0[];
+extern struct TP0A78 D_00526510;
+extern int func_00423C90();
+extern int func_00423CA0_i(int, int *) __asm__("func_00423CA0");
+extern int func_00423BA0(struct TP0A78 *);
+extern void func_00423BC0(int, int);
+extern void func_00423C30(int, int);
+extern void func_004009A8(void);
+int func_00400A78(int a, int b, int c) {
+    int ok;
+    ok = 1;
+    if (D_00451614[0] == 0) {
+        D_005264D8[0] = func_00423C90();
+        func_00423CA0_i(D_005264D8[0], D_005264E0);
+        D_00526510.stackSize = c;
+        D_00526510.entry = func_004009A8;
+        D_00526510.stack = b;
+        D_00526510.initPriority = a;
+        D_00526510.gpReg = 0;
+        D_00451614[0] = func_00423BA0(&D_00526510);
+        func_00423BC0(D_00451614[0], 0);
+    } else {
+        func_00423C30(D_00451614[0], a);
+        ok = 0;
+    }
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400B48);
