@@ -921,7 +921,7 @@ extern "C" void func_0025B688(void)
 }
 #endif
 
-//100% - objdiff report; single-function view differs only in a relocation name
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B6D8);
 #ifdef SKIP_ASM
 extern char D_00480488[];
@@ -958,6 +958,15 @@ static inline sMsgListIterB6D8 sMsgListB6D8_insert(sMsgListIterB6D8 pos, void* c
     return tmp;
 }
 
+static inline void postMsg_B6D8(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListB6D8_insert(*(sMsgListNodeB6D8**)(self + 0xF0), mp);
+}
+
 extern "C" void func_0025B6D8(char* self, int conn)
 {
     if (*(void**)(self + 0x54) == 0)
@@ -974,12 +983,7 @@ extern "C" void func_0025B6D8(char* self, int conn)
         *(int*)self = 2;
         *(int*)(self + 0x58) = func_003F3A98(*(void**)(self + 0xE8), 0);
     }
-    int type = 0xC8;
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgListB6D8_insert(*(sMsgListNodeB6D8**)(self + 0xF0), mp);
+    postMsg_B6D8(self, 0xC8);
 }
 #endif
 
