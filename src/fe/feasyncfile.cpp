@@ -5712,18 +5712,17 @@ extern char D_00462D48[];
 extern "C" void func_001AC9C0(void* self, void* a1, int a2)
 {
     if (a2 == 0xF) {
-        int three = 3;
         func_001A97B8(self, a1, 0xF);
         cBXString_cBXString4((char*)self + 0x6DC, *(const char**)((char*)a1 + 0x2B0));
         void* p = func_001A9C50(self);
         *(int*)((char*)p + 0xBC) = 0;
         *(int*)((char*)p + 0xC4) = GetHashValue32(D_00462D48);
-        *(int*)((char*)p + 0xC0) = three;
+        *(int*)((char*)p + 0xC0) = 3;
         *(int*)((char*)p + 0x164) = 0;
         *(int*)((char*)p + 0x150) = 0x810;
         func_001A9BC0(self, p);
         if (func_001AC448(self) != 0) {
-            *(int*)((char*)self + 0x6D8) = three;
+            *(int*)((char*)self + 0x6D8) = 3;
             func_0025B6D8(D_004A3028, 0);
         }
     } else {
