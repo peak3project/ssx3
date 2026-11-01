@@ -3539,7 +3539,48 @@ INCLUDE_ASM("seg/seg_2FE810", func_00404050);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00404758);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00404B78);
+#ifdef SKIP_ASM
+struct B4B78 { char b[0x1C]; };
+struct E4B78 {
+    int f0;
+    void *src;
+    char pad8[0x20];
+    void (*fa[4])(void *);
+    void (*fb[4])(void *);
+    struct B4B78 blk[8];
+    void *dst;
+    int count;
+    int f130;
+    int pad134;
+    int enable;
+    int f13C;
+};
+struct S4B78 { char pad0[0x590]; struct E4B78 e[2]; char pad810[0xC]; void *f81C; };
+extern void func_004034A8(int *, int);
+extern char D_00497E98[];
+extern void add_4B78(void *, void *) __asm__("func_00405AE8");
+extern void mix_4B78(void *, void *, void *) __asm__("func_00405A88");
+void f4B78(struct S4B78 *s, int n) __asm__("func_00404B78");
+void f4B78(struct S4B78 *s, int n) {
+    int i;
+    if (s->e[n].enable != 0) {
+        for (i = 0; i < s->e[n].count; i++) {
+            s->e[n].fa[i](&s->e[n].blk[i]);
+            s->e[n].fb[i](&s->e[n].blk[i + 4]);
+        }
+    }
+    if (s->e[n].f130 != 0 && s->e[n].f13C != 0)
+        func_004034A8((int *)s, (int)D_00497E98);
+    if (s->e[n].f130 != 0)
+        add_4B78(s->e[n].dst, s->e[n].src);
+    else if (s->e[n].f13C != 0)
+        add_4B78(s->e[n].dst, s->f81C);
+    else
+        mix_4B78(s->e[n].dst, s->f81C, s->e[n].src);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00404D98);
