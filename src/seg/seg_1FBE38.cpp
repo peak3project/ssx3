@@ -1733,10 +1733,7 @@ extern "C" V3_DC60 func_002FDC60(int n, Ent_DC60 *e) {
         D_DC60[0] = 0xFFFFFFFF;
         D_DC60[1] = 0xFFFFFFFF;
         ((int*)D_DC60)[2] = 0;
-        float z = 0.0f;
-        *(float*)&D_DC60[3] = z;
-        *(float*)&D_DC60[4] = z;
-        *(float*)&D_DC60[5] = z;
+        *(float*)&D_DC60[5] = *(float*)&D_DC60[4] = *(float*)&D_DC60[3] = 0.0f;
         D_004A5610 = 1;
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         *(sBindEnd_1FBE38*)((char*)D_DC60 + 24) = sBindEnd_1FBE38();
