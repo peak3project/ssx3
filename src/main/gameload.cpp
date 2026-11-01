@@ -1559,10 +1559,9 @@ INCLUDE_ASM("main/gameload", func_00232328__FPv);
 #ifdef SKIP_ASM
 void* func_00232328(void* self)
 {
-    int t0 = 0;
-    *(int*)((char*)self + 0x4) = t0;
+    *(int*)((char*)self + 0x4) = 0;
     *(int*)self = (int)(void*)D_0047D938;
-    *(int*)((char*)self + 0x8) = t0;
+    *(int*)((char*)self + 0x8) = 0;
     return self;
 }
 #endif
