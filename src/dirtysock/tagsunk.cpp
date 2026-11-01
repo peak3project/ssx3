@@ -5461,6 +5461,14 @@ static inline void push_back_262AF0(char* o, sObjVec_262AF0* v, void* const& x)
     }
 }
 
+static inline void postMsg_2AF0(char* g, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    post_262AF0(g, m);
+}
+
 extern "C" void func_00262AF0(char* self, char* name, int a2, int a3, int a4, int a5, int a6, int a7,
                               int s0, int s1, char* s2, int s3, int s4, int s5, int s6)
 {
@@ -5484,13 +5492,9 @@ extern "C" void func_00262AF0(char* self, char* name, int a2, int a3, int a4, in
                     break;
                 }
             }
-            int type = 0x108;
             func_002620D8(self, name, 2, &err, 0);
             char* g = (char*)D_004A3028;
-            int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-            m[0] = type;
-            *(void***)((char*)m + 0x4) = D_004812B0;
-            post_262AF0(g, m);
+            postMsg_2AF0(g, 0x108);
         }
     }
     else if (func_002623E0_2(self, idx))
