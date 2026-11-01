@@ -230,7 +230,272 @@ extern "C" void* func_003430D0(void* self, void* unused, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/debouncenode", func_00343130);
+#ifdef SKIP_ASM
+struct sDbVec_343130 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sDbMat_343130 {
+    sDbVec_343130 r[4];
+    sDbMat_343130() {}
+    sDbVec_343130 row(int i) const { return r[i]; }
+    sDbMat_343130(const sDbMat_343130& s);
+    sDbMat_343130& operator=(const sDbMat_343130& s);
+};
+
+struct sDbNode_343130 {
+    int next;                // 0x0
+    int pad4;
+    int pad8;
+    sDbMat_343130* mat;      // 0xC
+};
+
+struct sDbArg_343130 {
+    sDbVec_343130 pos;       // 0x00
+    sDbVec_343130 v1;        // 0x10
+    sDbVec_343130 v2;        // 0x20
+    sDbVec_343130 v3;        // 0x30
+    char pad40[0x1C];
+    int idx;                 // 0x5C
+};
+
+struct sDbVEntry_343130 {
+    short delta;
+    short index;
+    sDbMat_343130* (*fn)(void*);
+};
+
+extern sDbVec_343130 D_004FF150_343130 __asm__("D_004FF150");
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void MatMul_343130(sDbMat_343130* d, const sDbMat_343130* a, const sDbMat_343130* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void MatCopy_343130(sDbMat_343130* d, const sDbMat_343130* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+inline sDbMat_343130::sDbMat_343130(const sDbMat_343130& s)
+{
+    MatCopy_343130(this, &s);
+}
+
+inline sDbMat_343130& sDbMat_343130::operator=(const sDbMat_343130& s)
+{
+    MatCopy_343130(this, &s);
+    return *this;
+}
+
+static inline sDbMat_343130 Mul_343130(const sDbMat_343130* a, const sDbMat_343130& b)
+{
+    sDbMat_343130 r;
+    MatMul_343130(&r, a, &b);
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (matrix times vector, constant vector through a register).
+static inline sDbVec_343130 MatVec_343130(const sDbMat_343130* m, const sDbVec_343130& v)
+{
+    sDbVec_343130 r;
+    __asm__(
+        "lqc2      $vf8, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "o"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sDbVec_343130 Sub_343130(const sDbVec_343130& a, const sDbVec_343130& b)
+{
+    sDbVec_343130 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b into a).
+static inline void AddTo_343130(sDbVec_343130& dst, const sDbVec_343130& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_343130(const sDbVec_343130& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sDbVec_343130 Scale_343130(const sDbVec_343130& v, float s)
+{
+    sDbVec_343130 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product a x b, w cleared).
+static inline sDbVec_343130 Cross_343130(const sDbVec_343130& a, const sDbVec_343130& b)
+{
+    sDbVec_343130 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sDbVec_343130 Norm_343130(const sDbVec_343130& v)
+{
+    sDbVec_343130 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+extern "C" void func_00343130(char* self, sDbArg_343130* arg)
+{
+    if (arg->idx < 0)
+        return;
+    sDbVEntry_343130* vt = *(sDbVEntry_343130**)(self + 0xC);
+    sDbMat_343130* world = vt[24].fn(self + vt[24].delta);
+    sDbNode_343130* nodes = *(sDbNode_343130**)(*(char**)(*(char**)(self + 0x18) + 0x80) + 8);
+    sDbMat_343130 m = *nodes[arg->idx].mat;
+    for (int i = nodes[arg->idx].next; i != -1; i = nodes[i].next) {
+        sDbMat_343130 t;
+        sDbMat_343130 r;
+        MatMul_343130(&r, nodes[i].mat, &m);
+        t = r;
+        m = t;
+    }
+    m = Mul_343130(world, m);
+    char* flags = self + 0x20;
+    if (flags[arg->idx] != 0) {
+        sDbVec_343130 d = Sub_343130(arg->pos, m.row(3));
+        float s = *(float*)(self + 0x1C) / Length_343130(d);
+        sDbVec_343130 k = Scale_343130(arg->v1, s);
+        sDbVec_343130 w = Cross_343130(d, k);
+        AddTo_343130(arg->v2, w);
+        AddTo_343130(arg->v3, k);
+    } else {
+        sDbVec_343130 d = Norm_343130(MatVec_343130(&m, D_004FF150_343130));
+        AddTo_343130(arg->v2, Scale_343130(Cross_343130(d, arg->v1), *(float*)(self + 0x1C)));
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/debouncenode", func_003434E8);
