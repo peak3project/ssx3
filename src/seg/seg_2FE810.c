@@ -233,7 +233,53 @@ int func_003FDFB0(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE090);
+#ifdef SKIP_ASM
+// DMA environment write: validate the table indices, merge them into D_CTRL, write PCR/SQWC/RBOR/RBSR, keep a copy.
+// The field at +0x0C is a pointer (the ring-buffer address), stored as its integer value.
+typedef struct { unsigned char sts, std, mfd, rcyc; unsigned short h4, h6, h8, hA; void *w0C; unsigned w10; } E3FE090;
+extern unsigned char D_00497818[];
+extern unsigned char D_00497828[];
+extern unsigned char D_00497838[];
+extern E3FE090 D_Env_3FE090 __asm__("D_005261D0");
+int func_003FE090(E3FE090 *p) {
+    unsigned c;
+    unsigned pcr;
+    unsigned sqwc;
+    unsigned rbor;
+    unsigned rbsr;
+    c = *(volatile unsigned *)0x1000E000;
+    pcr = *(volatile unsigned *)0x1000E020;
+    sqwc = *(volatile unsigned *)0x1000E030;
+    rbor = *(volatile unsigned *)0x1000E050;
+    rbsr = *(volatile unsigned *)0x1000E040;
+    if (p->sts >= 10) return -1;
+    if (p->std >= 10) return -2;
+    if (p->mfd >= 10) return -3;
+    if (p->rcyc >= 7) return -4;
+    c = (c & ~0x30) | (D_00497818[p->sts] << 4);
+    c = (c & ~0xC0) | (D_00497828[p->std] << 6);
+    c = (c & ~0xC) | (D_00497838[p->mfd] << 2);
+    if (p->rcyc != 0) {
+        c |= 2;
+        c = (c & ~0x300) | ((p->rcyc - 1) << 8);
+    } else {
+        c &= ~2;
+    }
+    sqwc = (p->hA << 16) | p->h8;
+    rbsr = p->w10;
+    rbor = (unsigned)p->w0C;
+    *(volatile unsigned *)0x1000E000 = c;
+    pcr = (p->h4 << 16) | p->h6;
+    *(volatile unsigned *)0x1000E020 = pcr;
+    *(volatile unsigned *)0x1000E030 = sqwc;
+    *(volatile unsigned *)0x1000E050 = rbor;
+    *(volatile unsigned *)0x1000E040 = rbsr;
+    D_Env_3FE090 = *p;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE268);
