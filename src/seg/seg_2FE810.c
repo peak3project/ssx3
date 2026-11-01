@@ -977,7 +977,15 @@ int func_003FF0F0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF130);
+#ifdef SKIP_ASM
+unsigned func_003FF130(unsigned a, unsigned b, unsigned c) {
+    unsigned v = a | (b << 1) | (c << 2);
+    *(volatile unsigned *)0x10003820 = v;
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF150);
