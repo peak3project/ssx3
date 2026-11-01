@@ -2506,7 +2506,41 @@ extern "C" void func_003B1D58(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2AEDC0", sequence_scalable_extension);
+#ifdef SKIP_ASM
+extern void* D_sseDC __asm__("D_005095DC");
+extern void* D_sseE0 __asm__("D_005095E0");
+extern void* D_sseE4 __asm__("D_005095E4");
+extern void* D_sseE8 __asm__("D_005095E8");
+extern void* D_sseEC __asm__("D_005095EC");
+extern void* D_sseF0 __asm__("D_005095F0");
+extern void* D_sseF4 __asm__("D_005095F4");
+extern char D_sseA[] __asm__("D_004954F0");
+extern char D_sseB[] __asm__("D_00495510");
+struct sSSE_Hdr { char pad[0x424]; int mode; };
+extern sSSE_Hdr* D_sseG __asm__("D_0050A088");
+void* func_003B2360(void* self);
+void func_003B11E8(void* self);
+
+extern "C" void sequence_scalable_extension(void)
+{
+    D_sseG->mode = (int)func_003B1300(2) + 1;
+    D_sseDC = func_003B1300(4);
+    if (D_sseG->mode == 2) {
+        D_sseE0 = func_003B1300(0xE);
+        func_003B2360(D_sseA);
+        D_sseE4 = func_003B1300(0xE);
+        D_sseE8 = func_003B1300(5);
+        D_sseEC = func_003B1300(5);
+        D_sseF0 = func_003B1300(5);
+        D_sseF4 = func_003B1300(5);
+    }
+    if (D_sseG->mode == 4) {
+        func_003B11E8(D_sseB);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B1FC8);
