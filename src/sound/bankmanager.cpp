@@ -1555,7 +1555,109 @@ extern "C" int func_0028E510(void* self, void* a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmanager", func_0028E548);
+#ifdef SKIP_ASM
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE();
+extern "C" int* func_00144BC0(void*);
+extern "C" void* func_0028B1E8();
+extern "C" int func_002A1E20(void* self, int id);
+extern "C" int func_002A40E0(void* self, int id);
+extern "C" int func_002A4158(void* self, int id);
+extern "C" int func_002A42C8(void* self);
+extern "C" void func_002A26F0(void* self, int a, int b);
+extern "C" void func_002B11B0(void* mon, int a);
+extern "C" void func_002B1758__FPvi(void* mon, int a);
+extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int peak);
+
+struct sBankManagerE548 {
+    char pad0[0x118];
+    char stream[0x5560 - 0x118];    // 0x118
+    char monitor[0x574C - 0x5560];  // 0x5560
+    int f574C;                      // 0x574C
+    char pad5750[0x576C - 0x5750];
+    int f576C;                      // 0x576C
+    int f5770;                      // 0x5770
+    int f5774;                      // 0x5774
+    int f5778;                      // 0x5778
+    int f577C;                      // 0x577C
+    int f5780;                      // 0x5780
+    int f5784;                      // 0x5784
+    char pad5788[0x579C - 0x5788];
+    int peakFlags[14];              // 0x579C
+    int f57D4;                      // 0x57D4
+    int f57D8;                      // 0x57D8
+    int f57DC;                      // 0x57DC
+};
+
+extern "C" int func_0028E548(sBankManagerE548* self, char* msg)
+{
+    int type = *(int*)(msg + 0x1C);
+    if (0 == type) {
+        func_002B11B0(self->monitor, 0);
+        func_002A26F0(self, 1, 0);
+        func_002B1758__FPvi(self->monitor, 0);
+        if (func_002A42C8(self) == 0) {
+            self->f576C = 1;
+            int t = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            if (t == 1) {
+                self->f577C = t;
+                self->f5780 = 2;
+                self->f57D4 = 0;
+            }
+        }
+    } else if ((unsigned int)(type - 1) < 2) {
+        func_002B11B0(self->monitor, 0);
+        if (*(int*)(msg + 0x1C) == 2)
+            func_002A26F0(self, 0, 1);
+        else
+            func_002A26F0(self, 1, 1);
+        func_002B1758__FPvi(self->monitor, 0);
+        if (func_002A42C8(self) == 0)
+            self->f574C = 1;
+    } else if (type == 3 || type == 5 || type == 4) {
+        if (*(int*)(msg + 0x20) != -1) {
+            if ((unsigned int)(*(int*)(msg + 0x1C) - 3) < 2) {
+                func_002B11B0(self->monitor, 0);
+                if (*(int*)(msg + 0x1C) == 4)
+                    func_002A26F0(self, 0, 0);
+                else
+                    func_002A26F0(self, 1, 0);
+                func_002B1758__FPvi(self->monitor, 0);
+            }
+            if (func_002A42C8(self) == 0) {
+                if (cBENewPlayerInterface_isPeakLocked1(cBE_getInterface_Fv(cBE_getBE(), 1), 0, 1) != 0) {
+                    int id = *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0));
+                    if (func_002A1E20(self, id) == 1) {
+                        if (self->peakFlags[id] == 1) {
+                            if (func_002A40E0(self, id) != 0 || func_002A4158(self, id) != 0)
+                                self->f5770 = 1;
+                            self->peakFlags[id] = 0;
+                        }
+                    }
+                }
+            }
+            self->f5774 = 1;
+            self->f5778 = *(int*)(msg + 0x20);
+        }
+    } else if (type == 7) {
+        func_002B11B0(self->monitor, 0);
+        func_002A26F0(self, 1, 0);
+        func_002B1758__FPvi(self->monitor, 0);
+        self->f5784 = 1;
+        self->f5774 = 1;
+        self->f5778 = func_002B4908(self->stream);
+        int t = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+        if (t == 2)
+            self->f57D8 = 0;
+        else
+            self->f57DC = 0;
+    }
+    return 1;
+}
+#endif
 //100%
 INCLUDE_ASM("sound/bankmanager", func_0028E888);
 #ifdef SKIP_ASM
