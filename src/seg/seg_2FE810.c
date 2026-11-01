@@ -2076,7 +2076,50 @@ int func_00401BF0(int a) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00401DF8);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401FD8);
+#ifdef SKIP_ASM
+// func_00401FD8 (w8 2026-11-01, round 2): natural source = volatile sema-id read as the SignalSema argument (same idiom as
+// the committed func_004011E0/func_00402618/func_00400908/func_00401BF0). With it gcc 2.9 orders the fail block
+// sw658; lui; lw; jal exactly like the target (the volatile load depends on the volatile flag store), BUT gcc's reorg never
+// puts a volatile load into the jal delay slot and the project's ee-as (2.9-ee-991111) never swaps anything into a delay
+// slot, so this scores 98.78 here (two `lw; jal; nop` instead of `jal; lw`). The retail object was assembled by a
+// reorder-mode swapping assembler: ee-gcc -S of this file + `move`->`daddu` + GNU as (-march=r5900 -mabi=eabi -O2) gives
+// 164/164 words identical to the target (scratch/w8/prove2.sh). Needs a pipeline change (assembler swap pass) to commit.
+extern char D_00526780[];
+extern int D_00451700[];
+extern char D_004527D0[];
+extern int D_00451680[];
+extern int D_00451628[];
+extern char D_00451658[];
+extern int func_004011E0();
+extern void func_00426358(int, int);
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+extern void func_00423DC0(int);
+int func_00401FD8(char *dst) {
+    int v;
+    int *p = D_00451700;
+    if (func_004011E0(8) == 0)
+        return 0;
+    p[0] = (int)D_00526780;
+    func_00426358((int)D_00526780, 0x810);
+    func_00426358((int)p, 12);
+    *(volatile int *)D_00451658 = 3;
+    if (func_00426D18(D_004527D0, 4, 0, p, 12, D_00451680, 8, 0, 0) < 0) {
+        *(volatile int *)D_00451658 = 0;
+        func_00423DC0(*(volatile int *)D_00451628);
+        return 0;
+    }
+    *(volatile int *)D_00451658 = 0;
+    v = D_00451680[0];
+    if (D_00451680[1] == 0)
+        __builtin_memcpy(dst, (char *)((unsigned)D_00526780 | 0x20000000), 0x400);
+    else
+        __builtin_memcpy(dst, (char *)((unsigned)D_00526780 | 0x20000000), 0x810);
+    func_00423DC0(*(volatile int *)D_00451628);
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00402268);
