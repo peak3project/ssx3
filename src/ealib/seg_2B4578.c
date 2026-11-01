@@ -15228,14 +15228,14 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D0D70);
 extern int func_003D5450_0D70(int) __asm__("func_003D5450");
 extern int D_0044F420_0D70[] __asm__("D_0044F420");
 struct P_0D70 { char pad[0x58]; unsigned char *a[24]; };
-extern unsigned char D_0044F42C_0D70[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_0044F430_0D70[] __asm__("D_0044F430");
 extern char D_00517644_0D70[] __asm__("D_00517644");
 
 int func_003D0D70(unsigned int mask, unsigned int val) {
     int i, j;
     unsigned int fl, t, u;
-    if (D_0044F42C_0D70[0] == 0) {
+    if (D_0044F42C == 0) {
         return -18;
     }
     if (D_0044F430_0D70[0] != 0) {
@@ -15624,7 +15624,7 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1940);
 extern void func_003D1BA8_1940(int, int) __asm__("func_003D1BA8");
 extern int func_003D5450_1940(int) __asm__("func_003D5450");
 extern int D_0044F420_1940[] __asm__("D_0044F420");
-extern unsigned char D_0044F42C_1940[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_0044F430_1940[] __asm__("D_0044F430");
 extern char D_00517644_1940[] __asm__("D_00517644");
 
@@ -15633,7 +15633,7 @@ struct P_1940 { char pad[0xDC]; int a[16]; };
 void func_003D1940(unsigned int mask) {
     int i, j;
     unsigned int fl, t, u;
-    if (D_0044F42C_1940[0] != 0) {
+    if (D_0044F42C != 0) {
         if (D_0044F430_1940[0] == 0) {
             if (func_003D5450_1940(-1) != 0) {
                 for (i = 0; i < 4; i++) {
@@ -16009,7 +16009,7 @@ extern double func_00413AF8(float);
 extern double func_00411F18_2C20(double, double) __asm__("func_00411F18");
 extern int func_004126A0_2C20(double) __asm__("func_004126A0");
 extern char *D_0044F420_2C20[] __asm__("D_0044F420");
-extern unsigned char D_0044F42C_2C20[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_0044F430_2C20[] __asm__("D_0044F430");
 
 static inline int bitclear_2C20(int x) {
@@ -16027,7 +16027,7 @@ int func_003D2C20(int m, int arg1) {
 
     ratio = 0.0f;
     max = 0.0f;
-    if (D_0044F42C_2C20[0] == 0 || D_0044F430_2C20[0] != 0 || func_003D5450_2C20(-1) == 0) {
+    if (D_0044F42C == 0 || D_0044F430_2C20[0] != 0 || func_003D5450_2C20(-1) == 0) {
         return -0x12;
     }
     if (func_003D4BB0(m & 0xFF000000) == 0) {
@@ -16070,7 +16070,7 @@ extern int func_003D3140_2DF8(int, int) __asm__("func_003D3140");
 extern int func_002AE3A8(int);
 extern int func_002AE298_2DF8(int, char *, int, int) __asm__("func_002AE298");
 extern int D_0044F420_2DF8[] __asm__("D_0044F420");
-extern unsigned char D_0044F42C_2DF8[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_0044F430_2DF8[] __asm__("D_0044F430");
 
 int func_003D2DF8(int h, int idx, int arg2) {
@@ -16079,7 +16079,7 @@ int func_003D2DF8(int h, int idx, int arg2) {
     struct R_2DF8 *r;
     struct E_2DF8 *e;
 
-    if (D_0044F42C_2DF8[0] != 0) {
+    if (D_0044F42C != 0) {
         if (D_0044F430_2DF8[0] != 0) {
             return -0x12;
         }
@@ -16207,14 +16207,14 @@ extern void func_002AE768_30A8(int, int, int) __asm__("func_002AE768");
 extern void *func_003D5290_30A8(int) __asm__("func_003D5290");
 extern int func_003D5450_30A8(int) __asm__("func_003D5450");
 extern int D_0044F420_30A8[] __asm__("D_0044F420");
-extern unsigned char D_0044F42C_30A8[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_0044F430_30A8[] __asm__("D_0044F430");
 
 void func_003D30A8(int arg0, int arg1, int arg2) {
     int var_4;
     void *temp_2;
 
-    if ((D_0044F42C_30A8[0] != 0) && (D_0044F430_30A8[0] == 0) && (func_003D5450_30A8(-1) != 0)) {
+    if ((D_0044F42C != 0) && (D_0044F430_30A8[0] == 0) && (func_003D5450_30A8(-1) != 0)) {
         temp_2 = func_003D5290_30A8(arg0);
         var_4 = -8;
         if (temp_2 != 0) {
@@ -16235,7 +16235,7 @@ extern int func_002AE328(int, int);
 extern char *func_003D5290_3140(int) __asm__("func_003D5290");
 extern int func_003D5450_3140(int) __asm__("func_003D5450");
 extern int D_0044F420_3140[] __asm__("D_0044F420");
-extern unsigned char D_0044F42C_3140[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_0044F430_3140[] __asm__("D_0044F430");
 int func_003D3140_3140(int arg0, int arg1) __asm__("func_003D3140");
 
@@ -16243,7 +16243,7 @@ int func_003D3140_3140(int arg0, int arg1) {
     int r;
     char *t;
     r = 0;
-    if (D_0044F42C_3140[0] != 0) {
+    if (D_0044F42C != 0) {
         if (D_0044F430_3140[0] != 0) {
             return -0x12;
         }
@@ -16269,13 +16269,13 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D31E8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct S_31E8 { char p0[0xC]; int f0c; int f10; char p1[0x1C]; unsigned int f30; int f34; char p2[0x928 - 0x38]; };
 extern struct S_31E8 D_00517610_31E8[] __asm__("D_00517610");
-extern unsigned char D_0044F42C_31E8[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_0044F430_31E8[] __asm__("D_0044F430");
 extern int D_0044F420_31E8[] __asm__("D_0044F420");
 
 void func_003D31E8(unsigned int a, int b, int c) {
     int i;
-    if (D_0044F42C_31E8[0] != 0 && D_0044F430_31E8[0] == 0) {
+    if (D_0044F42C != 0 && D_0044F430_31E8[0] == 0) {
         if (func_003D5450(-1)) {
             a &= 0x0F000000;
             for (i = 0; i < 4; i++) {
@@ -17511,13 +17511,13 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D6108);
 struct P_6108 { char pad[0x30]; int m_a; int m_b; char pad2[0x928 - 0x38]; };
 extern int f5450_6108(int) __asm__("func_003D5450");
 extern int D_f420_6108[] __asm__("D_0044F420");
-extern unsigned char D_f42C_6108[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_f430_6108[] __asm__("D_0044F430");
 extern struct P_6108 D_7610_6108[4] __asm__("D_00517610");
 
 void func_003D6108(int a0, int a1) {
     int i;
-    if (D_f42C_6108[0] != 0 && D_f430_6108[0] == 0 && f5450_6108(-1) != 0) {
+    if (D_0044F42C != 0 && D_f430_6108[0] == 0 && f5450_6108(-1) != 0) {
         a0 &= 0x0F000000;
         for (i = 0; i < 4; i++) {
             if (D_7610_6108[i].m_b != 0 && (D_7610_6108[i].m_a & a0) && f5450_6108(i & 0xFF) != 0) {
@@ -17537,13 +17537,13 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D61E8);
 struct P_61E8 { char pad[0x30]; int m_a; int m_b; char pad2[0x928 - 0x38]; };
 extern int f5450_61E8(int) __asm__("func_003D5450");
 extern int D_f420_61E8[] __asm__("D_0044F420");
-extern unsigned char D_f42C_61E8[] __asm__("D_0044F42C");
+extern unsigned char D_0044F42C;
 extern int D_f430_61E8[] __asm__("D_0044F430");
 extern struct P_61E8 D_7610_61E8[4] __asm__("D_00517610");
 
 void func_003D61E8(int a0, int a1) {
     int i;
-    if (D_f42C_61E8[0] != 0 && D_f430_61E8[0] == 0 && f5450_61E8(-1) != 0) {
+    if (D_0044F42C != 0 && D_f430_61E8[0] == 0 && f5450_61E8(-1) != 0) {
         a0 &= 0x0F000000;
         for (i = 0; i < 4; i++) {
             if (D_7610_61E8[i].m_b != 0 && (D_7610_61E8[i].m_a & a0) && f5450_61E8(i & 0xFF) != 0) {
