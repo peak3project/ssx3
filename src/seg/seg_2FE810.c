@@ -939,7 +939,14 @@ int func_003FEF18_impl(S3EF18 *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF060);
+#ifdef SKIP_ASM
+void func_003FF060(void) {
+    *(volatile int *)0x10003810 = 1;
+    *(volatile int *)0x10003820 = 6;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF088);
