@@ -2920,7 +2920,90 @@ void func_003B93C8(int a0, struct B_93C8 *a1, int a2, int a3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B94B0);
+#ifdef SKIP_ASM
+struct N_94B0 { char a, b, c; signed char d; };
+struct Ch_94B0 {
+    char pad0[8];
+    unsigned char *p8;
+    char padC[4];
+    int h10;
+    char pad14[0x27 - 0x14];
+    unsigned char cnt;
+    signed char st;
+    char pad29[0x30 - 0x29];
+    struct N_94B0 n[16];
+};
+extern struct Ch_94B0 D_0050A120_94B0[] __asm__("D_0050A120");
+extern int f8EE8_94B0(int) __asm__("func_003B8EE8");
+extern void f9920_94B0(int) __asm__("func_003B9920");
+extern void f8F78_94B0(int, struct N_94B0 *, int, int) __asm__("func_003B8F78");
+extern void f9140_94B0(int, int, int) __asm__("func_003B9140");
+extern void f91E0_94B0(int, struct N_94B0 *, int, int) __asm__("func_003B91E0");
+extern void f93C8_94B0(int, struct N_94B0 *, int, int) __asm__("func_003B93C8");
+
+void func_003B94B0(int h) {
+    struct Ch_94B0 *c = &D_0050A120_94B0[h];
+    unsigned char ev, a, b;
+    unsigned char *s;
+    int hi, lo;
+
+    s = c->p8;
+    s++;
+    c->p8 = s;
+    c->cnt--;
+    hi = *s & 0xF0;
+    c->p8 = s + 1;
+    b = s[1];
+    c->p8 = s - 1;
+    if (hi == 0xF0 && b == 0x2F) {
+        if (f8EE8_94B0(h) != 0) f9920_94B0(c->h10);
+        return;
+    }
+    if (c->cnt != 0) return;
+    for (;;) {
+        struct N_94B0 *q;
+        ev = *c->p8++;
+        a = *c->p8++;
+        b = *c->p8++;
+        hi = a & 0xF0;
+        lo = a & 0xF;
+        q = &c->n[lo];
+        switch (hi) {
+        case 0x90:
+            f8F78_94B0(h, q, lo, b);
+            break;
+        case 0x80:
+            f9140_94B0(h, lo, b);
+            break;
+        case 0xB0:
+            f91E0_94B0(h, q, lo, b);
+            break;
+        case 0xE0:
+            f93C8_94B0(h, q, lo, b);
+            break;
+        case 0xC0:
+            q->d = b;
+            break;
+        case 0xF0:
+            if (b == 0x2F) {
+                if (f8EE8_94B0(h) != 0) {
+                    f9920_94B0(c->h10);
+                } else {
+                    ev = 1;
+                    c->p8 -= 3;
+                    c->cnt++;
+                }
+            }
+            break;
+        }
+        if (ev != 0) break;
+        if (c->st != 3) break;
+    }
+    c->cnt = ev;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003B96B8);
