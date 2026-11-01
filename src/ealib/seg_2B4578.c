@@ -308,14 +308,14 @@ int func_003B4448(int arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4458);
 #ifdef SKIP_ASM
-extern int D_0044C450[];
-extern int D_0044C454[];
-extern int D_0044C458[];
+extern int D_0044C450;
+extern void *(*D_0044C454)(void *, int, int, int, int);
+extern void (*D_0044C458)(void *);
 
-void func_003B4458(int arg0, int arg1, int arg2) {
-    D_0044C450[0] = arg0;
-    D_0044C454[0] = arg1;
-    D_0044C458[0] = arg2;
+void func_003B4458(int arg0, void *(*arg1)(void *, int, int, int, int), void (*arg2)(void *)) {
+    D_0044C450 = arg0;
+    D_0044C454 = arg1;
+    D_0044C458 = arg2;
 }
 #endif
 
@@ -413,11 +413,12 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B4690);
 extern int func_003B4478_4690(int) __asm__("func_003B4478");
 extern void *func_003B3A10_4690(int) __asm__("func_003B3A10");
 extern void SHAPE_cloneat_4690(void *, int) __asm__("SHAPE_cloneat");
-extern void *(*D_0044C454_4690)(void *, int, int, int, int) __asm__("D_0044C454");
+extern void *(*D_0044C454)(void *, int, int, int, int);
 
 void *func_003B4690(int arg0) {
     int sz = func_003B4478_4690(arg0);
-    void *r = D_0044C454_4690(func_003B3A10_4690(arg0), sz, 0, 0x10, 0x400);
+    void *r = D_0044C454(func_003B3A10_4690(arg0), sz, 0, 0x10, 0x400);
+
     SHAPE_cloneat_4690(r, arg0);
     return r;
 }
