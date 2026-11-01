@@ -1580,11 +1580,10 @@ INCLUDE_ASM("fe/ovstatehud", func_001F3170__FPv);
 void func_001F3170(void* self)
 {
     cOVStateHUDElem* e = (cOVStateHUDElem*)self;
-    int t0 = 0;
-    e->field_0x0 = t0;
-    *(int*)&e->rangeMax = t0;
-    e->field_0x4 = t0;
-    *(int*)&e->rangeMin = t0;
+    e->field_0x0 = 0;
+    *(int*)&e->rangeMax = 0;
+    e->field_0x4 = 0;
+    *(int*)&e->rangeMin = 0;
 }
 #endif
 
