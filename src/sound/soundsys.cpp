@@ -872,6 +872,10 @@ struct sSnd17D0E16 {
     int f8;
     int fC;
 };
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_17D0)(cController*, cBankMonitorInstance*, float);
 struct sSnd17D0Sub {
     char pad0[4];
     sSnd17D0Ch def;          // 0x04
@@ -881,7 +885,7 @@ struct sSnd17D0Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
+    sSndCallback_17D0 callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -907,9 +911,15 @@ struct sSnd17D0Sys {
 struct sSndKey8_17D0 {
     long v;
 } __attribute__((packed));
-extern sSndKey8_17D0 D_004A3688_17D0[] __asm__("D_004A3688");
+extern sSndCallback_17D0 D_004A3688_17D0[] __asm__("D_004A3688");
 
-// PORT: 64-bit long sound key
+// cSndPlayOpts::OPTS_Callback (prototype name)
+static inline void OPTS_Callback_17D0(sSnd17D0Mgr* m, sSndCallback_17D0 cb)
+{
+    sSnd17D0Sub* s = &m->sub;
+    s->callbacks[m->sub.cur] = cb;
+}
+
 void func_002917D0_17D0(void* vself, void* obj) __asm__("func_002917D0");
 void func_002917D0_17D0(void* vself, void* obj)
 {
@@ -959,12 +969,7 @@ void func_002917D0_17D0(void* vself, void* obj)
         sSnd17D0Mgr* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     }
-    {
-        sSnd17D0Mgr* m2 = *self->p118;
-        sSndKey8_17D0 k = D_004A3688_17D0[0];
-        sSnd17D0Sub* s2 = &m2->sub;
-        *(sSndKey8_17D0*)((char*)s2 + (m2->sub.cur << 3) + 0x40) = k;
-    }
+    OPTS_Callback_17D0(*self->p118, D_004A3688_17D0[0]);
     {
         sSnd17D0Mgr* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)obj;
