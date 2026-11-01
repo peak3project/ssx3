@@ -3572,7 +3572,24 @@ int func_0027D320(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027D330);
+#ifdef SKIP_ASM
+extern "C" int func_0027D330(void* self, int idx, void* item)
+{
+    int i;
+    for (i = 0; i < 30; i++) {
+        int off = i * 0x14 + 0x50;
+        if (*(void**)((char*)self + off) == 0) {
+            *(int*)((char*)self + off + 4) = idx;
+            *(void**)((char*)self + off) = item;
+            ((int*)item)[1] = i;
+            break;
+        }
+    }
+    return i;
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027D390);
