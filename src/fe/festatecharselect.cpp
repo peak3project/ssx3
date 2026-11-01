@@ -712,6 +712,12 @@ static inline void vcallI_CCW(sWidget_CCW* o, int slot, int arg)
     vt[slot].fn((char*)o + vt[slot].delta, arg);
 }
 
+static inline void setStateColor_CCW(sWidget_CCW* o, int st, int c)
+{
+    o->state = st;
+    o->color = c;
+}
+
 extern "C" void cFEStateCheatCharSelect_onWidgetCreate(sCharSelect_CCW* self, sWidget_CCW* w)
 {
     int id = *(int*)((char*)w + 0x38);
@@ -748,11 +754,7 @@ extern "C" void cFEStateCheatCharSelect_onWidgetCreate(sCharSelect_CCW* self, sW
                     vcallI_CCW(*p, 9, 0);
                     vcallI_CCW(*p, 8, 1);
                 } else {
-                    sWidget_CCW* o = *p;
-                    int m = -1;
-                    int c = self->colors[i];
-                    o->state = m;
-                    o->color = c;
+                    setStateColor_CCW(*p, -1, self->colors[i]);
                 }
             }
         }
