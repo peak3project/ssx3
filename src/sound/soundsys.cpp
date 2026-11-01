@@ -7804,7 +7804,7 @@ extern "C" void func_002A0A30(void* self, sSs0A30Rider* a, sSs0A30Rider* b, int 
 }
 #endif
 
-//100% - objdiff report; single-function view differs only in a relocation name
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A0E70);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
@@ -7851,8 +7851,7 @@ extern "C" void func_002A0E70(void* self, sSs0E70Rider* rider, int play)
     if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
     float v = rider->f470;
-    float zero = 0.0f;
-    int pos = v >= zero;
+    int pos = v >= 0.0f;
     if (pos) return;
     char* snd = (char*)self + 0x5560;
     if (func_002B0E28(snd, 0) == 0) return;
@@ -7862,7 +7861,7 @@ extern "C" void func_002A0E70(void* self, sSs0E70Rider* rider, int play)
     int ok = rider->f874 != 0 && rider->f87C != 0;
     if (!ok) return;
     int r = func_0029F330(rider);
-    if (func_002B1458(snd, 0, 0x2077, (int)rider, func_00123128(rider), 0, 0, zero) == 0) return;
+    if (func_002B1458(snd, 0, 0x2077, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     D_004A482C(func_003D8008(1, 0, 0x2077), 1, r);
 }
 #endif
