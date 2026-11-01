@@ -3293,7 +3293,116 @@ int func_003BA078(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA0B0);
+#ifdef SKIP_ASM
+struct E_A0B0 { int w0; short h4[18]; short h28; unsigned char b2A; char pad2B; unsigned int w2C; char pad30[0x69 - 0x30]; signed char b69; char pad6A[0x8C - 0x6A]; };
+struct G_A0B0 { char pad[0x3C]; unsigned char b3C; char pad3D[0x180 - 0x3D]; int w180; char pad184[0x1F0 - 0x184]; struct E_A0B0 *tab; };
+extern short D_0050AC20_A0B0[] __asm__("D_0050AC20");
+extern int D_0044C478_A0B0[] __asm__("D_0044C478");
+extern struct G_A0B0 D_0050A8E8_A0B0[] __asm__("D_0050A8E8");
+extern int f_A078_A0B0(int, int) __asm__("func_003BA078");
+extern void f_89E0_A0B0(int) __asm__("func_003B89E0");
+
+short func_003BA0B0(int n, int tag, unsigned int *out, int lo, int hi) {
+    int result = -9;
+    int sel = 0;
+    int i;
+    int k;
+    int best;
+    unsigned int key;
+    int lim;
+    struct E_A0B0 *e;
+
+    for (i = 0; i < n; i++) {
+        D_0050AC20_A0B0[i] = -1;
+    }
+    D_0044C478_A0B0[0] += 0x100;
+    if (D_0044C478_A0B0[0] < 0) {
+        D_0044C478_A0B0[0] = 0;
+    }
+    for (i = 0; i < n; i++) {
+        best = -1;
+        key = 0xFFFFFFFF;
+        for (k = lo; k < hi; k++) {
+            e = &D_0050A8E8_A0B0[0].tab[k];
+            if (e->b69 == 0 && f_A078_A0B0(k, sel) == 0 && e->w2C < key) {
+                key = e->w2C;
+                best = k;
+            }
+        }
+        if (best >= 0) {
+            D_0050AC20_A0B0[sel] = best;
+            sel++;
+        }
+    }
+    for (i = sel; i < n; i++) {
+        best = -1;
+        lim = tag;
+        if (D_0050A8E8_A0B0[0].b3C == 0) lim = tag - 1;
+        key = 0xFFFFFFFF;
+        for (k = lo; k < hi; k++) {
+            if (f_A078_A0B0(k, sel) == 0) {
+                e = &D_0050A8E8_A0B0[0].tab[k];
+                if (e->b2A < 0x65) {
+                    if (e->b2A < lim) {
+                        lim = e->b2A;
+                        key = e->w2C;
+                        best = k;
+                    } else if (e->b2A == lim && e->w2C < key) {
+                        key = e->w2C;
+                        best = k;
+                    }
+                }
+            }
+        }
+        if (best >= 0) {
+            D_0050AC20_A0B0[sel] = best;
+            sel++;
+            if (sel >= n) break;
+        }
+    }
+    if (sel == n) {
+        int sorted;
+        do {
+            sorted = 1;
+            for (i = 0; i < sel - 1; i++) {
+                short t = D_0050AC20_A0B0[i];
+                if (D_0050AC20_A0B0[i + 1] < t) {
+                    D_0050AC20_A0B0[i] = D_0050AC20_A0B0[i + 1];
+                    sorted = 0;
+                    D_0050AC20_A0B0[i + 1] = t;
+                }
+            }
+        } while (!sorted);
+        *out = D_0044C478_A0B0[0] | D_0050AC20_A0B0[0];
+        result = D_0050AC20_A0B0[0];
+        for (i = 0; i < sel; i++) {
+            int w;
+            e = &D_0050A8E8_A0B0[0].tab[D_0050AC20_A0B0[i]];
+            w = e->w0;
+            if (e->b69 != 0) {
+                if (w < 0) {
+                    w = D_0050A8E8_A0B0[0].tab[e->h28].w0;
+                }
+                f_89E0_A0B0(w);
+            }
+            e->b69 = 1;
+            e->w2C = D_0050A8E8_A0B0[0].w180;
+            e->b2A = tag;
+        }
+        D_0050A8E8_A0B0[0].tab[D_0050AC20_A0B0[0]].w0 = *out;
+        D_0050A8E8_A0B0[0].tab[D_0050AC20_A0B0[0]].h4[0] = D_0050AC20_A0B0[0];
+        D_0050A8E8_A0B0[0].tab[D_0050AC20_A0B0[0]].h28 = -1;
+        for (i = 1; i < sel; i++) {
+            D_0050A8E8_A0B0[0].tab[D_0050AC20_A0B0[0]].h4[i] = D_0050AC20_A0B0[i];
+            D_0050A8E8_A0B0[0].tab[D_0050AC20_A0B0[i]].w0 = -1;
+            D_0050A8E8_A0B0[0].tab[D_0050AC20_A0B0[i]].h28 = D_0050AC20_A0B0[0];
+        }
+    }
+    return result;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA550);
