@@ -908,9 +908,6 @@ struct sSnd17D0Sys {
     char padC[0x118 - 0xC];
     sSnd17D0Mgr** p118;      // 0x118
 };
-struct sSndKey8_17D0 {
-    long v;
-} __attribute__((packed));
 extern sSndCallback_17D0 D_004A3688_17D0[] __asm__("D_004A3688");
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
@@ -992,8 +989,8 @@ void func_002917D0_17D0(void* vself, void* obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00291C88);
 #ifdef SKIP_ASM
-extern sSndKey8_17D0 D_004A3690_17D0[] __asm__("D_004A3690");
-extern sSndKey8_17D0 D_004A3698_17D0[] __asm__("D_004A3698");
+extern sSndCallback_17D0 D_004A3690_17D0[] __asm__("D_004A3690");
+extern sSndCallback_17D0 D_004A3698_17D0[] __asm__("D_004A3698");
 
 void func_00291C88_impl(void* vself, void* obj, int n) __asm__("func_00291C88");
 void func_00291C88_impl(void* vself, void* obj, int n)
@@ -1043,12 +1040,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
             sSnd17D0Mgr* m2 = *self->p118;
             m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
         }
-        {
-            sSnd17D0Mgr* m2 = *self->p118;
-            sSndKey8_17D0 k = D_004A3690_17D0[0];
-            sSnd17D0Sub* s2 = &m2->sub;
-            *(sSndKey8_17D0*)((char*)s2 + (m2->sub.cur << 3) + 0x40) = k;
-        }
+        OPTS_Callback_17D0(*self->p118, D_004A3690_17D0[0]);
         {
             sSnd17D0Mgr* m2 = *self->p118;
             m2->sub.p60[m2->sub.cur] = (int)obj;
@@ -1103,12 +1095,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
             sSnd17D0Mgr* m2 = *self->p118;
             m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
         }
-        {
-            sSnd17D0Mgr* m2 = *self->p118;
-            sSndKey8_17D0 k = D_004A3698_17D0[0];
-            sSnd17D0Sub* s2 = &m2->sub;
-            *(sSndKey8_17D0*)((char*)s2 + (m2->sub.cur << 3) + 0x40) = k;
-        }
+        OPTS_Callback_17D0(*self->p118, D_004A3698_17D0[0]);
         {
             sSnd17D0Mgr* m2 = *self->p118;
             m2->sub.p7C[m2->sub.cur] = 0;
