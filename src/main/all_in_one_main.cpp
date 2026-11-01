@@ -1056,7 +1056,64 @@ extern "C" void func_001DD060(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/all_in_one_main", func_001DD0C8);
+#ifdef SKIP_ASM
+// PersonaMenu<cDebugLobbyScreen::OnSelectPersona, OnCreatePersona, OnDeletePersona>::~PersonaMenu (prototype name);
+// the compiler-generated member cleanup of a real class layout. Member classes are stand-ins named by their dtors.
+struct cMenuPart_DD0C8 {                    // dtor func_002CA280
+    char pad[0x18];
+    ~cMenuPart_DD0C8();
+};
+struct cMenuBase_DD0C8 {                    // dtor func_002CAA80
+    char pad[0x130];
+    ~cMenuBase_DD0C8();
+};
+struct cItemBase_DD0C8 {
+    char pad[0x10];
+    virtual ~cItemBase_DD0C8();
+};
+struct cItem_DD0C8 : cItemBase_DD0C8 {
+    char pad2[0x10];
+};
+struct cSubMenu_DD0C8 : cMenuBase_DD0C8 {
+    char pad134[0x4];
+    cMenuPart_DD0C8 part134;                // 0x134
+    char pad14C[0x4];
+    cMenuPart_DD0C8 part150;                // 0x150
+    cItem_DD0C8 items[4];                   // 0x168
+};
+struct cPartMenu_DD0C8 : cMenuBase_DD0C8 {
+    char pad130[0x4];
+    cMenuPart_DD0C8 part134;                // 0x134
+    char pad14C[0x4];
+    cMenuPart_DD0C8 part150;                // 0x150
+    cMenuPart_DD0C8 part168;                // 0x168
+    char pad180[0x14];
+    cMenuPart_DD0C8 part194;                // 0x194
+    char pad1AC[0xC];
+};
+struct cPersonaMenu_DD0C8 : cMenuBase_DD0C8 {
+    cPartMenu_DD0C8 menu130;                // 0x130
+    cSubMenu_DD0C8 sub2E8;                  // 0x2E8
+    char pad4E0[0x4];
+    cMenuPart_DD0C8 part4E4;                // 0x4E4
+    char pad4FC[0x4];
+    cMenuPart_DD0C8 part500;                // 0x500
+    cItem_DD0C8 items518[4];                // 0x518
+    cMenuPart_DD0C8 part5A8;                // 0x5A8
+    char pad5C0[0x4];
+    cMenuPart_DD0C8 part5C4;                // 0x5C4
+    ~cPersonaMenu_DD0C8();
+};
+
+cPersonaMenu_DD0C8::~cPersonaMenu_DD0C8()
+{
+}
+// PORT: the compiler names these dtors _$_<len><Class>; map them to the address-derived names.
+__asm__(".globl func_001DD0C8\n.type func_001DD0C8,@function\nfunc_001DD0C8 = _$_18cPersonaMenu_DD0C8\n.size func_001DD0C8,0x18C\n");
+__asm__("_$_15cMenuPart_DD0C8 = func_002CA280\n_$_15cMenuBase_DD0C8 = func_002CAA80\n");
+#endif
 
 //100%
 INCLUDE_ASM("main/all_in_one_main", func_001DD258);
