@@ -3987,7 +3987,7 @@ extern "C" void func_00274A08(void* self)
 }
 #endif
 
-//100% - objdiff report; single-function view differs only in a relocation name
+//100%
 INCLUDE_ASM("replay/replaycache", func_00274A30);
 #ifdef SKIP_ASM
 extern "C" int func_00274C70(void* self);
@@ -4032,16 +4032,15 @@ extern "C" void func_00274A30(void* p)
                 func_00274810(self);
                 func_00274DE0(self);
             }
-            float one = 1.0f;
             float pos = self->pos;
             float frac = (float)((int)pos + 1) - pos;
             float speed = self->speed;
-            if (frac < one)
+            if (frac < 1.0f)
             {
                 self->speed = frac;
                 func_00274DE0(self);
             }
-            self->speed = one;
+            self->speed = 1.0f;
             while (self->playing != 0 && self->pos < ft)
                 func_00274DE0(self);
             self->speed = speed;
