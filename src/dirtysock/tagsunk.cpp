@@ -1685,6 +1685,14 @@ struct sDsSlotC610 {
     int flags;
 };
 
+static inline void postMsg_C610(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    post_C610(self + 0xEC, m);
+}
+
 extern "C" void func_0025C610(char* self)
 {
     char buf[0x200];
@@ -1719,14 +1727,10 @@ extern "C" void func_0025C610(char* self)
     if ((int)func_00266F38(conn) & 0x10)
         flags |= 0x100;
     cDirtysock_tag_TagFieldSetNumber(buf, 0x200, D_004A30D8, flags);
-    int type = 0xD3;
     cDirtysock_tag_TagFieldSetNumber(buf, 0x200, D_004A30E0, caps);
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 8, 0x61757468, buf, (int)func_00268C70, 20.0f);
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    post_C610(self + 0xEC, m);
+    postMsg_C610(self, 0xD3);
 }
 #endif
 
