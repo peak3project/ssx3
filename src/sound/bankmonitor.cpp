@@ -4778,19 +4778,21 @@ extern "C" void func_002B4470(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B44D8);
 #ifdef SKIP_ASM
-// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPacked8 { long v; } __attribute__((packed));
-extern const sPacked8 D_004A3838_2B44D8[] __asm__("D_004A3838");
-extern const sPacked8 D_004A3840_2B44D8[] __asm__("D_004A3840");
-extern "C" void func_002ADDE0_m4481(int a, long t) __asm__("func_002ADDE0");
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback_44D8)(cController*, cBankMonitorInstance*, float);
+extern const sSndCallback_44D8 D_004A3838_2B44D8[] __asm__("D_004A3838");
+extern const sSndCallback_44D8 D_004A3840_2B44D8[] __asm__("D_004A3840");
+extern "C" void func_002ADDE0_m4481(int a, sSndCallback_44D8 t) __asm__("func_002ADDE0");
 extern "C" void func_002B4708(void* self);
 
 extern "C" void func_002B44D8(void* self)
 {
     if (*(void**)((char*)self + 0x408) != 0) {
-        func_002ADDE0_m4481(*(int*)(*(int*)self) + 0x1D8, D_004A3838_2B44D8[0].v);
-        func_002ADDE0_m4481(*(int*)(*(int*)self) + 0x1D8, D_004A3840_2B44D8[0].v);
+        func_002ADDE0_m4481(*(int*)(*(int*)self) + 0x1D8, D_004A3838_2B44D8[0]);
+        func_002ADDE0_m4481(*(int*)(*(int*)self) + 0x1D8, D_004A3840_2B44D8[0]);
         func_002B4708(self);
     }
 }
