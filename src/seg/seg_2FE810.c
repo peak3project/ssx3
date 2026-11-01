@@ -1862,7 +1862,31 @@ void func_00400B48(unsigned a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400C00);
+#ifdef SKIP_ASM
+struct QSema { int count; int max_count; int init_count; int wait_threads; int attr; int option; };
+extern int D_00451620[];
+extern int D_00451628[];
+extern int D_0045162C[];
+extern int D_00451630[];
+extern int D_00451634[];
+extern int Q0C00_create(struct QSema *) __asm__("func_00423DA0");
+void func_00400C00(void) {
+    struct QSema s;
+    if (*(volatile int *)D_00451628 == -1 || *(volatile int *)D_0045162C == -1 || *(volatile int *)D_00451630 == -1) {
+        s.option = 0;
+        s.init_count = 1;
+        s.max_count = 1;
+        *(volatile int *)D_00451628 = Q0C00_create(&s);
+        *(volatile int *)D_0045162C = Q0C00_create(&s);
+        *(volatile int *)D_00451630 = Q0C00_create(&s);
+        s.init_count = 0;
+        *(volatile int *)D_00451620 = Q0C00_create(&s);
+        *(volatile int *)D_00451634 = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400CB8);
