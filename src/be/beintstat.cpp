@@ -481,7 +481,185 @@ extern "C" void func_00149A88(void* self, signed char idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintstat", func_00149BB8);
+#ifdef SKIP_ASM
+struct sCharStat_9BB8 {
+    signed char v[15];
+};
+struct sCharBase_9BB8 {
+    unsigned char v[7];
+};
+extern sCharStat_9BB8 D_005308D8_9BB8[] __asm__("D_005308D8");
+extern sCharBase_9BB8 D_00440F00_9BB8[] __asm__("D_00440F00");
+
+struct sRange_9BB8 {
+    int lo;
+    int hi;
+};
+
+struct sStatRanges_9BB8 {
+    int f0;
+    int f4;
+    int pad8[4];
+    sRange_9BB8 a[16];          // 0x18
+    sRange_9BB8 b[16];          // 0x98
+    sRange_9BB8 c[6][3][2];     // 0x118
+    sRange_9BB8 d[10];          // 0x238
+    int e[8];                   // 0x288
+};
+
+extern sStatRanges_9BB8 D_00530600_9BB8 __asm__("D_00530600");
+
+static inline void setRange_9BB8(sRange_9BB8* r, int lo, int hi)
+{
+    r->lo = lo;
+    r->hi = hi;
+}
+extern "C" void* func_0041605C(void* dst, const void* src, int n);
+extern "C" void* func_0014C6A0(void*);
+extern "C" void cBERewardDB_init(void* db, int flag);
+extern "C" void* FILE_load(const char* name, int flags);
+void cMemMan_free(void*);
+extern char D_004A6750[];
+extern char D_004C3E98[];
+extern int D_005305B0[];
+extern char D_0045A2E0[];
+extern char D_00530970[];
+extern char D_00535898[];
+
+extern "C" void func_00149BB8(void)
+{
+    int i;
+    void* f;
+    func_0014C6A0(D_004A6750);
+    cBERewardDB_init(D_004C3E98, 0);
+    func_00416210(D_005305B0, 0, 0x4C);
+    for (i = 0; i < 6; i++) {
+        D_005305B0[i] = i;
+        D_005305B0[i + 6] = i;
+    }
+    func_00416210(D_00535B20, 0, 0xA8);
+    for (i = 0; i < 6; i++) {
+        sRiderEntry_149A88* e = (sRiderEntry_149A88*)(D_00535B20 + i * 0x1C);
+        e->name[0] = 0;
+        e->f1 = 1;
+        e->c11 = 4;
+    }
+    f = FILE_load(D_0045A2E0, 0x100);
+    func_0041605C(D_00530970, f, 0x550);
+    if (f != 0)
+        cMemMan_free(f);
+    for (i = 0; i < 10; i++) {
+        D_005308D8_9BB8[i].v[0] = i;
+        D_005308D8_9BB8[i].v[1] = D_00440F00_9BB8[i].v[0] + 5;
+        D_005308D8_9BB8[i].v[2] = D_00440F00_9BB8[i].v[1] + 5;
+        D_005308D8_9BB8[i].v[3] = D_00440F00_9BB8[i].v[2] + 5;
+        D_005308D8_9BB8[i].v[4] = D_00440F00_9BB8[i].v[3] + 5;
+        D_005308D8_9BB8[i].v[5] = D_00440F00_9BB8[i].v[4] + 5;
+        D_005308D8_9BB8[i].v[6] = D_00440F00_9BB8[i].v[5] + 5;
+        D_005308D8_9BB8[i].v[7] = D_00440F00_9BB8[i].v[6] + 5;
+        // the default stats are written in this (non-index) order; the retail store order follows it
+        D_005308D8_9BB8[i].v[9] = 0xB;
+        D_005308D8_9BB8[i].v[11] = 0xB;
+        D_005308D8_9BB8[i].v[8] = 0xB;
+        D_005308D8_9BB8[i].v[12] = 0xB;
+        D_005308D8_9BB8[i].v[14] = 0xB;
+        D_005308D8_9BB8[i].v[13] = 0xB;
+        D_005308D8_9BB8[i].v[10] = 0xB;
+    }
+    func_00416210(D_00535898, 0, 0x288);
+    for (i = 0; i < 3; i++)
+        func_001567B8(D_004A6CA8 + i * 0x9B50, 1);
+    D_00530600_9BB8.f0 = 0;
+    D_00530600_9BB8.f4 = 0;
+    setRange_9BB8(&D_00530600_9BB8.a[0], 200, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[1], 200, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[2], 200, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[3], 200, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[4], 250, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[5], 250, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[6], 250, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[7], 300, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[8], 300, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[9], 300, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[10], 300, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[11], 350, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[12], 300, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[13], 300, 400);
+    setRange_9BB8(&D_00530600_9BB8.a[14], 300, 400);
+    setRange_9BB8(&D_00530600_9BB8.b[0], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[1], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[2], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[3], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[4], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[5], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[6], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[7], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[8], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[9], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[10], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[11], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[12], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[13], 200, 500);
+    setRange_9BB8(&D_00530600_9BB8.b[14], 200, 500);
+    // c[group][level][side]: groups written 1, 2, 3, 0, 5, 4; per group side 0 then side 1
+    setRange_9BB8(&D_00530600_9BB8.c[1][0][0], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[1][1][0], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[1][2][0], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[1][0][1], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[1][1][1], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[1][2][1], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[2][0][0], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[2][1][0], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[2][2][0], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[2][0][1], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[2][1][1], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[2][2][1], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[3][0][0], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[3][1][0], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[3][2][0], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[3][0][1], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[3][1][1], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[3][2][1], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[0][0][0], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[0][1][0], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[0][2][0], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[0][0][1], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[0][1][1], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[0][2][1], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[5][0][0], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[5][1][0], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[5][2][0], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[5][0][1], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[5][1][1], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[5][2][1], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[4][0][0], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[4][1][0], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[4][2][0], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[4][0][1], 1000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[4][1][1], 2000, 3000);
+    setRange_9BB8(&D_00530600_9BB8.c[4][2][1], 2500, 3000);
+    setRange_9BB8(&D_00530600_9BB8.d[0], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[1], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[2], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[3], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[4], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[5], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[6], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[7], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[8], 3000, 4000);
+    setRange_9BB8(&D_00530600_9BB8.d[9], 3000, 4000);
+    D_00530600_9BB8.e[0] = 5000;
+    D_00530600_9BB8.e[1] = 5000;
+    D_00530600_9BB8.e[2] = 5000;
+    D_00530600_9BB8.e[3] = 5000;
+    D_00530600_9BB8.e[4] = 5000;
+    D_00530600_9BB8.e[5] = 5000;
+    D_00530600_9BB8.e[6] = 5000;
+    D_00530600_9BB8.e[7] = 5000;
+}
+#endif
 
 
 //100%
