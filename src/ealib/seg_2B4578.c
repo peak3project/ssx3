@@ -3768,22 +3768,22 @@ struct G_B0C8 {
     struct E_B0C8 *f1F0;
 };
 extern struct G_B0C8 D_0050A8E8_B0C8 __asm__("D_0050A8E8");
-extern unsigned char D_0044C588_B0C8[] __asm__("D_0044C588");
+extern unsigned char D_0044C588;
 
 unsigned char func_003BB0C8(void) {
     int i;
 again:
-    D_0044C588_B0C8[0] = D_0044C588_B0C8[0] + 1;
-    if (D_0044C588_B0C8[0] == 0) {
-        D_0044C588_B0C8[0] = D_0044C588_B0C8[0] + 1;
+    D_0044C588 = D_0044C588 + 1;
+    if (D_0044C588 == 0) {
+        D_0044C588 = D_0044C588 + 1;
     }
     for (i = 0; i < D_0050A8E8_B0C8.f17E; i++) {
         struct E_B0C8 *e = &D_0050A8E8_B0C8.f1F0[i];
-        if (e->f69 != 0 && e->f26 == D_0044C588_B0C8[0]) {
+        if (e->f69 != 0 && e->f26 == D_0044C588) {
             goto again;
         }
     }
-    return D_0044C588_B0C8[0];
+    return D_0044C588;
 }
 #endif
 
