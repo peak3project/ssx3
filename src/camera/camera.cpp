@@ -1772,15 +1772,14 @@ extern "C" void func_001604B8(char* self)
     } else if (D_004A127C < 0.0f) {
         D_004A127C = D_004A127C + 6.2831854820251465f;
     }
-    float k = 0.05000000074505806f;
-    D_004A1280 += ay * k;
+    D_004A1280 += ay * 0.05000000074505806f;
     D_004A1280 = Clamp_1604B8(D_004A1280, 0.0f, 1.5079644918441772f);
     ((sCamYP_1604B8*)self)->pitch = D_004A1280;
     ((sCamYP_1604B8*)self)->yaw = D_004A127C;
     sVec_1604B8 dir;
     func_001668B8(self, &dir);
     DivEq_1604B8(dir, Length_1604B8(dir));
-    D_004A1284 = Clamp_1604B8(D_004A1284 * (az * k + 1.0f), 150.0f, 850.0f);
+    D_004A1284 = Clamp_1604B8(D_004A1284 * (az * 0.05000000074505806f + 1.0f), 150.0f, 850.0f);
     *(sVec_1604B8*)(self + 0x20) = info.pos;
     *(sVec_1604B8*)(self + 0x40) = Sub_1604B8(*(sVec_1604B8*)(self + 0x20), Scale_1604B8(dir, D_004A1284));
 }
