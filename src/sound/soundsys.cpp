@@ -11567,7 +11567,25 @@ extern "C" char* func_002A7CF0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A7DA0);
+#ifdef SKIP_ASM
+extern "C" char* func_002A7DA0(void* self)
+{
+    int n = 0;
+    func_002A78F8_r(self);
+    while (**(signed char**)((char*)self + 0x8) != 0 && **(signed char**)((char*)self + 0x8) != ' ' &&
+           **(signed char**)((char*)self + 0x8) != '\t' && **(signed char**)((char*)self + 0x8) != '\n' &&
+           **(signed char**)((char*)self + 0x8) != '\r') {
+        char* dst = (char*)self + 0xC;
+        dst[n] = func_002A78E0(self);
+        n++;
+    }
+    char* buf = (char*)self + 0xC;
+    buf[n] = 0;
+    return buf;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A7E60);
