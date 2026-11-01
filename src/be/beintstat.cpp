@@ -304,22 +304,27 @@ struct sLevelTable_00149778
 };
 extern const sLevelTable_00149778 D_0045A2B0;
 
+static inline int clampLevel_149778(int v, int lo, int hi)
+{
+    int r;
+    if (v >= lo)
+    {
+        r = v;
+        if (r > hi)
+            r = hi;
+    }
+    else
+        r = lo;
+    return r;
+}
+
 extern "C" int func_00149778(void* self, int rider, int value)
 {
     if (cBENewPlayerInterface_isMissionMan(rider))
         return 0;
     sLevelTable_00149778 t = D_0045A2B0;
     int n = func_00148950(self, rider) - 1;
-    int lvl;
-    int hi = 10;
-    if (n >= 0)
-    {
-        lvl = n;
-        if (lvl > hi)
-            lvl = hi;
-    }
-    else
-        lvl = 0;
+    int lvl = clampLevel_149778(n, 0, 10);
     return value >= t.v[lvl];
 }
 #endif
