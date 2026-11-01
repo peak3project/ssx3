@@ -3731,10 +3731,9 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_001441A0__FPvT0);
 #ifdef SKIP_ASM
 int func_001441A0(void* self, void* a1)
 {
-    int t0 = 2;
-    *(int*)((char*)a1 + 0x8) = t0;
+    *(int*)((char*)a1 + 0x8) = 2;
     *(int*)((char*)self + 0x704) = (int)((char*)*(void**)((char*)self + 0x704) - 0x1);
-    return t0;
+    return 2;
 }
 #endif
 
