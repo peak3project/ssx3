@@ -6324,7 +6324,73 @@ extern "C" V3_5F40 func_00305F40(int n, Ent_5F40 *e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003061B0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" void func_003E6574(void*, void*, int);
+int* func_00226610(void*);
+struct Flag_61B0 {};
+struct Ent_61B0 { int idx; int val; int pad; int kind; };
+struct R12_61B0 { int a; int b; int c; };
+extern R12_61B0 D_004C9098_61B0 __asm__("D_004C9098");
+
+extern int D_004A3DA8_61B0[2] __asm__("D_004A3DA8");
+extern int D_005308D0_61B0[] __asm__("D_005308D0");
+extern int D_004A5888_61B0 __asm__("D_004A5888");
+extern int D_004A5880_61B0 __asm__("D_004A5880");
+extern Flag_61B0 D_004A5884_61B0 __asm__("D_004A5884");
+extern "C" void* func_003061B0(void* self, int n, Ent_61B0* e) {
+    if (D_004A5888_61B0 == 0) {
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004A5880_61B0 = 0;
+        D_004A5884_61B0 = Flag_61B0();
+        D_004A5888_61B0 = 1;
+    }
+    int v[4];
+    int* vp = v;
+    func_003E6574(vp, &D_004A5880_61B0, 8);
+    Ent_61B0* p = e;
+    for (int i = 0; i < n; i++, p++) {
+        int k = p->idx;
+        int* d = (int*)((k << 2) + (int)vp);
+        if (p->kind != D_004A3DA8_61B0[k] && D_004A3DA8_61B0[k] == 2)
+            *(float*)d = (float)p->val;
+        else
+            *d = p->val;
+    }
+    int r;
+    switch (vp[0]) {
+    case 0: {
+        int flags = D_005308D0_61B0[0] >> 6;
+        r = 0;
+        if ((flags & 1) == 0)
+            r++;
+        break;
+    }
+    case 1: {
+        int flags = D_005308D0_61B0[0] >> 8;
+        r = 0;
+        if ((flags & 1) == 0)
+            r++;
+        break;
+    }
+    case 2: {
+        int flags = D_005308D0_61B0[0] >> 7;
+        r = 0;
+        if ((flags & 1) == 0)
+            r++;
+        break;
+    }
+    default:
+        r = 1;
+        break;
+    }
+    *(int*)((char*)self + 8) = 1;
+    *func_00226610(self) = r;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00306300);
