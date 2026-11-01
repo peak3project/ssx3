@@ -233,7 +233,39 @@ extern "C" void func_0015D700(void* self, float x, float y, float z)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015D780);
+#ifdef SKIP_ASM
+struct sVec4_D780 { float x, y, z, w; };
+extern "C" float func_0031C228(float x);
+
+static inline float aiAtan2_D780(float y, float x)
+{
+    if (x == 0.0f)
+    {
+        if (y == 0.0f) return y;
+        if (y >= 0.0f) return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float r = func_0031C228(y / x);
+    if (x < 0.0f)
+    {
+        if (y > 0.0f) r += 3.1415927410125732f;
+        else r -= 3.1415927410125732f;
+    }
+    return r;
+}
+
+extern "C" float func_0015D780(void* self)
+{
+    sVec4_D780 v;
+    v.x = 2.0f * (*(float*)((char*)self + 0x34) * *(float*)((char*)self + 0x30) - *(float*)((char*)self + 0x3C) * *(float*)((char*)self + 0x38));
+    v.y = 1.0f - 2.0f * (*(float*)((char*)self + 0x38) * *(float*)((char*)self + 0x38) + *(float*)((char*)self + 0x30) * *(float*)((char*)self + 0x30));
+    v.z = 2.0f * (*(float*)((char*)self + 0x34) * *(float*)((char*)self + 0x38) + *(float*)((char*)self + 0x3C) * *(float*)((char*)self + 0x30));
+    v.w = 0;
+    return aiAtan2_D780(v.y, v.x);
+}
+#endif
 //100%
 INCLUDE_ASM("camera/cameraalgorithms", func_0015D880);
 #ifdef SKIP_ASM
