@@ -2393,7 +2393,7 @@ int func_003B85F0_impl(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B86C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_0050AAD8_86C0[] __asm__("D_0050AAD8");
+extern char *D_0050AAD8;
 int func_003BA6E8(int arg0);
 
 short func_003B86C0(int arg0) {
@@ -2401,7 +2401,7 @@ short func_003B86C0(int arg0) {
     if (i < 0) {
         return -8;
     }
-    return *(short *)(D_0050AAD8_86C0[0] + i * 0x8C + 0x3A);
+    return *(short *)(D_0050AAD8 + i * 0x8C + 0x3A);
 }
 #endif
 
