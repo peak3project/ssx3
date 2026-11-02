@@ -347,6 +347,11 @@ static inline void wsDivEq(t4Vector& v, float s)
         : "memory");
 }
 
+static inline void resetListCtx(sWsListCtx* cb)
+{
+    *cb->count = 0;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -836,10 +841,6 @@ static inline void addPatches_1E90(sWsListCtx* cb, sWsBoundObj* first)
     }
 }
 
-static inline void reset_1E90(sWsListCtx* cb)
-{
-    *cb->count = 0;
-}
 
 static inline void visit_1E90(sRoot_330BA8* t, int k, sWsListCtx2* ctx, void* box)
 {
@@ -940,10 +941,6 @@ static inline void addAll_2DB8(sWsListCtx* cb, sWsBoundObj* first)
     }
 }
 
-static inline void reset_2DB8(sWsListCtx* cb)
-{
-    *cb->count = 0;
-}
 
 static inline void visit_2DB8(sRoot_330BA8* t, int k, sCtx2_2DB8* ctx, void* box)
 {
