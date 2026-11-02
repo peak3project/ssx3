@@ -6326,10 +6326,6 @@ void func_003E5AA8(int idx, int val) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5B60);
 #ifdef SKIP_ASM
-struct EB_5B60 { int w0; int w1; };
-struct EA_5B60 { int w0; int w1; int w2; };
-extern char D_00451250_5B60[] __asm__("D_00451250");
-extern struct EB_5B60 D_00450E08_5B60[] __asm__("D_00450E08");
 extern void func_003E5EF8(int, int);
 extern void func_003E5DC8(int, int);
 
@@ -6337,21 +6333,21 @@ void func_003E5B60(void) {
     int i;
     if (D_00451008 == 0) {
         D_00451008 = 1;
-        for (i = 0; i < 0x60; i += 12) {
-            ((struct EA_5B60 *)(D_00451250_5B60 + i))->w2 &= ~1;
+        for (i = 0; i < 8; i++) {
+            D_00451250[i].on = 0;
         }
         for (i = 0; i < 64; i++) {
-            struct EB_5B60 *e = &D_00450E08_5B60[i];
-            e->w1 &= ~1;
+            struct sDbgChan *e = &D_00450E08[i];
+            e->on = 0;
         }
-        for (i = 0x30; i < 0x60; i += 12) {
-            ((struct EA_5B60 *)(D_00451250_5B60 + i))->w0 = 0;
-            ((struct EA_5B60 *)(D_00451250_5B60 + i))->w1 = 0;
+        for (i = 4; i < 8; i++) {
+            D_00451250[i].f00 = 0;
+            D_00451250[i].f04 = 0;
         }
         for (i = 14; i < 64; i++) {
-            struct EB_5B60 *e = &D_00450E08_5B60[i];
-            e->w0 = 0;
-            e->w1 &= ~2;
+            struct sDbgChan *e = &D_00450E08[i];
+            e->f00 = 0;
+            e->f04b1 = 0;
         }
         func_003E5EF8(2, 1);
         func_003E5DC8(2, 1);
