@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festateselectmp", cFEStateSelectMultiplayerMode_onCreateScreen);
 #ifdef SKIP_ASM
@@ -43,11 +51,6 @@ extern "C" void func_001A30F8(void* self, void* item)
 //100%
 INCLUDE_ASM("fe/festateselectmp", func_001A3160);
 #ifdef SKIP_ASM
-struct sVEntry001A3160 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 extern "C" void func_0039F400(void* list, void* item);
 
 extern "C" void func_001A3160(void* self, void* item, int msg)
@@ -58,7 +61,7 @@ extern "C" void func_001A3160(void* self, void* item, int msg)
     switch (msg) {
     case 5: {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry001A3160* vt = *(sVEntry001A3160**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[4].fn((char*)obj + vt[4].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
@@ -67,7 +70,7 @@ extern "C" void func_001A3160(void* self, void* item, int msg)
     }
     case 6: {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry001A3160* vt = *(sVEntry001A3160**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[5].fn((char*)obj + vt[5].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
