@@ -34,6 +34,42 @@ struct cWScriptMan {
     char* f2A4;             // 0x2A4
 };
 extern cWScriptMan* D_004A3DD8;
+// The race (main/gamemode.cpp layout): riders by being index at 0x28; each player holds its rider at +0x18.
+struct sRacePlayer {
+    char pad_0x0[0x18];
+    char* rider;                // 0x18
+};
+struct sRace {
+    char pad_0x0[0x28];
+    char* riders[6];            // 0x28
+    sRacePlayer* players[12];   // 0x40
+    sRacePlayer* players2[3];   // 0x70
+    int numPlayers;             // 0x7C
+    char pad_0x80[0x8];
+    int numPlayers2;            // 0x88
+    char pad_0x8C[0x1C];
+    void* fA8;                  // 0xA8
+};
+struct sGame {
+    char pad_0x0[0xC];
+    sRace* race;                // 0xC
+    char pad_0x10[0x18];
+    void* f28;                  // 0x28
+    char pad_0x2C[0x4C];
+    char* f78;                  // 0x78
+};
+// The game singleton (D_004A28A8).
+struct sApp {
+    char pad_0x0[0x14];
+    float f14;                  // 0x14
+    char pad_0x18[0x60];
+    void* f78;                  // 0x78
+    char pad_0x7C[0x8];
+    sGame* game;                // 0x84
+    char pad_0x88[0x38];
+    int fC0;                    // 0xC0
+};
+extern sApp* D_004A28A8;
 struct sBindArg_1FBE38 { int idx; int val; int pad; int kind; };
 struct sBindEnd_1FBE38 {};  // empty trailing member of a defaults record; value-init copies its byte through a stack temp
 extern "C" void func_003E6574(void*, void*, int);
@@ -797,7 +833,6 @@ extern "C" void func_002FC2C0(char* self, char* ev) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC420);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_C420 __asm__("D_004A28A8");
 static inline char *refToPtr_C420(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_C420(unsigned i) { if (i == 0) return 0; return refToPtr_C420(i); }
 extern "C" int checkActiveNode(void*, int, void*);
