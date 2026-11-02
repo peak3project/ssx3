@@ -1057,7 +1057,298 @@ extern "C" void func_0025AB40(char* self, const char* a, const char* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025AC50);
+#ifdef SKIP_ASM
+extern char D_00480488[];
+extern char D_004804A8[];
+extern void* D_004812B0[];
+extern void* D_00481290[];
+extern void* D_004811B0[];
+extern void* D_00481270[];
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern void* D_004A28A8;
+extern void* D_004A2EB8;
+extern int D_004A3018;
+extern float D_004A5154;
+extern "C" void func_003E95C8(void* p);
+extern "C" int func_003E8FB8(void* p);
+extern "C" void func_0025A650(char* self);
+extern "C" void func_0025B800(void* self);
+extern "C" int func_003E8260(void* p, int a, int timeout, void* cb, void* user);
+extern "C" void func_00268BA8(void* self, void* a1, int a2);
+extern "C" char* func_003E8A70(void* p, int tag);
+extern "C" void* cBXString_cBXString2(void* self, const char* s);
+extern "C" void func_00261408(void* self);
+extern "C" int func_00261460(void* p);
+extern "C" void func_00260F80(void);
+extern "C" void func_002613C8(void* p);
+extern "C" int func_00263128(char* self, char* name);
+extern "C" void func_00263018(void* self, void* name);
+extern "C" void func_0025F628(void* selfp, int notify, int flag);
+extern "C" void func_0025EED8(char* self);
+extern "C" int* func_002591D0();
+extern "C" void func_00263BA8(void* p, int arg);
+extern "C" int func_00255D38(void* comm, int chan);
+extern "C" void func_00255CC8(void* comm, int chan);
+extern "C" void func_003EE620(void* p);
+extern "C" void func_00261490(void* self);
+extern "C" void func_0017D260(void* self, void* msg);
+void operator_delete(int* ptr);
+
+struct sMsgListNodeAC50 {
+    sMsgListNodeAC50* next;
+    sMsgListNodeAC50* prev;
+    void* data;
+};
+
+struct sMsgListIterAC50 {
+    sMsgListNodeAC50* node;
+    sMsgListIterAC50(sMsgListNodeAC50* x) : node(x) {}
+    sMsgListIterAC50(const sMsgListIterAC50& x) : node(x.node) {}
+    void*& operator*() const { return node->data; }
+};
+
+static inline sMsgListIterAC50 sMsgListAC50_insert(sMsgListIterAC50 pos, void* const& x)
+{
+    sMsgListNodeAC50* tmp = (sMsgListNodeAC50*)operator new(0xC, D_004804A8, 0x20000000, 0);
+    void** data = &tmp->data;
+    if (data != 0)
+        *data = x;
+    tmp->next = pos.node;
+    tmp->prev = pos.node->prev;
+    pos.node->prev->next = tmp;
+    pos.node->prev = tmp;
+    return tmp;
+}
+
+struct sMsgListAC50 {
+    int pad;
+    sMsgListNodeAC50* node;
+    sMsgListIterAC50 begin() { return node->next; }
+    void*& front() { return *begin(); }
+    sMsgListIterAC50 erase(sMsgListIterAC50 pos)
+    {
+        sMsgListNodeAC50* next = pos.node->next;
+        sMsgListNodeAC50* prev = pos.node->prev;
+        prev->next = next;
+        next->prev = prev;
+        operator_delete((int*)pos.node);
+        return next;
+    }
+    void pop_front() { erase(begin()); }
+    sMsgListNodeAC50* first() { return node->next; }
+};
+
+static inline void postMsg_AC50(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgListAC50_insert(*(sMsgListNodeAC50**)(self + 0xF0), mp);
+}
+
+// Simple tag message: kind word, then the vtable pointer.
+struct sTagMsgAC50 {
+    int kind;
+    void** vt;
+    sTagMsgAC50(int k) { kind = k; vt = D_004812B0; }
+};
+
+static inline void post_AC50(char* g, void* msg)
+{
+    void* mp = msg;
+    sMsgListAC50_insert(*(sMsgListNodeAC50**)(g + 0xF0), mp);
+}
+
+// Error message: kind 0x102 with a reason code.
+struct sTagErrAC50 {
+    int kind;
+    void** vt;
+    int code;
+    sTagErrAC50(int c) { kind = 0x102; vt = D_00481290; code = c; }
+};
+
+// Message 0x103 carrying a value.
+struct sTagUserAC50 {
+    int kind;
+    void** vt;
+    int code;
+    sTagUserAC50(int c) { kind = 0x103; vt = D_00481270; code = c; }
+};
+
+static inline void* Mgr_AC50()
+{
+    if (D_004A3328 == 0)
+        func_00260F80();
+    if (func_00261460(D_004A3328) == 0)
+        func_002613C8(D_004A3328);
+    if (D_004A3328 == 0)
+        func_0025B800(D_004A3028);
+    return D_004A3328;
+}
+
+struct sAsyncOpAC50 {
+    int f0;
+    int result;                         // 0x4
+    int (*poll)(sAsyncOpAC50* op);      // 0x8
+    void (*release)(sAsyncOpAC50* op);  // 0xC
+};
+
+class cMsgAC50 {
+public:
+    int type;
+    virtual ~cMsgAC50();
+};
+
+struct sTagSessAC50 {
+    int state;              // 0x0
+    int addr;               // 0x4
+    int f8;
+    int fC;                 // 0xC
+    int f10;                // 0x10
+    char pad14[0x44 - 0x14];
+    int f44;                // 0x44
+    char pad48[0x54 - 0x48];
+    void* conn;             // 0x54
+    sAsyncOpAC50* op;       // 0x58
+    void* f5C;              // 0x5C
+    void* f60;              // 0x60
+    char pad64[0x98 - 0x64];
+    char* name;             // 0x98
+    char pad9C[0xE0 - 0x9C];
+    float timer;            // 0xE0
+    float timer2;           // 0xE4
+    char padE8[0xEC - 0xE8];
+    sMsgListAC50 msgs;      // 0xEC
+};
+
+static inline int inState_AC50(sTagSessAC50* self, int st)
+{
+    return self->state == st;
+}
+
+static inline int timedOut_AC50(sTagSessAC50* self)
+{
+    return self->timer < 0.0f;
+}
+
+static inline void releaseOp_AC50(sTagSessAC50* self)
+{
+    if (self->op != 0) {
+        self->op->release(self->op);
+        self->op = 0;
+    }
+}
+
+extern "C" void func_0025AC50(char* selfp)
+{
+    sTagSessAC50* self = (sTagSessAC50*)selfp;
+    if (self->conn != 0) {
+        func_003E95C8(self->conn);
+        int st = func_003E8FB8(self->conn);
+        func_0025A650(selfp);
+        if (self->f10 != 0) {
+            self->f10 = 0;
+            func_0025B800(selfp);
+            post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0x115));
+        } else if (self->state == 2) {
+            int r = self->op->poll(self->op);
+            if (r > 0) {
+                int g = self->op->result;
+                self->addr = g;
+                D_004A3018 = g;
+                self->state = 3;
+                self->timer = 30.0f;
+                // PORT: function pointer passed as a callback argument.
+                func_003E8260(self->conn, g, 0x2AF8, (void*)func_00268BA8, selfp);
+            } else if (r < 0) {
+                func_0025B800(selfp);
+                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x646E7366));
+            }
+            if (r != 0)
+                releaseOp_AC50(self);
+        } else if (self->state == 3) {
+            if (st == 0x400) {
+                char* s = func_003E8A70(self->conn, 0x646F776E);
+                int* m = (int*)operator new(0x10, D_00480488, 0x20000000, 0);
+                m[0] = 0x102;
+                m[2] = 0x646F776E;
+                *(void***)((char*)m + 0x4) = D_004811B0;
+                cBXString_cBXString2(m + 3, s);
+                void* mp = m;
+                sMsgListAC50_insert(*(sMsgListNodeAC50**)(selfp + 0xF0), mp);
+                func_0025B800(selfp);
+            } else if (timedOut_AC50(self)) {
+                func_0025B800(selfp);
+                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x74696D65));
+                releaseOp_AC50(self);
+            }
+        } else if (self->state == 0x1A) {
+            if (*(int*)((char*)D_004A3328 + 0xD0) != 0) {
+                func_00261408(D_004A3328);
+                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagUserAC50(*(int*)((char*)D_004A3328 + 0xD0)));
+            } else if (func_00261460(D_004A3328) != 0) {
+                self->state = 1;
+                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xDA));
+            }
+        } else if (self->state == 0x16) {
+        } else if (self->state == 0x17) {
+            if (self->timer < D_004A5154 - 1.0f)
+                D_004A5154 = self->timer;
+            if (timedOut_AC50(self)) {
+                if (func_00263128((char*)Mgr_AC50(), self->name) != 0)
+                    func_00263018(Mgr_AC50(), self->name);
+                postMsg_AC50(selfp, 0x112);
+                self->state = 1;
+            }
+        } else if (self->state == 0x18) {
+            if (self->timer < D_004A5154 - 1.0f)
+                D_004A5154 = self->timer;
+            if (timedOut_AC50(self)) {
+                postMsg_AC50(selfp, 0x112);
+                func_0025F628(selfp, 0, 1);
+            }
+        } else if (self->state == 0x14) {
+            if (timedOut_AC50(self)) {
+                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xE6));
+                func_0025EED8(selfp);
+            }
+        } else if (self->state != 0x19) {
+            int check = 0;
+            if (!inState_AC50(self, 1) || self->f44 != 0)
+                check = 1;
+            if (check && timedOut_AC50(self)) {
+                func_0025B800(selfp);
+                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x74696D65));
+                self->f44 = 0;
+                releaseOp_AC50(self);
+            }
+        }
+        if (!inState_AC50(self, 0x19)) {
+            if (*func_002591D0() != 0)
+                func_00263BA8(func_002591D0(), 0);
+            else if (func_00255D38(D_004A2EB8, 0) != 0)
+                func_00255CC8(D_004A2EB8, 0);
+        }
+        if (self->fC != 0) {
+            func_003EE620(self->f5C);
+            func_003EE620(self->f60);
+        }
+        self->timer -= *(float*)((char*)D_004A28A8 + 0x14);
+        self->timer2 -= *(float*)((char*)D_004A28A8 + 0x14);
+    }
+    func_00261490(D_004A3328);
+    while (self->msgs.first() != self->msgs.node) {
+        cMsgAC50* m = (cMsgAC50*)self->msgs.front();
+        self->msgs.pop_front();
+        func_0017D260(selfp, m);
+        delete m;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B608);
