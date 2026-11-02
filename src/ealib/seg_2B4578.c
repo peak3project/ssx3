@@ -918,21 +918,13 @@ void func_003B5A28(void (*arg0)(void *)) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5A60);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct G_5A60 { char pad[0x179]; signed char cnt; char pad2[0x4E]; int list[1]; };
-extern struct G_5A60 D_0050A8E8_5A60[] __asm__("D_0050A8E8");
-
-void func_003B5A60(int arg) {
+void func_003B5A60(void (*arg)(void *)) {
     int i;
     func_003B58A0();
-    for (i = 0; i < D_0050A8E8_5A60[0].cnt; i++) {
-        if (D_0050A8E8_5A60[0].list[i] == arg) {
-            D_0050A8E8_5A60[0].cnt--;
-            if (i < D_0050A8E8_5A60[0].cnt) {
-                do {
-                    D_0050A8E8_5A60[0].list[i] = D_0050A8E8_5A60[0].list[i + 1];
-                    i++;
-                } while (i < D_0050A8E8_5A60[0].cnt);
-            }
+    for (i = 0; i < D_0050A8E8.f179; i++) {
+        if (D_0050A8E8.f1C8[i] == arg) {
+            D_0050A8E8.f179--;
+            for (; i < D_0050A8E8.f179; i++) D_0050A8E8.f1C8[i] = D_0050A8E8.f1C8[i + 1];
             break;
         }
     }
