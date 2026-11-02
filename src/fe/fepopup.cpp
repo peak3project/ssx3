@@ -3073,6 +3073,7 @@ extern "C" void func_001CB650(void* self, int a1)
         *(int*)((char*)self + 0x430) = 3;
         if (st == 2) {
             int v = *(int*)((char*)self + 0x144);
+            // identical v == 0 tests per flag value: the binary keeps the flag test and a separate copy of each
             if (v == 2 || (flag && v == 0) || (!flag && v == 0)) {
                 if (func_001CE560_out(self, old, 0)) {
                     // the do/while(0) wrapper (a compiled-out macro block) is needed to match register allocation
