@@ -4384,7 +4384,55 @@ int func_0042BCE8(int a0, void *a1, int a2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042BDC8);
+#ifdef SKIP_ASM
+struct HdrBDC8 {
+    unsigned long psize:8;
+    unsigned long dsize:24;
+    unsigned int dest;
+    int cid;
+    int opt;
+    int size;
+    int mode;
+    char arg[0x50];
+};
+struct DmaBDC8 { int data; int addr; int size; int attr; };
+extern struct HdrBDC8 D_BDC8 __asm__("D_0052F2C0");
+extern void fBDC8_stop(void) __asm__("func_00424070");
+extern int fBDC8_getreg(unsigned int) __asm__("func_004241B0");
+extern unsigned int fBDC8_setreg(unsigned int, unsigned int) __asm__("func_004241A0");
+extern int fBDC8_dma(struct DmaBDC8 *, int) __asm__("func_00424160");
+extern void func_00426358(int, int);
+int func_0042BDC8(char *s, int mode) {
+    struct DmaBDC8 dma;
+    int reg;
+    int n;
+    fBDC8_stop();
+    reg = fBDC8_getreg(0x80000000);
+    D_BDC8.mode = mode;
+    for (n = 0; s[n] != 0; n++) D_BDC8.arg[n] = s[n];
+    D_BDC8.dest = 0;
+    D_BDC8.size = n;
+    D_BDC8.cid = 0x80000003;
+    D_BDC8.dsize = 0;
+    D_BDC8.psize = 0x68;
+    dma.data = (int)&D_BDC8;
+    dma.addr = reg;
+    dma.size = 0x68;
+    dma.attr = 0x44;
+    func_00426358((int)&D_BDC8, 0x68);
+    fBDC8_setreg(4, 0x40000);
+    if (fBDC8_dma(&dma, 1) != 0) {
+        fBDC8_setreg(4, 0x10000);
+        fBDC8_setreg(4, 0x20000);
+        fBDC8_setreg(0x80000002, 0);
+        fBDC8_setreg(0x80000000, 0);
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042BF08);
