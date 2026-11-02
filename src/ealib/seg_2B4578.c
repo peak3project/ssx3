@@ -360,6 +360,51 @@ struct sA120 {
 extern struct sA120 D_0050A120;
 extern struct sA120Voice D_0050A820[];  /* D_0050A120.f700 */
 
+/* D_005157B8: the stream queues (a pending-callback list, then one queue per stream). Layout from every use in
+   this unit; field names are their offsets. */
+struct s7B8Rec {                    /* 0x20, s7B8Queue.f7C[] */
+    int f00;                        /* sequence number */
+    int len : 31;
+    int flag : 1;
+    unsigned int f08[6];            /* one per reader */
+};
+struct s7B8Queue {
+    volatile int f00;               /* voice */
+    volatile int f04;               /* records written */
+    volatile unsigned int f08;
+    volatile unsigned int f0C;
+    volatile unsigned int f10[6];   /* per reader: records read */
+    volatile short f28[6];          /* per reader: read index */
+    volatile short f34[6];          /* per reader: records pending */
+    volatile short f40;             /* number of records */
+    volatile unsigned char f42;
+    char pad43;
+    volatile short f44;
+    volatile short f46;             /* write index */
+    volatile int f48;
+    volatile int f4C;
+    int f50;
+    void (*f54)(int, int);
+    void (*f58)(int, int, int);
+    int f5C;
+    char pad60[0x62 - 0x60];
+    unsigned char f62;              /* number of readers */
+    char pad63;
+    int f64[6];
+    struct s7B8Rec f7C[1];
+};
+struct s7B8Event {                  /* 8 bytes: a callback to run (f00 == 0: f58, else f54) */
+    unsigned short f00;
+    unsigned short f02;             /* queue */
+    int f04;
+};
+struct s7B8 {
+    int f000;                       /* number of f004 entries */
+    struct s7B8Event f004[0x60];
+    struct s7B8Queue *f304[32];
+};
+extern struct s7B8 D_005157B8;
+
 /* D_00515B40: the software mixer (channel buffers, per-voice gain entries with their filter chains, the filter
    factories). Layout from every use in this unit; field names are their offsets. */
 struct sB40Node {                   /* a filter in an entry's chain (allocated, size per kind) */
@@ -9982,59 +10027,37 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C6AB8);
 #ifdef SKIP_ASM
 /* 97.69: only missing "move $5,$2" copy of lbu result before loop (n vs r pseudo); volatile f48/f46/f4/f40/a[] needed */
 struct A_6AB8 { char pad0[4]; unsigned int sz : 31; unsigned int flag : 1; char pad8[4]; int w[6]; };
-struct R_6AB8 { int id; unsigned int sz : 31; unsigned int flag : 1; int w[6]; };
-struct S_6AB8 {
-    char pad0[4];
-    volatile int f4;
-    char pad8[0x2C];
-    volatile unsigned short a[6];
-    volatile unsigned short f40;
-    char pad42[4];
-    volatile unsigned short f46;
-    volatile int f48;
-    char pad4C[0x16];
-    unsigned char f62;
-    char pad63[0x19];
-    struct R_6AB8 recs[1];
-};
-struct G_6AB8 { char pad[0x304]; struct S_6AB8 *p[1]; };
-extern struct G_6AB8 D_005157B8_6AB8 __asm__("D_005157B8");
-
-
-
-
-
 
 int func_003C6AB8(int arg0, struct A_6AB8 *arg1)
 {
-  struct S_6AB8 *s = D_005157B8_6AB8.p[arg0];
-  struct R_6AB8 *e;
+  struct s7B8Queue *s = D_005157B8.f304[arg0];
+  struct s7B8Rec *e;
   int i;
   int r;
   for (i = 0; i < s->f62; i++)
   {
-    if (((short) s->a[i]) >= (((short) s->f40) - 1))
+    if (s->f34[i] >= s->f40 - 1)
     {
       r = -13;
       goto done;
     }
   }
 
-  e = (struct R_6AB8 *) ((((char *) s) + 0x7C) + (((short) s->f46) << 5));
-  e->sz = arg1->sz;
+  e = &s->f7C[s->f46];
+  e->len = arg1->sz;
   e->flag = arg1->flag;
-  e->id = s->f4;
+  e->f00 = s->f04;
   for (i = 0; i < s->f62; i++)
   {
-    e->w[i] = arg1->w[i];
-    s->a[i] += 1;
+    e->f08[i] = arg1->w[i];
+    s->f34[i] += 1;
   }
 
   s->f48 += arg1->sz;
-  r = s->f4;
-  s->f4 = s->f4 + 1;
+  r = s->f04;
+  s->f04 = s->f04 + 1;
   s->f46 = s->f46 + 1;
-  if (((short) s->f46) >= ((short) s->f40))
+  if (s->f46 >= s->f40)
   {
     s->f46 = 0;
   }
