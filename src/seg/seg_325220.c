@@ -72,6 +72,24 @@ extern char D_0052EE40[];
 extern int D_0052D6C0[];
 
 
+/* byte ring buffer (header + data, wraps at size + 16) */
+typedef struct { int size; int count; char *rd; char *wr; char data[1]; } sRing;
+/* serial console state; fd, wlen, pos and fC are shared with the RPC callback func_00424EA8 */
+typedef struct {
+    volatile int fd;
+    volatile int wlen;
+    volatile int pos;
+    volatile int fC;
+    char *wp;
+    unsigned char *buf;
+    sRing *ring;
+} sTty;
+extern sTty D_0052B8D0;
+extern sRing *D_0052B8E8;      /* D_0052B8D0.ring (own splat symbol) */
+extern int D_0052B7C0[];       /* storage of the console ring (func_00424E00) */
+extern sRing *func_00424E00(int size);
+
+
 /* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
 typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
 typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
@@ -705,21 +723,19 @@ int func_00424D68_r(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424E00);
 #ifdef SKIP_ASM
-extern int D_0052B7C0[];
-int *func_00424E00(int a0) {
+sRing *func_00424E00(int a0) {
     D_0052B7C0[0] = a0;
     D_0052B7C0[1] = 0;
     D_0052B7C0[3] = (int)&D_0052B7C0[4];
     D_0052B7C0[2] = (int)&D_0052B7C0[4];
-    return D_0052B7C0;
+    return (sRing *)D_0052B7C0;
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424E28);
 #ifdef SKIP_ASM
-struct Ring4E28 { int size; int count; char *rd; char *wr; char data[1]; };
-void func_00424E28(struct Ring4E28 *r) {
+void func_00424E28(sRing *r) {
     r->count++;
     r->wr++;
     if (r->wr == (char *)r + (r->size + 16)) {
@@ -731,8 +747,7 @@ void func_00424E28(struct Ring4E28 *r) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424E68);
 #ifdef SKIP_ASM
-struct Ring4E68 { int size; int count; char *rd; char *wr; char data[1]; };
-void func_00424E68(struct Ring4E68 *r) {
+void func_00424E68(sRing *r) {
     r->count--;
     r->rd++;
     if (r->rd == (char *)r + (r->size + 16)) {
@@ -744,13 +759,12 @@ void func_00424E68(struct Ring4E68 *r) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424EA8);
 #ifdef SKIP_ASM
-// pos is volatile: the read position is taken once into a local just before the read call.
-struct Tty_4EA8 { int fd; volatile int wlen; volatile int pos; volatile int fC; char *wp; unsigned char *buf; struct Ring4E28 *ring; };
+// The read position (volatile in sTty) is taken once into a local just before the read call.
 extern int pf_4EA8(const char *, ...) __asm__("func_00425C28");
 extern int rd_4EA8(int, unsigned char *, unsigned short) __asm__("func_0042C968");
 extern int wr_4EA8(int, char *, unsigned short) __asm__("func_0042C9A0");
 extern char D_0049AB08[], D_0049AB30[], D_0049AB48[], D_0049AB60[];
-void func_00424EA8(int cmd, int n, struct Tty_4EA8 *s) {
+void func_00424EA8(int cmd, int n, sTty *s) {
     switch (cmd) {
     case 1:
     case 2:
@@ -798,9 +812,6 @@ INCLUDE_ASM("seg/seg_325220", func_00425040);
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425190);
 #ifdef SKIP_ASM
-struct S8D0 { int f0; int f4; int f8; int fC; int f10; int f14; struct Ring4E68 *f18; };
-extern struct S8D0 D_0052B8D0;
-extern struct Ring4E68 *D_0052B8E8;
 int func_00425190(int a0, int n) {
     char *buf = (char *)a0;
     int i;
@@ -811,8 +822,8 @@ int func_00425190(int a0, int n) {
         j = i + 1;
         while (*(volatile int *)&D_0052B8E8->count == 0) {
         }
-        *p = *D_0052B8D0.f18->rd;
-        func_00424E68(D_0052B8D0.f18);
+        *p = *D_0052B8D0.ring->rd;
+        func_00424E68(D_0052B8D0.ring);
         if (*p == '\n' || *p == '\r') {
             return j;
         }
@@ -824,32 +835,29 @@ int func_00425190(int a0, int n) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425260);
 #ifdef SKIP_ASM
-// Same block as func_00424EA8 sees (fd, wlen, pos, fC shared with the RPC callback); the binary re-reads fd right after storing it.
-struct Tty_5260 { volatile int fd; volatile int wlen; volatile int pos; volatile int fC; char *wp; unsigned char *buf; struct Ring4E28 *ring; };
+// The binary re-reads fd right after storing it (sTty.fd is volatile).
 struct Pkt_5260 { short f0; short f2; short f4; char f6; char f7; int f8; };
-extern struct Tty_5260 D_5260 __asm__("D_0052B8D0");
 extern char D_0052B900[];
 extern char D_0052BA40[];
 extern void func_00424020(int);
 extern int f5260_open(int, void *, void *) __asm__("func_0042C8A0");
-extern struct Ring4E28 *f5260_ring(int) __asm__("func_00424E00");
 int func_00425260(void) {
     struct Pkt_5260 *p;
     func_00424020(0);
-    D_5260.fd = f5260_open(0x210, &D_5260, func_00424EA8);
-    if (D_5260.fd < 0) return 0;
-    D_5260.fC = 0;
-    D_5260.wlen = 0;
-    D_5260.pos = 0;
-    D_5260.buf = (unsigned char *)((int)D_0052BA40 | 0x20000000);
+    D_0052B8D0.fd = f5260_open(0x210, &D_0052B8D0, func_00424EA8);
+    if (D_0052B8D0.fd < 0) return 0;
+    D_0052B8D0.fC = 0;
+    D_0052B8D0.wlen = 0;
+    D_0052B8D0.pos = 0;
+    D_0052B8D0.buf = (unsigned char *)((int)D_0052BA40 | 0x20000000);
     p = (struct Pkt_5260 *)((int)D_0052B900 | 0x20000000);
-    D_5260.wp = (char *)p;
+    D_0052B8D0.wp = (char *)p;
     p->f4 = 0x210;
     p->f6 = 0x45;
     p->f7 = 0x48;
     p->f2 = 0;
     p->f8 = 0;
-    D_5260.ring = f5260_ring(0x100);
+    D_0052B8D0.ring = func_00424E00(0x100);
     return 1;
 }
 #endif
