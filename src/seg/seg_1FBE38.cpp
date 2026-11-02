@@ -5865,7 +5865,6 @@ struct Rec_59A0 { int head; unsigned id[8]; int cnt[8]; float f0[8]; float f1[8]
 extern Rec_59A0 D_004FBD90_59A0 __asm__("D_004FBD90");
 extern const int D_004466D8_59A0[] __asm__("D_004466D8");
 extern int D_004A5858_59A0 __asm__("D_004A5858");
-extern char **D_004A47B8_59A0 __asm__("D_004A47B8");
 static inline char *refToPtr_59A0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_59A0(unsigned i) { return i ? refToPtr_59A0(i) : 0; }
 extern "C" void cAvalanche_addAvalancheNode(int, void*, float, float, float, float, int);
@@ -5904,12 +5903,12 @@ extern "C" cLunoValue func_003059A0(int n, sBindArg_1FBE38* e) {
     for (int i = 0; i < 8; i++) {
         unsigned id = vp->id[i];
         if (id != 0xFFFFFFFF) {
-            char *s = (*(char***)(*D_004A47B8_59A0 + 8))[id & 0xFF];
+            sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
             char *r;
             if (!s)
                 r = 0;
             else {
-                unsigned j = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8;
+                unsigned j = s->refs[id >> 8] >> 8;
                 r = conv_59A0(j);
             }
             cAvalanche_addAvalancheNode(head, r, *f0, *f1, *f2, *f3, *cp);
