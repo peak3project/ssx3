@@ -13490,10 +13490,9 @@ void func_003CC848(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CC878);
 #ifdef SKIP_ASM
-extern int *D_00515B54_CC78 __asm__("D_00515B54");
 extern int D_00515D80_CC78[] __asm__("D_00515D80");
 void func_003CC878(int n) {
-    int *dst = D_00515B54_CC78;
+    int *dst = D_00515B54;
     if (dst != 0) {
         // PORT: PS2-only VU0 hand-written loop (scale by 127, convert, clear source); one inline asm block.
         __asm__ volatile(
