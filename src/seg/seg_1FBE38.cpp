@@ -5847,8 +5847,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003057C0);
 extern char *D_004A3DD8_57C0 __asm__("D_004A3DD8");
 extern char **D_004A47B8_57C0 __asm__("D_004A47B8");
 struct O_57C0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
-struct V3_57C0 { float x, y, z; };
-extern V3_57C0 D_004C9098_57C0 __asm__("D_004C9098");
 struct Rec_57C0 { unsigned id; int a; int b; float c; float d; float e; float g; float h; int k; sBindEnd_1FBE38 f; };
 extern Rec_57C0 D_4FBD68_57C0 __asm__("D_004FBD68");
 extern int D_5854_57C0 __asm__("D_004A5854");
@@ -5856,7 +5854,7 @@ extern const int D_004466B0_57C0[] __asm__("D_004466B0");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void cMoveNode_addHalo_57C0(void*, void*) __asm__("cMoveNode_addHalo");
 struct Ent_57C0 { int idx; int val; int pad; int type; };
-extern "C" V3_57C0 func_003057C0(int n, Ent_57C0 *e) {
+extern "C" cLunoValue func_003057C0(int n, Ent_57C0 *e) {
     if (D_5854_57C0 == 0) {
         D_4FBD68_57C0.id = 0xFFFFFFFF;
         D_4FBD68_57C0.a = 0;
@@ -5904,7 +5902,7 @@ extern "C" V3_57C0 func_003057C0(int n, Ent_57C0 *e) {
                 cMoveNode_addHalo_57C0(p, buf);
         }
     }
-    return D_004C9098_57C0;
+    return D_004C9098;
 }
 #endif
 
