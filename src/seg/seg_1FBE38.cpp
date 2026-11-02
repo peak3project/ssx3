@@ -119,7 +119,9 @@ struct sApp {
 extern sApp* D_004A28A8;
 extern char* D_004A28A4;
 extern void* D_004A4028;
-struct sBindArg_1FBE38 { int idx; int val; int pad; int kind; };
+// One script argument as the VM passes it to a binding: the slot index in the defaults record, then the value
+// (cLunoValue layout: value word, second word, type).
+struct sBindArg_1FBE38 { int idx; int val; int pad; int type; };
 struct sBindEnd_1FBE38 {};  // empty trailing member of a defaults record; value-init copies its byte through a stack temp
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
@@ -130,7 +132,7 @@ int* func_00226610(void*);
         for (int i_ = 0; i_ < n; i_++, p_++) { \
             int k_ = p_->idx; \
             int* d_ = (int*)((k_ << 2) + (int)vp); \
-            if (p_->kind != (types)[k_] && (types)[k_] == 2) \
+            if (p_->type != (types)[k_] && (types)[k_] == 2) \
                 *(float*)d_ = (float)p_->val; \
             else \
                 *d_ = p_->val; \
@@ -203,8 +205,7 @@ extern unsigned D_B060[] __asm__("D_004FB390");
 extern int D_004A55C0;
 extern const int D_00445E70[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_B060 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FB060(int n, Ent_B060 *e) {
+extern "C" cLunoValue func_002FB060(int n, sBindArg_1FBE38 *e) {
     if (D_004A55C0 == 0) {
         D_B060[0] = 0xFFFFFFFF;
         ((int*)D_B060)[1] = 1;
@@ -224,7 +225,7 @@ extern "C" cLunoValue func_002FB060(int n, Ent_B060 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_B060, 44);
-    Ent_B060 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445E70[idx];
@@ -275,8 +276,7 @@ extern unsigned D_B270[] __asm__("D_004FB3C0");
 extern int D_004A55C4;
 extern const int D_00445E98[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_B270 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FB270(int n, Ent_B270 *e) {
+extern "C" cLunoValue func_002FB270(int n, sBindArg_1FBE38 *e) {
     if (D_004A55C4 == 0) {
         D_B270[0] = 0xFFFFFFFF;
         ((int*)D_B270)[1] = 1;
@@ -300,7 +300,7 @@ extern "C" cLunoValue func_002FB270(int n, Ent_B270 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_B270, 60);
-    Ent_B270 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445E98[idx];
@@ -351,8 +351,7 @@ extern unsigned D_B498[] __asm__("D_004FB400");
 extern int D_004A55C8;
 extern const int D_00445ED0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_B498 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FB498(int n, Ent_B498 *e) {
+extern "C" cLunoValue func_002FB498(int n, sBindArg_1FBE38 *e) {
     if (D_004A55C8 == 0) {
         D_B498[0] = 0xFFFFFFFF;
         *(float*)&D_B498[1] = 0.6000000238418579f;
@@ -372,7 +371,7 @@ extern "C" cLunoValue func_002FB498(int n, Ent_B498 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_B498, 44);
-    Ent_B498 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445ED0[idx];
@@ -423,8 +422,7 @@ extern unsigned D_B6B8[] __asm__("D_004FB430");
 extern int D_004A55CC;
 extern const int D_00445EF8[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_B6B8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FB6B8(int n, Ent_B6B8 *e) {
+extern "C" cLunoValue func_002FB6B8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55CC == 0) {
         D_B6B8[0] = 0xFFFFFFFF;
         *(float*)&D_B6B8[1] = 100.0f;
@@ -445,7 +443,7 @@ extern "C" cLunoValue func_002FB6B8(int n, Ent_B6B8 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_B6B8, 52);
-    Ent_B6B8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445EF8[idx];
@@ -496,8 +494,7 @@ extern unsigned D_B8D0[] __asm__("D_004FB468");
 extern int D_004A55D0;
 extern int D_004A3BE0_B8D0[2] __asm__("D_004A3BE0");
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_B8D0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FB8D0(int n, Ent_B8D0 *e) {
+extern "C" cLunoValue func_002FB8D0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55D0 == 0) {
         D_B8D0[0] = 0xFFFFFFFF;
         ((int*)D_B8D0)[1] = 3;
@@ -509,7 +506,7 @@ extern "C" cLunoValue func_002FB8D0(int n, Ent_B8D0 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_B8D0, 12);
-    Ent_B8D0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004A3BE0_B8D0[idx];
@@ -560,8 +557,7 @@ extern unsigned D_BAB0[] __asm__("D_004FB478");
 extern int D_004A55D4;
 extern const int D_00445F28[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_BAB0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FBAB0(int n, Ent_BAB0 *e) {
+extern "C" cLunoValue func_002FBAB0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55D4 == 0) {
         D_BAB0[0] = 0xFFFFFFFF;
         *(float*)&D_BAB0[1] = 10.0f;
@@ -578,7 +574,7 @@ extern "C" cLunoValue func_002FBAB0(int n, Ent_BAB0 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_BAB0, 32);
-    Ent_BAB0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445F28[idx];
@@ -629,8 +625,7 @@ extern unsigned D_BCB8[] __asm__("D_004FB498");
 extern int D_004A55D8;
 extern const int D_00445F48[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_BCB8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FBCB8(int n, Ent_BCB8 *e) {
+extern "C" cLunoValue func_002FBCB8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55D8 == 0) {
         D_BCB8[0] = 0xFFFFFFFF;
         ((int*)D_BCB8)[1] = 1;
@@ -650,7 +645,7 @@ extern "C" cLunoValue func_002FBCB8(int n, Ent_BCB8 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_BCB8, 44);
-    Ent_BCB8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445F48[idx];
@@ -701,8 +696,7 @@ extern unsigned D_BEC8[] __asm__("D_004FB4C8");
 extern int D_004A55DC;
 extern const int D_00445F70[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_BEC8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FBEC8(int n, Ent_BEC8 *e) {
+extern "C" cLunoValue func_002FBEC8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55DC == 0) {
         D_BEC8[0] = 0xFFFFFFFF;
         ((int*)D_BEC8)[1] = 0;
@@ -721,7 +715,7 @@ extern "C" cLunoValue func_002FBEC8(int n, Ent_BEC8 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_BEC8, 36);
-    Ent_BEC8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445F70[idx];
@@ -772,8 +766,7 @@ extern unsigned D_C0D0[] __asm__("D_004FB4F0");
 extern int D_004A55E0;
 extern const int D_00445F90[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_C0D0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FC0D0(int n, Ent_C0D0 *e) {
+extern "C" cLunoValue func_002FC0D0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55E0 == 0) {
         D_C0D0[0] = 0xFFFFFFFF;
         ((int*)D_C0D0)[1] = 0;
@@ -786,7 +779,7 @@ extern "C" cLunoValue func_002FC0D0(int n, Ent_C0D0 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_C0D0, 16);
-    Ent_C0D0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445F90[idx];
@@ -890,8 +883,7 @@ extern unsigned D_C420[] __asm__("D_004FB500");
 extern int D_004A55E4;
 extern int D_004A3C00;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_C420 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FC420(int n, Ent_C420 *e) {
+extern "C" cLunoValue func_002FC420(int n, sBindArg_1FBE38 *e) {
     if (D_004A55E4 == 0) {
         D_C420[0] = 0xFFFFFFFF;
         ((int*)D_C420)[1] = 0;
@@ -902,7 +894,7 @@ extern "C" cLunoValue func_002FC420(int n, Ent_C420 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_C420, 12);
-    Ent_C420 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C00)[idx];
@@ -952,8 +944,7 @@ extern unsigned D_C5D8[] __asm__("D_004FB510");
 extern int D_004A55E8;
 extern const int D_00445FA0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_C5D8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FC5D8(int n, Ent_C5D8 *e) {
+extern "C" cLunoValue func_002FC5D8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55E8 == 0) {
         D_C5D8[0] = 0xFFFFFFFF;
         ((int*)D_C5D8)[1] = 0;
@@ -967,7 +958,7 @@ extern "C" cLunoValue func_002FC5D8(int n, Ent_C5D8 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_C5D8, 20);
-    Ent_C5D8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445FA0[idx];
@@ -1018,8 +1009,7 @@ extern unsigned D_C7D0[] __asm__("D_004FB528");
 extern int D_004A55EC;
 extern const int D_00445FB0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_C7D0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FC7D0(int n, Ent_C7D0 *e) {
+extern "C" cLunoValue func_002FC7D0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55EC == 0) {
         D_C7D0[0] = 0xFFFFFFFF;
         *(float*)&D_C7D0[1] = 1.0f;
@@ -1033,7 +1023,7 @@ extern "C" cLunoValue func_002FC7D0(int n, Ent_C7D0 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_C7D0, 20);
-    Ent_C7D0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445FB0[idx];
@@ -1084,8 +1074,7 @@ extern unsigned D_C9C8[] __asm__("D_004FB540");
 extern int D_004A55F0;
 extern const int D_00445FC0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_C9C8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FC9C8(int n, Ent_C9C8 *e) {
+extern "C" cLunoValue func_002FC9C8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55F0 == 0) {
         D_C9C8[0] = 0xFFFFFFFF;
         ((int*)D_C9C8)[1] = 1;
@@ -1122,7 +1111,7 @@ extern "C" cLunoValue func_002FC9C8(int n, Ent_C9C8 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_C9C8, 108);
-    Ent_C9C8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00445FC0[idx];
@@ -1167,12 +1156,11 @@ extern unsigned D_CC20[] __asm__("D_004FB5B0");
 extern int D_004A55F4;
 extern const int D_00446028[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_CC20 { int idx; int val; int pad; int type; };
 extern "C" int checkActiveNode(void*, int, void*);
 #define ASSERT_CC20(c) do { } while (0)
 
 // PORT: struct return written with the hidden return pointer explicit.
-extern "C" cLunoValue* func_002FCC20(cLunoValue* ret, int n, Ent_CC20 *e) {
+extern "C" cLunoValue* func_002FCC20(cLunoValue* ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A55F4 == 0) {
         D_CC20[0] = 0xFFFFFFFF;
         *(float*)&D_CC20[2] = 0.5f;
@@ -1184,7 +1172,7 @@ extern "C" cLunoValue* func_002FCC20(cLunoValue* ret, int n, Ent_CC20 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_CC20, 16);
-    Ent_CC20 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446028[idx];
@@ -1234,8 +1222,7 @@ extern unsigned D_CDC8[] __asm__("D_004FB5C0");
 extern int D_004A55F8;
 extern const int D_00446038[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_CDC8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FCDC8(int n, Ent_CDC8 *e) {
+extern "C" cLunoValue func_002FCDC8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55F8 == 0) {
         *(float*)&D_CDC8[0] = 500.0f;
         *(float*)&D_CDC8[1] = 1.0f;
@@ -1254,7 +1241,7 @@ extern "C" cLunoValue func_002FCDC8(int n, Ent_CDC8 *e) {
     unsigned *buf = buf64;
     buf64[8] = 0xFFFFFFFF;
     func_003E6574(buf, D_CDC8, 40);
-    Ent_CDC8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446038[idx];
@@ -1305,8 +1292,7 @@ extern unsigned D_CFF0[] __asm__("D_004FB5E8");
 extern int D_004A55FC;
 extern const int D_00446060[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_CFF0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FCFF0(int n, Ent_CFF0 *e) {
+extern "C" cLunoValue func_002FCFF0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55FC == 0) {
         D_CFF0[0] = 0xFFFFFFFF;
         ((int*)D_CFF0)[1] = 0;
@@ -1330,7 +1316,7 @@ extern "C" cLunoValue func_002FCFF0(int n, Ent_CFF0 *e) {
     buf64[0] = 0xFFFFFFFF;
     buf64[13] = 0xFFFFFFFF;
     func_003E6574(buf, D_CFF0, 64);
-    Ent_CFF0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446060[idx];
@@ -1377,8 +1363,7 @@ extern unsigned D_D250[] __asm__("D_004FB628");
 extern int D_004A5600;
 extern const int D_004460A0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_D250 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FD250(int n, Ent_D250 *e) {
+extern "C" cLunoValue func_002FD250(int n, sBindArg_1FBE38 *e) {
     if (D_004A5600 == 0) {
         D_D250[0] = 0xFFFFFFFF;
         *(float*)&D_D250[1] = 1.0f;
@@ -1392,7 +1377,7 @@ extern "C" cLunoValue func_002FD250(int n, Ent_D250 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_D250, 20);
-    Ent_D250 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004460A0[idx];
@@ -1439,8 +1424,7 @@ extern unsigned D_D420[] __asm__("D_004FB640");
 extern int D_004A5604;
 extern const int D_004460B0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_D420 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FD420(int n, Ent_D420 *e) {
+extern "C" cLunoValue func_002FD420(int n, sBindArg_1FBE38 *e) {
     if (D_004A5604 == 0) {
         ((int*)D_D420)[0] = 1;
         ((int*)D_D420)[1] = 0;
@@ -1471,7 +1455,7 @@ extern "C" cLunoValue func_002FD420(int n, Ent_D420 *e) {
     unsigned *buf = (unsigned*)cMemMan_alloc(0xE0, D_00489718_D420, 0x20000000, 0);
     buf[54] = 0xFFFFFFFF;
     func_003E6574(buf, D_D420, 0xE0);
-    Ent_D420 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004460B0[idx];
@@ -1569,8 +1553,7 @@ extern unsigned D_D758[] __asm__("D_004FB720");
 extern int D_004A5608;
 extern const int D_00446190[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_D758 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FD758(int n, Ent_D758 *e) {
+extern "C" cLunoValue func_002FD758(int n, sBindArg_1FBE38 *e) {
     if (D_004A5608 == 0) {
         D_D758[0] = 0xFFFFFFFF;
         ((int*)D_D758)[1] = -1;
@@ -1583,7 +1566,7 @@ extern "C" cLunoValue func_002FD758(int n, Ent_D758 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_D758, 24);
-    Ent_D758 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446190[idx];
@@ -1634,8 +1617,7 @@ extern unsigned D_D9F8[] __asm__("D_004FB738");
 extern int D_004A560C;
 extern const int D_004461A8[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_D9F8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FD9F8(int n, Ent_D9F8 *e) {
+extern "C" cLunoValue func_002FD9F8(int n, sBindArg_1FBE38 *e) {
     if (D_004A560C == 0) {
         D_D9F8[0] = 0xFFFFFFFF;
         D_D9F8[1] = 0xFFFFFFFF;
@@ -1650,7 +1632,7 @@ extern "C" cLunoValue func_002FD9F8(int n, Ent_D9F8 *e) {
     buf64[0] = 0xFFFFFFFF;
     buf64[1] = 0xFFFFFFFF;
     func_003E6574(buf, D_D9F8, 28);
-    Ent_D9F8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004461A8[idx];
@@ -1713,8 +1695,7 @@ extern unsigned D_DC60[] __asm__("D_004FB758");
 extern int D_004A5610;
 extern const int D_004461C0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_DC60 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FDC60(int n, Ent_DC60 *e) {
+extern "C" cLunoValue func_002FDC60(int n, sBindArg_1FBE38 *e) {
     if (D_004A5610 == 0) {
         D_DC60[0] = 0xFFFFFFFF;
         D_DC60[1] = 0xFFFFFFFF;
@@ -1729,7 +1710,7 @@ extern "C" cLunoValue func_002FDC60(int n, Ent_DC60 *e) {
     buf64[0] = 0xFFFFFFFF;
     buf64[1] = 0xFFFFFFFF;
     func_003E6574(buf, D_DC60, 28);
-    Ent_DC60 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004461C0[idx];
@@ -1791,8 +1772,7 @@ extern unsigned D_DED0[] __asm__("D_004FB778");
 extern int D_004A5614;
 extern const int D_004461D8[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_DED0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FDED0(int n, Ent_DED0 *e) {
+extern "C" cLunoValue func_002FDED0(int n, sBindArg_1FBE38 *e) {
     if (D_004A5614 == 0) {
         D_DED0[0] = 0xFFFFFFFF;
         D_DED0[1] = 0xFFFFFFFF;
@@ -1811,7 +1791,7 @@ extern "C" cLunoValue func_002FDED0(int n, Ent_DED0 *e) {
     buf64[0] = 0xFFFFFFFF;
     buf64[1] = 0xFFFFFFFF;
     func_003E6574(buf, D_DED0, 48);
-    Ent_DED0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004461D8[idx];
@@ -1861,8 +1841,7 @@ extern unsigned D_E0C0[] __asm__("D_004FB7A8");
 extern int D_004A5618;
 extern const int D_00446208[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_E0C0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FE0C0(int n, Ent_E0C0 *e) {
+extern "C" cLunoValue func_002FE0C0(int n, sBindArg_1FBE38 *e) {
     if (D_004A5618 == 0) {
         D_E0C0[0] = 0xFFFFFFFF;
         D_E0C0[1] = 0xFFFFFFFF;
@@ -1881,7 +1860,7 @@ extern "C" cLunoValue func_002FE0C0(int n, Ent_E0C0 *e) {
     buf64[0] = 0xFFFFFFFF;
     buf64[1] = 0xFFFFFFFF;
     func_003E6574(buf, D_E0C0, 52);
-    Ent_E0C0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446208[idx];
@@ -1929,8 +1908,7 @@ extern unsigned D_E2C0[] __asm__("D_004FB7E0");
 extern int D_004A561C;
 extern const int D_00446238[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_E2C0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FE2C0(int n, Ent_E2C0 *e) {
+extern "C" cLunoValue func_002FE2C0(int n, sBindArg_1FBE38 *e) {
     if (D_004A561C == 0) {
         D_E2C0[0] = 0xFFFFFFFF;
         ((int*)D_E2C0)[1] = 5;
@@ -1948,7 +1926,7 @@ extern "C" cLunoValue func_002FE2C0(int n, Ent_E2C0 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_E2C0, 52);
-    Ent_E2C0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446238[idx];
@@ -1989,8 +1967,7 @@ extern unsigned D_E4A8[] __asm__("D_004FB818");
 extern int D_004A5620;
 extern const int D_00446268[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_E4A8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FE4A8(int n, Ent_E4A8 *e) {
+extern "C" cLunoValue func_002FE4A8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5620 == 0) {
         D_E4A8[0] = 0xFFFFFFFF;
         ((int*)D_E4A8)[1] = 0;
@@ -2004,7 +1981,7 @@ extern "C" cLunoValue func_002FE4A8(int n, Ent_E4A8 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_E4A8, 24);
-    Ent_E4A8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446268[idx];
@@ -2045,8 +2022,7 @@ extern unsigned D_E668[] __asm__("D_004FB830");
 extern int D_004A5624;
 extern const int D_00446280[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_E668 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FE668(int n, Ent_E668 *e) {
+extern "C" cLunoValue func_002FE668(int n, sBindArg_1FBE38 *e) {
     if (D_004A5624 == 0) {
         D_E668[0] = 0xFFFFFFFF;
         ((int*)D_E668)[1] = 1;
@@ -2062,7 +2038,7 @@ extern "C" cLunoValue func_002FE668(int n, Ent_E668 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_E668, 36);
-    Ent_E668 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446280[idx];
@@ -2162,8 +2138,7 @@ extern unsigned D_E840[] __asm__("D_004FB858");
 extern int D_004A5628;
 extern const int D_004462A0[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_E840 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue cViewer_addParticle(int n, Ent_E840 *e) {
+extern "C" cLunoValue cViewer_addParticle(int n, sBindArg_1FBE38 *e) {
     if (D_004A5628 == 0) {
         ((int*)D_E840)[0] = 1;
         ((int*)D_E840)[1] = 0;
@@ -2194,7 +2169,7 @@ extern "C" cLunoValue cViewer_addParticle(int n, Ent_E840 *e) {
     unsigned *buf = (unsigned*)cMemMan_alloc(0xE0, D_00489740_E840, 0x20000000, 0);
     buf[54] = 0xFFFFFFFF;
     func_003E6574(buf, D_E840, 0xE0);
-    Ent_E840 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004462A0[idx];
@@ -2261,8 +2236,7 @@ extern unsigned D_EE98[] __asm__("D_004FB938");
 extern int D_004A562C;
 extern const int D_00446380[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_EE98 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FEE98(int n, Ent_EE98 *e) {
+extern "C" cLunoValue func_002FEE98(int n, sBindArg_1FBE38 *e) {
     if (D_004A562C == 0) {
         ((int*)D_EE98)[0] = 1;
         ((int*)D_EE98)[1] = 0;
@@ -2295,7 +2269,7 @@ extern "C" cLunoValue func_002FEE98(int n, Ent_EE98 *e) {
     unsigned *buf = (unsigned*)cMemMan_alloc(0xF0, D_00489750_EE98, 0x20000000, 0);
     buf[54] = 0xFFFFFFFF;
     func_003E6574(buf, D_EE98, 0xF0);
-    Ent_EE98 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446380[idx];
@@ -2341,8 +2315,7 @@ extern unsigned D_F1C8[] __asm__("D_004FBA28");
 extern int D_004A5630;
 extern const int D_00446470[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_F1C8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FF1C8(int n, Ent_F1C8 *e) {
+extern "C" cLunoValue func_002FF1C8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5630 == 0) {
         D_F1C8[0] = 0xFFFFFFFF;
         D_F1C8[1] = 0xFFFFFFFF;
@@ -2355,7 +2328,7 @@ extern "C" cLunoValue func_002FF1C8(int n, Ent_F1C8 *e) {
     buf64[0] = 0xFFFFFFFF;
     buf64[1] = 0xFFFFFFFF;
     func_003E6574(buf, D_F1C8, 16);
-    Ent_F1C8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446470[idx];
@@ -2404,8 +2377,7 @@ extern unsigned D_F390[] __asm__("D_004FBA38");
 extern int D_004A5634;
 extern const int D_00446480[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_F390 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FF390(int n, Ent_F390 *e) {
+extern "C" cLunoValue func_002FF390(int n, sBindArg_1FBE38 *e) {
     if (D_004A5634 == 0) {
         D_F390[0] = 0xFFFFFFFF;
         D_F390[1] = 0xFFFFFFFF;
@@ -2444,7 +2416,7 @@ extern "C" cLunoValue func_002FF390(int n, Ent_F390 *e) {
     buf64[7] = 0xFFFFFFFF;
     buf64[8] = 0xFFFFFFFF;
     func_003E6574(buf, D_F390, 88);
-    Ent_F390 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446480[idx];
@@ -2495,8 +2467,7 @@ extern unsigned D_F5E8[] __asm__("D_004FBA90");
 extern int D_004A5638;
 extern const int D_004464D8[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_F5E8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FF5E8(int n, Ent_F5E8 *e) {
+extern "C" cLunoValue func_002FF5E8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5638 == 0) {
         D_F5E8[0] = 0xFFFFFFFF;
         D_F5E8[1] = 0xFFFFFFFF;
@@ -2535,7 +2506,7 @@ extern "C" cLunoValue func_002FF5E8(int n, Ent_F5E8 *e) {
     buf64[7] = 0xFFFFFFFF;
     buf64[8] = 0xFFFFFFFF;
     func_003E6574(buf, D_F5E8, 88);
-    Ent_F5E8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004464D8[idx];
@@ -2579,14 +2550,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FF850);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_F850 { int idx; int val; int pad; int kind; };
 
 extern int D_00446530_F850[] __asm__("D_00446530");
 extern "C" void func_0010F1C0(cRider_1FBE38*, int, float);
 extern int D_004A563C_F850 __asm__("D_004A563C");
 struct T12_F850 { int a; int b; int e; sBindEnd_1FBE38 f; };
 extern T12_F850 D_004FBAE8_F850 __asm__("D_004FBAE8");
-extern "C" cLunoValue func_002FF850(int n, Ent_F850* e) {
+extern "C" cLunoValue func_002FF850(int n, sBindArg_1FBE38* e) {
     if (D_004A563C_F850 == 0) {
         D_004FBAE8_F850.a = -1;
         D_004A563C_F850 = 1;
@@ -2598,11 +2568,11 @@ extern "C" cLunoValue func_002FF850(int n, Ent_F850* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBAE8_F850, 16);
-    Ent_F850* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_00446530_F850[k] && D_00446530_F850[k] == 2)
+        if (p->type != D_00446530_F850[k] && D_00446530_F850[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -2633,8 +2603,7 @@ extern unsigned D_F9A8[] __asm__("D_004FBAF8");
 extern int D_004A5640;
 extern const int D_00446540[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_F9A8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FF9A8(int n, Ent_F9A8 *e) {
+extern "C" cLunoValue func_002FF9A8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5640 == 0) {
         D_F9A8[0] = 0xFFFFFFFF;
         ((int*)D_F9A8)[1] = -1;
@@ -2646,7 +2615,7 @@ extern "C" cLunoValue func_002FF9A8(int n, Ent_F9A8 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_F9A8, 16);
-    Ent_F9A8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446540[idx];
@@ -2679,8 +2648,7 @@ extern "C" void* func_00350E90(void*, void*);
 extern char D_004A3C18_FB50[] __asm__("D_004A3C18");
 struct O_FB50 { int p0, p1, p2; virtual void v01(int); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); };
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_FB50 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FFB50(int n, Ent_FB50 *e) {
+extern "C" cLunoValue func_002FFB50(int n, sBindArg_1FBE38 *e) {
     if (D_004A5650_FB50 == 0) {
         D_004A5648_FB50 = 0xFFFFFFFF;
         D_004A5650_FB50 = 1;
@@ -2691,7 +2659,7 @@ extern "C" cLunoValue func_002FFB50(int n, Ent_FB50 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_004A5648_FB50, 8);
-    Ent_FB50 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004A3C10_FB50[idx];
@@ -2751,8 +2719,7 @@ extern sBindEnd_1FBE38 D_004A565C;
 extern int D_004A5660;
 extern int D_004A3C20;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_FD58 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FFD58(int n, Ent_FD58 *e) {
+extern "C" cLunoValue func_002FFD58(int n, sBindArg_1FBE38 *e) {
     if (D_004A5660 == 0) {
         D_FD58 = 0xFFFFFFFF;
         D_004A5660 = 1;
@@ -2762,7 +2729,7 @@ extern "C" cLunoValue func_002FFD58(int n, Ent_FD58 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_FD58, 8);
-    Ent_FD58 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C20)[idx];
@@ -2796,8 +2763,7 @@ extern unsigned D_FF00[] __asm__("D_004FBB08");
 extern int D_004A5664;
 extern int D_004A3C28;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_FF00 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_002FFF00(int n, Ent_FF00 *e) {
+extern "C" cLunoValue func_002FFF00(int n, sBindArg_1FBE38 *e) {
     if (D_004A5664 == 0) {
         D_FF00[0] = 0xFFFFFFFF;
         D_FF00[1] = 0xFFFFFFFF;
@@ -2808,7 +2774,7 @@ extern "C" cLunoValue func_002FFF00(int n, Ent_FF00 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_FF00, 12);
-    Ent_FF00 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C28)[idx];
@@ -2855,8 +2821,7 @@ extern unsigned D_00A8[] __asm__("D_004FBB18");
 extern int D_004A5668;
 extern const int D_00446550[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_00A8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_003000A8(int n, Ent_00A8 *e) {
+extern "C" cLunoValue func_003000A8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5668 == 0) {
         D_00A8[0] = 0xFFFFFFFF;
         D_00A8[1] = 0xFFFFFFFF;
@@ -2868,7 +2833,7 @@ extern "C" cLunoValue func_003000A8(int n, Ent_00A8 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_00A8, 16);
-    Ent_00A8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446550[idx];
@@ -2916,8 +2881,7 @@ extern unsigned D_0260[] __asm__("D_004FBB28");
 extern int D_004A566C;
 extern const int D_00446560[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_0260 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00300260(int n, Ent_0260 *e) {
+extern "C" cLunoValue func_00300260(int n, sBindArg_1FBE38 *e) {
     if (D_004A566C == 0) {
         D_0260[0] = 0xFFFFFFFF;
         D_0260[1] = 0xFFFFFFFF;
@@ -2929,7 +2893,7 @@ extern "C" cLunoValue func_00300260(int n, Ent_0260 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_0260, 16);
-    Ent_0260 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446560[idx];
@@ -2974,8 +2938,7 @@ extern unsigned D_0418[] __asm__("D_004FBB38");
 extern int D_004A5670;
 extern int D_004A3C30;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_0418 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00300418(int n, Ent_0418 *e) {
+extern "C" cLunoValue func_00300418(int n, sBindArg_1FBE38 *e) {
     if (D_004A5670 == 0) {
         D_0418[0] = 0xFFFFFFFF;
         ((int*)D_0418)[1] = 0;
@@ -2986,7 +2949,7 @@ extern "C" cLunoValue func_00300418(int n, Ent_0418 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_0418, 12);
-    Ent_0418 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C30)[idx];
@@ -3030,8 +2993,7 @@ extern sBindEnd_1FBE38 D_004A567C;
 extern int D_004A5680;
 extern int D_004A3C38;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_05E8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_003005E8(int n, Ent_05E8 *e) {
+extern "C" cLunoValue func_003005E8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5680 == 0) {
         D_05E8 = 0xFFFFFFFF;
         D_004A5680 = 1;
@@ -3041,7 +3003,7 @@ extern "C" cLunoValue func_003005E8(int n, Ent_05E8 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_05E8, 8);
-    Ent_05E8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C38)[idx];
@@ -3082,8 +3044,7 @@ struct O_0770 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual 
 static inline char *refToPtr_0770(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0770(unsigned i) { if (i == 0) return 0; return refToPtr_0770(i); }
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_0770 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00300770(int n, Ent_0770 *e) {
+extern "C" cLunoValue func_00300770(int n, sBindArg_1FBE38 *e) {
     if (D_004A5690_0770 == 0) {
         D_004A5688_0770 = 0xFFFFFFFF;
         D_004A5690_0770 = 1;
@@ -3094,7 +3055,7 @@ extern "C" cLunoValue func_00300770(int n, Ent_0770 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_004A5688_0770, 8);
-    Ent_0770 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004A3C40_0770[idx];
@@ -3146,8 +3107,7 @@ struct O_0948 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual 
 static inline char *refToPtr_0948(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0948(unsigned i) { if (i == 0) return 0; return refToPtr_0948(i); }
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_0948 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00300948(int n, Ent_0948 *e) {
+extern "C" cLunoValue func_00300948(int n, sBindArg_1FBE38 *e) {
     if (D_004A56A0_0948 == 0) {
         D_004A5698_0948 = 0xFFFFFFFF;
         D_004A56A0_0948 = 1;
@@ -3158,7 +3118,7 @@ extern "C" cLunoValue func_00300948(int n, Ent_0948 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_004A5698_0948, 8);
-    Ent_0948 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004A3C48_0948[idx];
@@ -3204,14 +3164,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300B20);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_0B20 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3C50_0B20[2] __asm__("D_004A3C50");
 extern "C" void func_00358B28(unsigned, int);
 extern int D_004A56A4_0B20 __asm__("D_004A56A4");
 struct T12_0B20 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_0B20 D_004FBB48_0B20 __asm__("D_004FBB48");
-extern "C" cLunoValue func_00300B20(int n, Ent_0B20* e) {
+extern "C" cLunoValue func_00300B20(int n, sBindArg_1FBE38* e) {
     if (D_004A56A4_0B20 == 0) {
         D_004FBB48_0B20.a = -1;
         D_004FBB48_0B20.b = 1;
@@ -3223,11 +3182,11 @@ extern "C" cLunoValue func_00300B20(int n, Ent_0B20* e) {
     unsigned* vp = v;
     vp[0] = 0xFFFFFFFFu;
     func_003E6574(vp, &D_004FBB48_0B20, 12);
-    Ent_0B20* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3C50_0B20[k] && D_004A3C50_0B20[k] == 2)
+        if (p->type != D_004A3C50_0B20[k] && D_004A3C50_0B20[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -3255,8 +3214,7 @@ extern unsigned D_0C78[] __asm__("D_004FBB58");
 extern int D_004A56A8;
 extern int D_004A3C58;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_0C78 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00300C78(int n, Ent_0C78 *e) {
+extern "C" cLunoValue func_00300C78(int n, sBindArg_1FBE38 *e) {
     if (D_004A56A8 == 0) {
         D_0C78[0] = 0xFFFFFFFF;
         ((int*)D_0C78)[1] = 0;
@@ -3266,7 +3224,7 @@ extern "C" cLunoValue func_00300C78(int n, Ent_0C78 *e) {
     unsigned buf64[3];
     unsigned *buf = buf64;
     func_003E6574(buf, D_0C78, 12);
-    Ent_0C78 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C58)[idx];
@@ -3299,14 +3257,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300E28);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_0E28 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3C60_0E28[2] __asm__("D_004A3C60");
 extern "C" void func_0030B928(cWScriptMan*, unsigned, int);
 extern int D_004A56AC_0E28 __asm__("D_004A56AC");
 struct T12u_0E28 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12u_0E28 D_004FBB68_0E28 __asm__("D_004FBB68");
-extern "C" cLunoValue func_00300E28(int n, Ent_0E28* e) {
+extern "C" cLunoValue func_00300E28(int n, sBindArg_1FBE38* e) {
     if (D_004A56AC_0E28 == 0) {
         D_004FBB68_0E28.a = 0xFFFFFFFFu;
         D_004FBB68_0E28.b = 1;
@@ -3317,11 +3274,11 @@ extern "C" cLunoValue func_00300E28(int n, Ent_0E28* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBB68_0E28, 12);
-    Ent_0E28* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3C60_0E28[k] && D_004A3C60_0E28[k] == 2)
+        if (p->type != D_004A3C60_0E28[k] && D_004A3C60_0E28[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -3342,8 +3299,7 @@ extern int D_56B0_0F50 __asm__("D_004A56B0");
 extern const int D_00446570_0F50[] __asm__("D_00446570");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_0030BAC8_0F50(void*, unsigned, unsigned*, int) __asm__("func_0030BAC8");
-struct Ent_0F50 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00300F50(int n, Ent_0F50 *e) {
+extern "C" cLunoValue func_00300F50(int n, sBindArg_1FBE38 *e) {
     if (D_56B0_0F50 == 0) {
         D_0F50[0] = 0xFFFFFFFF;
         D_0F50[1] = 0xFFFFFFFF;
@@ -3393,7 +3349,7 @@ extern "C" cLunoValue func_00300F50(int n, Ent_0F50 *e) {
     buf64[19] = 0xFFFFFFFF;
     buf64[20] = 0xFFFFFFFF;
     func_003E6574(buf, D_0F50, 0x58);
-    Ent_0F50 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446570_0F50[idx];
@@ -3415,7 +3371,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301120);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_1120 { int idx; int val; int pad; int kind; };
 extern int D_004A3C68_1120[2] __asm__("D_004A3C68");
 extern "C" void func_0030B9A0(cWScriptMan*, int, unsigned, unsigned);
 extern int D_004A56B4_1120 __asm__("D_004A56B4");
@@ -3429,7 +3384,7 @@ static inline bool isIdle_1120(int slot) {
     }
     return false;
 }
-extern "C" cLunoValue* func_00301120(cLunoValue* ret, int n, Ent_1120* e) {
+extern "C" cLunoValue* func_00301120(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     int slot = D_004A3DD8->being;
     if (isIdle_1120(slot)) {
         if (D_004A56B4_1120 == 0) {
@@ -3443,11 +3398,11 @@ extern "C" cLunoValue* func_00301120(cLunoValue* ret, int n, Ent_1120* e) {
         unsigned* vp = v;
         v[1] = 0xFFFFFFFF;
         func_003E6574(vp, &D_004FBBD0_1120, 12);
-        Ent_1120* p = e;
+        sBindArg_1FBE38* p = e;
         for (int i = 0; i < n; i++, p++) {
             int k = p->idx;
             unsigned* d = (unsigned*)((k << 2) + (int)vp);
-            if (p->kind != D_004A3C68_1120[k] && D_004A3C68_1120[k] == 2)
+            if (p->type != D_004A3C68_1120[k] && D_004A3C68_1120[k] == 2)
                 *(float*)d = (float)p->val;
             else
                 *d = p->val;
@@ -3476,14 +3431,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003012F0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_12F0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3C70_12F0[2] __asm__("D_004A3C70");
 extern "C" int func_0030A868_12F0(cWScriptMan*, unsigned, int, int) __asm__("func_0030A868");
 extern int D_004A56B8_12F0 __asm__("D_004A56B8");
 struct T12_12F0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_12F0 D_004FBBE0_12F0 __asm__("D_004FBBE0");
-extern "C" cLunoValue* func_003012F0(cLunoValue* ret, int n, Ent_12F0* e) {
+extern "C" cLunoValue* func_003012F0(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A56B8_12F0 == 0) {
         D_004FBBE0_12F0.a = -1;
         D_004FBBE0_12F0.b = -1;
@@ -3494,11 +3448,11 @@ extern "C" cLunoValue* func_003012F0(cLunoValue* ret, int n, Ent_12F0* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBBE0_12F0, 12);
-    Ent_12F0* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3C70_12F0[k] && D_004A3C70_12F0[k] == 2)
+        if (p->type != D_004A3C70_12F0[k] && D_004A3C70_12F0[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -3541,7 +3495,7 @@ extern "C" cLunoValue func_00301440(int n, sBindArg_1FBE38* e) {
         int idx = x->idx;
         int t = D_004A3C78_1440[idx];
         unsigned* d = (unsigned*)((idx << 2) + (int)buf);
-        if (x->kind != t && t == 2)
+        if (x->type != t && t == 2)
             *(float*)d = (float)x->val;
         else
             *d = x->val;
@@ -3570,14 +3524,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301560);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_1560 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3C80_1560[2] __asm__("D_004A3C80");
 extern "C" int func_0030BA80(cWScriptMan*, unsigned);
 extern int D_004A56C8_1560 __asm__("D_004A56C8");
 extern unsigned D_004A56C0_1560 __asm__("D_004A56C0");
 extern sBindEnd_1FBE38 D_004A56C4_1560 __asm__("D_004A56C4");
-extern "C" cLunoValue* func_00301560(cLunoValue* ret, int n, Ent_1560* e) {
+extern "C" cLunoValue* func_00301560(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A56C8_1560 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A56C4_1560 = sBindEnd_1FBE38();
@@ -3587,11 +3540,11 @@ extern "C" cLunoValue* func_00301560(cLunoValue* ret, int n, Ent_1560* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A56C0_1560, 8);
-    Ent_1560* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3C80_1560[k] && D_004A3C80_1560[k] == 2)
+        if (p->type != D_004A3C80_1560[k] && D_004A3C80_1560[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -3627,8 +3580,7 @@ extern sBindEnd_1FBE38 D_004A56D4;
 extern int D_004A56D8;
 extern int D_004A3C88;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_1680 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue* func_00301680(cLunoValue *ret, int n, Ent_1680 *e) {
+extern "C" cLunoValue* func_00301680(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A56D8 == 0) {
         D_1680 = 0xFFFFFFFF;
         D_004A56D8 = 1;
@@ -3638,7 +3590,7 @@ extern "C" cLunoValue* func_00301680(cLunoValue *ret, int n, Ent_1680 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_1680, 8);
-    Ent_1680 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C88)[idx];
@@ -3688,8 +3640,7 @@ extern sBindEnd_1FBE38 D_004A56E4;
 extern int D_004A56E8;
 extern int D_004A3C90;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_1830 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue* func_00301830(cLunoValue *ret, int n, Ent_1830 *e) {
+extern "C" cLunoValue* func_00301830(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A56E8 == 0) {
         D_1830 = 0xFFFFFFFF;
         D_004A56E8 = 1;
@@ -3699,7 +3650,7 @@ extern "C" cLunoValue* func_00301830(cLunoValue *ret, int n, Ent_1830 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_1830, 8);
-    Ent_1830 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C90)[idx];
@@ -3750,8 +3701,7 @@ extern unsigned D_19C8[] __asm__("D_004FBC00");
 extern int D_004A56EC;
 extern int D_004A3C98;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_19C8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue* func_003019C8(cLunoValue *ret, int n, Ent_19C8 *e) {
+extern "C" cLunoValue* func_003019C8(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A56EC == 0) {
         D_19C8[0] = 0xFFFFFFFF;
         *(float*)&D_19C8[1] = -1.0f;
@@ -3762,7 +3712,7 @@ extern "C" cLunoValue* func_003019C8(cLunoValue *ret, int n, Ent_19C8 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_19C8, 12);
-    Ent_19C8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3C98)[idx];
@@ -3814,9 +3764,8 @@ extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_0030A6D8(cWScriptMan*, int);
 int* func_00226610(void*);
 
-struct Ent_1B88 { int idx; int val; int pad; int kind; };
 
-extern "C" cLunoValue* func_00301B88(cLunoValue* ret, int n, Ent_1B88* e) {
+extern "C" cLunoValue* func_00301B88(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A56F8_1B88 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A56F4_1B88 = sBindEnd_1FBE38();
@@ -3826,11 +3775,11 @@ extern "C" cLunoValue* func_00301B88(cLunoValue* ret, int n, Ent_1B88* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A56F0_1B88, 8);
-    Ent_1B88* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3CA0_1B88[k] && D_004A3CA0_1B88[k] == 2)
+        if (p->type != D_004A3CA0_1B88[k] && D_004A3CA0_1B88[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -3854,9 +3803,8 @@ extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_0030A700(cWScriptMan*, int);
 int* func_00226610(void*);
 
-struct Ent_1C80 { int idx; int val; int pad; int kind; };
 
-extern "C" cLunoValue* func_00301C80(cLunoValue* ret, int n, Ent_1C80* e) {
+extern "C" cLunoValue* func_00301C80(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A5708_1C80 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A5704_1C80 = sBindEnd_1FBE38();
@@ -3866,11 +3814,11 @@ extern "C" cLunoValue* func_00301C80(cLunoValue* ret, int n, Ent_1C80* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5700_1C80, 8);
-    Ent_1C80* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3CA8_1C80[k] && D_004A3CA8_1C80[k] == 2)
+        if (p->type != D_004A3CA8_1C80[k] && D_004A3CA8_1C80[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -3895,8 +3843,7 @@ static inline char *refToPtr_1D78(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_1D78(unsigned i) { if (i == 0) return 0; return refToPtr_1D78(i); }
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610_1D78(void*) __asm__("func_00226610__FPv");
-struct Ent_1D78 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, Ent_1D78 *e) {
+extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A5718_1D78 == 0) {
         D_004A5710_1D78 = 0xFFFFFFFF;
         D_004A5718_1D78 = 1;
@@ -3907,7 +3854,7 @@ extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, Ent_1D78 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_004A5710_1D78, 8);
-    Ent_1D78 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004A3CB0_1D78[idx];
@@ -3963,9 +3910,8 @@ extern int D_004A3CB8_1F48[2] __asm__("D_004A3CB8");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00303D88_1F48(int) __asm__("func_00303D88");
 
-struct Ent_1F48 { int idx; int val; int pad; int kind; };
 
-extern "C" cLunoValue func_00301F48(int n, Ent_1F48* e) {
+extern "C" cLunoValue func_00301F48(int n, sBindArg_1FBE38* e) {
     if (D_004A5728_1F48 == 0) {
         D_004A5720_1F48 = -1;
         D_004A5728_1F48 = 1;
@@ -3975,11 +3921,11 @@ extern "C" cLunoValue func_00301F48(int n, Ent_1F48* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5720_1F48, 8);
-    Ent_1F48* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3CB8_1F48[k] && D_004A3CB8_1F48[k] == 2)
+        if (p->type != D_004A3CB8_1F48[k] && D_004A3CB8_1F48[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4000,8 +3946,7 @@ extern unsigned D_2048[] __asm__("D_004FBC10");
 extern int D_004A572C;
 extern int D_004A3CC0;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_2048 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
+extern "C" cLunoValue func_00302048(int n, sBindArg_1FBE38 *e) {
     if (D_004A572C == 0) {
         ((int*)D_2048)[0] = -1;
         ((int*)D_2048)[1] = -1;
@@ -4011,7 +3956,7 @@ extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
     unsigned buf64[3];
     unsigned *buf = buf64;
     func_003E6574(buf, D_2048, 12);
-    Ent_2048 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3CC0)[idx];
@@ -4066,9 +4011,8 @@ extern "C" void func_00231250(void* self, int a, int b, int refresh);
 extern "C" void* func_0028B180();
 extern "C" void func_002A49E8_2210(void* self) __asm__("func_002A49E8");
 
-struct Ent_2210 { int idx; int val; int pad; int kind; };
 
-extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
+extern "C" cLunoValue func_00302210(int n, sBindArg_1FBE38* e)
 {
     if (D_004A5730_2210 == 0) {
         D_004FBC20_2210.v[0] = -1;
@@ -4081,11 +4025,11 @@ extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBC20_2210, 0x10);
-    Ent_2210* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004465C8_2210[k] && D_004465C8_2210[k] == 2)
+        if (p->type != D_004465C8_2210[k] && D_004465C8_2210[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4148,8 +4092,7 @@ extern int D_3CC8_2490 __asm__("D_004A3CC8");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00353228_2490(char*) __asm__("func_00353228");
 extern "C" void func_00353278_2490(char*) __asm__("func_00353278");
-struct Ent_2490 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00302490(int n, Ent_2490 *e) {
+extern "C" cLunoValue func_00302490(int n, sBindArg_1FBE38 *e) {
     if (D_5734_2490 == 0) {
         D_4FBC30_2490.a = 0xFFFFFFFF;
         D_4FBC30_2490.b = -1;
@@ -4161,7 +4104,7 @@ extern "C" cLunoValue func_00302490(int n, Ent_2490 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_4FBC30_2490, 12);
-    Ent_2490 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_3CC8_2490)[idx];
@@ -4290,13 +4233,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302968);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_2968 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3CE8_2968[2] __asm__("D_004A3CE8");
 extern int D_004A5770_2968 __asm__("D_004A5770");
 extern unsigned D_004A5768_2968 __asm__("D_004A5768");
 extern sBindEnd_1FBE38 D_004A576C_2968 __asm__("D_004A576C");
-extern "C" cLunoValue func_00302968(int n, Ent_2968* e) {
+extern "C" cLunoValue func_00302968(int n, sBindArg_1FBE38* e) {
     if (D_004A5770_2968 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A576C_2968 = sBindEnd_1FBE38();
@@ -4307,11 +4249,11 @@ extern "C" cLunoValue func_00302968(int n, Ent_2968* e) {
     unsigned* vp = v;
     vp[0] = 0xFFFFFFFFu;
     func_003E6574(vp, &D_004A5768_2968, 8);
-    Ent_2968* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3CE8_2968[k] && D_004A3CE8_2968[k] == 2)
+        if (p->type != D_004A3CE8_2968[k] && D_004A3CE8_2968[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4336,14 +4278,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302AC0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_2AC0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3CF0_2AC0[2] __asm__("D_004A3CF0");
 extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A5774_2AC0 __asm__("D_004A5774");
 struct T12_2AC0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2AC0 D_004FBC40_2AC0 __asm__("D_004FBC40");
-extern "C" cLunoValue func_00302AC0(int n, Ent_2AC0* e) {
+extern "C" cLunoValue func_00302AC0(int n, sBindArg_1FBE38* e) {
     if (D_004A5774_2AC0 == 0) {
         D_004FBC40_2AC0.a = -1;
         D_004FBC40_2AC0.b = 0;
@@ -4354,11 +4295,11 @@ extern "C" cLunoValue func_00302AC0(int n, Ent_2AC0* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBC40_2AC0, 12);
-    Ent_2AC0* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3CF0_2AC0[k] && D_004A3CF0_2AC0[k] == 2)
+        if (p->type != D_004A3CF0_2AC0[k] && D_004A3CF0_2AC0[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4374,14 +4315,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302BD8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_2BD8 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3CF8_2BD8[2] __asm__("D_004A3CF8");
 extern "C" int func_0030A868(cWScriptMan*, int, int, int);
 extern int D_004A5780_2BD8 __asm__("D_004A5780");
 extern unsigned D_004A5778_2BD8 __asm__("D_004A5778");
 extern sBindEnd_1FBE38 D_004A577C_2BD8 __asm__("D_004A577C");
-extern "C" cLunoValue func_00302BD8(int n, Ent_2BD8* e) {
+extern "C" cLunoValue func_00302BD8(int n, sBindArg_1FBE38* e) {
     if (D_004A5780_2BD8 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A577C_2BD8 = sBindEnd_1FBE38();
@@ -4391,11 +4331,11 @@ extern "C" cLunoValue func_00302BD8(int n, Ent_2BD8* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5778_2BD8, 8);
-    Ent_2BD8* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3CF8_2BD8[k] && D_004A3CF8_2BD8[k] == 2)
+        if (p->type != D_004A3CF8_2BD8[k] && D_004A3CF8_2BD8[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4411,14 +4351,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302CE8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_2CE8 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D00_2CE8[2] __asm__("D_004A3D00");
 extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A5790_2CE8 __asm__("D_004A5790");
 extern unsigned D_004A5788_2CE8 __asm__("D_004A5788");
 extern sBindEnd_1FBE38 D_004A578C_2CE8 __asm__("D_004A578C");
-extern "C" cLunoValue func_00302CE8(int n, Ent_2CE8* e) {
+extern "C" cLunoValue func_00302CE8(int n, sBindArg_1FBE38* e) {
     if (D_004A5790_2CE8 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A578C_2CE8 = sBindEnd_1FBE38();
@@ -4428,11 +4367,11 @@ extern "C" cLunoValue func_00302CE8(int n, Ent_2CE8* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5788_2CE8, 8);
-    Ent_2CE8* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D00_2CE8[k] && D_004A3D00_2CE8[k] == 2)
+        if (p->type != D_004A3D00_2CE8[k] && D_004A3D00_2CE8[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4448,14 +4387,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302DF0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_2DF0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D08_2DF0[2] __asm__("D_004A3D08");
 extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A57A0_2DF0 __asm__("D_004A57A0");
 extern unsigned D_004A5798_2DF0 __asm__("D_004A5798");
 extern sBindEnd_1FBE38 D_004A579C_2DF0 __asm__("D_004A579C");
-extern "C" cLunoValue func_00302DF0(int n, Ent_2DF0* e) {
+extern "C" cLunoValue func_00302DF0(int n, sBindArg_1FBE38* e) {
     if (D_004A57A0_2DF0 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A579C_2DF0 = sBindEnd_1FBE38();
@@ -4465,11 +4403,11 @@ extern "C" cLunoValue func_00302DF0(int n, Ent_2DF0* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5798_2DF0, 8);
-    Ent_2DF0* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D08_2DF0[k] && D_004A3D08_2DF0[k] == 2)
+        if (p->type != D_004A3D08_2DF0[k] && D_004A3D08_2DF0[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4550,8 +4488,7 @@ extern unsigned D_3130[] __asm__("D_004FBC50");
 extern int D_004A57B4;
 extern int D_004A3D18;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_3130 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, Ent_3130 *e) {
+extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A57B4 == 0) {
         D_3130[0] = 0xFFFFFFFF;
         D_3130[1] = 1;
@@ -4562,7 +4499,7 @@ extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, Ent_3130 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_3130, 12);
-    Ent_3130 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3D18)[idx];
@@ -4713,7 +4650,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303598);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_3598 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D20_3598[2] __asm__("D_004A3D20");
 float AIrandf(float, float);
@@ -4721,7 +4657,7 @@ void* func_00226618(void*);
 extern int D_004A57B8_3598 __asm__("D_004A57B8");
 struct T12_3598 { float a; float b; sBindEnd_1FBE38 f; };
 extern T12_3598 D_004FBC60_3598 __asm__("D_004FBC60");
-extern "C" cLunoValue* func_00303598(cLunoValue* ret, int n, Ent_3598* e) {
+extern "C" cLunoValue* func_00303598(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A57B8_3598 == 0) {
         D_004FBC60_3598.a = 0;
         D_004FBC60_3598.b = 1.0f;
@@ -4732,11 +4668,11 @@ extern "C" cLunoValue* func_00303598(cLunoValue* ret, int n, Ent_3598* e) {
     float v[4] __attribute__((aligned(16)));
     float* vp = v;
     func_003E6574(vp, &D_004FBC60_3598, 12);
-    Ent_3598* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D20_3598[k] && D_004A3D20_3598[k] == 2)
+        if (p->type != D_004A3D20_3598[k] && D_004A3D20_3598[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4760,9 +4696,8 @@ extern "C" void func_003E6574(void*, void*, int);
 extern "C" int func_0030AF08(cWScriptMan*, int, int);
 int* func_00226610(void*);
 
-struct Ent_36B0 { int idx; int val; int pad; int kind; };
 
-extern "C" cLunoValue* func_003036B0(cLunoValue* ret, int n, Ent_36B0* e) {
+extern "C" cLunoValue* func_003036B0(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A57C8_36B0 == 0) {
         D_004A57C0_36B0 = -1;
         D_004A57C8_36B0 = 1;
@@ -4772,11 +4707,11 @@ extern "C" cLunoValue* func_003036B0(cLunoValue* ret, int n, Ent_36B0* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A57C0_36B0, 8);
-    Ent_36B0* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D28_36B0[k] && D_004A3D28_36B0[k] == 2)
+        if (p->type != D_004A3D28_36B0[k] && D_004A3D28_36B0[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -4850,8 +4785,7 @@ extern unsigned D_39F0[] __asm__("D_004FBC70");
 extern int D_004A57DC;
 extern int D_004A3D38;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_39F0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_003039F0(int n, Ent_39F0 *e) {
+extern "C" cLunoValue func_003039F0(int n, sBindArg_1FBE38 *e) {
     if (D_004A57DC == 0) {
         D_39F0[0] = 0xFFFFFFFF;
         ((int*)D_39F0)[1] = -1;
@@ -4862,7 +4796,7 @@ extern "C" cLunoValue func_003039F0(int n, Ent_39F0 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_39F0, 12);
-    Ent_39F0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3D38)[idx];
@@ -4909,8 +4843,7 @@ extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00229820_3BA0(int, unsigned, int, int) __asm__("func_00229820");
 extern "C" void func_00229788(int, unsigned);
 extern "C" void func_002297D8(int, unsigned);
-struct Ent_3BA0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00303BA0(int n, Ent_3BA0 *e) {
+extern "C" cLunoValue func_00303BA0(int n, sBindArg_1FBE38 *e) {
     if (D_57E0_3BA0 == 0) {
         D_4FBC80_3BA0.a = 0xFFFFFFFF;
         D_4FBC80_3BA0.b = -1;
@@ -4924,7 +4857,7 @@ extern "C" cLunoValue func_00303BA0(int n, Ent_3BA0 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_4FBC80_3BA0, 0x14);
-    Ent_3BA0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004465D8_3BA0[idx];
@@ -5063,14 +4996,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303FF0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_3FF0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D40_3FF0[2] __asm__("D_004A3D40");
 void func_0030B4C0(void*, int, int);
 extern int D_004A57E4_3FF0 __asm__("D_004A57E4");
 struct T12_3FF0 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_3FF0 D_004FBC98_3FF0 __asm__("D_004FBC98");
-extern "C" cLunoValue func_00303FF0(int n, Ent_3FF0* e) {
+extern "C" cLunoValue func_00303FF0(int n, sBindArg_1FBE38* e) {
     if (D_004A57E4_3FF0 == 0) {
         D_004FBC98_3FF0.a = 0;
         D_004FBC98_3FF0.b = -1;
@@ -5081,11 +5013,11 @@ extern "C" cLunoValue func_00303FF0(int n, Ent_3FF0* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBC98_3FF0, 12);
-    Ent_3FF0* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D40_3FF0[k] && D_004A3D40_3FF0[k] == 2)
+        if (p->type != D_004A3D40_3FF0[k] && D_004A3D40_3FF0[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -5101,14 +5033,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304100);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_4100 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D48_4100[2] __asm__("D_004A3D48");
 void func_0030B4D8(void*, int, int);
 extern int D_004A57E8_4100 __asm__("D_004A57E8");
 struct T12_4100 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4100 D_004FBCA8_4100 __asm__("D_004FBCA8");
-extern "C" cLunoValue func_00304100(int n, Ent_4100* e) {
+extern "C" cLunoValue func_00304100(int n, sBindArg_1FBE38* e) {
     if (D_004A57E8_4100 == 0) {
         D_004FBCA8_4100.a = 0;
         D_004A57E8_4100 = 1;
@@ -5119,11 +5050,11 @@ extern "C" cLunoValue func_00304100(int n, Ent_4100* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBCA8_4100, 12);
-    Ent_4100* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D48_4100[k] && D_004A3D48_4100[k] == 2)
+        if (p->type != D_004A3D48_4100[k] && D_004A3D48_4100[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -5139,14 +5070,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304210);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_4210 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D50_4210[2] __asm__("D_004A3D50");
 void func_0030B4F0(void*, int, int);
 extern int D_004A57EC_4210 __asm__("D_004A57EC");
 struct T12_4210 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4210 D_004FBCB8_4210 __asm__("D_004FBCB8");
-extern "C" cLunoValue func_00304210(int n, Ent_4210* e) {
+extern "C" cLunoValue func_00304210(int n, sBindArg_1FBE38* e) {
     if (D_004A57EC_4210 == 0) {
         D_004FBCB8_4210.a = 0;
         D_004FBCB8_4210.b = -1;
@@ -5157,11 +5087,11 @@ extern "C" cLunoValue func_00304210(int n, Ent_4210* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBCB8_4210, 12);
-    Ent_4210* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D50_4210[k] && D_004A3D50_4210[k] == 2)
+        if (p->type != D_004A3D50_4210[k] && D_004A3D50_4210[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -5201,7 +5131,7 @@ extern "C" cLunoValue func_00304320(int n, sBindArg_1FBE38* e) {
         int idx = x->idx;
         int t = D_004A3D58_4320[idx];
         unsigned* d = (unsigned*)((idx << 2) + (int)buf);
-        if (x->kind != t && t == 2)
+        if (x->type != t && t == 2)
             *(float*)d = (float)x->val;
         else
             *d = x->val;
@@ -5236,14 +5166,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003044A8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_44A8 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D60_44A8[2] __asm__("D_004A3D60");
 extern "C" void func_00238550(int, int, int);
 extern int D_004A5808_44A8 __asm__("D_004A5808");
 extern int D_004A5800_44A8 __asm__("D_004A5800");
 extern sBindEnd_1FBE38 D_004A5804_44A8 __asm__("D_004A5804");
-extern "C" cLunoValue func_003044A8(int n, Ent_44A8* e) {
+extern "C" cLunoValue func_003044A8(int n, sBindArg_1FBE38* e) {
     if (D_004A5808_44A8 == 0) {
         D_004A5800_44A8 = -1;
         D_004A5808_44A8 = 1;
@@ -5253,11 +5182,11 @@ extern "C" cLunoValue func_003044A8(int n, Ent_44A8* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5800_44A8, 8);
-    Ent_44A8* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D60_44A8[k] && D_004A3D60_44A8[k] == 2)
+        if (p->type != D_004A3D60_44A8[k] && D_004A3D60_44A8[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -5291,8 +5220,7 @@ struct BF_45B8 {
     unsigned long f16 : 5;
 };
 extern "C" void func_0030B520_45B8(cWScriptMan*, BF_45B8*) __asm__("func_0030B520");
-struct Ent_45B8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_003045B8(int n, Ent_45B8 *e) {
+extern "C" cLunoValue func_003045B8(int n, sBindArg_1FBE38 *e) {
     if (D_580C_45B8 == 0) {
         D_4FBCC8_45B8.a0 = 0;
         D_4FBCC8_45B8.a1 = 0;
@@ -5318,7 +5246,7 @@ extern "C" cLunoValue func_003045B8(int n, Ent_45B8 *e) {
     Rec_45B8 *buf = &rec;
     func_003E6574(buf, &D_4FBCC8_45B8, 0x44);
     BF_45B8 bf;
-    Ent_45B8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446650_45B8[idx];
@@ -5360,8 +5288,7 @@ extern unsigned D_4980[] __asm__("D_004FBD10");
 extern int D_004A5810;
 extern int D_004A3D68;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_4980 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00304980(int n, Ent_4980 *e) {
+extern "C" cLunoValue func_00304980(int n, sBindArg_1FBE38 *e) {
     if (D_004A5810 == 0) {
         D_4980[0] = 0xFFFFFFFF;
         *(float*)&D_4980[1] = 1.0f;
@@ -5372,7 +5299,7 @@ extern "C" cLunoValue func_00304980(int n, Ent_4980 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_4980, 12);
-    Ent_4980 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3D68)[idx];
@@ -5409,14 +5336,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304B38);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_4B38 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D70_4B38[2] __asm__("D_004A3D70");
 extern "C" void func_002709D8(void*, int, int);
 extern int D_004A5820_4B38 __asm__("D_004A5820");
 extern int D_004A5818_4B38 __asm__("D_004A5818");
 extern sBindEnd_1FBE38 D_004A581C_4B38 __asm__("D_004A581C");
-extern "C" cLunoValue func_00304B38(int n, Ent_4B38* e) {
+extern "C" cLunoValue func_00304B38(int n, sBindArg_1FBE38* e) {
     if (D_004A5820_4B38 == 0) {
         D_004A5818_4B38 = -1;
         D_004A5820_4B38 = 1;
@@ -5426,11 +5352,11 @@ extern "C" cLunoValue func_00304B38(int n, Ent_4B38* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5818_4B38, 8);
-    Ent_4B38* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D70_4B38[k] && D_004A3D70_4B38[k] == 2)
+        if (p->type != D_004A3D70_4B38[k] && D_004A3D70_4B38[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -5446,13 +5372,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304C50);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 void* func_00226618(void*);
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_4C50 { int idx; int val; int pad; int type; };
 extern unsigned D_5828_4C50 __asm__("D_004A5828");
 extern sBindEnd_1FBE38 D_582C_4C50 __asm__("D_004A582C");
 extern int D_5830_4C50 __asm__("D_004A5830");
 extern int D_3D78_4C50 __asm__("D_004A3D78");
 static inline t4Vector pos_4C50(char *o) { return *(t4Vector*)(o + 0x40); }
-extern "C" cLunoValue* func_00304C50(cLunoValue* ret, int n, Ent_4C50 *e) {
+extern "C" cLunoValue* func_00304C50(cLunoValue* ret, int n, sBindArg_1FBE38 *e) {
     if (D_5830_4C50 == 0) {
         D_5828_4C50 = 0xFFFFFFFF;
         D_5830_4C50 = 1;
@@ -5463,7 +5388,7 @@ extern "C" cLunoValue* func_00304C50(cLunoValue* ret, int n, Ent_4C50 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_5828_4C50, 8);
-    Ent_4C50 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_3D78_4C50)[idx];
@@ -5518,8 +5443,7 @@ extern unsigned D_4E38[] __asm__("D_004FBD20");
 extern int D_004A5834;
 extern int D_004A3D80;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_4E38 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00304E38(int n, Ent_4E38 *e) {
+extern "C" cLunoValue func_00304E38(int n, sBindArg_1FBE38 *e) {
     if (D_004A5834 == 0) {
         D_4E38[0] = 0xFFFFFFFF;
         *(float*)&D_4E38[1] = 1.0f;
@@ -5530,7 +5454,7 @@ extern "C" cLunoValue func_00304E38(int n, Ent_4E38 *e) {
     unsigned *buf = buf64;
     buf64[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_4E38, 12);
-    Ent_4E38 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3D80)[idx];
@@ -5569,11 +5493,10 @@ extern int D_004A5838_4FF0 __asm__("D_004A5838");
 extern int D_004A3D88_4FF0[2] __asm__("D_004A3D88");
 extern "C" void func_003E6574(void*, void*, int);
 
-struct Ent_4FF0 { int idx; int val; int pad; int kind; };
 struct T12_4FF0 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4FF0 D_004FBD30_4FF0 __asm__("D_004FBD30");
 
-extern "C" cLunoValue func_00304FF0(int n, Ent_4FF0* e) {
+extern "C" cLunoValue func_00304FF0(int n, sBindArg_1FBE38* e) {
     if (D_004A5838_4FF0 == 0) {
         D_004FBD30_4FF0.a = 0;
         D_004A5838_4FF0 = 1;
@@ -5584,11 +5507,11 @@ extern "C" cLunoValue func_00304FF0(int n, Ent_4FF0* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBD30_4FF0, 12);
-    Ent_4FF0* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D88_4FF0[k] && D_004A3D88_4FF0[k] == 2)
+        if (p->type != D_004A3D88_4FF0[k] && D_004A3D88_4FF0[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -5663,7 +5586,7 @@ extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
         int idx = x->idx;
         int t = D_00446690[idx];
         unsigned *d = (unsigned*)((idx << 2) + (int)buf);
-        if (x->kind != t && t == 2)
+        if (x->type != t && t == 2)
             *(float*)d = (float)x->val;
         else
             *d = x->val;
@@ -5728,8 +5651,7 @@ extern int D_5840_5478 __asm__("D_004A5840");
 extern const int D_004466A0_5478[] __asm__("D_004466A0");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_003559F8_5478(O_5478*, void*, float, float) __asm__("func_003559F8");
-struct Ent_5478 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00305478(int n, Ent_5478 *e) {
+extern "C" cLunoValue func_00305478(int n, sBindArg_1FBE38 *e) {
     if (D_5840_5478 == 0) {
         D_4FBD58_5478.id = 0xFFFFFFFF;
         D_4FBD58_5478.a = 400.0f;
@@ -5742,7 +5664,7 @@ extern "C" cLunoValue func_00305478(int n, Ent_5478 *e) {
     Rec_5478 *buf = &rec;
     rec.id = 0xFFFFFFFF;
     func_003E6574(buf, &D_4FBD58_5478, 0x10);
-    Ent_5478 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004466A0_5478[idx];
@@ -5785,8 +5707,7 @@ extern sBindEnd_1FBE38 D_004A584C;
 extern int D_004A5850;
 extern int D_004A3D90;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_5660 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00305660(int n, Ent_5660 *e) {
+extern "C" cLunoValue func_00305660(int n, sBindArg_1FBE38 *e) {
     if (D_004A5850 == 0) {
         D_5660 = 0xFFFFFFFF;
         D_004A5850 = 1;
@@ -5796,7 +5717,7 @@ extern "C" cLunoValue func_00305660(int n, Ent_5660 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_5660, 8);
-    Ent_5660 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3D90)[idx];
@@ -5828,8 +5749,7 @@ extern int D_5854_57C0 __asm__("D_004A5854");
 extern const int D_004466B0_57C0[] __asm__("D_004466B0");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void cMoveNode_addHalo_57C0(void*, void*) __asm__("cMoveNode_addHalo");
-struct Ent_57C0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_003057C0(int n, Ent_57C0 *e) {
+extern "C" cLunoValue func_003057C0(int n, sBindArg_1FBE38 *e) {
     if (D_5854_57C0 == 0) {
         D_4FBD68_57C0.id = 0xFFFFFFFF;
         D_4FBD68_57C0.a = 0;
@@ -5848,7 +5768,7 @@ extern "C" cLunoValue func_003057C0(int n, Ent_57C0 *e) {
     Rec_57C0 *buf = &rec;
     rec.id = 0xFFFFFFFF;
     func_003E6574(buf, &D_4FBD68_57C0, 0x28);
-    Ent_57C0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004466B0_57C0[idx];
@@ -5912,7 +5832,7 @@ extern "C" cLunoValue func_003059A0(int n, sBindArg_1FBE38* e) {
     for (int i = 0; i < n; i++, x++) {
         int k = x->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (x->kind != D_004466D8_59A0[k] && D_004466D8_59A0[k] == 2)
+        if (x->type != D_004466D8_59A0[k] && D_004466D8_59A0[k] == 2)
             *(float*)d = (float)x->val;
         else
             *d = x->val;
@@ -5948,7 +5868,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00305C88);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_5C88 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D98_5C88[2] __asm__("D_004A3D98");
 extern "C" int cAvalanche_triggerAvalanche(int);
@@ -5956,7 +5875,7 @@ extern int D_004A3AC4_5C88 __asm__("D_004A3AC4");
 extern int D_004A5868_5C88 __asm__("D_004A5868");
 extern int D_004A5860_5C88 __asm__("D_004A5860");
 extern sBindEnd_1FBE38 D_004A5864_5C88 __asm__("D_004A5864");
-extern "C" cLunoValue func_00305C88(int n, Ent_5C88* e) {
+extern "C" cLunoValue func_00305C88(int n, sBindArg_1FBE38* e) {
     if (D_004A5868_5C88 == 0) {
         D_004A5868_5C88 = 1;
         D_004A5860_5C88 = 0;
@@ -5966,11 +5885,11 @@ extern "C" cLunoValue func_00305C88(int n, Ent_5C88* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004A5860_5C88, 8);
-    Ent_5C88* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3D98_5C88[k] && D_004A3D98_5C88[k] == 2)
+        if (p->type != D_004A3D98_5C88[k] && D_004A3D98_5C88[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -5995,8 +5914,7 @@ extern sBindEnd_1FBE38 D_004A5874;
 extern int D_004A5878;
 extern int D_004A3DA0;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_5D90 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00305D90(int n, Ent_5D90 *e) {
+extern "C" cLunoValue func_00305D90(int n, sBindArg_1FBE38 *e) {
     if (D_004A5878 == 0) {
         D_5D90 = 0xFFFFFFFF;
         D_004A5878 = 1;
@@ -6006,7 +5924,7 @@ extern "C" cLunoValue func_00305D90(int n, Ent_5D90 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_5D90, 8);
-    Ent_5D90 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3DA0)[idx];
@@ -6062,8 +5980,7 @@ extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_002D9538_5F40(char*, Rec_5F40*) __asm__("func_002D9538");
 static inline char *refToPtr_5F40(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_5F40(unsigned i) { if (i == 0) return 0; return refToPtr_5F40(i); }
-struct Ent_5F40 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00305F40(int n, Ent_5F40 *e) {
+extern "C" cLunoValue func_00305F40(int n, sBindArg_1FBE38 *e) {
     if (D_587C_5F40 == 0) {
         Rec_5F40 &r = D_4FBE58_5F40;
         r.a = 1;
@@ -6096,7 +6013,7 @@ extern "C" cLunoValue func_00305F40(int n, Ent_5F40 *e) {
     Rec_5F40 *buf = &rec;
     rec.id = 0xFFFFFFFF;
     func_003E6574(buf, &D_4FBE58_5F40, 0xE0);
-    Ent_5F40 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_004467A0_5F40[idx];
@@ -6178,7 +6095,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00306300);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
-struct Ent_6300 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3DB0_6300[2] __asm__("D_004A3DB0");
 extern "C" void func_001E3510(int, int);
@@ -6187,7 +6103,7 @@ extern "C" void* cBE_getInterface_6300(void*, int) __asm__("cBE_getInterface__Fv
 extern int D_004A588C_6300 __asm__("D_004A588C");
 struct T12_6300 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_6300 D_004FBF38_6300 __asm__("D_004FBF38");
-extern "C" cLunoValue func_00306300(int n, Ent_6300* e) {
+extern "C" cLunoValue func_00306300(int n, sBindArg_1FBE38* e) {
     if (D_004A588C_6300 == 0) {
         D_004FBF38_6300.a = 0;
         D_004A588C_6300 = 1;
@@ -6198,11 +6114,11 @@ extern "C" cLunoValue func_00306300(int n, Ent_6300* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FBF38_6300, 12);
-    Ent_6300* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3DB0_6300[k] && D_004A3DB0_6300[k] == 2)
+        if (p->type != D_004A3DB0_6300[k] && D_004A3DB0_6300[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
@@ -6225,8 +6141,7 @@ extern unsigned D_6438[] __asm__("D_004FBF48");
 extern int D_004A5890;
 extern const int D_00446880[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_6438 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00306438(int n, Ent_6438 *e) {
+extern "C" cLunoValue func_00306438(int n, sBindArg_1FBE38 *e) {
     if (D_004A5890 == 0) {
         D_6438[0] = 0xFFFFFFFF;
         *(float*)&D_6438[1] = 1000.0f;
@@ -6238,7 +6153,7 @@ extern "C" cLunoValue func_00306438(int n, Ent_6438 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_6438, 16);
-    Ent_6438 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446880[idx];
@@ -6291,8 +6206,7 @@ extern sBindEnd_1FBE38 D_004A589C;
 extern int D_004A58A0;
 extern int D_004A3DB8;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_65E8 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_003065E8(int n, Ent_65E8 *e) {
+extern "C" cLunoValue func_003065E8(int n, sBindArg_1FBE38 *e) {
     if (D_004A58A0 == 0) {
         D_65E8 = 0xFFFFFFFF;
         D_004A58A0 = 1;
@@ -6302,7 +6216,7 @@ extern "C" cLunoValue func_003065E8(int n, Ent_65E8 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_65E8, 8);
-    Ent_65E8 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3DB8)[idx];
@@ -6340,8 +6254,7 @@ extern unsigned D_6770[] __asm__("D_004FBF58");
 extern int D_004A58A4;
 extern int D_004A3DC0;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_6770 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00306770(int n, Ent_6770 *e) {
+extern "C" cLunoValue func_00306770(int n, sBindArg_1FBE38 *e) {
     if (D_004A58A4 == 0) {
         D_6770[0] = 0xFFFFFFFF;
         D_6770[1] = 0;
@@ -6352,7 +6265,7 @@ extern "C" cLunoValue func_00306770(int n, Ent_6770 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, D_6770, 12);
-    Ent_6770 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3DC0)[idx];
@@ -6395,8 +6308,7 @@ extern sBindEnd_1FBE38 D_004A58AC;
 extern int D_004A58B0;
 extern int D_004A3DC8;
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_6908 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00306908(int n, Ent_6908 *e) {
+extern "C" cLunoValue func_00306908(int n, sBindArg_1FBE38 *e) {
     if (D_004A58B0 == 0) {
         D_6908 = 0xFFFFFFFF;
         D_004A58B0 = 1;
@@ -6406,7 +6318,7 @@ extern "C" cLunoValue func_00306908(int n, Ent_6908 *e) {
     unsigned *buf = buf64;
     buf[0] = 0xFFFFFFFF;
     func_003E6574(buf, &D_6908, 8);
-    Ent_6908 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = (&D_004A3DC8)[idx];
@@ -6452,8 +6364,7 @@ extern int D_58B4_6A90 __asm__("D_004A58B4");
 extern const int D_00446890_6A90[] __asm__("D_00446890");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00357A78_6A90(void*, int, Rec_6A90*, int) __asm__("func_00357A78");
-struct Ent_6A90 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00306A90(int n, Ent_6A90 *e) {
+extern "C" cLunoValue func_00306A90(int n, sBindArg_1FBE38 *e) {
     if (D_58B4_6A90 == 0) {
         Rec_6A90 &r = D_4FBF68_6A90;
         r.a = 1;
@@ -6486,7 +6397,7 @@ extern "C" cLunoValue func_00306A90(int n, Ent_6A90 *e) {
     Rec_6A90 rec;
     Rec_6A90 *buf = &rec;
     func_003E6574(buf, &D_4FBF68_6A90, 0xE4);
-    Ent_6A90 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446890_6A90[idx];
@@ -6511,8 +6422,7 @@ extern unsigned D_6CB0[] __asm__("D_004FC050");
 extern int D_004A58B8;
 extern const int D_00446970[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_6CB0 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue func_00306CB0(int n, Ent_6CB0 *e) {
+extern "C" cLunoValue func_00306CB0(int n, sBindArg_1FBE38 *e) {
     if (D_004A58B8 == 0) {
         ((int*)D_6CB0)[0] = 0;
         D_6CB0[1] = 0xFFFFFFFF;
@@ -6524,7 +6434,7 @@ extern "C" cLunoValue func_00306CB0(int n, Ent_6CB0 *e) {
     unsigned *buf = buf64;
     buf64[1] = 0xFFFFFFFF;
     func_003E6574(buf, D_6CB0, 16);
-    Ent_6CB0 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446970[idx];
@@ -6572,8 +6482,7 @@ extern unsigned D_6E68[] __asm__("D_004FC060");
 extern int D_004A58BC;
 extern const int D_00446980[];
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_6E68 { int idx; int val; int pad; int type; };
-extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, Ent_6E68 *e) {
+extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A58BC == 0) {
         D_6E68[0] = 0xFFFFFFFF;
         D_6E68[1] = 0xFFFFFFFF;
@@ -6587,7 +6496,7 @@ extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, Ent_6E68 *e) {
     buf64[1] = 0xFFFFFFFF;
     buf64[2] = 0xFFFFFFFF;
     func_003E6574(buf, D_6E68, 16);
-    Ent_6E68 *x = e;
+    sBindArg_1FBE38 *x = e;
     for (int i = 0; i < n; i++, x++) {
         int idx = x->idx;
         int t = D_00446980[idx];
@@ -6625,14 +6534,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00307020);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
-struct Ent_7020 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3DD0_7020[2] __asm__("D_004A3DD0");
 extern "C" int func_001E3570(int, int);
 extern int D_004A58C0_7020 __asm__("D_004A58C0");
 struct T12_7020 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_7020 D_004FC070_7020 __asm__("D_004FC070");
-extern "C" cLunoValue* func_00307020(cLunoValue* ret, int n, Ent_7020* e) {
+extern "C" cLunoValue* func_00307020(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A58C0_7020 == 0) {
         D_004FC070_7020.a = 0;
         D_004A58C0_7020 = 1;
@@ -6643,11 +6551,11 @@ extern "C" cLunoValue* func_00307020(cLunoValue* ret, int n, Ent_7020* e) {
     int v[4] __attribute__((aligned(16)));
     int* vp = v;
     func_003E6574(vp, &D_004FC070_7020, 12);
-    Ent_7020* p = e;
+    sBindArg_1FBE38* p = e;
     for (int i = 0; i < n; i++, p++) {
         int k = p->idx;
         int* d = (int*)((k << 2) + (int)vp);
-        if (p->kind != D_004A3DD0_7020[k] && D_004A3DD0_7020[k] == 2)
+        if (p->type != D_004A3DD0_7020[k] && D_004A3DD0_7020[k] == 2)
             *(float*)d = (float)p->val;
         else
             *d = p->val;
