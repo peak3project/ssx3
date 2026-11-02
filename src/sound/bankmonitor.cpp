@@ -46,6 +46,31 @@ extern void* D_004838F8[];
 extern char D_00483C00[];
 extern char D_00483980[];
 
+// One of a sound player's 48 monitored-sound slots (0x2C bytes).
+struct sBmSlot {
+    char pad00[0xC];
+    sSndCallback callback;      // 0x0C
+    char pad14[0x18 - 0x14];
+    int f18;                    // 0x18
+    int f1C;                    // 0x1C
+    int f20;                    // 0x20
+    int f24;                    // 0x24
+    int f28;                    // 0x28
+};
+
+// Sound player: a cSndPlayOpts (0x88 bytes) plus 48 monitored-sound slots; virtual base at 0x8DC.
+struct sSndPlayer {
+    char* vbase;                // 0x0
+    char pad_0x4[0x88 - 0x4];
+    int f88;                    // 0x88
+    int f8C;                    // 0x8C
+    int f90;                    // 0x90
+    char pad_0x94[0x4];
+    sBmSlot slots[48];          // 0x98
+    void** vtbl;                // 0x8D8
+    char vb[0x4];               // 0x8DC
+};
+
 // One of the 24 bank-slot records D_004D3EF8 (0x28 bytes): sound id, handle and bank index (-1 = free).
 struct sBankMonSlot28 {
     int id;         // 0x00
@@ -66,8 +91,7 @@ extern void* D_004D3E98[];
 //100%
 INCLUDE_ASM("sound/bankmonitor", cBankMonitor_cBankMonitor);
 #ifdef SKIP_ASM
-struct sSndPlayerD9C8;
-extern "C" sSndPlayerD9C8* func_002AD9C8(sSndPlayerD9C8* self, int inchrg, int heap);
+extern "C" sSndPlayer* func_002AD9C8(sSndPlayer* self, int inchrg, int heap);
 extern "C" void* func_002ADE88(void* self, int a);
 extern "C" void* func_002AB9E0(void* self);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
@@ -99,7 +123,7 @@ extern "C" sBankMonitorCD08* cBankMonitor_cBankMonitor(sBankMonitorCD08* self, i
         self->vbase = self->vb;
         func_002ADE88(self->vb, heap);
     }
-    func_002AD9C8((sSndPlayerD9C8*)self, 0, heap);
+    func_002AD9C8((sSndPlayer*)self, 0, heap);
     *(const sSndVtbl4**)(self->vbase + 4) = &D_00483B88;
     if (!inchrg) {
         // PORT: g++ 2.95 virtual-base this-adjust fix-up (copied vtable on the stack), written out by hand.
@@ -125,8 +149,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002ACE40);
 void cMemMan_free(void*);
 void operator_delete(int* ptr);
 extern "C" void func_002ABA18(void* self, int flags);
-struct sSndPlayerDAC8;
-extern "C" void func_002ADAC8(sSndPlayerDAC8* self, int flags);
+extern "C" void func_002ADAC8(sSndPlayer* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 
 
@@ -162,7 +185,7 @@ extern "C" void func_002ACE40(sBankMonitorE40* self, int flags)
         }
         cMemMan_free((char*)self->voices - 0x10);
     }
-    func_002ADAC8((sSndPlayerDAC8*)self, 0);
+    func_002ADAC8((sSndPlayer*)self, 0);
     if (flags & 2) {
         func_002ADEE8(self->vbase, 0);
     }
@@ -585,18 +608,7 @@ extern "C" void func_002AD940(void*);
 void func_002AD970(void* self, int a1);
 void func_002AD980(void* self);
 
-struct sBmSlotD888 {
-    char pad00[0xC];
-    sSndCallback callback;   // 0x0C
-    char pad14[0x18 - 0x14];
-    int f18;                    // 0x18
-    int f1C;                    // 0x1C
-    int f20;                    // 0x20
-    int f24;                    // 0x24
-    int f28;                    // 0x28
-};
-
-extern "C" void func_002AD888(sBmSlotD888* self, int a1, sSndCallback key, int b, int c, int d, int e, int f)
+extern "C" void func_002AD888(sBmSlot* self, int a1, sSndCallback key, int b, int c, int d, int e, int f)
 {
     func_002AD940(self);
     func_002AD970(self, a1);
@@ -687,25 +699,9 @@ extern "C" void* cSndPlayOpts_cSndPlayOpts(void* self, int inchrg, int heap);
 void* func_002AD848(void* self);
 
 
-struct sBmSlotD9C8 {
-    char pad_0x0[0x2C];
-};
-
-struct sSndPlayerD9C8 {
-    char* vbase;                // 0x0
-    char pad_0x4[0x88 - 0x4];
-    int f88;                    // 0x88
-    int f8C;                    // 0x8C
-    int f90;                    // 0x90
-    char pad_0x94[0x4];
-    sBmSlotD9C8 slots[48];      // 0x98
-    void** vtbl;                // 0x8D8
-    char vb[0x4];               // 0x8DC
-};
-
 // Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
 #define ASSERT_D9C8(cond) do { } while (0)
-extern "C" sSndPlayerD9C8* func_002AD9C8(sSndPlayerD9C8* self, int inchrg, int heap)
+extern "C" sSndPlayer* func_002AD9C8(sSndPlayer* self, int inchrg, int heap)
 {
     if (inchrg) {
         self->vbase = self->vb;
@@ -725,7 +721,7 @@ extern "C" sSndPlayerD9C8* func_002AD9C8(sSndPlayerD9C8* self, int inchrg, int h
     ASSERT_D9C8(self != 0);
     self->vtbl = D_00483BA8;
     self->f8C = 0;
-    sBmSlotD9C8* p = self->slots;
+    sBmSlot* p = self->slots;
     self->f90 = 0;
     int i = 47;
     do {
@@ -747,20 +743,9 @@ extern "C" void func_002A97C0(void* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 
 
-struct sBmSlotDAC8 {
-    char pad_0x0[0x2C];
-};
-
-struct sSndPlayerDAC8 {
-    char* vbase;                // 0x0
-    char pad_0x4[0x98 - 0x4];
-    sBmSlotDAC8 slots[48];      // 0x98
-    void** vtbl;                // 0x8D8
-};
-
-extern "C" void func_002ADAC8(sSndPlayerDAC8* self, int flags)
+extern "C" void func_002ADAC8(sSndPlayer* self, int flags)
 {
-    sBmSlotDAC8* end = self->slots + 48;
+    sBmSlot* end = self->slots + 48;
     self->vtbl = D_00483BA8;
     *(const sSndVtbl4**)(self->vbase + 4) = &D_00483BC0;
     if (flags == 0) {
@@ -775,7 +760,7 @@ extern "C" void func_002ADAC8(sSndPlayerDAC8* self, int flags)
     func_003B5948((int)func_002AD998);
     D_004A3778 = 0;
     if (self->slots != 0) {
-        sBmSlotDAC8* p = end;
+        sBmSlot* p = end;
         while (self->slots != p) {
             p--;
             func_002AD860((int*)p, 0);
@@ -886,13 +871,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002ADDE0);
 #ifdef SKIP_ASM
 extern "C" void func_002AD940(void*);
 
-struct sBmSlotDDE0 {
-    char pad00[0xC];
-    sSndCallback callback;   // 0x0C
-    char pad14[0x2C - 0x14];
-};
-
-static inline int func_002ADDE0_match(sBmSlotDDE0* e, sSndCallback k)
+static inline int func_002ADDE0_match(sBmSlot* e, sSndCallback k)
 {
     return k == e->callback;
 }
@@ -901,7 +880,7 @@ static inline int func_002ADDE0_match(sBmSlotDDE0* e, sSndCallback k)
 extern "C" void func_002ADDE0(void* self, sSndCallback key)
 {
     for (int i = 0; i < 48; i++) {
-        if (func_002ADDE0_match((sBmSlotDDE0*)((char*)self + 0x98 + i * 0x2C), key)) {
+        if (func_002ADDE0_match((sBmSlot*)((char*)self + 0x98 + i * 0x2C), key)) {
             func_002AD940((char*)self + 0x98 + i * 0x2C);
         }
     }
