@@ -390,9 +390,6 @@ extern "C" void func_00359830(cSplineModifier_9830* self)
 INCLUDE_ASM("object/splinemodifier", func_00359CF8);
 #ifdef SKIP_ASM
 
-struct sSmMat_9CF8 {
-    t4Vector r[4];
-};
 
 struct sSmBody_9CF8 {
     t4Vector pos;       // 0x00
@@ -408,7 +405,7 @@ struct cSplineModifier_9CF8 {
     int stopped;            // 0x50
     int active;             // 0x54
     char pad_0x58[0x8];
-    sSmMat_9CF8 mat;        // 0x60
+    t4Matrix mat;        // 0x60
     t4Vector origin;    // 0xA0
     t4Vector dir;       // 0xB0
     float fC0;              // 0xC0
@@ -474,7 +471,7 @@ static inline t4Vector vu0Scale_9CF8(const t4Vector& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix * vector).
-static inline t4Vector vu0MulMat_9CF8(const sSmMat_9CF8* m, const t4Vector& v)
+static inline t4Vector vu0MulMat_9CF8(const t4Matrix* m, const t4Vector& v)
 {
     t4Vector r;
     __asm__(
@@ -1405,19 +1402,16 @@ struct sSmVE_35B418 {
     short index;
     void (*fn)(void*);
 };
-struct sSmMat_35B418 {
-    t4Vector r[4];
-};
 
 struct sSmVE43_35B418 {
     short delta;
     short index;
-    sSmMat_35B418 (*fn)(void*);
+    t4Matrix (*fn)(void*);
 };
 struct sSmVE93_35B418 {
     short delta;
     short index;
-    int (*fn)(void*, t4Vector*, t4Vector*, const sSmMat_35B418&);
+    int (*fn)(void*, t4Vector*, t4Vector*, const t4Matrix&);
 };
 struct sSmVEModel_35B418 {
     short delta;
