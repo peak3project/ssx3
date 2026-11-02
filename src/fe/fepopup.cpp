@@ -13,6 +13,11 @@ struct t3Vector {
     float x, y, z;
 };
 
+// EA's 2-float vector (prototype name, e.g. setTileUV__7cUIIconG8t2Vector).
+struct t2Vector {
+    float x, y;
+};
+
 //100%
 INCLUDE_ASM("fe/fepopup", cScreenPopup_cScreenPopup);
 #ifdef SKIP_ASM
@@ -1190,7 +1195,6 @@ extern "C" void func_001C7C20(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C7EB0);
 #ifdef SKIP_ASM
-struct sVec2_7EB0 { float x, y; };
 
 extern "C" void func_001C7EB0(void* self)
 {
@@ -1199,15 +1203,15 @@ extern "C" void func_001C7EB0(void* self)
     t3Vector c;
     t3Vector b = *(t3Vector*)(*(char**)((char*)self + 0x6C) + 0x44);
     c = *(t3Vector*)(*(char**)((char*)self + 0x84) + 0x44);
-    sVec2_7EB0 size;
+    t2Vector size;
     {
-        sVEntry<void(void*, sVec2_7EB0*)>* vt = *(sVEntry<void(void*, sVec2_7EB0*)>**)(o80 + 8);
+        sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)(o80 + 8);
         vt[20].fn(o80 + vt[20].delta, &size);
     }
     size.x = *(float*)((char*)self + 0x260) - (a.x - c.x) - 10.0f;
     {
         char* o = *(char**)((char*)self + 0x80);
-        sVEntry<void(void*, sVec2_7EB0*)>* vt = *(sVEntry<void(void*, sVec2_7EB0*)>**)(o + 8);
+        sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)(o + 8);
         vt[21].fn(o + vt[21].delta, &size);
     }
     t3Vector scale;
@@ -1443,13 +1447,12 @@ extern "C" void func_001C8568(void* self, void* text, const char* str, void* out
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C8628);
 #ifdef SKIP_ASM
-struct sVec2_8628 { float x, y; };
 
 
 extern "C" void func_001C8628(void* self, void* obj, void* out)
 {
-    sVec2_8628 v;
-    sVEntry<void(void*, sVec2_8628*)>* vt = *(sVEntry<void(void*, sVec2_8628*)>**)((char*)obj + 8);
+    t2Vector v;
+    sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)((char*)obj + 8);
     vt[20].fn((char*)obj + vt[20].delta, &v);
     *(float*)((char*)out + 0x8) = v.x;
     *(float*)((char*)out + 0xC) = v.y;
@@ -1549,7 +1552,6 @@ struct sObjBitsK8930 {
     unsigned state : 6;
     unsigned hi : 13;
 };
-struct sVec2K8930 { float x, y; };
 
 
 extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t)
@@ -1557,8 +1559,8 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
     sObjBitsK8930* b = (sObjBitsK8930*)((char*)obj + 0x14);
     if (b->state == state)
         return;
-    sVec2K8930 size;
-    sVEntry<void(void*, sVec2K8930*)>* vt = *(sVEntry<void(void*, sVec2K8930*)>**)((char*)obj + 8);
+    t2Vector size;
+    sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)((char*)obj + 8);
     vt[20].fn((char*)obj + vt[20].delta, &size);
     t3Vector pos = *(t3Vector*)((char*)obj + 0x44);
     b->state = state;
@@ -1846,7 +1848,6 @@ extern "C" void func_001C93B0(void* self, int* msg, void* out)
 INCLUDE_ASM("fe/fepopup", func_001C94B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sVec2_94B0 { float x, y; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00392C60(void* font, int c);
 extern "C" int USTR_length(unsigned short* s);
@@ -1871,8 +1872,8 @@ extern "C" void func_001C94B0(void* self, void* text, void* strp, void* outp)
     unsigned short* buf = new (D_004660E8, 0x100, 0) unsigned short[n + 1];
     USTR_copy(buf, str);
     t3Vector v;
-    sVec2_94B0 size;
-    sVEntry<void(void*, sVec2_94B0*)>* vt = *(sVEntry<void(void*, sVec2_94B0*)>**)((char*)text + 8);
+    t2Vector size;
+    sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
     v = *(t3Vector*)((char*)text + 0x50);
     while (i < n) {
@@ -1957,7 +1958,6 @@ INCLUDE_ASM("fe/fepopup", func_001C9938);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-struct sVec2_9938 { float x, y; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00392C60(void* font, int c);
 extern "C" int USTR_length(unsigned short* s);
@@ -1983,8 +1983,8 @@ extern "C" void func_001C9938(void* self, cUIText* text, void* strp, float* out)
     unsigned short* buf = new (D_004660E8, 0x100, 0) unsigned short[n + 1];
     USTR_copy(buf, str);
     t3Vector v;
-    sVec2_9938 size;
-    sVEntry<void(void*, sVec2_9938*)>* vt = *(sVEntry<void(void*, sVec2_9938*)>**)((char*)text + 8);
+    t2Vector size;
+    sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
     v = *(t3Vector*)((char*)text + 0x50);
     while (i < n) {
@@ -2392,7 +2392,6 @@ INCLUDE_ASM("fe/fepopup", cScreenPopup_checkAndFixTextEntry);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-struct sVec2_A6A0 { float x, y; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 extern "C" char* func_004162D0(char* dst, const char* src);
@@ -2414,10 +2413,10 @@ extern "C" void cScreenPopup_checkAndFixTextEntry(void* self, cUIText* text, con
 {
     int fixed = 0;
     t3Vector scale = *(t3Vector*)((char*)text + 0x50);
-    sVec2_A6A0 size;
+    t2Vector size;
     float ext[4];
     float dots[4];
-    sVEntry<void(void*, sVec2_A6A0*)>* vt = *(sVEntry<void(void*, sVec2_A6A0*)>**)((char*)text + 8);
+    sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
     char* f = (char*)func_003A04F0(text);
     float sx = *(float*)(f + 0x30) * scale.x;
