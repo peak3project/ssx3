@@ -5434,7 +5434,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304C50);
 void* func_00226618(void*);
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_4C50 { int idx; int val; int pad; int type; };
-extern char *D_004A28A8_4C50 __asm__("D_004A28A8");
 extern unsigned D_5828_4C50 __asm__("D_004A5828");
 extern sBindEnd_1FBE38 D_582C_4C50 __asm__("D_004A582C");
 extern int D_5830_4C50 __asm__("D_004A5830");
@@ -5443,7 +5442,6 @@ struct Vec_4C50 { float x, y, z, w; } __attribute__((aligned(16)));
 struct A_4C50 { char pad[0x6C0]; };
 struct B_4C50 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual Vec_4C50 *v05(); };
 struct D_4C50 : A_4C50, B_4C50 { };
-struct Tab_4C50 { char pad[0x28]; D_4C50 *arr[1]; };
 static inline Vec_4C50 pos_4C50(char *o) { return *(Vec_4C50*)(o + 0x40); }
 extern "C" void* func_00304C50(void* self, int n, Ent_4C50 *e) {
     if (D_5830_4C50 == 0) {
@@ -5482,7 +5480,7 @@ extern "C" void* func_00304C50(void* self, int n, Ent_4C50 *e) {
         obj = r;
     }
     if (obj) {
-        D_4C50 *rr = (*(Tab_4C50**)(*(char**)(D_004A28A8_4C50 + 0x84) + 0xC))->arr[slot];
+        D_4C50 *rr = (D_4C50*)D_004A28A8->game->race->riders[slot];
         B_4C50 *b = rr;
         D_4C50 *d = (D_4C50*)b;
         float v;
