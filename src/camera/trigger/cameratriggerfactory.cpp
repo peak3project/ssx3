@@ -9,6 +9,13 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai and camera/camera).
+struct sVec4 : t4Vector
+{
+    sVec4() {}
+    sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camaction);
 #ifdef SKIP_ASM
@@ -4787,24 +4794,18 @@ extern void* D_004A28A8;
 extern "C" float func_0031C040(float x);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 
-struct sVec_00178BB0 {
-    float x, y, z, w;
-    sVec_00178BB0() {}
-    sVec_00178BB0(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
-} __attribute__((aligned(16)));
-
 struct sCamInfo_00178BB0 {
     char data[0x68];
 } __attribute__((aligned(16)));
 
-extern sVec_00178BB0 D_004FF160;
+extern sVec4 D_004FF160;
 extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec_00178BB0 ctScale_00178BB0(const sVec_00178BB0& v, float s)
+static inline sVec4 ctScale_00178BB0(const sVec4& v, float s)
 {
-    sVec_00178BB0 r;
+    sVec4 r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4819,9 +4820,9 @@ static inline sVec_00178BB0 ctScale_00178BB0(const sVec_00178BB0& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec_00178BB0 ctAdd_00178BB0(const sVec_00178BB0& a, const sVec_00178BB0& b)
+static inline sVec4 ctAdd_00178BB0(const sVec4& a, const sVec4& b)
 {
-    sVec_00178BB0 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4834,9 +4835,9 @@ static inline sVec_00178BB0 ctAdd_00178BB0(const sVec_00178BB0& a, const sVec_00
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec_00178BB0 ctSub_00178BB0(const sVec_00178BB0& a, const sVec_00178BB0& b)
+static inline sVec4 ctSub_00178BB0(const sVec4& a, const sVec4& b)
 {
-    sVec_00178BB0 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4849,9 +4850,9 @@ static inline sVec_00178BB0 ctSub_00178BB0(const sVec_00178BB0& a, const sVec_00
 }
 
 // PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
-static inline sVec_00178BB0 ctRot_00178BB0(const sVec_00178BB0& q, const sVec_00178BB0& v)
+static inline sVec4 ctRot_00178BB0(const sVec4& q, const sVec4& v)
 {
-    sVec_00178BB0 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -4888,11 +4889,11 @@ static inline float wrap_00178BB0(float x)
     return x - ffloor_00178BB0(x * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
 }
 
-static inline sVec_00178BB0 AxisAngle_00178BB0(const sVec_00178BB0& axis, float angle)
+static inline sVec4 AxisAngle_00178BB0(const sVec4& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
-    sVec_00178BB0 q;
+    sVec4 q;
     q.w = c;
     q.x = s * axis.x;
     q.y = s * axis.y;
@@ -4900,10 +4901,10 @@ static inline sVec_00178BB0 AxisAngle_00178BB0(const sVec_00178BB0& axis, float 
     return q;
 }
 
-static inline sVec_00178BB0 getPos_00178BB0(char* self)
+static inline sVec4 getPos_00178BB0(char* self)
 {
     char* o = *(char**)(self + 0x30);
-    sVEntry<sVec_00178BB0(void*)>* e = &(*(sVEntry<sVec_00178BB0(void*)>**)o)[1];
+    sVEntry<sVec4(void*)>* e = &(*(sVEntry<sVec4(void*)>**)o)[1];
     return e->fn(o + e->delta);
 }
 
@@ -4918,9 +4919,9 @@ extern "C" void func_00178BB0(char* self)
     float ang = wrap_00178BB0((float)*(int*)(self + 0x3A0) * 0.0009090909152291715f * 6.2831854820251465f);
     float a = (1.0f - func_0031C040(ang)) * 0.7482788562774658f + -0.7482788562774658f;
     a -= ffloor_00178BB0(a * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
-    sVec_00178BB0 q = AxisAngle_00178BB0(D_004FF160, a);
-    sVec_00178BB0 v = ctRot_00178BB0(q, *(sVec_00178BB0*)(self + 0x390));
-    *(sVec_00178BB0*)(self + 0x20) = ctAdd_00178BB0(getPos_00178BB0(self), ctScale_00178BB0(D_004FF160, -3.0f));
+    sVec4 q = AxisAngle_00178BB0(D_004FF160, a);
+    sVec4 v = ctRot_00178BB0(q, *(sVec4*)(self + 0x390));
+    *(sVec4*)(self + 0x20) = ctAdd_00178BB0(getPos_00178BB0(self), ctScale_00178BB0(D_004FF160, -3.0f));
     int multi = *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x78) >= 2;
     float h = 0.0f;
     if (multi) {
@@ -4930,8 +4931,8 @@ extern "C" void func_00178BB0(char* self)
     if (multi) {
         d = 200.0f;
     }
-    *(sVec_00178BB0*)(self + 0x40) =
-        ctAdd_00178BB0(ctSub_00178BB0(*(sVec_00178BB0*)(self + 0x20), ctScale_00178BB0(v, d + 126.0f)),
+    *(sVec4*)(self + 0x40) =
+        ctAdd_00178BB0(ctSub_00178BB0(*(sVec4*)(self + 0x20), ctScale_00178BB0(v, d + 126.0f)),
                        ctScale_00178BB0(D_004FF160, h + -27.0f));
 }
 #endif
