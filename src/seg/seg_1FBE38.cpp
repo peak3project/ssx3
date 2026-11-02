@@ -3208,11 +3208,10 @@ extern "C" cLunoValue func_00300B20(int n, Ent_0B20* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300C78);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_004A28A4_0C78 __asm__("D_004A28A4");
-extern "C" void func_00278E50_0C78(int, int, int, int, int, int, int, int) __asm__("func_00278E50");
-extern "C" void func_00278ED0_0C78(int, int, int, int, int, int, int) __asm__("func_00278ED0");
-extern "C" int func_00278F38(int, int);
-extern "C" int func_00278F68(int, int, int, int);
+extern "C" void func_00278E50_0C78(char*, int, int, int, int, int, int, int) __asm__("func_00278E50");
+extern "C" void func_00278ED0_0C78(char*, int, int, int, int, int, int) __asm__("func_00278ED0");
+extern "C" int func_00278F38(char*, int);
+extern "C" int func_00278F68(char*, int, int, int);
 extern unsigned D_0C78[] __asm__("D_004FBB58");
 extern int D_004A56A8;
 extern int D_004A3C58;
@@ -3241,15 +3240,15 @@ extern "C" cLunoValue func_00300C78(int n, Ent_0C78 *e) {
     unsigned id = buf[0];
     switch ((int)buf[1]) {
     case 0:
-        func_00278ED0_0C78(D_004A28A4_0C78, 0, id, 3, -1, -1, -1);
-        func_00278F38(D_004A28A4_0C78, 0);
+        func_00278ED0_0C78(D_004A28A4, 0, id, 3, -1, -1, -1);
+        func_00278F38(D_004A28A4, 0);
         break;
     case 1:
-        func_00278E50_0C78(D_004A28A4_0C78, 0, id, 3, 0, -1, -1, -1);
-        func_00278F38(D_004A28A4_0C78, 0);
+        func_00278E50_0C78(D_004A28A4, 0, id, 3, 0, -1, -1, -1);
+        func_00278F38(D_004A28A4, 0);
         break;
     case 2:
-        func_00278F68(D_004A28A4_0C78, 0, 1, 0);
+        func_00278F68(D_004A28A4, 0, 1, 0);
         break;
     }
     return D_004C9098;
