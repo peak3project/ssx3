@@ -4740,7 +4740,7 @@ int* func_00226610(void*);
 
 struct Ent_36B0 { int idx; int val; int pad; int kind; };
 
-extern "C" void* func_003036B0(void* self, int n, Ent_36B0* e) {
+extern "C" cLunoValue* func_003036B0(cLunoValue* ret, int n, Ent_36B0* e) {
     if (D_004A57C8_36B0 == 0) {
         D_004A57C0_36B0 = -1;
         D_004A57C8_36B0 = 1;
@@ -4760,9 +4760,9 @@ extern "C" void* func_003036B0(void* self, int n, Ent_36B0* e) {
             *d = p->val;
     }
     int r = func_0030AF08(D_004A3DD8, D_004A3DD8->being, vp[0]);
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = r;
-    return self;
+    ret->type = 1;
+    *func_00226610(ret) = r;
+    return ret;
 }
 #endif
 
