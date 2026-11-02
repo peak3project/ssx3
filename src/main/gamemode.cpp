@@ -85,6 +85,25 @@ struct cGMBigAirHandler {
     int t[3][10];               // 0x04
 };
 
+// Game-mode handler base (cGameModeHandler; the per-mode handlers in D_00536668 derive from it).
+class cGameModeHandler {
+public:
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+};
+
+// The race handler (cGMRaceHandler, vtable D_0047CF38, 0xD0 bytes).
+struct cGMRaceHandler : public cGameModeHandler {
+    int f4;                     // 0x04
+    int f8;                     // 0x08
+    int fC;                     // 0x0C
+    int rows[3][6];             // 0x10 line-up per heat: the player's character, then the others
+    int tbl[3][10];             // 0x58 times per heat and rider
+};
+
 static inline sRace* GetRace()
 {
     return D_004A28A8->game->race;
@@ -1111,34 +1130,12 @@ int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
 extern "C" int func_00146E98(void* iface, int a1);
 extern "C" int func_00145750(void* iface);
 extern "C" void* func_00416210(void* dst, int c, int n);
-extern "C" void func_0023A4F0(void* self);
-extern "C" void func_0023A668(void* self);
+extern "C" void func_0023A4F0(cGMRaceHandler* self);
+extern "C" void func_0023A668(cGMRaceHandler* self);
 extern signed char D_00535C11[];
 extern unsigned int D_00536640[];
 extern int D_00536730[];
 extern int D_00536708[];
-
-class cGameModeBase_23A108 {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
-
-struct sMode_23A108 : public cGameModeBase_23A108 {
-    int f4;                     // 0x04
-    int f8;                     // 0x08
-    int fC;                     // 0x0C
-    char pad10[0x18];           // 0x10
-    int charA;                  // 0x28
-    int othersA[5];             // 0x2C
-    int charB;                  // 0x40
-    int charC;                  // 0x44
-    int othersB[4];             // 0x48
-    int tbl[3][10];             // 0x58
-};
 
 static inline void fillOthers_23A108(int* dst, int p)
 {
@@ -1157,7 +1154,7 @@ static inline void fillOthers_23A108(int* dst, int p)
     }
 }
 
-extern "C" void func_0023A108(sMode_23A108* self)
+extern "C" void func_0023A108(cGMRaceHandler* self)
 {
     cGameModeMan* g0 = D_004A2C70;
     g0->f9C = 0;
@@ -1207,8 +1204,8 @@ extern "C" void func_0023A108(sMode_23A108* self)
         gm->f14 = 0;
         if (self->f8 == 0) {
             int p = func_00146E98(player, 0);
-            self->charA = cBENewPlayerInterface_getRiderCharID(player, p);
-            fillOthers_23A108(self->othersA, p);
+            self->rows[1][0] = cBENewPlayerInterface_getRiderCharID(player, p);
+            fillOthers_23A108(&self->rows[1][1], p);
             func_0023A668(self);
         }
         {
@@ -1246,9 +1243,9 @@ extern "C" void func_0023A108(sMode_23A108* self)
                 self->v05();
             } else {
                 int p = func_00146E98(player, 0);
-                self->charB = cBENewPlayerInterface_getRiderCharID(player, p);
-                self->charC = func_00145750(race);
-                fillOthers_23A108(self->othersB, p);
+                self->rows[2][0] = cBENewPlayerInterface_getRiderCharID(player, p);
+                self->rows[2][1] = func_00145750(race);
+                fillOthers_23A108(&self->rows[2][2], p);
                 func_0023A668(self);
             }
         }
@@ -1289,7 +1286,7 @@ extern "C" int func_00145750(void* iface);
 extern "C" unsigned int func_00237CD8(void);
 extern "C" void func_0023C770(int* arr, unsigned int n);
 
-extern "C" void func_0023A4F0(void* self)
+extern "C" void func_0023A4F0(cGMRaceHandler* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1313,17 +1310,17 @@ extern "C" void func_0023A4F0(void* self)
         }
     }
     func_0023C770(arr, 10);
-    *(int*)((char*)self + 0x10) = charA;
-    *(int*)((char*)self + 0x14) = arr[0];
-    *(int*)((char*)self + 0x18) = arr[1];
-    *(int*)((char*)self + 0x1C) = arr[2];
-    *(int*)((char*)self + 0x20) = arr[3];
-    *(int*)((char*)self + 0x24) = arr[4];
-    *(int*)((char*)self + 0x34) = arr[5];
-    *(int*)((char*)self + 0x38) = arr[6];
-    *(int*)((char*)self + 0x3C) = arr[7];
-    *(int*)((char*)self + 0x50) = arr[8];
-    *(int*)((char*)self + 0x54) = arr[9];
+    self->rows[0][0] = charA;
+    self->rows[0][1] = arr[0];
+    self->rows[0][2] = arr[1];
+    self->rows[0][3] = arr[2];
+    self->rows[0][4] = arr[3];
+    self->rows[0][5] = arr[4];
+    self->rows[1][3] = arr[5];
+    self->rows[1][4] = arr[6];
+    self->rows[1][5] = arr[7];
+    self->rows[2][4] = arr[8];
+    self->rows[2][5] = arr[9];
 }
 #endif
 
@@ -1334,14 +1331,8 @@ extern int func_00146E98_668(void* iface, int a) __asm__("func_00146E98");
 extern int cBENewPlayerInterface_getRiderCharID_668(void* iface, int id) __asm__("cBENewPlayerInterface_getRiderCharID__FPvi");
 extern int func_00147410_668(void* iface, int id) __asm__("func_00147410");
 
-struct sSelf_23A668 {
-    char pad_0x0[0x10];
-    int rows[1][6];     // 0x10
-};
-
-extern "C" void func_0023A668(void* self_)
+extern "C" void func_0023A668(cGMRaceHandler* self)
 {
-    sSelf_23A668* self = (sSelf_23A668*)self_;
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
     int id = func_00146E98_668(iface, 0);
     int ch = cBENewPlayerInterface_getRiderCharID_668(iface, id);
@@ -1379,15 +1370,6 @@ extern int D_005366A8[];
 extern int D_00536730[];
 extern signed char D_00535BC8[];
 
-struct sMode_23A760 {
-    void* vt;           // 0x00
-    int f4;             // 0x04
-    int f8;             // 0x08
-    int fC;             // 0x0C
-    char pad10[0x48];   // 0x10
-    int tbl[3][10];     // 0x58
-};
-
 static inline int vcall_23A760(char* obj, int slot)
 {
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
@@ -1395,7 +1377,7 @@ static inline int vcall_23A760(char* obj, int slot)
 }
 
 // cGMRaceHandler slot 7: records rider idx's heat time, ranks the heat and moves the heat state on.
-extern "C" void func_0023A760(sMode_23A760* self, int idx)
+extern "C" void func_0023A760(cGMRaceHandler* self, int idx)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     cBE_getInterface_Fv(cBE_getBE(), 0);
