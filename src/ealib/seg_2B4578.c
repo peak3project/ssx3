@@ -8708,27 +8708,24 @@ int func_003C4E50(int a, int b) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4EC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct S_4EC8 { unsigned short a; unsigned short b; };
-struct G_4EC8 { char pad[0x1A98]; unsigned short n; unsigned short lo; unsigned short hi; unsigned short max; struct S_4EC8 *segs; };
-extern struct G_4EC8 D_0050AD00_4EC8 __asm__("D_0050AD00");
 int f_4EC8(int *out) __asm__("func_003C4EC8");
 int f_4EC8(int *out) {
     int start;
     int len;
     int best = 0;
     int i;
-    struct S_4EC8 *seg;
-    struct S_4EC8 *prev;
+    struct sAD00Seg *seg;
+    struct sAD00Seg *prev;
 
-    if (D_0050AD00_4EC8.n == 0) {
-        start = D_0050AD00_4EC8.lo;
-        len = D_0050AD00_4EC8.hi - D_0050AD00_4EC8.lo;
+    if (D_0050AD00.f1A98 == 0) {
+        start = D_0050AD00.f1A9A;
+        len = D_0050AD00.f1A9C - D_0050AD00.f1A9A;
         func_003C4AF8(&start, &len);
         best = len;
         *out = start;
     } else {
-        for (i = 0; i < D_0050AD00_4EC8.n; i++) {
-            seg = &D_0050AD00_4EC8.segs[i];
+        for (i = 0; i < D_0050AD00.f1A98; i++) {
+            seg = &D_0050AD00.f1AA0[i];
             if (i == 0) {
                 start = seg->a;
                 len = seg->a - 0x141;
@@ -8738,7 +8735,7 @@ int f_4EC8(int *out) {
                     *out = start;
                 }
             } else {
-                prev = &D_0050AD00_4EC8.segs[i - 1];
+                prev = &D_0050AD00.f1AA0[i - 1];
                 start = prev->a + prev->b;
                 len = seg->a - start;
                 func_003C4AF8(&start, &len);
@@ -8748,9 +8745,9 @@ int f_4EC8(int *out) {
                 }
             }
         }
-        prev = &D_0050AD00_4EC8.segs[i - 1];
+        prev = &D_0050AD00.f1AA0[i - 1];
         start = prev->a + prev->b;
-        len = D_0050AD00_4EC8.max - start;
+        len = D_0050AD00.f1A9E - start;
         func_003C4AF8(&start, &len);
         if (best < len) {
             best = len;
