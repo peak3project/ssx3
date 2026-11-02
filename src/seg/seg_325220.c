@@ -1872,7 +1872,93 @@ char *func_00427520(unsigned a0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00427590);
+#ifdef SKIP_ASM
+struct W7590 { char b[4]; };
+struct B7590 { char b[0x144]; };
+struct C7590 { char b[0x40]; };
+struct L7590 { int n1; int n2; char *d1; char *d2; unsigned char b1[64]; unsigned char b2[64]; };
+extern char D_7590_380[] __asm__("D_0052E380");
+extern int D_00455208;
+extern int D_00455210;
+extern volatile int D_00455188[];
+extern void *func_0041605C(void *, void *, int);
+extern void func_00423DD0(int);
+void func_00427590(int *a0) {
+    char *p;
+    int sema;
+    int cmd;
+    char *dst;
+    int size;
+    char *buf;
+    unsigned len;
+    int idx;
+    int i;
+    D_00455208 = idx = D_00455210 != 0 ? a0[3] : 0;
+    p = (char *)((int)(D_7590_380 + idx * 0x440) | 0x20000000);
+    *(struct W7590 *)&sema = *(struct W7590 *)(p + 0x0);
+    *(struct W7590 *)&cmd = *(struct W7590 *)(p + 0x4);
+    *(struct W7590 *)&dst = *(struct W7590 *)(p + 0x8);
+    *(struct W7590 *)&size = *(struct W7590 *)(p + 0xC);
+    if (sema >= 0)
+        func_0041605C(dst, p + 0x10, size);
+    switch (cmd) {
+    case 2: {
+        struct L7590 *q = (struct L7590 *)(p + 0x14);
+        char *d;
+        char *u;
+        if (q->n1 > 0) {
+            d = q->d1;
+            u = (char *)((int)d | 0x20000000);
+            for (i = 0; i < q->n1; i++) {
+                unsigned char c = q->b1[i];
+                u[i] = c;
+                d[i] = c;
+            }
+        }
+        if (q->n2 > 0) {
+            d = q->d2;
+            u = (char *)((int)d | 0x20000000);
+            for (i = 0; i < q->n2; i++) {
+                unsigned char c = q->b2[i];
+                u[i] = c;
+                d[i] = c;
+            }
+        }
+        break;
+    }
+    case 0xB:
+        *(struct W7590 *)&buf = *(struct W7590 *)(p + 0x14);
+        *(struct B7590 *)buf = *(struct B7590 *)(p + 0x18);
+        break;
+    case 0xC:
+        *(struct W7590 *)&buf = *(struct W7590 *)(p + 0x14);
+        *(struct C7590 *)buf = *(struct C7590 *)(p + 0x18);
+        break;
+    case 0x17:
+    case 0x19:
+    case 0x1A:
+        *(struct W7590 *)&buf = *(struct W7590 *)(p + 0x14);
+        *(struct W7590 *)&len = *(struct W7590 *)(p + 0x18);
+        if (len > 0x400)
+            len = 0x400;
+        func_0041605C(buf, p + 0x1C, len);
+        break;
+    }
+    if (sema < 0) {
+        sema = -sema;
+        for (i = 0; i < 0x20; i++) {
+            if (D_00455188[i] == sema) {
+                D_00455188[i] = -1;
+                break;
+            }
+        }
+    } else {
+        func_00423DD0(sema);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427938);
