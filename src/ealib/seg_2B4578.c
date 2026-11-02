@@ -3471,10 +3471,6 @@ void func_003B96B8(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B97D8);
 #ifdef SKIP_ASM
-struct A_97D8 { int a; char pad; signed char b; signed char c; signed char d; };
-struct B_97D8 { char pad[0x10]; int v; char pad2[0x14]; signed char w; char pad3[0x47]; };
-extern struct A_97D8 D_0050A820_97D8[] __asm__("D_0050A820");
-extern struct B_97D8 D_0050A120_97D8[] __asm__("D_0050A120");
 extern void func_003B58A0();
 extern void func_003B58D8();
 extern void f_5910_97D8(void (*)(void)) __asm__("func_003B5910");
@@ -3483,21 +3479,20 @@ extern void f_9880_97D8(void) __asm__("func_003B9880");
 
 int func_003B97D8(void) {
     int i;
-    struct A_97D8 *a;
-    struct B_97D8 *b;
+    struct sA120Song *b;
     int end;
     func_003B58A0();
     for (i = 0; i < 24; i++) {
-        D_0050A820_97D8[i].b = -1;
-        D_0050A820_97D8[i].c = 0;
-        D_0050A820_97D8[i].d = 0;
-        D_0050A820_97D8[i].a = -1;
+        D_0050A820[i].f05 = -1;
+        D_0050A820[i].f06 = 0;
+        D_0050A820[i].f07 = 0;
+        D_0050A820[i].f00 = -1;
     }
-    b = D_0050A120_97D8;
+    b = D_0050A120.f000;
     end = (int)(b + 16);
     do {
-        b->v = -1;
-        b->w = 0;
+        b->f10 = -1;
+        b->f28 = 0;
         b++;
     } while ((int)b < end);
     f_5910_97D8(func_003B96B8);
