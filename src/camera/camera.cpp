@@ -36,14 +36,15 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
-// The camera-shake tuning table: one entry per shake type, reset by func_0015E2A8, plus each type's
-// selector in D_004C5430.
+// The camera base matrix (set up by func_001673F8), followed by the camera-shake tuning
+// table: one entry per shake type, reset by func_0015E2A8, plus each type's selector in D_004C5430.
 struct sCamShake {
     float base;     // passed to func_001656B0 / func_00165938
     float spread;
     float weight;   // scales the requested amount
     float range;    // distance at which the shake fades out
 };
+extern t4Matrix D_004C53A0;
 extern sCamShake D_004C53E0[5];
 extern int D_004C5430[5];
 
@@ -295,7 +296,6 @@ struct sPair_E050 {
     t4Vector b;
 };
 
-extern t4Matrix D_004C53A0_E050 __asm__("D_004C53A0");
 extern "C" void* func_00176D68(void* self);
 extern "C" void func_00166640(void* self, int a1);
 extern "C" void func_00166F90(void* self);
@@ -439,7 +439,7 @@ extern "C" void func_0015E050_impl(char* self, char* a1, char* a2)
     t4Vector* q = (t4Vector*)(self + 0x30);
     t4Matrix* m = (t4Matrix*)(self + 0x40);
     *(sPair_E050*)(self + 0x20) = out;
-    vu0CopyMtx_E050(m, &D_004C53A0_E050);
+    vu0CopyMtx_E050(m, &D_004C53A0);
     t4Matrix rot;
     vu0QuatToMtx_E050(&rot, q);
     vu0MulEqMtx_E050(m, &rot);
@@ -5590,7 +5590,6 @@ extern int D_004A4DA8[2];
 extern int D_004A4DB0[2];
 extern int D_004A4DC0;
 extern int D_004A4DD4 __asm__("D_004A4DD4");
-extern float D_004C53A0[16];
 extern "C" void func_0015E2A8(void);
 static inline void initE(int* p, int n)
 {
@@ -5842,22 +5841,22 @@ void sti_001673F8(int init, int prio)
         initE(D_004A4DA8, 12);
         initE(D_004A4DB0, 13);
         float z = D_004C5030[3];
-        D_004C53A0[0] = z;
-        D_004C53A0[4] = -1.0f;
-        D_004C53A0[8] = z;
-        D_004C53A0[12] = z;
-        D_004C53A0[1] = z;
-        D_004C53A0[5] = z;
-        D_004C53A0[9] = 1.0f;
-        D_004C53A0[13] = z;
-        D_004C53A0[2] = 1.0f;
-        D_004C53A0[6] = z;
-        D_004C53A0[10] = z;
-        D_004C53A0[14] = z;
-        D_004C53A0[3] = z;
-        D_004C53A0[7] = z;
-        D_004C53A0[11] = z;
-        D_004C53A0[15] = 1.0f;
+        D_004C53A0.row[0].x = z;
+        D_004C53A0.row[1].x = -1.0f;
+        D_004C53A0.row[2].x = z;
+        D_004C53A0.row[3].x = z;
+        D_004C53A0.row[0].y = z;
+        D_004C53A0.row[1].y = z;
+        D_004C53A0.row[2].y = 1.0f;
+        D_004C53A0.row[3].y = z;
+        D_004C53A0.row[0].z = 1.0f;
+        D_004C53A0.row[1].z = z;
+        D_004C53A0.row[2].z = z;
+        D_004C53A0.row[3].z = z;
+        D_004C53A0.row[0].w = z;
+        D_004C53A0.row[1].w = z;
+        D_004C53A0.row[2].w = z;
+        D_004C53A0.row[3].w = 1.0f;
         func_0015E2A8();
         *(char*)&D_004A4DC0 = -1;
         D_004A4DC0 = (D_004A4DC0 & 0xFF) | 0xFFFFFF00u;
