@@ -8,10 +8,12 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Declarations shared by the functions of this unit.
+int GetHashValue32(char* str);
+
 //100%
 INCLUDE_ASM("fe/festateselectmp", cFEStateSelectMultiplayerMode_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_004613B8[];
@@ -30,7 +32,6 @@ extern "C" void cFEStateSelectMultiplayerMode_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateselectmp", func_001A30F8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_004A14F8[];
 extern char D_004A1500[];
 
