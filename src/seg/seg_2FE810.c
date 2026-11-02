@@ -1149,27 +1149,15 @@ int func_003FF4A8(int a) {
         Q_6B48a(&Q_526200[0], 0x80000100, 0);
         if (Q_526200[0].f24 != 0)
             break;
-        i = 0x10000;
-        do {
-            i--;
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-        } while (i != -1);
+        for (i = 0x10000; i--; )
+            ;
     }
     for (;;) {
         Q_6B48a(&Q_526200[1], 0x80000101, 0);
         if (Q_526200[1].f24 != 0)
             break;
-        i = 0x10000;
-        do {
-            i--;
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-        } while (i != -1);
+        for (i = 0x10000; i--; )
+            ;
     }
     v = func_00400740();
     h = v >> 8;
