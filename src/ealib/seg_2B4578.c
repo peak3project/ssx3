@@ -2112,15 +2112,15 @@ struct sA0A0Strm *func_003B6A38(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6A70);
 #ifdef SKIP_ASM
-extern void *func_003B7A70_6A70(int) __asm__("func_003B7A70");
+extern struct sA0A0Node *func_003B7A70(int);
 extern void func_003C6320(void *, void *);
-extern void func_003C6288_6A70(void *, void *) __asm__("func_003C6288");
+extern void func_003C6288(void *, void *);
 
 void func_003B6A70(int arg0) {
     struct sA0A0Strm *s = D_0050A0A0[arg0 & 0xFF];
-    void *r = func_003B7A70_6A70(arg0);
+    struct sA0A0Node *r = func_003B7A70(arg0);
     func_003C6320(&s->f11C, r);
-    func_003C6288_6A70(&s->f128, r);
+    func_003C6288(&s->f128, r);
     if (s->f134 == r) {
         s->f134 = 0;
     }
@@ -2448,17 +2448,14 @@ int func_003B78F8(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7A70);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-char *func_003B6A38_7A70(int) __asm__("func_003B6A38");
-
-char *func_003B7A70(int arg0) {
-    char *t;
-    char *v;
+struct sA0A0Node *func_003B7A70(int arg0) {
+    struct sA0A0Strm *t;
+    struct sA0A0Node *v;
     if (arg0 < 0) return 0;
-    t = func_003B6A38_7A70(arg0 & 0xFF);
+    t = func_003B6A38(arg0 & 0xFF);
     if (t == 0) return 0;
-    for (v = *(char **)(t + 0x11C); v != 0; v = *(char **)v) {
-        if (*(int *)(v + 0xC) == arg0) break;
+    for (v = t->f11C.f00; v != 0; v = v->f00) {
+        if (v->f0C == arg0) break;
     }
     return v;
 }
@@ -2537,37 +2534,35 @@ int func_003B7B48_impl(int arg0, int *out) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7C40);
 #ifdef SKIP_ASM
 typedef struct { unsigned int lo, hi; } L64_7C40;
-extern char *f6A38_7C40(int) __asm__("func_003B6A38");
-extern char *func_003B7A70(int);
 extern L64_7C40 f6380_7C40(int, int) __asm__("func_003C6380");
 extern int f64A8_7C40(L64_7C40, int) __asm__("func_003C64A8");
 
 int func_003B7C40(int h, int *out) {
-    char *a;
-    char *b;
+    struct sA0A0Strm *a;
+    struct sA0A0Node *b;
     unsigned int d;
     out[0] = 0;
     out[1] = 0;
     out[2] = 0;
     out[3] = 0;
-    if (h < 0 || (a = f6A38_7C40(h & 0xFF)) == 0) {
+    if (h < 0 || (a = func_003B6A38(h & 0xFF)) == 0) {
         return -8;
     }
     b = func_003B7A70(h);
     if (b != 0) {
-        if (*(unsigned char *)(b + 0x24) == 0) {
+        if (b->f24 == 0) {
             out[0] = 0;
         } else {
-            if (*(char **)(a + 0x11C) == b) {
+            if (a->f11C.f00 == b) {
                 out[0] = 2;
-                d = *(unsigned short *)(a + 0x14);
+                d = *(unsigned short *)a->f14.b;
             } else {
                 out[0] = 1;
-                d = *(unsigned short *)(a + 0x18);
+                d = *(unsigned short *)a->f18.b;
             }
-            out[1] = f64A8_7C40(f6380_7C40(*(int *)(b + 0x14), 1000), d);
-            out[2] = f64A8_7C40(f6380_7C40(*(int *)(b + 0x18) - *(int *)(b + 0x14), 1000), d);
-            out[3] = (unsigned int)(*(int *)(b + 0x1C) * 1000) / d;
+            out[1] = f64A8_7C40(f6380_7C40(b->f14, 1000), d);
+            out[2] = f64A8_7C40(f6380_7C40(b->f18 - b->f14, 1000), d);
+            out[3] = b->f1C * 1000 / d;
         }
     } else {
         out[0] = 3;
