@@ -111,8 +111,8 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     unsigned short f4C;
     char pad4E[0x5F - 0x4E];
     signed char f5F;
-    signed char f60;
-    signed char f61;
+    signed char f60[1];             /* indexed */
+    signed char f61[1];             /* indexed */
     short f62;
     signed char f64;
     char pad65[0x68 - 0x65];
@@ -2550,18 +2550,15 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B88C8);
 extern int func_003BA6E8_88C8() __asm__("func_003BA6E8");
 extern void func_003BA740_88C8(int, int) __asm__("func_003BA740");
 extern int func_003C27E0(int, int);
-extern char D_0050A8E8_88C8[] __asm__("D_0050A8E8");
 
 int func_003B88C8(int arg0, int arg1, int arg2) {
     int sp0;
     int t;
-    char *b;
     t = func_003BA6E8_88C8();
     if (t >= 0) {
         sp0 = -1;
-        b = D_0050A8E8_88C8;
         while (func_003BAA00(t, &sp0) != 0) {
-            *(char *)(sp0 * 0x8C + *(int *)(b + 0x1F0) + arg1 + 0x61) = arg2;
+            D_0050A8E8.f1F0[sp0].f61[arg1] = arg2;
             func_003BA740_88C8(arg1, sp0);
             func_003C27E0(sp0, arg1);
         }
