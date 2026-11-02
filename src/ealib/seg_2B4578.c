@@ -12420,7 +12420,39 @@ void func_003CAA28(float* a, float* b, float* d, int n, int m)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAB28);
+#ifdef SKIP_ASM
+#define FABS_AB28(x) ((x) < 0.0f ? -(x) : (x))
+int func_003CAB28(int n, unsigned char **pp, float *err, float t) {
+    int k = **pp + n / 2;
+    float e1, e2;
+    if (t < 1.0f) {
+        e1 = ((float)n + *err) - t * n;
+        e2 = ((float)(n * 2 - k) + *err) - (t + t) * n;
+        if (FABS_AB28(e1) < FABS_AB28(e2)) {
+            *pp += 1;
+            *err = e1;
+            return 0;
+        }
+        *pp += 2;
+        *err = e2;
+        return -k;
+    } else {
+        float tn = t * n;
+        e1 = ((float)n + *err) - tn;
+        e2 = ((float)(n + k) + *err) - tn;
+        if (FABS_AB28(e1) < FABS_AB28(e2)) {
+            *pp += 1;
+            *err = e1;
+            return 0;
+        }
+        *pp += 1;
+        *err = e2;
+        return k;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003CAC88);
