@@ -62,6 +62,24 @@ struct sCameras {
     char* cam[3];               // 0x4
     int f10;                    // 0x10
 };
+// 16-byte vector (by-value results of func_00122C28 / func_00123F38).
+struct sVec4 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// The object func_00230698 returns has this class at +0x10 (vtable pointer at 0xC).
+struct cRiderObj {
+    int f0, f4, f8;
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual int isBusy();
+};
+
 // The game-mode manager (cGameModeMan, main/gamemode layout; D_004A28A8->gm).
 struct cGameModeMan {
     int f0;             // 0x00 current heat (1..3)
@@ -691,23 +709,6 @@ INCLUDE_ASM("main/gamestate", func_00235CC8);
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cBE_getBE();
-struct sVec4_236960;
-struct sVec4_235CC8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-struct cRiderObj_235CC8 {
-    int f0, f4, f8;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual int isBusy();
-};
-
 extern "C" int func_0012ABD0(void* p);
 extern "C" void func_0012B030(void* p);
 extern "C" void func_0012B000(void* p);
@@ -715,9 +716,9 @@ extern "C" void func_00128958(void* p);
 extern "C" int func_0012A180(void* p);
 void func_001289F0(void* p);
 extern "C" void func_001296F8(void* p);
-extern "C" sVec4_235CC8 func_00122C28(void* rider);
-extern "C" void func_003A9658(void* cache, int idx, const sVec4_236960* pos, float radius);
-extern "C" int func_003A9770(void* cache, int idx, sVec4_236960* pos, float* dist);
+extern "C" sVec4 func_00122C28(void* rider);
+extern "C" void func_003A9658(void* cache, int idx, const sVec4* pos, float radius);
+extern "C" int func_003A9770(void* cache, int idx, sVec4* pos, float* dist);
 extern "C" int func_002791D8(void* p, int a);
 extern "C" int func_00279298(void* p);
 extern "C" bool func_0027A9F0(void* p);
@@ -750,8 +751,8 @@ extern "C" void func_00235CC8(void* self)
             D_004A2C68->race->f14 = 1;
             (*cache)->slot[idx].f0 = 1;
             sRacePlayer* r = D_004A28A8->game->race->players[0];
-            sVec4_235CC8 pos = func_00122C28(r->rider);
-            func_003A9658((char*)*cache + 0x10, idx, (const sVec4_236960*)&pos, 45000.0f);
+            sVec4 pos = func_00122C28(r->rider);
+            func_003A9658((char*)*cache + 0x10, idx, &pos, 45000.0f);
             *(int*)((char*)self + 0x10) = 2;
         } else {
             func_001296F8(D_004A28A8->game->race);
@@ -759,9 +760,9 @@ extern "C" void func_00235CC8(void* self)
         break;
     case 2:
         if (*(int*)((char*)self + 0x18) != 0) {
-            sVec4_235CC8 v;
+            sVec4 v;
             float dist;
-            func_003A9770((char*)*cache + 0x10, idx, (sVec4_236960*)&v, &dist);
+            func_003A9770((char*)*cache + 0x10, idx, &v, &dist);
             if (dist < 20000.0f)
                 break;
             if (*(int*)((char*)self + 0x14) < 120)
@@ -771,7 +772,7 @@ extern "C" void func_00235CC8(void* self)
             char* o = (char*)func_00230698(D_004A28A8->game, 0);
             if (func_00279298(D_004A28A4) != 0)
                 break;
-            if (((cRiderObj_235CC8*)(o + 0x10))->isBusy() != 0)
+            if (((cRiderObj*)(o + 0x10))->isBusy() != 0)
                 break;
             if (*(int*)(o + 0x44) != 0)
                 break;
@@ -1074,27 +1075,11 @@ extern "C" void func_002368A0(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236960);
 #ifdef SKIP_ASM
-struct sVec4_236960 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-struct cRiderObj_236960 {
-    int f0, f4, f8;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual int isBusy();
-};
-
 extern "C" int func_0022D278(void* self, int idx);
 extern "C" void func_0022D088(void* self, int idx, int mode);
-extern "C" sVec4_236960 func_00123F38(void* rider);
-extern "C" void func_003A9658(void* cache, int idx, const sVec4_236960* pos, float radius);
-extern "C" int func_003A9770(void* cache, int idx, sVec4_236960* pos, float* dist);
+extern "C" sVec4 func_00123F38(void* rider);
+extern "C" void func_003A9658(void* cache, int idx, const sVec4* pos, float radius);
+extern "C" int func_003A9770(void* cache, int idx, sVec4* pos, float* dist);
 extern "C" int func_00279298(void* p);
 extern "C" bool func_0027A9F0(void* p);
 extern void* D_004A28A4;
@@ -1113,21 +1098,21 @@ extern "C" void func_00236960(void* self)
     case 0:
         if (func_0022D278(game, *(int*)(game + 0x1BC)) != 0) {
             sRacePlayer* r = D_004A28A8->game->race->players[0];
-            sVec4_236960 pos = func_00123F38(r->rider);
+            sVec4 pos = func_00123F38(r->rider);
             (*cache)->slot[idx].f0 = 1;
             func_003A9658((char*)*cache + 0x10, idx, &pos, 45000.0f);
             *(int*)((char*)self + 0x10) = 1;
         }
         break;
     case 1: {
-        sVec4_236960 v;
+        sVec4 v;
         float dist;
         func_003A9770((char*)*cache + 0x10, idx, &v, &dist);
         if (dist < 20000.0f) {
             break;
         }
         char* o = (char*)func_00230698(D_004A28A8->game, 0);
-        if (((cRiderObj_236960*)(o + 0x10))->isBusy() != 0) {
+        if (((cRiderObj*)(o + 0x10))->isBusy() != 0) {
             break;
         }
         if (*(int*)(o + 0x44) != 0) {
