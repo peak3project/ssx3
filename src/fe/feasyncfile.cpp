@@ -102,6 +102,11 @@ struct sObj1C55F8 {
     char data[0xD0];
 };
 
+struct sFEObj6C4 {
+    char pad[0x6C4];
+    int f6C4;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -4714,12 +4719,7 @@ extern "C" void func_00261EF8(void* self, int a1, int a2, int a3);
 extern void* D_004A3328;
 extern void* D_004A3028;
 
-struct sFEObj_001ABC50 {
-    char pad[0x6C4];
-    int f6C4;
-};
-
-extern "C" void func_001ABC50(sFEObj_001ABC50* self, int a1, int a2)
+extern "C" void func_001ABC50(sFEObj6C4* self, int a1, int a2)
 {
     self->f6C4 = 0;
     if (D_004A3328 == 0) {
@@ -4748,12 +4748,7 @@ extern "C" void func_00261EF8(void* self, int a1, int a2, int a3);
 extern void* D_004A3328;
 extern void* D_004A3028;
 
-struct sFEObj_001ABE58 {
-    char pad[0x6C4];
-    int f6C4;
-};
-
-extern "C" void func_001ABE58(sFEObj_001ABE58* self, int a1, int a2)
+extern "C" void func_001ABE58(sFEObj6C4* self, int a1, int a2)
 {
     self->f6C4 = 0;
     if (D_004A3328 == 0) {
