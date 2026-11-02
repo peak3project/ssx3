@@ -206,6 +206,43 @@ struct sMonSlot {
 };
 
 extern void* D_004D3E98[];
+
+// A loaded sound stream object (func_002AF960, 0x4C bytes); 0x40 is passed on as its short name.
+struct sBmObj {
+    char pad[0x40];
+    int f40;                    // 0x40
+};
+
+struct sBmVoicePair {
+    void* handle;               // 0x0
+    int active;                 // 0x4
+};
+
+struct sBmHandlePair {
+    void* p[2];
+};
+
+// A bank list (func_002AFA68 ctor / func_002AFB38 dtor): its voices and up to 500 loaded streams.
+struct sBankList {
+    int f0;                     // 0x0
+    int id;                     // 0x4
+    int f8;                     // 0x8
+    char fC;                    // 0xC
+    char pad_0xD[0xCC - 0xD];
+    sBmVoicePair voices[4];     // 0xCC
+    int voiceCount;             // 0xEC
+    int count;                  // 0xF0
+    sBmObj* streams[(0x8C4 - 0xF4) / 4];  // 0xF4
+    int f8C4;                   // 0x8C4
+    int f8C8;                   // 0x8C8
+    int f8CC;                   // 0x8CC
+    int f8D0;                   // 0x8D0
+    sBmHandlePair pairs[4];     // 0x8D4
+    float f8F4;                 // 0x8F4
+    int f8F8;                   // 0x8F8
+    int f8FC;                   // 0x8FC
+    int f900;                   // 0x900
+};
 extern "C" void func_003B58D8(void);
 extern "C" void func_003B58A0(void);
 extern char* D_004A37B4;
@@ -2014,40 +2051,15 @@ INCLUDE_ASM("sound/bankmonitor", func_002AFA68);
 extern "C" void func_002AA910(void* sys, int id, int a, int b, int c);
 extern "C" void func_002B0088(void* self, int a, int b, int c);
 
-struct sBmPair_FA68 {
-    int a;
-    int b;
-};
-
-struct sBmStream_FA68 {
-    int f0;                     // 0x0
-    int f4;                     // 0x4
-    int f8;                     // 0x8
-    char fC;                    // 0xC
-    char pad_0xD[0xCC - 0xD];
-    sBmPair_FA68 pairs[4];      // 0xCC
-    int fEC;                    // 0xEC
-    int fF0;                    // 0xF0
-    char pad_0xF4[0x8C4 - 0xF4];
-    int f8C4;                   // 0x8C4
-    int f8C8;                   // 0x8C8
-    int f8CC;                   // 0x8CC
-    int f8D0;                   // 0x8D0
-    char pad_0x8D4[0x8F4 - 0x8D4];
-    int f8F4;                   // 0x8F4
-    char pad_0x8F8[0x900 - 0x8F8];
-    int f900;                   // 0x900
-};
-
 extern "C" void* func_002AFA68(void* mem, int a1, int a2, int a3, int a4, int a5, int a6)
 {
-    sBmStream_FA68* self = (sBmStream_FA68*)mem;
+    sBankList* self = (sBankList*)mem;
     self->f0 = a1;
-    self->f4 = a2;
+    self->id = a2;
     self->f900 = 1;
     self->f8 = a6;
-    self->fEC = 0;
-    self->fF0 = 0;
+    self->voiceCount = 0;
+    self->count = 0;
     self->f8C4 = 0;
     self->f8C8 = 0;
     self->f8CC = 0;
@@ -2055,10 +2067,10 @@ extern "C" void* func_002AFA68(void* mem, int a1, int a2, int a3, int a4, int a5
     self->f8F4 = 0;
     self->fC = 0;
     for (int i = 0; i < 4; i++) {
-        self->pairs[i].a = 0;
-        self->pairs[i].b = 0;
+        self->voices[i].handle = 0;
+        self->voices[i].active = 0;
     }
-    func_002AA910(*(void**)D_004A37B4, self->f4, a4, 0, 0x20000);
+    func_002AA910(*(void**)D_004A37B4, self->id, a4, 0, 0x20000);
     func_002B0088(self, a1, a3, a5);
     return self;
 }
@@ -2070,36 +2082,16 @@ INCLUDE_ASM("sound/bankmonitor", func_002AFB38);
 extern "C" void func_002AABD0(void* self, int i);
 extern "C" void func_002AF900(int* self, int flags);
 
-struct sBmVoiceFB38 {
-    void* handle;           // 0x0
-    int active;             // 0x4
-};
-
-struct sBmPairFB38 {
-    void* p[2];
-};
-
-struct sBankMonFB38 {
-    int field_0x0;
-    int id;                         // 0x4
-    char pad_0x8[0xC4];
-    sBmVoiceFB38 voices[(0xEC - 0xCC) / 8];   // 0xCC
-    int voiceCount;                 // 0xEC
-    int streamCount;                // 0xF0
-    int* streams[(0x8D4 - 0xF4) / 4];         // 0xF4
-    sBmPairFB38 pairs[1];           // 0x8D4
-};
-
 extern "C" void func_002AFB38(void* selfp, int flags)
 {
-    sBankMonFB38* self = (sBankMonFB38*)selfp;
+    sBankList* self = (sBankList*)selfp;
     int i;
-    for (i = 0; i < self->streamCount; i++) {
+    for (i = 0; i < self->count; i++) {
         if (self->streams[i] != 0) {
-            func_002AF900(self->streams[i], 3);
+            func_002AF900((int*)self->streams[i], 3);
         }
     }
-    D_004A37B8 -= self->streamCount;
+    D_004A37B8 -= self->count;
     for (i = 0; i < self->voiceCount; i++) {
         for (int j = 0; j < 2; j++) {
             if (self->pairs[i].p[j] != 0) {
@@ -2178,12 +2170,11 @@ extern "C" int func_003E2EE0(void* big);
 extern "C" void func_003D66C0(void* h, int a);
 char* BIG_locateentryz_2AFD40(void* big, char* name, int index, int* offset, int* size) __asm__("BIG_locateentryz");
 extern char D_004832C0[];
-struct sBankList_0348;
-extern "C" void func_002B0348(sBankList_0348* self, int a, int b, int c);
+extern "C" void func_002B0348(sBankList* self, int a, int b, int c);
 
 extern "C" int func_002AFD40(void* selfp, int a, char* name, int b, int c)
 {
-    sBankMonFB38* self = (sBankMonFB38*)selfp;
+    sBankList* self = (sBankList*)selfp;
     char buf[0x60];
     char path[0x60];
     int off;
@@ -2230,7 +2221,7 @@ extern "C" int func_002AFD40(void* selfp, int a, char* name, int b, int c)
                 int j = len - 4;
                 while (path[j] != 0x5C && j >= 0)
                     j--;
-                func_002B0348((sBankList_0348*)self, (int)path, (int)(path + j + 1), (int)e);
+                func_002B0348((sBankList*)self, (int)path, (int)(path + j + 1), (int)e);
             }
         }
     } else {
@@ -2264,8 +2255,7 @@ extern char D_004828C0[];
 extern char D_004A37D0[];
 extern char D_004832D8[];
 extern char D_004832E8[];
-struct sBankList_0348;
-extern "C" void func_002B0348(sBankList_0348* self, int a, int b, int c);
+extern "C" void func_002B0348(sBankList* self, int a, int b, int c);
 
 extern "C" void func_002B0088(void* p, int a1, int a2, int a3)
 {
@@ -2304,7 +2294,7 @@ extern "C" void func_002B0088(void* p, int a1, int a2, int a3)
             {
                 func_002A7FF8(parser, D_004A37D0, value);
                 sprintf(path, D_004A36E0, self + 0x6C, name);
-                func_002B0348((sBankList_0348*)self, (int)path, (int)name, 0);
+                func_002B0348((sBankList*)self, (int)path, (int)name, 0);
             }
         }
     }
@@ -2352,16 +2342,10 @@ INCLUDE_ASM("sound/bankmonitor", func_002B0348);
 #ifdef SKIP_ASM
 extern "C" int func_002AF960(int a, int b, int c);
 
-struct sBankList_0348 {
-    char pad[0xF0];
-    int count;     // 0xF0
-    int ids[1];    // 0xF4
-};
-
-extern "C" void func_002B0348(sBankList_0348* self, int a, int b, int c)
+extern "C" void func_002B0348(sBankList* self, int a, int b, int c)
 {
-    self->ids[self->count] = func_002AF960(a, b, c);
-    if (self->ids[self->count] != 0) {
+    self->streams[self->count] = (sBmObj*)func_002AF960(a, b, c);
+    if (self->streams[self->count] != 0) {
         self->count++;
         D_004A37B8++;
     }
@@ -2401,25 +2385,6 @@ extern "C" void func_002AB0D0(void* self, int i, int w);
 
 typedef int (*Fn1_04D8)(void*, int, char*, int, int, int, int, float, int, int);
 
-struct sBmVE_04D8 {
-    short delta;
-    short index;
-    void* fn;
-};
-
-struct sBmObj_04D8 {
-    char pad[0x40];
-    int f40;
-};
-
-struct sBmList_04D8 {
-    int f0;                     // 0x0
-    int f4;                     // 0x4
-    char pad8[0xE8];
-    int count;                  // 0xF0
-    sBmObj_04D8* ids[1];        // 0xF4
-};
-
 struct sBmArgs_04D8 {
     int f0;
     int f4;
@@ -2427,64 +2392,64 @@ struct sBmArgs_04D8 {
     unsigned short fC;
 };
 
-static inline sBmObj_04D8** at_04D8(sBmObj_04D8** base, int i)
+static inline sBmObj** at_04D8(sBmObj** base, int i)
 {
     return base + i;
 }
 
-extern "C" int func_002B04D8_impl(sBmList_04D8* self, sBmArgs_04D8* a) __asm__("func_002B04D8");
+extern "C" int func_002B04D8_impl(sBankList* self, sBmArgs_04D8* a) __asm__("func_002B04D8");
 
-extern "C" int func_002B04D8_impl(sBmList_04D8* self, sBmArgs_04D8* a)
+extern "C" int func_002B04D8_impl(sBankList* self, sBmArgs_04D8* a)
 {
     int idx = -1;
     int i;
-    if (func_002AFA58(self->ids[a->f0], a->f0)) {
+    if (func_002AFA58(self->streams[a->f0], a->f0)) {
         idx = a->f0;
     } else {
         for (i = 0; i < self->count; i++) {
-            if (func_002AFA58(self->ids[i], a->f0)) {
+            if (func_002AFA58(self->streams[i], a->f0)) {
                 idx = i;
             }
         }
     }
     if (idx >= 0 && func_002B1520(D_004A37B4, self->f0, a->fC)) {
-        sBmObj_04D8** slot = at_04D8(self->ids, idx);
+        sBmObj** slot = at_04D8(self->streams, idx);
         int lang = func_002B03B8((char*)*slot + 4);
         char buf[0x100];
         sprintf(buf, D_004832F8, D_004A3590, D_004A37B4 + 0x158 + lang * 0x14, (char*)*slot + 4);
         char* d0 = D_004A37B4;
-        sBmVE_04D8* vt0 = *(sBmVE_04D8**)(d0 + 0x1BC);
+        sSndVtSlot* vt0 = *(sSndVtSlot**)(d0 + 0x1BC);
         int h = ((int (*)(void*, int, int))vt0[2].fn)(d0 + vt0[2].delta, self->f0, (*slot)->f40);
-        char* d; sBmVE_04D8* vt;
-        int t = (int)func_002AAE78(*(void**)D_004A37B4, self->f4);
+        char* d; sSndVtSlot* vt;
+        int t = (int)func_002AAE78(*(void**)D_004A37B4, self->id);
         int r;
-        if (func_002AAE08(*(void**)D_004A37B4, self->f4) != 0) {
-            if (func_002AB028(*(void**)D_004A37B4, self->f4) != 0) {
+        if (func_002AAE08(*(void**)D_004A37B4, self->id) != 0) {
+            if (func_002AB028(*(void**)D_004A37B4, self->id) != 0) {
                 d = D_004A37B4;
-                vt = *(sBmVE_04D8**)(d + 0x1BC);
-                r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
+                vt = *(sSndVtSlot**)(d + 0x1BC);
+                r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->id, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
                 if (r >= 0) {
                     func_002ADCA0(&(**(cBankManager***)D_004A37B4)->sub, t, D_004A37D8[0], (int)self, r, h, 0, 0);
                 }
                 return r;
             }
             d = D_004A37B4;
-            vt = *(sBmVE_04D8**)(d + 0x1BC);
-            r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
+            vt = *(sSndVtSlot**)(d + 0x1BC);
+            r = ((Fn1_04D8)vt[1].fn)(d + vt[1].delta, self->id, buf, a->f4, *(int*)((char*)self + 0x8CC), -1, *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
             if (r >= 0) {
                 func_002ADCA0(&(**(cBankManager***)D_004A37B4)->sub, 0xC8, D_004A37E0[0], (int)self, r, h, 0, 0);
             }
             return r;
         }
         d = D_004A37B4;
-        vt = *(sBmVE_04D8**)(d + 0x1BC);
+        vt = *(sSndVtSlot**)(d + 0x1BC);
         int w = ((int (*)(void*, int, int, int))vt[3].fn)(d + vt[3].delta, self->f0, h, *(int*)((char*)self + 0x8D0));
         if (w != 0) {
-            func_002AB0D0(*(void**)D_004A37B4, self->f4, w);
+            func_002AB0D0(*(void**)D_004A37B4, self->id, w);
         }
         char* d2 = D_004A37B4;
-        sBmVE_04D8* vt2 = *(sBmVE_04D8**)(d2 + 0x1BC);
-        return ((Fn1_04D8)vt2[1].fn)(d2 + vt2[1].delta, self->f4, buf, a->f4, *(int*)((char*)self + 0x8CC), *(int*)((char*)self + 0x8C8), *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
+        sSndVtSlot* vt2 = *(sSndVtSlot**)(d2 + 0x1BC);
+        return ((Fn1_04D8)vt2[1].fn)(d2 + vt2[1].delta, self->id, buf, a->f4, *(int*)((char*)self + 0x8CC), *(int*)((char*)self + 0x8C8), *(int*)((char*)self + 0x8D0), *(float*)((char*)self + 0x8F4), *(int*)((char*)self + 0x8F8), *(int*)((char*)self + 0x8FC));
     }
     return -1;
 }
