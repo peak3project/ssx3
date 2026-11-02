@@ -85,6 +85,12 @@ struct sSelSet { struct sSel ent[12]; unsigned char n; unsigned char ntbl; unsig
 struct sTblEnt { unsigned short a; unsigned short b; };
 
 /* A layer condition: a[i] = 0xFE sets, 0xFF tests the flag word b[i] & 0x7F (when b[i] & 0x80). */
+/* The block that follows a shape's header and tables (bit map, then history). */
+static __inline__ unsigned char *shapeTail(unsigned char *s) {
+    int n = s[4] & 0xF;
+    return s + ((s[5] * (n + 2) + 0xF) & 0x3FFC) + n * 4;
+}
+
 /* Sequence data header: n entry offsets (in words) at ids[], then (f7 & 0xF) 3-byte events. */
 struct sSeqHdr { char pad[6]; unsigned char n; unsigned char f7; char pad8[4]; unsigned short ids[1]; };
 /* A layer header: cnt >> 2 conditions (low 2 bits: mode), each at word offset list[i]. */
@@ -354,11 +360,6 @@ static inline int findfree_69F0(void) {
     return idx;
 }
 
-static inline unsigned char *tail_69F0(unsigned char *s) {
-    int n = s[4] & 0xF;
-    return s + ((s[5] * (n + 2) + 0xF) & 0x3FFC) + n * 4;
-}
-
 int func_003D69F0(unsigned char *shp) {
     int ret;
     int i, j, w, extra, c, cnt, bit;
@@ -369,7 +370,7 @@ int func_003D69F0(unsigned char *shp) {
     if (D_004A4824 != 0) {
         if (shp[6] != 0) {
             extra = 0;
-            p = tail_69F0(shp);
+            p = shapeTail(shp);
             if (shp[4] & 0x80) {
                 extra = (shp[5] + 7) / 8 + 1;
             }
@@ -386,7 +387,7 @@ int func_003D69F0(unsigned char *shp) {
         ret = findfree_69F0();
         if (ret >= 0) {
             if (shp[4] & 0x80) {
-                t = tail_69F0(shp);
+                t = shapeTail(shp);
                 w = shp[5];
                 c = *t;
                 if (c > 0) {
@@ -1385,11 +1386,6 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D85C8);
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8780);
 #ifdef SKIP_ASM
-static __inline__ unsigned char *tail_8780(unsigned char *s) {
-    int n = s[4] & 0xF;
-    return s + ((s[5] * (n + 2) + 0xF) & 0x3FFC) + n * 4;
-}
-
 static __inline__ int bit_8780(unsigned char *b, int i) {
     unsigned char m = 1 << (i % 8);
     return b[i / 8] & m;
@@ -1411,7 +1407,7 @@ int func_003D8780(short *p, unsigned char *shp, int x) {
             if (h < *(unsigned short *)(shp + 0xA)) {
                 idx = shp[5] * h + x;
                 extra = 0;
-                t = tail_8780(shp);
+                t = shapeTail(shp);
                 if (shp[4] & 0x80) {
                     extra = (shp[5] + 7) / 8 + 1;
                 }
@@ -1427,7 +1423,7 @@ int func_003D8780(short *p, unsigned char *shp, int x) {
             }
         }
         if (shp[4] & 0x80) {
-            r = bit_8780(tail_8780(shp) + 1, x);
+            r = bit_8780(shapeTail(shp) + 1, x);
         }
     }
 out:
