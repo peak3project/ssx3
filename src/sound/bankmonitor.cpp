@@ -2389,7 +2389,86 @@ void* func_002AFD10_impl(void* self, void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002AFD40);
+#ifdef SKIP_ASM
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" unsigned int strlen(const char* s);
+extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
+extern "C" void* func_003E1908(const char* name, int flags);
+extern "C" void* func_003E2DF0(void* big, char* name);
+extern "C" int func_003E2EE0(void* big);
+extern "C" void func_003D66C0(void* h, int a);
+char* BIG_locateentryz_2AFD40(void* big, char* name, int index, int* offset, int* size) __asm__("BIG_locateentryz");
+extern "C" void* func_002523A8(void* self);
+extern char D_004832C0[];
+extern char D_004A36E0[];
+struct sBankList_0348;
+extern "C" void func_002B0348(sBankList_0348* self, int a, int b, int c);
+
+extern "C" int func_002AFD40(void* selfp, int a, char* name, int b, int c)
+{
+    sBankMonFB38* self = (sBankMonFB38*)selfp;
+    char buf[0x60];
+    char path[0x60];
+    int off;
+    int sel = 0;
+    if (!a)
+        sel++;
+    self->pairs[self->voiceCount].p[sel] = func_003E1908(name, 0);
+    if (self->pairs[self->voiceCount].p[sel] != 0) {
+        buf[0] = 0;
+        if (a != 0) {
+            sprintf(name, D_004832C0, (char*)self + 0x6C);
+            char* p = name;
+            int len = strlen(name);
+            int i;
+            for (i = 0; i < len; i++) {
+                if (name[i] == 0x7C) {
+                    int n = i + 1;
+                    p = name + n;
+                    strncpy(buf, name, n);
+                    buf[n] = 0;
+                    break;
+                }
+            }
+            self->voices[self->voiceCount].handle = func_003E2DF0(self->pairs[self->voiceCount].p[sel], p);
+            self->voices[self->voiceCount].active = 0;
+            if (self->voices[self->voiceCount].handle == 0) {
+                func_002523A8(self->pairs[self->voiceCount].p[sel]);
+                self->pairs[self->voiceCount].p[sel] = 0;
+                return 0;
+            }
+            func_003D66C0(self->voices[self->voiceCount].handle, b);
+        } else {
+            buf[1] = 0;
+            buf[0] = 0x7C;
+        }
+        int n = func_003E2EE0(self->pairs[self->voiceCount].p[sel]);
+        for (int i = 0; i < n; i++) {
+            char* nm = BIG_locateentryz_2AFD40(self->pairs[self->voiceCount].p[sel], 0, i, &off, 0);
+            char* e = (char*)self->pairs[self->voiceCount].p[sel] + off;
+            if (e != self->voices[self->voiceCount].handle) {
+                sprintf(path, D_004A36E0, buf, nm);
+                int len = strlen(path);
+                path[len - 4] = 0;
+                int j = len - 4;
+                while (path[j] != 0x5C && j >= 0)
+                    j--;
+                func_002B0348((sBankList_0348*)self, (int)path, (int)(path + j + 1), (int)e);
+            }
+        }
+    } else {
+        sprintf(name, D_004832C0, (char*)self + 0x6C);
+        self->voices[self->voiceCount].handle = func_003E1908(name, 0);
+        if (self->voices[self->voiceCount].handle == 0)
+            return 0;
+        self->voices[self->voiceCount].active = 1;
+        func_003D66C0(self->voices[self->voiceCount].handle, b);
+    }
+    return 1;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B0088);
