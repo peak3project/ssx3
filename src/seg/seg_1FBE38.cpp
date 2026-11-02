@@ -5526,7 +5526,6 @@ void* func_00226618(void*);
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_4C50 { int idx; int val; int pad; int type; };
 extern char *D_004A3DD8_4C50 __asm__("D_004A3DD8");
-extern char **D_004A47B8_4C50 __asm__("D_004A47B8");
 extern char *D_004A28A8_4C50 __asm__("D_004A28A8");
 extern unsigned D_5828_4C50 __asm__("D_004A5828");
 extern sBindEnd_1FBE38 D_582C_4C50 __asm__("D_004A582C");
@@ -5565,10 +5564,10 @@ extern "C" void* func_00304C50(void* self, int n, Ent_4C50 *e) {
     if (~id == 0) {
         obj = *(char**)(D_004A3DD8_4C50 + 0x290);
     } else {
-        char *s = (*(char***)((char*)*D_004A47B8_4C50 + 8))[id & 0xFF];
+        sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
         char *r;
-        if (!s || (i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8) == 0)
+        if (!s || (i = s->refs[id >> 8] >> 8) == 0)
             r = 0;
         else
             r = (char*)(i << 2);
