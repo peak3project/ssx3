@@ -18,6 +18,11 @@ struct t2Vector {
     float x, y;
 };
 
+// An RGB colour as the popup colour setter func_001C7738 takes it (three floats, copied as a block).
+struct sColour {
+    float r, g, b;
+};
+
 // A 3-float vector with an inline constructor (a non-POD sibling of t3Vector).
 struct sVec3 {
     float x, y, z;
@@ -168,25 +173,23 @@ extern "C" void func_001C5B88(void* self)
 INCLUDE_ASM("fe/fepopup", cScreenPopup_onGainTransition);
 #ifdef SKIP_ASM
 struct cUIScreen;
-struct sColor_7738;
-struct sColF_5C30 { float r, g, b; };
 int GetHashValue32(char* str);
 int cUIScreen_getFrameByLabel(cUIScreen* screen, int hash);
 extern "C" void func_001C5F20(void* self, float t);
 extern "C" void func_001C6B08(void* self, void* p);
-extern "C" void func_001C7738(void* self, sColor_7738* color);
+extern "C" void func_001C7738(void* self, sColour* color);
 extern char D_004A1C48[];
 
 extern "C" int cScreenPopup_onGainTransition(void* self, int first)
 {
     if (first) {
-        sColF_5C30 c;
+        sColour c;
         c.r = 0.2f;
         c.g = 0.2f;
         c.b = 1.0f;
         *(int*)((char*)self + 0x2BC) = 1;
         func_001C6B08(self, (char*)self + 0xBC);
-        func_001C7738(self, (sColor_7738*)&c);
+        func_001C7738(self, &c);
         if (*(int*)((char*)self + 0x31C) == 1)
             func_001C5F20(self, 0.0f);
         int f = cUIScreen_getFrameByLabel(*(cUIScreen**)((char*)self + 0x40), GetHashValue32(D_004A1C48));
@@ -203,17 +206,17 @@ extern "C" int cScreenPopup_onGainTransition(void* self, int first)
     if (*(int*)((char*)self + 0x31C) == 1) {
         float t = (float)*(int*)((char*)self + 0xA4);
         t3Vector pos = *(t3Vector*)(*(char**)((char*)self + 0x58) + 0x44);
-        sColF_5C30 c;
+        sColour c;
         c.r = t * *(float*)((char*)self + 0xAC) + 0.2f;
         c.g = t * *(float*)((char*)self + 0xB0) + 0.2f;
-        func_001C7738(self, (sColor_7738*)&c);
+        func_001C7738(self, &c);
         if (*(int*)((char*)self + 0xA4) < *(int*)((char*)self + 0xA8)) {
             *(int*)((char*)self + 0xA4) += 1;
             return 0;
         }
     } else {
-        sColF_5C30 c = *(sColF_5C30*)((char*)self + 0x278);
-        func_001C7738(self, (sColor_7738*)&c);
+        sColour c = *(sColour*)((char*)self + 0x278);
+        func_001C7738(self, &c);
     }
     return 1;
 }
@@ -231,19 +234,17 @@ int func_001C5DD0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C5DD8);
 #ifdef SKIP_ASM
-struct sColor_7738;
-struct sColor5DD8 { int r, g, b; };
 extern "C" void func_001C8A38(void* self);
 extern "C" void func_001C6B08(void* self, void* p);
-extern "C" void func_001C7738(void* self, sColor_7738* color);
+extern "C" void func_001C7738(void* self, sColour* color);
 
 extern "C" void func_001C5DD8(void* self)
 {
     if (*(int*)((char*)self + 0x2BC) != 0) {
         func_001C8A38(self);
         func_001C6B08(self, (char*)self + 0xBC);
-        sColor5DD8 c = *(sColor5DD8*)((char*)self + 0x278);
-        func_001C7738(self, (sColor_7738*)&c);
+        sColour c = *(sColour*)((char*)self + 0x278);
+        func_001C7738(self, &c);
         sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)self + 8);
         vt[6].fn((char*)self + vt[6].delta, 0);
     }
@@ -988,23 +989,21 @@ extern "C" void func_001C7620(void* self, t3Vector pos)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C7738);
 #ifdef SKIP_ASM
-struct sColor_7738 { int r, g, b; };
-
-extern "C" void func_001C7738(void* self, sColor_7738* color)
+extern "C" void func_001C7738(void* self, sColour* color)
 {
-    sColor_7738 c = *color;
+    sColour c = *color;
     switch (*(int*)((char*)self + 0x31C)) {
     case 0:
         {
             void* p = *(void**)((char*)self + 0x48);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         {
             void* p = *(void**)((char*)self + 0x4C);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         break;
@@ -1012,31 +1011,31 @@ extern "C" void func_001C7738(void* self, sColor_7738* color)
         {
             void* p = *(void**)((char*)self + 0x58);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         {
             void* p = *(void**)((char*)self + 0x5C);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         {
             void* p = *(void**)((char*)self + 0x50);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         {
             void* p = *(void**)((char*)self + 0x54);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         {
             void* p = *(void**)((char*)self + 0x60);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         break;
@@ -1044,7 +1043,7 @@ extern "C" void func_001C7738(void* self, sColor_7738* color)
         {
             void* p = *(void**)((char*)self + 0x68);
             if (p != 0) {
-                *(sColor_7738*)((char*)p + 0x50) = c;
+                *(sColour*)((char*)p + 0x50) = c;
             }
         }
         break;
