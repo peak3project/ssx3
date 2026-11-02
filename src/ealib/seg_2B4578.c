@@ -15883,13 +15883,11 @@ int func_003D2138(char *arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D21C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_0044F420_f420[] __asm__("D_0044F420");
 
 void func_003D21C0(char *arg0, int arg1) {
-    char *g = D_0044F420_f420[0];
-    char *p = *(char **)(g + 0x34) + (*(short *)(*(char **)(g + 0x40) + *(unsigned char *)(arg0 + 0xC) * 2) * 4);
+    unsigned int *p = D_0044F420->f34 + D_0044F420->f40[*(unsigned char *)(arg0 + 0xC)];
     if (p != 0) {
-        *(unsigned *)(p + 0xC) = (*(unsigned *)(p + 0xC) & 0xDFFFFFFF) | ((arg1 & 1) << 29);
+        p[3] = (p[3] & 0xDFFFFFFF) | ((arg1 & 1) << 29);
     }
 }
 #endif
