@@ -3532,8 +3532,7 @@ extern "C" void func_003E6574(void*, void*, int);
 struct Ent_1560 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3C80_1560[2] __asm__("D_004A3C80");
-extern "C" int func_0030BA80(int, unsigned);
-extern int D_004A3DD8_1560 __asm__("D_004A3DD8");
+extern "C" int func_0030BA80(cWScriptMan*, unsigned);
 extern int D_004A56C8_1560 __asm__("D_004A56C8");
 extern unsigned D_004A56C0_1560 __asm__("D_004A56C0");
 extern sBindEnd_1FBE38 D_004A56C4_1560 __asm__("D_004A56C4");
@@ -3558,7 +3557,7 @@ extern "C" void* func_00301560(void* self, int n, Ent_1560* e) {
     }
     unsigned x = vp[0];
     if (x != 0xFFFFFFFFu) {
-        BIND_SET_RESULT_1FBE38(self, func_0030BA80(D_004A3DD8_1560, x));
+        BIND_SET_RESULT_1FBE38(self, func_0030BA80(D_004A3DD8, x));
     } else {
         BIND_SET_RESULT_1FBE38(self, 0);
     }
