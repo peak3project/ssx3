@@ -2287,7 +2287,280 @@ extern "C" void func_00104DE0(char* self, cStream_4DE0* s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00104E70);
+#ifdef SKIP_ASM
+struct sV4_4E70 {
+    float x, y, z, w;
+    sV4_4E70() {}
+} __attribute__((aligned(16)));
+
+struct sTri_4E70 {
+    float a;
+    float b;
+    unsigned short flags;
+    unsigned short pad;
+};
+
+struct sMat_4E70 {
+    char pad[0x10];
+    sTri_4E70 tris[1];
+};
+
+class cHitObj_4E70 {
+public:
+    char pad[0xC];
+    virtual void h00(); virtual void h01(); virtual void h02(); virtual void h03(); virtual void h04();
+    virtual void h05(); virtual void h06(); virtual void h07(); virtual void h08(); virtual void h09();
+    virtual void h10(); virtual void h11(); virtual void h12(); virtual void h13(); virtual void h14();
+    virtual void h15(); virtual void h16(); virtual void h17(); virtual void h18(); virtual void h19();
+    virtual void h20(); virtual void h21(); virtual void h22(); virtual void h23(); virtual void h24();
+    virtual void h25(); virtual void h26(); virtual void h27(); virtual void h28(); virtual void h29();
+    virtual void h30(); virtual void h31(); virtual void h32(); virtual void h33(); virtual void h34();
+    virtual void h35(); virtual void h36(); virtual void h37(); virtual void h38(); virtual void h39();
+    virtual void h40();
+    virtual void OnHit(struct sContact_4E70*);
+};
+
+struct sSurf_4E70 {
+    char pad[0xC];
+    cHitObj_4E70* obj;
+    char pad10[0x78 - 0x10];
+    unsigned int id;
+    char pad7C[0x88 - 0x7C];
+    sMat_4E70* mat;
+};
+
+struct sOwner_4E70 {
+    char pad[0x150];
+    unsigned int order;
+};
+
+struct sContact_4E70 {
+    sV4_4E70 pos;
+    sV4_4E70 normal;
+    sV4_4E70 vel;
+    char pad30[0x10];
+    float height;
+    char pad44[0xC];
+    sSurf_4E70* surf;
+    sOwner_4E70* owner;
+    int pad58;
+    int idx;
+    char pad60[0x20];
+} __attribute__((aligned(16)));
+
+class cScope_4E70 {
+public:
+    char pad[0x50];
+    virtual void s0();
+    virtual void s1();
+    virtual float Height();
+};
+
+struct sSelf_4E70 {
+    char pad[0x5B8];
+    unsigned int ids[64];
+    char pad6B8[0x860 - 0x6B8];
+    void* tree;
+    char pad864[0xAA0 - 0x864];
+    char* body;
+};
+
+extern "C" int func_00334458_4E70(void*, cScope_4E70*, sContact_4E70*, int, int) __asm__("func_00334458");
+extern sV4_4E70 D_004FF120_4E70 __asm__("D_004FF120");
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_4E70(const sV4_4E70& a, const sV4_4E70& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_4E70(const sV4_4E70& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_4E70 Sub_4E70(const sV4_4E70& a, const sV4_4E70& b)
+{
+    sV4_4E70 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add in place).
+static inline void AddTo_4E70(sV4_4E70& a, const sV4_4E70& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline sV4_4E70 Div_4E70(const sV4_4E70& v, float s)
+{
+    sV4_4E70 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only FPU asm (absolute value).
+static inline float Abs_4E70(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: the RID list is indexed as i * 4 + (int)base (pointer held in int) to get the target's addu operand order.
+#define RID_4E70(i) (*(unsigned int*)((i) * 4 + (int)self->ids))
+
+static inline int IsWall_4E70(sContact_4E70* c)
+{
+    sTri_4E70* t = &c->surf->mat->tris[c->idx];
+    return (t->flags & 1) && t->a != 0.0f;
+}
+
+static inline int IsBack_4E70(sSelf_4E70* self, sContact_4E70* c)
+{
+    sV4_4E70 rel = Sub_4E70(c->pos, *(sV4_4E70*)(self->body + 0x10));
+    return Dot_4E70(rel, c->normal) < 0.0f;
+}
+
+static inline int Before_4E70(sContact_4E70* a, sContact_4E70* b)
+{
+    if (a->surf) {
+        if (b->surf == 0)
+            return 1;
+        return a->surf->id < b->surf->id;
+    }
+    if (b->surf)
+        return 0;
+    return a->owner->order < b->owner->order;
+}
+
+extern "C" float func_00104E70(sSelf_4E70* self, cScope_4E70* scope, sContact_4E70* out)
+{
+    int count = 0;
+    sContact_4E70 hits[64];
+    int n = func_00334458_4E70(self->tree, scope, hits, 64, 0);
+    if (n == 0)
+        return -1.0f;
+    if (hits[0].surf)
+        RID_4E70(count++) = hits[0].surf->id;
+    int best = 0;
+    float h = scope->Height();
+    float bestDist = Abs_4E70(hits[0].height - h);
+    int bestWall = IsWall_4E70(&hits[0]);
+    int bestBack = IsBack_4E70(self, &hits[0]);
+    for (int i = 1; i < n; i++) {
+        if (hits[i].surf) {
+            int j = 0;
+            while (j < count && RID_4E70(j) != hits[i].surf->id)
+                j++;
+            if (j >= count)
+                RID_4E70(count++) = hits[i].surf->id;
+        }
+        float dist = Abs_4E70(hits[i].height - h);
+        int wall = IsWall_4E70(&hits[i]);
+        if (wall && !bestWall) {
+            best = i;
+            bestDist = dist;
+            bestWall = 1;
+            continue;
+        }
+        if (bestWall && !wall)
+            continue;
+        int back = IsBack_4E70(self, &hits[i]);
+        if (back && !bestBack) {
+            best = i;
+            bestDist = dist;
+            bestBack = 1;
+            continue;
+        }
+        if (bestBack && !back)
+            continue;
+        if (dist < bestDist) {
+            best = i;
+            bestDist = dist;
+        } else if (dist == bestDist) {
+            if (Before_4E70(&hits[i], &hits[best]))
+                best = i;
+        }
+    }
+    *out = hits[best];
+    if (n >= 2) {
+        sV4_4E70 sum = D_004FF120_4E70;
+        for (int k = 0; k < n; k++) {
+            if (IsWall_4E70(&hits[k]))
+                AddTo_4E70(sum, hits[k].normal);
+        }
+        float len = Len_4E70(sum);
+        if (len > 0.0010000000474974513f) {
+            sV4_4E70 nrm = Div_4E70(sum, len);
+            out->normal = nrm;
+        }
+    }
+    RID_4E70(count) = 0xFFFFFFFF;
+    if (out->surf) {
+        cHitObj_4E70* o = out->surf->obj;
+        if (o)
+            o->OnHit(out);
+    }
+    return out->height;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_1218", func_00105398);
