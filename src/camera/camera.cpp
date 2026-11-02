@@ -36,6 +36,12 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
+// A transform as position + rotation quaternion, returned by value (func_0031B748 builds one from a matrix).
+struct sXf {
+    t4Vector pos;
+    t4Vector rot;
+};
+
 // The camera base matrix (set up by func_001673F8), followed by the camera-shake tuning
 // table: one entry per shake type, reset by func_0015E2A8, plus each type's selector in D_004C5430.
 struct sCamShake {
@@ -333,15 +339,10 @@ struct sObj_E050 {
     char pad[0x390];
 } __attribute__((aligned(16)));
 
-struct sPair_E050 {
-    t4Vector a;
-    t4Vector b;
-};
-
 extern "C" void* func_00176D68(void* self);
 extern "C" void func_00166640(void* self, int a1);
 extern "C" void func_00166F90(void* self);
-extern "C" sPair_E050 func_001673A0_E050(void* a1) __asm__("func_001673A0");
+extern "C" sXf func_001673A0_E050(void* a1) __asm__("func_001673A0");
 void func_00176DA8_E050(void* self, int flags) __asm__("func_00176DA8__FPv");
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
@@ -477,10 +478,10 @@ extern "C" void func_0015E050_impl(char* self, char* a1, char* a2)
     *(float*)((char*)&o + 0x2C) = 1.0f;
     func_00166640(&o, 1);
     func_00166F90(&o);
-    sPair_E050 out = func_001673A0_E050(&o);
+    sXf out = func_001673A0_E050(&o);
     t4Vector* q = (t4Vector*)(self + 0x30);
     t4Matrix* m = (t4Matrix*)(self + 0x40);
-    *(sPair_E050*)(self + 0x20) = out;
+    *(sXf*)(self + 0x20) = out;
     vu0CopyMtx_E050(m, &D_004C53A0);
     t4Matrix rot;
     vu0QuatToMtx_E050(&rot, q);
@@ -489,19 +490,19 @@ extern "C" void func_0015E050_impl(char* self, char* a1, char* a2)
     p.x = *(float*)(self + 0x20);
     p.y = *(float*)(self + 0x24);
     p.z = *(float*)(self + 0x28);
-    out.b.x = -p.x;
-    out.b.y = -p.y;
-    out.b.z = -p.z;
-    out.a.x = -p.x;
-    out.a.y = -p.y;
-    out.a.z = -p.z;
-    out.a.w = 1.0f;
-    vu0TransMtx_E050(m, out.a);
-    out.a.x = *(float*)(self + 0x48);
-    out.a.y = *(float*)(self + 0x58);
-    out.a.z = *(float*)(self + 0x68);
-    out.a.w = 0.0f;
-    *(t4Vector*)(self + 0x80) = out.a;
+    out.rot.x = -p.x;
+    out.rot.y = -p.y;
+    out.rot.z = -p.z;
+    out.pos.x = -p.x;
+    out.pos.y = -p.y;
+    out.pos.z = -p.z;
+    out.pos.w = 1.0f;
+    vu0TransMtx_E050(m, out.pos);
+    out.pos.x = *(float*)(self + 0x48);
+    out.pos.y = *(float*)(self + 0x58);
+    out.pos.z = *(float*)(self + 0x68);
+    out.pos.w = 0.0f;
+    *(t4Vector*)(self + 0x80) = out.pos;
     func_00176DA8_E050(&o, 2);
 }
 #endif
@@ -1084,13 +1085,8 @@ extern "C" void* func_0015F938(void* self)
 //100%
 INCLUDE_ASM("camera/camera", func_0015F9B8);
 #ifdef SKIP_ASM
-struct sPair_15F9B8 {
-    t4Vector a;
-    t4Vector b;
-};
-
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
-extern "C" sPair_15F9B8 func_0031B748_15F9B8(t4Matrix* m) __asm__("func_0031B748");
+extern "C" sXf func_0031B748_15F9B8(t4Matrix* m) __asm__("func_0031B748");
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
 static inline void vu0CopyMtx_15F9B8(t4Matrix* dst, const t4Matrix* src)
@@ -1212,7 +1208,7 @@ static inline void RotAxis_15F9B8(t4Matrix* m, const t4Vector& axis, float angle
     vu0MulMtx_15F9B8(m, m, &r);
 }
 
-extern "C" sPair_15F9B8 func_0015F9B8(char* src)
+extern "C" sXf func_0015F9B8(char* src)
 {
     t4Matrix m;
     vu0CopyMtx_15F9B8(&m, &D_004FF1A0);
