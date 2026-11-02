@@ -1290,7 +1290,25 @@ extern "C" int func_001D5C28(int size)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D5D78);
+#ifdef SKIP_ASM
+extern "C" int func_002710A8(void* replay, int* a, int* b);
+extern "C" void func_00241138(void* app, int a, int b);
+
+extern "C" int func_001D5D78(int y)
+{
+    int x;
+    if (D_004A2028_tr->mode == 1) {
+        void* app = func_00227F80(D_004A28A8);
+        if (func_002710A8(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28), &x, &y) != 0) {
+            func_00241138(app, x, y);
+            return 1;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D5DF0);
