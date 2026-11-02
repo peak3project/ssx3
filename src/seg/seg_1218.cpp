@@ -246,6 +246,45 @@ static inline void AddEq(t4Vector& a, const t4Vector& b)
         : "memory");
 }
 
+// The rider's being interface (seg/seg_1FBE38's cBeing, prototype vtable order) at rider + 0x6C0.
+struct tInstanceRecord;
+class cBeing {
+public:
+    virtual ~cBeing();
+    virtual const t4Vector* getVelocity() const;
+    virtual int isIntersecting(tInstanceRecord* rec) const;
+    virtual void applyBoost(const t4Vector& impulse);
+    virtual const t4Vector* getPosition() const;
+    virtual const t4Matrix* getTransform() const;
+    virtual int getAIIndex() const;
+    virtual bool isHuman() const;
+    virtual bool isComputer() const;
+    virtual void transport(const t4Matrix& m);
+    virtual void resetToPath();
+    virtual void initForMission(const t4Matrix& m);
+};
+// A rider as these functions see it: its own data, then the cBeing base at 0x6C0.
+struct cRiderData_1218 {
+    char pad[0x6C0];
+};
+class cRider_1218 : public cRiderData_1218, public cBeing {
+};
+// The race (seg/seg_1FBE38 layout): riders by being index at 0x28.
+struct sRace {
+    char pad_0x0[0x28];
+    cRider_1218* riders[1];     // 0x28
+};
+struct sGame {
+    char pad_0x0[0xC];
+    sRace* race;                // 0xC
+};
+// The game singleton (D_004A28A8).
+struct sApp {
+    char pad_0x0[0x84];
+    sGame* game;                // 0x84
+};
+extern sApp* D_004A28A8;
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -268,15 +307,6 @@ extern "C" float func_00100250(void* self, const t4Vector* v)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00100348);
 #ifdef SKIP_ASM
-class cObj_0348 {
-public:
-    virtual void vm1();
-    virtual t4Vector* GetDir();
-    virtual void v1();
-    virtual void v2();
-    virtual t4Vector* GetPos();
-};
-
 extern t4Vector D_004FF160_v0348 __asm__("D_004FF160");
 extern "C" float func_0031C228(float);
 
@@ -316,7 +346,7 @@ static inline float Atan2_0348(float y, float x)
     return r;
 }
 
-static inline cObj_0348* Obj_0348(char* self) { return (cObj_0348*)(*(char**)(self + 0x18) + 0x6C0); }
+static inline cBeing* Obj_0348(char* self) { return (cBeing*)(*(char**)(self + 0x18) + 0x6C0); }
 
 extern "C" float func_00100348_0348(char* self, t4Vector* target) __asm__("func_00100348");
 extern "C" float func_00100348_0348(char* self, t4Vector* target)
@@ -324,9 +354,9 @@ extern "C" float func_00100348_0348(char* self, t4Vector* target)
     t4Vector up = *(t4Vector*)(*(char**)(self + 0x18) + 0x1C0);
     if (up.z <= 0.0f)
         up = D_004FF160_v0348;
-    t4Vector fwd = *Obj_0348(self)->GetDir();
+    t4Vector fwd = *Obj_0348(self)->getVelocity();
     t4Vector side = Cross_0348(fwd, up);
-    t4Vector d = SubM(*target, *Obj_0348(self)->GetPos());
+    t4Vector d = SubM(*target, *Obj_0348(self)->getPosition());
     d.z = 0.0f;
     d = Norm(d);
     d = Norm(SubM(d, ScaleM(up, Dot(d, up))));
@@ -385,35 +415,6 @@ struct sPad_0680 {
 class cObj_0680;
 typedef void (cObj_0680::*Fn_0680)();
 extern "C" Fn_0680 D_0043CF20_0680[4] __asm__("D_0043CF20");
-
-class cAI_0680 {
-public:
-    virtual void v0();
-    virtual void v1();
-    virtual void v2();
-    virtual void v3();
-    virtual void v4();
-    virtual void v5();
-    virtual void v6();
-    virtual int Busy();
-};
-
-struct sRiders_0680 {
-    char pad[0x28];
-    char* riders[1];
-};
-
-struct sGame_0680 {
-    char pad[0xC];
-    sRiders_0680* list;
-};
-
-struct sWorld_0680 {
-    char pad[0x84];
-    sGame_0680* game;
-};
-
-extern sWorld_0680* D_004A28A8_0680 __asm__("D_004A28A8");
 
 extern "C" void func_00100610_0680(t4Vector*, void*) __asm__("func_00100610");
 extern "C" float func_00100348_0680(void*, t4Vector*) __asm__("func_00100348");
@@ -479,7 +480,7 @@ extern "C" void func_00100680_0680(char* self, sPad_0680* pad)
         if (z) {
             *(Fn_0680*)(self + 0xF44) = D_0043CF20_0680[3];
             *(short*)(self + 0xF38) = 3;
-        } else if (!((cAI_0680*)(D_004A28A8_0680->game->list->riders[*(int*)((char*)spd + 0x80)] + 0x6C0))->Busy()) {
+        } else if (!((cBeing*)((char*)D_004A28A8->game->race->riders[*(int*)((char*)spd + 0x80)] + 0x6C0))->isHuman()) {
             *(Fn_0680*)(self + 0xF44) = D_0043CF20_0680[2];
             *(short*)(self + 0xF38) = 2;
         }
@@ -562,49 +563,11 @@ class cObj_0F88;
 typedef void (cObj_0F88::*Fn_0F88)();
 extern "C" Fn_0F88 D_0043CF20_0F88[4] __asm__("D_0043CF20");
 
-class cAI_0F88 {
-public:
-    virtual void vm1();
-    virtual t4Vector* GetVel();
-    virtual void v2();
-    virtual void v3();
-    virtual void v4();
-    virtual void v5();
-    virtual void v6();
-    virtual void v7();
-    virtual int Ready();
-};
-
-class cRiderBase_0F88 {
-public:
-    char pad[0x6C0];
-};
-
-class cRider_0F88 : public cRiderBase_0F88, public cAI_0F88 {
-};
-
-struct sRiders_0F88 {
-    char pad[0x28];
-    cRider_0F88* riders[1];
-};
-
-struct sGame_0F88 {
-    char pad[0xC];
-    sRiders_0F88* list;
-};
-
-struct sWorld_0F88 {
-    char pad[0x84];
-    sGame_0F88* game;
-};
-
 struct sCtl_0F88 {
     float speed;
     char pad4[0x80 - 4];
     int target;
 };
-
-extern sWorld_0F88* D_004A28A8_0F88 __asm__("D_004A28A8");
 
 extern "C" void func_00100610_0F88(t4Vector*, void*) __asm__("func_00100610");
 extern "C" float func_00100348_0F88(void*, t4Vector*) __asm__("func_00100348");
@@ -637,11 +600,11 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
     int z;
     sCtl_0F88* ctl = (sCtl_0F88*)(self + 0xDF0);
     sRec_0F88* rec = Rec_0F88(self);
-    cRider_0F88* tgt = D_004A28A8_0F88->game->list->riders[ctl->target];
+    cRider_1218* tgt = D_004A28A8->game->race->riders[ctl->target];
     float diff = rec->angle - *(float*)(*(char**)(self + 0x18) + 0x4CC);
     float ang = diff - Floor_0F88(diff * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
     float mySpd = Len(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0));
-    float hisSpd = Len(*tgt->GetVel());
+    float hisSpd = Len(*tgt->getVelocity());
     float steer = 0.0f;
     if (Abs(ang) > 1.5707964897155762f) {
         func_00100610_0F88(&v, self);
@@ -664,7 +627,7 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
             func_00100610_0F88(&v, self);
             steer = func_00100348_0F88(self, &v);
             func_0010C0A8(self, pad);
-        } else if (tgt->Ready()) {
+        } else if (tgt->isComputer()) {
             if (*(int*)((char*)tgt + 0xAB8) == *(int*)(*(char**)(self + 0x18) + 0xAB8))
                 func_00112A50(*(char**)(self + 0x18), 0);
             func_00100610_0F88(&v, self);
@@ -2542,7 +2505,7 @@ extern "C" int func_00311AE8(void*, int);
 extern "C" int cRiderAnimBase_play(void*, int, int, float);
 extern "C" void cRider_updateOrientationImplicit(cRider* self);
 // The unit declares this later with its own vector type; bind it by asm label.
-extern "C" void cAirPredictor_startLaunchIntoAir_57B8(void*, t4Vector*, t4Vector*, float) __asm__("cAirPredictor_startLaunchIntoAir");
+extern "C" void cAirPredictor_startLaunchIntoAir_57B8(void*, const t4Vector*, const t4Vector*, float) __asm__("cAirPredictor_startLaunchIntoAir");
 extern "C" void func_00108388(char* self, char* info, int flag);
 extern "C" void func_00105D98(void* rider, void* info, int id);
 extern "C" void func_00106538_m2537(void* rider, const t4Vector& v) __asm__("func_00106538");
@@ -2955,20 +2918,11 @@ struct sRec_7E70 {
     char pad10[0x24 - 0x10];
 };
 
-class cAI_7E70 {
-public:
-    virtual void vm1();
-    virtual t4Vector* GetDir();
-    virtual void v1();
-    virtual void v2();
-    virtual t4Vector* GetPos();
-};
-
 int func_0011FEE8_7E70(void*) __asm__("func_0011FEE8__FPv");
 int func_0011FE98(void*);
 int AIrand();
 extern "C" int func_001231A8(void*);
-extern "C" void cAirPredictor_startLaunchIntoAir(void*, t4Vector*, t4Vector*, float);
+extern "C" void cAirPredictor_startLaunchIntoAir(void*, const t4Vector*, const t4Vector*, float);
 extern "C" void func_0010EB30_7E70(char*, int, int, int, sInfo_7E70*) __asm__("func_0010EB30");
 extern "C" void func_00108388_7E70(char*, sInfo_7E70*, int) __asm__("func_00108388");
 extern "C" void func_0010E468(void*, void*);
@@ -2998,9 +2952,9 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
     } else {
         AddEq(*(t4Vector*)(self + 0x1E0), imp);
         if (func_0011FE98(self) == 1 || (func_0011FE98(self) == 2 && *(int*)(*(char**)(self + 0x77C) + 0x30) == 1)) {
-            cAI_7E70* ai = (cAI_7E70*)(self + 0x6C0);
-            t4Vector* pos = ai->GetPos();
-            cAirPredictor_startLaunchIntoAir(*(void**)(self + 0x788), pos, ai->GetDir(), *(float*)(self + 0x2E4));
+            cBeing* ai = (cBeing*)(self + 0x6C0);
+            const t4Vector* pos = ai->getPosition();
+            cAirPredictor_startLaunchIntoAir(*(void**)(self + 0x788), pos, ai->getVelocity(), *(float*)(self + 0x2E4));
             if (Dot(*n, Get_7E70(self + 0x1C0)) * s > 0.0f)
                 absSpd = 0.0f;
         }
@@ -3887,17 +3841,6 @@ struct sPad_B790 {
     int b12 : 6;
 };
 
-class cLvl_B790 {
-public:
-    virtual void v0();
-    virtual void v1();
-    virtual void v2();
-    virtual void v3();
-    virtual void v4();
-    virtual void v5();
-    virtual int Level();
-};
-
 int AIrand();
 extern "C" int func_001298C8();
 
@@ -3905,12 +3848,12 @@ extern "C" void func_0010B790(char* self, sPad_B790* pad)
 {
     float t = 180.0f - (float)func_001298C8();
     float th = 33.0f;
-    th -= (float)((((cLvl_B790*)(*(char**)(self + 0x18) + 0x6C0))->Level() - 1) * 10);
-    if (t < th && ((cLvl_B790*)(*(char**)(self + 0x18) + 0x6C0))->Level() < 4) {
+    th -= (float)((((cBeing*)(*(char**)(self + 0x18) + 0x6C0))->getAIIndex() - 1) * 10);
+    if (t < th && ((cBeing*)(*(char**)(self + 0x18) + 0x6C0))->getAIIndex() < 4) {
         pad->b12 = 0x1F;
         return;
     }
-    if (t < 72.0f && ((cLvl_B790*)(*(char**)(self + 0x18) + 0x6C0))->Level() < 3) {
+    if (t < 72.0f && ((cBeing*)(*(char**)(self + 0x18) + 0x6C0))->getAIIndex() < 3) {
         pad->b12 = -0x1F;
         return;
     }
