@@ -3,6 +3,9 @@
 
 // ---- Shared declarations: one type per real thing, used by the functions below ----
 
+// g++ 2.95 vtable entry with an untyped function slot (cast at the call).
+struct sWsVtSlot { short delta; short index; void* fn; };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -418,7 +421,6 @@ extern "C" int func_00330950(void* self, void* a1, void* a2, sWsHit_330950* hit)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003309D8);
 #ifdef SKIP_ASM
-struct sVEnt_3309D8 { short delta; short index; void* fn; };
 typedef int (*Test_3309D8)(void*);
 
 struct sBox_3309D8 {
@@ -430,7 +432,7 @@ struct sBox_3309D8;
 typedef sBox_3309D8* (*GetBox_3309D8)(void*);
 struct sObj_3309D8 {
     int pad00[3];
-    sVEnt_3309D8* vt;
+    sWsVtSlot* vt;
 };
 
 struct sNode_3309D8 {
@@ -484,9 +486,9 @@ extern "C" void func_003309D8(sCtx_3309D8* ctx, void* tree)
                 *cnt = n + 1;
             }
         } else if (flags & 0x40) {
-            sVEnt_3309D8* vt = p->obj->vt;
+            sWsVtSlot* vt = p->obj->vt;
             if (((Test_3309D8)vt[44].fn)((char*)p->obj + vt[44].delta)) {
-                sVEnt_3309D8* vt2 = p->obj->vt;
+                sWsVtSlot* vt2 = p->obj->vt;
                 sBox_3309D8* b = ((GetBox_3309D8)vt2[45].fn)((char*)p->obj + vt2[45].delta);
                 if (overlapBox_3309D8(ctx->box, b)) {
                     int* cnt = ctx->count;
@@ -948,7 +950,6 @@ struct sHit_333EF8 {
     int pad74[3];
 };
 
-struct sVEnt_333EF8 { short delta; short index; void* fn; };
 struct sBox_333EF8;
 typedef int (*Test_333EF8)(void*);
 typedef sBox_333EF8* (*GetBox_333EF8)(void*);
@@ -960,7 +961,7 @@ struct sBox_333EF8 {
 
 struct sObj_333EF8 {
     int pad00[3];
-    sVEnt_333EF8* vt;
+    sWsVtSlot* vt;
 };
 
 struct sNode_333EF8 {
@@ -1092,9 +1093,9 @@ extern "C" int func_00333EF8(void* vself, void* vq, sHit_003342D0* vhits, int ca
             if (node->obj == 0) {
                 continue;
             }
-            sVEnt_333EF8* vt = node->obj->vt;
+            sWsVtSlot* vt = node->obj->vt;
             if (((Test_333EF8)vt[44].fn)((char*)node->obj + vt[44].delta)) {
-                sVEnt_333EF8* vt2 = node->obj->vt;
+                sWsVtSlot* vt2 = node->obj->vt;
                 sBox_333EF8* b = ((GetBox_333EF8)vt2[45].fn)((char*)node->obj + vt2[45].delta);
                 if (overlapBox_333EF8(q, b)) {
                     n += func_00334888(q, node, (char*)hits + n * 0x80, cap - n, 2);
@@ -1174,7 +1175,6 @@ extern "C" float func_003342D0(void* self, char* q, sHit_003342D0* out, int a3)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00334458);
 #ifdef SKIP_ASM
-struct sVEnt_334458 { short delta; short index; void* fn; };
 struct sBox_334458;
 typedef int (*Test_334458)(void*);
 typedef sBox_334458* (*GetBox_334458)(void*);
@@ -1192,7 +1192,7 @@ struct sQuery_334458 {
 
 struct sObj_334458 {
     int pad00[3];
-    sVEnt_334458* vt;
+    sWsVtSlot* vt;
 };
 
 struct sNode_334458 {
@@ -1248,9 +1248,9 @@ extern "C" int func_00334458(sList_334458* self, sQuery_334458* q, char* buf, in
                 n += func_00334888(q, node, buf + n * 0x80, cap - n, mode);
             }
         } else if (flags & 0x40) {
-            sVEnt_334458* vt = node->obj->vt;
+            sWsVtSlot* vt = node->obj->vt;
             if (((Test_334458)vt[44].fn)((char*)node->obj + vt[44].delta)) {
-                sVEnt_334458* vt2 = node->obj->vt;
+                sWsVtSlot* vt2 = node->obj->vt;
                 sBox_334458* b = ((GetBox_334458)vt2[45].fn)((char*)node->obj + vt2[45].delta);
                 if (overlapBox_334458(q, b)) {
                     n += func_00334888(q, node, buf + n * 0x80, cap - n, mode);
@@ -1477,7 +1477,6 @@ extern "C" void func_00335960(void* vctx, void* vobj)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00335B90);
 #ifdef SKIP_ASM
-struct sVEnt_335B90 { short delta; short index; void* fn; };
 struct sBox_335B90;
 typedef int (*Test_335B90)(void*);
 typedef sBox_335B90* (*GetBox_335B90)(void*);
@@ -1495,7 +1494,7 @@ struct sQuery_335B90 {
 
 struct sObj_335B90 {
     int pad00[3];
-    sVEnt_335B90* vt;
+    sWsVtSlot* vt;
 };
 
 struct sNode_335B90 {
@@ -1559,9 +1558,9 @@ extern "C" void func_00335B90(void* vctx, void* vnode)
         }
     } else if (flags & 0x40) {
         if (node->obj == 0) return;
-        sVEnt_335B90* vt = node->obj->vt;
+        sWsVtSlot* vt = node->obj->vt;
         if (((Test_335B90)vt[44].fn)((char*)node->obj + vt[44].delta)) {
-            sVEnt_335B90* vt2 = node->obj->vt;
+            sWsVtSlot* vt2 = node->obj->vt;
             sBox_335B90* b = ((GetBox_335B90)vt2[45].fn)((char*)node->obj + vt2[45].delta);
             if (overlapBox_335B90(ctx->q, b)) {
                 collect_335B90(ctx, node);
@@ -1888,7 +1887,6 @@ extern "C" int func_003369D8(sCell_369D8* self, float* pos, t4Vector* outP, t4Ve
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00336D40);
 #ifdef SKIP_ASM
-struct sVEnt_336D40 { short delta; short index; void* fn; };
 struct sBox_336D40;
 typedef int (*Test_336D40)(void*);
 typedef sBox_336D40* (*GetBox_336D40)(void*);
@@ -1906,7 +1904,7 @@ struct sQuery_336D40 {
 
 struct sObj_336D40 {
     int pad00[3];
-    sVEnt_336D40* vt;
+    sWsVtSlot* vt;
 };
 
 struct sNode_336D40 {
@@ -1970,9 +1968,9 @@ extern "C" void func_00336D40(void* vctx, void* vnode)
             collect_336D40(ctx, node, mode);
         }
     } else if (flags & 0x40) {
-        sVEnt_336D40* vt = node->obj->vt;
+        sWsVtSlot* vt = node->obj->vt;
         if (((Test_336D40)vt[44].fn)((char*)node->obj + vt[44].delta)) {
-            sVEnt_336D40* vt2 = node->obj->vt;
+            sWsVtSlot* vt2 = node->obj->vt;
             sBox_336D40* b = ((GetBox_336D40)vt2[45].fn)((char*)node->obj + vt2[45].delta);
             if (overlapBox_336D40(ctx->q, b)) {
                 collect_336D40(ctx, node, mode);
@@ -4275,7 +4273,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_003415D0);
 extern "C" int func_002D1AF0();
 extern "C" void** func_002D1B08(int i);
 
-struct sVEnt_003415D0 { short delta; short index; void* fn; };
 typedef void (*Fn0_003415D0)(void*);
 typedef void (*Fn1_003415D0)(void*, void*);
 typedef void (*FnI_003415D0)(void*, int);
@@ -4284,7 +4281,7 @@ typedef int (*Test_003415D0)(void*, int);
 
 struct sNode_003415D0 {
     int pad00[3];
-    sVEnt_003415D0* vt;
+    sWsVtSlot* vt;
     int pad10[2];
     int a18;
     int pad1C[6];
@@ -4308,32 +4305,32 @@ extern "C" void func_003415D0(sNode_003415D0* self)
             hit = 1;
         }
     }
-    sVEnt_003415D0* vt = self->vt;
+    sWsVtSlot* vt = self->vt;
     ((Fn0_003415D0)vt[49].fn)((char*)self + vt[49].delta);
     if (self->type == 1 || self->t3C <= 0) {
         for (int i = 0; i < func_002D1AF0(); i++) {
             void** obj = func_002D1B08(i);
             if (self->type == 2) {
-                sVEnt_003415D0* ovt = (sVEnt_003415D0*)*obj;
+                sWsVtSlot* ovt = (sWsVtSlot*)*obj;
                 if (((Test0_003415D0)ovt[9].fn)((char*)obj + ovt[9].delta) != 0) continue;
             }
-            sVEnt_003415D0* ovt = (sVEnt_003415D0*)*obj;
+            sWsVtSlot* ovt = (sWsVtSlot*)*obj;
             if (((Test_003415D0)ovt[3].fn)((char*)obj + ovt[3].delta, self->a18) != 0) {
                 hit = 1;
                 if (self->f34 < 0.0f) {
-                    sVEnt_003415D0* v = self->vt;
+                    sWsVtSlot* v = self->vt;
                     ((Fn1_003415D0)v[48].fn)((char*)self + v[48].delta, obj);
                 } else {
-                    sVEnt_003415D0* v = self->vt;
+                    sWsVtSlot* v = self->vt;
                     ((Fn1_003415D0)v[47].fn)((char*)self + v[47].delta, obj);
                 }
             }
         }
     }
-    sVEnt_003415D0* v2 = self->vt;
+    sWsVtSlot* v2 = self->vt;
     ((Fn0_003415D0)v2[50].fn)((char*)self + v2[50].delta);
     if (hit == 0) {
-        sVEnt_003415D0* v3 = self->vt;
+        sWsVtSlot* v3 = self->vt;
         ((FnI_003415D0)v3[34].fn)((char*)self + v3[34].delta, 1);
     }
 }
@@ -5131,7 +5128,6 @@ struct sVec4_342538 {
     sVec4_342538() {}
 } __attribute__((aligned(16)));
 
-struct sVEnt_342538 { short delta; short index; void* fn; };
 typedef char* (*GetMat_342538)(void*, int);
 
 
@@ -5267,7 +5263,7 @@ extern "C" void func_00342538(sSelf_342538* self, sObj_342538* o, sVec4_342538* 
         sSub_342538* sub = (sSub_342538*)((char*)self + 0x44);
         char* ents = sub->inf->tbl->ents;
         if (*(int*)(ents + idx * 16 + 8) != 0) {
-            sVEnt_342538* vt = *(sVEnt_342538**)((char*)self + 0x50);
+            sWsVtSlot* vt = *(sWsVtSlot**)((char*)self + 0x50);
             char* m = ((GetMat_342538)vt[29].fn)((char*)sub + vt[29].delta, idx);
             char* m2 = m;
             if (vu0Length_342538(*p) > 100.0f) {
@@ -5370,18 +5366,13 @@ extern "C" void* func_00342768(sSph_342768* self, sSphDef_342768* def, int a2)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342808);
 #ifdef SKIP_ASM
-struct sVEntry00342808 {
-    short delta;
-    short index;
-    void* fn;
-};
 
 typedef void (*ReadFn00342808)(void*, void*, int);
 typedef int (*ReadIntFn00342808)(void*);
 
 extern void* D_00490898[];
 
-extern "C" void* func_00342808(void* self, sVEntry00342808** stream)
+extern "C" void* func_00342808(void* self, sWsVtSlot** stream)
 {
     *(int*)((char*)self + 0x0) = 1;
     *(void***)((char*)self + 0x4) = D_00490898;
@@ -5397,7 +5388,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00342880);
 extern "C" int func_002D1AF0();
 extern "C" void** func_002D1B08(int i);
 
-struct sVEnt_00342880 { short delta; short index; void* fn; };
 typedef void (*Fn0_00342880)(void*);
 typedef void (*Fn1_00342880)(void*, void*);
 typedef int (*Test_00342880)(void*, int);
@@ -5416,25 +5406,25 @@ extern "C" void func_00342880(sSph_342768* self)
             self->refs = 1;
         }
     }
-    sVEnt_00342880* vt = (sVEnt_00342880*)self->vt;
+    sWsVtSlot* vt = (sWsVtSlot*)self->vt;
     ((Fn0_00342880)vt[9].fn)((char*)self + vt[9].delta);
     if (self->type == 1 || self->t2C <= 0) {
         for (int i = 0; i < func_002D1AF0(); i++) {
             void** obj = func_002D1B08(i);
-            sVEnt_00342880* ovt = (sVEnt_00342880*)*obj;
+            sWsVtSlot* ovt = (sWsVtSlot*)*obj;
             if (((Test_00342880)ovt[3].fn)((char*)obj + ovt[3].delta, self->a40) != 0) {
                 self->refs = 1;
                 if (self->f24 < 0.0f) {
-                    sVEnt_00342880* v = (sVEnt_00342880*)self->vt;
+                    sWsVtSlot* v = (sWsVtSlot*)self->vt;
                     ((Fn1_00342880)v[8].fn)((char*)self + v[8].delta, obj);
                 } else {
-                    sVEnt_00342880* v = (sVEnt_00342880*)self->vt;
+                    sWsVtSlot* v = (sWsVtSlot*)self->vt;
                     ((Fn1_00342880)v[7].fn)((char*)self + v[7].delta, obj);
                 }
             }
         }
     }
-    sVEnt_00342880* v2 = (sVEnt_00342880*)self->vt;
+    sWsVtSlot* v2 = (sWsVtSlot*)self->vt;
     ((Fn0_00342880)v2[10].fn)((char*)self + v2[10].delta);
 }
 #endif
