@@ -10,6 +10,21 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A cStream object used through its vtable by hand (slot 1 at +0x8 = read, slot 2 at +0x10 = write).
+struct sStreamObj { char* vt; };
+
+// Write n bytes from p to the stream (vtable slot 2).
+static inline void StreamWrite(sStreamObj* s, void* p, int n) {
+    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x10);
+    e->fn((char*)s + e->delta, p, n);
+}
+
+// Read n bytes from the stream into p (vtable slot 1).
+static inline void StreamRead(sStreamObj* s, void* p, int n) {
+    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x8);
+    e->fn((char*)s + e->delta, p, n);
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3978,80 +3993,65 @@ extern "C" void func_002BE4B0(int arg0, void **arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BE518);
 #ifdef SKIP_ASM
-struct Stream_E518 { char* vt; };
 
-static inline void Wr_E518(Stream_E518* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x10);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BE518(char* self, Stream_E518* s) {
-    Wr_E518(s, self + 0x8, 4);
-    Wr_E518(s, self, 4);
-    Wr_E518(s, self + 0x10, 4);
-    Wr_E518(s, self, 4);
-    Wr_E518(s, self + 0x18, 4);
-    Wr_E518(s, self, 4);
-    Wr_E518(s, self + 0x20, 4);
-    Wr_E518(s, self, 4);
-    Wr_E518(s, self + 0x28, 4);
-    Wr_E518(s, self, 4);
-    Wr_E518(s, self + 0x30, 4);
-    Wr_E518(s, self, 4);
+extern "C" void func_002BE518(char* self, sStreamObj* s) {
+    StreamWrite(s, self + 0x8, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x10, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x18, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x20, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x28, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x30, 4);
+    StreamWrite(s, self, 4);
 }
 #endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BE698);
 #ifdef SKIP_ASM
-struct Stream_E698 { char* vt; };
 
-static inline void Wr_E698(Stream_E698* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x10);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BE698(char* self, Stream_E698* s) {
-    Wr_E698(s, self + 0x8, 4);
-    Wr_E698(s, self, 4);
-    Wr_E698(s, self + 0x10, 4);
-    Wr_E698(s, self, 4);
-    Wr_E698(s, self + 0x18, 4);
-    Wr_E698(s, self, 4);
-    Wr_E698(s, self + 0x20, 4);
-    Wr_E698(s, self, 4);
-    Wr_E698(s, self + 0x28, 4);
-    Wr_E698(s, self, 4);
-    Wr_E698(s, self + 0x30, 4);
-    Wr_E698(s, self, 4);
-    Wr_E698(s, self + 0x38, 4);
-    Wr_E698(s, self, 4);
+extern "C" void func_002BE698(char* self, sStreamObj* s) {
+    StreamWrite(s, self + 0x8, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x10, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x18, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x20, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x28, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x30, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x38, 4);
+    StreamWrite(s, self, 4);
 }
 #endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BE850);
 #ifdef SKIP_ASM
-struct Stream_E850 { char* vt; };
 
-static inline void Wr_E850(Stream_E850* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x10);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BE850(char* self, Stream_E850* s) {
-    Wr_E850(s, self + 0x8, 4);
-    Wr_E850(s, self, 4);
-    Wr_E850(s, self + 0x10, 4);
-    Wr_E850(s, self, 4);
-    Wr_E850(s, self + 0x18, 4);
-    Wr_E850(s, self, 4);
-    Wr_E850(s, self + 0x20, 4);
-    Wr_E850(s, self, 4);
-    Wr_E850(s, self + 0x28, 4);
-    Wr_E850(s, self, 4);
-    Wr_E850(s, self + 0x30, 4);
-    Wr_E850(s, self, 4);
+extern "C" void func_002BE850(char* self, sStreamObj* s) {
+    StreamWrite(s, self + 0x8, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x10, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x18, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x20, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x28, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x30, 4);
+    StreamWrite(s, self, 4);
 }
 #endif
 
@@ -4072,32 +4072,27 @@ extern "C" void func_002BE9D0(int arg0, void **arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BEA38);
 #ifdef SKIP_ASM
-struct Stream_EA38 { char* vt; };
 
-static inline void Wr_EA38(Stream_EA38* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x10);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BEA38(char* self, Stream_EA38* s) {
-    Wr_EA38(s, self + 0x8, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x10, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x18, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x20, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x28, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x30, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x38, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x40, 4);
-    Wr_EA38(s, self, 4);
-    Wr_EA38(s, self + 0x48, 4);
-    Wr_EA38(s, self, 4);
+extern "C" void func_002BEA38(char* self, sStreamObj* s) {
+    StreamWrite(s, self + 0x8, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x10, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x18, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x20, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x28, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x30, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x38, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x40, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x48, 4);
+    StreamWrite(s, self, 4);
 }
 #endif
 
@@ -4118,78 +4113,68 @@ extern "C" void func_002BEC60(int arg0, void **arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BECC8);
 #ifdef SKIP_ASM
-struct Stream_ECC8 { char* vt; };
 
-static inline void Wr_ECC8(Stream_ECC8* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x10);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BECC8(char* self, Stream_ECC8* s) {
-    Wr_ECC8(s, self + 0x8, 8);
-    Wr_ECC8(s, self, 4);
-    Wr_ECC8(s, self + 0x18, 8);
-    Wr_ECC8(s, self, 4);
-    Wr_ECC8(s, self + 0x28, 8);
-    Wr_ECC8(s, self, 4);
-    Wr_ECC8(s, self + 0x38, 8);
-    Wr_ECC8(s, self, 4);
-    Wr_ECC8(s, self + 0x48, 4);
-    Wr_ECC8(s, self, 4);
-    Wr_ECC8(s, self + 0x50, 4);
-    Wr_ECC8(s, self, 4);
+extern "C" void func_002BECC8(char* self, sStreamObj* s) {
+    StreamWrite(s, self + 0x8, 8);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x18, 8);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x28, 8);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x38, 8);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x48, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x50, 4);
+    StreamWrite(s, self, 4);
 }
 #endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BEE48);
 #ifdef SKIP_ASM
-struct Stream_EE48 { char* vt; };
 
-static inline void Wr_EE48(Stream_EE48* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x10);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BEE48(char* self, Stream_EE48* s) {
-    Wr_EE48(s, self + 0x8, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x10, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x18, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x20, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x28, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x30, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x38, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x40, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x48, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x50, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x58, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x60, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x68, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x70, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x78, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x80, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x88, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x90, 4);
-    Wr_EE48(s, self, 4);
-    Wr_EE48(s, self + 0x98, 4);
-    Wr_EE48(s, self, 4);
+extern "C" void func_002BEE48(char* self, sStreamObj* s) {
+    StreamWrite(s, self + 0x8, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x10, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x18, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x20, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x28, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x30, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x38, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x40, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x48, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x50, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x58, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x60, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x68, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x70, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x78, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x80, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x88, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x90, 4);
+    StreamWrite(s, self, 4);
+    StreamWrite(s, self + 0x98, 4);
+    StreamWrite(s, self, 4);
 }
 #endif
 
@@ -4282,80 +4267,65 @@ extern "C" void func_002BF518(int arg0, void **arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BF580);
 #ifdef SKIP_ASM
-struct Stream_F580 { char* vt; };
 
-static inline void Wr_F580(Stream_F580* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x8);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BF580(char* self, Stream_F580* s) {
-    Wr_F580(s, self + 0x8, 4);
-    Wr_F580(s, self, 4);
-    Wr_F580(s, self + 0x10, 4);
-    Wr_F580(s, self, 4);
-    Wr_F580(s, self + 0x18, 4);
-    Wr_F580(s, self, 4);
-    Wr_F580(s, self + 0x20, 4);
-    Wr_F580(s, self, 4);
-    Wr_F580(s, self + 0x28, 4);
-    Wr_F580(s, self, 4);
-    Wr_F580(s, self + 0x30, 4);
-    Wr_F580(s, self, 4);
+extern "C" void func_002BF580(char* self, sStreamObj* s) {
+    StreamRead(s, self + 0x8, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x10, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x18, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x20, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x28, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x30, 4);
+    StreamRead(s, self, 4);
 }
 #endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BF700);
 #ifdef SKIP_ASM
-struct Stream_F700 { char* vt; };
 
-static inline void Wr_F700(Stream_F700* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x8);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BF700(char* self, Stream_F700* s) {
-    Wr_F700(s, self + 0x8, 4);
-    Wr_F700(s, self, 4);
-    Wr_F700(s, self + 0x10, 4);
-    Wr_F700(s, self, 4);
-    Wr_F700(s, self + 0x18, 4);
-    Wr_F700(s, self, 4);
-    Wr_F700(s, self + 0x20, 4);
-    Wr_F700(s, self, 4);
-    Wr_F700(s, self + 0x28, 4);
-    Wr_F700(s, self, 4);
-    Wr_F700(s, self + 0x30, 4);
-    Wr_F700(s, self, 4);
-    Wr_F700(s, self + 0x38, 4);
-    Wr_F700(s, self, 4);
+extern "C" void func_002BF700(char* self, sStreamObj* s) {
+    StreamRead(s, self + 0x8, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x10, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x18, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x20, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x28, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x30, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x38, 4);
+    StreamRead(s, self, 4);
 }
 #endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BF8B8);
 #ifdef SKIP_ASM
-struct Stream_F8B8 { char* vt; };
 
-static inline void Wr_F8B8(Stream_F8B8* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x8);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BF8B8(char* self, Stream_F8B8* s) {
-    Wr_F8B8(s, self + 0x8, 4);
-    Wr_F8B8(s, self, 4);
-    Wr_F8B8(s, self + 0x10, 4);
-    Wr_F8B8(s, self, 4);
-    Wr_F8B8(s, self + 0x18, 4);
-    Wr_F8B8(s, self, 4);
-    Wr_F8B8(s, self + 0x20, 4);
-    Wr_F8B8(s, self, 4);
-    Wr_F8B8(s, self + 0x28, 4);
-    Wr_F8B8(s, self, 4);
-    Wr_F8B8(s, self + 0x30, 4);
-    Wr_F8B8(s, self, 4);
+extern "C" void func_002BF8B8(char* self, sStreamObj* s) {
+    StreamRead(s, self + 0x8, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x10, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x18, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x20, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x28, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x30, 4);
+    StreamRead(s, self, 4);
 }
 #endif
 
@@ -4376,32 +4346,27 @@ extern "C" void func_002BFA38(int arg0, void **arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BFAA0);
 #ifdef SKIP_ASM
-struct Stream_FAA0 { char* vt; };
 
-static inline void Wr_FAA0(Stream_FAA0* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x8);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BFAA0(char* self, Stream_FAA0* s) {
-    Wr_FAA0(s, self + 0x8, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x10, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x18, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x20, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x28, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x30, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x38, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x40, 4);
-    Wr_FAA0(s, self, 4);
-    Wr_FAA0(s, self + 0x48, 4);
-    Wr_FAA0(s, self, 4);
+extern "C" void func_002BFAA0(char* self, sStreamObj* s) {
+    StreamRead(s, self + 0x8, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x10, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x18, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x20, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x28, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x30, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x38, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x40, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x48, 4);
+    StreamRead(s, self, 4);
 }
 #endif
 
@@ -4422,26 +4387,21 @@ extern "C" void func_002BFCC8(int arg0, void **arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BFD30);
 #ifdef SKIP_ASM
-struct Stream_FD30 { char* vt; };
 
-static inline void Wr_FD30(Stream_FD30* s, void* p, int n) {
-    sVEntry<int(void*, void*, int)>* e = (sVEntry<int(void*, void*, int)>*)(s->vt + 0x8);
-    e->fn((char*)s + e->delta, p, n);
-}
 
-extern "C" void func_002BFD30(char* self, Stream_FD30* s) {
-    Wr_FD30(s, self + 0x8, 8);
-    Wr_FD30(s, self, 4);
-    Wr_FD30(s, self + 0x18, 8);
-    Wr_FD30(s, self, 4);
-    Wr_FD30(s, self + 0x28, 8);
-    Wr_FD30(s, self, 4);
-    Wr_FD30(s, self + 0x38, 8);
-    Wr_FD30(s, self, 4);
-    Wr_FD30(s, self + 0x48, 4);
-    Wr_FD30(s, self, 4);
-    Wr_FD30(s, self + 0x50, 4);
-    Wr_FD30(s, self, 4);
+extern "C" void func_002BFD30(char* self, sStreamObj* s) {
+    StreamRead(s, self + 0x8, 8);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x18, 8);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x28, 8);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x38, 8);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x48, 4);
+    StreamRead(s, self, 4);
+    StreamRead(s, self + 0x50, 4);
+    StreamRead(s, self, 4);
 }
 #endif
 
