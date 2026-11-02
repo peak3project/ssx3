@@ -1448,7 +1448,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FD758);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_004A3DD8_D758 __asm__("D_004A3DD8");
-extern char **D_004A47B8_D758 __asm__("D_004A47B8");
 extern char *D_004A28A8_D758 __asm__("D_004A28A8");
 struct V4_D758 { float x, y, z, w; V4_D758() {} V4_D758(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} } __attribute__((aligned(16)));
 struct M4_D758 { V4_D758 r[4]; };
@@ -1530,9 +1529,9 @@ extern "C" cLunoValue func_002FD758(int n, Ent_D758 *e) {
     if (~id == 0) {
         obj = *(char**)(D_004A3DD8_D758 + 0x290);
     } else {
-        char *s = (*(char***)((char*)*D_004A47B8_D758 + 8))[id & 0xFF];
+        sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
-        if (!s || (i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8) == 0)
+        if (!s || (i = s->refs[id >> 8] >> 8) == 0)
             obj = 0;
         else
             obj = (char*)(i << 2);
