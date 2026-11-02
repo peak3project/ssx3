@@ -61,6 +61,15 @@ struct sA8E8Node {                  /* +0x1B4 list */
     void (*fn)(int);
     int arg;
 };
+struct sA8E8HeapEnt { int key; int val; };
+struct sA8E8Heap {                  /* +0x234 (also D_0050AB1C): block heap, entry table grows down from f04 */
+    int f00;
+    struct sA8E8HeapEnt *f04;
+    int f08;
+    unsigned int f0C;
+    int f10;
+    int f14;
+};
 struct sA8E8Pan { float l; float r; };
 struct sA8E8Bus {                   /* 0x14, at +0x1F8 / +0x20C / +0x220, indexed by id */
     short f00;
@@ -110,6 +119,7 @@ extern struct sA8E8Cfg D_0050A908;      /* D_0050A8E8.setup.cfg */
 extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
+extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
 
@@ -970,11 +980,9 @@ int func_003B5B68(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5BA0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct G_5BA0 { char pad[0xC]; unsigned int lim; };
-extern struct G_5BA0 *D_0050AB1C_5BA0[] __asm__("D_0050AB1C");
 void func_003B5BA0(int *a, int *b) {
     int x = *a;
-    unsigned int lim = D_0050AB1C_5BA0[0]->lim;
+    unsigned int lim = D_0050AB1C->f0C;
     if (lim < (unsigned int)(x + *b))
         *b = lim - x;
 }
@@ -9479,13 +9487,12 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C6158);
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6240);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_0050AB1C_6240[] __asm__("D_0050AB1C");
 
 int func_003C6240(void) {
     int temp_3;
 
-    temp_3 = (*(int *)((char*)(D_0050AB1C_6240[0]) + (8)));
-    return (int) ((temp_3 - (*(int *)((char*)(D_0050AB1C_6240[0]) + (0x10)))) * 0x64) / temp_3;
+    temp_3 = D_0050AB1C->f08;
+    return (temp_3 - D_0050AB1C->f10) * 100 / temp_3;
 }
 #endif
 
