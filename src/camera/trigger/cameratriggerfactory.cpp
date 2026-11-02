@@ -75,6 +75,25 @@ struct sCamInfo {
     int f64;                    // 0x64
 };
 
+// A being: the script/AI-facing interface of a rider, at rider + 0x6C0 (seg/seg_1FBE38; slot order of the
+// prototype's vtable _vt$6cBeing).
+struct tInstanceRecord;
+class cBeing {
+public:
+    virtual ~cBeing();
+    virtual const t4Vector* getVelocity() const;
+    virtual int isIntersecting(tInstanceRecord* rec) const;
+    virtual void applyBoost(const t4Vector& impulse);
+    virtual const t4Vector* getPosition() const;
+    virtual const t4Matrix* getTransform() const;
+    virtual int getAIIndex() const;
+    virtual bool isHuman() const;
+    virtual bool isComputer() const;
+    virtual void transport(const t4Matrix& m);
+    virtual void resetToPath();
+    virtual void initForMission(const t4Matrix& m);
+};
+
 // A camera algorithm (cCameraAlgorithm, camera/camera): the vptr follows the base's own data at 0x10; slots by
 // position.
 class cCameraAlgorithm {
@@ -2948,21 +2967,11 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00176CE0);
 #ifdef SKIP_ASM
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
-class cCamTargetK8940 {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual int v07();
-};
 
 extern "C" void func_00176CE0(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -3077,7 +3086,7 @@ extern "C" void func_00166550(void* self, float a, float b);
 extern "C" void func_00176FE0(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -3192,7 +3201,7 @@ extern "C" void func_00166550(void* self, float a, float b);
 extern "C" void func_001772E0(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -3300,7 +3309,7 @@ extern "C" void func_00166550(void* self, float a, float b);
 extern "C" void func_00177588(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -4001,16 +4010,6 @@ extern "C" void f_166C60_1783E0(void* self, long id) __asm__("func_00166C60");
 extern "C" t4Vector f_177FC0_1783E0(void* self, const t4Vector& v) __asm__("func_00177FC0");
 extern "C" t4Vector f_177EF8_1783E0(void* self) __asm__("func_00177EF8");
 
-class cCamTarget_1783E0 {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual long v07();
-};
 
 // PORT: PS2-only VU0 inline asm (a + b).
 static inline t4Vector Add_1783E0(const t4Vector& a, const t4Vector& b)
@@ -4047,7 +4046,7 @@ static inline t4Vector ScaleP_1783E0(const t4Vector* v, float s)
 extern "C" void func_001783E0(cCameraAlgorithm* self, long id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTarget_1783E0*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         char* o = *(char**)((char*)self + 0x30);
         sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[4];
         *(t4Vector*)((char*)self + 0x390) = e->fn(o + e->delta);
@@ -4382,21 +4381,11 @@ extern "C" void func_00166550(void* self, float a, float b);
 extern "C" t4Vector func_001785F0(void* self);
 extern "C" t4Vector func_00178758(void* self);
 
-class cCamTarget_00178938 {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual int v07();
-};
 
 extern "C" void func_00178938(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTarget_00178938*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         *(t4Vector*)((char*)self + 0x40) = func_001785F0(self);
         *(t4Vector*)((char*)self + 0x20) = func_00178758(self);
         func_00166C60(self, id);
