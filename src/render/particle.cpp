@@ -306,6 +306,45 @@ static inline int wrapIndex(int i, int start, int m)
     return (i + start) % m;
 }
 
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, by value).
+static inline sPtMatrixV MulMatV(const sPtMatrixV& a, const sPtMatrixV& b)
+{
+    sPtMatrixV d;
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(&d), "r"(&a), "r"(&b)
+        : "memory");
+    return d;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5397,43 +5436,6 @@ extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix product).
-static inline sPtMatrixV MulMat_1310(const sPtMatrixV& a, const sPtMatrixV& b)
-{
-    sPtMatrixV d;
-    __asm__ __volatile__(
-        "lqc2      $vf4, 0x0(%1)\n"
-        "lqc2      $vf5, 0x10(%1)\n"
-        "lqc2      $vf6, 0x20(%1)\n"
-        "lqc2      $vf7, 0x30(%1)\n"
-        "lqc2      $vf8, 0x0(%2)\n"
-        "lqc2      $vf9, 0x10(%2)\n"
-        "lqc2      $vf10, 0x20(%2)\n"
-        "lqc2      $vf11, 0x30(%2)\n"
-        "vmulax.xyzw ACC, $vf4, $vf8x\n"
-        "vmadday.xyzw ACC, $vf5, $vf8y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
-        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
-        "vmulax.xyzw ACC, $vf4, $vf9x\n"
-        "vmadday.xyzw ACC, $vf5, $vf9y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
-        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
-        "vmulax.xyzw ACC, $vf4, $vf10x\n"
-        "vmadday.xyzw ACC, $vf5, $vf10y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
-        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
-        "vmulax.xyzw ACC, $vf4, $vf11x\n"
-        "vmadday.xyzw ACC, $vf5, $vf11y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
-        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
-        "sqc2      $vf12, 0x0(%0)\n"
-        "sqc2      $vf13, 0x10(%0)\n"
-        "sqc2      $vf14, 0x20(%0)\n"
-        "sqc2      $vf15, 0x30(%0)\n"
-        :
-        : "r"(&d), "r"(&a), "r"(&b)
-        : "memory");
-    return d;
-}
 
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
@@ -5446,7 +5448,7 @@ extern "C" void func_00381310(cPS2GraphicsMan* self, sPtMatPacket* obj)
     if (self->texReady == 0) {
         func_0037D968(self);
     }
-    sPtMatrixV m = MulMat_1310(self->m5860, obj->mat);
+    sPtMatrixV m = MulMatV(self->m5860, obj->mat);
     unsigned int buf = self->bufAddr;
     unsigned long* p = func_0038F460(D_004A4474, buf, -1, 0);
     p[0] = 0x1000000D;
@@ -5511,43 +5513,6 @@ extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix product).
-static inline sPtMatrixV MulMat_16F0(const sPtMatrixV& a, const sPtMatrixV& b)
-{
-    sPtMatrixV d;
-    __asm__ __volatile__(
-        "lqc2      $vf4, 0x0(%1)\n"
-        "lqc2      $vf5, 0x10(%1)\n"
-        "lqc2      $vf6, 0x20(%1)\n"
-        "lqc2      $vf7, 0x30(%1)\n"
-        "lqc2      $vf8, 0x0(%2)\n"
-        "lqc2      $vf9, 0x10(%2)\n"
-        "lqc2      $vf10, 0x20(%2)\n"
-        "lqc2      $vf11, 0x30(%2)\n"
-        "vmulax.xyzw ACC, $vf4, $vf8x\n"
-        "vmadday.xyzw ACC, $vf5, $vf8y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
-        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
-        "vmulax.xyzw ACC, $vf4, $vf9x\n"
-        "vmadday.xyzw ACC, $vf5, $vf9y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
-        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
-        "vmulax.xyzw ACC, $vf4, $vf10x\n"
-        "vmadday.xyzw ACC, $vf5, $vf10y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
-        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
-        "vmulax.xyzw ACC, $vf4, $vf11x\n"
-        "vmadday.xyzw ACC, $vf5, $vf11y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
-        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
-        "sqc2      $vf12, 0x0(%0)\n"
-        "sqc2      $vf13, 0x10(%0)\n"
-        "sqc2      $vf14, 0x20(%0)\n"
-        "sqc2      $vf15, 0x30(%0)\n"
-        :
-        : "r"(&d), "r"(&a), "r"(&b)
-        : "memory");
-    return d;
-}
 
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
@@ -5560,7 +5525,7 @@ extern "C" void func_003816F0(cPS2GraphicsMan* self, sPtMatPacket* obj)
     if (self->texReady == 0) {
         func_0037D968(self);
     }
-    sPtMatrixV m = MulMat_16F0(self->m5860, obj->mat);
+    sPtMatrixV m = MulMatV(self->m5860, obj->mat);
     unsigned int buf = self->bufAddr;
     unsigned long* p = func_0038F460(D_004A4474, buf, -1, 0);
     p[0] = 0x1000000D;
