@@ -2201,34 +2201,32 @@ int func_003B7080(int arg0, int *arg1) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B70F8);
 #ifdef SKIP_ASM
-struct T_70F8 { char pad0[0x10]; unsigned int f10; char pad14[0xC]; volatile unsigned int f20; };
-struct S_70F8 { int h0; char pad4[0x12C]; int f130; struct T_70F8 *f134; };
 extern unsigned int f_14C8_70F8(int) __asm__("func_003E14C8");
 extern int f_14F8_70F8(int) __asm__("func_003E14F8");
-int func_003B70F8(struct S_70F8 *self) {
-    struct T_70F8 *t = self->f134;
+int func_003B70F8(struct sA0A0Strm *self) {
+    struct sA0A0Node *t = self->f134;
     if (t == 0) {
         return 0;
     }
     if (t->f10 == 0) {
         return 0;
     }
-    if ((int)t->f20 < 0) {
+    if (t->f20 < 0) {
         return 1;
     }
     if (t->f20 != 0) {
-        unsigned int u = f_14C8_70F8(self->h0);
+        unsigned int u = f_14C8_70F8(self->f00);
         if (u > 4000000) u = 4000000;
         if (u * 1000 / t->f10 >= t->f20) {
             t->f20 = 0;
             return 0;
         }
-        if (f_14F8_70F8(self->h0) == 2) {
+        if (f_14F8_70F8(self->f00) == 2) {
             t->f20 = 0;
             return 0;
         }
-        if (self->f130 > 0) return 1;
-        if (f_14F8_70F8(self->h0) == 0) {
+        if (self->f128.f08 > 0) return 1;
+        if (f_14F8_70F8(self->f00) == 0) {
             t->f20 = 0;
             return 0;
         }
