@@ -18,6 +18,21 @@ extern struct sC10 D_00450C10;
 extern void *(*D_00450C14)(char *, int, int);   /* D_00450C10.f04 */
 extern int (*D_00450C18)(void *);               /* D_00450C10.f08 */
 extern int D_00450C38;                          /* FILESYS_atomic lock */
+struct sReq {                       /* 0x30, a file request (D_00450C34[], D_00519BF0 of them) */
+    int f00;                        /* id: sequence << 8 | index */
+    struct sReq *f04;               /* next free */
+    int f08;
+    int f0C;
+    int f10;
+    unsigned int f14;
+    int f18;
+    volatile int f1C;               /* busy */
+    int f20;
+    int f24;
+    int f28;
+    int f2C;
+};
+extern struct sReq *D_00450C34;
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
@@ -2138,19 +2153,18 @@ void func_003DEF40(unsigned char *arg0) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DEF70);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450C34_0C34[] __asm__("D_00450C34");
 extern int D_00519BF0;
 
-int *func_003DEF70(int arg0) {
-    int *temp_2;
+struct sReq *func_003DEF70(int arg0) {
+    struct sReq *temp_2;
     int temp_6;
 
     temp_6 = arg0 & 0xFF;
     if ((arg0 < 0x100) || (temp_6 >= D_00519BF0)) {
         return 0;
     }
-    temp_2 = (int*)((char*)D_00450C34_0C34[0] + (temp_6 * 0x30));
-    return ((*temp_2 ^ arg0) != 0) ? 0 : temp_2;
+    temp_2 = &D_00450C34[temp_6];
+    return ((temp_2->f00 ^ arg0) != 0) ? 0 : temp_2;
 }
 #endif
 
