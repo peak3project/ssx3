@@ -1477,7 +1477,6 @@ void func_003DDE50(int a) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDE78);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int strlen_DE78(char *) __asm__("strlen");
 extern char *strcpy_DE78(char *, char *) __asm__("strcpy");
 extern int func_00416B18_DE78(char *, char *, int) __asm__("func_00416B18");
@@ -1485,7 +1484,6 @@ extern char* func_004162D0(char *, char *);
 extern char *D_00450C08;
 extern int D_00450C44;
 extern int D_00450C48;
-extern char D_00519AF0_DE78[] __asm__("D_00519AF0");
 extern char D_00495D78_DE78[] __asm__("D_00495D78");
 
 void func_003DDE78(char *a) {
@@ -1500,11 +1498,11 @@ void func_003DDE78(char *a) {
         D_00450C44 = 2;
         a += n;
     }
-    strcpy_DE78(D_00519AF0_DE78, a);
-    if (D_00519AF0_DE78[0xFF] == 0) {
-        len = strlen_DE78(D_00519AF0_DE78);
-        if (len > 0 && D_00519AF0_DE78[len - 1] != 0x2F) {
-            func_004162D0(D_00519AF0_DE78, D_00495D78_DE78);
+    strcpy_DE78(D_00519AF0, a);
+    if (D_00519AF0[0xFF] == 0) {
+        len = strlen_DE78(D_00519AF0);
+        if (len > 0 && D_00519AF0[len - 1] != 0x2F) {
+            func_004162D0(D_00519AF0, D_00495D78_DE78);
         }
     }
 }
