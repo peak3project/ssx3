@@ -992,20 +992,16 @@ void func_003B5BA0(int *a, int *b) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5BD0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct H_5BD0 { int f0; int f4; int f8; int fC; int f10; };
-struct G_5BD0 { char pad[0x234]; struct H_5BD0 *cur; };
-extern struct G_5BD0 D_0050A8E8_5BD0 __asm__("D_0050A8E8");
-
-void func_003B5BD0(struct H_5BD0 *a0, int a1) {
-    D_0050A8E8_5BD0.cur = a0;
-    a0->f8 = a1;
-    D_0050A8E8_5BD0.cur->f4 = (int)a0 + a1 - 8;
+void func_003B5BD0(struct sA8E8Heap *a0, int a1) {
+    D_0050A8E8.f234 = a0;
+    a0->f08 = a1;
+    D_0050A8E8.f234->f04 = (struct sA8E8HeapEnt *)((char *)a0 + a1 - 8);
     a1 -= 0xF;
-    D_0050A8E8_5BD0.cur->f0 = (int)a0 + 0x18;
-    D_0050A8E8_5BD0.cur->f0 += 0xF;
-    D_0050A8E8_5BD0.cur->f0 &= 0xFFFFFFF0;
-    D_0050A8E8_5BD0.cur->fC = a1 - 0x20;
-    D_0050A8E8_5BD0.cur->f10 = a1;
+    D_0050A8E8.f234->f00 = (int)a0 + 0x18;
+    D_0050A8E8.f234->f00 += 0xF;
+    D_0050A8E8.f234->f00 &= 0xFFFFFFF0;
+    D_0050A8E8.f234->f0C = a1 - 0x20;
+    D_0050A8E8.f234->f10 = a1;
 }
 #endif
 
@@ -1026,29 +1022,24 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B5E98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 void func_003B5E98_5E98(int) __asm__("func_003B5E98");
-struct E_5E98 { int key; int val; };
-struct S_5E98 { int base; struct E_5E98 *arr; int p2; int x; int p4; int cnt; };
-struct G_5E98 { char pad[0x234]; struct S_5E98 *s; };
-extern struct G_5E98 D_0050A8E8_5E98[] __asm__("D_0050A8E8");
-
 void func_003B5E98_5E98(int a) {
     int i = 0;
-    int d = a - D_0050A8E8_5E98[0].s->base;
-    if (D_0050A8E8_5E98[0].s->cnt >= 0) return;
+    int d = a - D_0050A8E8.f234->f00;
+    if (D_0050A8E8.f234->f14 >= 0) return;
     while (1) {
-        struct S_5E98 *s = D_0050A8E8_5E98[0].s;
-        if (((struct E_5E98 *)((char *)s->arr + (i << 3)))->key == d) {
-            s->cnt++;
-            D_0050A8E8_5E98[0].s->x += 8;
-            if (!(D_0050A8E8_5E98[0].s->cnt < i)) return;
+        struct sA8E8Heap *s = D_0050A8E8.f234;
+        if (((struct sA8E8HeapEnt *)((char *)s->f04 + (i << 3)))->key == d) {
+            s->f14++;
+            D_0050A8E8.f234->f0C += 8;
+            if (!(D_0050A8E8.f234->f14 < i)) return;
             do {
-                D_0050A8E8_5E98[0].s->arr[i] = D_0050A8E8_5E98[0].s->arr[i - 1];
+                D_0050A8E8.f234->f04[i] = D_0050A8E8.f234->f04[i - 1];
                 i--;
-            } while (D_0050A8E8_5E98[0].s->cnt < i);
+            } while (D_0050A8E8.f234->f14 < i);
             return;
         }
         i--;
-        if (!(s->cnt < i)) return;
+        if (!(s->f14 < i)) return;
     }
 }
 #endif
