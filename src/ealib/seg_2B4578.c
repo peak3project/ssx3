@@ -13783,25 +13783,8 @@ int func_003CE1A8(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003CE1B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct {
-    char pad0[4];
-    short h[8];
-    int f14;
-    char pad18[0x23 - 0x18];
-    unsigned char f23;
-    unsigned short f24;
-    char pad26[0x8C - 0x26];
-} E_E1B0;
-typedef struct {
-    char pad0[0x2F];
-    unsigned char f2F;
-    unsigned char f30;
-    char pad31[0x1F0 - 0x31];
-    E_E1B0 *ents;
-} G_E1B0;
 typedef struct { char pad0[3]; unsigned char b3; } A6_E1B0;
 typedef struct { char pad0[7]; unsigned char b7; char pad8[0x18 - 8]; int arr[8]; } A7_E1B0;
-extern G_E1B0 D_0050A8E8_E1B0 __asm__("D_0050A8E8");
 extern void func_003C8158_E1B0(int, int, int, int, unsigned int, int, int, int, int, int, int, int, int, int) __asm__("func_003C8158");
 extern int func_003C25E0(int);
 extern void func_003C38E0_E1B0(int) __asm__("func_003C38E0");
@@ -13812,25 +13795,25 @@ extern void func_003C3178_E1B0(int, int) __asm__("func_003C3178");
 extern void func_003C3250(int, int);
 
 int func_003CE1B0(int arg0, int idx, int arg2, int arg3, int arg4, int arg5, A6_E1B0 *arg6, A7_E1B0 *arg7) {
-    E_E1B0 *e;
+    struct sA8E8Chan *e;
     int i;
 
-    e = &D_0050A8E8_E1B0.ents[idx];
+    e = &D_0050A8E8.f1F0[idx];
     if (!(e->f24 & 8)) {
     if (e->f24 & 4) {
     for (i = 0; i < e->f23; i++) {
-        func_003C8158_E1B0(e->h[i] - (D_0050A8E8_E1B0.f30 + D_0050A8E8_E1B0.f2F), arg6->b3, 0, 0, 0xFFFFFFFF,
+        func_003C8158_E1B0(e->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F), arg6->b3, 0, 0, 0xFFFFFFFF,
                            arg7->arr[i], e->f23, e->f14, -1, -1, 0, 0, arg7->b7, i);
     }
-    func_003C25E0(e->h[0]);
-    func_003C38E0_E1B0(e->h[0]);
-    func_003C27E0(e->h[0], 0);
-    func_003C3010(e->h[0], arg2);
-    func_003C30C8(e->h[0], arg3);
-    func_003C3178_E1B0(e->h[0], arg4);
-    func_003C3250(e->h[0], arg5);
+    func_003C25E0(e->f04[0]);
+    func_003C38E0_E1B0(e->f04[0]);
+    func_003C27E0(e->f04[0], 0);
+    func_003C3010(e->f04[0], arg2);
+    func_003C30C8(e->f04[0], arg3);
+    func_003C3178_E1B0(e->f04[0], arg4);
+    func_003C3250(e->f04[0], arg5);
     for (i = 0; i < e->f23; i++) {
-        func_003C83A0(e->h[i] - (D_0050A8E8_E1B0.f30 + D_0050A8E8_E1B0.f2F));
+        func_003C83A0(e->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F));
     }
     }
     }
