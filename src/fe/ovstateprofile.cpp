@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovstateprofile", cOVState_PROFILE_onCreateScreen);
 #ifdef SKIP_ASM
@@ -358,11 +366,6 @@ public:
     virtual void v25(int);
 };
 
-struct sVE_1380 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 class cG_1380 {
 public:
@@ -713,21 +716,11 @@ extern char D_00471DC0[];
 extern char D_00471DD8[];
 extern char D_00471DE8[];
 
-struct sVEntryK211BC8 {
-    short delta;
-    short index;
-    void* (*fn)(void*, ...);
-};
 
-struct sVEntryVK211BC8 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
-#define VCALLV_K211BC8(obj, off, idx) (*(sVEntryVK211BC8**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryVK211BC8**)((char*)(obj) + (off)))[idx].delta
+#define VCALLV_K211BC8(obj, off, idx) (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
 
-#define VCALL_K211BC8(obj, off, idx) (*(sVEntryK211BC8**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryK211BC8**)((char*)(obj) + (off)))[idx].delta
+#define VCALL_K211BC8(obj, off, idx) (*(sVEntry<void*(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void*(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
 
 
 struct sProfileK211BC8 {
@@ -769,7 +762,7 @@ struct sMgrK211BC8 {
 static inline void* GetText_K211BC8(char* key)
 {
     char* db = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntryK211BC8* vt = *(sVEntryK211BC8**)(db + 4);
+    sVEntry<void*(void*, ...)>* vt = *(sVEntry<void*(void*, ...)>**)(db + 4);
     return vt[4].fn(db + vt[4].delta, GetHashValue32(key));
 }
 
@@ -946,15 +939,10 @@ int func_002122E0(void* self)
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_002122E8);
 #ifdef SKIP_ASM
-struct sVEntry002122E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sObj002122E8 {
     int pad[2];
-    sVEntry002122E8* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 
 int GetHashValue32(char* str);
@@ -1069,7 +1057,6 @@ extern "C" int cBENewRaceInterface_setGameEvent(void* iface, int ev);
 extern "C" int func_00146D98(void* self, int index);
 extern "C" void func_0039F400(void* list, void* item);
 
-struct sVEnt_00212508 { short delta; short index; void (*fn)(void*); };
 
 extern "C" void func_00212508(void* self)
 {
@@ -1090,7 +1077,7 @@ extern "C" void func_00212508(void* self)
         cBENewRaceInterface_setGameEvent(race, 0xC);
         D_00535C08[0] = func_00146D98(player, 0);
         D_004A11B8 = 1;
-        sVEnt_00212508* vt = *(sVEnt_00212508**)((char*)race + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)race + 0xC);
         vt[1].fn((char*)race + vt[1].delta);
         cAppMan_setNextModule((cAppMan*)D_004A28A8, (unsigned int)func_00232720(cMemMan_alloc(8, D_00471E90, 0x100, 0)));
     }
