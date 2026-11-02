@@ -63,6 +63,15 @@ extern sFioFile *func_00427498(void);
 extern sFioFile *func_00427520(unsigned fd);
 
 
+/* fileio RPC buffers */
+typedef struct { void (*fn)(int); int arg; } sFioCb;
+extern sFioCb D_0052EE80;      /* user callback run by func_00427A60 (set by func_004279C8) */
+extern char D_0052E340[];      /* RPC receive buffer */
+extern char D_0052E380[];      /* 0x440-byte read-ahead buffers */
+extern char D_0052EE40[];
+extern int D_0052D6C0[];
+
+
 /* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
 typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
 typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
@@ -2171,7 +2180,6 @@ struct W7590 { char b[4]; };
 struct B7590 { char b[0x144]; };
 struct C7590 { char b[0x40]; };
 struct L7590 { int n1; int n2; char *d1; char *d2; unsigned char b1[64]; unsigned char b2[64]; };
-extern char D_7590_380[] __asm__("D_0052E380");
 extern int D_00455208;
 extern int D_00455210;
 extern volatile int D_00455188[];
@@ -2188,7 +2196,7 @@ void func_00427590(int *a0) {
     int idx;
     int i;
     D_00455208 = idx = D_00455210 != 0 ? a0[3] : 0;
-    p = (char *)((int)(D_7590_380 + idx * 0x440) | 0x20000000);
+    p = (char *)((int)(D_0052E380 + idx * 0x440) | 0x20000000);
     *(struct W7590 *)&sema = *(struct W7590 *)(p + 0x0);
     *(struct W7590 *)&cmd = *(struct W7590 *)(p + 0x4);
     *(struct W7590 *)&dst = *(struct W7590 *)(p + 0x8);
@@ -2295,24 +2303,23 @@ void func_004279B8(void) {
 INCLUDE_ASM("seg/seg_325220", func_004279C8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern int D_0052EE80;
 extern void func_00427988_a(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern int func_0042C078_i(void) __asm__("func_0042C078");
 extern void func_0042C0C0(void);
 extern void func_004279B8(void);
-int func_004279C8(int a0, int a1) {
+void (*func_004279C8(void (*a0)(int), int a1))(int) {
     int r;
-    int old;
-    int *p = &D_0052EE80;
+    void (*old)(int);
+    sFioCb *p = &D_0052EE80;
     func_00427988_a(0x1B);
     if (D_0045520C == 0) {
         func_00427A90();
     }
     r = func_0042C078_i();
-    old = D_0052EE80;
-    p[1] = a1;
-    D_0052EE80 = a0;
+    old = D_0052EE80.fn;
+    p->arg = a1;
+    D_0052EE80.fn = a0;
     if (r != 0) {
         func_0042C0C0();
     }
@@ -2324,9 +2331,9 @@ int func_004279C8(int a0, int a1) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427A60);
 #ifdef SKIP_ASM
-void func_00427A60(int a, int *p) {
-    if (p[0])
-        ((void (*)(int))p[0])(p[1]);
+void func_00427A60(int a, sFioCb *p) {
+    if (p->fn)
+        p->fn(p->arg);
     SYNC_4248();
     EI_4248();
 }
@@ -2335,12 +2342,6 @@ void func_00427A60(int a, int *p) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427A90);
 #ifdef SKIP_ASM
-struct H4A90 { void (*fn)(int); int arg; };
-extern struct H4A90 D_4A90_ee80 __asm__("D_0052EE80");
-extern char D_4A90_ee40[] __asm__("D_0052EE40");
-extern int D_4A90_6c0[] __asm__("D_0052D6C0");
-extern char D_4A90_380[] __asm__("D_0052E380");
-extern char D_4A90_340[] __asm__("D_0052E340");
 extern int D_00455218;
 extern int D_0045520C;
 extern int D_00455210;
@@ -2358,13 +2359,13 @@ int func_00427A90_d(void) {
     int old;
     int v;
     sFioFile *p;
-    struct H4A90 *q = &D_4A90_ee80;
+    sFioCb *q = &D_0052EE80;
     sRpcVer w;
     func_00426408_z(0);
-    D_4A90_ee80.fn = 0;
+    D_0052EE80.fn = 0;
     q->arg = 0;
     old = func_0042C078_z();
-    func_00426020_z(0x80000011, func_00427590_z, D_4A90_ee40);
+    func_00426020_z(0x80000011, func_00427590_z, D_0052EE40);
     func_00426020_z(0x80000013, func_00427A60_z, q);
     if (old != 0)
         func_0042C0C0_z();
@@ -2383,12 +2384,12 @@ int func_00427A90_d(void) {
     for (p = D_0052EC00; p < &D_0052EC00[32]; p++)
         p->f4 = 0;
     func_00423DC0_z(D_00455218);
-    D_4A90_6c0[0] = (int)D_4A90_380;
-    D_4A90_6c0[1] = D_4A90_6c0[0] + 0x440;
-    if (func_00426D18(&D_0052EE00, 0xFF, 0, D_4A90_6c0, 8, D_4A90_340, 8, 0, 0) < 0)
+    D_0052D6C0[0] = (int)D_0052E380;
+    D_0052D6C0[1] = D_0052D6C0[0] + 0x440;
+    if (func_00426D18(&D_0052EE00, 0xFF, 0, D_0052D6C0, 8, D_0052E340, 8, 0, 0) < 0)
         return 0xFFFEFFFF;
-    D_0052EE28 = *(sRpcVer *)((int)D_4A90_340 | 0x20000000);
-    w = *(sRpcVer *)((int)(D_4A90_340 + 4) | 0x20000000);
+    D_0052EE28 = *(sRpcVer *)((int)D_0052E340 | 0x20000000);
+    w = *(sRpcVer *)((int)(D_0052E340 + 4) | 0x20000000);
     D_00455210 = *(int *)&w == 2;
     D_0045520C = 1;
     return 0;
@@ -2430,7 +2431,6 @@ INCLUDE_ASM("seg/seg_325220", func_00427D60);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern int D_00455218;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -2523,7 +2523,6 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
 INCLUDE_ASM("seg/seg_325220", func_00427FE8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2584,7 +2583,6 @@ INCLUDE_ASM("seg/seg_325220", func_00428168);
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2673,7 +2671,6 @@ INCLUDE_ASM("seg/seg_325220", func_004283A0);
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2764,7 +2761,6 @@ INCLUDE_ASM("seg/seg_325220", func_00428600);
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2869,7 +2865,6 @@ INCLUDE_ASM("seg/seg_325220", func_004288C0);
 INCLUDE_ASM("seg/seg_325220", func_00428C38);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -2937,7 +2932,6 @@ int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a
 INCLUDE_ASM("seg/seg_325220", func_00428E18);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3004,7 +2998,6 @@ int func_00428FC0(int a0) {
 INCLUDE_ASM("seg/seg_325220", func_00428FE0);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3072,7 +3065,6 @@ int func_00429190(int a0) {
 INCLUDE_ASM("seg/seg_325220", func_004291B0);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3155,7 +3147,6 @@ int func_004291B0_d(char *s, char *t, char *data, int len) {
 INCLUDE_ASM("seg/seg_325220", func_00429420);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3248,7 +3239,6 @@ int func_00429560(int a0) {
 INCLUDE_ASM("seg/seg_325220", func_00429628);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -3305,7 +3295,6 @@ int func_00429628(int a0) {
 INCLUDE_ASM("seg/seg_325220", func_00429790);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -3358,7 +3347,6 @@ int func_00429790_d(int a0, int a1) {
 INCLUDE_ASM("seg/seg_325220", func_004298E8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3419,7 +3407,6 @@ int func_004298E8(char *a0, int a1) {
 INCLUDE_ASM("seg/seg_325220", func_00429A88);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3484,7 +3471,6 @@ int func_00429A88_d(char *s, sFioStat *src, int a2) {
 INCLUDE_ASM("seg/seg_325220", func_00429CC8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3563,7 +3549,6 @@ int func_00429EB8(int a0) {
 INCLUDE_ASM("seg/seg_325220", func_00429ED8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3622,7 +3607,6 @@ int func_00429ED8_d(char *s, int a1) {
 INCLUDE_ASM("seg/seg_325220", func_0042A070);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3713,7 +3697,6 @@ INCLUDE_ASM("seg/seg_325220", func_0042A300);
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -3798,7 +3781,6 @@ long func_0042A300(int a0, long a1, int a2)
 INCLUDE_ASM("seg/seg_325220", func_0042A538);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3869,7 +3851,6 @@ int func_0042A538_d(char *s, int a1, char *data, unsigned len, int a4, unsigned 
 INCLUDE_ASM("seg/seg_325220", func_0042A770);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3937,7 +3918,6 @@ int func_0042A770_d(char *s, char *t) {
 INCLUDE_ASM("seg/seg_325220", func_0042A950);
 #ifdef SKIP_ASM
 extern int D_0045520C;
-extern char D_0052E340[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -4594,7 +4574,7 @@ struct HdrBDC8 {
     char arg[0x50];
 };
 struct DmaBDC8 { int data; int addr; int size; int attr; };
-extern struct HdrBDC8 D_BDC8 __asm__("D_0052F2C0");
+extern struct HdrBDC8 D_0052F2C0;
 extern void fBDC8_stop(void) __asm__("func_00424070");
 extern int fBDC8_getreg(unsigned int) __asm__("func_004241B0");
 extern unsigned int fBDC8_setreg(unsigned int, unsigned int) __asm__("func_004241A0");
@@ -4606,18 +4586,18 @@ int func_0042BDC8(char *s, int mode) {
     int n;
     fBDC8_stop();
     reg = fBDC8_getreg(0x80000000);
-    D_BDC8.mode = mode;
-    for (n = 0; s[n] != 0; n++) D_BDC8.arg[n] = s[n];
-    D_BDC8.dest = 0;
-    D_BDC8.size = n;
-    D_BDC8.cid = 0x80000003;
-    D_BDC8.dsize = 0;
-    D_BDC8.psize = 0x68;
-    dma.data = (int)&D_BDC8;
+    D_0052F2C0.mode = mode;
+    for (n = 0; s[n] != 0; n++) D_0052F2C0.arg[n] = s[n];
+    D_0052F2C0.dest = 0;
+    D_0052F2C0.size = n;
+    D_0052F2C0.cid = 0x80000003;
+    D_0052F2C0.dsize = 0;
+    D_0052F2C0.psize = 0x68;
+    dma.data = (int)&D_0052F2C0;
     dma.addr = reg;
     dma.size = 0x68;
     dma.attr = 0x44;
-    func_00426358((int)&D_BDC8, 0x68);
+    func_00426358((int)&D_0052F2C0, 0x68);
     fBDC8_setreg(4, 0x40000);
     if (fBDC8_dma(&dma, 1) != 0) {
         fBDC8_setreg(4, 0x10000);
