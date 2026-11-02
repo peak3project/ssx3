@@ -167,6 +167,16 @@ struct sWsTriHit {
     int pad74[3];
 };
 
+// Sphere query arguments (position, mask, count and distance outputs, box).
+struct sWsSphQuery {
+    t4Vector* pos;                   // 0x00
+    int a7;                         // 0x04
+    int mask;                       // 0x08
+    int* cnt;                       // 0x0C
+    float* dist;                    // 0x10
+    sWsBoxV* box;             // 0x14
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3247,18 +3257,10 @@ struct sOct_ED60 {
     char* objs;                     // 0x28
 };
 
-struct sQ_ED60 {
-    t4Vector* pos;                   // 0x00
-    int a7;                         // 0x04
-    int mask;                       // 0x08
-    int* cnt;                       // 0x0C
-    float* dist;                    // 0x10
-    sWsBoxV* box;             // 0x14
-};
 
-extern "C" void descRec_ED60(void* self, sQ_ED60* q) __asm__("func_003411B8");
+extern "C" void descRec_ED60(void* self, sWsSphQuery* q) __asm__("func_003411B8");
 
-static inline void dispatch_ED60(char* o, sQ_ED60* q)
+static inline void dispatch_ED60(char* o, sWsSphQuery* q)
 {
     for (; o != 0; o = *(char**)o) {
         int type = *(int*)(o + 8);
@@ -3275,7 +3277,7 @@ static inline void dispatch_ED60(char* o, sQ_ED60* q)
 }
 
 // nash::Cell::descend<SplineCallback>
-static inline void descend_ED60(void** n, sQ_ED60* cb2)
+static inline void descend_ED60(void** n, sWsSphQuery* cb2)
 {
     dispatch_ED60(((sOct_ED60*)n)->objs, cb2);
     if (n[0] != 0) descRec_ED60(n[0], cb2);
@@ -3288,7 +3290,7 @@ static inline void descend_ED60(void** n, sQ_ED60* cb2)
     if (n[7] != 0) descRec_ED60(n[7], cb2);
 }
 
-extern "C" void func_0033ED60(char* self, sQ_ED60* cb, sQ_ED60* cb2, float* box, void** node, sWsCell* cell)
+extern "C" void func_0033ED60(char* self, sWsSphQuery* cb, sWsSphQuery* cb2, float* box, void** node, sWsCell* cell)
 {
     dispatch_ED60(((sOct_ED60*)node)->objs, cb);
     if (cell->level == 11) {
@@ -3965,14 +3967,6 @@ extern "C" void* func_003400D8(int, int);
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003411B8);
 #ifdef SKIP_ASM
-struct sQuery_3411B8 {
-    t4Vector* pos;               // 0x00
-    int a7;                     // 0x04
-    int mask;                   // 0x08
-    int* cnt;                   // 0x0C
-    float* dist;                // 0x10
-    sWsBoxV* box;         // 0x14
-};
 
 struct sTree_3411B8 {
     sTree_3411B8* child[8];
@@ -3980,7 +3974,7 @@ struct sTree_3411B8 {
     char* objs;                 // 0x28
 };
 
-extern "C" void func_003411B8(sTree_3411B8* tree, sQuery_3411B8* q)
+extern "C" void func_003411B8(sTree_3411B8* tree, sWsSphQuery* q)
 {
     for (char* o = tree->objs; o != 0; o = *(char**)o) {
         int type = *(int*)(o + 8);
