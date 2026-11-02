@@ -16748,23 +16748,20 @@ int func_003D4A50(unsigned arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4B00);
 #ifdef SKIP_ASM
-struct E_4B00 { char pad0[3]; unsigned char f3; char pad4[0x20]; unsigned int f24; char pad28[8]; unsigned int *f30; char pad34[2]; short f36; };
-struct G_4B00 { int f0; unsigned int f4; unsigned int f8; char padC[0x58 - 0xC]; struct E_4B00 *e[24]; };
-extern struct G_4B00 *D_0044F420_4B00 __asm__("D_0044F420");
 
-static inline int valid_4B00(struct E_4B00 *e) { return e->f36 >= 0 && e->f30 != 0; }
+static inline int valid_4B00(struct sPathVoice *e) { return e->f36 >= 0 && e->f30 != 0; }
 
 void func_003D4B00(void) {
     int i;
-    D_0044F420_4B00->f0 = -1;
-    D_0044F420_4B00->f4 = 0;
-    D_0044F420_4B00->f8 = 0;
+    D_0044F420->f00 = -1;
+    D_0044F420->f04 = 0;
+    D_0044F420->f08 = 0;
     for (i = 0; i < 24; i++) {
-        struct E_4B00 *e = D_0044F420_4B00->e[i];
-        if (e != 0 && e->f3 == 0 && valid_4B00(e) && D_0044F420_4B00->f4 < e->f24) {
-            D_0044F420_4B00->f4 = e->f24;
-            D_0044F420_4B00->f0 = i;
-            D_0044F420_4B00->f8 = (*e->f30 >> 21) & 0x3F;
+        struct sPathVoice *e = D_0044F420->f58[i];
+        if (e != 0 && e->f03 == 0 && valid_4B00(e) && D_0044F420->f04 < e->f24) {
+            D_0044F420->f04 = e->f24;
+            D_0044F420->f00 = i;
+            D_0044F420->f08 = (*e->f30 >> 21) & 0x3F;
         }
     }
 }
