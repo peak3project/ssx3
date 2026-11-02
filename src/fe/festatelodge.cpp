@@ -8,17 +8,38 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/festatelodge", cFEStateLodge_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
+struct cUIScreen;
 int GetHashValue32(char* str);
-extern char D_004A2318[];
-extern int D_00441B14[];
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern char D_0046EDC0[];
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_001D99C8(void* self, void* engine, void* owner, unsigned short* text, int a4, int a5, int a6, int a7, int a8);
+extern "C" void* func_0018ECA0(void* self, void* engine, int a2, unsigned char mask);
+extern "C" void func_0039F290(void* list, void* item);
+extern "C" void func_0039F400(void* list, void* item);
+int cUIScreen_getFrameByLabel(cUIScreen* screen, int hash);
+extern void* D_004A28A8;
+extern int D_00441AF8[];
+extern char D_0046EEC0[];
+extern char D_0046EEF0[];
+extern char D_0046E050[];
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void* func_0039E2A0(void *, int);
+int cBENewPlayerInterface_getPlayerCharID(void* self, int player);
+extern "C" int func_001577A0(void* self, int a1, int a2);
+extern char D_0046EF70[];
+
+//100%
+INCLUDE_ASM("fe/festatelodge", cFEStateLodge_onCreateScreen);
+#ifdef SKIP_ASM
+extern char D_004A2318[];
+extern int D_00441B14[];
 extern "C" int func_001474C8(void* iface, int player);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
@@ -43,14 +64,8 @@ extern "C" void cFEStateLodge_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatelodge", cFEStateLodge_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00146D98(void* iface, int a1);
-struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern char D_0046EDC0[];
 extern char D_0046EDD0[];
 extern char D_0046EDE0[];
 extern char D_0046EDF0[];
@@ -63,7 +78,6 @@ extern char D_0046EE50[];
 extern char D_0046EE60[];
 extern char D_0046EE78[];
 extern char D_0046EE90[];
-
 
 extern "C" void cFEStateLodge_onWidgetCreate(void* self, void* w)
 {
@@ -110,25 +124,8 @@ extern "C" void cFEStateLodge_onWidgetCreate(void* self, void* w)
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F3A38);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* func_001D99C8(void* self, void* engine, void* owner, unsigned short* text, int a4, int a5, int a6, int a7, int a8);
-extern "C" void* func_0018ECA0(void* self, void* engine, int a2, unsigned char mask);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
-struct cUIScreen;
-int cUIScreen_getFrameByLabel(cUIScreen* screen, int hash);
-extern void* D_004A28A8;
-extern int D_00441AF8[];
 extern char D_0046EEA8[];
-extern char D_0046EEC0[];
 extern char D_0046EED0[];
-extern char D_0046EEF0[];
-extern char D_0046E050[];
-
-
 
 extern "C" void func_001F3A38(char* self, char* w, int event)
 {
@@ -201,25 +198,10 @@ extern "C" int func_001F3CC8(void* self, int a1, unsigned int key)
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F3CF0);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* func_001D99C8(void* self, void* engine, void* owner, unsigned short* text, int a4, int a5, int a6, int a7, int a8);
-extern "C" void* func_0018ECA0(void* self, void* engine, int a2, unsigned char mask);
 extern "C" void* func_0039F190(void* list, int a1);
-extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F4C0(void* list, void* item);
 extern "C" void cUIStateStack_pushSpecial(void* list, void* item, int a2, int a3);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIScreen;
-int cUIScreen_getFrameByLabel(cUIScreen* screen, int hash);
-extern void* D_004A28A8;
-extern char D_0046EDC0[];
-extern char D_0046E050[];
-extern char D_0046EEC0[];
-extern char D_0046EEF0[];
 extern char D_0046EF08[];
-
-
-
 
 extern "C" void func_001F3CF0(char* self, char* msg, unsigned int id)
 {
@@ -299,7 +281,6 @@ extern "C" void func_001F3CF0(char* self, char* msg, unsigned int id)
 INCLUDE_ASM("fe/festatelodge", func_001F3FF8);
 #ifdef SKIP_ASM
 extern void* D_004739D8[];
-extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 
 extern "C" void* func_001F3FF8(void* self, int a1)
@@ -316,15 +297,7 @@ extern "C" void* func_001F3FF8(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatelodge", cFEStateLodgeRiderDetail_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0046EF20[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int player);
-extern "C" int func_001577A0(void* self, int a1, int a2);
 
 extern "C" void cFEStateLodgeRiderDetail_onCreateScreen(void* self)
 {
@@ -345,15 +318,10 @@ extern "C" void cFEStateLodgeRiderDetail_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F4108);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00147138(void* self, int a1, const char* name);
 extern "C" void func_001474A8(void* self, int a1, int a2);
 extern "C" int strlen(const char* s);
 extern char D_0046EF40[];
-
 
 static inline int IsK1F4108(int id, char* s)
 {
@@ -393,18 +361,12 @@ extern "C" void func_001F4108(void* self, char* popup, int event)
 //100%
 INCLUDE_ASM("fe/festatelodge", cFEStateLodgeRiderDetail_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getRiderCharID(void* self, int riderIndex);
 extern "C" int func_00146E98(void* iface, int a1);
 extern "C" void* func_0014EEC8(void* self, int player, int index);
-struct cUIText;
 void cUIText_setAsciiString(cUIText* text, const char* str);
 extern char D_0046EF50[];
 extern char D_0046EF60[];
-extern char D_0046EF70[];
 extern char D_0046EF80[];
 extern char D_0046EF90[];
 extern char D_0046EFA0[];
@@ -439,10 +401,7 @@ extern "C" void cFEStateLodgeRiderDetail_onWidgetCreate(void* self, void* w)
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F4380);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_00194498(void* obj);
-extern char D_0046EF70[];
 
 extern "C" void func_001F4380(void* self)
 {
@@ -476,10 +435,6 @@ extern "C" int func_001F43D8(void* self, int a1, unsigned int key)
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F4400);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001CB030(void* self, void* engine, void* owner, int a3, unsigned char a4);
 extern "C" void func_001CD088(void* self, int a1);
 extern "C" void func_001CE3C8(void* self, int key, int a2, int a3);
@@ -487,18 +442,8 @@ extern "C" void func_001CE408(void* self, int a1);
 extern "C" void func_001CB418(void* self, const char* str);
 extern "C" const char* func_00147170(void* iface, int player);
 extern "C" void* func_00182220(void* self, void* engine, void* owner, int player, int charID);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" int func_001577A0(void* self, int a1, int a2);
-int cBENewPlayerInterface_getPlayerCharID(void* self, int player);
-struct cUIScreen;
-int cUIScreen_getFrameByLabel(cUIScreen* screen, int hash);
-extern int D_00441AF8[];
 extern char D_0046EFD0[];
 extern char D_0046EFE0[];
-extern char D_0046E050[];
-
 
 extern "C" void func_001F4400(char* self, char* w, int event)
 {
@@ -568,9 +513,6 @@ extern "C" void func_001F4400(char* self, char* w, int event)
 //100%
 INCLUDE_ASM("fe/festatelodge", func_001F4728);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" unsigned char func_001A1CD0(void* p, int a1);
 extern "C" int func_00148158_4728(void* iface, int a1, int stat) __asm__("func_00148158");
 extern "C" void func_003E6448(void* dst, int c, int n);
