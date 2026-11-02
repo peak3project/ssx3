@@ -11035,25 +11035,22 @@ void func_003C8E28(int arg0, int arg1, struct Kind_8E28 *arg2) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8EC0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_00515D1C_8EC0[] __asm__("D_00515D1C");
-extern void func_003C8FB0_8EC0(char *, char *) __asm__("func_003C8FB0");
-extern void func_003B5E98_8EC0(char *) __asm__("func_003B5E98");
+extern void func_003C8FB0_8EC0(struct sB40Node **, struct sB40Node *) __asm__("func_003C8FB0");
+extern void func_003B5E98_8EC0(struct sB40Node *) __asm__("func_003B5E98");
 
 void func_003C8EC0(int arg0, int arg1) {
-    char *rec = D_00515D1C_8EC0[0] + arg0 * 0x60;
-    char *node = *(char **)(rec + 0x40);
-    void (*fn)(char *);
+    struct sB40Ent *rec = &D_00515D1C[arg0];
+    struct sB40Node *node = rec->f40;
     do {
-        if (*(unsigned short *)(node + 0x18) == arg1) {
-            fn = *(void (**)(char *))(node + 4);
-            if (fn != 0) {
-                fn(node);
+        if (node->f18 == arg1) {
+            if (node->f04 != 0) {
+                node->f04(node);
             }
-            func_003C8FB0_8EC0(rec + 0x40, node);
+            func_003C8FB0_8EC0(&rec->f40, node);
             func_003B5E98_8EC0(node);
             return;
         }
-        node = *(char **)(node + 8);
+        node = node->f08;
     } while (node != 0);
 }
 #endif
