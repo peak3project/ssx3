@@ -302,6 +302,20 @@ struct sInfo {
     float speed;
 } __attribute__((aligned(16)));
 
+// The track a rider holds at 0xAB8: Query fills up to max records near (x, y); func_0026AB20 gives a position.
+struct sTrackRec {
+    int type;
+    int flags;
+    float a;
+    float b;
+};
+class cTrack {
+public:
+    char pad[0x34];
+    virtual int Query(sTrackRec* buf, int max, float x, float y);
+};
+extern "C" t4Vector func_0026AB20(cTrack*, int, float);
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -3559,19 +3573,6 @@ extern "C" void func_0010A960(cObj_A960* self, sFlags_A960* f)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010AA70);
 #ifdef SKIP_ASM
-struct sRec_AA70 {
-    int type;
-    int flags;
-    float a;
-    float b;
-};
-
-class cTrack_AA70 {
-public:
-    char pad[0x34];
-    virtual int Query(sRec_AA70* buf, int max, float x, float y);
-};
-
 struct sPad_AA70 {
     unsigned int pad0 : 13;
     unsigned int b13 : 1;
@@ -3582,14 +3583,13 @@ struct sPad_AA70 {
     int w0 : 6;
 };
 
-extern "C" t4Vector func_0026AB20_AA70(cTrack_AA70*, int, float) __asm__("func_0026AB20");
 extern "C" float func_00100348_AA70(void*, t4Vector*) __asm__("func_00100348");
 
 extern "C" void func_0010AA70(char* self, sPad_AA70* pad)
 {
-    sRec_AA70 buf[12];
+    sTrackRec buf[12];
     char* rider = *(char**)(self + 0x18);
-    cTrack_AA70* trk = *(cTrack_AA70**)(rider + 0xAB8);
+    cTrack* trk = *(cTrack**)(rider + 0xAB8);
     int n = trk->Query(buf, 12, *(float*)(rider + 0x4C0), *(float*)(rider + 0x4C4) + 50.0f);
     int sel = -1;
     if (Len(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0)) < *(float*)(self + 0xDF0) - 138.88890075683594f)
@@ -3613,7 +3613,7 @@ extern "C" void func_0010AA70(char* self, sPad_AA70* pad)
         char* r = *(char**)(self + 0x18);
         t4Vector half = Sub(*(t4Vector*)(r + 0x490), *(t4Vector*)(r + 0x110));
         half = Scale(half, 0.5f);
-        t4Vector pos = func_0026AB20_AA70(trk, 0, buf[sel].b);
+        t4Vector pos = func_0026AB20(trk, 0, buf[sel].b);
         t4Vector d = Sub(pos, half);
         pad->w0 = (int)(func_00100348_AA70(self, &d) * 31.0f);
     }
@@ -3858,26 +3858,12 @@ extern "C" void func_0010B790(char* self, sPad_B790* pad)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010B980);
 #ifdef SKIP_ASM
-struct sRec_B980 {
-    int type;
-    int flags;
-    float a;
-    float b;
-};
-
-class cTrack_B980 {
-public:
-    char pad[0x34];
-    virtual int Query(sRec_B980* buf, int max, float x, float y);
-};
-
-extern "C" t4Vector func_0026AB20(cTrack_B980*, int, float);
 
 extern "C" int func_0010B980(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6)
 {
-    sRec_B980 buf[12];
+    sTrackRec buf[12];
     char* rider = *(char**)(self + 0x18);
-    cTrack_B980* trk = *(cTrack_B980**)(rider + 0xAB8);
+    cTrack* trk = *(cTrack**)(rider + 0xAB8);
     int n = trk->Query(buf, 12, *(float*)(rider + 0x4C0), *(float*)(rider + 0x4C4) + 300.0f);
     for (int i = 0; i < n; i++) {
         if (buf[i].type == 0x10) {
