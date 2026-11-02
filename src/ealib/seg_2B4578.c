@@ -70,6 +70,66 @@ struct sA8E8Heap {                  /* +0x234 (also D_0050AB1C): block heap, ent
     int f10;
     int f14;
 };
+struct sA8E8Bank {                  /* a loaded bank's header */
+    int f00;
+    short f04;
+    unsigned short f06;             /* number of f14 entries */
+    int f08;                        /* header size */
+    int f0C;                        /* size of the kind-8 data */
+    int f10;                        /* size of the kind-0x100 data */
+    int f14[1];                     /* self-relative offsets */
+};
+struct sA8E8Slot {                  /* 0x10, D_0050A8E8.f1F4[f08] (also D_0050AADC) */
+    struct sA8E8Bank *f00;
+    char *f04;
+    char *f08;
+    signed char f0C;                /* busy */
+};
+struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050AAD8) */
+    int f00;
+    short f04[7];
+    short f12;                      /* slot */
+    int f14;
+    int f18;
+    unsigned short f1C;
+    unsigned short f1E;
+    unsigned short f20;
+    char pad22;
+    unsigned char f23;              /* number of f04 entries */
+    unsigned short f24;
+    unsigned char f26;
+    unsigned char f27;
+    short f28;
+    unsigned char f2A;
+    char pad2B;
+    unsigned int f2C;
+    int f30;
+    int f34;
+    int f38;
+    char pad3C[0x48 - 0x3C];
+    float f48;
+    unsigned short f4C;
+    char pad4E[0x5F - 0x4E];
+    signed char f5F;
+    signed char f60;
+    signed char f61;
+    short f62;
+    signed char f64;
+    char pad65[0x68 - 0x65];
+    unsigned char f68;
+    signed char f69;
+    unsigned short f6A;
+    char pad6C[0x74 - 0x6C];
+    signed char *f74;
+    char pad78[0x7C - 0x78];
+    signed char *f7C;
+    short f80;
+    short f82;
+    short f84;
+    unsigned short f86;
+    unsigned short f88;
+    unsigned short f8A;
+};
 struct sA8E8Pan { float l; float r; };
 struct sA8E8Bus {                   /* 0x14, at +0x1F8 / +0x20C / +0x220, indexed by id */
     short f00;
@@ -1087,70 +1147,66 @@ void func_003B5F98(struct Obj_5F98 *o, int arg) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6098);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Hdr_6098 { int pad0; short pad4; unsigned short n; int off; int size2; int size1; int tbl[1]; };
-struct Ent_6098 { struct Hdr_6098 *hdr; char *buf1; char *buf2; char busy; };
-struct G_6098 { char pad[0x1E4]; void (*cb)(); char pad2[0x1F4 - 0x1E8]; struct Ent_6098 *ents; };
-extern struct G_6098 D_0050A8E8_6098 __asm__("D_0050A8E8");
-extern void func_003B6300_6098() __asm__("func_003B6300");
+extern void func_003B6300_6098(int) __asm__("func_003B6300");
 extern int func_003C6500(void);
 extern char *f_4B70_6098(int, int) __asm__("func_003C4B70");
 extern int f_42D8_6098(int, char *, char *, int) __asm__("func_003C42D8");
 extern int f_42F8_6098(int) __asm__("func_003C42F8");
 extern int f_6788_6098(int, char *, char *, int *) __asm__("func_003B6788");
 
-int func_003B6098(int *out, struct Hdr_6098 *hdr) {
-    struct Ent_6098 *ent;
+int func_003B6098(int *out, struct sA8E8Bank *hdr) {
+    struct sA8E8Slot *ent;
     int i, n, h;
     int tmp;
 
-    D_0050A8E8_6098.cb = func_003B6300_6098;
+    D_0050A8E8.f1E4 = func_003B6300_6098;
     *out = func_003C6500();
-    ent = &D_0050A8E8_6098.ents[*out];
-    ent->busy = 1;
-    ent->hdr = hdr;
-    ent->buf1 = 0;
-    if (hdr->size1 != 0) {
-        ent->buf1 = f_4B70_6098(0x100, hdr->size1 + 0x40);
-        if (ent->buf1 == 0) {
+    ent = &D_0050A8E8.f1F4[*out];
+    ent->f0C = 1;
+    ent->f00 = hdr;
+    ent->f04 = 0;
+    if (hdr->f10 != 0) {
+        ent->f04 = f_4B70_6098(0x100, hdr->f10 + 0x40);
+        if (ent->f04 == 0) {
             goto fail;
         }
-        for (i = 0; i < hdr->size1; i += 0x1000) {
-            n = hdr->size1 - i;
-            h = f_42D8_6098(0x100, (char *)hdr + hdr->off + i, ent->buf1 + i, n < 0x1001 ? n : 0x1000);
+        for (i = 0; i < hdr->f10; i += 0x1000) {
+            n = hdr->f10 - i;
+            h = f_42D8_6098(0x100, (char *)hdr + hdr->f08 + i, ent->f04 + i, n < 0x1001 ? n : 0x1000);
             while (f_42F8_6098(h) == 0) {
             }
         }
         tmp = 0;
-        for (i = 0; i < hdr->n; i++) {
-            if (hdr->tbl[i] != 0) {
-                f_6788_6098(0x100, (char *)&hdr->tbl[i] + hdr->tbl[i], ent->buf1, &tmp);
+        for (i = 0; i < hdr->f06; i++) {
+            if (hdr->f14[i] != 0) {
+                f_6788_6098(0x100, (char *)&hdr->f14[i] + hdr->f14[i], ent->f04, &tmp);
             }
         }
     }
-    ent->buf2 = 0;
-    if (hdr->size2 != 0) {
-        ent->buf2 = f_4B70_6098(8, hdr->size2 + 0x30);
-        if (ent->buf2 == 0) {
+    ent->f08 = 0;
+    if (hdr->f0C != 0) {
+        ent->f08 = f_4B70_6098(8, hdr->f0C + 0x30);
+        if (ent->f08 == 0) {
 fail:
-            ent->hdr = 0;
-            ent->busy = 0;
+            ent->f00 = 0;
+            ent->f0C = 0;
             return -6;
         }
-        for (i = 0; i < hdr->size2; i += 0x1000) {
-            n = hdr->size2 - i;
-            h = f_42D8_6098(8, (char *)hdr + hdr->off + hdr->size1 + i, ent->buf2 + i, n < 0x1001 ? n : 0x1000);
+        for (i = 0; i < hdr->f0C; i += 0x1000) {
+            n = hdr->f0C - i;
+            h = f_42D8_6098(8, (char *)hdr + hdr->f08 + hdr->f10 + i, ent->f08 + i, n < 0x1001 ? n : 0x1000);
             while (f_42F8_6098(h) == 0) {
             }
         }
         tmp = 0;
-        for (i = 0; i < hdr->n; i++) {
-            if (hdr->tbl[i] != 0) {
-                f_6788_6098(8, (char *)&hdr->tbl[i] + hdr->tbl[i], ent->buf2, &tmp);
+        for (i = 0; i < hdr->f06; i++) {
+            if (hdr->f14[i] != 0) {
+                f_6788_6098(8, (char *)&hdr->f14[i] + hdr->f14[i], ent->f08, &tmp);
             }
         }
     }
-    ent->busy = 0;
-    if (hdr->size2 != 0 || hdr->size1 != 0) {
+    ent->f0C = 0;
+    if (hdr->f0C != 0 || hdr->f10 != 0) {
         return 7;
     }
     return 8;
