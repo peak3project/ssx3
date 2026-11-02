@@ -2676,11 +2676,10 @@ extern "C" cLunoValue func_002FFB50(int n, Ent_FB50 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FFD58);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A3DD8_FD58 __asm__("D_004A3DD8");
 extern char *D_004A28A8_FD58 __asm__("D_004A28A8");
 static inline char *look_FD58(unsigned id) {
     if (~id == 0)
-        return *(char**)(D_004A3DD8_FD58 + 0x290);
+        return D_004A3DD8->f290;
     sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
     unsigned i;
     if (!s || (i = s->refs[id >> 8] >> 8) == 0)
