@@ -908,7 +908,92 @@ extern "C" void func_0021E7E0(char* self, Col_E7E0* colp, float* pos, float* siz
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021EA00);
+#ifdef SKIP_ASM
+struct sVec4_EA00 {
+    float x, y, z, w;
+    sVec4_EA00() {}
+    sVec4_EA00(float ax, float ay, float az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sVtx_EA00 {
+    float u, v, q, pad;
+    int g, b, a, r;
+    sVec4_EA00 pos;
+};
+
+struct sVE71_EA00 { short delta; short index; void (*fn)(void*, int, sVtx_EA00*, int); };
+
+extern "C" void func_0021EA00(void* self, Col_E7E0* col, float* pos, float w, float h, float u0, float v0, float u1, float v1)
+{
+    if (h > 72.0f) {
+        sVtx_EA00 vtx[8];
+        for (int i = 0; i < 8; i++) {
+            int r = (int)(col->r * 128.0f);
+            int g = (int)(col->g * 128.0f);
+            int b = (int)(col->b * 128.0f);
+            int a = (int)(col->a * 128.0f);
+            vtx[i].r = r;
+            vtx[i].g = g;
+            vtx[i].b = b;
+            vtx[i].a = a;
+            vtx[i].q = 1.0f;
+            if (i & 1)
+                vtx[i].u = u1;
+            else
+                vtx[i].u = u0;
+        }
+        vtx[0].v = v0;
+        vtx[1].v = v0;
+        vtx[2].v = (v0 + v1) * 0.5f;
+        vtx[3].v = (v0 + v1) * 0.5f;
+        vtx[4].v = (v0 + v1) * 0.5f;
+        vtx[5].v = (v0 + v1) * 0.5f;
+        vtx[6].v = v1;
+        vtx[7].v = v1;
+        vtx[0].pos = sVec4_EA00(pos[0], pos[1], 0.0f, 1.0f);
+        vtx[1].pos = sVec4_EA00(pos[0] + w, pos[1], 0.0f, 1.0f);
+        vtx[2].pos = sVec4_EA00(pos[0], pos[1] + 36.0f, 0.0f, 1.0f);
+        vtx[3].pos = sVec4_EA00(pos[0] + w, pos[1] + 36.0f, 0.0f, 1.0f);
+        vtx[4].pos = sVec4_EA00(pos[0], pos[1] + h - 36.0f, 0.0f, 1.0f);
+        vtx[5].pos = sVec4_EA00(pos[0] + w, pos[1] + h - 36.0f, 0.0f, 1.0f);
+        vtx[6].pos = sVec4_EA00(pos[0], pos[1] + h, 0.0f, 1.0f);
+        vtx[7].pos = sVec4_EA00(pos[0] + w, pos[1] + h, 0.0f, 1.0f);
+        char* ctx = (char*)D_004A289C;
+        sVE71_EA00* vt = *(sVE71_EA00**)(ctx + 0x10D8);
+        vt[71].fn(ctx + vt[71].delta, 8, vtx, 0);
+    } else {
+        sVtx_EA00 vtx[4];
+        for (int i = 0; i < 4; i++) {
+            int r = (int)(col->r * 128.0f);
+            int g = (int)(col->g * 128.0f);
+            int b = (int)(col->b * 128.0f);
+            int a = (int)(col->a * 128.0f);
+            vtx[i].r = r;
+            vtx[i].g = g;
+            vtx[i].b = b;
+            vtx[i].a = a;
+            vtx[i].q = 1.0f;
+            if (i & 1)
+                vtx[i].u = u1;
+            else
+                vtx[i].u = u0;
+        }
+        vtx[0].v = v0;
+        vtx[1].v = v0;
+        vtx[2].v = v1;
+        vtx[3].v = v1;
+        vtx[0].pos = sVec4_EA00(pos[0], pos[1], 0.0f, 1.0f);
+        vtx[1].pos = sVec4_EA00(pos[0] + w, pos[1], 0.0f, 1.0f);
+        vtx[2].pos = sVec4_EA00(pos[0], pos[1] + h, 0.0f, 1.0f);
+        vtx[3].pos = sVec4_EA00(pos[0] + w, pos[1] + h, 0.0f, 1.0f);
+        char* ctx = (char*)D_004A289C;
+        sVE71_EA00* vt = *(sVE71_EA00**)(ctx + 0x10D8);
+        vt[71].fn(ctx + vt[71].delta, 4, vtx, 0);
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/all_in_one_fe", func_0021ED48);
 
