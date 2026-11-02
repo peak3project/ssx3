@@ -430,7 +430,7 @@ extern "C" int func_00152368(void*, int, int);
 
 extern "C" void func_0014B170(void* self, int a1, int a2, int a3, int a4)
 {
-    func_00152368((char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88, a3, a4);
+    func_00152368(&D_004A6CA8_pc[a1][a2], a3, a4);
 }
 #endif
 //100% - objdiff report; single-function view differs only in a relocation name
