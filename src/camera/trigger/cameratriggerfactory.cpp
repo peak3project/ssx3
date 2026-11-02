@@ -9,6 +9,13 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// 3-float vector with inline constructors (the layout the trigger files store: get_t3Vector reads one).
+struct sVec3 {
+    float x, y, z;
+    sVec3() {}
+    sVec3(float a, float b, float c) : x(a), y(b), z(c) {}
+};
+
 // 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai and camera/camera).
 struct sVec4 : t4Vector
 {
@@ -231,13 +238,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camboundobj);
 // PORT: the game's tagged allocator, bound as a placement operator new.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
 
-struct sCTVec3G {
-    float x, y, z;
-    sCTVec3G() {}
-    sCTVec3G(float a, float b, float c) : x(a), y(b), z(c) {}
-};
-
-extern sCTVec3G D_004FF0D8;     // zero vector
+extern sVec3 D_004FF0D8;     // zero vector
 extern void* D_0045C3F0[];      // cCTBoundObj vtable
 extern void* D_0045C2A8[];      // ellipse
 extern void* D_0045C268[];      // box
@@ -252,13 +253,13 @@ extern char D_0045C158[];
 // cCTBoundObj vtable first and the derived class's vtable last, where g++ 2.95 sets the
 // derived vptr (after the base ctor, before the derived class's members are constructed).
 struct sCTBoundObjG {
-    sCTVec3G center;    // 0x00
+    sVec3 center;    // 0x00
     int f0C;            // 0x0C
     int f10;            // 0x10
     int f14;            // 0x14
-    sCTVec3G size;      // 0x18
+    sVec3 size;      // 0x18
     void** vtable;      // 0x24
-    sCTBoundObjG(const sCTVec3G& s, void** vt)
+    sCTBoundObjG(const sVec3& s, void** vt)
     {
         vtable = D_0045C3F0;
         center = D_004FF0D8;
@@ -272,18 +273,18 @@ struct sCTBoundObjG {
 
 struct sCTBoundEllG : sCTBoundObjG {
     int type;           // 0x28
-    sCTBoundEllG() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C2A8) { type = 0; }
+    sCTBoundEllG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C2A8) { type = 0; }
 };
 
 struct sCTBoundBoxG : sCTBoundObjG {
     int type;           // 0x28
-    sCTBoundBoxG() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C268) { type = 1; }
+    sCTBoundBoxG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C268) { type = 1; }
 };
 
 struct sCTBoundLineG : sCTBoundObjG {
     int type;           // 0x28
-    sCTVec3G pts[2];    // 0x2C
-    sCTBoundLineG() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C228)
+    sVec3 pts[2];    // 0x2C
+    sCTBoundLineG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C228)
     {
         type = 2;
         pts[0] = D_004FF0D8;
@@ -293,7 +294,7 @@ struct sCTBoundLineG : sCTBoundObjG {
 
 struct sCTBoundPointG : sCTBoundObjG {
     int type;           // 0x28
-    sCTBoundPointG() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C1E8) { type = 3; }
+    sCTBoundPointG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C1E8) { type = 3; }
 };
 
 class cCTBoundObjEllK2;
@@ -474,8 +475,8 @@ extern "C" int get_t3Vector_n(void* reader, void* dst) __asm__("get_t3Vector");
 extern char D_0045C170[];
 
 struct sCTSplineG : sCTBoundObjG {
-    sCTVec3G pts[4];    // 0x28
-    sCTSplineG() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C3F0)
+    sVec3 pts[4];    // 0x28
+    sCTSplineG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C3F0)
     {
         pts[0] = D_004FF0D8;
         pts[1] = D_004FF0D8;
@@ -641,26 +642,20 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001721C0);
 #ifdef SKIP_ASM
 extern "C" float func_001731C0(float* v);
 
-struct sCTVec3K2 {
-    float x, y, z;
-    sCTVec3K2() {}
-    sCTVec3K2(float a, float b, float c) : x(a), y(b), z(c) {}
-};
-
-static inline sCTVec3K2 operator-(const sCTVec3K2& a, float s)
+static inline sVec3 operator-(const sVec3& a, float s)
 {
-    return sCTVec3K2(a.x - s, a.y - s, a.z - s);
+    return sVec3(a.x - s, a.y - s, a.z - s);
 }
 
-static inline sCTVec3K2 operator+(const sCTVec3K2& a, float s)
+static inline sVec3 operator+(const sVec3& a, float s)
 {
-    return sCTVec3K2(a.x + s, a.y + s, a.z + s);
+    return sVec3(a.x + s, a.y + s, a.z + s);
 }
 
 struct sCTVec4K2 {
     float x, y, z, w;
     sCTVec4K2() {}
-    sCTVec4K2(const sCTVec3K2& v, float w_) : x(v.x), y(v.y), z(v.z), w(w_) {}
+    sCTVec4K2(const sVec3& v, float w_) : x(v.x), y(v.y), z(v.z), w(w_) {}
 } __attribute__((aligned(16)));
 
 struct sCTBoxK2 {
@@ -673,8 +668,8 @@ struct sCTBoxK2 {
 extern "C" sCTBoxK2 func_001721C0(char* obj)
 {
     float r = func_001731C0((float*)(obj + 0x18));
-    sCTVec3K2 rv(r, r, r);
-    const sCTVec3K2& c = *(sCTVec3K2*)obj;
+    sVec3 rv(r, r, r);
+    const sVec3& c = *(sVec3*)obj;
     return sCTBoxK2(sCTVec4K2(c - r, 1.0f), sCTVec4K2(c + r, 1.0f));
 }
 #endif
@@ -684,20 +679,10 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00172278);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 
-struct sV3_2278 {
-    float x, y, z;
-    sV3_2278(float a, float b, float c)
-    {
-        x = a;
-        y = b;
-        z = c;
-    }
-};
-
 struct sV4_2278 {
     float x, y, z, w;
     sV4_2278() {}
-    sV4_2278(const sV3_2278& v, float d)
+    sV4_2278(const sVec3& v, float d)
     {
         x = v.x;
         y = v.y;
@@ -924,7 +909,7 @@ extern "C" int func_00172278(const sXform_2278* t, const sV4_2278* pt)
         ROT_2278(R, &D_004FF140.x, -t->rot[1]);
         *m *= R;
     }
-    vu0MulVecRow3_2278(&M, sV4_2278(sV3_2278(-t->pos[0], -t->pos[1], -t->pos[2]), one));
+    vu0MulVecRow3_2278(&M, sV4_2278(sVec3(-t->pos[0], -t->pos[1], -t->pos[2]), one));
     sV4_2278 v = vu0MulVec2_2278(&M, *pt);
     return v.x * v.x + v.y * v.y + v.z * v.z <= 1.0f;
 }
@@ -935,26 +920,10 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00172840);
 #ifdef SKIP_ASM
 extern "C" float func_001731C0(float* v);
 
-struct sCTVec3K2b {
-    float x, y, z;
-    sCTVec3K2b() {}
-    sCTVec3K2b(float a, float b, float c) : x(a), y(b), z(c) {}
-};
-
-static inline sCTVec3K2b operator-(const sCTVec3K2b& a, float s)
-{
-    return sCTVec3K2b(a.x - s, a.y - s, a.z - s);
-}
-
-static inline sCTVec3K2b operator+(const sCTVec3K2b& a, float s)
-{
-    return sCTVec3K2b(a.x + s, a.y + s, a.z + s);
-}
-
 struct sCTVec4K2b {
     float x, y, z, w;
     sCTVec4K2b() {}
-    sCTVec4K2b(const sCTVec3K2b& v, float w_) : x(v.x), y(v.y), z(v.z), w(w_) {}
+    sCTVec4K2b(const sVec3& v, float w_) : x(v.x), y(v.y), z(v.z), w(w_) {}
 } __attribute__((aligned(16)));
 
 struct sCTBoxK2b {
@@ -967,8 +936,8 @@ struct sCTBoxK2b {
 extern "C" sCTBoxK2b func_00172840(char* obj)
 {
     float r = func_001731C0((float*)(obj + 0x18));
-    sCTVec3K2b rv(r, r, r);
-    const sCTVec3K2b& c = *(sCTVec3K2b*)obj;
+    sVec3 rv(r, r, r);
+    const sVec3& c = *(sVec3*)obj;
     return sCTBoxK2b(sCTVec4K2b(c - r, 1.0f), sCTVec4K2b(c + r, 1.0f));
 }
 #endif
@@ -989,12 +958,12 @@ extern char D_0045C1A0[];
 
 struct sCTVolEllG : sCTBoundObjG {
     int type;           // 0x28
-    sCTVolEllG() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C350) { type = 0; }
+    sCTVolEllG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C350) { type = 0; }
 };
 
 struct sCTVolBoxG : sCTBoundObjG {
     int type;           // 0x28
-    sCTVolBoxG() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C300) { type = 1; }
+    sCTVolBoxG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C300) { type = 1; }
 };
 
 extern "C" int get_camvolume(void* reader, void** out)
@@ -2778,7 +2747,7 @@ extern void* D_0045C3A0[];
 inline void* operator new(unsigned int, void* p) { return p; }
 
 struct sCTBoundK_6468 : sCTBoundObjG {
-    sCTBoundK_6468() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C3A0) {}
+    sCTBoundK_6468() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C3A0) {}
 };
 
 extern "C" void* func_00176468(void* self)
@@ -2833,11 +2802,11 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00176710);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct sCTBoundLineK : sCTBoundObjG {
     int type;
-    sCTVec3G pts[2];
+    sVec3 pts[2];
     sCTBoundLineK() __asm__("func_00176710");
 };
 
-sCTBoundLineK::sCTBoundLineK() : sCTBoundObjG(sCTVec3G(1.0f, 1.0f, 1.0f), D_0045C228)
+sCTBoundLineK::sCTBoundLineK() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C228)
 {
     type = 2;
     pts[0] = D_004FF0D8;
