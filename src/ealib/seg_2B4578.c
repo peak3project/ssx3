@@ -10228,23 +10228,18 @@ void func_003C7010(int id, int b, int c)
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C7080);
 #ifdef SKIP_ASM
-struct O_7080 { char pad[0x54]; void (*f54)(int, int); void (*f58)(int, int, int); int f5C; };
-struct N_7080 { unsigned short a; unsigned short b; int arg; };
-struct G_7080 { int count; struct N_7080 ent[96]; struct O_7080 *tab[1]; };
-extern struct G_7080 D_005157B8_7080 __asm__("D_005157B8");
-
 void func_003C7080(void) {
     int i;
-    for (i = 0; i < D_005157B8_7080.count; i++) {
-        struct N_7080 *n = &D_005157B8_7080.ent[i];
-        struct O_7080 *o = D_005157B8_7080.tab[n->b];
-        if (n->a == 0) {
-            o->f58(n->b, n->arg, o->f5C);
+    for (i = 0; i < D_005157B8.f000; i++) {
+        struct s7B8Event *n = &D_005157B8.f004[i];
+        struct s7B8Queue *o = D_005157B8.f304[n->f02];
+        if (n->f00 == 0) {
+            o->f58(n->f02, n->f04, o->f5C);
         } else {
-            o->f54(n->arg, o->f5C);
+            o->f54(n->f04, o->f5C);
         }
     }
-    D_005157B8_7080.count = 0;
+    D_005157B8.f000 = 0;
 }
 #endif
 
