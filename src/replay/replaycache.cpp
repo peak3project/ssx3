@@ -720,7 +720,41 @@ extern "C" sReplayCacheNode2* func_00270C58(void* self, int i, sReplayCacheNode2
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00270CE8);
+#ifdef SKIP_ASM
+extern "C" int func_0026E838_s(void* self, int id, int mode) __asm__("func_0026E838");
+extern "C" void func_0026E800(void* p);
+void func_0026E7F8(void* self);
+
+struct sRcSlotCE8 {
+    char pad[0xB0];
+    sReplayCacheNode2* node;
+    bool isActive() { return node != 0; }
+    sReplayCacheNode2* getNode() { return node; }
+};
+
+struct sRcSlotsCE8 {
+    char pad[0x494];
+    sRcSlotCE8 slots[1];
+};
+
+extern "C" void func_00270CE8(void* p, int playerId, int id, int positive)
+{
+    sRcSlotsCE8* self = (sRcSlotsCE8*)p;
+    if (self->slots[playerId].isActive()) {
+        if (func_0026E838_s(&self->slots[playerId], id, positive)) {
+            if (!(func_00270BD8(self, playerId, positive) < func_00270C40(self, positive))) {
+                sReplayCacheNode2* n = func_00270C58(self, playerId, self->slots[playerId].getNode(), positive);
+                n->mask &= ~(1 << playerId);
+            }
+        } else {
+            func_0026E800(&self->slots[playerId]);
+        }
+        func_0026E7F8(&self->slots[playerId]);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00270DE0);
