@@ -285,6 +285,27 @@ static inline float wsLength(const t4Vector& v)
     return r;
 }
 
+static inline t4Vector wsDiv(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        ".set pop\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -461,26 +482,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00330788);
 // PORT: PS2-only VU0 inline asm (4-component vector length).
 
 // PORT: PS2-only VU0 inline asm (v / s).
-static inline t4Vector wsDiv_330788(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        ".set push\n"
-        ".set noreorder\n"
-        "mfc1      %1, %3\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vdiv      Q, $vf0w, $vf3x\n"
-        "lqc2      $vf4, %2\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf4, $vf4, Q\n"
-        "sqc2      $vf4, %0\n"
-        ".set pop\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 extern "C" int func_0032CA78(void* tree, int a1, int a2, int a3, int a4, t4Vector* out, int a6);
 
@@ -491,7 +492,7 @@ extern "C" int func_00330788(void* self, int a1, int a2, int a3, int a4, int a5,
     if (r != 0) {
         float len = wsLength(v);
         *outLen = len;
-        *outDir = wsDiv_330788(v, len);
+        *outDir = wsDiv(v, len);
     }
     return r;
 }
@@ -503,26 +504,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00330828);
 // PORT: PS2-only VU0 inline asm (4-component vector length).
 
 // PORT: PS2-only VU0 inline asm (v / s).
-static inline t4Vector wsDiv_330828(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        ".set push\n"
-        ".set noreorder\n"
-        "mfc1      %1, %3\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vdiv      Q, $vf0w, $vf3x\n"
-        "lqc2      $vf4, %2\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf4, $vf4, Q\n"
-        "sqc2      $vf4, %0\n"
-        ".set pop\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 extern "C" int func_00328030(void* tree, int a1, int a2, int a3, int a4, t4Vector* out, int a6);
 
@@ -533,7 +514,7 @@ extern "C" int func_00330828(void* self, int a1, int a2, int a3, int a4, int a5,
     if (r != 0) {
         float len = wsLength(v);
         *outLen = len;
-        *outDir = wsDiv_330828(v, len);
+        *outDir = wsDiv(v, len);
     }
     return r;
 }
