@@ -89,6 +89,10 @@ struct sRec60 { int a; int b; char pad[0x58]; };
 // A current/target float pair of a world-painter item (blended toward the target each update).
 struct sBlendF { float cur; float tgt; };
 
+// A lighting painter's irradiance bank reference (two words); D_004A53D0 is the empty reference.
+struct sBankRef { int a; int b; };
+extern sBankRef D_004A53D0;
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2898,18 +2902,16 @@ INCLUDE_ASM("bx/seg_1BA100", func_002BC9B0);
 // Lighting painter (tWPIGD_Lighting) constructor: four current/target
 // irradiance bank references, all starting at the empty reference, plus
 // current/target gain (1.0) and rim (0.75).
-struct sRef_C9B0 { int a; int b; };
-struct sSlot_C9B0 { sRef_C9B0 cur; sRef_C9B0 tgt; };
+struct sSlot_C9B0 { sBankRef cur; sBankRef tgt; };
 struct sLight_C9B0 {
     float f0;
     void *vt;
     sSlot_C9B0 slot[4];
     float gain, gainTgt, rim, rimTgt;
 };
-extern sRef_C9B0 D_004A53D0_C9B0 __asm__("D_004A53D0");
 extern char D_00484290[];
 
-static inline void refInit_C9B0(sRef_C9B0 *r) {
+static inline void refInit_C9B0(sBankRef *r) {
     r->b = 0;
     r->a = 0;
 }
@@ -2921,10 +2923,10 @@ extern "C" sLight_C9B0 *func_002BC9B0(sLight_C9B0 *self) {
     refInit_C9B0(&self->slot[1].cur); refInit_C9B0(&self->slot[1].tgt);
     refInit_C9B0(&self->slot[2].cur); refInit_C9B0(&self->slot[2].tgt);
     refInit_C9B0(&self->slot[3].cur); refInit_C9B0(&self->slot[3].tgt);
-    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[0].tgt = t; self->slot[0].cur = self->slot[0].tgt; }
-    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[1].tgt = t; self->slot[1].cur = self->slot[1].tgt; }
-    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[2].tgt = t; self->slot[2].cur = self->slot[2].tgt; }
-    { sRef_C9B0 t = D_004A53D0_C9B0; self->slot[3].tgt = t; self->slot[3].cur = self->slot[3].tgt; }
+    { sBankRef t = D_004A53D0; self->slot[0].tgt = t; self->slot[0].cur = self->slot[0].tgt; }
+    { sBankRef t = D_004A53D0; self->slot[1].tgt = t; self->slot[1].cur = self->slot[1].tgt; }
+    { sBankRef t = D_004A53D0; self->slot[2].tgt = t; self->slot[2].cur = self->slot[2].tgt; }
+    { sBankRef t = D_004A53D0; self->slot[3].tgt = t; self->slot[3].cur = self->slot[3].tgt; }
     self->gainTgt = 1.0f;
     self->rimTgt = 0.75f;
     self->gain = 1.0f;
@@ -3692,17 +3694,12 @@ extern "C" void func_002BE1E0(void *arg0) {
 INCLUDE_ASM("bx/seg_1BA100", func_002BE1F8);
 #ifdef SKIP_ASM
 // Lighting painter reset: all four bank slots get the empty reference.
-struct sLightRef_BE1F8 {
-    int a;
-    int b;
-};
-extern sLightRef_BE1F8 D_004A53D0;
 
 extern "C" void func_002BE1F8(void *arg0) {
-    *(sLightRef_BE1F8 *)((char *)arg0 + 0x8) = D_004A53D0;
-    *(sLightRef_BE1F8 *)((char *)arg0 + 0x18) = D_004A53D0;
-    *(sLightRef_BE1F8 *)((char *)arg0 + 0x28) = D_004A53D0;
-    *(sLightRef_BE1F8 *)((char *)arg0 + 0x38) = D_004A53D0;
+    *(sBankRef *)((char *)arg0 + 0x8) = D_004A53D0;
+    *(sBankRef *)((char *)arg0 + 0x18) = D_004A53D0;
+    *(sBankRef *)((char *)arg0 + 0x28) = D_004A53D0;
+    *(sBankRef *)((char *)arg0 + 0x38) = D_004A53D0;
     *(float *)((char *)arg0 + 0x48) = 1.0f;
     *(float *)((char *)arg0 + 0x50) = 0.75f;
     *(int *)((char *)arg0 + 0x0) = 0;
