@@ -4029,7 +4029,6 @@ extern Defaults_2210 D_004FBC20_2210 __asm__("D_004FBC20");
 extern int D_004A5730_2210 __asm__("D_004A5730");
 extern const int D_004465C8_2210[] __asm__("D_004465C8");
 extern char* const D_00445E40_2210[] __asm__("D_00445E40");
-extern char* D_004A28A8_2210 __asm__("D_004A28A8");
 extern "C" void* cBE_getBE_2210() __asm__("cBE_getBE");
 extern "C" void* cBE_getInterface_2210(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00144CE0(void* iface, int id);
@@ -4073,8 +4072,8 @@ extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
     int ok;
     int cur = D_004A3DD8->being;
     if (cur != -1) {
-        char* lvl = *(char**)(*(char**)(D_004A28A8_2210 + 0x84) + 0xC);
-        char* q = *(char**)(lvl + (cur << 2) + 0x28);
+        sRace* lvl = D_004A28A8->game->race;
+        char* q = lvl->riders[cur];
         char* a = q ? q + 0x6C0 : 0;
         char* r = a ? a - 0x6C0 : 0;
         ok = !((cRider_2210*)(r + 0x6C0))->isBusy();
@@ -4087,7 +4086,7 @@ extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
         int id = vp[0];
         char* name = 0;
         void* iface = cBE_getInterface_2210(cBE_getBE_2210(), 0);
-        char* ui = *(char**)(*(char**)(D_004A28A8_2210 + 0x84) + 0x78);
+        char* ui = D_004A28A8->game->f78;
         if ((unsigned int)sel < 8) {
             name = D_00445E40_2210[sel];
         }
@@ -4102,11 +4101,11 @@ extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
             func_0022D088_2210(ui, hash, name);
             break;
         case 3:
-            func_00231250(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 2, 0);
+            func_00231250(D_004A28A8->game, 0xE, 2, 0);
             func_002A49E8_2210(func_0028B180());
             break;
         case 4:
-            func_00231250(*(void**)(D_004A28A8_2210 + 0x84), 0xE, 0, 0);
+            func_00231250(D_004A28A8->game, 0xE, 0, 0);
             break;
         case 5:
             *(int*)(ui + 0x1A4) = 1;
