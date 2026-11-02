@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", cFEStateTrophyRoom_onCreateScreen);
 #ifdef SKIP_ASM
@@ -54,11 +62,6 @@ extern char D_00467720[];
 extern char* D_00441600[];
 extern char* D_00441618[];
 
-struct sVEntry_43F0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sTrophy_43F0 {
     char pad0[0x48];
@@ -73,7 +76,7 @@ struct sTrophy_43F0 {
 
 static inline void vcall_43F0(void* o, int slot, int arg)
 {
-    sVEntry_43F0* vt = *(sVEntry_43F0**)((char*)o + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)o + 8);
     vt[slot].fn((char*)o + vt[slot].delta, arg);
 }
 
@@ -149,11 +152,6 @@ extern "C" int func_001D4660(void* self, int a1, unsigned int a2)
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D4698);
 #ifdef SKIP_ASM
-struct sVEntry001D4698 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 extern "C" void func_0039F400(void* list, void* item);
 extern "C" void func_001D47A0(void* self, int index);
 extern "C" void func_001D4890(void* self, int index);
@@ -184,7 +182,7 @@ extern "C" void func_001D4698(void* self, void* item, int msg)
             w->show(0);
         }
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry001D4698* vt = *(sVEntry001D4698**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[5].fn((char*)obj + vt[5].delta, self, *(int*)((char*)self + 0x54));
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
@@ -619,11 +617,6 @@ extern "C" void cFEStateRewardsRoom_onWidgetCreate(void* self, void* w)
 //100%
 INCLUDE_ASM("fe/festatetrophyroom", func_001D4EA8);
 #ifdef SKIP_ASM
-struct sVEntry001D4EA8 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 extern "C" void func_0039F400(void* list, void* item);
 
 extern "C" void func_001D4EA8(void* self, void* item, unsigned int msg)
@@ -636,14 +629,14 @@ extern "C" void func_001D4EA8(void* self, void* item, unsigned int msg)
         break;
     case 5: {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry001D4EA8* vt = *(sVEntry001D4EA8**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[4].fn((char*)obj + vt[4].delta, self, *(int*)((char*)item + 0x18));
         func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
         break;
     }
     case 6: {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry001D4EA8* vt = *(sVEntry001D4EA8**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[5].fn((char*)obj + vt[5].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
@@ -1168,11 +1161,6 @@ extern void* D_004A2028;
 extern char D_004677A8[];
 extern char D_0045E2A0[];
 
-struct sVE_59A0 {
-    short delta;
-    short index;
-    void (*fn)(void*, char*, int, int, int, int, int);
-};
 
 // Memory-card "save" step: builds the save-file title for the current mode and starts the save; on first entry shows the saving dialog.
 extern "C" void func_001D59A0(void)
@@ -1214,7 +1202,7 @@ extern "C" void func_001D59A0(void)
         *(int*)(fe + 0x19C) = 0x16;
         char* buf = (char*)operator_new__FUi(0x640, D_0045E2A0, 0x100, 0);
         func_00241E18(app, buf, 0x320);
-        sVE_59A0* vt = *(sVE_59A0**)((char*)D_004A2028 + 8);
+        sVEntry<void(void*, char*, int, int, int, int, int)>* vt = *(sVEntry<void(void*, char*, int, int, int, int, int)>**)((char*)D_004A2028 + 8);
         vt[36].fn((char*)D_004A2028 + vt[36].delta, buf, 1, 1, 0, 0, 1);
         *(int*)((char*)D_004A2028 + 0x210) = 1;
         if (buf != 0) {
