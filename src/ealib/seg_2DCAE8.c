@@ -1335,12 +1335,11 @@ void func_003DD8E8(int a0, int a1, struct sFsNode *s) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDA10);
 #ifdef SKIP_ASM
 struct H_DA10 { unsigned int v; };
-extern char *D_00519AD8_DA10[] __asm__("D_00519AD8");
 extern int func_003DD310_DA10(struct H_DA10) __asm__("func_003DD310");
 extern void func_003DD8E8_DA10(void) __asm__("func_003DD8E8");
 
 void func_003DDA10(struct H_DA10 h, int mode, int *p) {
-    int e = *(int *)(((unsigned char *)&h)[3] * 0x30 + D_00519AD8_DA10[0] + 0x10);
+    int e = D_00519AD8[((unsigned char *)&h)[3]].f10;
     int r = func_003DD310_DA10(h);
     if (mode != 1) {
         *(int *)(p[4] + 0xC) = 4;
