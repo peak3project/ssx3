@@ -10599,33 +10599,31 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C7D00);
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8018);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct G_8018 { char p0[5]; unsigned char f5; char p6[0xA8-6]; int fA8[4]; int fB8[8]; char pc[0x1DC-0xD8]; int f1DC; };
-extern struct G_8018 D_00515B40_8018 __asm__("D_00515B40");
 extern void f_7AA8_8018(float) __asm__("func_003C7AA8");
 void func_003C8018(void) {
     int i;
     int v;
     func_003B58A0();
-    if (D_00515B40_8018.f1DC) {
-        func_003B5E98(D_00515B40_8018.f1DC);
-        D_00515B40_8018.f1DC = 0;
+    if (D_00515B40.f1DC) {
+        func_003B5E98(D_00515B40.f1DC);
+        D_00515B40.f1DC = 0;
     }
     for (i = 0; i < 2; i++) {
-        v = D_00515B40_8018.fA8[i];
+        v = D_00515B40.fA8[i];
         if ((v & 0x70000000) == 0x70000000) {
-            D_00515B40_8018.fA8[i] = 0;
+            D_00515B40.fA8[i] = 0;
         } else if (v != 0) {
             func_003B5E98(v);
-            D_00515B40_8018.fA8[i] = 0;
+            D_00515B40.fA8[i] = 0;
         }
     }
-    for (i = 0; i < D_00515B40_8018.f5; i++) {
-        v = D_00515B40_8018.fB8[i];
+    for (i = 0; i < D_00515B40.f05; i++) {
+        v = D_00515B40.fB8[i];
         if ((v & 0x70000000) == 0x70000000) {
-            D_00515B40_8018.fB8[i] = 0;
+            D_00515B40.fB8[i] = 0;
         } else if (v != 0) {
             func_003B5E98(v);
-            D_00515B40_8018.fB8[i] = 0;
+            D_00515B40.fB8[i] = 0;
         }
     }
     f_7AA8_8018(2.0f);
