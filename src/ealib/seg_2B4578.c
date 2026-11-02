@@ -11330,30 +11330,23 @@ void func_003C92B0(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C92F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct {
-    char pad[0x30];
-    void *f30, *f34, *f38, *f3C, *f40, *f44;
-    char pad2[0x30];
-    int i78, i7C, i80, i84, i88, i8C;
-} G_92F8;
-extern void func_003C9420_9420(void) __asm__("func_003C9420");
-extern void func_003C9618_9618(void) __asm__("func_003C9618");
-extern void func_003C9960_9960(void) __asm__("func_003C9960");
-extern G_92F8 D_00515B40_5B40 __asm__("D_00515B40");
+extern void func_003C9420_9420(struct sB40Node *, struct sB40Init *) __asm__("func_003C9420");
+extern void func_003C9618_9618(struct sB40Node *, struct sB40Init *) __asm__("func_003C9618");
+extern void func_003C9960_9960(struct sB40Node *, struct sB40Init *) __asm__("func_003C9960");
 
 void func_003C92F8(void) {
-    D_00515B40_5B40.f30 = func_003C9420_9420;
-    D_00515B40_5B40.i78 = 0x2C;
-    D_00515B40_5B40.f38 = func_003C9960_9960;
-    D_00515B40_5B40.i80 = 0x3C;
-    D_00515B40_5B40.f34 = func_003C9618_9618;
-    D_00515B40_5B40.i7C = 0x30;
-D_00515B40_5B40.f3C = func_003C9420_9420;
-    D_00515B40_5B40.i84 = 0x2C;
-    D_00515B40_5B40.f44 = func_003C9960_9960;
-    D_00515B40_5B40.i8C = 0x3C;
-    D_00515B40_5B40.f40 = func_003C9618_9618;
-    D_00515B40_5B40.i88 = 0x30;
+    D_00515B40.f18[2][0] = func_003C9420_9420;
+    D_00515B40.f60[2][0] = 0x2C;
+    D_00515B40.f18[2][2] = func_003C9960_9960;
+    D_00515B40.f60[2][2] = 0x3C;
+    D_00515B40.f18[2][1] = func_003C9618_9618;
+    D_00515B40.f60[2][1] = 0x30;
+    D_00515B40.f18[3][0] = func_003C9420_9420;
+    D_00515B40.f60[3][0] = 0x2C;
+    D_00515B40.f18[3][2] = func_003C9960_9960;
+    D_00515B40.f60[3][2] = 0x3C;
+    D_00515B40.f18[3][1] = func_003C9618_9618;
+    D_00515B40.f60[3][1] = 0x30;
 }
 #endif
 
