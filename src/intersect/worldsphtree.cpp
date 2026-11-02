@@ -267,6 +267,24 @@ static inline int isBetterHit(sWsRayHit* a, sWsRayHit* b)
     return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
 }
 
+static inline float wsLength(const t4Vector& v)
+{
+    float r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %0, $vi22\n"
+        : "=r"(r)
+        : "m"(v));
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -441,23 +459,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00330788);
 #ifdef SKIP_ASM
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_330788(const t4Vector& v)
-{
-    float r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %0, $vi22\n"
-        : "=r"(r)
-        : "m"(v));
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (v / s).
 static inline t4Vector wsDiv_330788(const t4Vector& v, float s)
@@ -488,7 +489,7 @@ extern "C" int func_00330788(void* self, int a1, int a2, int a3, int a4, int a5,
     t4Vector v;
     int r = func_0032CA78(*(void**)((char*)self + 0x60), a1, a2, a3, a4, &v, a5);
     if (r != 0) {
-        float len = wsLength_330788(v);
+        float len = wsLength(v);
         *outLen = len;
         *outDir = wsDiv_330788(v, len);
     }
@@ -500,23 +501,6 @@ extern "C" int func_00330788(void* self, int a1, int a2, int a3, int a4, int a5,
 INCLUDE_ASM("intersect/worldsphtree", func_00330828);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_330828(const t4Vector& v)
-{
-    float r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %0, $vi22\n"
-        : "=r"(r)
-        : "m"(v));
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (v / s).
 static inline t4Vector wsDiv_330828(const t4Vector& v, float s)
@@ -547,7 +531,7 @@ extern "C" int func_00330828(void* self, int a1, int a2, int a3, int a4, int a5,
     t4Vector v;
     int r = func_00328030(*(void**)((char*)self + 0x60), a1, a2, a3, a4, &v, a5);
     if (r != 0) {
-        float len = wsLength_330828(v);
+        float len = wsLength(v);
         *outLen = len;
         *outDir = wsDiv_330828(v, len);
     }
