@@ -8,10 +8,34 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIText;
+struct cNullMenuItem;
+struct cSpaceMenuItem;
+int GetHashValue32(char* str);
+extern void* D_004A28A8;
+extern "C" void* func_0039F190(void*, int);
+extern char D_004A1408[];
+void* func_002CAA58(void* self);
+cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
+cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
+extern "C" void* func_002CE418(void* self, void* a1, const char* name);
+extern "C" void* func_002CCF98(void* self, int a1, void* a2, int a3);
+extern "C" void* func_002CCDF0(void* self, void* text);
+extern "C" void cMenu_addItem(void* menu, void* item, int index);
+extern "C" char* func_00416958(char* dst, const char* src, int n);
+extern char D_00467A20[];
+extern char D_00467A30[];
+extern char D_00467A40[];
+extern char D_00467A50[];
+extern "C" void* cSubMenuItem_cSubMenuItem(void* self, void* a1, void* a2);
+extern char D_00467A70[];
+extern "C" void* func_002CCF08(void* self);
+extern char D_00467A98[];
+
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", cFEStateNetHelpPopup_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_004679A0[];
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
@@ -30,7 +54,6 @@ extern "C" void cFEStateNetHelpPopup_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001D9E20);
 #ifdef SKIP_ASM
-
 extern "C" int func_001D9E20(void* self, int a1, int a2)
 {
     if (*(int*)((char*)self + 0x50) != 0) {
@@ -47,9 +70,7 @@ extern "C" int func_001D9E20(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001D9E68);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" float func_00320BF0(void* self, int id);
-extern "C" void* func_0039F190(void*, int);
 
 extern "C" void func_001D9E68(void* self)
 {
@@ -80,7 +101,6 @@ int func_001D9F30(void* self)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", cFEStateNetHelpPopup_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char D_004679B0[];
 extern char D_004A2040[];
@@ -175,7 +195,6 @@ extern "C" unsigned short* func_002C2688(unsigned short* dst, unsigned short* sr
 extern "C" void func_003A0D00(void* text, unsigned short* str);
 extern char D_00461A70[];
 
-
 struct sStrings_A110 {
     int pad0;
     sVEntry<unsigned short*(void*, int)>* vt;
@@ -218,11 +237,9 @@ extern "C" void func_001DA110(void* p)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA238);
 #ifdef SKIP_ASM
-struct cUIText;
 void cUIText_setAsciiString(cUIText* text, const char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void func_001DA110(void* self);
-extern char D_004A1408[];
 
 struct sVec3_1DA238 { float x, y, z; };
 
@@ -300,8 +317,6 @@ extern "C" int func_001DA238(sNetHelp_1DA238* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA478);
 #ifdef SKIP_ASM
-extern "C" void* func_0039F190(void*, int);
-
 extern "C" void func_001DA478(void* self, int a1, int msg)
 {
     if (msg == 6) {
@@ -413,23 +428,7 @@ extern "C" int func_001DA5E8(const char* first1, const char* last1, const char* 
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA648);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* func_002CE418(void* self, void* a1, const char* name);
-extern "C" void* func_002CCF98(void* self, int a1, void* a2, int a3);
-extern "C" void* func_002CCDF0(void* self, void* text);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
-extern "C" char* func_00416958(char* dst, const char* src, int n);
-extern void* D_004A28A8;
 extern void* D_0046D690[];
-extern char D_00467A20[];
-extern char D_00467A30[];
-extern char D_00467A40[];
-extern char D_00467A50[];
-extern char D_004A1408[];
 
 static inline void copyName_1DA648(char* dst, const char* src)
 {
@@ -463,23 +462,7 @@ extern "C" void* func_001DA648(void* self, void* vinfo, void* a2)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA7E8);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* func_002CE418(void* self, void* a1, const char* name);
-extern "C" void* func_002CCF98(void* self, int a1, void* a2, int a3);
-extern "C" void* func_002CCDF0(void* self, void* text);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
-extern "C" char* func_00416958(char* dst, const char* src, int n);
-extern void* D_004A28A8;
 extern void* D_0046D6E8[];
-extern char D_00467A20[];
-extern char D_00467A30[];
-extern char D_00467A40[];
-extern char D_00467A50[];
-extern char D_004A1408[];
 
 static inline void copyName_1DA7E8(char* dst, const char* src)
 {
@@ -513,17 +496,9 @@ extern "C" void* func_001DA7E8(void* self, void* vinfo, void* a2)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatenethelppopup", func_001DA988);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* cSubMenuItem_cSubMenuItem(void* self, void* a1, void* a2);
 extern "C" void* func_001DA648(void* self, void* a1, void* a2);
 extern "C" void* func_001DA7E8(void* self, void* a1, void* a2);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D638[];
-extern char D_00467A20[];
 extern char D_00467A58[];
 extern char D_00467A60[];
 
@@ -548,18 +523,8 @@ extern "C" void* func_001DA988(void* self, void* a1, void* a2)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DAAC8);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* func_002CE418(void* self, void* a1, const char* name);
-extern "C" void* func_002CCF98(void* self, int a1, void* a2, int a3);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D588[];
-extern char D_00467A70[];
 extern char D_00467A80[];
-extern char D_004A1408[];
 extern char D_00467A90[];
 
 extern "C" void* func_001DAAC8(void* self, int* info)
@@ -582,15 +547,7 @@ extern "C" void* func_001DAAC8(void* self, int* info)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DABD0);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* func_002CCF08(void* self);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D5E0[];
-extern char D_00467A98[];
 
 extern "C" void* func_001DABD0(void* self, int* info)
 {
@@ -618,22 +575,11 @@ extern "C" void* func_001DABD0(void* self, int* info)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DACB8);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* cSubMenuItem_cSubMenuItem(void* self, void* a1, void* a2);
 // PORT: the member ctors return self, but this caller treats them as void
 void* func_001DAAC8(void* self, int* info);
 void* func_001DABD0(void* self, int* info);
-extern "C" void* func_002CCF08(void* self);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D530[];
 extern char D_00467AA8[];
-extern char D_00467A70[];
-extern char D_00467A98[];
-
 
 extern "C" void* func_001DACB8(void* self, int* info, int* a2, int* a3)
 {
@@ -666,13 +612,6 @@ extern "C" void* func_001DACB8(void* self, int* info, int* a2, int* a3)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DAE20);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* func_002CCF08(void* self);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D4D8[];
 extern char D_00467AB8[];
 
@@ -702,14 +641,6 @@ extern "C" void* func_001DAE20(void* self, int* info)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DAF08);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* func_002CCF08(void* self);
-extern "C" void* func_002CCF98(void* self, int a1, void* a2, int a3);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D480[];
 extern char D_00467AC8[];
 extern char D_00467AD8[];
@@ -743,18 +674,9 @@ extern "C" void* func_001DAF08(void* self, int* a, int* b)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001DB028);
 #ifdef SKIP_ASM
-struct cNullMenuItem;
-struct cSpaceMenuItem;
-void* func_002CAA58(void* self);
-cNullMenuItem* cNullMenuItem_cNullMenuItem(cNullMenuItem* self, void* text);
-cSpaceMenuItem* cSpaceMenuItem_cSpaceMenuItem(cSpaceMenuItem* self, void* text);
-extern "C" void* func_002CCF08(void* self);
-extern "C" void* func_002CE418(void* self, void* a1, const char* name);
-extern "C" void cMenu_addItem(void* menu, void* item, int index);
 extern void* D_0046D428[];
 extern char D_00467AE0[];
 extern char D_00467AF0[];
-extern char D_004A1408[];
 extern int D_00467D70[];
 
 extern "C" void* func_001DB028(void* self, int* info)
