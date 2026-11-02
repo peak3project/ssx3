@@ -643,7 +643,57 @@ void func_00424E68(struct Ring4E68 *r) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00424EA8);
+#ifdef SKIP_ASM
+// pos is volatile: the read position is taken once into a local just before the read call.
+struct Tty_4EA8 { int fd; volatile int wlen; volatile int pos; volatile int fC; char *wp; unsigned char *buf; struct Ring4E28 *ring; };
+extern int pf_4EA8(const char *, ...) __asm__("func_00425C28");
+extern int rd_4EA8(int, unsigned char *, unsigned short) __asm__("func_0042C968");
+extern int wr_4EA8(int, char *, unsigned short) __asm__("func_0042C9A0");
+extern char D_0049AB08[], D_0049AB30[], D_0049AB48[], D_0049AB60[];
+void func_00424EA8(int cmd, int n, struct Tty_4EA8 *s) {
+    switch (cmd) {
+    case 1:
+    case 2:
+        if (n != 0) {
+            if ((unsigned)(s->pos + n) > 0x140)
+                pf_4EA8(D_0049AB08);
+            {
+                int pos = s->pos;
+                n = rd_4EA8(s->fd, s->buf + pos, n);
+            }
+            if (n < 0)
+                pf_4EA8(D_0049AB30);
+            s->pos += n;
+        } else {
+            unsigned short *hdr = (unsigned short *)s->buf;
+            for (n = 12; n < *hdr; n++) {
+                *s->ring->wr = s->buf[n];
+                func_00424E28(s->ring);
+            }
+            s->pos = 0;
+        }
+        break;
+    case 3: {
+        int r = wr_4EA8(s->fd, s->wp, s->wlen);
+        if (r < 0) {
+            pf_4EA8(D_0049AB48, r);
+            s->fC = 0;
+            break;
+        }
+        s->wp += r;
+        s->wlen -= r;
+        break;
+    }
+    case 4:
+        if (s->wlen != 0)
+            pf_4EA8(D_0049AB60, s->wlen);
+        s->fC = 0;
+        break;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_325220", func_00425040);
 
