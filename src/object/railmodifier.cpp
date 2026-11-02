@@ -1,4 +1,17 @@
 #include "common.h"
+#include "bx/math3d.h"
+
+// ---- Shared declarations: one type per real thing, used by the functions below ----
+
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
+// ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
 // single lq/sq pair instead of word-by-word.
@@ -7,11 +20,8 @@ typedef int cQuad128 __attribute__((mode(TI)));
 //100%
 INCLUDE_ASM("object/railmodifier", cRailModifier_buildXform);
 #ifdef SKIP_ASM
-struct sVec4_C0E8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-struct sVecK_C0E8 : public sVec4_C0E8 {
+struct sVecK_C0E8 : public t4Vector {
     sVecK_C0E8(float ax, float ay, float az, float aw)
     {
         x = ax;
@@ -22,7 +32,7 @@ struct sVecK_C0E8 : public sVec4_C0E8 {
 };
 
 struct sMat_C0E8 {
-    sVec4_C0E8 r[4];
+    t4Vector r[4];
 } __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
@@ -80,9 +90,9 @@ static inline void vu0CopyMat_C0E8(sMat_C0E8* d, const sMat_C0E8* s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
-static inline sVec4_C0E8 vu0MtxMul_C0E8(const sMat_C0E8* m, const sVec4_C0E8& v)
+static inline t4Vector vu0MtxMul_C0E8(const sMat_C0E8* m, const t4Vector& v)
 {
-    sVec4_C0E8 r;
+    t4Vector r;
     __asm__(
         "lqc2         $vf8, %1\n"
         "lqc2         $vf4, 0x0(%2)\n"
@@ -101,9 +111,9 @@ static inline sVec4_C0E8 vu0MtxMul_C0E8(const sMat_C0E8* m, const sVec4_C0E8& v)
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_C0E8 vu0Scale_C0E8(const sVec4_C0E8& v, float s)
+static inline t4Vector vu0Scale_C0E8(const t4Vector& v, float s)
 {
-    sVec4_C0E8 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -149,17 +159,17 @@ struct cRailModifier_C0E8 {
 extern char D_0048EA60[];
 extern "C" void* cMemMan_alloc(unsigned int size, const char* tag, int flags, int d);
 
-static inline sVecK_C0E8 mulVec_C0E8(const sVec4_C0E8& a, const sVec4_C0E8& b)
+static inline sVecK_C0E8 mulVec_C0E8(const t4Vector& a, const t4Vector& b)
 {
     return sVecK_C0E8(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
 }
 
-static inline sVec4_C0E8 row_C0E8(const sMat_C0E8* m, int i)
+static inline t4Vector row_C0E8(const sMat_C0E8* m, int i)
 {
     return m->r[i];
 }
 
-static inline sMat_C0E8 scaled_C0E8(const sMat_C0E8* src, const sVec4_C0E8& s)
+static inline sMat_C0E8 scaled_C0E8(const sMat_C0E8* src, const t4Vector& s)
 {
     sMat_C0E8 r;
     r.r[0] = row_C0E8(src, 0);
@@ -180,7 +190,7 @@ extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
         m = p;
     } else {
         float s = model->scale;
-        sVec4_C0E8 scl;
+        t4Vector scl;
         scl.x = s;
         scl.y = s;
         scl.z = s;
@@ -190,8 +200,8 @@ extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
         vu0CopyMat_C0E8(p, l->mat);
         m = p;
         {
-        sVec4_C0E8 rr;
-        sVec4_C0E8 r3 = self->mat.r[3];
+        t4Vector rr;
+        t4Vector r3 = self->mat.r[3];
         rr.x = r3.x * scl.x;
         rr.y = r3.y * scl.y;
         rr.z = r3.z * scl.z;
@@ -203,8 +213,8 @@ extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
             sMat_C0E8* mm = m;
             sMat_C0E8 t2;
             sMat_C0E8 a;
-            sVec4_C0E8 res;
-            sVec4_C0E8 r3b;
+            t4Vector res;
+            t4Vector r3b;
             sMat_C0E8* lm = l2->mat;
             res = lm->r[0];
             a.r[0] = res;
@@ -245,7 +255,7 @@ extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
     f = self->mat.r[1].z;
     self->mat.r[1].z = self->mat.r[2].y;
     self->mat.r[2].y = f;
-    sVec4_C0E8 v = vu0Scale_C0E8(row_C0E8(&self->mat, 3), -1.0f);
+    t4Vector v = vu0Scale_C0E8(row_C0E8(&self->mat, 3), -1.0f);
     v.w = 0.0f;
     v = vu0MtxMul_C0E8(m, v);
     v.w = 1.0f;
@@ -402,9 +412,6 @@ void* func_0035CFE8(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035CFF0);
 #ifdef SKIP_ASM
-struct sVec4CFF0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sMat33CFF0 {
     float m[3][3];
@@ -412,11 +419,11 @@ struct sMat33CFF0 {
 
 struct sBodyCFF0 {
     char pad_0x00[0x30];
-    sVec4CFF0 pos;      // 0x30
+    t4Vector pos;      // 0x30
     char pad_0x40[0x10];
     sMat33CFF0 rot;     // 0x50
     char pad_0x74[0x1C];
-    sVec4CFF0 outPos;   // 0x90
+    t4Vector outPos;   // 0x90
 };
 
 static inline sMat33CFF0 scaleCFF0(const sMat33CFF0& a, float s)
@@ -451,9 +458,9 @@ static inline void invertCFF0(sMat33CFF0& a)
     a = scaleCFF0(adj, inv);
 }
 
-static inline sVec4CFF0 xformCFF0(const sMat33CFF0& m, sBodyCFF0* b)
+static inline t4Vector xformCFF0(const sMat33CFF0& m, sBodyCFF0* b)
 {
-    sVec4CFF0 r;
+    t4Vector r;
     float x = b->outPos.x;
     float y = b->outPos.y;
     float z = b->outPos.z;
@@ -464,7 +471,7 @@ static inline sVec4CFF0 xformCFF0(const sMat33CFF0& m, sBodyCFF0* b)
     return r;
 }
 
-extern "C" void func_0035CFF0(sBodyCFF0* self, const sVec4CFF0* v)
+extern "C" void func_0035CFF0(sBodyCFF0* self, const t4Vector* v)
 {
     self->outPos = *v;
     sMat33CFF0 m = self->rot;
@@ -476,18 +483,15 @@ extern "C" void func_0035CFF0(sBodyCFF0* self, const sVec4CFF0* v)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035D288);
 #ifdef SKIP_ASM
-struct sRmVec4 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sRmMat33 {
     float m[3][3];
 };
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sRmVec4 vu0ScaleRM(const sRmVec4& v, float s)
+static inline t4Vector vu0ScaleRM(const t4Vector& v, float s)
 {
-    sRmVec4 r;
+    t4Vector r;
     int t;
     __asm__ __volatile__(
         "mfc1      %1, %3\n"
@@ -502,19 +506,19 @@ static inline sRmVec4 vu0ScaleRM(const sRmVec4& v, float s)
 
 struct sRmBody {
     char pad_0x00[0x20];
-    sRmVec4 dir;        // 0x20
-    sRmVec4 pos;        // 0x30
+    t4Vector dir;        // 0x20
+    t4Vector pos;        // 0x30
     float scale;        // 0x40
     char pad_0x44[0xC];
     sRmMat33 rot;       // 0x50
     char pad_0x74[0xC];
-    sRmVec4 outDir;     // 0x80
-    sRmVec4 outPos;     // 0x90
+    t4Vector outDir;     // 0x80
+    t4Vector outPos;     // 0x90
 };
 
-static inline sRmVec4 xformRM(sRmBody* b)
+static inline t4Vector xformRM(sRmBody* b)
 {
-    sRmVec4 r;
+    t4Vector r;
     float x = b->pos.x;
     float y = b->pos.y;
     float z = b->pos.z;
@@ -535,24 +539,21 @@ extern "C" void func_0035D288(sRmBody* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035D340);
 #ifdef SKIP_ASM
-struct sRmVec4_D340 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sRmBody_D340 {
-    sRmVec4_D340 pos;       // 0x00
-    sRmVec4_D340 quat;      // 0x10
-    sRmVec4_D340 acc0;      // 0x20
-    sRmVec4_D340 acc1;      // 0x30
+    t4Vector pos;       // 0x00
+    t4Vector quat;      // 0x10
+    t4Vector acc0;      // 0x20
+    t4Vector acc1;      // 0x30
     char pad_0x40[0x40];
-    sRmVec4_D340 vel;       // 0x80
-    sRmVec4_D340 angVel;    // 0x90
+    t4Vector vel;       // 0x80
+    t4Vector angVel;    // 0x90
 };
 
 // PORT: PS2-only VU0 inline asm (vector * scalar).
-static inline void ScaleD340(sRmVec4_D340& out, const sRmVec4_D340& v, float s)
+static inline void ScaleD340(t4Vector& out, const t4Vector& v, float s)
 {
-    sRmVec4_D340 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -567,7 +568,7 @@ static inline void ScaleD340(sRmVec4_D340& out, const sRmVec4_D340& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (a += b).
-static inline void AddEqD340(sRmVec4_D340& a, const sRmVec4_D340& b)
+static inline void AddEqD340(t4Vector& a, const t4Vector& b)
 {
     __asm__(
         "lqc2      $vf3, %0\n"
@@ -580,9 +581,9 @@ static inline void AddEqD340(sRmVec4_D340& a, const sRmVec4_D340& b)
 }
 
 // PORT: PS2-only VU0 inline asm (quaternion derivative 0.5 * (0, w) * q).
-static inline void QuatDerivD340(sRmVec4_D340& out, const sRmVec4_D340& q, const sRmVec4_D340& w)
+static inline void QuatDerivD340(t4Vector& out, const t4Vector& q, const t4Vector& w)
 {
-    sRmVec4_D340 r;
+    t4Vector r;
     __asm__(
         "qmtc2.ni   %3, $vf1\n"
         "lqc2       $vf4, %1\n"
@@ -606,7 +607,7 @@ static inline void QuatDerivD340(sRmVec4_D340& out, const sRmVec4_D340& q, const
 }
 
 // PORT: PS2-only VU0 inline asm (normalise a 4-vector in place).
-static inline void NormalizeD340(sRmVec4_D340& v)
+static inline void NormalizeD340(t4Vector& v)
 {
     __asm__(
         "lqc2       $vf3, %0\n"
@@ -624,13 +625,13 @@ static inline void NormalizeD340(sRmVec4_D340& v)
         : "memory");
 }
 
-extern "C" void func_0035D340(sRmBody_D340* b, const sRmVec4_D340* a, const sRmVec4_D340* c, float dt)
+extern "C" void func_0035D340(sRmBody_D340* b, const t4Vector* a, const t4Vector* c, float dt)
 {
-    sRmVec4_D340 tmp;
+    t4Vector tmp;
     ScaleD340(tmp, b->vel, dt);
     AddEqD340(b->pos, tmp);
     {
-        sRmVec4_D340 d;
+        t4Vector d;
         QuatDerivD340(d, b->quat, b->angVel);
         ScaleD340(tmp, d, dt);
     }
@@ -649,23 +650,23 @@ extern "C" void func_0035D340(sRmBody_D340* b, const sRmVec4_D340* a, const sRmV
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035D4A0);
 #ifdef SKIP_ASM
-extern "C" void func_0035D908(sRmBody* b, const sRmVec4* r, const sRmVec4* imp);
+extern "C" void func_0035D908(sRmBody* b, const t4Vector* r, const t4Vector* imp);
 
 struct sRmRigid_D4A0 {
-    sRmVec4 pos;        // 0x00
+    t4Vector pos;        // 0x00
     char pad_0x10[0x30];
     float invMass;      // 0x40
     char pad_0x44[0xC];
     sRmMat33 invI;      // 0x50
     char pad_0x74[0xC];
-    sRmVec4 vel;        // 0x80
-    sRmVec4 angVel;     // 0x90
+    t4Vector vel;        // 0x80
+    t4Vector angVel;     // 0x90
 };
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sRmVec4 SubD4A0(const sRmVec4& a, const sRmVec4& b)
+static inline t4Vector SubD4A0(const t4Vector& a, const t4Vector& b)
 {
-    sRmVec4 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -678,9 +679,9 @@ static inline sRmVec4 SubD4A0(const sRmVec4& a, const sRmVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sRmVec4 AddD4A0(const sRmVec4& a, const sRmVec4& b)
+static inline t4Vector AddD4A0(const t4Vector& a, const t4Vector& b)
 {
-    sRmVec4 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -693,9 +694,9 @@ static inline sRmVec4 AddD4A0(const sRmVec4& a, const sRmVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (cross product, w = 0).
-static inline sRmVec4 CrossD4A0(const sRmVec4& a, const sRmVec4& b)
+static inline t4Vector CrossD4A0(const t4Vector& a, const t4Vector& b)
 {
-    sRmVec4 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -710,7 +711,7 @@ static inline sRmVec4 CrossD4A0(const sRmVec4& a, const sRmVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (dot product).
-static inline float DotD4A0(const sRmVec4& a, const sRmVec4& b)
+static inline float DotD4A0(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -730,7 +731,7 @@ static inline float DotD4A0(const sRmVec4& a, const sRmVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float LengthD4A0(const sRmVec4& v)
+static inline float LengthD4A0(const t4Vector& v)
 {
     float r;
     int t;
@@ -751,9 +752,9 @@ static inline float LengthD4A0(const sRmVec4& v)
 }
 
 // PORT: PS2-only VU0 inline asm (v / s).
-static inline sRmVec4 DivD4A0(const sRmVec4& v, float s)
+static inline t4Vector DivD4A0(const t4Vector& v, float s)
 {
-    sRmVec4 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -770,9 +771,9 @@ static inline sRmVec4 DivD4A0(const sRmVec4& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sRmVec4 ScaleD4A0(const sRmVec4& v, float s)
+static inline t4Vector ScaleD4A0(const t4Vector& v, float s)
 {
-    sRmVec4 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -786,9 +787,9 @@ static inline sRmVec4 ScaleD4A0(const sRmVec4& v, float s)
     return r;
 }
 
-static inline sRmVec4 MulID4A0(sRmRigid_D4A0* b, const sRmVec4& v)
+static inline t4Vector MulID4A0(sRmRigid_D4A0* b, const t4Vector& v)
 {
-    sRmVec4 r;
+    t4Vector r;
     float x = v.x;
     float y = v.y;
     float z = v.z;
@@ -799,23 +800,23 @@ static inline sRmVec4 MulID4A0(sRmRigid_D4A0* b, const sRmVec4& v)
     return r;
 }
 
-static inline sRmVec4 PointVelD4A0(sRmRigid_D4A0* b, const sRmVec4& p)
+static inline t4Vector PointVelD4A0(sRmRigid_D4A0* b, const t4Vector& p)
 {
     return AddD4A0(b->vel, CrossD4A0(b->angVel, SubD4A0(p, b->pos)));
 }
 
-extern "C" void func_0035D4A0(sRmRigid_D4A0* b, sRmVec4* point, sRmVec4* n, float e, float mu)
+extern "C" void func_0035D4A0(sRmRigid_D4A0* b, t4Vector* point, t4Vector* n, float e, float mu)
 {
-    sRmVec4 r = SubD4A0(*point, b->pos);
-    sRmVec4 vp = PointVelD4A0(b, *point);
+    t4Vector r = SubD4A0(*point, b->pos);
+    t4Vector vp = PointVelD4A0(b, *point);
     float d = DotD4A0(vp, *n);
     if (mu != 0.0f) {
-        sRmVec4 t = SubD4A0(vp, ScaleD4A0(*n, d));
+        t4Vector t = SubD4A0(vp, ScaleD4A0(*n, d));
         float len = LengthD4A0(t);
         if (len > 0.0010000000474974513f) {
-            sRmVec4 dir = DivD4A0(t, len);
+            t4Vector dir = DivD4A0(t, len);
             float j = -mu * len / (b->invMass + DotD4A0(dir, CrossD4A0(MulID4A0(b, CrossD4A0(r, dir)), r)));
-            sRmVec4 imp = ScaleD4A0(dir, j);
+            t4Vector imp = ScaleD4A0(dir, j);
             func_0035D908((sRmBody*)b, &r, &imp);
             vp = PointVelD4A0(b, *point);
             d = DotD4A0(vp, *n);
@@ -825,7 +826,7 @@ extern "C" void func_0035D4A0(sRmRigid_D4A0* b, sRmVec4* point, sRmVec4* n, floa
         }
     }
     float j = -(e + 1.0f) * d / (b->invMass + DotD4A0(*n, CrossD4A0(MulID4A0(b, CrossD4A0(r, *n)), r)));
-    sRmVec4 imp = ScaleD4A0(*n, j);
+    t4Vector imp = ScaleD4A0(*n, j);
     func_0035D908((sRmBody*)b, &r, &imp);
 }
 #endif
@@ -876,8 +877,8 @@ extern "C" void func_0035E248(void* self);
 extern "C" void* func_0035DDE8_DA70(void* self, void* a1, void* a2) __asm__("func_0035DDE8");
 
 struct sXf_DA70 {
-    sRmVec4 pos;
-    sRmVec4 quat;
+    t4Vector pos;
+    t4Vector quat;
 };
 
 extern "C" sXf_DA70 func_0031B748(void* m);
@@ -889,9 +890,9 @@ struct sV4c_DA70 {
 } __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
-static inline sRmVec4 QuatRot_DA70(const sRmVec4& q, const sRmVec4& v)
+static inline t4Vector QuatRot_DA70(const t4Vector& q, const t4Vector& v)
 {
-    sRmVec4 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -913,7 +914,7 @@ static inline sRmVec4 QuatRot_DA70(const sRmVec4& q, const sRmVec4& v)
 }
 
 // PORT: PS2-only VU0 inline asm (dst = v rotated by quaternion q).
-static inline void QuatRotTo_DA70(sRmVec4& dst, const sRmVec4& q, const sRmVec4& v)
+static inline void QuatRotTo_DA70(t4Vector& dst, const t4Vector& q, const t4Vector& v)
 {
     __asm__(
         "lqc2      $vf4, %1\n"
@@ -935,7 +936,7 @@ static inline void QuatRotTo_DA70(sRmVec4& dst, const sRmVec4& q, const sRmVec4&
 }
 
 // PORT: PS2-only VU0 inline asm (dst += b).
-static inline void AddTo_DA70(sRmVec4& dst, const sRmVec4& b)
+static inline void AddTo_DA70(t4Vector& dst, const t4Vector& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -948,7 +949,7 @@ static inline void AddTo_DA70(sRmVec4& dst, const sRmVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (unit quaternion + position -> 4x4 matrix).
-static inline void QuatPosToMtx_DA70(void* m, const sRmVec4& q, const sRmVec4& p)
+static inline void QuatPosToMtx_DA70(void* m, const t4Vector& q, const t4Vector& p)
 {
     __asm__ __volatile__(
         "lqc2       $vf4, %1\n"
@@ -1019,12 +1020,12 @@ extern "C" char* func_0035DA70(char* self, char* a1, char* a2, char* a3)
     char* t = *(char**)(self + 0x178);
     *(float*)(self + 0xC) = *(float*)(a1 + 0x8);
     *(float*)(self + 0x70) = 1.0f / timing[1];
-    sRmVec4 v;
+    t4Vector v;
     v.x = *(float*)(t + 0x2C);
     v.y = *(float*)(t + 0x30);
     v.z = *(float*)(t + 0x34);
     v.w = 0.0f;
-    *(sRmVec4*)(self + 0x2B0) = v;
+    *(t4Vector*)(self + 0x2B0) = v;
     *(sRmMat33*)(self + 0x280) = *(sRmMat33*)(t + 0x5C);
     ((sRmMat33*)(self + 0x280))->m[0][0] *= 0.5f;
     ((sRmMat33*)(self + 0x280))->m[0][1] *= 0.5f;
@@ -1037,11 +1038,11 @@ extern "C" char* func_0035DA70(char* self, char* a1, char* a2, char* a3)
     ((sRmMat33*)(self + 0x280))->m[2][2] *= 0.5f;
     sXf_DA70 x = func_0031B748(*(char**)(self + 0xD0) + 0x10);
     {
-        sRmVec4 r1;
-        QuatRotTo_DA70(r1, x.quat, *(sRmVec4*)(self + 0x2B0));
+        t4Vector r1;
+        QuatRotTo_DA70(r1, x.quat, *(t4Vector*)(self + 0x2B0));
         v = r1;
-        sRmVec4 b;
-        sRmVec4 r2;
+        t4Vector b;
+        t4Vector r2;
         QuatRotTo_DA70(r2, x.quat, v);
         b = r2;
         AddTo_DA70(x.pos, b);
@@ -1092,11 +1093,11 @@ extern "C" void func_0035E1E0(void* self, func_0035E1E0_cObj* obj)
 INCLUDE_ASM("object/railmodifier", func_0035E248);
 #ifdef SKIP_ASM
 struct sM44_E248 {
-    sRmVec4 r[4];
+    t4Vector r[4];
 };
 
 // PORT: PS2-only VU0 inline asm (unit quaternion -> 4x4 rotation matrix).
-static inline void QuatToMtx_E248(sM44_E248& m, const sRmVec4& q)
+static inline void QuatToMtx_E248(sM44_E248& m, const t4Vector& q)
 {
     __asm__ __volatile__(
         "lqc2       $vf4, %4\n"
@@ -1177,7 +1178,7 @@ static inline void Transpose33_E248(sRmMat33& a)
 
 struct sRmObj_E248 {
     char pad_0x0[0x40];
-    sRmVec4 quat;           // 0x40
+    t4Vector quat;           // 0x40
     char pad_0x50[0x30];
     sRmMat33 invIWorld;     // 0x80
     char pad_0xA4[0x280 - 0xA4];
@@ -1218,12 +1219,12 @@ extern "C" void func_0035E248(void* vself)
 INCLUDE_ASM("object/railmodifier", func_0035E770);
 #ifdef SKIP_ASM
 struct sRmXform {
-    sRmVec4 pos;    // 0x00
-    sRmVec4 quat;   // 0x10
+    t4Vector pos;    // 0x00
+    t4Vector quat;   // 0x10
 };
 
 // PORT: PS2-only VU0 inline asm (dst = v * s).
-static inline void vu0ScaleToRM(sRmVec4& dst, const sRmVec4& v, float s)
+static inline void vu0ScaleToRM(t4Vector& dst, const t4Vector& v, float s)
 {
     int t;
     __asm__(
@@ -1237,7 +1238,7 @@ static inline void vu0ScaleToRM(sRmVec4& dst, const sRmVec4& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (dst = v rotated by quaternion q).
-static inline void vu0QuatRotToRM(sRmVec4& dst, const sRmVec4& q, const sRmVec4& v)
+static inline void vu0QuatRotToRM(t4Vector& dst, const t4Vector& q, const t4Vector& v)
 {
     __asm__(
         "lqc2      $vf4, %1\n"
@@ -1258,7 +1259,7 @@ static inline void vu0QuatRotToRM(sRmVec4& dst, const sRmVec4& q, const sRmVec4&
 }
 
 // PORT: PS2-only VU0 inline asm (dst += b).
-static inline void vu0AddToRM(sRmVec4& dst, const sRmVec4& b)
+static inline void vu0AddToRM(t4Vector& dst, const t4Vector& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1272,12 +1273,12 @@ static inline void vu0AddToRM(sRmVec4& dst, const sRmVec4& b)
 extern "C" sRmXform func_0035E770(void* self)
 {
     sRmXform r = *(sRmXform*)((char*)self + 0x30);
-    sRmVec4 c;
-    sRmVec4 b;
-    sRmVec4 a;
-    sRmVec4 e;
-    sRmVec4 d;
-    vu0QuatRotToRM(a, *(sRmVec4*)((char*)self + 0x40), *(sRmVec4*)((char*)self + 0x2B0));
+    t4Vector c;
+    t4Vector b;
+    t4Vector a;
+    t4Vector e;
+    t4Vector d;
+    vu0QuatRotToRM(a, *(t4Vector*)((char*)self + 0x40), *(t4Vector*)((char*)self + 0x2B0));
     b = a;
     vu0ScaleToRM(a, b, -1.0f);
     c = a;
@@ -1301,10 +1302,10 @@ void func_0035ED88(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035ED90);
 #ifdef SKIP_ASM
-extern "C" void func_0032C630(void* p, const sRmVec4* d);
+extern "C" void func_0032C630(void* p, const t4Vector* d);
 
 // PORT: PS2-only VU0 inline asm (dst += b).
-static inline void vu0AddED90(sRmVec4& dst, const sRmVec4& b)
+static inline void vu0AddED90(t4Vector& dst, const t4Vector& b)
 {
     __asm__(
         ".set push\n"
@@ -1318,7 +1319,7 @@ static inline void vu0AddED90(sRmVec4& dst, const sRmVec4& b)
         : "m"(dst), "m"(b));
 }
 
-extern "C" void func_0035ED90(sRmBody* self, const sRmVec4* b)
+extern "C" void func_0035ED90(sRmBody* self, const t4Vector* b)
 {
     vu0AddED90(self->pos, *b);
     func_0032C630((char*)self + 0xE0, b);
@@ -3869,13 +3870,10 @@ extern "C" void func_003611D8(void* self, int flags)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361208);
 #ifdef SKIP_ASM
-struct sVec4_361208 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-extern "C" void func_00361208(void* self, sVec4_361208* out)
+extern "C" void func_00361208(void* self, t4Vector* out)
 {
-    sVec4_361208 v;
+    t4Vector v;
     v.x = -*(float*)((char*)self + 0x50);
     v.y = -*(float*)((char*)self + 0x54);
     v.z = -*(float*)((char*)self + 0x58);
@@ -3990,13 +3988,10 @@ extern "C" void func_00361370(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361378);
 #ifdef SKIP_ASM
-struct sVec4_361378 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-extern "C" void func_00361378(void* self, sVec4_361378* out)
+extern "C" void func_00361378(void* self, t4Vector* out)
 {
-    sVec4_361378 v;
+    t4Vector v;
     v.x = *(float*)((char*)self + 0x44);
     v.y = *(float*)((char*)self + 0x48);
     v.z = *(float*)((char*)self + 0x4C);
@@ -4286,16 +4281,13 @@ extern "C" int func_003615C0(void* self, int a1)
 //100%
 INCLUDE_ASM("object/railmodifier", func_003615D8);
 #ifdef SKIP_ASM
-struct sSpV4_15D8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sSpM_15D8 {
-    sSpV4_15D8 r[4];
+    t4Vector r[4];
 };
 
 // PORT: PS2-only VU0 inline asm (vector * 4x4 basis matrix, row-vector convention).
-static inline void vu0BasisMul_15D8(sSpV4_15D8& dst, const sSpV4_15D8& g, const float* b)
+static inline void vu0BasisMul_15D8(t4Vector& dst, const t4Vector& g, const float* b)
 {
     __asm__(
         "lqc2         $vf8, %1\n"
@@ -4341,7 +4333,7 @@ static inline void mmiTranspose_15D8(sSpM_15D8* m)
 extern "C" void func_003615D8(void* self, sSpM_15D8* out, const float* a, const float* b, const float* c, const float* d)
 {
     sSpM_15D8 L;
-    sSpV4_15D8 v;
+    t4Vector v;
     L.r[1].x = a[0]; L.r[1].y = b[0]; L.r[1].z = c[0]; L.r[1].w = d[0];
     vu0BasisMul_15D8(L.r[2], L.r[1], D_004FFAC0);
     L.r[0] = L.r[2];
