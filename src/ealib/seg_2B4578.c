@@ -3762,7 +3762,6 @@ int func_003B9DC8(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9E48);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0050A120_9E48[] __asm__("D_0050A120");
 extern int func_003B8D98_9E48() __asm__("func_003B8D98");
 extern void func_003B85F0(int, unsigned int);
 
@@ -3774,25 +3773,24 @@ int func_003B9E48(int a0, int vol) {
     }
     {
         int key = vol << 16;
-        char *e = D_0050A120_9E48 + idx * 0x70;
-        *(int *)(e + 0x18) = 0;
-        if (*(int *)(e + 0x14) != key) {
-            if (*(signed char *)(e + 0x28) == 3) {
-                char *p;
+        struct sA120Song *e = &D_0050A120.f000[idx];
+        e->f18 = 0;
+        if (e->f14 != key) {
+            if (e->f28 == 3) {
+                struct sA120Voice *p;
                 int i;
-                *(int *)(e + 0x14) = key;
-                p = D_0050A120_9E48 + 0x700;
+                e->f14 = key;
+                p = D_0050A120.f700;
                 i = 0x17;
                 do {
-                    if (*(signed char *)(p + 4) == idx) {
-                        int v = *(int *)p;
+                    if (p->f04 == idx) {
+                        int v = p->f00;
                         if (v >= 0) {
-                            unsigned x = *(unsigned *)(e + (*(signed char *)(p + 5) << 2) + 0x30);
-                            func_003B85F0(v, ((x >> 10 & 0x7F) * vol) >> 7);
+                            func_003B85F0(v, (unsigned int)(e->f30[p->f05].b10 * vol) >> 7);
                         }
                     }
                     i -= 1;
-                    p += 8;
+                    p++;
                 } while (i >= 0);
             } else {
                 ret = -1;
