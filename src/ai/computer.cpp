@@ -62,24 +62,29 @@ struct sAiPair { int vis; int val; float dist; int c; int d; int e; int f; int g
 //100%
 INCLUDE_ASM("ai/computer", cComputer_setIndividualRiderDifficulty);
 #ifdef SKIP_ASM
-struct sAiTune_SIRD {
+struct sAiTune {
     char pad0[0xDC];
     float accel;     // 0xDC
     float speed;     // 0xE0
     int boost;       // 0xE4
 };
 
-struct cComputer_SIRD {
-    char pad0[0x18];
-    sAiTune_SIRD* tune;     // 0x18
-    char pad1C[0xDF8 - 0x1C];
-    float skillA;           // 0xDF8
-    float skillB;           // 0xDFC
+// cComputer as the difficulty code sees it: the rider at 0x18 read as its AI tuning, the skill values.
+struct sCompSkill {
+    char pad_0x0[0x18];
+    sAiTune* tune;                  // 0x18
+    char pad_0x1C[0xDF8 - 0x1C];
+    float skillA;                   // 0xDF8
+    float skillB;                   // 0xDFC
+    short diff;                     // 0xE00
+    short pad_0xE02;
+    int f4;                         // 0xE04
+    int f8;                         // 0xE08
 };
 
 // Applies the per-level AI tuning; mode 0 and mode 2 override the skill values with their own tables.
 // skillB is stored as a percentage and scaled to 0..1 at the end.
-extern "C" void cComputer_setIndividualRiderDifficulty(cComputer_SIRD* self, int level, int mode)
+extern "C" void cComputer_setIndividualRiderDifficulty(sCompSkill* self, int level, int mode)
 {
     switch (level) {
     case 1:
@@ -182,17 +187,6 @@ extern "C" void cComputer_setIndividualRiderDifficulty(cComputer_SIRD* self, int
 //100%
 INCLUDE_ASM("ai/computer", cComputer_updateRiderDifficulty);
 #ifdef SKIP_ASM
-struct sComp_UR {
-    char pad_0x0[0x18];
-    sAiTune_SIRD* tune;             // 0x18
-    char pad_0x1C[0xDF8 - 0x1C];
-    float skillA;                   // 0xDF8
-    float skillB;                   // 0xDFC
-    short diff;                     // 0xE00
-    short pad_0xE02;
-    int f4;                         // 0xE04
-    int f8;                         // 0xE08
-};
 extern signed char D_00535BC8[];
 extern int D_005308D0[];
 extern "C" void* cBE_getBE();
@@ -209,8 +203,8 @@ static inline int ValidOr_UR(int v, int invalid, int def)
     return v;
 }
 
-void cComputer_updateRiderDifficulty_UR(sComp_UR* self) __asm__("cComputer_updateRiderDifficulty");
-void cComputer_updateRiderDifficulty_UR(sComp_UR* self)
+void cComputer_updateRiderDifficulty_UR(sCompSkill* self) __asm__("cComputer_updateRiderDifficulty");
+void cComputer_updateRiderDifficulty_UR(sCompSkill* self)
 {
     char* rider = *(char**)((char*)self + 0x18);
     int mode = *(int*)D_004A28A8->fC0;
