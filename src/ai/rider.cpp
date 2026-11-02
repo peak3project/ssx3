@@ -69,6 +69,12 @@ struct sAnimNameTable
     int extra;      // 0x2944 names func_0011BE88 appends after them
 };
 
+// Item record of the rider's character data (func_0014AD50), found through its map (func_00123640, func_00123B48).
+struct sItemRec {
+    short a;
+    unsigned short flags;
+};
+
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
 //100%
@@ -3723,16 +3729,11 @@ static inline void initTrack_3640(cRider* self, int off, float v, float z)
     *(float*)((char*)self + off + 4) = z;
 }
 
-struct sItem_3640 {
-    short a;
-    unsigned short flags;
-};
-
 struct sDb_3640 {
     char pad0[0x288];
     short* map;                 // 0x288
     char pad28C[0x4];
-    sItem_3640 items[1];        // 0x290
+    sItemRec items[1];        // 0x290
 };
 
 struct sEnt_3640 {
@@ -3744,7 +3745,7 @@ struct sEnt_3640 {
     int flags;                  // 0x34
 };
 
-static inline sItem_3640* lookup_3640(sDb_3640* d, int i)
+static inline sItemRec* lookup_3640(sDb_3640* d, int i)
 {
     short k = d->map[i];
     if (k >= 0) {
@@ -3865,16 +3866,11 @@ int func_0014D988(void* tbl, int g);
 extern "C" void* func_0014D998(void* tbl, int g);
 extern "C" void func_002AD5F0(void* bank, int id, int a, float f);
 
-struct sItem_123B48 {
-    short a;
-    unsigned short flags;
-};
-
 struct sDb_123B48 {
     char pad0[0x288];
     short* map;                 // 0x288
     char pad28C[0x4];
-    sItem_123B48 items[1];      // 0x290
+    sItemRec items[1];      // 0x290
 };
 
 struct sEnt_123B48 {
@@ -3886,7 +3882,7 @@ struct sEnt_123B48 {
     int flags;                  // 0x34
 };
 
-static inline sItem_123B48* lookup_123B48(sDb_123B48* d, int i)
+static inline sItemRec* lookup_123B48(sDb_123B48* d, int i)
 {
     short k = d->map[i];
     if (k >= 0) {
