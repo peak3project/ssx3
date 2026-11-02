@@ -83,6 +83,16 @@ struct sItemDb {
     sItemRec items[1];          // 0x290
 };
 
+// 0x38-byte entries of the table func_0014D998 returns: an item index into sItemDb plus a channel id.
+struct sItemRef {
+    char pad0[0x4];
+    short item;                 // 0x04
+    char pad6[0xA];
+    signed char id;             // 0x10
+    char pad11[0x23];
+    int flags;                  // 0x34
+};
+
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
 //100%
@@ -3737,15 +3747,6 @@ static inline void initTrack_3640(cRider* self, int off, float v, float z)
     *(float*)((char*)self + off + 4) = z;
 }
 
-struct sEnt_3640 {
-    char pad0[0x4];
-    short item;                 // 0x04
-    char pad6[0xA];
-    signed char id;             // 0x10
-    char pad11[0x23];
-    int flags;                  // 0x34
-};
-
 static inline sItemRec* lookup_3640(sItemDb* d, int i)
 {
     short k = d->map[i];
@@ -3832,7 +3833,7 @@ extern "C" void func_00123640(cRider* self)
         sItemDb* db = (sItemDb*)func_0014AD50(iface, self->mAIIndex);
         int g = func_00123128(self);
         int n = func_0014D988(tbl, g);
-        sEnt_3640* e = (sEnt_3640*)func_0014D998(tbl, g);
+        sItemRef* e = (sItemRef*)func_0014D998(tbl, g);
         int i;
         for (i = 0; i < n; i++, e++) {
             int id = e->id;
@@ -3867,15 +3868,6 @@ int func_0014D988(void* tbl, int g);
 extern "C" void* func_0014D998(void* tbl, int g);
 extern "C" void func_002AD5F0(void* bank, int id, int a, float f);
 
-struct sEnt_123B48 {
-    char pad0[0x4];
-    short item;                 // 0x04
-    char pad6[0xA];
-    signed char id;             // 0x10
-    char pad11[0x23];
-    int flags;                  // 0x34
-};
-
 static inline sItemRec* lookup_123B48(sItemDb* d, int i)
 {
     short k = d->map[i];
@@ -3885,12 +3877,12 @@ static inline sItemRec* lookup_123B48(sItemDb* d, int i)
     return 0;
 }
 
-static inline int entId_123B48(sEnt_123B48* e)
+static inline int entId_123B48(sItemRef* e)
 {
     return e->id;
 }
 
-static inline int entOn_123B48(sEnt_123B48* e)
+static inline int entOn_123B48(sItemRef* e)
 {
     return e->flags & 0x40;
 }
@@ -3905,12 +3897,12 @@ static inline void setChan_123B48(cRider* self, int id, int ch)
     func_0030E9E0(model_123B48(self), id, ch);
 }
 
-static inline int entItem_123B48(sEnt_123B48* e)
+static inline int entItem_123B48(sItemRef* e)
 {
     return e->item;
 }
 
-static inline unsigned short itemFlags_123B48(sItemDb* db, sEnt_123B48* e)
+static inline unsigned short itemFlags_123B48(sItemDb* db, sItemRef* e)
 {
     return lookup_123B48(db, entItem_123B48(e))->flags;
 }
@@ -3942,7 +3934,7 @@ extern "C" void func_00123B48(cRider* self)
         sItemDb* db = (sItemDb*)func_0014AD50(iface, self->mAIIndex);
         int g = func_00123128(self);
         int n = func_0014D988(tbl, g);
-        sEnt_123B48* e = (sEnt_123B48*)func_0014D998(tbl, g);
+        sItemRef* e = (sItemRef*)func_0014D998(tbl, g);
         int i;
         for (i = 0; i < n; i++, e++) {
             int id = entId_123B48(e);
