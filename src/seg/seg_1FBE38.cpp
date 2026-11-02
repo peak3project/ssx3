@@ -933,14 +933,12 @@ extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00342C08_C7D0(void*, int, void*, void*, void*) __asm__("func_00342C08");
 extern char D_004896E8_C7D0[] __asm__("D_004896E8");
-struct V3_C7D0 { float x, y, z; };
-extern V3_C7D0 D_004C9098_C7D0 __asm__("D_004C9098");
 extern unsigned D_C7D0[] __asm__("D_004FB528");
 extern int D_004A55EC;
 extern const int D_00445FB0[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_C7D0 { int idx; int val; int pad; int type; };
-extern "C" V3_C7D0 func_002FC7D0(int n, Ent_C7D0 *e) {
+extern "C" cLunoValue func_002FC7D0(int n, Ent_C7D0 *e) {
     if (D_004A55EC == 0) {
         D_C7D0[0] = 0xFFFFFFFF;
         *(float*)&D_C7D0[1] = 1.0f;
@@ -982,12 +980,12 @@ extern "C" V3_C7D0 func_002FC7D0(int n, Ent_C7D0 *e) {
         obj = r;
     }
     if (obj == 0)
-        return D_004C9098_C7D0;
+        return D_004C9098;
     void *p = *(void**)(obj + 0xC);
     if (p && checkActiveNode(p, 0, buf))
-        return D_004C9098_C7D0;
+        return D_004C9098;
     func_00342C08_C7D0(cMemMan_alloc(0x34, D_004896E8_C7D0, 0x20000000, 0), 1, obj, buf, 0);
-    return D_004C9098_C7D0;
+    return D_004C9098;
 }
 #endif
 
