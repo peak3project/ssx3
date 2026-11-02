@@ -2642,9 +2642,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B8AD8);
 extern int func_003BAA00_8AD8(int, int *) __asm__("func_003BAA00");
 extern int func_003BA6E8_8AD8(void) __asm__("func_003BA6E8");
 extern int func_003C4318_8AD8(int) __asm__("func_003C4318");
-struct E_8AD8 { char pad0[0x14]; int f14; int f18; char pad1C[4]; unsigned short h20; char pad22[0x48]; unsigned short h6A; char pad6C[0x1E]; unsigned short h8A; };
-struct G_8AD8 { char pad[0x1F0]; struct E_8AD8 *tab; };
-extern struct G_8AD8 D_0050A8E8_8AD8[] __asm__("D_0050A8E8");
 int func_003B8AD8(void) {
     int best = -7;
     int h = func_003BA6E8_8AD8();
@@ -2652,7 +2649,7 @@ int func_003B8AD8(void) {
     if (h >= 0) {
         sp0 = -1;
         while (func_003BAA00_8AD8(h, &sp0) != 0) {
-            struct E_8AD8 *e = (struct E_8AD8 *)((char *)D_0050A8E8_8AD8[0].tab + sp0 * 0x8C);
+            struct sA8E8Chan *e = &D_0050A8E8.f1F0[sp0];
             int v;
             if (e->f18 > 0) {
                 v = -7;
@@ -2660,9 +2657,9 @@ int func_003B8AD8(void) {
                 v = func_003C4318_8AD8(sp0);
             }
             if (v >= 0) {
-                int t = (e->f14 - v) * 100 / e->h20;
-                if (e->h8A > 0x10) {
-                    t = ((t << 12) / e->h8A << 12) / e->h6A;
+                int t = (e->f14 - v) * 100 / e->f20;
+                if (e->f8A > 0x10) {
+                    t = ((t << 12) / e->f8A << 12) / e->f6A;
                 } else {
                     t = 0x7FFFFFFF;
                 }
