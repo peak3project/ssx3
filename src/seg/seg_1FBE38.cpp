@@ -5798,7 +5798,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003057C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_004A3DD8_57C0 __asm__("D_004A3DD8");
-extern char **D_004A47B8_57C0 __asm__("D_004A47B8");
 struct O_57C0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct Rec_57C0 { unsigned id; int a; int b; float c; float d; float e; float g; float h; int k; sBindEnd_1FBE38 f; };
 extern Rec_57C0 D_4FBD68_57C0 __asm__("D_004FBD68");
@@ -5841,9 +5840,9 @@ extern "C" cLunoValue func_003057C0(int n, Ent_57C0 *e) {
     if (~id == 0) {
         obj = *(char**)(D_004A3DD8_57C0 + 0x290);
     } else {
-        char *s = (*(char***)((char*)*D_004A47B8_57C0 + 8))[id & 0xFF];
+        sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
-        if (!s || (i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8) == 0)
+        if (!s || (i = s->refs[id >> 8] >> 8) == 0)
             obj = 0;
         else
             obj = (char*)(i << 2);
