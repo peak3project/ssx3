@@ -3836,19 +3836,18 @@ extern "C" int func_00262400(void* self, int a1);
 extern "C" int func_00262598(void* self);
 extern "C" void func_00262EC0(char* self, int idx);
 extern "C" int func_002620D8(char* self, char* name, int kind, int* err, char* other);
-struct sPtrVec7128;
-extern "C" void func_00267128(sPtrVec7128* self, void** pos, void* const& x);
-
-struct sPtrVec1CD0 {
+struct sPtrVec {
     void* alloc;
     void** start;
     void** finish;
     void** eos;
 };
 
+extern "C" void func_00267128(sPtrVec* self, void** pos, void* const& x);
+
 struct sOwner1CD0 {
     char pad[0xA8];
-    sPtrVec1CD0 vec;    // 0xA8
+    sPtrVec vec;    // 0xA8
 };
 
 static inline void sPtrVec1CD0_construct(void** p, void* const& v)
@@ -3859,12 +3858,12 @@ static inline void sPtrVec1CD0_construct(void** p, void* const& v)
 
 static inline void sOwner1CD0_push_back(sOwner1CD0* s, void* const& x)
 {
-    sPtrVec1CD0* v = &s->vec;
+    sPtrVec* v = &s->vec;
     if (s->vec.finish != s->vec.eos) {
         sPtrVec1CD0_construct(v->finish, x);
         ++s->vec.finish;
     } else {
-        func_00267128((sPtrVec7128*)v, s->vec.finish, x);
+        func_00267128((sPtrVec*)v, s->vec.finish, x);
     }
 }
 
@@ -4453,8 +4452,7 @@ extern "C" void func_00262EC0(char* self, int idx);
 extern "C" void func_00263018(void* self, void* name);
 extern "C" int func_00263128(char* self, char* name);
 extern "C" void* func_0041AA88(void*, void*);
-struct sPtrVec72C8;
-extern "C" void func_002672C8(sPtrVec72C8* self, void** pos, void* const& x);
+extern "C" void func_002672C8(sPtrVec* self, void** pos, void* const& x);
 extern char D_00480488[];
 extern char D_00480EC0[];
 extern char D_004810E0[];
@@ -4482,7 +4480,7 @@ static inline void push_back_262AF0(char* o, sObjVec_262AF0* v, void* const& x)
     }
     else
     {
-        func_002672C8((sPtrVec72C8*)v, *(void***)(o + 0xC0), x);
+        func_002672C8((sPtrVec*)v, *(void***)(o + 0xC0), x);
     }
 }
 
@@ -8050,13 +8048,6 @@ extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
 void* cMemMan_free(void* ptr);
 void operator_delete(int*);
 
-struct sPtrVec7128 {
-    void* alloc;
-    void** start;
-    void** finish;
-    void** eos;
-};
-
 static inline void** sPtrVec7128_allocate(unsigned int n)
 {
     if (n == 1)
@@ -8098,7 +8089,7 @@ static inline void** sPtrVec7128_copy_backward(void** first, void** last, void**
     return result - n;
 }
 
-extern "C" void func_00267128(sPtrVec7128* self, void** pos, void* const& x)
+extern "C" void func_00267128(sPtrVec* self, void** pos, void* const& x)
 {
     if (self->finish != self->eos) {
         if (self->finish != 0)
@@ -8133,13 +8124,6 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
 void* cMemMan_free(void* ptr);
 void operator_delete(int*);
-
-struct sPtrVec72C8 {
-    void* alloc;
-    void** start;
-    void** finish;
-    void** eos;
-};
 
 static inline void** sPtrVec72C8_allocate(unsigned int n)
 {
@@ -8182,7 +8166,7 @@ static inline void** sPtrVec72C8_copy_backward(void** first, void** last, void**
     return result - n;
 }
 
-extern "C" void func_002672C8(sPtrVec72C8* self, void** pos, void* const& x)
+extern "C" void func_002672C8(sPtrVec* self, void** pos, void* const& x)
 {
     if (self->finish != self->eos) {
         if (self->finish != 0)
