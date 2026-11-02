@@ -7164,6 +7164,31 @@ static inline sQuat_12BE20 AxisAngleB_134DD0(const sQuat_12BE20& axis, float ang
     r.z = s * axis.z;
 }
 
+static inline void SetAA_134DD0(sQuat_12BE20& q, const sQuat_12BE20& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    q.x = s * axis.x;
+    q.y = s * axis.y;
+    q.z = s * axis.z;
+    q.w = c;
+}
+
+static inline sQuat_12BE20 AxisAngle2_134DD0(const sQuat_12BE20& axis, float angle)
+{
+    sQuat_12BE20 q;
+    SetAA_134DD0(q, axis, angle);
+    return q;
+}
+
+// rot *= q (quaternion product). Declared to return the quaternion by value but has no return statement (the
+// classic forgotten return); the callers ignore the result, and that ignored by-value result is the unwritten
+// 16-byte temp the retail frame keeps during both rotations.
+static inline sQuat_12BE20 operator*=(sQuat_12BE20& a, const sQuat_12BE20& b)
+{
+    a = QuatMul_12E010(a, b);
+}
+
 extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf) __asm__("func_00134DD0");
 extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf)
 {
@@ -7178,9 +7203,7 @@ extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf)
     {
         sQuat_12BE20 v = Rot_12E010(xf->rot, d);
         AddToL_134DD0(xf->pos, v);
-        sQuat_12BE20 pad;
-        sQuat_12BE20 q1;
-        (q1 = AxisAngle_12BE20(D_004FF160_12BE20, a1)), (xf->rot = QuatMul_12E010(xf->rot, q1));
+        xf->rot *= AxisAngle2_134DD0(D_004FF160_12BE20, a1);
     }
     float cur = func_00135180(self);
     float old = *(float*)((char*)self + 0x40);
@@ -7197,7 +7220,8 @@ extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf)
                                              ScaleO_134DD0(D_004FF140_134DD0, 1.0f - *(float*)((char*)self + 0x40))));
     {
         sQuat_12BE20 q3;
-        (q3 = AxisAngleB_134DD0(ax, a2)), (xf->rot = QuatMul_12E010(xf->rot, q3));
+        q3 = AxisAngleB_134DD0(ax, a2);
+        xf->rot *= q3;
     }
     sQuat_12BE20 w = Scale_12E010(d, -1.0f);
     sQuat_12BE20 u = Rot_12E010(xf->rot, w);
