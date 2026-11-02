@@ -261,7 +261,35 @@ extern "C" void* func_0014ADD8(void* self, int rider, int a2)
 }
 #endif
 
+// One character's flag table inside a profile record: D_004A6CA8 is
+// [profile][character] of these (0x9B50 = 10 * 0xF88).
+struct sBEFlagEntryPC {
+    short id;
+    unsigned short flags;
+};
+
+struct sBEProfileChar {
+    char pad_0x000[0x288];
+    short* index;                       // 0x288
+    int count;                          // 0x28C
+    sBEFlagEntryPC entries[0x20D];      // 0x290
+    char pad_0xAC4[0xF88 - 0xAC4];
+
+    int getCount() { return count; }
+    sBEFlagEntryPC* getEntries() { return entries; }
+};
+
+extern sBEProfileChar D_004A6CA8_pc[][10] __asm__("D_004A6CA8");
+
+//100%
 INCLUDE_ASM("be/belibrary", func_0014AE28);
+#ifdef SKIP_ASM
+extern "C" void* func_0014AE28(void* self, int a1, int a2, int* out)
+{
+    *out = D_004A6CA8_pc[a1][a2].getCount();
+    return D_004A6CA8_pc[a1][a2].getEntries();
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/belibrary", func_0014AE60);
 #ifdef SKIP_ASM
