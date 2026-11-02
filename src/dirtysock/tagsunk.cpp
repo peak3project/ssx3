@@ -35,6 +35,33 @@ static inline sMsgListIter sMsgList_insert(sMsgListIter pos, void* const& x)
     return tmp;
 }
 
+// Queue a message on the session's tag message list (+0xF0).
+static inline void post(char* self, void* msg)
+{
+    void* mp = msg;
+    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
+}
+
+// Queue a message on a bare message list (its node pointer at +4).
+static inline void postList(char* lst, void* msg)
+{
+    void* mp = msg;
+    sMsgList_insert(*(sMsgListNode**)(lst + 4), mp);
+}
+
+extern char D_00480488[];
+extern void* D_004812B0[];
+
+// Queue a simple tag message {type, D_004812B0 vtable} on the session's list.
+static inline void postMsg(char* self, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
+}
+
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", cDirtysock_tag_TagFieldSetUnk);
 #ifdef SKIP_ASM
@@ -407,12 +434,6 @@ struct sTagMsg9B10 {
     sTagMsg9B10(int k) { kind = k; vt = D_004812B0; }
 };
 
-static inline void post_9B10(char* g, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(g + 0xF0), mp);
-}
-
 static inline void* Mgr_9B10()
 {
     if (D_004A3328 == 0)
@@ -476,7 +497,7 @@ extern "C" void func_00259B10(char* self, sTagEvt9B10* msg)
             } else if (func_004165A8(cmd, D_004A2EF8) == 0) {
                 if (*(int*)self == 0x16)
                     *(int*)self = 1;
-                post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xED));
+                post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xED));
             } else if (func_004165A8(cmd, D_00480660) == 0) {
                 if (func_00263128((char*)Mgr_9B10(), name) != 0)
                     func_00263018(Mgr_9B10(), name);
@@ -496,15 +517,15 @@ extern "C" void func_00259B10(char* self, sTagEvt9B10* msg)
                     ok = 1;
                 }
                 if (ok)
-                    post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xEE));
+                    post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xEE));
             } else if (func_004165A8(cmd, D_004A2F00) == 0) {
                 if (*(int*)self == 0x16)
                     *(int*)self = 1;
-                post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF0));
+                post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF0));
             } else if (func_004165A8(cmd, D_00480680) == 0) {
                 if (*(int*)self == 0x16)
                     *(int*)self = 1;
-                post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF2));
+                post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF2));
             }
         }
         }
@@ -563,12 +584,6 @@ extern char D_005308B8[];
 extern char D_00480488[];
 extern void* D_004812B0[];
 
-static inline void post_A1D0(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 struct sAppA1D0 { char pad[0x78]; void* mBE; };
 
 struct sVEntryA1D0 { short delta; short index; int (*fn)(void*); };
@@ -578,7 +593,7 @@ static inline void postMsg_A1D0(char* self, int type)
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
     m[0] = type;
     *(void***)((char*)m + 0x4) = D_004812B0;
-    post_A1D0(self, m);
+    post(self, m);
 }
 
 extern "C" void func_0025A1D0(char* self, char* msg)
@@ -978,27 +993,12 @@ struct sMsgListAC50 {
     sMsgListNode* first() { return node->next; }
 };
 
-static inline void postMsg_AC50(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 // Simple tag message: kind word, then the vtable pointer.
 struct sTagMsgAC50 {
     int kind;
     void** vt;
     sTagMsgAC50(int k) { kind = k; vt = D_004812B0; }
 };
-
-static inline void post_AC50(char* g, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(g + 0xF0), mp);
-}
 
 // Error message: kind 0x102 with a reason code.
 struct sTagErrAC50 {
@@ -1090,7 +1090,7 @@ extern "C" void func_0025AC50(char* selfp)
         if (self->f10 != 0) {
             self->f10 = 0;
             func_0025B800(selfp);
-            post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0x115));
+            post(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0x115));
         } else if (self->state == 2) {
             int r = self->op->poll(self->op);
             if (r > 0) {
@@ -1103,7 +1103,7 @@ extern "C" void func_0025AC50(char* selfp)
                 func_003E8260(self->conn, g, 0x2AF8, (void*)func_00268BA8, selfp);
             } else if (r < 0) {
                 func_0025B800(selfp);
-                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x646E7366));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x646E7366));
             }
             if (r != 0)
                 releaseOp_AC50(self);
@@ -1120,16 +1120,16 @@ extern "C" void func_0025AC50(char* selfp)
                 func_0025B800(selfp);
             } else if (timedOut_AC50(self)) {
                 func_0025B800(selfp);
-                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x74696D65));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x74696D65));
                 releaseOp_AC50(self);
             }
         } else if (self->state == 0x1A) {
             if (*(int*)((char*)D_004A3328 + 0xD0) != 0) {
                 func_00261408(D_004A3328);
-                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagUserAC50(*(int*)((char*)D_004A3328 + 0xD0)));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagUserAC50(*(int*)((char*)D_004A3328 + 0xD0)));
             } else if (func_00261460(D_004A3328) != 0) {
                 self->state = 1;
-                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xDA));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xDA));
             }
         } else if (self->state == 0x16) {
         } else if (self->state == 0x17) {
@@ -1138,19 +1138,19 @@ extern "C" void func_0025AC50(char* selfp)
             if (timedOut_AC50(self)) {
                 if (func_00263128((char*)Mgr_AC50(), self->name) != 0)
                     func_00263018(Mgr_AC50(), self->name);
-                postMsg_AC50(selfp, 0x112);
+                postMsg(selfp, 0x112);
                 self->state = 1;
             }
         } else if (self->state == 0x18) {
             if (self->timer < D_004A5154 - 1.0f)
                 D_004A5154 = self->timer;
             if (timedOut_AC50(self)) {
-                postMsg_AC50(selfp, 0x112);
+                postMsg(selfp, 0x112);
                 func_0025F628(selfp, 0, 1);
             }
         } else if (self->state == 0x14) {
             if (timedOut_AC50(self)) {
-                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xE6));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xE6));
                 func_0025EED8(selfp);
             }
         } else if (self->state != 0x19) {
@@ -1159,7 +1159,7 @@ extern "C" void func_0025AC50(char* selfp)
                 check = 1;
             if (check && timedOut_AC50(self)) {
                 func_0025B800(selfp);
-                post_AC50(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x74696D65));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagErrAC50(0x74696D65));
                 self->f44 = 0;
                 releaseOp_AC50(self);
             }
@@ -1249,15 +1249,6 @@ extern "C" int func_003E8260(void* p, int a, int timeout, void* cb, void* user);
 extern "C" int func_003F3A98(void* p, int a);
 extern "C" void func_00268BA8(void* self, void* a1, int a2);
 
-static inline void postMsg_B6D8(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025B6D8(char* self, int conn)
 {
     if (*(void**)(self + 0x54) == 0)
@@ -1274,7 +1265,7 @@ extern "C" void func_0025B6D8(char* self, int conn)
         *(int*)self = 2;
         *(int*)(self + 0x58) = func_003F3A98(*(void**)(self + 0xE8), 0);
     }
-    postMsg_B6D8(self, 0xC8);
+    postMsg(self, 0xC8);
 }
 #endif
 
@@ -1305,12 +1296,6 @@ extern char D_00480848[];
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_B848(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025B848(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1319,13 +1304,13 @@ extern "C" void func_0025B848(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xC9;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_B848(self, m);
+        post(self, m);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_B848(self, m);
+        post(self, m);
         *(int*)(self + 0x10) = 1;
     }
 }
@@ -1354,15 +1339,6 @@ extern "C" void func_00268BD0(void* self, void* a1, int a2);
 extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char* key, int value);
 extern "C" const char* func_00259198();
 
-static inline void postMsg_B9C8(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025B9C8(char* self, char* msg)
 {
     char buf[0x200];
@@ -1389,7 +1365,7 @@ extern "C" void func_0025B9C8(char* self, char* msg)
     cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A2FE0, func_00259198());
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 4, 0x61636374, buf, (int)func_00268BD0, 20.0f);
-    postMsg_B9C8(self, 0xCA);
+    postMsg(self, 0xCA);
 }
 #endif
 
@@ -1442,12 +1418,6 @@ extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
 struct sDsNameListK2;
 extern "C" void func_0025BC48(sDsNameListK2* self, char* msg);
 
-static inline void post_BD30(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025BD30(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1456,7 +1426,7 @@ extern "C" void func_0025BD30(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xCB;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_BD30(self, m);
+        post(self, m);
     } else if (err == 0x746F6F79) {
         int n = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3098), 0);
         int* m = (int*)operator new(0x10, D_00480488, 0x20000000, 0);
@@ -1464,7 +1434,7 @@ extern "C" void func_0025BD30(char* self, char* msg)
         m[2] = err;
         *(void***)((char*)m + 0x4) = D_004811F0;
         m[3] = n;
-        post_BD30(self, m);
+        post(self, m);
     } else {
         if (err == 0x6475706C)
             func_0025BC48((sDsNameListK2*)self, msg);
@@ -1472,7 +1442,7 @@ extern "C" void func_0025BD30(char* self, char* msg)
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_BD30(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -1489,15 +1459,6 @@ extern char D_004A3048[];
 extern char D_004A3050[];
 extern char D_004A30A0[];
 extern "C" void func_00268BF8(void* self, void* a1, int a2);
-
-static inline void postMsg_BF18(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
 
 extern "C" void func_0025BF18(char* self, char* msg)
 {
@@ -1518,7 +1479,7 @@ extern "C" void func_0025BF18(char* self, char* msg)
     }
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 5, 0x65646974, buf, (int)func_00268BF8, 20.0f);
-    postMsg_BF18(self, 0xCD);
+    postMsg(self, 0xCD);
 }
 #endif
 
@@ -1529,12 +1490,6 @@ extern char D_00480488[];
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_C0C0(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025C0C0(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1542,13 +1497,13 @@ extern "C" void func_0025C0C0(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xCE;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_C0C0(self, m);
+        post(self, m);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_C0C0(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -1561,15 +1516,6 @@ extern void* D_004812B0[];
 extern char D_004A3050[];
 extern "C" void func_00268C20(void* self, void* a1, int a2);
 
-static inline void postMsg_C1E0(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025C1E0(char* self, const char* value)
 {
     char buf[0x200];
@@ -1577,7 +1523,7 @@ extern "C" void func_0025C1E0(char* self, const char* value)
     cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3050, value);
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 6, 0x6C6F7374, buf, (int)func_00268C20, 20.0f);
-    postMsg_C1E0(self, 0xD1);
+    postMsg(self, 0xD1);
 }
 #endif
 
@@ -1588,12 +1534,6 @@ extern char D_00480488[];
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_C2D8(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025C2D8(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1601,13 +1541,13 @@ extern "C" void func_0025C2D8(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xCF;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_C2D8(self, m);
+        post(self, m);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_C2D8(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -1620,15 +1560,6 @@ extern void* D_004812B0[];
 extern char D_004A2F58[];
 extern "C" void func_00268C48(void* self, void* a1, int a2);
 
-static inline void postMsg_C3F8(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025C3F8(char* self, const char* value)
 {
     char buf[0x200];
@@ -1636,7 +1567,7 @@ extern "C" void func_0025C3F8(char* self, const char* value)
     cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A2F58, value);
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 7, 0x6C6F7374, buf, (int)func_00268C48, 20.0f);
-    postMsg_C3F8(self, 0xD0);
+    postMsg(self, 0xD0);
 }
 #endif
 
@@ -1647,12 +1578,6 @@ extern char D_00480488[];
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_C4F0(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025C4F0(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1660,13 +1585,13 @@ extern "C" void func_0025C4F0(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xD2;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_C4F0(self, m);
+        post(self, m);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_C4F0(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -1692,12 +1617,6 @@ extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char*
 extern "C" const char* func_003F3F78();
 void* func_00266F38(void* self);
 
-static inline void post_C610(char* lst, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(lst + 4), mp);
-}
-
 struct sDsSlotC610 {
     char pad[0x88];
     int flags;
@@ -1708,7 +1627,7 @@ static inline void postMsg_C610(char* self, int type)
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
     m[0] = type;
     *(void***)((char*)m + 0x4) = D_004812B0;
-    post_C610(self + 0xEC, m);
+    postList(self + 0xEC, m);
 }
 
 extern "C" void func_0025C610(char* self)
@@ -1796,15 +1715,6 @@ extern void* D_004812B0[];
 extern void* D_00481290[];
 
 // PORT: the unit declares func_0025CD50 as void* (void*, int) (a caller tail-calls it); the body takes (self, name).
-static inline void postMsg_CD50(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025CD50_impl(char* self, const char* name) __asm__("func_0025CD50");
 
 extern "C" void func_0025CD50_impl(char* self, const char* name)
@@ -1820,7 +1730,7 @@ extern "C" void func_0025CD50_impl(char* self, const char* name)
         cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3110, self + 0x1C);
     // PORT: function pointer passed through func_0025B608's int parameter.
     func_0025B608(self, 9, 0x70657273, buf, (int)func_00268C98, 20.0f);
-    postMsg_CD50(self, 0xD9);
+    postMsg(self, 0xD9);
 }
 #endif
 
@@ -1832,12 +1742,6 @@ extern void* D_004812B0[];
 extern void* D_00481290[];
 extern "C" void func_0025CFE0(void* self);
 
-static inline void post_CEB0(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025CEB0(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1846,13 +1750,13 @@ extern "C" void func_0025CEB0(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xDA;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_CEB0(self, m);
+        post(self, m);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_CEB0(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -1892,12 +1796,6 @@ extern "C" void func_0025E0C8(void* self, int value);
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_D048(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025D048(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1917,7 +1815,7 @@ extern "C" void func_0025D048(char* self, char* msg)
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_D048(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -1937,15 +1835,6 @@ struct sDsNamesD1B8 {
     char* names[8];     // 0x70 (cBXString)
 };
 
-static inline void postMsg_D1B8(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025D1B8(char* self, const char* name)
 {
     if (*(int*)self != 0) {
@@ -1956,7 +1845,7 @@ extern "C" void func_0025D1B8(char* self, const char* name)
         func_0025B608(self, 0xA, 0x63706572, buf, (int)func_00268CE8, 20.0f);
         sDsNamesD1B8* s = (sDsNamesD1B8*)self;
         cBXString_cBXString4(&s->names[s->count], name);
-        postMsg_D1B8(self, 0xD5);
+        postMsg(self, 0xD5);
     }
 }
 #endif
@@ -1970,12 +1859,6 @@ extern char D_00480488[];
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_D2D8(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025D2D8(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1984,7 +1867,7 @@ extern "C" void func_0025D2D8(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xD6;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_D2D8(self, m);
+        post(self, m);
     } else {
         if (*(int*)(msg + 0x8) == 0x6475706C)
             func_0025BC48((sDsNameListK2*)self, msg);
@@ -1992,7 +1875,7 @@ extern "C" void func_0025D2D8(char* self, char* msg)
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_D2D8(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -2005,15 +1888,6 @@ extern void* D_004812B0[];
 extern char D_004A3108[];
 extern "C" void func_00268D10(void* self, void* a1, int a2);
 
-static inline void postMsg_D428(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025D428(char* self, int idx)
 {
     if (*(int*)self != 0) {
@@ -2023,7 +1897,7 @@ extern "C" void func_0025D428(char* self, int idx)
         // PORT: function pointer passed through func_0025B608's int parameter.
         func_0025B608(self, 0xB, 0x64706572, buf, (int)func_00268D10, 20.0f);
         *(int*)(self + 0x50) = idx;
-        postMsg_D428(self, 0xD7);
+        postMsg(self, 0xD7);
     }
 }
 #endif
@@ -2036,12 +1910,6 @@ extern char D_00480488[];
 extern "C" void* cBXString_operatorE(void* self, void* other);
 extern void* D_004812B0[];
 extern void* D_00481290[];
-
-static inline void post_D538(char* lst, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(lst + 4), mp);
-}
 
 struct sDsNamesD538 {
     char pad_0x00[0x50];
@@ -2063,13 +1931,13 @@ extern "C" void func_0025D538(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         *(void***)((char*)m + 0x4) = D_004812B0;
         m[0] = 0xD8;
-        post_D538(lst, m);
+        postList(lst, m);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_D538(self + 0xEC, m);
+        postList(self + 0xEC, m);
     }
 }
 #endif
@@ -2171,12 +2039,6 @@ extern "C" void cBXString_Reset(void* self);
 // PORT: TagFieldGetString really takes a 4th (default value) argument; the unit declares 3.
 extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
 
-static inline void post_D8F8(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025D8F8(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -2187,14 +2049,14 @@ extern "C" void func_0025D8F8(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0xDC;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_D8F8(self, m);
+        post(self, m);
     } else {
         cBXString_Reset(self + 0x84);
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = *(int*)(msg + 0x8);
-        post_D8F8(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -2257,20 +2119,6 @@ extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_DB80(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
-static inline void postMsg_DB80(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    post_DB80(self, m);
-}
-
 extern "C" void func_0025DB80(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -2279,13 +2127,13 @@ extern "C" void func_0025DB80(char* self, char* msg)
         char buf[0x100];
         cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A2F58), buf, 0x100, D_004A2F40);
         cBXString_cBXString4(self + 0x84, buf);
-        postMsg_DB80(self, 0xE4);
+        postMsg(self, 0xE4);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = v;
-        post_DB80(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -2385,32 +2233,18 @@ extern char D_00480488[];
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_DF98(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
-static inline void postMsg_DF98(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    post_DF98(self, m);
-}
-
 extern "C" void func_0025DF98(char* self, char* msg)
 {
     *(int*)self = 1;
     int v = *(int*)(msg + 0x8);
     if (v == 0) {
-        postMsg_DF98(self, 0xE8);
+        postMsg(self, 0xE8);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = v;
-        post_DF98(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -2467,12 +2301,6 @@ struct sNetMgrE138 {
     int timeout;    // 0xA4
 };
 
-static inline void post_E138(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025E138(char* self, char* msg)
 {
     sStateE138* st = (sStateE138*)self;
@@ -2483,7 +2311,7 @@ extern "C" void func_0025E138(char* self, char* msg)
         m[0] = 0xE2;
         *(void***)((char*)m + 0x4) = D_00481210;
         cBXString_cBXString2(m + 2, *(char**)(msg + 0xC));
-        post_E138(self, m);
+        post(self, m);
     } else if (type == 0x6E657730) {
         st->busy = 1;
         if (func_00261460(D_004A3328) == 0) {
@@ -2499,7 +2327,7 @@ extern "C" void func_0025E138(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = 0x111;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_E138(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -2633,20 +2461,11 @@ extern void* D_004812B0[];
 extern char D_004A3108[];
 extern "C" void func_00268E28(void* self, void* a1, int a2);
 
-static inline void postMsg_E6D0(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025E6D0(char* self, const char* name)
 {
     if (*(int*)self != 0) {
         if (func_0041AA88(*(void**)(self + 0x80), (void*)name) == 0) {
-            postMsg_E6D0(self, 0x10E);
+            postMsg(self, 0x10E);
         } else {
             char buf[0x100];
             buf[0] = 0;
@@ -2678,12 +2497,6 @@ extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int 
 extern "C" void* cBXString_cBXString2(void* self, const char* s);
 extern void* D_00481190[];
 extern void* D_00481290[];
-
-static inline void post_E7F0(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
 
 struct sRecE7F0 {
     int id;
@@ -2732,13 +2545,13 @@ extern "C" void func_0025E7F0(char* self, char* msg)
         m->on = on;
         m->count = count;
         m->rec = rec;
-        post_E7F0(self, m);
+        post(self, m);
     } else {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = err;
-        post_E7F0(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -2777,12 +2590,6 @@ extern char D_004A31F8[];
 extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
 extern void* D_00481110[];
 extern void* D_00481290[];
-
-static inline void post_25EB00(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
 
 struct sRec25EB00 {
     int id;
@@ -2836,13 +2643,13 @@ extern "C" void func_0025EB00(char* self, char* msg)
         strcpy(m->b1, b1);
         strcpy(m->b2, b2);
         m->rec = rec;
-        post_25EB00(self, m);
+        post(self, m);
     } else if (err != 0x75757372) {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = err;
-        post_25EB00(self, m);
+        post(self, m);
     }
 }
 #endif
@@ -2887,20 +2694,6 @@ extern "C" void func_00268E78(void* self, void* a1, int a2);
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_EED8(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
-static inline void postMsg_EED8(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    post_EED8(self, m);
-}
-
 extern "C" void func_0025EED8(char* self)
 {
     int st = *(int*)self;
@@ -2918,7 +2711,7 @@ extern "C" void func_0025EED8(char* self)
         *(int*)(self + 0x40) = func_003E8B10(*(void**)(self + 0x54), 0x7175696B, buf, (int)func_00268E78, self);
     }
     *(int*)self = 1;
-    postMsg_EED8(self, 0xE7);
+    postMsg(self, 0xE7);
 }
 #endif
 
@@ -3192,15 +2985,6 @@ extern "C" void func_0025F858(void* self);
 extern "C" void func_0025F740(void* self, int type);
 void* func_0025FC48(void* self);
 
-static inline void postMsg_F628(char* self, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_0025F628(void* selfp, int notify, int flag)
 {
     char* self = (char*)selfp;
@@ -3215,7 +2999,7 @@ extern "C" void func_0025F628(void* selfp, int notify, int flag)
             func_0025F740(self, 0);
         }
         if (notify) {
-            postMsg_F628(self, 0xEE);
+            postMsg(self, 0xEE);
         }
     }
 }
@@ -3427,20 +3211,11 @@ extern void* D_004812B0[];
 extern char D_00480910[];
 extern float D_004A5154;
 
-static inline void postMsg_FC70(void* self, int kind)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = kind;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)((char*)self + 0xF0), mp);
-}
-
 extern "C" void func_0025FC70(void* self, int a1, int a2)
 {
     func_0025FB80(self, a1, D_00480910);
     *(int*)self = a2;
-    postMsg_FC70(self, 0x110);
+    postMsg((char*)self, 0x110);
     *(float*)((char*)self + 0xE0) = 20.0f;
     D_004A5154 = 21.0f;
 }
@@ -3459,12 +3234,6 @@ extern void* D_004812B0[];
 extern void* D_00481290[];
 extern int D_00534B34[];
 
-static inline void post_0C68(char* lst, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(lst + 4), mp);
-}
-
 extern "C" void func_00260C68(char* self, char* msg)
 {
     cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
@@ -3473,7 +3242,7 @@ extern "C" void func_00260C68(char* self, char* msg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         m[0] = type;
         *(void***)((char*)m + 0x4) = D_004812B0;
-        post_0C68(self + 0xEC, m);
+        postList(self + 0xEC, m);
     } else {
         int err = *(int*)(msg + 0x8);
         char* lst = self + 0xEC;
@@ -3482,12 +3251,12 @@ extern "C" void func_00260C68(char* self, char* msg)
         *(void***)((char*)m + 0x4) = D_004812B0;
         *(void***)((char*)m + 0x4) = D_00481290;
         m[2] = err;
-        post_0C68(lst, m);
+        postList(lst, m);
         int type = 0x101;
         int* m2 = (int*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
         *(void***)((char*)m2 + 0x4) = D_004812B0;
         m2[0] = type;
-        post_0C68(lst, m2);
+        postList(lst, m2);
     }
 }
 #endif
@@ -3918,12 +3687,6 @@ extern "C" void func_00262768(void* self, int a1, int a2, int a3, int a4, int a5
 extern "C" void func_00268F68(void* self, void* a1, int a2);
 extern "C" int func_002634C0(void* self, int a1, void* a, void* b);
 
-static inline void post_15C8(char* owner, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(owner + 0xF0), mp);
-}
-
 extern "C" void func_002615C8(char* self, int* msg)
 {
     switch (msg[0]) {
@@ -3963,7 +3726,7 @@ extern "C" void func_002615C8(char* self, int* msg)
             int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
             *(void***)((char*)m + 0x4) = D_004812B0;
             m[0] = 0x104;
-            post_15C8(owner, m);
+            post(owner, m);
             int r = msg[2];
             *(int*)(self + 0xDC) = 1;
             *(int*)(self + 0xD0) = r;
@@ -4164,12 +3927,6 @@ static inline void sOwner1CD0_push_back(sOwner1CD0* s, void* const& x)
     }
 }
 
-static inline void post_1CD0(char* owner, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(owner + 0xF0), mp);
-}
-
 // PORT: name pointers passed through int parameters of some callees.
 static inline void postMsg_1CD0(int type)
 {
@@ -4177,7 +3934,7 @@ static inline void postMsg_1CD0(int type)
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
     m[0] = type;
     *(void***)((char*)m + 0x4) = D_004812B0;
-    post_1CD0(owner, m);
+    post(owner, m);
 }
 
 extern "C" void func_00261CD0(char* self, char* name, char* a2, char* a3)
@@ -4764,12 +4521,6 @@ extern char D_004810E0[];
 extern void* D_004812B0[];
 extern void* D_004A3028;
 
-static inline void post_262AF0(char* owner, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(owner + 0xF0), mp);
-}
-
 struct sObjVec_262AF0 {
     void* alloc;
     void** start;
@@ -4794,14 +4545,6 @@ static inline void push_back_262AF0(char* o, sObjVec_262AF0* v, void* const& x)
     {
         func_002672C8((sPtrVec72C8*)v, *(void***)(o + 0xC0), x);
     }
-}
-
-static inline void postMsg_2AF0(char* g, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    post_262AF0(g, m);
 }
 
 extern "C" void func_00262AF0(char* self, char* name, int a2, int a3, int a4, int a5, int a6, int a7,
@@ -4829,7 +4572,7 @@ extern "C" void func_00262AF0(char* self, char* name, int a2, int a3, int a4, in
             }
             func_002620D8(self, name, 2, &err, 0);
             char* g = (char*)D_004A3028;
-            postMsg_2AF0(g, 0x108);
+            postMsg(g, 0x108);
         }
     }
     else if (func_002623E0_2(self, idx))
@@ -4858,7 +4601,7 @@ extern "C" void func_00262AF0(char* self, char* name, int a2, int a3, int a4, in
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
     *(void***)((char*)m + 0x4) = D_004812B0;
     m[0] = 0xEC;
-    post_262AF0(g, m);
+    post(g, m);
 }
 #endif
 
@@ -5383,12 +5126,6 @@ static inline bool isState_3828(int st)
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_3828(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 struct sDsTimer_263828 {
     int state;
     float timer;
@@ -5408,7 +5145,7 @@ extern "C" void func_00263828(int* self)
             int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
             *(void***)((char*)m + 0x4) = D_004812B0;
             m[0] = 0x105;
-            post_3828(g, m);
+            post(g, m);
         } else if (isState_3828(6)) {
             func_002636F0(self, *(int*)((char*)D_004A2EB8 + 0x28));
         } else {
@@ -5544,12 +5281,6 @@ extern "C" void func_0025F740(void* self, int type);
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-static inline void post_3BA8(char* self, void* msg)
-{
-    void* mp = msg;
-    sMsgList_insert(*(sMsgListNode**)(self + 0xF0), mp);
-}
-
 extern "C" void func_00263BA8(void* p, int arg)
 {
     int* self = (int*)p;
@@ -5568,13 +5299,13 @@ extern "C" void func_00263BA8(void* p, int arg)
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         *(void***)((char*)m + 0x4) = D_004812B0;
         m[0] = 0x10C;
-        post_3BA8(g, m);
+        post(g, m);
     } else if (arg == 0) {
         char* g = (char*)D_004A3028;
         int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
         *(void***)((char*)m + 0x4) = D_004812B0;
         m[0] = 0x112;
-        post_3BA8(g, m);
+        post(g, m);
     }
 }
 #endif
@@ -5674,7 +5405,7 @@ extern "C" void func_00263CF0(int* self)
                 int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
                 *(void***)((char*)m + 0x4) = D_004812B0;
                 m[0] = 0x113;
-                post_3BA8(g, m);
+                post(g, m);
             }
             func_00263BA8(self, 2);
             return;
@@ -5870,15 +5601,6 @@ extern "C" void func_0025F740(void* self, int type);
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 
-static inline void postMsg_42B8(char* g, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(g + 0xF0), mp);
-}
-
 static inline void* Mgr_42B8()
 {
     if (D_004A3328 == 0)
@@ -5928,7 +5650,7 @@ extern "C" void func_002642B8(void* selfp)
         } else {
             self->state = 7;
             char* g = (char*)D_004A3028;
-            postMsg_42B8(g, 0xF6);
+            postMsg(g, 0xF6);
         }
     }
     if (func_002649B0_42B8(self, &msg, 0x14) == 0)
@@ -6430,15 +6152,6 @@ extern void* D_004A3028;
 extern "C" void func_00264CF0(void* self, int charID);
 extern "C" void func_00264E50(void* self, int type, int rider, int state);
 
-static inline void postMsg_5018(char* g, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(g + 0xF0), mp);
-}
-
 extern "C" void func_00265018(void* self, int rider)
 {
     if (*(int*)((char*)self + 0x124) != 0) {
@@ -6452,7 +6165,7 @@ extern "C" void func_00265018(void* self, int rider)
         func_00264CF0(self, rider);
         func_00264E50(self, 2, rider, *(int*)self);
         char* g = (char*)D_004A3028;
-        postMsg_5018(g, 0xF4);
+        postMsg(g, 0xF4);
     } else {
         func_00264E50(self, 3, rider, *(int*)self);
     }
@@ -6491,15 +6204,6 @@ struct sName7_00264D80;
 extern "C" void func_00264D80(void* self, int charID, sName7_00264D80* name);
 extern "C" void func_00264E50(void* self, int type, int rider, int state);
 
-static inline void postMsg_5190(char* g, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(g + 0xF0), mp);
-}
-
 extern "C" void func_00265190(void* self, int rider, sName7_00264D80* name)
 {
     int st = *(int*)self;
@@ -6513,7 +6217,7 @@ extern "C" void func_00265190(void* self, int rider, sName7_00264D80* name)
     func_00264E50(self, 1, rider, *(int*)self);
     {
         char* g = (char*)D_004A3028;
-        postMsg_5190(g, 0xF3);
+        postMsg(g, 0xF3);
     }
 }
 #endif
@@ -6528,15 +6232,6 @@ struct sName7_00264D80;
 extern "C" void func_00264D80(void* self, int charID, sName7_00264D80* name);
 extern "C" void func_00264E50(void* self, int type, int rider, int state);
 
-static inline void postMsg_5290(char* g, int type)
-{
-    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
-    m[0] = type;
-    *(void***)((char*)m + 0x4) = D_004812B0;
-    void* mp = m;
-    sMsgList_insert(*(sMsgListNode**)(g + 0xF0), mp);
-}
-
 extern "C" void func_00265290(void* self, int rider)
 {
     int st = *(int*)self;
@@ -6550,7 +6245,7 @@ extern "C" void func_00265290(void* self, int rider)
     func_00264E50(self, 3, rider, *(int*)self);
     {
         char* g = (char*)D_004A3028;
-        postMsg_5290(g, 0xF5);
+        postMsg(g, 0xF5);
     }
 }
 #endif
