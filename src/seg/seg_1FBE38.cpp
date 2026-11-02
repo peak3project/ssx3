@@ -2061,11 +2061,8 @@ extern char D_00489740_E840[] __asm__("D_00489740");
 extern char D_00489730_E840[] __asm__("D_00489730");
 struct V4_E840 { float x, y, z, w; } __attribute__((aligned(16)));
 struct Sh_E840 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual V4_E840 *v05(); };
-struct Ent_E840x { char pad[0x18]; char *obj; };
-struct Lvl_E840 { char pad[0x40]; Ent_E840x *a1[12]; Ent_E840x *a2[3]; int n1; int pad80[2]; int n2; };
 struct O_E840 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual char *v24(); };
 extern char *D_004A28A4_E840 __asm__("D_004A28A4");
-extern char *D_004A28A8_E840 __asm__("D_004A28A8");
 extern "C" void cMoveNode_addParticle_E840(void*, void*) __asm__("cMoveNode_addParticle");
 // PORT: PS2-only VU0 inline asm (vector subtract).
 static inline V4_E840 vSub_E840(const V4_E840 &a, const V4_E840 &b) {
@@ -2098,21 +2095,21 @@ static inline float vLen_E840(const V4_E840 &v) {
         : "m"(v));
     return r;
 }
-static inline Lvl_E840 *lvl_E840() { return *(Lvl_E840**)(*(char**)(D_004A28A8_E840 + 0x84) + 0xC); }
-static inline Sh_E840 *shape_E840(Ent_E840x *e) { return (Sh_E840*)(e->obj + 0x6C0); }
+static inline sRace *lvl_E840() { return D_004A28A8->game->race; }
+static inline Sh_E840 *shape_E840(sRacePlayer *e) { return (Sh_E840*)(e->rider + 0x6C0); }
 static inline int nearViewer_E840(const V4_E840 &pos) {
     int notEdit = *(int*)(D_004A28A4_E840 + 0x550) != 2;
     if (notEdit)
         return 1;
-    int n = lvl_E840()->n1;
+    int n = lvl_E840()->numPlayers;
     for (int i = 0; i < n; i++) {
-        V4_E840 d = vSub_E840(pos, *shape_E840(lvl_E840()->a1[i])->v05());
+        V4_E840 d = vSub_E840(pos, *shape_E840(lvl_E840()->players[i])->v05());
         if (vLen_E840(d) < 30000.0f)
             return 1;
     }
-    n = lvl_E840()->n2;
+    n = lvl_E840()->numPlayers2;
     for (int i = 0; i < n; i++) {
-        V4_E840 d = vSub_E840(pos, *shape_E840(lvl_E840()->a2[i])->v05());
+        V4_E840 d = vSub_E840(pos, *shape_E840(lvl_E840()->players2[i])->v05());
         if (vLen_E840(d) < 30000.0f)
             return 1;
     }
