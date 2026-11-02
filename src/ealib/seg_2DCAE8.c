@@ -2250,23 +2250,23 @@ extern int func_003DD5A0(int, int, void *);
 extern int func_003DD648(int, int, int, int, int, void *);
 extern void func_003DF0B8(void *);
 
-void func_003DF0F0(int a0, int a1, int *s) {
-    int n = func_003DD310_F0F0(*(volatile int *)&s[7]);
-    s[2] += n;
-    s[11] += n;
-    if (n <= 0x7FFF || s[4] != 0) {
-        *(volatile int *)&s[7] = func_003DD5A0(s[8], 0x63, s);
-        if (*(volatile int *)&s[7] != 0) {
-            func_003DCF70(*(volatile int *)&s[7], func_003DF0B8);
+void func_003DF0F0(int a0, int a1, struct sReq *s) {
+    int n = func_003DD310_F0F0(s->f1C);
+    s->f08 += n;
+    s->f2C += n;
+    if (n <= 0x7FFF || s->f10 != 0) {
+        s->f1C = func_003DD5A0(s->f20, 0x63, s);
+        if (s->f1C != 0) {
+            func_003DCF70(s->f1C, func_003DF0B8);
         }
     } else {
-        int off = s[9] + n;
-        int rem = s[10] - n;
-        s[9] = off;
-        s[10] = rem;
-        *(volatile int *)&s[7] = func_003DD648(s[8], off, s[11], rem <= 0x8000 ? rem : 0x8000, 0x63, s);
-        if (*(volatile int *)&s[7] != 0) {
-            func_003DCF70(*(volatile int *)&s[7], func_003DF0F0);
+        int off = s->f24 + n;
+        int rem = s->f28 - n;
+        s->f24 = off;
+        s->f28 = rem;
+        s->f1C = func_003DD648(s->f20, off, s->f2C, rem <= 0x8000 ? rem : 0x8000, 0x63, s);
+        if (s->f1C != 0) {
+            func_003DCF70(s->f1C, func_003DF0F0);
         }
     }
 }
