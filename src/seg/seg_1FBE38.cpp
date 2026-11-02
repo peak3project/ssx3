@@ -6376,14 +6376,12 @@ static inline char *look_6770(unsigned id) {
 }
 
 extern "C" void func_00101900_6770(void*, void*, int) __asm__("func_00101900");
-struct V3_6770 { float x, y, z; };
-extern V3_6770 D_004C9098_6770 __asm__("D_004C9098");
 extern unsigned D_6770[] __asm__("D_004FBF58");
 extern int D_004A58A4;
 extern int D_004A3DC0;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_6770 { int idx; int val; int pad; int type; };
-extern "C" V3_6770 func_00306770(int n, Ent_6770 *e) {
+extern "C" cLunoValue func_00306770(int n, Ent_6770 *e) {
     if (D_004A58A4 == 0) {
         D_6770[0] = 0xFFFFFFFF;
         D_6770[1] = 0;
@@ -6423,7 +6421,7 @@ extern "C" V3_6770 func_00306770(int n, Ent_6770 *e) {
         int b1 = buf[1];
         func_00101900_6770(*(void**)(*(char**)(*(char**)(D_004A28A8_6770 + 0x84) + 0xC) + 0xA8), obj + 0x78, b1);
     }
-    return D_004C9098_6770;
+    return D_004C9098;
 }
 #endif
 
