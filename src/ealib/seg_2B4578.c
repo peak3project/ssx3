@@ -2471,8 +2471,6 @@ short func_003B86C0(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8700);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct G_8700 { char pad[0x1F0]; char *tbl; };
-extern struct G_8700 D_0050A8E8_8700 __asm__("D_0050A8E8");
 
 int func_003B8700(int arg0, int arg1) {
     int sp0;
@@ -2482,7 +2480,7 @@ int func_003B8700(int arg0, int arg1) {
     if (h >= 0) {
         sp0 = -1;
         while (func_003BAA00(h, &sp0) != 0) {
-            *(char *)(D_0050A8E8_8700.tbl + sp0 * 0x8C + 0x5F) = arg1;
+            D_0050A8E8.f1F0[sp0].f5F = arg1;
             func_003C2EC8(sp0);
         }
     }
