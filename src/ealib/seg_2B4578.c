@@ -8685,22 +8685,20 @@ int func_003C4D78(int type, unsigned int addr) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4E50);
 #ifdef SKIP_ASM
-struct S_4E50 { char pad[0x1A9A]; unsigned short a; unsigned short b; };
-extern struct S_4E50 D_0050AD00_4E50 __asm__("D_0050AD00");
 int func_003C4E50(int a, int b) {
     if (a == -1) {
-        D_0050AD00_4E50.a = 0x141;
+        D_0050AD00.f1A9A = 0x141;
     } else {
         a = (a + 0x3F) >> 6;
         if (a < 0x141) return -8;
-        D_0050AD00_4E50.a = a;
+        D_0050AD00.f1A9A = a;
     }
     if (b == -1) {
-        D_0050AD00_4E50.b = 0x8000;
+        D_0050AD00.f1A9C = 0x8000;
     } else {
         b = (b + 0x3F) >> 6;
         if (b > 0x8000) return -8;
-        D_0050AD00_4E50.b = b;
+        D_0050AD00.f1A9C = b;
     }
     return 0;
 }
