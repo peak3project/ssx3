@@ -170,6 +170,12 @@ struct sVt22 {
     sVEntry<void> e[22];
 } __attribute__((aligned(8)));
 
+// One 0x64-byte wake allocation slot of the four-slot pool D_005382C0 (D_00538850[i] marks slot i used).
+struct sWakeSlot {
+    char data[0x64];
+};
+extern sWakeSlot D_005382C0[];
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2735,21 +2741,15 @@ extern "C" void func_002E4CB0(void)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4CE8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sWakePoolEntry {
-    char data[0x64];
-};
 
-// same object as the unit's later `extern sWakeSlot D_005382C0[]` (0x64-byte slots)
-extern sWakePoolEntry D_wakePool[] __asm__("D_005382C0");
-extern sWakePoolEntry* D_004A3B1C;
+extern sWakeSlot* D_004A3B1C;
 
-extern "C" sWakePoolEntry* func_002E4CE8(int size)
+extern "C" sWakeSlot* func_002E4CE8(int size)
 {
     for (int i = 0; i < 4; i++) {
         if (D_00538850[i] == 0) {
             D_00538850[i] = 1;
-            return &D_wakePool[i];
+            return &D_005382C0[i];
         }
     }
     return D_004A3B1C;
@@ -2759,11 +2759,7 @@ extern "C" sWakePoolEntry* func_002E4CE8(int size)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4D30);
 #ifdef SKIP_ASM
-struct sWakeSlot {
-    char pad[0x64];
-};
 
-extern sWakeSlot D_005382C0[];
 
 extern "C" void func_002E4D30(void* p)
 {
