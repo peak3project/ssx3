@@ -75,6 +75,10 @@ extern struct s0700 D_00450700;
 extern struct s0700Q D_0045070C[];
 extern struct s0710 D_00450710[];
 
+/* What func_003DB838 reports for one shape entry. */
+struct sShapeInfo { int len; int start; int n; unsigned char col[4]; };
+int func_003DB838(unsigned char *shp, int idx, struct sShapeInfo *out);
+
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6498);
 #ifdef SKIP_ASM
@@ -1468,14 +1472,12 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D8E58);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct E_8E58 { short x; char pad[2]; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
 struct H_8E58 { struct E_8E58 ent[12]; char pad[2]; unsigned char tbl[1]; };
-struct O_8E58 { int len; int start; int n; unsigned char col[4]; };
 struct L_8E58 { char pad[4]; unsigned char cnt; unsigned char n5; unsigned char n6; char pad2; unsigned char list[1]; };
 struct C_8E58 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
-extern int func_003DB838_8E58(unsigned char *, int, struct O_8E58 *) __asm__("func_003DB838");
 
 int func_003D8E58_impl(struct H_8E58 *h, struct L_8E58 *l) __asm__("func_003D8E58");
 int func_003D8E58_impl(struct H_8E58 *h, struct L_8E58 *l) {
-    struct O_8E58 o;
+    struct sShapeInfo o;
     int ok = 1;
     int i;
     int i0;
@@ -1507,7 +1509,7 @@ int func_003D8E58_impl(struct H_8E58 *h, struct L_8E58 *l) {
                     h->ent[i].flag = 1;
                     c = (struct C_8E58 *)((int *)l + lp[i]);
                     n = c->n;
-                    if (!func_003DB838_8E58(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
+                    if (!func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
                         ok = 0;
                         goto out;
                     }
@@ -1703,21 +1705,19 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D93C0);
    end of the file. */
 struct E_93C0 { short x; char pad[2]; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
 struct H_93C0 { struct E_93C0 ent[12]; char pad[2]; unsigned char tbl[1]; };
-struct O_93C0 { int len; int start; int n; unsigned char col[4]; };
 struct L_93C0 { char pad[4]; unsigned char cnt; unsigned char n5; char pad2[2]; unsigned char list[1]; };
-extern int func_003DB838_93C0(unsigned char *, int, struct O_93C0 *) __asm__("func_003DB838");
 extern int func_003D8E58_93C0(struct H_93C0 *, struct L_93C0 *) __asm__("func_003D8E58");
 
 /* same body as func_003DA910 */
 static inline int usage_93C0(unsigned char *a0, struct H_93C0 *h) {
-    struct O_93C0 o;
+    struct sShapeInfo o;
     int total = 0;
     int i;
     int r;
     int cnt = a0[4] >> 2;
 
     for (i = 0; i < cnt; i++) {
-        if (func_003DB838_93C0(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
+        if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
             total += o.len;
         }
     }
@@ -1791,11 +1791,9 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D95B8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct E_95B8 { short x; char pad[2]; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
 struct H_95B8 { struct E_95B8 ent[12]; char pad[2]; unsigned char tbl[1]; };
-struct O_95B8 { int len; int start; int n; unsigned char col[4]; };
 struct L_95B8 { char pad[4]; unsigned char cnt; unsigned char n5; char pad2[2]; unsigned char list[1]; };
 struct C_95B8 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 extern int func_003D83B8_95B8(void *, unsigned char **) __asm__("func_003D83B8");
-extern int func_003DB838_95B8(unsigned char *, int, struct O_95B8 *) __asm__("func_003DB838");
 extern int func_003D93C0_95B8(struct L_95B8 *, struct H_95B8 *, int) __asm__("func_003D93C0");
 extern int func_003DB5C0(int, int);
 
@@ -1821,7 +1819,7 @@ static __inline__ void shuffle_95B8(struct L_95B8 *l, struct H_95B8 *h) {
 }
 
 static __inline__ void apply_95B8(void *a0, struct H_95B8 *h, struct L_95B8 *l) {
-    struct O_95B8 o;
+    struct sShapeInfo o;
     unsigned char *out;
     int n;
     int i;
@@ -1835,7 +1833,7 @@ static __inline__ void apply_95B8(void *a0, struct H_95B8 *h, struct L_95B8 *l) 
             c = (struct C_95B8 *)((int *)l + l->list[i]);
             for (j = 0; j < c->n; j++) {
                 if (c->a[j] == 0xFE && !(c->b[j] & 0x80)) {
-                    if (func_003DB838_95B8(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
+                    if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
                         out[c->b[j]] = o.col[j];
                     }
                 }
@@ -1872,10 +1870,8 @@ end:
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9830);
 #ifdef SKIP_ASM
-struct O_9830 { int len; int start; int n; unsigned char col[4]; };
 extern int func_003D8330_9830(struct sKey4 *, int *) __asm__("func_003D8330");
 extern int func_003D81F0_9830(struct sKey4 *, int *) __asm__("func_003D81F0");
-extern int func_003DB838_9830(unsigned char *, int, struct O_9830 *) __asm__("func_003DB838");
 extern void func_003D6EE8_9830(unsigned char *, int) __asm__("func_003D6EE8");
 
 static __inline__ void clearBit_9830(unsigned char *s, int bit) {
@@ -1887,7 +1883,7 @@ static __inline__ void clearBit_9830(unsigned char *s, int bit) {
 
 int func_003D9830_impl(unsigned char *h, struct sKey4 *k, int a2) __asm__("func_003D9830");
 int func_003D9830_impl(unsigned char *h, struct sKey4 *k, int a2) {
-    struct O_9830 o;
+    struct sShapeInfo o;
     struct sFF90Msg m;
     int w30;
     int w34;
@@ -1919,7 +1915,7 @@ int func_003D9830_impl(unsigned char *h, struct sKey4 *k, int a2) {
                 if ((s[4] & 0x80) && D_004A4830 != 0) {
                     clearBit_9830(s, y);
                 }
-                if (func_003DB838_9830(s, y, &o)) {
+                if (func_003DB838(s, y, &o)) {
                     t = *(unsigned short *)(s + 8) * ((s[7] + 1) << 8);
                     st = o.start;
                     if (e->idx != -1) {
@@ -2306,21 +2302,18 @@ int func_003DA8E0(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DA910);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct E_A910 { short x; unsigned short y; unsigned short z; unsigned char idx; unsigned char pad; };
 struct H_A910 { struct E_A910 ent[12]; char pad[2]; unsigned char tbl[1]; };
-struct O_A910 { int len; int start; int n; unsigned char col[4]; };
-extern int func_003DB838_A910(unsigned char *, int, struct O_A910 *) __asm__("func_003DB838");
 
 int func_003DA910(unsigned char *a0, struct H_A910 *h) {
-    struct O_A910 o;
+    struct sShapeInfo o;
     int total = 0;
     int i;
     int r;
     int cnt = a0[4] >> 2;
 
     for (i = 0; i < cnt; i++) {
-        if (func_003DB838_A910(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].idx], &o)) {
+        if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].idx], &o)) {
             total += o.len;
         }
     }
@@ -2494,14 +2487,12 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003DACE8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct E_ACE8 { short x; unsigned short y; unsigned short z; unsigned char idx; unsigned char pad; };
 struct H_ACE8 { struct E_ACE8 ent[12]; char pad[2]; unsigned char tbl[1]; };
-struct O_ACE8 { int len; int start; int n; unsigned char col[4]; };
 struct L_ACE8 { char pad[4]; unsigned char cnt; char pad2[3]; unsigned char list[1]; };
 struct C_ACE8 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 extern int func_003D83B8_ACE8(void *, unsigned char **) __asm__("func_003D83B8");
-extern int func_003DB838_ACE8(unsigned char *, int, struct O_ACE8 *) __asm__("func_003DB838");
 
 void func_003DACE8(void *a0, struct H_ACE8 *h, struct L_ACE8 *l) {
-    struct O_ACE8 o;
+    struct sShapeInfo o;
     unsigned char *out;
     int n;
     int i;
@@ -2515,7 +2506,7 @@ void func_003DACE8(void *a0, struct H_ACE8 *h, struct L_ACE8 *l) {
             c = (struct C_ACE8 *)((int *)l + l->list[i]);
             for (j = 0; j < c->n; j++) {
                 if (c->a[j] == 0xFE && !(c->b[j] & 0x80)) {
-                    if (func_003DB838_ACE8(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].idx], &o)) {
+                    if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].idx], &o)) {
                         out[c->b[j]] = o.col[j];
                     }
                 }
@@ -2530,14 +2521,12 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003DAE48);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_AE48 { int len; int start; int n; unsigned char col[4]; };
 struct L_AE48 { char pad[4]; unsigned char cnt; char pad2[3]; unsigned char list[1]; };
 extern int func_003D8330_AE48(void *, int *) __asm__("func_003D8330");
-extern int func_003DB838_AE48(unsigned char *, int, struct O_AE48 *) __asm__("func_003DB838");
 extern int func_003DB3E0_AE48(int, int) __asm__("func_003DB3E0");
 
 void func_003DAE48(void *a0, int a1, struct L_AE48 *l, int a3) {
-    struct O_AE48 o;
+    struct sShapeInfo o;
     int out;
     int i;
     int j;
@@ -2560,7 +2549,7 @@ void func_003DAE48(void *a0, int a1, struct L_AE48 *l, int a3) {
                     h = func_003DB3E0_AE48(a1, b);
                     yy = D_00450710[i + a3].y;
                     shp = D_004A4824[D_0045070C[i + a3].x];
-                    if (func_003DB838_AE48(shp, yy, &o)) {
+                    if (func_003DB838(shp, yy, &o)) {
                         m = 1 << o.col[j];
                         D_0044FF90.f08(a0, h, (int)m, out);
                     }
