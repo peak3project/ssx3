@@ -176,6 +176,11 @@ struct sWakeSlot {
 };
 extern sWakeSlot D_005382C0[];
 
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+// The graphics manager as a raw pointer (a few functions use typed views of it through __asm__ aliases).
+extern char* D_004A5B80;
+
 // ---- end of shared declarations ----
 
 //100%
@@ -192,8 +197,6 @@ extern char D_00487980[];
 extern "C" void* cRider_cRider(void* self);
 struct sWakeDCF28;
 extern "C" void func_002DCF28(sWakeDCF28* self);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
 
 struct sWakePtBW {
     float v[4];
@@ -1928,7 +1931,6 @@ struct sWakeMgr2E18 {
     sWakePair2E18 pairs[1];     // 0x60
 };
 
-extern char* D_004A5B80;
 void* func_002E2860(void* self);
 void* func_002E3110(void* self);
 extern "C" void* func_002F4380(void* self);
@@ -2042,7 +2044,6 @@ extern "C" void func_002E2FF8(sWakeFx* self, int* vals, int count, int unused, i
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3060);
 #ifdef SKIP_ASM
 
-extern char* D_004A5B80;
 void operator_delete(int* p);
 
 extern "C" void func_002E3060(void* self, int flags)
@@ -2111,7 +2112,6 @@ struct sWakeRCtx {
     sWakeRState* top;
 };
 
-extern char* D_004A5B80;
 extern sWakeRState D_00501420;
 
 static inline void setA22_3578(sWakeRCtx* c, int v) { c->top->a22 = v; }
@@ -2318,7 +2318,6 @@ extern "C" void* func_002E4228(void* self, void* a1, int a2)
 INCLUDE_ASM("visualfx/boardwakefx", func_002E42D0);
 #ifdef SKIP_ASM
 
-extern char* D_004A5B80;
 extern "C" void func_002E4578(void* self);
 extern "C" void func_002832D8(void* self);
 extern "C" void func_00283228(void* self, int flags);
@@ -2347,7 +2346,6 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E4370);
 #ifdef SKIP_ASM
 
 
-extern char* D_004A5B80;
 extern "C" void func_002E4578(void* self);
 
 // PORT: later callers declare this as void (and an int alias); the body returns int.
@@ -2441,7 +2439,6 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E4578);
 #ifdef SKIP_ASM
 
 
-extern char* D_004A5B80;
 
 extern "C" void func_002E4578(void* self)
 {
@@ -2513,7 +2510,6 @@ extern "C" float func_002E4678(void* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E46C8);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 extern char* D_004A5B64;
 
 
@@ -2546,7 +2542,6 @@ extern "C" void func_002E46C8(char* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E47E8);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 extern "C" void func_002EB8F0(void);
 // PORT: cWorldPainterMan_reset is defined with an unused self param; this caller passes none.
 void cWorldPainterMan_reset_47E8() __asm__("cWorldPainterMan_reset__FPv");
@@ -3549,8 +3544,6 @@ extern const sVt9 D_00488550;
 extern const sVt22 D_00488598;
 extern char D_00487B08[];
 extern "C" void func_002E6640(void* self);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
 inline void* operator new[](unsigned int, void* p) { return p; }
 
 struct sWakeSeg_6320 {
