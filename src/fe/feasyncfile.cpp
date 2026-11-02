@@ -133,6 +133,15 @@ struct sUIThingVt {
     sVEntryVoidArg* vt;
 };
 
+// Five-word profile statistics record (session + 0xCC; filled by func_0025F288).
+struct sProfileStats {
+    int a;
+    int b;
+    int c;
+    int d;
+    int e;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -6907,21 +6916,13 @@ static inline int Loc1AFA60(char* name)
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
-struct sStats1AFA60 {
-    int a;
-    int b;
-    int c;
-    int d;
-    int e;
-};
-
 extern "C" void func_001AFA60(void* screen, char* msg)
 {
     sBXString s;
     char buf[0x100];
-    sStats1AFA60* st = (sStats1AFA60*)(msg + 0x18);
+    sProfileStats* st = (sProfileStats*)(msg + 0x18);
     cBXString_cBXString1(&s, (char*)D_004A3028 + 0x98);
-    *(sStats1AFA60*)((char*)D_004A3028 + 0xCC) = *(sStats1AFA60*)(msg + 0x18);
+    *(sProfileStats*)((char*)D_004A3028 + 0xCC) = *(sProfileStats*)(msg + 0x18);
     func_0025DD08(D_004A3028, s.str, *(int*)(msg + 0x14));
     cUIText* t = cUIScreen_getObjectByHashName(screen, GetHashValue32(D_00463108));
     if (t != 0) {
@@ -8676,20 +8677,12 @@ extern char D_00463B30[];
 extern char D_00463B40[];
 extern char D_00463B58[];
 
-struct sInfo_1B27B0 {
-    int a;
-    int b;
-    int c;
-    int d;
-    int e;
-};
-
 extern "C" void func_001B27B0(void* vself, int idx)
 {
     char* self = (char*)vself;
     sBXString s;
     char buf[0x400];
-    sInfo_1B27B0 info;
+    sProfileStats info;
     int flag = 0;
     cBXString_cBXString2(&s, func_0025F1E0_p(D_004A3028, idx, &flag));
     strcpy(self + 0x70C, s.str);
