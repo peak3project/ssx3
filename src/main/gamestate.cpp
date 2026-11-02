@@ -158,9 +158,20 @@ struct sApp {
 };
 extern sApp* D_004A28A8;
 
-//100%
-INCLUDE_ASM("main/gamestate", cGFGateState_gainFocus);
-#ifdef SKIP_ASM
+// Packed form of a float list (func_00237B28 packs, func_00237BE8 unpacks): count, a bit mask of the non-zero
+// values, then those values as bytes.
+struct sPackSrc_7B28 {
+    int count;
+    float vals[1];
+};
+
+struct sPackDst_7B28 {
+    unsigned char count;
+    unsigned char mask[3];
+    unsigned char vals[1];
+};
+
+// Callees and globals shared by the functions below.
 extern "C" void cAI_setAIState(void*, int);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
@@ -174,14 +185,134 @@ extern "C" void func_00258968(void* p);
 extern "C" void func_002300F0(void* self);
 extern "C" void func_0026F7B8(void* p);
 void func_0029C418(void* p);
-extern "C" void func_0029C420(void* p, int a1);
+extern "C" void func_0029C420(void* p, int secs);
 extern "C" void func_00234BE8(void* self, int a1);
-int GetHashValue32(char* s);
+int GetHashValue32(char* str);
 extern char* D_004A2EEC;
 extern int D_00534B30[];
 extern signed char D_00535C10[];
 extern char D_0047C038[];
+extern "C" int* func_00144BC0(void* iface);
+extern "C" int func_0022E098(void* world, int id);
+extern "C" int func_00309DD0(void* mgr, int id, int a);
+extern "C" void func_00309E50(void* mgr, int id, int a);
+extern void* D_004A3DD8;
+extern "C" int func_00270280(void* p);
+extern "C" void* func_0039F9D8(void* list, int hash);
+extern "C" void func_0029C7B0(void* p);
+void func_0028C8C0(void* self, int val);
+extern char D_0047C048[];
+extern char D_004A2AB0[];
+extern char D_0047D6E8[];
+extern char D_0047D428[];
+extern "C" void func_00278CD8(void* a);
+extern "C" void func_002790A0(void* a, int b);
+extern "C" void func_00278B98(void* a);
+extern "C" void func_0012AB20(void* self);
+extern "C" void func_0012AC48(void* self);
+extern "C" int func_00145D38(void* self, int index, int bit);
+extern "C" void func_0027AAF8(void* a, int b);
+extern void* D_004A28A4;
+extern signed char D_00535C11[];
+extern "C" int func_0027AA80(void* a);
+extern "C" void func_00158E30(void* iface);
+extern "C" void func_00309030(void* a);
+extern "C" void func_00309F18(void* a);
+extern "C" int func_00144BE0(void* race);
+extern "C" int func_00144CC0(void* race, int a);
+extern "C" void func_00146E10(void* player, int a, int b);
+extern "C" void func_001F36D8(void* hud, int a);
+extern "C" int func_00278F68(void* self, int i, int a, int b);
+extern "C" void func_002B3A98(void* p);
+extern "C" void func_002A4B68(void* p);
+extern "C" int func_00279220(void* a, int b);
+extern "C" void func_00308F38(void* a);
+extern "C" void func_00308C60(void* a);
+extern "C" void func_00145DD0(void* iface, int a1, int a2, int a3);
+extern "C" int func_00238510(cGameModeMan* gm, int a1, int a2);
+extern "C" void* func_00233AF0(void* self);
+extern "C" void* func_00233B28(void* self);
+// PORT: func_00233AF0 also reads $a1 (the stream); bound with its real arity.
+void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
+// PORT: func_00233B28 also reads $a1 (the stream); bound with its real arity.
+void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
+extern "C" void func_0030B7F8(void* self);
+extern "C" void func_00230180(void* self);
+// PORT: func_00278F38 returns func_00276270's result (ssxscriptengine defines it void).
+extern "C" int func_00278F38(void* self, int i);
+extern "C" void func_0027A860(void* a, int b, int c);
+extern "C" void func_001F36C0(void* a, int b);
+extern "C" void cGameModeMan_restartHeat(cGameModeMan* gm);
+extern "C" int cBENewRaceInterface_setNumberAI(void* self, int count);
+extern "C" void cBENewPlayerInterface_setRiderCharID(void* player, int i, int id);
+extern "C" void func_001473D0(void* player, int i, int v);
+extern "C" int func_0012ABD0(void* p);
+extern "C" void func_0012B030(void* p);
+extern "C" void func_0012B000(void* p);
+extern "C" void func_00128958(void* p);
+extern "C" int func_0012A180(void* p);
+void func_001289F0(void* p);
+extern "C" void func_001296F8(void* p);
+extern "C" sVec4 func_00122C28(void* rider);
+extern "C" void func_003A9658(void* cache, int idx, const sVec4* pos, float radius);
+extern "C" int func_003A9770(void* cache, int idx, sVec4* pos, float* dist);
+extern "C" int func_002791D8(void* p, int a);
+extern "C" int func_00279298(void* p);
+extern "C" bool func_0027A9F0(void* p);
+void* func_00230698(void* self, int id);
+extern int D_00535C04[];
+extern "C" void cGameModeMan_initGameMode(cGameModeMan* gm, int mode);
+extern "C" void func_0011DE60(void* self, int a1, int a2);
+extern "C" void func_0011DF18(void* self, int notify);
+// PORT: func_002E4CE8 is the wake pool's allocator; it ignores the size the caller passes
+extern "C" void* func_002E4CE8(int size);
+void* func_002E4D70(void* self);
+extern "C" void func_002E4370(void* self, int a1, int a2, void* a3, float f0, float f1, int a4, int a5, float f2);
+extern void* D_004880C0[];
+extern "C" void func_00231250(void* self, int a, int b, int refresh);
+extern char D_0047D320[];
+extern "C" void func_0011D390(void* rider);
+extern "C" void func_00278E50(void* self, int i, int a, int b, int c, int d, int f, int g);
+extern int D_004A11BC;
+extern char D_0047D2C8[];
+extern "C" void func_00145CB0(void* iface, int i, int a);
+extern "C" int func_0022D278(void* self, int idx);
+extern "C" void func_0022D088(void* self, int idx, int mode);
+extern "C" sVec4 func_00123F38(void* rider);
+extern "C" void func_002EA820(void* p);
+extern "C" void func_0020A8F8(int mode);
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F4[];
+extern "C" void func_00236CD8(void* self);
+extern int D_004428F0[];
+extern "C" void func_002871B0(void* mgr);
+extern "C" void func_0028CDF8(void* mgr);
+extern "C" void func_0020AB50(int state);
+void cMemMan_free(void*);
+void operator_delete(int*);
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_003E6448(void* dst, int value, int size);
+// PORT: func_00244400__FPvi takes the 0x2A4-byte block as an int (pointer in int)
+void func_00244400(void* self, int a1);
+void func_00244408(void* self, int a1);
+extern char D_0047C078[];
+extern char D_0047C088[];
+extern char D_0047C098[];
+extern "C" void func_00321298(void* target, int a, void* data);
+extern "C" int func_00237B28(void* self, sPackSrc_7B28* src, sPackDst_7B28* dst);
+extern "C" void func_00237BE8(void* self, sPackSrc_7B28* src, char* buf);
+extern "C" int func_00257E98(void* mgr, int a, char* buf, int len);
+extern "C" void cBxPseudoRng_Seed(uint* state, uint seed);
+extern uint D_004C9548[];
+extern "C" uint cBxPseudoRng_NextInt(uint* state);
 
+//100%
+INCLUDE_ASM("main/gamestate", cGFGateState_gainFocus);
+#ifdef SKIP_ASM
 extern "C" void cGFGateState_gainFocus(void* self)
 {
     D_004A2C68->race->f8C = 0;
@@ -212,15 +343,6 @@ extern "C" void cGFGateState_gainFocus(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00234BE8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int* func_00144BC0(void* iface);
-extern "C" int func_0022E098(void* world, int id);
-extern "C" int func_00309DD0(void* mgr, int id, int a);
-extern "C" void func_00309E50(void* mgr, int id, int a);
-extern void* D_004A3DD8;
-
 extern "C" void func_00234BE8(void* self, int a1)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -235,22 +357,6 @@ extern "C" void func_00234BE8(void* self, int a1)
 //100%
 INCLUDE_ASM("main/gamestate", cGFGateState_update);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int GetHashValue32(char* str);
-extern "C" int func_00270280(void* p);
-extern "C" void func_00234BE8(void* self, int a1);
-extern "C" void* func_0039F9D8(void* list, int hash);
-extern "C" void* func_0028B180(void);
-extern "C" void func_0029C7B0(void* p);
-void func_0028C8C0(void* self, int val);
-extern "C" void func_00233AA0(void* self);
-extern "C" void func_0029C420(void* p, int secs);
-extern signed char D_00535C10[];
-extern char D_0047C048[];
-extern char D_004A2AB0[];
-
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float ffloor_00234C68(float x)
 {
@@ -290,8 +396,6 @@ extern "C" void cGFGateState_update(void* self)
 }
 #endif
 
-extern "C" void* func_00233AF0(void* self);
-
 //100%
 INCLUDE_ASM("main/gamestate", func_00234DE0__FPv);
 #ifdef SKIP_ASM
@@ -300,8 +404,6 @@ void* func_00234DE0(void* self)
     return func_00233AF0(self);
 }
 #endif
-
-extern "C" void* func_00233B28(void* self);
 
 //100%
 INCLUDE_ASM("main/gamestate", func_00234E00__FPv);
@@ -315,14 +417,6 @@ void* func_00234E00(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00234E20);
 #ifdef SKIP_ASM
-extern "C" void cAI_setAIState(void*, int);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cBE_setState(int state);
-extern "C" void func_0039F840(void* list);
-extern signed char D_00535C10[];
-
 extern "C" void func_00234E20(void)
 {
     cAI_setAIState(D_004A2C68->race, 5);
@@ -363,9 +457,6 @@ void* func_00234ED8(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00234EF8);
 #ifdef SKIP_ASM
-extern char D_0047D6E8[];
-extern char D_0047D428[];
-
 extern "C" void* func_00234EF8(void* self)
 {
     *(int*)((char*)self + 0x0) = 0;
@@ -385,21 +476,6 @@ extern "C" void* func_00234EF8(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00234F40);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0026F228(void* p);
-extern "C" void func_00278CD8(void* a);
-extern "C" void func_002790A0(void* a, int b);
-extern "C" void func_00278B98(void* a);
-extern "C" void func_0012AB20(void* self);
-extern "C" void func_0012AC48(void* self);
-extern "C" int func_00145D38(void* self, int index, int bit);
-extern "C" void func_0027AAF8(void* a, int b);
-extern "C" void* func_0028B180(void);
-extern void* D_004A28A4;
-extern signed char D_00535C11[];
-
 struct sState_234F40 {
     int pad0[4];
     int f10;
@@ -445,10 +521,6 @@ INCLUDE_ASM("main/gamestate", func_00235080);
 //100%
 INCLUDE_ASM("main/gamestate", func_00235570);
 #ifdef SKIP_ASM
-extern "C" void func_00278CD8(void* a);
-extern "C" void func_002790A0(void* a, int b);
-extern void* D_004A28A4;
-
 extern "C" void func_00235570(void* self)
 {
     func_00278CD8(D_004A28A4);
@@ -469,26 +541,6 @@ extern "C" int func_002355B0(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_002355C0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" void cBE_setState(int state);
-extern "C" void cAI_setAIState(void*, int);
-extern "C" int func_0027AA80(void* a);
-extern "C" void func_00158E30(void* iface);
-extern "C" void func_00309030(void* a);
-extern "C" void func_00309F18(void* a);
-extern "C" int func_00144BE0(void* race);
-extern "C" int func_00144CC0(void* race, int a);
-extern "C" void func_00146E10(void* player, int a, int b);
-extern "C" void func_001F36D8(void* hud, int a);
-extern "C" int func_00278F68(void* self, int i, int a, int b);
-extern "C" void* func_0028B180(void);
-extern "C" void func_002B3A98(void* p);
-extern "C" void func_002A4B68(void* p);
-extern void* D_004A3DD8;
-extern void* D_004A28A4;
-
 static inline int inRange_2355C0(int t)
 {
     return t >= 14 && t <= 16;
@@ -548,11 +600,6 @@ extern "C" void func_002355C0(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_002357F8);
 #ifdef SKIP_ASM
-extern "C" int func_0027AA80(void* a);
-extern "C" int func_00279220(void* a, int b);
-extern "C" void func_00233AA0(void* self);
-extern void* D_004A28A4;
-
 extern "C" void func_002357F8(void* self)
 {
     if (*(int*)((char*)self + 0x1C) != 0 && func_0027AA80(D_004A28A4) == 0) {
@@ -568,14 +615,6 @@ extern "C" void func_002357F8(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235868);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00308F38(void* a);
-extern "C" void func_00308C60(void* a);
-extern "C" void func_0026F228(void* p);
-extern "C" void func_0026F7B8(void* p);
-extern "C" void func_00145DD0(void* iface, int a1, int a2, int a3);
-extern "C" int func_00238510(cGameModeMan* gm, int a1, int a2);
-
 static inline int otherSide_235868(char* p)
 {
     return *(int*)(p + 0xB0) == 0;
@@ -614,9 +653,6 @@ extern "C" void func_00235868(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235990);
 #ifdef SKIP_ASM
-// PORT: func_00233AF0 also reads $a1 (the stream); bound with its real arity.
-void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
-
 extern "C" void func_00235990(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
@@ -632,9 +668,6 @@ extern "C" void func_00235990(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235A18);
 #ifdef SKIP_ASM
-// PORT: func_00233B28 also reads $a1 (the stream); bound with its real arity.
-void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
-
 extern "C" void func_00235A18(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
@@ -650,27 +683,6 @@ extern "C" void func_00235A18(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235AA0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" void cBE_setState(int state);
-extern "C" void func_0030B7F8(void* self);
-extern "C" void func_00230180(void* self);
-extern "C" void func_0012AB20(void* self);
-extern "C" void func_0012AC48(void* self);
-extern "C" void func_002790A0(void* a, int b);
-extern "C" void func_0027AAF8(void* a, int b);
-// PORT: func_00278F38 returns func_00276270's result (ssxscriptengine defines it void).
-extern "C" int func_00278F38(void* self, int i);
-extern "C" void func_0027A860(void* a, int b, int c);
-extern "C" void func_001F36C0(void* a, int b);
-extern "C" void cGameModeMan_restartHeat(cGameModeMan* gm);
-extern "C" int cBENewRaceInterface_setNumberAI(void* self, int count);
-extern "C" void cBENewPlayerInterface_setRiderCharID(void* player, int i, int id);
-extern "C" void func_001473D0(void* player, int i, int v);
-extern void* D_004A3DD8;
-extern void* D_004A28A4;
-
 extern "C" void func_00235AA0(void* self)
 {
     cBE_setState(0);
@@ -729,27 +741,6 @@ extern "C" void func_00235AA0(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235CC8);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_0012ABD0(void* p);
-extern "C" void func_0012B030(void* p);
-extern "C" void func_0012B000(void* p);
-extern "C" void func_00128958(void* p);
-extern "C" int func_0012A180(void* p);
-void func_001289F0(void* p);
-extern "C" void func_001296F8(void* p);
-extern "C" sVec4 func_00122C28(void* rider);
-extern "C" void func_003A9658(void* cache, int idx, const sVec4* pos, float radius);
-extern "C" int func_003A9770(void* cache, int idx, sVec4* pos, float* dist);
-extern "C" int func_002791D8(void* p, int a);
-extern "C" int func_00279298(void* p);
-extern "C" bool func_0027A9F0(void* p);
-extern "C" void func_00233AA0(void* self);
-void* func_00230698(void* self, int id);
-extern void* D_004A28A4;
-extern int D_00535C04[];
-
 extern "C" void func_00235CC8(void* self)
 {
     *(int*)((char*)self + 0x14) += 1;
@@ -813,8 +804,6 @@ extern "C" void func_00235CC8(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235F20);
 #ifdef SKIP_ASM
-extern "C" void func_001F36D8(void* hud, int a);
-
 extern "C" void func_00235F20(void)
 {
     func_001F36D8(D_004A28A8->game->f94, 3);
@@ -824,9 +813,6 @@ extern "C" void func_00235F20(void)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235F48);
 #ifdef SKIP_ASM
-// PORT: func_00233AF0 also reads $a1 (the stream); bound with its real arity.
-void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
-
 extern "C" void func_00235F48(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
@@ -842,9 +828,6 @@ extern "C" void func_00235F48(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235FD0);
 #ifdef SKIP_ASM
-// PORT: func_00233B28 also reads $a1 (the stream); bound with its real arity.
-void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
-
 extern "C" void func_00235FD0(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
@@ -860,18 +843,6 @@ extern "C" void func_00235FD0(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236058);
 #ifdef SKIP_ASM
-extern "C" void func_0030B7F8(void* self);
-extern "C" void cGameModeMan_initGameMode(cGameModeMan* gm, int mode);
-extern "C" void func_00230180(void* self);
-extern "C" void func_0011DE60(void* self, int a1, int a2);
-extern "C" void func_0011DF18(void* self, int notify);
-void* func_00230698(void* self, int id);
-// PORT: func_002E4CE8 is the wake pool's allocator; it ignores the size the caller passes
-extern "C" void* func_002E4CE8(int size);
-void* func_002E4D70(void* self);
-extern "C" void func_002E4370(void* self, int a1, int a2, void* a3, float f0, float f1, int a4, int a5, float f2);
-extern void* D_004880C0[];
-
 struct sColor_236058 {
     float r, g, b, a;
 };
@@ -902,8 +873,6 @@ extern "C" void func_00236058(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236198);
 #ifdef SKIP_ASM
-extern "C" void func_00231250(void* self, int a, int b, int refresh);
-
 extern "C" void func_00236198(void)
 {
     func_00231250(D_004A28A8->game, 1, 0, 0);
@@ -931,9 +900,6 @@ void* func_002361E8(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236208);
 #ifdef SKIP_ASM
-extern char D_0047D6E8[];
-extern char D_0047D320[];
-
 extern "C" void* func_00236208(void* self)
 {
     *(int*)((char*)self + 0x0) = 0;
@@ -952,22 +918,6 @@ extern "C" void* func_00236208(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236250);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" void cAI_setAIState(void*, int);
-extern "C" int* func_00144BC0(void* iface);
-extern "C" void func_00230180(void* self);
-extern "C" void func_0030B7F8(void* self);
-extern "C" void func_0011D390(void* rider);
-extern "C" void func_00278E50(void* self, int i, int a, int b, int c, int d, int f, int g);
-// PORT: func_00278F38 returns func_00276270's result (ssxscriptengine defines it void).
-extern "C" int func_00278F38(void* self, int i);
-extern "C" int func_00278F68(void* self, int i, int a, int b);
-extern void* D_004A3DD8;
-extern void* D_004A28A4;
-extern int D_004A11BC;
-
 static inline int isOne_6250(int m)
 {
     return m == 1;
@@ -1014,9 +964,6 @@ INCLUDE_ASM("main/gamestate", func_00236418);
 //100%
 INCLUDE_ASM("main/gamestate", func_00236728);
 #ifdef SKIP_ASM
-// PORT: func_00233AF0 also reads $a1 (the stream); bound with its real arity.
-void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
-
 extern "C" void func_00236728(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
@@ -1034,9 +981,6 @@ extern "C" void func_00236728(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_002367C8);
 #ifdef SKIP_ASM
-// PORT: func_00233B28 also reads $a1 (the stream); bound with its real arity.
-void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
-
 extern "C" void func_002367C8(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
@@ -1054,9 +998,6 @@ extern "C" void func_002367C8(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236868);
 #ifdef SKIP_ASM
-extern char D_0047D6E8[];
-extern char D_0047D2C8[];
-
 extern "C" void* func_00236868(void* self)
 {
     *(int*)((char*)self + 0x0) = 0;
@@ -1072,13 +1013,6 @@ extern "C" void* func_00236868(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_002368A0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cBE_setState(int state);
-extern "C" void func_0026F228(void* p);
-extern "C" void func_00145CB0(void* iface, int i, int a);
-
 extern "C" void func_002368A0(void* self)
 {
     cBE_setState(0);
@@ -1098,15 +1032,6 @@ extern "C" void func_002368A0(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236960);
 #ifdef SKIP_ASM
-extern "C" int func_0022D278(void* self, int idx);
-extern "C" void func_0022D088(void* self, int idx, int mode);
-extern "C" sVec4 func_00123F38(void* rider);
-extern "C" void func_003A9658(void* cache, int idx, const sVec4* pos, float radius);
-extern "C" int func_003A9770(void* cache, int idx, sVec4* pos, float* dist);
-extern "C" int func_00279298(void* p);
-extern "C" bool func_0027A9F0(void* p);
-extern void* D_004A28A4;
-
 extern "C" void func_00236960(void* self)
 {
     sGame* g84 = D_004A28A8->game;
@@ -1185,7 +1110,6 @@ void* func_00236B18(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236B38);
 #ifdef SKIP_ASM
-
 extern "C" void func_00236B38(void)
 {
     D_004A2C68->race->v05(3);
@@ -1213,15 +1137,6 @@ void* func_00236B90(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236BB0);
 #ifdef SKIP_ASM
-extern "C" void cBE_setState(int state);
-extern "C" void func_002EA820(void* p);
-extern "C" void func_0020A8F8(int mode);
-extern char* D_004A2EEC;
-extern int D_004A2A50;
-extern int D_004A2A54;
-extern int D_005366E8[];
-extern int D_004428F4[];
-
 struct sGameState_6BB0 {
     char pad0[8];
     int done;   // 0x8
@@ -1247,9 +1162,6 @@ extern "C" void func_00236BB0(sGameState_6BB0* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236C48);
 #ifdef SKIP_ASM
-extern "C" void func_00233AA0(void* self);
-extern char* D_004A2EEC;
-
 extern "C" void func_00236C48(void* self)
 {
     if (D_004A2EEC == 0 || *(int*)(D_004A2EEC + 4) == 0) {
@@ -1263,12 +1175,6 @@ extern "C" void func_00236C48(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236C88);
 #ifdef SKIP_ASM
-extern "C" void func_00236CD8(void* self);
-extern int D_004A2A54;
-extern int D_004A2A50;
-extern int D_005366E8[];
-extern int D_004428F0[];
-
 extern "C" void func_00236C88(void* self)
 {
     D_004A2A50 = D_004428F0[D_005366E8[--D_004A2A54]];
@@ -1279,15 +1185,6 @@ extern "C" void func_00236C88(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236CD8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_002790A0(void* a, int b);
-extern "C" void* func_0028B180(void);
-extern "C" void func_002871B0(void* mgr);
-extern void* D_004A28A4;
-extern signed char D_00535C10[];
-
 static inline int isMode4_236CD8()
 {
     return D_00535C10[0] == 4;
@@ -1326,14 +1223,6 @@ void* func_00236D80(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236DA0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_00145CB0(void* iface, int i, int a);
-extern "C" void func_002790A0(void* a, int b);
-extern "C" void func_0020A8F8(int a);
-extern void* D_004A28A4;
-
 extern "C" void func_00236DA0(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1353,8 +1242,6 @@ extern "C" void func_00236DA0(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236E60);
 #ifdef SKIP_ASM
-extern "C" void func_00231250(void* self, int a, int b, int refresh);
-
 extern "C" void func_00236E60(void* self)
 {
     if (*(int*)((char*)self + 8) == 1) {
@@ -1366,8 +1253,6 @@ extern "C" void func_00236E60(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236EA0);
 #ifdef SKIP_ASM
-extern "C" void func_0039F840(void* list);
-
 extern "C" void func_00236EA0(void)
 {
     func_0039F840(D_004A2C68->f48 + 0x18);
@@ -1395,9 +1280,6 @@ void* func_00236EE8(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236F08);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180(void);
-extern "C" void func_0028CDF8(void* mgr);
-
 extern "C" void func_00236F08(void)
 {
     func_0028CDF8(func_0028B180());
@@ -1408,10 +1290,6 @@ extern "C" void func_00236F08(void)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236F40);
 #ifdef SKIP_ASM
-extern "C" int func_00279220(void* a, int b);
-extern "C" void func_00233AA0(void* self);
-extern void* D_004A28A4;
-
 extern "C" void func_00236F40(void* self)
 {
     int r = func_00279220(D_004A28A4, 0);
@@ -1425,7 +1303,6 @@ extern "C" void func_00236F40(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236F90);
 #ifdef SKIP_ASM
-
 extern "C" void func_00236F90(void)
 {
     D_004A28A8->game->race->f8C = 0;
@@ -1453,12 +1330,6 @@ void* func_00236FC8(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236FE8);
 #ifdef SKIP_ASM
-extern "C" void func_00309030(void* a);
-extern "C" void func_00309F18(void* a);
-extern "C" void func_001F36D8(void* hud, int a);
-extern "C" void func_0020AB50(int state);
-extern void* D_004A3DD8;
-
 extern "C" void func_00236FE8(void)
 {
     func_00309030(D_004A3DD8);
@@ -1479,10 +1350,6 @@ void func_00237030(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237038);
 #ifdef SKIP_ASM
-extern "C" void func_00308F38(void* a);
-extern "C" void func_00308C60(void* a);
-extern void* D_004A3DD8;
-
 extern "C" void func_00237038(void)
 {
     func_00308F38(D_004A3DD8);
@@ -1508,9 +1375,6 @@ extern "C" void* func_00237060(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("main/gamestate", func_002370A0);
 #ifdef SKIP_ASM
-void cMemMan_free(void*);
-void operator_delete(int*);
-
 extern "C" void func_002370A0(sRecorder* self, int flags)
 {
     int i;
@@ -1529,16 +1393,6 @@ extern "C" void func_002370A0(sRecorder* self, int flags)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237140);
 #ifdef SKIP_ASM
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_003E6448(void* dst, int value, int size);
-// PORT: func_00244400__FPvi takes the 0x2A4-byte block as an int (pointer in int)
-void func_00244400(void* self, int a1);
-void func_00244408(void* self, int a1);
-extern char D_0047C078[];
-extern char D_0047C088[];
-extern char D_0047C098[];
-
 static inline void* initObj_237140(void* o, int a, int b)
 {
     func_00244400(o, a);
@@ -1568,17 +1422,6 @@ extern "C" void* func_00237140(sRecorder* self, int* a1)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237280);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void func_003E6448(void* dst, int value, int size);
-// PORT: func_00244400__FPvi takes the 0x2A4-byte block as an int (pointer in int)
-void func_00244400(void* self, int a1);
-void func_00244408(void* self, int a1);
-extern char D_0047C078[];
-extern char D_0047C088[];
-extern char D_0047C098[];
-
 static inline void* initObj_237280(void* o, int a, int b)
 {
     func_00244400(o, a);
@@ -1618,8 +1461,6 @@ void func_00237948(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237950);
 #ifdef SKIP_ASM
-extern char* D_004A2EEC;
-
 extern "C" int func_00237950(sRecorder* self)
 {
     char* p = D_004A2EEC;
@@ -1644,8 +1485,6 @@ extern "C" int func_00237950(sRecorder* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_002379C8);
 #ifdef SKIP_ASM
-extern "C" void func_00321298(void* target, int a, void* data);
-
 extern "C" int func_002379C8(sRecorder* self)
 {
     if (*(int*)(D_004A2EEC + 0x70) < 14) {
@@ -1668,13 +1507,6 @@ extern "C" int func_002379C8(sRecorder* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237A98);
 #ifdef SKIP_ASM
-struct sPackSrc_7B28;
-struct sPackDst_7B28;
-extern "C" int func_00237B28(void* self, sPackSrc_7B28* src, sPackDst_7B28* dst);
-extern "C" void func_00237BE8(void* self, sPackSrc_7B28* src, char* buf);
-extern "C" int func_00257E98(void* mgr, int a, char* buf, int len);
-extern char* D_004A2EEC;
-
 extern "C" void func_00237A98(void* self, sPackSrc_7B28* src)
 {
     char buf[32];
@@ -1691,17 +1523,6 @@ extern "C" void func_00237A98(void* self, sPackSrc_7B28* src)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237B28);
 #ifdef SKIP_ASM
-struct sPackSrc_7B28 {
-    int count;
-    float vals[1];
-};
-
-struct sPackDst_7B28 {
-    unsigned char count;
-    unsigned char mask[3];
-    unsigned char vals[1];
-};
-
 extern "C" int func_00237B28(void* self, sPackSrc_7B28* src, sPackDst_7B28* dst)
 {
     int i;
@@ -1726,8 +1547,6 @@ extern "C" int func_00237B28(void* self, sPackSrc_7B28* src, sPackDst_7B28* dst)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237BE8);
 #ifdef SKIP_ASM
-extern "C" void func_003E6448(void* dst, int value, int size);
-
 extern "C" void func_00237BE8(void* self, sPackSrc_7B28* out, char* buf)
 {
     sPackDst_7B28* in = (sPackDst_7B28*)buf;
@@ -1748,9 +1567,6 @@ extern "C" void func_00237BE8(void* self, sPackSrc_7B28* out, char* buf)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237CB0);
 #ifdef SKIP_ASM
-extern "C" void cBxPseudoRng_Seed(uint* state, uint seed);
-extern uint D_004C9548[];
-
 extern "C" void func_00237CB0(uint seed)
 {
     cBxPseudoRng_Seed(D_004C9548, seed);
@@ -1760,9 +1576,6 @@ extern "C" void func_00237CB0(uint seed)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237CD8);
 #ifdef SKIP_ASM
-extern "C" uint cBxPseudoRng_NextInt(uint* state);
-extern uint D_004C9548[];
-
 extern "C" uint func_00237CD8(void)
 {
     return cBxPseudoRng_NextInt(D_004C9548);
