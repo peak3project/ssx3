@@ -1,5 +1,21 @@
 #include "common.h"
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
+};
+
 //100%
 INCLUDE_ASM("fe/festatedebug", cScreenKeyboard_initScreenKeyboard);
 #ifdef SKIP_ASM
@@ -23,48 +39,34 @@ extern char D_004A1378[];
 extern char D_004A1380[];
 extern char D_004A1388[];
 
-class cUIObjK180B60 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void setVisible(int on);
-};
-
 extern "C" void cScreenKeyboard_initScreenKeyboard(char* self, void* screen)
 {
-    cUIObjK180B60* t;
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D570));
+    cUIThing* t;
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D570));
     if (t != 0)
     {
         t->setVisible(1);
         cUIText_setAsciiString((cUIText*)t, D_004A1370);
     }
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D588));
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D588));
     if (t != 0)
     {
         t->setVisible(1);
         cUIText_setAsciiString((cUIText*)t, D_004A1378);
     }
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5A0));
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5A0));
     if (t != 0)
     {
         t->setVisible(1);
         cUIText_setAsciiString((cUIText*)t, D_004A1380);
     }
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5B0));
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5B0));
     if (t != 0)
         t->setVisible(0);
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5C0));
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5C0));
     if (t != 0)
         t->setVisible(0);
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5D0));
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5D0));
     if (t != 0)
         t->setVisible(0);
     char name[0x20];
@@ -74,11 +76,11 @@ extern "C" void cScreenKeyboard_initScreenKeyboard(char* self, void* screen)
     for (int i = 0; i < 26; i++)
     {
         func_001809B0(self, i + 10, name);
-        t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
+        t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
         if (t != 0)
             cUIText_setAsciiString((cUIText*)t, ch);
         func_00180A90(self, i + 10, name);
-        t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
+        t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
         if (t != 0)
             t->setVisible(0);
         ch[0]++;
@@ -87,20 +89,20 @@ extern "C" void cScreenKeyboard_initScreenKeyboard(char* self, void* screen)
     for (int j = 0; j < 10; j++)
     {
         func_001809B0(self, j, name);
-        t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
+        t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
         if (t != 0)
             cUIText_setAsciiString((cUIText*)t, ch);
         func_00180A90(self, j, name);
-        t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
+        t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(name));
         if (t != 0)
             t->setVisible(0);
         ch[0]++;
     }
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5E0));
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5E0));
     if (t != 0)
         t->setVisible(1);
     func_001805D8(self, D_004A1388);
-    t = (cUIObjK180B60*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5F0));
+    t = (cUIThing*)cUIScreen_getObjectByHashName(screen, GetHashValue32(D_0045D5F0));
     if (t != 0)
         cUIText_setAsciiString((cUIText*)t, self + 0xEC);
 }
