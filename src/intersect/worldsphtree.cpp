@@ -207,6 +207,14 @@ struct sWsListCtx2 {
     sWsListCtx b;
 };
 
+// PORT: PS2-only FPU inline asm (abs.s, kept out of cse like the original helper).
+static inline float absf(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1209,12 +1217,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_003342D0);
 extern "C" int func_00333EF8(void* self, void* q, sWsRayHit* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
-static inline float absf_003342D0(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 static inline int isBetter_003342D0(sWsRayHit* a, sWsRayHit* b)
 {
@@ -1240,9 +1242,9 @@ extern "C" float func_003342D0(void* self, char* q, sWsRayHit* out, int a3)
     int best = 0;
     sWsVtF* vt = *(sWsVtF**)(q + 0x50);
     float ref = vt[3].fn(q + vt[3].delta);
-    float bestDiff = absf_003342D0(hits[0].dist - ref);
+    float bestDiff = absf(hits[0].dist - ref);
     for (int i = 1; i < n; i++) {
-        float d = absf_003342D0(hits[i].dist - ref);
+        float d = absf(hits[i].dist - ref);
         if (d < bestDiff) {
             bestDiff = d;
             best = i;
@@ -1671,12 +1673,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00336850);
 extern "C" int func_00335D78(void* self, void* q, sWsRayHit* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
-static inline float absf_00336850(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 static inline int isBetter_00336850(sWsRayHit* a, sWsRayHit* b)
 {
@@ -1702,9 +1698,9 @@ extern "C" float func_00336850(void* self, char* q, sWsRayHit* out, int a3)
     int best = 0;
     sWsVtF* vt = *(sWsVtF**)(q + 0x50);
     float ref = vt[3].fn(q + vt[3].delta);
-    float bestDiff = absf_00336850(hits[0].dist - ref);
+    float bestDiff = absf(hits[0].dist - ref);
     for (int i = 1; i < n; i++) {
-        float d = absf_00336850(hits[i].dist - ref);
+        float d = absf(hits[i].dist - ref);
         if (d < bestDiff) {
             bestDiff = d;
             best = i;
@@ -1763,12 +1759,6 @@ struct sTrav_369D8 {
 extern "C" void func_0033DBE8(char* flag, sQuery_369D8* q, sQuery_369D8* q2, sCtx_369D8* ctx, void* node, sCell_369D8* cell);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
-static inline float absf_003369D8(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 // PORT: g++ `<?` (min) operator.
 static inline float clamp_003369D8(float v, float lo, float hi)
@@ -1848,9 +1838,9 @@ extern "C" int func_003369D8(sCell_369D8* self, float* pos, t4Vector* outP, t4Ve
     }
     float ref = pos[2];
     int best = 0;
-    float bestDiff = absf_003369D8(hits[0].p.z - ref);
+    float bestDiff = absf(hits[0].p.z - ref);
     for (int i = 1; i < tr.count; i++) {
-        float d = absf_003369D8((hits + i)->p.z - ref);
+        float d = absf((hits + i)->p.z - ref);
         if (d < bestDiff) {
             bestDiff = d;
             best = i;
@@ -2029,12 +2019,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_003378C0);
 extern "C" int func_00336F30(void* self, void* q, sWsRayHit* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
-static inline float absf_003378C0(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 static inline int isBetter_003378C0(sWsRayHit* a, sWsRayHit* b)
 {
@@ -2060,9 +2044,9 @@ extern "C" float func_003378C0(void* self, char* q, sWsRayHit* out, int a3)
     int best = 0;
     sWsVtF* vt = *(sWsVtF**)(q + 0x50);
     float ref = vt[3].fn(q + vt[3].delta);
-    float bestDiff = absf_003378C0(hits[0].dist - ref);
+    float bestDiff = absf(hits[0].dist - ref);
     for (int i = 1; i < n; i++) {
-        float d = absf_003378C0(hits[i].dist - ref);
+        float d = absf(hits[i].dist - ref);
         if (d < bestDiff) {
             bestDiff = d;
             best = i;
@@ -4808,12 +4792,6 @@ struct sSphCtl_00342358 {
 };
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
-static inline float absf_00342358(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 extern "C" int func_00342358(sSphCtl_00342358* s)
 {
@@ -4830,7 +4808,7 @@ extern "C" int func_00342358(sSphCtl_00342358* s)
     acc += force;
     acc += -s->damping * vel;
     s->step = step;
-    if (maxStep < absf_00342358(step)) {
+    if (maxStep < absf(step)) {
         if (step < 0.0f) {
             s->step = -maxStep;
         } else {
@@ -4844,7 +4822,7 @@ extern "C" int func_00342358(sSphCtl_00342358* s)
     s->vel = nv;
     if (pos < s->min) {
         s->pos = s->min;
-        if (absf_00342358(nv) > 0.1f) {
+        if (absf(nv) > 0.1f) {
             s->vel = nv * s->bounce;
         } else {
             s->step = 0.0f;
@@ -4852,7 +4830,7 @@ extern "C" int func_00342358(sSphCtl_00342358* s)
         }
     } else if (s->max < pos) {
         s->pos = s->max;
-        if (absf_00342358(nv) > 0.1f) {
+        if (absf(nv) > 0.1f) {
             s->vel = nv * s->bounce;
         } else {
             s->step = 0.0f;
