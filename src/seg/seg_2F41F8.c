@@ -2461,7 +2461,28 @@ int func_003F8588(unsigned v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F85C0);
+#ifdef SKIP_ASM
+typedef struct { int f0, f4, f8, fC; short f10; } S85C0;
+extern S85C0 *D_85C0 __asm__("D_004A4BD8");
+int func_003F85C0(unsigned short v, int dir) {
+    short i = D_85C0->f10;
+    int r;
+    if (dir == 0) {
+        i++;
+        while (i < 8 && !((v >> i) & 1)) i++;
+        if (i >= 8) r = -1; else r = i;
+    } else if (dir == 1) {
+        i--;
+        while (i >= 0 && !((v >> i) & 1)) i--;
+        if (i < 0) r = -1; else r = i;
+    } else {
+        return 0x12;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F86B8);
