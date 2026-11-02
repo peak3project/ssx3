@@ -64,11 +64,19 @@ struct sBEProfilePair {
     int b;
 };
 
+// One collectable record per peak-mission slot (12 bytes).
+struct sBEMissionRec {
+    signed char collected;              // 0x0: number of bits set in bits[]
+    char pad_0x1[3];
+    unsigned int bits[2];               // 0x4: 64 collected flags
+};
+
 // One character's record inside a profile: D_004A6CA8 is [profile][character] of these
 // (0x9B50 = 10 * 0xF88); same type as be/belibrary's sBEProfileChar.
 struct sBEProfileChar {
     int field_0x000;                    // 0x000
-    char pad_0x004[0x278 - 0x004];
+    sBEMissionRec missions[23];         // 0x004
+    unsigned int missionFlags[88];      // 0x118: one flag word per mission (D_0043EE10 order)
     // PORT: 64-bit `long` bitfield (8 bytes on EE); use uint64_t off-PS2.
     unsigned long b0 : 1;               // 0x278: bits 0-5 kind 0-2 flags, 6-11 more kind flags,
     unsigned long b1 : 1;               //        12/13 peak 1/2 locked, 14-19 kinds 6-11
