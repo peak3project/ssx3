@@ -35,6 +35,22 @@ public:
     virtual void v05();
 };
 
+// A node of a camera's algorithm blend list: the algorithm, its weight and rate, the smoothed blend
+// (smoothstep of the weight), linked both ways (camera/camera's func_00161BB8 layout).
+struct sAlgoNode {
+    cCameraAlgorithm* algo;     // 0x0
+    float weight;               // 0x4
+    float rate;                 // 0x8
+    float blend;                // 0xC
+    sAlgoNode* prev;            // 0x10
+    sAlgoNode* next;            // 0x14
+};
+
+struct sAlgoList {
+    sAlgoNode* head;            // 0x0
+    int count;                  // 0x4
+};
+
 // A transform as position + rotation quaternion, returned by value (func_0031B748 builds one from a matrix).
 struct sXf {
     t4Vector pos;
@@ -174,26 +190,15 @@ extern "C" void cScriptCameraController_addCamera(char* self, char* cam)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_001692D8);
 #ifdef SKIP_ASM
-struct sScrAlgoNode {
-    int key;              // 0x0
-    char pad_0x04[0x10];
-    sScrAlgoNode* next;   // 0x14
-};
-
-struct sScrAlgoList {
-    sScrAlgoNode* head;   // 0x0
-    int count;            // 0x4
-};
-
-extern "C" void func_0015CA50(sScrAlgoList* list, sScrAlgoNode* node);
+extern "C" void func_0015CA50(sAlgoList* list, sAlgoNode* node);
 
 extern "C" void func_001692D8(void* self, void* algo)
 {
     if (*(int*)((char*)self + 0x18) != 0) {
-        sScrAlgoList* list = *(sScrAlgoList**)((char*)self + 0x8);
-        for (sScrAlgoNode* n = list->head; n != 0; n = n->next) {
-            int k = *(int*)((char*)algo + 0x1C);
-            if (n->key == k) {
+        sAlgoList* list = *(sAlgoList**)((char*)self + 0x8);
+        for (sAlgoNode* n = list->head; n != 0; n = n->next) {
+            cCameraAlgorithm* k = *(cCameraAlgorithm**)((char*)algo + 0x1C);
+            if (n->algo == k) {
                 func_0015CA50(list, n);
                 break;
             }
@@ -222,26 +227,17 @@ INCLUDE_ASM("camera/script/scriptcontroller", func_00169368);
 // func_001694B0 returns a pointer (the unit declares it int); bind a pointer-returning alias.
 char* func_001694B0_K2(void* self) __asm__("func_001694B0__FPv");
 
-struct sScrAlgoNodeK2 {
-    cCameraAlgorithm* algo;    // 0x0
-    float t;                // 0x4
-    float pad_0x08;
-    float weight;           // 0xC
-    int pad_0x10;
-    sScrAlgoNodeK2* next;   // 0x14
-};
-
 extern "C" void func_00169368(void* self)
 {
-    sScrAlgoNodeK2* n = **(sScrAlgoNodeK2***)((char*)self + 0x8);
+    sAlgoNode* n = **(sAlgoNode***)((char*)self + 0x8);
     while (n != 0) {
         float t = *(float*)(func_001694B0_K2(n->algo) + 0x18);
         float t2 = t * t;
         float s = t2 * 3.0f - t2 * 2.0f * t;
-        n->t = t;
+        n->weight = t;
         if (s > 1.0f)
             s = 1.0f;
-        n->weight = s;
+        n->blend = s;
         n->algo->v05();
         n = n->next;
     }
