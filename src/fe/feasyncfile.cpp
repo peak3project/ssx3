@@ -3074,7 +3074,6 @@ void func_001A8768(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A8770);
 #ifdef SKIP_ASM
-
 extern "C" void func_0039E510(void*);
 extern "C" void* func_001A8B88(void* self, int size, int a2);
 
@@ -3090,7 +3089,6 @@ extern "C" void* func_001A8770(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A87D0);
 #ifdef SKIP_ASM
-
 extern "C" void func_0039E4C0(void* self, int a1);
 
 extern "C" void func_001A87D0(void* self, int a1)
@@ -3141,7 +3139,6 @@ extern "C" void func_001A8830(cUIState* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A8918);
 #ifdef SKIP_ASM
-
 extern "C" void* func_001D9D48(void* mem, void* a1, void* owner);
 extern char D_00461A70[];
 
@@ -3891,7 +3888,6 @@ extern "C" void func_001A9930(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A9A18);
 #ifdef SKIP_ASM
-
 extern "C" void func_001A9A18(void* self, cUIThing* box, int value)
 {
     *(int*)((char*)box + 0x14) = (*(int*)((char*)box + 0x14) & ~1) | 0x80;
@@ -3905,7 +3901,6 @@ extern "C" void func_001A9A18(void* self, cUIThing* box, int value)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A9AB8);
 #ifdef SKIP_ASM
-
 extern char D_0045E028[];
 extern char D_0045DF40[];
 
@@ -5417,7 +5412,6 @@ extern "C" void func_001AD5E8(void* selfp, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AD8C0);
 #ifdef SKIP_ASM
-
 extern "C" void func_001AD930(void* self, void* a1, int a2);
 
 extern "C" void func_001AD8C0(cUIState* self, void* a1, int a2)
@@ -5671,7 +5665,6 @@ extern "C" void func_001ADE88(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001ADFB8);
 #ifdef SKIP_ASM
-
 extern "C" int func_001ADFB8(cUIState* self)
 {
     self->v32();
@@ -6175,7 +6168,6 @@ extern "C" int func_001AF3E0(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AF428);
 #ifdef SKIP_ASM
-
 extern "C" void func_001AF428(cUIState* self, void* a1, int a2)
 {
     if (*(int*)((char*)a1 + 0x18) == 0x835) {
@@ -6706,7 +6698,6 @@ extern "C" void func_001B0538(void* self, void* obj, int msg)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B05E0);
 #ifdef SKIP_ASM
-
 extern "C" void func_001B05E0(cUIState* self, void* a1, int a2)
 {
     if (*(int*)((char*)a1 + 0x18) == 0x835) {
@@ -9601,7 +9592,6 @@ extern "C" void func_001B5BD8(void* self, void* a1, unsigned int kind)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B5CF8);
 #ifdef SKIP_ASM
-
 extern "C" void func_001B5CF8(void* self, void* a1, int a2)
 {
     if (a2 == 0x16) {
@@ -9997,7 +9987,6 @@ extern "C" int func_001B66B8(void* self, cFEVObj_001B66B8* obj)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6740);
 #ifdef SKIP_ASM
-
 extern "C" int func_001B6740(void* self, int a1, int a2)
 {
     return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
@@ -10158,7 +10147,6 @@ extern "C" void* func_001B6B50(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6BB8);
 #ifdef SKIP_ASM
-
 extern char D_004A1BA8[];
 extern char D_004A1BB0[];
 extern char D_004642C0[];
@@ -10228,7 +10216,6 @@ extern "C" int func_001B6C98(void* self, int on)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6E10);
 #ifdef SKIP_ASM
-
 extern "C" int func_001B6E10(void* self, int a1, int a2)
 {
     return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
@@ -10238,7 +10225,6 @@ extern "C" int func_001B6E10(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6E40);
 #ifdef SKIP_ASM
-
 extern "C" void func_001B6E40(void* self, int a1, unsigned int msg)
 {
     switch (msg) {
@@ -11320,7 +11306,6 @@ extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B8860);
 #ifdef SKIP_ASM
-
 extern "C" int func_001B8860(void* self, int a1, int a2)
 {
     return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
@@ -11407,7 +11392,6 @@ void* func_001B89E8(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B8A08);
 #ifdef SKIP_ASM
-
 extern "C" void func_001B95C0(void* self);
 extern "C" void func_001B9610(void* self);
 extern "C" void func_001B9678(void* self);
@@ -11936,7 +11920,6 @@ extern "C" void func_001B9950(void* self, cUIText* text, char* str)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9B18);
 #ifdef SKIP_ASM
-
 extern "C" int func_001B9CD8(void* self, const char* str);
 extern char D_004624D0[];
 extern char D_00464960[];
@@ -12007,7 +11990,6 @@ extern "C" int func_001B9CD8(void* self, const char* str)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9D68);
 #ifdef SKIP_ASM
-
 extern "C" int func_001B9F68(void* self, signed char val, signed char lo, signed char hi);
 extern char D_004624B0[];
 extern char D_00464978[];
@@ -12092,7 +12074,6 @@ extern "C" int func_001B9F68(void* self, signed char val, signed char lo, signed
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9FA0);
 #ifdef SKIP_ASM
-
 extern char D_00464998[];
 extern char D_004649B8[];
 
@@ -12783,7 +12764,6 @@ extern "C" void func_001BB4B0(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BB520);
 #ifdef SKIP_ASM
-
 extern char D_00464B10[];
 extern char D_00464B20[];
 
@@ -12841,7 +12821,6 @@ extern "C" void func_001BB5D0(void* self, void* box, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BB798);
 #ifdef SKIP_ASM
-
 extern "C" void func_0039A8D8(void* self, int count);
 
 extern "C" void func_001BB798(void* self, void* box, int value)
@@ -12985,7 +12964,6 @@ extern "C" int func_001BBAC8(void* self, int code)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BBC40);
 #ifdef SKIP_ASM
-
 extern char D_00464C38[];
 // PORT: the unit declares func_001BBC40 as returning void*; the body returns 0/1
 extern "C" int func_001BBC40_r(void* self) __asm__("func_001BBC40");
@@ -13528,7 +13506,6 @@ extern "C" sFEObj_001BCB58* func_001BCB58(sFEObj_001BCB58* self, int a1)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BCC30);
 #ifdef SKIP_ASM
-
 extern char D_00464DA0[];
 
 extern "C" void func_001BCC30(cUIState* self)
@@ -14245,7 +14222,6 @@ extern "C" void func_001BDF60(sFESlots1BDF60* self, int id)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BDFD8);
 #ifdef SKIP_ASM
-
 extern "C" void func_001BDFD8(void* self)
 {
     int i;
@@ -14500,7 +14476,6 @@ extern "C" void func_001BE540_2(void* self, int page)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BE720);
 #ifdef SKIP_ASM
-
 extern "C" void func_001BE720(void* self)
 {
     if (*(int*)((char*)self + 0x778) == 0) {
@@ -14704,7 +14679,6 @@ extern "C" int func_001BEC78(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BED28);
 #ifdef SKIP_ASM
-
 extern "C" int func_001BED28(void* self, int a1, int a2)
 {
     return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
@@ -15017,7 +14991,6 @@ extern "C" void func_001BF5A8(void* self, void* a1, int kind)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001BF6C0);
 #ifdef SKIP_ASM
-
 extern "C" void func_001BF438(void* self, void* a1, int a2);
 extern "C" void func_001BF5A8(void* self, void* a1, int a2);
 
@@ -16057,7 +16030,6 @@ extern "C" int func_001C17E0(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C17F8);
 #ifdef SKIP_ASM
-
 extern "C" void func_001C17F8(void* self, int on)
 {
     (*(cUIThing**)((char*)self + 0x6F8))->setStatic(on);
@@ -16434,7 +16406,6 @@ extern "C" void func_001C2298(sOwner1C2298* self, cUIText* text)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C23C0);
 #ifdef SKIP_ASM
-
 extern "C" int func_001C23C0(cUIState* self, int a1)
 {
     self->v32();
@@ -16921,7 +16892,6 @@ extern "C" void func_001C2F00(void* self, cFEVObj_001C2F00* obj)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C32B8);
 #ifdef SKIP_ASM
-
 extern "C" void func_001C3EE8(void* self, int a1);
 
 extern "C" int func_001C32B8(cUIState* self, int a1)
@@ -17936,14 +17906,22 @@ struct cFEAsyncSlot {
     int mValue; // 0x4
 };
 
-struct cFEAsyncSlots {
+struct cFEAsyncReq {
+    int mState; // 0x0
+    int mValue; // 0x4
+    int mExtra; // 0x8
+};
+
+// The slot and request tables of the object func_001C55F8 constructs.
+struct cFEAsyncTable {
     char pad_0x00[0x24];
-    cFEAsyncSlot mSlots[1]; // 0x24
+    cFEAsyncSlot mSlots[6]; // 0x24
+    cFEAsyncReq mReqs[1];   // 0x54
 };
 
 void func_001C5780(void* self, int a1, int a2)
 {
-    cFEAsyncSlots* s = (cFEAsyncSlots*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mSlots[a1].mValue = a2;
     s->mSlots[a1].mState = 2;
 }
@@ -17954,7 +17932,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C57A0__FPvii);
 #ifdef SKIP_ASM
 void func_001C57A0(void* self, int a1, int a2)
 {
-    cFEAsyncSlots* s = (cFEAsyncSlots*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mSlots[a1].mValue = a2;
     s->mSlots[a1].mState = 1;
 }
@@ -17965,7 +17943,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C57C0__FPvii);
 #ifdef SKIP_ASM
 void func_001C57C0(void* self, int a1, int a2)
 {
-    cFEAsyncSlots* s = (cFEAsyncSlots*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mSlots[a1].mValue = a2;
     s->mSlots[a1].mState = 3;
 }
@@ -17976,7 +17954,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C57E0);
 #ifdef SKIP_ASM
 extern "C" void func_001C57E0(void* self, int a1, cFEAsyncSlot* a2)
 {
-    cFEAsyncSlots* s = (cFEAsyncSlots*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mSlots[a1] = *a2;
 }
 #endif
@@ -17993,20 +17971,9 @@ extern "C" void* func_001C5800(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C5810);
 #ifdef SKIP_ASM
-struct cFEAsyncReq5810 {
-    int mState;
-    int mValue;
-    int mExtra;
-};
-
-struct cFEAsyncReqs5810 {
-    char pad_0x00[0x54];
-    cFEAsyncReq5810 mReqs[1];
-};
-
 extern "C" void func_001C5810(void* self, int a1, int a2, int a3)
 {
-    cFEAsyncReqs5810* s = (cFEAsyncReqs5810*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mReqs[a1].mValue = a2;
     s->mReqs[a1].mState = 2;
     s->mReqs[a1].mExtra = a3;
@@ -18016,20 +17983,10 @@ extern "C" void func_001C5810(void* self, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C5838);
 #ifdef SKIP_ASM
-struct cFEAsyncReq {
-    int mState; // 0x0
-    int mValue; // 0x4
-    int mExtra; // 0x8
-};
-
-struct cFEAsyncReqs {
-    char pad_0x00[0x54];
-    cFEAsyncReq mReqs[1]; // 0x54
-};
 
 extern "C" void func_001C5838(void* self, int a1, int a2, int a3)
 {
-    cFEAsyncReqs* s = (cFEAsyncReqs*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mReqs[a1].mValue = a2;
     s->mReqs[a1].mState = 1;
     s->mReqs[a1].mExtra = a3;
@@ -18051,7 +18008,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001C5878);
 #ifdef SKIP_ASM
 extern "C" void func_001C5878(void* self, int a1, int a2, int a3)
 {
-    cFEAsyncReqs* s = (cFEAsyncReqs*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mReqs[a1].mValue = a2;
     s->mReqs[a1].mState = 3;
     s->mReqs[a1].mExtra = a3;
@@ -18061,9 +18018,9 @@ extern "C" void func_001C5878(void* self, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C58A0);
 #ifdef SKIP_ASM
-extern "C" void func_001C58A0(void* self, int a1, cFEAsyncReq5810* a2)
+extern "C" void func_001C58A0(void* self, int a1, cFEAsyncReq* a2)
 {
-    cFEAsyncReqs5810* s = (cFEAsyncReqs5810*)self;
+    cFEAsyncTable* s = (cFEAsyncTable*)self;
     s->mReqs[a1] = *a2;
 }
 #endif
