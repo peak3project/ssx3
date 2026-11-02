@@ -21,6 +21,13 @@ struct sVec4 : t4Vector
     sVec4& operator+=(const sVec4& b);
 } __attribute__((aligned(16)));
 
+// The same vector with a constructor taking w by const reference (its callers compile differently from sVec4).
+struct sVec4R : t4Vector
+{
+    sVec4R() {}
+    sVec4R(float ax, float ay, float az, const float& aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
 //100%
 INCLUDE_ASM("camera/camera", cCamera_resetChaseControllerSwitches);
 #ifdef SKIP_ASM
@@ -2123,16 +2130,10 @@ void func_0031D700_2(void* spline, int n) __asm__("func_0031D700__FPv");
 extern "C" void func_0031D7E0(void* spline, float x, float y);
 extern "C" float func_0031DEE0(void* spline, float x);
 
-struct sVec_161060 {
-    float x, y, z, w;
-    sVec_161060() {}
-    sVec_161060(float a, float b, float c, const float& d) : x(a), y(b), z(c), w(d) {}
-} __attribute__((aligned(16)));
-
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec_161060 Sub_161060(const sVec_161060& a, const sVec_161060& b)
+static inline sVec4R Sub_161060(const sVec4R& a, const sVec4R& b)
 {
-    sVec_161060 r;
+    sVec4R r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -2145,7 +2146,7 @@ static inline sVec_161060 Sub_161060(const sVec_161060& a, const sVec_161060& b)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_161060(const sVec_161060& v)
+static inline float Length_161060(const sVec4R& v)
 {
     float r;
     int t;
@@ -2200,11 +2201,11 @@ extern "C" void* func_00161060(char* self, float* p0, float* p1, float* p2, floa
     *(float*)(self + 0x3B4) = dur;
     *(float*)(self + 0x3B8) = 0.0f;
     float total = 0.0f;
-    sVec_161060 prev(func_0031DEE0(sx, total), func_0031DEE0(sy, total), func_0031DEE0(sz, total), 1.0f);
+    sVec4R prev(func_0031DEE0(sx, total), func_0031DEE0(sy, total), func_0031DEE0(sz, total), 1.0f);
     for (int i = 1; i < 101; i++) {
         float t = (dur * (float)i * 0.009999999776482582f) <? dur;
-        sVec_161060 cur(func_0031DEE0(self + 0x390, t), func_0031DEE0(self + 0x39C, t), func_0031DEE0(self + 0x3A8, t), 1.0f);
-        sVec_161060 d = Sub_161060(cur, prev);
+        sVec4R cur(func_0031DEE0(self + 0x390, t), func_0031DEE0(self + 0x39C, t), func_0031DEE0(self + 0x3A8, t), 1.0f);
+        sVec4R d = Sub_161060(cur, prev);
         total += Length_161060(d);
         prev = cur;
     }
@@ -2254,18 +2255,12 @@ INCLUDE_ASM("camera/camera", func_001613F0);
 #ifdef SKIP_ASM
 extern "C" float func_0031DEE0(void* spline, float x);
 
-struct sVec_13F0 {
-    float x, y, z, w;
-    sVec_13F0() {}
-    sVec_13F0(float a, float b, float c, const float& d) : x(a), y(b), z(c), w(d) {}
-} __attribute__((aligned(16)));
-
-extern sVec_13F0 D_004FF160_v13F0 __asm__("D_004FF160");
+extern sVec4R D_004FF160_v13F0 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec_13F0 Sub_13F0(const sVec_13F0& a, const sVec_13F0& b)
+static inline sVec4R Sub_13F0(const sVec4R& a, const sVec4R& b)
 {
-    sVec_13F0 r;
+    sVec4R r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -2278,7 +2273,7 @@ static inline sVec_13F0 Sub_13F0(const sVec_13F0& a, const sVec_13F0& b)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_13F0(const sVec_13F0& v)
+static inline float Length_13F0(const sVec4R& v)
 {
     float r;
     int t;
@@ -2299,9 +2294,9 @@ static inline float Length_13F0(const sVec_13F0& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector at pointer times scalar).
-static inline sVec_13F0 ScaleP_13F0(float s, const sVec_13F0* v)
+static inline sVec4R ScaleP_13F0(float s, const sVec4R* v)
 {
-    sVec_13F0 r;
+    sVec4R r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -2316,9 +2311,9 @@ static inline sVec_13F0 ScaleP_13F0(float s, const sVec_13F0* v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec_13F0 Scale_13F0(float s, const sVec_13F0& v)
+static inline sVec4R Scale_13F0(float s, const sVec4R& v)
 {
-    sVec_13F0 r;
+    sVec4R r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -2333,9 +2328,9 @@ static inline sVec_13F0 Scale_13F0(float s, const sVec_13F0& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec_13F0 Add_13F0(const sVec_13F0& a, const sVec_13F0& b)
+static inline sVec4R Add_13F0(const sVec4R& a, const sVec4R& b)
 {
-    sVec_13F0 r;
+    sVec4R r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -2347,10 +2342,10 @@ static inline sVec_13F0 Add_13F0(const sVec_13F0& a, const sVec_13F0& b)
     return r;
 }
 
-static inline sVec_13F0 Get_13F0(char* self, int slot)
+static inline sVec4R Get_13F0(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEntry<sVec_13F0(void*)>* e = &(*(sVEntry<sVec_13F0(void*)>**)o)[slot];
+    sVEntry<sVec4R(void*)>* e = &(*(sVEntry<sVec4R(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -2362,18 +2357,18 @@ extern "C" void func_001613F0(char* self)
     float t = (*(float*)(self + 0x3B8) + 0.01666666753590107f) <? *(float*)(self + 0x3B4);
     float speed = *(float*)(self + 0x3BC) * 0.01666666753590107f;
     {
-        sVec_13F0 prev = *(sVec_13F0*)(self + 0x40);
-        sVec_13F0 cur(func_0031DEE0(sx, t), func_0031DEE0(sy, t), func_0031DEE0(sz, t), 1.0f);
-        sVec_13F0 d = Sub_13F0(cur, prev);
+        sVec4R prev = *(sVec4R*)(self + 0x40);
+        sVec4R cur(func_0031DEE0(sx, t), func_0031DEE0(sy, t), func_0031DEE0(sz, t), 1.0f);
+        sVec4R d = Sub_13F0(cur, prev);
         float len = Length_13F0(d);
         if (0.0f < len) {
             float t0 = *(float*)(self + 0x3B8);
             float nt = (t0 + (t - t0) / (len / speed)) <? *(float*)(self + 0x3B4);
             *(float*)(self + 0x3B8) = nt;
-            *(sVec_13F0*)(self + 0x40) = sVec_13F0(func_0031DEE0(sx, nt), func_0031DEE0(sy, nt), func_0031DEE0(sz, nt), 1.0f);
+            *(sVec4R*)(self + 0x40) = sVec4R(func_0031DEE0(sx, nt), func_0031DEE0(sy, nt), func_0031DEE0(sz, nt), 1.0f);
         }
     }
-    *(sVec_13F0*)(self + 0x20) = Add_13F0(Add_13F0(Get_13F0(self, 1), ScaleP_13F0(*(float*)(self + 0x3C4), &D_004FF160_v13F0)),
+    *(sVec4R*)(self + 0x20) = Add_13F0(Add_13F0(Get_13F0(self, 1), ScaleP_13F0(*(float*)(self + 0x3C4), &D_004FF160_v13F0)),
                                           Scale_13F0(*(float*)(self + 0x3C0), Get_13F0(self, 4)));
 }
 #endif
