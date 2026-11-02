@@ -16919,9 +16919,6 @@ extern int func_002AF370_5128(void) __asm__("func_002AF370");
 extern void func_002AEFA8_5128(int) __asm__("func_002AEFA8");
 extern void func_003D4B00_5128(void) __asm__("func_003D4B00");
 extern void func_003D4F10_5128(void) __asm__("func_003D4F10");
-struct P_5128 { char pad[0x30]; int m_a; int m_b; char pad2[0x928 - 0x38]; };
-extern struct P_5128 D_7610_5128[4] __asm__("D_00517610");
-extern struct P_5128 *D_0044F420_5128 __asm__("D_0044F420");
 extern unsigned char D_0044F42C_5128 __asm__("D_0044F42C");
 extern unsigned char D_0044F42D_5128 __asm__("D_0044F42D");
 extern unsigned int D_0044F430_5128 __asm__("D_0044F430");
@@ -16932,9 +16929,9 @@ extern int D_0044F438_5128 __asm__("D_0044F438");
 static inline int sel_5128(unsigned int idx) {
     if (D_0044F430_5128 == 0)
         D_0044F430_5128 = 0xFFFFFFFF;
-    if (idx < 4 && D_7610_5128[idx].m_b != 0) {
-        int v = D_7610_5128[idx].m_a;
-        D_0044F420_5128 = &D_7610_5128[idx];
+    if (idx < 4 && D_00517610[idx].f34 != 0) {
+        int v = D_00517610[idx].f30;
+        D_0044F420 = &D_00517610[idx];
         D_0044F430_5128 = v;
         return v;
     }
@@ -16955,7 +16952,7 @@ void func_003D5128_impl(unsigned char arg) {
     func_002AEFA8_5128(0);
     i = 0;
     do {
-        if (D_7610_5128[i].m_b != 0) {
+        if (D_00517610[i].f34 != 0) {
             if (sel_5128(i) != 0) {
                 func_003D4B00_5128();
                 func_003D4F10_5128();
@@ -16965,7 +16962,7 @@ void func_003D5128_impl(unsigned char arg) {
     } while (i < 4);
     func_002AEFA8_5128(1);
     D_0044F430_5128 = 0;
-    D_0044F420_5128 = 0;
+    D_0044F420 = 0;
 }
 #endif
 
