@@ -17537,20 +17537,19 @@ void func_003D4B00(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4BB0);
 #ifdef SKIP_ASM
-extern unsigned int D_0044F430_4BB0 __asm__("D_0044F430");
 
 static inline int sel_4BB0(unsigned int idx) {
-    if (D_0044F430_4BB0 == 0)
-        D_0044F430_4BB0 = 0xFFFFFFFF;
+    if (D_0044F430 == 0)
+        D_0044F430 = 0xFFFFFFFF;
     if (idx < 4 && D_00517610[idx].f34 != 0) {
         int v = D_00517610[idx].f30;
         D_0044F420 = &D_00517610[idx];
-        D_0044F430_4BB0 = v;
+        D_0044F430 = v;
         return v;
     }
     if ((int)idx != -1)
-        D_0044F430_4BB0 = 0;
-    return D_0044F430_4BB0;
+        D_0044F430 = 0;
+    return D_0044F430;
 }
 
 int func_003D4BB0(int key) {
