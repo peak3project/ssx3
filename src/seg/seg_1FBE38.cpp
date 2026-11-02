@@ -6019,15 +6019,13 @@ static inline char *refToPtr_5D90(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_5D90(unsigned i) { if (i == 0) return 0; return refToPtr_5D90(i); }
 extern "C" void func_00355A78_5D90(void*, void*) __asm__("func_00355A78");
 struct O_5D90 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
-struct V3_5D90 { float x, y, z; };
-extern V3_5D90 D_004C9098_5D90 __asm__("D_004C9098");
 extern unsigned D_5D90 __asm__("D_004A5870");
 extern sBindEnd_1FBE38 D_004A5874;
 extern int D_004A5878;
 extern int D_004A3DA0;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_5D90 { int idx; int val; int pad; int type; };
-extern "C" V3_5D90 func_00305D90(int n, Ent_5D90 *e) {
+extern "C" cLunoValue func_00305D90(int n, Ent_5D90 *e) {
     if (D_004A5878 == 0) {
         D_5D90 = 0xFFFFFFFF;
         D_004A5878 = 1;
@@ -6071,7 +6069,7 @@ extern "C" V3_5D90 func_00305D90(int n, Ent_5D90 *e) {
                 func_00355A78_5D90(p, obj);
         }
     }
-    return D_004C9098_5D90;
+    return D_004C9098;
 }
 #endif
 
