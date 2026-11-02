@@ -204,6 +204,47 @@ static inline char *lookupRef_1FBE38(unsigned id) {
 }
 
 
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector vSub_1FBE38(const t4Vector &a, const t4Vector &b) {
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vLen_1FBE38(const t4Vector &v) {
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+// True when the race slot (-1 = none) holds a rider that is not computer-controlled.
+static inline bool isIdle_1FBE38(int slot) {
+    if (slot != -1) {
+        cBeing *being = D_004A28A8->game->race->riders[slot];
+        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+        return !rider->isComputer();
+    }
+    return false;
+}
+
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", checkActiveNode);
 #ifdef SKIP_ASM
@@ -2079,37 +2120,6 @@ void operator_delete(int*);
 extern char D_00489740_E840[] __asm__("D_00489740");
 extern char D_00489730_E840[] __asm__("D_00489730");
 extern "C" void cMoveNode_addParticle_E840(void*, void*) __asm__("cMoveNode_addParticle");
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector vSub_E840(const t4Vector &a, const t4Vector &b) {
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_E840(const t4Vector &v) {
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 static inline sRace *lvl_E840() { return D_004A28A8->game->race; }
 static inline int nearViewer_E840(const t4Vector &pos) {
     int notEdit = *(int*)(D_004A28A4 + 0x550) != 2;
@@ -2117,14 +2127,14 @@ static inline int nearViewer_E840(const t4Vector &pos) {
         return 1;
     int n = lvl_E840()->numPlayers;
     for (int i = 0; i < n; i++) {
-        t4Vector d = vSub_E840(pos, *lvl_E840()->players[i]->rider->getPosition());
-        if (vLen_E840(d) < 30000.0f)
+        t4Vector d = vSub_1FBE38(pos, *lvl_E840()->players[i]->rider->getPosition());
+        if (vLen_1FBE38(d) < 30000.0f)
             return 1;
     }
     n = lvl_E840()->numPlayers2;
     for (int i = 0; i < n; i++) {
-        t4Vector d = vSub_E840(pos, *lvl_E840()->players2[i]->rider->getPosition());
-        if (vLen_E840(d) < 30000.0f)
+        t4Vector d = vSub_1FBE38(pos, *lvl_E840()->players2[i]->rider->getPosition());
+        if (vLen_1FBE38(d) < 30000.0f)
             return 1;
     }
     return 0;
@@ -3326,17 +3336,9 @@ extern "C" void func_0030B9A0(cWScriptMan*, int, unsigned, unsigned);
 extern int D_004A56B4_1120 __asm__("D_004A56B4");
 struct T12_1120 { unsigned a; unsigned b; sBindEnd_1FBE38 f; };
 extern T12_1120 D_004FBBD0_1120 __asm__("D_004FBBD0");
-static inline bool isIdle_1120(int slot) {
-    if (slot != -1) {
-        cBeing *being = D_004A28A8->game->race->riders[slot];
-        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
-        return !rider->isComputer();
-    }
-    return false;
-}
 extern "C" cLunoValue* func_00301120(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     int slot = D_004A3DD8->being;
-    if (isIdle_1120(slot)) {
+    if (isIdle_1FBE38(slot)) {
         if (D_004A56B4_1120 == 0) {
             D_004FBBD0_1120.a = 0xFFFFFFFF;
             D_004FBBD0_1120.b = 0xFFFFFFFF;
@@ -4440,30 +4442,11 @@ extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003032C0);
 #ifdef SKIP_ASM
-// PORT: PS2-only VU0 inline asm (vector length).
 void* func_00226618(void*);
-static inline float len_32C0(const t4Vector &v) {
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 extern "C" cLunoValue* func_003032C0(cLunoValue* ret) {
     cBeing *being = D_004A28A8->game->race->riders[D_004A3DD8->being];
     cRider_1FBE38 *rider = (cRider_1FBE38*)being;
-    float len = len_32C0(*rider->getVelocity());
+    float len = vLen_1FBE38(*rider->getVelocity());
     float res = len * D_004A28A8->f14;
     ret->type = 2;
     *(float*)func_00226618(ret) = res;
@@ -4474,30 +4457,11 @@ extern "C" cLunoValue* func_003032C0(cLunoValue* ret) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00303380);
 #ifdef SKIP_ASM
-// PORT: PS2-only VU0 inline asm (vector length).
 void* func_00226618(void*);
-static inline float len_3380(const t4Vector &v) {
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 extern "C" cLunoValue* func_00303380(cLunoValue* ret) {
     cBeing *being = D_004A28A8->game->race->riders[D_004A3DD8->being];
     cRider_1FBE38 *rider = (cRider_1FBE38*)being;
-    float len = len_3380(*rider->getVelocity());
+    float len = vLen_1FBE38(*rider->getVelocity());
     ret->type = 2;
     *(float*)func_00226618(ret) = len;
     return ret;
@@ -4871,16 +4835,8 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303EC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int* func_00226610(void*);
-static inline bool isIdle_3EC8(int slot) {
-    if (slot != -1) {
-        cBeing *being = D_004A28A8->game->race->riders[slot];
-        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
-        return !rider->isComputer();
-    }
-    return false;
-}
 extern "C" cLunoValue* func_00303EC8(cLunoValue* ret) {
-    if (isIdle_3EC8(D_004A3DD8->being)) {
+    if (isIdle_1FBE38(D_004A3DD8->being)) {
         ret->type = 1;
         *func_00226610(ret) = 1;
     } else {
@@ -5443,37 +5399,6 @@ extern int D_004A583C;
 extern const int D_00446690[];
 extern int D_004A3BD8[2];  // shake type per camera-shake keyword
 extern "C" void func_0015E360(char* cam, int type, float amount, float dist);
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector vSub_50F0(const t4Vector &a, const t4Vector &b) {
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_50F0(const t4Vector &v) {
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 // Translation row of a transform (by value).
 static inline t4Vector trans_50F0(const t4Matrix *m) { return m->row[3]; }
 extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
@@ -5526,8 +5451,8 @@ extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
                 const t4Vector *rp = game->race->players[i]->rider->getPosition();
                 cInstanceNode_1FBE38 *node = *(cInstanceNode_1FBE38**)(obj + 0xC);
                 t4Matrix *m = node ? node->v24() : (t4Matrix*)(obj + 0x10);
-                t4Vector d = vSub_50F0(*rp, trans_50F0(m));
-                float dist = vLen_50F0(d);
+                t4Vector d = vSub_1FBE38(*rp, trans_50F0(m));
+                float dist = vLen_1FBE38(d);
                 cRider_1FBE38 *r = game->race->players[i]->rider;
                 int view = r->mViewIndex;
                 if (r->mIsLocal)
