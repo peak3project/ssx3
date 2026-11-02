@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festateloadscreen", cFELoadScreen_load);
 #ifdef SKIP_ASM
@@ -27,11 +35,6 @@ extern void* D_0047C538[];
 extern void* D_0047C6D8[];
 extern void* D_0047C608[];
 
-struct sVE_233438 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sEngine_233438 {
     char pad0[0x8];
@@ -82,7 +85,7 @@ extern "C" void cFELoadScreen_load(void* self)
 {
     {
         char* g = (char*)D_004A289C;
-        sVE_233438* vt = *(sVE_233438**)(g + 0x10D8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(g + 0x10D8);
         vt[44].fn(g + vt[44].delta, 0x100);
     }
     void* eng = func_00397B08(cMemMan_alloc(0x70, D_0047B698, 0x100, 0));
@@ -149,16 +152,11 @@ struct sLsOpt_3640 {
 };
 extern sLsOpt_3640 D_00534B30_3640[] __asm__("D_00534B30");
 
-struct sVE_3640 {
-    short delta;
-    short index;
-    int (*fn)(void*, void*, const char*, int, int, int);
-};
 
 static inline int loadTex_3640(char* data, const char* name)
 {
     char* g = (char*)D_004A289C;
-    sVE_3640* vt = *(sVE_3640**)(g + 0x10D8);
+    sVEntry<int(void*, void*, const char*, int, int, int)>* vt = *(sVEntry<int(void*, void*, const char*, int, int, int)>**)(g + 0x10D8);
     return vt[46].fn(g + vt[46].delta, data + *(int*)(data + 0x14), name, 0, 1, -1);
 }
 
@@ -215,11 +213,6 @@ struct sVec3i_38C8 {
     sVec3i_38C8(int a, int b, int c) { x = a; y = b; z = c; }
 };
 
-struct sVE_38C8 {
-    short delta;
-    short index;
-    void (*fn)(void*, sVec3i_38C8);
-};
 
 extern "C" void func_002338C8(void)
 {
@@ -229,7 +222,7 @@ extern "C" void func_002338C8(void)
     int* p = &D_004A4324;
     *p = 0;
     char* g = (char*)D_004A289C;
-    sVE_38C8* vt = *(sVE_38C8**)(g + 0x10D8);
+    sVEntry<void(void*, sVec3i_38C8)>* vt = *(sVEntry<void(void*, sVec3i_38C8)>**)(g + 0x10D8);
     vt[15].fn(g + vt[15].delta, sVec3i_38C8(0, 0, 0));
     func_0028F768(func_0028B180());
 }
@@ -324,16 +317,6 @@ extern "C" void func_00233930(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_002339F8);
 #ifdef SKIP_ASM
-struct sVEntryI002339F8 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sVEntryV002339F8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern void* D_004A289C;
 extern "C" int func_00231D60(void* self);
@@ -342,7 +325,7 @@ extern "C" void func_00397DF8(void* engine);
 extern "C" int func_002339F8(void* self)
 {
     char* g = (char*)D_004A289C;
-    sVEntryI002339F8* vt = *(sVEntryI002339F8**)(g + 0x10D8);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(g + 0x10D8);
     if (vt[17].fn(g + vt[17].delta) == 0) {
         return 0;
     }
@@ -350,7 +333,7 @@ extern "C" int func_002339F8(void* self)
         func_00397DF8(*(void**)((char*)self + 0xC));
     }
     g = (char*)D_004A289C;
-    sVEntryV002339F8* vt2 = *(sVEntryV002339F8**)(g + 0x10D8);
+    sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)(g + 0x10D8);
     vt2[20].fn(g + vt2[20].delta);
     return 1;
 }
@@ -397,11 +380,6 @@ extern "C" void func_00233AD0(void) {
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233AF0);
 #ifdef SKIP_ASM
-struct sVEntry_func_00233AF0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 // PORT: the unit declares func_00233AF0 as `void* (void*)`; the body also uses $a1 (obj).
 // Bound by asm label.
@@ -409,7 +387,7 @@ void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
 
 void* func_00233AF0_2(void* self, void* obj)
 {
-    sVEntry_func_00233AF0* vt = *(sVEntry_func_00233AF0**)obj;
+    sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)obj;
     return vt[1].fn((char*)obj + vt[1].delta, self, 4);
 }
 #endif
@@ -417,11 +395,6 @@ void* func_00233AF0_2(void* self, void* obj)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233B28);
 #ifdef SKIP_ASM
-struct sVEntry_func_00233B28 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 // PORT: the unit declares func_00233B28 as `void* (void*)`; the body also uses $a1 (obj).
 // Bound by asm label.
@@ -429,7 +402,7 @@ void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
 
 void* func_00233B28_2(void* self, void* obj)
 {
-    sVEntry_func_00233B28* vt = *(sVEntry_func_00233B28**)obj;
+    sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)obj;
     return vt[2].fn((char*)obj + vt[2].delta, self, 4);
 }
 #endif
@@ -607,16 +580,11 @@ static inline float vLen_233CD8(const sVec4_233CD8& v)
     return r;
 }
 
-struct sVEntry_233CD8 {
-    short delta;
-    short index;
-    sVec4_233CD8* (*fn)(void*);
-};
 
 static inline sVec4_233CD8* riderPos_233CD8(char* rider)
 {
     char* obj = rider + 0x6C0;
-    sVEntry_233CD8* vt = *(sVEntry_233CD8**)obj;
+    sVEntry<sVec4_233CD8*(void*)>* vt = *(sVEntry<sVec4_233CD8*(void*)>**)obj;
     return vt[2].fn(obj + vt[2].delta);
 }
 
@@ -763,18 +731,13 @@ extern "C" void func_00234008(sLoadScreen00234008* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festateloadscreen", func_002340B8);
 #ifdef SKIP_ASM
-struct sVEntry_func_002340B8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_002340B8(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
-    sVEntry_func_002340B8* e = &(*(sVEntry_func_002340B8**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_002340B8**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
 }
 #endif
@@ -782,18 +745,13 @@ extern "C" void func_002340B8(void* self, void* stream)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festateloadscreen", func_00234120);
 #ifdef SKIP_ASM
-struct sVEntry_func_00234120 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00234120(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
-    sVEntry_func_00234120* e = &(*(sVEntry_func_00234120**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00234120**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
 }
 #endif
@@ -843,11 +801,6 @@ extern void* D_004A28A4;
 extern void* D_004A28A8;
 extern signed char D_00535C10[];
 
-struct sVE_2341D0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 struct sGM_2341D0 {
     char pad0[0x10];
@@ -876,7 +829,7 @@ extern "C" void func_002341D0(void* self, int mode)
     int base = *(int*)(*(char**)((char*)D_004A2C68 + 0xC) + 0x7C);
     cBENewRaceInterface_setNumberAI(race, n);
     {
-        sVE_2341D0* vt = *(sVE_2341D0**)(race + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(race + 0xC);
         vt[1].fn(race + vt[1].delta);
     }
     for (; i < n; i++) {
@@ -884,7 +837,7 @@ extern "C" void func_002341D0(void* self, int mode)
         func_001473D0(player, i + base, gm->boards[base + i]);
     }
     {
-        sVE_2341D0* vt = *(sVE_2341D0**)(player + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(player + 0xC);
         vt[1].fn(player + vt[1].delta);
     }
     switch (mode) {
@@ -1100,11 +1053,6 @@ struct sRaceMan_234750 {
     int f8C;
 };
 
-struct sVE_234750 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sTbl_234750 {
     char pad[0x250];
@@ -1131,7 +1079,7 @@ extern "C" void func_00234750(void* self)
     }
     if (mode != 4) {
         char* o = *(char**)((char*)D_004A2C68 + 0xC);
-        sVE_234750* vt = *(sVE_234750**)(o + 0xCC);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 0xCC);
         vt[5].fn(o + vt[5].delta, 3);
         *(int*)(*(char**)((char*)D_004A2C68 + 0xC) + 0x14) = 1;
     }
@@ -1191,22 +1139,17 @@ INCLUDE_ASM("fe/festateloadscreen", func_00234990);
 // PORT: the unit declares func_00233AF0 as `void* (void*)`; the body also uses $a1 (obj).
 void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
 
-struct sVEntry_func_00234990 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00234990(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
-    sVEntry_func_00234990* e = &(*(sVEntry_func_00234990**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00234990**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_00234990**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x1C, 4);
-    e = &(*(sVEntry_func_00234990**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x8, 4);
 }
 #endif
@@ -1217,22 +1160,17 @@ INCLUDE_ASM("fe/festateloadscreen", func_00234A30);
 // PORT: the unit declares func_00233B28 as `void* (void*)`; the body also uses $a1 (obj).
 void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
 
-struct sVEntry_func_00234A30 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00234A30(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
-    sVEntry_func_00234A30* e = &(*(sVEntry_func_00234A30**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00234A30**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_00234A30**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x1C, 4);
-    e = &(*(sVEntry_func_00234A30**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x8, 4);
 }
 #endif
