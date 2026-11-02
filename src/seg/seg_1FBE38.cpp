@@ -3029,15 +3029,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003005E8);
 extern int D_004A3DD8_05E8 __asm__("D_004A3DD8");
 extern char *D_004A47B8_05E8 __asm__("D_004A47B8");
 struct O_05E8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35(); };
-struct V3_05E8 { float x, y, z; };
-extern V3_05E8 D_004C9098_05E8 __asm__("D_004C9098");
 extern unsigned D_05E8 __asm__("D_004A5678");
 extern sBindEnd_1FBE38 D_004A567C;
 extern int D_004A5680;
 extern int D_004A3C38;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_05E8 { int idx; int val; int pad; int type; };
-extern "C" V3_05E8 func_003005E8(int n, Ent_05E8 *e) {
+extern "C" cLunoValue func_003005E8(int n, Ent_05E8 *e) {
     if (D_004A5680 == 0) {
         D_05E8 = 0xFFFFFFFF;
         D_004A5680 = 1;
@@ -3073,7 +3071,7 @@ extern "C" V3_05E8 func_003005E8(int n, Ent_05E8 *e) {
     O_05E8 *o = *(O_05E8**)(obj + 0xC);
     if (o)
         o->v35();
-    return D_004C9098_05E8;
+    return D_004C9098;
 }
 #endif
 
