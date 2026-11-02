@@ -7673,25 +7673,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C1B80);
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2268);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { int h; int pad[3]; } V_2268;
-typedef struct {
-    char pad0[0xE8C];
-    V_2268 v[1];
-    char padE9C[0x1AA0 - 0xE9C];
-    int f1AA0;
-    int f1AA4;
-    int f1AA8;
-    char pad1AAC;
-    unsigned char f1AAD;
-    char pad1AAE[0x1AD4 - 0x1AAE];
-    int f1AD4;
-    int f1AD8;
-    char pad1ADC[0x1AF8 - 0x1ADC];
-    int f1AF8;
-    char pad1AFC[0x1B38 - 0x1AFC];
-    int f1B38;
-} H_2268;
-extern H_2268 D_0050AD00_2268 __asm__("D_0050AD00");
 extern int D_00512B20;
 extern void func_003C0B10_2268(int, int, int) __asm__("func_003C0B10");
 extern void func_003C8018(void);
@@ -7717,9 +7698,9 @@ int func_003C2268(void) {
     while (D_0050A8E8.f180 < t) {
         func_003C60E0();
     }
-    if (D_0050AD00_2268.f1AA8 >= 0) {
+    if (D_0050AD00.f1AA8 >= 0) {
         func_00424880(2);
-        if (func_00423AA0_2268(2, D_0050AD00_2268.f1AA8) > 0) {
+        if (func_00423AA0_2268(2, D_0050AD00.f1AA8) > 0) {
             func_004248E8_2268(2);
         }
     }
@@ -7731,28 +7712,28 @@ int func_003C2268(void) {
         func_00423BF0(D_00512B20);
         func_00423BB0(D_00512B20);
     }
-    func_00423DB0(D_0050AD00_2268.f1AA4);
+    func_00423DB0(D_0050AD00.f1AA4);
     for (i = 0; i < 1; i++) {
-        func_0042AD08_2268(D_0050AD00_2268.v[i].h);
+        func_0042AD08_2268(D_0050AD00.fE88[i].f04);
     }
     func_003CBC00(0);
-    D_0050AD00_2268.f1AAD = 0;
+    D_0050AD00.f1AAD = 0;
     func_003B58A0();
-    if (D_0050AD00_2268.f1AD4 != 0) {
-        func_003B5E98(D_0050AD00_2268.f1AD4);
-        D_0050AD00_2268.f1AD4 = 0;
-        D_0050AD00_2268.f1AD8 = 0;
+    if (D_0050AD00.f1AD4 != 0) {
+        func_003B5E98(D_0050AD00.f1AD4);
+        D_0050AD00.f1AD4 = 0;
+        D_0050AD00.f1AD8 = 0;
     }
-    if (D_0050AD00_2268.f1AF8 != 0) {
-        func_003B5E98(D_0050AD00_2268.f1AF8);
-        D_0050AD00_2268.f1AF8 = 0;
+    if (D_0050AD00.f1AF8 != 0) {
+        func_003B5E98(D_0050AD00.f1AF8);
+        D_0050AD00.f1AF8 = 0;
     }
-    if (D_0050AD00_2268.f1B38 != 0) {
-        func_003B5E98(D_0050AD00_2268.f1B38);
-        D_0050AD00_2268.f1B38 = 0;
+    if (D_0050AD00.f1B38 != 0) {
+        func_003B5E98(D_0050AD00.f1B38);
+        D_0050AD00.f1B38 = 0;
     }
     func_003C8018();
-    func_003B5E98(D_0050AD00_2268.f1AA0);
+    func_003B5E98(D_0050AD00.f1AA0);
     func_003B58D8();
     return 0;
 }
