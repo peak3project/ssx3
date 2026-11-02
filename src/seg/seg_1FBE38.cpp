@@ -3863,7 +3863,7 @@ extern "C" void func_003E6574(void*, void*, int);
 struct Chk_1D78 { virtual void v01(); virtual void v02(); virtual int v03(char*); };
 int* func_00226610_1D78(void*) __asm__("func_00226610__FPv");
 struct Ent_1D78 { int idx; int val; int pad; int type; };
-extern "C" void* func_00301D78(void* self, int n, Ent_1D78 *e) {
+extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, Ent_1D78 *e) {
     if (D_004A5718_1D78 == 0) {
         D_004A5710_1D78 = 0xFFFFFFFF;
         D_004A5718_1D78 = 1;
@@ -3909,15 +3909,15 @@ extern "C" void* func_00301D78(void* self, int n, Ent_1D78 *e) {
         char *r = a ? a - 0x6C0 : 0;
         Chk_1D78 *c = (Chk_1D78*)(r + 0x6C0);
         if (c->v03(obj)) {
-            *(int*)((char*)self + 8) = found;
-            *func_00226610_1D78(self) = found;
+            ret->type = found;
+            *func_00226610_1D78(ret) = found;
             goto done;
         }
     }
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610_1D78(self) = 0;
+    ret->type = 1;
+    *func_00226610_1D78(ret) = 0;
 done:
-    return self;
+    return ret;
 }
 #endif
 
