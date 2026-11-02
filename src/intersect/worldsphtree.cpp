@@ -28,6 +28,12 @@ struct sWsCell {
     int level, x, y, z;
 };
 
+// Axis-aligned box as two float[4] corners (min, max).
+struct sWsBox {
+    float min[4];
+    float max[4];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -445,13 +451,9 @@ INCLUDE_ASM("intersect/worldsphtree", func_003309D8);
 #ifdef SKIP_ASM
 typedef int (*Test_3309D8)(void*);
 
-struct sBox_3309D8 {
-    float min[4];
-    float max[4];
-};
 
-struct sBox_3309D8;
-typedef sBox_3309D8* (*GetBox_3309D8)(void*);
+struct sWsBox;
+typedef sWsBox* (*GetBox_3309D8)(void*);
 struct sObj_3309D8 {
     int pad00[3];
     sWsVtSlot* vt;
@@ -471,10 +473,10 @@ struct sCtx_3309D8 {
     sNode_3309D8** list;
     int* count;
     int pad08;
-    sBox_3309D8* box;
+    sWsBox* box;
 };
 
-static inline int overlapNode_3309D8(const sBox_3309D8* b, const sNode_3309D8* n)
+static inline int overlapNode_3309D8(const sWsBox* b, const sNode_3309D8* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -485,7 +487,7 @@ static inline int overlapNode_3309D8(const sBox_3309D8* b, const sNode_3309D8* n
     return r;
 }
 
-static inline int overlapBox_3309D8(const sBox_3309D8* b, const sBox_3309D8* o)
+static inline int overlapBox_3309D8(const sWsBox* b, const sWsBox* o)
 {
     int r = 0;
     if (b->min[0] <= o->max[0] && b->max[0] >= o->min[0] &&
@@ -511,7 +513,7 @@ extern "C" void func_003309D8(sCtx_3309D8* ctx, void* tree)
             sWsVtSlot* vt = p->obj->vt;
             if (((Test_3309D8)vt[44].fn)((char*)p->obj + vt[44].delta)) {
                 sWsVtSlot* vt2 = p->obj->vt;
-                sBox_3309D8* b = ((GetBox_3309D8)vt2[45].fn)((char*)p->obj + vt2[45].delta);
+                sWsBox* b = ((GetBox_3309D8)vt2[45].fn)((char*)p->obj + vt2[45].delta);
                 if (overlapBox_3309D8(ctx->box, b)) {
                     int* cnt = ctx->count;
                     int n = *cnt;
@@ -583,7 +585,7 @@ extern "C" void func_00330BA8(sSelf_330BA8* self, void* box)
     ctx.list = (sNode_3309D8**)self->list;
     ctx.count = &self->count;
     *(int*)&ctx.pad08 = 0x40;
-    ctx.box = (sBox_3309D8*)box;
+    ctx.box = (sWsBox*)box;
     self->count = 0;
     visit_330BA8(t, 0, flags, c, box);
     visit_330BA8(t, 1, flags, c, box);
@@ -673,7 +675,7 @@ extern "C" void func_00331450(sSelf_1450* self, void* box)
     ctx.list = (sNode_3309D8**)self->arr;
     ctx.count = &self->count;
     *(int*)&ctx.pad08 = 0x200;
-    ctx.box = (sBox_3309D8*)box;
+    ctx.box = (sWsBox*)box;
     self->count = 0;
     visit_1450(t, 0, c, box);
     visit_1450(t, 1, c, box);
@@ -715,7 +717,7 @@ struct sCtx2_1E90 {
 extern "C" void descendRec_1E90(void* self, sCtx2_1E90* ctx) __asm__("func_00340C20");
 extern "C" void helpX_1E90(char* flag, sCtx2_1E90* ctx, sCtx2_1E90* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033A3D8");
 
-static inline int overlapPatch_1E90(const sBox_3309D8* b, const sPatch_1E90* n)
+static inline int overlapPatch_1E90(const sWsBox* b, const sPatch_1E90* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -781,8 +783,8 @@ extern "C" void func_00331E90(sSelf_1E90* self, void* box)
     ctx.b.count = &self->count2;
     *(int*)&ctx.a.pad08 = 0x40;
     *(int*)&ctx.b.pad08 = 0x40;
-    ctx.a.box = (sBox_3309D8*)box;
-    ctx.b.box = (sBox_3309D8*)box;
+    ctx.a.box = (sWsBox*)box;
+    ctx.b.box = (sWsBox*)box;
     self->count = 0;
     sCtx_3309D8* c2 = &ctx.b;
     *c2->count = 0;
@@ -829,7 +831,7 @@ struct sCtx2_2DB8 {
 extern "C" void descendRec_2DB8(void* self, sCtx2_2DB8* ctx) __asm__("func_00340DC0");
 extern "C" void helpX_2DB8(char* flag, sCtx2_2DB8* ctx, sCtx2_2DB8* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033B748");
 
-static inline int overlapPatch_2DB8(const sBox_3309D8* b, const sPatch_2DB8* n)
+static inline int overlapPatch_2DB8(const sWsBox* b, const sPatch_2DB8* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -906,15 +908,15 @@ extern "C" void func_00332DB8(sSelf_2DB8* self, void* box)
     ctx.b.count = &self->count2;
     *(int*)&ctx.a.pad08 = 0x40;
     *(int*)&ctx.b.pad08 = 0x40;
-    ctx.a.box = (sBox_3309D8*)box;
-    ctx.b.box = (sBox_3309D8*)box;
+    ctx.a.box = (sWsBox*)box;
+    ctx.b.box = (sWsBox*)box;
     self->count = 0;
     sCtx_3309D8* c2 = &ctx.b;
     *c2->count = 0;
     ctx.c.list = (sNode_3309D8**)self->list3;
     ctx.c.count = &self->count3;
     *(int*)&ctx.c.pad08 = 0x200;
-    ctx.c.box = (sBox_3309D8*)box;
+    ctx.c.box = (sWsBox*)box;
     sCtx_3309D8* c3 = &ctx.c;
     *c3->count = 0;
     sRoot_330BA8* t = self->root;
@@ -972,14 +974,10 @@ struct sHit_333EF8 {
     int pad74[3];
 };
 
-struct sBox_333EF8;
+struct sWsBox;
 typedef int (*Test_333EF8)(void*);
-typedef sBox_333EF8* (*GetBox_333EF8)(void*);
+typedef sWsBox* (*GetBox_333EF8)(void*);
 
-struct sBox_333EF8 {
-    float min[4];
-    float max[4];
-};
 
 struct sObj_333EF8 {
     int pad00[3];
@@ -1040,7 +1038,7 @@ static inline int overlapNode_333EF8(const sQuery_333EF8* q, const sNode_333EF8*
     return r;
 }
 
-static inline int overlapBox_333EF8(const sQuery_333EF8* q, const sBox_333EF8* o)
+static inline int overlapBox_333EF8(const sQuery_333EF8* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
@@ -1118,7 +1116,7 @@ extern "C" int func_00333EF8(void* vself, void* vq, sHit_003342D0* vhits, int ca
             sWsVtSlot* vt = node->obj->vt;
             if (((Test_333EF8)vt[44].fn)((char*)node->obj + vt[44].delta)) {
                 sWsVtSlot* vt2 = node->obj->vt;
-                sBox_333EF8* b = ((GetBox_333EF8)vt2[45].fn)((char*)node->obj + vt2[45].delta);
+                sWsBox* b = ((GetBox_333EF8)vt2[45].fn)((char*)node->obj + vt2[45].delta);
                 if (overlapBox_333EF8(q, b)) {
                     n += func_00334888(q, node, (char*)hits + n * 0x80, cap - n, 2);
                 }
@@ -1196,14 +1194,10 @@ extern "C" float func_003342D0(void* self, char* q, sHit_003342D0* out, int a3)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00334458);
 #ifdef SKIP_ASM
-struct sBox_334458;
+struct sWsBox;
 typedef int (*Test_334458)(void*);
-typedef sBox_334458* (*GetBox_334458)(void*);
+typedef sWsBox* (*GetBox_334458)(void*);
 
-struct sBox_334458 {
-    float min[4];
-    float max[4];
-};
 
 struct sQuery_334458 {
     char pad00[0x20];
@@ -1245,7 +1239,7 @@ static inline int overlapNode_334458(const sQuery_334458* q, const sNode_334458*
     return r;
 }
 
-static inline int overlapBox_334458(const sQuery_334458* q, const sBox_334458* o)
+static inline int overlapBox_334458(const sQuery_334458* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
@@ -1272,7 +1266,7 @@ extern "C" int func_00334458(sList_334458* self, sQuery_334458* q, char* buf, in
             sWsVtSlot* vt = node->obj->vt;
             if (((Test_334458)vt[44].fn)((char*)node->obj + vt[44].delta)) {
                 sWsVtSlot* vt2 = node->obj->vt;
-                sBox_334458* b = ((GetBox_334458)vt2[45].fn)((char*)node->obj + vt2[45].delta);
+                sWsBox* b = ((GetBox_334458)vt2[45].fn)((char*)node->obj + vt2[45].delta);
                 if (overlapBox_334458(q, b)) {
                     n += func_00334888(q, node, buf + n * 0x80, cap - n, mode);
                 }
@@ -1498,14 +1492,10 @@ extern "C" void func_00335960(void* vctx, void* vobj)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00335B90);
 #ifdef SKIP_ASM
-struct sBox_335B90;
+struct sWsBox;
 typedef int (*Test_335B90)(void*);
-typedef sBox_335B90* (*GetBox_335B90)(void*);
+typedef sWsBox* (*GetBox_335B90)(void*);
 
-struct sBox_335B90 {
-    float min[4];
-    float max[4];
-};
 
 struct sQuery_335B90 {
     char pad00[0x20];
@@ -1550,7 +1540,7 @@ static inline int overlapNode_335B90(const sQuery_335B90* q, const sNode_335B90*
     return r;
 }
 
-static inline int overlapBox_335B90(const sQuery_335B90* q, const sBox_335B90* o)
+static inline int overlapBox_335B90(const sQuery_335B90* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
@@ -1582,7 +1572,7 @@ extern "C" void func_00335B90(void* vctx, void* vnode)
         sWsVtSlot* vt = node->obj->vt;
         if (((Test_335B90)vt[44].fn)((char*)node->obj + vt[44].delta)) {
             sWsVtSlot* vt2 = node->obj->vt;
-            sBox_335B90* b = ((GetBox_335B90)vt2[45].fn)((char*)node->obj + vt2[45].delta);
+            sWsBox* b = ((GetBox_335B90)vt2[45].fn)((char*)node->obj + vt2[45].delta);
             if (overlapBox_335B90(ctx->q, b)) {
                 collect_335B90(ctx, node);
             }
@@ -1907,14 +1897,10 @@ extern "C" int func_003369D8(sCell_369D8* self, float* pos, t4Vector* outP, t4Ve
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00336D40);
 #ifdef SKIP_ASM
-struct sBox_336D40;
+struct sWsBox;
 typedef int (*Test_336D40)(void*);
-typedef sBox_336D40* (*GetBox_336D40)(void*);
+typedef sWsBox* (*GetBox_336D40)(void*);
 
-struct sBox_336D40 {
-    float min[4];
-    float max[4];
-};
 
 struct sQuery_336D40 {
     char pad00[0x20];
@@ -1960,7 +1946,7 @@ static inline int overlapNode_336D40(const sQuery_336D40* q, const sNode_336D40*
     return r;
 }
 
-static inline int overlapBox_336D40(const sQuery_336D40* q, const sBox_336D40* o)
+static inline int overlapBox_336D40(const sQuery_336D40* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
@@ -1991,7 +1977,7 @@ extern "C" void func_00336D40(void* vctx, void* vnode)
         sWsVtSlot* vt = node->obj->vt;
         if (((Test_336D40)vt[44].fn)((char*)node->obj + vt[44].delta)) {
             sWsVtSlot* vt2 = node->obj->vt;
-            sBox_336D40* b = ((GetBox_336D40)vt2[45].fn)((char*)node->obj + vt2[45].delta);
+            sWsBox* b = ((GetBox_336D40)vt2[45].fn)((char*)node->obj + vt2[45].delta);
             if (overlapBox_336D40(ctx->q, b)) {
                 collect_336D40(ctx, node, mode);
             }
@@ -2564,7 +2550,7 @@ static inline void gather_A3D8(sObj_A3D8* p, sCb_A3D8* cb)
 {
     sCtx_3309D8* q = &cb->b;
     for (; p != 0; p = p->next) {
-        const sBox_3309D8* bx = q->box;
+        const sWsBox* bx = q->box;
         int hit = 0;
         if (bx->min[0] <= p->bmax[0] && bx->max[0] >= p->bmin[0] &&
             bx->min[1] <= p->bmax[1] && bx->max[1] >= p->bmin[1] &&
@@ -2737,7 +2723,7 @@ static inline void gather_B748(sObj_B748* p, sCb_B748* cb)
 {
     sCtx_3309D8* q = &cb->b;
     for (; p != 0; p = p->next) {
-        const sBox_3309D8* bx = q->box;
+        const sWsBox* bx = q->box;
         int hit = 0;
         if (bx->min[0] <= p->bmax[0] && bx->max[0] >= p->bmin[0] &&
             bx->min[1] <= p->bmax[1] && bx->max[1] >= p->bmin[1] &&
@@ -3888,7 +3874,7 @@ struct sTree_340C20 {
     sObj_340C20* objs;          // 0x24
 };
 
-static inline int overlapObj_340C20(const sBox_3309D8* b, const sObj_340C20* n)
+static inline int overlapObj_340C20(const sWsBox* b, const sObj_340C20* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -3928,16 +3914,12 @@ INCLUDE_ASM("intersect/worldsphtree", func_00340DC0);
 struct sCtx_3309D8;
 extern "C" void func_003309D8(sCtx_3309D8* ctx, void* tree);
 
-struct sBox_340DC0 {
-    float min[4];
-    float max[4];
-};
 
 struct sSub_340DC0 {
     void** list;
     int* count;
     int pad08;
-    sBox_340DC0* box;
+    sWsBox* box;
 };
 
 struct sCtx_340DC0 {
@@ -3968,7 +3950,7 @@ static inline void add_340DC0(sSub_340DC0* s, void* p)
     *cnt = n + 1;
 }
 
-static inline int overlap_340DC0(const sBox_340DC0* b, const sObjNode_340DC0* n)
+static inline int overlap_340DC0(const sWsBox* b, const sObjNode_340DC0* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
