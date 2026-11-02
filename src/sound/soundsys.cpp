@@ -90,6 +90,9 @@ extern sSndCallback D_004A36E8[];
 extern sSndCallback D_004A36F0[];
 extern sSndCallback D_004A3700[];
 
+// g++ 2.95 vtable entry (this-adjust delta, index, function) for a method taking only self, returning int.
+struct sSndVtI { short delta; short index; int (*fn)(void*); };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1432,7 +1435,6 @@ extern "C" int func_002934D0(void *self, int kind, void *arg)
 INCLUDE_ASM("sound/soundsys", func_00293538);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sSsVt_3538 { short delta; short index; int (*fn)(void*); };
 extern const func_00290B58_sCurve D_00482B78;
 extern const func_00290B58_sCurve D_00482BA0;
 
@@ -1448,7 +1450,7 @@ void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch)
         level = level * speed * 10.0f;
     }
     char* obj = (char*)&rider->mVtbl;
-    sSsVt_3538* vt = *(sSsVt_3538**)obj;
+    sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
     float prev = *(float*)((char*)getLevels_3538(self) + (idx << 2));
     float d = prev - level;
@@ -1470,7 +1472,6 @@ void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch)
 INCLUDE_ASM("sound/soundsys", func_00293740);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sSsVt_3740 { short delta; short index; int (*fn)(void*); };
 extern const func_00290B58_sCurve D_00482BC8;
 extern const func_00290B58_sCurve D_00482BF0;
 
@@ -1486,7 +1487,7 @@ void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch)
         level = level * speed * 10.0f;
     }
     char* obj = (char*)&rider->mVtbl;
-    sSsVt_3740* vt = *(sSsVt_3740**)obj;
+    sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
     float prev = *(float*)((char*)getLevels_3740(self) + (idx << 2));
     float d = prev - level;
@@ -1508,7 +1509,6 @@ void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch)
 INCLUDE_ASM("sound/soundsys", func_00293948);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sSsVt_3948 { short delta; short index; int (*fn)(void*); };
 extern const func_00290B58_sCurve D_00482C18;
 extern const func_00290B58_sCurve D_00482C40;
 
@@ -1524,7 +1524,7 @@ void func_00293948_impl(void* self, cRider* rider, int* volume, int* pitch)
         level = level * speed * 10.0f;
     }
     char* obj = (char*)&rider->mVtbl;
-    sSsVt_3948* vt = *(sSsVt_3948**)obj;
+    sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
     float prev = *(float*)((char*)getLevels_3948(self) + (idx << 2));
     float d = prev - level;
@@ -1573,7 +1573,6 @@ extern "C" void func_00293B90(void) {
 //100%
 INCLUDE_ASM("sound/soundsys", func_00293BB0);
 #ifdef SKIP_ASM
-struct sSsVt_3BB0 { short delta; short index; int (*fn)(void*); };
 extern const func_00290B58_sCurve D_00482C68;
 extern const func_00290B58_sCurve D_00482C90;
 
@@ -1584,7 +1583,7 @@ extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch
     float pressure = rider->mAudioPressure;
     float level = rider->mAudioEdging + rider->mAudioBraking;
     char* obj = (char*)&rider->mVtbl;
-    sSsVt_3BB0* vt = *(sSsVt_3BB0**)obj;
+    sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
     float prev = *(float*)((char*)getLevels_3BB0(self) + (idx << 2));
     float d = prev - level;
@@ -1609,7 +1608,6 @@ extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00293DC0);
 #ifdef SKIP_ASM
-struct sSsVt_3DC0 { short delta; short index; int (*fn)(void*); };
 extern const func_00290B58_sCurve D_00482CB8;
 extern const func_00290B58_sCurve D_00482CE0;
 
@@ -1624,7 +1622,7 @@ extern "C" void func_00293DC0(void* self, cRider* rider, int* volume, int* pitch
     }
     float pressure = rider->mAudioPressure;
     char* obj = (char*)&rider->mVtbl;
-    sSsVt_3DC0* vt = *(sSsVt_3DC0**)obj;
+    sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
     float prev = *(float*)((char*)getLevels_3DC0(self) + (idx << 2));
     float d = prev - level;
@@ -1645,7 +1643,6 @@ extern "C" void func_00293DC0(void* self, cRider* rider, int* volume, int* pitch
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00293FC8);
 #ifdef SKIP_ASM
-struct sSsVt_3FC8 { short delta; short index; int (*fn)(void*); };
 extern const func_00290B58_sCurve D_00482D08;
 
 extern "C" void func_00293FC8(void* self, cRider* rider, int* volume, int* pitch)
@@ -1653,7 +1650,7 @@ extern "C" void func_00293FC8(void* self, cRider* rider, int* volume, int* pitch
     float pressure = rider->mAudioPressure;
     float level = rider->mAudioEdging + rider->mAudioBraking;
     char* obj = (char*)&rider->mVtbl;
-    sSsVt_3FC8* vt = *(sSsVt_3FC8**)obj;
+    sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
     float prev = *(float*)((char*)self + (idx << 2) + 0x5990);
     float d = prev - level;
@@ -1688,7 +1685,6 @@ extern "C" int func_00288AE0(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
-struct sSsVt4678 { short delta; short index; int (*fn)(void*); };
 
 extern "C" void func_00294678(void* self, char* rider)
 {
@@ -1696,14 +1692,14 @@ extern "C" void func_00294678(void* self, char* rider)
     int ok = s == 1 || s == 3;
     if (!ok) {
         char* o = rider + 0x6C0;
-        sSsVt4678* e = &(*(sSsVt4678**)o)[7];
+        sSndVtI* e = &(*(sSndVtI**)o)[7];
         func_00294880(self, e->fn(o + e->delta), 1);
         return;
     }
     int idx = -1;
     {
         char* o = rider + 0x6C0;
-        sSsVt4678* e = &(*(sSsVt4678**)o)[7];
+        sSndVtI* e = &(*(sSndVtI**)o)[7];
         func_00294880(self, e->fn(o + e->delta), 0);
     }
     float x = *(float*)(*(char**)(rider + 0x788) + 0x98);
@@ -1824,12 +1820,11 @@ extern sCurve_48D0 D_00482D30;
 // The unit declares func_00290B58 with other curve structs; bound by asm label.
 extern "C" float func_00290B58_48D0(sCurve_48D0* c, float x) __asm__("func_00290B58");
 
-struct sVE_48D0 { short delta; short index; int (*fn)(void*); };
 
 static inline int vcall_48D0(char* obj, int slot)
 {
     char* o = obj + 0x6C0;
-    sVE_48D0* vt = *(sVE_48D0**)o;
+    sSndVtI* vt = *(sSndVtI**)o;
     return vt[slot].fn(o + vt[slot].delta);
 }
 
@@ -2263,13 +2258,12 @@ extern "C" int func_002B5F60(void* mgr, void* evt, int id, void* rider, int vol)
 extern "C" void func_00295628(void* self, void* evt, int h, int t, int a, int idx);
 extern void* D_004A52D4;
 
-struct sSsVt6088 { short delta; short index; int (*fn)(void*); };
 
 extern "C" void func_00296088(void* self, char* rider, char* evt, int idx)
 {
     if (*(void**)(evt + 0x8C) == 0) return;
     char* obj = rider + 0x6C0;
-    sSsVt6088* e = &(*(sSsVt6088**)obj)[5];
+    sSndVtI* e = &(*(sSndVtI**)obj)[5];
     if (func_00288B40(self, e->fn(obj + e->delta), 100.0f) < 0) return;
     if (func_00295028_p(self, evt, idx) != 0) return;
     sSndVEntryVec* vt = *(sSndVEntryVec**)obj;
@@ -2360,12 +2354,11 @@ extern signed char D_00535C11[];
 extern struct func_00290B58_sCurve D_00482DA0;
 
 }
-struct sVE_6310 { short delta; short index; int (*fn)(void*); };
 
 
 static inline int vcall_6310(char* o, int slot)
 {
-    struct sVE_6310* vt = *(struct sVE_6310**)o;
+    struct sSndVtI* vt = *(struct sSndVtI**)o;
     return vt[slot].fn(o + vt[slot].delta);
 }
 
@@ -2485,12 +2478,11 @@ struct sSndOwner_6868 {
 };
 extern func_00290B58_sCurve D_00482DA0_6868 __asm__("D_00482DA0");
 
-struct sVE_6868 { short delta; short index; int (*fn)(void*); };
 
 
 static inline int vcall_6868(char* o, int slot)
 {
-    sVE_6868* vt = *(sVE_6868**)o;
+    sSndVtI* vt = *(sSndVtI**)o;
     return vt[slot].fn(o + vt[slot].delta);
 }
 
@@ -2627,12 +2619,11 @@ struct sSndOwner_6E80 {
 };
 extern func_00290B58_sCurve D_00482DA0_6E80 __asm__("D_00482DA0");
 
-struct sVE_6E80 { short delta; short index; int (*fn)(void*); };
 
 
 static inline int vcall_6E80(char* o, int slot)
 {
-    sVE_6E80* vt = *(sVE_6E80**)o;
+    sSndVtI* vt = *(sSndVtI**)o;
     return vt[slot].fn(o + vt[slot].delta);
 }
 
@@ -5213,12 +5204,11 @@ struct sOutDEF0 {
 };
 extern "C" void func_002DA1C0(sOutDEF0* out, sV3DEF0* in);
 
-struct sVE_DEF0 { short delta; short index; int (*fn)(void*); };
 struct sVEk_DEF0 { short delta; short index; void (*fn)(void*, sSndCallback); };
 
 static inline int vcall_DEF0(char* o, int slot)
 {
-    sVE_DEF0* vt = *(sVE_DEF0**)o;
+    sSndVtI* vt = *(sSndVtI**)o;
     return vt[slot].fn(o + vt[slot].delta);
 }
 
@@ -5905,16 +5895,11 @@ extern "C" void func_0029F5E0(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029F620);
 #ifdef SKIP_ASM
-struct sSndVEntry29F620 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" int func_0029F620(void* self, void* obj)
 {
     void* sub = (char*)obj + 0x6C0;
-    sSndVEntry29F620* vt = *(sSndVEntry29F620**)sub;
+    sSndVtI* vt = *(sSndVtI**)sub;
     if (vt[7].fn((char*)sub + vt[7].delta) == 0) {
         return 0xE;
     }
@@ -6630,7 +6615,6 @@ extern "C" int func_0029F330(void* self);
 extern "C" int func_002A1D48(void* self, void* obj);
 extern float D_004A36D8;
 
-struct sSsVt1138 { short delta; short index; int (*fn)(void*); };
 
 // PORT: callers declare func_002A1138 as (void*, int, int); the body takes (self, rider, obj).
 void func_002A1138_impl(void* self, char* rider, void* obj) __asm__("func_002A1138");
@@ -6643,7 +6627,7 @@ void func_002A1138_impl(void* self, char* rider, void* obj)
     if (rider == 0) rider = *(char**)((char*)func_0028B1D8() + 0x2C);
     if (obj == 0) obj = *(void**)((char*)func_0028B1D8() + 0x28);
     char* o = rider + 0x6C0;
-    sSsVt1138* e = &(*(sSsVt1138**)o)[5];
+    sSndVtI* e = &(*(sSndVtI**)o)[5];
     if (func_00288B40(self, e->fn(o + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20D3, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     int r = func_0029F330(rider);
@@ -6663,7 +6647,6 @@ extern "C" int func_0029F330(void* self);
 extern "C" int func_002A1D48(void* self, void* obj);
 extern float D_004A36D8;
 
-struct sSsVt1280 { short delta; short index; int (*fn)(void*); };
 
 // PORT: callers declare func_002A1280 as (void*, int, int); the body takes (self, rider, obj).
 void func_002A1280_impl(void* self, char* rider, void* obj) __asm__("func_002A1280");
@@ -6673,7 +6656,7 @@ void func_002A1280_impl(void* self, char* rider, void* obj)
     if (func_0029F0A0(self) == 0) return;
     if (func_00288AE0(self) != 0) return;
     char* o = rider + 0x6C0;
-    sSsVt1280* e = &(*(sSsVt1280**)o)[5];
+    sSndVtI* e = &(*(sSndVtI**)o)[5];
     if (func_00288B40(self, e->fn(o + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20D4, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     int r = func_0029F330(rider);
@@ -6718,7 +6701,7 @@ void func_002A1400_impl(void* self, char* rider)
     if (func_0029F0A0(self) == 0) return;
     if (func_00288AE0(self) != 0) return;
     char* o = rider + 0x6C0;
-    sSsVt1280* e = &(*(sSsVt1280**)o)[5];
+    sSndVtI* e = &(*(sSndVtI**)o)[5];
     if (func_00288B40(self, e->fn(o + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20B9, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     int r = func_0029F330(rider);
@@ -6751,13 +6734,13 @@ extern "C" void func_002A1560(void* self, char* rider)
     if (func_00288AE0(self) != 0) return;
     char* o = rider + 0x6C0;
     int check = 0;
-    sSsVt1280* e9 = &(*(sSsVt1280**)o)[9];
+    sSndVtI* e9 = &(*(sSndVtI**)o)[9];
     if (e9->fn(o + e9->delta) != 0 || *(int*)(rider + 0x87C) == 0) check = 1;
     if (check && func_00285D98_p(self, -1) != rider) return;
     char* bm = (char*)self + 0x5560;
     if (func_002B0E28(bm, 0) == 0) return;
     char* o2 = rider + 0x6C0;
-    sSsVt1280* e = &(*(sSsVt1280**)o2)[5];
+    sSndVtI* e = &(*(sSndVtI**)o2)[5];
     if (func_00288B40(self, e->fn(o2 + e->delta), D_004A36D8) < 0) return;
     if (func_002B1458(bm, 0, 0x20B8, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     int r = func_0029F330(rider);
@@ -7816,7 +7799,7 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
     if (func_002A4248_s(self) != 0 && rider != 0) {
         sSndCallback* key = D_004A36E8;
         char* o = rider + 0x6C0;
-        sSsVt1280* e = &(*(sSsVt1280**)o)[7];
+        sSndVtI* e = &(*(sSndVtI**)o)[7];
         char* bank = **(char***)((char*)self + 0x118) + 0x1D8;
         int v = e->fn(o + e->delta);
         func_002ADCA0_34D0(bank, 1000, *key, 0, v, 0, 0, 0);
@@ -7876,7 +7859,7 @@ extern "C" void func_002A3708(void* self, char* rider)
         char* o = rider + 0x6C0;
         char* p = **(char***)((char*)self + 0x118) + 0x1D8;
         sSndCallback* key = D_004A36E8;
-        sSsVt1280* e = &(*(sSsVt1280**)o)[7];
+        sSndVtI* e = &(*(sSndVtI**)o)[7];
         int v = e->fn(o + e->delta);
         func_002ADCA0_3708(p, 1000, *key, 0, v, 0, 0, 0);
         return;
