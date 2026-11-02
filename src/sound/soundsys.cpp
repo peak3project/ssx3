@@ -119,6 +119,9 @@ struct sSndVtCb { short delta; short index; void (*fn)(void*, sSndCallback); };
 // g++ 2.95 vtable entry for a method taking (self, int, int), returning int.
 struct sSndVtIII { short delta; short index; int (*fn)(void*, int, int); };
 
+// g++ 2.95 vtable entry for a variadic method returning char*.
+struct sSndVtVar { short delta; short index; char* (*fn)(void*, ...); };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2857,7 +2860,6 @@ struct sSs7950Vec4 {
     sSs7950Vec4() {}
 } __attribute__((aligned(16)));
 
-struct sSs7950Vt { short delta; short index; char* (*fn)(void*, ...); };
 
 
 static inline int snd7950Commit(void* vself, void* tgt, float f, int pri)
@@ -2903,16 +2905,16 @@ extern "C" void func_00297950(cBankSys* self, char* obj, int type, int id)
     *(char**)(sl + 0x5A04) = obj;
     if (id == -1) {
         char* inner = *(char**)(obj + 0xC);
-        sSs7950Vt* vt = *(sSs7950Vt**)(inner + 0xC);
+        sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
         sSs7950Vec4 p;
         p = *(sSs7950Vec4*)(vt[24].fn(inner + vt[24].delta) + 0x30);
         *(sSs7950Vec4*)(sl + 0x5A10) = p;
     } else {
         char* inner = *(char**)(obj + 0xC);
-        sSs7950Vt* vt = *(sSs7950Vt**)(inner + 0xC);
+        sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
         if (vt[26].fn(inner + vt[26].delta) != 0) {
             char* o = *(char**)(obj + 0xC);
-            sSs7950Vt* vt2 = *(sSs7950Vt**)(o + 0xC);
+            sSndVtVar* vt2 = *(sSndVtVar**)(o + 0xC);
             sSs7950Vec4 p;
             p = *(sSs7950Vec4*)(vt2[29].fn(o + vt2[29].delta, id) + 0x30);
             *(sSs7950Vec4*)(sl + 0x5A10) = p;
@@ -2994,7 +2996,6 @@ struct sSsVec4FA0 {
     sSsVec4FA0() {}
 } __attribute__((aligned(16)));
 
-struct sSsVtFA0 { short delta; short index; char* (*fn)(void*, ...); };
 
 extern "C" void func_00297FA0(void* self)
 {
@@ -3006,15 +3007,15 @@ extern "C" void func_00297FA0(void* self)
             func_002AD5F0(**(char***)((char*)self + 0x118) + 0x1D8, *(int*)(s + 0x5A24), 1, 0.0f);
             *(int*)(s + 0x5A00) = 0;
         } else if (*(int*)(s + 0x5A08) == -1) {
-            sSsVtFA0* vt = *(sSsVtFA0**)(inner + 0xC);
+            sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
             sSsVec4FA0 p;
             p = *(sSsVec4FA0*)(vt[24].fn(inner + vt[24].delta) + 0x30);
             *(sSsVec4FA0*)(s + 0x5A10) = p;
         } else {
-            sSsVtFA0* vt = *(sSsVtFA0**)(inner + 0xC);
+            sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
             if (vt[26].fn(inner + vt[26].delta) != 0) {
                 char* o = *(char**)(*(char**)(s + 0x5A04) + 0xC);
-                sSsVtFA0* vt2 = *(sSsVtFA0**)(o + 0xC);
+                sSndVtVar* vt2 = *(sSndVtVar**)(o + 0xC);
                 sSsVec4FA0 p;
                 p = *(sSsVec4FA0*)(vt2[29].fn(o + vt2[29].delta, *(int*)(s + 0x5A08)) + 0x30);
                 *(sSsVec4FA0*)(s + 0x5A10) = p;
