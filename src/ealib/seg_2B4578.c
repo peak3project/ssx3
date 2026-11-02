@@ -3523,26 +3523,17 @@ int func_003B9880(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B98C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { int a[4]; int v; int pad[0x17]; } E_98C0;
 extern void func_003B58A0();
 extern void func_003B58D8();
 extern int func_003B9920(int);
-extern E_98C0 D_0050A120_A120_98C0[] __asm__("D_0050A120");
 
 int func_003B98C0(void) {
-    E_98C0 *tbl;
-    int *p;
     int i;
 
-    i = 0xF;
     func_003B58A0();
-    tbl = D_0050A120_A120_98C0;
-    p = &tbl->v;
-    do {
-        i -= 1;
-        func_003B9920(*p);
-        p += 0x1C;
-    } while (i >= 0);
+    for (i = 0; i < 16; i++) {
+        func_003B9920(D_0050A120.f000[i].f10);
+    }
     func_003B58D8();
     return 0;
 }
