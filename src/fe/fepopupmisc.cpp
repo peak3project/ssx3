@@ -29,6 +29,20 @@ struct sPopupItem {
 };
 extern sPopupItem D_004C6C08[];
 
+// The pending-popup list func_001E39F8 returns (from the BE new-player interface): up to 25 item ids with a
+// flag each, a shown-bit mask and the count.
+struct sPopupListEntry {
+    int id;
+    unsigned char flag;
+    char pad_0x5[3];
+};
+struct sPopupList {
+    sPopupListEntry entries[25];
+    int mask;                   // 0xC8
+    unsigned char count;        // 0xCC
+};
+extern "C" sPopupList* func_001E39F8();
+
 //100%
 INCLUDE_ASM("fe/fepopupmisc", cFEPopupVideoCalibration_onCreateScreen);
 #ifdef SKIP_ASM
@@ -4372,24 +4386,12 @@ extern "C" void func_001E31B8(int idx);
 extern "C" unsigned char func_001E3100(int i);
 extern "C" void* func_0039F9D8(void* list, int hash);
 
-struct sPopupListEntry_2FE0 {
-    int id;
-    unsigned char flag;
-    char pad_0x5[3];
-};
-struct sPopupList_2FE0 {
-    sPopupListEntry_2FE0 entries[25];
-    int mask;
-    unsigned char count;
-};
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupList_2FE0* func_001E39F8_list2FE0() __asm__("func_001E39F8");
 
 
 
 extern "C" void func_001E2FE0(int id, unsigned char flag)
 {
-    sPopupList_2FE0* t = func_001E39F8_list2FE0();
+    sPopupList* t = func_001E39F8();
     if (t->count == 0x19)
         func_001E31B8(0);
     if (D_004C6C08[id].f8 == 1)
@@ -4434,22 +4436,10 @@ extern "C" unsigned char func_001E3100(int i)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E31B8);
 #ifdef SKIP_ASM
-struct sPopupListEntry_31B8 {
-    int id;
-    unsigned char field_0x4;
-    char pad_0x5[3];
-};
-struct sPopupList_31B8 {
-    sPopupListEntry_31B8 entries[25];
-    int mask;
-    unsigned char count;
-};
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupList_31B8* func_001E39F8_list31B8() __asm__("func_001E39F8");
 
 extern "C" void func_001E31B8(int idx)
 {
-    sPopupList_31B8* t = func_001E39F8_list31B8();
+    sPopupList* t = func_001E39F8();
     int i;
     for (i = idx; i < t->count - 1; i++) {
         t->entries[i] = t->entries[i + 1];
@@ -4467,23 +4457,11 @@ extern "C" void func_001E31B8(int idx)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3268);
 #ifdef SKIP_ASM
-struct sPopupListEntry {
-    int id;
-    unsigned char field_0x4;
-    char pad_0x5[3];
-};
-struct sPopupList {
-    sPopupListEntry entries[25];
-    int mask;
-    unsigned char count;
-};
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupList* func_001E39F8_list() __asm__("func_001E39F8");
 extern "C" void func_001E31B8(int idx);
 
 extern "C" void func_001E3268(int id)
 {
-    sPopupList* t = func_001E39F8_list();
+    sPopupList* t = func_001E39F8();
     int i;
     for (i = 0; i < t->count; i++) {
         if (id == t->entries[i].id) {
@@ -4497,25 +4475,13 @@ extern "C" void func_001E3268(int id)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E32C8);
 #ifdef SKIP_ASM
-struct sPopupListEntry_32C8 {
-    int id;
-    unsigned char field_0x4;
-    char pad_0x5[3];
-};
-struct sPopupList_32C8 {
-    sPopupListEntry_32C8 entries[25];
-    int mask;
-    unsigned char count;
-};
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupList_32C8* func_001E39F8_list32C8() __asm__("func_001E39F8");
 extern "C" void func_001E31B8(int idx);
 
 extern "C" void func_001E32C8(int type)
 {
     int n = 0;
     int j = 0;
-    sPopupList_32C8* t = func_001E39F8_list32C8();
+    sPopupList* t = func_001E39F8();
     for (; n < t->count; n++) {
         sPopupItem* a = &D_004C6C08[t->entries[j].id];
         if (type == a->def) {
@@ -4530,12 +4496,10 @@ extern "C" void func_001E32C8(int type)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3388);
 #ifdef SKIP_ASM
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupList* func_001E39F8_list() __asm__("func_001E39F8");
 
 extern "C" int func_001E3388(int id)
 {
-    sPopupList* t = func_001E39F8_list();
+    sPopupList* t = func_001E39F8();
     int i;
     for (i = 0; i < t->count; i++) {
         if (id == t->entries[i].id) {
@@ -4546,26 +4510,23 @@ extern "C" int func_001E3388(int id)
 }
 #endif
 
-extern "C" void* func_001E39F8(void* self);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E33E8__FPv);
 #ifdef SKIP_ASM
 unsigned char func_001E33E8(void* self)
 {
-    return *(unsigned char*)((char*)func_001E39F8(self) + 0xcc);
+    return func_001E39F8()->count;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3408);
 #ifdef SKIP_ASM
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupList* func_001E39F8_list() __asm__("func_001E39F8");
 
 extern "C" int func_001E3408()
 {
-    sPopupList* t = func_001E39F8_list();
+    sPopupList* t = func_001E39F8();
     int n = 0;
     int i;
     for (i = 0; i < t->count; i++) {
@@ -4581,13 +4542,11 @@ extern "C" int func_001E3408()
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3460);
 #ifdef SKIP_ASM
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupList* func_001E39F8_list() __asm__("func_001E39F8");
 extern "C" int func_001E3620(int idx);
 
 extern "C" int func_001E3460(int* out)
 {
-    sPopupList* t = func_001E39F8_list();
+    sPopupList* t = func_001E39F8();
     int i;
     for (i = 0; i < t->count; i++) {
         int bit = 1 << i;
@@ -4660,43 +4619,30 @@ extern "C" int func_001E3570(void)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E35F0);
 #ifdef SKIP_ASM
-extern "C" void* func_001E39F8(void* self);
 
 extern "C" int func_001E35F0(void* self)
 {
-    return (int)func_001E39F8(self) + ((int)self << 3);
+    return (int)func_001E39F8() + ((int)self << 3);
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3620);
 #ifdef SKIP_ASM
-struct sPopupEntry8 {
-    int field_0x0;
-    unsigned char field_0x4;
-    char pad_0x5[3];
-};
-struct sPopupTable8 {
-    sPopupEntry8 entries[1];
-};
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupTable8* func_001E39F8_get() __asm__("func_001E39F8");
 
 extern "C" int func_001E3620(int idx)
 {
-    return func_001E39F8_get()->entries[idx].field_0x0;
+    return func_001E39F8()->entries[idx].id;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3650);
 #ifdef SKIP_ASM
-// PORT: unit declares func_001E39F8(void*), but its body takes no arguments
-extern "C" sPopupTable8* func_001E39F8_get() __asm__("func_001E39F8");
 
 extern "C" unsigned char func_001E3650(int idx)
 {
-    return func_001E39F8_get()->entries[idx].field_0x4;
+    return func_001E39F8()->entries[idx].flag;
 }
 #endif
 
@@ -4811,9 +4757,9 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* func_00147908(void* iface, int a1);
 
-extern "C" void* func_001E39F8(void* self)
+extern "C" sPopupList* func_001E39F8()
 {
-    return func_00147908(cBE_getInterface_Fv(cBE_getBE(), 1), 0);
+    return (sPopupList*)func_00147908(cBE_getInterface_Fv(cBE_getBE(), 1), 0);
 }
 #endif
 
@@ -5209,7 +5155,7 @@ extern "C" void func_001E4200(void* self, void* widget, unsigned int event)
     if (widget == 0) {
         return;
     }
-    sPopupList* list = func_001E39F8_list();
+    sPopupList* list = func_001E39F8();
     int n1 = func_001E2BB8(4, 1);
     int n2 = func_001E33E8_noarg();
     switch (event) {
@@ -5637,7 +5583,7 @@ extern "C" void func_001E4C78(void* self_, int idx, int slot, int id, unsigned c
     char buf[16];
     sPopupItem* a = &D_004C6C08[id];
     sPopupDef* b = &D_00441630[a->def];
-    char* p = (char*)func_001E39F8(self);
+    sPopupList* p = func_001E39F8();
     if (idx == -1) {
         if (b->enabled != 0) {
             if (id == b->start) {
@@ -5653,7 +5599,7 @@ extern "C" void func_001E4C78(void* self_, int idx, int slot, int id, unsigned c
         func_001E4878(self, self->aBC[slot]);
     } else {
         int mask = 1 << idx;
-        if (*(int*)(p + 0xC8) & mask) {
+        if (p->mask & mask) {
             func_001E4840(self, self->a9C[slot]);
             func_001E4840(self, self->aBC[slot]);
         } else {
@@ -6088,7 +6034,6 @@ extern "C" void func_001E5800(void* self, void* a1, unsigned int msg)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E58E0);
 #ifdef SKIP_ASM
-extern "C" char* func_001E39F8_58E0() __asm__("func_001E39F8");
 extern "C" int func_001E33E8_58E0() __asm__("func_001E33E8__FPv");
 
 extern "C" void func_001E58E0(void* self)
@@ -6108,10 +6053,10 @@ extern "C" void func_001E58E0(void* self)
         *(int*)((char*)self + 0x6C) = *(int*)((char*)self + 0x6C) + 1;
         func_001E5428(self);
     } else if (func_001E3408() > 0) {
-        char* h = func_001E39F8_58E0();
+        sPopupList* h = func_001E39F8();
         int bit;
         *(int*)((char*)self + 0x68) = func_001E3460(&bit);
-        *(int*)(h + 0xC8) |= 1 << bit;
+        h->mask |= 1 << bit;
         *(int*)((char*)self + 0x6C) = func_001E33E8_58E0() - bit;
         func_001E5428(self);
     } else {
