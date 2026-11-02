@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovstateenterlodge", cOVState_ENTERLODGE_onCreateScreen);
 #ifdef SKIP_ASM
@@ -455,16 +463,11 @@ extern char D_004A2430[];
 extern char D_004A2438[];
 extern char D_004A2138[];
 
-struct sVEntry_1F7958 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 static inline int Loc1F7958(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_1F7958* vt = *(sVEntry_1F7958**)(obj + 4);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -662,17 +665,12 @@ extern "C" int func_001F80C8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstateenterlodge", func_001F80D8);
 #ifdef SKIP_ASM
-struct sVEntry_001F80D8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_001F80D8(void* self, void* a1, int a2)
 {
     if (a1 != 0) {
         if (a2 == 5) {
-            sVEntry_001F80D8* vt = *(sVEntry_001F80D8**)((char*)self + 0x8);
+            sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)self + 0x8);
             vt[26].fn((char*)self + vt[26].delta);
         }
     }
