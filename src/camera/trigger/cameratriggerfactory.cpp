@@ -1520,23 +1520,19 @@ extern "C" void func_001736E0(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00173E40);
 #ifdef SKIP_ASM
-struct sM_173E40 {
-    float m[4][4];
-} __attribute__((aligned(16)));
-
 struct sPair_173E40 {
     t4Vector a;
     t4Vector b;
 };
 
-extern sM_173E40 D_004FF1A0;
+extern t4Matrix D_004FF1A0;
 extern t4Vector D_004FF150;
 extern t4Vector D_004FF160_v173E40 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
-extern "C" sPair_173E40 func_0031B748(sM_173E40* m);
+extern "C" sPair_173E40 func_0031B748(t4Matrix* m);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
-static inline void vu0CopyMtx_173E40(sM_173E40* dst, const sM_173E40* src)
+static inline void vu0CopyMtx_173E40(t4Matrix* dst, const t4Matrix* src)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1555,7 +1551,7 @@ static inline void vu0CopyMtx_173E40(sM_173E40* dst, const sM_173E40* src)
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, dst = a * b).
-static inline void vu0MulMtx_173E40(sM_173E40* dst, const sM_173E40* a, const sM_173E40* b)
+static inline void vu0MulMtx_173E40(t4Matrix* dst, const t4Matrix* a, const t4Matrix* b)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1594,7 +1590,7 @@ static inline void vu0MulMtx_173E40(sM_173E40* dst, const sM_173E40* a, const sM
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_173E40(sM_173E40* m, const t4Vector& v)
+static inline void vu0TransMtx_173E40(t4Matrix* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1619,9 +1615,9 @@ static inline void SinCos_173E40(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void RotAxis_173E40(sM_173E40* m, const t4Vector& axis, float angle)
+static inline void RotAxis_173E40(t4Matrix* m, const t4Vector& axis, float angle)
 {
-    sM_173E40 r;
+    t4Matrix r;
     float s;
     float c;
     float one = 1.0f;
@@ -1636,28 +1632,28 @@ static inline void RotAxis_173E40(sM_173E40* m, const t4Vector& axis, float angl
     float sx = s * x;
     float sy = s * y;
     float sz = s * z;
-    r.m[0][0] = tx * x + c;
-    r.m[1][0] = tx * y + sz;
-    r.m[2][0] = tx * z - sy;
-    r.m[0][1] = ty * x - sz;
-    r.m[1][1] = ty * y + c;
-    r.m[2][1] = ty * z + sx;
-    r.m[0][2] = tz * x + sy;
-    r.m[1][2] = tz * y - sx;
-    r.m[2][2] = tz * z + c;
-    r.m[3][0] = 0.0f;
-    r.m[3][1] = 0.0f;
-    r.m[3][2] = 0.0f;
-    r.m[0][3] = 0.0f;
-    r.m[1][3] = 0.0f;
-    r.m[2][3] = 0.0f;
-    r.m[3][3] = one;
+    r.row[0].x = tx * x + c;
+    r.row[1].x = tx * y + sz;
+    r.row[2].x = tx * z - sy;
+    r.row[0].y = ty * x - sz;
+    r.row[1].y = ty * y + c;
+    r.row[2].y = ty * z + sx;
+    r.row[0].z = tz * x + sy;
+    r.row[1].z = tz * y - sx;
+    r.row[2].z = tz * z + c;
+    r.row[3].x = 0.0f;
+    r.row[3].y = 0.0f;
+    r.row[3].z = 0.0f;
+    r.row[0].w = 0.0f;
+    r.row[1].w = 0.0f;
+    r.row[2].w = 0.0f;
+    r.row[3].w = one;
     vu0MulMtx_173E40(m, m, &r);
 }
 
 extern "C" sPair_173E40 func_00173E40(char* src)
 {
-    sM_173E40 m;
+    t4Matrix m;
     vu0CopyMtx_173E40(&m, &D_004FF1A0);
     vu0TransMtx_173E40(&m, *(t4Vector*)(src + 0x40));
     RotAxis_173E40(&m, D_004FF150, -*(float*)(src + 0x54));
