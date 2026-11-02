@@ -2067,12 +2067,8 @@ extern "C" void func_001242B0(void* self, void* p);
 extern "C" void func_0011B3F8(void* self);
 extern void* D_004A28A8;
 
-struct sQuad_120F20
-{
-    float v[4];
-} __attribute__((aligned(16)));
 // D_004FF120 is declared later in the unit as a 4-aligned sVec4; this view gives the lq/sq copy.
-extern sQuad_120F20 D_004FF120_q120F20 __asm__("D_004FF120");
+extern t4Vector D_004FF120_q120F20 __asm__("D_004FF120");
 
 static inline int IsState1_120F20(void* obj)
 {
@@ -2107,7 +2103,7 @@ skip:
             p = (char*)self->mAnimModel->bones + (self->unk_8A0 << 5);
         func_001242B0(self, p);
     }
-    *(sQuad_120F20*)&self->unk_9D0 = D_004FF120_q120F20;
+    self->unk_9D0 = D_004FF120_q120F20;
     self->unk_A30 = 0;
     self->unk_5B8 = 0xFFFFFFFF;
     func_0011B3F8(self);
@@ -2140,13 +2136,8 @@ extern "C" int func_00116120(void* rider, int a, int b);
 extern "C" void func_001200D0(cRider* self);
 extern "C" void func_00120D90(cRider* self);
 
-struct sVec4_1210B0
-{
-    float v[4];
-} __attribute__((aligned(16)));
-
 // PORT: PS2-only VU0 inline asm; the PC port needs a C fallback (v *= s).
-static inline void VecScale_1210B0(sVec4_1210B0* v, float s)
+static inline void VecScale_1210B0(t4Vector* v, float s)
 {
     int t;
     __asm__(
@@ -2161,7 +2152,7 @@ static inline void VecScale_1210B0(sVec4_1210B0* v, float s)
 
 extern "C" void func_001210B0(cRider* self)
 {
-    VecScale_1210B0((sVec4_1210B0*)&self->unk_3E0, 0.9800000190734863f);
+    VecScale_1210B0(&self->unk_3E0, 0.9800000190734863f);
     self->unk_3F0 *= 0.9559999704360962f;
     self->unk_3F4 *= 0.9783333539962769f;
     if (self->unk_3F0 > 4.5f)
@@ -2269,13 +2260,9 @@ INCLUDE_ASM("ai/rider", func_00121750);
 extern "C" void func_001114A0(void* p);
 extern "C" void func_00310530(void* model, void* v);
 
-struct sVec4_00121750
-{
-    float x, y, z, w;
-};
-extern sVec4_00121750 D_004FF120;
+extern t4Vector D_004FF120;
 
-static inline int VecChanged_00121750(cRider* self, const sVec4_00121750& b)
+static inline int VecChanged_00121750(cRider* self, const t4Vector& b)
 {
     return self->unk_9D0.x != b.x || self->unk_9D0.y != b.y
         || self->unk_9D0.z != b.z || self->unk_9D0.w != b.w;
@@ -2773,18 +2760,17 @@ extern void* D_004A28A8;
 extern char D_828[];
 
 struct sMat_122278 { float m[16]; };
-struct sQ128_122278 { float v[4]; } __attribute__((aligned(16)));
 typedef sMat_122278 (*GetMatFn_122278)(void*);
 typedef int (*TestFn_122278)(void*, void*, void*, sMat_122278*);
 
-static inline int inFrustum_122278(sQ128_122278* v)
+static inline int inFrustum_122278(t4Vector* v)
 {
     char* inst = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x8C);
     int mask = *(int*)(inst + 0x110);
     for (int i = 0; i < *(int*)(inst + 0x10C); i++) {
         int bit = 1 << i;
         if (mask & bit) {
-            sQ128_122278* m = (sQ128_122278*)(*(char**)(inst + 8 + i * 8) + 0x50);
+            t4Vector* m = (t4Vector*)(*(char**)(inst + 8 + i * 8) + 0x50);
             int r;
             __asm__ __volatile__(
                 ".set push\n"
@@ -2835,7 +2821,7 @@ extern "C" int func_00122278(cRider* self)
         }
     }
     if (self->unk_150 == 0) {
-        if (inFrustum_122278((sQ128_122278*)&self->unk_420))
+        if (inFrustum_122278(&self->unk_420))
             self->mIsOnScreen = 0;
     }
     return self->mIsOnScreen;
@@ -2851,8 +2837,7 @@ extern void* D_004A28A8;
 extern "C" void func_00121F30(cRider* self);
 extern "C" void func_00310640(void* model, int lod, int a, int b);
 
-struct sVec4_122448 { float v[4]; };
-extern sVec4_122448 D_004FF120_v122448 __asm__("D_004FF120");
+extern t4Vector D_004FF120_v122448 __asm__("D_004FF120");
 
 
 extern "C" void func_00122448(cRider* self)
