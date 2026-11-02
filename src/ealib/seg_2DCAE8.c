@@ -4099,7 +4099,6 @@ int func_003E1AD0(int a, int *b) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1B68);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450C38_0C38[] __asm__("D_00450C38");
 
 int func_003E1B68(int a0, int a1, int a2) {
     int s[5];
@@ -4108,7 +4107,7 @@ int func_003E1B68(int a0, int a1, int a2) {
     s[2] = a2;
     s[3] = 1;
     s[4] = 0;
-    return FILESYS_atomic(func_003E1AD0, 0, D_00450C38_0C38[0], s);
+    return FILESYS_atomic(func_003E1AD0, 0, D_00450C38, s);
 }
 #endif
 
