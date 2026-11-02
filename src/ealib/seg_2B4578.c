@@ -192,6 +192,75 @@ extern unsigned int D_0050A94C[];       /* &D_0050A8E8.setup.cfg.f44 (an array, 
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
 extern unsigned char D_0050AA62;        /* D_0050A8E8.f17A */
 extern struct sA8E8Chan *D_0050AAD8;    /* D_0050A8E8.f1F0 */
+
+/* PATHI players: D_00517610[4] (0x928 each), D_0044F420 points at the one selected by func_003D5450. Layout
+   from every use in this unit; field names are their offsets. */
+struct sPathVoice {                 /* 0x110, sPath.f58[] */
+    char pad00;
+    unsigned char f01;
+    unsigned char f02;
+    unsigned char f03;
+    signed char f04;
+    char pad05[0x8 - 0x5];
+    int f08;
+    signed char f0C;
+    signed char f0D;
+    signed char f0E;
+    char pad0F;
+    int f10;
+    signed char f14;
+    signed char f15;
+    signed char f16;
+    char pad17;
+    int f18;
+    signed char f1C;
+    signed char f1D;
+    signed char f1E;
+    char pad1F[0x24 - 0x1F];
+    unsigned int f24;
+    char pad28[0x2F - 0x28];
+    unsigned char f2F;
+    unsigned int *f30;
+    signed char f34;
+    char pad35;
+    short f36;
+    char pad38[0x48 - 0x38];
+    unsigned int f48;
+    unsigned int f4C;
+    char pad50[0x54 - 0x50];
+    int f54;
+    char pad58[0x110 - 0x58];
+};
+struct sPathEvent {                 /* sPath.f0DC[] */
+    unsigned int f00;
+    unsigned int f04;
+    unsigned int f08;
+    unsigned int pad : 16;
+    unsigned int end : 6;
+    unsigned int start : 6;
+    unsigned int rest : 4;
+};
+struct sPathRamp { int dur; unsigned int mode; };
+struct sPath {                      /* 0x928 */
+    int f00;
+    unsigned int f04;
+    unsigned int f08;
+    unsigned int f0C;
+    unsigned int f10;
+    struct sPathRamp f14[3];
+    char pad2C[0x30 - 0x2C];
+    unsigned int f30;
+    int f34;
+    char pad38[0x58 - 0x38];
+    struct sPathVoice *f58[24];
+    char padB8[0xDC - 0xB8];
+    struct sPathEvent *f0DC[16];
+    char buf[0x91C - 0x11C];
+    int f91C;
+    char pad920[0x924 - 0x920];
+    int f924;
+};
+extern struct sPath *D_0044F420;
 extern struct sA8E8Bus D_0050AAE0[];    /* D_0050A8E8.f1F8 */
 extern struct sA8E8Bus D_0050AAF4[];    /* D_0050A8E8.f20C */
 extern struct sA8E8Bus D_0050AB08[];    /* D_0050A8E8.f220 */
@@ -15965,7 +16034,6 @@ extern struct R_2DF8 *func_003D4A50_2DF8(int) __asm__("func_003D4A50");
 extern int func_003D3140_2DF8(int, int) __asm__("func_003D3140");
 extern int func_002AE3A8(int);
 extern int func_002AE298_2DF8(int, char *, int, int) __asm__("func_002AE298");
-extern int D_0044F420_2DF8[] __asm__("D_0044F420");
 extern unsigned char D_0044F42C;
 extern int D_0044F430_2DF8[] __asm__("D_0044F430");
 
@@ -16015,7 +16083,7 @@ ok:
         ret = func_002AE298_2DF8(t->f54, t->f5C, idx, arg2);
     }
     D_0044F430_2DF8[0] = 0;
-    D_0044F420_2DF8[0] = 0;
+    D_0044F420 = 0;
     return ret;
 }
 #endif
