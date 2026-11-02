@@ -299,11 +299,6 @@ extern "C" void* func_0014D998(void* db, int key);
 int func_0014D988(void* db, int key);
 extern "C" void* func_0014AD50(void* iface, int rider);
 
-struct sTrickFlag_BBE8 {
-    short f0;
-    unsigned short flags;
-};
-
 extern "C" int func_0011BBE8(void* vself, char** out)
 {
     char* self = (char*)vself;
@@ -324,13 +319,12 @@ extern "C" int func_0011BBE8(void* vself, char** out)
         }
         return n;
     }
-    char* prof = (char*)func_0014AD50(iface, *(int*)(self + 0x86C));
+    sItemDb* prof = (sItemDb*)func_0014AD50(iface, *(int*)(self + 0x86C));
     int cnt = func_0014D988(db, key);
     char* p = (char*)func_0014D998(db, key);
     int i;
     for (i = 0; i < cnt; i++) {
-        short idx = (*(short**)(prof + 0x288))[*(short*)(p + 4)];
-        sTrickFlag_BBE8* e = (idx >= 0) ? (sTrickFlag_BBE8*)(prof + 0x290 + idx * 4) : 0;
+        sItemRec* e = lookupItem(prof, ((sItemRef*)p)->item);
         if (e->flags & 0x10) {
             out[n] = p;
             n++;
