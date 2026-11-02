@@ -6456,16 +6456,14 @@ int func_003E5E38(int a0) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5E88);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct S_5E88 { int a; int b; int c; };
 extern void func_003E5B60(void);
-extern struct S_5E88 D_00451250_5E88[] __asm__("D_00451250");
 
-void func_003E5E88(int a0, int a1, int a2) {
+void func_003E5E88(int a0, int a1, void (*a2)(int, char *)) {
     if (D_00451008 == 0) {
         func_003E5B60();
     }
-    D_00451250_5E88[a0].a = a1;
-    D_00451250_5E88[a0].b = a2;
+    D_00451250[a0].f00 = a1;
+    D_00451250[a0].f04 = a2;
 }
 #endif
 
