@@ -2538,7 +2538,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF8E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void MUTEX_unlock_F8E8(void *) __asm__("MUTEX_unlock");
-extern char D_00519C08_9C08[] __asm__("D_00519C08");
 extern char *func_003DEF70_F8E8(int) __asm__("func_003DEF70");
 
 void func_003DF8E8_impl(int h, void (*fn)(int)) __asm__("func_003DF8E8");
@@ -2548,10 +2547,10 @@ void func_003DF8E8_impl(int h, void (*fn)(int)) {
     if (e == 0 || *(int *)(e + 0x18) != 0) {
         return;
     }
-    MUTEX_lock(D_00519C08_9C08);
+    MUTEX_lock(D_00519C08);
     done = *(int *)(e + 0x1C) == 0;
     *(void (**)(int))(e + 0x18) = fn;
-    MUTEX_unlock_F8E8(D_00519C08_9C08);
+    MUTEX_unlock_F8E8(D_00519C08);
     if (done) {
         fn(h);
     }
