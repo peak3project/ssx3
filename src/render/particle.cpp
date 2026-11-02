@@ -131,6 +131,11 @@ struct sPtMatrixU {
     float m[4][4];
 };
 
+// Plain two-float vector.
+struct sPtVec2 {
+    float x, y;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1573,9 +1578,6 @@ extern "C" void func_00374298(char* self, char* src, sV2_4298* out, int idx)
 //100%
 INCLUDE_ASM("render/particle", func_00374440);
 #ifdef SKIP_ASM
-struct sPtVec2 {
-    float x, y;
-};
 
 struct sPtRect {
     char pad_0x0[0x10];
@@ -1748,9 +1750,6 @@ INCLUDE_ASM("render/particle", func_003747A0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-struct sPV2_47A0 {
-    float x, y;
-};
 
 struct sPEnt_47A0 {
     char* mat;      // 0x0
@@ -1767,12 +1766,12 @@ struct sPMgr_47A0 {
     sPtVec3 (*pos0)[16];          // 0x48
     sPtVec3 (*pos1)[36];          // 0x4C
     sPtVec3 (*pos2)[64];          // 0x50
-    sPV2_47A0 (*uv0)[16];           // 0x54
-    sPV2_47A0 (*uv1)[36];           // 0x58
-    sPV2_47A0 (*uv2)[64];           // 0x5C
-    sPV2_47A0 (*col0)[16];          // 0x60
-    sPV2_47A0 (*col1)[36];          // 0x64
-    sPV2_47A0 (*col2)[64];          // 0x68
+    sPtVec2 (*uv0)[16];           // 0x54
+    sPtVec2 (*uv1)[36];           // 0x58
+    sPtVec2 (*uv2)[64];           // 0x5C
+    sPtVec2 (*col0)[16];          // 0x60
+    sPtVec2 (*col1)[36];          // 0x64
+    sPtVec2 (*col2)[64];          // 0x68
     char pad_0x6C[0x1B4 - 0x6C];
     sPtVec3 (*nrm0)[16];          // 0x1B4
     sPtVec3 (*nrm1)[36];          // 0x1B8
@@ -1809,7 +1808,7 @@ static inline sPtVec3* PosOf_47A0(sPMgr_47A0* self, int idx, int slot)
     return 0;
 }
 
-static inline sPV2_47A0* UVOf_47A0(sPMgr_47A0* self, int idx, int slot)
+static inline sPtVec2* UVOf_47A0(sPMgr_47A0* self, int idx, int slot)
 {
     switch (idx) {
     case 0:
@@ -1822,7 +1821,7 @@ static inline sPV2_47A0* UVOf_47A0(sPMgr_47A0* self, int idx, int slot)
     return 0;
 }
 
-static inline sPV2_47A0* ColOf_47A0(sPMgr_47A0* self, int idx, int slot)
+static inline sPtVec2* ColOf_47A0(sPMgr_47A0* self, int idx, int slot)
 {
     switch (idx) {
     case 0:
@@ -1852,8 +1851,8 @@ extern "C" int func_003747A0(sPMgr_47A0* self, char* mat, int idx, int bit, int 
 {
     int slot = PopSlot_47A0(self, idx);
     sPtVec3* pos = PosOf_47A0(self, idx, slot);
-    sPV2_47A0* uv = UVOf_47A0(self, idx, slot);
-    sPV2_47A0* col = ColOf_47A0(self, idx, slot);
+    sPtVec2* uv = UVOf_47A0(self, idx, slot);
+    sPtVec2* col = ColOf_47A0(self, idx, slot);
     func_00374180((sPatchSet*)self, mat, (sPtVec3*)pos, idx);
     func_00374298((char*)self, mat, (sV2_4298*)uv, idx);
     func_00374440((char*)self, (sPtRect*)mat, (sPtVec2*)col, idx);
