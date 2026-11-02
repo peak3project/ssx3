@@ -185,6 +185,12 @@ struct sSndOwner {
     char* rider;             // 0x80
 };
 
+// A 16-byte aligned float vector with an empty ctor (unlike the POD t4Vector: arrays of it get vec_new loops).
+struct sSndVec4 {
+    float x, y, z, w;
+    sSndVec4() {}
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2880,10 +2886,6 @@ extern "C" int* func_00144BC0(void* p);
 extern "C" void* cBE_getBE(void);
 extern "C" void* cBE_getInterface__Fv(void* be, int kind);
 
-struct sSs7950Vec4 {
-    float x, y, z, w;
-    sSs7950Vec4() {}
-} __attribute__((aligned(16)));
 
 
 
@@ -2931,22 +2933,22 @@ extern "C" void func_00297950(cBankSys* self, char* obj, int type, int id)
     if (id == -1) {
         char* inner = *(char**)(obj + 0xC);
         sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
-        sSs7950Vec4 p;
-        p = *(sSs7950Vec4*)(vt[24].fn(inner + vt[24].delta) + 0x30);
-        *(sSs7950Vec4*)(sl + 0x5A10) = p;
+        sSndVec4 p;
+        p = *(sSndVec4*)(vt[24].fn(inner + vt[24].delta) + 0x30);
+        *(sSndVec4*)(sl + 0x5A10) = p;
     } else {
         char* inner = *(char**)(obj + 0xC);
         sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
         if (vt[26].fn(inner + vt[26].delta) != 0) {
             char* o = *(char**)(obj + 0xC);
             sSndVtVar* vt2 = *(sSndVtVar**)(o + 0xC);
-            sSs7950Vec4 p;
-            p = *(sSs7950Vec4*)(vt2[29].fn(o + vt2[29].delta, id) + 0x30);
-            *(sSs7950Vec4*)(sl + 0x5A10) = p;
+            sSndVec4 p;
+            p = *(sSndVec4*)(vt2[29].fn(o + vt2[29].delta, id) + 0x30);
+            *(sSndVec4*)(sl + 0x5A10) = p;
         } else {
-            sSs7950Vec4 p;
-            p = *(sSs7950Vec4*)(obj + 0x40);
-            *(sSs7950Vec4*)(sl + 0x5A10) = p;
+            sSndVec4 p;
+            p = *(sSndVec4*)(obj + 0x40);
+            *(sSndVec4*)(sl + 0x5A10) = p;
         }
     }
     *(int*)((char*)self + i * 0x30 + 0x5A08) = id;
@@ -3016,10 +3018,6 @@ extern "C" void func_00297F70(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00297FA0);
 #ifdef SKIP_ASM
-struct sSsVec4FA0 {
-    float x, y, z, w;
-    sSsVec4FA0() {}
-} __attribute__((aligned(16)));
 
 
 extern "C" void func_00297FA0(void* self)
@@ -3033,21 +3031,21 @@ extern "C" void func_00297FA0(void* self)
             *(int*)(s + 0x5A00) = 0;
         } else if (*(int*)(s + 0x5A08) == -1) {
             sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
-            sSsVec4FA0 p;
-            p = *(sSsVec4FA0*)(vt[24].fn(inner + vt[24].delta) + 0x30);
-            *(sSsVec4FA0*)(s + 0x5A10) = p;
+            sSndVec4 p;
+            p = *(sSndVec4*)(vt[24].fn(inner + vt[24].delta) + 0x30);
+            *(sSndVec4*)(s + 0x5A10) = p;
         } else {
             sSndVtVar* vt = *(sSndVtVar**)(inner + 0xC);
             if (vt[26].fn(inner + vt[26].delta) != 0) {
                 char* o = *(char**)(*(char**)(s + 0x5A04) + 0xC);
                 sSndVtVar* vt2 = *(sSndVtVar**)(o + 0xC);
-                sSsVec4FA0 p;
-                p = *(sSsVec4FA0*)(vt2[29].fn(o + vt2[29].delta, *(int*)(s + 0x5A08)) + 0x30);
-                *(sSsVec4FA0*)(s + 0x5A10) = p;
+                sSndVec4 p;
+                p = *(sSndVec4*)(vt2[29].fn(o + vt2[29].delta, *(int*)(s + 0x5A08)) + 0x30);
+                *(sSndVec4*)(s + 0x5A10) = p;
             } else {
-                sSsVec4FA0 p;
-                p = *(sSsVec4FA0*)(*(char**)(s + 0x5A04) + 0x40);
-                *(sSsVec4FA0*)(s + 0x5A10) = p;
+                sSndVec4 p;
+                p = *(sSndVec4*)(*(char**)(s + 0x5A04) + 0x40);
+                *(sSndVec4*)(s + 0x5A10) = p;
             }
         }
     }
