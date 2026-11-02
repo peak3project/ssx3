@@ -10739,8 +10739,6 @@ void func_003C8598(int idx, int k, float f) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C85D0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern float D_00515D80_85D0[] __asm__("D_00515D80");
 extern void f6210_85D0(void *, int, int) __asm__("func_00416210");
 extern void func_003C8430(int);
 
@@ -10754,7 +10752,7 @@ void func_003C85D0(int *outs, int n) {
 
     for (i = 0; i < 1; i++) {
         if (D_00515B40.f0F[i] != 0 && D_00515B40.f100[i] != 0.0f) {
-            func_003C7600(&D_00515B40.f100[i], D_00515D80_85D0);
+            func_003C7600(&D_00515B40.f100[i], D_00515D80.f0000);
         }
     }
     for (i = 0; i < D_00515B40.f05; i++) {
@@ -10787,8 +10785,8 @@ void func_003C85D0(int *outs, int n) {
                     }
                     for (i = 0; i < 1; i++) {
                         if (D_00515B40.f0F[i] != 0 && e->f38[i] != 0.0f) {
-                            D_00515B40.f1E0(r, D_00515B40.fB4, D_00515D80_85D0 + k, e->f38[i]);
-                            *(int *)((char *)D_00515D80_85D0 + 0x1800) = 0;
+                            D_00515B40.f1E0(r, D_00515B40.fB4, D_00515D80.f0000 + k, e->f38[i]);
+                            D_00515D80.f1800 = 0;
                         }
                     }
                 }
