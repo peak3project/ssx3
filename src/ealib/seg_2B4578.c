@@ -360,6 +360,78 @@ struct sA120 {
 extern struct sA120 D_0050A120;
 extern struct sA120Voice D_0050A820[];  /* D_0050A120.f700 */
 
+/* D_00515B40: the software mixer (channel buffers, per-voice gain entries with their filter chains, the filter
+   factories). Layout from every use in this unit; field names are their offsets. */
+struct sB40Node {                   /* a filter in an entry's chain (allocated, size per kind) */
+    int (*f00)(struct sB40Node *, int, int, float *, int);     /* process */
+    void (*f04)(struct sB40Node *);                             /* release */
+    struct sB40Node *f08;           /* next */
+    struct sB40Node *f0C;
+    struct sB40Node *f10;
+    struct sB40Node *f14;
+    unsigned short f18;             /* order in the chain */
+    signed char f1A;
+    unsigned char f1B;
+};
+struct sB40Init {                   /* what func_003C8158 hands a filter factory */
+    int f00;
+    int f04;
+    int f08;
+    int f0C;
+    int f10;
+    int f14;
+    int f18;
+    int f1C;
+    int f20;
+    int f24;
+    int (*f28)(struct sB40Node *);
+};
+struct sB40Ent {                    /* 0x60, D_00515B40.f1DC[] (one per mixer voice) */
+    signed char f00;                /* state */
+    signed char f01;                /* gains changed */
+    char pad02[0x4 - 0x2];
+    float f04[6];                   /* current channel gains */
+    float f1C[6];                   /* wanted channel gains */
+    float f34[1];                   /* current effect send */
+    float f38[1];                   /* wanted effect send */
+    float f3C;                      /* last sample */
+    struct sB40Node *f40;           /* filter chain */
+    int (*f44)(struct sB40Node *);
+    struct sB40Node *f48;
+    struct sB40Node *f4C;
+    struct sB40Node *f50;
+    struct sB40Node *f54;
+    int f58;
+    struct sB40Node *f5C;
+};
+struct sB40 {
+    char pad00[0x4];
+    unsigned char f04;              /* number of f1DC entries */
+    unsigned char f05;              /* number of channels (also D_00515B45) */
+    char pad06[0x8 - 0x6];
+    int (*f08)(int);                /* also D_00515B48 */
+    unsigned short f0C;
+    unsigned char f0E;              /* also D_00515B4E */
+    signed char f0F[1];             /* effect send on (also D_00515B4F) */
+    void (*f10)(int);               /* output hook (also D_00515B50) */
+    int *f14;                       /* output buffer (also D_00515B54) */
+    void (*f18[6][3])(struct sB40Node *, struct sB40Init *);   /* filter factories by kind and variant */
+    int f60[6][3];                  /* their node sizes */
+    int fA8[2];
+    int fB0;
+    float *fB4;                     /* mix buffer */
+    int fB8[6];
+    float *fD0[6];                  /* channel buffers */
+    float fE8[6];                   /* channel gains */
+    float f100[1];                  /* effect send gain */
+    struct sB40Node *f104[6];
+    struct sB40Node *f11C[6];
+    char pad134[0x1DC - 0x134];
+    struct sB40Ent *f1DC;           /* also D_00515D1C */
+    void (*f1E0)(int, float *, float *, float);                 /* add a voice into a buffer */
+};
+extern struct sB40 D_00515B40;
+
 /* D_0050AD00: the IOP sound side's state (RPC buffers, the shared voice block func_003C1638 lays out, the transfer
    queue, speaker gains, sound-RAM segments, the recursive lock). Layout from every use in this unit; field names are
    their offsets. */
@@ -10565,13 +10637,11 @@ void func_003C8018(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8128);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { char pad0[0xC]; short s; char pad1[0x1E0 - 0xE]; void (*f)(void); } C8128_S;
-extern C8128_S D_00515B40;
-extern void func_003CBB78(void);
+extern void func_003CBB78_set(int, float *, float *, float) __asm__("func_003CBB78");
 
 void func_003C8128(void) {
-    D_00515B40.f = func_003CBB78;
-    D_00515B40.s = 0x400;
+    D_00515B40.f1E0 = func_003CBB78_set;
+    D_00515B40.f0C = 0x400;
 }
 #endif
 
