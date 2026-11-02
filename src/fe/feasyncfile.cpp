@@ -29,6 +29,13 @@ struct cFEAsyncManager {
     cFEAsyncFile mFiles[5];
 };
 
+// A cBXString as these functions hold it (one char* word; the declared copy constructor makes it non-POD).
+struct sBXString {
+    char* str;
+    sBXString() {}
+    sBXString(const sBXString& o);
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -1270,18 +1277,12 @@ static inline void* GetSession_001A52B0()
     return D_004A3328;
 }
 
-struct sBXString1A52B0 {
-    char* str;
-    sBXString1A52B0() {}
-    sBXString1A52B0(const sBXString1A52B0& o);
-};
-
 extern "C" void func_001A52B0(void* self)
 {
     void* name;
     if ((Count1A52B0((sSession1A52B0*)GetSession_001A52B0()) != 0 && (name = func_00263308(GetSession_001A52B0(), 0)) != 0)
         || (func_00262938(GetSession_001A52B0()) > 0 && (name = func_00263630(GetSession_001A52B0(), 0)) != 0)) {
-        sBXString1A52B0 s;
+        sBXString s;
         cBXString_cBXString1(&s, name);
         *(int*)((char*)self + 0x6F8) = func_001A5800((sOwner1A5800*)self, &s.str);
         cBXString__cBXString(&s, 2);
@@ -4556,12 +4557,6 @@ extern char D_00462A20[];
 extern char D_00462A40[];
 extern char D_00462A90[];
 
-struct sBXString1AB478 {
-    char* str;
-    sBXString1AB478() {}
-    sBXString1AB478(const sBXString1AB478& o);
-};
-
 static inline int Loc1AB478(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
@@ -4594,7 +4589,7 @@ extern "C" void f_AB478(char* self, char* pop, char* name, int flag, int val)
     char* p = pop + 0xBC;
     {
         char* g = (char*)D_004A3028;
-        sBXString1AB478 s;
+        sBXString s;
         cBXString_cBXString2(&s, name);
         cBXString_operatorE(g + 0x98, &s);
         cBXString__cBXString(&s, 2);
@@ -6927,12 +6922,6 @@ static inline int Loc1AFA60(char* name)
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
-struct sBXString1AFA60 {
-    char* str;
-    sBXString1AFA60() {}
-    sBXString1AFA60(const sBXString1AFA60& o);
-};
-
 struct sStats1AFA60 {
     int a;
     int b;
@@ -6943,7 +6932,7 @@ struct sStats1AFA60 {
 
 extern "C" void func_001AFA60(void* screen, char* msg)
 {
-    sBXString1AFA60 s;
+    sBXString s;
     char buf[0x100];
     sStats1AFA60* st = (sStats1AFA60*)(msg + 0x18);
     cBXString_cBXString1(&s, (char*)D_004A3028 + 0x98);
@@ -8717,12 +8706,6 @@ extern char D_00463B30[];
 extern char D_00463B40[];
 extern char D_00463B58[];
 
-struct sBXString_1B27B0 {
-    char* str;
-    sBXString_1B27B0() {}
-    sBXString_1B27B0(const sBXString_1B27B0& o);
-};
-
 struct sInfo_1B27B0 {
     int a;
     int b;
@@ -8734,7 +8717,7 @@ struct sInfo_1B27B0 {
 extern "C" void func_001B27B0(void* vself, int idx)
 {
     char* self = (char*)vself;
-    sBXString_1B27B0 s;
+    sBXString s;
     char buf[0x400];
     sInfo_1B27B0 info;
     int flag = 0;
@@ -18748,16 +18731,10 @@ extern "C" void func_001C2578(void* self, void* text, char* str);
 extern void* D_004A28A8;
 extern char D_004A1C08[];
 
-struct sBXString1C2468 {
-    char* str;
-    sBXString1C2468() {}
-    sBXString1C2468(const sBXString1C2468& o);
-};
-
 extern "C" void func_001C2468(void* self, int idx)
 {
     char buf[16];
-    sBXString1C2468 s;
+    sBXString s;
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 4);
     sprintf(buf, D_004A1C08, idx + 1);
     cBXString_cBXString2(&s, buf);
@@ -20313,19 +20290,13 @@ extern "C" void func_003A19F8(cUIText* text, char* str);
 extern "C" void* func_001A8E40_3(void* self, int a1, int a2) __asm__("func_001A8E40");
 extern char D_00465F38[];
 
-struct sBXString1C5430 {
-    char* str;
-    sBXString1C5430() {}
-    sBXString1C5430(const sBXString1C5430& o);
-};
-
 // PORT: a2 is a message-data pointer passed as int
 extern "C" void* func_001C5430(void* self, int msg, int a2)
 {
     if (msg == 0xE2) {
         cUIText* text = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00465F38));
         if (text != 0) {
-            sBXString1C5430 s;
+            sBXString s;
             cBXString_cBXString1(&s, (char*)a2 + 8);
             int pos;
             while ((pos = cBXString_FindLastOf((cBXString*)&s, '\n', 0)) != -1) {
