@@ -430,7 +430,110 @@ extern "C" void func_002ED338(sLensLerp* self, const sLerpV4* a, const sLerpV4* 
 
 INCLUDE_ASM("visualfx/lensfx", func_002ED490);
 
+//100%
 INCLUDE_ASM("visualfx/lensfx", func_002EDB20);
+#ifdef SKIP_ASM
+struct sV4_DB20 {
+    float x, y, z, w;
+    sV4_DB20() {}
+    sV4_DB20(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+};
+
+static inline sV4_DB20 operator-(const sV4_DB20& a, const sV4_DB20& b)
+{
+    return sV4_DB20(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+}
+
+static inline sV4_DB20 operator*(const sV4_DB20& a, const sV4_DB20& b)
+{
+    return sV4_DB20(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+}
+
+static inline sV4_DB20 operator*(const sV4_DB20& a, float s)
+{
+    return sV4_DB20(a.x * s, a.y * s, a.z * s, a.w * s);
+}
+
+static inline sV4_DB20 operator/(const sV4_DB20& a, const sV4_DB20& b)
+{
+    return sV4_DB20(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
+}
+
+struct sVE57_DB20 {
+    short delta;
+    short index;
+    sV4_DB20 (*fn)(void*, float, float, short, int);
+};
+
+struct sLensSrc_DB20 {
+    char pad00[0xC];
+    int types;              // 0x0C: 3 bits per layer
+    float x0, y0, w0, h0;   // 0x10
+    float c00, c01, c02, c03, c10, c11, c12, c13; // 0x20
+    char pad40[0x155 - 0x40];
+    unsigned char page;     // 0x155
+    short slot;             // 0x156
+    char pad158[0x1A0 - 0x158];
+    short tex[3];           // 0x1A0
+};
+
+extern char* D_004A289C;
+extern char** D_004A47B8;
+extern sV4_DB20 D_004FAB00;
+
+static inline int IsLoaded_DB20(sLensSrc_DB20* s)
+{
+    char* wc = *D_004A47B8;
+    if (s->slot < 0)
+        return 0;
+    int ok = *(int*)(wc + (s->page << 3) + 0x24) == 6;
+    return ok ? *(int*)(wc + s->slot * 0x18 + 0x3F0) == 3 : 0;
+}
+
+// PORT: g++ `<?` (min) operator, removed in GCC 4.3.
+static inline float Clamp_DB20(float f, float lo, float hi)
+{
+    return f >= lo ? f <? hi : lo;
+}
+
+static inline float Lerp_DB20(float a, float b, float t)
+{
+    return a + (b - a) * t;
+}
+
+static inline sV4_DB20 Sample_DB20(float u, float v, short tex)
+{
+    sVE57_DB20* vt = *(sVE57_DB20**)(D_004A289C + 0x10D8);
+    return vt[58].fn(D_004A289C + vt[58].delta, u, v, tex, 1);
+}
+
+extern "C" void func_002EDB20(sLensSrc_DB20* self, float tx, float ty, sV4_DB20* o4, sV4_DB20* o5)
+{
+    sV4_DB20 a(0.0f, 0.0f, 0.0f, 0.0f);
+    sV4_DB20 b(0.0f, 0.0f, 0.0f, 0.0f);
+    if (self && IsLoaded_DB20(self)) {
+        for (int i = 0; i < 3; i++) {
+            if (((self->types >> (i * 3)) & 7) == 5) {
+                a = Sample_DB20(self->x0 + self->w0 * Clamp_DB20(tx, 0.0f, 1.0f), self->y0 + self->h0 * Clamp_DB20(ty, 0.0f, 1.0f), self->tex[i]);
+            }
+            if (((self->types >> (i * 3)) & 7) == 1) {
+                float top = Lerp_DB20(self->c00, self->c10, tx);
+                float bot = Lerp_DB20(self->c02, self->c12, tx);
+                float lft = Lerp_DB20(self->c01, self->c03, ty);
+                float rgt = Lerp_DB20(self->c11, self->c13, ty);
+                float u = Lerp_DB20(top, bot, ty) + 1000.0f;
+                float v = Lerp_DB20(lft, rgt, tx) + 1000.0f;
+                b = Sample_DB20(u - (float)(int)u, v - (float)(int)v, self->tex[i]);
+            }
+        }
+        float scale = a.x * 2.0f;
+        *o4 = (b - a) * D_004FAB00 * scale;
+        *o5 = *o4 / b;
+        o4->x = 0.5f;
+        o5->x = 0.5f;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/lensfx", func_002EDF00);
