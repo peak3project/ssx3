@@ -5653,7 +5653,6 @@ extern "C" cLunoValue func_00305478(int n, Ent_5478 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00305660);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_5660 __asm__("D_004A28A8");
 struct Sh_5660 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual int v08(); };
 extern "C" void func_00390EC8(float);
 extern unsigned D_5660 __asm__("D_004A5848");
@@ -5684,9 +5683,8 @@ extern "C" cLunoValue func_00305660(int n, Ent_5660 *e) {
     }
     int k = D_004A3DD8->being;
     if (k != -1) {
-        int k4 = k * 4;
-        char *lvl = *(char**)(*(char**)(D_004A28A8_5660 + 0x84) + 0xC);
-        char *q = *(char**)(lvl + k4 + 0x28);
+        sRace* lvl = D_004A28A8->game->race;
+        char *q = lvl->riders[k];
         Sh_5660 *sh = q ? (Sh_5660*)(q + 0x6C0) : 0;
         if (sh->v08())
             func_00390EC8(0.0f);
