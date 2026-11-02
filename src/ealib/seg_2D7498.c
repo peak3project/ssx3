@@ -1625,7 +1625,157 @@ out:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9088);
+#ifdef SKIP_ASM
+struct R_9088 { short a; short b; };
+struct T_9088 { unsigned short a; unsigned short b; };
+struct S_9088 {
+    char pad[4];
+    signed char n;
+    char pad2[3];
+    unsigned char a[8];
+    unsigned char b[8];
+};
+struct Slot_9088 { struct R_9088 r; unsigned char f4; unsigned char f5; unsigned char f6; unsigned char done; };
+extern int func_003DB3B8(unsigned char a, unsigned char b, unsigned char *p);
+extern int func_003D6D50(unsigned short arg0);
+extern int func_003D6DB8(unsigned short arg0, unsigned short arg1);
+extern int func_003D6CF8(int arg0, unsigned int arg1);
+extern int func_003D88C8(char *, unsigned char *, struct Slot_9088 *, struct S_9088 *, struct T_9088 *);
+
+
+static __inline__ int modeOk_9088(void *arg0, int arg1) {
+    int temp_3;
+
+    temp_3 = (*(unsigned char *)((char*)(arg0) + (4))) & 3;
+    if (((temp_3 == 1) && (arg1 == 2)) || ((temp_3 == 2) && (arg1 != temp_3))) {
+        return 1;
+    }
+    return temp_3 == 0;
+}
+
+static __inline__ void clear_9088(unsigned char *arg0) {
+    int *q;
+    int i;
+    q = (int *)(arg0 + ((((arg0[4] >> 2) + 3) & 0x7C) + 8) + (arg0[6] * 4));
+    for (i = 0; i < arg0[5]; i++) {
+        q[i] = 0;
+    }
+}
+
+static __inline__ int check_9088(unsigned char *h, struct S_9088 *s) {
+    int ok = 1;
+    int i;
+    int *tab;
+    int n = s->n;
+    int b;
+    for (i = 0; i < n; i++) {
+        if (s->a[i] == 0xFF) {
+            b = s->b[i];
+            if (b != 0xFF && (b & 0x80)) {
+                tab = (int *)(h + ((((h[4] >> 2) + 3) & 0xFFFFFFFC) + 8) + ((h[6] * 4 + 3) & 0xFFFFFFFC));
+                if (tab != 0) {
+                    b &= 0x7F;
+                    if (tab[b] == 0) {
+                        ok = 0;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return ok;
+}
+
+static __inline__ int resolve_9088(unsigned char *p, struct T_9088 *tbl, struct R_9088 *out) {
+    unsigned short v = *(unsigned short *)p;
+    unsigned int mode = p[3];
+    unsigned int idx = p[2];
+    int r;
+    out->b = -1;
+    out->a = -1;
+    switch (mode) {
+    case 0:
+        out->a = func_003D6D50(v);
+        break;
+    case 1:
+        if (idx >= 20) {
+            out->a = -1;
+        } else {
+            out->a = func_003D6DB8(v, tbl[idx].a);
+        }
+        break;
+    case 2: {
+        struct T_9088 *e;
+        int t = func_003D6D50(v);
+        e = (struct T_9088 *)(idx * 4 + (int)tbl);
+        if (func_003D6CF8(t, *(int *)e) != 0) {
+            out->b = e->a;
+        } else {
+            t = -1;
+        }
+        out->a = t;
+        break;
+    }
+    }
+    r = out->a;
+    if (r <= -1)
+        return 0;
+    return 1;
+}
+
+int func_003D9088(char *self, unsigned char *hdr, struct T_9088 *tbl, int a, int b, int mode) {
+    int ret = 1;
+    int all;
+    int tries = 200;
+    int n = hdr[4] >> 2;
+    unsigned char *lp;
+    int i;
+
+    if (n >= 13 || !modeOk_9088(hdr, mode) || !func_003DB3B8(a, b, hdr)) {
+        ret = 0;
+    } else {
+        clear_9088(hdr);
+        self[0x60] = n;
+        do {
+            all = 1;
+            tries--;
+            i = 0;
+            if (n != 0) {
+                lp = hdr + 8;
+                do {
+                    struct Slot_9088 *slot = (struct Slot_9088 *)self + i;
+                    struct S_9088 *e = (struct S_9088 *)(hdr + lp[i] * 4);
+                    if (!check_9088(hdr, e)) {
+                        all = 0;
+                    } else if (slot->done == 0) {
+                        int r;
+                        slot->f4 = self[0x61];
+                        if (!resolve_9088((unsigned char *)e, tbl, &slot->r)) {
+                            ret = 0;
+                            goto out;
+                        }
+                        r = func_003D88C8(self, hdr, slot, e, tbl);
+                        if (r == 0) {
+                            ret = 0;
+                            goto out;
+                        }
+                        slot->f5 = r;
+                        slot->done = 1;
+                    }
+                    i++;
+                } while (i < n);
+            }
+        } while (!all && tries > 0);
+        if (tries == 0) {
+            ret = 0;
+        }
+    }
+out:
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D93C0);
