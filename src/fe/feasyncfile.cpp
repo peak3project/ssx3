@@ -97,6 +97,11 @@ struct sBlk16 {
     int v[4];
 };
 
+// The 0xD0-byte object func_001C55F8 constructs (vptr at 0xC8).
+struct sObj1C55F8 {
+    char data[0xD0];
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -13298,9 +13303,6 @@ extern "C" void func_001B9950(void* self, cUIText* text, char* str)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9B18);
 #ifdef SKIP_ASM
-struct sObj1B9B18 {
-    char data[0xD0];
-};
 
 int GetHashValue32(char* str);
 extern "C" void func_001A9BC0(void* self, void* popup);
@@ -13318,7 +13320,7 @@ extern char D_00461618[];
 extern "C" int func_001B9B18(void* self)
 {
     int ok = 1;
-    sObj1B9B18 o;
+    sObj1C55F8 o;
     func_001C55F8(&o);
     int len = strlen(*(const char**)(*(char**)((char*)self + 0x6D0) + 0xC));
     if (len == 0) {
@@ -13383,9 +13385,6 @@ extern "C" int func_001B9CD8(void* self, const char* str)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9D68);
 #ifdef SKIP_ASM
-struct sObj1B9D68 {
-    char data[0xD0];
-};
 
 int GetHashValue32(char* str);
 extern "C" void func_001A9BC0(void* self, void* popup);
@@ -13403,7 +13402,7 @@ extern char D_00461618[];
 extern "C" int func_001B9D68(void* self)
 {
     int ok = 1;
-    sObj1B9D68 o;
+    sObj1C55F8 o;
     func_001C55F8(&o);
     int len = strlen(**(const char***)((char*)self + 0x6D0));
     if (len == 0) {
@@ -13480,9 +13479,6 @@ extern "C" int func_001B9F68(void* self, signed char val, signed char lo, signed
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B9FA0);
 #ifdef SKIP_ASM
-struct sObj1B9FA0 {
-    char data[0xD0];
-};
 
 int GetHashValue32(char* str);
 extern "C" void func_001A9BC0(void* self, void* popup);
@@ -13500,7 +13496,7 @@ extern char D_00461618[];
 extern "C" int func_001B9FA0(void* self)
 {
     int ok = 1;
-    sObj1B9FA0 o;
+    sObj1C55F8 o;
     func_001C55F8(&o);
     unsigned int len = strlen(*(const char**)(*(char**)((char*)self + 0x6D0) + 4));
     if (len == 0) {
@@ -14532,14 +14528,10 @@ extern char D_00464BF0[];
 extern char D_00464C08[];
 extern char D_00464C20[];
 
-struct sObj1BBAC8 {
-    char data[0xD0];
-};
-
 extern "C" int func_001BBAC8(void* self, int code);
 extern "C" int func_001BBAC8(void* self, int code)
 {
-    sObj1BBAC8 o;
+    sObj1C55F8 o;
     func_001C55F8(&o);
     if (code < 13) {
         void* p = func_001A9C50(self);
@@ -14579,9 +14571,6 @@ extern "C" int func_001BBAC8(void* self, int code)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BBC40);
 #ifdef SKIP_ASM
-struct sObj1BBC40 {
-    char data[0xD0];
-};
 
 int GetHashValue32(char* str);
 extern "C" void func_001A9BC0(void* self, void* popup);
@@ -14596,7 +14585,7 @@ extern "C" int func_001BBC40_r(void* self) __asm__("func_001BBC40");
 
 extern "C" int func_001BBC40_r(void* self)
 {
-    sObj1BBC40 o;
+    sObj1C55F8 o;
     func_001C55F8(&o);
     if (*(int*)((char*)*(void**)((char*)self + 0x6D0) + 0x40) == 0) {
         void* p = func_001A9C50(self);
