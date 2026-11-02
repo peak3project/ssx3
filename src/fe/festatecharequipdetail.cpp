@@ -8,6 +8,33 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// One file slot of the FE file cache (0x120 bytes; the cache sits at game + 0x7C -> + 0x1A70, D_004A196C points at
+// it). state: 0 idle, 1 loaded, 2 async load in flight, 3 queued.
+struct sFileSlot {
+    int state;              // 0x0
+    char name[0x100];       // 0x4
+    void* data;             // 0x104
+    int handle;             // 0x108: async file handle
+    int pending;            // 0x10C: load asynchronously
+    int type;               // 0x110
+    int timer;              // 0x114: use count
+    int size;               // 0x118
+    unsigned int stamp;     // 0x11C: least-recently-used stamp
+};
+
+// 256 slots per bank (0x12000 bytes).
+struct sFileBank {
+    sFileSlot slots[256];
+};
+
+// The FE file cache: ten banks, the loaded byte count, the number of loads in flight and per-bank stamp counters.
+struct sFileCache {
+    sFileBank banks[10];    // 0x0
+    int used;               // 0xB4000
+    int nPending;           // 0xB4004
+    int counts[10];         // 0xB4008
+};
+
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_cFEStateCharEquip);
 #ifdef SKIP_ASM
@@ -229,8 +256,7 @@ extern "C" void* cFEStateCharEquip_cFEStateCharEquip(void* p, void* owner, signe
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199148);
 #ifdef SKIP_ASM
-struct sEquipTable_DC20;
-extern "C" void func_0019DC20(sEquipTable_DC20* self, int bank, int i);
+extern "C" void func_0019DC20(sFileCache* self, int bank, int i);
 extern "C" void func_0019A498(void* self);
 extern "C" void func_0039E390(void* self, int flags);
 extern void* D_004A28A8;
@@ -252,7 +278,7 @@ extern "C" void func_00199148(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A548;
     if (*(int*)((char*)self + 0xA64) >= 0) {
-        func_0019DC20((sEquipTable_DC20*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC),
+        func_0019DC20((sFileCache*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC),
                       *(int*)((char*)self + 0xA64));
         *(int*)((char*)self + 0xA64) = -1;
     }
@@ -582,12 +608,11 @@ extern "C" void func_00199870(void* self, void* widget, int msg)
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_onUpdate);
 #ifdef SKIP_ASM
 struct cList;
-struct sEquipTable;
 int GetHashValue32(char* str);
 void* cList_first(cList* list);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_0039E510(void* self);
-extern "C" int func_0019E238(sEquipTable* self, int a1, int a2);
+extern "C" int func_0019E238(sFileCache* self, int a1, int a2);
 extern "C" void func_0019A9B8(void* self);
 extern "C" void func_0019A638(void* self);
 extern "C" void func_0019BFE8(void* self);
@@ -600,7 +625,7 @@ extern "C" void cFEStateCharEquip_onUpdate(void* self)
 {
     func_0039E510(self);
     if (*(int*)((char*)self + 0xA60) == 0
-        && func_0019E238((sEquipTable*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC),
+        && func_0019E238((sFileCache*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC),
                          *(int*)((char*)self + 0xA64))) {
         *(int*)((char*)self + 0xA60) = 1;
         func_0019A9B8(self);
@@ -950,9 +975,8 @@ extern "C" int func_00199F20(sEquipDetail_9F20* self, int a1, int kind, int idx)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A098);
 #ifdef SKIP_ASM
-struct sEquipTable;
 // PORT: func_0019E2B0 returns a pointer through int (the unit defines it as int).
-extern "C" void* func_0019E2B0(sEquipTable* self, int a1, int a2);
+extern "C" void* func_0019E2B0(sFileCache* self, int a1, int a2);
 extern "C" void func_003B3D00(void* pkg, int i, char* name);
 extern "C" int func_004165A8(const void* a, const void* b);
 extern void* D_004A28A8;
@@ -976,7 +1000,7 @@ extern "C" int func_0019A098(void* self, const char* name)
 {
     if (*(int*)((char*)self + 0xA60) == 0)
         return -1;
-    sPkgK19A098* pkg = (sPkgK19A098*)func_0019E2B0((sEquipTable*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA64));
+    sPkgK19A098* pkg = (sPkgK19A098*)func_0019E2B0((sFileCache*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA64));
     if (pkg == 0)
         return -1;
     int n = pkg->count;
@@ -1008,15 +1032,14 @@ extern "C" int func_0019A098(void* self, const char* name)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A1E0);
 #ifdef SKIP_ASM
-struct sEquipTable;
-extern "C" int func_0019E238(sEquipTable* self, int a1, int a2);
+extern "C" int func_0019E238(sFileCache* self, int a1, int a2);
 extern "C" void func_0019A9B8(void* self);
 extern void* D_004A28A8;
 
 extern "C" void func_0019A1E0(void* self)
 {
     if (*(int*)((char*)self + 0xA60) == 0
-        && func_0019E238((sEquipTable*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC),
+        && func_0019E238((sFileCache*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC),
                          *(int*)((char*)self + 0xA64))) {
         *(int*)((char*)self + 0xA60) = 1;
         func_0019A9B8(self);
@@ -1141,14 +1164,13 @@ extern "C" void func_0019A3D0(void* self)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A498);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
-struct sEquipTable_DC20;
-extern "C" void func_0019DC20(sEquipTable_DC20* self, int bank, int i);
+extern "C" void func_0019DC20(sFileCache* self, int bank, int i);
 
 extern "C" void func_0019A498(void* self)
 {
     int idx = *(int*)((char*)self + 0xA6C);
     if (idx >= 0) {
-        func_0019DC20((sEquipTable_DC20*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC), idx);
+        func_0019DC20((sFileCache*)(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70), *(int*)((char*)self + 0xBC), idx);
     }
     *(char*)((char*)self + 0x960) = 0;
     *(int*)((char*)self + 0xA6C) = -1;
@@ -1212,12 +1234,10 @@ extern "C" void func_0019A4E8(void* self, int flag)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A638);
 #ifdef SKIP_ASM
-struct sEquipTable;
-struct sEquipTable_DC20;
-extern "C" void func_0019DC20(sEquipTable_DC20* self, int bank, int i);
-extern "C" int func_0019E238(sEquipTable* self, int a1, int a2);
+extern "C" void func_0019DC20(sFileCache* self, int bank, int i);
+extern "C" int func_0019E238(sFileCache* self, int a1, int a2);
 // PORT: func_0019E2B0 returns a pointer through int (the unit defines it as int).
-extern "C" void* func_0019E2B0(sEquipTable* self, int a1, int a2);
+extern "C" void* func_0019E2B0(sFileCache* self, int a1, int a2);
 extern "C" int func_0019DA10(void* self, int bank, void* name, int a3, int a4, int a5);
 extern "C" void func_0019A9B8(void* self);
 extern void* D_004A28A8;
@@ -1238,8 +1258,8 @@ extern "C" void func_0019A638(void* self)
         }
     } else if (*(int*)((char*)self + 0xA6C) >= 0) {
         char* tbl = *(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70;
-        if (func_0019E238((sEquipTable*)tbl, *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA6C))) {
-            char* e = (char*)func_0019E2B0((sEquipTable*)tbl, *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA6C));
+        if (func_0019E238((sFileCache*)tbl, *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA6C))) {
+            char* e = (char*)func_0019E2B0((sFileCache*)tbl, *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA6C));
             if (e != 0) {
                 char* g = (char*)D_004A289C;
                 sVEntry<int(void*, void*, char*, int, int, int)>* vt = *(sVEntry<int(void*, void*, char*, int, int, int)>**)(g + 0x10D8);
@@ -1247,7 +1267,7 @@ extern "C" void func_0019A638(void* self)
             } else {
                 *(int*)((char*)self + 0xA70) = -1;
             }
-            func_0019DC20((sEquipTable_DC20*)tbl, *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA6C));
+            func_0019DC20((sFileCache*)tbl, *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA6C));
             *(int*)((char*)self + 0xA6C) = -1;
             func_0019A9B8(self);
         }
@@ -2590,10 +2610,10 @@ extern "C" void func_0019CD38(void* self, int bit, int a2, int val)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CDF0);
 #ifdef SKIP_ASM
-extern void* D_004A196C;
-extern "C" void func_0019CE68(void* self);
+extern sFileCache* D_004A196C;
+extern "C" void func_0019CE68(sFileCache* self);
 
-extern "C" void* func_0019CDF0(void* self)
+extern "C" void* func_0019CDF0(sFileCache* self)
 {
     D_004A196C = self;
     func_0019CE68(self);
@@ -2604,11 +2624,11 @@ extern "C" void* func_0019CDF0(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CE20);
 #ifdef SKIP_ASM
-extern void* D_004A196C;
-extern "C" void func_0019CF40(void* self);
+extern sFileCache* D_004A196C;
+extern "C" void func_0019CF40(sFileCache* self);
 void operator_delete(int* p);
 
-extern "C" void func_0019CE20(void* self, int flags)
+extern "C" void func_0019CE20(sFileCache* self, int flags)
 {
     D_004A196C = 0;
     func_0019CF40(self);
@@ -2624,48 +2644,26 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019CE68);
 extern void* D_004A1968;
 extern char D_004609C0[];
 
-struct sEquipEntryK19CE68 {
-    int f0;                // 0x0
-    char b4;               // 0x4
-    char pad_0x005[0x104 - 0x5];
-    int f104;              // 0x104
-    int f108;              // 0x108
-    int pad_0x10C;
-    int f110;              // 0x110
-    int f114;              // 0x114
-    int f118;              // 0x118
-    int pad_0x11C;
-};
-struct sEquipSlotK19CE68 {
-    sEquipEntryK19CE68 e[256];
-};
-struct sEquipTableK19CE68 {
-    sEquipSlotK19CE68 slots[10]; // 0x0
-    int fB4000;                  // 0xB4000
-    int fB4004;                  // 0xB4004
-    int counts[10];              // 0xB4008
-};
 
-extern "C" void func_0019CE68(void* self)
+extern "C" void func_0019CE68(sFileCache* self)
 {
-    sEquipTableK19CE68* t = (sEquipTableK19CE68*)self;
     int i;
     int j;
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 256; j++) {
-            sEquipEntryK19CE68* e = &t->slots[i].e[j];
-            e->f0 = 0;
-            e->b4 = 0;
-            e->f104 = 0;
-            e->f118 = 0;
-            e->f108 = 0;
-            e->f114 = 0;
-            e->f110 = -1;
+            sFileSlot* e = &self->banks[i].slots[j];
+            e->state = 0;
+            e->name[0] = 0;
+            e->data = 0;
+            e->size = 0;
+            e->handle = 0;
+            e->timer = 0;
+            e->type = -1;
         }
-        t->counts[i] = 1;
+        self->counts[i] = 1;
     }
-    t->fB4004 = 0;
-    t->fB4000 = 0;
+    self->nPending = 0;
+    self->used = 0;
     if (D_004A1968 == 0) {
         D_004A1968 = func_0019CB38(cMemMan_alloc(0x1F44, D_004609C0, 0, 0));
     } else {
@@ -2677,26 +2675,20 @@ extern "C" void func_0019CE68(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CF40);
 #ifdef SKIP_ASM
-struct sEquipTable_D4B8;
-extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i);
+extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
 void operator_delete(int* p);
 extern void* D_004A1968;
 
-struct sEquipTableK19CF40 {
-    char slots[0xB4008];
-    int counts[10];    // 0xB4008
-};
 
-extern "C" void func_0019CF40(void* self)
+extern "C" void func_0019CF40(sFileCache* self)
 {
-    sEquipTableK19CF40* t = (sEquipTableK19CF40*)self;
     int i;
     int j;
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 256; j++) {
-            func_0019D4B8((sEquipTable_D4B8*)self, i, j);
+            func_0019D4B8(self, i, j);
         }
-        t->counts[i] = 1;
+        self->counts[i] = 1;
     }
     if (D_004A1968 != 0) {
         operator_delete((int*)D_004A1968);
@@ -2708,34 +2700,22 @@ extern "C" void func_0019CF40(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D000);
 #ifdef SKIP_ASM
-struct sEquipTable_DC20;
-struct sEquipSlot_DC20;
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void* ptr);
 extern "C" int func_003B4818(void* data);
 extern "C" void* func_003B47F8(void* src, void* dst);
-extern "C" void func_0019D578(sEquipTable_DC20* self, int bank, int size);
-extern "C" void func_0019D738(sEquipTable_DC20* self, int bank, int size);
+extern "C" void func_0019D578(sFileCache* self, int bank, int size);
+extern "C" void func_0019D738(sFileCache* self, int bank, int size);
 extern "C" void MUTEX_lock(void* mutex);
 extern "C" void MUTEX_unlock(void* mutex);
 extern char D_004609D8[];
 extern char D_00538B00[];
 
-struct sSlotK19D000 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int timer;      // 0x114
-    int size;       // 0x118
-};
 
-extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20* p)
+extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* p)
 {
-    sSlotK19D000* slot = (sSlotK19D000*)p;
+    sFileSlot* slot = (sFileSlot*)p;
     if (slot == 0)
         return;
     if (slot->data == 0)
@@ -2755,7 +2735,7 @@ extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20*
     if (slot->data != 0)
         cMemMan_free(slot->data);
     slot->data = buf;
-    *(int*)((char*)self + 0xB4000) += size - slot->size;
+    self->used += size - slot->size;
     slot->size = size;
 }
 #endif
@@ -2763,29 +2743,16 @@ extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20*
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D140);
 #ifdef SKIP_ASM
-struct sEquipTable_DC20;
-extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i);
+extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
 
-struct sSlotK19D140 {
-    int state;
-    char pad[0x118];
-    unsigned int stamp; // 0x11C
-};
-struct sBankK19D140 {
-    sSlotK19D140 e[256];
-};
-struct sTableK19D140 {
-    sBankK19D140 banks[10];
-};
 
-extern "C" void func_0019D140(void* p, int bank)
+extern "C" void func_0019D140(sFileCache* self, int bank)
 {
-    sTableK19D140* self = (sTableK19D140*)p;
     unsigned int oldest = 0;
     int best = -1;
     int i;
     int b;
-    sSlotK19D140* s = self->banks[bank].e;
+    sFileSlot* s = self->banks[bank].slots;
     int found = bank;
     for (i = 0; i < 256; i++) {
         if (s->state == 3 && (oldest == 0 || s->stamp < oldest)) {
@@ -2797,7 +2764,7 @@ extern "C" void func_0019D140(void* p, int bank)
     if (best == -1) {
         for (b = 0; b < 10; b++) {
             if (b != bank) {
-                s = self->banks[b].e;
+                s = self->banks[b].slots;
                 for (i = 0; i < 256; i++) {
                     if (s->state == 3 && (oldest == 0 || s->stamp < oldest)) {
                         oldest = s->stamp;
@@ -2812,55 +2779,34 @@ extern "C" void func_0019D140(void* p, int bank)
         }
     }
     if (best >= 0)
-        func_0019D8B8((sEquipTable_DC20*)self, found, best);
+        func_0019D8B8(self, found, best);
 }
 #endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D250);
 #ifdef SKIP_ASM
-struct sEquipTable_DC20;
-struct sEquipSlot_DC20;
 extern "C" int func_003DF980(int handle);
 extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
-extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20* slot);
-extern "C" void func_0019D140(void* self, int bank);
-extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i);
+extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* slot);
+extern "C" void func_0019D140(sFileCache* self, int bank);
+extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
 
-struct sSlotK19D250 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int timer;      // 0x114
-    int size;       // 0x118
-    unsigned int stamp; // 0x11C
-};
-struct sBankK19D250 {
-    sSlotK19D250 e[256];
-};
-struct sTableK19D250 {
-    sBankK19D250 banks[10];      // 0x0
-    int fB4000;                  // 0xB4000
-    int nPending;                // 0xB4004
-};
 
 extern "C" void func_0019D250(void* p)
 {
-    sTableK19D250* self = (sTableK19D250*)p;
+    sFileCache* self = (sFileCache*)p;
     int i;
     int j;
     for (i = 0; i < 10; i++) {
-        sSlotK19D250* s = (sSlotK19D250*)((char*)self + i * 0x12000);
+        sFileSlot* s = self->banks[i].slots;
         for (j = 0; j < 256; j++, s++) {
             if (s->pending != 0 && s->state == 2) {
                 int r = func_003DF980(s->handle);
                 if (r == 1) {
                     int status[4];
                     ASYNCFILE_release(s->handle, 0, status);
-                    func_0019D000((sEquipTable_DC20*)self, i, (sEquipSlot_DC20*)s);
+                    func_0019D000(self, i, (sFileSlot*)s);
                     if (s->timer == 0)
                         s->state = 0;
                     else
@@ -2870,7 +2816,7 @@ extern "C" void func_0019D250(void* p)
                         func_0019D140(self, i);
                 }
             } else if (self->nPending <= 0 && s->state == 3) {
-                func_0019D8B8((sEquipTable_DC20*)self, i, j);
+                func_0019D8B8(self, i, j);
             }
         }
     }
@@ -2880,22 +2826,15 @@ extern "C" void func_0019D250(void* p)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D3B0);
 #ifdef SKIP_ASM
-struct sEquipSlot_D3B0 {
-    int used;               // 0x000
-    char pad_0x4[0x100];
-    int valid;              // 0x104
-    char pad_0x108[0x14];
-    unsigned int stamp;     // 0x11C
-};
 
-extern "C" int func_0019D3B0(void* self, int bank)
+extern "C" int func_0019D3B0(sFileCache* self, int bank)
 {
     unsigned int best = 0;
     int bestIdx = -1;
-    sEquipSlot_D3B0* p = (sEquipSlot_D3B0*)((char*)self + bank * 0x12000);
+    sFileSlot* p = self->banks[bank].slots;
     for (int i = 0; i < 256; i++, p++) {
-        if (p->used == 0) {
-            if (p->valid == 0) {
+        if (p->state == 0) {
+            if (p->data == 0) {
                 return i;
             }
             if (bestIdx < 0 || p->stamp < best) {
@@ -2913,24 +2852,12 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019D428);
 #ifdef SKIP_ASM
 extern "C" int func_004165A8(const void* a, const void* b);
 
-struct sEquipSlot_D428 {
-    int state;
-    char name[0x100];
-    int value;
-    char pad108[0x18];
-};
-struct sEquipRow_D428 {
-    sEquipSlot_D428 slots[0x100];
-};
-struct sEquipTable_D428 {
-    sEquipRow_D428 rows[1];
-};
 
-extern "C" int func_0019D428(sEquipTable_D428* self, int bank, const char* name)
+extern "C" int func_0019D428(sFileCache* self, int bank, const char* name)
 {
     for (int i = 0; i < 256; i++) {
-        sEquipSlot_D428* s = &self->rows[bank].slots[i];
-        if (s->name[0] != 0 && func_004165A8(self->rows[bank].slots[i].name, name) == 0) {
+        sFileSlot* s = &self->banks[bank].slots[i];
+        if (s->name[0] != 0 && func_004165A8(self->banks[bank].slots[i].name, name) == 0) {
             return i;
         }
     }
@@ -2943,34 +2870,17 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019D4B8);
 #ifdef SKIP_ASM
 extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 void cMemMan_free(void* ptr);
-struct sEquipSlot_D4B8 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int f114;
-    int size;       // 0x118
-    int f11C;
-};
-struct sEquipRow_D4B8 {
-    sEquipSlot_D4B8 slots[0x100];
-};
-struct sEquipTable_D4B8 {
-    sEquipRow_D4B8 rows[1];
-};
 
-extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i)
+extern "C" void func_0019D4B8(sFileCache* self, int bank, int i)
 {
     int status;
-    sEquipSlot_D4B8* s = &self->rows[bank].slots[i];
+    sFileSlot* s = &self->banks[bank].slots[i];
     if (s->state == 2) {
         if (s->pending != 0) {
             ASYNCFILE_release(s->handle, 0, &status);
         }
     }
-    *(int*)((char*)self + 0xB4000) -= s->size;
+    self->used -= s->size;
     if (s->data != 0) {
         cMemMan_free(s->data);
     }
@@ -2980,40 +2890,19 @@ extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i)
     s->name[0] = 0;
     s->handle = 0;
     s->pending = 0;
-    s->f114 = 0;
-    s->f110 = -1;
+    s->timer = 0;
+    s->type = -1;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D578);
 #ifdef SKIP_ASM
-struct sEquipTable_D4B8;
-struct sEquipTable_DC20;
-extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i);
+extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
 
-struct sSlotK19D578 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int timer;      // 0x114
-    int size;       // 0x118
-    unsigned int stamp; // 0x11C
-};
-struct sBankK19D578 {
-    sSlotK19D578 e[256];
-};
-struct sTableK19D578 {
-    sBankK19D578 banks[10];      // 0x0
-    int used;                    // 0xB4000
-};
 
-extern "C" void func_0019D578(sEquipTable_DC20* p, int bank, int size)
+extern "C" void func_0019D578(sFileCache* self, int bank, int size)
 {
-    sTableK19D578* self = (sTableK19D578*)p;
     if (self->used + size <= 9999999)
         return;
     int b;
@@ -3022,9 +2911,9 @@ extern "C" void func_0019D578(sEquipTable_DC20* p, int bank, int size)
         if (b == bank)
             continue;
         for (j = 0; j < 256; j++) {
-            sSlotK19D578* s = &self->banks[b].e[j];
+            sFileSlot* s = &self->banks[b].slots[j];
             if (s->data != 0 && s->timer == 0 && s->state == 0) {
-                func_0019D4B8((sEquipTable_D4B8*)self, b, j);
+                func_0019D4B8(self, b, j);
                 if (self->used + size <= 9999999)
                     return;
             }
@@ -3034,7 +2923,7 @@ extern "C" void func_0019D578(sEquipTable_DC20* p, int bank, int size)
         int best = -1;
         unsigned int stamp = 0;
         for (int k = 0; k < 256; k++) {
-            sSlotK19D578* s = &self->banks[bank].e[k];
+            sFileSlot* s = &self->banks[bank].slots[k];
             if (s->data != 0 && s->state == 0 && s->timer == 0) {
                 if (best < 0 || s->stamp < stamp) {
                     stamp = s->stamp;
@@ -3044,7 +2933,7 @@ extern "C" void func_0019D578(sEquipTable_DC20* p, int bank, int size)
         }
         if (best < 0)
             return;
-        func_0019D4B8((sEquipTable_D4B8*)self, bank, best);
+        func_0019D4B8(self, bank, best);
     } while (self->used + size > 9999999);
 }
 #endif
@@ -3052,41 +2941,21 @@ extern "C" void func_0019D578(sEquipTable_DC20* p, int bank, int size)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D738);
 #ifdef SKIP_ASM
-struct sEquipTable_D4B8;
-struct sEquipTable_DC20;
-extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i);
+extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
 
-struct sSlotK19D738 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int timer;      // 0x114
-    int size;       // 0x118
-    unsigned int stamp; // 0x11C
-};
-struct sBankK19D738 {
-    sSlotK19D738 e[256];
-};
-struct sTableK19D738 {
-    sBankK19D738 banks[10];      // 0x0
-};
 
-extern "C" void func_0019D738(sEquipTable_DC20* p, int bank, int size)
+extern "C" void func_0019D738(sFileCache* self, int bank, int size)
 {
-    sTableK19D738* self = (sTableK19D738*)p;
     int b;
     int j;
     for (b = 0; b < 10; b++) {
         if (b == bank)
             continue;
         for (j = 0; j < 256; j++) {
-            sSlotK19D738* s = &self->banks[b].e[j];
+            sFileSlot* s = &self->banks[b].slots[j];
             if (s->data != 0 && s->timer == 0 && s->state == 0) {
                 size -= s->size;
-                func_0019D4B8((sEquipTable_D4B8*)self, b, j);
+                func_0019D4B8(self, b, j);
                 if (size <= 0)
                     return;
             }
@@ -3096,7 +2965,7 @@ extern "C" void func_0019D738(sEquipTable_DC20* p, int bank, int size)
         int best = -1;
         unsigned int stamp = 0;
         for (int k = 0; k < 256; k++) {
-            sSlotK19D738* s = &self->banks[bank].e[k];
+            sFileSlot* s = &self->banks[bank].slots[k];
             if (s->data != 0 && s->state == 0 && s->timer == 0) {
                 if (best < 0 || s->stamp < stamp) {
                     stamp = s->stamp;
@@ -3106,8 +2975,8 @@ extern "C" void func_0019D738(sEquipTable_DC20* p, int bank, int size)
         }
         if (best < 0)
             return;
-        size -= self->banks[bank].e[best].size;
-        func_0019D4B8((sEquipTable_D4B8*)self, bank, best);
+        size -= self->banks[bank].slots[best].size;
+        func_0019D4B8(self, bank, best);
     } while (size > 0);
 }
 #endif
@@ -3115,34 +2984,22 @@ extern "C" void func_0019D738(sEquipTable_DC20* p, int bank, int size)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D8B8);
 #ifdef SKIP_ASM
-struct sEquipTable_DC20;
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_00317F60(const char* name);
 extern "C" int func_003DF748(const char* name, void* data, int size);
 extern "C" int func_003E1BB8(const char* name, void* data, int size);
-extern "C" void func_0019D578(sEquipTable_DC20* self, int bank, int size);
-extern "C" void func_0019D738(sEquipTable_DC20* self, int bank, int size);
+extern "C" void func_0019D578(sFileCache* self, int bank, int size);
+extern "C" void func_0019D738(sFileCache* self, int bank, int size);
 extern "C" void MUTEX_lock(void* mutex);
 extern "C" void MUTEX_unlock(void* mutex);
 extern char D_004609F0[];
 extern char D_00538B00[];
 
-struct sSlotK19D8B8 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int timer;      // 0x114
-    int size;       // 0x118
-    unsigned int stamp; // 0x11C
-};
 
-extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i)
+extern "C" void func_0019D8B8(sFileCache* self, int bank, int i)
 {
-    sSlotK19D8B8* s = &((sSlotK19D8B8*)((char*)self + bank * 0x12000))[i];
+    sFileSlot* s = &self->banks[bank].slots[i];
     int size = func_00317F60(s->name);
     func_0019D578(self, bank, size);
     s->data = operator_new__FUi(size, D_004609F0, 0x60000000, 0);
@@ -3152,12 +3009,12 @@ extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i)
         func_0019D738(self, bank, size);
         s->data = operator_new__FUi(size, D_004609F0, 0x60000000, 0);
     }
-    *(int*)((char*)self + 0xB4000) += size;
+    self->used += size;
     if (s->pending != 0) {
         s->size = size;
         s->state = 2;
         s->handle = func_003DF748(s->name, s->data, size);
-        *(int*)((char*)self + 0xB4004) += 1;
+        self->nPending += 1;
     } else {
         s->size = size;
         func_003E1BB8(s->name, s->data, size);
@@ -3169,44 +3026,21 @@ extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DA10);
 #ifdef SKIP_ASM
-struct sEquipTable_D4B8;
-struct sEquipTable_DC20;
-struct sEquipTable_D428;
-extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i);
-extern "C" void func_0019D8B8(sEquipTable_DC20* self, int bank, int i);
-extern "C" int func_0019D3B0(void* self, int bank);
-extern "C" int func_0019D428(sEquipTable_D428* self, int bank, const char* name);
+extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
+extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
+extern "C" int func_0019D3B0(sFileCache* self, int bank);
+extern "C" int func_0019D428(sFileCache* self, int bank, const char* name);
 extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 extern "C" char* strcpy(char* dst, const char* src);
 
-struct sSlotK19DA10 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int timer;      // 0x114
-    int size;       // 0x118
-    unsigned int stamp; // 0x11C
-};
-struct sBankK19DA10 {
-    sSlotK19DA10 e[256];
-};
-struct sTableK19DA10 {
-    sBankK19DA10 banks[10];      // 0x0
-    int used;                    // 0xB4000
-    int nPending;                // 0xB4004
-    int counts[10];              // 0xB4008
-};
 
 extern "C" int func_0019DA10(void* p, int bank, void* namep, int a3, int a4, int a5)
 {
-    sTableK19DA10* self = (sTableK19DA10*)p;
+    sFileCache* self = (sFileCache*)p;
     const char* name = (const char*)namep;
-    int i = func_0019D428((sEquipTable_D428*)self, bank, name);
+    int i = func_0019D428(self, bank, name);
     if (i >= 0) {
-        sSlotK19DA10* s = &self->banks[bank].e[i];
+        sFileSlot* s = &self->banks[bank].slots[i];
         if (a5)
             s->stamp = 0;
         else
@@ -3220,7 +3054,7 @@ extern "C" int func_0019DA10(void* p, int bank, void* namep, int a3, int a4, int
                 int status;
                 ASYNCFILE_release(s->handle, 0, &status);
             } else if (s->state == 3) {
-                func_0019D8B8((sEquipTable_DC20*)self, bank, i);
+                func_0019D8B8(self, bank, i);
             }
             s->state = 1;
             s->handle = -1;
@@ -3228,18 +3062,18 @@ extern "C" int func_0019DA10(void* p, int bank, void* namep, int a3, int a4, int
         s->timer++;
     } else {
     i = func_0019D3B0(self, bank);
-    sSlotK19DA10* s = &self->banks[bank].e[i];
-    func_0019D4B8((sEquipTable_D4B8*)self, bank, i);
+    sFileSlot* s = &self->banks[bank].slots[i];
+    func_0019D4B8(self, bank, i);
     if (a5)
         s->stamp = 0;
     else
         s->stamp = self->counts[bank]++;
     strcpy(s->name, name);
     s->timer++;
-    s->f110 = a3;
+    s->type = a3;
     s->pending = a4;
     if (a5 == 0 && (a4 == 0 || self->nPending <= 0))
-        func_0019D8B8((sEquipTable_DC20*)self, bank, i);
+        func_0019D8B8(self, bank, i);
     else
         s->state = 3;
     }
@@ -3252,31 +3086,13 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019DC20);
 #ifdef SKIP_ASM
 extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 extern "C" int func_003DF980(int handle);
-struct sEquipSlot_DC20 {
-    int state;
-    char name[0x100];
-    void* data;     // 0x104
-    int handle;     // 0x108
-    int pending;    // 0x10C
-    int f110;
-    int timer;      // 0x114
-    int size;       // 0x118
-    int f11C;
-};
-struct sEquipRow_DC20 {
-    sEquipSlot_DC20 slots[0x100];
-};
-struct sEquipTable_DC20 {
-    sEquipRow_DC20 rows[1];
-};
-extern "C" void func_0019D000(sEquipTable_DC20* self, int bank, sEquipSlot_DC20* slot);
-struct sEquipTable_D4B8;
-extern "C" void func_0019D4B8(sEquipTable_D4B8* self, int bank, int i);
+extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* slot);
+extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
 
-extern "C" void func_0019DC20(sEquipTable_DC20* self, int bank, int i)
+extern "C" void func_0019DC20(sFileCache* self, int bank, int i)
 {
     int status;
-    sEquipSlot_DC20* s = &self->rows[bank].slots[i];
+    sFileSlot* s = &self->banks[bank].slots[i];
     if (--s->timer > 0) {
         return;
     }
@@ -3288,10 +3104,10 @@ extern "C" void func_0019DC20(sEquipTable_DC20* self, int bank, int i)
         func_0019D000(self, bank, s);
         s->pending = 0;
         s->state = 0;
-        *(int*)((char*)self + 0xB4004) -= 1;
+        self->nPending -= 1;
     }
     if (s->data == 0) {
-        func_0019D4B8((sEquipTable_D4B8*)self, bank, i);
+        func_0019D4B8(self, bank, i);
     } else {
         s->state = 0;
     }
@@ -3301,34 +3117,23 @@ extern "C" void func_0019DC20(sEquipTable_DC20* self, int bank, int i)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DD10);
 #ifdef SKIP_ASM
-extern void* D_004A196C;
+extern sFileCache* D_004A196C;
 extern "C" int func_0041AA88(const char* a, const char* b);
 
-struct sSlotK19DD10 {
-    int state;
-    char name[0x10C];
-    int type;           // 0x110
-    int f114;
-    int f118;
-    int f11C;           // 0x11C
-};
-struct sRowK19DD10 {
-    sSlotK19DD10 slots[0x100];
-};
 
 extern "C" int func_0019DD10(const int* a, const int* b)
 {
     int ka = *a;
-    sRowK19DD10* row = (sRowK19DD10*)D_004A196C + (ka >> 16);
-    sSlotK19DD10* sa = &row->slots[ka & 0xFFFF];
-    sSlotK19DD10* sb = &row->slots[*b & 0xFFFF];
-    if (sa->state == 3 && sa->type == 8 && sa->f11C == 0) {
-        if (sb->state == 3 && sb->type == 8 && sb->f11C == 0)
+    sFileBank* row = &D_004A196C->banks[ka >> 16];
+    sFileSlot* sa = &row->slots[ka & 0xFFFF];
+    sFileSlot* sb = &row->slots[*b & 0xFFFF];
+    if (sa->state == 3 && sa->type == 8 && sa->stamp == 0) {
+        if (sb->state == 3 && sb->type == 8 && sb->stamp == 0)
             return func_0041AA88(sa->name, sb->name);
         return -1;
     }
-    if (sb->state == 3 && sb->type == 8 && sb->f11C == 0) {
-        if (sa->state == 3 && sa->type == 8 && sa->f11C == 0)
+    if (sb->state == 3 && sb->type == 8 && sb->stamp == 0) {
+        if (sa->state == 3 && sa->type == 8 && sa->stamp == 0)
             return func_0041AA88(sa->name, sb->name);
         return 1;
     }
@@ -3339,34 +3144,23 @@ extern "C" int func_0019DD10(const int* a, const int* b)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DE18);
 #ifdef SKIP_ASM
-extern void* D_004A196C;
+extern sFileCache* D_004A196C;
 extern "C" int func_0041AA88(const char* a, const char* b);
 
-struct sSlotK19DE18 {
-    int state;
-    char name[0x10C];
-    int type;           // 0x110
-    int f114;
-    int f118;
-    int f11C;           // 0x11C
-};
-struct sRowK19DE18 {
-    sSlotK19DE18 slots[0x100];
-};
 
 extern "C" int func_0019DE18(const int* a, const int* b)
 {
     int ka = *a;
-    sRowK19DE18* row = (sRowK19DE18*)D_004A196C + (ka >> 16);
-    sSlotK19DE18* sa = &row->slots[ka & 0xFFFF];
-    sSlotK19DE18* sb = &row->slots[*b & 0xFFFF];
-    if (sa->state == 3 && sa->type == 0xB && sa->f11C == 0) {
-        if (sb->state == 3 && sb->type == 0xB && sb->f11C == 0)
+    sFileBank* row = &D_004A196C->banks[ka >> 16];
+    sFileSlot* sa = &row->slots[ka & 0xFFFF];
+    sFileSlot* sb = &row->slots[*b & 0xFFFF];
+    if (sa->state == 3 && sa->type == 0xB && sa->stamp == 0) {
+        if (sb->state == 3 && sb->type == 0xB && sb->stamp == 0)
             return func_0041AA88(sa->name, sb->name);
         return -1;
     }
-    if (sb->state == 3 && sb->type == 0xB && sb->f11C == 0) {
-        if (sa->state == 3 && sa->type == 0xB && sa->f11C == 0)
+    if (sb->state == 3 && sb->type == 0xB && sb->stamp == 0) {
+        if (sa->state == 3 && sa->type == 0xB && sa->stamp == 0)
             return func_0041AA88(sa->name, sb->name);
         return 1;
     }
@@ -3389,14 +3183,14 @@ struct sRow12000_E1C0 {
     sSlot120_E1C0 slots[0x100];
 };
 struct sTable_E1C0 {
-    sRow12000_E1C0 rows[1];
+    sRow12000_E1C0 banks[1];
 };
 
 extern "C" int func_0019E1C0(sTable_E1C0* self, int a1)
 {
     int i;
     for (i = 0; i < 0x100; i++) {
-        if (self->rows[a1].slots[i].state >= 2) {
+        if (self->banks[a1].slots[i].state >= 2) {
             return 0;
         }
     }
@@ -3407,94 +3201,68 @@ extern "C" int func_0019E1C0(sTable_E1C0* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E208);
 #ifdef SKIP_ASM
-struct sSlot120_E208 {
-    int state;
-    char pad04[0x11C];
-};
-struct sRow12000_E208 {
-    sSlot120_E208 slots[0x100];
-};
-struct sTable_E208 {
-    sRow12000_E208 rows[1];
-};
 
-extern "C" int func_0019E208(sTable_E208* self, int a1, int a2)
+extern "C" int func_0019E208(sFileCache* self, int a1, int a2)
 {
-    return self->rows[a1].slots[a2].state == 2;
+    return self->banks[a1].slots[a2].state == 2;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E238);
 #ifdef SKIP_ASM
-struct sEquipSlot120 {
-    int state;
-    char pad04[0x100];
-    void* value;
-    char pad108[8];
-    int f110;
-    int f114;
-    int f118;
-    int f11C;
-};
-struct sEquipRow12000 {
-    sEquipSlot120 slots[0x100];
-};
-struct sEquipTable {
-    sEquipRow12000 rows[1];
-};
 
-extern "C" int func_0019E238(sEquipTable* self, int a1, int a2)
+extern "C" int func_0019E238(sFileCache* self, int a1, int a2)
 {
-    return self->rows[a1].slots[a2].state == 1;
+    return self->banks[a1].slots[a2].state == 1;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E268);
 #ifdef SKIP_ASM
-extern "C" void* func_0019E268(sEquipTable* self, int a1, int a2)
+extern "C" void* func_0019E268(sFileCache* self, int a1, int a2)
 {
-    if (self->rows[a1].slots[a2].state == -1) {
+    if (self->banks[a1].slots[a2].state == -1) {
         return 0;
     }
-    return (char*)&self->rows[a1].slots[a2] + 4;
+    return (char*)&self->banks[a1].slots[a2] + 4;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E2B0);
 #ifdef SKIP_ASM
-extern "C" void* func_0019E2B0(sEquipTable* self, int a1, int a2)
+extern "C" void* func_0019E2B0(sFileCache* self, int a1, int a2)
 {
-    if (self->rows[a1].slots[a2].state != 1) {
+    if (self->banks[a1].slots[a2].state != 1) {
         return 0;
     }
-    return self->rows[a1].slots[a2].value;
+    return self->banks[a1].slots[a2].data;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E2F0);
 #ifdef SKIP_ASM
-extern "C" void* func_0019E2F0(sEquipTable* self, int a1, int a2)
+extern "C" void* func_0019E2F0(sFileCache* self, int a1, int a2)
 {
-    if (self->rows[a1].slots[a2].state != 1) {
+    if (self->banks[a1].slots[a2].state != 1) {
         return 0;
     }
-    return self->rows[a1].slots[a2].value;
+    return self->banks[a1].slots[a2].data;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E330);
 #ifdef SKIP_ASM
-extern "C" void* func_0019E330(sEquipTable* self, int a1, int a2)
+extern "C" void* func_0019E330(sFileCache* self, int a1, int a2)
 {
-    void* v = self->rows[a1].slots[a2].value;
-    self->rows[a1].slots[a2].value = 0;
-    *(int*)((char*)self + 0xB4000) -= self->rows[a1].slots[a2].f118;
-    self->rows[a1].slots[a2].f118 = 0;
+    void* v = self->banks[a1].slots[a2].data;
+    self->banks[a1].slots[a2].data = 0;
+    self->used -= self->banks[a1].slots[a2].size;
+    self->banks[a1].slots[a2].size = 0;
     return v;
 }
 #endif
@@ -3502,18 +3270,18 @@ extern "C" void* func_0019E330(sEquipTable* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E380);
 #ifdef SKIP_ASM
-extern "C" int func_0019E380(sEquipTable* self, int a1, int a2)
+extern "C" int func_0019E380(sFileCache* self, int a1, int a2)
 {
-    return self->rows[a1].slots[a2].f110;
+    return self->banks[a1].slots[a2].type;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E3A8);
 #ifdef SKIP_ASM
-extern "C" int func_0019E3A8(sEquipTable* self, int a1, int a2)
+extern "C" int func_0019E3A8(sFileCache* self, int a1, int a2)
 {
-    return self->rows[a1].slots[a2].f114;
+    return self->banks[a1].slots[a2].timer;
 }
 #endif
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E3D0);
