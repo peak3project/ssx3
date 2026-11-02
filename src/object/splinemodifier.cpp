@@ -11,6 +11,16 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// An axis-aligned bounding box (min and max corners).
+struct sBoundBox { t4Vector min, max; };
+
+// One 0x60-byte multi-spline element: its bounding box at 0x30.
+struct sSmElem {
+    char pad_0x00[0x30];
+    sBoundBox box;              // 0x30
+    char pad_0x50[0x10];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -926,12 +936,6 @@ void* func_0035A5D8(void* self)
 INCLUDE_ASM("object/splinemodifier", cMultiSplineModifier_setupOverlapSystem);
 #ifdef SKIP_ASM
 
-struct sSmBox_A5F8 {
-    char pad_0x00[0x30];
-    t4Vector min;       // 0x30
-    t4Vector max;       // 0x40
-    char pad_0x50[0x10];
-};
 
 struct sSmCell_A5F8 {
     int level;
@@ -958,7 +962,7 @@ struct cMultiSpline_A5F8 {
     int pad_0x0;
     sSub_A5F8 sub;          // 0x4
     char pad_0x1c[0x20];
-    sSmBox_A5F8* boxes;     // 0x3C
+    sSmElem* boxes;     // 0x3C
     char** model;           // 0x40
     sSmInst_A5F8** insts;   // 0x44
 };
@@ -1032,13 +1036,13 @@ extern "C" void cMultiSplineModifier_setupOverlapSystem(void* vself)
         {
             t4Vector v;
             vu0Sub_A5F8(v, instPos_A5F8(self, i), ext);
-            self->boxes[i].min = v;
+            self->boxes[i].box.min = v;
             vu0Add_A5F8(v, instPos_A5F8(self, i), ext);
-            self->boxes[i].max = v;
+            self->boxes[i].box.max = v;
         }
         void* item = self->insts[i];
         char* w = (char*)func_002D1BE0();
-        insert_A5F8(w, item, &self->boxes[i].min);
+        insert_A5F8(w, item, &self->boxes[i].box.min);
     }
 }
 #endif
@@ -1113,16 +1117,7 @@ extern "C" void func_0035A780(void* vself)
 INCLUDE_ASM("object/splinemodifier", func_0035A918);
 #ifdef SKIP_ASM
 
-struct sSmBox_A918 {
-    t4Vector min;       // 0x30
-    t4Vector max;       // 0x40
-};
 
-struct sSmElem_A918 {
-    char pad_0x0[0x30];
-    sSmBox_A918 box;        // 0x30
-    char pad_0x50[0x10];
-};
 
 struct sSmVE_A918 {
     short delta;
@@ -1138,7 +1133,7 @@ struct cMultiSpline_A918 {
     char pad_0x1c[0x14];
     int dirty;              // 0x30
     char pad_0x34[0x8];
-    sSmElem_A918* elems;    // 0x3C
+    sSmElem* elems;    // 0x3C
     char* model;            // 0x40
     char** insts;           // 0x44
 };
@@ -1210,7 +1205,7 @@ extern "C" void func_0035A918(cMultiSpline_A918* self)
         self->vtable[3].fn((char*)self + self->vtable[3].delta);
     }
     for (int i = 1; i < self->count; i++) {
-        sSmBox_A918 old = self->elems[i].box;
+        sBoundBox old = self->elems[i].box;
         float r = self->radius;
         t4Vector ext;
         ext.x = r;
@@ -1390,12 +1385,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035B200);
 INCLUDE_ASM("object/splinemodifier", func_0035B418);
 #ifdef SKIP_ASM
 
-struct sSmBox_35B418 {
-    char pad_0x0[0x30];
-    t4Vector min;     // 0x30
-    t4Vector max;     // 0x40
-    char pad_0x50[0x10];
-};
 
 struct sSmVE_35B418 {
     short delta;
@@ -1428,7 +1417,7 @@ struct cMultiSpline_35B418 {
     int dirty;              // 0x30
     char pad_0x34[0x4];
     int mode;               // 0x38
-    sSmBox_35B418* boxes;   // 0x3C
+    sSmElem* boxes;   // 0x3C
     char* model;            // 0x40
     char** insts;           // 0x44
 };
@@ -1446,9 +1435,9 @@ extern "C" void func_0035B418(cMultiSpline_35B418* self)
     for (int i = 1; i < self->count; i++) {
         sSmVE93_35B418* vt = *(sSmVE93_35B418**)(w + 0x10D8);
         char* thisp = w + vt[93].delta;
-        sSmBox_35B418* box = &self->boxes[i];
+        sSmElem* box = &self->boxes[i];
         sSmVE43_35B418* vt2 = *(sSmVE43_35B418**)(w + 0x10D8);
-        int hit = vt[93].fn(thisp, &box->min, &box->max, vt2[43].fn(w + vt2[43].delta));
+        int hit = vt[93].fn(thisp, &box->box.min, &box->box.max, vt2[43].fn(w + vt2[43].delta));
         if (hit != 1) {
             sSmVEModel_35B418* mvt = *(sSmVEModel_35B418**)(model + 0xC);
             mvt[33].fn(model + mvt[33].delta, self->insts[i] + 0x10, self->mode);
@@ -1558,10 +1547,6 @@ extern "C" void cRailModifier_buildXform(void* self);
 struct sSmMod_C040;
 extern "C" void func_0035C040(sSmMod_C040* self);
 
-struct sSmBox_B708 {
-    t4Vector min;
-    t4Vector max;
-};
 struct sSmCell_B708 {
     int level;
     int x, y, z;
@@ -1636,7 +1621,7 @@ static inline sSmRoot_B708* findRoot_B708(char* w, int x, int y, int z)
     return rz;
 }
 
-static inline void remove_B708(char* w, void* item, const sSmBox_B708* box)
+static inline void remove_B708(char* w, void* item, const sBoundBox* box)
 {
     (*(int*)(w + 0xA0))++;
     sSmCell_B708 c;
@@ -1649,7 +1634,7 @@ static inline void remove_B708(char* w, void* item, const sSmBox_B708* box)
     }
 }
 
-static inline void insert_B708(char* w, void* item, const sSmBox_B708* box)
+static inline void insert_B708(char* w, void* item, const sBoundBox* box)
 {
     sSmCell_B708 c;
     func_00328F28(&c, box);
@@ -1707,9 +1692,9 @@ static inline void addEq_B708(t4Vector& a, const t4Vector& b)
         : "m"(b));
 }
 
-static inline sSmBox_B708 getBox_B708(const sSmModel_B708* m)
+static inline sBoundBox getBox_B708(const sSmModel_B708* m)
 {
-    sSmBox_B708 b;
+    sBoundBox b;
     b.min.x = m->minx;
     b.min.y = m->miny;
     b.min.z = m->minz;
@@ -1721,12 +1706,12 @@ static inline sSmBox_B708 getBox_B708(const sSmModel_B708* m)
     return b;
 }
 
-static inline void setBox_B708(char* self, sSmBox_B708 b)
+static inline void setBox_B708(char* self, sBoundBox b)
 {
-    *(sSmBox_B708*)(self + 0x10) = b;
+    *(sBoundBox*)(self + 0x10) = b;
 }
 
-static inline void grow_B708(sSmBox_B708& box, float d)
+static inline void grow_B708(sBoundBox& box, float d)
 {
     t4Vector pad;
     pad.x = d;
@@ -1739,7 +1724,7 @@ static inline void grow_B708(sSmBox_B708& box, float d)
 
 extern "C" char* func_0035B708(char* self, sSmDesc_B708* desc, sSmModel_B708* model)
 {
-    sSmBox_B708* box = (sSmBox_B708*)(self + 0x10);
+    sBoundBox* box = (sBoundBox*)(self + 0x10);
     *(unsigned int*)(self + 0x30) = 0xFFFFFFFF;
     *(void**)(self + 0x8) = D_004911D0;
     *(void**)(self + 0x0) = 0;
@@ -1750,7 +1735,7 @@ extern "C" char* func_0035B708(char* self, sSmDesc_B708* desc, sSmModel_B708* mo
     sSmModelObj_B708* o = model->obj;
     if (o->vt[44].fn((char*)o + o->vt[44].delta) == 0) {
         sSmModel_B708* m = *(sSmModel_B708**)(self + 0x40);
-        sSmBox_B708 b;
+        sBoundBox b;
         b.min.x = m->minx;
         b.min.y = m->miny;
         b.min.z = m->minz;
@@ -1765,8 +1750,8 @@ extern "C" char* func_0035B708(char* self, sSmDesc_B708* desc, sSmModel_B708* mo
         pad.y = 100.0f;
         pad.z = 100.0f;
         pad.w = 0.0f;
-        subEq_B708(((sSmBox_B708*)(self + 0x10))->min, pad);
-        addEq_B708(((sSmBox_B708*)(self + 0x10))->max, pad);
+        subEq_B708(((sBoundBox*)(self + 0x10))->min, pad);
+        addEq_B708(((sBoundBox*)(self + 0x10))->max, pad);
     }
     cRailModifier_buildXform(self);
     func_0035C040((sSmMod_C040*)self);
@@ -1774,7 +1759,7 @@ extern "C" char* func_0035B708(char* self, sSmDesc_B708* desc, sSmModel_B708* mo
     sSmTrack_B708* t = ((sSmRef_B708*)(self + 0x30))->get();
     sSmSeg_B708* seg = t->first;
     for (int i = 0; i < t->count; i++) {
-        sSmBox_B708 b;
+        sBoundBox b;
         b.min.x = seg->minx;
         b.min.y = seg->miny;
         b.min.z = seg->minz;
@@ -1796,10 +1781,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035BA88);
 void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
-struct sSmBox_BA88 {
-    t4Vector min;
-    t4Vector max;
-};
 struct sSmCell_BA88 {
     int level;
     int x, y, z;
@@ -1867,7 +1848,7 @@ static inline sSmRoot_BA88* findRoot_BA88(char* w, const sSmCell_BA88& c)
     return rz;
 }
 
-static inline void remove_BA88(char* w, void* item, const sSmBox_BA88* box)
+static inline void remove_BA88(char* w, void* item, const sBoundBox* box)
 {
     (*(int*)(w + 0xA0))++;
     sSmCell_BA88 c;
@@ -1880,7 +1861,7 @@ static inline void remove_BA88(char* w, void* item, const sSmBox_BA88* box)
     }
 }
 
-static inline void insert_BA88(char* w, void* item, const sSmBox_BA88* box)
+static inline void insert_BA88(char* w, void* item, const sBoundBox* box)
 {
     sSmCell_BA88 c;
     func_00328F28(&c, box);
@@ -1923,11 +1904,11 @@ extern "C" char* func_0035BA88(char* self, cSmStream_BA88* src)
     src->v02(self + 0x10, 0x30);
     *(int*)(self + 0x40) = src->v03();
     cRailModifier_buildXform(self);
-    insert_BA88((char*)func_002D1BE0(), *(void**)(self + 0x44), (sSmBox_BA88*)(self + 0x10));
+    insert_BA88((char*)func_002D1BE0(), *(void**)(self + 0x44), (sBoundBox*)(self + 0x10));
     sSmTrack_BA88* t = ((sSmRef_BA88*)(self + 0x30))->get();
     sSmSeg_BA88* seg = t->first;
     for (int i = 0; i < t->count; i++) {
-        sSmBox_BA88 b;
+        sBoundBox b;
         b.min.x = seg->minx;
         b.min.y = seg->miny;
         b.min.z = seg->minz;
@@ -1949,10 +1930,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035BD70);
 void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
-struct sSmBox_BD70 {
-    t4Vector min;
-    t4Vector max;
-};
 struct sSmCell_BD70 {
     int level;
     int x, y, z;
@@ -2013,7 +1990,7 @@ static inline sSmRoot_BD70* findRoot_BD70(char* w, const sSmCell_BD70& c)
     return rz;
 }
 
-static inline void remove_BD70(char* w, void* item, const sSmBox_BD70* box)
+static inline void remove_BD70(char* w, void* item, const sBoundBox* box)
 {
     (*(int*)(w + 0xA0))++;
     sSmCell_BD70 c;
@@ -2026,7 +2003,7 @@ static inline void remove_BD70(char* w, void* item, const sSmBox_BD70* box)
     }
 }
 
-static inline void insert_BD70(char* w, void* item, const sSmBox_BD70* box)
+static inline void insert_BD70(char* w, void* item, const sBoundBox* box)
 {
     sSmCell_BD70 c;
     func_00328F28(&c, box);
@@ -2063,12 +2040,12 @@ struct sSmRef_BD70 {
 extern "C" void func_0035BD70(char* self, int flags)
 {
     *(void**)(self + 0x8) = D_004911D0;
-    remove_BD70((char*)func_002D1BE0(), *(void**)(self + 0x44), (sSmBox_BD70*)(self + 0x10));
+    remove_BD70((char*)func_002D1BE0(), *(void**)(self + 0x44), (sBoundBox*)(self + 0x10));
     operator_delete(*(int**)(self + 0x44));
     sSmTrack_BD70* t = ((sSmRef_BD70*)(self + 0x30))->get();
     sSmSeg_BD70* seg = t->first;
     for (int i = 0; i < t->count; i++) {
-        sSmBox_BD70 b;
+        sBoundBox b;
         b.min.x = seg->minx;
         b.min.y = seg->miny;
         b.min.z = seg->minz;
@@ -2092,10 +2069,6 @@ extern "C" void func_0035BD70(char* self, int flags)
 INCLUDE_ASM("object/splinemodifier", func_0035C040);
 #ifdef SKIP_ASM
 
-struct sSmBox_C040 {
-    t4Vector min;
-    t4Vector max;
-};
 
 struct sSmVEntryI_C040 {
     short delta;
@@ -2106,7 +2079,7 @@ struct sSmVEntryI_C040 {
 struct sSmVEntryB_C040 {
     short delta;
     short index;
-    sSmBox_C040* (*fn)(void*);
+    sBoundBox* (*fn)(void*);
 };
 
 struct sSmVtbl_C040 {
@@ -2127,7 +2100,7 @@ struct sSmOwner_C040 {
 
 struct sSmMod_C040 {
     char pad_0x0[0x10];
-    sSmBox_C040 box;        // 0x10
+    sBoundBox box;        // 0x10
     char pad_0x30[0x10];
     sSmOwner_C040* owner;   // 0x40
 };
@@ -2169,7 +2142,7 @@ extern "C" void func_0035C040(sSmMod_C040* self)
     sSmObj_C040* o = self->owner->obj;
     if (o->vt->v44.fn((char*)o + o->vt->v44.delta) != 0) {
         o = self->owner->obj;
-        sSmBox_C040* b = o->vt->v45.fn((char*)o + o->vt->v45.delta);
+        sBoundBox* b = o->vt->v45.fn((char*)o + o->vt->v45.delta);
         self->box = *b;
         t4Vector pad;
         pad.x = 100.0f;
