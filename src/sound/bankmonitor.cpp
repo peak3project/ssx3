@@ -107,6 +107,37 @@ struct sBmVoice {
     void operator delete[](void* p, unsigned int size);
 };
 
+// cBankMonitor: a sound player (cSndPlayOpts part at 0x0, player part up to 0x8DC) plus 64 voices;
+// virtual base at 0x8F0.
+struct cBankMonitor {
+    char* vbase;                // 0x00
+    char pad04[0x1C - 0x4];
+    volatile int cur;           // 0x1C
+    void* ch;                   // 0x20
+    sBmQuad* tgt[4];            // 0x24
+    int* p34;                   // 0x34
+    int* vals;                  // 0x38
+    int* p3C;                   // 0x3C
+    sSndCallback callbacks[4];  // 0x40
+    int* p60;                   // 0x60
+    int* p64;                   // 0x64
+    float* p68;                 // 0x68
+    float* p6C;                 // 0x6C
+    void* p70;                  // 0x70
+    int* p74;                   // 0x74
+    int* p78;                   // 0x78
+    int* p7C;                   // 0x7C
+    int* p80;                   // 0x80
+    int* p84;                   // 0x84
+    char pad88[0x8D8 - 0x88];
+    void** vtbl;                // 0x8D8
+    volatile int busy;          // 0x8DC
+    int f8E0;                   // 0x8E0
+    int f8E4;                   // 0x8E4
+    int f8E8;                   // 0x8E8
+    sBmVoice* voices;           // 0x8EC
+    char vb[0x4];               // 0x8F0
+};
 
 // One of the 24 bank-slot records D_004D3EF8 (0x28 bytes): sound id, handle and bank index (-1 = free).
 struct sBankMonSlot28 {
@@ -135,19 +166,7 @@ void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm
 extern const char D_00483238[];
 
 
-struct sBankMonitorCD08 {
-    char* vbase;                // 0x0
-    char pad_0x4[0x8D8 - 0x4];
-    void** vtbl;                // 0x8D8
-    int f8DC;                   // 0x8DC
-    int f8E0;                   // 0x8E0
-    int f8E4;                   // 0x8E4
-    int f8E8;                   // 0x8E8
-    sBmVoice* voices;       // 0x8EC
-    char vb[0x4];               // 0x8F0
-};
-
-extern "C" sBankMonitorCD08* cBankMonitor_cBankMonitor(sBankMonitorCD08* self, int inchrg, int heap)
+extern "C" cBankMonitor* cBankMonitor_cBankMonitor(cBankMonitor* self, int inchrg, int heap)
 {
     if (inchrg) {
         self->vbase = self->vb;
@@ -164,7 +183,7 @@ extern "C" sBankMonitorCD08* cBankMonitor_cBankMonitor(sBankMonitorCD08* self, i
         vt.e[1].delta = D_00483B88.e[1].delta + d;
     }
     self->vtbl = D_00483B48;
-    self->f8DC = 0;
+    self->busy = 0;
     self->f8E0 = 1;
     self->f8E4 = 1;
     sBmVoice** slot = &self->voices;
@@ -183,15 +202,7 @@ extern "C" void func_002ADAC8(sSndPlayer* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 
 
-struct sBankMonitorE40 {
-    char* vbase;                // 0x0
-    char pad_0x4[0x8D8 - 0x4];
-    void** vtbl;                // 0x8D8
-    char pad_0x8DC[0x8EC - 0x8DC];
-    sBmVoice* voices;        // 0x8EC
-};
-
-extern "C" void func_002ACE40(sBankMonitorE40* self, int flags)
+extern "C" void func_002ACE40(cBankMonitor* self, int flags)
 {
     self->vtbl = D_00483B48;
     *(const sSndVtbl4**)(self->vbase + 4) = &D_00483B88;
@@ -250,33 +261,8 @@ extern "C" void func_003B89E0(int h);
 extern "C" int func_003B9920(int h);
 extern char D_00483250[];
 
-struct sBankMonitorCreate {
-    char pad00[0x1C];
-    volatile int cur;           // 0x1C
-    void* ch;                   // 0x20
-    sBmQuad* tgt[4];      // 0x24
-    int* p34;                   // 0x34
-    int* vals;                  // 0x38
-    int* p3C;                   // 0x3C
-    sSndCallback callbacks[4];  // 0x40
-    int* p60;                   // 0x60
-    int* p64;                   // 0x64
-    float* p68;                 // 0x68
-    float* p6C;                 // 0x6C
-    void* p70;                  // 0x70
-    int* p74;                   // 0x74
-    int* p78;                   // 0x78
-    int* p7C;                   // 0x7C
-    int* p80;                   // 0x80
-    int* p84;                   // 0x84
-    char pad88[0x8DC - 0x88];
-    volatile int busy;          // 0x8DC
-    char pad8E0[0x8EC - 0x8E0];
-    sBmVoice* voices;     // 0x8EC
-};
-
 // cSndPlayOpts::OPTS_GetCallback (prototype name; out-of-line copy in bx is func_002B91C8)
-static inline sSndCallback OPTS_GetCallback_Create(sBankMonitorCreate* s)
+static inline sSndCallback OPTS_GetCallback_Create(cBankMonitor* s)
 {
     return s->callbacks[s->cur];
 }
@@ -286,7 +272,7 @@ static inline void setCallback_Create(sBmVoice* v, sSndCallback k)
     v->callback = k;
 }
 
-extern "C" sBmVoice* cBankMonitor_BANKMONITOR_Create(sBankMonitorCreate* self, int id, int vol, int kind)
+extern "C" sBmVoice* cBankMonitor_BANKMONITOR_Create(cBankMonitor* self, int id, int vol, int kind)
 {
     sBmVoice* v = 0;
     self->busy++;
