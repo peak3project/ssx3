@@ -17598,8 +17598,6 @@ void func_003D4C40(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4F10);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern unsigned char D_0044F434_4F10 __asm__("D_0044F434");
-extern unsigned int D_0044F438_4F10 __asm__("D_0044F438");
 extern void func_002AE9F8(int h, int a);
 extern int func_002AEBD0(int h);
 extern int func_003D1E80_4F10(void) __asm__("func_003D1E80");
@@ -17610,7 +17608,7 @@ extern void func_003D5CC0_4F10(struct sPathVoice *s) __asm__("func_003D5CC0");
 extern void func_003D5EE8_4F10(struct sPathVoice *s) __asm__("func_003D5EE8");
 
 void func_003D4F10(void) {
-    int isB = D_0044F434_4F10 == 'B';
+    int isB = D_0044F434 == 'B';
     unsigned int step;
     unsigned int i;
     struct sPathVoice *s;
@@ -17633,7 +17631,7 @@ void func_003D4F10(void) {
             continue;
         }
         ok = 0;
-        end = D_0044F438_4F10 + s->f24;
+        end = D_0044F438 + s->f24;
         if (s->f36 >= 0) {
             ok = s->f30 != 0;
         }
@@ -17652,7 +17650,7 @@ void func_003D4F10(void) {
             continue;
         }
         if (s->f4C != 0) {
-            if (D_0044F438_4F10 + (step >> 1) >= s->f4C) {
+            if (D_0044F438 + (step >> 1) >= s->f4C) {
                 func_002AE9F8(s->f54, 0);
                 s->f4C = 0;
             }
