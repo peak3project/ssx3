@@ -1088,7 +1088,131 @@ extern "C" void func_0035E1E0(void* self, func_0035E1E0_cObj* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035E248);
+#ifdef SKIP_ASM
+struct sM44_E248 {
+    sRmVec4 r[4];
+};
+
+// PORT: PS2-only VU0 inline asm (unit quaternion -> 4x4 rotation matrix).
+static inline void QuatToMtx_E248(sM44_E248& m, const sRmVec4& q)
+{
+    __asm__ __volatile__(
+        "lqc2       $vf4, %4\n"
+        "vaddw.xyz  $vf1, $vf0, $vf0w\n"
+        "vadd.xyz   $vf5, $vf4, $vf4\n"
+        "vsub.w     $vf10, $vf10, $vf10\n"
+        "vsub.w     $vf11, $vf11, $vf11\n"
+        "vsub.w     $vf12, $vf12, $vf12\n"
+        "vmul.xyz   $vf6, $vf5, $vf4\n"
+        "vmulw.xyz  $vf7, $vf5, $vf4w\n"
+        "vopmula.xyz ACC, $vf5, $vf4\n"
+        "vmadd.xyz  $vf8, $vf0, $vf0\n"
+        "vsubay.x   ACC, $vf1, $vf6y\n"
+        "vmsubz.x   $vf10, $vf1, $vf6z\n"
+        "vsubaz.y   ACC, $vf1, $vf6z\n"
+        "vmsubx.y   $vf11, $vf1, $vf6x\n"
+        "vsubax.z   ACC, $vf1, $vf6x\n"
+        "vmsuby.z   $vf12, $vf1, $vf6y\n"
+        "vaddaz.y   ACC, $vf0, $vf8z\n"
+        "vmaddz.y   $vf10, $vf1, $vf7z\n"
+        "vaddax.z   ACC, $vf0, $vf8x\n"
+        "vmaddx.z   $vf11, $vf1, $vf7x\n"
+        "vaddax.y   ACC, $vf0, $vf8x\n"
+        "vmsubx.y   $vf12, $vf1, $vf7x\n"
+        "vadday.z   ACC, $vf0, $vf8y\n"
+        "vmsuby.z   $vf10, $vf1, $vf7y\n"
+        "vaddaz.x   ACC, $vf0, $vf8z\n"
+        "vmsubz.x   $vf11, $vf1, $vf7z\n"
+        "vadday.x   ACC, $vf0, $vf8y\n"
+        "vmaddy.x   $vf12, $vf1, $vf7y\n"
+        "sqc2       $vf0, %3\n"
+        "sqc2       $vf10, %0\n"
+        "sqc2       $vf11, %1\n"
+        "sqc2       $vf12, %2\n"
+        : "=m"(m.r[0]), "=m"(m.r[1]), "=m"(m.r[2]), "=m"(m.r[3])
+        : "m"(q)
+        : "memory");
+}
+
+static inline sRmMat33 Rot33_E248(const sM44_E248& m)
+{
+    sRmMat33 r;
+    r.m[0][0] = m.r[0].x;
+    r.m[0][1] = m.r[0].y;
+    r.m[0][2] = m.r[0].z;
+    r.m[1][0] = m.r[1].x;
+    r.m[1][1] = m.r[1].y;
+    r.m[1][2] = m.r[1].z;
+    r.m[2][0] = m.r[2].x;
+    r.m[2][1] = m.r[2].y;
+    r.m[2][2] = m.r[2].z;
+    return r;
+}
+
+// b * a for 3x3 matrices.
+static inline sRmMat33 Mul33_E248(const sRmMat33& a, const sRmMat33& b)
+{
+    sRmMat33 r;
+    r.m[0][0] = a.m[0][0] * b.m[0][0] + a.m[1][0] * b.m[0][1] + a.m[2][0] * b.m[0][2];
+    r.m[1][0] = a.m[0][0] * b.m[1][0] + a.m[1][0] * b.m[1][1] + a.m[2][0] * b.m[1][2];
+    r.m[2][0] = a.m[0][0] * b.m[2][0] + a.m[1][0] * b.m[2][1] + a.m[2][0] * b.m[2][2];
+    r.m[0][1] = a.m[0][1] * b.m[0][0] + a.m[1][1] * b.m[0][1] + a.m[2][1] * b.m[0][2];
+    r.m[1][1] = a.m[0][1] * b.m[1][0] + a.m[1][1] * b.m[1][1] + a.m[2][1] * b.m[1][2];
+    r.m[2][1] = a.m[0][1] * b.m[2][0] + a.m[1][1] * b.m[2][1] + a.m[2][1] * b.m[2][2];
+    r.m[0][2] = a.m[0][2] * b.m[0][0] + a.m[1][2] * b.m[0][1] + a.m[2][2] * b.m[0][2];
+    r.m[1][2] = a.m[0][2] * b.m[1][0] + a.m[1][2] * b.m[1][1] + a.m[2][2] * b.m[1][2];
+    r.m[2][2] = a.m[0][2] * b.m[2][0] + a.m[1][2] * b.m[2][1] + a.m[2][2] * b.m[2][2];
+    return r;
+}
+
+static inline void Transpose33_E248(sRmMat33& a)
+{
+    float t;
+    t = a.m[0][1]; a.m[0][1] = a.m[1][0]; a.m[1][0] = t;
+    t = a.m[0][2]; a.m[0][2] = a.m[2][0]; a.m[2][0] = t;
+    t = a.m[1][2]; a.m[1][2] = a.m[2][1]; a.m[2][1] = t;
+}
+
+struct sRmObj_E248 {
+    char pad_0x0[0x40];
+    sRmVec4 quat;           // 0x40
+    char pad_0x50[0x30];
+    sRmMat33 invIWorld;     // 0x80
+    char pad_0xA4[0x280 - 0xA4];
+    sRmMat33 invIBody;      // 0x280
+};
+
+// invIBody * a, reading the body matrix through the object (the binary addresses it at fixed offsets from self).
+static inline sRmMat33 MulIBody_E248(sRmObj_E248* o, const sRmMat33& a)
+{
+    sRmMat33 r;
+    r.m[0][0] = a.m[0][0] * o->invIBody.m[0][0] + a.m[1][0] * o->invIBody.m[0][1] + a.m[2][0] * o->invIBody.m[0][2];
+    r.m[1][0] = a.m[0][0] * o->invIBody.m[1][0] + a.m[1][0] * o->invIBody.m[1][1] + a.m[2][0] * o->invIBody.m[1][2];
+    r.m[2][0] = a.m[0][0] * o->invIBody.m[2][0] + a.m[1][0] * o->invIBody.m[2][1] + a.m[2][0] * o->invIBody.m[2][2];
+    r.m[0][1] = a.m[0][1] * o->invIBody.m[0][0] + a.m[1][1] * o->invIBody.m[0][1] + a.m[2][1] * o->invIBody.m[0][2];
+    r.m[1][1] = a.m[0][1] * o->invIBody.m[1][0] + a.m[1][1] * o->invIBody.m[1][1] + a.m[2][1] * o->invIBody.m[1][2];
+    r.m[2][1] = a.m[0][1] * o->invIBody.m[2][0] + a.m[1][1] * o->invIBody.m[2][1] + a.m[2][1] * o->invIBody.m[2][2];
+    r.m[0][2] = a.m[0][2] * o->invIBody.m[0][0] + a.m[1][2] * o->invIBody.m[0][1] + a.m[2][2] * o->invIBody.m[0][2];
+    r.m[1][2] = a.m[0][2] * o->invIBody.m[1][0] + a.m[1][2] * o->invIBody.m[1][1] + a.m[2][2] * o->invIBody.m[1][2];
+    r.m[2][2] = a.m[0][2] * o->invIBody.m[2][0] + a.m[1][2] * o->invIBody.m[2][1] + a.m[2][2] * o->invIBody.m[2][2];
+    return r;
+}
+
+extern "C" void func_0035E248(void* vself)
+{
+    sRmObj_E248* self = (sRmObj_E248*)vself;
+    sM44_E248 m;
+    QuatToMtx_E248(m, self->quat);
+    sRmMat33 rot;
+    sRmMat33 rotT;
+    rotT = Rot33_E248(m);
+    rot = rotT;
+    Transpose33_E248(rotT);
+    self->invIWorld = Mul33_E248(MulIBody_E248(self, rot), rotT);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035E770);
