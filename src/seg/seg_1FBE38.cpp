@@ -4939,14 +4939,12 @@ extern char *D_004A28A8_39F0 __asm__("D_004A28A8");
 extern int D_004A3FF0_39F0 __asm__("D_004A3FF0");
 extern "C" void func_00343C60_39F0(int, int) __asm__("func_00343C60");
 extern "C" void func_00343F38_39F0(int, int) __asm__("func_00343F38");
-struct V3_39F0 { float x, y, z; };
-extern V3_39F0 D_004C9098_39F0 __asm__("D_004C9098");
 extern unsigned D_39F0[] __asm__("D_004FBC70");
 extern int D_004A57DC;
 extern int D_004A3D38;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_39F0 { int idx; int val; int pad; int type; };
-extern "C" V3_39F0 func_003039F0(int n, Ent_39F0 *e) {
+extern "C" cLunoValue func_003039F0(int n, Ent_39F0 *e) {
     if (D_004A57DC == 0) {
         D_39F0[0] = 0xFFFFFFFF;
         ((int*)D_39F0)[1] = -1;
@@ -4987,7 +4985,7 @@ extern "C" V3_39F0 func_003039F0(int n, Ent_39F0 *e) {
         else if (b1 == 1)
             func_00343F38_39F0(D_004A3FF0_39F0, w);
     }
-    return D_004C9098_39F0;
+    return D_004C9098;
 }
 #endif
 
