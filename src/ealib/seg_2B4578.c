@@ -16452,8 +16452,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1940);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003D1BA8_1940(int, int) __asm__("func_003D1BA8");
 extern int func_003D5450_1940(int) __asm__("func_003D5450");
-extern unsigned char D_0044F42C;
-extern int D_0044F430_1940[] __asm__("D_0044F430");
 extern char D_00517644_1940[] __asm__("D_00517644");
 
 
@@ -16461,7 +16459,7 @@ void func_003D1940(unsigned int mask) {
     int i, j;
     unsigned int fl, t, u;
     if (D_0044F42C != 0) {
-        if (D_0044F430_1940[0] == 0) {
+        if (D_0044F430 == 0) {
             if (func_003D5450_1940(-1) != 0) {
                 for (i = 0; i < 4; i++) {
                     if (*(int *)(D_00517644_1940 + i * 0x928) != 0) {
@@ -16479,7 +16477,7 @@ void func_003D1940(unsigned int mask) {
                     }
                 }
                 D_0044F420 = 0;
-                D_0044F430_1940[0] = 0;
+                D_0044F430 = 0;
             }
         }
     }
