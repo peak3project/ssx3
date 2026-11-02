@@ -756,5 +756,54 @@ extern "C" void func_00210FA0(void* self, int a1, int a2, int a3, int a4)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatetrophy", func_00211088);
+#ifdef SKIP_ASM
+extern char D_00535BC8[];
+extern char D_00472928[];
+extern "C" void func_001D53B0(void* self, int a, int b);
+extern "C" int func_00147318(void* iface, int i);
+struct sOVTrophy_1088 {
+    char pad_0x0[8];
+    void* vtable;           // 0x8
+    int f0C;                // 0xC
+    char pad_0x10[0x1CC - 0x10];
+    int f1CC;               // 0x1CC
+    char pad_0x1D0[0x22C - 0x1D0];
+    int f22C;               // 0x22C
+    int f230;               // 0x230
+    char pad_0x234[0x278 - 0x234];
+    int f278;               // 0x278
+};
+extern "C" sOVTrophy_1088* func_00211088(sOVTrophy_1088* self, int a, unsigned char b, int c)
+{
+    int idx = 0;
+    func_001D53B0(self, a, 0);
+    self->f0C = 0x24;
+    self->vtable = D_00472928;
+    self->f278 = c;
+    self->f1CC = 0;
+    self->f22C = 0;
+    self->f230 = 0;
+    int i;
+    for (i = 1; i < 9; i++) {
+        b >>= i;
+        if (b == 0) {
+            idx = i - 1;
+            break;
+        }
+    }
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    int lim = 1;
+    if (D_00535BC8[0x49] == 2) lim = 2;
+    for (int n = 0; n < lim; n++) {
+        if (func_00147318(iface, n) == idx) {
+            self->f1CC = n;
+            break;
+        }
+    }
+    return self;
+}
+#endif
 
