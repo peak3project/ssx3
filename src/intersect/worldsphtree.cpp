@@ -237,6 +237,22 @@ static inline int overlapNode(const sWsQueryBox* q, const sWsListNode* n)
     return r;
 }
 
+static inline t4Vector vu0Scale(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4094,28 +4110,13 @@ INCLUDE_ASM("intersect/worldsphtree", func_00341770);
 #ifdef SKIP_ASM
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector vu0Scale_341770(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 
 extern "C" float func_002D1C70();
 
 extern "C" void func_00341770(void* self, cWsMover* obj)
 {
-    t4Vector u = vu0Scale_341770(vu0Scale_341770(*obj->getVelocity(), *(float*)((char*)self + 0x34) + 1.0f), func_002D1C70());
+    t4Vector u = vu0Scale(vu0Scale(*obj->getVelocity(), *(float*)((char*)self + 0x34) + 1.0f), func_002D1C70());
     obj->setVelocity(&u);
 }
 #endif
@@ -4166,21 +4167,6 @@ static inline float vu0Dot_341818(const t4Vector& a, const t4Vector& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector vu0Scale_341818(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 
 extern "C" float func_002D1C70();
@@ -4199,7 +4185,7 @@ struct sSph_341818 {
 
 static inline void push_341818(sParams_341818* p, cWsMover* obj, const t4Vector& dir, float amount)
 {
-    t4Vector u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, amount), p->scale), func_002D1C70());
+    t4Vector u = vu0Scale(vu0Scale(vu0Scale(dir, amount), p->scale), func_002D1C70());
     obj->setVelocity(&u);
 }
 
@@ -4215,11 +4201,11 @@ extern "C" void func_00341818(sSph_341818* self, cWsMover* obj)
     sParams_341818* p = &self->params;
     if (self->type == 2) {
         if (d >= 0.0f) {
-            t4Vector u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, p->speed), p->scale), func_002D1C70());
+            t4Vector u = vu0Scale(vu0Scale(vu0Scale(dir, p->speed), p->scale), func_002D1C70());
             obj->setVelocity(&u);
         }
     } else if (diff > 0.0f) {
-        t4Vector u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, diff), p->scale), func_002D1C70());
+        t4Vector u = vu0Scale(vu0Scale(vu0Scale(dir, diff), p->scale), func_002D1C70());
         obj->setVelocity(&u);
     }
 }
@@ -5104,28 +5090,13 @@ INCLUDE_ASM("intersect/worldsphtree", func_003429E0);
 #ifdef SKIP_ASM
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector vu0Scale_3429E0(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 
 extern "C" float func_002D1C70();
 
 extern "C" void func_003429E0(void* self, cWsMover* obj)
 {
-    t4Vector u = vu0Scale_3429E0(vu0Scale_3429E0(*obj->getVelocity(), *(float*)((char*)self + 0x24) + 1.0f), func_002D1C70());
+    t4Vector u = vu0Scale(vu0Scale(*obj->getVelocity(), *(float*)((char*)self + 0x24) + 1.0f), func_002D1C70());
     obj->setVelocity(&u);
 }
 #endif
@@ -5135,21 +5106,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00342A88);
 #ifdef SKIP_ASM
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector vu0Scale_342A88(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
 static inline float vu0Dot_342A88(const t4Vector& a, const t4Vector& b)
@@ -5196,7 +5152,7 @@ extern "C" void func_00342A88(sSelf_342A88* self, cWsMover* obj)
     if (d > 0.0f) {
         // PORT: takes the address of a temporary (g++ 2.95 accepts it).
         sPlane_342A88* pl = &self->plane;
-        setVel_342A88(obj, &vu0Scale_342A88(vu0Scale_342A88(vu0Scale_342A88(pl->n, d), pl->k), func_002D1C70()));
+        setVel_342A88(obj, &vu0Scale(vu0Scale(vu0Scale(pl->n, d), pl->k), func_002D1C70()));
     }
 }
 #endif
