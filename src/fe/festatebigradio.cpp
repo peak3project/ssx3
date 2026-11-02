@@ -8,6 +8,37 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24(int on);
+};
+
 //100%
 INCLUDE_ASM("fe/festatebigradio", cFEStateBraggingRights_onCreateScreen);
 #ifdef SKIP_ASM
@@ -57,20 +88,6 @@ extern char D_0045FCF8[];
 extern char D_0045FD08[];
 
 struct sStr2_2DB0 { char c[2]; };
-
-class cUIObj_2DB0 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
 
 struct sRadioPanel_2DB0 {
     void* menu;          // 0x0
@@ -191,14 +208,14 @@ extern "C" void cFEStateBraggingRights_onCreateScreen(sBragging_2DB0* self)
             }
         }
     }
-    cUIObj_2DB0* o = (cUIObj_2DB0*)find_2DB0(self, D_004A1580);
+    cUIThing* o = (cUIThing*)find_2DB0(self, D_004A1580);
     if (o != 0) {
         if (isNet_2DB0()) {
             o->setVisible(1);
-            cUIObj_2DB0* c = (cUIObj_2DB0*)find_2DB0(self, D_0045FCE8);
+            cUIThing* c = (cUIThing*)find_2DB0(self, D_0045FCE8);
             if (c != 0)
                 c->setVisible(0);
-            cUIObj_2DB0* d = (cUIObj_2DB0*)find_2DB0(self, D_0045FCF8);
+            cUIThing* d = (cUIThing*)find_2DB0(self, D_0045FCF8);
             if (d != 0)
                 d->setVisible(0);
         } else {
@@ -206,10 +223,10 @@ extern "C" void cFEStateBraggingRights_onCreateScreen(sBragging_2DB0* self)
         }
     }
     if (isNet_2DB0()) {
-        cUIObj_2DB0* c = (cUIObj_2DB0*)find_2DB0(self, D_004A1588);
+        cUIThing* c = (cUIThing*)find_2DB0(self, D_004A1588);
         if (c != 0)
             c->setVisible(0);
-        cUIObj_2DB0* d = (cUIObj_2DB0*)find_2DB0(self, D_0045FD08);
+        cUIThing* d = (cUIThing*)find_2DB0(self, D_0045FD08);
         if (d != 0)
             d->setVisible(0);
     }
@@ -304,49 +321,20 @@ extern char D_0045FD68[];
 extern char D_0045FD78[];
 extern char D_0045FD88[];
 
-class cUIObj_193650 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07(int on);
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24(int on);
-};
-
 static inline int Is_193650(int id, char* s) { return id == GetHashValue32(s); }
 
-extern "C" void cFEStateBraggingRights_onWidgetCreate(char* self, cUIObj_193650* w)
+extern "C" void cFEStateBraggingRights_onWidgetCreate(char* self, cUIThing* w)
 {
     char* wp = (char*)w;
     if (Is_193650(*(int*)(wp + 0x38), D_004A17A0)) {
         *(void**)(self + 0x6D0) = 0;
-        w->v07(1);
+        w->setFocus(1);
         *(void**)(self + 0x6D0) = w;
         *(int*)(wp + 0x14) |= 1;
         *(int*)(wp + 0x90) |= 1;
     } else if (Is_193650(*(int*)(wp + 0x38), D_004A17A8)) {
         *(void**)(self + 0x704) = 0;
-        w->v07(1);
+        w->setFocus(1);
         *(void**)(self + 0x704) = w;
         *(int*)(wp + 0x14) |= 1;
         *(int*)(wp + 0x90) |= 1;
@@ -405,7 +393,6 @@ extern char D_0045FD98[];
 extern char D_0045DCC8[];
 extern char D_0045FCD8[];
 extern char D_005308B8[];
-
 
 struct sVObj_38F8 {
     int f0;
@@ -815,8 +802,6 @@ INCLUDE_ASM("fe/festatebigradio", func_00194498);
 struct sColor4_4498 {
     float x, y, z, w;
 };
-
-
 
 extern "C" void func_00194498(void* self)
 {
