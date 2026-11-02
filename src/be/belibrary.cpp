@@ -629,7 +629,7 @@ static inline int scale10_14B560(int v)
 extern "C" int func_0014B560(void* self, int a1, int a2, int key, int flag)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 0xB);
-    char* p = (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
+    sBEProfileChar* p = &D_004A6CA8_pc[a1][a2];
     func_00151C48(p, key, 1);
     sBEEntry38_14B560* e = (sBEEntry38_14B560*)func_0014D998((sBELibTables*)func_0014BDB8_0(), a2);
     int n = func_0014D988(func_0014BDB8_0(), a2);
