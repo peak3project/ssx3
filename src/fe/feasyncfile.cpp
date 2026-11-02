@@ -14,6 +14,21 @@ struct sVEntryVarargs { short delta; short index; void (*fn)(void*, ...); };
 // A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's _vt$8cUIThing
 // (setEnabled/setFocus/setStatic/setVisible take a bool there; getSize fills a size or rectangle record). setColour
 // (slot 11) is declared by the widget views below that call it, each with its own colour type.
+// The FE async file manager: five file slots of 0x11C bytes.
+struct cFEAsyncFile {
+    char name[0x100];
+    char* data;    // 0x100
+    int handle;    // 0x104
+    int async;     // 0x108: load asynchronously
+    int size;      // 0x10C
+    int id;        // 0x110
+    int status;    // 0x114
+    int f118;      // 0x118
+};
+struct cFEAsyncManager {
+    cFEAsyncFile mFiles[5];
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -90,28 +105,17 @@ public:
 //100%
 INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_Load3PeakPic);
 #ifdef SKIP_ASM
-struct cFEAsyncManager;
 void cFEAsyncManager_SetFileStatus(cFEAsyncManager* self, int index, int status);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char* D_004A19F0;
 extern char D_004A19F8[];
 extern char D_004A1A00[];
 
-struct sFE3PeakPicEntry {
-    char mName[0x108];
-    int mParam; // 0x108
-    char pad[0x11C - 0x10C];
-};
-
-struct sFE3PeakPicFiles {
-    sFE3PeakPicEntry mFiles[1];
-};
 
 extern "C" void cFEAsyncManager_Load3PeakPic(cFEAsyncManager* self, int slot, int param)
 {
-    sFE3PeakPicFiles* files = (sFE3PeakPicFiles*)self;
-    sprintf(files->mFiles[slot].mName, D_004A19F8, D_004A19F0, D_004A1A00);
-    files->mFiles[slot].mParam = param;
+    sprintf(self->mFiles[slot].name, D_004A19F8, D_004A19F0, D_004A1A00);
+    self->mFiles[slot].async = param;
     cFEAsyncManager_SetFileStatus(self, slot, 1);
 }
 #endif
@@ -119,28 +123,17 @@ extern "C" void cFEAsyncManager_Load3PeakPic(cFEAsyncManager* self, int slot, in
 //100%
 INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_Load1PeakPic);
 #ifdef SKIP_ASM
-struct cFEAsyncManager;
 void cFEAsyncManager_SetFileStatus(cFEAsyncManager* self, int index, int status);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char* D_00441258[];
 extern char D_004A19F8[];
 extern char D_004A1A00[];
 
-struct sFEPeakPicEntry {
-    char mName[0x108];
-    int mParam; // 0x108
-    char pad[0x11C - 0x10C];
-};
-
-struct sFEPeakPicFiles {
-    sFEPeakPicEntry mFiles[1];
-};
 
 extern "C" void cFEAsyncManager_Load1PeakPic(cFEAsyncManager* self, int pic, int slot, int param)
 {
-    sFEPeakPicFiles* files = (sFEPeakPicFiles*)self;
-    sprintf(files->mFiles[slot].mName, D_004A19F8, D_00441258[pic], D_004A1A00);
-    files->mFiles[slot].mParam = param;
+    sprintf(self->mFiles[slot].name, D_004A19F8, D_00441258[pic], D_004A1A00);
+    self->mFiles[slot].async = param;
     cFEAsyncManager_SetFileStatus(self, slot, 1);
 }
 #endif
@@ -159,9 +152,8 @@ extern "C" void func_001A37F8(cFEAsyncManager* self, int id, int slot, int param
 {
     if (id >= 0) {
         void* iface = cBE_getInterface_Fv(cBE_getBE(), 10);
-        sFEPeakPicFiles* files = (sFEPeakPicFiles*)self;
-        sprintf(files->mFiles[slot].mName, D_004A1A08, D_004A1A10, func_00154760(iface, id), D_004A1A00);
-        files->mFiles[slot].mParam = param;
+        sprintf(self->mFiles[slot].name, D_004A1A08, D_004A1A10, func_00154760(iface, id), D_004A1A00);
+        self->mFiles[slot].async = param;
         cFEAsyncManager_SetFileStatus(self, slot, 1);
     }
 }
@@ -176,58 +168,34 @@ void cMemMan_free(void* p);
 extern "C" int ASYNCFILE_release(int handle, void** data, int* size);
 extern char* D_004A289C;
 
-struct sFEUnloadFile {
-    char name[0x100];
-    void* data;    // 0x100
-    int handle;    // 0x104
-    int async;     // 0x108
-    int size;      // 0x10C
-    int id;        // 0x110
-    int status;    // 0x114
-    int f118;      // 0x118
-};
-
-struct sFEUnloadFiles {
-    sFEUnloadFile files[5];
-};
 
 extern "C" void cFEAsyncManager_UnloadFEAsyncFile(cFEAsyncManager* self, int idx)
 {
-    sFEUnloadFiles* m = (sFEUnloadFiles*)self;
     if (cFEAsyncManager_GetFileStatus(self, idx) == 1) {
         cFEAsyncManager_SetFileStatus(self, idx, 0);
     } else if (cFEAsyncManager_GetFileStatus(self, idx) == 2) {
-        ASYNCFILE_release(m->files[idx].handle, 0, 0);
-        if (m->files[idx].data != 0) {
-            cMemMan_free(m->files[idx].data);
+        ASYNCFILE_release(self->mFiles[idx].handle, 0, 0);
+        if (self->mFiles[idx].data != 0) {
+            cMemMan_free(self->mFiles[idx].data);
         }
-        m->files[idx].data = 0;
+        self->mFiles[idx].data = 0;
         cFEAsyncManager_SetFileStatus(self, idx, 0);
     } else if (cFEAsyncManager_GetFileStatus(self, idx) == 3) {
         char* obj = D_004A289C;
         sVEntryInt* vt = *(sVEntryInt**)(obj + 0x10D8);
-        m->files[idx].f118 = vt[114].fn(obj + vt[114].delta) + 0xE;
+        self->mFiles[idx].f118 = vt[114].fn(obj + vt[114].delta) + 0xE;
         cFEAsyncManager_SetFileStatus(self, idx, 0);
     }
 }
 #endif
 
-struct cFEAsyncFileEntry {
-    char pad_0x00[0x114];
-    int mStatus; // 0x114
-    char pad_0x118[0x11C - 0x114 - 4];
-};
-
-struct cFEAsyncManager {
-    cFEAsyncFileEntry mFiles[1];
-};
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_GetFileStatus__FP15cFEAsyncManageri);
 #ifdef SKIP_ASM
 int cFEAsyncManager_GetFileStatus(cFEAsyncManager* self, int index)
 {
-    return self->mFiles[index].mStatus;
+    return self->mFiles[index].status;
 }
 #endif
 
@@ -236,27 +204,14 @@ INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_SetFileStatus__FP15cFEAsyncManager
 #ifdef SKIP_ASM
 void cFEAsyncManager_SetFileStatus(cFEAsyncManager* self, int index, int status)
 {
-    self->mFiles[index].mStatus = status;
+    self->mFiles[index].status = status;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A39F0);
 #ifdef SKIP_ASM
-struct sFE39F0File {
-    char name[0x100];
-    char* data;    // 0x100
-    int handle;    // 0x104
-    int async;     // 0x108
-    int size;      // 0x10C
-    int id;        // 0x110
-    int status;    // 0x114
-    int f118;      // 0x118
-};
 
-struct sFE39F0Files {
-    sFE39F0File files[5];
-};
 
 struct sVE39F0L {
     short delta;
@@ -275,41 +230,40 @@ extern char D_004A1A18[];
 
 extern "C" void func_001A39F0(cFEAsyncManager* self)
 {
-    sFE39F0Files* m = (sFE39F0Files*)self;
     int i;
     for (i = 0; i < 5; i++) {
         if (cFEAsyncManager_GetFileStatus(self, i) == 0 || cFEAsyncManager_GetFileStatus(self, i) == 1) {
             char* obj = D_004A289C;
             sVEntryInt* vt = *(sVEntryInt**)(obj + 0x10D8);
-            if (m->files[i].f118 < vt[114].fn(obj + vt[114].delta)) {
-                if (m->files[i].data != 0) {
+            if (self->mFiles[i].f118 < vt[114].fn(obj + vt[114].delta)) {
+                if (self->mFiles[i].data != 0) {
                     char* obj2 = D_004A289C;
                     sVEntryVoidArg* vt2 = *(sVEntryVoidArg**)(obj2 + 0x10D8);
-                    vt2[50].fn(obj2 + vt2[50].delta, m->files[i].id);
-                    if (m->files[i].data != 0) {
-                        cMemMan_free(m->files[i].data);
+                    vt2[50].fn(obj2 + vt2[50].delta, self->mFiles[i].id);
+                    if (self->mFiles[i].data != 0) {
+                        cMemMan_free(self->mFiles[i].data);
                     }
-                    m->files[i].data = 0;
-                    m->files[i].f118 = 0;
-                    m->files[i].id = -1;
+                    self->mFiles[i].data = 0;
+                    self->mFiles[i].f118 = 0;
+                    self->mFiles[i].id = -1;
                 }
             }
         }
         if (cFEAsyncManager_GetFileStatus(self, i) == 1) {
             char* obj = D_004A289C;
             sVEntryInt* vt = *(sVEntryInt**)(obj + 0x10D8);
-            if (m->files[i].f118 < vt[114].fn(obj + vt[114].delta)) {
+            if (self->mFiles[i].f118 < vt[114].fn(obj + vt[114].delta)) {
                 cFEAsyncManager_LoadDataFile(self, i);
             }
         }
         if (cFEAsyncManager_GetFileStatus(self, i) == 2) {
-            if (func_003DF980(m->files[i].handle) == 1) {
+            if (func_003DF980(self->mFiles[i].handle) == 1) {
                 cFEAsyncManager_SetFileStatus(self, i, 3);
-                ASYNCFILE_release(m->files[i].handle, 0, 0);
+                ASYNCFILE_release(self->mFiles[i].handle, 0, 0);
                 char* obj = D_004A289C;
                 sVE39F0L* vt = *(sVE39F0L**)(obj + 0x10D8);
-                char* data = m->files[i].data;
-                m->files[i].id = vt[46].fn(obj + vt[46].delta, data + *(int*)(data + 0x14), D_004A1A18, 0, 0, -1);
+                char* data = self->mFiles[i].data;
+                self->mFiles[i].id = vt[46].fn(obj + vt[46].delta, data + *(int*)(data + 0x14), D_004A1A18, 0, 0, -1);
             }
         }
     }
@@ -336,39 +290,25 @@ extern "C" int func_001A3BF0(cFEAsyncManager* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A3C50);
 #ifdef SKIP_ASM
-struct sFE3C50File {
-    char name[0x100];
-    void* data;    // 0x100
-    int handle;    // 0x104
-    int async;     // 0x108
-    int size;      // 0x10C
-    int id;        // 0x110
-    int status;    // 0x114
-    int f118;      // 0x118
-};
 
-struct sFE3C50Files {
-    sFE3C50File files[5];
-};
 
 extern char* D_004A289C;
 void cMemMan_free(void* p);
 
 extern "C" void func_001A3C50(cFEAsyncManager* self)
 {
-    sFE3C50Files* m = (sFE3C50Files*)self;
     int i;
     for (i = 0; i < 5; i++) {
-        if (m->files[i].data != 0) {
+        if (self->mFiles[i].data != 0) {
             char* obj = D_004A289C;
             sVEntryVoidArg* vt = *(sVEntryVoidArg**)(obj + 0x10D8);
-            vt[50].fn(obj + vt[50].delta, m->files[i].id);
-            if (m->files[i].data != 0) {
-                cMemMan_free(m->files[i].data);
+            vt[50].fn(obj + vt[50].delta, self->mFiles[i].id);
+            if (self->mFiles[i].data != 0) {
+                cMemMan_free(self->mFiles[i].data);
             }
-            m->files[i].data = 0;
-            m->files[i].f118 = 0;
-            m->files[i].id = -1;
+            self->mFiles[i].data = 0;
+            self->mFiles[i].f118 = 0;
+            self->mFiles[i].id = -1;
         }
     }
 }
@@ -377,20 +317,7 @@ extern "C" void func_001A3C50(cFEAsyncManager* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_LoadDataFile);
 #ifdef SKIP_ASM
-struct sFEAsyncFile {
-    char name[0x100];
-    void* data;    // 0x100
-    int handle;    // 0x104
-    int async;     // 0x108
-    int size;      // 0x10C
-    int pad110;
-    int status;    // 0x114
-    int pad118;
-};
 
-struct sFEAsyncFiles {
-    sFEAsyncFile files[5];
-};
 
 extern char D_00461430[];
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
@@ -399,19 +326,18 @@ extern "C" int func_003E1BB8(void* file, void* data, int size);
 
 extern "C" void cFEAsyncManager_LoadDataFile(cFEAsyncManager* self, int idx)
 {
-    sFEAsyncFiles* m = (sFEAsyncFiles*)self;
     void** pData;
     char* base;
-    m->files[idx].size = 0x109A0;
+    self->mFiles[idx].size = 0x109A0;
     base = (char*)self + 0x100;
     pData = (void**)(base + idx * 0x11C);
     *pData = operator_new__FUi(0x109A0, D_00461430, 0x25000000, 0);
     cFEAsyncManager_SetFileStatus(self, idx, 2);
-    if (m->files[idx].async != 0) {
+    if (self->mFiles[idx].async != 0) {
         cFEAsyncManager_SetFileStatus(self, idx, 2);
-        m->files[idx].handle = func_003DF748(&m->files[idx], *pData, m->files[idx].size);
+        self->mFiles[idx].handle = func_003DF748(&self->mFiles[idx], *pData, self->mFiles[idx].size);
     } else {
-        func_003E1BB8(&m->files[idx], *pData, m->files[idx].size);
+        func_003E1BB8(&self->mFiles[idx], *pData, self->mFiles[idx].size);
         cFEAsyncManager_SetFileStatus(self, idx, 3);
     }
 }
