@@ -121,7 +121,9 @@ struct cChaseCameraController {
 // slots, slot 1 the destructor.
 class cCameraController {
 public:
-    char pad[0x14];
+    char pad_0x00[0xC];
+    int pad;                    // 0xC: the controller pad it reads (sApp::pads)
+    char pad_0x10[0x4];
     virtual ~cCameraController();
     virtual void v02();
     virtual void v03();
@@ -258,12 +260,6 @@ void* func_0015E030(void* self);
 extern const char D_0045B790[];
 extern void* D_0045B7A8[];
 
-struct sCamCtrl_15DE60
-{
-    char pad_0x00[0xC];
-    int viewport;   // 0xC
-};
-
 struct sCamera_15DE60
 {
     char pad_0x00[0xC];
@@ -272,9 +268,9 @@ struct sCamera_15DE60
     float f14;      // 0x14
     int index;      // 0x18
     char pad_0x1C[0xA4 - 0x1C];
-    sCamCtrl_15DE60* manual;   // 0xA4
-    sCamCtrl_15DE60* chase;    // 0xA8
-    sCamCtrl_15DE60* script;   // 0xAC
+    cCameraController* manual;   // 0xA4
+    cCameraController* chase;    // 0xA8
+    cCameraController* script;   // 0xAC
     int fB0;        // 0xB0
     int fB4;        // 0xB4
     char pad_0xB8[0x454 - 0xB8];
@@ -297,9 +293,9 @@ extern "C" void cCamera_init(sCamera_15DE60* self, int idx, float a, float b, fl
     self->f14 = c;
     self->index = idx;
     self->f460 = 0;
-    self->manual->viewport = D_004A28A8->pads[0];
+    self->manual->pad = D_004A28A8->pads[0];
     func_0015CF80(self->manual, 0x51);
-    self->chase->viewport = D_004A28A8->pads[idx];
+    self->chase->pad = D_004A28A8->pads[idx];
     sRiderRef_15DE60* p = (sRiderRef_15DE60*)operator new(8, D_0045B790, 0, 0);
     p->vt = D_0045B7A8;
     p->rider = (int)D_004A28A8->game->race->riders[idx];
@@ -319,7 +315,7 @@ extern "C" void cCamera_init(sCamera_15DE60* self, int idx, float a, float b, fl
         break;
     }
     self->fB4 = 0;
-    self->script->viewport = D_004A28A8->pads[0];
+    self->script->pad = D_004A28A8->pads[0];
 }
 #endif
 
