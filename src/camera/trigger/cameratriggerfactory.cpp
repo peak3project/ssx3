@@ -25,6 +25,13 @@ struct sVec4 : t4Vector
     sVec4(const sVec3& v, float aw) { x = v.x; y = v.y; z = v.z; w = aw; }
 } __attribute__((aligned(16)));
 
+// A trigger volume's bounding box, returned by value from its bounds virtual (func_001721C0 / func_00172840).
+struct sCTBox {
+    sVec4 min;
+    sVec4 max;
+    sCTBox(const sVec4& a, const sVec4& b) : min(a), max(b) {}
+};
+
 // Global vectors and a matrix in .bss that the trigger code reads (set up elsewhere at startup).
 extern t4Vector D_004FF130;
 extern t4Vector D_004FF140;
@@ -512,11 +519,6 @@ extern "C" int get_camspline(void* reader, cCTSplineK2** out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00171FA8);
 #ifdef SKIP_ASM
-struct sBox_171FA8 {
-    t4Vector lo;
-    t4Vector hi;
-};
-
 extern "C" float func_0040DA10(float x);
 
 // PORT: PS2-only VU0 inline asm (a + b).
@@ -587,9 +589,9 @@ static inline float Length_171FA8(const t4Vector& v)
     return r;
 }
 
-static inline sBox_171FA8 GetBox_171FA8(char* o)
+static inline sCTBox GetBox_171FA8(char* o)
 {
-    sVEntry<sBox_171FA8(void*)>* e = &(*(sVEntry<sBox_171FA8(void*)>**)(o + 0x24))[6];
+    sVEntry<sCTBox(void*)>* e = &(*(sVEntry<sCTBox(void*)>**)(o + 0x24))[6];
     return e->fn(o + e->delta);
 }
 
@@ -599,9 +601,9 @@ static inline int Inside_171FA8(char* o, t4Vector* p)
     return e->fn(o + e->delta, p);
 }
 
-static inline t4Vector Center_171FA8(const sBox_171FA8& b)
+static inline t4Vector Center_171FA8(const sCTBox& b)
 {
-    return Scale_171FA8(Add_171FA8(b.lo, b.hi), 0.5f);
+    return Scale_171FA8(Add_171FA8(b.min, b.max), 0.5f);
 }
 
 extern "C" t4Vector func_00171FA8(char* obj, t4Vector* pos, float step)
@@ -648,19 +650,13 @@ static inline sVec3 operator+(const sVec3& a, float s)
     return sVec3(a.x + s, a.y + s, a.z + s);
 }
 
-struct sCTBoxK2 {
-    sVec4 min;
-    sVec4 max;
-    sCTBoxK2(const sVec4& a, const sVec4& b) : min(a), max(b) {}
-};
-
 // Bounding box of a trigger volume: centre +- the largest half-extent.
-extern "C" sCTBoxK2 func_001721C0(char* obj)
+extern "C" sCTBox func_001721C0(char* obj)
 {
     float r = func_001731C0((float*)(obj + 0x18));
     sVec3 rv(r, r, r);
     const sVec3& c = *(sVec3*)obj;
-    return sCTBoxK2(sVec4(c - r, 1.0f), sVec4(c + r, 1.0f));
+    return sCTBox(sVec4(c - r, 1.0f), sVec4(c + r, 1.0f));
 }
 #endif
 
@@ -891,19 +887,13 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00172840);
 #ifdef SKIP_ASM
 extern "C" float func_001731C0(float* v);
 
-struct sCTBoxK2b {
-    sVec4 min;
-    sVec4 max;
-    sCTBoxK2b(const sVec4& a, const sVec4& b) : min(a), max(b) {}
-};
-
 // Bounding box of a trigger volume: centre +- the largest half-extent.
-extern "C" sCTBoxK2b func_00172840(char* obj)
+extern "C" sCTBox func_00172840(char* obj)
 {
     float r = func_001731C0((float*)(obj + 0x18));
     sVec3 rv(r, r, r);
     const sVec3& c = *(sVec3*)obj;
-    return sCTBoxK2b(sVec4(c - r, 1.0f), sVec4(c + r, 1.0f));
+    return sCTBox(sVec4(c - r, 1.0f), sVec4(c + r, 1.0f));
 }
 #endif
 
