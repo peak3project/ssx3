@@ -1735,14 +1735,12 @@ extern "C" void func_00355AD0_DED0(void*, void*) __asm__("func_00355AD0");
 struct O_DED0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_DED0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_DED0(unsigned i) { if (i == 0) return 0; return refToPtr_DED0(i); }
-struct V3_DED0 { float x, y, z; };
-extern V3_DED0 D_004C9098_DED0 __asm__("D_004C9098");
 extern unsigned D_DED0[] __asm__("D_004FB778");
 extern int D_004A5614;
 extern const int D_004461D8[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_DED0 { int idx; int val; int pad; int type; };
-extern "C" V3_DED0 func_002FDED0(int n, Ent_DED0 *e) {
+extern "C" cLunoValue func_002FDED0(int n, Ent_DED0 *e) {
     if (D_004A5614 == 0) {
         D_DED0[0] = 0xFFFFFFFF;
         D_DED0[1] = 0xFFFFFFFF;
@@ -1795,7 +1793,7 @@ extern "C" V3_DED0 func_002FDED0(int n, Ent_DED0 *e) {
                 func_00355AD0_DED0(p, buf);
         }
     }
-    return D_004C9098_DED0;
+    return D_004C9098;
 }
 #endif
 
