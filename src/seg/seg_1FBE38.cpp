@@ -3502,8 +3502,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003012F0);
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_12F0 { int idx; int val; int pad; int kind; };
-struct R12_12F0 { int a; int b; int c; };
-extern R12_12F0 D_004C9098_12F0 __asm__("D_004C9098");
 
 extern int D_004A3C70_12F0[2] __asm__("D_004A3C70");
 extern "C" int func_0030A868_12F0(int, unsigned, int, int) __asm__("func_0030A868");
@@ -3537,7 +3535,7 @@ extern "C" void* func_003012F0(void* self, int n, Ent_12F0* e) {
         *(int*)((char*)self + 8) = 1;
         *func_00226610(self) = r;
     } else {
-        *(R12_12F0*)self = D_004C9098_12F0;
+        *(cLunoValue*)self = D_004C9098;
     }
     return self;
 }
