@@ -19,6 +19,18 @@ extern t4Vector D_004FF120;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
+// The game singleton D_004A28A8 (seg/seg_1FBE38's sApp / sGame; only the member this unit reads): the game's
+// table of 0xB0-byte entries at 0x44, indexed by the rider's ground material (cRider 0x438).
+struct sGame {
+    char pad_0x0[0x44];
+    char* f44;                  // 0x44
+};
+struct sApp {
+    char pad_0x0[0x84];
+    sGame* game;                // 0x84
+};
+extern sApp* D_004A28A8;
+
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", cHandplantMotion_gainFocus);
 #ifdef SKIP_ASM
@@ -547,7 +559,6 @@ extern "C" void func_00113648(void* ap, void* pos, void* vel, float dt);
 extern "C" void func_00121AA0(void* rider, void* a, void* b, float x, float y);
 extern "C" void func_00125970(char* self);
 int func_0011FEE8(void* rider);
-extern void* D_004A28A8;
 
 // PORT: PS2-only VU0 inline asm (in-place vector times scalar).
 static inline void vu0ScaleEq_139A20(t4Vector& v, float s)
@@ -610,7 +621,7 @@ extern "C" void func_00139A20(void* p)
         char* r2 = *(char**)(self + 0x4);
         char* ap = *(char**)(r2 + 0x788);
         int idx = *(int*)(ap + 0x90);
-        char* e = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x44) + idx * 0xB0;
+        char* e = D_004A28A8->game->f44 + idx * 0xB0;
         int flag = 0;
         short sf = *(short*)(ap + 0x94);
         if (sf != -1) {
@@ -1236,7 +1247,6 @@ extern "C" void* func_0013C650(void* self, int inChrg)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C7A8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" int func_001298C8();
 
 struct sHpEntry_13C7A8 {
@@ -1274,7 +1284,7 @@ extern "C" void func_0013C7A8(sHpCtl_13C7A8* self)
 {
     self->m0 = 0;
     char* r = self->mRider;
-    sHpEntry_13C7A8* tbl = *(sHpEntry_13C7A8**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x44);
+    sHpEntry_13C7A8* tbl = (sHpEntry_13C7A8*)D_004A28A8->game->f44;
     sHpEntry_13C7A8* e = &tbl[*(int*)(r + 0x438)];
     float k = *(float*)(*(char**)(r + 0x780) + 0x140);
     self->m4 = k * e->m14;
@@ -1799,7 +1809,6 @@ int func_0011FE98(void* rider);
 void func_0011FE78_impl_13F178(void* rider, int v) __asm__("func_0011FE78__FPv");
 extern char* D_004A3500;
 extern int D_004A115C;
-extern void* D_004A28A8;
 
 struct sInfo_13F178 {
     t4Vector pos;
@@ -1927,7 +1936,7 @@ extern "C" void func_0013F178(void* self)
     } else {
         char* r = RIDER_13F178;
         int idx = *(int*)(r + 0x438);
-        char* e = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x44) + idx * 0xB0;
+        char* e = D_004A28A8->game->f44 + idx * 0xB0;
         int fl;
         if (idx == 0x12) {
             sInfo_13F178 info;
