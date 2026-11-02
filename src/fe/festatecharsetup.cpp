@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatecharsetup", cFEStateCharSetup_onCreateScreen);
 #ifdef SKIP_ASM
@@ -30,11 +38,6 @@ extern char D_0045D830[];
 extern char D_0045D840[];
 extern char D_0045D850[];
 
-struct sVEntry_182928 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 class cWidget_182928 {
 public:
@@ -78,7 +81,7 @@ extern "C" void cFEStateCharSetup_onCreateScreen(sCharSetup_182928* self)
     func_00182DB8(self);
     char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
     int charId = cBENewPlayerInterface_getPlayerCharID(iface, self->player);
-    sVEntry_182928* vt = *(sVEntry_182928**)(iface + 0xC);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(iface + 0xC);
     vt[2].fn(iface + vt[2].delta);
     func_001A0570(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, self->player, 0);
     func_001A0508(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, self->player, charId, 0);
@@ -154,11 +157,6 @@ extern "C" void func_0039F400(void* list, void* item);
 extern "C" void func_001831D0(void* self, int a1);
 extern char D_0045D698[];
 
-struct sVEntryK182C80 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 struct sStateK182C80 {
     char pad_0x0[0x1C];
@@ -174,7 +172,7 @@ extern "C" void func_00182C80(void* self, void* item, unsigned int event)
     switch (event) {
     case 5: {
         char* o = **(char***)((char*)self + 0x10);
-        sVEntryK182C80* vt = *(sVEntryK182C80**)(o + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(o + 4);
         void* r = vt[4].fn(o + vt[4].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0)
             func_0039F400(*(char**)((char*)self + 0x10) + 0x18, r);
@@ -183,7 +181,7 @@ extern "C" void func_00182C80(void* self, void* item, unsigned int event)
     }
     case 6: {
         char* o = **(char***)((char*)self + 0x10);
-        sVEntryK182C80* vt = *(sVEntryK182C80**)(o + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(o + 4);
         void* r = vt[5].fn(o + vt[5].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0) {
             func_0039F400(*(char**)((char*)self + 0x10) + 0x18, r);
