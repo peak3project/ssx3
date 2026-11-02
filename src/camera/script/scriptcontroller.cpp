@@ -22,6 +22,19 @@ struct sVec2 {
     sVec2(float ax, float ay) : x(ax), y(ay) {}
 };
 
+// A camera algorithm (cCameraAlgorithm, camera/camera): the vptr follows the base's own data at 0x10; slots by
+// position.
+class cCameraAlgorithm {
+public:
+    char pad_0x00[0xC];
+    int type;                   // 0xC
+    virtual void v01();
+    virtual void v02();
+    virtual void v03(int on);
+    virtual void v04();
+    virtual void v05();
+};
+
 // A transform as position + rotation quaternion, returned by value (func_0031B748 builds one from a matrix).
 struct sXf {
     t4Vector pos;
@@ -209,19 +222,8 @@ INCLUDE_ASM("camera/script/scriptcontroller", func_00169368);
 // func_001694B0 returns a pointer (the unit declares it int); bind a pointer-returning alias.
 char* func_001694B0_K2(void* self) __asm__("func_001694B0__FPv");
 
-class cScrCamAlgoK2 {
-public:
-    char pad_0x00[0x10];
-    // vptr at 0x10
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
-
 struct sScrAlgoNodeK2 {
-    cScrCamAlgoK2* algo;    // 0x0
+    cCameraAlgorithm* algo;    // 0x0
     float t;                // 0x4
     float pad_0x08;
     float weight;           // 0xC
@@ -329,19 +331,7 @@ extern "C" void* func_001694B8(void* self)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169518);
 #ifdef SKIP_ASM
-class cScriptCtlVirt {
-public:
-    char pad[0x10];
-    // vptr lands at 0x10 (g++ 2.95 places it after the class's own data);
-    // slot N lives at vtable offset N*8 (delta at +0, function at +4)
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
-
-extern "C" void func_00169518(cScriptCtlVirt* self)
+extern "C" void func_00169518(cCameraAlgorithm* self)
 {
     self->v05();
 }
@@ -350,16 +340,7 @@ extern "C" void func_00169518(cScriptCtlVirt* self)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169540);
 #ifdef SKIP_ASM
-class cScriptCtlVirt2 {
-public:
-    char pad[0x10];
-    // vptr at 0x10; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03(int);
-};
-
-extern "C" void func_00169540(cScriptCtlVirt2* self)
+extern "C" void func_00169540(cCameraAlgorithm* self)
 {
     self->v03(0);
 }
@@ -644,7 +625,7 @@ extern "C" void* func_00169CF8(void* self)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169D58);
 #ifdef SKIP_ASM
-extern "C" void func_00169D58(cScriptCtlVirt* self)
+extern "C" void func_00169D58(cCameraAlgorithm* self)
 {
     self->v05();
 }
@@ -653,7 +634,7 @@ extern "C" void func_00169D58(cScriptCtlVirt* self)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169D80);
 #ifdef SKIP_ASM
-extern "C" void func_00169D80(cScriptCtlVirt2* self)
+extern "C" void func_00169D80(cCameraAlgorithm* self)
 {
     self->v03(0);
 }
@@ -928,7 +909,7 @@ extern "C" void* func_0016A458(void* self)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016A4B8);
 #ifdef SKIP_ASM
-extern "C" void func_0016A4B8(cScriptCtlVirt* self)
+extern "C" void func_0016A4B8(cCameraAlgorithm* self)
 {
     self->v05();
 }
@@ -937,7 +918,7 @@ extern "C" void func_0016A4B8(cScriptCtlVirt* self)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016A4E0);
 #ifdef SKIP_ASM
-extern "C" void func_0016A4E0(cScriptCtlVirt2* self)
+extern "C" void func_0016A4E0(cCameraAlgorithm* self)
 {
     self->v03(0);
 }
@@ -1434,7 +1415,7 @@ extern "C" void func_0016AD98(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016B150);
 #ifdef SKIP_ASM
-extern "C" void func_0016B150(cScriptCtlVirt2* self)
+extern "C" void func_0016B150(cCameraAlgorithm* self)
 {
     self->v03(0);
 }
