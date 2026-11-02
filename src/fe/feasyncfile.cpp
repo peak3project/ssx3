@@ -107,6 +107,13 @@ struct sFEObj6C4 {
     int f6C4;
 };
 
+struct sFEObjB80 {
+    char pad0[0x770];
+    int f770;           // 0x770
+    char pad774[0xB80 - 0x774];
+    char fB80[4];       // 0xB80 (string object)
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -15597,14 +15604,7 @@ extern "C" const char* func_0025F150(void* self, int a1);
 extern void* D_004A3028;
 extern char D_00464FA8[];
 
-struct sFEObj_001BD460 {
-    char pad0[0x770];
-    int f770;           // 0x770
-    char pad774[0xB80 - 0x774];
-    char fB80[4];       // 0xB80 (string object)
-};
-
-extern "C" void func_001BD460(sFEObj_001BD460* self, int a1, const char* str)
+extern "C" void func_001BD460(sFEObjB80* self, int a1, const char* str)
 {
     void* p = func_001A9C50(self);
     *(int*)((char*)p + 0xBC) = 0;
@@ -15637,13 +15637,6 @@ extern "C" void func_0025D860(void* self, const char* name, const char* str);
 extern void* D_004A3028;
 extern char D_00464FA8[];
 
-struct sFEObj_001BD540 {
-    char pad0[0x770];
-    int f770;           // 0x770
-    char pad774[0xB80 - 0x774];
-    char fB80[4];       // 0xB80 (string object)
-};
-
 extern "C" void func_001BD540(void* self, int a1, void* a2)
 {
     void* p = func_001A9C50(self);
@@ -15654,14 +15647,14 @@ extern "C" void func_001BD540(void* self, int a1, void* a2)
     *(int*)((char*)p + 0x150) = 0x829;
     func_001A9BC0(self, p);
     if (a2 == 0 || strlen((const char*)a2) == 0) {
-        ((sFEObj_001BD540*)self)->f770 = 0;
+        ((sFEObjB80*)self)->f770 = 0;
         func_0025D860(D_004A3028, (const char*)a1, 0);
     } else {
-        ((sFEObj_001BD540*)self)->f770 = 1;
+        ((sFEObjB80*)self)->f770 = 1;
         func_0025D860(D_004A3028, (const char*)a1, (const char*)a2);
     }
     // PORT: the unit declares a1 as int; it is the name string
-    cBXString_cBXString4(((sFEObj_001BD540*)self)->fB80, (const char*)a1);
+    cBXString_cBXString4(((sFEObjB80*)self)->fB80, (const char*)a1);
 }
 #endif
 
