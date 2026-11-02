@@ -38,6 +38,16 @@ struct sRailLink {
     int f18;        // 0x18
 };
 
+// A serialisation stream (vptr at 0x0; slot N at vtable offset N*8).
+class cRmStream {
+public:
+    virtual void v01(void* buf, int size);
+    virtual void v02(void* buf, int size);
+    virtual void v03(void* buf, int size);
+    virtual void v04(void* buf, int size);
+    virtual void v05(void* p);
+};
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -325,17 +335,8 @@ extern "C" void func_0035C4E0(sObj0035C4E0* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035C540);
 #ifdef SKIP_ASM
-class cStream0035C540 {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-    virtual void v02(void* buf, int size);
-    virtual void v03(void* buf, int size);
-    virtual void v04(void* buf, int size);
-    virtual void v05(void* p);
-};
 
-extern "C" void func_0035C540(void* self, cStream0035C540* stream)
+extern "C" void func_0035C540(void* self, cRmStream* stream)
 {
     stream->v01((char*)self + 0x10, 0x30);
     stream->v05(*(void**)((char*)self + 0x40));
@@ -854,13 +855,8 @@ INCLUDE_ASM("object/railmodifier", func_0035D908);
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035DA00);
 #ifdef SKIP_ASM
-class func_0035DA00_cObj {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-};
 
-extern "C" void func_0035DA00(void* self, func_0035DA00_cObj* obj)
+extern "C" void func_0035DA00(void* self, cRmStream* obj)
 {
     obj->v01(self, 0x50);
 }
@@ -1097,7 +1093,7 @@ public:
 
 extern "C" void func_0035E1E0(void* self, func_0035E1E0_cObj* obj)
 {
-    func_0035DA00((char*)self + 0x30, (func_0035DA00_cObj*)obj);
+    func_0035DA00((char*)self + 0x30, (cRmStream*)obj);
     obj->v01((char*)self + 0x4, 0x28);
     obj->v05(*(void**)((char*)self + 0xD0));
 }
@@ -1572,17 +1568,8 @@ extern "C" void func_0035F598(sRailModSel_F598* self, int id, float v)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F688);
 #ifdef SKIP_ASM
-class cStream0035F688 {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-    virtual void v02(void* buf, int size);
-    virtual void v03(void* buf, int size);
-    virtual void v04(void* buf, int size);
-    virtual void v05(void* p);
-};
 
-extern "C" void func_0035F688(void* self, cStream0035F688* stream)
+extern "C" void func_0035F688(void* self, cRmStream* stream)
 {
     stream->v01((char*)self + 0x0, 0x18);
     stream->v05(*(void**)((char*)self + 0x18));
@@ -1874,13 +1861,8 @@ extern "C" sRmMat44* func_0035FC20(sRmAxisRot_35FC20* self, sRmMat44* m)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035FD98);
 #ifdef SKIP_ASM
-class func_0035FD98_cObj {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-};
 
-extern "C" void func_0035FD98(void* self, func_0035FD98_cObj* obj)
+extern "C" void func_0035FD98(void* self, cRmStream* obj)
 {
     obj->v01(self, 0x50);
 }
