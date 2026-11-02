@@ -178,6 +178,33 @@ struct sBankMonSlot28 {
 };
 extern sBankMonSlot28 D_004D3EF8[];
 
+// One of the 24 bank records D_004D3E98 points at (0x70 bytes) and its per-sound sub-entries (12 bytes).
+struct sMonSub {
+    int size;   // 0x0
+    int id;     // 0x4
+    int pos;    // 0x8
+};
+
+struct sMonSlot {
+    int h;              // 0x0
+    int sub;            // 0x4
+    char pad08[0x4];
+    int status;         // 0xC
+    char pad10[0x38];
+    int f48;            // 0x48
+    int f4C;            // 0x4C
+    int f50;            // 0x50
+    int f54;            // 0x54
+    int busy;           // 0x58
+    int f5C;            // 0x5C
+    int f60;            // 0x60
+    signed char isMem;  // 0x64
+    signed char dirty;  // 0x65
+    signed char count;  // 0x66
+    char pad67[0x5];
+    sMonSub* subs;      // 0x6C
+};
+
 extern void* D_004D3E98[];
 extern "C" void func_003B58D8(void);
 extern "C" void func_003B58A0(void);
@@ -1228,7 +1255,6 @@ extern "C" int func_002AE478(int n, int m)
 INCLUDE_ASM("sound/bankmonitor", func_002AE4C0);
 #ifdef SKIP_ASM
 struct sBankDesc_2AE4C0 { char c[24]; };
-struct sBankEnt_2AE4C0 { int f0; int f4; int f8; };
 extern "C" int func_002AE1B8(void);
 extern "C" void func_002AE138(void* self);
 extern "C" int func_003B7818(void* desc, int n, int m, void* mem, int size);
@@ -1251,7 +1277,7 @@ extern "C" int func_002AE4C0(char* name, sBankDesc_2AE4C0* desc, int count, int 
     size -= mem - b;
     int i;
     for (i = 0; i < count; i++)
-        (*(sBankEnt_2AE4C0**)(b + 0x6C))[i].f4 = -1;
+        (*(sMonSub**)(b + 0x6C))[i].id = -1;
     if (desc)
         *(sBankDesc_2AE4C0*)(b + 0x30) = *desc;
     else
@@ -1345,8 +1371,6 @@ extern "C" int func_002AEA38(int idx)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEAA8);
 #ifdef SKIP_ASM
-struct sMonEntC { int f0; int f4; int f8; };
-
 extern "C" int func_002AEAA8(int idx, int sub)
 {
     void* m = D_004D3E98[idx];
@@ -1357,8 +1381,8 @@ extern "C" int func_002AEAA8(int idx, int sub)
         return *(int*)((char*)m + 0x54);
     }
     if (sub < *(signed char*)((char*)m + 0x66)) {
-        if ((*(sMonEntC**)((char*)m + 0x6C))[sub].f4 >= 0) {
-            return (*(sMonEntC**)((char*)m + 0x6C))[sub].f8;
+        if ((*(sMonSub**)((char*)m + 0x6C))[sub].id >= 0) {
+            return (*(sMonSub**)((char*)m + 0x6C))[sub].pos;
         }
         return -8;
     }
@@ -1369,8 +1393,6 @@ extern "C" int func_002AEAA8(int idx, int sub)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEB40);
 #ifdef SKIP_ASM
-struct sEntryEB40 { int pad0; int key; int value; };
-
 extern "C" int func_002AEB40(int idx, int key)
 {
     void* ch = D_004D3E98[idx];
@@ -1378,9 +1400,9 @@ extern "C" int func_002AEB40(int idx, int key)
         func_002AEFA8(0);
     }
     for (int i = 0; i < *(signed char*)((char*)ch + 0x66); i++) {
-        sEntryEB40* e = &(*(sEntryEB40**)((char*)ch + 0x6C))[i];
-        if (e->key == key) {
-            return e->value;
+        sMonSub* e = &(*(sMonSub**)((char*)ch + 0x6C))[i];
+        if (e->id == key) {
+            return e->pos;
         }
     }
     return -8;
@@ -1423,32 +1445,6 @@ extern "C" int func_003B6670(int h, int sub, void* hdr, void* buf, unsigned int*
 extern "C" int func_003B8AD8(int h);
 extern "C" int func_003B86C0(int h);
 extern "C" int func_003B7F18(int h);
-
-struct sMonSub {
-    int size;   // 0x0
-    int id;     // 0x4
-    int pos;    // 0x8
-};
-
-struct sMonSlot {
-    int h;              // 0x0
-    int sub;            // 0x4
-    char pad08[0x4];
-    int status;         // 0xC
-    char pad10[0x38];
-    int f48;            // 0x48
-    int f4C;            // 0x4C
-    int f50;            // 0x50
-    int f54;            // 0x54
-    int busy;           // 0x58
-    int f5C;            // 0x5C
-    int f60;            // 0x60
-    signed char isMem;  // 0x64
-    signed char dirty;  // 0x65
-    signed char count;  // 0x66
-    char pad67[0x5];
-    sMonSub* subs;      // 0x6C
-};
 
 struct sStrmInfo {
     int count;
