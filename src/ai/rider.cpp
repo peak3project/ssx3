@@ -75,6 +75,14 @@ struct sItemRec {
     unsigned short flags;
 };
 
+// The rider's character data as func_0014AD50 returns it; map[i] < 0 means no item.
+struct sItemDb {
+    char pad0[0x288];
+    short* map;                 // 0x288
+    char pad28C[0x4];
+    sItemRec items[1];          // 0x290
+};
+
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
 //100%
@@ -3729,13 +3737,6 @@ static inline void initTrack_3640(cRider* self, int off, float v, float z)
     *(float*)((char*)self + off + 4) = z;
 }
 
-struct sDb_3640 {
-    char pad0[0x288];
-    short* map;                 // 0x288
-    char pad28C[0x4];
-    sItemRec items[1];        // 0x290
-};
-
 struct sEnt_3640 {
     char pad0[0x4];
     short item;                 // 0x04
@@ -3745,7 +3746,7 @@ struct sEnt_3640 {
     int flags;                  // 0x34
 };
 
-static inline sItemRec* lookup_3640(sDb_3640* d, int i)
+static inline sItemRec* lookup_3640(sItemDb* d, int i)
 {
     short k = d->map[i];
     if (k >= 0) {
@@ -3828,7 +3829,7 @@ extern "C" void func_00123640(cRider* self)
     if (rec[6] != 0) {
         void* iface = cBE_getInterface(cBE_getBE(), 9);
         void* tbl = func_0014BDB8_3640();
-        sDb_3640* db = (sDb_3640*)func_0014AD50(iface, self->mAIIndex);
+        sItemDb* db = (sItemDb*)func_0014AD50(iface, self->mAIIndex);
         int g = func_00123128(self);
         int n = func_0014D988(tbl, g);
         sEnt_3640* e = (sEnt_3640*)func_0014D998(tbl, g);
@@ -3866,13 +3867,6 @@ int func_0014D988(void* tbl, int g);
 extern "C" void* func_0014D998(void* tbl, int g);
 extern "C" void func_002AD5F0(void* bank, int id, int a, float f);
 
-struct sDb_123B48 {
-    char pad0[0x288];
-    short* map;                 // 0x288
-    char pad28C[0x4];
-    sItemRec items[1];      // 0x290
-};
-
 struct sEnt_123B48 {
     char pad0[0x4];
     short item;                 // 0x04
@@ -3882,7 +3876,7 @@ struct sEnt_123B48 {
     int flags;                  // 0x34
 };
 
-static inline sItemRec* lookup_123B48(sDb_123B48* d, int i)
+static inline sItemRec* lookup_123B48(sItemDb* d, int i)
 {
     short k = d->map[i];
     if (k >= 0) {
@@ -3916,7 +3910,7 @@ static inline int entItem_123B48(sEnt_123B48* e)
     return e->item;
 }
 
-static inline unsigned short itemFlags_123B48(sDb_123B48* db, sEnt_123B48* e)
+static inline unsigned short itemFlags_123B48(sItemDb* db, sEnt_123B48* e)
 {
     return lookup_123B48(db, entItem_123B48(e))->flags;
 }
@@ -3945,7 +3939,7 @@ extern "C" void func_00123B48(cRider* self)
     if (*(signed char*)(func_0027C958(self->unk_6D8) + 6) != 0) {
         void* iface = cBE_getInterface(cBE_getBE(), 9);
         void* tbl = func_0014BDB8_noarg();
-        sDb_123B48* db = (sDb_123B48*)func_0014AD50(iface, self->mAIIndex);
+        sItemDb* db = (sItemDb*)func_0014AD50(iface, self->mAIIndex);
         int g = func_00123128(self);
         int n = func_0014D988(tbl, g);
         sEnt_123B48* e = (sEnt_123B48*)func_0014D998(tbl, g);
