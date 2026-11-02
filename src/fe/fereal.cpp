@@ -8,12 +8,34 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/fereal", cFECustom_cFECustom);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_0039E2A0(void* self, void* owner);
 extern "C" void cUIStateStack_pushExplicit(void* stack, void* state);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* func_00194738(void* self, void* owner);
+extern "C" void* func_001F3700(void* self, void* owner);
+extern void* D_004A28A8;
+extern int D_004A19D8;
+extern char D_0045E290[];
+extern char D_00461188[];
+extern void* D_0046D7C0[];
+extern void* D_004A289C;
+extern char D_004A4E80;
+extern "C" void* func_0028B180();
+extern char D_005047F8[];
+extern "C" void func_00253418(void* p, int a1);
+extern int D_004A19CC;
+extern void* D_004A3028;
+extern void* D_004A3E7C;
+void* func_0039E288(void* self);
+extern "C" void func_00294F78(void* snd, int a1);
+
+//100%
+INCLUDE_ASM("fe/fereal", cFECustom_cFECustom);
+#ifdef SKIP_ASM
 extern char D_00460B90[];
 extern void* D_0046D810[];
 // The vtable D_0046BB88 itself, as an array of slots. Kept as its own struct: declared as sVEntry<int(void*)>[] the
@@ -69,10 +91,6 @@ INCLUDE_ASM("fe/fereal", cFECustom_getNextState);
 //100%
 INCLUDE_ASM("fe/fereal", func_001A16C0);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 void cAppMan_setNextModule(struct cAppMan* app, unsigned int module);
 unsigned int func_00232720(void* mem);
 extern "C" void* func_00181090(void* mem, void* owner, int a2);
@@ -81,7 +99,6 @@ extern "C" void* func_00183238(void* mem, void* owner, int a2);
 extern "C" void* func_00186610(void* mem, void* owner, int a2);
 extern "C" void* func_001887A0(void* mem, void* owner, int a2);
 extern "C" void* func_0018D240(void* mem, void* owner);
-extern "C" void* func_00194738(void* self, void* owner);
 extern "C" void* func_00194A60(void* mem, void* owner);
 extern "C" void* func_00195FF0(void* mem, void* owner, int a2, int a3);
 extern "C" void* func_001BFBB8(void* mem, void* owner);
@@ -89,16 +106,12 @@ extern "C" void* func_001C1C50(void* mem, void* owner);
 extern "C" void* cFEStateMountainRoom_cFEStateMountainRoom(void* mem, void* owner, int a2);
 extern "C" void* func_001D3780(void* mem, void* owner, int a2, int a3);
 extern "C" void* func_001D4BC8(void* mem, void* owner, int a2, int a3);
-extern "C" void* func_001F3700(void* self, void* owner);
 extern "C" void* func_001F3FF8(void* mem, void* owner);
-extern void* D_004A28A8;
-extern int D_004A19D8;
 extern int D_004A1A70;
 extern int D_004A2594;
 extern int D_004A2598;
 extern signed char D_00535C11[];
 extern char D_0045CE60[];
-extern char D_0045E290[];
 extern char D_0045FF28[];
 extern char D_00460650[];
 extern char D_00460BA8[];
@@ -111,7 +124,6 @@ extern char D_00460D60[];
 extern char D_00460DD8[];
 extern char D_00460DF8[];
 extern char D_00460E28[];
-extern char D_00461188[];
 extern char D_00461198[];
 extern char D_004611A8[];
 
@@ -287,7 +299,6 @@ INCLUDE_ASM("fe/fereal", func_001A1CE8);
 extern "C" void* cFE_cFE(void* self);
 void* func_00263660(void* p);
 void* func_00263998(void* p);
-extern void* D_0046D7C0[];
 
 extern "C" void* func_001A1CE8(void* self)
 {
@@ -305,7 +316,6 @@ extern "C" void* func_001A1CE8(void* self)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A1D50);
 #ifdef SKIP_ASM
-extern void* D_0046D7C0[];
 extern "C" void func_002639B0(void* self, int flags);
 extern "C" void func_00263678(void* self, int flags);
 extern "C" void func_001957D0(void* self, int flags);
@@ -322,7 +332,6 @@ extern "C" void func_001A1D50(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A1DC0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
 extern "C" void func_0014DE28(void* be, int slot);
 extern "C" void* func_003E6448(void* dst, int c, int n);
 extern "C" void cBE_setState(int state);
@@ -333,17 +342,12 @@ extern int D_004A19B8;
 extern volatile int D_004A4324;
 extern volatile int D_004A45D8;
 extern volatile int D_004A43C8;
-extern void* D_004A289C;
-extern void* D_004A28A8;
-extern char D_004A4E80;
 extern char D_005308B8[];
 
 struct sVec3_1DC0 {
     int x, y, z;
     sVec3_1DC0(int a, int b, int c) { x = a; y = b; z = c; }
 };
-
-
 
 class cWorld_1DC0 {
 public:
@@ -386,8 +390,6 @@ extern "C" void func_001A1DC0(char* self)
 //100%
 INCLUDE_ASM("fe/fereal", cRealFE_load);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 void func_00317530(void* self, float t);
 void func_00317550(void* self, float t);
 void* func_0014BD78(void* iface);
@@ -397,28 +399,22 @@ extern "C" int cUIEngine_loadFile(void* engine, const char* path);
 extern "C" void cRealFE_loadCharAnimations(void* self);
 extern "C" void func_0019CE68(void* self);
 extern "C" void func_001A0498(void* self);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* cFECustom_cFECustom(void* self, void* owner);
 extern "C" void* func_001A2E20(void* self);
 extern "C" void cIrradianceDataBase_Load(void* db);
-extern "C" void* func_0028B180();
 extern "C" void func_00285FB0(void* snd);
-extern void* D_004A28A8;
-extern void* D_004A289C;
 extern char* D_004A5B64;
 extern char D_00461278[];
 extern char D_00461288[];
 extern char D_00461298[];
 extern char D_004612A8[];
 extern void* D_0046D1D0[];
-extern char D_005047F8[];
 
 struct sStr11_1E80 { char c[11]; };
 
 struct sV4_1E80 {
     float x, y, z, w;
 } __attribute__((aligned(16)));
-
 
 class cCamObj_1E80 {
 public:
@@ -518,10 +514,7 @@ extern "C" void cRealFE_load(sRealFE_1E80* self)
 INCLUDE_ASM("fe/fereal", func_001A2128);
 #ifdef SKIP_ASM
 extern "C" void* func_00231CF0(void* self);
-extern "C" void func_00253418(void* p, int a1);
 extern "C" void func_001A06B0(void* flow);
-extern int D_004A19CC;
-extern char D_004A4E80;
 
 extern "C" int func_001A2128(void* self)
 {
@@ -544,15 +537,10 @@ extern "C" int func_001A2128(void* self)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A2190);
 #ifdef SKIP_ASM
-
-extern void* D_004A289C;
-extern void* D_004A28A8;
-extern char D_005047F8[];
 extern "C" void func_001A2BC0(void* self);
 extern "C" void func_001A04C8(void* p);
 extern "C" void func_0019CF40(void* p);
 extern "C" void func_0038ADB0(void* p);
-extern "C" void* func_0028B180();
 extern "C" void func_00286200(void* p);
 
 extern "C" void func_001A2190(void* self)
@@ -580,9 +568,6 @@ extern "C" void func_00398018(void* ui);
 extern "C" void func_001A0598(void* p);
 extern "C" void func_00397DF8(void* ui);
 extern "C" void func_00285BF8(void* snd, int a1, float t);
-extern "C" void* func_0028B180();
-extern void* D_004A289C;
-extern int D_004A19CC;
 extern char D_004FF1A0[];
 
 struct sFeGs {
@@ -611,7 +596,6 @@ struct sFeGs {
 };
 
 extern sFeGs D_00501420;
-
 
 struct sFeWorld {
     char pad_0x0[0xE84];
@@ -768,20 +752,14 @@ extern "C" int func_001A2208(void* self)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A27A0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_00231D18(void* self);
 extern "C" void* func_002533C8(void* mem);
-extern "C" void* func_0028B180();
 extern "C" void func_002B3A70(void* p);
 extern "C" void func_002B3A98(void* p);
 extern "C" void func_00253390(void* self);
 extern "C" int func_002534A8(void* p, void* q);
 extern "C" int func_00253860(void* self);
 extern "C" void func_00253938(void* self);
-extern "C" void func_00253418(void* p, int a1);
 int func_00289DE0(void* self);
 void* func_00320C48(void* self, int a1);
 extern "C" void func_00398038(void* self);
@@ -792,7 +770,6 @@ extern "C" void func_00263828(void* p);
 extern "C" void func_00263CF0(void* p);
 extern "C" void func_0025AC50(void* p);
 extern const char D_00461320[];
-extern int D_004A19CC;
 extern int D_004A19D0;
 extern int D_004A19E0;
 extern int D_004A19E4;
@@ -801,9 +778,7 @@ extern int D_0044124C[];
 extern int D_00441250[];
 extern int D_00441254[];
 extern unsigned int D_00535610[];
-extern void* D_004A28A8;
 extern int D_004A29EC;
-extern void* D_004A3028;
 
 struct sVidInfo_27A0 {
     int a;
@@ -922,7 +897,6 @@ struct sAnimTableK1A2B00 {
     void* anims[1];
 };
 extern sAnimTableK1A2B00* D_004A3DF8_K1A2B00 __asm__("D_004A3DF8");
-extern void* D_004A3E7C;
 
 extern "C" void cRealFE_loadCharAnimations(void* self)
 {
@@ -943,7 +917,6 @@ extern "C" void cRealFE_loadCharAnimations(void* self)
 INCLUDE_ASM("fe/fereal", func_001A2BC0);
 #ifdef SKIP_ASM
 extern void** D_004A3DF8;
-extern void* D_004A3E7C;
 extern "C" void func_00314FE8(void* a, void* b);
 extern "C" void func_00311110(void* a);
 extern "C" void func_003112C8(void* a, int b);
@@ -968,12 +941,7 @@ extern "C" void func_001A2BC0(void* self)
 //100%
 INCLUDE_ASM("fe/fereal", cRealFE_loadStartState);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* func_0039E2A0(void* self, void* owner);
-extern "C" void cUIStateStack_pushExplicit(void* stack, void* state);
 extern "C" void func_0039F400(void* stack, void* state);
-extern "C" void* func_00194738(void* self, void* owner);
-extern "C" void* func_001F3700(void* self, void* owner);
 extern "C" void* func_001D5038(void* self, void* owner);
 extern "C" void func_00255CC8(void* a, int b);
 extern "C" void func_00266E88(void* a);
@@ -981,21 +949,13 @@ extern "C" void func_00266DF8(void* a);
 extern "C" void func_0025B6D8(void* a, int b);
 extern "C" void func_0014ECA0(void* a, int b);
 extern "C" void func_0014DE28(void* be, int b);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern char D_00461358[];
-extern char D_0045E290[];
-extern char D_00461188[];
 extern char D_00461370[];
 extern void* D_0046BC58[];
 extern int D_004A19C4;
-extern int D_004A19D8;
-extern void* D_004A28A8;
 extern void* D_004A2EB8;
 extern char* D_004A2EEC;
 extern void* D_004A33F4;
-extern void* D_004A3028;
 
 // PORT: cMemMan_alloc bound as a placement operator new (gcc then treats the result as unaliased)
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
@@ -1052,7 +1012,6 @@ extern "C" void cRealFE_loadStartState(sRealFE_1A2C40* self)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A2E20);
 #ifdef SKIP_ASM
-void* func_0039E288(void* self);
 extern void* D_00469348[];
 
 extern "C" void* func_001A2E20(void* self)
@@ -1067,8 +1026,6 @@ extern "C" void* func_001A2E20(void* self)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A2E58);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void* snd, int a1);
 extern "C" void func_001A2E58(void* self, int sel)
 {
     switch (sel) {
@@ -1097,7 +1054,6 @@ extern "C" void func_001A2E58(void* self, int sel)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A2F38);
 #ifdef SKIP_ASM
-void* func_0039E288(void* self);
 extern void* D_00469318[];
 
 extern "C" void* func_001A2F38(void* self)
@@ -1112,8 +1068,6 @@ extern "C" void* func_001A2F38(void* self)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A2F70);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void* snd, int a1);
 extern "C" void func_001A2F70(void* self, int sel)
 {
     switch (sel) {
@@ -1142,7 +1096,6 @@ extern "C" void func_001A2F70(void* self, int sel)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A3050);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* owner);
 extern void* D_00469248[];
 
 extern "C" void* func_001A3050(void* self, void* owner)
