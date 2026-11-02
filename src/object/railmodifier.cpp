@@ -59,6 +59,13 @@ struct sRailPair {
     int b;
 };
 
+// A packet builder: quadword count, write cursor and buffer base.
+struct sRmPkt {
+    int count;      // 0x0
+    ulong* cur;     // 0x4
+    ulong* base;    // 0x8
+};
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -5755,14 +5762,9 @@ INCLUDE_ASM("object/railmodifier", func_003627A8);
 #ifdef SKIP_ASM
 extern ulong D_00505A80[];
 
-struct sRmPkt27A8 {
-    int count;      // 0x0
-    ulong* cur;     // 0x4
-    ulong* base;    // 0x8
-};
 
 // PORT: 64-bit DMA/VIF/GIF tag writes (ulong) and addresses held in int.
-extern "C" void func_003627A8(sRmPkt27A8* self, ulong** pp, int mode)
+extern "C" void func_003627A8(sRmPkt* self, ulong** pp, int mode)
 {
     if (self->count == 0) {
         return;
@@ -6086,18 +6088,13 @@ struct sRmGsState4360 {
     }
 };
 
-struct sRmPkt4360 {
-    int count;      // 0x0
-    ulong* cur;     // 0x4
-    ulong* base;    // 0x8
-};
 
 // PORT: 64-bit DMA/GIF tag writes (ulong).
 extern "C" void func_00364360(void* self, ulong** pp)
 {
     char* gs = D_004A5B80;
     sRmGsState4360 st;
-    sRmPkt4360 pkt;
+    sRmPkt pkt;
     st = *(sRmGsState4360*)&D_00501420;
     (*pp)[0] = 0x10000001;
     (*pp)[1] = 0;
