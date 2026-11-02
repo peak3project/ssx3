@@ -129,6 +129,12 @@ struct sFsMesh {
     sVEntry<void(void*, sFsVec3*, sFsColor*, sFsVec2*)>* vt;   // 0x4
 };
 
+// The flag mesh as func_0034B818 / func_0034CF98 use it (vtable slot 3 with one pointer argument).
+struct sFlagMesh {
+    int pad0;
+    sVEntry<void(void*, void*)>* vt;   // 0x4
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -260,10 +266,6 @@ struct sFlagVert_B818 {
 };
 
 
-struct sFlagMesh_B818 {
-    int pad0;
-    sVEntry<void(void*, void*)>* vt;   // 0x4
-};
 
 struct sFlagElem_B818 {
     char pad0[0x4];
@@ -274,7 +276,7 @@ struct sFlagElem_B818 {
     float scrollV;          // 0x54
     char pad58[0x4];
     int active;             // 0x5C
-    sFlagMesh_B818* mesh;   // 0x60
+    sFlagMesh* mesh;   // 0x60
     char pad64[0x14];
     float phase[4];         // 0x78
     float u;                // 0x88
@@ -307,7 +309,7 @@ extern "C" void func_0034B818(void* elem)
     if (func_002D1C98() % 2 == self->parity) {
         sFlagVert_B818 verts[50];
         func_0034BCA0(self, verts);
-        sFlagMesh_B818* m = self->mesh;
+        sFlagMesh* m = self->mesh;
         sVEntry<void(void*, void*)>* e = &m->vt[3];
         e->fn((char*)m + e->delta, verts);
     }
@@ -954,10 +956,6 @@ static inline sFsVec3 fsAdd_CF98(const sFsVec3& a, const sFsVec4_CF98& b)
 }
 
 
-struct sFlagMesh_CF98 {
-    int pad0;
-    sVEntry<void(void*, void*)>* vt;   // 0x4
-};
 
 struct sFlagSet_CF98 {
     char pad0[0x20];
@@ -966,7 +964,7 @@ struct sFlagSet_CF98 {
     char pad28[0x4];
     float wind;             // 0x2C
     char pad30[0x10];
-    sFlagMesh_CF98* mesh;   // 0x40
+    sFlagMesh* mesh;   // 0x40
     sFsVec3 top[8];    // 0x44
     sFsVec3 bottom[8]; // 0xA4
 };
@@ -997,7 +995,7 @@ extern "C" void func_0034CF98(void* p)
             pts[i + 8] = self->bottom[i];
         }
     }
-    sFlagMesh_CF98* m = self->mesh;
+    sFlagMesh* m = self->mesh;
     sVEntry<void(void*, void*)>* e = &m->vt[3];
     e->fn((char*)m + e->delta, pts);
 }
