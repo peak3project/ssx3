@@ -1520,16 +1520,17 @@ extern "C" void func_001736E0(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00173E40);
 #ifdef SKIP_ASM
-struct sPair_173E40 {
-    t4Vector a;
-    t4Vector b;
+// A transform as position + rotation quaternion, returned by value (func_0031B748 builds one from a matrix).
+struct sXf {
+    t4Vector pos;
+    t4Vector rot;
 };
 
 extern t4Matrix D_004FF1A0;
 extern t4Vector D_004FF150;
 extern t4Vector D_004FF160_v173E40 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
-extern "C" sPair_173E40 func_0031B748(t4Matrix* m);
+extern "C" sXf func_0031B748(t4Matrix* m);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
 static inline void vu0CopyMtx_173E40(t4Matrix* dst, const t4Matrix* src)
@@ -1651,7 +1652,7 @@ static inline void RotAxis_173E40(t4Matrix* m, const t4Vector& axis, float angle
     vu0MulMtx_173E40(m, m, &r);
 }
 
-extern "C" sPair_173E40 func_00173E40(char* src)
+extern "C" sXf func_00173E40(char* src)
 {
     t4Matrix m;
     vu0CopyMtx_173E40(&m, &D_004FF1A0);
