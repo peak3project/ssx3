@@ -64,6 +64,29 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
+// The game singleton D_004A28A8 and the parts of its game / race / cameras chain this unit reads
+// (seg/seg_1FBE38 layout).
+struct sRace {
+    char pad_0x0[0x28];
+    char* riders[6];            // 0x28: riders by being index
+};
+// The game's cameras (cCamera, one per view).
+struct sCameras {
+    int f0;                     // 0x0: number of cameras
+    char* cam[1];               // 0x4
+};
+struct sGame {
+    char pad_0x0[0xC];
+    sRace* race;                // 0xC
+    char pad_0x10[0x74];
+    sCameras* cameras;          // 0x84
+};
+struct sApp {
+    char pad_0x0[0x84];
+    sGame* game;                // 0x84
+};
+extern sApp* D_004A28A8;
+
 // A script camera algorithm's state as func_00169570 .. func_0016B180 see it (the object is passed as char*).
 struct sScrCam {
     float roll;             // 0x0
@@ -250,7 +273,6 @@ INCLUDE_ASM("camera/script/scriptcontroller", func_00169418);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void* D_0045BDE0[];
 extern void* D_0045C8B8[];
-extern void* D_004A28A8;
 extern "C" float func_00167E30(void* self);
 
 struct sCamCtlK9418 {
@@ -276,10 +298,7 @@ extern "C" void* func_00169418(void* p)
     self->nearZ = 10.0f;
     self->farZ = 30000.0f;
     self->f14 = 0;
-    void* cam = *(void**)((char*)D_004A28A8 + 0x84);
-    void* chase = *(void**)((char*)cam + 0x84);
-    void* ctrl = *(void**)((char*)chase + 0x4);
-    self->f18 = *(int*)((char*)ctrl + 0xAC);
+    self->f18 = *(int*)(D_004A28A8->game->cameras->cam[0] + 0xAC);
     self->v20 = D_004FF130;
     return self;
 }
@@ -931,7 +950,6 @@ extern "C" float func_0031C228(float x);
 extern "C" void func_00160028(void* self, float v);
 extern "C" void func_00160130(void* self, float v);
 extern void* D_004A28A4;
-extern void* D_004A28A8;
 
 static inline sVec4 mtxMulVec_16A510(char* m, const sVec4& v)
 {
@@ -1043,7 +1061,7 @@ extern "C" void func_0016A510(char* p)
     char* m = *(char**)(p + 0x14) + 0x30;
     char* rider = func_00279F18(D_004A28A4, ((signed char*)f)[0x22], *(int*)(cam + 8));
     if (rider == 0) {
-        rider = *(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x28);
+        rider = D_004A28A8->game->race->riders[0];
     }
     self->x4 = f[0];
     self->x8 = f[1];
@@ -1255,7 +1273,6 @@ extern "C" float func_0031C228(float x);
 extern "C" void func_00160028(void* self, float v);
 extern "C" void func_00160130(void* self, float v);
 extern void* D_004A28A4;
-extern void* D_004A28A8;
 
 static inline sVec4 mtxMulVec_16AD98(char* m, const sVec4& v)
 {
@@ -1371,7 +1388,7 @@ extern "C" void func_0016AD98(char* p)
     self->pitch = self->r60 * 0.01745329424738884f + *(float*)(*(char**)(p + 0x14) + 0x70);
     char* rider = func_00279F18(D_004A28A4, ((signed char*)f)[0x1D], *(int*)(cam + 8));
     if (rider == 0) {
-        rider = *(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x28);
+        rider = D_004A28A8->game->race->riders[0];
     }
     char* obj = rider + 0x6C0;
     sVec4 rot = *(sVec4*)(*(char**)(rider + 0x780) + 0x140);
@@ -1571,7 +1588,7 @@ extern "C" void func_0016B180(char* p)
     float* f = func_0027C6A0(cam);
     char* rider = func_00279F18(D_004A28A4, ((signed char*)f)[0x1D], *(int*)(cam + 8));
     if (rider == 0) {
-        rider = *(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x28);
+        rider = D_004A28A8->game->race->riders[0];
     }
     self->x4 = f[0];
     self->x8 = f[1];
