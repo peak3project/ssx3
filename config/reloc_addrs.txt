@@ -58,3 +58,30 @@ rom:0x4B1B8 reloc:MIPS_HI16 symbol:D_005308B8
 rom:0x12E444 reloc:MIPS_LO16 symbol:D_00442168
 // render/lightman func_0038EE78 (tools/gen/reloc_from_diff.py)
 rom:0x28FFE0 reloc:MIPS_LO16 symbol:D_004FF160
+// camera/camera func_0015EE00: `$vf4, -0xEA0($3)` left raw; same bytes and base register as the relocated sibling at rom 0x5FE58.
+rom:0x5FF70 reloc:MIPS_LO16 symbol:D_004FF160
+rom:0x5FFB0 reloc:MIPS_LO16 symbol:D_004FF160
+// ealib/seg_2B4578 func_003CC070: `$2, 0x5D44($20)` left raw; same bytes and base register as the relocated sibling at rom 0x2CD1C4.
+rom:0x2CD1DC reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD230 reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD274 reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD2B8 reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD310 reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD378 reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD3B0 reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD404 reloc:MIPS_LO16 symbol:D_00515D44
+rom:0x2CD41C reloc:MIPS_LO16 symbol:D_00515D44
+// ealib/seg_2B4578 func_003CFC30: `$2, -0xBE0($23)` left raw; same bytes and base register as the relocated sibling at rom 0x2D0C9C.
+rom:0x2D0D98 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D13C0 reloc:MIPS_LO16 symbol:D_0044F420
+// fe/ovstatehud cOVStateHUD1P_onRender2D: three lui/addiu pairs that splat left as raw immediates
+// (`lui $3, (0x500000 >> 16)` ... `addiu $3, $3, 0x4FB8` = D_00504FB8, `lui $2, 0x4D` ... `addiu $14, $2, -0x7AD8` = D_004C8528).
+rom:0xEE4F4 reloc:MIPS_HI16 symbol:D_00504FB8
+rom:0xEF2BC reloc:MIPS_HI16 symbol:D_004C8528
+rom:0xF09CC reloc:MIPS_HI16 symbol:D_00504FB8
+rom:0xEE4FC reloc:MIPS_LO16 symbol:D_00504FB8
+rom:0xEF2D0 reloc:MIPS_LO16 symbol:D_004C8528
+rom:0xF09FC reloc:MIPS_LO16 symbol:D_00504FB8
+// animation/gameanimmap func_00315A20: `lui $10, (0x500000 >> 16)` / `addiu $10, $10, -0x14F0` = D_004FEB10, left raw.
+rom:0x217034 reloc:MIPS_HI16 symbol:D_004FEB10
+rom:0x21703C reloc:MIPS_LO16 symbol:D_004FEB10
