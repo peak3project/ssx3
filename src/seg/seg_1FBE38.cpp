@@ -4360,8 +4360,7 @@ int* func_00226610(void*);
 struct Ent_2BD8 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3CF8_2BD8[2] __asm__("D_004A3CF8");
-extern "C" int func_0030A868(int, int, int, int);
-extern int D_004A3DD8_2BD8 __asm__("D_004A3DD8");
+extern "C" int func_0030A868(cWScriptMan*, int, int, int);
 extern int D_004A5780_2BD8 __asm__("D_004A5780");
 extern unsigned D_004A5778_2BD8 __asm__("D_004A5778");
 extern sBindEnd_1FBE38 D_004A577C_2BD8 __asm__("D_004A577C");
@@ -4384,7 +4383,7 @@ extern "C" cLunoValue func_00302BD8(int n, Ent_2BD8* e) {
         else
             *d = p->val;
     }
-    func_0030A868(D_004A3DD8_2BD8, vp[0], 0, -1);
+    func_0030A868(D_004A3DD8, vp[0], 0, -1);
     return D_004C9098;
 }
 #endif
