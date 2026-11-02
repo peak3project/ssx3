@@ -16,6 +16,13 @@ struct sWsVtVPI {
 // g++ 2.95 vtable entry for a method taking only self, returning float.
 struct sWsVtF { short delta; short index; float (*fn)(void*); };
 
+// g++ 2.95 vtable entry for a method taking (self, int).
+struct sWsVtVI {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4673,11 +4680,6 @@ extern "C" void func_00341EC0(sBounceFloat_1EC0* s);
 extern "C" void func_00341F38(sClampFloat_1F38* s);
 extern "C" int func_0034EBA0(void* p);
 
-struct sVEntry_00341D48 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" int func_00341D48(void* self)
 {
@@ -4713,7 +4715,7 @@ extern "C" int func_00341D48(void* self)
     if (*(int*)((char*)self + 0x8) == 0) {
         return 1;
     }
-    sVEntry_00341D48* vt = *(sVEntry_00341D48**)((char*)self + 0x3C);
+    sWsVtVI* vt = *(sWsVtVI**)((char*)self + 0x3C);
     vt[0x22].fn(obj + vt[0x22].delta, 1);
     return 0;
 }
@@ -5537,18 +5539,13 @@ extern "C" void func_00342B80(void* self, int a1)
 INCLUDE_ASM("intersect/worldsphtree", func_00342BA0);
 #ifdef SKIP_ASM
 extern "C" void func_003584B8(void* self, void* stream);
-struct sVEntry1_func_00342BA0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00342BA0(void* self, void* stream)
 {
     func_003584B8(self, stream);
     sWsVtVPI* vt = *(sWsVtVPI**)stream;
     vt[1].fn((char*)stream + vt[1].delta, (char*)self + 0x10, 0x30);
-    sVEntry1_func_00342BA0* vt1 = *(sVEntry1_func_00342BA0**)stream;
+    sWsVtVI* vt1 = *(sWsVtVI**)stream;
     vt1[5].fn((char*)stream + vt1[5].delta, *(int*)((char*)self + 0x40));
 }
 #endif
