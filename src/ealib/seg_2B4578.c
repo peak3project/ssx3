@@ -7483,8 +7483,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C0C90);
 INCLUDE_ASM("ealib/seg_2B4578", func_003C0E28);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_0E28 { char pad[0x13]; unsigned char b13; };
-extern struct O_0E28 *D_0050B9B0_0E28 __asm__("D_0050B9B0");
 extern void f8148_0E28(int) __asm__("func_003C8148");
 extern void f38E0_0E28(int) __asm__("func_003C38E0");
 
@@ -7558,7 +7556,7 @@ int func_003C0E28(void) {
     if (D_0050A8E8.f174) {
         D_0050A8E8.setup.cfg.f20 = s.f20;
         D_0050A8E8.setup.cfg.f21 = s.f21;
-        D_0050B9B0_0E28->b13 = s.f21;
+        D_0050B9B0->f13 = s.f21;
         if (D_0050A8E8.saved.f27 != s.f27) {
             D_0050A8E8.setup.cfg.f27 = s.f27;
             for (i = 0; i < D_0050A8E8.f17E; i++) {
