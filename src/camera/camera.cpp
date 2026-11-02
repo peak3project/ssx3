@@ -255,10 +255,6 @@ void* func_0015E030(void* self)
 //100%
 INCLUDE_ASM("camera/camera", func_0015E050);
 #ifdef SKIP_ASM
-struct sM_E050 {
-    float m[4][4];
-} __attribute__((aligned(16)));
-
 struct sObj_E050 {
     char pad[0x390];
 } __attribute__((aligned(16)));
@@ -268,7 +264,7 @@ struct sPair_E050 {
     t4Vector b;
 };
 
-extern sM_E050 D_004C53A0_E050 __asm__("D_004C53A0");
+extern t4Matrix D_004C53A0_E050 __asm__("D_004C53A0");
 extern "C" void* func_00176D68(void* self);
 extern "C" void func_00166640(void* self, int a1);
 extern "C" void func_00166F90(void* self);
@@ -276,7 +272,7 @@ extern "C" sPair_E050 func_001673A0_E050(void* a1) __asm__("func_001673A0");
 void func_00176DA8_E050(void* self, int flags) __asm__("func_00176DA8__FPv");
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
-static inline void vu0CopyMtx_E050(sM_E050* dst, const sM_E050* src)
+static inline void vu0CopyMtx_E050(t4Matrix* dst, const t4Matrix* src)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -295,7 +291,7 @@ static inline void vu0CopyMtx_E050(sM_E050* dst, const sM_E050* src)
 }
 
 // PORT: PS2-only VU0 inline asm (unit quaternion -> 3x3 rotation, row 3 = (0,0,0,1)).
-static inline void vu0QuatToMtx_E050(sM_E050* m, const t4Vector* q)
+static inline void vu0QuatToMtx_E050(t4Matrix* m, const t4Vector* q)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -338,7 +334,7 @@ static inline void vu0QuatToMtx_E050(sM_E050* m, const t4Vector* q)
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply in place, m = m * b).
-static inline void vu0MulEqMtx_E050(sM_E050* m, const sM_E050* b)
+static inline void vu0MulEqMtx_E050(t4Matrix* m, const t4Matrix* b)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -377,7 +373,7 @@ static inline void vu0MulEqMtx_E050(sM_E050* m, const sM_E050* b)
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_E050(sM_E050* m, const t4Vector& v)
+static inline void vu0TransMtx_E050(t4Matrix* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -410,10 +406,10 @@ extern "C" void func_0015E050_impl(char* self, char* a1, char* a2)
     func_00166F90(&o);
     sPair_E050 out = func_001673A0_E050(&o);
     t4Vector* q = (t4Vector*)(self + 0x30);
-    sM_E050* m = (sM_E050*)(self + 0x40);
+    t4Matrix* m = (t4Matrix*)(self + 0x40);
     *(sPair_E050*)(self + 0x20) = out;
     vu0CopyMtx_E050(m, &D_004C53A0_E050);
-    sM_E050 rot;
+    t4Matrix rot;
     vu0QuatToMtx_E050(&rot, q);
     vu0MulEqMtx_E050(m, &rot);
     t4Vector p;
@@ -1040,23 +1036,19 @@ extern "C" void* func_0015F938(void* self)
 //100%
 INCLUDE_ASM("camera/camera", func_0015F9B8);
 #ifdef SKIP_ASM
-struct sM_15F9B8 {
-    float m[4][4];
-} __attribute__((aligned(16)));
-
 struct sPair_15F9B8 {
     t4Vector a;
     t4Vector b;
 };
 
-extern sM_15F9B8 D_004FF1A0_15F9B8 __asm__("D_004FF1A0");
+extern t4Matrix D_004FF1A0_15F9B8 __asm__("D_004FF1A0");
 extern t4Vector D_004FF150_15F9B8 __asm__("D_004FF150");
 extern t4Vector D_004FF160_v15F9B8 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
-extern "C" sPair_15F9B8 func_0031B748_15F9B8(sM_15F9B8* m) __asm__("func_0031B748");
+extern "C" sPair_15F9B8 func_0031B748_15F9B8(t4Matrix* m) __asm__("func_0031B748");
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
-static inline void vu0CopyMtx_15F9B8(sM_15F9B8* dst, const sM_15F9B8* src)
+static inline void vu0CopyMtx_15F9B8(t4Matrix* dst, const t4Matrix* src)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1075,7 +1067,7 @@ static inline void vu0CopyMtx_15F9B8(sM_15F9B8* dst, const sM_15F9B8* src)
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, dst = a * b).
-static inline void vu0MulMtx_15F9B8(sM_15F9B8* dst, const sM_15F9B8* a, const sM_15F9B8* b)
+static inline void vu0MulMtx_15F9B8(t4Matrix* dst, const t4Matrix* a, const t4Matrix* b)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1114,7 +1106,7 @@ static inline void vu0MulMtx_15F9B8(sM_15F9B8* dst, const sM_15F9B8* a, const sM
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_15F9B8(sM_15F9B8* m, const t4Vector& v)
+static inline void vu0TransMtx_15F9B8(t4Matrix* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1139,9 +1131,9 @@ static inline void SinCos_15F9B8(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void RotAxis_15F9B8(sM_15F9B8* m, const t4Vector& axis, float angle)
+static inline void RotAxis_15F9B8(t4Matrix* m, const t4Vector& axis, float angle)
 {
-    sM_15F9B8 r;
+    t4Matrix r;
     float s;
     float c;
     float one = 1.0f;
@@ -1156,28 +1148,28 @@ static inline void RotAxis_15F9B8(sM_15F9B8* m, const t4Vector& axis, float angl
     float sx = s * x;
     float sy = s * y;
     float sz = s * z;
-    r.m[0][0] = tx * x + c;
-    r.m[1][0] = tx * y + sz;
-    r.m[2][0] = tx * z - sy;
-    r.m[0][1] = ty * x - sz;
-    r.m[1][1] = ty * y + c;
-    r.m[2][1] = ty * z + sx;
-    r.m[0][2] = tz * x + sy;
-    r.m[1][2] = tz * y - sx;
-    r.m[2][2] = tz * z + c;
-    r.m[3][0] = 0.0f;
-    r.m[3][1] = 0.0f;
-    r.m[3][2] = 0.0f;
-    r.m[0][3] = 0.0f;
-    r.m[1][3] = 0.0f;
-    r.m[2][3] = 0.0f;
-    r.m[3][3] = one;
+    r.row[0].x = tx * x + c;
+    r.row[1].x = tx * y + sz;
+    r.row[2].x = tx * z - sy;
+    r.row[0].y = ty * x - sz;
+    r.row[1].y = ty * y + c;
+    r.row[2].y = ty * z + sx;
+    r.row[0].z = tz * x + sy;
+    r.row[1].z = tz * y - sx;
+    r.row[2].z = tz * z + c;
+    r.row[3].x = 0.0f;
+    r.row[3].y = 0.0f;
+    r.row[3].z = 0.0f;
+    r.row[0].w = 0.0f;
+    r.row[1].w = 0.0f;
+    r.row[2].w = 0.0f;
+    r.row[3].w = one;
     vu0MulMtx_15F9B8(m, m, &r);
 }
 
 extern "C" sPair_15F9B8 func_0015F9B8(char* src)
 {
-    sM_15F9B8 m;
+    t4Matrix m;
     vu0CopyMtx_15F9B8(&m, &D_004FF1A0_15F9B8);
     vu0TransMtx_15F9B8(&m, *(t4Vector*)(src + 0x20));
     RotAxis_15F9B8(&m, D_004FF150_15F9B8, -*(float*)(src + 0x30));
@@ -5209,19 +5201,15 @@ extern "C" void func_00166640_def(char* self)
 //100%
 INCLUDE_ASM("camera/camera", func_001668B8);
 #ifdef SKIP_ASM
-struct sM_1668B8 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
-
-extern sM_1668B8 D_004FF1A0_1668B8 __asm__("D_004FF1A0");
+extern t4Matrix D_004FF1A0_1668B8 __asm__("D_004FF1A0");
 extern t4Vector D_004FF150_1668B8 __asm__("D_004FF150");
 extern t4Vector D_004FF160_v1668B8 __asm__("D_004FF160");
 extern t4Vector D_004FF130_v1668B8 __asm__("D_004FF130");
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
-static inline void vu0CopyMtx_1668B8(sM_1668B8* dst, const sM_1668B8* src)
+static inline void vu0CopyMtx_1668B8(t4Matrix* dst, const t4Matrix* src)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -5240,7 +5228,7 @@ static inline void vu0CopyMtx_1668B8(sM_1668B8* dst, const sM_1668B8* src)
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, dst = a * b).
-static inline void vu0MulMtx_1668B8(sM_1668B8* dst, const sM_1668B8* a, const sM_1668B8* b)
+static inline void vu0MulMtx_1668B8(t4Matrix* dst, const t4Matrix* a, const t4Matrix* b)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -5279,7 +5267,7 @@ static inline void vu0MulMtx_1668B8(sM_1668B8* dst, const sM_1668B8* a, const sM
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply in place, m = m * b).
-static inline void vu0MulEqMtx_1668B8(sM_1668B8* m, const sM_1668B8* b)
+static inline void vu0MulEqMtx_1668B8(t4Matrix* m, const t4Matrix* b)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -5318,7 +5306,7 @@ static inline void vu0MulEqMtx_1668B8(sM_1668B8* m, const sM_1668B8* b)
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_1668B8(sM_1668B8* m, const t4Vector& v)
+static inline void vu0TransMtx_1668B8(t4Matrix* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -5343,12 +5331,12 @@ static inline void SinCos_1668B8(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void Rotate_1668B8(sM_1668B8* m, const t4Vector& axis, float angle)
+static inline void Rotate_1668B8(t4Matrix* m, const t4Vector& axis, float angle)
 {
-    sM_1668B8 tm;
+    t4Matrix tm;
     vu0CopyMtx_1668B8(&tm, m);
-    t4Vector pos = *(t4Vector*)tm.m[3];
-    *(t4Vector*)tm.m[3] = D_004FF130_v1668B8;
+    t4Vector pos = tm.row[3];
+    tm.row[3] = D_004FF130_v1668B8;
     float s;
     float c;
     SinCos_1668B8(&s, &c, angle);
@@ -5362,35 +5350,35 @@ static inline void Rotate_1668B8(sM_1668B8* m, const t4Vector& axis, float angle
     float sx = s * x;
     float sy = s * y;
     float sz = s * z;
-    m->m[0][0] = tx * x + c;
-    m->m[1][0] = tx * y + sz;
-    m->m[2][0] = tx * z - sy;
-    m->m[0][1] = ty * x - sz;
-    m->m[1][1] = ty * y + c;
-    m->m[2][1] = ty * z + sx;
-    m->m[0][2] = tz * x + sy;
-    m->m[1][2] = tz * y - sx;
-    m->m[2][2] = tz * z + c;
-    m->m[3][0] = 0.0f;
-    m->m[3][1] = 0.0f;
-    m->m[3][2] = 0.0f;
-    m->m[3][3] = 1.0f;
-    m->m[0][3] = 0.0f;
-    m->m[1][3] = 0.0f;
-    m->m[2][3] = 0.0f;
-    *(t4Vector*)m->m[3] = pos;
+    m->row[0].x = tx * x + c;
+    m->row[1].x = tx * y + sz;
+    m->row[2].x = tx * z - sy;
+    m->row[0].y = ty * x - sz;
+    m->row[1].y = ty * y + c;
+    m->row[2].y = ty * z + sx;
+    m->row[0].z = tz * x + sy;
+    m->row[1].z = tz * y - sx;
+    m->row[2].z = tz * z + c;
+    m->row[3].x = 0.0f;
+    m->row[3].y = 0.0f;
+    m->row[3].z = 0.0f;
+    m->row[3].w = 1.0f;
+    m->row[0].w = 0.0f;
+    m->row[1].w = 0.0f;
+    m->row[2].w = 0.0f;
+    m->row[3] = pos;
     vu0MulEqMtx_1668B8(m, &tm);
 }
 
-static inline t4Vector Row_1668B8(const sM_1668B8& m, int i)
+static inline t4Vector Row_1668B8(const t4Matrix& m, int i)
 {
-    return *(const t4Vector*)m.m[i];
+    return m.row[i];
 }
 
 extern "C" void func_001668B8_impl(char* self, t4Vector* out) __asm__("func_001668B8");
 extern "C" void func_001668B8_impl(char* self, t4Vector* out)
 {
-    sM_1668B8 m;
+    t4Matrix m;
     vu0CopyMtx_1668B8(&m, &D_004FF1A0_1668B8);
     Rotate_1668B8(&m, D_004FF150_1668B8, -*(float*)(self + 0x54));
     Rotate_1668B8(&m, D_004FF160_v1668B8, -*(float*)(self + 0x50));
