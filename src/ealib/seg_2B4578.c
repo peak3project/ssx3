@@ -17371,7 +17371,6 @@ struct E_4C40 {
     char pad38[0x928 - 0x38];
 };
 extern struct E_4C40 D_00517610_4C40[4] __asm__("D_00517610");
-extern char D_00517644_4C40[] __asm__("D_00517644");
 
 void func_003D4C40(void) {
     struct E_4C40 tmp;
@@ -17379,7 +17378,7 @@ void func_003D4C40(void) {
     int j;
 
     for (i = 0; i < 4; i++) {
-        if (*(void **)(D_00517644_4C40 + i * 0x928) != 0) {
+        if (*(void **)(D_00517644 + i * 0x928) != 0) {
             for (j = i + 1; j < 4; j++) {
                 if (D_00517610_4C40[j].hdr != 0 && D_00517610_4C40[j].mask < D_00517610_4C40[i].mask) {
                     tmp = D_00517610_4C40[i];
