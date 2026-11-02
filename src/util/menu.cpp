@@ -18,6 +18,98 @@ struct sColor {
     float a, r, g, b;
 };
 
+// One entry of the render-state stack (0x14 bytes); f8 holds 5-bit fields that are read through masks, f10 an id
+// (-1 = none).
+struct sRenderState {
+    int f0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 25;
+    int f8;
+    int fC;
+    short f10;
+};
+
+// The render context (D_004A289C): render-state stack top at 0xE84, vtable pointer at 0x10D8.
+class cRenderCtx {
+public:
+    char pad0[0xE84];
+    sRenderState* top;          // 0xE84
+    char pad1[0x10D8 - 0xE88];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35();
+    virtual void v36();
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
+    virtual void v42();
+    virtual void v43();
+    virtual void v44();
+    virtual void v45();
+    virtual void v46();
+    virtual void v47();
+    virtual void v48();
+    virtual void v49();
+    virtual void v50();
+    virtual void v51();
+    virtual void v52();
+    virtual void v53();
+    virtual void v54();
+    virtual void v55();
+    virtual void v56();
+    virtual void v57();
+    virtual void v58();
+    virtual void v59();
+    virtual void v60();
+    virtual void v61();
+    virtual void v62();
+    virtual void v63();
+    virtual void v64();
+    virtual void v65();
+    virtual void v66();
+    virtual void v67();
+    virtual void v68();
+    virtual void v69();
+    virtual void v70();
+    virtual void v71(int n, void* verts, int flags);
+};
+extern cRenderCtx* D_004A289C;
+
 struct cMenuItem {
     char pad_0x00[0x4];
     int field_0x4;
@@ -557,7 +649,8 @@ public:
     virtual void v34(void* p);
 };
 
-// Typed view of the render context (the unit declares D_004A289C with another class later).
+// This function's own view of the render context: its render-state copy has f8 as bitfields and an int at
+// 0x10, where cRenderCtx's sRenderState has an int f8 read through masks and a short f10.
 extern func_002CB180_cCtx* D_004A289C_cb180 __asm__("D_004A289C");
 extern char D_004FF1A0[];
 
@@ -587,50 +680,11 @@ extern "C" void func_002CB180()
 //100%
 INCLUDE_ASM("util/menu", func_002CB2F8);
 #ifdef SKIP_ASM
-class func_002CB2F8_cObj {
-public:
-    char data[0x10D8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
-
-extern func_002CB2F8_cObj* D_004A289C;
-
 extern "C" void func_002CB2F8()
 {
     D_004A289C->v32();
     D_004A289C->v22();
-    *(int*)((char*)D_004A289C + 0xE84) = *(int*)((char*)D_004A289C + 0xE84) - 0x14;
+    D_004A289C->top--;
 }
 #endif
 
@@ -649,85 +703,6 @@ struct func_002CB350_sVtx {
     func_002CB350_sVec4 pos;
 };
 
-class func_002CB350_cCtx {
-public:
-    char pad0[0x10D8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual void v46();
-    virtual void v47();
-    virtual void v48();
-    virtual void v49();
-    virtual void v50();
-    virtual void v51();
-    virtual void v52();
-    virtual void v53();
-    virtual void v54();
-    virtual void v55();
-    virtual void v56();
-    virtual void v57();
-    virtual void v58();
-    virtual void v59();
-    virtual void v60();
-    virtual void v61();
-    virtual void v62();
-    virtual void v63();
-    virtual void v64();
-    virtual void v65();
-    virtual void v66();
-    virtual void v67();
-    virtual void v68();
-    virtual void v69();
-    virtual void v70();
-    virtual void v71(int n, void* verts, int flags);
-};
-
-// Typed view of the render context (the unit declares D_004A289C with another class later).
-extern func_002CB350_cCtx* D_004A289C_cb350 __asm__("D_004A289C");
-
 extern "C" void func_002CB350(func_002CB350_sVtx* v, float* r, float* t)
 {
     v[0].pos = func_002CB350_sVec4(r[0], r[1], 0.0f, 1.0f);
@@ -742,7 +717,7 @@ extern "C" void func_002CB350(func_002CB350_sVtx* v, float* r, float* t)
     v[3].pos = func_002CB350_sVec4(r[0] + r[2], r[1] + r[3], 0.0f, 1.0f);
     v[3].u = t[0] + t[2];
     v[3].v = t[1] + t[3];
-    D_004A289C_cb350->v71(4, v, 0);
+    D_004A289C->v71(4, v, 0);
 }
 #endif
 
@@ -758,30 +733,12 @@ struct sVtx_2CB498 {
     sVtx_2CB498() {}
 };
 
-struct sRS_2CB498 {
-    int f0;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-    int f8;
-    int fC;
-    short f10;
-};
-
-class cCtx_2CB498 {
-public:
-    char pad0[0xE84];
-    sRS_2CB498* top;
-};
-
-extern cCtx_2CB498* D_004A289C_cb498 __asm__("D_004A289C");
-
-static inline int func_002CB498_getF8_5(sRS_2CB498* rs)
+static inline int func_002CB498_getF8_5(sRenderState* rs)
 {
     return (unsigned int)(rs->f8 & 0x3E0) >> 5;
 }
 
-static inline void func_002CB498_setF8_5(sRS_2CB498* rs, int v)
+static inline void func_002CB498_setF8_5(sRenderState* rs, int v)
 {
     if (v < 0) v = 0;
     rs->f8 = (rs->f8 & ~0x3E0) | ((v << 5) & 0x3E0);
@@ -798,11 +755,11 @@ extern "C" void func_002CB498(void* self, float* rect, sColor* col)
         v[i].b = (int)(col->b * 128.0f);
         v[i].q = 1.0f;
     }
-    int old = func_002CB498_getF8_5(D_004A289C_cb498->top);
-    func_002CB498_setF8_5(D_004A289C_cb498->top, old - 2);
-    D_004A289C_cb498->top->f4_2 = 5;
+    int old = func_002CB498_getF8_5(D_004A289C->top);
+    func_002CB498_setF8_5(D_004A289C->top, old - 2);
+    D_004A289C->top->f4_2 = 5;
     int id = *(int*)(*(char**)((char*)self + 0x124) + 0x60);
-    D_004A289C_cb498->top->f10 = id;
+    D_004A289C->top->f10 = id;
     float r[4];
     float t[4];
     float left = rect[0] + 5.0f;
@@ -838,7 +795,7 @@ extern "C" void func_002CB498(void* self, float* rect, sColor* col)
     r[0] = left; r[1] = top; r[2] = w; r[3] = h;
     t[0] = 0.25f; t[1] = 0.25f; t[2] = 0.5f; t[3] = 0.5f;
     func_002CB350((func_002CB350_sVtx*)v, r, t);
-    func_002CB498_setF8_5(D_004A289C_cb498->top, old);
+    func_002CB498_setF8_5(D_004A289C->top, old);
 }
 #endif
 
@@ -876,102 +833,12 @@ struct sVtx_2CB8C8 {
     sVtx_2CB8C8() {}
 };
 
-struct sRS_2CB8C8 {
-    int f0;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-    int f8;
-    int fC;
-    short f10;
-};
-
-class cCtx_2CB8C8 {
-public:
-    char pad0[0xE84];
-    sRS_2CB8C8* top;
-    char pad1[0x10D8 - 0xE88];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual void v46();
-    virtual void v47();
-    virtual void v48();
-    virtual void v49();
-    virtual void v50();
-    virtual void v51();
-    virtual void v52();
-    virtual void v53();
-    virtual void v54();
-    virtual void v55();
-    virtual void v56();
-    virtual void v57();
-    virtual void v58();
-    virtual void v59();
-    virtual void v60();
-    virtual void v61();
-    virtual void v62();
-    virtual void v63();
-    virtual void v64();
-    virtual void v65();
-    virtual void v66();
-    virtual void v67();
-    virtual void v68();
-    virtual void v69();
-    virtual void v70();
-    virtual void v71(int n, void* verts, int flags);
-};
-
-extern cCtx_2CB8C8* D_004A289C_cb8c8 __asm__("D_004A289C");
-
 extern "C" void func_002CB8C8(void* self, float* rect)
 {
     sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)((char*)self + 0x12C);
     vt[8].fn((char*)self + vt[8].delta, rect, D_004D5380);
-    *(short*)((char*)D_004A289C_cb8c8->top + 0x10) = -1;
-    D_004A289C_cb8c8->top->f4_2 = 1;
+    *(short*)((char*)D_004A289C->top + 0x10) = -1;
+    D_004A289C->top->f4_2 = 1;
     sVtx_2CB8C8 v[6];
     int i;
     for (i = 0; i < 6; i++) {
@@ -1001,7 +868,7 @@ extern "C" void func_002CB8C8(void* self, float* rect)
     v[4].pos = p;
     p.x = right; p.y = bot - 3.0f; p.z = 0.0f; p.w = 1.0f;
     v[5].pos = p;
-    D_004A289C_cb8c8->v71(6, v, 0);
+    D_004A289C->v71(6, v, 0);
 }
 #endif
 
@@ -1023,102 +890,12 @@ struct sVtx_2CBAC8 {
     sVtx_2CBAC8() {}
 };
 
-struct sRS_2CBAC8 {
-    int f0;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-    int f8;
-    int fC;
-    short f10;
-};
-
-class cCtx_2CBAC8 {
-public:
-    char pad0[0xE84];
-    sRS_2CBAC8* top;
-    char pad1[0x10D8 - 0xE88];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual void v46();
-    virtual void v47();
-    virtual void v48();
-    virtual void v49();
-    virtual void v50();
-    virtual void v51();
-    virtual void v52();
-    virtual void v53();
-    virtual void v54();
-    virtual void v55();
-    virtual void v56();
-    virtual void v57();
-    virtual void v58();
-    virtual void v59();
-    virtual void v60();
-    virtual void v61();
-    virtual void v62();
-    virtual void v63();
-    virtual void v64();
-    virtual void v65();
-    virtual void v66();
-    virtual void v67();
-    virtual void v68();
-    virtual void v69();
-    virtual void v70();
-    virtual void v71(int n, void* verts, int flags);
-};
-
-extern cCtx_2CBAC8* D_004A289C_cbac8 __asm__("D_004A289C");
-
 extern "C" void func_002CBAC8(void* self, float* rect)
 {
     sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)((char*)self + 0x12C);
     vt[8].fn((char*)self + vt[8].delta, rect, D_004D5380);
-    *(short*)((char*)D_004A289C_cbac8->top + 0x10) = -1;
-    D_004A289C_cbac8->top->f4_2 = 1;
+    *(short*)((char*)D_004A289C->top + 0x10) = -1;
+    D_004A289C->top->f4_2 = 1;
     sVtx_2CBAC8 v[6];
     int i;
     for (i = 0; i < 6; i++) {
@@ -1148,7 +925,7 @@ extern "C" void func_002CBAC8(void* self, float* rect)
     v[4].pos = p;
     p.x = right; p.y = top + 3.0f; p.z = 0.0f; p.w = 1.0f;
     v[5].pos = p;
-    D_004A289C_cbac8->v71(6, v, 0);
+    D_004A289C->v71(6, v, 0);
 }
 #endif
 
@@ -3372,93 +3149,6 @@ struct sVtx_2CE910 {
     sVtx_2CE910() {}
 };
 
-struct sRS_2CE910 {
-    int f0;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-};
-
-class cCtx_2CE910 {
-public:
-    char pad0[0xE84];
-    sRS_2CE910* top;
-    char pad1[0x10D8 - 0xE88];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual void v46();
-    virtual void v47();
-    virtual void v48();
-    virtual void v49();
-    virtual void v50();
-    virtual void v51();
-    virtual void v52();
-    virtual void v53();
-    virtual void v54();
-    virtual void v55();
-    virtual void v56();
-    virtual void v57();
-    virtual void v58();
-    virtual void v59();
-    virtual void v60();
-    virtual void v61();
-    virtual void v62();
-    virtual void v63();
-    virtual void v64();
-    virtual void v65();
-    virtual void v66();
-    virtual void v67();
-    virtual void v68();
-    virtual void v69();
-    virtual void v70();
-    virtual void v71(int n, void* verts, int flags);
-};
-
-extern cCtx_2CE910* D_004A289C_ce910 __asm__("D_004A289C");
-
 extern "C" void func_002CE910(void* self, float* rect)
 {
     char buf[0x20];
@@ -3523,9 +3213,9 @@ extern "C" void func_002CE910(void* self, float* rect)
         p.Set(x2, y2, zero, one);
         v[3] = v[0];
         v[3].pos = p;
-        D_004A289C_ce910->top->f4_2 = 1;
-        *(short*)((char*)D_004A289C_ce910->top + 0x10) = -1;
-        D_004A289C_ce910->v71(4, v, 0);
+        D_004A289C->top->f4_2 = 1;
+        *(short*)((char*)D_004A289C->top + 0x10) = -1;
+        D_004A289C->v71(4, v, 0);
     }
     *(sVec2_2CE910*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2_2CE910(0.0f, 0.0f);
 }
@@ -3698,93 +3388,6 @@ struct sVtx_2CF1C8 {
     sVtx_2CF1C8() {}
 };
 
-struct sRS_2CF1C8 {
-    int f0;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-};
-
-class cCtx_2CF1C8 {
-public:
-    char pad0[0xE84];
-    sRS_2CF1C8* top;
-    char pad1[0x10D8 - 0xE88];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual void v46();
-    virtual void v47();
-    virtual void v48();
-    virtual void v49();
-    virtual void v50();
-    virtual void v51();
-    virtual void v52();
-    virtual void v53();
-    virtual void v54();
-    virtual void v55();
-    virtual void v56();
-    virtual void v57();
-    virtual void v58();
-    virtual void v59();
-    virtual void v60();
-    virtual void v61();
-    virtual void v62();
-    virtual void v63();
-    virtual void v64();
-    virtual void v65();
-    virtual void v66();
-    virtual void v67();
-    virtual void v68();
-    virtual void v69();
-    virtual void v70();
-    virtual void v71(int n, void* verts, int flags);
-};
-
-extern cCtx_2CF1C8* D_004A289C_cf1c8 __asm__("D_004A289C");
-
 extern "C" void func_002CF1C8(void* self, float* rect)
 {
     {
@@ -3858,12 +3461,12 @@ extern "C" void func_002CF1C8(void* self, float* rect)
     p.Set(r.x + r.w, r.y + r.h, 0.0f, one);
     v[3].pos = p;
     if ((*(float**)((char*)self + 0x14))[0] != 1.0f) {
-        D_004A289C_cf1c8->top->f4_2 = 5;
+        D_004A289C->top->f4_2 = 5;
     } else {
-        D_004A289C_cf1c8->top->f4_2 = 1;
+        D_004A289C->top->f4_2 = 1;
     }
-    *(short*)((char*)D_004A289C_cf1c8->top + 0x10) = -1;
-    D_004A289C_cf1c8->v71(4, v, 0);
+    *(short*)((char*)D_004A289C->top + 0x10) = -1;
+    D_004A289C->v71(4, v, 0);
 
     float mx = r.x + r.w * *(float*)(*(char**)((char*)self + 0x14) + (*(int*)((char*)self + 0x18) << 2));
     v[0].r = (int)(c.r * 128.0f);
@@ -3881,7 +3484,7 @@ extern "C" void func_002CF1C8(void* self, float* rect)
     v[2].b = (int)(c.b * 128.0f);
     p.x = mx + 5.0f; p.y = r.y - 7.0f; p.z = 0.0f; p.w = 1.0f;
     v[2].pos = p;
-    D_004A289C_cf1c8->v71(3, v, 0);
+    D_004A289C->v71(3, v, 0);
 }
 #endif
 
@@ -4374,96 +3977,6 @@ struct sVec4_2D0008 {
     sVec4_2D0008(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
 } __attribute__((aligned(16)));
 
-struct sRS_2D0008 {
-    int f0;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-    int f8;
-    int fC;
-    short f10;
-};
-
-class cCtx_2D0008 {
-public:
-    char pad0[0xE84];
-    sRS_2D0008* top;
-    char pad1[0x10D8 - 0xE88];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual void v46();
-    virtual void v47();
-    virtual void v48();
-    virtual void v49();
-    virtual void v50();
-    virtual void v51();
-    virtual void v52();
-    virtual void v53();
-    virtual void v54();
-    virtual void v55();
-    virtual void v56();
-    virtual void v57();
-    virtual void v58();
-    virtual void v59();
-    virtual void v60();
-    virtual void v61();
-    virtual void v62();
-    virtual void v63();
-    virtual void v64();
-    virtual void v65();
-    virtual void v66();
-    virtual void v67();
-    virtual void v68();
-    virtual void v69();
-    virtual void v70();
-    virtual void v71(int prim, void* verts, int n);
-};
-
-extern cCtx_2D0008* D_004A289C_2d0008 __asm__("D_004A289C");
-
 // PORT: rect pointer passed through func_002CA988's int parameter
 extern "C" void func_002D0008(char* self, float* rect)
 {
@@ -4506,12 +4019,12 @@ extern "C" void func_002D0008(char* self, float* rect)
     v[3].q = 1.0f;
     *(sVec4_2D0008*)v[3].pos = sVec4_2D0008(x2, y2, 0.0f, 1.0f);
     if (c->a != 1.0f) {
-        D_004A289C_2d0008->top->f4_2 = 5;
+        D_004A289C->top->f4_2 = 5;
     } else {
-        D_004A289C_2d0008->top->f4_2 = 1;
+        D_004A289C->top->f4_2 = 1;
     }
-    *(short*)((char*)D_004A289C_2d0008->top + 0x10) = -1;
-    D_004A289C_2d0008->v71(4, v, 0);
+    *(short*)((char*)D_004A289C->top + 0x10) = -1;
+    D_004A289C->v71(4, v, 0);
 }
 #endif
 
