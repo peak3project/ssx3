@@ -148,17 +148,24 @@ struct sFlagSlot {
     sFlagSlot() {}
 };
 
+// Globals declared by several functions below.
+extern void* D_0048FA00[];
+extern void* D_0048FB80[];
+extern void* D_00490CC8[];
+extern char* D_004A5B80;
+extern char D_004FF1A0[];
+
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+
 // ---- end of shared declarations ----
 
 //100%
 INCLUDE_ASM("object/flagset", cFlagSet_CreateMesh);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 extern char D_0048E850[];
 extern "C" void func_0034BCA0(void* self, void* verts);
 
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
 
 
 
@@ -243,7 +250,6 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
 //100%
 INCLUDE_ASM("object/flagset", func_0034B7B8);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 void cMemMan_free(void*);
 
 
@@ -342,11 +348,9 @@ extern "C" void func_0034B818(void* elem)
 //100%
 INCLUDE_ASM("object/flagset", func_0034B9B0);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 extern int D_004A4244;
 // PORT: 128-bit integer mode for VU0 asm memory operands
 typedef int cQuad128_34B9B0 __attribute__((mode(TI)));
-extern char D_004FF1A0[];
 
 
 
@@ -487,7 +491,6 @@ INCLUDE_ASM("object/flagset", func_0034C428);
 #ifdef SKIP_ASM
 extern "C" void* func_00354648(void* self, void* a1);
 extern "C" void* func_0034AF38(void* self);
-extern void* D_0048FB80[];
 
 
 
@@ -512,7 +515,6 @@ extern "C" sFlagSetList* func_0034C428(sFlagSetList* self, void* a1)
 INCLUDE_ASM("object/flagset", func_0034C4B8);
 #ifdef SKIP_ASM
 extern "C" void func_003546C8(void* self, int flags);
-extern void* D_0048FB80[];
 
 
 
@@ -701,7 +703,6 @@ struct sFlagSet_CAB8 {
 extern "C" void* func_0034FB00(void* self, int a1, int type, void* obj);
 extern "C" void func_0034D1E8(void* self);
 extern "C" void func_0034D6F0(void* self, float dt);
-extern void* D_0048FA00[];
 
 // PORT: the unit declares this as void (callers ignore the result); bound by asm label.
 extern "C" sFlagSet_CAB8* func_0034CAB8_ctor(sFlagSet_CAB8* self, int a1, void* obj, sFlagBlock_CAB8* desc, int flag, float dt) __asm__("func_0034CAB8");
@@ -727,8 +728,6 @@ extern "C" sFlagSet_CAB8* func_0034CAB8_ctor(sFlagSet_CAB8* self, int a1, void* 
 //100%
 INCLUDE_ASM("object/flagset", func_0034CB80);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
-extern void* D_0048FA00[];
 extern "C" void func_0034FBF0(void* self, int flags);
 
 
@@ -751,7 +750,6 @@ INCLUDE_ASM("object/flagset", func_0034CBE8);
 #ifdef SKIP_ASM
 extern "C" void* cInstanceNode_cInstanceNode(void* self, void* a1, void* stream);
 extern "C" void func_0034D1E8(void* self);
-extern void* D_0048FA00[];
 
 
 
@@ -1007,7 +1005,6 @@ extern "C" void func_0034CF98(void* p)
 //100%
 INCLUDE_ASM("object/flagset", func_0034D1E8);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 extern "C" void func_0034CF98(void* self);
 
 
@@ -1214,9 +1211,6 @@ extern "C" void cAnimNode_setAnimMeshCache(void* self);
 extern "C" float func_00351508(void* p);
 struct sFlagOwner_E348;
 extern "C" void func_0034E348(sFlagOwner_E348* self);
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
-extern void* D_00490CC8[];
 extern char D_0048E758[];
 
 
@@ -1296,7 +1290,6 @@ struct sFlagOwner_DBA8 {
 void cMemMan_free(void*);
 void operator_delete(int*);
 extern "C" void func_003553C0(void* self, int flags);
-extern void* D_00490CC8[];
 
 extern "C" void func_0034DBA8(sFlagOwner_DBA8* self, int flags)
 {
@@ -1347,7 +1340,6 @@ INCLUDE_ASM("object/flagset", func_0034DD18);
 //100%
 INCLUDE_ASM("object/flagset", func_0034E320);
 #ifdef SKIP_ASM
-extern char D_004FF1A0[];
 
 extern "C" void* func_0034E320(void* self, int i) {
     char* base = *(char**)((char*)self + 0x48);
