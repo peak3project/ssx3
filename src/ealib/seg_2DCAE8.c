@@ -2496,28 +2496,25 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF808);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void fCF70_F808(int, char *) __asm__("func_003DCF70");
-extern char *fEED8_F808(char *) __asm__("func_003DEED8");
-extern void fEF40_F808(char *) __asm__("func_003DEF40");
-extern char D_9BF8_F808[] __asm__("D_00519BF8");
 extern char fF3C0_F808[] __asm__("func_003DF3C0");
 
 int func_003DF808(int a0, int a1, int a2, int a3) {
-    char *t = fEED8_F808(D_9BF8_F808);
+    struct sReq *t = func_003DEED8(&D_00519BF8);
     if (t != 0) {
-        fEF40_F808(t);
-        *(int *)(t + 8) = 0;
-        *(int *)(t + 0xC) = 0;
-        *(int *)(t + 0x10) = 0;
-        *(int *)(t + 0x14) = 0;
-        *(int *)(t + 0x18) = 0;
-        *(int *)(t + 0x20) = a0;
-        *(int *)(t + 0x24) = a1;
-        *(int *)(t + 0x28) = a3;
-        *(int *)(t + 0x2C) = a2;
-        *(volatile int *)(t + 0x1C) = func_003DD648(a0, a1, a2, a3 <= 0x8000 ? a3 : 0x8000, 0x64, t);
-        if (*(volatile int *)(t + 0x1C) != 0) {
-            fCF70_F808(*(volatile int *)(t + 0x1C), fF3C0_F808);
-            return *(int *)t;
+        func_003DEF40(t);
+        t->f08 = 0;
+        t->f0C = 0;
+        t->f10 = 0;
+        t->f14 = 0;
+        t->f18 = 0;
+        t->f20 = a0;
+        t->f24 = a1;
+        t->f28 = a3;
+        t->f2C = a2;
+        t->f1C = func_003DD648(a0, a1, a2, a3 <= 0x8000 ? a3 : 0x8000, 0x64, t);
+        if (t->f1C != 0) {
+            fCF70_F808(t->f1C, fF3C0_F808);
+            return t->f00;
         }
         return 0;
     }
