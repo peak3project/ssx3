@@ -22,6 +22,12 @@ struct sVec2 {
     sVec2(float ax, float ay) : x(ax), y(ay) {}
 };
 
+// A transform as position + rotation quaternion, returned by value (func_0031B748 builds one from a matrix).
+struct sXf {
+    t4Vector pos;
+    t4Vector rot;
+};
+
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", cScriptCameraController_cScriptCameraController);
 #ifdef SKIP_ASM
@@ -457,17 +463,12 @@ extern "C" void func_00169570(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169828);
 #ifdef SKIP_ASM
-struct sPair_9828 {
-    t4Vector a;
-    t4Vector b;
-};
-
 extern t4Matrix D_004FF1A0_9828 __asm__("D_004FF1A0");
 extern t4Vector D_004FF140_9828 __asm__("D_004FF140");
 extern t4Vector D_004FF150_9828 __asm__("D_004FF150");
 extern t4Vector D_004FF160_9828 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sPair_9828 func_0031B748_9828(t4Matrix* m) __asm__("func_0031B748");
+extern "C" sXf func_0031B748_9828(t4Matrix* m) __asm__("func_0031B748");
 extern "C" t4Vector func_00160228_9828(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -606,7 +607,7 @@ static inline void RotAxis_9828(t4Matrix* m, const t4Vector& axis, float angle)
     vu0MulMtx_9828(m, m, &r);
 }
 
-extern "C" sPair_9828 func_00169828(char* p)
+extern "C" sXf func_00169828(char* p)
 {
     t4Matrix m;
     vu0CopyMtx_9828(&m, &D_004FF1A0_9828);
@@ -771,17 +772,12 @@ extern "C" void func_00169DB0(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169F88);
 #ifdef SKIP_ASM
-struct sPair_9F88 {
-    t4Vector a;
-    t4Vector b;
-};
-
 extern t4Matrix D_004FF1A0_9F88 __asm__("D_004FF1A0");
 extern t4Vector D_004FF140_9F88 __asm__("D_004FF140");
 extern t4Vector D_004FF150_9F88 __asm__("D_004FF150");
 extern t4Vector D_004FF160_9F88 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sPair_9F88 func_0031B748_9F88(t4Matrix* m) __asm__("func_0031B748");
+extern "C" sXf func_0031B748_9F88(t4Matrix* m) __asm__("func_0031B748");
 extern "C" t4Vector func_00160228_9F88(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -920,7 +916,7 @@ static inline void RotAxis_9F88(t4Matrix* m, const t4Vector& axis, float angle)
     vu0MulMtx_9F88(m, m, &r);
 }
 
-extern "C" sPair_9F88 func_00169F88(char* p)
+extern "C" sXf func_00169F88(char* p)
 {
     t4Matrix m;
     vu0CopyMtx_9F88(&m, &D_004FF1A0_9F88);
@@ -1141,17 +1137,12 @@ extern "C" void func_0016A510(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016A868);
 #ifdef SKIP_ASM
-struct sPair_A868 {
-    t4Vector a;
-    t4Vector b;
-};
-
 extern t4Matrix D_004FF1A0_A868 __asm__("D_004FF1A0");
 extern t4Vector D_004FF140_A868 __asm__("D_004FF140");
 extern t4Vector D_004FF150_A868 __asm__("D_004FF150");
 extern t4Vector D_004FF160_A868 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sPair_A868 func_0031B748_A868(t4Matrix* m) __asm__("func_0031B748");
+extern "C" sXf func_0031B748_A868(t4Matrix* m) __asm__("func_0031B748");
 extern "C" t4Vector func_00160228_A868(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -1290,7 +1281,7 @@ static inline void RotAxis_A868(t4Matrix* m, const t4Vector& axis, float angle)
     vu0MulMtx_A868(m, m, &r);
 }
 
-extern "C" sPair_A868 func_0016A868(char* p)
+extern "C" sXf func_0016A868(char* p)
 {
     t4Matrix m;
     vu0CopyMtx_A868(&m, &D_004FF1A0_A868);
@@ -1749,17 +1740,12 @@ extern "C" void func_0016B180(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016B7B8);
 #ifdef SKIP_ASM
-struct sPair_B7B8 {
-    t4Vector a;
-    t4Vector b;
-};
-
 extern t4Matrix D_004FF1A0_B7B8 __asm__("D_004FF1A0");
 extern t4Vector D_004FF140_B7B8 __asm__("D_004FF140");
 extern t4Vector D_004FF150_B7B8 __asm__("D_004FF150");
 extern t4Vector D_004FF160_B7B8 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sPair_B7B8 func_0031B748_B7B8(t4Matrix* m) __asm__("func_0031B748");
+extern "C" sXf func_0031B748_B7B8(t4Matrix* m) __asm__("func_0031B748");
 extern "C" t4Vector func_00160228_B7B8(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -1898,7 +1884,7 @@ static inline void RotAxis_B7B8(t4Matrix* m, const t4Vector& axis, float angle)
     vu0MulMtx_B7B8(m, m, &r);
 }
 
-extern "C" sPair_B7B8 func_0016B7B8(char* p)
+extern "C" sXf func_0016B7B8(char* p)
 {
     t4Matrix m;
     vu0CopyMtx_B7B8(&m, &D_004FF1A0_B7B8);
