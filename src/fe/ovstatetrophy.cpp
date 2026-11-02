@@ -32,9 +32,9 @@ INCLUDE_ASM("fe/ovstatetrophy", func_0020E9A0);
 #ifdef SKIP_ASM
 extern "C" void func_0039F400(void* list, void* item);
 
-struct sColor_20E9A0 {
+struct sColour {
     float r, g, b, a;
-    sColor_20E9A0(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
+    sColour(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
 };
 
 class cUIObj_20E9A0 {
@@ -50,7 +50,7 @@ public:
     virtual void setEnabled(int v);
     virtual void setVisible(int v);
     virtual void v10();
-    virtual int setColor(const sColor_20E9A0& c);
+    virtual int setColor(const sColour& c);
 };
 
 
@@ -61,7 +61,7 @@ extern "C" void func_0020E9A0(void* self, cUIObj_20E9A0* item, int msg)
     }
     switch (msg) {
     case 5: {
-        item->setColor(sColor_20E9A0(1.0f, 1.0f, 0.0f, 0.0f));
+        item->setColor(sColour(1.0f, 1.0f, 0.0f, 0.0f));
         void* r = 0;
         if (*(int*)((char*)item + 0x18) == 1) {
             void* obj = **(void***)((char*)self + 0x10);
@@ -465,10 +465,6 @@ extern "C" void func_002108F8(void)
 //100%
 INCLUDE_ASM("fe/ovstatetrophy", func_00210940);
 #ifdef SKIP_ASM
-struct sColor_210940 {
-    float r, g, b, a;
-    sColor_210940(float ar, float ag, float ab, float aa) : r(ar), g(ag), b(ab), a(aa) {}
-};
 class cUIText;
 class cUIObj_210940 {
 public:
@@ -483,7 +479,7 @@ public:
     virtual void v08();
     virtual void setVisible(int v);
     virtual void v10();
-    virtual int setColor(const sColor_210940& c);
+    virtual int setColor(const sColour& c);
 };
 
 struct sRect_210940 { int a, b, c, d; };
@@ -539,7 +535,7 @@ extern "C" void func_00210940(void* self)
         func_003A1310(e, 1);
         e->setVisible(1);
         *(int*)((char*)e + 0x14) |= 0x80;
-        e->setColor(sColor_210940(1.0f, 0.0f, 0.0f, 0.0f));
+        e->setColor(sColour(1.0f, 0.0f, 0.0f, 0.0f));
         *(sRect_210940*)((char*)e + 0xA8) = D_004C8D08;
         *(char**)((char*)e + 0xB8) = a;
     }
