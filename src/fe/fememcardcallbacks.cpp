@@ -8,6 +8,120 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// The memory card object (cPS2MemCard in the RTTI list) at game + 0x434, as these functions call it.
+class cMemCard {
+public:
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual int v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35();
+    virtual void v36();
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
+    virtual void v42();
+    virtual void v43();
+    virtual void v44();
+    virtual void v45();
+    virtual void v46();
+    virtual void v47();
+    virtual void v48();
+    virtual void v49();
+    virtual void v50();
+    virtual void v51();
+    virtual int v52(int);
+    virtual bool v53();
+    virtual void v54();
+    virtual void v55();
+    virtual void v56();
+    virtual void v57();
+    virtual void v58();
+    virtual void v59();
+    virtual void v60();
+    virtual void v61();
+    virtual void v62();
+    virtual void v63();
+    virtual void v64();
+    virtual void v65();
+    virtual void v66();
+    virtual bool v67(int);
+    virtual void v68();
+    virtual void v69();
+    virtual void v70();
+    virtual void v71();
+    virtual void v72();
+    virtual void v73();
+    virtual void v74();
+    virtual int v75();
+};
+
+// The memory-card message box at state + 0x218 (built by func_001D99C8): vptr at 0x8.
+class cMemCardPopup {
+public:
+    int pad[2];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25(int);
+    virtual void v26();
+    virtual void v27(unsigned short*);
+    virtual void v28(int, int, int, int, int, int);
+};
+
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackSaveSuccess);
 #ifdef SKIP_ASM
@@ -17,8 +131,6 @@ extern void* D_004A28A8;
 extern char D_004677B8[];
 extern char D_0045F7E0[];
 void func_001D8C38(void* self);
-
-
 
 extern "C" void cFEMemCard_callbackSaveSuccess(void)
 {
@@ -55,8 +167,6 @@ extern void* D_004A28A8;
 extern char D_004677D0[];
 extern char D_0045F7E0[];
 extern "C" void func_001D9308(void*, int);
-
-
 
 extern "C" void cFEMemCard_callbackReadSuccess(void)
 {
@@ -99,8 +209,6 @@ extern void* D_004A28A8;
 extern char D_0045E2A0[];
 extern char D_004642F8[];
 
-
-
 extern "C" void func_001D68E8(void)
 {
     unsigned short name[0x28];
@@ -134,8 +242,6 @@ extern void* D_004A2028;
 extern void* D_004A28A8;
 extern char D_0045E2A0[];
 extern char D_004641F0[];
-
-
 
 extern "C" void func_001D69E0(void)
 {
@@ -519,7 +625,6 @@ extern void* D_004A28A8;
 extern char D_0045E2A0[];
 extern char D_00467830[];
 
-
 extern "C" void cFEMemCard_callbackConfirmDelete(void)
 {
     unsigned short name[0x100];
@@ -612,7 +717,6 @@ extern char D_0045E2A0[];
 extern char D_00467848[];
 extern char D_0045F7E0[];
 
-
 extern "C" void func_001D7998(void)
 {
     unsigned short name[0x100];
@@ -655,7 +759,6 @@ extern void* D_004A2028;
 extern void* D_004A28A8;
 extern char D_00467848[];
 extern char D_0045F7E0[];
-
 
 struct sLocal_001D7B18 {
     int v[8];
@@ -847,24 +950,6 @@ public:
     virtual void v01(int);
 };
 
-class cMovieStreamK1D8160 {
-public:
-    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04();
-    virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08();
-    virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12();
-    virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16();
-    virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20();
-    virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24();
-    virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28();
-    virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32();
-    virtual void v33(); virtual void v34(); virtual void v35(); virtual void v36();
-    virtual void v37(); virtual void v38(); virtual void v39(); virtual void v40();
-    virtual void v41(); virtual void v42(); virtual void v43(); virtual void v44();
-    virtual void v45(); virtual void v46(); virtual void v47(); virtual void v48();
-    virtual void v49(); virtual void v50(); virtual void v51();
-    virtual int v52(int);
-};
-
 extern "C" void func_001D8160(void)
 {
     cMoviePlayerK1D8160* mp = (cMoviePlayerK1D8160*)func_00227F80(D_004A28A8);
@@ -875,7 +960,7 @@ extern "C" void func_001D8160(void)
         return;
     }
     func_0023FB18(mp, 0);
-    if ((*(cMovieStreamK1D8160**)((char*)mp + 0x434))->v52(0) == 0) {
+    if ((*(cMemCard**)((char*)mp + 0x434))->v52(0) == 0) {
         char* fe = (char*)D_004A2028;
         if (*(int*)(fe + 0x208) != 0) {
             *(int*)(fe + 0x1C0) = 6;
@@ -896,7 +981,6 @@ extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_003A0D00(void* self, unsigned short* str);
 extern char D_004678B0[];
 extern char D_004678C8[];
-
 
 extern "C" void func_001D8240(void)
 {
@@ -958,7 +1042,6 @@ extern char D_0045E2A0[];
 extern char D_004678B0[];
 extern char D_004678C8[];
 
-
 static inline void SetMode_001D83A8(char* fe, int mode)
 {
     if (*(int*)(fe + 0x214) != mode) {
@@ -1008,39 +1091,6 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 extern "C" void* func_001D99C8_8530(void* self, void* engine, void* owner, int a3, int a4, int a5, int a6, int a7, int a8) __asm__("func_001D99C8");
 extern "C" void func_0039F290(void* list, void* item);
 
-class cPopup_8530 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25(int);
-    virtual void v26();
-    virtual void v27();
-    virtual void v28(int, int, int, int, int, int);
-};
-
 // Shows the memory-card popup: updates the existing one, or creates and registers a new one.
 extern "C" void func_001D8530(void* self_, int a1, int a2, int a3, int a4, int a5, int a6)
 {
@@ -1048,18 +1098,18 @@ extern "C" void func_001D8530(void* self_, int a1, int a2, int a3, int a4, int a
     if (*(int*)((char*)D_004A2028 + 0x19C) != 0x16) {
         *(int*)(self + 0x210) = 0;
     }
-    cPopup_8530* p = *(cPopup_8530**)(self + 0x218);
+    cMemCardPopup* p = *(cMemCardPopup**)(self + 0x218);
     if (p != 0) {
         p->v28(a1, a2, a3, a4, a5, a6);
     } else {
         void* mem = cMemMan_alloc(0xBFC, D_0045E130, 0x100, 0);
         void* engine = *(void**)((char*)D_004A2028 + 0x10);
-        cPopup_8530* n = (cPopup_8530*)func_001D99C8_8530(mem, engine, D_004A2028, a1, a2, a3, a4, a5, a6);
-        *(cPopup_8530**)(self + 0x218) = n;
+        cMemCardPopup* n = (cMemCardPopup*)func_001D99C8_8530(mem, engine, D_004A2028, a1, a2, a3, a4, a5, a6);
+        *(cMemCardPopup**)(self + 0x218) = n;
         func_0039F290(*(char**)(self + 0x10) + 0x18, n);
     }
     if (*(int*)((char*)D_004A2028 + 0x19C) == 1) {
-        (*(cPopup_8530**)(self + 0x218))->v25(1);
+        (*(cMemCardPopup**)(self + 0x218))->v25(1);
     }
 }
 #endif
@@ -1114,7 +1164,6 @@ extern "C" void* func_00227F80(void* app);
 extern "C" void func_001D9308(void*, int);
 extern "C" void func_001D7190(void);
 extern "C" void* func_0039F190(void* list, int a1);
-
 
 #define VCALL_K1D8700(obj, idx) ((*(sVEntry<void(void*)>**)((char*)(obj) + 8))[idx].fn((char*)(obj) + (*(sVEntry<void(void*)>**)((char*)(obj) + 8))[idx].delta))
 
@@ -1332,7 +1381,6 @@ int GetHashValue32(char* str);
 extern char D_00467940[];
 extern char D_00467950[];
 
-
 extern "C" int cFEMemCard_onInputBegin(void* self, void* input)
 {
     int handled = 0;
@@ -1403,42 +1451,9 @@ extern void* D_004A28A8;
 extern char D_0045E2A0[];
 extern char D_004A1600[];
 
-class cStreamK1D8DE0 {
-public:
-    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06();
-    virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
-    virtual int v11();
-    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17();
-    virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23();
-    virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
-    virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35();
-    virtual void v36(); virtual void v37(); virtual void v38(); virtual void v39(); virtual void v40(); virtual void v41();
-    virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45(); virtual void v46(); virtual void v47();
-    virtual void v48(); virtual void v49(); virtual void v50(); virtual void v51(); virtual void v52();
-    virtual bool v53();
-    virtual void v54(); virtual void v55(); virtual void v56(); virtual void v57(); virtual void v58(); virtual void v59();
-    virtual void v60(); virtual void v61(); virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
-    virtual void v66();
-    virtual bool v67(int);
-    virtual void v68(); virtual void v69(); virtual void v70(); virtual void v71(); virtual void v72(); virtual void v73();
-    virtual void v74();
-    virtual int v75();
-};
-
 class cSubK1D8DE0 {
 public:
     virtual void v01(int);
-};
-
-class cPopupK1D8DE0 {
-public:
-    int pad[2];
-    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06();
-    virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12();
-    virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18();
-    virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24();
-    virtual void v25(); virtual void v26();
-    virtual void v27(unsigned short*);
 };
 
 class cMemCardK1D8DE0 {
@@ -1467,11 +1482,10 @@ public:
     virtual void v47();
 };
 
-
 #define VCALL_K1D8DE0(obj, off, idx) (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
 
 #define BUSY_K1D8DE0(self, mp) ((*(int*)((self) + 0x1B0) == 1 && func_0023C898(mp) == 0) \
-        || (*(int*)((self) + 0x1B0) == 0 && (*(cStreamK1D8DE0**)((mp) + 0x434))->v11() != 0))
+        || (*(int*)((self) + 0x1B0) == 0 && (*(cMemCard**)((mp) + 0x434))->v11() != 0))
 
 extern "C" void func_001D8DE0(cMemCardK1D8DE0* card)
 {
@@ -1531,13 +1545,13 @@ extern "C" void func_001D8DE0(cMemCardK1D8DE0* card)
     if (*(int*)((char*)D_004A2028 + 0x210) != 0) {
         unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
         func_00241E18(mp, buf, 0x320);
-        (*(cPopupK1D8DE0**)(self + 0x218))->v27(buf);
+        (*(cMemCardPopup**)(self + 0x218))->v27(buf);
         if (buf != 0) {
             cMemMan_free(buf);
         }
     }
     VCALL_K1D8DE0(self, 8, 26));
-    if (*(void**)(self + 0x218) == 0 && (*(cStreamK1D8DE0**)(mp + 0x434))->v75() != 0) {
+    if (*(void**)(self + 0x218) == 0 && (*(cMemCard**)(mp + 0x434))->v75() != 0) {
         void* menu = cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1600));
         int sel = *(int*)(self + 0x1C4);
         if (menu != 0) {
@@ -1545,9 +1559,9 @@ extern "C" void func_001D8DE0(cMemCardK1D8DE0* card)
         }
         sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(self + 8);
         void (**pf)(void*, ...) = &vt[38].fn;
-        (*pf)(self + vt[38].delta, (*(cStreamK1D8DE0**)(mp + 0x434))->v67(sel) == 0 || (*(cStreamK1D8DE0**)(mp + 0x434))->v53() == 0);
-        bool a = !(*(cStreamK1D8DE0**)(mp + 0x434))->v67(sel);
-        bool b = !(*(cStreamK1D8DE0**)(mp + 0x434))->v53();
+        (*pf)(self + vt[38].delta, (*(cMemCard**)(mp + 0x434))->v67(sel) == 0 || (*(cMemCard**)(mp + 0x434))->v53() == 0);
+        bool a = !(*(cMemCard**)(mp + 0x434))->v67(sel);
+        bool b = !(*(cMemCard**)(mp + 0x434))->v53();
         VCALL_K1D8DE0(self, 8, 39), a, b);
     }
 }
@@ -1713,8 +1727,6 @@ extern char D_004678B0[];
 extern char D_00467980[];
 extern char D_00463F58[];
 
-
-
 extern "C" void cFEMemCard_triggerDisplayState(char* self, int state)
 {
     unsigned short buf[0x100];
@@ -1845,30 +1857,6 @@ void func_001D9878(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9880);
 #ifdef SKIP_ASM
-class cMovieStreamK1D9880 {
-public:
-    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04();
-    virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08();
-    virtual void v09(); virtual void v10();
-    virtual int v11();
-    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
-    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
-    virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23();
-    virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27();
-    virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31();
-    virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35();
-    virtual void v36(); virtual void v37(); virtual void v38(); virtual void v39();
-    virtual void v40(); virtual void v41(); virtual void v42(); virtual void v43();
-    virtual void v44(); virtual void v45(); virtual void v46(); virtual void v47();
-    virtual void v48(); virtual void v49(); virtual void v50(); virtual void v51();
-    virtual void v52(); virtual void v53(); virtual void v54(); virtual void v55();
-    virtual void v56(); virtual void v57(); virtual void v58(); virtual void v59();
-    virtual void v60(); virtual void v61(); virtual void v62(); virtual void v63();
-    virtual void v64(); virtual void v65(); virtual void v66(); virtual void v67();
-    virtual void v68(); virtual void v69(); virtual void v70(); virtual void v71();
-    virtual void v72(); virtual void v73(); virtual void v74();
-    virtual int v75();
-};
 
 static inline bool IsModeK1D9880(char* mp, int m) { return *(int*)(mp + 0x130) == m; }
 
@@ -1879,9 +1867,9 @@ extern "C" int func_001D9880(void* self)
     char* mp = (char*)func_00227F80(D_004A28A8);
     int st = *(int*)((char*)self + 0x1C0);
     if (st != 0 && st != 6 && *(int*)(mp + 0x340) != 0 && *(int*)(mp + 0xE0) == 0
-        && (*(cMovieStreamK1D9880**)(mp + 0x434))->v11() == 0) {
+        && (*(cMemCard**)(mp + 0x434))->v11() == 0) {
         if (!IsModeK1D9880(mp, 6) && !IsModeK1D9880(mp, 1)) {
-            if ((*(cMovieStreamK1D9880**)(mp + 0x434))->v75() != 0) {
+            if ((*(cMemCard**)(mp + 0x434))->v75() != 0) {
                 r = one;
             }
         }
