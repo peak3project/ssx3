@@ -16442,39 +16442,16 @@ int func_003D3C90(int idx, int def) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3D20);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V_3D20 {
-    char pad0;
-    unsigned char b1;
-    char pad2[0x20 - 2];
-    unsigned int lo : 4;
-    int ch : 5;
-    unsigned int hi : 23;
-    char pad24[0x2F - 0x24];
-    unsigned char b2F;
-    char pad30[6];
-    short h36;
-    char pad38[0x110 - 0x38];
-};
 struct E_3D20 { unsigned short h0; unsigned short h2; unsigned int w4; int w8; int wC; };
-struct G_3D20 {
-    char pad0[0x34];
-    char *hdr;
-    short *a;
-    char pad3C[0x58 - 0x3C];
-    struct V_3D20 *voices[32];
-    char padD8[0x91C - 0xD8];
-    int x91C;
-};
-extern struct G_3D20 *D_0044F420_3D20 __asm__("D_0044F420");
 extern int f_37A0_3D20(int, int) __asm__("func_003D37A0");
 extern int func_003D3900(int, int, int);
 extern int func_003D4050(int);
-extern int f_41A8_3D20(struct V_3D20 *) __asm__("func_003D41A8");
+extern int f_41A8_3D20(struct sPathVoice *) __asm__("func_003D41A8");
 
 void func_003D3D20(int idx) {
-    struct V_3D20 save;
-    struct V_3D20 *v;
-    struct V_3D20 *w;
+    struct sPathVoice save;
+    struct sPathVoice *v;
+    struct sPathVoice *w;
     struct E_3D20 *e;
     int old;
     int ch;
@@ -16484,40 +16461,40 @@ void func_003D3D20(int idx) {
     int r;
 
     sel = -1;
-    old = D_0044F420_3D20->x91C;
-    v = D_0044F420_3D20->voices[idx];
+    old = D_0044F420->f91C;
+    v = D_0044F420->f58[idx];
     save = *v;
     ch = -1;
-    k = v->h36;
-    e = (struct E_3D20 *)(D_0044F420_3D20->hdr + D_0044F420_3D20->a[k] * 4);
+    k = v->f36;
+    e = (struct E_3D20 *)(D_0044F420->f34 + D_0044F420->f38[k]);
     n = v->ch;
-    if (v->b2F) {
+    if (v->f2F) {
         ch = 1;
     }
     if (n > 0 && (e->wC & 2) && (int)(((e->w4 >> 24) & 0xF) * ((e->w4 >> 20) & 0xF)) >= n) {
         sel = k;
         ch = n;
-    } else if (v->h36 >= 0) {
-        sel = f_37A0_3D20(v->h36, v->b1);
+    } else if (v->f36 >= 0) {
+        sel = f_37A0_3D20(v->f36, v->f01);
     }
     if (sel >= 0) {
-        sel = func_003D3900(v->h36, sel, v->b1);
+        sel = func_003D3900(v->f36, sel, v->f01);
     }
-    e = (struct E_3D20 *)(D_0044F420_3D20->hdr + D_0044F420_3D20->a[sel] * 4);
-    w = D_0044F420_3D20->voices[e->h2 & 0x1F];
+    e = (struct E_3D20 *)(D_0044F420->f34 + D_0044F420->f38[sel]);
+    w = D_0044F420->f58[e->h2 & 0x1F];
     if (w != 0 && w != v) {
-        v->h36 = -1;
+        v->f36 = -1;
         v->ch = ch;
         func_003D4050(sel);
         return;
     }
-    v->h36 = sel;
+    v->f36 = sel;
     v->ch = ch;
     r = f_41A8_3D20(v);
     if (r >= 0 || r == -9999) {
         return;
     }
-    D_0044F420_3D20->x91C = old;
+    D_0044F420->f91C = old;
     *v = save;
 }
 #endif
