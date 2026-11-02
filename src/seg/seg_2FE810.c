@@ -72,6 +72,51 @@ extern int D_00453438;            /* semaphore serialising the keyboard RPCs (-1
 extern unsigned char D_00529100[]; /* RPC send buffer (16 bytes) */
 extern unsigned char D_00529140[]; /* RPC receive buffer */
 extern char D_004982F8[];
+extern unsigned char D_00529101[]; /* D_00529100[1] (own splat symbol) */
+extern unsigned char D_00529141[]; /* D_00529140[1] (own splat symbol) */
+
+/* key repeat state and 4-entry key ring of one keyboard (sKbPort + 0x10) */
+typedef struct {
+    int state;              /* 0 idle, 1 waiting for the first repeat, 2 repeating */
+    int count;              /* vblank count (func_0040CF88) */
+    int delay;
+    int rate;
+    unsigned short last;    /* key being repeated */
+    unsigned short ring[4];
+    int wr;
+    int rd;
+    int n;
+} sKbRepeat;
+/* one keyboard (0x38 bytes) */
+typedef struct {
+    int ledMode;            /* sceUsbKbSetLEDMode */
+    int f04;                /* code translation on/off (func_0040C770, func_0040D118) */
+    int f08;                /* key table 0..2 (func_0040C7C0, func_0040D268) */
+    int f0C;                /* 1 = raw reports (func_0040D430, func_0040C980) */
+    sKbRepeat rep;
+} sKbPort;
+/* one keyboard report (0x88 bytes) */
+typedef struct {
+    int led;
+    int mod;
+    int n;
+    unsigned short keys[62];
+} sKbData;
+typedef struct {
+    int n;                  /* number of keyboards */
+    sKbPort *port;
+    sKbData prev;           /* previous report */
+    int cmd;                /* RPC of the pending asynchronous call (dispatched by func_0040C8C0) */
+    int arg;                /* its keyboard index */
+    void *out;              /* its result buffer */
+    int thread;
+} sUsbKb;
+extern sUsbKb D_00529000;
+extern sKbPort *D_00529004; /* D_00529000.port (own splat symbol) */
+extern sKbData D_00529008;  /* D_00529000.prev (own splat symbol) */
+extern void *D_00529098;    /* D_00529000.out (own splat symbol) */
+extern int D_0052909C;      /* D_00529000.thread (own splat symbol) */
+extern sKbPort D_005291D0[];
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
@@ -7869,18 +7914,14 @@ void func_0040BFE0(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C028);
 #ifdef SKIP_ASM
-struct KbEnt_C028 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; short f20; char pad22[0xA]; int f2C; int f30; int f34; };
-struct KbG_C028 { int n; struct KbEnt_C028 *e; char pad8[8]; int f10; char pad14[0x88]; int f9C; };
 struct KbInfo_C028 { int n; char pad[0x8C]; };
-extern struct KbG_C028 G_C028 __asm__("D_00529000");
-extern struct KbEnt_C028 D_005291D0[];
 extern char D_00498240[];
 extern char D_00498258[];
 extern void k_6408(int) __asm__("func_00426408");
 extern int k_sema(struct QSema *) __asm__("func_00423DA0");
 extern int k_dsema(int) __asm__("func_00423DB0");
 extern void k_log(char *) __asm__("func_00425C60");
-extern int k_gi(struct KbInfo_C028 *) __asm__("sceUsbKbGetInfo");
+extern int sceUsbKbGetInfo(void *info);
 extern int k_C810(int, int *) __asm__("func_0040C810");
 extern int k_3A80(int, int (*)(void), int) __asm__("func_00423A80");
 extern int k_48E8(int) __asm__("func_004248E8");
@@ -7908,7 +7949,7 @@ int func_0040C028(int *out) {
         k_log(D_00498258);
         return -1;
     }
-    if (k_gi(&info) != 0) {
+    if (sceUsbKbGetInfo(&info) != 0) {
         k_dsema(D_00453438);
         D_00453438 = -1;
         return -1;
@@ -7929,31 +7970,31 @@ int func_0040C028(int *out) {
         D_00453438 = -1;
         return -1;
     }
-    G_C028.n = info.n;
+    D_00529000.n = info.n;
     *out = info.n;
-    G_C028.e = D_005291D0;
-    if (G_C028.e == 0) {
+    D_00529000.port = D_005291D0;
+    if (D_00529000.port == 0) {
         k_dsema(D_00453438);
         D_00453438 = -1;
         return -1;
     }
     for (i = 0; i < info.n; i++) {
-        G_C028.e[i].f34 = 0;
-        G_C028.e[i].f0 = 1;
-        G_C028.e[i].f4 = 1;
-        G_C028.e[i].f8 = 1;
-        G_C028.e[i].fC = 0;
-        G_C028.e[i].f10 = 0;
-        G_C028.e[i].f14 = 0;
-        G_C028.e[i].f18 = 0;
-        G_C028.e[i].f1C = 0;
-        G_C028.e[i].f2C = 0;
-        G_C028.e[i].f30 = 0;
-        G_C028.e[i].f20 = 0;
+        D_00529000.port[i].rep.n = 0;
+        D_00529000.port[i].ledMode = 1;
+        D_00529000.port[i].f04 = 1;
+        D_00529000.port[i].f08 = 1;
+        D_00529000.port[i].f0C = 0;
+        D_00529000.port[i].rep.state = 0;
+        D_00529000.port[i].rep.count = 0;
+        D_00529000.port[i].rep.delay = 0;
+        D_00529000.port[i].rep.rate = 0;
+        D_00529000.port[i].rep.wr = 0;
+        D_00529000.port[i].rep.rd = 0;
+        D_00529000.port[i].rep.last = 0;
     }
-    G_C028.f10 = 0;
-    G_C028.f9C = k_3A80(3, func_0040CF88, -1);
-    if (G_C028.f9C < 0) {
+    D_00529000.prev.n = 0;
+    D_00529000.thread = k_3A80(3, func_0040CF88, -1);
+    if (D_00529000.thread < 0) {
         k_dsema(D_00453438);
         D_00453438 = -1;
         return -1;
@@ -7971,14 +8012,13 @@ extern void func_0042C0C0(void);
 extern int func_00423AA0(int, int);
 extern void func_00424880(int);
 extern int func_00423DB0(int);
-extern int D_0052909C[];
 extern char D_00498278[];
 extern char D_004982A8[];
 int func_0040C220(void) {
     int n = 0;
     int s, r;
     s = func_0042C078_0();
-    r = func_00423AA0(3, D_0052909C[0]);
+    r = func_00423AA0(3, D_0052909C);
     if (r == 0)
         func_00424880(3);
     if (s)
@@ -8002,13 +8042,11 @@ int func_0040C220(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbGetInfo);
 #ifdef SKIP_ASM
-struct S_KbInfo { char pad[0x90]; int f90; int pad2; int f98; };
-extern struct S_KbInfo G_KbInfo[] __asm__("D_00529000");
 extern char D_004982D0[];
 extern void func_0040C8B0(void *);
 extern void func_00423DE0(int);
 extern void func_00425C60(char *, int);
-int sceUsbKbGetInfo(int a) {
+int sceUsbKbGetInfo(void *info) {
     int r;
     if (D_00453438 == -1)
         return -1;
@@ -8018,8 +8056,8 @@ int sceUsbKbGetInfo(int a) {
         func_00425C60(D_004982D0, r);
         return -2;
     }
-    G_KbInfo[0].f90 = 1;
-    G_KbInfo[0].f98 = a;
+    D_00529000.cmd = 1;
+    D_00529000.out = info;
     return 0;
 }
 #endif
@@ -8027,15 +8065,13 @@ int sceUsbKbGetInfo(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbRead);
 #ifdef SKIP_ASM
-struct S_KbInfo2 { int cnt; char pad[0x8C]; int f90; int f94; int f98; };
-extern struct S_KbInfo2 G_KbInfo2[] __asm__("D_00529000");
 extern void func_0040C8B0(void *);
 extern void func_00423DE0(int);
 extern void func_00425C60(char *, int);
-int sceUsbKbRead(unsigned a, int b) {
+int sceUsbKbRead(unsigned a, void *b) {
     if (D_00453438 == -1)
         return -1;
-    if (a >= G_KbInfo2[0].cnt)
+    if (a >= D_00529000.n)
         return -11;
     D_00529100[0] = a;
     func_00423DE0(D_00453438);
@@ -8046,9 +8082,9 @@ int sceUsbKbRead(unsigned a, int b) {
             return -2;
         }
     }
-    G_KbInfo2[0].f90 = 2;
-    G_KbInfo2[0].f94 = a;
-    G_KbInfo2[0].f98 = b;
+    D_00529000.cmd = 2;
+    D_00529000.arg = a;
+    D_00529000.out = b;
     return 0;
 }
 #endif
@@ -8056,16 +8092,14 @@ int sceUsbKbRead(unsigned a, int b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbGetLocation);
 #ifdef SKIP_ASM
-struct S_KbInfo3 { int cnt; char pad[0x8C]; int f90; int f94; int f98; };
-extern struct S_KbInfo3 G_KbInfo3[] __asm__("D_00529000");
 extern char D_00498320[];
 extern void func_0040C8B0(void *);
 extern void func_00423DE0(int);
 extern void func_00425C60(char *, int);
-int sceUsbKbGetLocation(int a, int b) {
+int sceUsbKbGetLocation(int a, void *b) {
     if (D_00453438 == -1)
         return -1;
-    if (a >= G_KbInfo3[0].cnt)
+    if (a >= D_00529000.n)
         return -11;
     D_00529100[0] = a;
     func_00423DE0(D_00453438);
@@ -8076,9 +8110,9 @@ int sceUsbKbGetLocation(int a, int b) {
             return -2;
         }
     }
-    G_KbInfo3[0].f90 = 3;
-    G_KbInfo3[0].f94 = a;
-    G_KbInfo3[0].f98 = b;
+    D_00529000.cmd = 3;
+    D_00529000.arg = a;
+    D_00529000.out = b;
     return 0;
 }
 #endif
@@ -8086,8 +8120,6 @@ int sceUsbKbGetLocation(int a, int b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbSetLEDStatus);
 #ifdef SKIP_ASM
-struct S_KbInfo4 { int cnt; char pad[0x8C]; int f90; int f94; int f98; };
-extern struct S_KbInfo4 G_KbInfo4[] __asm__("D_00529000");
 extern char D_00498350[];
 extern void func_0040C8B0(void *);
 extern void func_00423DE0(int);
@@ -8095,7 +8127,7 @@ extern void func_00425C60(char *, int);
 int sceUsbKbSetLEDStatus(int a, unsigned char b) {
     if (D_00453438 == -1)
         return -1;
-    if (a >= G_KbInfo4[0].cnt)
+    if (a >= D_00529000.n)
         return -11;
     D_00529100[0] = a;
     D_00529100[1] = b;
@@ -8107,9 +8139,9 @@ int sceUsbKbSetLEDStatus(int a, unsigned char b) {
             return -2;
         }
     }
-    G_KbInfo4[0].f90 = 4;
-    G_KbInfo4[0].f98 = 0;
-    G_KbInfo4[0].f94 = a;
+    D_00529000.cmd = 4;
+    D_00529000.out = 0;
+    D_00529000.arg = a;
     return 0;
 }
 
@@ -8118,9 +8150,6 @@ int sceUsbKbSetLEDStatus(int a, unsigned char b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", sceUsbKbSetLEDMode);
 #ifdef SKIP_ASM
-struct S_Ent5 { int mode; char pad[0x34]; };
-struct S_KbInfo5 { int cnt; struct S_Ent5 *ents; char pad[0x88]; int f90; int f94; int f98; };
-extern struct S_KbInfo5 G_KbInfo5[] __asm__("D_00529000");
 extern char D_00498380[];
 extern void func_0040C8B0(void *);
 extern void func_00423DE0(int);
@@ -8129,11 +8158,11 @@ int sceUsbKbSetLEDMode(int a, unsigned b) {
     int h = D_00453438;
     if (h == -1)
         return -1;
-    if (a >= G_KbInfo5[0].cnt)
+    if (a >= D_00529000.n)
         return -11;
     if (b > 2)
         return -12;
-    G_KbInfo5[0].ents[a].mode = b;
+    D_00529000.port[a].ledMode = b;
     D_00529100[0] = a;
     D_00529100[1] = b;
     func_00423DE0(h);
@@ -8144,9 +8173,9 @@ int sceUsbKbSetLEDMode(int a, unsigned b) {
             return -2;
         }
     }
-    G_KbInfo5[0].f90 = 5;
-    G_KbInfo5[0].f98 = 0;
-    G_KbInfo5[0].f94 = a;
+    D_00529000.cmd = 5;
+    D_00529000.out = 0;
+    D_00529000.arg = a;
     return 0;
 }
 #endif
@@ -8154,8 +8183,6 @@ int sceUsbKbSetLEDMode(int a, unsigned b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C728);
 #ifdef SKIP_ASM
-struct E_C728 { char pad[0x14]; int f14; int f18; int f1C; char pad2[0x18]; };
-extern struct E_C728 *D_00529004_c[] __asm__("D_00529004");
 int func_0040C728(int a, int b, int c) {
     int r;
     r = -11;
@@ -8163,9 +8190,9 @@ int func_0040C728(int a, int b, int c) {
         return r;
     if (c < 0)
         return -12;
-    D_00529004_c[0][a].f1C = c;
-    D_00529004_c[0][a].f18 = b;
-    D_00529004_c[0][a].f14 = 0;
+    D_00529004[a].rep.rate = c;
+    D_00529004[a].rep.delay = b;
+    D_00529004[a].rep.count = 0;
     return 0;
 }
 #endif
@@ -8173,15 +8200,13 @@ int func_0040C728(int a, int b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C770);
 #ifdef SKIP_ASM
-struct E_529000 { int f0; int f4; int f8; char pad[0x2C]; };
-struct T_529000 { int n; struct E_529000 *e; };
-extern struct T_529000 D_00529000[];
 int func_0040C770(int a, unsigned b) {
-    if (a >= D_00529000[0].n)
+
+    if (a >= D_00529000.n)
         return -11;
     if (b >= 2)
         return -12;
-    D_00529000[0].e[a].f4 = b;
+    D_00529000.port[a].f04 = b;
     return 0;
 }
 #endif
@@ -8190,11 +8215,11 @@ int func_0040C770(int a, unsigned b) {
 INCLUDE_ASM("seg/seg_2FE810", func_0040C7C0);
 #ifdef SKIP_ASM
 int func_0040C7C0(int a, unsigned b) {
-    if (a >= D_00529000[0].n)
+    if (a >= D_00529000.n)
         return -11;
     if (b >= 3)
         return -12;
-    D_00529000[0].e[a].f8 = b;
+    D_00529000.port[a].f08 = b;
     return 0;
 }
 #endif
@@ -8203,19 +8228,19 @@ int func_0040C7C0(int a, unsigned b) {
 INCLUDE_ASM("seg/seg_2FE810", func_0040C810);
 #ifdef SKIP_ASM
 extern void kb_signal4(int) __asm__("func_00423DC0");
-extern int kb_read4(void) __asm__("func_0040C8C0");
+extern int func_0040C8C0(void);
 int func_0040C810(int mode, int *out) {
     if (D_00453438 == -1)
         return -1;
     switch (mode) {
     case 0:
         func_00423DE0(D_00453438);
-        *out = kb_read4();
+        *out = func_0040C8C0();
         kb_signal4(D_00453438);
         return 0;
     case 1:
         if (func_00426F08(&D_005290A0) == 0) {
-            *out = kb_read4();
+            *out = func_0040C8C0();
             return 0;
         }
         return 1;
@@ -8237,16 +8262,14 @@ void func_0040C8B0(void *arg) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C8C0);
 #ifdef SKIP_ASM
-struct S_C8C0 { char pad[0x90]; int f90; int pad2; int f98; };
-extern struct S_C8C0 G_C8C0[] __asm__("D_00529000");
 extern int (*D_00453420[])(void);
 int func_0040C8C0(void) {
     int r = 0;
-    unsigned s = G_C8C0[0].f90;
+    unsigned s = D_00529000.cmd;
     if (s - 1 < 5)
         r = D_00453420[s]();
-    G_C8C0[0].f90 = 0;
-    G_C8C0[0].f98 = 0;
+    D_00529000.cmd = 0;
+    D_00529000.out = 0;
     return r;
 }
 #endif
@@ -8255,9 +8278,8 @@ int func_0040C8C0(void) {
 INCLUDE_ASM("seg/seg_2FE810", func_0040C928);
 #ifdef SKIP_ASM
 struct S40C928 { int n; int m; unsigned char d[1]; };
-extern unsigned char *D_00529098[];
 int func_0040C928(void) {
-    struct S40C928 *p = (struct S40C928 *)D_00529098[0];
+    struct S40C928 *p = (struct S40C928 *)D_00529098;
     unsigned char *s = D_00529140;
     int i = 0;
     int n = s[0];
@@ -8276,28 +8298,22 @@ int func_0040C928(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040C980);
 #ifdef SKIP_ASM
-struct KbData_C980 { int led; int mod; int n; unsigned short keys[62]; };
-struct KbRep_C980 { int state; int cnt; int delay; int rate; unsigned short last; };
-struct KbEnt_C980 { int f0; int f4; int f8; int mode; struct KbRep_C980 rep; char pad[0x38 - 0x24]; };
-struct KbG_C980 { int n; struct KbEnt_C980 *e; struct KbData_C980 prev; int f90; int idx; struct KbData_C980 *out; };
-extern struct KbG_C980 G_C980 __asm__("D_00529000");
-extern unsigned char D_00529008[];
 extern int func_0040D010(int);
 extern int func_0040D040(int, unsigned short);
 extern int func_0040D0B0(int, unsigned short *);
 extern int func_0040D118(int, unsigned char, unsigned char, int, unsigned short *, unsigned short *);
 int func_0040C980(void) {
-    struct KbData_C980 cur;
+    sKbData cur;
     unsigned short tmp[64];
     unsigned short key;
     unsigned char *s = D_00529140;
-    struct KbData_C980 *out = G_C980.out;
-    struct KbEnt_C980 *e = &G_C980.e[G_C980.idx];
-    struct KbRep_C980 *r = &e->rep;
+    sKbData *out = D_00529000.out;
+    sKbPort *e = &D_00529000.port[D_00529000.arg];
+    sKbRepeat *r = &e->rep;
     int i, j, k;
     if (s[1] == 0xFF)
         return -1;
-    if (e->mode == 1) {
+    if (e->f0C == 1) {
         out->led = s[0];
         out->n = s[1];
         out->mod = s[2];
@@ -8313,39 +8329,39 @@ int func_0040C980(void) {
             out->keys[0] = 0;
             out->n = 1;
         }
-        func_0040D118(G_C980.idx, out->mod, out->led, out->n, out->keys, out->keys);
+        func_0040D118(D_00529000.arg, out->mod, out->led, out->n, out->keys, out->keys);
         return 0;
     }
     switch (r->state) {
     case 1:
-        if (r->cnt >= r->delay) {
-            r->cnt = 0;
-            func_0040D010(G_C980.idx);
+        if (r->count >= r->delay) {
+            r->count = 0;
+            func_0040D010(D_00529000.arg);
             if (r->delay >= 2)
-                func_0040D040(G_C980.idx, 0);
-            func_0040D040(G_C980.idx, r->last);
+                func_0040D040(D_00529000.arg, 0);
+            func_0040D040(D_00529000.arg, r->last);
             if (r->rate >= 2)
-                func_0040D040(G_C980.idx, 0);
+                func_0040D040(D_00529000.arg, 0);
             r->state = 2;
         }
         break;
     case 2:
-        if (r->cnt >= r->rate) {
-            r->cnt = 0;
-            func_0040D040(G_C980.idx, r->last);
+        if (r->count >= r->rate) {
+            r->count = 0;
+            func_0040D040(D_00529000.arg, r->last);
             if (r->rate >= 2)
-                func_0040D040(G_C980.idx, 0);
+                func_0040D040(D_00529000.arg, 0);
         }
         break;
     case 0:
         break;
     }
     if (s[1] == 0) {
-        if (func_0040D0B0(G_C980.idx, &key) == 0) {
+        if (func_0040D0B0(D_00529000.arg, &key) == 0) {
             out->n = 1;
             out->keys[0] = key;
-            out->led = G_C980.prev.led;
-            out->mod = G_C980.prev.mod;
+            out->led = D_00529000.prev.led;
+            out->mod = D_00529000.prev.mod;
         } else {
             out->n = 0;
         }
@@ -8365,8 +8381,8 @@ int func_0040C980(void) {
             cur.keys[j++] = s[4 + i];
     }
     cur.n = j;
-    func_0040D010(G_C980.idx);
-    if (cur.keys[0] == 0 || cur.mod != G_C980.prev.mod) {
+    func_0040D010(D_00529000.arg);
+    if (cur.keys[0] == 0 || cur.mod != D_00529000.prev.mod) {
         out->keys[0] = 0;
         out->n = 1;
         r->last = 0;
@@ -8374,12 +8390,12 @@ int func_0040C980(void) {
         out->mod = cur.mod;
         r->state = 0;
     } else {
-        if (G_C980.prev.keys[0] != 0) {
+        if (D_00529000.prev.keys[0] != 0) {
             k = 0;
             for (i = 0; i < cur.n; i++) {
-                for (j = 0; j < G_C980.prev.n && cur.keys[i] != G_C980.prev.keys[j]; j++)
+                for (j = 0; j < D_00529000.prev.n && cur.keys[i] != D_00529000.prev.keys[j]; j++)
                     ;
-                if (j == G_C980.prev.n)
+                if (j == D_00529000.prev.n)
                     out->keys[k++] = cur.keys[i];
             }
             out->n = k;
@@ -8390,13 +8406,13 @@ int func_0040C980(void) {
         }
         out->led = cur.led;
         out->mod = cur.mod;
-        func_0040D118(G_C980.idx, out->mod, out->led, out->n, out->keys, out->keys);
+        func_0040D118(D_00529000.arg, out->mod, out->led, out->n, out->keys, out->keys);
         if (out->n > 0) {
             r->last = out->keys[out->n - 1];
             if (r->delay > 0 && r->rate > 0)
                 r->state = 1;
         } else {
-            func_0040D118(G_C980.idx, cur.mod, cur.led, cur.n, cur.keys, tmp);
+            func_0040D118(D_00529000.arg, cur.mod, cur.led, cur.n, cur.keys, tmp);
             for (i = 0; i < cur.n && tmp[i] != r->last; i++)
                 ;
             if (i == cur.n) {
@@ -8410,7 +8426,7 @@ int func_0040C980(void) {
     }
     {
         unsigned char *src = (unsigned char *)&cur;
-        unsigned char *dst = D_00529008;
+        unsigned char *dst = (unsigned char *)&D_00529008;
         for (i = 0; i < sizeof(cur); i++)
             *dst++ = *src++;
     }
@@ -8421,10 +8437,9 @@ int func_0040C980(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040CEF8);
 #ifdef SKIP_ASM
-extern unsigned char *D_00529098[];
 int func_0040CEF8(void) {
     unsigned char *s = D_00529140;
-    unsigned char *d = D_00529098[0];
+    unsigned char *d = D_00529098;
     int i;
     if (s[6])
         return -1;
@@ -8439,8 +8454,6 @@ int func_0040CEF8(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040CF48);
 #ifdef SKIP_ASM
-extern unsigned char D_00529141[];
-extern unsigned char D_00529101[];
 int func_0040CF48(void) {
     return D_00529141[0] == D_00529101[0] ? 0 : -1;
 }
@@ -8457,16 +8470,13 @@ int func_0040CF68(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040CF88);
 #ifdef SKIP_ASM
-struct S40CF88V { int f0; int f4; int f8; int fC; };
-struct S40CF88 { int n; char *e; };
-extern struct S40CF88 G_40CF88[] __asm__("D_00529000");
 int func_0040CF88(void) {
     int i;
 
-    for (i = 0; i < G_40CF88[0].n; i++) {
-        struct S40CF88V *v = (struct S40CF88V *)(G_40CF88[0].e + i * 0x38 + 0x10);
-        if (v->f8 > 0 && v->fC > 0 && v->f0 != 0 && v->f0 >= 0 && v->f0 < 3)
-            v->f4++;
+    for (i = 0; i < D_00529000.n; i++) {
+        sKbRepeat *v = &D_00529000.port[i].rep;
+        if (v->delay > 0 && v->rate > 0 && v->state != 0 && v->state >= 0 && v->state < 3)
+            v->count++;
     }
     SYNC_0810();
     EI_0810();
@@ -8477,13 +8487,12 @@ int func_0040CF88(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D010);
 #ifdef SKIP_ASM
-extern char *D_00529004[];
 int func_0040D010(int i) {
-    int *p = (int *)(D_00529004[0] + i * 0x38 + 0x10);
-    p[9] = 0;
-    p[7] = 0;
-    p[8] = 0;
-    p[1] = 0;
+    sKbRepeat *p = &D_00529004[i].rep;
+    p->n = 0;
+    p->wr = 0;
+    p->rd = 0;
+    p->count = 0;
     return 0;
 }
 #endif
@@ -8491,16 +8500,14 @@ int func_0040D010(int i) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D040);
 #ifdef SKIP_ASM
-struct E_D040 { char pad[0x22]; unsigned short buf[5]; int idx; };
 int func_0040D040(int a, unsigned short b) {
-    struct E_D040 *e = (struct E_D040 *)(D_00529004[0] + a * 0x38);
-    int *q = (int *)((char *)e + 0x10);
-    if (q[9] >= 4)
+    sKbRepeat *q = &D_00529004[a].rep;
+    if (q->n >= 4)
         return -1;
-    e->buf[e->idx++] = b;
-    if (q[7] >= 4)
-        q[7] = 0;
-    q[9]++;
+    q->ring[q->wr++] = b;
+    if (q->wr >= 4)
+        q->wr = 0;
+    q->n++;
     return 0;
 }
 #endif
@@ -8508,16 +8515,14 @@ int func_0040D040(int a, unsigned short b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D0B0);
 #ifdef SKIP_ASM
-struct E_D0B0 { char pad[0x22]; unsigned short buf[7]; int idx; };
 int func_0040D0B0(int a, unsigned short *out) {
-    struct E_D0B0 *e = (struct E_D0B0 *)(D_00529004[0] + a * 0x38);
-    int *q = (int *)((char *)e + 0x10);
-    if (q[9] <= 0)
+    sKbRepeat *q = &D_00529004[a].rep;
+    if (q->n <= 0)
         return -1;
-    *out = e->buf[e->idx++];
-    if (q[8] >= 4)
-        q[8] = 0;
-    q[9]--;
+    *out = q->ring[q->rd++];
+    if (q->rd >= 4)
+        q->rd = 0;
+    q->n--;
     return 0;
 }
 #endif
@@ -8525,14 +8530,12 @@ int func_0040D0B0(int a, unsigned short *out) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D118);
 #ifdef SKIP_ASM
-struct En_D118 { int f0; int mode; int f8; char pad[0x2C]; };
-extern struct En_D118 *K_529004[] __asm__("D_00529004");
 extern short q_0040D268(int, int, int, unsigned short) __asm__("func_0040D268");
 int func_0040D118(int idx, unsigned char b, unsigned char c, int n, unsigned short *src, unsigned short *dst) {
-    struct En_D118 *e = &K_529004[0][idx];
+    sKbPort *e = &D_00529004[idx];
     int i;
     int r = 0;
-    switch (e->mode) {
+    switch (e->f04) {
     case 0:
         i = 0;
         if (n > 0 && src[0] != 0) {
@@ -8547,7 +8550,7 @@ int func_0040D118(int idx, unsigned char b, unsigned char c, int n, unsigned sho
         i = 0;
         if (n > 0 && src[0] != 0) {
             do {
-                dst[i] = q_0040D268(e->f8, b, c, src[i]);
+                dst[i] = q_0040D268(e->f08, b, c, src[i]);
                 i++;
             } while (i < n && src[i] != 0);
         }
@@ -8628,20 +8631,21 @@ unsigned short func_0040D3C0(int a, unsigned char b) {
 INCLUDE_ASM("seg/seg_2FE810", func_0040D430);
 #ifdef SKIP_ASM
 int func_0040D430(int a, unsigned b) {
-    char *e;
-    if (a >= D_00529000[0].n)
+    sKbPort *e;
+    if (a >= D_00529000.n)
         return -11;
     if (b >= 2)
         return -12;
-    e = (char *)(a * 0x38) + (int)D_00529000[0].e;
-    if (b != *(unsigned *)(e + 0xC)) {
-        *(int *)(e + 0x14) = 0;
-        *(int *)(e + 0x2C) = 0;
-        *(int *)(e + 0x30) = 0;
-        *(int *)((char *)D_00529000 + 0x10) = 0;
-        *(short *)(e + 0x20) = 0;
+    /* int-arithmetic address (the typed &D_00529000.port[a] swaps the addu operands) */
+    e = (sKbPort *)((char *)(a * 0x38) + (int)D_00529000.port);
+    if (b != e->f0C) {
+        e->rep.count = 0;
+        e->rep.wr = 0;
+        e->rep.rd = 0;
+        D_00529000.prev.n = 0;
+        e->rep.last = 0;
     }
-    *(unsigned *)(e + 0xC) = b;
+    e->f0C = b;
     return 0;
 }
 #endif
@@ -8649,16 +8653,13 @@ int func_0040D430(int a, unsigned b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D4A0);
 #ifdef SKIP_ASM
-struct En_D4A0 { char pad[0x10]; int f10; int f14; char pad2[8]; short f20; char pad3[10]; int f2C; int f30; int f34; };
-struct Ki_D4A0 { unsigned cnt; struct En_D4A0 *ents; };
-extern struct Ki_D4A0 K_529000[] __asm__("D_00529000");
 extern void q_00425C60(char *, int) __asm__("func_00425C60");
 int func_0040D4A0(unsigned a) {
     int r;
-    struct En_D4A0 *e;
+    sKbPort *e;
     if (D_00453438 == -1)
         return -1;
-    if (a >= K_529000[0].cnt)
+    if (a >= D_00529000.n)
         return -11;
     D_00529100[0] = a;
     func_00423DE0(D_00453438);
@@ -8667,13 +8668,13 @@ int func_0040D4A0(unsigned a) {
         q_00425C60(D_004982F8, r);
         return -2;
     }
-    e = &K_529000[0].ents[a];
-    e->f10 = 0;
-    e->f14 = 0;
-    e->f20 = 0;
-    e->f2C = 0;
-    e->f30 = 0;
-    e->f34 = 0;
+    e = &D_00529000.port[a];
+    e->rep.state = 0;
+    e->rep.count = 0;
+    e->rep.last = 0;
+    e->rep.wr = 0;
+    e->rep.rd = 0;
+    e->rep.n = 0;
     return 0;
 }
 #endif
