@@ -2613,7 +2613,6 @@ extern unsigned D_004A5648_FB50 __asm__("D_004A5648");
 extern sBindEnd_1FBE38 D_004A564C_FB50 __asm__("D_004A564C");
 extern int D_004A5650_FB50 __asm__("D_004A5650");
 extern int D_004A3C10_FB50[2] __asm__("D_004A3C10");
-extern char *D_004A3DD8_FB50 __asm__("D_004A3DD8");
 static inline char *refToPtr_FB50(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_FB50(unsigned i) { if (i == 0) return 0; return refToPtr_FB50(i); }
 extern "C" void* cMemMan_alloc(int, void*, int, int);
@@ -2646,7 +2645,7 @@ extern "C" cLunoValue func_002FFB50(int n, Ent_FB50 *e) {
     unsigned id = buf[0];
     char *obj;
     if (~id == 0) {
-        obj = *(char**)(D_004A3DD8_FB50 + 0x290);
+        obj = D_004A3DD8->f290;
     } else {
         sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
