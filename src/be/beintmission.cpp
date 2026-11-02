@@ -4,6 +4,14 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 extern const char D_0045A848[];
 extern void* D_0045ADF8[16];
 extern void* D_004A1238;
+int cBELibrary_getProfileIndex(int);
+int cBELibrary_getCharacterID(int);
+extern "C" int func_00154240(void* self, int id);
+extern "C" int func_00153D78(void* self, int id);
+extern int D_005305F0[];
+extern signed char D_0043FA70[];
+extern void* D_004A28A8;
+extern char D_004A6CAC[];
 
 // Per-profile character stat levels / flag tables (as in be/beintplayer and be/belibrary).
 struct sBEFlagEntryPC {
@@ -148,8 +156,6 @@ void* cBEMissionInterface_getThis()
 //100%
 INCLUDE_ASM("be/beintmission", func_001532F0);
 #ifdef SKIP_ASM
-extern signed char D_0043FA70[];
-
 extern "C" int func_001532F0(void* self, int start)
 {
     int sum = 0;
@@ -163,9 +169,6 @@ extern "C" int func_001532F0(void* self, int start)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153330);
 #ifdef SKIP_ASM
-extern signed char D_0043FA70[];
-extern int D_005305F0[];
-
 extern "C" int func_00153330(void* self, int start)
 {
     return D_0043FA70[start + D_005305F0[0]];
@@ -175,8 +178,6 @@ extern "C" int func_00153330(void* self, int start)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153350);
 #ifdef SKIP_ASM
-extern signed char D_0043FA70[];
-
 extern "C" int func_00153350(void* self, int start)
 {
     int sum = 0;
@@ -191,8 +192,6 @@ extern "C" int func_00153350(void* self, int start)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153390);
 #ifdef SKIP_ASM
-extern signed char D_0043FA70[];
-
 extern "C" int func_00153390(void* self, int owner)
 {
     int sum = 0;
@@ -213,9 +212,6 @@ extern "C" int func_00153390(void* self, int owner)
 //100%
 INCLUDE_ASM("be/beintmission", func_001533F8);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" int func_001533F8(void* self, int rider, int idx)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -235,10 +231,6 @@ extern "C" int func_001533F8(void* self, int rider, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153498);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-extern int D_005305F0[];
-
 extern "C" int func_00153498(void* self, int rider, int idx)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -252,9 +244,6 @@ extern "C" int func_00153498(void* self, int rider, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153520);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" int func_00153520(void* self, int rider, int idx)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -273,9 +262,6 @@ extern "C" int func_00153520(void* self, int rider, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", cBEMissionInterface_getCurrentCollectForPeak);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 
 extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int rider, int owner)
 {
@@ -299,7 +285,6 @@ extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int ride
 //100%
 INCLUDE_ASM("be/beintmission", func_00153688);
 #ifdef SKIP_ASM
-
 extern "C" int func_00153688(void* self, int profile, int character, int owner)
 {
     int sum = 0;
@@ -322,10 +307,6 @@ INCLUDE_ASM("be/beintmission", func_00153708);
 //100%
 INCLUDE_ASM("be/beintmission", func_00153858);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-extern int D_005305F0[];
-
 extern "C" char* func_00153858(void* self, int rider, int idx)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -341,11 +322,6 @@ extern "C" char* func_00153858(void* self, int rider, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", func_001538E8);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-extern int D_005305F0[];
-extern char D_004A6CAC[];
-
 extern "C" int func_001538E8(void* self, int rider, int bit, int idx)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -361,9 +337,6 @@ extern "C" int func_001538E8(void* self, int rider, int bit, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", func_001539A8);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 // D_004A6CB0 = D_004A6CA8 + 8 (the first mission record's bit words) is its own symbol in the target:
 // one slot per mission, indexed as missions[block].m[i].
 struct sMissionBits_9A8 {
@@ -405,9 +378,6 @@ INCLUDE_ASM("be/beintmission", func_00153B00);
 //100%
 INCLUDE_ASM("be/beintmission", func_00153C88);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void* func_00153C88(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -418,9 +388,6 @@ extern "C" void* func_00153C88(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153CD8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void func_00153CD8(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -431,9 +398,6 @@ extern "C" void func_00153CD8(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153D28);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void* func_00153D28(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -444,9 +408,6 @@ extern "C" void* func_00153D28(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153D78);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153D78(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -460,9 +421,6 @@ extern "C" int func_00153D78(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153DD0);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153DD0(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -476,9 +434,6 @@ extern "C" int func_00153DD0(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153E28);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153E28(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -492,9 +447,6 @@ extern "C" int func_00153E28(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153E80);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153E80(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -508,9 +460,6 @@ extern "C" int func_00153E80(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153ED8);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153ED8(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -524,8 +473,6 @@ extern "C" int func_00153ED8(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153F30);
 #ifdef SKIP_ASM
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153F30(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -535,8 +482,6 @@ extern "C" int func_00153F30(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153F68);
 #ifdef SKIP_ASM
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153F68(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -547,8 +492,6 @@ extern "C" int func_00153F68(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153FA0);
 #ifdef SKIP_ASM
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" short func_00153FA0(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -559,8 +502,6 @@ extern "C" short func_00153FA0(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153FD8);
 #ifdef SKIP_ASM
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" int func_00153FD8(void* self, int id)
 {
     int i = func_00154240(self, id);
@@ -571,9 +512,6 @@ extern "C" int func_00153FD8(void* self, int id)
 //100%
 INCLUDE_ASM("be/beintmission", func_00154010);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void func_00154010(void* self, int id, int value)
 {
     int i = func_00154240(self, id);
@@ -587,9 +525,6 @@ extern "C" void func_00154010(void* self, int id, int value)
 //100%
 INCLUDE_ASM("be/beintmission", func_00154080);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void func_00154080(void* self, int id, int value)
 {
     int i = func_00154240(self, id);
@@ -603,9 +538,6 @@ extern "C" void func_00154080(void* self, int id, int value)
 //100%
 INCLUDE_ASM("be/beintmission", func_001540F0);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void func_001540F0(void* self, int id, int value)
 {
     int i = func_00154240(self, id);
@@ -619,9 +551,6 @@ extern "C" void func_001540F0(void* self, int id, int value)
 //100%
 INCLUDE_ASM("be/beintmission", func_00154160);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void func_00154160(void* self, int id, int value)
 {
     int i = func_00154240(self, id);
@@ -635,9 +564,6 @@ extern "C" void func_00154160(void* self, int id, int value)
 //100%
 INCLUDE_ASM("be/beintmission", func_001541D0);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-extern "C" int func_00154240(void* self, int id);
-
 extern "C" void func_001541D0(void* self, int id, int value)
 {
     int i = func_00154240(self, id);
@@ -666,7 +592,6 @@ extern "C" int func_00154240(void* self, int id)
 INCLUDE_ASM("be/beintmission", func_00154278);
 #ifdef SKIP_ASM
 extern "C" int func_001542A0(void* self, int group);
-extern int D_005305F0[];
 
 extern "C" int func_00154278(void* self)
 {
@@ -692,8 +617,6 @@ extern "C" int func_001542A0(void* self, int group)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintmission", func_001542E0);
 #ifdef SKIP_ASM
-extern "C" int func_00153D78(void* self, int id);
-
 extern "C" int func_001542E0(void* self, int group)
 {
     int n = 0;
@@ -745,8 +668,6 @@ extern "C" int func_00154368(void* self, int owner)
 //100%
 INCLUDE_ASM("be/beintmission", func_001543E0);
 #ifdef SKIP_ASM
-extern "C" int func_00153D78(void* self, int id);
-
 // Counts the completed missions whose slot belongs to the given owner.
 extern "C" int func_001543E0(void* self, int owner)
 {
@@ -767,7 +688,6 @@ extern "C" int func_001543E0(void* self, int owner)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintmission", func_001544D0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_001543E0(void* self, int owner);
 
 // View of D_0043D950[].peak (offset 0x54); splat labels that address D_0043D9A4.
@@ -801,7 +721,6 @@ extern "C" int func_001544D0(void* self, int profile, int character, int owner)
 INCLUDE_ASM("be/beintmission", func_00154588);
 #ifdef SKIP_ASM
 extern "C" int func_001545B0(void* self, int a, int group);
-extern int D_005305F0[];
 
 extern "C" int func_00154588(void* self, int a)
 {
@@ -927,8 +846,6 @@ void func_001547E0(void* self)
 //100%
 INCLUDE_ASM("be/beintmission", func_001547E8);
 #ifdef SKIP_ASM
-extern char D_004A6CAC[];
-
 extern "C" void func_001547E8(void* self, void* stream)
 {
     int c = cBELibrary_getCharacterID(0);
@@ -947,8 +864,6 @@ extern "C" void func_001547E8(void* self, void* stream)
 //100%
 INCLUDE_ASM("be/beintmission", func_00154898);
 #ifdef SKIP_ASM
-extern char D_004A6CAC[];
-
 extern "C" void func_00154898(void* self, void* stream)
 {
     int c = cBELibrary_getCharacterID(0);
