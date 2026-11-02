@@ -9,6 +9,17 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// The AI's rider list (the game's +0xC object; ai/ai's sAiRiderList): riders at 0x28, their count at 0x78.
+struct sAiRiderList
+{
+    char pad0[0x28];
+    char* mRiders[19];          // 0x28
+    int mMode;                  // 0x74
+    int mCount;                 // 0x78
+    int pad7C;                  // 0x7C
+    int f80;                    // 0x80
+};
+
 //100%
 INCLUDE_ASM("ai/computer", cComputer_setIndividualRiderDifficulty);
 #ifdef SKIP_ASM
@@ -617,8 +628,7 @@ INCLUDE_ASM("ai/computer", func_0010D410);
 #ifdef SKIP_ASM
 unsigned int AIrand();
 extern "C" float func_0010D870(void* self, int a1, int a2, int a3);
-struct sAi0010FC30;
-extern "C" int func_0010FC30(sAi0010FC30* self, int team);
+extern "C" int func_0010FC30(sAiRiderList* self, int team);
 extern "C" float func_00112588(void* self, int arg1);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
 extern void* D_004A28A8;
@@ -698,12 +708,6 @@ static inline int speedLimit_10D410(int kind)
     return 0;
 }
 
-struct sAi_10D410 {
-    char pad0[0x28];
-    char* riders[20];
-    int count;
-};
-
 extern "C" float func_0010D410(char* self, char* tgt)
 {
     float sc[7];
@@ -753,7 +757,7 @@ extern "C" float func_0010D410(char* self, char* tgt)
     }
     sc[0] = v * 0.22727273404598236f;
     char* r2 = *(char**)(self + 0x18);
-    if (*(int*)(r2 + 0xF0) != 0 && *(char**)(((sAi_10D410*)ai)->riders[*(int*)(r2 + 0xF8)] + 0xAB8) == tgt) {
+    if (*(int*)(r2 + 0xF0) != 0 && *(char**)(((sAiRiderList*)ai)->mRiders[*(int*)(r2 + 0xF8)] + 0xAB8) == tgt) {
         return 100.0f;
     }
     float zero = 0.0f;
@@ -761,7 +765,7 @@ extern "C" float func_0010D410(char* self, char* tgt)
     float w = 1.0f / total;
     sc[2] = (float)lvl * (w * 0.3333333432674408f);
     // PORT: the path pointer is passed as func_0010FC30's int team
-    int n = func_0010FC30((sAi0010FC30*)ai, (int)tgt);
+    int n = func_0010FC30((sAiRiderList*)ai, (int)tgt);
     n -= tgt == *(char**)(*(char**)(self + 0x18) + 0xAB8);
     float c;
     if (n <= 0) {
@@ -907,7 +911,6 @@ INCLUDE_ASM("ai/computer", func_0010DA10);
 #ifdef SKIP_ASM
 struct sEnt_0010DA10 { int vis; int val; float dist; int c; int d; int e; int f; int g; int h; };
 struct sRider_0010DA10 { sEnt_0010DA10 ent[6]; };
-struct sAI_0010DA10 { char pad[0x28]; char* riders[20]; int count; };
 extern void* D_004A28A8;
 extern "C" int func_001298C8();
 extern "C" int func_00311AE8(void*, int);
@@ -928,21 +931,21 @@ extern "C" int func_0010DA10(char* self)
     }
     if (func_001298C8() % 6 != 0)
         return 0;
-    sAI_0010DA10* ai = *(sAI_0010DA10**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
+    sAiRiderList* ai = *(sAiRiderList**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
     int i;
-    for (i = 0; i < ai->count; i++)
+    for (i = 0; i < ai->mCount; i++)
     {
         char* o = *(char**)(self + 0x18) + 0x6C0;
         sVEntry<int(void*)>* ve = &(*(sVEntry<int(void*)>**)o)[7];
         if (i == ve->fn(o + ve->delta))
             continue;
-        char* o2 = ai->riders[i] + 0x6C0;
+        char* o2 = ai->mRiders[i] + 0x6C0;
         sVEntry<int(void*)>* ve2 = &(*(sVEntry<int(void*)>**)o2)[8];
         if (ve2->fn(o2 + ve2->delta) == 0)
             continue;
         if (!((*(sRider_0010DA10**)(self + 0x18))->ent[i].dist < 200.0f))
             continue;
-        if (func_00311AE8(*(void**)(ai->riders[i] + 0x784), 1) != 13)
+        if (func_00311AE8(*(void**)(ai->mRiders[i] + 0x784), 1) != 13)
             continue;
         unsigned int r = AIrand() % 100;
         int* pf = (int*)(self + 0xF34);
@@ -968,7 +971,6 @@ struct sRider_0010DBF0 {
     char padF8[0x1B0 - 0xF8];
     t4Vector vel;              // 0x1B0
 };
-struct sAI_0010DBF0 { char pad[0x28]; char* riders[20]; int count; };
 
 static inline int id_0010DBF0(char* self)
 {
@@ -1026,9 +1028,9 @@ extern "C" int func_0010DBF0(char* self, int* side)
 {
     if (func_001298C8() % 6 != 0)
         return 0;
-    sAI_0010DBF0* ai = *(sAI_0010DBF0**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
+    sAiRiderList* ai = *(sAiRiderList**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
     int i;
-    for (i = 0; i < ai->count; i++)
+    for (i = 0; i < ai->mCount; i++)
     {
         float pi = 3.1415927410125732f;
         float lo = 0.5235988497734070f;
@@ -1649,8 +1651,7 @@ INCLUDE_ASM("ai/computer", func_0010F560);
 void* cBEAggressionInterface_getThis();
 extern "C" int func_00155B50(void* agg, int a, int b);
 extern "C" float func_0031C228(float x);
-struct sComputer_0010F878;
-extern "C" void func_0010F878(sComputer_0010F878* self);
+extern "C" void func_0010F878(sAiRiderList* self);
 extern "C" void func_0010F998(void* self);
 
 struct sRiderInfo_0010F560 {
@@ -1776,7 +1777,7 @@ extern "C" void func_0010F560(sComputer_0010F560* self)
             }
         }
     }
-    func_0010F878((sComputer_0010F878*)self);
+    func_0010F878((sAiRiderList*)self);
 }
 #endif
 
@@ -1786,16 +1787,7 @@ INCLUDE_ASM("ai/computer", func_0010F878);
 void* cBEAggressionInterface_getThis();
 extern "C" int func_00155B50(void* self, int a, int b);
 
-struct sComputer_0010F878
-{
-    char pad0[0x28];
-    char* mRiders[20];  // 0x28
-    int mCount;         // 0x78
-    int pad7C;          // 0x7C
-    int f80;            // 0x80
-};
-
-extern "C" void func_0010F878(sComputer_0010F878* self)
+extern "C" void func_0010F878(sAiRiderList* self)
 {
     if (self->f80 <= 0) return;
     for (int i = 0; i < self->mCount; i++)
@@ -1822,13 +1814,7 @@ INCLUDE_ASM("ai/computer", func_0010F998);
 //100%
 INCLUDE_ASM("ai/computer", func_0010FBF0);
 #ifdef SKIP_ASM
-struct sAi0010FBF0 {
-    char pad0[0x28];
-    char* mRiders[20];
-    int mCount;
-};
-
-extern "C" int func_0010FBF0(sAi0010FBF0* self, int team)
+extern "C" int func_0010FBF0(sAiRiderList* self, int team)
 {
     int n = 0;
     for (int i = 0; i < self->mCount; i++)
@@ -1843,14 +1829,7 @@ extern "C" int func_0010FBF0(sAi0010FBF0* self, int team)
 //100%
 INCLUDE_ASM("ai/computer", func_0010FC30);
 #ifdef SKIP_ASM
-struct sAi0010FC30
-{
-    char pad0[0x28];
-    char* mRiders[20];
-    int mCount;
-};
-
-extern "C" int func_0010FC30(sAi0010FC30* self, int team)
+extern "C" int func_0010FC30(sAiRiderList* self, int team)
 {
     int n = 0;
     for (int i = 0; i < self->mCount; i++)
