@@ -2770,9 +2770,6 @@ extern "C" void func_002224B8(cLunoValue** out, char** state, cLunoValue* a, int
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222648);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
-
 extern "C" void func_00222648(cLunoValue** out, char** state, cLunoValue* a, cLunoValue* b, int c) {
     char* s = *state;
     int n = *(int*)(s + *(int*)(s + 4) + 8);
