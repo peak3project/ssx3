@@ -16506,7 +16506,61 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D32B8);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3658);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D37A0);
+#ifdef SKIP_ASM
+struct S_37A0 { char pad0[0x20]; int c : 4; int : 28; char pad24[8]; short f2C; };
+struct G_37A0 { char pad0[0x34]; int *f34; short *f38; char pad3C[0x1C]; struct S_37A0 *f58[32]; };
+struct R_37A0 { signed char lo; signed char hi; short v; };
+extern struct G_37A0 *D_0044F420_37A0 __asm__("D_0044F420");
+int func_003D37A0(int arg0, int arg1) {
+    struct G_37A0 *g = D_0044F420_37A0;
+    int r = -1;
+    unsigned int *e = (unsigned int *)(g->f34 + g->f38[arg0]);
+    unsigned int w0 = e[0];
+    struct S_37A0 *s = g->f58[(w0 >> 16) & 0x1F];
+    struct R_37A0 *p = (struct R_37A0 *)(e + 4);
+    unsigned int i;
+    if (s->f2C == arg0) {
+        arg1 = s->c & 0x7F;
+        if ((int)w0 >> 28 > 0) {
+            if (--s->c == -1) {
+                s->f2C = -1;
+            }
+        }
+    }
+    for (i = 0; i < ((e[1] >> 12) & 0x1F); i++) {
+        if (arg1 >= p[i].lo && p[i].hi >= arg1) {
+            r = p[i].v;
+            break;
+        }
+    }
+    if (r < 0) {
+        int n = (e[1] >> 12) & 0x1F;
+        if (n <= 0) {
+            r = -1;
+        } else {
+            struct R_37A0 *best = p;
+            int bd = 0x7F;
+            int k;
+            for (k = 0; k < n; k++) {
+                int a = p[k].lo - arg1;
+                int b = p[k].hi - arg1;
+                int m;
+                if (a < 0) a = -a;
+                if (b < 0) b = -b;
+                m = a < b ? a : b;
+                if (m < bd) {
+                    bd = m;
+                    best = &p[k];
+                }
+            }
+            r = (unsigned short)best->v;
+        }
+    }
+    return r;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3900);
