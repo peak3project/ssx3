@@ -328,6 +328,15 @@ public:
     virtual void WriteInt(int v);
 };
 
+// The pad word as func_0010C0A8 / func_0010C140 read it: buttons 16 and 17 and the 6-bit signed axis at 26.
+struct sPadW0 {
+    unsigned int pad0 : 16;
+    unsigned int b16 : 1;
+    unsigned int b17 : 1;
+    unsigned int pad18 : 8;
+    int w0 : 6;
+};
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -3969,16 +3978,9 @@ extern "C" void func_0010BFA8(sObj_BFA8* self, int a, int b, int c, int d)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010C0A8);
 #ifdef SKIP_ASM
-struct sPad_C0A8 {
-    unsigned int pad0 : 16;
-    unsigned int b16 : 1;
-    unsigned int b17 : 1;
-    unsigned int pad18 : 8;
-    int w0 : 6;
-};
 extern "C" void func_0010C0A8(void* self, void* padp)
 {
-    sPad_C0A8* pad = (sPad_C0A8*)padp;
+    sPadW0* pad = (sPadW0*)padp;
     float len = Len(*(t4Vector*)(*(char**)((char*)self + 0x18) + 0x1E0));
     float s = 0.97f;
     if (len < 833.3334350585938f)
@@ -3992,16 +3994,9 @@ extern "C" void func_0010C0A8(void* self, void* padp)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010C140);
 #ifdef SKIP_ASM
-struct sPad_C140 {
-    unsigned int pad0 : 16;
-    unsigned int b16 : 1;
-    unsigned int b17 : 1;
-    unsigned int pad18 : 8;
-    int w0 : 6;
-};
 extern "C" void func_0010C140(void* self, void* padp)
 {
-    sPad_C140* pad = (sPad_C140*)padp;
+    sPadW0* pad = (sPadW0*)padp;
     float len = Len(*(t4Vector*)(*(char**)((char*)self + 0x18) + 0x1E0));
     float s = 0.97f;
     if (len < 833.3334350585938f)
