@@ -14741,7 +14741,87 @@ void func_003CE410_asmbody(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CE7C0);
+#ifdef SKIP_ASM
+typedef struct {
+    float m[0x38];
+    float c[5];
+    float f1;
+    float f2;
+    char dirty;
+} sFir_E7C0;
+
+void func_003CE7C0(sFir_E7C0 *p, int type) {
+    /* order stays in $19: the target tests it with slti/beqz and folds order & 1 only via nonzero_bits */
+    int order = 4;
+    int i;
+    float angle, sum;
+
+    p->dirty = 1;
+    if ((unsigned)(type - 3) < 2 && p->f1 > 0.8f) {
+        p->f1 = 0.8f;
+    }
+    switch (type) {
+    case 2:
+        p->c[order] = p->f2;
+        for (i = 1; i <= order; i++) {
+            angle = (float)i * 3.1415927f;
+            p->c[order - i] = func_003BC770(p->f2 * angle) / angle;
+        }
+        break;
+    case 3:
+        p->c[order] = p->f1;
+        for (i = 1; i <= order; i++) {
+            angle = (float)i * 3.1415927f;
+            p->c[order - i] = func_003BC770(p->f1 * angle) / angle;
+        }
+        break;
+    case 4:
+        p->c[order] = p->f2 - p->f1;
+        for (i = 1; i <= order; i++) {
+            float s;
+            angle = (float)i * 3.1415927f;
+            s = func_003BC770((p->f2 - p->f1) * 0.5f * angle);
+            p->c[order - i] = (s + s) * func_003BC840((p->f2 + p->f1) * 0.5f * angle) / angle;
+        }
+        break;
+    }
+    /* window step pi/4 is set at the switch join before the order < 0 loop guard (a literal is hoisted after it) */
+    angle = 0.7853982f;
+    sum = 0.0f;
+    for (i = 0; i <= order; i++) {
+        if (type == 2 || type == 4) {
+            float v = p->c[i] * (0.54f - func_003BC840(angle * (float)i) * 0.46f);
+            p->c[i] = v;
+            sum += v;
+        } else if (type == 3) {
+            float v = p->c[i] * -(0.54f - func_003BC840(angle * (float)i) * 0.46f);
+            p->c[i] = v;
+            if ((i & 1) == 0) {
+                sum += v;
+            } else {
+                sum -= v;
+            }
+        }
+    }
+    if (type == 3) {
+        sum += 1.0f;
+        p->c[order] += 1.0f;
+    }
+    if (order & 1) {
+        sum = sum + sum;
+    } else {
+        sum = sum + sum - p->c[order];
+    }
+    if (sum < 0.0f) {
+        sum = -sum;
+    }
+    for (i = 0; i <= order; i++) {
+        p->c[i] /= sum;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CEB90);
