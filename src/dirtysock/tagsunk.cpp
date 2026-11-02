@@ -5858,7 +5858,7 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00264CB8);
 #ifdef SKIP_ASM
 extern "C" int func_00264BE8(void* self, void* msg, int size);
 
-struct sTagMsg264CB8 {
+struct sTagStateMsg {
     int type;          // 0x0
     int state;         // 0x4
     unsigned int id;   // 0x8
@@ -5867,7 +5867,7 @@ struct sTagMsg264CB8 {
 
 extern "C" void func_00264CB8(void* self, int a)
 {
-    sTagMsg264CB8 msg;
+    sTagStateMsg msg;
     msg.state = *(int*)((char*)D_004A3028 + 0xB8);
     msg.type = 16;
     msg.id = 0;
@@ -6287,18 +6287,11 @@ send:
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265700);
 #ifdef SKIP_ASM
-struct sTagMsg265700 {
-    int type;          // 0x0
-    int state;         // 0x4
-    unsigned int id;   // 0x8
-    int pad[2];
-};
-
 extern "C" int func_00264BE8(void* self, void* msg, int size);
 
 extern "C" void func_00265700(void* self)
 {
-    sTagMsg265700 msg;
+    sTagStateMsg msg;
     int type;
     int state = *(int*)self;
     if (state == 12)
