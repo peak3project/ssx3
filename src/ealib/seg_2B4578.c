@@ -3600,56 +3600,53 @@ short func_003BA0B0(int n, int tag, unsigned int *out, int lo, int hi) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA550);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_A550 { int f0; char pad[0x22]; unsigned char f26; unsigned char f27; char pad2[4]; int f2C; char pad3[0x69 - 0x30]; signed char f69; char pad4[0x8C - 0x6A]; };
-struct G_A550 { char pad[0x17E]; short cnt; int f180; char pad2[0x1F0 - 0x184]; struct E_A550 *tab; };
-extern struct G_A550 D_0050A8E8_A550 __asm__("D_0050A8E8");
 void func_003BA550(int i, unsigned char u) {
-    struct E_A550 *e = &D_0050A8E8_A550.tab[i];
+    struct sA8E8Chan *e = &D_0050A8E8.f1F0[i];
     unsigned char k = e->f26;
     int n = 0;
     int sel = -1;
     int j;
     if (k != 0) {
-        for (j = 0; j < D_0050A8E8_A550.cnt; j++) {
-            struct E_A550 *q = &D_0050A8E8_A550.tab[j];
-            if (q->f26 == k && q->f0 >= 0 && q->f69 != 0) {
+        for (j = 0; j < D_0050A8E8.f17E; j++) {
+            struct sA8E8Chan *q = &D_0050A8E8.f1F0[j];
+            if (q->f26 == k && q->f00 >= 0 && q->f69 != 0) {
                 n++;
                 if (q->f27) sel = j;
             }
         }
-        e = &D_0050A8E8_A550.tab[i];
+        e = &D_0050A8E8.f1F0[i];
         if (n == 1) {
             e->f69 = 0;
             e->f26 = 0;
             e->f27 = 0;
-            e->f2C = D_0050A8E8_A550.f180;
+            e->f2C = D_0050A8E8.f180;
             return;
         }
-        if (D_0050A8E8_A550.tab[sel].f69 == 2 && i != sel && n == 2) {
+        if (D_0050A8E8.f1F0[sel].f69 == 2 && i != sel && n == 2) {
             e->f69 = 0;
             e->f26 = 0;
             e->f27 = 0;
-            e->f2C = D_0050A8E8_A550.f180;
-            D_0050A8E8_A550.tab[sel].f69 = 0;
-            D_0050A8E8_A550.tab[sel].f26 = 0;
-            D_0050A8E8_A550.tab[sel].f27 = 0;
-            D_0050A8E8_A550.tab[sel].f2C = D_0050A8E8_A550.f180;
+            e->f2C = D_0050A8E8.f180;
+            D_0050A8E8.f1F0[sel].f69 = 0;
+            D_0050A8E8.f1F0[sel].f26 = 0;
+            D_0050A8E8.f1F0[sel].f27 = 0;
+            D_0050A8E8.f1F0[sel].f2C = D_0050A8E8.f180;
             return;
         }
-        if (D_0050A8E8_A550.tab[sel].f69 == 1 && i == sel) {
-            D_0050A8E8_A550.tab[sel].f69 = 2;
+        if (D_0050A8E8.f1F0[sel].f69 == 1 && i == sel) {
+            D_0050A8E8.f1F0[sel].f69 = 2;
             return;
         }
         e->f69 = 0;
         e->f26 = 0;
         e->f27 = 0;
-        e->f2C = D_0050A8E8_A550.f180;
+        e->f2C = D_0050A8E8.f180;
         return;
     }
     e->f69 = 0;
     e->f26 = 0;
     e->f27 = 0;
-    e->f2C = D_0050A8E8_A550.f180;
+    e->f2C = D_0050A8E8.f180;
 }
 #endif
 
