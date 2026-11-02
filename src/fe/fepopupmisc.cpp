@@ -107,7 +107,7 @@ struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* t, int id);
 extern char* D_004A1540;
 // PORT: the target re-reads this name pointer without filling the call delay slot; volatile view.
-extern char* volatile D_004A1544_EC68 __asm__("D_004A1544");
+extern char* volatile D_004A1544;
 extern char D_0045DD90[];
 extern char D_0045DDB8[];
 extern char D_0045DDC8[];
@@ -139,7 +139,7 @@ extern "C" int func_001DEC68(char* self, sWidget_EC68* w)
     if (w->vt[5].fn((char*)w + w->vt[5].delta)) {
         if (*(signed char*)(self + 0x48) == 0) {
             show_EC68(self, D_004A1540, 0);
-            show_EC68(self, D_004A1544_EC68, 1);
+            show_EC68(self, D_004A1544, 1);
             cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0045DD90));
             if (t != 0) {
                 cUIText_setUnicodeStringByID(t, GetHashValue32(D_0045DDB8));
@@ -192,7 +192,7 @@ struct sOptions_EE10 {
     int pad_7 : 8;
     int data[(0x288 - 8) / 4];
 };
-extern sOptions_EE10 D_00535610_EE10 __asm__("D_00535610");
+extern sOptions_EE10 D_00535610;
 
 static inline int optB6_EE10(sOptions_EE10 o)
 {
@@ -216,9 +216,9 @@ extern "C" void func_001DEE10(void* self)
     void* be = cBE_getBE();
     cBE_getInterface_Fv(be, 4);
     int* p48 = (int*)((char*)self + 0x48);
-    *p48 = optB6_EE10(D_00535610_EE10);
+    *p48 = optB6_EE10(D_00535610);
     int* p4C = (int*)((char*)self + 0x4C);
-    *p4C = optB5_EE10(D_00535610_EE10);
+    *p4C = optB5_EE10(D_00535610);
 }
 #endif
 
