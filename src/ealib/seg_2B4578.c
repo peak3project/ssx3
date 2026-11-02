@@ -7863,22 +7863,6 @@ int func_003C27E0(int id, int k) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2A50);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct W8_2A50 { char pad[6]; signed char l; signed char r; };
-struct W16_2A50 { char pad[6]; signed char c[10]; };
-struct T_2A50 {
-    char pad0[0x20];
-    struct W8_2A50 a[48];
-    struct W16_2A50 b[1];
-};
-struct Spk_2A50 { float p[5]; char pad14[0x20 - 0x14]; };
-struct A_2A50 {
-    char pad0[0xCB0];
-    struct T_2A50 *tbl;
-    char padCB4[0xE98 - 0xCB4];
-    struct Spk_2A50 spk[1];
-};
-extern struct A_2A50 D_0050AD00_2A50 __asm__("D_0050AD00");
-extern struct Spk_2A50 D_0050BB98_2A50[] __asm__("D_0050BB98");
 extern void func_003C8560(int, int, float);
 
 void func_003C2A50(int id) {
@@ -7892,19 +7876,19 @@ void func_003C2A50(int id) {
     if (ch->f24 & 8) {
         for (i = 0; i < ch->f23; i++) {
             if (D_0050A8E8.setup.cfg.f29 != 2) {
-                D_0050AD00_2A50.tbl->a[ch->f04[i]].l = D_0050AD00_2A50.spk[ch->f04[i]].p[1] * ch->f48 * 127.0f;
-                D_0050AD00_2A50.tbl->a[ch->f04[i]].r = D_0050AD00_2A50.spk[ch->f04[i]].p[0] * ch->f48 * 127.0f;
+                D_0050AD00.fCB0->f20[ch->f04[i]].l = D_0050AD00.fE98[ch->f04[i]].f00[1] * ch->f48 * 127.0f;
+                D_0050AD00.fCB0->f20[ch->f04[i]].r = D_0050AD00.fE98[ch->f04[i]].f00[0] * ch->f48 * 127.0f;
             } else {
                 if (D_0050A8E8.setup.cfg.f27 == 4) {
-                    D_0050AD00_2A50.tbl->a[ch->f04[i]].l = D_0050AD00_2A50.spk[ch->f04[i]].p[3] * ch->f48 * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->f04[i]].r = D_0050AD00_2A50.spk[ch->f04[i]].p[0] * ch->f48 * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].l = D_0050AD00_2A50.spk[ch->f04[i]].p[2] * ch->f48 * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].r = D_0050AD00_2A50.spk[ch->f04[i]].p[1] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i]].l = D_0050AD00.fE98[ch->f04[i]].f00[3] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i]].r = D_0050AD00.fE98[ch->f04[i]].f00[0] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i] + 0x18].l = D_0050AD00.fE98[ch->f04[i]].f00[2] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i] + 0x18].r = D_0050AD00.fE98[ch->f04[i]].f00[1] * ch->f48 * 127.0f;
                 } else {
-                    D_0050AD00_2A50.tbl->a[ch->f04[i]].l = D_0050AD00_2A50.spk[ch->f04[i]].p[4] * ch->f48 * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->f04[i]].r = D_0050AD00_2A50.spk[ch->f04[i]].p[1] * ch->f48 * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].l = D_0050AD00_2A50.spk[ch->f04[i]].p[3] * ch->f48 * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].r = D_0050AD00_2A50.spk[ch->f04[i]].p[2] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i]].l = D_0050AD00.fE98[ch->f04[i]].f00[4] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i]].r = D_0050AD00.fE98[ch->f04[i]].f00[1] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i] + 0x18].l = D_0050AD00.fE98[ch->f04[i]].f00[3] * ch->f48 * 127.0f;
+                    D_0050AD00.fCB0->f20[ch->f04[i] + 0x18].r = D_0050AD00.fE98[ch->f04[i]].f00[2] * ch->f48 * 127.0f;
                 }
             }
         }
@@ -7913,7 +7897,7 @@ void func_003C2A50(int id) {
         sc = ch->f48 * (float)ch->f5F * 0.0078740157186985016f;
         for (i = 0; i < ch->f23; i++) {
             for (j = 0; j < m; j++) {
-                D_0050AD00_2A50.tbl->b[ch->f04[i] - D_0050A8E8.setup.cfg.f10].c[j] = sc * D_0050AD00_2A50.spk[ch->f04[i]].p[j] * 127.0f;
+                D_0050AD00.fCB0->f1A0[ch->f04[i] - D_0050A8E8.setup.cfg.f10].vol[j] = sc * D_0050AD00.fE98[ch->f04[i]].f00[j] * 127.0f;
             }
         }
     } else {
@@ -7921,7 +7905,7 @@ void func_003C2A50(int id) {
         sc = ch->f48 * (float)ch->f5F * 0.0078740157186985016f;
         for (i = 0; i < ch->f23; i++) {
             for (j = 0; j < m; j++) {
-                func_003C8560(ch->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F), j, sc * D_0050BB98_2A50[ch->f04[i]].p[j]);
+                func_003C8560(ch->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F), j, sc * D_0050BB98[ch->f04[i]].f00[j]);
             }
         }
     }
