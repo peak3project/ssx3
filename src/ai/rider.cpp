@@ -54,6 +54,21 @@ struct sVec4XW {
     sVec4XW(float ax, float ay, float az, float aw) { x = ax; w = aw; y = ay; z = az; }
 } __attribute__((aligned(16)));
 
+// cRider::unk_894: the rider's sorted animation-name table (0x108-byte records, sorted with func_00418EF8).
+struct sAnimName
+{
+    char name[0x100];
+    int f100;
+    int f104;
+};
+
+struct sAnimNameTable
+{
+    sAnimName e[40];
+    int count;      // 0x2940 names added by func_0011BD60
+    int extra;      // 0x2944 names func_0011BE88 appends after them
+};
+
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
 //100%
@@ -233,25 +248,12 @@ extern "C" char* strcpy(char* dst, const char* src);
 void* func_0011B678(void* self);
 extern "C" int func_00418EF8(void* base, int n, int size, void* (*cmp)(void*));
 
-struct sAnimName_11BD60
-{
-    char name[0x100];
-    int f100;
-    int f104;
-};
-
-struct sAnimNameTable_11BD60
-{
-    sAnimName_11BD60 e[40];
-    int count;      // 0x2940
-};
-
 extern "C" void func_0011BD60(cRider* self, void** list, int n)
 {
     for (int i = 0; i < n; i++, list++)
     {
         char* name = *(char**)((char*)*list + 0x28);
-        sAnimNameTable_11BD60* t = ((sAnimNameTable_11BD60*)self->unk_894);
+        sAnimNameTable* t = ((sAnimNameTable*)self->unk_894);
         if (name == 0) continue;
         if (*name == 0) continue;
         int j;
@@ -260,7 +262,7 @@ extern "C" void func_0011BD60(cRider* self, void** list, int n)
             if (func_004165A8(name, &t->e[j]) == 0) goto next;
         }
         {
-            sAnimName_11BD60* e = &t->e[t->count];
+            sAnimName* e = &t->e[t->count];
             strcpy(e->name, name);
             e->f100 = -1;
             e->f104 = 0;
@@ -268,7 +270,7 @@ extern "C" void func_0011BD60(cRider* self, void** list, int n)
         }
     next:;
     }
-    sAnimNameTable_11BD60* t2 = ((sAnimNameTable_11BD60*)self->unk_894);
+    sAnimNameTable* t2 = ((sAnimNameTable*)self->unk_894);
     func_00418EF8(t2, t2->count, 0x108, func_0011B678);
 }
 #endif
@@ -288,20 +290,6 @@ extern "C" int func_0014A0B0(int c);
 extern "C" int func_0014AC50(int c);
 extern "C" int func_0014B988(void* iface, int b, int a, void* item, char* out);
 
-struct sAnimName_11BE88
-{
-    char name[0x100];
-    int f100;
-    int f104;
-};
-
-struct sAnimNameTable_11BE88
-{
-    sAnimName_11BE88 e[40];
-    int start;      // 0x2940
-    int count;      // 0x2944
-};
-
 extern "C" void func_0011BE88(cRider* self, void** list, int n)
 {
     void* iface = cBE_getInterface(cBE_getBE(), 9);
@@ -309,20 +297,20 @@ extern "C" void func_0011BE88(cRider* self, void** list, int n)
     if (func_0014A0B0(self->mAIIndex)) {
         for (int i = 0; i < n; i++) {
             char* name = *(char**)((char*)list[i] + 0x2C);
-            sAnimNameTable_11BE88* t = ((sAnimNameTable_11BE88*)self->unk_894);
+            sAnimNameTable* t = ((sAnimNameTable*)self->unk_894);
             if (name == 0) continue;
             if (*name == 0) continue;
             int j;
-            int end = t->count + t->start;
-            for (j = t->start; j < end; j++) {
+            int end = t->extra + t->count;
+            for (j = t->count; j < end; j++) {
                 if (func_004165A8(name, &t->e[j]) == 0) goto next;
             }
             {
-                sAnimName_11BE88* e = &t->e[end];
+                sAnimName* e = &t->e[end];
                 strcpy(e->name, name);
                 e->f100 = -1;
                 e->f104 = 0;
-                t->count++;
+                t->extra++;
             }
         next:;
         }
@@ -332,25 +320,25 @@ extern "C" void func_0011BE88(cRider* self, void** list, int n)
             char buf[0x100];
             if (func_0014B988(iface, b, a, list[i], buf) == 0) continue;
             char* name = buf;
-            sAnimNameTable_11BE88* t = ((sAnimNameTable_11BE88*)self->unk_894);
+            sAnimNameTable* t = ((sAnimNameTable*)self->unk_894);
             if (*name == 0) continue;
             int j;
-            int end = t->count + t->start;
-            for (j = t->start; j < end; j++) {
+            int end = t->extra + t->count;
+            for (j = t->count; j < end; j++) {
                 if (func_004165A8(name, &t->e[j]) == 0) goto next2;
             }
             {
-                sAnimName_11BE88* e = &t->e[end];
+                sAnimName* e = &t->e[end];
                 strcpy(e->name, name);
                 e->f100 = -1;
                 e->f104 = 0;
-                t->count++;
+                t->extra++;
             }
         next2:;
         }
     }
-    sAnimNameTable_11BE88* t2 = ((sAnimNameTable_11BE88*)self->unk_894);
-    func_00418EF8(&t2->e[t2->start], t2->count, 0x108, func_0011B678);
+    sAnimNameTable* t2 = ((sAnimNameTable*)self->unk_894);
+    func_00418EF8(&t2->e[t2->count], t2->extra, 0x108, func_0011B678);
 }
 #endif
 
