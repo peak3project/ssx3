@@ -285,6 +285,15 @@ struct sApp {
 };
 extern sApp* D_004A28A8;
 
+// A 0x24-byte record per rider (looked up by rider index): whether it is set, distance and angle.
+struct sRiderRec {
+    int active;
+    int pad4;
+    float dist;
+    float angle;
+    char pad10[0x24 - 0x10];
+};
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -551,14 +560,6 @@ struct sPad_0F88 {
     int b20 : 6;
 };
 
-struct sRec_0F88 {
-    int active;
-    int pad4;
-    float dist;
-    float angle;
-    char pad10[0x24 - 0x10];
-};
-
 class cObj_0F88;
 typedef void (cObj_0F88::*Fn_0F88)();
 extern "C" Fn_0F88 D_0043CF20_0F88[4] __asm__("D_0043CF20");
@@ -591,7 +592,7 @@ static inline float Floor_0F88(float x)
     return t;
 }
 
-static inline sRec_0F88* Rec_0F88(char* self) { return &((sRec_0F88*)*(char**)(self + 0x18))[*(int*)(self + 0xE70)]; }
+static inline sRiderRec* Rec_0F88(char* self) { return &((sRiderRec*)*(char**)(self + 0x18))[*(int*)(self + 0xE70)]; }
 
 extern "C" void func_00100F88(char* self, sPad_0F88* pad)
 {
@@ -599,7 +600,7 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
     int below, o3, o4, o5, o6;
     int z;
     sCtl_0F88* ctl = (sCtl_0F88*)(self + 0xDF0);
-    sRec_0F88* rec = Rec_0F88(self);
+    sRiderRec* rec = Rec_0F88(self);
     cRider_1218* tgt = D_004A28A8->game->race->riders[ctl->target];
     float diff = rec->angle - *(float*)(*(char**)(self + 0x18) + 0x4CC);
     float ang = diff - Floor_0F88(diff * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
@@ -2910,14 +2911,6 @@ struct sInfo_7E70 {
     float speed;
 } __attribute__((aligned(16)));
 
-struct sRec_7E70 {
-    int active;
-    int pad4;
-    float dist;
-    float angle;
-    char pad10[0x24 - 0x10];
-};
-
 int func_0011FEE8_7E70(void*) __asm__("func_0011FEE8__FPv");
 int func_0011FE98(void*);
 int AIrand();
@@ -2965,7 +2958,7 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
         return;
     if (absSpd < 39.99532699584961f)
         return;
-    float r = ((sRec_7E70*)self)[*(int*)(other + 0x86C)].dist;
+    float r = ((sRiderRec*)self)[*(int*)(other + 0x86C)].dist;
     sInfo_7E70 info;
     info.pos = Add(*(t4Vector*)(self + 0x110), Scale(*n, r));
     info.dir = Norm(*(t4Vector*)(self + 0x1E0));
