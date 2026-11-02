@@ -201,6 +201,19 @@ struct sSndVec4 {
     sSndVec4() {}
 } __attribute__((aligned(16)));
 
+// One 0x54-byte slot of the bank system at D_004A36F8 (from 0x1C): a random-pick list (func_002A4CA0)
+// followed by two floats the caller sums.
+struct sSndRandSlot {
+    char pad0[0x48];
+    float a;
+    float b;
+    char pad50[4];
+};
+struct sSndRandSys {
+    char pad0[0x1C];
+    sSndRandSlot ent[1];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -8943,16 +8956,6 @@ extern "C" void func_002A8450(char** sys, int a, int b);
 extern "C" int func_002A86B8(char** sys);
 extern char** D_004A36F8;
 
-struct sSnd64A0Ent {
-    char pad0[0x48];
-    float a;
-    float b;
-    char pad50[4];
-};
-struct sSnd64A0Sys {
-    char pad0[0x1C];
-    sSnd64A0Ent ent[1];
-};
 
 
 
@@ -8961,7 +8964,7 @@ extern "C" void func_002A64A0(void* vself, int idx)
     char* self = (char*)vself;
     func_002A6848(self);
     if (*(int*)(self + 0xD4) == 0) return;
-    sSnd64A0Ent* e = &((sSnd64A0Sys*)D_004A36F8)->ent[idx];
+    sSndRandSlot* e = &((sSndRandSys*)D_004A36F8)->ent[idx];
     *(int*)(self + 0x184) = idx;
     *(float*)(self + 0x188) = e->a + e->b;
     int r = func_002A4CA0((sSndRandList*)e);
@@ -8992,16 +8995,6 @@ extern "C" void func_002A8450(char** sys, int a, int b);
 extern "C" int func_002A86B8(char** sys);
 extern char** D_004A36F8;
 
-struct sSnd6648Ent {
-    char pad0[0x48];
-    float a;
-    float b;
-    char pad50[4];
-};
-struct sSnd6648Sys {
-    char pad0[0x1C];
-    sSnd6648Ent ent[1];
-};
 
 
 
@@ -9010,7 +9003,7 @@ extern "C" void func_002A6648(void* vself, int idx)
     char* self = (char*)vself;
     func_002A6848(self);
     if (*(int*)(self + 0xD4) == 0) return;
-    sSnd6648Ent* e = &((sSnd6648Sys*)D_004A36F8)->ent[idx];
+    sSndRandSlot* e = &((sSndRandSys*)D_004A36F8)->ent[idx];
     *(int*)(self + 0x184) = idx;
     *(float*)(self + 0x188) = e->a + e->b;
     int r = func_002A4CA0((sSndRandList*)((char*)e + 0x18));
