@@ -4786,7 +4786,6 @@ extern int D_004A57D0_37B0 __asm__("D_004A57D0");
 extern sBindEnd_1FBE38 D_004A57D4_37B0 __asm__("D_004A57D4");
 extern int D_004A57D8_37B0 __asm__("D_004A57D8");
 extern int D_004A3D30_37B0[2] __asm__("D_004A3D30");
-extern int* D_004A3DD8_37B0 __asm__("D_004A3DD8");
 extern char* D_004A28A8_37B0 __asm__("D_004A28A8");
 
 
@@ -4802,7 +4801,7 @@ extern "C" void* func_003037B0(void* self, int n, sBindArg_1FBE38 *e)
     int *vp;
     BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A57D0_37B0, 8, D_004A3D30_37B0, n, e);
     char* lvl = *(char**)(*(char**)(D_004A28A8_37B0 + 0x84) + 0xC);
-    char* q = *(char**)(lvl + (*D_004A3DD8_37B0 << 2) + 0x28);
+    char* q = *(char**)(lvl + (D_004A3DD8->being << 2) + 0x28);
     char* a = q ? q + 0x6C0 : 0;
     char* r = a ? a - 0x6C0 : 0;
     int res;
