@@ -303,13 +303,7 @@ struct sVec4_34B9B0 {
     sVec4_34B9B0(const float& a, const float& b, const float& c, const float& d) : x(a), y(b), z(c), w(d) {}
 } __attribute__((aligned(16)));
 
-struct sRow_34B9B0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-struct sMat_34B9B0 {
-    sRow_34B9B0 r[4];
-};
 
 struct sModel_34B9B0 {
     char pad_0x0[0x7D];
@@ -326,18 +320,16 @@ static inline int IsLoaded_34B9B0(sModel_34B9B0* m)
     return ok ? *(int*)(wc + m->slot * 0x18 + 0x3F0) == 3 : 0;
 }
 
-struct sPair_34B9B0 { sRow_34B9B0 r[4]; };
-struct sVE43_34B9B0 { short delta; short index; sPair_34B9B0 (*fn)(void*); };
-struct sPair_34B9B0;
-struct sVE93_34B9B0 { short delta; short index; int (*fn)(void*, sVec4_34B9B0*, sVec4_34B9B0*, sPair_34B9B0*); };
+struct sVE43_34B9B0 { short delta; short index; t4Matrix (*fn)(void*); };
+struct sVE93_34B9B0 { short delta; short index; int (*fn)(void*, sVec4_34B9B0*, sVec4_34B9B0*, t4Matrix*); };
 struct sVE96_34B9B0 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
-struct sVE7_34B9B0 { short delta; short index; void (*fn)(void*, void*, void*, sMat_34B9B0*); };
+struct sVE7_34B9B0 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
 static inline void SetF0_12_34B9B0(sRS_34B9B0* rs, int v) { rs->f0_12 = v; }
 static inline void SetF4_2_34B9B0(sRS_34B9B0* rs, int v) { rs->f4_2 = v; }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy).
-static inline void MatCopy_34B9B0(sMat_34B9B0* d, const sMat_34B9B0* s)
+static inline void MatCopy_34B9B0(t4Matrix* d, const t4Matrix* s)
 {
     __asm__(
         "lqc2      $vf1, 0x0(%1)\n"
@@ -388,17 +380,17 @@ extern "C" void func_0034B9B0(sFlagSetEntry* e)
             sVec4_34B9B0 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
             sVec4_34B9B0* pb = &b;
             sVE43_34B9B0* vt43 = *(sVE43_34B9B0**)(ctx + 0x10D8);
-            sPair_34B9B0 c = vt43[43].fn(ctx + vt43[43].delta);
+            t4Matrix c = vt43[43].fn(ctx + vt43[43].delta);
             if (vt[93].fn(thisp, &a, pb, &c) == 1) {
                 continue;
             }
         }
         {
             char* pos = (char*)m + 0x10;
-            sMat_34B9B0 mat;
-            MatCopy_34B9B0(&mat, (sMat_34B9B0*)D_004FF1A0);
-            mat.r[3].x = *(float*)(self + 0x88);
-            mat.r[3].y = *(float*)(self + 0x8C);
+            t4Matrix mat;
+            MatCopy_34B9B0(&mat, (t4Matrix*)D_004FF1A0);
+            mat.row[3].x = *(float*)(self + 0x88);
+            mat.row[3].y = *(float*)(self + 0x8C);
             char* h = *(char**)(self + 0x60);
             if (h != 0) {
                 sVE7_34B9B0* hv = *(sVE7_34B9B0**)(h + 4);
@@ -1236,12 +1228,9 @@ INCLUDE_ASM("object/flagset", func_0034D650);
 #ifdef SKIP_ASM
 extern "C" void func_0034D6F0(void* self, float dt);
 
-struct sFsVec4_D650 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float fsDot_D650(const sFsVec4_D650& a, const sFsVec4_D650& b)
+static inline float fsDot_D650(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -1265,7 +1254,7 @@ extern "C" void func_0034D650(void* self, void* obj)
     char* s = (char*)self;
     char* o = (char*)obj;
     if (*(float*)(s + 0x30) >= 1.0f) return;
-    float d = fsDot_D650(*(sFsVec4_D650*)(o + 0x20), *(sFsVec4_D650*)(o + 0x10));
+    float d = fsDot_D650(*(t4Vector*)(o + 0x20), *(t4Vector*)(o + 0x10));
     func_0034D6F0(self, d * 0.0010000000474974513f * *(float*)(o + 0x30));
     if (*(int*)(s + 0x38) == 0) *(int*)(s + 0x38) = 4;
     if (*(int*)(s + 0x3C) == 0) *(int*)(s + 0x3C) = 4;
@@ -1332,13 +1321,7 @@ struct sVec4_D778 {
     sVec4_D778(const float& a, const float& b, const float& c, const float& d) : x(a), y(b), z(c), w(d) {}
 } __attribute__((aligned(16)));
 
-struct sRow_D778 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-struct sMat_D778 {
-    sRow_D778 r[4];
-};
 
 struct sModel_D778 {
     char pad_0x0[0x7D];
@@ -1355,12 +1338,10 @@ static inline int IsLoaded_D778(sModel_D778* m)
     return ok ? *(int*)(wc + m->slot * 0x18 + 0x3F0) == 3 : 0;
 }
 
-struct sPair_D778 { sRow_D778 r[4]; };
-struct sVE43_D778 { short delta; short index; sPair_D778 (*fn)(void*); };
-struct sPair_D778;
-struct sVE93_D778 { short delta; short index; int (*fn)(void*, sVec4_D778*, sVec4_D778*, sPair_D778*); };
+struct sVE43_D778 { short delta; short index; t4Matrix (*fn)(void*); };
+struct sVE93_D778 { short delta; short index; int (*fn)(void*, sVec4_D778*, sVec4_D778*, t4Matrix*); };
 struct sVE96_D778 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
-struct sVE7_D778 { short delta; short index; void (*fn)(void*, void*, void*, sMat_D778*); };
+struct sVE7_D778 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
 static inline void SetF0_12_D778(sRS_D778* rs, int v) { rs->f0_12 = v; }
 static inline void SetF4_2_D778(sRS_D778* rs, int v) { rs->f4_2 = v; }
@@ -1382,7 +1363,7 @@ extern "C" void func_0034D778(void* vself)
         sVec4_D778 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
         sVec4_D778* pb = &b;
         sVE43_D778* vt43 = *(sVE43_D778**)(ctx + 0x10D8);
-        sPair_D778 c = vt43[43].fn(ctx + vt43[43].delta);
+        t4Matrix c = vt43[43].fn(ctx + vt43[43].delta);
         if (vt[93].fn(thisp, &a, pb, &c) == 1) {
             return;
         }
