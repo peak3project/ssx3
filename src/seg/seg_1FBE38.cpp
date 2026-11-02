@@ -1,4 +1,5 @@
 #include "common.h"
+#include "bx/math3d.h"
 
 // Script-binding layer shared by the bound functions of this unit. Every binding unpacks its argument list the same
 // way (the binding's defaults record is copied into a local record, then each passed argument is stored by index,
@@ -34,14 +35,48 @@ struct cWScriptMan {
     char* f2A4;             // 0x2A4
 };
 extern cWScriptMan* D_004A3DD8;
+// A being: the script/AI-facing interface of a rider. Slot order of the prototype's vtable _vt$6cBeing; parameter
+// types from its mangled names (applyBoost__6cBeingRC8t4Vector, transport__6cBeingRC8t4Matrix, ...).
+struct tInstanceRecord;
+class cBeing {
+public:
+    virtual ~cBeing();
+    virtual const t4Vector* getVelocity() const;
+    virtual int isIntersecting(tInstanceRecord* rec) const;
+    virtual void applyBoost(const t4Vector& impulse);
+    virtual const t4Vector* getPosition() const;
+    virtual const t4Matrix* getTransform() const;
+    virtual int getAIIndex() const;
+    virtual bool isHuman() const;
+    virtual bool isComputer() const;
+    virtual void transport(const t4Matrix& m);
+    virtual void resetToPath();
+    virtual void initForMission(const t4Matrix& m);
+};
+// A rider as these bindings see it (include/ai/rider.h has the flat layout): its cBeing base sits at 0x6C0, after the
+// rider's own data, so converting between cRider_1FBE38* and cBeing* adds/subtracts 0x6C0 with a null check.
+struct cRiderData_1FBE38 {
+    char pad_0x0[0x3FC];
+    int unk_3FC;                // 0x3FC (cRider::unk_3FC)
+    char pad_0x400[0x2C0];
+};
+struct sRiderHandler_1FBE38 {
+    char pad_0x0[0xD4];
+    unsigned int fD4;           // 0xD4
+};
+class cRider_1FBE38 : public cRiderData_1FBE38, public cBeing {
+public:
+    char pad_0x6C4[0xB8];
+    sRiderHandler_1FBE38* mRiderHandler;    // 0x77C (cRider::mRiderHandler)
+};
 // The race (main/gamemode.cpp layout): riders by being index at 0x28; each player holds its rider at +0x18.
 struct sRacePlayer {
     char pad_0x0[0x18];
-    char* rider;                // 0x18
+    cRider_1FBE38* rider;       // 0x18
 };
 struct sRace {
     char pad_0x0[0x28];
-    char* riders[6];            // 0x28
+    cRider_1FBE38* riders[6];   // 0x28
     sRacePlayer* players[12];   // 0x40
     sRacePlayer* players2[3];   // 0x70
     int numPlayers;             // 0x7C
@@ -1475,17 +1510,14 @@ extern "C" cLunoValue func_002FD420(int n, Ent_D420 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FD758);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V4_D758 { float x, y, z, w; V4_D758() {} V4_D758(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} } __attribute__((aligned(16)));
-struct M4_D758 { V4_D758 r[4]; };
-struct Sh_D758 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual V4_D758 *v05(); virtual M4_D758 *v06(); };
-extern "C" void func_003558B8_D758(void*, V4_D758*) __asm__("func_003558B8");
-static inline Sh_D758 *shape_D758(int k) {
+struct V4_D758 : t4Vector { V4_D758() {} V4_D758(float a, float b, float c, float d) { x = a; y = b; z = c; w = d; } };
+extern "C" void func_003558B8_D758(void*, t4Vector*) __asm__("func_003558B8");
+static inline cBeing *being_D758(int k) {
     sRace *lvl = D_004A28A8->game->race;
-    char *q = lvl->riders[k];
-    return (Sh_D758*)(q ? q + 0x6C0 : 0);
+    return lvl->riders[k];
 }
 // PORT: PS2-only VU0 inline asm; the PC port needs a C fallback (matrix * vector).
-static inline V4_D758 mtxApply_D758(M4_D758 *m, const V4_D758 &v) {
+static inline V4_D758 mtxApply_D758(const t4Matrix *m, const t4Vector &v) {
     V4_D758 out;
     __asm__(
         ".set push\n"
@@ -1507,7 +1539,7 @@ static inline V4_D758 mtxApply_D758(M4_D758 *m, const V4_D758 &v) {
     return out;
 }
 // PORT: PS2-only VU0 inline asm (vector add in place).
-static inline void vAddTo_D758(V4_D758 &a, const V4_D758 &b) {
+static inline void vAddTo_D758(t4Vector &a, const t4Vector &b) {
     __asm__(
         ".set push\n"
         ".set noreorder\n"
@@ -1566,8 +1598,8 @@ extern "C" cLunoValue func_002FD758(int n, Ent_D758 *e) {
         if (p->v16()) {
             int k = buf[1];
             if (k != -1) {
-                V4_D758 pos = *shape_D758(k)->v05();
-                M4_D758 *m = shape_D758(buf[1])->v06();
+                t4Vector pos = *being_D758(k)->getPosition();
+                const t4Matrix *m = being_D758(buf[1])->getTransform();
                 vAddTo_D758(pos, mtxApply_D758(m, V4_D758(*(float*)&buf[2], *(float*)&buf[3], *(float*)&buf[4], 0.0f)));
                 func_003558B8_D758(p, &pos);
             }
@@ -2061,13 +2093,11 @@ extern "C" void* func_003578A8_E840(void*, int, void*, void*, void*) __asm__("fu
 void operator_delete(int*);
 extern char D_00489740_E840[] __asm__("D_00489740");
 extern char D_00489730_E840[] __asm__("D_00489730");
-struct V4_E840 { float x, y, z, w; } __attribute__((aligned(16)));
-struct Sh_E840 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual V4_E840 *v05(); };
 struct O_E840 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual char *v24(); };
 extern "C" void cMoveNode_addParticle_E840(void*, void*) __asm__("cMoveNode_addParticle");
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline V4_E840 vSub_E840(const V4_E840 &a, const V4_E840 &b) {
-    V4_E840 r;
+static inline t4Vector vSub_E840(const t4Vector &a, const t4Vector &b) {
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -2078,7 +2108,7 @@ static inline V4_E840 vSub_E840(const V4_E840 &a, const V4_E840 &b) {
     return r;
 }
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_E840(const V4_E840 &v) {
+static inline float vLen_E840(const t4Vector &v) {
     float r;
     int t;
     __asm__(
@@ -2097,20 +2127,19 @@ static inline float vLen_E840(const V4_E840 &v) {
     return r;
 }
 static inline sRace *lvl_E840() { return D_004A28A8->game->race; }
-static inline Sh_E840 *shape_E840(sRacePlayer *e) { return (Sh_E840*)(e->rider + 0x6C0); }
-static inline int nearViewer_E840(const V4_E840 &pos) {
+static inline int nearViewer_E840(const t4Vector &pos) {
     int notEdit = *(int*)(D_004A28A4 + 0x550) != 2;
     if (notEdit)
         return 1;
     int n = lvl_E840()->numPlayers;
     for (int i = 0; i < n; i++) {
-        V4_E840 d = vSub_E840(pos, *shape_E840(lvl_E840()->players[i])->v05());
+        t4Vector d = vSub_E840(pos, *lvl_E840()->players[i]->rider->getPosition());
         if (vLen_E840(d) < 30000.0f)
             return 1;
     }
     n = lvl_E840()->numPlayers2;
     for (int i = 0; i < n; i++) {
-        V4_E840 d = vSub_E840(pos, *shape_E840(lvl_E840()->players2[i])->v05());
+        t4Vector d = vSub_E840(pos, *lvl_E840()->players2[i]->rider->getPosition());
         if (vLen_E840(d) < 30000.0f)
             return 1;
     }
@@ -2185,14 +2214,14 @@ extern "C" cLunoValue cViewer_addParticle(int n, Ent_E840 *e) {
     O_E840 *p = *(O_E840**)(obj + 0xC);
     if (p) {
         if (p->v16()) {
-            V4_E840 pos = *(V4_E840*)(p->v24() + 0x30);
+            t4Vector pos = *(t4Vector*)(p->v24() + 0x30);
             if (nearViewer_E840(pos)) {
                 cMoveNode_addParticle_E840(p, buf);
                 return D_004C9098;
             }
         }
     } else {
-        V4_E840 pos = *(V4_E840*)(obj + 0x40);
+        t4Vector pos = *(t4Vector*)(obj + 0x40);
         if (nearViewer_E840(pos)) {
             func_003578A8_E840(cMemMan_alloc(0x2C, D_00489730_E840, 0x20000000, 0), 1, obj, buf, 0);
             return D_004C9098;
@@ -2541,7 +2570,7 @@ int* func_00226610(void*);
 struct Ent_F850 { int idx; int val; int pad; int kind; };
 
 extern int D_00446530_F850[] __asm__("D_00446530");
-extern "C" void func_0010F1C0(char*, int, float);
+extern "C" void func_0010F1C0(cRider_1FBE38*, int, float);
 extern int D_004A563C_F850 __asm__("D_004A563C");
 struct T12_F850 { int a; int b; int e; sBindEnd_1FBE38 f; };
 extern T12_F850 D_004FBAE8_F850 __asm__("D_004FBAE8");
@@ -3037,8 +3066,7 @@ extern unsigned D_004A5688_0770 __asm__("D_004A5688");
 extern sBindEnd_1FBE38 D_004A568C_0770 __asm__("D_004A568C");
 extern int D_004A5690_0770 __asm__("D_004A5690");
 extern int D_004A3C40_0770[2] __asm__("D_004A3C40");
-struct O_0770 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
-struct Sh_0770 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(void*); };
+struct O_0770 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual t4Matrix *v24(); };
 static inline char *refToPtr_0770(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0770(unsigned i) { if (i == 0) return 0; return refToPtr_0770(i); }
 extern "C" void func_003E6574(void*, void*, int);
@@ -3084,11 +3112,11 @@ extern "C" cLunoValue func_00300770(int n, Ent_0770 *e) {
     int k = D_004A3DD8->being;
     if (k >= 0 && obj) {
         O_0770 *p = *(O_0770**)(obj + 0xC);
-        void *v = obj + 0x10;
+        t4Matrix *m = (t4Matrix*)(obj + 0x10);
         if (p)
-            v = p->v24();
+            m = p->v24();
         sRace *lvl = D_004A28A8->game->race;
-        ((Sh_0770*)(lvl->riders[k] + 0x6C0))->v10(v);
+        lvl->riders[k]->transport(*m);
     }
     return D_004C9098;
 }
@@ -3102,8 +3130,7 @@ extern unsigned D_004A5698_0948 __asm__("D_004A5698");
 extern sBindEnd_1FBE38 D_004A569C_0948 __asm__("D_004A569C");
 extern int D_004A56A0_0948 __asm__("D_004A56A0");
 extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
-struct O_0948 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
-struct Sh_0948 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(void*); };
+struct O_0948 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual t4Matrix *v24(); };
 static inline char *refToPtr_0948(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0948(unsigned i) { if (i == 0) return 0; return refToPtr_0948(i); }
 extern "C" void func_003E6574(void*, void*, int);
@@ -3149,11 +3176,11 @@ extern "C" cLunoValue func_00300948(int n, Ent_0948 *e) {
     int k = D_004A3DD8->being;
     if (k >= 0 && obj) {
         O_0948 *p = *(O_0948**)(obj + 0xC);
-        void *v = obj + 0x10;
+        t4Matrix *m = (t4Matrix*)(obj + 0x10);
         if (p)
-            v = p->v24();
+            m = p->v24();
         sRace *lvl = D_004A28A8->game->race;
-        ((Sh_0948*)(lvl->riders[k] + 0x6C0))->v12(v);
+        lvl->riders[k]->initForMission(*m);
     }
     return D_004C9098;
 }
@@ -3382,15 +3409,11 @@ extern "C" void func_0030B9A0(cWScriptMan*, int, unsigned, unsigned);
 extern int D_004A56B4_1120 __asm__("D_004A56B4");
 struct T12_1120 { unsigned a; unsigned b; sBindEnd_1FBE38 f; };
 extern T12_1120 D_004FBBD0_1120 __asm__("D_004FBBD0");
-struct A_1120 { char pad[0x6C0]; };
-struct B_1120 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual bool v09(); };
-struct D_1120 : A_1120, B_1120 { };
 static inline bool isIdle_1120(int slot) {
     if (slot != -1) {
-        D_1120 *r = (D_1120*)D_004A28A8->game->race->riders[slot];
-        B_1120 *b = r;
-        D_1120 *d = (D_1120*)b;
-        return !d->v09();
+        cBeing *being = D_004A28A8->game->race->riders[slot];
+        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+        return !rider->isComputer();
     }
     return false;
 }
@@ -3856,11 +3879,9 @@ extern sBindEnd_1FBE38 D_004A5714_1D78 __asm__("D_004A5714");
 extern int D_004A5718_1D78 __asm__("D_004A5718");
 extern int D_004A3CB0_1D78[2] __asm__("D_004A3CB0");
 struct O_1D78 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
-struct Sh_1D78 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(void*); };
 static inline char *refToPtr_1D78(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_1D78(unsigned i) { if (i == 0) return 0; return refToPtr_1D78(i); }
 extern "C" void func_003E6574(void*, void*, int);
-struct Chk_1D78 { virtual void v01(); virtual void v02(); virtual int v03(char*); };
 int* func_00226610_1D78(void*) __asm__("func_00226610__FPv");
 struct Ent_1D78 { int idx; int val; int pad; int type; };
 extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, Ent_1D78 *e) {
@@ -3904,11 +3925,9 @@ extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, Ent_1D78 *e) {
     if (obj) {
         int found = 1;
         sRace* lvl = D_004A28A8->game->race;
-        char *q = lvl->riders[D_004A3DD8->being];
-        char *a = q ? q + 0x6C0 : 0;
-        char *r = a ? a - 0x6C0 : 0;
-        Chk_1D78 *c = (Chk_1D78*)(r + 0x6C0);
-        if (c->v03(obj)) {
+        cBeing *being = lvl->riders[D_004A3DD8->being];
+        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+        if (rider->isIntersecting((tInstanceRecord*)obj)) {
             ret->type = found;
             *func_00226610_1D78(ret) = found;
             goto done;
@@ -3965,7 +3984,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302048);
 extern int D_00445E40_2048[] __asm__("D_00445E40");
 extern "C" void func_0030B7F8(cWScriptMan*);
 extern "C" void func_0022D6C8_2048(char*, int) __asm__("func_0022D6C8");
-struct Sh_2048 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual int v09(); };
 extern unsigned D_2048[] __asm__("D_004FBC10");
 extern int D_004A572C;
 extern int D_004A3CC0;
@@ -3995,11 +4013,9 @@ extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
     int k = D_004A3DD8->being;
     if (k != -1) {
         sRace* lvl = D_004A28A8->game->race;
-        char *q = lvl->riders[k];
-        char *a = q ? q + 0x6C0 : 0;
-        char *b = a ? a - 0x6C0 : 0;
-        Sh_2048 *sh = (Sh_2048*)(b + 0x6C0);
-        r = sh->v09() ^ 1;
+        cBeing *being = lvl->riders[k];
+        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+        r = !rider->isComputer();
     } else {
         r = 0;
     }
@@ -4040,13 +4056,6 @@ extern "C" void func_002A49E8_2210(void* self) __asm__("func_002A49E8");
 
 struct Ent_2210 { int idx; int val; int pad; int kind; };
 
-class cRider_2210 {
-public:
-    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
-    virtual void v06(); virtual void v07(); virtual void v08();
-    virtual bool isBusy();
-};
-
 extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
 {
     if (D_004A5730_2210 == 0) {
@@ -4073,10 +4082,9 @@ extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
     int cur = D_004A3DD8->being;
     if (cur != -1) {
         sRace* lvl = D_004A28A8->game->race;
-        char* q = lvl->riders[cur];
-        char* a = q ? q + 0x6C0 : 0;
-        char* r = a ? a - 0x6C0 : 0;
-        ok = !((cRider_2210*)(r + 0x6C0))->isBusy();
+        cBeing* being = lvl->riders[cur];
+        cRider_1FBE38* rider = (cRider_1FBE38*)being;
+        ok = !rider->isComputer();
     } else {
         ok = 0;
     }
@@ -4466,7 +4474,7 @@ extern int D_004A57A8_2EF8 __asm__("D_004A57A8");
 extern sBindEnd_1FBE38 D_004A57AC_2EF8 __asm__("D_004A57AC");
 extern int D_004A57B0_2EF8 __asm__("D_004A57B0");
 extern int D_004A3D10_2EF8[2] __asm__("D_004A3D10");
-extern "C" int func_00122EE8(char* rider, int which);
+extern "C" int func_00122EE8(cRider_1FBE38* rider, int which);
 
 
 extern "C" cLunoValue* func_00302EF8(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
@@ -4481,9 +4489,8 @@ extern "C" cLunoValue* func_00302EF8(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
     int *vp;
     BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A57A8_2EF8, 8, D_004A3D10_2EF8, n, e);
     sRace* lvl = D_004A28A8->game->race;
-    char* q = lvl->riders[D_004A3DD8->being];
-    char* a = q ? q + 0x6C0 : 0;
-    char* r = a ? a - 0x6C0 : 0;
+    cBeing* being = lvl->riders[D_004A3DD8->being];
+    cRider_1FBE38* r = (cRider_1FBE38*)being;
     int res;
     switch (vp[0]) {
     case 3: res = func_00122EE8(r, 0); break;
@@ -4570,11 +4577,7 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003032C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (vector length).
 void* func_00226618(void*);
-struct Vec_32C0 { float x, y, z, w; } __attribute__((aligned(16)));
-struct A_32C0 { char pad[0x6C0]; };
-struct B_32C0 { virtual void v01(); virtual Vec_32C0 *v02(); };
-struct D_32C0 : A_32C0, B_32C0 { };
-static inline float len_32C0(const Vec_32C0 &v) {
+static inline float len_32C0(const t4Vector &v) {
     float r;
     int t;
     __asm__(
@@ -4593,10 +4596,9 @@ static inline float len_32C0(const Vec_32C0 &v) {
     return r;
 }
 extern "C" cLunoValue* func_003032C0(cLunoValue* ret) {
-    D_32C0 *r = (D_32C0*)D_004A28A8->game->race->riders[D_004A3DD8->being];
-    B_32C0 *b = r;
-    D_32C0 *d = (D_32C0*)b;
-    float len = len_32C0(*d->v02());
+    cBeing *being = D_004A28A8->game->race->riders[D_004A3DD8->being];
+    cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+    float len = len_32C0(*rider->getVelocity());
     float res = len * D_004A28A8->f14;
     ret->type = 2;
     *(float*)func_00226618(ret) = res;
@@ -4609,11 +4611,7 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303380);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (vector length).
 void* func_00226618(void*);
-struct Vec_3380 { float x, y, z, w; } __attribute__((aligned(16)));
-struct A_3380 { char pad[0x6C0]; };
-struct B_3380 { virtual void v01(); virtual Vec_3380 *v02(); };
-struct D_3380 : A_3380, B_3380 { };
-static inline float len_3380(const Vec_3380 &v) {
+static inline float len_3380(const t4Vector &v) {
     float r;
     int t;
     __asm__(
@@ -4632,10 +4630,9 @@ static inline float len_3380(const Vec_3380 &v) {
     return r;
 }
 extern "C" cLunoValue* func_00303380(cLunoValue* ret) {
-    D_3380 *r = (D_3380*)D_004A28A8->game->race->riders[D_004A3DD8->being];
-    B_3380 *b = r;
-    D_3380 *d = (D_3380*)b;
-    float len = len_3380(*d->v02());
+    cBeing *being = D_004A28A8->game->race->riders[D_004A3DD8->being];
+    cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+    float len = len_3380(*rider->getVelocity());
     ret->type = 2;
     *(float*)func_00226618(ret) = len;
     return ret;
@@ -4685,17 +4682,12 @@ extern "C" cLunoValue* func_00303490(cLunoValue* ret) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003034F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct A_34F8 { char pad[0x6C0]; };
-struct B_34F8 { virtual void v01(); };
-struct D_34F8 : A_34F8, B_34F8 { };
-extern "C" int func_00122EE8_34F8(D_34F8*, int) __asm__("func_00122EE8");
 extern "C" cLunoValue* func_003034F8(cLunoValue* ret) {
-    D_34F8 *r = (D_34F8*)D_004A28A8->game->race->riders[D_004A3DD8->being];
-    B_34F8 *b = r;
-    D_34F8 *d = (D_34F8*)b;
+    cBeing *being = D_004A28A8->game->race->riders[D_004A3DD8->being];
+    cRider_1FBE38 *rider = (cRider_1FBE38*)being;
     unsigned v;
-    if (func_00122EE8_34F8(d, 4))
-        v = *(unsigned*)(*(char**)((char*)d + 0x77C) + 0xD4);
+    if (func_00122EE8(rider, 4))
+        v = rider->mRiderHandler->fD4;
     else
         v = 0xFFFFFFFF;
     BIND_SET_RESULT_1FBE38(ret, v);
@@ -4805,9 +4797,8 @@ extern "C" cLunoValue* func_003037B0(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
     int *vp;
     BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A57D0_37B0, 8, D_004A3D30_37B0, n, e);
     sRace* lvl = D_004A28A8->game->race;
-    char* q = lvl->riders[D_004A3DD8->being];
-    char* a = q ? q + 0x6C0 : 0;
-    char* r = a ? a - 0x6C0 : 0;
+    cBeing* being = lvl->riders[D_004A3DD8->being];
+    cRider_1FBE38* r = (cRider_1FBE38*)being;
     int res;
     switch (vp[0]) {
     case 3: res = func_00122EE8(r, 0); break;
@@ -5019,15 +5010,11 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303EC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int* func_00226610(void*);
-struct A_3EC8 { char pad[0x6C0]; };
-struct B_3EC8 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual bool v09(); };
-struct D_3EC8 : A_3EC8, B_3EC8 { };
 static inline bool isIdle_3EC8(int slot) {
     if (slot != -1) {
-        D_3EC8 *r = (D_3EC8*)D_004A28A8->game->race->riders[slot];
-        B_3EC8 *b = r;
-        D_3EC8 *d = (D_3EC8*)b;
-        return !d->v09();
+        cBeing *being = D_004A28A8->game->race->riders[slot];
+        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+        return !rider->isComputer();
     }
     return false;
 }
@@ -5047,16 +5034,12 @@ extern "C" cLunoValue* func_00303EC8(cLunoValue* ret) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00303F80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct A_3F80 { char pad[0x6C0]; };
-struct B_3F80 { virtual void v01(); };
-struct D_3F80 : A_3F80, B_3F80 { };
 extern "C" cLunoValue func_00303F80(void) {
     int slot = D_004A3DD8->being;
     if (slot != -1) {
-        D_3F80 *r = (D_3F80*)D_004A28A8->game->race->riders[slot];
-        B_3F80 *b = r;
-        D_3F80 *d = (D_3F80*)b;
-        *(int*)((char*)d + 0x3FC) = 1;
+        cBeing *being = D_004A28A8->game->race->riders[slot];
+        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
+        rider->unk_3FC = 1;
     }
     return D_004C9098;
 }
@@ -5456,11 +5439,7 @@ extern unsigned D_5828_4C50 __asm__("D_004A5828");
 extern sBindEnd_1FBE38 D_582C_4C50 __asm__("D_004A582C");
 extern int D_5830_4C50 __asm__("D_004A5830");
 extern int D_3D78_4C50 __asm__("D_004A3D78");
-struct Vec_4C50 { float x, y, z, w; } __attribute__((aligned(16)));
-struct A_4C50 { char pad[0x6C0]; };
-struct B_4C50 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual Vec_4C50 *v05(); };
-struct D_4C50 : A_4C50, B_4C50 { };
-static inline Vec_4C50 pos_4C50(char *o) { return *(Vec_4C50*)(o + 0x40); }
+static inline t4Vector pos_4C50(char *o) { return *(t4Vector*)(o + 0x40); }
 extern "C" cLunoValue* func_00304C50(cLunoValue* ret, int n, Ent_4C50 *e) {
     if (D_5830_4C50 == 0) {
         D_5828_4C50 = 0xFFFFFFFF;
@@ -5498,12 +5477,11 @@ extern "C" cLunoValue* func_00304C50(cLunoValue* ret, int n, Ent_4C50 *e) {
         obj = r;
     }
     if (obj) {
-        D_4C50 *rr = (D_4C50*)D_004A28A8->game->race->riders[slot];
-        B_4C50 *b = rr;
-        D_4C50 *d = (D_4C50*)b;
+        cBeing *being = D_004A28A8->game->race->riders[slot];
+        cRider_1FBE38 *rider = (cRider_1FBE38*)being;
         float v;
-        if (d) {
-            float z = d->v05()->z;
+        if (rider) {
+            float z = rider->getPosition()->z;
             v = z - pos_4C50(obj).z;
         }
         else
@@ -5671,7 +5649,6 @@ extern "C" cLunoValue func_00305478(int n, Ent_5478 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00305660);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Sh_5660 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual int v08(); };
 extern "C" void func_00390EC8(float);
 extern unsigned D_5660 __asm__("D_004A5848");
 extern sBindEnd_1FBE38 D_004A584C;
@@ -5702,9 +5679,8 @@ extern "C" cLunoValue func_00305660(int n, Ent_5660 *e) {
     int k = D_004A3DD8->being;
     if (k != -1) {
         sRace* lvl = D_004A28A8->game->race;
-        char *q = lvl->riders[k];
-        Sh_5660 *sh = q ? (Sh_5660*)(q + 0x6C0) : 0;
-        if (sh->v08())
+        cBeing *being = lvl->riders[k];
+        if (being->isHuman())
             func_00390EC8(0.0f);
     }
     return D_004C9098;
