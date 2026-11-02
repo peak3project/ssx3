@@ -8,6 +8,22 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int);
+    virtual void setVisible(int);
+};
+
 //100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", cOVTemplate_PauseMenu_onCreateScreen);
 #ifdef SKIP_ASM
@@ -33,15 +49,6 @@ extern char* D_00441BC0[];
 extern char D_004A2470[];
 extern unsigned char D_004A2468;
 extern int D_00534B30[];
-
-
-class cUIObj_PM {
-public:
-    char pad0[8];
-    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
-    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7(int);
-    virtual void v8(int);
-};
 
 struct sPauseMenu_PM {
     char pad0[0xC];
@@ -88,8 +95,8 @@ extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
                 }
                 *(int*)(o + 0x18) = self->a9C[i];
             } else {
-                ((cUIObj_PM*)o)->v8(0);
-                ((cUIObj_PM*)o)->v7(1);
+                ((cUIThing*)o)->setVisible(0);
+                ((cUIThing*)o)->setStatic(1);
             }
         }
     }
@@ -183,7 +190,6 @@ extern char D_004C8AE8[];
 extern char D_004C8AF8[];
 extern char D_004C8B08[];
 extern char D_004C8B18[];
-
 
 static inline void setColor_001F85C0(char* obj, void* c)
 {
@@ -371,7 +377,6 @@ extern char D_004C8AE8[];
 extern char D_004C8AF8[];
 extern char D_004C8B08[];
 extern char D_004C8B18[];
-
 
 struct sSnd_PMWE {
     sVEntry<void(void*, ...)>* vt;
