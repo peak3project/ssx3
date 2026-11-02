@@ -54,6 +54,12 @@ struct cSndPlayOpts {
     int* p84;                // 0x84
 };
 
+// cBankManager as this unit sees it: only its cSndPlayOpts part at 0x1D8 is used here.
+struct cBankManager {
+    char pad0[0x1D8];
+    cSndPlayOpts sub;        // 0x1D8
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -180,12 +186,8 @@ INCLUDE_ASM("sound/soundsys", func_00290018);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0018Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd0018Sys {
-    sSnd0018Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
 };
@@ -205,7 +207,7 @@ extern sSnd0018Sys* D_004A3664_0018 __asm__("D_004A3664");
 static inline void snd0018AddVoice(void* vself, int a, int b)
 {
     sSnd0018Sys* self = (sSnd0018Sys*)vself;
-    sSnd0018Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -235,9 +237,9 @@ static inline void snd0018AddVoice(void* vself, int a, int b)
 extern "C" int func_00290018(void* self, sSnd0018Req* req)
 {
     snd0018AddVoice(D_004A3664_0018, req->f1C, req->f20);
-    sSnd0018Mgr* m1 = D_004A3664_0018->mgr;
+    cBankManager* m1 = D_004A3664_0018->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
-    sSnd0018Mgr* m2 = D_004A3664_0018->mgr;
+    cBankManager* m2 = D_004A3664_0018->mgr;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
     s2->ch[m2->sub.cur].vol = SND_0018_MAX(0, SND_0018_MIN(s2->vals[s2->cur], 0x7F));
@@ -252,12 +254,8 @@ INCLUDE_ASM("sound/soundsys", func_00290358);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0358Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd0358Sys {
-    sSnd0358Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
 };
@@ -278,7 +276,7 @@ extern sSnd0358Sys* D_004A3664_0358 __asm__("D_004A3664");
 static inline void snd0358AddVoice(void* vself, int a, int b)
 {
     sSnd0358Sys* self = (sSnd0358Sys*)vself;
-    sSnd0358Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -308,13 +306,13 @@ static inline void snd0358AddVoice(void* vself, int a, int b)
 extern "C" int func_00290358(void* self, sSnd0358Req* req)
 {
     snd0358AddVoice(D_004A3664_0358, req->f1C, req->f20);
-    sSnd0358Mgr* m1 = D_004A3664_0358->mgr;
+    cBankManager* m1 = D_004A3664_0358->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
-    sSnd0358Mgr* m2 = D_004A3664_0358->mgr;
+    cBankManager* m2 = D_004A3664_0358->mgr;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
     s2->ch[m2->sub.cur].vol = SND_0358_MAX(0, SND_0358_MIN(s2->vals[s2->cur], 0x7F));
-    sSnd0358Mgr* m3 = D_004A3664_0358->mgr;
+    cBankManager* m3 = D_004A3664_0358->mgr;
     m3->sub.ch[m3->sub.cur].fC = req->f28;
     func_002906B8(D_004A3664_0358);
     return 1;
@@ -425,22 +423,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0CC0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd0CC0Sys {
-    sSnd0CC0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd0CC0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00290CC0(void* vself, int a, int b)
 {
     sSnd0CC0Sys* self = (sSnd0CC0Sys*)vself;
-    sSnd0CC0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -464,7 +458,7 @@ extern "C" int func_00290CC0(void* vself, int a, int b)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd0CC0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 5, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -532,22 +526,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd10E0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd10E0Sys {
-    sSnd10E0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd10E0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline void snd10E0Init(void* vself, int a, int b)
 {
     sSnd10E0Sys* self = (sSnd10E0Sys*)vself;
-    sSnd10E0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -577,7 +567,7 @@ static inline void snd10E0Init(void* vself, int a, int b)
 extern sSndCallback D_004A3680[];
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_10E0(sSnd10E0Mgr* m, sSndCallback cb)
+static inline void OPTS_Callback_10E0(cBankManager* m, sSndCallback cb)
 {
     cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -635,22 +625,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd1438Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd1438Sys {
-    sSnd1438Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd1438Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int snd1438AddVoice(void* vself, int a, int b, int type)
 {
     sSnd1438Sys* self = (sSnd1438Sys*)vself;
-    sSnd1438Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -674,7 +660,7 @@ static inline int snd1438AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd1438Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -760,21 +746,17 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd17D0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd17D0Sys {
-    sSnd17D0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd17D0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 extern sSndCallback D_004A3688_17D0[] __asm__("D_004A3688");
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_17D0(sSnd17D0Mgr* m, sSndCallback cb)
+static inline void OPTS_Callback_17D0(cBankManager* m, sSndCallback cb)
 {
     cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -794,7 +776,7 @@ void func_002917D0_17D0(void* vself, void* obj)
         flag = func_00288AE0(self) == 0;
     }
     int a = func_002917B8(self, 0);
-    sSnd17D0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -818,24 +800,24 @@ void func_002917D0_17D0(void* vself, void* obj)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = 0;
-    sSnd17D0Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = 0;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-    sSnd17D0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 6, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     {
-        sSnd17D0Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     }
     OPTS_Callback_17D0(*self->p118, D_004A3688_17D0[0]);
     {
-        sSnd17D0Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)obj;
     }
     {
-        sSnd17D0Mgr** pq = self->p118;
+        cBankManager** pq = self->p118;
         int q = func_00288A20(self, obj);
         (*pq)->sub.p64[(*pq)->sub.cur] = q;
     }
@@ -868,7 +850,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
         }
         int a = func_002917B8(self, n);
         int v = n * 8 + 4;
-        sSnd17D0Mgr* m = self->mgr;
+        cBankManager* m = self->mgr;
         cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
         s->ch[m->sub.cur] = m->sub.def;
@@ -892,24 +874,24 @@ void func_00291C88_impl(void* vself, void* obj, int n)
         s->p7C[m->sub.cur] = 1;
         self->a4[self->mgr->sub.cur] = a;
         self->a8[self->mgr->sub.cur] = v;
-        sSnd17D0Mgr* m3 = *self->p118;
+        cBankManager* m3 = *self->p118;
         cSndPlayOpts* s3 = &m3->sub;
         s3->vals[m3->sub.cur] = 0;
         s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-        sSnd17D0Mgr** pp = self->p118;
+        cBankManager** pp = self->p118;
         int r = (int)func_00287968(self, 6, 0);
         (*pp)->sub.p3C[(*pp)->sub.cur] = r;
         {
-            sSnd17D0Mgr* m2 = *self->p118;
+            cBankManager* m2 = *self->p118;
             m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
         }
         OPTS_Callback_17D0(*self->p118, D_004A3690_17D0[0]);
         {
-            sSnd17D0Mgr* m2 = *self->p118;
+            cBankManager* m2 = *self->p118;
             m2->sub.p60[m2->sub.cur] = (int)obj;
         }
         {
-            sSnd17D0Mgr** pq = self->p118;
+            cBankManager** pq = self->p118;
             int q = func_00288A20(self, obj);
             (*pq)->sub.p64[(*pq)->sub.cur] = q;
         }
@@ -923,7 +905,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
     } else {
         int a = func_002917B8(self, n);
         int v = n * 8 + 6;
-        sSnd17D0Mgr* m = self->mgr;
+        cBankManager* m = self->mgr;
         cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
         s->ch[m->sub.cur] = m->sub.def;
@@ -947,24 +929,24 @@ void func_00291C88_impl(void* vself, void* obj, int n)
         s->p7C[m->sub.cur] = 1;
         self->a4[self->mgr->sub.cur] = a;
         self->a8[self->mgr->sub.cur] = v;
-        sSnd17D0Mgr* m3 = *self->p118;
+        cBankManager* m3 = *self->p118;
         cSndPlayOpts* s3 = &m3->sub;
         s3->vals[m3->sub.cur] = 0;
         s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-        sSnd17D0Mgr** pp = self->p118;
+        cBankManager** pp = self->p118;
         int r = (int)func_00287968(self, 6, 0);
         (*pp)->sub.p3C[(*pp)->sub.cur] = r;
         {
-            sSnd17D0Mgr* m2 = *self->p118;
+            cBankManager* m2 = *self->p118;
             m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
         }
         OPTS_Callback_17D0(*self->p118, D_004A3698_17D0[0]);
         {
-            sSnd17D0Mgr* m2 = *self->p118;
+            cBankManager* m2 = *self->p118;
             m2->sub.p7C[m2->sub.cur] = 0;
         }
         {
-            sSnd17D0Mgr* m2 = *self->p118;
+            cBankManager* m2 = *self->p118;
             m2->sub.p60[m2->sub.cur] = (int)obj;
         }
         func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
@@ -987,21 +969,17 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd2508Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd2508Sys {
-    sSnd2508Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd2508Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 extern sSndCallback D_004A36A0_2508[] __asm__("D_004A36A0");
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_2508(sSnd2508Mgr* m, sSndCallback cb)
+static inline void OPTS_Callback_2508(cBankManager* m, sSndCallback cb)
 {
     cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -1022,7 +1000,7 @@ void func_00292508_2508(void* vself, void* obj, int n)
     }
     int a = func_002917B8(self, n);
     int b = n * 8 + 3;
-    sSnd2508Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -1046,25 +1024,25 @@ void func_00292508_2508(void* vself, void* obj, int n)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd2508Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = 0;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-    sSnd2508Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 6, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     {
-        sSnd2508Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     }
     OPTS_Callback_2508(*self->p118, D_004A36A0_2508[0]);
     (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
     {
-        sSnd2508Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)obj;
     }
     {
-        sSnd2508Mgr** pq = self->p118;
+        cBankManager** pq = self->p118;
         int q = func_00288A20(self, obj);
         (*pq)->sub.p64[(*pq)->sub.cur] = q;
     }
@@ -1855,16 +1833,12 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
 
-struct sSnd48D0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd48D0Sys {
-    sSnd48D0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd48D0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
     char pad11C[0x5FB8 - 0x11C];
     int handle;              // 0x5FB8
 };
@@ -1892,7 +1866,7 @@ static inline int vcall_48D0(char* obj, int slot)
 
 static inline void snd48D0AddVoice(sSnd48D0Sys* self, int a, int b)
 {
-    sSnd48D0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -1977,20 +1951,20 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
         }
     }
     snd48D0AddVoice(self, 10, b);
-    sSnd48D0Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = vol;
     s2->ch[m2->sub.cur].vol = SND_48D0_MAX(0, SND_48D0_MIN(s2->vals[s2->cur], 0x7F));
-    sSnd48D0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 6, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     func_002A9988(&(*self->p118)->sub, 30.0f, -1.0f);
     {
-        sSnd48D0Mgr* m3 = *self->p118;
+        cBankManager* m3 = *self->p118;
         m3->sub.tgt[m3->sub.cur] = obj + 0x110;
     }
     {
-        sSnd48D0Mgr** pq = self->p118;
+        cBankManager** pq = self->p118;
         int q = func_00288A20(self, obj);
         (*pq)->sub.p64[(*pq)->sub.cur] = q;
     }
@@ -2419,16 +2393,12 @@ extern struct func_00290B58_sCurve D_00482DA0;
 }
 struct sVE_6310 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6310Mgr {
-    char pad0[0x1D8];
-    struct cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd6310Sys {
-    struct sSnd6310Mgr* mgr;
+    struct cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    struct sSnd6310Mgr** p118;      // 0x118
+    struct cBankManager** p118;      // 0x118
 };
 
 static inline int vcall_6310(char* o, int slot)
@@ -2440,7 +2410,7 @@ static inline int vcall_6310(char* o, int slot)
 #define SND_6310_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_6310_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-static inline void optsVol_6310(struct sSnd6310Mgr* m, int v)
+static inline void optsVol_6310(struct cBankManager* m, int v)
 {
     struct cSndPlayOpts* o = &m->sub;
     o->vals[m->sub.cur] = v;
@@ -2449,7 +2419,7 @@ static inline void optsVol_6310(struct sSnd6310Mgr* m, int v)
 
 static inline void sfxBegin_6310(struct sSnd6310Sys* self, int a, int b)
 {
-    struct sSnd6310Mgr* m = self->mgr;
+    struct cBankManager* m = self->mgr;
     struct cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -2513,15 +2483,15 @@ state23:
     }
     sfxBegin_6310(self, a, b);
     optsVol_6310(*self->p118, vol);
-    struct sSnd6310Mgr** pp = self->p118;
+    struct cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 5, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     {
-        struct sSnd6310Mgr* m2 = *self->p118;
+        struct cBankManager* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = obj + 0x110;
     }
     {
-        struct sSnd6310Mgr** pq = self->p118;
+        struct cBankManager** pq = self->p118;
         int q = func_00288A20(self, obj);
         (*pq)->sub.p64[(*pq)->sub.cur] = q;
     }
@@ -2556,16 +2526,12 @@ extern func_00290B58_sCurve D_00482DA0_6868 __asm__("D_00482DA0");
 
 struct sVE_6868 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6868Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd6868Sys {
-    sSnd6868Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd6868Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int vcall_6868(char* o, int slot)
@@ -2575,7 +2541,7 @@ static inline int vcall_6868(char* o, int slot)
 }
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_6868(sSnd6868Mgr* m, sSndCallback cb)
+static inline void OPTS_Callback_6868(cBankManager* m, sSndCallback cb)
 {
     cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -2610,7 +2576,7 @@ extern "C" void func_00296868(void* vself, sSndOwner_6868* t)
             flag = func_00288AE0(self) == 0;
         }
     }
-    sSnd6868Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -2634,24 +2600,24 @@ extern "C" void func_00296868(void* vself, sSndOwner_6868* t)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = 0;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd6868Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-    sSnd6868Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 5, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     {
-        sSnd6868Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = t->rider + 0x110;
     }
     {
-        sSnd6868Mgr** pq = self->p118;
+        cBankManager** pq = self->p118;
         int q = func_00288A20(self, t ? t->rider : 0);
         (*pq)->sub.p64[(*pq)->sub.cur] = q;
     }
     {
-        sSnd6868Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)t;
     }
     OPTS_Callback_6868(*self->p118, D_004A36B0_6868[0]);
@@ -2710,16 +2676,12 @@ extern func_00290B58_sCurve D_00482DA0_6E80 __asm__("D_00482DA0");
 
 struct sVE_6E80 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6E80Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd6E80Sys {
-    sSnd6E80Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd6E80Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int vcall_6E80(char* o, int slot)
@@ -2729,7 +2691,7 @@ static inline int vcall_6E80(char* o, int slot)
 }
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_6E80(sSnd6E80Mgr* m, sSndCallback cb)
+static inline void OPTS_Callback_6E80(cBankManager* m, sSndCallback cb)
 {
     cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -2764,7 +2726,7 @@ extern "C" void func_00296E80(void* vself, sSndOwner_6E80* t)
             flag = func_00288AE0(self) == 0;
         }
     }
-    sSnd6E80Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -2788,24 +2750,24 @@ extern "C" void func_00296E80(void* vself, sSndOwner_6E80* t)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = 0;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd6E80Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-    sSnd6E80Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 5, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     {
-        sSnd6E80Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = t->rider + 0x110;
     }
     {
-        sSnd6E80Mgr** pq = self->p118;
+        cBankManager** pq = self->p118;
         int q = func_00288A20(self, t ? t->rider : 0);
         (*pq)->sub.p64[(*pq)->sub.cur] = q;
     }
     {
-        sSnd6E80Mgr* m2 = *self->p118;
+        cBankManager* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)t;
     }
     OPTS_Callback_6E80(*self->p118, D_004A36B8_6E80[0]);
@@ -2856,16 +2818,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd74A0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd74A0Sys {
-    sSnd74A0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd74A0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00288A20(void* self, void* obj);
@@ -2879,7 +2837,7 @@ extern "C" int func_00288940(void* self, sSndVec4* pos);
 static inline void snd74A0AddVoice(void* vself, int a, int b, int type)
 {
     sSnd74A0Sys* self = (sSnd74A0Sys*)vself;
-    sSnd74A0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -2903,11 +2861,11 @@ static inline void snd74A0AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd74A0Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_74A0_MAX(0, SND_74A0_MIN(s2->vals[s2->cur], 0x7F));
-    sSnd74A0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
 }
@@ -2943,18 +2901,18 @@ extern "C" void func_002974A0(void* self, char* evt, int n)
         type = 4;
     }
     snd74A0AddVoice(self, type, b, 5);
-    sSnd74A0Mgr** pp;
+    cBankManager** pp;
     int r;
     sSnd74A0Sys* sys = (sSnd74A0Sys*)self;
-    sSnd74A0Mgr* m3 = *sys->p118;
+    cBankManager* m3 = *sys->p118;
     m3->sub.tgt[m3->sub.cur] = &pos;
-    sSnd74A0Mgr* m4 = *sys->p118;
+    cBankManager* m4 = *sys->p118;
     m4->sub.p34[m4->sub.cur] = 1;
     func_002A9988(&(*sys->p118)->sub, 300.0f, -1.0f);
     pp = sys->p118;
     r = func_00288940(sys, &pos);
     (*pp)->sub.p64[(*pp)->sub.cur] = r;
-    sSnd74A0Mgr* m5 = *sys->p118;
+    cBankManager* m5 = *sys->p118;
     m5->sub.p78[m5->sub.cur] = pri;
     int h = func_002906B8(self);
     func_00295628(self, evt, h, *(int*)(**(char***)((char*)self + 0x118) + 0x260) + 50, 0, 0);
@@ -2981,11 +2939,11 @@ struct sSs7950Vec4 {
 struct sSs7950Vt { short delta; short index; char* (*fn)(void*, ...); };
 
 struct sSs7950Sys {
-    sSnd0018Mgr* mgr;
+    cBankManager* mgr;
     int* a4;
     int* a8;
     char padC[0x118 - 0xC];
-    sSnd0018Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int snd7950Commit(void* vself, void* tgt, float f, int pri)
@@ -3076,7 +3034,7 @@ extern "C" void func_00297950(sSs7950Sys* self, char* obj, int type, int id)
         }
     }
     snd0018AddVoice(self, a, b);
-    sSnd0018Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 5, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     *(int*)((char*)self + i * 0x30 + 0x5A24) = snd7950Commit(self, (char*)self + i * 0x30 + 0x5A10, f, pri);
@@ -3180,16 +3138,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd8138Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd8138Sys {
-    sSnd8138Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd8138Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00295028(void* self, int a, int b);
@@ -3204,7 +3158,7 @@ static inline bool snd8138Active(void* o)
 static inline int snd8138AddVoice(void* vself, void* obj, int a, int b, int type)
 {
     sSnd8138Sys* self = (sSnd8138Sys*)vself;
-    sSnd8138Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3228,10 +3182,10 @@ static inline int snd8138AddVoice(void* vself, void* obj, int a, int b, int type
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd8138Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    sSnd8138Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     pp = self->p118;
     r = func_00288A20(self, obj);
@@ -3293,7 +3247,7 @@ static inline sSndVec4* vcallv_8488(char* obj, int slot)
 static inline int snd8488AddVoice(void* vself, void* obj, int a, int b, int type, int v)
 {
     sSnd8138Sys* self = (sSnd8138Sys*)vself;
-    sSnd8138Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3317,18 +3271,18 @@ static inline int snd8488AddVoice(void* vself, void* obj, int a, int b, int type
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd8138Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = v;
     s3->ch[m3->sub.cur].vol = SND_8488_MAX(SND_8488_MIN(s3->vals[s3->cur], 127), 0);
-    sSnd8138Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
     pp = self->p118;
     r = func_00288A20(self, obj);
     (*pp)->sub.p64[(*pp)->sub.cur] = r;
-    sSnd8138Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     return func_002906B8(self);
 }
@@ -3355,16 +3309,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd89A8Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd89A8Sys {
-    sSnd89A8Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd89A8Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00295028(void* self, int a, int b);
@@ -3375,7 +3325,7 @@ extern "C" void func_002A9988(void* self, float a, float b);
 static inline int snd89A8AddVoice(void* vself, void* obj, int a, int b, int type)
 {
     sSnd89A8Sys* self = (sSnd89A8Sys*)vself;
-    sSnd89A8Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3399,14 +3349,14 @@ static inline int snd89A8AddVoice(void* vself, void* obj, int a, int b, int type
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd89A8Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
     pp = self->p118;
     r = func_00288A20(self, obj);
     (*pp)->sub.p64[(*pp)->sub.cur] = r;
-    sSnd89A8Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     return func_002906B8(self);
 }
@@ -3472,7 +3422,7 @@ struct sSnd8D90Self {
 static inline void snd8D90AddVoice(void* vself, int a, int b)
 {
     sSnd74A0Sys* self = (sSnd74A0Sys*)vself;
-    sSnd74A0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3496,7 +3446,7 @@ static inline void snd8D90AddVoice(void* vself, int a, int b)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd74A0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 9, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
 }
@@ -3554,16 +3504,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9368Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd9368Sys {
-    sSnd9368Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd9368Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern sSndCallback D_004A36A8_9368[] __asm__("D_004A36A8");
@@ -3577,7 +3523,7 @@ static inline int IsReady299368(char* obj)
 
 static inline void AddVoice299368(sSnd9368Sys* self, int a, int bb, int type)
 {
-    sSnd9368Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3601,7 +3547,7 @@ static inline void AddVoice299368(sSnd9368Sys* self, int a, int bb, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = bb;
-    sSnd9368Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
 }
@@ -3679,16 +3625,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd97B8Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd97B8Sys {
-    sSnd97B8Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd97B8Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00288A20(void* self, void* obj);
@@ -3699,7 +3641,7 @@ extern "C" int func_00288A20(void* self, void* obj);
 static inline int snd97B8AddVoice(void* vself, int a, int b, int type)
 {
     sSnd97B8Sys* self = (sSnd97B8Sys*)vself;
-    sSnd97B8Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3723,11 +3665,11 @@ static inline int snd97B8AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd97B8Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_97B8_MAX(0, SND_97B8_MIN(s2->vals[s2->cur], 0x7F));
-    sSnd97B8Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -3765,22 +3707,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9B70Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd9B70Sys {
-    sSnd9B70Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd9B70Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int snd9B70AddVoice(void* vself, int a, int b, int type)
 {
     sSnd9B70Sys* self = (sSnd9B70Sys*)vself;
-    sSnd9B70Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3804,7 +3742,7 @@ static inline int snd9B70AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd9B70Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -3831,22 +3769,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9E28Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd9E28Sys {
-    sSnd9E28Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd9E28Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int snd9E28AddVoice(void* vself, int a, int b, int type)
 {
     sSnd9E28Sys* self = (sSnd9E28Sys*)vself;
-    sSnd9E28Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3870,7 +3804,7 @@ static inline int snd9E28AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd9E28Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -3931,22 +3865,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA220Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndA220Sys {
-    sSndA220Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndA220Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndA220AddVoice(void* vself, int a, int b, int type)
 {
     sSndA220Sys* self = (sSndA220Sys*)vself;
-    sSndA220Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -3970,7 +3900,7 @@ static inline int sndA220AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndA220Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -4008,22 +3938,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA530Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndA530Sys {
-    sSndA530Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndA530Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndA530AddVoice(void* vself, int a, int b, int type)
 {
     sSndA530Sys* self = (sSndA530Sys*)vself;
-    sSndA530Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4047,7 +3973,7 @@ static inline int sndA530AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndA530Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -4069,22 +3995,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA7D8Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndA7D8Sys {
-    sSndA7D8Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndA7D8Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndA7D8AddVoice(void* vself, int a, int b, int type)
 {
     sSndA7D8Sys* self = (sSndA7D8Sys*)vself;
-    sSndA7D8Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4108,7 +4030,7 @@ static inline int sndA7D8AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndA7D8Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -4193,11 +4115,11 @@ struct sSndRiderAB40 {
 };
 
 struct sSndSysAB40 {
-    sSnd17D0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd17D0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
     char pad11C[0x5FE0 - 0x11C];
     int f5FE0[2];            // 0x5FE0
     unsigned short f5FE8[2]; // 0x5FE8
@@ -4213,7 +4135,7 @@ static inline bool sndAB40Active(sSndRiderAB40* r)
 #define MAX_AB40(a,b) ((a) < (b) ? (b) : (a))
 static inline void sndAB40AddVoice(sSndSysAB40* self, int a, int b, int type, int vol)
 {
-    sSnd17D0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4237,11 +4159,11 @@ static inline void sndAB40AddVoice(sSndSysAB40* self, int a, int b, int type, in
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSnd17D0Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = MAX_AB40(MIN_AB40(s3->vals[s3->cur], 127), 0);
-    sSnd17D0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     func_002906B8(self);
@@ -4296,22 +4218,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB0E0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndB0E0Sys {
-    sSndB0E0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndB0E0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndB0E0AddVoice(void* vself, int a, int b, int type)
 {
     sSndB0E0Sys* self = (sSndB0E0Sys*)vself;
-    sSndB0E0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4335,7 +4253,7 @@ static inline int sndB0E0AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndB0E0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -4389,22 +4307,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB430Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndB430Sys {
-    sSndB430Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndB430Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndB430AddVoice(void* vself, int a, int b, int type)
 {
     sSndB430Sys* self = (sSndB430Sys*)vself;
-    sSndB430Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4428,7 +4342,7 @@ static inline int sndB430AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndB430Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -4516,16 +4430,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB968Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndB968Sys {
-    sSndB968Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndB968Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00288A20(void* self, void* obj);
@@ -4536,7 +4446,7 @@ extern "C" int func_00288A20(void* self, void* obj);
 static inline int sndB968AddVoice(void* vself, void* obj, int a, int b, int type)
 {
     sSndB968Sys* self = (sSndB968Sys*)vself;
-    sSndB968Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4560,14 +4470,14 @@ static inline int sndB968AddVoice(void* vself, void* obj, int a, int b, int type
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndB968Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_B968_MAX(0, SND_B968_MIN(s2->vals[s2->cur], 0x7F));
-    sSndB968Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    sSndB968Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     m3->sub.tgt[m3->sub.cur] = (char*)obj + 0x110;
     pp = self->p118;
     r = func_00288A20(self, obj);
@@ -4591,16 +4501,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndBCF8Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndBCF8Sys {
-    sSndBCF8Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndBCF8Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00288A20(void* self, void* obj);
@@ -4611,7 +4517,7 @@ extern "C" int func_00288A20(void* self, void* obj);
 static inline int sndBCF8AddVoice(void* vself, void* obj, int a, int b, int type)
 {
     sSndBCF8Sys* self = (sSndBCF8Sys*)vself;
-    sSndBCF8Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4635,14 +4541,14 @@ static inline int sndBCF8AddVoice(void* vself, void* obj, int a, int b, int type
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndBCF8Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_BCF8_MAX(0, SND_BCF8_MIN(s2->vals[s2->cur], 0x7F));
-    sSndBCF8Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    sSndBCF8Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     m3->sub.tgt[m3->sub.cur] = (char*)obj + 0x110;
     pp = self->p118;
     r = func_00288A20(self, obj);
@@ -4666,16 +4572,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC088Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndC088Sys {
-    sSndC088Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndC088Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00288A20(void* self, void* obj);
@@ -4686,7 +4588,7 @@ extern "C" int func_00288A20(void* self, void* obj);
 static inline int sndC088AddVoice(void* vself, void* obj, int a, int b, int type)
 {
     sSndC088Sys* self = (sSndC088Sys*)vself;
-    sSndC088Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4710,14 +4612,14 @@ static inline int sndC088AddVoice(void* vself, void* obj, int a, int b, int type
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndC088Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_C088_MAX(0, SND_C088_MIN(s2->vals[s2->cur], 0x7F));
-    sSndC088Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    sSndC088Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     m3->sub.tgt[m3->sub.cur] = (char*)obj + 0x110;
     pp = self->p118;
     r = func_00288A20(self, obj);
@@ -4749,22 +4651,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC420Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndC420Sys {
-    sSndC420Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndC420Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndC420AddVoice(void* vself, char* mon, int a, int b, int type)
 {
     sSndC420Sys* self = (sSndC420Sys*)vself;
-    sSndC420Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -4788,7 +4686,7 @@ static inline int sndC420AddVoice(void* vself, char* mon, int a, int b, int type
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndC420Mgr** pp = *(sSndC420Mgr***)mon;
+    cBankManager** pp = *(cBankManager***)mon;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -4853,16 +4751,12 @@ extern "C" void func_00295950(void* self, int a, int b, int c);
 extern signed char D_00535C11[];
 extern char* D_004A28A8;
 
-struct sSnd7B0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd7B0Sys {
-    sSnd7B0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSnd7B0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 struct sSs7B0PreC { char pad[0xC]; };
 class sSs7B0Self : public sSs7B0PreC {
@@ -4881,7 +4775,7 @@ public:
 static inline int snd7B0Add(void* vself, int a, int b)
 {
     sSnd7B0Sys* self = (sSnd7B0Sys*)vself;
-        sSnd7B0Mgr* m = self->mgr;
+        cBankManager* m = self->mgr;
         cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
         s->ch[m->sub.cur] = m->sub.def;
@@ -4905,11 +4799,11 @@ static inline int snd7B0Add(void* vself, int a, int b)
         s->p7C[m->sub.cur] = 1;
         self->a4[self->mgr->sub.cur] = a;
         self->a8[self->mgr->sub.cur] = b;
-        sSnd7B0Mgr* m3 = *self->p118;
+        cBankManager* m3 = *self->p118;
         cSndPlayOpts* s3 = &m3->sub;
         s3->vals[m3->sub.cur] = 0x7F;
         s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-        sSnd7B0Mgr** pp = self->p118;
+        cBankManager** pp = self->p118;
         int r = (int)func_00287968(self, 9, 0);
         (*pp)->sub.p3C[(*pp)->sub.cur] = r;
         return func_002906B8(self);
@@ -5058,22 +4952,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndCED8Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndCED8Sys {
-    sSndCED8Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndCED8Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndCED8AddVoice(void* vself, int a, int b, int type)
 {
     sSndCED8Sys* self = (sSndCED8Sys*)vself;
-    sSndCED8Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -5097,7 +4987,7 @@ static inline int sndCED8AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndCED8Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -5190,22 +5080,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD370Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndD370Sys {
-    sSndD370Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndD370Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndD370AddVoice(void* vself, int a, int b)
 {
     sSndD370Sys* self = (sSndD370Sys*)vself;
-    sSndD370Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -5229,7 +5115,7 @@ static inline int sndD370AddVoice(void* vself, int a, int b)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndD370Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 5, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -5377,22 +5263,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD8E0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndD8E0Sys {
-    sSndD8E0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndD8E0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndD8E0AddVoice(void* vself, int a, int b, int type)
 {
     sSndD8E0Sys* self = (sSndD8E0Sys*)vself;
-    sSndD8E0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -5416,7 +5298,7 @@ static inline int sndD8E0AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndD8E0Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -5476,22 +5358,18 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndDC48Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndDC48Sys {
-    sSndDC48Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndDC48Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 static inline int sndDC48AddVoice(void* vself, int a, int b, int type)
 {
     sSndDC48Sys* self = (sSndDC48Sys*)vself;
-    sSndDC48Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -5515,7 +5393,7 @@ static inline int sndDC48AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndDC48Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -5563,16 +5441,12 @@ static inline int vcall_DEF0(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-struct sSndDEF0Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndDEF0Sys {
-    sSndDEF0Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndDEF0Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
     char pad11C[0x5FF4 - 0x11C];
     int handle;              // 0x5FF4
     char pad5FF8[0x6030 - 0x5FF8];
@@ -5585,7 +5459,7 @@ struct sSndDEF0Sys {
 };
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_DEF0(sSndDEF0Mgr* m, sSndCallback cb)
+static inline void OPTS_Callback_DEF0(cBankManager* m, sSndCallback cb)
 {
     cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -5593,7 +5467,7 @@ static inline void OPTS_Callback_DEF0(sSndDEF0Mgr* m, sSndCallback cb)
 
 static inline void sndDEF0Init(sSndDEF0Sys* self, int a, int b)
 {
-    sSndDEF0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -5642,23 +5516,23 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 *(sOutDEF0*)self->blk = out;
             }
             sndDEF0Init(self, 8, 2);
-            sSndDEF0Mgr** p0 = self->p118;
+            cBankManager** p0 = self->p118;
             int v = func_0029E438(self, (char*)self->blk);
-            sSndDEF0Mgr* m3 = *p0;
+            cBankManager* m3 = *p0;
             cSndPlayOpts* s3 = &m3->sub;
             s3->vals[m3->sub.cur] = v;
             s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
-            sSndDEF0Mgr** pp = self->p118;
+            cBankManager** pp = self->p118;
             int r = (int)func_00287968(self, 5, 0);
             (*pp)->sub.p3C[(*pp)->sub.cur] = r;
             {
-                sSndDEF0Mgr* m2 = *self->p118;
+                cBankManager* m2 = *self->p118;
                 m2->sub.tgt[m2->sub.cur] = self->blk;
             }
             func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
             OPTS_Callback_DEF0(*self->p118, D_004A36D0_DEF0[0]);
             {
-                sSndDEF0Mgr** pq = self->p118;
+                cBankManager** pq = self->p118;
                 int q = func_00288A20(self, obj);
                 (*pq)->sub.p64[(*pq)->sub.cur] = q;
             }
@@ -5668,7 +5542,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
     } else {
         if (--self->users == 0) {
             func_002AD5F0(&(*self->p118)->sub, self->handle, 1, 2.0f);
-            sSndDEF0Mgr* mg = *self->p118;
+            cBankManager* mg = *self->p118;
             sVEk_DEF0* vt = *(sVEk_DEF0**)((char*)mg + 0xAB0);
             char* sub = (char*)&mg->sub;
             vt[3].fn(sub + vt[3].delta, D_004A36D0_DEF0[0]);
@@ -5768,16 +5642,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE590Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndE590Sys {
-    sSndE590Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndE590Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00288A20(void* self, void* obj);
@@ -5788,7 +5658,7 @@ extern "C" int func_00288A20(void* self, void* obj);
 static inline int sndE590AddVoice(void* vself, int a, int b, int type, unsigned short pitch)
 {
     sSndE590Sys* self = (sSndE590Sys*)vself;
-    sSndE590Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -5812,14 +5682,14 @@ static inline int sndE590AddVoice(void* vself, int a, int b, int type, unsigned 
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndE590Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_E590_MAX(0, SND_E590_MIN(s2->vals[s2->cur], 0x7F));
-    sSndE590Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    sSndE590Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     *(unsigned short*)((char*)&m3->sub.ch[m3->sub.cur] + 0xC) = pitch;
     return func_002906B8(self);
 }
@@ -5855,16 +5725,12 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE970Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSndE970Sys {
-    sSndE970Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
     char padC[0x118 - 0xC];
-    sSndE970Mgr** p118;      // 0x118
+    cBankManager** p118;      // 0x118
 };
 
 extern "C" int func_00288A20(void* self, void* obj);
@@ -5875,7 +5741,7 @@ extern "C" int func_00288A20(void* self, void* obj);
 static inline int sndE970AddVoice(void* vself, int a, int b, int type)
 {
     sSndE970Sys* self = (sSndE970Sys*)vself;
-    sSndE970Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -5899,11 +5765,11 @@ static inline int sndE970AddVoice(void* vself, int a, int b, int type)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
-    sSndE970Mgr* m2 = *self->p118;
+    cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_E970_MAX(0, SND_E970_MIN(s2->vals[s2->cur], 0x7F));
-    sSndE970Mgr** pp = self->p118;
+    cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     return func_002906B8(self);
@@ -6344,7 +6210,7 @@ extern "C" void func_0029F660(void* vself, void* vrider, int a, int b)
         }
     }
     int vol = func_00290C40(self, rider);
-    sSnd17D0Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -6368,17 +6234,17 @@ extern "C" void func_0029F660(void* vself, void* vrider, int a, int b)
     s->p7C[m->sub.cur] = 1;
     self->a4[self->mgr->sub.cur] = kind;
     self->a8[self->mgr->sub.cur] = prio;
-    sSnd17D0Mgr* m3 = *self->p118;
+    cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
     {
-        sSnd17D0Mgr** pq = self->p118;
+        cBankManager** pq = self->p118;
         int q = func_00288A20(self, rider);
         (*pq)->sub.p64[(*pq)->sub.cur] = q;
     }
     {
-        sSnd17D0Mgr** pp = self->p118;
+        cBankManager** pp = self->p118;
         int r = (int)func_00287968(self, 4, func_00123128(rider));
         (*pp)->sub.p3C[(*pp)->sub.cur] = r;
     }
@@ -6389,7 +6255,7 @@ extern "C" void func_0029F660(void* vself, void* vrider, int a, int b)
         func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
     }
     {
-        sSnd17D0Mgr** pt = self->p118;
+        cBankManager** pt = self->p118;
         char* obj = (char*)&rider->mVtbl;
         sSsVtF660* vt = *(sSsVtF660**)obj;
         void* pos = vt[kRiderVt_getPosition].fn(obj + vt[kRiderVt_getPosition].delta);
@@ -9288,12 +9154,8 @@ struct sPool5D08 {
     int f17C;
 };
 
-struct sSnd5D08Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd5D08Sys {
-    sSnd5D08Mgr* mgr;
+    cBankManager* mgr;
     int* a4;                 // 0x4
     int* a8;                 // 0x8
 };
@@ -9304,7 +9166,7 @@ extern sSnd5D08Sys* D_004A36F8_5D08 __asm__("D_004A36F8");
 #define SND_5D08_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_5D08(sSnd5D08Mgr* m, sSndCallback cb)
+static inline void OPTS_Callback_5D08(cBankManager* m, sSndCallback cb)
 {
     cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -9357,7 +9219,7 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
         } while (h < 3);
         found->grp->vec = *found->p;
         sSnd5D08Sys* sys = D_004A36F8_5D08;
-        sSnd5D08Mgr* m = sys->mgr;
+        cBankManager* m = sys->mgr;
         int a = self->fD8;
         cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
@@ -9385,30 +9247,30 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
         {
             sSnd5D08Sys* s2 = D_004A36F8_5D08;
             s2->mgr->sub.tgt[s2->mgr->sub.cur] = &found->grp->vec;
-            sSnd5D08Mgr* m2 = s2->mgr;
+            cBankManager* m2 = s2->mgr;
             cSndPlayOpts* ss = &m2->sub;
             ss->vals[m2->sub.cur] = found->v4;
             ss->ch[m2->sub.cur].vol = SND_5D08_MAX(0, SND_5D08_MIN(ss->vals[ss->cur], 0x7F));
         }
         {
-            sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8_5D08->mgr;
             m2->sub.p3C[m2->sub.cur] = self->f17C;
         }
         {
-            sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8_5D08->mgr;
             m2->sub.p74[m2->sub.cur] = 1;
         }
         {
-            sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8_5D08->mgr;
             m2->sub.p64[m2->sub.cur] = self->f0;
         }
         OPTS_Callback_5D08(D_004A36F8_5D08->mgr, D_004A3700_5D08[0]);
         {
-            sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8_5D08->mgr;
             m2->sub.p60[m2->sub.cur] = (int)self;
         }
         {
-            sSnd5D08Mgr* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8_5D08->mgr;
             m2->sub.p7C[m2->sub.cur] = 0;
         }
         found->grp->handle = func_002906B8(D_004A36F8_5D08);
@@ -10156,14 +10018,10 @@ INCLUDE_ASM("sound/soundsys", func_002A7468);
 #ifdef SKIP_ASM
 extern "C" void* func_00416210(void* dst, int c, int n);
 
-struct sSnd7468Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;        // 0x1D8
-};
 
 extern "C" void func_002A7468(char** sys)
 {
-    sSnd7468Mgr* m = *(sSnd7468Mgr**)sys;
+    cBankManager* m = *(cBankManager**)sys;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = s->def;
@@ -10797,12 +10655,8 @@ struct sSnd8450E8 {
     int a;
     int b;
 };
-struct sSnd8450Mgr {
-    char pad0[0x1D8];
-    cSndPlayOpts sub;         // 0x1D8
-};
 struct sSnd8450Sys {
-    sSnd8450Mgr* mgr;
+    cBankManager* mgr;
     char pad4[0xC];
     sSnd8450E8* e10;         // 0x10
 };
@@ -10810,7 +10664,7 @@ struct sSnd8450Sys {
 extern "C" void func_002A8450(char** sys, int a, int b)
 {
     sSnd8450Sys* self = (sSnd8450Sys*)sys;
-    sSnd8450Mgr* m = self->mgr;
+    cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
@@ -10849,9 +10703,9 @@ extern "C" int func_002A86B8(char** sys);
 extern "C" int func_002A8B28(void* unused, char* obj)
 {
     func_002A8450((char**)D_004A3744_8B28, *(int*)(obj + 0x1C), *(int*)(obj + 0x20));
-    sSnd8450Mgr* m = D_004A3744_8B28->mgr;
+    cBankManager* m = D_004A3744_8B28->mgr;
     m->sub.p3C[m->sub.cur] = *(int*)(obj + 0x18);
-    sSnd8450Mgr* m2 = D_004A3744_8B28->mgr;
+    cBankManager* m2 = D_004A3744_8B28->mgr;
     cSndPlayOpts* s = &m2->sub;
     s->vals[m2->sub.cur] = *(int*)(obj + 0x24);
 #define SND_X (s->vals[s->cur])
