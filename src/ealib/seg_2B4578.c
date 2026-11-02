@@ -507,6 +507,9 @@ struct s7B8 {
     struct s7B8Queue *f304[32];
 };
 extern struct s7B8 D_005157B8;
+extern int D_005157B0;
+extern int D_0044E1C0;
+extern unsigned int D_0044E1C4;
 
 /* D_00515B40: the software mixer (channel buffers, per-voice gain entries with their filter chains, the filter
    factories). Layout from every use in this unit; field names are their offsets. */
@@ -9124,8 +9127,6 @@ int func_003C5538(unsigned int kind, char **out) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5600);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044E1C4_5600[] __asm__("D_0044E1C4");
 int func_003C54C0_5600(int, int *) __asm__("func_003C54C0");
 
 int func_003C5600(int arg0) {
@@ -9134,7 +9135,7 @@ int func_003C5600(int arg0) {
     if (buf[0] == 0) {
         return -5;
     }
-    D_0044E1C4_5600[0] = arg0;
+    D_0044E1C4 = arg0;
     return 0;
 }
 #endif
