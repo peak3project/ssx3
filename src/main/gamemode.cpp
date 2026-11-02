@@ -79,6 +79,12 @@ struct sRiderStats {
     int w[3];
 };
 
+// The big-air handler (cGMBigAirHandler, vtable D_0047CFA0, 0x7C bytes): score table t[heat][rider].
+struct cGMBigAirHandler {
+    sVEntry<void(void*)>* vt;   // 0x00
+    int t[3][10];               // 0x04
+};
+
 static inline sRace* GetRace()
 {
     return D_004A28A8->game->race;
@@ -638,19 +644,13 @@ extern "C" int func_001454F8(void* iface, int a1);
 extern "C" void func_00238B70(void* self, int n);
 // PORT: func_00239938 is defined as (void); this caller passes self.
 extern "C" void func_00239938(void* self);
-struct sScore_239AA0;
-extern "C" void func_00239AA0(sScore_239AA0* self);
+extern "C" void func_00239AA0(cGMBigAirHandler* self);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern signed char D_00535C11[];
 extern unsigned int D_00536640[];
 extern int D_00536708[];
 
-struct sScore_238E20 {
-    sVEntry<void(void*)>* vt;
-    int t[3][10];
-};
-
-extern "C" void func_00238E20(sScore_238E20* self)
+extern "C" void func_00238E20(cGMBigAirHandler* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     int i;
@@ -681,7 +681,7 @@ extern "C" void func_00238E20(sScore_238E20* self)
         cGameModeMan* g2 = D_004A2C70;
         g2->f70 = 3;
         g2->f74 = 3;
-        func_00239AA0((sScore_239AA0*)self);
+        func_00239AA0(self);
     }
     D_004A2C70->f78 = func_001454F8(race, D_004A2C70->f0) * 60;
     cGameModeMan* g3 = D_004A2C70;
@@ -715,7 +715,7 @@ extern "C" void func_00238E20(sScore_238E20* self)
             func_00416210(t0, 0, 0x78);
             self->vt[4].fn((char*)self + self->vt[4].delta);
             func_00239938(self);
-            func_00239AA0((sScore_239AA0*)self);
+            func_00239AA0(self);
         }
         D_00536640[0] = 0;
         for (i = 1; i < D_004A2C70->iNumberAI + 1; i++) {
@@ -779,12 +779,7 @@ extern int D_005366A8[];
 extern int D_00536730[];
 extern signed char D_00535C11[];
 
-struct sScore_239230 {
-    void* vt;
-    int t[3][10];
-};
-
-extern "C" void func_00239230(sScore_239230* self, int idx)
+extern "C" void func_00239230(cGMBigAirHandler* self, int idx)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -949,17 +944,12 @@ struct sOpts_239AA0 {
     signed char f49;
 };
 
-struct sScore_239AA0 {
-    int f0;
-    int t[3][10];
-};
-
 static inline int opt49_239AA0(sOpts_239AA0* o)
 {
     return o->f49;
 }
 
-extern "C" void func_00239AA0(sScore_239AA0* self)
+extern "C" void func_00239AA0(cGMBigAirHandler* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -998,17 +988,13 @@ extern "C" void func_00239AA0(sScore_239AA0* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239CE0);
 #ifdef SKIP_ASM
-struct sScoreTable239CE0 {
-    int f0;
-    int tbl[8][10];
-};
 
-extern "C" int func_00239CE0(sScoreTable239CE0* self, int col, int row)
+extern "C" int func_00239CE0(cGMBigAirHandler* self, int col, int row)
 {
     if (D_004A2C70->f0 < row) {
         return 0;
     }
-    return self->tbl[row][col];
+    return self->t[row][col];
 }
 #endif
 
