@@ -79,6 +79,10 @@ extern struct s0710 D_00450710[];
 struct sShapeInfo { int len; int start; int n; unsigned char col[4]; };
 int func_003DB838(unsigned char *shp, int idx, struct sShapeInfo *out);
 
+/* A selection set: one entry per layer (x = shape, tbl[start .. start + len) its candidates, cur the chosen one). */
+struct sSel { short x; unsigned short y; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
+struct sSelSet { struct sSel ent[12]; unsigned char n; unsigned char ntbl; unsigned char tbl[200]; };
+
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6498);
 #ifdef SKIP_ASM
@@ -1470,13 +1474,11 @@ void func_003D8CB0(struct H_8CB0 *h, unsigned char *out) {
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8E58);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_8E58 { short x; char pad[2]; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
-struct H_8E58 { struct E_8E58 ent[12]; char pad[2]; unsigned char tbl[1]; };
 struct L_8E58 { char pad[4]; unsigned char cnt; unsigned char n5; unsigned char n6; char pad2; unsigned char list[1]; };
 struct C_8E58 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 
-int func_003D8E58_impl(struct H_8E58 *h, struct L_8E58 *l) __asm__("func_003D8E58");
-int func_003D8E58_impl(struct H_8E58 *h, struct L_8E58 *l) {
+int func_003D8E58_impl(struct sSelSet *h, struct L_8E58 *l) __asm__("func_003D8E58");
+int func_003D8E58_impl(struct sSelSet *h, struct L_8E58 *l) {
     struct sShapeInfo o;
     int ok = 1;
     int i;
@@ -1703,13 +1705,11 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D93C0);
    wraps. The helpers are the inline bodies of func_003DA910 (usage percent) and
    func_003DAC20 (next combination); the retail TU keeps their out-of-line copies at the
    end of the file. */
-struct E_93C0 { short x; char pad[2]; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
-struct H_93C0 { struct E_93C0 ent[12]; char pad[2]; unsigned char tbl[1]; };
 struct L_93C0 { char pad[4]; unsigned char cnt; unsigned char n5; char pad2[2]; unsigned char list[1]; };
-extern int func_003D8E58_93C0(struct H_93C0 *, struct L_93C0 *) __asm__("func_003D8E58");
+extern int func_003D8E58_93C0(struct sSelSet *, struct L_93C0 *) __asm__("func_003D8E58");
 
 /* same body as func_003DA910 */
-static inline int usage_93C0(unsigned char *a0, struct H_93C0 *h) {
+static inline int usage_93C0(unsigned char *a0, struct sSelSet *h) {
     struct sShapeInfo o;
     int total = 0;
     int i;
@@ -1729,11 +1729,11 @@ static inline int usage_93C0(unsigned char *a0, struct H_93C0 *h) {
 }
 
 /* same body as func_003DAC20 */
-static inline int next_93C0(unsigned char *h, struct E_93C0 *e) {
+static inline int next_93C0(unsigned char *h, struct sSel *e) {
     int wrap = 0;
     int done = 0;
     int i = (h[4] >> 2) - 1;
-    struct E_93C0 *p = &e[i];
+    struct sSel *p = &e[i];
     int t = p->len;
     int limit = p->start + t;
     do {
@@ -1753,8 +1753,8 @@ static inline int next_93C0(unsigned char *h, struct E_93C0 *e) {
     return wrap;
 }
 
-int func_003D93C0_impl(struct L_93C0 *l, struct H_93C0 *h, int thr) __asm__("func_003D93C0");
-int func_003D93C0_impl(struct L_93C0 *l, struct H_93C0 *h, int thr) {
+int func_003D93C0_impl(struct L_93C0 *l, struct sSelSet *h, int thr) __asm__("func_003D93C0");
+int func_003D93C0_impl(struct L_93C0 *l, struct sSelSet *h, int thr) {
     int ok = 0;
     int of = 0;
     int i;
@@ -1789,19 +1789,17 @@ int func_003D93C0_impl(struct L_93C0 *l, struct H_93C0 *h, int thr) {
 INCLUDE_ASM("ealib/seg_2D7498", func_003D95B8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_95B8 { short x; char pad[2]; unsigned char start; unsigned char len; unsigned char cur; unsigned char flag; };
-struct H_95B8 { struct E_95B8 ent[12]; char pad[2]; unsigned char tbl[1]; };
 struct L_95B8 { char pad[4]; unsigned char cnt; unsigned char n5; char pad2[2]; unsigned char list[1]; };
 struct C_95B8 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 extern int func_003D83B8_95B8(void *, unsigned char **) __asm__("func_003D83B8");
-extern int func_003D93C0_95B8(struct L_95B8 *, struct H_95B8 *, int) __asm__("func_003D93C0");
+extern int func_003D93C0_95B8(struct L_95B8 *, struct sSelSet *, int) __asm__("func_003D93C0");
 extern int func_003DB5C0(int, int);
 
-static __inline__ void shuffle_95B8(struct L_95B8 *l, struct H_95B8 *h) {
+static __inline__ void shuffle_95B8(struct L_95B8 *l, struct sSelSet *h) {
     int i = 0;
     int j;
     int n = l->cnt >> 2;
-    struct E_95B8 *e;
+    struct sSel *e;
     unsigned char *p;
     unsigned char *q;
     unsigned char t;
@@ -1818,7 +1816,7 @@ static __inline__ void shuffle_95B8(struct L_95B8 *l, struct H_95B8 *h) {
     }
 }
 
-static __inline__ void apply_95B8(void *a0, struct H_95B8 *h, struct L_95B8 *l) {
+static __inline__ void apply_95B8(void *a0, struct sSelSet *h, struct L_95B8 *l) {
     struct sShapeInfo o;
     unsigned char *out;
     int n;
@@ -1842,7 +1840,7 @@ static __inline__ void apply_95B8(void *a0, struct H_95B8 *h, struct L_95B8 *l) 
     }
 }
 
-int func_003D95B8(void *a0, struct H_95B8 *h, struct L_95B8 *l, int mode, int thr) {
+int func_003D95B8(void *a0, struct sSelSet *h, struct L_95B8 *l, int mode, int thr) {
     int ok;
     int i;
     int n;
@@ -1973,10 +1971,8 @@ void func_003D9A40(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9AC8);
 #ifdef SKIP_ASM
-struct E_9AC8 { unsigned short x; unsigned short y; unsigned short z; unsigned char idx; unsigned char pad; };
-struct H_9AC8 { struct E_9AC8 ent[12]; char pad[2]; unsigned char tbl[1]; };
 
-void func_003D9AC8(struct H_9AC8 *h, int id, int a2, unsigned char *a3, int a4, int *a5) {
+void func_003D9AC8(struct sSelSet *h, int id, int a2, unsigned char *a3, int a4, int *a5) {
     int n;
     int i;
     int cnt;
@@ -1998,7 +1994,7 @@ void func_003D9AC8(struct H_9AC8 *h, int id, int a2, unsigned char *a3, int a4, 
             for (i = 0; i < cnt; i++) {
                 D_00450700.q[j + i].x = h->ent[i].x;
                 D_00450700.q[j + i].idx = h->ent[i].y;
-                D_00450700.q[j + i].y = h->tbl[h->ent[i].idx];
+                D_00450700.q[j + i].y = h->tbl[h->ent[i].cur];
             }
             D_00450700.f8 += cnt;
         }
@@ -2302,10 +2298,8 @@ int func_003DA8E0(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DA910);
 #ifdef SKIP_ASM
-struct E_A910 { short x; unsigned short y; unsigned short z; unsigned char idx; unsigned char pad; };
-struct H_A910 { struct E_A910 ent[12]; char pad[2]; unsigned char tbl[1]; };
 
-int func_003DA910(unsigned char *a0, struct H_A910 *h) {
+int func_003DA910(unsigned char *a0, struct sSelSet *h) {
     struct sShapeInfo o;
     int total = 0;
     int i;
@@ -2313,7 +2307,7 @@ int func_003DA910(unsigned char *a0, struct H_A910 *h) {
     int cnt = a0[4] >> 2;
 
     for (i = 0; i < cnt; i++) {
-        if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].idx], &o)) {
+        if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
             total += o.len;
         }
     }
@@ -2408,23 +2402,21 @@ int func_003DAAB0(unsigned char *h, struct S_AAB0 *s) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DAB58);
 #ifdef SKIP_ASM
-struct E_AB58 { char pad[4]; unsigned char off; unsigned char cnt; char pad2[2]; };
-struct H_AB58 { struct E_AB58 ent[12]; char pad[2]; unsigned char tbl[1]; };
 extern int func_003DB5C0(int, int);
 
-void func_003DAB58(unsigned char *a0, struct H_AB58 *h) {
+void func_003DAB58(unsigned char *a0, struct sSelSet *h) {
     int i = 0;
     int j;
     int n = a0[4] >> 2;
-    struct E_AB58 *e;
+    struct sSel *e;
     unsigned char *p;
     unsigned char *q;
     unsigned char t;
 
     for (; i < n; i++) {
         e = &h->ent[i];
-        p = &h->tbl[e->off];
-        for (j = e->cnt; j >= 2; j--) {
+        p = &h->tbl[e->start];
+        for (j = e->len; j >= 2; j--) {
             q = &p[func_003DB5C0(j, -1)];
             t = p[j - 1];
             p[j - 1] = *q;
@@ -2437,18 +2429,11 @@ void func_003DAB58(unsigned char *a0, struct H_AB58 *h) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DAC20);
 #ifdef SKIP_ASM
-struct E_AC20 {
-    int pad;
-    unsigned char start;
-    unsigned char len;
-    unsigned char cur;
-    unsigned char pad2;
-};
-int func_003DAC20(unsigned char *h, struct E_AC20 *e) {
+int func_003DAC20(unsigned char *h, struct sSel *e) {
     int wrap = 0;
     int done = 0;
     int i = (h[4] >> 2) - 1;
-    struct E_AC20 *p = &e[i];
+    struct sSel *p = &e[i];
     int t = p->len;
     int limit = p->start + t;
     do {
@@ -2485,13 +2470,11 @@ int func_003DACA8(void *arg0) {
 INCLUDE_ASM("ealib/seg_2D7498", func_003DACE8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_ACE8 { short x; unsigned short y; unsigned short z; unsigned char idx; unsigned char pad; };
-struct H_ACE8 { struct E_ACE8 ent[12]; char pad[2]; unsigned char tbl[1]; };
 struct L_ACE8 { char pad[4]; unsigned char cnt; char pad2[3]; unsigned char list[1]; };
 struct C_ACE8 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 extern int func_003D83B8_ACE8(void *, unsigned char **) __asm__("func_003D83B8");
 
-void func_003DACE8(void *a0, struct H_ACE8 *h, struct L_ACE8 *l) {
+void func_003DACE8(void *a0, struct sSelSet *h, struct L_ACE8 *l) {
     struct sShapeInfo o;
     unsigned char *out;
     int n;
@@ -2506,7 +2489,7 @@ void func_003DACE8(void *a0, struct H_ACE8 *h, struct L_ACE8 *l) {
             c = (struct C_ACE8 *)((int *)l + l->list[i]);
             for (j = 0; j < c->n; j++) {
                 if (c->a[j] == 0xFE && !(c->b[j] & 0x80)) {
-                    if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].idx], &o)) {
+                    if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
                         out[c->b[j]] = o.col[j];
                     }
                 }
