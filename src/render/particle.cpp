@@ -87,6 +87,13 @@ struct sPtVec4c {
     sPtVec4c() {}
 };
 
+// g++ 2.95 vtable entry for a method taking only self, returning int.
+struct sPtVtI {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2580,15 +2587,10 @@ extern "C" void func_00376768(sPtGfx6768* self)
 //100%
 INCLUDE_ASM("render/particle", func_00376938);
 #ifdef SKIP_ASM
-struct sPtVEntryI6938 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 struct sPtGfx6938 {
     char pad_0x0[0x10D8];
-    sPtVEntryI6938* vtable;         // 0x10D8
+    sPtVtI* vtable;         // 0x10D8
     char pad_0x10DC[0x5900 - 0x10DC];
     unsigned short scissor[4];      // 0x5900: x, y, w, h
 };
@@ -2597,7 +2599,7 @@ struct sPtGfx6938 {
 extern "C" void func_00376938(void* p, float x, float y, float w, float h)
 {
     sPtGfx6938* self = (sPtGfx6938*)p;
-    sPtVEntryI6938* e = &self->vtable[10];
+    sPtVtI* e = &self->vtable[10];
     int width = e->fn((char*)self + e->delta);
     e = &self->vtable[11];
     int height = e->fn((char*)self + e->delta);
@@ -2637,11 +2639,6 @@ extern "C" void func_00376938(void* p, float x, float y, float w, float h)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("render/particle", func_00376A70);
 #ifdef SKIP_ASM
-struct sPtVEntryI6A70 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 struct sPtView6A70 {
     float x, y, w, h;               // 0x6D20 in the first view
@@ -2650,7 +2647,7 @@ struct sPtView6A70 {
 
 struct sPtGfx6A70 {
     char pad_0x0[0x10D8];
-    sPtVEntryI6A70* vtable;         // 0x10D8
+    sPtVtI* vtable;         // 0x10D8
     int curView;                    // 0x10DC
     char pad_0x10E0[0x18F0 - 0x10E0];
     void* keys;                     // 0x18F0
@@ -2669,7 +2666,7 @@ extern "C" void func_00364B88(void* table, void* key);
 
 extern "C" void func_00376A70(sPtGfx6A70* self, float x, float y, float w, float h)
 {
-    sPtVEntryI6A70* e = &self->vtable[11];
+    sPtVtI* e = &self->vtable[11];
     int height = e->fn((char*)self + e->delta);
     int mode = self->clampMode;
     if (mode < 3) {
@@ -3373,11 +3370,6 @@ extern "C" void func_0037A430(sPtGfx_A430* self)
 //100%
 INCLUDE_ASM("render/particle", func_0037A540);
 #ifdef SKIP_ASM
-struct sPartVEntryI_A540 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 
 struct sPartEmitter_A540 {
@@ -3395,7 +3387,7 @@ extern "C" sPartEmitter_A540* func_0037A540(void* a0, void* a1, void* a2, unsign
         if (e == 0) {
             return 0;
         }
-        sPartVEntryI_A540* vt = (sPartVEntryI_A540*)e->vt;
+        sPtVtI* vt = (sPtVtI*)e->vt;
         if (vt[2].fn((char*)e + vt[2].delta) == 0) {
             sPtVtVI* vt2 = (sPtVtVI*)e->vt;
             vt2[1].fn((char*)e + vt2[1].delta, 3);
