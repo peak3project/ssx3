@@ -1,5 +1,23 @@
 #include "common.h"
 
+/* D_00450C10: the file system's settings (0x24 bytes: func_003DE928 hands out a copy, func_003DE9B8 takes one).
+   Field names are their offsets; f04 / f08 are also reached through their own splat symbols. */
+struct sC10File { char *name; int a; int b; char *path; };   /* built-in file table entry (f20) */
+struct sC10 {
+    int f00;                        /* size */
+    void *(*f04)(char *, int, int); /* alloc (name, size, flags) */
+    void (*f08)(void *);            /* free */
+    int f0C;
+    int f10;
+    int f14;
+    int f18;
+    int f1C;
+    struct sC10File *f20;
+};
+extern struct sC10 D_00450C10;
+extern void *(*D_00450C14)(char *, int, int);   /* D_00450C10.f04 */
+extern void (*D_00450C18)(void *);              /* D_00450C10.f08 */
+
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
 #ifdef SKIP_ASM
@@ -635,7 +653,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCBD8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003DCC88(int, int, int, int);
 extern int func_003DCD98(int, int, int);
-extern int (*D_00450C10_CBD8[])(char *, int, int) __asm__("D_00450C10");
 extern char D_00495D28_CBD8[] __asm__("D_00495D28");
 extern int D_00519AB0_CBD8[] __asm__("D_00519AB0");
 extern int D_00519AE8;
@@ -643,7 +660,7 @@ extern int D_00519AE8;
 int func_003DCBD8(int arg0, int arg1, int arg2) {
     int r;
     if (D_00519AB0_CBD8[0] == 0) {
-        r = D_00450C10_CBD8[1](D_00495D28_CBD8, func_003DCD98(arg0, arg1, arg2), 0x100);
+        r = (int)D_00450C10.f04(D_00495D28_CBD8, func_003DCD98(arg0, arg1, arg2), 0x100);
         D_00519AE8 = r;
         return func_003DCC88(arg0, arg1, arg2, r);
     }
