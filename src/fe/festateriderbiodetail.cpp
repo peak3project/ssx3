@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", cFEStateRiderBio_onCreateScreen);
 #ifdef SKIP_ASM
@@ -21,7 +29,6 @@ extern char D_0045E3C8[];
 extern char D_0045E3D8[];
 extern char D_0045E3E8[];
 
-struct sVEnt_001908C0 { short delta; short index; void (*fn)(void*); };
 
 extern "C" void cFEStateRiderBio_onCreateScreen(void* self)
 {
@@ -40,7 +47,7 @@ extern "C" void cFEStateRiderBio_onCreateScreen(void* self)
     }
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
     *(int*)((char*)self + 0x48) = cBENewPlayerInterface_getPlayerCharID(iface, *(signed char*)((char*)self + 0x44));
-    sVEnt_001908C0* vt = *(sVEnt_001908C0**)((char*)iface + 0xC);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)iface + 0xC);
     vt[2].fn((char*)iface + vt[2].delta);
     *(int*)((char*)self + 0x4C) = 0;
     func_00190A08(self);
@@ -270,11 +277,6 @@ extern "C" void cFEStateRiderBio_fillBioInfo(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", func_001912D0);
 #ifdef SKIP_ASM
-struct sVEntry001912D0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 extern "C" void func_0039F400(void* list, void* item);
 extern "C" void func_00190A08(void* self);
 
@@ -286,7 +288,7 @@ extern "C" void func_001912D0(void* self, void* item, int msg)
     switch (msg) {
     case 6: {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry001912D0* vt = *(sVEntry001912D0**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[5].fn((char*)obj + vt[5].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
