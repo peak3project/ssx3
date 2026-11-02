@@ -5975,8 +5975,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00305C88);
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_5C88 { int idx; int val; int pad; int kind; };
-struct R12_5C88 { int a; int b; int c; };
-extern R12_5C88 D_004C9098_5C88 __asm__("D_004C9098");
 
 extern int D_004A3D98_5C88[2] __asm__("D_004A3D98");
 extern "C" int cAvalanche_triggerAvalanche(int);
@@ -5984,7 +5982,7 @@ extern int D_004A3AC4_5C88 __asm__("D_004A3AC4");
 extern int D_004A5868_5C88 __asm__("D_004A5868");
 extern int D_004A5860_5C88 __asm__("D_004A5860");
 extern sBindEnd_1FBE38 D_004A5864_5C88 __asm__("D_004A5864");
-extern "C" R12_5C88 func_00305C88(int n, Ent_5C88* e) {
+extern "C" cLunoValue func_00305C88(int n, Ent_5C88* e) {
     if (D_004A5868_5C88 == 0) {
         D_004A5868_5C88 = 1;
         D_004A5860_5C88 = 0;
@@ -6006,7 +6004,7 @@ extern "C" R12_5C88 func_00305C88(int n, Ent_5C88* e) {
     int a = vp[0];
     if (D_004A3AC4_5C88 == 0)
         cAvalanche_triggerAvalanche(a);
-    return D_004C9098_5C88;
+    return D_004C9098;
 }
 #endif
 
