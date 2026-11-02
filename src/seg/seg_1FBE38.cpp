@@ -5801,15 +5801,13 @@ extern int *D_004A3DD8_5660 __asm__("D_004A3DD8");
 extern char *D_004A28A8_5660 __asm__("D_004A28A8");
 struct Sh_5660 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual int v08(); };
 extern "C" void func_00390EC8(float);
-struct V3_5660 { float x, y, z; };
-extern V3_5660 D_004C9098_5660 __asm__("D_004C9098");
 extern unsigned D_5660 __asm__("D_004A5848");
 extern sBindEnd_1FBE38 D_004A584C;
 extern int D_004A5850;
 extern int D_004A3D90;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_5660 { int idx; int val; int pad; int type; };
-extern "C" V3_5660 func_00305660(int n, Ent_5660 *e) {
+extern "C" cLunoValue func_00305660(int n, Ent_5660 *e) {
     if (D_004A5850 == 0) {
         D_5660 = 0xFFFFFFFF;
         D_004A5850 = 1;
@@ -5838,7 +5836,7 @@ extern "C" V3_5660 func_00305660(int n, Ent_5660 *e) {
         if (sh->v08())
             func_00390EC8(0.0f);
     }
-    return D_004C9098_5660;
+    return D_004C9098;
 }
 #endif
 
