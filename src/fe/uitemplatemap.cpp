@@ -8,6 +8,22 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
+};
+
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_onCreateScreen);
 #ifdef SKIP_ASM
@@ -56,20 +72,6 @@ extern char D_004705C8[];
 extern char D_004705D8[];
 extern char D_004705E8[];
 
-class cUIObj_200700 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09(int on);
-};
-
 struct sMapTmpl_200700 {
     char pad0[0x2CC];
     int popup;                  // 0x2CC
@@ -78,7 +80,7 @@ struct sMapTmpl_200700 {
     int file;                   // 0x2D8
     int f2DC;
     int f2E0;
-    cUIObj_200700* map;         // 0x2E4
+    cUIThing* map;         // 0x2E4
     void* screen;               // 0x2E8
     void* owner;                // 0x2EC
     int f2F0;                   // 0x2F0
@@ -98,10 +100,10 @@ extern "C" void cUITemplate_MAP_onCreateScreen(void* tmpl, void* screen, void* o
     self->mode = -1;
     self->file = func_001A3BF0(*(void**)((char*)D_004A28A8 + 0x11C));
     self->pic = 0;
-    cUIObj_200700* o = (cUIObj_200700*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A25A8));
+    cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A25A8));
     self->map = o;
     if (o != 0)
-        o->v09(0);
+        o->setVisible(0);
     self->f2F0 = 0;
     cUITemplate_MAP_setupPeakUnlock(self);
     cUITemplate_MAP_setupEventUnlock((cUITemplate_MAP*)self);
@@ -341,7 +343,6 @@ extern "C" void cUITemplate_MAP_setupPeakUnlock(void* p)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00201868);
 #ifdef SKIP_ASM
-
 extern "C" void func_00201868(void* self)
 {
     *(int*)((char*)self + 0x2F0) = 1;
@@ -385,7 +386,6 @@ extern "C" void cUITemplate_MAP_setupPeakGoals(void* self);
 extern "C" void cUITemplate_MAP_setupLayout(void* self);
 extern "C" void func_00207430(void* self);
 extern int D_004A259C;
-
 
 // PORT: the unit declares func_00202770(void*); the body also takes the menu object in $5.
 extern "C" void func_00202770_r(void* self, void* menu) __asm__("func_00202770");
@@ -701,20 +701,7 @@ extern int D_004A25A0;
 extern int D_004A25A4;
 extern unsigned int D_004A2594;
 
-class cUIObj_MFocusB {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07(int on);
-    virtual void v08(int on);
-    virtual void v09(int on);
-};
-class cUIObj_MFocus : public cUIObj_MFocusB {
+class cUIObj_MFocus : public cUIThing {
 public:
     int f0C;
     int f10;
@@ -725,8 +712,8 @@ static inline cUIObj_MFocus* hideObj(char* self, char* name)
 {
     cUIObj_MFocus* o = (cUIObj_MFocus*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(name));
     if (o != 0) {
-        o->v07(0);
-        o->v09(0);
+        o->setFocus(0);
+        o->setVisible(0);
     }
     return o;
 }
@@ -734,8 +721,8 @@ static inline cUIObj_MFocus* hideObj(char* self, char* name)
 static inline void showObj(cUIObj_MFocus* o)
 {
     o->flags |= 1;
-    o->v09(1);
-    o->v07(1);
+    o->setVisible(1);
+    o->setFocus(1);
 }
 
 extern "C" void cUITemplate_MAP_setupMenuFocus(void* self_, int mode)
@@ -759,16 +746,16 @@ extern "C" void cUITemplate_MAP_setupMenuFocus(void* self_, int mode)
     cUIObj_MFocus* o13 = hideObj(self, D_00470A20);
     if (*(int*)(self + 0x2CC) != 0) {
         cUIState_hideObjSafe(*(void**)(self + 0x2EC), D_004A2610);
-        o13->v07(1);
-        o13->v09(1);
+        o13->setFocus(1);
+        o13->setVisible(1);
         if (*(int*)(self + 0x2D0) == 0) {
             cUIObj_MFocus* o = (cUIObj_MFocus*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_004706C8));
-            o->v09(1);
-            o->v08(0);
+            o->setVisible(1);
+            o->setStatic(0);
         } else {
             cUIObj_MFocus* o = (cUIObj_MFocus*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_004706C8));
-            o->v09(0);
-            o->v08(1);
+            o->setVisible(0);
+            o->setStatic(1);
         }
         return;
     }
@@ -777,8 +764,8 @@ extern "C" void cUITemplate_MAP_setupMenuFocus(void* self_, int mode)
         cUITemplate_MAP_setupPeakInfo(self);
         if (o0 != 0) {
             o0->flags |= 1;
-            o0->v07(1);
-            o0->v09(1);
+            o0->setFocus(1);
+            o0->setVisible(1);
         }
         if (D_004A2594 < 2) {
             cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00470518));
@@ -883,20 +870,6 @@ extern char D_004A2638[];
 extern char D_004A2640[];
 extern int D_004A259C;
 
-class cUIObj_203A58 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08(int on);
-    virtual void v09(int on);
-};
-
 extern "C" void cUITemplate_MAP_setupPopup(char* self)
 {
     if (*(int*)(self + 0x2CC) != 0) {
@@ -924,16 +897,16 @@ extern "C" void cUITemplate_MAP_setupPopup(char* self)
             if (title != 0)
                 cUIText_setUnicodeStringByID(title, GetHashValue32(D_0046FAA0));
             if (o != 0) {
-                ((cUIObj_203A58*)o)->v09(0);
-                ((cUIObj_203A58*)o)->v08(1);
+                ((cUIThing*)o)->setVisible(0);
+                ((cUIThing*)o)->setStatic(1);
             }
             cUIState_hideObjSafe(*(void**)(self + 0x2EC), D_004706C8);
         } else {
             if (title != 0)
                 cUIText_setUnicodeStringByID(title, GetHashValue32(D_00470AA8));
             if (o != 0) {
-                ((cUIObj_203A58*)o)->v09(1);
-                ((cUIObj_203A58*)o)->v08(0);
+                ((cUIThing*)o)->setVisible(1);
+                ((cUIThing*)o)->setStatic(0);
             }
             cUIState_showObjSafe(*(void**)(self + 0x2EC), D_004706C8);
         }
@@ -978,7 +951,6 @@ extern char D_00470E10[];
 extern char D_00470E20[];
 extern char D_00470E30[];
 extern char D_00470E40[];
-
 
 static inline int setPic00204FF0(char* name)
 {
