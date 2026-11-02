@@ -10930,34 +10930,31 @@ void func_003C8B40(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8B80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *f_5C60_8B80(int) __asm__("func_003B5C60");
+extern struct sB40Node *f_5C60_8B80(int) __asm__("func_003B5C60");
 extern void f_5E98_8B80(void *) __asm__("func_003B5E98");
-extern void f_8F48_8B80(void *, void *) __asm__("func_003C8F48");
-extern void f_8FB0_8B80(void *, void *) __asm__("func_003C8FB0");
-extern void f_B4A8_8B80(void *, int) __asm__("func_003CB4A8");
-extern void f_B528_8B80(void *) __asm__("func_003CB528");
-struct Q_8B80 { int w0; int w4; char pad[0x10]; short h18; };
-struct E_8B80 { char pad[0x40]; char sub[0x14]; struct Q_8B80 *q; char pad2[8]; };
-extern struct E_8B80 *D_00515D1C_8B80[] __asm__("D_00515D1C");
+extern void f_8F48_8B80(struct sB40Node **, struct sB40Node *) __asm__("func_003C8F48");
+extern void f_8FB0_8B80(struct sB40Node **, struct sB40Node *) __asm__("func_003C8FB0");
+extern void f_B4A8_8B80(struct sB40Node *, int) __asm__("func_003CB4A8");
+extern void f_B528_8B80(struct sB40Node *) __asm__("func_003CB528");
 
 void func_003C8B80(int arg0, int arg1) {
-    struct E_8B80 *p = D_00515D1C_8B80[0] + arg0;
+    struct sB40Ent *p = &D_00515D1C[arg0];
     if (arg1 > 0) {
-        if (p->q == 0) {
-            struct Q_8B80 *n = (struct Q_8B80 *)f_5C60_8B80(0x50);
-            p->q = n;
-            n->w4 = 0;
-            p->q->h18 = 0x78;
-            f_B528_8B80(p->q);
-            f_8F48_8B80(p->sub, p->q);
+        if (p->f54 == 0) {
+            struct sB40Node *n = f_5C60_8B80(0x50);
+            p->f54 = n;
+            n->f04 = 0;
+            p->f54->f18 = 0x78;
+            f_B528_8B80(p->f54);
+            f_8F48_8B80(&p->f40, p->f54);
         }
-        f_B4A8_8B80(p->q, arg1);
+        f_B4A8_8B80(p->f54, arg1);
         return;
     }
-    if (p->q != 0) {
-        f_8FB0_8B80(p->sub, p->q);
-        f_5E98_8B80(p->q);
-        p->q = 0;
+    if (p->f54 != 0) {
+        f_8FB0_8B80(&p->f40, p->f54);
+        f_5E98_8B80(p->f54);
+        p->f54 = 0;
     }
 }
 #endif
