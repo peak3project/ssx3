@@ -5,6 +5,71 @@ extern const char D_0045A848[];
 extern void* D_0045ADF8[16];
 extern void* D_004A1238;
 
+// Per-profile character stat levels / flag tables (as in be/beintplayer and be/belibrary).
+struct sBEFlagEntryPC {
+    short id;
+    unsigned short flags;
+};
+
+struct sBEProfilePair {
+    int a;
+    int b;
+};
+
+struct sPlayerStat7 {
+    signed char v[7];
+};
+
+// One collectable record per peak-mission slot (12 bytes).
+struct sBEMissionRec {
+    signed char collected;              // 0x0: number of bits set in bits[]
+    char pad_0x1[3];
+    unsigned int bits[2];               // 0x4: 64 collected flags
+};
+
+// One character's record inside a profile: D_004A6CA8 is [profile][character] of these
+// (0x9B50 = 10 * 0xF88); same type as be/belibrary's sBEProfileChar.
+struct sBEProfileChar {
+    int field_0x000;                    // 0x000
+    sBEMissionRec missions[23];         // 0x004
+    unsigned int missionFlags[88];      // 0x118: one flag word per mission (D_0043EE10 order)
+    // PORT: 64-bit `long` bitfield (8 bytes on EE); use uint64_t off-PS2.
+    unsigned long b0 : 1;               // 0x278: bits 0-5 kind 0-2 flags, 6-11 more kind flags,
+    unsigned long b1 : 1;               //        12/13 peak 1/2 locked, 14-19 kinds 6-11
+    unsigned long b2 : 1;
+    unsigned long b3 : 1;
+    unsigned long b4 : 1;
+    unsigned long b5 : 1;
+    unsigned long b6 : 1;
+    unsigned long b7 : 1;
+    unsigned long b8 : 1;
+    unsigned long b9 : 1;
+    unsigned long b10 : 1;
+    unsigned long b11 : 1;
+    unsigned long b12 : 1;
+    unsigned long b13 : 1;
+    unsigned long b14 : 1;
+    unsigned long b15 : 1;
+    unsigned long b16 : 1;
+    unsigned long b17 : 1;
+    unsigned long b18 : 1;
+    unsigned long b19 : 1;
+    int field_0x27C;                    // 0x27C
+    short level0;                       // 0x280
+    short progress0;                    // 0x282
+    short level1;                       // 0x284
+    short progress1;                    // 0x286
+    short* index;                       // 0x288
+    int count;                          // 0x28C
+    sBEFlagEntryPC entries[0x20D];      // 0x290
+    char pad_0xAC4[0xBA0 - 0xAC4];
+    sBEProfilePair pairs[7];            // 0xBA0
+    char pad_0xBD8[0xBDF - 0xBD8];
+    sPlayerStat7 stats;                 // 0xBDF
+    char pad_0xBE6[0xF88 - 0xBE6];
+};
+extern sBEProfileChar D_004A6CA8[][10];
+
 struct cBEMissionInterface {
     char pad_0x00[8];
     int field_0x8;
@@ -102,10 +167,8 @@ extern "C" int func_00153390(void* self, int owner)
 //100%
 INCLUDE_ASM("be/beintmission", func_001533F8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
-extern char D_004A6CA8_raw[] __asm__("D_004A6CA8");
 
 extern "C" int func_001533F8(void* self, int rider, int idx)
 {
@@ -113,7 +176,7 @@ extern "C" int func_001533F8(void* self, int rider, int idx)
     int c = cBELibrary_getCharacterID(rider);
     int sum = 0;
     int off = idx * 12 + c * 0xF88 + profile * 0x9B50;
-    char* p = D_004A6CA8_raw + off;
+    char* p = (char*)D_004A6CA8 + off;
     for (int i = 0; i < 17; i++)
     {
         sum += *(signed char*)(p + 4);
@@ -126,19 +189,16 @@ extern "C" int func_001533F8(void* self, int rider, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153498);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 extern int D_005305F0[];
-// Byte view of the profile table; the unit declares D_004A6CA8 later with a struct type.
-extern char D_004A6CA8_raw[] __asm__("D_004A6CA8");
 
 extern "C" int func_00153498(void* self, int rider, int idx)
 {
     int profile = cBELibrary_getProfileIndex(rider);
     int c = cBELibrary_getCharacterID(rider);
     int off = (idx + D_005305F0[0]) * 12 + c * 0xF88 + profile * 0x9B50;
-    char* p = D_004A6CA8_raw + off;
+    char* p = (char*)D_004A6CA8 + off;
     return *(signed char*)(p + 4);
 }
 #endif
@@ -146,11 +206,8 @@ extern "C" int func_00153498(void* self, int rider, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153520);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
-// Byte view of the profile table; the unit declares D_004A6CA8 later with a struct type.
-extern char D_004A6CA8_raw[] __asm__("D_004A6CA8");
 
 extern "C" int func_00153520(void* self, int rider, int idx)
 {
@@ -158,7 +215,7 @@ extern "C" int func_00153520(void* self, int rider, int idx)
     int c = cBELibrary_getCharacterID(rider);
     int sum = 0;
     int off = idx * 12 + c * 0xF88 + profile * 0x9B50;
-    char* p = D_004A6CA8_raw + off;
+    char* p = (char*)D_004A6CA8 + off;
     for (int i = 0; i < 1; i++)
     {
         sum += *(signed char*)(p + i * 12 + 4);
@@ -170,26 +227,10 @@ extern "C" int func_00153520(void* self, int rider, int idx)
 //100%
 INCLUDE_ASM("be/beintmission", cBEMissionInterface_getCurrentCollectForPeak);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 
-struct sEconRecord_001535C0
-{
-    int id;
-    signed char count; // 0x4
-    char pad_0x05[0x7];
-};
-
-// One character's economy block (0xF88 bytes); 10 per profile (0x9B50).
-struct sEconChar_001535C0
-{
-    sEconRecord_001535C0 records[22];
-    char pad[0xF88 - 22 * 12];
-};
-
 extern sMissionEntry_0043D950 D_0043D950[];
-extern sEconChar_001535C0 D_004A6CA8_econ[][10] __asm__("D_004A6CA8");
 
 extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int rider, int owner)
 {
@@ -202,7 +243,7 @@ extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int ride
         {
             if (D_0043D950[j].owner == owner)
             {
-                sum += D_004A6CA8_econ[profile][character].records[i + j].count;
+                sum += D_004A6CA8[profile][character].missions[i + j].collected;
             }
         }
     }
@@ -213,22 +254,7 @@ extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int ride
 //100%
 INCLUDE_ASM("be/beintmission", func_00153688);
 #ifdef SKIP_ASM
-struct sEconRecord_00153688
-{
-    int id;
-    signed char count; // 0x4
-    char pad_0x05[0x7];
-};
-
-// One character's economy block (0xF88 bytes); 10 per profile (0x9B50).
-struct sEconChar_00153688
-{
-    sEconRecord_00153688 records[22];
-    char pad[0xF88 - 22 * 12];
-};
-
 extern sMissionEntry_0043D950 D_0043D950[];
-extern sEconChar_00153688 D_004A6CA8[][10];
 
 extern "C" int func_00153688(void* self, int profile, int character, int owner)
 {
@@ -239,7 +265,7 @@ extern "C" int func_00153688(void* self, int profile, int character, int owner)
         {
             if (D_0043D950[j].owner == owner)
             {
-                sum += D_004A6CA8[profile][character].records[i + j].count;
+                sum += D_004A6CA8[profile][character].missions[i + j].collected;
             }
         }
     }
@@ -255,13 +281,12 @@ INCLUDE_ASM("be/beintmission", func_00153858);
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 extern int D_005305F0[];
-extern char D_004A6CA8_raw[] __asm__("D_004A6CA8");
 
 extern "C" char* func_00153858(void* self, int rider, int idx)
 {
     int profile = cBELibrary_getProfileIndex(rider);
     int c = cBELibrary_getCharacterID(rider);
-    char* b = D_004A6CA8_raw + c * 0xF88;
+    char* b = (char*)D_004A6CA8 + c * 0xF88;
     // PORT: pointer held as int (index-first addu)
     char* p = (char*)(profile * 0x9B50 + (int)b);
     char* q = p + (D_005305F0[0] * 12 + 4);
@@ -295,28 +320,16 @@ INCLUDE_ASM("be/beintmission", func_001539A8);
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 
-struct sMissionBits_9A8 {
-    unsigned int w[2];
-};
-
-struct sMission_9A8 {
-    unsigned char collected;
-    char pad1[3];
-    sMissionBits_9A8 bits;
-};
-
-struct sMissionProfile_9A8 {
-    int pad0;
-    sMission_9A8 missions[(0xF88 - 4) / 12];
-};
-
 struct sRaceSettings_9A8 {
     char pad_0x00[0x40];
     int missionBase;    // 0x40
 };
 
-// Second view of the same profile table, based at the first mission's bit words (D_004A6CB0 = D_004A6CA8 + 8):
+// D_004A6CB0 = D_004A6CA8 + 8 (the first mission record's bit words) is its own symbol in the target:
 // one slot per mission, indexed as missions[block].m[i].
+struct sMissionBits_9A8 {
+    unsigned int w[2];
+};
 struct sBitsSlot_9A8 {
     sMissionBits_9A8 bits;
     char next[4];
@@ -331,7 +344,6 @@ struct sBitsProfile_9A8 {
 
 struct sMask8_9A8 { char b[8]; };
 
-extern sMissionProfile_9A8 D_004A6CA8_9A8[][10] __asm__("D_004A6CA8");
 extern sBitsProfile_9A8 D_004A6CB0_bits[][10] __asm__("D_004A6CB0");
 extern sRaceSettings_9A8 D_005305B0_9A8 __asm__("D_005305B0");
 
@@ -346,7 +358,7 @@ extern "C" void func_001539A8(void* self, int rider, int idx, sMask8_9A8* mask)
         if (D_004A6CB0_bits[profile][c].missions[D_005305B0_9A8.missionBase].m[idx].bits.w[k / 32] & (1 << k))
             count++;
     }
-    D_004A6CA8_9A8[profile][c].missions[idx + D_005305B0_9A8.missionBase].collected = count;
+    D_004A6CA8[profile][c].missions[idx + D_005305B0_9A8.missionBase].collected = count;
 }
 #endif
 
@@ -856,14 +868,6 @@ struct sMissionOwnerView_001544D0
 };
 extern sMissionOwnerView_001544D0 D_0043D9A4[];
 
-// One character's economy block (0xF88 bytes); mission flag words start at 0x118.
-struct sEconFlags_001544D0
-{
-    char pad_0x00[0x118];
-    unsigned int flags[88];
-    char pad_0x278[0xF88 - 0x118 - 88 * 4];
-};
-extern sEconFlags_001544D0 D_004A6CA8_flags[][10] __asm__("D_004A6CA8");
 
 extern "C" int func_001544D0(void* self, int profile, int character, int owner)
 {
@@ -876,7 +880,7 @@ extern "C" int func_001544D0(void* self, int profile, int character, int owner)
     {
         if (D_0043D9A4[D_0043EE10[i].group].owner == owner)
         {
-            n += (D_004A6CA8_flags[profile][character].flags[i] >> 3) & 1;
+            n += (D_004A6CA8[profile][character].missionFlags[i] >> 3) & 1;
         }
     }
     return n;
