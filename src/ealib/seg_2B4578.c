@@ -16283,8 +16283,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1470);
 #ifdef SKIP_ASM
 extern int func_003D5450_1470(int) __asm__("func_003D5450");
 extern int func_002AF838(int);
-extern unsigned char D_0044F42C_1470 __asm__("D_0044F42C");
-extern int D_0044F430_1470 __asm__("D_0044F430");
 extern char D_00517644_1470[] __asm__("D_00517644");
 
 void func_003D1470_impl(unsigned int mask) __asm__("func_003D1470");
@@ -16293,8 +16291,8 @@ void func_003D1470_impl(unsigned int mask) {
     int j;
     unsigned int fl, t, u;
     struct sPathVoice *e;
-    if (D_0044F42C_1470 == 0) return;
-    if (D_0044F430_1470 != 0) return;
+    if (D_0044F42C == 0) return;
+    if (D_0044F430 != 0) return;
     if (func_003D5450_1470(-1) == 0) return;
     for (i = 0; i < 4; i++) {
         if (*(int *)(D_00517644_1470 + i * 0x928) != 0) {
@@ -16315,7 +16313,7 @@ void func_003D1470_impl(unsigned int mask) {
         }
     }
     D_0044F420 = 0;
-    D_0044F430_1470 = 0;
+    D_0044F430 = 0;
 }
 #endif
 
