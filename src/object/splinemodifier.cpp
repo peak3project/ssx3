@@ -152,6 +152,65 @@ struct sSmRef {
     }
 };
 
+// PORT: PS2 sqrt.s asm helper; use sqrtf on PC.
+static inline float fsqrt(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize).
+static inline t4Vector vu0Normalize(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2       $vf3, %1\n"
+        "vaddw.x    $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw  $vf4, $vf3, $vf3\n"
+        "vadday.x   ACC, $vf4, $vf4y\n"
+        "vmaddaz.x  ACC, $vf6, $vf4z\n"
+        "vmaddw.x   $vf4, $vf6, $vf4w\n"
+        "vrsqrt     Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2       $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline t4Vector vu0Sub(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline t4Vector vu0Add(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -326,13 +385,6 @@ struct cSplineModifier_9830 {
 
 extern sSmV3_9830 D_004FF160;
 
-// PORT: PS2 sqrt.s asm helper; use sqrtf on PC.
-static inline float Sqrt_9830(float x)
-{
-    float r;
-    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 static inline float Atan2_9830(float y, float x)
 {
@@ -353,26 +405,6 @@ static inline float Atan2_9830(float y, float x)
     return a;
 }
 
-// PORT: PS2-only VU0 inline asm (normalize).
-static inline t4Vector vu0Normalize_9830(const t4Vector& v)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2       $vf3, %1\n"
-        "vaddw.x    $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw  $vf4, $vf3, $vf3\n"
-        "vadday.x   ACC, $vf4, $vf4y\n"
-        "vmaddaz.x  ACC, $vf6, $vf4z\n"
-        "vmaddw.x   $vf4, $vf6, $vf4w\n"
-        "vrsqrt     Q, $vf0w, $vf4x\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf5, $vf3, Q\n"
-        "sqc2       $vf5, %0\n"
-        : "=m"(r)
-        : "m"(v)
-        : "memory");
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
 static inline void vu0MulMat_9830(sSmM44_9830* d, const sSmM44_9830* a, const sSmM44_9830* b)
@@ -436,12 +468,12 @@ extern "C" void func_00359830(cSplineModifier_9830* self)
     func_00345248(self->follow, self->pos, &self->origin, &self->dir, &self->q);
     self->fD0 = self->dir.x * self->dir.x;
     self->fD4 = self->dir.y * self->dir.y;
-    t4Vector n = vu0Normalize_9830(self->dir);
+    t4Vector n = vu0Normalize(self->dir);
     if ((unsigned)(self->mode - 2) < 2) {
         rz = ry - Atan2_9830(n.y, n.x);
     }
     if (self->mode == 1 || self->mode == 3) {
-        float len = Sqrt_9830(self->fD0 + self->fD4);
+        float len = fsqrt(self->fD0 + self->fD4);
         ry += Atan2_9830(self->dir.z, len);
     }
     sSmV3_9830 rot;
@@ -559,34 +591,7 @@ static inline float Abs_9CF8(float x)
     return r;
 }
 
-// PORT: PS2 sqrt.s asm helper; use sqrtf on PC.
-static inline float Sqrt_9CF8(float x)
-{
-    float r;
-    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
-// PORT: PS2-only VU0 inline asm (normalize).
-static inline t4Vector vu0Normalize_9CF8(const t4Vector& v)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2       $vf3, %1\n"
-        "vaddw.x    $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw  $vf4, $vf3, $vf3\n"
-        "vadday.x   ACC, $vf4, $vf4y\n"
-        "vmaddaz.x  ACC, $vf6, $vf4z\n"
-        "vmaddw.x   $vf4, $vf6, $vf4w\n"
-        "vrsqrt     Q, $vf0w, $vf4x\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf5, $vf3, Q\n"
-        "sqc2       $vf5, %0\n"
-        : "=m"(r)
-        : "m"(v)
-        : "memory");
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (vector * scalar).
 static inline t4Vector vu0Scale_9CF8(const t4Vector& v, float s)
@@ -626,35 +631,7 @@ static inline t4Vector vu0MulMat_9CF8(const t4Matrix* m, const t4Vector& v)
     return r;
 }
 
-// PORT: PS2-only VU0 inline asm (a - b).
-static inline t4Vector vu0Sub_9CF8(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
 
-// PORT: PS2-only VU0 inline asm (a + b).
-static inline t4Vector vu0Add_9CF8(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (cross product, w = 0).
 static inline t4Vector vu0Cross_9CF8(const t4Vector& a, const t4Vector& b)
@@ -705,17 +682,17 @@ extern "C" void func_00359CF8(cSplineModifier_9CF8* self, sSmBody_9CF8* body)
         float sum = d0 + self->fD4;
         b = -d0 / sum;
         b *= c4 / t - self->dir.y * c0 / d0;
-        a = (1.0f / Sqrt_9CF8(sum)) * (self->fC8 - self->dir.z * (c0 + c4) / sum);
+        a = (1.0f / fsqrt(sum)) * (self->fC8 - self->dir.z * (c0 + c4) / sum);
     }
-    t4Vector vel = vu0Scale_9CF8(vu0Normalize_9CF8(self->dir), *(float*)(sub + 0x38));
+    t4Vector vel = vu0Scale_9CF8(vu0Normalize(self->dir), *(float*)(sub + 0x38));
     t4Vector w;
     w.x = 0.0f;
     w.z = b * self->speed;
     w.y = a * self->speed;
     w.w = 0.0f;
     w = vu0MulMat_9CF8(&self->mat, w);
-    t4Vector d = vu0Sub_9CF8(body->pos, self->origin);
-    vu0AddTo_9CF8(body->vel, vu0Add_9CF8(vel, vu0Cross_9CF8(d, w)));
+    t4Vector d = vu0Sub(body->pos, self->origin);
+    vu0AddTo_9CF8(body->vel, vu0Add(vel, vu0Cross_9CF8(d, w)));
     vu0AddTo_9CF8(body->rot, w);
 }
 #endif
@@ -1230,35 +1207,7 @@ struct sBox_F048;
 extern "C" void* func_002D1BE0();
 extern "C" void func_003291E0(void* world, int type, void* id, sBox_F048* box, sBox_F048* old);
 
-// PORT: PS2-only VU0 inline asm (a - b).
-static inline t4Vector vu0Sub_A918(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
 
-// PORT: PS2-only VU0 inline asm (a + b).
-static inline t4Vector vu0Add_A918(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
 
 static inline t4Vector instPos_A918(cMultiSpline_A918* self, int i)
 {
@@ -1300,8 +1249,8 @@ extern "C" void func_0035A918(cMultiSpline_A918* self)
         ext.y = r;
         ext.z = r;
         ext.w = 0.0f;
-        self->elems[i].box.min = vu0Sub_A918(instPos_A918(self, i), ext);
-        self->elems[i].box.max = vu0Add_A918(instPos_A918(self, i), ext);
+        self->elems[i].box.min = vu0Sub(instPos_A918(self, i), ext);
+        self->elems[i].box.max = vu0Add(instPos_A918(self, i), ext);
         void* id = self->insts[i];
         func_003291E0(func_002D1BE0(), 0, id, (sBox_F048*)&self->elems[i].box, (sBox_F048*)&old);
         setMin_A918((sSmInst_A918*)self->insts[i], self->elems[i].box.min);
