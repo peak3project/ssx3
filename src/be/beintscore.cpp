@@ -111,7 +111,122 @@ extern "C" void func_00154A58(int rider, int a)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintscore", func_00154AB8);
+#ifdef SKIP_ASM
+int cBELibrary_getProfileIndex(int);
+signed char cBELibrary_getCharacterID(int index);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" bool func_001557E0(void* self, int rider);
+extern "C" char* func_00147170(void* self, int idx);
+extern "C" char* strcpy(char* dst, const char* src);
+
+struct sProfileChar_154AB8 { char data[0xF88]; };
+extern "C" int func_00152460(sProfileChar_154AB8* self, int event, int mode, unsigned int value);
+extern sProfileChar_154AB8 D_004A6CA8_154AB8[][10] __asm__("D_004A6CA8");
+
+struct sRaceStats_154AB8 { int w[0xAC / 4]; };
+struct sScoreSlot_154AB8 {
+    sRaceStats_154AB8 stats;
+    int result;     // 0xAC
+};
+struct sScore_154AB8 {
+    char pad_0x00[0x10];
+    int best[2];    // 0x10
+    int rank[2];    // 0x18
+    sScoreSlot_154AB8 slots[2]; // 0x20
+};
+
+struct sHighScore_154AB8 {
+    unsigned int value;
+    int charID;
+    char name[0xC];
+};
+sHighScore_154AB8* func_0014AB20_154AB8(int event, int mode) __asm__("func_0014AB20");
+
+struct sRaceSettings_154AB8 {
+    char pad_0x00[0x40];
+    int event;          // 0x40
+    char pad_0x44[0x4];
+    signed char b48;    // 0x48
+    signed char b49;    // 0x49
+};
+extern sRaceSettings_154AB8 D_005305B0_154AB8 __asm__("D_005305B0");
+struct sRaceGlobal_154AB8 {
+    char pad_0x00[0x34];
+    int numHumans;      // 0x34
+    char pad_0x38[0x12];
+    signed char mode;   // 0x4A
+};
+extern sRaceGlobal_154AB8 D_00535BC8_154AB8 __asm__("D_00535BC8");
+struct sEvent_154AB8 {
+    int id;
+    char pad_0x4[0x60];
+};
+extern sEvent_154AB8 D_0043D950_154AB8[] __asm__("D_0043D950");
+
+extern "C" void func_00154AB8(sScore_154AB8* self, int rider, sRaceStats_154AB8* stats, unsigned int score)
+{
+    int profile = cBELibrary_getProfileIndex(rider);
+    if (profile >= 2)
+        return;
+    self->slots[profile].stats = *stats;
+    int mode;
+    sProfileChar_154AB8* pc;
+    int timed = 0;
+    self->slots[profile].result = -1;
+    func_00154A58(rider, (int)stats);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    int charID = cBELibrary_getCharacterID(rider);
+    mode = D_00535BC8_154AB8.mode;
+    int event = D_0043D950_154AB8[D_005305B0_154AB8.event].id;
+    pc = &D_004A6CA8_154AB8[profile][charID];
+    self->best[profile] = 0;
+    self->rank[profile] = -1;
+    if (event == 0x16)
+        event = 0;
+    if (D_005305B0_154AB8.b48 == 0 || D_005305B0_154AB8.b48 == 5) {
+        timed = 1;
+        score = (int)(score * (1.0f / 60.0f));
+    }
+    if (func_001557E0(self, profile)) {
+        sHighScore_154AB8* t = func_0014AB20_154AB8(event, mode);
+        if (t != 0) {
+            for (int i = 0; i < 5; i++) {
+                int better;
+                if (timed)
+                    better = t[i].value < score;
+                else
+                    better = score < t[i].value;
+                if (!better) {
+                    for (int j = 4; j > i; j--)
+                        t[j] = t[j - 1];
+                    t[i].charID = charID;
+                    t[i].value = score;
+                    strcpy(t[i].name, func_00147170(cBE_getInterface_Fv(cBE_getBE(), 1), rider));
+                    self->rank[profile] = i;
+                    if (D_00535BC8_154AB8.numHumans >= 2) {
+                        if (self->rank[1 - profile] >= i) {
+                            self->rank[1 - profile]++;
+                            if (self->rank[1 - profile] >= 5)
+                                self->rank[1 - profile] = -1;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    if (timed)
+        func_00155420(rider, (int)stats, -1, score);
+    else
+        func_00155420(rider, (int)stats, score, -1);
+    if (D_005305B0_154AB8.b49 == 0)
+        self->best[profile] = func_00152460(pc, event, mode, score);
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintscore", func_00154EE8);
