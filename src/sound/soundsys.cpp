@@ -402,6 +402,40 @@ extern "C" int func_0041AA88(const char* a, const char* b);
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 
+// Pushes a voice (cSndPlayOpts push + the a4 / a8 values), sets its mVolControl from func_00287968(type) and plays it.
+static inline int sndPlayVoice(void* vself, int a, int b, int type)
+{
+    cSSXAudio* self = (cSSXAudio*)vself;
+    cBankManager* m = self->mgr;
+    cSndPlayOpts* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+    cBankManager** pp = self->p118;
+    int r = (int)func_00287968(self, type, 0);
+    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
+    return func_002906B8(self);
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -870,38 +904,6 @@ INCLUDE_ASM("sound/soundsys", func_00291438);
 #ifdef SKIP_ASM
 
 
-static inline int snd1438AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void func_003B58A0();
 extern "C" unsigned int func_003B8AB8(int id);
@@ -915,7 +917,7 @@ extern "C" void func_00291438(void* self)
     if (!busy) {
         func_002AD5F0(**(char***)((char*)self + 0x118) + 0x1D8, *(int*)((char*)self + 0x5FCC), 1, 0.0f);
     }
-    *(int*)((char*)self + 0x5FCC) = snd1438AddVoice(self, 8, 0x10, 5);
+    *(int*)((char*)self + 0x5FCC) = sndPlayVoice(self, 8, 0x10, 5);
 }
 #endif
 
@@ -3543,38 +3545,6 @@ INCLUDE_ASM("sound/soundsys", func_00299B70);
 #ifdef SKIP_ASM
 
 
-static inline int snd9B70AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 
 extern "C" void func_00299B70(void* self, void* obj)
@@ -3584,7 +3554,7 @@ extern "C" void func_00299B70(void* self, void* obj)
     }
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
-        snd9B70AddVoice(self, 0, 0x6C, 9);
+        sndPlayVoice(self, 0, 0x6C, 9);
     }
 }
 #endif
@@ -3594,38 +3564,6 @@ INCLUDE_ASM("sound/soundsys", func_00299E28);
 #ifdef SKIP_ASM
 
 
-static inline int snd9E28AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
@@ -3654,7 +3592,7 @@ extern "C" void func_00299E28(void* self, void* obj, void* a, void* b, int lim, 
         return;
     }
     if (n == 0 && func_00295028(self, 1, 0) == 0 && func_00288AE0(self) == 0) {
-        int h = snd9E28AddVoice(self, 0, 0x6D, 9);
+        int h = sndPlayVoice(self, 0, 0x6D, 9);
         func_00295628(self, (void*)1, h, *(int*)(**(char***)((char*)self + 0x118) + 0x260) + 200, 0, 0);
     }
     if (n < lim) {
@@ -3675,38 +3613,6 @@ INCLUDE_ASM("sound/soundsys", func_0029A220);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
 
-static inline int sndA220AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void func_002992D8(void* self, void* obj);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
@@ -3716,7 +3622,7 @@ extern "C" void func_0029A220(void* self, void* obj)
 {
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok && func_00288AE0(self) == 0) {
-        sndA220AddVoice(self, 0, 0x7B, 5);
+        sndPlayVoice(self, 0, 0x7B, 5);
     }
     func_00296E20(self, obj);
     func_00297438(self, obj);
@@ -3734,44 +3640,12 @@ INCLUDE_ASM("sound/soundsys", func_0029A530);
 #ifdef SKIP_ASM
 
 
-static inline int sndA530AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void func_0029A530(void* self, void* obj)
 {
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
-        sndA530AddVoice(self, 0, 0x77, 9);
+        sndPlayVoice(self, 0, 0x77, 9);
     }
 }
 #endif
@@ -3781,38 +3655,6 @@ INCLUDE_ASM("sound/soundsys", func_0029A7D8);
 #ifdef SKIP_ASM
 
 
-static inline int sndA7D8AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void func_003B58A0();
 extern "C" unsigned int func_003B8AB8(int id);
@@ -3833,7 +3675,7 @@ extern "C" void func_0029A7D8(void* self, void* obj, int n)
             if (!busy) {
                 func_002AD5F0(**(char***)((char*)self + 0x118) + 0x1D8, *(int*)((char*)self + 0x5FAC), 1, 0.0f);
             }
-            *(int*)((char*)self + 0x5FAC) = sndA7D8AddVoice(self, 0, 0x4D, 9);
+            *(int*)((char*)self + 0x5FAC) = sndPlayVoice(self, 0, 0x4D, 9);
         }
         *(int*)((char*)self + 0x5FA8) = v;
     }
@@ -3965,38 +3807,6 @@ INCLUDE_ASM("sound/soundsys", func_0029B0E0);
 #ifdef SKIP_ASM
 
 
-static inline int sndB0E0AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 
 extern "C" void func_0029B0E0(void* self, void* obj)
@@ -4009,7 +3819,7 @@ extern "C" void func_0029B0E0(void* self, void* obj)
         if (*(int*)((char*)self + 0x5FDC) != -1) {
             func_002AD5F0(**(char***)((char*)self + 0x118) + 0x1D8, *(int*)((char*)self + 0x5FDC), 1, 0.0f);
         }
-        *(int*)((char*)self + 0x5FDC) = sndB0E0AddVoice(self, 0, 0x66, 9);
+        *(int*)((char*)self + 0x5FDC) = sndPlayVoice(self, 0, 0x66, 9);
     }
 }
 #endif
@@ -4041,38 +3851,6 @@ INCLUDE_ASM("sound/soundsys", func_0029B430);
 #ifdef SKIP_ASM
 
 
-static inline int sndB430AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 
 extern "C" void func_0029B430(void* self, void* obj, int a, int b)
@@ -4082,7 +3860,7 @@ extern "C" void func_0029B430(void* self, void* obj, int a, int b)
     }
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
-        sndB430AddVoice(self, 0, 0x67, 9);
+        sndPlayVoice(self, 0, 0x67, 9);
         int t = b + a;
         if (b < 4) {
             if (t >= 4) {
@@ -4604,38 +4382,6 @@ INCLUDE_ASM("sound/soundsys", func_0029CED8);
 #ifdef SKIP_ASM
 
 
-static inline int sndCED8AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void func_002A3EB8(void* self, void* obj, int n);
 
@@ -4657,7 +4403,7 @@ extern "C" void func_0029CED8(void* self, int kind, void* obj, float x)
     } else if (kind == 3) {
         id = 0x76;
     }
-    sndCED8AddVoice(self, 0, id, 9);
+    sndPlayVoice(self, 0, id, 9);
     if (kind == 2) {
         if (x == 2.0f) {
             func_002A3EB8(self, obj, 1);
@@ -4875,38 +4621,6 @@ INCLUDE_ASM("sound/soundsys", func_0029D8E0);
 #ifdef SKIP_ASM
 
 
-static inline int sndD8E0AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void func_002A3C00(void* self, void* obj, int a2);
 
@@ -4920,7 +4634,7 @@ extern "C" void func_0029D8E0(void* self)
         *(int*)((char*)self + 0x5FD0) = 0;
         *(int*)((char*)self + 0x5FD4) = 0;
     }
-    sndD8E0AddVoice(self, 0, 0x6D, 9);
+    sndPlayVoice(self, 0, 0x6D, 9);
     func_002A3C00(self, *(void**)((char*)func_0028B1D8() + 0x28), 1);
 }
 #endif
@@ -4954,44 +4668,12 @@ INCLUDE_ASM("sound/soundsys", func_0029DC48);
 #ifdef SKIP_ASM
 
 
-static inline int sndDC48AddVoice(void* vself, int a, int b, int type)
-{
-    cSSXAudio* self = (cSSXAudio*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-    cBankManager** pp = self->p118;
-    int r = (int)func_00287968(self, type, 0);
-    (*pp)->sub.p3C[(*pp)->sub.cur] = r;
-    return func_002906B8(self);
-}
 
 extern "C" void func_0029DC48(void* self, void* obj)
 {
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
-        sndDC48AddVoice(self, 0, 0x61, 9);
+        sndPlayVoice(self, 0, 0x61, 9);
     }
 }
 #endif
