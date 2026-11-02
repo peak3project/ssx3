@@ -3510,7 +3510,8 @@ INCLUDE_ASM("sound/bankmonitor", func_002B2600);
 // The unit declares func_002B25C8(void*, int); its second arg is really an out pointer.
 void func_002B25C8_out(void* self, void* out) __asm__("func_002B25C8");
 
-struct func_002B2600_sInfo {
+// Stream info filled through func_002B25C8 (func_003B7C40's out record).
+struct sBmStrmInfo {
     int type;
     int value;
     int c;
@@ -3519,7 +3520,7 @@ struct func_002B2600_sInfo {
 
 extern "C" float func_002B2600(void* self)
 {
-    func_002B2600_sInfo info;
+    sBmStrmInfo info;
     func_002B25C8_out(self, &info);
     if (info.type == 2) {
         return (float)info.value;
@@ -3531,20 +3532,13 @@ extern "C" float func_002B2600(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B2640);
 #ifdef SKIP_ASM
-struct func_002B2640_sInfo {
-    int type;
-    int value;
-    int c;
-    int d;
-};
-
 extern "C" float func_002B26B8(void* self);
 
 // PORT: the unit later declares func_002B2640() as void() for a caller; real signature is float(void*).
 float func_002B2640_impl(void* self) __asm__("func_002B2640");
 float func_002B2640_impl(void* self)
 {
-    func_002B2640_sInfo info;
+    sBmStrmInfo info;
     func_002B25C8_out(self, &info);
     if (info.type == 2) {
         return (float)info.c;
