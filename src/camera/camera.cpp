@@ -13,6 +13,14 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai); stores x, y, z, w.
+struct sVec4 : t4Vector
+{
+    sVec4() {}
+    sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+    sVec4& operator+=(const sVec4& b);
+} __attribute__((aligned(16)));
+
 //100%
 INCLUDE_ASM("camera/camera", cCamera_resetChaseControllerSwitches);
 #ifdef SKIP_ASM
@@ -1206,24 +1214,17 @@ extern "C" float func_00320BF0(int pad, int axis);
 extern "C" float func_0031BF60(float x);
 extern "C" float func_0031C040(float x);
 
-struct sVec_0015FD50 {
-    float x, y, z, w;
-    sVec_0015FD50() {}
-    sVec_0015FD50(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
-    sVec_0015FD50& operator+=(const sVec_0015FD50& b);
-} __attribute__((aligned(16)));
-
 struct sFreeCam_0015FD50 {
     char pad0[0x20];
-    sVec_0015FD50 pos;  // 0x20
+    sVec4 pos;  // 0x20
     float pitch;        // 0x30
     float yaw;          // 0x34
 };
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec_0015FD50 fcScale_0015FD50(const sVec_0015FD50& v, float s)
+static inline sVec4 fcScale_0015FD50(const sVec4& v, float s)
 {
-    sVec_0015FD50 r;
+    sVec4 r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1238,7 +1239,7 @@ static inline sVec_0015FD50 fcScale_0015FD50(const sVec_0015FD50& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add, in place).
-inline sVec_0015FD50& sVec_0015FD50::operator+=(const sVec_0015FD50& b)
+inline sVec4& sVec4::operator+=(const sVec4& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1252,9 +1253,9 @@ inline sVec_0015FD50& sVec_0015FD50::operator+=(const sVec_0015FD50& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec_0015FD50 fcAdd_0015FD50(const sVec_0015FD50& a, const sVec_0015FD50& b)
+static inline sVec4 fcAdd_0015FD50(const sVec4& a, const sVec4& b)
 {
-    sVec_0015FD50 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1299,10 +1300,10 @@ extern "C" void func_0015FD50(sFreeCam_0015FD50* self)
                                    -1.5707963705062866f, 1.5707963705062866f);
     float yaw = self->yaw + rs * (rx * 0.6283185482025146f) * 0.01666666753590107f;
     yaw -= ffloor_0015FD50(yaw * 0.15915493667125702f) * 6.2831854820251465f;
-    sVec_0015FD50 fwd(func_0031C040(pitch) * func_0031C040(yaw), func_0031C040(pitch) * func_0031BF60(yaw),
+    sVec4 fwd(func_0031C040(pitch) * func_0031C040(yaw), func_0031C040(pitch) * func_0031BF60(yaw),
                       func_0031BF60(pitch), 0.0f);
-    sVec_0015FD50 right(func_0031BF60(yaw), -func_0031C040(yaw), 0.0f, 0.0f);
-    sVec_0015FD50 pos = fcAdd_0015FD50(sVec_0015FD50(self->pos), fcScale_0015FD50(fwd, speed * (mf * 25.0f)));
+    sVec4 right(func_0031BF60(yaw), -func_0031C040(yaw), 0.0f, 0.0f);
+    sVec4 pos = fcAdd_0015FD50(sVec4(self->pos), fcScale_0015FD50(fwd, speed * (mf * 25.0f)));
     pos += fcScale_0015FD50(right, speed * (ms * -25.0f));
     self->pitch = pitch;
     self->yaw = yaw;
@@ -1462,18 +1463,12 @@ INCLUDE_ASM("camera/camera", func_00160228);
 extern "C" float func_0031BF60(float x);
 extern "C" float func_0031C040(float x);
 
-struct sVec_00160228 {
-    float x, y, z, w;
-    sVec_00160228() {}
-    sVec_00160228(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
-} __attribute__((aligned(16)));
-
-extern sVec_00160228 D_004FF120_v160228 __asm__("D_004FF120");
+extern sVec4 D_004FF120_v160228 __asm__("D_004FF120");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec_00160228 Scale_00160228(const sVec_00160228& v, float s)
+static inline sVec4 Scale_00160228(const sVec4& v, float s)
 {
-    sVec_00160228 r;
+    sVec4 r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1488,9 +1483,9 @@ static inline sVec_00160228 Scale_00160228(const sVec_00160228& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec_00160228 Add_00160228(const sVec_00160228& a, const sVec_00160228& b)
+static inline sVec4 Add_00160228(const sVec4& a, const sVec4& b)
 {
-    sVec_00160228 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1503,9 +1498,9 @@ static inline sVec_00160228 Add_00160228(const sVec_00160228& a, const sVec_0016
 }
 
 // PORT: PS2-only VU0 inline asm (cross product, w = 0).
-static inline sVec_00160228 Cross_00160228(const sVec_00160228& a, const sVec_00160228& b)
+static inline sVec4 Cross_00160228(const sVec4& a, const sVec4& b)
 {
-    sVec_00160228 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -1519,17 +1514,17 @@ static inline sVec_00160228 Cross_00160228(const sVec_00160228& a, const sVec_00
     return r;
 }
 
-extern "C" sVec_00160228 func_00160228(char* p, float a, float b)
+extern "C" sVec4 func_00160228(char* p, float a, float b)
 {
     if (*(float*)(p + 0x18) == 0.0f) return D_004FF120_v160228;
-    sVec_00160228 fwd(func_0031C040(b) * func_0031C040(a), func_0031C040(b) * func_0031BF60(a), -func_0031BF60(b), 0.0f);
-    sVec_00160228 right(func_0031BF60(a), -func_0031C040(a), 0.0f, 0.0f);
-    sVec_00160228 up = Cross_00160228(fwd, right);
+    sVec4 fwd(func_0031C040(b) * func_0031C040(a), func_0031C040(b) * func_0031BF60(a), -func_0031BF60(b), 0.0f);
+    sVec4 right(func_0031BF60(a), -func_0031C040(a), 0.0f, 0.0f);
+    sVec4 up = Cross_00160228(fwd, right);
     float k = *(float*)(p + 0x20) / *(float*)(p + 0x28);
     float sx = k * (*(float*)(p + 0xC) - *(float*)(p + 0x0));
     float sy = k * (*(float*)(p + 0x10) - *(float*)(p + 0x4));
     float sz = *(float*)(p + 0x18) * 10.0f;
-    sVec_00160228 res = Scale_00160228(Add_00160228(Scale_00160228(right, sx), Scale_00160228(up, sy)), sz);
+    sVec4 res = Scale_00160228(Add_00160228(Scale_00160228(right, sx), Scale_00160228(up, sy)), sz);
     return res;
 }
 #endif
@@ -4612,20 +4607,13 @@ INCLUDE_ASM("camera/camera", func_00165540);
 extern "C" void* func_00168150(void* self);
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 
-struct sVec4_165540
-{
-    float x, y, z, w;
-    sVec4_165540() {}
-    sVec4_165540(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
-} __attribute__((aligned(16)));
-
-extern sVec4_165540 D_004FF140_v165540 __asm__("D_004FF140");
-extern sVec4_165540 D_004FF160_v165540 __asm__("D_004FF160");
+extern sVec4 D_004FF140_v165540 __asm__("D_004FF140");
+extern sVec4 D_004FF160_v165540 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_165540 Sub_165540(const sVec4_165540& a, const sVec4_165540& b)
+static inline sVec4 Sub_165540(const sVec4& a, const sVec4& b)
 {
-    sVec4_165540 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4638,7 +4626,7 @@ static inline sVec4_165540 Sub_165540(const sVec4_165540& a, const sVec4_165540&
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_165540(const sVec4_165540& v)
+static inline float Length_165540(const sVec4& v)
 {
     float r;
     int t;
@@ -4659,7 +4647,7 @@ static inline float Length_165540(const sVec4_165540& v)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place v *= s).
-static inline void ScaleEq_165540(sVec4_165540& v, float s)
+static inline void ScaleEq_165540(sVec4& v, float s)
 {
     int t;
     __asm__(
@@ -4674,9 +4662,9 @@ static inline void ScaleEq_165540(sVec4_165540& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (rotate v by quaternion q).
-static inline sVec4_165540 Rot_165540(const sVec4_165540& q, const sVec4_165540& v)
+static inline sVec4 Rot_165540(const sVec4& q, const sVec4& v)
 {
-    sVec4_165540 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -4697,18 +4685,18 @@ static inline sVec4_165540 Rot_165540(const sVec4_165540& q, const sVec4_165540&
     return r;
 }
 
-static inline sVec4_165540 AxisAngle_165540(const sVec4_165540& axis, float ang)
+static inline sVec4 AxisAngle_165540(const sVec4& axis, float ang)
 {
     float s, c;
     func_0031BE50(&s, &c, ang * 0.5f);
-    sVec4_165540 r(s * axis.x, s * axis.y, s * axis.z, c);
+    sVec4 r(s * axis.x, s * axis.y, s * axis.z, c);
     return r;
 }
 
 extern "C" void func_00165540(char* self, float ang)
 {
-    sVec4_165540 off = Sub_165540(*(sVec4_165540*)(self + 0x20), *(sVec4_165540*)(self + 0x40));
-    sVec4_165540 dir = D_004FF140_v165540;
+    sVec4 off = Sub_165540(*(sVec4*)(self + 0x20), *(sVec4*)(self + 0x40));
+    sVec4 dir = D_004FF140_v165540;
     float z = off.z;
     off.z = 0.0f;
     float len = Length_165540(off);
@@ -4716,10 +4704,10 @@ extern "C" void func_00165540(char* self, float ang)
     {
         ScaleEq_165540(dir, len);
         dir.z = z;
-        sVec4_165540 q = AxisAngle_165540(D_004FF160_v165540, ang);
-        sVec4_165540 rd = Rot_165540(q, dir);
-        sVec4_165540 t = Sub_165540(*(sVec4_165540*)(self + 0x20), rd);
-        *(sVec4_165540*)(self + 0x40) = t;
+        sVec4 q = AxisAngle_165540(D_004FF160_v165540, ang);
+        sVec4 rd = Rot_165540(q, dir);
+        sVec4 t = Sub_165540(*(sVec4*)(self + 0x20), rd);
+        *(sVec4*)(self + 0x40) = t;
     }
     func_00168150(self);
 }
@@ -5383,22 +5371,17 @@ INCLUDE_ASM("camera/camera", func_00166C60);
 extern cQuad128 D_004FF120;
 extern "C" void f_6C60_def(void* self, long id) __asm__("func_00166C60");
 
-struct sVec_6C60 {
-    float x, y, z, w;
-    sVec_6C60() {}
-} __attribute__((aligned(16)));
-
-extern sVec_6C60 D_004FF160_v6C60 __asm__("D_004FF160");
+extern sVec4 D_004FF160_v6C60 __asm__("D_004FF160");
 
 typedef long (*LongFn_6C60)(void*);
-typedef sVec_6C60 (*VecFn_6C60)(void*);
-typedef void (*VecFn2_6C60)(sVec_6C60*, void*);
+typedef sVec4 (*VecFn_6C60)(void*);
+typedef void (*VecFn2_6C60)(sVec4*, void*);
 typedef float (*FloatFn_6C60)(void*);
 typedef void (*VoidFn_6C60)(void*);
 typedef void (*IntFn_6C60)(void*, int);
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline void Scale_6C60(sVec_6C60& r, const sVec_6C60& v, float s)
+static inline void Scale_6C60(sVec4& r, const sVec4& v, float s)
 {
     int t;
     __asm__(
@@ -5413,7 +5396,7 @@ static inline void Scale_6C60(sVec_6C60& r, const sVec_6C60& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (cross product, w = 0).
-static inline void Cross_6C60(sVec_6C60& r, const sVec_6C60& a, const sVec_6C60& b)
+static inline void Cross_6C60(sVec4& r, const sVec4& a, const sVec4& b)
 {
     __asm__(
         "lqc2      $vf4, %1\n"
@@ -5427,7 +5410,7 @@ static inline void Cross_6C60(sVec_6C60& r, const sVec_6C60& a, const sVec_6C60&
         : "memory");
 }
 
-static inline sVec_6C60 getVec_6C60(char* self, int slot)
+static inline sVec4 getVec_6C60(char* self, int slot)
 {
     char* cam = *(char**)(self + 0x30);
     sVEntry<void>* cvt = *(sVEntry<void>**)cam;
@@ -5440,11 +5423,11 @@ extern "C" void f_6C60_def(void* p, long id)
     char* mgr = *(char**)(*(char**)(self + 0x30) + 4) + 0x6C0;
     sVEntry<void>* mvt = *(sVEntry<void>**)mgr;
     if (id == ((LongFn_6C60)mvt[7].fn)(mgr + mvt[7].delta)) {
-        sVec_6C60 pos = getVec_6C60(self, 4);
-        sVec_6C60 dir = getVec_6C60(self, 3);
-        sVec_6C60 v;
-        sVec_6C60 t;
-        sVec_6C60 u;
+        sVec4 pos = getVec_6C60(self, 4);
+        sVec4 dir = getVec_6C60(self, 3);
+        sVec4 v;
+        sVec4 t;
+        sVec4 u;
         *(int*)(self + 0x2C0) = 5000;
         *(float*)(self + 0x1E0) = 10.0f;
         *(float*)(self + 0x1DC) = 1.0f;
@@ -5454,7 +5437,7 @@ extern "C" void f_6C60_def(void* p, long id)
         *(cQuad128*)(self + 0xC0) = D_004FF120;
         *(cQuad128*)(self + 0xD0) = D_004FF120;
         *(cQuad128*)(self + 0xE0) = D_004FF120;
-        *(sVec_6C60*)(self + 0x80) = pos;
+        *(sVec4*)(self + 0x80) = pos;
         sVEntry<void>* svt1 = *(sVEntry<void>**)(self + 0x10);
         *(float*)(self + 0x1D4) = ((FloatFn_6C60)svt1[13].fn)(self + svt1[13].delta);
         *(int*)(self + 0x1E8) = 0;
@@ -5462,7 +5445,7 @@ extern "C" void f_6C60_def(void* p, long id)
         Cross_6C60(t, D_004FF160_v6C60, pos);
         v = t;
         *(float*)(self + 0x224) = 0.92f;
-        *(sVec_6C60*)(self + 0xF0) = t;
+        *(sVec4*)(self + 0xF0) = t;
         *(int*)(self + 0x2E4) = 1;
         *(int*)(self + 0x2C4) = -1;
         *(float*)(self + 0x228) = 1.0f;
@@ -5484,11 +5467,11 @@ extern "C" void f_6C60_def(void* p, long id)
         *(cQuad128*)(self + 0x170) = D_004FF120;
         *(int*)(self + 0x244) = 0;
         *(int*)(self + 0x240) = 0;
-        *(sVec_6C60*)(self + 0x190) = dir;
+        *(sVec4*)(self + 0x190) = dir;
         Scale_6C60(t, pos, 250.0f);
         *(int*)(self + 0x300) = 1;
         v = t;
-        *(sVec_6C60*)(self + 0x1A0) = t;
+        *(sVec4*)(self + 0x1A0) = t;
         *(float*)(self + 0x248) = 0.5f;
         *(int*)(self + 0x24C) = 0;
         *(int*)(self + 0x250) = 0;
@@ -5498,7 +5481,7 @@ extern "C" void f_6C60_def(void* p, long id)
             ((VecFn2_6C60)cvt[4].fn)(&v, cam + cvt[4].delta);
         }
         *(int*)(self + 0x2EC) = 0;
-        *(sVec_6C60*)(self + 0x1B0) = v;
+        *(sVec4*)(self + 0x1B0) = v;
         *(int*)(self + 0x2B4) = 0;
         *(int*)(self + 0x2B8) = 0;
         *(int*)(self + 0x2F0) = 0;
@@ -5518,8 +5501,8 @@ extern "C" void f_6C60_def(void* p, long id)
         }
         Scale_6C60(u, t, 2.0f);
         v = u;
-        *(sVec_6C60*)(self + 0x1C0) = u;
-        *(sVec_6C60*)(self + 0x100) = dir;
+        *(sVec4*)(self + 0x1C0) = u;
+        *(sVec4*)(self + 0x100) = dir;
         *(int*)(self + 0x108) = 0;
         sVEntry<void>* svt2 = *(sVEntry<void>**)(self + 0x10);
         ((VoidFn_6C60)svt2[5].fn)(self + svt2[5].delta);
