@@ -37,6 +37,18 @@ struct sRenderCtx {
 };
 extern sRenderCtx* D_004A289C;
 
+// An RGBA colour as the element colour getter func_001E91A8 writes it and func_001F1190 takes it (the first component
+// is the one the fades scale).
+struct sColour {
+    float r, g, b, a;
+};
+
+// Four floats, 4-byte aligned (not a t4Vector, which is 16-aligned): the 4-float slots some callers give the element
+// position / scale getters.
+struct sFloat4 {
+    float x, y, z, w;
+};
+
 // A HUD sprite: texture id and UV rectangle.
 struct sHudSprite {
     int tex;                // 0x0
@@ -999,7 +1011,6 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D9A0);
 #ifdef SKIP_ASM
-struct sCol_D9A0 { float r, g, b, a; };
 struct sPlayerHud_D9A0 {
     char pad[0x48];
     int rider;              // 0x48
@@ -1013,7 +1024,7 @@ struct sHudRoot_D9A0 {
 extern int D_004A4E98;
 extern float D_004A5B28;
 extern float D_004A5B2C;
-extern sCol_D9A0 D_004C8668;
+extern sColour D_004C8668;
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_D9A0(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00147618(void* iface, int a1);
@@ -1140,7 +1151,7 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
         t2Vector fs;
         fs.x = (t.x - (m.x + m.x)) * fill;
         fs.y = t.y - (m.y + m.y);
-        sCol_D9A0 col = D_004C8668;
+        sColour col = D_004C8668;
         col.r *= alpha;
         v.x += m.x;
         v.y += m.y;
@@ -1157,7 +1168,6 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021E1B0);
 #ifdef SKIP_ASM
-struct V4_E1B0 { float x, y, z, w; };
 extern char D_00477F30[];
 extern int D_00535BF8[];
 extern "C" void* cBE_getBE();
@@ -1168,20 +1178,20 @@ void func_001E9290_E1B0(void*, void*) __asm__("func_001E9290__FPvT0");
 void func_001E91A8_E1B0(void*, void*) __asm__("func_001E91A8__FPvT0");
 extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
 extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
-extern "C" void func_0021E7E0_E1B0(char* self, V4_E1B0* colp, t2Vector* pos, t2Vector* size,
+extern "C" void func_0021E7E0_E1B0(char* self, sColour* colp, t2Vector* pos, t2Vector* size,
                                    float t, float sx, float sy, float amin, float amax) __asm__("func_0021E7E0");
 
 extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
 {
     t2Vector scale;
-    V4_E1B0 col;
+    sColour col;
     t2Vector sc;
-    V4_E1B0 a;
+    sFloat4 a;
     t2Vector size1;
     t2Vector size2;
     t2Vector dim;
     t2Vector p;
-    V4_E1B0 c2;
+    sColour c2;
     t2Vector size3;
     t2Vector tmp;
     t2Vector pa;
@@ -1197,7 +1207,7 @@ extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
         if (*(int*)(r + 0xEC) == 0) {
             k = D_00504FB8[(int)(t * 12.566370964050293f * 81.4873275756836f) & 0x1FF] * 0.199636310338974f * (1.0f - t * t) + k;
         } else {
-            col.x = col.x * (t * 0.5f + 0.5f);
+            col.r = col.r * (t * 0.5f + 0.5f);
         }
     }
     func_001E9290_E1B0(obj + 0x360, &sc);
@@ -1295,13 +1305,12 @@ extern "C" float func_0021E7A8(int arg0, int mode, float a, float b, float c) {
 INCLUDE_ASM("fe/all_in_one_fe", func_0021E7E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Col_E7E0 { float r, g, b, a; };
-extern "C" void func_0021EA00_E7E0(void* self, Col_E7E0* col, float* pos, float w, float h, float u0, float v0, float u1, float v1) __asm__("func_0021EA00");
+extern "C" void func_0021EA00_E7E0(void* self, sColour* col, float* pos, float w, float h, float u0, float v0, float u1, float v1) __asm__("func_0021EA00");
 
-extern "C" void func_0021E7E0(char* self, Col_E7E0* colp, float* pos, float* size,
+extern "C" void func_0021E7E0(char* self, sColour* colp, float* pos, float* size,
                               float t, float sx, float sy, float amin, float amax) {
-    Col_E7E0 col = *colp;
-    Col_E7E0* c = &col;
+    sColour col = *colp;
+    sColour* c = &col;
     float dw, dh;
     float range = amax - amin;
     c->r = c->r * (amin + (t > 1.0f ? range * (2.0f - t) : range * t));
@@ -1329,7 +1338,7 @@ extern "C" void func_0021E7E0(char* self, Col_E7E0* colp, float* pos, float* siz
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021EA00);
 #ifdef SKIP_ASM
-extern "C" void func_0021EA00(void* self, Col_E7E0* col, float* pos, float w, float h, float u0, float v0, float u1, float v1)
+extern "C" void func_0021EA00(void* self, sColour* col, float* pos, float w, float h, float u0, float v0, float u1, float v1)
 {
     if (h > 72.0f) {
         sHudVertex vtx[8];
@@ -1404,12 +1413,11 @@ INCLUDE_ASM("fe/all_in_one_fe", func_0021ED48);
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F338);
 #ifdef SKIP_ASM
-struct V4_F338 { float x, y, z, w; };
-extern V4_F338 D_004C8568;
-extern V4_F338 D_004C8588;
-extern V4_F338 D_004C85A8;
-extern V4_F338 D_004C85C8;
-extern V4_F338 D_004C85E8;
+extern sColour D_004C8568;
+extern sColour D_004C8588;
+extern sColour D_004C85A8;
+extern sColour D_004C85C8;
+extern sColour D_004C85E8;
 extern "C" void func_001E91F8(void*, void*);
 extern "C" void func_001E9220(void*, void*, int);
 void func_001E9290(void*, void*);
@@ -1418,13 +1426,13 @@ extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
 
 extern "C" void func_0021F338(char* self, char* obj, int n, int x, t2Vector* pos, t2Vector* scale, float alpha) {
     if (n > 0) {
-        V4_F338 cols[5];
-        V4_F338 a;
+        sColour cols[5];
+        sFloat4 a;
         t2Vector p;
         t2Vector size;
         t2Vector sc;
         t2Vector dim;
-        V4_F338 col;
+        sColour col;
         float step;
         int i;
         cols[0] = D_004C8568;
@@ -1452,7 +1460,7 @@ extern "C" void func_0021F338(char* self, char* obj, int n, int x, t2Vector* pos
         *w = (*w & ~0x3E0) | ((obj[0x262] << 5) & 0x3E0);
         step = (size.x + 2.0f) * sc.x;
         col = cols[n - 1];
-        col.x *= alpha;
+        col.r *= alpha;
         for (i = 0; i < n; i++) {
             func_001F1190(self, *(int*)(self + 0x4A0), &p, &size, &sc, &col);
             p.x += step;
@@ -1464,7 +1472,6 @@ extern "C" void func_0021F338(char* self, char* obj, int n, int x, t2Vector* pos
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F660);
 #ifdef SKIP_ASM
-struct V4_F660 { float x, y, z, w; };
 struct Obj_F660 {
     virtual void v01();
     virtual void v02();
@@ -1478,7 +1485,7 @@ extern signed char D_00535C10[];
 extern int D_00536640[];
 extern char D_0046ED68[];
 extern char D_004A2138[];
-extern V4_F660 D_004C8808;
+extern sColour D_004C8808;
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001E91F8(void*, void*);
@@ -1493,12 +1500,12 @@ extern "C" void func_00392908(void*, float, float, char*);
 extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag) {
     t2Vector scale;
     t2Vector p;
-    V4_F660 a;
+    sFloat4 a;
     t2Vector size;
     t2Vector sc;
-    V4_F660 c;
+    sColour c;
     char buf[64];
-    V4_F660 col;
+    sColour col;
     int idx = 0x42;
     char* r = *(char**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + (*rider << 2) + 0x28);
     int sz = *(int*)(self + 0x4B4);
@@ -1540,7 +1547,7 @@ extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag
         *(float*)(t + 0x38) = *(float*)(t + 0x30) * sc.x;
         *(float*)(t + 0x3C) = *(float*)(t + 0x34) * sc.y;
         col = D_004C8808;
-        *(V4_F660*)(*(char**)(self + 0x42C) + 0x40) = col;
+        *(sColour*)(*(char**)(self + 0x42C) + 0x40) = col;
         func_00392908(*(char**)(self + 0x42C), p.x, p.y, buf);
         t = *(char**)(self + 0x42C);
         *(float*)(t + 0x38) = *(float*)(t + 0x30) * scale.x;
@@ -1553,7 +1560,6 @@ extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F9B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V4_F9B0 { float x, y, z, w; };
 struct Obj_F9B0 {
     virtual void v01();
     virtual void v02();
@@ -1563,7 +1569,7 @@ struct Obj_F9B0 {
     virtual void v06();
     virtual int v07();
 };
-extern V4_F9B0 D_004C8648;
+extern sColour D_004C8648;
 extern char D_004A2300[];
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -1582,10 +1588,10 @@ extern "C" void func_00391CB0(void*, float, float, char*);
 extern "C" void func_0021F9B0(char* self, char* obj, char* rider, int x, float t) {
     t2Vector scale;
     t2Vector p;
-    V4_F9B0 a;
+    sFloat4 a;
     t2Vector size;
     t2Vector sc;
-    V4_F9B0 col;
+    sColour col;
     char buf[64];
     char* m = *(char**)(*(char**)(D_004A28A8 + 0x84) + 0x78);
     int id = *(int*)(m + 0x1BC);
@@ -1608,10 +1614,10 @@ extern "C" void func_0021F9B0(char* self, char* obj, char* rider, int x, float t
         func_001F10F8(self, &p, &a, &size, &scale, obj[0x824], obj[0x825], x);
         int* w = (int*)(D_004A289C->e84 + 8);
         *w = (*w & ~0x3E0) | ((obj[0x826] << 5) & 0x3E0);
-        col.x = 1.0f;
-        col.y = 1.0f;
-        col.z = 1.0f;
-        col.w = 1.0f;
+        col.r = 1.0f;
+        col.g = 1.0f;
+        col.b = 1.0f;
+        col.a = 1.0f;
         func_001F1190(self, *(int*)(self + 0x4A8), &p, &size, &scale, &col);
         char* tx = *(char**)(self + 0x42C);
         p.x += size.x;
@@ -1624,7 +1630,7 @@ extern "C" void func_0021F9B0(char* self, char* obj, char* rider, int x, float t
         char* tx2 = *(char**)(self + 0x42C);
         *(float*)(tx2 + 0x38) = *(float*)(tx2 + 0x30) * sc.x;
         *(float*)(tx2 + 0x3C) = *(float*)(tx2 + 0x34) * sc.y;
-        *(V4_F9B0*)(*(char**)(self + 0x42C) + 0x40) = col;
+        *(sColour*)(*(char**)(self + 0x42C) + 0x40) = col;
         Obj_F9B0* o = (Obj_F9B0*)(rider + 0x6C0);
         sprintf(buf, D_004A2300, func_00153520(iface, o->v07(), id), func_00153350(iface, id));
         func_00391CB0(*(char**)(self + 0x42C), p.x, p.y, buf);
@@ -1645,7 +1651,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_002204A0);
 INCLUDE_ASM("fe/all_in_one_fe", func_00220AD0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V4_0AD0 { float x, y, z, w; };
 struct Big_0AD0 { unsigned int pad0 : 20; unsigned int mode : 2; unsigned int pad1 : 10; int rest[0xA1]; };
 struct Bits_0AD0 { int a, b; unsigned int lo : 5; int v : 5; unsigned int hi : 22; };
 struct Glob_0AD0 { char pad[0x504]; int f504; };
@@ -1660,9 +1665,9 @@ extern "C" void func_001E95A0(void*, void*, void*, void*, int, int);
 
 extern "C" void func_00220AD0(char* self, char* obj, float t) {
     t2Vector a;
-    V4_0AD0 b;
+    sFloat4 b;
     Big_0AD0 big;
-    V4_0AD0 c;
+    sColour c;
     t2Vector d;
     t2Vector e;
     void* p = obj + 0xAD4;
@@ -1676,9 +1681,9 @@ extern "C" void func_00220AD0(char* self, char* obj, float t) {
     }
     func_001E91A8(obj + 0xAD4, &c);
     if (t <= 0.5f) {
-        c.x *= t * 2.0f;
+        c.r *= t * 2.0f;
     } else {
-        c.x *= (1.0f - t) * 2.0f;
+        c.r *= (1.0f - t) * 2.0f;
     }
     d.x = 2.0f;
     d.y = 2.0f;
