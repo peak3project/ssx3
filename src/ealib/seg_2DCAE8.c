@@ -6369,7 +6369,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5C78);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct E_5C78 { int a; unsigned int b0 : 1; unsigned int rest : 31; };
 struct H_5C78 { int a; void (*fn)(int, char *); unsigned int b0 : 1; unsigned int rest : 31; };
-extern int D_00451008_5C78[] __asm__("D_00451008");
 extern struct E_5C78 D_00450E08_5C78[] __asm__("D_00450E08");
 extern struct H_5C78 D_00451250_5C78[] __asm__("D_00451250");
 
@@ -6377,7 +6376,7 @@ void func_003E5C78_5C78(int, char *, char *) __asm__("func_003E5C78");
 void func_003E5C78_5C78(int idx, char *fmt, char *ap) {
     char buf[0x2000];
     int h;
-    if (D_00451008_5C78[0] == 0) {
+    if (D_00451008 == 0) {
         func_003E5B60();
     }
     if (D_00450E08_5C78[idx].b0) {
