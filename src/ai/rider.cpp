@@ -2486,7 +2486,187 @@ extern "C" void func_00121950(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_00121AA0);
+#ifdef SKIP_ASM
+extern "C" void func_0031BB30(void* q, const void* a, const void* b);
+extern "C" float func_0031C128(float x);
+extern "C" float func_0031BF60(float x);
+
+struct sQ_1AA0 {
+    float x, y, z, w;
+    sQ_1AA0() {}
+    sQ_1AA0(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
+struct sV_1AA0 {
+    float x, y, z, w;
+    sV_1AA0() {}
+    sV_1AA0(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+extern sV_1AA0 D_004FF120_1AA0 __asm__("D_004FF120");
+extern sV_1AA0 D_004FF140_1AA0 __asm__("D_004FF140");
+
+// PORT: PS2-only VU0 macro-mode asm (rotate v by the conjugate of quaternion q).
+static inline sV_1AA0 QuatRot_1AA0(const sQ_1AA0& q, const sV_1AA0& v)
+{
+    sV_1AA0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vsub.w     $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmsubaw.xyz ACC, $vf6, $vf4w\n"
+        "vmsubaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQ_1AA0 QuatMul_1AA0(const sQ_1AA0& a, const sQ_1AA0& b)
+{
+    sQ_1AA0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline sV_1AA0 Div_1AA0(const sV_1AA0& v, float s)
+{
+    sV_1AA0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+static inline sQ_1AA0 AxisAngle_1AA0(const sV_1AA0& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQ_1AA0(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+// q = rotation(axis, angle) * q. Declared to return the quaternion by value but has no return statement (the classic
+// forgotten return); the caller ignores the result, and that ignored by-value result is the unwritten 16-byte temp the
+// retail frame keeps during the heading rotation. The final rotation below is written out instead (99.19 with this helper).
+static inline sQ_1AA0 Rotate_1AA0(sQ_1AA0& q, const sV_1AA0& axis, float angle)
+{
+    q = QuatMul_1AA0(AxisAngle_1AA0(axis, angle), q);
+}
+
+static inline float Atan2_1AA0(float y, float x)
+{
+    if (x == 0.0f)
+    {
+        if (y == 0.0f)
+            return y;
+        float a = -1.5707963705062866f;
+        if (y >= 0.0f)
+            a = 1.5707963705062866f;
+        return a;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f)
+    {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+static inline float Acos_1AA0(float x)
+{
+    return 1.5707963705062866f - func_0031C128(x);
+}
+
+#define ROT_1AA0 (*(sQ_1AA0*)&self->mRotation)
+
+static inline sQ_1AA0 Conj_1AA0(cRider* self)
+{
+    sQ_1AA0 r(-ROT_1AA0.x, -ROT_1AA0.y, -ROT_1AA0.z, ROT_1AA0.w);
+    return r;
+}
+
+static inline int neq_1AA0(const sV_1AA0* a, const sV_1AA0& b)
+{
+    return a->x != b.x || a->y != b.y || a->z != b.z || a->w != b.w;
+}
+
+extern "C" void func_00121AA0(cRider* self, const sV_1AA0* up, const sV_1AA0* fwd, float rate, float maxRate)
+{
+    sQ_1AA0 q = ROT_1AA0;
+    {
+        sV_1AA0 cur(2.0f * (ROT_1AA0.z * ROT_1AA0.x + ROT_1AA0.w * ROT_1AA0.y), 2.0f * (ROT_1AA0.z * ROT_1AA0.y - ROT_1AA0.w * ROT_1AA0.x),
+                    1.0f - 2.0f * (ROT_1AA0.x * ROT_1AA0.x + ROT_1AA0.y * ROT_1AA0.y), 0.0f);
+        func_0031BB30(&q, &cur, up);
+    }
+    if (neq_1AA0(fwd, D_004FF120_1AA0)) {
+        sV_1AA0 v = QuatRot_1AA0(q, *fwd);
+        float heading = -Atan2_1AA0(v.x, v.y);
+        Rotate_1AA0(q, *up, heading);
+    }
+    sQ_1AA0 d = QuatMul_1AA0(q, Conj_1AA0(self));
+    float angle;
+    sV_1AA0 axis;
+    if (0.0f < d.w) {
+        angle = 2.0f * Acos_1AA0(d.w <? 1.0f);
+        if (9.999999747378752e-06f <= angle) {
+            axis = Div_1AA0(sV_1AA0(d.x, d.y, d.z, 0.0f), func_0031BF60(angle * 0.5f));
+            goto have_axis;
+        }
+    } else {
+        angle = 2.0f * Acos_1AA0(-(d.w >? -1.0f));
+        if (9.999999747378752e-06f <= angle) {
+            axis = Div_1AA0(sV_1AA0(d.x, d.y, d.z, 0.0f), func_0031BF60(angle * -0.5f));
+            goto have_axis;
+        }
+    }
+    axis = D_004FF140_1AA0;
+have_axis:
+    angle = (maxRate <? angle * rate) * 0.01666666753590107f;
+    d = AxisAngle_1AA0(axis, angle);
+    ROT_1AA0 = QuatMul_1AA0(d, ROT_1AA0);
+    cRider_updateOrientationImplicit(self);
+}
+#undef ROT_1AA0
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_00121F30);
