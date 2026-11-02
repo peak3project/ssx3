@@ -3548,13 +3548,11 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301440);
 extern char *D_004A3DD8_1440 __asm__("D_004A3DD8");
 extern char **D_004A47B8_1440 __asm__("D_004A47B8");
 struct T12_1440 { unsigned a; int b; sBindEnd_1FBE38 f; };
-struct R12_1440 { int a; int b; int c; };
-extern R12_1440 D_004C9098_1440 __asm__("D_004C9098");
 extern T12_1440 D_004FBBF0_1440 __asm__("D_004FBBF0");
 extern int D_004A56BC_1440 __asm__("D_004A56BC");
 extern int D_004A3C78_1440[2] __asm__("D_004A3C78");
 #define ASSERT_1440(c) do { } while (0)
-extern "C" R12_1440 func_00301440(int n, sBindArg_1FBE38* e) {
+extern "C" cLunoValue func_00301440(int n, sBindArg_1FBE38* e) {
     if (D_004A56BC_1440 == 0) {
         D_004FBBF0_1440.a = 0xFFFFFFFF;
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
@@ -3591,7 +3589,7 @@ extern "C" R12_1440 func_00301440(int n, sBindArg_1FBE38* e) {
     // NOTE: in the release build the looked-up object is consumed by debug code only, so the lookup is dead and just
     // the id test's operands survive (lw; nor) once the branch is removed after register allocation.
     ASSERT_1440(obj != 0);
-    return D_004C9098_1440;
+    return D_004C9098;
 }
 #endif
 
