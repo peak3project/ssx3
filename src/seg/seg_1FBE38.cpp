@@ -2228,14 +2228,12 @@ struct O_EE98 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual 
 extern "C" void cMoveNode_addDynamicParticle_EE98(void*, void*, int, V4_EE98*) __asm__("cMoveNode_addDynamicParticle");
 void operator_delete(int*);
 extern char D_00489750_EE98[] __asm__("D_00489750");
-struct V3_EE98 { float x, y, z; };
-extern V3_EE98 D_004C9098_EE98 __asm__("D_004C9098");
 extern unsigned D_EE98[] __asm__("D_004FB938");
 extern int D_004A562C;
 extern const int D_00446380[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_EE98 { int idx; int val; int pad; int type; };
-extern "C" V3_EE98 func_002FEE98(int n, Ent_EE98 *e) {
+extern "C" cLunoValue func_002FEE98(int n, Ent_EE98 *e) {
     if (D_004A562C == 0) {
         ((int*)D_EE98)[0] = 1;
         ((int*)D_EE98)[1] = 0;
@@ -2297,10 +2295,10 @@ extern "C" V3_EE98 func_002FEE98(int n, Ent_EE98 *e) {
         float one = 1.0f;
         V4_EE98 v(*(float*)&buf[56], *(float*)&buf[57], *(float*)&buf[58], one);
         cMoveNode_addDynamicParticle_EE98(p, buf, buf[55], &v);
-        return D_004C9098_EE98;
+        return D_004C9098;
     }
     operator_delete((int*)buf);
-    return D_004C9098_EE98;
+    return D_004C9098;
 }
 #endif
 
