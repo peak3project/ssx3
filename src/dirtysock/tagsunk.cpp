@@ -2478,7 +2478,7 @@ extern "C" void* cBXString_cBXString2(void* self, const char* s);
 extern void* D_00481190[];
 extern void* D_00481290[];
 
-struct sRecE7F0 {
+struct sRec {
     int id;
     int start;
     int end;
@@ -2493,7 +2493,7 @@ struct sMsgE7F0 {
     char text[4];       // 0xC cBXString
     int on;             // 0x10
     int count;          // 0x14
-    sRecE7F0 rec;       // 0x18
+    sRec rec;       // 0x18
 };
 
 extern "C" void func_0025E7F0(char* self, char* msg)
@@ -2503,7 +2503,7 @@ extern "C" void func_0025E7F0(char* self, char* msg)
     if (err == 0) {
         char name[0x100];
         char text[0x100];
-        sRecE7F0 rec;
+        sRec rec;
         char buf[0x100];
         int st[16];
         cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3108), name, 0x100, D_004A2F40);
@@ -2571,14 +2571,6 @@ extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int 
 extern void* D_00481110[];
 extern void* D_00481290[];
 
-struct sRec25EB00 {
-    int id;
-    int start;
-    int end;
-    int len;
-    int extra;
-};
-
 struct sMsg25EB00 {
     int type;
     void** vt;
@@ -2588,7 +2580,7 @@ struct sMsg25EB00 {
     char pad68[0xE0];
     int f148;
     int f14C;
-    sRec25EB00 rec;     // 0x150
+    sRec rec;     // 0x150
 };
 
 extern "C" void func_0025EB00(char* self, char* msg)
@@ -2600,7 +2592,7 @@ extern "C" void func_0025EB00(char* self, char* msg)
         char b2[0x100];
         char buf[0x14];
         int st[16];
-        sRec25EB00 rec;
+        sRec rec;
         cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A31D8), name, 0x100, D_004A2F40);
         cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A2F38), b1, 0x100, D_004A2F40);
         cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A31E0), b2, 0x100, D_004A2F40);
