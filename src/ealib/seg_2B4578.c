@@ -2667,20 +2667,18 @@ int func_003B7F18(int h) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7F60);
 #ifdef SKIP_ASM
-int *func_003B6A38_7F60(void) __asm__("func_003B6A38");
 int func_003B8C00(int, int, int);
 
 int func_003B7F60(int arg0, int arg1, int arg2) {
-    int *p;
+    struct sA0A0Strm *p;
 
-    p = func_003B6A38_7F60();
+    p = func_003B6A38(arg0);
     if (p == 0) {
         return -8;
-        do { } while (0);
     }
-    *(short *)((char *)p + 0xF4) = arg1;
-    *(short *)((char *)p + 0xF6) = arg2;
-    func_003B8C00(p[1], arg1, arg2);
+    p->fEC.f08 = arg1;
+    p->fEC.f0A = arg2;
+    func_003B8C00(p->f04, arg1, arg2);
     return 0;
 }
 #endif
