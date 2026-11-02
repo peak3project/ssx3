@@ -8280,25 +8280,6 @@ struct V_3EE0 {
     int a80[6];
     int a98[6];
 };
-struct W8_3EE0 { int w; int pad; };
-struct W16_3EE0 { int w; char pad[12]; };
-struct T_3EE0 {
-    char pad0[0x20];
-    struct W8_3EE0 a[48];
-    struct W16_3EE0 b[1];
-};
-struct E32_3EE0 { int w; char pad[28]; };
-struct A_3EE0 {
-    char pad0[0x840];
-    struct W8_3EE0 x840[48];
-    struct W8_3EE0 x9C0[(0xCB0 - 0x9C0) / 8];
-    struct T_3EE0 *tbl;
-    char padCB4[0xEB0 - 0xCB4];
-    struct E32_3EE0 e[96];
-    char pad1AB0[0x1AB8 - 0x1AB0];
-    int x1AB8;
-};
-extern struct A_3EE0 D_0050AD00_3EE0 __asm__("D_0050AD00");
 extern void func_003C2EC8(int);
 extern void f38E0_3EE0(int) __asm__("func_003C38E0");
 extern void f3178_3EE0(int, int) __asm__("func_003C3178");
@@ -8316,13 +8297,13 @@ int func_003C3EE0(struct V_3EE0 *v, int base, int id, int p3, int p4, int p5, in
         func_003C2EC8(id);
         func_003C27E0(id, 0);
         for (i = 0; i < ch->f23; i++) {
-            D_0050AD00_3EE0.e[ch->f04[i]].w = *v->p64 + (v->a68[i] - v->a68[0]);
-            D_0050AD00_3EE0.x1AB8 += 0x800000;
-            D_0050AD00_3EE0.tbl->a[ch->f04[i]].w = D_0050AD00_3EE0.e[ch->f04[i]].w | D_0050AD00_3EE0.x1AB8;
-            D_0050AD00_3EE0.x840[ch->f04[i]].w = D_0050AD00_3EE0.e[ch->f04[i]].w;
+            D_0050AD00.fE98[ch->f04[i]].f18 = *v->p64 + (v->a68[i] - v->a68[0]);
+            D_0050AD00.f1AB8 += 0x800000;
+            D_0050AD00.fCB0->f20[ch->f04[i]].key = D_0050AD00.fE98[ch->f04[i]].f18 | D_0050AD00.f1AB8;
+            D_0050AD00.f83C[ch->f04[i]].val = D_0050AD00.fE98[ch->f04[i]].f18;
             if (D_0050A8E8.setup.cfg.f29 == 2) {
-                D_0050AD00_3EE0.tbl->a[ch->f04[i] + 0x18].w = D_0050AD00_3EE0.e[ch->f04[i]].w | D_0050AD00_3EE0.x1AB8;
-                D_0050AD00_3EE0.x840[ch->f04[i] + 0x18].w = D_0050AD00_3EE0.e[ch->f04[i]].w;
+                D_0050AD00.fCB0->f20[ch->f04[i] + 0x18].key = D_0050AD00.fE98[ch->f04[i]].f18 | D_0050AD00.f1AB8;
+                D_0050AD00.f83C[ch->f04[i] + 0x18].val = D_0050AD00.fE98[ch->f04[i]].f18;
             }
         }
     } else if (ch->f24 & 0x100) {
@@ -8330,10 +8311,10 @@ int func_003C3EE0(struct V_3EE0 *v, int base, int id, int p3, int p4, int p5, in
         f38E0_3EE0(id);
         func_003C27E0(id, 0);
         for (i = 0; i < ch->f23; i++) {
-            D_0050AD00_3EE0.e[ch->f04[i]].w = *v->p64 + (v->a68[i] - v->a68[0]);
-            D_0050AD00_3EE0.x1AB8 += 0x800000;
-            D_0050AD00_3EE0.tbl->b[ch->f04[i] - D_0050A8E8.setup.cfg.f10].w = D_0050AD00_3EE0.e[ch->f04[i]].w | D_0050AD00_3EE0.x1AB8;
-            D_0050AD00_3EE0.x9C0[ch->f04[i] - D_0050A8E8.setup.cfg.f10].w = 0;
+            D_0050AD00.fE98[ch->f04[i]].f18 = *v->p64 + (v->a68[i] - v->a68[0]);
+            D_0050AD00.f1AB8 += 0x800000;
+            D_0050AD00.fCB0->f1A0[ch->f04[i] - D_0050A8E8.setup.cfg.f10].key = D_0050AD00.fE98[ch->f04[i]].f18 | D_0050AD00.f1AB8;
+            D_0050AD00.f9BC[ch->f04[i] - D_0050A8E8.setup.cfg.f10].val = 0;
         }
     } else {
         for (i = 0; i < ch->f23; i++) {
