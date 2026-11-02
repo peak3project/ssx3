@@ -92,6 +92,14 @@ struct sRaceSettings {
 };
 extern sRaceSettings D_00535BC8;
 
+// Animation table D_00459FC8 (two entries per row): animation id and a mirror flag.
+struct sAnimEntry
+{
+    int anim;
+    int flip;
+};
+extern sAnimEntry D_00459FC8[][2];
+
 // The path system (cPathSys, the name from cPathSys_resolvePaths); D_004D33A0 is the instance. Only the
 // count of its 0x3C-byte paths (items at 0x14) is read here.
 struct cPathSys {
@@ -6435,7 +6443,6 @@ extern "C" void func_0029DC48(void* self, void* rider);
 extern "C" float func_00312790(char* self, int a1);
 extern "C" void func_00132FB8(void* self, int a1, int a2);
 extern "C" void func_00311E88(void*, int, float);
-extern char D_00459FC8[];
 
 extern "C" void func_001328B0(void* self)
 {
@@ -6448,7 +6455,7 @@ extern "C" void func_001328B0(void* self)
     *(int*)(*(char**)((char*)self + 0x14) + 0x32C) = 1;
     func_0029DC48(func_0028B180(), *(void**)((char*)self + 0x14));
     char* r3 = *(char**)((char*)self + 0x14);
-    float d = func_00312790(*(char**)(r3 + 0x784), *(int*)(D_00459FC8 + *(int*)((char*)self + 0x10) * 8 + *(int*)(r3 + 0x32C) * 16));
+    float d = func_00312790(*(char**)(r3 + 0x784), D_00459FC8[*(int*)(r3 + 0x32C)][*(int*)((char*)self + 0x10)].anim);
     *(float*)(*(char**)(*(char**)((char*)self + 0x14) + 0x784) + 0x1C) = d / *(float*)self;
     func_00132FB8(self, *(int*)(*(char**)((char*)self + 0x14) + 0x32C), *(int*)((char*)self + 0x10));
     *(float*)(*(char**)(*(char**)((char*)self + 0x14) + 0x784) + 0x1C) = 1.0f;
@@ -6542,13 +6549,6 @@ INCLUDE_ASM("ai/ai", func_00132FB8);
 extern "C" void cRider_updateOrientationImplicit(void*);
 extern "C" void cRiderAnimBase_changeHeadingOffset(void* self, float angle);
 
-struct sAnimEntry_132FB8
-{
-    int anim;
-    int flip;
-};
-// Typed view of D_00459FC8 (func_001328B0 reads it as raw bytes); bound by asm label.
-extern sAnimEntry_132FB8 D_00459FC8_tbl[][2] __asm__("D_00459FC8");
 
 struct sVec3_132FB8
 {
@@ -6588,7 +6588,7 @@ static inline sQuat_132FB8 QuatMul_132FB8(const sQuat_132FB8& a, const sQuat_132
 
 extern "C" void func_00132FB8(void* self, int a1, int a2)
 {
-    if (D_00459FC8_tbl[a1][a2].flip != 0)
+    if (D_00459FC8[a1][a2].flip != 0)
     {
         char* r = *(char**)((char*)self + 0x14);
         sQuat_132FB8 t = QuatMul_132FB8(sQuat_132FB8(sVec3_132FB8(*(t4Vector*)(r + 0x1C0)), 0.0f), *(sQuat_132FB8*)(r + 0x120));
@@ -6596,7 +6596,7 @@ extern "C" void func_00132FB8(void* self, int a1, int a2)
         cRider_updateOrientationImplicit(*(void**)((char*)self + 0x14));
         cRiderAnimBase_changeHeadingOffset(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 3.1415927410125732f);
     }
-    cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x14) + 0x784), D_00459FC8_tbl[a1][a2].anim, 0, -1.0f);
+    cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x14) + 0x784), D_00459FC8[a1][a2].anim, 0, -1.0f);
 }
 #endif
 
