@@ -11702,7 +11702,83 @@ void func_003CA028(char *arg0, char *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CA0B8);
+#ifdef SKIP_ASM
+typedef struct { float x, y; } V2_A0B8;
+extern int func_003CCF90_A0B8(int, int **, int) __asm__("func_003CCF90");
+extern int func_003CCF60_A0B8(int, int, int, int) __asm__("func_003CCF60");
+extern V2_A0B8 func_003CD138_A0B8(int) __asm__("func_003CD138");
+extern void func_003CD190_A0B8(int, V2_A0B8 *) __asm__("func_003CD190");
+
+int func_003CA0B8(char *o, int n, int unused, int *buf) {
+    int used = 0;
+    int got;
+    int *dst = buf;
+    V2_A0B8 v;
+    struct { int hdr[2]; int samples[30]; } tmp;
+    int *p2;
+
+    if (*(int *)(o + 0x30) < 3) {
+        int k;
+        if (*(int *)(o + 0x40) == 0) {
+            k = *(int *)(o + 0x44) / 0x1C;
+            k = k * 0x1C;
+            func_003CCF60_A0B8(*(int *)(o + 0x1C), *(int *)(o + 0x34), k * 4, k);
+            *(int *)(o + 0x40) = 1;
+        }
+        while (n != 0) {
+            got = func_003CCF90_A0B8(*(int *)(o + 0x1C), &dst, n);
+            dst += got;
+            used += got;
+            *(int *)(o + 0x20) += got;
+            if (got < n) {
+                int rem;
+                int cnt;
+                n -= got;
+                rem = *(int *)(o + 0x44) % 0x1C;
+                *(int *)(o + 0x20) = *(int *)(o + 0x44) - rem;
+                cnt = *(int *)(o + 0x48) - *(int *)(o + 0x20) + 1;
+                func_003CCF60_A0B8(*(int *)(o + 0x1C), *(int *)(o + 0x34) + (*(int *)(o + 0x20) / 0x1C) * 15, cnt * 4, cnt);
+                if (*(int *)(o + 0x3C) == 0) {
+                    v = func_003CD138_A0B8(*(int *)(o + 0x1C));
+                    *(float *)(o + 0x4C) = v.x;
+                    *(float *)(o + 0x50) = v.y;
+                    got = func_003CCF90_A0B8(*(int *)(o + 0x1C), &dst, n);
+                    dst += got;
+                    *(int *)(o + 0x20) += got;
+                    *(int *)(o + 0x3C) = 1;
+                    used += got;
+                    n -= got;
+                } else {
+                    v.x = *(float *)(o + 0x4C);
+                    v.y = *(float *)(o + 0x50);
+                    func_003CD190_A0B8(*(int *)(o + 0x1C), &v);
+                    p2 = tmp.samples;
+                    got = func_003CCF90_A0B8(*(int *)(o + 0x1C), &p2, rem);
+                    *(int *)(o + 0x20) += got;
+                }
+            } else {
+                n -= got;
+            }
+        }
+        return used;
+    }
+    while (n > 0) {
+        got = func_003CCF90_A0B8(*(int *)(o + 0x1C), &dst, n);
+        dst += got;
+        n -= got;
+        *(int *)(o + 0x20) += got;
+        used += got;
+        if (got < n) {
+            int cnt = *(int *)(o + 0x28) - *(int *)(o + 0x24) + 1;
+            *(int *)(o + 0x20) = *(int *)(o + 0x24);
+            func_003CCF60_A0B8(*(int *)(o + 0x1C), *(int *)(o + 0x2C), cnt * 4, cnt);
+        }
+    }
+    return used;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CA358);
