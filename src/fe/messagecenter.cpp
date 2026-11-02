@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_onWidgetCreate);
 #ifdef SKIP_ASM
@@ -39,11 +47,6 @@ extern char D_00460470[];
 extern char D_004A1408[];
 extern char* D_004A28A8;
 
-struct sVtEntry_6F98 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 class cWidget_6F98 {
 public:
@@ -117,7 +120,7 @@ extern "C" void cFEStateRequestLine_onWidgetCreate(void* p, void* q)
         w->show(0);
     } else if (h == GetHashValue32(D_004605C8)) {
         char* db = *(char**)(D_004A28A8 + 0x8C);
-        sVtEntry_6F98* vt = *(sVtEntry_6F98**)(db + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(db + 4);
         unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_004605D8));
         unsigned short* buf = (unsigned short*)operator_new__FUi((USTR_length(fmt) + 5) * 2, D_00460470, 0x100, 0);
         func_002C26D0(buf, fmt, countBits_6F98(self->done));
@@ -245,11 +248,6 @@ struct sReqLine_7500 {
     int f16C;               // 0x16C
 };
 
-struct sVE_7500 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline int isSet_7500(unsigned long m, int i)
 {
@@ -314,7 +312,7 @@ extern "C" void func_00197500(void* p, void* item, unsigned int msg)
         func_0028C2D0(func_0028B180(), self->done);
         if (self->f16C != 0) {
             char* pl = (char*)func_0028B180();
-            sVE_7500* vt = *(sVE_7500**)(pl + 0x5558);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(pl + 0x5558);
             char* obj = pl + 0x118;
             vt[3].fn(obj + vt[3].delta, 0xA);
         }
@@ -673,11 +671,6 @@ extern char D_00460668[];
 extern char D_00460678[];
 extern char* D_004A28A8;
 
-struct sVtEntry_197E70 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 class cMsgWidget_197E70 {
 public:
@@ -712,7 +705,7 @@ extern "C" void func_00197E70(void* vself)
         if (strlen(name) != 0) {
             self->title->show(1);
             char* db = *(char**)(D_004A28A8 + 0x8C);
-            sVtEntry_197E70* vt = *(sVtEntry_197E70**)(db + 4);
+            sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(db + 4);
             unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_00460668));
             int len = USTR_length(fmt) + strlen(name) + 1;
             unsigned short* buf = (unsigned short*)operator_new__FUi(len * 2, D_00460470, 0x100, 0);
@@ -728,7 +721,7 @@ extern "C" void func_00197E70(void* vself)
         if (strlen(artist) != 0) {
             self->artist->show(1);
             char* db = *(char**)(D_004A28A8 + 0x8C);
-            sVtEntry_197E70* vt = *(sVtEntry_197E70**)(db + 4);
+            sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(db + 4);
             unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_00460678));
             int len = USTR_length(fmt) + strlen(artist) + 1;
             unsigned short* buf = (unsigned short*)operator_new__FUi(len * 2, D_00460470, 0x100, 0);
@@ -761,11 +754,6 @@ extern char D_004605D8[];
 extern char D_00460688[];
 extern char* D_004A28A8;
 
-struct sVtEntry_00198118 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 struct sMsgCenter_00198118 {
@@ -779,7 +767,7 @@ extern "C" void func_00198118(void* p)
 {
     sMsgCenter_00198118* self = (sMsgCenter_00198118*)p;
     char* db = *(char**)(D_004A28A8 + 0x8C);
-    sVtEntry_00198118* vt = *(sVtEntry_00198118**)(db + 4);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(db + 4);
     unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_004605D8));
     unsigned short* buf = (unsigned short*)operator_new__FUi((USTR_length(fmt) + 5) * 2, D_00460688, 0x100, 0);
     int n = 0;
@@ -1052,11 +1040,6 @@ extern char D_00460688[];
 extern char D_004A1408[];
 extern char* D_004A28A8;
 
-struct sVtEntry_001986D0 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 class cMsgWidget_1986D0 {
 public:
@@ -1089,7 +1072,7 @@ extern "C" void cFEStateRequestLine_updateHilightedSongInfo(void* vself, int idx
     sReqLine_1986D0* self = (sReqLine_1986D0*)vself;
     if (self->title != 0) {
         char* db = *(char**)(D_004A28A8 + 0x8C);
-        sVtEntry_001986D0* vt = *(sVtEntry_001986D0**)(db + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(db + 4);
         unsigned short* fmt = vt[4].fn(db + vt[4].delta, GetHashValue32(D_00460770));
         char* name = (char*)func_00198AB8(self, idx);
         int len = USTR_length(fmt) + strlen(name) + 1;
