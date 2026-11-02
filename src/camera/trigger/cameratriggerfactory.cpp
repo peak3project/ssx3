@@ -15,6 +15,7 @@ struct sVec3 {
     sVec3() {}
     sVec3(float a, float b, float c) : x(a), y(b), z(c) {}
 };
+extern sVec3 D_004FF0D8;     // zero vector
 
 // 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai and camera/camera).
 struct sVec4 : t4Vector
@@ -41,11 +42,6 @@ void* get_cCTActionNone(void* unused, int* outType);
 // PORT: the game's tagged allocator, bound as a placement operator new.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
 
-struct sCTActVec3A {
-    float x, y, z;
-};
-
-extern sCTActVec3A D_004FF0D8_act __asm__("D_004FF0D8");     // zero vector
 extern void* D_0045C2E8[];      // cCTAction vtable
 extern void* D_0045C1D0[];      // bounded cam
 extern void* D_0045C1B8[];      // spline
@@ -89,7 +85,7 @@ struct sCTActBoundedA : sCTActA {
     float f1C;          // 0x1C
     int f20;            // 0x20
     int f24;            // 0x24
-    sCTActVec3A f28;    // 0x28
+    sVec3 f28;          // 0x28
     sCTActBoundedA() : sCTActA()
     {
         vtable = D_0045C1D0;
@@ -101,7 +97,7 @@ struct sCTActBoundedA : sCTActA {
         f1C = 25.0f;
         f18 = 70.0f;
         f24 = 0;
-        f28 = D_004FF0D8_act;
+        f28 = D_004FF0D8;
         f20 = 0;
     }
 };
@@ -238,7 +234,6 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camboundobj);
 // PORT: the game's tagged allocator, bound as a placement operator new.
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
 
-extern sVec3 D_004FF0D8;     // zero vector
 extern void* D_0045C3F0[];      // cCTBoundObj vtable
 extern void* D_0045C2A8[];      // ellipse
 extern void* D_0045C268[];      // box
