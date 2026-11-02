@@ -141,6 +141,11 @@ struct sPtQuadF {
     float v[4];
 } __attribute__((aligned(16)));
 
+// Four unsigned shorts (a scissor / viewport rectangle).
+struct sPtScissor {
+    unsigned short v[4];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2354,9 +2359,6 @@ INCLUDE_ASM("render/particle", func_003765B8);
 #ifdef SKIP_ASM
 
 
-struct sPtScis65B8 {
-    unsigned short v[4];
-};
 
 struct sPtView65B8 {
     float x, y, w, h;               // 0x00
@@ -2377,7 +2379,7 @@ struct sPtView65B8 {
     sPtMatrix m1C0;                // 0x1C0
     sPtQuadF q200;                  // 0x200
     sPtQuadF q210;                  // 0x210
-    sPtScis65B8 scissor;            // 0x220
+    sPtScissor scissor;            // 0x220
     int key;                        // 0x228
     int pad_0x22C;
 };
@@ -2397,7 +2399,7 @@ struct sPtGfx65B8 {
     sPtMatrix m58A0;               // 0x58A0
     sPtQuadF q58E0;                 // 0x58E0
     sPtQuadF q58F0;                 // 0x58F0
-    sPtScis65B8 scissor;            // 0x5900
+    sPtScissor scissor;            // 0x5900
     float f5908;                    // 0x5908
     float f590C;                    // 0x590C
     float f5910;                    // 0x5910
@@ -2462,9 +2464,6 @@ INCLUDE_ASM("render/particle", func_00376768);
 #ifdef SKIP_ASM
 
 
-struct sPtScis6768 {
-    unsigned short v[4];
-};
 
 struct sPtView6768 {
     float x, y, w, h;               // 0x00
@@ -2485,7 +2484,7 @@ struct sPtView6768 {
     sPtMatrix m1C0;                // 0x1C0
     sPtQuadF q200;                  // 0x200
     sPtQuadF q210;                  // 0x210
-    sPtScis6768 scissor;            // 0x220
+    sPtScissor scissor;            // 0x220
     int key;                        // 0x228
     int pad_0x22C;
 };
@@ -2505,7 +2504,7 @@ struct sPtGfx6768 {
     sPtMatrix m58A0;               // 0x58A0
     sPtQuadF q58E0;                 // 0x58E0
     sPtQuadF q58F0;                 // 0x58F0
-    sPtScis6768 scissor;            // 0x5900
+    sPtScissor scissor;            // 0x5900
     float f5908;                    // 0x5908
     float f590C;                    // 0x590C
     float f5910;                    // 0x5910
