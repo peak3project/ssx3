@@ -57,6 +57,21 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
+// The game singleton D_004A28A8 and the part of its game / race chain this unit reads (seg/seg_1FBE38 layout).
+struct sRace {
+    char pad_0x0[0x78];
+    int f78;                    // 0x78
+};
+struct sGame {
+    char pad_0x0[0xC];
+    sRace* race;                // 0xC
+};
+struct sApp {
+    char pad_0x0[0x84];
+    sGame* game;                // 0x84
+};
+extern sApp* D_004A28A8;
+
 // The per-frame camera input record (0x70 bytes) that func_00162568 (camera/camera) fills from the target.
 struct sCamInfo {
     t4Vector f00;               // 0x00
@@ -4588,7 +4603,6 @@ void func_00178BA8(void* self, void* other)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178BB0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" float func_0031C040(float x);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 
@@ -4715,7 +4729,7 @@ extern "C" void func_00178BB0(char* self)
     sVec4 q = AxisAngle_00178BB0((const sVec4&)D_004FF160, a);
     sVec4 v = ctRot_00178BB0(q, *(sVec4*)(self + 0x390));
     *(sVec4*)(self + 0x20) = ctAdd_00178BB0(getPos_00178BB0(self), ctScale_00178BB0((const sVec4&)D_004FF160, -3.0f));
-    int multi = *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x78) >= 2;
+    int multi = D_004A28A8->game->race->f78 >= 2;
     float h = 0.0f;
     if (multi) {
         h = 150.0f;
