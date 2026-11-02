@@ -2951,18 +2951,12 @@ struct sOct_DBE8 {
     void** listA;                   // 0x24
 };
 
-struct sCell_DBE8 {
-    int level;                      // 0x0
-    int x;                          // 0x4
-    int y;                          // 0x8
-    int z;                          // 0xC
-};
 
 struct sCtx_DBE8 {
     float* pos;                     // 0x0
 };
 
-static inline int Classify_DBE8(sCtx_DBE8* ctx, sCell_DBE8* c)
+static inline int Classify_DBE8(sCtx_DBE8* ctx, sWsCell* c)
 {
     int bits = (c->level + 0x7F) << 23;
     float s = *(float*)&bits;
@@ -2986,7 +2980,7 @@ extern "C" void func_0033DBE8(char* flag, sQuery_369D8* q, sQuery_369D8* q2, sCt
 {
     sCtx_DBE8* ctx = (sCtx_DBE8*)vctx;
     sOct_DBE8* node = (sOct_DBE8*)vnode;
-    sCell_DBE8* cell = (sCell_DBE8*)vcell;
+    sWsCell* cell = (sWsCell*)vcell;
     int r = Classify_DBE8(ctx, cell);
     if (r == 0) {
         void** o;
@@ -3031,7 +3025,7 @@ extern "C" void func_0033DBE8(char* flag, sQuery_369D8* q, sQuery_369D8* q2, sCt
         if (cell->level == 11) {
             return;
         }
-        sCell_DBE8 sub;
+        sWsCell sub;
         sub.level = cell->level - 1;
         sub.x = cell->x * 2;
         sub.y = cell->y * 2;
