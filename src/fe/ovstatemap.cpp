@@ -8,6 +8,22 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual ~cUIThing();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+};
+
 //100%
 INCLUDE_ASM("fe/ovstatemap", cOVState_MAP_onCreateScreen);
 #ifdef SKIP_ASM
@@ -26,20 +42,6 @@ extern void* D_004A28A8;
 extern char D_004717F8[];
 extern char D_004A25A8[];
 
-class cUIObj_86A8 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
 struct sMap_86A8 {
     char pad_0x0[0x10];
     void* engine;       // 0x10
@@ -48,7 +50,7 @@ struct sMap_86A8 {
     int fC0;            // 0xC0
     int fC4;            // 0xC4
     char pad_0xC8[0x8];
-    cUIObj_86A8* obj;   // 0xD0
+    cUIThing* obj;   // 0xD0
     void* screen;       // 0xD4
     char pad_0xD8[0x4];
     int fDC;            // 0xDC
@@ -77,7 +79,7 @@ extern "C" void cOVState_MAP_onCreateScreen(sMap_86A8* self)
     self->fBC = 0;
     self->scale = 1.0f;
     self->speed = 0.1599999964237213f;
-    cUIObj_86A8* o = (cUIObj_86A8*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A25A8));
+    cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A25A8));
     self->obj = o;
     if (o != 0) {
         o->setVisible(0);
@@ -115,7 +117,6 @@ struct sV3_87F0 {
 struct sV4_87F0 {
     float x, y, z, w;
 } __attribute__((aligned(16)));
-
 
 struct sUIObj_87F0 {
     int pad_0x0[2];
@@ -247,7 +248,6 @@ extern "C" int cOVState_MAP_onGainTransition(void* selfp, int on)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208B00);
 #ifdef SKIP_ASM
-
 struct sObj00208B00 {
     int pad[2];
     sVEntry<void(void*, int)>* vt;
@@ -289,7 +289,6 @@ extern "C" void func_00208B78(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208BB8);
 #ifdef SKIP_ASM
-
 struct sObj00208BB8 {
     int pad[2];
     sVEntry<void(void*, int)>* vt;
@@ -454,7 +453,6 @@ extern "C" void func_00208F10(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", cOVState_MAP_setupPopup);
 #ifdef SKIP_ASM
-
 struct sUIObj_9010 {
     int pad_0x0[2];
     sVEntry<void>* vt;               // 0x8
@@ -577,7 +575,6 @@ extern "C" void cOVState_MAP_setupPopup(void* selfp)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00209300);
 #ifdef SKIP_ASM
-
 struct sObj00209300 {
     int pad[2];
     sVEntry<int(void*)>* vt;
@@ -896,28 +893,15 @@ int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char D_00471850[];
 
-class cUIObj_9E78 {
-public:
-    int pad[2];
-    virtual ~cUIObj_9E78();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
 struct sMap_9E78 {
     char pad_0x0[0xC0];
     int count;              // 0xC0
     char pad_0xC4[0x10];
     void* screen;           // 0xD4
     char pad_0xD8[0x8];
-    cUIObj_9E78* cursor;    // 0xE0
-    cUIObj_9E78* a[8];      // 0xE4
-    cUIObj_9E78* b[8];      // 0x104
+    cUIThing* cursor;    // 0xE0
+    cUIThing* a[8];      // 0xE4
+    cUIThing* b[8];      // 0x104
 };
 
 extern "C" void func_00209E78(void* p)
@@ -955,26 +939,13 @@ extern "C" void func_00209E78(void* p)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00209FD0);
 #ifdef SKIP_ASM
-class cUIObj_9FD0 {
-public:
-    int pad[2];
-    virtual ~cUIObj_9FD0();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
 struct sMap_9FD0 {
     char pad_0x0[0xC0];
     int count;              // 0xC0
     char pad_0xC4[0x1C];
-    cUIObj_9FD0* cursor;    // 0xE0
-    cUIObj_9FD0* a[8];      // 0xE4
-    cUIObj_9FD0* b[8];      // 0x104
+    cUIThing* cursor;    // 0xE0
+    cUIThing* a[8];      // 0xE4
+    cUIThing* b[8];      // 0x104
 };
 
 extern "C" void func_00209FD0(void* p)
@@ -997,25 +968,11 @@ extern "C" void func_00209FD0(void* p)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A088);
 #ifdef SKIP_ASM
-class cUIObj_A088 {
-public:
-    int pad[2];
-    virtual ~cUIObj_A088();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
 struct sMap_A088 {
     char pad_0x0[0xE0];
-    cUIObj_A088* cursor;    // 0xE0
-    cUIObj_A088* a[8];      // 0xE4
-    cUIObj_A088* b[8];      // 0x104
+    cUIThing* cursor;    // 0xE0
+    cUIThing* a[8];      // 0xE4
+    cUIThing* b[8];      // 0x104
 };
 
 extern "C" void func_0020A088(void* p)
@@ -1176,7 +1133,6 @@ struct sBXString_A4E0 {
     sBXString_A4E0(const sBXString_A4E0& o);
 };
 
-
 static inline void show_A4E0(char* o, int on)
 {
     sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
@@ -1224,7 +1180,6 @@ extern "C" int func_0020A4E0(char* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A6A8);
 #ifdef SKIP_ASM
-
 extern void* D_004A28A8;
 
 extern "C" void func_0020A6A8(void* self, int a1, int a2)
