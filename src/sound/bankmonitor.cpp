@@ -64,7 +64,7 @@ struct sSndPlayer {
     char pad_0x4[0x88 - 0x4];
     int f88;                    // 0x88
     int f8C;                    // 0x8C
-    int f90;                    // 0x90
+    volatile int busy;          // 0x90
     char pad_0x94[0x4];
     sBmSlot slots[48];          // 0x98
     void** vtbl;                // 0x8D8
@@ -722,7 +722,7 @@ extern "C" sSndPlayer* func_002AD9C8(sSndPlayer* self, int inchrg, int heap)
     self->vtbl = D_00483BA8;
     self->f8C = 0;
     sBmSlot* p = self->slots;
-    self->f90 = 0;
+    self->busy = 0;
     int i = 47;
     do {
         func_002AD848(p);
@@ -823,12 +823,7 @@ extern "C" int func_002ADC30(void* self, int n);
 
 void func_002AD888_cb(void* self, int a1, sSndCallback cb, int b, int c, int d, int e, int f) __asm__("func_002AD888");
 
-struct sSndPlayerDCA0 {
-    char pad_0x00[0x90];
-    volatile int busy;          // 0x90
-};
-
-extern "C" int func_002ADCA0(sSndPlayerDCA0* self, int a1, sSndCallback cb, int b, int c, int d, int e, int f)
+extern "C" int func_002ADCA0(sSndPlayer* self, int a1, sSndCallback cb, int b, int c, int d, int e, int f)
 {
     self->busy = self->busy + 1;
     int idx = func_002ADC30(self, self->busy);
