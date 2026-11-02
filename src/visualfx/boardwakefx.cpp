@@ -181,6 +181,14 @@ void* operator new[](unsigned int size, const char* tag, unsigned int flags, int
 // The graphics manager as a raw pointer (a few functions use typed views of it through __asm__ aliases).
 extern char* D_004A5B80;
 
+// Four floats with an empty and a by-value ctor and a placement new[] (16-byte aligned; not the POD t4Vector).
+struct sWakeVec4c {
+    float x, y, z, w;
+    sWakeVec4c() {}
+    sWakeVec4c(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+    void* operator new[](unsigned int, void* p) { return p; }
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2915,21 +2923,16 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E4F50);
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E5430);
 #ifdef SKIP_ASM
-struct sWakeVec5430 {
-    float x, y, z, w;
-    sWakeVec5430() {}
-    sWakeVec5430(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
-} __attribute__((aligned(16)));
 
 struct sWakeGrid5430 {
     char pad_0x0[0xC];
     float size;                 // 0xC
     char pad_0x10[0x10];
-    sWakeVec5430 pos;           // 0x20
+    sWakeVec4c pos;           // 0x20
 };
 
 // PORT: PS2-only VU0 inline asm (a -= b).
-static inline void wakeSub5430(sWakeVec5430& a, const sWakeVec5430& b)
+static inline void wakeSub5430(sWakeVec4c& a, const sWakeVec4c& b)
 {
     __asm__(
         "lqc2      $vf3, %0\n"
@@ -2952,7 +2955,7 @@ static inline void wakeWrap5430(float& r, float v, float s)
     }
 }
 
-extern "C" void func_002E5430(sWakeGrid5430* self, sWakeVec5430* d)
+extern "C" void func_002E5430(sWakeGrid5430* self, sWakeVec4c* d)
 {
     wakeSub5430(self->pos, *d);
     float x = self->pos.x;
@@ -2964,7 +2967,7 @@ extern "C" void func_002E5430(sWakeGrid5430* self, sWakeVec5430* d)
     wakeWrap5430(x, px, self->size);
     wakeWrap5430(y, py, self->size);
     wakeWrap5430(z, pz, self->size);
-    self->pos = sWakeVec5430(x, y, z, 1.0f);
+    self->pos = sWakeVec4c(x, y, z, 1.0f);
 }
 #endif
 
@@ -3228,31 +3231,25 @@ extern "C" void func_00319CC8(void);
 extern char D_004A3B20[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
-struct sVec5920 {
-    float x, y, z, w;
-    sVec5920() {}
-    sVec5920(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
-    void* operator new[](unsigned int, void* p) { return p; }
-} __attribute__((aligned(16)));
 
 struct sWake5920 {
     char pad0[0xC];             // 0x00
     void** vtbl;                // 0x0C
     void* fx[12];               // 0x10
-    sVec5920 v[2];              // 0x40
+    sWakeVec4c v[2];              // 0x40
 };
 
 extern "C" void* func_002E5920(sWake5920* self, void* a1)
 {
     func_00354648(self, a1);
     self->vtbl = D_00487FD8;
-    new (self->v) sVec5920[2];
+    new (self->v) sWakeVec4c[2];
     func_00319CC8();
     for (int i = 11; i >= 0; i--) {
         self->fx[i] = 0;
     }
     for (int j = 0; j < 2; j++) {
-        self->v[j] = sVec5920(0.0f, 0.0f, 0.0f, 1.0f);
+        self->v[j] = sWakeVec4c(0.0f, 0.0f, 0.0f, 1.0f);
     }
     self->fx[0] = func_002E4D88((char*)cMemMan_alloc(0xC0, D_004A3B20, 0, 0), 0, 0, 1500.0f, 3.0f, 1.0f, -200.0f);
     self->fx[1] = func_002E4D88((char*)cMemMan_alloc(0xC0, D_004A3B20, 0, 0), 0, 0, 1500.0f, 3.0f, 1.0f, -200.0f);
@@ -3431,7 +3428,7 @@ struct sRiders_6008 {
 struct sWakeFx_6008 {
     char pad0[0x10];
     int* parts[12];             // 0x10
-    sWakeVec5430 last[4];       // 0x40
+    sWakeVec4c last[4];       // 0x40
 };
 
 extern int D_004A4524;
@@ -3447,9 +3444,9 @@ static inline sRiders_6008* riders_6008()
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sWakeVec5430 sub_6008(const sWakeVec5430& a, const sWakeVec5430& b)
+static inline sWakeVec4c sub_6008(const sWakeVec4c& a, const sWakeVec4c& b)
 {
-    sWakeVec5430 r;
+    sWakeVec4c r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3483,8 +3480,8 @@ extern "C" void func_002E6008(sWakeFx_6008* self)
     }
     sRiders_6008* rs = riders_6008();
     int k = rs->cur;
-    sWakeVec5430 a = *(sWakeVec5430*)(rs->riders[k] + 0x20);
-    sWakeVec5430 d = sub_6008(a, self->last[k]);
+    sWakeVec4c a = *(sWakeVec4c*)(rs->riders[k] + 0x20);
+    sWakeVec4c d = sub_6008(a, self->last[k]);
     self->last[k] = a;
     sRsCtx_6008* ctx = D_004A5B80_6008;
     ctx->top[1] = ctx->top[0];
@@ -3504,7 +3501,7 @@ extern "C" void func_002E6008(sWakeFx_6008* self)
     m = *ctx->vtable[35].fn((char*)ctx + ctx->vtable[35].delta);
     m.v[3] = D_004FF130;
     sRiders_6008* rs2 = riders_6008();
-    sWakeVec5430 c = *(sWakeVec5430*)(rs2->riders[rs2->cur] + 0x80);
+    sWakeVec4c c = *(sWakeVec4c*)(rs2->riders[rs2->cur] + 0x80);
     float r = c.x * 0.6f + -0.5f;
     float g = c.y * 0.6f + -0.5f;
     float b = c.z * 0.6f + -0.5f;
