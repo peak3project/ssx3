@@ -4650,16 +4650,16 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303490);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int* func_00226620_3490(void*) __asm__("func_00226620__FPv");
 extern "C" unsigned func_003079D8_3490(char*) __asm__("func_003079D8");
-extern "C" void* func_00303490(void* self) {
+extern "C" cLunoValue* func_00303490(cLunoValue* ret) {
     char *p = D_004A3DD8->f2A4;
     unsigned v;
     if (p)
         v = func_003079D8_3490(p);
     else
         v = 0xFFFFFFFF;
-    *(int*)((char*)self + 8) = 3;
-    *func_00226620_3490(self) = v;
-    return self;
+    ret->type = 3;
+    *func_00226620_3490(ret) = v;
+    return ret;
 }
 #endif
 
