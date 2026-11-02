@@ -3938,8 +3938,6 @@ struct Sh_1D78 { virtual void v01(); virtual void v02(); virtual void v03(); vir
 struct Lvl_1D78 { char pad[0x28]; char *sh[1]; };
 static inline char *refToPtr_1D78(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_1D78(unsigned i) { if (i == 0) return 0; return refToPtr_1D78(i); }
-struct V3_1D78 { float x, y, z; };
-extern V3_1D78 D_004C9098_1D78 __asm__("D_004C9098");
 extern "C" void func_003E6574(void*, void*, int);
 struct Chk_1D78 { virtual void v01(); virtual void v02(); virtual int v03(char*); };
 int* func_00226610_1D78(void*) __asm__("func_00226610__FPv");
