@@ -4822,7 +4822,6 @@ extern "C" void* func_003037B0(void* self, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_003039F0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_39F0 __asm__("D_004A28A8");
 extern int D_004A3FF0_39F0 __asm__("D_004A3FF0");
 extern "C" void func_00343C60_39F0(int, int) __asm__("func_00343C60");
 extern "C" void func_00343F38_39F0(int, int) __asm__("func_00343F38");
