@@ -10728,35 +10728,19 @@ void func_003C8158(int idx, int type, int p2, int a3, int a4, int a5, int a6, in
 INCLUDE_ASM("ealib/seg_2B4578", func_003C83A0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct G_83A0 { char p0[5]; unsigned char cnt; char pad[0x1D6]; char *tbl; };
-extern struct G_83A0 D_00515B40_83A0 __asm__("D_00515B40");
-
 void func_003C83A0(int arg0) {
+    struct sB40Ent *e = &D_00515B40.f1DC[arg0];
     int i;
-    int j;
-    char *e;
-    float *a;
-    float *b;
-    i = 0;
-    e = D_00515B40_83A0.tbl + arg0 * 0x60;
-    *(int *)(e + 0x3C) = 0;
-    a = (float *)(e + 0x34);
-    e[1] = 0;
-    do {
-        i -= 1;
-        a[0] = a[1];
-        a++;
-    } while (i >= 0);
-    j = 0;
-    if (D_00515B40_83A0.cnt != 0) {
-        b = (float *)(e + 4);
-        do {
-            j += 1;
-            b[0] = b[6];
-            b++;
-        } while (j < D_00515B40_83A0.cnt);
+
+    e->f3C = 0.0f;
+    e->f01 = 0;
+    for (i = 0; i < 1; i++) {
+        e->f34[i] = e->f38[i];
     }
-    e[0] = 2;
+    for (i = 0; i < D_00515B40.f05; i++) {
+        e->f04[i] = e->f1C[i];
+    }
+    e->f00 = 2;
 }
 #endif
 
