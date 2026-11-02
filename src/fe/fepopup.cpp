@@ -18,6 +18,12 @@ struct t2Vector {
     float x, y;
 };
 
+// A 3-float vector with an inline constructor (a non-POD sibling of t3Vector).
+struct sVec3 {
+    float x, y, z;
+    sVec3(float a, float b, float c) : x(a), y(b), z(c) {}
+};
+
 //100%
 INCLUDE_ASM("fe/fepopup", cScreenPopup_cScreenPopup);
 #ifdef SKIP_ASM
@@ -26,10 +32,6 @@ extern "C" void* func_001C55F8(void* self);
 extern "C" void func_00416210(void* dst, int c, int n);
 extern void* D_0046CBD8[];
 extern int D_004A3E90;
-struct sVec3_58E8 {
-    float x, y, z;
-    sVec3_58E8(float a, float b, float c) : x(a), y(b), z(c) {}
-};
 struct sQuad_58E8 { int v[4]; };
 extern sQuad_58E8 D_004C6788;
 extern sQuad_58E8 D_004C6798;
@@ -73,7 +75,7 @@ extern "C" void* cScreenPopup_cScreenPopup(void* self, void* engine, void* owner
     for (int i = 0; i < 5; i++)
         ((int*)((char*)self + 0x90))[i] = 0;
     *(int*)((char*)self + 0x31C) = 0;
-    *(sVec3_58E8*)((char*)self + 0x278) = sVec3_58E8(1.0f, 1.0f, 1.0f);
+    *(sVec3*)((char*)self + 0x278) = sVec3(1.0f, 1.0f, 1.0f);
     *(int*)((char*)self + 0x2C8) = 0;
     *(int*)((char*)self + 0x2CC) = 0;
     *(sQuad_58E8*)((char*)self + 0x32C) = D_004C6788;
@@ -1589,7 +1591,7 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
 static inline void Place_8A38(char* self, int off, int src)
 {
     if (*(char**)(self + off) != 0) {
-        *(sVec3_58E8*)(*(char**)(self + off) + 0x50) = sVec3_58E8(1.0f, 1.0f, 1.0f);
+        *(sVec3*)(*(char**)(self + off) + 0x50) = sVec3(1.0f, 1.0f, 1.0f);
         *(t3Vector*)(*(char**)(self + off) + 0x44) = *(t3Vector*)(self + src);
     }
 }
@@ -2057,10 +2059,6 @@ extern char D_00466110[];
 extern char D_0045DCC8[];
 extern char D_0045FCD8[];
 
-struct sVec3K1C9B98 {
-    float x, y, z;
-    sVec3K1C9B98(float a, float b, float c) : x(a), y(b), z(c) {}
-};
 struct sPairK1C9B98 { int a, b; };
 struct sEntryK1C9B98 { sPairK1C9B98 p; int c; };
 struct sSelfK1C9B98 { char pad[0x2D0]; sEntryK1C9B98 entries[4]; };
@@ -2073,8 +2071,8 @@ extern "C" void cScreenPopup_createConfirmationPopup(void* self, int idx)
     *(int*)(popup + 0xBC) = 2;
     func_001C57C0(slots, 0, GetHashValue32(D_0045DCC8));
     func_001C57C0(slots, 1, GetHashValue32(D_0045FCD8));
-    sVec3K1C9B98 v(30.0f, 40.0f, 0.0f);
-    *(sVec3K1C9B98*)(popup + 0x158) = v;
+    sVec3 v(30.0f, 40.0f, 0.0f);
+    *(sVec3*)(popup + 0x158) = v;
     *(int*)(popup + 0x14C) = *(int*)((char*)self + 0x314) + 3;
     *(int*)(popup + 0x168) = ((sSelfK1C9B98*)self)->entries[idx].c;
     *(sPairK1C9B98*)(popup + 0xC0) = ((sSelfK1C9B98*)self)->entries[idx].p;
