@@ -393,7 +393,34 @@ extern "C" void func_003ACCD8(sWScriptCacheItem* ep, void* world, int index)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/wscriptcache", func_003AD120);
+#ifdef SKIP_ASM
+struct sRef_D120 {
+    unsigned int idx : 8;
+    unsigned int slot : 24;
+};
+
+#define WSD_D120 (*(char**)((char*)cache + 0x8))
+
+static inline int valid_D120(sRef_D120 r)
+{
+    return *(unsigned int*)&r != 0xFFFFFFFF;
+}
+
+extern "C" unsigned int func_003AD120(void* cache, void* inst, int entry)
+{
+    char* data = *(char**)((char*)inst + 0x88);
+    if (data == 0 || WSD_D120 == 0) {
+        return 0xFFFFFFFF;
+    }
+    sRef_D120 id = *(sRef_D120*)(data + 0x8);
+    if (!valid_D120(id)) {
+        return 0xFFFFFFFF;
+    }
+    return *(unsigned int*)(*(char**)(WSD_D120 + 0x1C) + id.slot * 0x18 + entry * 4);
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/wscriptcache", func_003AD188);
