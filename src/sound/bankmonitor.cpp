@@ -1496,13 +1496,13 @@ extern "C" int func_003B7B48(int h, void* out);
 extern "C" int func_003B7C40(int h, int v);
 extern "C" int func_003B7F18(int h);
 
-struct sMonSub_EC58 {
+struct sMonSub {
     int size;   // 0x0
     int id;     // 0x4
     int pos;    // 0x8
 };
 
-struct sMonSlot_EC58 {
+struct sMonSlot {
     int h;              // 0x0
     int sub;            // 0x4
     char pad08[0x4];
@@ -1519,27 +1519,27 @@ struct sMonSlot_EC58 {
     signed char dirty;  // 0x65
     signed char count;  // 0x66
     char pad67[0x5];
-    sMonSub_EC58* subs; // 0x6C
+    sMonSub* subs;      // 0x6C
 };
 
-struct sStrmInfo_EC58 {
+struct sStrmInfo {
     int count;
     int pad[3];
 };
 
-struct sStrmState_EC58 {
+struct sStrmState {
     int state;  // 0x0
     int a;      // 0x4
     int b;      // 0x8
     int c;      // 0xC
 };
 
-struct sStrmPos_EC58 {
+struct sStrmPos {
     unsigned int samples;   // 0x0
     int pad[7];
 };
 
-struct sStrmHdr_EC58 {
+struct sStrmHdr {
     unsigned short rate;
     char pad[0xE];
 };
@@ -1547,7 +1547,7 @@ struct sStrmHdr_EC58 {
 // PORT: the end of this function stores the out-pointers themselves into the slot (as in the original)
 extern "C" int func_002AEC58(int idx, int* outA, int* outB)
 {
-    sMonSlot_EC58* m = (sMonSlot_EC58*)D_004D3E98[idx];
+    sMonSlot* m = (sMonSlot*)D_004D3E98[idx];
     *outA = 0;
     *outB = 0;
     if (m == 0) {
@@ -1560,11 +1560,11 @@ extern "C" int func_002AEC58(int idx, int* outA, int* outB)
     }
     m->dirty = 1;
     func_003B58A0();
-    sStrmInfo_EC58 info;
-    sStrmState_EC58 st;
-    sStrmHdr_EC58 hdr;
+    sStrmInfo info;
+    sStrmState st;
+    sStrmHdr hdr;
     char buf[0x70];
-    sStrmPos_EC58 pos;
+    sStrmPos pos;
     if (m->isMem != 0) {
         if (m->sub >= 0 && m->subs->id >= 0) {
             f60 = func_003B6670(m->h, m->sub, &hdr, buf, &pos.samples);
@@ -1639,69 +1639,11 @@ done:
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEFA8);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
-extern "C" int func_003B6670(int h, int sub, void* hdr, void* buf, unsigned int* pos);
-extern "C" int func_003B8AD8(int h);
-extern "C" int func_003B86C0(int h);
-extern "C" int func_003B7B48(int h, void* out);
-// PORT: the unit declares func_003B7C40(int, int); the second argument is an out-pointer
-extern "C" int func_003B7C40(int h, int v);
-extern "C" int func_003B7F18(int h);
-
-struct sMonSub_EFA8 {
-    int size;   // 0x0
-    int id;     // 0x4
-    int pos;    // 0x8
-};
-
-struct sMonSlot_EFA8 {
-    int h;              // 0x0
-    int sub;            // 0x4
-    char pad08[0x4];
-    int status;         // 0xC
-    char pad10[0x38];
-    int f48;            // 0x48
-    int f4C;            // 0x4C
-    int f50;            // 0x50
-    int f54;            // 0x54
-    int busy;           // 0x58
-    int f5C;            // 0x5C
-    int f60;            // 0x60
-    signed char isMem;  // 0x64
-    signed char dirty;  // 0x65
-    signed char count;  // 0x66
-    char pad67[0x5];
-    sMonSub_EFA8* subs; // 0x6C
-};
-
-struct sStrmInfo_EFA8 {
-    int count;
-    int pad[3];
-};
-
-struct sStrmState_EFA8 {
-    int state;  // 0x0
-    int a;      // 0x4
-    int b;      // 0x8
-    int c;      // 0xC
-};
-
-struct sStrmPos_EFA8 {
-    unsigned int samples;   // 0x0
-    int pad[7];
-};
-
-struct sStrmHdr_EFA8 {
-    unsigned short rate;
-    char pad[0xE];
-};
-
 extern "C" void func_002AEFA8(int reset)
 {
     func_003B58A0();
     for (int i = 0; i < 24; i++) {
-        sMonSlot_EFA8* m = (sMonSlot_EFA8*)D_004D3E98[i];
+        sMonSlot* m = (sMonSlot*)D_004D3E98[i];
         if (m == 0) {
             continue;
         }
@@ -1715,11 +1657,11 @@ extern "C" void func_002AEFA8(int reset)
         int f4C = 0;
         m->busy = 1;
         if (m->h >= 0) {
-            sStrmInfo_EFA8 info;
-            sStrmState_EFA8 st;
-            sStrmHdr_EFA8 hdr;
+            sStrmInfo info;
+            sStrmState st;
+            sStrmHdr hdr;
             char buf[0x70];
-            sStrmPos_EFA8 pos;
+            sStrmPos pos;
             if (m->isMem != 0) {
                 if (m->sub >= 0 && m->subs->id >= 0) {
                     f60 = func_003B6670(m->h, m->sub, &hdr, buf, &pos.samples);
