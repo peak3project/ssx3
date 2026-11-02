@@ -373,8 +373,6 @@ void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm
 extern char D_00492650[];
 extern char D_00492670[];
 
-
-
 extern "C" void cBaseClass_DynamicEmitter_Allocate(void* self)
 {
     char* s = (char*)self;
@@ -451,7 +449,6 @@ struct sGsState_00370DC8 {
 
 extern sGsState_00370DC8 D_00501420;
 
-
 class cEmitter_00370DC8 {
 public:
     float start;            // 0x0
@@ -483,7 +480,6 @@ public:
     void setC(int v) { gs.c = v; }
     void setD(int v) { gs.d = v; }
 };
-
 
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float fceil_00370DC8(float x)
@@ -563,7 +559,6 @@ extern "C" void func_00370DC8(cEmitter_00370DC8* self, char* def, float f)
 //100%
 INCLUDE_ASM("render/particle", func_003710D0);
 #ifdef SKIP_ASM
-
 
 // PORT: the unit's callers use a 4-arg declaration; bind the real 5-arg body by asm label.
 extern "C" void func_003710D0_impl(char* self, t4Vector* pos, t4Vector* vel, int rnd, float dt) __asm__("func_003710D0");
@@ -689,12 +684,9 @@ INCLUDE_ASM("render/particle", func_00371380);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-
-
 extern char* D_004A5B80;
 extern cPS2GraphicsMan* D_004A5B80_ctx __asm__("D_004A5B80");
 extern int D_0044B420[];
-
 
 extern "C" void func_00371380(sPtEmitter* self, int blend)
 {
@@ -822,12 +814,9 @@ INCLUDE_ASM("render/particle", func_00371688);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-
-
 extern char* D_004A5B80;
 extern cPS2GraphicsMan* D_004A5B80_ctx1688 __asm__("D_004A5B80");
 extern int D_0044B420[];
-
 
 extern "C" void func_00371688(sPtEmitter* self, int blend)
 {
@@ -860,7 +849,6 @@ INCLUDE_ASM("render/particle", func_003717C0);
 struct sPtCol17C0 {
     float r, g, b, a;
 } __attribute__((aligned(16)));
-
 
 struct sPtObj17C0 {
     char pad_0x0[0x17C];
@@ -1444,7 +1432,6 @@ INCLUDE_ASM("render/particle", func_00372B30);
 #ifdef SKIP_ASM
 inline void* operator new[](unsigned int, void* p) { return p; }
 
-
 extern "C" void* func_00372B30(void* self)
 {
     new ((char*)self + 0x20) sPtVec4c[4];
@@ -1632,7 +1619,6 @@ extern "C" void func_00373EA8(void* self, sPtVec4u* p, sPtMatrixU* mt, float* w,
 //100%
 INCLUDE_ASM("render/particle", func_00374180);
 #ifdef SKIP_ASM
-
 
 struct sPatchSet {
     char pad_0x00[0x190];
@@ -1925,7 +1911,6 @@ extern "C" void func_00374518(sPatchSet4518* self, char* mat, sPatchOut4518* out
 INCLUDE_ASM("render/particle", func_003747A0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 
 struct sPEnt_47A0 {
     char* mat;      // 0x0
@@ -2306,7 +2291,6 @@ extern char* D_004A5B80;
 extern "C" void func_00367B60(void* mgr, int id);
 void operator_delete(int* ptr);
 
-
 extern "C" void func_00375918(void* self, int flags)
 {
     char* s = (char*)self;
@@ -2328,7 +2312,6 @@ extern "C" void func_00375918(void* self, int flags)
 INCLUDE_ASM("render/particle", func_00375990);
 #ifdef SKIP_ASM
 extern char* D_004A5B80;
-
 
 extern "C" void func_00375990(void* self)
 {
@@ -2524,9 +2507,6 @@ extern "C" int func_00376578(void* self, int a1)
 INCLUDE_ASM("render/particle", func_003765B8);
 #ifdef SKIP_ASM
 
-
-
-
 struct sPtGfx65B8 {
     char pad_0x0[0x10DC];
     int curView;                    // 0x10DC
@@ -2556,8 +2536,6 @@ struct sPtGfx65B8 {
     char pad_0x6B90[0x6D20 - 0x6B90];
     sPtView views[1];           // 0x6D20
 };
-
-// PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
 
 extern "C" void func_003950C0(sPtView* dst, sPtView* src);
 
@@ -2591,9 +2569,6 @@ extern "C" void func_003765B8(sPtGfx65B8* self)
 INCLUDE_ASM("render/particle", func_00376768);
 #ifdef SKIP_ASM
 
-
-
-
 struct sPtGfx6768 {
     char pad_0x0[0x10DC];
     int curView;                    // 0x10DC
@@ -2624,8 +2599,6 @@ struct sPtGfx6768 {
     char pad_0x6B94[0x6D20 - 0x6B94];
     sPtView views[1];           // 0x6D20
 };
-
-// PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
 
 extern "C" void func_00364B88(void* table, void* key);
 
@@ -2834,7 +2807,6 @@ struct sPt7278 {
     sPt7278() {}
     sPt7278(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
 } __attribute__((aligned(16)));
-
 
 struct sPtView7278 {
     char pad_0x0[0x1C];
@@ -3137,10 +3109,6 @@ INCLUDE_ASM("render/particle", func_00377CF0);
 #ifdef SKIP_ASM
 typedef int cQuad128_CF0 __attribute__((mode(TI)));
 
-
-
-
-
 // PORT: PS2-only VU0 inline asm (vector subtract); the PC port needs a C fallback.
 static inline sPt7278 Sub_CF0(const sPt7278& a, const sPt7278& b)
 {
@@ -3155,7 +3123,6 @@ static inline sPt7278 Sub_CF0(const sPt7278& a, const sPt7278& b)
         : "memory");
     return r;
 }
-
 
 static inline int Bits_CF0(float f)
 {
@@ -3371,9 +3338,6 @@ INCLUDE_ASM("render/particle", func_0037A260);
 INCLUDE_ASM("render/particle", func_0037A430);
 #ifdef SKIP_ASM
 
-
-
-
 extern int D_004A4474;
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 
@@ -3407,7 +3371,6 @@ extern "C" void func_0037A430(cPS2GraphicsMan* self)
 //100%
 INCLUDE_ASM("render/particle", func_0037A540);
 #ifdef SKIP_ASM
-
 
 struct sPartEmitter_A540 {
     int field_0x0;
@@ -4133,9 +4096,6 @@ INCLUDE_ASM("render/particle", func_0037CC98);
 #ifdef SKIP_ASM
 typedef int cQuad128_CC98 __attribute__((mode(TI)));
 
-
-
-
 struct sPtTex_CC98 {
     char pad_0x0[0x28];
     int size;                       // 0x28
@@ -4385,9 +4345,6 @@ extern "C" void func_0037D318(char* self, int a1, int a2, int a3, int a4, int a5
 INCLUDE_ASM("render/particle", func_0037D348);
 #ifdef SKIP_ASM
 
-
-
-
 extern "C" void func_00367DB8_D348(void* texset, int idx, unsigned int* buf) __asm__("func_00367DB8");
 
 // PORT: uncached (0x30000000) pointers held in int.
@@ -4419,9 +4376,6 @@ extern "C" int func_0037D348(cPS2GraphicsMan* self, int idx)
 //100%
 INCLUDE_ASM("render/particle", func_0037D450);
 #ifdef SKIP_ASM
-
-
-
 
 // PORT: 64-bit `ulong` GS packet words; uncached (0x30000000) pointers held in int.
 extern "C" int func_0037D450(cPS2GraphicsMan* self)
@@ -4519,7 +4473,6 @@ void* func_0037D738(void* self)
 INCLUDE_ASM("render/particle", func_0037D758);
 #ifdef SKIP_ASM
 
-
 struct sPartDrawEntry {
     sPtQuadI q;          // 0x00
     sPtMatrix m0;         // 0x10
@@ -4533,8 +4486,6 @@ struct sPartDrawList {
     int count;                    // 0x13EC
     sPartDrawEntry entries[1];    // 0x13F0
 };
-
-// PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
 
 extern "C" void func_0037D758(sPartDrawList* self, sPtQuadI* q, sPtMatrix* m0, sPtMatrix* m1, float f, int i)
 {
@@ -4550,9 +4501,6 @@ extern "C" void func_0037D758(sPartDrawList* self, sPtQuadI* q, sPtMatrix* m0, s
 //100%
 INCLUDE_ASM("render/particle", func_0037D800);
 #ifdef SKIP_ASM
-
-
-
 
 extern "C" void func_00367F18_D800(void* texset, int idx, float* color, unsigned int* buf) __asm__("func_00367F18");
 
@@ -5121,17 +5069,12 @@ extern "C" void func_00380380(void* self, char* obj, int idx, float* pos, float*
 INCLUDE_ASM("render/particle", func_00380518);
 #ifdef SKIP_ASM
 
-
-
-
-
 extern int D_004A44F8;
 extern int D_004A4474;
 extern char D_0[];
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
-
 
 // Sends obj's 0x15 quads to the VU1 program at address 0 under a pushed render state.
 extern "C" void func_00380518(cPS2GraphicsMan* self, sGifQuad* obj)
@@ -5182,10 +5125,6 @@ extern "C" void func_00380518(cPS2GraphicsMan* self, sGifQuad* obj)
 INCLUDE_ASM("render/particle", func_003807A0);
 #ifdef SKIP_ASM
 
-
-
-
-
 struct sTrail_07A0 {
     char pad_0x0[0x20];
     sGifQuad q[0x15];             // 0x20
@@ -5198,15 +5137,12 @@ struct sTrail_07A0 {
     sGifQuad* posB;               // 0x1A4
 };
 
-
 extern int D_004A44FC;
 extern int D_004A4474;
 extern char D_510[];
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
-
-
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_003807A0(cPS2GraphicsMan* self, sTrail_07A0* obj)
@@ -5299,14 +5235,10 @@ extern "C" void func_003807A0(cPS2GraphicsMan* self, sTrail_07A0* obj)
 INCLUDE_ASM("render/particle", func_00380CE0);
 #ifdef SKIP_ASM
 
-
-
-
 struct sCol_0CE0 {
     char b[4];
     sCol_0CE0() {}
 };
-
 
 struct sTrail_0CE0 {
     char pad_0x0[0x20];
@@ -5323,7 +5255,6 @@ struct sTrail_0CE0 {
     sCol_0CE0* cols;                // 0x204
 };
 
-
 extern int D_004A44FC;
 extern int D_004A4474;
 extern char D_A00[];
@@ -5332,8 +5263,6 @@ extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 extern "C" void func_003E6574(void* dst, void* src, int n);
-
-
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
@@ -5439,21 +5368,11 @@ extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
 INCLUDE_ASM("render/particle", func_00381310);
 #ifdef SKIP_ASM
 
-
-
-
-
-
-
-
 extern int D_004A4474;
 extern char D_0[];
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
-
-// PORT: PS2-only VU0 inline asm (4x4 matrix product).
-
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_00381310(cPS2GraphicsMan* self, sPtMatPacket* obj)
@@ -5516,21 +5435,11 @@ extern "C" void func_00381310(cPS2GraphicsMan* self, sPtMatPacket* obj)
 INCLUDE_ASM("render/particle", func_003816F0);
 #ifdef SKIP_ASM
 
-
-
-
-
-
-
-
 extern int D_004A4474;
 extern char D_408[];
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
-
-// PORT: PS2-only VU0 inline asm (4x4 matrix product).
-
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_003816F0(cPS2GraphicsMan* self, sPtMatPacket* obj)
@@ -5595,10 +5504,6 @@ INCLUDE_ASM("render/particle", func_00381AD0);
 INCLUDE_ASM("render/particle", func_00381F10);
 #ifdef SKIP_ASM
 
-
-
-
-
 extern char D_3BF0[];
 
 // PORT: PS2-only VU0 inline asm (matrix copy); the PC port needs a C fallback.
@@ -5657,14 +5562,12 @@ struct sPt2170 {
     sPt2170() {}
 } __attribute__((aligned(16)));
 
-
 struct sVtx2170 {
     float s, t, q, pad;     // 0x00
     int r, g, b, a;         // 0x10
     sPt2170 pos;            // 0x20
     sVtx2170() {}
 };
-
 
 struct cRMgr2170 {
     char pad_0x0[0x10D8];
@@ -6177,9 +6080,6 @@ extern "C" void func_00384DC0(void* self)
 INCLUDE_ASM("render/particle", func_00384E50);
 #ifdef SKIP_ASM
 
-
-
-
 struct sPktBuilder_4E50 {
     unsigned int* where;            // 0x0
     unsigned int cur;               // 0x4 (uncached)
@@ -6391,7 +6291,6 @@ struct sPartGrid_5410 {
     int stripLen;                   // 0x1C0
 };
 
-
 extern "C" void func_00385BA0_uv(void* self, void* dst, int idx, float* src) __asm__("func_00385BA0");
 
 extern "C" void func_00385410(sPartGrid_5410* self, float* src)
@@ -6546,11 +6445,6 @@ extern "C" void func_00385BE0(cPartVirt* self, int a, void* b, int c)
 //100%
 INCLUDE_ASM("render/particle", func_00385C10);
 #ifdef SKIP_ASM
-
-
-
-
-
 
 struct sBez_5C10 {
     char pad_0x0[0x194];
@@ -6899,7 +6793,6 @@ struct sPair_7EC0 {
     int b;
 };
 
-
 struct sVtx_7EC0 {
     sGifQuad q[3];                // 0x30 bytes
 };
@@ -7051,9 +6944,6 @@ void func_00387EC0_impl(sPtGfx_7EC0* self, sVtx_7EC0** tbl, int start, int n, in
 //100%
 INCLUDE_ASM("render/particle", func_003883B8);
 #ifdef SKIP_ASM
-
-
-
 
 extern int D_004A5B84;
 extern sPtRenderState D_00501420_rs __asm__("D_00501420");
