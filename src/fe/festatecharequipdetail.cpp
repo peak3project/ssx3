@@ -8,6 +8,25 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// One node of the file index manager (D_004A1968, allocation tag "BoltFileIndexManager"): 400 16-byte nodes hashed by
+// key % 400, two flag sets (mask0 / val0 and mask1 / val1), prev / next as node indices.
+struct sIndexNode {
+    int key;                // 0x0
+    short mask0;            // 0x4
+    short mask1;            // 0x6
+    short val0;             // 0x8
+    short val1;             // 0xA
+    short prev;             // 0xC
+    short next;             // 0xE
+};
+
+// The file index manager: the nodes, the 400 bucket heads and the free list (0x1F44 bytes).
+struct sFileIndex {
+    sIndexNode nodes[400];  // 0x0
+    sIndexNode* heads[400]; // 0x1900
+    sIndexNode* freeList;   // 0x1F40
+};
+
 // One file slot of the FE file cache (0x120 bytes; the cache sits at game + 0x7C -> + 0x1A70, D_004A196C points at
 // it). state: 0 idle, 1 loaded, 2 async load in flight, 3 queued.
 struct sFileSlot {
@@ -264,7 +283,6 @@ extern void* D_004A289C;
 extern void* D_0046A548[];
 extern void* D_0046D0D0[];
 
-
 static inline void releaseK199148(int id)
 {
     if (id >= 0) {
@@ -427,7 +445,6 @@ extern char D_004A1930[];
 extern char D_004A1938[];
 extern char D_004A1940[];
 extern char D_004A1948[];
-
 
 static inline void hide_FE(void* w)
 {
@@ -620,7 +637,6 @@ extern "C" void* func_001A0548(void* self, int a1);
 extern void* D_004A28A8;
 extern char D_004608A0[];
 
-
 extern "C" void cFEStateCharEquip_onUpdate(void* self)
 {
     func_0039E510(self);
@@ -774,7 +790,6 @@ struct sItem_9C28 {
     char pad10[0x34 - 0x10];
     int flags;          // 0x34
 };
-
 
 struct sCharEquip_9C28 {
     char pad0[0x10];
@@ -1055,7 +1070,6 @@ int GetHashValue32(char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_00460820[];
 
-
 extern "C" void func_0019A238(void* self)
 {
     if (*(cUIText**)((char*)self + 0x48) != 0) {
@@ -1088,7 +1102,6 @@ struct cUIText;
 int GetHashValue32(char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_00460810[];
-
 
 extern "C" void func_0019A308(void* self)
 {
@@ -1243,7 +1256,6 @@ extern "C" void func_0019A9B8(void* self);
 extern void* D_004A28A8;
 extern void* D_004A289C;
 extern char D_004A1960[];
-
 
 extern "C" void func_0019A638(void* self)
 {
@@ -1441,7 +1453,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019AA08);
 extern "C" int func_0019A098(void* self, const char* name);
 extern "C" void func_0019BD48(void* self, int a1);
 
-
 static inline void showK19AA08(char* o, int on)
 {
     sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
@@ -1493,7 +1504,6 @@ struct cUIText;
 void cUIText_setAsciiString(cUIText* self, const char* str);
 // PORT: the unit declares func_00198AF0(void*), but it formats an int price; bind an int view.
 extern "C" const char* func_00198AF0_price(int price) __asm__("func_00198AF0");
-
 
 static inline void showK19AB78(void* o, int on)
 {
@@ -1559,7 +1569,6 @@ extern "C" void func_0019B7E0(void* self, int idx);
 extern "C" void func_0019BA60(void* self, int idx);
 extern "C" int func_003A0C28(void* self);
 extern "C" void func_003A0E90(void* self, int str);
-
 
 struct sW_AD18 {
     char pad_0x0[0x8];
@@ -2024,7 +2033,6 @@ int GetHashValue32(char* str);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 
-
 static inline void showK19BA60(void* o, int on)
 {
     sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)o + 8);
@@ -2147,7 +2155,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019BC90);
 #ifdef SKIP_ASM
 extern int D_004A18D8;
 
-
 struct sVec3K19BC90 {
     float x, y, z;
     sVec3K19BC90(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
@@ -2179,8 +2186,6 @@ struct sVec3K19BD48 {
     float x, y, z;
     sVec3K19BD48(float a, float b, float c) : x(a), y(b), z(c) {}
 };
-
-
 
 extern "C" void func_0019BD48(void* self, int delta)
 {
@@ -2315,16 +2320,16 @@ extern "C" void func_0019C7E8(void* self, void* item)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019C880);
 #ifdef SKIP_ASM
-extern "C" void* func_0019C8F8(void* self, void* item);
+extern "C" sIndexNode* func_0019C8F8(sFileIndex* self, sIndexNode* item);
 
-extern "C" void* func_0019C880(void* self)
+extern "C" sIndexNode* func_0019C880(sFileIndex* self)
 {
-    char* item = *(char**)((char*)self + 0x1F40);
-    *(void**)((char*)self + 0x1F40) = func_0019C8F8(self, item);
-    *(short*)(item + 0xE) = -1;
-    char* head = *(char**)((char*)self + 0x1F40);
+    sIndexNode* item = self->freeList;
+    self->freeList = func_0019C8F8(self, item);
+    item->next = -1;
+    sIndexNode* head = self->freeList;
     if (head != 0) {
-        *(short*)(head + 0xC) = -1;
+        head->prev = -1;
     }
     return item;
 }
@@ -2333,12 +2338,12 @@ extern "C" void* func_0019C880(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019C8D0);
 #ifdef SKIP_ASM
-extern "C" void* func_0019C8D0(void* self, void* item)
+extern "C" sIndexNode* func_0019C8D0(sFileIndex* self, sIndexNode* item)
 {
     if (item != 0) {
-        short idx = *(short*)((char*)item + 0xc);
+        short idx = item->prev;
         if (idx >= 0) {
-            return (char*)self + (idx << 4);
+            return &self->nodes[idx];
         }
     }
     return 0;
@@ -2348,12 +2353,12 @@ extern "C" void* func_0019C8D0(void* self, void* item)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019C8F8);
 #ifdef SKIP_ASM
-extern "C" void* func_0019C8F8(void* self, void* item)
+extern "C" sIndexNode* func_0019C8F8(sFileIndex* self, sIndexNode* item)
 {
     if (item != 0) {
-        short idx = *(short*)((char*)item + 0xe);
+        short idx = item->next;
         if (idx >= 0) {
-            return (char*)self + (idx << 4);
+            return &self->nodes[idx];
         }
     }
     return 0;
@@ -2363,7 +2368,8 @@ extern "C" void* func_0019C8F8(void* self, void* item)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019C920);
 #ifdef SKIP_ASM
-extern "C" int func_0019C920(void* self, int a1)
+// PORT: takes the node pointer as an int (address arithmetic on the node index).
+extern "C" int func_0019C920(sFileIndex* self, int a1)
 {
     int diff = a1 - (int)self;
     if (a1 != 0) return diff >> 4;
@@ -2374,38 +2380,25 @@ extern "C" int func_0019C920(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019C938);
 #ifdef SKIP_ASM
-struct sNodeK19C938 {
-    int key;
-    short f4;
-    short f6;
-    short f8;
-    short fA;
-    short prev;   // 0xC
-    short next;   // 0xE
-};
+extern "C" sIndexNode* func_0019C880(sFileIndex* self);
 
-extern "C" void* func_0019C880(void* self);
-extern "C" void* func_0019C8F8(void* self, void* item);
-// PORT: func_0019C920 takes the node pointer as an int.
-extern "C" int func_0019C920(void* self, int a1);
-
-extern "C" void* func_0019C938(void* self, int hi, int lo, int create)
+extern "C" sIndexNode* func_0019C938(sFileIndex* self, int hi, int lo, int create)
 {
     int key = (hi << 16) | lo;
     int b = key % 400;
-    sNodeK19C938* prev = 0;
-    sNodeK19C938* n = *(sNodeK19C938**)((char*)self + (b << 2) + 0x1900);
-    while (*(void**)((char*)self + 0x1F40) != 0 || n != 0) {
+    sIndexNode* prev = 0;
+    sIndexNode* n = self->heads[b];
+    while (self->freeList != 0 || n != 0) {
         if (n == 0) {
             if (create) {
-                n = (sNodeK19C938*)func_0019C880(self);
+                n = func_0019C880(self);
                 n->prev = func_0019C920(self, (int)prev);
                 if (prev != 0) {
                     n->prev = func_0019C920(self, (int)prev);
                     prev->next = func_0019C920(self, (int)n);
                 } else {
                     n->prev = -1;
-                    *(sNodeK19C938**)((char*)self + (b << 2) + 0x1900) = n;
+                    self->heads[b] = n;
                 }
                 n->next = -1;
             }
@@ -2414,7 +2407,7 @@ extern "C" void* func_0019C938(void* self, int hi, int lo, int create)
         if (n->key == key)
             break;
         prev = n;
-        n = (sNodeK19C938*)func_0019C8F8(self, prev);
+        n = func_0019C8F8(self, prev);
     }
     if (n != 0)
         n->key = key;
@@ -2425,39 +2418,24 @@ extern "C" void* func_0019C938(void* self, int hi, int lo, int create)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CA70);
 #ifdef SKIP_ASM
-struct sNode_CA70 {
-    int key;
-    short f4;
-    short f6;
-    short f8;
-    short fA;
-    short prev;
-    short next;
-};
-extern "C" void* func_0019C8D0(void* self, void* item);
-extern "C" void* func_0019C8F8(void* self, void* item);
-extern "C" int func_0019C920(void* self, int a1);
-
-extern "C" void func_0019CA70(void* self, void* nodep)
+extern "C" void func_0019CA70(sFileIndex* self, sIndexNode* node)
 {
-    sNode_CA70* node = (sNode_CA70*)nodep;
     if (node != 0) {
         int h = node->key % 400;
         if (node->prev < 0) {
-            *(void**)((char*)self + (h << 2) + 0x1900) = func_0019C8F8(self, node);
+            self->heads[h] = func_0019C8F8(self, node);
         } else {
-            ((sNode_CA70*)func_0019C8D0(self, node))->next = node->next;
+            func_0019C8D0(self, node)->next = node->next;
         }
         if (node->next >= 0) {
-            ((sNode_CA70*)func_0019C8F8(self, node))->prev = node->prev;
+            func_0019C8F8(self, node)->prev = node->prev;
         }
         node->key = -1;
-        node->fA = -1;
-        node->f8 = -1;
+        node->val1 = -1;
+        node->val0 = -1;
         node->prev = -1;
-        // PORT: free-list head pointer passed as int (unit declares func_0019C920(void*, int))
-        node->next = func_0019C920(self, *(int*)((char*)self + 0x1F40));
-        *(sNode_CA70**)((char*)self + 0x1F40) = node;
+        node->next = func_0019C920(self, (int)self->freeList);
+        self->freeList = node;
     }
 }
 #endif
@@ -2465,9 +2443,9 @@ extern "C" void func_0019CA70(void* self, void* nodep)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CB38);
 #ifdef SKIP_ASM
-extern "C" void func_0019CB60(void* self);
+extern "C" void func_0019CB60(sFileIndex* self);
 
-extern "C" void* func_0019CB38(void* self)
+extern "C" sFileIndex* func_0019CB38(sFileIndex* self)
 {
     func_0019CB60(self);
     return self;
@@ -2479,26 +2457,17 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019CB60);
 #ifdef SKIP_ASM
 extern "C" void func_003E6448(void* dst, unsigned int value, int size);
 
-struct sNode0019CB60 {
-    int field_0x0;
-    short field_0x4;
-    short field_0x6;
-    int field_0x8;
-    short prev;
-    short next;
-};
-
-extern "C" void func_0019CB60(void* self)
+extern "C" void func_0019CB60(sFileIndex* self)
 {
     func_003E6448(self, 0xFFFFFFFF, 0x1900);
-    func_003E6448((char*)self + 0x1900, 0, 0x640);
-    *(void**)((char*)self + 0x1F40) = self;
-    sNode0019CB60* n = (sNode0019CB60*)self;
+    func_003E6448(self->heads, 0, 0x640);
+    self->freeList = self->nodes;
+    sIndexNode* n = self->nodes;
     for (int i = 0; i < 400; i++) {
         n[i].next = i + 1;
         n[i].prev = i - 1;
-        n[i].field_0x4 = 0;
-        n[i].field_0x6 = 0;
+        n[i].mask0 = 0;
+        n[i].mask1 = 0;
     }
     n[399].next = -1;
 }
@@ -2507,14 +2476,12 @@ extern "C" void func_0019CB60(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CBE0);
 #ifdef SKIP_ASM
-extern "C" void* func_0019C938(void* self, int a1, int a2, int a3);
-
-extern "C" int func_0019CBE0(void* self, int a1, int a2)
+extern "C" int func_0019CBE0(sFileIndex* self, int a1, int a2)
 {
-    void* p = func_0019C938(self, a1, a2, 0);
+    sIndexNode* p = func_0019C938(self, a1, a2, 0);
     if (p != 0) {
-        if ((*(short*)((char*)p + 6) >> a1) & 1) {
-            return *(short*)((char*)p + 0xA);
+        if ((p->mask1 >> a1) & 1) {
+            return p->val1;
         }
     }
     return -1;
@@ -2524,33 +2491,20 @@ extern "C" int func_0019CBE0(void* self, int a1, int a2)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CC30);
 #ifdef SKIP_ASM
-extern "C" void* func_0019C938(void* self, int a1, int a2, int a3);
-
-extern "C" void func_0019CA70(void* self, void* node);
-struct sNode_CC30 {
-    int key;
-    short f4;
-    short mask;
-    short f8;
-    short val;
-    short prev;
-    short next;
-};
-
-extern "C" void func_0019CC30(void* self, int bit, int a2, int val)
+extern "C" void func_0019CC30(sFileIndex* self, int bit, int a2, int val)
 {
-    sNode_CC30* p = (sNode_CC30*)func_0019C938(self, bit, a2, val != -1);
+    sIndexNode* p = func_0019C938(self, bit, a2, val != -1);
     if (p != 0) {
         if (val < 0) {
-            if ((p->mask >> bit) & 1) {
-                p->mask &= ~(1 << bit);
-                if (p->mask == 0 && p->f8 < 0) {
+            if ((p->mask1 >> bit) & 1) {
+                p->mask1 &= ~(1 << bit);
+                if (p->mask1 == 0 && p->val0 < 0) {
                     func_0019CA70(self, p);
                 }
             }
         } else {
-            p->val = val;
-            p->mask |= 1 << bit;
+            p->val1 = val;
+            p->mask1 |= 1 << bit;
         }
     }
 }
@@ -2559,14 +2513,12 @@ extern "C" void func_0019CC30(void* self, int bit, int a2, int val)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CCE8);
 #ifdef SKIP_ASM
-extern "C" void* func_0019C938(void* self, int a1, int a2, int a3);
-
-extern "C" int func_0019CCE8(void* self, int a1, int a2)
+extern "C" int func_0019CCE8(sFileIndex* self, int a1, int a2)
 {
-    void* p = func_0019C938(self, a1, a2, 0);
+    sIndexNode* p = func_0019C938(self, a1, a2, 0);
     if (p != 0) {
-        if ((*(short*)((char*)p + 4) >> a1) & 1) {
-            return *(short*)((char*)p + 0x8);
+        if ((p->mask0 >> a1) & 1) {
+            return p->val0;
         }
     }
     return -1;
@@ -2576,32 +2528,20 @@ extern "C" int func_0019CCE8(void* self, int a1, int a2)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CD38);
 #ifdef SKIP_ASM
-extern "C" void* func_0019C938(void* self, int a1, int a2, int a3);
-extern "C" void func_0019CA70(void* self, void* node);
-struct sNode_CD38 {
-    int key;
-    short mask;
-    short f6;
-    short val;
-    short fA;
-    short prev;
-    short next;
-};
-
-extern "C" void func_0019CD38(void* self, int bit, int a2, int val)
+extern "C" void func_0019CD38(sFileIndex* self, int bit, int a2, int val)
 {
-    sNode_CD38* p = (sNode_CD38*)func_0019C938(self, bit, a2, val != -1);
+    sIndexNode* p = func_0019C938(self, bit, a2, val != -1);
     if (p != 0) {
         if (val < 0) {
-            if ((p->mask >> bit) & 1) {
-                p->mask &= ~(1 << bit);
-                if (p->mask == 0 && p->fA < 0) {
+            if ((p->mask0 >> bit) & 1) {
+                p->mask0 &= ~(1 << bit);
+                if (p->mask0 == 0 && p->val1 < 0) {
                     func_0019CA70(self, p);
                 }
             }
         } else {
-            p->val = val;
-            p->mask |= 1 << bit;
+            p->val0 = val;
+            p->mask0 |= 1 << bit;
         }
     }
 }
@@ -2641,9 +2581,8 @@ extern "C" void func_0019CE20(sFileCache* self, int flags)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CE68);
 #ifdef SKIP_ASM
-extern void* D_004A1968;
+extern sFileIndex* D_004A1968;
 extern char D_004609C0[];
-
 
 extern "C" void func_0019CE68(sFileCache* self)
 {
@@ -2665,7 +2604,7 @@ extern "C" void func_0019CE68(sFileCache* self)
     self->nPending = 0;
     self->used = 0;
     if (D_004A1968 == 0) {
-        D_004A1968 = func_0019CB38(cMemMan_alloc(0x1F44, D_004609C0, 0, 0));
+        D_004A1968 = func_0019CB38((sFileIndex*)cMemMan_alloc(0x1F44, D_004609C0, 0, 0));
     } else {
         func_0019CB60(D_004A1968);
     }
@@ -2677,8 +2616,7 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019CF40);
 #ifdef SKIP_ASM
 extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
 void operator_delete(int* p);
-extern void* D_004A1968;
-
+extern sFileIndex* D_004A1968;
 
 extern "C" void func_0019CF40(sFileCache* self)
 {
@@ -2712,7 +2650,6 @@ extern "C" void MUTEX_unlock(void* mutex);
 extern char D_004609D8[];
 extern char D_00538B00[];
 
-
 extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* p)
 {
     sFileSlot* slot = (sFileSlot*)p;
@@ -2744,7 +2681,6 @@ extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* p)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D140);
 #ifdef SKIP_ASM
 extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
-
 
 extern "C" void func_0019D140(sFileCache* self, int bank)
 {
@@ -2792,7 +2728,6 @@ extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* slot);
 extern "C" void func_0019D140(sFileCache* self, int bank);
 extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
 
-
 extern "C" void func_0019D250(void* p)
 {
     sFileCache* self = (sFileCache*)p;
@@ -2826,7 +2761,6 @@ extern "C" void func_0019D250(void* p)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D3B0);
 #ifdef SKIP_ASM
-
 extern "C" int func_0019D3B0(sFileCache* self, int bank)
 {
     unsigned int best = 0;
@@ -2851,7 +2785,6 @@ extern "C" int func_0019D3B0(sFileCache* self, int bank)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D428);
 #ifdef SKIP_ASM
 extern "C" int func_004165A8(const void* a, const void* b);
-
 
 extern "C" int func_0019D428(sFileCache* self, int bank, const char* name)
 {
@@ -2900,7 +2833,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019D578);
 #ifdef SKIP_ASM
 extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
 
-
 extern "C" void func_0019D578(sFileCache* self, int bank, int size)
 {
     if (self->used + size <= 9999999)
@@ -2942,7 +2874,6 @@ extern "C" void func_0019D578(sFileCache* self, int bank, int size)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D738);
 #ifdef SKIP_ASM
 extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
-
 
 extern "C" void func_0019D738(sFileCache* self, int bank, int size)
 {
@@ -2996,7 +2927,6 @@ extern "C" void MUTEX_unlock(void* mutex);
 extern char D_004609F0[];
 extern char D_00538B00[];
 
-
 extern "C" void func_0019D8B8(sFileCache* self, int bank, int i)
 {
     sFileSlot* s = &self->banks[bank].slots[i];
@@ -3032,7 +2962,6 @@ extern "C" int func_0019D3B0(sFileCache* self, int bank);
 extern "C" int func_0019D428(sFileCache* self, int bank, const char* name);
 extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 extern "C" char* strcpy(char* dst, const char* src);
-
 
 extern "C" int func_0019DA10(void* p, int bank, void* namep, int a3, int a4, int a5)
 {
@@ -3120,7 +3049,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019DD10);
 extern sFileCache* D_004A196C;
 extern "C" int func_0041AA88(const char* a, const char* b);
 
-
 extern "C" int func_0019DD10(const int* a, const int* b)
 {
     int ka = *a;
@@ -3146,7 +3074,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019DE18);
 #ifdef SKIP_ASM
 extern sFileCache* D_004A196C;
 extern "C" int func_0041AA88(const char* a, const char* b);
-
 
 extern "C" int func_0019DE18(const int* a, const int* b)
 {
@@ -3201,7 +3128,6 @@ extern "C" int func_0019E1C0(sTable_E1C0* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E208);
 #ifdef SKIP_ASM
-
 extern "C" int func_0019E208(sFileCache* self, int a1, int a2)
 {
     return self->banks[a1].slots[a2].state == 2;
@@ -3211,7 +3137,6 @@ extern "C" int func_0019E208(sFileCache* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E238);
 #ifdef SKIP_ASM
-
 extern "C" int func_0019E238(sFileCache* self, int a1, int a2)
 {
     return self->banks[a1].slots[a2].state == 1;
@@ -3342,7 +3267,6 @@ extern "C" void func_0019E538(void* self, int a1)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E588);
 #ifdef SKIP_ASM
 extern void* D_004A289C;
-
 
 struct sRider_E588 {
     unsigned int item;  // 0x0
