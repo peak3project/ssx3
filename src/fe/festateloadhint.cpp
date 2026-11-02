@@ -8,16 +8,44 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/festateloadhint", cFELoadHintState_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char D_004A2BC8[];
+extern char D_004A2BD0[];
+extern void* D_004A5B64;
+extern "C" int func_002C27C0(char* buf, const char* fmt, ...);
+extern "C" void func_003A0E90(void* obj, char* text);
+extern "C" void func_0039E390(void *, int);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern signed char D_00535C11[];
+extern unsigned int D_00536640[];
+void cUIText_setAsciiString(cUIText* text, const char* str);
+extern char D_004A2AC0[];
+extern char D_004A2AC8[];
+extern char D_004A2AD0[];
+extern char D_0047B8F8[];
+extern char D_0047B930[];
+extern char D_0047B968[];
+extern char* D_004A28A8;
+extern "C" int func_00146E98(void* iface, int a1);
+extern "C" const char* func_0014EE58(void* iface, int a1);
+extern "C" int func_00148950(void* iface, int id);
+extern "C" void* func_002C2508(void* dst, void* src);
+extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
+extern char D_0047BC80[];
+extern "C" void* func_00242EB8(int, int);
+
+//100%
+INCLUDE_ASM("fe/festateloadhint", cFELoadHintState_onCreateScreen);
+#ifdef SKIP_ASM
 extern signed char D_004A2C38;
 extern char D_0047BDD8[];
 extern char D_0047BDE8[];
@@ -69,14 +97,6 @@ extern "C" void cFELoadHintState_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245AE0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_004A2BC8[];
-extern char D_004A2BD0[];
-extern void* D_004A5B64;
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int func_002C27C0(char* buf, const char* fmt, ...);
-extern "C" void func_003A0E90(void* obj, char* text);
-
 extern "C" int func_00245AE0(void* self)
 {
     char buf[200];
@@ -101,7 +121,6 @@ void func_00245B50(void* self)
 INCLUDE_ASM("fe/festateloadhint", func_00245B58);
 #ifdef SKIP_ASM
 extern void* D_0047C608[];
-extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_00245B58(void* self, int flags)
 {
@@ -113,14 +132,7 @@ extern "C" void func_00245B58(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/festateloadhint", cFELoadState_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void cFELoadState_InitwidgetMultiP(void* self, int idx);
-extern signed char D_00535C11[];
 extern char D_0047BE40[];
 extern char D_0047BE50[];
 
@@ -150,14 +162,6 @@ extern "C" void cFELoadState_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245C60);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_004A2BC8[];
-extern char D_004A2BD0[];
-extern void* D_004A5B64;
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int func_002C27C0(char* buf, const char* fmt, ...);
-extern "C" void func_003A0E90(void* obj, char* text);
-
 extern "C" int func_00245C60(void* self)
 {
     char buf[200];
@@ -173,11 +177,7 @@ extern "C" int func_00245C60(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245CD0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void cFELoadState_widgetCreateQP(void* self, void* widget);
-extern signed char D_00535C11[];
 
 extern "C" void func_00245CD0(void* self, void* widget)
 {
@@ -192,7 +192,6 @@ extern "C" void func_00245CD0(void* self, void* widget)
 INCLUDE_ASM("fe/festateloadhint", func_00245D28);
 #ifdef SKIP_ASM
 extern void* D_0047C538[];
-extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_00245D28(void* self, int flags)
 {
@@ -204,10 +203,7 @@ extern "C" void func_00245D28(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/festateloadhint", cFELoadStateInLodge_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0047BFA0[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 extern "C" void cFELoadStateInLodge_onCreateScreen(void* self)
 {
@@ -231,14 +227,6 @@ void func_00245DB8(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245DC0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_004A2BC8[];
-extern char D_004A2BD0[];
-extern void* D_004A5B64;
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int func_002C27C0(char* buf, const char* fmt, ...);
-extern "C" void func_003A0E90(void* obj, char* text);
-
 extern "C" int func_00245DC0(void* self)
 {
     char buf[200];
@@ -254,8 +242,6 @@ extern "C" int func_00245DC0(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245E30);
 #ifdef SKIP_ASM
-extern unsigned int D_00536640[];
-
 extern "C" int func_00245E30(int* a, int* b)
 {
     unsigned int va = D_00536640[*a];
@@ -270,8 +256,6 @@ extern "C" int func_00245E30(int* a, int* b)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245E78);
 #ifdef SKIP_ASM
-extern unsigned int D_00536640[];
-
 extern "C" int func_00245E78(int* a, int* b)
 {
     unsigned int va = D_00536640[*a];
@@ -314,8 +298,6 @@ extern "C" void func_00245F00(void* self, int flags)
 }
 #endif
 
-extern "C" void func_0039E390(void *, int);
-
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245F30__FPv);
 #ifdef SKIP_ASM
@@ -330,21 +312,7 @@ void func_00245F30(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00245F50);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
-void cUIText_setAsciiString(cUIText* text, const char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_004A2AD8[];
-extern char D_004A2AC0[];
-extern char D_004A2AC8[];
-extern char D_004A2AD0[];
-extern char D_0047B8F8[];
-extern char D_0047B930[];
-extern char D_0047B968[];
-
 
 extern "C" void func_00245F50(void* self)
 {
@@ -379,20 +347,8 @@ extern "C" void func_00245F50(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00246098);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
-void cUIText_setAsciiString(cUIText* text, const char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void func_0039E510(void* self);
 extern void* D_004A5B80;
-extern char D_004A2AC0[];
-extern char D_004A2AC8[];
-extern char D_004A2AD0[];
-extern char D_0047B8F8[];
-extern char D_0047B930[];
-extern char D_0047B968[];
-
 
 extern "C" void func_00246098(void* self)
 {
@@ -431,11 +387,9 @@ extern "C" void func_00246098(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_002461E0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00186A08(void* self, void* engine);
 extern "C" void func_0039F400(void* list, void* item);
-extern char D_004A2AC8[];
 extern char D_0047B978[];
 
 extern "C" void func_002461E0(void* self, void* item, int msg)
@@ -467,7 +421,6 @@ INCLUDE_ASM("fe/festateloadhint", func_00246278);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_00144C98(void* iface);
 extern "C" const char* func_00144BF0(void* iface);
-extern char* D_004A28A8;
 extern signed char D_00535C10[];
 extern char D_004A2BD8[];
 extern char D_0047BA48[];
@@ -479,7 +432,6 @@ extern char D_0047BAA0[];
 extern char D_0047BAB0[];
 extern char D_0047BAC0[];
 extern char D_0047BAD0[];
-
 
 static inline int Loc_246278(char* key)
 {
@@ -493,7 +445,6 @@ static inline void Fmt_246278(char* buf, char* fmt, char* key, void* iface)
     int str = Loc_246278(key);
     func_002C27C0(buf, fmt, str, func_00144BF0(iface));
 }
-
 
 static inline void Activate_246278(char* obj)
 {
@@ -559,11 +510,6 @@ INCLUDE_ASM("fe/festateloadhint", func_002464E8);
 #ifdef SKIP_ASM
 extern "C" int func_00144BE0(void* iface);
 extern "C" int func_00144D18(void* iface, int idx);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" const char* func_0014EE58(void* iface, int a1);
-extern "C" int func_00148950(void* iface, int id);
-extern "C" void* func_002C2508(void* dst, void* src);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern signed char D_00535BC8[];
 extern char D_0047BB70[];
 extern char D_0047BB80[];
@@ -585,7 +531,6 @@ extern char D_0047BC30[];
 extern char D_0047BC48[];
 extern char D_0047BC60[];
 extern char D_0047BC70[];
-extern char D_0047BC80[];
 extern char D_004A2C08[];
 
 // 17 per-event values (two rodata tables copied to the stack)
@@ -602,8 +547,6 @@ struct sOptTriple_2464E8 {
     int c;
 };
 extern sOptTriple_2464E8 D_005308B8[];
-
-
 
 static inline void* Loc_2464E8(char* key)
 {
@@ -751,25 +694,10 @@ INCLUDE_ASM("fe/festateloadhint", cFELoadState_InitwidgetMultiP);
 //100%
 INCLUDE_ASM("fe/festateloadhint", cFELoadState_widgetCreateQP);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-struct cUIText;
-void cUIText_setAsciiString(cUIText* text, const char* str);
-extern "C" int func_00146E98(void* iface, int a1);
 extern "C" char* func_00155270(void* iface, int a1);
-extern "C" const char* func_0014EE58(void* iface, int a1);
-extern "C" int func_00148950(void* iface, int id);
 extern "C" unsigned short* func_002C2540(void* dst, const char* s);
-extern "C" void* func_002C2508(void* dst, void* src);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern "C" void func_003A0E90(void* obj, char* text);
 extern "C" double func_00413AF8(float f);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern char* D_004A28A8;
 extern char D_004A2C28[];
-extern char D_0047BC80[];
 extern char D_0047BEC8[];
 extern char D_0047BED8[];
 extern char D_0047BEE8[];
@@ -784,7 +712,6 @@ extern char D_0047BF88[];
 extern char D_0047BF78[] __attribute__((aligned(8)));
 
 static inline int wHash_7AB0(char* w) { return *(int*)(w + 0x38); }
-
 
 extern "C" void cFELoadState_widgetCreateQP(void* self, void* widget)
 {
@@ -842,8 +769,6 @@ extern "C" void cFELoadState_widgetCreateQP(void* self, void* widget)
 }
 #endif
 
-extern "C" void* func_00242EB8(int, int);
-
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00247E20__FPv);
 #ifdef SKIP_ASM
@@ -852,8 +777,6 @@ void* func_00247E20(void* self)
     return func_00242EB8(1, 0xffff);
 }
 #endif
-
-extern "C" void* func_00242EB8(int, int);
 
 //100%
 INCLUDE_ASM("fe/festateloadhint", func_00247E40__FPv);
