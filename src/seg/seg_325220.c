@@ -2034,6 +2034,8 @@ extern struct R7230 *func_004266C8_w(sSifRpcState *, unsigned) __asm__("func_004
 extern struct R7230 *func_00426698_w(sSifRpcState *, unsigned) __asm__("func_00426698");
 extern int func_004261B0_w(int, void *, int, int, int, int) __asm__("func_004261B0");
 void func_00427230_d(struct W7230 *) __asm__("func_00427230");
+// Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
+#define ASSERT_7230(cond) do { } while (0)
 void func_00427230_d(struct W7230 *a0) {
     int s4 = 0;
     int t;
@@ -2065,9 +2067,8 @@ void func_00427230_d(struct W7230 *a0) {
     } else {
         e = func_00426698_w(&D_0052D680, fl);
     }
-    do {
-        func_0042C0C0_w();
-    } while (0);
+    func_0042C0C0_w();
+    ASSERT_7230(e != 0);
     w = 0x8000000A;
     v = a0->f1C;
     e->f20 = w;
