@@ -308,6 +308,103 @@ extern void (*D_0050AAD4)(void);        /* D_0050A8E8.f1EC */
 extern struct sA8E8Slot *D_0050AADC;    /* D_0050A8E8.f1F4 */
 extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 
+/* D_0050AD00: the IOP sound side's state (RPC buffers, the shared voice block func_003C1638 lays out, the transfer
+   queue, speaker gains, sound-RAM segments, the recursive lock). Layout from every use in this unit; field names are
+   their offsets. */
+struct sAD00Voice { int key; unsigned int val; };
+struct sAD00SpuVoice {              /* 8 bytes, sAD00Spu.f20[] */
+    int key;
+    short pitch;
+    signed char l;
+    signed char r;
+};
+struct sAD00SpuChan {               /* 16 bytes, sAD00Spu.f1A0[] */
+    int key;
+    short pitch;
+    signed char vol[6];
+    signed char f0C[4];
+};
+struct sAD00Spu {                   /* 0x2A0, block 3 of the shared buffer (D_0050AD00.fCB0) */
+    long f00;                       /* voice on bits */
+    unsigned long f08;
+    char f10;
+    char f11;
+    char f12;
+    unsigned char f13;
+    short f14;
+    short f16;
+    char pad18[0x20 - 0x18];
+    struct sAD00SpuVoice f20[48];
+    struct sAD00SpuChan f1A0[16];
+};
+struct sAD00Xfer {                  /* 16 bytes, D_0050AD00.fCC8[] (also D_0050B9C8) */
+    unsigned int key;
+    int f04;
+    int f08;
+    unsigned short f0C;
+    unsigned char f0E;
+    char pad0F;
+};
+struct sAD00Spk {                   /* 0x20, D_0050AD00.fE98[] (also D_0050BB98) */
+    float f00[6];
+    unsigned int f18;
+    short f1C;
+    short f1E;
+};
+struct sAD00Seg { unsigned short a; unsigned short b; };
+struct sAD00 {
+    char f000[0x83C];               /* RPC send buffer */
+    struct sAD00Voice f83C[48];
+    struct sAD00Voice f9BC[16];
+    char padA3C[0xC80 - 0xA3C];
+    char fC80[0x30];                /* RPC client data */
+    struct sAD00Spu *fCB0;          /* also D_0050B9B0 */
+    int *fCB4;
+    void *fCB8;
+    volatile int fCBC;              /* last transfer id */
+    volatile unsigned char fCC0;    /* queued transfers */
+    volatile unsigned char fCC1;    /* selected transfer */
+    volatile unsigned char fCC2;    /* transfer running */
+    char padCC3;
+    int fCC4;                       /* tick of the last transfer */
+    struct sAD00Xfer fCC8[28];
+    char padE88[0xE8C - 0xE88];
+    int fE8C[1];
+    char padE90[0xE98 - 0xE90];
+    struct sAD00Spk fE98[96];
+    unsigned short f1A98;           /* number of f1AA0 segments */
+    unsigned short f1A9A;
+    unsigned short f1A9C;
+    unsigned short f1A9E;
+    struct sAD00Seg *f1AA0;
+    int f1AA4;
+    int f1AA8;
+    char f1AAC;
+    unsigned char f1AAD;
+    unsigned short f1AAE;
+    char pad1AB0[0x1AB2 - 0x1AB0];
+    unsigned short f1AB2;           /* fill offset while func_003C1638 lays out f1AB4 */
+    char *f1AB4;
+    int f1AB8;
+    void *f1ABC[6];
+    int f1AD4;
+    int f1AD8;
+    char pad1ADC[0x1AF4 - 0x1ADC];
+    void *f1AF4;
+    int f1AF8;
+    char pad1AFC[0x1B00 - 0x1AFC];
+    void *f1B00;
+    int f1B04;
+    int f1B08;
+    int f1B0C;
+    volatile int f1B10;             /* lock: semaphore, owner thread, depth */
+    volatile int f1B14;
+    volatile int f1B18;
+    int f1B1C[7];                   /* saved SPU2 DMA registers */
+    int f1B38;
+};
+extern struct sAD00 D_0050AD00;
+
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
 
 //100%
@@ -7292,19 +7389,17 @@ void func_003C08F8(void* buf)
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C09B8);
 #ifdef SKIP_ASM
-struct D_09B8 { char pad[0x1AAE]; unsigned short s1AAE; char pad2[0x1B1C - 0x1AB0]; int r[7]; int f1B38; };
-extern struct D_09B8 D_0050AD00_09B8 __asm__("D_0050AD00");
 extern void func_003C4A38_09B8(int, int, int, int) __asm__("func_003C4A38");
 
 void func_003C09B8(void) {
-    D_0050AD00_09B8.r[0] = *(volatile int *)0x1000D010;
-    D_0050AD00_09B8.r[1] = *(volatile int *)0x1000D080;
-    D_0050AD00_09B8.r[2] = *(volatile int *)0x1000D020;
-    D_0050AD00_09B8.r[3] = *(volatile int *)0x1000D410;
-    D_0050AD00_09B8.r[4] = *(volatile int *)0x1000D430;
-    D_0050AD00_09B8.r[5] = *(volatile int *)0x1000D480;
-    D_0050AD00_09B8.r[6] = *(volatile int *)0x1000D420;
-    func_003C4A38_09B8(D_0050A94C[0], D_0050AD00_09B8.f1B38, D_0050AD00_09B8.s1AAE >> 4, 0x10000);
+    D_0050AD00.f1B1C[0] = *(volatile int *)0x1000D010;
+    D_0050AD00.f1B1C[1] = *(volatile int *)0x1000D080;
+    D_0050AD00.f1B1C[2] = *(volatile int *)0x1000D020;
+    D_0050AD00.f1B1C[3] = *(volatile int *)0x1000D410;
+    D_0050AD00.f1B1C[4] = *(volatile int *)0x1000D430;
+    D_0050AD00.f1B1C[5] = *(volatile int *)0x1000D480;
+    D_0050AD00.f1B1C[6] = *(volatile int *)0x1000D420;
+    func_003C4A38_09B8(D_0050A94C[0], D_0050AD00.f1B38, D_0050AD00.f1AAE >> 4, 0x10000);
 }
 #endif
 
