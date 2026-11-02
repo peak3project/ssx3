@@ -2,15 +2,25 @@
 
 extern int D_005305B0[];
 
+// One player slot (0x1C bytes). D_00534FE0 is the live table, D_00535B20 its saved copy.
 struct sPlayerCharEntry {
-    char pad_0x00[0xc];
-    int field_0xc; // 0xc
-    char pad_0x10[1];
-    signed char mCharID; // 0x11
-    signed char field_0x12; // 0x12
-    char pad_0x13[0x1C - 0x12 - 1];
+    char name[0xC];                 // 0x00
+    int ctrlID;                     // 0x0C (-1 = none)
+    unsigned int flag0 : 1;         // 0x10 bit 0
+    unsigned int flag1 : 1;         // 0x10 bit 1
+    unsigned int missionMan : 1;    // 0x10 bit 2
+    unsigned int flag3 : 1;         // 0x10 bit 3
+    signed char mCharID;            // 0x11
+    signed char field_0x12;         // 0x12
+    signed char field_0x13;         // 0x13
+    int field_0x14;                 // 0x14
+    int field_0x18;                 // 0x18
+};
+struct sPlayerCharTable {
+    sPlayerCharEntry e[6];
 };
 extern sPlayerCharEntry D_00534FE0[];
+extern sPlayerCharEntry D_00535B20[];
 
 // Per-profile character stat levels: one row of 10 characters x 7 stats per profile.
 struct sPlayerStat7 {
@@ -70,11 +80,6 @@ void* cBENewPlayerInterface_getThis()
 //100%
 INCLUDE_ASM("be/beintplayer", func_001459B8);
 #ifdef SKIP_ASM
-struct sRecords_59B8 {
-    int w[42];
-};
-extern sRecords_59B8 D_00535B20_59B8 __asm__("D_00535B20");
-extern sRecords_59B8 D_00534FE0_59B8 __asm__("D_00534FE0");
 extern void* D_004A11C0;
 // PORT: func_00145A98 takes no arguments; this caller passes its own self through untouched in $a0.
 extern "C" void func_00145A98(void* self);
@@ -83,7 +88,7 @@ extern "C" void func_00145A98(void* self);
 extern "C" void func_001459B8(void* self)
 {
     if (*(int*)((char*)D_004A11C0 + 8) != 0) {
-        D_00535B20_59B8 = D_00534FE0_59B8;
+        *(sPlayerCharTable*)D_00535B20 = *(sPlayerCharTable*)D_00534FE0;
     } else {
         func_00145A98(self);
     }
@@ -93,28 +98,14 @@ extern "C" void func_001459B8(void* self)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145A98);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-
-struct sCharEntryBits_00145A98 {
-    char name[0xC];          // 0x00
-    int field_0xc;           // 0x0C
-    unsigned int flag0 : 1;  // 0x10
-    unsigned int flag1 : 1;
-    unsigned int rest : 30;
-    int pad_0x14[2];
-};
-
-// Bitfield views of the two 0x1C-byte character tables.
-extern sCharEntryBits_00145A98 D_00534FE0_bits[] __asm__("D_00534FE0");
-extern sCharEntryBits_00145A98 D_00535B20_bits[] __asm__("D_00535B20");
 
 extern "C" void func_00145A98(void* self)
 {
     for (int i = 0; i < 6; i++)
     {
-        D_00535B20_bits[i].flag1 = D_00534FE0_bits[i].flag1;
-        strncpy(D_00535B20_bits[i].name, D_00534FE0_bits[i].name, 0xC);
+        D_00535B20[i].flag1 = D_00534FE0[i].flag1;
+        strncpy(D_00535B20[i].name, D_00534FE0[i].name, 0xC);
     }
 }
 #endif
@@ -122,16 +113,9 @@ extern "C" void func_00145A98(void* self)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145B20);
 #ifdef SKIP_ASM
-struct sPlayerTable_00145B20
-{
-    sPlayerCharEntry entries[6];
-};
-
-extern sPlayerTable_00145B20 D_00535B20;
-
 extern "C" void func_00145B20(void* self)
 {
-    *(sPlayerTable_00145B20*)D_00534FE0 = D_00535B20;
+    *(sPlayerCharTable*)D_00534FE0 = *(sPlayerCharTable*)D_00535B20;
 }
 #endif
 
@@ -144,22 +128,13 @@ struct sVEntry00145BD8 {
     void (*fn)(void*);
 };
 
-struct sCtrlEntry00145BD8 {
-    char pad_0x00[0x10];
-    unsigned int flag0 : 1;
-    unsigned int flag1 : 1;
-    unsigned int flag2 : 1;
-    unsigned int rest : 29;
-    char pad_0x14[0x8];
-};
-
 extern "C" void cBENewPlayerInterface_defaultCtrl(void* self)
 {
     int i;
-    sCtrlEntry00145BD8* e = (sCtrlEntry00145BD8*)&D_00535B20;
+    sPlayerCharEntry* e = D_00535B20;
     for (i = 0; i < 6; i++)
     {
-        ((char*)&e[i])[0x13] = 0;
+        e[i].field_0x13 = 0;
         e[i].flag1 = 1;
     }
     sVEntry00145BD8* vt = *(sVEntry00145BD8**)((char*)self + 0xC);
@@ -793,7 +768,7 @@ INCLUDE_ASM("be/beintplayer", func_00146F40);
 #ifdef SKIP_ASM
 extern "C" void func_00146F40(void* self, int index, const char* name)
 {
-    strncpy((char*)&D_00534FE0[cBENewPlayerInterface_getPlayerID(index)], name, 0xC);
+    strncpy(D_00534FE0[cBENewPlayerInterface_getPlayerID(index)].name, name, 0xC);
 }
 #endif
 
@@ -828,24 +803,24 @@ extern "C" char* func_00146F88(void* self, int idx)
             return net + 0x498;
         return net + 0x488;
     }
-    if (D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].pad_0x00[0] == 0) {
+    if (D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].name[0] == 0) {
         cBE_getInterface_Fv(cBE_getBE(), 4);
         switch ((int)((D_00535610[0] >> 22) & 7)) {
         case 0:
-            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].pad_0x00, D_0045A228, idx + 1);
+            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].name, D_0045A228, idx + 1);
             break;
         case 1:
-            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].pad_0x00, D_0045A238, idx + 1);
+            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].name, D_0045A238, idx + 1);
             break;
         case 2:
-            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].pad_0x00, D_0045A248, idx + 1);
+            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].name, D_0045A248, idx + 1);
             break;
         case 3:
-            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].pad_0x00, D_0045A258, idx + 1);
+            sprintf(D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].name, D_0045A258, idx + 1);
             break;
         }
     }
-    return D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].pad_0x00;
+    return D_00534FE0[cBENewPlayerInterface_getPlayerID(idx)].name;
 }
 #endif
 
@@ -856,7 +831,7 @@ extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
 
 extern "C" void func_00147138(void* self, int a1, const char* name)
 {
-    strncpy(D_00534FE0[a1].pad_0x00, name, 0xC);
+    strncpy(D_00534FE0[a1].name, name, 0xC);
 }
 #endif
 
@@ -879,7 +854,7 @@ extern char* D_004A28A8;
 
 extern "C" char* func_00147170(void* self, int idx)
 {
-    char* name = (char*)&D_00534FE0[idx];
+    char* name = D_00534FE0[idx].name;
     if (strlen(name) == 0)
     {
         unsigned short buf[0x68];
@@ -897,22 +872,13 @@ INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_setRiderCtrlID);
 #ifdef SKIP_ASM
 int cBENewPlayerInterface_getPlayerID(int index);
 
-struct sPlayerCharFlags_00147220 {
-    unsigned int bit0 : 1;
-    unsigned int bit1 : 1;
-    unsigned int bit2 : 1;
-    unsigned int rest : 29;
-};
-
 extern "C" void cBENewPlayerInterface_setRiderCtrlID(void* self, int index, int ctrl)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
-    D_00534FE0[id].field_0xc = ctrl;
+    D_00534FE0[id].ctrlID = ctrl;
     if (ctrl >= 0) {
-        char* p = (char*)&D_00534FE0[0] + id * 0x1c;
-        sPlayerCharFlags_00147220* f = (sPlayerCharFlags_00147220*)(p + 0x10);
-        f->bit0 = id;
-        f->bit2 = 0;
+        D_00534FE0[id].flag0 = id;
+        D_00534FE0[id].missionMan = 0;
     }
 }
 #endif
@@ -925,28 +891,19 @@ int cBENewPlayerInterface_getPlayerID(int index);
 extern "C" int func_00147290(void* self, int index)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
-    return D_00534FE0[id].field_0xc;
+    return D_00534FE0[id].ctrlID;
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_001472C8);
 #ifdef SKIP_ASM
-struct sPlayerCharFlags_001472C8 {
-    unsigned int bit0 : 1;
-    unsigned int bit1 : 1;
-    unsigned int bit2 : 1;
-    unsigned int rest : 29;
-};
-
 extern "C" void func_001472C8(void* self, int a1, int a2)
 {
-    D_00534FE0[a1].field_0xc = a2;
+    D_00534FE0[a1].ctrlID = a2;
     if (a2 >= 0) {
-        char* p = (char*)&D_00534FE0[0] + a1 * 0x1c;
-        sPlayerCharFlags_001472C8* f = (sPlayerCharFlags_001472C8*)(p + 0x10);
-        f->bit0 = a1;
-        f->bit2 = 0;
+        D_00534FE0[a1].flag0 = a1;
+        D_00534FE0[a1].missionMan = 0;
     }
 }
 #endif
@@ -956,7 +913,7 @@ INCLUDE_ASM("be/beintplayer", func_00147318);
 #ifdef SKIP_ASM
 extern "C" int func_00147318(void* self, int a1)
 {
-    return D_00534FE0[a1].field_0xc;
+    return D_00534FE0[a1].ctrlID;
 }
 #endif
 
@@ -965,7 +922,7 @@ INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_setRiderCharID);
 #ifdef SKIP_ASM
 static inline int func_00147338_isLocked(sPlayerCharEntry* e)
 {
-    return (*(unsigned int*)((char*)e + 0x10) >> 2) & 1;
+    return e->missionMan;
 }
 
 extern "C" void cBENewPlayerInterface_setRiderCharID(void* self, int index, int charID)
@@ -1019,25 +976,18 @@ extern "C" signed char func_00147410(void* self, int index)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147448);
 #ifdef SKIP_ASM
-struct sPlayerCharFlags_00147448 {
-    unsigned int bit0 : 1;
-    unsigned int bit1 : 1;
-    unsigned int bit2 : 1;
-    unsigned int rest : 29;
-};
-
-static inline int func_00147448_getBit2(char* p)
+static inline int func_00147448_getBit2(sPlayerCharEntry* e)
 {
-    return ((sPlayerCharFlags_00147448*)(p + 0x10))->bit2;
+    return e->missionMan;
 }
 
 extern "C" void func_00147448(void* self, int a1, int charID)
 {
-    char* p = (char*)&D_00534FE0[0] + a1 * 0x1c;
-    if (func_00147448_getBit2(p) == 1) {
-        *(signed char*)(p + 0x11) = D_00534FE0[0].mCharID;
+    sPlayerCharEntry* e = &D_00534FE0[a1];
+    if (func_00147448_getBit2(e) == 1) {
+        e->mCharID = D_00534FE0[0].mCharID;
     } else {
-        *(signed char*)(p + 0x11) = charID;
+        e->mCharID = charID;
     }
 }
 #endif
@@ -1057,8 +1007,7 @@ INCLUDE_ASM("be/beintplayer", func_001474A8);
 #ifdef SKIP_ASM
 extern "C" void func_001474A8(void* self, int a1, int a2)
 {
-    char* p = (char*)&D_00534FE0[0] + a1 * 0x1c;
-    *(char*)(p + 0x12) = a2;
+    D_00534FE0[a1].field_0x12 = a2;
 }
 #endif
 
@@ -1067,46 +1016,28 @@ INCLUDE_ASM("be/beintplayer", func_001474C8);
 #ifdef SKIP_ASM
 extern "C" signed char func_001474C8(void* self, int a1)
 {
-    char* p = (char*)&D_00534FE0[0] + a1 * 0x1c;
-    return *(signed char*)(p + 0x12);
+    return D_00534FE0[a1].field_0x12;
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_001474E8);
 #ifdef SKIP_ASM
-struct sPlayerCharFlags_0x10 {
-    unsigned int bit0 : 1;
-    unsigned int bit1 : 1;
-    unsigned int bit2 : 1;
-    unsigned int bit3 : 1;
-    unsigned int rest : 28;
-};
-
 extern "C" int func_001474E8(void* self, int index)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
-    char* p = (char*)&D_00534FE0[0] + id * 0x1c;
-    return ((sPlayerCharFlags_0x10*)(p + 0x10))->bit1;
+    return D_00534FE0[id].flag1;
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147528);
 #ifdef SKIP_ASM
-struct sPlayerCharFlags_00147528 {
-    unsigned int bit0 : 1;
-    unsigned int bit1 : 1;
-    unsigned int bit2 : 1;
-    unsigned int bit3 : 1;
-    unsigned int rest : 28;
-};
-
 extern "C" void func_00147528(void* self, int index, int value)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
     sPlayerCharEntry* e = &D_00534FE0[id];
-    ((sPlayerCharFlags_00147528*)((char*)e + 0x10))->bit1 = value;
+    e->flag1 = value;
 }
 #endif
 
@@ -1116,27 +1047,18 @@ INCLUDE_ASM("be/beintplayer", func_00147580);
 extern "C" int func_00147580(void* self, int index)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
-    char* p = (char*)&D_00534FE0[0] + id * 0x1c;
-    return ((sPlayerCharFlags_0x10*)(p + 0x10))->bit3;
+    return D_00534FE0[id].flag3;
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_001475C0);
 #ifdef SKIP_ASM
-struct sPlayerCharFlags_001475C0 {
-    unsigned int bit0 : 1;
-    unsigned int bit1 : 1;
-    unsigned int bit2 : 1;
-    unsigned int bit3 : 1;
-    unsigned int rest : 28;
-};
-
 extern "C" void func_001475C0(void* self, int index, int value)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
     sPlayerCharEntry* e = &D_00534FE0[id];
-    ((sPlayerCharFlags_001475C0*)((char*)e + 0x10))->bit3 = value;
+    e->flag3 = value;
 }
 #endif
 
@@ -1145,7 +1067,7 @@ INCLUDE_ASM("be/beintplayer", func_00147618);
 #ifdef SKIP_ASM
 extern "C" signed char func_00147618(void* self, int index)
 {
-    return D_00534FE0[cBENewPlayerInterface_getPlayerID(index)].pad_0x13[0];
+    return D_00534FE0[cBENewPlayerInterface_getPlayerID(index)].field_0x13;
 }
 #endif
 
@@ -1155,72 +1077,42 @@ INCLUDE_ASM("be/beintplayer", func_00147658);
 extern "C" void func_00147658(void* self, int index, int value)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
-    D_00534FE0[id].pad_0x13[0] = value;
+    D_00534FE0[id].field_0x13 = value;
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147698);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPlayerCharEntryExt_7698 {
-    char pad_0x00[0x14];
-    int field_0x14;
-    char pad_0x18[4];
-};
-extern sPlayerCharEntryExt_7698 D_00534FE0_ext[] __asm__("D_00534FE0");
-
 extern "C" int func_00147698(void* self, int index)
 {
-    return D_00534FE0_ext[cBENewPlayerInterface_getPlayerID(index)].field_0x14;
+    return D_00534FE0[cBENewPlayerInterface_getPlayerID(index)].field_0x14;
 }
 #endif
 //100%
 INCLUDE_ASM("be/beintplayer", func_001476D8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPlayerCharEntryExt_76D8 {
-    char pad_0x00[0x14];
-    int field_0x14;
-    int field_0x18;
-};
-extern sPlayerCharEntryExt_76D8 D_00534FE0_ext_76D8[] __asm__("D_00534FE0");
-
 extern "C" void func_001476D8(void* self, int index, int value)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
-    D_00534FE0_ext_76D8[id].field_0x14 = value;
+    D_00534FE0[id].field_0x14 = value;
 }
 #endif
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147718);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPlayerCharEntryExt_7718 {
-    char pad_0x00[0x18];
-    int field_0x18;
-};
-extern sPlayerCharEntryExt_7718 D_00534FE0_ext_7718[] __asm__("D_00534FE0");
-
 extern "C" int func_00147718(void* self, int index)
 {
-    return D_00534FE0_ext_7718[cBENewPlayerInterface_getPlayerID(index)].field_0x18;
+    return D_00534FE0[cBENewPlayerInterface_getPlayerID(index)].field_0x18;
 }
 #endif
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147758);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPlayerCharEntryExt_7758 {
-    char pad_0x00[0x18];
-    int field_0x18;
-};
-extern sPlayerCharEntryExt_7758 D_00534FE0_ext_7758[] __asm__("D_00534FE0");
-
 extern "C" void func_00147758(void* self, int index, int value)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
-    D_00534FE0_ext_7758[id].field_0x18 = value;
+    D_00534FE0[id].field_0x18 = value;
 }
 #endif
 
@@ -1236,39 +1128,22 @@ int cBENewPlayerInterface_getPlayerID(int index)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001477B0);
 #ifdef SKIP_ASM
-struct sPlayerFlags_001477B0 {
-    char pad_0x00[0x10];
-    unsigned int flag0 : 1;
-    unsigned int rest : 31;
-    char pad_0x14[0x1C - 0x14];
-};
-
 extern "C" int func_001477B0(void* self, int index)
 {
-    if (D_00534FE0[index].field_0xc == -1) {
+    if (D_00534FE0[index].ctrlID == -1) {
         return -1;
     }
-    return ((sPlayerFlags_001477B0*)D_00534FE0)[index].flag0;
+    return D_00534FE0[index].flag0;
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_isMissionMan__Fi);
 #ifdef SKIP_ASM
-struct sPlayerFlags_001477E8
-{
-    char pad_0x00[0x10];
-    unsigned int flag0 : 1;       // 0x10 bit 0
-    unsigned int flag1 : 1;       // 0x10 bit 1
-    unsigned int missionMan : 1;  // 0x10 bit 2
-    unsigned int rest : 29;
-    char pad_0x14[0x1C - 0x14];
-};
-
 int cBENewPlayerInterface_isMissionMan(int index)
 {
     int playerID = cBENewPlayerInterface_getPlayerID(index);
-    return ((sPlayerFlags_001477E8*)D_00534FE0)[playerID].missionMan;
+    return D_00534FE0[playerID].missionMan;
 }
 #endif
 
@@ -1279,7 +1154,7 @@ extern "C" void func_00147828(int index)
 {
     D_00534FE0[cBENewPlayerInterface_getPlayerID(index)].mCharID = D_00534FE0[0].mCharID;
     sPlayerCharEntry* e = &D_00534FE0[cBENewPlayerInterface_getPlayerID(index)];
-    ((sPlayerCharFlags_0x10*)((char*)e + 0x10))->bit2 = 1;
+    e->missionMan = 1;
 }
 #endif
 
@@ -1290,7 +1165,7 @@ extern "C" void cBENewPlayerInterface_resetFromMissionMan(void* self, int index)
 {
     D_00534FE0[cBENewPlayerInterface_getPlayerID(index)].mCharID = 0;
     sPlayerCharEntry* e = &D_00534FE0[cBENewPlayerInterface_getPlayerID(index)];
-    ((sPlayerCharFlags_0x10*)((char*)e + 0x10))->bit2 = 0;
+    e->missionMan = 0;
 }
 #endif
 
