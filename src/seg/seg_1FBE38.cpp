@@ -6569,12 +6569,10 @@ extern "C" void func_003071C8(void* self, int flags) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003071F0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_71F0 __asm__("D_004A28A8");
 void func_0010F2B8_71F0(void*) __asm__("func_0010F2B8__FPv");
 extern "C" void func_00307C40_71F0(void*) __asm__("func_00307C40");
-struct Tab_71F0 { char pad[0x28]; void *arr[1]; };
 extern "C" void func_003071F0(void* self) {
-    func_0010F2B8_71F0((*(Tab_71F0**)(*(char**)(D_004A28A8_71F0 + 0x84) + 0xC))->arr[**(int**)((char*)self + 0x10)]);
+    func_0010F2B8_71F0(D_004A28A8->game->race->riders[**(int**)((char*)self + 0x10)]);
     func_00307C40_71F0(self);
 }
 #endif
