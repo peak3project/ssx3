@@ -801,14 +801,12 @@ static inline char *refToPtr_C420(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_C420(unsigned i) { if (i == 0) return 0; return refToPtr_C420(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void func_002FC2C0_C420(void*, void*) __asm__("func_002FC2C0");
-struct V3_C420 { float x, y, z; };
-extern V3_C420 D_004C9098_C420 __asm__("D_004C9098");
 extern unsigned D_C420[] __asm__("D_004FB500");
 extern int D_004A55E4;
 extern int D_004A3C00;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_C420 { int idx; int val; int pad; int type; };
-extern "C" V3_C420 func_002FC420(int n, Ent_C420 *e) {
+extern "C" cLunoValue func_002FC420(int n, Ent_C420 *e) {
     if (D_004A55E4 == 0) {
         D_C420[0] = 0xFFFFFFFF;
         ((int*)D_C420)[1] = 0;
@@ -847,11 +845,11 @@ extern "C" V3_C420 func_002FC420(int n, Ent_C420 *e) {
         obj = r;
     }
     if (obj == 0)
-        return D_004C9098_C420;
+        return D_004C9098;
     void *p = *(void**)(obj + 0xC);
     if (!p || !checkActiveNode(p, 6, buf))
         func_002FC2C0_C420(obj, buf);
-    return D_004C9098_C420;
+    return D_004C9098;
 }
 #endif
 
