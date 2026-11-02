@@ -5016,7 +5016,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303EC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int* func_00226610(void*);
-extern char *D_004A3DD8_3EC8 __asm__("D_004A3DD8");
 extern char *D_004A28A8_3EC8 __asm__("D_004A28A8");
 struct A_3EC8 { char pad[0x6C0]; };
 struct B_3EC8 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual bool v09(); };
@@ -5032,7 +5031,7 @@ static inline bool isIdle_3EC8(int slot) {
     return false;
 }
 extern "C" void* func_00303EC8(void* self) {
-    if (isIdle_3EC8(*(int*)D_004A3DD8_3EC8)) {
+    if (isIdle_3EC8(D_004A3DD8->being)) {
         *(int*)((char*)self + 8) = 1;
         *func_00226610(self) = 1;
     } else {
