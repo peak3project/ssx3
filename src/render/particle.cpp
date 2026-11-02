@@ -94,6 +94,13 @@ struct sPtVtI {
     int (*fn)(void*);
 };
 
+// g++ 2.95 vtable entry for a method taking (self, pointer).
+struct sPtVtVP {
+    short delta;
+    short index;
+    void (*fn)(void*, void*);
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -433,18 +440,13 @@ INCLUDE_ASM("render/particle", func_00371380);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-struct sPtVEntry1380 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 struct sPtCtx1380 {
     char pad_0x0[0xE84];
     sPtRenderState* top;             // 0xE84
     char pad_0xE88[0xF50 - 0xE88];
     int texIds[(0x10D8 - 0xF50) / 4];   // 0xF50
-    sPtVEntry1380* vtable;      // 0x10D8
+    sPtVtVP* vtable;      // 0x10D8
 };
 
 extern char* D_004A5B80;
@@ -483,7 +485,7 @@ extern "C" void func_00371380(sPtObj1380* self, int blend)
     ctx->top[1] = ctx->top[0];
     ctx->top++;
     *ctx->top = self->rs;
-    sPtVEntry1380* vt = ctx->vtable;
+    sPtVtVP* vt = ctx->vtable;
     vt[83].fn((char*)ctx + vt[83].delta, self);
     ctx->top--;
 }
@@ -593,18 +595,13 @@ INCLUDE_ASM("render/particle", func_00371688);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-struct sPtVEntry1688 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 struct sPtCtx1688 {
     char pad_0x0[0xE84];
     sPtRenderState* top;             // 0xE84
     char pad_0xE88[0xF50 - 0xE88];
     int texIds[(0x10D8 - 0xF50) / 4];   // 0xF50
-    sPtVEntry1688* vtable;      // 0x10D8
+    sPtVtVP* vtable;      // 0x10D8
 };
 
 extern char* D_004A5B80;
@@ -643,7 +640,7 @@ extern "C" void func_00371688(sPtObj1688* self, int blend)
     ctx->top[1] = ctx->top[0];
     ctx->top++;
     *ctx->top = self->rs;
-    sPtVEntry1688* vt = ctx->vtable;
+    sPtVtVP* vt = ctx->vtable;
     vt[84].fn((char*)ctx + vt[84].delta, self);
     ctx->top--;
 }
