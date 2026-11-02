@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 struct cOVStateHUDElem {
     int field_0x0;
     int field_0x4;
@@ -68,15 +76,10 @@ extern "C" void cOVStateHiScoreList_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001E9130);
 #ifdef SKIP_ASM
-struct sVEntry001E9130 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 struct sObj001E9130 {
     int field_0x0;
-    sVEntry001E9130* vt;
+    sVEntry<void*(void*, void*, int)>* vt;
 };
 
 extern "C" void func_0039F400(void* list, void* item);
@@ -488,7 +491,6 @@ struct sHudVert_001F1190 {
 
 static inline int texOf_001F1190(cOVStateHUDElem* e) { return e->field_0x0; }
 
-struct sVEnt_001F1190 { short delta; short index; void (*fn)(void*, int, sHudVert_001F1190*, int); };
 extern char* D_004A289C;
 
 extern "C" void func_001F1190(void* self, cOVStateHUDElem* e, float* pos, float* size, float* scale, float* color)
@@ -540,7 +542,7 @@ extern "C" void func_001F1190(void* self, cOVStateHUDElem* e, float* pos, float*
         p.z = 0.0f;
         p.w = 1.0f;
         v[3].pos = p;
-        sVEnt_001F1190* vt = *(sVEnt_001F1190**)(D_004A289C + 0x10D8);
+        sVEntry<void(void*, int, sHudVert_001F1190*, int)>* vt = *(sVEntry<void(void*, int, sHudVert_001F1190*, int)>**)(D_004A289C + 0x10D8);
         vt[71].fn(D_004A289C + vt[71].delta, 4, v, 0);
     }
 }
@@ -560,7 +562,6 @@ struct sHudVert_001F1338 {
     sHudVert_001F1338() {}
 };
 
-struct sVEnt_001F1338 { short delta; short index; void (*fn)(void*, int, sHudVert_001F1338*, int); };
 extern char* D_004A289C;
 
 extern "C" void func_001F1338(void* self, float* pos, float* size, float* scale, float* color)
@@ -603,7 +604,7 @@ extern "C" void func_001F1338(void* self, float* pos, float* size, float* scale,
     p.w = 1.0f;
     v[3].pos = p;
     *(short*)(*(char**)(D_004A289C + 0xE84) + 0x10) = -1;
-    sVEnt_001F1338* vt = *(sVEnt_001F1338**)(D_004A289C + 0x10D8);
+    sVEntry<void(void*, int, sHudVert_001F1338*, int)>* vt = *(sVEntry<void(void*, int, sHudVert_001F1338*, int)>**)(D_004A289C + 0x10D8);
     vt[71].fn(D_004A289C + vt[71].delta, 4, v, 0);
 }
 #endif
@@ -1541,11 +1542,6 @@ void* func_001F30C0(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F30D8);
 #ifdef SKIP_ASM
-struct sVEntry001F30D8 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 struct sHudIds001F30D8 {
     int a;
     int b;
@@ -1563,7 +1559,7 @@ extern "C" void func_001F30D8(void* p)
 {
     sHudIds001F30D8* self = (sHudIds001F30D8*)p;
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001F30D8* vt = *(sVEntry001F30D8**)(o + 4);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)(o + 4);
     char* adj = o + vt[4].delta;
     int h = GetHashValue32(D_0046ED78);
     self->a = vt[4].fn(adj, h);
@@ -1714,11 +1710,6 @@ struct sHudTimer_001F31E0 {
     sFont_001F31E0* font;       // 0xC
 };
 
-struct sVE_31E0 {
-    short delta;
-    short index;
-    void (*fn)(void*, float, float, float, float, int);
-};
 
 extern "C" void func_001F31E0(sHudTimer_001F31E0* self)
 {
@@ -1745,7 +1736,7 @@ extern "C" void func_001F31E0(sHudTimer_001F31E0* self)
     D_004A289C_31E0->stateTop->f4_2 = 5;
     D_004A289C_31E0->SetTexture(D_004FF1A0);
     {
-        sVE_31E0* vt = *(sVE_31E0**)((char*)D_004A289C_31E0 + 0x10D8);
+        sVEntry<void(void*, float, float, float, float, int)>* vt = *(sVEntry<void(void*, float, float, float, float, int)>**)((char*)D_004A289C_31E0 + 0x10D8);
         char* thisp = (char*)D_004A289C_31E0 + vt[23].delta;
         void (**pfn)(void*, float, float, float, float, int) = &vt[23].fn;
         (*pfn)(thisp, 0.0f, 0.0f, (float)D_004A289C_31E0->GetWidth(), (float)D_004A289C_31E0->GetHeight(), 1);
