@@ -17134,9 +17134,7 @@ void func_003D54E8(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5508);
 #ifdef SKIP_ASM
 extern int func_003D5450_5508(int) __asm__("func_003D5450");
-extern void func_003D62C8_5508(int, int) __asm__("func_003D62C8");
-struct P_5508 { char pad0[0x58]; int a[24]; };
-extern struct P_5508 *D_0044F420_5508 __asm__("D_0044F420");
+extern void func_003D62C8_5508(struct sPathVoice *, int) __asm__("func_003D62C8");
 extern unsigned char D_0044F42C_5508 __asm__("D_0044F42C");
 extern unsigned char D_0044F42E_5508 __asm__("D_0044F42E");
 extern int D_0044F430_5508 __asm__("D_0044F430");
@@ -17147,7 +17145,7 @@ void func_003D5508(unsigned int mask, signed char val) {
     int i;
     int j;
     unsigned int fl, t, u;
-    int e;
+    struct sPathVoice *e;
     if (D_0044F42C_5508 == 0) return;
     if (D_0044F430_5508 != 0) return;
     if (func_003D5450_5508(-1) == 0) return;
@@ -17164,7 +17162,7 @@ void func_003D5508(unsigned int mask, signed char val) {
                 u = fl & 0x0F000000;
                 if ((u & mask) != 0 && func_003D5450_5508(i) != 0) {
                     for (j = 0; j < 24; j++) {
-                        e = D_0044F420_5508->a[j];
+                        e = D_0044F420->f58[j];
                         if (e == 0 || isOff(mask, j)) continue;
                         func_003D62C8_5508(e, val);
                     }
@@ -17172,7 +17170,7 @@ void func_003D5508(unsigned int mask, signed char val) {
             }
         }
     }
-    D_0044F420_5508 = 0;
+    D_0044F420 = 0;
     D_0044F430_5508 = 0;
 }
 #endif
