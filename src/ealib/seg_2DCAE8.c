@@ -36,6 +36,8 @@ struct sReq {                       /* 0x30, a file request (D_00450C34[], D_005
     int f2C;
 };
 extern struct sReq *D_00450C34;
+struct sReqQueue { struct sReq *f00; struct sReq *f04; };  /* head, tail */
+extern struct sReqQueue D_00519BF8;             /* free requests */
 extern char D_00519C08[];                       /* request list mutex */
 extern int D_00451008;                          /* debug output set up (func_003E5B60) */
 struct sDbgChan {                   /* 8 bytes, D_00450E08[64]: a debug message channel */
@@ -2106,15 +2108,15 @@ INCLUDE_ASM("ealib/seg_2DCAE8", queueadd);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void MUTEX_unlock_qa(void *) __asm__("MUTEX_unlock");
 
-void queueadd(char *arg0, char *arg1) {
+void queueadd(struct sReqQueue *arg0, struct sReq *arg1) {
     MUTEX_lock(D_00519C08);
-    if (*(char **)arg0 == 0) {
-        *(char **)arg0 = arg1;
+    if (arg0->f00 == 0) {
+        arg0->f00 = arg1;
     } else {
-        *(char **)(*(char **)(arg0 + 4) + 4) = arg1;
+        arg0->f04->f04 = arg1;
     }
-    *(char **)(arg0 + 4) = arg1;
-    *(int *)(arg1 + 4) = 0;
+    arg0->f04 = arg1;
+    arg1->f04 = 0;
     MUTEX_unlock_qa(D_00519C08);
 }
 #endif
@@ -2182,21 +2184,19 @@ struct sReq *func_003DEF70(int arg0) {
 INCLUDE_ASM("ealib/seg_2DCAE8", releaserequest);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void queueadd(char *, char *);
-extern char D_00519BF8_9BF8[] __asm__("D_00519BF8");
 
-void releaserequest(char *arg0) {
+void releaserequest(struct sReq *arg0) {
     unsigned int temp_4;
 
-    if (*(int *)(arg0 + 0x10) != 0) {
-        temp_4 = *(unsigned int *)(arg0 + 0x14);
+    if (arg0->f10 != 0) {
+        temp_4 = arg0->f14;
         if (temp_4 >= 2U) {
             D_00450C18((void *)temp_4);
         }
     }
-    *(int *)(arg0 + 0x1C) = 0;
-    *(int *)arg0 = *(unsigned char *)arg0;
-    queueadd(D_00519BF8_9BF8, arg0);
+    arg0->f1C = 0;
+    arg0->f00 = *(unsigned char *)&arg0->f00;   /* keep the slot index */
+    queueadd(&D_00519BF8, arg0);
 }
 #endif
 
@@ -2623,23 +2623,21 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DFAF0);
 extern void mlock_FAF0(char *) __asm__("MUTEX_lock");
 extern void munlock_FAF0(char *) __asm__("MUTEX_unlock");
 extern void fD148_FAF0(int) __asm__("func_003DD148");
-extern char *fEF70_FAF0(int) __asm__("func_003DEF70");
-extern void releaserequest(char *);
 
 int func_003DFAF0(int a0) {
     int v18, v19, v20, r;
-    char *t;
+    struct sReq *t;
     v19 = 0;
     v20 = 0;
     mlock_FAF0(D_00519C08);
     v18 = 0;
-    t = fEF70_FAF0(a0);
-    if (t != 0 && ((v19 = *(int *)(t + 0x1C), v20 = *(int *)(t + 0x10), v18 = *(int *)(t + 0xC), v19 != 0) || v18 == 0)) {
-        *(int *)(t + 0x10) = 1;
+    t = func_003DEF70(a0);
+    if (t != 0 && ((v19 = t->f1C, v20 = t->f10, v18 = t->f0C, v19 != 0) || v18 == 0)) {
+        t->f10 = 1;
     }
     munlock_FAF0(D_00519C08);
     if (t != 0 && v20 == 0) {
-        if (*(int *)(t + 0x10) != 0) {
+        if (t->f10 != 0) {
             if (v19 != 0) {
                 fD148_FAF0(v19);
                 return 1;
