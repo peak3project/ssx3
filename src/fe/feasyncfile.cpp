@@ -126,6 +126,14 @@ struct sQueueItemVec {
     sQueueItem** mEnd;
     sQueueItem** mCap;
 };
+// The FE state that keeps the item queue (func_001A7DD8 pushes, its destructor func_001A7848 deletes the items).
+struct sQueueState {
+    char pad0[0x8];
+    void* vt;
+    char padC[0x6C4];
+    char str[8];
+    sQueueItemVec mVec;
+};
 
 // A widget whose virtual calls are written through its vtable entries (vptr at 0x8).
 struct sUIThingVt {
@@ -2401,15 +2409,7 @@ static inline void Dealloc1A7848(sQueueItem** p, int n)
     }
 }
 
-struct sOwner1A7848 {
-    char pad0[0x8];
-    void* vt;
-    char padC[0x6C4];
-    char str[8];
-    sQueueItemVec mVec;
-};
-
-extern "C" void func_001A7848(sOwner1A7848* self, int flags)
+extern "C" void func_001A7848(sQueueState* self, int flags)
 {
     self->vt = D_00467E18;
     for (;;) {
@@ -2657,14 +2657,9 @@ static inline sQueueItem** Copy1A7DD8(sQueueItem** first, sQueueItem** last, sQu
     return result + (last - first);
 }
 
-struct sOwner1A7DD8 {
-    char pad0[0x6D8];
-    sQueueItemVec mVec;
-};
-
 extern "C" void func_001A7DD8(void* selfp, void* item)
 {
-    sOwner1A7DD8* self = (sOwner1A7DD8*)selfp;
+    sQueueState* self = (sQueueState*)selfp;
     sQueueItem* x = (sQueueItem*)item;
     for (;;) {
         if ((unsigned int)(self->mVec.mEnd - self->mVec.mBegin) < 31) break;
