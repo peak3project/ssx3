@@ -1931,7 +1931,164 @@ extern "C" void func_0026A378(void* self, char* src, int* dst)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A428);
+#ifdef SKIP_ASM
+struct sBXVec4_A428 {
+    float x, y, z, w;
+    sBXVec4_A428() {}
+    sBXVec4_A428(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sBXPathSeg_A428 {
+    float x, y, z;   // direction
+    float len;       // 0xC
+};
+
+struct sBXPath_A428 {
+    char pad_0x00[8];
+    int count;            // 0x8
+    float x, y, z;        // 0xC start
+    sBXPathSeg_A428* segs; // 0x18
+};
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sBXVec4_A428 bxVu0Sub_A428(const sBXVec4_A428& a, const sBXVec4_A428& b)
+{
+    sBXVec4_A428 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float bxVu0Dot_A428(const sBXVec4_A428& a, const sBXVec4_A428& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sBXVec4_A428 bxVu0Scale_A428(const sBXVec4_A428& v, float s)
+{
+    sBXVec4_A428 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sBXVec4_A428 bxVu0Add_A428(const sBXVec4_A428& a, const sBXVec4_A428& b)
+{
+    sBXVec4_A428 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add-assign).
+static inline void bxVu0AddEq_A428(sBXVec4_A428& dst, sBXVec4_A428 b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only FPU square root (sqrt.s; __builtin_sqrtf emits the errno-checked call).
+static inline float bxSqrt_A428(float x)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: <? (g++ min operator).
+static inline float bxClamp_A428(float v, float lo, float hi)
+{
+    return lo <= v ? v <? hi : lo;
+}
+
+extern "C" float func_0026A428(sBXPath_A428* self, const sBXVec4_A428& p, sBXVec4_A428* outPos,
+                               float* outDist, int flat)
+{
+    float bestT = 0.0f;
+    float bestDist = 0.0f;
+    float along = 0.0f;
+    float best = 1e37f;
+    sBXVec4_A428 pos(self->x, self->y, self->z, 1.0f);
+    for (int i = 0; i < self->count; i++) {
+        sBXVec4_A428 dir;
+        dir.x = self->segs[i].x;
+        dir.y = self->segs[i].y;
+        dir.z = self->segs[i].z;
+        dir.w = 0.0f;
+        float len = self->segs[i].len;
+        sBXVec4_A428 d = bxVu0Sub_A428(p, pos);
+        float t;
+        if (flat)
+            t = d.x * dir.x + d.y * dir.y;
+        else
+            t = bxVu0Dot_A428(d, dir);
+        float tc = bxClamp_A428(t, 0.0f, len);
+        sBXVec4_A428 q = bxVu0Add_A428(pos, bxVu0Scale_A428(dir, tc));
+        d = bxVu0Sub_A428(p, q);
+        float d2;
+        if (flat)
+            d2 = d.x * d.x + d.y * d.y;
+        else
+            d2 = bxVu0Dot_A428(d, d);
+        if (d2 < best) {
+            best = d2;
+            if (flat)
+                bestDist = d2;
+            else
+                bestDist = d.x * d.x + d.y * d.y;
+            bestT = along + tc;
+            *outPos = q;
+        }
+        along += len;
+        bxVu0AddEq_A428(pos, bxVu0Scale_A428(dir, len));
+    }
+    *outDist = bxSqrt_A428(bestDist);
+    return bestT;
+}
+#endif
 
 INCLUDE_ASM("bx/bxstringctor", func_0026A638);
 
