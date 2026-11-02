@@ -204,6 +204,9 @@ extern int *D_004A5B18;
 /* A network session (func_003F5A70 / func_003F5C38 read from its receive buffer f18). */
 struct sSess { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; unsigned char *f18; };
 
+/* A 0x11-byte name copied as a block. */
+struct sName17 { char b[17]; };
+
 /* Globals used by several functions. */
 extern unsigned D_00496C08[];
 extern char D_0051EEF8[];
@@ -2019,7 +2022,6 @@ extern char fn78E0[] __asm__("func_003F78E0");
 extern int func_003FCE10(char *, int, int, int);
 extern int fC548(struct sMcParams *, int, int, int, int) __asm__("func_003FC548");
 extern int func_003F8178(int);
-typedef struct { char b[17]; } K17;
 int func_003F7478(void) {
     int r;
     struct sNetAcct *d = D_004A4BC4;
@@ -2028,8 +2030,8 @@ int func_003F7478(void) {
     r = func_003F8178(func_003FCE10((char *)&d->f144, d->heap, 0x11, 0));
     if (r == 0) {
         struct sNetAcct *e = D_004A4BC4;
-        K17 *dst = (K17 *)e->f144;
-        *dst = *(K17 *)e->name;
+        struct sName17 *dst = (struct sName17 *)e->f144;
+        *dst = *(struct sName17 *)e->name;
         r = func_003F8178(fC548(&D_004A4BC4->params, 0x41434354, 0, (int)D_004A4BC4->f144, 0x11));
     }
     return r;
@@ -2044,7 +2046,6 @@ extern char fn7900[] __asm__("func_003F7900");
 extern int func_003FCE10(char *, int, int, int);
 extern int fC548(struct sMcParams *, int, int, int, int) __asm__("func_003FC548");
 extern int func_003F8178(int);
-typedef struct { char b[17]; } K17b;
 int func_003F7528(void) {
     int r;
     struct sNetAcct *d = D_004A4BC4;
@@ -2053,8 +2054,8 @@ int func_003F7528(void) {
     r = func_003F8178(func_003FCE10((char *)&d->f144, d->heap, 0x11, 0));
     if (r == 0) {
         struct sNetAcct *e = D_004A4BC4;
-        K17b *dst = (K17b *)e->f144;
-        *dst = *(K17b *)e->pass;
+        struct sName17 *dst = (struct sName17 *)e->f144;
+        *dst = *(struct sName17 *)e->pass;
         r = func_003F8178(fC548(&D_004A4BC4->params, 0x50415353, 0, (int)D_004A4BC4->f144, 0x11));
     }
     return r;
@@ -2186,11 +2187,10 @@ int func_003F7820(void) { return func_003F77F8(); }
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7840);
 #ifdef SKIP_ASM
-typedef struct { char c[17]; } S17b;
 extern int func_003F7920(int);
 void func_003F7840(void) {
-    S17b *dst = (S17b *)D_004A4BC4->out;
-    *dst = *(S17b *)D_004A4BC4->f144;
+    struct sName17 *dst = (struct sName17 *)D_004A4BC4->out;
+    *dst = *(struct sName17 *)D_004A4BC4->f144;
     func_003F7920(0);
 }
 #endif
@@ -2199,10 +2199,9 @@ void func_003F7840(void) {
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7890);
 #ifdef SKIP_ASM
 extern int func_003F7958(int);
-typedef struct { char c[17]; } S17;
 void func_003F7890(void) {
-    S17 *dst = (S17 *)(D_004A4BC4->out + 0x11);
-    *dst = *(S17 *)D_004A4BC4->f144;
+    struct sName17 *dst = (struct sName17 *)(D_004A4BC4->out + 0x11);
+    *dst = *(struct sName17 *)D_004A4BC4->f144;
     func_003F7958(0);
 }
 #endif
