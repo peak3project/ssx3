@@ -294,6 +294,14 @@ struct sRiderRec {
     char pad10[0x24 - 0x10];
 };
 
+// Position, direction, surface normal and speed (filled by func_001057B8 / func_00108388).
+struct sInfo {
+    t4Vector pos;
+    t4Vector dir;
+    t4Vector normal;
+    float speed;
+} __attribute__((aligned(16)));
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -2377,13 +2385,6 @@ struct sContact_5398 {
     char pad60[0x20];
 } __attribute__((aligned(16)));
 
-struct sInfo_5398 {
-    t4Vector pos;
-    t4Vector dir;
-    t4Vector normal;
-    float speed;
-} __attribute__((aligned(16)));
-
 struct cScope_5398 {
     char data[0x320];
     cScope_5398(void* tree, int flag) __asm__("func_0032F650");
@@ -2394,7 +2395,7 @@ int func_0011FE98(void*);
 extern "C" void func_00106F78(void*);
 extern "C" float func_00104E70_5398(char*, cScope_5398*, sContact_5398*) __asm__("func_00104E70");
 extern "C" int func_001231A8(void*);
-extern "C" void func_001057B8_5398(char*, sSurf_5398*, sInfo_5398*, sContact_5398*, float) __asm__("func_001057B8");
+extern "C" void func_001057B8_5398(char*, sSurf_5398*, sInfo*, sContact_5398*, float) __asm__("func_001057B8");
 extern "C" void func_00296088_5398(void*, char*, sSurf_5398*, int) __asm__("func_00296088");
 extern "C" void func_0016D320(void*, void*);
 extern "C" void func_0032F708(void* self, int flags);
@@ -2447,7 +2448,7 @@ static inline unsigned short TriFlags_5398(sSurf_5398* s, int i)
 extern "C" void func_00105398(char* self, t4Vector* norm)
 {
     sContact_5398 c;
-    sInfo_5398 info;
+    sInfo info;
     if (func_0011FEE8_5398(self) == 9)
         return;
     func_00106F78(self);
@@ -2480,7 +2481,7 @@ extern "C" void func_00105398(char* self, t4Vector* norm)
         info.speed = k;
         if ((TriFlags_5398(c.surf, c.idx) & 2) && !(c.surf->flags & 0x2000)) {
             *(sContact_5398*)(self + 0x9E0) = c;
-            *(sInfo_5398*)(self + 0xA60) = info;
+            *(sInfo*)(self + 0xA60) = info;
         }
         if (TriFlags_5398(c.surf, c.idx) & 1)
             func_001057B8_5398(self, c.surf, &info, &c, d);
@@ -2904,20 +2905,13 @@ INCLUDE_ASM("seg/seg_1218", func_00107888);
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00107E70);
 #ifdef SKIP_ASM
-struct sInfo_7E70 {
-    t4Vector pos;
-    t4Vector dir;
-    t4Vector normal;
-    float speed;
-} __attribute__((aligned(16)));
-
 int func_0011FEE8_7E70(void*) __asm__("func_0011FEE8__FPv");
 int func_0011FE98(void*);
 int AIrand();
 extern "C" int func_001231A8(void*);
 extern "C" void cAirPredictor_startLaunchIntoAir(void*, const t4Vector*, const t4Vector*, float);
-extern "C" void func_0010EB30_7E70(char*, int, int, int, sInfo_7E70*) __asm__("func_0010EB30");
-extern "C" void func_00108388_7E70(char*, sInfo_7E70*, int) __asm__("func_00108388");
+extern "C" void func_0010EB30_7E70(char*, int, int, int, sInfo*) __asm__("func_0010EB30");
+extern "C" void func_00108388_7E70(char*, sInfo*, int) __asm__("func_00108388");
 extern "C" void func_0010E468(void*, void*);
 extern "C" void func_0010E2E8(void*, void*);
 extern "C" void func_0010E3A8(void*, void*);
@@ -2959,7 +2953,7 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
     if (absSpd < 39.99532699584961f)
         return;
     float r = ((sRiderRec*)self)[*(int*)(other + 0x86C)].dist;
-    sInfo_7E70 info;
+    sInfo info;
     info.pos = Add(*(t4Vector*)(self + 0x110), Scale(*n, r));
     info.dir = Norm(*(t4Vector*)(self + 0x1E0));
     info.normal = *n;
