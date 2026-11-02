@@ -5185,10 +5185,9 @@ extern unsigned D_004A57F0_4320 __asm__("D_004A57F0");
 extern sBindEnd_1FBE38 D_004A57F4_4320 __asm__("D_004A57F4");
 extern int D_004A57F8_4320 __asm__("D_004A57F8");
 extern int D_004A3D58_4320[2] __asm__("D_004A3D58");
-extern char *D_004A3DD8_4320 __asm__("D_004A3DD8");
 // Inline accessor of the current script process (wscript/wscriptman func_0030D2D8 is its out-of-line copy). Calling it
 // at each use gives the shared copy of the pointer the target keeps (lw; move) instead of one cached local.
-static inline char *curProcess_4320() { return D_004A3DD8_4320; }
+static inline cWScriptMan *curProcess_4320() { return D_004A3DD8; }
 static inline char *refToPtr_4320(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_4320(unsigned i) { if (i == 0) return 0; return refToPtr_4320(i); }
 void func_0030B508(void*, int, void*);
@@ -5213,11 +5212,11 @@ extern "C" cLunoValue func_00304320(int n, sBindArg_1FBE38* e) {
         else
             *d = x->val;
     }
-    int gv = *(int*)curProcess_4320();
+    int gv = curProcess_4320()->being;
     unsigned id = buf[0];
     char *obj;
     if (~id == 0) {
-        obj = *(char**)(curProcess_4320() + 0x290);
+        obj = curProcess_4320()->f290;
     } else {
         sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
