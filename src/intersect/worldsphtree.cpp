@@ -363,6 +363,17 @@ static inline int overlapTri(const sWsQueryBox* q, const sWsTriObj* n)
     return r;
 }
 
+static inline int overlapBox(const sWsQueryBox* q, const sWsBox* o)
+{
+    int r = 0;
+    if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
+        q->max[1] > o->min[1] && q->min[1] < o->max[1] &&
+        q->max[2] > o->min[2] && o->max[2] > q->min[2]) {
+        r = 1;
+    }
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1045,16 +1056,6 @@ extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Ve
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
 
-static inline int overlapBox_333EF8(const sWsQueryBox* q, const sWsBox* o)
-{
-    int r = 0;
-    if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
-        q->max[1] > o->min[1] && q->min[1] < o->max[1] &&
-        q->max[2] > o->min[2] && o->max[2] > q->min[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline void reset_333EF8(sWsTriHit* h)
 {
@@ -1124,7 +1125,7 @@ extern "C" int func_00333EF8(void* vself, void* vq, sWsRayHit* vhits, int cap, i
             if (((Test_333EF8)vt[44].fn)((char*)node->obj + vt[44].delta)) {
                 sWsVtSlot* vt2 = node->obj->vt;
                 sWsBox* b = ((GetBox_333EF8)vt2[45].fn)((char*)node->obj + vt2[45].delta);
-                if (overlapBox_333EF8(q, b)) {
+                if (overlapBox(q, b)) {
                     n += func_00334888(q, node, (char*)hits + n * 0x80, cap - n, 2);
                 }
             }
@@ -1182,16 +1183,6 @@ struct sList_334458 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapBox_334458(const sWsQueryBox* q, const sWsBox* o)
-{
-    int r = 0;
-    if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
-        q->max[1] > o->min[1] && q->min[1] < o->max[1] &&
-        q->max[2] > o->min[2] && o->max[2] > q->min[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int cap, int full)
 {
@@ -1210,7 +1201,7 @@ extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int 
             if (((Test_334458)vt[44].fn)((char*)node->obj + vt[44].delta)) {
                 sWsVtSlot* vt2 = node->obj->vt;
                 sWsBox* b = ((GetBox_334458)vt2[45].fn)((char*)node->obj + vt2[45].delta);
-                if (overlapBox_334458(q, b)) {
+                if (overlapBox(q, b)) {
                     n += func_00334888(q, node, buf + n * 0x80, cap - n, mode);
                 }
             }
