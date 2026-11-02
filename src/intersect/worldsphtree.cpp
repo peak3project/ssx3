@@ -177,6 +177,19 @@ struct sWsSphQuery {
     sWsBoxV* box;             // 0x14
 };
 
+// A world-list node (next, flags, object, bounds at 0x60, active flag).
+struct sWsListNode {
+    void* next;
+    int pad04;
+    int flags;
+    sWsVObj* obj;
+    int pad10[20];
+    float bmin[3];
+    float bmax[3];
+    int pad78[4];
+    int active;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1062,17 +1075,6 @@ typedef sWsBox* (*GetBox_333EF8)(void*);
 
 
 
-struct sNode_333EF8 {
-    void* next;
-    int pad04;
-    int flags;
-    sWsVObj* obj;
-    int pad10[20];
-    float bmin[3];
-    float bmax[3];
-    int pad78[4];
-    int active;
-};
 
 struct sOwner_333EF8 {
     char pad00[0xA4];
@@ -1083,7 +1085,7 @@ struct sTree_333EF8 {
     sOwner_333EF8* owner;           // 0x0
     int pad04;
     unsigned int count;             // 0x8
-    sNode_333EF8* items[0x40];      // 0xC
+    sWsListNode* items[0x40];      // 0xC
     unsigned int ntris;             // 0x10C
     sWsTriObj* tris[1];        // 0x110
 };
@@ -1105,7 +1107,7 @@ static inline int overlapTri_333EF8(const sWsQueryBox* q, const sWsTriObj* n)
     return r;
 }
 
-static inline int overlapNode_333EF8(const sWsQueryBox* q, const sNode_333EF8* n)
+static inline int overlapNode_333EF8(const sWsQueryBox* q, const sWsListNode* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1178,7 +1180,7 @@ extern "C" int func_00333EF8(void* vself, void* vq, sWsRayHit* vhits, int cap, i
         n++;
     }
     for (unsigned int j = 0; j < self->count; j++) {
-        sNode_333EF8* node = self->items[j];
+        sWsListNode* node = self->items[j];
         if (node->active == 0) {
             continue;
         }
@@ -1522,17 +1524,6 @@ typedef sWsBox* (*GetBox_335B90)(void*);
 
 
 
-struct sNode_335B90 {
-    void* next;
-    int pad04;
-    int flags;
-    sWsVObj* obj;
-    int pad10[20];
-    float bmin[3];
-    float bmax[3];
-    int pad78[4];
-    int active;
-};
 
 struct sCtx_335B90 {
     sWsQueryBox* q;
@@ -1543,7 +1534,7 @@ struct sCtx_335B90 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_335B90(const sWsQueryBox* q, const sNode_335B90* n)
+static inline int overlapNode_335B90(const sWsQueryBox* q, const sWsListNode* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1565,7 +1556,7 @@ static inline int overlapBox_335B90(const sWsQueryBox* q, const sWsBox* o)
     return r;
 }
 
-static inline void collect_335B90(sCtx_335B90* ctx, sNode_335B90* node)
+static inline void collect_335B90(sCtx_335B90* ctx, sWsListNode* node)
 {
     int n = *ctx->count;
     *ctx->count += func_00334888(ctx->q, node, ctx->buf + n * 0x80, ctx->cap - n, 2);
@@ -1574,7 +1565,7 @@ static inline void collect_335B90(sCtx_335B90* ctx, sNode_335B90* node)
 extern "C" void func_00335B90(void* vctx, void* vnode)
 {
     sCtx_335B90* ctx = (sCtx_335B90*)vctx;
-    sNode_335B90* node = (sNode_335B90*)vnode;
+    sWsListNode* node = (sWsListNode*)vnode;
     if (node->active == 0) return;
     int flags = node->flags;
     if (flags & 0x20) {
@@ -1901,17 +1892,6 @@ typedef sWsBox* (*GetBox_336D40)(void*);
 
 
 
-struct sNode_336D40 {
-    void* next;
-    int pad04;
-    int flags;
-    sWsVObj* obj;
-    int pad10[20];
-    float bmin[3];
-    float bmax[3];
-    int pad78[4];
-    int active;
-};
 
 struct sCtx_336D40 {
     sWsQueryBox* q;
@@ -1923,7 +1903,7 @@ struct sCtx_336D40 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_336D40(const sWsQueryBox* q, const sNode_336D40* n)
+static inline int overlapNode_336D40(const sWsQueryBox* q, const sWsListNode* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1945,7 +1925,7 @@ static inline int overlapBox_336D40(const sWsQueryBox* q, const sWsBox* o)
     return r;
 }
 
-static inline void collect_336D40(sCtx_336D40* ctx, sNode_336D40* node, int mode)
+static inline void collect_336D40(sCtx_336D40* ctx, sWsListNode* node, int mode)
 {
     int n = *ctx->count;
     *ctx->count += func_00334888(ctx->q, node, ctx->buf + n * 0x80, ctx->cap - n, mode);
@@ -1954,7 +1934,7 @@ static inline void collect_336D40(sCtx_336D40* ctx, sNode_336D40* node, int mode
 extern "C" void func_00336D40(void* vctx, void* vnode)
 {
     sCtx_336D40* ctx = (sCtx_336D40*)vctx;
-    sNode_336D40* node = (sNode_336D40*)vnode;
+    sWsListNode* node = (sWsListNode*)vnode;
     int mode = ctx->full ? 3 : 1;
     int flags = node->flags;
     if (flags & 0x20) {
