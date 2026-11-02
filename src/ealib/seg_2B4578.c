@@ -16759,14 +16759,10 @@ void func_003D2218(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2290);
 #ifdef SKIP_ASM
-extern unsigned int D_0044F430_2290 __asm__("D_0044F430");
-extern unsigned char D_0044F42C_2290 __asm__("D_0044F42C");
-extern unsigned char D_0044F42D_2290 __asm__("D_0044F42D");
-extern int D_0044F43C_2290 __asm__("D_0044F43C");
 
 int func_003D2290(void) {
     int i, j;
-    if (D_0044F430_2290 != 0) return -0x12;
+    if (D_0044F430 != 0) return -0x12;
     for (i = 0; i < 4; i++) {
         D_00517610[i].f34 = 0;
         D_00517610[i].f924 = 0;
@@ -16774,10 +16770,10 @@ int func_003D2290(void) {
             D_00517610[i].f58[j] = 0;
         }
     }
-    D_0044F42C_2290 = 1;
-    D_0044F43C_2290 = 0x100;
+    D_0044F42C = 1;
+    D_0044F43C = 0x100;
     D_0044F420 = 0;
-    D_0044F42D_2290 = 0;
+    D_0044F42D = 0;
     return 0;
 }
 #endif
