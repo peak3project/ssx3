@@ -5909,17 +5909,15 @@ extern "C" cLunoValue func_003057C0(int n, Ent_57C0 *e) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003059A0);
 #ifdef SKIP_ASM
-struct R12_59A0 { int a; int b; int c; };
 struct Rec_59A0 { int head; unsigned id[8]; int cnt[8]; float f0[8]; float f1[8]; float f2[8]; float f3[8]; sBindEnd_1FBE38 f; };
 extern Rec_59A0 D_004FBD90_59A0 __asm__("D_004FBD90");
-extern R12_59A0 D_004C9098_59A0 __asm__("D_004C9098");
 extern const int D_004466D8_59A0[] __asm__("D_004466D8");
 extern int D_004A5858_59A0 __asm__("D_004A5858");
 extern char **D_004A47B8_59A0 __asm__("D_004A47B8");
 static inline char *refToPtr_59A0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_59A0(unsigned i) { return i ? refToPtr_59A0(i) : 0; }
 extern "C" void cAvalanche_addAvalancheNode(int, void*, float, float, float, float, int);
-extern "C" R12_59A0 func_003059A0(int n, sBindArg_1FBE38* e) {
+extern "C" cLunoValue func_003059A0(int n, sBindArg_1FBE38* e) {
     if (D_004A5858_59A0 == 0) {
         D_004FBD90_59A0.head = 0;
         D_004FBD90_59A0.id[7] = D_004FBD90_59A0.id[6] = D_004FBD90_59A0.id[5] = D_004FBD90_59A0.id[4] = D_004FBD90_59A0.id[3] = D_004FBD90_59A0.id[2] = D_004FBD90_59A0.id[1] = D_004FBD90_59A0.id[0] = 0xFFFFFFFF;
@@ -5966,7 +5964,7 @@ extern "C" R12_59A0 func_003059A0(int n, sBindArg_1FBE38* e) {
         }
         cp++; f3++; f2++; f1++; f0++;
     }
-    return D_004C9098_59A0;
+    return D_004C9098;
 }
 #endif
 
