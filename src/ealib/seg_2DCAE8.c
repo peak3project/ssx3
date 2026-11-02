@@ -861,24 +861,20 @@ int func_003DCD98(int a, int b, int c) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCDE0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003E44B0(void);
 extern int func_003DECA0(int, int);
-extern void func_003E56E0_CDE0(char *) __asm__("func_003E56E0");
+extern void func_003E56E0_CDE0(int *) __asm__("func_003E56E0");
 extern void func_003E6220_CDE0(char *, int) __asm__("func_003E6220");
-extern char D_00519AC4_CDE0[] __asm__("D_00519AC4");
-extern int *D_00519AE4_CDE0[] __asm__("D_00519AE4");
-extern int D_00519AE8;
 
 void func_003DCDE0(void) {
-    int *n;
+    struct sFsNode *n;
     func_003E44B0();
-    for (n = D_00519AE4_CDE0[0]; n != 0; n = (int *)n[5]) {
-        D_00450C10.f08((void *)n[0]);
-        func_003DECA0(*(int *)n[3], 0);
+    for (n = D_00519AE4; n != 0; n = n->f14) {
+        D_00450C10.f08((void *)n->f00);
+        func_003DECA0(n->f0C->f00, 0);
     }
-    func_003E56E0_CDE0(D_00519AC4_CDE0);
-    func_003E6220_CDE0(D_00519AC4_CDE0 - 0x14, 0x38);
+    func_003E56E0_CDE0(D_00519AC4.f00);
+    func_003E6220_CDE0((char *)&D_00519AC4 - 0x14, 0x38);
     if (D_00519AE8 != 0) {
         D_00450C18((void *)D_00519AE8);
         D_00519AE8 = 0;
