@@ -16561,7 +16561,6 @@ struct E_1D28 {
     unsigned int f8;
     unsigned int fC;
 };
-extern unsigned int D_0044F438_1D28 __asm__("D_0044F438");
 extern int func_003CFC30_1D28(struct sPathEvent *, struct E_1D28 *) __asm__("func_003CFC30");
 
 int func_003D1D28_impl(int idx) __asm__("func_003D1D28");
@@ -16574,9 +16573,9 @@ int func_003D1D28_impl(int idx) {
         do {
             if (e->f4 != 0) {
                 if (e->f4 < h->f00) {
-                    e->f4 += D_0044F438_1D28;
+                    e->f4 += D_0044F438;
                 }
-                if (e->f4 < D_0044F438_1D28) {
+                if (e->f4 < D_0044F438) {
                     e->f8 |= 0x04000000;
                 }
             }
@@ -16586,7 +16585,7 @@ int func_003D1D28_impl(int idx) {
             i++;
             n++;
             e++;
-            h->f08 = D_0044F438_1D28;
+            h->f08 = D_0044F438;
             h->f0C.b.start++;
         } while (i < h->f0C.b.end);
     }
