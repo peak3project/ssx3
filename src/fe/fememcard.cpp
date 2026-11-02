@@ -118,17 +118,38 @@ struct sCardText {
     int v[8];
 };
 
+// Declarations shared by the functions of this unit.
+extern void* D_004A28A8;
+extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
+extern "C" void* func_00227F80(void* p);
+extern char D_004A14C0[];
+extern "C" void func_00241DC8(void* mp, void* out, int a2);
+extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00152BA8();
+extern char D_0045DCD8[];
+extern int D_004A14BC;
+extern "C" int func_0023C8D0(void* mp);
+extern "C" void func_0023C8F0(void* mp, int mode);
+extern "C" void func_00187318(cFEStateMemCard* self);
+extern "C" void func_001877B0(void);
+extern int D_004A14B4;
+extern char D_0045DD00[];
+extern "C" void func_0023CAA0(void* mp, int a);
+extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
+extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
+extern "C" void func_001D9308(void*, int);
+
 //100%
 INCLUDE_ASM("fe/fememcard", cFEStateMemCard_onCreateScreen);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern char D_0045DC70[];
 extern char D_0045DC80[];
-extern void* D_004A28A8;
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
-extern "C" void* func_00227F80(void* p);
 
 extern "C" void cFEStateMemCard_onCreateScreen(cFEStateMemCard* self)
 {
@@ -146,7 +167,6 @@ extern "C" void cFEStateMemCard_onCreateScreen(cFEStateMemCard* self)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00186BF0);
 #ifdef SKIP_ASM
-extern char D_004A14C0[];
 extern "C" void func_001D8DE0(void* self);
 extern "C" int func_0023C898(void* mp);
 extern "C" void func_0039FD38(void* obj);
@@ -169,8 +189,6 @@ INCLUDE_ASM("fe/fememcard", func_00186C98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char D_0045DC90[];
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 
 extern "C" void func_00186C98(void)
 {
@@ -191,15 +209,8 @@ extern "C" void func_00186C98(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00186D60);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00152BA8();
 extern char D_0045DCA8[];
 extern char D_0045DCC8[];
-extern char D_0045DCD8[];
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 
 extern "C" void func_00186D60(void)
 {
@@ -250,9 +261,6 @@ extern "C" void func_00186D60(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00186F40);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern int D_004A14BC;
-extern "C" void* func_00227F80(void* p);
 extern "C" int func_0023C8D0(void* game);
 
 extern "C" bool func_00186F40(void)
@@ -270,16 +278,8 @@ extern "C" bool func_00186F40(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00186F90);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00152BA8();
 extern "C" void func_00187270(cFEStateMemCard* self);
-extern "C" void* func_00227F80(void* p);
-extern "C" int func_0023C8D0(void* mp);
 extern "C" int func_002419D8(void* mp, int card);
-extern void* D_004A28A8;
-extern int D_004A14BC;
 
 extern "C" void func_00186F90(void)
 {
@@ -354,12 +354,8 @@ extern "C" void func_00187180(void)
 INCLUDE_ASM("fe/fememcard", func_001871A8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A28A8;
-extern int D_004A14BC;
-extern "C" void* func_00227F80(void* p);
 void func_0023FB18(void* mp, int a);
 extern "C" void func_0023FAE0(void* mp);
-extern "C" void func_0023C8F0(void* mp, int mode);
 
 class cMoviePlayerK1871A8 {
 public:
@@ -385,10 +381,6 @@ extern "C" void func_001871A8(void)
 INCLUDE_ASM("fe/fememcard", func_00187230);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A28A8;
-extern int D_004A14BC;
-extern "C" void* func_00227F80(void* p);
-extern "C" void func_0023C8F0(void* mp, int mode);
 
 extern "C" void func_00187230(void)
 {
@@ -403,8 +395,6 @@ extern "C" void func_00187230(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00187270);
 #ifdef SKIP_ASM
-extern "C" void func_00187318(cFEStateMemCard* self);
-extern "C" void func_001877B0(void);
 extern "C" void func_00187920(void);
 
 extern "C" void func_00187270(cFEStateMemCard* self)
@@ -429,7 +419,6 @@ extern "C" void func_00187270(cFEStateMemCard* self)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00187318);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" void func_00228238(void* p);
 
 extern "C" void func_00187318(cFEStateMemCard* self)
@@ -444,16 +433,7 @@ extern "C" void func_00187318(cFEStateMemCard* self)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00187360);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern char D_0045DCE8[];
-extern char D_0045DCD8[];
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00152BA8();
-extern "C" void* func_00227F80(void* p);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 
 extern "C" void func_00187360(void)
 {
@@ -488,12 +468,7 @@ extern "C" void func_00187360(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_001874E8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern int D_004A14BC;
-extern "C" void* func_00227F80(void* p);
 extern "C" void* func_0023FB58(void* mp);
-extern "C" void func_001877B0(void);
-extern "C" void func_00187318(cFEStateMemCard* self);
 
 static inline int moviePlaying_K1874E8(void* mp)
 {
@@ -550,28 +525,11 @@ extern "C" void func_001876A8(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_001877B0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern int D_004A14BC;
-extern int D_004A14B4;
-extern char D_004A14C0[];
 extern char D_004A14C8[];
-extern char D_0045DD00[];
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00152BA8();
-extern "C" void* func_00227F80(void* p);
-extern "C" void func_0023CAA0(void* mp, int a);
-extern "C" void func_0023C8F0(void* mp, int mode);
 extern "C" unsigned short* func_002C2540(void*, void*);
 // PORT: callers pass more args than the unit's declarations of these take.
 extern "C" void func_00241D40(void* self, int mode, void* buf, int size);
 extern "C" void func_00241AA0(void* buf, int size);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
-extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
-extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
-extern "C" void func_001D9308(void*, int);
 
 extern "C" void func_001877B0(void)
 {
@@ -613,15 +571,8 @@ extern "C" void func_001877B0(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00187920);
 #ifdef SKIP_ASM
-extern char D_0045DD00[];
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 // PORT: func_00152948__FPv ignores its argument; this caller passes none.
 int func_00152948_K187920() __asm__("func_00152948__FPv");
-extern "C" void func_0023CAA0(void* mp, int a);
-extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
-extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
-extern "C" void func_001D9308(void*, int);
 
 extern "C" void func_00187920(void)
 {
@@ -653,13 +604,6 @@ extern "C" void func_00187920(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00187A38);
 #ifdef SKIP_ASM
-extern "C" void* func_00227F80(void* p);
-extern "C" int func_0023C8D0(void* mp);
-extern "C" void func_0023C8F0(void* mp, int mode);
-extern void* D_004A28A8;
-extern int D_004A14BC;
-extern int D_004A14B4;
-
 static inline int cardCall_87A38(char* o, int slot)
 {
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)o;
