@@ -16983,21 +16983,19 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D30A8);
 extern void func_002AE768_30A8(int, int, int) __asm__("func_002AE768");
 extern void *func_003D5290_30A8(int) __asm__("func_003D5290");
 extern int func_003D5450_30A8(int) __asm__("func_003D5450");
-extern unsigned char D_0044F42C;
-extern int D_0044F430_30A8[] __asm__("D_0044F430");
 
 void func_003D30A8(int arg0, int arg1, int arg2) {
     int var_4;
     void *temp_2;
 
-    if ((D_0044F42C != 0) && (D_0044F430_30A8[0] == 0) && (func_003D5450_30A8(-1) != 0)) {
+    if ((D_0044F42C != 0) && (D_0044F430 == 0) && (func_003D5450_30A8(-1) != 0)) {
         temp_2 = func_003D5290_30A8(arg0);
         var_4 = -8;
         if (temp_2 != 0) {
             var_4 = (*(int *)((char*)(temp_2) + (0x54)));
         }
         func_002AE768_30A8(var_4, arg1, arg2);
-        D_0044F430_30A8[0] = 0;
+        D_0044F430 = 0;
         D_0044F420 = 0;
     }
 }
