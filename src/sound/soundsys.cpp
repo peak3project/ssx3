@@ -20,6 +20,16 @@ struct sSndOptsRec {
     char padE[0xA];
 };
 
+// One cSndPlayOpts mDelay[] entry (reset to 100 / 0 / 90 / 50 on every push).
+struct sSndOptsDelay {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+
+// ---- end of shared declarations ----
+
 //100%
 INCLUDE_ASM("sound/soundsys", cBankSys_cBankSys);
 #ifdef SKIP_ASM
@@ -144,12 +154,6 @@ INCLUDE_ASM("sound/soundsys", func_00290018);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0018E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd0018Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -164,7 +168,7 @@ struct sSnd0018Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd0018E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -243,12 +247,6 @@ INCLUDE_ASM("sound/soundsys", func_00290358);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0358E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd0358Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -263,7 +261,7 @@ struct sSnd0358Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd0358E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -443,12 +441,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0CC0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd0CC0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -463,7 +455,7 @@ struct sSnd0CC0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd0CC0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -577,12 +569,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd10E0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd10E0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -597,7 +583,7 @@ struct sSnd10E0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd10E0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -707,12 +693,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd1438E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd1438Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -727,7 +707,7 @@ struct sSnd1438Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd1438E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -859,12 +839,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd17D0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd17D0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -879,7 +853,7 @@ struct sSnd17D0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd17D0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -1113,12 +1087,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd2508E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd2508Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -1133,7 +1101,7 @@ struct sSnd2508Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd2508E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -2008,12 +1976,6 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
 
-struct sSnd48D0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd48D0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -2028,7 +1990,7 @@ struct sSnd48D0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd48D0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -2599,12 +2561,6 @@ extern struct func_00290B58_sCurve D_00482DA0;
 }
 struct sVE_6310 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6310E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd6310Sub {
     void* rng;               // 0x00
     struct sSndOptsRec def;          // 0x04
@@ -2619,7 +2575,7 @@ struct sSnd6310Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    struct sSnd6310E16* p70;        // 0x70
+    struct sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -2763,12 +2719,6 @@ extern func_00290B58_sCurve D_00482DA0_6868 __asm__("D_00482DA0");
 
 struct sVE_6868 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6868E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd6868Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -2783,7 +2733,7 @@ struct sSnd6868Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd6868E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -2944,12 +2894,6 @@ extern func_00290B58_sCurve D_00482DA0_6E80 __asm__("D_00482DA0");
 
 struct sVE_6E80 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6E80E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd6E80Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -2964,7 +2908,7 @@ struct sSnd6E80Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd6E80E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -3117,12 +3061,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd74A0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd74A0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -3137,7 +3075,7 @@ struct sSnd74A0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd74A0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -3468,12 +3406,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd8138E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd8138Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -3488,7 +3420,7 @@ struct sSnd8138Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd8138E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -3670,12 +3602,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd89A8E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd89A8Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -3690,7 +3616,7 @@ struct sSnd89A8Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd89A8E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -3896,12 +3822,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9368E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd9368Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -3916,7 +3836,7 @@ struct sSnd9368Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd9368E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4048,12 +3968,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd97B8E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd97B8Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4068,7 +3982,7 @@ struct sSnd97B8Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd97B8E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4161,12 +4075,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9B70E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd9B70Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4181,7 +4089,7 @@ struct sSnd9B70Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd9B70E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4254,12 +4162,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9E28E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd9E28Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4274,7 +4176,7 @@ struct sSnd9E28Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd9E28E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4381,12 +4283,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA220E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndA220Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4401,7 +4297,7 @@ struct sSndA220Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndA220E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4485,12 +4381,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA530E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndA530Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4505,7 +4395,7 @@ struct sSndA530Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndA530E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4573,12 +4463,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA7D8E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndA7D8Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4593,7 +4477,7 @@ struct sSndA7D8Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndA7D8E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4827,12 +4711,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB0E0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndB0E0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4847,7 +4725,7 @@ struct sSndB0E0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndB0E0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -4947,12 +4825,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB430E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndB430Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -4967,7 +4839,7 @@ struct sSndB430Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndB430E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -5101,12 +4973,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB968E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndB968Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -5121,7 +4987,7 @@ struct sSndB968Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndB968E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -5203,12 +5069,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndBCF8E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndBCF8Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -5223,7 +5083,7 @@ struct sSndBCF8Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndBCF8E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -5305,12 +5165,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC088E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndC088Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -5325,7 +5179,7 @@ struct sSndC088Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndC088E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -5415,12 +5269,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC420E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndC420Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -5435,7 +5283,7 @@ struct sSndC420Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndC420E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -5546,12 +5394,6 @@ extern "C" void func_00295950(void* self, int a, int b, int c);
 extern signed char D_00535C11[];
 extern char* D_004A28A8;
 
-struct sSnd7B0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd7B0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -5566,7 +5408,7 @@ struct sSnd7B0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd7B0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -5778,12 +5620,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndCED8E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndCED8Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -5798,7 +5634,7 @@ struct sSndCED8Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndCED8E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -5937,12 +5773,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD370E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndD370Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -5957,7 +5787,7 @@ struct sSndD370Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndD370E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -6151,12 +5981,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD8E0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndD8E0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -6171,7 +5995,7 @@ struct sSndD8E0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndD8E0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -6277,12 +6101,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndDC48E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndDC48Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -6297,7 +6115,7 @@ struct sSndDC48Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndDC48E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -6391,12 +6209,6 @@ static inline int vcall_DEF0(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-struct sSndDEF0E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndDEF0Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -6411,7 +6223,7 @@ struct sSndDEF0Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndDEF0E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -6623,12 +6435,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE590E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndE590Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -6643,7 +6449,7 @@ struct sSndE590Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndE590E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -6737,12 +6543,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE970E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSndE970Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -6757,7 +6557,7 @@ struct sSndE970Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSndE970E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -10197,12 +9997,6 @@ struct sPool5D08 {
     int f17C;
 };
 
-struct sSnd5D08E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd5D08Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -10217,7 +10011,7 @@ struct sSnd5D08Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd5D08E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
@@ -11764,12 +11558,6 @@ struct sSnd8450E8 {
     int a;
     int b;
 };
-struct sSnd8450E16 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
 struct sSnd8450Sub {
     char pad0[4];
     sSndOptsRec def;          // 0x04
@@ -11784,7 +11572,7 @@ struct sSnd8450Sub {
     int* p64;                // 0x64
     int* p68;                // 0x68
     int* p6C;                // 0x6C
-    sSnd8450E16* p70;        // 0x70
+    sSndOptsDelay* p70;        // 0x70
     int* p74;                // 0x74
     int* p78;                // 0x78
     int* p7C;                // 0x7C
