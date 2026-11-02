@@ -1452,17 +1452,14 @@ int func_003DDC30(char *a0, int a1, int a2) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", FILESYS_atomic);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00519AB0_9AB0[] __asm__("D_00519AB0");
-
 int FILESYS_atomic(int (*arg0)(), int arg1, int arg2, void *arg3) {
     int temp_18;
     int temp_2;
 
-    temp_18 = D_00519AB0_9AB0[2];
-    D_00519AB0_9AB0[2] = arg2;
+    temp_18 = D_00519AB0.f08;
+    D_00519AB0.f08 = arg2;
     temp_2 = arg0(arg2, arg3);
-    D_00519AB0_9AB0[2] = temp_18;
+    D_00519AB0.f08 = temp_18;
     iFILESYS_ExecCommand(0);
     return temp_2;
 }
