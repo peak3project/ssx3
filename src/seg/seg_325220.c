@@ -723,7 +723,38 @@ int func_00425190(int a0, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425260);
+#ifdef SKIP_ASM
+// Same block as func_00424EA8 sees (fd, wlen, pos, fC shared with the RPC callback); the binary re-reads fd right after storing it.
+struct Tty_5260 { volatile int fd; volatile int wlen; volatile int pos; volatile int fC; char *wp; unsigned char *buf; struct Ring4E28 *ring; };
+struct Pkt_5260 { short f0; short f2; short f4; char f6; char f7; int f8; };
+extern struct Tty_5260 D_5260 __asm__("D_0052B8D0");
+extern char D_0052B900[];
+extern char D_0052BA40[];
+extern void func_00424020(int);
+extern int f5260_open(int, void *, void *) __asm__("func_0042C8A0");
+extern struct Ring4E28 *f5260_ring(int) __asm__("func_00424E00");
+int func_00425260(void) {
+    struct Pkt_5260 *p;
+    func_00424020(0);
+    D_5260.fd = f5260_open(0x210, &D_5260, func_00424EA8);
+    if (D_5260.fd < 0) return 0;
+    D_5260.fC = 0;
+    D_5260.wlen = 0;
+    D_5260.pos = 0;
+    D_5260.buf = (unsigned char *)((int)D_0052BA40 | 0x20000000);
+    p = (struct Pkt_5260 *)((int)D_0052B900 | 0x20000000);
+    D_5260.wp = (char *)p;
+    p->f4 = 0x210;
+    p->f6 = 0x45;
+    p->f7 = 0x48;
+    p->f2 = 0;
+    p->f8 = 0;
+    D_5260.ring = f5260_ring(0x100);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425320);
