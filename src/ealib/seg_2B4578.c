@@ -3346,24 +3346,19 @@ void func_003B91E0(int h, struct Bits_91E0 *bits, int x, int cmd) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B93C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct B_93C8 { unsigned int lo : 17; unsigned int f : 7; unsigned int hi : 8; };
-struct E_93C8 { int id; signed char owner; signed char sub; short pad; };
-struct R_93C8 { char pad0[8]; unsigned char *cur; char pad1[0x70 - 12]; };
-struct G_93C8 { struct R_93C8 r[16]; struct E_93C8 e[24]; };
-extern struct G_93C8 D_a120_93C8 __asm__("D_0050A120");
 extern int func_003BC6B8(int, int);
 
-void func_003B93C8(int a0, struct B_93C8 *a1, int a2, int a3) {
-    struct R_93C8 *r = &D_a120_93C8.r[a0];
+void func_003B93C8(int a0, struct sA120Chan *a1, int a2, int a3) {
+    struct sA120Song *r = &D_0050A120.f000[a0];
     int t, i;
-    struct E_93C8 *e = &D_a120_93C8.e[0];
+    struct sA120Voice *e = &D_0050A120.f700[0];
     i = 0x17;
-    t = (*r->cur++ << 7) + a3;
-    a1->f = t / 128;
+    t = (*r->f08++ << 7) + a3;
+    a1->b17 = t / 128;
     do {
         i -= 1;
-        if (e->owner == a0 && e->sub == a2) {
-            func_003BC6B8(e->id, a1->f);
+        if (e->f04 == a0 && e->f05 == a2) {
+            func_003BC6B8(e->f00, a1->b17);
         }
         e += 1;
     } while (i >= 0);
