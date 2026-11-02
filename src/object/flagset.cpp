@@ -103,6 +103,15 @@ static inline int IsLoaded(sFsModel* m)
 static inline void SetF0_12(sFsRenderState* rs, int v) { rs->f0_12 = v; }
 static inline void SetF4_2(sFsRenderState* rs, int v) { rs->f4_2 = v; }
 
+// One 0x188-byte flag-set element (the lists below hold 15): active flag at 0x5C, vptr at 0x184
+// (slot 1 = destructor).
+struct sFlagSetElem {
+    char pad0[0x5C];
+    int active;                         // 0x5C
+    char pad60[0x184 - 0x60];
+    sVEntry<void(void*, int)>* vt;      // 0x184
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -336,7 +345,6 @@ static inline void MatCopy_34B9B0(t4Matrix* d, const t4Matrix* s)
         : "memory");
 }
 
-struct sFlagSetEntry;
 struct sFSE_34B9B0 {
     char pad[0x94];
     sFsModel* models[1];
@@ -344,7 +352,7 @@ struct sFSE_34B9B0 {
 
 #define TOP_34B9B0(c) (*(sFsRenderState**)((c) + 0xE84))
 
-extern "C" void func_0034B9B0(sFlagSetEntry* e)
+extern "C" void func_0034B9B0(sFlagSetElem* e)
 {
     char* self = (char*)e;
     if (D_004A4244 == 0) {
@@ -453,9 +461,6 @@ extern "C" void* func_00354648(void* self, void* a1);
 extern "C" void* func_0034AF38(void* self);
 extern void* D_0048FB80[];
 
-struct sFlagSetElem_C428 {
-    char data[0x188];
-};
 
 struct sFlagSet_C428 {
     char pad0[0xC];
@@ -464,13 +469,13 @@ struct sFlagSet_C428 {
     float field_0x14;               // 0x14
     float field_0x18;               // 0x18
     int field_0x1c;                 // 0x1C
-    sFlagSetElem_C428 elems[15];    // 0x20
+    sFlagSetElem elems[15];    // 0x20
 };
 
 extern "C" sFlagSet_C428* func_0034C428(sFlagSet_C428* self, void* a1)
 {
     int i;
-    sFlagSetElem_C428* p = self->elems;
+    sFlagSetElem* p = self->elems;
     func_00354648(self, a1);
     self->vtable = D_0048FB80;
     for (i = 14; i != -1; i--, p++) {
@@ -491,23 +496,19 @@ extern "C" void func_003546C8(void* self, int flags);
 extern void* D_0048FB80[];
 
 
-struct sFlagSetElem_C4B8 {
-    char pad0[0x184];
-    sVEntry<void(void*, int)>* vt;        // 0x184
-};
 
 struct sFlagSet_C4B8 {
     char pad0[0xC];
     void** vtable;                  // 0xC
     char pad10[0x10];
-    sFlagSetElem_C4B8 elems[15];    // 0x20
+    sFlagSetElem elems[15];    // 0x20
 };
 
 extern "C" void func_0034C4B8(sFlagSet_C4B8* self, int flags)
 {
     self->vtable = D_0048FB80;
     if (self->elems != 0) {
-        sFlagSetElem_C4B8* p = self->elems + 15;
+        sFlagSetElem* p = self->elems + 15;
         while (self->elems != p) {
             p--;
             p->vt[1].fn((char*)p + p->vt[1].delta, 0);
@@ -520,15 +521,10 @@ extern "C" void func_0034C4B8(sFlagSet_C4B8* self, int flags)
 //100%
 INCLUDE_ASM("object/flagset", func_0034C548);
 #ifdef SKIP_ASM
-struct sFlagSetElem_C548 {
-    char pad0[0x5C];
-    int active; // 0x5C
-    char pad60[0x188 - 0x60];
-};
 
 struct sFlagSet_C548 {
     char pad0[0x20];
-    sFlagSetElem_C548 elems[15]; // 0x20
+    sFlagSetElem elems[15]; // 0x20
 };
 
 extern "C" int func_0034AFE8(void* self, void* data, void* ctx);
@@ -537,14 +533,14 @@ extern "C" void func_0034B038(void* self, void* data, void* ctx);
 extern "C" void func_0034C548(sFlagSet_C548* self, void* node, void* desc)
 {
     int i;
-    sFlagSetElem_C548* e;
+    sFlagSetElem* e;
     for (i = 0, e = self->elems; i < 15; i++, e++) {
         if (e->active != 0 && func_0034AFE8(e, desc, node) != 0) {
             func_0034B038(e, desc, node);
             return;
         }
     }
-    sFlagSetElem_C548* f = self->elems;
+    sFlagSetElem* f = self->elems;
     for (int j = 0; j < 15; j++, f++) {
         if (f->active == 0) {
             func_0034B038(f, desc, node);
@@ -557,15 +553,10 @@ extern "C" void func_0034C548(sFlagSet_C548* self, void* node, void* desc)
 //100%
 INCLUDE_ASM("object/flagset", func_0034C600);
 #ifdef SKIP_ASM
-struct sFlagSetElem_C600 {
-    char pad0[0x5C];
-    int active; // 0x5C
-    char pad60[0x188 - 0x60];
-};
 
 struct sFlagSet_C600 {
     char pad0[0x20];
-    sFlagSetElem_C600 elems[15]; // 0x20
+    sFlagSetElem elems[15]; // 0x20
 };
 
 extern "C" int func_0034B168(void* elem, void* arg);
@@ -573,7 +564,7 @@ extern "C" int func_0034B168(void* elem, void* arg);
 extern "C" void func_0034C600(sFlagSet_C600* self, void* arg)
 {
     int i;
-    sFlagSetElem_C600* e = self->elems;
+    sFlagSetElem* e = self->elems;
     for (i = 0; i < 15; i++, e++) {
         if (e->active != 0 && func_0034B168(e, arg) != 0) {
             return;
@@ -585,11 +576,6 @@ extern "C" void func_0034C600(sFlagSet_C600* self, void* arg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/flagset", func_0034C668);
 #ifdef SKIP_ASM
-struct sFlagSetElem_C668 {
-    char pad0[0x5C];
-    int active; // 0x5C
-    char pad60[0x188 - 0x60];
-};
 
 struct sFlagSet_C668 {
     char pad0[0x10];
@@ -597,7 +583,7 @@ struct sFlagSet_C668 {
     float base;     // 0x14
     float delta;    // 0x18
     float t;        // 0x1C
-    sFlagSetElem_C668 elems[15]; // 0x20
+    sFlagSetElem elems[15]; // 0x20
 };
 
 extern "C" int func_002D1BA0();
@@ -634,7 +620,7 @@ extern "C" void func_0034C668(sFlagSet_C668* self)
     self->level = self->base + self->delta * self->t;
     int i;
     for (i = 0; i < 15; i++) {
-        sFlagSetElem_C668* e = &self->elems[i];
+        sFlagSetElem* e = &self->elems[i];
         if (e->active != 0) {
             func_0034B818(e);
         }
@@ -645,24 +631,19 @@ extern "C" void func_0034C668(sFlagSet_C668* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/flagset", func_0034C7F8);
 #ifdef SKIP_ASM
-struct sFlagSetEntry {
-    char pad_0x0[0x5C];
-    int active; // 0x5C
-    char pad_0x60[0x128];
-};
 
 struct sFlagSetOwner {
     char pad_0x0[0x20];
-    sFlagSetEntry entries[15]; // 0x20
+    sFlagSetElem entries[15]; // 0x20
 };
 
-extern "C" void func_0034B9B0(sFlagSetEntry* e);
+extern "C" void func_0034B9B0(sFlagSetElem* e);
 
 extern "C" void func_0034C7F8(sFlagSetOwner* self)
 {
     int i;
     for (i = 0; i < 15; i++) {
-        sFlagSetEntry* e = &self->entries[i];
+        sFlagSetElem* e = &self->entries[i];
         if (e->active != 0) {
             func_0034B9B0(e);
         }
@@ -673,13 +654,10 @@ extern "C" void func_0034C7F8(sFlagSetOwner* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/flagset", func_0034C848);
 #ifdef SKIP_ASM
-struct sFlagSetElem_C848 {
-    char data[0x188];
-};
 
 struct sFlagSet_C848 {
     char pad0[0x20];
-    sFlagSetElem_C848 elems[15]; // 0x20
+    sFlagSetElem elems[15]; // 0x20
 };
 
 extern "C" void func_0034C2E0(void* elem, void* arg);
@@ -696,13 +674,10 @@ extern "C" void func_0034C848(sFlagSet_C848* self, void* arg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/flagset", func_0034C898);
 #ifdef SKIP_ASM
-struct sFlagSetElem_C898 {
-    char data[0x188];
-};
 
 struct sFlagSet_C898 {
     char pad0[0x20];
-    sFlagSetElem_C898 elems[15]; // 0x20
+    sFlagSetElem elems[15]; // 0x20
 };
 
 extern "C" void func_0034C378(void* elem, void* arg);
