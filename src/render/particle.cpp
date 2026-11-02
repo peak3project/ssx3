@@ -126,7 +126,8 @@ struct sPtVert {
     char pad[0x10];
 };
 
-// 4x4 float matrix without the 16-byte alignment of sPtMatrix.
+// 4x4 float matrix without the 16-byte alignment of sPtMatrix (the skinning code uses it as one bone matrix:
+// column j of each row feeds output component j).
 struct sPtMatrixU {
     float m[4][4];
 };
@@ -717,7 +718,6 @@ INCLUDE_ASM("render/particle", func_00371380);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-
 extern "C" void func_00371380(sPtEmitter* self, int blend)
 {
     if (self->field_0x174 == 0) {
@@ -841,7 +841,6 @@ extern "C" void cDynamicColourEmitter_reset(void* self)
 INCLUDE_ASM("render/particle", func_00371688);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 
 extern "C" void func_00371688(sPtEmitter* self, int blend)
 {
@@ -1537,7 +1536,6 @@ struct sPtPools39D0 {
     int freeCountB[3];              // 0x1D8
 };
 
-
 extern "C" void func_003739D0(sPtPools39D0* self)
 {
     int n0 = self->cnt[0];
@@ -1590,8 +1588,6 @@ extern "C" void func_003739D0(sPtPools39D0* self)
 INCLUDE_ASM("render/particle", func_00373C28);
 #ifdef SKIP_ASM
 
-// One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
-
 static inline float ptBlend_3C28(sPtVec3* p, sPtMatrixU* mt, float* w, int j)
 {
     float x = p->x;
@@ -1615,8 +1611,6 @@ extern "C" void func_00373C28(void* self, sPtVec3* p, sPtMatrixU* mt, float* w, 
 //100%
 INCLUDE_ASM("render/particle", func_00373EA8);
 #ifdef SKIP_ASM
-
-// One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
 
 static inline float ptBlend4_3EA8(sPtVec4u* p, sPtMatrixU* mt, float* w, int j)
 {
@@ -2609,7 +2603,6 @@ struct sPtGfx6768 {
     sPtView views[1];           // 0x6D20
 };
 
-
 extern "C" void func_00376768(sPtGfx6768* self)
 {
     self->curView--;
@@ -2903,7 +2896,6 @@ static inline sPt7278 Add7278(const sPt7278& a, const sPt7278& b)
         : "memory");
     return r;
 }
-
 
 static inline float DepthOffset7278(sPtGfx7278* self, sPt7278* pos, float dist)
 {
@@ -3341,7 +3333,6 @@ INCLUDE_ASM("render/particle", func_0037A260);
 //100%
 INCLUDE_ASM("render/particle", func_0037A430);
 #ifdef SKIP_ASM
-
 
 // PORT: uncached (0x30000000) pointers held in int.
 // Flushes the pending packet into a ring entry and resets the render state's layer bits.
@@ -4076,7 +4067,6 @@ extern "C" void func_0037CBE8(void* self, void* out, int a2, int a3)
 INCLUDE_ASM("render/particle", func_0037CC30);
 #ifdef SKIP_ASM
 
-
 extern "C" void func_0037CC30(void* self, void* item)
 {
     if (*(int*)((char*)item + 0x4) != -1) {
@@ -4125,7 +4115,6 @@ struct sPtGfxB_CC98 {
     char pad_0x5A84[4];
     int f5A88;
 };
-
 
 extern "C" void func_0037CC98(sPtGfxB_CC98* self, int* obj)
 {
@@ -4650,7 +4639,6 @@ struct sPtGfxDBE8 {
     float field_0x6B8C;
     int clipValid;              // 0x6B90
 };
-
 
 // PORT: PS2-only VU0 inline asm (matrix * vector).
 static inline t4Vector mtxApplyDBE8(sPtMtxDBE8* m, const t4Vector& v)
@@ -5477,9 +5465,6 @@ INCLUDE_ASM("render/particle", func_00381F10);
 
 extern char D_3BF0[];
 
-// PORT: PS2-only VU0 inline asm (matrix copy); the PC port needs a C fallback.
-
-
 // PORT: uncached (0x30000000) pointers held in int; 64-bit GS words are `unsigned long`.
 extern "C" void func_00381F10(cPS2GraphicsMan* self, sPtMatrix* m, float* col, int n)
 {
@@ -5618,8 +5603,6 @@ struct cRMgr2170 {
 
 extern sPt2170 D_004FFBC0[];
 extern int D_004A59A0;
-
-// PORT: PS2-only VU0 inline asm (matrix copy); the PC port needs a C fallback.
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix * vector); the PC port needs a C fallback.
 static inline sPt2170 MulMat2170(const sPtMatrix* m, const sPt2170& v)
@@ -6703,7 +6686,6 @@ struct sPartStrip_6D10 {
     int field_0x10;
 };
 
-
 extern "C" void func_00386D10(void* self, sPartStrip_6D10* strips, int n, void* a3, void* a4, void* a5, float f0, float f1)
 {
     for (; n > 0; n--, strips++) {
@@ -6724,7 +6706,6 @@ struct sPartStrip_6DD0 {
     float f0;       // 0xC
     float f1;       // 0x10
 };
-
 
 extern "C" void func_00386DD0(void* self, sPartStrip_6DD0* strips, int n, void* a3, void* a4, void* a5)
 {
