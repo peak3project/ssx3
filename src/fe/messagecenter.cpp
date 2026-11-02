@@ -8,6 +8,22 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
+};
+
 //100%
 INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_onWidgetCreate);
 #ifdef SKIP_ASM
@@ -46,7 +62,6 @@ extern char* D_00441200[];
 extern char D_00460470[];
 extern char D_004A1408[];
 extern char* D_004A28A8;
-
 
 class cWidget_6F98 {
 public:
@@ -247,7 +262,6 @@ struct sReqLine_7500 {
     int limit;              // 0x168
     int f16C;               // 0x16C
 };
-
 
 static inline int isSet_7500(unsigned long m, int i)
 {
@@ -671,7 +685,6 @@ extern char D_00460668[];
 extern char D_00460678[];
 extern char* D_004A28A8;
 
-
 class cMsgWidget_197E70 {
 public:
     int pad0, pad4;
@@ -753,7 +766,6 @@ extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags
 extern char D_004605D8[];
 extern char D_00460688[];
 extern char* D_004A28A8;
-
 
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 struct sMsgCenter_00198118 {
@@ -867,14 +879,6 @@ extern char D_00460748[];
 extern char D_00460758[];
 extern char* D_004A28A8;
 
-class cUIObj_UBT {
-public:
-    int pad[2];
-    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
-    virtual void v06(); virtual void v07(); virtual void v08();
-    virtual void setVisible(int on);
-};
-
 struct sReqLine_UBT {
     char pad_0x0[0x158];
     unsigned long done;     // 0x158
@@ -882,10 +886,10 @@ struct sReqLine_UBT {
     int count;              // 0x168
     int f16C;               // 0x16C
     char pad_0x170[0x1F4 - 0x170];
-    cUIObj_UBT* text;       // 0x1F4
-    cUIObj_UBT* back;       // 0x1F8
-    cUIObj_UBT* btnA;       // 0x1FC
-    cUIObj_UBT* btnB;       // 0x200
+    cUIThing* text;       // 0x1F4
+    cUIThing* back;       // 0x1F8
+    cUIThing* btnA;       // 0x1FC
+    cUIThing* btnB;       // 0x200
 };
 
 // Release-build assert: expands to an empty do { } while (0). The empty loop still leaves loop notes in the
@@ -1039,7 +1043,6 @@ extern char D_00460780[];
 extern char D_00460688[];
 extern char D_004A1408[];
 extern char* D_004A28A8;
-
 
 class cMsgWidget_1986D0 {
 public:
