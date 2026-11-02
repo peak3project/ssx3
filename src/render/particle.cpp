@@ -301,6 +301,11 @@ static inline float clampPos(float x, float hi)
     return x >= 0.0f ? (x <? hi) : 0.0f;
 }
 
+static inline int wrapIndex(int i, int start, int m)
+{
+    return (i + start) % m;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5145,10 +5150,6 @@ extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 
-static inline int Wrap_07A0(int i, int start, int m)
-{
-    return (i + start) % m;
-}
 
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
@@ -5196,11 +5197,11 @@ extern "C" void func_003807A0(cPS2GraphicsMan* self, sTrail_07A0* obj)
         sGifQuad* lastA;
         sGifQuad* lastB;
         if (done < m) {
-            int e = Wrap_07A0(done, wrap, m);
+            int e = wrapIndex(done, wrap, m);
             lastB = obj->posB + e;
             lastA = obj->posA + e;
         } else {
-            int e = Wrap_07A0(done - 1, wrap, m);
+            int e = wrapIndex(done - 1, wrap, m);
             lastB = obj->posB + e;
             lastA = obj->posA + e;
         }
@@ -5276,10 +5277,6 @@ extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 extern "C" void func_003E6574(void* dst, void* src, int n);
 
-static inline int Wrap_0CE0(int i, int start, int m)
-{
-    return (i + start) % m;
-}
 
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
@@ -5329,12 +5326,12 @@ extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
         sGifQuad* lastB;
         sCol_0CE0* lastC;
         if (done < m) {
-            int e = Wrap_0CE0(done, wrap, m);
+            int e = wrapIndex(done, wrap, m);
             lastA = obj->posA + e;
             lastB = obj->posB + e;
             lastC = obj->cols + e;
         } else {
-            int e = Wrap_0CE0(done - 1, wrap, m);
+            int e = wrapIndex(done - 1, wrap, m);
             lastA = obj->posA + e;
             lastB = obj->posB + e;
             lastC = obj->cols + e;
