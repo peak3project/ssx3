@@ -1572,14 +1572,12 @@ extern "C" void func_00355978_D9F8(void*, int, int, V4_D9F8*) __asm__("func_0035
 struct O_D9F8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_D9F8(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_D9F8(unsigned i) { if (i == 0) return 0; return refToPtr_D9F8(i); }
-struct V3_D9F8 { float x, y, z; };
-extern V3_D9F8 D_004C9098_D9F8 __asm__("D_004C9098");
 extern unsigned D_D9F8[] __asm__("D_004FB738");
 extern int D_004A560C;
 extern const int D_004461A8[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_D9F8 { int idx; int val; int pad; int type; };
-extern "C" V3_D9F8 func_002FD9F8(int n, Ent_D9F8 *e) {
+extern "C" cLunoValue func_002FD9F8(int n, Ent_D9F8 *e) {
     if (D_004A560C == 0) {
         D_D9F8[0] = 0xFFFFFFFF;
         D_D9F8[1] = 0xFFFFFFFF;
@@ -1640,7 +1638,7 @@ extern "C" V3_D9F8 func_002FD9F8(int n, Ent_D9F8 *e) {
             }
         }
     }
-    return D_004C9098_D9F8;
+    return D_004C9098;
 }
 #endif
 
