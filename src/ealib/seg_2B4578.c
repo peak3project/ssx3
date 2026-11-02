@@ -10963,40 +10963,39 @@ void func_003C8B80(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8C30);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_00515D1C_8C30[] __asm__("D_00515D1C");
-extern void *func_003B5C60_8C30(int) __asm__("func_003B5C60");
+extern struct sB40Node *func_003B5C60_8C30(int) __asm__("func_003B5C60");
 extern void func_003B5E98_8C30(void *) __asm__("func_003B5E98");
-extern void func_003CA990_8C30(void *) __asm__("func_003CA990");
-extern void func_003C8F48_8C30(void *, void *) __asm__("func_003C8F48");
-extern void func_003C8FB0_8C30(void *, void *) __asm__("func_003C8FB0");
-extern void func_003CA9D8_8C30(void *, int *) __asm__("func_003CA9D8");
+extern void func_003CA990_8C30(struct sB40Node *) __asm__("func_003CA990");
+extern void func_003C8F48_8C30(struct sB40Node **, struct sB40Node *) __asm__("func_003C8F48");
+extern void func_003C8FB0_8C30(struct sB40Node **, struct sB40Node *) __asm__("func_003C8FB0");
+extern void func_003CA9D8_8C30(struct sB40Node *, int *) __asm__("func_003CA9D8");
 
 void func_003C8C30(int arg0, int arg1) {
     int sp[2];
-    char *e;
-    char *buf;
+    struct sB40Ent *e;
+    struct sB40Node *buf;
 
-    e = D_00515D1C_8C30[0] + arg0 * 0x60;
+    e = &D_00515D1C[arg0];
     if (arg1 > 0) {
-        if (*(char**)(e + 0x5C) == 0) {
-            char *t2 = func_003B5C60_8C30(0x120);
-            *(char**)(e + 0x5C) = t2;
-            *(int*)(t2 + 4) = 0;
-            *(short*)(*(char**)(e + 0x5C) + 0x18) = 0x50;
-            *(signed char*)(*(char**)(e + 0x5C) + 0x1A) = 0;
-            func_003CA990_8C30(*(char**)(e + 0x5C));
-            func_003C8F48_8C30(e + 0x40, *(char**)(e + 0x5C));
+        if (e->f5C == 0) {
+            struct sB40Node *t2 = func_003B5C60_8C30(0x120);
+            e->f5C = t2;
+            t2->f04 = 0;
+            e->f5C->f18 = 0x50;
+            e->f5C->f1A = 0;
+            func_003CA990_8C30(e->f5C);
+            func_003C8F48_8C30(&e->f40, e->f5C);
         }
         sp[0] = arg1 << 8;
         sp[1] = D_0050A912 << 8;
-        func_003CA9D8_8C30(*(char**)(e + 0x5C), sp);
+        func_003CA9D8_8C30(e->f5C, sp);
         return;
     }
-    buf = *(char**)(e + 0x5C);
+    buf = e->f5C;
     if (buf != 0) {
-        func_003C8FB0_8C30(e + 0x40, buf);
-        func_003B5E98_8C30(*(char**)(e + 0x5C));
-        *(char**)(e + 0x5C) = 0;
+        func_003C8FB0_8C30(&e->f40, buf);
+        func_003B5E98_8C30(e->f5C);
+        e->f5C = 0;
     }
 }
 #endif
