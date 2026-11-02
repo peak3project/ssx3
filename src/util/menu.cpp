@@ -142,8 +142,9 @@ struct sVtxF {
     sVtxF() {}
 };
 
+// Base of the menu items; cMenu_addItem stores the owning menu in the first word.
 struct cMenuItem {
-    char pad_0x00[0x4];
+    void* owner;    // 0x0
     int field_0x4;
     void* field_0x8;
     int field_0xC;
@@ -1096,17 +1097,9 @@ extern "C" void func_002CBF60(void* p, int wrap)
 //100%
 INCLUDE_ASM("util/menu", func_002CBFD0);
 #ifdef SKIP_ASM
-struct s2CBFD0Menu {
-    int count;          // 0x0
-    int selected;       // 0x4
-    int unk8;           // 0x8
-    void* items[70];    // 0xC
-    int wrap;           // 0x124
-};
-
 extern "C" void func_002CBFD0(void* p)
 {
-    s2CBFD0Menu* self = (s2CBFD0Menu*)p;
+    cMenuList* self = (cMenuList*)p;
     void* item = self->items[self->selected];
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)item + 0x10);
     vt[7].fn((char*)item + vt[7].delta);
@@ -1739,14 +1732,12 @@ cMenuItem* cMenuItem_cMenuItem_id(cMenuItem* self, int id) __asm__("cMenuItem_cM
 
 extern void* D_00486DE0[];
 
-struct cSubMenuItem_sItem {
-    char pad_0x00[0x10];
-    void* vtable;    // 0x10
+struct cSubMenuItem : cMenuItem {
     void* field_0x14;
     void* field_0x18;
 };
 
-extern "C" cSubMenuItem_sItem* cSubMenuItem_cSubMenuItem(cSubMenuItem_sItem* self, void* a1, void* a2)
+extern "C" cSubMenuItem* cSubMenuItem_cSubMenuItem(cSubMenuItem* self, void* a1, void* a2)
 {
     cMenuItem_cMenuItem_id((cMenuItem*)self, -1);
     self->field_0x14 = a2;
@@ -1808,9 +1799,7 @@ cMenuItem* cMenuItem_cMenuItem_id(cMenuItem* self, int id) __asm__("cMenuItem_cM
 
 extern void* D_00486D90[];
 
-struct s2CCDF0Item {
-    char pad_0x00[0x10];
-    void* vtable;
+struct s2CCDF0Item : cMenuItem {
     void* field_0x14;
 };
 
@@ -1873,9 +1862,8 @@ cMenuItem* cMenuItem_cMenuItem_id(cMenuItem* self, int id) __asm__("cMenuItem_cM
 
 extern void* D_00486D40[];
 
-struct s2CCF08Item {
-    char pad_0x00[0x10];
-    void* vtable;    // 0x10
+// The item class with vtable D_00486D40 (constructors func_002CCF08, func_002CCF50, func_002CCF98).
+struct s2CCF08Item : cMenuItem {
     int field_0x14;
     int field_0x18;
     int field_0x1C;
@@ -1916,16 +1904,7 @@ INCLUDE_ASM("util/menu", func_002CCF98);
 #ifdef SKIP_ASM
 extern void* D_00486D40[];
 
-struct func_002CCF98_sItem {
-    char pad_0x00[0x10];
-    void* vtable;    // 0x10
-    int field_0x14;
-    int field_0x18;
-    int field_0x1C;
-    int field_0x20;
-};
-
-extern "C" func_002CCF98_sItem* func_002CCF98(func_002CCF98_sItem* self, void* text, int a2, int a3)
+extern "C" s2CCF08Item* func_002CCF98(s2CCF08Item* self, void* text, int a2, int a3)
 {
     cMenuItem_cMenuItem((cMenuItem*)self, text);
     self->field_0x14 = a2;
@@ -2093,9 +2072,7 @@ void* func_002CD278(void* self, int a1)
 
 extern void* D_00486CA0[16];
 
-struct cNullMenuItem {
-    char pad_0x00[0x10];
-    void* vtable;
+struct cNullMenuItem : cMenuItem {
     void* field_0x14;
 };
 
@@ -2151,9 +2128,7 @@ void* func_002CD328(void* self, int a1)
 
 extern void* D_00486C50[16];
 
-struct cSpaceMenuItem {
-    char pad_0x00[0x10];
-    void* vtable;
+struct cSpaceMenuItem : cMenuItem {
     void* field_0x14;
 };
 
@@ -3201,14 +3176,12 @@ cMenuItem* cMenuItem_cMenuItem_id(cMenuItem* self, int id) __asm__("cMenuItem_cM
 
 extern void* D_00486A70[];
 
-struct cColorMenuItem__cColorMenuItem_sItem {
-    char pad_0x00[0x10];
-    void* vtable;    // 0x10
+struct cColorMenuItem : cMenuItem {
     void* field_0x14;
     void* field_0x18;
 };
 
-extern "C" cColorMenuItem__cColorMenuItem_sItem* cColorMenuItem__cColorMenuItem(cColorMenuItem__cColorMenuItem_sItem* self, void* a1, void* a2)
+extern "C" cColorMenuItem* cColorMenuItem__cColorMenuItem(cColorMenuItem* self, void* a1, void* a2)
 {
     cMenuItem_cMenuItem_id((cMenuItem*)self, -1);
     self->field_0x14 = a1;
@@ -3870,14 +3843,12 @@ cMenuItem* cMenuItem_cMenuItem_id(cMenuItem* self, int id) __asm__("cMenuItem_cM
 
 extern void* D_00486968[];
 
-struct cRGBTitleMenuItem_sItem {
-    char pad_0x00[0x10];
-    void* vtable;    // 0x10
+struct cRGBTitleMenuItem : cMenuItem {
     void* field_0x14;
     void* field_0x18;
 };
 
-extern "C" cRGBTitleMenuItem_sItem* cRGBTitleMenuItem_cRGBTitleMenuItem(cRGBTitleMenuItem_sItem* self, void* a1, void* a2)
+extern "C" cRGBTitleMenuItem* cRGBTitleMenuItem_cRGBTitleMenuItem(cRGBTitleMenuItem* self, void* a1, void* a2)
 {
     cMenuItem_cMenuItem_id((cMenuItem*)self, -1);
     self->field_0x14 = a2;
@@ -3988,11 +3959,11 @@ extern "C" void* cARGBMenuItem_cARGBMenuItem(void* self, void* name, void* title
     *(void**)(s + 0x5AC) = color;
     *(void***)(s + 0x10) = D_00486908;
     // PORT: the channel index is passed in the unit's void* parameter
-    cColorMenuItem__cColorMenuItem((cColorMenuItem__cColorMenuItem_sItem*)(s + 0x5B0), color, (void*)0);
-    cColorMenuItem__cColorMenuItem((cColorMenuItem__cColorMenuItem_sItem*)(s + 0x5D4), color, (void*)1);
-    cColorMenuItem__cColorMenuItem((cColorMenuItem__cColorMenuItem_sItem*)(s + 0x5F8), color, (void*)2);
-    cColorMenuItem__cColorMenuItem((cColorMenuItem__cColorMenuItem_sItem*)(s + 0x61C), color, (void*)3);
-    cRGBTitleMenuItem_cRGBTitleMenuItem((cRGBTitleMenuItem_sItem*)(s + 0x640), title, color);
+    cColorMenuItem__cColorMenuItem((cColorMenuItem*)(s + 0x5B0), color, (void*)0);
+    cColorMenuItem__cColorMenuItem((cColorMenuItem*)(s + 0x5D4), color, (void*)1);
+    cColorMenuItem__cColorMenuItem((cColorMenuItem*)(s + 0x5F8), color, (void*)2);
+    cColorMenuItem__cColorMenuItem((cColorMenuItem*)(s + 0x61C), color, (void*)3);
+    cRGBTitleMenuItem_cRGBTitleMenuItem((cRGBTitleMenuItem*)(s + 0x640), title, color);
     cExpandMenuItem_addItem3(self, s + 0x5B0, -1);
     cExpandMenuItem_addItem3(self, s + 0x5D4, -1);
     cExpandMenuItem_addItem3(self, s + 0x5F8, -1);
