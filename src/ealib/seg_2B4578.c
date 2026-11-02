@@ -17321,14 +17321,11 @@ void func_003D5A98_impl(struct sPathVoice *v) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5CC0);
 #ifdef SKIP_ASM
-struct V_5CC0 { char pad0[0x10]; int f10; char f14; char f15; char f16; char pad17[0x54 - 0x17]; int f54; };
-struct G_5CC0 { char pad0[0x1C]; unsigned short h1C; char pad1E[2]; unsigned f20; };
-extern struct G_5CC0 *D_0044F420_5CC0 __asm__("D_0044F420");
 extern int D_0044F438_5CC0 __asm__("D_0044F438");
 extern int func_002AF4E0(int, int, int);
 
-void func_003D5CC0_impl(struct V_5CC0 *v) __asm__("func_003D5CC0");
-void func_003D5CC0_impl(struct V_5CC0 *v) {
+void func_003D5CC0_impl(struct sPathVoice *v) __asm__("func_003D5CC0");
+void func_003D5CC0_impl(struct sPathVoice *v) {
     struct {
         unsigned mode : 7;
         int neg : 1;
@@ -17343,8 +17340,8 @@ void func_003D5CC0_impl(struct V_5CC0 *v) {
     int none;
     unsigned sel;
     diff = (float)v->f16 - (float)v->f14;
-    l.dur = D_0044F420_5CC0->h1C;
-    l.mode = D_0044F420_5CC0->f20;
+    l.dur = D_0044F420->f14[1].dur;
+    l.mode = D_0044F420->f14[1].mode;
     pos = 1;
     if (diff < 0.0f) {
         pos = 0;
