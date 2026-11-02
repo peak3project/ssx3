@@ -113,6 +113,9 @@ struct sSndVtbl7 {
 // g++ 2.95 vtable entry for a method taking (self, int).
 struct sSndVtVI { short delta; short index; void (*fn)(void*, int); };
 
+// g++ 2.95 vtable entry for a method taking (self, sSndCallback).
+struct sSndVtCb { short delta; short index; void (*fn)(void*, sSndCallback); };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -594,17 +597,12 @@ extern "C" void func_002910E0(void* vself)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002913D8);
 #ifdef SKIP_ASM
-struct sVE_13D8 {
-    short delta;
-    short index;
-    void (*fn)(void*, sSndCallback);
-};
 
 extern "C" void func_002913D8(void* self)
 {
     char* s = (char*)self;
     char* sys = **(char***)(s + 0x118);
-    sVE_13D8* vt = *(sVE_13D8**)(sys + 0xAB0);
+    sSndVtCb* vt = *(sSndVtCb**)(sys + 0xAB0);
     char* obj = sys + 0x1D8;
     vt[3].fn(obj + vt[3].delta, D_004A3680[0]);
     *(int*)(s + 0x5830) = 0;
@@ -1102,11 +1100,10 @@ extern "C" void func_00292AE8(char* self, int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00292B48);
 #ifdef SKIP_ASM
-struct sVE292B48 { short delta; short index; void (*fn)(void*, sSndCallback); };
 
 struct sBank292B48 {
     char pad0[0x8D8];
-    sVE292B48* vt;      // 0x8D8
+    sSndVtCb* vt;      // 0x8D8
 };
 struct sSys292B48 {
     char pad0[0x1D8];
@@ -1119,7 +1116,7 @@ extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
 static inline void bankStop292B48(char* self, const sSndCallback& id)
 {
     sSys292B48* sys = **(sSys292B48***)(self + 0x118);
-    sVE292B48* vt = sys->bank.vt;
+    sSndVtCb* vt = sys->bank.vt;
     char* b = (char*)&sys->bank;
     vt[3].fn(b + vt[3].delta, id);
 }
@@ -5194,7 +5191,6 @@ struct sOutDEF0 {
 };
 extern "C" void func_002DA1C0(sOutDEF0* out, sV3DEF0* in);
 
-struct sVEk_DEF0 { short delta; short index; void (*fn)(void*, sSndCallback); };
 
 static inline int vcall_DEF0(char* o, int slot)
 {
@@ -5304,7 +5300,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
         if (--self->users == 0) {
             func_002AD5F0(&(*self->p118)->sub, self->handle, 1, 2.0f);
             cBankManager* mg = *self->p118;
-            sVEk_DEF0* vt = *(sVEk_DEF0**)((char*)mg + 0xAB0);
+            sSndVtCb* vt = *(sSndVtCb**)((char*)mg + 0xAB0);
             char* sub = (char*)&mg->sub;
             vt[3].fn(sub + vt[3].delta, D_004A36D0[0]);
             for (int i = 2; i >= 0; i--) {
@@ -9780,11 +9776,6 @@ INCLUDE_ASM("sound/soundsys", func_002A7718);
 #ifdef SKIP_ASM
 extern "C" void func_002A6430(void* voice, float a1);
 
-struct sVE_7718 {
-    short delta;
-    short index;
-    void (*fn)(void*, sSndCallback);
-};
 
 extern "C" void func_002A7718(void* self)
 {
@@ -9793,7 +9784,7 @@ extern "C" void func_002A7718(void* self)
         func_002A6430(*(char**)(s + 0x18) + i * 0x190, 0.0f);
     }
     char* sys = *(char**)s;
-    sVE_7718* vt = *(sVE_7718**)(sys + 0xAB0);
+    sSndVtCb* vt = *(sSndVtCb**)(sys + 0xAB0);
     char* obj = sys + 0x1D8;
     vt[3].fn(obj + vt[3].delta, D_004A3700[0]);
 }
