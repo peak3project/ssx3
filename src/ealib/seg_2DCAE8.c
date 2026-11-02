@@ -1804,9 +1804,7 @@ void func_003DE910(void *(*arg0)(char *, int, int), int (*arg1)(void *)) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DE928);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct A_E928 { int p0, p4, p8, pC, f10, f14, f18, f1C; };
 struct B_E928 { int f0, f4, f8, fC; };
-extern struct A_E928 D_00450C10_E928 __asm__("D_00450C10");
 extern struct B_E928 D_00450C58_E928 __asm__("D_00450C58");
 extern int D_00450C50_E928[] __asm__("D_00450C50");
 extern void func_003E6220(int, int);
@@ -1817,11 +1815,11 @@ int func_003DE928(int *arg0) {
     if (n >= 0x25) {
         func_003E6220(arg0, n);
     }
-    D_00450C10_E928.f18 = D_00450C58_E928.f0;
-    D_00450C10_E928.f10 = D_00450C58_E928.f4;
-    D_00450C10_E928.f14 = D_00450C58_E928.fC != 0;
-    D_00450C10_E928.f1C = D_00450C50_E928[0];
-    func_003E6574_E928(arg0, &D_00450C10_E928, n);
+    D_00450C10.f18 = D_00450C58_E928.f0;
+    D_00450C10.f10 = D_00450C58_E928.f4;
+    D_00450C10.f14 = D_00450C58_E928.fC != 0;
+    D_00450C10.f1C = D_00450C50_E928[0];
+    func_003E6574_E928(arg0, &D_00450C10, n);
     return 1;
 }
 #endif
