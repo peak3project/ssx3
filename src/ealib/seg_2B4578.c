@@ -55,6 +55,12 @@ struct sA8E8Setup {                 /* 0xD4: what func_003B4DD8 hands out */
     struct sA8E8Cfg cfg;
     struct sA8E8Tail tail;
 };
+struct sA8E8Node {                  /* +0x1B4 list */
+    struct sA8E8Node *next;
+    int f04;
+    void (*fn)(int);
+    int arg;
+};
 struct sA8E8Pan { float l; float r; };
 struct sA8E8Bus {                   /* 0x14, at +0x1F8 / +0x20C / +0x220, indexed by id */
     short f00;
@@ -772,18 +778,14 @@ int func_003B5478(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B54E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct N_54E0 { struct N_54E0 *next; int pad; void (*fn)(int); int arg; } N_54E0;
-typedef struct { char pad[0x1B4]; N_54E0 *list; int pad2[2]; int cnt; } G_54E0;
-extern int D_0050A8E8_A8E8_54E0[] __asm__("D_0050A8E8");
 extern int D_0044C468;
 
 void func_003B54E0(void) {
-    N_54E0 *n;
-    G_54E0 *g = (G_54E0 *)D_0050A8E8_A8E8_54E0;
+    struct sA8E8Node *n;
 
-    if (g->cnt != D_0044C468) {
-        n = g->list;
-        D_0044C468 = g->cnt;
+    if (D_0050A8E8.f1C0 != D_0044C468) {
+        n = D_0050A8E8.f1B4;
+        D_0044C468 = D_0050A8E8.f1C0;
         if (n != 0) {
             do {
                 n->fn(n->arg);
