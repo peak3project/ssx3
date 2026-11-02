@@ -36,6 +36,17 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
+// The camera-shake tuning table: one entry per shake type, reset by func_0015E2A8, plus each type's
+// selector in D_004C5430.
+struct sCamShake {
+    float base;     // passed to func_001656B0 / func_00165938
+    float spread;
+    float weight;   // scales the requested amount
+    float range;    // distance at which the shake fades out
+};
+extern sCamShake D_004C53E0[5];
+extern int D_004C5430[5];
+
 //100%
 INCLUDE_ASM("camera/camera", cCamera_resetChaseControllerSwitches);
 #ifdef SKIP_ASM
@@ -456,43 +467,33 @@ extern "C" void func_0015E050_impl(char* self, char* a1, char* a2)
 //100%
 INCLUDE_ASM("camera/camera", func_0015E2A8);
 #ifdef SKIP_ASM
-struct sCamLag_15E2A8 {
-    float f0, f4, f8, fC;
-    struct {
-        float a, b, c, d;
-    } group[3];             // 0x10
-    float f40, f44, f48, f4C;
-};
-extern sCamLag_15E2A8 D_004C53E0;
-extern int D_004C5430[5];
-
 // Resets the chase camera's tuning constants.
 extern "C" void func_0015E2A8(void)
 {
-    D_004C53E0.f0 = 0.05f;
-    D_004C53E0.f4 = 0.01f;
-    D_004C53E0.f8 = 0.4f;
-    D_004C53E0.fC = 20000.0f;
+    D_004C53E0[0].base = 0.05f;
+    D_004C53E0[0].spread = 0.01f;
+    D_004C53E0[0].weight = 0.4f;
+    D_004C53E0[0].range = 20000.0f;
     D_004C5430[0] = 0;
-    D_004C53E0.group[0].a = 0.02f;
-    D_004C53E0.group[0].b = 0.01366f;
-    D_004C53E0.group[0].c = 0.07f;
-    D_004C53E0.group[0].d = -1.0f;
+    D_004C53E0[1].base = 0.02f;
+    D_004C53E0[1].spread = 0.01366f;
+    D_004C53E0[1].weight = 0.07f;
+    D_004C53E0[1].range = -1.0f;
     D_004C5430[1] = 1;
-    D_004C53E0.group[1].a = 0.02f;
-    D_004C53E0.group[1].b = 0.01366f;
-    D_004C53E0.group[1].c = 0.08f;
-    D_004C53E0.group[1].d = -1.0f;
+    D_004C53E0[2].base = 0.02f;
+    D_004C53E0[2].spread = 0.01366f;
+    D_004C53E0[2].weight = 0.08f;
+    D_004C53E0[2].range = -1.0f;
     D_004C5430[2] = 1;
-    D_004C53E0.group[2].a = 0.02f;
-    D_004C53E0.group[2].b = 0.01366f;
-    D_004C53E0.group[2].c = 0.09f;
-    D_004C53E0.group[2].d = -1.0f;
+    D_004C53E0[3].base = 0.02f;
+    D_004C53E0[3].spread = 0.01366f;
+    D_004C53E0[3].weight = 0.09f;
+    D_004C53E0[3].range = -1.0f;
     D_004C5430[3] = 1;
-    D_004C53E0.f40 = 0.1f;
-    D_004C53E0.f44 = 0.03f;
-    D_004C53E0.f48 = 1.4f;
-    D_004C53E0.f4C = -1.0f;
+    D_004C53E0[4].base = 0.1f;
+    D_004C53E0[4].spread = 0.03f;
+    D_004C53E0[4].weight = 1.4f;
+    D_004C53E0[4].range = -1.0f;
     D_004C5430[4] = 1;
 }
 #endif
@@ -501,14 +502,6 @@ extern "C" void func_0015E2A8(void)
 INCLUDE_ASM("camera/camera", func_0015E360);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
-struct sCamShake_E360 {
-    float f0;
-    float f4;
-    float weight;   // 0x8
-    float range;    // 0xC
-};
-// View of the tuning block initialised by func_0015E2A8 as one entry per shake type.
-extern sCamShake_E360 D_004C53E0_E360[] __asm__("D_004C53E0");
 
 #define MIN_E360(a, b) ((a) <= (b) ? (a) : (b))
 #define MAX_E360(a, b) ((b) <= (a) ? (a) : (b))
@@ -523,14 +516,14 @@ extern "C" void func_0015E360(char* self, int type, float amount, float dist)
         return;
     }
     float scale;
-    float range = D_004C53E0_E360[type].range;
+    float range = D_004C53E0[type].range;
     if (0.0f < dist && 0.0f < range) {
         float t = 2.0f - (dist + dist) / range;
         scale = MAX_E360(MIN_E360(t, 1.0f), 0.0f);
     } else {
         scale = 1.0f;
     }
-    float v = amount * scale * D_004C53E0_E360[type].weight;
+    float v = amount * scale * D_004C53E0[type].weight;
     if (*(float*)(self + 0x454) < v) {
         *(int*)(self + 0x450) = type;
         *(float*)(self + 0x454) = v;
@@ -594,8 +587,8 @@ extern "C" void func_0015E460(char* self)
             func_0015E360(self, 1, k, 0.0f);
     }
     int idx = *(int*)(self + 0x450);
-    float f21 = D_004C53E0_E360[idx].f0;
-    float f22 = D_004C53E0_E360[idx].f4;
+    float f21 = D_004C53E0[idx].base;
+    float f22 = D_004C53E0[idx].spread;
     int sel = D_004C5430[idx];
     char* p = self + 0xC0;
     float t = *(float*)(self + 0x454);
