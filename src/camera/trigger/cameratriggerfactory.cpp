@@ -1,4 +1,5 @@
 #include "common.h"
+#include "bx/math3d.h"
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camaction);
@@ -492,13 +493,9 @@ extern "C" int get_camspline(void* reader, cCTSplineK2** out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00171FA8);
 #ifdef SKIP_ASM
-struct sVec4_171FA8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sBox_171FA8 {
-    sVec4_171FA8 lo;
-    sVec4_171FA8 hi;
+    t4Vector lo;
+    t4Vector hi;
 };
 
 struct sVEbox_171FA8 {
@@ -510,15 +507,15 @@ struct sVEbox_171FA8 {
 struct sVEin_171FA8 {
     short delta;
     short index;
-    int (*fn)(void*, sVec4_171FA8*);
+    int (*fn)(void*, t4Vector*);
 };
 
 extern "C" float func_0040DA10(float x);
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_171FA8 Add_171FA8(const sVec4_171FA8& a, const sVec4_171FA8& b)
+static inline t4Vector Add_171FA8(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_171FA8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -531,9 +528,9 @@ static inline sVec4_171FA8 Add_171FA8(const sVec4_171FA8& a, const sVec4_171FA8&
 }
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_171FA8 Sub_171FA8(const sVec4_171FA8& a, const sVec4_171FA8& b)
+static inline t4Vector Sub_171FA8(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_171FA8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -546,9 +543,9 @@ static inline sVec4_171FA8 Sub_171FA8(const sVec4_171FA8& a, const sVec4_171FA8&
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_171FA8 Scale_171FA8(const sVec4_171FA8& v, float s)
+static inline t4Vector Scale_171FA8(const t4Vector& v, float s)
 {
-    sVec4_171FA8 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -563,7 +560,7 @@ static inline sVec4_171FA8 Scale_171FA8(const sVec4_171FA8& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_171FA8(const sVec4_171FA8& v)
+static inline float Length_171FA8(const t4Vector& v)
 {
     float r;
     int t;
@@ -589,35 +586,35 @@ static inline sBox_171FA8 GetBox_171FA8(char* o)
     return e->fn(o + e->delta);
 }
 
-static inline int Inside_171FA8(char* o, sVec4_171FA8* p)
+static inline int Inside_171FA8(char* o, t4Vector* p)
 {
     sVEin_171FA8* e = &(*(sVEin_171FA8**)(o + 0x24))[7];
     return e->fn(o + e->delta, p);
 }
 
-static inline sVec4_171FA8 Center_171FA8(const sBox_171FA8& b)
+static inline t4Vector Center_171FA8(const sBox_171FA8& b)
 {
     return Scale_171FA8(Add_171FA8(b.lo, b.hi), 0.5f);
 }
 
-extern "C" sVec4_171FA8 func_00171FA8(char* obj, sVec4_171FA8* pos, float step)
+extern "C" t4Vector func_00171FA8(char* obj, t4Vector* pos, float step)
 {
-    sVec4_171FA8 center = Center_171FA8(GetBox_171FA8(obj));
-    sVec4_171FA8 dir = Sub_171FA8(*pos, center);
-    sVec4_171FA8 a = *pos;
-    sVec4_171FA8 b = center;
+    t4Vector center = Center_171FA8(GetBox_171FA8(obj));
+    t4Vector dir = Sub_171FA8(*pos, center);
+    t4Vector a = *pos;
+    t4Vector b = center;
     float k = 2.0f;
     sVEin_171FA8* e;
     while (e = &(*(sVEin_171FA8**)(obj + 0x24))[7], e->fn(obj + e->delta, &a)) {
         b = a;
-        sVec4_171FA8 off = Scale_171FA8(dir, k);
+        t4Vector off = Scale_171FA8(dir, k);
         a = Add_171FA8(center, off);
         k += k;
     }
     float len = Length_171FA8(Sub_171FA8(a, b));
     int n = (int)func_0040DA10(len / step) + 1;
     for (int i = 0; i < n; i++) {
-        sVec4_171FA8 m = Scale_171FA8(Add_171FA8(a, b), 0.5f);
+        t4Vector m = Scale_171FA8(Add_171FA8(a, b), 0.5f);
         e = &(*(sVEin_171FA8**)(obj + 0x24))[7];
         if (e->fn(obj + e->delta, &m)) {
             b = m;
@@ -1108,11 +1105,8 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00173208);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void* func_001622B0(void* self);
 extern void* D_0045C4C8[];
-struct sQuad_00173208 {
-    int v[4];
-} __attribute__((aligned(16)));
 
-extern sQuad_00173208 D_004FF130_00173208 __asm__("D_004FF130");
+extern t4Vector D_004FF130_00173208 __asm__("D_004FF130");
 
 extern "C" void* func_00173208(void* self)
 {
@@ -1127,7 +1121,7 @@ extern "C" void* func_00173208(void* self)
     *(float*)((char*)self + 0x70) = 400.0f;
     *(int*)((char*)self + 0x74) = 0;
     *(float*)((char*)self + 0x78) = 20.0f;
-    *(sQuad_00173208*)((char*)self + 0x40) = D_004FF130_00173208;
+    *(t4Vector*)((char*)self + 0x40) = D_004FF130_00173208;
     *(int*)((char*)self + 0xC) = 0x5A;
     *(int*)((char*)self + 0x54) = 0;
     *(int*)((char*)self + 0x50) = 0;
@@ -1158,10 +1152,6 @@ void func_001732B8_impl(void* self, int flags)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001732E8);
 #ifdef SKIP_ASM
-struct sVec4_1732E8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVL_1732E8 {
     short delta;
     short index;
@@ -1171,7 +1161,7 @@ struct sVL_1732E8 {
 struct sVV_1732E8 {
     short delta;
     short index;
-    sVec4_1732E8 (*fn)(void*);
+    t4Vector (*fn)(void*);
 };
 
 struct sVN_1732E8 {
@@ -1187,10 +1177,10 @@ struct sVec2_1732E8 {
 
 extern "C" float func_0031C228(float x);
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
-extern sVec4_1732E8 D_004FF160_1732E8 __asm__("D_004FF160");
+extern t4Vector D_004FF160_1732E8 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (dst += b).
-static inline void AddEq_1732E8(sVec4_1732E8& dst, const sVec4_1732E8& b)
+static inline void AddEq_1732E8(t4Vector& dst, const t4Vector& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1203,9 +1193,9 @@ static inline void AddEq_1732E8(sVec4_1732E8& dst, const sVec4_1732E8& b)
 }
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_1732E8 Sub_1732E8(const sVec4_1732E8& a, const sVec4_1732E8& b)
+static inline t4Vector Sub_1732E8(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1732E8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1218,9 +1208,9 @@ static inline sVec4_1732E8 Sub_1732E8(const sVec4_1732E8& a, const sVec4_1732E8&
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_1732E8 Scale_1732E8(const sVec4_1732E8& v, float s)
+static inline t4Vector Scale_1732E8(const t4Vector& v, float s)
 {
-    sVec4_1732E8 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1290,7 +1280,7 @@ extern "C" void func_001732E8_x(char* self, long key)
     sVL_1732E8* e = &(*(sVL_1732E8**)r)[7];
     if (key != e->fn(r + e->delta))
         return;
-    sVec4_1732E8 a, b, dir;
+    t4Vector a, b, dir;
     {
         char* o1 = *(char**)(self + 0x30);
         sVV_1732E8* e1 = &(*(sVV_1732E8**)o1)[1];
@@ -1314,7 +1304,7 @@ extern "C" void func_001732E8_x(char* self, long key)
     dir.y = c1 * s0;
     dir.z = -s1;
     dir.w = 0.0f;
-    *(sVec4_1732E8*)(self + 0x40) = Sub_1732E8(a, Scale_1732E8(dir, *(float*)(self + 0x70)));
+    *(t4Vector*)(self + 0x40) = Sub_1732E8(a, Scale_1732E8(dir, *(float*)(self + 0x70)));
     sVN_1732E8* v = &(*(sVN_1732E8**)(self + 0x10))[5];
     v->fn(self + v->delta);
 }
@@ -1347,22 +1337,18 @@ extern "C" void* func_00173678(void* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001736E0);
 #ifdef SKIP_ASM
-struct sVec4_1736E0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVE_1736E0 {
     short delta;
     short index;
-    sVec4_1736E0 (*fn)(void*);
+    t4Vector (*fn)(void*);
 };
 
 extern "C" float func_0031C228(float x);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern sVec4_1736E0 D_004FF160_1736E0 __asm__("D_004FF160");
+extern t4Vector D_004FF160_1736E0 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (d += b).
-static inline void AddEq_1736E0(sVec4_1736E0& d, const sVec4_1736E0& b)
+static inline void AddEq_1736E0(t4Vector& d, const t4Vector& b)
 {
     __asm__(
         "lqc2      $vf3, %0\n"
@@ -1375,9 +1361,9 @@ static inline void AddEq_1736E0(sVec4_1736E0& d, const sVec4_1736E0& b)
 }
 
 // PORT: PS2-only VU0 inline asm (d = v * s).
-static inline void ScaleTo_1736E0(sVec4_1736E0& d, const sVec4_1736E0& v, float s)
+static inline void ScaleTo_1736E0(t4Vector& d, const t4Vector& v, float s)
 {
-    sVec4_1736E0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1392,9 +1378,9 @@ static inline void ScaleTo_1736E0(sVec4_1736E0& d, const sVec4_1736E0& v, float 
 }
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_1736E0 Sub_1736E0(const sVec4_1736E0& a, const sVec4_1736E0& b)
+static inline t4Vector Sub_1736E0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1736E0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1407,7 +1393,7 @@ static inline sVec4_1736E0 Sub_1736E0(const sVec4_1736E0& a, const sVec4_1736E0&
 }
 
 // PORT: PS2-only VU0 inline asm (a - b); g++ named-return-value extension.
-static inline sVec4_1736E0 SubN_1736E0(const sVec4_1736E0& a, const sVec4_1736E0& b) return r
+static inline t4Vector SubN_1736E0(const t4Vector& a, const t4Vector& b) return r
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1420,7 +1406,7 @@ static inline sVec4_1736E0 SubN_1736E0(const sVec4_1736E0& a, const sVec4_1736E0
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_1736E0(const sVec4_1736E0& v)
+static inline float Length_1736E0(const t4Vector& v)
 {
     float r;
     int t;
@@ -1503,7 +1489,7 @@ static inline float Wrap_1736E0(float v)
 
 extern "C" void func_001736E0(char* self)
 {
-    sVec4_1736E0 a, b, c;
+    t4Vector a, b, c;
     char* o = *(char**)(self + 0x30);
     sVE_1736E0* e = &(*(sVE_1736E0**)o)[1];
     ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
@@ -1514,14 +1500,14 @@ extern "C" void func_001736E0(char* self)
     e = &(*(sVE_1736E0**)o)[4];
     ((void (*)(void*, void*))e->fn)(&c, o + e->delta);
     {
-        sVec4_1736E0 t;
+        t4Vector t;
         ScaleTo_1736E0(t, D_004FF160_1736E0, *(float*)(self + 0x6C));
         AddEq_1736E0(a, t);
         ScaleTo_1736E0(t, c, *(float*)(self + 0x74));
         AddEq_1736E0(a, t);
     }
-    *(sVec4_1736E0*)(self + 0x20) = a;
-    sVec4_1736E0 d = Sub_1736E0(a, *(sVec4_1736E0*)(self + 0x40));
+    *(t4Vector*)(self + 0x20) = a;
+    t4Vector d = Sub_1736E0(a, *(t4Vector*)(self + 0x40));
     float yawD = Atan2_1736E0(d.y, d.x);
     float yawC = Atan2_1736E0(c.y, c.x);
     float diff = Wrap_1736E0(yawC) - yawD;
@@ -1546,8 +1532,8 @@ extern "C" void func_001736E0(char* self)
     float pitchC = Atan2_1736E0(c.z, Len2_1736E0(sVec2_1736E0(c.x, c.y)));
     float tp = pitchC * -*(float*)(self + 0x58) + *(float*)(self + 0x78) * 0.01745329424738884f;
     float pitchN = pitchD + (Wrap_1736E0(tp) - pitchD) * *(float*)(self + 0x60) * 0.01666666753590107f;
-    sVec4_1736E0 dir;
-    sVec4_1736E0 n;
+    t4Vector dir;
+    t4Vector n;
     float sc0, sc1, sc2, sc3;
     func_0031BE50(&sc0, &sc1, yawN);
     func_0031BE50(&sc2, &sc3, pitchN);
@@ -1556,12 +1542,12 @@ extern "C" void func_001736E0(char* self)
     dir.z = -sc2;
     dir.w = 0.0f;
     {
-        sVec4_1736E0 t;
+        t4Vector t;
         ScaleTo_1736E0(t, dir, dist);
         n = SubN_1736E0(a, t);
     }
-    *(sVec4_1736E0*)(self + 0x40) = n;
-    n = SubN_1736E0(a, *(sVec4_1736E0*)(self + 0x40));
+    *(t4Vector*)(self + 0x40) = n;
+    n = SubN_1736E0(a, *(t4Vector*)(self + 0x40));
     float yawE = Atan2_1736E0(n.y, n.x);
     float oy = *(float*)(self + 0x50);
     *(float*)(self + 0x50) = oy + Wrap_1736E0(yawE - oy) * *(float*)(self + 0x64) * 0.01666666753590107f;
@@ -1574,22 +1560,18 @@ extern "C" void func_001736E0(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00173E40);
 #ifdef SKIP_ASM
-struct sV_173E40 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sM_173E40 {
     float m[4][4];
 } __attribute__((aligned(16)));
 
 struct sPair_173E40 {
-    sV_173E40 a;
-    sV_173E40 b;
+    t4Vector a;
+    t4Vector b;
 };
 
 extern sM_173E40 D_004FF1A0;
-extern sV_173E40 D_004FF150;
-extern sV_173E40 D_004FF160_v173E40 __asm__("D_004FF160");
+extern t4Vector D_004FF150;
+extern t4Vector D_004FF160_v173E40 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 extern "C" sPair_173E40 func_0031B748(sM_173E40* m);
 
@@ -1652,7 +1634,7 @@ static inline void vu0MulMtx_173E40(sM_173E40* dst, const sM_173E40* a, const sM
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_173E40(sM_173E40* m, const sV_173E40& v)
+static inline void vu0TransMtx_173E40(sM_173E40* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1677,7 +1659,7 @@ static inline void SinCos_173E40(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void RotAxis_173E40(sM_173E40* m, const sV_173E40& axis, float angle)
+static inline void RotAxis_173E40(sM_173E40* m, const t4Vector& axis, float angle)
 {
     sM_173E40 r;
     float s;
@@ -1717,7 +1699,7 @@ extern "C" sPair_173E40 func_00173E40(char* src)
 {
     sM_173E40 m;
     vu0CopyMtx_173E40(&m, &D_004FF1A0);
-    vu0TransMtx_173E40(&m, *(sV_173E40*)(src + 0x40));
+    vu0TransMtx_173E40(&m, *(t4Vector*)(src + 0x40));
     RotAxis_173E40(&m, D_004FF150, -*(float*)(src + 0x54));
     RotAxis_173E40(&m, D_004FF160_v173E40, *(float*)(src + 0x50));
     return func_0031B748(&m);
@@ -1757,23 +1739,19 @@ void* func_001741D8(void* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00174200);
 #ifdef SKIP_ASM
-struct sVec4_174200 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVE_174200 {
     short delta;
     short index;
-    sVec4_174200 (*fn)(void*);
+    t4Vector (*fn)(void*);
 };
 
 extern "C" float func_0031C228(float x);
-extern sVec4_174200 D_004FF160_174200 __asm__("D_004FF160");
+extern t4Vector D_004FF160_174200 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_174200 Add_174200(const sVec4_174200& a, const sVec4_174200& b)
+static inline t4Vector Add_174200(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_174200 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1786,9 +1764,9 @@ static inline sVec4_174200 Add_174200(const sVec4_174200& a, const sVec4_174200&
 }
 
 // PORT: PS2-only VU0 inline asm (d = a + b).
-static inline void AddTo_174200(sVec4_174200& d, const sVec4_174200& a, const sVec4_174200& b)
+static inline void AddTo_174200(t4Vector& d, const t4Vector& a, const t4Vector& b)
 {
-    sVec4_174200 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1801,9 +1779,9 @@ static inline void AddTo_174200(sVec4_174200& d, const sVec4_174200& a, const sV
 }
 
 // PORT: PS2-only VU0 inline asm (d = v * s).
-static inline void ScaleTo_174200(sVec4_174200& d, const sVec4_174200& v, float s)
+static inline void ScaleTo_174200(t4Vector& d, const t4Vector& v, float s)
 {
-    sVec4_174200 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1818,9 +1796,9 @@ static inline void ScaleTo_174200(sVec4_174200& d, const sVec4_174200& v, float 
 }
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_174200 Sub_174200(const sVec4_174200& a, const sVec4_174200& b)
+static inline t4Vector Sub_174200(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_174200 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1833,9 +1811,9 @@ static inline sVec4_174200 Sub_174200(const sVec4_174200& a, const sVec4_174200&
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_174200 Scale_174200(const sVec4_174200& v, float s)
+static inline t4Vector Scale_174200(const t4Vector& v, float s)
 {
-    sVec4_174200 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1894,14 +1872,14 @@ extern "C" void func_00174200(char* self)
     *(float*)(self + 0x78) = *(float*)(act + 0x1C);
     *(float*)(self + 0x00) = *(float*)(act + 0x14);
     *(float*)(self + 0x74) = *(float*)(act + 0x20);
-    sVec4_174200 p;
+    t4Vector p;
     if (*(int*)(act + 0x24) == 1) {
         p.x = *(float*)(act + 0x28);
         p.y = *(float*)(act + 0x2C);
         p.z = *(float*)(act + 0x30);
         p.w = 1.0f;
     } else {
-        sVec4_174200 c, a, t, b;
+        t4Vector c, a, t, b;
         char* o = *(char**)(self + 0x30);
         sVE_174200* e = &(*(sVE_174200**)o)[1];
         ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
@@ -1911,17 +1889,17 @@ extern "C" void func_00174200(char* self)
         ((void (*)(void*, void*))e->fn)(&b, o + e->delta);
         ScaleTo_174200(t, b, k);
         AddTo_174200(c, a, t);
-        sVec4_174200 t2;
+        t4Vector t2;
         ScaleTo_174200(t2, D_004FF160_174200, *(float*)(self + 0x6C));
         AddTo_174200(p, c, t2);
     }
-    *(sVec4_174200*)(self + 0x20) = p;
+    *(t4Vector*)(self + 0x20) = p;
     {
         char* o = *(char**)(*(char**)(self + 0x80) + 8);
         sVE_174200* e = &(*(sVE_174200**)(o + 0x24))[6];
         ((void (*)(void*, void*))e->fn)(o + e->delta, self + 0x40);
     }
-    sVec4_174200 d = Sub_174200(p, *(sVec4_174200*)(self + 0x40));
+    t4Vector d = Sub_174200(p, *(t4Vector*)(self + 0x40));
     *(float*)(self + 0x50) = Atan2_174200(d.y, d.x);
     *(float*)(self + 0x54) = Atan2_174200(d.z, Len2_174200(sVec2_174200(d.x, d.y)));
 }
@@ -1930,14 +1908,10 @@ extern "C" void func_00174200(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001744B0);
 #ifdef SKIP_ASM
-struct sVec4_1744B0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVE_1744B0 {
     short delta;
     short index;
-    sVec4_1744B0 (*fn)(void*);
+    t4Vector (*fn)(void*);
 };
 
 struct sVEL_1744B0 {
@@ -1947,12 +1921,12 @@ struct sVEL_1744B0 {
 };
 
 extern "C" float func_0031C228(float x);
-extern sVec4_1744B0 D_004FF160_1744B0 __asm__("D_004FF160");
+extern t4Vector D_004FF160_1744B0 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_1744B0 Add_1744B0(const sVec4_1744B0& a, const sVec4_1744B0& b)
+static inline t4Vector Add_1744B0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1744B0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1965,9 +1939,9 @@ static inline sVec4_1744B0 Add_1744B0(const sVec4_1744B0& a, const sVec4_1744B0&
 }
 
 // PORT: PS2-only VU0 inline asm (d = a + b).
-static inline void AddTo_1744B0(sVec4_1744B0& d, const sVec4_1744B0& a, const sVec4_1744B0& b)
+static inline void AddTo_1744B0(t4Vector& d, const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1744B0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1980,9 +1954,9 @@ static inline void AddTo_1744B0(sVec4_1744B0& d, const sVec4_1744B0& a, const sV
 }
 
 // PORT: PS2-only VU0 inline asm (d = v * s).
-static inline void ScaleTo_1744B0(sVec4_1744B0& d, const sVec4_1744B0& v, float s)
+static inline void ScaleTo_1744B0(t4Vector& d, const t4Vector& v, float s)
 {
-    sVec4_1744B0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1997,9 +1971,9 @@ static inline void ScaleTo_1744B0(sVec4_1744B0& d, const sVec4_1744B0& v, float 
 }
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_1744B0 Sub_1744B0(const sVec4_1744B0& a, const sVec4_1744B0& b)
+static inline t4Vector Sub_1744B0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1744B0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -2012,9 +1986,9 @@ static inline sVec4_1744B0 Sub_1744B0(const sVec4_1744B0& a, const sVec4_1744B0&
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_1744B0 Scale_1744B0(const sVec4_1744B0& v, float s)
+static inline t4Vector Scale_1744B0(const t4Vector& v, float s)
 {
-    sVec4_1744B0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -2076,14 +2050,14 @@ extern "C" void func_001744B0(char* self, long a1)
             return;
     }
     char* act = *(char**)(self + 0x80);
-    sVec4_1744B0 p;
+    t4Vector p;
     if (*(int*)(act + 0x24) == 1) {
         p.x = *(float*)(act + 0x28);
         p.y = *(float*)(act + 0x2C);
         p.z = *(float*)(act + 0x30);
         p.w = 1.0f;
     } else {
-        sVec4_1744B0 c, a, t, b;
+        t4Vector c, a, t, b;
         char* o = *(char**)(self + 0x30);
         sVE_1744B0* e = &(*(sVE_1744B0**)o)[1];
         ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
@@ -2093,7 +2067,7 @@ extern "C" void func_001744B0(char* self, long a1)
         ((void (*)(void*, void*))e->fn)(&b, o + e->delta);
         ScaleTo_1744B0(t, b, k);
         AddTo_1744B0(c, a, t);
-        sVec4_1744B0 t2;
+        t4Vector t2;
         ScaleTo_1744B0(t2, D_004FF160_1744B0, *(float*)(self + 0x6C));
         AddTo_1744B0(p, c, t2);
     }
@@ -2109,7 +2083,7 @@ extern "C" void func_001744B0(char* self, long a1)
         sVE_1744B0* e = &(*(sVE_1744B0**)(o + 0x24))[6];
         ((void (*)(void*, void*))e->fn)(o + e->delta, self + 0x40);
     }
-    sVec4_1744B0 d = Sub_1744B0(p, *(sVec4_1744B0*)(self + 0x40));
+    t4Vector d = Sub_1744B0(p, *(t4Vector*)(self + 0x40));
     *(float*)(self + 0x50) = Atan2_1744B0(d.y, d.x);
     *(float*)(self + 0x54) = Atan2_1744B0(d.z, Len2_1744B0(sVec2_1744B0(d.x, d.y)));
 }
@@ -2964,13 +2938,9 @@ extern "C" int func_00176800(int arg0) {
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00176808);
 #ifdef SKIP_ASM
-struct sVec4A16 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-extern "C" void func_00176808(float* v, sVec4A16* out)
+extern "C" void func_00176808(float* v, t4Vector* out)
 {
-    sVec4A16 t;
+    t4Vector t;
     t.x = v[0];
     t.y = v[1];
     t.z = v[2];
@@ -3944,26 +3914,22 @@ extern "C" void func_00177EC8(void* self, void* out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00177EF8);
 #ifdef SKIP_ASM
-struct sVec_00177EF8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVEa_00177EF8 {
     short delta;
     short index;
-    sVec_00177EF8* (*fn)(void*);
+    t4Vector* (*fn)(void*);
 };
 
 struct sVEb_00177EF8 {
     short delta;
     short index;
-    sVec_00177EF8 (*fn)(void*);
+    t4Vector (*fn)(void*);
 };
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec_00177EF8 ctScale_00177EF8(const sVec_00177EF8& v, float s)
+static inline t4Vector ctScale_00177EF8(const t4Vector& v, float s)
 {
-    sVec_00177EF8 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -3978,9 +3944,9 @@ static inline sVec_00177EF8 ctScale_00177EF8(const sVec_00177EF8& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec_00177EF8 ctAdd_00177EF8(const sVec_00177EF8& a, const sVec_00177EF8& b)
+static inline t4Vector ctAdd_00177EF8(const t4Vector& a, const t4Vector& b)
 {
-    sVec_00177EF8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3992,18 +3958,18 @@ static inline sVec_00177EF8 ctAdd_00177EF8(const sVec_00177EF8& a, const sVec_00
     return r;
 }
 
-static inline sVec_00177EF8 ctGetB_00177EF8(void* self)
+static inline t4Vector ctGetB_00177EF8(void* self)
 {
     char* o2 = *(char**)((char*)self + 0x30);
     sVEb_00177EF8* e2 = &(*(sVEb_00177EF8**)o2)[1];
     return e2->fn(o2 + e2->delta);
 }
 
-extern "C" sVec_00177EF8 func_00177EF8(void* self)
+extern "C" t4Vector func_00177EF8(void* self)
 {
     char* o = *(char**)(*(char**)((char*)self + 0x30) + 4) + 0x6C0;
     sVEa_00177EF8* e = &(*(sVEa_00177EF8**)o)[5];
-    sVec_00177EF8* v = e->fn(o + e->delta);
+    t4Vector* v = e->fn(o + e->delta);
     return ctAdd_00177EF8(ctScale_00177EF8(*v, 0.19999998807907104f), ctScale_00177EF8(ctGetB_00177EF8(self), 0.800000011920929f));
 }
 #endif
@@ -4012,12 +3978,12 @@ extern "C" sVec_00177EF8 func_00177EF8(void* self)
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00177FC0);
 #ifdef SKIP_ASM
 int func_0011FE98_7FC0(void*) __asm__("func_0011FE98__FPv");
-extern sVec_00177EF8 D_004FF160_7FC0 __asm__("D_004FF160");
+extern t4Vector D_004FF160_7FC0 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec_00177EF8 ctSub_7FC0(const sVec_00177EF8& a, const sVec_00177EF8& b)
+static inline t4Vector ctSub_7FC0(const t4Vector& a, const t4Vector& b)
 {
-    sVec_00177EF8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4030,7 +3996,7 @@ static inline sVec_00177EF8 ctSub_7FC0(const sVec_00177EF8& a, const sVec_00177E
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float ctLength_7FC0(const sVec_00177EF8& v)
+static inline float ctLength_7FC0(const t4Vector& v)
 {
     float r;
     int t;
@@ -4051,7 +4017,7 @@ static inline float ctLength_7FC0(const sVec_00177EF8& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector *= 1/len).
-static inline void ctDivEq_7FC0(sVec_00177EF8& v, float len)
+static inline void ctDivEq_7FC0(t4Vector& v, float len)
 {
     int t;
     __asm__(
@@ -4066,14 +4032,14 @@ static inline void ctDivEq_7FC0(sVec_00177EF8& v, float len)
         : "m"(v), "f"(len));
 }
 
-static inline sVec_00177EF8* ctGetA_7FC0(void* self)
+static inline t4Vector* ctGetA_7FC0(void* self)
 {
     char* o = *(char**)((char*)self + 0x30);
     sVEa_00177EF8* e = &(*(sVEa_00177EF8**)o)[10];
     return e->fn(o + e->delta);
 }
 
-static inline sVec_00177EF8 ctGetC_7FC0(void* self)
+static inline t4Vector ctGetC_7FC0(void* self)
 {
     char* o = *(char**)((char*)self + 0x30);
     sVEb_00177EF8* e = &(*(sVEb_00177EF8**)o)[4];
@@ -4081,9 +4047,9 @@ static inline sVec_00177EF8 ctGetC_7FC0(void* self)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar, vector by address).
-static inline sVec_00177EF8 ctScaleP_7FC0(const sVec_00177EF8* v, float s)
+static inline t4Vector ctScaleP_7FC0(const t4Vector* v, float s)
 {
-    sVec_00177EF8 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4097,9 +4063,9 @@ static inline sVec_00177EF8 ctScaleP_7FC0(const sVec_00177EF8* v, float s)
     return r;
 }
 
-extern "C" sVec_00177EF8 func_00177FC0(void* self, const sVec_00177EF8& in)
+extern "C" t4Vector func_00177FC0(void* self, const t4Vector& in)
 {
-    sVec_00177EF8 dir;
+    t4Vector dir;
     if (func_0011FE98_7FC0(*(void**)(*(char**)((char*)self + 0x30) + 4)) == 5)
         dir = *ctGetA_7FC0(self);
     else
@@ -4109,14 +4075,14 @@ extern "C" sVec_00177EF8 func_00177FC0(void* self, const sVec_00177EF8& in)
         dir = ctGetC_7FC0(self);
     else
         ctDivEq_7FC0(dir, len);
-    sVec_00177EF8 v = ctAdd_00177EF8(ctScale_00177EF8(*(sVec_00177EF8*)((char*)self + 0x390), 0.9599999785423279f), ctScale_00177EF8(dir, 0.04000002145767212f));
+    t4Vector v = ctAdd_00177EF8(ctScale_00177EF8(*(t4Vector*)((char*)self + 0x390), 0.9599999785423279f), ctScale_00177EF8(dir, 0.04000002145767212f));
     len = ctLength_7FC0(v);
     if (len < 0.019999999552965164f)
         v = dir;
     else
         ctDivEq_7FC0(v, len);
-    *(sVec_00177EF8*)((char*)self + 0x390) = v;
-    sVec_00177EF8 r = ctSub_7FC0(ctAdd_00177EF8(func_00177EF8(self), ctScaleP_7FC0(&D_004FF160_7FC0, 30.0f)), ctScale_00177EF8(v, 250.0f));
+    *(t4Vector*)((char*)self + 0x390) = v;
+    t4Vector r = ctSub_7FC0(ctAdd_00177EF8(func_00177EF8(self), ctScaleP_7FC0(&D_004FF160_7FC0, 30.0f)), ctScale_00177EF8(v, 250.0f));
     return r;
 }
 #endif
@@ -4124,19 +4090,15 @@ extern "C" sVec_00177EF8 func_00177FC0(void* self, const sVec_00177EF8& in)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178208);
 #ifdef SKIP_ASM
-struct sVec4_8208 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sCamInfo_00178BB0;
-extern sVec4_8208 D_004FF160_8208 __asm__("D_004FF160");
+extern t4Vector D_004FF160_8208 __asm__("D_004FF160");
 extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_8208 Sub_8208(const sVec4_8208& a, const sVec4_8208& b)
+static inline t4Vector Sub_8208(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_8208 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4149,9 +4111,9 @@ static inline sVec4_8208 Sub_8208(const sVec4_8208& a, const sVec4_8208& b)
 }
 
 // PORT: PS2-only VU0 inline asm (*v * s).
-static inline sVec4_8208 ScaleP_8208(const sVec4_8208* v, float s)
+static inline t4Vector ScaleP_8208(const t4Vector* v, float s)
 {
-    sVec4_8208 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4166,7 +4128,7 @@ static inline sVec4_8208 ScaleP_8208(const sVec4_8208* v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_8208(const sVec4_8208& v)
+static inline float Length_8208(const t4Vector& v)
 {
     float r;
     int t;
@@ -4186,9 +4148,9 @@ static inline float Length_8208(const sVec4_8208& v)
     return r;
 }
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_8208 Add_8208(const sVec4_8208& a, const sVec4_8208& b)
+static inline t4Vector Add_8208(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_8208 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4201,9 +4163,9 @@ static inline sVec4_8208 Add_8208(const sVec4_8208& a, const sVec4_8208& b)
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_8208 Scale_8208(const sVec4_8208& v, float s)
+static inline t4Vector Scale_8208(const t4Vector& v, float s)
 {
-    sVec4_8208 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4218,9 +4180,9 @@ static inline sVec4_8208 Scale_8208(const sVec4_8208& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (dst = a + b).
-static inline void AddD_8208(sVec4_8208& dst, const sVec4_8208& a, const sVec4_8208& b)
+static inline void AddD_8208(t4Vector& dst, const t4Vector& a, const t4Vector& b)
 {
-    sVec4_8208 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4240,13 +4202,13 @@ static inline float Sqrt_8208(float x)
     return r;
 }
 
-extern "C" sVec4_8208 f_177FC0_8208(void* self, const sVec4_8208& v) __asm__("func_00177FC0");
-extern "C" sVec4_8208 f_177EF8_8208(void* self) __asm__("func_00177EF8");
+extern "C" t4Vector f_177FC0_8208(void* self, const t4Vector& v) __asm__("func_00177FC0");
+extern "C" t4Vector f_177EF8_8208(void* self) __asm__("func_00177EF8");
 extern "C" int func_0011FE98(void* self);
 
 struct sCamInfo_8208 {
     char pad0[0x20];
-    sVec4_8208 pos;   // 0x20
+    t4Vector pos;   // 0x20
     char pad30[0x38];
 } __attribute__((aligned(16)));
 
@@ -4259,7 +4221,7 @@ extern "C" void func_00178208_v(char* self)
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     *(float*)self = 0.7853981852531433f;
-    sVec4_8208 d = Sub_8208(*(sVec4_8208*)(self + 0x20), *(sVec4_8208*)(self + 0x40));
+    t4Vector d = Sub_8208(*(t4Vector*)(self + 0x20), *(t4Vector*)(self + 0x40));
     float len = Length_8208(d);
     float t;
     if (len >= 150.0f) {
@@ -4276,33 +4238,29 @@ extern "C" void func_00178208_v(char* self)
         f = Sqrt_8208(f);
     }
     {
-        sVec4_8208 s = Scale_8208(*(sVec4_8208*)(self + 0x40), f);
+        t4Vector s = Scale_8208(*(t4Vector*)(self + 0x40), f);
         float g = 1.0f - f;
         AddD_8208(d, s, Scale_8208(f_177FC0_8208(self, info.pos), g));
-        *(sVec4_8208*)(self + 0x40) = d;
+        *(t4Vector*)(self + 0x40) = d;
     }
     AddD_8208(d, f_177EF8_8208(self), ScaleP_8208(&D_004FF160_8208, 37.0f));
-    *(sVec4_8208*)(self + 0x20) = d;
+    *(t4Vector*)(self + 0x20) = d;
 }
 #endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001783E0);
 #ifdef SKIP_ASM
-struct sVec4_1783E0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVE_1783E0 {
     short delta;
     short index;
-    sVec4_1783E0 (*fn)(void*);
+    t4Vector (*fn)(void*);
 };
 
-extern sVec4_1783E0 D_004FF160_1783E0 __asm__("D_004FF160");
+extern t4Vector D_004FF160_1783E0 __asm__("D_004FF160");
 extern "C" void f_166C60_1783E0(void* self, long id) __asm__("func_00166C60");
-extern "C" sVec4_1783E0 f_177FC0_1783E0(void* self, const sVec4_1783E0& v) __asm__("func_00177FC0");
-extern "C" sVec4_1783E0 f_177EF8_1783E0(void* self) __asm__("func_00177EF8");
+extern "C" t4Vector f_177FC0_1783E0(void* self, const t4Vector& v) __asm__("func_00177FC0");
+extern "C" t4Vector f_177EF8_1783E0(void* self) __asm__("func_00177EF8");
 
 class cCamTarget_1783E0 {
 public:
@@ -4325,9 +4283,9 @@ public:
 };
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_1783E0 Add_1783E0(const sVec4_1783E0& a, const sVec4_1783E0& b)
+static inline t4Vector Add_1783E0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1783E0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4340,9 +4298,9 @@ static inline sVec4_1783E0 Add_1783E0(const sVec4_1783E0& a, const sVec4_1783E0&
 }
 
 // PORT: PS2-only VU0 inline asm (*v * s).
-static inline sVec4_1783E0 ScaleP_1783E0(const sVec4_1783E0* v, float s)
+static inline t4Vector ScaleP_1783E0(const t4Vector* v, float s)
 {
-    sVec4_1783E0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4362,11 +4320,11 @@ extern "C" void func_001783E0(cCamCtrl_1783E0* self, long id)
     if (id == ((cCamTarget_1783E0*)(rider + 0x6C0))->v07()) {
         char* o = *(char**)((char*)self + 0x30);
         sVE_1783E0* e = &(*(sVE_1783E0**)o)[4];
-        *(sVec4_1783E0*)((char*)self + 0x390) = e->fn(o + e->delta);
+        *(t4Vector*)((char*)self + 0x390) = e->fn(o + e->delta);
         o = *(char**)((char*)self + 0x30);
         e = &(*(sVE_1783E0**)o)[3];
-        *(sVec4_1783E0*)((char*)self + 0x40) = f_177FC0_1783E0(self, e->fn(o + e->delta));
-        *(sVec4_1783E0*)((char*)self + 0x20) = Add_1783E0(f_177EF8_1783E0(self), ScaleP_1783E0(&D_004FF160_1783E0, 37.0f));
+        *(t4Vector*)((char*)self + 0x40) = f_177FC0_1783E0(self, e->fn(o + e->delta));
+        *(t4Vector*)((char*)self + 0x20) = Add_1783E0(f_177EF8_1783E0(self), ScaleP_1783E0(&D_004FF160_1783E0, 37.0f));
         f_166C60_1783E0(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -4377,17 +4335,16 @@ extern "C" void func_001783E0(cCamCtrl_1783E0* self, long id)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178520);
 #ifdef SKIP_ASM
-struct func_00178520_sVec4 { float x, y, z, w; } __attribute__((aligned(16)));
 extern void* D_0045CC50[];
 extern "C" void* func_00162318(void* self);
 
-extern "C" void* func_00178520(void* self, func_00178520_sVec4* a, func_00178520_sVec4* b)
+extern "C" void* func_00178520(void* self, t4Vector* a, t4Vector* b)
 {
     func_00162318(self);
     *(int*)((char*)self + 0xC) = 0x43;
     *(void***)((char*)self + 0x10) = D_0045CC50;
-    *(func_00178520_sVec4*)((char*)self + 0x390) = *a;
-    *(func_00178520_sVec4*)((char*)self + 0x3A0) = *b;
+    *(t4Vector*)((char*)self + 0x390) = *a;
+    *(t4Vector*)((char*)self + 0x3A0) = *b;
     return self;
 }
 #endif
@@ -4430,18 +4387,13 @@ extern "C" void func_001785C0(void* self, void* out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001785F0);
 #ifdef SKIP_ASM
-struct sVec4_1785F0
-{
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-
-struct sVEntry_1785F0 { short delta; short index; sVec4_1785F0 (*fn)(void*); };
+struct sVEntry_1785F0 { short delta; short index; t4Vector (*fn)(void*); };
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_1785F0 Sub_1785F0(const sVec4_1785F0& a, const sVec4_1785F0& b)
+static inline t4Vector Sub_1785F0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1785F0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4454,9 +4406,9 @@ static inline sVec4_1785F0 Sub_1785F0(const sVec4_1785F0& a, const sVec4_1785F0&
 }
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_1785F0 Add_1785F0(const sVec4_1785F0& a, const sVec4_1785F0& b)
+static inline t4Vector Add_1785F0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1785F0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4469,9 +4421,9 @@ static inline sVec4_1785F0 Add_1785F0(const sVec4_1785F0& a, const sVec4_1785F0&
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_1785F0 Scale_1785F0(const sVec4_1785F0& v, float s)
+static inline t4Vector Scale_1785F0(const t4Vector& v, float s)
 {
-    sVec4_1785F0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4486,9 +4438,9 @@ static inline sVec4_1785F0 Scale_1785F0(const sVec4_1785F0& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (normalize via rsqrt).
-static inline sVec4_1785F0 Normalize_1785F0(const sVec4_1785F0& v)
+static inline t4Vector Normalize_1785F0(const t4Vector& v)
 {
-    sVec4_1785F0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "vaddw.x   $vf6, $vf0, $vf0w\n"
@@ -4507,7 +4459,7 @@ static inline sVec4_1785F0 Normalize_1785F0(const sVec4_1785F0& v)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_1785F0(const sVec4_1785F0& a, const sVec4_1785F0& b)
+static inline float Dot_1785F0(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -4526,7 +4478,7 @@ static inline float Dot_1785F0(const sVec4_1785F0& a, const sVec4_1785F0& b)
     return r;
 }
 
-static inline sVec4_1785F0 GetPos_1785F0(char* self)
+static inline t4Vector GetPos_1785F0(char* self)
 {
     char* o = *(char**)(self + 0x30);
     sVEntry_1785F0* e = &(*(sVEntry_1785F0**)o)[1];
@@ -4534,14 +4486,14 @@ static inline sVec4_1785F0 GetPos_1785F0(char* self)
 }
 
 // The unit declares func_001785F0 later with its own vector type; bind this body by asm label.
-extern "C" sVec4_1785F0 func_001785F0_impl(char* self) __asm__("func_001785F0");
+extern "C" t4Vector func_001785F0_impl(char* self) __asm__("func_001785F0");
 
-extern "C" sVec4_1785F0 func_001785F0_impl(char* self)
+extern "C" t4Vector func_001785F0_impl(char* self)
 {
-    sVec4_1785F0 dir = Normalize_1785F0(Sub_1785F0(*(sVec4_1785F0*)(self + 0x390), *(sVec4_1785F0*)(self + 0x3A0)));
-    sVec4_1785F0 rel = Sub_1785F0(GetPos_1785F0(self), *(sVec4_1785F0*)(self + 0x390));
-    sVec4_1785F0 off = Scale_1785F0(dir, Dot_1785F0(rel, dir) / Dot_1785F0(dir, dir));
-    sVec4_1785F0 res = Sub_1785F0(Add_1785F0(*(sVec4_1785F0*)(self + 0x390), off), Scale_1785F0(dir, 1500.0f));
+    t4Vector dir = Normalize_1785F0(Sub_1785F0(*(t4Vector*)(self + 0x390), *(t4Vector*)(self + 0x3A0)));
+    t4Vector rel = Sub_1785F0(GetPos_1785F0(self), *(t4Vector*)(self + 0x390));
+    t4Vector off = Scale_1785F0(dir, Dot_1785F0(rel, dir) / Dot_1785F0(dir, dir));
+    t4Vector res = Sub_1785F0(Add_1785F0(*(t4Vector*)(self + 0x390), off), Scale_1785F0(dir, 1500.0f));
     return res;
 }
 #endif
@@ -4549,22 +4501,18 @@ extern "C" sVec4_1785F0 func_001785F0_impl(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178758);
 #ifdef SKIP_ASM
-struct sVec4_178758 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVE_178758 {
     short delta;
     short index;
-    sVec4_178758 (*fn)(void*);
+    t4Vector (*fn)(void*);
 };
 
-extern sVec4_178758 D_004FF160_178758 __asm__("D_004FF160");
+extern t4Vector D_004FF160_178758 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_178758 Add_178758(const sVec4_178758& a, const sVec4_178758& b)
+static inline t4Vector Add_178758(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_178758 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4577,9 +4525,9 @@ static inline sVec4_178758 Add_178758(const sVec4_178758& a, const sVec4_178758&
 }
 
 // PORT: PS2-only VU0 inline asm (*v * s).
-static inline sVec4_178758 ScaleP_178758(const sVec4_178758* v, float s)
+static inline t4Vector ScaleP_178758(const t4Vector* v, float s)
 {
-    sVec4_178758 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4593,15 +4541,15 @@ static inline sVec4_178758 ScaleP_178758(const sVec4_178758* v, float s)
     return r;
 }
 
-static inline sVec4_178758 CallA_178758(char* self)
+static inline t4Vector CallA_178758(char* self)
 {
     char* o = *(char**)(self + 0x30);
     sVE_178758* e = &(*(sVE_178758**)o)[1];
     return e->fn(o + e->delta);
 }
 
-extern "C" sVec4_178758 f_178758(char* self) __asm__("func_00178758");
-extern "C" sVec4_178758 f_178758(char* self)
+extern "C" t4Vector f_178758(char* self) __asm__("func_00178758");
+extern "C" t4Vector f_178758(char* self)
 {
     return Add_178758(CallA_178758(self), ScaleP_178758(&D_004FF160_178758, -100.0f));
 }
@@ -4610,24 +4558,20 @@ extern "C" sVec4_178758 f_178758(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001787E0);
 #ifdef SKIP_ASM
-struct sVec4_1787E0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sCamInfo_1787E0 {
     char data[0x68];
 } __attribute__((aligned(16)));
 
-extern sVec4_1787E0 D_004FF140_1787E0 __asm__("D_004FF140");
+extern t4Vector D_004FF140_1787E0 __asm__("D_004FF140");
 extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
-extern "C" sVec4_1787E0 f_1785F0_1787E0(void* self) __asm__("func_001785F0");
-extern "C" sVec4_1787E0 f_178758_1787E0(void* self) __asm__("func_00178758");
+extern "C" t4Vector f_1785F0_1787E0(void* self) __asm__("func_001785F0");
+extern "C" t4Vector f_178758_1787E0(void* self) __asm__("func_00178758");
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_1787E0 Sub_1787E0(const sVec4_1787E0& a, const sVec4_1787E0& b)
+static inline t4Vector Sub_1787E0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1787E0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4640,9 +4584,9 @@ static inline sVec4_1787E0 Sub_1787E0(const sVec4_1787E0& a, const sVec4_1787E0&
 }
 
 // PORT: PS2-only VU0 inline asm (*v * s).
-static inline sVec4_1787E0 ScaleP_1787E0(const sVec4_1787E0* v, float s)
+static inline t4Vector ScaleP_1787E0(const t4Vector* v, float s)
 {
-    sVec4_1787E0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4657,7 +4601,7 @@ static inline sVec4_1787E0 ScaleP_1787E0(const sVec4_1787E0* v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place vector times scalar).
-static inline void ScaleEq_1787E0(sVec4_1787E0& v, float s)
+static inline void ScaleEq_1787E0(t4Vector& v, float s)
 {
     int t;
     __asm__(
@@ -4672,7 +4616,7 @@ static inline void ScaleEq_1787E0(sVec4_1787E0& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_1787E0(const sVec4_1787E0& v)
+static inline float Length_1787E0(const t4Vector& v)
 {
     float r;
     int t;
@@ -4699,15 +4643,15 @@ extern "C" void func_001787E0(char* self)
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     *(float*)self = 0.7853981852531433f;
-    *(sVec4_1787E0*)(self + 0x40) = f_1785F0_1787E0(self);
-    *(sVec4_1787E0*)(self + 0x20) = f_178758_1787E0(self);
-    sVec4_1787E0 d = Sub_1787E0(*(sVec4_1787E0*)(self + 0x20), *(sVec4_1787E0*)(self + 0x40));
+    *(t4Vector*)(self + 0x40) = f_1785F0_1787E0(self);
+    *(t4Vector*)(self + 0x20) = f_178758_1787E0(self);
+    t4Vector d = Sub_1787E0(*(t4Vector*)(self + 0x20), *(t4Vector*)(self + 0x40));
     float len = Length_1787E0(d);
     if (len < 1.0f) {
         d = ScaleP_1787E0(&D_004FF140_1787E0, 600.0f);
     } else if (len > 600.0f) {
         ScaleEq_1787E0(d, 600.0f / len);
-        *(sVec4_1787E0*)(self + 0x40) = Sub_1787E0(*(sVec4_1787E0*)(self + 0x20), d);
+        *(t4Vector*)(self + 0x40) = Sub_1787E0(*(t4Vector*)(self + 0x20), d);
     }
 }
 #endif
@@ -4718,12 +4662,8 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178938);
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
 
-struct sVec4_00178938 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-extern "C" sVec4_00178938 func_001785F0(void* self);
-extern "C" sVec4_00178938 func_00178758(void* self);
+extern "C" t4Vector func_001785F0(void* self);
+extern "C" t4Vector func_00178758(void* self);
 
 class cCamTarget_00178938 {
 public:
@@ -4749,8 +4689,8 @@ extern "C" void func_00178938(cCamCtrl_00178938* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTarget_00178938*)(rider + 0x6C0))->v07()) {
-        *(sVec4_00178938*)((char*)self + 0x40) = func_001785F0(self);
-        *(sVec4_00178938*)((char*)self + 0x20) = func_00178758(self);
+        *(t4Vector*)((char*)self + 0x40) = func_001785F0(self);
+        *(t4Vector*)((char*)self + 0x20) = func_00178758(self);
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -4761,18 +4701,13 @@ extern "C" void func_00178938(cCamCtrl_00178938* self, int id)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001789E8);
 #ifdef SKIP_ASM
-struct sVec4_1789E8
-{
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-
-struct sVEntry_1789E8 { short delta; short index; sVec4_1789E8 (*fn)(void*); };
+struct sVEntry_1789E8 { short delta; short index; t4Vector (*fn)(void*); };
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_1789E8 Sub_1789E8(const sVec4_1789E8& a, const sVec4_1789E8& b)
+static inline t4Vector Sub_1789E8(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1789E8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4785,9 +4720,9 @@ static inline sVec4_1789E8 Sub_1789E8(const sVec4_1789E8& a, const sVec4_1789E8&
 }
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_1789E8 Add_1789E8(const sVec4_1789E8& a, const sVec4_1789E8& b)
+static inline t4Vector Add_1789E8(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1789E8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4800,9 +4735,9 @@ static inline sVec4_1789E8 Add_1789E8(const sVec4_1789E8& a, const sVec4_1789E8&
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_1789E8 Scale_1789E8(const sVec4_1789E8& v, float s)
+static inline t4Vector Scale_1789E8(const t4Vector& v, float s)
 {
-    sVec4_1789E8 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4817,9 +4752,9 @@ static inline sVec4_1789E8 Scale_1789E8(const sVec4_1789E8& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (normalize via rsqrt).
-static inline sVec4_1789E8 Normalize_1789E8(const sVec4_1789E8& v)
+static inline t4Vector Normalize_1789E8(const t4Vector& v)
 {
-    sVec4_1789E8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "vaddw.x   $vf6, $vf0, $vf0w\n"
@@ -4838,7 +4773,7 @@ static inline sVec4_1789E8 Normalize_1789E8(const sVec4_1789E8& v)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Length_1789E8(const sVec4_1789E8& v)
+static inline float Length_1789E8(const t4Vector& v)
 {
     float r;
     int t;
@@ -4859,7 +4794,7 @@ static inline float Length_1789E8(const sVec4_1789E8& v)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
-static inline void DivEq_1789E8(sVec4_1789E8& v, float s)
+static inline void DivEq_1789E8(t4Vector& v, float s)
 {
     int t;
     __asm__(
@@ -4876,7 +4811,7 @@ static inline void DivEq_1789E8(sVec4_1789E8& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_1789E8(const sVec4_1789E8& a, const sVec4_1789E8& b)
+static inline float Dot_1789E8(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -4895,15 +4830,11 @@ static inline float Dot_1789E8(const sVec4_1789E8& a, const sVec4_1789E8& b)
     return r;
 }
 
-struct sQuad_1789E8
-{
-    float v[4];
-} __attribute__((aligned(16)));
-extern sQuad_1789E8 D_004FF140_v1789E8 __asm__("D_004FF140");
+extern t4Vector D_004FF140_v1789E8 __asm__("D_004FF140");
 extern void* D_0045CBD8[];
 extern "C" void* func_00162318(void* self);
 
-static inline sVec4_1789E8 Get_1789E8(char* o, int slot)
+static inline t4Vector Get_1789E8(char* o, int slot)
 {
     sVEntry_1789E8* e = &(*(sVEntry_1789E8**)o)[slot];
     return e->fn(o + e->delta);
@@ -4912,18 +4843,18 @@ static inline sVec4_1789E8 Get_1789E8(char* o, int slot)
 extern "C" void* func_001789E8(char* self, char* src)
 {
     func_00162318(self);
-    sVec4_1789E8* d = (sVec4_1789E8*)(self + 0x390);
+    t4Vector* d = (t4Vector*)(self + 0x390);
     *(int*)(self + 0xC) = 0x44;
     *(void***)(self + 0x10) = D_0045CBD8;
     *(int*)(self + 0x3A0) = 0;
-    sVec4_1789E8 dir = (Length_1789E8(Get_1789E8(src, 3)) > 1.0f) ? Normalize_1789E8(Get_1789E8(src, 3)) : Get_1789E8(src, 4);
+    t4Vector dir = (Length_1789E8(Get_1789E8(src, 3)) > 1.0f) ? Normalize_1789E8(Get_1789E8(src, 3)) : Get_1789E8(src, 4);
     *d = dir;
     *(float*)(self + 0x398) = 0.0f;
-    float len = Length_1789E8(*(sVec4_1789E8*)(self + 0x390));
+    float len = Length_1789E8(*(t4Vector*)(self + 0x390));
     if (len > 0.009999999776482582f)
-        DivEq_1789E8(*(sVec4_1789E8*)(self + 0x390), len);
+        DivEq_1789E8(*(t4Vector*)(self + 0x390), len);
     else
-        *(sQuad_1789E8*)(self + 0x390) = D_004FF140_v1789E8;
+        *(t4Vector*)(self + 0x390) = D_004FF140_v1789E8;
     return self;
 }
 #endif
