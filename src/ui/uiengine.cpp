@@ -991,7 +991,146 @@ extern "C" int func_00399920(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiengine", func_00399970);
+#ifdef SKIP_ASM
+struct cUIThing;
+unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+void* func_0039FF50(void* self);
+extern "C" int func_003A0318(void* self, int a);
+extern char D_004A5A58[4];
+
+struct sVE_9970 { short delta; short index; int (*fn)(void*, ...); };
+struct sVEv_9970 { short delta; short index; void (*fn)(void*, ...); };
+
+static inline int inputIs_9970(void* in, int slot)
+{
+    sVE_9970* vt = *(sVE_9970**)((char*)in + 8);
+    return vt[slot].fn((char*)in + vt[slot].delta);
+}
+
+static inline void focusNotify_9970(char* self, int what)
+{
+    char* o = *(char**)(*(char**)(self + 0x5C) + 0xD0);
+    sVEv_9970* vt = *(sVEv_9970**)(o + 8);
+    vt[19].fn(o + vt[19].delta, self, what);
+}
+
+static inline int focusMove_9970(char* self, int dir)
+{
+    char* o = *(char**)(*(char**)(self + 0x5C) + 0xD0);
+    sVE_9970* vt = *(sVE_9970**)(o + 8);
+    return vt[22].fn(o + vt[22].delta, self, dir);
+}
+
+static inline int isClear_9970(int flags)
+{
+    return (flags & 1) == 0;
+}
+
+// List input: up/down move the current item (wrapping when flag 0x80 is set; flag 1 swaps the directions),
+// accept notifies; the listener gets the result.
+extern "C" int func_00399970(char* self, void* in)
+{
+    if (*(unsigned char*)(self + 0x318) == 0)
+        return 0;
+    int result = 0;
+    char* listener = D_004A5A58;
+    char* owner = (char*)func_0039FF50(self);
+    if (*(char**)(owner + 0x14) != 0) {
+        listener = *(char**)(owner + 0x14);
+    }
+    int f;
+    if ((inputIs_9970(in, 19) && isClear_9970(*(int*)(self + 0x14)))
+        || (inputIs_9970(in, 18) && (*(int*)(self + 0x14) & 1))) {
+        int cur = *(unsigned char*)(self + 0x319);
+        if (cur != 0) {
+            *(unsigned char*)(self + 0x319) = cur - 1;
+            focusNotify_9970(self, 9);
+        } else {
+            int f7 = *(int*)(self + 0x14) >> 7;
+            if (f7 & 1) {
+                *(unsigned char*)(self + 0x319) = *(unsigned char*)(self + 0x318) - 1;
+                focusNotify_9970(self, 9);
+            }
+        }
+        if (isClear_9970(*(int*)(self + 0x14)))
+            f = focusMove_9970(self, 0);
+        else
+            f = focusMove_9970(self, 3);
+        if (f & 0x100) {
+            unsigned short ev = cUIThing_getKeyframerEvent((cUIThing*)self, 8);
+            if (ev != 0xFFFF && *(void**)(self + 0x5C) != 0) {
+                cUIScreen_playFrame(*(void**)(self + 0x5C), ev, 1);
+            }
+        }
+        if (f & 1) {
+            result = 1;
+        } else if (f & 0x10) {
+            result = func_003A0318(self, 0);
+        }
+        if (listener != 0) {
+            sVEv_9970* vt = *(sVEv_9970**)listener;
+            vt[2].fn(listener + vt[2].delta, result);
+        }
+        return 1;
+    } else if ((inputIs_9970(in, 20) && isClear_9970(*(int*)(self + 0x14)))
+               || (inputIs_9970(in, 17) && (*(int*)(self + 0x14) & 1))) {
+        int next = *(unsigned char*)(self + 0x319) + 1;
+        if (next < *(unsigned char*)(self + 0x318)) {
+            *(unsigned char*)(self + 0x319) = next;
+            focusNotify_9970(self, 9);
+        } else {
+            int f7 = *(int*)(self + 0x14) >> 7;
+            if (f7 & 1) {
+                *(unsigned char*)(self + 0x319) = 0;
+                focusNotify_9970(self, 9);
+            }
+        }
+        if (isClear_9970(*(int*)(self + 0x14)))
+            f = focusMove_9970(self, 1);
+        else
+            f = focusMove_9970(self, 2);
+        if (f & 0x100) {
+            unsigned short ev = cUIThing_getKeyframerEvent((cUIThing*)self, 9);
+            if (ev != 0xFFFF && *(void**)(self + 0x5C) != 0) {
+                cUIScreen_playFrame(*(void**)(self + 0x5C), ev, 1);
+            }
+        }
+        if (f & 1) {
+            result = 1;
+        } else if (f & 0x10) {
+            result = func_003A0318(self, 0);
+        }
+        if (listener != 0) {
+            sVEv_9970* vt = *(sVEv_9970**)listener;
+            vt[2].fn(listener + vt[2].delta, result);
+        }
+        return 1;
+    } else if (inputIs_9970(in, 6)) {
+        focusNotify_9970(self, 6);
+        f = focusMove_9970(self, 4);
+        if (f & 0x100) {
+            unsigned short ev = cUIThing_getKeyframerEvent((cUIThing*)self, 3);
+            if (ev != 0xFFFF) {
+                cUIScreen_playFrame(*(void**)(self + 0x5C), ev, 1);
+            }
+        }
+        if (f & 1) {
+            result = func_003A0318(self, 1);
+        } else if (f & 0x10) {
+            result = func_003A0318(self, 0);
+        }
+        if (listener != 0) {
+            sVEv_9970* vt = *(sVEv_9970**)listener;
+            vt[2].fn(listener + vt[2].delta, result);
+        }
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uiengine", func_00399D80);
