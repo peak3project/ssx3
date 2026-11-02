@@ -115,7 +115,26 @@ void func_003F33B0(unsigned char *s, unsigned char *key, int klen, int rounds) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3530);
+#ifdef SKIP_ASM
+extern unsigned D_00496C08[];
+void func_003F3530(unsigned char *s, unsigned char *buf, int n) {
+    unsigned char i = s[0x100];
+    unsigned j = *(unsigned *)(s + 0x104);
+    for (; n > 0; n--) {
+        unsigned char a, b;
+        j = (j >> 8) ^ D_00496C08[(j & 0xFF) ^ s[i++]];
+        a = s[i];
+        b = s[j & 0xFF];
+        s[i] = b;
+        s[j & 0xFF] = a;
+        *buf++ ^= s[(unsigned char)(a - b)];
+    }
+    s[0x100] = i;
+    *(unsigned *)(s + 0x104) = j;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F35D0);
