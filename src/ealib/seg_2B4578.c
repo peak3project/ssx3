@@ -10,7 +10,8 @@
    their offsets). Some fields are also reached through their own splat symbols (declared below), which the
    functions that address them directly must keep using. */
 struct sA8E8Cfg {                   /* 0xA0: the current setup (+0x20, D_0050A908) and a saved copy (+0xD4) */
-    char pad00[0x8];
+    char pad00[0x4];
+    int f04;
     unsigned short f08;             /* number of slots (f1F4) */
     unsigned short f0A;
     unsigned short f0C;
@@ -195,8 +196,8 @@ struct sA8E8 {
     struct sA8E8Bus f220[1];        /* kind 8 */
     struct sA8E8Heap *f234;
     char pad238[0x2E0 - 0x238];
-    unsigned short f2E0[5][6];      /* also D_0050ABC8: row n - 1 = n channel angles */
-    char pad31C[0x330 - 0x31C];
+    unsigned short f2E0[6][6];      /* also D_0050ABC8: row n - 1 = n channel angles */
+    char pad328[0x330 - 0x328];
     volatile unsigned int f330;
     volatile unsigned short f334;
 };
@@ -969,7 +970,87 @@ int func_003B4FC0_impl(struct sA8E8Setup *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5158);
+#ifdef SKIP_ASM
+extern char D_0044E180;
+extern void func_00416210_5158(void *, int, int) __asm__("func_00416210");
+void func_003B5BD0(struct sA8E8Heap *a0, int a1);
+int func_003B4DD8_4DD8(struct sA8E8Setup *out) __asm__("func_003B4DD8");
+int func_003B4FC0_impl(struct sA8E8Setup *p) __asm__("func_003B4FC0");
+void func_003BC588(int arg0);
+void func_003C3300(void);
+void func_003B58A0(void);
+void func_003B58D8(void);
+extern void *func_003B5C60_5158(int) __asm__("func_003B5C60");
+extern int func_003C1B80(void);
+extern void func_003C2268_5320() __asm__("func_003C2268");
+extern void func_003C3358();
+extern void func_003BC0B0(void);
+
+int func_003B5158_impl(void *buf, int size, int arg2) __asm__("func_003B5158");
+
+/* arg2 is passed by the caller (func_003C5B80 forwards its own argument) but not used here. */
+int func_003B5158_impl(void *buf, int size, int arg2) {
+    int r;
+    D_0044E180 = 'S';
+    if (D_0050A8E8.f174 != 0) return 0;
+    func_00416210_5158(buf, 0, size);
+    func_003B5BD0(buf, size);
+    if (D_0050A8E8.f17E == 0) {
+        r = func_003B4DD8_4DD8(&D_0050A8E8.setup);
+        if (r < 0) return r;
+        func_003B4FC0_impl(&D_0050A8E8.setup);
+    }
+    func_003BC588(D_0050A8E8.setup.cfg.f04);
+    func_003C3300();
+    D_0050A8E8.f174 = 1;
+    func_003B58A0();
+    D_0050A8E8.f1F0 = func_003B5C60_5158(D_0050A8E8.f17E * 0x8C);
+    D_0050A8E8.f1F4 = func_003B5C60_5158(D_0050A8E8.setup.cfg.f08 << 4);
+    func_003B58D8();
+    D_0050A8E8.f330 = 0;
+    D_0050A8E8.f175 = 0x7F;
+    D_0050A8E8.f180 = 0;
+    D_0050A8E8.f179 = 0;
+    D_0050A8E8.f177 = 0;
+    D_0050A8E8.f178 = 0;
+    r = func_003C1B80();
+    if (r < 0) {
+        func_003C2268_5320();
+        func_003C3358();
+        D_0050A8E8.f174 = 0;
+        return r;
+    }
+    if (D_0050A8E8.setup.cfg.f27 == 2) {
+        D_0050A8E8.f2E0[1][0] = 0xC000;
+        D_0050A8E8.f2E0[1][1] = 0x4000;
+    } else {
+        D_0050A8E8.f2E0[1][0] = 0xE000;
+        D_0050A8E8.f2E0[1][1] = 0x2000;
+    }
+    D_0050A8E8.f2E0[2][0] = D_0050A8E8.setup.cfg.f58[2][2];
+    D_0050A8E8.f2E0[2][1] = D_0050A8E8.setup.cfg.f58[2][0];
+    D_0050A8E8.f2E0[2][2] = D_0050A8E8.setup.cfg.f58[2][1];
+    D_0050A8E8.f2E0[3][0] = 0xE000;
+    D_0050A8E8.f2E0[3][1] = 0x2000;
+    D_0050A8E8.f2E0[3][2] = 0xA000;
+    D_0050A8E8.f2E0[3][3] = 0x6000;
+    D_0050A8E8.f2E0[4][0] = 0xE000;
+    D_0050A8E8.f2E0[4][1] = 0;
+    D_0050A8E8.f2E0[4][2] = 0x2000;
+    D_0050A8E8.f2E0[4][3] = 0xA000;
+    D_0050A8E8.f2E0[4][4] = 0x6000;
+    D_0050A8E8.f2E0[5][0] = 0xE000;
+    D_0050A8E8.f2E0[5][1] = 0;
+    D_0050A8E8.f2E0[5][2] = 0x2000;
+    D_0050A8E8.f2E0[5][3] = 0xA000;
+    D_0050A8E8.f2E0[5][4] = 0x6000;
+    D_0050A8E8.f2E0[5][5] = 0;
+    func_003BC0B0();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5320);
