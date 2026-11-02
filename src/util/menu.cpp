@@ -110,6 +110,12 @@ public:
 };
 extern cRenderCtx* D_004A289C;
 
+// 2-float vector (the font's scale at font + 0x28).
+struct sVec2 {
+    float x, y;
+    sVec2(float ax, float ay) : x(ax), y(ay) {}
+};
+
 // 16-byte vector for the menu's vertices (built with the constructor or with Set).
 struct sVec4 {
     float x, y, z, w;
@@ -359,11 +365,6 @@ INCLUDE_ASM("util/menu", func_002CA768);
 extern "C" void func_00391CB0(void* self, float x, float y, const char* str);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 
-struct sVec2_2CA768 {
-    float x, y;
-    sVec2_2CA768(float ax, float ay) : x(ax), y(ay) {}
-};
-
 static inline char* font_2CA768(char* item)
 {
     return *(char**)(*(char**)(*(char**)item + 0x124) + 0x58);
@@ -380,8 +381,8 @@ extern "C" void func_002CA768_impl(char* item, sRect* rect, const char* left, co
     vt[8].fn(menu + vt[8].delta, rect, style);
     *(sColor*)(font_2CA768(item) + 0x40) = *color;
     char* f0 = font_2CA768(item);
-    sVec2_2CA768 sc(2.0f, 2.0f);
-    *(sVec2_2CA768*)(f0 + 0x28) = sc;
+    sVec2 sc(2.0f, 2.0f);
+    *(sVec2*)(f0 + 0x28) = sc;
     if (left) {
         func_00391CB0(font_2CA768(item), rect->x + 16.0f, rect->y + 6.0f - 1.0f, left);
     }
@@ -395,7 +396,7 @@ extern "C" void func_002CA768_impl(char* item, sRect* rect, const char* left, co
         float w = func_00391FB0(f, right, 0, 0, *(float*)(f + 0x38), *(float*)(f + 0x3C));
         func_00391CB0(font_2CA768(item), rect->x + (rect->w - w) - 16.0f, rect->y + 6.0f - 1.0f, right);
     }
-    *(sVec2_2CA768*)(font_2CA768(item) + 0x28) = sVec2_2CA768(0.0f, 0.0f);
+    *(sVec2*)(font_2CA768(item) + 0x28) = sVec2(0.0f, 0.0f);
 }
 #endif
 
@@ -3120,11 +3121,6 @@ INCLUDE_ASM("util/menu", func_002CE910);
 extern "C" void func_00391CB0(void* self, float x, float y, const char* str);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 
-struct sVec2_2CE910 {
-    float x, y;
-    sVec2_2CE910(float ax, float ay) { x = ax; y = ay; }
-};
-
 extern "C" void func_002CE910(void* self, float* rect)
 {
     char buf[0x20];
@@ -3148,7 +3144,7 @@ extern "C" void func_002CE910(void* self, float* rect)
     c.g = col->y;
     c.b = col->z;
     *(sColor*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x40) = c;
-    *(sVec2_2CE910*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2_2CE910(2.0f, 2.0f);
+    *(sVec2*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2(2.0f, 2.0f);
     char* label = *(char**)((char*)self + 0x14);
     if (label) {
         func_00391CB0(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58), rect[0] + 16.0f, rect[1] + 6.0f - 1.0f, label);
@@ -3193,7 +3189,7 @@ extern "C" void func_002CE910(void* self, float* rect)
         *(short*)((char*)D_004A289C->top + 0x10) = -1;
         D_004A289C->v71(4, v, 0);
     }
-    *(sVec2_2CE910*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2_2CE910(0.0f, 0.0f);
+    *(sVec2*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2(0.0f, 0.0f);
 }
 #endif
 
@@ -3345,11 +3341,6 @@ extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char* D_00487470[];
 extern char D_00486710[];
 
-struct sVec2_2CF1C8 {
-    float x, y;
-    sVec2_2CF1C8(float ax, float ay) { x = ax; y = ay; }
-};
-
 extern "C" void func_002CF1C8(void* self, float* rect)
 {
     {
@@ -3367,7 +3358,7 @@ extern "C" void func_002CF1C8(void* self, float* rect)
     c.g = col->y;
     c.b = col->z;
     *(sColor*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x40) = c;
-    *(sVec2_2CF1C8*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2_2CF1C8(2.0f, 2.0f);
+    *(sVec2*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2(2.0f, 2.0f);
     func_00391CB0(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58), rect[0] + 16.0f, rect[1] + 6.0f - 1.0f,
                   D_00487470[*(int*)((char*)self + 0x18)]);
     char buf[0x10];
