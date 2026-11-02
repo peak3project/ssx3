@@ -6169,7 +6169,7 @@ struct sTagMsg5458 {
     int pad[2];
 };
 
-struct sNetMsg5458 {
+struct sNetMsg {
     int type;       // 0x0
     void** vt;      // 0x4
     int flag;       // 0x8
@@ -6195,7 +6195,7 @@ extern "C" void func_00265458(void* self, int id)
         msg.state = *(int*)self;
         msg.id = id;
         func_00264BE8(self, &msg, sizeof(msg));
-        sNetMsg5458* m = (sNetMsg5458*)cMemMan_alloc(0x10, D_00480F18, 0x20000000, 0);
+        sNetMsg* m = (sNetMsg*)cMemMan_alloc(0x10, D_00480F18, 0x20000000, 0);
         m->type = 0xFB;
         m->vt = D_00481150;
         m->v0 = id;
@@ -6221,14 +6221,6 @@ struct sTagMsg5568 {
     int pad[2];
 };
 
-struct sNetMsg5568 {
-    int type;       // 0x0
-    void** vt;      // 0x4
-    int flag;       // 0x8
-    int v0;         // 0xC
-    int v1;         // 0x10
-};
-
 extern "C" void func_00265568(void* self, int a, int b)
 {
     int st = *(int*)self;
@@ -6247,7 +6239,7 @@ extern "C" void func_00265568(void* self, int a, int b)
         msg.a = a;
         msg.b = b;
         func_00264BE8(self, &msg, sizeof(msg));
-        sNetMsg5568* m = (sNetMsg5568*)cMemMan_alloc(0x14, D_00480F18, 0x20000000, 0);
+        sNetMsg* m = (sNetMsg*)cMemMan_alloc(0x14, D_00480F18, 0x20000000, 0);
         m->type = 0xFC;
         m->vt = D_00481130;
         m->v0 = a;
