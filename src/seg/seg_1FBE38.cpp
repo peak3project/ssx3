@@ -1504,14 +1504,12 @@ static inline void vAddTo_D758(V4_D758 &a, const V4_D758 &b) {
         : "memory");
 }
 struct O_D758 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
-struct V3_D758 { float x, y, z; };
-extern V3_D758 D_004C9098_D758 __asm__("D_004C9098");
 extern unsigned D_D758[] __asm__("D_004FB720");
 extern int D_004A5608;
 extern const int D_00446190[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_D758 { int idx; int val; int pad; int type; };
-extern "C" V3_D758 func_002FD758(int n, Ent_D758 *e) {
+extern "C" cLunoValue func_002FD758(int n, Ent_D758 *e) {
     if (D_004A5608 == 0) {
         D_D758[0] = 0xFFFFFFFF;
         ((int*)D_D758)[1] = -1;
@@ -1558,7 +1556,7 @@ extern "C" V3_D758 func_002FD758(int n, Ent_D758 *e) {
             }
         }
     }
-    return D_004C9098_D758;
+    return D_004C9098;
 }
 #endif
 
