@@ -61,6 +61,14 @@ struct sAiState
     char* mRider;
 };
 
+// The path system (cPathSys, the name from cPathSys_resolvePaths); D_004D33A0 is the instance. Only the
+// count of its 0x3C-byte paths (items at 0x14) is read here.
+struct cPathSys {
+    int pad[4];
+    int count;                  // 0x10
+};
+extern cPathSys D_004D33A0;
+
 // Constant vectors (in .bss, set up at startup); named by use: D_004FF120 zero, D_004FF130 origin (w = 1),
 // D_004FF140 / D_004FF150 / D_004FF160 the x / y / z axes.
 extern t4Vector D_004FF120;
@@ -1165,11 +1173,10 @@ INCLUDE_ASM("ai/ai", func_0012A2B0);
 extern "C" void func_00112180(void* rider, int v);
 extern "C" void func_0026AF00(void* self);
 extern "C" void func_0026ADA8(void*, int);
-extern char D_004D33A0[];
 extern "C" void func_0012A2B0(void* self, int arg1) {
     int i;
-    func_0026AF00(D_004D33A0);
-    func_0026ADA8(D_004D33A0, arg1);
+    func_0026AF00(&D_004D33A0);
+    func_0026ADA8(&D_004D33A0, arg1);
     for (i = 0; i < *(int*)((char*)self + 0x78); i++) {
         func_00112180(*(void**)((char*)self + 0x28 + (i << 2)), 0);
     }
@@ -1183,7 +1190,6 @@ INCLUDE_ASM("ai/ai", func_0012A340);
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern void* D_004A28A8;
 extern "C" int func_0022E0E0(void* self);
-extern char D_004D33A0[];
 extern char D_00535BC8[];
 extern "C" void func_0026AF00(void* self);
 extern "C" int func_0026AD70(void* self, int v);
@@ -1214,8 +1220,8 @@ extern "C" int func_0012A340(sAiRiderList* self, int unused, int mode, int arg)
 ok:
     if (lvl < 0x16)
     {
-        func_0026AF00(D_004D33A0);
-        func_0026AD70(D_004D33A0, arg);
+        func_0026AF00(&D_004D33A0);
+        func_0026AD70(&D_004D33A0, arg);
         if (*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) == 0)
             return 1;
         for (int i = 0; i < self->mCount; i++)
@@ -1234,13 +1240,12 @@ INCLUDE_ASM("ai/ai", func_0012A490);
 extern void* D_004A28A8;
 extern "C" int func_0022E0E0(void* self);
 void func_0026ADA0(void* self);
-extern char D_004D33A0[];
 
 extern "C" void func_0012A490(void* p, unsigned char id)
 {
     if (func_0022E0E0(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78)) < 0x16)
     {
-        func_0026ADA0(D_004D33A0);
+        func_0026ADA0(&D_004D33A0);
     }
 }
 #endif
@@ -1248,10 +1253,10 @@ extern "C" void func_0012A490(void* p, unsigned char id)
 //100%
 INCLUDE_ASM("ai/ai", func_0012A4D0);
 #ifdef SKIP_ASM
-extern "C" int func_0026ADE8(int *);
+extern "C" int func_0026ADE8(void* self);
 
 extern "C" void func_0012A4D0(void) {
-    func_0026ADE8(&(*(int*)&D_004D33A0));
+    func_0026ADE8(&D_004D33A0);
 }
 #endif
 //100%
@@ -1279,8 +1284,6 @@ extern "C" void* func_0026AF70(void* tree, int id);
 extern "C" float func_0026A138(void* obj);
 extern "C" void func_0011FEC8_2A560(void* self, int v) __asm__("func_0011FEC8__FPv");
 extern "C" void func_0011FE78_2A560(void* self, int v) __asm__("func_0011FE78__FPv");
-struct sTree_2A560 { int pad[4]; int count; };
-extern sTree_2A560 D_tree_2A560 __asm__("D_004D33A0");
 
 t4Vector func_0026AB20_2A560(void* path, int* inRange, float t) __asm__("func_0026AB20");
 void func_0011D660_2A560(void* self, t4Vector* a, t4Vector* b, int n, float t) __asm__("func_0011D660");
@@ -1344,11 +1347,11 @@ struct sAi_2A560
 
 extern "C" void func_0012A560(char* self, int which)
 {
-    int n = D_tree_2A560.count;
+    int n = D_004D33A0.count;
     int i;
     for (i = 0; i < n; i++)
     {
-        void* obj = func_0026AF70(&D_tree_2A560, i);
+        void* obj = func_0026AF70(&D_004D33A0, i);
         float f = func_0026A138(obj);
         if (f == -1.0f)
             continue;
