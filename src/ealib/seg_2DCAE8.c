@@ -4333,7 +4333,6 @@ unsigned int func_003E1F48(char *name, char *data, int len) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E2030);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_00450C50_2030[] __asm__("D_00450C50");
 extern int func_00416B18_2030(char *, char *, int) __asm__("func_00416B18");
 extern char* func_004162D0(char *, char *);
 extern int func_00427D60_2030(char *, int) __asm__("func_00427D60");
@@ -4344,8 +4343,8 @@ unsigned int func_003E2030(char *name, char *data, int len) {
     char buf[256];
     int fd;
     buf[0] = 0;
-    if (func_00416B18_2030(name, D_00450C50_2030[0], strlen(D_00450C50_2030[0])) != 0) {
-        strcpy(buf, D_00450C50_2030[0]);
+    if (func_00416B18_2030(name, D_00450C50, strlen(D_00450C50)) != 0) {
+        strcpy(buf, D_00450C50);
     }
     func_004162D0(buf, name);
     fd = func_00427D60_2030(buf, 0x602);
