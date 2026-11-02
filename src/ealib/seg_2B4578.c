@@ -7577,20 +7577,6 @@ int func_003C0E28(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C1298);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct KV_1298 { int key; int val; };
-struct T_1298 {
-    char pad0[0x20];
-    struct KV_1298 e[(0x1A0 - 0x20) / 8];
-    struct { int a; int b; int c; int d; } f[1];
-};
-struct H_1298 {
-    char pad0[0x83C];
-    struct KV_1298 k[(0x9BC - 0x83C) / 8];
-    struct KV_1298 k2[(0xCAC - 0x9BC) / 8];
-    int padCAC;
-    struct T_1298 *tbl;
-};
-extern struct H_1298 D_0050AD00_1298 __asm__("D_0050AD00");
 extern void f_A550_1298(int) __asm__("func_003BA550");
 
 void func_003C1298(void) {
@@ -7599,31 +7585,31 @@ void func_003C1298(void) {
     int h;
 
     for (i = 0; i < D_0050A8E8.setup.cfg.f10; i++) {
-        if (D_0050AD00_1298.tbl->e[i].key != 0 && D_0050A8E8.f1F0[i].f28 == -1) {
-            if (D_0050AD00_1298.k[i].key != D_0050AD00_1298.tbl->e[i].key) {
-                D_0050AD00_1298.k[i].val = D_0050AD00_1298.tbl->e[i].key & 0x7FFFFF;
+        if (D_0050AD00.fCB0->f20[i].key != 0 && D_0050A8E8.f1F0[i].f28 == -1) {
+            if (D_0050AD00.f83C[i].key != D_0050AD00.fCB0->f20[i].key) {
+                D_0050AD00.f83C[i].val = D_0050AD00.fCB0->f20[i].key & 0x7FFFFF;
             }
-            if (D_0050AD00_1298.k[i].val == 0) {
+            if (D_0050AD00.f83C[i].val == 0) {
                 for (j = 0; j < D_0050A8E8.f1F0[i].f23; j++) {
                     h = D_0050A8E8.f1F0[i].f04[j];
-                    D_0050AD00_1298.tbl->e[h].key = 0;
+                    D_0050AD00.fCB0->f20[h].key = 0;
                     f_A550_1298(h);
                     if (D_0050A8E8.setup.cfg.f29 == 2) {
-                        D_0050AD00_1298.tbl->e[h + 0x18].key = 0;
+                        D_0050AD00.fCB0->f20[h + 0x18].key = 0;
                     }
                 }
             }
         }
     }
     for (i = 0; i < D_0050A8E8.setup.cfg.f0F; i++) {
-        if (D_0050AD00_1298.tbl->f[i].a != 0 && D_0050A8E8.f1F0[i + D_0050A8E8.setup.cfg.f10].f28 == -1) {
-            if (D_0050AD00_1298.k2[i].key != D_0050AD00_1298.tbl->f[i].a) {
-                D_0050AD00_1298.k2[i].val = 0;
+        if (D_0050AD00.fCB0->f1A0[i].key != 0 && D_0050A8E8.f1F0[i + D_0050A8E8.setup.cfg.f10].f28 == -1) {
+            if (D_0050AD00.f9BC[i].key != D_0050AD00.fCB0->f1A0[i].key) {
+                D_0050AD00.f9BC[i].val = 0;
             }
-            if (D_0050AD00_1298.k2[i].val == -1) {
+            if (D_0050AD00.f9BC[i].val == -1) {
                 for (j = 0; j < D_0050A8E8.f1F0[i + D_0050A8E8.setup.cfg.f10].f23; j++) {
                     h = D_0050A8E8.f1F0[i + D_0050A8E8.setup.cfg.f10].f04[j];
-                    D_0050AD00_1298.tbl->f[h - D_0050A8E8.setup.cfg.f10].a = 0;
+                    D_0050AD00.fCB0->f1A0[h - D_0050A8E8.setup.cfg.f10].key = 0;
                     f_A550_1298(h);
                 }
             }
