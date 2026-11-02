@@ -127,6 +127,12 @@ struct sQueueItemVec {
     sQueueItem** mCap;
 };
 
+// A widget whose virtual calls are written through its vtable entries (vptr at 0x8).
+struct sUIThingVt {
+    int pad[2];
+    sVEntryVoidArg* vt;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -12759,11 +12765,6 @@ extern char D_00464838[];
 extern char D_00464848[];
 extern char D_00464860[];
 
-struct sObj_8C38 {
-    int pad[2];
-    sVEntryVoidArg* vt;
-};
-
 struct cState_8C38 {
     char pad0[0x10];
     int engine;              // 0x10
@@ -12775,7 +12776,7 @@ struct cState_8C38 {
     int* settings;           // 0x6D0
     char pad6D4[0x6EC - 0x6D4];
     int online;              // 0x6EC
-    sObj_8C38* toggle;       // 0x6F0
+    sUIThingVt* toggle;       // 0x6F0
 };
 
 static inline bool isButton_8C38(char* a1, char* name)
@@ -12850,7 +12851,7 @@ extern "C" void func_001B8C38(cState_8C38* self, char* a1, int msg)
         break;
     case 13: {
         func_001B9820(self);
-        sObj_8C38* o = self->toggle;
+        sUIThingVt* o = self->toggle;
         if (o == 0) {
             break;
         }
@@ -15467,11 +15468,6 @@ extern "C" int func_0025F180_D1B8(void* self, int id) __asm__("func_0025F180");
 extern "C" void func_0025D770_D1B8(void* self, int id) __asm__("func_0025D770");
 extern char D_00464F60[];
 
-struct sObj_D1B8 {
-    int pad[2];
-    sVEntryVoidArg* vt;
-};
-
 struct cState_D1B8 {
     char pad0[0x10];
     int engine;              // 0x10
@@ -15487,7 +15483,7 @@ struct cState_D1B8 {
     char* items[4];          // 0x708
     void* btns[4];           // 0x718
     char pad728[0x740 - 0x728];
-    sObj_D1B8* texts[4];     // 0x740
+    sUIThingVt* texts[4];     // 0x740
     int vals[4];             // 0x750
     int changed;             // 0x760
     int sel;                 // 0x764
@@ -15509,7 +15505,7 @@ extern "C" void func_001BD1B8(cState_D1B8* self, char* a1, int msg)
                 int id = func_0039A738(a1);
                 self->curId = id;
                 int r = func_0025F180_D1B8(D_004A3028, id);
-                sObj_D1B8* t = self->texts[i];
+                sUIThingVt* t = self->texts[i];
                 t->vt[9].fn((char*)t + t->vt[9].delta, r);
                 func_0025D770_D1B8(D_004A3028, self->curId);
                 return;
