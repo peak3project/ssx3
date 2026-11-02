@@ -15692,36 +15692,25 @@ void func_003D1BA8(int idx, int status) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1D28);
 #ifdef SKIP_ASM
-struct H_1D28 {
-    unsigned int f0;
-    unsigned int f4;
-    unsigned int f8;
-    unsigned int pad : 16;
-    unsigned int end : 6;
-    unsigned int start : 6;
-    unsigned int rest : 4;
-};
 struct E_1D28 {
     unsigned int f0;
     unsigned int f4;
     unsigned int f8;
     unsigned int fC;
 };
-struct G_1D28 { char pad[0xDC]; struct H_1D28 *h[1]; };
-extern struct G_1D28 *D_0044F420_1D28 __asm__("D_0044F420");
 extern unsigned int D_0044F438_1D28 __asm__("D_0044F438");
-extern int func_003CFC30_1D28(struct H_1D28 *, struct E_1D28 *) __asm__("func_003CFC30");
+extern int func_003CFC30_1D28(struct sPathEvent *, struct E_1D28 *) __asm__("func_003CFC30");
 
 int func_003D1D28_impl(int idx) __asm__("func_003D1D28");
 int func_003D1D28_impl(int idx) {
-    struct H_1D28 *h = D_0044F420_1D28->h[idx];
+    struct sPathEvent *h = D_0044F420->f0DC[idx];
     unsigned int i = h->start;
     int n = 0;
     if (i < h->end) {
         struct E_1D28 *e = (struct E_1D28 *)(i * 16 + ((int)h + 16));
         do {
             if (e->f4 != 0) {
-                if (e->f4 < h->f0) {
+                if (e->f4 < h->f00) {
                     e->f4 += D_0044F438_1D28;
                 }
                 if (e->f4 < D_0044F438_1D28) {
@@ -15734,7 +15723,7 @@ int func_003D1D28_impl(int idx) {
             i++;
             n++;
             e++;
-            h->f8 = D_0044F438_1D28;
+            h->f08 = D_0044F438_1D28;
             h->start++;
         } while (i < h->end);
     }
