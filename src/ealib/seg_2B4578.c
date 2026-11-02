@@ -17157,9 +17157,6 @@ struct Q_3900 {
     unsigned long hi : 10;
 };
 struct P_3900 { char pad[0x30]; unsigned int x30; char pad2[0x928 - 0x34]; };
-extern void (*D_0044F424_3900)(int, int) __asm__("D_0044F424");
-extern int D_0044F430_3900 __asm__("D_0044F430");
-extern unsigned int D_0044F438_3900 __asm__("D_0044F438");
 extern struct P_3900 D_00517610_3900[4] __asm__("D_00517610");
 extern int func_003D3C90(int, int);
 extern int f37A0_3900(int, int) __asm__("func_003D37A0");
@@ -17201,17 +17198,17 @@ int func_003D3900(int id, int start, int vel) {
                 ev.f7 = ((e->w8 >> 10) & 0x1F) - 1;
                 ev.b8 = -1;
                 q.p1 = ev.hE;
-                ev.w4 = D_0044F438_3900 + ev.hE;
+                ev.w4 = D_0044F438 + ev.hE;
                 ev.w0 = 0x1F000001;
                 q.b = 0;
                 f0B18_3900(&q, &ev);
                 func_003D1F80(D_00517610_3900[0].x30, fcopy_3900(&q));
             }
             if ((e->w4 & 0xE0000) == 0x20000) {
-                vel = (D_0044F438_3900 / 23) & 0x7F;
+                vel = (D_0044F438 / 23) & 0x7F;
             }
-            if (D_0044F424_3900 != 0) {
-                D_0044F424_3900(D_0044F430_3900, k);
+            if (D_0044F424 != 0) {
+                D_0044F424(D_0044F430, k);
             }
         } else if (type == -1) {
             w = *(unsigned int *)e;
@@ -17222,7 +17219,7 @@ int func_003D3900(int id, int start, int vel) {
                 }
             }
         } else if (type == -2) {
-            vel = (D_0044F438_3900 / 23) & 0x7F;
+            vel = (D_0044F438 / 23) & 0x7F;
         } else if (type == -3) {
             func_003D1F80(D_0044F420->f30, (char *)(D_0044F420->f34 + D_0044F420->f40[(e->wC >> 2) & 0xFFF]));
         }
