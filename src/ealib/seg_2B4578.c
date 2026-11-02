@@ -7688,23 +7688,6 @@ struct V_3EE0 {
     int a80[6];
     int a98[6];
 };
-struct Ch_3EE0 {
-    int pad0;
-    short ids[15];
-    char pad22;
-    unsigned char n;
-    unsigned short flags;
-    char pad26[0x8C - 0x26];
-};
-struct G_3EE0 {
-    char pad0[0x2F];
-    unsigned char base2;
-    unsigned char base;
-    char pad31[0x49 - 0x31];
-    unsigned char mode;
-    char pad4A[0x1F0 - 0x4A];
-    struct Ch_3EE0 *chans;
-};
 struct W8_3EE0 { int w; int pad; };
 struct W16_3EE0 { int w; char pad[12]; };
 struct T_3EE0 {
@@ -7723,7 +7706,6 @@ struct A_3EE0 {
     char pad1AB0[0x1AB8 - 0x1AB0];
     int x1AB8;
 };
-extern struct G_3EE0 D_0050A8E8_3EE0 __asm__("D_0050A8E8");
 extern struct A_3EE0 D_0050AD00_3EE0 __asm__("D_0050AD00");
 extern void func_003C2EC8(int);
 extern void f38E0_3EE0(int) __asm__("func_003C38E0");
@@ -7732,50 +7714,50 @@ extern void func_003C83A0(int);
 extern void f8158_3EE0(int, int, int, int, int, int, int, int, int, int, int, int, int, int) __asm__("func_003C8158");
 
 int func_003C3EE0(struct V_3EE0 *v, int base, int id, int p3, int p4, int p5, int p6) {
-    struct Ch_3EE0 *ch;
+    struct sA8E8Chan *ch;
     int i;
 
-    ch = (struct Ch_3EE0 *)((char *)D_0050A8E8_3EE0.chans + id * 0x8C);
-    if (ch->flags & 8) {
+    ch = &D_0050A8E8.f1F0[id];
+    if (ch->f24 & 8) {
         func_003C25E0(id);
         f38E0_3EE0(id);
         func_003C2EC8(id);
         func_003C27E0(id, 0);
-        for (i = 0; i < ch->n; i++) {
-            D_0050AD00_3EE0.e[ch->ids[i]].w = *v->p64 + (v->a68[i] - v->a68[0]);
+        for (i = 0; i < ch->f23; i++) {
+            D_0050AD00_3EE0.e[ch->f04[i]].w = *v->p64 + (v->a68[i] - v->a68[0]);
             D_0050AD00_3EE0.x1AB8 += 0x800000;
-            D_0050AD00_3EE0.tbl->a[ch->ids[i]].w = D_0050AD00_3EE0.e[ch->ids[i]].w | D_0050AD00_3EE0.x1AB8;
-            D_0050AD00_3EE0.x840[ch->ids[i]].w = D_0050AD00_3EE0.e[ch->ids[i]].w;
-            if (D_0050A8E8_3EE0.mode == 2) {
-                D_0050AD00_3EE0.tbl->a[ch->ids[i] + 0x18].w = D_0050AD00_3EE0.e[ch->ids[i]].w | D_0050AD00_3EE0.x1AB8;
-                D_0050AD00_3EE0.x840[ch->ids[i] + 0x18].w = D_0050AD00_3EE0.e[ch->ids[i]].w;
+            D_0050AD00_3EE0.tbl->a[ch->f04[i]].w = D_0050AD00_3EE0.e[ch->f04[i]].w | D_0050AD00_3EE0.x1AB8;
+            D_0050AD00_3EE0.x840[ch->f04[i]].w = D_0050AD00_3EE0.e[ch->f04[i]].w;
+            if (D_0050A8E8.setup.cfg.f29 == 2) {
+                D_0050AD00_3EE0.tbl->a[ch->f04[i] + 0x18].w = D_0050AD00_3EE0.e[ch->f04[i]].w | D_0050AD00_3EE0.x1AB8;
+                D_0050AD00_3EE0.x840[ch->f04[i] + 0x18].w = D_0050AD00_3EE0.e[ch->f04[i]].w;
             }
         }
-    } else if (ch->flags & 0x100) {
+    } else if (ch->f24 & 0x100) {
         func_003C25E0(id);
         f38E0_3EE0(id);
         func_003C27E0(id, 0);
-        for (i = 0; i < ch->n; i++) {
-            D_0050AD00_3EE0.e[ch->ids[i]].w = *v->p64 + (v->a68[i] - v->a68[0]);
+        for (i = 0; i < ch->f23; i++) {
+            D_0050AD00_3EE0.e[ch->f04[i]].w = *v->p64 + (v->a68[i] - v->a68[0]);
             D_0050AD00_3EE0.x1AB8 += 0x800000;
-            D_0050AD00_3EE0.tbl->b[ch->ids[i] - D_0050A8E8_3EE0.base].w = D_0050AD00_3EE0.e[ch->ids[i]].w | D_0050AD00_3EE0.x1AB8;
-            D_0050AD00_3EE0.x9C0[ch->ids[i] - D_0050A8E8_3EE0.base].w = 0;
+            D_0050AD00_3EE0.tbl->b[ch->f04[i] - D_0050A8E8.setup.cfg.f10].w = D_0050AD00_3EE0.e[ch->f04[i]].w | D_0050AD00_3EE0.x1AB8;
+            D_0050AD00_3EE0.x9C0[ch->f04[i] - D_0050A8E8.setup.cfg.f10].w = 0;
         }
     } else {
-        for (i = 0; i < ch->n; i++) {
-            f8158_3EE0(ch->ids[i] - (D_0050A8E8_3EE0.base + D_0050A8E8_3EE0.base2), v->b13, 1,
-                       base + v->a68[i], base + v->a68[0] + v->a80[i], v->a98[i], ch->n, *(int *)((char *)ch + 0x14),
+        for (i = 0; i < ch->f23; i++) {
+            f8158_3EE0(ch->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F), v->b13, 1,
+                       base + v->a68[i], base + v->a68[0] + v->a80[i], v->a98[i], ch->f23, *(int *)((char *)ch + 0x14),
                        v->x5C, v->x60, 0, 0, v->b2, i);
         }
-        func_003C25E0(ch->ids[0]);
-        f38E0_3EE0(ch->ids[0]);
-        func_003C27E0(ch->ids[0], 0);
-        func_003C3010(ch->ids[0], p3);
-        func_003C30C8(ch->ids[0], p4);
-        f3178_3EE0(ch->ids[0], p5);
-        func_003C3250(ch->ids[0], p6);
-        for (i = 0; i < ch->n; i++) {
-            func_003C83A0(ch->ids[i] - (D_0050A8E8_3EE0.base + D_0050A8E8_3EE0.base2));
+        func_003C25E0(ch->f04[0]);
+        f38E0_3EE0(ch->f04[0]);
+        func_003C27E0(ch->f04[0], 0);
+        func_003C3010(ch->f04[0], p3);
+        func_003C30C8(ch->f04[0], p4);
+        f3178_3EE0(ch->f04[0], p5);
+        func_003C3250(ch->f04[0], p6);
+        for (i = 0; i < ch->f23; i++) {
+            func_003C83A0(ch->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F));
         }
     }
     return 0;
