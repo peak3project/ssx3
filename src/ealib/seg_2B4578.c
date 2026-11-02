@@ -300,6 +300,15 @@ struct sPath {                      /* 0x928 */
 };
 extern struct sPath *D_0044F420;
 extern struct sPath D_00517610[4];
+extern void (*D_0044F424)(int, int);    /* event callback (func_003D3018) */
+extern void (*D_0044F428)(unsigned int, int);
+extern unsigned char D_0044F42C;
+extern unsigned char D_0044F42D;
+extern unsigned char D_0044F42E;
+extern unsigned int D_0044F430;
+extern unsigned char D_0044F434;
+extern unsigned int D_0044F438;         /* tick */
+extern int D_0044F43C;                  /* flags */
 extern struct sA8E8Bus D_0050AAE0[];    /* D_0050A8E8.f1F8 */
 extern struct sA8E8Bus D_0050AAF4[];    /* D_0050A8E8.f20C */
 extern struct sA8E8Bus D_0050AB08[];    /* D_0050A8E8.f220 */
@@ -15974,7 +15983,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D0CC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003D32B8_0CC8(char *, int *) __asm__("func_003D32B8");
-extern int D_0044F438;
 int func_003D0CC8_0CC8(char *arg0) __asm__("func_003D0CC8");
 
 int func_003D0CC8_0CC8(char *arg0) {
@@ -16968,10 +16976,8 @@ void func_003D3010(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3018);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044F424;
-extern int D_0044F428;
 
-void func_003D3018(int arg0, int arg1) {
+void func_003D3018(void (*arg0)(int, int), void (*arg1)(unsigned int, int)) {
     D_0044F424 = arg0;
     D_0044F428 = arg1;
 }
@@ -18334,7 +18340,6 @@ void func_003D6360(void *arg0, int arg1, int arg2, int arg3) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D6378);
 #ifdef SKIP_ASM
-extern int D_0044F438;
 extern int func_002AF428(int);
 
 void func_003D6378(char *self, int a, int b) {
@@ -18355,7 +18360,6 @@ void func_003D6378(char *self, int a, int b) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D63F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044F438;
 extern signed char f_63F8_cb(int) __asm__("func_002AF4B0");
 
 void func_003D63F8(char *self, int a, int b) {
@@ -18372,7 +18376,6 @@ void func_003D63F8(char *self, int a, int b) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D6448);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044F438;
 extern signed char f_6448_cb(int) __asm__("func_002AF480");
 
 void func_003D6448(char *self, int a, int b) {
