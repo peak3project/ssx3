@@ -85,7 +85,7 @@ struct cGMBigAirHandler {
     int t[3][10];               // 0x04
 };
 
-// Game-mode handler base (cGameModeHandler; the per-mode handlers in D_00536668 derive from it).
+// Game-mode handler base (cGameModeHandler): the handlers in D_00536668 are its subclasses.
 class cGameModeHandler {
 public:
     virtual void v01();
@@ -104,6 +104,13 @@ struct cGMRaceHandler : public cGameModeHandler {
     int tbl[3][10];             // 0x58 times per heat and rider
 };
 
+// Serialisation stream: v01 = read(buf, size), v02 = write(buf, size).
+class cGameModeStream {
+public:
+    virtual void v01(void* buf, int size);
+    virtual void v02(void* buf, int size);
+};
+
 static inline sRace* GetRace()
 {
     return D_004A28A8->game->race;
@@ -119,10 +126,7 @@ static inline int Finished(cRider* r)
     return r->mFinishTime >= 0.0f;
 }
 
-//100%
-INCLUDE_ASM("main/gamemode", cGameModeMan_getGM);
-#ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+// Callees and globals shared by the functions below.
 extern void* D_00536668[];
 extern char D_0047C0A8[];
 extern char D_0047C0B8[];
@@ -138,7 +142,67 @@ extern void* D_0047CE68[];
 extern void* D_0047CED0[];
 extern void* D_0047CF38[];
 extern void* D_0047CFA0[];
+void operator_delete(int*);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern signed char D_00535C11[];
+extern "C" void cGameModeMan_restartHeat(cGameModeMan* self);
+extern int D_00536730[];
+extern int D_005366D0[];
+extern unsigned int D_00536640[];
+extern "C" int* func_00144BC0(void* iface);
+extern "C" void func_00154AB8(void* self, int idx, int a2, unsigned int v);
+extern "C" void func_00154EE8(void* self, int idx, int a2, unsigned int v);
+extern "C" int func_001577E0(void* self, int a, int b);
+extern "C" int func_0015A2E0(void* self, int a1, int a2, int bit);
+extern "C" void func_00159CD0(void* self, int a1, int a2, int bit);
+int cBELibrary_getProfileIndex(int);
+signed char cBELibrary_getCharacterID(int index);
+extern int D_00536708[];
+extern "C" int func_00245E30(const void* a, const void* b);
+extern "C" int func_00245EC0(const void* a, const void* b);
+extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
+extern "C" int func_00245E78(const void* a, const void* b);
+extern int D_005366A8[];
+extern "C" int func_001454F8(void* iface, int a1);
+extern "C" void func_00238B70(void* self, int n);
+extern "C" void func_00239938(void* self);
+extern "C" void func_00239AA0(cGMBigAirHandler* self);
+extern "C" int func_00122E50(void* self);
+extern "C" int func_0012A250(void* race);
+extern "C" int func_00146E98(void* iface, int a1);
+extern "C" void func_00147D20(void* iface, int a1);
+extern "C" void func_00147E18(void* iface, int a1);
+int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
+extern "C" int func_00145750(void* iface);
+extern "C" int func_00147410(void* iface, int player);
+extern "C" void func_0023C770(int* arr, unsigned int n);
+extern signed char D_00535BC8[];
+extern "C" short func_00147CB8(void* self, int which);
+extern "C" int func_001453D0(void* self, int kind, int place, int mode);
+int cBENewPlayerInterface_getPlayerCharID(void* iface, int player);
+extern "C" int func_001474C8(void* iface, int player);
+extern "C" void func_0023A4F0(cGMRaceHandler* self);
+extern "C" void func_0023A668(cGMRaceHandler* self);
+extern "C" unsigned int func_00237CD8(void);
+extern "C" int func_00122D78(void* self);
+extern "C" void func_00238BF8(void* self, int n);
+extern "C" void func_0023B0A8(void* self);
+extern int D_00534B30[];
+extern int D_00535C04[];
+extern "C" int func_001455D0(void* iface, int mode, int a2);
+extern "C" int func_001558F8(void* iface, int a1, int a2, int a3);
+extern signed char D_00535C12[];
+extern "C" int func_00144BE0(void* iface);
+extern "C" int func_00145668(void* iface, int a1, int a2, int a3);
+extern "C" float func_001195A8(void* self, int value);
+extern "C" int func_00145600(void* iface, int mode, int a2);
+extern "C" float func_001195D8(void* self, int value);
 
+//100%
+INCLUDE_ASM("main/gamemode", cGameModeMan_getGM);
+#ifdef SKIP_ASM
 struct sGMMode_4 {
     void** vt;
     sGMMode_4(void** v) { vt = v; }
@@ -254,8 +318,6 @@ class cMode2380E8 {
 public:
     virtual ~cMode2380E8();
 };
-void operator_delete(int*);
-extern void* D_00536668[];
 
 extern "C" void func_002380E8(void* p)
 {
@@ -273,11 +335,6 @@ extern "C" void func_002380E8(void* p)
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_initGameMode);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C11[];
-extern "C" void cGameModeMan_restartHeat(cGameModeMan* self);
-
 extern "C" void cGameModeMan_initGameMode(cGameModeMan* self, unsigned int type)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -326,8 +383,6 @@ extern "C" void cGameModeMan_initGameMode(cGameModeMan* self, unsigned int type)
 //100%
 INCLUDE_ASM("main/gamemode", func_002382B8);
 #ifdef SKIP_ASM
-extern int D_00536730[];
-
 extern "C" void func_002382B8(void* self, int idx)
 {
     D_00536730[idx] = -1;
@@ -337,9 +392,6 @@ extern "C" void func_002382B8(void* self, int idx)
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_restartHeat);
 #ifdef SKIP_ASM
-extern void* D_00536668[];
-extern int D_005366D0[];
-
 extern "C" void cGameModeMan_restartHeat(cGameModeMan* self)
 {
     int i;
@@ -366,21 +418,6 @@ int func_00238348(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238358);
 #ifdef SKIP_ASM
-extern void* D_00536668[];
-extern unsigned int D_00536640[];
-extern int D_00536730[];
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int* func_00144BC0(void* iface);
-extern "C" void func_00154AB8(void* self, int idx, int a2, unsigned int v);
-extern "C" void func_00154EE8(void* self, int idx, int a2, unsigned int v);
-extern "C" int func_001577E0(void* self, int a, int b);
-extern "C" int func_0015A2E0(void* self, int a1, int a2, int bit);
-extern "C" void func_00159CD0(void* self, int a1, int a2, int bit);
-int cBELibrary_getProfileIndex(int);
-signed char cBELibrary_getCharacterID(int index);
-
 extern "C" void func_00238358(cGameModeMan* self, int idx, int a2)
 {
     void* obj = D_00536668[self->mode];
@@ -414,8 +451,6 @@ extern "C" void func_00238358(cGameModeMan* self, int idx, int a2)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238510);
 #ifdef SKIP_ASM
-extern void* D_00536668[];
-
 extern "C" int func_00238510(cGameModeMan* self, int a, int b)
 {
     void* obj = D_00536668[self->mode];
@@ -427,8 +462,6 @@ extern "C" int func_00238510(cGameModeMan* self, int a, int b)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238550);
 #ifdef SKIP_ASM
-extern void* D_00536668[];
-
 extern "C" void func_00238550(cGameModeMan* self, int a, int b)
 {
     void* obj = D_00536668[self->mode];
@@ -440,8 +473,6 @@ extern "C" void func_00238550(cGameModeMan* self, int a, int b)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238590);
 #ifdef SKIP_ASM
-extern void* D_00536668[];
-
 extern "C" void func_00238590(cGameModeMan* self, int a, int b)
 {
     void* obj = D_00536668[self->mode];
@@ -453,11 +484,6 @@ extern "C" void func_00238590(cGameModeMan* self, int a, int b)
 //100%
 INCLUDE_ASM("main/gamemode", func_002385D0);
 #ifdef SKIP_ASM
-extern void* D_00536668[];
-extern int D_00536730[];
-extern int D_00536708[];
-extern unsigned int D_00536640[];
-
 static inline void io002385D0(void* s, void* p, int n)
 {
     sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)s;
@@ -497,11 +523,6 @@ extern "C" void func_002385D0(cGameModeMan* gm, void* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_002388A0);
 #ifdef SKIP_ASM
-extern void* D_00536668[];
-extern int D_00536730[];
-extern int D_00536708[];
-extern unsigned int D_00536640[];
-
 static inline void io002388A0(void* s, void* p, int n)
 {
     sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)s;
@@ -540,12 +561,6 @@ extern "C" void func_002388A0(cGameModeMan* gm, void* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238B70);
 #ifdef SKIP_ASM
-extern int D_00536730[];
-extern int D_00536708[];
-extern "C" int func_00245E30(const void* a, const void* b);
-extern "C" int func_00245EC0(const void* a, const void* b);
-extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
-
 extern "C" void func_00238B70(void* self, int n)
 {
     int i;
@@ -561,12 +576,6 @@ extern "C" void func_00238B70(void* self, int n)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238BF8);
 #ifdef SKIP_ASM
-extern int D_00536730[];
-extern int D_00536708[];
-extern "C" int func_00245E78(const void* a, const void* b);
-extern "C" int func_00245EC0(const void* a, const void* b);
-extern "C" int func_00418EF8(void* base, int n, int size, int (*cmp)(const void*, const void*));
-
 extern "C" void func_00238BF8(void* self, int n)
 {
     int i;
@@ -582,9 +591,6 @@ extern "C" void func_00238BF8(void* self, int n)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238C80);
 #ifdef SKIP_ASM
-extern "C" void* func_00416210(void* dst, int c, int n);
-
-
 extern "C" void func_00238C80(void* self)
 {
     cGameModeMan* gm = D_004A2C70;
@@ -616,13 +622,6 @@ extern "C" void func_00238C80(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238D30);
 #ifdef SKIP_ASM
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern int D_00536730[];
-extern int D_00536708[];
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_005366D0[];
-
 extern "C" void func_00238D30(void)
 {
     func_00416210(D_00536730, 9, 0x28);
@@ -636,13 +635,6 @@ extern "C" void func_00238D30(void)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238DA8);
 #ifdef SKIP_ASM
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern int D_00536730[];
-extern int D_00536708[];
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_005366D0[];
-
 extern "C" void func_00238DA8(void)
 {
     func_00416210(D_00536730, 9, 0x28);
@@ -656,19 +648,6 @@ extern "C" void func_00238DA8(void)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238E20);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_001454F8(void* iface, int a1);
-extern "C" void func_00238B70(void* self, int n);
-// PORT: func_00239938 is defined as (void); this caller passes self.
-extern "C" void func_00239938(void* self);
-extern "C" void func_00239AA0(cGMBigAirHandler* self);
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern signed char D_00535C11[];
-extern unsigned int D_00536640[];
-extern int D_00536708[];
-
 extern "C" void func_00238E20(cGMBigAirHandler* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -784,20 +763,6 @@ extern "C" void func_00238E20(cGMBigAirHandler* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239230);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_00122E50(void* self);
-extern "C" int func_0012A250(void* race);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_00147D20(void* iface, int a1);
-extern "C" void func_00147E18(void* iface, int a1);
-extern "C" void func_00238B70(void* self, int n);
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_00536730[];
-extern signed char D_00535C11[];
-
 extern "C" void func_00239230(cGMBigAirHandler* self, int idx)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -904,16 +869,6 @@ INCLUDE_ASM("main/gamemode", func_002398E8);
 //100%
 INCLUDE_ASM("main/gamemode", func_00239938);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_00145750(void* iface);
-extern "C" int func_00147410(void* iface, int player);
-extern "C" void func_0023C770(int* arr, unsigned int n);
-extern signed char D_00535BC8[];
-
 extern "C" void func_00239938(void* self)
 {
     int n = 0;
@@ -948,16 +903,6 @@ extern "C" void func_00239938(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239AA0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" short func_00147CB8(void* self, int which);
-extern "C" int func_001453D0(void* self, int kind, int place, int mode);
-extern "C" void func_00238B70(void* self, int n);
-extern signed char D_00535BC8[];
-extern unsigned int D_00536640[];
-extern int D_00536730[];
-
 struct sOpts_239AA0 {
     char pad00[0x49];
     signed char f49;
@@ -1007,7 +952,6 @@ extern "C" void func_00239AA0(cGMBigAirHandler* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239CE0);
 #ifdef SKIP_ASM
-
 extern "C" int func_00239CE0(cGMBigAirHandler* self, int col, int row)
 {
     if (D_004A2C70->f0 < row) {
@@ -1020,13 +964,6 @@ extern "C" int func_00239CE0(cGMBigAirHandler* self, int col, int row)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239D18);
 #ifdef SKIP_ASM
-// Serialisation stream: v01 = read(buf, size), v02 = write(buf, size).
-class cGameModeStream {
-public:
-    virtual void v01(void* buf, int size);
-    virtual void v02(void* buf, int size);
-};
-
 extern "C" void func_00239D18(void* self, cGameModeStream* s)
 {
     s->v01((char*)self + 0x4, 0xA0);
@@ -1036,7 +973,6 @@ extern "C" void func_00239D18(void* self, cGameModeStream* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239D50);
 #ifdef SKIP_ASM
-// Serialisation stream: v01 = read(buf, size), v02 = write(buf, size).
 extern "C" void func_00239D50(void* self, cGameModeStream* s)
 {
     s->v02((char*)self + 0x4, 0xA0);
@@ -1046,13 +982,6 @@ extern "C" void func_00239D50(void* self, cGameModeStream* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239D88);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getPlayerCharID(void* iface, int player);
-extern "C" int func_001454F8(void* iface, int a1);
-extern "C" int func_001474C8(void* iface, int player);
-
 extern "C" void func_00239D88(void* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1094,7 +1023,6 @@ INCLUDE_ASM("main/gamemode", func_00239EC8);
 //100%
 INCLUDE_ASM("main/gamemode", func_0023A070);
 #ifdef SKIP_ASM
-
 extern "C" int func_0023A070(char* self, int player, int secs)
 {
     short* score = (short*)(self + 4);
@@ -1123,20 +1051,6 @@ extern "C" int func_0023A070(char* self, int player, int secs)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023A108);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_00145750(void* iface);
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern "C" void func_0023A4F0(cGMRaceHandler* self);
-extern "C" void func_0023A668(cGMRaceHandler* self);
-extern signed char D_00535C11[];
-extern unsigned int D_00536640[];
-extern int D_00536730[];
-extern int D_00536708[];
-
 static inline void fillOthers_23A108(int* dst, int p)
 {
     for (int i = 0; i < 3; i++) {
@@ -1277,15 +1191,6 @@ extern "C" void func_0023A108(cGMRaceHandler* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023A4F0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_00145750(void* iface);
-extern "C" unsigned int func_00237CD8(void);
-extern "C" void func_0023C770(int* arr, unsigned int n);
-
 extern "C" void func_0023A4F0(cGMRaceHandler* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -1327,16 +1232,12 @@ extern "C" void func_0023A4F0(cGMRaceHandler* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023A668);
 #ifdef SKIP_ASM
-extern int func_00146E98_668(void* iface, int a) __asm__("func_00146E98");
-extern int cBENewPlayerInterface_getRiderCharID_668(void* iface, int id) __asm__("cBENewPlayerInterface_getRiderCharID__FPvi");
-extern int func_00147410_668(void* iface, int id) __asm__("func_00147410");
-
 extern "C" void func_0023A668(cGMRaceHandler* self)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
-    int id = func_00146E98_668(iface, 0);
-    int ch = cBENewPlayerInterface_getRiderCharID_668(iface, id);
-    int r = func_00147410_668(iface, id);
+    int id = func_00146E98(iface, 0);
+    int ch = cBENewPlayerInterface_getRiderCharID(iface, id);
+    int r = func_00147410(iface, id);
     int k = D_004A2C70->f0 - 1;
     if (k < 0) k = 0;
     for (int i = 0; i < 6; i++) {
@@ -1356,20 +1257,6 @@ extern "C" void func_0023A668(cGMRaceHandler* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023A760);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_0012A250(void* race);
-extern "C" int func_00122D78(void* self);
-extern "C" void func_00238BF8(void* self, int n);
-extern "C" void func_00147D20(void* iface, int a1);
-extern "C" void func_00147E18(void* iface, int a1);
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_00536730[];
-extern signed char D_00535BC8[];
-
 static inline int vcall_23A760(char* obj, int slot)
 {
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
@@ -1466,7 +1353,6 @@ void func_0023AC10(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023AC18);
 #ifdef SKIP_ASM
-// Serialisation stream: v01 = read(buf, size), v02 = write(buf, size).
 extern "C" void func_0023AC18(void* self, cGameModeStream* s)
 {
     s->v01(self, 0xD0);
@@ -1476,7 +1362,6 @@ extern "C" void func_0023AC18(void* self, cGameModeStream* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023AC50);
 #ifdef SKIP_ASM
-// Serialisation stream: v01 = read(buf, size), v02 = write(buf, size).
 extern "C" void func_0023AC50(void* self, cGameModeStream* s)
 {
     s->v02(self, 0xD0);
@@ -1486,15 +1371,6 @@ extern "C" void func_0023AC50(void* self, cGameModeStream* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023AC88);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getPlayerCharID(void* iface, int player);
-extern "C" int func_001474C8(void* iface, int player);
-extern "C" void func_0023B0A8(void* self);
-extern int D_00534B30[];
-extern int D_00535C04[];
-
 extern "C" void func_0023AC88(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -1539,13 +1415,6 @@ extern "C" void func_0023AC88(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023AE00);
 #ifdef SKIP_ASM
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_00536730[];
-extern "C" int func_0012A250(void* race);
-extern "C" int func_00122D78(void* self);
-extern "C" void func_00238BF8(void* self, int n);
-
 struct sSelf_23AE00 {
     int f0;
     int times[8];
@@ -1590,7 +1459,6 @@ extern "C" void func_0023AE00(sSelf_23AE00* self, int idx)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B038);
 #ifdef SKIP_ASM
-// Serialisation stream: v01 = read(buf, size), v02 = write(buf, size).
 extern "C" void func_0023B038(void* self, cGameModeStream* s)
 {
     s->v01(self, 0x2C);
@@ -1600,7 +1468,6 @@ extern "C" void func_0023B038(void* self, cGameModeStream* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B070);
 #ifdef SKIP_ASM
-// Serialisation stream: v01 = read(buf, size), v02 = write(buf, size).
 extern "C" void func_0023B070(void* self, cGameModeStream* s)
 {
     s->v02(self, 0x2C);
@@ -1612,12 +1479,6 @@ INCLUDE_ASM("main/gamemode", func_0023B0A8);
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B170);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-
 extern "C" void func_0023B170(void* self)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -1650,16 +1511,6 @@ extern "C" void func_0023B170(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B268);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_001455D0(void* iface, int mode, int a2);
-extern "C" int func_001558F8(void* iface, int a1, int a2, int a3);
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern signed char D_00535C12[];
-
 struct sMode_23B268 {
     sVEntry<void(void*)>* vt;
     int f4;
@@ -1727,14 +1578,6 @@ extern "C" void func_0023B268(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B468);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_001455D0(void* iface, int mode, int a2);
-extern int D_00536730[];
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-
 extern "C" void func_0023B468(void* self, int p)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1771,14 +1614,6 @@ extern "C" void func_0023B468(void* self, int p)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B5F8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00144BE0(void* iface);
-extern "C" int func_00145668(void* iface, int a1, int a2, int a3);
-extern "C" float func_001195A8(void* self, int value);
-extern signed char D_00535C12[];
-
 extern "C" int func_0023B5F8(void* self)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1805,16 +1640,6 @@ extern "C" int func_0023B5F8(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B6C0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_00145750(void* iface);
-extern "C" int func_00147410(void* iface, int player);
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern signed char D_00535C11[];
-
 extern "C" void func_0023B6C0(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -1860,18 +1685,6 @@ extern "C" void func_0023B6C0(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B8C8);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_00122D78(void* self);
-extern "C" int func_0012A250(void* race);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_00238BF8(void* self, int n);
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_00536730[];
-extern signed char D_00535C11[];
-
 class cRiderState_23B8C8 {
 public:
     virtual void v01();
@@ -1944,17 +1757,6 @@ extern "C" void func_0023B8C8(void* self, int idx)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023BB98);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_00145750(void* iface);
-extern "C" int func_00147410(void* iface, int player);
-extern "C" int func_001454F8(void* iface, int a1);
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern signed char D_00535C11[];
-
 extern "C" void func_0023BB98(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -2002,18 +1804,6 @@ extern "C" void func_0023BB98(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023BDB8);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_00122E50(void* self);
-extern "C" int func_0012A250(void* race);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_00238B70(void* self, int n);
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_00536730[];
-extern signed char D_00535C11[];
-
 extern "C" void func_0023BDB8(void* self, int idx)
 {
     cRider* r = GetRider(idx);
@@ -2069,17 +1859,6 @@ extern "C" void func_0023BDB8(void* self, int idx)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023C0D0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" int func_001455D0(void* iface, int mode, int a2);
-extern "C" int func_00145600(void* iface, int mode, int a2);
-extern "C" int func_001558F8(void* iface, int a1, int a2, int a3);
-extern "C" void* func_00416210(void* dst, int c, int n);
-extern signed char D_00535C12[];
-
 extern "C" void func_0023C0D0(void* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -2142,14 +1921,6 @@ extern "C" void func_0023C0D0(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023C2D8);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" int func_001455D0(void* iface, int mode, int a2);
-extern unsigned int D_00536640[];
-extern int D_005366A8[];
-extern int D_00536730[];
-
 extern "C" void func_0023C2D8(void* self, int idx)
 {
     sRace* clk = GetRace();
@@ -2191,14 +1962,6 @@ extern "C" void func_0023C2D8(void* self, int idx)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023C560);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00144BE0(void* iface);
-extern "C" int func_00145668(void* iface, int a1, int a2, int a3);
-extern "C" float func_001195D8(void* self, int value);
-extern signed char D_00535C12[];
-
 extern "C" int func_0023C560(void* self)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -2225,14 +1988,6 @@ extern "C" int func_0023C560(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023C618);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_0023C770(int* arr, unsigned int n);
-extern int D_00535C04[];
-
 extern "C" void func_0023C618(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -2284,8 +2039,6 @@ extern "C" void func_0023C618(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_0023C770);
 #ifdef SKIP_ASM
-extern "C" unsigned int func_00237CD8(void);
-
 extern "C" void func_0023C770(int* arr, unsigned int n)
 {
     int i;
