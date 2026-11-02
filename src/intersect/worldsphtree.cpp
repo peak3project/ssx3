@@ -34,6 +34,14 @@ struct sWsBox {
     float max[4];
 };
 
+// A linked world object with its bounds at 0x158 (bmin, bmax).
+struct sWsBoundObj {
+    sWsBoundObj* next;              // 0x00
+    char pad04[0x154];
+    float bmin[3];                  // 0x158
+    float bmax[3];                  // 0x164
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -702,12 +710,6 @@ struct sSelf_1E90 {
     void* list2[0x41];              // 0x110
 };
 
-struct sPatch_1E90 {
-    sPatch_1E90* next;              // 0x00
-    char pad04[0x154];
-    float bmin[3];                  // 0x158
-    float bmax[3];                  // 0x164
-};
 
 struct sCtx2_1E90 {
     sCtx_3309D8 a;
@@ -717,7 +719,7 @@ struct sCtx2_1E90 {
 extern "C" void descendRec_1E90(void* self, sCtx2_1E90* ctx) __asm__("func_00340C20");
 extern "C" void helpX_1E90(char* flag, sCtx2_1E90* ctx, sCtx2_1E90* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033A3D8");
 
-static inline int overlapPatch_1E90(const sWsBox* b, const sPatch_1E90* n)
+static inline int overlapPatch_1E90(const sWsBox* b, const sWsBoundObj* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -728,9 +730,9 @@ static inline int overlapPatch_1E90(const sWsBox* b, const sPatch_1E90* n)
     return r;
 }
 
-static inline void addPatches_1E90(sCtx_3309D8* cb, sPatch_1E90* first)
+static inline void addPatches_1E90(sCtx_3309D8* cb, sWsBoundObj* first)
 {
-    for (sPatch_1E90* p = first; p != 0; p = p->next) {
+    for (sWsBoundObj* p = first; p != 0; p = p->next) {
         if (overlapPatch_1E90(cb->box, p)) {
             int* cnt = cb->count;
             int idx = *cnt;
@@ -757,7 +759,7 @@ static inline void visit_1E90(sRoot_330BA8* t, int k, sCtx2_1E90* ctx, void* box
         int r = func_00328360(c, box);
         if (r == 0) {
             func_003309D8(&ctx->a, n);
-            addPatches_1E90(&ctx->b, *(sPatch_1E90**)((char*)n + 0x24));
+            addPatches_1E90(&ctx->b, *(sWsBoundObj**)((char*)n + 0x24));
             if (n[0] != 0) descendRec_1E90(n[0], ctx);
             if (n[1] != 0) descendRec_1E90(n[1], ctx);
             if (n[2] != 0) descendRec_1E90(n[2], ctx);
@@ -815,12 +817,6 @@ struct sSelf_2DB8 {
     void* list3[0x80];              // 0x214
 };
 
-struct sPatch_2DB8 {
-    sPatch_2DB8* next;              // 0x00
-    char pad04[0x154];
-    float bmin[3];                  // 0x158
-    float bmax[3];                  // 0x164
-};
 
 struct sCtx2_2DB8 {
     sCtx_3309D8 a;
@@ -831,7 +827,7 @@ struct sCtx2_2DB8 {
 extern "C" void descendRec_2DB8(void* self, sCtx2_2DB8* ctx) __asm__("func_00340DC0");
 extern "C" void helpX_2DB8(char* flag, sCtx2_2DB8* ctx, sCtx2_2DB8* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033B748");
 
-static inline int overlapPatch_2DB8(const sWsBox* b, const sPatch_2DB8* n)
+static inline int overlapPatch_2DB8(const sWsBox* b, const sWsBoundObj* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -842,9 +838,9 @@ static inline int overlapPatch_2DB8(const sWsBox* b, const sPatch_2DB8* n)
     return r;
 }
 
-static inline void addPatches_2DB8(sCtx_3309D8* cb, sPatch_2DB8* first)
+static inline void addPatches_2DB8(sCtx_3309D8* cb, sWsBoundObj* first)
 {
-    for (sPatch_2DB8* p = first; p != 0; p = p->next) {
+    for (sWsBoundObj* p = first; p != 0; p = p->next) {
         if (overlapPatch_2DB8(cb->box, p)) {
             int* cnt = cb->count;
             int idx = *cnt;
@@ -854,9 +850,9 @@ static inline void addPatches_2DB8(sCtx_3309D8* cb, sPatch_2DB8* first)
     }
 }
 
-static inline void addAll_2DB8(sCtx_3309D8* cb, sPatch_2DB8* first)
+static inline void addAll_2DB8(sCtx_3309D8* cb, sWsBoundObj* first)
 {
-    for (sPatch_2DB8* p = first; p != 0; p = p->next) {
+    for (sWsBoundObj* p = first; p != 0; p = p->next) {
         int* cnt = cb->count;
         int idx = *cnt;
         cb->list[idx] = (sNode_3309D8*)p;
@@ -881,8 +877,8 @@ static inline void visit_2DB8(sRoot_330BA8* t, int k, sCtx2_2DB8* ctx, void* box
         int r = func_00328360(c, box);
         if (r == 0) {
             func_003309D8(&ctx->a, n);
-            addPatches_2DB8(&ctx->b, *(sPatch_2DB8**)((char*)n + 0x24));
-            addAll_2DB8(&ctx->c, *(sPatch_2DB8**)((char*)n + 0x28));
+            addPatches_2DB8(&ctx->b, *(sWsBoundObj**)((char*)n + 0x24));
+            addAll_2DB8(&ctx->c, *(sWsBoundObj**)((char*)n + 0x28));
             if (n[0] != 0) descendRec_2DB8(n[0], ctx);
             if (n[1] != 0) descendRec_2DB8(n[1], ctx);
             if (n[2] != 0) descendRec_2DB8(n[2], ctx);
@@ -2532,12 +2528,6 @@ struct sOct_A3D8 {
     void* objs;                     // 0x24
 };
 
-struct sObj_A3D8 {
-    sObj_A3D8* next;
-    char pad04[0x154];
-    float bmin[3];                  // 0x158
-    float bmax[3];                  // 0x164
-};
 
 struct sCb_A3D8 {
     sCtx_3309D8 a;
@@ -2546,7 +2536,7 @@ struct sCb_A3D8 {
 
 extern "C" void descRec_A3D8(void* self, sCb_A3D8* cb) __asm__("func_00340C20");
 
-static inline void gather_A3D8(sObj_A3D8* p, sCb_A3D8* cb)
+static inline void gather_A3D8(sWsBoundObj* p, sCb_A3D8* cb)
 {
     sCtx_3309D8* q = &cb->b;
     for (; p != 0; p = p->next) {
@@ -2570,7 +2560,7 @@ static inline void gather_A3D8(sObj_A3D8* p, sCb_A3D8* cb)
 static inline void descend_A3D8(void** n, sCb_A3D8* cb2)
 {
     func_003309D8(&cb2->a, n);
-    gather_A3D8((sObj_A3D8*)((sOct_A3D8*)n)->objs, cb2);
+    gather_A3D8((sWsBoundObj*)((sOct_A3D8*)n)->objs, cb2);
     if (n[0] != 0) descRec_A3D8(n[0], cb2);
     if (n[1] != 0) descRec_A3D8(n[1], cb2);
     if (n[2] != 0) descRec_A3D8(n[2], cb2);
@@ -2584,7 +2574,7 @@ static inline void descend_A3D8(void** n, sCb_A3D8* cb2)
 extern "C" void func_0033A3D8(char* self, sCb_A3D8* cb, sCb_A3D8* cb2, float* box, void** node, sWsCell* cell)
 {
     func_003309D8(&cb->a, node);
-    gather_A3D8((sObj_A3D8*)((sOct_A3D8*)node)->objs, cb);
+    gather_A3D8((sWsBoundObj*)((sOct_A3D8*)node)->objs, cb);
     if (cell->level == 11) {
         return;
     }
@@ -2699,12 +2689,6 @@ struct sOct_B748 {
     void** all;                     // 0x28
 };
 
-struct sObj_B748 {
-    sObj_B748* next;
-    char pad04[0x154];
-    float bmin[3];                  // 0x158
-    float bmax[3];                  // 0x164
-};
 
 struct sSub_B748 {
     void** list;
@@ -2719,7 +2703,7 @@ struct sCb_B748 {
 
 extern "C" void descRec_B748(void* self, sCb_B748* cb) __asm__("func_00340DC0");
 
-static inline void gather_B748(sObj_B748* p, sCb_B748* cb)
+static inline void gather_B748(sWsBoundObj* p, sCb_B748* cb)
 {
     sCtx_3309D8* q = &cb->b;
     for (; p != 0; p = p->next) {
@@ -2754,7 +2738,7 @@ static inline void gatherAll_B748(void** p, sCb_B748* cb)
 static inline void descend_B748(void** n, sCb_B748* cb2)
 {
     func_003309D8(&cb2->a, n);
-    gather_B748((sObj_B748*)((sOct_B748*)n)->objs, cb2);
+    gather_B748((sWsBoundObj*)((sOct_B748*)n)->objs, cb2);
     gatherAll_B748(((sOct_B748*)n)->all, cb2);
     if (n[0] != 0) descRec_B748(n[0], cb2);
     if (n[1] != 0) descRec_B748(n[1], cb2);
@@ -2769,7 +2753,7 @@ static inline void descend_B748(void** n, sCb_B748* cb2)
 extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* box, void** node, sWsCell* cell)
 {
     func_003309D8(&cb->a, node);
-    gather_B748((sObj_B748*)((sOct_B748*)node)->objs, cb);
+    gather_B748((sWsBoundObj*)((sOct_B748*)node)->objs, cb);
     gatherAll_B748(((sOct_B748*)node)->all, cb);
     if (cell->level == 11) {
         return;
@@ -3861,20 +3845,14 @@ extern "C" void func_00340B18(void* self, sOctCollect* out)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340C20);
 #ifdef SKIP_ASM
-struct sObj_340C20 {
-    sObj_340C20* next;
-    char pad04[0x154];
-    float bmin[3];              // 0x158
-    float bmax[3];              // 0x164
-};
 
 struct sTree_340C20 {
     sTree_340C20* child[8];
     int pad20;
-    sObj_340C20* objs;          // 0x24
+    sWsBoundObj* objs;          // 0x24
 };
 
-static inline int overlapObj_340C20(const sWsBox* b, const sObj_340C20* n)
+static inline int overlapObj_340C20(const sWsBox* b, const sWsBoundObj* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -3889,7 +3867,7 @@ extern "C" void func_00340C20(sTree_340C20* tree, sCtx_3309D8* ctx)
 {
     func_003309D8(ctx, tree);
     sCtx_3309D8* q = (sCtx_3309D8*)((char*)ctx + 0x10);
-    for (sObj_340C20* p = tree->objs; p != 0; p = p->next) {
+    for (sWsBoundObj* p = tree->objs; p != 0; p = p->next) {
         if (overlapObj_340C20(q->box, p)) {
             int* cnt = q->count;
             int n = *cnt;
