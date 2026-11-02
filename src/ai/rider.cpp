@@ -42,6 +42,13 @@ struct sVec4W {
     }
 } __attribute__((aligned(16)));
 
+// sVec4XW stores x, w, y, z.
+struct sVec4XW {
+    float x, y, z, w;
+    sVec4XW() {}
+    sVec4XW(float ax, float ay, float az, float aw) { x = ax; w = aw; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
 //100%
@@ -717,17 +724,10 @@ INCLUDE_ASM("ai/rider", func_0011DFE0);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void cRider_updateOrientationImplicit_m582(char* self) __asm__("cRider_updateOrientationImplicit");
 
-struct sQuat_DFE0 {
-    float x, y, z, w;
-    sQuat_DFE0() {}
-    // PORT: this store order (x, w, y, z) reproduces the target float-register allocation
-    sQuat_DFE0(float a, float b, float c, float d) { x = a; w = d; y = b; z = c; }
-} __attribute__((aligned(16)));
-
 // PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
-static inline sQuat_DFE0 QuatMul_DFE0(const sQuat_DFE0& a, const sQuat_DFE0& b)
+static inline sVec4XW QuatMul_DFE0(const sVec4XW& a, const sVec4XW& b)
 {
-    sQuat_DFE0 r;
+    sVec4XW r;
     __asm__(
         "lqc2       $vf4, %1\n"
         "lqc2       $vf5, %2\n"
@@ -747,16 +747,16 @@ static inline sQuat_DFE0 QuatMul_DFE0(const sQuat_DFE0& a, const sQuat_DFE0& b)
     return r;
 }
 
-static inline sQuat_DFE0 AxisAngle_DFE0(const sQuat_DFE0& axis, float angle)
+static inline sVec4XW AxisAngle_DFE0(const sVec4XW& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
-    return sQuat_DFE0(s * axis.x, s * axis.y, s * axis.z, c);
+    return sVec4XW(s * axis.x, s * axis.y, s * axis.z, c);
 }
 
-extern "C" void func_0011DFE0(char* self, sQuat_DFE0* axis, float angle)
+extern "C" void func_0011DFE0(char* self, sVec4XW* axis, float angle)
 {
-    *(sQuat_DFE0*)(self + 0x120) = QuatMul_DFE0(AxisAngle_DFE0(*axis, angle), *(sQuat_DFE0*)(self + 0x120));
+    *(sVec4XW*)(self + 0x120) = QuatMul_DFE0(AxisAngle_DFE0(*axis, angle), *(sVec4XW*)(self + 0x120));
     cRider_updateOrientationImplicit_m582(self);
 }
 #endif
@@ -1327,25 +1327,19 @@ INCLUDE_ASM("ai/rider", cRider_doLeanPoseAdjust);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 
-struct sQ_LP {
-    float x, y, z, w;
-    sQ_LP() {}
-    sQ_LP(float a, float b, float c, float d) { x = a; w = d; y = b; z = c; }
-} __attribute__((aligned(16)));
-
 struct sXf_LP {
-    sQ_LP pos;
-    sQ_LP rot;
+    sVec4XW pos;
+    sVec4XW rot;
 };
 
-extern sQ_LP D_004FF130_LP __asm__("D_004FF130");
-extern sQ_LP D_004FF140_LP __asm__("D_004FF140");
-extern sQ_LP D_004FF150_LP __asm__("D_004FF150");
+extern sVec4XW D_004FF130_LP __asm__("D_004FF130");
+extern sVec4XW D_004FF140_LP __asm__("D_004FF140");
+extern sVec4XW D_004FF150_LP __asm__("D_004FF150");
 
 // PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
-static inline sQ_LP QuatMul_LP(const sQ_LP& a, const sQ_LP& b)
+static inline sVec4XW QuatMul_LP(const sVec4XW& a, const sVec4XW& b)
 {
-    sQ_LP r;
+    sVec4XW r;
     __asm__(
         "lqc2       $vf4, %1\n"
         "lqc2       $vf5, %2\n"
@@ -1366,9 +1360,9 @@ static inline sQ_LP QuatMul_LP(const sQ_LP& a, const sQ_LP& b)
 }
 
 // PORT: PS2-only VU0 inline asm (a - b, constant b through a register).
-static inline sQ_LP SubO_LP(const sQ_LP& a, const sQ_LP& b)
+static inline sVec4XW SubO_LP(const sVec4XW& a, const sVec4XW& b)
 {
-    sQ_LP r;
+    sVec4XW r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1381,9 +1375,9 @@ static inline sQ_LP SubO_LP(const sQ_LP& a, const sQ_LP& b)
 }
 
 // PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
-static inline sQ_LP Rot_LP(const sQ_LP& q, const sQ_LP& v)
+static inline sVec4XW Rot_LP(const sVec4XW& q, const sVec4XW& v)
 {
-    sQ_LP r;
+    sVec4XW r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -1405,9 +1399,9 @@ static inline sQ_LP Rot_LP(const sQ_LP& q, const sQ_LP& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sQ_LP Scale_LP(const sQ_LP& v, float s)
+static inline sVec4XW Scale_LP(const sVec4XW& v, float s)
 {
-    sQ_LP r;
+    sVec4XW r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1422,7 +1416,7 @@ static inline sQ_LP Scale_LP(const sQ_LP& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (dst += b, label keeps the store out of a following jal delay slot).
-static inline void AddToL_LP(sQ_LP& dst, const sQ_LP& b)
+static inline void AddToL_LP(sVec4XW& dst, const sVec4XW& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1436,7 +1430,7 @@ static inline void AddToL_LP(sQ_LP& dst, const sQ_LP& b)
 }
 
 // PORT: PS2-only VU0 inline asm (dst += b).
-static inline void AddTo_LP(sQ_LP& dst, const sQ_LP& b)
+static inline void AddTo_LP(sVec4XW& dst, const sVec4XW& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1456,7 +1450,7 @@ static inline float absf_LP(float x)
     return r;
 }
 
-static inline void SetAA_LP(sQ_LP& q, const sQ_LP& axis, float angle)
+static inline void SetAA_LP(sVec4XW& q, const sVec4XW& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -1466,14 +1460,14 @@ static inline void SetAA_LP(sQ_LP& q, const sQ_LP& axis, float angle)
     q.z = s * axis.z;
 }
 
-static inline sQ_LP AxisAngle_LP(const sQ_LP& axis, float angle)
+static inline sVec4XW AxisAngle_LP(const sVec4XW& axis, float angle)
 {
-    sQ_LP q;
+    sVec4XW q;
     SetAA_LP(q, axis, angle);
     return q;
 }
 
-static inline void QuatMulTo_LP(sQ_LP& a, sQ_LP b)
+static inline void QuatMulTo_LP(sVec4XW& a, sVec4XW b)
 {
     a = QuatMul_LP(a, b);
 }
@@ -1481,7 +1475,7 @@ static inline void QuatMulTo_LP(sQ_LP& a, sQ_LP b)
 // rot *= q (quaternion product). Declared to return the quaternion by value but has no return statement (the
 // classic forgotten return); the caller ignores the result, and that ignored by-value result is the unwritten
 // 16-byte temp the retail frame keeps during the first lean rotation. The other two sites use QuatMulTo_LP.
-static inline sQ_LP operator*=(sQ_LP& a, const sQ_LP& b)
+static inline sVec4XW operator*=(sVec4XW& a, const sVec4XW& b)
 {
     a = QuatMul_LP(a, b);
 }
@@ -1499,18 +1493,18 @@ static inline float deadzone_LP(float v, float k)
 static inline void LeanAbout_LP(char* self, sXf_LP* xf, float a, float b, float ka, float kb)
 {
     char* trk = *(char**)(self + 0x780);
-    sQ_LP* n = (sQ_LP*)((*(int*)(self + 0x8A0) << 4) + *(int*)(trk + 0x24));
-    sQ_LP d = SubO_LP(sQ_LP(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
+    sVec4XW* n = (sVec4XW*)((*(int*)(self + 0x8A0) << 4) + *(int*)(trk + 0x24));
+    sVec4XW d = SubO_LP(sVec4XW(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
                             n->z * *(float*)(trk + 0x148), n->w * *(float*)(trk + 0x14C)),
                       D_004FF130_LP);
     {
-        sQ_LP v = Rot_LP(xf->rot, d);
+        sVec4XW v = Rot_LP(xf->rot, d);
         AddToL_LP(xf->pos, v);
         xf->rot *= AxisAngle_LP(D_004FF140_LP, a * ka);
     }
     QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF150_LP, b * kb));
-    sQ_LP w = Scale_LP(d, -1.0f);
-    sQ_LP u = Rot_LP(xf->rot, w);
+    sVec4XW w = Scale_LP(d, -1.0f);
+    sVec4XW u = Rot_LP(xf->rot, w);
     AddTo_LP(xf->pos, u);
 }
 
@@ -1525,7 +1519,7 @@ extern "C" void cRider_doLeanPoseAdjust_x(char* self, sXf_LP* xf)
     if (k != 0.0f) {
         QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF140_LP, k * 0.7853982448577881f));
     }
-    sQ_LP g = Scale_LP(*(sQ_LP*)(self + 0x3B0), *(float*)(*(char**)(self + 0x780) + 0x140) * (*(float*)(self + 0x1F0) * 45.0f));
+    sVec4XW g = Scale_LP(*(sVec4XW*)(self + 0x3B0), *(float*)(*(char**)(self + 0x780) + 0x140) * (*(float*)(self + 0x1F0) * 45.0f));
     AddTo_LP(xf->pos, g);
 }
 #endif
