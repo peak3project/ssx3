@@ -15387,15 +15387,9 @@ struct S_11B8 {
     char name[0xFC - 0xDC];
     struct Ent_11B8 *tbl;
 };
-struct G_11B8 {
-    char pad0[0x34];
-    char *hdr;
-    short *a;
-};
 extern unsigned char D_0044F42C_11B8 __asm__("D_0044F42C");
 extern int D_0044F430_11B8 __asm__("D_0044F430");
 extern int D_0044F43C_11B8 __asm__("D_0044F43C");
-extern struct G_11B8 *D_0044F420_11B8 __asm__("D_0044F420");
 extern char D_00495B10_11B8[] __asm__("D_00495B10");
 extern int f_5450_11B8(int) __asm__("func_003D5450");
 extern struct S_11B8 *f_5290_11B8(unsigned int) __asm__("func_003D5290");
@@ -15407,7 +15401,7 @@ int func_003D11B8_impl(unsigned int id, struct Info_11B8 *info) __asm__("func_00
 int func_003D11B8_impl(unsigned int id, struct Info_11B8 *info) {
     int ret;
     struct S_11B8 *s;
-    struct G_11B8 *g;
+    struct sPath *g;
     struct Rec_11B8 *r;
     unsigned int i;
     unsigned int total;
@@ -15442,11 +15436,11 @@ int func_003D11B8_impl(unsigned int id, struct Info_11B8 *info) {
             info->f24 = s->f36;
             for (i = 0; i < s->n; i++) {
                 if (s->tbl[i].key == ret) {
-                    g = D_0044F420_11B8;
+                    g = D_0044F420;
                     info->a = s->tbl[i].a;
                     total = info->total;
                     info->c = s->tbl[i].c;
-                    r = (struct Rec_11B8 *)(g->hdr + g->a[info->a] * 4);
+                    r = (struct Rec_11B8 *)(g->f34 + g->f38[info->a]);
                     q = total;
                     if (r->w & 0xF00000) {
                         info->f10 = total / ((r->w >> 20) & 0xF);
@@ -15476,7 +15470,7 @@ int func_003D11B8_impl(unsigned int id, struct Info_11B8 *info) {
     }
 done:
     D_0044F430_11B8 = 0;
-    D_0044F420_11B8 = 0;
+    D_0044F420 = 0;
     return ret;
 }
 #endif
