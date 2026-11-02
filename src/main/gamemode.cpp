@@ -72,6 +72,14 @@ struct sApp {
 };
 extern sApp* D_004A28A8;
 
+// Race settings (D_00535BC8; ai/ai's sRaceSettings). D_00535C04 / D_00535C11 / D_00535C12 are splat
+// symbols for its fields at 0x3C / 0x49 / 0x4A.
+struct sRaceSettings {
+    char pad[0x49];
+    signed char f49;            // 0x49
+};
+extern sRaceSettings D_00535BC8;
+
 // The cRiderMetrix block the handlers copy out of a rider (0xAC bytes at mMetrix + 0xFC; finish time at 0x9C).
 struct sRiderStats {
     int v[0x9C / 4];
@@ -178,7 +186,6 @@ int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
 extern "C" int func_00145750(void* iface);
 extern "C" int func_00147410(void* iface, int player);
 extern "C" void func_0023C770(int* arr, unsigned int n);
-extern signed char D_00535BC8[];
 extern "C" short func_00147CB8(void* self, int which);
 extern "C" int func_001453D0(void* self, int kind, int place, int mode);
 int cBENewPlayerInterface_getPlayerCharID(void* iface, int player);
@@ -894,7 +901,7 @@ extern "C" void func_00239938(void* self)
         D_004A2C70->a18[j + 2] = list[j];
         D_004A2C70->a40[j + 2] = 0;
     }
-    if (D_00535BC8[0x49] != 0) {
+    if (D_00535BC8.f49 != 0) {
         D_004A2C70->a18[1] = list[n - 1];
     }
 }
@@ -903,12 +910,7 @@ extern "C" void func_00239938(void* self)
 //100%
 INCLUDE_ASM("main/gamemode", func_00239AA0);
 #ifdef SKIP_ASM
-struct sOpts_239AA0 {
-    char pad00[0x49];
-    signed char f49;
-};
-
-static inline int opt49_239AA0(sOpts_239AA0* o)
+static inline int opt49_239AA0(sRaceSettings* o)
 {
     return o->f49;
 }
@@ -931,7 +933,7 @@ extern "C" void func_00239AA0(cGMBigAirHandler* self)
     int nA = d + 1;
     for (int r = 0; r < nB; r++) {
         for (int c = 0; c < 3; c++) {
-            int b = opt49_239AA0((sOpts_239AA0*)D_00535BC8);
+            int b = opt49_239AA0(&D_00535BC8);
             int same = 0;
             if (c != 0) same = 1;
             if (b == 0) same = 0;
@@ -1303,7 +1305,7 @@ extern "C" void func_0023A760(cGMRaceHandler* self, int idx)
             gm->f84 = 1;
             gm->f70 = 3;
         }
-        if (D_00535BC8[0x49] == 0) {
+        if (D_00535BC8.f49 == 0) {
             if (D_00536730[n] == 0) {
                 if ((D_004A2C70->f0 < 2 && D_00536640[1] - D_00536640[0] > 600) ||
                     (D_004A2C70->f0 == 2 && D_00536640[1] - D_00536640[0] > 300) ||
@@ -1321,7 +1323,7 @@ extern "C" void func_0023A760(cGMRaceHandler* self, int idx)
         self->f8 = 1;
         self->fC = 1;
         GetRace()->riders[idx]->unk_100 = 0;
-        if (D_00535BC8[0x49] == 0) {
+        if (D_00535BC8.f49 == 0) {
             if (D_004A2C70->f0 < 2 ||
                 (D_004A2C70->f0 == 2 && D_00536730[n] >= 4) ||
                 (D_004A2C70->f0 == 3 && D_00536730[n] == 5)) {
