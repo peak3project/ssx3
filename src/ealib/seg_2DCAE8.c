@@ -17,6 +17,7 @@ struct sC10 {
 extern struct sC10 D_00450C10;
 extern void *(*D_00450C14)(char *, int, int);   /* D_00450C10.f04 */
 extern int (*D_00450C18)(void *);               /* D_00450C10.f08 */
+extern int D_00450C38;                          /* FILESYS_atomic lock */
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
@@ -3899,10 +3900,9 @@ int func_003E16B0(int a0, int a1) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1700);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450C38_1700[] __asm__("D_00450C38");
 int func_003DEE18(int, int);
 void func_003E1700(int a) {
-    func_003DEE18(a, D_00450C38_1700[0]);
+    func_003DEE18(a, D_00450C38);
 }
 #endif
 
