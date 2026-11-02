@@ -622,6 +622,10 @@ void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
+// Bank calls keyed by an OPTS_Callback handler (00299638 keeps 64-bit key views of both).
+extern "C" int func_002ADCA0(void* bank, int a1, sSndCallback id, int a3, int a4, int a5, int a6, int a7);
+extern "C" void func_002ADDE0(void* bank, sSndCallback key);
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1383,7 +1387,6 @@ extern "C" void func_00292A50(void* self, int id)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00292AE8);
 #ifdef SKIP_ASM
-extern "C" void func_002ADDE0_2AE8(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 
 struct sBank292AE8 {
     char pad0[0x8D8];
@@ -1401,7 +1404,7 @@ extern "C" void func_00292AE8(char* self, int a1)
     sSndVtVI* vt = sys->bank.vt;
     sys = (sSys292AE8*)&sys->bank;
     vt[4].fn((char*)sys + vt[4].delta, a1);
-    func_002ADDE0_2AE8(&(**(sSys292AE8***)(self + 0x118))->bank, D_004A36A8[0]);
+    func_002ADDE0(&(**(sSys292AE8***)(self + 0x118))->bank, D_004A36A8[0]);
 }
 #endif
 
@@ -1436,7 +1439,7 @@ extern "C" void func_00292B48(void* vself)
     bankStop292B48(self, D_004A3690[0]);
     bankStop292B48(self, D_004A3698[0]);
     bankStop292B48(self, D_004A36A0[0]);
-    func_002ADDE0_2AE8(&(**(sSys292B48***)(self + 0x118))->bank, D_004A36A8[0]);
+    func_002ADDE0(&(**(sSys292B48***)(self + 0x118))->bank, D_004A36A8[0]);
     if (*(int*)(self + 0x59E4) > 0) {
         func_002AD5F0(&(**(sSys292B48***)(self + 0x118))->bank, *(int*)(self + 0x59E0), 1, 0.0f);
         *(int*)(self + 0x59E4) = 0;
@@ -3241,7 +3244,6 @@ extern "C" void func_002989A8(void* self, void* obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00298D00);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_8D00(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 
 extern "C" void func_00298D00(void* self, void* obj)
 {
@@ -3250,7 +3252,7 @@ extern "C" void func_00298D00(void* self, void* obj)
         char* p = **(char***)((char*)self + 0x118) + 0x1D8;
         sSndCallback* key = D_004A3678;
         int r = (int)func_00287968(self, 9, 0);
-        func_002ADCA0_8D00(p, 0xFA, *key, r, 0, 0x72, 0x7F, 0);
+        func_002ADCA0(p, 0xFA, *key, r, 0, 0x72, 0x7F, 0);
     }
 }
 #endif
@@ -3266,7 +3268,6 @@ extern "C" int func_00298D88(void) {
 //100%
 INCLUDE_ASM("sound/soundsys", func_00298D90);
 #ifdef SKIP_ASM
-extern "C" void func_002ADDE0_8D90(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 
 static inline void snd8D90AddVoice(void* vself, int a, int b)
 {
@@ -3307,7 +3308,7 @@ extern "C" void func_00298D90(cSSXAudio* self, char* obj, int extra)
     if (func_00288AE0(self) == 0) {
         bool ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
         if (ok) {
-            func_002ADDE0_8D90(&(*self->p118)->sub, D_004A36A8[0]);
+            func_002ADDE0(&(*self->p118)->sub, D_004A36A8[0]);
             if (self->count59E4 == 0) {
                 snd8D90AddVoice(self, 0, b7);
                 self->handle59E0 = func_002906B8(self);
@@ -3348,7 +3349,6 @@ extern "C" void func_002992D8(void* self, void* obj)
 INCLUDE_ASM("sound/soundsys", func_00299368);
 #ifdef SKIP_ASM
 
-extern "C" void func_002ADDE0_9368(void* bank, sSndCallback id) __asm__("func_002ADDE0");
 
 static inline int IsReady299368(char* obj)
 {
@@ -3395,7 +3395,7 @@ extern "C" void func_00299368(cSSXAudio* self, char* obj)
     if (!IsReady299368(obj)) {
         return;
     }
-    func_002ADDE0_9368(&(*self->p118)->sub, D_004A36A8[0]);
+    func_002ADDE0(&(*self->p118)->sub, D_004A36A8[0]);
     AddVoice299368(self, 0, 0x6C, 9);
     func_002906B8(self);
 }
@@ -3409,9 +3409,9 @@ struct sSndKey8 {
 } __attribute__((packed));
 // 64-bit key views of two of the handlers: the key stays in a saved register across calls.
 extern sSndKey8 D_004A36A8_key[] __asm__("D_004A36A8");
-extern "C" void func_002ADDE0(void* bank, long id);
+extern "C" void func_002ADDE0_key(void* bank, long id) __asm__("func_002ADDE0");
 extern sSndKey8 D_004A3678_key[] __asm__("D_004A3678");
-extern "C" int func_002ADCA0(void*, int, long, int, int, int, int, int);
+extern "C" int func_002ADCA0_key(void*, int, long, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" void func_002A3C00(void* self, void* obj, int flags);
 
 // PORT: 64-bit long sound keys
@@ -3432,7 +3432,7 @@ extern "C" void func_00299638(void* self, char* obj)
     char* p = **(char***)((char*)self + 0x118) + 0x1D8;
     sSndKey8* key = D_004A3678_key;
     int r = (int)func_00287968(self, 9, 0);
-    func_002ADCA0(p, 400, key->v, r, 0, 0x6B, 0x7F, 0);
+    func_002ADCA0_key(p, 400, key->v, r, 0, 0x6B, 0x7F, 0);
     int m = *(int*)(obj + 0x2F4);
     if (m == 10) {
         func_002A3C00(self, obj, 0x10);
@@ -3442,11 +3442,11 @@ extern "C" void func_00299638(void* self, char* obj)
         func_002A3C00(self, obj, 0x4);
     }
     long id = D_004A36A8_key[0].v;
-    func_002ADDE0(**(char***)((char*)self + 0x118) + 0x1D8, id);
+    func_002ADDE0_key(**(char***)((char*)self + 0x118) + 0x1D8, id);
     if (*(int*)((char*)self + 0x59E4) != 0) {
         return;
     }
-    func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 3000, id, (int)obj, 0, 0, 0, 0);
+    func_002ADCA0_key(**(char***)((char*)self + 0x118) + 0x1D8, 3000, id, (int)obj, 0, 0, 0, 0);
 }
 #endif
 
@@ -3612,7 +3612,6 @@ extern "C" void func_0029AB08(void* self, void* obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029AB40);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_AB40(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float truncf_AB40(float x)
@@ -3689,7 +3688,7 @@ extern "C" void func_0029AB40(cSSXAudio* self)
             if (self->f5FE0[i] < v && v > 0) {
                 cSndPlayOpts* o = &(*self->p118)->sub;
                 int r = (int)func_00287968(self, 9, 0);
-                func_002ADCA0_AB40(o, 0x96, D_004A36C0[0], r, 0, 0x65, 0x7F, self->f5FE8[rider->mViewIndex]);
+                func_002ADCA0(o, 0x96, D_004A36C0[0], r, 0, 0x65, 0x7F, self->f5FE8[rider->mViewIndex]);
                 self->f5FE8[rider->mViewIndex] += 0x100;
             }
             self->f5FE0[i] = v;
@@ -4064,7 +4063,6 @@ extern "C" void func_0029C7B0(void* vself)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029CCA8);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_CCA8(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: func_004139F8 is libgcc's float -> unsigned conversion (__fixunssfsi).
 extern "C" int func_004139F8(float f);
 extern int D_005308D0[];
@@ -4094,7 +4092,7 @@ extern "C" void func_0029CCA8(char* self)
         char* p = **(char***)(self + 0x118) + 0x1D8;
         sSndCallback* key = D_004A3678;
         int r = (int)func_00287968(self, 9, 0);
-        func_002ADCA0_CCA8(p, 0x1C2, *key, r, 0, 0x4E, 0x7F, 0);
+        func_002ADCA0(p, 0x1C2, *key, r, 0, 0x4E, 0x7F, 0);
     }
     *(int*)(self + 0x607C) = m;
 }
@@ -4311,7 +4309,6 @@ void func_0029D6D0(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029D6E0);
 #ifdef SKIP_ASM
-extern "C" void func_002ADDE0_D6E0(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 extern "C" int func_002B46E8(void* monitor);
 extern "C" void func_002B4708(void* monitor);
 extern "C" int func_002B4620(void* monitor);
@@ -4339,9 +4336,9 @@ extern "C" void func_0029D6E0(char* self, int mission)
     }
     char*** mgr = (char***)(self + 0x118);
     if ((unsigned int)(func_002B49E0(self + 0x118) - 1) < 3) {
-        func_002ADDE0_D6E0(**mgr + 0x1D8, D_004A3648[0]);
-        func_002ADDE0_D6E0(**mgr + 0x1D8, D_004A3650[0]);
-        func_002ADDE0_D6E0(**mgr + 0x1D8, D_004A3658[0]);
+        func_002ADDE0(**mgr + 0x1D8, D_004A3648[0]);
+        func_002ADDE0(**mgr + 0x1D8, D_004A3650[0]);
+        func_002ADDE0(**mgr + 0x1D8, D_004A3658[0]);
         func_0028DEF0_D6E0(self, 0x12);
         func_0028D488(self);
         func_0028CF98(self, 0, 0, -1, 0);
@@ -5660,7 +5657,6 @@ extern "C" int func_002A1820(void* self, sSndRider* a, sSndRider* b)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A19D8);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_19D8(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" void func_002A31C0(void* self);
 extern "C" void func_002A32B0(void* self);
 extern "C" void func_002A3358(void* self);
@@ -5676,7 +5672,7 @@ extern "C" int func_002A19D8(void* self, int ev)
         func_002A31C0(self);
         if (*(int*)((char*)self + 0x530) == 0) {
             func_0028D488(self);
-            func_002ADCA0_19D8(**(char***)((char*)self + 0x118) + 0x1D8, 10, D_004A3648[0], 0, 3, 1, 0, 0);
+            func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 10, D_004A3648[0], 0, 3, 1, 0, 0);
         }
     } else if (ev == 1) {
         func_002A32B0(self);
@@ -6417,7 +6413,6 @@ extern "C" void func_002A3400(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A34D0);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_34D0(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: callers pass self to func_002A42C8 (the unit's later definition takes no args).
 int func_002A42C8_s(void* self) __asm__("func_002A42C8");
 
@@ -6432,7 +6427,7 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
         sSndVtI* e = &(*(sSndVtI**)o)[7];
         char* bank = **(char***)((char*)self + 0x118) + 0x1D8;
         int v = e->fn(o + e->delta);
-        func_002ADCA0_34D0(bank, 1000, *key, 0, v, 0, 0, 0);
+        func_002ADCA0(bank, 1000, *key, 0, v, 0, 0, 0);
         return 1;
     }
     if (func_002A42C8_s(self) != 0) return 1;
@@ -6472,7 +6467,6 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A3708);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_3708(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
 int func_002A4248_s(void* self) __asm__("func_002A4248");
 
@@ -6487,7 +6481,7 @@ extern "C" void func_002A3708(void* self, char* rider)
         sSndCallback* key = D_004A36E8;
         sSndVtI* e = &(*(sSndVtI**)o)[7];
         int v = e->fn(o + e->delta);
-        func_002ADCA0_3708(p, 1000, *key, 0, v, 0, 0, 0);
+        func_002ADCA0(p, 1000, *key, 0, v, 0, 0, 0);
         return;
     }
     if (func_002B1458((char*)self + 0x5560, 0, 0x20C5, 0, 0xB, 0, 0, 0.0f) == 0) return;
@@ -7121,13 +7115,12 @@ extern "C" int func_002A4770(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A49E8);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_49E8(void* bank, int a1, sSndCallback id, int a3, int a4, int a5, int a6, int a7) __asm__("func_002ADCA0");
 
 // Flags the transition and fades the ambient stream back in.
 extern "C" void func_002A49E8(char* self)
 {
     *(int*)(self + 0x5818) = 1;
-    func_002ADCA0_49E8(**(char***)(self + 0x118) + 0x1D8, 0x7530, D_004A36F0[0], 0, 0, 0, 0, 0);
+    func_002ADCA0(**(char***)(self + 0x118) + 0x1D8, 0x7530, D_004A36F0[0], 0, 0, 0, 0, 0);
 }
 #endif
 
@@ -7156,7 +7149,6 @@ extern "C" int func_002A4A68(void *arg0) {
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4A78);
 #ifdef SKIP_ASM
-extern "C" int func_002ADCA0_4A78(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" int func_0028DEF0(void* self, int a1);
 
 extern "C" void func_002A4A78(void* self)
@@ -7165,12 +7157,12 @@ extern "C" void func_002A4A78(void* self)
     if (*(int*)((char*)self + 0x578C) == 0 && D_00535C11[0] == 0) {
         if (func_002A3F90(self) != 0) {
             func_0028DEF0(self, 0xD);
-            func_002ADCA0_4A78(**(char***)((char*)self + 0x118) + 0x1D8, 2, D_004A3650[0], 0, 2, 0, 0, 0);
+            func_002ADCA0(**(char***)((char*)self + 0x118) + 0x1D8, 2, D_004A3650[0], 0, 2, 0, 0, 0);
         } else {
             char* p = **(char***)((char*)self + 0x118) + 0x1D8;
             sSndCallback* key = D_004A3650;
             int r = func_002B4908((char*)self + 0x118);
-            func_002ADCA0_4A78(p, 2, *key, 0, 4, r, 0, 0);
+            func_002ADCA0(p, 2, *key, 0, 4, r, 0, 0);
         }
     }
 }
