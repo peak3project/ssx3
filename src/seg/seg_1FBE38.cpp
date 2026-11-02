@@ -867,14 +867,6 @@ extern "C" void* func_00350F60(void*, void*);
 extern char D_004896B8[];
 extern char D_004896C8[];
 
-typedef void (*DtorFn)(void*, int);
-
-// virtual-destructor dispatch (delete obj): vtable entry {short delta @+8, fn @+0xC}
-static inline void del_obj(char* o) {
-    char* vt = *(char**)(o + 0xC);
-    ((DtorFn) * (void**)(vt + 0xC))(o + *(short*)(vt + 8), 3);
-}
-
 extern "C" void func_002FC2C0(char* self, char* ev) {
     switch (*(int*)(ev + 4)) {
     case 1: {
@@ -882,7 +874,7 @@ extern "C" void func_002FC2C0(char* self, char* ev) {
         if (o) {
             if (*(short*)(o + 0x10) == 6)
                 break;
-            del_obj(o);
+            delete (cInstanceNode_1FBE38*)o;
         }
         int t = *(int*)(self + 8) & 0xFFFF0300;
         *(int*)(self + 8) = t | (t >> 16) | 2;
@@ -893,7 +885,7 @@ extern "C" void func_002FC2C0(char* self, char* ev) {
         if (o) {
             if (*(short*)(o + 0x10) == 6)
                 break;
-            del_obj(o);
+            delete (cInstanceNode_1FBE38*)o;
         }
         func_003506D8(cMemMan_alloc(0x1C, D_004896B8, 0x20000000, 0), self);
         break;
@@ -904,7 +896,7 @@ extern "C" void func_002FC2C0(char* self, char* ev) {
             short ty = *(short*)(o + 0x10);
             if (ty == 6 || ty == 0x13)
                 break;
-            del_obj(o);
+            delete (cInstanceNode_1FBE38*)o;
         }
         func_00350F60(cMemMan_alloc(0x1C, D_004896C8, 0x20000000, 0), self);
         break;
