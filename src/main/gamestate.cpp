@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type).
+// Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("main/gamestate", cGFGateState_gainFocus);
 #ifdef SKIP_ASM
@@ -102,12 +110,6 @@ extern signed char D_00535C10[];
 extern char D_0047C048[];
 extern char D_004A2AB0[];
 
-struct sVEntry00234C68 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
-
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float ffloor_00234C68(float x)
 {
@@ -132,7 +134,7 @@ extern "C" void cGFGateState_update(void* self)
         func_00234BE8(self, GetHashValue32(D_0047C048));
         char* obj = (char*)func_0039F9D8(*(char**)(D_004A2C68 + 0x48) + 0x18, GetHashValue32(D_004A2AB0));
         if (obj != 0) {
-            sVEntry00234C68* e = &(*(sVEntry00234C68**)(obj + 8))[24];
+            sVEntry<int(void*, int, int)>* e = &(*(sVEntry<int(void*, int, int)>**)(obj + 8))[24];
             e->fn(obj + e->delta, 6, 0);
         }
         func_0029C7B0(func_0028B180());
@@ -261,12 +263,6 @@ extern void* D_004A28A8;
 extern char* D_004A2C68;
 extern signed char D_00535C11[];
 
-struct sVEntry_234F40 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 struct sState_234F40 {
     int pad0[4];
     int f10;
@@ -291,7 +287,7 @@ extern "C" void func_00234F40(sState_234F40* self)
         if (t >= 14 && t <= 16) {
             void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
             char* sub = *(char**)(*(char**)(*(char**)(D_004A2C68 + 0xC) + 0x40) + 0x18) + 0x6C0;
-            sVEntry_234F40* vt = *(sVEntry_234F40**)sub;
+            sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)sub;
             if (func_00145D38(iface, vt[7].fn(sub + vt[7].delta), t) != 0) {
                 char* g = (char*)func_0028B180();
                 *(int*)(g + 0x5790) = 0;
@@ -370,12 +366,6 @@ struct sRaceMan_2355C0 {
     int f14;
 };
 
-struct sVE_2355C0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 static inline int inRange_2355C0(int t)
 {
     return t >= 14 && t <= 16;
@@ -411,7 +401,7 @@ extern "C" void func_002355C0(void* self)
     if (func_00144CC0(race, func_00144BE0(race)) == 1) {
         char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
         func_00146E10(player, 0, func_00144BE0(race));
-        sVE_2355C0* vt = *(sVE_2355C0**)(player + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(player + 0xC);
         vt[1].fn(player + vt[1].delta);
     }
     (*(sRaceMan_2355C0**)(D_004A2C68 + 0xC))->f14 = mode != 4;
@@ -517,23 +507,17 @@ extern "C" void func_00235868(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235990);
 #ifdef SKIP_ASM
-struct sVEntry_func_00235990 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 // PORT: func_00233AF0 also reads $a1 (the stream); bound with its real arity.
 void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
 
 extern "C" void func_00235990(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
-    sVEntry_func_00235990* e = &(*(sVEntry_func_00235990**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00235990**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_00235990**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x18, 4);
 }
 #endif
@@ -541,23 +525,17 @@ extern "C" void func_00235990(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235A18);
 #ifdef SKIP_ASM
-struct sVEntry_func_00235A18 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 // PORT: func_00233B28 also reads $a1 (the stream); bound with its real arity.
 void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
 
 extern "C" void func_00235A18(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
-    sVEntry_func_00235A18* e = &(*(sVEntry_func_00235A18**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00235A18**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_00235A18**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x18, 4);
 }
 #endif
@@ -595,12 +573,6 @@ struct sRace_235AA0 {
 };
 extern sRace_235AA0 D_00535BC8_r235AA0 __asm__("D_00535BC8");
 
-struct sVE_235AA0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 struct sGM_235AA0 {
     char pad0[0x10];
     int total;      // 0x10
@@ -634,7 +606,7 @@ extern "C" void func_00235AA0(void* self)
     int i = 0;
     cBENewRaceInterface_setNumberAI(race, n);
     {
-        sVE_235AA0* vt = *(sVE_235AA0**)(race + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(race + 0xC);
         vt[1].fn(race + vt[1].delta);
     }
     for (; i < n; i++) {
@@ -642,7 +614,7 @@ extern "C" void func_00235AA0(void* self)
         func_001473D0(player, i + base, gm->boards[base + i]);
     }
     {
-        sVE_235AA0* vt = *(sVE_235AA0**)(player + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(player + 0xC);
         vt[1].fn(player + vt[1].delta);
     }
     func_0012AB20(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
@@ -792,23 +764,17 @@ extern "C" void func_00235F20(void)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235F48);
 #ifdef SKIP_ASM
-struct sVEntry_func_00235F48 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 // PORT: func_00233AF0 also reads $a1 (the stream); bound with its real arity.
 void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
 
 extern "C" void func_00235F48(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
-    sVEntry_func_00235F48* e = &(*(sVEntry_func_00235F48**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00235F48**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_00235F48**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x18, 4);
 }
 #endif
@@ -816,23 +782,17 @@ extern "C" void func_00235F48(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_00235FD0);
 #ifdef SKIP_ASM
-struct sVEntry_func_00235FD0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 // PORT: func_00233B28 also reads $a1 (the stream); bound with its real arity.
 void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
 
 extern "C" void func_00235FD0(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
-    sVEntry_func_00235FD0* e = &(*(sVEntry_func_00235FD0**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00235FD0**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_00235FD0**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x18, 4);
 }
 #endif
@@ -998,25 +958,19 @@ INCLUDE_ASM("main/gamestate", func_00236418);
 //100%
 INCLUDE_ASM("main/gamestate", func_00236728);
 #ifdef SKIP_ASM
-struct sVEntry_func_00236728 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 // PORT: func_00233AF0 also reads $a1 (the stream); bound with its real arity.
 void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
 
 extern "C" void func_00236728(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
-    sVEntry_func_00236728* e = &(*(sVEntry_func_00236728**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_00236728**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_00236728**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x8, 4);
-    e = &(*(sVEntry_func_00236728**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x18, 4);
 }
 #endif
@@ -1024,25 +978,19 @@ extern "C" void func_00236728(void* self, void* stream)
 //100%
 INCLUDE_ASM("main/gamestate", func_002367C8);
 #ifdef SKIP_ASM
-struct sVEntry_func_002367C8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 // PORT: func_00233B28 also reads $a1 (the stream); bound with its real arity.
 void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
 
 extern "C" void func_002367C8(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
-    sVEntry_func_002367C8* e = &(*(sVEntry_func_002367C8**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 4);
-    e = &(*(sVEntry_func_002367C8**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x14, 4);
-    e = &(*(sVEntry_func_002367C8**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x8, 4);
-    e = &(*(sVEntry_func_002367C8**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x18, 4);
 }
 #endif
