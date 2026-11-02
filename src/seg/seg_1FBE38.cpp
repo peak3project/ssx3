@@ -4207,8 +4207,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302490);
 extern char *D_004A3DD8_2490 __asm__("D_004A3DD8");
 extern char **D_004A47B8_2490 __asm__("D_004A47B8");
 struct O_2490 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
-struct V3_2490 { float x, y, z; };
-extern V3_2490 D_004C9098_2490 __asm__("D_004C9098");
 struct T12_2490 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2490 D_4FBC30_2490 __asm__("D_004FBC30");
 extern int D_5734_2490 __asm__("D_004A5734");
@@ -4217,7 +4215,7 @@ extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00353228_2490(char*) __asm__("func_00353228");
 extern "C" void func_00353278_2490(char*) __asm__("func_00353278");
 struct Ent_2490 { int idx; int val; int pad; int type; };
-extern "C" V3_2490 func_00302490(int n, Ent_2490 *e) {
+extern "C" cLunoValue func_00302490(int n, Ent_2490 *e) {
     if (D_5734_2490 == 0) {
         D_4FBC30_2490.a = 0xFFFFFFFF;
         D_4FBC30_2490.b = -1;
@@ -4276,7 +4274,7 @@ extern "C" V3_2490 func_00302490(int n, Ent_2490 *e) {
             }
         }
     }
-    return D_004C9098_2490;
+    return D_004C9098;
 }
 #endif
 
