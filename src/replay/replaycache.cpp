@@ -2963,10 +2963,11 @@ struct sCacheTrack_3698 {
     int numEvents;                  // 0x24
 };
 
+// Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
+#define ASSERT_3698(cond) do { } while (0)
 // Advances running events by dt, drops finished ones and starts every record that is due.
 extern "C" int func_00273698(sCacheTrack_3698* self, int* flags, float t, float dt)
 {
-    float zero;
     sCacheEvent_3698* prev = 0;
     sCacheEvent_3698* e = self->events;
     while (e != 0) {
@@ -2985,20 +2986,18 @@ extern "C" int func_00273698(sCacheTrack_3698* self, int* flags, float t, float 
             e = e->next;
         }
     }
-    zero = 0.0f;
-loop:
-    do {
-        if (self->rec != 0) {
-            float d = t - (float)self->rec->time;
-            if (d >= zero) {
-                *flags |= 1;
-                sCacheEvent_3698* n = (sCacheEvent_3698*)func_00273860(self, (sCacheRecord2*)self->rec);
-                n->value += d * n->speed;
-                func_002738F8(self);
-                goto loop;
-            }
-        }
-    } while (0);
+    for (;;) {
+        ASSERT_3698(self != 0);
+        if (self->rec == 0)
+            break;
+        float d = t - (float)self->rec->time;
+        if (!(d >= 0.0f))
+            break;
+        *flags |= 1;
+        sCacheEvent_3698* n = (sCacheEvent_3698*)func_00273860(self, (sCacheRecord2*)self->rec);
+        n->value += d * n->speed;
+        func_002738F8(self);
+    }
     if (self->events == 0 && self->rec == 0)
         return 0;
     return 1;
