@@ -2331,7 +2331,6 @@ extern "C" cLunoValue func_002FF1C8(int n, Ent_F1C8 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FF390);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A3DD8_F390 __asm__("D_004A3DD8");
 static inline char *refToPtr_F390(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_F390(unsigned i) { if (i == 0) return 0; return refToPtr_F390(i); }
 extern "C" int checkActiveNode(void*, int, void*);
@@ -2395,7 +2394,7 @@ extern "C" cLunoValue func_002FF390(int n, Ent_F390 *e) {
     unsigned id = buf[0];
     char *obj;
     if (~id == 0) {
-        obj = *(char**)(D_004A3DD8_F390 + 0x290);
+        obj = D_004A3DD8->f290;
     } else {
         sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
