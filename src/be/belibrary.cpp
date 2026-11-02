@@ -9,6 +9,26 @@ struct sCharEntry {
 };
 extern sCharEntry D_00535B20[];
 
+// One character's flag table inside a profile record: D_004A6CA8 is
+// [profile][character] of these (0x9B50 = 10 * 0xF88).
+struct sBEFlagEntryPC {
+    short id;
+    unsigned short flags;
+};
+
+struct sBEProfileChar {
+    char pad_0x000[0x288];
+    short* index;                       // 0x288
+    int count;                          // 0x28C
+    sBEFlagEntryPC entries[0x20D];      // 0x290
+    char pad_0xAC4[0xF88 - 0xAC4];
+
+    int getCount() { return count; }
+    sBEFlagEntryPC* getEntries() { return entries; }
+};
+
+extern sBEProfileChar D_004A6CA8_pc[][10] __asm__("D_004A6CA8");
+
 //100%
 INCLUDE_ASM("be/belibrary", cBELibrary_getCharacterID__Fi);
 #ifdef SKIP_ASM
@@ -219,11 +239,9 @@ extern "C" void func_0014ACF8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("be/belibrary", func_0014AD28);
 #ifdef SKIP_ASM
-extern int D_004A6CA8[];
-
 extern "C" void* func_0014AD28(void* self, int a1, int a2)
 {
-    return (char*)D_004A6CA8 + a1 * 0x9b50 + a2 * 0xf88;
+    return &D_004A6CA8_pc[a1][a2];
 }
 #endif
 
@@ -260,26 +278,6 @@ extern "C" void* func_0014ADD8(void* self, int rider, int a2)
     return func_0014ADA8(self, profile, ch, a2);
 }
 #endif
-
-// One character's flag table inside a profile record: D_004A6CA8 is
-// [profile][character] of these (0x9B50 = 10 * 0xF88).
-struct sBEFlagEntryPC {
-    short id;
-    unsigned short flags;
-};
-
-struct sBEProfileChar {
-    char pad_0x000[0x288];
-    short* index;                       // 0x288
-    int count;                          // 0x28C
-    sBEFlagEntryPC entries[0x20D];      // 0x290
-    char pad_0xAC4[0xF88 - 0xAC4];
-
-    int getCount() { return count; }
-    sBEFlagEntryPC* getEntries() { return entries; }
-};
-
-extern sBEProfileChar D_004A6CA8_pc[][10] __asm__("D_004A6CA8");
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014AE28);
