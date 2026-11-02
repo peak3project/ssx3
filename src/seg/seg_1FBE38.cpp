@@ -3290,7 +3290,6 @@ extern "C" cLunoValue func_00300E28(int n, Ent_0E28* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300F50);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A3DD8_0F50 __asm__("D_004A3DD8");
 extern unsigned D_0F50[] __asm__("D_004FBB78");
 extern int D_56B0_0F50 __asm__("D_004A56B0");
 extern const int D_00446570_0F50[] __asm__("D_00446570");
@@ -3358,7 +3357,7 @@ extern "C" cLunoValue func_00300F50(int n, Ent_0F50 *e) {
             *d = x->val;
     }
     if (buf[0] != 0xFFFFFFFF)
-        func_0030BAC8_0F50(D_004A3DD8_0F50, buf[0], buf + 1, 20);
+        func_0030BAC8_0F50(D_004A3DD8, buf[0], buf + 1, 20);
     return D_004C9098;
 }
 #endif
