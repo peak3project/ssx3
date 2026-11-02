@@ -13421,7 +13421,6 @@ void func_003CC848(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CC878);
 #ifdef SKIP_ASM
-extern int D_00515D80_CC78[] __asm__("D_00515D80");
 void func_003CC878(int n) {
     int *dst = D_00515B54;
     if (dst != 0) {
@@ -13463,7 +13462,7 @@ void func_003CC878(int n) {
             "bne $4, $5, 1b\n\t"
             "sqc2 $vf5, -0x10($6)\n\t"
             ".set pop\n"
-            : : "r"(n), "r"(D_00515D80_CC78), "r"(dst)
+            : : "r"(n), "r"(D_00515D80.f0000), "r"(dst)
             : "$4", "$5", "$6", "$8", "memory");
     }
 }
