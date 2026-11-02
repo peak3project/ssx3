@@ -8,6 +8,22 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+};
+
 //100%
 INCLUDE_ASM("fe/festateriderbio", cFEStateRiderDetail_onCreateScreen);
 #ifdef SKIP_ASM
@@ -26,7 +42,6 @@ extern "C" void func_0028F140(void* self, int a1);
 extern "C" int func_001577A0(void* self, int a1, int a2);
 extern void* D_004A28A8;
 extern char D_0045D870[];
-
 
 extern "C" void cFEStateRiderDetail_onCreateScreen(void* self)
 {
@@ -62,7 +77,6 @@ extern char D_0045D898[];
 extern char D_0045D8A8[];
 extern char D_0045D8B8[];
 extern char D_0045D8C8[];
-
 
 static inline void showObj_001833D0(void* self, char* name, int id)
 {
@@ -140,7 +154,6 @@ extern "C" void func_001474A8(void* self, int a1, int a2);
 extern "C" void func_001831D0(void* self, int a1);
 extern "C" unsigned int strlen(const char* s);
 extern char D_0045D780[];
-
 
 static inline int Is_001835F8(int id, char* s) { return id == GetHashValue32(s); }
 
@@ -298,35 +311,21 @@ extern char D_0045D910[];
 extern char D_0045D920[];
 extern char D_0045D930[];
 
-class cUIObj_183B08 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
 extern "C" void func_00183B08(void* self)
 {
-    cUIObj_183B08* a = (cUIObj_183B08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D900));
+    cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D900));
     if (a != 0) {
         a->setVisible(0);
     }
-    cUIObj_183B08* b = (cUIObj_183B08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D910));
+    cUIThing* b = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D910));
     if (b != 0) {
         b->setVisible(1);
     }
-    cUIObj_183B08* c = (cUIObj_183B08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D920));
+    cUIThing* c = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D920));
     if (c != 0) {
         c->setVisible(1);
     }
-    cUIObj_183B08* d = (cUIObj_183B08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D930));
+    cUIThing* d = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D930));
     if (d != 0) {
         d->setVisible(0);
     }
@@ -343,35 +342,21 @@ extern char D_0045D910[];
 extern char D_0045D920[];
 extern char D_0045D930[];
 
-class cUIObj_183C08 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
 extern "C" void func_00183C08(void* self)
 {
-    cUIObj_183C08* a = (cUIObj_183C08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D900));
+    cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D900));
     if (a != 0) {
         a->setVisible(1);
     }
-    cUIObj_183C08* b = (cUIObj_183C08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D910));
+    cUIThing* b = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D910));
     if (b != 0) {
         b->setVisible(0);
     }
-    cUIObj_183C08* c = (cUIObj_183C08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D920));
+    cUIThing* c = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D920));
     if (c != 0) {
         c->setVisible(0);
     }
-    cUIObj_183C08* d = (cUIObj_183C08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D930));
+    cUIThing* d = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D930));
     if (d != 0) {
         d->setVisible(1);
     }
