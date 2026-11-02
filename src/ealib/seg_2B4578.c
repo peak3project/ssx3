@@ -94,6 +94,9 @@ struct sA8E8 {
     volatile unsigned short f334;
 };
 extern struct sA8E8 D_0050A8E8;
+extern struct sA8E8Cfg D_0050A908;      /* D_0050A8E8.setup.cfg */
+extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
+extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
 
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
 
@@ -665,16 +668,14 @@ int func_003B4DD8_4DD8(struct sA8E8Setup *out) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4FC0);
 #ifdef SKIP_ASM
-typedef struct { int w[5]; } W14_4FC0;
-extern char D_0050A908[];
-extern W14_4FC0 D_0050A9A8;
 extern int func_003C0E28(void);
-int func_003B4FC0_impl(char *p) __asm__("func_003B4FC0");
-int func_003B4FC0_impl(char *p) {
-    __builtin_memcpy(D_0050A908, p + 0x20, 0xA0);
-    D_0050A9A8 = *(W14_4FC0 *)(p + 0xC0);
+int func_003B4FC0_impl(struct sA8E8Setup *p) __asm__("func_003B4FC0");
+int func_003B4FC0_impl(struct sA8E8Setup *p) {
+    __builtin_memcpy(&D_0050A908, &p->cfg, sizeof(struct sA8E8Cfg));
+    D_0050A9A8 = p->tail;
     func_003C0E28();
-    __builtin_memcpy((char *)&D_0050A9A8 + 0x14, (char *)&D_0050A9A8 - 0xA0, 0xA0);
+    /* D_0050A8E8.saved = D_0050A8E8.setup.cfg, addressed from D_0050A9A8 as in the target */
+    __builtin_memcpy((char *)&D_0050A9A8 + 0x14, (char *)&D_0050A9A8 - 0xA0, sizeof(struct sA8E8Cfg));
     return 0;
 }
 #endif
