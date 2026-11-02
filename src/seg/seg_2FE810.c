@@ -208,6 +208,35 @@ extern sPadSlot D_00526250[2][4];
 extern int D_00526440[];        /* RPC send / receive block (128 bytes) */
 extern int D_004515C8;
 extern int D_004515CC;
+/* one 0x80-byte pad data frame in the DMA area (func_003FF9A8 returns the newer one) */
+typedef struct {
+    unsigned char a, b, c, d;
+} sPadAct;
+typedef struct {
+    unsigned char f00[0x30];
+    sPadAct act[4];             /* 0x30 */
+    sPadAct comb[4];            /* 0x40 */
+    unsigned short modes[4];    /* 0x50 */
+    int frame;                  /* 0x58 frame counter */
+    int f5C;
+    int len;                    /* 0x60 */
+    unsigned char f64;
+    unsigned char f65;
+    unsigned char f66;
+    unsigned char f67;
+    unsigned char f68;
+    unsigned char f69;
+    unsigned char f6A;
+    unsigned char f6B;
+    unsigned char f6C[4];
+    unsigned char state;        /* 0x70 */
+    unsigned char reqState;     /* 0x71 */
+    unsigned char ok;           /* 0x72 */
+    unsigned char f73[6];
+    unsigned char f79[4];       /* 0x79 little-endian word */
+    unsigned char f7D[3];
+} sPadFrame;
+extern sPadFrame *func_003FF9A8(int port, int slot);
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
@@ -1435,22 +1464,22 @@ int func_003FF8F0(int a, int b) {
 INCLUDE_ASM("seg/seg_2FE810", func_003FF9A8);
 #ifdef SKIP_ASM
 extern void func_00424698(int *, int *);
-int *func_003FF9A8(int a, int b) {
-    int *p, c;
-    p = (int *)D_00526250[a][b].dmaBuf;
-    func_00424698(p, (int *)((char *)p + 0xFF));
-    c = (p[22] < p[54]) << 7;
-    return (int *)((char *)p + c);
+sPadFrame *func_003FF9A8(int a, int b) {
+    sPadFrame *p;
+    int c;
+    p = (sPadFrame *)D_00526250[a][b].dmaBuf;
+    func_00424698((int *)p, (int *)((char *)p + 0xFF));
+    c = (p[0].frame < p[1].frame) << 7;
+    return (sPadFrame *)((char *)p + c);
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFA08);
 #ifdef SKIP_ASM
-extern int * func_003FF9A8(int, int);
 int func_003FFA08(int a, int b) {
     if (!D_00526250[a][b].open) return 0;
-    return func_003FF9A8(a, b)[22];
+    return func_003FF9A8(a, b)->frame;
 }
 #endif
 
@@ -1458,7 +1487,6 @@ int func_003FFA08(int a, int b) {
 INCLUDE_ASM("seg/seg_2FE810", func_003FFA58);
 #ifdef SKIP_ASM
 struct B128 { char b[128]; };
-extern unsigned char *func_003FF9A8_c(int, int) __asm__("func_003FF9A8");
 extern int func_0042C078();
 extern void func_0042C0C0();
 extern int func_0041605C_k() __asm__("func_0041605C");
@@ -1470,7 +1498,7 @@ int func_003FFA58(int a, int b, int c) {
         return 0;
     r = func_0042C078();
     q = (int *)&s;
-    s = *(struct B128 *)func_003FF9A8_c(a, b);
+    s = *(struct B128 *)func_003FF9A8(a, b);
     func_0041605C_k(c, q, q[0x60 / 4]);
     if (r == 1)
         func_0042C0C0();
@@ -1485,7 +1513,7 @@ int func_003FFBC0(int a, int b) {
     unsigned char *p;
     if (!D_00526250[a][b].open)
         return 99;
-    p = (unsigned char *)func_003FF9A8(a, b);
+    p = (unsigned char *)func_003FF9A8(a, b); /* byte reads: a sPadFrame * makes one lhu of state/reqState */
     if (p[0x70] == 6 && p[0x71] == 2)
         return 5;
     return p[0x70];
@@ -1513,7 +1541,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FFC70);
 int func_003FFC70(int a, int b, int c) {
     if (!D_00526250[a][b].open)
         return 0;
-    ((char *)func_003FF9A8(a, b))[0x71] = c;
+    func_003FF9A8(a, b)->reqState = c;
     return 1;
 }
 #endif
@@ -1523,7 +1551,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FFCD8);
 #ifdef SKIP_ASM
 int func_003FFCD8(int a, int b) {
     if (!D_00526250[a][b].open) return 0;
-    return ((unsigned char *)func_003FF9A8(a, b))[0x71];
+    return func_003FF9A8(a, b)->reqState;
 }
 #endif
 
@@ -1545,24 +1573,23 @@ void func_003FFD28(unsigned i, char *dst) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFD60);
 #ifdef SKIP_ASM
-struct Z_FD60 { unsigned char pad[0x30]; struct { unsigned char a, b, c, d; } e[8]; unsigned char pad2[0x14]; unsigned char f64; unsigned char pad3[5]; unsigned char f6A; unsigned char pad4[7]; unsigned char f72; };
 int func_003FFD60(int a, int b, int c, int d) {
-    struct Z_FD60 *p;
+    sPadFrame *p;
     if (!D_00526250[a][b].open) return 0;
-    p = (struct Z_FD60 *)func_003FF9A8(a, b);
-    if (p->f72 != 1) return 0;
+    p = func_003FF9A8(a, b);
+    if (p->ok != 1) return 0;
     if (p->f64 < 2) return 0;
     if (c >= p->f6A) return 0;
     if (c == -1) return p->f6A;
     switch (d) {
     case 1:
-        return p->e[c].a;
+        return p->act[c].a;
     case 2:
-        return p->e[c].b;
+        return p->act[c].b;
     case 3:
-        return p->e[c].c;
+        return p->act[c].c;
     case 4:
-        return p->e[c].d;
+        return p->act[c].d;
     }
     return 0;
 }
@@ -1571,24 +1598,23 @@ int func_003FFD60(int a, int b, int c, int d) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FFE80);
 #ifdef SKIP_ASM
-struct Z_FE80 { unsigned char pad[0x40]; struct { unsigned char a, b, c, d; } e[8]; unsigned char pad2[4]; unsigned char f64; unsigned char pad3[6]; unsigned char f6B; unsigned char pad4[6]; unsigned char f72; };
 int func_003FFE80(int a, int b, int c, int d) {
-    struct Z_FE80 *p;
+    sPadFrame *p;
     if (!D_00526250[a][b].open) return 0;
-    p = (struct Z_FE80 *)func_003FF9A8(a, b);
-    if (p->f72 != 1) return 0;
+    p = func_003FF9A8(a, b);
+    if (p->ok != 1) return 0;
     if (p->f64 < 2) return 0;
     if (c == -1) return p->f6B;
     if (c >= p->f6B) return 0;
     switch (d) {
     case -1:
-        return p->e[c].a;
+        return p->comb[c].a;
     case 0:
-        return p->e[c].b;
+        return p->comb[c].b;
     case 1:
-        return p->e[c].c;
+        return p->comb[c].c;
     case 2:
-        return p->e[c].d;
+        return p->comb[c].d;
     }
     return 0;
 }
@@ -1598,14 +1624,13 @@ int func_003FFE80(int a, int b, int c, int d) {
 INCLUDE_ASM("seg/seg_2FE810", func_003FFFA0);
 #ifdef SKIP_ASM
 // scePadInfoMode(port, slot, term, offs)
-struct Z_FFA0 { unsigned char pad[0x50]; unsigned short t[8]; unsigned char pad2[4]; unsigned char f64; unsigned char f65; unsigned char pad3[2]; unsigned char f68; unsigned char f69; unsigned char pad4[7]; unsigned char f71; unsigned char f72; };
 int func_003FFFA0(int port, int slot, int term, int offs) {
-    struct Z_FFA0 *p;
+    sPadFrame *p;
     int t;
     if (!D_00526250[port][slot].open) return 0;
-    p = (struct Z_FFA0 *)func_003FF9A8(port, slot);
-    if (p->f72 != 1) return 0;
-    if (p->f71 == 2) return 0;
+    p = func_003FF9A8(port, slot);
+    if (p->ok != 1) return 0;
+    if (p->reqState == 2) return 0;
     switch (term) {
     case 1:
         t = p->f65;
@@ -1613,14 +1638,14 @@ int func_003FFFA0(int port, int slot, int term, int offs) {
         return t >> 4;
     case 2:
         if (p->f64 == 1) return 0;
-        return p->t[p->f69];
+        return p->modes[p->f69];
     case 3:
         if (p->f64 == 1) return 0;
         return p->f69;
     case 4:
         if (p->f64 == 1) return 0;
         if (offs == -1) return p->f68;
-        if (offs < p->f68) return p->t[offs];
+        if (offs < p->f68) return p->modes[offs];
         return 0;
     }
     return 0;
@@ -1650,14 +1675,13 @@ int func_004000D8(int a, int b, int c, int d) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400190);
 #ifdef SKIP_ASM
-extern int *func_003FF9A8(int, int);
 extern int s0_F390(int, int) __asm__("func_003FF390");
 int func_00400190(int a, int b, unsigned char *src) {
     int i;
     int ok;
     int *q;
     char *d;
-    if (((unsigned char *)func_003FF9A8(a, b))[0x72] != 1)
+    if (func_003FF9A8(a, b)->ok != 1)
         return 0;
     q = (int *)D_00526250[a][b].actBuf;
     d = (char *)q + 0xC;
@@ -1697,19 +1721,18 @@ int func_00400250(int port, int slot, unsigned char *data) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400328);
 #ifdef SKIP_ASM
-extern unsigned char *func_003FF9A8_c(int, int) __asm__("func_003FF9A8");
 int func_00400328(int a, int b) {
-    unsigned char *p;
+    sPadFrame *p;
     if (!D_00526250[a][b].open)
         return 0;
-    p = func_003FF9A8_c(a, b);
-    if (p[0x72] != 1)
+    p = func_003FF9A8(a, b);
+    if (p->ok != 1)
         return 0;
-    if (p[0x64] < 2)
+    if (p->f64 < 2)
         return 0;
-    if (p[0x66] < 2)
+    if (p->f66 < 2)
         return 0;
-    return p[0x79] + ((long)p[0x7A] << 8) + ((long)p[0x7B] << 16) + ((long)p[0x7C] << 24);
+    return p->f79[0] + ((long)p->f79[1] << 8) + ((long)p->f79[2] << 16) + ((long)p->f79[3] << 24);
 }
 #endif
 
