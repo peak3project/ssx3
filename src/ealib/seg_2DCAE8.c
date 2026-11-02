@@ -6463,10 +6463,9 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5E88);
 struct S_5E88 { int a; int b; int c; };
 extern void func_003E5B60(void);
 extern struct S_5E88 D_00451250_5E88[] __asm__("D_00451250");
-extern int D_00451008_5E88[] __asm__("D_00451008");
 
 void func_003E5E88(int a0, int a1, int a2) {
-    if (D_00451008_5E88[0] == 0) {
+    if (D_00451008 == 0) {
         func_003E5B60();
     }
     D_00451250_5E88[a0].a = a1;
