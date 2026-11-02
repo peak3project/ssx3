@@ -120,6 +120,13 @@ struct sQueueItem {
     sVEntryVoidArg* vt;
 };
 
+struct sQueueItemVec {
+    int f0;
+    sQueueItem** mBegin;
+    sQueueItem** mEnd;
+    sQueueItem** mCap;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -2368,13 +2375,6 @@ void cMemMan_free(void* p);
 void operator_delete(int* ptr);
 extern char D_00467E18[];
 
-struct sObjVec1A7848 {
-    int f0;
-    sQueueItem** mBegin;
-    sQueueItem** mEnd;
-    sQueueItem** mCap;
-};
-
 static inline void Dealloc1A7848(sQueueItem** p, int n)
 {
     if (p != 0) {
@@ -2391,7 +2391,7 @@ struct sOwner1A7848 {
     void* vt;
     char padC[0x6C4];
     char str[8];
-    sObjVec1A7848 mVec;
+    sQueueItemVec mVec;
 };
 
 extern "C" void func_001A7848(sOwner1A7848* self, int flags)
@@ -2405,7 +2405,7 @@ extern "C" void func_001A7848(sOwner1A7848* self, int flags)
             p->vt[1].fn((char*)p + p->vt[1].delta, 3);
         }
     }
-    sObjVec1A7848* v = &self->mVec;
+    sQueueItemVec* v = &self->mVec;
     sQueueItem** first = self->mVec.mBegin;
     sQueueItem** last = self->mVec.mEnd;
     func_0041610C(first, last, (v->mEnd - last) * sizeof(sQueueItem*));
@@ -2634,14 +2634,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001A7DD8);
 #ifdef SKIP_ASM
 extern "C" void* func_0041610C(void* dst, void* src, int n);
 
-struct sObjVec1A7DD8 {
-    int f0;
-    sQueueItem** mBegin;
-    sQueueItem** mEnd;
-    sQueueItem** mCap;
-};
-
-extern "C" void func_001DB918(sObjVec1A7DD8* vec, sQueueItem** pos, sQueueItem* const* x);
+extern "C" void func_001DB918(sQueueItemVec* vec, sQueueItem** pos, sQueueItem* const* x);
 
 static inline sQueueItem** Copy1A7DD8(sQueueItem** first, sQueueItem** last, sQueueItem** result)
 {
@@ -2651,7 +2644,7 @@ static inline sQueueItem** Copy1A7DD8(sQueueItem** first, sQueueItem** last, sQu
 
 struct sOwner1A7DD8 {
     char pad0[0x6D8];
-    sObjVec1A7DD8 mVec;
+    sQueueItemVec mVec;
 };
 
 extern "C" void func_001A7DD8(void* selfp, void* item)
@@ -2660,7 +2653,7 @@ extern "C" void func_001A7DD8(void* selfp, void* item)
     sQueueItem* x = (sQueueItem*)item;
     for (;;) {
         if ((unsigned int)(self->mVec.mEnd - self->mVec.mBegin) < 31) break;
-        sObjVec1A7DD8* v = &self->mVec;
+        sQueueItemVec* v = &self->mVec;
         sQueueItem** pos = self->mVec.mBegin;
         sQueueItem* p = *pos;
         if (p) {
@@ -2671,7 +2664,7 @@ extern "C" void func_001A7DD8(void* selfp, void* item)
             p->vt[1].fn((char*)p + p->vt[1].delta, 3);
         }
     }
-    sObjVec1A7DD8* v2 = &self->mVec;
+    sQueueItemVec* v2 = &self->mVec;
     if (self->mVec.mEnd != self->mVec.mCap) {
         sQueueItem** e = v2->mEnd;
         if (e) *e = x;
