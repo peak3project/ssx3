@@ -66,6 +66,15 @@ struct sRmPkt {
     ulong* base;    // 0x8
 };
 
+// Globals declared by several functions below.
+extern void* D_00490AF0[];
+extern void* D_004913B8[];
+extern void* D_004913F8[];
+extern char* D_004A5B64;
+extern int D_004A5B78;
+extern int D_004A5B7C;
+extern void* D_004A5B84;
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -896,7 +905,6 @@ extern "C" void func_0035DA38(void* self, func_0035DA38_cObj* obj)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035DA70);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 extern void* D_0048F080[];
 void* func_0035CFE8(void* self);
 extern "C" void* func_0032C508(void* p);
@@ -1349,7 +1357,6 @@ INCLUDE_ASM("object/railmodifier", func_0035EDC8);
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F0B8);
 #ifdef SKIP_ASM
-extern char* D_004A5B64;
 int BXrand();
 extern "C" void func_0035F218(void* self);
 
@@ -1591,7 +1598,6 @@ extern "C" void func_0035F688(void* self, cRmStream* stream)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F6E8);
 #ifdef SKIP_ASM
-extern char* D_004A5B64;
 
 struct sRmQuad_F6E8 {
     float x, y, z, w;
@@ -1662,7 +1668,6 @@ extern "C" void* func_0035F788(void* self, void* stream)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F7D0);
 #ifdef SKIP_ASM
-extern char* D_004A5B64;
 
 struct sV2_F7D0 {
     float x, y;
@@ -2430,8 +2435,6 @@ int func_00360880(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00360888);
 #ifdef SKIP_ASM
-extern int D_004A5B78;
-extern int D_004A5B7C;
 
 extern "C" void func_00360888(void)
 {
@@ -2442,7 +2445,6 @@ extern "C" void func_00360888(void)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00360898);
 #ifdef SKIP_ASM
-extern int D_004A5B78;
 
 extern "C" int func_00360898(void)
 {
@@ -2452,7 +2454,6 @@ extern "C" int func_00360898(void)
 //100%
 INCLUDE_ASM("object/railmodifier", func_003608B0);
 #ifdef SKIP_ASM
-extern int D_004A5B7C;
 
 extern "C" int func_003608B0(void)
 {
@@ -2462,7 +2463,6 @@ extern "C" int func_003608B0(void)
 //100%
 INCLUDE_ASM("object/railmodifier", func_003608C8);
 #ifdef SKIP_ASM
-extern int D_004A5B78;
 
 extern "C" int func_003608C8(void) {
     return D_004A5B78;
@@ -2471,7 +2471,6 @@ extern "C" int func_003608C8(void) {
 //100%
 INCLUDE_ASM("object/railmodifier", func_003608D0);
 #ifdef SKIP_ASM
-extern int D_004A5B7C;
 
 extern "C" int func_003608D0(void) {
     return D_004A5B7C;
@@ -2480,7 +2479,6 @@ extern "C" int func_003608D0(void) {
 //100%
 INCLUDE_ASM("object/railmodifier", func_003608D8);
 #ifdef SKIP_ASM
-extern int D_004A5B78;
 
 extern "C" void func_003608D8(int arg0) {
     D_004A5B78 = arg0;
@@ -2489,7 +2487,6 @@ extern "C" void func_003608D8(int arg0) {
 //100%
 INCLUDE_ASM("object/railmodifier", func_003608E0);
 #ifdef SKIP_ASM
-extern int D_004A5B7C;
 
 extern "C" void func_003608E0(int arg0) {
     D_004A5B7C = arg0;
@@ -2973,7 +2970,6 @@ void func_00360AF8(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00360B00);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 void operator_delete(int*);
 
 extern "C" void func_00360B00(void* self, int flags)
@@ -3210,7 +3206,6 @@ void func_00360C00(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00360C08);
 #ifdef SKIP_ASM
-extern void* D_004913B8[];
 
 extern "C" void *func_00360C08(void *arg0) {
     (*(int **)((char*)(arg0) + (4))) = &(*(int*)&D_004913B8);
@@ -3222,7 +3217,6 @@ extern "C" void *func_00360C08(void *arg0) {
 //100%
 INCLUDE_ASM("object/railmodifier", func_00360C28);
 #ifdef SKIP_ASM
-extern void* D_004913B8[];
 void operator_delete(int*);
 
 extern "C" void func_00360C28(void* self, int flags)
@@ -3814,7 +3808,6 @@ int func_00361198(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_003611A0);
 #ifdef SKIP_ASM
-extern void* D_00490AF0[];
 extern "C" void func_003513D0(void*);
 
 extern "C" void* func_003611A0(void* self)
@@ -3828,7 +3821,6 @@ extern "C" void* func_003611A0(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_003611D8);
 #ifdef SKIP_ASM
-extern void* D_00490AF0[];
 void operator_delete(int*);
 
 extern "C" void func_003611D8(void* self, int flags)
@@ -3857,7 +3849,6 @@ extern "C" void func_00361208(void* self, t4Vector* out)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361248);
 #ifdef SKIP_ASM
-extern void* D_00490AF0[];
 extern void* D_00490AD0[];
 extern "C" void func_003513D0(void*);
 extern "C" void func_003612C0(void*);
@@ -3875,7 +3866,6 @@ extern "C" void* func_00361248(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361290);
 #ifdef SKIP_ASM
-extern void* D_00490AF0[];
 void operator_delete(int*);
 
 extern "C" void func_00361290(void* self, int flags)
@@ -3923,7 +3913,6 @@ extern "C" int func_003612F8(int arg0) {
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361300);
 #ifdef SKIP_ASM
-extern void* D_00490AF0[];
 extern void* D_00490AB0[];
 extern "C" void func_003513D0(void*);
 
@@ -3939,7 +3928,6 @@ extern "C" void* func_00361300(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361340);
 #ifdef SKIP_ASM
-extern void* D_00490AF0[];
 void operator_delete(int*);
 
 extern "C" void func_00361340(void* self, int flags)
@@ -4038,7 +4026,6 @@ extern "C" int func_00361460(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361488);
 #ifdef SKIP_ASM
-extern void* D_004913B8[];
 void operator_delete(int*);
 
 extern "C" void func_00361488(void* self, int flags)
@@ -4429,7 +4416,6 @@ extern "C" void func_00361858(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_003618C8);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 void operator_delete(int*);
 
 extern "C" void func_003618C8(void* self, int flags)
@@ -4521,7 +4507,6 @@ extern "C" void* func_00361940(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361988);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 void operator_delete(int*);
 
 extern "C" void func_00361988(void* self, int flags)
@@ -4571,7 +4556,6 @@ extern "C" void func_003619D8(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("object/railmodifier", func_003619E0);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 void operator_delete(int*);
 
 extern "C" void func_003619E0(void* self, int flags)
@@ -4663,7 +4647,6 @@ extern "C" void* func_00361A60(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361AA8);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 void operator_delete(int*);
 
 extern "C" void func_00361AA8(void* self, int flags)
@@ -4733,7 +4716,6 @@ void* func_00361B10(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361B18);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 void operator_delete(int*);
 
 extern "C" void func_00361B18(void* self, int flags)
@@ -4904,7 +4886,6 @@ int func_00361C70(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361C78);
 #ifdef SKIP_ASM
-extern void* D_004913F8[];
 void operator_delete(int*);
 
 extern "C" void func_00361C78(void* self, int flags)
@@ -5852,7 +5833,6 @@ INCLUDE_ASM("object/railmodifier", func_00362CC8);
 extern "C" void func_004247D8(void* begin, void* end);
 extern "C" void func_0038F738(void* base, int size, int mode);
 extern "C" void func_003E6448(void* dst, int c, int n);
-extern void* D_004A5B84;
 
 struct sRail20_2CC8 {
     int v[5];
@@ -6475,7 +6455,6 @@ extern "C" void func_00366618(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_003666F8);
 #ifdef SKIP_ASM
-extern void* D_004A5B84;
 extern char D_0053AB80[];
 extern char D_0053E9FF[];
 
