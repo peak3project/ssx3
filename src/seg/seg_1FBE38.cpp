@@ -5389,8 +5389,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003045B8);
 #ifdef SKIP_ASM
 // PORT: 64-bit bitfield container (unsigned long is 8 bytes on the EE).
 extern char *D_004A3DD8_45B8 __asm__("D_004A3DD8");
-struct V3_45B8 { float x, y, z; };
-extern V3_45B8 D_004C9098_45B8 __asm__("D_004C9098");
 struct Rec_45B8 {
     unsigned a0; int a1; int a2; int a3;
     unsigned a4; unsigned a5; unsigned a6; unsigned a7;
@@ -5411,7 +5409,7 @@ struct BF_45B8 {
 };
 extern "C" void func_0030B520_45B8(char*, BF_45B8*) __asm__("func_0030B520");
 struct Ent_45B8 { int idx; int val; int pad; int type; };
-extern "C" V3_45B8 func_003045B8(int n, Ent_45B8 *e) {
+extern "C" cLunoValue func_003045B8(int n, Ent_45B8 *e) {
     if (D_580C_45B8 == 0) {
         D_4FBCC8_45B8.a0 = 0;
         D_4FBCC8_45B8.a1 = 0;
@@ -5465,7 +5463,7 @@ extern "C" V3_45B8 func_003045B8(int n, Ent_45B8 *e) {
     bf.f14 = buf->a15;
     bf.f16 = 0;
     func_0030B520_45B8(D_004A3DD8_45B8, &bf);
-    return D_004C9098_45B8;
+    return D_004C9098;
 }
 #endif
 
