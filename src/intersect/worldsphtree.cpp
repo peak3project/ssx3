@@ -23,6 +23,11 @@ struct sWsVtVI {
     void (*fn)(void*, int);
 };
 
+// Octree cell key: level and integer cell coordinates.
+struct sWsCell {
+    int level, x, y, z;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2264,9 +2269,6 @@ extern "C" void* func_003388E0(void* self, ...)
 INCLUDE_ASM("intersect/worldsphtree", func_00338920);
 #ifdef SKIP_ASM
 struct sSphNode_340A40;
-struct sCell_8920 {
-    int level, x, y, z;
-};
 
 extern "C" void func_00340A40(sSphNode_340A40* node, sCtx_3309D8* ctx);
 
@@ -2284,7 +2286,7 @@ static inline void descend_8920(void** n, sCtx_3309D8* cb)
     if (n[7] != 0) func_00340A40((sSphNode_340A40*)n[7], cb);
 }
 
-extern "C" void func_00338920(char* self, sCtx_3309D8* cb, sCtx_3309D8* cb2, float* box, void** node, sCell_8920* cell)
+extern "C" void func_00338920(char* self, sCtx_3309D8* cb, sCtx_3309D8* cb2, float* box, void** node, sWsCell* cell)
 {
     func_003309D8(cb, node);
     if (cell->level == 11) {
@@ -2292,7 +2294,7 @@ extern "C" void func_00338920(char* self, sCtx_3309D8* cb, sCtx_3309D8* cb2, flo
     }
     int bits = (cell->level + 0x7E) << 23;
     float s = *(float*)&bits;
-    sCell_8920 k;
+    sWsCell k;
     k.level = cell->level - 1;
     k.x = cell->x * 2;
     k.y = cell->y * 2;
@@ -2392,9 +2394,6 @@ extern "C" void func_00338920(char* self, sCtx_3309D8* cb, sCtx_3309D8* cb2, flo
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00339598);
 #ifdef SKIP_ASM
-struct sCell_9598 {
-    int level, x, y, z;
-};
 
 struct sOct_9598 {
     void* child[8];                 // 0x00
@@ -2425,7 +2424,7 @@ static inline void descend_9598(void** n, sColl_9598* cb)
     if (n[7] != 0) descendRec_9598(n[7], cb);
 }
 
-extern "C" void func_00339598(char* self, sColl_9598* cb, sColl_9598* cb2, float* box, void** node, sCell_9598* cell)
+extern "C" void func_00339598(char* self, sColl_9598* cb, sColl_9598* cb2, float* box, void** node, sWsCell* cell)
 {
     {
         void** p;
@@ -2439,7 +2438,7 @@ extern "C" void func_00339598(char* self, sColl_9598* cb, sColl_9598* cb2, float
     }
     int bits = (cell->level + 0x7E) << 23;
     float s = *(float*)&bits;
-    sCell_9598 k;
+    sWsCell k;
     k.level = cell->level - 1;
     k.x = cell->x * 2;
     k.y = cell->y * 2;
@@ -2540,9 +2539,6 @@ extern "C" void func_00339598(char* self, sColl_9598* cb, sColl_9598* cb2, float
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033A3D8);
 #ifdef SKIP_ASM
-struct sCell_A3D8 {
-    int level, x, y, z;
-};
 
 struct sOct_A3D8 {
     void* child[8];                 // 0x00
@@ -2599,7 +2595,7 @@ static inline void descend_A3D8(void** n, sCb_A3D8* cb2)
     if (n[7] != 0) descRec_A3D8(n[7], cb2);
 }
 
-extern "C" void func_0033A3D8(char* self, sCb_A3D8* cb, sCb_A3D8* cb2, float* box, void** node, sCell_A3D8* cell)
+extern "C" void func_0033A3D8(char* self, sCb_A3D8* cb, sCb_A3D8* cb2, float* box, void** node, sWsCell* cell)
 {
     func_003309D8(&cb->a, node);
     gather_A3D8((sObj_A3D8*)((sOct_A3D8*)node)->objs, cb);
@@ -2608,7 +2604,7 @@ extern "C" void func_0033A3D8(char* self, sCb_A3D8* cb, sCb_A3D8* cb2, float* bo
     }
     int bits = (cell->level + 0x7E) << 23;
     float s = *(float*)&bits;
-    sCell_A3D8 k;
+    sWsCell k;
     k.level = cell->level - 1;
     k.x = cell->x * 2;
     k.y = cell->y * 2;
@@ -2709,9 +2705,6 @@ extern "C" void func_0033A3D8(char* self, sCb_A3D8* cb, sCb_A3D8* cb2, float* bo
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033B748);
 #ifdef SKIP_ASM
-struct sCell_B748 {
-    int level, x, y, z;
-};
 
 struct sOct_B748 {
     void* child[8];                 // 0x00
@@ -2787,7 +2780,7 @@ static inline void descend_B748(void** n, sCb_B748* cb2)
     if (n[7] != 0) descRec_B748(n[7], cb2);
 }
 
-extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* box, void** node, sCell_B748* cell)
+extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* box, void** node, sWsCell* cell)
 {
     func_003309D8(&cb->a, node);
     gather_B748((sObj_B748*)((sOct_B748*)node)->objs, cb);
@@ -2797,7 +2790,7 @@ extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* bo
     }
     int bits = (cell->level + 0x7E) << 23;
     float s = *(float*)&bits;
-    sCell_B748 k;
+    sWsCell k;
     k.level = cell->level - 1;
     k.x = cell->x * 2;
     k.y = cell->y * 2;
@@ -2898,9 +2891,6 @@ extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* bo
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033CCF8);
 #ifdef SKIP_ASM
-struct sCell_CCF8 {
-    int level, x, y, z;
-};
 
 struct sOct_CCF8 {
     void* child[8];                 // 0x00
@@ -2932,7 +2922,7 @@ static inline void descend_CCF8(void** n, void* cb)
     if (n[7] != 0) func_00340FA0(n[7], cb);
 }
 
-extern "C" void func_0033CCF8(char* self, void* cb, void* cb2, float* box, void** node, sCell_CCF8* cell)
+extern "C" void func_0033CCF8(char* self, void* cb, void* cb2, float* box, void** node, sWsCell* cell)
 {
     {
         void** p;
@@ -2949,7 +2939,7 @@ extern "C" void func_0033CCF8(char* self, void* cb, void* cb2, float* box, void*
     }
     int bits = (cell->level + 0x7E) << 23;
     float s = *(float*)&bits;
-    sCell_CCF8 k;
+    sWsCell k;
     k.level = cell->level - 1;
     k.x = cell->x * 2;
     k.y = cell->y * 2;
@@ -3186,9 +3176,6 @@ extern "C" void func_0033DBE8(char* flag, sQuery_369D8* q, sQuery_369D8* q2, sCt
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033DFD8);
 #ifdef SKIP_ASM
-struct sCell_DFD8 {
-    int level, x, y, z;
-};
 
 struct sOct_DFD8 {
     void* child[8];                 // 0x00
@@ -3215,7 +3202,7 @@ static inline void descend_DFD8(void** n, void* cb)
     if (n[7] != 0) func_003410C0(n[7], cb);
 }
 
-extern "C" void func_0033DFD8(char* self, void* cb, void* cb2, float* box, void** node, sCell_DFD8* cell)
+extern "C" void func_0033DFD8(char* self, void* cb, void* cb2, float* box, void** node, sWsCell* cell)
 {
     {
         void** p;
@@ -3229,7 +3216,7 @@ extern "C" void func_0033DFD8(char* self, void* cb, void* cb2, float* box, void*
     }
     int bits = (cell->level + 0x7E) << 23;
     float s = *(float*)&bits;
-    sCell_DFD8 k;
+    sWsCell k;
     k.level = cell->level - 1;
     k.x = cell->x * 2;
     k.y = cell->y * 2;
@@ -3330,9 +3317,6 @@ extern "C" void func_0033DFD8(char* self, void* cb, void* cb2, float* box, void*
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_0033ED60);
 #ifdef SKIP_ASM
-struct sCell_ED60 {
-    int level, x, y, z;
-};
 
 struct sOct_ED60 {
     void* child[8];                 // 0x00
@@ -3381,7 +3365,7 @@ static inline void descend_ED60(void** n, sQ_ED60* cb2)
     if (n[7] != 0) descRec_ED60(n[7], cb2);
 }
 
-extern "C" void func_0033ED60(char* self, sQ_ED60* cb, sQ_ED60* cb2, float* box, void** node, sCell_ED60* cell)
+extern "C" void func_0033ED60(char* self, sQ_ED60* cb, sQ_ED60* cb2, float* box, void** node, sWsCell* cell)
 {
     dispatch_ED60(((sOct_ED60*)node)->objs, cb);
     if (cell->level == 11) {
@@ -3389,7 +3373,7 @@ extern "C" void func_0033ED60(char* self, sQ_ED60* cb, sQ_ED60* cb2, float* box,
     }
     int bits = (cell->level + 0x7E) << 23;
     float s = *(float*)&bits;
-    sCell_ED60 k;
+    sWsCell k;
     k.level = cell->level - 1;
     k.x = cell->x * 2;
     k.y = cell->y * 2;
