@@ -800,7 +800,88 @@ void func_003B49B0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B49D0);
+#ifdef SKIP_ASM
+int func_003B49D0(unsigned char *dst, unsigned char *src, int *used) {
+    unsigned char *s = src;
+    unsigned char *ref;
+    unsigned int t;
+    unsigned char c;
+    unsigned int b1;
+    unsigned int b2;
+    unsigned int b3;
+    unsigned int run;
+    int len = 0;
+
+    if (src != 0) {
+        t = s[0];
+        t = (t << 8) + s[1];
+        s = src + 2;
+        if (t & 0x8000) {
+            if (t & 0x100) {
+                s = src + 6;
+            }
+            len = *s++;
+            len = (len << 8) + *s++;
+            len = (len << 8) + *s++;
+            len = (len << 8) + *s++;
+        } else {
+            if (t & 0x100) {
+                s = src + 5;
+            }
+            len = *s++;
+            len = (len << 8) + *s++;
+            len = (len << 8) + *s++;
+        }
+        for (;;) {
+            c = *s++;
+            if (!(c & 0x80)) {
+                b1 = *s++;
+                run = c & 3;
+                while (run--) *dst++ = *s++;
+                ref = dst - 1 - (((c & 0x60) << 3) + b1);
+                run = ((c & 0x1C) >> 2) + 3 - 1;
+                do *dst++ = *ref++; while (run--);
+                continue;
+            }
+            if (!(c & 0x40)) {
+                b1 = *s++;
+                b2 = *s++;
+                run = b1 >> 6;
+                while (run--) *dst++ = *s++;
+                ref = dst - 1 - (((b1 & 0x3F) << 8) + b2);
+                run = (c & 0x3F) + 4 - 1;
+                do *dst++ = *ref++; while (run--);
+                continue;
+            }
+            if (!(c & 0x20)) {
+                b1 = *s++;
+                b2 = *s++;
+                b3 = *s++;
+                run = c & 3;
+                while (run--) *dst++ = *s++;
+                ref = dst - 1 - ((((c & 0x10) >> 4) << 16) + (b1 << 8) + b2);
+                run = ((c & 0x0C) << 6) + b3 + 5 - 1;
+                do *dst++ = *ref++; while (run--);
+                continue;
+            }
+            run = ((c & 0x1F) << 2) + 4;
+            if (run <= 0x70) {
+                while (run--) *dst++ = *s++;
+                continue;
+            }
+            run = c & 3;
+            while (run--) *dst++ = *s++;
+            break;
+        }
+    }
+    if (used != 0) {
+        *used = s - src;
+    }
+    return len;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4D00);
