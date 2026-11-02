@@ -68,6 +68,11 @@ class cRider_1FBE38 : public cRiderData_1FBE38, public cBeing {
 public:
     char pad_0x6C4[0xB8];
     sRiderHandler_1FBE38* mRiderHandler;    // 0x77C (cRider::mRiderHandler)
+    char pad_0x780[0xF0];
+    int mViewIndex;             // 0x870 (cRider::mViewIndex)
+    int mIsHuman;               // 0x874
+    int mIsActor;               // 0x878
+    int mIsLocal;               // 0x87C
 };
 // The race (main/gamemode.cpp layout): riders by being index at 0x28; each player holds its rider at +0x18.
 struct sRacePlayer {
@@ -85,6 +90,11 @@ struct sRace {
     char pad_0x8C[0x1C];
     void* fA8;                  // 0xA8
 };
+// The game's cameras (camera/camera.cpp); one per view, indexed by cRider::mViewIndex.
+struct sCameras {
+    int f0;                     // 0x0
+    char* cam[1];               // 0x4
+};
 struct sGame {
     char pad_0x0[0xC];
     sRace* race;                // 0xC
@@ -92,6 +102,8 @@ struct sGame {
     void* f28;                  // 0x28
     char pad_0x2C[0x4C];
     char* f78;                  // 0x78
+    char pad_0x7C[0x8];
+    sCameras* cameras;          // 0x84
 };
 // The game singleton (D_004A28A8).
 struct sApp {
@@ -5585,7 +5597,125 @@ extern "C" cLunoValue func_00304FF0(int n, Ent_4FF0* e) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003050F0);
+#ifdef SKIP_ASM
+struct O_50F0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual t4Matrix *v24(); };
+// Defaults record of this camera-shake binding; keyword indexes the shake keyword table (the prototype asserts
+// dp->Index < kNumCameraShakeKeywords).
+struct Rec_50F0 { int keyword; int useObj; unsigned id; float scale; sBindEnd_1FBE38 f; };
+extern Rec_50F0 D_004FBD40_50F0 __asm__("D_004FBD40");
+extern int D_004A583C;
+extern const int D_00446690[];
+extern int D_004A3BD8[2];  // shake type per camera-shake keyword
+extern "C" void func_0015E360(char* cam, int type, float amount, float dist);
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector vSub_50F0(const t4Vector &a, const t4Vector &b) {
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vLen_50F0(const t4Vector &v) {
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+// Translation row of a transform (by value).
+static inline t4Vector trans_50F0(const t4Matrix *m) { return m->row[3]; }
+static inline char *refToPtr_50F0(unsigned i) { return (char*)(i << 2); }
+static inline char *conv_50F0(unsigned i) { if (i == 0) return 0; return refToPtr_50F0(i); }
+extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
+    if (D_004A583C == 0) {
+        D_004FBD40_50F0.keyword = 0;
+        D_004FBD40_50F0.useObj = 1;
+        // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
+        D_004FBD40_50F0.f = sBindEnd_1FBE38();
+        D_004FBD40_50F0.scale = 1.0f;
+        D_004FBD40_50F0.id = 0xFFFFFFFF;
+        D_004A583C = 1;
+    }
+    Rec_50F0 rec;
+    Rec_50F0 *buf = &rec;
+    rec.id = 0xFFFFFFFF;
+    func_003E6574(buf, &D_004FBD40_50F0, 0x14);
+    sBindArg_1FBE38 *x = e;
+    for (int i = 0; i < n; i++, x++) {
+        int idx = x->idx;
+        int t = D_00446690[idx];
+        unsigned *d = (unsigned*)((idx << 2) + (int)buf);
+        if (x->kind != t && t == 2)
+            *(float*)d = (float)x->val;
+        else
+            *d = x->val;
+    }
+    char *obj = 0;
+    if (buf->useObj) {
+        unsigned id = buf->id;
+        if (~id == 0) {
+            obj = D_004A3DD8->f290;
+        } else {
+            sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
+            char *r;
+            if (!s)
+                r = 0;
+            else
+                r = conv_50F0(s->refs[id >> 8] >> 8);
+            obj = r;
+        }
+    }
+    int being = D_004A3DD8->being;
+    float scale = buf->scale;
+    int keyword = buf->keyword;
+    if (keyword == 0) {
+        sGame *game = D_004A28A8->game;
+        int np = game->race->numPlayers;
+        if (obj) {
+            for (int i = 0; i < np; i++) {
+                const t4Vector *rp = game->race->players[i]->rider->getPosition();
+                O_50F0 *node = *(O_50F0**)(obj + 0xC);
+                t4Matrix *m = node ? node->v24() : (t4Matrix*)(obj + 0x10);
+                t4Vector d = vSub_50F0(*rp, trans_50F0(m));
+                float dist = vLen_50F0(d);
+                cRider_1FBE38 *r = game->race->players[i]->rider;
+                int view = r->mViewIndex;
+                if (r->mIsLocal)
+                    func_0015E360(game->cameras->cam[view], D_004A3BD8[keyword], 1.0f, dist * scale);
+            }
+        } else {
+            for (int i = 0; i < np; i++) {
+                if (game->race->players[i]->rider->getAIIndex() == being) {
+                    cRider_1FBE38 *r = game->race->players[i]->rider;
+                    int view = r->mViewIndex;
+                    if (r->mIsLocal)
+                        func_0015E360(game->cameras->cam[view], D_004A3BD8[keyword], 1.0f, 0.0f);
+                    break;
+                }
+            }
+        }
+    }
+    return D_004C9098;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00305478);
