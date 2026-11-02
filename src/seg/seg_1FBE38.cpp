@@ -3448,7 +3448,7 @@ extern "C" int func_0030A868_12F0(cWScriptMan*, unsigned, int, int) __asm__("fun
 extern int D_004A56B8_12F0 __asm__("D_004A56B8");
 struct T12_12F0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_12F0 D_004FBBE0_12F0 __asm__("D_004FBBE0");
-extern "C" void* func_003012F0(void* self, int n, Ent_12F0* e) {
+extern "C" cLunoValue* func_003012F0(cLunoValue* ret, int n, Ent_12F0* e) {
     if (D_004A56B8_12F0 == 0) {
         D_004FBBE0_12F0.a = -1;
         D_004FBBE0_12F0.b = -1;
@@ -3471,12 +3471,12 @@ extern "C" void* func_003012F0(void* self, int n, Ent_12F0* e) {
     unsigned x = vp[0];
     if (x != 0xFFFFFFFFu) {
         int r = func_0030A868_12F0(D_004A3DD8, x, vp[1], -1);
-        *(int*)((char*)self + 8) = 1;
-        *func_00226610(self) = r;
+        ret->type = 1;
+        *func_00226610(ret) = r;
     } else {
-        *(cLunoValue*)self = D_004C9098;
+        *ret = D_004C9098;
     }
-    return self;
+    return ret;
 }
 #endif
 
