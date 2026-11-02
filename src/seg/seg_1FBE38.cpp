@@ -5528,7 +5528,6 @@ extern "C" void* func_00304C50(void* self, int n, Ent_4C50 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00304E38);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A3DD8_4E38 __asm__("D_004A3DD8");
 extern char *D_004A28A8_4E38 __asm__("D_004A28A8");
 extern "C" void func_00355888(void*, void*);
 struct O_4E38 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
@@ -5561,7 +5560,7 @@ extern "C" cLunoValue func_00304E38(int n, Ent_4E38 *e) {
     unsigned id = buf[0];
     char *obj;
     if (~id == 0) {
-        obj = *(char**)(D_004A3DD8_4E38 + 0x290);
+        obj = D_004A3DD8->f290;
     } else {
         sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
