@@ -3704,15 +3704,12 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B9D00);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003B89E0_9D00(int) __asm__("func_003B89E0");
-extern int D_0050A120_9D00[] __asm__("D_0050A120");
-typedef struct { int a; signed char b; char pad[3]; } E_9D00;
 int func_003B9FC8(int arg0);
 
 int func_003B9D00(int arg0) {
     int r, h, i;
-
-    E_9D00 *p;
-    char *t;
+    struct sA120Voice *p;
+    struct sA120Song *t;
 
     func_003B58A0();
     h = func_003B8D98(arg0);
@@ -3720,15 +3717,15 @@ int func_003B9D00(int arg0) {
         func_003B58D8();
         return h;
     }
-    t = (char*)D_0050A120_9D00 + h * 0x70;
-    if (*(signed char*)(t + 0x28) == 3) {
-        p = (E_9D00*)(((char*)D_0050A120_9D00) + 0x700);
-        *(signed char*)(t + 0x28) = 5;
+    t = &D_0050A120.f000[h];
+    if (t->f28 == 3) {
+        p = D_0050A120.f700;
+        t->f28 = 5;
         i = 0x17;
         do {
             i--;
-            if (p->b == h) {
-                if (p->a >= 0) func_003B89E0_9D00(p->a);
+            if (p->f04 == h) {
+                if (p->f00 >= 0) func_003B89E0_9D00(p->f00);
             }
             p++;
         } while (i >= 0);
