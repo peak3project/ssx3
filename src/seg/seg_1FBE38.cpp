@@ -4631,14 +4631,14 @@ static inline float len_3380(const Vec_3380 &v) {
         : "m"(v));
     return r;
 }
-extern "C" void* func_00303380(void* self) {
+extern "C" cLunoValue* func_00303380(cLunoValue* ret) {
     D_3380 *r = (D_3380*)D_004A28A8->game->race->riders[D_004A3DD8->being];
     B_3380 *b = r;
     D_3380 *d = (D_3380*)b;
     float len = len_3380(*d->v02());
-    *(int*)((char*)self + 8) = 2;
-    *(float*)func_00226618(self) = len;
-    return self;
+    ret->type = 2;
+    *(float*)func_00226618(ret) = len;
+    return ret;
 }
 #endif
 
