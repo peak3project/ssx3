@@ -329,7 +329,6 @@ extern volatile int D_004A4324;
 extern volatile int D_004A45D8;
 extern volatile int D_004A43C8;
 extern void* D_004A289C;
-extern void* volatile D_004A289C_v __asm__("D_004A289C");
 extern void* D_004A28A8;
 extern char D_004A4E80;
 extern char D_005308B8[];
@@ -360,6 +359,9 @@ public:
     virtual void setCamera(const sVec3_1DC0& v);
 };
 
+// Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
+#define ASSERT_1DC0(cond) do { } while (0)
+
 // Front-end reset on entry: clears the saved sessions once, resets the game state and the world camera.
 extern "C" void func_001A1DC0(char* self)
 {
@@ -377,9 +379,9 @@ extern "C" void func_001A1DC0(char* self)
     func_00195E58(*(void**)((char*)D_004A28A8 + 0x8C));
     D_004A4324 = 0;
     D_004A45D8 = 0;
-    do { } while (0);
+    ASSERT_1DC0(D_004A289C != 0);
     D_004A43C8 = 0;
-    ((cWorld_1DC0*)D_004A289C_v)->setCamera(sVec3_1DC0(0, 0, 0));
+    ((cWorld_1DC0*)D_004A289C)->setCamera(sVec3_1DC0(0, 0, 0));
     cFEFlowState_setNumStates(&D_004A4E80, 0x56);
     sVE0_1DC0* svt = *(sVE0_1DC0**)self;
     svt[8].fn(self + svt[8].delta);
