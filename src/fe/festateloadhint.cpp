@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festateloadhint", cFELoadHintState_onCreateScreen);
 #ifdef SKIP_ASM
@@ -337,11 +345,6 @@ extern char D_0047B8F8[];
 extern char D_0047B930[];
 extern char D_0047B968[];
 
-struct sVEK245F50 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00245F50(void* self)
 {
@@ -364,9 +367,9 @@ extern "C" void func_00245F50(void* self)
     }
     char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2AD0));
     if (o != 0) {
-        sVEK245F50* vt = *(sVEK245F50**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 0);
-        sVEK245F50* vt2 = *(sVEK245F50**)(o + 8);
+        sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(o + 8);
         vt2[8].fn(o + vt2[8].delta, 1);
     }
     *(int*)((char*)self + 0x4C) = 300;
@@ -390,11 +393,6 @@ extern char D_0047B8F8[];
 extern char D_0047B930[];
 extern char D_0047B968[];
 
-struct sVEK246098 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00246098(void* self)
 {
@@ -415,13 +413,13 @@ extern "C" void func_00246098(void* self)
                 }
                 char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2AD0));
                 if (o != 0) {
-                    sVEK246098* vt = *(sVEK246098**)(o + 8);
+                    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
                     vt[9].fn(o + vt[9].delta, 0);
-                    sVEK246098* vt2 = *(sVEK246098**)(o + 8);
+                    sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(o + 8);
                     vt2[8].fn(o + vt2[8].delta, 1);
                 }
                 char* g = (char*)D_004A5B80;
-                sVEK246098* vt3 = *(sVEK246098**)(g + 0x10D8);
+                sVEntry<void(void*, int)>* vt3 = *(sVEntry<void(void*, int)>**)(g + 0x10D8);
                 vt3[8].fn(g + vt3[8].delta, 0);
             }
         }
@@ -482,16 +480,11 @@ extern char D_0047BAB0[];
 extern char D_0047BAC0[];
 extern char D_0047BAD0[];
 
-struct sVEntry_246278 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 static inline int Loc_246278(char* key)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_246278* vt = *(sVEntry_246278**)(obj + 4);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
 }
 
@@ -501,15 +494,10 @@ static inline void Fmt_246278(char* buf, char* fmt, char* key, void* iface)
     func_002C27C0(buf, fmt, str, func_00144BF0(iface));
 }
 
-struct sVEntryV_246278 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void Activate_246278(char* obj)
 {
-    sVEntryV_246278* vt = *(sVEntryV_246278**)(obj + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 8);
     vt[9].fn(obj + vt[9].delta, 1);
 }
 
@@ -615,22 +603,12 @@ struct sOptTriple_2464E8 {
 };
 extern sOptTriple_2464E8 D_005308B8[];
 
-struct sVEnt_2464E8 {
-    short delta;
-    short index;
-    void* (*fn)(void*, int);
-};
 
-struct sVEntV_2464E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void* Loc_2464E8(char* key)
 {
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEnt_2464E8* vt = *(sVEnt_2464E8**)(o + 4);
+    sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(o + 4);
     return vt[4].fn(o + vt[4].delta, GetHashValue32(key));
 }
 
@@ -642,7 +620,7 @@ static inline bool IsId_2464E8(char* obj, char* key)
 
 static inline void Activate_2464E8(char* obj)
 {
-    sVEntV_2464E8* vt = *(sVEntV_2464E8**)(obj + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 8);
     vt[9].fn(obj + vt[9].delta, 1);
 }
 
@@ -807,7 +785,6 @@ extern char D_0047BF78[] __attribute__((aligned(8)));
 
 static inline int wHash_7AB0(char* w) { return *(int*)(w + 0x38); }
 
-struct sVEnt_7AB0 { short delta; short index; void* (*fn)(void*, int); };
 
 extern "C" void cFELoadState_widgetCreateQP(void* self, void* widget)
 {
@@ -824,7 +801,7 @@ extern "C" void cFELoadState_widgetCreateQP(void* self, void* widget)
         func_003A0E90(widget, (char*)text);
     } else if (wHash_7AB0(w) == GetHashValue32(D_0047BED8)) {
         char* o = *(char**)(D_004A28A8 + 0x8C);
-        sVEnt_7AB0* vt = *(sVEnt_7AB0**)(o + 4);
+        sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(o + 4);
         func_002C2508(fmtw, vt[4].fn(o + vt[4].delta, GetHashValue32(D_0047BC80)));
         func_002C26D0(text, fmtw, func_00148950(iface3, func_00146E98(iface1, 0)));
         func_003A0E90(widget, (char*)text);
