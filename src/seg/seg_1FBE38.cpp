@@ -6209,8 +6209,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00306300);
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_6300 { int idx; int val; int pad; int kind; };
-struct R12_6300 { int a; int b; int c; };
-extern R12_6300 D_004C9098_6300 __asm__("D_004C9098");
 
 extern int D_004A3DB0_6300[2] __asm__("D_004A3DB0");
 extern "C" void func_001E3510(int, int);
@@ -6220,7 +6218,7 @@ extern char* D_004A28A8_6300 __asm__("D_004A28A8");
 extern int D_004A588C_6300 __asm__("D_004A588C");
 struct T12_6300 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_6300 D_004FBF38_6300 __asm__("D_004FBF38");
-extern "C" R12_6300 func_00306300(int n, Ent_6300* e) {
+extern "C" cLunoValue func_00306300(int n, Ent_6300* e) {
     if (D_004A588C_6300 == 0) {
         D_004FBF38_6300.a = 0;
         D_004A588C_6300 = 1;
@@ -6245,7 +6243,7 @@ extern "C" R12_6300 func_00306300(int n, Ent_6300* e) {
     cBE_getInterface_6300(*(void**)(D_004A28A8_6300 + 0x78), 7);
     if (D_00534B30_6300[0] == 0)
         func_001E3510(x, y);
-    return D_004C9098_6300;
+    return D_004C9098;
 }
 #endif
 
