@@ -4642,7 +4642,25 @@ extern "C" cLunoValue* func_00303380(cLunoValue* ret) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00303430);
+#ifdef SKIP_ASM
+// Int result setter taking the value by const reference; the by-value macro form lets jump1 hoist the -1 arm.
+static inline void setInt_3430(cLunoValue* r, const unsigned& v) {
+    r->type = 1;
+    *func_00226610(r) = v;
+}
+extern "C" cLunoValue* func_00303430(cLunoValue* ret) {
+    char *p = D_004A3DD8->f290;
+    unsigned v;
+    if (p)
+        v = *(unsigned*)(p + 0x78);
+    else
+        v = 0xFFFFFFFF;
+    setInt_3430(ret, v);
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00303490);
