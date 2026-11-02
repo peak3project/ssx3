@@ -436,6 +436,13 @@ static inline int sndPlayVoice(void* vself, int a, int b, int type)
     return func_002906B8(self);
 }
 
+// Virtual call of slot `slot` through the vtable at o (int-returning, no arguments).
+static inline int sndVCall(char* o, int slot)
+{
+    sSndVtI* vt = *(sSndVtI**)o;
+    return vt[slot].fn(o + vt[slot].delta);
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2520,11 +2527,6 @@ extern signed char D_00535C11[];
 
 
 
-static inline int vcall_6868(char* o, int slot)
-{
-    sSndVtI* vt = *(sSndVtI**)o;
-    return vt[slot].fn(o + vt[slot].delta);
-}
 
 
 // Board slide sound of an owner's rider: started once per rider, volume from the speed curve.
@@ -2534,8 +2536,8 @@ extern "C" void func_00296868(void* vself, sSndOwner* t)
     if (*(int*)(t->rider + 0x774) >= 0) {
         return;
     }
-    if (vcall_6868(t->rider + 0x6C0, 9) != 0 || *(int*)(t->rider + 0x87C) == 0) {
-        if (func_00288B40(self, vcall_6868(t->rider + 0x6C0, 5), 100.0f) < 0) {
+    if (sndVCall(t->rider + 0x6C0, 9) != 0 || *(int*)(t->rider + 0x87C) == 0) {
+        if (func_00288B40(self, sndVCall(t->rider + 0x6C0, 5), 100.0f) < 0) {
             return;
         }
     }
@@ -2642,11 +2644,6 @@ extern signed char D_00535C11[];
 
 
 
-static inline int vcall_6E80(char* o, int slot)
-{
-    sSndVtI* vt = *(sSndVtI**)o;
-    return vt[slot].fn(o + vt[slot].delta);
-}
 
 
 // Board slide sound of an owner's rider: started once per rider, volume from the speed curve.
@@ -2656,8 +2653,8 @@ extern "C" void func_00296E80(void* vself, sSndOwner* t)
     if (*(int*)(t->rider + 0x778) >= 0) {
         return;
     }
-    if (vcall_6E80(t->rider + 0x6C0, 9) != 0 || *(int*)(t->rider + 0x87C) == 0) {
-        if (func_00288B40(self, vcall_6E80(t->rider + 0x6C0, 5), 100.0f) < 0) {
+    if (sndVCall(t->rider + 0x6C0, 9) != 0 || *(int*)(t->rider + 0x87C) == 0) {
+        if (func_00288B40(self, sndVCall(t->rider + 0x6C0, 5), 100.0f) < 0) {
             return;
         }
     }
@@ -4694,11 +4691,6 @@ struct sOutDEF0 {
 extern "C" void func_002DA1C0(sOutDEF0* out, sV3DEF0* in);
 
 
-static inline int vcall_DEF0(char* o, int slot)
-{
-    sSndVtI* vt = *(sSndVtI**)o;
-    return vt[slot].fn(o + vt[slot].delta);
-}
 
 
 
@@ -4741,9 +4733,9 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 id = 0;
             }
             char* obj = (char*)func_00285D98(self, id);
-            self->idx = vcall_DEF0(obj + 0x6C0, 7);
+            self->idx = sndVCall(obj + 0x6C0, 7);
             {
-                sV3DEF0* p = (sV3DEF0*)vcall_DEF0(obj + 0x6C0, 5);
+                sV3DEF0* p = (sV3DEF0*)sndVCall(obj + 0x6C0, 5);
                 sOutDEF0 out;
                 sV3DEF0 pos;
                 pos.x = p->x;
