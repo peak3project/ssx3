@@ -8360,26 +8360,16 @@ int func_003C42F8(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4318);
 #ifdef SKIP_ASM
-struct P8_4318 { unsigned int v; int pad; };
-struct Spk_4318 { char pad0[0x18]; unsigned int f18; char pad1C[4]; };
-struct A_4318 {
-    char pad0[0x840];
-    struct P8_4318 a[48];
-    struct P8_4318 b[1];
-    char pad9C8[0xE98 - 0x9C8];
-    struct Spk_4318 spk[1];
-};
-extern struct A_4318 D_0050AD00_4318 __asm__("D_0050AD00");
 extern int func_003C8A40(int);
 unsigned int func_003C4318(int id) {
     struct sA8E8Chan *ch = &D_0050A8E8.f1F0[id];
-    struct Spk_4318 *s = &D_0050AD00_4318.spk[id];
+    struct sAD00Spk *s = &D_0050AD00.fE98[id];
     unsigned short f = ch->f24;
     if (f & 8) {
-        return ((D_0050AD00_4318.a[id].v - s->f18) * 0x1C) >> 4;
+        return ((D_0050AD00.f83C[id].val - s->f18) * 0x1C) >> 4;
     }
     if (f & 0x100) {
-        return D_0050AD00_4318.b[id - D_0050A8E8.setup.cfg.f10].v;
+        return D_0050AD00.f9BC[id - D_0050A8E8.setup.cfg.f10].val;
     }
     return func_003C8A40(id - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F));
 }
