@@ -194,7 +194,9 @@ struct sA8E8 {
     struct sA8E8Bus f20C[1];        /* kind 0x100 */
     struct sA8E8Bus f220[1];        /* kind 8 */
     struct sA8E8Heap *f234;
-    char pad238[0x330 - 0x238];
+    char pad238[0x2E0 - 0x238];
+    unsigned short f2E0[5][6];      /* also D_0050ABC8: row n - 1 = n channel angles */
+    char pad31C[0x330 - 0x31C];
     volatile unsigned int f330;
     volatile unsigned short f334;
 };
@@ -4088,7 +4090,159 @@ fail:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BB820);
+#ifdef SKIP_ASM
+struct Rec_B820 { int p; int id; int v1; int v2; int v3; };
+struct Hdr_B820 { unsigned short rate; unsigned char nch; unsigned char f03; };
+struct Ext_B820 { int f00; int pos[6]; };
+struct Out_B820 {
+    char pad00[2];
+    unsigned char f02;
+    char pad03[2];
+    unsigned char f05;
+    unsigned char f06;
+    unsigned char f07;
+    unsigned short f08;
+    char pad0A[2];
+    short f0C[6];
+    void *data[6];
+    int len[6];
+    int a[4];
+    int b[4];
+};
+extern void f_6210_B820(void *, int, int) __asm__("func_00416210");
+extern int f_7218_B820(struct Out_B820 *) __asm__("func_003C7218");
+extern int f_7388_B820(struct Rec_B820 *) __asm__("func_003C7388");
+extern void *f_5C60_B820(int) __asm__("func_003B5C60");
+extern void func_003C51E8(void *, void *, int);
+extern void func_003BBDA0(int, int, unsigned char *, char *, int *);
+
+void func_003BB820(int base, unsigned char *src, struct Hdr_B820 *hdr, struct Out_B820 *out, struct Ext_B820 *extra, char *gstr) {
+    struct Rec_B820 rec;
+    int d[6];
+    int k;
+    int bits;
+    int *pos;
+    int i;
+
+    f_6210_B820(d, 0, sizeof(d));
+    k = 0;
+    f_6210_B820(hdr, 0, 4);
+    bits = 8;
+    pos = 0;
+    f_6210_B820(out, 0, 0x68);
+    f_6210_B820(extra, 0, 0x1C);
+    if (!(src[0] == 'P' && src[1] == 'T') && src[0] == 'G' && src[1] == 'S' && src[2] == 'T' && src[3] == 'R') {
+        func_003BBDA0(0, (int)src, (unsigned char *)hdr, (char *)out, (int *)extra);
+        if (gstr != 0) {
+            *gstr = 1;
+        }
+        return;
+    }
+    if (gstr != 0) {
+        *gstr = 0;
+    }
+    f_7218_B820(out);
+    rec.p = (int)(src + 4);
+    hdr->rate = 22050;
+    hdr->nch = 1;
+    hdr->f03 = 5;
+    extra->f00 = 0;
+    while (f_7388_B820(&rec) != 0) {
+        if (rec.id == 0xA0) {
+            hdr->f03 = rec.v1;
+        } else if (rec.id == 0x9C) {
+            d[0] = rec.v1;
+        } else if (rec.id == 0x9D) {
+            d[1] = rec.v1;
+        } else if (rec.id == 0x9E) {
+            d[2] = rec.v1;
+        } else if (rec.id == 0x9F) {
+            d[3] = rec.v1;
+        } else if (rec.id == 0xA6) {
+            d[4] = rec.v1;
+        } else if (rec.id == 0xA7) {
+            d[5] = rec.v1;
+        } else if (rec.id == 0x98) {
+            out->data[0] = f_5C60_B820(rec.v3);
+            func_003C51E8(out->data[0], (void *)rec.v2, rec.v3);
+            out->len[0] = rec.v3;
+        } else if (rec.id == 0x99) {
+            out->data[1] = f_5C60_B820(rec.v3);
+            func_003C51E8(out->data[1], (void *)rec.v2, rec.v3);
+            out->len[1] = rec.v3;
+        } else if (rec.id == 0x9A) {
+            out->data[2] = f_5C60_B820(rec.v3);
+            func_003C51E8(out->data[2], (void *)rec.v2, rec.v3);
+            out->len[2] = rec.v3;
+        } else if (rec.id == 0x9B) {
+            out->data[3] = f_5C60_B820(rec.v3);
+            func_003C51E8(out->data[3], (void *)rec.v2, rec.v3);
+            out->len[3] = rec.v3;
+        } else if (rec.id == 0xA4) {
+            out->data[4] = f_5C60_B820(rec.v3);
+            func_003C51E8(out->data[4], (void *)rec.v2, rec.v3);
+            out->len[4] = rec.v3;
+        } else if (rec.id == 0xA5) {
+            out->data[5] = f_5C60_B820(rec.v3);
+            func_003C51E8(out->data[5], (void *)rec.v2, rec.v3);
+            out->len[5] = rec.v3;
+        } else if (rec.id == 0x80) {
+            out->f07 = rec.v1;
+        } else if (rec.id == 0x82) {
+            hdr->nch = rec.v1;
+        } else if (rec.id == 0x84) {
+            hdr->rate = rec.v1;
+        } else if (rec.id == 0x85) {
+            extra->f00 = rec.v1;
+        } else if (rec.id == 0x8A) {
+            pos = (int *)rec.v2;
+        } else if (rec.id == 0x13) {
+            out->f05 = rec.v1;
+        } else if (rec.id == 0x0A) {
+            out->f06 = rec.v1;
+        } else if (rec.id == 0x06) {
+            out->f02 = rec.v1;
+        } else if (rec.id == 0x8C) {
+            bits = rec.v1;
+        } else if (rec.id == 0x88) {
+            extra->pos[0] = rec.v1;
+        } else if (rec.id == 0x89) {
+            extra->pos[1] = rec.v1;
+        } else if (rec.id == 0x94) {
+            extra->pos[2] = rec.v1;
+        } else if (rec.id == 0x95) {
+            extra->pos[3] = rec.v1;
+        } else if (rec.id == 0xA2) {
+            extra->pos[4] = rec.v1;
+        } else if (rec.id == 0xA3) {
+            extra->pos[5] = rec.v1;
+        } else if (rec.id == 0x14) {
+            out->a[k] = rec.v2;
+            out->b[k] = rec.v3;
+            k++;
+        }
+    }
+    out->f08 = bits;
+    for (i = hdr->nch - 1; i >= 0; i--) {
+        if (D_0050A8E8.setup.cfg.f27 == 2 && hdr->nch == 2) {
+            d[i] = 0;
+        }
+        out->f0C[i] = D_0050A8E8.f2E0[hdr->nch - 1][i] + d[i];
+        if ((out->f08 & 0x14) != 0 || out->f08 == 0) {
+            extra->pos[i] = base + extra->pos[i];
+        }
+        if ((out->f08 & 0x308) != 0 && pos != 0) {
+            if (i == 0) {
+                extra->pos[0] = *pos;
+            } else {
+                extra->pos[i] = *pos + (extra->pos[i] - extra->pos[0]);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BBDA0);
