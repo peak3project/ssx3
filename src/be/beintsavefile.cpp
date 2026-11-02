@@ -135,7 +135,57 @@ int func_00152948(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintsavefile", func_00152950);
+#ifdef SKIP_ASM
+extern "C" int func_00152BA8();
+class cBEIface_2950 {
+public:
+    char pad[0xC];
+    virtual void v1();
+    virtual void v2();
+};
+cBEIface_2950* cBENewPlayerInterface_getThis_2950() __asm__("cBENewPlayerInterface_getThis__Fv");
+cBEIface_2950* cBEBAGTInterface_getThis_2950() __asm__("cBEBAGTInterface_getThis__Fv");
+cBEIface_2950* cBEMissionInterface_getThis_2950() __asm__("cBEMissionInterface_getThis__Fv");
+cBEIface_2950* cBEScoreInterface_getThis_2950() __asm__("cBEScoreInterface_getThis__Fv");
+cBEIface_2950* func_00147F78_2950() __asm__("func_00147F78");
+extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
+struct sProfSub_2950 { char pad[0xF88]; };
+struct sProfile_2950 { sProfSub_2950 sub[10]; };
+extern sProfile_2950 D_004A6CA8_2950[] __asm__("D_004A6CA8");
+struct sCharFlag_2950 { unsigned char f; char pad[0x1B]; };
+extern sCharFlag_2950 D_00535B31_2950[] __asm__("D_00535B31");
+
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+// Builds the save block of rider profile 'idx': name, profile, character flag, CRC.
+extern "C" void* func_00152950(void* self, int idx)
+{
+    cBEIface_2950* o;
+    int size = func_00152BA8();
+    func_00152700(self);
+    D_004A1220 = new (D_0045A7F0, 0x100, 0) char[size];
+    char* p = (char*)D_004A1220;
+    strncpy(p, (char*)&D_00535B20[idx], 0xC);
+    p += 0xC;
+    *(sProfile_2950*)p = D_004A6CA8_2950[idx];
+    p += sizeof(sProfile_2950);
+    *p++ = D_00535B31_2950[idx].f;
+    o = cBENewPlayerInterface_getThis_2950();
+    o->v2();
+    o = cBEBAGTInterface_getThis_2950();
+    o->v2();
+    o = cBEMissionInterface_getThis_2950();
+    o->v2();
+    o = cBEScoreInterface_getThis_2950();
+    o->v2();
+    o = func_00147F78_2950();
+    o->v2();
+    int crc = func_003E62D0(D_004A1220, size - 4, 0xFBEA);
+    __builtin_memcpy(p, &crc, 4);
+    return D_004A1220;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintsavefile", func_00152BA8);
