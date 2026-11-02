@@ -725,7 +725,239 @@ extern "C" void func_0021D160(float x, float y, int c, int d, ...) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D1A0);
+#ifdef SKIP_ASM
+struct sV2_D1A0 { float x, y; };
+struct sV4_D1A0 {
+    float x, y, z, w;
+    sV4_D1A0() {}
+    void setZW(float az, float aw) { z = az; w = aw; }
+} __attribute__((aligned(16)));
+struct sVtx_D1A0 {
+    float u, v, q, pad;
+    int g, b, a, r;
+    sV4_D1A0 pos;
+};
+struct sVE71_D1A0 { short delta; short index; void (*fn)(void*, int, sVtx_D1A0*, int); };
+struct sCtx_D1A0 {
+    char pad[0xE84];
+    char* e84;              // 0xE84
+    char pad2[0x10D8 - 0xE88];
+    sVE71_D1A0* vt;         // 0x10D8
+};
+struct sSprite_D1A0 {
+    int tex;                // 0x0
+    int pad[2];
+    float v0;               // 0xC
+    float u0;               // 0x10
+    float u1;               // 0x14
+    float v1;               // 0x18
+};
+struct sBar_D1A0 {
+    float scale;
+    int count;
+};
+extern sCtx_D1A0* D_004A289C_D1A0 __asm__("D_004A289C");
+extern "C" void func_001E91F8(void*, void*);
+extern "C" void func_001E9220(void*, void*, int);
+void func_001E9290_D1A0(void*, void*) __asm__("func_001E9290__FPvT0");
+extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
+
+static inline int texOf_D1A0(sSprite_D1A0* s)
+{
+    return s->tex;
+}
+
+static inline void setTex_D1A0(sSprite_D1A0* s)
+{
+    *(short*)(D_004A289C_D1A0->e84 + 0x10) = texOf_D1A0(s);
+}
+
+static inline void setUV_D1A0(sVtx_D1A0* v, sSprite_D1A0* s)
+{
+    v[0].u = s->u0;
+    v[0].v = s->v0;
+    v[1].u = s->u1;
+    v[1].v = s->v0;
+    v[2].u = s->u0;
+    v[2].v = s->v1;
+    v[3].u = s->u1;
+    v[3].v = s->v1;
+}
+
+static inline void setPos_D1A0(sVtx_D1A0* v, float x0, float y0, float x1, float y1)
+{
+    v[0].pos.x = x0;
+    v[0].pos.y = y0;
+    v[1].pos.x = x1;
+    v[1].pos.y = y0;
+    v[2].pos.x = x0;
+    v[2].pos.y = y1;
+    v[3].pos.x = x1;
+    v[3].pos.y = y1;
+}
+
+static inline void draw_D1A0(sVtx_D1A0* v)
+{
+    char* ctx = (char*)D_004A289C_D1A0;
+    sVE71_D1A0* vt = *(sVE71_D1A0**)(ctx + 0x10D8);
+    vt[71].fn(ctx + vt[71].delta, 4, v, 0);
+}
+
+// Vertical gauge from three sprites (cap, repeated middle, base), filled from the bottom by `fill`.
+extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* elems, signed char sel, int idx,
+                              sBar_D1A0* bar, float* col, int x, float* rect)
+{
+    sV2_D1A0 a;
+    sV2_D1A0 p;
+    sV2_D1A0 size;
+    sV2_D1A0 sc;
+    sV2_D1A0 one;
+    sSprite_D1A0** sprites = (sSprite_D1A0**)(self + (idx * 0xC + 0x4FC));
+    char* e = elems + sel * 0x24;
+    func_001E91F8(e, &a);
+    func_001E9220(e, &size, 0);
+    func_001E9290_D1A0(e, &sc);
+    sc.x *= sx;
+    sc.y *= sy;
+    size.x *= sc.x;
+    size.y *= sc.y;
+    sc.y *= bar->scale;
+    one.x = 1.0f;
+    one.y = 1.0f;
+    func_001F10F8(self, &p, &a, &size, &one, e[0x20], e[0x21], x);
+    int* w = (int*)(D_004A289C_D1A0->e84 + 8);
+    *w = (*w & ~0x3E0) | ((e[0x22] << 5) & 0x3E0);
+    sVtx_D1A0 vtx[4];
+    sVtx_D1A0* verts = vtx;
+    for (int i = 0; i < 4; i++) {
+        int r = (int)(col[0] * 128.0f);
+        int g = (int)(col[1] * 128.0f);
+        int b = (int)(col[2] * 128.0f);
+        int a = (int)(col[3] * 128.0f);
+        vtx[i].r = r;
+        vtx[i].g = g;
+        vtx[i].b = b;
+        vtx[i].a = a;
+        vtx[i].q = 1.0f;
+        vtx[i].pos.setZW(0.0f, 1.0f);
+    }
+    if (fill == 1.0f) {
+        if (rect != 0) {
+            rect[0] = p.x;
+            rect[1] = p.y;
+            rect[2] = size.x;
+            rect[3] = size.y;
+        }
+        p.y += size.y;
+        {
+            sSprite_D1A0* s = sprites[2];
+            setTex_D1A0(s);
+            float h = sc.y * 23.0f;
+            setUV_D1A0(vtx, s);
+            setPos_D1A0(vtx, p.x, p.y - h, p.x + size.x, p.y);
+            draw_D1A0(verts);
+            p.y -= h;
+        }
+        {
+            sSprite_D1A0* s = sprites[1];
+            setTex_D1A0(s);
+            float h = sc.y * 23.0f;
+            setUV_D1A0(vtx, s);
+            for (int i = 0; i < bar->count; i++) {
+                setPos_D1A0(vtx, p.x, p.y - h, p.x + size.x, p.y);
+                draw_D1A0(verts);
+                p.y -= h;
+            }
+        }
+        {
+            sSprite_D1A0* s = sprites[0];
+            setTex_D1A0(s);
+            setUV_D1A0(vtx, s);
+            setPos_D1A0(vtx, p.x, p.y - sc.y * 31.0f, p.x + size.x, p.y);
+            draw_D1A0(verts);
+        }
+    } else {
+        float bottom = p.y + size.y;
+        float top = p.y + size.y * (1.0f - fill);
+        if (rect != 0) {
+            rect[0] = p.x;
+            rect[3] = bottom - top;
+            rect[2] = size.x;
+            rect[1] = top;
+        }
+        {
+            sSprite_D1A0* s = sprites[2];
+            float h = sc.y * 23.0f;
+            float y = bottom - h;
+            float tv = s->v0;
+            int clipped = y <= top;
+            if (clipped) {
+                tv = tv + (s->v1 - tv) * (top - y) / h;
+                y = top;
+            }
+            setTex_D1A0(s);
+            vtx[0].u = s->u0;
+            vtx[0].v = tv;
+            vtx[1].u = s->u1;
+            vtx[1].v = tv;
+            vtx[2].u = s->u0;
+            vtx[2].v = s->v1;
+            vtx[3].u = s->u1;
+            vtx[3].v = s->v1;
+            setPos_D1A0(vtx, p.x, y, p.x + size.x, bottom);
+            draw_D1A0(verts);
+            bottom = y;
+            if (clipped)
+                return;
+        }
+        {
+            sSprite_D1A0* s = sprites[1];
+            float h = sc.y * 23.0f;
+            setTex_D1A0(s);
+            setUV_D1A0(vtx, s);
+            for (int i = 0; i < bar->count; i++) {
+                float y = bottom - h;
+                int last = y <= top;
+                if (last) {
+                    float tv = s->v0 + (s->v1 - s->v0) * (top - y) / h;
+                    vtx[0].v = tv;
+                    vtx[1].v = tv;
+                    y = top;
+                }
+                setPos_D1A0(vtx, p.x, y, p.x + size.x, bottom);
+                draw_D1A0(verts);
+                bottom = y;
+                if (last)
+                    return;
+            }
+        }
+        {
+            sSprite_D1A0* s = sprites[0];
+            float h = sc.y * 31.0f;
+            float y = bottom - h;
+            float tv = s->v0;
+            int clipped = y <= top;
+            if (clipped) {
+                tv = tv + (s->v1 - tv) * (top - y) / h;
+                y = top;
+            }
+            setTex_D1A0(s);
+            vtx[0].u = s->u0;
+            vtx[0].v = tv;
+            vtx[1].u = s->u1;
+            vtx[1].v = tv;
+            vtx[2].u = s->u0;
+            vtx[2].v = s->v1;
+            vtx[3].u = s->u1;
+            vtx[3].v = s->v1;
+            setPos_D1A0(vtx, p.x, y, p.x + size.x, bottom);
+            draw_D1A0(verts);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D9A0);
 
