@@ -31,13 +31,35 @@ public:
     virtual void v11(const sColor_185268& c);
 };
 
-//100%
-INCLUDE_ASM("fe/festatestore", cFEStateUberTrick_costVisible);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
 struct cList;
+struct cUIText;
+struct sTrick_185268;
 void* cList_first(cList* list);
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern char D_0045DA18[];
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE();
+int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+extern "C" void func_001A0570(void* self, int a1, int a2);
+extern "C" void cFEStateUberTrick_costVisible(void* self, int on);
+extern "C" void func_00184780(void* self, int on);
+extern void* D_004A28A8;
+extern "C" void cWScriptMan_checkGate(void* self);
+extern "C" void func_00183B08(void* self);
+extern "C" void* func_001A0548(void* self, int idx);
+extern "C" int cRiderAnimBase_play(void* anim, int id, int a2, float t);
+void cUIText_setUnicodeStringByID(cUIText* t, int id);
+extern "C" void func_00184520(void* self);
+extern char D_0045D930[];
+extern char D_0045DA70[];
+extern char D_004A14A8[];
+
+//100%
+INCLUDE_ASM("fe/festatestore", cFEStateUberTrick_costVisible);
+#ifdef SKIP_ASM
 extern char D_0045D9B8[];
 extern char D_0045D9C8[];
 extern char D_0045D9D8[];
@@ -82,9 +104,6 @@ extern "C" void cFEStateUberTrick_costVisible(void* self, int on)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00184780);
 #ifdef SKIP_ASM
-struct cList;
-void* cList_first(cList* list);
-int GetHashValue32(char* str);
 extern char D_004A1458[];
 extern char D_004A1460[];
 
@@ -102,8 +121,6 @@ public:
     virtual void v08();
     virtual void v09(int a);
 };
-
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 
 extern "C" void func_00184780(void* self, int on)
 {
@@ -124,7 +141,6 @@ INCLUDE_ASM("fe/festatestore", cFEStateUberTrick_trickVisible);
 #ifdef SKIP_ASM
 extern char D_0045D9F8[];
 extern char D_0045DA08[];
-extern char D_0045DA18[];
 extern char D_0045D960[];
 extern char D_0045D970[];
 extern char D_0045D980[];
@@ -162,22 +178,13 @@ extern "C" void cFEStateUberTrick_trickVisible(void* self, int on)
 //100%
 INCLUDE_ASM("fe/festatestore", func_001849B0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-int GetHashValue32(char* str);
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_001A0508(void* self, int a1, int a2, int a3);
-extern "C" void func_001A0570(void* self, int a1, int a2);
 extern "C" void func_0015E050(void* cam, void* a, void* b);
 extern "C" void* func_00398380(void* list, int hash);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* p, int a);
-extern "C" void cFEStateUberTrick_costVisible(void* self, int on);
-extern "C" void func_00184780(void* self, int on);
-extern void* D_004A28A8;
 extern char D_0045DA28[];
 extern char D_0045DA38[];
 extern char D_0045DA48[];
@@ -242,8 +249,6 @@ extern "C" void func_001849B0(void* self)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00184B70);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void func_001A0570(void* self, int a1, int a2);
 void func_0039E4A0(void* self);
 
 extern "C" void func_00184B70(void* self)
@@ -259,8 +264,6 @@ extern "C" void func_00184B70(void* self)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00184BB8);
 #ifdef SKIP_ASM
-extern "C" void cWScriptMan_checkGate(void* self);
-
 extern "C" int func_00184BB8(void* self, int on)
 {
     if (on != 0) {
@@ -278,7 +281,6 @@ struct sObj00184BE0 {
     sVEntry<void(void*, int)>* vt;
 };
 
-extern "C" void func_00183B08(void* self);
 extern "C" void func_0039E4C0(void* self, int a1);
 
 extern "C" void func_00184BE0(void* self, int a1)
@@ -301,11 +303,8 @@ extern "C" void func_00184BE0(void* self, int a1)
 INCLUDE_ASM("fe/festatestore", func_00184C60);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" void* func_001A0548(void* self, int idx);
 extern "C" void func_00311A50(void* anim);
-extern "C" int cRiderAnimBase_play(void* anim, int id, int a2, float t);
 extern "C" void func_0039E510(void* self);
-extern void* D_004A28A8;
 
 struct sQuat_184C60
 {
@@ -400,20 +399,8 @@ extern "C" void func_00184C60(char* self)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00184F40);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* t, int id);
 extern "C" int func_00150B48(void* self, int a, int b, int amount);
 extern "C" int func_0014FE08(void* self, int rider, int idx, int bit);
-extern "C" void func_00184520(void* self);
-extern "C" void cWScriptMan_checkGate(void* self);
-extern char D_0045D930[];
-extern char D_0045DA70[];
 
 extern "C" void func_00184F40(void* self, void* item, int msg)
 {
@@ -445,8 +432,6 @@ extern "C" void func_00184F40(void* self, void* item, int msg)
 //100%
 INCLUDE_ASM("fe/festatestore", cFEStateUberTrick_onWidgetCreate);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 extern char D_004A1468[];
 extern char D_004A1470[];
@@ -460,9 +445,7 @@ extern char D_004A1498[];
 extern char D_0045DAA8[];
 extern char D_004A14A0[];
 extern char D_0045DAB8[];
-extern char D_004A14A8[];
 extern char D_0045DAC8[];
-extern char D_0045DA18[];
 
 static inline int Is_185080(int id, char* s)
 {
@@ -517,42 +500,22 @@ extern "C" void cFEStateUberTrick_onWidgetCreate(void* self, void* widget)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00185268);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* t, int id);
-extern "C" void cFEStateUberTrick_costVisible(void* self, int on);
 extern "C" void cFEStateUberTrick_trickVisible(void* self, int on);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" int cRiderAnimBase_play(void* anim, int id, int a2, float t);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" void cUIStateBuyPopup_initBuyTrick(void* popup, int trick, int cost, int points);
-extern "C" void cWScriptMan_checkGate(void* self);
 extern "C" int func_00116938(int id);
 extern "C" int func_0014FD80(void* iface, int rider, int a, int b);
-struct sTrick_185268;
 extern "C" sTrick_185268* func_0014FF90(void* iface, int rider, int a, int* out);
 extern "C" int func_0014FFB8(void* iface, int rider, int a, int b);
 extern "C" int func_00150048(void* iface, int rider, int a, int b);
 extern "C" int func_00150928(void* iface, int a1, int charID);
-extern "C" void func_00183B08(void* self);
 extern "C" void func_00183C08(void* self);
-extern "C" void func_00184520(void* self);
-extern "C" void func_00184780(void* self, int on);
-extern "C" void* func_001A0548(void* self, int idx);
 extern "C" void* func_001CABA8(void* mem, void* owner, void* state, int a3);
 extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F400(void* list, void* item);
-extern void* D_004A28A8;
 extern signed char D_00535C11[];
-extern char D_004A14A8[];
 extern char D_0045D920[];
-extern char D_0045D930[];
-extern char D_0045DA70[];
 extern char D_0045DAD8[];
 extern char D_0045DAE8[];
 extern char D_0045DB00[];
