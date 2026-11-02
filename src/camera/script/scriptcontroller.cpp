@@ -1,6 +1,14 @@
 #include "common.h"
 #include "bx/math3d.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 // 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai and camera/camera).
 struct sVec4 : t4Vector
 {
@@ -1106,12 +1114,6 @@ struct sScrCam_16A510 {
     float r6C;              // 0x6C
 };
 
-struct sVEp_16A510 {
-    short delta;
-    short index;
-    sVec4* (*fn)(void*);
-};
-
 extern "C" void func_0016A510(char* p)
 {
     sScrCam_16A510* self = (sScrCam_16A510*)p;
@@ -1131,7 +1133,7 @@ extern "C" void func_0016A510(char* p)
     self->pitch = self->r60 * 0.01745329424738884f + *(float*)(*(char**)(p + 0x14) + 0x70);
     self->target = sVec4(self->ox, self->oy, self->oz, self->target.w);
     self->target = mtxMulVec_16A510(m, self->target);
-    sVEp_16A510* vt = *(sVEp_16A510**)obj;
+    sVEntry<sVec4*(void*)>* vt = *(sVEntry<sVec4*(void*)>**)obj;
     sVec4* rp = vt[5].fn(obj + vt[5].delta);
     self->pos = Add_16A510(Add_16A510(*rp, Scale_16A510(vec_16A510(rider + 0x1B0), self->dist * rot.y)),
                                Scale_16A510(vec_16A510(rider + 0x1C0), self->r5C * rot.x));
@@ -1469,12 +1471,6 @@ struct sScrCam_16AD98 {
     float r6C;              // 0x6C
 };
 
-struct sVEp_16AD98 {
-    short delta;
-    short index;
-    sVec4* (*fn)(void*);
-};
-
 extern "C" void func_0016AD98(char* p)
 {
     sScrCam_16AD98* self = (sScrCam_16AD98*)p;
@@ -1491,7 +1487,7 @@ extern "C" void func_0016AD98(char* p)
     }
     char* obj = rider + 0x6C0;
     sVec4 rot = *(sVec4*)(*(char**)(rider + 0x780) + 0x140);
-    sVEp_16AD98* vt = *(sVEp_16AD98**)obj;
+    sVEntry<sVec4*(void*)>* vt = *(sVEntry<sVec4*(void*)>**)obj;
     sVec4* rp = vt[5].fn(obj + vt[5].delta);
     self->pos = Add_16AD98(Add_16AD98(*rp, Scale_16AD98(vec_16AD98(rider + 0x1B0), self->ox * rot.y)),
                            Scale_16AD98(vec_16AD98(rider + 0x1C0), self->oy * rot.x));
@@ -1657,12 +1653,6 @@ struct sScrCam_B180 {
     float r6C;              // 0x6C
 };
 
-struct sVEp_B180 {
-    short delta;
-    short index;
-    sVec4* (*fn)(void*);
-};
-
 // PORT: PS2-only VU0 inline asm (normalize via rsqrt).
 static inline sVec4 Normalize_B180(const sVec4& v)
 {
@@ -1740,7 +1730,7 @@ extern "C" void func_0016B180(char* p)
     yaw += *(float*)(g + 0x74);
     pit += *(float*)(g + 0x78);
     sVec4 rot = *(sVec4*)(*(char**)(rider + 0x780) + 0x140);
-    sVEp_B180* vt = *(sVEp_B180**)obj;
+    sVEntry<sVec4*(void*)>* vt = *(sVEntry<sVec4*(void*)>**)obj;
     sVec4* rp = vt[5].fn(obj + vt[5].delta);
     self->pos = Add_B180(Add_B180(*rp, Scale_B180(vec_B180(rider + 0x1B0), self->ox * rot.y)),
                          Scale_B180(vec_B180(rider + 0x1C0), self->oy * rot.x));
