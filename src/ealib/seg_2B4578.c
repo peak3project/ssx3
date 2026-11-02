@@ -431,6 +431,13 @@ struct sB40 {
     void (*f1E0)(int, float *, float *, float);                 /* add a voice into a buffer */
 };
 extern struct sB40 D_00515B40;
+extern unsigned char D_00515B45;        /* D_00515B40.f05 */
+extern int (*D_00515B48)(int);          /* D_00515B40.f08 */
+extern unsigned char D_00515B4E;        /* D_00515B40.f0E */
+extern signed char D_00515B4F;          /* D_00515B40.f0F[0] */
+extern void (*D_00515B50)(int);         /* D_00515B40.f10 */
+extern int *D_00515B54;                 /* D_00515B40.f14 */
+extern struct sB40Ent *D_00515D1C;      /* D_00515B40.f1DC */
 
 /* D_0050AD00: the IOP sound side's state (RPC buffers, the shared voice block func_003C1638 lays out, the transfer
    queue, speaker gains, sound-RAM segments, the recursive lock). Layout from every use in this unit; field names are
@@ -7713,7 +7720,7 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C2268);
 extern int D_00512B20;
 extern void func_003C0B10_2268(int, int, int) __asm__("func_003C0B10");
 extern void func_003C8018(void);
-extern void func_003CBC00(int);
+extern void func_003CBC00(int *);
 extern int func_00423AA0_2268(int, int) __asm__("func_00423AA0");
 extern void func_00423BB0(int);
 extern void func_00423BF0(int);
@@ -8117,19 +8124,16 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C3450);
 extern void func_003C0B10(int, void *, int);
 extern int f_72F8_3450(void *, int) __asm__("func_003C72F8");
 extern char D_0050AAF4_3450[] __asm__("D_0050AAF4");
-struct G_3450 { char pad[0xF]; char c; void *fn; };
-extern struct G_3450 D_00515B40_3450[] __asm__("D_00515B40");
-extern char D_00515B4F;
 extern char D_0044DD70_3450[] __asm__("D_0044DD70");
-extern char f_C878_3450[] __asm__("func_003CC878");
+extern void func_003CC878(int);
 
 void func_003C3450(int arg0) {
     char *b = D_0050AAF4_3450;
     char *t = b - 0x20C;
     char *q;
     if (*(unsigned char *)(t + 0x42) != 0) {
-        D_00515B40_3450[0].fn = f_C878_3450;
-        D_00515B40_3450[0].c = 1;
+        D_00515B40.f10 = func_003CC878;
+        D_00515B40.f0F[0] = 1;
     }
     if (arg0 != 1) {
         func_003C0B10(2, D_0044DD70_3450, 4);
@@ -10618,7 +10622,6 @@ void func_003C8128(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8148);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern signed char D_00515B4E;
 
 void func_003C8148(signed char arg0) {
     D_00515B4E = arg0;
@@ -13205,9 +13208,8 @@ void func_003CBB78(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003CBC00);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00515B54;
 
-void func_003CBC00(int arg0) {
+void func_003CBC00(int *arg0) {
     D_00515B54 = arg0;
 }
 #endif
