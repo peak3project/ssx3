@@ -116,6 +116,9 @@ struct sSndVtVI { short delta; short index; void (*fn)(void*, int); };
 // g++ 2.95 vtable entry for a method taking (self, sSndCallback).
 struct sSndVtCb { short delta; short index; void (*fn)(void*, sSndCallback); };
 
+// g++ 2.95 vtable entry for a method taking (self, int, int), returning int.
+struct sSndVtIII { short delta; short index; int (*fn)(void*, int, int); };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1937,15 +1940,10 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00294F48);
 #ifdef SKIP_ASM
-struct sSndVEntry294F48 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 extern "C" int func_00294F48(void* self)
 {
-    sSndVEntry294F48* vt = *(sSndVEntry294F48**)((char*)self + 0xC);
+    sSndVtIII* vt = *(sSndVtIII**)((char*)self + 0xC);
     return vt[1].fn((char*)self + vt[1].delta, 0, 0);
 }
 #endif
@@ -1953,7 +1951,6 @@ extern "C" int func_00294F48(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00294F78);
 #ifdef SKIP_ASM
-struct sVEnt_294F78 { short delta; short index; int (*fn)(void*, int, int); };
 
 extern "C" void func_00294F78(void* self, int cue)
 {
@@ -1991,7 +1988,7 @@ extern "C" void func_00294F78(void* self, int cue)
         break;
     }
     if (id != -1) {
-        sVEnt_294F78* vt = *(sVEnt_294F78**)((char*)self + 0xC);
+        sSndVtIII* vt = *(sSndVtIII**)((char*)self + 0xC);
         vt[1].fn((char*)self + vt[1].delta, 0, id);
     }
 }
