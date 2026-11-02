@@ -5102,7 +5102,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3618);
 struct S_3618 { int pad[0xB]; int f2C; };
 extern struct S_3618 D_00519C40_3618 __asm__("D_00519C40");
 extern int D_00519C80_3618[] __asm__("D_00519C80");
-extern int D_00450C58_3618[] __asm__("D_00450C58");
 extern void func_00402450(int);
 extern void func_00401BF0_3618(int) __asm__("func_00401BF0");
 extern int func_00401DF8_3618(int, int, void *, void *) __asm__("func_00401DF8");
@@ -5118,7 +5117,7 @@ int *func_003E3618(void) {
         if (n == 0) {
             n = 10;
             func_00401718(0);
-            func_00402450(D_00450C58_3618[2]);
+            func_00402450(D_00450C58.f08);
         }
         func_00401BF0_3618(0);
         while (func_00401DF8_3618(D_00519C40_3618.f2C, 1, D_00519C80_3618, (char *)&D_00519C40_3618 + 0x1C) == 0) {
