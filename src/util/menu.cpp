@@ -191,6 +191,24 @@ public:
     virtual void v10(int a);
 };
 
+// A menu (cMenu; cMenu_addItem): its items and selection, vtable pointer at 0x12C.
+class cMenu {
+public:
+    int count;                  // 0x0
+    int selected;               // 0x4
+    int unk8;                   // 0x8
+    cMenuItemV* items[70];      // 0xC
+    int wrap;                   // 0x124
+    int f128;                   // 0x128
+    virtual void v01();
+    virtual void v02();
+    virtual int v03(void* item, void* data);
+    virtual void v04(void* p);
+    virtual void v05();
+    virtual void v06(void* stack);
+    virtual void v07();
+};
+
 // Callees and globals shared by the functions below.
 void operator_delete(int* ptr);
 extern "C" int func_002CA3E8(void** self);
@@ -626,50 +644,36 @@ extern "C" void func_002CAAB0(void* self)
 //100%
 INCLUDE_ASM("util/menu", func_002CAB08);
 #ifdef SKIP_ASM
-struct func_002CAB08_sMenu {
-    int count;
-    int cur;
-    int f8;
-    cMenuItemV* items[1];
-};
-
 extern "C" void func_002CAB08(void* menu)
 {
-    func_002CAB08_sMenu* self = (func_002CAB08_sMenu*)menu;
-    int start = self->cur;
+    cMenu* self = (cMenu*)menu;
+    int start = self->selected;
     do {
-        self->cur = (self->cur + 1) % self->count;
-        if (self->cur == start) {
+        self->selected = (self->selected + 1) % self->count;
+        if (self->selected == start) {
             return;
         }
-    } while (!self->items[self->cur]->v03());
+    } while (!self->items[self->selected]->v03());
     self->items[start]->v07();
-    self->items[self->cur]->v06(0);
+    self->items[self->selected]->v06(0);
 }
 #endif
 
 //100%
 INCLUDE_ASM("util/menu", func_002CABE0);
 #ifdef SKIP_ASM
-struct func_002CABE0_sMenu {
-    int count;
-    int cur;
-    int f8;
-    cMenuItemV* items[1];
-};
-
 extern "C" void func_002CABE0(void* menu)
 {
-    func_002CABE0_sMenu* self = (func_002CABE0_sMenu*)menu;
-    int start = self->cur;
+    cMenu* self = (cMenu*)menu;
+    int start = self->selected;
     do {
-        self->cur = (self->cur + self->count - 1) % self->count;
-        if (self->cur == start) {
+        self->selected = (self->selected + self->count - 1) % self->count;
+        if (self->selected == start) {
             return;
         }
-    } while (!self->items[self->cur]->v03());
+    } while (!self->items[self->selected]->v03());
     self->items[start]->v07();
-    self->items[self->cur]->v06(1);
+    self->items[self->selected]->v06(1);
 }
 #endif
 
@@ -1012,15 +1016,7 @@ extern "C" void func_002CBAC8(void* self, float* rect)
 //100%
 INCLUDE_ASM("util/menu", cMenu_addItem);
 #ifdef SKIP_ASM
-struct cMenuList {
-    int count;          // 0x0
-    int selected;       // 0x4
-    int unk8;           // 0x8
-    void* items[70];    // 0xC
-    int wrap;           // 0x124
-};
-
-extern "C" void cMenu_addItem(cMenuList* menu, void** item, int index)
+extern "C" void cMenu_addItem(cMenu* menu, void** item, int index)
 {
     *item = menu;
     if (index < 0) {
@@ -1029,7 +1025,7 @@ extern "C" void cMenu_addItem(cMenuList* menu, void** item, int index)
     for (int i = menu->count; index < i; i--) {
         menu->items[i] = menu->items[i - 1];
     }
-    menu->items[index] = item;
+    menu->items[index] = (cMenuItemV*)item;
     if (menu->wrap != 0 && menu->selected >= index && menu->count != 0) {
         menu->selected++;
     }
@@ -1040,8 +1036,8 @@ extern "C" void cMenu_addItem(cMenuList* menu, void** item, int index)
 //100%
 INCLUDE_ASM("util/menu", func_002CBD50);
 #ifdef SKIP_ASM
-void func_002CBD50_impl(cMenuList* list, int index) __asm__("func_002CBD50");
-void func_002CBD50_impl(cMenuList* list, int index)
+void func_002CBD50_impl(cMenu* list, int index) __asm__("func_002CBD50");
+void func_002CBD50_impl(cMenu* list, int index)
 {
     for (int i = index; i < list->count - 1; i++) {
         list->items[i] = list->items[i + 1];
@@ -1084,15 +1080,7 @@ extern "C" void func_002CBE20(void* self, int (*cmp)(int, int))
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CBE68);
 #ifdef SKIP_ASM
-struct func_002CBE68_sMenu {
-    int count;          // 0x0
-    int selected;       // 0x4
-    int unk8;           // 0x8
-    cMenuItemV* items[70];    // 0xC
-    int wrap;           // 0x124
-};
-
-extern "C" void func_002CBE68(func_002CBE68_sMenu* self, int index)
+extern "C" void func_002CBE68(cMenu* self, int index)
 {
     if (index < 0) {
         index += self->count;
@@ -1128,17 +1116,9 @@ extern "C" void* func_002CBF30(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CBF60);
 #ifdef SKIP_ASM
-struct func_002CBF60_sMenu {
-    int count;          // 0x0
-    int selected;       // 0x4
-    int unk8;           // 0x8
-    cMenuItemV* items[70];    // 0xC
-    int wrap;           // 0x124
-};
-
 extern "C" void func_002CBF60(void* p, int wrap)
 {
-    func_002CBF60_sMenu* self = (func_002CBF60_sMenu*)p;
+    cMenu* self = (cMenu*)p;
     self->wrap = wrap;
     if (self->selected >= self->count) {
         self->selected = self->count - 1;
@@ -1153,7 +1133,7 @@ INCLUDE_ASM("util/menu", func_002CBFD0);
 #ifdef SKIP_ASM
 extern "C" void func_002CBFD0(void* p)
 {
-    cMenuList* self = (cMenuList*)p;
+    cMenu* self = (cMenu*)p;
     void* item = self->items[self->selected];
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)item + 0x10);
     vt[7].fn((char*)item + vt[7].delta);
@@ -1369,16 +1349,6 @@ int func_002CC318_impl(void* self)
 //100%
 INCLUDE_ASM("util/menu", func_002CC350);
 #ifdef SKIP_ASM
-class func_002CC350_cObj {
-public:
-    char data[0x12C];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
-
 struct func_002CC350_sVec2 {
     float x;
     float y;
@@ -1391,7 +1361,7 @@ struct func_002CC350_sVec2 {
 
 struct func_002CC350_sStack {
     int count;
-    func_002CC350_cObj* items[1];
+    cMenu* items[1];
 };
 
 extern "C" void func_002CC350(void* self)
@@ -1408,22 +1378,9 @@ extern "C" void func_002CC350(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CC3B8);
 #ifdef SKIP_ASM
-class func_002CC3B8_cMenu {
-public:
-    char pad[0x12C];
-    // vptr at 0x12C; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06(void*);
-    virtual void v07();
-};
-
 struct func_002CC3B8_sStack {
     int count;
-    func_002CC3B8_cMenu* items[1];
+    cMenu* items[1];
 };
 
 extern "C" void func_002CC3B8(void* stack, void* item)
@@ -1432,7 +1389,7 @@ extern "C" void func_002CC3B8(void* stack, void* item)
     if (self->count != 0) {
         self->items[self->count - 1]->v07();
     }
-    self->items[self->count++] = (func_002CC3B8_cMenu*)item;
+    self->items[self->count++] = (cMenu*)item;
     self->items[self->count - 1]->v06(self);
     func_002CC0B8(self, 1);
 }
@@ -1441,22 +1398,9 @@ extern "C" void func_002CC3B8(void* stack, void* item)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CC460);
 #ifdef SKIP_ASM
-class func_002CC460_cMenu {
-public:
-    char pad[0x12C];
-    // vptr at 0x12C; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06(void*);
-    virtual void v07();
-};
-
 struct func_002CC460_sStack {
     int count;                          // 0x0
-    func_002CC460_cMenu* entries[8];    // 0x4
+    cMenu* entries[8];    // 0x4
 };
 
 extern "C" void func_002CC460(void* p)
@@ -1492,23 +1436,13 @@ extern "C" void* func_002CC500(void* self, void* text, int a2, int a3, int a4, i
 //100%
 INCLUDE_ASM("util/menu", func_002CC578);
 #ifdef SKIP_ASM
-class func_002CC578_cMenu {
-public:
-    char pad[0x12C];
-    // vptr at 0x12C; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04(void*);
-};
-
 extern "C" int func_002CC578(void** self)
 {
     int r = func_002CA2B0(self);
     if (func_002CA3B0(self) == 0 && r == 0) {
         if ((self[6] != 0 && self[7] != 0 && (func_002CA3E8(self) == 2 || func_002CA3E8(self) == 3)) || func_002CA3E8(self) == 6) {
             *(int*)self[8] ^= 1;
-            ((func_002CC578_cMenu*)self[0])->v04(self);
+            ((cMenu*)self[0])->v04(self);
         }
     }
     return r;
@@ -1898,20 +1832,11 @@ extern "C" void func_002CCFF8(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("util/menu", func_002CD008);
 #ifdef SKIP_ASM
-class func_002CD008_cMenu {
-public:
-    char pad[0x12C];
-    // vptr at 0x12C; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual int v03(void* item, void* data);
-};
-
 extern "C" int func_002CD008(void* self)
 {
     int r = func_002CA2B0(self);
     if (func_002CA3B0(self) == 0 && r == 0 && func_002CA3E8((void**)self) == 6) {
-        r = (*(func_002CD008_cMenu**)self)->v03(self, *(void**)((char*)self + 0x1C));
+        r = (*(cMenu**)self)->v03(self, *(void**)((char*)self + 0x1C));
     }
     return r;
 }
@@ -3310,8 +3235,8 @@ INCLUDE_ASM("util/menu", func_002CF988);
 extern "C" void func_002CF988(void* self, void* item)
 {
     char* s = (char*)self;
-    for (int i = 0; i < ((cMenuList*)(s + 0x18))->count; i++) {
-        if (((cMenuList*)(s + 0x18))->items[i] == *(void**)(s + 0x14)) {
+    for (int i = 0; i < ((cMenu*)(s + 0x18))->count; i++) {
+        if (((cMenu*)(s + 0x18))->items[i] == *(void**)(s + 0x14)) {
             func_002CBD50_pi(s + 0x18, i);
             break;
         }
@@ -3326,7 +3251,7 @@ INCLUDE_ASM("util/menu", func_002CFA08);
 #ifdef SKIP_ASM
 struct func_002CFA08_sOwner {
     char pad[0x18];
-    func_002CBE68_sMenu menu;
+    cMenu menu;
 };
 
 // PORT: returns a key code (int) through the unit's void* declaration.
@@ -3362,16 +3287,7 @@ extern "C" void* func_002CFA08(void* p)
 //100%
 INCLUDE_ASM("util/menu", func_002CFAF8);
 #ifdef SKIP_ASM
-class func_002CFAF8_cMenu {
-public:
-    char pad[0x12C];
-    // vptr at 0x12C; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual int v03(int a, int b);
-};
-
-extern "C" int func_002CFAF8(func_002CFAF8_cMenu** self, int a, int b)
+extern "C" int func_002CFAF8(cMenu** self, void* a, void* b)
 {
     return (*self)->v03(a, b);
 }
@@ -3380,17 +3296,7 @@ extern "C" int func_002CFAF8(func_002CFAF8_cMenu** self, int a, int b)
 //100%
 INCLUDE_ASM("util/menu", func_002CFB28);
 #ifdef SKIP_ASM
-class func_002CFB28_cMenu {
-public:
-    char pad[0x12C];
-    // vptr at 0x12C; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04(void*);
-};
-
-extern "C" void func_002CFB28(func_002CFB28_cMenu** self)
+extern "C" void func_002CFB28(cMenu** self)
 {
     (*self)->v04(self);
 }
@@ -3984,9 +3890,9 @@ extern "C" void* func_002D1740(void* self)
     cNullMenuItem_cNullMenuItem((cNullMenuItem*)nullItem, 0);
     cSpaceMenuItem_cSpaceMenuItem((cSpaceMenuItem*)spaceItem, (void*)0xA);
     func_002CCDF0((s2CCDF0Item*)item3, 0);
-    cMenu_addItem((cMenuList*)self, (void**)nullItem, -1);
-    cMenu_addItem((cMenuList*)self, (void**)spaceItem, -1);
-    cMenu_addItem((cMenuList*)self, (void**)item3, -1);
+    cMenu_addItem((cMenu*)self, (void**)nullItem, -1);
+    cMenu_addItem((cMenu*)self, (void**)spaceItem, -1);
+    cMenu_addItem((cMenu*)self, (void**)item3, -1);
     return self;
 }
 #endif
@@ -4004,9 +3910,9 @@ extern "C" void* func_002D17F0(void* self, void* nullText, void* text3)
     cNullMenuItem_cNullMenuItem((cNullMenuItem*)nullItem, nullText);
     cSpaceMenuItem_cSpaceMenuItem((cSpaceMenuItem*)spaceItem, (void*)0x1E);
     func_002CCDF0((s2CCDF0Item*)item3, text3);
-    cMenu_addItem((cMenuList*)self, (void**)nullItem, -1);
-    cMenu_addItem((cMenuList*)self, (void**)spaceItem, -1);
-    cMenu_addItem((cMenuList*)self, (void**)item3, -1);
+    cMenu_addItem((cMenu*)self, (void**)nullItem, -1);
+    cMenu_addItem((cMenu*)self, (void**)spaceItem, -1);
+    cMenu_addItem((cMenu*)self, (void**)item3, -1);
     return self;
 }
 #endif
