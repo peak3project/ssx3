@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatecharselect", cFEStateCharSelect_onCreateScreen);
 #ifdef SKIP_ASM
@@ -150,18 +158,16 @@ extern "C" void func_00181420(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00181450);
 #ifdef SKIP_ASM
-struct sPadVtI_1450 { short delta; short index; int (*fn)(void*); };
-struct sPadVtF_1450 { short delta; short index; float (*fn)(void*); };
 
 static inline int padBtn_1450(char* pad, int slot)
 {
-    sPadVtI_1450* vt = *(sPadVtI_1450**)(pad + 8);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(pad + 8);
     return vt[slot].fn(pad + vt[slot].delta);
 }
 
 static inline float padAxis_1450(char* pad, int slot)
 {
-    sPadVtF_1450* vt = *(sPadVtF_1450**)(pad + 8);
+    sVEntry<float(void*)>* vt = *(sVEntry<float(void*)>**)(pad + 8);
     return vt[slot].fn(pad + vt[slot].delta);
 }
 
@@ -243,11 +249,10 @@ extern char D_0045D678[];
 struct sCharKey_1620 { char c[2]; };
 extern sCharKey_1620 D_004A13A0[];
 
-struct sWVt_1620 { short delta; short index; void (*fn)(void*, int); };
 struct sWidget_1620 {
     int f0;
     int f4;
-    sWVt_1620* vt;              // 0x8
+    sVEntry<void(void*, int)>* vt;              // 0x8
     int fC;
     int f10;
     unsigned b0 : 1;            // 0x14
@@ -676,15 +681,10 @@ extern char* D_00440FA0[];
 extern "C" void func_0039B760_u(void* self, unsigned char a1) __asm__("func_0039B760");
 void cUIText_setAsciiString(void* text, const char* str) __asm__("cUIText_setAsciiString__FP7cUITextPCc");
 
-struct sVE_CCW {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 struct sWidget_CCW {
     char pad_0x0[0x8];
-    sVE_CCW* vt;                    // 0x8
+    sVEntry<void(void*, ...)>* vt;                    // 0x8
     char pad_0xC[0x8];
     int flags;                      // 0x14
     int idx;                        // 0x18
@@ -708,7 +708,7 @@ struct sCharSelect_CCW {
 
 static inline void vcallI_CCW(sWidget_CCW* o, int slot, int arg)
 {
-    sVE_CCW* vt = o->vt;
+    sVEntry<void(void*, ...)>* vt = o->vt;
     vt[slot].fn((char*)o + vt[slot].delta, arg);
 }
 
@@ -729,11 +729,11 @@ extern "C" void cFEStateCheatCharSelect_onWidgetCreate(sCharSelect_CCW* self, sW
             func_0039B760_u(self->f6C, (unsigned char)self->sel);
     } else if (id == GetHashValue32(D_0045D790)) {
         self->f48 = w;
-        sVE_CCW* vt = w->vt;
+        sVEntry<void(void*, ...)>* vt = w->vt;
         vt[9].fn((char*)w + vt[9].delta, self->sel > 6);
     } else if (id == GetHashValue32(D_0045D7A0)) {
         self->f4C = w;
-        sVE_CCW* vt = w->vt;
+        sVEntry<void(void*, ...)>* vt = w->vt;
         vt[9].fn((char*)w + vt[9].delta, self->sel > 6);
     } else if (id == GetHashValue32(D_0045D7B0)) {
         self->f50 = w;
@@ -747,7 +747,7 @@ extern "C" void cFEStateCheatCharSelect_onWidgetCreate(sCharSelect_CCW* self, sW
                 *p = w;
                 w->idx = i;
                 if (i == 0) {
-                    sVE_CCW* vt = self->items[0]->vt;
+                    sVEntry<void(void*, ...)>* vt = self->items[0]->vt;
                     vt[21].fn((char*)self->items[0] + vt[21].delta, D_004C66B8);
                 }
                 if (i >= self->sel) {
@@ -775,16 +775,6 @@ extern "C" void* func_0039F190(void*, int);
 extern char D_004C66A8[];
 extern char D_004C66B8[];
 
-struct sVEK182690a {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
-struct sVEK182690b {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_00182690(void* self, void* menu, unsigned int msg)
 {
@@ -792,13 +782,13 @@ extern "C" void func_00182690(void* self, void* menu, unsigned int msg)
         return;
     switch (msg) {
     case 2: {
-        sVEK182690a* vt = *(sVEK182690a**)((char*)menu + 8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)menu + 8);
         vt[21].fn((char*)menu + vt[21].delta, D_004C66A8);
         break;
     }
     case 1: {
         int sel = *(int*)((char*)menu + 0x18) + *(unsigned char*)(*(char**)((char*)self + 0x6C) + 0x98);
-        sVEK182690a* vt = *(sVEK182690a**)((char*)menu + 8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)menu + 8);
         vt[21].fn((char*)menu + vt[21].delta, D_004C66B8);
         cUIText_setAsciiString(*(cUIText**)((char*)self + 0x50), *(const char**)((char*)self + (sel << 2) + 0x16C));
         break;
@@ -815,7 +805,7 @@ extern "C" void func_00182690(void* self, void* menu, unsigned int msg)
             *(int*)((char*)self + 0x70) = *(int*)((char*)self + (sel << 2) + 0x7C);
         char* pl = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
         func_001474A8(pl, *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0x70));
-        sVEK182690b* vt = *(sVEK182690b**)(pl + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(pl + 0xC);
         vt[1].fn(pl + vt[1].delta);
         *(int*)((char*)self + 0x74) = 1;
         func_0039F190(*(char**)((char*)self + 0x10) + 0x18, 1);
