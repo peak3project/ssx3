@@ -1405,7 +1405,58 @@ extern "C" void func_0014D240(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014D368);
+#ifdef SKIP_ASM
+struct sBEEntry38_D368 {
+    signed char group;          // 0x0
+    signed char f1;             // 0x1
+    short pad_0x2;
+    short f4;                   // 0x4
+    char pad_0x6[0x12];
+    int f18;                    // 0x18
+    char pad_0x1C[0xC];
+    int f28;                    // 0x28
+    int f2C;                    // 0x2C
+    char pad_0x30[8];
+};
+
+struct sBETbl_D368 {
+    char pad_0x00[4];
+    sBEEntry38_D368* entries;   // 0x4
+    char pad_0x08[0x14];
+    int f1C;                    // 0x1C
+    char pad_0x20[0xC];
+    int count[30];              // 0x2C
+    int first[30];              // 0xA4
+
+    int getCount(int g) { return count[g]; }
+    int getFirst(int g) { return first[g]; }
+};
+
+// Index of e in the table: e itself if it lies inside it, else the first
+// entry of e's group with the same key fields, or -1.
+extern "C" int func_0014D368(sBETbl_D368* self, sBEEntry38_D368* e)
+{
+    sBEEntry38_D368* entries = self->entries;
+    int r = e - entries;
+    if (r < 0 || r >= self->f1C) {
+        int g = e->group;
+        int end = self->getFirst(g) + self->getCount(g);
+        int i;
+        for (i = self->getFirst(g); i < end; i++) {
+            if (entries[i].f4 == e->f4 && entries[i].f1 == e->f1 && entries[i].f28 == e->f28 &&
+                entries[i].f18 == e->f18 && entries[i].f2C == e->f2C) {
+                r = i;
+                goto done;
+            }
+        }
+        r = -1;
+    }
+done:
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014D448);
