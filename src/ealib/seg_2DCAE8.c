@@ -5640,12 +5640,10 @@ void func_003E4F40(void) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4F80);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003E4E98();
-extern int D_00450DE8_4F80[] __asm__("D_00450DE8");
 
 int func_003E4F80(void) {
-    int r = func_003E4E98() - D_00450DE8_4F80[0]; if (r > -1) return 1; return 0;
+    int r = func_003E4E98() - D_00450DE8; if (r > -1) return 1; return 0;
 }
 #endif
 
