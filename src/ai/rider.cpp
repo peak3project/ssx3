@@ -13,6 +13,11 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// EA's 3-float vector (name from the July 2003 prototype, e.g. setSize__8cUIThingRC8t3Vector).
+struct t3Vector {
+    float x, y, z;
+};
+
 // 16-byte vectors with inline constructors (non-POD siblings of t4Vector). The classes differ only in the order
 // their 4-float constructor stores the components; that order decides the float-register allocation of every
 // caller (merging them changes code), so they are kept apart.
@@ -2696,12 +2701,11 @@ struct sV3_20D8 {
     sV3_20D8() {}
     sV3_20D8(float a, float b, float c) : x(a), y(b), z(c) {}
 };
-struct sPt_20D8 { float x, y, z; };
 struct sQ_20D8 { float v[4]; };
 struct sPath_20D8 {
     float x, y, z;
     int n;
-    sPt_20D8 pts[5];
+    t3Vector pts[5];
     int pad;
     sQ_20D8 q[5];
 };
@@ -3039,10 +3043,6 @@ extern "C" void func_00122680(void)
 INCLUDE_ASM("ai/rider", func_00122898);
 #ifdef SKIP_ASM
 
-struct sV3_2898 {
-    float x, y, z;
-};
-
 struct sMat_2898 {
     float m[4][4];
 } __attribute__((aligned(16)));
@@ -3066,9 +3066,9 @@ struct sObj_2898 {
 
 extern void* D_004A289C;
 extern int D_004A4C00;
-extern sV3_2898 D_004A5E40;
+extern t3Vector D_004A5E40;
 
-extern "C" void func_00374D00(void* obj, sV3_2898* a, sV3_2898* b, sV3_2898* dir, sMat_2898* bones, int f);
+extern "C" void func_00374D00(void* obj, t3Vector* a, t3Vector* b, t3Vector* dir, sMat_2898* bones, int f);
 extern "C" void func_00310948(void* model, int lod, sVec4* a, sVec4* b);
 extern "C" void func_00375890(void* obj);
 int func_0011FE98(void*);
@@ -3122,7 +3122,7 @@ static inline void CopyMat_2898(sMat_2898* d, sMat_2898* s)
         : "memory");
 }
 
-static inline void Set3_2898(sV3_2898& v, float x, float y, float z)
+static inline void Set3_2898(t3Vector& v, float x, float y, float z)
 {
     v.x = x;
     v.y = y;
@@ -3145,7 +3145,7 @@ extern "C" void func_00122898(cRider* self)
         void* g = D_004A289C;
         top_2898(g)[1] = top_2898(g)[0];
         top_2898(g)++;
-        sV3_2898 a;
+        t3Vector a;
         {
             sVec4 m = Scale_2898(Add_2898(BonePos_2898(self, self->unk_918), BonePos_2898(self, self->unk_8E8)), 0.5f);
             a.x = m.x;
@@ -3156,7 +3156,7 @@ extern "C" void func_00122898(cRider* self)
             Set3_2898(D_004A5E40, 0.0f, 0.0f, -1.0f);
             D_004A4C00 = 1;
         }
-        sV3_2898 b;
+        t3Vector b;
         {
             sVec4 p = *(sVec4*)&self->mMatrix.row[2];
             b.x = p.x;
