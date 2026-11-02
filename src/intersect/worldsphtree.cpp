@@ -428,6 +428,26 @@ static inline float vu0Dot(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
+// Callees declared by several functions below.
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" int func_002D1AF0();
+extern "C" void** func_002D1B08(int i);
+extern "C" float func_002D1C70();
+extern "C" void func_003279D0(void* cache, void* src, void** out);
+extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
+extern "C" float func_0032C590(void* self);
+extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
+extern "C" void func_00335960(void* ctx, void* obj);
+extern "C" void func_00335B90(void* ctx, void* obj);
+extern "C" void func_00336D40(void* ctx, void* obj);
+extern "C" void func_00340FA0(void* self, void* ctx);
+extern "C" void func_003410C0(void* self, void* ctx);
+extern "C" void* func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
+extern "C" void* func_0034DAC8(void* p, int a1, void* stream);
+extern "C" void func_0034E3D8(void* p, void* stream);
+extern "C" int func_0034EBA0(void* p);
+extern "C" float func_00351508(void* inst);
+
 // ---- end of shared declarations ----
 
 //100%
@@ -436,8 +456,6 @@ INCLUDE_ASM("intersect/worldsphtree", cWorldSphTree_cWorldSphTree);
 extern void* D_0048E5F0[];
 extern char D_0048E550[];
 extern "C" void* func_0032C508(void* p);
-extern "C" float func_0032C590(void* self);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
 extern "C" void* cWorldSphTree_cWorldSphTree(void* self, void* a1, int a2)
 {
@@ -522,7 +540,6 @@ static inline t4Vector sub_330540(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
-extern "C" float func_0032C590(void* self);
 
 extern "C" int func_00330540(void* self, float* lo, float* hi)
 {
@@ -555,7 +572,6 @@ extern "C" int func_00330540(void* self, float* lo, float* hi)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003306D8);
 #ifdef SKIP_ASM
-extern "C" float func_0032C590(void* self);
 
 extern "C" float func_003306D8(void* self)
 {
@@ -1101,11 +1117,8 @@ struct sTree_333EF8 {
     sWsTriObj* tris[1];        // 0x110
 };
 
-extern "C" void func_003279D0(void* cache, void* src, void** out);
 struct t4Vector;
 struct sWsRayHit;
-extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
-extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
 static inline void reset_333EF8(sWsTriHit* h)
 {
@@ -1231,7 +1244,6 @@ struct sList_334458 {
     sWsListNode* items[1];
 };
 
-extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
 extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int cap, int full)
 {
@@ -1329,7 +1341,6 @@ extern "C" int func_00334680(char* self, t4Vector* pos, int a2, int mask, float 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00334800);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 void* func_00327810(void* self);
 extern "C" void cAIFwdDiffCache_Init(void* cache, int n);
 extern char D_0048E4F8[];
@@ -1376,8 +1387,6 @@ struct sCtx_335960 {
     void* cache;
 };
 
-extern "C" void func_003279D0(void* cache, void* src, void** out);
-extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 
 static inline void reset_335960(sWsTriHit* h)
 {
@@ -1435,7 +1444,6 @@ struct sCtx_335B90 {
     int* count;
 };
 
-extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
 static inline void collect_335B90(sCtx_335B90* ctx, sWsListNode* node)
 {
@@ -1486,9 +1494,6 @@ struct sSelf_5D78 {
     int fA4;
 };
 
-extern "C" void func_00335960(void* ctx, void* obj);
-extern "C" void func_00335B90(void* ctx, void* obj);
-extern "C" void func_00340FA0(void* self, void* ctx);
 extern "C" void helpX_5D78(char* flag, sCb_5D78* cb, sCb_5D78* cb2, sWsBoxV* box, void** node, sCell_330BA8* cell) __asm__("func_0033CCF8");
 
 // nash::Cell::descend<TerrainCallback>
@@ -1743,7 +1748,6 @@ struct sCtx_336D40 {
     int full;
 };
 
-extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
 static inline void collect_336D40(sCtx_336D40* ctx, sWsListNode* node, int mode)
 {
@@ -1790,8 +1794,6 @@ struct sSelf_6F30 {
     sCell_330BA8 cell[8];           // 0x00
 };
 
-extern "C" void func_00336D40(void* ctx, void* obj);
-extern "C" void func_003410C0(void* self, void* ctx);
 extern "C" void helpX_6F30(char* flag, sCb_6F30* cb, sCb_6F30* cb2, sWsBoxV* box, void** node, sCell_330BA8* cell) __asm__("func_0033DFD8");
 
 // nash::Cell::descend<StaticObjectCallback>
@@ -2593,9 +2595,6 @@ extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* bo
 INCLUDE_ASM("intersect/worldsphtree", func_0033CCF8);
 #ifdef SKIP_ASM
 
-extern "C" void func_00335960(void* ctx, void* obj);
-extern "C" void func_00335B90(void* ctx, void* obj);
-extern "C" void func_00340FA0(void* self, void* ctx);
 
 // nash::Cell::descend<TerrainCallback>
 static inline void descend_CCF8(void** n, void* cb)
@@ -2739,9 +2738,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_0033DBE8);
 struct sQuery_369D8;
 struct sCtx_369D8;
 struct sCell_369D8;
-extern "C" void func_00335960(void* ctx, void* obj);
-extern "C" void func_00335B90(void* ctx, void* obj);
-extern "C" void func_00340FA0(void* self, void* ctx);
 
 struct sOct_DBE8 {
     sOct_DBE8* child[8];            // 0x00
@@ -2866,8 +2862,6 @@ extern "C" void func_0033DBE8(char* flag, sQuery_369D8* q, sQuery_369D8* q2, sCt
 INCLUDE_ASM("intersect/worldsphtree", func_0033DFD8);
 #ifdef SKIP_ASM
 
-extern "C" void func_00336D40(void* ctx, void* obj);
-extern "C" void func_003410C0(void* self, void* ctx);
 
 // nash::Cell::descend<StaticObjectCallback>
 static inline void descend_DFD8(void** n, void* cb)
@@ -3638,8 +3632,6 @@ extern "C" void func_00340DC0(sTree_340DC0* self, sCtx_340DC0* ctx)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/worldsphtree", func_00340FA0);
 #ifdef SKIP_ASM
-extern "C" void func_00335960(void* ctx, void* obj);
-extern "C" void func_00335B90(void* ctx, void* obj);
 
 extern "C" void func_00340FA0(void* self, void* ctx)
 {
@@ -3664,7 +3656,6 @@ extern "C" void func_00340FA0(void* self, void* ctx)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/worldsphtree", func_003410C0);
 #ifdef SKIP_ASM
-extern "C" void func_00336D40(void* ctx, void* obj);
 
 extern "C" void func_003410C0(void* self, void* ctx)
 {
@@ -3877,8 +3868,6 @@ void* func_003415A8(void* self)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003415D0);
 #ifdef SKIP_ASM
-extern "C" int func_002D1AF0();
-extern "C" void** func_002D1B08(int i);
 
 typedef void (*Fn0_003415D0)(void*);
 typedef void (*Fn1_003415D0)(void*, void*);
@@ -3947,7 +3936,6 @@ extern "C" void func_003415D0(sNode_003415D0* self)
 INCLUDE_ASM("intersect/worldsphtree", func_00341770);
 #ifdef SKIP_ASM
 
-extern "C" float func_002D1C70();
 
 extern "C" void func_00341770(void* self, cWsMover* obj)
 {
@@ -3981,7 +3969,6 @@ static inline t4Vector vu0Normalize_341818(const t4Vector& v)
     return r;
 }
 
-extern "C" float func_002D1C70();
 
 struct sParams_341818 {
     t4Vector dir;
@@ -4053,8 +4040,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00341AA0);
 #ifdef SKIP_ASM
 extern char* D_004A5B64;
 extern void* D_00490B10[];
-extern "C" void* func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
-extern "C" float func_00351508(void* inst);
 float AIrandf(float lo, float hi);
 float func_00317890(float a, float b);
 
@@ -4141,7 +4126,6 @@ extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, 
 INCLUDE_ASM("intersect/worldsphtree", func_00341C80);
 #ifdef SKIP_ASM
 
-extern "C" void* func_0034DAC8(void* p, int a1, void* stream);
 extern void* D_00490B10[];
 
 extern "C" void* func_00341C80(void* self, int a1, sWsVtVPI** stream)
@@ -4180,7 +4164,6 @@ struct sClampFloat_1F38;
 extern "C" void func_00341E48(sWsAnimFloat* s);
 extern "C" void func_00341EC0(sWsAnimFloat* s);
 extern "C" void func_00341F38(sClampFloat_1F38* s);
-extern "C" int func_0034EBA0(void* p);
 
 extern "C" int func_00341D48(void* self)
 {
@@ -4375,7 +4358,6 @@ extern "C" void func_00341FE8(sClampFloat_1F38* self, int msg, float v)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342150);
 #ifdef SKIP_ASM
-extern "C" void func_0034E3D8(void* p, void* stream);
 
 extern "C" void func_00342150(void* self, void* stream)
 {
@@ -4390,8 +4372,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_003421A0);
 #ifdef SKIP_ASM
 extern char* D_004A5B64;
 extern void* D_004908F8[];
-extern "C" void* func_0034D9B0(void* p, int a1, int a2, void* obj, int a4);
-extern "C" float func_00351508(void* inst);
 
 struct sSphCtl_003421A0 {
     int f00;            // 0x00
@@ -4444,7 +4424,6 @@ extern "C" void* func_003421A0(sSphCtl_003421A0* self, int a1, char* obj, char* 
 INCLUDE_ASM("intersect/worldsphtree", func_003422E8);
 #ifdef SKIP_ASM
 
-extern "C" void* func_0034DAC8(void* p, int a1, void* stream);
 extern void* D_004908F8[];
 
 extern "C" void* func_003422E8(void* self, int a1, sWsVtVPI** stream)
@@ -4460,8 +4439,6 @@ extern "C" void* func_003422E8(void* self, int a1, sWsVtVPI** stream)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342358);
 #ifdef SKIP_ASM
-extern "C" float func_002D1C70();
-extern "C" int func_0034EBA0(void* p);
 
 struct sSphCtl_00342358 {
     float force;        // 0x00
@@ -4730,7 +4707,6 @@ extern "C" void func_00342538(sSelf_342538* self, sObj_342538* o, sVec4_342538* 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342718);
 #ifdef SKIP_ASM
-extern "C" void func_0034E3D8(void* p, void* stream);
 
 extern "C" void func_00342718(void* self, void* stream)
 {
@@ -4803,8 +4779,6 @@ extern "C" void* func_00342808(void* self, sWsVtSlot** stream)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342880);
 #ifdef SKIP_ASM
-extern "C" int func_002D1AF0();
-extern "C" void** func_002D1B08(int i);
 
 typedef void (*Fn0_00342880)(void*);
 typedef void (*Fn1_00342880)(void*, void*);
@@ -4851,7 +4825,6 @@ extern "C" void func_00342880(sSph_342768* self)
 INCLUDE_ASM("intersect/worldsphtree", func_003429E0);
 #ifdef SKIP_ASM
 
-extern "C" float func_002D1C70();
 
 extern "C" void func_003429E0(void* self, cWsMover* obj)
 {
@@ -4864,7 +4837,6 @@ extern "C" void func_003429E0(void* self, cWsMover* obj)
 INCLUDE_ASM("intersect/worldsphtree", func_00342A88);
 #ifdef SKIP_ASM
 
-extern "C" float func_002D1C70();
 
 static inline void setVel_342A88(cWsMover* o, t4Vector* v)
 {
