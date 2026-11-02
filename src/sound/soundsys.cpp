@@ -110,6 +110,9 @@ struct sSndVtbl7 {
     sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
+// g++ 2.95 vtable entry for a method taking (self, int).
+struct sSndVtVI { short delta; short index; void (*fn)(void*, int); };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1075,11 +1078,10 @@ INCLUDE_ASM("sound/soundsys", func_00292AE8);
 #ifdef SKIP_ASM
 extern "C" void func_002ADDE0_2AE8(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 
-struct sVE292AE8 { short delta; short index; void (*fn)(void*, int); };
 
 struct sBank292AE8 {
     char pad0[0x8D8];
-    sVE292AE8* vt;      // 0x8D8
+    sSndVtVI* vt;      // 0x8D8
 };
 struct sSys292AE8 {
     char pad0[0x1D8];
@@ -1090,7 +1092,7 @@ struct sSys292AE8 {
 extern "C" void func_00292AE8(char* self, int a1)
 {
     sSys292AE8* sys = **(sSys292AE8***)(self + 0x118);
-    sVE292AE8* vt = sys->bank.vt;
+    sSndVtVI* vt = sys->bank.vt;
     sys = (sSys292AE8*)&sys->bank;
     vt[4].fn((char*)sys + vt[4].delta, a1);
     func_002ADDE0_2AE8(&(**(sSys292AE8***)(self + 0x118))->bank, D_004A36A8[0]);
@@ -4982,11 +4984,6 @@ extern "C" void func_0028D488(void* self);
 extern "C" int func_002B49E0(void*);
 extern "C" int func_0028DEF0_D6E0(void* self, int a1) __asm__("func_0028DEF0");
 
-struct sSndVE_D6E0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 // Mission start: resets the rider sounds, stops the front-end bank loops and picks the mission's music track.
 extern "C" void func_0029D6E0(char* self, int mission)
@@ -4998,7 +4995,7 @@ extern "C" void func_0029D6E0(char* self, int mission)
     func_0029B3C0(self, 0);
     if (func_002B46E8(bank) != 0) {
         if (func_0028D960(self) != 0) {
-            sSndVE_D6E0* vt = *(sSndVE_D6E0**)(self + 0x5558);
+            sSndVtVI* vt = *(sSndVtVI**)(self + 0x5558);
             vt[3].fn(bank + vt[3].delta, 8);
         }
         func_002B4708(bank);
@@ -5028,7 +5025,7 @@ extern "C" void func_0029D6E0(char* self, int mission)
     }
     do {
         if (func_002B4620(self + 0x118) != 0) {
-            sSndVE_D6E0* vt = *(sSndVE_D6E0**)(self + 0x5558);
+            sSndVtVI* vt = *(sSndVtVI**)(self + 0x5558);
             char* mon = self + 0x118;
             ((int (*)(void*, int))vt[4].fn)(mon + vt[4].delta, track);
             *(int*)(self + 0x5FD4) = 1;
@@ -5082,13 +5079,12 @@ static inline int sndD8E0AddVoice(void* vself, int a, int b, int type)
 extern "C" void* func_0028B1D8();
 extern "C" void func_002A3C00(void* self, void* obj, int a2);
 
-struct sSndVtEntD8E0 { short delta; short index; void (*fn)(void*, int); };
 
 extern "C" void func_0029D8E0(void* self)
 {
     if (*(int*)((char*)self + 0x5FD4) != 0) {
         char* o = (char*)self + 0x118;
-        sSndVtEntD8E0* e = &(*(sSndVtEntD8E0**)((char*)self + 0x5558))[4];
+        sSndVtVI* e = &(*(sSndVtVI**)((char*)self + 0x5558))[4];
         e->fn(o + e->delta, 0x27);
         *(int*)((char*)self + 0x5FD0) = 0;
         *(int*)((char*)self + 0x5FD4) = 0;
@@ -5106,7 +5102,6 @@ extern "C" void func_00296E20(void* self, void* obj);
 extern "C" void func_00297438(void* self, void* obj);
 extern "C" void func_0029B3C0(void* self, void* obj);
 
-struct sSndVtEnt { short delta; short index; void (*fn)(void*, int); };
 
 extern "C" void func_0029DBB0(void* self, int keep)
 {
@@ -5118,7 +5113,7 @@ extern "C" void func_0029DBB0(void* self, int keep)
         func_00297438(self, *(void**)((char*)func_0028B1D8() + 0x28));
         func_0029B3C0(self, 0);
         char* o = (char*)self + 0x118;
-        sSndVtEnt* e = &(*(sSndVtEnt**)((char*)self + 0x5558))[4];
+        sSndVtVI* e = &(*(sSndVtVI**)((char*)self + 0x5558))[4];
         e->fn(o + e->delta, 0x27);
         *(int*)((char*)self + 0x5FD0) = 0;
         *(int*)((char*)self + 0x5FD4) = 0;
