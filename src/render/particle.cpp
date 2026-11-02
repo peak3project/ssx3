@@ -13,6 +13,17 @@ struct sPtRenderState {
     short pad;
 };
 
+// One 0x80-byte entry of the graphics manager's draw ring (ring at 0x18F0): its render state, packet buffer, link
+// and sort key.
+struct sPtRingEnt {
+    sPtRenderState rs;       // 0x00
+    unsigned int buf;        // 0x14
+    unsigned int next;       // 0x18
+    short key;               // 0x1C
+    short flag;              // 0x1E
+    char pad_0x20[0x60];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3048,19 +3059,11 @@ INCLUDE_ASM("render/particle", func_00377CF0);
 typedef int cQuad128_CF0 __attribute__((mode(TI)));
 
 
-struct sEnt_CF0 {
-    sPtRenderState rs;                     // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sRing_CF0 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sEnt_CF0 ents[1];               // 0x80
+    sPtRingEnt ents[1];               // 0x80
 };
 
 struct sPtGfx_CF0 {
@@ -3179,7 +3182,7 @@ extern "C" void func_00377CF0(sPtGfx_CF0* self, sPt7278* pos, float* size, int* 
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
-            sEnt_CF0* e = (sEnt_CF0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
             e->rs = *rs;
             e->buf = buf;
             e->next = next;
@@ -3296,7 +3299,7 @@ extern "C" void func_003781A0(sGfx_81A0* self, float ang, sPt7278* pos, float* s
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sEnt_CF0* e = (sEnt_CF0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -3321,19 +3324,11 @@ INCLUDE_ASM("render/particle", func_0037A260);
 INCLUDE_ASM("render/particle", func_0037A430);
 #ifdef SKIP_ASM
 
-struct sPtEnt_A430 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_A430 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_A430 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_A430 {
@@ -3363,7 +3358,7 @@ extern "C" void func_0037A430(sPtGfx_A430* self)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_A430* e = (sPtEnt_A430*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -4142,19 +4137,11 @@ typedef int cQuad128_CC98 __attribute__((mode(TI)));
 union uF_CC98 { float f; int i; };
 
 
-struct sPtEnt_CC98 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_CC98 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_CC98 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtTex_CC98 {
@@ -4261,7 +4248,7 @@ extern "C" void func_0037CC98(sPtGfxB_CC98* self, int* obj)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_CC98* e = (sPtEnt_CC98*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -4406,19 +4393,11 @@ extern "C" void func_0037D318(char* self, int a1, int a2, int a3, int a4, int a5
 INCLUDE_ASM("render/particle", func_0037D348);
 #ifdef SKIP_ASM
 
-struct sPtEnt_D348 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_D348 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_D348 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_D348 {
@@ -4447,7 +4426,7 @@ extern "C" int func_0037D348(sPtGfx_D348* self, int idx)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_D348* e = (sPtEnt_D348*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -4463,19 +4442,11 @@ extern "C" int func_0037D348(sPtGfx_D348* self, int idx)
 INCLUDE_ASM("render/particle", func_0037D450);
 #ifdef SKIP_ASM
 
-struct sPtEnt_D450 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short one;                      // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_D450 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_D450 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_D450 {
@@ -4529,9 +4500,9 @@ extern "C" int func_0037D450(sPtGfx_D450* self)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_D450* e = (sPtEnt_D450*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
-        e->one = one;
+        e->flag = one;
         e->next = next;
         e->key = key;
         e->buf = buf;
@@ -4650,19 +4621,11 @@ extern "C" void func_0037D758(sPartDrawList* self, sPartQ16* q, sPartMtx* m0, sP
 INCLUDE_ASM("render/particle", func_0037D800);
 #ifdef SKIP_ASM
 
-struct sPtEnt_D800 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_D800 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_D800 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_D800 {
@@ -4694,7 +4657,7 @@ extern "C" void func_0037D800(sPtGfx_D800* self, int idx, float* color)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_D800* e = (sPtEnt_D800*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         ASSERT_D800(e != 0);
         e->rs = *rs;
         e->buf = buf;
@@ -5260,19 +5223,11 @@ extern "C" void func_00380380(void* self, char* obj, int idx, float* pos, float*
 INCLUDE_ASM("render/particle", func_00380518);
 #ifdef SKIP_ASM
 
-struct sPtEnt_0518 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_0518 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_0518 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sQuad_0518 {
@@ -5341,7 +5296,7 @@ extern "C" void func_00380518(sPtGfx_0518* self, sQuad_0518* obj)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_0518* e = (sPtEnt_0518*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -5357,19 +5312,11 @@ extern "C" void func_00380518(sPtGfx_0518* self, sQuad_0518* obj)
 INCLUDE_ASM("render/particle", func_003807A0);
 #ifdef SKIP_ASM
 
-struct sPtEnt_07A0 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_07A0 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_07A0 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sQuad_07A0 {
@@ -5502,7 +5449,7 @@ extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
-            sPtEnt_07A0* e = (sPtEnt_07A0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
             e->rs = *rs;
             e->buf = buf;
             e->next = next;
@@ -5520,19 +5467,11 @@ extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
 INCLUDE_ASM("render/particle", func_00380CE0);
 #ifdef SKIP_ASM
 
-struct sPtEnt_0CE0 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_0CE0 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_0CE0 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sQuad_0CE0 {
@@ -5688,7 +5627,7 @@ extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
-            sPtEnt_0CE0* e = (sPtEnt_0CE0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
             e->rs = *rs;
             e->buf = buf;
             e->next = next;
@@ -5706,19 +5645,11 @@ extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
 INCLUDE_ASM("render/particle", func_00381310);
 #ifdef SKIP_ASM
 
-struct sPtEnt_1310 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_1310 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_1310 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sQuad_1310 {
@@ -5866,7 +5797,7 @@ extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_1310* e = (sPtEnt_1310*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -5885,19 +5816,11 @@ extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
 INCLUDE_ASM("render/particle", func_003816F0);
 #ifdef SKIP_ASM
 
-struct sPtEnt_16F0 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_16F0 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_16F0 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sQuad_16F0 {
@@ -6045,7 +5968,7 @@ extern "C" void func_003816F0(sPtGfx_16F0* self, sPtObj_16F0* obj)
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_16F0* e = (sPtEnt_16F0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -6066,19 +5989,11 @@ INCLUDE_ASM("render/particle", func_00381AD0);
 INCLUDE_ASM("render/particle", func_00381F10);
 #ifdef SKIP_ASM
 
-struct sPtEnt_1F10 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_1F10 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_1F10 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_1F10 {
@@ -6150,7 +6065,7 @@ extern "C" void func_00381F10(sPtGfx_1F10* self, sMat_1F10* m, float* col, int n
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_1F10* e = (sPtEnt_1F10*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
@@ -6707,19 +6622,11 @@ extern "C" void func_00384DC0(void* self)
 INCLUDE_ASM("render/particle", func_00384E50);
 #ifdef SKIP_ASM
 
-struct sPtEnt_4E50 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_4E50 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_4E50 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_4E50 {
@@ -6764,7 +6671,7 @@ extern "C" void func_00384E50(sPktBuilder_4E50* self, int flags)
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
-            sPtEnt_4E50* e = (sPtEnt_4E50*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
             e->rs = *rs;
             e->buf = buf;
             e->next = next;
@@ -7099,19 +7006,11 @@ extern "C" void func_00385BE0(cPartVirt* self, int a, void* b, int c)
 INCLUDE_ASM("render/particle", func_00385C10);
 #ifdef SKIP_ASM
 
-struct sPtEnt_5C10 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_5C10 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_5C10 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_5C10 {
@@ -7226,7 +7125,7 @@ extern "C" void func_00385C10(sBez_5C10* self, sMat_5C10* mat, int tex, int flag
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_5C10* e = (sPtEnt_5C10*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = cur;
         e->next = addr;
@@ -7654,19 +7553,11 @@ void func_00387EC0_impl(sPtGfx_7EC0* self, sVtx_7EC0** tbl, int start, int n, in
 INCLUDE_ASM("render/particle", func_003883B8);
 #ifdef SKIP_ASM
 
-struct sPtEnt_83B8 {
-    sPtRenderState rs;                  // 0x00
-    unsigned int buf;               // 0x14
-    unsigned int next;              // 0x18
-    short key;                      // 0x1C
-    short flag;                     // 0x1E
-    char pad_0x20[0x60];
-};
 
 struct sPtRing_83B8 {
     int count;                      // 0x0
     char pad_0x4[0x7C];
-    sPtEnt_83B8 ents[1];            // 0x80
+    sPtRingEnt ents[1];            // 0x80
 };
 
 struct sPtGfx_83B8 {
@@ -7706,7 +7597,7 @@ extern "C" void func_003883B8(sPtGfx_83B8* self, void* a1, int n, void* a3, void
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
-        sPtEnt_83B8* e = (sPtEnt_83B8*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
         e->rs = *rs;
         e->buf = buf;
         e->next = next;
