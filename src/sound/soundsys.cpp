@@ -443,6 +443,11 @@ static inline int sndVCall(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
+// cSSXAudio float tables used by the rider volume / pitch curves (at 0x59B8 and 0x5990).
+static inline float* sndLevels59B8(void* self) { return (float*)((char*)self + 0x59B8); }
+
+static inline float* sndLevels5990(void* self) { return (float*)((char*)self + 0x5990); }
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1635,7 +1640,6 @@ INCLUDE_ASM("sound/soundsys", func_00293538);
 extern const sSndCurve D_00482B78;
 extern const sSndCurve D_00482BA0;
 
-static inline float* getLevels_3538(void* self) { return (float*)((char*)self + 0x59B8); }
 
 void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch) __asm__("func_00293538");
 void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch)
@@ -1649,7 +1653,7 @@ void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch)
     char* obj = (char*)&rider->mVtbl;
     sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
-    float prev = *(float*)((char*)getLevels_3538(self) + (idx << 2));
+    float prev = *(float*)((char*)sndLevels59B8(self) + (idx << 2));
     float d = prev - level;
     if (__builtin_fabsf(d) > 0.1f) {
         if (level < prev) {
@@ -1659,7 +1663,7 @@ void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch)
         }
     }
     sSndCurve c1 = D_00482B78;
-    *(float*)((char*)getLevels_3538(self) + (idx << 2)) = level;
+    *(float*)((char*)sndLevels59B8(self) + (idx << 2)) = level;
     sSndCurve c2 = D_00482BA0;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, level) * 4096.0f);
@@ -1672,7 +1676,6 @@ INCLUDE_ASM("sound/soundsys", func_00293740);
 extern const sSndCurve D_00482BC8;
 extern const sSndCurve D_00482BF0;
 
-static inline float* getLevels_3740(void* self) { return (float*)((char*)self + 0x59B8); }
 
 void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch) __asm__("func_00293740");
 void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch)
@@ -1686,7 +1689,7 @@ void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch)
     char* obj = (char*)&rider->mVtbl;
     sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
-    float prev = *(float*)((char*)getLevels_3740(self) + (idx << 2));
+    float prev = *(float*)((char*)sndLevels59B8(self) + (idx << 2));
     float d = prev - level;
     if (__builtin_fabsf(d) > 0.1f) {
         if (level < prev) {
@@ -1696,7 +1699,7 @@ void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch)
         }
     }
     sSndCurve c1 = D_00482BC8;
-    *(float*)((char*)getLevels_3740(self) + (idx << 2)) = level;
+    *(float*)((char*)sndLevels59B8(self) + (idx << 2)) = level;
     sSndCurve c2 = D_00482BF0;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, level) * 4096.0f);
@@ -1709,7 +1712,6 @@ INCLUDE_ASM("sound/soundsys", func_00293948);
 extern const sSndCurve D_00482C18;
 extern const sSndCurve D_00482C40;
 
-static inline float* getLevels_3948(void* self) { return (float*)((char*)self + 0x59B8); }
 
 void func_00293948_impl(void* self, cRider* rider, int* volume, int* pitch) __asm__("func_00293948");
 void func_00293948_impl(void* self, cRider* rider, int* volume, int* pitch)
@@ -1723,7 +1725,7 @@ void func_00293948_impl(void* self, cRider* rider, int* volume, int* pitch)
     char* obj = (char*)&rider->mVtbl;
     sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
-    float prev = *(float*)((char*)getLevels_3948(self) + (idx << 2));
+    float prev = *(float*)((char*)sndLevels59B8(self) + (idx << 2));
     float d = prev - level;
     if (__builtin_fabsf(d) > 0.1f) {
         if (level < prev) {
@@ -1733,7 +1735,7 @@ void func_00293948_impl(void* self, cRider* rider, int* volume, int* pitch)
         }
     }
     sSndCurve c1 = D_00482C18;
-    *(float*)((char*)getLevels_3948(self) + (idx << 2)) = level;
+    *(float*)((char*)sndLevels59B8(self) + (idx << 2)) = level;
     sSndCurve c2 = D_00482C40;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, level) * 4096.0f);
@@ -1773,7 +1775,6 @@ INCLUDE_ASM("sound/soundsys", func_00293BB0);
 extern const sSndCurve D_00482C68;
 extern const sSndCurve D_00482C90;
 
-static inline float* getLevels_3BB0(void* self) { return (float*)((char*)self + 0x5990); }
 
 extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch)
 {
@@ -1782,7 +1783,7 @@ extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch
     char* obj = (char*)&rider->mVtbl;
     sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
-    float prev = *(float*)((char*)getLevels_3BB0(self) + (idx << 2));
+    float prev = *(float*)((char*)sndLevels5990(self) + (idx << 2));
     float d = prev - level;
     if (__builtin_fabsf(d) > 0.1f) {
         if (level < prev) {
@@ -1792,7 +1793,7 @@ extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch
         }
     }
     sSndCurve c1 = D_00482C68;
-    *(float*)((char*)getLevels_3BB0(self) + (idx << 2)) = level;
+    *(float*)((char*)sndLevels5990(self) + (idx << 2)) = level;
     sSndCurve c2 = D_00482C90;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, pressure) * 4096.0f);
@@ -1808,7 +1809,6 @@ INCLUDE_ASM("sound/soundsys", func_00293DC0);
 extern const sSndCurve D_00482CB8;
 extern const sSndCurve D_00482CE0;
 
-static inline float* getLevels_3DC0(void* self) { return (float*)((char*)self + 0x5990); }
 
 extern "C" void func_00293DC0(void* self, cRider* rider, int* volume, int* pitch)
 {
@@ -1821,7 +1821,7 @@ extern "C" void func_00293DC0(void* self, cRider* rider, int* volume, int* pitch
     char* obj = (char*)&rider->mVtbl;
     sSndVtI* vt = *(sSndVtI**)obj;
     int idx = vt[kRiderVt_getAIIndex].fn(obj + vt[kRiderVt_getAIIndex].delta);
-    float prev = *(float*)((char*)getLevels_3DC0(self) + (idx << 2));
+    float prev = *(float*)((char*)sndLevels5990(self) + (idx << 2));
     float d = prev - level;
     if (__builtin_fabsf(d) > 0.1f) {
         if (level < prev) {
@@ -1831,7 +1831,7 @@ extern "C" void func_00293DC0(void* self, cRider* rider, int* volume, int* pitch
         }
     }
     sSndCurve c1 = D_00482CB8;
-    *(float*)((char*)getLevels_3DC0(self) + (idx << 2)) = level;
+    *(float*)((char*)sndLevels5990(self) + (idx << 2)) = level;
     sSndCurve c2 = D_00482CE0;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, pressure) * 4096.0f);
