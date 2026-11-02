@@ -308,6 +308,13 @@ static inline void sndRingPush(cSSXAudio* s, int v)
     if (++s->ring.head >= s->ring.cap) s->ring.head = 0;
 }
 
+// cSndPlayOpts::OPTS_Callback (prototype name): sets the handler of the voice being pushed.
+static inline void OPTS_Callback(cBankManager* m, sSndCallback cb)
+{
+    cSndPlayOpts* s = &m->sub;
+    s->callbacks[m->sub.cur] = cb;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -745,12 +752,6 @@ static inline void snd10E0Init(void* vself, int a, int b)
 
 
 
-// cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_10E0(cBankManager* m, sSndCallback cb)
-{
-    cSndPlayOpts* s = &m->sub;
-    s->callbacks[m->sub.cur] = cb;
-}
 
 // PORT: voice target stored as int
 extern "C" void func_002910E0(void* vself)
@@ -762,7 +763,7 @@ extern "C" void func_002910E0(void* vself)
     snd10E0Init(self, 0, 0x20);
     (*self->p118)->sub.p3C[(*self->p118)->sub.cur] = (int)((char*)self + 0x5830);
     (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
-    OPTS_Callback_10E0(*self->p118, D_004A3680[0]);
+    OPTS_Callback(*self->p118, D_004A3680[0]);
     func_002906B8(self);
     *(int*)((char*)self + 0x5834) = 1;
 }
@@ -914,12 +915,6 @@ extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
 
-// cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_17D0(cBankManager* m, sSndCallback cb)
-{
-    cSndPlayOpts* s = &m->sub;
-    s->callbacks[m->sub.cur] = cb;
-}
 
 void func_002917D0_17D0(void* vself, void* obj) __asm__("func_002917D0");
 void func_002917D0_17D0(void* vself, void* obj)
@@ -970,7 +965,7 @@ void func_002917D0_17D0(void* vself, void* obj)
         cBankManager* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     }
-    OPTS_Callback_17D0(*self->p118, D_004A3688[0]);
+    OPTS_Callback(*self->p118, D_004A3688[0]);
     {
         cBankManager* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)obj;
@@ -1042,7 +1037,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
             cBankManager* m2 = *self->p118;
             m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
         }
-        OPTS_Callback_17D0(*self->p118, D_004A3690[0]);
+        OPTS_Callback(*self->p118, D_004A3690[0]);
         {
             cBankManager* m2 = *self->p118;
             m2->sub.p60[m2->sub.cur] = (int)obj;
@@ -1097,7 +1092,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
             cBankManager* m2 = *self->p118;
             m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
         }
-        OPTS_Callback_17D0(*self->p118, D_004A3698[0]);
+        OPTS_Callback(*self->p118, D_004A3698[0]);
         {
             cBankManager* m2 = *self->p118;
             m2->sub.p7C[m2->sub.cur] = 0;
@@ -1127,12 +1122,6 @@ extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
 
-// cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_2508(cBankManager* m, sSndCallback cb)
-{
-    cSndPlayOpts* s = &m->sub;
-    s->callbacks[m->sub.cur] = cb;
-}
 
 void func_00292508_2508(void* vself, void* obj, int n) __asm__("func_00292508");
 void func_00292508_2508(void* vself, void* obj, int n)
@@ -1184,7 +1173,7 @@ void func_00292508_2508(void* vself, void* obj, int n)
         cBankManager* m2 = *self->p118;
         m2->sub.tgt[m2->sub.cur] = (char*)obj + 0x110;
     }
-    OPTS_Callback_2508(*self->p118, D_004A36A0[0]);
+    OPTS_Callback(*self->p118, D_004A36A0[0]);
     (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
     {
         cBankManager* m2 = *self->p118;
@@ -2523,12 +2512,6 @@ static inline int vcall_6868(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-// cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_6868(cBankManager* m, sSndCallback cb)
-{
-    cSndPlayOpts* s = &m->sub;
-    s->callbacks[m->sub.cur] = cb;
-}
 
 // Board slide sound of an owner's rider: started once per rider, volume from the speed curve.
 extern "C" void func_00296868(void* vself, sSndOwner* t)
@@ -2603,7 +2586,7 @@ extern "C" void func_00296868(void* vself, sSndOwner* t)
         cBankManager* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)t;
     }
-    OPTS_Callback_6868(*self->p118, D_004A36B0[0]);
+    OPTS_Callback(*self->p118, D_004A36B0[0]);
     (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
     if (flag) {
         (*self->p118)->sub.p80[(*self->p118)->sub.cur] = 1;
@@ -2658,12 +2641,6 @@ static inline int vcall_6E80(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-// cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_6E80(cBankManager* m, sSndCallback cb)
-{
-    cSndPlayOpts* s = &m->sub;
-    s->callbacks[m->sub.cur] = cb;
-}
 
 // Board slide sound of an owner's rider: started once per rider, volume from the speed curve.
 extern "C" void func_00296E80(void* vself, sSndOwner* t)
@@ -2738,7 +2715,7 @@ extern "C" void func_00296E80(void* vself, sSndOwner* t)
         cBankManager* m2 = *self->p118;
         m2->sub.p60[m2->sub.cur] = (int)t;
     }
-    OPTS_Callback_6E80(*self->p118, D_004A36B8[0]);
+    OPTS_Callback(*self->p118, D_004A36B8[0]);
     (*self->p118)->sub.p7C[(*self->p118)->sub.cur] = 0;
     if (flag) {
         (*self->p118)->sub.p80[(*self->p118)->sub.cur] = 1;
@@ -5195,12 +5172,6 @@ static inline int vcall_DEF0(char* o, int slot)
 }
 
 
-// cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_DEF0(cBankManager* m, sSndCallback cb)
-{
-    cSndPlayOpts* s = &m->sub;
-    s->callbacks[m->sub.cur] = cb;
-}
 
 static inline void sndDEF0Init(cSSXAudio* self, int a, int b)
 {
@@ -5267,7 +5238,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 m2->sub.tgt[m2->sub.cur] = &self->xf;
             }
             func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
-            OPTS_Callback_DEF0(*self->p118, D_004A36D0[0]);
+            OPTS_Callback(*self->p118, D_004A36D0[0]);
             {
                 cBankManager** pq = self->p118;
                 int q = func_00288A20(self, obj);
@@ -8709,12 +8680,6 @@ struct sPool5D08 {
 #define SND_5D08_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_5D08_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-// cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_5D08(cBankManager* m, sSndCallback cb)
-{
-    cSndPlayOpts* s = &m->sub;
-    s->callbacks[m->sub.cur] = cb;
-}
 
 int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key) __asm__("func_002A5D08");
 int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
@@ -8808,7 +8773,7 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
             cBankManager* m2 = D_004A36F8->mgr;
             m2->sub.p64[m2->sub.cur] = self->f0;
         }
-        OPTS_Callback_5D08(D_004A36F8->mgr, D_004A3700[0]);
+        OPTS_Callback(D_004A36F8->mgr, D_004A3700[0]);
         {
             cBankManager* m2 = D_004A36F8->mgr;
             m2->sub.p60[m2->sub.cur] = (int)self;
