@@ -1,6 +1,36 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EDF50);
+#ifdef SKIP_ASM
+extern unsigned char D_004963C0[];
+int func_003EDF50(char *a, char *b) {
+    unsigned qa, qb;
+    unsigned ca, cb;
+    if (a == 0 || *a == 0) return -1;
+    if (*a == '"' || *a == '\'') {
+        qa = *(unsigned char *)a;
+        a++;
+    } else {
+        qa = 0;
+    }
+    if (*b == '"' || *b == '\'') {
+        qb = *(unsigned char *)b;
+        b++;
+    } else {
+        qb = 0;
+    }
+    do {
+        ca = D_004963C0[(int)*a];
+        a++;
+        if (ca == qa || (ca < 0x20 && qa == 0)) ca = 0;
+        cb = D_004963C0[(int)*b];
+        b++;
+        if (cb == qb || (cb < 0x20 && qb == 0)) cb = 0;
+    } while (ca == cb && ca != 0);
+    return ca - cb;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EE028);
