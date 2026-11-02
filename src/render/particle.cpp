@@ -126,6 +126,11 @@ struct sPtVert {
     char pad[0x10];
 };
 
+// 4x4 float matrix without the 16-byte alignment of sPtMatrix.
+struct sPtMatrixU {
+    float m[4][4];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1396,11 +1401,8 @@ INCLUDE_ASM("render/particle", func_00373C28);
 #ifdef SKIP_ASM
 
 // One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
-struct sPtMtx_3C28 {
-    float m[4][4];
-};
 
-static inline float ptBlend_3C28(sPtVec3* p, sPtMtx_3C28* mt, float* w, int j)
+static inline float ptBlend_3C28(sPtVec3* p, sPtMatrixU* mt, float* w, int j)
 {
     float x = p->x;
     float y = p->y;
@@ -1413,7 +1415,7 @@ static inline float ptBlend_3C28(sPtVec3* p, sPtMtx_3C28* mt, float* w, int j)
 
 // Blends p through four matrices: out = M0 p * w[0] + M1 p * w[1] + M2 p * w[2] + M3 p
 // (rows 0-2 scale x, y, z; row 3 is the translation).
-extern "C" void func_00373C28(void* self, sPtVec3* p, sPtMtx_3C28* mt, float* w, float* out)
+extern "C" void func_00373C28(void* self, sPtVec3* p, sPtMatrixU* mt, float* w, float* out)
 {
     out[0] = ptBlend_3C28(p, mt, w, 0);
     out[1] = ptBlend_3C28(p, mt, w, 1);
@@ -1425,11 +1427,8 @@ INCLUDE_ASM("render/particle", func_00373EA8);
 #ifdef SKIP_ASM
 
 // One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
-struct sPtMtx_3EA8 {
-    float m[4][4];
-};
 
-static inline float ptBlend4_3EA8(sPtVec4u* p, sPtMtx_3EA8* mt, float* w, int j)
+static inline float ptBlend4_3EA8(sPtVec4u* p, sPtMatrixU* mt, float* w, int j)
 {
     float x = p->x;
     float y = p->y;
@@ -1442,7 +1441,7 @@ static inline float ptBlend4_3EA8(sPtVec4u* p, sPtMtx_3EA8* mt, float* w, int j)
 }
 
 // Blends the homogeneous point p through four matrices weighted by w[0..3]; writes x, y, z.
-extern "C" void func_00373EA8(void* self, sPtVec4u* p, sPtMtx_3EA8* mt, float* w, float* out)
+extern "C" void func_00373EA8(void* self, sPtVec4u* p, sPtMatrixU* mt, float* w, float* out)
 {
     out[0] = ptBlend4_3EA8(p, mt, w, 0);
     out[1] = ptBlend4_3EA8(p, mt, w, 1);
