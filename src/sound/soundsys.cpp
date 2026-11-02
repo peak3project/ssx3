@@ -626,6 +626,10 @@ void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm
 extern "C" int func_002ADCA0(void* bank, int a1, sSndCallback id, int a3, int a4, int a5, int a6, int a7);
 extern "C" void func_002ADDE0(void* bank, sSndCallback key);
 
+// Alternate views of two callees: func_002B1458 with a float sixth argument, func_002A4248 called with self.
+int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int refresh) __asm__("func_002B1458");
+int func_002A4248_s(void* self) __asm__("func_002A4248");
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5242,7 +5246,6 @@ extern "C" void func_002A02D8(void* self, sSndRider* rider)
 INCLUDE_ASM("sound/soundsys", func_002A0560);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
-int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int refresh) __asm__("func_002B1458");
 unsigned func_002A1820_0560(void* self, void* a, void* b) __asm__("func_002A1820");
 void func_0031BE50_0560(float a, float* x, float* y) __asm__("func_0031BE50");
 
@@ -5334,7 +5337,6 @@ INCLUDE_ASM("sound/soundsys", func_002A0A30);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
 // func_002B1458 with the float argument in its real position (same registers).
-int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int refresh) __asm__("func_002B1458");
 
 extern "C" int func_002A1820(void* self, sSndRider* a, sSndRider* b);
 
@@ -5528,7 +5530,6 @@ extern "C" int func_002A1388(void* self, void* obj)
 INCLUDE_ASM("sound/soundsys", func_002A1400);
 #ifdef SKIP_ASM
 // PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
-int func_002A4248_s(void* self) __asm__("func_002A4248");
 
 // PORT: callers declare func_002A1400 as (void*, int); the body takes (self, rider).
 void func_002A1400_impl(void* self, char* rider) __asm__("func_002A1400");
@@ -6468,7 +6469,6 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
 INCLUDE_ASM("sound/soundsys", func_002A3708);
 #ifdef SKIP_ASM
 // PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
-int func_002A4248_s(void* self) __asm__("func_002A4248");
 
 extern "C" void func_002A3708(void* self, char* rider)
 {
