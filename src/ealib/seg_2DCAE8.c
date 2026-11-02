@@ -1265,7 +1265,6 @@ extern struct N_DAC0 *D_00519AE4_DAC0 __asm__("D_00519AE4");
 extern struct R_DAC0 *func_003DE670_DAC0(void) __asm__("func_003DE670");
 extern int func_00416B18_DAC0(char *, char *, int) __asm__("func_00416B18");
 extern void iFILESYS_ExecCommand_DAC0(void *) __asm__("iFILESYS_ExecCommand");
-extern int (*D_00450C10_DAC0[])(char *, int, int) __asm__("D_00450C10");
 extern char D_00495D68_DAC0[] __asm__("D_00495D68");
 extern int func_003DD4E8_DAC0(char *, int, int, void *) __asm__("func_003DD4E8");
 extern char func_003DDA10_DAC0[] __asm__("func_003DDA10");
@@ -1283,11 +1282,11 @@ int func_003DDAC0(char *name, int a1, int a2, int a3) {
             return (int)r;
         }
     }
-    n = (struct N_DAC0 *)D_00450C10_DAC0[1](name, 0x18, a1);
+    n = D_00450C10.f04(name, 0x18, a1);
     n->f10 = (int *)r;
     n->f4 = 0x800;
     n->f8 = a1;
-    n->f0 = D_00450C10_DAC0[1](D_00495D68_DAC0, 0x800, a1);
+    n->f0 = (int)D_00450C10.f04(D_00495D68_DAC0, 0x800, a1);
     func_003DCF70(func_003DD4E8_DAC0(name, 1, a2, n), func_003DDA10_DAC0);
     return r->f0;
 }
