@@ -81,6 +81,25 @@ struct sApp {
 };
 extern sApp* D_004A28A8;
 
+// A being: the script/AI-facing interface of a rider, at rider + 0x6C0 (seg/seg_1FBE38; slot order of the
+// prototype's vtable _vt$6cBeing).
+struct tInstanceRecord;
+class cBeing {
+public:
+    virtual ~cBeing();
+    virtual const t4Vector* getVelocity() const;
+    virtual int isIntersecting(tInstanceRecord* rec) const;
+    virtual void applyBoost(const t4Vector& impulse);
+    virtual const t4Vector* getPosition() const;
+    virtual const t4Matrix* getTransform() const;
+    virtual int getAIIndex() const;
+    virtual bool isHuman() const;
+    virtual bool isComputer() const;
+    virtual void transport(const t4Matrix& m);
+    virtual void resetToPath();
+    virtual void initForMission(const t4Matrix& m);
+};
+
 // The chase camera controller (cChaseCameraController, 0x44 bytes; cCamera holds it at 0xA8).
 struct cChaseCameraController {
     char pad_0x00[0x24];
@@ -746,17 +765,10 @@ extern "C" void* func_0015F598(void* self, void* a1)
 //100%
 INCLUDE_ASM("camera/camera", func_0015F5B0);
 #ifdef SKIP_ASM
-class cCamVObj_0015F5B0 {
-public:
-    // vptr at 0x0
-    virtual void v01();
-    virtual t4Vector* v02();
-};
-
 extern "C" void* func_0015F5B0(void* self, void* a1)
 {
     char* p = *(char**)((char*)a1 + 0x4);
-    *(t4Vector*)self = *((cCamVObj_0015F5B0*)(p + 0x6C0))->v02();
+    *(t4Vector*)self = *((cBeing*)(p + 0x6C0))->getVelocity();
     return self;
 }
 #endif
@@ -6844,16 +6856,6 @@ extern "C" void func_001686D0(char* self)
 //100%
 INCLUDE_ASM("camera/camera", func_00168940);
 #ifdef SKIP_ASM
-class cCamTargetK8940 {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual int v07();
-};
 class cCamCtrlK8940 {
 public:
     char pad_0x00[0x10];
@@ -6867,7 +6869,7 @@ public:
 extern "C" void func_00168940(cCamCtrlK8940* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -6976,7 +6978,7 @@ INCLUDE_ASM("camera/camera", func_00168C50);
 extern "C" void func_00168C50(cCamCtrlK8940* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
@@ -7085,7 +7087,7 @@ INCLUDE_ASM("camera/camera", func_00168F60);
 extern "C" void func_00168F60(cCamCtrlK8940* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
-    if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
+    if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         self->v05();
