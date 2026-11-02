@@ -1,6 +1,224 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("object/deadfadenode", cDeadFadeNode_cDeadFadeNode);
+#ifdef SKIP_ASM
+extern "C" void* func_0034FB00(void* self, int a1, int type, void* a3);
+extern "C" float func_002D1C70();
+extern "C" void func_003E6574(void* dst, void* src, int size);
+extern char D_00491980[];
+extern char D_0048E8A8[];
+
+// PORT: array new bound to the tagged allocator
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+
+struct sDfV4_0750 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sDfMat_0750 {
+    sDfV4_0750 r[4];
+};
+
+struct sDfMatElem_0750 {
+    sDfV4_0750 r[4];
+    sDfMatElem_0750() {}
+};
+
+struct sDfPart_0750 {
+    int parent;
+    int pad4;
+    int pad8;
+    sDfMat_0750* mat;   // 0xC
+};
+
+struct sDfModel_0750 {
+    int pad0;
+    int count;              // 0x4
+    sDfPart_0750* parts;    // 0x8
+};
+
+struct sDfInst_0750 {
+    char pad_0x00[0x8];
+    unsigned int flags;     // 0x8
+    char pad_0x0C[0x4];
+    sDfMat_0750 world;      // 0x10
+    char pad_0x50[0x30];
+    sDfModel_0750* model;   // 0x80
+    float scale;            // 0x84
+};
+
+struct sDfDesc_0750 {
+    int w[2];
+    float f8;
+    float fC;
+};
+
+struct sDfBlock_0750 {
+    unsigned int w[3];
+};
+
+struct sDfVE_0750 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+struct sDfOther_0750 {
+    char pad_0x00[0xC];
+    sDfVE_0750* vt;         // 0xC
+};
+
+struct cDeadFadeNode_0750 {
+    char pad_0x00[0xC];
+    void* vt;                   // 0xC
+    char pad_0x10[0x8];
+    sDfInst_0750* inst;         // 0x18
+    sDfBlock_0750 block;        // 0x1C
+    float f28;                  // 0x28
+    float f2C;                  // 0x2C
+    float f30;                  // 0x30
+    float f34;                  // 0x34
+    sDfMatElem_0750* mats;      // 0x38
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_0750(sDfMat_0750* d, const void* a, const sDfMat_0750* b)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_0750(void* d, const void* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+static inline sDfV4_0750 row_0750(const sDfMat_0750* m, int i)
+{
+    return m->r[i];
+}
+
+static inline void mulv_0750(sDfV4_0750& r, const sDfV4_0750& a, const sDfV4_0750& b)
+{
+    r.x = a.x * b.x;
+    r.y = a.y * b.y;
+    r.z = a.z * b.z;
+    r.w = a.w * b.w;
+}
+
+// Builds a part matrix: dst = parent * (local with its translation row scaled by s).
+static inline void partMat_0750(sDfMat_0750* dst, const void* parentMat, const sDfMat_0750* m, const sDfV4_0750& s)
+{
+    sDfMat_0750 l;
+    l.r[0] = row_0750(m, 0);
+    l.r[1] = row_0750(m, 1);
+    l.r[2] = row_0750(m, 2);
+    sDfV4_0750 t;
+    sDfV4_0750 r3 = m->r[3];
+    mulv_0750(t, r3, s);
+    l.r[3] = t;
+    sDfMat_0750 tt;
+    vu0MulMat_0750(&tt, parentMat, &l);
+    vu0CopyMat_0750(dst, &tt);
+}
+
+typedef int (*DfBoolFn_0750)(void*);
+typedef sDfMat_0750* (*DfMatFn_0750)(void*);
+typedef void (*DfSetFn_0750)(void*, int);
+
+extern "C" cDeadFadeNode_0750* cDeadFadeNode_cDeadFadeNode(cDeadFadeNode_0750* self, int a1, void* obj, sDfDesc_0750* desc, sDfOther_0750* other)
+{
+    sDfMatElem_0750** pm = &self->mats;
+    func_0034FB00(self, a1, 0x16, obj);
+    self->vt = D_00491980;
+    self->block.w[0] = 0xFFFFFFFF;
+    self->block = *(sDfBlock_0750*)desc;
+    self->f2C = func_002D1C70() / desc->f8;
+    self->f34 = desc->fC * func_002D1C70();
+    self->f30 = 0.0f;
+    self->f28 = 1.0f;
+    sDfModel_0750* model = self->inst->model;
+    *pm = new (D_0048E8A8, 0x20000000, 0) sDfMatElem_0750[model->count];
+    if (other != 0 && ((DfBoolFn_0750)other->vt[26].fn)((char*)other + other->vt[26].delta)) {
+        sDfMat_0750* src = ((DfMatFn_0750)other->vt[27].fn)((char*)other + other->vt[27].delta);
+        func_003E6574(self->mats, src, model->count << 6);
+    } else {
+        sDfMat_0750* base = &self->inst->world;
+        if (other != 0) {
+            base = ((DfMatFn_0750)other->vt[24].fn)((char*)other + other->vt[24].delta);
+        }
+        sDfPart_0750* p = model->parts;
+        float k = self->inst->scale;
+        sDfV4_0750 s;
+        s.x = k;
+        s.y = k;
+        s.z = k;
+        s.w = 1.0f;
+        sDfMat_0750 t2;
+        for (int i = 0; i < model->count; i++, p++) {
+            int parent = p->parent;
+            if (parent != -1) {
+                partMat_0750(&t2, &self->mats[parent], p->mat, s);
+                vu0CopyMat_0750(&self->mats[i], &t2);
+            } else {
+                partMat_0750(&t2, base, p->mat, s);
+                vu0CopyMat_0750(&self->mats[i], &t2);
+            }
+        }
+    }
+    if (other != 0) {
+        ((DfSetFn_0750)other->vt[1].fn)((char*)other + other->vt[1].delta, 3);
+    }
+    self->inst->flags &= ~0x60;
+    self->inst->flags = (self->inst->flags & ~2) | 4;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/deadfadenode", func_00350B98);
