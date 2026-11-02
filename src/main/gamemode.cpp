@@ -72,6 +72,13 @@ struct sApp {
 };
 extern sApp* D_004A28A8;
 
+// The cRiderMetrix block the handlers copy out of a rider (0xAC bytes at mMetrix + 0xFC; finish time at 0x9C).
+struct sRiderStats {
+    int v[0x9C / 4];
+    int time;           // 0x9C
+    int w[3];
+};
+
 static inline sRace* GetRace()
 {
     return D_004A28A8->game->race;
@@ -777,20 +784,13 @@ struct sScore_239230 {
     int t[3][10];
 };
 
-// cRiderMetrix block copied out of the rider (0xAC bytes; finish time at 0x9C).
-struct sStats_239230 {
-    int v[0x9C / 4];
-    int time;           // 0x9C
-    int w[3];
-};
-
 extern "C" void func_00239230(sScore_239230* self, int idx)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     int quick = D_00535C11[0];
     int n = func_00146E98(player, 0);
-    sStats_239230 st = *(sStats_239230*)((char*)GetRider(idx)->mMetrix + 0xFC);
+    sRiderStats st = *(sRiderStats*)((char*)GetRider(idx)->mMetrix + 0xFC);
     if (GetRider(idx)->mDidNotFinish != 0) {
         self->t[D_004A2C70->f0 - 1][idx] = 0;
         D_005366A8[idx] = 1;
@@ -2046,12 +2046,6 @@ extern int D_005366A8[];
 extern int D_00536730[];
 extern signed char D_00535C11[];
 
-struct sStats_23BDB8 {
-    int v[0x9C / 4];
-    int time;           // 0x9C
-    int w[3];
-};
-
 extern "C" void func_0023BDB8(void* self, int idx)
 {
     cRider* r = GetRider(idx);
@@ -2059,7 +2053,7 @@ extern "C" void func_0023BDB8(void* self, int idx)
         D_00536640[idx] = 0;
         D_005366A8[idx] = 1;
     } else {
-        sStats_23BDB8 st = *(sStats_23BDB8*)((char*)r->mMetrix + 0xFC);
+        sRiderStats st = *(sRiderStats*)((char*)r->mMetrix + 0xFC);
         D_005366A8[idx] = 0;
         D_00536640[idx] = st.time;
     }
@@ -2188,16 +2182,10 @@ extern unsigned int D_00536640[];
 extern int D_005366A8[];
 extern int D_00536730[];
 
-struct sStats_23C2D8 {
-    int v[0x9C / 4];
-    int time;           // 0x9C
-    int w[3];
-};
-
 extern "C" void func_0023C2D8(void* self, int idx)
 {
     sRace* clk = GetRace();
-    sStats_23C2D8 st = *(sStats_23C2D8*)((char*)clk->riders[idx]->mMetrix + 0xFC);
+    sRiderStats st = *(sRiderStats*)((char*)clk->riders[idx]->mMetrix + 0xFC);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     cRider* r = GetRider(idx);
     if (r->mDidNotFinish != 0) {
