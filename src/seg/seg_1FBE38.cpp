@@ -4113,8 +4113,6 @@ extern const int D_004465C8_2210[] __asm__("D_004465C8");
 extern char* const D_00445E40_2210[] __asm__("D_00445E40");
 extern int* D_004A3DD8_2210 __asm__("D_004A3DD8");
 extern char* D_004A28A8_2210 __asm__("D_004A28A8");
-struct V3_2210 { float x, y, z; };
-extern V3_2210 D_004C9098_2210 __asm__("D_004C9098");
 extern "C" void* cBE_getBE_2210() __asm__("cBE_getBE");
 extern "C" void* cBE_getInterface_2210(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00144CE0(void* iface, int id);
@@ -4133,7 +4131,7 @@ public:
     virtual bool isBusy();
 };
 
-extern "C" V3_2210 func_00302210(int n, Ent_2210* e)
+extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
 {
     if (D_004A5730_2210 == 0) {
         D_004FBC20_2210.v[0] = -1;
@@ -4198,7 +4196,7 @@ extern "C" V3_2210 func_00302210(int n, Ent_2210* e)
             break;
         }
     }
-    return D_004C9098_2210;
+    return D_004C9098;
 }
 #endif
 
