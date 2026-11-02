@@ -16488,15 +16488,13 @@ void func_003D1940(unsigned int mask) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1A88);
 #ifdef SKIP_ASM
 extern int func_003D5450_1A88(int) __asm__("func_003D5450");
-extern unsigned char D_0044F42C_1A88 __asm__("D_0044F42C");
-extern int D_0044F430_1A88 __asm__("D_0044F430");
 
 int func_003D1A88_impl(unsigned int mask) __asm__("func_003D1A88");
 int func_003D1A88_impl(unsigned int mask) {
     int n = 0;
     int i;
     int j;
-    if (D_0044F42C_1A88 == 0 || D_0044F430_1A88 != 0 || func_003D5450_1A88(-1) == 0) {
+    if (D_0044F42C == 0 || D_0044F430 != 0 || func_003D5450_1A88(-1) == 0) {
         return -0x12;
     }
     mask &= 0x0F000000;
@@ -16510,7 +16508,7 @@ int func_003D1A88_impl(unsigned int mask) {
             break;
         }
     }
-    D_0044F430_1A88 = 0;
+    D_0044F430 = 0;
     D_0044F420 = 0;
     return n;
 }
