@@ -253,6 +253,20 @@ static inline t4Vector vu0Scale(const t4Vector& v, float s)
     return r;
 }
 
+static inline int isBetterHit(sWsRayHit* a, sWsRayHit* b)
+{
+    if (a->obj != 0) {
+        if (b->obj == 0) {
+            return 1;
+        }
+        return *(unsigned int*)(a->obj + 0x78) < *(unsigned int*)(b->obj + 0x78);
+    }
+    if (b->obj != 0) {
+        return 0;
+    }
+    return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1226,19 +1240,6 @@ extern "C" int func_00333EF8(void* self, void* q, sWsRayHit* hits, int max, int 
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
 
-static inline int isBetter_003342D0(sWsRayHit* a, sWsRayHit* b)
-{
-    if (a->obj != 0) {
-        if (b->obj == 0) {
-            return 1;
-        }
-        return *(unsigned int*)(a->obj + 0x78) < *(unsigned int*)(b->obj + 0x78);
-    }
-    if (b->obj != 0) {
-        return 0;
-    }
-    return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
-}
 
 extern "C" float func_003342D0(void* self, char* q, sWsRayHit* out, int a3)
 {
@@ -1257,7 +1258,7 @@ extern "C" float func_003342D0(void* self, char* q, sWsRayHit* out, int a3)
             bestDiff = d;
             best = i;
         } else if (d == bestDiff) {
-            if (isBetter_003342D0(&hits[i], &hits[best])) {
+            if (isBetterHit(&hits[i], &hits[best])) {
                 best = i;
             }
         }
@@ -1662,19 +1663,6 @@ extern "C" int func_00335D78(void* self, void* q, sWsRayHit* hits, int max, int 
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
 
-static inline int isBetter_00336850(sWsRayHit* a, sWsRayHit* b)
-{
-    if (a->obj != 0) {
-        if (b->obj == 0) {
-            return 1;
-        }
-        return *(unsigned int*)(a->obj + 0x78) < *(unsigned int*)(b->obj + 0x78);
-    }
-    if (b->obj != 0) {
-        return 0;
-    }
-    return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
-}
 
 extern "C" float func_00336850(void* self, char* q, sWsRayHit* out, int a3)
 {
@@ -1693,7 +1681,7 @@ extern "C" float func_00336850(void* self, char* q, sWsRayHit* out, int a3)
             bestDiff = d;
             best = i;
         } else if (d == bestDiff) {
-            if (isBetter_00336850(&hits[i], &hits[best])) {
+            if (isBetterHit(&hits[i], &hits[best])) {
                 best = i;
             }
         }
@@ -1998,19 +1986,6 @@ extern "C" int func_00336F30(void* self, void* q, sWsRayHit* hits, int max, int 
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
 
-static inline int isBetter_003378C0(sWsRayHit* a, sWsRayHit* b)
-{
-    if (a->obj != 0) {
-        if (b->obj == 0) {
-            return 1;
-        }
-        return *(unsigned int*)(a->obj + 0x78) < *(unsigned int*)(b->obj + 0x78);
-    }
-    if (b->obj != 0) {
-        return 0;
-    }
-    return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
-}
 
 extern "C" float func_003378C0(void* self, char* q, sWsRayHit* out, int a3)
 {
@@ -2029,7 +2004,7 @@ extern "C" float func_003378C0(void* self, char* q, sWsRayHit* out, int a3)
             bestDiff = d;
             best = i;
         } else if (d == bestDiff) {
-            if (isBetter_003378C0(&hits[i], &hits[best])) {
+            if (isBetterHit(&hits[i], &hits[best])) {
                 best = i;
             }
         }
