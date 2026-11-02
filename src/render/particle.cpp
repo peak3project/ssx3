@@ -159,6 +159,12 @@ struct sPtSegHdr {
     float v;
 } __attribute__((aligned(16)));
 
+// Float / int bit view.
+union uPtFloatBits {
+    float f;
+    int i;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3102,14 +3108,10 @@ static inline sPt7278 Sub_CF0(const sPt7278& a, const sPt7278& b)
     return r;
 }
 
-union uFI_CF0 {
-    float f;
-    int i;
-};
 
 static inline int Bits_CF0(float f)
 {
-    uFI_CF0 u;
+    uPtFloatBits u;
     u.f = f;
     return u.i;
 }
@@ -4101,7 +4103,6 @@ extern "C" void func_0037CC30(void* self, void* item)
 INCLUDE_ASM("render/particle", func_0037CC98);
 #ifdef SKIP_ASM
 typedef int cQuad128_CC98 __attribute__((mode(TI)));
-union uF_CC98 { float f; int i; };
 
 
 
@@ -4182,7 +4183,7 @@ extern "C" void func_0037CC98(sPtGfxB_CC98* self, int* obj)
     p[19] = 6;
     p[20] = 0x116;
     p[21] = 0;
-    uF_CC98 one;
+    uPtFloatBits one;
     one.f = 1.0f;
     p[22] = ((unsigned long)one.i << 32) | 0x80808080UL;
     p[23] = 1;
