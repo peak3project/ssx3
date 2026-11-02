@@ -3598,7 +3598,32 @@ extern "C" void func_0025F288(void* self, int a1, sDsPeerInfoK2* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F338);
+#ifdef SKIP_ASM
+extern "C" int func_003EE550(void*);
+
+struct sDsSlotSessF338 {
+    int active;                  // 0x0
+    char pad_0x04[0xF8 - 0x4];
+    int slot;                    // 0xF8
+    char pad_0xFC[0x1EC - 0xFC];
+    void* handles[29];           // 0x1EC
+};
+
+static inline int handleCount_F338(void* h)
+{
+    return h ? func_003EE550(h) : 0;
+}
+
+extern "C" unsigned int func_0025F338(void* self_)
+{
+    sDsSlotSessF338* self = (sDsSlotSessF338*)self_;
+    if (self->active == 0)
+        return 0;
+    return handleCount_F338(self->handles[self->slot]);
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F388);
