@@ -255,8 +255,15 @@ struct sPath {                      /* 0x928 */
     struct sPathRamp f14[3];
     char pad2C[0x30 - 0x2C];
     unsigned int f30;
-    int f34;
-    char pad38[0x58 - 0x38];
+    unsigned int *f34;              /* the loaded path data (32-bit words) */
+    short *f38;                     /* word offsets of its nodes */
+    char pad3C[0x40 - 0x3C];
+    short *f40;
+    char pad44[0x48 - 0x44];
+    int *f48;
+    int *f4C;
+    char *f50;
+    unsigned int *f54;
     struct sPathVoice *f58[24];
     char padB8[0xDC - 0xB8];
     struct sPathEvent *f0DC[16];
@@ -16426,22 +16433,20 @@ int func_003D3900(int id, int start, int vel) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3C90);
 #ifdef SKIP_ASM
-struct G_3C90 { char pad[0x34]; unsigned int *t34; short *t38; char pad2[0xC]; int *t48; };
-extern struct G_3C90 *D_0044F420_3C90 __asm__("D_0044F420");
 
 int func_003D3C90(int idx, int def) {
     int ret = def;
-    struct G_3C90 *g;
+    struct sPath *g;
     unsigned int *base;
     int k;
     if (idx < 0) return ret;
-    g = D_0044F420_3C90;
-    base = g->t34;
-    k = ((unsigned char *)base)[g->t38[idx] * 4 + 4];
+    g = D_0044F420;
+    base = g->f34;
+    k = ((unsigned char *)base)[g->f38[idx] * 4 + 4];
     if (k == 0) return ret;
     {
-        int lo = g->t48[k - 1];
-        int n = g->t48[k] - lo;
+        int lo = g->f48[k - 1];
+        int n = g->f48[k] - lo;
         unsigned int *start = base + lo;
         int i;
         for (i = 0; i < n; i++) {
