@@ -337,6 +337,12 @@ struct sPadW0 {
     int w0 : 6;
 };
 
+// The AI state functions: the object these functions run on keeps its current state as a pointer to member
+// at +0xF44 (state index at +0xF38), taken from the table D_0043CF20.
+class cAiObj;
+typedef void (cAiObj::*tAiState)();
+extern "C" tAiState D_0043CF20[4];
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -464,10 +470,6 @@ struct sPad_0680 {
     int w6 : 6;
 };
 
-class cObj_0680;
-typedef void (cObj_0680::*Fn_0680)();
-extern "C" Fn_0680 D_0043CF20_0680[4] __asm__("D_0043CF20");
-
 extern "C" void func_00100610_0680(t4Vector*, void*) __asm__("func_00100610");
 extern "C" float func_00100348_0680(void*, t4Vector*) __asm__("func_00100348");
 extern "C" int func_0010BB18_0680(void*, float*, int*) __asm__("func_0010BB18");
@@ -526,14 +528,14 @@ extern "C" void func_00100680_0680(char* self, sPad_0680* pad)
     z = 0;
     if (func_0010B980_0680(self, spd, &below, &o3, &o4, &o5, &o6)) {
         *(int*)(self + 0xE70) = -1;
-        *(Fn_0680*)(self + 0xF44) = D_0043CF20_0680[0];
+        *(tAiState*)(self + 0xF44) = D_0043CF20[0];
         *(short*)(self + 0xF38) = 0;
     } else if (func_0010BD10_0680(self, &z)) {
         if (z) {
-            *(Fn_0680*)(self + 0xF44) = D_0043CF20_0680[3];
+            *(tAiState*)(self + 0xF44) = D_0043CF20[3];
             *(short*)(self + 0xF38) = 3;
         } else if (!((cBeing*)((char*)D_004A28A8->game->race->riders[*(int*)((char*)spd + 0x80)] + 0x6C0))->isHuman()) {
-            *(Fn_0680*)(self + 0xF44) = D_0043CF20_0680[2];
+            *(tAiState*)(self + 0xF44) = D_0043CF20[2];
             *(short*)(self + 0xF38) = 2;
         }
     }
@@ -552,10 +554,6 @@ struct sPad_09E0 {
     int w0 : 6;
 };
 
-class cObj_8E88;
-typedef void (cObj_8E88::*Fn_8E88)();
-extern "C" Fn_8E88 D_0043CF20[4];
-
 extern "C" int func_0010B980(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6);
 extern "C" void func_0010BFA8_09E0(char*, int, int, int, int) __asm__("func_0010BFA8");
 extern "C" void func_00100610_09E0(t4Vector*, void*) __asm__("func_00100610");
@@ -567,7 +565,7 @@ extern "C" void func_001009E0(char* self, sPad_09E0* pad)
 {
     int below, o3, o4, o5, o6;
     if (!func_0010B980(self, (float*)(self + 0xDF0), &below, &o3, &o4, &o5, &o6)) {
-        *(Fn_8E88*)(self + 0xF44) = D_0043CF20[1];
+        *(tAiState*)(self + 0xF44) = D_0043CF20[1];
         *(short*)(self + 0xF38) = 1;
         func_00100680(self, pad);
         return;
@@ -602,10 +600,6 @@ struct sPad_0F88 {
     unsigned int pad0 : 20;
     int b20 : 6;
 };
-
-class cObj_0F88;
-typedef void (cObj_0F88::*Fn_0F88)();
-extern "C" Fn_0F88 D_0043CF20_0F88[4] __asm__("D_0043CF20");
 
 struct sCtl_0F88 {
     float speed;
@@ -683,13 +677,13 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
     z = 0;
     if (func_0010B980(self, (float*)(self + 0xDF0), &below, &o3, &o4, &o5, &o6)) {
         *(int*)(self + 0xE70) = -1;
-        *(Fn_0F88*)(self + 0xF44) = D_0043CF20_0F88[0];
+        *(tAiState*)(self + 0xF44) = D_0043CF20[0];
         *(short*)(self + 0xF38) = 0;
     } else if (!func_0010BD10_0F88(self, &z)) {
-        *(Fn_0F88*)(self + 0xF44) = D_0043CF20_0F88[1];
+        *(tAiState*)(self + 0xF44) = D_0043CF20[1];
         *(short*)(self + 0xF38) = 1;
     } else if (z) {
-        *(Fn_0F88*)(self + 0xF44) = D_0043CF20_0F88[3];
+        *(tAiState*)(self + 0xF44) = D_0043CF20[3];
         *(short*)(self + 0xF38) = 3;
     }
 }
@@ -3361,9 +3355,6 @@ __asm__(".globl func_00108C80\n.type func_00108C80,@function\nfunc_00108C80 = __
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00108E88);
 #ifdef SKIP_ASM
-class cObj_8E88b;
-typedef void (cObj_8E88b::*Fn_8E88b)();
-extern "C" Fn_8E88b D_0043CF20_8E88b[4] __asm__("D_0043CF20");
 struct sQ_8E88 {
     int v[4];
 } __attribute__((aligned(16)));
@@ -3404,7 +3395,7 @@ void func_00108E88_self(char* self)
     func_0010CAB8(self);
     *(int*)(self + 0xE70) = -1;
     *(float*)(self + 0xDF4) = 1.0f;
-    *(Fn_8E88b*)(self + 0xF44) = D_0043CF20_8E88b[1];
+    *(tAiState*)(self + 0xF44) = D_0043CF20[1];
     *(short*)(self + 0xF38) = 1;
     ASSERT_8E88(self != 0);
     func_003E6448(self + 0xE7C, 0, 0x3C);
@@ -3500,9 +3491,6 @@ extern "C" void func_0010A898(char *arg0, C_A898 *arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010A8E8);
 #ifdef SKIP_ASM
-class cObj_A8E8;
-typedef void (cObj_A8E8::*Fn_A8E8)();
-extern "C" Fn_A8E8 D_0043CF20_A8E8[4] __asm__("D_0043CF20");
 extern "C" void func_00111D98(void* self, void* src);
 
 extern "C" void func_0010A8E8(char* self, cStream* in)
@@ -3510,7 +3498,7 @@ extern "C" void func_0010A8E8(char* self, cStream* in)
     func_00111D98(self, in);
     in->Read(self + 0xDF0, 0x150);
     short state = *(short*)(self + 0xF38);
-    *(Fn_A8E8*)(self + 0xF44) = D_0043CF20_A8E8[state];
+    *(tAiState*)(self + 0xF44) = D_0043CF20[state];
     *(short*)(self + 0xF38) = state;
 }
 #endif
