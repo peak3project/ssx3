@@ -33,22 +33,24 @@ extern int (*D_0044FFA0[])(int, void *);
 extern struct sFFA8 D_0044FFA8;
 extern int (*D_0044FFB0[])();
 
+/* D_0044FFB8: the registered banks (func_003D6498); p is the bank header, x its key. */
+struct sBank { unsigned char *p; unsigned int x; };
+extern struct sBank D_0044FFB8[8];
+
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6498);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_6498 { unsigned char *p; unsigned int x; };
-extern struct E_6498 D_0044FFB8_6498[] __asm__("D_0044FFB8");
 void func_003DA3A8(void *arg0, int *arg1, int *arg2);
 
 static __inline__ void clear_6498(unsigned long key) {
     int i, j;
     for (i = 0; i < 8; i++) {
-        unsigned char *p = D_0044FFB8_6498[i].p;
-        if (p != 0 && D_0044FFB8_6498[i].x == key) {
+        unsigned char *p = D_0044FFB8[i].p;
+        if (p != 0 && D_0044FFB8[i].x == key) {
             unsigned char *q = p + (((*(unsigned short *)(p + 0x10) * 2 + 3) & 0xFFFFFFFC) + 0x18);
-            for (j = 0; j < D_0044FFB8_6498[i].p[0x12]; j++) {
+            for (j = 0; j < D_0044FFB8[i].p[0x12]; j++) {
                 q[j] = 0xFF;
             }
         }
@@ -63,15 +65,15 @@ int func_003D6498_6498(unsigned short *arg0, unsigned int arg1) {
     if (*arg0 == 0xC03) {
         func_003DA3A8(arg0, &a, &b);
         for (i = 0; i < 8; i++) {
-            unsigned char *p = D_0044FFB8_6498[i].p;
+            unsigned char *p = D_0044FFB8[i].p;
             if (p != 0 && p[9] == b && p[8] == a) {
                 goto out;
             }
         }
         for (i = 0; i < 8; i++) {
-            if (D_0044FFB8_6498[i].p == 0) {
-                D_0044FFB8_6498[i].p = (unsigned char *)arg0;
-                D_0044FFB8_6498[i].x = arg1;
+            if (D_0044FFB8[i].p == 0) {
+                D_0044FFB8[i].p = (unsigned char *)arg0;
+                D_0044FFB8[i].x = arg1;
                 ok = 1;
                 break;
             }
@@ -87,17 +89,14 @@ out:
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6618);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_6618 { unsigned char *p; unsigned int x; };
-extern struct E_6618 D_0044FFB8_6618[] __asm__("D_0044FFB8");
 
 void func_003D6618(unsigned long key) {
     int i, j;
     for (i = 0; i < 8; i++) {
-        unsigned char *p = D_0044FFB8_6618[i].p;
-        if (p != 0 && D_0044FFB8_6618[i].x == key) {
+        unsigned char *p = D_0044FFB8[i].p;
+        if (p != 0 && D_0044FFB8[i].x == key) {
             unsigned char *q = p + (((*(unsigned short *)(p + 0x10) * 2 + 3) & 0xFFFFFFFC) + 0x18);
-            for (j = 0; j < D_0044FFB8_6618[i].p[0x12]; j++) {
+            for (j = 0; j < D_0044FFB8[i].p[0x12]; j++) {
                 q[j] = 0xFF;
             }
         }
@@ -123,17 +122,15 @@ int func_003D66C0(void *arg0, unsigned int arg1) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D66F0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044FFB8_FFB8[] __asm__("D_0044FFB8");
 
-int func_003D66F0(int arg0, int arg1) {
+int func_003D66F0(unsigned char *arg0, unsigned int arg1) {
     int i;
     if (arg0 == 0) {
         return 0;
     }
     for (i = 0; i < 8; i++) {
-        if (D_0044FFB8_FFB8[i * 2] == arg0 && D_0044FFB8_FFB8[i * 2 + 1] == arg1) {
-            D_0044FFB8_FFB8[i * 2] = 0;
+        if (D_0044FFB8[i].p == arg0 && D_0044FFB8[i].x == arg1) {
+            D_0044FFB8[i].p = 0;
             return 1;
         }
     }
@@ -666,9 +663,6 @@ int func_003D70B0(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7110);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_7110 { unsigned char *p; int x; };
-extern struct E_7110 D_0044FFB8_7110[] __asm__("D_0044FFB8");
 
 static __inline__ unsigned short *lookup_7110(unsigned char *base, unsigned short id) {
     unsigned short n = *(unsigned short *)(base + 0x10);
@@ -683,10 +677,10 @@ static __inline__ unsigned short *lookup_7110(unsigned char *base, unsigned shor
 }
 
 unsigned short *func_003D7110(unsigned char *arg0) {
-    struct E_7110 *res;
-    struct E_7110 *e = D_0044FFB8_7110;
+    struct sBank *res;
+    struct sBank *e = D_0044FFB8;
     unsigned short *ret = 0;
-    struct E_7110 **pres = &res;
+    struct sBank **pres = &res;
     int found = 0;
     int i = 0;
     do {
@@ -1167,15 +1161,12 @@ void func_003D8190(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D81F0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E82B0 { unsigned char *p; int x; };
-extern struct E82B0 D_0044FFB8_82B0[] __asm__("D_0044FFB8");
 
 int func_003D81F0(unsigned char *arg0, int *arg1) {
-    struct E82B0 *res;
-    struct E82B0 *e = D_0044FFB8_82B0;
+    struct sBank *res;
+    struct sBank *e = D_0044FFB8;
     int ret = 0;
-    struct E82B0 **pres = &res;
+    struct sBank **pres = &res;
     int found = 0;
     int i = 0;
     do {
@@ -1200,35 +1191,25 @@ done:
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8278);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044FFB8_8278[] __asm__("D_0044FFB8");
 
 void func_003D8278(void) {
-    int *var_2;
-    int var_3;
-
-    var_3 = 7;
-    var_2 = D_0044FFB8_8278;
-    do {
-        var_2[0] = 0;
-        var_3 -= 1;
-        var_2[1] = 0;
-        var_2 += 2;
-    } while (var_3 >= 0);
+    int i;
+    for (i = 0; i < 8; i++) {
+        D_0044FFB8[i].p = 0;
+        D_0044FFB8[i].x = 0;
+    }
 }
 #endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D82B0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern struct E82B0 D_0044FFB8_82B0[] __asm__("D_0044FFB8");
 
 unsigned short func_003D82B0(unsigned char *arg0) {
-    struct E82B0 *res;
-    struct E82B0 *e = D_0044FFB8_82B0;
+    struct sBank *res;
+    struct sBank *e = D_0044FFB8;
     unsigned short ret = 0;
-    struct E82B0 **pres = &res;
+    struct sBank **pres = &res;
     int found = 0;
     int i = 0;
     do {
@@ -1252,14 +1233,12 @@ done:
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8330);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern struct E82B0 D_0044FFB8_82B0[] __asm__("D_0044FFB8");
 
 int func_003D8330(unsigned char *arg0, int *arg1) {
-    struct E82B0 *res;
-    struct E82B0 *e = D_0044FFB8_82B0;
+    struct sBank *res;
+    struct sBank *e = D_0044FFB8;
     int ret = 0;
-    struct E82B0 **pres = &res;
+    struct sBank **pres = &res;
     int found = 0;
     int i = 0;
     do {
@@ -1284,15 +1263,12 @@ done:
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D83B8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_83B8 { unsigned char *p; int x; };
-extern struct E_83B8 D_0044FFB8_83B8[] __asm__("D_0044FFB8");
 
 int func_003D83B8(unsigned char *arg0, unsigned char **arg1) {
-    struct E_83B8 *res;
-    struct E_83B8 *e = D_0044FFB8_83B8;
+    struct sBank *res;
+    struct sBank *e = D_0044FFB8;
     int ret = 0;
-    struct E_83B8 **pres = &res;
+    struct sBank **pres = &res;
     int found = 0;
     int i = 0;
     do {
@@ -1349,12 +1325,9 @@ block_4:
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D84A0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_84A0 { unsigned char *p; int x; };
-extern struct E_84A0 D_0044FFB8_84A0[] __asm__("D_0044FFB8");
 
-int func_003D84A0(unsigned char *arg0, struct E_84A0 **pres) {
-    struct E_84A0 *e = D_0044FFB8_84A0;
+int func_003D84A0(unsigned char *arg0, struct sBank **pres) {
+    struct sBank *e = D_0044FFB8;
     int found = 0;
     int i = 0;
     do {
