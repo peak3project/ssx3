@@ -25,6 +25,24 @@ static inline void StreamRead(sStreamObj* s, void* p, int n) {
     e->fn((char*)s + e->delta, p, n);
 }
 
+// A world-painter item data object (tWPIGD_* in the strings; base name is ours): f0 first, vptr at +4. Only vtable slot 66 (vt()) is called by name.
+class tWPIGDBase {
+public:
+    int f0;
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3(); virtual void v4(); virtual void v5();
+    virtual void v6(); virtual void v7(); virtual void v8(); virtual void v9(); virtual void v10(); virtual void v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17();
+    virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23();
+    virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35();
+    virtual void v36(); virtual void v37(); virtual void v38(); virtual void v39(); virtual void v40(); virtual void v41();
+    virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45(); virtual void v46(); virtual void v47();
+    virtual void v48(); virtual void v49(); virtual void v50(); virtual void v51(); virtual void v52(); virtual void v53();
+    virtual void v54(); virtual void v55(); virtual void v56(); virtual void v57(); virtual void v58(); virtual void v59();
+    virtual void v60(); virtual void v61(); virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
+    virtual int vt();
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3141,9 +3159,8 @@ extern "C" void *func_002BCBD0(void *arg0) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BCC00);
 #ifdef SKIP_ASM
-class cCC00 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BCC00(void *self, void *p, float f) {
-    cCC00 *o = (cCC00*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(int*)((char*)self + 8) = (int)(f * (float)*(int*)((char*)p + 4) + (1.0f - f) * (float)*(int*)((char*)self + 8));
@@ -3157,9 +3174,8 @@ extern "C" void func_002BCC00(void *self, void *p, float f) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BCCC8);
 #ifdef SKIP_ASM
-class cCCC8 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BCCC8(void *self, void *p, float f) {
-    cCCC8 *o = (cCCC8*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(int*)((char*)self + 8) = (int)(f * (float)*(int*)((char*)p + 4) + (1.0f - f) * (float)*(int*)((char*)self + 8));
@@ -3171,9 +3187,8 @@ extern "C" void func_002BCCC8(void *self, void *p, float f) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BCD68);
 #ifdef SKIP_ASM
-class cCD68 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BCD68(void *self, void *p, float f) {
-    cCD68 *o = (cCD68*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(int*)((char*)self + 8) = (int)(f * (float)*(int*)((char*)p + 4) + (1.0f - f) * (float)*(int*)((char*)self + 8));
@@ -3185,9 +3200,8 @@ extern "C" void func_002BCD68(void *self, void *p, float f) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BCE08);
 #ifdef SKIP_ASM
-class cCE08 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BCE08(void *self, void *p, float f) {
-    cCE08 *o = (cCE08*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(int*)((char*)self + 8) = (int)(f * (float)*(int*)((char*)p + 4) + (1.0f - f) * (float)*(int*)((char*)self + 8));
@@ -3199,9 +3213,8 @@ extern "C" void func_002BCE08(void *self, void *p, float f) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BCEA8);
 #ifdef SKIP_ASM
-class cCEA8 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BCEA8(void *self, void *p, float f) {
-    cCEA8 *o = (cCEA8*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(float*)((char*)self + 8) = f * *(float*)((char*)p + 4) + (1.0f - f) * *(float*)((char*)self + 8);
@@ -3310,9 +3323,8 @@ extern "C" void func_002BD1B8(Obj_D1B8* self, Src_D1B8* src, float t) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BD2E8);
 #ifdef SKIP_ASM
-class cD2E8 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BD2E8(void *self, void *p, float f) {
-    cD2E8 *o = (cD2E8*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(float*)((char*)self + 8) = f * *(float*)((char*)p + 4) + (1.0f - f) * *(float*)((char*)self + 8);
@@ -3362,9 +3374,8 @@ extern "C" void func_002BD378(Obj_D378* self, Src_D378* src, float t) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BD518);
 #ifdef SKIP_ASM
-class cD518 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BD518(void *self, void *p, float f) {
-    cD518 *o = (cD518*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(float*)((char*)self + 8) = f * *(float*)((char*)p + 4) + (1.0f - f) * *(float*)((char*)self + 8);
@@ -3377,9 +3388,8 @@ extern "C" void func_002BD518(void *self, void *p, float f) {
 INCLUDE_ASM("bx/seg_1BA100", func_002BD5A8);
 #ifdef SKIP_ASM
 struct sP_D5A8 { float x, y; };
-class cD5A8 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BD5A8(void *self, void *p, float f) {
-    cD5A8 *o = (cD5A8*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(sP_D5A8*)((char*)self + 8) = *(sP_D5A8*)((char*)p + 4);
@@ -3399,9 +3409,8 @@ INCLUDE_ASM("bx/seg_1BA100", func_002BD698);
 #ifdef SKIP_ASM
 // Environment property blend: w^2 blend of all 19 current values toward the
 // incoming set, which is then stored as the target.
-class cD698 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BD698(void *self, void *p, float f) {
-    cD698 *o = (cD698*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(float*)((char*)self + 0x8) = f * *(float*)((char*)p + 0x4) + (1.0f - f) * *(float*)((char*)self + 0x8);
@@ -3449,9 +3458,8 @@ extern "C" void func_002BD698(void *self, void *p, float f) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BD968);
 #ifdef SKIP_ASM
-class cD968 { public: int f0; virtual void v0();virtual void v1();virtual void v2();virtual void v3();virtual void v4();virtual void v5();virtual void v6();virtual void v7();virtual void v8();virtual void v9();virtual void v10();virtual void v11();virtual void v12();virtual void v13();virtual void v14();virtual void v15();virtual void v16();virtual void v17();virtual void v18();virtual void v19();virtual void v20();virtual void v21();virtual void v22();virtual void v23();virtual void v24();virtual void v25();virtual void v26();virtual void v27();virtual void v28();virtual void v29();virtual void v30();virtual void v31();virtual void v32();virtual void v33();virtual void v34();virtual void v35();virtual void v36();virtual void v37();virtual void v38();virtual void v39();virtual void v40();virtual void v41();virtual void v42();virtual void v43();virtual void v44();virtual void v45();virtual void v46();virtual void v47();virtual void v48();virtual void v49();virtual void v50();virtual void v51();virtual void v52();virtual void v53();virtual void v54();virtual void v55();virtual void v56();virtual void v57();virtual void v58();virtual void v59();virtual void v60();virtual void v61();virtual void v62();virtual void v63();virtual void v64();virtual void v65(); virtual int vt(); };
 extern "C" void func_002BD968(void *self, void *p, float f) {
-    cD968 *o = (cD968*)self;
+    tWPIGDBase *o = (tWPIGDBase*)self;
     o->vt();
     f = f * f;
     *(int*)((char*)self + 8) = (int)(f * (float)*(int*)((char*)p + 4) + (1.0f - f) * (float)*(int*)((char*)self + 8));
