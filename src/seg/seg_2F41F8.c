@@ -9,6 +9,44 @@
 
 extern unsigned int strlen(const char *);
 
+/* D_0051F0C0: the SIF request queue (layout from every user in this unit). Requests a[] are sent, results b[] come
+   back with the same key; c[] holds the completion callback (fn 0 = none, 1 = store f14 and wake th). */
+struct sSifReq { int f0; int f4; int pad8[5]; int key; };
+struct sSifRes { int pad0[2]; int f8; int fC; int f10; int f14; int pad18; int key; };
+struct sSifCb { int (*fn)(int, int, int, int, int, int, int, int, int *); int *out; int arg; int th; };
+struct sSifEnt { int idx; int k1; int k2; int v; };
+struct sSifQueue {
+    char buf[0x4D88];                   /* byte 0: done flag (func_003F4F40) */
+    struct sSifEnt *beg;                /* 0x4D88 */
+    struct sSifEnt *end;
+    int pad4D90;
+    struct sSifReq *a;                  /* 0x4D94 */
+    int pad4D98[2];
+    struct sSifRes *b;                  /* 0x4DA0 */
+    int pad4DA4[2];
+    int base2;                          /* 0x4DAC */
+    int pad4DB0;
+    int base1;                          /* 0x4DB4 */
+    int pad4DB8[3];
+    struct sSifCb *c;                   /* 0x4DC4 */
+    int pad4DC8[2];
+    int head;                           /* 0x4DD0 */
+    int tail;
+    int cnt;
+    int pad4DDC;
+    int pos;                            /* 0x4DE0 */
+    int pad4DE4;
+    int h4DE8;
+    int h4DEC;
+    int h4DF0;
+    int h4DF4;
+    volatile unsigned last;             /* 0x4DF8: Count at the last update */
+    int pad4DFC;
+    volatile unsigned long total;       /* 0x4E00 */
+    int sema;                           /* 0x4E08 */
+};
+extern struct sSifQueue D_0051F0C0;
+
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 #ifdef SKIP_ASM
@@ -557,8 +595,7 @@ int func_003F43D0(int a, ...) { return 1; }
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4410);
 #ifdef SKIP_ASM
-struct T_4410 { char pad[0x4DF8]; volatile unsigned last; int pad2; volatile unsigned long total; };
-int func_003F4410(int a0, struct T_4410 *d) {
+int func_003F4410(int a0, struct sSifQueue *d) {
     unsigned c;
     unsigned last = d->last;
     unsigned long total;
@@ -575,17 +612,15 @@ int func_003F4410(int a0, struct T_4410 *d) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4448);
 #ifdef SKIP_ASM
-typedef struct { int pad[7]; int v; } E4448;
-typedef struct { char pad[0x4D94]; E4448 *p94; char pad2[8]; E4448 *pA0; char pad3[0x2C]; int c0; int c4; char pad4[0x10]; int e8; int ec; int f0; } S4448;
 extern int f4C50(int) __asm__("func_00424C50");
 extern int f3B80(int, void *, void *) __asm__("func_00423B80");
-void func_003F4448(int a, int b, S4448 *s);
-void func_003F4448(int a, int b, S4448 *s) {
-    if (a == s->ec) s->ec = -1;
-    if (a == s->f0) s->f0 = -1;
-    if (s->c4 != s->c0) {
-        if (s->pA0[s->c4].v == s->p94[s->c4].v) f4C50(s->e8);
-        if (s->ec < 0 && s->f0 < 0) s->f0 = f3B80(0x10, (void *)func_003F4448, s);
+void func_003F4448(int a, int b, struct sSifQueue *s);
+void func_003F4448(int a, int b, struct sSifQueue *s) {
+    if (a == s->h4DEC) s->h4DEC = -1;
+    if (a == s->h4DF0) s->h4DF0 = -1;
+    if (s->tail != s->head) {
+        if (s->b[s->tail].key == s->a[s->tail].key) f4C50(s->h4DE8);
+        if (s->h4DEC < 0 && s->h4DF0 < 0) s->h4DF0 = f3B80(0x10, (void *)func_003F4448, s);
     }
 }
 #endif
@@ -611,17 +646,12 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F4528);
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4A78);
 #ifdef SKIP_ASM
-typedef struct { int f0; int f4; int pad[5]; int key; } A4A78;
-typedef struct { int pad[2]; int f8; int fC; int f10; int f14; int pad2; int key; } B4A78;
-typedef struct { int (*fn)(int, int, int, int, int, int, int, int, int *); int *out; int arg; int th; } C4A78;
-typedef struct { char pad[0x4D94]; A4A78 *a; int pad98[2]; B4A78 *b; int padA4[2]; int base2; int padB0; int base1; int padB8[3]; C4A78 *c; int padC8[2]; int head; int tail; int cnt; int padDC; int pos; int padE4[9]; int sema; } G4A78;
-extern G4A78 D_4A78 __asm__("D_0051F0C0");
 extern volatile int D_004A5B00;
 extern int func_00423DE0(int);
 extern int func_00423DC0(int);
 extern int func_00423CD0(int);
 int func_003F4A78(void) {
-    G4A78 *g = &D_4A78;
+    struct sSifQueue *g = &D_0051F0C0;
     int n = 0;
     while (g->tail != g->head && g->b[g->tail].key == g->a[g->tail].key) {
         int th, key, kind, arg, p10, p14, addr, len, p8, pC;
@@ -678,19 +708,15 @@ int func_003F4C68_impl(int a0, int a1, int a2, int a3, int a4, int a5, int a6, i
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4C98);
 #ifdef SKIP_ASM
-typedef struct { int idx; int k1; int k2; int v; } C4C98;
-typedef struct { int idx; int k1; int k2; int v; } Ent;
-typedef struct { char pad[0x4D88]; Ent *beg; Ent *end; } G4C98;
-extern G4C98 D_4C98 __asm__("D_0051F0C0");
-int f4C98impl(C4C98 *c, int k1, int k2) __asm__("func_003F4C98");
-int f4C98impl(C4C98 *c, int k1, int k2) {
-    G4C98 *g = &D_4C98;
-    Ent *e;
+int f4C98impl(struct sSifEnt *c, int k1, int k2) __asm__("func_003F4C98");
+int f4C98impl(struct sSifEnt *c, int k1, int k2) {
+    struct sSifQueue *g = &D_0051F0C0;
+    struct sSifEnt *e;
     if (k1 == c->k1 && k2 == c->k2) {
         int i = c->idx;
         if (i >= 0) {
             if (i < 0x81) {
-                Ent *ent = (Ent *)(i * 16 + (int)g->beg);
+                struct sSifEnt *ent = (struct sSifEnt *)(i * 16 + (int)g->beg);
                 if (ent->v == c->v && ent->k1 == k1) return 0;
             }
         }
@@ -713,15 +739,13 @@ int f4C98impl(C4C98 *c, int k1, int k2) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4D68);
 #ifdef SKIP_ASM
-typedef struct { char pad[0x4D88]; int a; int b; char pad2[0x40]; int c; int d; } S4D68;
-extern S4D68 D_4d68 __asm__("D_0051F0C0");
 extern int func_003F4C68d(int *, int, int, int, int, int, int, int, int, int) __asm__("func_003F4C68");
 extern int func_003F4A78(void);
 int func_003F4D68(void) {
     int t[4];
     t[3] = 1;
-    func_003F4C68d(t, 1, 0, 0, 0, 0, D_4d68.a, D_4d68.b - D_4d68.a, 1, 0);
-    while (D_4d68.c != D_4d68.d) func_003F4A78();
+    func_003F4C68d(t, 1, 0, 0, 0, 0, (int)D_0051F0C0.beg, (char *)D_0051F0C0.end - (char *)D_0051F0C0.beg, 1, 0);
+    while (D_0051F0C0.head != D_0051F0C0.tail) func_003F4A78();
     return 0;
 }
 #endif
@@ -729,8 +753,6 @@ int func_003F4D68(void) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4DE8);
 #ifdef SKIP_ASM
-struct T_4DE8 { char pad[0x4DF8]; volatile unsigned last; int pad2; volatile unsigned long total; };
-extern struct T_4DE8 D_0051F0C0_4DE8 __asm__("D_0051F0C0");
 extern long func_00411538_4DE8(long, long) __asm__("func_00411538");
 int func_003F4DE8(void) {
     volatile unsigned cnt;
@@ -739,13 +761,13 @@ int func_003F4DE8(void) {
     volatile unsigned long sum;
     unsigned c, t;
     do {
-        last = D_0051F0C0_4DE8.last;
-        total = D_0051F0C0_4DE8.total;
+        last = D_0051F0C0.last;
+        total = D_0051F0C0.total;
         MFC0_COUNT_2F41(c);
         cnt = c;
         t = cnt;
         t = last;
-    } while (t != D_0051F0C0_4DE8.last || total != D_0051F0C0_4DE8.total);
+    } while (t != D_0051F0C0.last || total != D_0051F0C0.total);
     sum = total + (unsigned)(cnt - last);
     return (int)func_00411538_4DE8(sum, 0x48000);
 }
@@ -783,7 +805,6 @@ int func_003F4EA0(unsigned a, int *out) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4F40);
 #ifdef SKIP_ASM
-extern char D_0051F0C0[];
 extern struct { unsigned char b; char pad[11]; int w; } D_00451340;
 extern void func_00424020(int);
 extern void func_004261B0(int, void *, int, int, int, int);
@@ -791,7 +812,7 @@ int func_003F4F40(void) {
     int r;
     unsigned start;
     unsigned c;
-    char *flag = D_0051F0C0;
+    char *flag = D_0051F0C0.buf;
     unsigned limit = 0x2FAF080;
     *flag = 0;
     D_00451340.w = (int)flag + 1;
@@ -816,7 +837,6 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F5000);
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F53F8);
 #ifdef SKIP_ASM
-extern char D_0051F0C0[];
 extern int D_004A4BB0;
 extern void func_00423B30(int);
 extern void func_00423AA0(int, int);
@@ -824,13 +844,13 @@ extern void func_00423BF0(int);
 extern void func_00423BB0(int);
 extern void func_00423DB0(int);
 int func_003F53F8(void) {
-    char *p = D_0051F0C0;
-    if (*(int *)(p + 0x4DEC) >= 0) func_00423B30(*(int *)(p + 0x4DEC));
-    if (*(int *)(p + 0x4DF0) >= 0) func_00423B30(*(int *)(p + 0x4DF0));
-    func_00423AA0(2, *(int *)(p + 0x4DF4));
-    func_00423BF0(*(int *)(p + 0x4DE8));
-    func_00423BB0(*(int *)(p + 0x4DE8));
-    func_00423DB0(*(int *)(p + 0x4E08));
+    struct sSifQueue *q = &D_0051F0C0;
+    if (q->h4DEC >= 0) func_00423B30(q->h4DEC);
+    if (q->h4DF0 >= 0) func_00423B30(q->h4DF0);
+    func_00423AA0(2, q->h4DF4);
+    func_00423BF0(q->h4DE8);
+    func_00423BB0(q->h4DE8);
+    func_00423DB0(q->sema);
     D_004A4BB0 = 0;
     return 0;
 }
