@@ -8,20 +8,44 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Declarations shared by the functions of this unit.
+extern "C" void* cBE_getBE();
+extern void* D_004A289C;
+extern void* D_004A28A8;
+extern "C" void* func_0028B180();
+extern void* D_004A2C68;
+extern "C" void func_00231250(void* self, int a, int b, int refresh);
+// PORT: the unit declares func_00233AF0 as `void* (void*)`; the body also uses $a1 (obj).
+void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
+// PORT: the unit declares func_00233B28 as `void* (void*)`; the body also uses $a1 (obj).
+void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
+extern void* D_0047D6E8[];
+extern void* D_004A28A4;
+extern "C" void func_002790A0(void* self, int i);
+extern "C" void func_001F36C0(void* self, int bit);
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+void* cBEAggressionInterface_getThis();
+extern "C" void func_00155E58(void* p);
+extern "C" void func_001F36D8(void* hud, int a);
+extern "C" void func_00233AA0(void* self);
+// PORT: func_00278F38 returns func_00276270's result (ssxscriptengine defines it void).
+extern "C" int func_00278F38(void* self, int i);
+extern "C" int func_00278F68(void* self, int i, int a, int b);
+extern "C" void cBE_setState(int state);
+extern "C" void cAI_setAIState(void*, int);
+extern signed char D_00535C10[];
+
 //100%
 INCLUDE_ASM("fe/festateloadscreen", cFELoadScreen_load);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_3438(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00397B08(void* mem);
 extern "C" int cUIEngine_loadFile(void* engine, const char* name);
 extern "C" void* func_0039E2A0(void* self, void* engine);
 extern "C" void func_00233640(void* self, int type);
 extern "C" void func_0039F400(void* list, void* screen);
-extern void* D_004A289C;
-extern void* D_004A28A8;
 extern int D_004A19C4;
 extern signed char D_00535C11[];
 extern char D_0047B698[];
@@ -34,7 +58,6 @@ extern void* D_0046D1D0[];
 extern void* D_0047C538[];
 extern void* D_0047C6D8[];
 extern void* D_0047C608[];
-
 
 struct sEngine_233438 {
     char pad0[0x8];
@@ -152,7 +175,6 @@ struct sLsOpt_3640 {
 };
 extern sLsOpt_3640 D_00534B30_3640[] __asm__("D_00534B30");
 
-
 static inline int loadTex_3640(char* data, const char* name)
 {
     char* g = (char*)D_004A289C;
@@ -205,14 +227,12 @@ INCLUDE_ASM("fe/festateloadscreen", func_002338C8);
 extern int D_004A4324;
 extern "C" void func_00369FF8(void* g);
 extern "C" void func_00228238(void* app);
-extern "C" void* func_0028B180();
 extern "C" void func_0028F768(void* snd);
 
 struct sVec3i_38C8 {
     int x, y, z;
     sVec3i_38C8(int a, int b, int c) { x = a; y = b; z = c; }
 };
-
 
 extern "C" void func_002338C8(void)
 {
@@ -285,10 +305,8 @@ struct cGame00233930 {
     virtual void v50(int id);
 };
 
-extern void* D_004A289C;
 extern "C" void func_00397B70(void* self, int a1);
 extern "C" void func_0036A020(void* self);
-extern "C" void* func_0028B180();
 extern "C" void func_0028FA98(void* self, float f);
 
 extern "C" void func_00233930(void* self)
@@ -317,8 +335,6 @@ extern "C" void func_00233930(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_002339F8);
 #ifdef SKIP_ASM
-
-extern void* D_004A289C;
 extern "C" int func_00231D60(void* self);
 extern "C" void func_00397DF8(void* engine);
 
@@ -355,9 +371,6 @@ extern "C" void func_00233A70(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233AA0);
 #ifdef SKIP_ASM
-extern void* D_004A2C68;
-extern "C" void func_00231250(void* self, int a, int b, int refresh);
-
 extern "C" void func_00233AA0(void* self)
 {
     int a = *(int*)self;
@@ -380,10 +393,8 @@ extern "C" void func_00233AD0(void) {
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233AF0);
 #ifdef SKIP_ASM
-
 // PORT: the unit declares func_00233AF0 as `void* (void*)`; the body also uses $a1 (obj).
 // Bound by asm label.
-void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
 
 void* func_00233AF0_2(void* self, void* obj)
 {
@@ -395,10 +406,8 @@ void* func_00233AF0_2(void* self, void* obj)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233B28);
 #ifdef SKIP_ASM
-
 // PORT: the unit declares func_00233B28 as `void* (void*)`; the body also uses $a1 (obj).
 // Bound by asm label.
-void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
 
 void* func_00233B28_2(void* self, void* obj)
 {
@@ -410,9 +419,6 @@ void* func_00233B28_2(void* self, void* obj)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233B60);
 #ifdef SKIP_ASM
-extern void* D_004A2C68;
-extern "C" void func_00231250(void* self, int a, int b, int refresh);
-
 extern "C" void func_00233B60(void)
 {
     func_00231250(D_004A2C68, 0xA, 0, 0);
@@ -470,9 +476,7 @@ void* func_00233BF0(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233C10);
 #ifdef SKIP_ASM
-extern void* D_0047D6E8[];
 extern void* D_0047D5E0[];
-extern void* D_004A2C68;
 
 extern "C" void* func_00233C10(void* self)
 {
@@ -491,14 +495,9 @@ extern "C" void* func_00233C10(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00233C50);
 #ifdef SKIP_ASM
-extern void* D_004A2C68;
-extern void* D_004A28A4;
-extern void* D_004A28A8;
 extern void* D_004A2EEC;
 extern "C" void func_0026FA50(void* self);
 extern "C" void func_0039F840(void* list);
-extern "C" void func_002790A0(void* self, int i);
-extern "C" void func_001F36C0(void* self, int bit);
 void func_00244880(void* self);
 
 extern "C" void func_00233C50(void* self)
@@ -521,21 +520,11 @@ extern "C" void func_00233C50(void* self)
 INCLUDE_ASM("fe/festateloadscreen", func_00233CD8);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-void* cBEAggressionInterface_getThis();
-extern "C" void func_00155E58(void* p);
-extern "C" void func_001F36D8(void* hud, int a);
 extern "C" void func_0020CC60();
-extern "C" void func_00233AA0(void* self);
-extern "C" int func_00278F38(void* self, int i);
-extern "C" void func_002790A0(void* self, int i);
 extern "C" int func_002791D8(void* self, int i);
 extern "C" int func_00279248(void* self, int i);
 extern "C" void func_0027AC60(void* self);
 extern "C" void* func_0039F9D8(void* list, int hash);
-extern void* D_004A28A4;
-extern void* D_004A28A8;
 extern int D_005366A8[];
 // PORT: function-local `static const float` with a dynamic initializer (guard D_004A4F64),
 // spelled with splat's globals; the const object's loads are loop-invariant (RTX_UNCHANGING).
@@ -580,7 +569,6 @@ static inline float vLen_233CD8(const sVec4_233CD8& v)
     return r;
 }
 
-
 static inline sVec4_233CD8* riderPos_233CD8(char* rider)
 {
     char* obj = rider + 0x6C0;
@@ -617,7 +605,6 @@ public:
     virtual void v23();
     virtual int v24(int on, int a2);
 };
-
 
 extern "C" void func_00233CD8(void* self)
 {
@@ -706,10 +693,7 @@ struct sLoadScreen00234008 {
     int pad4[3];
     int mode;
 };
-extern void* D_004A28A8;
-extern void* D_004A28A4;
 void func_00162290_v(void* self) __asm__("func_00162290__FPv");
-extern "C" int func_00278F68(void* self, int i, int a, int b);
 void func_00278DE8(void* self, int val);
 
 extern "C" void func_00234008(sLoadScreen00234008* self)
@@ -731,7 +715,6 @@ extern "C" void func_00234008(sLoadScreen00234008* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festateloadscreen", func_002340B8);
 #ifdef SKIP_ASM
-
 extern "C" void func_002340B8(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
@@ -745,7 +728,6 @@ extern "C" void func_002340B8(void* self, void* stream)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festateloadscreen", func_00234120);
 #ifdef SKIP_ASM
-
 extern "C" void func_00234120(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
@@ -759,9 +741,7 @@ extern "C" void func_00234120(void* self, void* stream)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00234188);
 #ifdef SKIP_ASM
-extern void* D_0047D6E8[];
 extern void* D_0047D530[];
-extern void* D_004A2C68;
 
 extern "C" void* func_00234188(void* self)
 {
@@ -784,23 +764,11 @@ INCLUDE_ASM("fe/festateloadscreen", func_002341D0);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_41D0(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" void cBE_setState(int state);
-extern "C" void cAI_setAIState(void*, int);
-extern "C" void func_001F36D8(void* hud, int a);
 extern "C" void* func_0026F228(void* p);
 extern "C" int cBENewRaceInterface_setNumberAI(void* self, int count);
 extern "C" void cBENewPlayerInterface_setRiderCharID(void* player, int i, int id);
 extern "C" void func_001473D0(void* player, int i, int v);
-extern "C" void func_002790A0(void* self, int i);
 extern "C" void func_0027AAF8(void* a, int b);
-// PORT: func_00278F38 returns func_00276270's result (ssxscriptengine defines it void).
-extern "C" int func_00278F38(void* self, int i);
-extern void* D_004A2C68;
-extern void* D_004A28A4;
-extern void* D_004A28A8;
-extern signed char D_00535C10[];
-
 
 struct sGM_2341D0 {
     char pad0[0x10];
@@ -863,9 +831,6 @@ extern "C" void func_002341D0(void* self, int mode)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_002343B0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_001F36C0(void* self, int bit);
 extern "C" void func_001F36D8(void* self, int bit);
 extern "C" int func_00279220(void* snd, int a1);
 extern "C" void func_00279040(void* snd, int a1, int a2);
@@ -874,7 +839,6 @@ extern "C" int func_002791D8(void* snd, int a1);
 extern "C" int func_00278F68(void* snd, int a1, int a2, int a3);
 extern "C" int func_00279148(void* snd, int a1, int a2);
 extern "C" void func_00234910(void* self);
-extern "C" void func_00233AA0(void* self);
 extern "C" void func_0012AB20(void* o);
 extern "C" void func_0012AC48(void* o);
 extern "C" void func_00128958(void* o);
@@ -887,11 +851,7 @@ extern "C" int func_0012ABD0(void* o);
 extern "C" int func_0012ACF8(void* o);
 extern "C" void func_0012B030(void* o);
 extern "C" void func_0012B000(void* o);
-extern void* D_004A28A8;
-extern void* D_004A28A4;
-extern void* D_004A2C68;
 extern signed char D_00535BC8[];
-extern signed char D_00535C10[];
 
 struct sLoadObj_43B0 {
     char pad0[0x14];
@@ -1022,11 +982,6 @@ INCLUDE_ASM("fe/festateloadscreen", func_00234750);
 #ifdef SKIP_ASM
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_4750(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cBE_getBE();
-extern "C" void cBE_setState(int state);
-extern "C" void cAI_setAIState(void*, int);
-void* cBEAggressionInterface_getThis();
-extern "C" void func_002790A0(void* self, int i);
 extern "C" void func_00128958(void* p);
 void func_001289F0(void* p);
 extern "C" void func_00128A10(void* p);
@@ -1035,10 +990,6 @@ extern "C" void func_00128A48(void* p, int a);
 extern "C" void func_00308F38(void* a);
 extern "C" void func_00308C60(void* a);
 extern "C" void func_00129160(void* p);
-extern "C" void func_00155E58(void* p);
-extern void* D_004A2C68;
-extern void* D_004A28A4;
-extern void* D_004A28A8;
 extern void* D_004A3DD8;
 
 struct sRace_234750 {
@@ -1052,7 +1003,6 @@ struct sRaceMan_234750 {
     char pad0[0x8C];
     int f8C;
 };
-
 
 struct sTbl_234750 {
     char pad[0x250];
@@ -1110,9 +1060,6 @@ extern "C" void func_00234750(void* self)
 //100%
 INCLUDE_ASM("fe/festateloadscreen", func_00234910);
 #ifdef SKIP_ASM
-extern void* D_004A28A4;
-extern "C" int func_00278F68(void* self, int i, int a, int b);
-
 static inline int isState00234910(void* e, int s)
 {
     return *(int*)((char*)e + 0x550) == s;
@@ -1136,10 +1083,6 @@ extern "C" void func_00234910(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festateloadscreen", func_00234990);
 #ifdef SKIP_ASM
-// PORT: the unit declares func_00233AF0 as `void* (void*)`; the body also uses $a1 (obj).
-void* func_00233AF0_2(void* self, void* obj) __asm__("func_00233AF0");
-
-
 extern "C" void func_00234990(void* self, void* stream)
 {
     func_00233AF0_2(self, stream);
@@ -1157,10 +1100,6 @@ extern "C" void func_00234990(void* self, void* stream)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festateloadscreen", func_00234A30);
 #ifdef SKIP_ASM
-// PORT: the unit declares func_00233B28 as `void* (void*)`; the body also uses $a1 (obj).
-void* func_00233B28_2(void* self, void* obj) __asm__("func_00233B28");
-
-
 extern "C" void func_00234A30(void* self, void* stream)
 {
     func_00233B28_2(self, stream);
