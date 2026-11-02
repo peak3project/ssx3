@@ -316,6 +316,18 @@ public:
 };
 extern "C" t4Vector func_0026AB20(cTrack*, int, float);
 
+// The save / load stream: slot 1 writes, slot 2 reads (func_00103480 / func_00103578 and func_00104D68 /
+// func_00104DE0 are save / load pairs), ReadPtr restores a pointer, WriteInt writes one word.
+struct sItem_3578;
+class cStream {
+public:
+    virtual void Write(void* p, int n);
+    virtual void Read(void* p, int n);
+    virtual sItem_3578* ReadPtr();
+    virtual void v04();
+    virtual void WriteInt(int v);
+};
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -1127,15 +1139,6 @@ extern "C" void func_001033F8(sList1033F8* self, int id)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103480);
 #ifdef SKIP_ASM
-class cStream_3480 {
-public:
-    virtual void Write(void* p, int n);
-    virtual void v1();
-    virtual void v2();
-    virtual void v3();
-    virtual void WriteInt(int v);
-};
-
 struct sEnt_3480 {
     char d[0x20];
 };
@@ -1151,7 +1154,7 @@ struct sObj_3480 {
     int vals[1];
 };
 
-extern "C" void func_00103480(sObj_3480* self, cStream_3480* s)
+extern "C" void func_00103480(sObj_3480* self, cStream* s)
 {
     s->Write(&self->fD0, 4);
     for (int i = 0; i < self->n; i++)
@@ -1171,13 +1174,6 @@ struct sItem_3578 {
     unsigned int flags;
 };
 
-class cStream_3578 {
-public:
-    virtual void v0();
-    virtual void Read(void* p, int n);
-    virtual sItem_3578* ReadPtr();
-};
-
 struct sEnt_3578 {
     char d[0x20];
 };
@@ -1193,7 +1189,7 @@ struct sObj_3578 {
     sItem_3578* items[1];
 };
 
-extern "C" void func_00103578(sObj_3578* self, cStream_3578* s)
+extern "C" void func_00103578(sObj_3578* self, cStream* s)
 {
     s->Read(&self->fD0, 4);
     for (int i = 0; i < self->n; i++)
@@ -2144,13 +2140,9 @@ extern "C" void func_00104D50(void *arg0, void *arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104D68);
 #ifdef SKIP_ASM
-class cStream_4D68 {
-public:
-    virtual void Read(void* dst, int n);
-};
-extern "C" void func_003147F0(void*, cStream_4D68*);
-extern "C" void func_00104D68(char* self, cStream_4D68* s) {
-    s->Read(self, 0x50);
+extern "C" void func_003147F0(void*, cStream*);
+extern "C" void func_00104D68(char* self, cStream* s) {
+    s->Write(self, 0x50);
     for (int i = 0; i < 6; i++) {
         func_003147F0(*(char**)(self + 0x50) + i * 8, s);
     }
@@ -2160,14 +2152,9 @@ extern "C" void func_00104D68(char* self, cStream_4D68* s) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104DE0);
 #ifdef SKIP_ASM
-class cStream_4DE0 {
-public:
-    virtual void v0();
-    virtual void Read(void* dst, int n);
-};
 extern "C" void func_00314668(void*);
-extern "C" void func_00314880(void*, cStream_4DE0*);
-extern "C" void func_00104DE0(char* self, cStream_4DE0* s) {
+extern "C" void func_00314880(void*, cStream*);
+extern "C" void func_00104DE0(char* self, cStream* s) {
     s->Read(self, 0x50);
     for (int i = 0; i < 6; i++) {
         func_00314668(*(char**)(self + 0x50) + i * 8);
@@ -3509,16 +3496,10 @@ typedef void (cObj_A8E8::*Fn_A8E8)();
 extern "C" Fn_A8E8 D_0043CF20_A8E8[4] __asm__("D_0043CF20");
 extern "C" void func_00111D98(void* self, void* src);
 
-class cStream_A8E8 {
-public:
-    virtual void v1();
-    virtual void read(void* dst, int size);
-};
-
-extern "C" void func_0010A8E8(char* self, cStream_A8E8* in)
+extern "C" void func_0010A8E8(char* self, cStream* in)
 {
     func_00111D98(self, in);
-    in->read(self + 0xDF0, 0x150);
+    in->Read(self + 0xDF0, 0x150);
     short state = *(short*)(self + 0xF38);
     *(Fn_A8E8*)(self + 0xF44) = D_0043CF20_A8E8[state];
     *(short*)(self + 0xF38) = state;
