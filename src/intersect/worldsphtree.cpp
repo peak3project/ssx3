@@ -42,6 +42,13 @@ struct sWsBoundObj {
     float bmax[3];                  // 0x164
 };
 
+// Query record with its box at 0x20 (max then min).
+struct sWsQueryBox {
+    char pad00[0x20];
+    float max[4];
+    float min[4];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -934,11 +941,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00333EF8);
 
 extern t4Vector D_004FF120_333EF8[] __asm__("D_004FF120");
 
-struct sQuery_333EF8 {
-    char pad00[0x20];
-    float max[4];
-    float min[4];
-};
 
 struct sTriObj_333EF8 {
     char pad00[8];
@@ -1012,7 +1014,7 @@ struct sHit_003342D0;
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapTri_333EF8(const sQuery_333EF8* q, const sTriObj_333EF8* n)
+static inline int overlapTri_333EF8(const sWsQueryBox* q, const sTriObj_333EF8* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1023,7 +1025,7 @@ static inline int overlapTri_333EF8(const sQuery_333EF8* q, const sTriObj_333EF8
     return r;
 }
 
-static inline int overlapNode_333EF8(const sQuery_333EF8* q, const sNode_333EF8* n)
+static inline int overlapNode_333EF8(const sWsQueryBox* q, const sNode_333EF8* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1034,7 +1036,7 @@ static inline int overlapNode_333EF8(const sQuery_333EF8* q, const sNode_333EF8*
     return r;
 }
 
-static inline int overlapBox_333EF8(const sQuery_333EF8* q, const sWsBox* o)
+static inline int overlapBox_333EF8(const sWsQueryBox* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
@@ -1065,7 +1067,7 @@ static inline void reset_333EF8(sHit_333EF8* h)
 extern "C" int func_00333EF8(void* vself, void* vq, sHit_003342D0* vhits, int cap, int arg)
 {
     sTree_333EF8* self = (sTree_333EF8*)vself;
-    sQuery_333EF8* q = (sQuery_333EF8*)vq;
+    sWsQueryBox* q = (sWsQueryBox*)vq;
     sHit_333EF8* hits = (sHit_333EF8*)vhits;
     int n = 0;
     for (unsigned int i = 0; i < self->ntris; i++) {
@@ -1195,11 +1197,6 @@ typedef int (*Test_334458)(void*);
 typedef sWsBox* (*GetBox_334458)(void*);
 
 
-struct sQuery_334458 {
-    char pad00[0x20];
-    float max[4];
-    float min[4];
-};
 
 struct sObj_334458 {
     int pad00[3];
@@ -1224,7 +1221,7 @@ struct sList_334458 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_334458(const sQuery_334458* q, const sNode_334458* n)
+static inline int overlapNode_334458(const sWsQueryBox* q, const sNode_334458* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1235,7 +1232,7 @@ static inline int overlapNode_334458(const sQuery_334458* q, const sNode_334458*
     return r;
 }
 
-static inline int overlapBox_334458(const sQuery_334458* q, const sWsBox* o)
+static inline int overlapBox_334458(const sWsQueryBox* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
@@ -1246,7 +1243,7 @@ static inline int overlapBox_334458(const sQuery_334458* q, const sWsBox* o)
     return r;
 }
 
-extern "C" int func_00334458(sList_334458* self, sQuery_334458* q, char* buf, int cap, int full)
+extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int cap, int full)
 {
     int mode = 1;
     if (full) mode = 2;
@@ -1384,11 +1381,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00335960);
 
 extern t4Vector D_004FF120[];
 
-struct sQuery_335960 {
-    char pad00[0x20];
-    float max[4];
-    float min[4];
-};
 
 struct sTriObj_335960 {
     char pad00[8];
@@ -1421,7 +1413,7 @@ struct sHit_335960 {
 };
 
 struct sCtx_335960 {
-    sQuery_335960* q;
+    sWsQueryBox* q;
     sHit_335960* hits;
     int cap;
     int* count;
@@ -1432,7 +1424,7 @@ struct sCtx_335960 {
 extern "C" void func_003279D0(void* cache, void* src, void** out);
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 
-static inline int overlap_335960(const sQuery_335960* q, const sTriObj_335960* n)
+static inline int overlap_335960(const sWsQueryBox* q, const sTriObj_335960* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1493,11 +1485,6 @@ typedef int (*Test_335B90)(void*);
 typedef sWsBox* (*GetBox_335B90)(void*);
 
 
-struct sQuery_335B90 {
-    char pad00[0x20];
-    float max[4];
-    float min[4];
-};
 
 struct sObj_335B90 {
     int pad00[3];
@@ -1517,7 +1504,7 @@ struct sNode_335B90 {
 };
 
 struct sCtx_335B90 {
-    sQuery_335B90* q;
+    sWsQueryBox* q;
     char* buf;
     int cap;
     int* count;
@@ -1525,7 +1512,7 @@ struct sCtx_335B90 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_335B90(const sQuery_335B90* q, const sNode_335B90* n)
+static inline int overlapNode_335B90(const sWsQueryBox* q, const sNode_335B90* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1536,7 +1523,7 @@ static inline int overlapNode_335B90(const sQuery_335B90* q, const sNode_335B90*
     return r;
 }
 
-static inline int overlapBox_335B90(const sQuery_335B90* q, const sWsBox* o)
+static inline int overlapBox_335B90(const sWsQueryBox* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
@@ -1898,11 +1885,6 @@ typedef int (*Test_336D40)(void*);
 typedef sWsBox* (*GetBox_336D40)(void*);
 
 
-struct sQuery_336D40 {
-    char pad00[0x20];
-    float max[4];
-    float min[4];
-};
 
 struct sObj_336D40 {
     int pad00[3];
@@ -1922,7 +1904,7 @@ struct sNode_336D40 {
 };
 
 struct sCtx_336D40 {
-    sQuery_336D40* q;
+    sWsQueryBox* q;
     char* buf;
     int cap;
     int* count;
@@ -1931,7 +1913,7 @@ struct sCtx_336D40 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_336D40(const sQuery_336D40* q, const sNode_336D40* n)
+static inline int overlapNode_336D40(const sWsQueryBox* q, const sNode_336D40* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1942,7 +1924,7 @@ static inline int overlapNode_336D40(const sQuery_336D40* q, const sNode_336D40*
     return r;
 }
 
-static inline int overlapBox_336D40(const sQuery_336D40* q, const sWsBox* o)
+static inline int overlapBox_336D40(const sWsQueryBox* q, const sWsBox* o)
 {
     int r = 0;
     if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
