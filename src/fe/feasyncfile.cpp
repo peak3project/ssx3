@@ -53,6 +53,10 @@ struct sVec2 {
     sVec2(float x_, float y_) : x(x_), y(y_) {}
 };
 
+struct sRect {
+    float x, y, w, h;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -13296,11 +13300,7 @@ extern "C" char* func_003A04F0(void* text);
 extern "C" char* func_004162D0(char*, const char*);
 extern char D_004A1BD0[];
 
-struct sRect1B9950 {
-    float x, y, w, h;
-};
-
-static inline void Measure1B9950(cUIText* text, const char* s, sRect1B9950* out)
+static inline void Measure1B9950(cUIText* text, const char* s, sRect* out)
 {
     char* f = func_003A04F0(text);
     func_00391FB0(f, s, out, 0, *(float*)(f + 0x38), *(float*)(f + 0x3C));
@@ -13310,7 +13310,7 @@ extern "C" void func_001B9950(void* self, cUIText* text, char* str)
 {
     int cut = 0;
     sVec3 scale = *(sVec3*)((char*)text + 0x50);
-    sRect1B9950 box;
+    sRect box;
     ((cUIThing*)text)->getSize(&box);
     char* f = func_003A04F0(text);
     float sx = scale.x;
@@ -13321,8 +13321,8 @@ extern "C" void func_001B9950(void* self, cUIText* text, char* str)
     char buf[0x50];
     strcpy(buf, str);
     const char* ell = D_004A1BD0;
-    sRect1B9950 sz;
-    sRect1B9950 dots;
+    sRect sz;
+    sRect dots;
     Measure1B9950(text, ell, &dots);
     Measure1B9950(text, buf, &sz);
     while (box.x - dots.w < sz.w) {
@@ -18747,11 +18747,7 @@ extern "C" char* func_003A04F0(void* text);
 extern "C" char* func_004162D0(char*, const char*);
 extern char D_004A1BD0[];
 
-struct sRect1C2578 {
-    float x, y, w, h;
-};
-
-static inline void Measure1C2578(cUIText* text, const char* s, sRect1C2578* out)
+static inline void Measure1C2578(cUIText* text, const char* s, sRect* out)
 {
     char* f = func_003A04F0(text);
     func_00391FB0(f, s, out, 0, *(float*)(f + 0x38), *(float*)(f + 0x3C));
@@ -18762,7 +18758,7 @@ extern "C" void func_001C2578(void* self, void* vtext, char* str)
     cUIText* text = (cUIText*)vtext;
     int cut = 0;
     sVec3 scale = *(sVec3*)((char*)text + 0x50);
-    sRect1C2578 box;
+    sRect box;
     ((cUIThing*)text)->getSize(&box);
     char* f = func_003A04F0(text);
     float sx = scale.x;
@@ -18773,8 +18769,8 @@ extern "C" void func_001C2578(void* self, void* vtext, char* str)
     char buf[0x50];
     strcpy(buf, str);
     const char* ell = D_004A1BD0;
-    sRect1C2578 sz;
-    sRect1C2578 dots;
+    sRect sz;
+    sRect dots;
     Measure1C2578(text, ell, &dots);
     Measure1C2578(text, buf, &sz);
     while (box.x - dots.w < sz.w) {
