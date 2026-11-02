@@ -2534,10 +2534,11 @@ struct sCacheTrack_2F28 {
     int numEvents;                  // 0x28
 };
 
+// Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
+#define ASSERT_2F28(cond) do { } while (0)
 // Drops finished events and plays every record whose start time has been reached.
 extern "C" int func_00272F28(sCacheTrack_2F28* self, int* flags, float t)
 {
-    float zero;
     sCacheEvent_2F28* prev = 0;
     sCacheEvent_2F28* e = self->events;
     while (e != 0) {
@@ -2555,16 +2556,14 @@ extern "C" int func_00272F28(sCacheTrack_2F28* self, int* flags, float t)
             e = e->next;
         }
     }
-    zero = 0.0f;
-loop:
-    do {
-        if (self->rec != 0 && t - (float)self->rec->time >= zero) {
-            *flags |= 4;
-            func_002730C0(self, (sCacheRecord*)self->rec);
-            func_00273140(self);
-            goto loop;
-        }
-    } while (0);
+    for (;;) {
+        ASSERT_2F28(self != 0);
+        if (self->rec == 0 || !(t - (float)self->rec->time >= 0.0f))
+            break;
+        *flags |= 4;
+        func_002730C0(self, (sCacheRecord*)self->rec);
+        func_00273140(self);
+    }
     if (self->events == 0 && self->rec == 0)
         return 0;
     return 1;
