@@ -4800,8 +4800,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303598);
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_3598 { int idx; int val; int pad; int kind; };
-struct R12_3598 { int a; int b; int c; };
-extern R12_3598 D_004C9098_3598 __asm__("D_004C9098");
 
 extern int D_004A3D20_3598[2] __asm__("D_004A3D20");
 float AIrandf(float, float);
