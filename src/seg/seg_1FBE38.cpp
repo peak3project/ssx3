@@ -6691,7 +6691,7 @@ extern "C" void func_003071C8(void* self, int flags) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003071F0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-void func_0010F2B8_71F0(void*) __asm__("func_0010F2B8__FPv");
+void func_0010F2B8_71F0(cRider_1FBE38*) __asm__("func_0010F2B8__FPv");
 extern "C" void func_00307C40_71F0(void*) __asm__("func_00307C40");
 extern "C" void func_003071F0(void* self) {
     func_0010F2B8_71F0(D_004A28A8->game->race->riders[**(int**)((char*)self + 0x10)]);
@@ -6738,7 +6738,7 @@ extern "C" void func_00154160(void* missions, int id, int done);
 extern "C" int func_00153FA0(void* missions, int id);
 extern "C" int func_001511B0(void* econ, int reward);
 extern "C" int func_00144C98(void* iface);
-extern "C" void func_0010F2D8(void* rider, int player, int money);
+extern "C" void func_0010F2D8(cRider_1FBE38* rider, int player, int money);
 extern "C" int func_00153FD8(void* missions, int id);
 extern "C" void func_001541D0(void* missions, int id, int active);
 extern "C" void func_0030AC98(int, void *, int);
