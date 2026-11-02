@@ -8,18 +8,13 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-// EA's 3-float vector (name from the July 2003 prototype, e.g. setOffset__10cPopupInfoG8t3Vector).
-struct t3Vector {
-    float x, y, z;
-};
-
-// EA's 2-float vector (prototype name, e.g. setTileUV__7cUIIconG8t2Vector).
-struct t2Vector {
-    float x, y;
+struct sColorK1CDB98 {
+    float a, r, g, b;
+    sColorK1CDB98(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
 };
 
 // A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
-// _vt$8cUIThing (as in fe/feasyncfile).
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
 class cUIThing {
 public:
     char pad[0x8];
@@ -32,6 +27,18 @@ public:
     virtual void setFocus(int on);
     virtual void setStatic(int on);
     virtual void setVisible(int on);
+    virtual void v10();
+    virtual void v11(const sColorK1CDB98& c);
+};
+
+// EA's 3-float vector (name from the July 2003 prototype, e.g. setOffset__10cPopupInfoG8t3Vector).
+struct t3Vector {
+    float x, y, z;
+};
+
+// EA's 2-float vector (prototype name, e.g. setTileUV__7cUIIconG8t2Vector).
+struct t2Vector {
+    float x, y;
 };
 
 // A constant 3-vector its users start positions from.
@@ -273,7 +280,6 @@ extern "C" void func_001C5DD8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C5E58);
 #ifdef SKIP_ASM
-
 static inline void Call9_5E58(char* o, int a)
 {
     if (o != 0) {
@@ -354,7 +360,6 @@ extern char D_004A1C68[];
 extern char D_004A1C70[];
 extern char D_004A1C78[];
 extern char D_00466080[];
-
 
 struct sObj_6260 {
     char pad0[0x8];
@@ -463,7 +468,6 @@ INCLUDE_ASM("fe/fepopup", func_001C66E8);
 extern "C" void func_001CA488(void* self, void* obj);
 extern "C" void func_001CA4C0(void* self, void* obj);
 extern sQuad_58E8 D_004C67A8;
-
 
 static inline void SetColor_C66E8(char* o, sQuad_58E8* c)
 {
@@ -1187,7 +1191,6 @@ extern "C" void func_001C7C20(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C7EB0);
 #ifdef SKIP_ASM
-
 extern "C" void func_001C7EB0(void* self)
 {
     char* o80 = *(char**)((char*)self + 0x80);
@@ -1262,7 +1265,6 @@ extern void* D_004A28A8;
 extern char D_00466098[];
 extern char D_004660A8[];
 extern char D_004A1408[];
-
 
 extern "C" void func_001C80E8(void* self, void* dst, int* info)
 {
@@ -1352,7 +1354,6 @@ extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern void* D_004A28A8;
 extern char D_004660A8[];
 
-
 extern "C" void func_001C8320(void* self, cUIText* text, int* info, float* out)
 {
     t3Vector v = *(t3Vector*)((char*)text + 0x50);
@@ -1439,8 +1440,6 @@ extern "C" void func_001C8568(void* self, void* text, const char* str, void* out
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C8628);
 #ifdef SKIP_ASM
-
-
 extern "C" void func_001C8628(void* self, void* obj, void* out)
 {
     t2Vector v;
@@ -1523,7 +1522,6 @@ extern "C" void func_001C8758(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C88C8);
 #ifdef SKIP_ASM
-
 extern "C" void func_001C88C8(void* self)
 {
     void* p = *(void**)((char*)self + 0x70);
@@ -1544,7 +1542,6 @@ struct sObjBitsK8930 {
     unsigned state : 6;
     unsigned hi : 13;
 };
-
 
 extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t)
 {
@@ -1645,7 +1642,6 @@ extern "C" void func_001C9210_s(void* self, void* text, const char* str, float* 
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern void* D_004A28A8;
 extern char D_004660A8[];
-
 
 extern "C" void func_001C8EF0(void* vself, int* item, float* size, int flag, float extra)
 {
@@ -1805,7 +1801,6 @@ extern "C" void func_001C94B0(void* self, void* text, void* str, void* out);
 extern void* D_004A28A8;
 extern char D_004660A8[];
 
-
 extern "C" void func_001C93B0(void* self, int* msg, void* out)
 {
     if (*(void**)((char*)self + 0x74) == 0)
@@ -1903,7 +1898,6 @@ extern "C" void func_001C9B28(void* self, cUIText* text, const char* str, int a3
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern void* D_004A28A8;
 extern char D_004660A8[];
-
 
 extern "C" void func_001C97E0(void* self, void* a, void* b, int which, float t)
 {
@@ -2077,7 +2071,6 @@ INCLUDE_ASM("fe/fepopup", func_001C9CD0);
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA0F0);
 #ifdef SKIP_ASM
-
 extern "C" void func_001CA0F0(void* self, int idx, int a)
 {
     char* o = *(char**)((char*)self + (idx << 2) + 0x90);
@@ -2111,7 +2104,6 @@ extern "C" int func_001CA150(void* self)
 INCLUDE_ASM("fe/fepopup", func_001CA180);
 #ifdef SKIP_ASM
 extern "C" char* func_00397870(void* list, int idx);
-
 
 static inline void SetColour1CA180(char* obj, void* colour)
 {
@@ -2158,7 +2150,6 @@ extern "C" void* func_001CB030(void* self, void* engine, void* owner, int a3, un
 extern "C" void func_001CD088(void* popup, int a1);
 extern "C" void func_0039F290(void* stack, void* item);
 extern char D_0045D8D8[];
-
 
 struct sPopupOwner_1CA298 {
     char pad0[8];
@@ -2239,7 +2230,6 @@ extern "C" void func_001CA298(char* self, int id, int ev)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA488);
 #ifdef SKIP_ASM
-
 extern "C" void func_001CA488(void* self, void* obj)
 {
     if (obj != 0) {
@@ -2252,7 +2242,6 @@ extern "C" void func_001CA488(void* self, void* obj)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA4C0);
 #ifdef SKIP_ASM
-
 extern "C" void func_001CA4C0(void* self, void* obj)
 {
     if (obj != 0) {
@@ -2303,7 +2292,6 @@ extern "C" int func_001CA4F8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA528);
 #ifdef SKIP_ASM
-
 extern "C" void func_0039E510(void*);
 
 extern "C" void func_001CA528(void* self)
@@ -2335,7 +2323,6 @@ extern "C" void func_001CB418(void* popup, const char* a1);
 extern "C" void func_001CCF00(void* popup, const char* a1);
 // PORT: the unit declares func_0039F190 as void; it returns a value this caller ignores.
 extern "C" void* func_0039F190_i(void* self, int a1) __asm__("func_0039F190");
-
 
 // Child-popup message handler: forwards results, plays sounds and closes the popup when done.
 extern "C" void func_001CA598(char* self, void* child, int msg)
@@ -2861,7 +2848,6 @@ extern "C" void cKeyboardPopup_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CB208);
 #ifdef SKIP_ASM
-
 extern void* D_004A2EEC;
 extern void* D_004A28A8;
 extern "C" void func_0039E510(void*);
@@ -2910,7 +2896,6 @@ extern char D_004663A8[];
 extern char D_004663B8[];
 extern char D_004663C8[];
 
-
 static inline int isOnK1CB2C8()
 {
     return D_004A1A70 == 1;
@@ -2947,7 +2932,6 @@ extern "C" void cKeyboardPopup_onWidgetCreate(void* self, void* widget)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CB3D0);
 #ifdef SKIP_ASM
-
 extern "C" int func_001CB3D0(void* self, int a1, int a2)
 {
     if (*(int*)((char*)self + 0x438) != 0) {
@@ -3602,7 +3586,6 @@ int func_001CE560_out(void* self, int idx, int* out) __asm__("func_001CE560");
 // func_0039F190 returns its last list node in $v0; the unit declares it void.
 void* func_0039F190_r(void* self, int a1) __asm__("func_0039F190");
 
-
 struct sUIObj_C1E0 {
     char pad_0x0[0x8];
     sVEntry<void(void*, ...)>* vt;                   // 0x8
@@ -3612,7 +3595,6 @@ struct sColor_C1E0 {
     float r, g, b, a;
     sColor_C1E0(float ar, float ag, float ab, float aa) : r(ar), g(ag), b(ab), a(aa) {}
 };
-
 
 struct sKeyboard_C1E0 {
     char pad_0x0[0x10];
@@ -4200,8 +4182,6 @@ extern char D_00466540[];
 extern char D_00466558[];
 extern char D_004A1408[];
 
-
-
 struct sKbd_D348 {
     char pad_0x0[0x68];
     int f68;            // 0x68
@@ -4429,7 +4409,6 @@ extern char D_004667A8[];
 extern char D_004667C0[];
 extern char D_004667D8[];
 
-
 static inline void SetColor_1CD9B8(cUIText* text, void* col)
 {
     sVEntry<void>* vt = *(sVEntry<void>**)((char*)text + 8);
@@ -4536,25 +4515,6 @@ extern char D_004669A0[];
 extern char D_004669B8[];
 extern char D_004669D8[];
 
-struct sColorK1CDB98 {
-    float a, r, g, b;
-    sColorK1CDB98(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
-};
-class cUIObjK1CDB98 {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void SetColor(const sColorK1CDB98& c);
-};
 struct sSndK1CDB98 {
     sVEntry<void>* vt;
 };
@@ -4583,9 +4543,9 @@ extern "C" int func_001CDB98(void* self, char* ev)
         int sound = 1;
         cKeyboardPopup_getObjName(self, *(int*)((char*)self + 0x140), name, 1);
         {
-            cUIObjK1CDB98* o = (cUIObjK1CDB98*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+            cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
             if (o != 0) {
-                o->SetColor(sColorK1CDB98(0.3f, 0.0f, 0.0f, 0.0f));
+                o->v11(sColorK1CDB98(0.3f, 0.0f, 0.0f, 0.0f));
             }
         }
         if (InputK1CDB98(ev, 19)) {
@@ -4711,9 +4671,9 @@ extern "C" int func_001CDB98(void* self, char* ev)
         }
         cKeyboardPopup_getObjName(self, *(int*)((char*)self + 0x140), name, 1);
         {
-            cUIObjK1CDB98* o = (cUIObjK1CDB98*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+            cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
             if (o != 0) {
-                o->SetColor(sColorK1CDB98(1.0f, 0.0f, 0.0f, 0.0f));
+                o->v11(sColorK1CDB98(1.0f, 0.0f, 0.0f, 0.0f));
             }
         }
         sSndK1CDB98* snd = *(sSndK1CDB98**)(*(char**)((char*)self + 0x10) + 0x14);
@@ -4796,7 +4756,6 @@ extern "C" void func_001CE468(void* self, int v)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CE4C8);
 #ifdef SKIP_ASM
-
 extern "C" void* func_003A04F0(void* self);
 
 extern "C" void func_001CE4C8(void* self, void* obj)
@@ -4839,7 +4798,6 @@ extern "C" char* func_004162D0(char* dst, const char* src);
 extern "C" char* strcpy(char* dst, const char* src);
 extern "C" int strlen(const char* s);
 extern void* D_004A28A8;
-
 
 extern "C" void func_001CE5E0(void* self, int key)
 {
