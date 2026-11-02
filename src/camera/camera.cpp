@@ -116,6 +116,18 @@ struct cChaseCameraController {
     int field_0x40;
 };
 
+// The camera controllers (cCameraController and its manual / chase / script subclasses; cCamera holds them at
+// 0xA4 / 0xA8 / 0xAC and the active one at 0xA0). The vptr follows the base's own data at 0x14; four virtual
+// slots, slot 1 the destructor.
+class cCameraController {
+public:
+    char pad[0x14];
+    virtual ~cCameraController();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+};
+
 // The per-frame camera input record (0x70 bytes) that func_00162568 fills from the target for the chase algorithms.
 struct sCamInfo {
     t4Vector f00;               // 0x00
@@ -197,23 +209,16 @@ extern void* D_0045B8B0[];
 void func_0015CD60(void* p);
 void func_00176DA8_2(void* self, int flags) __asm__("func_00176DA8__FPv");
 
-class cCamPartK2 {
-public:
-    char pad[0x14];
-    // vptr at 0x14
-    virtual ~cCamPartK2();
-};
-
 // PORT: func_00176DA8__FPv is a destructor taking (self, flags); bind the 2-arg form.
 extern "C" void func_0015DD88(void* self, int flags)
 {
     *(void***)((char*)self + 0x90) = D_0045B888;
-    func_0015CD60(*(cCamPartK2**)((char*)self + 0xA4));
-    func_0015CD60(*(cCamPartK2**)((char*)self + 0xA8));
-    func_0015CD60(*(cCamPartK2**)((char*)self + 0xAC));
-    delete *(cCamPartK2**)((char*)self + 0xA4);
-    delete *(cCamPartK2**)((char*)self + 0xA8);
-    delete *(cCamPartK2**)((char*)self + 0xAC);
+    func_0015CD60(*(cCameraController**)((char*)self + 0xA4));
+    func_0015CD60(*(cCameraController**)((char*)self + 0xA8));
+    func_0015CD60(*(cCameraController**)((char*)self + 0xAC));
+    delete *(cCameraController**)((char*)self + 0xA4);
+    delete *(cCameraController**)((char*)self + 0xA8);
+    delete *(cCameraController**)((char*)self + 0xAC);
     func_00176DA8_2((char*)self + 0xC0, 2);
     *(void***)((char*)self + 0x90) = D_0045B8B0;
     if (flags & 1)
@@ -304,19 +309,11 @@ extern "C" void cCamera_init(sCamera_15DE60* self, int idx, float a, float b, fl
 //100%
 INCLUDE_ASM("camera/camera", func_0015DF98);
 #ifdef SKIP_ASM
-class cCamVObj_0015DF98 {
-public:
-    char pad[0x14];
-    // vptr at 0x14
-    virtual void v01();
-    virtual void v02();
-};
-
 extern "C" void* func_0015E668(void* self);
 
 extern "C" void func_0015DF98(void* self)
 {
-    (*(cCamVObj_0015DF98**)((char*)self + 0xA0))->v02();
+    (*(cCameraController**)((char*)self + 0xA0))->v02();
     func_0015E668(self);
 }
 #endif
@@ -719,21 +716,11 @@ extern "C" void func_0015EC98(char* self)
 //100%
 INCLUDE_ASM("camera/camera", func_0015EDC8);
 #ifdef SKIP_ASM
-class cCamVObj_0015EDC8 {
-public:
-    char pad[0x14];
-    // vptr at 0x14 (g++ 2.95 places it after the class's own data)
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-};
-
 extern "C" void func_0015EDC8(void* self, int value)
 {
     char* obj = *(char**)((char*)self + 0xA8);
     *(int*)(*(char**)(obj + 0x20) + 0x4) = value;
-    (*(cCamVObj_0015EDC8**)((char*)self + 0xA8))->v04();
+    (*(cCameraController**)((char*)self + 0xA8))->v04();
 }
 #endif
 
