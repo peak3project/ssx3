@@ -17,6 +17,49 @@
 // PORT: PS2-only COP0 (write the TLB Wired register).
 #define MTC0_WIRED_4248(v) __asm__ volatile("mtc0 %z0, $6\n\tsync.p" : : "rJ"(v))
 
+/* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
+typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
+typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
+typedef struct { int f0; int f4; int f8; int fC; int f10; int f14; int f18; } sFioLseekCmd;    /* 4 */
+typedef struct { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; } sFioReadCmd; /* 2 */
+typedef struct { int f0; int f4; int f8; int fC; unsigned f10; int f14; int f18; char data[16]; int f2C; } sFioWriteCmd; /* 3 */
+typedef struct { int f0; int f4; int f8; int fC; long f10; int f18; int f1C; } sFioLseek64Cmd;  /* 22 */
+typedef struct { int f0; int f4; int f8; char name[0x400]; } sFioPathCmd;                       /* 6, 8, 9, 16, 18, 21 */
+typedef struct { int f0; int f4; int f8; int fC; char name[0x400]; } sFioPathModeCmd;           /* 7, 12 */
+typedef struct { int f0; int f4; int f8; int fC; int f10; char name[0x400]; } sFioPathArgCmd;   /* 19, 25 */
+typedef struct { int f0; int f4; int f8; int fC; int f10; char name[0x400]; int f414; } sFioOpenCmd; /* 0 */
+typedef struct { int f0; int f4; int f8; char name[0x400]; char name2[0x400]; } sFioPath2Cmd;   /* 17, 24 */
+typedef struct { int f0; int f4; int f8; char name[0x400]; char name2[0x400]; char data[0x400]; int fC0C; } sFioFormatCmd; /* 14 */
+typedef struct { int f0; int f4; int f8; char name[0x400]; char name2[0x400]; char data[0x400]; int fC0C; int fC10; } sFioMountCmd; /* 20 */
+typedef struct { int w[16]; } sFioStat;
+typedef struct { int f0; int f4; int f8; int fC; sFioStat v; char name[0x400]; } sFioChstatCmd; /* 13 */
+typedef struct { int f0; int f4; int f8; char name[0x400]; char data[0x400]; int f80C; int f810; int f814; int f818; } sFioDevctlCmd; /* 23 */
+typedef struct { int f0; int f4; int f8; int fC; int f10; char data[0x400]; int f414; int f418; int f41C; } sFioIoctl2Cmd; /* 26 */
+typedef union {
+    sFioOpenCmd open;           /* 0 */
+    sFioFdCmd close;            /* 1 */
+    sFioReadCmd read;           /* 2 */
+    sFioWriteCmd write;         /* 3 */
+    sFioLseekCmd lseek;         /* 4 */
+    sFioPathCmd path;           /* 6, 8, 9, 16, 18, 21 (func_00428E18 takes the number) */
+    sFioPathModeCmd mkdir;      /* 7 */
+    sFioFormatCmd format;       /* 14 */
+    sFioCmd4 adddrv;            /* 15 */
+    sFioFdCmd dclose;           /* 10 */
+    sFioFdCmd dread;            /* 11 */
+    sFioPathModeCmd getstat;    /* 12 */
+    sFioChstatCmd chstat;       /* 13 */
+    sFioPath2Cmd rename;        /* 17 */
+    sFioPathArgCmd sync;        /* 19 */
+    sFioMountCmd mount;         /* 20 */
+    sFioLseek64Cmd lseek64;     /* 22 */
+    sFioDevctlCmd devctl;       /* 23 */
+    sFioPath2Cmd symlink;       /* 24 */
+    sFioPathArgCmd readlink;    /* 25 */
+    sFioIoctl2Cmd ioctl2;       /* 26 */
+} uFioCmd;
+extern uFioCmd D_0052D700;
+
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00424220);
 #ifdef SKIP_ASM
@@ -2351,11 +2394,9 @@ int func_00427D28(void) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427D60);
 #ifdef SKIP_ASM
-struct S7D60 { int f0; int f4; int f8; int fC; int f10; char name[0x400]; int f414; };
 struct E7D60 { int f0; int f4; };
 extern int D_0045520C;
 extern int D_00455218;
-extern struct S7D60 D_G60 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern char D_0052EC00[];
@@ -2381,7 +2422,7 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
     int mode;
     char *ap;
     struct E7D60 *t;
-    struct S7D60 *p = &D_G60;
+    sFioOpenCmd *p = &D_0052D700.open;
     func_00427988_b(0);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -2421,7 +2462,7 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
     p->f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0, 0, &D_G60, 0x418, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, 0, 0, &D_0052D700.open, 0x418, D_0052E340, 4, 0, 0) < 0) {
         db0i(sem);
         func_004279B8();
         return -0xB;
@@ -2452,9 +2493,7 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427FE8);
 #ifdef SKIP_ASM
-struct S7FE8 { int f0; int f4; int f8; int fC; int f10; };
 extern int D_0045520C;
-extern struct S7FE8 D_0052D700_s __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EC00[];
 extern char D_0052EE00[];
@@ -2471,7 +2510,7 @@ int func_00427FE8(int a0) {
     int sem;
     int v;
     int *t;
-    struct S7FE8 *p = &D_0052D700_s;
+    sFioFdCmd *p = &D_0052D700.close;
     t = func_00427520_p(a0);
     func_00427988_b(1);
     if (D_0045520C == 0) {
@@ -2517,11 +2556,9 @@ int func_00427FE8(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00428168);
 #ifdef SKIP_ASM
-struct S8168 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; };
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern struct S8168 D_8168 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EC00[];
 extern char D_0052EE00[];
@@ -2544,7 +2581,7 @@ int func_00428168(int a0, int a1, int a2)
   int *t;
   unsigned fl;
   int *out;
-  struct S8168 *p = &D_8168;
+  sFioLseekCmd *p = &D_0052D700.lseek;
   t = func_00427520_p(a0);
   func_00427988_b(4);
   if (D_0045520C == 0)
@@ -2569,7 +2606,7 @@ int func_00428168(int a0, int a1, int a2)
   p->f8 = 4;
   p->f4 = (int) out;
   flags = fl;
-  D_8168.f0 = sem;
+  D_0052D700.lseek.f0 = sem;
   if (flags & 0x8000)
   {
     func_00423DE0_i(D_0045521C);
@@ -2585,7 +2622,7 @@ int func_00428168(int a0, int a1, int a2)
 
     func_00423DC0(D_0045521C);
   }
-  if (func_00426D18_v(D_0052EE00, 4, 0, &D_8168, 0x1C, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18_v(D_0052EE00, 4, 0, &D_0052D700.lseek, 0x1C, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -2612,11 +2649,9 @@ int func_00428168(int a0, int a1, int a2)
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004283A0);
 #ifdef SKIP_ASM
-struct SA3A0 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; };
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern struct SA3A0 D_A3A0 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EC00[];
 extern char D_0052EE00[];
@@ -2638,7 +2673,7 @@ int func_004283A0(int a0, int a1, int a2)
   int *t;
   unsigned fl;
   int *out;
-  struct SA3A0 *p = &D_A3A0;
+  sFioReadCmd *p = &D_0052D700.read;
   t = func_00427520_p(a0);
   func_00427988_b(2);
   if (D_0045520C == 0)
@@ -2663,7 +2698,7 @@ int func_004283A0(int a0, int a1, int a2)
   p->f8 = 4;
   p->f4 = (int) out;
   flags = fl;
-  D_A3A0.f0 = sem;
+  D_0052D700.read.f0 = sem;
   if (flags & 0x8000)
   {
     func_00423DE0_i(D_0045521C);
@@ -2682,7 +2717,7 @@ int func_004283A0(int a0, int a1, int a2)
   if (!(fl & 0x20000000))
     func_00426358(a1, a2);
   func_00426358((int) p, 0x20);
-  if (func_00426D18_v(D_0052EE00, 2, 0, &D_A3A0, 0x20, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18_v(D_0052EE00, 2, 0, &D_0052D700.read, 0x20, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -2709,11 +2744,9 @@ int func_004283A0(int a0, int a1, int a2)
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00428600);
 #ifdef SKIP_ASM
-struct SA600 { int f0; int f4; int f8; int fC; unsigned f10; int f14; int f18; char data[16]; int f2C; };
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern struct SA600 D_A600 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EC00[];
 extern char D_0052EE00[];
@@ -2737,7 +2770,7 @@ int func_00428600(int a0, unsigned a1, int a2)
   int *t;
   unsigned fl;
   int *out;
-  struct SA600 *p = &D_A600;
+  sFioWriteCmd *p = &D_0052D700.write;
   t = func_00427520_p(a0);
   func_00427988_b(3);
   if (D_0045520C == 0)
@@ -2762,7 +2795,7 @@ int func_00428600(int a0, unsigned a1, int a2)
   p->f8 = 4;
   p->f4 = (int) out;
   flags = fl;
-  D_A600.f0 = sem;
+  D_0052D700.write.f0 = sem;
   if (flags & 0x8000)
   {
     func_00423DE0_i(D_0045521C);
@@ -2793,7 +2826,7 @@ int func_00428600(int a0, unsigned a1, int a2)
   p->f18 = n;
   for (j = 0; j < n; j++)
     p->data[j] = ((char *) a1)[j];
-  if (func_00426D18_v(D_0052EE00, 3, 0, &D_A600, 0x30, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18_v(D_0052EE00, 3, 0, &D_0052D700.write, 0x30, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -2822,9 +2855,7 @@ INCLUDE_ASM("seg/seg_325220", func_004288C0);
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00428C38);
 #ifdef SKIP_ASM
-struct S8C38 { int f0; int f4; int f8; int fC; int f10; char data[0x400]; int f414; int f418; int f41C; };
 extern int D_0045520C;
-extern struct S8C38 D_8C38 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
@@ -2843,7 +2874,7 @@ int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a
     int sem;
     int v;
     int *t;
-    struct S8C38 *p = &D_8C38;
+    sFioIoctl2Cmd *p = &D_0052D700.ioctl2;
     t = func_00427520_p(a0);
     func_00427988_b(0x1A);
     if (D_0045520C == 0) {
@@ -2874,8 +2905,8 @@ int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a
     p->f8 = 4;
     p->f414 = a4;
     p->f0 = sem;
-    func_00426358((int)&D_8C38, 0x420);
-    if (func_00426D18_v(D_0052EE00, 0x1A, 0, &D_8C38, 0x420, D_0052E340, 4, 0, 0) < 0) {
+    func_00426358((int)&D_0052D700.ioctl2, 0x420);
+    if (func_00426D18_v(D_0052EE00, 0x1A, 0, &D_0052D700.ioctl2, 0x420, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -2895,9 +2926,7 @@ int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00428E18);
 #ifdef SKIP_ASM
-struct S8E18 { int f0; int f4; int f8; char name[0x400]; };
 extern int D_0045520C;
-extern struct S8E18 D_func_00428E18 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -2913,7 +2942,7 @@ int func_00428E18_d(char *s, int a1) {
     int sem;
     int v;
     int n;
-    struct S8E18 *p = &D_func_00428E18;
+    sFioPathCmd *p = &D_0052D700.path;
     func_00427988_b(a1);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -2937,7 +2966,7 @@ int func_00428E18_d(char *s, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, a1, 0, &D_func_00428E18, n + 0xD, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, a1, 0, &D_0052D700.path, n + 0xD, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -2966,9 +2995,7 @@ int func_00428FC0(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00428FE0);
 #ifdef SKIP_ASM
-struct S8FE0 { int f0; int f4; int f8; int fC; char name[0x400]; };
 extern int D_0045520C;
-extern struct S8FE0 D_func_00428FE0 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -2984,7 +3011,7 @@ int func_00428FE0_d(char *s, int a1) {
     int sem;
     int v;
     int n;
-    struct S8FE0 *p = &D_func_00428FE0;
+    sFioPathModeCmd *p = &D_0052D700.mkdir;
     func_00427988_b(7);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3009,7 +3036,7 @@ int func_00428FE0_d(char *s, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 7, 0, &D_func_00428FE0, n + 0x11, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, 7, 0, &D_0052D700.mkdir, n + 0x11, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3038,9 +3065,7 @@ int func_00429190(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004291B0);
 #ifdef SKIP_ASM
-struct S91B0 { int f0; int f4; int f8; char name[0x400]; char name2[0x400]; char data[0x400]; int fC0C; };
 extern int D_0045520C;
-extern struct S91B0 D_91B0 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3058,7 +3083,7 @@ int func_004291B0_d(char *s, char *t, char *data, int len) {
     int v;
     int n;
     int i;
-    struct S91B0 *p = &D_91B0;
+    sFioFormatCmd *p = &D_0052D700.format;
     func_00427988_b(0xE);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3104,8 +3129,8 @@ int func_004291B0_d(char *s, char *t, char *data, int len) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    func_00426358((int)&D_91B0, 0xC10);
-    if (func_00426D18_v(D_0052EE00, 0xE, 0, &D_91B0, 0xC10, D_0052E340, 4, 0, 0) < 0) {
+    func_00426358((int)&D_0052D700.format, 0xC10);
+    if (func_00426D18_v(D_0052EE00, 0xE, 0, &D_0052D700.format, 0xC10, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3125,9 +3150,7 @@ int func_004291B0_d(char *s, char *t, char *data, int len) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429420);
 #ifdef SKIP_ASM
-struct S9420 { int f0; int f4; int f8; int fC; };
 extern int D_0045520C;
-extern struct S9420 D_0052D700;
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3141,7 +3164,7 @@ int func_00429420(int a0) {
     int buf[12];
     int sem;
     int v;
-    struct S9420 *p = &D_0052D700;
+    sFioCmd4 *p = &D_0052D700.adddrv;
     func_00427988_b(0xF);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3151,10 +3174,10 @@ int func_00429420(int a0) {
     buf[2] = 0;
     buf[5] = 0;
     sem = func_00423DA0(&buf[0]);
-    D_0052D700.f0 = sem;
+    D_0052D700.adddrv.f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0xF, 0, &D_0052D700, 0x10, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, 0xF, 0, &D_0052D700.adddrv, 0x10, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -1;
@@ -3225,10 +3248,8 @@ int func_00429560(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429628);
 #ifdef SKIP_ASM
-struct S9628 { int f0; int f4; int f8; int fC; int f10; };
 struct E9628 { int f0; int f4; };
 extern int D_0045520C;
-extern struct S9628 D_0052D700_t __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EC00[];
 extern char D_0052EE00[];
@@ -3244,7 +3265,7 @@ int func_00429628(int a0) {
     int sem;
     int v;
     struct E9628 *e;
-    struct S9628 *p = &D_0052D700_t;
+    sFioFdCmd *p = &D_0052D700.dclose;
     e = func_00427520_r(a0);
     func_00427988_b(0xA);
     if (D_0045520C == 0) {
@@ -3289,9 +3310,7 @@ int func_00429628(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429790);
 #ifdef SKIP_ASM
-struct S9790 { int f0; int f4; int f8; int fC; int f10; };
 extern int D_0045520C;
-extern struct S9790 D_Y __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
@@ -3307,7 +3326,7 @@ int func_00429790_d(int a0, int a1) {
     int sem;
     int v;
     int *t;
-    struct S9790 *p = &D_Y;
+    sFioFdCmd *p = &D_0052D700.dread;
     t = func_00427520_p(a0);
     func_00427988_b(0xB);
     if (D_0045520C == 0) {
@@ -3347,9 +3366,7 @@ int func_00429790_d(int a0, int a1) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004298E8);
 #ifdef SKIP_ASM
-struct S98E8 { int f0; int f4; int f8; int fC; char s[0x400]; };
 extern int D_0045520C;
-extern struct S98E8 D_G98 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3365,23 +3382,23 @@ int func_004298E8(char *a0, int a1) {
     int v;
     int i;
     unsigned char c;
-    struct S98E8 *p = &D_G98;
+    sFioPathModeCmd *p = &D_0052D700.getstat;
     func_00427988_b(0xC);
     if (D_0045520C == 0) {
         func_00427A90();
     }
-    c = (p->s[0] = a0[0]);
+    c = (p->name[0] = a0[0]);
     i = 0;
     if (c != 0) {
         while (++i < 0x400) {
-            c = (p->s[i] = a0[i]);
+            c = (p->name[i] = a0[i]);
             if (c == 0) {
                 break;
             }
         }
     }
     if (i == 0x400) {
-        p->s[0x3FF] = 0;
+        p->name[0x3FF] = 0;
         i = 0x3FF;
     }
     p->fC = a1;
@@ -3392,7 +3409,7 @@ int func_004298E8(char *a0, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0xC, 0, &D_G98, i + 0x11, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, 0xC, 0, &D_0052D700.getstat, i + 0x11, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3412,10 +3429,7 @@ int func_004298E8(char *a0, int a1) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429A88);
 #ifdef SKIP_ASM
-struct V64 { int w[16]; };
-struct S9A88 { int f0; int f4; int f8; int fC; struct V64 v; char name[0x400]; };
 extern int D_0045520C;
-extern struct S9A88 D_9A88 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3426,14 +3440,14 @@ extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
 extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
-int func_00429A88_d(char *, struct V64 *, int) __asm__("func_00429A88");
-int func_00429A88_d(char *s, struct V64 *src, int a2) {
+int func_00429A88_d(char *, sFioStat *, int) __asm__("func_00429A88");
+int func_00429A88_d(char *s, sFioStat *src, int a2) {
     int buf[12];
     int sem;
     int v;
     int n;
     unsigned char c;
-    struct S9A88 *p = &D_9A88;
+    sFioChstatCmd *p = &D_0052D700.chstat;
     func_00427988_b(0xD);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3461,8 +3475,8 @@ int func_00429A88_d(char *s, struct V64 *src, int a2) {
     p->f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    func_00426358((int)&D_9A88, 0x450);
-    if (func_00426D18_v(D_0052EE00, 0xD, 0, &D_9A88, n + 0x51, D_0052E340, 4, 0, 0) < 0) {
+    func_00426358((int)&D_0052D700.chstat, 0x450);
+    if (func_00426D18_v(D_0052EE00, 0xD, 0, &D_0052D700.chstat, n + 0x51, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3482,9 +3496,7 @@ int func_00429A88_d(char *s, struct V64 *src, int a2) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429CC8);
 #ifdef SKIP_ASM
-struct SCC8 { int f0; int f4; int f8; char name[0x400]; char name2[0x400]; };
 extern int D_0045520C;
-extern struct SCC8 D_CC8 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3501,7 +3513,7 @@ int func_00429CC8_d(char *s, char *t) {
     int sem;
     int v;
     int n;
-    struct SCC8 *p = &D_CC8;
+    sFioPath2Cmd *p = &D_0052D700.rename;
     func_00427988_b(0x11);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3535,8 +3547,8 @@ int func_00429CC8_d(char *s, char *t) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    func_00426358((int)&D_CC8, 0x80C);
-    if (func_00426D18_v(D_0052EE00, 0x11, 0, &D_CC8, 0x80C, D_0052E340, 4, 0, 0) < 0) {
+    func_00426358((int)&D_0052D700.rename, 0x80C);
+    if (func_00426D18_v(D_0052EE00, 0x11, 0, &D_0052D700.rename, 0x80C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3565,9 +3577,7 @@ int func_00429EB8(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429ED8);
 #ifdef SKIP_ASM
-struct S9ED8 { int f0; int f4; int f8; int fC; int f10; char name[0x400]; };
 extern int D_0045520C;
-extern struct S9ED8 D_func_00429ED8 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3583,7 +3593,7 @@ int func_00429ED8_d(char *s, int a1) {
     int sem;
     int v;
     int n;
-    struct S9ED8 *p = &D_func_00429ED8;
+    sFioPathArgCmd *p = &D_0052D700.sync;
     func_00427988_b(0x13);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3608,7 +3618,7 @@ int func_00429ED8_d(char *s, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0x13, 0, &D_func_00429ED8, 0x414, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, 0x13, 0, &D_0052D700.sync, 0x414, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3628,9 +3638,7 @@ int func_00429ED8_d(char *s, int a1) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042A070);
 #ifdef SKIP_ASM
-struct S20A0 { int f0; int f4; int f8; char name[0x400]; char name2[0x400]; char data[0x400]; int fC0C; int fC10; };
 extern int D_0045520C;
-extern struct S20A0 D_A070 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3648,7 +3656,7 @@ int func_0042A070_d(char *s, char *t, int a2, char *data, int len) {
     int v;
     int n;
     int i;
-    struct S20A0 *p = &D_A070;
+    sFioMountCmd *p = &D_0052D700.mount;
     func_00427988_b(0x14);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3691,8 +3699,8 @@ int func_0042A070_d(char *s, char *t, int a2, char *data, int len) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    func_00426358((int)&D_A070, 0xC14);
-    if (func_00426D18_v(D_0052EE00, 0x14, 0, &D_A070, 0xC14, D_0052E340, 4, 0, 0) < 0) {
+    func_00426358((int)&D_0052D700.mount, 0xC14);
+    if (func_00426D18_v(D_0052EE00, 0x14, 0, &D_0052D700.mount, 0xC14, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3721,11 +3729,9 @@ int func_0042A2E0(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042A300);
 #ifdef SKIP_ASM
-struct SA300 { int f0; int f4; int f8; int fC; long f10; int f18; int f1C; };
 extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
-extern struct SA300 D_A300 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EC00[];
 extern char D_0052EE00[];
@@ -3747,7 +3753,7 @@ long func_0042A300(int a0, long a1, int a2)
   short flags;
   int *t;
   unsigned fl;
-  struct SA300 *p = &D_A300;
+  sFioLseek64Cmd *p = &D_0052D700.lseek64;
   t = func_00427520_p(a0);
   func_00427988_b(0x16);
   if (D_0045520C == 0)
@@ -3771,7 +3777,7 @@ long func_0042A300(int a0, long a1, int a2)
   p->f4 = (int) &res;
   p->f8 = 8;
   flags = fl;
-  D_A300.f0 = sem;
+  D_0052D700.lseek64.f0 = sem;
   if (flags & 0x8000)
   {
     func_00423DE0_i(D_0045521C);
@@ -3787,7 +3793,7 @@ long func_0042A300(int a0, long a1, int a2)
 
     func_00423DC0(D_0045521C);
   }
-  if (func_00426D18_v(D_0052EE00, 0x16, 0, &D_A300, 0x20, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18_v(D_0052EE00, 0x16, 0, &D_0052D700.lseek64, 0x20, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -3814,9 +3820,7 @@ long func_0042A300(int a0, long a1, int a2)
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042A538);
 #ifdef SKIP_ASM
-struct S2538 { int f0; int f4; int f8; char name[0x400]; char data[0x400]; int f80C; int f810; int f814; int f818; };
 extern int D_0045520C;
-extern struct S2538 D_A538 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3834,7 +3838,7 @@ int func_0042A538_d(char *s, int a1, char *data, unsigned len, int a4, unsigned 
     int v;
     int n;
     unsigned i;
-    struct S2538 *p = &D_A538;
+    sFioDevctlCmd *p = &D_0052D700.devctl;
     func_00427988_b(0x17);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3868,8 +3872,8 @@ int func_0042A538_d(char *s, int a1, char *data, unsigned len, int a4, unsigned 
     p->f8 = 4;
     p->f814 = a4;
     p->f0 = sem;
-    func_00426358((int)&D_A538, 0x81C);
-    if (func_00426D18_v(D_0052EE00, 0x17, 0, &D_A538, 0x81C, D_0052E340, 4, 0, 0) < 0) {
+    func_00426358((int)&D_0052D700.devctl, 0x81C);
+    if (func_00426D18_v(D_0052EE00, 0x17, 0, &D_0052D700.devctl, 0x81C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3889,9 +3893,7 @@ int func_0042A538_d(char *s, int a1, char *data, unsigned len, int a4, unsigned 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042A770);
 #ifdef SKIP_ASM
-struct SA770 { int f0; int f4; int f8; char name[0x400]; char name2[0x400]; };
 extern int D_0045520C;
-extern struct SA770 D_A770 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3907,7 +3909,7 @@ int func_0042A770_d(char *s, char *t) {
     int sem;
     int v;
     int n;
-    struct SA770 *p = &D_A770;
+    sFioPath2Cmd *p = &D_0052D700.symlink;
     func_00427988_b(0x11);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -3941,7 +3943,7 @@ int func_0042A770_d(char *s, char *t) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0x18, 0, &D_A770, 0x80C, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, 0x18, 0, &D_0052D700.symlink, 0x80C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3961,9 +3963,7 @@ int func_0042A770_d(char *s, char *t) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042A950);
 #ifdef SKIP_ASM
-struct SA950 { int f0; int f4; int f8; int fC; int f10; char name[0x400]; };
 extern int D_0045520C;
-extern struct SA950 D_A950 __asm__("D_0052D700");
 extern char D_0052E340[];
 extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
@@ -3980,7 +3980,7 @@ int func_0042A950_d(char *s, int a1, unsigned len) {
     int sem;
     int v;
     int n;
-    struct SA950 *p = &D_A950;
+    sFioPathArgCmd *p = &D_0052D700.readlink;
     func_00427988_b(0x11);
     if (D_0045520C == 0) {
         func_00427A90();
@@ -4009,7 +4009,7 @@ int func_0042A950_d(char *s, int a1, unsigned len) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0x19, 0, &D_A950, 0x80C, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18_v(D_0052EE00, 0x19, 0, &D_0052D700.readlink, 0x80C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
