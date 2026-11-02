@@ -105,6 +105,11 @@ struct sSndVtbl4 {
     sSndVtSlot e[4];
 } __attribute__((aligned(8)));
 
+// 7-entry vtable image (same use as sSndVtbl4).
+struct sSndVtbl7 {
+    sSndVtSlot e[7];
+} __attribute__((aligned(8)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -115,16 +120,13 @@ extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, 
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
-struct sSndBsVt7 {
-    sSndVtSlot e[7];
-} __attribute__((aligned(8)));
 
 extern char D_00483A48[];
 extern char D_00483B48[];
 extern const char D_004A3668[];
 extern const char D_004A3670[];
 extern const sSndVtbl4 D_00483A60_bs __asm__("D_00483A60");
-extern const sSndBsVt7 D_00483A80_bs __asm__("D_00483A80");
+extern const sSndVtbl7 D_00483A80_bs __asm__("D_00483A80");
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
 extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap)
@@ -145,7 +147,7 @@ extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x10;
         int adj1 = self - c1;
         t1.e[1].delta = D_00483A60_bs.e[1].delta + adj1;
-        sSndBsVt7 t2 = D_00483A80_bs;
+        sSndVtbl7 t2 = D_00483A80_bs;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x18;
         int adj2 = self - c2;
@@ -167,13 +169,10 @@ void operator_delete(int*);
 extern "C" void func_0028BB10(void* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 
-struct sSndDtVt7 {
-    sSndVtSlot e[7];
-} __attribute__((aligned(8)));
 
 extern char D_00483A48[];
 extern const sSndVtbl4 D_00483A60;
-extern const sSndDtVt7 D_00483A80;
+extern const sSndVtbl7 D_00483A80;
 extern char D_00483B48[];
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
@@ -189,7 +188,7 @@ extern "C" void func_0028FEA0(char* self, int flags)
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x10;
         int adj1 = self - c1;
         t1.e[1].delta = D_00483A60.e[1].delta + adj1;
-        sSndDtVt7 t2 = D_00483A80;
+        sSndVtbl7 t2 = D_00483A80;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x18;
         int adj2 = self - c2;
@@ -9324,9 +9323,6 @@ extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, 
 extern "C" char* func_002A8140(char* self, int embedded, int count, int heap);
 extern "C" void* func_002A4BA8(void* self);
 
-struct sSnd69Vt7 {
-    sSndVtSlot e[7];
-} __attribute__((aligned(8)));
 
 struct sSnd69List {
     char pad0[0x18];
@@ -9345,7 +9341,7 @@ struct sSnd69Ent {
 extern char D_004837F8[];
 extern char D_00483B48[];
 extern const sSndVtbl4 D_00483818_69 __asm__("D_00483818");
-extern const sSnd69Vt7 D_00483838_69 __asm__("D_00483838");
+extern const sSndVtbl7 D_00483838_69 __asm__("D_00483838");
 
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
@@ -9368,7 +9364,7 @@ extern "C" char* func_002A69A0(char* self, int embedded, int count, int unused, 
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x118;
         int adj1 = self - c1;
         t1.e[1].delta = D_00483818_69.e[1].delta + adj1;
-        sSnd69Vt7 t2 = D_00483838_69;
+        sSndVtbl7 t2 = D_00483838_69;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x120;
         int adj2 = self - c2;
@@ -9394,14 +9390,11 @@ struct sSsMgr6F38;
 extern "C" void func_002A6F38(sSsMgr6F38* self);
 extern "C" void func_002A82D8(char* self, int flags);
 
-struct sSnd6BVt7 {
-    sSndVtSlot e[7];
-} __attribute__((aligned(8)));
 
 extern char D_004837F8[];
 extern char D_00483B48[];
 extern const sSndVtbl4 D_00483818_6B __asm__("D_00483818");
-extern const sSnd6BVt7 D_00483838_6B __asm__("D_00483838");
+extern const sSndVtbl7 D_00483838_6B __asm__("D_00483838");
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
 extern "C" void func_002A6B50(char* self, int flags)
@@ -9416,7 +9409,7 @@ extern "C" void func_002A6B50(char* self, int flags)
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x118;
         int adj1 = self - c1;
         t1.e[1].delta = D_00483818_6B.e[1].delta + adj1;
-        sSnd6BVt7 t2 = D_00483838_6B;
+        sSndVtbl7 t2 = D_00483838_6B;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x120;
         int adj2 = self - c2;
@@ -10252,15 +10245,12 @@ extern "C" int func_003B97D8();
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
-struct sSndCtVt7 {
-    sSndVtSlot e[7];
-} __attribute__((aligned(8)));
 
 extern char D_00483A48[];
 extern char D_00483B48[];
 extern const char D_00483148[];
 extern const sSndVtbl4 D_004839F0_ct __asm__("D_004839F0");
-extern const sSndCtVt7 D_00483A10_ct __asm__("D_00483A10");
+extern const sSndVtbl7 D_00483A10_ct __asm__("D_00483A10");
 extern int D_004A3744;
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
@@ -10283,7 +10273,7 @@ extern "C" char* func_002A8140(char* self, int embedded, int count, int heap)
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x14;
         int adj1 = self - c1;
         t1.e[1].delta = D_004839F0_ct.e[1].delta + adj1;
-        sSndCtVt7 t2 = D_00483A10_ct;
+        sSndVtbl7 t2 = D_00483A10_ct;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x1C;
         int adj2 = self - c2;
@@ -10307,13 +10297,10 @@ extern "C" void func_002ADEE8(void* self, int flags);
 extern "C" void func_0028FEA0(char* self, int flags);
 extern "C" int func_003B9880();
 
-struct sSndDtBVt7 {
-    sSndVtSlot e[7];
-} __attribute__((aligned(8)));
 
 extern char D_00483A48[];
 extern const sSndVtbl4 D_004839F0;
-extern const sSndDtBVt7 D_00483A10;
+extern const sSndVtbl7 D_00483A10;
 extern char D_00483B48[];
 extern int D_004A3744;
 
@@ -10330,7 +10317,7 @@ extern "C" void func_002A82D8(char* self, int flags)
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x14;
         int adj1 = self - c1;
         t1.e[1].delta = D_004839F0.e[1].delta + adj1;
-        sSndDtBVt7 t2 = D_00483A10;
+        sSndVtbl7 t2 = D_00483A10;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x1C;
         int adj2 = self - c2;
