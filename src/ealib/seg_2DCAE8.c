@@ -2127,16 +2127,16 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DEED8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void MUTEX_unlock_EED8(void *) __asm__("MUTEX_unlock");
 
-void *func_003DEED8(void **arg0) {
-    void *temp_2;
-    void *var_16;
+struct sReq *func_003DEED8(struct sReqQueue *arg0) {
+    struct sReq *temp_2;
+    struct sReq *var_16;
 
     MUTEX_lock(D_00519C08);
-    temp_2 = *arg0;
+    temp_2 = arg0->f00;
     var_16 = 0;
     if (temp_2 != 0) {
         var_16 = temp_2;
-        *arg0 = *(void **)((char *)var_16 + 4);
+        arg0->f00 = var_16->f04;
     }
     MUTEX_unlock_EED8(D_00519C08);
     return var_16;
