@@ -3217,14 +3217,12 @@ int func_003B8DE8_impl(int id) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8EE8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_8EE8 { int id; signed char owner; char pad[3]; };
-extern struct E_8EE8 D_0050A820_8EE8[] __asm__("D_0050A820");
 
 int func_003B8EE8(int arg0) {
     int i;
     int r = 1;
     for (i = 0; i < 0x18; i++) {
-        if (D_0050A820_8EE8[i].owner == arg0 && D_0050A820_8EE8[i].id >= 0 && func_003BA6E8(D_0050A820_8EE8[i].id) >= 0) {
+        if (D_0050A820[i].f04 == arg0 && D_0050A820[i].f00 >= 0 && func_003BA6E8(D_0050A820[i].f00) >= 0) {
             r = 0;
             break;
         }
