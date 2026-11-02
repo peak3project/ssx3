@@ -105,11 +105,15 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     unsigned int f2C;
     int f30;
     int f34;
-    int f38;
-    char pad3C[0x48 - 0x3C];
+    int f38;                        /* 16.16 */
+    int f3C;
+    int f40;
+    int f44;
     float f48;
     unsigned short f4C;
-    char pad4E[0x5F - 0x4E];
+    char pad4E[0x5D - 0x4E];
+    signed char f5D;
+    signed char f5E;
     signed char f5F;
     signed char f60[1];             /* indexed */
     signed char f61[1];             /* indexed */
@@ -119,7 +123,8 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     unsigned char f68;
     signed char f69;
     unsigned short f6A;
-    char pad6C[0x74 - 0x6C];
+    struct sA8E8Env *f6C;
+    char pad70[0x74 - 0x70];
     signed char *f74;
     char pad78[0x7C - 0x78];
     signed char *f7C;
@@ -130,6 +135,7 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     unsigned short f88;
     unsigned short f8A;
 };
+struct sA8E8Env { int f00; int f04; };
 struct sA8E8Pan { float l; float r; };
 struct sA8E8Bus {                   /* 0x14, at +0x1F8 / +0x20C / +0x220, indexed by id */
     short f00;
@@ -9695,28 +9701,25 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C7138);
 extern int fA6E8_7138(void) __asm__("func_003BA6E8");
 extern int func_003BAA00(int, int *);
 extern int func_003C2440(int);
-extern char D_A8E8_7138[] __asm__("D_0050A8E8");
 
 int func_003C7138(void) {
     int sp0;
     int r = fA6E8_7138();
     if (r >= 0) {
-        char *g;
         sp0 = -1;
-        g = D_A8E8_7138;
         while (func_003BAA00(r, &sp0) != 0) {
-            char *e = *(char **)(g + 0x1F0) + sp0 * 0x8C;
-            signed char t = *(signed char *)(e + 0x5E);
+            struct sA8E8Chan *e = &D_0050A8E8.f1F0[sp0];
+            signed char t = e->f5E;
             if (t < 0) {
                 func_003C2440(sp0);
-            } else if (*(signed char *)(e + 0x5D) < t) {
-                char *q;
+            } else if (e->f5D < t) {
+                struct sA8E8Env *q;
                 int d;
-                *(signed char *)(e + 0x5D) = (unsigned char)*(signed char *)(e + 0x5E);
-                q = (char *)(t * 8 + *(int *)(e + 0x6C));
-                d = *(int *)q;
-                *(int *)(e + 0x44) = d;
-                *(int *)(e + 0x3C) = ((*(int *)(q + 4) << 16) - *(int *)(e + 0x40)) / d;
+                e->f5D = e->f5E;
+                q = (struct sA8E8Env *)(t * 8 + (int)e->f6C);
+                d = q->f00;
+                e->f44 = d;
+                e->f3C = ((q->f04 << 16) - e->f40) / d;
             }
         }
     }
