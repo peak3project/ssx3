@@ -6255,14 +6255,12 @@ extern char *D_004A3DD8_6438 __asm__("D_004A3DD8");
 extern char **D_004A47B8_6438 __asm__("D_004A47B8");
 extern char *D_004A28A8_6438 __asm__("D_004A28A8");
 extern "C" void func_00101728_6438(void*, void*, float, float) __asm__("func_00101728");
-struct V3_6438 { float x, y, z; };
-extern V3_6438 D_004C9098_6438 __asm__("D_004C9098");
 extern unsigned D_6438[] __asm__("D_004FBF48");
 extern int D_004A5890;
 extern const int D_00446880[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_6438 { int idx; int val; int pad; int type; };
-extern "C" V3_6438 func_00306438(int n, Ent_6438 *e) {
+extern "C" cLunoValue func_00306438(int n, Ent_6438 *e) {
     if (D_004A5890 == 0) {
         D_6438[0] = 0xFFFFFFFF;
         *(float*)&D_6438[1] = 1000.0f;
@@ -6303,7 +6301,7 @@ extern "C" V3_6438 func_00306438(int n, Ent_6438 *e) {
         tmp[0] = *(int*)(obj + 0x78);
         func_00101728_6438(*(void**)(*(char**)(*(char**)(D_004A28A8_6438 + 0x84) + 0xC) + 0xA8), tmp, f1, f2);
     }
-    return D_004C9098_6438;
+    return D_004C9098;
 }
 #endif
 
