@@ -13,6 +13,9 @@ struct sWsVtVPI {
     void (*fn)(void*, void*, int);
 };
 
+// g++ 2.95 vtable entry for a method taking only self, returning float.
+struct sWsVtF { short delta; short index; float (*fn)(void*); };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1127,7 +1130,6 @@ struct sHit_003342D0 {
     sHit_003342D0() {}
 } __attribute__((aligned(16)));
 
-struct sVEnt_003342D0 { short delta; short index; float (*fn)(void*); };
 extern "C" int func_00333EF8(void* self, void* q, sHit_003342D0* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
@@ -1160,7 +1162,7 @@ extern "C" float func_003342D0(void* self, char* q, sHit_003342D0* out, int a3)
         return -1.0f;
     }
     int best = 0;
-    sVEnt_003342D0* vt = *(sVEnt_003342D0**)(q + 0x50);
+    sWsVtF* vt = *(sWsVtF**)(q + 0x50);
     float ref = vt[3].fn(q + vt[3].delta);
     float bestDiff = absf_003342D0(hits[0].dist - ref);
     for (int i = 1; i < n; i++) {
@@ -1692,7 +1694,6 @@ struct sHit_00336850 {
     sHit_00336850() {}
 } __attribute__((aligned(16)));
 
-struct sVEnt_00336850 { short delta; short index; float (*fn)(void*); };
 extern "C" int func_00335D78(void* self, void* q, sHit_00336850* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
@@ -1725,7 +1726,7 @@ extern "C" float func_00336850(void* self, char* q, sHit_00336850* out, int a3)
         return -1.0f;
     }
     int best = 0;
-    sVEnt_00336850* vt = *(sVEnt_00336850**)(q + 0x50);
+    sWsVtF* vt = *(sWsVtF**)(q + 0x50);
     float ref = vt[3].fn(q + vt[3].delta);
     float bestDiff = absf_00336850(hits[0].dist - ref);
     for (int i = 1; i < n; i++) {
@@ -2093,7 +2094,6 @@ struct sHit_003378C0 {
     sHit_003378C0() {}
 } __attribute__((aligned(16)));
 
-struct sVEnt_003378C0 { short delta; short index; float (*fn)(void*); };
 extern "C" int func_00336F30(void* self, void* q, sHit_003378C0* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
@@ -2126,7 +2126,7 @@ extern "C" float func_003378C0(void* self, char* q, sHit_003378C0* out, int a3)
         return -1.0f;
     }
     int best = 0;
-    sVEnt_003378C0* vt = *(sVEnt_003378C0**)(q + 0x50);
+    sWsVtF* vt = *(sWsVtF**)(q + 0x50);
     float ref = vt[3].fn(q + vt[3].delta);
     float bestDiff = absf_003378C0(hits[0].dist - ref);
     for (int i = 1; i < n; i++) {
