@@ -69,6 +69,7 @@ struct cBankSys {
     char padC[0x118 - 0xC];
     cBankManager** p118;     // 0x118
 };
+extern cBankSys* D_004A3664;
 
 // ---- end of shared declarations ----
 
@@ -98,7 +99,6 @@ extern const char D_004A3668[];
 extern const char D_004A3670[];
 extern const sSndBsVt4 D_00483A60_bs __asm__("D_00483A60");
 extern const sSndBsVt7 D_00483A80_bs __asm__("D_00483A80");
-extern int D_004A3664;
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
 extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap)
@@ -126,7 +126,7 @@ extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap
         t2.e[1].delta = D_00483A80_bs.e[1].delta + adj2;
     }
     *(void**)(self + 0xC) = D_00483A48;
-    D_004A3664 = (int)self;
+    D_004A3664 = (cBankSys*)self;
     *(void**)(self + 4) = new (D_004A3668, 0, 0) char[0x10];
     *(void**)(self + 8) = new (D_004A3670, 0, 0) char[0x10];
     return self;
@@ -157,7 +157,6 @@ extern char D_00483A48[];
 extern const sSndDtVt4 D_00483A60;
 extern const sSndDtVt7 D_00483A80;
 extern char D_00483B48[];
-extern int D_004A3664;
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
 extern "C" void func_0028FEA0(char* self, int flags)
@@ -204,7 +203,6 @@ struct sSnd0018Req {
     int vol;                 // 0x24
 };
 
-extern cBankSys* D_004A3664_0018 __asm__("D_004A3664");
 
 #define SND_0018_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_0018_MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -241,14 +239,14 @@ static inline void snd0018AddVoice(void* vself, int a, int b)
 // Adds a voice on the global sound system for the request, sets its target and volume (clamped to 0..127), then commits.
 extern "C" int func_00290018(void* self, sSnd0018Req* req)
 {
-    snd0018AddVoice(D_004A3664_0018, req->f1C, req->f20);
-    cBankManager* m1 = D_004A3664_0018->mgr;
+    snd0018AddVoice(D_004A3664, req->f1C, req->f20);
+    cBankManager* m1 = D_004A3664->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
-    cBankManager* m2 = D_004A3664_0018->mgr;
+    cBankManager* m2 = D_004A3664->mgr;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
     s2->ch[m2->sub.cur].vol = SND_0018_MAX(0, SND_0018_MIN(s2->vals[s2->cur], 0x7F));
-    func_002906B8(D_004A3664_0018);
+    func_002906B8(D_004A3664);
     return 1;
 }
 #endif
@@ -268,7 +266,6 @@ struct sSnd0358Req {
     unsigned short f28;      // 0x28
 };
 
-extern cBankSys* D_004A3664_0358 __asm__("D_004A3664");
 
 #define SND_0358_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_0358_MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -305,16 +302,16 @@ static inline void snd0358AddVoice(void* vself, int a, int b)
 // Adds a voice on the global sound system for the request, sets its target and volume (clamped to 0..127), stores its 16-bit field, then commits.
 extern "C" int func_00290358(void* self, sSnd0358Req* req)
 {
-    snd0358AddVoice(D_004A3664_0358, req->f1C, req->f20);
-    cBankManager* m1 = D_004A3664_0358->mgr;
+    snd0358AddVoice(D_004A3664, req->f1C, req->f20);
+    cBankManager* m1 = D_004A3664->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
-    cBankManager* m2 = D_004A3664_0358->mgr;
+    cBankManager* m2 = D_004A3664->mgr;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
     s2->ch[m2->sub.cur].vol = SND_0358_MAX(0, SND_0358_MIN(s2->vals[s2->cur], 0x7F));
-    cBankManager* m3 = D_004A3664_0358->mgr;
+    cBankManager* m3 = D_004A3664->mgr;
     m3->sub.ch[m3->sub.cur].fC = req->f28;
-    func_002906B8(D_004A3664_0358);
+    func_002906B8(D_004A3664);
     return 1;
 }
 #endif
