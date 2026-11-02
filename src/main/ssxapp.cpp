@@ -1827,7 +1827,211 @@ extern "C" void func_00229820(void* self, unsigned int handle, int a, int b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_00229910);
+#ifdef SKIP_ASM
+struct sV3_229910 {
+    float x, y, z;
+    sV3_229910() {}
+};
+
+struct sV4_229910 {
+    float x, y, z, w;
+    sV4_229910() {}
+    sV4_229910(const sV3_229910& v, const float& d) : x(v.x), y(v.y), z(v.z), w(d) {}
+} __attribute__((aligned(16)));
+
+struct sV2_229910 {
+    float u, v;
+    sV2_229910() {}
+};
+
+struct sHTable_229910 {
+    char pad[0x1C];
+    unsigned int* entries;      // 0x1C
+};
+
+struct sHMgr_229910 {
+    char pad[0x8];
+    sHTable_229910** tables;    // 0x8
+};
+
+extern sHMgr_229910** D_004A47B8_229910 __asm__("D_004A47B8");
+
+struct sModel_229910 {
+    char pad[0x10];
+    sV4_229910 mat[4];          // 0x10
+};
+
+struct sVEntry_229910 {
+    short delta;
+    short index;
+    void (*fn)(void*, sModel_229910*, int, sV3_229910*, sV2_229910*, sV4_229910*);
+};
+
+struct sGfx_229910 {
+    char pad[0x10D8];
+    sVEntry_229910* vt;         // 0x10D8
+};
+
+extern sGfx_229910* D_004A5B80_229910 __asm__("D_004A5B80");
+
+static inline sModel_229910* refToPtr_229910(unsigned int p)
+{
+    return (sModel_229910*)(p << 2);
+}
+
+static inline sModel_229910* lookup_229910(sHTable_229910* t, unsigned int idx)
+{
+    unsigned int p = t->entries[idx] >> 8;
+    if (p == 0) {
+        return 0;
+    }
+    return refToPtr_229910(p);
+}
+
+struct tResourceID_229910 {
+    struct {
+        unsigned int m_uiSectionID : 8;
+        unsigned int m_uiUID : 24;
+    } m_bfRID;
+};
+
+static inline sModel_229910* HandleToModel_229910(tResourceID_229910 RID)
+{
+    sHTable_229910* t = (*D_004A47B8_229910)->tables[RID.m_bfRID.m_uiSectionID];
+    if (t == 0) {
+        return 0;
+    }
+    return lookup_229910(t, RID.m_bfRID.m_uiUID);
+}
+
+// PORT: PS2-only VU0 inline asm (matrix * vector).
+static inline sV4_229910 MulMV_229910(const sV4_229910* m, const sV4_229910& v)
+{
+    sV4_229910 r;
+    __asm__(
+        "lqc2      $vf8, %1\n"
+        "lqc2      $vf4, 0x0(%2)\n"
+        "lqc2      $vf5, 0x10(%2)\n"
+        "lqc2      $vf6, 0x20(%2)\n"
+        "lqc2      $vf7, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sV4_229910 Sub_229910(const sV4_229910& a, const sV4_229910& b)
+{
+    sV4_229910 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sV4_229910 Add_229910(const sV4_229910& a, const sV4_229910& b)
+{
+    sV4_229910 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddTo_229910(sV4_229910& a, const sV4_229910& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sV4_229910 Scale_229910(const sV4_229910& v, float s)
+{
+    sV4_229910 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+struct sCrowdSlot_229910 {
+    sV4_229910 pos;             // 0x00
+    sV4_229910 dx;              // 0x10
+    sV4_229910 dy;              // 0x20
+    int delay;                  // 0x30
+    char pad_0x34[0xC];
+};
+
+struct sCrowd_229910 {
+    int pad0;
+    int* anim;                          // 0x4
+    tResourceID_229910 ids[128];              // 0x8
+    char pad_0x208[0x8];
+    sCrowdSlot_229910 slots[128];       // 0x210
+};
+
+// PORT: callers declare func_00229910 as (void*, int, int); defined under an asm label.
+extern "C" void func_00229910_r(sCrowd_229910* self, int index, tResourceID_229910 RID) __asm__("func_00229910");
+
+// Places crowd quad index on the model behind RID: corner points from the renderer, then base/width/height.
+extern "C" void func_00229910_r(sCrowd_229910* self, int index, tResourceID_229910 RID)
+{
+    self->ids[index] = RID;
+    sV4_229910 pts[4];
+    sV3_229910 pos[4];
+    sV2_229910 uv[4];
+    sV4_229910 col[4];
+    sGfx_229910* g = D_004A5B80_229910;
+    sModel_229910* m = HandleToModel_229910(RID);
+    sVEntry_229910* vt = g->vt;
+    vt[97].fn((char*)g + vt[97].delta, m, 0, pos, uv, col);
+    for (int i = 0; i < 4; i++) {
+        pts[i] = MulMV_229910(m->mat, sV4_229910(pos[i], 1.0f));
+    }
+    self->slots[index].pos = Add_229910(pts[0], Scale_229910(Sub_229910(pts[3], pts[0]), 0.5f));
+    self->slots[index].dx = Scale_229910(Sub_229910(pts[2], pts[0]), 0.45f);
+    self->slots[index].dy = Scale_229910(Sub_229910(pts[1], pts[0]), 0.45f);
+    sV4_229910 up;
+    up.x = 0.0f;
+    up.y = 0.0f;
+    up.z = 150.0f;
+    up.w = 0.0f;
+    AddTo_229910(self->slots[index].pos, up);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxapp", func_00229B90);
