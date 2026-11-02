@@ -33,6 +33,15 @@ struct sPadIn
     int y : 6;
 };
 
+// The AI's rider list (self of func_00128A48, func_00129160, func_0012A340 ...): riders at 0x28, mode, count.
+struct sAiRiderList
+{
+    char pad0[0x28];
+    char* mRiders[19];
+    int mMode;
+    int mCount;
+};
+
 //100%
 INCLUDE_ASM("ai/ai", cAI_cAI);
 #ifdef SKIP_ASM
@@ -228,28 +237,20 @@ void func_001289F0(void* self)
 //100%
 INCLUDE_ASM("ai/ai", func_00128A10);
 #ifdef SKIP_ASM
-struct sAiObj128A48;
-extern "C" void func_00128A48(sAiObj128A48* self, int mode);
+extern "C" void func_00128A48(sAiRiderList* self, int mode);
 
 extern "C" void func_00128A10(void* self)
 {
     func_001297C8(self, 0);
-    func_00128A48((sAiObj128A48*)self, 0);
+    func_00128A48((sAiRiderList*)self, 0);
 }
 #endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_00128A48);
 #ifdef SKIP_ASM
-struct sAiObj128A48
-{
-    char pad0[0x28];
-    char* mRiders[19];
-    int mMode;
-    int mCount;
-};
 
-extern "C" void func_00128A48(sAiObj128A48* self, int mode)
+extern "C" void func_00128A48(sAiRiderList* self, int mode)
 {
     self->mMode = mode;
     if (mode == 0)
@@ -428,7 +429,7 @@ extern "C" void func_0011EB60(void* self, float value);
 extern "C" void func_0011EB98(void* self);
 extern "C" void func_003103F0(void*);
 
-extern "C" void func_00129160(sAiObj128A48* self)
+extern "C" void func_00129160(sAiRiderList* self)
 {
     for (int i = 0; i < self->mCount; i++)
     {
@@ -571,7 +572,7 @@ INCLUDE_ASM("ai/ai", func_001296F8);
 extern "C" int func_0011D640(void* self);
 extern "C" void func_0011C298(void* self);
 
-extern "C" void func_001296F8(sAiObj128A48* self)
+extern "C" void func_001296F8(sAiRiderList* self)
 {
     for (int i = 0; i < self->mCount; i++)
     {
@@ -1074,7 +1075,7 @@ INCLUDE_ASM("ai/ai", func_0012A180);
 #ifdef SKIP_ASM
 extern "C" int func_0011D640(void* self);
 
-extern "C" int func_0012A180(sAiObj128A48* self)
+extern "C" int func_0012A180(sAiRiderList* self)
 {
     int result = 1;
     for (int i = 0; i < self->mCount; i++)
@@ -1177,15 +1178,7 @@ extern "C" void func_0026AF00(void* self);
 extern "C" int func_0026AD70(void* self, int v);
 extern "C" void func_00112180(void* rider, int v);
 
-struct sAiObj12A340
-{
-    char pad0[0x28];
-    char* mRiders[19];
-    int mMode;
-    int mCount;
-};
-
-extern "C" int func_0012A340(sAiObj12A340* self, int unused, int mode, int arg)
+extern "C" int func_0012A340(sAiRiderList* self, int unused, int mode, int arg)
 {
     int lvl = func_0022E0E0(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78));
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1774,7 +1767,7 @@ INCLUDE_ASM("ai/ai", func_0012B180);
 extern "C" void func_00154A58(int rider, int a);
 extern "C" void func_001175B8(char* self);
 
-extern "C" void func_0012B180(sAiObj128A48* self)
+extern "C" void func_0012B180(sAiRiderList* self)
 {
     for (int i = 0; i < self->mCount; i++)
     {
@@ -1887,7 +1880,7 @@ INCLUDE_ASM("ai/ai", func_0012B420);
 unsigned int AIrand();
 extern "C" int func_00125AD8(void* self);
 
-extern "C" int func_0012B420(sAiObj128A48* self)
+extern "C" int func_0012B420(sAiRiderList* self)
 {
     int sum = AIrand();
     for (int i = 0; i < self->mCount; i++)
@@ -2194,7 +2187,7 @@ extern "C" void func_0012BB20(sAi_12BB20* self)
         return;
     int seed = 0;
     if (self->timer % 60 == 0)
-        seed = func_0012B420((sAiObj128A48*)self);
+        seed = func_0012B420((sAiRiderList*)self);
     int st = self->state;
     if (st != 5) {
         if (st != 3)
