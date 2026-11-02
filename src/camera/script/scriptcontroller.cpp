@@ -8,6 +8,12 @@ struct sVec4 : t4Vector
     sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
 } __attribute__((aligned(16)));
 
+// 2-float vector (the horizontal part of a direction, for pitch = atan2(z, |xy|)).
+struct sVec2 {
+    float x, y;
+    sVec2(float ax, float ay) : x(ax), y(ay) {}
+};
+
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", cScriptCameraController_cScriptCameraController);
 #ifdef SKIP_ASM
@@ -392,12 +398,7 @@ static inline float Atan2_169570(float y, float x)
     return r;
 }
 
-struct sVec2_169570 {
-    float x, y;
-    sVec2_169570(float ax, float ay) : x(ax), y(ay) {}
-};
-
-static inline float Length_169570(const sVec2_169570& v)
+static inline float Length_169570(const sVec2& v)
 {
     return Sqrt_169570(v.x * v.x + v.y * v.y);
 }
@@ -438,7 +439,7 @@ extern "C" void func_00169570(char* p)
     self->pos = mtxMulVec_169570(m, sVec4(self->dist, self->r5C, self->r60, 1.0f));
     sVec4 d = Sub_169570(self->pos, self->target);
     self->yaw = Atan2_169570(d.y, d.x);
-    float h = Length_169570(sVec2_169570(d.x, d.y));
+    float h = Length_169570(sVec2(d.x, d.y));
     self->x48 = Atan2_169570(d.z, h);
     func_00160028(p + 0x74, self->r6C);
     func_00160130(p + 0x74, self->r70);
@@ -1081,12 +1082,7 @@ static inline sVec4 vec_16A510(char* p)
     return *(sVec4*)p;
 }
 
-struct sVec2_16A510 {
-    float x, y;
-    sVec2_16A510(float ax, float ay) : x(ax), y(ay) {}
-};
-
-static inline float Length_16A510(const sVec2_16A510& v)
+static inline float Length_16A510(const sVec2& v)
 {
     return Sqrt_16A510(v.x * v.x + v.y * v.y);
 }
@@ -1141,7 +1137,7 @@ extern "C" void func_0016A510(char* p)
                                Scale_16A510(vec_16A510(rider + 0x1C0), self->r5C * rot.x));
     sVec4 t = Sub_16A510(self->pos, self->target);
     self->yaw = Atan2_16A510(t.y, t.x);
-    float h = Length_16A510(sVec2_16A510(t.x, t.y));
+    float h = Length_16A510(sVec2(t.x, t.y));
     self->x48 = Atan2_16A510(t.z, h);
     func_00160028(p + 0x70, self->r68);
     func_00160130(p + 0x70, self->r6C);
@@ -1449,12 +1445,7 @@ static inline sVec4 vec_16AD98(char* p)
     return *(sVec4*)p;
 }
 
-struct sVec2_16AD98 {
-    float x, y;
-    sVec2_16AD98(float ax, float ay) : x(ax), y(ay) {}
-};
-
-static inline float Length_16AD98(const sVec2_16AD98& v)
+static inline float Length_16AD98(const sVec2& v)
 {
     return Sqrt_16AD98(v.x * v.x + v.y * v.y);
 }
@@ -1511,7 +1502,7 @@ extern "C" void func_0016AD98(char* p)
         sVec4 v = vec_16AD98(rider + 0x1B0);
         sVec4* pv = &v;
         float a = self->dist * 0.01745329424738884f;
-        yaw = Atan2_16AD98(v.z, Length_16AD98(sVec2_16AD98(v.x, v.y))) - a;
+        yaw = Atan2_16AD98(v.z, Length_16AD98(sVec2(v.x, v.y))) - a;
         float b = self->r5C * 0.01745329424738884f;
         pit = b + Atan2_16AD98(pv->y, pv->x);
         k = self->oz;
@@ -1642,12 +1633,7 @@ static inline sVec4 vec_B180(char* p)
     return *(sVec4*)p;
 }
 
-struct sVec2_B180 {
-    float x, y;
-    sVec2_B180(float ax, float ay) : x(ax), y(ay) {}
-};
-
-static inline float Length_B180(const sVec2_B180& v)
+static inline float Length_B180(const sVec2& v)
 {
     return Sqrt_B180(v.x * v.x + v.y * v.y);
 }
@@ -1740,7 +1726,7 @@ extern "C" void func_0016B180(char* p)
         sVec4 v = vec_B180(rider + 0x1B0);
         sVec4* pv = &v;
         float a = self->dist * 0.01745329424738884f;
-        yaw = Atan2_B180(v.z, Length_B180(sVec2_B180(v.x, v.y))) - a;
+        yaw = Atan2_B180(v.z, Length_B180(sVec2(v.x, v.y))) - a;
         float b = self->r5C * 0.01745329424738884f;
         pit = b + Atan2_B180(pv->y, pv->x);
         k = self->oz;
@@ -1775,7 +1761,7 @@ extern "C" void func_0016B180(char* p)
     }
     sVec4 t2 = Sub_B180(self->pos, self->target);
     self->yaw = Atan2_B180(t2.y, t2.x);
-    float h = Length_B180(sVec2_B180(t2.x, t2.y));
+    float h = Length_B180(sVec2(t2.x, t2.y));
     self->x48 = Atan2_B180(t2.z, h);
     func_00160028(p + 0x70, self->r68);
     func_00160130(p + 0x70, self->r6C);
