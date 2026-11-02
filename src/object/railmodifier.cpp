@@ -48,6 +48,11 @@ public:
     virtual void v05(void* p);
 };
 
+// A 0x40-byte rail element (opaque here).
+struct sRailElem40 {
+    char data[0x40];
+};
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -3763,18 +3768,15 @@ struct sVEntry003610E0 {
     void (*fn)(void*);
 };
 
-struct sElem003610E0 {
-    char data[0x40];
-};
 
-extern "C" sElem003610E0* func_003610E0(void* self, int i)
+extern "C" sRailElem40* func_003610E0(void* self, int i)
 {
     char* obj = (char*)self + 0x14;
     if (*(unsigned short*)((char*)self + 0x26) & 1) {
         sVEntry003610E0* vt = *(sVEntry003610E0**)((char*)self + 0x20);
         vt[51].fn(obj + vt[51].delta);
     }
-    return &(*(sElem003610E0**)((char*)self + 0x44))[i];
+    return &(*(sRailElem40**)((char*)self + 0x44))[i];
 }
 #endif
 
@@ -4422,17 +4424,14 @@ struct sVEntry00361800 {
     void (*fn)(void*);
 };
 
-struct sElem00361800 {
-    char data[0x40];
-};
 
-extern "C" sElem00361800* func_00361800(void* self, int i)
+extern "C" sRailElem40* func_00361800(void* self, int i)
 {
     if (*(unsigned short*)((char*)self + 0x12) & 1) {
         sVEntry00361800* vt = *(sVEntry00361800**)((char*)self + 0xC);
         vt[51].fn((char*)self + vt[51].delta);
     }
-    return &(*(sElem00361800**)((char*)self + 0x74))[i];
+    return &(*(sRailElem40**)((char*)self + 0x74))[i];
 }
 #endif
 
