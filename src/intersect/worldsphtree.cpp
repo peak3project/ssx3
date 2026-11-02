@@ -91,6 +91,12 @@ struct sWsOctNode {
     void** list;                    // 0x20
 };
 
+// Collector of found objects (array and count pointers).
+struct sWsCollect {
+    void** arr;
+    int* count;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2342,14 +2348,10 @@ struct sOct_9598 {
     int pad20[2];
     void** list;                    // 0x28
 };
-struct sColl_9598 {
-    void** arr;
-    int* count;
-};
-extern "C" void descendRec_9598(void* self, sColl_9598* out) __asm__("func_00340B18");
+extern "C" void descendRec_9598(void* self, sWsCollect* out) __asm__("func_00340B18");
 
 // nash::Cell::descend<OverlapListCallback>
-static inline void descend_9598(void** n, sColl_9598* cb)
+static inline void descend_9598(void** n, sWsCollect* cb)
 {
     sOct_9598* o = (sOct_9598*)n;
     void** p;
@@ -2366,7 +2368,7 @@ static inline void descend_9598(void** n, sColl_9598* cb)
     if (n[7] != 0) descendRec_9598(n[7], cb);
 }
 
-extern "C" void func_00339598(char* self, sColl_9598* cb, sColl_9598* cb2, float* box, void** node, sWsCell* cell)
+extern "C" void func_00339598(char* self, sWsCollect* cb, sWsCollect* cb2, float* box, void** node, sWsCell* cell)
 {
     {
         void** p;
@@ -3771,12 +3773,8 @@ extern "C" void func_00340A40(sSphNode_340A40* node, sCtx_3309D8* ctx)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340B18);
 #ifdef SKIP_ASM
-struct sOctCollect {
-    void** arr;
-    int* count;
-};
 
-extern "C" void func_00340B18(void* self, sOctCollect* out)
+extern "C" void func_00340B18(void* self, sWsCollect* out)
 {
     void** p;
     for (p = *(void***)((char*)self + 0x28); p != 0; p = (void**)*p) {
