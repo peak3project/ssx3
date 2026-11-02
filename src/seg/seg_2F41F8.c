@@ -897,7 +897,39 @@ void func_003F55B8(int *p) {
 
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5638);
+#ifdef SKIP_ASM
+extern char D_00525F20[];
+extern int func_003F4C98(char *, int, int);
+extern int func_003F4C68(char *, int, int, int, int, int, int, int, int, int);
+extern int func_00424698(int, int);
+typedef struct { unsigned short family; unsigned short port; int addr; int z8; int zC; } SA5638;
+int func_003F5638(int *self, unsigned addr, int port) {
+    unsigned v;
+    if (((SA5638 *)self[1])->family != 0) return -1;
+    ((SA5638 *)self[1])->family = 2;
+    ((SA5638 *)self[1])->port = 0;
+    ((SA5638 *)self[1])->addr = 0;
+    ((SA5638 *)self[1])->z8 = 0;
+    ((SA5638 *)self[1])->zC = 0;
+    ((unsigned char *)self[1])[2] = port >> 8;
+    ((unsigned char *)self[1])[3] = port;
+    v = addr;
+    ((unsigned char *)self[1])[7] = v;
+    v >>= 8;
+    ((unsigned char *)self[1])[6] = v;
+    v >>= 8;
+    ((unsigned char *)self[1])[5] = v;
+    v >>= 8;
+    ((unsigned char *)self[1])[4] = v;
+    func_00424698(self[1], self[1] + 0x20);
+    func_003F4C98(D_00525F20, 'sess', 'conn');
+    func_003F4C68(D_00525F20, 0, self[0], 0, self[1], 0x10, 0, 0, 0, 0);
+    self[4] = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5738);
