@@ -22,6 +22,7 @@ struct sVec4 : t4Vector
 {
     sVec4() {}
     sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+    sVec4(const sVec3& v, float aw) { x = v.x; y = v.y; z = v.z; w = aw; }
 } __attribute__((aligned(16)));
 
 // Global vectors and a matrix in .bss that the trigger code reads (set up elsewhere at startup).
@@ -647,16 +648,10 @@ static inline sVec3 operator+(const sVec3& a, float s)
     return sVec3(a.x + s, a.y + s, a.z + s);
 }
 
-struct sCTVec4K2 {
-    float x, y, z, w;
-    sCTVec4K2() {}
-    sCTVec4K2(const sVec3& v, float w_) : x(v.x), y(v.y), z(v.z), w(w_) {}
-} __attribute__((aligned(16)));
-
 struct sCTBoxK2 {
-    sCTVec4K2 min;
-    sCTVec4K2 max;
-    sCTBoxK2(const sCTVec4K2& a, const sCTVec4K2& b) : min(a), max(b) {}
+    sVec4 min;
+    sVec4 max;
+    sCTBoxK2(const sVec4& a, const sVec4& b) : min(a), max(b) {}
 };
 
 // Bounding box of a trigger volume: centre +- the largest half-extent.
@@ -665,7 +660,7 @@ extern "C" sCTBoxK2 func_001721C0(char* obj)
     float r = func_001731C0((float*)(obj + 0x18));
     sVec3 rv(r, r, r);
     const sVec3& c = *(sVec3*)obj;
-    return sCTBoxK2(sCTVec4K2(c - r, 1.0f), sCTVec4K2(c + r, 1.0f));
+    return sCTBoxK2(sVec4(c - r, 1.0f), sVec4(c + r, 1.0f));
 }
 #endif
 
@@ -673,25 +668,6 @@ extern "C" sCTBoxK2 func_001721C0(char* obj)
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00172278);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
-
-struct sV4_2278 {
-    float x, y, z, w;
-    sV4_2278() {}
-    sV4_2278(const sVec3& v, float d)
-    {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-        w = d;
-    }
-    sV4_2278(float a, float b, float c, float d)
-    {
-        x = a;
-        y = b;
-        z = c;
-        w = d;
-    }
-} __attribute__((aligned(16)));
 
 struct sMtx_2278;
 
@@ -750,7 +726,7 @@ static inline void vu0Copy_2278(sMtx_2278* d, const sMtx_2278* s)
 }
 
 // PORT: PS2-only VU0 inline asm (scale matrix rows by the components of s).
-static inline void vu0ScaleRows_2278(sMtx_2278* d, const sMtx_2278* m, const sV4_2278& s)
+static inline void vu0ScaleRows_2278(sMtx_2278* d, const sMtx_2278* m, const sVec4& s)
 {
     __asm__ __volatile__(
         "lqc2      $vf1, %2\n"
@@ -772,12 +748,12 @@ static inline void vu0ScaleRows_2278(sMtx_2278* d, const sMtx_2278* m, const sV4
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix times vector into the last matrix row).
-static inline void vu0MulVecRow3_2278(sMtx_2278* m, const sV4_2278& v);
+static inline void vu0MulVecRow3_2278(sMtx_2278* m, const sVec4& v);
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix times vector, vector loaded first).
-static inline sV4_2278 vu0MulVec2_2278(const sMtx_2278* m, const sV4_2278& v)
+static inline sVec4 vu0MulVec2_2278(const sMtx_2278* m, const sVec4& v)
 {
-    sV4_2278 r;
+    sVec4 r;
     __asm__ __volatile__(
         "lqc2      $vf8, %2\n"
         "lqc2      $vf4, 0x0(%1)\n"
@@ -812,7 +788,7 @@ struct sMtx_2278 {
 } __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix times vector into the last matrix row).
-static inline void vu0MulVecRow3_2278(sMtx_2278* m, const sV4_2278& v)
+static inline void vu0MulVecRow3_2278(sMtx_2278* m, const sVec4& v)
 {
     __asm__ __volatile__(
         "lqc2      $vf4, 0x0(%0)\n"
@@ -873,7 +849,7 @@ struct sXform_2278 {
         R.m[3][3] = 1.0f; \
     }
 
-static inline sMtx_2278 scaled_2278(const sMtx_2278& m, const sV4_2278& s)
+static inline sMtx_2278 scaled_2278(const sMtx_2278& m, const sVec4& s)
 {
     sMtx_2278 r;
     vu0ScaleRows_2278(&r, &m, s);
@@ -881,11 +857,11 @@ static inline sMtx_2278 scaled_2278(const sMtx_2278& m, const sV4_2278& s)
 }
 
 
-extern "C" int func_00172278(const sXform_2278* t, const sV4_2278* pt)
+extern "C" int func_00172278(const sXform_2278* t, const sVec4* pt)
 {
     sMtx_2278 M = (const sMtx_2278&)D_004FF1A0;
     float one = 1.0f;
-    M = scaled_2278(M, sV4_2278(one / t->scale[0], one / t->scale[1], one / t->scale[2], one));
+    M = scaled_2278(M, sVec4(one / t->scale[0], one / t->scale[1], one / t->scale[2], one));
     {
         sMtx_2278* m = &M;
         sMtx_2278 R;
@@ -904,8 +880,8 @@ extern "C" int func_00172278(const sXform_2278* t, const sV4_2278* pt)
         ROT_2278(R, &D_004FF140.x, -t->rot[1]);
         *m *= R;
     }
-    vu0MulVecRow3_2278(&M, sV4_2278(sVec3(-t->pos[0], -t->pos[1], -t->pos[2]), one));
-    sV4_2278 v = vu0MulVec2_2278(&M, *pt);
+    vu0MulVecRow3_2278(&M, sVec4(sVec3(-t->pos[0], -t->pos[1], -t->pos[2]), one));
+    sVec4 v = vu0MulVec2_2278(&M, *pt);
     return v.x * v.x + v.y * v.y + v.z * v.z <= 1.0f;
 }
 #endif
@@ -915,16 +891,10 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00172840);
 #ifdef SKIP_ASM
 extern "C" float func_001731C0(float* v);
 
-struct sCTVec4K2b {
-    float x, y, z, w;
-    sCTVec4K2b() {}
-    sCTVec4K2b(const sVec3& v, float w_) : x(v.x), y(v.y), z(v.z), w(w_) {}
-} __attribute__((aligned(16)));
-
 struct sCTBoxK2b {
-    sCTVec4K2b min;
-    sCTVec4K2b max;
-    sCTBoxK2b(const sCTVec4K2b& a, const sCTVec4K2b& b) : min(a), max(b) {}
+    sVec4 min;
+    sVec4 max;
+    sCTBoxK2b(const sVec4& a, const sVec4& b) : min(a), max(b) {}
 };
 
 // Bounding box of a trigger volume: centre +- the largest half-extent.
@@ -933,7 +903,7 @@ extern "C" sCTBoxK2b func_00172840(char* obj)
     float r = func_001731C0((float*)(obj + 0x18));
     sVec3 rv(r, r, r);
     const sVec3& c = *(sVec3*)obj;
-    return sCTBoxK2b(sCTVec4K2b(c - r, 1.0f), sCTVec4K2b(c + r, 1.0f));
+    return sCTBoxK2b(sVec4(c - r, 1.0f), sVec4(c + r, 1.0f));
 }
 #endif
 
