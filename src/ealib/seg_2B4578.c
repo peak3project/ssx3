@@ -6937,25 +6937,6 @@ struct H_1298 {
     int padCAC;
     struct T_1298 *tbl;
 };
-struct Ent_1298 {
-    char pad0[4];
-    short list[15];
-    char pad22;
-    unsigned char n;
-    char pad24[4];
-    short f28;
-    char pad2A[0x8C - 0x2A];
-};
-struct G_1298 {
-    char pad0[0x2F];
-    unsigned char cnt2;
-    unsigned char cnt1;
-    char pad31[0x49 - 0x31];
-    unsigned char mode;
-    char pad4A[0x1F0 - 0x4A];
-    struct Ent_1298 *ents;
-};
-extern struct G_1298 D_0050A8E8_1298 __asm__("D_0050A8E8");
 extern struct H_1298 D_0050AD00_1298 __asm__("D_0050AD00");
 extern void f_A550_1298(int) __asm__("func_003BA550");
 
@@ -6964,32 +6945,32 @@ void func_003C1298(void) {
     int j;
     int h;
 
-    for (i = 0; i < D_0050A8E8_1298.cnt1; i++) {
-        if (D_0050AD00_1298.tbl->e[i].key != 0 && D_0050A8E8_1298.ents[i].f28 == -1) {
+    for (i = 0; i < D_0050A8E8.setup.cfg.f10; i++) {
+        if (D_0050AD00_1298.tbl->e[i].key != 0 && D_0050A8E8.f1F0[i].f28 == -1) {
             if (D_0050AD00_1298.k[i].key != D_0050AD00_1298.tbl->e[i].key) {
                 D_0050AD00_1298.k[i].val = D_0050AD00_1298.tbl->e[i].key & 0x7FFFFF;
             }
             if (D_0050AD00_1298.k[i].val == 0) {
-                for (j = 0; j < D_0050A8E8_1298.ents[i].n; j++) {
-                    h = D_0050A8E8_1298.ents[i].list[j];
+                for (j = 0; j < D_0050A8E8.f1F0[i].f23; j++) {
+                    h = D_0050A8E8.f1F0[i].f04[j];
                     D_0050AD00_1298.tbl->e[h].key = 0;
                     f_A550_1298(h);
-                    if (D_0050A8E8_1298.mode == 2) {
+                    if (D_0050A8E8.setup.cfg.f29 == 2) {
                         D_0050AD00_1298.tbl->e[h + 0x18].key = 0;
                     }
                 }
             }
         }
     }
-    for (i = 0; i < D_0050A8E8_1298.cnt2; i++) {
-        if (D_0050AD00_1298.tbl->f[i].a != 0 && D_0050A8E8_1298.ents[i + D_0050A8E8_1298.cnt1].f28 == -1) {
+    for (i = 0; i < D_0050A8E8.setup.cfg.f0F; i++) {
+        if (D_0050AD00_1298.tbl->f[i].a != 0 && D_0050A8E8.f1F0[i + D_0050A8E8.setup.cfg.f10].f28 == -1) {
             if (D_0050AD00_1298.k2[i].key != D_0050AD00_1298.tbl->f[i].a) {
                 D_0050AD00_1298.k2[i].val = 0;
             }
             if (D_0050AD00_1298.k2[i].val == -1) {
-                for (j = 0; j < D_0050A8E8_1298.ents[i + D_0050A8E8_1298.cnt1].n; j++) {
-                    h = D_0050A8E8_1298.ents[i + D_0050A8E8_1298.cnt1].list[j];
-                    D_0050AD00_1298.tbl->f[h - D_0050A8E8_1298.cnt1].a = 0;
+                for (j = 0; j < D_0050A8E8.f1F0[i + D_0050A8E8.setup.cfg.f10].f23; j++) {
+                    h = D_0050A8E8.f1F0[i + D_0050A8E8.setup.cfg.f10].f04[j];
+                    D_0050AD00_1298.tbl->f[h - D_0050A8E8.setup.cfg.f10].a = 0;
                     f_A550_1298(h);
                 }
             }
