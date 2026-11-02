@@ -22,6 +22,16 @@ struct sPtRenderState {
     short pad;
 };
 
+// Globals declared by several functions below.
+extern char D_00459B90[];
+extern void* D_00487FD8[];
+extern void* D_004886B0[];
+extern char* D_004A289C;
+extern void* D_004A28A8;
+extern int D_004A3AFC;
+extern int D_004A3B18;
+extern int D_00538850[];
+
 // ---- end of shared declarations ----
 
 //100%
@@ -44,7 +54,6 @@ struct sVt22_BW {
 
 extern const sVt9_BW D_00488DA8;
 extern const sVt22_BW D_00488DF0;
-extern char D_00459B90[];
 extern char D_00487968[];
 extern char D_00487980[];
 extern "C" void* cRider_cRider(void* self);
@@ -248,7 +257,6 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002DD0B8);
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002DDAB8);
 #ifdef SKIP_ASM
-extern char* D_004A289C;
 extern int D_004A4528;
 
 struct sGs_DAB8 {
@@ -685,7 +693,6 @@ extern "C" void func_002DE368(void* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002DE398);
 #ifdef SKIP_ASM
-extern int D_004A3AFC;
 
 
 // PORT: PS2-only inline asm (float absolute value).
@@ -965,7 +972,6 @@ struct sWakeVtIF920 {
     int (*fn)(void*);
 };
 
-extern void* D_004A28A8;
 int func_0011FE98(void*);
 int func_0011FEE8(void*);
 int func_00312AA0(void*, int);
@@ -1245,7 +1251,6 @@ extern "C" void func_002E0EE8(sWakeFx0EE8* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E10B8);
 #ifdef SKIP_ASM
-extern int D_004A3AFC;
 
 struct sWake10B8 {
     char pad0[0x18];
@@ -2104,9 +2109,7 @@ struct sWakeMgr2E18 {
     sWakePair2E18 pairs[1];     // 0x60
 };
 
-extern void* D_004886B0[];
 extern char* D_004A5B80;
-extern int D_004A3B18;
 void* func_002E2860(void* self);
 void* func_002E3110(void* self);
 extern "C" void* func_002F4380(void* self);
@@ -2225,9 +2228,7 @@ struct sBWVEntry2 {
     void (*fn)(void*, int, int);
 };
 
-extern void* D_004886B0[];
 extern char* D_004A5B80;
-extern int D_004A3B18;
 void operator_delete(int* p);
 
 extern "C" void func_002E3060(void* self, int flags)
@@ -2322,7 +2323,6 @@ extern "C" void func_002E3578(void)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3668);
 #ifdef SKIP_ASM
-extern char* D_004A289C;
 
 extern "C" void func_002E3668(void)
 {
@@ -2350,7 +2350,6 @@ struct sVt22_3680 {
 
 extern const sVt9_3680 D_004889C8;
 extern const sVt22_3680 D_00488A10;
-extern char D_00459B90[];
 
 struct sWakeFade_3930;
 extern "C" void* cRider_cRider(void* self);
@@ -2772,7 +2771,6 @@ extern "C" void func_002E46C8(char* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E47E8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern char* D_004A5B80;
 extern "C" void func_002EB8F0(void);
 // PORT: cWorldPainterMan_reset is defined with an unused self param; this caller passes none.
@@ -2975,7 +2973,6 @@ extern "C" int func_002E4C90(void* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4CB0);
 #ifdef SKIP_ASM
-extern int D_00538850[];
 
 extern "C" void func_002E4CB0(void)
 {
@@ -2994,7 +2991,6 @@ struct sWakePoolEntry {
     char data[0x64];
 };
 
-extern int D_00538850[];
 // same object as the unit's later `extern sWakeSlot D_005382C0[]` (0x64-byte slots)
 extern sWakePoolEntry D_wakePool[] __asm__("D_005382C0");
 extern sWakePoolEntry* D_004A3B1C;
@@ -3019,7 +3015,6 @@ struct sWakeSlot {
 };
 
 extern sWakeSlot D_005382C0[];
-extern int D_00538850[];
 
 extern "C" void func_002E4D30(void* p)
 {
@@ -3237,7 +3232,6 @@ extern "C" void func_002E5430(sWakeGrid5430* self, sWakeVec5430* d)
 INCLUDE_ASM("visualfx/boardwakefx", func_002E55D8);
 #ifdef SKIP_ASM
 struct sMat_6008;
-extern char* D_004A289C;
 
 
 struct sMat55D8 {
@@ -3495,9 +3489,7 @@ extern "C" void func_002E55D8(int* p, sMat_6008* m, float x, float y, float z)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E5920);
 #ifdef SKIP_ASM
-extern void* D_00487FD8[];
 extern "C" void func_00319CC8(void);
-extern void* D_004A28A8;
 extern char D_004A3B20[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
@@ -3549,7 +3541,6 @@ extern "C" void* func_002E5920(sWake5920* self, void* a1)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/boardwakefx", func_002E5D18);
 #ifdef SKIP_ASM
-extern void* D_00487FD8[];
 extern "C" void func_00319CC8(void);
 extern "C" void func_002E4F28(int* self, int flags);
 extern "C" void func_003546C8(void* self, int flags);
@@ -3573,7 +3564,6 @@ extern "C" void func_002E5D18(void* self, int flags)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("visualfx/boardwakefx", func_002E5DA0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern int D_004A473C;
 extern float D_004A4740;
 extern float D_004A4744;
@@ -3716,7 +3706,6 @@ struct sWakeFx_6008 {
 
 extern int D_004A4524;
 extern int D_004A4760[1];
-extern void* D_004A28A8;
 extern sRsCtx_6008* D_004A5B80_6008 __asm__("D_004A5B80");
 extern sPtRenderState D_00501420_6008[] __asm__("D_00501420");
 extern t4Vector D_004FF130;
@@ -3878,7 +3867,6 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E64C0);
 #ifdef SKIP_ASM
 void cMemMan_free(void* p);
 extern "C" void func_0037C720(void* mgr, float f);
-extern char* D_004A289C;
 
 class cVbDtor002E64C0 : virtual public cRiderVb_bwf {
 public:
