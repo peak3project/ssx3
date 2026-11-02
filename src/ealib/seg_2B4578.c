@@ -13256,7 +13256,6 @@ struct G_C070 {
 };
 extern struct Hdr_C070 D_005175C0_C070 __asm__("D_005175C0");
 extern struct G_C070 D_00515B40_C070 __asm__("D_00515B40");
-extern unsigned char D_00515B45;
 extern struct Hdr_C070 *D_00515D40;
 extern void **D_00515D44;
 extern void **D_00515D48;
