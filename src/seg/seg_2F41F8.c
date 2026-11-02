@@ -2722,7 +2722,48 @@ int func_003F9208(void) { return D_004A4BDC != 0; }
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9218);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9530);
+#ifdef SKIP_ASM
+extern int func_003F9208(void);
+extern int func_00266760(int, char *, int, int);
+typedef struct { int f0; int f4[17]; char pad[0x428 - 0x48]; int h; } E9530;
+typedef struct { int f0; int f4; } S9530;
+extern E9530 *D_9530e __asm__("D_004A4BDC");
+extern S9530 *D_9530s __asm__("D_004A4BD8");
+int func_003F9530(void) {
+    E9530 *e;
+    S9530 *s;
+    if (func_003F9208() == 0) return 2;
+    e = D_9530e;
+    s = D_9530s;
+    if (e == 0 || s == 0) return 2;
+    e->f4[0] = 0;
+    e->f4[1] = 0;
+    e->f4[2] = 0;
+    e->f4[3] = 0;
+    e->f4[4] = 0;
+    e->f4[5] = 0;
+    e->f4[6] = 0;
+    e->f4[7] = 0;
+    e->f4[8] = 0;
+    e->f4[9] = 0;
+    e->f4[10] = 0;
+    e->f4[11] = 0;
+    e->f4[12] = 0;
+    e->f4[13] = 0;
+    e->f4[14] = 0;
+    e->f4[15] = 0;
+    e->f4[16] = 0;
+    s->f0 = 0;
+    s->f4 = 0;
+    func_00266760(e->h, (char *)s, 0x74, 4);
+    D_9530s = 0;
+    func_00266760(D_9530e->h, (char *)D_9530e, 0x42C, 4);
+    D_9530e = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F95E8);
