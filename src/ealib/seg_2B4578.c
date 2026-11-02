@@ -10761,52 +10761,29 @@ void func_003C8430(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8468);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Node_8468 {
-    int pad0;
-    void (*fn)(struct Node_8468 *);
-    struct Node_8468 *next;
-};
-struct Ent_8468 {
-    char c0;
-    char pad1[3];
-    float a[12];
-    float b[2];
-    float scale;
-    struct Node_8468 *node;
-};
-struct G_8468 {
-    char pad0[5];
-    unsigned char n;
-    char pad1[0xE8 - 6];
-    float f[6];
-    float g[1];
-    char pad2[0x1DC - 0x104];
-    char *tab;
-};
-extern struct G_8468 D_00515B40_8468 __asm__("D_00515B40");
-extern void func_003B5E98_8468(struct Node_8468 *) __asm__("func_003B5E98");
+extern void func_003B5E98_8468(struct sB40Node *) __asm__("func_003B5E98");
 
 void func_003C8468(int idx) {
-    struct Ent_8468 *e = (struct Ent_8468 *)(D_00515B40_8468.tab + idx * 0x60);
+    struct sB40Ent *e = &D_00515B40.f1DC[idx];
     int i;
-    struct Node_8468 *nd;
-    struct Node_8468 *next;
+    struct sB40Node *nd;
+    struct sB40Node *next;
     for (i = 0; i < 1; i++) {
-        D_00515B40_8468.g[i] += e->b[i] * e->scale;
+        D_00515B40.f100[i] += e->f34[i] * e->f3C;
     }
-    for (i = 0; i < D_00515B40_8468.n; i++) {
-        D_00515B40_8468.f[i] += e->a[i] * e->scale;
+    for (i = 0; i < D_00515B40.f05; i++) {
+        D_00515B40.fE8[i] += e->f04[i] * e->f3C;
     }
     do {
-        if (e->node->fn != 0) {
-            e->node->fn(e->node);
+        if (e->f40->f04 != 0) {
+            e->f40->f04(e->f40);
         }
-        nd = e->node;
-        next = nd->next;
+        nd = e->f40;
+        next = nd->f08;
         func_003B5E98_8468(nd);
-        e->node = next;
+        e->f40 = next;
     } while (next != 0);
-    e->c0 = 0;
+    e->f00 = 0;
 }
 #endif
 
