@@ -49,6 +49,26 @@ struct sFloat4 {
     float x, y, z, w;
 };
 
+// The rider's cBeing interface (rider + 0x6C0), slots in the prototype's order (as in seg/seg_1FBE38).
+struct t4Vector;
+struct t4Matrix;
+struct tInstanceRecord;
+class cBeing {
+public:
+    virtual ~cBeing();
+    virtual const t4Vector* getVelocity() const;
+    virtual int isIntersecting(tInstanceRecord* rec) const;
+    virtual void applyBoost(const t4Vector& impulse);
+    virtual const t4Vector* getPosition() const;
+    virtual const t4Matrix* getTransform() const;
+    virtual int getAIIndex() const;
+    virtual bool isHuman() const;
+    virtual bool isComputer() const;
+    virtual void transport(const t4Matrix& m);
+    virtual void resetToPath();
+    virtual void initForMission(const t4Matrix& m);
+};
+
 // A HUD sprite: texture id and UV rectangle.
 struct sHudSprite {
     int tex;                // 0x0
@@ -1472,15 +1492,6 @@ extern "C" void func_0021F338(char* self, char* obj, int n, int x, t2Vector* pos
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F660);
 #ifdef SKIP_ASM
-struct Obj_F660 {
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual int v07();
-};
 extern signed char D_00535C10[];
 extern int D_00536640[];
 extern char D_0046ED68[];
@@ -1529,8 +1540,8 @@ extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag
     if (flag == 0) {
         cBE_getInterface_Fv(cBE_getBE(), 0);
         signed char mode = D_00535C10[0];
-        Obj_F660* o = (Obj_F660*)(r + 0x6C0);
-        int k = o->v07();
+        cBeing* o = (cBeing*)(r + 0x6C0);
+        int k = o->getAIIndex();
         int val = D_00536640[k];
         if (mode == 0 || mode == 5) {
             int t = (int)((float)val * 0.01666666753590107f);
@@ -1560,15 +1571,6 @@ extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F9B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Obj_F9B0 {
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual int v07();
-};
 extern sColour D_004C8648;
 extern char D_004A2300[];
 extern "C" void* cBE_getBE();
@@ -1631,8 +1633,8 @@ extern "C" void func_0021F9B0(char* self, char* obj, char* rider, int x, float t
         *(float*)(tx2 + 0x38) = *(float*)(tx2 + 0x30) * sc.x;
         *(float*)(tx2 + 0x3C) = *(float*)(tx2 + 0x34) * sc.y;
         *(sColour*)(*(char**)(self + 0x42C) + 0x40) = col;
-        Obj_F9B0* o = (Obj_F9B0*)(rider + 0x6C0);
-        sprintf(buf, D_004A2300, func_00153520(iface, o->v07(), id), func_00153350(iface, id));
+        cBeing* o = (cBeing*)(rider + 0x6C0);
+        sprintf(buf, D_004A2300, func_00153520(iface, o->getAIIndex(), id), func_00153350(iface, id));
         func_00391CB0(*(char**)(self + 0x42C), p.x, p.y, buf);
         tx = *(char**)(self + 0x42C);
         *(float*)(tx + 0x38) = *(float*)(tx + 0x30) * scale.x;
