@@ -4116,7 +4116,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1BB8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 typedef struct { int a; int b; int c; int d; int e; int pad[3]; } S_1BB8;
-extern int D_00450C38_1BB8[] __asm__("D_00450C38");
 
 int func_003E1BB8(int a, void *b, int c) {
     S_1BB8 s;
@@ -4125,7 +4124,7 @@ int func_003E1BB8(int a, void *b, int c) {
     s.c = c;
     s.d = 0;
     s.e = 0;
-    return FILESYS_atomic(func_003E1AD0, 0, D_00450C38_1BB8[0], &s);
+    return FILESYS_atomic(func_003E1AD0, 0, D_00450C38, &s);
 }
 #endif
 
