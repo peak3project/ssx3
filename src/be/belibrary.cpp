@@ -443,7 +443,7 @@ extern "C" void func_0014B1B0(void* self, int rider, int b, int c)
 {
     int ch = 0;
     int profile = func_0014AC70(self, rider, &ch);
-    func_00152368((char*)D_004A6CA8 + profile * 0x9b50 + ch * 0xf88, b, c);
+    func_00152368(&D_004A6CA8_pc[profile][ch], b, c);
 }
 #endif
 
