@@ -503,6 +503,35 @@ static inline void sndPushVoice(void* vself, int a, int b)
     self->a8[self->mgr->sub.cur] = b;
 }
 
+// Pushes a voice on cSSXAudio and records its a4 / a8 values.
+static inline void sndBeginVoice(cSSXAudio* self, int a, int b)
+{
+    cBankManager* m = self->mgr;
+    cSndPlayOpts* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1988,33 +2017,6 @@ static inline int vcall_48D0(char* obj, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-static inline void snd48D0AddVoice(cSSXAudio* self, int a, int b)
-{
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-}
 
 #define SND_48D0_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_48D0_MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -2074,7 +2076,7 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
             flag = func_00288AE0(self) == 0;
         }
     }
-    snd48D0AddVoice(self, 10, b);
+    sndBeginVoice(self, 10, b);
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = vol;
@@ -4672,33 +4674,6 @@ extern "C" void func_002DA1C0(sOutDEF0* out, sV3DEF0* in);
 
 
 
-static inline void sndDEF0Init(cSSXAudio* self, int a, int b)
-{
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-}
 
 // Grind/ride loop sound: reference-counted start (pushes the voice at the rider's position) and stop.
 extern "C" void func_0029DEF0(void* vself, int on)
@@ -4722,7 +4697,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 func_002DA1C0(&out, &pos);
                 *(sOutDEF0*)&self->xf = out;
             }
-            sndDEF0Init(self, 8, 2);
+            sndBeginVoice(self, 8, 2);
             cBankManager** p0 = self->p118;
             int v = func_0029E438(self, (char*)&self->xf);
             cBankManager* m3 = *p0;
