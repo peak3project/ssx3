@@ -16520,14 +16520,11 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D2A68);
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2C20);
 #ifdef SKIP_ASM
-// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003D5450_2C20(int) __asm__("func_003D5450");
 extern int func_003D4BB0(int);
 extern double func_00413AF8(float);
 extern double func_00411F18_2C20(double, double) __asm__("func_00411F18");
 extern int func_004126A0_2C20(double) __asm__("func_004126A0");
-extern char *D_0044F420_2C20[] __asm__("D_0044F420");
 
 static inline int bitclear_2C20(int x) {
     return !(x & 1);
@@ -16536,7 +16533,7 @@ static inline int bitclear_2C20(int x) {
 int func_003D2C20(int m, int arg1) {
     float ratio, max;
     unsigned int i;
-    char *g;
+    struct sPath *g;
     int *base;
     int *tab;
     int *e;
@@ -16554,12 +16551,12 @@ int func_003D2C20(int m, int arg1) {
     while (i < 24 && bitclear_2C20((long)m >> i)) {
         i++;
     }
-    g = D_0044F420_2C20[0];
-    base = *(int **)(g + 0x34);
+    g = D_0044F420;
+    base = (int *)g->f34;
     if (*((unsigned char *)base + 0xD) < i) {
         return 0;
     }
-    tab = *(int **)(g + 0x4C);
+    tab = g->f4C;
     for (e = base + tab[i]; e < base + tab[i + 1] - 2; e += 2) {
         ratio = (float)((unsigned int)(e[2] - e[0]) << 7) / (float)(unsigned int)e[1];
         if (max < ratio) {
@@ -16568,7 +16565,7 @@ int func_003D2C20(int m, int arg1) {
     }
     r = func_004126A0_2C20(func_00411F18_2C20(func_00413AF8(ratio * arg1), 0.5));
     D_0044F430 = 0;
-    D_0044F420_2C20[0] = 0;
+    D_0044F420 = 0;
     return r;
 }
 #endif
