@@ -905,12 +905,10 @@ int func_003DCE90(struct H_CE90 h) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCF10);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00519AD8_CF10[] __asm__("D_00519AD8");
 typedef struct { unsigned char a, b, c, d; } T_CF10;
 
 int func_003DCF10(T_CF10 arg0) {
-    return *(int *)((char*)(D_00519AD8_CF10[0]) + arg0.d * 0x30 + 0xC);
+    return D_00519AD8[arg0.d].f0C;
 }
 #endif
 
