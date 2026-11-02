@@ -15905,13 +15905,10 @@ void func_003D2218(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2290);
 #ifdef SKIP_ASM
-struct P_2290 { char pad[0x34]; int valid; char pad2[0x58 - 0x38]; int arr[24]; char pad3[0x924 - 0xB8]; int tail; };
-extern struct P_2290 D_00517610_2290[4] __asm__("D_00517610");
 extern unsigned int D_0044F430_2290 __asm__("D_0044F430");
 extern unsigned char D_0044F42C_2290 __asm__("D_0044F42C");
 extern unsigned char D_0044F42D_2290 __asm__("D_0044F42D");
 extern int D_0044F43C_2290 __asm__("D_0044F43C");
-extern int D_0044F420_2290 __asm__("D_0044F420");
 
 int func_003D2290(void) {
     int i, j, n;
@@ -15919,16 +15916,16 @@ int func_003D2290(void) {
     i = 0;
     do {
         n = i + 1;
-        D_00517610_2290[i].valid = 0;
-        D_00517610_2290[i].tail = 0;
+        D_00517610[i].f34 = 0;
+        D_00517610[i].f924 = 0;
         for (j = 23; j >= 0; j--) {
-            D_00517610_2290[i].arr[j] = 0;
+            D_00517610[i].f58[j] = 0;
         }
         i = n;
     } while (i < 4);
     D_0044F42C_2290 = 1;
     D_0044F43C_2290 = 0x100;
-    D_0044F420_2290 = 0;
+    D_0044F420 = 0;
     D_0044F42D_2290 = 0;
     return 0;
 }
