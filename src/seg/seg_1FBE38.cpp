@@ -2847,14 +2847,12 @@ static inline char *refToPtr_00A8(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_00A8(unsigned i) { if (i == 0) return 0; return refToPtr_00A8(i); }
 extern "C" void *func_0028B180(void);
 extern "C" void func_00297950_00A8(void*, void*, int, int) __asm__("func_00297950");
-struct V3_00A8 { float x, y, z; };
-extern V3_00A8 D_004C9098_00A8 __asm__("D_004C9098");
 extern unsigned D_00A8[] __asm__("D_004FBB18");
 extern int D_004A5668;
 extern const int D_00446550[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_00A8 { int idx; int val; int pad; int type; };
-extern "C" V3_00A8 func_003000A8(int n, Ent_00A8 *e) {
+extern "C" cLunoValue func_003000A8(int n, Ent_00A8 *e) {
     if (D_004A5668 == 0) {
         D_00A8[0] = 0xFFFFFFFF;
         D_00A8[1] = 0xFFFFFFFF;
@@ -2898,7 +2896,7 @@ extern "C" V3_00A8 func_003000A8(int n, Ent_00A8 *e) {
         int b2 = buf[2];
         func_00297950_00A8(func_0028B180(), obj, b1, b2);
     }
-    return D_004C9098_00A8;
+    return D_004C9098;
 }
 #endif
 
