@@ -352,6 +352,17 @@ static inline void resetListCtx(sWsListCtx* cb)
     *cb->count = 0;
 }
 
+static inline int overlapTri(const sWsQueryBox* q, const sWsTriObj* n)
+{
+    int r = 0;
+    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
+        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
+        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
+        r = 1;
+    }
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1033,16 +1044,6 @@ struct sWsRayHit;
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapTri_333EF8(const sWsQueryBox* q, const sWsTriObj* n)
-{
-    int r = 0;
-    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
-        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
-        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline int overlapBox_333EF8(const sWsQueryBox* q, const sWsBox* o)
 {
@@ -1083,7 +1084,7 @@ extern "C" int func_00333EF8(void* vself, void* vq, sWsRayHit* vhits, int cap, i
         if ((obj->flags & 0x41) != 0x41) {
             continue;
         }
-        if (!overlapTri_333EF8(q, obj)) {
+        if (!overlapTri(q, obj)) {
             continue;
         }
         t4Vector uv;
@@ -1338,16 +1339,6 @@ struct sCtx_335960 {
 extern "C" void func_003279D0(void* cache, void* src, void** out);
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 
-static inline int overlap_335960(const sWsQueryBox* q, const sWsTriObj* n)
-{
-    int r = 0;
-    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
-        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
-        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline void reset_335960(sWsTriHit* h)
 {
@@ -1376,7 +1367,7 @@ extern "C" void func_00335960(void* vctx, void* vobj)
     void* node;
     float dist;
     if ((obj->flags & 0x41) != 0x41) return;
-    if (!overlap_335960(ctx->q, obj)) return;
+    if (!overlapTri(ctx->q, obj)) return;
     func_003279D0(ctx->cache, obj, &node);
     if (!func_0032B6E0(ctx->q, obj, node, &pos, &nrm, &dist, &uv, ctx->arg)) return;
     reset_335960(&ctx->hits[*ctx->count]);
