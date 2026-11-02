@@ -692,21 +692,17 @@ extern "C" void* func_0015F598(void* self, void* a1)
 //100%
 INCLUDE_ASM("camera/camera", func_0015F5B0);
 #ifdef SKIP_ASM
-struct sQuad_0015F5B0 {
-    float v[4];
-} __attribute__((aligned(16)));
-
 class cCamVObj_0015F5B0 {
 public:
     // vptr at 0x0
     virtual void v01();
-    virtual sQuad_0015F5B0* v02();
+    virtual t4Vector* v02();
 };
 
 extern "C" void* func_0015F5B0(void* self, void* a1)
 {
     char* p = *(char**)((char*)a1 + 0x4);
-    *(sQuad_0015F5B0*)self = *((cCamVObj_0015F5B0*)(p + 0x6C0))->v02();
+    *(t4Vector*)self = *((cCamVObj_0015F5B0*)(p + 0x6C0))->v02();
     return self;
 }
 #endif
@@ -3970,15 +3966,10 @@ INCLUDE_ASM("camera/camera", func_00163450);
 #ifdef SKIP_ASM
 extern "C" void* func_00168150(void* self);
 
-struct sVec4_163450
-{
-    float v[4];
-} __attribute__((aligned(16)));
-
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4_163450 Sub_163450(const sVec4_163450& a, const sVec4_163450& b)
+static inline t4Vector Sub_163450(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_163450 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3991,9 +3982,9 @@ static inline sVec4_163450 Sub_163450(const sVec4_163450& a, const sVec4_163450&
 }
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4_163450 Add_163450(const sVec4_163450& a, const sVec4_163450& b)
+static inline t4Vector Add_163450(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_163450 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -4006,9 +3997,9 @@ static inline sVec4_163450 Add_163450(const sVec4_163450& a, const sVec4_163450&
 }
 
 // PORT: PS2-only VU0 inline asm (v * s).
-static inline sVec4_163450 Scale_163450(const sVec4_163450& v, float s)
+static inline t4Vector Scale_163450(const t4Vector& v, float s)
 {
-    sVec4_163450 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4026,9 +4017,9 @@ extern "C" void func_00163450(char* self, char* trig, float a, float b, float c,
 {
     if (*(int*)(trig + 0x5C))
     {
-        sVec4_163450 t = Sub_163450(*(sVec4_163450*)(self + 0x20), *(sVec4_163450*)(self + 0x40));
+        t4Vector t = Sub_163450(*(t4Vector*)(self + 0x20), *(t4Vector*)(self + 0x40));
         *(float*)(self + 0x1E0) = 0.0f;
-        *(sVec4_163450*)(self + 0xB0) = t;
+        *(t4Vector*)(self + 0xB0) = t;
     }
     else if (*(float*)(self + 0x1E0) < 5.0f)
     {
@@ -4040,12 +4031,12 @@ extern "C" void func_00163450(char* self, char* trig, float a, float b, float c,
             float s = u2 * 3.0f - (u2 + u2) * u;
             if (s > 1.0f)
                 s = 1.0f;
-            sVec4_163450 t = Add_163450(Scale_163450(Sub_163450(*(sVec4_163450*)(self + 0x20), *(sVec4_163450*)(self + 0xB0)), 1.0f - s),
-                                        Scale_163450(*(sVec4_163450*)(self + 0x40), s));
-            *(sVec4_163450*)(self + 0x40) = t;
+            t4Vector t = Add_163450(Scale_163450(Sub_163450(*(t4Vector*)(self + 0x20), *(t4Vector*)(self + 0xB0)), 1.0f - s),
+                                        Scale_163450(*(t4Vector*)(self + 0x40), s));
+            *(t4Vector*)(self + 0x40) = t;
         }
     }
-    *(sVec4_163450*)(self + 0xA0) = *(sVec4_163450*)(trig + 0x10);
+    *(t4Vector*)(self + 0xA0) = *(t4Vector*)(trig + 0x10);
     float z;
     if (*(int*)(trig + 0x5C))
         z = f * *(float*)(self + 0x2B8) + (1.0f - f) * e;
