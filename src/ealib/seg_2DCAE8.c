@@ -2562,39 +2562,36 @@ int func_003DF980(int h) {
 INCLUDE_ASM("ealib/seg_2DCAE8", ASYNCFILE_release);
 #ifdef SKIP_ASM
 extern void MUTEX_unlock_AR(void *) __asm__("MUTEX_unlock");
-extern char *func_003DEF70_AR(int) __asm__("func_003DEF70");
 extern int func_003DD1D8(int);
-extern void releaserequest_AR(void *) __asm__("releaserequest");
-struct AF_AR { int w0; int w4; int w8; int wC; int w10; int w14; int w18; volatile int w1C; int w20; int w24; int w28; int w2C; };
 
 int ASYNCFILE_release(int h, int *a, int *b);
 int ASYNCFILE_release(int h, int *a, int *b) {
-    struct AF_AR *f;
+    struct sReq *f;
     int busy = 0;
     MUTEX_lock(D_00519C08);
-    f = (struct AF_AR *)func_003DEF70_AR(h);
+    f = func_003DEF70(h);
     if (f != 0) {
-        busy = f->w10;
+        busy = f->f10;
         if (busy == 0) {
-            f->wC = 1;
+            f->f0C = 1;
         }
     }
     MUTEX_unlock_AR(D_00519C08);
     if (f == 0 || busy != 0) {
         return -1;
     }
-    while (f->w1C != 0) {
-        func_003DD1D8(f->w1C);
+    while (f->f1C != 0) {
+        func_003DD1D8(f->f1C);
     }
-    if (f->w10 != 0) {
+    if (f->f10 != 0) {
         if (a != 0) *a = 0;
         if (b != 0) *b = 0;
-        releaserequest_AR(f);
+        releaserequest(f);
         return -1;
     }
-    if (a != 0) *a = f->w2C - f->w8;
-    if (b != 0) *b = f->w8;
-    releaserequest_AR(f);
+    if (a != 0) *a = f->f2C - f->f08;
+    if (b != 0) *b = f->f08;
+    releaserequest(f);
     return 1;
 }
 #endif
