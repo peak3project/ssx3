@@ -1500,7 +1500,219 @@ extern "C" void func_003449F0(void* elem)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/debouncenode", func_00344AA0);
+#ifdef SKIP_ASM
+struct sTrackWorld51C0;
+extern "C" sTrackWorld51C0** func_002D1BD8();
+
+struct sDbV4_4AA0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sDbMat_4AA0 {
+    sDbV4_4AA0 r[4];
+};
+
+struct sDbPart_4AA0 {
+    int parent;             // 0x0
+    int pad4;
+    int animated;           // 0x8
+    sDbMat_4AA0* mat;       // 0xC
+};
+
+struct sDbModelInfo_4AA0 {
+    int pad0;
+    int count;              // 0x4
+    sDbPart_4AA0* parts;    // 0x8
+};
+
+struct sDbInst_4AA0 {
+    char pad_0x00[0x84];
+    float scale;            // 0x84
+};
+
+static inline sDbInst_4AA0* refToPtr_4AA0(unsigned int p)
+{
+    return (sDbInst_4AA0*)(p << 2);
+}
+
+struct sDbModelSet_4AA0 {
+    char pad_0x0[0x1C];
+    unsigned int* refs;     // 0x1C
+
+    sDbInst_4AA0* lookup(unsigned int idx)
+    {
+        unsigned int p = refs[idx] >> 8;
+        if (p == 0) {
+            return 0;
+        }
+        return refToPtr_4AA0(p);
+    }
+};
+
+struct sDbWorld_4AA0 {
+    char pad_0x0[0x8];
+    sDbModelSet_4AA0** sets;    // 0x8
+};
+
+struct sDbModelRef_4AA0 {
+    unsigned int id;
+
+    sDbInst_4AA0* get()
+    {
+        sDbModelSet_4AA0* set = (*(sDbWorld_4AA0**)func_002D1BD8())->sets[id & 0xFF];
+        if (set == 0) {
+            return 0;
+        }
+        return set->lookup(id >> 8);
+    }
+};
+
+struct sDbItem_4AA0 {
+    char pad_0x00[0x90];
+    sDbMat_4AA0 mat;        // 0x90
+};
+
+struct sDbAnim_4AA0 {
+    int pad0;
+    sDbModelRef_4AA0 model;     // 0x4
+    char pad_0x8[0x1E0];
+    sDbMat_4AA0* mats;          // 0x1E8
+    sDbItem_4AA0* items;        // 0x1EC
+    sDbModelInfo_4AA0* info;    // 0x1F0
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_4AA0(sDbMat_4AA0* d, const sDbMat_4AA0* a, const sDbMat_4AA0* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_4AA0(sDbMat_4AA0* d, const sDbMat_4AA0* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+static inline sDbV4_4AA0 row_4AA0(const sDbMat_4AA0* m, int i)
+{
+    return m->r[i];
+}
+
+static inline void mulv_4AA0(sDbV4_4AA0& r, const sDbV4_4AA0& a, const sDbV4_4AA0& b)
+{
+    r.x = a.x * b.x;
+    r.y = a.y * b.y;
+    r.z = a.z * b.z;
+    r.w = a.w * b.w;
+}
+
+// Builds a part matrix: dst = parent * (local with its translation row scaled by s).
+static inline void partMat_4AA0(sDbMat_4AA0* dst, const sDbMat_4AA0* parentMat, const sDbMat_4AA0* m, const sDbV4_4AA0& s)
+{
+    sDbMat_4AA0 l;
+    l.r[0] = row_4AA0(m, 0);
+    l.r[1] = row_4AA0(m, 1);
+    l.r[2] = row_4AA0(m, 2);
+    sDbV4_4AA0 t;
+    sDbV4_4AA0 r3 = m->r[3];
+    mulv_4AA0(t, r3, s);
+    l.r[3] = t;
+    sDbMat_4AA0 tt;
+    vu0MulMat_4AA0(&tt, parentMat, &l);
+    vu0CopyMat_4AA0(dst, &tt);
+}
+
+// Scales the translation row of m by s.
+static inline void scaleTrans_4AA0(sDbMat_4AA0* m, const sDbV4_4AA0& s)
+{
+    sDbV4_4AA0 t;
+    sDbV4_4AA0 r3 = m->r[3];
+    mulv_4AA0(t, r3, s);
+    m->r[3] = t;
+}
+
+// Rebuilds the world matrix of every part; animated parts take their local matrix from the next animation item.
+extern "C" void func_00344AA0_4AA0(sDbAnim_4AA0* self) __asm__("func_00344AA0");
+extern "C" void func_00344AA0_4AA0(sDbAnim_4AA0* self)
+{
+    sDbPart_4AA0* p = self->info->parts;
+    float k = self->model.get()->scale;
+    sDbV4_4AA0 s;
+    s.x = k;
+    s.y = k;
+    s.z = k;
+    s.w = 1.0f;
+    int n = 0;
+    for (int i = 0; i < self->info->count; i++, p++) {
+        int parent = p->parent;
+        if (p->animated != 0) {
+            if (parent != -1) {
+                // PORT: pointer arithmetic done in int (gives the target's offset-first addu).
+                sDbMat_4AA0* local = &((sDbItem_4AA0*)(n++ * (int)sizeof(sDbItem_4AA0) + (int)self->items))->mat;
+                sDbMat_4AA0 t2;
+                partMat_4AA0(&t2, &self->mats[parent], local, s);
+                vu0CopyMat_4AA0(&self->mats[i], &t2);
+            } else {
+                vu0CopyMat_4AA0(&self->mats[i], &self->items[n++].mat);
+                scaleTrans_4AA0(&self->mats[i], s);
+            }
+        } else {
+            if (parent != -1) {
+                sDbMat_4AA0 t2;
+                partMat_4AA0(&t2, &self->mats[parent], p->mat, s);
+                vu0CopyMat_4AA0(&self->mats[i], &t2);
+            } else {
+                vu0CopyMat_4AA0(&self->mats[i], p->mat);
+                scaleTrans_4AA0(&self->mats[i], s);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/debouncenode", func_00344E18);
