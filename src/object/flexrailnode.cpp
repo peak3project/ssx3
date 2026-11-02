@@ -800,7 +800,134 @@ extern "C" void func_0034A028(void* self, sFrNodeA028* node)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flexrailnode", func_0034A0B0);
+#ifdef SKIP_ASM
+struct sFrV4_A0B0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sFrM4_A0B0 {
+    sFrV4_A0B0 r[4];
+};
+
+struct sFrElem_A0B0 {
+    sFrV4_A0B0 pos; // 0x00
+    char pad_0x10[0x50];
+};
+
+struct sFrNode_A0B0 {
+    char pad_0x00[0x20];
+    int count;              // 0x20
+    char pad_0x24[0x2C];
+    sFrM4_A0B0* mats;       // 0x50
+    char pad_0x54[0x1C];
+    sFrElem_A0B0* elems;    // 0x70
+};
+
+extern float D_004FFAC0[16];
+
+// PORT: PS2-only VU0 inline asm (vector * 4x4 basis matrix, row-vector convention).
+static inline void vu0BasisMul_A0B0(sFrV4_A0B0& dst, const sFrV4_A0B0& g, const float* b)
+{
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(dst)
+        : "m"(g), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only MMI inline asm (4x4 transpose in place, as sceVu0TransposeMatrix).
+static inline void mmiTranspose_A0B0(sFrM4_A0B0* m)
+{
+    long t0, t1, t2, t3, t4, t5, t6, t7;
+    __asm__ __volatile__(
+        "lq      %0, 0x0(%8)\n"
+        "lq      %1, 0x10(%8)\n"
+        "lq      %2, 0x20(%8)\n"
+        "lq      %3, 0x30(%8)\n"
+        "pextlw  %4, %1, %0\n"
+        "pextuw  %5, %1, %0\n"
+        "pextlw  %6, %3, %2\n"
+        "pextuw  %7, %3, %2\n"
+        "pcpyld  %0, %6, %4\n"
+        "pcpyud  %1, %4, %6\n"
+        "pcpyld  %2, %7, %5\n"
+        "pcpyud  %3, %5, %7\n"
+        "sq      %0, 0x0(%8)\n"
+        "sq      %1, 0x10(%8)\n"
+        "sq      %2, 0x20(%8)\n"
+        "sq      %3, 0x30(%8)\n"
+        : "=&r"(t0), "=&r"(t1), "=&r"(t2), "=&r"(t3), "=&r"(t4), "=&r"(t5), "=&r"(t6), "=&r"(t7)
+        : "r"(m)
+        : "memory");
+}
+
+static inline void set4_A0B0(sFrV4_A0B0& r, float x, float y, float z, float w)
+{
+    r.x = x; r.y = y; r.z = z; r.w = w;
+}
+
+// Spline basis matrix for the segment from e[0] to e[1]: control points a, e[0], e[1], e[2].
+static inline void updateMatSeg_A0B0(sFrM4_A0B0& out, const sFrV4_A0B0& a, const sFrElem_A0B0* e)
+{
+    sFrM4_A0B0 L;
+    sFrV4_A0B0 v;
+    set4_A0B0(L.r[1], a.x, e[0].pos.x, e[1].pos.x, e[2].pos.x);
+    vu0BasisMul_A0B0(L.r[2], L.r[1], D_004FFAC0);
+    L.r[0] = L.r[2];
+    set4_A0B0(L.r[2], a.y, e[0].pos.y, e[1].pos.y, e[2].pos.y);
+    vu0BasisMul_A0B0(L.r[3], L.r[2], D_004FFAC0);
+    L.r[1] = L.r[3];
+    set4_A0B0(L.r[3], a.z, e[0].pos.z, e[1].pos.z, e[2].pos.z);
+    vu0BasisMul_A0B0(v, L.r[3], D_004FFAC0);
+    L.r[2] = v;
+    out.r[0] = L.r[0]; out.r[1] = L.r[1]; out.r[2] = L.r[2];
+    L.r[3].x = 0.0f; L.r[3].y = 0.0f; L.r[3].z = 0.0f; L.r[3].w = 1.0f;
+    out.r[3] = L.r[3];
+    mmiTranspose_A0B0(&out);
+}
+
+// Last segment: the end point e[1] is repeated as the fourth control point.
+static inline void updateMatEnd_A0B0(sFrM4_A0B0& out, const sFrV4_A0B0& a, const sFrElem_A0B0* e)
+{
+    sFrM4_A0B0 L;
+    sFrV4_A0B0 v;
+    set4_A0B0(L.r[1], a.x, e[0].pos.x, e[1].pos.x, e[1].pos.x);
+    vu0BasisMul_A0B0(L.r[2], L.r[1], D_004FFAC0);
+    L.r[0] = L.r[2];
+    set4_A0B0(L.r[2], a.y, e[0].pos.y, e[1].pos.y, e[1].pos.y);
+    vu0BasisMul_A0B0(L.r[3], L.r[2], D_004FFAC0);
+    L.r[1] = L.r[3];
+    set4_A0B0(L.r[3], a.z, e[0].pos.z, e[1].pos.z, e[1].pos.z);
+    vu0BasisMul_A0B0(v, L.r[3], D_004FFAC0);
+    L.r[2] = v;
+    out.r[0] = L.r[0]; out.r[1] = L.r[1]; out.r[2] = L.r[2];
+    L.r[3].x = 0.0f; L.r[3].y = 0.0f; L.r[3].z = 0.0f; L.r[3].w = 1.0f;
+    out.r[3] = L.r[3];
+    mmiTranspose_A0B0(&out);
+}
+
+extern "C" void func_0034A0B0(void* selfv)
+{
+    sFrNode_A0B0* self = (sFrNode_A0B0*)selfv;
+    int i = 1;
+    updateMatSeg_A0B0(self->mats[0], self->elems[0].pos, &self->elems[0]);
+    for (; i < self->count - 2; i++) {
+        updateMatSeg_A0B0(self->mats[i], self->elems[i - 1].pos, &self->elems[i]);
+    }
+    updateMatEnd_A0B0(self->mats[i], self->elems[i - 1].pos, &self->elems[i]);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flexrailnode", func_0034A568);
