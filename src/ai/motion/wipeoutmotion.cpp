@@ -779,7 +779,198 @@ extern "C" void func_00137860(void* vself)
 
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00137D18);
 
+//100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00138640);
+#ifdef SKIP_ASM
+struct sHit_138640 {
+    t4Vector pos;       // 0x00
+    t4Vector normal;    // 0x10
+    t4Vector v20;       // 0x20
+    float pad30[7];     // 0x30
+    int material;       // 0x4C
+    char* obj;          // 0x50
+    char pad54[0x2C];   // 0x54
+} __attribute__((aligned(16)));
+
+struct sSphere_138640 {
+    int state;          // 0x00
+    int f4;             // 0x04
+    int f8;             // 0x08
+    int padC;           // 0x0C
+    t4Vector dir;       // 0x10
+    char rest[0x320 - 0x20];
+} __attribute__((aligned(16)));
+
+struct sVEntH_138640 { short delta; short index; void (*fn)(void*, void*); };
+
+extern "C" void* func_0032F650(void* self, void* tree, int flag);
+extern "C" void func_0032F708(void* self, int flags);
+extern "C" float func_003342D0(void* world, void* seg, void* hit, int flags);
+extern "C" void func_00106538(void* rider, const t4Vector& v);
+extern "C" void* func_0011E150(void* rider, int a1);
+extern "C" void func_00105398(void* rider, int a1);
+extern "C" void func_00107888(void* rider);
+extern t4Vector D_004FF120_138640 __asm__("D_004FF120");
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_138640(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_138640(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector vu0Scale_138640(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector vu0Sub_138640(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector vu0Normalize_138640(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void vu0AddEq_138640(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b));
+}
+
+// PORT: <? (g++ min operator).
+static inline float clamp_138640(float v, float lo, float hi)
+{
+    return lo <= v ? v <? hi : lo;
+}
+
+#define RIDER (*(cRider**)(self + 0x40))
+
+extern "C" void func_00138640(void* vself)
+{
+    char* self = (char*)vself;
+    sHit_138640 hit;
+    sSphere_138640 sph;
+    func_0032F650(&sph, RIDER->mSphereTree, 1);
+    sph.f8 = 1;
+    sph.dir = RIDER->mGroundNormal;
+    float d = func_003342D0(RIDER->unk_860, &sph, &hit, (int)RIDER->unk_868);
+    if (0.0f <= d) {
+        float dot = vu0Dot_138640(RIDER->mGroundNormal, hit.normal);
+        if (-0.9998999834060669f < dot) {
+            if (dot < 0.0f)
+                hit.normal = vu0Normalize_138640(vu0Sub_138640(hit.normal, vu0Scale_138640(RIDER->mGroundNormal, dot)));
+            if (hit.obj != 0) {
+                char* o = *(char**)(hit.obj + 0xC);
+                if (o != 0) {
+                    sVEntH_138640* vt = *(sVEntH_138640**)(o + 0xC);
+                    vt[42].fn(o + vt[42].delta, &hit);
+                }
+            }
+            t4Vector push = vu0Scale_138640(vu0Scale_138640(hit.normal, 1.100000023841858f), d);
+            func_00106538(RIDER, push);
+            t4Vector a = vu0Sub_138640(RIDER->mVelocity, hit.v20);
+            float dot2 = vu0Dot_138640(vu0Scale_138640(hit.normal, -1.0f), a);
+            if (0.0f <= dot2) {
+                float k = clamp_138640(dot2 * 0.5f, 27.77777862548828f, 555.5555419921875f);
+                vu0AddEq_138640(RIDER->mVelocity, vu0Scale_138640(hit.normal, dot2 + k));
+            }
+        }
+    }
+    func_0011E150(RIDER, 0);
+    func_00105398(RIDER, 0);
+    func_00107888(RIDER);
+    if (*(int*)(self + 0x4) != 0) {
+        *(int*)(self + 0x4) = 0;
+        *(int*)self = 1;
+    }
+    if (vu0Length_138640(RIDER->mVelocity) < 50.0f)
+        RIDER->mVelocity = D_004FF120_138640;
+    func_0032F708(&sph, 2);
+}
+
+#undef RIDER
+#endif
 
 //100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00138960);
