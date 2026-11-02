@@ -2347,9 +2347,11 @@ void func_00111AA0_impl(void* self, void* a, void* b, int c, float x)
 //100%
 INCLUDE_ASM("ai/computer", func_00111AC0);
 #ifdef SKIP_ASM
-class cStream_00111AC0 {
+// The save / load stream (vptr at 0x0): slot 1 writes, slot 2 reads.
+class cStream {
 public:
     virtual void Write(void* p, int n);
+    virtual void Read(void* p, int n);
 };
 
 extern char D_004D33A0[];
@@ -2378,7 +2380,7 @@ extern "C" int func_0026B550(void* tree, void* path);
 
 extern "C" void func_00111AC0(char* self, char* s)
 {
-    cStream_00111AC0* st = (cStream_00111AC0*)s;
+    cStream* st = (cStream*)s;
     st->Write(*(void**)(self + 0x18), 0x6C0);
     func_00104D68(*(void**)(*(char**)(self + 0x18) + 0x784), s);
     func_00310EA8(*(void**)(*(char**)(self + 0x18) + 0x780), s);
@@ -2428,13 +2430,6 @@ extern "C" void func_00111AC0(char* self, char* s)
 //100%
 INCLUDE_ASM("ai/computer", func_00111D98);
 #ifdef SKIP_ASM
-class cStream_00111D98 {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* p, int n);
-    virtual void Read(void* p, int n);
-};
-
 struct sRefSet_00111D98 {
     char pad_0x0[0xC];
     unsigned int* refs;     // 0xC
@@ -2512,7 +2507,7 @@ struct sRef_00111D98 {
 
 extern "C" void func_00111D98(char* self, char* s)
 {
-    cStream_00111D98* st = (cStream_00111D98*)s;
+    cStream* st = (cStream*)s;
     st->Read(*(void**)(self + 0x18), 0x6C0);
     func_00104DE0(*(void**)(*(char**)(self + 0x18) + 0x784), s);
     func_00310EE0(*(void**)(*(char**)(self + 0x18) + 0x780), s);
