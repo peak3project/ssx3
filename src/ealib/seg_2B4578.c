@@ -10801,22 +10801,9 @@ void func_003C8560(int idx, int k, float f) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8598);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_8598 {
-    char pad0[1];
-    char flag;
-    char pad1[0x36];
-    float v[1];
-    char pad2[0x24];
-};
-struct G_8598 {
-    char pad[0x1DC];
-    struct E_8598 *tab;
-};
-extern struct G_8598 D_00515B40_8598 __asm__("D_00515B40");
-
 void func_003C8598(int idx, int k, float f) {
-    D_00515B40_8598.tab[idx].v[k] = f;
-    D_00515B40_8598.tab[idx].flag = 1;
+    D_00515B40.f1DC[idx].f38[k] = f;
+    D_00515B40.f1DC[idx].f01 = 1;
 }
 #endif
 
