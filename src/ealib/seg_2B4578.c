@@ -9606,17 +9606,13 @@ void *func_003C6540(char *arg0, int arg1) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6580);
 #ifdef SKIP_ASM
-struct E_6580 { short h[0x46]; };
-struct T_6580 { int pad; struct E_6580 e[1]; };
-extern struct T_6580 *D_0050AAD8_6580 __asm__("D_0050AAD8");
-
 int func_003C6580(int arg0, int arg1) {
     int i;
     int best = -1;
     int bi = -1;
     for (i = 0; i < arg1; i++) {
-        if (best < D_0050AAD8_6580->e[arg0].h[i]) {
-            best = D_0050AAD8_6580->e[arg0].h[i];
+        if (best < D_0050AAD8[arg0].f04[i]) {
+            best = D_0050AAD8[arg0].f04[i];
             bi = i;
         }
     }
