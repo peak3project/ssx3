@@ -8,27 +8,33 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetCreate);
-
-//100%
-INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetEvent);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
 struct cUIText;
 int GetHashValue32(char* str);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* func_0028B180();
+extern void* D_004A28A8;
+extern "C" void* func_0039F9D8(void* self, int id);
+extern char D_004A18A8[];
+extern "C" void cFEStateRequestLine_updateButtonsText(void* self, int a1);
+extern "C" void cFEStateRequestLine_updateHelpText(void* self, int a1);
+
+INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetCreate);
+
+//100%
+INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetEvent);
+#ifdef SKIP_ASM
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" cUIText* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setUnicodeStringByID(cUIText* self, int id);
 extern "C" void func_001587F8(void* iface, int player, int a2, int a3);
-extern "C" void* func_0028B180();
 extern "C" void func_0028BF78(void* audio, int a1);
 extern "C" void* func_00196B90(void* p, int a1, signed char idx, int a3);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
 extern "C" void* func_0039F190(void* stack, int a1);
 extern "C" void func_0039F400(void* stack, void* state);
-extern void* D_004A28A8;
 extern char D_00460470[];
 extern char D_00460488[];
 extern char D_00460498[];
@@ -39,7 +45,6 @@ extern char D_004604F8[];
 extern char D_00460510[];
 extern char D_00460528[];
 extern char D_00460540[];
-
 
 struct sOption_AOWE {
     char pad_0x0[0x78];
@@ -238,18 +243,13 @@ INCLUDE_ASM("fe/festateaudiooptions", func_00196B90);
 #ifdef SKIP_ASM
 extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, signed char a1);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
-int GetHashValue32(char* str);
 extern "C" void* func_003E6448(void* p, int c, int n);
 extern "C" int func_00398380(void* list, int hash);
 extern "C" int func_00150928(void* iface, int idx, int ch);
 // PORT: 64-bit results (long is 8 bytes on the EE).
 extern "C" long func_00158728(void* iface, int idx, int ch);
 extern "C" long func_00158750(void* iface, int idx, int ch);
-extern "C" void* func_0028B180();
 extern "C" void func_00197AD8(void* self);
 extern void* D_00469378[];
 extern char D_0045DA48[];
@@ -357,16 +357,11 @@ extern "C" void* func_00196B90(void* p, int a1, signed char idx, int a3)
 //100%
 INCLUDE_ASM("fe/festateaudiooptions", func_00196DB0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0039B760(void* self, int a1);
-extern "C" void* func_0039F9D8(void* self, int id);
-extern void* D_004A28A8;
-extern char D_004A18A8[];
 extern char D_004A18B0[];
 extern char D_00460578[];
-
 
 extern "C" void func_00196DB0(void* self)
 {
@@ -392,12 +387,7 @@ extern "C" void func_00196DB0(void* self)
 //100%
 INCLUDE_ASM("fe/festateaudiooptions", func_00196E80);
 #ifdef SKIP_ASM
-
-int GetHashValue32(char* str);
 void func_0039E4A0(void* self);
-extern "C" void* func_0039F9D8(void* self, int id);
-extern char D_004A18A8[];
-extern void* D_004A28A8;
 
 extern "C" void func_00196E80(void* self)
 {
@@ -418,8 +408,6 @@ INCLUDE_ASM("fe/festateaudiooptions", func_00196F00);
 extern "C" void func_00186518(void* self, void* a1);
 extern "C" void func_00197B88(void* self);
 extern "C" void func_00197E70(void* self);
-extern "C" void cFEStateRequestLine_updateButtonsText(void* self, int a1);
-extern "C" void cFEStateRequestLine_updateHelpText(void* self, int a1);
 
 extern "C" void func_00196F00(void* self, void* a1)
 {
@@ -436,8 +424,6 @@ extern "C" void func_00196F00(void* self, void* a1)
 INCLUDE_ASM("fe/festateaudiooptions", func_00196F50);
 #ifdef SKIP_ASM
 extern "C" void func_00197DB8(void* self);
-extern "C" void cFEStateRequestLine_updateButtonsText(void* self, int a1);
-extern "C" void cFEStateRequestLine_updateHelpText(void* self, int a1);
 
 extern "C" int func_00196F50(void* self, int a1)
 {
