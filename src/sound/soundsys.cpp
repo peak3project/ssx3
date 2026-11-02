@@ -8256,10 +8256,8 @@ INCLUDE_ASM("sound/soundsys", func_002A78F8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 signed char func_002A78E0(void* self);
 
-// func_002A78F8 returns int (its body leaves a result in v0); the unit declares it void.
-int func_002A78F8_r(void*) __asm__("func_002A78F8");
 
-int func_002A78F8_r(void* self)
+int func_002A78F8(void* self)
 {
     while (**(signed char**)((char*)self + 0x8) != 0) {
         if (func_002A79C8(self) == 1) return 1;
@@ -8300,16 +8298,14 @@ extern "C" int func_002A79C8(void* self)
 INCLUDE_ASM("sound/soundsys", func_002A7A20);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// func_002A78F8 returns int (its body leaves a result in v0); the unit declares it void.
-int func_002A78F8_r(void*) __asm__("func_002A78F8");
 extern "C" int func_002A7F90(void*);
 
 extern "C" void func_002A7A20(void* self)
 {
-    func_002A78F8_r(self);
+    func_002A78F8(self);
     while (**(signed char**)((char*)self + 0x8) == '[') {
         func_002A7B08(self);
-        func_002A78F8_r(self);
+        func_002A78F8(self);
     }
     func_002A7F90(self);
 }
@@ -8429,7 +8425,7 @@ INCLUDE_ASM("sound/soundsys", func_002A7DA0);
 extern "C" char* func_002A7DA0(void* self)
 {
     int n = 0;
-    func_002A78F8_r(self);
+    func_002A78F8(self);
     while (**(signed char**)((char*)self + 0x8) != 0 && **(signed char**)((char*)self + 0x8) != ' ' &&
            **(signed char**)((char*)self + 0x8) != '\t' && **(signed char**)((char*)self + 0x8) != '\n' &&
            **(signed char**)((char*)self + 0x8) != '\r') {
@@ -8478,12 +8474,11 @@ INCLUDE_ASM("sound/soundsys", func_002A7EF0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 signed char func_002A78E0(void* self);
-int func_002A78F8_r(void*) __asm__("func_002A78F8");
 
 extern "C" int func_002A7EF0(void* self, const char* name)
 {
     int i = 0;
-    func_002A78F8_r(self);
+    func_002A78F8(self);
     while (**(char**)((char*)self + 0x8) != 0 && name[i] != 0) {
         if (func_002A78E0(self) != name[i]) {
             return 1;
@@ -8498,14 +8493,13 @@ extern "C" int func_002A7EF0(void* self, const char* name)
 INCLUDE_ASM("sound/soundsys", func_002A7F90);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int func_002A78F8_r(void*) __asm__("func_002A78F8");
 
 extern "C" int func_002A7F90(void* self)
 {
     if (*(char**)((char*)self + 0x8) - *(char**)((char*)self + 0x4) >= *(int*)((char*)self + 0x0)) {
         return 1;
     }
-    func_002A78F8_r(self);
+    func_002A78F8(self);
     signed char c = **(signed char**)((char*)self + 0x8);
     int r = 0;
     if (c == 0 || c == '[') {
