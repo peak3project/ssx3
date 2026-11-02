@@ -2249,7 +2249,70 @@ int func_00401668(long id, int *out) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00401718);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004019F8);
+#ifdef SKIP_ASM
+extern int D_00451610[];
+extern int D_0045162C[];
+extern int D_00451648[];
+extern char D_00526710[];
+extern int D_00526750[];
+extern int D_00452800[];
+extern char D_00497B48[];
+extern char D_00497B60[];
+extern char D_00497B80[];
+extern void func_00425C60();
+extern void func_00400C00();
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern int func_00401488(int);
+extern void func_00426408(int);
+extern int func_00426B48(char *, unsigned, int);
+extern void func_00426358(int, int);
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+int func_004019F8(int a) {
+    int r;
+    int v;
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497B48);
+    func_00400C00();
+    if (D_0045162C[0] != func_00423DF0(*(volatile int *)D_0045162C))
+        return 6;
+    if (func_00401488(1) != 0) {
+        func_00423DC0(*(volatile int *)D_0045162C);
+        return a != 8 ? 6 : -1;
+    }
+    func_00426408(0);
+    if (D_00451648[0] < 0) {
+        for (;;) {
+            if (func_00426B48(D_00526710, 0x8000059A, 0) < 0) {
+                if (D_00451610[0] > 0)
+                    func_00425C60(D_00497B60);
+                for (r = 0x100000; r--; )
+                    ;
+                continue;
+            }
+            if (*(int *)(D_00526710 + 0x24) != 0) {
+                D_00451648[0] = 0;
+                break;
+            }
+            for (r = 0x100000; r--; )
+                ;
+        }
+    }
+    D_00526750[0] = a;
+    func_00426358((int)D_00526750, 4);
+    if (func_00426D18(D_00526710, 0, 0, D_00526750, 4, D_00452800, 4, 0, 0) < 0) {
+        func_00423DC0(*(volatile int *)D_0045162C);
+        return a != 8 ? 6 : -1;
+    }
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497B80);
+    v = *(int *)((unsigned)D_00452800 | 0x20000000);
+    func_00423DC0(*(volatile int *)D_0045162C);
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401BF0);
