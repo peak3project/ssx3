@@ -146,6 +146,11 @@ struct sPtScissor {
     unsigned short v[4];
 };
 
+// 128-bit packet quadword as four signed words (the unsigned view is sGifQuad).
+struct sPtQuadI {
+    int w[4];
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4506,13 +4511,10 @@ void* func_0037D738(void* self)
 //100%
 INCLUDE_ASM("render/particle", func_0037D758);
 #ifdef SKIP_ASM
-struct sPartQ16 {
-    int w[4];
-} __attribute__((aligned(16)));
 
 
 struct sPartDrawEntry {
-    sPartQ16 q;          // 0x00
+    sPtQuadI q;          // 0x00
     sPtMatrix m0;         // 0x10
     sPtMatrix m1;         // 0x50
     float f;             // 0x90
@@ -4542,7 +4544,7 @@ static inline void vu0CopyMtxP(sPtMatrix* dst, sPtMatrix* src)
         : "memory");
 }
 
-extern "C" void func_0037D758(sPartDrawList* self, sPartQ16* q, sPtMatrix* m0, sPtMatrix* m1, float f, int i)
+extern "C" void func_0037D758(sPartDrawList* self, sPtQuadI* q, sPtMatrix* m0, sPtMatrix* m1, float f, int i)
 {
     self->entries[self->count].q = *q;
     vu0CopyMtxP(&self->entries[self->count].m0, m0);
@@ -5009,12 +5011,9 @@ extern "C" void func_0037E040(void* m, char** pp)
 //100%
 INCLUDE_ASM("render/particle", func_0037E098);
 #ifdef SKIP_ASM
-struct sPartPktQuad {
-    int w[4];
-} __attribute__((aligned(16)));
 
 // PORT: 64-bit `ulong` packet words.
-extern "C" void func_0037E098(sPartPktQuad* src, void* self, sPartPktQuad* hdr, char** pp)
+extern "C" void func_0037E098(sPtQuadI* src, void* self, sPtQuadI* hdr, char** pp)
 {
     char* p = *pp;
     int i;
@@ -5022,14 +5021,14 @@ extern "C" void func_0037E098(sPartPktQuad* src, void* self, sPartPktQuad* hdr, 
     *(ulong*)(p + 0x8) = 0;
     *(ulong*)(p + 0x10) = 0;
     *(ulong*)(p + 0x18) = (ulong)0x6C038009 << 32;
-    ((sPartPktQuad*)(p + 0x20))[0] = hdr[0];
-    ((sPartPktQuad*)(p + 0x20))[1] = hdr[1];
-    ((sPartPktQuad*)(p + 0x20))[2] = hdr[2];
+    ((sPtQuadI*)(p + 0x20))[0] = hdr[0];
+    ((sPtQuadI*)(p + 0x20))[1] = hdr[1];
+    ((sPtQuadI*)(p + 0x20))[2] = hdr[2];
     *(ulong*)(p + 0x50) = 0;
     *(ulong*)(p + 0x58) = (ulong)0x6C0A800F << 32;
     p += 0x60;
     for (i = 0; i < 10; i++) {
-        ((sPartPktQuad*)p)[i] = src[i];
+        ((sPtQuadI*)p)[i] = src[i];
     }
     p += 0xA0;
     *pp = p;
@@ -5042,8 +5041,8 @@ INCLUDE_ASM("render/particle", func_0037E120);
 // Appends a DMA cnt tag (qwc 6), a VIF header and the 4x4 matrix m to the packet at *pp,
 // then the optional sub-packets.
 // PORT: 64-bit `ulong` packet words and PS2-only VU0 asm (lqc2/sqc2 copy).
-extern "C" void func_0037E120(void* self, sPartPktQuad* m, sPartPktQuad* hdr, int a3, void* m2,
-                              sPartPktQuad* src, int flags, char** pp)
+extern "C" void func_0037E120(void* self, sPtQuadI* m, sPtQuadI* hdr, int a3, void* m2,
+                              sPtQuadI* src, int flags, char** pp)
 {
     char* p = *pp;
     *(cPartQuad128*)p = 0x10000006;
@@ -5068,7 +5067,7 @@ extern "C" void func_0037E120(void* self, sPartPktQuad* m, sPartPktQuad* hdr, in
         func_0037E040(m2, &p);
     }
     if (flags & 1) {
-        sPartPktQuad t = m[3];
+        sPtQuadI t = m[3];
         func_0037E098(src, &t, hdr, &p);
     }
     *pp = p;
