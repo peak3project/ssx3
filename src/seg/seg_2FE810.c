@@ -242,6 +242,19 @@ extern sPadFrame *func_003FF9A8(int port, int slot);
 typedef struct { unsigned char sts, std, mfd, rcyc; unsigned short h4, h6, h8, hA; void *w0C; unsigned w10; } sDmaEnv;
 extern sDmaEnv D_005261D0;     /* copy of the last environment set by func_003FE090 */
 
+/* system configuration copy set by func_0040BA48 (8 bytes; each byte has its own splat symbol) */
+typedef struct {
+    short f0;
+    unsigned char f2[6];
+} sSysConfig;
+extern sSysConfig D_004533F8;
+extern unsigned char D_004533FA[]; /* D_004533F8.f2[0..5] */
+extern unsigned char D_004533FB[];
+extern unsigned char D_004533FC[];
+extern unsigned char D_004533FD[];
+extern unsigned char D_004533FE[];
+extern unsigned char D_004533FF[];
+
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
 #ifdef SKIP_ASM
@@ -7561,7 +7574,6 @@ int func_0040B9A8(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B9E8);
 #ifdef SKIP_ASM
-extern unsigned char D_004533FC[];
 extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 int func_0040B9E8(void) {
@@ -7584,17 +7596,14 @@ int func_0040B9E8(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA48);
 #ifdef SKIP_ASM
-typedef struct { int a; int b; } U64;
-extern U64 D_004533F8[];
-void func_0040BA48(U64 *p) {
-    D_004533F8[0] = *p;
+void func_0040BA48(sSysConfig *p) {
+    D_004533F8 = *p;
 }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BA68);
 #ifdef SKIP_ASM
-extern unsigned char D_004533FA[];
 extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 int func_0040BA68(void) {
@@ -7609,7 +7618,6 @@ int func_0040BA68(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BAA8);
 #ifdef SKIP_ASM
-extern unsigned char D_004533FD[];
 extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 int func_0040BAA8(void) {
@@ -7624,14 +7632,13 @@ int func_0040BAA8(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BAE8);
 #ifdef SKIP_ASM
-extern short D_004533F8_s[] __asm__("D_004533F8");
 extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 int func_0040BAE8(void) {
     unsigned buf[1];
     int r;
     if (func_0040B9A8()) {
-        r = D_004533F8_s[0];
+        r = D_004533F8.f0;
     } else {
         func_00423E50(buf);
         if (((buf[0] >> 13) & 7) == 0) r = 0x21C; else r = (int)buf[0] >> 21;
@@ -7643,7 +7650,6 @@ int func_0040BAE8(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BB38);
 #ifdef SKIP_ASM
-extern unsigned char D_004533FB[];
 extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 extern int func_004240B0(unsigned *, int, int);
@@ -7670,7 +7676,6 @@ int func_0040BB38(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BBA0);
 #ifdef SKIP_ASM
-extern unsigned char D_004533FE[];
 extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 extern int func_004240B0(unsigned *, int, int);
@@ -7697,7 +7702,6 @@ int func_0040BBA0(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BC08);
 #ifdef SKIP_ASM
-extern unsigned char D_004533FF[];
 extern int func_0040B9A8(void);
 extern void func_00423E50(unsigned *);
 extern int func_004240B0(unsigned *, int, int);
