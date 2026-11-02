@@ -17,6 +17,18 @@ struct sVec3 {
 };
 extern sVec3 D_004FF0D8;     // zero vector
 
+// A trigger bound object / volume / spline as the readers see it (cCTBoundObj and its subclasses): the vptr
+// follows the base's own data at 0x24; the accessors return where each field lives.
+class cCTBoundObj {
+public:
+    char pad_0x00[0x24];
+    virtual void* center();
+    virtual void* sizeX();
+    virtual void* sizeY();
+    virtual void* sizeZ();
+    virtual void* axis();
+};
+
 // 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai and camera/camera).
 struct sVec4 : t4Vector
 {
@@ -300,13 +312,10 @@ struct sCTBoundPointG : sCTBoundObjG {
     sCTBoundPointG() : sCTBoundObjG(sVec3(1.0f, 1.0f, 1.0f), D_0045C1E8) { type = 3; }
 };
 
-class cCTBoundObjEllK2;
-class cCTBoundObjBoxK2;
-class cCTBoundObjLineK2;
 struct sBoundObjPoint;
-extern "C" int get_cCTBoundObjEllipse(void* reader, cCTBoundObjEllK2* obj);
-extern "C" int get_cCTBoundObjBox(void* reader, cCTBoundObjBoxK2* obj);
-extern "C" int get_cCTBoundObjLine(void* reader, cCTBoundObjLineK2* obj);
+extern "C" int get_cCTBoundObjEllipse(void* reader, cCTBoundObj* obj);
+extern "C" int get_cCTBoundObjBox(void* reader, cCTBoundObj* obj);
+extern "C" int get_cCTBoundObjLine(void* reader, cCTBoundObj* obj);
 void* get_cCTBoundObjPoint(void* self, sBoundObjPoint* obj);
 
 extern "C" int get_camboundobj(void* reader, void** out)
@@ -316,21 +325,21 @@ extern "C" int get_camboundobj(void* reader, void** out)
     switch (type) {
     case 0: {
         sCTBoundEllG* o = new (D_0045C110, 0, 0) sCTBoundEllG;
-        int r = get_cCTBoundObjEllipse(reader, (cCTBoundObjEllK2*)o);
+        int r = get_cCTBoundObjEllipse(reader, (cCTBoundObj*)o);
         *out = o;
         n += r;
         break;
     }
     case 1: {
         sCTBoundBoxG* o = new (D_0045C128, 0, 0) sCTBoundBoxG;
-        int r = get_cCTBoundObjBox(reader, (cCTBoundObjBoxK2*)o);
+        int r = get_cCTBoundObjBox(reader, (cCTBoundObj*)o);
         *out = o;
         n += r;
         break;
     }
     case 2: {
         sCTBoundLineG* o = new (D_0045C140, 0, 0) sCTBoundLineG;
-        int r = get_cCTBoundObjLine(reader, (cCTBoundObjLineK2*)o);
+        int r = get_cCTBoundObjLine(reader, (cCTBoundObj*)o);
         *out = o;
         n += r;
         break;
@@ -355,18 +364,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_cCTBoundObjEllipse);
 // get_t3Vector returns the byte count read (the unit declares it void*); bind an int-returning alias.
 extern "C" int get_t3Vector_n(void* reader, void* dst) __asm__("get_t3Vector");
 
-class cCTBoundObjEllK2 {
-public:
-    char pad_0x00[0x24];
-    // vptr at 0x24; int at 0x28
-    virtual void* center();
-    virtual void* sizeX();
-    virtual void* sizeY();
-    virtual void* sizeZ();
-    virtual void* axis();
-};
-
-extern "C" int get_cCTBoundObjEllipse(void* reader, cCTBoundObjEllK2* obj)
+extern "C" int get_cCTBoundObjEllipse(void* reader, cCTBoundObj* obj)
 {
     int n;
     *(int*)((char*)obj + 0x28) = 0;
@@ -386,18 +384,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_cCTBoundObjBox);
 // get_t3Vector returns the byte count read (the unit declares it void*); bind an int-returning alias.
 extern "C" int get_t3Vector_n(void* reader, void* dst) __asm__("get_t3Vector");
 
-class cCTBoundObjBoxK2 {
-public:
-    char pad_0x00[0x24];
-    // vptr at 0x24; int at 0x28
-    virtual void* center();
-    virtual void* sizeX();
-    virtual void* sizeY();
-    virtual void* sizeZ();
-    virtual void* axis();
-};
-
-extern "C" int get_cCTBoundObjBox(void* reader, cCTBoundObjBoxK2* obj)
+extern "C" int get_cCTBoundObjBox(void* reader, cCTBoundObj* obj)
 {
     int n;
     *(int*)((char*)obj + 0x28) = 1;
@@ -417,18 +404,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_cCTBoundObjLine);
 // get_t3Vector returns the byte count read (the unit declares it void*); bind an int-returning alias.
 extern "C" int get_t3Vector_n(void* reader, void* dst) __asm__("get_t3Vector");
 
-class cCTBoundObjLineK2 {
-public:
-    char pad_0x00[0x24];
-    // vptr at 0x24; int at 0x28
-    virtual void* center();
-    virtual void* sizeX();
-    virtual void* sizeY();
-    virtual void* sizeZ();
-    virtual void* axis();
-};
-
-extern "C" int get_cCTBoundObjLine(void* reader, cCTBoundObjLineK2* obj)
+extern "C" int get_cCTBoundObjLine(void* reader, cCTBoundObj* obj)
 {
     int n;
     *(int*)((char*)obj + 0x28) = 2;
@@ -488,21 +464,10 @@ struct sCTSplineG : sCTBoundObjG {
     }
 };
 
-class cCTSplineK2 {
-public:
-    char pad_0x00[0x24];
-    // vptr at 0x24; control points at 0x28
-    virtual void* center();
-    virtual void* sizeX();
-    virtual void* sizeY();
-    virtual void* sizeZ();
-    virtual void* axis();
-};
-
-extern "C" int get_camspline(void* reader, cCTSplineK2** out)
+extern "C" int get_camspline(void* reader, cCTBoundObj** out)
 {
     int n;
-    *out = (cCTSplineK2*)new (D_0045C170, 0, 0) sCTSplineG;
+    *out = (cCTBoundObj*)new (D_0045C170, 0, 0) sCTSplineG;
     n = get_t3Vector_n(reader, (*out)->center());
     n += get_t3Vector_n(reader, (*out)->axis());
     n += get_float(reader, (*out)->sizeX());
@@ -902,10 +867,8 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001728F8);
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camvolume);
 #ifdef SKIP_ASM
-class cCTVolumeEllK2;
-class cCTVolumeBoxK2;
-extern "C" int get_cCTVolumeEllipse(void* reader, cCTVolumeEllK2* obj);
-extern "C" int get_cCTVolumeBox(void* reader, cCTVolumeBoxK2* obj);
+extern "C" int get_cCTVolumeEllipse(void* reader, cCTBoundObj* obj);
+extern "C" int get_cCTVolumeBox(void* reader, cCTBoundObj* obj);
 extern void* D_0045C350[];      // volume ellipse vtable
 extern void* D_0045C300[];      // volume box vtable
 extern char D_0045C188[];
@@ -928,14 +891,14 @@ extern "C" int get_camvolume(void* reader, void** out)
     switch (type) {
     case 0: {
         sCTVolEllG* o = new (D_0045C188, 0, 0) sCTVolEllG;
-        int r = get_cCTVolumeEllipse(reader, (cCTVolumeEllK2*)o);
+        int r = get_cCTVolumeEllipse(reader, (cCTBoundObj*)o);
         *out = o;
         n += r;
         break;
     }
     case 1: {
         sCTVolBoxG* o = new (D_0045C1A0, 0, 0) sCTVolBoxG;
-        int r = get_cCTVolumeBox(reader, (cCTVolumeBoxK2*)o);
+        int r = get_cCTVolumeBox(reader, (cCTBoundObj*)o);
         *out = o;
         n += r;
         break;
@@ -955,18 +918,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_cCTVolumeEllipse);
 // get_t3Vector returns the byte count read (the unit declares it void*); bind an int-returning alias.
 extern "C" int get_t3Vector_n(void* reader, void* dst) __asm__("get_t3Vector");
 
-class cCTVolumeEllK2 {
-public:
-    char pad_0x00[0x24];
-    // vptr at 0x24; int at 0x28
-    virtual void* center();
-    virtual void* sizeX();
-    virtual void* sizeY();
-    virtual void* sizeZ();
-    virtual void* axis();
-};
-
-extern "C" int get_cCTVolumeEllipse(void* reader, cCTVolumeEllK2* obj)
+extern "C" int get_cCTVolumeEllipse(void* reader, cCTBoundObj* obj)
 {
     int n;
     *(int*)((char*)obj + 0x28) = 0;
@@ -986,18 +938,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_cCTVolumeBox);
 // get_t3Vector returns the byte count read (the unit declares it void*); bind an int-returning alias.
 extern "C" int get_t3Vector_n(void* reader, void* dst) __asm__("get_t3Vector");
 
-class cCTVolumeBoxK2 {
-public:
-    char pad_0x00[0x24];
-    // vptr at 0x24; int at 0x28
-    virtual void* center();
-    virtual void* sizeX();
-    virtual void* sizeY();
-    virtual void* sizeZ();
-    virtual void* axis();
-};
-
-extern "C" int get_cCTVolumeBox(void* reader, cCTVolumeBoxK2* obj)
+extern "C" int get_cCTVolumeBox(void* reader, cCTBoundObj* obj)
 {
     int n;
     *(int*)((char*)obj + 0x28) = 1;
