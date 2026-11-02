@@ -191,6 +191,8 @@ public:
     virtual void v10(int a);
 };
 
+struct sMenuStack;
+
 // A menu (cMenu; cMenu_addItem): its items and selection, vtable pointer at 0x12C.
 class cMenu {
 public:
@@ -198,7 +200,7 @@ public:
     int selected;               // 0x4
     int unk8;                   // 0x8
     cMenuItemV* items[70];      // 0xC
-    int wrap;                   // 0x124
+    sMenuStack* stack;          // 0x124 the menu stack it is open on (0 = none)
     int f128;                   // 0x128
     virtual void v01();
     virtual void v02();
@@ -207,6 +209,19 @@ public:
     virtual void v05();
     virtual void v06(void* stack);
     virtual void v07();
+};
+
+// The menu stack a menu is open on (cMenu::stack): the open menus, the last pad input / key / character, the
+// font the items draw with, the pad.
+struct sMenuStack {
+    int depth;                  // 0x00
+    cMenu* menus[17];           // 0x04
+    int input;                  // 0x48
+    int key;                    // 0x4C
+    int chr;                    // 0x50
+    int f54;                    // 0x54
+    char* font;                 // 0x58
+    int** pad;                  // 0x5C
 };
 
 // Callees and globals shared by the functions below.
@@ -1026,7 +1041,7 @@ extern "C" void cMenu_addItem(cMenu* menu, void** item, int index)
         menu->items[i] = menu->items[i - 1];
     }
     menu->items[index] = (cMenuItemV*)item;
-    if (menu->wrap != 0 && menu->selected >= index && menu->count != 0) {
+    if (menu->stack != 0 && menu->selected >= index && menu->count != 0) {
         menu->selected++;
     }
     menu->count++;
@@ -1116,10 +1131,10 @@ extern "C" void* func_002CBF30(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CBF60);
 #ifdef SKIP_ASM
-extern "C" void func_002CBF60(void* p, int wrap)
+extern "C" void func_002CBF60(void* p, sMenuStack* stack)
 {
     cMenu* self = (cMenu*)p;
-    self->wrap = wrap;
+    self->stack = stack;
     if (self->selected >= self->count) {
         self->selected = self->count - 1;
     }
@@ -1137,7 +1152,7 @@ extern "C" void func_002CBFD0(void* p)
     void* item = self->items[self->selected];
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)item + 0x10);
     vt[7].fn((char*)item + vt[7].delta);
-    self->wrap = 0;
+    self->stack = 0;
 }
 #endif
 
@@ -1203,23 +1218,13 @@ void func_002CC0B8(void* self, int val)
 //100%
 INCLUDE_ASM("util/menu", func_002CC0C0);
 #ifdef SKIP_ASM
-struct sMenu2CC0C0 {
-    int depth;              // 0x00
-    char* items[17];        // 0x04
-    int input;              // 0x48
-    int key;                // 0x4C
-    int chr;                // 0x50
-    char pad54[0x8];
-    int** pad;              // 0x5C
-};
-
 static inline int PadValid2CC0C0(int** pad)
 {
     return *pad != 0 && **pad != 0;
 }
 
 // Reads the pad (or USB keyboard) and lets the top menu handle it; pops menus on close.
-extern "C" void func_002CC0C0(sMenu2CC0C0* self)
+extern "C" void func_002CC0C0(sMenuStack* self)
 {
     if (self->depth == 0) {
         return;
@@ -1248,7 +1253,7 @@ extern "C" void func_002CC0C0(sMenu2CC0C0* self)
         case 0x1B: self->input = 7; break;
         }
     }
-    char* item = self->items[self->depth - 1];
+    char* item = (char*)self->menus[self->depth - 1];
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(item + 0x12C);
     switch (vt[2].fn(item + vt[2].delta)) {
     case 1:
@@ -1359,38 +1364,27 @@ struct func_002CC350_sVec2 {
     }
 };
 
-struct func_002CC350_sStack {
-    int count;
-    cMenu* items[1];
-};
-
-extern "C" void func_002CC350(void* self)
+extern "C" void func_002CC350(sMenuStack* st)
 {
     func_002CC350_sVec2 scale(0.8500000238418579f, 0.8500000238418579f);
-    char* o = *(char**)((char*)self + 0x58);
+    char* o = st->font;
     *(float*)(o + 0x38) = *(float*)(o + 0x30) * scale.x;
     *(float*)(o + 0x3C) = *(float*)(o + 0x34) * scale.y;
-    func_002CC350_sStack* st = (func_002CC350_sStack*)self;
-    st->items[st->count - 1]->v05();
+    st->menus[st->depth - 1]->v05();
 }
 #endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CC3B8);
 #ifdef SKIP_ASM
-struct func_002CC3B8_sStack {
-    int count;
-    cMenu* items[1];
-};
-
 extern "C" void func_002CC3B8(void* stack, void* item)
 {
-    func_002CC3B8_sStack* self = (func_002CC3B8_sStack*)stack;
-    if (self->count != 0) {
-        self->items[self->count - 1]->v07();
+    sMenuStack* self = (sMenuStack*)stack;
+    if (self->depth != 0) {
+        self->menus[self->depth - 1]->v07();
     }
-    self->items[self->count++] = (cMenu*)item;
-    self->items[self->count - 1]->v06(self);
+    self->menus[self->depth++] = (cMenu*)item;
+    self->menus[self->depth - 1]->v06(self);
     func_002CC0B8(self, 1);
 }
 #endif
@@ -1398,19 +1392,14 @@ extern "C" void func_002CC3B8(void* stack, void* item)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CC460);
 #ifdef SKIP_ASM
-struct func_002CC460_sStack {
-    int count;                          // 0x0
-    cMenu* entries[8];    // 0x4
-};
-
 extern "C" void func_002CC460(void* p)
 {
-    func_002CC460_sStack* self = (func_002CC460_sStack*)p;
-    self->count--;
-    self->entries[self->count]->v07();
-    if (self->count != 0) {
-        self->entries[self->count - 1]->v06(self);
-        if (self->count != 0) {
+    sMenuStack* self = (sMenuStack*)p;
+    self->depth--;
+    self->menus[self->depth]->v07();
+    if (self->depth != 0) {
+        self->menus[self->depth - 1]->v06(self);
+        if (self->depth != 0) {
             return;
         }
     }
@@ -3404,7 +3393,7 @@ extern "C" void func_002CFE78(void* self, int mode)
         func_002CBE68_v((char*)self + 0x18, -1);
         break;
     }
-    func_002CBF60((char*)self + 0x18, *(int*)(*(char**)self + 0x124));
+    func_002CBF60((char*)self + 0x18, *(sMenuStack**)(*(char**)self + 0x124));
 }
 #endif
 
