@@ -15,9 +15,8 @@ template <int N> struct sVtbl {
 } __attribute__((aligned(8)));
 
 // 16-byte vector with inline constructors (a non-POD sibling of t4Vector); stores x, y, z, w.
-struct sVec4
+struct sVec4 : t4Vector
 {
-    float x, y, z, w;
     sVec4() {}
     sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
 } __attribute__((aligned(16)));
@@ -61,6 +60,14 @@ struct sAiState
     int mState;
     char* mRider;
 };
+
+// Constant vectors (in .bss, set up at startup); named by use: D_004FF120 zero, D_004FF130 origin (w = 1),
+// D_004FF140 / D_004FF150 / D_004FF160 the x / y / z axes.
+extern t4Vector D_004FF120;
+extern t4Vector D_004FF130;
+extern t4Vector D_004FF140;
+extern t4Vector D_004FF150;
+extern t4Vector D_004FF160;
 
 //100%
 INCLUDE_ASM("ai/ai", cAI_cAI);
@@ -2261,10 +2268,8 @@ extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void func_00311A50(void* anim);
 extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
 
-extern sVec4 D_004FF130_12BE20 __asm__("D_004FF130");
-extern sVec4 D_004FF160_12BE20 __asm__("D_004FF160");
 
-static inline sVec4 AxisAngle_12BE20(const sVec4& axis, float angle)
+static inline sVec4 AxisAngle_12BE20(const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -2282,8 +2287,8 @@ extern "C" void func_0012BE20(void* self)
     float a = 0.0f;
     if (*(int*)(r + 0x320) != 0) a = 3.1415927410125732f;
     char* anim = *(char**)(r + 0x784);
-    *(sVec4*)(anim + 0x30) = D_004FF130_12BE20;
-    *(sVec4*)(anim + 0x40) = AxisAngle_12BE20(D_004FF160_12BE20, -a);
+    *(t4Vector*)(anim + 0x30) = D_004FF130;
+    *(sVec4*)(anim + 0x40) = AxisAngle_12BE20(D_004FF160, -a);
     if (*(int*)self == 2)
     {
         cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 1, 0, -1.0f);
@@ -2650,7 +2655,6 @@ int func_0011FE98(void* self);
 extern "C" int func_00311AE8(void*, int);
 int func_00312AA0(void* self, int i);
 extern float D_004A4C8C;
-extern char D_004FF120[];
 
 // PORT: PS2-only VU0 inline asm (vector *= scalar).
 static inline void vu0ScaleEq_12C678(t4Vector& v, float s)
@@ -2758,7 +2762,7 @@ extern "C" void func_0012C678(sAiState* self)
         break;
     }
     case 2:
-        *(t4Vector*)(self->mRider + 0x1E0) = *(t4Vector*)D_004FF120;
+        *(t4Vector*)(self->mRider + 0x1E0) = D_004FF120;
         *(float*)(*(char**)(self->mRider + 0x784) + 0x1C) = 0.75f;
         func_00115B58(self->mRider);
         *(float*)(*(char**)(self->mRider + 0x784) + 0x1C) = 1.0f;
@@ -2769,7 +2773,7 @@ extern "C" void func_0012C678(sAiState* self)
         }
         break;
     case 3:
-        *(t4Vector*)(self->mRider + 0x1E0) = *(t4Vector*)D_004FF120;
+        *(t4Vector*)(self->mRider + 0x1E0) = D_004FF120;
         break;
     }
     if (anim != prev)
@@ -2809,7 +2813,6 @@ extern "C" void func_002708F0(void* self, int key, int id);
 extern "C" void func_00309990(void* self);
 extern void* D_004A28A8;
 extern void* D_004A3DD8;
-extern char D_004FF120[];
 
 extern "C" void func_00136D40(char* self, t4Vector* a, t4Vector* b, sAnimModelBone* c);
 
@@ -2855,7 +2858,7 @@ extern "C" void func_0012CA30(sAiObj12CA30* self)
     self->f0 = 0;
     if (func_00311AE8(*(void**)(self->mRider + 0x784), 2) == 0x16)
     {
-        func_00136D40(*(char**)(self->mRider + 0x77C) + 0x30, (t4Vector*)(self->mRider + 0x1E0), (t4Vector*)D_004FF120, p30);
+        func_00136D40(*(char**)(self->mRider + 0x77C) + 0x30, (t4Vector*)(self->mRider + 0x1E0), &D_004FF120, p30);
         *(int*)(self->mRider + 0x318) = 0;
     }
     func_002708F0(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28), *(int*)(self->mRider + 0x86C), *(int*)(self->mRider + 0x790) + 0xFC);
@@ -3760,7 +3763,7 @@ static inline sVec4 QuatMul_12E010(const sVec4& a, const sVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sVec4 Sub_12E010(const sVec4& a, const sVec4& b)
+static inline sVec4 Sub_12E010(const sVec4& a, const t4Vector& b)
 {
     sVec4 r;
     __asm__(
@@ -3775,7 +3778,7 @@ static inline sVec4 Sub_12E010(const sVec4& a, const sVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sVec4 Add_12E010(const sVec4& a, const sVec4& b)
+static inline sVec4 Add_12E010(const sVec4& a, const t4Vector& b)
 {
     sVec4 r;
     __asm__(
@@ -3847,7 +3850,7 @@ static inline sXf Invert_12E010(const sXf& a)
 {
     sXf r;
     r.rot = Conj_12E010(a);
-    r.pos = Add_12E010(Scale_12E010(Rot_12E010(r.rot, Sub_12E010(a.pos, D_004FF130_12BE20)), -1.0f), D_004FF130_12BE20);
+    r.pos = Add_12E010(Scale_12E010(Rot_12E010(r.rot, Sub_12E010(a.pos, D_004FF130)), -1.0f), D_004FF130);
     return r;
 }
 
@@ -3855,7 +3858,7 @@ static inline sXf Combine_12E010(const sXf& a, const sXf& b)
 {
     sXf r;
     r.rot = QuatMul_12E010(a.rot, b.rot);
-    r.pos = Add_12E010(Rot_12E010(a.rot, Sub_12E010(b.pos, D_004FF130_12BE20)), a.pos);
+    r.pos = Add_12E010(Rot_12E010(a.rot, Sub_12E010(b.pos, D_004FF130)), a.pos);
     return r;
 }
 
@@ -4182,8 +4185,8 @@ static inline float aiAbs_12E9B8(float x)
 // Resets the animation's rotation pair: identity, and a yaw of -heading about the Y axis.
 static inline void ResetAnimRot_12E9B8(char* anim, float heading)
 {
-    *(sVec4*)(anim + 0x30) = D_004FF130_12BE20;
-    *(sVec4*)(anim + 0x40) = AxisAngle_12BE20(D_004FF160_12BE20, -heading);
+    *(t4Vector*)(anim + 0x30) = D_004FF130;
+    *(sVec4*)(anim + 0x40) = AxisAngle_12BE20(D_004FF160, -heading);
 }
 
 extern "C" void func_0012E9B8(void* self, void* in)
@@ -4946,10 +4949,8 @@ INCLUDE_ASM("ai/ai", func_0012FEC8);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" void func_00116930(void* rider);
 
-extern sVec4 D_004FF130;
-extern sVec4 D_004FF160;
 
-static inline sVec4 AxisAngle_12FEC8(const sVec4& axis, float angle)
+static inline sVec4 AxisAngle_12FEC8(const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -4963,7 +4964,7 @@ extern "C" void func_0012FEC8(void* self)
     float a = 0.0f;
     if (*(int*)(r + 0x320) != 0) a = 3.1415927410125732f;
     char* anim = *(char**)(r + 0x784);
-    *(sVec4*)(anim + 0x30) = D_004FF130;
+    *(t4Vector*)(anim + 0x30) = D_004FF130;
     *(sVec4*)(anim + 0x40) = AxisAngle_12FEC8(D_004FF160, -a);
     char* r2 = *(char**)((char*)self + 0x14);
     *(int*)(*(char**)(r2 + 0x784) + 0x18) = *(int*)(r2 + 0x320);
@@ -5513,14 +5514,14 @@ extern sCurve_130DD0* D_004A111C;
 
 struct sInfo_130DD0
 {
-    sVec4 pos;
-    sVec4 dir;
-    sVec4 up;
+    t4Vector pos;
+    t4Vector dir;
+    t4Vector up;
     float speed;
 };
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4 Scale_130DD0(const sVec4& v, float s)
+static inline sVec4 Scale_130DD0(const t4Vector& v, float s)
 {
     sVec4 r;
     int t;
@@ -5633,7 +5634,7 @@ extern "C" int func_00130DD0(void* self, void* in)
         sInfo_130DD0 info;
         char* r4 = *(char**)((char*)self + 0x14);
         float speed = aiLength_12C5C8(*(t4Vector*)(r4 + 0x1E0));
-        info.pos = *(sVec4*)(r4 + 0x110);
+        info.pos = *(t4Vector*)(r4 + 0x110);
         info.up = Scale_130DD0(D_004FF160, -1.0f);
         info.speed = speed;
         if (speed > 0.0010000000474974513f)
@@ -6240,10 +6241,8 @@ extern "C" void func_0010E098(void*, int, float);
 extern "C" void func_00116930(void* rider);
 float func_00119918_2060(void* p, int st, float h) __asm__("func_00119918__FPvi");
 
-extern sVec4 D_004FF130_2060 __asm__("D_004FF130");
-extern sVec4 D_004FF160_2060 __asm__("D_004FF160");
 
-static inline sVec4 AxisAngle_2060(const sVec4& axis, float angle)
+static inline sVec4 AxisAngle_2060(const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -6254,8 +6253,8 @@ static inline sVec4 AxisAngle_2060(const sVec4& axis, float angle)
 
 static inline void setRot_2060(char* anim, float a)
 {
-    *(sVec4*)(anim + 0x30) = D_004FF130_2060;
-    *(sVec4*)(anim + 0x40) = AxisAngle_2060(D_004FF160_2060, -a);
+    *(t4Vector*)(anim + 0x30) = D_004FF130;
+    *(sVec4*)(anim + 0x40) = AxisAngle_2060(D_004FF160, -a);
 }
 
 static inline void flip_2060(void* self, int f)
@@ -6773,11 +6772,9 @@ INCLUDE_ASM("ai/ai", func_00134DD0);
 #ifdef SKIP_ASM
 extern "C" float func_00135180(void* self);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern sVec4 D_004FF140_134DD0 __asm__("D_004FF140");
-extern sVec4 D_004FF150_134DD0 __asm__("D_004FF150");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar, constant vector through a register).
-static inline sVec4 ScaleO_134DD0(const sVec4& v, float s)
+static inline sVec4 ScaleO_134DD0(const t4Vector& v, float s)
 {
     sVec4 r;
     int t;
@@ -6794,7 +6791,7 @@ static inline sVec4 ScaleO_134DD0(const sVec4& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (a - b, constant b through a register).
-static inline sVec4 SubO_134DD0(const sVec4& a, const sVec4& b)
+static inline sVec4 SubO_134DD0(const sVec4& a, const t4Vector& b)
 {
     sVec4 r;
     __asm__(
@@ -6902,7 +6899,7 @@ static inline sVec4 AxisAngleB_134DD0(const sVec4& axis, float angle) return r
     r.z = s * axis.z;
 }
 
-static inline void SetAA_134DD0(sVec4& q, const sVec4& axis, float angle)
+static inline void SetAA_134DD0(sVec4& q, const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -6912,7 +6909,7 @@ static inline void SetAA_134DD0(sVec4& q, const sVec4& axis, float angle)
     q.w = c;
 }
 
-static inline sVec4 AxisAngle2_134DD0(const sVec4& axis, float angle)
+static inline sVec4 AxisAngle2_134DD0(const t4Vector& axis, float angle)
 {
     sVec4 q;
     SetAA_134DD0(q, axis, angle);
@@ -6937,11 +6934,11 @@ extern "C" void func_00134DD0_x(void* self, sXf* xf)
     float a2 = *(float*)((char*)self + 0x24) + *(float*)((char*)self + 0x2C);
     sVec4 d = SubO_134DD0(sVec4(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
                                               n->z * *(float*)(trk + 0x148), n->w * *(float*)(trk + 0x14C)),
-                                 D_004FF130_12BE20);
+                                 D_004FF130);
     {
         sVec4 v = Rot_12E010(xf->rot, d);
         AddToL_134DD0(xf->pos, v);
-        xf->rot *= AxisAngle2_134DD0(D_004FF160_12BE20, a1);
+        xf->rot *= AxisAngle2_134DD0(D_004FF160, a1);
     }
     float cur = func_00135180(self);
     float old = *(float*)((char*)self + 0x40);
@@ -6954,8 +6951,8 @@ extern "C" void func_00134DD0_x(void* self, sXf* xf)
     else
         nv = cur;
     *(float*)((char*)self + 0x40) = nv;
-    sVec4 ax = Norm_134DD0(Sub_12E010(ScaleO_134DD0(D_004FF150_134DD0, nv),
-                                             ScaleO_134DD0(D_004FF140_134DD0, 1.0f - *(float*)((char*)self + 0x40))));
+    sVec4 ax = Norm_134DD0(Sub_12E010(ScaleO_134DD0(D_004FF150, nv),
+                                             ScaleO_134DD0(D_004FF140, 1.0f - *(float*)((char*)self + 0x40))));
     {
         sVec4 q3;
         q3 = AxisAngleB_134DD0(ax, a2);
@@ -7317,7 +7314,7 @@ extern "C" void func_00136268(void* self)
     int s = *(int*)(r + 0x328);
     if (s == 4) {
         char* anim = *(char**)(r + 0x784);
-        *(sVec4*)(anim + 0x30) = D_004FF130;
+        *(t4Vector*)(anim + 0x30) = D_004FF130;
         *(sVec4*)(anim + 0x40) = AxisAngle_12FEC8(D_004FF160, 1.5707963705062866f);
         cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x8) + 0x784), e->anims[0], 0, -1.0f);
     } else if (s == 3) {
@@ -7326,12 +7323,12 @@ extern "C" void func_00136268(void* self)
         *(int*)(r + 0x320) = 0;
         *(int*)(*(char**)(*(char**)((char*)self + 0x8) + 0x784) + 0x18) = 0;
         char* anim = *(char**)(*(char**)((char*)self + 0x8) + 0x784);
-        *(sVec4*)(anim + 0x30) = D_004FF130;
+        *(t4Vector*)(anim + 0x30) = D_004FF130;
         *(sVec4*)(anim + 0x40) = AxisAngle_12FEC8(D_004FF160, 1.5707963705062866f);
         cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x8) + 0x784), e->anims[2], 0, -1.0f);
     } else {
         char* anim = *(char**)(r + 0x784);
-        *(sVec4*)(anim + 0x30) = D_004FF130;
+        *(t4Vector*)(anim + 0x30) = D_004FF130;
         *(sVec4*)(anim + 0x40) = AxisAngle_12FEC8(D_004FF160, 1.5707963705062866f);
         cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x8) + 0x784), e->anims[3], 0, -1.0f);
     }
