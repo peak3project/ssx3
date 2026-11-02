@@ -113,7 +113,7 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     signed char f5F;
     signed char f60[1];             /* indexed */
     signed char f61[1];             /* indexed */
-    short f62;
+    short f62[1];                   /* indexed */
     signed char f64;
     char pad65[0x68 - 0x65];
     unsigned char f68;
@@ -180,6 +180,7 @@ extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
 extern unsigned char D_0050A92E;        /* D_0050A8E8.setup.cfg.f26 */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
+extern struct sA8E8Chan *D_0050AAD8;    /* D_0050A8E8.f1F0 */
 extern struct sA8E8Bus D_0050AAE0[];    /* D_0050A8E8.f1F8 */
 extern struct sA8E8Bus D_0050AAF4[];    /* D_0050A8E8.f20C */
 extern struct sA8E8Bus D_0050AB08[];    /* D_0050A8E8.f220 */
@@ -2433,7 +2434,7 @@ int func_003B85F0_impl(int arg0, int arg1) {
             e->f38 = v;
             f_A7B0_85F0(sp0);
             f_2A50_85F0(sp0);
-            if (e->f62 > 0) func_003C27E0(e->f04[0], 0);
+            if (e->f62[0] > 0) func_003C27E0(e->f04[0], 0);
         }
     }
     return h;
@@ -2444,7 +2445,6 @@ int func_003B85F0_impl(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B86C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_0050AAD8;
 int func_003BA6E8(int arg0);
 
 short func_003B86C0(int arg0) {
@@ -2452,7 +2452,7 @@ short func_003B86C0(int arg0) {
     if (i < 0) {
         return -8;
     }
-    return *(short *)(D_0050AAD8 + i * 0x8C + 0x3A);
+    return *(short *)((char *)D_0050AAD8 + i * 0x8C + 0x3A);   /* integer part of the 16.16 f38 */
 }
 #endif
 
@@ -3681,14 +3681,10 @@ int func_003BA6E8(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA740);
 #ifdef SKIP_ASM
-struct E_A740 { char pad0[0x24]; unsigned short f24; char pad1[0x3A]; signed char v[1]; signed char w[1]; short s[8]; };
-struct Q_A740 { char pad[2]; signed char b2; };
-extern struct E_A740 *D_0050AAD8_A740 __asm__("D_0050AAD8");
-extern struct Q_A740 *f8218_A740(int, int) __asm__("func_003B8218");
 void func_003BA740(int a, int i) {
-    struct E_A740 *e = (struct E_A740 *)((char *)D_0050AAD8_A740 + i * 0x8C);
-    struct Q_A740 *q = f8218_A740(a, e->f24);
-    e->s[a] = (e->v[a] * e->w[a] * q->b2) >> 6;
+    struct sA8E8Chan *e = &D_0050AAD8[i];
+    struct sA8E8Bus *q = func_003B8218(a, e->f24);
+    e->f62[a] = (e->f60[a] * e->f61[a] * q->f02) >> 6;
 }
 #endif
 
