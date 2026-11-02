@@ -5443,7 +5443,7 @@ struct A_4C50 { char pad[0x6C0]; };
 struct B_4C50 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual Vec_4C50 *v05(); };
 struct D_4C50 : A_4C50, B_4C50 { };
 static inline Vec_4C50 pos_4C50(char *o) { return *(Vec_4C50*)(o + 0x40); }
-extern "C" void* func_00304C50(void* self, int n, Ent_4C50 *e) {
+extern "C" cLunoValue* func_00304C50(cLunoValue* ret, int n, Ent_4C50 *e) {
     if (D_5830_4C50 == 0) {
         D_5828_4C50 = 0xFFFFFFFF;
         D_5830_4C50 = 1;
@@ -5490,13 +5490,13 @@ extern "C" void* func_00304C50(void* self, int n, Ent_4C50 *e) {
         }
         else
             v = 0.0f;
-        *(int*)((char*)self + 8) = 2;
-        *(float*)func_00226618(self) = v;
+        ret->type = 2;
+        *(float*)func_00226618(ret) = v;
     } else {
-        *(int*)((char*)self + 8) = 2;
-        *(int*)func_00226618(self) = 0;
+        ret->type = 2;
+        *(int*)func_00226618(ret) = 0;
     }
-    return self;
+    return ret;
 }
 #endif
 
