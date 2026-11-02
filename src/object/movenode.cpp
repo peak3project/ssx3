@@ -11,6 +11,14 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// An axis-aligned bounding box (min and max corners).
+struct sBoundBox { t4Vector min, max; };
+
+// PORT: func_00352B88 is declared returning int for the predicate callers below; the box getter users bind it by
+// asm label.
+extern "C" sBoundBox* func_00352B88_box(void* mb) __asm__("func_00352B88");
+extern "C" void func_003291E0(void* mgr, int a, void* obj, sBoundBox* box, sBoundBox* old);
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1024,9 +1032,6 @@ extern "C" void cInstanceNode_getBoundBoxInfo(void* self, void* box, float* radi
 void tModifierBlock_setBoundBox_K(tModifierBlock* mb, void* box) __asm__("tModifierBlock_setBoundBox__FP14tModifierBlock");
 void tModifierBlock_setRadius_K(tModifierBlock* mb, float r) __asm__("tModifierBlock_setRadius__FP14tModifierBlock");
 
-struct sBox_3567 {
-    float v[8];
-} __attribute__((aligned(16)));
 
 // Copies the instance's bounding box and radius into its modifier block, when it has one with data.
 extern "C" void cMoveNode_setupOverlapSystem(void* self_)
@@ -1039,7 +1044,7 @@ extern "C" void cMoveNode_setupOverlapSystem(void* self_)
     else
         n = 0;
     if (n) {
-        sBox_3567 box;
+        sBoundBox box;
         float radius;
         cInstanceNode_getBoundBoxInfo(self, &box, &radius);
         tModifierBlock_setBoundBox_K(*(tModifierBlock**)(self + 0x1C), &box);
@@ -1055,13 +1060,8 @@ INCLUDE_ASM("object/movenode", func_003567E0);
 struct tModifierBlock;
 void tModifierBlock_setBoundBox_K(tModifierBlock* mb, void* box) __asm__("tModifierBlock_setBoundBox__FP14tModifierBlock");
 
-struct sMnBox_67E0 {
-    t4Vector min, max;
-};
 
-extern "C" sMnBox_67E0* func_00352B88_67E0(void* mb) __asm__("func_00352B88");
 extern "C" void* func_002D1BE0(void);
-extern "C" void func_003291E0_67E0(void* mgr, int a, void* obj, sMnBox_67E0* box, sMnBox_67E0* old) __asm__("func_003291E0");
 
 // Sets the modifier block's bound box from the node's own extents (self->18 + 0x60) and re-files it.
 extern "C" void func_003567E0(void* vself)
@@ -1073,8 +1073,8 @@ extern "C" void func_003567E0(void* vself)
     char*& o = blk;
     if (o == 0)
         return;
-    sMnBox_67E0 box;
-    sMnBox_67E0 old = *func_00352B88_67E0(*(void**)(self + 0x1C));
+    sBoundBox box;
+    sBoundBox old = *func_00352B88_box(*(void**)(self + 0x1C));
     char* n = *(char**)(self + 0x18);
     t4Vector v;
     v.x = *(float*)(n + 0x60);
@@ -1088,7 +1088,7 @@ extern "C" void func_003567E0(void* vself)
     box.max = v;
     tModifierBlock_setBoundBox_K(*(tModifierBlock**)(self + 0x1C), &box);
     void* obj = *(void**)(self + 0x18);
-    func_003291E0_67E0(func_002D1BE0(), 0, obj, &box, &old);
+    func_003291E0(func_002D1BE0(), 0, obj, &box, &old);
 }
 #endif
 
@@ -1096,15 +1096,10 @@ extern "C" void func_003567E0(void* vself)
 INCLUDE_ASM("object/movenode", func_003568B0);
 #ifdef SKIP_ASM
 
-struct sMnBox_68B0 {
-    t4Vector min, max;
-};
 
 
-extern "C" sMnBox_68B0* func_00352B88_68B0(void* mb) __asm__("func_00352B88");
 extern "C" float func_00352BF8(void* mb);
 extern "C" void* func_002D1BE0(void);
-extern "C" void func_003291E0(void* mgr, int a, void* obj, sMnBox_68B0* box, sMnBox_68B0* old);
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline void vu0Sub_68B0(t4Vector& out, const t4Vector& a, const t4Vector& b)
@@ -1156,8 +1151,8 @@ extern "C" void func_003568B0(char* self)
     char* o = h ? *h : 0;
     if (o == 0)
         return;
-    sMnBox_68B0 box;
-    sMnBox_68B0 old = *func_00352B88_68B0(*(void**)(self + 0x1C));
+    sBoundBox box;
+    sBoundBox old = *func_00352B88_box(*(void**)(self + 0x1C));
     float r = func_00352BF8(*(void**)(self + 0x1C));
     t4Vector rv;
     rv.w = 0.0f;
