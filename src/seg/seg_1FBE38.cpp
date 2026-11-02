@@ -2736,15 +2736,13 @@ static inline char *look_FD58(unsigned id) {
 }
 
 struct O_FD58 { int p0, p1, p2; virtual void v01(int); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); };
-struct V3_FD58 { float x, y, z; };
-extern V3_FD58 D_004C9098_FD58 __asm__("D_004C9098");
 extern unsigned D_FD58 __asm__("D_004A5658");
 extern sBindEnd_1FBE38 D_004A565C;
 extern int D_004A5660;
 extern int D_004A3C20;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_FD58 { int idx; int val; int pad; int type; };
-extern "C" V3_FD58 func_002FFD58(int n, Ent_FD58 *e) {
+extern "C" cLunoValue func_002FFD58(int n, Ent_FD58 *e) {
     if (D_004A5660 == 0) {
         D_FD58 = 0xFFFFFFFF;
         D_004A5660 = 1;
@@ -2772,7 +2770,7 @@ extern "C" V3_FD58 func_002FFD58(int n, Ent_FD58 *e) {
                 p->v01(3);
         }
     }
-    return D_004C9098_FD58;
+    return D_004C9098;
 }
 #endif
 
