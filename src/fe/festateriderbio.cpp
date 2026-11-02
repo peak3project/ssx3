@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festateriderbio", cFEStateRiderDetail_onCreateScreen);
 #ifdef SKIP_ASM
@@ -19,11 +27,6 @@ extern "C" int func_001577A0(void* self, int a1, int a2);
 extern void* D_004A28A8;
 extern char D_0045D870[];
 
-struct sVE_32A8 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" void cFEStateRiderDetail_onCreateScreen(void* self)
 {
@@ -36,7 +39,7 @@ extern "C" void cFEStateRiderDetail_onCreateScreen(void* self)
     func_00182DB8(self);
     void* pi = cBE_getInterface_Fv(cBE_getBE(), 1);
     int charID = cBENewPlayerInterface_getPlayerCharID(pi, *(signed char*)((char*)self + 0x44));
-    sVE_32A8* vt = *(sVE_32A8**)((char*)pi + 0xC);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)pi + 0xC);
     vt[2].fn((char*)pi + vt[2].delta);
     func_001A0570(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)((char*)self + 0x44), 0);
     func_001A0508(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)((char*)self + 0x44), charID, 0);
@@ -60,13 +63,12 @@ extern char D_0045D8A8[];
 extern char D_0045D8B8[];
 extern char D_0045D8C8[];
 
-struct sVtEnt_001833D0 { short delta; short index; void (*fn)(void*, int); };
 
 static inline void showObj_001833D0(void* self, char* name, int id)
 {
     void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
     if (obj != 0) {
-        sVtEnt_001833D0* vt = *(sVtEnt_001833D0**)((char*)obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 8);
         vt[9].fn((char*)obj + vt[9].delta, 1);
         *(int*)((char*)obj + 0x18) = id;
     }
@@ -139,11 +141,6 @@ extern "C" void func_001831D0(void* self, int a1);
 extern "C" unsigned int strlen(const char* s);
 extern char D_0045D780[];
 
-struct sVE_35F8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 static inline int Is_001835F8(int id, char* s) { return id == GetHashValue32(s); }
 
@@ -156,14 +153,14 @@ extern "C" void func_001835F8(void* self, void* item, int msg)
             if (*(int*)((char*)item + 0x74) != 0) {
                 void* pi2 = cBE_getInterface_Fv(cBE_getBE(), 1);
                 func_001474A8(pi2, *(signed char*)((char*)self + 0x44), v);
-                sVE_35F8* vt = *(sVE_35F8**)((char*)pi2 + 0xC);
+                sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)pi2 + 0xC);
                 vt[1].fn((char*)pi2 + vt[1].delta);
             }
         } else if (*(int*)((char*)item + 0xC) == 0) {
             char* name = (char*)item + 0x74;
             if (*(int*)((char*)item + 0x5C) != 0 && strlen(name) != 0) {
                 func_00147138(pi, *(signed char*)((char*)self + 0x44), name);
-                sVE_35F8* vt = *(sVE_35F8**)((char*)pi + 0xC);
+                sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)pi + 0xC);
                 vt[1].fn((char*)pi + vt[1].delta);
             }
         }
@@ -198,11 +195,6 @@ extern const char D_0045D8D8[];
 extern const char D_0045D8E8[];
 extern const char D_0045D698[];
 
-struct sVE_3710 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 struct sBits_3710 {
     unsigned lo : 8;
     unsigned mode : 6;
@@ -245,7 +237,7 @@ extern "C" void func_00183710(char* self, char* item, unsigned int msg)
             }
         } else {
             char* obj = **(char***)(self + 0x10);
-            sVE_3710* vt = *(sVE_3710**)(obj + 4);
+            sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(obj + 4);
             void* r = vt[4].fn(obj + vt[4].delta, self, sub);
             if (r != 0) {
                 func_0039F400(*(char**)(self + 0x10) + 0x18, r);
@@ -256,7 +248,7 @@ extern "C" void func_00183710(char* self, char* item, unsigned int msg)
     }
     case 6: {
         char* obj = **(char***)(self + 0x10);
-        sVE_3710* vt = *(sVE_3710**)(obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(obj + 4);
         void* r = vt[5].fn(obj + vt[5].delta, self, *(int*)(item + 0x18));
         if (r != 0) {
             func_0039F400(*(char**)(self + 0x10) + 0x18, r);
