@@ -1,6 +1,8 @@
 #include "common.h"
 
 extern "C" char* strcpy(char* dst, const char* src);
+// The shared empty cBXString data pointer, read as const so one load serves several string inits.
+extern void* const D_004A3E90;
 
 // PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align): gcc then treats the
 // result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
@@ -287,8 +289,6 @@ cBXString2* cBXString_cBXString(cBXString2* self);
 extern "C" void* cBXString_cBXString2(void* self, const char* s);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_00260F10(void* self);
-// The shared empty-string pointer is read as const so one load serves several string inits.
-extern void* const D_004A3E90_94D0 __asm__("D_004A3E90");
 extern char D_004807D8[];
 
 struct sBXStr_94D0 {
@@ -323,8 +323,8 @@ extern "C" void* func_002594D0(void* self_)
     *(int*)(self + 0x14) = 0;
     *(int*)(self + 0x18) = 0;
     *(int*)(self + 0x44) = 0;
-    *(void**)(self + 0x48) = D_004A3E90_94D0;
-    *(void**)(self + 0x4C) = D_004A3E90_94D0;
+    *(void**)(self + 0x48) = D_004A3E90;
+    *(void**)(self + 0x4C) = D_004A3E90;
     *(int*)(self + 0x54) = 0;
     *(int*)(self + 0x58) = 0;
     *(int*)(self + 0x5C) = 0;
@@ -333,16 +333,16 @@ extern "C" void* func_002594D0(void* self_)
     *(int*)(self + 0x6C) = 0;
     sBXStr_94D0* p = (sBXStr_94D0*)(self + 0x70);
     for (int i = 3; i != -1; i--, p++) {
-        p->str = D_004A3E90_94D0;
+        p->str = D_004A3E90;
     }
-    *(void**)(self + 0x80) = D_004A3E90_94D0;
-    *(void**)(self + 0x84) = D_004A3E90_94D0;
-    *(void**)(self + 0x88) = D_004A3E90_94D0;
-    *(void**)(self + 0x8C) = D_004A3E90_94D0;
-    *(void**)(self + 0x90) = D_004A3E90_94D0;
-    *(void**)(self + 0x94) = D_004A3E90_94D0;
-    *(void**)(self + 0x98) = D_004A3E90_94D0;
-    *(void**)(self + 0x9C) = D_004A3E90_94D0;
+    *(void**)(self + 0x80) = D_004A3E90;
+    *(void**)(self + 0x84) = D_004A3E90;
+    *(void**)(self + 0x88) = D_004A3E90;
+    *(void**)(self + 0x8C) = D_004A3E90;
+    *(void**)(self + 0x90) = D_004A3E90;
+    *(void**)(self + 0x94) = D_004A3E90;
+    *(void**)(self + 0x98) = D_004A3E90;
+    *(void**)(self + 0x9C) = D_004A3E90;
     cBXString_cBXString2(self + 0xE8, D_004807D8);
     sList_94D0* lst = (sList_94D0*)(self + 0xEC);
     *(sListNode_94D0**)(self + 0xF0) = (sListNode_94D0*)cMemMan_alloc(0xC, D_004804A8, 0x20000000, 0);
@@ -3191,7 +3191,6 @@ extern "C" void cBXString__cBXString(void* self, int flags);
 extern "C" void* cBXString_cBXString1(void* self, void* other);
 extern "C" void* cBXString_cBXString2(void* self, const char* s);
 extern "C" void func_003194A8(void* str, const char* fmt, ...);
-extern void* D_004A3E90;
 extern char D_00480E10[];
 extern char D_004A3320[];
 extern char D_00480E20[];
@@ -3251,7 +3250,6 @@ extern "C" void func_00260F10(void* self)
 INCLUDE_ASM("dirtysock/tagsunk", func_00260F80);
 #ifdef SKIP_ASM
 extern char D_00480E48[];
-extern void* D_004A3E90;
 
 // Creates the memory-card manager singleton (D_004A3328).
 extern "C" void func_00260F80(void)
@@ -3380,7 +3378,6 @@ extern "C" void func_002614E8(void* self, void* a1);
 extern "C" int func_003F0818(void* p, const char* a1, int tag, const char* a3, int a4);
 extern "C" int func_003F08E8(void* p, const char* name, int a2, int a3, const char* s1, const char* s2, void* cb, void* user);
 extern "C" void func_00268F18(void* self, void* a1, int a2);
-extern void* D_004A3E90;
 extern char D_004A3330[];
 extern char D_004A3338[];
 
@@ -6280,8 +6277,8 @@ extern int D_004A33D4;
 extern int D_004A33DC;
 extern int D_004A33E0;
 extern int D_004A33E4;
-struct sDsInit265950 { void* buf; int len; };
-extern sDsInit265950 D_004A5B48_s __asm__("D_004A5B48");
+struct sDsInit { void* buf; int len; };
+extern sDsInit D_004A5B48;
 extern char D_00442A18[];
 extern char D_00537190[];
 extern "C" void* func_003E6448(void* dst, int value, int size);
@@ -6295,12 +6292,12 @@ extern "C" void func_00265950(void* vself)
     self[0] = 1;
     D_004A33D4 = 0;
     self[1] = 0;
-    D_004A5B48_s.buf = D_00442A18;
+    D_004A5B48.buf = D_00442A18;
     D_004A33E0 = 0;
     D_004A33DC = 0;
     D_004A33E4 = 0;
-    D_004A5B48_s.len = 0;
-    func_003F7EE0(&D_004A5B48_s);
+    D_004A5B48.len = 0;
+    func_003F7EE0(&D_004A5B48);
     func_003E6448(D_00537190, 0, 0x40);
     D_004A33D8 = func_002C22C8();
 }
