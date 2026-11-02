@@ -2315,7 +2315,140 @@ void func_001613E8(void* self, void* other)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_001613F0);
+#ifdef SKIP_ASM
+extern "C" float func_0031DEE0(void* spline, float x);
+
+struct sVec_13F0 {
+    float x, y, z, w;
+    sVec_13F0() {}
+    sVec_13F0(float a, float b, float c, const float& d) : x(a), y(b), z(c), w(d) {}
+} __attribute__((aligned(16)));
+
+extern sVec_13F0 D_004FF160_v13F0 __asm__("D_004FF160");
+
+struct sVEv_13F0 {
+    short delta;
+    short index;
+    sVec_13F0 (*fn)(void*);
+};
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec_13F0 Sub_13F0(const sVec_13F0& a, const sVec_13F0& b)
+{
+    sVec_13F0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_13F0(const sVec_13F0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector at pointer times scalar).
+static inline sVec_13F0 ScaleP_13F0(float s, const sVec_13F0* v)
+{
+    sVec_13F0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec_13F0 Scale_13F0(float s, const sVec_13F0& v)
+{
+    sVec_13F0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sVec_13F0 Add_13F0(const sVec_13F0& a, const sVec_13F0& b)
+{
+    sVec_13F0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline sVec_13F0 Get_13F0(char* self, int slot)
+{
+    char* o = *(char**)(self + 0x30);
+    sVEv_13F0* e = &(*(sVEv_13F0**)o)[slot];
+    return e->fn(o + e->delta);
+}
+
+extern "C" void func_001613F0(char* self)
+{
+    char* sx = self + 0x390;
+    char* sy = self + 0x39C;
+    char* sz = self + 0x3A8;
+    float t = (*(float*)(self + 0x3B8) + 0.01666666753590107f) <? *(float*)(self + 0x3B4);
+    float speed = *(float*)(self + 0x3BC) * 0.01666666753590107f;
+    {
+        sVec_13F0 prev = *(sVec_13F0*)(self + 0x40);
+        sVec_13F0 cur(func_0031DEE0(sx, t), func_0031DEE0(sy, t), func_0031DEE0(sz, t), 1.0f);
+        sVec_13F0 d = Sub_13F0(cur, prev);
+        float len = Length_13F0(d);
+        if (0.0f < len) {
+            float t0 = *(float*)(self + 0x3B8);
+            float nt = (t0 + (t - t0) / (len / speed)) <? *(float*)(self + 0x3B4);
+            *(float*)(self + 0x3B8) = nt;
+            *(sVec_13F0*)(self + 0x40) = sVec_13F0(func_0031DEE0(sx, nt), func_0031DEE0(sy, nt), func_0031DEE0(sz, nt), 1.0f);
+        }
+    }
+    *(sVec_13F0*)(self + 0x20) = Add_13F0(Add_13F0(Get_13F0(self, 1), ScaleP_13F0(*(float*)(self + 0x3C4), &D_004FF160_v13F0)),
+                                          Scale_13F0(*(float*)(self + 0x3C0), Get_13F0(self, 4)));
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_00161630);
