@@ -108,6 +108,11 @@ struct sWsSphDef {
     float x, y, z;
 };
 
+// A single float wrapped in a struct (written through a pointer by the rate setters).
+struct sWsFloat {
+    float v;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4458,11 +4463,8 @@ struct sSphFloatDef_1AA0 {
     int f24;            // 0x24
 };
 
-struct sFloat_1AA0 {
-    float v;
-};
 
-static inline void setRate_1AA0(sFloat_1AA0* dst, float v, float dflt)
+static inline void setRate_1AA0(sWsFloat* dst, float v, float dflt)
 {
     float r;
     if (v >= 0.0f) {
@@ -4473,7 +4475,7 @@ static inline void setRate_1AA0(sFloat_1AA0* dst, float v, float dflt)
     dst->v = r;
 }
 
-static inline void setRateMax_1AA0(sFloat_1AA0* dst, float v, char* info)
+static inline void setRateMax_1AA0(sWsFloat* dst, float v, char* info)
 {
     float r;
     if (v < 0.0f) {
@@ -4495,8 +4497,8 @@ extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, 
         v = func_00351508(self->inst);
     }
     self->id = def->id;
-    setRate_1AA0((sFloat_1AA0*)&self->min, def->min, v);
-    setRateMax_1AA0((sFloat_1AA0*)&self->max, def->max, info);
+    setRate_1AA0((sWsFloat*)&self->min, def->min, v);
+    setRateMax_1AA0((sWsFloat*)&self->max, def->max, info);
     v = def->value;
     if (v < 0.0f) {
         v = self->min;
@@ -4826,11 +4828,8 @@ struct sSphCtl_003421A0 {
     void* inst;         // 0x78
 };
 
-struct sFloat_003421A0 {
-    float v;
-};
 
-static inline void setRate_003421A0(sFloat_003421A0* dst, float v, float dflt)
+static inline void setRate_003421A0(sWsFloat* dst, float v, float dflt)
 {
     float r;
     if (v >= 0.0f) {
@@ -4841,7 +4840,7 @@ static inline void setRate_003421A0(sFloat_003421A0* dst, float v, float dflt)
     dst->v = r;
 }
 
-static inline void setRateMax_003421A0(sFloat_003421A0* dst, float v, char* info)
+static inline void setRateMax_003421A0(sWsFloat* dst, float v, char* info)
 {
     float r;
     if (v < 0.0f) {
@@ -4861,8 +4860,8 @@ extern "C" void* func_003421A0(sSphCtl_003421A0* self, int a1, char* obj, char* 
     if (self->inst != 0) {
         t = func_00351508(self->inst);
     }
-    setRate_003421A0((sFloat_003421A0*)&self->f10, *(float*)(def + 0x20), t);
-    setRateMax_003421A0((sFloat_003421A0*)&self->f14, *(float*)(def + 0x24), info);
+    setRate_003421A0((sWsFloat*)&self->f10, *(float*)(def + 0x20), t);
+    setRateMax_003421A0((sWsFloat*)&self->f14, *(float*)(def + 0x24), info);
     self->f0C = *(float*)(def + 0x8);
     self->f08 = *(float*)(def + 0x4) * 9.999999974752427e-07f;
     self->f18 = *(float*)(def + 0xC) * 0.03333333507180214f / (float)*(int*)(D_004A5B64 + 0x10);
