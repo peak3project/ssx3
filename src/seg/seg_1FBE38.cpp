@@ -4445,8 +4445,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00302BD8);
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_2BD8 { int idx; int val; int pad; int kind; };
-struct R12_2BD8 { int a; int b; int c; };
-extern R12_2BD8 D_004C9098_2BD8 __asm__("D_004C9098");
 
 extern int D_004A3CF8_2BD8[2] __asm__("D_004A3CF8");
 extern "C" int func_0030A868(int, int, int, int);
@@ -4454,7 +4452,7 @@ extern int D_004A3DD8_2BD8 __asm__("D_004A3DD8");
 extern int D_004A5780_2BD8 __asm__("D_004A5780");
 extern unsigned D_004A5778_2BD8 __asm__("D_004A5778");
 extern sBindEnd_1FBE38 D_004A577C_2BD8 __asm__("D_004A577C");
-extern "C" R12_2BD8 func_00302BD8(int n, Ent_2BD8* e) {
+extern "C" cLunoValue func_00302BD8(int n, Ent_2BD8* e) {
     if (D_004A5780_2BD8 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A577C_2BD8 = sBindEnd_1FBE38();
@@ -4474,7 +4472,7 @@ extern "C" R12_2BD8 func_00302BD8(int n, Ent_2BD8* e) {
             *d = p->val;
     }
     func_0030A868(D_004A3DD8_2BD8, vp[0], 0, -1);
-    return D_004C9098_2BD8;
+    return D_004C9098;
 }
 #endif
 
