@@ -2126,15 +2126,13 @@ static inline int nearViewer_E840(const V4_E840 &pos) {
     }
     return 0;
 }
-struct V3_E840 { float x, y, z; };
-extern V3_E840 D_004C9098_E840 __asm__("D_004C9098");
 struct Tag_E840 { char c; Tag_E840() {} Tag_E840(const Tag_E840 &o) : c(o.c) {} };
 extern unsigned D_E840[] __asm__("D_004FB858");
 extern int D_004A5628;
 extern const int D_004462A0[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_E840 { int idx; int val; int pad; int type; };
-extern "C" V3_E840 cViewer_addParticle(int n, Ent_E840 *e) {
+extern "C" cLunoValue cViewer_addParticle(int n, Ent_E840 *e) {
     if (D_004A5628 == 0) {
         ((int*)D_E840)[0] = 1;
         ((int*)D_E840)[1] = 0;
@@ -2200,18 +2198,18 @@ extern "C" V3_E840 cViewer_addParticle(int n, Ent_E840 *e) {
             V4_E840 pos = *(V4_E840*)(p->v24() + 0x30);
             if (nearViewer_E840(pos)) {
                 cMoveNode_addParticle_E840(p, buf);
-                return D_004C9098_E840;
+                return D_004C9098;
             }
         }
     } else {
         V4_E840 pos = *(V4_E840*)(obj + 0x40);
         if (nearViewer_E840(pos)) {
             func_003578A8_E840(cMemMan_alloc(0x2C, D_00489730_E840, 0x20000000, 0), 1, obj, buf, 0);
-            return D_004C9098_E840;
+            return D_004C9098;
         }
     }
     operator_delete((int*)buf);
-    return D_004C9098_E840;
+    return D_004C9098;
 }
 #endif
 
