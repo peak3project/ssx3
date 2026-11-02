@@ -3805,20 +3805,18 @@ int func_003B9E48(int a0, int vol) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9F38);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0050A120_9F38[] __asm__("D_0050A120");
-
 int func_003B9F38(int arg0, int arg1, int arg2) {
     int r;
-    char *e;
+    struct sA120Song *e;
     int t;
     r = func_003B8D98(arg0);
     if (r < 0) return r;
-    e = D_0050A120_9F38 + r * 0x70;
-    if (*(signed char *)(e + 0x28) == 3) {
+    e = &D_0050A120.f000[r];
+    if (e->f28 == 3) {
         if (arg1 <= 0) arg1 = 1;
         t = arg2 << 16;
-        *(int *)(e + 0x1C) = t;
-        *(int *)(e + 0x18) = (t - *(int *)(e + 0x14)) / arg1;
+        e->f1C = t;
+        e->f18 = (t - e->f14) / arg1;
     }
     return 0;
 }
