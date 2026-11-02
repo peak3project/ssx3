@@ -4660,10 +4660,9 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303490);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int* func_00226620_3490(void*) __asm__("func_00226620__FPv");
-extern char *D_004A3DD8_3490 __asm__("D_004A3DD8");
 extern "C" unsigned func_003079D8_3490(char*) __asm__("func_003079D8");
 extern "C" void* func_00303490(void* self) {
-    char *p = *(char**)(D_004A3DD8_3490 + 0x2A4);
+    char *p = D_004A3DD8->f2A4;
     unsigned v;
     if (p)
         v = func_003079D8_3490(p);
