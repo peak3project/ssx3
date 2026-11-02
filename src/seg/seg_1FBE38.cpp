@@ -2558,8 +2558,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FF850);
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_F850 { int idx; int val; int pad; int kind; };
-struct R12_F850 { int a; int b; int c; };
-extern R12_F850 D_004C9098_F850 __asm__("D_004C9098");
 
 extern int D_00446530_F850[] __asm__("D_00446530");
 extern "C" void func_0010F1C0(int, int, float);
@@ -2568,7 +2566,7 @@ extern char* D_004A28A8_F850 __asm__("D_004A28A8");
 extern int D_004A563C_F850 __asm__("D_004A563C");
 struct T12_F850 { int a; int b; int e; sBindEnd_1FBE38 f; };
 extern T12_F850 D_004FBAE8_F850 __asm__("D_004FBAE8");
-extern "C" R12_F850 func_002FF850(int n, Ent_F850* e) {
+extern "C" cLunoValue func_002FF850(int n, Ent_F850* e) {
     if (D_004A563C_F850 == 0) {
         D_004FBAE8_F850.a = -1;
         D_004A563C_F850 = 1;
@@ -2594,7 +2592,7 @@ extern "C" R12_F850 func_002FF850(int n, Ent_F850* e) {
     char* o = *(char**)(D_004A28A8_F850 + 0x84);
     char* base = *(char**)(o + 0xC);
     func_0010F1C0(*(int*)(base + (vp[0] << 2) + 0x28), vp[1], *(float*)&vp[2]);
-    return D_004C9098_F850;
+    return D_004C9098;
 }
 #endif
 
