@@ -185,6 +185,7 @@ extern struct sA8E8 D_0050A8E8;
 extern struct sA8E8Cfg D_0050A908;      /* D_0050A8E8.setup.cfg */
 extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
+extern unsigned short D_0050A912;       /* D_0050A8E8.setup.cfg.f0A */
 extern unsigned char D_0050A918;        /* D_0050A8E8.setup.cfg.f10 */
 extern unsigned char D_0050A92E;        /* D_0050A8E8.setup.cfg.f26 */
 extern unsigned int D_0050A94C[];       /* &D_0050A8E8.setup.cfg.f44 (an array, so reads are in-struct memory like the member's) */
@@ -10550,7 +10551,6 @@ extern void func_003CA990_8C30(void *) __asm__("func_003CA990");
 extern void func_003C8F48_8C30(void *, void *) __asm__("func_003C8F48");
 extern void func_003C8FB0_8C30(void *, void *) __asm__("func_003C8FB0");
 extern void func_003CA9D8_8C30(void *, int *) __asm__("func_003CA9D8");
-extern unsigned short D_0050A912_8C30[] __asm__("D_0050A912");
 
 void func_003C8C30(int arg0, int arg1) {
     int sp[2];
@@ -10569,7 +10569,7 @@ void func_003C8C30(int arg0, int arg1) {
             func_003C8F48_8C30(e + 0x40, *(char**)(e + 0x5C));
         }
         sp[0] = arg1 << 8;
-        sp[1] = D_0050A912_8C30[0] << 8;
+        sp[1] = D_0050A912 << 8;
         func_003CA9D8_8C30(*(char**)(e + 0x5C), sp);
         return;
     }
