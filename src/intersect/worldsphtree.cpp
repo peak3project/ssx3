@@ -49,6 +49,17 @@ struct sWsQueryBox {
     float min[4];
 };
 
+// Ray / sphere hit record (distance at 0x40, object and triangle at 0x50; empty ctor).
+struct sWsRayHit {
+    float pad0[16];
+    float dist;             // 0x40
+    int pad44[3];
+    char* obj;              // 0x50
+    char* tri;              // 0x54
+    int pad58[10];
+    sWsRayHit() {}
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1010,7 +1021,7 @@ struct sTree_333EF8 {
 
 extern "C" void func_003279D0(void* cache, void* src, void** out);
 struct t4Vector;
-struct sHit_003342D0;
+struct sWsRayHit;
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
@@ -1064,7 +1075,7 @@ static inline void reset_333EF8(sHit_333EF8* h)
     h->v = 0;
 }
 
-extern "C" int func_00333EF8(void* vself, void* vq, sHit_003342D0* vhits, int cap, int arg)
+extern "C" int func_00333EF8(void* vself, void* vq, sWsRayHit* vhits, int cap, int arg)
 {
     sTree_333EF8* self = (sTree_333EF8*)vself;
     sWsQueryBox* q = (sWsQueryBox*)vq;
@@ -1128,17 +1139,8 @@ extern "C" int func_00333EF8(void* vself, void* vq, sHit_003342D0* vhits, int ca
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/worldsphtree", func_003342D0);
 #ifdef SKIP_ASM
-struct sHit_003342D0 {
-    float pad0[16];
-    float dist;             // 0x40
-    int pad44[3];
-    char* obj;              // 0x50
-    char* tri;              // 0x54
-    int pad58[10];
-    sHit_003342D0() {}
-} __attribute__((aligned(16)));
 
-extern "C" int func_00333EF8(void* self, void* q, sHit_003342D0* hits, int max, int a4);
+extern "C" int func_00333EF8(void* self, void* q, sWsRayHit* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
 static inline float absf_003342D0(float x)
@@ -1148,7 +1150,7 @@ static inline float absf_003342D0(float x)
     return r;
 }
 
-static inline int isBetter_003342D0(sHit_003342D0* a, sHit_003342D0* b)
+static inline int isBetter_003342D0(sWsRayHit* a, sWsRayHit* b)
 {
     if (a->obj != 0) {
         if (b->obj == 0) {
@@ -1162,9 +1164,9 @@ static inline int isBetter_003342D0(sHit_003342D0* a, sHit_003342D0* b)
     return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
 }
 
-extern "C" float func_003342D0(void* self, char* q, sHit_003342D0* out, int a3)
+extern "C" float func_003342D0(void* self, char* q, sWsRayHit* out, int a3)
 {
-    sHit_003342D0 hits[64];
+    sWsRayHit hits[64];
     int n = func_00333EF8(self, q, hits, 0x40, a3);
     if (n == 0) {
         return -1.0f;
@@ -1669,17 +1671,8 @@ extern "C" int query_5D78(sSelf_5D78* self, char* q, int p3, int p4, int p5)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/worldsphtree", func_00336850);
 #ifdef SKIP_ASM
-struct sHit_00336850 {
-    float pad0[16];
-    float dist;             // 0x40
-    int pad44[3];
-    char* obj;              // 0x50
-    char* tri;              // 0x54
-    int pad58[10];
-    sHit_00336850() {}
-} __attribute__((aligned(16)));
 
-extern "C" int func_00335D78(void* self, void* q, sHit_00336850* hits, int max, int a4);
+extern "C" int func_00335D78(void* self, void* q, sWsRayHit* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
 static inline float absf_00336850(float x)
@@ -1689,7 +1682,7 @@ static inline float absf_00336850(float x)
     return r;
 }
 
-static inline int isBetter_00336850(sHit_00336850* a, sHit_00336850* b)
+static inline int isBetter_00336850(sWsRayHit* a, sWsRayHit* b)
 {
     if (a->obj != 0) {
         if (b->obj == 0) {
@@ -1703,9 +1696,9 @@ static inline int isBetter_00336850(sHit_00336850* a, sHit_00336850* b)
     return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
 }
 
-extern "C" float func_00336850(void* self, char* q, sHit_00336850* out, int a3)
+extern "C" float func_00336850(void* self, char* q, sWsRayHit* out, int a3)
 {
-    sHit_00336850 hits[64];
+    sWsRayHit hits[64];
     int n = func_00335D78(self, q, hits, 0x40, a3);
     if (n == 0) {
         return -1.0f;
@@ -2060,17 +2053,8 @@ extern "C" int query_6F30(sSelf_6F30* self, char* q, int p3, int p4, int p5)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/worldsphtree", func_003378C0);
 #ifdef SKIP_ASM
-struct sHit_003378C0 {
-    float pad0[16];
-    float dist;             // 0x40
-    int pad44[3];
-    char* obj;              // 0x50
-    char* tri;              // 0x54
-    int pad58[10];
-    sHit_003378C0() {}
-} __attribute__((aligned(16)));
 
-extern "C" int func_00336F30(void* self, void* q, sHit_003378C0* hits, int max, int a4);
+extern "C" int func_00336F30(void* self, void* q, sWsRayHit* hits, int max, int a4);
 
 // PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
 static inline float absf_003378C0(float x)
@@ -2080,7 +2064,7 @@ static inline float absf_003378C0(float x)
     return r;
 }
 
-static inline int isBetter_003378C0(sHit_003378C0* a, sHit_003378C0* b)
+static inline int isBetter_003378C0(sWsRayHit* a, sWsRayHit* b)
 {
     if (a->obj != 0) {
         if (b->obj == 0) {
@@ -2094,9 +2078,9 @@ static inline int isBetter_003378C0(sHit_003378C0* a, sHit_003378C0* b)
     return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
 }
 
-extern "C" float func_003378C0(void* self, char* q, sHit_003378C0* out, int a3)
+extern "C" float func_003378C0(void* self, char* q, sWsRayHit* out, int a3)
 {
-    sHit_003378C0 hits[128];
+    sWsRayHit hits[128];
     int n = func_00336F30(self, q, hits, 0x80, a3);
     if (n == 0) {
         return -1.0f;
