@@ -154,7 +154,8 @@ struct sA8E8 {
     signed char f177;
     signed char f178;
     signed char f179;
-    char pad17A[0x17E - 0x17A];
+    unsigned char f17A;             /* also D_0050AA62 */
+    char pad17B[0x17E - 0x17B];
     short f17E;                     /* number of channels (f1F0) */
     volatile unsigned int f180;     /* tick */
     void (*f184[6])(void);          /* f177 entries */
@@ -188,6 +189,7 @@ extern unsigned char D_0050A918;        /* D_0050A8E8.setup.cfg.f10 */
 extern unsigned char D_0050A92E;        /* D_0050A8E8.setup.cfg.f26 */
 extern unsigned int D_0050A94C[];       /* &D_0050A8E8.setup.cfg.f44 (an array, so reads are in-struct memory like the member's) */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
+extern unsigned char D_0050AA62;        /* D_0050A8E8.f17A */
 extern struct sA8E8Chan *D_0050AAD8;    /* D_0050A8E8.f1F0 */
 extern struct sA8E8Bus D_0050AAE0[];    /* D_0050A8E8.f1F8 */
 extern struct sA8E8Bus D_0050AAF4[];    /* D_0050A8E8.f20C */
@@ -10090,7 +10092,6 @@ struct O_8158 { int f0; int f4; char pad8[0x10]; short f18; char f1A; };
 struct E_8158 { char flag; char pad[0x3F]; int f40; int f44; struct O_8158 *f48; struct O_8158 *f4C; int f50; int f54; int f58; int f5C; };
 struct T_8158 { char pad[0x18]; void (*fn[6][3])(struct O_8158 *, struct R_8158 *); int sz[6][3]; char pad2[0x1DC - 0x18 - 0x48 - 0x48]; struct E_8158 *ents; };
 extern struct T_8158 D_00515B40_8158[] __asm__("D_00515B40");
-extern unsigned char D_0050AA62_8158[] __asm__("D_0050AA62");
 extern struct O_8158 *func_003B5C60_8158(int) __asm__("func_003B5C60");
 extern void func_003C8F48_8158(int *, struct O_8158 *) __asm__("func_003C8F48");
 extern void func_003CB280_8158(struct O_8158 *, int, int) __asm__("func_003CB280");
@@ -10131,7 +10132,7 @@ void func_003C8158(int idx, int type, int p2, int a3, int a4, int a5, int a6, in
         r.wC = a7;
         r.w10 = a8;
         r.w14 = a9;
-        r.w20 = D_0050AA62_8158[0];
+        r.w20 = D_0050AA62;
         r.w1C = idx;
         e->f48->f4 = 0;
         e->f48->f18 = 0xF0;
@@ -10460,7 +10461,6 @@ struct O_8A88 { int f0; int f4; char pad8[0x10]; short f18; char f1A; };
 struct E_8A88 { char pad0[0x40]; int f40; char pad44[0xC]; struct O_8A88 *f50; char pad54[0xC]; };
 struct T_8A88 { char pad0[0xE]; unsigned char fE; char padF[0x1DC - 0xF]; struct E_8A88 *ents; };
 extern struct T_8A88 D_00515B40_8A88 __asm__("D_00515B40");
-extern unsigned char D_0050AA62_8A88 __asm__("D_0050AA62");
 extern struct O_8A88 *func_003B5C60_8A88(int) __asm__("func_003B5C60");
 extern void func_003CBB28_8A88(struct O_8A88 *, int, int) __asm__("func_003CBB28");
 extern void func_003C8F48_8A88(int *, struct O_8A88 *) __asm__("func_003C8F48");
@@ -10477,7 +10477,7 @@ void func_003C8A88(int idx, int n) {
         e->f50->f4 = 0;
         e->f50->f18 = 0xA0;
         e->f50->f1A = 0;
-        func_003CBB28_8A88(e->f50, D_0050AA62_8A88, big);
+        func_003CBB28_8A88(e->f50, D_0050AA62, big);
         func_003C8F48_8A88(&e->f40, e->f50);
     }
     func_003CB538_8A88(e->f50, n);
@@ -10544,13 +10544,13 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C8C30);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_00515D1C_8C30[] __asm__("D_00515D1C");
-extern unsigned short D_0050A912_8C30[] __asm__("D_0050A912");
 extern void *func_003B5C60_8C30(int) __asm__("func_003B5C60");
 extern void func_003B5E98_8C30(void *) __asm__("func_003B5E98");
 extern void func_003CA990_8C30(void *) __asm__("func_003CA990");
 extern void func_003C8F48_8C30(void *, void *) __asm__("func_003C8F48");
 extern void func_003C8FB0_8C30(void *, void *) __asm__("func_003C8FB0");
 extern void func_003CA9D8_8C30(void *, int *) __asm__("func_003CA9D8");
+extern unsigned short D_0050A912_8C30[] __asm__("D_0050A912");
 
 void func_003C8C30(int arg0, int arg1) {
     int sp[2];
