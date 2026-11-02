@@ -21,6 +21,12 @@ struct sPlayerStatRow {
 };
 extern sPlayerStatRow D_00535538[];
 
+// Per-character base stats (15 bytes each).
+struct sCharStat {
+    signed char v[15];
+};
+extern sCharStat D_005308D8[];
+
 extern "C" void func_00145B20(void* self);
 extern "C" void cBENewPlayerInterface_defaultCtrl(void* self);
 extern void* D_0045AE28[16];
@@ -1693,33 +1699,21 @@ extern "C" int func_00148158(void* self, int profile, unsigned int stat)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001482D0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sCharStat_001482D0 {
-    signed char v[15];
-};
-extern sCharStat_001482D0 D_005308D8_001482D0[] __asm__("D_005308D8");
-
-extern "C" sCharStat_001482D0* func_001482D0(sCharStat_001482D0* dst, int unused, int c)
+extern "C" sCharStat* func_001482D0(sCharStat* dst, int unused, int c)
 {
-    *dst = D_005308D8_001482D0[c];
+    *dst = D_005308D8[c];
     return dst;
 }
 #endif
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148328);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int cBELibrary_getCharacterID(int);
 
-struct sCharStat_00148328 {
-    signed char v[15];
-};
-extern sCharStat_00148328 D_005308D8_00148328[] __asm__("D_005308D8");
-
-extern "C" sCharStat_00148328* func_00148328(sCharStat_00148328* dst, int unused, int rider)
+extern "C" sCharStat* func_00148328(sCharStat* dst, int unused, int rider)
 {
     int c = cBELibrary_getCharacterID(rider);
-    *dst = D_005308D8_00148328[c];
+    *dst = D_005308D8[c];
     return dst;
 }
 #endif
@@ -2102,12 +2096,6 @@ INCLUDE_ASM("be/beintplayer", func_00148D80);
 #ifdef SKIP_ASM
 int cBENewPlayerInterface_isMissionMan(int index);
 
-struct sCharStat_005308D8
-{
-    signed char v[15];
-};
-extern sCharStat_005308D8 D_005308D8[];
-
 extern "C" float func_00148D80(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -2126,14 +2114,7 @@ extern "C" float func_00148D80(void* self, int rider, int value)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintplayer", func_00148E68);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sCharStat_00148E68
-{
-    signed char v[15];
-};
-extern sCharStat_00148E68 D_005308D8_00148E68[] __asm__("D_005308D8");
 
 extern "C" float func_00148E68(void* self, int rider, int value)
 {
@@ -2146,7 +2127,7 @@ extern "C" float func_00148E68(void* self, int rider, int value)
         v = value;
     else
         v = D_00535538[profile].e[c].v[3] / 5;
-    return (float)v / (float)D_005308D8_00148E68[c].v[0xB];
+    return (float)v / (float)D_005308D8[c].v[0xB];
 }
 #endif
 
