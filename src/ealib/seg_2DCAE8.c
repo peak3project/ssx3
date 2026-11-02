@@ -1202,15 +1202,13 @@ extern struct G_D8E8 D_00519AB0_D8E8 __asm__("D_00519AB0");
 extern int func_003DD310_D8E8(int) __asm__("func_003DD310");
 extern int BIG_typeofheader_D8E8(int) __asm__("BIG_typeofheader");
 extern int BIG_sizeofheader_D8E8(int) __asm__("BIG_sizeofheader");
-extern void (*D_00450C18_D8E8[])(int) __asm__("D_00450C18");
-extern int (*D_00450C10_D8E8[])(char *, int, int) __asm__("D_00450C10");
 extern char D_00495D68_D8E8[] __asm__("D_00495D68");
 extern void iFILESYS_ExecCommand_D8E8(void *) __asm__("iFILESYS_ExecCommand");
 extern char func_003DD8E8_D8E8[] __asm__("func_003DD8E8");
 
 void func_003DD8E8(int a0, int a1, struct R_D8E8 *s) {
     int n, k, t;
-    void (**tbl)(int);
+    struct sC10 *fs;
     char *e = D_00519AB0_D8E8.f28 + ((unsigned char *)&a0)[3] * 0x30;
     t = *(int *)(e + 0x24);
     k = *(int *)(e + 0x10);
@@ -1218,14 +1216,14 @@ void func_003DD8E8(int a0, int a1, struct R_D8E8 *s) {
     s->f10->f24 = t;
     func_003DD310_D8E8(a0);
     if (BIG_typeofheader_D8E8(s->f0) == 0) {
-        D_00450C18_D8E8[0](s->f0);
+        D_00450C18((void *)s->f0);
     }
     n = BIG_sizeofheader_D8E8(s->f0);
     if (s->f4 < n) {
-        tbl = (void (**)(int))D_00450C10_D8E8;
-        tbl[2](s->f0);
+        fs = &D_00450C10;
+        fs->f08((void *)s->f0);
         s->f4 = n;
-        s->f0 = ((int (**)(char *, int, int))tbl)[1](D_00495D68_D8E8, n, s->f8);
+        s->f0 = (int)fs->f04(D_00495D68_D8E8, n, s->f8);
         a0 = func_003DD648(s->fC, 0, s->f0, n, k, s);
         func_003DCF70(a0, func_003DD8E8_D8E8);
     } else {
