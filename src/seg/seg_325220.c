@@ -119,6 +119,12 @@ typedef struct {
 extern sWakeQueue D_0052B3A8;
 
 
+/* SIF DMA transfer descriptor (as passed to func_00424160 / func_00424170) */
+typedef struct { int data; int addr; int size; int attr; } sSifDmaData;
+extern int func_00424160(sSifDmaData *sdd, int n);
+extern int func_00424170(sSifDmaData *sdd, int n);
+
+
 /* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
 typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
 typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
@@ -1362,27 +1368,24 @@ void func_00426050(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426078);
 #ifdef SKIP_ASM
-struct E6078 { int a; int b; int c; int d; };
 extern int D_0052BCE0;
 extern void func_00426358(int, int);
-extern int func_00424160(struct E6078 *, int);
-extern int func_00424170(struct E6078 *, int);
 int func_00426078_d(int, int, int *, unsigned, int, int, int) __asm__("func_00426078");
 int func_00426078_d(int a0, int a1, int *a2, unsigned a3, int a4, int a5, int a6) {
-    struct E6078 ent[2];
+    sSifDmaData ent[2];
     int n;
     if (a3 - 0x10 > 0x60) {
         return 0;
     }
     n = 0;
     if (a6 > 0) {
-        ent[0].a = a4;
+        ent[0].data = a4;
         n = 1;
-        ent[0].b = a5;
+        ent[0].addr = a5;
         a2[1] = a5;
         a2[0] = *(unsigned char *)a2 | (a6 << 8);
-        ent[0].c = a6;
-        ent[0].d = 0;
+        ent[0].size = a6;
+        ent[0].attr = 0;
         if (a1 & 4) {
             func_00426358(a4, a6);
         }
@@ -1390,12 +1393,12 @@ int func_00426078_d(int a0, int a1, int *a2, unsigned a3, int a4, int a5, int a6
         a2[1] = 0;
         a2[0] = *(unsigned char *)a2;
     }
-    ent[n].a = (int)a2;
-    ent[n].b = D_0052BCE0;
-    ent[n].c = a3;
+    ent[n].data = (int)a2;
+    ent[n].addr = D_0052BCE0;
+    ent[n].size = a3;
     a2[2] = a0;
     *(unsigned char *)a2 = a3;
-    ent[n].d = 0x44;
+    ent[n].attr = 0x44;
     func_00426358((int)a2, a3);
     n++;
     if (a1 & 1) {
@@ -2020,7 +2023,6 @@ int func_004271D8(int arg) {
 INCLUDE_ASM("seg/seg_325220", func_00427230);
 #ifdef SKIP_ASM
 struct W7230 { int f0; int (*f4)(int, int, int); int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; int f28; int f2C; int f30; int f34; };
-struct E7230 { int a; int b; int c; int d; };
 struct R7230 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; };
 extern void func_00426358(int, int);
 extern void func_0042C078_w(void) __asm__("func_0042C078");
@@ -2028,7 +2030,6 @@ extern int func_0042C0C0_w(void) __asm__("func_0042C0C0");
 extern struct R7230 *func_004266C8_w(sSifRpcState *, unsigned) __asm__("func_004266C8");
 extern struct R7230 *func_00426698_w(sSifRpcState *, unsigned) __asm__("func_00426698");
 extern int func_004261B0_w(int, void *, int, int, int, int) __asm__("func_004261B0");
-extern int func_00424160_w(struct E7230 *, int) __asm__("func_00424160");
 void func_00427230_d(struct W7230 *) __asm__("func_00427230");
 void func_00427230_d(struct W7230 *a0) {
     int s4 = 0;
@@ -2041,7 +2042,7 @@ void func_00427230_d(struct W7230 *a0) {
     int w;
     int x4;
     struct R7230 *e;
-    struct E7230 ent[2];
+    sSifDmaData ent[2];
     t = a0->f4(a0->f24, a0->f8, a0->fC);
     if (t != 0) {
         s4 = a0->f2C;
@@ -2078,18 +2079,18 @@ void func_00427230_d(struct W7230 *a0) {
     e->f10 = 0;
     if (s4 > 0) {
         n = 1;
-        ent[0].a = t;
-        ent[0].b = a0->f28;
-        ent[0].c = s4;
-        ent[0].d = 0;
+        ent[0].data = t;
+        ent[0].addr = a0->f28;
+        ent[0].size = s4;
+        ent[0].attr = 0;
     }
-    ent[n].a = (int)e;
-    ent[n].b = a0->f20;
-    ent[n].c = 0x40;
-    ent[n].d = 0;
+    ent[n].data = (int)e;
+    ent[n].addr = a0->f20;
+    ent[n].size = 0x40;
+    ent[n].attr = 0;
     n++;
     do {
-        r = func_00424160_w(ent, n);
+        r = func_00424160(ent, n);
         if (r == 0) {
             i = 0x100000;
             do {
@@ -4583,15 +4584,13 @@ struct HdrBDC8 {
     int mode;
     char arg[0x50];
 };
-struct DmaBDC8 { int data; int addr; int size; int attr; };
 extern struct HdrBDC8 D_0052F2C0;
 extern void fBDC8_stop(void) __asm__("func_00424070");
 extern int fBDC8_getreg(unsigned int) __asm__("func_004241B0");
 extern unsigned int fBDC8_setreg(unsigned int, unsigned int) __asm__("func_004241A0");
-extern int fBDC8_dma(struct DmaBDC8 *, int) __asm__("func_00424160");
 extern void func_00426358(int, int);
 int func_0042BDC8(char *s, int mode) {
-    struct DmaBDC8 dma;
+    sSifDmaData dma;
     int reg;
     int n;
     fBDC8_stop();
@@ -4609,7 +4608,7 @@ int func_0042BDC8(char *s, int mode) {
     dma.attr = 0x44;
     func_00426358((int)&D_0052F2C0, 0x68);
     fBDC8_setreg(4, 0x40000);
-    if (fBDC8_dma(&dma, 1) != 0) {
+    if (func_00424160(&dma, 1) != 0) {
         fBDC8_setreg(4, 0x10000);
         fBDC8_setreg(4, 0x20000);
         fBDC8_setreg(0x80000002, 0);
