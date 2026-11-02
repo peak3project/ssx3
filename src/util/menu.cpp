@@ -110,6 +110,32 @@ public:
 };
 extern cRenderCtx* D_004A289C;
 
+// 16-byte vector for the menu's vertices (built with the constructor or with Set).
+struct sVec4 {
+    float x, y, z, w;
+    sVec4() {}
+    sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+    void Set(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+// A vertex handed to cRenderCtx::v71: texture coordinates, colour (0..128 per channel), position.
+struct sVtx {
+    float u, v, q;
+    int pad;
+    int r, g, b, a;
+    sVec4 pos;
+    sVtx() {}
+};
+
+// The same vertex with the position as a plain aligned float[4] (filled through casts).
+struct sVtxF {
+    float u, v, q;
+    int pad;
+    int r, g, b, a;
+    float pos[4] __attribute__((aligned(16)));
+    sVtxF() {}
+};
+
 struct cMenuItem {
     char pad_0x00[0x4];
     int field_0x4;
@@ -725,14 +751,6 @@ extern "C" void func_002CB350(func_002CB350_sVtx* v, float* r, float* t)
 INCLUDE_ASM("util/menu", func_002CB498);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sVtx_2CB498 {
-    float u, v, q;
-    int pad;
-    int r, g, b, a;
-    float pos[4] __attribute__((aligned(16)));
-    sVtx_2CB498() {}
-};
-
 static inline int func_002CB498_getF8_5(sRenderState* rs)
 {
     return (unsigned int)(rs->f8 & 0x3E0) >> 5;
@@ -746,7 +764,7 @@ static inline void func_002CB498_setF8_5(sRenderState* rs, int v)
 
 extern "C" void func_002CB498(void* self, float* rect, sColor* col)
 {
-    sVtx_2CB498 v[4];
+    sVtxF v[4];
     int i;
     for (i = 0; i < 4; i++) {
         v[i].a = (int)(col->a * 128.0f);
@@ -819,27 +837,13 @@ extern "C" void func_002CB880(void* self, void* a1, int on)
 INCLUDE_ASM("util/menu", func_002CB8C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sVec4_2CB8C8 {
-    float x, y, z, w;
-    sVec4_2CB8C8() {}
-    sVec4_2CB8C8(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
-} __attribute__((aligned(16)));
-
-struct sVtx_2CB8C8 {
-    float u, v, q;
-    int pad;
-    int r, g, b, a;
-    sVec4_2CB8C8 pos;
-    sVtx_2CB8C8() {}
-};
-
 extern "C" void func_002CB8C8(void* self, float* rect)
 {
     sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)((char*)self + 0x12C);
     vt[8].fn((char*)self + vt[8].delta, rect, D_004D5380);
     *(short*)((char*)D_004A289C->top + 0x10) = -1;
     D_004A289C->top->f4_2 = 1;
-    sVtx_2CB8C8 v[6];
+    sVtx v[6];
     int i;
     for (i = 0; i < 6; i++) {
         v[i].a = 0x80;
@@ -855,7 +859,7 @@ extern "C" void func_002CB8C8(void* self, float* rect)
     float right = rect[0] + rect[2] - 6.0f;
     float mid = rect[0] + rect[2] * 0.5f;
     float top = rect[1] + 3.0f;
-    sVec4_2CB8C8 p;
+    sVec4 p;
     p.x = left; p.y = bot; p.z = 0.0f; p.w = 1.0f;
     v[0].pos = p;
     p.x = left; p.y = bot - 3.0f; p.z = 0.0f; p.w = 1.0f;
@@ -876,27 +880,13 @@ extern "C" void func_002CB8C8(void* self, float* rect)
 INCLUDE_ASM("util/menu", func_002CBAC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sVec4_2CBAC8 {
-    float x, y, z, w;
-    sVec4_2CBAC8() {}
-    sVec4_2CBAC8(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
-} __attribute__((aligned(16)));
-
-struct sVtx_2CBAC8 {
-    float u, v, q;
-    int pad;
-    int r, g, b, a;
-    sVec4_2CBAC8 pos;
-    sVtx_2CBAC8() {}
-};
-
 extern "C" void func_002CBAC8(void* self, float* rect)
 {
     sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)((char*)self + 0x12C);
     vt[8].fn((char*)self + vt[8].delta, rect, D_004D5380);
     *(short*)((char*)D_004A289C->top + 0x10) = -1;
     D_004A289C->top->f4_2 = 1;
-    sVtx_2CBAC8 v[6];
+    sVtx v[6];
     int i;
     for (i = 0; i < 6; i++) {
         v[i].a = 0x80;
@@ -912,7 +902,7 @@ extern "C" void func_002CBAC8(void* self, float* rect)
     float right = rect[0] + rect[2] - 6.0f;
     float mid = rect[0] + rect[2] * 0.5f;
     float bot = rect[1] + rect[3] - 4.0f;
-    sVec4_2CBAC8 p;
+    sVec4 p;
     p.x = left; p.y = top; p.z = 0.0f; p.w = 1.0f;
     v[0].pos = p;
     p.x = left; p.y = top + 3.0f; p.z = 0.0f; p.w = 1.0f;
@@ -3135,20 +3125,6 @@ struct sVec2_2CE910 {
     sVec2_2CE910(float ax, float ay) { x = ax; y = ay; }
 };
 
-struct sVec4_2CE910 {
-    float x, y, z, w;
-    sVec4_2CE910() {}
-    void Set(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
-} __attribute__((aligned(16)));
-
-struct sVtx_2CE910 {
-    float u, v, q;
-    int pad;
-    int r, g, b, a;
-    sVec4_2CE910 pos;
-    sVtx_2CE910() {}
-};
-
 extern "C" void func_002CE910(void* self, float* rect)
 {
     char buf[0x20];
@@ -3191,10 +3167,10 @@ extern "C" void func_002CE910(void* self, float* rect)
         float x2 = rect[0] + (rect[2] - w2) - 16.0f;
         float y1 = bot - 4.0f;
         float y2 = bot - 1.0f;
-        sVtx_2CE910 v[4];
+        sVtx v[4];
         float zero = 0.0f;
         float one = 1.0f;
-        sVec4_2CE910 p;
+        sVec4 p;
         p.Set(x1, y1, zero, one);
         v[0].v = zero;
         v[0].u = zero;
@@ -3374,20 +3350,6 @@ struct sVec2_2CF1C8 {
     sVec2_2CF1C8(float ax, float ay) { x = ax; y = ay; }
 };
 
-struct sVec4_2CF1C8 {
-    float x, y, z, w;
-    sVec4_2CF1C8() {}
-    void Set(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
-} __attribute__((aligned(16)));
-
-struct sVtx_2CF1C8 {
-    float u, v, q;
-    int pad;
-    int r, g, b, a;
-    sVec4_2CF1C8 pos;
-    sVtx_2CF1C8() {}
-};
-
 extern "C" void func_002CF1C8(void* self, float* rect)
 {
     {
@@ -3425,9 +3387,9 @@ extern "C" void func_002CF1C8(void* self, float* rect)
     r.y = rect[1] + rect[3] - 6.0f - 10.0f;
     r.w = 80.0f;
     r.h = 10.0f;
-    sVtx_2CF1C8 v[4];
+    sVtx v[4];
     float one = 1.0f;
-    sVec4_2CF1C8 p;
+    sVec4 p;
     v[0].r = (int)(c1.r * 128.0f);
     v[0].g = (int)(c1.g * 128.0f);
     v[0].b = (int)(c1.b * 128.0f);
@@ -3964,14 +3926,6 @@ INCLUDE_ASM("util/menu", func_002D0008);
 // PORT: the unit's 4-arg declaration of func_002CA988 is wrong: the body reads $8 (5th arg).
 void* func_002CA988_5(void*, int, int, int, void*) __asm__("func_002CA988");
 
-struct sVtx_2D0008 {
-    float u, v, q;
-    int pad;
-    int r, g, b, a;
-    float pos[4] __attribute__((aligned(16)));
-    sVtx_2D0008() {}
-};
-
 struct sVec4_2D0008 {
     float x, y, z, w;
     sVec4_2D0008(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
@@ -3981,7 +3935,7 @@ struct sVec4_2D0008 {
 extern "C" void func_002D0008(char* self, float* rect)
 {
     func_002CA988_5(self, (int)rect, *(int*)(self + 0x18), 0, 0);
-    sVtx_2D0008 v[4];
+    sVtxF v[4];
     sRect rc;
     rc.w = 20.0f;
     rc.h = 17.0f;
