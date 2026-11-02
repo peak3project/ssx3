@@ -1316,7 +1316,6 @@ extern int func_003DD5A0_DC30(char *, int, R_DC30 *) __asm__("func_003DD5A0");
 extern void func_003DCF70_DC30(int, void *) __asm__("func_003DCF70");
 extern void func_003DDC00(int, int, int);
 extern G_DC30 D_00519AB0_DC30 __asm__("D_00519AB0");
-extern int (*D_00450C10_DC30[])(void *) __asm__("D_00450C10");
 
 int func_003DDC30(char *a0, int a1, int a2) {
     N_DC30 *prev;
@@ -1354,8 +1353,8 @@ int func_003DDC30(char *a0, int a1, int a2) {
     } else {
         D_00519AB0_DC30.head = D_00519AB0_DC30.head->next;
     }
-    D_00450C10_DC30[2]((void *)n->f0);
-    D_00450C10_DC30[2](n);
+    D_00450C10.f08((void *)n->f0);
+    D_00450C10.f08(n);
     func_003DCF70_DC30(func_003DD5A0_DC30(a0, a1, r), func_003DDC00);
     return *(int *)r;
 }
