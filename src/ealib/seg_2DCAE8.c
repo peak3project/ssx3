@@ -1295,9 +1295,6 @@ int func_003DD878(int a0, int a1, int a2) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DD8E8);
 #ifdef SKIP_ASM
-struct G_D8E8 { char pad[0x28]; char *f28; char pad2[8]; int f34; };
-struct R_D8E8 { int f0; int f4; int f8; int fC; struct { char pad[0x24]; int f24; } *f10; int f14; };
-extern struct G_D8E8 D_00519AB0_D8E8 __asm__("D_00519AB0");
 extern int func_003DD310_D8E8(int) __asm__("func_003DD310");
 extern int BIG_typeofheader_D8E8(int) __asm__("BIG_typeofheader");
 extern int BIG_sizeofheader_D8E8(int) __asm__("BIG_sizeofheader");
@@ -1305,29 +1302,30 @@ extern char D_00495D68_D8E8[] __asm__("D_00495D68");
 extern void iFILESYS_ExecCommand_D8E8(void *) __asm__("iFILESYS_ExecCommand");
 extern char func_003DD8E8_D8E8[] __asm__("func_003DD8E8");
 
-void func_003DD8E8(int a0, int a1, struct R_D8E8 *s) {
-    int n, k, t;
+void func_003DD8E8(int a0, int a1, struct sFsNode *s) {
+    int n, k;
+    struct sFsHd *t;
     struct sC10 *fs;
-    char *e = D_00519AB0_D8E8.f28 + ((unsigned char *)&a0)[3] * 0x30;
-    t = *(int *)(e + 0x24);
-    k = *(int *)(e + 0x10);
-    s->fC = t;
+    struct sFsCmd *e = &D_00519AB0.f28[((unsigned char *)&a0)[3]];
+    t = e->f24;
+    k = e->f10;
+    s->f0C = t;
     s->f10->f24 = t;
     func_003DD310_D8E8(a0);
-    if (BIG_typeofheader_D8E8(s->f0) == 0) {
-        D_00450C18((void *)s->f0);
+    if (BIG_typeofheader_D8E8(s->f00) == 0) {
+        D_00450C18((void *)s->f00);
     }
-    n = BIG_sizeofheader_D8E8(s->f0);
-    if (s->f4 < n) {
+    n = BIG_sizeofheader_D8E8(s->f00);
+    if (s->f04 < n) {
         fs = &D_00450C10;
-        fs->f08((void *)s->f0);
-        s->f4 = n;
-        s->f0 = (int)fs->f04(D_00495D68_D8E8, n, s->f8);
-        a0 = func_003DD648(s->fC, 0, s->f0, n, k, s);
+        fs->f08((void *)s->f00);
+        s->f04 = n;
+        s->f00 = (int)fs->f04(D_00495D68_D8E8, n, s->f08);
+        a0 = func_003DD648(s->f0C, 0, s->f00, n, k, s);
         func_003DCF70(a0, func_003DD8E8_D8E8);
     } else {
-        s->f14 = D_00519AB0_D8E8.f34;
-        D_00519AB0_D8E8.f34 = (int)s;
+        s->f14 = D_00519AB0.f34;
+        D_00519AB0.f34 = s;
         iFILESYS_ExecCommand_D8E8(s->f10);
     }
 }
