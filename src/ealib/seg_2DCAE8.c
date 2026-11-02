@@ -61,6 +61,36 @@ struct sSyncTask {                  /* 16 bytes, D_0051ED98[16]: a task SYNCTASK
     int f0C;                        /* running */
 };
 extern struct sSyncTask D_0051ED98[16];
+struct sC40Mode {                   /* the CD read mode handed to func_00401DF8 */
+    unsigned char f00;
+    unsigned char f01;
+    unsigned char f02;
+    unsigned char f03;
+};
+struct sC40Read {                   /* the read in progress */
+    int f00;                        /* bytes in this step */
+    int f04;                        /* bytes left */
+    int f08;
+    int f0C;                        /* sector */
+    int f10;                        /* sectors in this step */
+    int f14;                        /* destination */
+    char *f18;                      /* the file table (also D_00519C78) */
+    int *f1C;                       /* sector buffer (D_00519C80) */
+};
+struct sC40 {                       /* 0x40, D_00519C40: the CD file system */
+    unsigned int f00;               /* flags */
+    int f04;                        /* number of files */
+    int f08;                        /* reader thread */
+    int f0C;                        /* semaphore (also D_00519C4C) */
+    int f10;
+    int f14;
+    int f18;
+    struct sC40Mode f1C;
+    struct sC40Read f20;
+};
+extern struct sC40 D_00519C40;
+extern char *D_00519C78;                        /* D_00519C40.f20.f18 */
+extern int D_00519C80[];                        /* a sector buffer (0x800 bytes) */
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
@@ -5076,9 +5106,6 @@ void func_003E35B0(unsigned short arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3618);
 #ifdef SKIP_ASM
-struct S_3618 { int pad[0xB]; int f2C; };
-extern struct S_3618 D_00519C40_3618 __asm__("D_00519C40");
-extern int D_00519C80_3618[] __asm__("D_00519C80");
 extern void func_00402450(int);
 extern void func_00401BF0_3618(int) __asm__("func_00401BF0");
 extern int func_00401DF8_3618(int, int, void *, void *) __asm__("func_00401DF8");
@@ -5097,7 +5124,7 @@ int *func_003E3618(void) {
             func_00402450(D_00450C58.f08);
         }
         func_00401BF0_3618(0);
-        while (func_00401DF8_3618(D_00519C40_3618.f2C, 1, D_00519C80_3618, (char *)&D_00519C40_3618 + 0x1C) == 0) {
+        while (func_00401DF8_3618(D_00519C40.f20.f0C, 1, D_00519C80, &D_00519C40.f1C) == 0) {
             func_003E35B0_3618(0x1E0);
         }
         do {
@@ -5107,7 +5134,7 @@ int *func_003E3618(void) {
         q = func_00402300_3618() == 0;
         if (!q) n--;
     } while (!q);
-    return D_00519C80_3618;
+    return D_00519C80;
 }
 #endif
 
