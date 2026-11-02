@@ -8030,10 +8030,8 @@ void func_003C3300(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3358);
 #ifdef SKIP_ASM
-extern int D_0050AD00_3358[] __asm__("D_0050AD00");
 void func_003C3358(void) {
-    int *p = D_0050AD00_3358;
-    func_00423DB0(((volatile int *)p)[0x6C4]);
+    func_00423DB0(D_0050AD00.f1B10);
 }
 #endif
 
