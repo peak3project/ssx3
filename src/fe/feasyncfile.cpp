@@ -17223,10 +17223,6 @@ struct sVE_1C3EE8 {
     void (*fn)(void*, void*);
 };
 
-struct sVec4_1C3EE8 {
-    float x, y, z, w;
-    sVec4_1C3EE8(float a, float b, float c, float d) { x = a; y = b; z = c; w = d; }
-};
 extern "C" void func_001C3EE8(void* self_, int state)
 {
     char* self = (char*)self_;
@@ -17240,7 +17236,7 @@ extern "C" void func_001C3EE8(void* self_, int state)
     OBJ_3EE8(name); \
     if (o != 0) { \
         sVE_1C3EE8* vt = *(sVE_1C3EE8**)(o + 8); \
-        vt[11].fn(o + vt[11].delta, &sVec4_1C3EE8(1.0f, 1.0f, 1.0f, 1.0f)); \
+        vt[11].fn(o + vt[11].delta, &cVec4(1.0f, 1.0f, 1.0f, 1.0f)); \
     }
 #define SHOW_3EE8(name, on) \
     OBJ_3EE8(name); \
