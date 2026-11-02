@@ -352,6 +352,7 @@ struct sAD00Spk {                   /* 0x20, D_0050AD00.fE98[] (also D_0050BB98)
     short f1E;
 };
 struct sAD00Seg { unsigned short a; unsigned short b; };
+struct sAD00Port { int f00; int f04; int pad08[2]; };   /* 16 bytes, D_0050AD00.fE88[] */
 struct sAD00 {
     char f000[0x83C];               /* RPC send buffer */
     struct sAD00Voice f83C[48];
@@ -368,9 +369,7 @@ struct sAD00 {
     char padCC3;
     int fCC4;                       /* tick of the last transfer */
     struct sAD00Xfer fCC8[28];
-    char padE88[0xE8C - 0xE88];
-    int fE8C[1];
-    char padE90[0xE98 - 0xE90];
+    struct sAD00Port fE88[1];
     struct sAD00Spk fE98[96];
     unsigned short f1A98;           /* number of f1AA0 segments */
     unsigned short f1A9A;
@@ -7623,10 +7622,8 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C1578);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 typedef struct { char pad[0xC]; int v; int mode; } A_1578;
-typedef struct { char pad[0x1AA4]; int a; char pad2[0x5C]; int b; } G_1578;
 extern void func_003C4918(int);
 extern void func_00423DD0(int);
-extern G_1578 D_0050AD00_AD00 __asm__("D_0050AD00");
 
 void func_003C1578(A_1578 *arg0) {
     switch (arg0->mode) {
@@ -7636,8 +7633,8 @@ void func_003C1578(A_1578 *arg0) {
     case 3:
         break;
     case 0:
-        D_0050AD00_AD00.b = arg0->v;
-        func_00423DD0(D_0050AD00_AD00.a);
+        D_0050AD00.f1B04 = arg0->v;
+        func_00423DD0(D_0050AD00.f1AA4);
         break;
     }
 }
