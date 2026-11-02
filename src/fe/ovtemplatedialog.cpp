@@ -24,18 +24,34 @@ public:
     virtual void setVisible(int v);
 };
 
-//100%
-INCLUDE_ASM("fe/ovtemplatedialog", cPDATemplate_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
+struct cUIScreen;
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern void* D_004A28A8;
+extern char D_00471A10[];
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_0020AB50(int state);
+extern char* D_004A2EEC;
+extern int D_00534B30[];
+extern char D_00535BC8[];
+extern int D_004A26FC;
+extern char D_00471A40[];
+extern void* D_004A270C;
+extern "C" void func_0020A380(void* self);
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, int idx);
+
+//100%
+INCLUDE_ASM("fe/ovtemplatedialog", cPDATemplate_onCreateScreen);
+#ifdef SKIP_ASM
 // PORT: func_002C26D0 is a varargs formatter (dst, fmt, ...)
 extern "C" void func_002C26D0_v(void* dst, int fmt, ...) __asm__("func_002C26D0");
 extern "C" void func_003A0E90(void* text, char* str);
-extern void* D_004A28A8;
-extern char D_00471A10[];
 extern char D_004A2718[];
 extern char D_00471A20[];
 
@@ -95,17 +111,8 @@ extern "C" int func_0020A8B0(int a0, int a1)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020A8F8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0020AB50(int state);
 int func_00158F30(void* self);
 extern "C" void func_002706B8(void* p);
-extern void* D_004A28A8;
-extern char* D_004A2EEC;
-extern int D_00534B30[];
-extern char D_00535BC8[];
-extern int D_004A26FC;
 extern int D_004A2704;
 extern int D_004A2700;
 extern int D_004A1228;
@@ -198,8 +205,6 @@ extern "C" void func_001F7548(void* o);
 extern "C" void func_001F7738(void* o);
 extern "C" void func_002006B8(void* o);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
-int GetHashValue32(char* str);
-extern void* D_004A28A8;
 extern char D_00471A30[];
 extern char D_0046E340[];
 extern unsigned short D_004A2088[];
@@ -692,19 +697,11 @@ INCLUDE_ASM("fe/ovtemplatedialog", func_0020BAB8);
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CA10);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0020AB50(int state);
 extern "C" void func_00258C00(void* net);
 extern "C" void func_00258790(void* net, int a1);
 extern "C" int func_0030B8C0(void* self);
-extern void* D_004A28A8;
 extern void* D_004A3DD8;
-extern char* D_004A2EEC;
 extern char D_004A2468;
-extern int D_00534B30[];
-extern char D_00535BC8[];
 
 static inline bool notMode4_0020CA10(signed char* g)
 {
@@ -752,10 +749,7 @@ extern "C" void func_0020CA10(void)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CB58);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* func_0039F9D8_CB58(void* list, int hash) __asm__("func_0039F9D8");
-extern void* D_004A28A8;
-extern char D_00471A40[];
 
 extern "C" int func_0020CB58(void)
 {
@@ -767,9 +761,7 @@ extern "C" int func_0020CB58(void)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CBA0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* func_0039F9D8(void* stack, int hash);
-extern void* D_004A28A8;
 extern char D_0046F818[];
 
 extern "C" int func_0020CBA0(void)
@@ -813,7 +805,6 @@ public:
 };
 extern "C" void* cUIStateStack_getCurrentState(void* stack);
 extern "C" int func_0020CBA0(void);
-extern void* D_004A28A8;
 
 extern "C" int func_0020CBE8(void)
 {
@@ -835,13 +826,6 @@ extern "C" int func_0020CBE8(void)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CC60);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0020AB50(int state);
-extern char D_00535BC8[];
-extern int D_004A26FC;
-
 extern "C" void func_0020CC60(void)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1062,9 +1046,6 @@ INCLUDE_ASM("fe/ovtemplatedialog", cOVStateManager_addPDATemplate);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_0039E2A0(void* self, void* mgr);
 extern "C" void cUIStateStack_pushExplicit(void* stack, void* state);
-extern void* D_004A270C;
-extern void* D_004A28A8;
-extern char D_00471A10[];
 extern char D_004743F0[];
 
 extern "C" void cOVStateManager_addPDATemplate(void)
@@ -1089,7 +1070,6 @@ public:
     virtual ~cOVTemplate20D190();
 };
 extern "C" void cListNode_removeFromList(void* node);
-extern void* D_004A270C;
 
 extern "C" void func_0020D190(void)
 {
@@ -1104,11 +1084,7 @@ extern "C" void func_0020D190(void)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020D1D8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* t, int id);
-extern "C" void func_0020A380(void* self);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern int D_004A2860[2];
 extern char* D_00441D10[];
@@ -1150,8 +1126,6 @@ extern "C" int func_0020D308(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020D318);
 #ifdef SKIP_ASM
-extern int D_004A26FC;
-
 extern "C" void func_0020D318(void* self, int a1, int key)
 {
     if (a1 != 0 && key == 5) {
@@ -1233,8 +1207,6 @@ extern "C" void cOVTemplate_Dialog_onCreateScreen(char* self)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020D4F0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, int idx);
 extern char D_0046E818[];
 
 extern "C" void func_0020D4F0(void* self, void* item)
@@ -1273,13 +1245,9 @@ INCLUDE_ASM("fe/ovtemplatedialog", cOVTemplate_Dialog_onWidgetEvent);
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020DBD0);
 #ifdef SKIP_ASM
-struct cUIScreen;
-int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0020E900(void* self);
 extern "C" void* func_0039F190(void* self, int a1);
-extern char* D_004A2EEC;
 extern char D_0046E050[];
 
 extern "C" void func_0020DBD0(void* self)
@@ -1302,17 +1270,9 @@ extern "C" void func_0020DBD0(void* self)
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020DC68);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_0020A380(void* self);
 extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
 extern "C" void cOVState_REPLAY_setupCameraName(void* self);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, int idx);
-extern void* D_004A28A8;
-extern char D_00471A40[];
 extern char D_00471BA0[];
 extern char D_00471BB0[];
 extern char D_00471BC0[];
