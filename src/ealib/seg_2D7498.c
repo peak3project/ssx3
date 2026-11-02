@@ -56,6 +56,8 @@ extern struct sFFF8 D_0044FFF8;
 /* D_00450660: one entry per bucket (func_003D69A8 resets h to 0xFFFF). */
 struct s0660 { unsigned short h; int w; };
 extern struct s0660 D_00450660[8];
+extern int D_004506A0[];                /* one word per bucket (a mask table follows at +0x20) */
+extern unsigned int D_004506E0[8];      /* weight scale by the top 3 bits of a weight byte */
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6498);
@@ -218,8 +220,6 @@ void func_003D67F8(void) {
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6840);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_004506A0_6840[] __asm__("D_004506A0");
 void func_003D76F0(int, int, ...);
 void func_003DB790(int);
 void func_003D9A40(void);
@@ -244,7 +244,7 @@ int func_003D6840(int (*arg0)(struct sFF90Msg *), int arg1, int arg2) {
     func_003D9A40();
     func_003DA3C0(0);
     for (i = 7; i >= 0; i--) {
-        D_004506A0_6840[i] = 0;
+        D_004506A0[i] = 0;
     }
     func_003D8278();
     for (j = 0; j < 8; j++) {
@@ -1087,11 +1087,9 @@ void func_003D80B0(int x) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8158);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_004506A0_8158[128] __asm__("D_004506A0");
 
 void func_003D8158(int arg0, int arg1) {
-    D_004506A0_8158[arg1] = arg0;
+    D_004506A0[arg1] = arg0;
 }
 #endif
 
@@ -1410,11 +1408,9 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D88C8);
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8CB0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct H_8CB0 { char pad[6]; unsigned char n; char pad2[5]; unsigned short ids[1]; };
-extern unsigned int D_004506E0_8CB0[] __asm__("D_004506E0");
 
-#define WEIGHT_8CB0(p) ((*(p) & 0x1F) * D_004506E0_8CB0[*(p) >> 5])
+#define WEIGHT_8CB0(p) ((*(p) & 0x1F) * D_004506E0[*(p) >> 5])
 
 void func_003D8CB0(struct H_8CB0 *h, unsigned char *out) {
     int w[100];
@@ -2037,11 +2033,9 @@ void func_003DA3C0(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DA3C8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern unsigned int D_004506E0_A3C8[] __asm__("D_004506E0");
 unsigned int func_003DA3C8(unsigned int a) {
     a &= 0xFF;
-    return (a & 0x1F) * D_004506E0_A3C8[a >> 5];
+    return (a & 0x1F) * D_004506E0[a >> 5];
 }
 #endif
 
