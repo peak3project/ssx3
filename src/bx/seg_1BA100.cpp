@@ -43,6 +43,46 @@ public:
     virtual int vt();
 };
 
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback)(cController*, cBankMonitorInstance*, float);
+
+// One 0x18-byte option record of cSndPlayOpts' option stack.
+struct sSndOptsRec { signed char v; char pad[0x17]; };
+
+// Per-level four-int record at cSndPlayOpts+0x70 (reset to 100, 0, 90, 50).
+struct sSndOptsQuad { int a, b, c, d; };
+
+// cSndPlayOpts (prototype class name): the current option record plus per-level arrays indexed by the stack depth idx.
+struct sSndPlayOpts {
+    int pad0;
+    sSndOptsRec cur;                    // 0x04
+    volatile int idx;                   // 0x1C
+    sSndOptsRec* recs;                  // 0x20
+    int arr24[4];
+    int* p34;
+    int* vals;                          // 0x38
+    int* p3C;
+    sSndCallback callbacks[4];          // 0x40
+    int* p60;
+    int* p64;
+    int* p68;
+    int* p6C;
+    sSndOptsQuad* q70;
+    int* p74;
+    int* p78;
+    int* p7C;
+    int* p80;
+    int* p84;
+};
+
+// cSoundSys (its vtable is _vt$12cSndPlayOpts$9cSoundSys): the cSndPlayOpts part sits at 0x1D8.
+struct sSoundSysView { char pad[0x1D8]; sSndPlayOpts sub; };
+
+// An object holding the sound system and two per-level int arrays.
+struct sSndOptsUser { sSoundSysView* o; int* vals; int* vals2; };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -111,20 +151,10 @@ extern "C" int func_002B91B0(void *p) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B91C8);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_91C8)(cController*, cBankMonitorInstance*, float);
-struct sSndPlayOpts_91C8 {
-    char pad00[0x1C];
-    int cur;                            // 0x1C
-    char pad20[0x40 - 0x20];
-    sSndCallback_91C8 callbacks[4];     // 0x40
-};
 
 // cSndPlayOpts::OPTS_GetCallback (prototype name)
-extern "C" sSndCallback_91C8 func_002B91C8(sSndPlayOpts_91C8* s) {
-    return s->callbacks[s->cur];
+extern "C" sSndCallback func_002B91C8(sSndPlayOpts* s) {
+    return s->callbacks[s->idx];
 }
 #endif
 
@@ -246,32 +276,9 @@ extern "C" void func_002B9368(void *self) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B93B8);
 #ifdef SKIP_ASM
-struct Rec_93B8 { signed char v; char pad[0x17]; };
-struct Q_93B8 { int a, b, c, d; };
-struct Obj_93B8 {
-    int pad0;
-    Rec_93B8 cur;
-    volatile int idx;
-    Rec_93B8* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_93B8* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 extern "C" void* func_00416210(void*, int, unsigned int);
 
-extern "C" void func_002B93B8(Obj_93B8* p) {
+extern "C" void func_002B93B8(sSndPlayOpts* p) {
     p->recs[p->idx] = p->cur;
     p->arr24[p->idx] = 0;
     p->p34[p->idx] = 0;
@@ -297,32 +304,9 @@ extern "C" void func_002B93B8(Obj_93B8* p) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B95B0);
 #ifdef SKIP_ASM
-struct Rec_95B0 { signed char v; char pad[0x17]; };
-struct Q_95B0 { int a, b, c, d; };
-struct Obj_95B0 {
-    int pad0;
-    Rec_95B0 cur;
-    volatile int idx;
-    Rec_95B0* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_95B0* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 extern "C" void* func_00416210(void*, int, unsigned int);
 
-extern "C" void func_002B95B0(Obj_95B0* p) {
+extern "C" void func_002B95B0(sSndPlayOpts* p) {
     p->idx++;
     p->recs[p->idx] = p->cur;
     p->arr24[p->idx] = 0;
@@ -373,33 +357,10 @@ extern "C" void func_002B97F0(void *arg0, signed char arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9810);
 #ifdef SKIP_ASM
-struct Rec_9810 { signed char v; char pad[0x17]; };
-struct Q_9810 { int a, b, c, d; };
-struct Obj_9810 {
-    int pad0;
-    Rec_9810 cur;
-    volatile int idx;
-    Rec_9810* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_9810* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 
 #define MIN_9810(a,b) ((a) < (b) ? (a) : (b))
 #define MAX_9810(a,b) ((a) < (b) ? (b) : (a))
-extern "C" void func_002B9810(Obj_9810 *p, int v) {
+extern "C" void func_002B9810(sSndPlayOpts *p, int v) {
     p->vals[p->idx] = v;
     p->recs[p->idx].v = MAX_9810(MIN_9810(p->vals[p->idx], 127), 0);
 }
@@ -410,16 +371,8 @@ INCLUDE_ASM("bx/seg_1BA100", func_002B98A8);
 #ifdef SKIP_ASM
 #define MIN_98A8(a, b) ((a) < (b) ? (a) : (b))
 #define MAX_98A8(a, b) ((a) >= (b) ? (a) : (b))
-struct Rec_98A8 { unsigned char v; char pad[0x17]; };
-struct Obj_98A8 {
-    char pad0[0x1C];
-    volatile int idx;
-    Rec_98A8* recs;
-    char pad24[0x14];
-    int* vals;
-};
 
-extern "C" void func_002B98A8(Obj_98A8* p, float f) {
+extern "C" void func_002B98A8(sSndPlayOpts* p, float f) {
     p->vals[p->idx] = (int)MAX_98A8(MIN_98A8(p->vals[p->idx] * f, 127.0f), 0.0f);
     p->recs[p->idx].v = MAX_98A8(MIN_98A8(p->vals[p->idx], 127), 0);
 }
@@ -430,16 +383,8 @@ INCLUDE_ASM("bx/seg_1BA100", func_002B99E8);
 #ifdef SKIP_ASM
 #define MIN_99E8(a, b) ((a) < (b) ? (a) : (b))
 #define MAX_99E8(a, b) ((a) >= (b) ? (a) : (b))
-struct Rec_99E8 { unsigned char v; char pad[0x17]; };
-struct Obj_99E8 {
-    char pad0[0x1C];
-    volatile int idx;
-    Rec_99E8* recs;
-    char pad24[0x14];
-    int* vals;
-};
 
-extern "C" void func_002B99E8(Obj_99E8* p, int n) {
+extern "C" void func_002B99E8(sSndPlayOpts* p, int n) {
     p->vals[p->idx] = MAX_99E8(MIN_99E8(p->vals[p->idx] * n / 127, 127), 0);
     p->recs[p->idx].v = MAX_99E8(MIN_99E8(p->vals[p->idx], 127), 0);
 }
@@ -834,36 +779,12 @@ extern "C" void func_002B9FD8(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9FF8);
 #ifdef SKIP_ASM
-struct Rec_9FF8 { signed char v; char pad[0x17]; };
-struct Q_9FF8 { int a, b, c, d; };
-struct Obj_9FF8 {
-    int pad0;
-    Rec_9FF8 cur;
-    volatile int idx;
-    Rec_9FF8* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_9FF8* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 extern "C" void* func_00416210(void*, int, unsigned int);
 
 
-struct Outer_9FF8 { char pad[0x1D8]; Obj_9FF8 sub; };
-extern "C" void func_002B9FF8(Outer_9FF8** arg) {
-    Outer_9FF8* o = *arg;
-    Obj_9FF8* p = &o->sub;
+extern "C" void func_002B9FF8(sSoundSysView** arg) {
+    sSoundSysView* o = *arg;
+    sSndPlayOpts* p = &o->sub;
     o->sub.idx++;
     p->recs[o->sub.idx] = o->sub.cur;
     o->sub.arr24[o->sub.idx] = 0;
@@ -890,37 +811,12 @@ extern "C" void func_002B9FF8(Outer_9FF8** arg) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BA208);
 #ifdef SKIP_ASM
-struct Rec_A208 { signed char v; char pad[0x17]; };
-struct Q_A208 { int a, b, c, d; };
-struct Obj_A208 {
-    int pad0;
-    Rec_A208 cur;
-    volatile int idx;
-    Rec_A208* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_A208* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 extern "C" void* func_00416210(void*, int, unsigned int);
 
 
-struct Outer_A208 { char pad[0x1D8]; Obj_A208 sub; };
-struct Arg_A208 { Outer_A208* o; int* vals; };
-extern "C" void func_002BA208(Arg_A208* arg, int v) {
-    Outer_A208* o = arg->o;
-    Obj_A208* p = &o->sub;
+extern "C" void func_002BA208(sSndOptsUser* arg, int v) {
+    sSoundSysView* o = arg->o;
+    sSndPlayOpts* p = &o->sub;
     o->sub.idx++;
     p->recs[o->sub.idx] = o->sub.cur;
     o->sub.arr24[o->sub.idx] = 0;
@@ -948,37 +844,12 @@ extern "C" void func_002BA208(Arg_A208* arg, int v) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BA448);
 #ifdef SKIP_ASM
-struct Rec_A448 { signed char v; char pad[0x17]; };
-struct Q_A448 { int a, b, c, d; };
-struct Obj_A448 {
-    int pad0;
-    Rec_A448 cur;
-    volatile int idx;
-    Rec_A448* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_A448* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 extern "C" void* func_00416210(void*, int, unsigned int);
 
 
-struct Outer_A448 { char pad[0x1D8]; Obj_A448 sub; };
-struct Arg_A448 { Outer_A448* o; int* vals; int* vals2; };
-extern "C" void func_002BA448(Arg_A448* arg, int v, int v2) {
-    Outer_A448* o = arg->o;
-    Obj_A448* p = &o->sub;
+extern "C" void func_002BA448(sSndOptsUser* arg, int v, int v2) {
+    sSoundSysView* o = arg->o;
+    sSndPlayOpts* p = &o->sub;
     o->sub.idx++;
     p->recs[o->sub.idx] = o->sub.cur;
     o->sub.arr24[o->sub.idx] = 0;
@@ -1007,38 +878,13 @@ extern "C" void func_002BA448(Arg_A448* arg, int v, int v2) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BA6B0);
 #ifdef SKIP_ASM
-struct Rec_A6B0 { signed char v; char pad[0x17]; };
-struct Q_A6B0 { int a, b, c, d; };
-struct Obj_A6B0 {
-    int pad0;
-    Rec_A6B0 cur;
-    volatile int idx;
-    Rec_A6B0* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_A6B0* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 extern "C" void* func_00416210(void*, int, unsigned int);
 
 
 extern "C" int func_002906B8(void*);
-struct Outer_A6B0 { char pad[0x1D8]; Obj_A6B0 sub; };
-struct Arg_A6B0 { Outer_A6B0* o; int* vals; int* vals2; };
-extern "C" void func_002BA6B0(Arg_A6B0* arg, int v, int v2) {
-    Outer_A6B0* o = arg->o;
-    Obj_A6B0* p = &o->sub;
+extern "C" void func_002BA6B0(sSndOptsUser* arg, int v, int v2) {
+    sSoundSysView* o = arg->o;
+    sSndPlayOpts* p = &o->sub;
     o->sub.idx++;
     p->recs[o->sub.idx] = o->sub.cur;
     o->sub.arr24[o->sub.idx] = 0;
@@ -1068,40 +914,15 @@ extern "C" void func_002BA6B0(Arg_A6B0* arg, int v, int v2) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BA920);
 #ifdef SKIP_ASM
-struct Rec_A920 { signed char v; char pad[0x17]; };
-struct Q_A920 { int a, b, c, d; };
-struct Obj_A920 {
-    int pad0;
-    Rec_A920 cur;
-    volatile int idx;
-    Rec_A920* recs;
-    int arr24[4];
-    int* p34;
-    int* vals;
-    int* p3C;
-    int arr40[4][2];
-    int* p60;
-    int* p64;
-    int* p68;
-    int* p6C;
-    Q_A920* q70;
-    int* p74;
-    int* p78;
-    int* p7C;
-    int* p80;
-    int* p84;
-};
 extern "C" void* func_00416210(void*, int, unsigned int);
 
 
-struct Outer_A920 { char pad[0x1D8]; Obj_A920 sub; };
-struct Arg_A920 { Outer_A920* o; int* vals; int* vals2; };
 #define MIN_A920(a,b) ((a) < (b) ? (a) : (b))
 #define MAX_A920(a,b) ((a) < (b) ? (b) : (a))
 extern "C" int func_002906B8(void*);
-extern "C" void func_002BA920(Arg_A920* arg, int v, int v2, int v3) {
-    Outer_A920* o = arg->o;
-    Obj_A920* p = &o->sub;
+extern "C" void func_002BA920(sSndOptsUser* arg, int v, int v2, int v3) {
+    sSoundSysView* o = arg->o;
+    sSndPlayOpts* p = &o->sub;
     o->sub.idx++;
     p->recs[o->sub.idx] = o->sub.cur;
     o->sub.arr24[o->sub.idx] = 0;
@@ -1125,8 +946,8 @@ extern "C" void func_002BA920(Arg_A920* arg, int v, int v2, int v3) {
     arg->vals[arg->o->sub.idx] = v;
     arg->vals2[arg->o->sub.idx] = v2;
     {
-        Outer_A920* o2 = arg->o;
-        Obj_A920* p2 = &o2->sub;
+        sSoundSysView* o2 = arg->o;
+        sSndPlayOpts* p2 = &o2->sub;
         p2->vals[o2->sub.idx] = v3;
         p2->recs[o2->sub.idx].v = MAX_A920(MIN_A920(p2->vals[p2->idx], 127), 0);
     }
