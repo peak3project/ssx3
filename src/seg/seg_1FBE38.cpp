@@ -3852,7 +3852,6 @@ extern unsigned D_004A5710_1D78 __asm__("D_004A5710");
 extern sBindEnd_1FBE38 D_004A5714_1D78 __asm__("D_004A5714");
 extern int D_004A5718_1D78 __asm__("D_004A5718");
 extern int D_004A3CB0_1D78[2] __asm__("D_004A3CB0");
-extern int *D_004A3DD8_1D78 __asm__("D_004A3DD8");
 extern char *D_004A28A8_1D78 __asm__("D_004A28A8");
 struct O_1D78 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct Sh_1D78 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(void*); };
@@ -3887,7 +3886,7 @@ extern "C" void* func_00301D78(void* self, int n, Ent_1D78 *e) {
     unsigned id = buf[0];
     char *obj;
     if (~id == 0) {
-        obj = *(char**)((char*)D_004A3DD8_1D78 + 0x290);
+        obj = D_004A3DD8->f290;
     } else {
         sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
@@ -3904,7 +3903,7 @@ extern "C" void* func_00301D78(void* self, int n, Ent_1D78 *e) {
     if (obj) {
         int found = 1;
         char *lvl = *(char**)(*(char**)(D_004A28A8_1D78 + 0x84) + 0xC);
-        char *q = *(char**)(lvl + (*D_004A3DD8_1D78 << 2) + 0x28);
+        char *q = *(char**)(lvl + (D_004A3DD8->being << 2) + 0x28);
         char *a = q ? q + 0x6C0 : 0;
         char *r = a ? a - 0x6C0 : 0;
         Chk_1D78 *c = (Chk_1D78*)(r + 0x6C0);
