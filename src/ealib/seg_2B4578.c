@@ -217,7 +217,7 @@ struct sPathVoice {                 /* 0x110, sPath.f58[] */
     signed char f1D;
     signed char f1E;
     char pad1F[0x24 - 0x1F];
-    unsigned int f24;
+    int f24;
     char pad28[0x2F - 0x28];
     unsigned char f2F;
     unsigned int *f30;
@@ -16835,69 +16835,38 @@ void func_003D4C40(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4F10);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Str_4F10 {
-    char pad00[0x3];
-    unsigned char f3;
-    char pad04[0xD - 0x4];
-    signed char fD;
-    signed char fE;
-    char pad0F[0x15 - 0xF];
-    signed char f15;
-    char pad16[0x1D - 0x16];
-    signed char f1D;
-    char pad1E[0x24 - 0x1E];
-    int f24;
-    char pad28[0x2F - 0x28];
-    unsigned char f2F;
-    int f30;
-    char pad34[0x36 - 0x34];
-    short f36;
-    char pad38[0x48 - 0x38];
-    unsigned int f48;
-    unsigned int f4C;
-    char pad50[0x54 - 0x50];
-    int f54;
-};
-struct Mgr_4F10 {
-    char pad00[0xC];
-    unsigned int fC;
-    unsigned int f10;
-    char pad14[0x58 - 0x14];
-    struct Str_4F10 *slot[24];
-};
-extern struct Mgr_4F10 *D_0044F420_4F10 __asm__("D_0044F420");
 extern unsigned char D_0044F434_4F10 __asm__("D_0044F434");
 extern unsigned int D_0044F438_4F10 __asm__("D_0044F438");
 extern void func_002AE9F8(int h, int a);
 extern int func_002AEBD0(int h);
 extern int func_003D1E80_4F10(void) __asm__("func_003D1E80");
 extern void func_003D3D20_4F10(unsigned int i) __asm__("func_003D3D20");
-extern int func_003D4950_4F10(struct Str_4F10 *s) __asm__("func_003D4950");
-extern void func_003D5A98_4F10(struct Str_4F10 *s) __asm__("func_003D5A98");
-extern void func_003D5CC0_4F10(struct Str_4F10 *s) __asm__("func_003D5CC0");
-extern void func_003D5EE8_4F10(struct Str_4F10 *s) __asm__("func_003D5EE8");
+extern int func_003D4950_4F10(struct sPathVoice *s) __asm__("func_003D4950");
+extern void func_003D5A98_4F10(struct sPathVoice *s) __asm__("func_003D5A98");
+extern void func_003D5CC0_4F10(struct sPathVoice *s) __asm__("func_003D5CC0");
+extern void func_003D5EE8_4F10(struct sPathVoice *s) __asm__("func_003D5EE8");
 
 void func_003D4F10(void) {
     int isB = D_0044F434_4F10 == 'B';
     unsigned int step;
     unsigned int i;
-    struct Str_4F10 *s;
+    struct sPathVoice *s;
     unsigned int end;
     int ok;
     int r;
     int skip;
 
     if (isB) {
-        step = D_0044F420_4F10->f10;
+        step = D_0044F420->f10;
     } else {
-        step = D_0044F420_4F10->fC;
+        step = D_0044F420->f0C;
     }
     if (!isB) {
         func_003D1E80_4F10();
     }
     for (i = 0; i < 24; i++) {
-        s = D_0044F420_4F10->slot[i];
-        if (s == 0 || s->f3 != 0) {
+        s = D_0044F420->f58[i];
+        if (s == 0 || s->f03 != 0) {
             continue;
         }
         ok = 0;
@@ -16906,7 +16875,7 @@ void func_003D4F10(void) {
             ok = s->f30 != 0;
         }
         if (ok) {
-            if (s->fD >= 0) {
+            if (s->f0D >= 0) {
                 func_003D5A98_4F10(s);
             }
             if (s->f15 >= 0) {
@@ -16933,8 +16902,8 @@ void func_003D4F10(void) {
                 skip = s->f24 < r;
             }
             if (!skip) {
-                if (s->fE == 0 && func_002AF428(s->f54) == 0) {
-                    s->fE = -1;
+                if (s->f0E == 0 && func_002AF428(s->f54) == 0) {
+                    s->f0E = -1;
                 }
                 func_003D3D20_4F10(i);
             }
