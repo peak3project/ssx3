@@ -93,6 +93,13 @@ extern sSndCallback D_004A3700[];
 // g++ 2.95 vtable entry (this-adjust delta, index, function) for a method taking only self, returning int.
 struct sSndVtI { short delta; short index; int (*fn)(void*); };
 
+// g++ 2.95 vtable entry with an untyped function slot (vtables copied / patched as data).
+struct sSndVtSlot {
+    short delta;
+    short index;
+    void* fn;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -103,16 +110,11 @@ extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, 
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
-struct sSndBsVtEnt {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sSndBsVt4 {
-    sSndBsVtEnt e[4];
+    sSndVtSlot e[4];
 } __attribute__((aligned(8)));
 struct sSndBsVt7 {
-    sSndBsVtEnt e[7];
+    sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_00483A48[];
@@ -163,16 +165,11 @@ void operator_delete(int*);
 extern "C" void func_0028BB10(void* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 
-struct sSndDtVtEnt {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sSndDtVt4 {
-    sSndDtVtEnt e[4];
+    sSndVtSlot e[4];
 } __attribute__((aligned(8)));
 struct sSndDtVt7 {
-    sSndDtVtEnt e[7];
+    sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_00483A48[];
@@ -9328,16 +9325,11 @@ extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, 
 extern "C" char* func_002A8140(char* self, int embedded, int count, int heap);
 extern "C" void* func_002A4BA8(void* self);
 
-struct sSnd69VtEnt {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sSnd69Vt4 {
-    sSnd69VtEnt e[4];
+    sSndVtSlot e[4];
 } __attribute__((aligned(8)));
 struct sSnd69Vt7 {
-    sSnd69VtEnt e[7];
+    sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 struct sSnd69List {
@@ -9406,16 +9398,11 @@ struct sSsMgr6F38;
 extern "C" void func_002A6F38(sSsMgr6F38* self);
 extern "C" void func_002A82D8(char* self, int flags);
 
-struct sSnd6BVtEnt {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sSnd6BVt4 {
-    sSnd6BVtEnt e[4];
+    sSndVtSlot e[4];
 } __attribute__((aligned(8)));
 struct sSnd6BVt7 {
-    sSnd6BVtEnt e[7];
+    sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_004837F8[];
@@ -10272,16 +10259,11 @@ extern "C" int func_003B97D8();
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
-struct sSndCtVtEnt {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sSndCtVt4 {
-    sSndCtVtEnt e[4];
+    sSndVtSlot e[4];
 } __attribute__((aligned(8)));
 struct sSndCtVt7 {
-    sSndCtVtEnt e[7];
+    sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_00483A48[];
@@ -10335,16 +10317,11 @@ extern "C" void func_002ADEE8(void* self, int flags);
 extern "C" void func_0028FEA0(char* self, int flags);
 extern "C" int func_003B9880();
 
-struct sSndDtBVtEnt {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sSndDtBVt4 {
-    sSndDtBVtEnt e[4];
+    sSndVtSlot e[4];
 } __attribute__((aligned(8)));
 struct sSndDtBVt7 {
-    sSndDtBVtEnt e[7];
+    sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_00483A48[];
