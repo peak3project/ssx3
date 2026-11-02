@@ -6521,11 +6521,10 @@ void func_003E5F98(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5FF0);
 #ifdef SKIP_ASM
 struct H_5FF0 { int a; void (*fn)(int, int); int c; };
-extern int D_00451008_5FF0[] __asm__("D_00451008");
 extern struct H_5FF0 D_00451250_5FF0[] __asm__("D_00451250");
 
 void func_003E5FF0(int idx, int a, int b) {
-    if (D_00451008_5FF0[0] == 0) {
+    if (D_00451008 == 0) {
         func_003E5B60();
     }
     if (D_00451250_5FF0[idx].fn) {
