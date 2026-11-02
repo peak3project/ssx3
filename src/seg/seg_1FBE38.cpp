@@ -3091,11 +3091,9 @@ struct Sh_0770 { virtual void v01(); virtual void v02(); virtual void v03(); vir
 struct Lvl_0770 { char pad[0x28]; char *sh[1]; };
 static inline char *refToPtr_0770(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0770(unsigned i) { if (i == 0) return 0; return refToPtr_0770(i); }
-struct V3_0770 { float x, y, z; };
-extern V3_0770 D_004C9098_0770 __asm__("D_004C9098");
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_0770 { int idx; int val; int pad; int type; };
-extern "C" V3_0770 func_00300770(int n, Ent_0770 *e) {
+extern "C" cLunoValue func_00300770(int n, Ent_0770 *e) {
     if (D_004A5690_0770 == 0) {
         D_004A5688_0770 = 0xFFFFFFFF;
         D_004A5690_0770 = 1;
@@ -3142,7 +3140,7 @@ extern "C" V3_0770 func_00300770(int n, Ent_0770 *e) {
         Lvl_0770 *lvl = *(Lvl_0770**)(*(char**)(D_004A28A8_0770 + 0x84) + 0xC);
         ((Sh_0770*)(lvl->sh[k] + 0x6C0))->v10(v);
     }
-    return D_004C9098_0770;
+    return D_004C9098;
 }
 #endif
 
