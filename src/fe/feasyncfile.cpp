@@ -44,6 +44,10 @@ struct sBXStringInit {
     sBXStringInit(const sBXStringInit& o);
 };
 
+struct sVec3 {
+    float x, y, z;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -1210,15 +1214,9 @@ extern "C" cUIText* cUIScreen_getObjectByHashName(void* screen, int hash);
 extern char D_00461778[];
 extern char D_00461788[];
 
-struct sVec3_001A5128 {
-    float x;
-    float y;
-    float z;
-};
-
-static inline sVec3_001A5128 GetPos_001A5128(cUIThing* o)
+static inline sVec3 GetPos_001A5128(cUIThing* o)
 {
-    return *(sVec3_001A5128*)((char*)o + 0x44);
+    return *(sVec3*)((char*)o + 0x44);
 }
 
 extern "C" void func_001A5128(void* self, int pos, int count)
@@ -1231,16 +1229,16 @@ extern "C" void func_001A5128(void* self, int pos, int count)
     cUIThing* thumb = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00461788));
     if (thumb == 0) return;
     if (track == 0) return;
-    sVec3_001A5128 size;
+    sVec3 size;
     track->getSize(&size);
-    sVec3_001A5128 p = *(sVec3_001A5128*)((char*)track + 0x44);
+    sVec3 p = *(sVec3*)((char*)track + 0x44);
     float fpos = (float)pos;
     if (count >= 2) count--;
     float step = (size.y + -15.0f) / (float)count;
-    sVec3_001A5128 np = p;
+    sVec3 np = p;
     np.y += fpos * step;
     np.x += -2.0f;
-    *(sVec3_001A5128*)((char*)thumb + 0x44) = np;
+    *(sVec3*)((char*)thumb + 0x44) = np;
     thumb->setVisible(1);
     track->setVisible(1);
 }
@@ -2184,10 +2182,6 @@ struct sVEntryP_001A7390 {
     int (*fn)(void*, float*);
 };
 
-struct sVec3_001A7390 {
-    float x, y, z;
-};
-
 struct sChar2_001A7390 {
     char c[2];
 };
@@ -2231,7 +2225,7 @@ extern "C" void func_001A7390(void* self, const char* name, int mode)
         func_003EFA48(wide, 0x60, buf);
         sVEntryP_001A7390* vt = *(sVEntryP_001A7390**)((char*)t1 + 8);
         vt[20].fn((char*)t1 + vt[20].delta, size);
-        sVec3_001A7390 scale = *(sVec3_001A7390*)((char*)t1 + 0x50);
+        sVec3 scale = *(sVec3*)((char*)t1 + 0x50);
         unsigned short* rest = func_00392680(func_003A04F0(t1), wide, wrapped, 0x30, scale.x, size[0]);
         func_003A0E90(t1, (char*)wrapped);
         if (rest != 0) {
@@ -9506,10 +9500,6 @@ struct sCol1B3D20 {
     sCol1B3D20(const float& r_, const float& g_, const float& b_, const float& a_) : r(r_), g(g_), b(b_), a(a_) {}
 };
 
-struct sVec3_1B3D20 {
-    float x, y, z;
-};
-
 class cFEVObj_001B3D20 {
 public:
     char pad[0x8];
@@ -9570,7 +9560,7 @@ extern "C" void func_001B3D20(void* self, int idx, int on)
     func_003A0290(t, &pos);
     pos.r += 2.0f;
     pos.g += 3.0f;
-    *(sVec3_1B3D20*)((char*)hl + 0x44) = *(sVec3_1B3D20*)&pos;
+    *(sVec3*)((char*)hl + 0x44) = *(sVec3*)&pos;
     hl->setVisible(1);
     func_001B27B0(self, *(int*)((char*)sel + 0x18));
     sel->setColour(sCol1B3D20(1.0f, 1.0f, 1.0f, 1.0f));
@@ -13301,10 +13291,6 @@ extern "C" char* func_003A04F0(void* text);
 extern "C" char* func_004162D0(char*, const char*);
 extern char D_004A1BD0[];
 
-struct sVec3_1B9950 {
-    float x, y, z;
-};
-
 struct sVec2_1B9950 {
     float x, y;
     sVec2_1B9950(float x_, float y_) : x(x_), y(y_) {}
@@ -13323,7 +13309,7 @@ static inline void Measure1B9950(cUIText* text, const char* s, sRect1B9950* out)
 extern "C" void func_001B9950(void* self, cUIText* text, char* str)
 {
     int cut = 0;
-    sVec3_1B9950 scale = *(sVec3_1B9950*)((char*)text + 0x50);
+    sVec3 scale = *(sVec3*)((char*)text + 0x50);
     sRect1B9950 box;
     ((cUIThing*)text)->getSize(&box);
     char* f = func_003A04F0(text);
@@ -18761,10 +18747,6 @@ extern "C" char* func_003A04F0(void* text);
 extern "C" char* func_004162D0(char*, const char*);
 extern char D_004A1BD0[];
 
-struct sVec3_1C2578 {
-    float x, y, z;
-};
-
 struct sVec2_1C2578 {
     float x, y;
     sVec2_1C2578(float x_, float y_) : x(x_), y(y_) {}
@@ -18784,7 +18766,7 @@ extern "C" void func_001C2578(void* self, void* vtext, char* str)
 {
     cUIText* text = (cUIText*)vtext;
     int cut = 0;
-    sVec3_1C2578 scale = *(sVec3_1C2578*)((char*)text + 0x50);
+    sVec3 scale = *(sVec3*)((char*)text + 0x50);
     sRect1C2578 box;
     ((cUIThing*)text)->getSize(&box);
     char* f = func_003A04F0(text);
@@ -19413,10 +19395,6 @@ struct cVec_3668 {
     cVec_3668(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
 };
 
-struct cPos_3668 {
-    float x, y, z;
-};
-
 class cObj_3668 {
 public:
     int pad[2];
@@ -19427,7 +19405,7 @@ public:
     virtual void setColor(const cVec_3668& v);
     virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16();
     virtual void v17(); virtual void v18(); virtual void v19();
-    virtual void getSize(cPos_3668* out);
+    virtual void getSize(sVec3* out);
 };
 
 // Same slot-9 setVisible, declared with other return types so the two highlight-off arms are not cross-jumped.
@@ -19508,14 +19486,14 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
             for (int i = 0; i < 10; i++) {
                 sprintf(buf, D_00465D60, i);
                 if (isButton_3668(w, buf)) {
-                    cPos_3668 pos;
-                    cPos_3668 size;
+                    sVec3 pos;
+                    sVec3 size;
                     cObj_3668* t = getObj_3668(self, D_004A1C10);
                     func_003A0290_3668(w, &pos);
                     w->getSize(&size);
                     pos.y = pos.y - size.y + 14.0f;
                     pos.x = pos.x + -40.0f;
-                    *(cPos_3668*)((char*)t + 0x44) = pos;
+                    *(sVec3*)((char*)t + 0x44) = pos;
                     t->setVisible(1);
                     func_001C3D68(self, i + *(int*)(self + 0x6E8), func_0025F338(D_004A3028));
                     break;
@@ -19583,15 +19561,9 @@ extern "C" cUIText* cUIScreen_getObjectByHashName(void* screen, int hash);
 extern char D_00465CE0[];
 extern char D_004A1C18[];
 
-struct sVec3_001C3D68 {
-    float x;
-    float y;
-    float z;
-};
-
-static inline sVec3_001C3D68 GetPos_001C3D68(cUIThing* o)
+static inline sVec3 GetPos_001C3D68(cUIThing* o)
 {
-    return *(sVec3_001C3D68*)((char*)o + 0x44);
+    return *(sVec3*)((char*)o + 0x44);
 }
 
 extern "C" void func_001C3D68(void* self, int pos, int count)
@@ -19604,15 +19576,15 @@ extern "C" void func_001C3D68(void* self, int pos, int count)
     cUIThing* thumb = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A1C18));
     if (thumb == 0) return;
     if (track == 0) return;
-    sVec3_001C3D68 size;
+    sVec3 size;
     track->getSize(&size);
-    sVec3_001C3D68 p = *(sVec3_001C3D68*)((char*)track + 0x44);
+    sVec3 p = *(sVec3*)((char*)track + 0x44);
     float fpos = (float)pos;
     if (count >= 2) count--;
     float step = (size.y + -17.0f) / (float)count;
-    sVec3_001C3D68 np = *(sVec3_001C3D68*)((char*)thumb + 0x44);
+    sVec3 np = *(sVec3*)((char*)thumb + 0x44);
     np.y = p.y + fpos * step + 20.0f;
-    *(sVec3_001C3D68*)((char*)thumb + 0x44) = np;
+    *(sVec3*)((char*)thumb + 0x44) = np;
     thumb->setVisible(1);
     track->setVisible(1);
 }
