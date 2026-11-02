@@ -74,6 +74,13 @@ struct sPtVec4u {
     float x, y, z, w;
 };
 
+// g++ 2.95 vtable entry for a method taking (self, int).
+struct sPtVtVI {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2130,11 +2137,6 @@ extern char* D_004A5B80;
 extern "C" void func_00367B60(void* mgr, int id);
 void operator_delete(int* ptr);
 
-struct sPtVEntry_5918 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00375918(void* self, int flags)
 {
@@ -2143,7 +2145,7 @@ extern "C" void func_00375918(void* self, int flags)
     if (tex >= 0) {
         func_00367B60(*(void**)(D_004A5B80 + 0x18F4), tex);
         char* mgr = D_004A5B80;
-        sPtVEntry_5918* vt = *(sPtVEntry_5918**)(mgr + 0x10D8);
+        sPtVtVI* vt = *(sPtVtVI**)(mgr + 0x10D8);
         vt[50].fn(mgr + vt[50].delta, *(int*)(s + 0x170));
         *(int*)(s + 0x170) = -1;
     }
@@ -3383,11 +3385,6 @@ struct sPartVEntryI_A540 {
     int (*fn)(void*);
 };
 
-struct sPartVEntryD_A540 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sPartEmitter_A540 {
     int field_0x0;
@@ -3406,7 +3403,7 @@ extern "C" sPartEmitter_A540* func_0037A540(void* a0, void* a1, void* a2, unsign
         }
         sPartVEntryI_A540* vt = (sPartVEntryI_A540*)e->vt;
         if (vt[2].fn((char*)e + vt[2].delta) == 0) {
-            sPartVEntryD_A540* vt2 = (sPartVEntryD_A540*)e->vt;
+            sPtVtVI* vt2 = (sPtVtVI*)e->vt;
             vt2[1].fn((char*)e + vt2[1].delta, 3);
             return 0;
         }
@@ -3872,18 +3869,13 @@ void func_0037C808(void* self)
 //100%
 INCLUDE_ASM("render/particle", func_0037C830);
 #ifdef SKIP_ASM
-struct sVEntry0037C830 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_0037C830(void* self)
 {
     int i;
     for (i = 0; i < 2000; i++) {
         if (((int*)((char*)self + 0x18F8))[i] != 0) {
-            sVEntry0037C830* vt = *(sVEntry0037C830**)((char*)self + 0x10D8);
+            sPtVtVI* vt = *(sPtVtVI**)((char*)self + 0x10D8);
             vt[50].fn((char*)self + vt[50].delta, i);
         }
     }
@@ -4112,11 +4104,6 @@ extern "C" void func_0037CBE8(void* self, void* out, int a2, int a3)
 //100%
 INCLUDE_ASM("render/particle", func_0037CC30);
 #ifdef SKIP_ASM
-struct sVEntry0037CC30 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00367B60(void* mgr, int id);
 
@@ -4124,7 +4111,7 @@ extern "C" void func_0037CC30(void* self, void* item)
 {
     if (*(int*)((char*)item + 0x4) != -1) {
         func_00367B60(*(void**)((char*)self + 0x18F4), *(int*)((char*)item + 0x4));
-        sVEntry0037CC30* vt = *(sVEntry0037CC30**)((char*)self + 0x10D8);
+        sPtVtVI* vt = *(sPtVtVI**)((char*)self + 0x10D8);
         vt[50].fn((char*)self + vt[50].delta, *(int*)((char*)item + 0x4));
         *(int*)((char*)item + 0x4) = -1;
     }
@@ -6981,7 +6968,6 @@ extern "C" void func_003865D8(void *arg0, void **arg1) {
 //100%
 INCLUDE_ASM("render/particle", func_003865E8);
 #ifdef SKIP_ASM
-struct sVE3865E8 { short delta; short index; void (*fn)(void*, int); };
 
 extern "C" void func_003865E8(void* head)
 {
@@ -6990,7 +6976,7 @@ extern "C" void func_003865E8(void* head)
         do {
             void* next = *(void**)((char*)p + 8);
             if (p != 0) {
-                sVE3865E8* vt = *(sVE3865E8**)((char*)p + 4);
+                sPtVtVI* vt = *(sPtVtVI**)((char*)p + 4);
                 vt[1].fn((char*)p + vt[1].delta, 3);
             }
             p = next;
