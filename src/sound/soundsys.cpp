@@ -122,6 +122,47 @@ struct sSndVtIII { short delta; short index; int (*fn)(void*, int, int); };
 // g++ 2.95 vtable entry for a variadic method returning char*.
 struct sSndVtVar { short delta; short index; char* (*fn)(void*, ...); };
 
+// A being: the script/AI-facing interface of a rider (slot order of the prototype's vtable _vt$6cBeing; same
+// declaration as seg/seg_1FBE38).
+struct tInstanceRecord;
+class cBeing {
+public:
+    virtual ~cBeing();
+    virtual const t4Vector* getVelocity() const;
+    virtual int isIntersecting(tInstanceRecord* rec) const;
+    virtual void applyBoost(const t4Vector& impulse);
+    virtual const t4Vector* getPosition() const;
+    virtual const t4Matrix* getTransform() const;
+    virtual int getAIIndex() const;
+    virtual bool isHuman() const;
+    virtual bool isComputer() const;
+    virtual void transport(const t4Matrix& m);
+    virtual void resetToPath();
+    virtual void initForMission(const t4Matrix& m);
+};
+// A rider as this unit sees it (include/ai/rider.h has the flat layout and the field names): its cBeing base sits
+// at 0x6C0, after the rider's own data.
+struct sSndRiderData {
+    char pad0[0x2F0];
+    float unk_2F0;           // 0x2F0
+    char pad2F4[0x470 - 0x2F4];
+    float mFinishTime;       // 0x470
+    char pad474[0x4CC - 0x474];
+    float f4CC;              // 0x4CC
+    char pad4D0[0x6C0 - 0x4D0];
+};
+struct sSndRider : public sSndRiderData, public cBeing {
+    char pad6C4[0x788 - 0x6C4];
+    char* mAirPredictor;     // 0x788 (cAirPredictor*)
+    char pad78C[0x790 - 0x78C];
+    char* mMetrix;           // 0x790 (cRiderMetrix*)
+    char pad794[0x870 - 0x794];
+    int mViewIndex;          // 0x870
+    int mIsHuman;            // 0x874
+    int mIsActor;            // 0x878
+    int mIsLocal;            // 0x87C
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3943,19 +3984,6 @@ static inline int floori_AB40(float x)
     return (int)t;
 }
 
-struct sSndRiderAB40 {
-    char pad0[0x2F0];
-    float f2F0;
-    char pad2F4[0x470 - 0x2F4];
-    float f470;
-    char pad474[0x790 - 0x474];
-    char* f790;
-    char pad794[0x870 - 0x794];
-    int f870;
-    int f874;
-    char pad878[4];
-    int f87C;
-};
 
 struct sSndSysAB40 {
     cBankManager* mgr;
@@ -3969,9 +3997,9 @@ struct sSndSysAB40 {
     int f5FEC[2];            // 0x5FEC
 };
 
-static inline bool sndAB40Active(sSndRiderAB40* r)
+static inline bool sndAB40Active(sSndRider* r)
 {
-    return r->f874 && r->f87C;
+    return r->mIsHuman && r->mIsLocal;
 }
 
 #define MIN_AB40(a,b) ((a) < (b) ? (a) : (b))
@@ -4022,22 +4050,22 @@ extern "C" void func_0029AB40(sSndSysAB40* self)
     if (D_00535C11[0] == 2)
         n = 2;
     for (int i = 0; i < n; i++) {
-        if (sndAB40Active(*(sSndRiderAB40**)((char*)func_0028B1D8() + (i << 2) + 0x28))) {
-            sSndRiderAB40* rider = *(sSndRiderAB40**)((char*)func_0028B1D8() + (i << 2) + 0x28);
-            char* q0 = *(char**)(rider->f790 + 0x1B0);
+        if (sndAB40Active(*(sSndRider**)((char*)func_0028B1D8() + (i << 2) + 0x28))) {
+            sSndRider* rider = *(sSndRider**)((char*)func_0028B1D8() + (i << 2) + 0x28);
+            char* q0 = *(char**)(rider->mMetrix + 0x1B0);
             char* q = q0 ? q0 + 0x3A8 : 0;
             int v = floori_AB40(*(float*)(q + 8) / *(float*)(q + 4) * 10.0f);
             if (self->f5FE0[i] < v && v > 0) {
                 cSndPlayOpts* o = &(*self->p118)->sub;
                 int r = (int)func_00287968(self, 9, 0);
-                func_002ADCA0_AB40(o, 0x96, D_004A36C0[0], r, 0, 0x65, 0x7F, self->f5FE8[rider->f870]);
-                self->f5FE8[rider->f870] += 0x100;
+                func_002ADCA0_AB40(o, 0x96, D_004A36C0[0], r, 0, 0x65, 0x7F, self->f5FE8[rider->mViewIndex]);
+                self->f5FE8[rider->mViewIndex] += 0x100;
             }
             self->f5FE0[i] = v;
-            int u = floori_AB40(rider->f2F0 + rider->f2F0);
+            int u = floori_AB40(rider->unk_2F0 + rider->unk_2F0);
             if (u > 0 && u == self->f5FEC[i] - 1 && u < 13 && ((u & 1) == 0 || u < 5)) {
                 int ok = 1;
-                int pos = rider->f470 >= 0.0f;
+                int pos = rider->mFinishTime >= 0.0f;
                 if (pos)
                     ok = 0;
                 if ((D_004A2A50 & 1) || func_00270280(*(void**)((char*)func_0028B1C8() + 0x28)) != 0)
@@ -6020,49 +6048,26 @@ extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern float D_004A36D8;
 
-class cSsFCC8Obj {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual int v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual int v09();
-};
-struct sSsFCC8RiderA {
-    char pad0[0x470];
-    float f470;
-    char pad474[0x6C0 - 0x474];
-};
-struct sSsFCC8Rider : public sSsFCC8RiderA, public cSsFCC8Obj {
-    char pad6C4[0x788 - 0x6C4];
-    char* p788;
-    char pad78C[0x87C - 0x78C];
-    int f87C;
-};
 
 extern "C" void func_0029FCC8(void* self, void* vrider)
 {
-    sSsFCC8Rider* rider = (sSsFCC8Rider*)vrider;
+    sSndRider* rider = (sSndRider*)vrider;
     if (func_0029F0A0(self) == 0) return;
     if (func_002A3FE8(self) != 0) return;
     if (func_00288AE0(self) != 0) return;
-    int pos = rider->f470 >= 0.0f;
+    int pos = rider->mFinishTime >= 0.0f;
     if (pos) return;
-    if (*(float*)(rider->p788 + 0x98) < 4.000256061553955f) return;
+    if (*(float*)(rider->mAirPredictor + 0x98) < 4.000256061553955f) return;
     int chk = 0;
-    if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
+    if (rider->isComputer() != 0 || rider->mIsLocal == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
-    float v = rider->f470;
+    float v = rider->mFinishTime;
     int pos2 = v >= 0.0f;
     if (pos2) return;
     char* snd = (char*)self + 0x5560;
     if (func_002B0E28(snd, 0) == 0) return;
     int r = func_0029F330(rider);
-    if (func_00288B40(self, rider->v05(), D_004A36D8) < 0) return;
+    if (func_00288B40(self, (int)rider->getPosition(), D_004A36D8) < 0) return;
     int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
         if (func_002B1458(snd, 0, 0x2084, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
@@ -6098,39 +6103,18 @@ extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern float D_004A36D8;
 
-class cSsFF80Obj {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual int v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual int v09();
-};
-struct sSsFF80RiderA {
-    char pad0[0x470];
-    float f470;
-    char pad474[0x6C0 - 0x474];
-};
-struct sSsFF80Rider : public sSsFF80RiderA, public cSsFF80Obj {
-    char pad6C4[0x87C - 0x6C4];
-    int f87C;
-};
 
-extern "C" void func_0029FF80(void* self, sSsFF80Rider* rider, int alt)
+extern "C" void func_0029FF80(void* self, sSndRider* rider, int alt)
 {
     if (func_0029F0A0(self) == 0) return;
     if (func_00288AE0(self) != 0) return;
-    int pos = rider->f470 >= 0.0f;
+    int pos = rider->mFinishTime >= 0.0f;
     if (pos) return;
     int chk = 0;
-    if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
+    if (rider->isComputer() != 0 || rider->mIsLocal == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
     int r = func_0029F330(rider);
-    if (func_00288B40(self, rider->v05(), D_004A36D8) < 0) return;
+    if (func_00288B40(self, (int)rider->getPosition(), D_004A36D8) < 0) return;
     if (alt != 0) {
         int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
         if (sel == 1) {
@@ -6184,36 +6168,15 @@ extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern float D_004A36D8;
 
-class cSs02D8Obj {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual int v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual int v09();
-};
-struct sSs02D8RiderA {
-    char pad0[0x470];
-    float f470;
-    char pad474[0x6C0 - 0x474];
-};
-struct sSs02D8Rider : public sSs02D8RiderA, public cSs02D8Obj {
-    char pad6C4[0x87C - 0x6C4];
-    int f87C;
-};
 
-extern "C" void func_002A02D8(void* self, sSs02D8Rider* rider)
+extern "C" void func_002A02D8(void* self, sSndRider* rider)
 {
     if (func_0029F0A0(self) == 0) return;
     if (func_00288AE0(self) != 0) return;
-    int pos = rider->f470 >= 0.0f;
+    int pos = rider->mFinishTime >= 0.0f;
     if (pos) return;
     int chk = 0;
-    if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
+    if (rider->isComputer() != 0 || rider->mIsLocal == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
     if (func_002B0E28((char*)self + 0x5560, 0) == 0) return;
     int r = func_0029F330(rider);
@@ -6223,7 +6186,7 @@ extern "C" void func_002A02D8(void* self, sSs02D8Rider* rider)
     } else {
         mode = 3;
     }
-    if (func_00288B40(self, rider->v05(), D_004A36D8) < 0) return;
+    if (func_00288B40(self, (int)rider->getPosition(), D_004A36D8) < 0) return;
     int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x2088, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
@@ -6287,32 +6250,9 @@ static inline float vu0Dot_0560(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
-class cSs0560Obj {
-public:
-    virtual void v01();
-    virtual t4Vector* v02();
-    virtual void v03();
-    virtual void v04();
-    virtual int v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual int v09();
-};
-struct sSs0560RiderA {
-    char pad0[0x470];
-    float f470;
-    char pad474[0x4CC - 0x474];
-    float f4CC;
-    char pad4D0[0x6C0 - 0x4D0];
-};
-struct sSs0560Rider : public sSs0560RiderA, public cSs0560Obj {
-    char pad6C4[0x87C - 0x6C4];
-    int f87C;
-};
 
-void func_002A0560_0560(void* self, sSs0560Rider* a, sSs0560Rider* b) __asm__("func_002A0560");
-void func_002A0560_0560(void* self, sSs0560Rider* a, sSs0560Rider* b)
+void func_002A0560_0560(void* self, sSndRider* a, sSndRider* b) __asm__("func_002A0560");
+void func_002A0560_0560(void* self, sSndRider* a, sSndRider* b)
 {
     if (func_0029F0A0(self) == 0) return;
     if (!sndA30Mode0560(2)) return;
@@ -6320,21 +6260,21 @@ void func_002A0560_0560(void* self, sSs0560Rider* a, sSs0560Rider* b)
     if (func_00123168(a) != 0) return;
     if (func_00123168(b) != 0) return;
     if (*(int*)(*(int*)((char*)func_0028B1C8() + 0xC) + 8) - *(int*)((char*)self + 0x582C) < 0x258) return;
-    int posA = a->f470 >= 0.0f;
+    int posA = a->mFinishTime >= 0.0f;
     if (posA) return;
-    int posB = b->f470 >= 0.0f;
+    int posB = b->mFinishTime >= 0.0f;
     if (posB) return;
     int chkA = 0;
-    if (a->v09() != 0 || a->f87C == 0) chkA = 1;
+    if (a->isComputer() != 0 || a->mIsLocal == 0) chkA = 1;
     int chkB = 0;
-    if (b->v09() != 0 || b->f87C == 0) chkB = 1;
+    if (b->isComputer() != 0 || b->mIsLocal == 0) chkB = 1;
     void* pl = func_00285D98_p(self, -1);
     if (chkA && chkB && a != pl && b != pl) return;
     char* snd = (char*)self + 0x5560;
     if (func_002B0E28(snd, 0) == 0) return;
-    int okA = func_00288B40(self, a->v05(), D_004A36D8);
+    int okA = func_00288B40(self, (int)a->getPosition(), D_004A36D8);
     if (okA < 0) return;
-    int okB = func_00288B40(self, b->v05(), D_004A36D8);
+    int okB = func_00288B40(self, (int)b->getPosition(), D_004A36D8);
     if (okA != okB) return;
     float t0, t1;
     func_0031BE50_0560(b->f4CC, &t0, &t1);
@@ -6343,8 +6283,8 @@ void func_002A0560_0560(void* self, sSs0560Rider* a, sSs0560Rider* b)
     v.y = t0;
     v.z = 0;
     v.w = 0;
-    float d = vu0Dot_0560(v, *a->v02());
-    d -= vu0Dot_0560(v, *b->v02());
+    float d = vu0Dot_0560(v, *a->getVelocity());
+    d -= vu0Dot_0560(v, *b->getVelocity());
     if (!(d > 670.55999755859375f)) return;
     if (!(d < 1788.159912109375f)) return;
     int mode = 1;
@@ -6397,58 +6337,36 @@ static inline int sndA30Mode(int m)
     return *(int*)((char*)D_004A28A4 + 0x550) == m;
 }
 
-class cSs0A30Obj {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual int v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual int v09();
-};
-struct sSs0A30RiderA {
-    char pad0[0x470];
-    float f470;
-    char pad474[0x6C0 - 0x474];
-};
-struct sSs0A30Rider : public sSs0A30RiderA, public cSs0A30Obj {
-    char pad6C4[0x87C - 0x6C4];
-    int f87C;
-};
-struct sSs1820Rider;
-extern "C" int func_002A1820(void* self, sSs1820Rider* a, sSs1820Rider* b);
+extern "C" int func_002A1820(void* self, sSndRider* a, sSndRider* b);
 
-extern "C" void func_002A0A30(void* self, sSs0A30Rider* a, sSs0A30Rider* b, int p7, int p8)
+extern "C" void func_002A0A30(void* self, sSndRider* a, sSndRider* b, int p7, int p8)
 {
     if (func_0029F0A0(self) == 0) return;
     if (!sndA30Mode(2)) return;
     if (func_00288AE0(self) != 0) return;
     if (func_00123168(a) != 0) return;
     if (func_00123168(b) != 0) return;
-    int posA = a->f470 >= 0.0f;
+    int posA = a->mFinishTime >= 0.0f;
     if (posA) return;
-    int posB = b->f470 >= 0.0f;
+    int posB = b->mFinishTime >= 0.0f;
     if (posB) return;
     int chkA = 0;
-    if (a->v09() != 0 || a->f87C == 0) chkA = 1;
+    if (a->isComputer() != 0 || a->mIsLocal == 0) chkA = 1;
     int chkB = 0;
-    if (b->v09() != 0 || b->f87C == 0) chkB = 1;
+    if (b->isComputer() != 0 || b->mIsLocal == 0) chkB = 1;
     void* pl = func_00285D98_p(self, -1);
     if (chkA && chkB && a != pl && b != pl) return;
     func_0029F660(self, b, 0, 1);
     char* snd = (char*)self + 0x5560;
     if (func_002B0E28(snd, 0) == 0) return;
-    int okB = func_00288B40(self, b->v05(), D_004A36D8) >= 0;
-    int okA = func_00288B40(self, a->v05(), D_004A36D8) >= 0;
+    int okB = func_00288B40(self, (int)b->getPosition(), D_004A36D8) >= 0;
+    int okA = func_00288B40(self, (int)a->getPosition(), D_004A36D8) >= 0;
     if (!okB && !okA) return;
     int rA = func_0029F330(a);
     int rB = func_0029F330(b);
     if (p8 != 0) return;
     if (p7 != 0) return;
-    int sel = func_002A1820(self, (sSs1820Rider*)a, (sSs1820Rider*)b);
+    int sel = func_002A1820(self, (sSndRider*)a, (sSndRider*)b);
     if (sel == 2) {
         if (func_002B1458_f(snd, 0, 0x208F, (int)b, func_00123128(b), 0.0f, 0, 0) != 0) {
             D_004A482C(func_003D8008(1, 0, 0x208F), 2, rB, 3);
@@ -6488,46 +6406,23 @@ extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern float D_004A36D8;
 
-class cSs0E70Obj {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual int v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual int v09();
-};
-struct sSs0E70RiderA {
-    char pad0[0x470];
-    float f470;
-    char pad474[0x6C0 - 0x474];
-};
-struct sSs0E70Rider : public sSs0E70RiderA, public cSs0E70Obj {
-    char pad6C4[0x874 - 0x6C4];
-    int f874;
-    int f878;
-    int f87C;
-};
 
-extern "C" void func_002A0E70(void* self, sSs0E70Rider* rider, int play)
+extern "C" void func_002A0E70(void* self, sSndRider* rider, int play)
 {
     if (func_0029F0A0(self) == 0) return;
     if (func_00288AE0(self) != 0) return;
     int chk = 0;
-    if (rider->v09() != 0 || rider->f87C == 0) chk = 1;
+    if (rider->isComputer() != 0 || rider->mIsLocal == 0) chk = 1;
     if (chk && func_00285D98_p(self, -1) != rider) return;
-    float v = rider->f470;
+    float v = rider->mFinishTime;
     int pos = v >= 0.0f;
     if (pos) return;
     char* snd = (char*)self + 0x5560;
     if (func_002B0E28(snd, 0) == 0) return;
-    if (func_00288B40(self, rider->v05(), D_004A36D8) < 0) return;
+    if (func_00288B40(self, (int)rider->getPosition(), D_004A36D8) < 0) return;
     func_0029F660(self, rider, 2, 0);
     if (play == 0) return;
-    int ok = rider->f874 != 0 && rider->f87C != 0;
+    int ok = rider->mIsHuman != 0 && rider->mIsLocal != 0;
     if (!ok) return;
     int r = func_0029F330(rider);
     if (func_002B1458(snd, 0, 0x2077, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
@@ -6789,39 +6684,20 @@ void* cBEAggressionInterface_getThis();
 extern "C" int func_00155B50(void* ag, int a, int b);
 extern "C" int func_00155AB0(void* ag, int a, int b);
 
-class cSs1820Obj {
-public:
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual int v07();
-};
-struct sSs1820RiderA {
-    char pad0[0x6C0];
-};
-struct sSs1820Rider : public sSs1820RiderA, public cSs1820Obj {
-    char pad6C4[0x874 - 0x6C4];
-    int f874;
-    int f878;
-    int f87C;
-};
 
-extern "C" int func_002A1820(void* self, sSs1820Rider* a, sSs1820Rider* b)
+extern "C" int func_002A1820(void* self, sSndRider* a, sSndRider* b)
 {
     if (*(int*)((char*)func_0028B1D8() + 0x78) == 2) return 2;
-    int oka = a->f874 != 0 && a->f87C != 0;
+    int oka = a->mIsHuman != 0 && a->mIsLocal != 0;
     if (oka) {
-        int okb = b->f874 != 0 && b->f87C != 0;
+        int okb = b->mIsHuman != 0 && b->mIsLocal != 0;
         if (okb) return 2;
     }
     int r = 2;
-    int c1 = func_00155B50(cBEAggressionInterface_getThis(), a->v07(), b->v07());
-    int c2 = func_00155B50(cBEAggressionInterface_getThis(), b->v07(), a->v07());
+    int c1 = func_00155B50(cBEAggressionInterface_getThis(), a->getAIIndex(), b->getAIIndex());
+    int c2 = func_00155B50(cBEAggressionInterface_getThis(), b->getAIIndex(), a->getAIIndex());
     if (c1 < 2 && c2 < 2) {
-        int t = func_00155AB0(cBEAggressionInterface_getThis(), a->v07(), b->v07());
+        int t = func_00155AB0(cBEAggressionInterface_getThis(), a->getAIIndex(), b->getAIIndex());
         if (t == 0) r = 0;
         else if (t == 1) r = 1;
     }
