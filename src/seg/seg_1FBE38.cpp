@@ -1654,14 +1654,12 @@ extern "C" void func_00355978_DC60(void*, int, int, V4_DC60*) __asm__("func_0035
 struct O_DC60 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_DC60(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_DC60(unsigned i) { if (i == 0) return 0; return refToPtr_DC60(i); }
-struct V3_DC60 { float x, y, z; };
-extern V3_DC60 D_004C9098_DC60 __asm__("D_004C9098");
 extern unsigned D_DC60[] __asm__("D_004FB758");
 extern int D_004A5610;
 extern const int D_004461C0[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_DC60 { int idx; int val; int pad; int type; };
-extern "C" V3_DC60 func_002FDC60(int n, Ent_DC60 *e) {
+extern "C" cLunoValue func_002FDC60(int n, Ent_DC60 *e) {
     if (D_004A5610 == 0) {
         D_DC60[0] = 0xFFFFFFFF;
         D_DC60[1] = 0xFFFFFFFF;
@@ -1722,7 +1720,7 @@ extern "C" V3_DC60 func_002FDC60(int n, Ent_DC60 *e) {
             }
         }
     }
-    return D_004C9098_DC60;
+    return D_004C9098;
 }
 #endif
 
