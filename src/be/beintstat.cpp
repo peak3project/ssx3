@@ -1,24 +1,27 @@
 #include "common.h"
 
-//100%
-INCLUDE_ASM("be/beintstat", cBEStatInterface_getCollisionAttrib);
-#ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 int cBENewPlayerInterface_isMissionMan(int index);
 
-struct sPlayerStatRow_getCollisionAttrib
-{
-    signed char e[10][7]; // 0x46 bytes
+// Per-profile character stat levels: one row of 10 characters x 7 stats per profile.
+struct sPlayerStat7 {
+    signed char v[7];
 };
-struct sCharStat_getCollisionAttrib
-{
+struct sPlayerStatRow {
+    sPlayerStat7 e[10]; // 0x46 bytes
+};
+extern sPlayerStatRow D_00535538[];
+
+// Per-character base stats (15 bytes each).
+struct sCharStat {
     signed char v[15];
 };
-extern sPlayerStatRow_getCollisionAttrib D_00535538_getCollisionAttrib[] __asm__("D_00535538");
-extern sCharStat_getCollisionAttrib D_005308D8_getCollisionAttrib[] __asm__("D_005308D8");
+extern sCharStat D_005308D8[];
 
+//100%
+INCLUDE_ASM("be/beintstat", cBEStatInterface_getCollisionAttrib);
+#ifdef SKIP_ASM
 extern "C" float cBEStatInterface_getCollisionAttrib(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -29,30 +32,14 @@ extern "C" float cBEStatInterface_getCollisionAttrib(void* self, int rider, int 
     if (value > 0)
         v = value;
     else
-        v = D_00535538_getCollisionAttrib[profile].e[c][5] / 5;
-    return (float)v / (float)D_005308D8_getCollisionAttrib[c].v[0xD];
+        v = D_00535538[profile].e[c].v[5] / 5;
+    return (float)v / (float)D_005308D8[c].v[0xD];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_00149038);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sPlayerStatRow_func_00149038
-{
-    signed char e[10][7]; // 0x46 bytes
-};
-struct sCharStat_func_00149038
-{
-    signed char v[15];
-};
-extern sPlayerStatRow_func_00149038 D_00535538_func_00149038[] __asm__("D_00535538");
-extern sCharStat_func_00149038 D_005308D8_func_00149038[] __asm__("D_005308D8");
-
 extern "C" float func_00149038(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -63,30 +50,14 @@ extern "C" float func_00149038(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_00149038[profile].e[c][5] / 5;
-    return (float)v / (float)D_005308D8_func_00149038[c].v[0xD];
+        v = D_00535538[profile].e[c].v[5] / 5;
+    return (float)v / (float)D_005308D8[c].v[0xD];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_00149120);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sPlayerStatRow_func_00149120
-{
-    signed char e[10][7]; // 0x46 bytes
-};
-struct sCharStat_func_00149120
-{
-    signed char v[15];
-};
-extern sPlayerStatRow_func_00149120 D_00535538_func_00149120[] __asm__("D_00535538");
-extern sCharStat_func_00149120 D_005308D8_func_00149120[] __asm__("D_005308D8");
-
 extern "C" float func_00149120(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -97,30 +68,14 @@ extern "C" float func_00149120(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_00149120[profile].e[c][6] / 5;
-    return (float)v / (float)D_005308D8_func_00149120[c].v[0xE];
+        v = D_00535538[profile].e[c].v[6] / 5;
+    return (float)v / (float)D_005308D8[c].v[0xE];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_00149208);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sPlayerStatRow_func_00149208
-{
-    signed char e[10][7]; // 0x46 bytes
-};
-struct sCharStat_func_00149208
-{
-    signed char v[15];
-};
-extern sPlayerStatRow_func_00149208 D_00535538_func_00149208[] __asm__("D_00535538");
-extern sCharStat_func_00149208 D_005308D8_func_00149208[] __asm__("D_005308D8");
-
 extern "C" float func_00149208(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -131,8 +86,8 @@ extern "C" float func_00149208(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_00149208[profile].e[c][6] / 5;
-    return (float)v / (float)D_005308D8_func_00149208[c].v[0xE];
+        v = D_00535538[profile].e[c].v[6] / 5;
+    return (float)v / (float)D_005308D8[c].v[0xE];
 }
 #endif
 
@@ -149,30 +104,14 @@ extern "C" float func_001492F0(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_00149038[profile].e[c][6] / 5;
-    return (float)v / (float)D_005308D8_func_00149038[c].v[0xE];
+        v = D_00535538[profile].e[c].v[6] / 5;
+    return (float)v / (float)D_005308D8[c].v[0xE];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_001493D8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sPlayerStatRow_func_001493D8
-{
-    signed char e[10][7]; // 0x46 bytes
-};
-struct sCharStat_func_001493D8
-{
-    signed char v[15];
-};
-extern sPlayerStatRow_func_001493D8 D_00535538_func_001493D8[] __asm__("D_00535538");
-extern sCharStat_func_001493D8 D_005308D8_func_001493D8[] __asm__("D_005308D8");
-
 extern "C" float func_001493D8(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -183,30 +122,14 @@ extern "C" float func_001493D8(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_001493D8[profile].e[c][1] / 5;
-    return (float)v / (float)D_005308D8_func_001493D8[c].v[0x9];
+        v = D_00535538[profile].e[c].v[1] / 5;
+    return (float)v / (float)D_005308D8[c].v[0x9];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_001494C0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sPlayerStatRow_func_001494C0
-{
-    signed char e[10][7]; // 0x46 bytes
-};
-struct sCharStat_func_001494C0
-{
-    signed char v[15];
-};
-extern sPlayerStatRow_func_001494C0 D_00535538_func_001494C0[] __asm__("D_00535538");
-extern sCharStat_func_001494C0 D_005308D8_func_001494C0[] __asm__("D_005308D8");
-
 extern "C" float func_001494C0(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -217,30 +140,14 @@ extern "C" float func_001494C0(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_001494C0[profile].e[c][0] / 5;
-    return (float)v / (float)D_005308D8_func_001494C0[c].v[0x8];
+        v = D_00535538[profile].e[c].v[0] / 5;
+    return (float)v / (float)D_005308D8[c].v[0x8];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_001495A8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sPlayerStatRow_func_001495A8
-{
-    signed char e[10][7]; // 0x46 bytes
-};
-struct sCharStat_func_001495A8
-{
-    signed char v[15];
-};
-extern sPlayerStatRow_func_001495A8 D_00535538_func_001495A8[] __asm__("D_00535538");
-extern sCharStat_func_001495A8 D_005308D8_func_001495A8[] __asm__("D_005308D8");
-
 extern "C" float func_001495A8(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -251,30 +158,14 @@ extern "C" float func_001495A8(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_001495A8[profile].e[c][4] / 5;
-    return (float)v / (float)D_005308D8_func_001495A8[c].v[0xC];
+        v = D_00535538[profile].e[c].v[4] / 5;
+    return (float)v / (float)D_005308D8[c].v[0xC];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_00149690);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-int cBENewPlayerInterface_isMissionMan(int index);
-
-struct sPlayerStatRow_func_00149690
-{
-    signed char e[10][7]; // 0x46 bytes
-};
-struct sCharStat_func_00149690
-{
-    signed char v[15];
-};
-extern sPlayerStatRow_func_00149690 D_00535538_func_00149690[] __asm__("D_00535538");
-extern sCharStat_func_00149690 D_005308D8_func_00149690[] __asm__("D_005308D8");
-
 extern "C" float func_00149690(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -285,15 +176,14 @@ extern "C" float func_00149690(void* self, int rider, int value)
     if (value > 0)
         v = value;
     else
-        v = D_00535538_func_00149690[profile].e[c][2] / 5;
-    return (float)v / (float)D_005308D8_func_00149690[c].v[0xA];
+        v = D_00535538[profile].e[c].v[2] / 5;
+    return (float)v / (float)D_005308D8[c].v[0xA];
 }
 #endif
 
 //100%
 INCLUDE_ASM("be/beintstat", func_00149778);
 #ifdef SKIP_ASM
-int cBENewPlayerInterface_isMissionMan(int index);
 extern "C" int func_00148950(void* iface, int id);
 
 // Local threshold table; the original was likely an `int t[11] = {...};` whose
@@ -489,14 +379,10 @@ extern "C" void func_00149A88(void* self, signed char idx)
 //100%
 INCLUDE_ASM("be/beintstat", func_00149BB8);
 #ifdef SKIP_ASM
-struct sCharStat_9BB8 {
-    signed char v[15];
-};
-struct sCharBase_9BB8 {
+struct sCharBase {
     unsigned char v[7];
 };
-extern sCharStat_9BB8 D_005308D8_9BB8[] __asm__("D_005308D8");
-extern sCharBase_9BB8 D_00440F00_9BB8[] __asm__("D_00440F00");
+extern sCharBase D_00440F00[];
 
 struct sRange_9BB8 {
     int lo;
@@ -556,22 +442,22 @@ extern "C" void func_00149BB8(void)
     if (f != 0)
         cMemMan_free(f);
     for (i = 0; i < 10; i++) {
-        D_005308D8_9BB8[i].v[0] = i;
-        D_005308D8_9BB8[i].v[1] = D_00440F00_9BB8[i].v[0] + 5;
-        D_005308D8_9BB8[i].v[2] = D_00440F00_9BB8[i].v[1] + 5;
-        D_005308D8_9BB8[i].v[3] = D_00440F00_9BB8[i].v[2] + 5;
-        D_005308D8_9BB8[i].v[4] = D_00440F00_9BB8[i].v[3] + 5;
-        D_005308D8_9BB8[i].v[5] = D_00440F00_9BB8[i].v[4] + 5;
-        D_005308D8_9BB8[i].v[6] = D_00440F00_9BB8[i].v[5] + 5;
-        D_005308D8_9BB8[i].v[7] = D_00440F00_9BB8[i].v[6] + 5;
+        D_005308D8[i].v[0] = i;
+        D_005308D8[i].v[1] = D_00440F00[i].v[0] + 5;
+        D_005308D8[i].v[2] = D_00440F00[i].v[1] + 5;
+        D_005308D8[i].v[3] = D_00440F00[i].v[2] + 5;
+        D_005308D8[i].v[4] = D_00440F00[i].v[3] + 5;
+        D_005308D8[i].v[5] = D_00440F00[i].v[4] + 5;
+        D_005308D8[i].v[6] = D_00440F00[i].v[5] + 5;
+        D_005308D8[i].v[7] = D_00440F00[i].v[6] + 5;
         // the default stats are written in this (non-index) order; the retail store order follows it
-        D_005308D8_9BB8[i].v[9] = 0xB;
-        D_005308D8_9BB8[i].v[11] = 0xB;
-        D_005308D8_9BB8[i].v[8] = 0xB;
-        D_005308D8_9BB8[i].v[12] = 0xB;
-        D_005308D8_9BB8[i].v[14] = 0xB;
-        D_005308D8_9BB8[i].v[13] = 0xB;
-        D_005308D8_9BB8[i].v[10] = 0xB;
+        D_005308D8[i].v[9] = 0xB;
+        D_005308D8[i].v[11] = 0xB;
+        D_005308D8[i].v[8] = 0xB;
+        D_005308D8[i].v[12] = 0xB;
+        D_005308D8[i].v[14] = 0xB;
+        D_005308D8[i].v[13] = 0xB;
+        D_005308D8[i].v[10] = 0xB;
     }
     func_00416210(D_00535898, 0, 0x288);
     for (i = 0; i < 3; i++)
