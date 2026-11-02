@@ -4522,11 +4522,10 @@ extern "C" void* func_00302EF8(void* self, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00303130);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A3DD8_3130 __asm__("D_004A3DD8");
 extern char *D_004A28A8_3130 __asm__("D_004A28A8");
 static inline char *look_3130(unsigned id) {
     if (~id == 0)
-        return *(char**)(D_004A3DD8_3130 + 0x290);
+        return D_004A3DD8->f290;
     sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
     unsigned i;
     if (!s || (i = s->refs[id >> 8] >> 8) == 0)
