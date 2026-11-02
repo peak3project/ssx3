@@ -201,6 +201,9 @@ extern int D_005261C0[];
 extern int D_00526140[];
 extern int *D_004A5B18;
 
+/* A network session (func_003F5A70 / func_003F5C38 read from its receive buffer f18). */
+struct sSess { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; unsigned char *f18; };
+
 /* Globals used by several functions. */
 extern unsigned D_00496C08[];
 extern char D_0051EEF8[];
@@ -1188,9 +1191,8 @@ int func_003F5910(int *self, int a, int b, char *str, int len) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A50);
 #ifdef SKIP_ASM
-typedef struct { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; char *f18; } S5A50;
-int func_003F5A50_cb(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int len, S5A50 *self) __asm__("func_003F5A50");
-int func_003F5A50_cb(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int len, S5A50 *self) {
+int func_003F5A50_cb(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int len, struct sSess *self) __asm__("func_003F5A50");
+int func_003F5A50_cb(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int len, struct sSess *self) {
     self->f10 = len;
     self->fC = 0;
     self->f8 = 0;
@@ -1201,14 +1203,13 @@ int func_003F5A50_cb(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5A70);
 #ifdef SKIP_ASM
-typedef struct { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; unsigned char *f18; } S5A70;
 extern char D_00525F60[];
 extern char D_004A4BB8[];
 extern int func_003F4C98(char *, int, int);
 extern void a70_47D8(unsigned char *, unsigned char *) __asm__("func_004247D8");
 extern int a70_4C68(char *, int, int, int, int, int, unsigned char *, int, int, int) __asm__("func_003F4C68");
 extern int func_003F5A50(void);
-int func_003F5A70(S5A70 *self, unsigned *o1, unsigned *o2, char **o3) {
+int func_003F5A70(struct sSess *self, unsigned *o1, unsigned *o2, char **o3) {
     int n;
     if (self->fC >= self->f10) {
         if (self->f8 == 0 && self->fC >= self->f10) {
@@ -1240,16 +1241,15 @@ int func_003F5A70(S5A70 *self, unsigned *o1, unsigned *o2, char **o3) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5C38);
 #ifdef SKIP_ASM
-typedef struct { int f0; int f4; volatile int f8; volatile int fC; volatile int f10; int f14; char *f18; } S5C38;
 extern char D_00525F70[];
-extern int c38_5A70(S5C38 *, int, int, int) __asm__("func_003F5A70");
-extern void c38_605C(char *, char *, int) __asm__("func_0041605C");
-extern void c38_47D8(char *, char *) __asm__("func_004247D8");
+extern int c38_5A70(struct sSess *, int, int, int) __asm__("func_003F5A70");
+extern void c38_605C(char *, void *, int) __asm__("func_0041605C");
+extern void c38_47D8(unsigned char *, unsigned char *) __asm__("func_004247D8");
 extern int func_003F4C98(char *, int, int);
-extern int c38_4C68(char *, int, int, int, int, int, char *, int, int, int) __asm__("func_003F4C68");
+extern int c38_4C68(char *, int, int, int, int, int, unsigned char *, int, int, int) __asm__("func_003F4C68");
 extern int func_003F5A50(void);
-int func_003F5C38_impl(S5C38 *self, int a, int b, char *buf, int max) __asm__("func_003F5C38");
-int func_003F5C38_impl(S5C38 *self, int a, int b, char *buf, int max) {
+int func_003F5C38_impl(struct sSess *self, int a, int b, char *buf, int max) __asm__("func_003F5C38");
+int func_003F5C38_impl(struct sSess *self, int a, int b, char *buf, int max) {
     int t;
     int n = c38_5A70(self, a, b, 0);
     if (n >= 0) {
