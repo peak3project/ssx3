@@ -1345,7 +1345,6 @@ INCLUDE_ASM("fe/debugfe", func_0017FA60);
 extern "C" void func_00369FF8(void* world);
 extern volatile int D_004A4324;
 extern void* D_004A289C_17FA60 __asm__("D_004A289C");
-extern void* volatile D_004A289C_v17FA60 __asm__("D_004A289C");
 
 struct sVec3_17FA60 {
     int x, y, z;
@@ -1361,14 +1360,16 @@ public:
     virtual void setCamera(const sVec3_17FA60& v);
 };
 
+// Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
+#define ASSERT_FA60(cond) do { } while (0)
+
 // Resets the world camera to the origin.
 extern "C" void func_0017FA60(void)
 {
     func_00369FF8(D_004A289C_17FA60);
-    // release-build assert leftover: the empty do/while(0) keeps the world pointer reload after the call
-    do { } while (0);
+    ASSERT_FA60(D_004A289C_17FA60 != 0);
     D_004A4324 = 0;
-    ((cWorld_17FA60*)D_004A289C_v17FA60)->setCamera(sVec3_17FA60(0, 0, 0));
+    ((cWorld_17FA60*)D_004A289C_17FA60)->setCamera(sVec3_17FA60(0, 0, 0));
 }
 #endif
 
