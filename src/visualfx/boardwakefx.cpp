@@ -166,18 +166,13 @@ static inline float vu0Dot(const t4Vector& a, const t4Vector& b)
 INCLUDE_ASM("visualfx/boardwakefx", cBoardWakeFX_cBoardWakeFX);
 #ifdef SKIP_ASM
 // g++ 2.95 vtable entry (no thunks): {delta, index, fn}. Vtables are double-aligned.
-struct sVtEntBW {
-    short delta;
-    short index;
-    void* fn;
-};
 
 struct sVt9_BW {
-    sVtEntBW e[9];
+    sVEntry<void> e[9];
 } __attribute__((aligned(8)));
 
 struct sVt22_BW {
-    sVtEntBW e[22];
+    sVEntry<void> e[22];
 } __attribute__((aligned(8)));
 
 extern const sVt9_BW D_00488DA8;
@@ -663,11 +658,6 @@ struct sSeg_E058 {
     char pad1C[0x14];           // 0x1C
 };
 
-struct sWakeVt_E058 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 struct sWake_E058 {
     char* obj;                  // 0x00
@@ -700,7 +690,7 @@ extern "C" void func_002DE058(sWake_E058* self)
     }
     self->head = (self->head + self->cap - 1) % self->cap;
     char* sub = self->obj + 0x6C0;
-    sWakeVt_E058* vt = *(sWakeVt_E058**)sub;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)sub;
     sCol_E058 col = D_004FA398[vt[7].fn(sub + vt[7].delta)].col;
     col.a *= 2.0f;
     col.r *= 2.0f;
@@ -858,17 +848,12 @@ extern "C" void func_002DF3B0(void* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002DF448);
 #ifdef SKIP_ASM
-struct sVEntry2DF448 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, float);
-};
 
 struct func_002DF448_sElem {
     char pad0[0x58];
     float f58;                      // 0x58
     char pad5C[0x1F8 - 0x5C];
-    sVEntry2DF448* vt;              // 0x1F8
+    sVEntry<void(void*, void*, float)>* vt;              // 0x1F8
     char pad1FC[0x210 - 0x1FC];
 };
 
@@ -886,7 +871,7 @@ extern "C" void func_002DF448(func_002DF448_sFx* self)
     for (i = 0; i < 10; i++) {
         // PORT: pointer held in int (index-first address arithmetic)
         func_002DF448_sElem* e = (func_002DF448_sElem*)(i * 0x210 + (int)self->elems);
-        sVEntry2DF448* vt = e->vt;
+        sVEntry<void(void*, void*, float)>* vt = e->vt;
         vt[3].fn((char*)e + vt[3].delta, self->data + i * 0xE8, e->f58);
     }
     self->f60 = 0;
@@ -989,16 +974,6 @@ struct sWakeFxF920 {
     float f12C;                 // 0x12C
 };
 
-struct sWakeVtF920 {
-    short delta;
-    short index;
-    t4Vector* (*fn)(void*);
-};
-struct sWakeVtIF920 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 int func_0011FE98(void*);
 int func_0011FEE8(void*);
@@ -1063,7 +1038,7 @@ extern "C" void func_002DF920(sWakeFxF920* self)
         self->fB4 = -self->fB4;
     }
     char* sub = self->obj + 0x6C0;
-    sWakeVtF920* vt = *(sWakeVtF920**)sub;
+    sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)sub;
     float sp = vu0Length(*vt[2].fn(sub + vt[2].delta));
     self->fB8 = sp;
     self->fBC = fsAbs(sp);
@@ -1115,7 +1090,7 @@ extern "C" void func_002DF920(sWakeFxF920* self)
         func_002E2550(self);
     }
     char* sub2 = self->obj + 0x6C0;
-    sWakeVtIF920* vt2 = *(sWakeVtIF920**)sub2;
+    sVEntry<int(void*)>* vt2 = *(sVEntry<int(void*)>**)sub2;
     int idx = vt2[7].fn(sub2 + vt2[7].delta);
     sEnt_E058* e = &D_004FA398[idx];
     t4Vector c;
@@ -1160,11 +1135,6 @@ struct sWakeFx0EE8 {
     char* pD0;                  // 0xD0
 };
 
-struct sWakeVt0EE8 {
-    short delta;
-    short index;
-    t4Vector* (*fn)(void*);
-};
 
 extern "C" void func_003717C0(void* em, void* pos, void* d, void* vel, int alive, float dt);
 
@@ -1183,7 +1153,7 @@ extern "C" void func_002E0EE8(sWakeFx0EE8* self)
         t4Vector pos = vu0Add(self->pos, vu0Scale(self->dir, 15.0f));
         func_002DE398((char*)self, &pos);
         char* sub = self->obj + 0x6C0;
-        sWakeVt0EE8* vt = *(sWakeVt0EE8**)sub;
+        sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)sub;
         t4Vector* v = vt[2].fn(sub + vt[2].delta);
         t4Vector vel = vu0Add(
             vu0Add(vu0Scale(*v, *(float*)(self->p2C + 0xD8)),
@@ -1249,11 +1219,6 @@ extern "C" void func_002F4118(void*, float);
 
 
 
-struct sWakeVt1598 {
-    short delta;
-    short index;
-    t4Vector* (*fn)(void*);
-};
 
 
 static inline float wakeMin1598(float a, float b)
@@ -1264,7 +1229,7 @@ static inline float wakeMin1598(float a, float b)
 static inline t4Vector* wakeVel1598(sWakeFx1598* self)
 {
     char* sub = self->obj + 0x6C0;
-    sWakeVt1598* vt = *(sWakeVt1598**)sub;
+    sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)sub;
     return vt[2].fn(sub + vt[2].delta);
 }
 
@@ -1384,11 +1349,6 @@ struct sWakeFx1F70 {
     char* pD0;                  // 0xD0
 };
 
-struct sWakeVt1F70 {
-    short delta;
-    short index;
-    t4Vector* (*fn)(void*);
-};
 
 
 static inline float wakeLimit1F70()
@@ -1399,7 +1359,7 @@ static inline float wakeLimit1F70()
 static inline t4Vector* wakeVel1F70(sWakeFx1F70* self)
 {
     char* sub = self->obj + 0x6C0;
-    sWakeVt1F70* vt = *(sWakeVt1F70**)sub;
+    sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)sub;
     return vt[2].fn(sub + vt[2].delta);
 }
 
@@ -1679,7 +1639,6 @@ extern "C" void func_002E2550(void* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E26B8);
 #ifdef SKIP_ASM
-struct sWakeVt26B8 { short delta; short index; void (*fn)(void*, void*, float); };
 
 extern "C" void func_002E26B8(void* vself)
 {
@@ -1704,13 +1663,13 @@ extern "C" void func_002E26B8(void* vself)
     {
         char* b = *(char**)(self + 0x28);
         char* o = b + 0xA50;
-        sWakeVt26B8* vt = *(sWakeVt26B8**)(b + 0xC48);
+        sVEntry<void(void*, void*, float)>* vt = *(sVEntry<void(void*, void*, float)>**)(b + 0xC48);
         vt[3].fn(o + vt[3].delta, *(char**)(self + 0x2C) + 0x488, *(float*)(b + 0xAA8));
     }
     {
         char* b = *(char**)(self + 0x28);
         char* o = b + 0xC60;
-        sWakeVt26B8* vt = *(sWakeVt26B8**)(b + 0xE58);
+        sVEntry<void(void*, void*, float)>* vt = *(sVEntry<void(void*, void*, float)>**)(b + 0xE58);
         vt[3].fn(o + vt[3].delta, *(char**)(self + 0x2C) + 0x570, *(float*)(b + 0xCB8));
     }
 }
@@ -1751,11 +1710,6 @@ struct sV2_2868 { float x, y; sV2_2868() { x = 0.0f; y = 0.0f; } sV2_2868(const 
 struct sCol_2868 { float a; sV3_2868 d; };
 
 
-struct sRsVEnt_2868 {
-    short delta;
-    short index;
-    void (*fn)(void*, sV4_2868*, sV2_2868*, sV2_2868*, sV2_2868*, sCol_2868*, float, int);
-};
 
 struct sRsCtx_2868 {
     char pad0[0xE84];
@@ -1953,11 +1907,6 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E2B00);
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E2E18);
 #ifdef SKIP_ASM
-struct sBWVEntry2E18 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, void*);
-};
 
 struct sWakePair2E18 {
     int a;
@@ -2019,7 +1968,7 @@ extern "C" void* func_002E2E18(void* self)
     }
     {
         char* obj = D_004A5B80;
-        sBWVEntry2E18* e = &(*(sBWVEntry2E18**)(obj + 0x10D8))[117];
+        sVEntry<void(void*, void*, void*)>* e = &(*(sVEntry<void(void*, void*, void*)>**)(obj + 0x10D8))[117];
         e->fn(obj + e->delta, (void*)func_002E3110, self);
     }
     D_004A3B18 = 1;
@@ -2082,11 +2031,6 @@ extern "C" void func_002E2FF8(sWakeFx* self, int* vals, int count, int unused, i
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3060);
 #ifdef SKIP_ASM
-struct sBWVEntry2 {
-    short delta;
-    short index;
-    void (*fn)(void*, int, int);
-};
 
 extern char* D_004A5B80;
 void operator_delete(int* p);
@@ -2095,7 +2039,7 @@ extern "C" void func_002E3060(void* self, int flags)
 {
     char* obj = D_004A5B80;
     *(void***)((char*)self + 0x649C) = D_004886B0;
-    sBWVEntry2* e = &(*(sBWVEntry2**)(obj + 0x10D8))[117];
+    sVEntry<void(void*, int, int)>* e = &(*(sVEntry<void(void*, int, int)>**)(obj + 0x10D8))[117];
     e->fn(obj + e->delta, 0, 0);
     D_004A3B18 = 0;
     if (flags & 1) {
@@ -2194,18 +2138,13 @@ extern "C" void func_002E3668(void)
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3680);
 #ifdef SKIP_ASM
 // g++ 2.95 vtable entry (no thunks): {delta, index, fn}. Vtables are double-aligned.
-struct sVtEnt3680 {
-    short delta;
-    short index;
-    void* fn;
-};
 
 struct sVt9_3680 {
-    sVtEnt3680 e[9];
+    sVEntry<void> e[9];
 } __attribute__((aligned(8)));
 
 struct sVt22_3680 {
-    sVtEnt3680 e[22];
+    sVEntry<void> e[22];
 } __attribute__((aligned(8)));
 
 extern const sVt9_3680 D_004889C8;
@@ -2304,7 +2243,6 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E39D8);
 extern "C" float func_0031C040(float x);
 extern float D_004A55AC;
 
-struct sWkVt39D8 { short delta; short index; int (*fn)(void*); };
 struct sWkCol39D8 {
     char* rider;                // 0x0
     float phase;                // 0x4
@@ -2316,7 +2254,7 @@ struct sWkCol39D8 {
 extern "C" void func_002E39D8(sWkCol39D8* self)
 {
     char* o = self->rider + 0x6C0;
-    sWkVt39D8* vt = *(sWkVt39D8**)o;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)o;
     if (vt[8].fn(o + vt[8].delta) == 0) return;
     float p = self->phase + D_004A55AC * 0.01666666753590107f;
     float t = p * 0.15915493667125702f + 0.5f;
@@ -2375,11 +2313,6 @@ extern "C" void* func_002E4228(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E42D0);
 #ifdef SKIP_ASM
-struct sBWVEntry1 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 extern char* D_004A5B80;
 extern "C" void func_002E4578(void* self);
@@ -2395,7 +2328,7 @@ extern "C" void func_002E42D0(void* self, int flags)
     func_002E4578(self);
     if (*(int*)((char*)self + 0x7C) != 0) {
         char* obj = D_004A5B80;
-        sBWVEntry1* e = &(*(sBWVEntry1**)(obj + 0x10D8))[60];
+        sVEntry<void(void*, void*)>* e = &(*(sVEntry<void(void*, void*)>**)(obj + 0x10D8))[60];
         e->fn(obj + e->delta, (char*)self + 0x68);
         *(int*)((char*)self + 0x7C) = 0;
     }
@@ -2408,17 +2341,7 @@ extern "C" void func_002E42D0(void* self, int flags)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4370);
 #ifdef SKIP_ASM
-struct sBWVEntry4370 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int, int);
-};
 
-struct sBWVEntryI4370 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern char* D_004A5B80;
 extern "C" void func_002E4578(void* self);
@@ -2440,15 +2363,15 @@ extern "C" int func_002E4370_def(void* self, int a1, void* o1, void* o2, float f
         char* ref = (char*)self + 0x68;
         if (~*(int*)((char*)self + 0x6C) == 0) {
             char* obj = D_004A5B80;
-            sBWVEntry4370* e = &(*(sBWVEntry4370**)(obj + 0x10D8))[59];
+            sVEntry<void(void*, void*, int, int)>* e = &(*(sVEntry<void(void*, void*, int, int)>**)(obj + 0x10D8))[59];
             e->fn(obj + e->delta, ref, 0x100, 0x100);
             if (~*(int*)((char*)self + 0x6C) == 0) {
                 if (o1 != 0) {
-                    sBWVEntryI4370* vt = *(sBWVEntryI4370**)o1;
+                    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)o1;
                     vt[1].fn((char*)o1 + vt[1].delta, 3);
                 }
                 if (o2 != 0) {
-                    sBWVEntryI4370* vt = *(sBWVEntryI4370**)o2;
+                    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)o2;
                     vt[1].fn((char*)o2 + vt[1].delta, 3);
                 }
                 return 0;
@@ -2512,17 +2435,7 @@ extern "C" void func_002E4540(void* self, int a1, int a3, int a5, float f2)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4578);
 #ifdef SKIP_ASM
-struct sBWVEntryI_4578 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
-struct sBWVEntryR_4578 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern char* D_004A5B80;
 
@@ -2533,13 +2446,13 @@ extern "C" void func_002E4578(void* self)
         *(int*)((char*)self + 0x40) = 0;
         char* o = *(char**)((char*)self + 0x4C);
         if (o != 0) {
-            sBWVEntryI_4578* e = &(*(sBWVEntryI_4578**)o)[1];
+            sVEntry<void(void*, int)>* e = &(*(sVEntry<void(void*, int)>**)o)[1];
             e->fn(o + e->delta, 3);
         }
         *(char**)((char*)self + 0x4C) = 0;
         o = *(char**)((char*)self + 0x50);
         if (o != 0) {
-            sBWVEntryI_4578* e = &(*(sBWVEntryI_4578**)o)[1];
+            sVEntry<void(void*, int)>* e = &(*(sVEntry<void(void*, int)>**)o)[1];
             e->fn(o + e->delta, 3);
         }
         *(char**)((char*)self + 0x50) = 0;
@@ -2547,7 +2460,7 @@ extern "C" void func_002E4578(void* self)
         if (~*(int*)((char*)self + 0x6C) != 0) {
             char* obj = D_004A5B80;
             *(int*)((char*)self + 0x7C) = 1;
-            sBWVEntryR_4578* e = &(*(sBWVEntryR_4578**)(obj + 0x10D8))[0x72];
+            sVEntry<int(void*)>* e = &(*(sVEntry<int(void*)>**)(obj + 0x10D8))[0x72];
             *(int*)((char*)self + 0x80) = e->fn(obj + e->delta);
             *(int*)((char*)self + 0x64) = 0;
             *(int*)((char*)self + 0x60) = 0;
@@ -2599,16 +2512,14 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E46C8);
 extern char* D_004A5B80;
 extern char* D_004A5B64;
 
-struct sWkVtA46C8 { short delta; short index; int (*fn)(void*); };
-struct sWkVtB46C8 { short delta; short index; void (*fn)(void*, void*); };
 
 extern "C" void func_002E46C8(char* self)
 {
     char* ctx = D_004A5B80;
     if (*(int*)(self + 0x7C) != 0) {
-        sWkVtA46C8* vt = *(sWkVtA46C8**)(ctx + 0x10D8);
+        sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(ctx + 0x10D8);
         if (vt[114].fn(ctx + vt[114].delta) - *(int*)(self + 0x80) >= 3) {
-            sWkVtB46C8* vt2 = *(sWkVtB46C8**)(ctx + 0x10D8);
+            sVEntry<void(void*, void*)>* vt2 = *(sVEntry<void(void*, void*)>**)(ctx + 0x10D8);
             vt2[60].fn(ctx + vt2[60].delta, self + 0x68);
             *(int*)(self + 0x7C) = 0;
         }
@@ -2637,36 +2548,16 @@ extern "C" void func_002EB8F0(void);
 void cWorldPainterMan_reset_47E8() __asm__("cWorldPainterMan_reset__FPv");
 
 
-struct sRsVt47E8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
-struct sRsVtP47E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
-struct sRsVtV47E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int, int, float, float, float, float, float, float);
-};
 
 struct sRsCtx47E8 {
     char pad0[0xE84];
     sPtRenderState* top;          // 0xE84
     char pad1[0x10D8 - 0xE88];
-    sRsVt47E8* vtable;          // 0x10D8
+    sVEntry<void(void*)>* vtable;          // 0x10D8
 };
 
-struct sFadeVt47E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, float);
-};
 
 struct sFade47E8 {
     char pad0[0x44];
@@ -2717,7 +2608,7 @@ extern "C" void func_002E47E8(sFade47E8* self)
     }
     float t = self->time;
     if (self->pending != 0 && self->fadeIn + self->hold <= t) {
-        sRsVtP47E8* vt = (sRsVtP47E8*)ctx->vtable;
+        sVEntry<void(void*, void*)>* vt = (sVEntry<void(void*, void*)>*)ctx->vtable;
         vt[61].fn((char*)ctx + vt[61].delta, &self->ref);
         self->pending = 0;
     }
@@ -2745,7 +2636,7 @@ extern "C" void func_002E47E8(sFade47E8* self)
     ctx->vtable[21].fn((char*)ctx + ctx->vtable[21].delta);
     ctx->vtable[31].fn((char*)ctx + ctx->vtable[31].delta);
     ctx->vtable[37].fn((char*)ctx + ctx->vtable[37].delta);
-    sRsVtV47E8* vv = (sRsVtV47E8*)ctx->vtable;
+    sVEntry<void(void*, int, int, float, float, float, float, float, float)>* vv = (sVEntry<void(void*, int, int, float, float, float, float, float, float)>*)ctx->vtable;
     vv[26].fn((char*)ctx + vv[26].delta, 0, 0, 0.0f, 0.0f, 640.0f, 480.0f, 0.0f, 1.0f);
     rsSetB47E8(ctx, 0x3E0, 5, 8);
     rsSetA47E8(ctx, 0x400000, 22, 1);
@@ -2762,7 +2653,7 @@ extern "C" void func_002E47E8(sFade47E8* self)
         ctx->top->tex = -1;
     }
     if (self->useTex == 0 || self->pending == 0) {
-        sFadeVt47E8* ov = *(sFadeVt47E8**)o;
+        sVEntry<void(void*, float)>* ov = *(sVEntry<void(void*, float)>**)o;
         ov[2].fn(o + ov[2].delta, c);
     }
     ctx->vtable[32].fn((char*)ctx + ctx->vtable[32].delta);
@@ -3165,11 +3056,6 @@ struct sCell55D8 {
     float colB;                 // 0xAC
 };
 
-struct sVt55D8 {
-    short delta;
-    short index;
-    void (*fn)(void*, sCellInfo55D8*);
-};
 
 // PORT: 128-bit TImode quadword (the PC port needs a 16-byte struct).
 typedef int cQuad55D8 __attribute__((mode(TI)));
@@ -3333,12 +3219,12 @@ extern "C" void func_002E55D8(int* p, sMat_6008* m, float x, float y, float z)
     wakeSubV55D8(info.pos, v);
     switch (self->type) {
     case 0: {
-        sVt55D8* vt = *(sVt55D8**)(D_004A289C + 0x10D8);
+        sVEntry<void(void*, sCellInfo55D8*)>* vt = *(sVEntry<void(void*, sCellInfo55D8*)>**)(D_004A289C + 0x10D8);
         vt[85].fn(D_004A289C + vt[85].delta, &info);
         break;
     }
     case 1: {
-        sVt55D8* vt = *(sVt55D8**)(D_004A289C + 0x10D8);
+        sVEntry<void(void*, sCellInfo55D8*)>* vt = *(sVEntry<void(void*, sCellInfo55D8*)>**)(D_004A289C + 0x10D8);
         vt[86].fn(D_004A289C + vt[86].delta, &info);
         break;
     }
@@ -3537,11 +3423,6 @@ struct sMat_6008 {
 } __attribute__((aligned(16)));
 
 
-struct sRsVEnt_6008 {
-    short delta;
-    short index;
-    sMat_6008* (*fn)(void*);
-};
 
 struct sRsCtx_6008 {
     char pad0[0xE84];
@@ -3549,7 +3430,7 @@ struct sRsCtx_6008 {
     char pad1[0xF70 - 0xE88];
     int texF70;                 // 0xF70
     char pad2[0x10D8 - 0xF74];
-    sRsVEnt_6008* vtable;       // 0x10D8
+    sVEntry<sMat_6008*(void*)>* vtable;       // 0x10D8
 };
 
 struct sRiders_6008 {
