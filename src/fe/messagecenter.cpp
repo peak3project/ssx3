@@ -24,9 +24,8 @@ public:
     virtual void setVisible(int on);
 };
 
-//100%
-INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_onWidgetCreate);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
 int GetHashValue32(char* str);
 extern "C" int USTR_length(unsigned short* s);
 void cMemMan_free(void* p);
@@ -34,8 +33,31 @@ extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, int n);
 extern "C" void func_003A0E90(void* text, void* p);
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" const char* func_00198AF0(void* a0);
-struct cUIText;
 void cUIText_setAsciiString(cUIText* self, const char* str);
+extern char D_004605D8[];
+extern char D_00460470[];
+extern char D_004A1408[];
+extern char* D_004A28A8;
+extern "C" void func_00197CA0(void* self);
+extern "C" void func_00198118(void* self);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* func_0028B180();
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_00197B88(void* self);
+extern "C" void* func_00198A88(void* self, int i);
+extern "C" int strlen(const char* s);
+extern "C" void* func_002B40F0(void* self, int i);
+extern "C" void* func_002B4120(void* self, int i);
+extern char D_00460688[];
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+// PORT: func_00198AE8__FPv is called with (self, idx) here; bind the 2-arg form to that symbol.
+int func_00198AE8_2(void* self, int idx) __asm__("func_00198AE8__FPv");
+
+//100%
+INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_onWidgetCreate);
+#ifdef SKIP_ASM
 extern char D_00460588[];
 extern char D_00460598[];
 extern char D_00460488[];
@@ -43,7 +65,6 @@ extern char D_004A18B8[];
 extern char D_004605A8[];
 extern char D_004605B8[];
 extern char D_004605C8[];
-extern char D_004605D8[];
 extern char D_004A18C0[];
 extern char D_004A18C8[];
 extern char D_004A18D0[];
@@ -59,9 +80,6 @@ extern char* D_004A18A4;
 extern char* D_004411A0[];
 extern char* D_004411C0[];
 extern char* D_00441200[];
-extern char D_00460470[];
-extern char D_004A1408[];
-extern char* D_004A28A8;
 
 class cWidget_6F98 {
 public:
@@ -226,24 +244,17 @@ extern "C" void cFEStateRequestLine_onWidgetCreate(void* p, void* q)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00197500);
 #ifdef SKIP_ASM
-extern "C" void func_00197CA0(void* self);
-extern "C" void func_00198118(void* self);
 extern "C" void func_00198988_7500(void* self, int idx) __asm__("func_00198988");
 extern "C" void cFEStateRequestLine_updateHilightedSongInfo(void* self, int idx);
 extern "C" void cFEStateRequestLine_updateHelpText(void* self, int idx);
 extern "C" void cFEStateRequestLine_updateButtonsText(void* self, int idx);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00158848(void* iface, int a, int b, unsigned long m);
 extern "C" void func_00158820(void* iface, int a, int b, unsigned long m);
-extern "C" void* func_0028B180();
 extern "C" void func_0028C2D0(void* p, unsigned long m);
 extern "C" void* func_0039F190(void* list, int a);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_00195FF0(void* mem, void* engine, int a, int b);
 extern "C" void func_0039F400(void* list, void* item);
 int func_00198AE8(void* self, int idx) __asm__("func_00198AE8__FPv");
-extern char* D_004A28A8;
 extern const char D_00460650[];
 
 struct sReqLine_7500 {
@@ -355,7 +366,6 @@ extern "C" void func_00197500(void* p, void* item, unsigned int msg)
 INCLUDE_ASM("fe/messagecenter", func_001977D0);
 #ifdef SKIP_ASM
 extern "C" void func_00197E70(void* self);
-extern "C" void func_00197B88(void* self);
 extern "C" void func_0028CF98(void* p, int a, int b, long c, int d);
 extern "C" void func_002B4978(void* list, int idx);
 
@@ -419,7 +429,6 @@ extern "C" int func_001977D0(void* p, void* item, unsigned int msg, int k)
 INCLUDE_ASM("fe/messagecenter", func_001979D8);
 #ifdef SKIP_ASM
 extern "C" void func_001988D8(void* self, int idx);
-extern "C" void func_00197B88(void* self);
 extern "C" void cFEStateRequestLine_updateHilightedSongInfo(void* self, int a1);
 extern "C" void func_001985B0(void* self);
 extern "C" void func_001985F0(void* self);
@@ -499,9 +508,7 @@ extern "C" void func_00197AD8(void* self)
 INCLUDE_ASM("fe/messagecenter", func_00197B88);
 #ifdef SKIP_ASM
 extern "C" void func_00197BC8(void* self);
-extern "C" void func_00197CA0(void* self);
 extern "C" void func_00197DB8(void* self);
-extern "C" void func_00198118(void* self);
 
 extern "C" void func_00197B88(void* self)
 {
@@ -515,10 +522,6 @@ extern "C" void func_00197B88(void* self)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00197BC8);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-extern "C" void* func_00198A88(void* self, int i);
-
 class cMsgWidget_97BC8 {
 public:
     int pad0, pad4;
@@ -670,20 +673,8 @@ extern "C" void func_00197DB8(void* self)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00197E70);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" int USTR_length(unsigned short* s);
-extern "C" int strlen(const char* s);
-void cMemMan_free(void* p);
-extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, int n);
-extern "C" void func_003A0E90(void* text, void* p);
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-extern "C" void* func_0028B180();
-extern "C" void* func_002B40F0(void* self, int i);
-extern "C" void* func_002B4120(void* self, int i);
-extern char D_00460470[];
 extern char D_00460668[];
 extern char D_00460678[];
-extern char* D_004A28A8;
 
 class cMsgWidget_197E70 {
 public:
@@ -757,16 +748,6 @@ extern "C" void func_00197E70(void* vself)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00198118);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" int USTR_length(unsigned short* s);
-void cMemMan_free(void* p);
-extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, int n);
-extern "C" void func_003A0E90(void* text, void* p);
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-extern char D_004605D8[];
-extern char D_00460688[];
-extern char* D_004A28A8;
-
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 struct sMsgCenter_00198118 {
     char pad_0x0[0x158];
@@ -798,12 +779,6 @@ extern "C" void func_00198118(void* p)
 //100%
 INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_updateHelpText);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 int func_00198AE8(void* self);
 extern char D_004606B0[];
 extern char D_004606C8[];
@@ -868,16 +843,11 @@ extern "C" void cFEStateRequestLine_updateHelpText(void* p, int idx)
 //100%
 INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_updateButtonsText);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 int func_00198AE8_UBT(void* self, int idx) __asm__("func_00198AE8__FPv");
 extern char D_004A1390[];
 extern char D_00460738[];
 extern char D_00460748[];
 extern char D_00460758[];
-extern char* D_004A28A8;
 
 struct sReqLine_UBT {
     char pad_0x0[0x158];
@@ -961,10 +931,6 @@ extern "C" void cFEStateRequestLine_updateButtonsText(void* p, int idx)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_001985B0);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-extern "C" const char* func_00198AF0(void* a0);
-
 extern "C" void func_001985B0(void* self)
 {
     if (*(cUIText**)((char*)self + 0x1E0) != 0) {
@@ -1024,25 +990,9 @@ extern "C" void func_001985F0(void* self)
 //100%
 INCLUDE_ASM("fe/messagecenter", cFEStateRequestLine_updateHilightedSongInfo);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" int USTR_length(unsigned short* s);
-extern "C" int strlen(const char* s);
-void cMemMan_free(void* p);
-extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, int n);
-extern "C" void func_003A0E90(void* text, void* p);
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" void* func_00198AB8(void* self, int i);
-// PORT: func_00198AE8__FPv is called with (self, idx) here; bind the 2-arg form to that symbol.
-int func_00198AE8_2(void* self, int idx) __asm__("func_00198AE8__FPv");
-extern "C" const char* func_00198AF0(void* a0);
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_00460770[];
 extern char D_00460780[];
-extern char D_00460688[];
-extern char D_004A1408[];
-extern char* D_004A28A8;
 
 class cMsgWidget_1986D0 {
 public:
@@ -1118,9 +1068,6 @@ extern "C" void cFEStateRequestLine_updateHilightedSongInfo(void* vself, int idx
 //100%
 INCLUDE_ASM("fe/messagecenter", func_001988D8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00158558(void* iface, int rider, int a, int idx, int full);
 
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
@@ -1154,11 +1101,7 @@ extern "C" void func_001988D8(void* self, int idx)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00198988);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001CABA8(void* self, void* engine, void* owner, signed char idx);
-extern "C" void* func_00198A88(void* self, int i);
-// PORT: func_00198AE8__FPv is called with (self, idx) here; bind the 2-arg form to that symbol.
-int func_00198AE8_2(void* self, int idx) __asm__("func_00198AE8__FPv");
 extern "C" void cBuyPopupInfo_initBuySong(int* self, int a1, int a2, int a3);
 extern "C" void cBuyPopupInfo_initBuySongByCredit(void* self, int song, int credit);
 extern "C" void func_0039F290(void* stack, void* state);
@@ -1196,9 +1139,6 @@ extern "C" void func_00198988(sMsgCenter_98988* self, int idx)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00198A88);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180();
-extern "C" void* func_002B40F0(void* self, int i);
-
 extern "C" void* func_00198A88(void* self, int i)
 {
     return func_002B40F0((char*)func_0028B180() + 0x118, i);
@@ -1208,9 +1148,6 @@ extern "C" void* func_00198A88(void* self, int i)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00198AB8);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180();
-extern "C" void* func_002B4120(void* self, int i);
-
 extern "C" void* func_00198AB8(void* self, int i)
 {
     return func_002B4120((char*)func_0028B180() + 0x118, i);
@@ -1229,10 +1166,7 @@ int func_00198AE8(void* self)
 //100%
 INCLUDE_ASM("fe/messagecenter", func_00198AF0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" int strlen(const char* s);
 extern char D_004C6310[];
 extern char D_004A12C0[];
 
