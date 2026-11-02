@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="840" height="196" viewBox="0 0 840 196" role="img" aria-labelledby="t d">
 <title id="t">SSX 3 decompilation progress</title>
-<desc id="d">14,594 of 15,107 functions match (96.6%); 75.9% of code bytes (2026-11-02).</desc>
+<desc id="d">14,594 of 15,107 functions match (96.6%); 75.9% of code bytes (2026-11-03).</desc>
 <style>
   .surface { fill: #fcfcfb; } text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: #0b0b0b; }
   .ink2 { fill: #52514e; } .muted { fill: #898781; } .track { fill: #c3c2b7; } .num { font-variant-numeric: tabular-nums; }
@@ -26,5 +26,5 @@
 <text x="438" y="172" font-size="12"><tspan>Partial (&lt;90%)</tspan><tspan class="muted num"> · 1</tspan></text>
 <rect class="track" x="620" y="162" width="12" height="12" rx="3"/>
 <text x="638" y="172" font-size="12"><tspan>Not attempted</tspan><tspan class="muted num"> · 510</tspan></text>
-<text x="820" y="190" font-size="10" class="muted" text-anchor="end">updated 2026-11-02</text>
+<text x="820" y="190" font-size="10" class="muted" text-anchor="end">updated 2026-11-03</text>
 </svg>
