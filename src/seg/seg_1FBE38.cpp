@@ -4012,10 +4012,8 @@ extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00303D88_1F48(int) __asm__("func_00303D88");
 
 struct Ent_1F48 { int idx; int val; int pad; int kind; };
-struct R12_1F48 { int a; int b; int c; };
-extern R12_1F48 D_004C9098_1F48 __asm__("D_004C9098");
 
-extern "C" R12_1F48 func_00301F48(int n, Ent_1F48* e) {
+extern "C" cLunoValue func_00301F48(int n, Ent_1F48* e) {
     if (D_004A5728_1F48 == 0) {
         D_004A5720_1F48 = -1;
         D_004A5728_1F48 = 1;
@@ -4035,7 +4033,7 @@ extern "C" R12_1F48 func_00301F48(int n, Ent_1F48* e) {
             *d = p->val;
     }
     func_00303D88_1F48(vp[0]);
-    return D_004C9098_1F48;
+    return D_004C9098;
 }
 #endif
 
