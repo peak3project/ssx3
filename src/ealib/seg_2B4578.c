@@ -10853,7 +10853,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C8968);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 typedef struct { char pad[5]; unsigned char cnt; char pad2[6]; unsigned short add; } H_8968;
 extern H_8968 D_00515B40_8968[] __asm__("D_00515B40");
-extern unsigned char D_00515B45;
 extern void func_003C85D0(int *, int);
 
 void func_003C8968(int *src, int len) {
