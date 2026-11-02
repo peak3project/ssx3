@@ -881,7 +881,213 @@ void func_004254D0(double x) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425638);
+#ifdef SKIP_ASM
+extern void (*D_00455178)(int);
+extern int func_0042C078_p(void) __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+extern long func_0042D470(long, long);
+extern long func_0040FCB0(long, long);
+extern unsigned long func_0042DAD8(unsigned long, unsigned long);
+extern unsigned long func_00411538(unsigned long, unsigned long);
+extern double func_00413AF8(float);
+extern void func_004254D0(double x);
+// printf core: fmt + va_list (8-byte argument slots); 64-bit div/mod go through the soft helpers.
+void func_00425638_f(char *fmt, char *ap) __asm__("func_00425638");
+void func_00425638_f(char *fmt, char *ap) {
+    char buf[32];
+    char *pad;
+    char *p;
+    char *str;
+    int lmod;
+    int w;
+    int c;
+    long v;
+    unsigned long u;
+    float f;
+    int st;
+    st = func_0042C078_p();
+    while (*fmt) {
+        pad = 0;
+        lmod = 0;
+        if (*fmt == '%') {
+        again:
+            switch (*++fmt) {
+            case '0':
+                w = fmt[1] - '0';
+                c = fmt[2];
+                if ((unsigned char)w < 10) {
+                    if ((unsigned)(c - '0') < 10) {
+                        w = w * 10 + (c - '0');
+                        if (w > 31)
+                            w = 31;
+                        fmt += 2;
+                    } else {
+                        fmt += 1;
+                    }
+                    pad = &buf[31 - w];
+                    for (; w > 0; w--)
+                        buf[31 - w] = '0';
+                }
+                goto again;
+            case 'l':
+                lmod = 'l';
+                goto again;
+            case 'h':
+                lmod = 'h';
+                goto again;
+            case 'o':
+                if (lmod == 'l') {
+                    ap += 8;
+                    u = *(unsigned long *)(ap - 8);
+                } else if (lmod == 'h') {
+                    ap += 8;
+                    u = *(unsigned short *)(ap - 8);
+                } else {
+                    ap += 8;
+                    u = *(unsigned int *)(ap - 8);
+                }
+                p = &buf[31];
+                *p = 0;
+                if (u == 0) {
+                    *--p = '0';
+                } else {
+                    while (u) {
+                        *--p = (u & 7) + '0';
+                        u >>= 3;
+                    }
+                }
+                if (pad && pad < p)
+                    p = pad;
+                while (*p)
+                    D_00455178(*p++);
+                break;
+            case 'x':
+                if (lmod == 'l') {
+                    ap += 8;
+                    u = *(unsigned long *)(ap - 8);
+                } else if (lmod == 'h') {
+                    ap += 8;
+                    u = *(unsigned short *)(ap - 8);
+                } else {
+                    ap += 8;
+                    u = *(unsigned int *)(ap - 8);
+                }
+                p = &buf[31];
+                *p = 0;
+                if (u == 0) {
+                    *--p = '0';
+                } else {
+                    while (u) {
+                        unsigned long d = u & 0xF;
+                        if (d < 10)
+                            *--p = d + '0';
+                        else
+                            *--p = d + 'a' - 10;
+                        u >>= 4;
+                    }
+                }
+                if (pad && pad < p)
+                    p = pad;
+                while (*p)
+                    D_00455178(*p++);
+                break;
+            case 'd':
+                if (lmod == 'l') {
+                    ap += 8;
+                    v = *(long *)(ap - 8);
+                } else if (lmod == 'h') {
+                    ap += 8;
+                    v = *(short *)(ap - 8);
+                } else {
+                    ap += 8;
+                    v = *(int *)(ap - 8);
+                }
+                p = &buf[31];
+                *p = 0;
+                if (v == 0) {
+                    *--p = '0';
+                } else {
+                    if (v < 0) {
+                        v = -v;
+                        D_00455178('-');
+                    }
+                    while (v) {
+                        *--p = func_0042D470(v, 10) + '0';
+                        v = func_0040FCB0(v, 10);
+                    }
+                }
+                if (pad && pad < p)
+                    p = pad;
+                while (*p)
+                    D_00455178(*p++);
+                break;
+            case 'u':
+                if (lmod == 'l') {
+                    ap += 8;
+                    u = *(unsigned long *)(ap - 8);
+                } else if (lmod == 'h') {
+                    ap += 8;
+                    u = *(unsigned short *)(ap - 8);
+                } else {
+                    ap += 8;
+                    u = *(unsigned int *)(ap - 8);
+                }
+                p = &buf[31];
+                *p = 0;
+                if (u == 0) {
+                    *--p = '0';
+                } else {
+                    while (u) {
+                        *--p = func_0042DAD8(u, 10) + '0';
+                        u = func_00411538(u, 10);
+                    }
+                }
+                if (pad && pad < p)
+                    p = pad;
+                while (*p)
+                    D_00455178(*p++);
+                break;
+            case 'e':
+            case 'f':
+                ap += 8;
+                f = *(float *)(ap - 8);
+                if (f == 0.0f)
+                    D_00455178('0');
+                else
+                    func_004254D0(func_00413AF8(f));
+                break;
+            case 's':
+                ap += 8;
+                str = *(char **)(ap - 8);
+                if (*str == 0) {
+                    D_00455178('(');
+                    D_00455178('n');
+                    D_00455178('u');
+                    D_00455178('l');
+                    D_00455178('l');
+                    D_00455178(')');
+                } else {
+                    for (p = str; *p; p++)
+                        D_00455178(*p);
+                }
+                break;
+            case 'c':
+                ap += 8;
+                v = *(char *)(ap - 8);
+                D_00455178(v);
+                break;
+            }
+        } else {
+            D_00455178(*fmt);
+        }
+        fmt++;
+    }
+    if (st)
+        func_0042C0C0();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425C28);
