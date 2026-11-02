@@ -3608,14 +3608,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301680);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_004A3DD8_1680 __asm__("D_004A3DD8");
-extern char **D_004A47B8_1680 __asm__("D_004A47B8");
 extern char *D_004A28A8_1680 __asm__("D_004A28A8");
 static inline char *look_1680(unsigned id) {
     if (~id == 0)
         return *(char**)(D_004A3DD8_1680 + 0x290);
-    char *s = (*(char***)((char*)*D_004A47B8_1680 + 8))[id & 0xFF];
+    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
     unsigned i;
-    if (!s || (i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8) == 0)
+    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
         return 0;
     return (char*)(i << 2);
 }
