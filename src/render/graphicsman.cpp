@@ -1295,7 +1295,174 @@ extern "C" void* func_00370018(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_00370058);
+#ifdef SKIP_ASM
+struct sGmV4_0058 {
+    float x, y, z, w;
+    sGmV4_0058() {}
+    sGmV4_0058(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sGmCam_0058 {
+    char pad_0x0[0x38];
+    float f38;                  // 0x38
+    char pad_0x3C[0x34];
+    sGmV4_0058 v70;             // 0x70
+    sGmV4_0058 v80;             // 0x80
+    sGmV4_0058 v90;             // 0x90
+    sGmV4_0058 vA0;             // 0xA0
+    sGmV4_0058 vB0;             // 0xB0
+    sGmV4_0058 vC0;             // 0xC0
+    sGmV4_0058 vD0;             // 0xD0
+};
+
+struct sGmDef_0058 {
+    char pad_0x0[0x8];
+    float f8;                   // 0x08
+    float fC;                   // 0x0C
+    float f10;                  // 0x10
+    float f14;                  // 0x14
+    float f18;                  // 0x18
+    float f1C;                  // 0x1C
+    char pad_0x20[0x4];
+    float p24[3];               // 0x24
+    float p30[3];               // 0x30
+    float p3C[3];               // 0x3C
+    float p48[3];               // 0x48
+    float p54[3];               // 0x54
+    float p60[3];               // 0x60
+    float p6C[3];               // 0x6C
+    char pad_0x78[0xC];
+    float q84[4];               // 0x84
+    float q94[4];               // 0x94
+    float qA4[4];               // 0xA4
+    float qB4[4];               // 0xB4
+    char pad_0xC4[0x8];
+    float fCC;                  // 0xCC
+};
+
+extern "C" void func_0036D500(void* a, void* b);
+extern "C" void func_0036D318_r(char* self, const sGmV4_0058& a, const sGmV4_0058& b, const sGmV4_0058& c, const sGmV4_0058& d, float t) __asm__("func_0036D318");
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector).
+static inline sGmV4_0058 MulM_0058(const sGmV4_0058* m, const sGmV4_0058& v)
+{
+    sGmV4_0058 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline sGmV4_0058 Div_0058(const sGmV4_0058& v, float s)
+{
+    sGmV4_0058 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sGmV4_0058 Add_0058(const sGmV4_0058& a, const sGmV4_0058& b)
+{
+    sGmV4_0058 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract in place).
+static inline void SubEq_0058(sGmV4_0058& a, const sGmV4_0058& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sGmV4_0058 Scale_0058(const sGmV4_0058& v, float s)
+{
+    sGmV4_0058 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+extern "C" void func_00370058_d(sGmCam_0058* self, sGmV4_0058* m, sGmDef_0058* def, void* out, float fov) __asm__("func_00370058");
+extern "C" void func_00370058_d(sGmCam_0058* self, sGmV4_0058* m, sGmDef_0058* def, void* out, float fov)
+{
+    func_0036CE00(self, def->f10, def->fCC, def->f18);
+    float h = def->f1C * 0.5f;
+    func_0036CE28(self, def->f14 - h, def->f14 + h);
+    if (fov < 0.0f)
+        func_0036CCB8((char*)self);
+    else
+        self->f38 = fov;
+    func_0036D008(self);
+    self->vB0 = MulM_0058(m, sGmV4_0058(def->p24[0], def->p24[1], def->p24[2], 1.0f));
+    self->vC0 = MulM_0058(m, sGmV4_0058(def->p30[0], def->p30[1], def->p30[2], 0.0f));
+    self->vD0 = MulM_0058(m, sGmV4_0058(def->p3C[0], def->p3C[1], def->p3C[2], 0.0f));
+    SubEq_0058(self->vB0, Scale_0058(Add_0058(self->vC0, self->vD0), 1.5f));
+    self->v70 = Div_0058(MulM_0058(m, sGmV4_0058(def->p48[0], def->p48[1], def->p48[2], 0.0f)), def->fC);
+    self->v80 = Div_0058(MulM_0058(m, sGmV4_0058(def->p54[0], def->p54[1], def->p54[2], 0.0f)), def->fC);
+    self->v90 = Div_0058(MulM_0058(m, sGmV4_0058(def->p60[0], def->p60[1], def->p60[2], 0.0f)), def->fC);
+    self->vA0 = Div_0058(MulM_0058(m, sGmV4_0058(def->p6C[0], def->p6C[1], def->p6C[2], 0.0f)), def->fC);
+    SubEq_0058(self->v70, Scale_0058(Add_0058(Add_0058(self->v80, self->v90), self->vA0), 1.5f));
+    func_0036D318_r((char*)self,
+                    Scale_0058(sGmV4_0058(def->q84[1], def->q84[2], def->q84[3], def->q84[0]), 128.0f),
+                    Scale_0058(sGmV4_0058(def->q94[1], def->q94[2], def->q94[3], def->q94[0]), 128.0f),
+                    Scale_0058(sGmV4_0058(def->qA4[1], def->qA4[2], def->qA4[3], def->qA4[0]), 128.0f),
+                    Scale_0058(sGmV4_0058(def->qB4[1], def->qB4[2], def->qB4[3], def->qB4[0]), 128.0f),
+                    def->f14 + def->f1C * 0.5f);
+    float z = 0.0f;
+    if (def->f8 < 0.0f)
+        z = def->f14 + def->f1C * 0.5f;
+    func_0036D3D8(self, z);
+    func_0036D500(self, out);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("render/graphicsman", func_003705E0);
