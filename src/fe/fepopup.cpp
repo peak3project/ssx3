@@ -18,6 +18,22 @@ struct t2Vector {
     float x, y;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile).
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
+};
+
 // An RGB colour as the popup colour setter func_001C7738 takes it (three floats, copied as a block).
 struct sColour {
     float r, g, b;
@@ -657,25 +673,12 @@ INCLUDE_ASM("fe/fepopup", func_001C6D30);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-class cUIObj_6D30 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
 struct sPopup_6D30 {
     char pad[0x80];
-    cUIObj_6D30* o80;
-    cUIObj_6D30* o84;
-    cUIObj_6D30* o88;
-    cUIObj_6D30* o8C;
+    cUIThing* o80;
+    cUIThing* o84;
+    cUIThing* o88;
+    cUIThing* o8C;
 };
 extern t3Vector D_004FF0D8_6D30 __asm__("D_004FF0D8");
 extern "C" void func_001C80E8(void* self, void* dst, int* info);
@@ -700,7 +703,7 @@ extern "C" int func_001C6D30(void* self, void* infop)
             func_001C8320(self, (cUIText*)p->o84, it, item);
             w = item[2];
             pos = *(t3Vector*)((char*)p->o84 + 0x44);
-            p->o84->setEnabled(0);
+            p->o84->setStatic(0);
             p->o84->setVisible(1);
         }
         if (p->o80 != 0) {
@@ -709,11 +712,11 @@ extern "C" int func_001C6D30(void* self, void* infop)
             v.x = v.x + w + 10.0f;
             *(t3Vector*)((char*)p->o80 + 0x44) = v;
             func_001C9B68(self, (float*)((char*)self + 0x260), size);
-            p->o80->setEnabled(0);
+            p->o80->setStatic(0);
             p->o80->setVisible(1);
         }
         if (p->o88 != 0) {
-            p->o88->setEnabled(0);
+            p->o88->setStatic(0);
             p->o88->setVisible(1);
         }
         if (p->o8C != 0) {
@@ -723,15 +726,15 @@ extern "C" int func_001C6D30(void* self, void* infop)
         return 1;
     }
     if (p->o88 != 0) {
-        p->o88->setEnabled(1);
+        p->o88->setStatic(1);
         p->o88->setVisible(0);
     }
     if (p->o84 != 0) {
-        p->o84->setEnabled(1);
+        p->o84->setStatic(1);
         p->o84->setVisible(0);
     }
     if (p->o80 != 0) {
-        p->o80->setEnabled(1);
+        p->o80->setStatic(1);
         p->o80->setVisible(0);
     }
     if (p->o8C != 0) {
@@ -860,22 +863,9 @@ extern "C" void func_001C7258(void* self, void* a1)
 INCLUDE_ASM("fe/fepopup", func_001C7388);
 #ifdef SKIP_ASM
 struct cUIText;
-class cUIObj_7388 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
 struct sPopup_7388 {
     char pad[0x90];
-    cUIObj_7388* items[5];
+    cUIThing* items[5];
 };
 extern "C" int func_001C6D30(void* self, void* info);
 extern "C" int* func_001C5800(void* info, int i);
@@ -902,17 +892,17 @@ extern "C" void func_001C7388(void* self, void* infop)
     *(int*)((char*)self + 0x29C) = 0;
     int r = func_001C6D30(self, info);
     if (info[0] == 0)
-        (*(cUIObj_7388**)((char*)self + 0x70))->setVisible(0);
+        (*(cUIThing**)((char*)self + 0x70))->setVisible(0);
     else
-        (*(cUIObj_7388**)((char*)self + 0x70))->setVisible(1);
+        (*(cUIThing**)((char*)self + 0x70))->setVisible(1);
     for (int i = info[0]; i < 5; i++) {
         if (((sPopup_7388*)self)->items[i] != 0) {
-            ((sPopup_7388*)self)->items[i]->setEnabled(1);
+            ((sPopup_7388*)self)->items[i]->setStatic(1);
             ((sPopup_7388*)self)->items[i]->setVisible(0);
         }
     }
     for (int j = 0; j < info[0]; j++) {
-        cUIObj_7388* t = ((sPopup_7388*)self)->items[j];
+        cUIThing* t = ((sPopup_7388*)self)->items[j];
         if (t != 0) {
             float size[4];
             float item[4];
@@ -923,7 +913,7 @@ extern "C" void func_001C7388(void* self, void* infop)
             if (*(float*)((char*)self + 0x29C) < item[2])
                 *(float*)((char*)self + 0x29C) = item[2];
             func_001C9B68(self, (float*)((char*)self + 0x260), size);
-            t->setEnabled(0);
+            t->setStatic(0);
             t->setVisible(1);
         }
     }
@@ -2624,19 +2614,6 @@ extern "C" void func_001CAC30(void* self)
 INCLUDE_ASM("fe/fepopup", cUIStateBuyPopup_onWidgetCreate);
 #ifdef SKIP_ASM
 struct cUIText;
-class cUIObj_AC98 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
 int GetHashValue32(char* str);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
@@ -2696,10 +2673,10 @@ extern "C" void cUIStateBuyPopup_onWidgetCreate(void* self, void* widget)
         }
     } else if (id == GetHashValue32(D_00466318)) {
         if (*(int*)((char*)self + 0x50) <= 0)
-            ((cUIObj_AC98*)widget)->setVisible(0);
+            ((cUIThing*)widget)->setVisible(0);
     } else if (id == GetHashValue32(D_00466328)) {
         if (*(int*)((char*)self + 0x50) > 0)
-            ((cUIObj_AC98*)widget)->setVisible(0);
+            ((cUIThing*)widget)->setVisible(0);
     }
 }
 #endif
