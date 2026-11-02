@@ -41,6 +41,18 @@ static inline void vu0CopyMatrix(void* dst, void* src)
         : "memory");
 }
 
+// Globals declared by several functions below.
+extern char D_0048E8F0[];
+extern void* D_0048EE60[];
+extern char D_0048F420[];
+extern char D_0048F508[];
+extern void* D_0048F5F0[];
+extern void* D_00490E80[];
+extern char D_00491028[];
+extern void* D_004A4028;
+extern char* D_004A5B64;
+extern sMoveQuad D_004FF1A0[];
+
 // ---- end of shared declarations ----
 
 //100%
@@ -52,7 +64,6 @@ void cMoveNode_addModifierBlock(cMoveNode* self);
 extern "C" void* cInstanceNode_cInstanceNode(void* self, void* a, void* stream);
 extern "C" void tModifierBlock_readFromReplayFrame(void* block, void* stream);
 extern "C" void cMoveNode_setupOverlapSystem(void* self);
-extern char D_00491028[];
 
 // PORT: the unit declares cMoveNode_cMoveNode(void*) (1 arg) for its callers; the body reads a1/a2
 // (forwarded to cInstanceNode_cInstanceNode), so the 3-arg body is bound by asm label.
@@ -85,7 +96,6 @@ void* cMoveNode_cMoveNode_3(void* self, void* a, void* stream)
 //100%
 INCLUDE_ASM("object/movenode", func_003553C0);
 #ifdef SKIP_ASM
-extern char D_00491028[];
 extern "C" void func_003567E0(void* self);
 extern "C" void func_00352AE8(void* block, int flags);
 extern "C" void func_0034FBF0(void* self, int flags);
@@ -274,7 +284,6 @@ extern "C" void func_00355748(cMoveNode* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00355770);
 #ifdef SKIP_ASM
-extern char* D_004A5B64;
 extern "C" int func_002D1B30(int);
 void* func_0034FE00(void*, int, int, int);
 
@@ -316,7 +325,6 @@ extern "C" void func_00355770(cMoveNode* self, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("object/movenode", func_00355858);
 #ifdef SKIP_ASM
-extern char* D_004A5B64;
 
 extern "C" void func_00355858(void* self, float secs)
 {
@@ -349,7 +357,6 @@ extern "C" void func_00355888(void* self, void* a1)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_003558B8);
 #ifdef SKIP_ASM
-extern char D_0048E8F0[];
 extern "C" void* func_00356EB8(void* self, sMoveQuad* pos);
 extern "C" void func_003554B0(cMoveNode* self, void* mod);
 
@@ -362,7 +369,6 @@ extern "C" void func_003558B8(cMoveNode* self, sMoveQuad* pos)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_00355918);
 #ifdef SKIP_ASM
-extern char D_0048E8F0[];
 extern "C" void* func_00356F10(void* mem, void* desc);
 extern "C" void func_003554B0(cMoveNode* self, void* mod);
 
@@ -721,7 +727,6 @@ extern "C" void func_00356198(void* selfv)
 INCLUDE_ASM("object/movenode", func_00356298);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern sMoveQuad D_004FF1A0[];
 
 
 
@@ -1409,7 +1414,6 @@ struct sMoveFlags_6DB0 {
     unsigned int w;     // 0x8
 };
 
-extern void* D_00490E80[];
 extern "C" void* func_00355280(void* self, void* a1, int type, void* a3);
 
 extern "C" void* func_00356DB0(void* self, void* a1, void* a2, int a3, int a4)
@@ -1432,7 +1436,6 @@ extern "C" void* func_00356DB0(void* self, void* a1, void* a2, int a3, int a4)
 INCLUDE_ASM("object/movenode", func_00356E60);
 #ifdef SKIP_ASM
 extern "C" void* cMoveNode_cMoveNode(void* self);
-extern void* D_00490E80[];
 
 extern "C" void* func_00356E60(void* self, void* bucket, void* stream)
 {
@@ -1457,8 +1460,6 @@ void* func_00356E98(void* self)
 INCLUDE_ASM("object/movenode", func_00356EB8);
 #ifdef SKIP_ASM
 
-extern void* D_0048F5F0[];
-extern sMoveQuad D_004FF1A0[];
 
 extern "C" void* func_00356EB8(void* self, sMoveQuad* pos)
 {
@@ -1489,7 +1490,6 @@ extern "C" void* func_00356EB8(void* self, sMoveQuad* pos)
 INCLUDE_ASM("object/movenode", func_00356F10);
 #ifdef SKIP_ASM
 
-extern void* D_0048F5F0[];
 
 extern "C" void* func_00356F10(void* self, void* src)
 {
@@ -1578,7 +1578,6 @@ extern "C" void func_00357000(void* self, func_00357000_cObj* obj)
 //100%
 INCLUDE_ASM("object/movenode", func_00357038);
 #ifdef SKIP_ASM
-extern char D_0048F508[];
 
 extern "C" void* func_00357038(void* self, void* a1, void* a2, sMoveQuad* pos)
 {
@@ -1596,7 +1595,6 @@ INCLUDE_ASM("object/movenode", func_00357090);
 
 
 extern "C" void* func_00356F68(void* self, void* stream);
-extern char D_0048F508[];
 
 extern "C" void* func_00357090(void* self, void* stream)
 {
@@ -1721,7 +1719,6 @@ extern "C" void func_00357278(void* self, void* stream)
 //100%
 INCLUDE_ASM("object/movenode", func_003572E0);
 #ifdef SKIP_ASM
-extern char D_0048F420[];
 
 extern "C" void* func_003572E0(void* self, void* a1, void* mat, float f40, float speed)
 {
@@ -1760,7 +1757,6 @@ INCLUDE_ASM("object/movenode", func_00357358);
 #ifdef SKIP_ASM
 
 
-extern char D_0048F420[];
 
 extern "C" void* func_00357358(void* self, void* stream)
 {
@@ -2017,7 +2013,6 @@ INCLUDE_ASM("object/movenode", func_003578A8);
 #ifdef SKIP_ASM
 extern "C" void* func_00355280(void* self, void* a1, int type, void* a3);
 extern "C" void func_00355F10(cMoveNode* self, void* a1);
-extern void* D_0048EE60[];
 
 extern "C" void* func_003578A8(cMoveNode* self, void* a1, void* a2, void* particle, void* a4)
 {
@@ -2033,7 +2028,6 @@ extern "C" void* func_003578A8(cMoveNode* self, void* a1, void* a2, void* partic
 INCLUDE_ASM("object/movenode", func_00357918);
 #ifdef SKIP_ASM
 extern "C" void* cMoveNode_cMoveNode(void* self);
-extern void* D_0048EE60[];
 
 extern "C" void* func_00357918(void* self, void* bucket, void* stream)
 {
@@ -2075,7 +2069,6 @@ void* func_003579A8(void* self)
 //100%
 INCLUDE_ASM("object/movenode", func_003579C8);
 #ifdef SKIP_ASM
-extern void* D_004A4028;
 
 extern "C" void* func_003579C8(void* self)
 {
@@ -2091,7 +2084,6 @@ extern "C" void* func_003579C8(void* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00357A00);
 #ifdef SKIP_ASM
-extern void* D_004A4028;
 extern "C" void func_00357FA0(void* p, int flags);
 void operator_delete(int* ptr);
 
