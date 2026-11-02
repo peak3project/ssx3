@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 struct cMenuItem {
     char pad_0x00[0x4];
     int field_0x4;
@@ -230,8 +238,6 @@ struct sVec2_2CA768 {
     sVec2_2CA768(float ax, float ay) : x(ax), y(ay) {}
 };
 
-struct sVEnt_2CA768 { short delta; short index; void (*fn)(void*, sRect_2CA768*, char*); };
-
 static inline char* font_2CA768(char* item)
 {
     return *(char**)(*(char**)(*(char**)item + 0x124) + 0x58);
@@ -244,7 +250,7 @@ extern "C" void func_002CA768_impl(char* item, sRect_2CA768* rect, const char* l
 extern "C" void func_002CA768_impl(char* item, sRect_2CA768* rect, const char* left, const char* center, const char* right, char* style, sColor_2CA768* color)
 {
     char* menu = *(char**)item;
-    sVEnt_2CA768* vt = *(sVEnt_2CA768**)(menu + 0x12C);
+    sVEntry<void(void*, sRect_2CA768*, char*)>* vt = *(sVEntry<void(void*, sRect_2CA768*, char*)>**)(menu + 0x12C);
     vt[8].fn(menu + vt[8].delta, rect, style);
     *(sColor_2CA768*)(font_2CA768(item) + 0x40) = *color;
     char* f0 = font_2CA768(item);
@@ -843,15 +849,9 @@ extern char D_004D5390[];
 
 typedef void (*fn2CB880)(void*, void*, char*);
 
-struct sVEntry2CB880 {
-    short delta;
-    short index;
-    fn2CB880 fn;
-};
-
 extern "C" void func_002CB880(void* self, void* a1, int on)
 {
-    sVEntry2CB880* vt = *(sVEntry2CB880**)((char*)self + 0x12C);
+    sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)((char*)self + 0x12C);
     fn2CB880* f = &vt[8].fn;
     (*f)((char*)self + vt[8].delta, a1, on ? D_004D5380 : D_004D5390);
 }
@@ -967,7 +967,7 @@ extern cCtx_2CB8C8* D_004A289C_cb8c8 __asm__("D_004A289C");
 
 extern "C" void func_002CB8C8(void* self, float* rect)
 {
-    sVEntry2CB880* vt = *(sVEntry2CB880**)((char*)self + 0x12C);
+    sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)((char*)self + 0x12C);
     vt[8].fn((char*)self + vt[8].delta, rect, D_004D5380);
     *(short*)((char*)D_004A289C_cb8c8->top + 0x10) = -1;
     D_004A289C_cb8c8->top->f4_2 = 1;
@@ -1114,7 +1114,7 @@ extern cCtx_2CBAC8* D_004A289C_cbac8 __asm__("D_004A289C");
 
 extern "C" void func_002CBAC8(void* self, float* rect)
 {
-    sVEntry2CB880* vt = *(sVEntry2CB880**)((char*)self + 0x12C);
+    sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)((char*)self + 0x12C);
     vt[8].fn((char*)self + vt[8].delta, rect, D_004D5380);
     *(short*)((char*)D_004A289C_cbac8->top + 0x10) = -1;
     D_004A289C_cbac8->top->f4_2 = 1;
@@ -1327,12 +1327,6 @@ extern "C" void func_002CBF60(void* p, int wrap)
 //100%
 INCLUDE_ASM("util/menu", func_002CBFD0);
 #ifdef SKIP_ASM
-struct sVEntry2CBFD0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 struct s2CBFD0Menu {
     int count;          // 0x0
     int selected;       // 0x4
@@ -1345,7 +1339,7 @@ extern "C" void func_002CBFD0(void* p)
 {
     s2CBFD0Menu* self = (s2CBFD0Menu*)p;
     void* item = self->items[self->selected];
-    sVEntry2CBFD0* vt = *(sVEntry2CBFD0**)((char*)item + 0x10);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)item + 0x10);
     vt[7].fn((char*)item + vt[7].delta);
     self->wrap = 0;
 }
@@ -1422,12 +1416,6 @@ extern "C" int func_00266BA8(void* kb, int a1, int* key, int* chr);
 extern "C" void func_002CC460(void* p);
 extern void* D_004A33F0;
 
-struct sVE2CC0C0 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 struct sMenu2CC0C0 {
     int depth;              // 0x00
     char* items[17];        // 0x04
@@ -1474,7 +1462,7 @@ extern "C" void func_002CC0C0(sMenu2CC0C0* self)
         }
     }
     char* item = self->items[self->depth - 1];
-    sVE2CC0C0* vt = *(sVE2CC0C0**)(item + 0x12C);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(item + 0x12C);
     switch (vt[2].fn(item + vt[2].delta)) {
     case 1:
         func_002CC460(self);
@@ -1854,7 +1842,6 @@ extern "C" int func_002CA2B0(void* self);
 extern "C" int func_002CA3B0(void* self);
 extern "C" int func_002CA3E8(void** self);
 
-struct sVEnt_2CC8F0 { short delta; short index; void* fn; };
 typedef int (*Pick_2CC8F0)(void*, void*, int);
 typedef void (*Notify_2CC8F0)(void*, void*);
 
@@ -1873,7 +1860,7 @@ struct sList_2CC8F0 {
 
 static inline void notify_2CC8F0(sList_2CC8F0* self)
 {
-    sVEnt_2CC8F0* vt = *(sVEnt_2CC8F0**)(self->menu + 0x12C);
+    sVEntry<void>* vt = *(sVEntry<void>**)(self->menu + 0x12C);
     ((Notify_2CC8F0)vt[4].fn)(self->menu + vt[4].delta, self);
 }
 
@@ -1888,7 +1875,7 @@ extern "C" int func_002CC8F0(void* vself)
         return r;
     }
     if (func_002CA3E8((void**)self) == 6) {
-        sVEnt_2CC8F0* vt = *(sVEnt_2CC8F0**)(self->menu + 0x12C);
+        sVEntry<void>* vt = *(sVEntry<void>**)(self->menu + 0x12C);
         r = ((Pick_2CC8F0)vt[3].fn)(self->menu + vt[3].delta, self, 0);
     } else {
     int n = self->count;
@@ -2551,12 +2538,6 @@ INCLUDE_ASM("util/menu", func_002CD5A0);
 float func_002CA408_f(void* self) __asm__("func_002CA408__FPv");
 float func_002CA428_f(void* self) __asm__("func_002CA428__FPv");
 
-struct sVEntry002CD5A0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
-
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float ffloor_002CD5A0(float x)
 {
@@ -2624,7 +2605,7 @@ extern "C" int func_002CD5A0(void* self)
         *(float*)(s + 0x28) = d + (float)(cur - v);
         *p = v;
         char* menu = *(char**)s;
-        sVEntry002CD5A0* e = &(*(sVEntry002CD5A0**)(menu + 0x12C))[4];
+        sVEntry<void(void*, void*)>* e = &(*(sVEntry<void(void*, void*)>**)(menu + 0x12C))[4];
         e->fn(menu + e->delta, self);
     }
     return r;
@@ -2779,12 +2760,6 @@ INCLUDE_ASM("util/menu", func_002CD9D8);
 float func_002CA408_f(void* self) __asm__("func_002CA408__FPv");
 float func_002CA428_f(void* self) __asm__("func_002CA428__FPv");
 
-struct sVEntry002CD9D8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
-
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float ffloor_002CD9D8(float x)
 {
@@ -2852,7 +2827,7 @@ extern "C" int func_002CD9D8(void* self)
         *(float*)(s + 0x2C) = d + (float)(cur - v);
         *p = v;
         char* menu = *(char**)s;
-        sVEntry002CD9D8* e = &(*(sVEntry002CD9D8**)(menu + 0x12C))[4];
+        sVEntry<void(void*, void*)>* e = &(*(sVEntry<void(void*, void*)>**)(menu + 0x12C))[4];
         e->fn(menu + e->delta, self);
     }
     return r;
@@ -3006,7 +2981,7 @@ extern "C" int func_002CDD78(void* self)
         }
         **(float**)(s + 0x18) = (v - *(float*)(s + 0x28)) / *(float*)(s + 0x24);
         char* menu = *(char**)s;
-        sVEntry002CD9D8* vt = *(sVEntry002CD9D8**)(menu + 0x12C);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(menu + 0x12C);
         vt[4].fn(menu + vt[4].delta, self);
     }
     return r;
@@ -3183,7 +3158,7 @@ extern "C" int func_002CE1F0(void* self)
             **(float**)(s + 0x18) = *(float*)(s + 0x20);
         }
         char* menu = *(char**)s;
-        sVEntry002CD9D8* vt = *(sVEntry002CD9D8**)(menu + 0x12C);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(menu + 0x12C);
         vt[4].fn(menu + vt[4].delta, self);
     }
     return r;
@@ -3502,7 +3477,7 @@ extern "C" void func_002CE910(void* self, float* rect)
     }
     {
         char* menu = *(char**)self;
-        sVEntry2CB880* vt = *(sVEntry2CB880**)(menu + 0x12C);
+        sVEntry<void(void*, void*, char*)>* vt = *(sVEntry<void(void*, void*, char*)>**)(menu + 0x12C);
         fn2CB880* f = &vt[8].fn;
         (*f)(menu + vt[8].delta, rect, focused ? D_004D5380 : D_004D5390);
     }
@@ -3636,7 +3611,7 @@ extern "C" int func_002CED78(void* self)
         }
         *p = v;
         char* menu = *(char**)s;
-        sVEntry002CD9D8* vt = *(sVEntry002CD9D8**)(menu + 0x12C);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(menu + 0x12C);
         vt[4].fn(menu + vt[4].delta, self);
     }
     return r;
@@ -3711,12 +3686,6 @@ extern "C" int func_00413AF8(float f);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char* D_00487470[];
 extern char D_00486710[];
-
-struct sVEntry_2CF1C8 {
-    short delta;
-    short index;
-    void (*fn)(void*, float*, int);
-};
 
 struct sVec2_2CF1C8 {
     float x, y;
@@ -3832,7 +3801,7 @@ extern "C" void func_002CF1C8(void* self, float* rect)
 {
     {
         char* menu = *(char**)self;
-        sVEntry_2CF1C8* vt = *(sVEntry_2CF1C8**)(menu + 0x12C);
+        sVEntry<void(void*, float*, int)>* vt = *(sVEntry<void(void*, float*, int)>**)(menu + 0x12C);
         char* thisp = menu + vt[9].delta;
         vt[9].fn(thisp, rect, self == func_002CBF30(menu));
     }
@@ -4218,11 +4187,9 @@ extern "C" void* func_002CBF30(void* self);
 
 struct sMenuRect_2CFB58 { float x, y, z, w; };
 
-struct sVEnt_2CFB58 { short delta; short index; sMenuRect_2CFB58 (*fn)(void*); };
-
 struct sItem_2CFB58 {
     char pad00[0x10];
-    sVEnt_2CFB58* vt;
+    sVEntry<sMenuRect_2CFB58(void*)>* vt;
 };
 
 struct sMenu_2CFB58 {
@@ -4244,7 +4211,7 @@ extern "C" sMenuRect_2CFB58* func_002CFB58(sMenuRect_2CFB58* ret, sMenu_2CFB58* 
     self->f13C = *(void**)(self->owner + 0x124);
     for (int i = 0; i < self->count; i++) {
         if (func_002CA378(self->items[i])) {
-            sVEnt_2CFB58* vt = self->items[i]->vt;
+            sVEntry<sMenuRect_2CFB58(void*)>* vt = self->items[i]->vt;
             self->rects[i] = vt[4].fn((char*)self->items[i] + vt[4].delta);
             if (self == func_002CBF30(self->owner) || self->items[i] == self->sel) {
                 r.w += self->rects[i].w;
@@ -4835,12 +4802,6 @@ struct sCurvePt_D0908 {
     float x, y;
 };
 
-struct sVE_D0908 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
-
 struct sCurveItem_D0908 {
     char* menu;                 // 0x00
     char pad4[0x14];            // 0x04
@@ -4936,7 +4897,7 @@ extern "C" int func_002D0908(sCurveItem_D0908* self)
         r = func_002CA2B0(self);
     }
     if (changed) {
-        sVE_D0908* vt = *(sVE_D0908**)(self->menu + 0x12C);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(self->menu + 0x12C);
         vt[4].fn(self->menu + vt[4].delta, self);
     }
     }
