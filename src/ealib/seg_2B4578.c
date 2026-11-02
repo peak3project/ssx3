@@ -2177,13 +2177,12 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B6EA8);
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7080);
 #ifdef SKIP_ASM
-extern int *D_0050A0A0_7080[] __asm__("D_0050A0A0");
-extern void func_003B6EA8_7080(int *, int *) __asm__("func_003B6EA8");
+extern void func_003B6EA8_7080(struct sA0A0Strm *, int *) __asm__("func_003B6EA8");
 extern void func_003B6BD0_7080(int) __asm__("func_003B6BD0");
 extern void func_003E13E8_7080(int, int *) __asm__("func_003E13E8");
 
 int func_003B7080(int arg0, int *arg1) {
-    int *o = D_0050A0A0_7080[arg0];
+    struct sA0A0Strm *o = D_0050A0A0[arg0];
     int r;
     if (*arg1 == 0x6C444353) {
         func_003B6EA8_7080(o, arg1);
@@ -2192,7 +2191,7 @@ int func_003B7080(int arg0, int *arg1) {
         func_003B6BD0_7080(arg0);
         r = 0;
     } else {
-        func_003E13E8_7080(*o, arg1);
+        func_003E13E8_7080(o->f00, arg1);
         r = 1;
     }
     return r;
