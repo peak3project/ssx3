@@ -53,6 +53,49 @@ public:
     virtual void resetToPath();
     virtual void initForMission(const t4Matrix& m);
 };
+// The scene node of a world object (the object holds it at +0xC): the prototype's cObjNode / cTypeObjNode /
+// cInstanceNode family. Slot 1 is the virtual destructor; isType (10) and isMoveNode (16) are named as in the
+// prototype's _vt$13cInstanceNode; the other slots are known only by position.
+struct cInstanceNode_1FBE38 {
+    int p0, p1, p2;
+    virtual ~cInstanceNode_1FBE38();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual int isType(int type) const;
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual int isMoveNode();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual t4Matrix* v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual float v30();
+    virtual int v31();
+    virtual int v32(float);
+    virtual void v33();
+    virtual void v34(int);
+    virtual void v35();
+    virtual void v36(int, float);
+    virtual void v37();
+};
 // A rider as these bindings see it (include/ai/rider.h has the flat layout): its cBeing base sits at 0x6C0, after the
 // rider's own data, so converting between cRider_1FBE38* and cBeing* adds/subtracts 0x6C0 with a null check.
 struct cRiderData_1FBE38 {
@@ -158,12 +201,11 @@ extern "C" void* func_003578A8_AE38(void*, int, void*, void*, void*) __asm__("fu
 extern "C" void func_00351B40_AE38(void*, int, void*, void*, void*, void*) __asm__("func_00351B40");
 extern "C" void* func_00342C08_AE38(void*, int, void*, void*, void*) __asm__("func_00342C08");
 extern "C" void cDeadFadeNode_cDeadFadeNode_AE38(void*, int, void*, void*, void*) __asm__("cDeadFadeNode_cDeadFadeNode");
-struct N_AE38 { int p0, p1, p2; virtual ~N_AE38(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35(); virtual void v36(); virtual void v37(); };
 extern "C" int checkActiveNode(void *a, int type, void *buf) {
-    N_AE38 *n = (N_AE38*)a;
-    if (n->v10(9) || n->v10(6) || n->v10(22))
+    cInstanceNode_1FBE38 *n = (cInstanceNode_1FBE38*)a;
+    if (n->isType(9) || n->isType(6) || n->isType(22))
         return 1;
-    if (n->v10(type)) {
+    if (n->isType(type)) {
         n->v37();
         return 1;
     }
@@ -1358,7 +1400,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FD250);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355DB8_D250(void*, void*, int, void*) __asm__("func_00355DB8");
-struct O_D250 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_D250[] __asm__("D_004FB628");
 extern int D_004A5600;
 extern const int D_004460A0[];
@@ -1399,9 +1440,9 @@ extern "C" cLunoValue func_002FD250(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_D250 *p = *(O_D250**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
-        if (p->v16())
+        if (p->isMoveNode())
             func_00355DB8_D250(p, buf, D_004A3DD8->f298, D_004A3DD8->f294);
     }
     return D_004C9098;
@@ -1548,7 +1589,6 @@ static inline void vAddTo_D758(t4Vector &a, const t4Vector &b) {
         : "m"(a), "m"(b)
         : "memory");
 }
-struct O_D758 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_D758[] __asm__("D_004FB720");
 extern int D_004A5608;
 extern const int D_00446190[];
@@ -1588,9 +1628,9 @@ extern "C" cLunoValue func_002FD758(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_D758 *p = *(O_D758**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
-        if (p->v16()) {
+        if (p->isMoveNode()) {
             int k = buf[1];
             if (k != -1) {
                 t4Vector pos = *being_D758(k)->getPosition();
@@ -1610,7 +1650,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FD9F8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct V4_D9F8 { float x, y, z, w; V4_D9F8(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
 extern "C" void func_00355978_D9F8(void*, int, int, V4_D9F8*) __asm__("func_00355978");
-struct O_D9F8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_D9F8(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_D9F8(unsigned i) { if (i == 0) return 0; return refToPtr_D9F8(i); }
 extern unsigned D_D9F8[] __asm__("D_004FB738");
@@ -1668,10 +1707,10 @@ extern "C" cLunoValue func_002FD9F8(int n, sBindArg_1FBE38 *e) {
             o2 = 0;
         else
             o2 = (char*)(i2 << 2);
-        O_D9F8 *q = o2 ? *(O_D9F8**)(o2 + 0xC) : 0;
-        if (q && !q->v10(6)) {
-            O_D9F8 *p = *(O_D9F8**)(obj + 0xC);
-            if (p && p->v16()) {
+        cInstanceNode_1FBE38 *q = o2 ? *(cInstanceNode_1FBE38**)(o2 + 0xC) : 0;
+        if (q && !q->isType(6)) {
+            cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
+            if (p && p->isMoveNode()) {
                 int k = *(int*)((char*)q + 0x18);
                 V4_D9F8 v(*(float*)&buf[3], *(float*)&buf[4], *(float*)&buf[5], 0.0f);
                 func_00355978_D9F8(p, k, buf[2], &v);
@@ -1688,7 +1727,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FDC60);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct V4_DC60 { float x, y, z, w; V4_DC60(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
 extern "C" void func_00355978_DC60(void*, int, int, V4_DC60*) __asm__("func_00355978");
-struct O_DC60 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_DC60(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_DC60(unsigned i) { if (i == 0) return 0; return refToPtr_DC60(i); }
 extern unsigned D_DC60[] __asm__("D_004FB758");
@@ -1738,8 +1776,8 @@ extern "C" cLunoValue func_002FDC60(int n, sBindArg_1FBE38 *e) {
         obj = r;
     }
     if (~buf[1] != 0) {
-        O_DC60 *q = *(O_DC60**)(obj + 0xC);
-        if (q && !q->v10(6)) {
+        cInstanceNode_1FBE38 *q = *(cInstanceNode_1FBE38**)(obj + 0xC);
+        if (q && !q->isType(6)) {
             unsigned id2 = buf[1];
             sRefSet *s2 = (*D_004A47B8)->sets[id2 & 0xFF];
             unsigned i2;
@@ -1748,8 +1786,8 @@ extern "C" cLunoValue func_002FDC60(int n, sBindArg_1FBE38 *e) {
                 o2 = 0;
             else
                 o2 = (char*)(i2 << 2);
-            O_DC60 *p = o2 ? *(O_DC60**)(o2 + 0xC) : 0;
-            if (p && p->v16()) {
+            cInstanceNode_1FBE38 *p = o2 ? *(cInstanceNode_1FBE38**)(o2 + 0xC) : 0;
+            if (p && p->isMoveNode()) {
                 int k = *(int*)((char*)q + 0x18);
                 V4_DC60 v(*(float*)&buf[3], *(float*)&buf[4], *(float*)&buf[5], 0.0f);
                 func_00355978_DC60(p, k, buf[2], &v);
@@ -1765,7 +1803,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FDED0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355AD0_DED0(void*, void*) __asm__("func_00355AD0");
-struct O_DED0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_DED0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_DED0(unsigned i) { if (i == 0) return 0; return refToPtr_DED0(i); }
 extern unsigned D_DED0[] __asm__("D_004FB778");
@@ -1819,9 +1856,9 @@ extern "C" cLunoValue func_002FDED0(int n, sBindArg_1FBE38 *e) {
         obj = r;
     }
     if (~buf[1] != 0) {
-        O_DED0 *p = *(O_DED0**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
-            if (p->v16())
+            if (p->isMoveNode())
                 func_00355AD0_DED0(p, buf);
         }
     }
@@ -1834,7 +1871,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FE0C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void cMoveNode_addSpline_E0C0(void*, void*) __asm__("cMoveNode_addSpline");
-struct O_E0C0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_E0C0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_E0C0(unsigned i) { if (i == 0) return 0; return refToPtr_E0C0(i); }
 extern unsigned D_E0C0[] __asm__("D_004FB7A8");
@@ -1888,9 +1924,9 @@ extern "C" cLunoValue func_002FE0C0(int n, sBindArg_1FBE38 *e) {
         obj = r;
     }
     if (~buf[1] != 0) {
-        O_E0C0 *p = *(O_E0C0**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
-            if (p->v16())
+            if (p->isMoveNode())
                 cMoveNode_addSpline_E0C0(p, buf);
         }
     }
@@ -1903,7 +1939,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FE2C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355B90_E2C0(void*, void*) __asm__("func_00355B90");
-struct O_E2C0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_E2C0[] __asm__("D_004FB7E0");
 extern int D_004A561C;
 extern const int D_00446238[];
@@ -1948,9 +1983,9 @@ extern "C" cLunoValue func_002FE2C0(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_E2C0 *p = *(O_E2C0**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
-        if (p->v16())
+        if (p->isMoveNode())
             func_00355B90_E2C0(p, buf);
     }
     return D_004C9098;
@@ -1962,7 +1997,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FE4A8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355BF0_E4A8(void*, void*) __asm__("func_00355BF0");
-struct O_E4A8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_E4A8[] __asm__("D_004FB818");
 extern int D_004A5620;
 extern const int D_00446268[];
@@ -2003,9 +2037,9 @@ extern "C" cLunoValue func_002FE4A8(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_E4A8 *p = *(O_E4A8**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
-        if (p->v16())
+        if (p->isMoveNode())
             func_00355BF0_E4A8(p, buf);
     }
     return D_004C9098;
@@ -2017,7 +2051,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FE668);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355C50_E668(void*, void*) __asm__("func_00355C50");
-struct O_E668 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_E668[] __asm__("D_004FB830");
 extern int D_004A5624;
 extern const int D_00446280[];
@@ -2060,9 +2093,9 @@ extern "C" cLunoValue func_002FE668(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_E668 *p = *(O_E668**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
-        if (p->v16())
+        if (p->isMoveNode())
             func_00355C50_E668(p, buf);
     }
     return D_004C9098;
@@ -2081,7 +2114,6 @@ extern "C" void* func_003578A8_E840(void*, int, void*, void*, void*) __asm__("fu
 void operator_delete(int*);
 extern char D_00489740_E840[] __asm__("D_00489740");
 extern char D_00489730_E840[] __asm__("D_00489730");
-struct O_E840 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual char *v24(); };
 extern "C" void cMoveNode_addParticle_E840(void*, void*) __asm__("cMoveNode_addParticle");
 // PORT: PS2-only VU0 inline asm (vector subtract).
 static inline t4Vector vSub_E840(const t4Vector &a, const t4Vector &b) {
@@ -2198,10 +2230,10 @@ extern "C" cLunoValue cViewer_addParticle(int n, sBindArg_1FBE38 *e) {
         }
         obj = r;
     }
-    O_E840 *p = *(O_E840**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
-        if (p->v16()) {
-            t4Vector pos = *(t4Vector*)(p->v24() + 0x30);
+        if (p->isMoveNode()) {
+            t4Vector pos = p->v24()->row[3];
             if (nearViewer_E840(pos)) {
                 cMoveNode_addParticle_E840(p, buf);
                 return D_004C9098;
@@ -2228,7 +2260,6 @@ static inline char *conv_EE98(unsigned i) { if (i == 0) return 0; return refToPt
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 struct V4_EE98 { float x, y, z, w; V4_EE98(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
-struct O_EE98 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern "C" void cMoveNode_addDynamicParticle_EE98(void*, void*, int, V4_EE98*) __asm__("cMoveNode_addDynamicParticle");
 void operator_delete(int*);
 extern char D_00489750_EE98[] __asm__("D_00489750");
@@ -2293,8 +2324,8 @@ extern "C" cLunoValue func_002FEE98(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_EE98 *p = *(O_EE98**)(obj + 0xC);
-    if (p && p->v16()) {
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
+    if (p && p->isMoveNode()) {
         float one = 1.0f;
         V4_EE98 v(*(float*)&buf[56], *(float*)&buf[57], *(float*)&buf[58], one);
         cMoveNode_addDynamicParticle_EE98(p, buf, buf[55], &v);
@@ -2310,7 +2341,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FF1C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355E38_F1C8(void*, void*) __asm__("func_00355E38");
-struct O_F1C8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_F1C8[] __asm__("D_004FBA28");
 extern int D_004A5630;
 extern const int D_00446470[];
@@ -2353,9 +2383,9 @@ extern "C" cLunoValue func_002FF1C8(int n, sBindArg_1FBE38 *e) {
         obj = r;
     }
     if (~buf[1] != 0) {
-        O_F1C8 *p = *(O_F1C8**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
-            if (p->v16())
+            if (p->isMoveNode())
                 func_00355E38_F1C8(p, buf);
         }
     }
@@ -2598,7 +2628,6 @@ static inline char *look_F9A8(unsigned id) {
     return (char*)(i << 2);
 }
 
-struct O_F9A8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35(); virtual void v36(int, float); };
 extern unsigned D_F9A8[] __asm__("D_004FBAF8");
 extern int D_004A5640;
 extern const int D_00446540[];
@@ -2626,7 +2655,7 @@ extern "C" cLunoValue func_002FF9A8(int n, sBindArg_1FBE38 *e) {
             *d = x->val;
     }
     char *obj = look_F9A8(buf[0]);
-    O_F9A8 *p = *(O_F9A8**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p)
         p->v36(buf[1], *(float*)&buf[2]);
     return D_004C9098;
@@ -2646,7 +2675,6 @@ static inline char *conv_FB50(unsigned i) { if (i == 0) return 0; return refToPt
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00350E90(void*, void*);
 extern char D_004A3C18_FB50[] __asm__("D_004A3C18");
-struct O_FB50 { int p0, p1, p2; virtual void v01(int); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); };
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FFB50(int n, sBindArg_1FBE38 *e) {
     if (D_004A5650_FB50 == 0) {
@@ -2688,11 +2716,11 @@ extern "C" cLunoValue func_002FFB50(int n, sBindArg_1FBE38 *e) {
     }
     if (obj == 0)
         return D_004C9098;
-    O_FB50 *p = *(O_FB50**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
-        if (p->v10(16) || p->v10(6))
+        if (p->isType(16) || p->isType(6))
             return D_004C9098;
-        p->v01(3);
+        delete p;
     }
     func_00350E90(cMemMan_alloc(0x1C, D_004A3C18_FB50, 0x20000000, 0), obj);
     return D_004C9098;
@@ -2713,7 +2741,6 @@ static inline char *look_FD58(unsigned id) {
     return (char*)(i << 2);
 }
 
-struct O_FD58 { int p0, p1, p2; virtual void v01(int); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); };
 extern unsigned D_FD58 __asm__("D_004A5658");
 extern sBindEnd_1FBE38 D_004A565C;
 extern int D_004A5660;
@@ -2741,10 +2768,10 @@ extern "C" cLunoValue func_002FFD58(int n, sBindArg_1FBE38 *e) {
     }
     char *obj = look_FD58(buf[0]);
     if (obj) {
-        O_FD58 *p = *(O_FD58**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
-            if (p->v10(0x10))
-                p->v01(3);
+            if (p->isType(0x10))
+                delete p;
         }
     }
     return D_004C9098;
@@ -2933,7 +2960,6 @@ extern "C" cLunoValue func_00300260(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300418);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_0418 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(int); };
 extern unsigned D_0418[] __asm__("D_004FBB38");
 extern int D_004A5670;
 extern int D_004A3C30;
@@ -2971,7 +2997,7 @@ extern "C" cLunoValue func_00300418(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_0418 *p = *(O_0418**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p) {
         int b1 = buf[1];
         if (b1 == 0)
@@ -2987,7 +3013,6 @@ extern "C" cLunoValue func_00300418(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003005E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_05E8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35(); };
 extern unsigned D_05E8 __asm__("D_004A5678");
 extern sBindEnd_1FBE38 D_004A567C;
 extern int D_004A5680;
@@ -3025,7 +3050,7 @@ extern "C" cLunoValue func_003005E8(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_05E8 *o = *(O_05E8**)(obj + 0xC);
+    cInstanceNode_1FBE38 *o = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (o)
         o->v35();
     return D_004C9098;
@@ -3040,7 +3065,6 @@ extern unsigned D_004A5688_0770 __asm__("D_004A5688");
 extern sBindEnd_1FBE38 D_004A568C_0770 __asm__("D_004A568C");
 extern int D_004A5690_0770 __asm__("D_004A5690");
 extern int D_004A3C40_0770[2] __asm__("D_004A3C40");
-struct O_0770 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual t4Matrix *v24(); };
 static inline char *refToPtr_0770(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0770(unsigned i) { if (i == 0) return 0; return refToPtr_0770(i); }
 extern "C" void func_003E6574(void*, void*, int);
@@ -3084,7 +3108,7 @@ extern "C" cLunoValue func_00300770(int n, sBindArg_1FBE38 *e) {
     }
     int k = D_004A3DD8->being;
     if (k >= 0 && obj) {
-        O_0770 *p = *(O_0770**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         t4Matrix *m = (t4Matrix*)(obj + 0x10);
         if (p)
             m = p->v24();
@@ -3103,7 +3127,6 @@ extern unsigned D_004A5698_0948 __asm__("D_004A5698");
 extern sBindEnd_1FBE38 D_004A569C_0948 __asm__("D_004A569C");
 extern int D_004A56A0_0948 __asm__("D_004A56A0");
 extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
-struct O_0948 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual t4Matrix *v24(); };
 static inline char *refToPtr_0948(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0948(unsigned i) { if (i == 0) return 0; return refToPtr_0948(i); }
 extern "C" void func_003E6574(void*, void*, int);
@@ -3147,7 +3170,7 @@ extern "C" cLunoValue func_00300948(int n, sBindArg_1FBE38 *e) {
     }
     int k = D_004A3DD8->being;
     if (k >= 0 && obj) {
-        O_0948 *p = *(O_0948**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         t4Matrix *m = (t4Matrix*)(obj + 0x10);
         if (p)
             m = p->v24();
@@ -3574,7 +3597,6 @@ static inline char *look_1680(unsigned id) {
 }
 
 float *func_00226618_1680(void*) __asm__("func_00226618__FPv");
-struct O_1680 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual float v30(); };
 extern unsigned D_1680 __asm__("D_004A56D0");
 extern sBindEnd_1FBE38 D_004A56D4;
 extern int D_004A56D8;
@@ -3603,7 +3625,7 @@ extern "C" cLunoValue* func_00301680(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
     char *obj = look_1680(buf[0]);
     float v;
     if (obj) {
-        O_1680 *p = *(O_1680**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p)
             v = p->v30();
         else
@@ -3634,7 +3656,6 @@ static inline char *look_1830(unsigned id) {
 }
 
 int *func_00226610(void*);
-struct O_1830 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual int v31(); };
 extern unsigned D_1830 __asm__("D_004A56E0");
 extern sBindEnd_1FBE38 D_004A56E4;
 extern int D_004A56E8;
@@ -3675,7 +3696,7 @@ extern "C" cLunoValue* func_00301830(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
         obj = r;
     }
     if (obj) {
-        O_1830 *p = *(O_1830**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         int v;
         if (p)
             v = p->v31();
@@ -3696,7 +3717,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003019C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int *func_00226610(void*);
-struct O_19C8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual int v32(float); };
 extern unsigned D_19C8[] __asm__("D_004FBC00");
 extern int D_004A56EC;
 extern int D_004A3C98;
@@ -3735,7 +3755,7 @@ extern "C" cLunoValue* func_003019C8(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
             obj = (char*)(i << 2);
     }
     if (obj) {
-        O_19C8 *p = *(O_19C8**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         float f = *(float*)&buf[1];
         int v;
         if (p)
@@ -3838,7 +3858,6 @@ extern unsigned D_004A5710_1D78 __asm__("D_004A5710");
 extern sBindEnd_1FBE38 D_004A5714_1D78 __asm__("D_004A5714");
 extern int D_004A5718_1D78 __asm__("D_004A5718");
 extern int D_004A3CB0_1D78[2] __asm__("D_004A3CB0");
-struct O_1D78 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 static inline char *refToPtr_1D78(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_1D78(unsigned i) { if (i == 0) return 0; return refToPtr_1D78(i); }
 extern "C" void func_003E6574(void*, void*, int);
@@ -4084,7 +4103,6 @@ extern "C" cLunoValue func_00302210(int n, sBindArg_1FBE38* e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00302490);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_2490 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 struct T12_2490 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2490 D_4FBC30_2490 __asm__("D_004FBC30");
 extern int D_5734_2490 __asm__("D_004A5734");
@@ -4129,10 +4147,10 @@ extern "C" cLunoValue func_00302490(int n, sBindArg_1FBE38 *e) {
         obj = r;
     }
     if (obj) {
-        O_2490 *p = *(O_2490**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         int mode = buf[1];
         if (p) {
-            if (p->v16()) {
+            if (p->isMoveNode()) {
                 char *c = *(char**)(obj + 0xC);
                 switch (mode) {
                 case 0: {
@@ -5283,7 +5301,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304980);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 void func_00355878(void*, void*);
-struct O_4980 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_4980[] __asm__("D_004FBD10");
 extern int D_004A5810;
 extern int D_004A3D68;
@@ -5321,10 +5338,10 @@ extern "C" cLunoValue func_00304980(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_4980 *p = *(O_4980**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p == 0)
         return D_004C9098;
-    if (p->v16())
+    if (p->isMoveNode())
         func_00355878(p, buf);
     return D_004C9098;
 }
@@ -5438,7 +5455,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304E38);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355888(void*, void*);
-struct O_4E38 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_4E38[] __asm__("D_004FBD20");
 extern int D_004A5834;
 extern int D_004A3D80;
@@ -5476,10 +5492,10 @@ extern "C" cLunoValue func_00304E38(int n, sBindArg_1FBE38 *e) {
         else
             obj = (char*)(i << 2);
     }
-    O_4E38 *p = *(O_4E38**)(obj + 0xC);
+    cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p == 0)
         return D_004C9098;
-    if (p->v16())
+    if (p->isMoveNode())
         func_00355888(p, buf);
     return D_004C9098;
 }
@@ -5523,7 +5539,6 @@ extern "C" cLunoValue func_00304FF0(int n, sBindArg_1FBE38* e) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003050F0);
 #ifdef SKIP_ASM
-struct O_50F0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual t4Matrix *v24(); };
 // Defaults record of this camera-shake binding; keyword indexes the shake keyword table (the prototype asserts
 // dp->Index < kNumCameraShakeKeywords).
 struct Rec_50F0 { int keyword; int useObj; unsigned id; float scale; sBindEnd_1FBE38 f; };
@@ -5615,7 +5630,7 @@ extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
         if (obj) {
             for (int i = 0; i < np; i++) {
                 const t4Vector *rp = game->race->players[i]->rider->getPosition();
-                O_50F0 *node = *(O_50F0**)(obj + 0xC);
+                cInstanceNode_1FBE38 *node = *(cInstanceNode_1FBE38**)(obj + 0xC);
                 t4Matrix *m = node ? node->v24() : (t4Matrix*)(obj + 0x10);
                 t4Vector d = vSub_50F0(*rp, trans_50F0(m));
                 float dist = vLen_50F0(d);
@@ -5644,13 +5659,12 @@ extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00305478);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_5478 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct Rec_5478 { unsigned id; float a; float b; sBindEnd_1FBE38 f; };
 extern Rec_5478 D_4FBD58_5478 __asm__("D_004FBD58");
 extern int D_5840_5478 __asm__("D_004A5840");
 extern const int D_004466A0_5478[] __asm__("D_004466A0");
 extern "C" void func_003E6574(void*, void*, int);
-extern "C" void func_003559F8_5478(O_5478*, void*, float, float) __asm__("func_003559F8");
+extern "C" void func_003559F8_5478(cInstanceNode_1FBE38*, void*, float, float) __asm__("func_003559F8");
 extern "C" cLunoValue func_00305478(int n, sBindArg_1FBE38 *e) {
     if (D_5840_5478 == 0) {
         D_4FBD58_5478.id = 0xFFFFFFFF;
@@ -5687,9 +5701,9 @@ extern "C" cLunoValue func_00305478(int n, sBindArg_1FBE38 *e) {
             obj = (char*)(i << 2);
     }
     if (obj) {
-        O_5478 *p = *(O_5478**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
-            if (p->v16())
+            if (p->isMoveNode())
                 func_003559F8_5478(p, p->v24(), buf->a, buf->b);
         }
     }
@@ -5742,7 +5756,6 @@ extern "C" cLunoValue func_00305660(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003057C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_57C0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct Rec_57C0 { unsigned id; int a; int b; float c; float d; float e; float g; float h; int k; sBindEnd_1FBE38 f; };
 extern Rec_57C0 D_4FBD68_57C0 __asm__("D_004FBD68");
 extern int D_5854_57C0 __asm__("D_004A5854");
@@ -5791,9 +5804,9 @@ extern "C" cLunoValue func_003057C0(int n, sBindArg_1FBE38 *e) {
             obj = (char*)(i << 2);
     }
     if (obj) {
-        O_57C0 *p = *(O_57C0**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
-            if (p->v16())
+            if (p->isMoveNode())
                 cMoveNode_addHalo_57C0(p, buf);
         }
     }
@@ -5908,7 +5921,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00305D90);
 static inline char *refToPtr_5D90(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_5D90(unsigned i) { if (i == 0) return 0; return refToPtr_5D90(i); }
 extern "C" void func_00355A78_5D90(void*, void*) __asm__("func_00355A78");
-struct O_5D90 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 extern unsigned D_5D90 __asm__("D_004A5870");
 extern sBindEnd_1FBE38 D_004A5874;
 extern int D_004A5878;
@@ -5952,9 +5964,9 @@ extern "C" cLunoValue func_00305D90(int n, sBindArg_1FBE38 *e) {
         obj = r;
     }
     if (obj) {
-        O_5D90 *p = *(O_5D90**)(obj + 0xC);
+        cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
-            if (p->v16())
+            if (p->isMoveNode())
                 func_00355A78_5D90(p, obj);
         }
     }
