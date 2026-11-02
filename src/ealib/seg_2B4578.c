@@ -8409,56 +8409,51 @@ void func_003C43C0(int arg0, int arg1, int arg2, int arg3) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4450);
 #ifdef SKIP_ASM
-struct Ent_4450 { unsigned key; int f4; int f8; unsigned short hC; unsigned char bE; char pF; };
-struct Hd_4450 { char pad0[0xCC0]; volatile unsigned char cnt; volatile unsigned char sel; char f1CC2; char pad1CC3; int f1CC4; char pad1CC8[0xE8C - 0xCC8]; int fE8C; };
 struct Dst_4450 { char b0; char pad1[0xF]; int f10; int f14; int f18; int f1C; unsigned short h20; short h22; };
-extern struct Ent_4450 D_0050B9C8_4450[] __asm__("D_0050B9C8");
-extern struct Hd_4450 D_0050AD00_4450 __asm__("D_0050AD00");
-extern struct { char pad[0x180]; int f180; } D_0050A8E8_4450 __asm__("D_0050A8E8");
 extern struct Dst_4450 D_00515780_4450 __asm__("D_00515780");
 extern void func_003C43C0(int, int, int, int);
 extern void func_004261B0(int, void *, int, int, int, int);
 extern void f61F0_4450(int, void *, int, int, int, int) __asm__("func_004261F0");
 
 void func_003C4450(int arg0) {
-    struct Ent_4450 *t0 = D_0050B9C8_4450;
-    struct Hd_4450 *h = (struct Hd_4450 *)((char *)t0 - 0xCC8);
-    struct Ent_4450 *e = t0;
+    struct sAD00Xfer *t0 = D_0050B9C8;
+    struct sAD00 *h = (struct sAD00 *)((char *)t0 - 0xCC8);
+    struct sAD00Xfer *e = t0;
     int cnt = 0;
     unsigned best = 0xFFFFFFFF;
     unsigned char pri = 0;
     int i;
-    struct Ent_4450 *p;
+    struct sAD00Xfer *p;
     signed char c;
     i = 0;
     do {
         if (e->key != 0) {
             cnt++;
-            if (pri < e->bE) {
-                h->sel = i;
+            if (pri < e->f0E) {
+                h->fCC1 = i;
                 best = e->key;
-                pri = e->bE;
-            } else if (e->bE == pri && e->key < best) {
-                h->sel = i;
+                pri = e->f0E;
+            } else if (e->f0E == pri && e->key < best) {
+                h->fCC1 = i;
                 best = e->key;
             }
-            c = h->cnt;
+            c = h->fCC0;
             if (cnt >= c) break;
         }
         i++;
         e++;
     } while (i < 0x1C);
-    D_0050AD00_4450.f1CC4 = D_0050A8E8_4450.f180;
-    p = &((struct Ent_4450 *)((char *)&D_0050AD00_4450 + 0xCC8))[(signed char)D_0050AD00_4450.sel];
-    func_003C43C0(p->f4, D_0050AD00_4450.fE8C, p->hC, arg0);
-    D_0050AD00_4450.f1CC2 = 1;
+    p = &D_0050AD00.fCC8[(signed char)D_0050AD00.fCC1];
+    D_0050AD00.fCC4 = D_0050A8E8.f180;
+    func_003C43C0(p->f04, D_0050AD00.fE88[0].f04, p->f0C, arg0);
+    D_0050AD00.fCC2 = 1;
     D_00515780_4450.b0 = 0x30;
     D_00515780_4450.f10 = 1;
     D_00515780_4450.f14 = p->key;
-    D_00515780_4450.f18 = D_0050AD00_4450.fE8C;
-    D_00515780_4450.f1C = p->f8;
-    D_00515780_4450.h20 = p->hC;
-    D_00515780_4450.h22 = p->bE;
+    D_00515780_4450.f18 = D_0050AD00.fE88[0].f04;
+    D_00515780_4450.f1C = p->f08;
+    D_00515780_4450.h20 = p->f0C;
+    D_00515780_4450.h22 = p->f0E;
     if (arg0 != 0) {
         f61F0_4450(0, &D_00515780_4450, 0x30, 0, 0, 0);
         return;
