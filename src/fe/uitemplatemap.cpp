@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_onCreateScreen);
 #ifdef SKIP_ASM
@@ -333,11 +341,6 @@ extern "C" void cUITemplate_MAP_setupPeakUnlock(void* p)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00201868);
 #ifdef SKIP_ASM
-struct sVEntry00201868 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00201868(void* self)
 {
@@ -345,7 +348,7 @@ extern "C" void func_00201868(void* self)
     *(int*)((char*)self + 0x2DC) = 0;
     void* obj = *(void**)((char*)self + 0x2E4);
     if (obj != 0) {
-        sVEntry00201868* vt = *(sVEntry00201868**)((char*)obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 8);
         vt[9].fn((char*)obj + vt[9].delta, 0);
     }
 }
@@ -383,20 +386,15 @@ extern "C" void cUITemplate_MAP_setupLayout(void* self);
 extern "C" void func_00207430(void* self);
 extern int D_004A259C;
 
-struct sVEntry00202770 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 // PORT: the unit declares func_00202770(void*); the body also takes the menu object in $5.
 extern "C" void func_00202770_r(void* self, void* menu) __asm__("func_00202770");
 
 extern "C" void func_00202770_r(void* self, void* menu)
 {
-    sVEntry00202770* e = &(*(sVEntry00202770**)((char*)menu + 8))[17];
+    sVEntry<int(void*)>* e = &(*(sVEntry<int(void*)>**)((char*)menu + 8))[17];
     if (e->fn((char*)menu + e->delta) == 0) {
-        sVEntry00202770* e2 = &(*(sVEntry00202770**)((char*)menu + 8))[18];
+        sVEntry<int(void*)>* e2 = &(*(sVEntry<int(void*)>**)((char*)menu + 8))[18];
         if (e2->fn((char*)menu + e2->delta) == 0) {
             return;
         }
@@ -981,16 +979,11 @@ extern char D_00470E20[];
 extern char D_00470E30[];
 extern char D_00470E40[];
 
-struct sVEntry00204FF0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 static inline int setPic00204FF0(char* name)
 {
     void* obj = *(void**)((char*)D_004A28A8 + 0x8C);
-    sVEntry00204FF0* vt = *(sVEntry00204FF0**)((char*)obj + 4);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)((char*)obj + 4);
     return vt[4].fn((char*)obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -1019,11 +1012,6 @@ INCLUDE_ASM("fe/uitemplatemap", func_00207430);
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_002083D8);
 #ifdef SKIP_ASM
-struct sVEntry_func_002083D8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern char D_004C8B38[];
 extern char D_004C8B28[];
 
@@ -1031,10 +1019,10 @@ extern "C" void func_002083D8(void* self, void* obj, int on)
 {
     if (obj != 0) {
         if (on != 0) {
-            sVEntry_func_002083D8* vt = *(sVEntry_func_002083D8**)((char*)obj + 0x8);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
             vt[11].fn((char*)obj + vt[11].delta, D_004C8B38);
         } else {
-            sVEntry_func_002083D8* vt = *(sVEntry_func_002083D8**)((char*)obj + 0x8);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
             vt[11].fn((char*)obj + vt[11].delta, D_004C8B28);
         }
     }
@@ -1044,11 +1032,6 @@ extern "C" void func_002083D8(void* self, void* obj, int on)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00208438);
 #ifdef SKIP_ASM
-struct sVEntry_func_00208438 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern char D_004C8B58[];
 extern char D_004C8B48[];
 
@@ -1056,10 +1039,10 @@ extern "C" void func_00208438(void* self, void* obj, int on)
 {
     if (obj != 0) {
         if (on != 0) {
-            sVEntry_func_00208438* vt = *(sVEntry_func_00208438**)((char*)obj + 0x8);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
             vt[11].fn((char*)obj + vt[11].delta, D_004C8B58);
         } else {
-            sVEntry_func_00208438* vt = *(sVEntry_func_00208438**)((char*)obj + 0x8);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
             vt[11].fn((char*)obj + vt[11].delta, D_004C8B48);
         }
     }
