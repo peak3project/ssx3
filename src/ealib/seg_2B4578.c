@@ -13213,7 +13213,172 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003CBC58);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CBEC8);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CC070);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct Hdr_C070 {
+    unsigned char f0;
+    unsigned char f1;
+    unsigned char f2;
+    unsigned char f3;
+    int f4;
+    unsigned char cnt[6][4];
+    unsigned char len[6][4];
+};
+struct G_C070 {
+    char pad00[0x5];
+    unsigned char n;
+};
+extern struct Hdr_C070 D_005175C0_C070 __asm__("D_005175C0");
+extern struct G_C070 D_00515B40_C070 __asm__("D_00515B40");
+extern unsigned char D_00515B45;
+extern struct Hdr_C070 *D_00515D40;
+extern void **D_00515D44;
+extern void **D_00515D48;
+extern unsigned char *D_00515D4C;
+extern unsigned char *D_00515D50;
+extern int D_00515D58;
+extern unsigned char *D_005175F8;
+extern unsigned char *D_005175FC;
+extern int D_00517600;
+extern int D_0044E848_C070[] __asm__("D_0044E848");
+extern int D_0044E870_C070[] __asm__("D_0044E870");
+extern int D_00515D80_C070[] __asm__("D_00515D80");
+extern void *f_5C60_C070(int) __asm__("func_003B5C60");
+extern void *f_6210_C070(void *, int, unsigned int) __asm__("func_00416210");
+extern int f_72F8_C070(unsigned char *, int) __asm__("func_003C72F8");
+extern unsigned char f_BC20_C070(int, int, int) __asm__("func_003CBC20");
+extern int f_F7B0_C070(void *) __asm__("func_003CF7B0");
+extern int f_A870_C070(void *) __asm__("func_003CA870");
+extern void f_A8A0_C070(void *, int *) __asm__("func_003CA8A0");
+extern int f_EE88_C070(void *) __asm__("func_003CEE88");
+extern void f_EED0_C070(void *, int *) __asm__("func_003CEED0");
+extern int f_A990_C070(void *) __asm__("func_003CA990");
+extern void f_A9D8_C070(void *, int *) __asm__("func_003CA9D8");
+extern int f_EFB0_C070(void *) __asm__("func_003CEFB0");
+extern void f_EFF8_C070(void *, int *) __asm__("func_003CEFF8");
+extern int f_F498_C070(void *) __asm__("func_003CF498");
+extern void f_F4D0_C070(void *, int *) __asm__("func_003CF4D0");
+extern int f_F128_C070(void *) __asm__("func_003CF128");
+extern void f_F158_C070(void *, int *) __asm__("func_003CF158");
+extern int f_F998_C070(void *) __asm__("func_003CF998");
+extern void f_F9D8_C070(void *, int *) __asm__("func_003CF9D8");
+extern int f_F2C0_C070(void *) __asm__("func_003CF2C0");
+extern int f_F6F8_C070(void *) __asm__("func_003CF6F8");
+extern int f_90C0_C070(void *, void *, int, int) __asm__("func_003C90C0");
+
+void func_003CC070(int a, unsigned char *data) {
+    int s[4];
+    unsigned char *p;
+    unsigned char *q;
+    void *o;
+    int n;
+    int count;
+    int i;
+    int v;
+
+    D_00515D40 = &D_005175C0_C070;
+    D_00515D48 = f_5C60_C070(0x1C);
+    f_6210_C070(D_00515D48, 0, 0x1C);
+    n = D_00515D58 - 1;
+    D_00515D4C = D_005175F8;
+    D_00515D50 = D_005175FC;
+    count = f_72F8_C070(D_00515D40->cnt[n], 4);
+    D_00515D44 = f_5C60_C070(count * 4);
+    p = D_00515D4C;
+    for (i = 0; i < count; i++) {
+        D_00515D44[i] = f_5C60_C070(D_0044E848_C070[*p]);
+        f_6210_C070(D_00515D44[i], 0, D_0044E848_C070[*p]);
+        f_6210_C070(s, 0, 0x10);
+        switch (*p) {
+        case 0:
+            f_F7B0_C070(D_00515D44[i]);
+            break;
+        case 1:
+            o = D_00515D44[i];
+            s[0] = f_72F8_C070(p + 4, 2) << 8;
+            s[1] = a << 8;
+            s[2] = f_72F8_C070(p + 6, 2);
+            f_A870_C070(o);
+            f_A8A0_C070(o, s);
+            break;
+        case 2:
+            o = D_00515D44[i];
+            s[0] = f_72F8_C070(p + 2, 2) << 8;
+            s[1] = a << 8;
+            f_EE88_C070(o);
+            f_EED0_C070(o, s);
+            break;
+        case 3:
+            o = D_00515D44[i];
+            s[0] = f_72F8_C070(p + 2, 2) << 8;
+            s[1] = a << 8;
+            f_A990_C070(o);
+            f_A9D8_C070(o, s);
+            break;
+        case 4:
+            o = D_00515D44[i];
+            s[0] = f_72F8_C070(p + 4, 2) << 8;
+            s[1] = f_72F8_C070(p + 6, 2) << 8;
+            s[2] = a << 8;
+            f_EFB0_C070(o);
+            f_EFF8_C070(o, s);
+            break;
+        case 5:
+            o = D_00515D44[i];
+            s[0] = f_72F8_C070(p + 2, 2) << 8;
+            s[1] = a << 8;
+            s[2] = f_72F8_C070(p + 4, 2) << 8;
+            s[3] = f_72F8_C070(p + 6, 2);
+            f_F498_C070(o);
+            f_F4D0_C070(o, s);
+            break;
+        case 6:
+            o = D_00515D44[i];
+            s[0] = f_72F8_C070(p + 2, 2);
+            f_F128_C070(o);
+            f_F158_C070(o, s);
+            break;
+        case 7:
+            o = D_00515D44[i];
+            s[0] = f_72F8_C070(p + 2, 2);
+            s[1] = a << 8;
+            s[2] = f_72F8_C070(p + 4, 2) << 8;
+            f_F998_C070(o);
+            f_F9D8_C070(o, s);
+            break;
+        case 8:
+            f_F2C0_C070(D_00515D44[i]);
+            break;
+        case 9:
+            f_F6F8_C070(D_00515D44[i]);
+            break;
+        }
+        if (p[1] != 0) {
+            if (*p == 9 && D_00515D40->f2 > 10) {
+                v = p[1];
+                D_00515D48[f_BC20_C070(D_00515D58, D_00515B40_C070.n, v & 0xF)] = D_00515D44[i];
+                D_00515D48[f_BC20_C070(D_00515D58, D_00515B40_C070.n, v >> 4)] = D_00515D44[i];
+            } else {
+                D_00515D48[f_BC20_C070(D_00515D58, D_00515B45, p[1])] = D_00515D44[i];
+            }
+        }
+        p += D_0044E870_C070[*p];
+    }
+    q = D_00515D50;
+    for (i = 0; i < f_72F8_C070(D_00515D40->len[n], 4); i++) {
+        f_90C0_C070(D_00515D44[f_72F8_C070(q, 4)], D_00515D44[f_72F8_C070(q + 4, 4)], q[8], q[9]);
+        q += 12;
+    }
+    D_00515D80_C070[0x600] = 3000;
+    f_6210_C070(D_00515D80_C070, 0, 0x800);
+    p = D_00515D4C;
+    for (D_00517600 = 0; *p != 0; D_00517600++) {
+        p += D_0044E870_C070[*p];
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003CC630);
