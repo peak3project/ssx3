@@ -83,6 +83,9 @@ struct sSoundSysView { char pad[0x1D8]; sSndPlayOpts sub; };
 // An object holding the sound system and two per-level int arrays.
 struct sSndOptsUser { sSoundSysView* o; int* vals; int* vals2; };
 
+// A 0x60-byte record of the array at +0xACC (a = state: 1 and 2 are tested; b is read when a == 1).
+struct sRec60 { int a; int b; char pad[0x58]; };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -697,9 +700,8 @@ extern "C" void func_002B9E90(void *a) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9EB0);
 #ifdef SKIP_ASM
-struct S9EB0 { int a; char pad[0x5C]; };
 extern "C" int func_002B9EB0(void *arg0, int arg1) {
-    S9EB0 *base = *(S9EB0 **)((char *)arg0 + 0xACC);
+    sRec60 *base = *(sRec60 **)((char *)arg0 + 0xACC);
     return base[arg1].a;
 }
 #endif
@@ -707,9 +709,8 @@ extern "C" int func_002B9EB0(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9EC8);
 #ifdef SKIP_ASM
-struct S9EC8 { int a; char pad[0x5C]; };
 extern "C" int func_002B9EC8(void *arg0, int arg1) {
-    S9EC8 *base = *(S9EC8 **)((char *)arg0 + 0xACC);
+    sRec60 *base = *(sRec60 **)((char *)arg0 + 0xACC);
     return base[arg1].a == 1;
 }
 #endif
@@ -717,9 +718,8 @@ extern "C" int func_002B9EC8(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9EE8);
 #ifdef SKIP_ASM
-struct S9EE8 { int a; char pad[0x5C]; };
 extern "C" int func_002B9EE8(void *arg0, int arg1) {
-    S9EE8 *base = *(S9EE8 **)((char *)arg0 + 0xACC);
+    sRec60 *base = *(sRec60 **)((char *)arg0 + 0xACC);
     return base[arg1].a == 2;
 }
 #endif
@@ -747,9 +747,8 @@ extern "C" int func_002B9F08(void *self, int idx) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002B9F88);
 #ifdef SKIP_ASM
-struct S9F88 { int a; int b; char pad[0x58]; };
 extern "C" int func_002B9F88(void *arg0, int arg1) {
-    S9F88 *base = *(S9F88 **)((char *)arg0 + 0xACC);
+    sRec60 *base = *(sRec60 **)((char *)arg0 + 0xACC);
     bool ne = base[arg1].a != 1;
     if (!ne) {
         return base[arg1].b;
