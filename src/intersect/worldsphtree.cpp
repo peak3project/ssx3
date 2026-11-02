@@ -124,6 +124,12 @@ struct sWsAnimFloat {
     float last;     // 0x28
 };
 
+// Query box as two vectors (min, max) for the octree / cell visitors.
+struct sWsBoxV {
+    t4Vector min;
+    t4Vector max;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1319,13 +1325,9 @@ extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00334680);
 #ifdef SKIP_ASM
-struct sBox_00334680 {
-    t4Vector min;
-    t4Vector max;
-};
-extern "C" void func_0035C698(void* a0, sBox_00334680* box, sBox_00334680* box2, t4Vector* pos, int mask, int* cnt, float* dist, int a7);
-extern "C" void func_00348290(void* a0, sBox_00334680* box, sBox_00334680* box2, t4Vector* pos, int mask, int* cnt, float* dist, int a7);
-extern "C" void func_00335128(void* obj, sBox_00334680* box, t4Vector* pos, int* cnt, float* dist, int a5);
+extern "C" void func_0035C698(void* a0, sWsBoxV* box, sWsBoxV* box2, t4Vector* pos, int mask, int* cnt, float* dist, int a7);
+extern "C" void func_00348290(void* a0, sWsBoxV* box, sWsBoxV* box2, t4Vector* pos, int mask, int* cnt, float* dist, int a7);
+extern "C" void func_00335128(void* obj, sWsBoxV* box, t4Vector* pos, int* cnt, float* dist, int a5);
 
 // PORT: PS2-only VU0 inline asm (in-place vector subtract).
 static inline void wsSubEq_334680(t4Vector& a, const t4Vector& b)
@@ -1355,7 +1357,7 @@ static inline void wsAddEq_334680(t4Vector& a, const t4Vector& b)
 
 extern "C" int func_00334680(char* self, t4Vector* pos, int a2, int mask, float r)
 {
-    sBox_00334680 box;
+    sWsBoxV box;
     t4Vector ext;
     int cnt;
     float dist;
@@ -1619,9 +1621,6 @@ struct sCb_5D78 {
 };
 
 
-struct sBox_5D78 {
-    t4Vector a, b;
-} __attribute__((aligned(16)));
 
 struct sSelf_5D78 {
     sCell_330BA8 cell[8];           // 0x00
@@ -1632,7 +1631,7 @@ struct sSelf_5D78 {
 extern "C" void func_00335960(void* ctx, void* obj);
 extern "C" void func_00335B90(void* ctx, void* obj);
 extern "C" void func_00340FA0(void* self, void* ctx);
-extern "C" void helpX_5D78(char* flag, sCb_5D78* cb, sCb_5D78* cb2, sBox_5D78* box, void** node, sCell_330BA8* cell) __asm__("func_0033CCF8");
+extern "C" void helpX_5D78(char* flag, sCb_5D78* cb, sCb_5D78* cb2, sWsBoxV* box, void** node, sCell_330BA8* cell) __asm__("func_0033CCF8");
 
 // nash::Cell::descend<TerrainCallback>
 static inline void descend_5D78(void** n, sCb_5D78* cb)
@@ -1655,7 +1654,7 @@ static inline void descend_5D78(void** n, sCb_5D78* cb)
     if (n[7] != 0) func_00340FA0(n[7], cb);
 }
 
-static inline void visit_5D78(sSelf_5D78* t, int k, sCb_5D78* cb, sBox_5D78* box)
+static inline void visit_5D78(sSelf_5D78* t, int k, sCb_5D78* cb, sWsBoxV* box)
 {
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
@@ -1675,7 +1674,7 @@ extern "C" int query_5D78(sSelf_5D78* self, char* q, int p3, int p4, int p5) __a
 extern "C" int query_5D78(sSelf_5D78* self, char* q, int p3, int p4, int p5)
 {
     sCb_5D78 cb;
-    sBox_5D78 box;
+    sWsBoxV box;
     int result;
     sCb_5D78* pcb = &cb;
     cb.q = q;
@@ -1684,8 +1683,8 @@ extern "C" int query_5D78(sSelf_5D78* self, char* q, int p3, int p4, int p5)
     cb.result = &result;
     cb.f10 = p5;
     cb.f14 = self->fA4;
-    box.a = *(t4Vector*)(q + 0x30);
-    box.b = *(t4Vector*)(q + 0x20);
+    box.min = *(t4Vector*)(q + 0x30);
+    box.max = *(t4Vector*)(q + 0x20);
     result = 0;
     visit_5D78(self, 0, pcb, &box);
     visit_5D78(self, 1, pcb, &box);
@@ -2004,9 +2003,6 @@ struct sCb_6F30 {
 };
 
 
-struct sBox_6F30 {
-    t4Vector a, b;
-} __attribute__((aligned(16)));
 
 struct sSelf_6F30 {
     sCell_330BA8 cell[8];           // 0x00
@@ -2014,7 +2010,7 @@ struct sSelf_6F30 {
 
 extern "C" void func_00336D40(void* ctx, void* obj);
 extern "C" void func_003410C0(void* self, void* ctx);
-extern "C" void helpX_6F30(char* flag, sCb_6F30* cb, sCb_6F30* cb2, sBox_6F30* box, void** node, sCell_330BA8* cell) __asm__("func_0033DFD8");
+extern "C" void helpX_6F30(char* flag, sCb_6F30* cb, sCb_6F30* cb2, sWsBoxV* box, void** node, sCell_330BA8* cell) __asm__("func_0033DFD8");
 
 // nash::Cell::descend<StaticObjectCallback>
 static inline void descend_6F30(void** n, sCb_6F30* cb)
@@ -2034,7 +2030,7 @@ static inline void descend_6F30(void** n, sCb_6F30* cb)
     if (n[7] != 0) func_003410C0(n[7], cb);
 }
 
-static inline void visit_6F30(sSelf_6F30* t, int k, sCb_6F30* cb, sBox_6F30* box)
+static inline void visit_6F30(sSelf_6F30* t, int k, sCb_6F30* cb, sWsBoxV* box)
 {
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
@@ -2054,7 +2050,7 @@ extern "C" int query_6F30(sSelf_6F30* self, char* q, int p3, int p4, int p5) __a
 extern "C" int query_6F30(sSelf_6F30* self, char* q, int p3, int p4, int p5)
 {
     sCb_6F30 cb;
-    sBox_6F30 box;
+    sWsBoxV box;
     int result;
     sCb_6F30* pcb = &cb;
     cb.q = q;
@@ -2062,8 +2058,8 @@ extern "C" int query_6F30(sSelf_6F30* self, char* q, int p3, int p4, int p5)
     cb.f08 = p4;
     cb.result = &result;
     cb.f10 = p5;
-    box.a = *(t4Vector*)(q + 0x30);
-    box.b = *(t4Vector*)(q + 0x20);
+    box.min = *(t4Vector*)(q + 0x30);
+    box.max = *(t4Vector*)(q + 0x20);
     result = 0;
     visit_6F30(self, 0, pcb, &box);
     visit_6F30(self, 1, pcb, &box);
@@ -2147,7 +2143,7 @@ struct sCb_7A48 {
     int mask;
     int* cnt;
     float* dist;
-    sBox_00334680* box;
+    sWsBoxV* box;
 };
 
 struct sNodeEnt_7A48 {
@@ -2158,9 +2154,9 @@ struct sNodeEnt_7A48 {
 };
 
 extern "C" void descendRec_7A48(void* self, sCb_7A48* cb) __asm__("func_003411B8");
-extern "C" void helpX_7A48(char* flag, sCb_7A48* cb, sCb_7A48* cb2, sBox_00334680* box, void** node, sCell_330BA8* cell) __asm__("func_0033ED60");
+extern "C" void helpX_7A48(char* flag, sCb_7A48* cb, sCb_7A48* cb2, sWsBoxV* box, void** node, sCell_330BA8* cell) __asm__("func_0033ED60");
 
-static inline void visit_7A48(sSelf_6F30* t, int k, sCb_7A48* cb, sBox_00334680* box)
+static inline void visit_7A48(sSelf_6F30* t, int k, sCb_7A48* cb, sWsBoxV* box)
 {
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
@@ -2197,12 +2193,12 @@ static inline void visit_7A48(sSelf_6F30* t, int k, sCb_7A48* cb, sBox_00334680*
 
 extern "C" int func_00337A48(sSelf_6F30* self, t4Vector* pos, int a2, int mask, float r)
 {
-    sBox_00334680 box;
+    sWsBoxV box;
     t4Vector ext;
     int cnt;
     float dist;
     sCb_7A48 cb;
-    sBox_00334680* pbox = &box;
+    sWsBoxV* pbox = &box;
     box.min = *pos;
     box.max = *pos;
     ext.x = r;
@@ -3280,7 +3276,7 @@ struct sQ_ED60 {
     int mask;                       // 0x08
     int* cnt;                       // 0x0C
     float* dist;                    // 0x10
-    sBox_00334680* box;             // 0x14
+    sWsBoxV* box;             // 0x14
 };
 
 extern "C" void descRec_ED60(void* self, sQ_ED60* q) __asm__("func_003411B8");
@@ -3998,7 +3994,7 @@ struct sQuery_3411B8 {
     int mask;                   // 0x08
     int* cnt;                   // 0x0C
     float* dist;                // 0x10
-    sBox_00334680* box;         // 0x14
+    sWsBoxV* box;         // 0x14
 };
 
 struct sTree_3411B8 {
