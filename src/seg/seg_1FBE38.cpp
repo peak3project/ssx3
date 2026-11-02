@@ -6618,13 +6618,12 @@ extern "C" void func_002974A0_6E68(void*, void*, int) __asm__("func_002974A0");
 int *func_00226610(void*);
 static inline char *refToPtr_6E68(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_6E68(unsigned i) { if (i == 0) return 0; return refToPtr_6E68(i); }
-struct V3_6E68 { int w0, w1, w2; };
 extern unsigned D_6E68[] __asm__("D_004FC060");
 extern int D_004A58BC;
 extern const int D_00446980[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_6E68 { int idx; int val; int pad; int type; };
-extern "C" V3_6E68* func_00306E68(V3_6E68 *ret, int n, Ent_6E68 *e) {
+extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, Ent_6E68 *e) {
     if (D_004A58BC == 0) {
         D_6E68[0] = 0xFFFFFFFF;
         D_6E68[1] = 0xFFFFFFFF;
@@ -6665,7 +6664,7 @@ extern "C" V3_6E68* func_00306E68(V3_6E68 *ret, int n, Ent_6E68 *e) {
         if (obj)
             func_002974A0_6E68(func_0028B180(), obj, 0x5C);
     }
-    ((int*)ret)[2] = 1;
+    ret->type = 1;
     *func_00226610(ret) = r;
     return ret;
 }
