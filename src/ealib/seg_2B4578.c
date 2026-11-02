@@ -8635,25 +8635,22 @@ void func_003C4A38(int arg0, int arg1, int arg2, int arg3) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4AF8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0050AD00_4AF8[] __asm__("D_0050AD00");
-
 void func_003C4AF8(int *arg0, int *arg1) {
-    char *b = D_0050AD00_4AF8;
     int temp_4;
     int temp_6;
-    int lo = *(unsigned short *)(b + 0x1A9A);
+    int lo = D_0050AD00.f1A9A;
 
     temp_6 = *arg0;
     if (temp_6 < lo) {
         *arg0 = lo;
         *arg1 -= lo - temp_6;
     }
-    if ((int)*(unsigned short *)(b + 0x1A9C) < *arg0 + *arg1) {
-        *arg1 = *(unsigned short *)(b + 0x1A9C) - *arg0;
+    if (D_0050AD00.f1A9C < *arg0 + *arg1) {
+        *arg1 = D_0050AD00.f1A9C - *arg0;
     }
     temp_4 = *arg0;
-    if ((int)*(unsigned short *)(b + 0x1A9E) < temp_4 + *arg1) {
-        *arg1 = *(unsigned short *)(b + 0x1A9E) - temp_4;
+    if (D_0050AD00.f1A9E < temp_4 + *arg1) {
+        *arg1 = D_0050AD00.f1A9E - temp_4;
     }
 }
 #endif
