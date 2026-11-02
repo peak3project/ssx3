@@ -28,6 +28,14 @@ struct sVec4R : t4Vector
     sVec4R(float ax, float ay, float az, const float& aw) { x = ax; y = ay; z = az; w = aw; }
 } __attribute__((aligned(16)));
 
+// Global vectors and a matrix in .bss that the camera code reads (set up elsewhere at startup).
+extern t4Vector D_004FF120;
+extern t4Vector D_004FF130;
+extern t4Vector D_004FF140;
+extern t4Vector D_004FF150;
+extern t4Vector D_004FF160;
+extern t4Matrix D_004FF1A0;
+
 //100%
 INCLUDE_ASM("camera/camera", cCamera_resetChaseControllerSwitches);
 #ifdef SKIP_ASM
@@ -61,9 +69,6 @@ extern void* D_0045B888[];
 extern const char D_0045B748[];
 extern const char D_0045B760[];
 extern const char D_0045B778[];
-// PORT: cQuad128 (the unit's 128-bit TImode typedef) is a 16-byte register copy.
-extern cQuad128 D_004FF160;
-extern cQuad128 D_004FF130;
 
 extern "C" void* cCamera_cCamera(void* self, int idx)
 {
@@ -80,8 +85,8 @@ extern "C" void* cCamera_cCamera(void* self, int idx)
     *(int*)((char*)self + 0x45C) = 0;
     *(int*)((char*)self + 0x450) = 0;
     *(int*)((char*)self + 0x460) = 0;
-    *(cQuad128*)((char*)self + 0x470) = D_004FF160;
-    *(cQuad128*)((char*)self + 0x490) = D_004FF130;
+    *(t4Vector*)((char*)self + 0x470) = D_004FF160;
+    *(t4Vector*)((char*)self + 0x490) = D_004FF130;
     *(int*)((char*)self + 0x4A4) = 1;
     *(int*)((char*)self + 0x4A0) = 0;
     return self;
@@ -1023,8 +1028,6 @@ INCLUDE_ASM("camera/camera", func_0015F938);
 #ifdef SKIP_ASM
 extern void* D_0045BDE0[];
 extern void* D_0045BD78[];
-// PORT: cQuad128 (the unit's 128-bit TImode typedef) is a 16-byte register copy.
-extern cQuad128 D_004FF130;
 extern "C" float func_00167E30(void* self);
 
 extern "C" void* func_0015F938(void* self)
@@ -1037,7 +1040,8 @@ extern "C" void* func_0015F938(void* self)
     *(void***)((char*)self + 0x10) = D_0045BD78;
     *(int*)((char*)self + 0x30) = 0;
     *(int*)((char*)self + 0x34) = 0;
-    cQuad128 v = D_004FF130;
+    // One 128-bit register copy (cQuad128); a t4Vector local here takes one more insn.
+    cQuad128 v = *(cQuad128*)&D_004FF130;
     *(int*)((char*)self + 0xC) = 0x4F;
     *(cQuad128*)((char*)self + 0x20) = v;
     return self;
@@ -1052,9 +1056,6 @@ struct sPair_15F9B8 {
     t4Vector b;
 };
 
-extern t4Matrix D_004FF1A0_15F9B8 __asm__("D_004FF1A0");
-extern t4Vector D_004FF150_15F9B8 __asm__("D_004FF150");
-extern t4Vector D_004FF160_v15F9B8 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 extern "C" sPair_15F9B8 func_0031B748_15F9B8(t4Matrix* m) __asm__("func_0031B748");
 
@@ -1181,10 +1182,10 @@ static inline void RotAxis_15F9B8(t4Matrix* m, const t4Vector& axis, float angle
 extern "C" sPair_15F9B8 func_0015F9B8(char* src)
 {
     t4Matrix m;
-    vu0CopyMtx_15F9B8(&m, &D_004FF1A0_15F9B8);
+    vu0CopyMtx_15F9B8(&m, &D_004FF1A0);
     vu0TransMtx_15F9B8(&m, *(t4Vector*)(src + 0x20));
-    RotAxis_15F9B8(&m, D_004FF150_15F9B8, -*(float*)(src + 0x30));
-    RotAxis_15F9B8(&m, D_004FF160_v15F9B8, *(float*)(src + 0x34));
+    RotAxis_15F9B8(&m, D_004FF150, -*(float*)(src + 0x30));
+    RotAxis_15F9B8(&m, D_004FF160, *(float*)(src + 0x34));
     return func_0031B748_15F9B8(&m);
 }
 #endif
@@ -1470,7 +1471,6 @@ INCLUDE_ASM("camera/camera", func_00160228);
 extern "C" float func_0031BF60(float x);
 extern "C" float func_0031C040(float x);
 
-extern sVec4 D_004FF120_v160228 __asm__("D_004FF120");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline sVec4 Scale_00160228(const sVec4& v, float s)
@@ -1523,7 +1523,7 @@ static inline sVec4 Cross_00160228(const sVec4& a, const sVec4& b)
 
 extern "C" sVec4 func_00160228(char* p, float a, float b)
 {
-    if (*(float*)(p + 0x18) == 0.0f) return D_004FF120_v160228;
+    if (*(float*)(p + 0x18) == 0.0f) return (const sVec4&)D_004FF120;
     sVec4 fwd(func_0031C040(b) * func_0031C040(a), func_0031C040(b) * func_0031BF60(a), -func_0031BF60(b), 0.0f);
     sVec4 right(func_0031BF60(a), -func_0031C040(a), 0.0f, 0.0f);
     sVec4 up = Cross_00160228(fwd, right);
@@ -1826,9 +1826,6 @@ struct sCamInfo_001607E0 {
     char pad30[0x38];
 } __attribute__((aligned(16)));
 
-// asm-label views: camera.cpp declares these globals as cQuad128
-extern t4Vector D_004FF140_v1607E0 __asm__("D_004FF140");
-extern t4Vector D_004FF160_v1607E0 __asm__("D_004FF160");
 extern "C" void func_00162568(void* self, sCamInfo_001607E0* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 
@@ -1954,22 +1951,22 @@ extern "C" void func_001607E0(char* self)
     } else {
         dir = cmGet_001607E0(self, 4);
         if (__builtin_fabsf(dir.x) < 0.0010000000474974513f && __builtin_fabsf(dir.y) < 0.0010000000474974513f) {
-            dir = D_004FF140_v1607E0;
+            dir = D_004FF140;
         }
     }
     dir.z = 0.0f;
-    t4Vector side = cmCross_001607E0(D_004FF160_v1607E0, dir);
+    t4Vector side = cmCross_001607E0(D_004FF160, dir);
     cmNormalize_001607E0(dir);
     cmNormalize_001607E0(side);
     float* ang = (float*)(self + 0x390);
     *ang += 0.061352409422397614f;
     *ang -= ffloor_001607E0(*ang * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
     float r = 216.23182678222656f;
-    *(t4Vector*)(self + 0x20) = cmAdd_001607E0(cmGet_001607E0(self, 1), cmScale_001607E0(D_004FF160_v1607E0, 0.0f));
+    *(t4Vector*)(self + 0x20) = cmAdd_001607E0(cmGet_001607E0(self, 1), cmScale_001607E0(D_004FF160, 0.0f));
     *(t4Vector*)(self + 0x40) = cmAdd_001607E0(
         cmAdd_001607E0(cmAdd_001607E0(*(t4Vector*)(self + 0x20), cmScale_001607E0(dir, func_0031C040(*ang) * r)),
                        cmScale_001607E0(side, func_0031BF60(*ang) * r)),
-        cmScale_001607E0(D_004FF160_v1607E0, -0.5597707033157349f));
+        cmScale_001607E0(D_004FF160, -0.5597707033157349f));
 }
 #endif
 
@@ -2070,14 +2067,14 @@ extern "C" void func_00160BF8(char* self)
     } else {
         dir = cmGet_001607E0(self, 4);
         if (__builtin_fabsf(dir.x) < 0.0010000000474974513f && __builtin_fabsf(dir.y) < 0.0010000000474974513f) {
-            dir = D_004FF140_v1607E0;
+            dir = D_004FF140;
         }
     }
     dir.z = 0.0f;
-    t4Vector side = cmCross_001607E0(D_004FF160_v1607E0, dir);
+    t4Vector side = cmCross_001607E0(D_004FF160, dir);
     cmNormalize_001607E0(dir);
     cmNormalize_001607E0(side);
-    *(t4Vector*)(self + 0x20) = cmAdd_001607E0(cmGet_001607E0(self, 1), cmScale_001607E0(D_004FF160_v1607E0, 0.0f));
+    *(t4Vector*)(self + 0x20) = cmAdd_001607E0(cmGet_001607E0(self, 1), cmScale_001607E0(D_004FF160, 0.0f));
     if (*(int*)(self + 0x394)) {
         *(t4Vector*)(self + 0x20) = cmAdd_001607E0(cmScale_001607E0(*(t4Vector*)(self + 0x3B0), 0.6399999856948853f),
                                                     cmScale_001607E0(*(t4Vector*)(self + 0x20), 0.36000001430511475f));
@@ -2087,7 +2084,7 @@ extern "C" void func_00160BF8(char* self)
     *(t4Vector*)(self + 0x40) = cmAdd_001607E0(
         cmAdd_001607E0(cmAdd_001607E0(*(t4Vector*)(self + 0x20), cmScale_001607E0(dir, func_0031C040(*(float*)(self + 0x390)) * r)),
                        cmScale_001607E0(side, func_0031BF60(*(float*)(self + 0x390)) * r)),
-        cmScale_001607E0(D_004FF160_v1607E0, 53.241573333740234f));
+        cmScale_001607E0(D_004FF160, 53.241573333740234f));
     if (*(int*)(self + 0x394)) {
         t4Vector d = cmSub_00160BF8(*(t4Vector*)(self + 0x20), *(t4Vector*)(self + 0x40));
         t4Vector e = cmAdd_001607E0(cmScale_001607E0(*(t4Vector*)(self + 0x3A0), 0.9700000286102295f),
@@ -2255,7 +2252,6 @@ INCLUDE_ASM("camera/camera", func_001613F0);
 #ifdef SKIP_ASM
 extern "C" float func_0031DEE0(void* spline, float x);
 
-extern sVec4R D_004FF160_v13F0 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline sVec4R Sub_13F0(const sVec4R& a, const sVec4R& b)
@@ -2368,7 +2364,7 @@ extern "C" void func_001613F0(char* self)
             *(sVec4R*)(self + 0x40) = sVec4R(func_0031DEE0(sx, nt), func_0031DEE0(sy, nt), func_0031DEE0(sz, nt), 1.0f);
         }
     }
-    *(sVec4R*)(self + 0x20) = Add_13F0(Add_13F0(Get_13F0(self, 1), ScaleP_13F0(*(float*)(self + 0x3C4), &D_004FF160_v13F0)),
+    *(sVec4R*)(self + 0x20) = Add_13F0(Add_13F0(Get_13F0(self, 1), ScaleP_13F0(*(float*)(self + 0x3C4), (const sVec4R*)&D_004FF160)),
                                           Scale_13F0(*(float*)(self + 0x3C0), Get_13F0(self, 4)));
 }
 #endif
@@ -2467,7 +2463,7 @@ extern "C" void func_00161728_v(char* self)
                   0.6000000238418579f);
     t4Vector* p20 = (t4Vector*)(self + 0x20);
     t4Vector* p40 = (t4Vector*)(self + 0x40);
-    *p20 = cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1728(&D_004FF160_v1607E0, 13.495580673217773f));
+    *p20 = cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1728(&D_004FF160, 13.495580673217773f));
     t4Vector d = cmSub_00160BF8(*p20, *p40);
     float len = cmLength_001607E0(d);
     if (0.0f < len) {
@@ -2522,7 +2518,7 @@ extern "C" void func_00161848_v(char* self, int id)
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
-        *(t4Vector*)(self + 0x40) = cmAddP_1848(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160_v1607E0, 100.05000305175781f)), &D_004FF140_v1607E0);
+        *(t4Vector*)(self + 0x40) = cmAddP_1848(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160, 100.05000305175781f)), &D_004FF140);
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
         sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)(self + 0x10);
@@ -3063,8 +3059,6 @@ void func_00162310(void* self, int val)
 INCLUDE_ASM("camera/camera", func_00162318);
 #ifdef SKIP_ASM
 extern void* D_0045BBC0[];
-extern cQuad128 D_004FF120;
-extern cQuad128 D_004FF130;
 extern "C" void* func_001622B0(void* self);
 extern "C" void func_0031D5E8(void* spline);
 extern "C" float func_00167D88(void);
@@ -3086,13 +3080,13 @@ extern "C" void* func_00162318(void* self)
     *(float*)((char*)self + 0x384) = func_00167D98_v();
     *(float*)((char*)self + 0x388) = func_00167DA8_v();
     func_00167DB8_f(filt, 0.0f);
-    *(cQuad128*)((char*)self + 0x40) = D_004FF130;
+    *(t4Vector*)((char*)self + 0x40) = D_004FF130;
     *(int*)((char*)self + 0x54) = 0;
     *(int*)((char*)self + 0xC) = 0x54;
     *(int*)((char*)self + 0x50) = 0;
     *(int*)((char*)self + 0x58) = 0;
     float z = *(float*)((char*)self + 0x54);
-    *(cQuad128*)((char*)self + 0x90) = D_004FF120;
+    *(t4Vector*)((char*)self + 0x90) = D_004FF120;
     *(float*)((char*)self + 0x1D0) = 200.0f;
     *(float*)((char*)self + 0x1DC) = 1.0f;
     *(float*)((char*)self + 0x1E0) = 10.0f;
@@ -3102,9 +3096,9 @@ extern "C" void* func_00162318(void* self)
     *(float*)((char*)self + 0x1E4) = z;
     *(int*)((char*)self + 0x2D0) = 0;
     *(int*)((char*)self + 0x2D8) = 0;
-    *(cQuad128*)((char*)self + 0xC0) = D_004FF120;
-    *(cQuad128*)((char*)self + 0xD0) = D_004FF120;
-    *(cQuad128*)((char*)self + 0xE0) = D_004FF120;
+    *(t4Vector*)((char*)self + 0xC0) = D_004FF120;
+    *(t4Vector*)((char*)self + 0xD0) = D_004FF120;
+    *(t4Vector*)((char*)self + 0xE0) = D_004FF120;
     *(float*)self = 0.7853981852531433f;
     *(float*)((char*)self + 0x388) = 0.0012785084545612335f;
     *(float*)((char*)self + 0x384) = z;
@@ -3164,7 +3158,6 @@ extern "C" void func_00162560(void) {
 INCLUDE_ASM("camera/camera", func_00162568);
 #ifdef SKIP_ASM
 int func_0011FE98(void*);
-extern t4Vector D_004FF120_v162568 __asm__("D_004FF120");
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
 static inline t4Vector cmSub_162568(const t4Vector& a, const t4Vector& b)
@@ -3271,7 +3264,7 @@ extern "C" void func_00162568_impl(char* self, char* out, float a, float b, floa
     t4Vector w = v;
     w.z = 0.0f;
     t4Vector dz = cmSub_162568(v, w);
-    t4Vector n = cmDot_162568(v, v) > 0.0f ? cmNormalized_162568(v) : D_004FF120_v162568;
+    t4Vector n = cmDot_162568(v, v) > 0.0f ? cmNormalized_162568(v) : D_004FF120;
     int k = cmGetI_162568(self, 20);
     float lo, hi, t0, t1;
     if ((unsigned)(k - 2) < 2 || k == 13) {
@@ -3457,7 +3450,6 @@ extern "C" cQuad128 func_00162B80(void* self, void* a1)
 //100%
 INCLUDE_ASM("camera/camera", func_00162B90);
 #ifdef SKIP_ASM
-extern t4Vector D_004FF160_v162B90 __asm__("D_004FF160");
 extern "C" void func_00168150_v(void* self) __asm__("func_00168150");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
@@ -3534,7 +3526,7 @@ extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCa
     self->f208 = x;
     float r = e * self->f1E4 + (1.0f - e) * (a + t * b + src->f4C * d + c * x);
     self->f1E4 = r;
-    AddTo_162B90(self->v20, Scale_162B90(D_004FF160_v162B90, r));
+    AddTo_162B90(self->v20, Scale_162B90(D_004FF160, r));
     func_00168150_v(self);
 }
 #endif
@@ -3745,7 +3737,6 @@ INCLUDE_ASM("camera/camera", func_00163010);
 //100%
 INCLUDE_ASM("camera/camera", func_00163158);
 #ifdef SKIP_ASM
-extern t4Vector D_004FF160_163158 __asm__("D_004FF160");
 extern "C" void* func_00168150(void* self);
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
@@ -3851,7 +3842,7 @@ extern "C" void func_00163158(void* self_, void* info, float a, float b)
     char* self = (char*)self_;
     float zero = 0.0f;
     t4Vector d = Sub_163158(*(t4Vector*)(self + 0x20), *(t4Vector*)(self + 0x40));
-    t4Vector c = Cross_163158(&D_004FF160_163158, d);
+    t4Vector c = Cross_163158(&D_004FF160, d);
     float len = Length_163158(c);
     if (len > zero) {
         ScaleEq_163158(c, a * Length_163158(d) / len);
@@ -3927,7 +3918,7 @@ extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCa
     self->f204 = x;
     float r = e * self->f1D4 + (1.0f - e) * (a * (dist * 9.999999747378752e-05f) * Sqrt_163270(dist) - b + (x >? (c * Sqrt_163270(src->f4C))));
     self->f1D4 = r;
-    SubTo_163270(self->v40, Scale_162B90(D_004FF160_v162B90, r));
+    SubTo_163270(self->v40, Scale_162B90(D_004FF160, r));
     func_00168150_v(self);
 }
 #endif
@@ -4263,7 +4254,7 @@ extern "C" void func_001641C0_v(char* self, float a, float b, float c, float eas
     *(float*)(self + 0x214) = f;
     t4Vector v = Scale_41C0(Normalize_41C0(d), f * b);
     v.z += f * c;
-    t4Vector cr = Cross_41C0(&D_004FF160_163158, v);
+    t4Vector cr = Cross_41C0(&D_004FF160, v);
     if (0.0f < Dot_41C0(cr, cr)) {
         ScaleEq_41C0(cr, f * a / Length_41C0(cr));
     }
@@ -4553,7 +4544,6 @@ static inline void cmStep_1646A0(t4Vector& pos, t4Vector& vel, t4Vector v)
     cmAddEq_1646A0(pos, v);
 }
 
-extern t4Vector D_004FF120_v1646A0 __asm__("D_004FF120");
 
 extern "C" void func_001646A0_def(char* self, char* src, float a, float b)
 {
@@ -4564,13 +4554,13 @@ extern "C" void func_001646A0_def(char* self, char* src, float a, float b)
         float s = l1 / l2;
         t4Vector sv = *(t4Vector*)(src + 0x20);
         cmScaleEq_1646A0(sv, s);
-        cmSubEq_1646A0(sv, cmScaleP_1646A0(&D_004FF160_v1607E0, a));
+        cmSubEq_1646A0(sv, cmScaleP_1646A0(&D_004FF160, a));
         v = cmSub_1646A0(*(t4Vector*)(self + 0x20), sv);
     } else {
         v = *(t4Vector*)(self + 0x40);
     }
     t4Vector d = cmSub_1646A0(v, *(t4Vector*)(self + 0x40));
-    const t4Vector* pe = *(int*)(src + 0x64) ? &d : &D_004FF120_v1646A0;
+    const t4Vector* pe = *(int*)(src + 0x64) ? &d : &D_004FF120;
     t4Vector e = *pe;
     cmStep_1646A0(*(t4Vector*)(self + 0x40), *(t4Vector*)(self + 0xC0), cmLerp_1646A0(*(t4Vector*)(self + 0xC0), e, b));
     func_00168150(self);
@@ -4602,8 +4592,6 @@ INCLUDE_ASM("camera/camera", func_00165540);
 extern "C" void* func_00168150(void* self);
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 
-extern sVec4 D_004FF140_v165540 __asm__("D_004FF140");
-extern sVec4 D_004FF160_v165540 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline sVec4 Sub_165540(const sVec4& a, const sVec4& b)
@@ -4691,7 +4679,7 @@ static inline sVec4 AxisAngle_165540(const sVec4& axis, float ang)
 extern "C" void func_00165540(char* self, float ang)
 {
     sVec4 off = Sub_165540(*(sVec4*)(self + 0x20), *(sVec4*)(self + 0x40));
-    sVec4 dir = D_004FF140_v165540;
+    sVec4 dir = (const sVec4&)D_004FF140;
     float z = off.z;
     off.z = 0.0f;
     float len = Length_165540(off);
@@ -4699,7 +4687,7 @@ extern "C" void func_00165540(char* self, float ang)
     {
         ScaleEq_165540(dir, len);
         dir.z = z;
-        sVec4 q = AxisAngle_165540(D_004FF160_v165540, ang);
+        sVec4 q = AxisAngle_165540((const sVec4&)D_004FF160, ang);
         sVec4 rd = Rot_165540(q, dir);
         sVec4 t = Sub_165540(*(sVec4*)(self + 0x20), rd);
         *(sVec4*)(self + 0x40) = t;
@@ -4943,7 +4931,6 @@ void* func_00166530(void* self)
 //100%
 INCLUDE_ASM("camera/camera", func_00166550);
 #ifdef SKIP_ASM
-extern t4Vector D_004FF160_166550 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector Scale_166550(const t4Vector& v, float s)
@@ -5040,7 +5027,7 @@ extern "C" void func_00166550(void* self_, float a, float b)
     char* self = (char*)self_;
     t4Vector& v = *(t4Vector*)(self + 0x80);
     v = Scale_166550(Get_166550(self, 4), a);
-    SubTo_166550(v, v, Scale_166550(D_004FF160_166550, b));
+    SubTo_166550(v, v, Scale_166550(D_004FF160, b));
     DivEq_166550(v, Length_166550(v));
 }
 #endif
@@ -5051,8 +5038,6 @@ INCLUDE_ASM("camera/camera", func_00166640);
 extern "C" float func_0031C228(float x);
 extern "C" float func_0031C128(float x);
 
-extern t4Vector D_004FF140_166640 __asm__("D_004FF140");
-extern t4Vector D_004FF150_166640 __asm__("D_004FF150");
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline t4Vector Sub_166640(const t4Vector& a, const t4Vector& b)
@@ -5160,10 +5145,10 @@ extern "C" void func_00166640_def(char* self)
     *(float*)(self + 0x54) = -func_0031C228(z / len);
     if (0.0f < len) {
         float r;
-        if (0.0f < DotP_166640(off, D_004FF150_166640)) {
-            r = Angle_166640(off, D_004FF140_166640);
+        if (0.0f < DotP_166640(off, D_004FF150)) {
+            r = Angle_166640(off, D_004FF140);
         } else {
-            r = 6.2831854820251465f - Angle_166640(off, D_004FF140_166640);
+            r = 6.2831854820251465f - Angle_166640(off, D_004FF140);
         }
         *p = r;
     } else {
@@ -5176,10 +5161,6 @@ extern "C" void func_00166640_def(char* self)
 INCLUDE_ASM("camera/camera", func_001668B8);
 #ifdef SKIP_ASM
 
-extern t4Matrix D_004FF1A0_1668B8 __asm__("D_004FF1A0");
-extern t4Vector D_004FF150_1668B8 __asm__("D_004FF150");
-extern t4Vector D_004FF160_v1668B8 __asm__("D_004FF160");
-extern t4Vector D_004FF130_v1668B8 __asm__("D_004FF130");
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
@@ -5310,7 +5291,7 @@ static inline void Rotate_1668B8(t4Matrix* m, const t4Vector& axis, float angle)
     t4Matrix tm;
     vu0CopyMtx_1668B8(&tm, m);
     t4Vector pos = tm.row[3];
-    tm.row[3] = D_004FF130_v1668B8;
+    tm.row[3] = D_004FF130;
     float s;
     float c;
     SinCos_1668B8(&s, &c, angle);
@@ -5353,9 +5334,9 @@ extern "C" void func_001668B8_impl(char* self, t4Vector* out) __asm__("func_0016
 extern "C" void func_001668B8_impl(char* self, t4Vector* out)
 {
     t4Matrix m;
-    vu0CopyMtx_1668B8(&m, &D_004FF1A0_1668B8);
-    Rotate_1668B8(&m, D_004FF150_1668B8, -*(float*)(self + 0x54));
-    Rotate_1668B8(&m, D_004FF160_v1668B8, -*(float*)(self + 0x50));
+    vu0CopyMtx_1668B8(&m, &D_004FF1A0);
+    Rotate_1668B8(&m, D_004FF150, -*(float*)(self + 0x54));
+    Rotate_1668B8(&m, D_004FF160, -*(float*)(self + 0x50));
     *out = Row_1668B8(m, 0);
 }
 #endif
@@ -5363,10 +5344,8 @@ extern "C" void func_001668B8_impl(char* self, t4Vector* out)
 //100%
 INCLUDE_ASM("camera/camera", func_00166C60);
 #ifdef SKIP_ASM
-extern cQuad128 D_004FF120;
 extern "C" void f_6C60_def(void* self, long id) __asm__("func_00166C60");
 
-extern sVec4 D_004FF160_v6C60 __asm__("D_004FF160");
 
 typedef long (*LongFn_6C60)(void*);
 typedef sVec4 (*VecFn_6C60)(void*);
@@ -5429,15 +5408,15 @@ extern "C" void f_6C60_def(void* p, long id)
         *(int*)(self + 0x1E4) = 0;
         *(int*)(self + 0x2D0) = 0;
         *(int*)(self + 0x2D8) = 0;
-        *(cQuad128*)(self + 0xC0) = D_004FF120;
-        *(cQuad128*)(self + 0xD0) = D_004FF120;
-        *(cQuad128*)(self + 0xE0) = D_004FF120;
+        *(t4Vector*)(self + 0xC0) = D_004FF120;
+        *(t4Vector*)(self + 0xD0) = D_004FF120;
+        *(t4Vector*)(self + 0xE0) = D_004FF120;
         *(sVec4*)(self + 0x80) = pos;
         sVEntry<void>* svt1 = *(sVEntry<void>**)(self + 0x10);
         *(float*)(self + 0x1D4) = ((FloatFn_6C60)svt1[13].fn)(self + svt1[13].delta);
         *(int*)(self + 0x1E8) = 0;
         *(int*)(self + 0x1EC) = 0;
-        Cross_6C60(t, D_004FF160_v6C60, pos);
+        Cross_6C60(t, (const sVec4&)D_004FF160, pos);
         v = t;
         *(float*)(self + 0x224) = 0.92f;
         *(sVec4*)(self + 0xF0) = t;
@@ -5459,7 +5438,7 @@ extern "C" void f_6C60_def(void* p, long id)
         *(int*)(self + 0x2E8) = 0;
         *(int*)(self + 0x2CC) = 0;
         *(int*)(self + 0x23C) = 0;
-        *(cQuad128*)(self + 0x170) = D_004FF120;
+        *(t4Vector*)(self + 0x170) = D_004FF120;
         *(int*)(self + 0x244) = 0;
         *(int*)(self + 0x240) = 0;
         *(sVec4*)(self + 0x190) = dir;
@@ -5993,14 +5972,13 @@ extern "C" float func_00167E30(void* self)
 }
 #endif
 
-extern cQuad128 D_004FF120;
 
 //100%
 INCLUDE_ASM("camera/camera", func_00167E40);
 #ifdef SKIP_ASM
 extern "C" void* func_00167E40(void* self)
 {
-    *(cQuad128*)self = D_004FF120;
+    *(t4Vector*)self = D_004FF120;
     return self;
 }
 #endif
@@ -6600,7 +6578,7 @@ extern "C" void func_00168150_def(char* self)
         t4Vector p = e->fn(o + e->delta);
         int one = 1;
         float k50 = 50.0f;
-        t4Vector np = cmAdd_168150(cmSub2_168150(p, cmScale_168150(x, 200.0f)), cmScaleP_168150(&D_004FF160_v1607E0, k50));
+        t4Vector np = cmAdd_168150(cmSub2_168150(p, cmScale_168150(x, 200.0f)), cmScaleP_168150(&D_004FF160, k50));
         *(t4Vector*)(self + 0x40) = np;
         *(t4Vector*)(self + 0x20) = p;
         *(int*)(self + 0x2F0) = one;
@@ -6697,7 +6675,7 @@ extern "C" void func_00168338_v(char* self)
     func_00162568(self, (sCamInfo_001607E0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
-    *(t4Vector*)(self + 0x20) = cmAdd_001607E0(info.pos, cmScaleP_1848(&D_004FF160_v1607E0, 2.3602666854858398f));
+    *(t4Vector*)(self + 0x20) = cmAdd_001607E0(info.pos, cmScaleP_1848(&D_004FF160, 2.3602666854858398f));
     t4Vector d = cmSub_168150(*(t4Vector*)(self + 0x20), *(t4Vector*)(self + 0x40));
     float len = cmLength_168150(d);
     if (len > 0.0f) {
@@ -6734,7 +6712,7 @@ extern "C" void func_00168508_v(char* self, long id)
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
-        t4Vector nv = cmSub_168150(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160_v1607E0, 100.0f)), cmScale_001607E0(cmGet_001607E0(self, 4), 200.0f));
+        t4Vector nv = cmSub_168150(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160, 100.0f)), cmScale_001607E0(cmGet_001607E0(self, 4), 200.0f));
         *(t4Vector*)(self + 0x40) = nv;
         f_6C60_8508(self, id);
         func_00166550(self, 100.0f, 100.0f);
