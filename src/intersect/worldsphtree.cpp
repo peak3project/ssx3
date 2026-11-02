@@ -374,6 +374,17 @@ static inline int overlapBox(const sWsQueryBox* q, const sWsBox* o)
     return r;
 }
 
+static inline int overlapBoxB(const sWsQueryBox* q, const sWsBox* o)
+{
+    int r = 0;
+    if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
+        q->max[1] > o->min[1] && q->min[1] < o->max[1] &&
+        q->max[2] > o->min[2] && q->min[2] < o->max[2]) {
+        r = 1;
+    }
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1389,16 +1400,6 @@ struct sCtx_335B90 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapBox_335B90(const sWsQueryBox* q, const sWsBox* o)
-{
-    int r = 0;
-    if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
-        q->max[1] > o->min[1] && q->min[1] < o->max[1] &&
-        q->max[2] > o->min[2] && q->min[2] < o->max[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline void collect_335B90(sCtx_335B90* ctx, sWsListNode* node)
 {
@@ -1422,7 +1423,7 @@ extern "C" void func_00335B90(void* vctx, void* vnode)
         if (((Test_335B90)vt[44].fn)((char*)node->obj + vt[44].delta)) {
             sWsVtSlot* vt2 = node->obj->vt;
             sWsBox* b = ((GetBox_335B90)vt2[45].fn)((char*)node->obj + vt2[45].delta);
-            if (overlapBox_335B90(ctx->q, b)) {
+            if (overlapBoxB(ctx->q, b)) {
                 collect_335B90(ctx, node);
             }
         }
@@ -1708,16 +1709,6 @@ struct sCtx_336D40 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapBox_336D40(const sWsQueryBox* q, const sWsBox* o)
-{
-    int r = 0;
-    if (q->max[0] > o->min[0] && q->min[0] < o->max[0] &&
-        q->max[1] > o->min[1] && q->min[1] < o->max[1] &&
-        q->max[2] > o->min[2] && q->min[2] < o->max[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline void collect_336D40(sCtx_336D40* ctx, sWsListNode* node, int mode)
 {
@@ -1740,7 +1731,7 @@ extern "C" void func_00336D40(void* vctx, void* vnode)
         if (((Test_336D40)vt[44].fn)((char*)node->obj + vt[44].delta)) {
             sWsVtSlot* vt2 = node->obj->vt;
             sWsBox* b = ((GetBox_336D40)vt2[45].fn)((char*)node->obj + vt2[45].delta);
-            if (overlapBox_336D40(ctx->q, b)) {
+            if (overlapBoxB(ctx->q, b)) {
                 collect_336D40(ctx, node, mode);
             }
         }
