@@ -8,6 +8,29 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+struct sColor_185268 {
+    float a, r, g, b;
+    sColor_185268(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
+};
+
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
+    virtual void v10();
+    virtual void v11(const sColor_185268& c);
+};
+
 //100%
 INCLUDE_ASM("fe/festatestore", cFEStateUberTrick_costVisible);
 #ifdef SKIP_ASM
@@ -164,7 +187,6 @@ struct sVec4_1849B0 {
     float x, y, z, w;
 };
 
-
 extern "C" void func_001849B0(void* self)
 {
     void* engine = *(void**)((char*)self + 0x10);
@@ -251,7 +273,6 @@ extern "C" int func_00184BB8(void* self, int on)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00184BE0);
 #ifdef SKIP_ASM
-
 struct sObj00184BE0 {
     int pad[2];
     sVEntry<void(void*, int)>* vt;
@@ -393,7 +414,6 @@ extern "C" void func_00184520(void* self);
 extern "C" void cWScriptMan_checkGate(void* self);
 extern char D_0045D930[];
 extern char D_0045DA70[];
-
 
 extern "C" void func_00184F40(void* self, void* item, int msg)
 {
@@ -545,26 +565,6 @@ struct sSnd_185268 {
 };
 extern sSnd_185268 D_004A5A58;
 
-struct sColor_185268 {
-    float a, r, g, b;
-    sColor_185268(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
-};
-class cUIObj_185268 {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void SetColor(const sColor_185268& c);
-};
-
 struct sTrick_185268 {
     unsigned short anim;
     unsigned short f2;
@@ -658,9 +658,9 @@ extern "C" void func_00185268(char* self, char* item, int msg)
             SetActive_185268(*(char**)(self + 0x4C), 1);
             SetActive_185268(*(char**)(self + 0x50), 0);
             {
-                cUIObj_185268* o = *(cUIObj_185268**)(*(char**)(self + 0x50) + 0xA0);
+                cUIThing* o = *(cUIThing**)(*(char**)(self + 0x50) + 0xA0);
                 if (o != 0)
-                    o->SetColor(sColor_185268(1.0f, 0.0f, 0.0f, 0.0f));
+                    o->v11(sColor_185268(1.0f, 0.0f, 0.0f, 0.0f));
             }
             cUIMenu_setSelectedByIndex(*(void**)(self + 0x50), 0xFF);
             func_00183B08(self);
