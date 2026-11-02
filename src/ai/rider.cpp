@@ -1598,19 +1598,12 @@ extern "C" void func_0011FF18(cRider* self, void* a1)
 //100%
 INCLUDE_ASM("ai/rider", func_0011FF48);
 #ifdef SKIP_ASM
-// 0x20-byte elements with the quadword at offset 0
-struct sRiderXform {
-    cQuad128 q;
-    char pad_0x10[0x10];
-};
-
 // Copies the quadword of the anim model's transform unk_89C into dst.
 extern "C" void* func_0011FF48(void* dst, cRider* self)
 {
     cAnimModel* q = self->mAnimModel;
     int i = self->unk_89C;
-    sRiderXform* b = (sRiderXform*)q->bones;
-    *(cQuad128*)dst = b[i].q;
+    *(t4Vector*)dst = q->bones[i].pos;
     return dst;
 }
 #endif
@@ -1618,17 +1611,11 @@ extern "C" void* func_0011FF48(void* dst, cRider* self)
 //100%
 INCLUDE_ASM("ai/rider", func_0011FF70);
 #ifdef SKIP_ASM
-struct sRiderXform_FF70 {
-    cQuad128 q;
-    char pad_0x10[0x10];
-};
-
 extern "C" void* func_0011FF70(void* dst, cRider* self)
 {
     cAnimModel* q = self->mAnimModel;
     int i = self->unk_8A8;
-    sRiderXform_FF70* b = (sRiderXform_FF70*)q->bones;
-    *(cQuad128*)dst = b[i].q;
+    *(t4Vector*)dst = q->bones[i].pos;
     return dst;
 }
 #endif
