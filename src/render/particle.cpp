@@ -287,6 +287,15 @@ static inline void vu0CopyMtx(sPtMatrix* dst, sPtMatrix* src)
         : "memory");
 }
 
+int BXrand();
+// Uniform random float in [0, 1).
+static inline float randUnit()
+{
+    union { int i; float f; } u;
+    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
+    return u.f - 1.0f;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -409,12 +418,6 @@ public:
     void setD(int v) { gs.d = v; }
 };
 
-static inline float randf_00370DC8()
-{
-    union { int i; float f; } u;
-    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
-    return u.f - 1.0f;
-}
 
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float fceil_00370DC8(float x)
@@ -452,7 +455,7 @@ extern "C" void func_00370DC8(cEmitter_00370DC8* self, char* def, float f)
     self->f14 = *(float*)(def + 0xD4);
     if (n >= 2) {
         float fn = (float)n;
-        self->f10 = fn * randf_00370DC8();
+        self->f10 = fn * randUnit();
     } else {
         self->f10 = 0.0f;
     }
@@ -495,12 +498,6 @@ extern "C" void func_00370DC8(cEmitter_00370DC8* self, char* def, float f)
 INCLUDE_ASM("render/particle", func_003710D0);
 #ifdef SKIP_ASM
 
-static inline float randUnit10D0()
-{
-    union { int i; float f; } u;
-    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
-    return u.f - 1.0f;
-}
 
 // PORT: the unit's callers use a 4-arg declaration; bind the real 5-arg body by asm label.
 extern "C" void func_003710D0_impl(char* self, t4Vector* pos, t4Vector* vel, int rnd, float dt) __asm__("func_003710D0");
@@ -533,7 +530,7 @@ extern "C" void func_003710D0_impl(char* self, t4Vector* pos, t4Vector* vel, int
     // PORT: pointer held in int (index-first addu)
     t4Vector* v = (t4Vector*)((*(int*)(self + 0x17C) << 4) + *(int*)(self + 0x1A4));
     if (rnd) {
-        v->w = randUnit10D0() + 1.0f;
+        v->w = randUnit() + 1.0f;
     } else {
         v->w = 0.0f;
     }
