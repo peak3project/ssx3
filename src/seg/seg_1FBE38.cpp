@@ -4699,7 +4699,7 @@ void* func_00226618(void*);
 extern int D_004A57B8_3598 __asm__("D_004A57B8");
 struct T12_3598 { float a; float b; sBindEnd_1FBE38 f; };
 extern T12_3598 D_004FBC60_3598 __asm__("D_004FBC60");
-extern "C" void* func_00303598(void* self, int n, Ent_3598* e) {
+extern "C" cLunoValue* func_00303598(cLunoValue* ret, int n, Ent_3598* e) {
     if (D_004A57B8_3598 == 0) {
         D_004FBC60_3598.a = 0;
         D_004FBC60_3598.b = 1.0f;
@@ -4720,9 +4720,9 @@ extern "C" void* func_00303598(void* self, int n, Ent_3598* e) {
             *d = p->val;
     }
     float r = AIrandf(vp[0], vp[1]);
-    *(int*)((char*)self + 8) = 2;
-    *(float*)func_00226618(self) = r;
-    return self;
+    ret->type = 2;
+    *(float*)func_00226618(ret) = r;
+    return ret;
 }
 #endif
 
