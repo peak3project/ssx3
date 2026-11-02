@@ -2625,20 +2625,19 @@ extern void munlock_FAF0(char *) __asm__("MUTEX_unlock");
 extern void fD148_FAF0(int) __asm__("func_003DD148");
 extern char *fEF70_FAF0(int) __asm__("func_003DEF70");
 extern void releaserequest(char *);
-extern char D_9C08_FAF0[] __asm__("D_00519C08");
 
 int func_003DFAF0(int a0) {
     int v18, v19, v20, r;
     char *t;
     v19 = 0;
     v20 = 0;
-    mlock_FAF0(D_9C08_FAF0);
+    mlock_FAF0(D_00519C08);
     v18 = 0;
     t = fEF70_FAF0(a0);
     if (t != 0 && ((v19 = *(int *)(t + 0x1C), v20 = *(int *)(t + 0x10), v18 = *(int *)(t + 0xC), v19 != 0) || v18 == 0)) {
         *(int *)(t + 0x10) = 1;
     }
-    munlock_FAF0(D_9C08_FAF0);
+    munlock_FAF0(D_00519C08);
     if (t != 0 && v20 == 0) {
         if (*(int *)(t + 0x10) != 0) {
             if (v19 != 0) {
