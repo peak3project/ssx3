@@ -34,6 +34,20 @@ struct sReq {                       /* 0x30, a file request (D_00450C34[], D_005
 };
 extern struct sReq *D_00450C34;
 extern int D_00451008;                          /* debug output set up (func_003E5B60) */
+struct sDbgChan {                   /* 8 bytes, D_00450E08[64]: a debug message channel */
+    int f00;
+    unsigned int on : 1;
+    unsigned int f04b1 : 1;
+    unsigned int pad : 30;
+};
+struct sDbgOut {                    /* 12 bytes, D_00451250[8]: a debug output */
+    int f00;
+    void (*f04)(int, char *);
+    unsigned int on : 1;
+    unsigned int pad : 31;
+};
+extern struct sDbgChan D_00450E08[];
+extern struct sDbgOut D_00451250[];
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
@@ -6280,13 +6294,9 @@ int func_003E5A10(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5A78);
 #ifdef SKIP_ASM
-extern char D_00451250[];
 
 void func_003E5A78(int arg0, int arg1) {
-    char *temp_4;
-
-    temp_4 = D_00451250 + arg0 * 0xC;
-    (*(int *)((char*)(temp_4) + (8))) = (int) (((*(int *)((char*)(temp_4) + (8))) & ~1) | (arg1 & 1));
+    D_00451250[arg0].on = arg1;
 }
 #endif
 
