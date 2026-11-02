@@ -8,6 +8,22 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+};
+
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", cPDATemplate_onCreateScreen);
 #ifdef SKIP_ASM
@@ -22,7 +38,6 @@ extern void* D_004A28A8;
 extern char D_00471A10[];
 extern char D_004A2718[];
 extern char D_00471A20[];
-
 
 static inline int Loc_PDA(int hash)
 {
@@ -1100,20 +1115,6 @@ extern char* D_00441D10[];
 extern char D_0046E510[];
 extern char D_0046E4C0[];
 
-class cUIObj_20D1D8 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
 extern "C" void func_0020D1D8(void* self)
 {
     func_0020A380(self);
@@ -1122,7 +1123,7 @@ extern "C" void func_0020D1D8(void* self)
     for (int i = 0; i < 5; i++) {
         char buf[32];
         sprintf(buf, D_0046E4C0, i);
-        cUIObj_20D1D8* o = (cUIObj_20D1D8*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
+        cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
         if (o != 0) {
             if (i < 1) {
                 int v = D_004A2860[i];
@@ -1130,7 +1131,7 @@ extern "C" void func_0020D1D8(void* self)
                 *(int*)((char*)o + 0x18) = v;
             } else {
                 o->setVisible(0);
-                o->setEnabled(1);
+                o->setStatic(1);
             }
         }
     }
@@ -1175,7 +1176,6 @@ extern char D_0046F608[];
 extern char D_0046EF08[];
 extern char D_00471B30[];
 extern char D_0046F648[];
-
 
 struct sObj_DlgCreate {
     int pad[2];
@@ -1319,7 +1319,6 @@ extern char D_00471BC0[];
 extern char D_00471BD0[];
 extern char D_00471BE0[];
 extern char D_00471BF0[];
-
 
 extern "C" void func_0020DC68(char* self)
 {
