@@ -6027,7 +6027,6 @@ extern "C" cLunoValue func_00305D90(int n, Ent_5D90 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00305F40);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char **D_004A47B8_5F40 __asm__("D_004A47B8");
 struct Rec_5F40 {
     int a; int b; float c; float d; float e;
     float m[28];
@@ -6088,12 +6087,12 @@ extern "C" cLunoValue func_00305F40(int n, Ent_5F40 *e) {
     }
     unsigned id = buf->id;
     if (~id != 0) {
-        char *s = (*(char***)((char*)*D_004A47B8_5F40 + 8))[id & 0xFF];
+        sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         char *obj;
         if (!s)
             obj = 0;
         else
-            obj = conv_5F40(((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8);
+            obj = conv_5F40(s->refs[id >> 8] >> 8);
         func_002D9538_5F40(obj, buf);
     }
     return D_004C9098;
