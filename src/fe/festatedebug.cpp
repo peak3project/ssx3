@@ -16,16 +16,18 @@ public:
     virtual void setVisible(int on);
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIText;
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_00180A90(void* self, int id, char* buf);
+
 //100%
 INCLUDE_ASM("fe/festatedebug", cScreenKeyboard_initScreenKeyboard);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
 void cUIText_setAsciiString(cUIText* self, const char* s);
 extern "C" void func_001805D8(void* self, char* s);
 extern "C" void func_001809B0(void* self, int id, char* buf);
-extern "C" void func_00180A90(void* self, int id, char* buf);
 extern char D_0045D570[];
 extern char D_0045D588[];
 extern char D_0045D5A0[];
@@ -111,9 +113,6 @@ extern "C" void cScreenKeyboard_initScreenKeyboard(char* self, void* screen)
 //100%
 INCLUDE_ASM("fe/festatedebug", func_00180EF0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_00180A90(void* self, int id, char* buf);
 extern "C" void func_00180618(void* self);
 extern "C" void func_00180678(void* self);
 extern "C" void func_001806D8(void* self);
