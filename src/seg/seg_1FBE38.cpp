@@ -3024,7 +3024,6 @@ extern unsigned D_004A5688_0770 __asm__("D_004A5688");
 extern sBindEnd_1FBE38 D_004A568C_0770 __asm__("D_004A568C");
 extern int D_004A5690_0770 __asm__("D_004A5690");
 extern int D_004A3C40_0770[2] __asm__("D_004A3C40");
-extern int *D_004A3DD8_0770 __asm__("D_004A3DD8");
 extern char *D_004A28A8_0770 __asm__("D_004A28A8");
 struct O_0770 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct Sh_0770 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(void*); };
@@ -3057,7 +3056,7 @@ extern "C" cLunoValue func_00300770(int n, Ent_0770 *e) {
     unsigned id = buf[0];
     char *obj;
     if (~id == 0) {
-        obj = *(char**)((char*)D_004A3DD8_0770 + 0x290);
+        obj = D_004A3DD8->f290;
     } else {
         sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
@@ -3071,7 +3070,7 @@ extern "C" cLunoValue func_00300770(int n, Ent_0770 *e) {
         }
         obj = r;
     }
-    int k = *D_004A3DD8_0770;
+    int k = D_004A3DD8->being;
     if (k >= 0 && obj) {
         O_0770 *p = *(O_0770**)(obj + 0xC);
         void *v = obj + 0x10;
