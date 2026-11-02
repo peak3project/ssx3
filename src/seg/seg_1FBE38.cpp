@@ -3123,7 +3123,6 @@ extern sBindEnd_1FBE38 D_004A569C_0948 __asm__("D_004A569C");
 extern int D_004A56A0_0948 __asm__("D_004A56A0");
 extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
 extern int *D_004A3DD8_0948 __asm__("D_004A3DD8");
-extern char **D_004A47B8_0948 __asm__("D_004A47B8");
 extern char *D_004A28A8_0948 __asm__("D_004A28A8");
 struct O_0948 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct Sh_0948 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(void*); };
@@ -3158,13 +3157,13 @@ extern "C" cLunoValue func_00300948(int n, Ent_0948 *e) {
     if (~id == 0) {
         obj = *(char**)((char*)D_004A3DD8_0948 + 0x290);
     } else {
-        char *s = (*(char***)((char*)*D_004A47B8_0948 + 8))[id & 0xFF];
+        sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
         char *r;
         if (!s)
             r = 0;
         else {
-            i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8;
+            i = s->refs[id >> 8] >> 8;
             char *t = conv_0948(i);
             r = t;
         }
