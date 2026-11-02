@@ -1557,7 +1557,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FD9F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_004A3DD8_D9F8 __asm__("D_004A3DD8");
-extern char **D_004A47B8_D9F8 __asm__("D_004A47B8");
 extern char *D_004A28A8_D9F8 __asm__("D_004A28A8");
 struct V4_D9F8 { float x, y, z, w; V4_D9F8(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
 extern "C" void func_00355978_D9F8(void*, int, int, V4_D9F8*) __asm__("func_00355978");
@@ -1599,13 +1598,13 @@ extern "C" cLunoValue func_002FD9F8(int n, Ent_D9F8 *e) {
     if (~id == 0) {
         obj = *(char**)(D_004A3DD8_D9F8 + 0x290);
     } else {
-        char *s = (*(char***)((char*)*D_004A47B8_D9F8 + 8))[id & 0xFF];
+        sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
         char *r;
         if (!s)
             r = 0;
         else {
-            i = ((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8;
+            i = s->refs[id >> 8] >> 8;
             char *t = conv_D9F8(i);
             r = t;
         }
@@ -1613,10 +1612,10 @@ extern "C" cLunoValue func_002FD9F8(int n, Ent_D9F8 *e) {
     }
     unsigned id2 = buf[1];
     if (~id2 != 0) {
-        char *s2 = (*(char***)((char*)*D_004A47B8_D9F8 + 8))[id2 & 0xFF];
+        sRefSet *s2 = (*D_004A47B8)->sets[id2 & 0xFF];
         unsigned i2;
         char *o2;
-        if (!s2 || (i2 = ((unsigned*)*(char**)(s2 + 0x1C))[id2 >> 8] >> 8) == 0)
+        if (!s2 || (i2 = s2->refs[id2 >> 8] >> 8) == 0)
             o2 = 0;
         else
             o2 = (char*)(i2 << 2);
