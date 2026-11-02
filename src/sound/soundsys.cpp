@@ -100,6 +100,11 @@ struct sSndVtSlot {
     void* fn;
 };
 
+// 4-entry vtable image (the hand-expanded virtual-base ctors / dtors copy one to the stack and patch a delta).
+struct sSndVtbl4 {
+    sSndVtSlot e[4];
+} __attribute__((aligned(8)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -110,9 +115,6 @@ extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, 
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
-struct sSndBsVt4 {
-    sSndVtSlot e[4];
-} __attribute__((aligned(8)));
 struct sSndBsVt7 {
     sSndVtSlot e[7];
 } __attribute__((aligned(8)));
@@ -121,7 +123,7 @@ extern char D_00483A48[];
 extern char D_00483B48[];
 extern const char D_004A3668[];
 extern const char D_004A3670[];
-extern const sSndBsVt4 D_00483A60_bs __asm__("D_00483A60");
+extern const sSndVtbl4 D_00483A60_bs __asm__("D_00483A60");
 extern const sSndBsVt7 D_00483A80_bs __asm__("D_00483A80");
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
@@ -138,7 +140,7 @@ extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
     *(const void**)(*(char**)self + 0x1D4) = &D_00483A80_bs;
     if (!embedded) {
-        sSndBsVt4 t1 = D_00483A60_bs;
+        sSndVtbl4 t1 = D_00483A60_bs;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x10;
         int adj1 = self - c1;
@@ -165,15 +167,12 @@ void operator_delete(int*);
 extern "C" void func_0028BB10(void* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 
-struct sSndDtVt4 {
-    sSndVtSlot e[4];
-} __attribute__((aligned(8)));
 struct sSndDtVt7 {
     sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_00483A48[];
-extern const sSndDtVt4 D_00483A60;
+extern const sSndVtbl4 D_00483A60;
 extern const sSndDtVt7 D_00483A80;
 extern char D_00483B48[];
 
@@ -185,7 +184,7 @@ extern "C" void func_0028FEA0(char* self, int flags)
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
     *(void**)(*(char**)self + 0x1D4) = (void*)&D_00483A80;
     if (flags == 0) {
-        sSndDtVt4 t1 = D_00483A60;
+        sSndVtbl4 t1 = D_00483A60;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x10;
         int adj1 = self - c1;
@@ -9325,9 +9324,6 @@ extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, 
 extern "C" char* func_002A8140(char* self, int embedded, int count, int heap);
 extern "C" void* func_002A4BA8(void* self);
 
-struct sSnd69Vt4 {
-    sSndVtSlot e[4];
-} __attribute__((aligned(8)));
 struct sSnd69Vt7 {
     sSndVtSlot e[7];
 } __attribute__((aligned(8)));
@@ -9348,7 +9344,7 @@ struct sSnd69Ent {
 
 extern char D_004837F8[];
 extern char D_00483B48[];
-extern const sSnd69Vt4 D_00483818_69 __asm__("D_00483818");
+extern const sSndVtbl4 D_00483818_69 __asm__("D_00483818");
 extern const sSnd69Vt7 D_00483838_69 __asm__("D_00483838");
 
 
@@ -9367,7 +9363,7 @@ extern "C" char* func_002A69A0(char* self, int embedded, int count, int unused, 
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
     *(const void**)(*(char**)self + 0x1D4) = &D_00483838_69;
     if (!embedded) {
-        sSnd69Vt4 t1 = D_00483818_69;
+        sSndVtbl4 t1 = D_00483818_69;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x118;
         int adj1 = self - c1;
@@ -9398,16 +9394,13 @@ struct sSsMgr6F38;
 extern "C" void func_002A6F38(sSsMgr6F38* self);
 extern "C" void func_002A82D8(char* self, int flags);
 
-struct sSnd6BVt4 {
-    sSndVtSlot e[4];
-} __attribute__((aligned(8)));
 struct sSnd6BVt7 {
     sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_004837F8[];
 extern char D_00483B48[];
-extern const sSnd6BVt4 D_00483818_6B __asm__("D_00483818");
+extern const sSndVtbl4 D_00483818_6B __asm__("D_00483818");
 extern const sSnd6BVt7 D_00483838_6B __asm__("D_00483838");
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
@@ -9418,7 +9411,7 @@ extern "C" void func_002A6B50(char* self, int flags)
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
     *(const void**)(*(char**)self + 0x1D4) = &D_00483838_6B;
     if (flags == 0) {
-        sSnd6BVt4 t1 = D_00483818_6B;
+        sSndVtbl4 t1 = D_00483818_6B;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x118;
         int adj1 = self - c1;
@@ -10259,9 +10252,6 @@ extern "C" int func_003B97D8();
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
-struct sSndCtVt4 {
-    sSndVtSlot e[4];
-} __attribute__((aligned(8)));
 struct sSndCtVt7 {
     sSndVtSlot e[7];
 } __attribute__((aligned(8)));
@@ -10269,7 +10259,7 @@ struct sSndCtVt7 {
 extern char D_00483A48[];
 extern char D_00483B48[];
 extern const char D_00483148[];
-extern const sSndCtVt4 D_004839F0_ct __asm__("D_004839F0");
+extern const sSndVtbl4 D_004839F0_ct __asm__("D_004839F0");
 extern const sSndCtVt7 D_00483A10_ct __asm__("D_00483A10");
 extern int D_004A3744;
 
@@ -10288,7 +10278,7 @@ extern "C" char* func_002A8140(char* self, int embedded, int count, int heap)
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
     *(const void**)(*(char**)self + 0x1D4) = &D_00483A10_ct;
     if (!embedded) {
-        sSndCtVt4 t1 = D_004839F0_ct;
+        sSndVtbl4 t1 = D_004839F0_ct;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x14;
         int adj1 = self - c1;
@@ -10317,15 +10307,12 @@ extern "C" void func_002ADEE8(void* self, int flags);
 extern "C" void func_0028FEA0(char* self, int flags);
 extern "C" int func_003B9880();
 
-struct sSndDtBVt4 {
-    sSndVtSlot e[4];
-} __attribute__((aligned(8)));
 struct sSndDtBVt7 {
     sSndVtSlot e[7];
 } __attribute__((aligned(8)));
 
 extern char D_00483A48[];
-extern const sSndDtBVt4 D_004839F0;
+extern const sSndVtbl4 D_004839F0;
 extern const sSndDtBVt7 D_00483A10;
 extern char D_00483B48[];
 extern int D_004A3744;
@@ -10338,7 +10325,7 @@ extern "C" void func_002A82D8(char* self, int flags)
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
     *(void**)(*(char**)self + 0x1D4) = (void*)&D_00483A10;
     if (flags == 0) {
-        sSndDtBVt4 t1 = D_004839F0;
+        sSndVtbl4 t1 = D_004839F0;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x14;
         int adj1 = self - c1;
