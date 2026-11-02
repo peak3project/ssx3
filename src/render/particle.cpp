@@ -81,6 +81,12 @@ struct sPtVtVI {
     void (*fn)(void*, int);
 };
 
+// Four floats with an empty ctor (arrays of it are built with vec_new loops; not the POD t4Vector).
+struct sPtVec4c {
+    float v[4];
+    sPtVec4c() {}
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -92,23 +98,15 @@ void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm
 extern char D_00492650[];
 extern char D_00492670[];
 
-struct sEmitParticle_0C60 {
-    float v[4];
-    sEmitParticle_0C60() {}
-};
 
-struct sEmitState_0C60 {
-    float v[4];
-    sEmitState_0C60() {}
-};
 
 extern "C" void cBaseClass_DynamicEmitter_Allocate(void* self)
 {
     char* s = (char*)self;
-    sEmitParticle_0C60** pp = (sEmitParticle_0C60**)(s + 0x1A0);
-    *pp = new (D_00492650, 0, 0) sEmitParticle_0C60[*(int*)(s + 0x178)];
-    sEmitState_0C60** ps = (sEmitState_0C60**)(s + 0x1A4);
-    *ps = new (D_00492670, 0, 0) sEmitState_0C60[*(int*)(s + 0x178)];
+    sPtVec4c** pp = (sPtVec4c**)(s + 0x1A0);
+    *pp = new (D_00492650, 0, 0) sPtVec4c[*(int*)(s + 0x178)];
+    sPtVec4c** ps = (sPtVec4c**)(s + 0x1A4);
+    *ps = new (D_00492670, 0, 0) sPtVec4c[*(int*)(s + 0x178)];
 }
 #endif
 
@@ -1259,19 +1257,15 @@ INCLUDE_ASM("render/particle", func_00372B30);
 #ifdef SKIP_ASM
 inline void* operator new[](unsigned int, void* p) { return p; }
 
-struct sPtElem2B30 {
-    float v[4];
-    sPtElem2B30() {}
-};
 
 extern "C" void* func_00372B30(void* self)
 {
-    new ((char*)self + 0x20) sPtElem2B30[4];
-    new ((char*)self + 0x60) sPtElem2B30[6];
-    new ((char*)self + 0xC0) sPtElem2B30[8];
-    new ((char*)self + 0x140) sPtElem2B30[4];
-    new ((char*)self + 0x180) sPtElem2B30[6];
-    new ((char*)self + 0x1E0) sPtElem2B30[8];
+    new ((char*)self + 0x20) sPtVec4c[4];
+    new ((char*)self + 0x60) sPtVec4c[6];
+    new ((char*)self + 0xC0) sPtVec4c[8];
+    new ((char*)self + 0x140) sPtVec4c[4];
+    new ((char*)self + 0x180) sPtVec4c[6];
+    new ((char*)self + 0x1E0) sPtVec4c[8];
     *(int*)((char*)self + 0xC) = 0;
     *(int*)((char*)self + 0x10) = 0;
     *(int*)((char*)self + 0x14) = 0;
