@@ -1,6 +1,14 @@
 #include "common.h"
 #include "ai/rider.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type).
+// Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 // 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai); stores x, y, z, w.
 struct sVec4 : t4Vector
 {
@@ -2552,10 +2560,6 @@ struct sHit_57B8 {
     int surf;           // 0x5C
 };
 
-struct sVE_57B8 { short delta; short index; int (*fn)(void*); };
-struct sVEf_57B8 { short delta; short index; void (*fn)(void*, float); };
-struct sVEv_57B8 { short delta; short index; t4Vector* (*fn)(void*); };
-
 // PORT: PS2-only VU0 inline asm (a += b).
 static inline void AddEq_57B8(t4Vector& a, const t4Vector& b)
 {
@@ -2612,7 +2616,7 @@ extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* h
     float vn = Dot(hit->n, SubM(hit->vel, rider->mVelocity)) >= 0.0f
                    ? Dot(hit->n, SubM(hit->vel, rider->mVelocity)) : 0.0f;
     char* h = *(char**)(obj + 0xC);
-    if (h == 0 || (*(sVE_57B8**)(h + 0xC))[14].fn(h + (*(sVE_57B8**)(h + 0xC))[14].delta) != 0) {
+    if (h == 0 || (*(sVEntry<int(void*)>**)(h + 0xC))[14].fn(h + (*(sVEntry<int(void*)>**)(h + 0xC))[14].delta) != 0) {
         func_00106538_m2537(rider, ScaleM(hit->n, depth * 1.100000023841858f));
         if (vn < 0.0f)
             vn = 0.0f;
@@ -2646,7 +2650,7 @@ extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* h
             f = f / speed;
         ScaleEq(w, f);
         rider->mVelocity = AddM(w, ScaleM(hit->n, out));
-        sVEf_57B8* vt = *(sVEf_57B8**)&rider->mVtbl;
+        sVEntry<void(void*, float)>* vt = *(sVEntry<void(void*, float)>**)&rider->mVtbl;
         vt[kRiderVt_vibrationBump].fn((char*)rider + vt[kRiderVt_vibrationBump].delta, vn);
         if (func_00312AA0(rider->mRiderAnim, 2) != 0x10C || func_00312AB0(rider->mRiderAnim, 2) > 0.20000000298023224f) {
             rider->unk_438 = 0;
@@ -2657,9 +2661,9 @@ extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* h
             cRiderAnimBase_play(rider->mRiderAnim, 0x10C, 1, -1.0f);
         }
         char* sub = (char*)&rider->mVtbl;
-        sVEv_57B8* vt2 = *(sVEv_57B8**)sub;
+        sVEntry<t4Vector*(void*)>* vt2 = *(sVEntry<t4Vector*(void*)>**)sub;
         t4Vector* pos = vt2[kRiderVt_getPosition].fn(sub + vt2[kRiderVt_getPosition].delta);
-        sVEv_57B8* vt3 = *(sVEv_57B8**)sub;
+        sVEntry<t4Vector*(void*)>* vt3 = *(sVEntry<t4Vector*(void*)>**)sub;
         t4Vector* vel = vt3[kRiderVt_getVelocity].fn(sub + vt3[kRiderVt_getVelocity].delta);
         cAirPredictor_startLaunchIntoAir_57B8(rider->mAirPredictor, pos, vel, rider->unk_2E4);
         return;
@@ -2748,8 +2752,6 @@ struct sQuat_6848 {
     sQuat_6848(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
 } __attribute__((aligned(16)));
 
-struct sVEH_6848 { short delta; short index; void (*fn)(void*, void*, const t4Vector&); };
-
 static inline float Atan2_6848(float y, float x)
 {
     if (x == 0.0f) {
@@ -2837,7 +2839,7 @@ extern "C" int func_00106848(cRider* self)
     if (land.obj != 0) {
         char* h = *(char**)(land.obj + 0xC);
         if (h != 0) {
-            sVEH_6848* vt = *(sVEH_6848**)(h + 0xC);
+            sVEntry<void(void*, void*, const t4Vector&)>* vt = *(sVEntry<void(void*, void*, const t4Vector&)>**)(h + 0xC);
             vt[43].fn(h + vt[43].delta, &land, ScaleM(dv, -1.0f));
         }
     }
