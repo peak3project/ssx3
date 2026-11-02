@@ -8,6 +8,31 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Declarations shared by the functions of this unit.
+struct sItemListFA78;
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
+void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
+extern "C" void* func_0014AD28(void* self, int a1, int a2);
+extern "C" void* func_0014D998(void* db, int g);
+int func_0014D988(void* db, int g);
+extern "C" int func_0014B988(void* iface, int a1, int a2, void* ent, char* buf);
+extern "C" int func_0019DA10(void* mgr, int bank, char* buf, int a3, int a4, int a5);
+extern "C" int func_0019CCE8(void* self, int a1, int a2);
+extern "C" void func_0019CD38(void* self, int bit, int a2, int val);
+extern void* D_004A28A8;
+extern void* D_004A1968;
+extern "C" int func_0019CBE0(void* self, int a1, int a2);
+extern "C" void func_0019CC30(void* self, int bit, int a2, int val);
+extern "C" void func_0019DC20(void* self, int bank, int i);
+extern void* D_004A289C;
+extern "C" void func_00310200(void* model, void* pose);
+extern "C" void func_0019F2D0(void* self);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" int func_0014D448(void* self, int g, int key);
+
 //100%
 INCLUDE_ASM("fe/feridermanager", cFERider_initBoneMap);
 #ifdef SKIP_ASM
@@ -49,21 +74,6 @@ extern "C" void cFERider_initBoneMap(void* self)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019E7F0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
-void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
-extern "C" void* func_0014D998(void* db, int g);
-int func_0014D988(void* db, int g);
-extern "C" int func_0014B988(void* iface, int a1, int a2, void* ent, char* buf);
-extern "C" int func_0019DA10(void* mgr, int bank, char* buf, int a3, int a4, int a5);
-extern "C" int func_0019CCE8(void* self, int a1, int a2);
-extern "C" void func_0019CD38(void* self, int bit, int a2, int val);
-extern void* D_004A28A8;
-extern void* D_004A1968;
-
 struct sItemE7F0 {
     short id;
     unsigned short flags;
@@ -118,10 +128,6 @@ extern "C" void func_0019E7F0(int* self)
 //100%
 INCLUDE_ASM("fe/feridermanager", cFERider_init);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
 extern "C" void func_0019EBA0(void* self);
 extern "C" void func_0019E7F0(int* self);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
@@ -233,18 +239,6 @@ extern "C" void func_0019EBA0(void* self)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019EC68);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
-extern "C" int func_0019CBE0(void* self, int a1, int a2);
-extern "C" int func_0019CCE8(void* self, int a1, int a2);
-extern "C" void func_0019CC30(void* self, int bit, int a2, int val);
-extern "C" void func_0019CD38(void* self, int bit, int a2, int val);
-extern "C" void func_0019DC20(void* self, int bank, int i);
-extern void* D_004A28A8;
-extern void* D_004A1968;
-
 struct sItemEC68 {
     short id;
     short pad;
@@ -285,7 +279,6 @@ extern "C" void func_0019EC68(void* p)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019ED80);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
 void func_00369890(void* self, int a1, int a2);
 extern "C" void func_00369690(void* self, int count, void* src);
 extern "C" void cAnimModel_compile(void* self, int a1);
@@ -306,7 +299,6 @@ struct sHalfED80 {
     sHalfED80() {}
 };
 extern sHalfED80 D_004FF230;
-extern "C" void func_00310200(void* model, void* pose);
 
 struct sFERiderED80 {
     char pad_0x0[0x8];
@@ -344,7 +336,6 @@ extern "C" void func_0019ED80(sFERiderED80* self)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019EE88);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
 extern char D_005047F8[];
 extern char D_00504810[];
 extern char D_004A1620[];
@@ -393,7 +384,6 @@ struct sFERider_EE88 {
     int fCD0;           // 0xCD0
     int pending;        // 0xCD4
 };
-
 
 extern "C" void func_0019EE88(void* selfp)
 {
@@ -480,12 +470,10 @@ extern "C" void func_0019EE88(void* selfp)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feridermanager", func_0019F138);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
 extern "C" int cFERider_init(void* self, int a1, int a2, int a3);
 extern "C" int func_001A0100(int* self);
 extern "C" int func_0019FD58(int* self);
 extern "C" void func_0019F780(int* self);
-extern "C" void func_0019F2D0(void* self);
 extern "C" void func_003123C0(void* anim, int a1, float blend);
 extern "C" void func_00312490(void* anim);
 extern "C" void func_002F1A08(void* p);
@@ -512,7 +500,6 @@ struct sFERiderF138 {
     char pad_0xCCC[0xCD4 - 0xCCC];
     int pending;            // 0xCD4
 };
-
 
 extern "C" void func_0019F138(void* selfp)
 {
@@ -564,7 +551,6 @@ struct sQuadF2D0 { int x[4]; } __attribute__((aligned(16)));
 struct sHalfF2D0 { sQuadF2D0 a, b; };
 extern sQuadF2D0 D_004FF130;
 extern sQuadF2D0 D_004FF220;
-extern "C" void func_00310200(void* model, void* pose);
 extern "C" void func_003103F0(void* model);
 
 extern "C" void func_0019F2D0(void* self)
@@ -593,7 +579,6 @@ extern "C" void func_0019F2D0(void* self)
 INCLUDE_ASM("fe/feridermanager", func_0019F3E8);
 #ifdef SKIP_ASM
 struct sQuadRM { int x[4]; } __attribute__((aligned(16)));
-extern "C" void func_0019F2D0(void* self);
 
 extern "C" void func_0019F3E8(void* self, sQuadRM* src)
 {
@@ -606,8 +591,6 @@ extern "C" void func_0019F3E8(void* self, sQuadRM* src)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F418);
 #ifdef SKIP_ASM
-extern "C" void func_0019F2D0(void* self);
-
 struct sVec_F418 {
     float x, y, z, w;
     sVec_F418() {}
@@ -665,9 +648,6 @@ extern "C" void func_0019F418(void* self, sVec_F418* v)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F488);
 #ifdef SKIP_ASM
-extern "C" void func_0019F2D0(void* self);
-extern "C" void func_0031BE50(float* s, float* c, float angle);
-
 struct sQuat_F488 {
     float x, y, z, w;
     sQuat_F488() {}
@@ -718,8 +698,6 @@ extern "C" void func_0019F488(void* self, sQuat_F488* axis, float angle)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F548);
 #ifdef SKIP_ASM
-extern "C" void func_0019F2D0(void* self);
-
 extern "C" void func_0019F548(void* self, sQuadRM* src)
 {
     *(sQuadRM*)((char*)self + 0xC50) = src[0];
@@ -731,8 +709,6 @@ extern "C" void func_0019F548(void* self, sQuadRM* src)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F578);
 #ifdef SKIP_ASM
-extern "C" void func_0019F2D0(void* self);
-
 struct sVec_F578 {
     float x, y, z, w;
     sVec_F578() {}
@@ -790,9 +766,6 @@ extern "C" void func_0019F578(void* self, sVec_F578* v)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F5E8);
 #ifdef SKIP_ASM
-extern "C" void func_0019F2D0(void* self);
-extern "C" void func_0031BE50(float* s, float* c, float angle);
-
 struct sQuat_F5E8 {
     float x, y, z, w;
     sQuat_F5E8() {}
@@ -901,13 +874,6 @@ extern "C" void func_0019F760(void *arg0) {
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019F780);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
-void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
-extern "C" int func_0014D448(void* self, int g, int key);
 extern "C" void func_0030EB60(void* model);
 extern "C" void func_0030EC18(void* model, int i, int param);
 
@@ -993,7 +959,6 @@ INCLUDE_ASM("fe/feridermanager", func_0019F908);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void func_003B3D00(void* pkg, int i, char* name);
 extern "C" char* strcpy(char* dst, const char* src);
-extern void* D_004A289C;
 extern char D_004A19A8[];
 extern char D_004A19B0[];
 
@@ -1043,20 +1008,6 @@ extern "C" void func_0019F908(sRiderTable_F878* self, sPkg_F908* pkg, int replac
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019FA78);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
-void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
-extern "C" void* func_0014D998(void* db, int g);
-int func_0014D988(void* db, int g);
-extern "C" int func_0019CCE8(void* self, int a1, int a2);
-extern "C" void func_0019CD38(void* self, int bit, int a2, int val);
-extern "C" void func_0019DC20(void* self, int bank, int i);
-extern void* D_004A28A8;
-extern void* D_004A1968;
-
 struct sItemFA78 {
     short id;
     unsigned short flags;
@@ -1117,22 +1068,8 @@ extern "C" void func_0019FA78(int* self, sItemListFA78* list)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019FBE0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
-void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
-extern "C" void* func_0014D998(void* db, int g);
-int func_0014D988(void* db, int g);
-extern "C" int func_0014B988(void* iface, int a1, int a2, void* ent, char* buf);
-extern "C" int func_0019DA10(void* mgr, int bank, char* buf, int a3, int a4, int a5);
-extern "C" int func_0019CCE8(void* self, int a1, int a2);
-extern "C" void func_0019CD38(void* self, int bit, int a2, int val);
 extern "C" void func_0019E070(void* mgr, int bank);
-struct sItemListFA78;
 extern "C" void func_0019FA78(int* self, sItemListFA78* list);
-extern void* D_004A28A8;
-extern void* D_004A1968;
 
 struct sItemFBE0 {
     short id;
@@ -1190,18 +1127,9 @@ extern "C" void func_0019FBE0(int* self, sItemListFBE0* list, int a2, int a3)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019FD58);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
-extern "C" int func_0019CCE8(void* self, int a1, int a2);
-extern "C" void func_0019CD38(void* self, int bit, int a2, int val);
-extern "C" void func_0019DC20(void* self, int bank, int i);
 extern "C" int func_0019E238(void* mgr, int bank, int i);
 extern "C" void* func_0019E2B0(void* mgr, int bank, int i);
 extern "C" void* func_003E6448(void* dst, int c, int n);
-extern void* D_004A28A8;
-extern void* D_004A1968;
 
 struct sItemFD58 {
     short id;
@@ -1258,16 +1186,7 @@ extern "C" int func_0019FD58(int* self)
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019FF00);
 #ifdef SKIP_ASM
-// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
-void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
-extern "C" int func_0014D448(void* self, int g, int key);
-extern "C" int func_0019CBE0(void* self, int a1, int a2);
-extern "C" void func_0019CC30(void* self, int bit, int a2, int val);
-extern "C" int func_0019DA10(void* mgr, int bank, char* buf, int a3, int a4, int a5);
-extern "C" void func_0019DC20(void* self, int bank, int i);
 extern "C" void func_0019DF20(void* mgr, int bank);
-extern void* D_004A28A8;
-extern void* D_004A1968;
 
 struct sItemFF00 {
     short id;
