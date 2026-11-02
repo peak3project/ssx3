@@ -187,6 +187,10 @@ extern unsigned char *D_004A4BE8;
 extern unsigned char *D_004A4BEC;
 extern int D_004A4BF0;
 
+/* D_0051F030: the periodic callbacks run by func_003F42A0 (fn 0 = free slot). */
+struct sTick { void (*fn)(int, int); int arg; };
+extern struct sTick D_0051F030[16];
+
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 #ifdef SKIP_ASM
@@ -641,17 +645,16 @@ void func_003F41B8(int n) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4210);
 #ifdef SKIP_ASM
-extern int D_0051F030[];
-int func_003F4210(int a, int b) {
+int func_003F4210(void (*fn)(int, int), int arg) {
     int i;
-    int *p = D_0051F030;
+    struct sTick *p = D_0051F030;
     for (i = 0; i < 16; i++) {
-        if (p[0] == 0) {
-            p[0] = a;
-            p[1] = b;
+        if (p->fn == 0) {
+            p->fn = fn;
+            p->arg = arg;
             return 0;
         }
-        p += 2;
+        p++;
     }
     return -1;
 }
@@ -660,17 +663,16 @@ int func_003F4210(int a, int b) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4250);
 #ifdef SKIP_ASM
-extern int D_0051F030[];
-int func_003F4250(int a, int b) {
+int func_003F4250(void (*fn)(int, int), int arg) {
     int i;
-    int *p = D_0051F030;
+    struct sTick *p = D_0051F030;
     for (i = 0; i < 16; i++) {
-        if (p[0] == a && p[1] == b) {
-            p[0] = 0;
-            p[1] = 0;
+        if (p->fn == fn && p->arg == arg) {
+            p->fn = 0;
+            p->arg = 0;
             return 0;
         }
-        p += 2;
+        p++;
     }
     return -1;
 }
@@ -682,17 +684,15 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F42A0);
 extern int D_004A4BA0;
 extern unsigned D_004A4BAC;
 extern int func_003F4A78(void);
-typedef struct { void (*fn)(int, int); int arg; } T42A0;
-extern T42A0 D_42A0t[] __asm__("D_0051F030");
 void func_003F42A0(void) {
     int i;
-    T42A0 *p;
+    struct sTick *p;
     if (D_004A4BA0 != 0) {
         if (func_003F4DE8() < D_004A4BAC) return;
         D_004A4BAC = func_003F4DE8() + 5;
     }
     func_003F4A78();
-    p = D_42A0t;
+    p = D_0051F030;
     for (i = 0xF; i >= 0; i--) {
         if (p->fn) p->fn(p->arg, func_003F4DE8());
         p++;
