@@ -8,6 +8,16 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Menu rectangles (item extents, text boxes): position and size.
+struct sRect {
+    float x, y, w, h;
+};
+
+// Menu colours, alpha first (cARGBMenuItem); the font colour at font + 0x40.
+struct sColor {
+    float a, r, g, b;
+};
+
 struct cMenuItem {
     char pad_0x00[0x4];
     int field_0x4;
@@ -231,8 +241,6 @@ INCLUDE_ASM("util/menu", func_002CA768);
 extern "C" void func_00391CB0(void* self, float x, float y, const char* str);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 
-struct sRect_2CA768 { float x, y, w, h; };
-struct sColor_2CA768 { float r, g, b, a; };
 struct sVec2_2CA768 {
     float x, y;
     sVec2_2CA768(float ax, float ay) : x(ax), y(ay) {}
@@ -245,14 +253,14 @@ static inline char* font_2CA768(char* item)
 
 // PORT: the unit's callers declare func_002CA768 as (void*, int, int, int, void*, char*, sColor*) returning void*;
 // the body takes (item, rect, left, center, right, style, color) and returns nothing. Bound by asm label.
-extern "C" void func_002CA768_impl(char* item, sRect_2CA768* rect, const char* left, const char* center, const char* right, char* style, sColor_2CA768* color) __asm__("func_002CA768");
+extern "C" void func_002CA768_impl(char* item, sRect* rect, const char* left, const char* center, const char* right, char* style, sColor* color) __asm__("func_002CA768");
 
-extern "C" void func_002CA768_impl(char* item, sRect_2CA768* rect, const char* left, const char* center, const char* right, char* style, sColor_2CA768* color)
+extern "C" void func_002CA768_impl(char* item, sRect* rect, const char* left, const char* center, const char* right, char* style, sColor* color)
 {
     char* menu = *(char**)item;
-    sVEntry<void(void*, sRect_2CA768*, char*)>* vt = *(sVEntry<void(void*, sRect_2CA768*, char*)>**)(menu + 0x12C);
+    sVEntry<void(void*, sRect*, char*)>* vt = *(sVEntry<void(void*, sRect*, char*)>**)(menu + 0x12C);
     vt[8].fn(menu + vt[8].delta, rect, style);
-    *(sColor_2CA768*)(font_2CA768(item) + 0x40) = *color;
+    *(sColor*)(font_2CA768(item) + 0x40) = *color;
     char* f0 = font_2CA768(item);
     sVec2_2CA768 sc(2.0f, 2.0f);
     *(sVec2_2CA768*)(f0 + 0x28) = sc;
@@ -288,14 +296,7 @@ struct func_002CA988_sVec3 {
 extern func_002CA988_sVec3 D_004D53A0;
 extern func_002CA988_sVec3 D_004D53B0;
 
-struct func_002CA988_sColor {
-    float a;
-    float r;
-    float g;
-    float b;
-};
-
-extern "C" void* func_002CA768(void* self, int a1, int a2, int a3, void* a4, char* style, func_002CA988_sColor* col);
+extern "C" void* func_002CA768(void* self, int a1, int a2, int a3, void* a4, char* style, sColor* col);
 
 // PORT: the unit's 4-arg declaration of func_002CA988 is wrong: the body reads $8 (5th arg).
 void* func_002CA988_5(void*, int, int, int, void*) __asm__("func_002CA988");
@@ -305,7 +306,7 @@ void* func_002CA988_5(void* self, int a1, int a2, int a3, void* a4)
     int focused = self == func_002CBF30(*(void**)self);
     char* style = focused ? D_004D5380 : D_004D5390;
     func_002CA988_sVec3* v = focused ? &D_004D53A0 : &D_004D53B0;
-    func_002CA988_sColor c;
+    sColor c;
     c.a = 1.0f;
     c.r = v->x;
     c.g = v->y;
@@ -786,7 +787,7 @@ static inline void func_002CB498_setF8_5(sRS_2CB498* rs, int v)
     rs->f8 = (rs->f8 & ~0x3E0) | ((v << 5) & 0x3E0);
 }
 
-extern "C" void func_002CB498(void* self, float* rect, func_002CA988_sColor* col)
+extern "C" void func_002CB498(void* self, float* rect, sColor* col)
 {
     sVtx_2CB498 v[4];
     int i;
@@ -1731,19 +1732,17 @@ INCLUDE_ASM("util/menu", func_002CC648);
 #ifdef SKIP_ASM
 extern "C" void func_002CA4C8(void*, void*, int, int, void*);
 
-struct sMenuRectC648 { float x, y, z, w; };
-
-extern "C" sMenuRectC648* func_002CC648(sMenuRectC648* ret, char* item)
+extern "C" sRect* func_002CC648(sRect* ret, char* item)
 {
     if (*(void**)(item + 0x18) != 0 && *(void**)(item + 0x1C) != 0) {
-        sMenuRectC648 a;
-        sMenuRectC648 b;
-        sMenuRectC648 tmp;
+        sRect a;
+        sRect b;
+        sRect tmp;
         func_002CA4C8(&tmp, item, *(int*)(item + 0x14), 0, *(void**)(item + 0x18));
         a = tmp;
         func_002CA4C8(&tmp, item, *(int*)(item + 0x14), 0, *(void**)(item + 0x1C));
         b = tmp;
-        *ret = (a.z > b.z) ? a : b;
+        *ret = (a.w > b.w) ? a : b;
     } else {
         func_002CA4C8(ret, item, 0, *(int*)(item + 0x14), 0);
     }
@@ -1916,18 +1915,17 @@ INCLUDE_ASM("util/menu", func_002CCB18);
 extern "C" void func_002CA4C8(void*, void*, int, int, void*);
 extern char D_004866B8[];
 
-struct sMenuRectCB18 { float x, y, z, w; };
 struct sMenuEntCB18 { void* name; int data; };
 
-extern "C" sMenuRectCB18* func_002CCB18(sMenuRectCB18* ret, char* item)
+extern "C" sRect* func_002CCB18(sRect* ret, char* item)
 {
-    sMenuRectCB18 best;
-    sMenuRectCB18 tmp;
+    sRect best;
+    sRect tmp;
     func_002CA4C8(&tmp, item, *(int*)(item + 0x14), 0, D_004866B8);
     best = tmp;
     for (int i = 0; i < *(int*)(item + 0x18); i++) {
         func_002CA4C8(&tmp, item, *(int*)(item + 0x14), 0, (*(sMenuEntCB18**)(item + 0x1C))[i].name);
-        if (tmp.z > best.z) {
+        if (tmp.w > best.w) {
             best = tmp;
         }
     }
@@ -2419,15 +2417,11 @@ int func_002CD398(void* self)
 //100%
 INCLUDE_ASM("util/menu", func_002CD3A0);
 #ifdef SKIP_ASM
-struct s2CD3A0Vec {
-    float x, y, z, w;
-};
-
-extern "C" s2CD3A0Vec func_002CD3A0(void* self)
+extern "C" sRect func_002CD3A0(void* self)
 {
-    s2CD3A0Vec v;
-    v.x = v.y = v.z = 0.0f;
-    v.w = (float)*(int*)((char*)self + 0x14);
+    sRect v;
+    v.x = v.y = v.w = 0.0f;
+    v.h = (float)*(int*)((char*)self + 0x14);
     return v;
 }
 #endif
@@ -3482,12 +3476,12 @@ extern "C" void func_002CE910(void* self, float* rect)
         (*f)(menu + vt[8].delta, rect, focused ? D_004D5380 : D_004D5390);
     }
     func_002CA988_sVec3* col = self == func_002CBF30(*(void**)self) ? &D_004D53A0 : &D_004D53B0;
-    func_002CA988_sColor c;
+    sColor c;
     c.a = 1.0f;
     c.r = col->x;
     c.g = col->y;
     c.b = col->z;
-    *(func_002CA988_sColor*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x40) = c;
+    *(sColor*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x40) = c;
     *(sVec2_2CE910*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2_2CE910(2.0f, 2.0f);
     char* label = *(char**)((char*)self + 0x14);
     if (label) {
@@ -3627,8 +3621,6 @@ extern "C" int func_00413AF8(float f);
 extern char D_00486700[];
 extern char* D_00487470[];
 
-struct sRect_2CEEE8 { float x, y, w, h; };
-
 struct sFont_2CEEE8 {
     char pad_0x0[0x14];
     int lineHeight;                 // 0x14
@@ -3660,9 +3652,9 @@ static inline float textWidth_2CEEE8(sMenuValueItem_2CEEE8* item, const char* st
 #define MAX_2CEEE8(a, b) ((a) > (b) ? (a) : (b))
 
 // Returns the rect of a value menu item: sized for the widest of the three option labels plus the formatted value.
-extern "C" sRect_2CEEE8* func_002CEEE8(sRect_2CEEE8* ret, sMenuValueItem_2CEEE8* item)
+extern "C" sRect* func_002CEEE8(sRect* ret, sMenuValueItem_2CEEE8* item)
 {
-    sRect_2CEEE8 r;
+    sRect r;
     char buf[64];
     sprintf(buf, D_00486700, func_00413AF8(*(float*)((char*)item->values + (item->index << 2))));
     r.x = r.y = 0.0f;
@@ -3690,10 +3682,6 @@ extern char D_00486710[];
 struct sVec2_2CF1C8 {
     float x, y;
     sVec2_2CF1C8(float ax, float ay) { x = ax; y = ay; }
-};
-
-struct sRect_2CF1C8 {
-    float x, y, w, h;
 };
 
 struct sVec4_2CF1C8 {
@@ -3808,12 +3796,12 @@ extern "C" void func_002CF1C8(void* self, float* rect)
     float barX = rect[0] + rect[2] - 16.0f - 80.0f;
     float textX = barX - 16.0f;
     func_002CA988_sVec3* col = self == func_002CBF30(*(void**)self) ? &D_004D53A0 : &D_004D53B0;
-    func_002CA988_sColor c;
+    sColor c;
     c.a = 1.0f;
     c.r = col->x;
     c.g = col->y;
     c.b = col->z;
-    *(func_002CA988_sColor*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x40) = c;
+    *(sColor*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x40) = c;
     *(sVec2_2CF1C8*)(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58) + 0x28) = sVec2_2CF1C8(2.0f, 2.0f);
     func_00391CB0(*(char**)(*(char**)(*(char**)self + 0x124) + 0x58), rect[0] + 16.0f, rect[1] + 6.0f - 1.0f,
                   D_00487470[*(int*)((char*)self + 0x18)]);
@@ -3825,11 +3813,11 @@ extern "C" void func_002CF1C8(void* self, float* rect)
     float w = func_00391FB0(font, buf, 0, 0, *(float*)(font + 0x38), *(float*)(font + 0x3C));
     func_00391CB0(font, textX - w, rect[1] + 6.0f - 1.0f, buf);
 
-    func_002CA988_sColor c1 = **(func_002CA988_sColor**)((char*)self + 0x14);
-    func_002CA988_sColor c2 = **(func_002CA988_sColor**)((char*)self + 0x14);
+    sColor c1 = **(sColor**)((char*)self + 0x14);
+    sColor c2 = **(sColor**)((char*)self + 0x14);
     *(float*)((char*)&c1 + (*(int*)((char*)self + 0x18) << 2)) = 0.0f;
     *(float*)((char*)&c2 + (*(int*)((char*)self + 0x18) << 2)) = 1.0f;
-    sRect_2CF1C8 r;
+    sRect r;
     r.x = barX;
     r.y = rect[1] + rect[3] - 6.0f - 10.0f;
     r.w = 80.0f;
@@ -4185,11 +4173,9 @@ INCLUDE_ASM("util/menu", func_002CFB58);
 extern "C" int func_002CA378(void* self);
 extern "C" void* func_002CBF30(void* self);
 
-struct sMenuRect_2CFB58 { float x, y, z, w; };
-
 struct sItem_2CFB58 {
     char pad00[0x10];
-    sVEntry<sMenuRect_2CFB58(void*)>* vt;
+    sVEntry<sRect(void*)>* vt;
 };
 
 struct sMenu_2CFB58 {
@@ -4201,34 +4187,34 @@ struct sMenu_2CFB58 {
     sItem_2CFB58* items[70];
     void* f13C;
     char pad140[0xC];
-    sMenuRect_2CFB58 rects[1];
+    sRect rects[1];
 };
 
-extern "C" sMenuRect_2CFB58* func_002CFB58(sMenuRect_2CFB58* ret, sMenu_2CFB58* self)
+extern "C" sRect* func_002CFB58(sRect* ret, sMenu_2CFB58* self)
 {
-    sMenuRect_2CFB58 r;
-    r.x = r.y = r.z = r.w = 0.0f;
+    sRect r;
+    r.x = r.y = r.w = r.h = 0.0f;
     self->f13C = *(void**)(self->owner + 0x124);
     for (int i = 0; i < self->count; i++) {
         if (func_002CA378(self->items[i])) {
-            sVEntry<sMenuRect_2CFB58(void*)>* vt = self->items[i]->vt;
+            sVEntry<sRect(void*)>* vt = self->items[i]->vt;
             self->rects[i] = vt[4].fn((char*)self->items[i] + vt[4].delta);
             if (self == func_002CBF30(self->owner) || self->items[i] == self->sel) {
-                r.w += self->rects[i].w;
+                r.h += self->rects[i].h;
             }
-            float h = self->rects[i].z;
+            float h = self->rects[i].w;
             if (self->items[i] != self->sel) {
                 h += 20.0f;
             }
-            if (r.z < h) {
-                r.z = h;
+            if (r.w < h) {
+                r.w = h;
             }
         } else {
-            sMenuRect_2CFB58 z;
+            sRect z;
             z.x = 0;
             z.y = 0;
-            z.z = 0;
             z.w = 0;
+            z.h = 0;
             self->rects[i] = z;
         }
     }
@@ -4243,10 +4229,6 @@ INCLUDE_ASM("util/menu", func_002CFD28);
 extern "C" int func_002CA378(void* self);
 extern "C" void* func_002CBF30(void* self);
 
-struct func_002CFD28_sRect {
-    float x, y, w, h;
-};
-
 class func_002CFD28_cItem {
 public:
     char pad[0x10];
@@ -4255,7 +4237,7 @@ public:
     virtual void v02();
     virtual void v03();
     virtual void v04();
-    virtual void v05(func_002CFD28_sRect* r);
+    virtual void v05(sRect* r);
 };
 
 struct func_002CFD28_sOwner {
@@ -4268,12 +4250,12 @@ struct func_002CFD28_sOwner {
     func_002CFD28_cItem* items[70];     // 0x24
     int wrap;                           // 0x13C
     char pad140[0xC];
-    func_002CFD28_sRect rects[70];      // 0x14C
+    sRect rects[70];      // 0x14C
 };
 
-extern "C" void func_002CFD28(func_002CFD28_sOwner* self, func_002CFD28_sRect* r)
+extern "C" void func_002CFD28(func_002CFD28_sOwner* self, sRect* r)
 {
-    func_002CFD28_sRect pos = *r;
+    sRect pos = *r;
     for (int i = 0; i < self->count; i++) {
         if (func_002CA378(self->items[i]) == 0) {
             continue;
@@ -4361,17 +4343,10 @@ int func_002CFF80(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CFF88);
 #ifdef SKIP_ASM
-struct func_002CFF88_sRect {
-    float x;
-    float y;
-    float w;
-    float h;
-};
-
 // PORT: `>?` (g++ max operator); returns the rect through the hidden result pointer.
-extern "C" func_002CFF88_sRect* func_002CFF88(func_002CFF88_sRect* out, void* item)
+extern "C" sRect* func_002CFF88(sRect* out, void* item)
 {
-    func_002CFF88_sRect r;
+    sRect r;
     func_002CA4C8(&r, item, *(int*)((char*)item + 0x18), 0, 0);
     r.w += 36.0f;
     r.h = r.h >? 29.0f;
@@ -4386,8 +4361,6 @@ INCLUDE_ASM("util/menu", func_002D0008);
 // PORT: the unit's 4-arg declaration of func_002CA988 is wrong: the body reads $8 (5th arg).
 void* func_002CA988_5(void*, int, int, int, void*) __asm__("func_002CA988");
 
-struct sCol_2D0008 { float a, r, g, b; };
-
 struct sVtx_2D0008 {
     float u, v, q;
     int pad;
@@ -4400,8 +4373,6 @@ struct sVec4_2D0008 {
     float x, y, z, w;
     sVec4_2D0008(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
 } __attribute__((aligned(16)));
-
-struct sRect_2D0008 { float x, y, w, h; };
 
 struct sRS_2D0008 {
     int f0;
@@ -4498,14 +4469,14 @@ extern "C" void func_002D0008(char* self, float* rect)
 {
     func_002CA988_5(self, (int)rect, *(int*)(self + 0x18), 0, 0);
     sVtx_2D0008 v[4];
-    sRect_2D0008 rc;
+    sRect rc;
     rc.w = 20.0f;
     rc.h = 17.0f;
     rc.x = rect[0] + rect[2] - 16.0f - rc.w;
     rc.y = rect[1] + 6.0f + 2.0f;
     float x2 = rc.x + rc.w;
     float y2 = rc.y + rc.h;
-    sCol_2D0008* c = *(sCol_2D0008**)(self + 0x14);
+    sColor* c = *(sColor**)(self + 0x14);
     v[0].r = (int)(c->r * 128.0f);
     v[0].g = (int)(c->g * 128.0f);
     v[0].b = (int)(c->b * 128.0f);
@@ -4912,14 +4883,12 @@ extern "C" void* func_002CBF30(void* self);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 extern char D_00486748[];
 
-struct sMenuRect_2D0D48 { float x, y, z, w; };
-
 static inline char* font_2D0D48(char* item)
 {
     return *(char**)(*(char**)(*(char**)item + 0x124) + 0x58);
 }
 
-extern "C" sMenuRect_2D0D48* func_002D0D48(sMenuRect_2D0D48* ret, char* item)
+extern "C" sRect* func_002D0D48(sRect* ret, char* item)
 {
     int margin = 100;
     int focused = 0;
@@ -4933,7 +4902,7 @@ extern "C" sMenuRect_2D0D48* func_002D0D48(sMenuRect_2D0D48* ret, char* item)
     char* font2 = font_2D0D48(item);
     float w2 = func_00391FB0(font2, D_00486748, 0, 0, *(float*)(font2 + 0x38), *(float*)(font2 + 0x3C));
     if (w < w2) w = w2;
-    sMenuRect_2D0D48 r;
+    sRect r;
     r.x = r.y = 0.0f;
     if (focused) {
         float h = lh + lh + 6.0f;
@@ -4943,12 +4912,12 @@ extern "C" sMenuRect_2D0D48* func_002D0D48(sMenuRect_2D0D48* ret, char* item)
         } else {
             h = h + 24.0f;
         }
-        r.w = h;
+        r.h = h;
     } else {
         char* font3 = font_2D0D48(item);
-        r.w = (float)*(int*)(font3 + 0x14) * *(float*)(font3 + 0x34) + 12.0f;
+        r.h = (float)*(int*)(font3 + 0x14) * *(float*)(font3 + 0x34) + 12.0f;
     }
-    r.z = (float)margin + w + 64.0f;
+    r.w = (float)margin + w + 64.0f;
     *ret = r;
     return ret;
 }
