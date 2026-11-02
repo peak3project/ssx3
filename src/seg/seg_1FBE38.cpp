@@ -4592,15 +4592,15 @@ static inline float len_32C0(const Vec_32C0 &v) {
         : "m"(v));
     return r;
 }
-extern "C" void* func_003032C0(void* self) {
+extern "C" cLunoValue* func_003032C0(cLunoValue* ret) {
     D_32C0 *r = (D_32C0*)D_004A28A8->game->race->riders[D_004A3DD8->being];
     B_32C0 *b = r;
     D_32C0 *d = (D_32C0*)b;
     float len = len_32C0(*d->v02());
     float res = len * D_004A28A8->f14;
-    *(int*)((char*)self + 8) = 2;
-    *(float*)func_00226618(self) = res;
-    return self;
+    ret->type = 2;
+    *(float*)func_00226618(ret) = res;
+    return ret;
 }
 #endif
 
