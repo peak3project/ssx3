@@ -47,6 +47,14 @@ struct sAiRiderList
     int mCount;
 };
 
+// A new computer rider seen by the cAI spawners: its AI index (cRider::mAIIndex) and controller slot at 0x870.
+struct sRiderCtrl {
+    char pad[0x86C];
+    int mIndex;
+    int mCtrl;
+    void setCtrl(int c) { mCtrl = c; }
+};
+
 //100%
 INCLUDE_ASM("ai/ai", cAI_cAI);
 #ifdef SKIP_ASM
@@ -949,12 +957,6 @@ extern char D_00457F30[];
 extern int D_00535C04[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
-struct sRiderCR {
-    char pad[0x86C];
-    int mIndex;
-    int mCtrl;
-    void setCtrl(int c) { mCtrl = c; }
-};
 class cBEIfaceCR {
 public:
     int pad[3];
@@ -966,7 +968,7 @@ struct sAiObjCR
     char pad0[0x10];
     int f10;
     char pad14[0x14];
-    sRiderCR* mRiders[8];
+    sRiderCtrl* mRiders[8];
     char* mObjs[12];
     int mCount;
     char pad7C[4];
@@ -984,8 +986,8 @@ extern "C" void cAI_initComputerRiders(void* p)
     {
         int ch = cBENewPlayerInterface_getRiderCharID(iface, idx);
         char* obj = (char*)func_00108C80(cMemMan_alloc(0x1A90, D_00457F30, 0x80000000, 0), 1, 0);
-        sRiderCR** slot = &self->mRiders[idx];
-        sRiderCR* rider = obj ? *(sRiderCR**)(obj + 0x18) : 0;
+        sRiderCtrl** slot = &self->mRiders[idx];
+        sRiderCtrl* rider = obj ? *(sRiderCtrl**)(obj + 0x18) : 0;
         *slot = rider;
         rider->mIndex = idx;
         cBENewPlayerInterface_setRiderCtrlID(iface, idx, -1);
@@ -1022,18 +1024,11 @@ void cRider_addRiderMetrix(cRider* rider);
 extern char D_00457F40[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
-struct sRiderCA {
-    char pad[0x86C];
-    int mIndex;
-    int mCtrl;
-    void setCtrl(int c) { mCtrl = c; }
-};
-
 struct sAiObj129FF8
 {
     char pad0[0x20];
     int mCharIds[2];
-    sRiderCA* mRiders[13];
+    sRiderCtrl* mRiders[13];
     char* mObjs[7];
     int mCount;
     char pad7C[8];
@@ -1052,7 +1047,7 @@ extern "C" void cAI_initComputerActors(void* p)
     {
         int ch = self->mCharIds[self->mNumActors];
         char* obj = (char*)func_00108C80(cMemMan_alloc(0x1A90, D_00457F40, 0x80000000, 0), 1, 1);
-        sRiderCA* rider = obj ? *(sRiderCA**)(obj + 0x18) : 0;
+        sRiderCtrl* rider = obj ? *(sRiderCtrl**)(obj + 0x18) : 0;
         self->mRiders[idx] = rider;
         rider->mIndex = idx;
         cBENewPlayerInterface_setRiderCtrlID(iface, idx, -1);
