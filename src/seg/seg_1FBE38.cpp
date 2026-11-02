@@ -3438,8 +3438,7 @@ int* func_00226610(void*);
 struct Ent_12F0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3C70_12F0[2] __asm__("D_004A3C70");
-extern "C" int func_0030A868_12F0(int, unsigned, int, int) __asm__("func_0030A868");
-extern int D_004A3DD8_12F0 __asm__("D_004A3DD8");
+extern "C" int func_0030A868_12F0(cWScriptMan*, unsigned, int, int) __asm__("func_0030A868");
 extern int D_004A56B8_12F0 __asm__("D_004A56B8");
 struct T12_12F0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_12F0 D_004FBBE0_12F0 __asm__("D_004FBBE0");
@@ -3465,7 +3464,7 @@ extern "C" void* func_003012F0(void* self, int n, Ent_12F0* e) {
     }
     unsigned x = vp[0];
     if (x != 0xFFFFFFFFu) {
-        int r = func_0030A868_12F0(D_004A3DD8_12F0, x, vp[1], -1);
+        int r = func_0030A868_12F0(D_004A3DD8, x, vp[1], -1);
         *(int*)((char*)self + 8) = 1;
         *func_00226610(self) = r;
     } else {
