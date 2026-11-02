@@ -3542,30 +3542,26 @@ int func_003B98C0(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9920);
 #ifdef SKIP_ASM
-struct E_9920 { char pad0[0x10]; int f10; char pad14[0x14]; signed char f28; char pad29[0x47]; };
-struct V_9920 { int id; signed char owner; signed char s5; signed char s6; signed char s7; };
-extern struct E_9920 D_0050A120_9920[] __asm__("D_0050A120");
-extern struct V_9920 D_0050A820_9920[] __asm__("D_0050A820");
 extern int func_003B8D98(int);
 extern void f_89E0_9920(int) __asm__("func_003B89E0");
 
 int func_003B9920(int);
 int func_003B9920(int arg0) {
     int idx = func_003B8D98(arg0);
-    struct E_9920 *e;
-    struct V_9920 *vt;
+    struct sA120Song *e;
+    struct sA120Voice *vt;
     int i;
     if (idx < 0) return idx;
-    e = &D_0050A120_9920[idx];
+    e = &D_0050A120.f000[idx];
     if (e->f28 != 0) {
-        vt = (struct V_9920 *)&D_0050A120_9920[16];
+        vt = D_0050A120.f700;
         for (i = 0; i < 24; i++) {
-            if (vt[i].owner == idx) {
-                if (vt[i].id >= 0) f_89E0_9920(vt[i].id);
-                vt[i].s5 = -1;
-                vt[i].s6 = 0;
-                vt[i].s7 = 0;
-                vt[i].id = -1;
+            if (vt[i].f04 == idx) {
+                if (vt[i].f00 >= 0) f_89E0_9920(vt[i].f00);
+                vt[i].f05 = -1;
+                vt[i].f06 = 0;
+                vt[i].f07 = 0;
+                vt[i].f00 = -1;
             }
         }
         e->f10 = -1;
