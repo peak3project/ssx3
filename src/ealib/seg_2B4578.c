@@ -7745,8 +7745,6 @@ void func_003C2438(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2440);
 #ifdef SKIP_ASM
-struct H_2440 { char pad0[0xCB0]; char *tbl; };
-extern struct H_2440 D_0050AD00_2440 __asm__("D_0050AD00");
 extern void f_A550_2440(int) __asm__("func_003BA550");
 extern void f_8468_2440(int) __asm__("func_003C8468");
 
@@ -7756,16 +7754,16 @@ int func_003C2440(int arg0) {
     unsigned fl = e->f24;
     if (fl & 8) {
         for (i = 0; i < e->f23; i++) {
-            *(int *)(D_0050AD00_2440.tbl + (e->f04[i] << 3) + 0x20) = 0;
+            D_0050AD00.fCB0->f20[e->f04[i]].key = 0;
             f_A550_2440(e->f04[i]);
             if (D_0050A8E8.setup.cfg.f29 == 2) {
                 k = e->f04[i] + 0x18;
-                *(int *)(D_0050AD00_2440.tbl + (k << 3) + 0x20) = 0;
+                D_0050AD00.fCB0->f20[k].key = 0;
             }
         }
     } else if (fl & 0x100) {
         for (i = 0; i < e->f23; i++) {
-            *(int *)(D_0050AD00_2440.tbl + ((e->f04[i] - D_0050A8E8.setup.cfg.f10) << 4) + 0x1A0) = 0;
+            D_0050AD00.fCB0->f1A0[e->f04[i] - D_0050A8E8.setup.cfg.f10].key = 0;
             f_A550_2440(e->f04[i]);
         }
     } else {
