@@ -379,6 +379,9 @@ extern "C" void func_00424020(int);
 extern "C" void func_00424880(int);
 extern "C" void func_00424950(int);
 
+// The graphics manager instance.
+extern cPS2GraphicsMan* D_004A5B80;
+
 // ---- end of shared declarations ----
 
 //100%
@@ -701,8 +704,6 @@ INCLUDE_ASM("render/particle", func_00371380);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-extern char* D_004A5B80;
-extern cPS2GraphicsMan* D_004A5B80_ctx __asm__("D_004A5B80");
 extern int D_0044B420[];
 
 extern "C" void func_00371380(sPtEmitter* self, int blend)
@@ -710,7 +711,7 @@ extern "C" void func_00371380(sPtEmitter* self, int blend)
     if (self->field_0x174 == 0) {
         return;
     }
-    cPS2GraphicsMan* ctx = D_004A5B80_ctx;
+    cPS2GraphicsMan* ctx = D_004A5B80;
     if (self->field_0x1E0 == 0) {
         return;
     }
@@ -831,8 +832,6 @@ INCLUDE_ASM("render/particle", func_00371688);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-extern char* D_004A5B80;
-extern cPS2GraphicsMan* D_004A5B80_ctx1688 __asm__("D_004A5B80");
 extern int D_0044B420[];
 
 extern "C" void func_00371688(sPtEmitter* self, int blend)
@@ -840,7 +839,7 @@ extern "C" void func_00371688(sPtEmitter* self, int blend)
     if (self->field_0x174 == 0) {
         return;
     }
-    cPS2GraphicsMan* ctx = D_004A5B80_ctx1688;
+    cPS2GraphicsMan* ctx = D_004A5B80;
     if (self->field_0x1E0 == 0) {
         return;
     }
@@ -2201,7 +2200,6 @@ INCLUDE_ASM("render/particle", func_00374D00);
 //100%
 INCLUDE_ASM("render/particle", func_00375890);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 
 struct sPtVec4_5890 {
     float x, y, z, w;
@@ -2303,7 +2301,6 @@ void* func_003758F8(void* self)
 //100%
 INCLUDE_ASM("render/particle", func_00375918);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 void operator_delete(int* ptr);
 
 extern "C" void func_00375918(void* self, int flags)
@@ -2311,8 +2308,8 @@ extern "C" void func_00375918(void* self, int flags)
     char* s = (char*)self;
     int tex = *(int*)(s + 0x170);
     if (tex >= 0) {
-        func_00367B60(*(void**)(D_004A5B80 + 0x18F4), tex);
-        char* mgr = D_004A5B80;
+        func_00367B60(D_004A5B80->texset, tex);
+        char* mgr = (char*)D_004A5B80;
         sPtVtVI* vt = *(sPtVtVI**)(mgr + 0x10D8);
         vt[50].fn(mgr + vt[50].delta, *(int*)(s + 0x170));
         *(int*)(s + 0x170) = -1;
@@ -2326,13 +2323,12 @@ extern "C" void func_00375918(void* self, int flags)
 //100%
 INCLUDE_ASM("render/particle", func_00375990);
 #ifdef SKIP_ASM
-extern char* D_004A5B80;
 
 extern "C" void func_00375990(void* self)
 {
     char* s = (char*)self;
     if (*(int*)(s + 0x170) < 0) {
-        char* mgr = D_004A5B80;
+        char* mgr = (char*)D_004A5B80;
         sPtVtIIII* vt = *(sPtVtIIII**)(mgr + 0x10D8);
         *(int*)(s + 0x170) = vt[52].fn(mgr + vt[52].delta, *(int*)(s + 0x174), *(int*)(s + 0x178), 2);
     }
@@ -6065,7 +6061,6 @@ struct sPktBuilder_4E50 {
     int open;                       // 0xC
 };
 
-extern cPS2GraphicsMan* D_004A5B80_4E50 __asm__("D_004A5B80");
 extern "C" void func_00384DC0(void* self);
 void operator_delete(int*);
 
@@ -6087,7 +6082,7 @@ extern "C" void func_00384E50(sPktBuilder_4E50* self, int flags)
         unsigned int next = self->cur & 0x0FFFFFFF;
         self->cur = next;
         self->start = buf;
-        cPS2GraphicsMan* g = D_004A5B80_4E50;
+        cPS2GraphicsMan* g = D_004A5B80;
         sPtRing* ring = g->ring;
         sPtRenderState* rs = g->top;
         if (ring->count < 0xA28) {
