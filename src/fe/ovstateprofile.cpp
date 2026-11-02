@@ -339,36 +339,6 @@ public:
     virtual void v43();
 };
 
-class cUIObj_1380 {
-public:
-    int pad[2];
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual int v04();
-    virtual int v05();
-    virtual int v06();
-    virtual int v07();
-    virtual void v08(int);
-    virtual void v09(int);
-    virtual int v10();
-    virtual int v11();
-    virtual int v12();
-    virtual int v13();
-    virtual int v14();
-    virtual int v15();
-    virtual int v16();
-    virtual int v17();
-    virtual int v18();
-    virtual int v19();
-    virtual int v20();
-    virtual int v21();
-    virtual int v22();
-    virtual int v23();
-    virtual int v24();
-    virtual void v25(int);
-};
-
 class cG_1380 {
 public:
     int pad;
@@ -401,9 +371,9 @@ struct sCol_1380 {
 
 extern sCol_1380 D_004C66C8_1380 __asm__("D_004C66C8");
 
-static inline cUIObj_1380* getObj_1380(cState_1380* self, char* name)
+static inline cUIThing* getObj_1380(cState_1380* self, char* name)
 {
-    return (cUIObj_1380*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+    return (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
 }
 
 // Refreshes the memory-card profile list: device name, then the six profile slots and the arrow hints.
@@ -428,11 +398,11 @@ extern "C" void func_00211380(void* p)
         func_003A0D00(getObj_1380(self, D_00471D78), buf);
         *(int*)((char*)self + 0x21C) = *(int*)(mp + 0x428);
         self->v43();
-        cUIObj_1380* o = getObj_1380(self, D_004700F0);
+        cUIThing* o = getObj_1380(self, D_004700F0);
         *(sCol_1380*)((char*)o + 0x88) = D_004C66C8_1380;
         (*(cMCSub_1380**)(mp + 0x434))->v64(buf);
         func_003A0E90(o, buf);
-        o->v09(0);
+        o->setVisible(0);
         for (int i = 1; i < 7; i++) {
             sprintf(name, D_00471D68, i);
             o = getObj_1380(self, name);
@@ -442,32 +412,32 @@ extern "C" void func_00211380(void* p)
                 && (*(cMCSub_1380**)(mp + 0x434))->v55()) {
                 if (!first) {
                     first = 1;
-                    o->v08(0);
+                    o->setStatic(0);
                 } else {
                     o->v25(1);
-                    o->v08(1);
+                    o->setStatic(1);
                 }
             } else if ((*(cMCSub_1380**)(mp + 0x434))->v54(*(int*)(mp + 0x428))) {
                 if ((*(cMCSub_1380**)(mp + 0x434))->v66(i - 1)) {
-                    o->v08(1);
+                    o->setStatic(1);
                     o->v25(1);
                 } else {
-                    o->v08(0);
+                    o->setStatic(0);
                     o->v25(0);
                 }
             } else {
                 o->v25(1);
-                o->v08(1);
+                o->setStatic(1);
             }
         }
         if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 1) == -1)
-            getObj_1380(self, D_00471D90)->v09(0);
+            getObj_1380(self, D_00471D90)->setVisible(0);
         else
-            getObj_1380(self, D_00471D90)->v09(1);
+            getObj_1380(self, D_00471D90)->setVisible(1);
         if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 0) == -1)
-            getObj_1380(self, D_00471DA0)->v09(0);
+            getObj_1380(self, D_00471DA0)->setVisible(0);
         else
-            getObj_1380(self, D_00471DA0)->v09(1);
+            getObj_1380(self, D_00471DA0)->setVisible(1);
     }
 }
 #endif
