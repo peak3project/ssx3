@@ -3766,20 +3766,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BAAC0);
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BB0C8);
 #ifdef SKIP_ASM
-struct E_B0C8 {
-    char pad00[0x26];
-    unsigned char f26;
-    char pad27[0x69 - 0x27];
-    signed char f69;
-    char pad6A[0x8C - 0x6A];
-};
-struct G_B0C8 {
-    char pad[0x17E];
-    short f17E;
-    char pad180[0x1F0 - 0x180];
-    struct E_B0C8 *f1F0;
-};
-extern struct G_B0C8 D_0050A8E8_B0C8 __asm__("D_0050A8E8");
 extern unsigned char D_0044C588;
 
 unsigned char func_003BB0C8(void) {
@@ -3789,8 +3775,8 @@ again:
     if (D_0044C588 == 0) {
         D_0044C588 = D_0044C588 + 1;
     }
-    for (i = 0; i < D_0050A8E8_B0C8.f17E; i++) {
-        struct E_B0C8 *e = &D_0050A8E8_B0C8.f1F0[i];
+    for (i = 0; i < D_0050A8E8.f17E; i++) {
+        struct sA8E8Chan *e = &D_0050A8E8.f1F0[i];
         if (e->f69 != 0 && e->f26 == D_0044C588) {
             goto again;
         }
