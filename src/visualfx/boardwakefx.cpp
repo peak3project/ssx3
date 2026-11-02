@@ -160,6 +160,16 @@ static inline float vu0Dot(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
+// The two vtables a constructor of a class with the virtual cRider base copies (9 and 22 raw slots; vtables are
+// double-aligned).
+struct sVt9 {
+    sVEntry<void> e[9];
+} __attribute__((aligned(8)));
+
+struct sVt22 {
+    sVEntry<void> e[22];
+} __attribute__((aligned(8)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -167,16 +177,10 @@ INCLUDE_ASM("visualfx/boardwakefx", cBoardWakeFX_cBoardWakeFX);
 #ifdef SKIP_ASM
 // g++ 2.95 vtable entry (no thunks): {delta, index, fn}. Vtables are double-aligned.
 
-struct sVt9_BW {
-    sVEntry<void> e[9];
-} __attribute__((aligned(8)));
 
-struct sVt22_BW {
-    sVEntry<void> e[22];
-} __attribute__((aligned(8)));
 
-extern const sVt9_BW D_00488DA8;
-extern const sVt22_BW D_00488DF0;
+extern const sVt9 D_00488DA8;
+extern const sVt22 D_00488DF0;
 extern char D_00487968[];
 extern char D_00487980[];
 extern "C" void* cRider_cRider(void* self);
@@ -205,8 +209,8 @@ struct sWakeElemBW {
 // (cRider at +0xC0): vtable copies with delta fixups when not in charge.
 extern "C" void* cBoardWakeFX_cBoardWakeFX(void* self, int inChrg)
 {
-    sVt9_BW t1;
-    sVt22_BW t2;
+    sVt9 t1;
+    sVt22 t2;
     if (inChrg) {
         *(void**)self = (char*)self + 0xC0;
         cRider_cRider((char*)self + 0xC0);
@@ -2139,16 +2143,10 @@ INCLUDE_ASM("visualfx/boardwakefx", func_002E3680);
 #ifdef SKIP_ASM
 // g++ 2.95 vtable entry (no thunks): {delta, index, fn}. Vtables are double-aligned.
 
-struct sVt9_3680 {
-    sVEntry<void> e[9];
-} __attribute__((aligned(8)));
 
-struct sVt22_3680 {
-    sVEntry<void> e[22];
-} __attribute__((aligned(8)));
 
-extern const sVt9_3680 D_004889C8;
-extern const sVt22_3680 D_00488A10;
+extern const sVt9 D_004889C8;
+extern const sVt22 D_00488A10;
 
 struct sWakeFade_3930;
 extern "C" void* cRider_cRider(void* self);
@@ -2158,8 +2156,8 @@ extern "C" void func_002E3930(sWakeFade_3930* self);
 // (cRider at +0x40): vtable copies with delta fixups when not in charge.
 extern "C" void* func_002E3680(void* self, int inChrg)
 {
-    sVt9_3680 t1;
-    sVt22_3680 t2;
+    sVt9 t1;
+    sVt22 t2;
     if (inChrg) {
         *(void**)self = (char*)self + 0x40;
         cRider_cRider((char*)self + 0x40);
@@ -3551,8 +3549,8 @@ extern "C" void func_002E62C8(void* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E6320);
 #ifdef SKIP_ASM
-extern const sVt9_3680 D_00488550;
-extern const sVt22_3680 D_00488598;
+extern const sVt9 D_00488550;
+extern const sVt22 D_00488598;
 extern char D_00487B08[];
 extern "C" void func_002E6640(void* self);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
@@ -3573,8 +3571,8 @@ struct sWakePt_6320 {
 // (cRider at +0x3B0): vtable copies with delta fixups when not in charge.
 extern "C" void* func_002E6320(void* self, int inChrg)
 {
-    sVt9_3680 t1;
-    sVt22_3680 t2;
+    sVt9 t1;
+    sVt22 t2;
     if (inChrg) {
         *(void**)self = (char*)self + 0x3B0;
         cRider_cRider((char*)self + 0x3B0);
