@@ -1,6 +1,16 @@
 #include "common.h"
 #include "ai/rider.h"
 
+// g++ 2.95 vtable entry {this delta, index, function}; virtual calls are written through these (the manual form keeps
+// the retail load order). One type per slot signature.
+struct sVEntryInt { short delta; short index; int (*fn)(void*); };
+struct sVEntryIntArg { short delta; short index; int (*fn)(void*, int); };
+struct sVEntryPtrArg { short delta; short index; void* (*fn)(void*, int); };
+struct sVEntryVoid { short delta; short index; void (*fn)(void*); };
+struct sVEntryVoidArg { short delta; short index; void (*fn)(void*, int); };
+struct sVEntryVoidPtrInt { short delta; short index; void (*fn)(void*, void*, int); };
+struct sVEntryVarargs { short delta; short index; void (*fn)(void*, ...); };
+
 //100%
 INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_Load3PeakPic);
 #ifdef SKIP_ASM
@@ -105,12 +115,6 @@ struct sFEUnloadFiles {
     sFEUnloadFile files[5];
 };
 
-struct sVEUnload {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 extern "C" void cFEAsyncManager_UnloadFEAsyncFile(cFEAsyncManager* self, int idx)
 {
     sFEUnloadFiles* m = (sFEUnloadFiles*)self;
@@ -125,7 +129,7 @@ extern "C" void cFEAsyncManager_UnloadFEAsyncFile(cFEAsyncManager* self, int idx
         cFEAsyncManager_SetFileStatus(self, idx, 0);
     } else if (cFEAsyncManager_GetFileStatus(self, idx) == 3) {
         char* obj = D_004A289C;
-        sVEUnload* vt = *(sVEUnload**)(obj + 0x10D8);
+        sVEntryInt* vt = *(sVEntryInt**)(obj + 0x10D8);
         m->files[idx].f118 = vt[114].fn(obj + vt[114].delta) + 0xE;
         cFEAsyncManager_SetFileStatus(self, idx, 0);
     }
@@ -178,22 +182,10 @@ struct sFE39F0Files {
     sFE39F0File files[5];
 };
 
-struct sVE39F0 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 struct sVE39F0L {
     short delta;
     short index;
     int (*fn)(void*, char*, const char*, int, int, int);
-};
-
-struct sVE39F0V {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
 };
 
 int cFEAsyncManager_GetFileStatus(cFEAsyncManager* self, int index);
@@ -212,11 +204,11 @@ extern "C" void func_001A39F0(cFEAsyncManager* self)
     for (i = 0; i < 5; i++) {
         if (cFEAsyncManager_GetFileStatus(self, i) == 0 || cFEAsyncManager_GetFileStatus(self, i) == 1) {
             char* obj = D_004A289C;
-            sVE39F0* vt = *(sVE39F0**)(obj + 0x10D8);
+            sVEntryInt* vt = *(sVEntryInt**)(obj + 0x10D8);
             if (m->files[i].f118 < vt[114].fn(obj + vt[114].delta)) {
                 if (m->files[i].data != 0) {
                     char* obj2 = D_004A289C;
-                    sVE39F0V* vt2 = *(sVE39F0V**)(obj2 + 0x10D8);
+                    sVEntryVoidArg* vt2 = *(sVEntryVoidArg**)(obj2 + 0x10D8);
                     vt2[50].fn(obj2 + vt2[50].delta, m->files[i].id);
                     if (m->files[i].data != 0) {
                         cMemMan_free(m->files[i].data);
@@ -229,7 +221,7 @@ extern "C" void func_001A39F0(cFEAsyncManager* self)
         }
         if (cFEAsyncManager_GetFileStatus(self, i) == 1) {
             char* obj = D_004A289C;
-            sVE39F0* vt = *(sVE39F0**)(obj + 0x10D8);
+            sVEntryInt* vt = *(sVEntryInt**)(obj + 0x10D8);
             if (m->files[i].f118 < vt[114].fn(obj + vt[114].delta)) {
                 cFEAsyncManager_LoadDataFile(self, i);
             }
@@ -283,12 +275,6 @@ struct sFE3C50Files {
     sFE3C50File files[5];
 };
 
-struct sVE3C50 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 extern char* D_004A289C;
 void cMemMan_free(void* p);
 
@@ -299,7 +285,7 @@ extern "C" void func_001A3C50(cFEAsyncManager* self)
     for (i = 0; i < 5; i++) {
         if (m->files[i].data != 0) {
             char* obj = D_004A289C;
-            sVE3C50* vt = *(sVE3C50**)(obj + 0x10D8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)(obj + 0x10D8);
             vt[50].fn(obj + vt[50].delta, m->files[i].id);
             if (m->files[i].data != 0) {
                 cMemMan_free(m->files[i].data);
@@ -421,12 +407,6 @@ struct sOwner1A5450;
 extern "C" void func_001A5450(sOwner1A5450* self);
 extern "C" void func_001A85D0_dtor3EA0(void* self, int flags) __asm__("func_001A85D0");
 
-struct sVE1A3EA0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 static inline void Dealloc1A3EA0(void** p, int n)
 {
     if (p != 0) {
@@ -462,7 +442,7 @@ extern "C" void func_001A3EA0(sOwner1A3EA0* self, int flags)
 {
     self->vt = D_00467F28;
     char* child = self->child;
-    sVE1A3EA0* vt = *(sVE1A3EA0**)(child + 0x8);
+    sVEntryVoid* vt = *(sVEntryVoid**)(child + 0x8);
     vt[32].fn(child + vt[32].delta);
     func_001A5450((sOwner1A5450*)self);
     sVec1A3EA0* v = &self->mVec;
@@ -553,18 +533,13 @@ extern "C" void func_001A4040(void* self, void* menu)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A4170);
 #ifdef SKIP_ASM
-struct sVE1A4170 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" void func_001A6C40(void* self, int a1);
 
 extern "C" int func_001A4170(void* self, void* obj)
 {
     int r;
-    sVE1A4170* vt = *(sVE1A4170**)((char*)obj + 0x8);
+    sVEntryInt* vt = *(sVEntryInt**)((char*)obj + 0x8);
     if (vt[27].fn((char*)obj + vt[27].delta) == 0) {
         r = 0;
     } else {
@@ -687,15 +662,9 @@ public:
     virtual void set(const cVec_4330& v);
 };
 
-struct sVE_4330 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
-
 struct sObj_4330 {
     int pad[2];
-    sVE_4330* vt;
+    sVEntryVarargs* vt;
 };
 
 // Message handler for the slot-list screen: picks a slot by its button hash, or highlights it.
@@ -1162,19 +1131,13 @@ extern char D_00461618[];
 extern char D_00461678[];
 extern char D_00461690[];
 
-struct sVEntry_001A4E28 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 extern "C" void func_001A4E28(void* self, void* msg)
 {
     switch (*(int*)((char*)msg + 8)) {
     case 0x69706572: {
         char* buf = (char*)self + 0x9C;
         char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry_001A4E28* vt = *(sVEntry_001A4E28**)(obj + 4);
+        sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
         func_002C26D0(buf, vt[4].fn(obj + vt[4].delta, GetHashValue32(D_00461678)), *(char**)((char*)self + 0x6D4));
         void* p = func_001A9C50(self);
         *(int*)((char*)p + 0xBC) = 1;
@@ -1600,11 +1563,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001A5898);
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A5FB8);
 #ifdef SKIP_ASM
-struct sVE1A5FB8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern char D_004615B0[];
 extern "C" int sprintf(char* buf, const char* fmt, ...);
@@ -1621,7 +1579,7 @@ extern "C" void func_001A5FB8(void* self, int sel)
         sprintf(buf, D_004615B0, i);
         void* obj = (void*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
         if (obj != 0) {
-            sVE1A5FB8* vt = *(sVE1A5FB8**)((char*)obj + 0x8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)obj + 0x8);
             vt[9].fn((char*)obj + vt[9].delta, i == sel);
         }
         func_001A66A8(self, sel, i == sel);
@@ -2335,12 +2293,6 @@ extern char D_00461910[];
 extern char D_00461930[];
 extern char D_00461950[];
 
-struct sVEntry_001A7390 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 struct sVEntryP_001A7390 {
     short delta;
     short index;
@@ -2358,7 +2310,7 @@ struct sChar2_001A7390 {
 static inline int Loc1A7390(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001A7390* vt = *(sVEntry_001A7390**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -2518,15 +2470,9 @@ void cMemMan_free(void* p);
 void operator_delete(int* ptr);
 extern char D_00467E18[];
 
-struct sVE1A7848 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 struct sObj1A7848 {
     char pad[0xC];
-    sVE1A7848* vt;
+    sVEntryVoidArg* vt;
 };
 
 struct sObjVec1A7848 {
@@ -2863,15 +2809,9 @@ INCLUDE_ASM("fe/feasyncfile", func_001A7DD8);
 #ifdef SKIP_ASM
 extern "C" void* func_0041610C(void* dst, void* src, int n);
 
-struct sVE1A7DD8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 struct sObj1A7DD8 {
     char pad[0xC];
-    sVE1A7DD8* vt;
+    sVEntryVoidArg* vt;
 };
 
 struct sObjVec1A7DD8 {
@@ -3032,16 +2972,10 @@ extern char D_004619F8[];
 extern char D_004A1408[];
 extern char D_004A1A50[];
 
-struct sVEntry_001A81F0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1A81F0(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001A81F0* vt = *(sVEntry_001A81F0**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -3378,17 +3312,12 @@ extern "C" void* func_001A8770(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A87D0);
 #ifdef SKIP_ASM
-struct sVE1A87D0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_0039E4C0(void* self, int a1);
 
 extern "C" void func_001A87D0(void* self, int a1)
 {
-    sVE1A87D0* vt = *(sVE1A87D0**)((char*)self + 0x8);
+    sVEntryVoid* vt = *(sVEntryVoid**)((char*)self + 0x8);
     vt[32].fn((char*)self + vt[32].delta);
     func_0039E4C0(self, a1);
     *(int*)((char*)self + 0x48) = 1;
@@ -4028,18 +3957,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001A92D8);
 // func_001A93D0 really takes (self, a1, a2); the unit declares it with a 4th arg
 void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
 
-struct sVE1A92D8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
-struct sVE1A92D8b {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_001A92D8(void* self, int a1, unsigned int kind)
 {
     switch (kind) {
@@ -4052,11 +3969,11 @@ extern "C" void func_001A92D8(void* self, int a1, unsigned int kind)
         func_001A93D0_3(self, a1, 0xF);
         break;
     case 22: {
-        sVE1A92D8* vt = *(sVE1A92D8**)((char*)self + 0x8);
+        sVEntryVoid* vt = *(sVEntryVoid**)((char*)self + 0x8);
         vt[32].fn((char*)self + vt[32].delta);
         if (*(int*)((char*)self + 0x6BC) == 0) {
             char* obj = *(char**)((char*)self + 0x20);
-            sVE1A92D8b* vt2 = *(sVE1A92D8b**)(obj + 0x8);
+            sVEntryVoidPtrInt* vt2 = *(sVEntryVoidPtrInt**)(obj + 0x8);
             vt2[17].fn(obj + vt2[17].delta, self, 0xF);
         }
         func_001A93D0_3(self, a1, 0x16);
@@ -5126,16 +5043,10 @@ struct sBXString1AB478 {
     sBXString1AB478(const sBXString1AB478& o);
 };
 
-struct sVEntry_001AB478 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1AB478(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001AB478* vt = *(sVEntry_001AB478**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 static inline void* GetSession_1AB478()
@@ -6021,15 +5932,9 @@ extern void* D_004A3028;
 extern char D_00462B88[];
 extern char D_00462BA0[];
 
-struct sVE1ACDD0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 static inline void Show1ACDD0(char* o, int on)
 {
-    sVE1ACDD0* vt = *(sVE1ACDD0**)(o + 0x8);
+    sVEntryVoidArg* vt = *(sVEntryVoidArg**)(o + 0x8);
     vt[8].fn(o + vt[8].delta, on);
 }
 
@@ -6749,21 +6654,9 @@ extern int D_004A4E8C;
 extern char D_004630C8[];
 extern char D_004630E0[];
 
-struct sVE1ADE88 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
-struct sVE1ADE88i {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 extern "C" void func_001ADE88(void* self)
 {
-    sVE1ADE88* vt = *(sVE1ADE88**)((char*)self + 0x8);
+    sVEntryVoid* vt = *(sVEntryVoid**)((char*)self + 0x8);
     vt[32].fn((char*)self + vt[32].delta);
     void* engine = *(void**)((char*)self + 0x10);
     void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_004630C8), 0);
@@ -6772,7 +6665,7 @@ extern "C" void func_001ADE88(void* self)
         cUIScreen_playFrame(screen, 0, 0);
         char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
         cBENewRaceInterface_setNumberAI(iface, D_004A4E8C);
-        sVE1ADE88i* ivt = *(sVE1ADE88i**)(iface + 0xC);
+        sVEntryInt* ivt = *(sVEntryInt**)(iface + 0xC);
         ivt[1].fn(iface + ivt[1].delta);
         func_001AF728(self, iface, *(void**)((char*)self + 0x40));
         func_001AF688(self);
@@ -6931,18 +6824,6 @@ extern void* D_004A28A8;
 extern int D_00534B34[];
 extern char D_005308B8[];
 
-struct sVE1AE680 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
-struct sVE1AE680i {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 struct sOpts1AE680 {
     char pad[0x18];
     unsigned int f0 : 6;
@@ -6956,7 +6837,7 @@ extern "C" void func_001AE680(void* self)
     if (*(void**)((char*)self + 0x40) != 0) {
         char* iface = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
         D_00534B34[0] = func_0039A738(*(void**)((char*)self + 0x6DC)) != 0;
-        sVE1AE680* vt = *(sVE1AE680**)(iface + 0xC);
+        sVEntryVoid* vt = *(sVEntryVoid**)(iface + 0xC);
         vt[1].fn(iface + vt[1].delta);
         int v = func_0039A738(*(void**)((char*)self + 0x6E8));
         sOpts1AE680* o = (sOpts1AE680*)D_005308B8;
@@ -6965,7 +6846,7 @@ extern "C" void func_001AE680(void* self)
         o->b7 = func_0039A738(*(void**)((char*)self + 0x6EC));
         char* nr = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
         cBENewRaceInterface_setNumberAI(nr, func_0039A738(*(void**)((char*)self + 0x6E0)));
-        sVE1AE680i* nvt = *(sVE1AE680i**)(nr + 0xC);
+        sVEntryInt* nvt = *(sVEntryInt**)(nr + 0xC);
         nvt[1].fn(nr + nvt[1].delta);
     }
 }
@@ -6999,15 +6880,9 @@ struct sRaceOpts_E7A0 {
 };
 extern sRaceOpts_E7A0 D_005308B8_E7A0 __asm__("D_005308B8");
 
-struct sIVE_E7A0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 static inline void commit_E7A0(char* iface)
 {
-    sIVE_E7A0* ivt = *(sIVE_E7A0**)(iface + 0xC);
+    sVEntryVoid* ivt = *(sVEntryVoid**)(iface + 0xC);
     ivt[1].fn(iface + ivt[1].delta);
 }
 
@@ -7175,12 +7050,6 @@ public:
     virtual void v08(int on);
 };
 
-struct sVE_001AEC60 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 extern "C" void func_001AEC60(void* self, int on)
 {
     char* s = (char*)self;
@@ -7199,12 +7068,12 @@ extern "C" void func_001AEC60(void* self, int on)
         o->v08(on);
         if (on == 0) {
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)o + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)o + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)o + vt[8].delta, (*(int**)(s + 0x6D8))[0] == 0 || locked != 0);
         }
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E0)) + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E0)) + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E0)) + vt[8].delta, (*(int**)(s + 0x6D8))[0] == 0 || locked != 0);
         }
@@ -7216,12 +7085,12 @@ extern "C" void func_001AEC60(void* self, int on)
         (*(cFEVObj_001AEC60**)(s + 0x6E4))->v08(on);
         if (on == 0) {
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E4)) + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E4)) + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E4)) + vt[8].delta, (*(int**)(s + 0x6D8))[1] == 0 || locked != 0);
         }
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)o + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)o + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)o + vt[8].delta, (*(int**)(s + 0x6D8))[1] == 0 || locked != 0);
         }
@@ -7233,12 +7102,12 @@ extern "C" void func_001AEC60(void* self, int on)
         (*(cFEVObj_001AEC60**)(s + 0x6E8))->v08(on);
         if (on == 0) {
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E8)) + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E8)) + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)(*(cFEVObj_001AEC60**)(s + 0x6E8)) + vt[8].delta, (*(int**)(s + 0x6D8))[3] == 0 || locked != 0);
         }
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)o + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)o + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)o + vt[8].delta, (*(int**)(s + 0x6D8))[3] == 0 || locked != 0);
         }
@@ -7250,12 +7119,12 @@ extern "C" void func_001AEC60(void* self, int on)
         (*(cFEVObj_001AEC60**)(s + 0x6EC))->v08(on);
         if (on == 0) {
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6EC)) + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)(*(cFEVObj_001AEC60**)(s + 0x6EC)) + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)(*(cFEVObj_001AEC60**)(s + 0x6EC)) + vt[8].delta, (*(int**)(s + 0x6D8))[2] == 0 || locked != 0);
         }
             {
-            sVE_001AEC60* vt = *(sVE_001AEC60**)((char*)o + 8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)o + 8);
             void (**pf)(void*, int) = &vt[8].fn;
             (*pf)((char*)o + vt[8].delta, (*(int**)(s + 0x6D8))[2] == 0 || locked != 0);
         }
@@ -7280,12 +7149,6 @@ extern int D_005308D0[];
 extern signed char D_00535C12_1AF098[] __asm__("D_00535C12");
 // PORT: a volatile view keeps the flag load ahead of the item load.
 extern volatile unsigned char D_004A4E8C_v __asm__("D_004A4E8C");
-
-struct sVE1AF098 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 struct sOpts1AF098 {
     int f0;
@@ -7324,7 +7187,7 @@ extern "C" void func_001AF098(void* self, int all)
     }
     if (D_00535C12_1AF098[0] != 0) {
         cBENewRaceInterface_setNumberAI(race, 0);
-        sVE1AF098* vt = *(sVE1AF098**)(race + 0xC);
+        sVEntryInt* vt = *(sVEntryInt**)(race + 0xC);
         vt[1].fn(race + vt[1].delta);
         func_0039A7A8(*(void**)(s + 0x6E0), 0);
     } else {
@@ -7538,18 +7401,6 @@ extern char D_00463480[];
 extern char D_004631C8[];
 extern char D_004630E0[];
 
-struct sVE_001AF568 {
-    short delta;
-    short index;
-    int (*fn)(void* self, int hash);
-};
-
-struct sVE_001AF568b {
-    short delta;
-    short index;
-    void (*fn)(void* self, int on);
-};
-
 extern "C" void func_001AF568(void* self)
 {
     char buf[0x400];
@@ -7558,12 +7409,12 @@ extern "C" void func_001AF568(void* self)
     if (text != 0) {
         char* name = *(char**)((char*)D_004A3028 + 0x98);
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVE_001AF568* vt = *(sVE_001AF568**)(o + 4);
+        sVEntryIntArg* vt = *(sVEntryIntArg**)(o + 4);
         char* obj = o + vt[4].delta;
         func_002C26D0(buf, vt[4].fn(obj, GetHashValue32(D_00463480)), name);
         func_003A0E90(text, buf);
         char* o2 = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004631C8));
-        sVE_001AF568b* vt2 = *(sVE_001AF568b**)(o2 + 8);
+        sVEntryVoidArg* vt2 = *(sVEntryVoidArg**)(o2 + 8);
         vt2[8].fn(o2 + vt2[8].delta, 1);
         cUIMenu_setSelectedByIndex(cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004630E0)), 7);
         func_001AEC60(self, 1);
@@ -7763,16 +7614,10 @@ extern char D_00463590[];
 extern char D_004635A8[];
 extern char D_004A1A88[];
 
-struct sVEntry_001AFA60 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1AFA60(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001AFA60* vt = *(sVEntry_001AFA60**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -7911,12 +7756,6 @@ extern int D_00535C08[];
 extern int D_00534B34[];
 extern char D_004635D8[];
 
-struct sVE_FE68 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 struct sRaceSetup_FE68 {
     int f0;
     char* name;                     // 0x4
@@ -7948,14 +7787,14 @@ struct sInfo_FE68 {
 
 static inline void vcall_FE68(void* p)
 {
-    sVE_FE68* vt = *(sVE_FE68**)((char*)p + 0xC);
+    sVEntryVoid* vt = *(sVEntryVoid**)((char*)p + 0xC);
     ((int (*)(void*))vt[1].fn)((char*)p + vt[1].delta);
 }
 
 // Creates the race-setup screen and applies the selected online race settings.
 extern "C" void func_001AFE68(char* self)
 {
-    sVE_FE68* vt = *(sVE_FE68**)(self + 0x8);
+    sVEntryVoid* vt = *(sVEntryVoid**)(self + 0x8);
     vt[32].fn(self + vt[32].delta);
     void* engine = *(void**)(self + 0x10);
     void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_004635D8), 0);
@@ -8637,12 +8476,6 @@ static inline void* GetSession_001B0E10()
     return D_004A3328;
 }
 
-struct sVE1B0E10 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_001B0E10(void* self)
 {
     func_001B0C08(self);
@@ -8654,7 +8487,7 @@ extern "C" void func_001B0E10(void* self)
         func_00263018(GetSession_001B0E10(), *(void**)((char*)D_004A3028 + 0x98));
     }
     char* obj = *(char**)((char*)self + 0x20);
-    sVE1B0E10* vt = *(sVE1B0E10**)(obj + 0x8);
+    sVEntryVoidPtrInt* vt = *(sVEntryVoidPtrInt**)(obj + 0x8);
     vt[17].fn(obj + vt[17].delta, self, 0x14);
 }
 #endif
@@ -8859,12 +8692,6 @@ extern char D_0045FD98[];
 extern char D_0045DCC8[];
 extern char D_0045FCD8[];
 
-struct sVE1B1280 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 class cFEVObj_001B1280 {
 public:
     char pad[0x8];
@@ -8899,7 +8726,7 @@ extern "C" void func_001B1280(void* self, int a1, unsigned int msg)
         if (*(int*)((char*)self + 0x6E0) != func_0039A738(*(void**)((char*)self + 0x6D0))) {
             char* iface = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 1);
             func_001474A8(iface, 0, 0);
-            sVE1B1280* vt = *(sVE1B1280**)(iface + 0xC);
+            sVEntryVoid* vt = *(sVEntryVoid**)(iface + 0xC);
             vt[1].fn(iface + vt[1].delta);
         }
         {
@@ -9115,16 +8942,10 @@ extern char D_004639B8[];
 extern char D_00463550[];
 extern char D_004A1A88[];
 
-struct sVEntry_001B1808 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1B1808(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B1808* vt = *(sVEntry_001B1808**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -9671,16 +9492,10 @@ extern char D_00463A90[];
 extern char D_00463AA8[];
 extern char D_00463AC0[];
 
-struct sVEntry_001B25E0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1B25E0(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B25E0* vt = *(sVEntry_001B25E0**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -10394,7 +10209,7 @@ extern char D_004A1408[];
 
 extern "C" int func_001B38D0(void* self, void* obj)
 {
-    sVE1A4170* vt = *(sVE1A4170**)((char*)obj + 0x8);
+    sVEntryInt* vt = *(sVEntryInt**)((char*)obj + 0x8);
     if (vt[27].fn((char*)obj + vt[27].delta) != 0) {
         // PORT: string pointer passed through an int parameter (func_001A9150's a3)
         func_001A9150(self, 0, GetHashValue32(D_00463DB8), (int)D_004A1408, 0, 4, 0x3F);
@@ -10823,12 +10638,6 @@ void func_002C67E8(void* self, int a1);
 extern char* D_004A1B78_p __asm__("D_004A1B78");
 extern int D_004A1B80;
 
-struct sVEv1B41A8 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
-
 struct sVE1B41A8 {
     short delta;
     short index;
@@ -10847,7 +10656,7 @@ extern "C" void func_001B41A8(void* self)
 {
     if (D_004A1B78_p != 0) {
         char* obj = D_004A1B78_p;
-        sVEv1B41A8* vt = *(sVEv1B41A8**)obj;
+        sVEntryVarargs* vt = *(sVEntryVarargs**)obj;
         vt[3].fn(obj + vt[3].delta);
     }
     switch (*(int*)((char*)self + 0x708)) {
@@ -10882,7 +10691,7 @@ extern "C" void func_001B41A8(void* self)
     case 0:
         if (VCall1B41A8(11) == 0) {
             char* obj = D_004A1B78_p;
-            sVEv1B41A8* vt = *(sVEv1B41A8**)obj;
+            sVEntryVarargs* vt = *(sVEntryVarargs**)obj;
             vt[5].fn(obj + vt[5].delta, D_004A1B80);
         }
         break;
@@ -11065,16 +10874,10 @@ extern char D_00463F38[];
 extern char D_0045F7E0[];
 extern char D_00462C88[];
 
-struct sVEntry_001B45E8 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1B45E8(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B45E8* vt = *(sVEntry_001B45E8**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -11179,19 +10982,13 @@ extern void* D_004A28A8;
 extern char D_004A12C0[];
 extern char D_00463F58[];
 
-struct sVE_001B47C0 {
-    short delta;
-    short index;
-    int (*fn)(void* self, int hash);
-};
-
 extern "C" void func_001B47C0(void* self, int a1)
 {
     char buf[32];
     char* str = (char*)self + 0x71C;
     func_002C2718(buf, D_004A12C0, a1);
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVE_001B47C0* vt = *(sVE_001B47C0**)(o + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(o + 4);
     char* obj = o + vt[4].delta;
     func_002C26D0(str, vt[4].fn(obj, GetHashValue32(D_00463F58)), buf);
     void* p = func_001A9C50(self);
@@ -11229,16 +11026,10 @@ extern char D_00462688[];
 extern char D_0045F7E0[];
 extern char D_00462C88[];
 
-struct sVEntry_001B4888 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1B4888(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B4888* vt = *(sVEntry_001B4888**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -11822,12 +11613,6 @@ extern void* D_004A3328;
 extern void* D_004A3028;
 extern const char D_00461CD8[];
 
-struct sVE1B5A58 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 // Tracks a pending flag; on 0x10/0x14 restarts the memory-card task and resets the list.
 extern "C" void func_001B5A58(void* self, void* a1, int a2)
 {
@@ -11855,7 +11640,7 @@ extern "C" void func_001B5A58(void* self, void* a1, int a2)
         func_0025B800(D_004A3028);
         func_002636F0(func_002591B8(), 0);
         char* obj = *(char**)((char*)self + 0x6EC);
-        sVE1B5A58* vt = *(sVE1B5A58**)(obj + 8);
+        sVEntryVoidArg* vt = *(sVEntryVoidArg**)(obj + 8);
         vt[8].fn(obj + vt[8].delta, 0);
         break;
     }
@@ -12029,16 +11814,10 @@ extern char D_004641D0[];
 extern char D_00460688[];
 extern char D_00461618[];
 
-struct sVEntry_001B5E28 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1B5E28(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B5E28* vt = *(sVEntry_001B5E28**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -12229,12 +12008,6 @@ extern void* D_004A28A8;
 extern char D_00464208[];
 extern char D_00464220[];
 
-struct sVE_001B6288 {
-    short delta;
-    short index;
-    void* (*fn)(void* self, int hash);
-};
-
 struct sFEObj_001B6288 {
     char pad0[0x8];
     void** vt;          // 0x8
@@ -12264,7 +12037,7 @@ extern "C" sFEObj_001B6288* func_001B6288(sFEObj_001B6288* self, int a1, int a2)
     self->f6E4 = 0;
     self->f6FC = 0;
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVE_001B6288* vt = *(sVE_001B6288**)(o + 4);
+    sVEntryPtrArg* vt = *(sVEntryPtrArg**)(o + 4);
     int n = USTR_length(vt[4].fn(o + vt[4].delta, GetHashValue32(D_00464208)));
     if (self->f6FC != 0) {
         cMemMan_free(self->f6FC);
@@ -13025,16 +12798,10 @@ extern char D_00464360[];
 extern char D_00464380[];
 extern char D_00464398[];
 
-struct sVEntry_001B70D0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1B70D0(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B70D0* vt = *(sVEntry_001B70D0**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -13646,16 +13413,10 @@ extern char D_004644D8[];
 extern char D_004644F0[];
 extern char D_00464508[];
 
-struct sVEntry_B7E40 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc_B7E40(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_B7E40* vt = *(sVEntry_B7E40**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -13782,15 +13543,10 @@ INCLUDE_ASM("fe/feasyncfile", func_001B8238);
 extern "C" void func_002C2718_1B8238(char* buf, const char* fmt, ...) __asm__("func_002C2718");
 extern "C" void func_002C26D0_1B8238(void* dst, int fmt, ...) __asm__("func_002C26D0");
 extern char D_004A12C0[];
-struct sVEntry_001B8238 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 static inline int Loc_001B8238(char* key)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B8238* vt = *(sVEntry_001B8238**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
 }
 extern char D_004642E0[];
@@ -13837,16 +13593,10 @@ extern char D_00464628[];
 extern char D_00464640[];
 extern char D_004644F0[];
 
-struct sVEntry_001B83C0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc_001B83C0(char* key)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001B83C0* vt = *(sVEntry_001B83C0**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
 }
 
@@ -14183,11 +13933,6 @@ void* func_001B89E8(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B8A08);
 #ifdef SKIP_ASM
-struct sVE1B8A08 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" bool func_001B9558(void* self);
 extern "C" void func_001B95C0(void* self);
@@ -14210,7 +13955,7 @@ extern "C" int func_001B8A08(void* self, int a1)
         func_001BA178(self);
         void* obj = *(void**)((char*)self + 0x6F0);
         if (obj != 0) {
-            sVE1B8A08* vt = *(sVE1B8A08**)((char*)obj + 0x8);
+            sVEntryVoidArg* vt = *(sVEntryVoidArg**)((char*)obj + 0x8);
             void* o = (char*)obj + vt[8].delta;
             vt[8].fn(o, !func_001B9558(self));
         }
@@ -14319,15 +14064,9 @@ extern char D_00464838[];
 extern char D_00464848[];
 extern char D_00464860[];
 
-struct sVE_8C38 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 struct sObj_8C38 {
     int pad[2];
-    sVE_8C38* vt;
+    sVEntryVoidArg* vt;
 };
 
 struct cState_8C38 {
@@ -17014,16 +16753,10 @@ extern "C" void func_001BE3A8(void* self, int id);
 extern "C" void func_001BE720(void*);
 extern "C" void func_0039A7A8(void* self, int a1);
 
-struct sVE1BCD18 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" int func_001BCD18(void* self, int reset)
 {
     if (reset != 0) {
-        sVE1BCD18* vt = *(sVE1BCD18**)((char*)self + 0x8);
+        sVEntryVoid* vt = *(sVEntryVoid**)((char*)self + 0x8);
         vt[32].fn((char*)self + vt[32].delta);
         *(int*)((char*)self + 0x760) = 0;
         func_001BE0A8(self);
@@ -17211,15 +16944,9 @@ extern "C" int func_0025F180_D1B8(void* self, int id) __asm__("func_0025F180");
 extern "C" void func_0025D770_D1B8(void* self, int id) __asm__("func_0025D770");
 extern char D_00464F60[];
 
-struct sVE_D1B8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 struct sObj_D1B8 {
     int pad[2];
-    sVE_D1B8* vt;
+    sVEntryVoidArg* vt;
 };
 
 struct cState_D1B8 {
@@ -17551,12 +17278,6 @@ extern char D_004650B8[];
 extern char D_004650D0[];
 extern char D_00462C88[];
 
-struct sVEntry_001BD8C8 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 // PORT: the unit declares the message pointer as int
 extern "C" void func_001BD8C8(void* self, int a2)
 {
@@ -17579,7 +17300,7 @@ extern "C" void func_001BD8C8(void* self, int a2)
             char* buf = (char*)self + 0x780;
             char* name = *(char**)((char*)self + 0xB80);
             char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-            sVEntry_001BD8C8* vt = *(sVEntry_001BD8C8**)(obj + 4);
+            sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
             func_002C26D0(buf, vt[4].fn(obj + vt[4].delta, GetHashValue32(D_004650B8)), name);
             void* p = func_001A9C50(self);
             *(char**)((char*)p + 0xC4) = buf;
@@ -18039,12 +17760,6 @@ public:
     virtual void v09(int on);
 };
 
-struct sVE_001BE3A8 {
-    short delta;
-    short index;
-    int (*fn)(void* self, int hash);
-};
-
 struct sFE_001BE3A8 {
     char pad0[0x704];
     cUIText* text;
@@ -18082,7 +17797,7 @@ extern "C" void func_001BE3A8(void* p, int id)
     } else {
         char buf[0x50];
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVE_001BE3A8* vt = *(sVE_001BE3A8**)(o + 4);
+        sVEntryIntArg* vt = *(sVEntryIntArg**)(o + 4);
         char* obj = o + vt[4].delta;
         func_002C26D0(buf, vt[4].fn(obj, GetHashValue32(D_004651C8)), 0);
         func_003A0E90(self->text, buf);
@@ -18119,16 +17834,10 @@ extern void* D_004A28A8;
 extern void* D_004A3028;
 extern char D_004651C8[];
 
-struct sVEntry_001BE540 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1BE540(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001BE540* vt = *(sVEntry_001BE540**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -18622,16 +18331,10 @@ extern char D_00465330[];
 extern char D_00462F08[];
 extern char D_00536760[];
 
-struct sVEntry_001BEF60 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc_001BEF60(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001BEF60* vt = *(sVEntry_001BEF60**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -19043,16 +18746,10 @@ extern const char D_00461CD8[];
 extern char D_0045DCC8[];
 extern char D_0045FCD8[];
 
-struct sVEntry_001BF758 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-
 static inline int Loc1BF758(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_001BF758* vt = *(sVEntry_001BF758**)(obj + 4);
+    sVEntryIntArg* vt = *(sVEntryIntArg**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
@@ -20193,12 +19890,6 @@ struct sSelf_001C1560 {
     int ids[5];
 };
 
-struct sVE_001C1560 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 class cFEVObj_001C1560 {
 public:
     char pad[0x8];
@@ -20246,7 +19937,7 @@ extern "C" void func_001C1560(void* self, int a1, unsigned int msg)
                 func_001C13E0(self, 0);
                 char* iface = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
                 D_00534B34[0] = func_0039A738(*(void**)(s + 0x70C)) != 0;
-                sVE_001C1560* vt = *(sVE_001C1560**)(iface + 0xC);
+                sVEntryVoid* vt = *(sVEntryVoid**)(iface + 0xC);
                 vt[1].fn(iface + vt[1].delta);
                 cBENewRaceInterface_setNumberAI(cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 0), 0);
                 o->ids[0] = func_0039A738(*(void**)(s + 0x70C));
@@ -20879,12 +20570,6 @@ struct sBXString1C2468 {
     sBXString1C2468(const sBXString1C2468& o);
 };
 
-struct sVE_001C2468 {
-    short delta;
-    short index;
-    void* (*fn)(void* self, int hash);
-};
-
 extern "C" void func_001C2468(void* self, int idx)
 {
     char buf[16];
@@ -20896,7 +20581,7 @@ extern "C" void func_001C2468(void* self, int idx)
     if (msg == 0) {
         char tmp[0x40];
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVE_001C2468* vt = *(sVE_001C2468**)(o + 4);
+        sVEntryPtrArg* vt = *(sVEntryPtrArg**)(o + 4);
         char* obj = o + vt[4].delta;
         void* str = vt[4].fn(obj, cBEOptionInterface_getDefaultQuickKeyMessageHashValue(iface, idx));
         func_003DCB20(tmp, str);
@@ -21008,12 +20693,6 @@ extern char D_00465BC0[];
 extern char D_00465BE0[];
 extern char D_00465C00[];
 
-struct sVE_001C2740 {
-    short delta;
-    short index;
-    void* (*fn)(void* self, int hash);
-};
-
 // Message handler for the quick-message edit screen.
 extern "C" void func_001C2740(void* selfp, void* a1, int a2)
 {
@@ -21029,7 +20708,7 @@ extern "C" void func_001C2740(void* selfp, void* a1, int a2)
         if (msg == 0) {
             char tmp[0x40];
             char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-            sVE_001C2740* vt = *(sVE_001C2740**)(o + 4);
+            sVEntryPtrArg* vt = *(sVEntryPtrArg**)(o + 4);
             char* obj = o + vt[4].delta;
             void* str = vt[4].fn(obj, cBEOptionInterface_getDefaultQuickKeyMessageHashValue(iface, idx));
             func_003DCB20(tmp, str);
@@ -21102,12 +20781,6 @@ extern char D_00465C48[];
 extern char D_00461618[];
 extern char D_00535617[];
 
-struct sVE1C2A18 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 extern "C" void func_001C2A18(void* self)
 {
     char* p = *(char**)((char*)self + 0x69C);
@@ -21130,7 +20803,7 @@ extern "C" void func_001C2A18(void* self)
             strcpy(D_00535617 + (idx << 6), src);
         }
         *(int*)((char*)self + 0x6D0) = 1;
-        sVE1C2A18* vt = *(sVE1C2A18**)(iface + 0xC);
+        sVEntryInt* vt = *(sVEntryInt**)(iface + 0xC);
         vt[1].fn(iface + vt[1].delta);
         func_001C2468(self, idx);
     }
@@ -21904,12 +21577,6 @@ struct sVE_1C3EE8 {
     void (*fn)(void*, void*);
 };
 
-struct sVE2_1C3EE8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 struct sVec4_1C3EE8 {
     float x, y, z, w;
     sVec4_1C3EE8(float a, float b, float c, float d) { x = a; y = b; z = c; w = d; }
@@ -21932,7 +21599,7 @@ extern "C" void func_001C3EE8(void* self_, int state)
 #define SHOW_3EE8(name, on) \
     OBJ_3EE8(name); \
     if (o != 0) { \
-        sVE2_1C3EE8* vt = *(sVE2_1C3EE8**)(o + 8); \
+        sVEntryVoidArg* vt = *(sVEntryVoidArg**)(o + 8); \
         vt[9].fn(o + vt[9].delta, on); \
     }
 #define TEXT_3EE8(name, str) \
@@ -22231,15 +21898,9 @@ void func_0039E508_2(void* self, void* pad) __asm__("func_0039E508__FPv");
 extern "C" void func_001C4D28(void* self);
 extern "C" void func_001C4E40(void* self);
 
-struct sVE1C4BD8 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 static inline int Pad1C4BD8(char* pad, int slot)
 {
-    sVE1C4BD8* vt = *(sVE1C4BD8**)(pad + 0x8);
+    sVEntryInt* vt = *(sVEntryInt**)(pad + 0x8);
     return vt[slot].fn(pad + vt[slot].delta);
 }
 
@@ -22278,15 +21939,9 @@ INCLUDE_ASM("fe/feasyncfile", func_001C4D28);
 #ifdef SKIP_ASM
 extern char D_004A5A58;
 
-struct sVE1C4D28 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 static inline void Show1C4D28(char* o, int on)
 {
-    sVE1C4D28* vt = *(sVE1C4D28**)(o + 0x8);
+    sVEntryVoidArg* vt = *(sVEntryVoidArg**)(o + 0x8);
     vt[7].fn(o + vt[7].delta, on);
 }
 
@@ -22295,7 +21950,7 @@ extern "C" void func_001C4D28(void* self)
     char* snd = *(char**)(*(char**)((char*)self + 0x10) + 0x14);
     if (snd == 0) snd = &D_004A5A58;
     if (snd != 0) {
-        sVE1C4D28* vt = *(sVE1C4D28**)snd;
+        sVEntryVoidArg* vt = *(sVEntryVoidArg**)snd;
         vt[2].fn(snd + vt[2].delta, 1);
     }
     if (*(unsigned int*)((char*)self + 0x6E4) != 3) {
@@ -22324,15 +21979,9 @@ INCLUDE_ASM("fe/feasyncfile", func_001C4E40);
 #ifdef SKIP_ASM
 extern char D_004A5A58;
 
-struct sVE1C4E40 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 static inline void Show1C4E40(char* o, int on)
 {
-    sVE1C4E40* vt = *(sVE1C4E40**)(o + 0x8);
+    sVEntryVoidArg* vt = *(sVEntryVoidArg**)(o + 0x8);
     vt[7].fn(o + vt[7].delta, on);
 }
 
@@ -22341,7 +21990,7 @@ extern "C" void func_001C4E40(void* self)
     char* snd = *(char**)(*(char**)((char*)self + 0x10) + 0x14);
     if (snd == 0) snd = &D_004A5A58;
     if (snd != 0) {
-        sVE1C4E40* vt = *(sVE1C4E40**)snd;
+        sVEntryVoidArg* vt = *(sVEntryVoidArg**)snd;
         vt[2].fn(snd + vt[2].delta, 1);
     }
     if (*(unsigned int*)((char*)self + 0x6E4) != 3) {
