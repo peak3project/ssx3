@@ -17109,11 +17109,8 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D41A8);
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4898);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 typedef struct E_4898 { short v; short w; } E_4898;
 typedef struct B_4898 { E_4898 ent[0x40]; } B_4898;
-typedef struct A_4898 { char pad0[0x34]; B_4898 *b; short *idx; char pad1[0x50 - 0x3C]; char *arr; } A_4898;
-extern A_4898 *D_0044F420_F420[] __asm__("D_0044F420");
 
 static inline int get_4898(char *arr, int i) {
     return *(int *)(arr + i * 8);
@@ -17121,18 +17118,18 @@ static inline int get_4898(char *arr, int i) {
 
 int func_003D4898(int arg0) {
     int var_7;
-    A_4898 *a;
+    struct sPath *a;
     B_4898 *b;
     short t;
 
     var_7 = 0;
     if (arg0 < 0) return 0;
-    a = D_0044F420_F420[0];
-    b = a->b;
+    a = D_0044F420;
+    b = (B_4898 *)a->f34;
     if (arg0 >= *(unsigned short *)((char *)b + 0x12)) return 0;
-    t = b->ent[a->idx[arg0]].v;
+    t = b->ent[a->f38[arg0]].v;
     if (t > 0) {
-        var_7 = get_4898(a->arr, t - 1);
+        var_7 = get_4898(a->f50, t - 1);
     }
     return var_7;
 }
