@@ -4210,8 +4210,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E1D68);
 extern int func_003DEBF0(int, int, int, void *);
 extern int func_003DEC60(int a, int b, int c, int d, int e);
 extern int func_003DECA0(int a, int b);
-struct M_1D68 { int f0; char *(*alloc)(int, int, int); void (*free)(char *); };
-extern struct M_1D68 D_00450C10_1D68 __asm__("D_00450C10");
 extern int BIG_typeofheader_1D68(char *) __asm__("BIG_typeofheader");
 extern int BIG_sizeofheader_1D68(char *) __asm__("BIG_sizeofheader");
 extern void func_003E6574_1D68(char *, char *, int) __asm__("func_003E6574");
@@ -4220,25 +4218,25 @@ extern void func_003E6574_1D68(char *, char *, int) __asm__("func_003E6574");
 int func_003E1D68(int a, int *b) {
     int sp0;
     if (func_003DEBF0(b[0], 1, a, &sp0)) {
-        char *hdr = D_00450C10_1D68.alloc(b[0], 0xA90, b[2]);
+        char *hdr = D_00450C10.f04((char *)b[0], 0xA90, b[2]);
         if (hdr) {
             func_003DEC60(sp0, 0, (int)hdr, 0xA90, a - 1);
             if (BIG_typeofheader_1D68(hdr) == 0) {
-                D_00450C10_1D68.free(hdr);
+                D_00450C10.f08(hdr);
                 func_003DECA0(sp0, a - 1);
                 return 0;
             }
             {
                 int size = BIG_sizeofheader_1D68(hdr);
                 if (size > 0xA90) {
-                    char *buf = D_00450C10_1D68.alloc(b[0], size, b[2]);
+                    char *buf = D_00450C10.f04((char *)b[0], size, b[2]);
                     if (buf == 0) {
-                        D_00450C10_1D68.free(hdr);
+                        D_00450C10.f08(hdr);
                         func_003DECA0(sp0, a - 1);
                         return 0;
                     }
                     func_003E6574_1D68(buf, hdr, 0xA90);
-                    D_00450C10_1D68.free(hdr);
+                    D_00450C10.f08(hdr);
                     hdr = buf;
                     func_003DEC60(sp0, 0xA90, (int)(hdr + 0xA90), size - 0xA90, a - 1);
                 }
