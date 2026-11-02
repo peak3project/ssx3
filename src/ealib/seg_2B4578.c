@@ -7403,19 +7403,16 @@ void func_003C30C8(int arg0, int arg1) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3178);
 #ifdef SKIP_ASM
-struct E_3178 { int pad0; short s[9]; char pad16[0x23 - 0x16]; unsigned char b23; unsigned short h24; char pad26[0x8C - 0x26]; };
-struct G_3178 { char pad[0x2A]; unsigned short f2A; char pad2C[3]; unsigned char b2F; unsigned char b30; char pad31[0x1F0 - 0x31]; struct E_3178 *tab; };
-extern struct G_3178 D_0050A8E8_3178[] __asm__("D_0050A8E8");
 extern void func_003C8D00_3178(float, int) __asm__("func_003C8D00");
 
 void func_003C3178(int arg0, int arg1) {
-    struct E_3178 *e = &D_0050A8E8_3178[0].tab[arg0];
+    struct sA8E8Chan *e = &D_0050A8E8.f1F0[arg0];
     int i;
 
-    if (e->h24 & 4) {
-        float f = (float)arg1 * (1.0f / ((float)D_0050A8E8_3178[0].f2A * 0.5f));
-        for (i = 0; i < e->b23; i++) {
-            func_003C8D00_3178(f, e->s[i] - (D_0050A8E8_3178[0].b30 + D_0050A8E8_3178[0].b2F));
+    if (e->f24 & 4) {
+        float f = (float)arg1 * (1.0f / ((float)D_0050A8E8.setup.cfg.f0A * 0.5f));
+        for (i = 0; i < e->f23; i++) {
+            func_003C8D00_3178(f, e->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F));
         }
     }
 }
