@@ -465,7 +465,7 @@ extern "C" void func_00169570(char* p)
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169828);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sXf func_0031B748_9828(t4Matrix* m) __asm__("func_0031B748");
+extern "C" sXf func_0031B748(t4Matrix* m);
 extern "C" t4Vector func_00160228_9828(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -612,7 +612,7 @@ extern "C" sXf func_00169828(char* p)
     RotAxis_9828(&m, D_004FF140, *(float*)(p + 0x40) + func_001603F0(p + 0x74));
     RotAxis_9828(&m, D_004FF150, -*(float*)(p + 0x48));
     RotAxis_9828(&m, D_004FF160, *(float*)(p + 0x44));
-    return func_0031B748_9828(&m);
+    return func_0031B748(&m);
 }
 #endif
 
@@ -749,7 +749,6 @@ extern "C" void func_00169DB0(char* p)
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169F88);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sXf func_0031B748_9F88(t4Matrix* m) __asm__("func_0031B748");
 extern "C" t4Vector func_00160228_9F88(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -896,7 +895,7 @@ extern "C" sXf func_00169F88(char* p)
     RotAxis_9F88(&m, D_004FF140, *(float*)(p + 0x40) + func_001603F0(p + 0x74));
     RotAxis_9F88(&m, D_004FF150, -*(float*)(p + 0x48));
     RotAxis_9F88(&m, D_004FF160, *(float*)(p + 0x44));
-    return func_0031B748_9F88(&m);
+    return func_0031B748(&m);
 }
 #endif
 
@@ -1089,7 +1088,6 @@ extern "C" void func_0016A510(char* p)
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016A868);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sXf func_0031B748_A868(t4Matrix* m) __asm__("func_0031B748");
 extern "C" t4Vector func_00160228_A868(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -1236,7 +1234,7 @@ extern "C" sXf func_0016A868(char* p)
     RotAxis_A868(&m, D_004FF140, *(float*)(p + 0x40) + func_001603F0(p + 0x70));
     RotAxis_A868(&m, D_004FF150, -*(float*)(p + 0x48));
     RotAxis_A868(&m, D_004FF160, *(float*)(p + 0x44));
-    return func_0031B748_A868(&m);
+    return func_0031B748(&m);
 }
 #endif
 
@@ -1648,7 +1646,6 @@ extern "C" void func_0016B180(char* p)
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016B7B8);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" sXf func_0031B748_B7B8(t4Matrix* m) __asm__("func_0031B748");
 extern "C" t4Vector func_00160228_B7B8(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
@@ -1795,7 +1792,7 @@ extern "C" sXf func_0016B7B8(char* p)
     RotAxis_B7B8(&m, D_004FF140, *(float*)(p + 0x40) + func_001603F0(p + 0x70));
     RotAxis_B7B8(&m, D_004FF150, -*(float*)(p + 0x48));
     RotAxis_B7B8(&m, D_004FF160, *(float*)(p + 0x44));
-    return func_0031B748_B7B8(&m);
+    return func_0031B748(&m);
 }
 #endif
 
