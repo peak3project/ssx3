@@ -5404,27 +5404,34 @@ extern "C" int func_00179FC8(void* self, int id)
 }
 #endif
 
+// The camera list (0x8C0C bytes): up to 0x100 named cameras with their tag, index and flags; func_0017A638
+// builds it, func_0017A028 / func_0017A0B8 step through the valid ones.
+struct sCamEntry {
+    char name[0x40];    // 0x00
+    char tag[4];        // 0x40
+    char pad44[0x3C];
+    int idx;            // 0x80
+    int active;         // 0x84
+    int valid;          // 0x88
+};
+
+struct sCamMgr {
+    int count;                  // 0x0000
+    sCamEntry entries[0x100];   // 0x0004
+    int numActive;              // 0x8C04
+    int numValid;               // 0x8C08
+};
+
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A028);
 #ifdef SKIP_ASM
-struct func_0017A028_sEntry {
-    int active;
-    char pad_0x4[0x88];
-};
-
-struct func_0017A028_sMgr {
-    int count;
-    char pad_0x4[0x88];
-    func_0017A028_sEntry entries[1];
-};
-
-extern "C" int func_0017A028(func_0017A028_sMgr* self, int i)
+extern "C" int func_0017A028(sCamMgr* self, int i)
 {
-    if (*(int*)((char*)self + 0x8C08) == 0) {
+    if (self->numValid == 0) {
         return -1;
     }
     i = (i + 1) % self->count;
-    while (self->entries[i].active == 0) {
+    while (self->entries[i].valid == 0) {
         i = (i + 1) % self->count;
     }
     return i;
@@ -5434,13 +5441,13 @@ extern "C" int func_0017A028(func_0017A028_sMgr* self, int i)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A0B8);
 #ifdef SKIP_ASM
-extern "C" int func_0017A0B8(func_0017A028_sMgr* self, int i)
+extern "C" int func_0017A0B8(sCamMgr* self, int i)
 {
-    if (*(int*)((char*)self + 0x8C08) == 0) {
+    if (self->numValid == 0) {
         return -1;
     }
     i = (i + self->count - 1) % self->count;
-    while (self->entries[i].active == 0) {
+    while (self->entries[i].valid == 0) {
         i = (i + self->count - 1) % self->count;
     }
     return i;
@@ -5529,22 +5536,6 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A378);
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A638);
 #ifdef SKIP_ASM
-struct sCamEntry_17A638 {
-    char name[0x40];    // 0x00
-    char* tag;          // 0x40
-    char pad44[0x3C];
-    int idx;            // 0x80
-    int active;         // 0x84
-    int valid;          // 0x88
-};
-
-struct sCamMgr_17A638 {
-    int count;                          // 0x0000
-    sCamEntry_17A638 entries[0x100];    // 0x0004
-    int numActive;                      // 0x8C04
-    int numValid;                       // 0x8C08
-};
-
 struct sCamName_17A638 {
     char* name;
     int ok;
@@ -5560,7 +5551,7 @@ extern "C" int func_00179FC8(void* self, int id);
 extern "C" char* strcpy(char* d, const char* s);
 extern char* D_004A1290[];
 
-extern "C" void func_0017A638(sCamMgr_17A638* self)
+extern "C" void func_0017A638(sCamMgr* self)
 {
     sCamName_17A638 names[0x18];
     int i;
@@ -5610,17 +5601,6 @@ extern "C" int func_003A6948(const char* path, int n, void* names);
 extern char D_0045CE20[];
 extern char D_004A1298[];
 
-struct sCamEntry_A830 {
-    char name[0x40];    // 0x00
-    char tag[4];        // 0x40
-    char pad_44[0x48];
-};
-
-struct sCamMgr_A830 {
-    int count;                          // 0x0000
-    sCamEntry_A830 entries[0x100];    // 0x0004
-};
-
 struct sCamName_A830 {
     char* name;
     int ok;
@@ -5641,7 +5621,7 @@ struct sBigFile_A830 {
 };
 
 // Returns 0 when (name, tag) is already registered; otherwise looks the name up in the bigfile.
-extern "C" int func_0017A830(sCamMgr_A830* self, char* name, char* tag)
+extern "C" int func_0017A830(sCamMgr* self, char* name, char* tag)
 {
     int i;
     for (i = 0; i < self->count; i++) {
@@ -5688,17 +5668,6 @@ extern "C" int func_003A6948(const char* path, int n, void* names);
 extern char D_0045CE20[];
 extern char D_004A1298[];
 
-struct sCamEntry_17A978 {
-    char name[0x40];    // 0x00
-    char tag[4];        // 0x40
-    char pad_44[0x48];
-};
-
-struct sCamMgr_17A978 {
-    int count;                          // 0x0000
-    sCamEntry_17A978 entries[0x100];    // 0x0004
-};
-
 struct sCamName_17A978 {
     char* name;
     int ok;
@@ -5720,7 +5689,7 @@ struct sBigFile_17A978 {
 
 extern "C" int func_0017A978(void* selfp, int n, void* namesp, char* tag)
 {
-    sCamMgr_17A978* self = (sCamMgr_17A978*)selfp;
+    sCamMgr* self = (sCamMgr*)selfp;
     sCamName_17A978* names = (sCamName_17A978*)namesp;
     int fail = 0;
     int i;
