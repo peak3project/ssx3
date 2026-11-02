@@ -17354,27 +17354,18 @@ int func_003D4BB0(int key) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4C40);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_4C40 {
-    char pad0[0x30];
-    unsigned int mask;
-    void *hdr;
-    char pad38[0x928 - 0x38];
-};
-extern struct E_4C40 D_00517610_4C40[4] __asm__("D_00517610");
-
 void func_003D4C40(void) {
-    struct E_4C40 tmp;
+    struct sPath tmp;
     int i;
     int j;
 
     for (i = 0; i < 4; i++) {
         if (*(void **)(D_00517644 + i * 0x928) != 0) {
             for (j = i + 1; j < 4; j++) {
-                if (D_00517610_4C40[j].hdr != 0 && D_00517610_4C40[j].mask < D_00517610_4C40[i].mask) {
-                    tmp = D_00517610_4C40[i];
-                    D_00517610_4C40[i] = D_00517610_4C40[j];
-                    D_00517610_4C40[j] = tmp;
+                if (D_00517610[j].f34 != 0 && D_00517610[j].f30 < D_00517610[i].f30) {
+                    tmp = D_00517610[i];
+                    D_00517610[i] = D_00517610[j];
+                    D_00517610[j] = tmp;
                 }
             }
         }
