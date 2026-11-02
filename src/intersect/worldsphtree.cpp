@@ -85,6 +85,12 @@ struct sWsOctNode2 {
     void** listA;                   // 0x24
 };
 
+// Octree node with eight children and one object list.
+struct sWsOctNode {
+    void* child[8];                 // 0x00
+    void** list;                    // 0x20
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1952,10 +1958,6 @@ extern "C" void func_00336D40(void* vctx, void* vnode)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00336F30);
 #ifdef SKIP_ASM
-struct sOct_6F30 {
-    void* child[8];                 // 0x00
-    void** list;                    // 0x20
-};
 
 struct sQH_6F30 {
 };
@@ -1984,7 +1986,7 @@ extern "C" void helpX_6F30(char* flag, sCb_6F30* cb, sCb_6F30* cb2, sBox_6F30* b
 // nash::Cell::descend<StaticObjectCallback>
 static inline void descend_6F30(void** n, sCb_6F30* cb)
 {
-    sOct_6F30* o = (sOct_6F30*)n;
+    sWsOctNode* o = (sWsOctNode*)n;
     void** p;
     for (p = o->list; p != 0; p = (void**)*p) {
         func_00336D40(cb, p);
@@ -3100,17 +3102,13 @@ extern "C" void func_0033DBE8(char* flag, sQuery_369D8* q, sQuery_369D8* q2, sCt
 INCLUDE_ASM("intersect/worldsphtree", func_0033DFD8);
 #ifdef SKIP_ASM
 
-struct sOct_DFD8 {
-    void* child[8];                 // 0x00
-    void** list;                    // 0x20
-};
 extern "C" void func_00336D40(void* ctx, void* obj);
 extern "C" void func_003410C0(void* self, void* ctx);
 
 // nash::Cell::descend<StaticObjectCallback>
 static inline void descend_DFD8(void** n, void* cb)
 {
-    sOct_DFD8* o = (sOct_DFD8*)n;
+    sWsOctNode* o = (sWsOctNode*)n;
     void** p;
     for (p = o->list; p != 0; p = (void**)*p) {
         func_00336D40(cb, p);
@@ -3129,7 +3127,7 @@ extern "C" void func_0033DFD8(char* self, void* cb, void* cb2, float* box, void*
 {
     {
         void** p;
-        sOct_DFD8* o = (sOct_DFD8*)node;
+        sWsOctNode* o = (sWsOctNode*)node;
         for (p = o->list; p != 0; p = (void**)*p) {
             func_00336D40(cb, p);
         }
