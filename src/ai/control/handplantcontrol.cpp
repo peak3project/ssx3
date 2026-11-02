@@ -2672,12 +2672,8 @@ extern "C" void func_00140918(void *arg0, long long *arg1) {
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00140928);
 #ifdef SKIP_ASM
-struct sMat4HP {
-    float m[16];
-} __attribute__((aligned(16)));
-
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy).
-static inline void vu0CopyMat_140928(sMat4HP& dst, const sMat4HP& src)
+static inline void vu0CopyMat_140928(t4Matrix& dst, const t4Matrix& src)
 {
     __asm__(
         "lqc2      $vf1, 0x0(%1)\n"
@@ -2692,9 +2688,9 @@ static inline void vu0CopyMat_140928(sMat4HP& dst, const sMat4HP& src)
         : : "r"(&dst), "r"(&src) : "memory");
 }
 
-extern "C" sMat4HP* func_00140928(sMat4HP* dst, void* self)
+extern "C" t4Matrix* func_00140928(t4Matrix* dst, void* self)
 {
-    vu0CopyMat_140928(*dst, *(sMat4HP*)((char*)self + 0x160));
+    vu0CopyMat_140928(*dst, *(t4Matrix*)((char*)self + 0x160));
     return dst;
 }
 #endif
