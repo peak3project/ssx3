@@ -5298,9 +5298,7 @@ struct IsoDir_4040 {
     char name[1];
 };
 struct Pvd_4040 { char pad[0x9C]; struct IsoDir_4040 root; };
-struct Rec_4040 { char *name; int a; int b; char *path; };
 struct Ent_4040 { char name[0x100]; int a; int b; };
-struct M_4040 { int f0; char *(*alloc)(char *, int, int); void (*free)(char *); char pad[0x20 - 0xC]; struct Rec_4040 *f20; };
 struct C_4040 { char *f0; int f4; int f8; int fC; };
 struct G_4040 {
     int f0;
@@ -5324,7 +5322,6 @@ struct Sem_4040 { int count; int max; int init; int wait; int attr; int option; 
 
 extern struct G_4040 D_00519C40_4040 __asm__("D_00519C40");
 extern struct C_4040 D_00450C58_4040 __asm__("D_00450C58");
-extern struct M_4040 D_00450C10_4040 __asm__("D_00450C10");
 extern struct Ent_4040 *D_00450C68_4040 __asm__("D_00450C68");
 extern unsigned int D_00450C6C_4040 __asm__("D_00450C6C");
 extern int D_00450C70_4040 __asm__("D_00450C70");
@@ -5389,10 +5386,10 @@ int func_003E4040(unsigned int n, char *dst) {
     D_00519C40_4040.f1E = 0;
     D_00519C40_4040.f2C = 0x10;
     func_00424020_4040(0);
-    D_00450C68_4040 = (struct Ent_4040 *)D_00450C10_4040.alloc(D_00495DE0_4040, n * 0x108, 0);
+    D_00450C68_4040 = D_00450C10.f04(D_00495DE0_4040, n * 0x108, 0);
     func_003E6220_4040(D_00450C68_4040, n * 0x108);
-    if (D_00450C10_4040.f20 != 0) {
-        struct Rec_4040 *r = D_00450C10_4040.f20;
+    if (D_00450C10.f20 != 0) {
+        struct sC10File *r = D_00450C10.f20;
         struct Ent_4040 *e = D_00450C68_4040;
         while (*r->name != 0) {
             char *s;
@@ -5432,7 +5429,7 @@ int func_003E4040(unsigned int n, char *dst) {
         }
     }
     if (n < D_00450C6C_4040) {
-        D_00450C10_4040.free((char *)D_00450C68_4040);
+        D_00450C10.f08(D_00450C68_4040);
         D_00450C68_4040 = 0;
         D_00450C6C_4040 = 0;
         return 0;
@@ -5440,7 +5437,7 @@ int func_003E4040(unsigned int n, char *dst) {
     D_00519C40_4040.f38 = dst;
     D_00519C40_4040.f4 = D_00450C6C_4040;
     D_00519C40_4040.f18 = func_003E39A8_4040(D_00450C68_4040, dst, D_00450C6C_4040, D_00450C70_4040);
-    D_00450C10_4040.free((char *)D_00450C68_4040);
+    D_00450C10.f08(D_00450C68_4040);
     D_00450C6C_4040 = 0;
     sp.init = 0;
     sp.max = 0x20;
