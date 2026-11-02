@@ -4047,14 +4047,12 @@ extern int D_00445E40_2048[] __asm__("D_00445E40");
 extern "C" void func_0030B7F8(int*);
 extern "C" void func_0022D6C8_2048(int, int) __asm__("func_0022D6C8");
 struct Sh_2048 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual int v09(); };
-struct V3_2048 { float x, y, z; };
-extern V3_2048 D_004C9098_2048 __asm__("D_004C9098");
 extern unsigned D_2048[] __asm__("D_004FBC10");
 extern int D_004A572C;
 extern int D_004A3CC0;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_2048 { int idx; int val; int pad; int type; };
-extern "C" V3_2048 func_00302048(int n, Ent_2048 *e) {
+extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
     if (D_004A572C == 0) {
         ((int*)D_2048)[0] = -1;
         ((int*)D_2048)[1] = -1;
@@ -4100,7 +4098,7 @@ extern "C" V3_2048 func_00302048(int n, Ent_2048 *e) {
             func_0022D6C8_2048(w, v16);
         }
     }
-    return D_004C9098_2048;
+    return D_004C9098;
 }
 #endif
 
