@@ -1263,25 +1263,16 @@ typedef sWsBox* (*GetBox_334458)(void*);
 
 
 
-struct sNode_334458 {
-    void* next;
-    int pad04;
-    int flags;
-    sWsVObj* obj;
-    int pad10[20];
-    float bmin[3];
-    float bmax[3];
-};
 
 struct sList_334458 {
     int pad00[2];
     unsigned int count;
-    sNode_334458* items[1];
+    sWsListNode* items[1];
 };
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_334458(const sWsQueryBox* q, const sNode_334458* n)
+static inline int overlapNode_334458(const sWsQueryBox* q, const sWsListNode* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1309,7 +1300,7 @@ extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int 
     if (full) mode = 2;
     int n = 0;
     for (unsigned int i = 0; i < self->count; i++) {
-        sNode_334458* node = self->items[i];
+        sWsListNode* node = self->items[i];
         int flags = node->flags;
         if (flags & 0x20) {
             if (overlapNode_334458(q, node)) {
