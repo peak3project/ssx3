@@ -4997,7 +4997,8 @@ extern void* D_00481250[];
 extern void* D_004A2EB8;
 extern "C" void func_00261408(void* p);
 extern "C" void func_00255FA0(void* p);
-static inline bool isState_36F0(int st)
+// The tag connection state word (D_004A2EB8 + 0x20) equals st.
+static inline bool isState(int st)
 {
     return *(int*)((char*)D_004A2EB8 + 0x20) == st;
 }
@@ -5012,7 +5013,7 @@ extern "C" void func_002636F0(int* out, int val)
         func_0025B800(D_004A3028);
     func_00261408(D_004A3328);
     func_0025B800(D_004A3028);
-    if (!isState_36F0(1)) {
+    if (!isState(1)) {
         func_00255FA0(D_004A2EB8);
         if (val != 0) {
             char* g = (char*)D_004A3028;
@@ -5037,10 +5038,6 @@ extern void* D_004A2EB8;
 extern void* D_004A28A8;
 extern "C" void func_002636F0(int* out, int val);
 
-static inline bool isState_3828(int st)
-{
-    return *(int*)((char*)D_004A2EB8 + 0x20) == st;
-}
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
@@ -5057,14 +5054,14 @@ extern "C" void func_00263828(int* self)
     case 0:
         break;
     case 1:
-        if (isState_3828(5)) {
+        if (isState(5)) {
             t->state = 2;
             char* g = (char*)D_004A3028;
             int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
             *(void***)((char*)m + 0x4) = D_004812B0;
             m[0] = 0x105;
             post(g, m);
-        } else if (isState_3828(6)) {
+        } else if (isState(6)) {
             func_002636F0(self, *(int*)((char*)D_004A2EB8 + 0x28));
         } else {
             int expired = t->timer < 0.0f;
@@ -5075,7 +5072,7 @@ extern "C" void func_00263828(int* self)
         }
         break;
     case 2:
-        if (isState_3828(6))
+        if (isState(6))
             func_002636F0(self, *(int*)((char*)D_004A2EB8 + 0x28));
         break;
     }
