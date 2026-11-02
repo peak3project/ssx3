@@ -60,6 +60,14 @@ struct sWsRayHit {
     sWsRayHit() {}
 } __attribute__((aligned(16)));
 
+// Hit record with a direction at 0x10 and its length at 0x40.
+struct sWsDirHit {
+    char pad_0x00[0x10];
+    t4Vector dir;      // 0x10
+    char pad_0x20[0x20];
+    float len;            // 0x40
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -389,16 +397,10 @@ static inline void wsDivEq_3308C8(t4Vector& v, float s)
         : "memory");
 }
 
-struct sWsHit_3308C8 {
-    char pad_0x00[0x10];
-    t4Vector dir;      // 0x10
-    char pad_0x20[0x20];
-    float len;            // 0x40
-};
 
 extern "C" int func_0032CB58(void* self, void* other, void* a2, void* a3);
 
-extern "C" int func_003308C8(void* self, void* a1, sWsHit_3308C8* hit)
+extern "C" int func_003308C8(void* self, void* a1, sWsDirHit* hit)
 {
     if (func_0032CB58(*(void**)((char*)self + 0x60), a1, &hit->dir, hit) != 0) {
         float len = wsLength_3308C8(hit->dir);
@@ -451,16 +453,10 @@ static inline void wsDivEq_330950(t4Vector& v, float s)
         : "memory");
 }
 
-struct sWsHit_330950 {
-    char pad_0x00[0x10];
-    t4Vector dir;      // 0x10
-    char pad_0x20[0x20];
-    float len;            // 0x40
-};
 
 extern "C" int func_0032C928(void* self, void* a1, void* a2, void* a3, void* a4);
 
-extern "C" int func_00330950(void* self, void* a1, void* a2, sWsHit_330950* hit)
+extern "C" int func_00330950(void* self, void* a1, void* a2, sWsDirHit* hit)
 {
     if (func_0032C928(*(void**)((char*)self + 0x60), a1, a2, &hit->dir, hit) != 0) {
         float len = wsLength_330950(hit->dir);
