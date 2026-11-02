@@ -1,6 +1,13 @@
 #include "common.h"
 #include "ai/rider.h"
 
+// 16-byte vector with inline constructors (a non-POD sibling of t4Vector, as in ai/ai); stores x, y, z, w.
+struct sVec4 : t4Vector
+{
+    sVec4() {}
+    sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -2261,11 +2268,6 @@ extern "C" void func_00104DE0(char* self, cStream_4DE0* s) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104E70);
 #ifdef SKIP_ASM
-struct sV4_4E70 {
-    float x, y, z, w;
-    sV4_4E70() {}
-} __attribute__((aligned(16)));
-
 struct sTri_4E70 {
     float a;
     float b;
@@ -2308,9 +2310,9 @@ struct sOwner_4E70 {
 };
 
 struct sContact_4E70 {
-    sV4_4E70 pos;
-    sV4_4E70 normal;
-    sV4_4E70 vel;
+    sVec4 pos;
+    sVec4 normal;
+    sVec4 vel;
     char pad30[0x10];
     float height;
     char pad44[0xC];
@@ -2339,10 +2341,10 @@ struct sSelf_4E70 {
 };
 
 extern "C" int func_00334458_4E70(void*, cScope_4E70*, sContact_4E70*, int, int) __asm__("func_00334458");
-extern sV4_4E70 D_004FF120_4E70 __asm__("D_004FF120");
+extern sVec4 D_004FF120_4E70 __asm__("D_004FF120");
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_4E70(const sV4_4E70& a, const sV4_4E70& b)
+static inline float Dot_4E70(const sVec4& a, const sVec4& b)
 {
     float r;
     int t;
@@ -2362,7 +2364,7 @@ static inline float Dot_4E70(const sV4_4E70& a, const sV4_4E70& b)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_4E70(const sV4_4E70& v)
+static inline float Len_4E70(const sVec4& v)
 {
     float r;
     int t;
@@ -2383,9 +2385,9 @@ static inline float Len_4E70(const sV4_4E70& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sV4_4E70 Sub_4E70(const sV4_4E70& a, const sV4_4E70& b)
+static inline sVec4 Sub_4E70(const sVec4& a, const sVec4& b)
 {
-    sV4_4E70 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -2397,7 +2399,7 @@ static inline sV4_4E70 Sub_4E70(const sV4_4E70& a, const sV4_4E70& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add in place).
-static inline void AddTo_4E70(sV4_4E70& a, const sV4_4E70& b)
+static inline void AddTo_4E70(sVec4& a, const sVec4& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -2409,9 +2411,9 @@ static inline void AddTo_4E70(sV4_4E70& a, const sV4_4E70& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector divided by scalar).
-static inline sV4_4E70 Div_4E70(const sV4_4E70& v, float s)
+static inline sVec4 Div_4E70(const sVec4& v, float s)
 {
-    sV4_4E70 r;
+    sVec4 r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -2445,7 +2447,7 @@ static inline int IsWall_4E70(sContact_4E70* c)
 
 static inline int IsBack_4E70(sSelf_4E70* self, sContact_4E70* c)
 {
-    sV4_4E70 rel = Sub_4E70(c->pos, *(sV4_4E70*)(self->body + 0x10));
+    sVec4 rel = Sub_4E70(c->pos, *(sVec4*)(self->body + 0x10));
     return Dot_4E70(rel, c->normal) < 0.0f;
 }
 
@@ -2512,14 +2514,14 @@ extern "C" float func_00104E70(sSelf_4E70* self, cScope_4E70* scope, sContact_4E
     }
     *out = hits[best];
     if (n >= 2) {
-        sV4_4E70 sum = D_004FF120_4E70;
+        sVec4 sum = D_004FF120_4E70;
         for (int k = 0; k < n; k++) {
             if (IsWall_4E70(&hits[k]))
                 AddTo_4E70(sum, hits[k].normal);
         }
         float len = Len_4E70(sum);
         if (len > 0.0010000000474974513f) {
-            sV4_4E70 nrm = Div_4E70(sum, len);
+            sVec4 nrm = Div_4E70(sum, len);
             out->normal = nrm;
         }
     }
@@ -3756,15 +3758,8 @@ extern "C" void func_00108388(char* self, char* info, int flag)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001086B8);
 #ifdef SKIP_ASM
-struct sV4_86B8
-{
-    float x, y, z, w;
-    sV4_86B8() {}
-    sV4_86B8(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
-} __attribute__((aligned(16)));
-
 struct sNode_86B8 {
-    sV4_86B8 pos;
+    sVec4 pos;
     float qx, qy, qz, qw;
 };
 
@@ -3774,16 +3769,16 @@ struct sPath_86B8 {
 };
 
 struct sHit_86B8 {
-    sV4_86B8 pos;
+    sVec4 pos;
     char pad[0x80 - 0x10];
 };
 
-extern "C" int func_00334680_86B8(void*, sV4_86B8*, sV4_86B8*, int, float) __asm__("func_00334680");
+extern "C" int func_00334680_86B8(void*, sVec4*, sVec4*, int, float) __asm__("func_00334680");
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sV4_86B8 Add_86B8(const sV4_86B8& a, const sV4_86B8& b)
+static inline sVec4 Add_86B8(const sVec4& a, const sVec4& b)
 {
-    sV4_86B8 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3796,9 +3791,9 @@ static inline sV4_86B8 Add_86B8(const sV4_86B8& a, const sV4_86B8& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sV4_86B8 Sub_86B8(const sV4_86B8& a, const sV4_86B8& b)
+static inline sVec4 Sub_86B8(const sVec4& a, const sVec4& b)
 {
-    sV4_86B8 r;
+    sVec4 r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3810,9 +3805,9 @@ static inline sV4_86B8 Sub_86B8(const sV4_86B8& a, const sV4_86B8& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sV4_86B8 Scale_86B8(const sV4_86B8& v, float s)
+static inline sVec4 Scale_86B8(const sVec4& v, float s)
 {
-    sV4_86B8 r;
+    sVec4 r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -3826,9 +3821,9 @@ static inline sV4_86B8 Scale_86B8(const sV4_86B8& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector divided by scalar).
-static inline sV4_86B8 Div_86B8(const sV4_86B8& v, float s)
+static inline sVec4 Div_86B8(const sVec4& v, float s)
 {
-    sV4_86B8 r;
+    sVec4 r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -3844,7 +3839,7 @@ static inline sV4_86B8 Div_86B8(const sV4_86B8& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_86B8(const sV4_86B8& v)
+static inline float Len_86B8(const sVec4& v)
 {
     float r;
     int t;
@@ -3865,7 +3860,7 @@ static inline float Len_86B8(const sV4_86B8& v)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_86B8(const sV4_86B8& a, const sV4_86B8& b)
+static inline float Dot_86B8(const sVec4& a, const sVec4& b)
 {
     float r;
     int t;
@@ -3895,20 +3890,20 @@ static inline float Lerp_86B8(float a, float b, float t)
     return t * a + (1.0f - t) * b;
 }
 
-static inline sV4_86B8 Fwd_86B8(const sNode_86B8* n)
+static inline sVec4 Fwd_86B8(const sNode_86B8* n)
 {
-    return sV4_86B8(1.0f - (n->qy * n->qy + n->qz * n->qz) * 2.0f,
+    return sVec4(1.0f - (n->qy * n->qy + n->qz * n->qz) * 2.0f,
                     (n->qx * n->qy + n->qw * n->qz) * 2.0f,
                     (n->qx * n->qz - n->qw * n->qy) * 2.0f,
                     0.0f);
 }
 
-extern "C" int func_001086B8_86B8(char* self, sV4_86B8* tgt, sV4_86B8* dir) __asm__("func_001086B8");
-extern "C" int func_001086B8_86B8(char* self, sV4_86B8* tgt, sV4_86B8* dir)
+extern "C" int func_001086B8_86B8(char* self, sVec4* tgt, sVec4* dir) __asm__("func_001086B8");
+extern "C" int func_001086B8_86B8(char* self, sVec4* tgt, sVec4* dir)
 {
     sNode_86B8* n = &(*(sPath_86B8**)(self + 0x780))->nodes[*(int*)(self + 0x8A0)];
-    const sV4_86B8& fwd = Fwd_86B8(n);
-    sV4_86B8 pos = Add_86B8(n->pos, *(sV4_86B8*)(self + 0x9D0));
+    const sVec4& fwd = Fwd_86B8(n);
+    sVec4 pos = Add_86B8(n->pos, *(sVec4*)(self + 0x9D0));
     float t = *(float*)(self + 0x25C);
     float nearR = Lerp_86B8(50.0f, 30.0f, t);
     float farR;
@@ -3919,16 +3914,16 @@ extern "C" int func_001086B8_86B8(char* self, sV4_86B8* tgt, sV4_86B8* dir)
     float proj = Dot_86B8(fwd, Sub_86B8(*tgt, pos));
     float lo = nearR - farR;
     float hi = farR - nearR;
-    sV4_86B8 d = Sub_86B8(Add_86B8(pos, Scale_86B8(fwd, Clamp_86B8(proj, lo, hi))), *tgt);
+    sVec4 d = Sub_86B8(Add_86B8(pos, Scale_86B8(fwd, Clamp_86B8(proj, lo, hi))), *tgt);
     if (Len_86B8(d) <= nearR)
         return 1;
     float dd = Dot_86B8(*dir, fwd);
     float den = 1.0f - dd * dd;
     if (den < 0.0010000000474974513f)
         return 0;
-    sV4_86B8 b = Div_86B8(Sub_86B8(pos, *tgt), den);
+    sVec4 b = Div_86B8(Sub_86B8(pos, *tgt), den);
     float u = Dot_86B8(b, Sub_86B8(Scale_86B8(*dir, dd), fwd));
-    sV4_86B8 p = Add_86B8(pos, Scale_86B8(fwd, Clamp_86B8(u, lo, hi)));
+    sVec4 p = Add_86B8(pos, Scale_86B8(fwd, Clamp_86B8(u, lo, hi)));
     sHit_86B8 hit;
     if (!func_00334680_86B8(*(void**)(self + 0x860), &p, &hit.pos, 1, 300.0f))
         return 0;
