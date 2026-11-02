@@ -3706,7 +3706,7 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00261970);
 extern char D_00480488[];
 extern void* D_004812B0[];
 
-struct sMsg_00261970 {
+struct sMsg {
     int kind;
     void** vt;
 };
@@ -3714,7 +3714,7 @@ struct sMsg_00261970 {
 extern "C" void func_00261970(int unused)
 {
     char* g = (char*)D_004A3028;
-    sMsg_00261970* m = (sMsg_00261970*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
+    sMsg* m = (sMsg*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
     m->vt = D_004812B0;
     m->kind = 0x10B;
     void* mp = m;
@@ -6141,17 +6141,12 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00265398);
 extern char D_00480488[];
 extern void* D_004812B0[];
 
-struct sMsg_00265398 {
-    int kind;
-    void** vt;
-};
-
 extern "C" void func_00265398(int* self)
 {
     if (*self == 3)
         *self = 2;
     char* g = (char*)D_004A3028;
-    sMsg_00265398* m = (sMsg_00265398*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
+    sMsg* m = (sMsg*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
     m->vt = D_004812B0;
     m->kind = 0xF7;
     void* mp = m;
