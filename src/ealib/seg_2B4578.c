@@ -722,8 +722,6 @@ int func_003B5320(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5440);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern signed char D_0050AA5C;
-
 signed char func_003B5440(void) {
     return D_0050AA5C;
 }
@@ -1076,7 +1074,6 @@ void func_003B5E98_5E98(int a) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5F60);
 #ifdef SKIP_ASM
 int func_003C51E0(void);
-extern signed char D_0050AA5C;
 
 int func_003B5F60(void) {
     int r;
@@ -9314,7 +9311,6 @@ int func_003C5C30(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5DF0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern signed char D_0050AA5C;
 
 int func_003C5DF0(void) {
     return D_0050AA5C == 1;
