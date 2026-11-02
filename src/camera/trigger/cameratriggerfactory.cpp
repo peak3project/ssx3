@@ -9,6 +9,12 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// 2-float vector (the horizontal part of a direction, for pitch = atan2(z, |xy|)).
+struct sVec2 {
+    float x, y;
+    sVec2(float ax, float ay) : x(ax), y(ay) {}
+};
+
 // 3-float vector with inline constructors (the layout the trigger files store: get_t3Vector reads one).
 struct sVec3 {
     float x, y, z;
@@ -1040,11 +1046,6 @@ void func_001732B8_impl(void* self, int flags)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001732E8);
 #ifdef SKIP_ASM
-struct sVec2_1732E8 {
-    float x, y;
-    sVec2_1732E8(float ax, float ay) : x(ax), y(ay) {}
-};
-
 extern "C" float func_0031C228(float x);
 extern "C" void func_0031BE50(float* sout, float* cout, float x);
 
@@ -1117,7 +1118,7 @@ static inline float wrap_1732E8(float x)
     return x - ffloor_1732E8(x * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
 }
 
-static inline float Len2_1732E8(const sVec2_1732E8& v)
+static inline float Len2_1732E8(const sVec2& v)
 {
     return Sqrt_1732E8(v.x * v.x + v.y * v.y);
 }
@@ -1163,7 +1164,7 @@ extern "C" void func_001732E8_x(char* self, long key)
     AddEq_1732E8(a, Scale_1732E8(D_004FF160, *(float*)(self + 0x6C)));
     AddEq_1732E8(a, Scale_1732E8(b, *(float*)(self + 0x74)));
     *(float*)(self + 0x50) = wrap_1732E8(Atan2_1732E8(b.y, b.x));
-    float p = Atan2_1732E8(b.z, Len2_1732E8(sVec2_1732E8(b.x, b.y)));
+    float p = Atan2_1732E8(b.z, Len2_1732E8(sVec2(b.x, b.y)));
     float mm = -*(float*)(self + 0x78) * 0.01745329424738884f;
     *(float*)(self + 0x54) = wrap_1732E8(p * -*(float*)(self + 0x58) + mm);
     float s0, c0, s1, c1;
@@ -1303,12 +1304,7 @@ static inline float ffloor_1736E0(float x)
     return t;
 }
 
-struct sVec2_1736E0 {
-    float x, y;
-    sVec2_1736E0(float ax, float ay) : x(ax), y(ay) {}
-};
-
-static inline float Len2_1736E0(const sVec2_1736E0& v)
+static inline float Len2_1736E0(const sVec2& v)
 {
     return Sqrt_1736E0(v.x * v.x + v.y * v.y);
 }
@@ -1378,8 +1374,8 @@ extern "C" void func_001736E0(char* self)
         }
         dist = len3 + x;
     }
-    float pitchD = Atan2_1736E0(-d.z, Len2_1736E0(sVec2_1736E0(d.x, d.y)));
-    float pitchC = Atan2_1736E0(c.z, Len2_1736E0(sVec2_1736E0(c.x, c.y)));
+    float pitchD = Atan2_1736E0(-d.z, Len2_1736E0(sVec2(d.x, d.y)));
+    float pitchC = Atan2_1736E0(c.z, Len2_1736E0(sVec2(c.x, c.y)));
     float tp = pitchC * -*(float*)(self + 0x58) + *(float*)(self + 0x78) * 0.01745329424738884f;
     float pitchN = pitchD + (Wrap_1736E0(tp) - pitchD) * *(float*)(self + 0x60) * 0.01666666753590107f;
     t4Vector dir;
@@ -1401,7 +1397,7 @@ extern "C" void func_001736E0(char* self)
     float yawE = Atan2_1736E0(n.y, n.x);
     float oy = *(float*)(self + 0x50);
     *(float*)(self + 0x50) = oy + Wrap_1736E0(yawE - oy) * *(float*)(self + 0x64) * 0.01666666753590107f;
-    float pitchE = Atan2_1736E0(n.z, Len2_1736E0(sVec2_1736E0(n.x, n.y)));
+    float pitchE = Atan2_1736E0(n.z, Len2_1736E0(sVec2(n.x, n.y)));
     float op = *(float*)(self + 0x54);
     *(float*)(self + 0x54) = op + (pitchE - op) * *(float*)(self + 0x68) * 0.01666666753590107f;
 }
@@ -1672,12 +1668,7 @@ static inline float Sqrt_174200(float x)
     return r;
 }
 
-struct sVec2_174200 {
-    float x, y;
-    sVec2_174200(float ax, float ay) : x(ax), y(ay) {}
-};
-
-static inline float Len2_174200(const sVec2_174200& v)
+static inline float Len2_174200(const sVec2& v)
 {
     return Sqrt_174200(v.x * v.x + v.y * v.y);
 }
@@ -1738,7 +1729,7 @@ extern "C" void func_00174200(char* self)
     }
     t4Vector d = Sub_174200(p, *(t4Vector*)(self + 0x40));
     *(float*)(self + 0x50) = Atan2_174200(d.y, d.x);
-    *(float*)(self + 0x54) = Atan2_174200(d.z, Len2_174200(sVec2_174200(d.x, d.y)));
+    *(float*)(self + 0x54) = Atan2_174200(d.z, Len2_174200(sVec2(d.x, d.y)));
 }
 #endif
 
@@ -1834,12 +1825,7 @@ static inline float Sqrt_1744B0(float x)
     return r;
 }
 
-struct sVec2_1744B0 {
-    float x, y;
-    sVec2_1744B0(float ax, float ay) : x(ax), y(ay) {}
-};
-
-static inline float Len2_1744B0(const sVec2_1744B0& v)
+static inline float Len2_1744B0(const sVec2& v)
 {
     return Sqrt_1744B0(v.x * v.x + v.y * v.y);
 }
@@ -1909,7 +1895,7 @@ extern "C" void func_001744B0(char* self, long a1)
     }
     t4Vector d = Sub_1744B0(p, *(t4Vector*)(self + 0x40));
     *(float*)(self + 0x50) = Atan2_1744B0(d.y, d.x);
-    *(float*)(self + 0x54) = Atan2_1744B0(d.z, Len2_1744B0(sVec2_1744B0(d.x, d.y)));
+    *(float*)(self + 0x54) = Atan2_1744B0(d.z, Len2_1744B0(sVec2(d.x, d.y)));
 }
 #endif
 
