@@ -465,7 +465,31 @@ extern "C" void cGame_exit(void* self, int toFrontEnd)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_00230558);
+#ifdef SKIP_ASM
+extern "C" void func_0026F8A0(void* a, int b, int c, int d);
+void func_002CC0B8(void* a, int b);
+extern int D_004A2A54;
+extern int D_004A2A50;
+extern int D_005366E8[];
+extern int D_00442910[];
+
+struct sGameLoad_0558 {
+    char pad_0x00[0x28];
+    void* field_0x28;       // 0x28
+    char pad_0x2C[0xA4 - 0x2C];
+    void* field_0xA4;       // 0xA4
+};
+
+extern "C" void func_00230558(sGameLoad_0558* self)
+{
+    D_005366E8[++D_004A2A54] = 8;
+    D_004A2A50 = D_00442910[0];
+    func_0026F8A0(self->field_0x28, 0, 0, 0);
+    func_002CC0B8(self->field_0xA4, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_002305C8);
