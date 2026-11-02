@@ -1,6 +1,14 @@
 #include "common.h"
 #include "bx/math3d.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camaction);
 #ifdef SKIP_ASM
@@ -498,18 +506,6 @@ struct sBox_171FA8 {
     t4Vector hi;
 };
 
-struct sVEbox_171FA8 {
-    short delta;
-    short index;
-    sBox_171FA8 (*fn)(void*);
-};
-
-struct sVEin_171FA8 {
-    short delta;
-    short index;
-    int (*fn)(void*, t4Vector*);
-};
-
 extern "C" float func_0040DA10(float x);
 
 // PORT: PS2-only VU0 inline asm (a + b).
@@ -582,13 +578,13 @@ static inline float Length_171FA8(const t4Vector& v)
 
 static inline sBox_171FA8 GetBox_171FA8(char* o)
 {
-    sVEbox_171FA8* e = &(*(sVEbox_171FA8**)(o + 0x24))[6];
+    sVEntry<sBox_171FA8(void*)>* e = &(*(sVEntry<sBox_171FA8(void*)>**)(o + 0x24))[6];
     return e->fn(o + e->delta);
 }
 
 static inline int Inside_171FA8(char* o, t4Vector* p)
 {
-    sVEin_171FA8* e = &(*(sVEin_171FA8**)(o + 0x24))[7];
+    sVEntry<int(void*, t4Vector*)>* e = &(*(sVEntry<int(void*, t4Vector*)>**)(o + 0x24))[7];
     return e->fn(o + e->delta, p);
 }
 
@@ -604,8 +600,8 @@ extern "C" t4Vector func_00171FA8(char* obj, t4Vector* pos, float step)
     t4Vector a = *pos;
     t4Vector b = center;
     float k = 2.0f;
-    sVEin_171FA8* e;
-    while (e = &(*(sVEin_171FA8**)(obj + 0x24))[7], e->fn(obj + e->delta, &a)) {
+    sVEntry<int(void*, t4Vector*)>* e;
+    while (e = &(*(sVEntry<int(void*, t4Vector*)>**)(obj + 0x24))[7], e->fn(obj + e->delta, &a)) {
         b = a;
         t4Vector off = Scale_171FA8(dir, k);
         a = Add_171FA8(center, off);
@@ -615,7 +611,7 @@ extern "C" t4Vector func_00171FA8(char* obj, t4Vector* pos, float step)
     int n = (int)func_0040DA10(len / step) + 1;
     for (int i = 0; i < n; i++) {
         t4Vector m = Scale_171FA8(Add_171FA8(a, b), 0.5f);
-        e = &(*(sVEin_171FA8**)(obj + 0x24))[7];
+        e = &(*(sVEntry<int(void*, t4Vector*)>**)(obj + 0x24))[7];
         if (e->fn(obj + e->delta, &m)) {
             b = m;
         } else {
@@ -1152,24 +1148,6 @@ void func_001732B8_impl(void* self, int flags)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001732E8);
 #ifdef SKIP_ASM
-struct sVL_1732E8 {
-    short delta;
-    short index;
-    long (*fn)(void*);
-};
-
-struct sVV_1732E8 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
-struct sVN_1732E8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 struct sVec2_1732E8 {
     float x, y;
     sVec2_1732E8(float ax, float ay) : x(ax), y(ay) {}
@@ -1277,18 +1255,18 @@ extern "C" void func_001732E8_x(char* self, long key)
 {
     char* o = *(char**)(self + 0x30);
     char* r = *(char**)(o + 4) + 0x6C0;
-    sVL_1732E8* e = &(*(sVL_1732E8**)r)[7];
+    sVEntry<long(void*)>* e = &(*(sVEntry<long(void*)>**)r)[7];
     if (key != e->fn(r + e->delta))
         return;
     t4Vector a, b, dir;
     {
         char* o1 = *(char**)(self + 0x30);
-        sVV_1732E8* e1 = &(*(sVV_1732E8**)o1)[1];
+        sVEntry<t4Vector(void*)>* e1 = &(*(sVEntry<t4Vector(void*)>**)o1)[1];
         a = e1->fn(o1 + e1->delta);
     }
     {
         char* o2 = *(char**)(self + 0x30);
-        sVV_1732E8* e2 = &(*(sVV_1732E8**)o2)[4];
+        sVEntry<t4Vector(void*)>* e2 = &(*(sVEntry<t4Vector(void*)>**)o2)[4];
         b = e2->fn(o2 + e2->delta);
     }
     AddEq_1732E8(a, Scale_1732E8(D_004FF160_1732E8, *(float*)(self + 0x6C)));
@@ -1305,7 +1283,7 @@ extern "C" void func_001732E8_x(char* self, long key)
     dir.z = -s1;
     dir.w = 0.0f;
     *(t4Vector*)(self + 0x40) = Sub_1732E8(a, Scale_1732E8(dir, *(float*)(self + 0x70)));
-    sVN_1732E8* v = &(*(sVN_1732E8**)(self + 0x10))[5];
+    sVEntry<void(void*)>* v = &(*(sVEntry<void(void*)>**)(self + 0x10))[5];
     v->fn(self + v->delta);
 }
 #endif
@@ -1313,23 +1291,11 @@ extern "C" void func_001732E8_x(char* self, long key)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00173678);
 #ifdef SKIP_ASM
-struct sVE173678a {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
-
-struct sVE173678b {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*);
-};
-
 extern "C" void* func_00173678(void* self)
 {
-    sVE173678b* vt = *(sVE173678b**)((char*)self + 0x10);
+    sVEntry<void*(void*, void*)>* vt = *(sVEntry<void*(void*, void*)>**)((char*)self + 0x10);
     char* o = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sVE173678a* vt2 = *(sVE173678a**)o;
+    sVEntry<void*(void*)>* vt2 = *(sVEntry<void*(void*)>**)o;
     return vt[3].fn((char*)self + vt[3].delta, vt2[7].fn(o + vt2[7].delta));
 }
 #endif
@@ -1337,12 +1303,6 @@ extern "C" void* func_00173678(void* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001736E0);
 #ifdef SKIP_ASM
-struct sVE_1736E0 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 extern "C" float func_0031C228(float x);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern t4Vector D_004FF160_1736E0 __asm__("D_004FF160");
@@ -1491,13 +1451,13 @@ extern "C" void func_001736E0(char* self)
 {
     t4Vector a, b, c;
     char* o = *(char**)(self + 0x30);
-    sVE_1736E0* e = &(*(sVE_1736E0**)o)[1];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[1];
     ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
     o = *(char**)(self + 0x30);
-    e = &(*(sVE_1736E0**)o)[3];
+    e = &(*(sVEntry<t4Vector(void*)>**)o)[3];
     ((void (*)(void*, void*))e->fn)(&b, o + e->delta);
     o = *(char**)(self + 0x30);
-    e = &(*(sVE_1736E0**)o)[4];
+    e = &(*(sVEntry<t4Vector(void*)>**)o)[4];
     ((void (*)(void*, void*))e->fn)(&c, o + e->delta);
     {
         t4Vector t;
@@ -1739,12 +1699,6 @@ void* func_001741D8(void* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00174200);
 #ifdef SKIP_ASM
-struct sVE_174200 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 extern "C" float func_0031C228(float x);
 extern t4Vector D_004FF160_174200 __asm__("D_004FF160");
 
@@ -1881,11 +1835,11 @@ extern "C" void func_00174200(char* self)
     } else {
         t4Vector c, a, t, b;
         char* o = *(char**)(self + 0x30);
-        sVE_174200* e = &(*(sVE_174200**)o)[1];
+        sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[1];
         ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
         float k = *(float*)(self + 0x74);
         o = *(char**)(self + 0x30);
-        e = &(*(sVE_174200**)o)[4];
+        e = &(*(sVEntry<t4Vector(void*)>**)o)[4];
         ((void (*)(void*, void*))e->fn)(&b, o + e->delta);
         ScaleTo_174200(t, b, k);
         AddTo_174200(c, a, t);
@@ -1896,7 +1850,7 @@ extern "C" void func_00174200(char* self)
     *(t4Vector*)(self + 0x20) = p;
     {
         char* o = *(char**)(*(char**)(self + 0x80) + 8);
-        sVE_174200* e = &(*(sVE_174200**)(o + 0x24))[6];
+        sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)(o + 0x24))[6];
         ((void (*)(void*, void*))e->fn)(o + e->delta, self + 0x40);
     }
     t4Vector d = Sub_174200(p, *(t4Vector*)(self + 0x40));
@@ -1908,18 +1862,6 @@ extern "C" void func_00174200(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001744B0);
 #ifdef SKIP_ASM
-struct sVE_1744B0 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
-struct sVEL_1744B0 {
-    short delta;
-    short index;
-    long (*fn)(void*);
-};
-
 extern "C" float func_0031C228(float x);
 extern t4Vector D_004FF160_1744B0 __asm__("D_004FF160");
 
@@ -2045,7 +1987,7 @@ extern "C" void func_001744B0(char* self, long a1)
 {
     {
         char* o = *(char**)(*(char**)(self + 0x30) + 4) + 0x6C0;
-        sVEL_1744B0* e = &(*(sVEL_1744B0**)o)[7];
+        sVEntry<long(void*)>* e = &(*(sVEntry<long(void*)>**)o)[7];
         if (e->fn(o + e->delta) != a1)
             return;
     }
@@ -2059,11 +2001,11 @@ extern "C" void func_001744B0(char* self, long a1)
     } else {
         t4Vector c, a, t, b;
         char* o = *(char**)(self + 0x30);
-        sVE_1744B0* e = &(*(sVE_1744B0**)o)[1];
+        sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[1];
         ((void (*)(void*, void*))e->fn)(&a, o + e->delta);
         float k = *(float*)(self + 0x74);
         o = *(char**)(self + 0x30);
-        e = &(*(sVE_1744B0**)o)[4];
+        e = &(*(sVEntry<t4Vector(void*)>**)o)[4];
         ((void (*)(void*, void*))e->fn)(&b, o + e->delta);
         ScaleTo_1744B0(t, b, k);
         AddTo_1744B0(c, a, t);
@@ -2080,7 +2022,7 @@ extern "C" void func_001744B0(char* self, long a1)
     func_001732E8(self, a1);
     {
         char* o = *(char**)(*(char**)(self + 0x80) + 8);
-        sVE_1744B0* e = &(*(sVE_1744B0**)(o + 0x24))[6];
+        sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)(o + 0x24))[6];
         ((void (*)(void*, void*))e->fn)(o + e->delta, self + 0x40);
     }
     t4Vector d = Sub_1744B0(p, *(t4Vector*)(self + 0x40));
@@ -2092,23 +2034,11 @@ extern "C" void func_001744B0(char* self, long a1)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001747A0);
 #ifdef SKIP_ASM
-struct sVE1747A0a {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
-
-struct sVE1747A0b {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*);
-};
-
 extern "C" void* func_001747A0(void* self)
 {
-    sVE1747A0b* vt = *(sVE1747A0b**)((char*)self + 0x10);
+    sVEntry<void*(void*, void*)>* vt = *(sVEntry<void*(void*, void*)>**)((char*)self + 0x10);
     char* o = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sVE1747A0a* vt2 = *(sVE1747A0a**)o;
+    sVEntry<void*(void*)>* vt2 = *(sVEntry<void*(void*)>**)o;
     return vt[3].fn((char*)self + vt[3].delta, vt2[7].fn(o + vt2[7].delta));
 }
 #endif
@@ -2128,11 +2058,6 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00174848);
 struct sCell_1748 {
     int level, x, y, z;
 };
-struct sVEnt1748 {
-    short delta;
-    short index;
-    int (*fn)(void*, ...);
-};
 
 extern "C" void* func_0016C6B0(void*, void*);
 extern "C" void cActiveTriggerList_add(void*, void*);
@@ -2147,8 +2072,8 @@ static inline void trigCb_1748(char* ctx, void** node)
             char* trig = *(char**)(e + 0xC);
             char* sub = *(char**)(ctx + 4) + 0x6C0;
             char* bound = *(char**)(trig + 8);
-            sVEnt1748* cvt = *(sVEnt1748**)sub;
-            sVEnt1748* bvt = *(sVEnt1748**)(bound + 0x24);
+            sVEntry<int(void*, ...)>* cvt = *(sVEntry<int(void*, ...)>**)sub;
+            sVEntry<int(void*, ...)>* bvt = *(sVEntry<int(void*, ...)>**)(bound + 0x24);
             char* bthis = bound + bvt[7].delta;
             int r = cvt[5].fn(sub + cvt[5].delta);
             if (bvt[7].fn(bthis, r)) {
@@ -2980,12 +2905,6 @@ extern "C" void func_00176868(void* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00176890);
 #ifdef SKIP_ASM
-struct sVEnt176890 {
-    short delta;
-    short index;
-    int (*fn)(void*, ...);
-};
-
 extern "C" void* func_0016C6B0(void*, void*);
 extern "C" void cActiveTriggerList_add(void*, void*);
 
@@ -2997,8 +2916,8 @@ extern "C" void func_00176890(void* node, void* ctx)
             char* trig = *(char**)(e + 0xC);
             char* sub = *(char**)((char*)ctx + 4) + 0x6C0;
             char* bound = *(char**)(trig + 8);
-            sVEnt176890* cvt = *(sVEnt176890**)sub;
-            sVEnt176890* bvt = *(sVEnt176890**)(bound + 0x24);
+            sVEntry<int(void*, ...)>* cvt = *(sVEntry<int(void*, ...)>**)sub;
+            sVEntry<int(void*, ...)>* bvt = *(sVEntry<int(void*, ...)>**)(bound + 0x24);
             char* bthis = bound + bvt[7].delta;
             int r = cvt[5].fn(sub + cvt[5].delta);
             if (bvt[7].fn(bthis, r)) {
@@ -3914,18 +3833,6 @@ extern "C" void func_00177EC8(void* self, void* out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00177EF8);
 #ifdef SKIP_ASM
-struct sVEa_00177EF8 {
-    short delta;
-    short index;
-    t4Vector* (*fn)(void*);
-};
-
-struct sVEb_00177EF8 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector ctScale_00177EF8(const t4Vector& v, float s)
 {
@@ -3961,14 +3868,14 @@ static inline t4Vector ctAdd_00177EF8(const t4Vector& a, const t4Vector& b)
 static inline t4Vector ctGetB_00177EF8(void* self)
 {
     char* o2 = *(char**)((char*)self + 0x30);
-    sVEb_00177EF8* e2 = &(*(sVEb_00177EF8**)o2)[1];
+    sVEntry<t4Vector(void*)>* e2 = &(*(sVEntry<t4Vector(void*)>**)o2)[1];
     return e2->fn(o2 + e2->delta);
 }
 
 extern "C" t4Vector func_00177EF8(void* self)
 {
     char* o = *(char**)(*(char**)((char*)self + 0x30) + 4) + 0x6C0;
-    sVEa_00177EF8* e = &(*(sVEa_00177EF8**)o)[5];
+    sVEntry<t4Vector*(void*)>* e = &(*(sVEntry<t4Vector*(void*)>**)o)[5];
     t4Vector* v = e->fn(o + e->delta);
     return ctAdd_00177EF8(ctScale_00177EF8(*v, 0.19999998807907104f), ctScale_00177EF8(ctGetB_00177EF8(self), 0.800000011920929f));
 }
@@ -4035,14 +3942,14 @@ static inline void ctDivEq_7FC0(t4Vector& v, float len)
 static inline t4Vector* ctGetA_7FC0(void* self)
 {
     char* o = *(char**)((char*)self + 0x30);
-    sVEa_00177EF8* e = &(*(sVEa_00177EF8**)o)[10];
+    sVEntry<t4Vector*(void*)>* e = &(*(sVEntry<t4Vector*(void*)>**)o)[10];
     return e->fn(o + e->delta);
 }
 
 static inline t4Vector ctGetC_7FC0(void* self)
 {
     char* o = *(char**)((char*)self + 0x30);
-    sVEb_00177EF8* e = &(*(sVEb_00177EF8**)o)[4];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[4];
     return e->fn(o + e->delta);
 }
 
@@ -4251,12 +4158,6 @@ extern "C" void func_00178208_v(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001783E0);
 #ifdef SKIP_ASM
-struct sVE_1783E0 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 extern t4Vector D_004FF160_1783E0 __asm__("D_004FF160");
 extern "C" void f_166C60_1783E0(void* self, long id) __asm__("func_00166C60");
 extern "C" t4Vector f_177FC0_1783E0(void* self, const t4Vector& v) __asm__("func_00177FC0");
@@ -4319,10 +4220,10 @@ extern "C" void func_001783E0(cCamCtrl_1783E0* self, long id)
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTarget_1783E0*)(rider + 0x6C0))->v07()) {
         char* o = *(char**)((char*)self + 0x30);
-        sVE_1783E0* e = &(*(sVE_1783E0**)o)[4];
+        sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[4];
         *(t4Vector*)((char*)self + 0x390) = e->fn(o + e->delta);
         o = *(char**)((char*)self + 0x30);
-        e = &(*(sVE_1783E0**)o)[3];
+        e = &(*(sVEntry<t4Vector(void*)>**)o)[3];
         *(t4Vector*)((char*)self + 0x40) = f_177FC0_1783E0(self, e->fn(o + e->delta));
         *(t4Vector*)((char*)self + 0x20) = Add_1783E0(f_177EF8_1783E0(self), ScaleP_1783E0(&D_004FF160_1783E0, 37.0f));
         f_166C60_1783E0(self, id);
@@ -4388,7 +4289,6 @@ extern "C" void func_001785C0(void* self, void* out)
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001785F0);
 #ifdef SKIP_ASM
 
-struct sVEntry_1785F0 { short delta; short index; t4Vector (*fn)(void*); };
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline t4Vector Sub_1785F0(const t4Vector& a, const t4Vector& b)
@@ -4481,7 +4381,7 @@ static inline float Dot_1785F0(const t4Vector& a, const t4Vector& b)
 static inline t4Vector GetPos_1785F0(char* self)
 {
     char* o = *(char**)(self + 0x30);
-    sVEntry_1785F0* e = &(*(sVEntry_1785F0**)o)[1];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[1];
     return e->fn(o + e->delta);
 }
 
@@ -4501,12 +4401,6 @@ extern "C" t4Vector func_001785F0_impl(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178758);
 #ifdef SKIP_ASM
-struct sVE_178758 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 extern t4Vector D_004FF160_178758 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (a + b).
@@ -4544,7 +4438,7 @@ static inline t4Vector ScaleP_178758(const t4Vector* v, float s)
 static inline t4Vector CallA_178758(char* self)
 {
     char* o = *(char**)(self + 0x30);
-    sVE_178758* e = &(*(sVE_178758**)o)[1];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[1];
     return e->fn(o + e->delta);
 }
 
@@ -4702,7 +4596,6 @@ extern "C" void func_00178938(cCamCtrl_00178938* self, int id)
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001789E8);
 #ifdef SKIP_ASM
 
-struct sVEntry_1789E8 { short delta; short index; t4Vector (*fn)(void*); };
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline t4Vector Sub_1789E8(const t4Vector& a, const t4Vector& b)
@@ -4836,7 +4729,7 @@ extern "C" void* func_00162318(void* self);
 
 static inline t4Vector Get_1789E8(char* o, int slot)
 {
-    sVEntry_1789E8* e = &(*(sVEntry_1789E8**)o)[slot];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -4910,12 +4803,6 @@ struct sCamInfo_00178BB0 {
 extern sVec_00178BB0 D_004FF160;
 extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
-
-struct sVEv_00178BB0 {
-    short delta;
-    short index;
-    sVec_00178BB0 (*fn)(void*);
-};
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline sVec_00178BB0 ctScale_00178BB0(const sVec_00178BB0& v, float s)
@@ -5019,7 +4906,7 @@ static inline sVec_00178BB0 AxisAngle_00178BB0(const sVec_00178BB0& axis, float 
 static inline sVec_00178BB0 getPos_00178BB0(char* self)
 {
     char* o = *(char**)(self + 0x30);
-    sVEv_00178BB0* e = &(*(sVEv_00178BB0**)o)[1];
+    sVEntry<sVec_00178BB0(void*)>* e = &(*(sVEntry<sVec_00178BB0(void*)>**)o)[1];
     return e->fn(o + e->delta);
 }
 
@@ -5058,26 +4945,15 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178E90);
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
 
-struct sCamVEntryIntA {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sCamVEntryVoidA {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_00178E90(void* self, int id)
 {
     char* obj = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sCamVEntryIntA* vt = *(sCamVEntryIntA**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
         func_00166C60(self, id);
         func_00166550(self, 100.0f, 100.0f);
-        sCamVEntryVoidA* vt2 = *(sCamVEntryVoidA**)((char*)self + 0x10);
+        sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)((char*)self + 0x10);
         vt2[5].fn((char*)self + vt2[5].delta);
     }
 }
@@ -6129,12 +6005,6 @@ void operator_delete(int* ptr);
 void cMemMan_free(void* p);
 extern char* D_004A289C;
 
-struct sVE_0017ABE0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 struct sIdList_0017ABE0 {
     int* ids;
     int count;
@@ -6150,7 +6020,7 @@ extern "C" void func_0017ABE0(sIdList_0017ABE0* self, int flags)
             if (id >= 0)
             {
                 char* obj = D_004A289C;
-                sVE_0017ABE0* vt = *(sVE_0017ABE0**)(obj + 0x10D8);
+                sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 0x10D8);
                 vt[50].fn(obj + vt[50].delta, id);
             }
         }
