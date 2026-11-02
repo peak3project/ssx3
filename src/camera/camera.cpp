@@ -128,6 +128,23 @@ public:
     virtual void v04();
 };
 
+// A camera algorithm (cCameraAlgorithm, the base of the chase / look-at / script algorithms): the vptr follows
+// the base's own data at 0x10; slots by position.
+class cCameraAlgorithm {
+public:
+    char pad_0x00[0xC];
+    int type;                   // 0xC
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09(int on);
+};
+
 // The per-frame camera input record (0x70 bytes) that func_00162568 fills from the target for the chase algorithms.
 struct sCamInfo {
     t4Vector f00;               // 0x00
@@ -2685,24 +2702,8 @@ INCLUDE_ASM("camera/camera", func_00161BB8);
 extern "C" void func_00162060(cChaseCameraController* self, int mode, int arg, float blend);
 extern int D_004A2A50;
 
-class cCamAlgo_161BB8 {
-public:
-    char pad_0x00[0xC];
-    int type;  // 0xC
-    // vptr at 0x10
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09(int on);
-};
-
 struct sAlgoNode_161BB8 {
-    cCamAlgo_161BB8* algo;    // 0x0
+    cCameraAlgorithm* algo;    // 0x0
     float weight;             // 0x4
     float rate;               // 0x8
     float blend;              // 0xC
@@ -5930,19 +5931,7 @@ void func_00167E60(void* self)
 //100%
 INCLUDE_ASM("camera/camera", func_00167E68);
 #ifdef SKIP_ASM
-class func_00167E68_cObj {
-public:
-    char pad[0x10];
-    // vptr lands at 0x10 (g++ 2.95 places it after the class's own data);
-    // slot N lives at vtable offset N*8 (delta at +0, function at +4)
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
-
-extern "C" void func_00167E68(func_00167E68_cObj* self)
+extern "C" void func_00167E68(cCameraAlgorithm* self)
 {
     self->v05();
 }
@@ -6843,17 +6832,8 @@ extern "C" void func_001686D0(char* self)
 //100%
 INCLUDE_ASM("camera/camera", func_00168940);
 #ifdef SKIP_ASM
-class cCamCtrlK8940 {
-public:
-    char pad_0x00[0x10];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
 
-extern "C" void func_00168940(cCamCtrlK8940* self, int id)
+extern "C" void func_00168940(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
@@ -6962,7 +6942,7 @@ extern "C" void func_00168A70(char* self)
 //100%
 INCLUDE_ASM("camera/camera", func_00168C50);
 #ifdef SKIP_ASM
-extern "C" void func_00168C50(cCamCtrlK8940* self, int id)
+extern "C" void func_00168C50(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
@@ -7071,7 +7051,7 @@ extern "C" void func_00168D80(char* self)
 //100%
 INCLUDE_ASM("camera/camera", func_00168F60);
 #ifdef SKIP_ASM
-extern "C" void func_00168F60(cCamCtrlK8940* self, int id)
+extern "C" void func_00168F60(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cBeing*)(rider + 0x6C0))->getAIIndex()) {
