@@ -10851,8 +10851,6 @@ void func_003C85D0(int *outs, int n) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8968);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { char pad[5]; unsigned char cnt; char pad2[6]; unsigned short add; } H_8968;
-extern H_8968 D_00515B40_8968[] __asm__("D_00515B40");
 extern void func_003C85D0(int *, int);
 
 void func_003C8968(int *src, int len) {
@@ -10864,8 +10862,8 @@ void func_003C8968(int *src, int len) {
     }
     while (len > 0) {
         func_003C85D0(buf, len < 0x201 ? len : 0x200);
-        for (i = 0; i < D_00515B40_8968[0].cnt; i++) {
-            buf[i] += D_00515B40_8968[0].add;
+        for (i = 0; i < D_00515B40.f05; i++) {
+            buf[i] += D_00515B40.f0C;
         }
         len -= 0x200;
     }
