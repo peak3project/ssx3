@@ -362,7 +362,190 @@ extern "C" void func_00199420(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_onWidgetCreate);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void cFEStateCharEquip_updateHeading_FE(void* self, int a) __asm__("cFEStateCharEquip_updateHeading");
+extern "C" void cUIText_setAsciiString(void* t, const char* s) __asm__("cUIText_setAsciiString__FP7cUITextPCc");
+extern "C" void cUIText_setUnicodeStringByID(void* t, int id) __asm__("cUIText_setUnicodeStringByID__FP7cUITexti");
+extern "C" void func_0019B7E0_FE(void* self, int i) __asm__("func_0019B7E0");
+extern "C" void func_0019BA60_FE(void* self, int i) __asm__("func_0019BA60");
+extern "C" void func_0019BBA0_FE(void* self) __asm__("func_0019BBA0");
+extern "C" void func_0039B760_FE(void* w, unsigned char v) __asm__("func_0039B760");
+extern char* D_00441218[];
+extern char* D_00441230[];
+extern char D_00460488[];
+extern char D_004607F8[];
+extern char D_00460810[];
+extern char D_00460820[];
+extern char D_00460830[];
+extern char D_00460840[];
+extern char D_00460850[];
+extern char D_00460860[];
+extern char D_00460870[];
+extern char D_00460880[];
+extern char D_00460890[];
+extern int D_004A11D0;
+extern char D_004A1408[];
+extern char D_004A1458[];
+extern char D_004A1460[];
+extern char D_004A1910[];
+extern char D_004A1918[];
+extern char D_004A1920[];
+extern char D_004A1928[];
+extern char D_004A1930[];
+extern char D_004A1938[];
+extern char D_004A1940[];
+extern char D_004A1948[];
+
+struct sVE_FE {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+static inline void hide_FE(void* w)
+{
+    sVE_FE* vt = *(sVE_FE**)((char*)w + 8);
+    vt[9].fn((char*)w + vt[9].delta, 0);
+}
+
+struct sCharEquip_FE {
+    char pad0[0x48];
+    void* f48;
+    void* f4C;
+    void* f50;
+    void* f54;
+    void* f58;
+    void* f5C;
+    void* f60;
+    void* f64;
+    void* f68;
+    void* f6C;
+    void* f70;
+    void* f74;
+    void* f78;
+    void* f7C;
+    void* f80;
+    void* f84;
+    void* f88;
+    void* f8C[6];
+    void* fA4[6];
+    char padBC[0xC8 - 0xBC];
+    int fC8;
+    char padCC[0x958 - 0xCC];
+    int f958;
+    char pad95C[0xAE4 - 0x95C];
+    int fAE4;
+};
+
+static inline bool isC8_FE(sCharEquip_FE* s)
+{
+    return s->fC8 == 1;
+}
+
+extern "C" void cFEStateCharEquip_onWidgetCreate(sCharEquip_FE* self, void* w)
+{
+    int id = *(int*)((char*)w + 0x38);
+    if (id == GetHashValue32(D_004607F8)) {
+        self->f48 = w;
+        if (isC8_FE(self)) {
+            cUIText_setUnicodeStringByID(self->f48, GetHashValue32(D_00460810));
+        } else {
+            cUIText_setUnicodeStringByID(self->f48, GetHashValue32(D_00460820));
+        }
+    } else if (id == GetHashValue32(D_00460488)) {
+        self->f4C = w;
+        hide_FE(self->f4C);
+    } else if (id == GetHashValue32(D_004A1458)) {
+        self->f50 = w;
+        if (self->fAE4 == 0) {
+            hide_FE(self->f50);
+        } else {
+            if (isC8_FE(self)) {
+                cUIText_setUnicodeStringByID(self->f50, GetHashValue32(D_00460820));
+            } else {
+                cUIText_setUnicodeStringByID(self->f50, GetHashValue32(D_00460810));
+            }
+        }
+    } else if (id == GetHashValue32(D_004A1460) || id == GetHashValue32(D_004A1910) || id == GetHashValue32(D_004A1918)) {
+        self->f54 = w;
+        if (self->fAE4 == 0) {
+            hide_FE(self->f54);
+        }
+    } else if (id == GetHashValue32(D_004A1920)) {
+        self->f58 = w;
+        cFEStateCharEquip_updateHeading_FE(self, D_004A11D0);
+    } else if (id == GetHashValue32(D_00460830)) {
+        self->f5C = w;
+        func_0039B760_FE(self->f5C, self->f958);
+    } else if (id == GetHashValue32(D_00460840)) {
+        self->f60 = w;
+        if (!isC8_FE(self)) {
+            hide_FE(self->f60);
+        }
+    } else if (id == GetHashValue32(D_004A1928)) {
+        self->f64 = w;
+        func_0019BBA0_FE(self);
+    } else if (id == GetHashValue32(D_004A1930)) {
+        self->f68 = w;
+        cUIText_setAsciiString(self->f68, D_004A1408);
+    } else if (id == GetHashValue32(D_004A1938)) {
+        self->f84 = w;
+    } else if (id == GetHashValue32(D_00460850)) {
+        self->f6C = w;
+        hide_FE(self->f6C);
+    } else if (id == GetHashValue32(D_004A1940)) {
+        self->f70 = w;
+        hide_FE(self->f70);
+    } else if (id == GetHashValue32(D_00460860)) {
+        self->f74 = w;
+        hide_FE(self->f74);
+    } else if (id == GetHashValue32(D_00460870)) {
+        self->f78 = w;
+    } else if (id == GetHashValue32(D_00460880)) {
+        self->f80 = w;
+        hide_FE(self->f80);
+    } else if (id == GetHashValue32(D_004A1948)) {
+        self->f7C = w;
+        cUIText_setAsciiString(self->f7C, D_004A1408);
+    } else if (id == GetHashValue32(D_00460890)) {
+        self->f88 = w;
+        hide_FE(self->f88);
+    } else {
+        for (int i = 0; i < 6; i++) {
+            if (id == GetHashValue32(D_00441218[i])) {
+                self->f8C[i] = w;
+                *(int*)((char*)w + 0x18) = i;
+                if (i < self->f958) {
+                    if (isC8_FE(self)) {
+                        func_0019BA60_FE(self, i);
+                    } else {
+                        func_0019B7E0_FE(self, i);
+                    }
+                } else {
+                    hide_FE(self->f8C[i]);
+                }
+                return;
+            }
+            if (id == GetHashValue32(D_00441230[i])) {
+                self->fA4[i] = w;
+                if (i < self->f958) {
+                    if (isC8_FE(self)) {
+                        func_0019BA60_FE(self, i);
+                    } else {
+                        func_0019B7E0_FE(self, i);
+                    }
+                } else {
+                    hide_FE(self->fA4[i]);
+                }
+                return;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199870);
