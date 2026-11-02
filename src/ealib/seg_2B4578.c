@@ -10134,14 +10134,11 @@ int func_003C6CE8(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6DA0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int func_003CE1A8(void);
-typedef struct { char pad[0x304]; int arr[100]; } W_6DA0;
-extern W_6DA0 D_005157B8_6DA0 __asm__("D_005157B8");
 
 int func_003C6DA0(int arg0) {
     func_003CE1A8();
-    D_005157B8_6DA0.arr[arg0] = 0;
+    D_005157B8.f304[arg0] = 0;
     return 0;
 }
 #endif
