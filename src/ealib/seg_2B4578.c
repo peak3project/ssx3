@@ -16399,8 +16399,6 @@ int func_003D1F80(unsigned int a0, char *a1) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", PATHI_copyevent);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0044F420_2068[] __asm__("D_0044F420");
 extern char D_00495B48_2068[] __asm__("D_00495B48");
 extern void func_0041605C_2068(unsigned int, void *, int) __asm__("func_0041605C");
 
@@ -16412,9 +16410,9 @@ unsigned int PATHI_copyevent(void *arg0) {
     unsigned int cur;
     unsigned int i;
 
-    temp_6 = D_0044F420_2068[0] + 0x91C;
-    cur = D_0044F420_2068[0] + 0x11C;
-    p = (unsigned int*)(D_0044F420_2068[0] + 0xDC);
+    temp_6 = (unsigned int)D_0044F420 + 0x91C;
+    cur = (unsigned int)D_0044F420 + 0x11C;
+    p = (unsigned int *)D_0044F420->f0DC;
     temp_9 = (((*(unsigned short*)((char*)arg0 + 0xE)) & 0x3F) * 0x10) + 0x10;
     for (i = 0; i < 0x10; i++, p++) {
         temp_3 = *p;
