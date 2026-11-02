@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festateprofile", cFEStateProfileSelect_onCreateScreen);
 #ifdef SKIP_ASM
@@ -43,11 +51,6 @@ public:
     virtual void v10();
     virtual void setColor(const sColorK18EB40& c);
 };
-struct sVEK18EB40b {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 
 extern "C" void func_0018EB40(void* self, char* menu, unsigned int msg)
@@ -58,7 +61,7 @@ extern "C" void func_0018EB40(void* self, char* menu, unsigned int msg)
     case 5: {
         ((cUIObjK18EB40*)menu)->setColor(sColorK18EB40(1.0f, 1.0f, 0.0f, 0.0f));
         char* g = **(char***)((char*)self + 0x10);
-        sVEK18EB40b* vt = *(sVEK18EB40b**)(g + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(g + 4);
         void* r = vt[4].fn(g + vt[4].delta, self, *(int*)(menu + 0x18));
         if (r != 0)
             func_0039F400(*(char**)((char*)self + 0x10) + 0x18, r);
@@ -66,7 +69,7 @@ extern "C" void func_0018EB40(void* self, char* menu, unsigned int msg)
     }
     case 6: {
         char* g = **(char***)((char*)self + 0x10);
-        sVEK18EB40b* vt = *(sVEK18EB40b**)(g + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(g + 4);
         void* r = vt[5].fn(g + vt[5].delta, self, *(int*)(menu + 0x18));
         if (r != 0)
             func_0039F400(*(char**)((char*)self + 0x10) + 0x18, r);
@@ -855,16 +858,6 @@ extern int D_00535C08[];
 extern char D_0045CE60[];
 extern char D_0045E290[];
 
-struct sVEK18FAF0a {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
-struct sVEK18FAF0b {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_0018FAF0(void* self)
 {
@@ -872,7 +865,7 @@ extern "C" void func_0018FAF0(void* self)
         int sel = *(int*)((char*)self + 0x27C);
         if (sel == 0) {
             char* g = **(char***)((char*)self + 0x10);
-            sVEK18FAF0a* vt = *(sVEK18FAF0a**)(g + 4);
+            sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(g + 4);
             void* r = vt[5].fn(g + vt[5].delta, self, *(int*)((char*)self + 0x1BC));
             if (r != 0)
                 func_0039F4C0(*(char**)((char*)self + 0x10) + 0x18, r);
@@ -884,7 +877,7 @@ extern "C" void func_0018FAF0(void* self)
             int x = func_00146D98(pl, 0);
             D_004A11B8 = 1;
             D_00535C08[0] = x;
-            sVEK18FAF0b* vt = *(sVEK18FAF0b**)(race + 0xC);
+            sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(race + 0xC);
             vt[1].fn(race + vt[1].delta);
             cAppMan_setNextModule((cAppMan*)D_004A28A8, (unsigned int)func_00232720(cMemMan_alloc(8, D_0045CE60, 0x100, 0)));
         } else if (sel == 2) {
@@ -1015,21 +1008,11 @@ extern char D_0045E2B0[];
 extern char D_0045E2C8[];
 extern char D_0045E2D8[];
 
-struct sVEntryK18FD90 {
-    short delta;
-    short index;
-    void* (*fn)(void*, ...);
-};
 
-struct sVEntryVK18FD90 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
-#define VCALLV_K18FD90(obj, off, idx) (*(sVEntryVK18FD90**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryVK18FD90**)((char*)(obj) + (off)))[idx].delta
+#define VCALLV_K18FD90(obj, off, idx) (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
 
-#define VCALL_K18FD90(obj, off, idx) (*(sVEntryK18FD90**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryK18FD90**)((char*)(obj) + (off)))[idx].delta
+#define VCALL_K18FD90(obj, off, idx) (*(sVEntry<void*(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void*(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
 
 
 struct sProfileK18FD90 {
@@ -1069,7 +1052,7 @@ struct sMgrK18FD90 {
 static inline void* GetText_K18FD90(char* key)
 {
     char* db = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntryK18FD90* vt = *(sVEntryK18FD90**)(db + 4);
+    sVEntry<void*(void*, ...)>* vt = *(sVEntry<void*(void*, ...)>**)(db + 4);
     return vt[4].fn(db + vt[4].delta, GetHashValue32(key));
 }
 
