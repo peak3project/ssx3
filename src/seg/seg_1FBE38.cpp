@@ -6433,15 +6433,13 @@ extern char *D_004A3DD8_6908 __asm__("D_004A3DD8");
 extern char **D_004A47B8_6908 __asm__("D_004A47B8");
 extern char *D_004A28A8_6908 __asm__("D_004A28A8");
 extern "C" void func_00101970_6908(void*, void*) __asm__("func_00101970");
-struct V3_6908 { float x, y, z; };
-extern V3_6908 D_004C9098_6908 __asm__("D_004C9098");
 extern unsigned D_6908 __asm__("D_004A58A8");
 extern sBindEnd_1FBE38 D_004A58AC;
 extern int D_004A58B0;
 extern int D_004A3DC8;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_6908 { int idx; int val; int pad; int type; };
-extern "C" V3_6908 func_00306908(int n, Ent_6908 *e) {
+extern "C" cLunoValue func_00306908(int n, Ent_6908 *e) {
     if (D_004A58B0 == 0) {
         D_6908 = 0xFFFFFFFF;
         D_004A58B0 = 1;
@@ -6477,7 +6475,7 @@ extern "C" V3_6908 func_00306908(int n, Ent_6908 *e) {
     }
     if (obj)
         func_00101970_6908(*(void**)(*(char**)(*(char**)(D_004A28A8_6908 + 0x84) + 0xC) + 0xA8), obj + 0x78);
-    return D_004C9098_6908;
+    return D_004C9098;
 }
 #endif
 
