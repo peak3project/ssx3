@@ -640,7 +640,148 @@ extern "C" int func_001298C8()
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", cAI_InitPlayers);
+#ifdef SKIP_ASM
+struct sPadCacheIP { char pad0[0x2EEC]; int devices[2]; };
+extern sPadCacheIP* D_004A28A0_ip __asm__("D_004A28A0");
+struct sRaceSetIP { char pad[0x34]; int numberOfHumanRiders; };
+extern sRaceSetIP D_00535BC8_ip __asm__("D_00535BC8");
+extern int D_00534B30[];
+extern char D_004A1108[];
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+// PORT: this call site passes the flags as a signed int; bind that form to cMemMan_alloc.
+void* cMemMan_alloc_ip(int size, const char* tag, int flags, int d) __asm__("cMemMan_alloc");
+// PORT: func_00125C70 returns the rider-component pointer here.
+void* func_00125C70_ip(void* self, int inChrg) __asm__("func_00125C70");
+extern "C" int func_00147290(void* iface, int i);
+extern "C" int func_00147618(void* iface, int i);
+extern "C" void* func_00237140(void* a, void* b);
+extern "C" void* func_00237280(void* a, void* b);
+extern "C" void cRider_addFocusBox(void* self);
+extern "C" void cRider_initOnce(void* self, int immediate);
+struct cRider;
+void cRider_addRiderMetrix(cRider* rider);
+extern "C" void func_0012B498(void* self, void* obj, int i);
+void func_00144D70(void*, int, int);
+
+struct sVEntry_IP { short delta; short index; void (*fn)(void*); };
+
+struct sInputIP { int f0; void* map; };
+struct sAppIP
+{
+    char pad0[0x78];
+    void* f78;
+    char pad7C[8];
+    char* f84;
+    char pad88[0x28];
+    sInputIP* Inputs[2];
+    void* InputMaps[2];
+};
+extern sAppIP* D_004A28A8_ip __asm__("D_004A28A8");
+
+struct sRiderIP
+{
+    char pad0[0x2F8];
+    int f2F8;
+    char pad2FC[0x86C - 0x2FC];
+    int mIndex;
+    int mCtrl;
+    char pad874[8];
+    int f87C;
+};
+
+struct sHumanIP
+{
+    char pad0[0x18];
+    sRiderIP* rider;
+    char pad1C[0xDF0 - 0x1C];
+    void* mInput;
+    int mPad;
+    void setInput(void* in, int pad) { mInput = in; mPad = pad; }
+};
+
+struct sAiObjIP
+{
+    char pad0[0x28];
+    sRiderIP* mRiders[6];
+    sHumanIP* mObjs[2];
+    char pad48[0x30];
+    int mCount;
+    int mNum;
+};
+
+extern "C" void cAI_InitPlayers(void* p)
+{
+    sAiObjIP* self = (sAiObjIP*)p;
+    int k;
+    for (k = 0; k < 2; k++)
+        self->mObjs[k] = 0;
+    int id = 0;
+    int i;
+    int num = 0;
+    char* rm = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
+    char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
+    cBE_getInterface_Fv(D_004A28A8_ip->f78, 7);
+    sRaceSetIP* settings = &D_00535BC8_ip;
+    int numberOfHumanRiders = settings->numberOfHumanRiders;
+    for (i = 0; i < numberOfHumanRiders; i++)
+    {
+        int ch = func_00147290(iface, i);
+        sHumanIP* obj = (sHumanIP*)func_00125C70_ip(cMemMan_alloc_ip(0x1950, D_004A1108, 0x80000000, 0), 1);
+        self->mRiders[id] = obj ? obj->rider : 0;
+        self->mRiders[id]->mIndex = id;
+        self->mRiders[id]->mCtrl = id;
+        int t = func_00147618(iface, id);
+        if (D_00534B30[0] != 0)
+        {
+            if (D_00534B30[2] != 0 ? i != 1 : i != 0)
+            {
+                D_004A28A8_ip->Inputs[ch]->map = D_004A28A8_ip->InputMaps[t];
+                obj->setInput(func_00237140(*(void**)(D_004A28A8_ip->f84 + 0x7C), D_004A28A8_ip->Inputs[ch]), D_004A28A0_ip->devices[ch]);
+            }
+            else
+            {
+                obj->rider->f87C = 0;
+                obj->setInput(func_00237280(*(void**)(D_004A28A8_ip->f84 + 0x7C), D_004A28A8_ip->InputMaps[t]), 0);
+            }
+        }
+        else
+        {
+            D_004A28A8_ip->Inputs[ch]->map = D_004A28A8_ip->InputMaps[t];
+            obj->setInput(D_004A28A8_ip->Inputs[ch], D_004A28A0_ip->devices[ch]);
+            self->mRiders[id]->mCtrl = id;
+        }
+        cRider_addFocusBox(obj->rider);
+        cRider_addRiderMetrix((cRider*)obj->rider);
+        func_0012B498(self, obj, i);
+        obj->rider->f2F8 = 0;
+        cRider_initOnce(self->mRiders[id], 0);
+        func_00144D70(rm, id, id);
+        id++;
+        self->mObjs[num++] = obj;
+    }
+    if (D_00534B30[0] != 0)
+    {
+        if (D_00534B30[2] != 0)
+        {
+            self->mObjs[0]->rider->mCtrl = 0;
+            self->mObjs[1]->rider->mCtrl = -2;
+        }
+        else
+        {
+            self->mObjs[0]->rider->mCtrl = -2;
+            self->mObjs[1]->rider->mCtrl = 0;
+        }
+    }
+    sVEntry_IP* vt = *(sVEntry_IP**)(rm + 0xC);
+    vt[1].fn(rm + vt[1].delta);
+    self->mCount = id;
+    self->mNum = num;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", cAI_initMissionRiders);
