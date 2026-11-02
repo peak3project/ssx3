@@ -5302,27 +5302,9 @@ struct IsoDir_4040 {
 };
 struct Pvd_4040 { char pad[0x9C]; struct IsoDir_4040 root; };
 struct Ent_4040 { char name[0x100]; int a; int b; };
-struct G_4040 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    char pad10[0x18 - 0x10];
-    int f18;
-    char pad1C[0x1C - 0x1C];
-    char f1C;
-    char f1D;
-    char f1E;
-    char pad1F[0x2C - 0x1F];
-    int f2C;
-    char pad30[0x38 - 0x30];
-    char *f38;
-    int *f3C;
-};
 struct Thr_4040 { int status; void (*entry)(void); void *stack; int stackSize; void *gp; int prio; int cur; int attr; int option; int pad[3]; };
 struct Sem_4040 { int count; int max; int init; int wait; int attr; int option; };
 
-extern struct G_4040 D_00519C40_4040 __asm__("D_00519C40");
 extern struct Ent_4040 *D_00450C68_4040 __asm__("D_00450C68");
 extern unsigned int D_00450C6C_4040 __asm__("D_00450C6C");
 extern int D_00450C70_4040 __asm__("D_00450C70");
@@ -5332,7 +5314,6 @@ extern char D_00495DE0_4040[] __asm__("D_00495DE0");
 extern char D_00495DF0_4040[] __asm__("D_00495DF0");
 extern char D_0051AC80_4040[] __asm__("D_0051AC80");
 extern char D_004A30F0_4040[] __asm__("D_004A30F0");
-extern int D_00519C80_4040[] __asm__("D_00519C80");
 extern void func_003E6448_4040(void *, int, int) __asm__("func_003E6448");
 extern int func_00401718_4040(int) __asm__("func_00401718");
 extern void func_00402450_4040(int) __asm__("func_00402450");
@@ -5367,7 +5348,7 @@ int func_003E4040(unsigned int n, char *dst) {
     int ok = 0;
     int th;
 
-    func_003E6448_4040(&D_00519C40_4040, 0, 0x40);
+    func_003E6448_4040(&D_00519C40, 0, 0x40);
     func_003E6448_4040(dst, 0, (D_00450C58.f04 + 0xC) * n);
     if (func_00401718_4040(0) == 0) {
         return 0;
@@ -5382,10 +5363,10 @@ int func_003E4040(unsigned int n, char *dst) {
     }
     func_00401BF0_4040(0);
     func_00401FD8_4040(buf);
-    D_00519C40_4040.f1C = 0;
-    D_00519C40_4040.f1D = 1;
-    D_00519C40_4040.f1E = 0;
-    D_00519C40_4040.f2C = 0x10;
+    D_00519C40.f1C.f00 = 0;
+    D_00519C40.f1C.f01 = 1;
+    D_00519C40.f1C.f02 = 0;
+    D_00519C40.f20.f0C = 0x10;
     func_00424020_4040(0);
     D_00450C68_4040 = D_00450C10.f04(D_00495DE0_4040, n * 0x108, 0);
     func_003E6220_4040(D_00450C68_4040, n * 0x108);
@@ -5416,7 +5397,7 @@ int func_003E4040(unsigned int n, char *dst) {
         D_0051EC80_4040[0] = 0x2F;
         if (*D_00450C58.f00 != 0) {
             struct IsoDir_4040 *d;
-            D_00519C40_4040.f2C = pvd->root.lba;
+            D_00519C40.f20.f0C = pvd->root.lba;
             for (d = (struct IsoDir_4040 *)func_003E3618_4040(); d <= (struct IsoDir_4040 *)D_0051A480_4040; d = (struct IsoDir_4040 *)((char *)d + d->len)) {
                 if (func_00416B18_4040(d->name, D_00450C58.f00, d->namelen) == 0) {
                     func_004162D0_4040(D_0051EC80_4040, D_00450C58.f00);
@@ -5435,15 +5416,15 @@ int func_003E4040(unsigned int n, char *dst) {
         D_00450C6C_4040 = 0;
         return 0;
     }
-    D_00519C40_4040.f38 = dst;
-    D_00519C40_4040.f4 = D_00450C6C_4040;
-    D_00519C40_4040.f18 = func_003E39A8_4040(D_00450C68_4040, dst, D_00450C6C_4040, D_00450C70_4040);
+    D_00519C40.f20.f18 = dst;
+    D_00519C40.f04 = D_00450C6C_4040;
+    D_00519C40.f18 = func_003E39A8_4040(D_00450C68_4040, dst, D_00450C6C_4040, D_00450C70_4040);
     D_00450C10.f08(D_00450C68_4040);
     D_00450C6C_4040 = 0;
     sp.init = 0;
     sp.max = 0x20;
     D_00450C68_4040 = 0;
-    D_00519C40_4040.fC = func_00423DA0_4040(&sp);
+    D_00519C40.f0C = func_00423DA0_4040(&sp);
     tp.entry = func_003E3BE0_4040;
     tp.stack = D_0051AC80_4040;
     tp.gp = D_004A30F0_4040;
@@ -5451,13 +5432,13 @@ int func_003E4040(unsigned int n, char *dst) {
     tp.prio = 0xC;
     tp.option = 0;
     th = func_00423BA0_4040(&tp);
-    D_00519C40_4040.f8 = th;
+    D_00519C40.f08 = th;
     func_00423BC0_4040(th, 0);
     func_00400A78_4040(0xB, D_0051A480_4040, 0x800);
     func_004008A0_4040(func_003E3AD8_4040);
-    D_00519C40_4040.f3C = D_00519C80_4040;
+    D_00519C40.f20.f1C = D_00519C80;
     SYNCTASK_add_4040(func_003E4000_4040, 0, 0);
-    return D_00519C40_4040.f4;
+    return D_00519C40.f04;
 }
 #endif
 
