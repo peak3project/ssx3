@@ -28,7 +28,8 @@ struct sSndOptsDelay {
     int fC;
 };
 
-#define SND_OPTS_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_MAX(a, b) ((a) > (b) ? (a) : (b))
 #define SND_OPTS_MAX(a, b) ((a) >= (b) ? (a) : (b))
 
 // cSndPlayOpts (prototype class): the play-option stack; push = cur++ and copy def into mCurrent[cur]. The
@@ -60,7 +61,7 @@ struct cSndPlayOpts {
     }
     // mCurrent[i].vol = the current base volume clamped to 0..127
     void update(int i) {
-        ch[i].vol = SND_OPTS_MAX(SND_OPTS_MIN(vals[cur], 0x7F), 0);
+        ch[i].vol = SND_OPTS_MAX(SND_MIN(vals[cur], 0x7F), 0);
     }
 };
 
@@ -629,8 +630,6 @@ struct sSnd0018Req {
 };
 
 
-#define SND_0018_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_0018_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 
 // Adds a voice on the global sound system for the request, sets its target and volume (clamped to 0..127), then commits.
@@ -642,7 +641,7 @@ extern "C" int func_00290018(void* self, sSnd0018Req* req)
     cBankManager* m2 = D_004A3664->mgr;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
-    s2->ch[m2->sub.cur].vol = SND_0018_MAX(0, SND_0018_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     func_002906B8(D_004A3664);
     return 1;
 }
@@ -662,8 +661,6 @@ struct sSnd0358Req {
 };
 
 
-#define SND_0358_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_0358_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 
 // Adds a voice on the global sound system for the request, sets its target and volume (clamped to 0..127), stores its 16-bit field, then commits.
@@ -675,7 +672,7 @@ extern "C" int func_00290358(void* self, sSnd0358Req* req)
     cBankManager* m2 = D_004A3664->mgr;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
-    s2->ch[m2->sub.cur].vol = SND_0358_MAX(0, SND_0358_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager* m3 = D_004A3664->mgr;
     m3->sub.ch[m3->sub.cur].fC = req->f28;
     func_002906B8(D_004A3664);
@@ -2018,8 +2015,6 @@ static inline int vcall_48D0(char* obj, int slot)
 }
 
 
-#define SND_48D0_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_48D0_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 // Rider speed sound: sets the speed level for the rider's board sound and (re)starts the wind loop with the
 // curve-mapped volume.
@@ -2080,7 +2075,7 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = vol;
-    s2->ch[m2->sub.cur].vol = SND_48D0_MAX(0, SND_48D0_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 6, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -2408,14 +2403,12 @@ static inline int vcall_6310(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-#define SND_6310_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_6310_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static inline void optsVol_6310(struct cBankManager* m, int v)
 {
     struct cSndPlayOpts* o = &m->sub;
     o->vals[m->sub.cur] = v;
-    o->ch[m->sub.cur].vol = SND_6310_MAX(0, SND_6310_MIN(o->vals[o->cur], 0x7F));
+    o->ch[m->sub.cur].vol = SND_MAX(0, SND_MIN(o->vals[o->cur], 0x7F));
 }
 
 static inline void sfxBegin_6310(struct cSSXAudio* self, int a, int b)
@@ -2750,8 +2743,6 @@ INCLUDE_ASM("sound/soundsys", func_002974A0);
 
 
 
-#define SND_74A0_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_74A0_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 extern "C" int func_00288940(void* self, t4Vector* pos);
 
@@ -2785,7 +2776,7 @@ static inline void snd74A0AddVoice(void* vself, int a, int b, int type)
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
-    s2->ch[m2->sub.cur].vol = SND_74A0_MAX(0, SND_74A0_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -3108,7 +3099,6 @@ static inline t4Vector sndVu0Add(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
-#define SND_8488_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_8488_MAX(a, b) ((a) < (b) ? (b) : (a))
 
 static inline int vcall_8488(char* obj, int slot)
@@ -3155,7 +3145,7 @@ static inline int snd8488AddVoice(void* vself, void* obj, int a, int b, int type
     cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = v;
-    s3->ch[m3->sub.cur].vol = SND_8488_MAX(SND_8488_MIN(s3->vals[s3->cur], 127), 0);
+    s3->ch[m3->sub.cur].vol = SND_8488_MAX(SND_MIN(s3->vals[s3->cur], 127), 0);
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -3461,8 +3451,6 @@ INCLUDE_ASM("sound/soundsys", func_002997B8);
 
 
 
-#define SND_97B8_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_97B8_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static inline int snd97B8AddVoice(void* vself, int a, int b, int type)
 {
@@ -3494,7 +3482,7 @@ static inline int snd97B8AddVoice(void* vself, int a, int b, int type)
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
-    s2->ch[m2->sub.cur].vol = SND_97B8_MAX(0, SND_97B8_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -3703,7 +3691,6 @@ static inline bool sndAB40Active(sSndRider* r)
     return r->mIsHuman && r->mIsLocal;
 }
 
-#define MIN_AB40(a,b) ((a) < (b) ? (a) : (b))
 #define MAX_AB40(a,b) ((a) < (b) ? (b) : (a))
 static inline void sndAB40AddVoice(cSSXAudio* self, int a, int b, int type, int vol)
 {
@@ -3734,7 +3721,7 @@ static inline void sndAB40AddVoice(cSSXAudio* self, int a, int b, int type, int 
     cBankManager* m3 = *self->p118;
     cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
-    s3->ch[m3->sub.cur].vol = MAX_AB40(MIN_AB40(s3->vals[s3->cur], 127), 0);
+    s3->ch[m3->sub.cur].vol = MAX_AB40(SND_MIN(s3->vals[s3->cur], 127), 0);
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -3907,8 +3894,6 @@ INCLUDE_ASM("sound/soundsys", func_0029B968);
 
 
 
-#define SND_B968_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_B968_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static inline int sndB968AddVoice(void* vself, void* obj, int a, int b, int type)
 {
@@ -3940,7 +3925,7 @@ static inline int sndB968AddVoice(void* vself, void* obj, int a, int b, int type
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
-    s2->ch[m2->sub.cur].vol = SND_B968_MAX(0, SND_B968_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -3967,8 +3952,6 @@ INCLUDE_ASM("sound/soundsys", func_0029BCF8);
 
 
 
-#define SND_BCF8_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_BCF8_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static inline int sndBCF8AddVoice(void* vself, void* obj, int a, int b, int type)
 {
@@ -4000,7 +3983,7 @@ static inline int sndBCF8AddVoice(void* vself, void* obj, int a, int b, int type
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
-    s2->ch[m2->sub.cur].vol = SND_BCF8_MAX(0, SND_BCF8_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -4027,8 +4010,6 @@ INCLUDE_ASM("sound/soundsys", func_0029C088);
 
 
 
-#define SND_C088_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_C088_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static inline int sndC088AddVoice(void* vself, void* obj, int a, int b, int type)
 {
@@ -4060,7 +4041,7 @@ static inline int sndC088AddVoice(void* vself, void* obj, int a, int b, int type
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
-    s2->ch[m2->sub.cur].vol = SND_C088_MAX(0, SND_C088_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -4821,8 +4802,6 @@ INCLUDE_ASM("sound/soundsys", func_0029E590);
 
 
 
-#define SND_E590_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_E590_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static inline int sndE590AddVoice(void* vself, int a, int b, int type, unsigned short pitch)
 {
@@ -4854,7 +4833,7 @@ static inline int sndE590AddVoice(void* vself, int a, int b, int type, unsigned 
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
-    s2->ch[m2->sub.cur].vol = SND_E590_MAX(0, SND_E590_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -4888,8 +4867,6 @@ INCLUDE_ASM("sound/soundsys", func_0029E970);
 
 
 
-#define SND_E970_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_E970_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static inline int sndE970AddVoice(void* vself, int a, int b, int type)
 {
@@ -4921,7 +4898,7 @@ static inline int sndE970AddVoice(void* vself, int a, int b, int type)
     cBankManager* m2 = *self->p118;
     cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
-    s2->ch[m2->sub.cur].vol = SND_E970_MAX(0, SND_E970_MIN(s2->vals[s2->cur], 0x7F));
+    s2->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(s2->vals[s2->cur], 0x7F));
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, type, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
@@ -7808,8 +7785,6 @@ struct sPool5D08 {
 };
 
 
-#define SND_5D08_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define SND_5D08_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 
 int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key) __asm__("func_002A5D08");
@@ -7890,7 +7865,7 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
             cBankManager* m2 = s2->mgr;
             cSndPlayOpts* ss = &m2->sub;
             ss->vals[m2->sub.cur] = found->v4;
-            ss->ch[m2->sub.cur].vol = SND_5D08_MAX(0, SND_5D08_MIN(ss->vals[ss->cur], 0x7F));
+            ss->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(ss->vals[ss->cur], 0x7F));
         }
         {
             cBankManager* m2 = D_004A36F8->mgr;
