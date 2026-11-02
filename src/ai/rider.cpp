@@ -13,7 +13,10 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-// 16-byte vector with inline constructors (a non-POD sibling of t4Vector); stores x, y, z, w.
+// 16-byte vectors with inline constructors (non-POD siblings of t4Vector). The classes differ only in the order
+// their 4-float constructor stores the components; that order decides the float-register allocation of every
+// caller (merging them changes code), so they are kept apart.
+// sVec4 stores x, y, z, w.
 struct sVec4 {
     float x, y, z, w;
     sVec4() {}
@@ -23,6 +26,19 @@ struct sVec4 {
         y = ay;
         z = az;
         w = aw;
+    }
+} __attribute__((aligned(16)));
+
+// sVec4W stores w first, then x, y, z.
+struct sVec4W {
+    float x, y, z, w;
+    sVec4W() {}
+    sVec4W(float ax, float ay, float az, float aw)
+    {
+        w = aw;
+        x = ax;
+        y = ay;
+        z = az;
     }
 } __attribute__((aligned(16)));
 
@@ -930,31 +946,19 @@ extern "C" float func_0031C128(float x);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 int func_0011FEE8(void* self);
 
-struct sQ_EB98 {
-    float x, y, z, w;
-    sQ_EB98() {}
-    sQ_EB98(float ax, float ay, float az, float aw)
-    {
-        w = aw;
-        x = ax;
-        y = ay;
-        z = az;
-    }
-} __attribute__((aligned(16)));
-
 struct sXf_EB98 {
-    sQ_EB98 pos;
-    sQ_EB98 rot;
+    sVec4W pos;
+    sVec4W rot;
 };
 
-extern sQ_EB98 D_004FF130_EB98 __asm__("D_004FF130");
-extern sQ_EB98 D_004FF160_EB98 __asm__("D_004FF160");
-extern sQ_EB98 D_004FF220_EB98 __asm__("D_004FF220");
+extern sVec4W D_004FF130_EB98 __asm__("D_004FF130");
+extern sVec4W D_004FF160_EB98 __asm__("D_004FF160");
+extern sVec4W D_004FF220_EB98 __asm__("D_004FF220");
 
 // PORT: PS2-only VU0 inline asm (vector * scalar).
-static inline sQ_EB98 Scale_EB98(const sQ_EB98& v, float s)
+static inline sVec4W Scale_EB98(const sVec4W& v, float s)
 {
-    sQ_EB98 r;
+    sVec4W r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -969,9 +973,9 @@ static inline sQ_EB98 Scale_EB98(const sQ_EB98& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sQ_EB98 Add_EB98(const sQ_EB98& a, const sQ_EB98& b)
+static inline sVec4W Add_EB98(const sVec4W& a, const sVec4W& b)
 {
-    sQ_EB98 r;
+    sVec4W r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -984,7 +988,7 @@ static inline sQ_EB98 Add_EB98(const sQ_EB98& a, const sQ_EB98& b)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place vector add).
-static inline void AddTo_EB98(sQ_EB98& a, const sQ_EB98& b)
+static inline void AddTo_EB98(sVec4W& a, const sVec4W& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -998,7 +1002,7 @@ static inline void AddTo_EB98(sQ_EB98& a, const sQ_EB98& b)
 // vector += vector through VU0. Declared to return the vector by value (as if for chaining) but there is no return
 // statement: g++ 2.95 accepts it, every caller ignores the result, and the ignored by-value result is the unwritten
 // 16-byte call temp the retail frame (and the July 2003 prototype's) has at 0x70.
-static inline sQ_EB98 operator+=(sQ_EB98& a, const sQ_EB98& b)
+static inline sVec4W operator+=(sVec4W& a, const sVec4W& b)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1011,9 +1015,9 @@ static inline sQ_EB98 operator+=(sQ_EB98& a, const sQ_EB98& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sQ_EB98 Sub_EB98(const sQ_EB98& a, const sQ_EB98& b)
+static inline sVec4W Sub_EB98(const sVec4W& a, const sVec4W& b)
 {
-    sQ_EB98 r;
+    sVec4W r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1026,9 +1030,9 @@ static inline sQ_EB98 Sub_EB98(const sQ_EB98& a, const sQ_EB98& b)
 }
 
 // PORT: PS2-only VU0 inline asm (cross product, w = 0).
-static inline sQ_EB98 Cross_EB98(const sQ_EB98& a, const sQ_EB98& b)
+static inline sVec4W Cross_EB98(const sVec4W& a, const sVec4W& b)
 {
-    sQ_EB98 r;
+    sVec4W r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -1043,7 +1047,7 @@ static inline sQ_EB98 Cross_EB98(const sQ_EB98& a, const sQ_EB98& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector length).
-static inline float Length_EB98(const sQ_EB98& v)
+static inline float Length_EB98(const sVec4W& v)
 {
     float r;
     int t;
@@ -1064,7 +1068,7 @@ static inline float Length_EB98(const sQ_EB98& v)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_EB98(const sQ_EB98& a, const sQ_EB98& b)
+static inline float Dot_EB98(const sVec4W& a, const sVec4W& b)
 {
     float r;
     int t;
@@ -1084,7 +1088,7 @@ static inline float Dot_EB98(const sQ_EB98& a, const sQ_EB98& b)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place vector / scalar via vdiv).
-static inline void DivEq_EB98(sQ_EB98& r, float s)
+static inline void DivEq_EB98(sVec4W& r, float s)
 {
     int t;
     __asm__(
@@ -1101,7 +1105,7 @@ static inline void DivEq_EB98(sQ_EB98& r, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (v /= s, then the 4-component dot product of a and b).
-static inline float DivDot_EB98(sQ_EB98& v, float s, const sQ_EB98& a, const sQ_EB98& b)
+static inline float DivDot_EB98(sVec4W& v, float s, const sVec4W& a, const sVec4W& b)
 {
     float r;
     int t, u;
@@ -1129,9 +1133,9 @@ static inline float DivDot_EB98(sQ_EB98& v, float s, const sQ_EB98& a, const sQ_
 }
 
 // PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
-static inline sQ_EB98 QuatMul_EB98(const sQ_EB98& a, const sQ_EB98& b)
+static inline sVec4W QuatMul_EB98(const sVec4W& a, const sVec4W& b)
 {
-    sQ_EB98 r;
+    sVec4W r;
     __asm__(
         "lqc2       $vf4, %1\n"
         "lqc2       $vf5, %2\n"
@@ -1152,9 +1156,9 @@ static inline sQ_EB98 QuatMul_EB98(const sQ_EB98& a, const sQ_EB98& b)
 }
 
 // PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
-static inline sQ_EB98 Rot_EB98(const sQ_EB98& q, const sQ_EB98& v)
+static inline sVec4W Rot_EB98(const sVec4W& q, const sVec4W& v)
 {
-    sQ_EB98 r;
+    sVec4W r;
     __asm__(
         "lqc2      $vf4, %1\n"
         "lqc2      $vf5, %2\n"
@@ -1176,7 +1180,7 @@ static inline sQ_EB98 Rot_EB98(const sQ_EB98& q, const sQ_EB98& v)
 }
 
 // PORT: PS2-only VU0 macro-mode asm (quaternion + position to a 4x4 matrix).
-static inline void QuatToMat_EB98(void* dst, const sQ_EB98* q, const sQ_EB98* p)
+static inline void QuatToMat_EB98(void* dst, const sVec4W* q, const sVec4W* p)
 {
     __asm__ __volatile__(
         "lqc2       $vf4, 0(%1)\n"
@@ -1217,11 +1221,11 @@ static inline void QuatToMat_EB98(void* dst, const sQ_EB98* q, const sQ_EB98* p)
         : "memory");
 }
 
-static inline sQ_EB98 AxisAngle_EB98(const sQ_EB98& axis, float angle)
+static inline sVec4W AxisAngle_EB98(const sVec4W& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
-    return sQ_EB98(s * axis.x, s * axis.y, s * axis.z, c);
+    return sVec4W(s * axis.x, s * axis.y, s * axis.z, c);
 }
 
 static inline float Min_EB98(float a, float b)
@@ -1242,8 +1246,8 @@ extern "C" void func_0011EB98_impl(cRider* self) __asm__("func_0011EB98");
 extern "C" void func_0011EB98_impl(cRider* self)
 {
     sXf_EB98 xf;
-    xf.pos = *(sQ_EB98*)&self->mPosition;
-    xf.rot = *(sQ_EB98*)&self->mRotation;
+    xf.pos = *(sVec4W*)&self->mPosition;
+    xf.rot = *(sVec4W*)&self->mRotation;
     if (func_0011FEE8(self) == 5)
         func_00134DD0((char*)self->mRiderHandler + 0x230, &xf);
     cRider_doLeanPoseAdjust(self, &xf);
@@ -1252,7 +1256,7 @@ extern "C" void func_0011EB98_impl(cRider* self)
     ab[0] = xf;
     if (func_0011FEE8(self) != 13 && self->unk_1F0[18].cur != 0.0f)
     {
-        sQ_EB98 s = Scale_EB98(D_004FF160_EB98, self->unk_1F0[18].cur);
+        sVec4W s = Scale_EB98(D_004FF160_EB98, self->unk_1F0[18].cur);
         ab[0].pos += Rot_EB98(ab[0].rot, s);
     }
     if (self->unk_150 != 0)
@@ -1261,26 +1265,26 @@ extern "C" void func_0011EB98_impl(cRider* self)
         self->mAnimModel->localRot[self->unk_8A0] = *(t4Vector*)&D_004FF220_EB98;
         self->mAnimModel->localPos[(*(int*)&self->unk_8A4[0])] = *(t4Vector*)&D_004FF130_EB98;
         self->mAnimModel->localRot[(*(int*)&self->unk_8A4[0])] = *(t4Vector*)&D_004FF220_EB98;
-        ab[1].pos = *(sQ_EB98*)&self->unk_130[0];
-        ab[1].rot = *(sQ_EB98*)&self->unk_130[0x10];
+        ab[1].pos = *(sVec4W*)&self->unk_130[0];
+        ab[1].rot = *(sVec4W*)&self->unk_130[0x10];
     }
     func_00310200(self->mAnimModel, ab);
     if (self->unk_1F0[17].cur != 0.0f)
     {
         sXf_EB98* b1 = (sXf_EB98*)(self->mAnimModel->bones + self->unk_8A0);
         float qx = b1->rot.x, qy = b1->rot.y, qz = b1->rot.z, qw = b1->rot.w;
-        sQ_EB98 ax;
+        sVec4W ax;
         ax.w = 0.0f;
         ax.x = 1.0f - 2.0f * (qy * qy + qz * qz);
         ax.y = 2.0f * (qx * qy + qw * qz);
         ax.z = 2.0f * (qx * qz - qw * qy);
-        sQ_EB98 c = Cross_EB98(*(sQ_EB98*)&self->unk_390[0], ax);
+        sVec4W c = Cross_EB98(*(sVec4W*)&self->unk_390[0], ax);
         float len = Length_EB98(c);
         if (len > 9.99999993922529e-09f)
         {
-            float d = DivDot_EB98(c, len, *(sQ_EB98*)&self->unk_390[0], ax);
+            float d = DivDot_EB98(c, len, *(sVec4W*)&self->unk_390[0], ax);
             float m = Min_EB98(len, 1.0f);
-            sQ_EB98 q;
+            sVec4W q;
             if (d < 0.0f)
                 q = AxisAngle_EB98(c, (func_0031C128(m) - 1.5707963705062866f) * self->unk_1F0[17].cur);
             else
@@ -1288,12 +1292,12 @@ extern "C" void func_0011EB98_impl(cRider* self)
             b1->rot = QuatMul_EB98(q, b1->rot);
         }
         if (0.0f < *(float*)((char*)self + 0x31C))
-            AddTo_EB98(b1->pos, Scale_EB98(Scale_EB98(*(sQ_EB98*)&self->mGroundNormal, *(float*)((char*)self + 0x31C)), self->unk_1F0[17].cur));
+            AddTo_EB98(b1->pos, Scale_EB98(Scale_EB98(*(sVec4W*)&self->mGroundNormal, *(float*)((char*)self + 0x31C)), self->unk_1F0[17].cur));
         {
             cAnimModel* am = self->mAnimModel;
             sXf_EB98 local;
-            local.pos = sQ_EB98(am->localPos[(*(int*)&self->unk_8A4[0])].x * am->unk_140.x, am->localPos[(*(int*)&self->unk_8A4[0])].y * am->unk_140.y, am->localPos[(*(int*)&self->unk_8A4[0])].z * am->unk_140.z, am->localPos[(*(int*)&self->unk_8A4[0])].w * am->unk_140.w);
-            sQ_EB98* lr = (sQ_EB98*)&am->localRot[(*(int*)&self->unk_8A4[0])];
+            local.pos = sVec4W(am->localPos[(*(int*)&self->unk_8A4[0])].x * am->unk_140.x, am->localPos[(*(int*)&self->unk_8A4[0])].y * am->unk_140.y, am->localPos[(*(int*)&self->unk_8A4[0])].z * am->unk_140.z, am->localPos[(*(int*)&self->unk_8A4[0])].w * am->unk_140.w);
+            sVec4W* lr = (sVec4W*)&am->localRot[(*(int*)&self->unk_8A4[0])];
             local.rot = *lr;
             sXf_EB98* bn = (sXf_EB98*)&am->bones[(*(int*)&self->unk_8A4[0])];
             *bn = Combine_EB98(*b1, local);
@@ -2445,17 +2449,11 @@ extern "C" void func_0031BB30(void* q, const void* a, const void* b);
 extern "C" float func_0031C128(float x);
 extern "C" float func_0031BF60(float x);
 
-struct sQ_1AA0 {
-    float x, y, z, w;
-    sQ_1AA0() {}
-    sQ_1AA0(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
-} __attribute__((aligned(16)));
-
 extern sVec4 D_004FF120_1AA0 __asm__("D_004FF120");
 extern sVec4 D_004FF140_1AA0 __asm__("D_004FF140");
 
 // PORT: PS2-only VU0 macro-mode asm (rotate v by the conjugate of quaternion q).
-static inline sVec4 QuatRot_1AA0(const sQ_1AA0& q, const sVec4& v)
+static inline sVec4 QuatRot_1AA0(const sVec4W& q, const sVec4& v)
 {
     sVec4 r;
     __asm__(
@@ -2479,9 +2477,9 @@ static inline sVec4 QuatRot_1AA0(const sQ_1AA0& q, const sVec4& v)
 }
 
 // PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
-static inline sQ_1AA0 QuatMul_1AA0(const sQ_1AA0& a, const sQ_1AA0& b)
+static inline sVec4W QuatMul_1AA0(const sVec4W& a, const sVec4W& b)
 {
-    sQ_1AA0 r;
+    sVec4W r;
     __asm__(
         "lqc2       $vf4, %1\n"
         "lqc2       $vf5, %2\n"
@@ -2520,17 +2518,17 @@ static inline sVec4 Div_1AA0(const sVec4& v, float s)
     return r;
 }
 
-static inline sQ_1AA0 AxisAngle_1AA0(const sVec4& axis, float angle)
+static inline sVec4W AxisAngle_1AA0(const sVec4& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
-    return sQ_1AA0(s * axis.x, s * axis.y, s * axis.z, c);
+    return sVec4W(s * axis.x, s * axis.y, s * axis.z, c);
 }
 
 // q = rotation(axis, angle) * q. Declared to return the quaternion by value but has no return statement (the classic
 // forgotten return); the caller ignores the result, and that ignored by-value result is the unwritten 16-byte temp the
 // retail frame keeps during the heading rotation. The final rotation below is written out instead (99.19 with this helper).
-static inline sQ_1AA0 Rotate_1AA0(sQ_1AA0& q, const sVec4& axis, float angle)
+static inline sVec4W Rotate_1AA0(sVec4W& q, const sVec4& axis, float angle)
 {
     q = QuatMul_1AA0(AxisAngle_1AA0(axis, angle), q);
 }
@@ -2562,11 +2560,11 @@ static inline float Acos_1AA0(float x)
     return 1.5707963705062866f - func_0031C128(x);
 }
 
-#define ROT_1AA0 (*(sQ_1AA0*)&self->mRotation)
+#define ROT_1AA0 (*(sVec4W*)&self->mRotation)
 
-static inline sQ_1AA0 Conj_1AA0(cRider* self)
+static inline sVec4W Conj_1AA0(cRider* self)
 {
-    sQ_1AA0 r(-ROT_1AA0.x, -ROT_1AA0.y, -ROT_1AA0.z, ROT_1AA0.w);
+    sVec4W r(-ROT_1AA0.x, -ROT_1AA0.y, -ROT_1AA0.z, ROT_1AA0.w);
     return r;
 }
 
@@ -2577,7 +2575,7 @@ static inline int neq_1AA0(const sVec4* a, const sVec4& b)
 
 extern "C" void func_00121AA0(cRider* self, const sVec4* up, const sVec4* fwd, float rate, float maxRate)
 {
-    sQ_1AA0 q = ROT_1AA0;
+    sVec4W q = ROT_1AA0;
     {
         sVec4 cur(2.0f * (ROT_1AA0.z * ROT_1AA0.x + ROT_1AA0.w * ROT_1AA0.y), 2.0f * (ROT_1AA0.z * ROT_1AA0.y - ROT_1AA0.w * ROT_1AA0.x),
                     1.0f - 2.0f * (ROT_1AA0.x * ROT_1AA0.x + ROT_1AA0.y * ROT_1AA0.y), 0.0f);
@@ -2588,7 +2586,7 @@ extern "C" void func_00121AA0(cRider* self, const sVec4* up, const sVec4* fwd, f
         float heading = -Atan2_1AA0(v.x, v.y);
         Rotate_1AA0(q, *up, heading);
     }
-    sQ_1AA0 d = QuatMul_1AA0(q, Conj_1AA0(self));
+    sVec4W d = QuatMul_1AA0(q, Conj_1AA0(self));
     float angle;
     sVec4 axis;
     if (0.0f < d.w) {
