@@ -80,6 +80,29 @@ struct cRiderObj {
     virtual int isBusy();
 };
 
+// A recorder (func_00237140 / func_00237280 add tracks, func_002379C8 plays them back, func_002370A0 frees
+// them): nFrames 100-byte frames per track, tracks of 0x18 bytes from 0x14.
+struct sFrame {
+    int type;                   // 0x00
+    char data[0x60];            // 0x04
+};
+struct sTrack {
+    sFrame* frames;             // 0x00
+    int cur;                    // 0x04
+    int max;                    // 0x08
+    int fC;                     // 0x0C
+    int* target;                // 0x10 (a 0x2A4-byte block)
+    void* obj;                  // 0x14
+};
+struct sRecorder {
+    int f0;                     // 0x00 track length
+    int nFrames;                // 0x04
+    int f8;                     // 0x08
+    int fC;                     // 0x0C
+    int count;                  // 0x10 tracks in use
+    sTrack tracks[1];           // 0x14
+};
+
 // The game-mode manager (cGameModeMan, main/gamemode layout; D_004A28A8->gm).
 struct cGameModeMan {
     int f0;             // 0x00 current heat (1..3)
@@ -1488,28 +1511,15 @@ INCLUDE_ASM("main/gamestate", func_002370A0);
 void cMemMan_free(void*);
 void operator_delete(int*);
 
-struct sEntry_func_002370A0 {
-    void* buf;
-    int pad[3];
-    int* a;
-    int* b;
-};
-
-struct sObj_func_002370A0 {
-    char pad[0x10];
-    int count;
-    sEntry_func_002370A0 entries[1];
-};
-
-extern "C" void func_002370A0(sObj_func_002370A0* self, int flags)
+extern "C" void func_002370A0(sRecorder* self, int flags)
 {
     int i;
     for (i = 0; i < self->count; i++) {
-        sEntry_func_002370A0* e = &self->entries[i];
-        if (e->buf)
-            cMemMan_free(e->buf);
-        operator_delete(e->a);
-        operator_delete(e->b);
+        sTrack* e = &self->tracks[i];
+        if (e->frames)
+            cMemMan_free(e->frames);
+        operator_delete(e->target);
+        operator_delete((int*)e->obj);
     }
     if (flags & 1)
         operator_delete((int*)self);
@@ -1529,28 +1539,6 @@ extern char D_0047C078[];
 extern char D_0047C088[];
 extern char D_0047C098[];
 
-struct sRec_237140 {
-    int type;
-    char pad[0x60];
-};
-
-struct sEntry_237140 {
-    sRec_237140* recs;
-    int f4;
-    int f8;
-    int fC;
-    int* f10;
-    void* f14;
-};
-
-struct sOwner_237140 {
-    int f0;
-    int count;
-    int pad8[2];
-    int n;
-    sEntry_237140 entries[1];
-};
-
 static inline void* initObj_237140(void* o, int a, int b)
 {
     func_00244400(o, a);
@@ -1558,21 +1546,21 @@ static inline void* initObj_237140(void* o, int a, int b)
     return o;
 }
 
-extern "C" void* func_00237140(sOwner_237140* self, int* a1)
+extern "C" void* func_00237140(sRecorder* self, int* a1)
 {
-    sEntry_237140* e = &self->entries[self->n++];
-    e->recs = (sRec_237140*)operator_new__FUi(self->count * 100, D_0047C078, 0, 0);
-    func_003E6448(e->recs, 0, self->count * 100);
-    for (int i = 0; i < self->count; i++) {
-        e->recs[i].type = 0x18;
+    sTrack* e = &self->tracks[self->count++];
+    e->frames = (sFrame*)operator_new__FUi(self->nFrames * 100, D_0047C078, 0, 0);
+    func_003E6448(e->frames, 0, self->nFrames * 100);
+    for (int i = 0; i < self->nFrames; i++) {
+        e->frames[i].type = 0x18;
     }
-    e->f4 = 0;
-    e->f8 = self->f0;
+    e->cur = 0;
+    e->max = self->f0;
     e->fC = a1[0];
-    e->f10 = (int*)cMemMan_alloc(0x2A4, D_0047C088, 0, 0);
-    *e->f10 = 0;
-    void* o = initObj_237140(cMemMan_alloc(8, D_0047C098, 0, 0), (int)e->f10, a1[1]);
-    e->f14 = o;
+    e->target = (int*)cMemMan_alloc(0x2A4, D_0047C088, 0, 0);
+    *e->target = 0;
+    void* o = initObj_237140(cMemMan_alloc(8, D_0047C098, 0, 0), (int)e->target, a1[1]);
+    e->obj = o;
     return o;
 }
 #endif
@@ -1591,28 +1579,6 @@ extern char D_0047C078[];
 extern char D_0047C088[];
 extern char D_0047C098[];
 
-struct sRec_237280 {
-    int type;
-    char pad[0x60];
-};
-
-struct sEntry_237280 {
-    sRec_237280* recs;
-    int f4;
-    int f8;
-    int fC;
-    int* f10;
-    void* f14;
-};
-
-struct sOwner_237280 {
-    int f0;
-    int count;
-    int pad8[2];
-    int n;
-    sEntry_237280 entries[1];
-};
-
 static inline void* initObj_237280(void* o, int a, int b)
 {
     func_00244400(o, a);
@@ -1620,21 +1586,21 @@ static inline void* initObj_237280(void* o, int a, int b)
     return o;
 }
 
-extern "C" void* func_00237280(sOwner_237280* self, int a1)
+extern "C" void* func_00237280(sRecorder* self, int a1)
 {
-    sEntry_237280* e = &self->entries[self->n++];
-    e->recs = (sRec_237280*)operator_new__FUi(self->count * 100, D_0047C078, 0, 0);
-    func_003E6448(e->recs, 0, self->count * 100);
-    for (int i = 0; i < self->count; i++) {
-        e->recs[i].type = 0x18;
+    sTrack* e = &self->tracks[self->count++];
+    e->frames = (sFrame*)operator_new__FUi(self->nFrames * 100, D_0047C078, 0, 0);
+    func_003E6448(e->frames, 0, self->nFrames * 100);
+    for (int i = 0; i < self->nFrames; i++) {
+        e->frames[i].type = 0x18;
     }
-    e->f4 = 0;
-    e->f8 = self->f0;
+    e->cur = 0;
+    e->max = self->f0;
     e->fC = 0;
-    e->f10 = (int*)cMemMan_alloc(0x2A4, D_0047C088, 0, 0);
-    *e->f10 = 0;
-    void* o = initObj_237280(cMemMan_alloc(8, D_0047C098, 0, 0), (int)e->f10, a1);
-    e->f14 = o;
+    e->target = (int*)cMemMan_alloc(0x2A4, D_0047C088, 0, 0);
+    *e->target = 0;
+    void* o = initObj_237280(cMemMan_alloc(8, D_0047C098, 0, 0), (int)e->target, a1);
+    e->obj = o;
     return o;
 }
 #endif
@@ -1652,20 +1618,9 @@ void func_00237948(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00237950);
 #ifdef SKIP_ASM
-struct sSlot237950 {
-    int f0;
-    int cur;
-    int max;
-    int pad[3];
-};
-struct sOwner237950 {
-    char pad[0x10];
-    int count;
-    sSlot237950 slots[1];
-};
 extern char* D_004A2EEC;
 
-extern "C" int func_00237950(sOwner237950* self)
+extern "C" int func_00237950(sRecorder* self)
 {
     char* p = D_004A2EEC;
     if (*(int*)(p + 0x70) < 14) {
@@ -1677,7 +1632,7 @@ extern "C" int func_00237950(sOwner237950* self)
     }
     int i;
     for (i = 0; i < self->count; i++) {
-        sSlot237950* s = &self->slots[i];
+        sTrack* s = &self->tracks[i];
         if (s->cur == s->max) {
             return 0;
         }
@@ -1691,40 +1646,19 @@ INCLUDE_ASM("main/gamestate", func_002379C8);
 #ifdef SKIP_ASM
 extern "C" void func_00321298(void* target, int a, void* data);
 
-struct sFrame002379C8 {
-    int first;
-    char data[0x60];
-};
-struct sTrack002379C8 {
-    sFrame002379C8* frames;
-    int cur;
-    int f8;
-    int fC;
-    void* target;
-    int f14;
-};
-struct sPlayer002379C8 {
-    int f0;
-    int nFrames;
-    int f8;
-    int fC;
-    int count;
-    sTrack002379C8 tracks[1];
-};
-
-extern "C" int func_002379C8(sPlayer002379C8* self)
+extern "C" int func_002379C8(sRecorder* self)
 {
     if (*(int*)(D_004A2EEC + 0x70) < 14) {
         return 0;
     }
-    if (func_00237950((sOwner237950*)self) == 0) {
+    if (func_00237950(self) == 0) {
         return 0;
     }
     int i;
     for (i = 0; i < self->count; i++) {
-        sTrack002379C8* t = &self->tracks[i];
-        sFrame002379C8* f = &t->frames[t->cur % self->nFrames];
-        func_00321298(t->target, f->first, f->data);
+        sTrack* t = &self->tracks[i];
+        sFrame* f = &t->frames[t->cur % self->nFrames];
+        func_00321298(t->target, f->type, f->data);
         t->cur++;
     }
     return 1;
