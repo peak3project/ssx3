@@ -2687,13 +2687,7 @@ struct sLand_6848 {
 // The unit defines this later with its own vector type; bind it by asm label.
 extern "C" int func_00108A48_6848(cRider* self, sLand_6848* land) __asm__("func_00108A48");
 
-struct sV_6848 {
-    float x, y, z, w;
-    sV_6848() {}
-    sV_6848(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
-} __attribute__((aligned(16)));
-
-extern sV_6848 D_004FF160_6848 __asm__("D_004FF160");
+extern sVec4 D_004FF160_6848 __asm__("D_004FF160");
 
 struct sQuat_6848 {
     float x, y, z, w;
@@ -2735,31 +2729,31 @@ static inline float AtMost_6848(float x, float hi)
     return x <= hi ? x : hi;
 }
 
-static inline sV_6848 Side_6848(const sAnimModelBone* b)
+static inline sVec4 Side_6848(const sAnimModelBone* b)
 {
-    return sV_6848(1.0f - 2.0f * (b->rot.y * b->rot.y + b->rot.z * b->rot.z),
+    return sVec4(1.0f - 2.0f * (b->rot.y * b->rot.y + b->rot.z * b->rot.z),
                    2.0f * (b->rot.x * b->rot.y + b->rot.w * b->rot.z),
                    2.0f * (b->rot.x * b->rot.z - b->rot.w * b->rot.y),
                    0.0f);
 }
 
-static inline sV_6848 Front_6848(const sAnimModelBone* b)
+static inline sVec4 Front_6848(const sAnimModelBone* b)
 {
-    return sV_6848(2.0f * (b->rot.y * b->rot.x - b->rot.w * b->rot.z),
+    return sVec4(2.0f * (b->rot.y * b->rot.x - b->rot.w * b->rot.z),
                    1.0f - 2.0f * (b->rot.z * b->rot.z + b->rot.x * b->rot.x),
                    2.0f * (b->rot.y * b->rot.z + b->rot.w * b->rot.x),
                    0.0f);
 }
 
-static inline sV_6848 Up_6848(const sAnimModelBone* b)
+static inline sVec4 Up_6848(const sAnimModelBone* b)
 {
-    return sV_6848(2.0f * (b->rot.z * b->rot.x + b->rot.w * b->rot.y),
+    return sVec4(2.0f * (b->rot.z * b->rot.x + b->rot.w * b->rot.y),
                    2.0f * (b->rot.z * b->rot.y - b->rot.w * b->rot.x),
                    1.0f - 2.0f * (b->rot.x * b->rot.x + b->rot.y * b->rot.y),
                    0.0f);
 }
 
-static inline sQuat_6848 AxisAngle_6848(const sV_6848& axis, float angle)
+static inline sQuat_6848 AxisAngle_6848(const sVec4& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -2793,8 +2787,8 @@ extern "C" int func_00106848(cRider* self)
         }
     }
     sAnimModelBone* bone = &self->mAnimModel->bones[self->unk_8A0];
-    sV_6848 side = Side_6848(bone);
-    sV_6848 up = Up_6848(bone);
+    sVec4 side = Side_6848(bone);
+    sVec4 up = Up_6848(bone);
     float a = Dot(*(t4Vector*)&side, land.n);
     float b = Dot(*(t4Vector*)&up, land.n);
     float angle = Atan2_6848(b, a);
@@ -2812,7 +2806,7 @@ extern "C" int func_00106848(cRider* self)
     } else if (func_0011FEE8(self) == 0xC) {
         LAND_STATE(self) = 3;
     } else {
-        sV_6848 front = Front_6848(bone);
+        sVec4 front = Front_6848(bone);
         if (front.z < 0.0f) {
             if (b < 0.0f)
                 LAND_STATE(self) = 4;
