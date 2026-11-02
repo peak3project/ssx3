@@ -12,6 +12,14 @@ class cBankMonitorInstance;
 // Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
 typedef void (cController::*sSndCallback)(cController*, cBankMonitorInstance*, float);
 
+// One entry of cSndPlayOpts' option stack (mCurrent[], 0x18 bytes); byte 0 seeds mBaseVol.
+struct sSndOptsRec {
+    signed char vol;
+    char pad1[0xB];
+    unsigned short fC;       // 0x0C
+    char padE[0xA];
+};
+
 //100%
 INCLUDE_ASM("sound/soundsys", cBankSys_cBankSys);
 #ifdef SKIP_ASM
@@ -136,10 +144,6 @@ INCLUDE_ASM("sound/soundsys", func_00290018);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0018Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd0018E16 {
     int f0;
     int f4;
@@ -148,9 +152,9 @@ struct sSnd0018E16 {
 };
 struct sSnd0018Sub {
     char pad0[4];
-    sSnd0018Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd0018Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -239,12 +243,6 @@ INCLUDE_ASM("sound/soundsys", func_00290358);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0358Ch {
-    signed char vol;
-    char pad1[0xB];
-    unsigned short fC;       // 0x0C
-    char padE[0xA];
-};
 struct sSnd0358E16 {
     int f0;
     int f4;
@@ -253,9 +251,9 @@ struct sSnd0358E16 {
 };
 struct sSnd0358Sub {
     char pad0[4];
-    sSnd0358Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd0358Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -445,10 +443,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0CC0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd0CC0E16 {
     int f0;
     int f4;
@@ -457,9 +451,9 @@ struct sSnd0CC0E16 {
 };
 struct sSnd0CC0Sub {
     char pad0[4];
-    sSnd0CC0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd0CC0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -583,10 +577,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd10E0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd10E0E16 {
     int f0;
     int f4;
@@ -595,9 +585,9 @@ struct sSnd10E0E16 {
 };
 struct sSnd10E0Sub {
     char pad0[4];
-    sSnd10E0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd10E0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -717,10 +707,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd1438Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd1438E16 {
     int f0;
     int f4;
@@ -729,9 +715,9 @@ struct sSnd1438E16 {
 };
 struct sSnd1438Sub {
     char pad0[4];
-    sSnd1438Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd1438Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -873,10 +859,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd17D0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd17D0E16 {
     int f0;
     int f4;
@@ -885,9 +867,9 @@ struct sSnd17D0E16 {
 };
 struct sSnd17D0Sub {
     char pad0[4];
-    sSnd17D0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd17D0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -1131,10 +1113,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd2508Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd2508E16 {
     int f0;
     int f4;
@@ -1143,9 +1121,9 @@ struct sSnd2508E16 {
 };
 struct sSnd2508Sub {
     char pad0[4];
-    sSnd2508Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd2508Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -2030,10 +2008,6 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
 
-struct sSnd48D0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd48D0E16 {
     int f0;
     int f4;
@@ -2042,9 +2016,9 @@ struct sSnd48D0E16 {
 };
 struct sSnd48D0Sub {
     char pad0[4];
-    sSnd48D0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd48D0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -2625,10 +2599,6 @@ extern struct func_00290B58_sCurve D_00482DA0;
 }
 struct sVE_6310 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6310Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd6310E16 {
     int f0;
     int f4;
@@ -2637,9 +2607,9 @@ struct sSnd6310E16 {
 };
 struct sSnd6310Sub {
     void* rng;               // 0x00
-    struct sSnd6310Ch def;          // 0x04
+    struct sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    struct sSnd6310Ch* ch;          // 0x20
+    struct sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -2793,10 +2763,6 @@ extern func_00290B58_sCurve D_00482DA0_6868 __asm__("D_00482DA0");
 
 struct sVE_6868 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6868Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd6868E16 {
     int f0;
     int f4;
@@ -2805,9 +2771,9 @@ struct sSnd6868E16 {
 };
 struct sSnd6868Sub {
     char pad0[4];
-    sSnd6868Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd6868Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -2978,10 +2944,6 @@ extern func_00290B58_sCurve D_00482DA0_6E80 __asm__("D_00482DA0");
 
 struct sVE_6E80 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6E80Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd6E80E16 {
     int f0;
     int f4;
@@ -2990,9 +2952,9 @@ struct sSnd6E80E16 {
 };
 struct sSnd6E80Sub {
     char pad0[4];
-    sSnd6E80Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd6E80Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -3155,10 +3117,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd74A0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd74A0E16 {
     int f0;
     int f4;
@@ -3167,9 +3125,9 @@ struct sSnd74A0E16 {
 };
 struct sSnd74A0Sub {
     char pad0[4];
-    sSnd74A0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd74A0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -3510,10 +3468,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd8138Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd8138E16 {
     int f0;
     int f4;
@@ -3522,9 +3476,9 @@ struct sSnd8138E16 {
 };
 struct sSnd8138Sub {
     char pad0[4];
-    sSnd8138Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd8138Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -3716,10 +3670,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd89A8Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd89A8E16 {
     int f0;
     int f4;
@@ -3728,9 +3678,9 @@ struct sSnd89A8E16 {
 };
 struct sSnd89A8Sub {
     char pad0[4];
-    sSnd89A8Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd89A8Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -3946,10 +3896,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9368Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd9368E16 {
     int f0;
     int f4;
@@ -3958,9 +3904,9 @@ struct sSnd9368E16 {
 };
 struct sSnd9368Sub {
     char pad0[4];
-    sSnd9368Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd9368Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -4102,10 +4048,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd97B8Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd97B8E16 {
     int f0;
     int f4;
@@ -4114,9 +4056,9 @@ struct sSnd97B8E16 {
 };
 struct sSnd97B8Sub {
     char pad0[4];
-    sSnd97B8Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd97B8Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -4219,10 +4161,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9B70Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd9B70E16 {
     int f0;
     int f4;
@@ -4231,9 +4169,9 @@ struct sSnd9B70E16 {
 };
 struct sSnd9B70Sub {
     char pad0[4];
-    sSnd9B70Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd9B70Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -4316,10 +4254,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9E28Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd9E28E16 {
     int f0;
     int f4;
@@ -4328,9 +4262,9 @@ struct sSnd9E28E16 {
 };
 struct sSnd9E28Sub {
     char pad0[4];
-    sSnd9E28Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd9E28Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -4447,10 +4381,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA220Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndA220E16 {
     int f0;
     int f4;
@@ -4459,9 +4389,9 @@ struct sSndA220E16 {
 };
 struct sSndA220Sub {
     char pad0[4];
-    sSndA220Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndA220Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -4555,10 +4485,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA530Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndA530E16 {
     int f0;
     int f4;
@@ -4567,9 +4493,9 @@ struct sSndA530E16 {
 };
 struct sSndA530Sub {
     char pad0[4];
-    sSndA530Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndA530Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -4647,10 +4573,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA7D8Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndA7D8E16 {
     int f0;
     int f4;
@@ -4659,9 +4581,9 @@ struct sSndA7D8E16 {
 };
 struct sSndA7D8Sub {
     char pad0[4];
-    sSndA7D8Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndA7D8Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -4905,10 +4827,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB0E0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndB0E0E16 {
     int f0;
     int f4;
@@ -4917,9 +4835,9 @@ struct sSndB0E0E16 {
 };
 struct sSndB0E0Sub {
     char pad0[4];
-    sSndB0E0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndB0E0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -5029,10 +4947,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB430Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndB430E16 {
     int f0;
     int f4;
@@ -5041,9 +4955,9 @@ struct sSndB430E16 {
 };
 struct sSndB430Sub {
     char pad0[4];
-    sSndB430Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndB430Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -5187,10 +5101,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB968Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndB968E16 {
     int f0;
     int f4;
@@ -5199,9 +5109,9 @@ struct sSndB968E16 {
 };
 struct sSndB968Sub {
     char pad0[4];
-    sSndB968Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndB968Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -5293,10 +5203,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndBCF8Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndBCF8E16 {
     int f0;
     int f4;
@@ -5305,9 +5211,9 @@ struct sSndBCF8E16 {
 };
 struct sSndBCF8Sub {
     char pad0[4];
-    sSndBCF8Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndBCF8Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -5399,10 +5305,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC088Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndC088E16 {
     int f0;
     int f4;
@@ -5411,9 +5313,9 @@ struct sSndC088E16 {
 };
 struct sSndC088Sub {
     char pad0[4];
-    sSndC088Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndC088Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -5513,10 +5415,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC420Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndC420E16 {
     int f0;
     int f4;
@@ -5525,9 +5423,9 @@ struct sSndC420E16 {
 };
 struct sSndC420Sub {
     char pad0[4];
-    sSndC420Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndC420Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -5648,10 +5546,6 @@ extern "C" void func_00295950(void* self, int a, int b, int c);
 extern signed char D_00535C11[];
 extern char* D_004A28A8;
 
-struct sSnd7B0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd7B0E16 {
     int f0;
     int f4;
@@ -5660,9 +5554,9 @@ struct sSnd7B0E16 {
 };
 struct sSnd7B0Sub {
     char pad0[4];
-    sSnd7B0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd7B0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -5884,10 +5778,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndCED8Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndCED8E16 {
     int f0;
     int f4;
@@ -5896,9 +5786,9 @@ struct sSndCED8E16 {
 };
 struct sSndCED8Sub {
     char pad0[4];
-    sSndCED8Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndCED8Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -6047,10 +5937,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD370Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndD370E16 {
     int f0;
     int f4;
@@ -6059,9 +5945,9 @@ struct sSndD370E16 {
 };
 struct sSndD370Sub {
     char pad0[4];
-    sSndD370Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndD370Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -6265,10 +6151,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD8E0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndD8E0E16 {
     int f0;
     int f4;
@@ -6277,9 +6159,9 @@ struct sSndD8E0E16 {
 };
 struct sSndD8E0Sub {
     char pad0[4];
-    sSndD8E0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndD8E0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -6395,10 +6277,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndDC48Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndDC48E16 {
     int f0;
     int f4;
@@ -6407,9 +6285,9 @@ struct sSndDC48E16 {
 };
 struct sSndDC48Sub {
     char pad0[4];
-    sSndDC48Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndDC48Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -6513,10 +6391,6 @@ static inline int vcall_DEF0(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-struct sSndDEF0Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndDEF0E16 {
     int f0;
     int f4;
@@ -6525,9 +6399,9 @@ struct sSndDEF0E16 {
 };
 struct sSndDEF0Sub {
     char pad0[4];
-    sSndDEF0Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndDEF0Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -6749,10 +6623,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE590Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndE590E16 {
     int f0;
     int f4;
@@ -6761,9 +6631,9 @@ struct sSndE590E16 {
 };
 struct sSndE590Sub {
     char pad0[4];
-    sSndE590Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndE590Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -6867,10 +6737,6 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE970Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSndE970E16 {
     int f0;
     int f4;
@@ -6879,9 +6745,9 @@ struct sSndE970E16 {
 };
 struct sSndE970Sub {
     char pad0[4];
-    sSndE970Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSndE970Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -10331,10 +10197,6 @@ struct sPool5D08 {
     int f17C;
 };
 
-struct sSnd5D08Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd5D08E16 {
     int f0;
     int f4;
@@ -10343,9 +10205,9 @@ struct sSnd5D08E16 {
 };
 struct sSnd5D08Sub {
     char pad0[4];
-    sSnd5D08Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd5D08Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     sVec4_5D08* tgt[4];      // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
@@ -11230,10 +11092,6 @@ INCLUDE_ASM("sound/soundsys", func_002A7468);
 #ifdef SKIP_ASM
 extern "C" void* func_00416210(void* dst, int c, int n);
 
-struct sSnd7468Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd7468Env {
     int a;
     int b;
@@ -11246,9 +11104,9 @@ struct sSnd7468Pair {
 };
 struct sSnd7468Sub {
     char pad0[0x4];
-    sSnd7468Ch def;         // 0x04
+    sSndOptsRec def;         // 0x04
     volatile int cur;       // 0x1C
-    sSnd7468Ch* ch;         // 0x20
+    sSndOptsRec* ch;         // 0x20
     void* tgt[4];           // 0x24
     int* p34;               // 0x34
     int* vals;              // 0x38
@@ -11902,10 +11760,6 @@ INCLUDE_ASM("sound/soundsys", func_002A8450);
 #ifdef SKIP_ASM
 extern "C" void* func_00416210(void* dst, int c, int n);
 
-struct sSnd8450Ch {
-    signed char vol;
-    char pad1[0x17];
-};
 struct sSnd8450E8 {
     int a;
     int b;
@@ -11918,9 +11772,9 @@ struct sSnd8450E16 {
 };
 struct sSnd8450Sub {
     char pad0[4];
-    sSnd8450Ch def;          // 0x04
+    sSndOptsRec def;          // 0x04
     volatile int cur;        // 0x1C
-    sSnd8450Ch* ch;          // 0x20
+    sSndOptsRec* ch;          // 0x20
     void* tgt[4];            // 0x24
     int* p34;                // 0x34
     int* vals;               // 0x38
