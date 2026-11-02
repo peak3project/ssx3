@@ -59,6 +59,11 @@ struct sPtMatrixV {
     }
 } __attribute__((aligned(16)));
 
+// One 128-bit GIF / DMA packet quadword (four unsigned words, 16-byte aligned).
+struct sGifQuad {
+    unsigned int w[4];
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -683,9 +688,6 @@ extern "C" void func_003718E8(void)
 //100%
 INCLUDE_ASM("render/particle", func_00371940);
 #ifdef SKIP_ASM
-struct sGifQuad {
-    unsigned int w[4];
-} __attribute__((aligned(16)));
 
 extern sGifQuad D_0044B430;
 
@@ -5194,9 +5196,6 @@ INCLUDE_ASM("render/particle", func_00380518);
 
 
 
-struct sQuad_0518 {
-    unsigned int w[4];
-} __attribute__((aligned(16)));
 
 struct sPtGfx_0518 {
     char pad_0x0[0xE84];
@@ -5218,9 +5217,9 @@ extern "C" void func_0037D968(void* self);
 
 static inline void CopyQuads_0518(unsigned long** pp, const void* srcp, int n)
 {
-    const sQuad_0518* src = (const sQuad_0518*)srcp;
-    sQuad_0518* d = (sQuad_0518*)*pp;
-    sQuad_0518* end = d + n;
+    const sGifQuad* src = (const sGifQuad*)srcp;
+    sGifQuad* d = (sGifQuad*)*pp;
+    sGifQuad* end = d + n;
     while (d != end) {
         *d++ = *src++;
     }
@@ -5228,7 +5227,7 @@ static inline void CopyQuads_0518(unsigned long** pp, const void* srcp, int n)
 }
 
 // Sends obj's 0x15 quads to the VU1 program at address 0 under a pushed render state.
-extern "C" void func_00380518(sPtGfx_0518* self, sQuad_0518* obj)
+extern "C" void func_00380518(sPtGfx_0518* self, sGifQuad* obj)
 {
     if (D_004A44F8 != 0)
         return;
@@ -5278,9 +5277,6 @@ INCLUDE_ASM("render/particle", func_003807A0);
 
 
 
-struct sQuad_07A0 {
-    unsigned int w[4];
-} __attribute__((aligned(16)));
 
 struct sPtGfx_07A0 {
     char pad_0x0[0xE84];
@@ -5295,14 +5291,14 @@ struct sPtGfx_07A0 {
 
 struct sTrail_07A0 {
     char pad_0x0[0x20];
-    sQuad_07A0 q[0x15];             // 0x20
+    sGifQuad q[0x15];             // 0x20
     float scale;                    // 0x170 (unused here)
     char pad_0x174[4];
     int count;                      // 0x178
     int head;                       // 0x17C
     char pad_0x180[0x20];
-    sQuad_07A0* posA;               // 0x1A0
-    sQuad_07A0* posB;               // 0x1A4
+    sGifQuad* posA;               // 0x1A0
+    sGifQuad* posB;               // 0x1A4
 };
 
 struct sHdr_07A0 {
@@ -5326,9 +5322,9 @@ static inline int Wrap_07A0(int i, int start, int m)
 
 static inline void CopyQuads_07A0(unsigned long** pp, const void* srcp, int n)
 {
-    const sQuad_07A0* src = (const sQuad_07A0*)srcp;
-    sQuad_07A0* d = (sQuad_07A0*)*pp;
-    sQuad_07A0* end = d + n;
+    const sGifQuad* src = (const sGifQuad*)srcp;
+    sGifQuad* d = (sGifQuad*)*pp;
+    sGifQuad* end = d + n;
     while (d != end) {
         *d++ = *src++;
     }
@@ -5377,8 +5373,8 @@ extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
         if (m - s < first)
             first = m - s;
         int pad = 0x40 - first - over;
-        sQuad_07A0* lastA;
-        sQuad_07A0* lastB;
+        sGifQuad* lastA;
+        sGifQuad* lastB;
         if (done < m) {
             int e = Wrap_07A0(done, wrap, m);
             lastB = obj->posB + e;
@@ -5392,12 +5388,12 @@ extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
         if (over > 0)
             CopyQuads_07A0(&p, obj->posA, over);
         CopyQuads_07A0(&p, lastA, 1);
-        p = (unsigned long*)((sQuad_07A0*)p + pad);
+        p = (unsigned long*)((sGifQuad*)p + pad);
         CopyQuads_07A0(&p, obj->posB + s, first);
         if (over > 0)
             CopyQuads_07A0(&p, obj->posB, over);
         CopyQuads_07A0(&p, lastB, 1);
-        p = (unsigned long*)((sQuad_07A0*)p + pad);
+        p = (unsigned long*)((sGifQuad*)p + pad);
         p[0] = (unsigned long)(((unsigned int)D_510 >> 3) | 0x14000000) << 32;
         p[1] = (unsigned long)0x8800 << 45;
         p += 2;
@@ -5428,9 +5424,6 @@ INCLUDE_ASM("render/particle", func_00380CE0);
 
 
 
-struct sQuad_0CE0 {
-    unsigned int w[4];
-} __attribute__((aligned(16)));
 
 struct sCol_0CE0 {
     char b[4];
@@ -5450,14 +5443,14 @@ struct sPtGfx_0CE0 {
 
 struct sTrail_0CE0 {
     char pad_0x0[0x20];
-    sQuad_0CE0 q[0x15];             // 0x20
+    sGifQuad q[0x15];             // 0x20
     float scale;                    // 0x170 (unused here)
     char pad_0x174[4];
     int count;                      // 0x178
     int head;                       // 0x17C
     char pad_0x180[0x20];
-    sQuad_0CE0* posA;               // 0x1A0
-    sQuad_0CE0* posB;               // 0x1A4
+    sGifQuad* posA;               // 0x1A0
+    sGifQuad* posB;               // 0x1A4
     char pad_0x1A8[0x200 - 0x1A8];
     int alt;                        // 0x200
     sCol_0CE0* cols;                // 0x204
@@ -5486,9 +5479,9 @@ static inline int Wrap_0CE0(int i, int start, int m)
 
 static inline void CopyQuads_0CE0(unsigned long** pp, const void* srcp, int n)
 {
-    const sQuad_0CE0* src = (const sQuad_0CE0*)srcp;
-    sQuad_0CE0* d = (sQuad_0CE0*)*pp;
-    sQuad_0CE0* end = d + n;
+    const sGifQuad* src = (const sGifQuad*)srcp;
+    sGifQuad* d = (sGifQuad*)*pp;
+    sGifQuad* end = d + n;
     while (d != end) {
         *d++ = *src++;
     }
@@ -5538,8 +5531,8 @@ extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
         if (m - s < first)
             first = m - s;
         int pad = 0x2B - first - over;
-        sQuad_0CE0* lastA;
-        sQuad_0CE0* lastB;
+        sGifQuad* lastA;
+        sGifQuad* lastB;
         sCol_0CE0* lastC;
         if (done < m) {
             int e = Wrap_0CE0(done, wrap, m);
@@ -5556,12 +5549,12 @@ extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
         if (over > 0)
             CopyQuads_0CE0(&p, obj->posA, over);
         CopyQuads_0CE0(&p, lastA, 1);
-        p = (unsigned long*)((sQuad_0CE0*)p + pad);
+        p = (unsigned long*)((sGifQuad*)p + pad);
         CopyQuads_0CE0(&p, obj->posB + s, first);
         if (over > 0)
             CopyQuads_0CE0(&p, obj->posB, over);
         CopyQuads_0CE0(&p, lastB, 1);
-        p = (unsigned long*)((sQuad_0CE0*)p + pad);
+        p = (unsigned long*)((sGifQuad*)p + pad);
         p[0] = 0;
         p[1] = (unsigned long)0x6E2CC06E << 32;
         p += 2;
@@ -5601,9 +5594,6 @@ INCLUDE_ASM("render/particle", func_00381310);
 
 
 
-struct sQuad_1310 {
-    unsigned int w[4];
-} __attribute__((aligned(16)));
 
 
 
@@ -5621,7 +5611,7 @@ struct sPtGfx_1310 {
 };
 
 struct sPtObj_1310 {
-    sQuad_1310 q[5];                // 0x00
+    sGifQuad q[5];                // 0x00
     sPtMatrixV mat;                  // 0x50
 };
 
@@ -5672,9 +5662,9 @@ static inline sPtMatrixV MulMat_1310(const sPtMatrixV& a, const sPtMatrixV& b)
 
 static inline void CopyQuads_1310(unsigned long** pp, const void* srcp, int n)
 {
-    const sQuad_1310* src = (const sQuad_1310*)srcp;
-    sQuad_1310* d = (sQuad_1310*)*pp;
-    sQuad_1310* end = d + n;
+    const sGifQuad* src = (const sGifQuad*)srcp;
+    sGifQuad* d = (sGifQuad*)*pp;
+    sGifQuad* end = d + n;
     while (d != end) {
         *d++ = *src++;
     }
@@ -5709,9 +5699,9 @@ extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
     v1.y = 1.0f;
     v1.z = 0.0f;
     v1.w = 0.0f;
-    CopyQuads_1310(&p, (const sQuad_1310*)&m, 4);
-    CopyQuads_1310(&p, (const sQuad_1310*)&v0, 1);
-    CopyQuads_1310(&p, (const sQuad_1310*)&v1, 1);
+    CopyQuads_1310(&p, (const sGifQuad*)&m, 4);
+    CopyQuads_1310(&p, (const sGifQuad*)&v0, 1);
+    CopyQuads_1310(&p, (const sGifQuad*)&v1, 1);
     CopyQuads_1310(&p, obj->q, 5);
     p[0] = (unsigned long)(((unsigned int)D_0 >> 3) | 0x14000000) << 32;
     p[1] = (unsigned long)0x8800 << 45;
@@ -5744,9 +5734,6 @@ INCLUDE_ASM("render/particle", func_003816F0);
 
 
 
-struct sQuad_16F0 {
-    unsigned int w[4];
-} __attribute__((aligned(16)));
 
 
 
@@ -5764,7 +5751,7 @@ struct sPtGfx_16F0 {
 };
 
 struct sPtObj_16F0 {
-    sQuad_16F0 q[5];                // 0x00
+    sGifQuad q[5];                // 0x00
     sPtMatrixV mat;                  // 0x50
 };
 
@@ -5815,9 +5802,9 @@ static inline sPtMatrixV MulMat_16F0(const sPtMatrixV& a, const sPtMatrixV& b)
 
 static inline void CopyQuads_16F0(unsigned long** pp, const void* srcp, int n)
 {
-    const sQuad_16F0* src = (const sQuad_16F0*)srcp;
-    sQuad_16F0* d = (sQuad_16F0*)*pp;
-    sQuad_16F0* end = d + n;
+    const sGifQuad* src = (const sGifQuad*)srcp;
+    sGifQuad* d = (sGifQuad*)*pp;
+    sGifQuad* end = d + n;
     while (d != end) {
         *d++ = *src++;
     }
@@ -5852,9 +5839,9 @@ extern "C" void func_003816F0(sPtGfx_16F0* self, sPtObj_16F0* obj)
     v1.y = 1.0f;
     v1.z = 0.0f;
     v1.w = 0.0f;
-    CopyQuads_16F0(&p, (const sQuad_16F0*)&m, 4);
-    CopyQuads_16F0(&p, (const sQuad_16F0*)&v0, 1);
-    CopyQuads_16F0(&p, (const sQuad_16F0*)&v1, 1);
+    CopyQuads_16F0(&p, (const sGifQuad*)&m, 4);
+    CopyQuads_16F0(&p, (const sGifQuad*)&v0, 1);
+    CopyQuads_16F0(&p, (const sGifQuad*)&v1, 1);
     CopyQuads_16F0(&p, obj->q, 5);
     p[0] = (unsigned long)(((unsigned int)D_408 >> 3) | 0x14000000) << 32;
     p[1] = (unsigned long)0x8800 << 45;
@@ -7251,12 +7238,9 @@ struct sPair_7EC0 {
     int b;
 };
 
-struct sQuad_7EC0 {
-    unsigned int w[4];
-} __attribute__((aligned(16)));
 
 struct sVtx_7EC0 {
-    sQuad_7EC0 q[3];                // 0x30 bytes
+    sGifQuad q[3];                // 0x30 bytes
 };
 
 extern int D_004A43A0;
