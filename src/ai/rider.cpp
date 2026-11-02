@@ -102,6 +102,25 @@ static inline sItemRec* lookupItem(sItemDb* d, int i)
     return 0;
 }
 
+// World-collision ray (filled by func_0032E100) and hit record (func_00336850, func_003342D0).
+struct sRay {
+    char data[0xB0];
+} __attribute__((aligned(16)));
+
+struct sHit {
+    t4Vector pos;        // 0x00
+    t4Vector nrm;        // 0x10
+    t4Vector v20;        // 0x20
+    char pad30[0x1C];
+    int mat;            // 0x4C
+    int pad50;
+    char* obj;          // 0x54
+    char pad58[0x14];
+    float f6C;          // 0x6C
+    float f70;          // 0x70
+    char pad74[0xC];
+} __attribute__((aligned(16)));
+
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
 //100%
@@ -4031,17 +4050,8 @@ char* func_0027C958(void* self);
 
 extern t4Vector D_004FF160_3F38 __asm__("D_004FF160");
 
-struct sRay_3F38 {
-    char data[0xB0];
-} __attribute__((aligned(16)));
-
-struct sHit_3F38 {
-    t4Vector pos;
-    char pad[0x70];
-} __attribute__((aligned(16)));
-
-extern "C" void* func_0032E100_3F38(sRay_3F38* ray, const t4Vector& a, const t4Vector& b, int n, float t) __asm__("func_0032E100");
-extern "C" float func_00336850(void* self, sRay_3F38* ray, sHit_3F38* out, int a3);
+extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, int n, float t);
+extern "C" float func_00336850(void* self, sRay* ray, sHit* out, int a3);
 
 // PORT: PS2-only VU0 inline asm (vector * scalar).
 static inline t4Vector Scale_3F38(const t4Vector& v, float s)
@@ -4179,9 +4189,9 @@ extern "C" t4Vector func_00123F38(cRider* self)
     }
     t4Vector lo = Add_3F38(pos, Scale_3F38(D_004FF160_3F38, -7000.0f));
     t4Vector hi = Add_3F38(pos, Scale_3F38(D_004FF160_3F38, 200.0f));
-    sHit_3F38 hit;
-    sRay_3F38 ray;
-    func_0032E100_3F38(&ray, lo, hi, 2, 0.9791666865348816f);
+    sHit hit;
+    sRay ray;
+    func_0032E100(&ray, lo, hi, 2, 0.9791666865348816f);
     if (func_00336850(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x20), &ray, &hit, 0) >= 0.0f)
         pos = hit.pos;
     AddTo_3F38(pos, Scale_3F38(D_004FF160_3F38, lift));
@@ -4218,27 +4228,9 @@ INCLUDE_ASM("ai/rider", func_001242B0);
 extern t4Vector D_004FF120_42B0 __asm__("D_004FF120");
 extern t4Vector D_004FF160_42B0 __asm__("D_004FF160");
 
-struct sRay_42B0 {
-    char data[0xB0];
-} __attribute__((aligned(16)));
 
-struct sHit_42B0 {
-    t4Vector pos;        // 0x00
-    t4Vector nrm;        // 0x10
-    t4Vector v20;        // 0x20
-    char pad30[0x1C];
-    int mat;            // 0x4C
-    int pad50;
-    char* obj;          // 0x54
-    char pad58[0x14];
-    float f6C;          // 0x6C
-    float f70;          // 0x70
-    char pad74[0xC];
-} __attribute__((aligned(16)));
-
-
-extern "C" void* func_0032E100(sRay_42B0* ray, const t4Vector& a, const t4Vector& b, int n, float t);
-extern "C" float func_003342D0(void* coll, sRay_42B0* ray, sHit_42B0* hit, int flags);
+extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, int n, float t);
+extern "C" float func_003342D0(void* coll, sRay* ray, sHit* hit, int flags);
 void func_00111AA0_42B0(void* self, void* a, void* b, int c, float x) __asm__("func_00111AA0__FPv");
 
 // PORT: PS2-only VU0 inline asm (vector length).
@@ -4396,8 +4388,8 @@ extern "C" void func_001242B0_impl(cRider* self, void* p)
     t4Vector b = Add_42B0(*(t4Vector*)p, Scale_42B0(*(t4Vector*)((char*)self + 0x3B0), s));
     t4Vector lo = Add_42B0(b, Scale_42B0(self->mGroundNormal, -100.0f));
     t4Vector hi = Add_42B0(b, Scale_42B0(self->mGroundNormal, 200.0f));
-    sHit_42B0 hit;
-    sRay_42B0 ray;
+    sHit hit;
+    sRay ray;
     func_0032E100(&ray, lo, hi, 2, 0.5f);
     float t = func_003342D0(self->unk_860, &ray, &hit, 0);
     *(t4Vector*)((char*)self + 0x380) = self->mGroundNormal;
