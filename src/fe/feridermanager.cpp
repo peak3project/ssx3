@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/feridermanager", cFERider_initBoneMap);
 #ifdef SKIP_ASM
@@ -185,11 +193,6 @@ extern "C" int cFERider_init_impl(int* self, int profile, int character, int slo
 //100%
 INCLUDE_ASM("fe/feridermanager", func_0019EBA0);
 #ifdef SKIP_ASM
-struct sVE_EBA0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 extern "C" void func_0030D540(void* p, int flags);
 extern "C" void func_0019EC68(void* self);
 
@@ -201,17 +204,17 @@ extern "C" void func_0019EBA0(void* self)
     }
     char* o = *(char**)((char*)self + 0xC);
     if (o != 0) {
-        sVE_EBA0* vt = *(sVE_EBA0**)(o + 0x58);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 0x58);
         vt[1].fn(o + vt[1].delta, 3);
     }
     o = *(char**)((char*)self + 0xC74);
     if (o != 0) {
-        sVE_EBA0* vt = *(sVE_EBA0**)(o + 0xC4);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 0xC4);
         vt[1].fn(o + vt[1].delta, 3);
     }
     o = *(char**)((char*)self + 0xC70);
     if (o != 0) {
-        sVE_EBA0* vt = *(sVE_EBA0**)(o + 0xA4);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 0xA4);
         vt[1].fn(o + vt[1].delta, 3);
     }
     *(void**)((char*)self + 0x8) = 0;
@@ -391,11 +394,6 @@ struct sFERider_EE88 {
     int pending;        // 0xCD4
 };
 
-struct sVE_EE88 {
-    short delta;
-    short index;
-    void (*fn)(void*, sMtx_EE88*, int);
-};
 
 extern "C" void func_0019EE88(void* selfp)
 {
@@ -465,7 +463,7 @@ extern "C" void func_0019EE88(void* selfp)
     func_00389CB8(&m, &pos, 1.0f);
     {
         char* o = (char*)D_004A289C;
-        sVE_EE88* vt = *(sVE_EE88**)(o + 0x10D8);
+        sVEntry<void(void*, sMtx_EE88*, int)>* vt = *(sVEntry<void(void*, sMtx_EE88*, int)>**)(o + 0x10D8);
         vt[69].fn(o + vt[69].delta, &m, 1);
     }
     int* fl = (int*)(*(char**)((char*)D_004A289C + 0xE84) + 8);
@@ -515,18 +513,13 @@ struct sFERiderF138 {
     int pending;            // 0xCD4
 };
 
-struct sVEF138 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" void func_0019F138(void* selfp)
 {
     sFERiderF138* self = (sFERiderF138*)selfp;
     if (self->pending >= 0) {
         char* g = (char*)D_004A289C;
-        sVEF138* vt = *(sVEF138**)(g + 0x10D8);
+        sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(g + 0x10D8);
         if (self->pending < vt[114].fn(g + vt[114].delta)) {
             self->pending = -1;
             cFERider_init(self, self->f4, self->fC24, self->fC28);
@@ -1017,16 +1010,6 @@ struct sPkg_F908 {
     sPkgEnt_F908 ents[1];   // 0x14
 };
 struct sName2_F908 { char c[2]; };
-struct sVE_F908a {
-    short delta;
-    short index;
-    int (*fn)(void*, char*, char*, int, int, int);
-};
-struct sVE_F908b {
-    short delta;
-    short index;
-    void (*fn)(void*, int, char*, int);
-};
 
 extern "C" void func_0019F908(sRiderTable_F878* self, sPkg_F908* pkg, int replace)
 {
@@ -1043,13 +1026,13 @@ extern "C" void func_0019F908(sRiderTable_F878* self, sPkg_F908* pkg, int replac
         if (id >= 0) {
             if (replace) {
                 char* o = (char*)D_004A289C;
-                sVE_F908b* vt = *(sVE_F908b**)(o + 0x10D8);
+                sVEntry<void(void*, int, char*, int)>* vt = *(sVEntry<void(void*, int, char*, int)>**)(o + 0x10D8);
                 vt[48].fn(o + vt[48].delta, id, data, 1);
             }
         } else {
             strcpy(self->entries[self->count].name, name);
             char* o = (char*)D_004A289C;
-            sVE_F908a* vt = *(sVE_F908a**)(o + 0x10D8);
+            sVEntry<int(void*, char*, char*, int, int, int)>* vt = *(sVEntry<int(void*, char*, char*, int, int, int)>**)(o + 0x10D8);
             self->entries[self->count].id = vt[46].fn(o + vt[46].delta, data, D_004A19B0, 0, 1, -1);
             self->count++;
         }
