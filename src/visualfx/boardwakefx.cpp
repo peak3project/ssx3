@@ -953,9 +953,6 @@ struct sWakeVtIF920 {
     short index;
     int (*fn)(void*);
 };
-struct sMtxF920 {
-    t4Vector r0, r1, r2, r3;
-};
 
 extern void* D_004A28A8;
 int func_0011FE98(void*);
