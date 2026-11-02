@@ -363,6 +363,7 @@ static inline int overlapTri(const sWsQueryBox* q, const sWsTriObj* n)
     return r;
 }
 
+// Query box vs box; overlapBoxB is the same test with the z comparison written the other way round.
 static inline int overlapBox(const sWsQueryBox* q, const sWsBox* o)
 {
     int r = 0;
@@ -405,6 +406,26 @@ static inline void setRateMax(sWsFloat* dst, float v, char* info)
         r = v * 0.03333333507180214f;
     }
     dst->v = r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
 }
 
 // ---- end of shared declarations ----
@@ -896,7 +917,6 @@ static inline void addPatches_1E90(sWsListCtx* cb, sWsBoundObj* first)
     }
 }
 
-
 static inline void visit_1E90(sRoot_330BA8* t, int k, sWsListCtx2* ctx, void* box)
 {
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
@@ -996,7 +1016,6 @@ static inline void addAll_2DB8(sWsListCtx* cb, sWsBoundObj* first)
     }
 }
 
-
 static inline void visit_2DB8(sRoot_330BA8* t, int k, sCtx2_2DB8* ctx, void* box)
 {
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
@@ -1087,8 +1106,6 @@ struct t4Vector;
 struct sWsRayHit;
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
-
-
 
 static inline void reset_333EF8(sWsTriHit* h)
 {
@@ -1215,7 +1232,6 @@ struct sList_334458 {
 };
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
-
 
 extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int cap, int full)
 {
@@ -1363,7 +1379,6 @@ struct sCtx_335960 {
 extern "C" void func_003279D0(void* cache, void* src, void** out);
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 
-
 static inline void reset_335960(sWsTriHit* h)
 {
     h->type = 2;
@@ -1421,7 +1436,6 @@ struct sCtx_335B90 {
 };
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
-
 
 static inline void collect_335B90(sCtx_335B90* ctx, sWsListNode* node)
 {
@@ -1730,7 +1744,6 @@ struct sCtx_336D40 {
 };
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
-
 
 static inline void collect_336D40(sCtx_336D40* ctx, sWsListNode* node, int mode)
 {
@@ -3968,26 +3981,6 @@ static inline t4Vector vu0Normalize_341818(const t4Vector& v)
     return r;
 }
 
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_341818(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
 extern "C" float func_002D1C70();
 
 struct sParams_341818 {
@@ -4015,7 +4008,7 @@ extern "C" void func_00341818(sSph_341818* self, cWsMover* obj)
     if (dir.x == 0.0f && dir.y == 0.0f && dir.z == 0.0f) {
         dir = vu0Normalize_341818(vel);
     }
-    float d = vu0Dot_341818(vel, dir);
+    float d = vu0Dot(vel, dir);
     float diff = self->params.speed - d;
     sParams_341818* p = &self->params;
     if (self->type == 2) {
@@ -4097,8 +4090,6 @@ struct sSphFloatDef_1AA0 {
     int random;         // 0x20
     int f24;            // 0x24
 };
-
-
 
 // Animated float constructor: range and start value (frames -> seconds), optional random start and speed.
 extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, sSphFloatDef_1AA0* def)
@@ -4422,8 +4413,6 @@ struct sSphCtl_003421A0 {
     char pad58[0x20];
     void* inst;         // 0x78
 };
-
-
 
 extern "C" void* func_003421A0(sSphCtl_003421A0* self, int a1, char* obj, char* def)
 {
@@ -4875,26 +4864,6 @@ extern "C" void func_003429E0(void* self, cWsMover* obj)
 INCLUDE_ASM("intersect/worldsphtree", func_00342A88);
 #ifdef SKIP_ASM
 
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_342A88(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
 extern "C" float func_002D1C70();
 
 static inline void setVel_342A88(cWsMover* o, t4Vector* v)
@@ -4915,7 +4884,7 @@ struct sSelf_342A88 {
 
 extern "C" void func_00342A88(sSelf_342A88* self, cWsMover* obj)
 {
-    float d = self->plane.d - vu0Dot_342A88(*obj->getVelocity(), self->plane.n);
+    float d = self->plane.d - vu0Dot(*obj->getVelocity(), self->plane.n);
     if (d > 0.0f) {
         // PORT: takes the address of a temporary (g++ 2.95 accepts it).
         sPlane_342A88* pl = &self->plane;
