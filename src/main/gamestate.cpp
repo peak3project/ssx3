@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ai/rider.h"
 
 // g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type).
 // Virtual calls in this unit go through these by hand.
@@ -20,6 +21,77 @@ struct sRaceSettings {
 };
 extern sRaceSettings D_00535BC8;
 
+// The race (seg/seg_1FBE38 / main/gamemode layout; players at 0x40 hold their rider at +0x18). It is a class
+// with its vtable pointer at 0xCC.
+struct sRacePlayer {
+    char pad_0x0[0x18];
+    cRider* rider;              // 0x18
+};
+class cRace {
+public:
+    char pad_0x0[0x14];
+    int f14;                    // 0x14
+    char pad_0x18[0x4];
+    int f1C;                    // 0x1C frame counter
+    char pad_0x20[0x20];
+    sRacePlayer* players[12];   // 0x40
+    char pad_0x70[0xC];
+    int numPlayers;             // 0x7C
+    char pad_0x80[0xC];
+    int f8C;                    // 0x8C
+    char pad_0x90[0x3C];
+    virtual void v01();         // vtable pointer at 0xCC
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05(int);
+};
+// Two 0x50-byte slots at 0x250 (the table the game holds at 0x10); its +0x10 is the cache passed to
+// func_003A9658 / func_003A9770.
+struct sCacheSlot {
+    int f0;
+    char pad[0x4C];
+};
+struct sCacheTbl {
+    char pad[0x250];
+    sCacheSlot slot[2];         // 0x250
+};
+// The game's cameras (seg/seg_1FBE38 sCameras): one per view.
+struct sCameras {
+    int f0;                     // 0x0
+    char* cam[3];               // 0x4
+    int f10;                    // 0x10
+};
+// The game (D_004A2C68, also D_004A28A8->game).
+struct sGame {
+    char pad_0x0[0xC];
+    cRace* race;                // 0xC
+    sCacheTbl** cache;          // 0x10
+    char pad_0x14[0x14];
+    int* f28;                   // 0x28
+    char pad_0x2C[0x1C];
+    char* f48;                  // 0x48 (+0x18: the list for func_0039F840 / func_0039F9D8)
+    char pad_0x4C[0x18];
+    void* f64;                  // 0x64
+    char pad_0x68[0x10];
+    char* f78;                  // 0x78
+    char pad_0x7C[0x8];
+    sCameras* cameras;          // 0x84
+    char pad_0x88[0xC];
+    void* f94;                  // 0x94 (the HUD for func_001F36D8 / func_001F36C0)
+};
+extern sGame* D_004A2C68;
+// The game singleton (D_004A28A8).
+struct sApp {
+    char pad_0x0[0x78];
+    void* f78;                  // 0x78
+    char pad_0x7C[0x8];
+    sGame* game;                // 0x84
+    char pad_0x88[0x38];
+    void* gm;                   // 0xC0 the game-mode manager
+};
+extern sApp* D_004A28A8;
+
 //100%
 INCLUDE_ASM("main/gamestate", cGFGateState_gainFocus);
 #ifdef SKIP_ASM
@@ -39,42 +111,35 @@ void func_0029C418(void* p);
 extern "C" void func_0029C420(void* p, int a1);
 extern "C" void func_00234BE8(void* self, int a1);
 int GetHashValue32(char* s);
-extern char* D_004A2C68;
 extern char* D_004A2EEC;
-extern void* D_004A28A8;
 extern int D_00534B30[];
 extern signed char D_00535C10[];
 extern char D_0047C038[];
 
-struct sRace_234AD0 {
-    char pad[0x8C];
-    int f8C;
-};
-
 extern "C" void cGFGateState_gainFocus(void* self)
 {
-    (*(sRace_234AD0**)(D_004A2C68 + 0xC))->f8C = 0;
+    D_004A2C68->race->f8C = 0;
     if (D_004A2EEC != 0) {
         func_00258968(D_004A2EEC);
     }
     cBE_setState(0);
-    cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    cBE_getInterface_Fv(D_004A28A8->f78, 7);
     if (D_00534B30[0] != 0) {
         func_002300F0(D_004A2C68);
     }
-    func_0026F228(*(void**)(D_004A2C68 + 0x28));
-    func_0026F7B8(*(void**)(D_004A2C68 + 0x28));
+    func_0026F228(D_004A2C68->f28);
+    func_0026F7B8(D_004A2C68->f28);
     cBE_getInterface_Fv(cBE_getBE(), 0);
     int mode = D_00535C10[0];
     if (mode >= 4 && mode <= 6) {
         func_00233AA0(self);
         return;
     }
-    cAI_setAIState(*(void**)(D_004A2C68 + 0xC), 4);
+    cAI_setAIState(D_004A2C68->race, 4);
     func_0029C418(func_0028B180());
     func_0029C420(func_0028B180(), 3);
     func_00234BE8(self, GetHashValue32(D_0047C038));
-    func_0039F840(*(char**)(D_004A2C68 + 0x48) + 0x18);
+    func_0039F840(D_004A2C68->f48 + 0x18);
 }
 #endif
 
@@ -88,13 +153,12 @@ extern "C" int* func_00144BC0(void* iface);
 extern "C" int func_0022E098(void* world, int id);
 extern "C" int func_00309DD0(void* mgr, int id, int a);
 extern "C" void func_00309E50(void* mgr, int id, int a);
-extern void* D_004A28A8;
 extern void* D_004A3DD8;
 
 extern "C" void func_00234BE8(void* self, int a1)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
-    void* world = *(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78);
+    void* world = D_004A28A8->game->f78;
     int id = func_0022E098(world, *func_00144BC0(iface));
     if (func_00309DD0(D_004A3DD8, id, a1) != 0) {
         func_00309E50(D_004A3DD8, id, a1);
@@ -117,7 +181,6 @@ extern "C" void func_0029C7B0(void* p);
 void func_0028C8C0(void* self, int val);
 extern "C" void func_00233AA0(void* self);
 extern "C" void func_0029C420(void* p, int secs);
-extern char* D_004A2C68;
 extern signed char D_00535C10[];
 extern char D_0047C048[];
 extern char D_004A2AB0[];
@@ -135,16 +198,16 @@ static inline float ffloor_00234C68(float x)
 
 extern "C" void cGFGateState_update(void* self)
 {
-    if (func_00270280(*(void**)(D_004A2C68 + 0x28)) != 0) {
+    if (func_00270280(D_004A2C68->f28) != 0) {
         return;
     }
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (D_00535C10[0] == 4) {
         return;
     }
-    if (*(int*)(*(char**)(D_004A2C68 + 0xC) + 0x1C) <= 0) {
+    if (D_004A2C68->race->f1C <= 0) {
         func_00234BE8(self, GetHashValue32(D_0047C048));
-        char* obj = (char*)func_0039F9D8(*(char**)(D_004A2C68 + 0x48) + 0x18, GetHashValue32(D_004A2AB0));
+        char* obj = (char*)func_0039F9D8(D_004A2C68->f48 + 0x18, GetHashValue32(D_004A2AB0));
         if (obj != 0) {
             sVEntry<int(void*, int, int)>* e = &(*(sVEntry<int(void*, int, int)>**)(obj + 8))[24];
             e->fn(obj + e->delta, 6, 0);
@@ -153,7 +216,7 @@ extern "C" void cGFGateState_update(void* self)
         func_0028C8C0(func_0028B180(), 0x78);
         func_00233AA0(self);
     }
-    int frames = *(int*)(*(char**)(D_004A2C68 + 0xC) + 0x1C);
+    int frames = D_004A2C68->race->f1C;
     float secs = frames / 60;
     if (frames % 60 == 0) {
         func_0029C420(func_0028B180(), (int)ffloor_00234C68(secs));
@@ -192,24 +255,23 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void cBE_setState(int state);
 extern "C" void func_0039F840(void* list);
-extern char* D_004A2C68;
 extern signed char D_00535C10[];
 
 extern "C" void func_00234E20(void)
 {
-    cAI_setAIState(*(void**)(D_004A2C68 + 0xC), 5);
+    cAI_setAIState(D_004A2C68->race, 5);
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (D_00535C10[0] != 4) {
-        char* g = D_004A2C68;
-        *(int*)(*(char**)(g + 0xC) + 0x14) = 1;
-        *(int*)(*(char**)(g + 0xC) + 0x8C) = 0;
+        sGame* g = D_004A2C68;
+        g->race->f14 = 1;
+        g->race->f8C = 0;
     }
     cBE_setState(1);
-    char* gs = D_004A2C68;
-    int n = **(int**)(gs + 0x28);
+    sGame* gs = D_004A2C68;
+    int n = *gs->f28;
     int ok = n != 0 && n < 10;
     if (!ok) {
-        func_0039F840(*(char**)(gs + 0x48) + 0x18);
+        func_0039F840(gs->f48 + 0x18);
     }
 }
 #endif
@@ -237,7 +299,6 @@ INCLUDE_ASM("main/gamestate", func_00234EF8);
 #ifdef SKIP_ASM
 extern char D_0047D6E8[];
 extern char D_0047D428[];
-extern char* D_004A2C68;
 
 extern "C" void* func_00234EF8(void* self)
 {
@@ -271,8 +332,6 @@ extern "C" int func_00145D38(void* self, int index, int bit);
 extern "C" void func_0027AAF8(void* a, int b);
 extern "C" void* func_0028B180(void);
 extern void* D_004A28A4;
-extern void* D_004A28A8;
-extern char* D_004A2C68;
 extern signed char D_00535C11[];
 
 struct sState_234F40 {
@@ -285,20 +344,20 @@ struct sState_234F40 {
 extern "C" void func_00234F40(sState_234F40* self)
 {
     self->f18 = 0;
-    func_0026F228(*(void**)(D_004A2C68 + 0x28));
+    func_0026F228(D_004A2C68->f28);
     func_002790A0(D_004A28A4, 0);
     func_00278CD8(D_004A28A4);
     func_00278B98(D_004A28A4);
     cBE_getInterface_Fv(cBE_getBE(), 0);
     self->f14 = 0;
     int m = D_00535C11[0];
-    func_0012AB20(*(void**)(D_004A2C68 + 0xC));
-    func_0012AC48(*(void**)(D_004A2C68 + 0xC));
+    func_0012AB20(D_004A2C68->race);
+    func_0012AC48(D_004A2C68->race);
     if (m == 0) {
-        int t = *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78) + 0x1BC);
+        int t = *(int*)(D_004A28A8->game->f78 + 0x1BC);
         if (t >= 14 && t <= 16) {
             void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
-            char* sub = *(char**)(*(char**)(*(char**)(D_004A2C68 + 0xC) + 0x40) + 0x18) + 0x6C0;
+            char* sub = (char*)D_004A2C68->race->players[0]->rider + 0x6C0;
             sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)sub;
             if (func_00145D38(iface, vt[7].fn(sub + vt[7].delta), t) != 0) {
                 char* g = (char*)func_0028B180();
@@ -361,15 +420,8 @@ extern "C" int func_00278F68(void* self, int i, int a, int b);
 extern "C" void* func_0028B180(void);
 extern "C" void func_002B3A98(void* p);
 extern "C" void func_002A4B68(void* p);
-extern char* D_004A2C68;
 extern void* D_004A3DD8;
-extern void* D_004A28A8;
 extern void* D_004A28A4;
-
-struct sRaceMan_2355C0 {
-    char pad0[0x14];
-    int f14;
-};
 
 static inline int inRange_2355C0(int t)
 {
@@ -391,7 +443,7 @@ extern "C" void func_002355C0(void* self)
     sRaceSettings* r = &D_00535BC8;
     int flag = r->flag49;
     int mode = r->mode48;
-    if (flag == 0 && !inRange_2355C0(*(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78) + 0x1BC))) {
+    if (flag == 0 && !inRange_2355C0(*(int*)(D_004A28A8->game->f78 + 0x1BC))) {
         *(int*)((char*)self + 0x4) = 0;
         *(int*)((char*)self + 0x0) = 4;
     } else {
@@ -399,7 +451,7 @@ extern "C" void func_002355C0(void* self)
         *(int*)((char*)self + 0x4) = flag == 0;
     }
     if (mode == 4)
-        cAI_setAIState(*(void**)(D_004A2C68 + 0xC), 3);
+        cAI_setAIState(D_004A2C68->race, 3);
     cBE_setState(0);
     func_00309030(D_004A3DD8);
     func_00309F18(D_004A3DD8);
@@ -409,8 +461,8 @@ extern "C" void func_002355C0(void* self)
         sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(player + 0xC);
         vt[1].fn(player + vt[1].delta);
     }
-    (*(sRaceMan_2355C0**)(D_004A2C68 + 0xC))->f14 = mode != 4;
-    func_001F36D8(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x94), 0);
+    D_004A2C68->race->f14 = mode != 4;
+    func_001F36D8(D_004A28A8->game->f94, 0);
     if (flag) {
         *(int*)((char*)self + 0x0) = 1;
         *(int*)((char*)self + 0x4) = 0;
@@ -434,12 +486,11 @@ extern "C" int func_0027AA80(void* a);
 extern "C" int func_00279220(void* a, int b);
 extern "C" void func_00233AA0(void* self);
 extern void* D_004A28A4;
-extern void* D_004A28A8;
 
 extern "C" void func_002357F8(void* self)
 {
     if (*(int*)((char*)self + 0x1C) != 0 && func_0027AA80(D_004A28A4) == 0) {
-        *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78) + 0x1A4) = 1;
+        *(int*)(D_004A28A8->game->f78 + 0x1A4) = 1;
         *(int*)((char*)self + 0x1C) = 0;
     }
     if (func_00279220(D_004A28A4, 1) == 0) {
@@ -459,14 +510,6 @@ extern "C" void func_0026F7B8(void* p);
 extern "C" void func_00145DD0(void* iface, int a1, int a2, int a3);
 extern "C" int func_00238510(void* gm, int a1, int a2);
 
-struct sSlot_235868 {
-    char pad[0x50];
-};
-struct sTbl_235868 {
-    char pad[0x250];
-    struct { int f0; char pad[0x4C]; } slot[2];
-};
-
 static inline int otherSide_235868(char* p)
 {
     return *(int*)(p + 0xB0) == 0;
@@ -477,8 +520,8 @@ extern "C" void func_00235868(void* self)
     func_00308F38(D_004A3DD8);
     func_00308C60(D_004A3DD8);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
-    func_0026F228(*(void**)(D_004A2C68 + 0x28));
-    func_0026F7B8(*(void**)(D_004A2C68 + 0x28));
+    func_0026F228(D_004A2C68->f28);
+    func_0026F7B8(D_004A2C68->f28);
     *(int*)((char*)self + 0x14) = 0;
     sRaceSettings* r = &D_00535BC8;
     if (r->flag49 == 0) {
@@ -491,13 +534,13 @@ extern "C" void func_00235868(void* self)
     }
     if (m == 6) {
     restart:
-        func_00238510(*(void**)((char*)D_004A28A8 + 0xC0), 0, 0);
+        func_00238510(D_004A28A8->gm, 0, 0);
     }
-    char* g = *(char**)((char*)D_004A28A8 + 0x84);
-    char* x = *(char**)(g + 0x84);
-    if (*(int*)(x + 0x10) == 1) {
-        sTbl_235868* t = **(sTbl_235868***)(g + 0x10);
-        t->slot[otherSide_235868(*(char**)(x + 4))].f0 = 0;
+    sGame* g = D_004A28A8->game;
+    sCameras* x = g->cameras;
+    if (x->f10 == 1) {
+        sCacheTbl* t = *g->cache;
+        t->slot[otherSide_235868(x->cam[0])].f0 = 0;
     }
 }
 #endif
@@ -559,9 +602,7 @@ extern "C" void cGameModeMan_restartHeat(void* gm);
 extern "C" int cBENewRaceInterface_setNumberAI(void* self, int count);
 extern "C" void cBENewPlayerInterface_setRiderCharID(void* player, int i, int id);
 extern "C" void func_001473D0(void* player, int i, int v);
-extern char* D_004A2C68;
 extern void* D_004A3DD8;
-extern void* D_004A28A8;
 extern void* D_004A28A4;
 
 struct sGM_235AA0 {
@@ -578,9 +619,9 @@ extern "C" void func_00235AA0(void* self)
     func_0030B7F8(D_004A3DD8);
     char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
     char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
-    sGM_235AA0* gm = *(sGM_235AA0**)((char*)D_004A28A8 + 0xC0);
+    sGM_235AA0* gm = (sGM_235AA0*)D_004A28A8->gm;
     cGameModeMan_restartHeat(gm);
-    func_00230180(*(void**)((char*)D_004A28A8 + 0x84));
+    func_00230180(D_004A28A8->game);
     sRaceSettings* r = &D_00535BC8;
     int m = r->mode48;
     if (m == 5)
@@ -593,7 +634,7 @@ extern "C" void func_00235AA0(void* self)
         return;
     }
     int n = gm->total - gm->humans;
-    int base = *(int*)(*(char**)(D_004A2C68 + 0xC) + 0x7C);
+    int base = D_004A2C68->race->numPlayers;
     int i = 0;
     cBENewRaceInterface_setNumberAI(race, n);
     {
@@ -608,9 +649,9 @@ extern "C" void func_00235AA0(void* self)
         sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(player + 0xC);
         vt[1].fn(player + vt[1].delta);
     }
-    func_0012AB20(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
+    func_0012AB20(D_004A28A8->game->race);
     if (n >= 2)
-        func_0012AC48(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
+        func_0012AC48(D_004A28A8->game->race);
     *(int*)((char*)self + 0x18) = 0;
     sRaceSettings* r2 = &D_00535BC8;
     if (r2->mode48 == 0) {
@@ -621,7 +662,7 @@ extern "C" void func_00235AA0(void* self)
     func_002790A0(D_004A28A4, 0);
     func_0027AAF8(D_004A28A4, *(int*)((char*)gm + 0x98) ? 3 : 2);
     func_00278F38(D_004A28A4, 0);
-    func_001F36C0(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x94), 3);
+    func_001F36C0(D_004A28A8->game->f94, 3);
     *(int*)((char*)self + 0x14) = 0;
     *(int*)((char*)self + 0x10) = 0;
 }
@@ -637,16 +678,6 @@ struct sVec4_236960;
 struct sVec4_235CC8 {
     float x, y, z, w;
 } __attribute__((aligned(16)));
-
-struct sRaceMan_235CC8 {
-    char pad0[0x14];
-    int f14;
-};
-
-struct sCacheTbl_235CC8 {
-    char pad[0x250];
-    struct { int f0; char pad[0x4C]; } slot[2];
-};
 
 struct cRiderObj_235CC8 {
     int f0, f4, f8;
@@ -675,8 +706,6 @@ extern "C" int func_00279298(void* p);
 extern "C" bool func_0027A9F0(void* p);
 extern "C" void func_00233AA0(void* self);
 void* func_00230698(void* self, int id);
-extern char* D_004A2C68;
-extern void* D_004A28A8;
 extern void* D_004A28A4;
 extern int D_00535C04[];
 
@@ -684,45 +713,45 @@ extern "C" void func_00235CC8(void* self)
 {
     *(int*)((char*)self + 0x14) += 1;
     cBE_getInterface_Fv(cBE_getBE(), 0);
-    char* g84 = *(char**)((char*)D_004A28A8 + 0x84);
+    sGame* g84 = D_004A28A8->game;
     int state = *(int*)((char*)self + 0x10);
-    char** cache = *(char***)(g84 + 0x10);
-    int idx = *(int*)(*(char**)(*(char**)(g84 + 0x84) + 4) + 0xB0) == 0;
+    sCacheTbl** cache = g84->cache;
+    int idx = *(int*)(g84->cameras->cam[0] + 0xB0) == 0;
     switch (state) {
     case 0:
-        if (func_0012ABD0(*(void**)(g84 + 0xC))) {
-            func_0012B030(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
+        if (func_0012ABD0(g84->race)) {
+            func_0012B030(D_004A28A8->game->race);
             if (D_00535C04[0] >= 2)
-                func_0012B000(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
-            func_00128958(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
+                func_0012B000(D_004A28A8->game->race);
+            func_00128958(D_004A28A8->game->race);
             *(int*)((char*)self + 0x10) = 1;
         }
         break;
     case 1:
-        if (func_0012A180(*(void**)(g84 + 0xC))) {
-            func_001289F0(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
-            (*(sRaceMan_235CC8**)(D_004A2C68 + 0xC))->f14 = 1;
-            ((sCacheTbl_235CC8*)*cache)->slot[idx].f0 = 1;
-            char* r = *(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40);
-            sVec4_235CC8 pos = func_00122C28(*(void**)(r + 0x18));
-            func_003A9658(*cache + 0x10, idx, (const sVec4_236960*)&pos, 45000.0f);
+        if (func_0012A180(g84->race)) {
+            func_001289F0(D_004A28A8->game->race);
+            D_004A2C68->race->f14 = 1;
+            (*cache)->slot[idx].f0 = 1;
+            sRacePlayer* r = D_004A28A8->game->race->players[0];
+            sVec4_235CC8 pos = func_00122C28(r->rider);
+            func_003A9658((char*)*cache + 0x10, idx, (const sVec4_236960*)&pos, 45000.0f);
             *(int*)((char*)self + 0x10) = 2;
         } else {
-            func_001296F8(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
+            func_001296F8(D_004A28A8->game->race);
         }
         break;
     case 2:
         if (*(int*)((char*)self + 0x18) != 0) {
             sVec4_235CC8 v;
             float dist;
-            func_003A9770(*cache + 0x10, idx, (sVec4_236960*)&v, &dist);
+            func_003A9770((char*)*cache + 0x10, idx, (sVec4_236960*)&v, &dist);
             if (dist < 20000.0f)
                 break;
             if (*(int*)((char*)self + 0x14) < 120)
                 break;
             if (func_002791D8(D_004A28A4, 0) == 1)
                 break;
-            char* o = (char*)func_00230698(*(void**)((char*)D_004A28A8 + 0x84), 0);
+            char* o = (char*)func_00230698(D_004A28A8->game, 0);
             if (func_00279298(D_004A28A4) != 0)
                 break;
             if (((cRiderObj_235CC8*)(o + 0x10))->isBusy() != 0)
@@ -744,11 +773,10 @@ extern "C" void func_00235CC8(void* self)
 INCLUDE_ASM("main/gamestate", func_00235F20);
 #ifdef SKIP_ASM
 extern "C" void func_001F36D8(void* hud, int a);
-extern void* D_004A28A8;
 
 extern "C" void func_00235F20(void)
 {
-    func_001F36D8(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x94), 3);
+    func_001F36D8(D_004A28A8->game->f94, 3);
 }
 #endif
 
@@ -809,14 +837,14 @@ struct sColor_236058 {
 
 extern "C" void func_00236058(void* self)
 {
-    void* gm = *(void**)((char*)D_004A28A8 + 0xC0);
+    void* gm = D_004A28A8->gm;
     func_0030B7F8(D_004A3DD8);
     cGameModeMan_initGameMode(gm, 0xC);
     char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 0xA);
-    func_00230180(*(void**)((char*)D_004A28A8 + 0x84));
-    func_0011DE60(*(void**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40) + 0x18), *(int*)(iface + 0x10), 2);
-    func_0011DF18(*(void**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40) + 0x18), 1);
-    void* r = func_00230698(*(void**)((char*)D_004A28A8 + 0x84), 0);
+    func_00230180(D_004A28A8->game);
+    func_0011DE60(D_004A28A8->game->race->players[0]->rider, *(int*)(iface + 0x10), 2);
+    func_0011DF18(D_004A28A8->game->race->players[0]->rider, 1);
+    void* r = func_00230698(D_004A28A8->game, 0);
     char* o = (char*)func_002E4CE8(0x14);
     sColor_236058 c;
     c.r = 1.0f;
@@ -834,11 +862,10 @@ extern "C" void func_00236058(void* self)
 INCLUDE_ASM("main/gamestate", func_00236198);
 #ifdef SKIP_ASM
 extern "C" void func_00231250(void* self, int a, int b, int refresh);
-extern void* D_004A28A8;
 
 extern "C" void func_00236198(void)
 {
-    func_00231250(*(void**)((char*)D_004A28A8 + 0x84), 1, 0, 0);
+    func_00231250(D_004A28A8->game, 1, 0, 0);
 }
 #endif
 
@@ -865,7 +892,6 @@ INCLUDE_ASM("main/gamestate", func_00236208);
 #ifdef SKIP_ASM
 extern char D_0047D6E8[];
 extern char D_0047D320[];
-extern char* D_004A2C68;
 
 extern "C" void* func_00236208(void* self)
 {
@@ -897,9 +923,7 @@ extern "C" void func_00278E50(void* self, int i, int a, int b, int c, int d, int
 // PORT: func_00278F38 returns func_00276270's result (ssxscriptengine defines it void).
 extern "C" int func_00278F38(void* self, int i);
 extern "C" int func_00278F68(void* self, int i, int a, int b);
-extern char* D_004A2C68;
 extern void* D_004A3DD8;
-extern void* D_004A28A8;
 extern void* D_004A28A4;
 extern int D_004A11BC;
 
@@ -912,8 +936,8 @@ extern "C" void func_00236250(void* self, int mode)
 {
     func_0030B7F8(D_004A3DD8);
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
-    cAI_setAIState(*(void**)(D_004A2C68 + 0xC), 3);
-    *(int*)(*(char**)(*(char**)(*(char**)(D_004A2C68 + 0xC) + 0x40) + 0x18) + 0x2F8) = 0;
+    cAI_setAIState(D_004A2C68->race, 3);
+    D_004A2C68->race->players[0]->rider->unk_2F8 = 0;
     *(int*)((char*)self + 0x18) = 0x17;
     *(int*)((char*)self + 0x10) = 0;
     *(int*)((char*)self + 0x14) = mode;
@@ -925,7 +949,7 @@ extern "C" void func_00236250(void* self, int mode)
         *(int*)((char*)self + 0x18) = D_004A11BC;
     }
     if (*(int*)((char*)self + 0x18) == *func_00144BC0(iface))
-        func_00230180(*(void**)((char*)D_004A28A8 + 0x84));
+        func_00230180(D_004A28A8->game);
     int m = *(int*)((char*)self + 0x14);
     if (m == 0) {
         func_00278E50(D_004A28A4, 1, 0x16, 3, 0, -1, -1, -1);
@@ -937,7 +961,7 @@ extern "C" void func_00236250(void* self, int mode)
             if (!isOne_6250(m))
                 func_00278E50(D_004A28A4, 1, 0xB, 3, 0, -1, -1, -1);
             func_00278F38(D_004A28A4, 1);
-            func_0011D390(*(void**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40) + 0x18));
+            func_0011D390(D_004A28A8->game->race->players[0]->rider);
             func_00278F68(D_004A28A4, 1, *(int*)((char*)self + 0x14) == 2, 0);
         }
     }
@@ -991,7 +1015,6 @@ INCLUDE_ASM("main/gamestate", func_00236868);
 #ifdef SKIP_ASM
 extern char D_0047D6E8[];
 extern char D_0047D2C8[];
-extern char* D_004A2C68;
 
 extern "C" void* func_00236868(void* self)
 {
@@ -1014,12 +1037,11 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void cBE_setState(int state);
 extern "C" void func_0026F228(void* p);
 extern "C" void func_00145CB0(void* iface, int i, int a);
-extern char* D_004A2C68;
 
 extern "C" void func_002368A0(void* self)
 {
     cBE_setState(0);
-    func_0026F228(*(void**)(D_004A2C68 + 0x28));
+    func_0026F228(D_004A2C68->f28);
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (D_00535BC8.flag49 == 0) {
         int i = 0;
@@ -1062,33 +1084,32 @@ extern void* D_004A28A4;
 
 extern "C" void func_00236960(void* self)
 {
-    char* g84 = *(char**)((char*)D_004A28A8 + 0x84);
-    char* game = *(char**)(g84 + 0x78);
+    sGame* g84 = D_004A28A8->game;
+    char* game = g84->f78;
     if (*(int*)(game + 0x1C8) == 0) {
         return;
     }
     int state = *(int*)((char*)self + 0x10);
-    char** cache = *(char***)(g84 + 0x10);
-    int idx = *(int*)(*(char**)(*(char**)(g84 + 0x84) + 4) + 0xB0) == 0;
+    sCacheTbl** cache = g84->cache;
+    int idx = *(int*)(g84->cameras->cam[0] + 0xB0) == 0;
     switch (state) {
     case 0:
         if (func_0022D278(game, *(int*)(game + 0x1BC)) != 0) {
-            char* r = *(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x40);
-            sVec4_236960 pos = func_00123F38(*(void**)(r + 0x18));
-            char* e = *cache + idx * 0x50;
-            *(int*)(e + 0x250) = 1;
-            func_003A9658(*cache + 0x10, idx, &pos, 45000.0f);
+            sRacePlayer* r = D_004A28A8->game->race->players[0];
+            sVec4_236960 pos = func_00123F38(r->rider);
+            (*cache)->slot[idx].f0 = 1;
+            func_003A9658((char*)*cache + 0x10, idx, &pos, 45000.0f);
             *(int*)((char*)self + 0x10) = 1;
         }
         break;
     case 1: {
         sVec4_236960 v;
         float dist;
-        func_003A9770(*cache + 0x10, idx, &v, &dist);
+        func_003A9770((char*)*cache + 0x10, idx, &v, &dist);
         if (dist < 20000.0f) {
             break;
         }
-        char* o = (char*)func_00230698(*(void**)((char*)D_004A28A8 + 0x84), 0);
+        char* o = (char*)func_00230698(D_004A28A8->game, 0);
         if (((cRiderObj_236960*)(o + 0x10))->isBusy() != 0) {
             break;
         }
@@ -1139,20 +1160,10 @@ void* func_00236B18(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236B38);
 #ifdef SKIP_ASM
-class cRace236B38 {
-public:
-    char pad[0xCC];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05(int);
-};
-extern char* D_004A2C68;
 
 extern "C" void func_00236B38(void)
 {
-    (*(cRace236B38**)(D_004A2C68 + 0xC))->v05(3);
+    D_004A2C68->race->v05(3);
 }
 #endif
 
@@ -1181,15 +1192,6 @@ extern "C" void cBE_setState(int state);
 extern "C" void func_002EA820(void* p);
 extern "C" void func_0020A8F8(int mode);
 extern char* D_004A2EEC;
-struct sMgr_6BB0 {
-    char pad0[0x64];
-    void* world;    // 0x64
-};
-struct sApp_6BB0 {
-    char pad0[0x84];
-    sMgr_6BB0* mgr; // 0x84
-};
-extern sApp_6BB0* D_004A28A8_s __asm__("D_004A28A8");
 extern int D_004A2A50;
 extern int D_004A2A54;
 extern int D_005366E8[];
@@ -1205,14 +1207,14 @@ extern "C" void func_00236BB0(sGameState_6BB0* self)
 {
     self->done = 0;
     if (D_004A2EEC != 0 && *(int*)(D_004A2EEC + 4) != 0) {
-        func_002EA820(D_004A28A8_s->mgr->world);
+        func_002EA820(D_004A28A8->game->f64);
         cBE_setState(0);
         return;
     }
     func_0020A8F8(2);
     D_005366E8[++D_004A2A54] = 1;
     D_004A2A50 = D_004428F4[0];
-    func_002EA820(D_004A28A8_s->mgr->world);
+    func_002EA820(D_004A28A8->game->f64);
     cBE_setState(0);
 }
 #endif
@@ -1252,15 +1254,6 @@ extern "C" void func_00236C88(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236CD8);
 #ifdef SKIP_ASM
-class cRace236CD8 {
-public:
-    char pad[0xCC];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05(int);
-};
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -1268,7 +1261,6 @@ extern "C" void func_002790A0(void* a, int b);
 extern "C" void* func_0028B180(void);
 extern "C" void func_002871B0(void* mgr);
 extern void* D_004A28A4;
-extern char* D_004A2C68;
 extern signed char D_00535C10[];
 
 static inline int isMode4_236CD8()
@@ -1281,8 +1273,8 @@ extern "C" void func_00236CD8(void* self)
     func_002790A0(D_004A28A4, 0);
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (!isMode4_236CD8()) {
-        (*(cRace236CD8**)(D_004A2C68 + 0xC))->v05(3);
-        *(int*)(*(char**)(D_004A2C68 + 0xC) + 0x14) = 1;
+        D_004A2C68->race->v05(3);
+        D_004A2C68->race->f14 = 1;
     }
     func_002871B0(func_0028B180());
 }
@@ -1337,12 +1329,11 @@ extern "C" void func_00236DA0(void* self)
 INCLUDE_ASM("main/gamestate", func_00236E60);
 #ifdef SKIP_ASM
 extern "C" void func_00231250(void* self, int a, int b, int refresh);
-extern void* D_004A28A8;
 
 extern "C" void func_00236E60(void* self)
 {
     if (*(int*)((char*)self + 8) == 1) {
-        func_00231250(*(void**)((char*)D_004A28A8 + 0x84), 0xE, 2, 0);
+        func_00231250(D_004A28A8->game, 0xE, 2, 0);
     }
 }
 #endif
@@ -1351,11 +1342,10 @@ extern "C" void func_00236E60(void* self)
 INCLUDE_ASM("main/gamestate", func_00236EA0);
 #ifdef SKIP_ASM
 extern "C" void func_0039F840(void* list);
-extern char* D_004A2C68;
 
 extern "C" void func_00236EA0(void)
 {
-    func_0039F840(*(char**)(D_004A2C68 + 0x48) + 0x18);
+    func_0039F840(D_004A2C68->f48 + 0x18);
 }
 #endif
 
@@ -1382,12 +1372,11 @@ INCLUDE_ASM("main/gamestate", func_00236F08);
 #ifdef SKIP_ASM
 extern "C" void* func_0028B180(void);
 extern "C" void func_0028CDF8(void* mgr);
-extern void* D_004A28A8;
 
 extern "C" void func_00236F08(void)
 {
     func_0028CDF8(func_0028B180());
-    *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x8C) = 1;
+    D_004A28A8->game->race->f8C = 1;
 }
 #endif
 
@@ -1411,11 +1400,10 @@ extern "C" void func_00236F40(void* self)
 //100%
 INCLUDE_ASM("main/gamestate", func_00236F90);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 
 extern "C" void func_00236F90(void)
 {
-    *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x8C) = 0;
+    D_004A28A8->game->race->f8C = 0;
 }
 #endif
 
@@ -1445,13 +1433,12 @@ extern "C" void func_00309F18(void* a);
 extern "C" void func_001F36D8(void* hud, int a);
 extern "C" void func_0020AB50(int state);
 extern void* D_004A3DD8;
-extern void* D_004A28A8;
 
 extern "C" void func_00236FE8(void)
 {
     func_00309030(D_004A3DD8);
     func_00309F18(D_004A3DD8);
-    func_001F36D8(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x94), 0);
+    func_001F36D8(D_004A28A8->game->f94, 0);
     func_0020AB50(0x11);
 }
 #endif
