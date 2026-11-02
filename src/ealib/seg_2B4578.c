@@ -13209,7 +13209,6 @@ extern unsigned char *D_005175FC;
 extern int D_00517600;
 extern int D_0044E848_C070[] __asm__("D_0044E848");
 extern int D_0044E870_C070[] __asm__("D_0044E870");
-extern int D_00515D80_C070[] __asm__("D_00515D80");
 extern void *f_5C60_C070(int) __asm__("func_003B5C60");
 extern void *f_6210_C070(void *, int, unsigned int) __asm__("func_00416210");
 extern int f_72F8_C070(unsigned char *, int) __asm__("func_003C72F8");
@@ -13336,8 +13335,8 @@ void func_003CC070(int a, unsigned char *data) {
         f_90C0_C070(D_00515D44[f_72F8_C070(q, 4)], D_00515D44[f_72F8_C070(q + 4, 4)], q[8], q[9]);
         q += 12;
     }
-    D_00515D80_C070[0x600] = 3000;
-    f_6210_C070(D_00515D80_C070, 0, 0x800);
+    D_00515D80.f1800 = 3000;
+    f_6210_C070(D_00515D80.f0000, 0, 0x800);
     p = D_00515D4C;
     for (D_00517600 = 0; *p != 0; D_00517600++) {
         p += D_0044E870_C070[*p];
