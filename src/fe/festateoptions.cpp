@@ -64,6 +64,53 @@ public:
     virtual void v25(int on);
 };
 
+// The game-options state (cFEStateOptionsGame) as its functions use it: engine, screen, and the screen's three
+// option rows (index into the row tables, -1 = hidden).
+struct sOptGame {
+    char pad0[0x10];
+    char* engine;                   // 0x10
+    char pad14[0x40 - 0x14];
+    char* screen;                   // 0x40
+    char pad44[0x48 - 0x44];
+    signed char item[3];            // 0x48
+};
+
+// The sound-options state (cFEStateOptionsSound).
+struct sOptSound {
+    char pad0[0x10];
+    char* engine;                   // 0x10
+    char pad14[0x40 - 0x14];
+    void* screen;                   // 0x40
+};
+
+// The device-select state (cFEStateOptionsDeviceSelect).
+struct sDevSel {
+    char pad0[8];
+    sVEntry<void(void*)>* vt;       // 0x8
+    char padC[0x10 - 0xC];
+    void* engine;                   // 0x10
+    char pad14[0x40 - 0x14];
+    void* screen;                   // 0x40
+    char pad44[0x1A8 - 0x44];
+    int busy;                       // 0x1A8
+    char pad1AC[0x1BC - 0x1AC];
+    int mode;                       // 0x1BC
+    int state;                      // 0x1C0
+    int slot;                       // 0x1C4
+    char pad1C8[0x1DC - 0x1C8];
+    int f1DC;                       // 0x1DC
+    int pad1E0;
+    int f1E4;                       // 0x1E4
+    char pad1E8[0x214 - 0x1E8];
+    int f214;                       // 0x214
+    char pad218[0x224 - 0x218];
+    int f224;                       // 0x224
+    int pad228;
+    int f22C;                       // 0x22C
+    char pad230[0x238 - 0x230];
+    int f238;                       // 0x238
+};
+
 // The memory card object (cPS2MemCard in the RTTI list) at app + 0x434, as these functions call it.
 class cMemCard {
 public:
@@ -500,25 +547,16 @@ static inline sGameOptions getOptions_OGCS()
     return D_00535610;
 }
 
-struct sOptGame_OGCS {
-    char pad0[0x10];
-    void* engine;                   // 0x10
-    char pad14[0x2C];
-    void* screen;                   // 0x40
-    char pad44[0x4];
-    signed char item[3];            // 0x48
-};
-
-static inline void* find_OGCS(sOptGame_OGCS* self, char* name)
+static inline void* find_OGCS(sOptGame* self, char* name)
 {
     return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
 }
 
-extern "C" void cFEStateOptionsGame_onCreateScreen(sOptGame_OGCS* self)
+extern "C" void cFEStateOptionsGame_onCreateScreen(sOptGame* self)
 {
     void* engine = self->engine;
     void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0045DED0), 0);
-    self->screen = screen;
+    self->screen = (char*)screen;
     if (screen != 0)
         cUIScreen_playFrame(screen, 0, 0);
     cBE_getInterface_Fv(cBE_getBE(), 4);
@@ -732,21 +770,12 @@ extern char* D_00440FD8[];
 extern int D_004A14D0;
 extern void* D_004A28A8;
 
-struct sOptGame_189980 {
-    char pad0[0x10];
-    char* engine;           // 0x10
-    char pad14[0x40 - 0x14];
-    char* screen;           // 0x40
-    char pad44[0x48 - 0x44];
-    signed char item[3];    // 0x48
-};
-
 static inline int Is_189980(int id, char* s)
 {
     return id == GetHashValue32(s);
 }
 
-static inline void Refresh_189980(sOptGame_189980* self)
+static inline void Refresh_189980(sOptGame* self)
 {
     char* scr = self->screen;
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(scr + 0x48);
@@ -754,7 +783,7 @@ static inline void Refresh_189980(sOptGame_189980* self)
     vt[16].fn(sub + vt[16].delta);
 }
 
-extern "C" void cFEStateOptionsGame_onWidgetEvent(sOptGame_189980* self, char* widget, unsigned int event)
+extern "C" void cFEStateOptionsGame_onWidgetEvent(sOptGame* self, char* widget, unsigned int event)
 {
     if (widget == 0) {
         return;
@@ -848,14 +877,7 @@ struct sOptionIface_189D60 {
     sGameOptions getOptions() { return D_00535610; }
 };
 
-struct sOptGame_189D60 {
-    char pad0[0x40];
-    char* screen;                   // 0x40
-    char pad44[0x4];
-    signed char item[3];            // 0x48
-};
-
-static inline void* find_189D60(sOptGame_189D60* self, int i)
+static inline void* find_189D60(sOptGame* self, int i)
 {
     return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00440FD8[self->item[i]]));
 }
@@ -863,7 +885,7 @@ static inline void* find_189D60(sOptGame_189D60* self, int i)
 // Pushes the current game options into the option widgets of the screen.
 extern "C" void func_00189D60(void* self_)
 {
-    sOptGame_189D60* self = (sOptGame_189D60*)self_;
+    sOptGame* self = (sOptGame*)self_;
     sOptionIface_189D60* iface = (sOptionIface_189D60*)cBE_getInterface_Fv(cBE_getBE(), 4);
     if (self->item[0] >= 0) {
         void* w = find_189D60(self, 0);
@@ -1087,13 +1109,8 @@ static inline sGameOptions Cfg_18A8D0()
     return D_00535610;
 }
 
-struct sOptSound_18A8D0 {
-    char pad0[0x10];
-    char* engine;                   // 0x10
-};
-
 // Sound options screen: widget event handler (popup, apply on exit, value changes).
-extern "C" void func_0018A8D0(sOptSound_18A8D0* self, char* widget, unsigned int event)
+extern "C" void func_0018A8D0(sOptSound* self, char* widget, unsigned int event)
 {
     if (widget == 0)
         return;
@@ -1207,12 +1224,7 @@ struct sSlider_18B380 {
     int max;                        // 0x78
 };
 
-struct sOptSound_18B380 {
-    char pad0[0x40];
-    void* screen;                   // 0x40
-};
-
-static inline void* find_18B380(sOptSound_18B380* self, char* name)
+static inline void* find_18B380(sOptSound* self, char* name)
 {
     return cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
 }
@@ -1220,7 +1232,7 @@ static inline void* find_18B380(sOptSound_18B380* self, char* name)
 // Pushes the current sound options into the widgets of the sound options screen.
 extern "C" void cFEStateOptionsSound_updateWidget(void* self_)
 {
-    sOptSound_18B380* self = (sOptSound_18B380*)self_;
+    sOptSound* self = (sOptSound*)self_;
     cBE_getInterface_Fv(cBE_getBE(), 4);
     void* lb = find_18B380(self, D_004A1568);
     if (lb != 0) {
@@ -2237,18 +2249,7 @@ extern void* D_004A28A8;
 struct sBlob16_DS { char b[16]; };
 extern sBlob16_DS D_004C66C8;
 
-struct sDevSel_DS {
-    char pad0[0x10];
-    void* engine;               // 0x10
-    char pad14[0x2C];
-    void* screen;               // 0x40
-    char pad44[0x178];
-    int f1BC;                   // 0x1BC
-    char pad1C0[0x6C];
-    int f22C;                   // 0x22C
-};
-
-static inline cUIThing* find_DS(sDevSel_DS* self, char* name)
+static inline cUIThing* find_DS(sDevSel* self, char* name)
 {
     return (cUIThing*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name));
 }
@@ -2260,7 +2261,7 @@ static inline void* mgrLookup_DS(char* name)
     return vt[4].fn(mgr + vt[4].delta, GetHashValue32(name));
 }
 
-extern "C" void cFEStateOptionsDeviceSelect_onCreateScreen(sDevSel_DS* self)
+extern "C" void cFEStateOptionsDeviceSelect_onCreateScreen(sDevSel* self)
 {
     char buf[0x20];
     cUIThing* o;
@@ -2274,7 +2275,7 @@ extern "C" void cFEStateOptionsDeviceSelect_onCreateScreen(sDevSel_DS* self)
         o = find_DS(self, D_004A15D8);
         o->setVisible(0);
         void* v;
-        if (self->f1BC == 1) {
+        if (self->mode == 1) {
             v = mgrLookup_DS(D_0045E150);
             o = find_DS(self, D_004A15D8);
             o->setVisible(1);
@@ -2310,7 +2311,7 @@ extern "C" void cFEStateOptionsDeviceSelect_onCreateScreen(sDevSel_DS* self)
             func_003A0E90(o, w);
             *(sBlob16_DS*)((char*)o + 0x88) = D_004C66C8;
             o->v25(1);
-            if (self->f1BC != 1) {
+            if (self->mode != 1) {
                 if (i >= 2) {
                     o->setStatic(1);
                     (o)->setVisible(0);
@@ -2360,30 +2361,7 @@ extern "C" void func_0023C8F0(void* app, int a1);
 extern "C" void func_0023D570(void* app, int a1);
 extern void* D_004A28A8;
 
-struct sDevSel_18DEA0 {
-    char pad0[8];
-    sVEntry<void(void*)>* vt;        // 0x8
-    char padC[0x1A8 - 0xC];
-    int busy;               // 0x1A8
-    char pad1AC[0x1BC - 0x1AC];
-    int mode;               // 0x1BC
-    int state;              // 0x1C0
-    int slot;               // 0x1C4
-    char pad1C8[0x1DC - 0x1C8];
-    int f1DC;               // 0x1DC
-    int pad1E0;
-    int f1E4;               // 0x1E4
-    char pad1E8[0x214 - 0x1E8];
-    int f214;               // 0x214
-    char pad218[0x224 - 0x218];
-    int f224;               // 0x224
-    int pad228;
-    int f22C;               // 0x22C
-    char pad230[0x238 - 0x230];
-    int f238;               // 0x238
-};
-
-extern "C" void func_0018DEA0(sDevSel_18DEA0* self, char* widget, unsigned int event)
+extern "C" void func_0018DEA0(sDevSel* self, char* widget, unsigned int event)
 {
     char* app = (char*)func_00227F80(D_004A28A8);
     switch (event) {
