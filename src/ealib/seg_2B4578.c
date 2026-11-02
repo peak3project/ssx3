@@ -15470,9 +15470,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1470);
 #ifdef SKIP_ASM
 extern int func_003D5450_1470(int) __asm__("func_003D5450");
 extern int func_002AF838(int);
-struct E_1470 { char pad0[0x36]; short h36; char pad38[0x1C]; int f54; };
-struct P_1470 { char pad0[0x58]; struct E_1470 *a[24]; };
-extern struct P_1470 *D_0044F420_1470 __asm__("D_0044F420");
 extern unsigned char D_0044F42C_1470 __asm__("D_0044F42C");
 extern int D_0044F430_1470 __asm__("D_0044F430");
 extern char D_00517644_1470[] __asm__("D_00517644");
@@ -15482,7 +15479,7 @@ void func_003D1470_impl(unsigned int mask) {
     int i;
     int j;
     unsigned int fl, t, u;
-    struct E_1470 *e;
+    struct sPathVoice *e;
     if (D_0044F42C_1470 == 0) return;
     if (D_0044F430_1470 != 0) return;
     if (func_003D5450_1470(-1) == 0) return;
@@ -15494,17 +15491,17 @@ void func_003D1470_impl(unsigned int mask) {
                 u = fl & 0x0F000000;
                 if ((u & mask) != 0 && func_003D5450_1470(i) != 0) {
                     for (j = 0; j < 24; j++) {
-                        e = D_0044F420_1470->a[j];
+                        e = D_0044F420->f58[j];
                         if (e != 0) {
                             func_002AF838(e->f54);
-                            e->h36 = -1;
+                            e->f36 = -1;
                         }
                     }
                 }
             }
         }
     }
-    D_0044F420_1470 = 0;
+    D_0044F420 = 0;
     D_0044F430_1470 = 0;
 }
 #endif
