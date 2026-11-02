@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatestore", cFEStateUberTrick_costVisible);
 #ifdef SKIP_ASM
@@ -156,11 +164,6 @@ struct sVec4_1849B0 {
     float x, y, z, w;
 };
 
-struct sVE_1849B0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_001849B0(void* self)
 {
@@ -172,7 +175,7 @@ extern "C" void func_001849B0(void* self)
     char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
     signed char charID = cBENewPlayerInterface_getPlayerCharID(player, *(signed char*)((char*)self + 0x44));
     {
-        sVE_1849B0* vt = *(sVE_1849B0**)(player + 0xC);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(player + 0xC);
         vt[2].fn(player + vt[2].delta);
     }
     func_001A0508(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)((char*)self + 0x44), charID, 0);
@@ -248,15 +251,10 @@ extern "C" int func_00184BB8(void* self, int on)
 //100%
 INCLUDE_ASM("fe/festatestore", func_00184BE0);
 #ifdef SKIP_ASM
-struct sVEntry00184BE0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sObj00184BE0 {
     int pad[2];
-    sVEntry00184BE0* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 
 extern "C" void func_00183B08(void* self);
@@ -396,11 +394,6 @@ extern "C" void cWScriptMan_checkGate(void* self);
 extern char D_0045D930[];
 extern char D_0045DA70[];
 
-struct sVE_4F40 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" void func_00184F40(void* self, void* item, int msg)
 {
@@ -415,7 +408,7 @@ extern "C" void func_00184F40(void* self, void* item, int msg)
             int b = *(signed char*)(*(char**)(*(char**)((char*)self + 0x50) + 0xA0) + 0x18);
             void* pi = cBE_getInterface_Fv(cBE_getBE(), 6);
             func_0014FE08(pi, *(signed char*)((char*)self + 0x44), a, b);
-            sVE_4F40* vt = *(sVE_4F40**)((char*)pi + 0xC);
+            sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)pi + 0xC);
             vt[1].fn((char*)pi + vt[1].delta);
             void* t = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D930));
             if (t != 0) {
@@ -547,13 +540,8 @@ extern char D_0045DB18[];
 extern char D_0045DB30[];
 extern char D_0045DB48[];
 
-struct sVE_185268 {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sSnd_185268 {
-    sVE_185268* vt;
+    sVEntry<void>* vt;
 };
 extern sSnd_185268 D_004A5A58;
 
@@ -591,7 +579,7 @@ static inline int Is_185268(int id, char* s)
 
 static inline void SetActive_185268(char* menu, int on)
 {
-    sVE_185268* vt = *(sVE_185268**)(menu + 8);
+    sVEntry<void>* vt = *(sVEntry<void>**)(menu + 8);
     ((void (*)(void*, int))vt[7].fn)(menu + vt[7].delta, on);
 }
 
@@ -607,7 +595,7 @@ static inline void PlaySound_185268(char* self, int id)
 static inline void Back_185268(char* self)
 {
     char* mgr = **(char***)(self + 0x10);
-    sVE_185268* vt = *(sVE_185268**)(mgr + 4);
+    sVEntry<void>* vt = *(sVEntry<void>**)(mgr + 4);
     void* r = ((void* (*)(void*, void*, int))vt[5].fn)(mgr + vt[5].delta, self, 0);
     if (r != 0)
         func_0039F400(*(char**)(self + 0x10) + 0x18, r);
@@ -638,7 +626,7 @@ extern "C" void func_00185268(char* self, char* item, int msg)
                 cBE_getInterface_Fv(cBE_getBE(), 0);
                 if (func_00150048(pi, *(signed char*)(self + 0x44), ai, bi) && !func_0014FFB8(pi, *(signed char*)(self + 0x44), ai, bi)) {
                     func_0014FD80(pi, *(signed char*)(self + 0x44), ai, bi);
-                    sVE_185268* vt = *(sVE_185268**)(pi + 0xC);
+                    sVEntry<void>* vt = *(sVEntry<void>**)(pi + 0xC);
                     ((int (*)(void*))vt[1].fn)(pi + vt[1].delta);
                     cWScriptMan_checkGate(self);
                 } else if (D_00535C11[0] != 0) {
@@ -647,7 +635,7 @@ extern "C" void func_00185268(char* self, char* item, int msg)
                     char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
                     signed char charID = cBENewPlayerInterface_getPlayerCharID(player, *(signed char*)(self + 0x44));
                     {
-                        sVE_185268* vt = *(sVE_185268**)(player + 0xC);
+                        sVEntry<void>* vt = *(sVEntry<void>**)(player + 0xC);
                         ((void (*)(void*))vt[2].fn)(player + vt[2].delta);
                     }
                     int points = func_00150928(cBE_getInterface_Fv(cBE_getBE(), 0xB), *(signed char*)(self + 0x44), charID);
@@ -730,7 +718,7 @@ extern "C" void func_00185268(char* self, char* item, int msg)
                         char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
                         signed char charID = cBENewPlayerInterface_getPlayerCharID(player, *(signed char*)(self + 0x44));
                         {
-                            sVE_185268* vt = *(sVE_185268**)(player + 0xC);
+                            sVEntry<void>* vt = *(sVEntry<void>**)(player + 0xC);
                             ((void (*)(void*))vt[2].fn)(player + vt[2].delta);
                         }
                         int points = func_00150928(cBE_getInterface_Fv(cBE_getBE(), 0xB), *(signed char*)(self + 0x44), charID);
