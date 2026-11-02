@@ -10506,67 +10506,38 @@ void func_003C7AA8(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C7AB0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Obj_7AB0 {
-    int (*fn)(struct Obj_7AB0 *self, int a, int b, void *c, int d);
-};
-struct Snd_7AB0 {
-    char pad00[0x3C];
-    float f3C;
-};
-struct G_7AB0 {
-    char pad000[0x5];
-    unsigned char n;
-    char pad006[0xF - 0x6];
-    signed char on[1];
-    char pad010[0xB0 - 0x10];
-    int fB0;
-    struct Snd_7AB0 *snd;
-    char pad0B8[0xD0 - 0xB8];
-    void *names[(0x1E0 - 0xD0) / 4];
-    void (*set)(int a, struct Snd_7AB0 *snd, void *name, float v);
-};
-struct S_7AB0 {
-    char pad00[0x4];
-    float cur[6];
-    float want[6];
-    float a[1];
-    float b[1];
-    float f3C;
-    struct Obj_7AB0 *obj;
-};
-extern struct G_7AB0 D_00515B40_7AB0 __asm__("D_00515B40");
-extern char D_00515D80_7AB0[] __asm__("D_00515D80");
-extern void func_003C7828_7AB0(struct Snd_7AB0 *snd, void *name, float from, float to) __asm__("func_003C7828");
+extern float D_00515D80_7AB0[] __asm__("D_00515D80");
+extern void func_003C7828_7AB0(float *snd, float *name, float from, float to) __asm__("func_003C7828");
 
-int func_003C7AB0(struct S_7AB0 *s) {
+int func_003C7AB0(struct sB40Ent *s) {
     int i;
 
-    if (s->obj->fn(s->obj, 0x10, D_00515B40_7AB0.fB0, D_00515B40_7AB0.snd, 0) <= 0) {
+    if (s->f40->f00(s->f40, 0x10, D_00515B40.fB0, D_00515B40.fB4, 0) <= 0) {
         for (i = 0; i < 1; i++) {
-            s->a[i] = s->b[i];
+            s->f34[i] = s->f38[i];
         }
-        for (i = 0; i < D_00515B40_7AB0.n; i++) {
-            s->cur[i] = s->want[i];
+        for (i = 0; i < D_00515B40.f05; i++) {
+            s->f04[i] = s->f1C[i];
         }
         return 0;
     }
-    s->f3C = D_00515B40_7AB0.snd->f3C;
+    s->f3C = D_00515B40.fB4[15];
     for (i = 0; i < 1; i++) {
-        if (D_00515B40_7AB0.on[i] != 0) {
-            if (s->a[i] != s->b[i]) {
-                func_003C7828_7AB0(D_00515B40_7AB0.snd, D_00515D80_7AB0, s->a[i], s->b[i]);
-                s->a[i] = s->b[i];
-            } else if (s->b[i] != 0.0f) {
-                D_00515B40_7AB0.set(0x10, D_00515B40_7AB0.snd, D_00515D80_7AB0, s->b[i]);
+        if (D_00515B40.f0F[i] != 0) {
+            if (s->f34[i] != s->f38[i]) {
+                func_003C7828_7AB0(D_00515B40.fB4, D_00515D80_7AB0, s->f34[i], s->f38[i]);
+                s->f34[i] = s->f38[i];
+            } else if (s->f38[i] != 0.0f) {
+                D_00515B40.f1E0(0x10, D_00515B40.fB4, D_00515D80_7AB0, s->f38[i]);
             }
         }
     }
-    for (i = 0; i < D_00515B40_7AB0.n; i++) {
-        if (s->cur[i] != s->want[i]) {
-            func_003C7828_7AB0(D_00515B40_7AB0.snd, D_00515B40_7AB0.names[i], s->cur[i], s->want[i]);
-            s->cur[i] = s->want[i];
-        } else if (s->want[i] != 0.0f) {
-            D_00515B40_7AB0.set(0x10, D_00515B40_7AB0.snd, D_00515B40_7AB0.names[i], s->want[i]);
+    for (i = 0; i < D_00515B40.f05; i++) {
+        if (s->f04[i] != s->f1C[i]) {
+            func_003C7828_7AB0(D_00515B40.fB4, D_00515B40.fD0[i], s->f04[i], s->f1C[i]);
+            s->f04[i] = s->f1C[i];
+        } else if (s->f1C[i] != 0.0f) {
+            D_00515B40.f1E0(0x10, D_00515B40.fB4, D_00515B40.fD0[i], s->f1C[i]);
         }
     }
     return 0x10;
