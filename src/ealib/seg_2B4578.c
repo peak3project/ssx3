@@ -179,6 +179,7 @@ extern struct sA8E8Cfg D_0050A908;      /* D_0050A8E8.setup.cfg */
 extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
+extern struct sA8E8Slot *D_0050AADC;    /* D_0050A8E8.f1F4 */
 extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
@@ -1289,12 +1290,8 @@ int func_003B64D8(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6528);
 #ifdef SKIP_ASM
-typedef struct { int a; int b; int c; } B6528_inner;
-typedef struct { B6528_inner *p; int pad[3]; } B6528_ent;
-extern B6528_ent *D_0050AADC;
-
 int func_003B6528(int arg0) {
-    return D_0050AADC[arg0].p->c;
+    return D_0050AADC[arg0].f00->f08;
 }
 #endif
 
@@ -1302,18 +1299,14 @@ int func_003B6528(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6548);
 #ifdef SKIP_ASM
 extern void *func_0041610C(void *, void *, int);
-struct R_6548 { void *ptr; int pad[3]; };
-struct G_6548 { char pad[0x1F4]; struct R_6548 *recs; };
-extern struct G_6548 D_0050A8E8_6548 __asm__("D_0050A8E8");
-
-int func_003B6548(void *dst, int idx) {
+int func_003B6548(struct sA8E8Bank *dst, int idx) {
     int ret = 0;
     int n = func_003B6528(idx);
     if (n < 0) {
         ret = n;
     } else {
-        func_0041610C(dst, D_0050A8E8_6548.recs[idx].ptr, n);
-        D_0050A8E8_6548.recs[idx].ptr = dst;
+        func_0041610C(dst, D_0050A8E8.f1F4[idx].f00, n);
+        D_0050A8E8.f1F4[idx].f00 = dst;
     }
     return ret;
 }
@@ -1322,9 +1315,6 @@ int func_003B6548(void *dst, int idx) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B65D0);
 #ifdef SKIP_ASM
-struct E_65D0 { int f0; char pad[0xE]; short f12; char pad2[0x8C - 0x14]; };
-struct G_65D0 { char pad[0x17E]; short cnt; char pad2[0x1F0 - 0x180]; struct E_65D0 *tab; };
-extern struct G_65D0 D_0050A8E8_65D0 __asm__("D_0050A8E8");
 extern int func_003B64D8(int);
 extern unsigned int func_003B8AB8(int);
 
@@ -1333,9 +1323,9 @@ int func_003B65D0(int a) {
     int i;
     if (func_003B64D8(a) != 0) return -8;
     func_003B58A0();
-    for (i = 0; i < D_0050A8E8_65D0.cnt; i++) {
-        struct E_65D0 *e = &D_0050A8E8_65D0.tab[i];
-        if (e->f12 == a && func_003B8AB8(e->f0) == 0) {
+    for (i = 0; i < D_0050A8E8.f17E; i++) {
+        struct sA8E8Chan *e = &D_0050A8E8.f1F0[i];
+        if (e->f12 == a && func_003B8AB8(e->f00) == 0) {
             ok = 1;
             break;
         }
@@ -1410,16 +1400,15 @@ int func_003B6788(int arg0, char *arg1, int arg2, int arg3) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6820);
 #ifdef SKIP_ASM
-extern B6528_ent *D_0050AADC;
 extern void *f_6540_6820(void *, int) __asm__("func_003C6540");
 extern int f_B588_6820(void *, void *, int, int, int) __asm__("func_003BB588");
 
 int func_003B6820(int a, int b, int c) {
-    char *obj;
+    struct sA8E8Bank *obj;
     if (func_003B64D8(a) < 0) return -8;
-    obj = (char *)D_0050AADC[a].p;
+    obj = D_0050AADC[a].f00;
 
-    if (b < 0 || b >= *(unsigned short *)(obj + 6)) return -8;
+    if (b < 0 || b >= obj->f06) return -8;
     return f_B588_6820(obj, f_6540_6820(obj, b), a, b, c);
 }
 #endif
