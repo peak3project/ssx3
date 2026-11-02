@@ -2204,7 +2204,6 @@ void releaserequest(char *arg0) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF028);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_00519C08_F028[] __asm__("D_00519C08");
 extern void MUTEX_unlock_F028(void *) __asm__("MUTEX_unlock");
 extern void releaserequest_F028(void *) __asm__("releaserequest");
 
@@ -2213,12 +2212,12 @@ void func_003DF028(void *arg0) {
     int temp_16;
     int temp_18;
 
-    MUTEX_lock(D_00519C08_F028);
+    MUTEX_lock(D_00519C08);
     (*(int *)((char*)(arg0) + (0x1C))) = 0;
     temp_16 = (*(int *)((char*)(arg0) + (0x10)));
     temp_19 = (*(int (**)(int))((char*)(arg0) + (0x18)));
     temp_18 = (*(int *)((char*)(arg0) + (0xC)));
-    MUTEX_unlock_F028(D_00519C08_F028);
+    MUTEX_unlock_F028(D_00519C08);
     if (temp_16 != 0) {
         if (temp_18 == 0) {
             releaserequest_F028(arg0);
