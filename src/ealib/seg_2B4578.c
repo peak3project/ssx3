@@ -1340,21 +1340,18 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B6670);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003B64D8_6670() __asm__("func_003B64D8");
-extern void func_003BB820_6670(int, int, char *, int, int, int) __asm__("func_003BB820");
-extern int func_003C6540_6670(int, int) __asm__("func_003C6540");
-struct G_6670 { char pad[0x1F4]; int f1F4; };
-extern struct G_6670 D_0050A8E8_6670 __asm__("D_0050A8E8");
+extern void func_003BB820_6670(struct sA8E8Bank *, int, char *, int, int, int) __asm__("func_003BB820");
+extern int func_003C6540_6670(struct sA8E8Bank *, int) __asm__("func_003C6540");
 
 int func_003B6670(int a0, int a1, char *a2, int a3, int a4) {
-    int off, o, i;
+    int o, i;
     int *p;
     if (func_003B64D8_6670() < 0) return -8;
-    off = a0 * 0x10;
-    o = func_003C6540_6670(*(int *)(off + D_0050A8E8_6670.f1F4), a1);
+    o = func_003C6540_6670(D_0050A8E8.f1F4[a0].f00, a1);
     if (o == 0) return -8;
     i = 0;
     func_003B58A0();
-    func_003BB820_6670(*(int *)(off + D_0050A8E8_6670.f1F4), o, a2, a3, a4, 0);
+    func_003BB820_6670(D_0050A8E8.f1F4[a0].f00, o, a2, a3, a4, 0);
     if (*(unsigned char *)(a2 + 2) != 0) {
         p = (int *)(a3 + 0x18);
         do {
