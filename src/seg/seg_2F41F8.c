@@ -191,6 +191,11 @@ extern int D_004A4BF0;
 struct sTick { void (*fn)(int, int); int arg; };
 extern struct sTick D_0051F030[16];
 
+/* SIF RPC client (func_003F6A40 binds it): D_004A5B14 = bound, D_00526100 the client data, D_00526080 the
+   send buffer. */
+extern unsigned char D_004A5B14;
+extern int D_00526100[];
+
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 #ifdef SKIP_ASM
@@ -1690,8 +1695,6 @@ char *func_003F68F0(char *a, int b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6960);
 #ifdef SKIP_ASM
-extern unsigned char D_004A5B14b __asm__("D_004A5B14");
-extern int D_6100[] __asm__("D_00526100");
 typedef struct { int a; int b; } R6960;
 extern R6960 D_526080s[] __asm__("D_00526080");
 extern int f6F08(int *) __asm__("func_00426F08");
@@ -1699,12 +1702,12 @@ extern int f6D18(int *, int, int, R6960 *, int, int, int, int, int) __asm__("fun
 void func_003F6960_impl(int a, int b, int c, int d, int e) __asm__("func_003F6960");
 void func_003F6960_impl(int a, int b, int c, int d, int e) {
     R6960 *r = D_526080s;
-    if (D_004A5B14b) {
-        while (f6F08(D_6100) > 0) ;
+    if (D_004A5B14) {
+        while (f6F08(D_00526100) > 0) ;
         r->a = b;
         r->b = c;
         do {
-            if (f6D18(D_6100, a, 0, D_526080s, 0x80, d, e, 0, 0) >= 0) break;
+            if (f6D18(D_00526100, a, 0, D_526080s, 0x80, d, e, 0, 0) >= 0) break;
         } while (1);
     }
 }
@@ -1713,9 +1716,8 @@ void func_003F6960_impl(int a, int b, int c, int d, int e) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6A40);
 #ifdef SKIP_ASM
-extern char D_004A5B14;
 extern int *D_004A5B18;
-extern int D_00526100[], D_005261C0[], D_00526140[];
+extern int D_005261C0[], D_00526140[];
 extern int func_00426B48(int *, int, int);
 extern void func_003F6960b(int, int, int, int *, int) __asm__("func_003F6960");
 void func_003F6A40(void) {
@@ -1731,7 +1733,6 @@ void func_003F6A40(void) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6AB0);
 #ifdef SKIP_ASM
-extern char D_004A5B14;
 void func_003F6AB0(void) { D_004A5B14 = 0; }
 #endif
 
