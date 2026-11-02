@@ -48,21 +48,46 @@ extern t4Matrix D_004C53A0;
 extern sCamShake D_004C53E0[5];
 extern int D_004C5430[5];
 
+// The game singleton D_004A28A8 and the parts of its game / race / cameras chain this unit reads
+// (seg/seg_1FBE38 layout).
+struct sRace {
+    char pad_0x0[0x28];
+    char* riders[6];            // 0x28: riders by being index
+};
+// The game's cameras (cCamera, one per view).
+struct sCameras {
+    int f0;                     // 0x0: number of cameras
+    char* cam[1];               // 0x4
+};
+struct sGame {
+    char pad_0x0[0xC];
+    sRace* race;                // 0xC
+    char pad_0x10[0x18];
+    int* f28;                   // 0x28: game state (state word at 0)
+    char pad_0x2C[0x58];
+    sCameras* cameras;          // 0x84
+};
+struct sApp {
+    char pad_0x0[0x84];
+    sGame* game;                // 0x84
+    char pad_0x88[0x28];
+    int pads[2];                // 0xB0: controller pad of each view (ai/ai: Inputs)
+};
+extern sApp* D_004A28A8;
+
 //100%
 INCLUDE_ASM("camera/camera", cCamera_resetChaseControllerSwitches);
 #ifdef SKIP_ASM
 struct sCam162138;
 extern "C" void func_00162138(sCam162138* self);
-extern void* D_004A28A8;
 
 extern "C" void cCamera_resetChaseControllerSwitches(void)
 {
-    void* cam = *(void**)((char*)D_004A28A8 + 0x84);
-    int* chase = *(int**)((char*)cam + 0x84);
-    if (chase != 0) {
-        func_00162138(*(sCam162138**)(*(char**)((char*)chase + 4) + 0xA8));
-        if (*chase >= 2) {
-            func_00162138(*(sCam162138**)(*(char**)((char*)chase + 8) + 0xA8));
+    sCameras* cams = D_004A28A8->game->cameras;
+    if (cams != 0) {
+        func_00162138(*(sCam162138**)(cams->cam[0] + 0xA8));
+        if (cams->f0 >= 2) {
+            func_00162138(*(sCam162138**)(cams->cam[1] + 0xA8));
         }
     }
 }
@@ -151,7 +176,6 @@ struct sCam162060;
 extern "C" void func_00162060(sCam162060* self, int mode, int arg, float blend);
 void func_00162310(void* self, int val);
 void* func_0015E030(void* self);
-extern void* D_004A28A8;
 extern const char D_0045B790[];
 extern void* D_0045B7A8[];
 
@@ -181,20 +205,6 @@ struct sCamera_15DE60
     int f460;       // 0x460
 };
 
-struct sCamWorld_15DE60
-{
-    char pad_0x00[0xC];
-    char* riders;   // 0xC
-};
-
-struct sApp_15DE60
-{
-    char pad_0x00[0x84];
-    sCamWorld_15DE60* world;   // 0x84
-    char pad_0x88[0xB0 - 0x88];
-    int viewports[4];          // 0xB0
-};
-
 struct sRiderRef_15DE60
 {
     void** vt;
@@ -208,12 +218,12 @@ extern "C" void cCamera_init(sCamera_15DE60* self, int idx, float a, float b, fl
     self->f14 = c;
     self->index = idx;
     self->f460 = 0;
-    self->manual->viewport = ((sApp_15DE60*)D_004A28A8)->viewports[0];
+    self->manual->viewport = D_004A28A8->pads[0];
     func_0015CF80(self->manual, 0x51);
-    self->chase->viewport = ((sApp_15DE60*)D_004A28A8)->viewports[idx];
+    self->chase->viewport = D_004A28A8->pads[idx];
     sRiderRef_15DE60* p = (sRiderRef_15DE60*)operator new(8, D_0045B790, 0, 0);
     p->vt = D_0045B7A8;
-    p->rider = *(int*)(((sApp_15DE60*)D_004A28A8)->world->riders + (idx << 2) + 0x28);
+    p->rider = (int)D_004A28A8->game->race->riders[idx];
     func_00161A60(self->chase, (int*)p);
     func_00162060((sCam162060*)self->chase, 0x4C, 0, 1.0f);
     func_00162310((char*)self + 0xC0, (int)p);
@@ -230,7 +240,7 @@ extern "C" void cCamera_init(sCamera_15DE60* self, int idx, float a, float b, fl
         break;
     }
     self->fB4 = 0;
-    self->script->viewport = ((sApp_15DE60*)D_004A28A8)->viewports[0];
+    self->script->viewport = D_004A28A8->pads[0];
 }
 #endif
 
@@ -501,7 +511,6 @@ extern "C" void func_0015E2A8(void)
 //100%
 INCLUDE_ASM("camera/camera", func_0015E360);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 
 #define MIN_E360(a, b) ((a) <= (b) ? (a) : (b))
 #define MAX_E360(a, b) ((b) <= (a) ? (a) : (b))
@@ -510,7 +519,7 @@ extern void* D_004A28A8;
 // Replays ignore types 1-4.
 extern "C" void func_0015E360(char* self, int type, float amount, float dist)
 {
-    int state = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
+    int state = *D_004A28A8->game->f28;
     int replay = state != 0 && state < 10;
     if (replay && (unsigned int)(type - 1) < 4) {
         return;
@@ -608,7 +617,6 @@ INCLUDE_ASM("camera/camera", func_0015EC98);
 #ifdef SKIP_ASM
 extern "C" void func_003A9658(void* self, unsigned int i, t4Vector* v, float f);
 extern "C" int func_003A96E0(void* self, int i, t4Vector* outPos, float* outT);
-extern void* D_004A28A8;
 
 struct sCacheSlot_15EC98
 {
@@ -637,7 +645,7 @@ static inline float clamp_15EC98(float v, float lo, float hi)
 extern "C" void func_0015EC98(char* self)
 {
     float r;
-    if (*(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84) + 0x10) == 1)
+    if (*(int*)((char*)D_004A28A8->game->cameras + 0x10) == 1)
         r = *(float*)(self + 0x8);
     else
         r = clamp_15EC98(*(float*)(self + 0x8), 0.0f, 15000.0f);
@@ -1209,7 +1217,6 @@ void func_0015FD48(void* self)
 //100%
 INCLUDE_ASM("camera/camera", func_0015FD50);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 // PORT: func_00320BF0 returns a float (input axis value, $f0).
 extern "C" float func_00320BF0(int pad, int axis);
 extern "C" float func_0031BF60(float x);
@@ -1290,7 +1297,7 @@ static inline float ffloor_0015FD50(float x)
 // PORT: g++ `>?` / `<?` (max/min) operators.
 extern "C" void func_0015FD50(sFreeCam_0015FD50* self)
 {
-    int pad = *(int*)(*(char**)(*(char**)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84) + 0x4) + 0xA4) + 0xC);
+    int pad = *(int*)(*(char**)(D_004A28A8->game->cameras->cam[0] + 0xA4) + 0xC);
     float speed = func_00320BF0(pad, 0x34);
     float ry = func_00320BF0(pad, 0x31);
     float rx = func_00320BF0(pad, 0x30);
@@ -1591,7 +1598,6 @@ void func_001604B0(void* self, void* other)
 //100%
 INCLUDE_ASM("camera/camera", func_001604B8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" float func_00320BF0(int pad, int axis);
 extern "C" void func_00162568(void* self, struct sCamInfo_001607E0* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
@@ -1699,21 +1705,14 @@ struct sCamYP_1604B8 {
     float pitch;        // 0x54
 };
 
-struct sGame_1604B8 {
-    char pad0[0x84];
-    char* f84;          // 0x84
-    char pad88[0xB0 - 0x88];
-    int pads[4];        // 0xB0
-};
-
 extern "C" void func_001604B8(char* self)
 {
     sCamInfo_1604B8 info;
     func_00162568(self, (sCamInfo_001607E0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
-    sGame_1604B8* g = (sGame_1604B8*)D_004A28A8;
-    int pad = g->pads[*(int*)(*(char**)(g->f84 + 0x28) + 0x28)];
+    sApp* g = D_004A28A8;
+    int pad = g->pads[g->game->f28[0x28 / 4]];
     float ax = func_00320BF0(pad, 0xBE);
     float ay = func_00320BF0(pad, 0xBF);
     float az = -func_00320BF0(pad, 0xC0);
@@ -2757,7 +2756,7 @@ extern "C" void func_00161BB8(char* self)
             }
         }
     }
-    int* st = *(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
+    int* st = D_004A28A8->game->f28;
     int idle = InRace_161BB8(st) && st[0x484 / 4] == 0;
     if (idle)
         *(float*)(self + 0x38) = 0.0f;
