@@ -3575,7 +3575,6 @@ extern "C" void* func_00301560(void* self, int n, Ent_1560* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00301680);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_1680 __asm__("D_004A28A8");
 static inline char *look_1680(unsigned id) {
     if (~id == 0)
         return D_004A3DD8->f290;
