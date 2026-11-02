@@ -1175,21 +1175,20 @@ typedef struct { unsigned int pad0 : 20; unsigned int f : 4; unsigned int pad1 :
 extern C_D5A0 *func_003DE670_D5A0(void) __asm__("func_003DE670");
 extern void func_003DE668_D5A0(C_D5A0 *) __asm__("func_003DE668");
 extern void iFILESYS_ExecCommand_D5A0(C_D5A0 *) __asm__("iFILESYS_ExecCommand");
-extern int *D_00519AE4_D5A0[] __asm__("D_00519AE4");
 
 int func_003DD5A0_impl(int arg0, int arg1, int arg2) __asm__("func_003DD5A0");
 int func_003DD5A0_impl(int arg0, int arg1, int arg2) {
     C_D5A0 *c;
-    int *n;
+    struct sFsNode *n;
 
     c = func_003DE670_D5A0();
-    n = D_00519AE4_D5A0[0];
+    n = D_00519AE4;
     c->f = 3;
     *(int*)((char*)c + 0x10) = arg1;
     *(int*)((char*)c + 0x14) = arg2;
     *(int*)((char*)c + 0x24) = arg0;
-    for (; n != 0; n = (int *)n[5]) {
-        if (n[3] == arg0) {
+    for (; n != 0; n = n->f14) {
+        if ((int)n->f0C == arg0) {
             *(int*)((char*)c + 0xC) = 3;
             func_003DE668_D5A0(c);
             break;
