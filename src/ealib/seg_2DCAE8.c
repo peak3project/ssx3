@@ -33,6 +33,7 @@ struct sReq {                       /* 0x30, a file request (D_00450C34[], D_005
     int f2C;
 };
 extern struct sReq *D_00450C34;
+extern int D_00451008;                          /* debug output set up (func_003E5B60) */
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
@@ -6319,7 +6320,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5B60);
 #ifdef SKIP_ASM
 struct EB_5B60 { int w0; int w1; };
 struct EA_5B60 { int w0; int w1; int w2; };
-extern int D_00451008_5B60 __asm__("D_00451008");
 extern char D_00451250_5B60[] __asm__("D_00451250");
 extern struct EB_5B60 D_00450E08_5B60[] __asm__("D_00450E08");
 extern void func_003E5EF8(int, int);
@@ -6327,8 +6327,8 @@ extern void func_003E5DC8(int, int);
 
 void func_003E5B60(void) {
     int i;
-    if (D_00451008_5B60 == 0) {
-        D_00451008_5B60 = 1;
+    if (D_00451008 == 0) {
+        D_00451008 = 1;
         for (i = 0; i < 0x60; i += 12) {
             ((struct EA_5B60 *)(D_00451250_5B60 + i))->w2 &= ~1;
         }
