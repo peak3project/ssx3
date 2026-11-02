@@ -9,6 +9,11 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A whole vtable (N slots), for copying one and patching its this-adjustments.
+template <int N> struct sVtbl {
+    sVEntry<void> e[N];
+} __attribute__((aligned(8)));
+
 // 16-byte vector with inline constructors (a non-POD sibling of t4Vector); stores x, y, z, w.
 struct sVec4
 {
@@ -824,12 +829,9 @@ void cRider_addRiderMetrix(cRider* rider);
 void func_00144D70(void*, int, int);
 extern char D_00457F20[];
 
-struct sVtbl9_MR { sVEntry<void> e[9]; } __attribute__((aligned(8)));
-struct sVtbl22_MR { sVEntry<void> e[22]; } __attribute__((aligned(8)));
-
-extern const sVtbl9_MR D_00458240;
+extern const sVtbl<9> D_00458240;
 extern char D_00459B90[];
-extern const sVtbl22_MR D_00458288;
+extern const sVtbl<22> D_00458288;
 extern char D_00458338[];
 
 // PORT: g++ 2.95 most-derived constructor of a class deriving virtually from cRider (vbase at +0xE10,
@@ -879,12 +881,12 @@ static inline char* cMissionRider_ctor(char* self, int inChrg)
     *(void**)(self + 0xDE8) = D_00458338;
     if (!inChrg)
     {
-        sVtbl9_MR t1 = D_00458240;
+        sVtbl<9> t1 = D_00458240;
         *(void**)(*(char**)(self + 0x18) + 0x6E8) = &t1;
         char* base = *(char**)(self + 0x18) - 0xE10;
         int d = self - base;
         t1.e[1].delta = D_00458240.e[1].delta + d;
-        sVtbl22_MR t2 = D_00458288;
+        sVtbl<22> t2 = D_00458288;
         *(void**)(*(char**)(self + 0x18) + 0x6C0) = &t2;
         t2.e[1].delta = D_00458288.e[1].delta + d;
     }
@@ -7540,12 +7542,10 @@ INCLUDE_ASM("ai/ai", func_00136980);
 #ifdef SKIP_ASM
 extern "C" void* cRider_cRider(void* self);
 
-struct sVtbl9_136980 { sVEntry<void> e[9]; } __attribute__((aligned(8)));
-struct sVtbl22_136980 { sVEntry<void> e[22]; } __attribute__((aligned(8)));
 
-extern const sVtbl9_136980 D_004597B0;
+extern const sVtbl<9> D_004597B0;
 extern char D_00459B90[];
-extern const sVtbl22_136980 D_004597F8;
+extern const sVtbl<22> D_004597F8;
 
 // PORT: g++ 2.95 virtual-base construction. The class derives virtually from cRider (vbase pointer at
 // +0x40, vbase at +0x70); when not most-derived, g++ copies cRider's overridden vtables to the stack and
@@ -7563,12 +7563,12 @@ extern "C" void* func_00136980(void* self, int inChrg)
     *(void**)(*(char**)((char*)self + 0x40) + 0x6C0) = (void*)&D_004597F8;
     if (!inChrg)
     {
-        sVtbl9_136980 t1 = D_004597B0;
+        sVtbl<9> t1 = D_004597B0;
         *(void**)(*(char**)((char*)self + 0x40) + 0x6E8) = &t1;
         char* base = *(char**)((char*)self + 0x40) - 0x70;
         int d = (char*)self - base;
         t1.e[1].delta = D_004597B0.e[1].delta + d;
-        sVtbl22_136980 t2 = D_004597F8;
+        sVtbl<22> t2 = D_004597F8;
         *(void**)(*(char**)((char*)self + 0x40) + 0x6C0) = &t2;
         t2.e[1].delta = D_004597F8.e[1].delta + d;
     }
