@@ -96,13 +96,61 @@ struct sRewardWidget {
     void* tex;                  // 0x7C
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIText;
+struct sData001CFFF8;
+struct cUIScreen;
+int GetHashValue32(char* str);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void func_0039E510(void* self);
+void cUIText_setAsciiString(cUIText* self, const char* str);
+void cUIText_setUnicodeStringByID(cUIText* self, int id);
+extern "C" void* func_00398380(void* self, int id);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char D_00466DF8[];
+extern char D_00466E08[];
+extern char D_00466E18[];
+extern char D_00466E30[];
+extern char D_00466E50[];
+extern char D_00466E60[];
+extern char D_00466E70[];
+extern char D_00466E88[];
+extern char D_00466EA0[];
+extern char D_00466EC0[];
+extern char D_00466F10[];
+extern char D_004A12C0[];
+extern char D_004A1408[];
+extern void* D_004A28A8;
+extern "C" int func_0019DA10(void* self, int bank, int id, int a3, int a4, int a5);
+extern "C" void func_0019DC20(void* self, int bank, int i);
+extern "C" int func_0019E238(void* self, int bank, int i);
+extern void* D_004A289C;
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00156A38(void* iface);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_0039F290(void* stack, void* state);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" const char* func_00198AF0(void* a0);
+extern "C" void* func_001CEEA0(void* self, void* engine, signed char idx, int a3, int kind);
+extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
+extern "C" int func_001CFDD0(void* self, char* name);
+extern "C" void* func_0015A478();
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
+extern void* D_004699F8[];
+extern void* D_0046D0D0[];
+extern "C" void func_0039E390(void* self, int flags);
+extern "C" void* func_0039F190(void* self, int a1);
+extern void* D_00469928[];
+extern "C" void func_00253418(void* p, int a1);
+extern "C" void* func_0028B180();
+
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_00466D88[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_001D0180(void* self);
 extern "C" void func_001CFE60(void* self);
 
@@ -166,7 +214,6 @@ INCLUDE_ASM("fe/festaterewards", func_001CF238);
 #ifdef SKIP_ASM
 extern "C" void func_001D0238(void* self);
 extern "C" void func_001CFF10(void* self);
-extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001CF238(void* self)
 {
@@ -181,11 +228,6 @@ INCLUDE_ASM("fe/festaterewards", func_001CF270);
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_onWidgetCreate);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-void cUIText_setUnicodeStringByID(cUIText* self, int id);
-extern "C" void* func_00398380(void* self, int id);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char D_00460488[];
 extern char D_00466DA0[];
 extern char D_00466DB0[];
@@ -195,18 +237,8 @@ extern char D_00466DE8[];
 extern char D_004A1EE8[];
 extern char D_004A1EF0[];
 extern char D_0045DB90[];
-extern char D_00466DF8[];
-extern char D_00466E08[];
-extern char D_00466E18[];
-extern char D_00466E30[];
 extern char D_00466E40[];
-extern char D_00466E50[];
-extern char D_00466E60[];
-extern char D_00466E70[];
-extern char D_00466E88[];
-extern char D_00466EA0[];
 extern char D_00466EB0[];
-extern char D_00466EC0[];
 extern char D_00466ED0[];
 extern char D_00466EE8[];
 extern char D_00466EF8[];
@@ -216,11 +248,8 @@ extern char D_00466240[];
 extern char D_00466258[];
 extern char D_00466270[];
 extern char D_00466288[];
-extern char D_00466F10[];
 extern char D_00466F20[];
 extern char D_00466F30[];
-extern char D_004A12C0[];
-extern char D_004A1408[];
 extern char* D_00441440[][8];
 extern char* D_004414C0[][8];
 
@@ -441,9 +470,6 @@ int func_001CFDD0_find(sRewardGallery* self, char* name)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001CFE60);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_0019DA10(void* self, int bank, int id, int a3, int a4, int a5);
-
 extern "C" void func_001CFE60(void* self)
 {
     char* mgr = *(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70;
@@ -461,10 +487,6 @@ extern "C" void func_001CFE60(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001CFF10);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void func_0019DC20(void* self, int bank, int i);
-extern "C" int func_0019E238(void* self, int bank, int i);
-struct sData001CFFF8;
 extern "C" sData001CFFF8* func_0019E2B0(void* self, int bank, int i);
 extern "C" void func_001CFFF8(sRewardGallery* self, sData001CFFF8* data);
 
@@ -492,7 +514,6 @@ extern "C" void func_001CFF10(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001CFFF8);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
 extern "C" void func_003B3D00(void* data, int i, void* entry);
 struct sDataEnt001CFFF8 {
     int off;
@@ -526,10 +547,6 @@ extern "C" void func_001CFFF8(sRewardGallery* self, sData001CFFF8* data)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D00C0);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
-extern void* D_004A28A8;
-extern "C" void func_0019DC20(void* self, int bank, int i);
-
 extern "C" void func_001D00C0(sRewardGallery* self)
 {
     int i;
@@ -552,10 +569,6 @@ extern "C" void func_001D00C0(sRewardGallery* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0180);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00156A38(void* iface);
 extern "C" void func_00156A10(void* iface);
 
 extern "C" void func_001D0180(void* self)
@@ -576,11 +589,6 @@ extern "C" void func_001D0180(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0238);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00156A38(void* iface);
-
 extern "C" void func_001D0238(void* self)
 {
     if (((*(int*)((char*)self + 0x48) >> 1) & 1) == 0) {
@@ -604,9 +612,6 @@ extern "C" void func_001D0238(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0320);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00157F20(void* iface, int player, int a2, int a3, int a4, int a5);
 extern "C" int func_00150928(void* iface, int a1, int charID);
 
@@ -628,12 +633,10 @@ extern "C" void func_001D0320(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_showReward);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001D1AA0(void* self, void* engine, void* owner, int player);
 extern "C" void func_001D20D8(void* self, int kind, void* data);
 extern "C" void* func_001D22F0(void* self, void* engine, void* owner, signed char idx);
 extern "C" void func_001D2598(void* self, const char* a, const char* b);
-extern "C" void func_0039F290(void* stack, void* state);
 extern char D_00466F78[];
 extern char D_004601D8[];
 
@@ -666,10 +669,8 @@ extern "C" void cFEStateRewardGalleryBase_showReward(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0510);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001CABA8(void* self, void* engine, void* owner, signed char idx);
 extern "C" void func_001CAA18(void* self, int a1, int a2, int a3, int a4);
-extern "C" void func_0039F290(void* stack, void* state);
 extern char D_00460790[];
 
 extern "C" void func_001D0510(void* self)
@@ -690,9 +691,6 @@ extern "C" void func_001D0510(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D05F0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00157468(void* iface, int a, int b, int c, int d);
 
 extern "C" void func_001D05F0(void* self, int arg)
@@ -704,9 +702,6 @@ extern "C" void func_001D05F0(void* self, int arg)
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_updateHelpText);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* self, int id);
 extern char D_00466F90[];
 extern char D_00466FB0[];
 extern char D_00466FC8[];
@@ -800,8 +795,6 @@ extern "C" void cFEStateRewardGalleryBase_updateHelpText(char* self, int idx)
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_updateRow);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* func_00398380(void* self, int id);
 extern char D_00467040[];
 extern char D_00467050[];
 extern char D_004C6818[];
@@ -903,16 +896,11 @@ extern "C" void func_001D0B00(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_updatePageNumber);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" int func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern "C" void func_003A0E90(void* text, void* p);
 extern char D_00467060[];
 extern char D_004A1EF8[];
 extern char D_004A1F00[];
-extern char D_004A1408[];
 
 extern "C" void cFEStateRewardGalleryBase_updatePageNumber(void* self)
 {
@@ -949,12 +937,8 @@ extern "C" void cFEStateRewardGalleryBase_updatePageNumber(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0D30);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-extern "C" const char* func_00198AF0(void* a0);
 // PORT: func_00198AF0 really takes the int value to format; bound by asm label
 extern "C" const char* func_00198AF0_i(int v) __asm__("func_00198AF0");
-extern char D_004A1408[];
 
 extern "C" void func_001D0D30(void* self)
 {
@@ -991,10 +975,6 @@ extern "C" void func_001D0D30(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0E78);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-extern "C" const char* func_00198AF0(void* a0);
-
 extern "C" void func_001D0E78(void* self)
 {
     if (*(cUIText**)((char*)self + 0x910) != 0) {
@@ -1006,11 +986,6 @@ extern "C" void func_001D0E78(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0EB8);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern char D_004A12C0[];
-
 extern "C" void func_001D0EB8(void* self)
 {
     char buf[32];
@@ -1098,7 +1073,6 @@ extern "C" void func_001D10A8(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1128);
 #ifdef SKIP_ASM
-extern "C" void* func_001CEEA0(void* self, void* engine, signed char idx, int a3, int kind);
 extern void* D_0046A248[];
 
 extern "C" void* func_001D1128(void* self, void* engine, signed char idx, int a3)
@@ -1128,9 +1102,6 @@ void* func_001D1198(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festaterewards", func_001D11A8);
 #ifdef SKIP_ASM
-extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" int func_001CFDD0(void* self, char* name);
-
 extern "C" void func_001D11A8(void* self, int i)
 {
     char buf[5];
@@ -1144,11 +1115,7 @@ extern "C" void func_001D11A8(void* self, int i)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D11F8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_001572B0(void* self);
-extern "C" void* func_0015A478();
 
 extern "C" void func_001D11F8(sRewardGallery* self)
 {
@@ -1178,7 +1145,6 @@ extern "C" void func_001D1290(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D12C8);
 #ifdef SKIP_ASM
-extern "C" void* func_001CEEA0(void* self, void* engine, signed char idx, int a3, int kind);
 extern void* D_0046A0C8[];
 
 extern "C" void* func_001D12C8(void* self, void* engine, signed char idx, int a3)
@@ -1207,9 +1173,6 @@ void* func_001D1330(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festaterewards", func_001D1340);
 #ifdef SKIP_ASM
-extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" int func_001CFDD0(void* self, char* name);
-
 extern "C" void func_001D1340(void* self, int i)
 {
     char buf[5];
@@ -1223,11 +1186,7 @@ extern "C" void func_001D1340(void* self, int i)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1390);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_001572D0(void* self);
-extern "C" void* func_0015A478();
 
 extern "C" void func_001D1390(sRewardGallery* self)
 {
@@ -1257,7 +1216,6 @@ extern "C" void func_001D1428(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1460);
 #ifdef SKIP_ASM
-extern "C" void* func_001CEEA0(void* self, void* engine, signed char idx, int a3, int kind);
 extern void* D_00469F48[];
 
 extern "C" void* func_001D1460(void* self, void* engine, signed char idx, int a3)
@@ -1286,9 +1244,6 @@ void* func_001D14C8(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festaterewards", func_001D14D8);
 #ifdef SKIP_ASM
-extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" int func_001CFDD0(void* self, char* name);
-
 extern "C" void func_001D14D8(void* self, int i)
 {
     char buf[5];
@@ -1302,11 +1257,7 @@ extern "C" void func_001D14D8(void* self, int i)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1528);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_001572F0(void* self);
-extern "C" void* func_0015A478();
 
 extern "C" void func_001D1528(sRewardGallery* self)
 {
@@ -1336,7 +1287,6 @@ extern "C" void func_001D15C0(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D15F8);
 #ifdef SKIP_ASM
-extern "C" void* func_001CEEA0(void* self, void* engine, signed char idx, int a3, int kind);
 extern void* D_00469DC8[];
 
 extern "C" void* func_001D15F8(void* self, void* engine, signed char idx, int a3)
@@ -1365,9 +1315,6 @@ void* func_001D1660(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festaterewards", func_001D1670);
 #ifdef SKIP_ASM
-extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" int func_001CFDD0(void* self, char* name);
-
 extern "C" void func_001D1670(void* self, int i)
 {
     char buf[5];
@@ -1381,11 +1328,7 @@ extern "C" void func_001D1670(void* self, int i)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D16C0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00157330(void* self);
-extern "C" void* func_0015A478();
 
 extern "C" void func_001D16C0(sRewardGallery* self)
 {
@@ -1415,7 +1358,6 @@ extern "C" void func_001D1758(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1790);
 #ifdef SKIP_ASM
-extern "C" void* func_001CEEA0(void* self, void* engine, signed char idx, int a3, int kind);
 extern void* D_00469C48[];
 
 extern "C" void* func_001D1790(void* self, void* engine, signed char idx, int a3)
@@ -1444,9 +1386,6 @@ void* func_001D17F8(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festaterewards", func_001D1808);
 #ifdef SKIP_ASM
-extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-extern "C" int func_001CFDD0(void* self, char* name);
-
 extern "C" void func_001D1808(void* self, int i)
 {
     char buf[5];
@@ -1460,11 +1399,7 @@ extern "C" void func_001D1808(void* self, int i)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1858);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00157310(void* self);
-extern "C" void* func_0015A478();
 
 extern "C" void func_001D1858(sRewardGallery* self)
 {
@@ -1494,7 +1429,6 @@ extern "C" void func_001D18F0(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1928);
 #ifdef SKIP_ASM
-extern "C" void* func_001CEEA0(void* self, void* engine, signed char idx, int a3, int kind);
 extern void* D_00469AC8[];
 
 extern "C" void* func_001D1928(void* self, void* engine, signed char idx, int a3)
@@ -1512,11 +1446,7 @@ extern "C" void* func_001D1928(void* self, void* engine, signed char idx, int a3
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1990);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00157370(void* self);
-extern "C" void* func_0015A478();
 
 extern "C" void func_001D1990(sRewardGallery* self)
 {
@@ -1546,9 +1476,6 @@ extern "C" void func_001D1A28(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1A60);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* func_00398380(void* self, int id);
-
 extern "C" void func_001D1A60(void* self, int i)
 {
     char* obj = *(char**)((char*)self + 0x10);
@@ -1561,13 +1488,8 @@ extern "C" void func_001D1A60(void* self, int i)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1AA0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" unsigned char func_001A1CD0(void* self, signed char a1);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int player);
-extern void* D_004699F8[];
 struct sRewardState_1AA0 {
     char pad_0x0[0x48];
     int a[3];   // 0x48
@@ -1601,13 +1523,6 @@ extern "C" void* func_001D1AA0(void* self, void* engine, void* owner, int player
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1B68);
 #ifdef SKIP_ASM
-extern void* D_004699F8[];
-extern void* D_0046D0D0[];
-extern void* D_004A289C;
-extern void* D_004A28A8;
-extern "C" void func_0019DC20(void* self, int bank, int i);
-extern "C" void func_0039E390(void* self, int flags);
-
 extern "C" void func_001D1B68(void* self, int flags)
 {
     *(void***)((char*)self + 8) = D_004699F8;
@@ -1631,12 +1546,8 @@ extern "C" void func_001D1B68(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStatePreviewReward_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_00467140[];
 extern char D_004A1398[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 
 extern "C" void cFEStatePreviewReward_onCreateScreen(void* self)
 {
@@ -1656,18 +1567,7 @@ extern "C" void cFEStatePreviewReward_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStatePreviewReward_onWidgetCreate);
 #ifdef SKIP_ASM
-extern char D_00466DF8[];
-extern char D_00466E08[];
-extern char D_00466E18[];
-extern char D_00466E30[];
-extern char D_00466E50[];
-extern char D_00466E60[];
-extern char D_00466E70[];
-extern char D_00466E88[];
-extern char D_00466EA0[];
 extern char D_00467150[];
-extern char D_00466EC0[];
-extern char D_00466F10[];
 extern char D_00467160[];
 extern char D_00467170[];
 extern char D_00467188[];
@@ -1809,7 +1709,6 @@ extern "C" int func_001D1F78(void* self, int a1, unsigned int a2)
 INCLUDE_ASM("fe/festaterewards", func_001D1FB0);
 #ifdef SKIP_ASM
 extern "C" void func_001D2198(void* self);
-extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001D1FB0(void* self)
 {
@@ -1823,11 +1722,7 @@ extern "C" void func_001D1FB0(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1FF0);
 #ifdef SKIP_ASM
-struct cUIScreen;
-int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* func_0039F190(void* self, int a1);
 extern char D_0045DC60[];
 struct sDefObj_1FF0 {
     sVEntry<void(void*, int)>* vt;
@@ -1891,9 +1786,6 @@ extern "C" void func_001D20D8(void* self, int kind, void* data)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2150);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_0019DA10(void* self, int bank, int id, int a3, int a4, int a5);
-
 extern "C" void func_001D2150(void* self, int id)
 {
     *(int*)((char*)self + 0x6C) = func_0019DA10(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70, *(int*)((char*)self + 0x64), id, 9, 1, 0);
@@ -1903,10 +1795,6 @@ extern "C" void func_001D2150(void* self, int id)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2198);
 #ifdef SKIP_ASM
-extern "C" int func_0019E238(void* self, int bank, int i);
-extern "C" void func_0019DC20(void* self, int bank, int i);
-extern void* D_004A28A8;
-
 struct sSelfK1D2198 {
     char pad_0x0[0x48];
     char* a48[3];   // 0x48
@@ -1955,9 +1843,7 @@ extern "C" void func_001D2198(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D22F0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E318(void* self, void* engine, void* owner);
 extern "C" void func_00253390(void* p);
-extern void* D_00469928[];
 
 // Constructor for the reward popup state: base init, empty title/body strings and text list.
 extern "C" void* func_001D22F0(void* vself, void* engine, void* owner, signed char player)
@@ -1986,11 +1872,6 @@ extern "C" void* func_001D22F0(void* vself, void* engine, void* owner, signed ch
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2380);
 #ifdef SKIP_ASM
-extern "C" void func_00253418(void* p, int a1);
-extern "C" void func_0039E390(void* self, int flags);
-extern void* D_00469928[];
-extern void* D_0046D0D0[];
-
 extern "C" void func_001D2380(void* self, int flags)
 {
     *(void***)((char*)self + 8) = D_00469928;
@@ -2005,7 +1886,6 @@ extern "C" void func_001D2380(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D23E0);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_002533C8(void* mem);
 extern "C" void func_001D25E8(void* self);
 extern char D_00461320[];
@@ -2020,8 +1900,6 @@ extern "C" void func_001D23E0(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2430);
 #ifdef SKIP_ASM
-extern "C" void func_00253418(void* p, int a1);
-
 extern "C" void func_001D2430(void* self)
 {
     void* p = *(void**)((char*)self + 0x248);
@@ -2054,7 +1932,6 @@ INCLUDE_ASM("fe/festaterewards", func_001D24A8);
 #ifdef SKIP_ASM
 extern "C" void func_00253938(void* p);
 extern "C" void func_001D2638(void* self);
-extern "C" void func_0039E510(void* self);
 
 extern "C" void func_001D24A8(void* self)
 {
@@ -2111,7 +1988,6 @@ extern "C" void func_001D2598(void* self, const char* a, const char* b)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D25E8);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180();
 extern "C" void func_002B3A70(void* p);
 extern "C" int func_002534A8(void* p, void* q);
 extern "C" int func_00253860(void* p);
@@ -2130,9 +2006,7 @@ extern "C" void func_001D25E8(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2638);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180();
 extern "C" void func_002B3A98(void* self);
-extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_001D2638(void* self)
 {
