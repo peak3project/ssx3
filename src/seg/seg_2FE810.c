@@ -2407,14 +2407,8 @@ int func_00401BF0(int a) {
             if (b1_6B48(B1_526710, 0x8000059C, 0) < 0) {
                 if (B1_451610[0] > 0)
                     b1_log(B1_497B60);
-                r = 0x100000;
-                do {
-                    r--;
-                    __asm__ volatile("nop");
-                    __asm__ volatile("nop");
-                    __asm__ volatile("nop");
-                    __asm__ volatile("nop");
-                } while (r != -1);
+                for (r = 0x100000; r--; )
+                    ;
                 continue;
             }
             if (*(int *)(B1_526710 + 0x24) != 0) {
@@ -2425,14 +2419,8 @@ int func_00401BF0(int a) {
                 b1_3DC0(semaId1BF0());
                 return b1_19F8(a);
             }
-            r = 0x100000;
-            do {
-                r--;
-                __asm__ volatile("nop");
-                __asm__ volatile("nop");
-                __asm__ volatile("nop");
-                __asm__ volatile("nop");
-            } while (r != -1);
+            for (r = 0x100000; r--; )
+                ;
             i++;
         }
     }
