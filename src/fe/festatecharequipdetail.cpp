@@ -73,6 +73,12 @@ struct sEquipList {
     unsigned char top;   // 0x98
 };
 
+// A 3-float vector with an inline constructor (as in fe/fepopup): the widget scale at + 0x50.
+struct sVec3 {
+    float x, y, z;
+    sVec3(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+};
+
 // One node of the file index manager (D_004A1968, allocation tag "BoltFileIndexManager"): 400 16-byte nodes hashed by
 // key % 400, two flag sets (mask0 / val0 and mask1 / val1), prev / next as node indices.
 struct sIndexNode {
@@ -2037,11 +2043,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019BC90);
 #ifdef SKIP_ASM
 extern int D_004A18D8;
 
-struct sVec3K19BC90 {
-    float x, y, z;
-    sVec3K19BC90(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
-};
-
 extern "C" void func_0019BC90(void* self)
 {
     char* o = *(char**)((char*)self + 0x70);
@@ -2052,7 +2053,7 @@ extern "C" void func_0019BC90(void* self)
         }
         sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 1);
-        *(sVec3K19BC90*)(*(char**)((char*)self + 0x70) + 0x50) = sVec3K19BC90(1.0f, -t, 1.0f);
+        *(sVec3*)(*(char**)((char*)self + 0x70) + 0x50) = sVec3(1.0f, -t, 1.0f);
     }
 }
 #endif
@@ -2063,11 +2064,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019BD48);
 extern int D_004A18D8;
 extern char D_004C66E8[];
 extern char D_004C66F8[];
-
-struct sVec3K19BD48 {
-    float x, y, z;
-    sVec3K19BD48(float a, float b, float c) : x(a), y(b), z(c) {}
-};
 
 extern "C" void func_0019BD48(void* self, int delta)
 {
@@ -2092,7 +2088,7 @@ extern "C" void func_0019BD48(void* self, int delta)
         sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 1);
     }
-    *(sVec3K19BD48*)(*(char**)((char*)self + 0x74) + 0x50) = sVec3K19BD48(1.0f, -t, 1.0f);
+    *(sVec3*)(*(char**)((char*)self + 0x74) + 0x50) = sVec3(1.0f, -t, 1.0f);
 }
 #endif
 
