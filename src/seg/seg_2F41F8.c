@@ -3098,7 +3098,39 @@ extern int func_3FB278(void);
 int func_003FA360(char* name) { return func_003FB278(); }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA380);
+#ifdef SKIP_ASM
+typedef struct { unsigned char b[33]; } T_A380;
+extern T_A380 D_004973B0;
+void func_003FA380(char *src, unsigned short *dst) {
+    T_A380 tbl = D_004973B0;
+    unsigned char i = 0;
+    unsigned short c = *src++;
+    while (c != 0) {
+        if ((unsigned short)(c - 0x81) < 0x18) {
+            c = (c << 8) + *src++;
+        } else if (c >= 0x7B) {
+            c = tbl.b[c - 0x5E] + 0x8100;
+        } else if (c >= 0x61) {
+            c = c + 0x8220;
+        } else if (c >= 0x5B) {
+            c = tbl.b[c - 0x44] + 0x8100;
+        } else if (c >= 0x41) {
+            c = c + 0x821F;
+        } else if (c >= 0x3A) {
+            c = tbl.b[c - 0x2A] + 0x8100;
+        } else if (c >= 0x30) {
+            c = c + 0x821F;
+        } else {
+            c = tbl.b[c - 0x20] + 0x8100;
+        }
+        c = (c >> 8) | ((c & 0xFF) << 8);
+        dst[i++] = c;
+        c = *src++;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA4F0);
 
