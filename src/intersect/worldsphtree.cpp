@@ -326,6 +326,22 @@ static inline float wsLengthT(const t4Vector& v)
     return r;
 }
 
+static inline void wsDivEq(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %0\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -546,21 +562,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_003308C8);
 // PORT: PS2-only VU0 inline asm (4-component vector length).
 
 // PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
-static inline void wsDivEq_3308C8(t4Vector& v, float s)
-{
-    int t;
-    __asm__(
-        "mfc1      %1, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vdiv      Q, $vf0w, $vf3x\n"
-        "lqc2      $vf4, %0\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf5, $vf4, Q\n"
-        "sqc2      $vf5, %0\n"
-        : "+m"(v), "=&r"(t)
-        : "f"(s)
-        : "memory");
-}
 
 
 extern "C" int func_0032CB58(void* self, void* other, void* a2, void* a3);
@@ -570,7 +571,7 @@ extern "C" int func_003308C8(void* self, void* a1, sWsDirHit* hit)
     if (func_0032CB58(*(void**)((char*)self + 0x60), a1, &hit->dir, hit) != 0) {
         float len = wsLengthT(hit->dir);
         hit->len = len;
-        wsDivEq_3308C8(hit->dir, len);
+        wsDivEq(hit->dir, len);
         return 1;
     }
     return 0;
@@ -583,21 +584,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00330950);
 // PORT: PS2-only VU0 inline asm (4-component vector length).
 
 // PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
-static inline void wsDivEq_330950(t4Vector& v, float s)
-{
-    int t;
-    __asm__(
-        "mfc1      %1, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vdiv      Q, $vf0w, $vf3x\n"
-        "lqc2      $vf4, %0\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf5, $vf4, Q\n"
-        "sqc2      $vf5, %0\n"
-        : "+m"(v), "=&r"(t)
-        : "f"(s)
-        : "memory");
-}
 
 
 extern "C" int func_0032C928(void* self, void* a1, void* a2, void* a3, void* a4);
@@ -607,7 +593,7 @@ extern "C" int func_00330950(void* self, void* a1, void* a2, sWsDirHit* hit)
     if (func_0032C928(*(void**)((char*)self + 0x60), a1, a2, &hit->dir, hit) != 0) {
         float len = wsLengthT(hit->dir);
         hit->len = len;
-        wsDivEq_330950(hit->dir, len);
+        wsDivEq(hit->dir, len);
         return 1;
     }
     return 0;
