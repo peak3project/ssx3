@@ -1340,7 +1340,8 @@ extern "C" float func_001494C0(void* self, int rider, int value);
 extern "C" float func_001493D8(void* self, int rider, int value);
 extern "C" float func_00148D80(void* self, int rider, int value);
 
-struct sCurvePt_13CCF0 { float x, y; };
+// A point of a piecewise-linear curve.
+struct sCurvePt { float x, y; };
 
 // PORT: PS2-only inline asm (float absolute value), as an SDK math-header fabsf would.
 static inline float hpAbs_13CCF0(float x)
@@ -1350,14 +1351,14 @@ static inline float hpAbs_13CCF0(float x)
     return r;
 }
 
-static inline float hpLerp_13CCF0(const sCurvePt_13CCF0& a, const sCurvePt_13CCF0& b, float x)
+static inline float hpLerp_13CCF0(const sCurvePt& a, const sCurvePt& b, float x)
 {
     float y0 = a.y;
     x -= a.x;
     return y0 + (b.y - y0) * x / (b.x - a.x);
 }
 
-struct sHpCfg_13CCF0 { char pad[0x90]; sCurvePt_13CCF0 p[4]; };
+struct sHpCfg_13CCF0 { char pad[0x90]; sCurvePt p[4]; };
 
 static inline float hpCurve_13CCF0(const sHpCfg_13CCF0* c, float x)
 {
@@ -1434,8 +1435,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cBE_getBE();
 extern "C" void func_00148E68(void* iface, int rider, int b);
 
-struct sCurvePt_13D028 { float x, y; };
-extern sCurvePt_13D028* D_004A1140;
+extern sCurvePt* D_004A1140;
 
 // PORT: PS2-only inline asm (float absolute value), as an SDK math-header fabsf would.
 static inline float hpAbs_13D028(float x)
@@ -1445,14 +1445,14 @@ static inline float hpAbs_13D028(float x)
     return r;
 }
 
-static inline float hpLerp_13D028(const sCurvePt_13D028& a, const sCurvePt_13D028& b, float x)
+static inline float hpLerp_13D028(const sCurvePt& a, const sCurvePt& b, float x)
 {
     float y0 = a.y;
     x -= a.x;
     return y0 + (b.y - y0) * x / (b.x - a.x);
 }
 
-static inline float hpCurve_13D028(const sCurvePt_13D028* p, float x)
+static inline float hpCurve_13D028(const sCurvePt* p, float x)
 {
     if (p[1].x < x)
     {
