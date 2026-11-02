@@ -170,6 +170,23 @@ struct sBindArg_1FBE38 { int idx; int val; int pad; int type; };
 struct sBindEnd_1FBE38 {};  // empty trailing member of a defaults record; value-init copies its byte through a stack temp
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
+extern "C" void* func_003578A8(void*, int, void*, void*, void*);
+extern "C" void func_00351B40(void*, int, void*, void*, void*, void*);
+extern "C" void* func_00342C08(void*, int, void*, void*, void*);
+extern "C" void func_002974A0(void*, void*, int);
+extern char D_00489730[];
+extern char D_00489A30[];
+extern "C" void* cBE_getBE(void);
+// cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
+extern "C" void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cMemMan_alloc(int, void*, int, int);
+extern "C" int checkActiveNode(void*, int, void*);
+void* func_00226618(void*);
+extern "C" void *func_0028B180(void);
+void operator_delete(int*);
+extern "C" void func_0030AC98(int, void *, int);
+extern "C" void func_0030A728(cWScriptMan*, int, int);
+extern "C" void func_00355978(void*, int, int, sVec4_1FBE38*);
 #define BIND_UNPACK_ARGS_1FBE38(vp, rec, defaults, size, types, n, args) do { \
         vp = rec; \
         func_003E6574(vp, defaults, size); \
@@ -249,14 +266,10 @@ static inline bool isIdle_1FBE38(int slot) {
 INCLUDE_ASM("seg/seg_1FBE38", checkActiveNode);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern char D_00489618_AE38[] __asm__("D_00489618");
 extern char D_00489628_AE38[] __asm__("D_00489628");
 extern char D_00489638_AE38[] __asm__("D_00489638");
 extern char D_00489648_AE38[] __asm__("D_00489648");
-extern "C" void* func_003578A8_AE38(void*, int, void*, void*, void*) __asm__("func_003578A8");
-extern "C" void func_00351B40_AE38(void*, int, void*, void*, void*, void*) __asm__("func_00351B40");
-extern "C" void* func_00342C08_AE38(void*, int, void*, void*, void*) __asm__("func_00342C08");
 extern "C" void cDeadFadeNode_cDeadFadeNode_AE38(void*, int, void*, void*, void*) __asm__("cDeadFadeNode_cDeadFadeNode");
 extern "C" int checkActiveNode(void *a, int type, void *buf) {
     cInstanceNode_1FBE38 *n = (cInstanceNode_1FBE38*)a;
@@ -270,15 +283,15 @@ extern "C" int checkActiveNode(void *a, int type, void *buf) {
     switch (type) {
     case 13:
         *(int*)(o + 0xC) = 0;
-        func_003578A8_AE38(cMemMan_alloc(0x2C, D_00489618_AE38, 0x20000000, 0), 1, o, buf, n);
+        func_003578A8(cMemMan_alloc(0x2C, D_00489618_AE38, 0x20000000, 0), 1, o, buf, n);
         return -1;
     case 11:
         *(int*)(o + 0xC) = 0;
-        func_00351B40_AE38(cMemMan_alloc(0x6C0, D_00489628_AE38, 0x20000000, 0), 1, o, buf, D_004A3DD8->f294, n);
+        func_00351B40(cMemMan_alloc(0x6C0, D_00489628_AE38, 0x20000000, 0), 1, o, buf, D_004A3DD8->f294, n);
         return -1;
     case 0:
         *(int*)(o + 0xC) = 0;
-        func_00342C08_AE38(cMemMan_alloc(0x34, D_00489638_AE38, 0x20000000, 0), 1, o, buf, n);
+        func_00342C08(cMemMan_alloc(0x34, D_00489638_AE38, 0x20000000, 0), 1, o, buf, n);
         return -1;
     case 22:
         *(int*)(o + 0xC) = 0;
@@ -294,14 +307,11 @@ extern "C" int checkActiveNode(void *a, int type, void *buf) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB060);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00359228(void*, int, void*, void*);
 extern char D_00489658_B060[] __asm__("D_00489658");
 extern unsigned D_B060[] __asm__("D_004FB390");
 extern int D_004A55C0;
 extern const int D_00445E70[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FB060(int n, sBindArg_1FBE38 *e) {
     if (D_004A55C0 == 0) {
         D_B060[0] = 0xFFFFFFFF;
@@ -363,14 +373,11 @@ extern "C" cLunoValue func_002FB060(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB270);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void func_00358C80_B270(void*, int, void*, void*) __asm__("func_00358C80");
 extern char D_00489668_B270[] __asm__("D_00489668");
 extern unsigned D_B270[] __asm__("D_004FB3C0");
 extern int D_004A55C4;
 extern const int D_00445E98[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FB270(int n, sBindArg_1FBE38 *e) {
     if (D_004A55C4 == 0) {
         D_B270[0] = 0xFFFFFFFF;
@@ -436,14 +443,11 @@ extern "C" cLunoValue func_002FB270(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB498);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_003421A0(void*, int, void*, void*);
 extern char D_00489678_B498[] __asm__("D_00489678");
 extern unsigned D_B498[] __asm__("D_004FB400");
 extern int D_004A55C8;
 extern const int D_00445ED0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FB498(int n, sBindArg_1FBE38 *e) {
     if (D_004A55C8 == 0) {
         D_B498[0] = 0xFFFFFFFF;
@@ -505,14 +509,11 @@ extern "C" cLunoValue func_002FB498(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB6B8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00343010(void*, int, void*, void*);
 extern char D_00489688_B6B8[] __asm__("D_00489688");
 extern unsigned D_B6B8[] __asm__("D_004FB430");
 extern int D_004A55CC;
 extern const int D_00445EF8[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FB6B8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55CC == 0) {
         D_B6B8[0] = 0xFFFFFFFF;
@@ -575,14 +576,11 @@ extern "C" cLunoValue func_002FB6B8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB8D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00343768(void*, int, void*, void*);
 extern char D_004A3BE8_B8D0[] __asm__("D_004A3BE8");
 extern unsigned D_B8D0[] __asm__("D_004FB468");
 extern int D_004A55D0;
 extern int D_004A3BE0_B8D0[2] __asm__("D_004A3BE0");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FB8D0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55D0 == 0) {
         D_B8D0[0] = 0xFFFFFFFF;
@@ -636,14 +634,11 @@ extern "C" cLunoValue func_002FB8D0(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FBAB0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_0034EC58(void*, int, void*, void*);
 extern char D_00489698_BAB0[] __asm__("D_00489698");
 extern unsigned D_BAB0[] __asm__("D_004FB478");
 extern int D_004A55D4;
 extern const int D_00445F28[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FBAB0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55D4 == 0) {
         D_BAB0[0] = 0xFFFFFFFF;
@@ -702,14 +697,11 @@ extern "C" cLunoValue func_002FBAB0(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FBCB8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00341AA0(void*, int, int, void*, void*);
 extern char D_004896A8_BCB8[] __asm__("D_004896A8");
 extern unsigned D_BCB8[] __asm__("D_004FB498");
 extern int D_004A55D8;
 extern const int D_00445F48[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FBCB8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55D8 == 0) {
         D_BCB8[0] = 0xFFFFFFFF;
@@ -771,14 +763,11 @@ extern "C" cLunoValue func_002FBCB8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FBEC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void func_00341388_BEC8(void*, int, int, void*, void*) __asm__("func_00341388");
 extern char D_004A3BF0_BEC8[] __asm__("D_004A3BF0");
 extern unsigned D_BEC8[] __asm__("D_004FB4C8");
 extern int D_004A55DC;
 extern const int D_00445F70[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FBEC8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55DC == 0) {
         D_BEC8[0] = 0xFFFFFFFF;
@@ -839,14 +828,11 @@ extern "C" cLunoValue func_002FBEC8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC0D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00356DB0(void*, int, void*, int, bool);
 extern char D_004A3BF8_C0D0[] __asm__("D_004A3BF8");
 extern unsigned D_C0D0[] __asm__("D_004FB4F0");
 extern int D_004A55E0;
 extern const int D_00445F90[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FC0D0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55E0 == 0) {
         D_C0D0[0] = 0xFFFFFFFF;
@@ -900,7 +886,6 @@ extern "C" cLunoValue func_002FC0D0(int n, sBindArg_1FBE38 *e) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC2C0);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_003506D8(void*, void*);
 extern "C" void* func_00350F60(void*, void*);
 extern char D_004896B8[];
@@ -948,12 +933,10 @@ extern "C" void func_002FC2C0(char* self, char* ev) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC420);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void func_002FC2C0_C420(void*, void*) __asm__("func_002FC2C0");
 extern unsigned D_C420[] __asm__("D_004FB500");
 extern int D_004A55E4;
 extern int D_004A3C00;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FC420(int n, sBindArg_1FBE38 *e) {
     if (D_004A55E4 == 0) {
         D_C420[0] = 0xFFFFFFFF;
@@ -1005,14 +988,11 @@ extern "C" cLunoValue func_002FC420(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC5D8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void cDeadFadeNode_cDeadFadeNode_C5D8(void*, int, void*, void*, int) __asm__("cDeadFadeNode_cDeadFadeNode");
 extern char D_004896D8_C5D8[] __asm__("D_004896D8");
 extern unsigned D_C5D8[] __asm__("D_004FB510");
 extern int D_004A55E8;
 extern const int D_00445FA0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FC5D8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55E8 == 0) {
         D_C5D8[0] = 0xFFFFFFFF;
@@ -1068,14 +1048,10 @@ extern "C" cLunoValue func_002FC5D8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC7D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void* func_00342C08_C7D0(void*, int, void*, void*, void*) __asm__("func_00342C08");
 extern char D_004896E8_C7D0[] __asm__("D_004896E8");
 extern unsigned D_C7D0[] __asm__("D_004FB528");
 extern int D_004A55EC;
 extern const int D_00445FB0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FC7D0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55EC == 0) {
         D_C7D0[0] = 0xFFFFFFFF;
@@ -1122,7 +1098,7 @@ extern "C" cLunoValue func_002FC7D0(int n, sBindArg_1FBE38 *e) {
     void *p = *(void**)(obj + 0xC);
     if (p && checkActiveNode(p, 0, buf))
         return D_004C9098;
-    func_00342C08_C7D0(cMemMan_alloc(0x34, D_004896E8_C7D0, 0x20000000, 0), 1, obj, buf, 0);
+    func_00342C08(cMemMan_alloc(0x34, D_004896E8_C7D0, 0x20000000, 0), 1, obj, buf, 0);
     return D_004C9098;
 }
 #endif
@@ -1131,14 +1107,11 @@ extern "C" cLunoValue func_002FC7D0(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC9C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_0034ADD8(void*, int, void*, void*);
 extern char D_004A3C08_C9C8[] __asm__("D_004A3C08");
 extern unsigned D_C9C8[] __asm__("D_004FB540");
 extern int D_004A55F0;
 extern const int D_00445FC0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FC9C8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55F0 == 0) {
         D_C9C8[0] = 0xFFFFFFFF;
@@ -1220,8 +1193,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FCC20);
 extern unsigned D_CC20[] __asm__("D_004FB5B0");
 extern int D_004A55F4;
 extern const int D_00446028[];
-extern "C" void func_003E6574(void*, void*, int);
-extern "C" int checkActiveNode(void*, int, void*);
 #define ASSERT_CC20(c) do { } while (0)
 
 // PORT: struct return written with the hidden return pointer explicit.
@@ -1277,14 +1248,11 @@ extern "C" cLunoValue* func_002FCC20(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_002FCDC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00346350(void*, int, void*, void*);
 extern char D_004896F8_CDC8[] __asm__("D_004896F8");
 extern unsigned D_CDC8[] __asm__("D_004FB5C0");
 extern int D_004A55F8;
 extern const int D_00446038[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FCDC8(int n, sBindArg_1FBE38 *e) {
     if (D_004A55F8 == 0) {
         *(float*)&D_CDC8[0] = 500.0f;
@@ -1345,14 +1313,10 @@ extern "C" cLunoValue func_002FCDC8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FCFF0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void func_00351B40_CFF0(void*, int, void*, void*, void*, void*) __asm__("func_00351B40");
 extern char D_00489708_CFF0[] __asm__("D_00489708");
 extern unsigned D_CFF0[] __asm__("D_004FB5E8");
 extern int D_004A55FC;
 extern const int D_00446060[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FCFF0(int n, sBindArg_1FBE38 *e) {
     if (D_004A55FC == 0) {
         D_CFF0[0] = 0xFFFFFFFF;
@@ -1409,7 +1373,7 @@ extern "C" cLunoValue func_002FCFF0(int n, sBindArg_1FBE38 *e) {
     void *p = *(void**)(obj + 0xC);
     if (p && checkActiveNode(p, 11, buf))
         return D_004C9098;
-    func_00351B40_CFF0(cMemMan_alloc(0x6C0, D_00489708_CFF0, 0x20000000, 0), 1, obj, buf, D_004A3DD8->f294, 0);
+    func_00351B40(cMemMan_alloc(0x6C0, D_00489708_CFF0, 0x20000000, 0), 1, obj, buf, D_004A3DD8->f294, 0);
     return D_004C9098;
 }
 #endif
@@ -1422,7 +1386,6 @@ extern "C" void func_00355DB8_D250(void*, void*, int, void*) __asm__("func_00355
 extern unsigned D_D250[] __asm__("D_004FB628");
 extern int D_004A5600;
 extern const int D_004460A0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FD250(int n, sBindArg_1FBE38 *e) {
     if (D_004A5600 == 0) {
         D_D250[0] = 0xFFFFFFFF;
@@ -1472,16 +1435,10 @@ extern "C" cLunoValue func_002FD250(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FD420);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void* func_003578A8_D420(void*, int, void*, void*, void*) __asm__("func_003578A8");
-void operator_delete(int*);
 extern char D_00489718_D420[] __asm__("D_00489718");
-extern char D_00489730_D420[] __asm__("D_00489730");
 extern unsigned D_D420[] __asm__("D_004FB640");
 extern int D_004A5604;
 extern const int D_004460B0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FD420(int n, sBindArg_1FBE38 *e) {
     if (D_004A5604 == 0) {
         ((int*)D_D420)[0] = 1;
@@ -1555,7 +1512,7 @@ extern "C" cLunoValue func_002FD420(int n, sBindArg_1FBE38 *e) {
     }
     if (*(float*)&buf[7] > *(float*)&buf[5])
         *(float*)&buf[7] = *(float*)&buf[5];
-    func_003578A8_D420(cMemMan_alloc(0x2C, D_00489730_D420, 0x20000000, 0), 1, obj, buf, 0);
+    func_003578A8(cMemMan_alloc(0x2C, D_00489730, 0x20000000, 0), 1, obj, buf, 0);
     return D_004C9098;
 }
 #endif
@@ -1609,7 +1566,6 @@ static inline void vAddTo_D758(t4Vector &a, const t4Vector &b) {
 extern unsigned D_D758[] __asm__("D_004FB720");
 extern int D_004A5608;
 extern const int D_00446190[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FD758(int n, sBindArg_1FBE38 *e) {
     if (D_004A5608 == 0) {
         D_D758[0] = 0xFFFFFFFF;
@@ -1665,11 +1621,9 @@ extern "C" cLunoValue func_002FD758(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FD9F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00355978(void*, int, int, sVec4_1FBE38*);
 extern unsigned D_D9F8[] __asm__("D_004FB738");
 extern int D_004A560C;
 extern const int D_004461A8[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FD9F8(int n, sBindArg_1FBE38 *e) {
     if (D_004A560C == 0) {
         D_D9F8[0] = 0xFFFFFFFF;
@@ -1739,11 +1693,9 @@ extern "C" cLunoValue func_002FD9F8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FDC60);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00355978(void*, int, int, sVec4_1FBE38*);
 extern unsigned D_DC60[] __asm__("D_004FB758");
 extern int D_004A5610;
 extern const int D_004461C0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FDC60(int n, sBindArg_1FBE38 *e) {
     if (D_004A5610 == 0) {
         D_DC60[0] = 0xFFFFFFFF;
@@ -1817,7 +1769,6 @@ extern "C" void func_00355AD0_DED0(void*, void*) __asm__("func_00355AD0");
 extern unsigned D_DED0[] __asm__("D_004FB778");
 extern int D_004A5614;
 extern const int D_004461D8[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FDED0(int n, sBindArg_1FBE38 *e) {
     if (D_004A5614 == 0) {
         D_DED0[0] = 0xFFFFFFFF;
@@ -1883,7 +1834,6 @@ extern "C" void cMoveNode_addSpline_E0C0(void*, void*) __asm__("cMoveNode_addSpl
 extern unsigned D_E0C0[] __asm__("D_004FB7A8");
 extern int D_004A5618;
 extern const int D_00446208[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FE0C0(int n, sBindArg_1FBE38 *e) {
     if (D_004A5618 == 0) {
         D_E0C0[0] = 0xFFFFFFFF;
@@ -1949,7 +1899,6 @@ extern "C" void func_00355B90_E2C0(void*, void*) __asm__("func_00355B90");
 extern unsigned D_E2C0[] __asm__("D_004FB7E0");
 extern int D_004A561C;
 extern const int D_00446238[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FE2C0(int n, sBindArg_1FBE38 *e) {
     if (D_004A561C == 0) {
         D_E2C0[0] = 0xFFFFFFFF;
@@ -2007,7 +1956,6 @@ extern "C" void func_00355BF0_E4A8(void*, void*) __asm__("func_00355BF0");
 extern unsigned D_E4A8[] __asm__("D_004FB818");
 extern int D_004A5620;
 extern const int D_00446268[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FE4A8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5620 == 0) {
         D_E4A8[0] = 0xFFFFFFFF;
@@ -2061,7 +2009,6 @@ extern "C" void func_00355C50_E668(void*, void*) __asm__("func_00355C50");
 extern unsigned D_E668[] __asm__("D_004FB830");
 extern int D_004A5624;
 extern const int D_00446280[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FE668(int n, sBindArg_1FBE38 *e) {
     if (D_004A5624 == 0) {
         D_E668[0] = 0xFFFFFFFF;
@@ -2113,12 +2060,7 @@ extern "C" cLunoValue func_002FE668(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", cViewer_addParticle);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern "C" void* func_003578A8_E840(void*, int, void*, void*, void*) __asm__("func_003578A8");
-void operator_delete(int*);
 extern char D_00489740_E840[] __asm__("D_00489740");
-extern char D_00489730_E840[] __asm__("D_00489730");
 extern "C" void cMoveNode_addParticle_E840(void*, void*) __asm__("cMoveNode_addParticle");
 static inline sRace *lvl_E840() { return D_004A28A8->game->race; }
 static inline int nearViewer_E840(const t4Vector &pos) {
@@ -2143,7 +2085,6 @@ struct Tag_E840 { char c; Tag_E840() {} Tag_E840(const Tag_E840 &o) : c(o.c) {} 
 extern unsigned D_E840[] __asm__("D_004FB858");
 extern int D_004A5628;
 extern const int D_004462A0[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue cViewer_addParticle(int n, sBindArg_1FBE38 *e) {
     if (D_004A5628 == 0) {
         ((int*)D_E840)[0] = 1;
@@ -2216,7 +2157,7 @@ extern "C" cLunoValue cViewer_addParticle(int n, sBindArg_1FBE38 *e) {
     } else {
         t4Vector pos = *(t4Vector*)(obj + 0x40);
         if (nearViewer_E840(pos)) {
-            func_003578A8_E840(cMemMan_alloc(0x2C, D_00489730_E840, 0x20000000, 0), 1, obj, buf, 0);
+            func_003578A8(cMemMan_alloc(0x2C, D_00489730, 0x20000000, 0), 1, obj, buf, 0);
             return D_004C9098;
         }
     }
@@ -2229,15 +2170,11 @@ extern "C" cLunoValue cViewer_addParticle(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FEE98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void cMoveNode_addDynamicParticle_EE98(void*, void*, int, sVec4_1FBE38*) __asm__("cMoveNode_addDynamicParticle");
-void operator_delete(int*);
 extern char D_00489750_EE98[] __asm__("D_00489750");
 extern unsigned D_EE98[] __asm__("D_004FB938");
 extern int D_004A562C;
 extern const int D_00446380[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FEE98(int n, sBindArg_1FBE38 *e) {
     if (D_004A562C == 0) {
         ((int*)D_EE98)[0] = 1;
@@ -2315,7 +2252,6 @@ extern "C" void func_00355E38_F1C8(void*, void*) __asm__("func_00355E38");
 extern unsigned D_F1C8[] __asm__("D_004FBA28");
 extern int D_004A5630;
 extern const int D_00446470[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FF1C8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5630 == 0) {
         D_F1C8[0] = 0xFFFFFFFF;
@@ -2368,14 +2304,11 @@ extern "C" cLunoValue func_002FF1C8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FF390);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00348D98(void*, void*, void*);
 extern char D_00489768_F390[] __asm__("D_00489768");
 extern unsigned D_F390[] __asm__("D_004FBA38");
 extern int D_004A5634;
 extern const int D_00446480[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FF390(int n, sBindArg_1FBE38 *e) {
     if (D_004A5634 == 0) {
         D_F390[0] = 0xFFFFFFFF;
@@ -2456,14 +2389,11 @@ extern "C" cLunoValue func_002FF390(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FF5E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int checkActiveNode(void*, int, void*);
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00349B48(void*, void*, void*);
 extern char D_00489778_F5E8[] __asm__("D_00489778");
 extern unsigned D_F5E8[] __asm__("D_004FBA90");
 extern int D_004A5638;
 extern const int D_004464D8[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FF5E8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5638 == 0) {
         D_F5E8[0] = 0xFFFFFFFF;
@@ -2545,8 +2475,6 @@ extern "C" cLunoValue func_002FF5E8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FF850);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_00446530_F850[] __asm__("D_00446530");
 extern "C" void func_0010F1C0(cRider_1FBE38*, int, float);
@@ -2589,7 +2517,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FF9A8);
 extern unsigned D_F9A8[] __asm__("D_004FBAF8");
 extern int D_004A5640;
 extern const int D_00446540[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FF9A8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5640 == 0) {
         D_F9A8[0] = 0xFFFFFFFF;
@@ -2628,10 +2555,8 @@ extern unsigned D_004A5648_FB50 __asm__("D_004A5648");
 extern sBindEnd_1FBE38 D_004A564C_FB50 __asm__("D_004A564C");
 extern int D_004A5650_FB50 __asm__("D_004A5650");
 extern int D_004A3C10_FB50[2] __asm__("D_004A3C10");
-extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00350E90(void*, void*);
 extern char D_004A3C18_FB50[] __asm__("D_004A3C18");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FFB50(int n, sBindArg_1FBE38 *e) {
     if (D_004A5650_FB50 == 0) {
         D_004A5648_FB50 = 0xFFFFFFFF;
@@ -2692,7 +2617,6 @@ extern unsigned D_FD58 __asm__("D_004A5658");
 extern sBindEnd_1FBE38 D_004A565C;
 extern int D_004A5660;
 extern int D_004A3C20;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FFD58(int n, sBindArg_1FBE38 *e) {
     if (D_004A5660 == 0) {
         D_FD58 = 0xFFFFFFFF;
@@ -2729,12 +2653,9 @@ extern "C" cLunoValue func_002FFD58(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FFF00);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void *func_0028B180(void);
-extern "C" void func_002974A0_FF00(void*, void*, int) __asm__("func_002974A0");
 extern unsigned D_FF00[] __asm__("D_004FBB08");
 extern int D_004A5664;
 extern int D_004A3C28;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_002FFF00(int n, sBindArg_1FBE38 *e) {
     if (D_004A5664 == 0) {
         D_FF00[0] = 0xFFFFFFFF;
@@ -2775,7 +2696,7 @@ extern "C" cLunoValue func_002FFF00(int n, sBindArg_1FBE38 *e) {
     }
     if (obj) {
         int b1 = buf[1];
-        func_002974A0_FF00(func_0028B180(), obj, b1);
+        func_002974A0(func_0028B180(), obj, b1);
     }
     return D_004C9098;
 }
@@ -2785,12 +2706,10 @@ extern "C" cLunoValue func_002FFF00(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003000A8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void *func_0028B180(void);
 extern "C" void func_00297950_00A8(void*, void*, int, int) __asm__("func_00297950");
 extern unsigned D_00A8[] __asm__("D_004FBB18");
 extern int D_004A5668;
 extern const int D_00446550[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_003000A8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5668 == 0) {
         D_00A8[0] = 0xFFFFFFFF;
@@ -2843,12 +2762,10 @@ extern "C" cLunoValue func_003000A8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300260);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void *func_0028B180(void);
 extern "C" void func_00297EB8_0260(void*, void*, int, int) __asm__("func_00297EB8");
 extern unsigned D_0260[] __asm__("D_004FBB28");
 extern int D_004A566C;
 extern const int D_00446560[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00300260(int n, sBindArg_1FBE38 *e) {
     if (D_004A566C == 0) {
         D_0260[0] = 0xFFFFFFFF;
@@ -2904,7 +2821,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300418);
 extern unsigned D_0418[] __asm__("D_004FBB38");
 extern int D_004A5670;
 extern int D_004A3C30;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00300418(int n, sBindArg_1FBE38 *e) {
     if (D_004A5670 == 0) {
         D_0418[0] = 0xFFFFFFFF;
@@ -2958,7 +2874,6 @@ extern unsigned D_05E8 __asm__("D_004A5678");
 extern sBindEnd_1FBE38 D_004A567C;
 extern int D_004A5680;
 extern int D_004A3C38;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_003005E8(int n, sBindArg_1FBE38 *e) {
     if (D_004A5680 == 0) {
         D_05E8 = 0xFFFFFFFF;
@@ -3006,7 +2921,6 @@ extern unsigned D_004A5688_0770 __asm__("D_004A5688");
 extern sBindEnd_1FBE38 D_004A568C_0770 __asm__("D_004A568C");
 extern int D_004A5690_0770 __asm__("D_004A5690");
 extern int D_004A3C40_0770[2] __asm__("D_004A3C40");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00300770(int n, sBindArg_1FBE38 *e) {
     if (D_004A5690_0770 == 0) {
         D_004A5688_0770 = 0xFFFFFFFF;
@@ -3066,7 +2980,6 @@ extern unsigned D_004A5698_0948 __asm__("D_004A5698");
 extern sBindEnd_1FBE38 D_004A569C_0948 __asm__("D_004A569C");
 extern int D_004A56A0_0948 __asm__("D_004A56A0");
 extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00300948(int n, sBindArg_1FBE38 *e) {
     if (D_004A56A0_0948 == 0) {
         D_004A5698_0948 = 0xFFFFFFFF;
@@ -3122,8 +3035,6 @@ extern "C" cLunoValue func_00300948(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300B20);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3C50_0B20[2] __asm__("D_004A3C50");
 extern "C" void func_00358B28(unsigned, int);
@@ -3173,7 +3084,6 @@ extern "C" int func_00278F68(char*, int, int, int);
 extern unsigned D_0C78[] __asm__("D_004FBB58");
 extern int D_004A56A8;
 extern int D_004A3C58;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00300C78(int n, sBindArg_1FBE38 *e) {
     if (D_004A56A8 == 0) {
         D_0C78[0] = 0xFFFFFFFF;
@@ -3216,7 +3126,6 @@ extern "C" cLunoValue func_00300C78(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300E28);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
 
 extern int D_004A3C60_0E28[2] __asm__("D_004A3C60");
 extern "C" void func_0030B928(cWScriptMan*, unsigned, int);
@@ -3257,7 +3166,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300F50);
 extern unsigned D_0F50[] __asm__("D_004FBB78");
 extern int D_56B0_0F50 __asm__("D_004A56B0");
 extern const int D_00446570_0F50[] __asm__("D_00446570");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_0030BAC8_0F50(void*, unsigned, unsigned*, int) __asm__("func_0030BAC8");
 extern "C" cLunoValue func_00300F50(int n, sBindArg_1FBE38 *e) {
     if (D_56B0_0F50 == 0) {
@@ -3329,8 +3237,6 @@ extern "C" cLunoValue func_00300F50(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00301120);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 extern int D_004A3C68_1120[2] __asm__("D_004A3C68");
 extern "C" void func_0030B9A0(cWScriptMan*, int, unsigned, unsigned);
 extern int D_004A56B4_1120 __asm__("D_004A56B4");
@@ -3381,8 +3287,6 @@ extern "C" cLunoValue* func_00301120(cLunoValue* ret, int n, sBindArg_1FBE38* e)
 INCLUDE_ASM("seg/seg_1FBE38", func_003012F0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3C70_12F0[2] __asm__("D_004A3C70");
 extern "C" int func_0030A868_12F0(cWScriptMan*, unsigned, int, int) __asm__("func_0030A868");
@@ -3475,7 +3379,6 @@ extern "C" cLunoValue func_00301440(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00301560);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
 
 extern int D_004A3C80_1560[2] __asm__("D_004A3C80");
 extern "C" int func_0030BA80(cWScriptMan*, unsigned);
@@ -3521,7 +3424,6 @@ extern unsigned D_1680 __asm__("D_004A56D0");
 extern sBindEnd_1FBE38 D_004A56D4;
 extern int D_004A56D8;
 extern int D_004A3C88;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue* func_00301680(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A56D8 == 0) {
         D_1680 = 0xFFFFFFFF;
@@ -3566,12 +3468,10 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301830);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-int *func_00226610(void*);
 extern unsigned D_1830 __asm__("D_004A56E0");
 extern sBindEnd_1FBE38 D_004A56E4;
 extern int D_004A56E8;
 extern int D_004A3C90;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue* func_00301830(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A56E8 == 0) {
         D_1830 = 0xFFFFFFFF;
@@ -3627,11 +3527,9 @@ extern "C" cLunoValue* func_00301830(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_003019C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int *func_00226610(void*);
 extern unsigned D_19C8[] __asm__("D_004FBC00");
 extern int D_004A56EC;
 extern int D_004A3C98;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue* func_003019C8(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A56EC == 0) {
         D_19C8[0] = 0xFFFFFFFF;
@@ -3691,9 +3589,7 @@ extern unsigned D_004A56F0_1B88 __asm__("D_004A56F0");
 extern sBindEnd_1FBE38 D_004A56F4_1B88 __asm__("D_004A56F4");
 extern int D_004A56F8_1B88 __asm__("D_004A56F8");
 extern int D_004A3CA0_1B88[2] __asm__("D_004A3CA0");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_0030A6D8(cWScriptMan*, int);
-int* func_00226610(void*);
 
 
 extern "C" cLunoValue* func_00301B88(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
@@ -3730,9 +3626,7 @@ extern unsigned D_004A5700_1C80 __asm__("D_004A5700");
 extern sBindEnd_1FBE38 D_004A5704_1C80 __asm__("D_004A5704");
 extern int D_004A5708_1C80 __asm__("D_004A5708");
 extern int D_004A3CA8_1C80[2] __asm__("D_004A3CA8");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_0030A700(cWScriptMan*, int);
-int* func_00226610(void*);
 
 
 extern "C" cLunoValue* func_00301C80(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
@@ -3769,7 +3663,6 @@ extern unsigned D_004A5710_1D78 __asm__("D_004A5710");
 extern sBindEnd_1FBE38 D_004A5714_1D78 __asm__("D_004A5714");
 extern int D_004A5718_1D78 __asm__("D_004A5718");
 extern int D_004A3CB0_1D78[2] __asm__("D_004A3CB0");
-extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610_1D78(void*) __asm__("func_00226610__FPv");
 extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A5718_1D78 == 0) {
@@ -3835,7 +3728,6 @@ extern int D_004A5720_1F48 __asm__("D_004A5720");
 extern sBindEnd_1FBE38 D_004A5724_1F48 __asm__("D_004A5724");
 extern int D_004A5728_1F48 __asm__("D_004A5728");
 extern int D_004A3CB8_1F48[2] __asm__("D_004A3CB8");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00303D88_1F48(int) __asm__("func_00303D88");
 
 
@@ -3873,7 +3765,6 @@ extern "C" void func_0022D6C8_2048(char*, int) __asm__("func_0022D6C8");
 extern unsigned D_2048[] __asm__("D_004FBC10");
 extern int D_004A572C;
 extern int D_004A3CC0;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00302048(int n, sBindArg_1FBE38 *e) {
     if (D_004A572C == 0) {
         ((int*)D_2048)[0] = -1;
@@ -3924,14 +3815,11 @@ extern "C" cLunoValue func_00302048(int n, sBindArg_1FBE38 *e) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00302210);
 #ifdef SKIP_ASM
-extern "C" void func_003E6574(void*, void*, int);
 struct Defaults_2210 { int v[3]; sBindEnd_1FBE38 flag; };
 extern Defaults_2210 D_004FBC20_2210 __asm__("D_004FBC20");
 extern int D_004A5730_2210 __asm__("D_004A5730");
 extern const int D_004465C8_2210[] __asm__("D_004465C8");
 extern char* const D_00445E40_2210[] __asm__("D_00445E40");
-extern "C" void* cBE_getBE_2210() __asm__("cBE_getBE");
-extern "C" void* cBE_getInterface_2210(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00144CE0(void* iface, int id);
 extern "C" void func_0022CEA8_2210(void* self, int hash, char* name) __asm__("func_0022CEA8");
 extern "C" void func_0022D088_2210(void* self, int hash, char* name) __asm__("func_0022D088");
@@ -3977,7 +3865,7 @@ extern "C" cLunoValue func_00302210(int n, sBindArg_1FBE38* e)
         int action = vp[1];
         int id = vp[0];
         char* name = 0;
-        void* iface = cBE_getInterface_2210(cBE_getBE_2210(), 0);
+        void* iface = cBE_getInterface(cBE_getBE(), 0);
         char* ui = D_004A28A8->game->f78;
         if ((unsigned int)sel < 8) {
             name = D_00445E40_2210[sel];
@@ -4016,7 +3904,6 @@ struct T12_2490 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2490 D_4FBC30_2490 __asm__("D_004FBC30");
 extern int D_5734_2490 __asm__("D_004A5734");
 extern int D_3CC8_2490 __asm__("D_004A3CC8");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00353228_2490(char*) __asm__("func_00353228");
 extern "C" void func_00353278_2490(char*) __asm__("func_00353278");
 extern "C" cLunoValue func_00302490(int n, sBindArg_1FBE38 *e) {
@@ -4158,8 +4045,6 @@ extern "C" cLunoValue* func_00302870(cLunoValue* ret, int n, sBindArg_1FBE38* e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00302968);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3CE8_2968[2] __asm__("D_004A3CE8");
 extern int D_004A5770_2968 __asm__("D_004A5770");
@@ -4203,11 +4088,8 @@ extern "C" cLunoValue func_00302968(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00302AC0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3CF0_2AC0[2] __asm__("D_004A3CF0");
-extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A5774_2AC0 __asm__("D_004A5774");
 struct T12_2AC0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2AC0 D_004FBC40_2AC0 __asm__("D_004FBC40");
@@ -4240,8 +4122,6 @@ extern "C" cLunoValue func_00302AC0(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00302BD8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3CF8_2BD8[2] __asm__("D_004A3CF8");
 extern "C" int func_0030A868(cWScriptMan*, int, int, int);
@@ -4276,11 +4156,8 @@ extern "C" cLunoValue func_00302BD8(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00302CE8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D00_2CE8[2] __asm__("D_004A3D00");
-extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A5790_2CE8 __asm__("D_004A5790");
 extern unsigned D_004A5788_2CE8 __asm__("D_004A5788");
 extern sBindEnd_1FBE38 D_004A578C_2CE8 __asm__("D_004A578C");
@@ -4312,11 +4189,8 @@ extern "C" cLunoValue func_00302CE8(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00302DF0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D08_2DF0[2] __asm__("D_004A3D08");
-extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A57A0_2DF0 __asm__("D_004A57A0");
 extern unsigned D_004A5798_2DF0 __asm__("D_004A5798");
 extern sBindEnd_1FBE38 D_004A579C_2DF0 __asm__("D_004A579C");
@@ -4401,11 +4275,9 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303130);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-int *func_00226610(void*);
 extern unsigned D_3130[] __asm__("D_004FBC50");
 extern int D_004A57B4;
 extern int D_004A3D18;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A57B4 == 0) {
         D_3130[0] = 0xFFFFFFFF;
@@ -4442,7 +4314,6 @@ extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003032C0);
 #ifdef SKIP_ASM
-void* func_00226618(void*);
 extern "C" cLunoValue* func_003032C0(cLunoValue* ret) {
     cBeing *being = D_004A28A8->game->race->riders[D_004A3DD8->being];
     cRider_1FBE38 *rider = (cRider_1FBE38*)being;
@@ -4457,7 +4328,6 @@ extern "C" cLunoValue* func_003032C0(cLunoValue* ret) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00303380);
 #ifdef SKIP_ASM
-void* func_00226618(void*);
 extern "C" cLunoValue* func_00303380(cLunoValue* ret) {
     cBeing *being = D_004A28A8->game->race->riders[D_004A3DD8->being];
     cRider_1FBE38 *rider = (cRider_1FBE38*)being;
@@ -4528,12 +4398,9 @@ extern "C" cLunoValue* func_003034F8(cLunoValue* ret) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00303598);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D20_3598[2] __asm__("D_004A3D20");
 float AIrandf(float, float);
-void* func_00226618(void*);
 extern int D_004A57B8_3598 __asm__("D_004A57B8");
 struct T12_3598 { float a; float b; sBindEnd_1FBE38 f; };
 extern T12_3598 D_004FBC60_3598 __asm__("D_004FBC60");
@@ -4572,9 +4439,7 @@ extern int D_004A57C0_36B0 __asm__("D_004A57C0");
 extern sBindEnd_1FBE38 D_004A57C4_36B0 __asm__("D_004A57C4");
 extern int D_004A57C8_36B0 __asm__("D_004A57C8");
 extern int D_004A3D28_36B0[2] __asm__("D_004A3D28");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" int func_0030AF08(cWScriptMan*, int, int);
-int* func_00226610(void*);
 
 
 extern "C" cLunoValue* func_003036B0(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
@@ -4664,7 +4529,6 @@ extern "C" void func_00343F38_39F0(int, int) __asm__("func_00343F38");
 extern unsigned D_39F0[] __asm__("D_004FBC70");
 extern int D_004A57DC;
 extern int D_004A3D38;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_003039F0(int n, sBindArg_1FBE38 *e) {
     if (D_004A57DC == 0) {
         D_39F0[0] = 0xFFFFFFFF;
@@ -4719,7 +4583,6 @@ struct T20_3BA0 { unsigned a; int b; int c; int d; sBindEnd_1FBE38 f; };
 extern T20_3BA0 D_4FBC80_3BA0 __asm__("D_004FBC80");
 extern int D_57E0_3BA0 __asm__("D_004A57E0");
 extern const int D_004465D8_3BA0[] __asm__("D_004465D8");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00229820_3BA0(int, unsigned, int, int) __asm__("func_00229820");
 extern "C" void func_00229788(int, unsigned);
 extern "C" void func_002297D8(int, unsigned);
@@ -4782,14 +4645,11 @@ extern "C" void func_00303D88(void) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00303D90);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" void* cBE_getBE_3D90(void) __asm__("cBE_getBE");
-void* cBE_getInterface_Fv_3D90(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern const int D_004465E8_3D90[] __asm__("D_004465E8");
 extern signed char D_00535C11_3D90[] __asm__("D_00535C11");
 extern "C" int func_00303D90(unsigned i) {
     if (i < 4) {
-        cBE_getInterface_Fv_3D90(cBE_getBE_3D90(), 0);
+        cBE_getInterface(cBE_getBE(), 0);
         return D_004465E8_3D90[i] == D_00535C11_3D90[0];
     }
     return 0;
@@ -4799,14 +4659,11 @@ extern "C" int func_00303D90(unsigned i) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00303DF8);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" void* cBE_getBE_3DF8(void) __asm__("cBE_getBE");
-void* cBE_getInterface_Fv_3DF8(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern const int D_004465F8_3DF8[] __asm__("D_004465F8");
 extern signed char D_00535C10_3DF8[] __asm__("D_00535C10");
 extern "C" int func_00303DF8(unsigned i) {
     if (i < 8) {
-        cBE_getInterface_Fv_3DF8(cBE_getBE_3DF8(), 0);
+        cBE_getInterface(cBE_getBE(), 0);
         return D_004465F8_3DF8[i] == D_00535C10_3DF8[0];
     }
     return 0;
@@ -4816,14 +4673,11 @@ extern "C" int func_00303DF8(unsigned i) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00303E60);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-extern "C" void* cBE_getBE_3E60(void) __asm__("cBE_getBE");
-void* cBE_getInterface_Fv_3E60(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern const int D_00446618_3E60[] __asm__("D_00446618");
 extern signed char D_00535C12_3E60[] __asm__("D_00535C12");
 extern "C" int func_00303E60(unsigned i) {
     if (i < 0xF) {
-        cBE_getInterface_Fv_3E60(cBE_getBE_3E60(), 0);
+        cBE_getInterface(cBE_getBE(), 0);
         return D_00446618_3E60[i] == D_00535C12_3E60[0];
     }
     return 0;
@@ -4834,7 +4688,6 @@ extern "C" int func_00303E60(unsigned i) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00303EC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int* func_00226610(void*);
 extern "C" cLunoValue* func_00303EC8(cLunoValue* ret) {
     if (isIdle_1FBE38(D_004A3DD8->being)) {
         ret->type = 1;
@@ -4866,8 +4719,6 @@ extern "C" cLunoValue func_00303F80(void) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00303FF0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D40_3FF0[2] __asm__("D_004A3D40");
 void func_0030B4C0(void*, int, int);
@@ -4903,8 +4754,6 @@ extern "C" cLunoValue func_00303FF0(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00304100);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D48_4100[2] __asm__("D_004A3D48");
 void func_0030B4D8(void*, int, int);
@@ -4940,8 +4789,6 @@ extern "C" cLunoValue func_00304100(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00304210);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D50_4210[2] __asm__("D_004A3D50");
 void func_0030B4F0(void*, int, int);
@@ -5034,8 +4881,6 @@ extern "C" cLunoValue func_00304320(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003044A8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D60_44A8[2] __asm__("D_004A3D60");
 extern "C" void func_00238550(int, int, int);
@@ -5081,7 +4926,6 @@ struct Rec_45B8 {
 extern Rec_45B8 D_4FBCC8_45B8 __asm__("D_004FBCC8");
 extern int D_580C_45B8 __asm__("D_004A580C");
 extern const int D_00446650_45B8[] __asm__("D_00446650");
-extern "C" void func_003E6574(void*, void*, int);
 struct BF_45B8 {
     unsigned long f0 : 3; unsigned long f1 : 4; unsigned long f2 : 3; unsigned long f3 : 2;
     unsigned long f4 : 4; unsigned long f5 : 3; unsigned long f6 : 3; unsigned long f7 : 6;
@@ -5156,7 +5000,6 @@ void func_00355878(void*, void*);
 extern unsigned D_4980[] __asm__("D_004FBD10");
 extern int D_004A5810;
 extern int D_004A3D68;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00304980(int n, sBindArg_1FBE38 *e) {
     if (D_004A5810 == 0) {
         D_4980[0] = 0xFFFFFFFF;
@@ -5203,8 +5046,6 @@ extern "C" cLunoValue func_00304980(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00304B38);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D70_4B38[2] __asm__("D_004A3D70");
 extern "C" void func_002709D8(void*, int, int);
@@ -5239,8 +5080,6 @@ extern "C" cLunoValue func_00304B38(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00304C50);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-void* func_00226618(void*);
-extern "C" void func_003E6574(void*, void*, int);
 extern unsigned D_5828_4C50 __asm__("D_004A5828");
 extern sBindEnd_1FBE38 D_582C_4C50 __asm__("D_004A582C");
 extern int D_5830_4C50 __asm__("D_004A5830");
@@ -5310,7 +5149,6 @@ extern "C" void func_00355888(void*, void*);
 extern unsigned D_4E38[] __asm__("D_004FBD20");
 extern int D_004A5834;
 extern int D_004A3D80;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00304E38(int n, sBindArg_1FBE38 *e) {
     if (D_004A5834 == 0) {
         D_4E38[0] = 0xFFFFFFFF;
@@ -5359,7 +5197,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304FF0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_004A5838_4FF0 __asm__("D_004A5838");
 extern int D_004A3D88_4FF0[2] __asm__("D_004A3D88");
-extern "C" void func_003E6574(void*, void*, int);
 
 struct T12_4FF0 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4FF0 D_004FBD30_4FF0 __asm__("D_004FBD30");
@@ -5482,7 +5319,6 @@ struct Rec_5478 { unsigned id; float a; float b; sBindEnd_1FBE38 f; };
 extern Rec_5478 D_4FBD58_5478 __asm__("D_004FBD58");
 extern int D_5840_5478 __asm__("D_004A5840");
 extern const int D_004466A0_5478[] __asm__("D_004466A0");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_003559F8_5478(cInstanceNode_1FBE38*, void*, float, float) __asm__("func_003559F8");
 extern "C" cLunoValue func_00305478(int n, sBindArg_1FBE38 *e) {
     if (D_5840_5478 == 0) {
@@ -5539,7 +5375,6 @@ extern unsigned D_5660 __asm__("D_004A5848");
 extern sBindEnd_1FBE38 D_004A584C;
 extern int D_004A5850;
 extern int D_004A3D90;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00305660(int n, sBindArg_1FBE38 *e) {
     if (D_004A5850 == 0) {
         D_5660 = 0xFFFFFFFF;
@@ -5579,7 +5414,6 @@ struct Rec_57C0 { unsigned id; int a; int b; float c; float d; float e; float g;
 extern Rec_57C0 D_4FBD68_57C0 __asm__("D_004FBD68");
 extern int D_5854_57C0 __asm__("D_004A5854");
 extern const int D_004466B0_57C0[] __asm__("D_004466B0");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void cMoveNode_addHalo_57C0(void*, void*) __asm__("cMoveNode_addHalo");
 extern "C" cLunoValue func_003057C0(int n, sBindArg_1FBE38 *e) {
     if (D_5854_57C0 == 0) {
@@ -5697,8 +5531,6 @@ extern "C" cLunoValue func_003059A0(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00305C88);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3D98_5C88[2] __asm__("D_004A3D98");
 extern "C" int cAvalanche_triggerAvalanche(int);
@@ -5741,7 +5573,6 @@ extern unsigned D_5D90 __asm__("D_004A5870");
 extern sBindEnd_1FBE38 D_004A5874;
 extern int D_004A5878;
 extern int D_004A3DA0;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00305D90(int n, sBindArg_1FBE38 *e) {
     if (D_004A5878 == 0) {
         D_5D90 = 0xFFFFFFFF;
@@ -5804,7 +5635,6 @@ struct Rec_5F40 {
 extern Rec_5F40 D_4FBE58_5F40 __asm__("D_004FBE58");
 extern int D_587C_5F40 __asm__("D_004A587C");
 extern const int D_004467A0_5F40[] __asm__("D_004467A0");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_002D9538_5F40(char*, Rec_5F40*) __asm__("func_002D9538");
 extern "C" cLunoValue func_00305F40(int n, sBindArg_1FBE38 *e) {
     if (D_587C_5F40 == 0) {
@@ -5919,13 +5749,10 @@ extern "C" cLunoValue* func_003061B0(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00306300);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
-int* func_00226610(void*);
 
 extern int D_004A3DB0_6300[2] __asm__("D_004A3DB0");
 extern "C" void func_001E3510(int, int);
 extern int D_00534B30_6300[] __asm__("D_00534B30");
-extern "C" void* cBE_getInterface_6300(void*, int) __asm__("cBE_getInterface__Fv");
 extern int D_004A588C_6300 __asm__("D_004A588C");
 struct T12_6300 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_6300 D_004FBF38_6300 __asm__("D_004FBF38");
@@ -5951,7 +5778,7 @@ extern "C" cLunoValue func_00306300(int n, sBindArg_1FBE38* e) {
     }
     int x = vp[0];
     int y = vp[1];
-    cBE_getInterface_6300(D_004A28A8->f78, 7);
+    cBE_getInterface(D_004A28A8->f78, 7);
     if (D_00534B30_6300[0] == 0)
         func_001E3510(x, y);
     return D_004C9098;
@@ -5966,7 +5793,6 @@ extern "C" void func_00101728_6438(void*, void*, float, float) __asm__("func_001
 extern unsigned D_6438[] __asm__("D_004FBF48");
 extern int D_004A5890;
 extern const int D_00446880[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00306438(int n, sBindArg_1FBE38 *e) {
     if (D_004A5890 == 0) {
         D_6438[0] = 0xFFFFFFFF;
@@ -6022,7 +5848,6 @@ extern unsigned D_65E8 __asm__("D_004A5898");
 extern sBindEnd_1FBE38 D_004A589C;
 extern int D_004A58A0;
 extern int D_004A3DB8;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_003065E8(int n, sBindArg_1FBE38 *e) {
     if (D_004A58A0 == 0) {
         D_65E8 = 0xFFFFFFFF;
@@ -6061,7 +5886,6 @@ extern "C" void func_00101900_6770(void*, void*, int) __asm__("func_00101900");
 extern unsigned D_6770[] __asm__("D_004FBF58");
 extern int D_004A58A4;
 extern int D_004A3DC0;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00306770(int n, sBindArg_1FBE38 *e) {
     if (D_004A58A4 == 0) {
         D_6770[0] = 0xFFFFFFFF;
@@ -6115,7 +5939,6 @@ extern unsigned D_6908 __asm__("D_004A58A8");
 extern sBindEnd_1FBE38 D_004A58AC;
 extern int D_004A58B0;
 extern int D_004A3DC8;
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00306908(int n, sBindArg_1FBE38 *e) {
     if (D_004A58B0 == 0) {
         D_6908 = 0xFFFFFFFF;
@@ -6170,7 +5993,6 @@ struct Rec_6A90 {
 extern Rec_6A90 D_4FBF68_6A90 __asm__("D_004FBF68");
 extern int D_58B4_6A90 __asm__("D_004A58B4");
 extern const int D_00446890_6A90[] __asm__("D_00446890");
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_00357A78_6A90(void*, int, Rec_6A90*, int) __asm__("func_00357A78");
 extern "C" cLunoValue func_00306A90(int n, sBindArg_1FBE38 *e) {
     if (D_58B4_6A90 == 0) {
@@ -6229,7 +6051,6 @@ void func_00357B10(void*, int, int);
 extern unsigned D_6CB0[] __asm__("D_004FC050");
 extern int D_004A58B8;
 extern const int D_00446970[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00306CB0(int n, sBindArg_1FBE38 *e) {
     if (D_004A58B8 == 0) {
         ((int*)D_6CB0)[0] = 0;
@@ -6282,12 +6103,9 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00306E68);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_0030BFC0_6E68(cWScriptMan*, int, int, int) __asm__("func_0030BFC0");
 extern "C" void *func_0028B180();
-extern "C" void func_002974A0_6E68(void*, void*, int) __asm__("func_002974A0");
-int *func_00226610(void*);
 extern unsigned D_6E68[] __asm__("D_004FC060");
 extern int D_004A58BC;
 extern const int D_00446980[];
-extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A58BC == 0) {
         D_6E68[0] = 0xFFFFFFFF;
@@ -6327,7 +6145,7 @@ extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
             obj = t;
         }
         if (obj)
-            func_002974A0_6E68(func_0028B180(), obj, 0x5C);
+            func_002974A0(func_0028B180(), obj, 0x5C);
     }
     ret->type = 1;
     *func_00226610(ret) = r;
@@ -6339,7 +6157,6 @@ extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00307020);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_003E6574(void*, void*, int);
 
 extern int D_004A3DD0_7020[2] __asm__("D_004A3DD0");
 extern "C" int func_001E3570(int, int);
@@ -6375,12 +6192,11 @@ extern "C" cLunoValue* func_00307020(cLunoValue* ret, int n, sBindArg_1FBE38* e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00307128);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_00489A30_7128[] __asm__("D_00489A30");
 extern "C" void* cWScriptProcess_cWScriptProcess(void* self, void* man, int a1, int a2);
 extern "C" int func_00309B70(void*, int);
 extern "C" void* func_00307128(void* self, void* man, int a1, char* a2, int a3) {
     cWScriptProcess_cWScriptProcess(self, man, a1, (int)a2);
-    *(void**)((char*)self + 0x5C) = D_00489A30_7128;
+    *(void**)((char*)self + 0x5C) = D_00489A30;
     *(int*)((char*)self + 0x60) = *(int*)(a2 + 0x50);
     *(int*)((char*)self + 0x64) = a3;
     for (int i = 0; i < 4; i++)
@@ -6393,10 +6209,9 @@ extern "C" void* func_00307128(void* self, void* man, int a1, char* a2, int a3) 
 INCLUDE_ASM("seg/seg_1FBE38", func_003071C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_00489A30_71C8[] __asm__("D_00489A30");
 extern "C" void func_00307738(void*, int);
 extern "C" void func_003071C8(void* self, int flags) {
-    *(void**)((char*)self + 0x5C) = D_00489A30_71C8;
+    *(void**)((char*)self + 0x5C) = D_00489A30;
     func_00307738(self, flags);
 }
 #endif
@@ -6419,7 +6234,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00307240);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct P_7240 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); };
 int func_0030B898_7240(void*, void*) __asm__("func_0030B898__FPvT0");
-extern "C" void *func_0028B180(void);
 extern "C" void func_0029D8E0(void*);
 extern "C" void func_00307240(P_7240* self) {
     if (func_0030B898_7240(*(void**)((char*)self + 0x10), self)) {
@@ -6444,9 +6258,6 @@ extern "C" void func_003072B0(P_72B0* self) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00307308);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00153D78(void* missions, int id);
 extern "C" void func_00154160(void* missions, int id, int done);
 extern "C" int func_00153FA0(void* missions, int id);
@@ -6455,7 +6266,6 @@ extern "C" int func_00144C98(void* iface);
 extern "C" void func_0010F2D8(cRider_1FBE38* rider, int player, int money);
 extern "C" int func_00153FD8(void* missions, int id);
 extern "C" void func_001541D0(void* missions, int id, int active);
-extern "C" void func_0030AC98(int, void *, int);
 extern "C" int func_00153E28(void* missions, int id);
 extern "C" void func_00154010(void* missions, int id, int a);
 extern "C" void func_00154080(void* missions, int id, int a);
@@ -6468,13 +6278,13 @@ extern "C" void func_0026F7B8(void* replay);
 extern "C" void func_00307308(char* self)
 {
     int money = 0;
-    void* missions = cBE_getInterface_Fv(cBE_getBE(), 0xA);
+    void* missions = cBE_getInterface(cBE_getBE(), 0xA);
     if (func_00153D78(missions, *(int*)(self + 0x20)) == 0) {
         func_00154160(missions, *(int*)(self + 0x20), 1);
         int reward = func_00153FA0(missions, *(int*)(self + 0x20));
-        money = func_001511B0(cBE_getInterface_Fv(cBE_getBE(), 0xB), reward);
+        money = func_001511B0(cBE_getInterface(cBE_getBE(), 0xB), reward);
     }
-    int pl = func_00144C98(cBE_getInterface_Fv(cBE_getBE(), 0));
+    int pl = func_00144C98(cBE_getInterface(cBE_getBE(), 0));
     sRace* race = D_004A28A8->game->race;
     func_0010F2D8(race->riders[**(int**)(self + 0x10)], pl, money);
     unsigned int next = func_00153FD8(missions, *(int*)(self + 0x20));
@@ -6506,7 +6316,6 @@ extern "C" int cBE_getInterface__Fv(void* be, int kind);
 extern "C" int func_00153E80_74C0(int, int) __asm__("func_00153E80");
 extern "C" void func_001540F0_74C0(int, int, int) __asm__("func_001540F0");
 extern "C" void func_00307D78(void*);
-extern "C" void func_0030AC98(int, void *, int);
 struct P_74C0 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); };
 extern "C" void func_003074C0(P_74C0* self) {
     int iface = cBE_getInterface__Fv(cBE_getBE(), 10);
@@ -6525,7 +6334,6 @@ extern "C" void func_003074C0(P_74C0* self) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00307568);
 #ifdef SKIP_ASM
-extern "C" void func_0030AC98(int, void *, int);
 
 extern "C" void func_00307568(void *arg0) {
     int temp_6;
