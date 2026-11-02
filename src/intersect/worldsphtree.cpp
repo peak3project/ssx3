@@ -113,6 +113,17 @@ struct sWsFloat {
     float v;
 };
 
+// Animated float parameter (speed, range, value, last value).
+struct sWsAnimFloat {
+    char pad_0x00[0x10];
+    float speed;    // 0x10
+    float min;      // 0x14
+    float max;      // 0x18
+    float value;    // 0x1C
+    char pad_0x20[0x8];
+    float last;     // 0x28
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4569,11 +4580,11 @@ extern "C" void func_00341CF0(void* self, int flags)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341D48);
 #ifdef SKIP_ASM
-struct sWrapFloat_1E48;
-struct sBounceFloat_1EC0;
+struct sWsAnimFloat;
+struct sWsAnimFloat;
 struct sClampFloat_1F38;
-extern "C" void func_00341E48(sWrapFloat_1E48* s);
-extern "C" void func_00341EC0(sBounceFloat_1EC0* s);
+extern "C" void func_00341E48(sWsAnimFloat* s);
+extern "C" void func_00341EC0(sWsAnimFloat* s);
 extern "C" void func_00341F38(sClampFloat_1F38* s);
 extern "C" int func_0034EBA0(void* p);
 
@@ -4592,10 +4603,10 @@ extern "C" int func_00341D48(void* self)
             *(float*)((char*)self + 0x24) = *(float*)((char*)self + 0x1C);
             switch (*(short*)self) {
             case 2:
-                func_00341EC0((sBounceFloat_1EC0*)self);
+                func_00341EC0((sWsAnimFloat*)self);
                 break;
             case 1:
-                func_00341E48((sWrapFloat_1E48*)self);
+                func_00341E48((sWsAnimFloat*)self);
                 break;
             default:
                 func_00341F38((sClampFloat_1F38*)self);
@@ -4621,17 +4632,8 @@ extern "C" int func_00341D48(void* self)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341E48);
 #ifdef SKIP_ASM
-struct sWrapFloat_1E48 {
-    char pad_0x00[0x10];
-    float speed;    // 0x10
-    float min;      // 0x14
-    float max;      // 0x18
-    float value;    // 0x1C
-    char pad_0x20[0x8];
-    float last;     // 0x28
-};
 
-extern "C" void func_00341E48(sWrapFloat_1E48* s)
+extern "C" void func_00341E48(sWsAnimFloat* s)
 {
     if (s->speed >= 0.0f) {
         s->value += s->speed;
@@ -4652,17 +4654,8 @@ extern "C" void func_00341E48(sWrapFloat_1E48* s)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341EC0);
 #ifdef SKIP_ASM
-struct sBounceFloat_1EC0 {
-    char pad_0x00[0x10];
-    float speed;    // 0x10
-    float min;      // 0x14
-    float max;      // 0x18
-    float value;    // 0x1C
-    char pad_0x20[0x8];
-    float last;     // 0x28
-};
 
-extern "C" void func_00341EC0(sBounceFloat_1EC0* s)
+extern "C" void func_00341EC0(sWsAnimFloat* s)
 {
     if (s->speed >= 0.0f) {
         s->value += s->speed;
