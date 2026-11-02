@@ -10913,17 +10913,15 @@ void func_003C8A88(int idx, int n) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8B40);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { char pad[0x4C]; int f; char pad2[0x10]; } E_8B40;
-typedef struct { E_8B40 arr[100]; } W_8B40;
-extern W_8B40 *D_00515D1C_8B40[] __asm__("D_00515D1C");
-void func_003CB110_8B40(int, int) __asm__("func_003CB110");
+void func_003CB110_8B40(struct sB40Node *, int) __asm__("func_003CB110");
 
 void func_003C8B40(int arg0, int arg1) {
-    int temp_4;
+    struct sB40Ent *e = &D_00515D1C[arg0];
+    struct sB40Node *n;
 
-    temp_4 = D_00515D1C_8B40[0]->arr[arg0].f;
-    if (temp_4 != 0) {
-        func_003CB110_8B40(temp_4, arg1);
+    n = e->f4C;
+    if (n != 0) {
+        func_003CB110_8B40(n, arg1);
     }
 }
 #endif
