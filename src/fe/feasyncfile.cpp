@@ -79,6 +79,13 @@ struct sSession {
     void** mEnd;
 };
 
+// An FE state that holds a vector of char** at 0x6E8.
+struct sOwner {
+    char pad[0x6E8];
+    char*** mBegin;
+    char*** mEnd;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -1282,8 +1289,7 @@ extern "C" int func_00262938(void* self);
 extern "C" void* func_00263630(void* self, int a1);
 extern "C" void* cBXString_cBXString1(void* self, void* other);
 extern "C" void cBXString__cBXString(void* self, int flags);
-struct sOwner1A5800;
-extern "C" int func_001A5800(sOwner1A5800* self, char** name);
+extern "C" int func_001A5800(sOwner* self, char** name);
 extern void* D_004A3328;
 extern void* D_004A3028;
 
@@ -1310,7 +1316,7 @@ extern "C" void func_001A52B0(void* self)
         || (func_00262938(GetSession_001A52B0()) > 0 && (name = func_00263630(GetSession_001A52B0(), 0)) != 0)) {
         sBXString s;
         cBXString_cBXString1(&s, name);
-        *(int*)((char*)self + 0x6F8) = func_001A5800((sOwner1A5800*)self, &s.str);
+        *(int*)((char*)self + 0x6F8) = func_001A5800((sOwner*)self, &s.str);
         cBXString__cBXString(&s, 2);
     } else {
         *(int*)((char*)self + 0x6F8) = -1;
@@ -1364,8 +1370,7 @@ extern "C" const char* func_002625C8(void* self, int idx);
 extern "C" int func_00262438(void* self, const char* name);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* cBXString_cBXString2(void* self, const char* str);
-struct sOwner1A56D0;
-extern "C" int func_001A56D0(sOwner1A56D0* self, const char* name);
+extern "C" int func_001A56D0(sOwner* self, const char* name);
 extern "C" void func_001DB778(void* vec, void** pos, void* const* val);
 extern void* D_004A3328;
 extern void* D_004A3028;
@@ -1422,7 +1427,7 @@ extern "C" void func_001A54D8(void* self)
         int i;
         for (i = 0; i < func_00262598(GetSession_001A54D8()); i++) {
             const char* name = func_002625C8(GetSession_001A54D8(), i);
-            if (name != 0 && func_00262438(GetSession_001A54D8(), name) != 0 && func_001A56D0((sOwner1A56D0*)self, name) == 0) {
+            if (name != 0 && func_00262438(GetSession_001A54D8(), name) != 0 && func_001A56D0((sOwner*)self, name) == 0) {
                 void* s = cBXString_cBXString2(cMemMan_alloc(4, D_00461798, 0x20000000, 0), name);
                 PushBack1A54D8((sOwner1A54D8*)self, s);
             }
@@ -1436,15 +1441,9 @@ INCLUDE_ASM("fe/feasyncfile", func_001A56D0);
 #ifdef SKIP_ASM
 extern "C" int func_0041AA88(const char* a, const char* b);
 
-struct sOwner1A56D0 {
-    char pad[0x6E8];
-    char*** mBegin;
-    char*** mEnd;
-};
+static inline unsigned int Count1A56D0(sOwner* s) { return s->mEnd - s->mBegin; }
 
-static inline unsigned int Count1A56D0(sOwner1A56D0* s) { return s->mEnd - s->mBegin; }
-
-extern "C" int func_001A56D0(sOwner1A56D0* self, const char* name)
+extern "C" int func_001A56D0(sOwner* self, const char* name)
 {
     unsigned int i;
     for (i = 0; i < Count1A56D0(self); i++) {
@@ -1461,15 +1460,9 @@ INCLUDE_ASM("fe/feasyncfile", func_001A5768);
 #ifdef SKIP_ASM
 extern "C" int func_0041AA88(const char* a, const char* b);
 
-struct sOwner1A5768 {
-    char pad[0x6E8];
-    char*** mBegin;
-    char*** mEnd;
-};
+static inline unsigned int Count1A5768(sOwner* s) { return s->mEnd - s->mBegin; }
 
-static inline unsigned int Count1A5768(sOwner1A5768* s) { return s->mEnd - s->mBegin; }
-
-extern "C" int func_001A5768(sOwner1A5768* self, const char* name)
+extern "C" int func_001A5768(sOwner* self, const char* name)
 {
     unsigned int i;
     for (i = 0; i < Count1A5768(self); i++) {
@@ -1486,15 +1479,9 @@ INCLUDE_ASM("fe/feasyncfile", func_001A5800);
 #ifdef SKIP_ASM
 extern "C" int func_0041AA88(const char* a, const char* b);
 
-struct sOwner1A5800 {
-    char pad[0x6E8];
-    char*** mBegin;
-    char*** mEnd;
-};
+static inline unsigned int Count1A5800(sOwner* s) { return s->mEnd - s->mBegin; }
 
-static inline unsigned int Count1A5800(sOwner1A5800* s) { return s->mEnd - s->mBegin; }
-
-extern "C" int func_001A5800(sOwner1A5800* self, char** name)
+extern "C" int func_001A5800(sOwner* self, char** name)
 {
     unsigned int i;
     for (i = 0; i < Count1A5800(self); i++) {
