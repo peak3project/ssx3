@@ -8173,7 +8173,43 @@ void func_003C3728(unsigned x, float* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3780);
+#ifdef SKIP_ASM
+void func_003C3780(int a, float *x, float *y, int dx, int dy) {
+    int oct;
+    int k;
+    int r;
+    if (dx < 0 && dy < 0) {
+        oct = dx < dy ? 1 : 2;
+    } else if (dx >= 0 && dy >= 0) {
+        oct = dx < dy ? 2 : 1;
+    } else {
+        int ax = dx > -1 ? dx : -dx;
+        oct = (dy < 0 ? -dy < ax : dy < ax) ? 4 : 3;
+    }
+    r = 0;
+    if ((unsigned)(a - 0x4000) < 0x8000) {
+        k = 4;
+        if (*x < *y) k = 3;
+        if (oct < 3) {
+            r = 2;
+            if (k == 3 && oct == 2) r = 1;
+        }
+    } else {
+        k = 1;
+        if (*x < *y) k = 2;
+        if (oct >= 3) {
+            r = 2;
+            if (k == 2 && oct == 3) r = 1;
+        }
+    }
+    if (dx < 0) *x = -*x;
+    if (dy < 0) *y = -*y;
+    if (r == 1) *x = -*x;
+    else if (r == 2) *y = -*y;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C38E0);
 
