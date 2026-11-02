@@ -2375,7 +2375,6 @@ struct L_F488 { struct sReq *a; struct sReq *b; };
 extern char D_00495DB8_F488[] __asm__("D_00495DB8");
 extern int D_00519BF0;
 extern struct L_F488 D_00519BF8_F488 __asm__("D_00519BF8");
-extern char D_00519C08_F488[] __asm__("D_00519C08");
 extern void func_003E5698_F488(void *) __asm__("func_003E5698");
 
 void func_003DF488(int n, int arg1) {
@@ -2391,7 +2390,7 @@ void func_003DF488(int n, int arg1) {
         l->b = &base[n - 1];
         D_00519BF8_F488.a = base;
         D_00450C34 = base;
-        func_003E5698_F488(D_00519C08_F488);
+        func_003E5698_F488(D_00519C08);
         i = 0;
         if (n > i) {
             e = D_00450C34;
