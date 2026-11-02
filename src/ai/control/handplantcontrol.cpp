@@ -66,7 +66,210 @@ extern "C" void func_00139178(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001391A8);
+#ifdef SKIP_ASM
+extern "C" void cRider_updateOrientationImplicit(void*);
+extern "C" void cAirPredictor_startLaunchIntoAir(void* self, void* a, void* b, float t);
+extern "C" void func_00113648(void* ap, void* pos, void* vel, float dt);
+extern "C" void func_00121AA0(void* rider, void* a, void* b, float x, float y);
+extern "C" int func_00139548(void* self);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+struct sQ_91A8 {
+    float x, y, z, w;
+    sQ_91A8() {}
+    sQ_91A8(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
+extern sQ_91A8 D_004FF120_91A8 __asm__("D_004FF120");
+extern sQ_91A8 D_004FF160_91A8 __asm__("D_004FF160");
+
+struct sHP_91A8 {
+    sQ_91A8 start;   // 0x00
+    sQ_91A8 vel;     // 0x10
+    sQ_91A8 v20;     // 0x20
+    sQ_91A8 target;  // 0x30
+    sQ_91A8 v40;     // 0x40
+    sQ_91A8 lpos;    // 0x50
+    sQ_91A8 lvel;    // 0x60
+    sQ_91A8 axis;    // 0x70
+    float spin;      // 0x80
+    float dur;       // 0x84
+    float time;      // 0x88
+    char pad8C[0x14];
+    char* rider;     // 0xA0
+};
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sQ_91A8 vu0Sub_91A8(const sQ_91A8& a, const sQ_91A8& b)
+{
+    sQ_91A8 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sQ_91A8 vu0Add_91A8(const sQ_91A8& a, const sQ_91A8& b)
+{
+    sQ_91A8 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sQ_91A8 vu0ScaleP_91A8(const sQ_91A8* v, float s)
+{
+    sQ_91A8 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(*v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sQ_91A8 vu0Scale_91A8(const sQ_91A8& v, float s)
+{
+    sQ_91A8 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_91A8(const sQ_91A8& a, const sQ_91A8& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQ_91A8 QuatMul_91A8(const sQ_91A8& a, const sQ_91A8& b)
+{
+    sQ_91A8 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline sQ_91A8 AxisAngle_91A8(const sQ_91A8& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQ_91A8(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+static inline int eq_91A8(sHP_91A8* a, const sQ_91A8& b)
+{
+    return a->vel.x == b.x && a->vel.y == b.y && a->vel.z == b.z && a->vel.w == b.w;
+}
+
+static inline int landed_91A8(char* ap)
+{
+    int st = *(int*)(ap + 0xAC);
+    int ok = 0;
+    if (st == 1 || st == 3) ok = 1;
+    return ok;
+}
+
+extern "C" void func_001391A8(sHP_91A8* self)
+{
+    float step = *(float*)(self->rider + 0x300) * 0.01666666753590107f;
+    self->time += step;
+    if (self->time <= self->dur) {
+        float u = self->time / self->dur;
+        *(sQ_91A8*)(self->rider + 0x110) =
+            vu0Add_91A8(vu0Scale_91A8(vu0Sub_91A8(self->start, self->target), u * (u - 2.0f)), self->start);
+        *(float*)(self->rider + 0x11C) = 1.0f;
+        sQ_91A8 q;
+        {
+            float s, c;
+            func_0031BE50(&s, &c, self->spin * step * 0.5f);
+            q = sQ_91A8(s * self->axis.x, s * self->axis.y, s * self->axis.z, c);
+        }
+        *(sQ_91A8*)(self->rider + 0x120) = QuatMul_91A8(q, *(sQ_91A8*)(self->rider + 0x120));
+    } else {
+        *(sQ_91A8*)(self->rider + 0x110) = self->target;
+        *(sQ_91A8*)(self->rider + 0x1E0) = D_004FF120_91A8;
+        if (eq_91A8(self, D_004FF120_91A8)) {
+            if (func_00139548(self)) {
+                self->lpos = vu0Add_91A8(self->target, vu0ScaleP_91A8(&D_004FF160_91A8, 5.0f));
+                self->lvel = self->vel;
+                cAirPredictor_startLaunchIntoAir(*(void**)(self->rider + 0x788), &self->lpos, &self->lvel,
+                                                 3333.33349609375f);
+                for (int i = 0; i < 8 || !landed_91A8(*(char**)(self->rider + 0x788)); i++)
+                    func_00113648(*(void**)(self->rider + 0x788), &self->lpos, &self->lvel, 0.01666666753590107f);
+            }
+        } else {
+            if (landed_91A8(*(char**)(self->rider + 0x788))) {
+                char* ap = *(char**)(self->rider + 0x788);
+                if (0.0f < vu0Dot_91A8(*(sQ_91A8*)(ap + 0x20), self->vel))
+                    func_00121AA0(self->rider, ap + 0x20, ap + 0x10, *(float*)(self->rider + 0x300) + *(float*)(self->rider + 0x300),
+                                  *(float*)(self->rider + 0x300) * 6.632251739501953f);
+            } else {
+                func_00113648(*(void**)(self->rider + 0x788), &self->lpos, &self->lvel, 0.01666666753590107f);
+            }
+        }
+    }
+    cRider_updateOrientationImplicit(self->rider);
+}
+#endif
 
 extern "C" void* func_0011E150(void*, int);
 
