@@ -125,30 +125,78 @@ struct sFileCache {
     int counts[10];         // 0xB4008
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIText;
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int GetHashValue32(char* str);
+extern "C" void func_003E6448(void* dst, unsigned int value, int size);
+extern "C" void func_0014AEA8(void* self, int a1, int a2);
+extern "C" int func_0014B478(void* self, int a1, int a2);
+extern "C" char* func_0014B700(void* iface, int rider);
+extern "C" void func_0019B180(void* self, int id);
+extern "C" int func_0019DA10(void* self, int bank, void* name, int a3, int a4, int a5);
+extern void* D_004A28A8;
+extern const int D_004A11D0;
+extern void* D_0046A548[];
+extern "C" void func_0019DC20(sFileCache* self, int bank, int i);
+extern "C" void func_0019A498(void* self);
+extern void* D_004A289C;
+extern "C" void* func_001A0548(void* self, int a1);
+extern "C" void func_0019BFE8(void* self);
+extern "C" void func_0019BC90(void* self);
+extern "C" void func_0019BD48(void* self, int a1);
+extern "C" void func_0019B618(void* self, int a1, int a2);
+extern "C" void cFEStateCharEquip_updateHeading(void* self, int id);
+extern "C" void func_0019B7E0(void* self, int idx);
+extern "C" void func_0019BA60(void* self, int idx);
+extern "C" void func_0019BBA0(void* self);
+extern char D_00460810[];
+extern char D_00460820[];
+extern "C" int func_0019E238(sFileCache* self, int a1, int a2);
+extern "C" void func_0019A9B8(void* self);
+extern int D_004A18D8;
+// PORT: func_0019E2B0 returns a pointer through int (the unit defines it as int).
+extern "C" void* func_0019E2B0(sFileCache* self, int a1, int a2);
+extern "C" int func_004165A8(const void* a, const void* b);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" void* func_0014AD28(void* self, int a1, int a2);
+void cUIText_setAsciiString(cUIText* self, const char* str);
+extern "C" int func_0019B518(void* self);
+extern "C" int func_0019B598(void* self);
+extern "C" int func_0014D7E8(int a0, int a1, int a2, void* out, int a4, int a5);
+extern "C" int func_0014AFB0(void* self, int a1, int a2, int id, int locked);
+extern sFileCache* D_004A196C;
+void operator_delete(int* p);
+extern sFileIndex* D_004A1968;
+extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
+// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
+void cMemMan_free(void* ptr);
+extern "C" void func_0019D578(sFileCache* self, int bank, int size);
+extern "C" void func_0019D738(sFileCache* self, int bank, int size);
+extern "C" void MUTEX_lock(void* mutex);
+extern "C" void MUTEX_unlock(void* mutex);
+extern char D_00538B00[];
+extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
+extern "C" int func_003DF980(int handle);
+extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
+extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* slot);
+extern "C" int func_0041AA88(const char* a, const char* b);
+
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_cFEStateCharEquip);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void* func_0039E2A0(void* self, void* parent);
 extern "C" unsigned char func_001A1CD0(void* self, signed char a1);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 int cBELibrary_getRiderIndex(int index);
-int GetHashValue32(char* str);
-extern "C" void func_003E6448(void* dst, unsigned int value, int size);
 extern "C" int func_00398380(void* list, int hash);
 extern "C" void func_001A0508(void* mgr, int idx, int ch, int a3);
 extern "C" int func_00150928(void* iface, int idx, int ch);
-extern "C" void func_0014AEA8(void* self, int a1, int a2);
-extern "C" int func_0014B478(void* self, int a1, int a2);
-extern "C" char* func_0014B700(void* iface, int rider);
 extern "C" int func_00146D98(void* iface, int a1);
-extern "C" void func_0019B180(void* self, int id);
-extern "C" int func_0019DA10(void* self, int bank, void* name, int a3, int a4, int a5);
-extern void* D_004A28A8;
-extern const int D_004A11D0_c __asm__("D_004A11D0");
-extern void* D_0046A548[];
 extern char D_004607A8[];
 extern char D_004607B8[];
 extern char D_0045DA48[];
@@ -279,7 +327,7 @@ extern "C" void* cFEStateCharEquip_cFEStateCharEquip(void* p, void* owner, signe
     self->fA70 = -1;
     self->fA74 = -1;
     self->fAE0 = 1;
-    func_003E6448(self->bufD0, D_004A11D0_c, 0x50);
+    func_003E6448(self->bufD0, D_004A11D0, 0x50);
     self->f120 = 0;
     for (int i = 0; i < 6; i++) {
         self->a8C[i] = 0;
@@ -336,7 +384,7 @@ extern "C" void* cFEStateCharEquip_cFEStateCharEquip(void* p, void* owner, signe
     } else {
         self->fCC = -1;
     }
-    func_0019B180(self, D_004A11D0_c);
+    func_0019B180(self, D_004A11D0);
     char* name = func_0014B700(shop, self->slot);
     self->fA64 = func_0019DA10(*(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70, self->slot, name, 9, 1, 0);
     return self;
@@ -346,12 +394,7 @@ extern "C" void* cFEStateCharEquip_cFEStateCharEquip(void* p, void* owner, signe
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199148);
 #ifdef SKIP_ASM
-extern "C" void func_0019DC20(sFileCache* self, int bank, int i);
-extern "C" void func_0019A498(void* self);
 extern "C" void func_0039E390(void* self, int flags);
-extern void* D_004A28A8;
-extern void* D_004A289C;
-extern void* D_0046A548[];
 extern void* D_0046D0D0[];
 
 static inline void releaseK199148(int id)
@@ -386,16 +429,12 @@ extern "C" void func_00199148(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* func_001A0548(void* self, int a1);
 extern "C" void func_00311A50(void* self);
 extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
-extern "C" void func_0019BFE8(void* self);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
-extern void* D_004A28A8;
 extern char D_004607E8[];
 
 extern "C" void cFEStateCharEquip_onCreateScreen(void* self)
@@ -427,8 +466,6 @@ extern "C" void cFEStateCharEquip_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199350);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* func_001A0548(void* self, int a1);
 void func_0039E4A0(void* self);
 
 extern "C" void func_00199350(void* self)
@@ -447,9 +484,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_001993A0);
 #ifdef SKIP_ASM
 extern "C" void func_0019A308(void* self);
 extern "C" void func_0019A238(void* self);
-extern "C" void func_0019BC90(void* self);
-extern "C" void func_0019BD48(void* self, int a1);
-extern "C" void func_0019B618(void* self, int a1, int a2);
 extern "C" void func_00186518(void* self, int a1);
 
 extern "C" void func_001993A0(void* self, int a1)
@@ -470,8 +504,6 @@ extern "C" void func_001993A0(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199420);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* func_001A0548(void* self, int a1);
 extern "C" void func_0019E538(void* rider, int a1);
 
 extern "C" void func_00199420(void* self)
@@ -483,20 +515,13 @@ extern "C" void func_00199420(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void cFEStateCharEquip_updateHeading_FE(void* self, int a) __asm__("cFEStateCharEquip_updateHeading");
 extern "C" void cUIText_setAsciiString(void* t, const char* s) __asm__("cUIText_setAsciiString__FP7cUITextPCc");
 extern "C" void cUIText_setUnicodeStringByID(void* t, int id) __asm__("cUIText_setUnicodeStringByID__FP7cUITexti");
-extern "C" void func_0019B7E0_FE(void* self, int i) __asm__("func_0019B7E0");
-extern "C" void func_0019BA60_FE(void* self, int i) __asm__("func_0019BA60");
-extern "C" void func_0019BBA0_FE(void* self) __asm__("func_0019BBA0");
 extern "C" void func_0039B760_FE(void* w, unsigned char v) __asm__("func_0039B760");
 extern char* D_00441218[];
 extern char* D_00441230[];
 extern char D_00460488[];
 extern char D_004607F8[];
-extern char D_00460810[];
-extern char D_00460820[];
 extern char D_00460830[];
 extern char D_00460840[];
 extern char D_00460850[];
@@ -504,7 +529,6 @@ extern char D_00460860[];
 extern char D_00460870[];
 extern char D_00460880[];
 extern char D_00460890[];
-extern int D_004A11D0;
 extern char D_004A1408[];
 extern char D_004A1458[];
 extern char D_004A1460[];
@@ -588,7 +612,7 @@ extern "C" void cFEStateCharEquip_onWidgetCreate(sCharEquip_FE* self, void* w)
         }
     } else if (id == GetHashValue32(D_004A1920)) {
         self->f58 = w;
-        cFEStateCharEquip_updateHeading_FE(self, D_004A11D0);
+        cFEStateCharEquip_updateHeading(self, D_004A11D0);
     } else if (id == GetHashValue32(D_00460830)) {
         self->f5C = w;
         func_0039B760_FE(self->f5C, self->f958);
@@ -599,7 +623,7 @@ extern "C" void cFEStateCharEquip_onWidgetCreate(sCharEquip_FE* self, void* w)
         }
     } else if (id == GetHashValue32(D_004A1928)) {
         self->f64 = w;
-        func_0019BBA0_FE(self);
+        func_0019BBA0(self);
     } else if (id == GetHashValue32(D_004A1930)) {
         self->f68 = w;
         cUIText_setAsciiString(self->f68, D_004A1408);
@@ -632,9 +656,9 @@ extern "C" void cFEStateCharEquip_onWidgetCreate(sCharEquip_FE* self, void* w)
                 *(int*)((char*)w + 0x18) = i;
                 if (i < self->f958) {
                     if (isC8_FE(self)) {
-                        func_0019BA60_FE(self, i);
+                        func_0019BA60(self, i);
                     } else {
-                        func_0019B7E0_FE(self, i);
+                        func_0019B7E0(self, i);
                     }
                 } else {
                     hide_FE(self->f8C[i]);
@@ -645,9 +669,9 @@ extern "C" void cFEStateCharEquip_onWidgetCreate(sCharEquip_FE* self, void* w)
                 self->fA4[i] = w;
                 if (i < self->f958) {
                     if (isC8_FE(self)) {
-                        func_0019BA60_FE(self, i);
+                        func_0019BA60(self, i);
                     } else {
-                        func_0019B7E0_FE(self, i);
+                        func_0019B7E0(self, i);
                     }
                 } else {
                     hide_FE(self->fA4[i]);
@@ -663,10 +687,8 @@ extern "C" void cFEStateCharEquip_onWidgetCreate(sCharEquip_FE* self, void* w)
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199870);
 #ifdef SKIP_ASM
 extern "C" void func_0019BE80(void* self);
-extern "C" void func_0019BBA0(void* self);
 struct sEquipDetail;
 extern "C" int func_0019B458(sEquipDetail* self, int idx);
-extern "C" void func_0019B618(void* self, int a1, int a2);
 
 extern "C" void func_00199870(void* self, void* widget, int msg)
 {
@@ -696,16 +718,10 @@ extern "C" void func_00199870(void* self, void* widget, int msg)
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_onUpdate);
 #ifdef SKIP_ASM
 struct cList;
-int GetHashValue32(char* str);
 void* cList_first(cList* list);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_0039E510(void* self);
-extern "C" int func_0019E238(sFileCache* self, int a1, int a2);
-extern "C" void func_0019A9B8(void* self);
 extern "C" void func_0019A638(void* self);
-extern "C" void func_0019BFE8(void* self);
-extern "C" void* func_001A0548(void* self, int a1);
-extern void* D_004A28A8;
 extern char D_004608A0[];
 
 extern "C" void cFEStateCharEquip_onUpdate(void* self)
@@ -829,24 +845,12 @@ extern "C" int func_00199A38(void* self, cPad_9A38* in)
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199C28);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void cFEStateCharEquip_updateHeading(void* self, int id);
-extern "C" void func_0019B180(void* self, int id);
-extern "C" void func_0019B618(void* self, int a1, int a2);
 extern "C" void func_0019A4E8(void* self, int a1);
-extern "C" void func_0019A9B8(void* self);
 extern "C" void func_0019ACA0(void* self);
 extern "C" int func_0019BEE8(void* self);
 extern "C" void func_0019C7E8(void* self, void* item);
-extern "C" void func_0019BC90(void* self);
-extern "C" void func_0019BD48(void* self, int a1);
-extern "C" int func_0014B478(void* self, int a1, int a2);
 extern "C" void func_0039F400(void* list, void* item);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_001A0548(void* self, int a1);
 extern int D_004A11E0;
-extern int D_004A18D8;
-extern void* D_004A28A8;
 
 struct sCharEquip_9C28 {
     char pad0[0x10];
@@ -957,7 +961,6 @@ extern "C" void func_00199C28(void* selfv, char* w, unsigned int ev)
 INCLUDE_ASM("fe/festatecharequipdetail", func_00199F20);
 #ifdef SKIP_ASM
 extern "C" void func_0019A3D0(void* self);
-extern int D_004A18D8;
 
 struct sEquipDetail_9F20 {
     char pad0[0x5C];
@@ -1040,12 +1043,7 @@ extern "C" int func_00199F20(sEquipDetail_9F20* self, int a1, int kind, int idx)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A098);
 #ifdef SKIP_ASM
-// PORT: func_0019E2B0 returns a pointer through int (the unit defines it as int).
-extern "C" void* func_0019E2B0(sFileCache* self, int a1, int a2);
 extern "C" void func_003B3D00(void* pkg, int i, char* name);
-extern "C" int func_004165A8(const void* a, const void* b);
-extern void* D_004A28A8;
-extern void* D_004A289C;
 extern char D_004A1950[];
 
 struct sPkgEntK19A098 {
@@ -1097,10 +1095,6 @@ extern "C" int func_0019A098(void* self, const char* name)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A1E0);
 #ifdef SKIP_ASM
-extern "C" int func_0019E238(sFileCache* self, int a1, int a2);
-extern "C" void func_0019A9B8(void* self);
-extern void* D_004A28A8;
-
 extern "C" void func_0019A1E0(void* self)
 {
     if (*(int*)((char*)self + 0xA60) == 0
@@ -1115,11 +1109,6 @@ extern "C" void func_0019A1E0(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A238);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern char D_00460820[];
-
 extern "C" void func_0019A238(void* self)
 {
     if (*(cUIText**)((char*)self + 0x48) != 0) {
@@ -1148,11 +1137,6 @@ extern "C" void func_0019A238(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A308);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern char D_00460810[];
-
 extern "C" void func_0019A308(void* self)
 {
     if (*(cUIText**)((char*)self + 0x48) != 0) {
@@ -1180,16 +1164,6 @@ extern "C" void func_0019A308(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A3D0);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" void func_003E6448(void* dst, unsigned int value, int size);
-extern "C" void cFEStateCharEquip_updateHeading(void* self, int id);
-extern "C" void func_0019B180(void* self, int id);
-extern int D_004A11D0;
-extern char D_00460810[];
-extern char D_00460820[];
-
 struct sEquipDetailK19A3D0 {
     char pad_0x000[0x120];
     int f120;      // 0x120
@@ -1226,9 +1200,6 @@ extern "C" void func_0019A3D0(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A498);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void func_0019DC20(sFileCache* self, int bank, int i);
-
 extern "C" void func_0019A498(void* self)
 {
     int idx = *(int*)((char*)self + 0xA6C);
@@ -1244,14 +1215,9 @@ extern "C" void func_0019A498(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A4E8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" char* func_0014B700(void* iface, int rider);
 extern "C" char* func_0041ACC0(const char* s, int c);
 extern "C" char* strncpy(char* dst, const char* src, int n);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void func_0019A498(void* self);
 extern char D_004A1958[];
 
 static inline int isDigitK19A4E8(unsigned char c)
@@ -1280,7 +1246,7 @@ extern "C" void func_0019A4E8(void* self, int flag)
     else
         *(int*)((char*)self + 0x95C) = 1;
     char* buf = (char*)self + 0x960;
-    char* s = func_0014B700(cBE_getInterface_Fv(cBE_getBE(), 9), *(int*)((char*)self + 0xBC));
+    char* s = func_0014B700(cBE_getInterface(cBE_getBE(), 9), *(int*)((char*)self + 0xBC));
     char* dot = func_0041ACC0(s, '.');
     int len = dot - s - 1;
     strncpy(buf, s, len);
@@ -1297,14 +1263,6 @@ extern "C" void func_0019A4E8(void* self, int flag)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A638);
 #ifdef SKIP_ASM
-extern "C" void func_0019DC20(sFileCache* self, int bank, int i);
-extern "C" int func_0019E238(sFileCache* self, int a1, int a2);
-// PORT: func_0019E2B0 returns a pointer through int (the unit defines it as int).
-extern "C" void* func_0019E2B0(sFileCache* self, int a1, int a2);
-extern "C" int func_0019DA10(void* self, int bank, void* name, int a3, int a4, int a5);
-extern "C" void func_0019A9B8(void* self);
-extern void* D_004A28A8;
-extern void* D_004A289C;
 extern char D_004A1960[];
 
 extern "C" void func_0019A638(void* self)
@@ -1340,8 +1298,6 @@ extern "C" void func_0019A638(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A758);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* func_001A0548(void* self, int a1);
 extern "C" void func_0019FA78(void* self, int a1);
 
 extern "C" void func_0019A758(void* self)
@@ -1357,13 +1313,6 @@ extern "C" void func_0019A758(void* self)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019A798);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct cUIText;
-int GetHashValue32(char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
-extern int D_004A18D8;
 extern char D_004608D8[];
 extern char D_004608F0[];
 extern char D_00460908[];
@@ -1452,7 +1401,6 @@ extern "C" void func_0019A9B8(void* self)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AA08);
 #ifdef SKIP_ASM
 extern "C" int func_0019A098(void* self, const char* name);
-extern "C" void func_0019BD48(void* self, int a1);
 
 static inline void showK19AA08(char* o, int on)
 {
@@ -1501,8 +1449,6 @@ extern "C" void func_0019AA08(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AB78);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
 // PORT: the unit declares func_00198AF0(void*), but it formats an int price; bind an int view.
 extern "C" const char* func_00198AF0_price(int price) __asm__("func_00198AF0");
 
@@ -1546,28 +1492,18 @@ extern "C" void func_0019AB78(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019ACA0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* func_001A0548(void* self, int a1);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
 extern "C" void func_0019FBE0(void* rider, void* item, int a2, int a3);
 
 extern "C" void func_0019ACA0(void* self)
 {
     void* rider = func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)((char*)self + 0x44));
-    func_0019FBE0(rider, func_0014AD28(cBE_getInterface_Fv(cBE_getBE(), 9), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC)), 0, 1);
+    func_0019FBE0(rider, func_0014AD28(cBE_getInterface(cBE_getBE(), 9), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC)), 0, 1);
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AD18);
 #ifdef SKIP_ASM
-extern "C" int func_0019B518(void* self);
-extern "C" int func_0019B598(void* self);
-extern "C" void func_0019B7E0(void* self, int idx);
-extern "C" void func_0019BA60(void* self, int idx);
 extern "C" int func_003A0C28(void* self);
 extern "C" void func_003A0E90(void* self, int str);
 
@@ -1642,8 +1578,6 @@ extern "C" void func_0019AD18(sEquip_AD18* self, int n)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AFD0);
 #ifdef SKIP_ASM
-extern "C" int func_0014D7E8(int a0, int a1, int a2, void* out, int a4, int a5);
-
 extern "C" int func_0019AFD0(void* self, int a1, sBEProfileChar* db, int a3)
 {
     sEquipItem* items[528];
@@ -1666,8 +1600,6 @@ extern "C" int func_0019AFD0(void* self, int a1, sBEProfileChar* db, int a3)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B098);
 #ifdef SKIP_ASM
-extern "C" int func_0014D7E8(int a0, int a1, int a2, void* out, int a4, int a5);
-
 extern "C" int func_0019B098(void* self, int a1, sBEProfileChar* db, int a3)
 {
     sEquipItem* items[528];
@@ -1737,8 +1669,6 @@ extern "C" int func_0019B458(sEquipDetail* self, int idx)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B518);
 #ifdef SKIP_ASM
-extern "C" void func_0019B7E0(void* self, int idx);
-
 extern "C" int func_0019B518(void* self)
 {
     int j = *(unsigned char*)(*(char**)((char*)self + 0x5C) + 0x98);
@@ -1755,8 +1685,6 @@ extern "C" int func_0019B518(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B598);
 #ifdef SKIP_ASM
-extern "C" void func_0019BA60(void* self, int idx);
-
 extern "C" int func_0019B598(void* self)
 {
     int j = *(unsigned char*)(*(char**)((char*)self + 0x5C) + 0x98);
@@ -1773,12 +1701,7 @@ extern "C" int func_0019B598(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B618);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-extern "C" int func_0019B518(void* self);
-extern "C" int func_0019B598(void* self);
 extern "C" void func_0039B760(void* menu, int n);
 extern char D_004C6708[];
 extern char D_004609A0[];
@@ -1838,10 +1761,8 @@ extern "C" void func_0019B618(void* self, int reset, int select)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B7E0);
 #ifdef SKIP_ASM
-extern "C" int func_0014AFB0(void* self, int a1, int a2, int id, int locked);
 extern "C" void func_003E6574(void* dst, void* src, int n);
 extern "C" void func_0014ACB0(void* self, int a1, int a2, void* src);
-extern "C" int func_0014B478(void* self, int a1, int a2);
 
 static inline int IsSet_19B7E0(sBEFlagEntryPC* e)
 {
@@ -1916,11 +1837,6 @@ extern "C" void func_0019B7E0(void* selfv, int i)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019BA60);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-void cUIText_setAsciiString(cUIText* self, const char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-
 static inline void showK19BA60(void* o, int on)
 {
     sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)o + 8);
@@ -1983,8 +1899,6 @@ extern "C" void func_0019BA60(void* p, int i)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019BBA0);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" const char* func_00198AF0(void* a0);
 
 extern "C" void func_0019BBA0(void* self)
@@ -1998,12 +1912,9 @@ extern "C" void func_0019BBA0(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_updateHeading);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 // PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
 void* func_0014BDB8_noarg() __asm__("func_0014BDB8__FPv");
 extern "C" int func_0014D448(void* self, int g, int key);
-extern int D_004A11D0;
 extern char D_004609B0[];
 
 struct sBEEntry38K19BBE0 {
@@ -2041,8 +1952,6 @@ extern "C" void cFEStateCharEquip_updateHeading(void* self, int id)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019BC90);
 #ifdef SKIP_ASM
-extern int D_004A18D8;
-
 extern "C" void func_0019BC90(void* self)
 {
     char* o = *(char**)((char*)self + 0x70);
@@ -2061,7 +1970,6 @@ extern "C" void func_0019BC90(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019BD48);
 #ifdef SKIP_ASM
-extern int D_004A18D8;
 extern char D_004C66E8[];
 extern char D_004C66F8[];
 
@@ -2095,16 +2003,13 @@ extern "C" void func_0019BD48(void* self, int delta)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019BE80);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_0014B560(void* iface, int a1, int a2, int a3, int a4);
 
 extern "C" void func_0019BE80(void* self)
 {
     int idx = *(unsigned char*)(*(char**)((char*)self + 0x5C) + 0x95);
     char* item = *(char**)((char*)self + (idx << 2) + 0x124);
-    *(int*)((char*)self + 0xC0) = func_0014B560(cBE_getInterface_Fv(cBE_getBE(), 9),
+    *(int*)((char*)self + 0xC0) = func_0014B560(cBE_getInterface(cBE_getBE(), 9),
         *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC), *(short*)(item + 4), 1);
 }
 #endif
@@ -2112,13 +2017,6 @@ extern "C" void func_0019BE80(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019BEE8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014AD28(void* self, int a1, int a2);
-extern "C" int func_0014AFB0(void* self, int a1, int a2, int id, int locked);
-extern "C" void func_0014AEA8(void* self, int a1, int a2);
-
 static inline sBEFlagEntryPC* getItemK19BEE8(sBEProfileChar* l, int id)
 {
     int idx = l->index[id];
@@ -2139,7 +2037,7 @@ extern "C" int func_0019BEE8(void* self)
     char* item = *(char**)((char*)self + (*(unsigned char*)(*(char**)((char*)self + 0x5C) + 0x95) << 2) + 0x124);
     if (!(*(int*)(item + 0x34) & 4))
         return 0;
-    void* iface = cBE_getInterface_Fv(cBE_getBE(), 9);
+    void* iface = cBE_getInterface(cBE_getBE(), 9);
     sBEProfileChar* list = (sBEProfileChar*)func_0014AD28(iface, *(signed char*)((char*)self + 0x44),
                                                               *(int*)((char*)self + 0xBC));
     sBEFlagEntryPC* e = getItemK19BEE8(list, *(short*)(item + 4));
@@ -2322,8 +2220,6 @@ extern "C" sFileIndex* func_0019CB38(sFileIndex* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CB60);
 #ifdef SKIP_ASM
-extern "C" void func_003E6448(void* dst, unsigned int value, int size);
-
 extern "C" void func_0019CB60(sFileIndex* self)
 {
     func_003E6448(self, 0xFFFFFFFF, 0x1900);
@@ -2417,7 +2313,6 @@ extern "C" void func_0019CD38(sFileIndex* self, int bit, int a2, int val)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CDF0);
 #ifdef SKIP_ASM
-extern sFileCache* D_004A196C;
 extern "C" void func_0019CE68(sFileCache* self);
 
 extern "C" void* func_0019CDF0(sFileCache* self)
@@ -2431,9 +2326,7 @@ extern "C" void* func_0019CDF0(sFileCache* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CE20);
 #ifdef SKIP_ASM
-extern sFileCache* D_004A196C;
 extern "C" void func_0019CF40(sFileCache* self);
-void operator_delete(int* p);
 
 extern "C" void func_0019CE20(sFileCache* self, int flags)
 {
@@ -2448,7 +2341,6 @@ extern "C" void func_0019CE20(sFileCache* self, int flags)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CE68);
 #ifdef SKIP_ASM
-extern sFileIndex* D_004A1968;
 extern char D_004609C0[];
 
 extern "C" void func_0019CE68(sFileCache* self)
@@ -2481,10 +2373,6 @@ extern "C" void func_0019CE68(sFileCache* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019CF40);
 #ifdef SKIP_ASM
-extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
-void operator_delete(int* p);
-extern sFileIndex* D_004A1968;
-
 extern "C" void func_0019CF40(sFileCache* self)
 {
     int i;
@@ -2505,17 +2393,9 @@ extern "C" void func_0019CF40(sFileCache* self)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D000);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* ptr);
 extern "C" int func_003B4818(void* data);
 extern "C" void* func_003B47F8(void* src, void* dst);
-extern "C" void func_0019D578(sFileCache* self, int bank, int size);
-extern "C" void func_0019D738(sFileCache* self, int bank, int size);
-extern "C" void MUTEX_lock(void* mutex);
-extern "C" void MUTEX_unlock(void* mutex);
 extern char D_004609D8[];
-extern char D_00538B00[];
 
 extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* p)
 {
@@ -2547,8 +2427,6 @@ extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* p)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D140);
 #ifdef SKIP_ASM
-extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
-
 extern "C" void func_0019D140(sFileCache* self, int bank)
 {
     unsigned int oldest = 0;
@@ -2589,11 +2467,7 @@ extern "C" void func_0019D140(sFileCache* self, int bank)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D250);
 #ifdef SKIP_ASM
-extern "C" int func_003DF980(int handle);
-extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
-extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* slot);
 extern "C" void func_0019D140(sFileCache* self, int bank);
-extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
 
 extern "C" void func_0019D250(void* p)
 {
@@ -2651,8 +2525,6 @@ extern "C" int func_0019D3B0(sFileCache* self, int bank)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D428);
 #ifdef SKIP_ASM
-extern "C" int func_004165A8(const void* a, const void* b);
-
 extern "C" int func_0019D428(sFileCache* self, int bank, const char* name)
 {
     for (int i = 0; i < 256; i++) {
@@ -2668,9 +2540,6 @@ extern "C" int func_0019D428(sFileCache* self, int bank, const char* name)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D4B8);
 #ifdef SKIP_ASM
-extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
-void cMemMan_free(void* ptr);
-
 extern "C" void func_0019D4B8(sFileCache* self, int bank, int i)
 {
     int status;
@@ -2698,8 +2567,6 @@ extern "C" void func_0019D4B8(sFileCache* self, int bank, int i)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D578);
 #ifdef SKIP_ASM
-extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
-
 extern "C" void func_0019D578(sFileCache* self, int bank, int size)
 {
     if (self->used + size <= 9999999)
@@ -2740,8 +2607,6 @@ extern "C" void func_0019D578(sFileCache* self, int bank, int size)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D738);
 #ifdef SKIP_ASM
-extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
-
 extern "C" void func_0019D738(sFileCache* self, int bank, int size)
 {
     int b;
@@ -2782,17 +2647,10 @@ extern "C" void func_0019D738(sFileCache* self, int bank, int size)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019D8B8);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_00317F60(const char* name);
 extern "C" int func_003DF748(const char* name, void* data, int size);
 extern "C" int func_003E1BB8(const char* name, void* data, int size);
-extern "C" void func_0019D578(sFileCache* self, int bank, int size);
-extern "C" void func_0019D738(sFileCache* self, int bank, int size);
-extern "C" void MUTEX_lock(void* mutex);
-extern "C" void MUTEX_unlock(void* mutex);
 extern char D_004609F0[];
-extern char D_00538B00[];
 
 extern "C" void func_0019D8B8(sFileCache* self, int bank, int i)
 {
@@ -2823,11 +2681,8 @@ extern "C" void func_0019D8B8(sFileCache* self, int bank, int i)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DA10);
 #ifdef SKIP_ASM
-extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
-extern "C" void func_0019D8B8(sFileCache* self, int bank, int i);
 extern "C" int func_0019D3B0(sFileCache* self, int bank);
 extern "C" int func_0019D428(sFileCache* self, int bank, const char* name);
-extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
 extern "C" char* strcpy(char* dst, const char* src);
 
 extern "C" int func_0019DA10(void* p, int bank, void* namep, int a3, int a4, int a5)
@@ -2880,11 +2735,6 @@ extern "C" int func_0019DA10(void* p, int bank, void* namep, int a3, int a4, int
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DC20);
 #ifdef SKIP_ASM
-extern "C" int ASYNCFILE_release(int handle, int a1, void* status);
-extern "C" int func_003DF980(int handle);
-extern "C" void func_0019D000(sFileCache* self, int bank, sFileSlot* slot);
-extern "C" void func_0019D4B8(sFileCache* self, int bank, int i);
-
 extern "C" void func_0019DC20(sFileCache* self, int bank, int i)
 {
     int status;
@@ -2913,9 +2763,6 @@ extern "C" void func_0019DC20(sFileCache* self, int bank, int i)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DD10);
 #ifdef SKIP_ASM
-extern sFileCache* D_004A196C;
-extern "C" int func_0041AA88(const char* a, const char* b);
-
 extern "C" int func_0019DD10(const int* a, const int* b)
 {
     int ka = *a;
@@ -2939,9 +2786,6 @@ extern "C" int func_0019DD10(const int* a, const int* b)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DE18);
 #ifdef SKIP_ASM
-extern sFileCache* D_004A196C;
-extern "C" int func_0041AA88(const char* a, const char* b);
-
 extern "C" int func_0019DE18(const int* a, const int* b)
 {
     int ka = *a;
@@ -3087,9 +2931,7 @@ struct sSlot0019E498 {
     char pad[7];
 };
 
-extern void* D_004A289C;
 extern "C" void func_0019EBA0(void* self);
-void operator_delete(int* p);
 
 extern "C" void func_0019E498(void* self, int flags)
 {
@@ -3133,8 +2975,6 @@ extern "C" void func_0019E538(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E588);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
-
 struct sRider_E588 {
     unsigned int item;  // 0x0
     char pad4[0xC];
