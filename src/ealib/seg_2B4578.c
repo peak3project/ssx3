@@ -8187,7 +8187,6 @@ void func_003C3500(unsigned a) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C35F8);
 #ifdef SKIP_ASM
-extern int D_00515B50_35F8 __asm__("D_00515B50");
 extern void func_003CC848(void);
 extern void func_003CC630_35F8(int, int) __asm__("func_003CC630");
 
@@ -8200,7 +8199,7 @@ void func_003C35F8(int arg0) {
     } else if (arg0 == 4) {
         if (D_0050A8E8.f1F8[0].f00 != 1 || D_0050A8E8.setup.cfg.f22 != 0) {
             if (D_0050A8E8.setup.cfg.f22 == 0) {
-                D_00515B50_35F8 = 0;
+                D_00515B50 = 0;
             }
             func_003CC848();
         } else {
