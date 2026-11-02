@@ -136,6 +136,15 @@ struct sWsVObj {
     sWsVtSlot* vt;
 };
 
+// Interface of a moving object (getVelocity / setVelocity at slots 2 and 4).
+class cWsMover {
+public:
+    virtual void v01();
+    virtual t4Vector* getVelocity();
+    virtual void v03();
+    virtual void setVelocity(t4Vector* v);
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4259,17 +4268,10 @@ static inline t4Vector vu0Scale_341770(const t4Vector& v, float s)
     return r;
 }
 
-class cMover_341770 {
-public:
-    virtual void v01();
-    virtual t4Vector* getVelocity();
-    virtual void v03();
-    virtual void setVelocity(t4Vector* v);
-};
 
 extern "C" float func_002D1C70();
 
-extern "C" void func_00341770(void* self, cMover_341770* obj)
+extern "C" void func_00341770(void* self, cWsMover* obj)
 {
     t4Vector u = vu0Scale_341770(vu0Scale_341770(*obj->getVelocity(), *(float*)((char*)self + 0x34) + 1.0f), func_002D1C70());
     obj->setVelocity(&u);
@@ -4338,13 +4340,6 @@ static inline t4Vector vu0Scale_341818(const t4Vector& v, float s)
     return r;
 }
 
-class cMover_341818 {
-public:
-    virtual void v01();
-    virtual t4Vector* getVelocity();
-    virtual void v03();
-    virtual void setVelocity(t4Vector* v);
-};
 
 extern "C" float func_002D1C70();
 
@@ -4360,13 +4355,13 @@ struct sSph_341818 {
     int type;
 };
 
-static inline void push_341818(sParams_341818* p, cMover_341818* obj, const t4Vector& dir, float amount)
+static inline void push_341818(sParams_341818* p, cWsMover* obj, const t4Vector& dir, float amount)
 {
     t4Vector u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, amount), p->scale), func_002D1C70());
     obj->setVelocity(&u);
 }
 
-extern "C" void func_00341818(sSph_341818* self, cMover_341818* obj)
+extern "C" void func_00341818(sSph_341818* self, cWsMover* obj)
 {
     t4Vector vel = *obj->getVelocity();
     t4Vector dir = self->params.dir;
@@ -5289,17 +5284,10 @@ static inline t4Vector vu0Scale_3429E0(const t4Vector& v, float s)
     return r;
 }
 
-class cMover_3429E0 {
-public:
-    virtual void v01();
-    virtual t4Vector* getVelocity();
-    virtual void v03();
-    virtual void setVelocity(t4Vector* v);
-};
 
 extern "C" float func_002D1C70();
 
-extern "C" void func_003429E0(void* self, cMover_3429E0* obj)
+extern "C" void func_003429E0(void* self, cWsMover* obj)
 {
     t4Vector u = vu0Scale_3429E0(vu0Scale_3429E0(*obj->getVelocity(), *(float*)((char*)self + 0x24) + 1.0f), func_002D1C70());
     obj->setVelocity(&u);
@@ -5347,17 +5335,10 @@ static inline float vu0Dot_342A88(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
-class cMover_342A88 {
-public:
-    virtual void v01();
-    virtual t4Vector* getVelocity();
-    virtual void v03();
-    virtual void setVelocity(t4Vector* v);
-};
 
 extern "C" float func_002D1C70();
 
-static inline void setVel_342A88(cMover_342A88* o, t4Vector* v)
+static inline void setVel_342A88(cWsMover* o, t4Vector* v)
 {
     o->setVelocity(v);
 }
@@ -5373,7 +5354,7 @@ struct sSelf_342A88 {
     sPlane_342A88 plane;
 };
 
-extern "C" void func_00342A88(sSelf_342A88* self, cMover_342A88* obj)
+extern "C" void func_00342A88(sSelf_342A88* self, cWsMover* obj)
 {
     float d = self->plane.d - vu0Dot_342A88(*obj->getVelocity(), self->plane.n);
     if (d > 0.0f) {
