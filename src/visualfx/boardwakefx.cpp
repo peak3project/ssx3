@@ -1541,9 +1541,6 @@ extern "C" void func_002E1F70(sWakeFx1F70* self)
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E2260);
 #ifdef SKIP_ASM
-struct sWakeMtx2260 {
-    t4Vector row[4];
-};
 
 struct sWakeFx2260 {
     char* obj;                  // 0x00
@@ -1590,7 +1587,7 @@ extern "C" void func_002E2260(sWakeFx2260* self)
         t4Vector vel;
         t4Vector tmp;
         char* obj;
-        sWakeMtx2260* m;
+        t4Matrix* m;
         int k;
         a = wakeClamp2260(self->f4 * 1.5f, 0.0f, 1.0f);
         col = self->col;
@@ -1598,8 +1595,8 @@ extern "C" void func_002E2260(sWakeFx2260* self)
         dt = 0.01666666753590107f;
         obj = self->obj;
         k = self->p7C[self->i78];
-        m = *(sWakeMtx2260**)(*(char**)(obj + 0x780) + 0x30);
-        pos = ((sWakeMtx2260*)((char*)m + (k << 6)))->row[3];
+        m = *(t4Matrix**)(*(char**)(obj + 0x780) + 0x30);
+        pos = ((t4Matrix*)((char*)m + (k << 6)))->row[3];
         wakeScaleE398(tmp, *(t4Vector*)(obj + 0x1E0), *(float*)(self->p2C + 0x900));
         vel = tmp;
         func_003717C0(em, &pos, &vel, &col, 1, dt);
@@ -1613,8 +1610,8 @@ extern "C" void func_002E2260(sWakeFx2260* self)
     } else {
         char* obj = self->obj;
         int k = *(int*)(obj + 0x89C);
-        sWakeMtx2260* m = *(sWakeMtx2260**)(*(char**)(obj + 0x780) + 0x30);
-        t4Vector pos = ((sWakeMtx2260*)((char*)m + (k << 6)))->row[3];
+        t4Matrix* m = *(t4Matrix**)(*(char**)(obj + 0x780) + 0x30);
+        t4Vector pos = ((t4Matrix*)((char*)m + (k << 6)))->row[3];
         func_003717C0(em, &pos, 0, 0, 0, 0.01666666753590107f);
     }
 }
@@ -3063,15 +3060,12 @@ void* func_002E4D70(void* self)
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4D88);
 #ifdef SKIP_ASM
 
-struct sMatD88 {
-    t4Vector r[4];
-};
 
 extern char D_004FF1A0[];
 int BXrand();
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy).
-static inline void wakeCopyMatD88(sMatD88* dst, const sMatD88* src)
+static inline void wakeCopyMatD88(t4Matrix* dst, const t4Matrix* src)
 {
     __asm__ __volatile__(
         "lqc2       $vf1, 0x0(%1)\n"
@@ -3088,7 +3082,7 @@ static inline void wakeCopyMatD88(sMatD88* dst, const sMatD88* src)
 }
 
 // PORT: PS2-only VU0 inline asm (scale matrix rows by the components of s).
-static inline void wakeScaleMatD88(sMatD88* dst, const sMatD88* src, const t4Vector& s)
+static inline void wakeScaleMatD88(t4Matrix* dst, const t4Matrix* src, const t4Vector& s)
 {
     __asm__ __volatile__(
         "lqc2       $vf1, %2\n"
@@ -3140,18 +3134,18 @@ extern "C" void* func_002E4D88(char* self, int a1, int a2, float f0, float f1, f
     *(int*)(self + 0x98) = BXrand();
     *(int*)(self + 0x9C) = BXrand();
     *(int*)(self + 0xA0) = BXrand();
-    wakeCopyMatD88((sMatD88*)(self + 0x50), (sMatD88*)D_004FF1A0);
+    wakeCopyMatD88((t4Matrix*)(self + 0x50), (t4Matrix*)D_004FF1A0);
     {
-        sMatD88 t2;
+        t4Matrix t2;
         t4Vector s;
-        sMatD88 tmp;
+        t4Matrix tmp;
         s.x = *(float*)(self + 0xC);
         s.y = *(float*)(self + 0xC);
         s.z = *(float*)(self + 0xC);
         s.w = 1.0f;
-        wakeScaleMatD88(&tmp, (sMatD88*)(self + 0x50), s);
+        wakeScaleMatD88(&tmp, (t4Matrix*)(self + 0x50), s);
         wakeCopyMatD88(&t2, &tmp);
-        wakeCopyMatD88((sMatD88*)(self + 0x50), &t2);
+        wakeCopyMatD88((t4Matrix*)(self + 0x50), &t2);
     }
     {
         t4Vector p;
