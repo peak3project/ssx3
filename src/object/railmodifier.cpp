@@ -75,6 +75,23 @@ extern int D_004A5B78;
 extern int D_004A5B7C;
 extern void* D_004A5B84;
 
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline t4Vector vu0Scale(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -171,22 +188,6 @@ static inline t4Vector vu0MtxMul_C0E8(const t4Matrix* m, const t4Vector& v)
     return r;
 }
 
-// PORT: PS2-only VU0 inline asm (v * s).
-static inline t4Vector vu0Scale_C0E8(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 struct sLink_C0E8 {
     int next;               // 0x0
@@ -316,7 +317,7 @@ extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
     f = self->mat.row[1].z;
     self->mat.row[1].z = self->mat.row[2].y;
     self->mat.row[2].y = f;
-    t4Vector v = vu0Scale_C0E8(row_C0E8(&self->mat, 3), -1.0f);
+    t4Vector v = vu0Scale(row_C0E8(&self->mat, 3), -1.0f);
     v.w = 0.0f;
     v = vu0MtxMul_C0E8(m, v);
     v.w = 1.0f;
@@ -813,22 +814,6 @@ static inline t4Vector DivD4A0(const t4Vector& v, float s)
     return r;
 }
 
-// PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector ScaleD4A0(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
 
 static inline t4Vector MulID4A0(sRmRigid_D4A0* b, const t4Vector& v)
 {
@@ -854,12 +839,12 @@ extern "C" void func_0035D4A0(sRmRigid_D4A0* b, t4Vector* point, t4Vector* n, fl
     t4Vector vp = PointVelD4A0(b, *point);
     float d = DotD4A0(vp, *n);
     if (mu != 0.0f) {
-        t4Vector t = SubD4A0(vp, ScaleD4A0(*n, d));
+        t4Vector t = SubD4A0(vp, vu0Scale(*n, d));
         float len = LengthD4A0(t);
         if (len > 0.0010000000474974513f) {
             t4Vector dir = DivD4A0(t, len);
             float j = -mu * len / (b->invMass + DotD4A0(dir, CrossD4A0(MulID4A0(b, CrossD4A0(r, dir)), r)));
-            t4Vector imp = ScaleD4A0(dir, j);
+            t4Vector imp = vu0Scale(dir, j);
             func_0035D908((sRmBody*)b, &r, &imp);
             vp = PointVelD4A0(b, *point);
             d = DotD4A0(vp, *n);
@@ -869,7 +854,7 @@ extern "C" void func_0035D4A0(sRmRigid_D4A0* b, t4Vector* point, t4Vector* n, fl
         }
     }
     float j = -(e + 1.0f) * d / (b->invMass + DotD4A0(*n, CrossD4A0(MulID4A0(b, CrossD4A0(r, *n)), r)));
-    t4Vector imp = ScaleD4A0(*n, j);
+    t4Vector imp = vu0Scale(*n, j);
     func_0035D908((sRmBody*)b, &r, &imp);
 }
 #endif
