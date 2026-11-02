@@ -108,7 +108,92 @@ extern "C" void func_0031D7E0(sCubicSpline* self, float x, float y)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031D8B0);
+#ifdef SKIP_ASM
+// self->data holds 5 floats per key: x, y, end x, end y, start slope on input;
+// d, c, b, a, x of each segment (y = a + b*u + c*u^2 + d*u^3, u = t - x) on output.
+// Builds the natural (flags.b0 == 0) or clamped (flags.b0 == 1) cubic spline through the added keys.
+extern "C" void func_0031D8B0(sCubicSpline* self)
+{
+    float x[256];
+    float a[256];
+    float h[256];
+    float alpha[256];
+    float l[256];
+    float mu[256];
+    float z[256];
+    float b[256];
+    float c[256];
+    float d[256];
+    int n = self->flags.count;
+    int i;
+    for (i = 0; i < n; i++) {
+        x[i] = ((float*)self->data)[i * 5 + 0];
+        a[i] = ((float*)self->data)[i * 5 + 1];
+    }
+    x[n] = ((float*)self->data)[(n - 1) * 5 + 2];
+    a[n] = ((float*)self->data)[(n - 1) * 5 + 3];
+    for (i = 0; i < n; i++) {
+        h[i] = x[i + 1] - x[i];
+    }
+    switch (self->flags.b0) {
+    case 0:
+        for (i = 1; i < n; i++) {
+            alpha[i] = 3.0f / h[i] * (a[i + 1] - a[i]) - 3.0f / h[i - 1] * (a[i] - a[i - 1]);
+        }
+        l[0] = 1.0f;
+        mu[0] = 0.0f;
+        z[0] = 0.0f;
+        for (i = 1; i < n; i++) {
+            l[i] = 2.0f * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+            mu[i] = h[i] / l[i];
+            z[i] = (alpha[i] - h[i - 1] * z[i - 1]) / l[i];
+        }
+        l[n] = 1.0f;
+        z[n] = 0.0f;
+        c[n] = 0.0f;
+        for (i = n - 1; i >= 0; i--) {
+            c[i] = z[i] - mu[i] * c[i + 1];
+            b[i] = (a[i + 1] - a[i]) / h[i] - h[i] * (c[i + 1] + 2.0f * c[i]) * 0.33333334f;
+            d[i] = (c[i + 1] - c[i]) / (3.0f * h[i]);
+        }
+        break;
+    case 1:
+        alpha[0] = 3.0f * (a[1] - a[0]) / h[0] - 3.0f * ((float*)self->data)[4];
+        alpha[n] = 3.0f * self->f4 - 3.0f * (a[n] - a[n - 1]) / h[n - 1];
+        for (i = 1; i < n; i++) {
+            alpha[i] = 3.0f / h[i] * (a[i + 1] - a[i]) - 3.0f / h[i - 1] * (a[i] - a[i - 1]);
+        }
+        l[0] = 2.0f * h[0];
+        mu[0] = 0.5f;
+        z[0] = alpha[0] / l[0];
+        for (i = 1; i < n; i++) {
+            l[i] = 2.0f * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+            mu[i] = h[i] / l[i];
+            z[i] = (alpha[i] - h[i - 1] * z[i - 1]) / l[i];
+        }
+        l[n] = h[n - 1] * (2.0f - mu[n - 1]);
+        z[n] = (alpha[n] - h[n - 1] * z[n - 1]) / l[n];
+        c[n] = z[n];
+        for (i = n - 1; i >= 0; i--) {
+            c[i] = z[i] - mu[i] * c[i + 1];
+            b[i] = (a[i + 1] - a[i]) / h[i] - h[i] * (c[i + 1] + 2.0f * c[i]) * 0.33333334f;
+            d[i] = (c[i + 1] - c[i]) / (3.0f * h[i]);
+        }
+        break;
+    }
+    for (i = 0; i < n; i++) {
+        ((float*)self->data)[i * 5 + 0] = d[i];
+        ((float*)self->data)[i * 5 + 1] = c[i];
+        ((float*)self->data)[i * 5 + 2] = b[i];
+        ((float*)self->data)[i * 5 + 3] = a[i];
+        ((float*)self->data)[i * 5 + 4] = x[i];
+    }
+    self->f4 = x[n];
+    *(unsigned int*)&self->flags &= 0xF807FFFF;
+}
+#endif
 
 INCLUDE_ASM("bx/cubicspline", func_0031DEE0);
 
