@@ -176,6 +176,10 @@ struct sNetAcct {
 };
 extern struct sNetAcct *D_004A4BC4;
 
+/* D_00451518: the CRC-32 state (func_003FB3A0 allocates the 0x400-byte table). */
+struct sCrc { unsigned *table; int f04; int *f08; unsigned crc; int heap; };
+extern struct sCrc D_00451518;
+
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 #ifdef SKIP_ASM
@@ -3503,20 +3507,19 @@ void func_003FB358(unsigned int *t) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB3A0);
 #ifdef SKIP_ASM
-extern unsigned D_3A0[] __asm__("D_00451518");
 extern int func_00266728(int, int, int);
 extern void func_003FB358b(int) __asm__("func_003FB358");
 int func_003FB3A0(unsigned a) {
     int r;
-    if (D_3A0[0] != 0) return 5;
+    if (D_00451518.table != 0) return 5;
     r = func_00266728(a, 0x400, 4);
-    D_3A0[0] = r;
+    D_00451518.table = (unsigned *)r;
     if (r == 0) return 1;
-    D_3A0[4] = a;
+    D_00451518.heap = a;
     func_003FB358b(r);
-    D_3A0[1] = 4;
-    D_3A0[3] = 0xFFFFFFFF;
-    D_3A0[2] = 0;
+    D_00451518.f04 = 4;
+    D_00451518.crc = 0xFFFFFFFF;
+    D_00451518.f08 = 0;
     return 0;
 }
 #endif
@@ -3524,13 +3527,12 @@ int func_003FB3A0(unsigned a) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB430);
 #ifdef SKIP_ASM
-extern int D_00451518[];
 extern int func_00266760(int, char *, int, int);
 int func_003FB430(void) {
-    int *p = D_00451518;
-    if (D_00451518[0] == 0) return 6;
-    func_00266760(p[4], (char *)p[0], 0x400, 4);
-    D_00451518[0] = 0;
+    struct sCrc *p = &D_00451518;
+    if (D_00451518.table == 0) return 6;
+    func_00266760(p->heap, (char *)p->table, 0x400, 4);
+    D_00451518.table = 0;
     return 0;
 }
 #endif
@@ -3538,18 +3540,16 @@ int func_003FB430(void) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB480);
 #ifdef SKIP_ASM
-extern int D_00451518[];
-int func_003FB480(void) { return D_00451518[0] != 0; }
+int func_003FB480(void) { return D_00451518.table != 0; }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB490);
 #ifdef SKIP_ASM
-extern int D_00451518[];
 int func_003FB490(void) {
     unsigned long long v = 0xFFFFFFFF;
-    if (D_00451518[0] == 0) return 6;
-    D_00451518[3] = v;
+    if (D_00451518.table == 0) return 6;
+    D_00451518.crc = v;
     return 0;
 }
 #endif
@@ -3557,15 +3557,14 @@ int func_003FB490(void) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB4C0);
 #ifdef SKIP_ASM
-extern unsigned D_4C0[] __asm__("D_00451518");
 int func_003FB4C0(unsigned char *buf, unsigned n) {
-    unsigned crc = D_4C0[3];
+    unsigned crc = D_00451518.crc;
     unsigned i;
-    if (D_4C0[0] == 0) return 6;
+    if (D_00451518.table == 0) return 6;
     if (buf == 0) return 2;
     for (i = 0; i < n; i++)
-        crc = ((crc >> 8) & 0xFFFFFF) ^ ((unsigned *)D_4C0[0])[(crc ^ buf[i]) & 0xFF];
-    D_4C0[3] = crc;
+        crc = ((crc >> 8) & 0xFFFFFF) ^ D_00451518.table[(crc ^ buf[i]) & 0xFF];
+    D_00451518.crc = crc;
     return 0;
 }
 #endif
@@ -3573,16 +3572,15 @@ int func_003FB4C0(unsigned char *buf, unsigned n) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB558);
 #ifdef SKIP_ASM
-extern int D_00451518[];
 extern int D_004A5B1C;
 int func_003FB558(int **out) {
-    int *p = D_00451518;
-    if (D_00451518[0] == 0) return 6;
+    struct sCrc *p = &D_00451518;
+    if (D_00451518.table == 0) return 6;
     if (out == 0) return 2;
-    p[2] = (int)&D_004A5B1C;
-    p[1] = 4;
-    D_004A5B1C = ~p[3];
-    *out = &p[1];
+    p->f08 = &D_004A5B1C;
+    p->f04 = 4;
+    D_004A5B1C = ~p->crc;
+    *out = &p->f04;
     return 0;
 }
 #endif
@@ -3590,9 +3588,8 @@ int func_003FB558(int **out) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB5B0);
 #ifdef SKIP_ASM
-extern int D_00451518[];
 int func_003FB5B0(int *out) {
-    if (D_00451518[0] == 0) return 6;
+    if (D_00451518.table == 0) return 6;
     if (out == 0) return 2;
     *out = 4;
     return 0;
