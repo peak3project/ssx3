@@ -42,6 +42,24 @@ extern "C" int func_00261460(void* p);
 extern "C" void func_002613C8(void* p);
 extern "C" void func_0025B800(void* self);
 
+struct sName7 {
+    char c[7];
+};
+
+// The network game state D_00534B30 (D_00534B34 = +0x4 and D_00534E58 = +0x328 are their own symbols).
+struct sNetState {
+    int active;                     // 0x000
+    int f4;                         // 0x004
+    int chan;                       // 0x008
+    int port;                       // 0x00C
+    float rate;                     // 0x010
+    char pad_0x014[0x32C - 0x14];
+    int charID;                     // 0x32C
+    char pad_0x330[0x4A8 - 0x330];
+    sName7 name;                    // 0x4A8
+};
+extern sNetState D_00534B30;
+
 // The session manager singleton D_004A3328, created / reset on demand.
 static inline void* Mgr()
 {
@@ -5137,16 +5155,6 @@ struct sIf {
     sVEntryV* vt;
 };
 
-struct sNetCfg_002639E0 {
-    int active;     // 0x0
-    int f4;         // 0x4
-    int chan;       // 0x8
-    int port;       // 0xC
-    float rate;     // 0x10
-};
-
-extern sNetCfg_002639E0 D_00534B30_002639E0[] __asm__("D_00534B30");
-
 extern "C" void func_002639E0(int* self, unsigned int ip, int chan, int a3, int a4)
 {
     char buf[256];
@@ -5159,15 +5167,15 @@ extern "C" void func_002639E0(int* self, unsigned int ip, int chan, int a3, int 
     func_001472C8(p, 1, 0);
     p->vt[1].fn((char*)p + p->vt[1].delta);
     sIf* r = (sIf*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
-    D_00534B30_002639E0[0].active = 1;
-    D_00534B30_002639E0[0].rate = 0.01666666753590107f;
-    D_00534B30_002639E0[0].port = 0xE4A;
-    D_00534B30_002639E0[0].chan = chan;
+    D_00534B30.active = 1;
+    D_00534B30.rate = 0.01666666753590107f;
+    D_00534B30.port = 0xE4A;
+    D_00534B30.chan = chan;
     r->vt[1].fn((char*)r + r->vt[1].delta);
     r->vt[1].fn((char*)r + r->vt[1].delta);
     self[2] = chan;
     sprintf(buf, D_00480EE0, ip >> 24, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF);
-    self[1] = cCommSystem_openDSockChannel(D_004A2EB8, buf, D_00534B30_002639E0[0].port, chan);
+    self[1] = cCommSystem_openDSockChannel(D_004A2EB8, buf, D_00534B30.port, chan);
     cBE_getInterface_Fv(cBE_getBE(), 4);
     if ((D_00535610[0] >> 18) & 1) {
         func_00266D58(D_004A33F4, (void*)ip);
@@ -5253,7 +5261,6 @@ extern int D_004A19C4;
 extern int D_00534B34[];
 extern int D_00534E58[];
 extern char D_00480EF0[];
-
 
 static inline bool tsTimedOut_263CF0(int* self)
 {
@@ -5463,8 +5470,7 @@ extern "C" void func_00264B20(void* p);
 extern "C" int func_00264BE8(void* self, void* msg, int size);
 int func_002649B0_42B8(void* self, void* dst, int size) __asm__("func_002649B0");
 extern "C" void func_00264F88(void* self, int a1);
-struct sName7_00264D80;
-extern "C" void func_00265190(void* self, int rider, sName7_00264D80* name);
+extern "C" void func_00265190(void* self, int rider, sName7* name);
 extern "C" void func_00265290(void* self, int rider);
 extern "C" void func_00265398(int* self);
 extern "C" void func_00269008(void* self, int a1, int a2);
@@ -5557,7 +5563,7 @@ extern "C" void func_002642B8(void* selfp)
         if (self->state < 7) {
             switch (msg.type) {
             case 1:
-                func_00265190(self, msg.a, (sName7_00264D80*)msg.name);
+                func_00265190(self, msg.a, (sName7*)msg.name);
                 break;
             case 3:
                 func_00265290(self, msg.a);
@@ -5901,28 +5907,15 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00147448(void* self, int a1, int charID);
 extern void* D_004A28A8;
 
-struct sName7_00264D80 {
-    char c[7];
-};
-
-struct sNetState_00264D80 {
-    char pad_0x000[0x32C];
-    int charID;                     // 0x32C
-    char pad_0x330[0x4A8 - 0x330];
-    sName7_00264D80 name;           // 0x4A8
-};
-
-extern sNetState_00264D80 D_00534B30_00264D80[] __asm__("D_00534B30");
-
-extern "C" void func_00264D80(void* self, int charID, sName7_00264D80* name)
+extern "C" void func_00264D80(void* self, int charID, sName7* name)
 {
     sIf* p = (sIf*)cBE_getInterface_Fv(cBE_getBE(), 1);
     func_00147448(p, 1, charID);
     p->vt[1].fn((char*)p + p->vt[1].delta);
     sIf* q = (sIf*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
-    D_00534B30_00264D80[0].charID = charID;
+    D_00534B30.charID = charID;
     if (name != 0)
-        D_00534B30_00264D80[0].name = *name;
+        D_00534B30.name = *name;
     q->vt[1].fn((char*)q + q->vt[1].delta);
 }
 #endif
@@ -6054,11 +6047,10 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00265190);
 #ifdef SKIP_ASM
 extern char D_00480488[];
 extern void* D_004812B0[];
-struct sName7_00264D80;
-extern "C" void func_00264D80(void* self, int charID, sName7_00264D80* name);
+extern "C" void func_00264D80(void* self, int charID, sName7* name);
 extern "C" void func_00264E50(void* self, int type, int rider, int state);
 
-extern "C" void func_00265190(void* self, int rider, sName7_00264D80* name)
+extern "C" void func_00265190(void* self, int rider, sName7* name)
 {
     int st = *(int*)self;
     if (st != 2) {
@@ -6081,8 +6073,7 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00265290);
 #ifdef SKIP_ASM
 extern char D_00480488[];
 extern void* D_004812B0[];
-struct sName7_00264D80;
-extern "C" void func_00264D80(void* self, int charID, sName7_00264D80* name);
+extern "C" void func_00264D80(void* self, int charID, sName7* name);
 extern "C" void func_00264E50(void* self, int type, int rider, int state);
 
 extern "C" void func_00265290(void* self, int rider)
