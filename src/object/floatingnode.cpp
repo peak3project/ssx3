@@ -173,7 +173,200 @@ extern "C" void func_0034F048(cFloatingNode* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/floatingnode", func_0034F120);
+#ifdef SKIP_ASM
+struct sV4_F120 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sMat_F120 {
+    sV4_F120 r[4];
+};
+
+struct sPart_F120 {
+    int parent;
+    int pad4;
+    int pad8;
+    sMat_F120* mat;     // 0xC
+};
+
+struct sModel_F120 {
+    int pad0;
+    int count;          // 0x4
+    sPart_F120* parts;  // 0x8
+};
+
+struct sInst_F120 {
+    char pad_0x00[0x80];
+    sModel_F120* model; // 0x80
+    float scale;        // 0x84
+};
+
+struct sFlBase_F120 {
+    char pad_0x00[0x28];
+    float f28;
+    char pad_0x2C[0xC];
+    float f38;
+};
+
+struct sFloat_F120 {
+    char pad_0x00[0x12];
+    unsigned short flags;   // 0x12
+    char pad_0x14[0x4];
+    sInst_F120* inst;       // 0x18
+    char pad_0x1C[0x34];
+    float f50;              // 0x50
+};
+
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_F120(sMat_F120* d, const sMat_F120* a, const sMat_F120* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_F120(sMat_F120* d, const sMat_F120* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+static inline sV4_F120 row_F120(const sMat_F120* m, int i)
+{
+    return m->r[i];
+}
+
+static inline void mulv_F120(sV4_F120& r, const sV4_F120& a, const sV4_F120& b)
+{
+    r.x = a.x * b.x;
+    r.y = a.y * b.y;
+    r.z = a.z * b.z;
+    r.w = a.w * b.w;
+}
+
+// Builds a part matrix: dst = parent * (local with its translation row scaled by s).
+static inline void partMat_F120(sMat_F120* dst, const sMat_F120* parentMat, const sMat_F120* m, const sV4_F120& s)
+{
+    sMat_F120 l;
+    l.r[0] = row_F120(m, 0);
+    l.r[1] = row_F120(m, 1);
+    l.r[2] = row_F120(m, 2);
+    sV4_F120 t;
+    sV4_F120 r3 = m->r[3];
+    mulv_F120(t, r3, s);
+    l.r[3] = t;
+    sMat_F120 tt;
+    vu0MulMat_F120(&tt, parentMat, &l);
+    vu0CopyMat_F120(dst, &tt);
+}
+
+extern "C" void func_0034F120(sFloat_F120* self, sMat_F120* world, sMat_F120* out)
+{
+    sMat_F120 M;
+    sFlBase_F120* b = (sFlBase_F120*)((char*)self + 0x2C);
+    sV4_F120 pos = world->r[3];
+    sV4_F120 t;
+    t.x = 0.0f;
+    t.y = 0.0f;
+    t.z = self->f50 - pos.z;
+    float r[3];
+    r[0] = b->f28;
+    r[1] = b->f38;
+    r[2] = 0.0f;
+    float sx, cx, sy, cy, sz, cz;
+    func_0031BE50(&sx, &cx, r[0]);
+    func_0031BE50(&sy, &cy, r[1]);
+    func_0031BE50(&sz, &cz, r[2]);
+    float sxsy = sx * sy;
+    float cxsy = cx * sy;
+    float cxsz = cx * sz;
+    M.r[0].x = cy * cz;
+    M.r[0].y = -cy * sz;
+    M.r[0].z = sy;
+    M.r[0].w = 0.0f;
+    M.r[1].x = sxsy * cz + cxsz;
+    M.r[1].y = cx * cz - sxsy * sz;
+    M.r[1].z = -sx * cy;
+    M.r[1].w = 0.0f;
+    M.r[2].x = sx * sz - cxsy * cz;
+    M.r[2].y = cxsz * sy + sx * cz;
+    M.r[2].z = cx * cy;
+    M.r[2].w = 0.0f;
+    M.r[3].x = t.x;
+    M.r[3].y = t.y;
+    M.r[3].z = t.z;
+    M.r[3].w = 1.0f;
+    sInst_F120* inst = self->inst;
+    sModel_F120* model = inst->model;
+    sPart_F120* p = model->parts;
+    float k = inst->scale;
+    sV4_F120 s;
+    s.x = k;
+    s.y = k;
+    s.z = k;
+    s.w = 1.0f;
+    sMat_F120 t2;
+    for (int i = 0; i < model->count; i++, p++) {
+        int parent = p->parent;
+        if (parent != -1) {
+            partMat_F120(&t2, &out[parent], p->mat, s);
+            vu0CopyMat_F120(&out[i], &t2);
+        } else {
+            sMat_F120 w;
+            sMat_F120 tt;
+            vu0MulMat_F120(&tt, world, &M);
+            vu0CopyMat_F120(&w, &tt);
+            partMat_F120(&t2, &w, p->mat, s);
+            vu0CopyMat_F120(&out[i], &t2);
+        }
+    }
+    self->flags &= ~1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/floatingnode", func_0034F600);
