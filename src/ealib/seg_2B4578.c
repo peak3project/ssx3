@@ -318,6 +318,74 @@ extern void (*D_0050AAD4)(void);        /* D_0050A8E8.f1EC */
 extern struct sA8E8Slot *D_0050AADC;    /* D_0050A8E8.f1F4 */
 extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 
+/* D_0050A0A0: the streams (one per stream slot, func_003B6A38 looks one up). Layout from every use in this unit;
+   field names are their offsets. */
+struct sA0A0Node {                  /* 0x28: a queued stream request */
+    struct sA0A0Node *f00;          /* next */
+    int f04;
+    int f08;
+    volatile int f0C;               /* handle */
+    unsigned int f10;
+    volatile unsigned int f14;
+    volatile unsigned int f18;
+    volatile unsigned int f1C;
+    volatile int f20;
+    unsigned char f24;
+    char pad25[0x28 - 0x25];
+};
+struct sA0A0List {                  /* 0xC */
+    struct sA0A0Node *f00;          /* first */
+    struct sA0A0Node *f04;
+    int f08;                        /* count */
+};
+struct sA0A0Fmt {                   /* 4 bytes, copied as a whole: rate (u16), channels, codec (func_003B6948) */
+    unsigned char b[4];
+};
+struct sA0A0Hdr {                   /* 0x68 */
+    char pad00[0x18];
+    int f18[6];                     /* one per channel */
+    char pad30[0x68 - 0x30];
+};
+struct sA0A0Parm {                  /* 0x18, handed to func_003C6760 */
+    signed char f00;
+    signed char f01;
+    char pad02[0x4 - 0x2];
+    char f04;
+    char f05;
+    char pad06[0x8 - 0x6];
+    short f08;
+    short f0A;
+    short f0C;
+    short f0E;
+    char pad10[0x14 - 0x10];
+    short f14;
+    char pad16[0x18 - 0x16];
+};
+struct sA0A0Trk {                   /* 0x18 */
+    char pad00[0x10];
+    int f10;
+    char pad14[0x18 - 0x14];
+};
+struct sA0A0Strm {                  /* 0x138 */
+    int f00;                        /* handle */
+    volatile int f04;               /* voice */
+    volatile int f08;               /* queue (D_005157B8.f304) */
+    volatile int f0C;
+    volatile signed char f10;       /* state */
+    volatile unsigned char f11;
+    char pad12[0x14 - 0x12];
+    struct sA0A0Fmt f14;            /* current */
+    struct sA0A0Fmt f18;            /* next */
+    struct sA0A0Hdr f1C;            /* current */
+    struct sA0A0Hdr f84;            /* next */
+    struct sA0A0Parm fEC;
+    struct sA0A0Trk f104[1];
+    struct sA0A0List f11C;          /* queued requests */
+    struct sA0A0List f128;          /* free requests */
+    struct sA0A0Node *f134;
+};
+extern struct sA0A0Strm *D_0050A0A0[32];
+
 /* D_0050A120: the MIDI sequence player (16 songs, then 24 voices, also D_0050A820). Layout from every use in this
    unit; field names are their offsets. */
 struct sA120Chan {                  /* 4 bytes, one per MIDI channel (sA120Song.f30[]) */
@@ -1977,20 +2045,20 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B68B8);
 extern int func_003B8CC8(int, int);
 extern int func_003C6760(int, int, int, int);
 
-void func_003B68B8(char *p) {
+void func_003B68B8(struct sA0A0Strm *p) {
     int i = 0;
-    char *q = p + 0x104;
-    int *f = (int*)(p + 0x114);
-    *(int *)(p + 4) = func_003C6760(*(int *)(p + 8), (int)(p + 0x14), (int)(p + 0x1C), (int)(p + 0xEC));
+    struct sA0A0Trk *q = p->f104;
+    int *f = &p->f104[0].f10;
+    p->f04 = func_003C6760(p->f08, (int)&p->f14, (int)&p->f1C, (int)&p->fEC);
     do {
         if (*f != 0) {
-            func_003B8CC8(*(int *)(p + 4), (int)q);
+            func_003B8CC8(p->f04, (int)q);
         }
-        q += 0x18;
+        q++;
         i++;
         f += 6;
     } while (i == 0);
-    *(char *)(p + 0x10) = 1;
+    p->f10 = 1;
 }
 #endif
 
@@ -2033,10 +2101,7 @@ int func_003B69D8(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6A38);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_0050A0A0[];
-
-int func_003B6A38(int arg0) {
+struct sA0A0Strm *func_003B6A38(int arg0) {
     if (arg0 >= D_0050A92E || arg0 < 0) {
         return 0;
     }
