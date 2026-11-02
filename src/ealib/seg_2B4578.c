@@ -7021,10 +7021,8 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C1638);
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C1980);
 #ifdef SKIP_ASM
-struct S_1980 { char pad[0x1C0]; int cnt; };
-extern struct S_1980 D_0050A8E8_1980 __asm__("D_0050A8E8");
 int func_003C1980(void) {
-    D_0050A8E8_1980.cnt = D_0050A8E8_1980.cnt + 1;
+    D_0050A8E8.f1C0 = D_0050A8E8.f1C0 + 1;
     // PORT: MIPS sync + EE ei (no C equivalent)
     __asm__ volatile("sync\n\tei");
     return 0;
