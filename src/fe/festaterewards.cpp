@@ -8,6 +8,94 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// The render context D_004A289C as these functions call it: vptr at 0x10D8; slot 46 loads a texture by name and
+// returns its handle, slot 50 releases a handle.
+struct sRenderCtx {
+    char pad[0x10D8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35();
+    virtual void v36();
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
+    virtual void v42();
+    virtual void v43();
+    virtual void v44();
+    virtual void v45();
+    virtual int v46(void* name, void* entry, int a, int b, int c);
+    virtual void v47();
+    virtual void v48();
+    virtual void v49();
+    virtual void v50(int id);
+};
+
+// A loaded reward texture: its 4-character name and the render context's handle (-1 = none).
+struct sRewardTex {
+    char name[8];
+    int handle;
+};
+
+// The reward gallery state's data as these functions use it (cFEStateRewardGalleryBase and the derived galleries):
+// the reward list (count, base address, item addresses) and the loaded textures.
+struct sRewardGallery {
+    char pad_0x0[0x68];
+    int count;                  // 0x68: entries in items[]
+    char pad_0x6C[0x78 - 0x6C];
+    int texCount;               // 0x78
+    sRewardTex tex[180];        // 0x7C
+    char pad_0x8EC[0xA24 - 0x8EC];
+    int base;                   // 0xA24
+    int items[1];               // 0xA28
+};
+
+// A gallery / preview widget: vptr at 0x8 (slot 9 shows or hides it), the reward it shows and its texture.
+struct sRewardWidget {
+    char pad0[0x8];
+    sVEntry<void(void*, int)>* vt;  // 0x8
+    char padC[0x18 - 0xC];
+    int index;                  // 0x18
+    char pad1C[0x38 - 0x1C];
+    int hash;                   // 0x38
+    char pad3C[0x78 - 0x3C];
+    int reward;                 // 0x78
+    void* tex;                  // 0x7C
+};
+
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_onCreateScreen);
 #ifdef SKIP_ASM
@@ -17,14 +105,6 @@ extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int ha
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_001D0180(void* self);
 extern "C" void func_001CFE60(void* self);
-struct sRewardEntry_F0B0 {
-    char name[8];
-    int id;
-};
-struct sRewardGallery_F0B0 {
-    char pad_0x0[0x7C];
-    sRewardEntry_F0B0 entries[180];  // 0x7C
-};
 
 extern "C" void cFEStateRewardGalleryBase_onCreateScreen(void* self)
 {
@@ -36,8 +116,8 @@ extern "C" void cFEStateRewardGalleryBase_onCreateScreen(void* self)
     }
     int i;
     for (i = 0; i < 180; i++) {
-        ((sRewardGallery_F0B0*)self)->entries[i].name[0] = 0;
-        ((sRewardGallery_F0B0*)self)->entries[i].id = -1;
+        ((sRewardGallery*)self)->tex[i].name[0] = 0;
+        ((sRewardGallery*)self)->tex[i].handle = -1;
     }
     *(int*)((char*)self + 0x78) = 0;
     func_001D0180(self);
@@ -144,19 +224,6 @@ extern char D_004A1408[];
 extern char* D_00441440[][8];
 extern char* D_004414C0[][8];
 
-
-struct sWidget_F820 {
-    char pad0[0x8];
-    sVEntry<void(void*, int)>* vt;              // 0x8
-    char padC[0x18 - 0xC];
-    int index;                  // 0x18
-    char pad1C[0x38 - 0x1C];
-    int hash;                   // 0x38
-    char pad3C[0x78 - 0x3C];
-    int reward;                 // 0x78
-    void* tex;                  // 0x7C
-};
-
 struct sGallery_F820 {
     char pad0[0x8];
     sVEntry<void(void*)>* vt;              // 0x8
@@ -171,28 +238,28 @@ struct sGallery_F820 {
     int count68;                // 0x68
     int count6C;                // 0x6C
     char pad70[0x8F4 - 0x70];
-    sWidget_F820* w8F4;         // 0x8F4
-    sWidget_F820* w8F8;         // 0x8F8
+    sRewardWidget* w8F4;         // 0x8F4
+    sRewardWidget* w8F8;         // 0x8F8
     char pad8FC[0x900 - 0x8FC];
-    sWidget_F820* w900;         // 0x900
-    sWidget_F820* w904;         // 0x904
-    sWidget_F820* w908;         // 0x908
-    sWidget_F820* w90C;         // 0x90C
-    sWidget_F820* w910;         // 0x910
-    sWidget_F820* w914;         // 0x914
-    sWidget_F820* w918;         // 0x918
-    sWidget_F820* w91C;         // 0x91C
-    sWidget_F820* w920;         // 0x920
-    sWidget_F820* cells[4][8];  // 0x924
-    sWidget_F820* frames[4][8]; // 0x9A4
+    sRewardWidget* w900;         // 0x900
+    sRewardWidget* w904;         // 0x904
+    sRewardWidget* w908;         // 0x908
+    sRewardWidget* w90C;         // 0x90C
+    sRewardWidget* w910;         // 0x910
+    sRewardWidget* w914;         // 0x914
+    sRewardWidget* w918;         // 0x918
+    sRewardWidget* w91C;         // 0x91C
+    sRewardWidget* w920;         // 0x920
+    sRewardWidget* cells[4][8];  // 0x924
+    sRewardWidget* frames[4][8]; // 0x9A4
 };
 
-static inline void show_F820(sWidget_F820* w, int on)
+static inline void show_F820(sRewardWidget* w, int on)
 {
     w->vt[9].fn((char*)w + w->vt[9].delta, on);
 }
 
-extern "C" void cFEStateRewardGalleryBase_onWidgetCreate(sGallery_F820* self, sWidget_F820* w)
+extern "C" void cFEStateRewardGalleryBase_onWidgetCreate(sGallery_F820* self, sRewardWidget* w)
 {
     char buf[16];
     int hash = w->hash;
@@ -329,7 +396,6 @@ extern "C" void cFEStateRewardGalleryBase_onWidgetCreate(sGallery_F820* self, sW
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001CFD18);
 #ifdef SKIP_ASM
-
 extern "C" void func_001CFD18(void* self, void* widget, int msg)
 {
     switch (msg) {
@@ -357,26 +423,15 @@ INCLUDE_ASM("fe/festaterewards", func_001CFDD0);
 #ifdef SKIP_ASM
 extern "C" int func_004165A8(const void* a, const void* b);
 
-struct sRewardName_FDD0 {
-    char name[8];
-    int id;
-};
+// The callers declare func_001CFDD0 extern "C" with a void* self; the definition takes the gallery view.
+int func_001CFDD0_find(sRewardGallery* self, char* name) __asm__("func_001CFDD0");
 
-struct sRewardTable_FDD0 {
-    char pad_0x0[0x78];
-    int count;
-    sRewardName_FDD0 entries[1];
-};
-
-// PORT: the unit declares func_001CFDD0 as `void (void*, char*)`, but the body returns the id.
-int func_001CFDD0_find(sRewardTable_FDD0* self, char* name) __asm__("func_001CFDD0");
-
-int func_001CFDD0_find(sRewardTable_FDD0* self, char* name)
+int func_001CFDD0_find(sRewardGallery* self, char* name)
 {
     int i;
-    for (i = 0; i < self->count; i++) {
-        if (func_004165A8(self->entries[i].name, name) == 0) {
-            return self->entries[i].id;
+    for (i = 0; i < self->texCount; i++) {
+        if (func_004165A8(self->tex[i].name, name) == 0) {
+            return self->tex[i].handle;
         }
     }
     return -1;
@@ -409,17 +464,16 @@ INCLUDE_ASM("fe/festaterewards", func_001CFF10);
 extern void* D_004A28A8;
 extern "C" void func_0019DC20(void* self, int bank, int i);
 extern "C" int func_0019E238(void* self, int bank, int i);
-struct sSelf001CFFF8;
 struct sData001CFFF8;
 extern "C" sData001CFFF8* func_0019E2B0(void* self, int bank, int i);
-extern "C" void func_001CFFF8(sSelf001CFFF8* self, sData001CFFF8* data);
+extern "C" void func_001CFFF8(sRewardGallery* self, sData001CFFF8* data);
 
 extern "C" void func_001CFF10(void* self)
 {
     if (((*(int*)((char*)self + 0x48) >> 3) & 1) == 0) {
         char* mgr = *(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70;
         if (func_0019E238(mgr, *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x8EC)) != 0) {
-            func_001CFFF8((sSelf001CFFF8*)self, func_0019E2B0(mgr, *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x8EC)));
+            func_001CFFF8((sRewardGallery*)self, func_0019E2B0(mgr, *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x8EC)));
             func_0019DC20(mgr, *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x8EC));
             *(int*)((char*)self + 0x8EC) = -1;
             *(int*)((char*)self + 0x48) = (*(int*)((char*)self + 0x48) & ~4) | 8;
@@ -438,62 +492,8 @@ extern "C" void func_001CFF10(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001CFFF8);
 #ifdef SKIP_ASM
-struct cGame001CFFF8 {
-    char pad[0x10D8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual int v46(void* name, void* entry, int a, int b, int c);
-};
-
 extern void* D_004A289C;
 extern "C" void func_003B3D00(void* data, int i, void* entry);
-struct sEntry001CFFF8 {
-    char name[5];
-    int handle;
-};
 struct sDataEnt001CFFF8 {
     int off;
     int f4;
@@ -506,24 +506,19 @@ struct sData001CFFF8 {
     int f10;
     sDataEnt001CFFF8 tbl[1];
 };
-struct sSelf001CFFF8 {
-    char pad[0x78];
-    int count;
-    sEntry001CFFF8 entries[1];
-};
 
-extern "C" void func_001CFFF8(sSelf001CFFF8* self, sData001CFFF8* data)
+extern "C" void func_001CFFF8(sRewardGallery* self, sData001CFFF8* data)
 {
     if (data == 0) {
-        self->count = 0;
+        self->texCount = 0;
         return;
     }
-    self->count = data->count;
+    self->texCount = data->count;
     int i;
-    for (i = 0; i < self->count; i++) {
-        func_003B3D00(data, i, &self->entries[i]);
-        self->entries[i].name[4] = 0;
-        self->entries[i].handle = ((cGame001CFFF8*)D_004A289C)->v46((char*)data + data->tbl[i].off, &self->entries[i], 0, 1, -1);
+    for (i = 0; i < self->texCount; i++) {
+        func_003B3D00(data, i, &self->tex[i]);
+        self->tex[i].name[4] = 0;
+        self->tex[i].handle = ((sRenderCtx*)D_004A289C)->v46((char*)data + data->tbl[i].off, &self->tex[i], 0, 1, -1);
     }
 }
 #endif
@@ -531,82 +526,19 @@ extern "C" void func_001CFFF8(sSelf001CFFF8* self, sData001CFFF8* data)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D00C0);
 #ifdef SKIP_ASM
-struct cGame001D00C0 {
-    char pad[0x10D8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-    virtual void v42();
-    virtual void v43();
-    virtual void v44();
-    virtual void v45();
-    virtual void v46();
-    virtual void v47();
-    virtual void v48();
-    virtual void v49();
-    virtual void v50(int id);
-};
-
 extern void* D_004A289C;
 extern void* D_004A28A8;
 extern "C" void func_0019DC20(void* self, int bank, int i);
-struct sEntry001D00C0 {
-    char name[5];
-    int handle;
-};
-struct sSelf001D00C0 {
-    char pad[0x78];
-    int count;
-    sEntry001D00C0 entries[1];
-};
 
-extern "C" void func_001D00C0(sSelf001D00C0* self)
+extern "C" void func_001D00C0(sRewardGallery* self)
 {
     int i;
-    for (i = 0; i < self->count; i++) {
-        if (self->entries[i].handle >= 0) {
-            ((cGame001D00C0*)D_004A289C)->v50(self->entries[i].handle);
+    for (i = 0; i < self->texCount; i++) {
+        if (self->tex[i].handle >= 0) {
+            ((sRenderCtx*)D_004A289C)->v50(self->tex[i].handle);
         }
-        self->entries[i].handle = -1;
-        self->entries[i].name[0] = 0;
+        self->tex[i].handle = -1;
+        self->tex[i].name[0] = 0;
     }
     int h = *(int*)((char*)self + 0x8EC);
     if (h >= 0) {
@@ -705,7 +637,6 @@ extern "C" void func_0039F290(void* stack, void* state);
 extern char D_00466F78[];
 extern char D_004601D8[];
 
-
 extern "C" void cFEStateRewardGalleryBase_showReward(void* self)
 {
     void* p = 0;
@@ -784,7 +715,6 @@ extern char D_00466FF8[];
 extern char D_00467010[];
 extern char D_00467028[];
 extern char D_00460958[];
-
 
 static inline void setVis_0648(char* o, int on)
 {
@@ -876,15 +806,6 @@ extern char D_00467040[];
 extern char D_00467050[];
 extern char D_004C6818[];
 
-
-struct sGalCell_08A0 {
-    char pad0[0x8];
-    void* vt;                   // 0x8
-    char padC[0x78 - 0xC];
-    int reward;                 // 0x78
-    void* tex;                  // 0x7C
-};
-
 struct sGallery_08A0 {
     char pad0[0x8];
     sVEntry<int(void*, int)>* vt;              // 0x8
@@ -898,11 +819,11 @@ struct sGallery_08A0 {
     char pad6C[0x8F0 - 0x6C];
     int selected;               // 0x8F0
     char pad8F4[0x924 - 0x8F4];
-    sGalCell_08A0* cells[4][8];  // 0x924
-    sGalCell_08A0* frames[4][8]; // 0x9A4
+    sRewardWidget* cells[4][8];  // 0x924
+    sRewardWidget* frames[4][8]; // 0x9A4
 };
 
-static inline void show_08A0(sGalCell_08A0* c, int on)
+static inline void show_08A0(sRewardWidget* c, int on)
 {
     sVEntry<void(void*, int)>* vt = (sVEntry<void(void*, int)>*)c->vt;
     vt[9].fn((char*)c + vt[9].delta, on);
@@ -918,13 +839,13 @@ extern "C" void cFEStateRewardGalleryBase_updateRow(sGallery_08A0* self, int row
             if (self->vt[38].fn((char*)self + self->vt[38].delta, idx) != 0) {
                 int a = self->vt[26].fn((char*)self + self->vt[26].delta, idx);
                 if (a >= 0) {
-                    sGalCell_08A0* cell = self->cells[row][col];
+                    sRewardWidget* cell = self->cells[row][col];
                     cell->reward = a;
                     cell->tex = 0;
                 } else {
                     int b = self->vt[27].fn((char*)self + self->vt[27].delta, idx);
                     if (b != 0) {
-                        sGalCell_08A0* cell = self->cells[row][col];
+                        sRewardWidget* cell = self->cells[row][col];
                         cell->tex = (void*)b;
                         cell->reward = -1;
                     }
@@ -941,11 +862,11 @@ extern "C" void cFEStateRewardGalleryBase_updateRow(sGallery_08A0* self, int row
                     int h = GetHashValue32(D_00467050);
                     t = func_00398380(ui + 0x58, h);
                 }
-                sGalCell_08A0* cell = self->cells[row][col];
+                sRewardWidget* cell = self->cells[row][col];
                 cell->tex = t;
                 cell->reward = -1;
             }
-            sGalCell_08A0* cell = self->cells[row][col];
+            sRewardWidget* cell = self->cells[row][col];
             sVEntry<void(void*, void*)>* vt = (sVEntry<void(void*, void*)>*)cell->vt;
             vt[11].fn((char*)cell + vt[11].delta, D_004C6818);
         } else {
@@ -959,7 +880,6 @@ extern "C" void cFEStateRewardGalleryBase_updateRow(sGallery_08A0* self, int row
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0B00);
 #ifdef SKIP_ASM
-
 extern "C" void func_001D0B00(void* self)
 {
     int i;
@@ -993,7 +913,6 @@ extern char D_00467060[];
 extern char D_004A1EF8[];
 extern char D_004A1F00[];
 extern char D_004A1408[];
-
 
 extern "C" void cFEStateRewardGalleryBase_updatePageNumber(void* self)
 {
@@ -1036,7 +955,6 @@ extern "C" const char* func_00198AF0(void* a0);
 // PORT: func_00198AF0 really takes the int value to format; bound by asm label
 extern "C" const char* func_00198AF0_i(int v) __asm__("func_00198AF0");
 extern char D_004A1408[];
-
 
 extern "C" void func_001D0D30(void* self)
 {
@@ -1112,7 +1030,6 @@ INCLUDE_ASM("fe/festaterewards", func_001D0F30);
 #ifdef SKIP_ASM
 extern char D_004C6808[];
 
-
 extern "C" void func_001D0F30(void* self)
 {
     char* icon = *(char**)((char*)self + 0x8F8);
@@ -1162,7 +1079,6 @@ extern "C" void func_001D0F30(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D10A8);
 #ifdef SKIP_ASM
-
 extern "C" void func_001D10A8(void* self)
 {
     void* obj = *(void**)((char*)self + 0x91C);
@@ -1234,15 +1150,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_001572B0(void* self);
 extern "C" void* func_0015A478();
 
-struct sRewardList_11F8 {
-    char pad_0x0[0x68];
-    int count;
-    char pad_0x6C[0xA24 - 0x6C];
-    int base;
-    int items[1];
-};
-
-extern "C" void func_001D11F8(sRewardList_11F8* self)
+extern "C" void func_001D11F8(sRewardGallery* self)
 {
     int n = func_001572B0(cBE_getInterface_Fv(cBE_getBE(), 0xD));
     self->count = 0;
@@ -1321,15 +1229,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_001572D0(void* self);
 extern "C" void* func_0015A478();
 
-struct sRewardList_1390 {
-    char pad_0x0[0x68];
-    int count;
-    char pad_0x6C[0xA24 - 0x6C];
-    int base;
-    int items[1];
-};
-
-extern "C" void func_001D1390(sRewardList_1390* self)
+extern "C" void func_001D1390(sRewardGallery* self)
 {
     int n = func_001572D0(cBE_getInterface_Fv(cBE_getBE(), 0xD));
     self->count = 0;
@@ -1408,15 +1308,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_001572F0(void* self);
 extern "C" void* func_0015A478();
 
-struct sRewardList_1528 {
-    char pad_0x0[0x68];
-    int count;
-    char pad_0x6C[0xA24 - 0x6C];
-    int base;
-    int items[1];
-};
-
-extern "C" void func_001D1528(sRewardList_1528* self)
+extern "C" void func_001D1528(sRewardGallery* self)
 {
     int n = func_001572F0(cBE_getInterface_Fv(cBE_getBE(), 0xD));
     self->count = 0;
@@ -1495,15 +1387,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00157330(void* self);
 extern "C" void* func_0015A478();
 
-struct sRewardList_16C0 {
-    char pad_0x0[0x68];
-    int count;
-    char pad_0x6C[0xA24 - 0x6C];
-    int base;
-    int items[1];
-};
-
-extern "C" void func_001D16C0(sRewardList_16C0* self)
+extern "C" void func_001D16C0(sRewardGallery* self)
 {
     int n = func_00157330(cBE_getInterface_Fv(cBE_getBE(), 0xD));
     self->count = 0;
@@ -1582,15 +1466,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00157310(void* self);
 extern "C" void* func_0015A478();
 
-struct sRewardList_1858 {
-    char pad_0x0[0x68];
-    int count;
-    char pad_0x6C[0xA24 - 0x6C];
-    int base;
-    int items[1];
-};
-
-extern "C" void func_001D1858(sRewardList_1858* self)
+extern "C" void func_001D1858(sRewardGallery* self)
 {
     int n = func_00157310(cBE_getInterface_Fv(cBE_getBE(), 0xD));
     self->count = 0;
@@ -1642,15 +1518,7 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int func_00157370(void* self);
 extern "C" void* func_0015A478();
 
-struct sRewardList_1990 {
-    char pad_0x0[0x68];
-    int count;
-    char pad_0x6C[0xA24 - 0x6C];
-    int base;
-    int items[1];
-};
-
-extern "C" void func_001D1990(sRewardList_1990* self)
+extern "C" void func_001D1990(sRewardGallery* self)
 {
     int n = func_00157370(cBE_getInterface_Fv(cBE_getBE(), 0xD));
     self->count = 0;
@@ -1733,7 +1601,6 @@ extern "C" void* func_001D1AA0(void* self, void* engine, void* owner, int player
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1B68);
 #ifdef SKIP_ASM
-
 extern void* D_004699F8[];
 extern void* D_0046D0D0[];
 extern void* D_004A289C;
@@ -1808,23 +1675,12 @@ extern char D_00467198[];
 extern char D_004671A8[];
 extern char D_004671C0[];
 
-
-struct sWidget_1C98 {
-    char pad_0x0[8];
-    sVEntry<void(void*, int)>* vt;       // 0x8
-    char pad_0xC[0x38 - 0xC];
-    int hash;           // 0x38
-    char pad_0x3C[0x78 - 0x3C];
-    int f78;            // 0x78
-    void* f7C;          // 0x7C
-};
-
 struct sPreviewReward_1C98 {
     char pad_0x0[0x10];
     char* ui;                   // 0x10
     char pad_0x14[0x48 - 0x14];
-    sWidget_1C98* items[3];     // 0x48
-    sWidget_1C98* frames[3];    // 0x54
+    sRewardWidget* items[3];     // 0x48
+    sRewardWidget* frames[3];    // 0x54
     char** reward;              // 0x60
     char pad_0x64[0x68 - 0x64];
     int type;                   // 0x68
@@ -1833,7 +1689,7 @@ struct sPreviewReward_1C98 {
     int sel;                    // 0x74
 };
 
-extern "C" void cFEStatePreviewReward_onWidgetCreate(sPreviewReward_1C98* self, sWidget_1C98* w)
+extern "C" void cFEStatePreviewReward_onWidgetCreate(sPreviewReward_1C98* self, sRewardWidget* w)
 {
     if (w == 0)
         return;
@@ -1845,33 +1701,33 @@ extern "C" void cFEStatePreviewReward_onWidgetCreate(sPreviewReward_1C98* self, 
             {
                 char* ui = self->ui;
                 int h = GetHashValue32(D_00466E08);
-                w->f7C = func_00398380(ui + 0x58, h);
+                w->tex = func_00398380(ui + 0x58, h);
             }
-            w->f78 = -1;
+            w->reward = -1;
             break;
         case 4:
             {
                 char* ui = self->ui;
                 int h = GetHashValue32(D_00466E18);
-                w->f7C = func_00398380(ui + 0x58, h);
+                w->tex = func_00398380(ui + 0x58, h);
             }
-            w->f78 = -1;
+            w->reward = -1;
             break;
         case 5:
             {
                 char* ui = self->ui;
                 int h = GetHashValue32(D_00466E30);
-                w->f7C = func_00398380(ui + 0x58, h);
+                w->tex = func_00398380(ui + 0x58, h);
             }
-            w->f78 = -1;
+            w->reward = -1;
             break;
         case 7:
             {
                 char* ui = self->ui;
                 int h = GetHashValue32(D_00466E50);
-                w->f7C = func_00398380(ui + 0x58, h);
+                w->tex = func_00398380(ui + 0x58, h);
             }
-            w->f78 = -1;
+            w->reward = -1;
             break;
         }
     } else if (hash == GetHashValue32(D_00466E60)) {
@@ -1923,11 +1779,11 @@ extern "C" void cFEStatePreviewReward_onWidgetCreate(sPreviewReward_1C98* self, 
     }
     int sel = self->sel;
     if (sel >= 0) {
-        sWidget_1C98* item = self->items[sel];
+        sRewardWidget* item = self->items[sel];
         if (item != 0 && self->frames[sel] != 0) {
-            item->f78 = self->f70;
-            item->f7C = 0;
-            sWidget_1C98* f = self->frames[self->sel];
+            item->reward = self->f70;
+            item->tex = 0;
+            sRewardWidget* f = self->frames[self->sel];
             f->vt[9].fn((char*)f + f->vt[9].delta, 1);
         }
     }
@@ -2078,10 +1934,10 @@ extern "C" void func_001D2198(void* self)
         *(int*)((char*)self + 0x74) = 2;
     else
         *(int*)((char*)self + 0x74) = 0;
-    sEntry001CFFF8 ent;
+    sRewardTex ent;
     func_003B3D00(data, 0, &ent);
     ent.name[4] = 0;
-    *(int*)((char*)self + 0x70) = ((cGame001CFFF8*)D_004A289C)->v46(e, &ent, 0, 1, -1);
+    *(int*)((char*)self + 0x70) = ((sRenderCtx*)D_004A289C)->v46(e, &ent, 0, 1, -1);
     func_0019DC20(mgr, *(int*)((char*)self + 0x64), *(int*)((char*)self + 0x6C));
     *(int*)((char*)self + 0x6C) = -1;
     sSelfK1D2198* s = (sSelfK1D2198*)self;
@@ -2218,7 +2074,6 @@ extern "C" void func_001D24A8(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2518);
 #ifdef SKIP_ASM
-
 static inline int vcall001D2518(void* obj, int slot)
 {
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)obj + 8);
