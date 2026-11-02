@@ -8,23 +8,33 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_cFEStateMountainRoom);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
 extern "C" void* func_0039E2A0(void *, int);
 extern "C" unsigned char func_001A1CD0(void* self, int a1);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+extern "C" int func_00398380(void* self, int id);
+int GetHashValue32(char* str);
+extern void* D_00469858[];
+extern void* D_004A28A8;
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
+void cUIText_setUnicodeStringByID(cUIText* self, int id);
+extern char D_00466E60[];
+extern char D_00460488[];
+extern "C" int func_00157BF0(void* self, int rider, int a, int b, int c);
+
+//100%
+INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_cFEStateMountainRoom);
+#ifdef SKIP_ASM
 extern "C" int cBENewPlayerInterface_isPeakLocked(void* self, int a, int b, int peak);
 int cBELibrary_getRiderIndex(int rider) __asm__("cBELibrary_getRiderIndex__Fi");
 extern "C" int func_00148950(void* iface, int rider);
 extern "C" char* func_00156B28(void* self, int a1, int a2);
-extern "C" int func_00398380(void* self, int id);
 extern "C" void func_001D3160(void* self);
-int GetHashValue32(char* str);
-extern void* D_00469858[];
 extern char D_00467208[];
 extern char D_00467218[];
 
@@ -108,11 +118,8 @@ extern "C" void* cFEStateMountainRoom_cFEStateMountainRoom(void* self, void* ui,
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D28F8);
 #ifdef SKIP_ASM
-
-extern void* D_00469858[];
 extern void* D_0046D0D0[];
 extern void* D_004A289C;
-extern void* D_004A28A8;
 extern "C" void func_0019DC20(void* self, int bank, int i);
 extern "C" void func_0039E390(void* self, int flags);
 
@@ -138,11 +145,7 @@ extern "C" void func_001D28F8(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
 void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
@@ -194,16 +197,11 @@ extern "C" void func_001D2A90(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* self, int id);
-extern "C" int func_00398380(void* self, int id);
 // The array-initializer clear (memset) is a void libcall here.
 extern "C" void func_00416210(void* dst, int c, int n);
 
 struct sName5_2AD0 { char c[5]; };
 extern sName5_2AD0 D_00467298[];
-extern char D_00466E60[];
 extern char D_00467238[];
 extern char D_00467250[];
 extern char D_004A1F20[];
@@ -234,8 +232,6 @@ extern char D_00467440[];
 extern char D_004A1F28[];
 extern char D_004A1F30[];
 extern char D_004A1F38[];
-extern char D_00460488[];
-
 
 struct sWidget_2AD0 {
     char pad0[8];
@@ -449,8 +445,6 @@ extern "C" int func_001D2F40(void* self, int a1, unsigned int key)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_onWidgetEvent);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* t, int id);
 extern "C" void func_001D32E0_MR(void* self) __asm__("func_001D32E0");
 extern "C" void func_0039F400_MR(void* list, void* item) __asm__("func_0039F400");
@@ -459,12 +453,10 @@ extern char D_00467460[];
 extern char D_00467478[];
 extern char D_00467490[];
 
-
 struct sFactory_MR {
     int pad0;
     sVEntry<void*(void*, void*, int)>* vt;
 };
-
 
 struct sText_MR {
     int pad[2];
@@ -552,7 +544,6 @@ extern "C" void func_001D3120(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3160);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" int func_0019DA10(void* self, int bank, int id, int a3, int a4, int a5);
 
 extern "C" void func_001D3160(void* self)
@@ -573,7 +564,6 @@ extern "C" int func_0019E238(void* mgr, int bank, int i);
 extern "C" void* func_0019E2B0(void* mgr, int bank, int i);
 extern "C" void func_001D32E0(void* self);
 extern char D_004A1F40[];
-
 
 struct sWidget_31C0 {
     char pad0[0x14];
@@ -625,7 +615,6 @@ extern "C" void func_001D31C0(void* p)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D32E0);
 #ifdef SKIP_ASM
-
 extern "C" void func_001D32E0(void* self)
 {
     {
@@ -646,12 +635,6 @@ INCLUDE_ASM("fe/ovstatelodge", func_001D3340);
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3780);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern "C" unsigned char func_001A1CD0(void* self, int a1);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 extern void* D_00469788[];
 
 struct sLodge_3780 {
@@ -694,9 +677,6 @@ extern "C" void* func_001D3780(void* self, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStatePeakRoom_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern char D_00467648[];
 
 extern "C" void cFEStatePeakRoom_onCreateScreen(void* self)
@@ -713,22 +693,12 @@ extern "C" void cFEStatePeakRoom_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStatePeakRoom_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* self, int id);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" char* func_00156A90(void* self, int a1, int a2);
-extern "C" int func_00157BF0(void* self, int rider, int a, int b, int c);
-extern "C" int func_00398380(void* self, int id);
-extern char D_00466E60[];
 extern char D_00467658[];
 extern char D_00467668[];
 extern char D_00467678[];
 extern char D_004A1FA8[];
 extern char D_004A1FB0[];
-extern char D_00460488[];
 extern char* D_004415E0[];
 extern char* D_004415F0[];
 extern char* D_00441540[];
@@ -737,7 +707,6 @@ extern char* D_00441570[];
 extern char* D_00441588[];
 extern char* D_004415A0[];
 extern char* D_004415B8[];
-
 
 struct sWidget_38F8 {
     char pad0[8];
@@ -873,10 +842,6 @@ void func_001D3C60(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3C80);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00157BF0(void* self, int rider, int a, int b, int c);
 extern "C" void cFEStatePeakRoom_updateHelpText(void* self, int id);
 extern "C" void func_001D3F80(void* self, int id);
 extern "C" void func_0039F400(void* list, void* item);
@@ -925,10 +890,6 @@ extern "C" void func_001D3C80(void* self, void* item, unsigned int key)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3E08);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00157BF0(void* self, int rider, int a, int b, int c);
 extern "C" void* func_00397870(void* list, int id);
 
 extern "C" int func_001D3E08(void* self, void* item, unsigned int key, int id)
@@ -956,13 +917,6 @@ extern "C" int func_001D3E08(void* self, void* item, unsigned int key, int id)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStatePeakRoom_updateHelpText);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00157BF0(void* self, int rider, int a, int b, int c);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* self, int id);
 extern char D_00467688[];
 extern char D_004676A0[];
 
@@ -997,15 +951,12 @@ extern "C" void cFEStatePeakRoom_updateHelpText(void* self, int index)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D3F80);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv_3F80(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_001CE6F0(int mountain, int b);
 extern "C" int func_001CED90(int player, int charId, int mountain, int peak, int i);
 extern "C" void setChallengeName(void* text, int mountain, int peak, int i);
 extern "C" char* func_00156AE0(void* iface, int peak, int ch);
-extern "C" int func_00398380(void* self, int id);
 
 class cWidget_3F80 {
 public:
@@ -1086,15 +1037,8 @@ extern "C" void func_001D3F80(void* vself, int peak)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D4268);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern "C" unsigned char func_001A1CD0(void* self, int a1);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 extern "C" void func_001D4918(void* self);
 extern void* D_004696B8[];
-
 
 struct sTrophy_4268 {
     char pad_0x0[0x48];
