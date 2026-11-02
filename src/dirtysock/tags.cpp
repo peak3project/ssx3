@@ -506,8 +506,6 @@ extern const unsigned char kHexHi[] __asm__("D_00495FC0");
 extern const unsigned char kHexLo[] __asm__("D_004960C0");
 extern const unsigned char kSafe[] __asm__("D_004964C0");
 
-// Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
-#define ASSERT_ture(cond) do { } while (0)
 extern "C" int cDirtysock_tag_TagFieldSetStructure(char* record, int len, char* name, const char* buffer, int size, const char* tmpl)
 {
     char temp[2560];
