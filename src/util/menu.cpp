@@ -1354,19 +1354,9 @@ int func_002CC318_impl(void* self)
 //100%
 INCLUDE_ASM("util/menu", func_002CC350);
 #ifdef SKIP_ASM
-struct func_002CC350_sVec2 {
-    float x;
-    float y;
-    func_002CC350_sVec2(float a, float b)
-    {
-        x = a;
-        y = b;
-    }
-};
-
 extern "C" void func_002CC350(sMenuStack* st)
 {
-    func_002CC350_sVec2 scale(0.8500000238418579f, 0.8500000238418579f);
+    sVec2 scale(0.8500000238418579f, 0.8500000238418579f);
     char* o = st->font;
     *(float*)(o + 0x38) = *(float*)(o + 0x30) * scale.x;
     *(float*)(o + 0x3C) = *(float*)(o + 0x34) * scale.y;
