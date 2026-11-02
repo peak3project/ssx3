@@ -34,6 +34,9 @@ public:
     virtual void setVisible(int on);
 };
 
+// A constant 3-vector its users start positions from.
+extern t3Vector D_004FF0D8;
+
 // An RGB colour as the popup colour setter func_001C7738 takes it (three floats, copied as a block).
 struct sColour {
     float r, g, b;
@@ -680,7 +683,6 @@ struct sPopup_6D30 {
     cUIThing* o88;
     cUIThing* o8C;
 };
-extern t3Vector D_004FF0D8_6D30 __asm__("D_004FF0D8");
 extern "C" void func_001C80E8(void* self, void* dst, int* info);
 extern "C" void func_001C8050(void* self, cUIText* text, int* info);
 extern "C" void func_001C8628(void* self, void* obj, void* out);
@@ -693,7 +695,7 @@ extern "C" int func_001C6D30(void* self, void* infop)
     sPopup_6D30* p = (sPopup_6D30*)self;
     float size[4];
     if (info[0] == -1) {
-        t3Vector pos = D_004FF0D8_6D30;
+        t3Vector pos = D_004FF0D8;
         float w = 0.0f;
         if (p->o84 != 0) {
             float item[4];
@@ -831,7 +833,6 @@ extern "C" void func_001C70F0(void* self, t3Vector* vp)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/fepopup", func_001C7258);
 #ifdef SKIP_ASM
-extern t3Vector D_004FF0D8;
 extern "C" void func_001C70F0(void* self, t3Vector* v);
 extern "C" void func_001C93B0(void* self, int* msg, void* out);
 extern "C" void func_001C97E0(void* self, void* a, void* b, int which, float t);
