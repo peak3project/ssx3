@@ -3718,14 +3718,13 @@ static inline char *look_1830(unsigned id) {
 
 int *func_00226610(void*);
 struct O_1830 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual int v31(); };
-struct V3_1830 { int w0, w1, w2; };
 extern unsigned D_1830 __asm__("D_004A56E0");
 extern sBindEnd_1FBE38 D_004A56E4;
 extern int D_004A56E8;
 extern int D_004A3C90;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_1830 { int idx; int val; int pad; int type; };
-extern "C" V3_1830* func_00301830(V3_1830 *ret, int n, Ent_1830 *e) {
+extern "C" cLunoValue* func_00301830(cLunoValue *ret, int n, Ent_1830 *e) {
     if (D_004A56E8 == 0) {
         D_1830 = 0xFFFFFFFF;
         D_004A56E8 = 1;
@@ -3766,10 +3765,10 @@ extern "C" V3_1830* func_00301830(V3_1830 *ret, int n, Ent_1830 *e) {
             v = p->v31();
         else
             v = 0;
-        ((int*)ret)[2] = 1;
+        ret->type = 1;
         *func_00226610(ret) = v;
     } else {
-        ((int*)ret)[2] = 1;
+        ret->type = 1;
         *func_00226610(ret) = 0;
     }
     return ret;
