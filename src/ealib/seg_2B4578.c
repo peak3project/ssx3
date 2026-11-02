@@ -3800,9 +3800,6 @@ struct Rec_B588 {
     unsigned char y1;
     char padC[0xD0 - 0xC];
 };
-struct G_B588 { char pad[0x1F0]; char *ents; };
-extern struct G_B588 D_0050A8E8_B588 __asm__("D_0050A8E8");
-extern char *D_0050AAD8_B588 __asm__("D_0050AAD8");
 extern unsigned char func_003BB0C8(void);
 extern int f_AAC0_B588(int **, struct Rec_B588 *) __asm__("func_003BAAC0");
 extern int func_003C72A0(int);
@@ -3819,7 +3816,7 @@ int func_003BB588_impl(int *self, int *cur, int a2, int a3, signed char *pos) {
     int m;
     int i;
     int k;
-    char *e;
+    struct sA8E8Chan *e;
     int ret;
     int first;
     int h;
@@ -3874,20 +3871,20 @@ int func_003BB588_impl(int *self, int *cur, int a2, int a3, signed char *pos) {
     if (n == 1) {
         k = func_003BA6E8(ids[0]);
         if (k >= 0) {
-            e = D_0050AAD8_B588 + k * 0x8C;
-            e[0x26] = 0;
-            e[0x27] = 0;
+            e = &D_0050AAD8[k];
+            e->f26 = 0;
+            e->f27 = 0;
         }
     } else {
         for (i = 0; i < n; i++) {
             k = func_003BA6E8(ids[i]);
             if (k >= 0) {
-                e = D_0050A8E8_B588.ents + k * 0x8C;
-                e[0x26] = tag;
-                e[0x27] = 0;
+                e = &D_0050A8E8.f1F0[k];
+                e->f26 = tag;
+                e->f27 = 0;
             }
         }
-        e[0x27] = 1;
+        e->f27 = 1;
     }
     return ret;
 fail:
