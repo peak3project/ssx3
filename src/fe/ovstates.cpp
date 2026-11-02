@@ -78,28 +78,14 @@ extern char D_0045DB90[];
 extern char D_004A17D0[];
 extern int D_004A17C0;
 
-class cUIObj_1947F8 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06(int v);
-    virtual void v07(int v);
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
 extern "C" int func_001947F8(void* self)
 {
     if (D_004A17C0 == 0 || --D_004A17C0 == 0) {
-        cUIObj_1947F8* o = (cUIObj_1947F8*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045DB90));
+        cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045DB90));
         if (o != 0) {
-            o->v07(1);
+            o->setFocus(1);
         }
-        o = (cUIObj_1947F8*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A17D0));
+        o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A17D0));
         if (o != 0) {
             o->setVisible(1);
         }
