@@ -6511,15 +6511,14 @@ void func_003E5F98(int arg0, int arg1) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5FF0);
 #ifdef SKIP_ASM
-struct H_5FF0 { int a; void (*fn)(int, int); int c; };
-extern struct H_5FF0 D_00451250_5FF0[] __asm__("D_00451250");
 
-void func_003E5FF0(int idx, int a, int b) {
+void func_003E5FF0(int idx, int a, char *b) {
     if (D_00451008 == 0) {
         func_003E5B60();
     }
-    if (D_00451250_5FF0[idx].fn) {
-        ((struct H_5FF0 *)((char *)D_00451250_5FF0 + idx * 12))->fn(a, b);
+    if (D_00451250[idx].f04) {
+        /* the call addresses the entry again (the target recomputes it and reloads f04) */
+        ((struct sDbgOut *)((char *)D_00451250 + idx * sizeof(struct sDbgOut)))->f04(a, b);
     }
 }
 #endif
