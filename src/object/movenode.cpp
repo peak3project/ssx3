@@ -24,6 +24,23 @@ struct sMoveQuad {
     float v[4];
 } __attribute__((aligned(16)));
 
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void vu0CopyMatrix(void* dst, void* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -550,22 +567,6 @@ struct sMat44_355F10 {
     float m[16];
 } __attribute__((aligned(16)));
 
-// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
-static inline void vu0CopyMatrix_355F10(void* dst, void* src)
-{
-    __asm__ __volatile__(
-        "lqc2      $vf1, 0x0(%1)\n"
-        "lqc2      $vf2, 0x10(%1)\n"
-        "lqc2      $vf3, 0x20(%1)\n"
-        "lqc2      $vf4, 0x30(%1)\n"
-        "sqc2      $vf1, 0x0(%0)\n"
-        "sqc2      $vf2, 0x10(%0)\n"
-        "sqc2      $vf3, 0x20(%0)\n"
-        "sqc2      $vf4, 0x30(%0)\n"
-        :
-        : "r"(dst), "r"(src)
-        : "memory");
-}
 
 
 extern "C" void func_00355F10(cMoveNode* self, void* srcv)
@@ -586,7 +587,7 @@ extern "C" void func_00355F10(cMoveNode* self, void* srcv)
         return;
     }
     sMat44_355F10 copy;
-    vu0CopyMatrix_355F10(&copy, m);
+    vu0CopyMatrix(&copy, m);
     int keep = *(int*)(*(char**)((char*)self + 0x18) + 8);
     sVEntry<void(void*, int)>* vd = *(sVEntry<void(void*, int)>**)(src + 0xC);
     vd[1].fn(src + vd[1].delta, 3);
@@ -1616,22 +1617,6 @@ INCLUDE_ASM("object/movenode", func_00357108);
 
 extern "C" void func_0034FED8(void* model, int bone, t4Matrix* out);
 
-// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
-static inline void vu0CopyMtx_357108(void* dst, void* src)
-{
-    __asm__ __volatile__(
-        "lqc2      $vf1, 0x0(%1)\n"
-        "lqc2      $vf2, 0x10(%1)\n"
-        "lqc2      $vf3, 0x20(%1)\n"
-        "lqc2      $vf4, 0x30(%1)\n"
-        "sqc2      $vf1, 0x0(%0)\n"
-        "sqc2      $vf2, 0x10(%0)\n"
-        "sqc2      $vf3, 0x20(%0)\n"
-        "sqc2      $vf4, 0x30(%0)\n"
-        :
-        : "r"(dst), "r"(src)
-        : "memory");
-}
 
 // PORT: PS2-only VU0 inline asm (matrix * vector).
 static inline t4Vector vu0MtxApply_357108(t4Matrix* m, t4Vector* v)
@@ -1685,7 +1670,7 @@ extern "C" void func_00357108(char* self)
         sVEntry<int(void*)>* vi = *(sVEntry<int(void*)>**)(o + 0xC);
         if (vi[26].fn(o + vi[26].delta) != 0) {
             sVEntry<t4Matrix*(void*, int)>* vm = *(sVEntry<t4Matrix*(void*, int)>**)(o + 0xC);
-            vu0CopyMtx_357108(self + 0x50, vm[29].fn(o + vm[29].delta, *(int*)(self + 0x90)));
+            vu0CopyMatrix(self + 0x50, vm[29].fn(o + vm[29].delta, *(int*)(self + 0x90)));
         } else {
             func_0034FED8(*(void**)(self + 0xA0), *(int*)(self + 0x90), (t4Matrix*)(self + 0x50));
         }
