@@ -614,6 +614,10 @@ static inline int sndPlayRiderVoice(void* vself, void* obj, int a, int b, int ty
     return func_002906B8(self);
 }
 
+// cBE interface lookup: cBE_getInterface__Fv takes (be, kind) despite its mangled name.
+extern "C" void* cBE_getBE();
+extern "C" void* cBE_getInterface__Fv(void* be, int kind);
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1087,8 +1091,6 @@ extern "C" int func_002917B8(void* self, int a1)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002917D0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 
 
@@ -1101,7 +1103,7 @@ void func_002917D0_17D0(void* vself, void* obj)
         return;
     }
     int flag = 0;
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (D_00535C11[0] == 2) {
         flag = func_00288AE0(self) == 0;
     }
@@ -1172,7 +1174,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
         int flag = 0;
-        cBE_getInterface_Fv(cBE_getBE(), 0);
+        cBE_getInterface__Fv(cBE_getBE(), 0);
         if (D_00535C11[0] == 2) {
             flag = func_00288AE0(self) == 0;
         }
@@ -1286,8 +1288,6 @@ void func_00291C88_impl(void* vself, void* obj, int n)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00292508);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 
 
@@ -1300,7 +1300,7 @@ void func_00292508_2508(void* vself, void* obj, int n)
         return;
     }
     int flag = 0;
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (D_00535C11[0] == 2) {
         flag = func_00288AE0(self) == 0;
     }
@@ -2077,8 +2077,6 @@ INCLUDE_ASM("sound/soundsys", func_002948D0);
 extern "C" void func_003B58A0();
 extern "C" void func_003B58D8();
 extern "C" unsigned int func_003B8AB8(int id);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 
 extern "C" void func_002A7438(void* self, int id);
@@ -2147,7 +2145,7 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
     int flag = 0;
     bool ok2 = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
     if (ok2) {
-        cBE_getInterface_Fv(cBE_getBE(), 0);
+        cBE_getInterface__Fv(cBE_getBE(), 0);
         if (D_00535C11[0] == 2) {
             flag = func_00288AE0(self) == 0;
         }
@@ -2472,8 +2470,6 @@ int func_00288A20(void* self, void* obj);
 int func_00288AE0(void* self);
 int func_00288B40(void* self, int which, float f);
 unsigned int func_002ADF60(void* rng);
-void* cBE_getBE(void);
-void* cBE_getInterface__Fv(void* be, int kind);
 
 }
 
@@ -2583,8 +2579,6 @@ INCLUDE_ASM("sound/soundsys", func_00296868);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
 extern "C" unsigned int func_002ADF60(void* rng);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 
 
@@ -2614,7 +2608,7 @@ extern "C" void func_00296868(void* vself, sSndOwner* t)
     int flag = 0;
     bool ok = *(int*)(t->rider + 0x874) && *(int*)(t->rider + 0x87C);
     if (ok) {
-        cBE_getInterface_Fv(cBE_getBE(), 0);
+        cBE_getInterface__Fv(cBE_getBE(), 0);
         if (D_00535C11[0] == 2) {
             flag = func_00288AE0(self) == 0;
         }
@@ -2699,8 +2693,6 @@ INCLUDE_ASM("sound/soundsys", func_00296E80);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
 extern "C" unsigned int func_002ADF60(void* rng);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 
 
@@ -2730,7 +2722,7 @@ extern "C" void func_00296E80(void* vself, sSndOwner* t)
     int flag = 0;
     bool ok = *(int*)(t->rider + 0x874) && *(int*)(t->rider + 0x87C);
     if (ok) {
-        cBE_getInterface_Fv(cBE_getBE(), 0);
+        cBE_getInterface__Fv(cBE_getBE(), 0);
         if (D_00535C11[0] == 2) {
             flag = func_00288AE0(self) == 0;
         }
@@ -2864,15 +2856,12 @@ static inline void snd74A0AddVoice(void* vself, int a, int b, int type)
 }
 
 
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002974A0(void* self, char* evt, int n)
 {
     if (n == 0) return;
-    if (n == 0x66 && *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)) == 0) return;
+    if (n == 0x66 && *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0)) == 0) return;
     if (*(int*)((char*)self + 0x62A8) >= 0) return;
     if (func_00295028(self, (int)evt, 0) != 0) return;
     int pri = 0x50;
@@ -2914,8 +2903,6 @@ extern "C" void func_002974A0(void* self, char* evt, int n)
 INCLUDE_ASM("sound/soundsys", func_00297950);
 #ifdef SKIP_ASM
 extern "C" int* func_00144BC0(void* p);
-extern "C" void* cBE_getBE(void);
-extern "C" void* cBE_getInterface__Fv(void* be, int kind);
 
 
 
@@ -3580,9 +3567,6 @@ INCLUDE_ASM("sound/soundsys", func_00299E28);
 
 
 
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002A4290(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
@@ -3590,7 +3574,7 @@ extern "C" void func_002A0560(void* self, void* a, void* b);
 
 extern "C" void func_00299E28(void* self, void* obj, void* a, void* b, int lim, int n)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (D_00535C10[0] != 0 && func_002A4290(self) == 0) {
         return;
     }
@@ -3778,7 +3762,7 @@ extern "C" void func_0029AB40(cSSXAudio* self)
 {
     if (func_00288AE0(self) != 0)
         return;
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     int n = 1;
     if (D_00535C11[0] == 2)
         n = 2;
@@ -4065,8 +4049,6 @@ extern "C" void func_0029C420(void* self, int mode)
 INCLUDE_ASM("sound/soundsys", func_0029C7B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_002B3A98(void* p);
 void func_0028DF08_C7B0(void* p) __asm__("func_0028DF08__FPv");
 void func_002B1758(void* self, int a1);
@@ -4141,7 +4123,7 @@ extern "C" void func_0029C7B0(void* vself)
     if (*(int*)(base + 0x627C) != 0) {
         ((sSs7B0Obj*)(base + 0x118))->v04(0);
     }
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (func_00295028(vself, 0, 0) == 0) {
         int m = D_00535C11[0];
         if (m == 1) {
@@ -4475,7 +4457,7 @@ extern "C" void func_0029D6E0(char* self, int mission)
         return;
     }
     int track = -1;
-    int kind = func_001547A0(cBE_getInterface_Fv(cBE_getBE(), 0xA), mission);
+    int kind = func_001547A0(cBE_getInterface__Fv(cBE_getBE(), 0xA), mission);
     *(int*)(self + 0x5FD0) = kind;
     switch (kind) {
     case 1: track = 0x21; break;
@@ -4995,9 +4977,6 @@ extern "C" int func_0029F160(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029F198);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 struct sSsOpts9F198 {
     unsigned int w0;
@@ -5007,7 +4986,7 @@ extern sSsOpts9F198 D_00535610_ss9F198 __asm__("D_00535610");
 
 extern "C" int func_0029F198(void* self)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 4);
+    cBE_getInterface__Fv(cBE_getBE(), 4);
     sSsOpts9F198 o = D_00535610_ss9F198;
     unsigned m = o.w0 >> 22;
     m &= 7;
@@ -5192,7 +5171,7 @@ extern "C" void func_0029F660(void* vself, void* vrider, int a, int b)
     int flag = 0;
     int ok2 = rider->mIsHuman != 0 && rider->mIsLocal != 0;
     if (ok2) {
-        cBE_getInterface_Fv(cBE_getBE(), 0);
+        cBE_getInterface__Fv(cBE_getBE(), 0);
         if (D_00535C11[0] == 2) {
             flag = func_00288AE0(self) == 0;
         }
@@ -5287,7 +5266,7 @@ extern "C" void func_0029FCC8(void* self, void* vrider)
     if (func_002B0E28(snd, 0) == 0) return;
     int r = func_0029F330(rider);
     if (func_00288B40(self, (int)rider->getPosition(), D_004A36D8) < 0) return;
-    int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+    int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
         if (func_002B1458(snd, 0, 0x2084, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
             D_004A482C(func_003D8008(1, 0, 0x2084), 2, r, 3);
@@ -5326,7 +5305,7 @@ extern "C" void func_0029FF80(void* self, sSndRider* rider, int alt)
     int r = func_0029F330(rider);
     if (func_00288B40(self, (int)rider->getPosition(), D_004A36D8) < 0) return;
     if (alt != 0) {
-        int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+        int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
         if (sel == 1) {
             if (func_002B1458((char*)self + 0x5560, 0, 0x2090, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
                 D_004A482C(func_003D8008(1, 0, 0x2090), 1, r);
@@ -5341,7 +5320,7 @@ extern "C" void func_0029FF80(void* self, sSndRider* rider, int alt)
             }
         }
     } else {
-        int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+        int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
         if (sel == 1) {
             if (func_002B1458((char*)self + 0x5560, 0, 0x2082, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
                 D_004A482C(func_003D8008(1, 0, 0x2082), 1, r);
@@ -5388,7 +5367,7 @@ extern "C" void func_002A02D8(void* self, sSndRider* rider)
         mode = 3;
     }
     if (func_00288B40(self, (int)rider->getPosition(), D_004A36D8) < 0) return;
-    int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+    int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x2088, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
             D_004A482C(func_003D8008(1, 0, 0x2088), 2, r, mode);
@@ -5649,7 +5628,7 @@ void func_002A1138_impl(void* self, char* rider, void* obj)
 {
     if (func_0029F0A0(self) == 0) return;
     if (func_00288AE0(self) != 0) return;
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (rider == 0) rider = *(char**)((char*)func_0028B1D8() + 0x2C);
     if (obj == 0) obj = *(void**)((char*)func_0028B1D8() + 0x28);
     char* o = rider + 0x6C0;
@@ -5723,7 +5702,7 @@ void func_002A1400_impl(void* self, char* rider)
     if (func_002B1458((char*)self + 0x5560, 0, 0x20B9, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     int r = func_0029F330(rider);
     int k = func_002A1E68(self, rider);
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     int v;
     if (k == 1) {
         v = 1;
@@ -5767,9 +5746,6 @@ extern "C" void func_002A1560(void* self, char* rider)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A16B0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 // func_0029F2B0 returns a value (the unit's earlier declaration says void).
 
 extern "C" void func_002A16B0(void* self, int a1)
@@ -5777,7 +5753,7 @@ extern "C" void func_002A16B0(void* self, int a1)
     if (func_0029F0A0(self) != 0) {
         char* bm = (char*)self + 0x5560;
         if (func_002B0E28(bm, 0) != 0) {
-            cBE_getInterface_Fv(cBE_getBE(), 0);
+            cBE_getInterface__Fv(cBE_getBE(), 0);
             if (D_00535C11[0] != 0) {
                 if (func_002B1458(bm, 0, 0x20BC, 0, a1, 0, 1, 0.0f) != 0) {
                     int r = func_0029F2B0(a1, 0);
@@ -6065,8 +6041,6 @@ extern "C" int func_002A1FA0(void *self, void *obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A2018);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2018(void* self)
@@ -6074,7 +6048,7 @@ extern "C" void func_002A2018(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C8, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x20C8), 2, r, m);
         }
     }
@@ -6084,8 +6058,6 @@ extern "C" void func_002A2018(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A20D0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A20D0(void* self)
@@ -6093,7 +6065,7 @@ extern "C" void func_002A20D0(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C9, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x20C9), 2, r, m);
         }
     }
@@ -6104,8 +6076,6 @@ extern "C" void func_002A20D0(void* self)
 INCLUDE_ASM("sound/soundsys", func_002A2188);
 #ifdef SKIP_ASM
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2188(void* self)
@@ -6114,7 +6084,7 @@ extern "C" void func_002A2188(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20CA, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x20CA), 3, r, a, m);
         }
     }
@@ -6124,8 +6094,6 @@ extern "C" void func_002A2188(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A2260);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2260(void* self)
@@ -6133,7 +6101,7 @@ extern "C" void func_002A2260(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20E7, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x20E7), 2, r, m);
         }
     }
@@ -6143,8 +6111,6 @@ extern "C" void func_002A2260(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A2318);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2318(void* self)
@@ -6152,7 +6118,7 @@ extern "C" void func_002A2318(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20E8, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x20E8), 2, r, m);
         }
     }
@@ -6162,8 +6128,6 @@ extern "C" void func_002A2318(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A23D0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A23D0(void* self, int mode)
@@ -6173,7 +6137,7 @@ extern "C" void func_002A23D0(void* self, int mode)
             int r = func_0029F198(self);
             int m;
             if (mode == -1) {
-                m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+                m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             } else {
                 m = func_002A1E20(self, mode);
             }
@@ -6203,8 +6167,6 @@ extern "C" void func_002A24B0(void* self, int a1)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A2568);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2568(void* self, int a1)
@@ -6212,7 +6174,7 @@ extern "C" void func_002A2568(void* self, int a1)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20CC, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), a1);
+            int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)), a1);
             D_004A482C(func_003D8008(1, 0, 0x20CC), 3, r, m, 3);
         }
     }
@@ -6222,8 +6184,6 @@ extern "C" void func_002A2568(void* self, int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A2638);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2638(void* self)
@@ -6231,7 +6191,7 @@ extern "C" void func_002A2638(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20BA, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x20BA), 2, r, m);
         }
     }
@@ -6308,8 +6268,6 @@ extern "C" void func_002A2860(void* self, int n)
 INCLUDE_ASM("sound/soundsys", func_002A2938);
 #ifdef SKIP_ASM
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2938(void* self)
@@ -6318,7 +6276,7 @@ extern "C" void func_002A2938(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x2102, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x2102), 3, r, a, m);
         }
     }
@@ -6328,8 +6286,6 @@ extern "C" void func_002A2938(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A2A10);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00145750(void*);
 
 extern "C" void func_002A2A10(void* self)
@@ -6337,7 +6293,7 @@ extern "C" void func_002A2A10(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x210B, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1DA0(self, func_00145750(cBE_getInterface_Fv(func_0028B1E8(), 0)), 0);
+            int m = func_002A1DA0(self, func_00145750(cBE_getInterface__Fv(func_0028B1E8(), 0)), 0);
             D_004A482C(func_003D8008(1, 0, 0x210B), 2, r, m);
         }
     }
@@ -6347,8 +6303,6 @@ extern "C" void func_002A2A10(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A2AD0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2AD0(void* self)
@@ -6356,7 +6310,7 @@ extern "C" void func_002A2AD0(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x212B, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+            int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
             D_004A482C(func_003D8008(1, 0, 0x212B), 2, r, m);
         }
     }
@@ -6384,8 +6338,6 @@ extern "C" void func_002A2B88(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A2C30);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A2C30(void* self)
@@ -6393,7 +6345,7 @@ extern "C" void func_002A2C30(void* self)
     if (func_0029F0D8(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x212D, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), -1);
+            int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)), -1);
             D_004A482C(func_003D8008(1, 0, 0x212D), 2, r, m);
         }
     }
@@ -6480,13 +6432,13 @@ extern "C" void func_002A2E50(void* vself, int bonus)
                 *(unsigned int*)(self + 0x573C) = 0;
                 left = n;
                 int track = 0xE;
-                void* players = cBE_getInterface_Fv(cBE_getBE(), 1);
+                void* players = cBE_getInterface__Fv(cBE_getBE(), 1);
                 signed char ch = cBENewPlayerInterface_getRiderCharID_i(players, func_00146E98(players, 0));
-                int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
+                int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)));
                 if (sel != 1) {
                     track = sel == 2 ? 0xF : 0x10;
                 }
-                void* rewards = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+                void* rewards = cBE_getInterface__Fv(cBE_getBE(), 0xD);
                 int gold = cBERewardInterface_getTrackMedal(rewards, 0, ch, 4, track) != -1;
                 int plat = cBERewardInterface_getTrackMedal(rewards, 0, ch, 5, track) != -1;
                 if (gold && plat) {
@@ -6551,15 +6503,12 @@ extern "C" void func_002A3170(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A31C0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" void func_002A31C0(void* self)
 {
     if (func_0029F128(self) == 0) return;
     if (func_002A4040(self) != 0) return;
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (D_00535C11[0] != 0) return;
     if (**(int**)(D_004A28A8 + 0xC0) < 2) {
         if (func_00295028(self, 0, 0) != 0) return;
@@ -6609,8 +6558,6 @@ extern "C" void func_002A3358(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A3400);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A3400(void* self)
@@ -6619,7 +6566,7 @@ extern "C" void func_002A3400(void* self)
     if (func_00288AE0(self) != 0) return;
     if (func_002B1458((char*)self + 0x5560, 0, 0x20C3, 0, 0xB, 0, 0, 0.0f) == 0) return;
     int r = func_0029F198(self);
-    int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), -1);
+    int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)), -1);
     D_004A482C(func_003D8008(1, 0, 0x20C3), 2, r, m);
 }
 #endif
@@ -6713,8 +6660,6 @@ INCLUDE_ASM("sound/soundsys", func_002A3860);
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A39E0);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A39E0(void* self)
@@ -6722,7 +6667,7 @@ extern "C" void func_002A39E0(void* self)
     if (func_0029F128(self) != 0) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20BB, 0, 0xB, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
-            int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), -1);
+            int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0)), -1);
             D_004A482C(func_003D8008(1, 0, 0x20BB), 2, r, m);
         }
     }
@@ -6857,14 +6802,11 @@ extern "C" void func_002A3EB8(void* self, void* obj, int ev)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A3F90);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" int func_002A3F90(void* self)
 {
-    return func_002A3FD8(self, *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)));
+    return func_002A3FD8(self, *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0)));
 }
 #endif
 
@@ -6880,14 +6822,11 @@ extern "C" int func_002A3FD8(void* self, unsigned int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A3FE8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" int func_002A3FE8(void* self)
 {
-    return func_002A4030(self, *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)));
+    return func_002A4030(self, *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0)));
 }
 #endif
 
@@ -6903,13 +6842,10 @@ extern "C" int func_002A4030(void* self, unsigned int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4040);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" int func_002A4040(void* self)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     return D_00535C10[0] == 4;
 }
 #endif
@@ -6917,14 +6853,11 @@ extern "C" int func_002A4040(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4078);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" int func_002A4078(void* self)
 {
-    if (func_002A40E0(self, *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0))) != 0) {
+    if (func_002A40E0(self, *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0))) != 0) {
         return 1;
     }
     if (D_00535C10[0] == 0) {
@@ -6946,14 +6879,11 @@ extern "C" int func_002A40E0(void* self, unsigned int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A40E8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" int func_002A40E8(void* self)
 {
-    if (func_002A4158(self, *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0))) != 0) {
+    if (func_002A4158(self, *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0))) != 0) {
         return 1;
     }
     if (D_00535C10[0] == 1) {
@@ -6979,15 +6909,12 @@ extern "C" int func_002A4158(void* self, unsigned int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4168);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A41C8(void* self, unsigned int a1);
 
 extern "C" int func_002A4168(void* self)
 {
-    if (func_002A41C8(self, *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0))) != 0) {
+    if (func_002A41C8(self, *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0))) != 0) {
         return 1;
     }
     return D_00535C10[0] == 2;
@@ -7006,14 +6933,11 @@ extern "C" int func_002A41C8(void* self, unsigned int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A41D8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" int func_002A41D8(void* self)
 {
-    if (func_002A4238(self, *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0))) != 0) {
+    if (func_002A4238(self, *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0))) != 0) {
         return 1;
     }
     return D_00535C10[0] == 3;
@@ -7032,13 +6956,10 @@ extern "C" int func_002A4238(void* self, unsigned int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4248);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" int func_002A4248(void)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     switch (D_00535C12[0]) {
     case 4:
         return 1;
@@ -7053,13 +6974,10 @@ extern "C" int func_002A4248(void)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4290);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" int func_002A4290(void* self)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     return D_00535C12[0] == 4;
 }
 #endif
@@ -7067,13 +6985,10 @@ extern "C" int func_002A4290(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A42C8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" int func_002A42C8(void)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (D_00535C12[0] >= 6) {
         if (D_00535C12[0] <= 11) {
             return 1;
@@ -7086,13 +7001,10 @@ extern "C" int func_002A42C8(void)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4318);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" int func_002A4318(void* self)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (D_00535C12[0] >= 6) {
         if (D_00535C12[0] <= 8) {
             return 1;
@@ -7105,13 +7017,10 @@ extern "C" int func_002A4318(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4368);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" int func_002A4368(void* self)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (D_00535C12[0] >= 9) {
         if (D_00535C12[0] <= 11) {
             return 1;
@@ -7247,8 +7156,6 @@ extern "C" void func_002A45C0(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4660);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" void func_002A4660(void* self, int a1, int a2, int a3, int a4)
@@ -7260,7 +7167,7 @@ extern "C" void func_002A4660(void* self, int a1, int a2, int a3, int a4)
             *(int*)((char*)self + 0x57FC) = 1;
         }
         *(int*)((char*)self + 0x5800) = a1;
-        *(int*)((char*)self + 0x5810) = *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0));
+        *(int*)((char*)self + 0x5810) = *func_00144BC0(cBE_getInterface__Fv(func_0028B1E8(), 0));
     }
     *(int*)((char*)self + 0x5804) += a2;
     *(int*)((char*)self + 0x5808) += a3;
@@ -7270,14 +7177,11 @@ extern "C" void func_002A4660(void* self, int a1, int a2, int a3, int a4)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4718);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 
 extern "C" int func_002A4718(void* self)
 {
-    int id = *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0));
+    int id = *func_00144BC0(cBE_getInterface__Fv(cBE_getBE(), 0));
     int cur = *(int*)((char*)self + 0x5814);
     if (id == cur || cur == 0x17) {
         return 0;
@@ -7420,7 +7324,7 @@ extern "C" int func_0028DEF0(void* self, int a1);
 
 extern "C" void func_002A4A78(void* self)
 {
-    cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface__Fv(cBE_getBE(), 0);
     if (*(int*)((char*)self + 0x578C) == 0 && D_00535C11[0] == 0) {
         if (func_002A3F90(self) != 0) {
             func_0028DEF0(self, 0xD);
