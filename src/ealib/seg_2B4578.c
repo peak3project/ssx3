@@ -3654,18 +3654,20 @@ void func_003BA550(int i, unsigned char u) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA6E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0050A8E8_A8E8[] __asm__("D_0050A8E8");
 
 int func_003BA6E8(int arg0) {
     int var_5;
-    char *temp_2;
-    char *g;
+    struct sA8E8Chan *e;
 
-    if ((arg0 < 0) || (g = D_0050A8E8_A8E8, var_5 = arg0 & 0xFF, (var_5 < *(short *)(g + 0x17E)) == 0)) {
+    if (arg0 < 0) {
         return -8;
     }
-    temp_2 = *(char **)(g + 0x1F0) + (var_5 * 0x8C);
-    if ((*(signed char *)(temp_2 + 0x69) == 0) || (*(int *)temp_2 != arg0)) {
+    var_5 = arg0 & 0xFF;
+    if (var_5 >= D_0050A8E8.f17E) {
+        return -8;
+    }
+    e = &D_0050A8E8.f1F0[var_5];
+    if (e->f69 == 0 || e->f00 != arg0) {
         var_5 = -8;
     }
     return var_5;
