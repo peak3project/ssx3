@@ -1,6 +1,14 @@
 #include "common.h"
 
-extern int D_005305B0[];
+// Race settings: the rider -> player slot map, the selected event and the race mode.
+struct sRaceSettings {
+    int playerID[6];            // 0x00
+    char pad_0x18[0x40 - 0x18];
+    int event;                  // 0x40 (index into D_0043D950)
+    char pad_0x44[4];
+    signed char mode;           // 0x48
+};
+extern sRaceSettings D_005305B0;
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 int cBENewPlayerInterface_getPlayerID(int index);
@@ -474,27 +482,20 @@ extern "C" int func_001464D0(void* self, int index, int c, int kind, int flag)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001466A0);
 #ifdef SKIP_ASM
-struct sSel_66A0 {
-    char pad_0x0[0x40];
-    int idx;                // 0x40
-    char pad_0x44[4];
-    signed char mode;       // 0x48
-};
-struct sEnt_66A0 {
+struct sEventEntry {
     char pad_0x0[0x54];
     int kind;               // 0x54
     char pad_0x58[0xC];
 };
-extern sEnt_66A0 D_0043D950_t[] __asm__("D_0043D950");
-extern sSel_66A0 D_005305B0_s __asm__("D_005305B0");
+extern sEventEntry D_0043D950[];
 
 extern "C" int func_001466A0(void* self, int index)
 {
     int profile = cBELibrary_getProfileIndex(index);
     int id = cBENewPlayerInterface_getPlayerID(index);
     signed char c = D_00534FE0[id].mCharID;
-    int kind = D_0043D950_t[D_005305B0_s.idx].kind;
-    if (D_005305B0_s.mode == 5) {
+    int kind = D_0043D950[D_005305B0.event].kind;
+    if (D_005305B0.mode == 5) {
         switch (kind) {
         case 0:
             {
@@ -1052,7 +1053,7 @@ INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_getPlayerID__Fi);
 #ifdef SKIP_ASM
 int cBENewPlayerInterface_getPlayerID(int index)
 {
-    return D_005305B0[index];
+    return D_005305B0.playerID[index];
 }
 #endif
 
