@@ -8,6 +8,11 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// EA's 3-float vector (name from the July 2003 prototype, e.g. setOffset__10cPopupInfoG8t3Vector).
+struct t3Vector {
+    float x, y, z;
+};
+
 //100%
 INCLUDE_ASM("fe/fepopup", cScreenPopup_cScreenPopup);
 #ifdef SKIP_ASM
@@ -158,7 +163,6 @@ INCLUDE_ASM("fe/fepopup", cScreenPopup_onGainTransition);
 struct cUIScreen;
 struct sColor_7738;
 struct sColF_5C30 { float r, g, b; };
-struct sVec3_5C30 { float x, y, z; };
 int GetHashValue32(char* str);
 int cUIScreen_getFrameByLabel(cUIScreen* screen, int hash);
 extern "C" void func_001C5F20(void* self, float t);
@@ -191,7 +195,7 @@ extern "C" int cScreenPopup_onGainTransition(void* self, int first)
     }
     if (*(int*)((char*)self + 0x31C) == 1) {
         float t = (float)*(int*)((char*)self + 0xA4);
-        sVec3_5C30 pos = *(sVec3_5C30*)(*(char**)((char*)self + 0x58) + 0x44);
+        t3Vector pos = *(t3Vector*)(*(char**)((char*)self + 0x58) + 0x44);
         sColF_5C30 c;
         c.r = t * *(float*)((char*)self + 0xAC) + 0.2f;
         c.g = t * *(float*)((char*)self + 0xB0) + 0.2f;
@@ -324,16 +328,12 @@ extern char D_004A1C70[];
 extern char D_004A1C78[];
 extern char D_00466080[];
 
-struct sV3_6260 {
-    float x, y, z;
-};
-
 
 struct sObj_6260 {
     char pad0[0x8];
     sVEntry<void(void*, void*)>* vt;                   // 0x8
     char padC[0x44 - 0xC];
-    sV3_6260 pos;                   // 0x44
+    t3Vector pos;                   // 0x44
     void GetRect(void* out) { vt[20].fn((char*)this + vt[20].delta, out); }
 };
 
@@ -342,7 +342,7 @@ static inline sObj_6260* find_6260(void* self, char* name)
     return (sObj_6260*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
 }
 
-#define POS_6260(o) (*(sV3_6260*)((char*)self + (o)))
+#define POS_6260(o) (*(t3Vector*)((char*)self + (o)))
 #define OBJ_6260(o) (*(sObj_6260**)((char*)self + (o)))
 
 // Looks up the popup's widgets by name and caches them (and their positions) in the screen object.
@@ -649,7 +649,6 @@ INCLUDE_ASM("fe/fepopup", func_001C6D30);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-struct sVec3_6D30 { float x, y, z; };
 class cUIObj_6D30 {
 public:
     int pad[2];
@@ -670,7 +669,7 @@ struct sPopup_6D30 {
     cUIObj_6D30* o88;
     cUIObj_6D30* o8C;
 };
-extern sVec3_6D30 D_004FF0D8_6D30 __asm__("D_004FF0D8");
+extern t3Vector D_004FF0D8_6D30 __asm__("D_004FF0D8");
 extern "C" void func_001C80E8(void* self, void* dst, int* info);
 extern "C" void func_001C8050(void* self, cUIText* text, int* info);
 extern "C" void func_001C8628(void* self, void* obj, void* out);
@@ -683,7 +682,7 @@ extern "C" int func_001C6D30(void* self, void* infop)
     sPopup_6D30* p = (sPopup_6D30*)self;
     float size[4];
     if (info[0] == -1) {
-        sVec3_6D30 pos = D_004FF0D8_6D30;
+        t3Vector pos = D_004FF0D8_6D30;
         float w = 0.0f;
         if (p->o84 != 0) {
             float item[4];
@@ -692,15 +691,15 @@ extern "C" int func_001C6D30(void* self, void* infop)
             func_001C8628(self, p->o84, size);
             func_001C8320(self, (cUIText*)p->o84, it, item);
             w = item[2];
-            pos = *(sVec3_6D30*)((char*)p->o84 + 0x44);
+            pos = *(t3Vector*)((char*)p->o84 + 0x44);
             p->o84->setEnabled(0);
             p->o84->setVisible(1);
         }
         if (p->o80 != 0) {
             func_001C80E8(self, (char*)self + 0x2B0, info + 7);
-            sVec3_6D30 v = pos;
+            t3Vector v = pos;
             v.x = v.x + w + 10.0f;
-            *(sVec3_6D30*)((char*)p->o80 + 0x44) = v;
+            *(t3Vector*)((char*)p->o80 + 0x44) = v;
             func_001C9B68(self, (float*)((char*)self + 0x260), size);
             p->o80->setEnabled(0);
             p->o80->setVisible(1);
@@ -739,7 +738,6 @@ extern "C" int func_001C6D30(void* self, void* infop)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C7040);
 #ifdef SKIP_ASM
-struct sVec3_7040 { float x, y, z; };
 extern "C" void func_001C97E0(void* self, void* a, void* b, int which, float t);
 extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t);
 
@@ -748,9 +746,9 @@ extern "C" void func_001C7040(void* self, void* a1)
     char* o = *(char**)((char*)self + 0x78);
     if (o != 0) {
         if (*(int*)((char*)a1 + 0x4C) != 0) {
-            sVec3_7040 v = *(sVec3_7040*)((char*)self + 0x1B8);
+            t3Vector v = *(t3Vector*)((char*)self + 0x1B8);
             v.y += *(float*)((char*)self + 0x264);
-            *(sVec3_7040*)(o + 0x44) = v;
+            *(t3Vector*)(o + 0x44) = v;
             func_001C97E0(self, (char*)a1 + 0x4C, (char*)self + 0x260, 0, 10.0f);
             if (*(int*)((char*)self + 0x2CC) != 0) {
                 func_001C8930(self, *(void**)((char*)self + 0x78), 0x11, 0.0f);
@@ -787,15 +785,14 @@ struct cW_70F0 {
     virtual void get(void* out);
     virtual void set(void* in);
 };
-struct sVec3_70F0 { float x, y, z; };
-struct sVec3_7258;
+struct t3Vector;
 
-extern "C" void func_001C70F0(void* self, sVec3_7258* vp)
+extern "C" void func_001C70F0(void* self, t3Vector* vp)
 {
-    sVec3_70F0* v = (sVec3_70F0*)vp;
+    t3Vector* v = (t3Vector*)vp;
     cW_70F0* o = *(cW_70F0**)((char*)self + 0x74);
     if (o != 0) {
-        sVec3_70F0 t;
+        t3Vector t;
         o->get(&t);
         if (v->x != 0.0f) t.x = v->x;
         if (v->y != 0.0f) t.y = v->y;
@@ -803,7 +800,7 @@ extern "C" void func_001C70F0(void* self, sVec3_7258* vp)
     }
     o = *(cW_70F0**)((char*)self + 0x78);
     if (o != 0) {
-        sVec3_70F0 t;
+        t3Vector t;
         o->get(&t);
         if (v->x != 0.0f) t.x = v->x;
         if (v->y != 0.0f) t.y = v->y;
@@ -811,7 +808,7 @@ extern "C" void func_001C70F0(void* self, sVec3_7258* vp)
     }
     o = *(cW_70F0**)((char*)self + 0x7C);
     if (o != 0) {
-        sVec3_70F0 t;
+        t3Vector t;
         o->get(&t);
         if (v->x != 0.0f) t.x = v->x;
         if (v->y != 0.0f) t.y = v->y;
@@ -823,9 +820,8 @@ extern "C" void func_001C70F0(void* self, sVec3_7258* vp)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/fepopup", func_001C7258);
 #ifdef SKIP_ASM
-struct sVec3_7258 { float x, y, z; };
-extern sVec3_7258 D_004FF0D8;
-extern "C" void func_001C70F0(void* self, sVec3_7258* v);
+extern t3Vector D_004FF0D8;
+extern "C" void func_001C70F0(void* self, t3Vector* v);
 extern "C" void func_001C93B0(void* self, int* msg, void* out);
 extern "C" void func_001C97E0(void* self, void* a, void* b, int which, float t);
 extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t);
@@ -834,12 +830,12 @@ extern "C" void func_001C7258(void* self, void* a1)
 {
     char* o = *(char**)((char*)self + 0x74);
     if (o != 0) {
-        sVec3_7258 v = *(sVec3_7258*)((char*)self + 0x1B8);
+        t3Vector v = *(t3Vector*)((char*)self + 0x1B8);
         v.y += *(float*)((char*)self + 0x264);
-        *(sVec3_7258*)(o + 0x44) = v;
+        *(t3Vector*)(o + 0x44) = v;
         char* p = (char*)a1 + 4;
         if (*(int*)((char*)self + 0x2CC) != 0) {
-            sVec3_7258 t = D_004FF0D8;
+            t3Vector t = D_004FF0D8;
             func_001C93B0(self, (int*)p, &t);
             if (t.x > *(float*)((char*)self + 0x260))
                 func_001C70F0(self, &t);
@@ -848,7 +844,7 @@ extern "C" void func_001C7258(void* self, void* a1)
         if (*(int*)((char*)self + 0x2CC) != 0)
             func_001C8930(self, *(void**)((char*)self + 0x74), 0x11, 0.0f);
     }
-    *(sVec3_7258*)((char*)self + 0x284) = *(sVec3_7258*)((char*)self + 0x260);
+    *(t3Vector*)((char*)self + 0x284) = *(t3Vector*)((char*)self + 0x260);
 }
 #endif
 
@@ -956,14 +952,13 @@ extern "C" void func_001C75C8(void* self, void* menu, int idx, int max)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C7620);
 #ifdef SKIP_ASM
-struct sVec3_7620 { float x, y, z; };
 // PORT: SN soft-float helpers called by name (fptodp / dpmul / dptofp); on PC: (float)((double)(...) * 1.05)
 extern "C" double func_00413AF8(float f);
 extern "C" double func_00411FD8(double a, double b);
 extern "C" float func_004127A8(double d);
 
 // Converts a screen position into the popup's normalised scroll position for the current layout.
-extern "C" void func_001C7620(void* self, sVec3_7620 pos)
+extern "C" void func_001C7620(void* self, t3Vector pos)
 {
     char* s = (char*)self;
     switch (*(int*)(s + 0x31C)) {
@@ -1053,63 +1048,62 @@ extern "C" void func_001C7738(void* self, sColor_7738* color)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C78C0);
 #ifdef SKIP_ASM
-struct sVec3_78C0 { float x, y, z; };
 // PORT: SN soft-float helpers called by name (fptodp / dpsub / dptofp); on PC: y = (float)((double)(...) - 7.5)
 extern "C" double func_00413AF8(float f);
 extern "C" double func_00411F70(double a, double b);
 extern "C" float func_004127A8(double d);
 
-extern "C" void func_001C78C0(void* self, sVec3_78C0 v, float a, float b)
+extern "C" void func_001C78C0(void* self, t3Vector v, float a, float b)
 {
     char* s = (char*)self;
     float y = 0.0f;
     switch (*(int*)(s + 0x31C)) {
     case 0:
         if (*(char**)(s + 0x48) != 0) {
-            sVec3_78C0 p = *(sVec3_78C0*)(s + 0x188);
+            t3Vector p = *(t3Vector*)(s + 0x188);
             y = *(float*)(s + 0x1BC) + b + v.y * 0.5f - 5.0f;
             p.x += a;
             p.y = y;
-            *(sVec3_78C0*)(*(char**)(s + 0x48) + 0x44) = p;
+            *(t3Vector*)(*(char**)(s + 0x48) + 0x44) = p;
         }
         if (*(char**)(s + 0x4C) != 0) {
-            sVec3_78C0 p = *(sVec3_78C0*)(s + 0x194);
+            t3Vector p = *(t3Vector*)(s + 0x194);
             p.y = y;
             p.x += a;
-            *(sVec3_78C0*)(*(char**)(s + 0x4C) + 0x44) = p;
+            *(t3Vector*)(*(char**)(s + 0x4C) + 0x44) = p;
         }
         break;
     case 1:
         if (*(char**)(s + 0x58) != 0) {
-            sVec3_78C0 p = *(sVec3_78C0*)(s + 0x23C);
+            t3Vector p = *(t3Vector*)(s + 0x23C);
             y = func_004127A8(func_00411F70(func_00413AF8(*(float*)(s + 0x1BC) + b + v.y * 0.5f), 7.5));
             p.x += a;
             p.y = y;
-            *(sVec3_78C0*)(*(char**)(s + 0x58) + 0x44) = p;
+            *(t3Vector*)(*(char**)(s + 0x58) + 0x44) = p;
         }
         if (*(char**)(s + 0x5C) != 0) {
-            sVec3_78C0 p = *(sVec3_78C0*)(s + 0x248);
+            t3Vector p = *(t3Vector*)(s + 0x248);
             p.y = y;
             p.x += a;
-            *(sVec3_78C0*)(*(char**)(s + 0x5C) + 0x44) = p;
+            *(t3Vector*)(*(char**)(s + 0x5C) + 0x44) = p;
         }
         if (*(char**)(s + 0x50) != 0) {
-            sVec3_78C0 p = *(sVec3_78C0*)(s + 0x224);
+            t3Vector p = *(t3Vector*)(s + 0x224);
             p.y = y;
             p.x += a;
-            *(sVec3_78C0*)(*(char**)(s + 0x50) + 0x44) = p;
+            *(t3Vector*)(*(char**)(s + 0x50) + 0x44) = p;
         }
         if (*(char**)(s + 0x54) != 0) {
-            sVec3_78C0 p = *(sVec3_78C0*)(s + 0x230);
+            t3Vector p = *(t3Vector*)(s + 0x230);
             p.y = y;
             p.x += a;
-            *(sVec3_78C0*)(*(char**)(s + 0x54) + 0x44) = p;
+            *(t3Vector*)(*(char**)(s + 0x54) + 0x44) = p;
         }
         if (*(char**)(s + 0x60) != 0) {
-            sVec3_78C0 p = *(sVec3_78C0*)(s + 0x254);
+            t3Vector p = *(t3Vector*)(s + 0x254);
             p.y = y;
             p.x += a;
-            *(sVec3_78C0*)(*(char**)(s + 0x60) + 0x44) = p;
+            *(t3Vector*)(*(char**)(s + 0x60) + 0x44) = p;
         }
         break;
     case 2:
@@ -1135,61 +1129,60 @@ extern "C" float func_001C7BE0(void* self)
 INCLUDE_ASM("fe/fepopup", func_001C7C20);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sVec3_7C20 { float x, y, z; };
 extern "C" float func_001C7BE0(void* self);
-void func_001C7620_7C20(void* self, sVec3_7C20 v) __asm__("func_001C7620");
-void func_001C78C0_7C20(void* self, sVec3_7C20 v, float a, float b) __asm__("func_001C78C0");
+void func_001C7620_7C20(void* self, t3Vector v) __asm__("func_001C7620");
+void func_001C78C0_7C20(void* self, t3Vector v, float a, float b) __asm__("func_001C78C0");
 
 extern "C" void func_001C7C20(void* self)
 {
     char* s = (char*)self;
     float x = func_001C7BE0(self) + *(float*)(s + 0x26C);
     float y = *(float*)(s + 0x270);
-    func_001C7620_7C20(self, *(sVec3_7C20*)(s + 0x260));
-    func_001C78C0_7C20(self, *(sVec3_7C20*)(s + 0x260), *(float*)(s + 0x26C), y);
+    func_001C7620_7C20(self, *(t3Vector*)(s + 0x260));
+    func_001C78C0_7C20(self, *(t3Vector*)(s + 0x260), *(float*)(s + 0x26C), y);
     char* p = *(char**)(s + 0x6C);
     if (p != 0) {
-        sVec3_7C20 v = *(sVec3_7C20*)(p + 0x44);
+        t3Vector v = *(t3Vector*)(p + 0x44);
         v.x += *(float*)(s + 0x26C);
         v.y += y;
-        *(sVec3_7C20*)(p + 0x44) = v;
+        *(t3Vector*)(p + 0x44) = v;
     }
     p = *(char**)(s + 0x70);
     if (p != 0) {
-        sVec3_7C20 v = *(sVec3_7C20*)(p + 0x44);
+        t3Vector v = *(t3Vector*)(p + 0x44);
         v.x += *(float*)(s + 0x26C);
         v.y += y;
-        *(sVec3_7C20*)(p + 0x44) = v;
+        *(t3Vector*)(p + 0x44) = v;
     }
     if (*(char**)(s + 0x74) != 0) {
-        sVec3_7C20 v = *(sVec3_7C20*)(*(char**)(s + 0x74) + 0x44);
+        t3Vector v = *(t3Vector*)(*(char**)(s + 0x74) + 0x44);
         if (*(int*)(s + 0x2CC) != 0) {
             v.x = x + 320.0f;
         } else {
             v.x += x;
         }
         v.y += y;
-        *(sVec3_7C20*)(*(char**)(s + 0x74) + 0x44) = v;
+        *(t3Vector*)(*(char**)(s + 0x74) + 0x44) = v;
     }
     if (*(char**)(s + 0x7C) != 0) {
-        sVec3_7C20 v = *(sVec3_7C20*)(*(char**)(s + 0x7C) + 0x44);
+        t3Vector v = *(t3Vector*)(*(char**)(s + 0x7C) + 0x44);
         if (*(int*)(s + 0x2CC) != 0) {
             v.x = x + 320.0f;
         } else {
             v.x += x;
         }
         v.y += y;
-        *(sVec3_7C20*)(*(char**)(s + 0x7C) + 0x44) = v;
+        *(t3Vector*)(*(char**)(s + 0x7C) + 0x44) = v;
     }
     if (*(char**)(s + 0x78) != 0) {
-        sVec3_7C20 v = *(sVec3_7C20*)(*(char**)(s + 0x78) + 0x44);
+        t3Vector v = *(t3Vector*)(*(char**)(s + 0x78) + 0x44);
         if (*(int*)(s + 0x2CC) != 0) {
             v.x = x + 320.0f;
         } else {
             v.x += x;
         }
         v.y += y;
-        *(sVec3_7C20*)(*(char**)(s + 0x78) + 0x44) = v;
+        *(t3Vector*)(*(char**)(s + 0x78) + 0x44) = v;
     }
 }
 #endif
@@ -1197,16 +1190,15 @@ extern "C" void func_001C7C20(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C7EB0);
 #ifdef SKIP_ASM
-struct sVec3_7EB0 { float x, y, z; };
 struct sVec2_7EB0 { float x, y; };
 
 extern "C" void func_001C7EB0(void* self)
 {
     char* o80 = *(char**)((char*)self + 0x80);
-    sVec3_7EB0 a = *(sVec3_7EB0*)(o80 + 0x44);
-    sVec3_7EB0 c;
-    sVec3_7EB0 b = *(sVec3_7EB0*)(*(char**)((char*)self + 0x6C) + 0x44);
-    c = *(sVec3_7EB0*)(*(char**)((char*)self + 0x84) + 0x44);
+    t3Vector a = *(t3Vector*)(o80 + 0x44);
+    t3Vector c;
+    t3Vector b = *(t3Vector*)(*(char**)((char*)self + 0x6C) + 0x44);
+    c = *(t3Vector*)(*(char**)((char*)self + 0x84) + 0x44);
     sVec2_7EB0 size;
     {
         sVEntry<void(void*, sVec2_7EB0*)>* vt = *(sVEntry<void(void*, sVec2_7EB0*)>**)(o80 + 8);
@@ -1218,17 +1210,17 @@ extern "C" void func_001C7EB0(void* self)
         sVEntry<void(void*, sVec2_7EB0*)>* vt = *(sVEntry<void(void*, sVec2_7EB0*)>**)(o + 8);
         vt[21].fn(o + vt[21].delta, &size);
     }
-    sVec3_7EB0 scale;
+    t3Vector scale;
     scale.x = (size.x + 6.0f) / *(float*)((char*)self + 0x20C);
     scale.y = 1.0f;
     scale.z = 1.0f;
     char* p = *(char**)((char*)self + 0x8C);
     if (p != 0) {
-        sVec3_7EB0 d = a;
+        t3Vector d = a;
         d.y = d.y + *(float*)((char*)self + 0x210) * 0.5f + b.y - 3.0f;
         d.x = d.x + (size.x + 6.0f) * 0.5f;
-        *(sVec3_7EB0*)(p + 0x44) = d;
-        *(sVec3_7EB0*)(*(char**)((char*)self + 0x8C) + 0x50) = scale;
+        *(t3Vector*)(p + 0x44) = d;
+        *(t3Vector*)(*(char**)((char*)self + 0x8C) + 0x50) = scale;
     }
 }
 #endif
@@ -1357,7 +1349,6 @@ extern "C" void cScreenPopup_setTextString(void* self, void* dst, cUIText* text)
 INCLUDE_ASM("fe/fepopup", func_001C8320);
 #ifdef SKIP_ASM
 struct cUIText;
-struct sVec3_8320 { float x, y, z; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 extern "C" float func_003921F0(void* self, const char* str, void* out, int n, float sx, float sy);
@@ -1368,7 +1359,7 @@ extern char D_004660A8[];
 
 extern "C" void func_001C8320(void* self, cUIText* text, int* info, float* out)
 {
-    sVec3_8320 v = *(sVec3_8320*)((char*)text + 0x50);
+    t3Vector v = *(t3Vector*)((char*)text + 0x50);
     char* g = (char*)func_003A04F0(text);
     float sx = *(float*)(g + 0x30) * v.x;
     float sy = *(float*)(g + 0x34) * v.y;
@@ -1410,13 +1401,12 @@ extern "C" void func_001C8320(void* self, cUIText* text, int* info, float* out)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C84A8);
 #ifdef SKIP_ASM
-struct sVec3_84A8 { float x, y, z; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 
 extern "C" void func_001C84A8(void* self, void* text, const char* str, void* out)
 {
-    sVec3_84A8 v = *(sVec3_84A8*)((char*)text + 0x50);
+    t3Vector v = *(t3Vector*)((char*)text + 0x50);
     char* f = (char*)func_003A04F0(text);
     float sx = *(float*)(f + 0x30) * v.x;
     float sy = *(float*)(f + 0x34) * v.y;
@@ -1432,13 +1422,12 @@ extern "C" void func_001C84A8(void* self, void* text, const char* str, void* out
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C8568);
 #ifdef SKIP_ASM
-struct sVec3_8568 { float x, y, z; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_003921F0(void* self, const char* str, void* out, int n, float sx, float sy);
 
 extern "C" void func_001C8568(void* self, void* text, const char* str, void* out)
 {
-    sVec3_8568 v = *(sVec3_8568*)((char*)text + 0x50);
+    t3Vector v = *(t3Vector*)((char*)text + 0x50);
     char* f = (char*)func_003A04F0(text);
     float sx = *(float*)(f + 0x30) * v.x;
     float sy = *(float*)(f + 0x34) * v.y;
@@ -1506,23 +1495,22 @@ extern "C" void func_001C8678(void* self, void* a1)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C8758);
 #ifdef SKIP_ASM
-struct sVec3_8758 { float x, y, z; };
 extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t);
 
 extern "C" void func_001C8758(void* self)
 {
     char* p = *(char**)((char*)self + 0x6C);
     if (p != 0) {
-        sVec3_8758 a = *(sVec3_8758*)(*(char**)((char*)self + 0x90) + 0x44);
+        t3Vector a = *(t3Vector*)(*(char**)((char*)self + 0x90) + 0x44);
         float x = (640.0f - *(float*)((char*)self + 0x29C)) * 0.5f - a.x;
-        sVec3_8758 b = *(sVec3_8758*)((char*)self + 0x1A0);
+        t3Vector b = *(t3Vector*)((char*)self + 0x1A0);
         b.y += *(float*)((char*)self + 0x288);
         b.x += x;
-        *(sVec3_8758*)(p + 0x44) = b;
+        *(t3Vector*)(p + 0x44) = b;
         char* q = *(char**)((char*)self + 0x88);
-        sVec3_8758 c = *(sVec3_8758*)(q + 0x44);
+        t3Vector c = *(t3Vector*)(q + 0x44);
         c.x = c.x - x + 5.0f;
-        *(sVec3_8758*)(q + 0x44) = c;
+        *(t3Vector*)(q + 0x44) = c;
         if (*(int*)((char*)self + 0x2C8) != 0) {
             int i;
             for (i = 0; i < 5; i++) {
@@ -1540,16 +1528,15 @@ extern "C" void func_001C8758(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C88C8);
 #ifdef SKIP_ASM
-struct sVec3_88C8 { float x, y, z; };
 
 extern "C" void func_001C88C8(void* self)
 {
     void* p = *(void**)((char*)self + 0x70);
     if (p != 0) {
-        sVec3_88C8 v = *(sVec3_88C8*)((char*)self + 0x1AC);
+        t3Vector v = *(t3Vector*)((char*)self + 0x1AC);
         v.y += *(float*)((char*)self + 0x294);
         v.x += *(float*)((char*)self + 0x290);
-        *(sVec3_88C8*)((char*)p + 0x44) = v;
+        *(t3Vector*)((char*)p + 0x44) = v;
     }
 }
 #endif
@@ -1563,7 +1550,6 @@ struct sObjBitsK8930 {
     unsigned hi : 13;
 };
 struct sVec2K8930 { float x, y; };
-struct sVec3K8930 { float x, y, z; };
 
 
 extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t)
@@ -1574,7 +1560,7 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
     sVec2K8930 size;
     sVEntry<void(void*, sVec2K8930*)>* vt = *(sVEntry<void(void*, sVec2K8930*)>**)((char*)obj + 8);
     vt[20].fn((char*)obj + vt[20].delta, &size);
-    sVec3K8930 pos = *(sVec3K8930*)((char*)obj + 0x44);
+    t3Vector pos = *(t3Vector*)((char*)obj + 0x44);
     b->state = state;
     if (t == 0.0f)
         t = size.x * 0.5f;
@@ -1588,7 +1574,7 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
         pos.x -= t;
         break;
     }
-    *(sVec3K8930*)((char*)obj + 0x44) = pos;
+    *(t3Vector*)((char*)obj + 0x44) = pos;
 }
 #endif
 
@@ -1602,14 +1588,14 @@ static inline void Place_8A38(char* self, int off, int src)
 {
     if (*(char**)(self + off) != 0) {
         *(sVec3_58E8*)(*(char**)(self + off) + 0x50) = sVec3_58E8(1.0f, 1.0f, 1.0f);
-        *(sVec3_7258*)(*(char**)(self + off) + 0x44) = *(sVec3_7258*)(self + src);
+        *(t3Vector*)(*(char**)(self + off) + 0x44) = *(t3Vector*)(self + src);
     }
 }
 
 static inline void Move_8A38(char* self, int off, int src)
 {
     if (*(char**)(self + off) != 0)
-        *(sVec3_7258*)(*(char**)(self + off) + 0x44) = *(sVec3_7258*)(self + src);
+        *(t3Vector*)(*(char**)(self + off) + 0x44) = *(t3Vector*)(self + src);
 }
 
 extern "C" void func_001C8A38(void* self_)
@@ -1626,15 +1612,15 @@ extern "C" void func_001C8A38(void* self_)
     Move_8A38(self, 0x6C, 0x1A0);
     Move_8A38(self, 0x70, 0x1AC);
     if (*(char**)(self + 0x74) != 0) {
-        *(sVec3_7258*)(*(char**)(self + 0x74) + 0x44) = *(sVec3_7258*)(self + 0x1C4);
+        *(t3Vector*)(*(char**)(self + 0x74) + 0x44) = *(t3Vector*)(self + 0x1C4);
         func_001C8930(self, *(char**)(self + 0x74), 9, 0.0f);
     }
     if (*(char**)(self + 0x7C) != 0) {
-        *(sVec3_7258*)(*(char**)(self + 0x7C) + 0x44) = *(sVec3_7258*)(self + 0x1B8);
+        *(t3Vector*)(*(char**)(self + 0x7C) + 0x44) = *(t3Vector*)(self + 0x1B8);
         func_001C8930(self, *(char**)(self + 0x74), 9, 0.0f);
     }
     if (*(char**)(self + 0x78) != 0) {
-        *(sVec3_7258*)(*(char**)(self + 0x78) + 0x44) = *(sVec3_7258*)(self + 0x1D0);
+        *(t3Vector*)(*(char**)(self + 0x78) + 0x44) = *(t3Vector*)(self + 0x1D0);
         func_001C8930(self, *(char**)(self + 0x74), 9, 0.0f);
     }
     Move_8A38(self, 0x80, 0x1DC);
@@ -1644,14 +1630,14 @@ extern "C" void func_001C8A38(void* self_)
         if (o != 0)
             func_001C8930(self, o, 10, *(float*)(self + 0x29C) * 0.5f);
     }
-    sVec3_7258 vp = D_004FF0D8;
+    t3Vector vp = D_004FF0D8;
     vp.x = 472.0f;
     func_001C70F0(self, &vp);
-    sVec3_7258 one;
+    t3Vector one;
     one.x = 1.0f;
     one.y = 1.0f;
     one.z = 1.0f;
-    *(sVec3_7258*)(self + 0x278) = one;
+    *(t3Vector*)(self + 0x278) = one;
     func_001C9CD0(self, -*(int*)(self + 0x314));
 }
 #endif
@@ -1860,7 +1846,6 @@ extern "C" void func_001C93B0(void* self, int* msg, void* out)
 INCLUDE_ASM("fe/fepopup", func_001C94B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sVec3_94B0 { float x, y, z; };
 struct sVec2_94B0 { float x, y; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00392C60(void* font, int c);
@@ -1885,11 +1870,11 @@ extern "C" void func_001C94B0(void* self, void* text, void* strp, void* outp)
     int done = 0;
     unsigned short* buf = new (D_004660E8, 0x100, 0) unsigned short[n + 1];
     USTR_copy(buf, str);
-    sVec3_94B0 v;
+    t3Vector v;
     sVec2_94B0 size;
     sVEntry<void(void*, sVec2_94B0*)>* vt = *(sVEntry<void(void*, sVec2_94B0*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
-    v = *(sVec3_94B0*)((char*)text + 0x50);
+    v = *(t3Vector*)((char*)text + 0x50);
     while (i < n) {
         if (buf[i] == D_004A1C38 && buf[i + 1] == D_004A1C38) {
             w = 0.0f;
@@ -1972,7 +1957,6 @@ INCLUDE_ASM("fe/fepopup", func_001C9938);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-struct sVec3_9938 { float x, y, z; };
 struct sVec2_9938 { float x, y; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00392C60(void* font, int c);
@@ -1998,11 +1982,11 @@ extern "C" void func_001C9938(void* self, cUIText* text, void* strp, float* out)
     int i = 0;
     unsigned short* buf = new (D_004660E8, 0x100, 0) unsigned short[n + 1];
     USTR_copy(buf, str);
-    sVec3_9938 v;
+    t3Vector v;
     sVec2_9938 size;
     sVEntry<void(void*, sVec2_9938*)>* vt = *(sVEntry<void(void*, sVec2_9938*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
-    v = *(sVec3_9938*)((char*)text + 0x50);
+    v = *(t3Vector*)((char*)text + 0x50);
     while (i < n) {
         if (buf[i] == D_004A1C38 && buf[i + 1] == D_004A1C38) {
             last = -1;
@@ -2408,7 +2392,6 @@ INCLUDE_ASM("fe/fepopup", cScreenPopup_checkAndFixTextEntry);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-struct sVec3_A6A0 { float x, y, z; };
 struct sVec2_A6A0 { float x, y; };
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
@@ -2430,7 +2413,7 @@ static inline void measure_A6A0(cUIText* text, const char* s, float* out)
 extern "C" void cScreenPopup_checkAndFixTextEntry(void* self, cUIText* text, const char* str)
 {
     int fixed = 0;
-    sVec3_A6A0 scale = *(sVec3_A6A0*)((char*)text + 0x50);
+    t3Vector scale = *(t3Vector*)((char*)text + 0x50);
     sVec2_A6A0 size;
     float ext[4];
     float dots[4];
@@ -3940,7 +3923,6 @@ INCLUDE_ASM("fe/fepopup", func_001CC8D8);
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CCC30);
 #ifdef SKIP_ASM
-struct sVec3_CC30 { float x, y, z; };
 struct sRect_CC30 {
     float x, y, w, h;
     void Measure(char* f, const char* str, int flag)
@@ -3954,7 +3936,7 @@ extern char D_00466570[];
 
 extern "C" void func_001CCC30(void* self)
 {
-    sVec3_CC30 pos;
+    t3Vector pos;
     char* s = (char*)self;
 
     void* text = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466530));
@@ -3962,12 +3944,12 @@ extern "C" void func_001CCC30(void* self)
     if (t != 0) {
         sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(t + 8);
         vt[20].fn(t + vt[20].delta, s + 0x3F4);
-        *(sVec3_CC30*)(s + 0x3E8) = *(sVec3_CC30*)(t + 0x44);
+        *(t3Vector*)(s + 0x3E8) = *(t3Vector*)(t + 0x44);
     }
     *(float*)(s + 0x410) = *(float*)(s + 0x3F8) + *(float*)(s + 0x3EC) - *(float*)(s + 0x404) - 2.0f;
     unsigned char c = *(s + *(int*)(s + 0x134) + 0x74);
     char tc = *(s + *(int*)(s + 0x134) + 0x74);
-    pos = *(sVec3_CC30*)(s + 0x400);
+    pos = *(t3Vector*)(s + 0x400);
     if (tc != 0) {
         sRect_CC30 size;
         char ch[2];
@@ -3997,9 +3979,9 @@ extern "C" void func_001CCC30(void* self)
     char* f = (char*)func_003A04F0(text);
     sRect_CC30 size;
     size.Measure(f, buf, 1);
-    sVec3_CC30 p = *(sVec3_CC30*)(s + 0x40C);
+    t3Vector p = *(t3Vector*)(s + 0x40C);
     p.x = size.w + *(float*)(s + 0x3E8);
-    *(sVec3_CC30*)(t + 0x44) = p;
+    *(t3Vector*)(t + 0x44) = p;
 }
 #endif
 
@@ -4243,8 +4225,6 @@ extern char D_00466540[];
 extern char D_00466558[];
 extern char D_004A1408[];
 
-struct sVec3_D348 { float x, y, z; };
-
 
 
 struct sKbd_D348 {
@@ -4315,18 +4295,18 @@ extern "C" int cKeyboardPopup_onGainTransition(char* s, int first)
         if (o1 != 0) {
             sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o1 + 8);
             vt[20].fn(o1 + vt[20].delta, s + 0x400);
-            *(sVec3_D348*)(s + 0x40C) = *(sVec3_D348*)(o1 + 0x44);
+            *(t3Vector*)(s + 0x40C) = *(t3Vector*)(o1 + 0x44);
         }
         char* o2 = (char*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466530));
         if (o2 != 0) {
             sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o2 + 8);
             vt[20].fn(o2 + vt[20].delta, s + 0x3F4);
-            *(sVec3_D348*)(s + 0x3E8) = *(sVec3_D348*)(o2 + 0x44);
+            *(t3Vector*)(s + 0x3E8) = *(t3Vector*)(o2 + 0x44);
             *(float*)(s + 0x410) = *(float*)(s + 0x3F8) + *(float*)(s + 0x3EC);
         }
         char* o3 = (char*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466710));
         if (o3 != 0) {
-            sVec3_D348 p = *(sVec3_D348*)(o3 + 0x44);
+            t3Vector p = *(t3Vector*)(o3 + 0x44);
             *(float*)(s + 0x3E8) += p.x;
             *(float*)(s + 0x3EC) += p.y;
             *(float*)(s + 0x3F0) += p.z;
@@ -4841,13 +4821,12 @@ extern "C" void func_001CE468(void* self, int v)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CE4C8);
 #ifdef SKIP_ASM
-struct sVec3_CE4C8 { float x, y, z; };
 
 extern "C" void* func_003A04F0(void* self);
 
 extern "C" void func_001CE4C8(void* self, void* obj)
 {
-    sVec3_CE4C8 v = *(sVec3_CE4C8*)((char*)obj + 0x50);
+    t3Vector v = *(t3Vector*)((char*)obj + 0x50);
     char* p = (char*)func_003A04F0(obj);
     float x = *(float*)(p + 0x30) * v.x;
     float y = *(float*)(p + 0x34) * v.y;
