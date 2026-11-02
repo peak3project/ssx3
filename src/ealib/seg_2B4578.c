@@ -16795,8 +16795,6 @@ extern double func_00413AF8(float);
 extern double func_00411F18_2C20(double, double) __asm__("func_00411F18");
 extern int func_004126A0_2C20(double) __asm__("func_004126A0");
 extern char *D_0044F420_2C20[] __asm__("D_0044F420");
-extern unsigned char D_0044F42C;
-extern int D_0044F430_2C20[] __asm__("D_0044F430");
 
 static inline int bitclear_2C20(int x) {
     return !(x & 1);
@@ -16813,7 +16811,7 @@ int func_003D2C20(int m, int arg1) {
 
     ratio = 0.0f;
     max = 0.0f;
-    if (D_0044F42C == 0 || D_0044F430_2C20[0] != 0 || func_003D5450_2C20(-1) == 0) {
+    if (D_0044F42C == 0 || D_0044F430 != 0 || func_003D5450_2C20(-1) == 0) {
         return -0x12;
     }
     if (func_003D4BB0(m & 0xFF000000) == 0) {
@@ -16836,7 +16834,7 @@ int func_003D2C20(int m, int arg1) {
         }
     }
     r = func_004126A0_2C20(func_00411F18_2C20(func_00413AF8(ratio * arg1), 0.5));
-    D_0044F430_2C20[0] = 0;
+    D_0044F430 = 0;
     D_0044F420_2C20[0] = 0;
     return r;
 }
