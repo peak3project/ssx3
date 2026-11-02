@@ -8,25 +8,30 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/festatecharsetup", cFEStateCharSetup_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
 struct cUIText;
 int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+extern void* D_004A28A8;
+extern "C" void func_001831D0(void* self, int a1);
+extern "C" void func_00182EC0(void* self);
+extern "C" void func_0019E538(void* self, int a1);
+
+//100%
+INCLUDE_ASM("fe/festatecharsetup", cFEStateCharSetup_onCreateScreen);
+#ifdef SKIP_ASM
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void func_00182DB8(void* self);
 extern "C" void func_001A0570(void* self, int i, int v);
 extern "C" void func_001A0508(void* self, int idx, int a2, int a3);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* snd, int a);
-extern void* D_004A28A8;
 extern signed char D_00535C11[];
 extern char D_0045D7C0[];
 extern char D_004A1410[];
@@ -37,7 +42,6 @@ extern char D_0045D820[];
 extern char D_0045D830[];
 extern char D_0045D840[];
 extern char D_0045D850[];
-
 
 class cWidget_182928 {
 public:
@@ -115,7 +119,6 @@ extern "C" void cFEStateCharSetup_onCreateScreen(sCharSetup_182928* self)
 //100%
 INCLUDE_ASM("fe/festatecharsetup", func_00182C08);
 #ifdef SKIP_ASM
-extern "C" void func_001831D0(void* self, int a1);
 void func_0039E4A0(void* self);
 
 extern "C" void func_00182C08(void* self)
@@ -129,7 +132,6 @@ extern "C" void func_00182C08(void* self)
 INCLUDE_ASM("fe/festatecharsetup", func_00182C38);
 #ifdef SKIP_ASM
 extern "C" void func_0039E510(void* self);
-extern "C" void func_00182EC0(void* self);
 
 extern "C" void func_00182C38(void* self)
 {
@@ -154,9 +156,7 @@ extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, in
 extern "C" void* func_001887A0(void* self, void* engine, int reset);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* st, int a2, int a3);
 extern "C" void func_0039F400(void* list, void* item);
-extern "C" void func_001831D0(void* self, int a1);
 extern char D_0045D698[];
-
 
 struct sStateK182C80 {
     char pad_0x0[0x1C];
@@ -203,21 +203,11 @@ extern "C" void func_00182C80(void* self, void* item, unsigned int event)
 //100%
 INCLUDE_ASM("fe/festatecharsetup", func_00182DB8);
 #ifdef SKIP_ASM
-struct cUIText;
 struct sVec4_182DB8 { float x, y, z, w; } __attribute__((aligned(16)));
 struct sCam_182DB8 { char pad[0x10]; float fov; };
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" void* func_0014EEC8(void* self, int player, int index);
 extern "C" void func_0015E050(void* cam, sVec4_182DB8* a, sVec4_182DB8* b);
-extern "C" void func_001831D0(void* self, int a1);
-extern "C" void func_00182EC0(void* self);
-extern void* D_004A28A8;
 extern char D_0045D860[];
 
 extern "C" void func_00182DB8(void* self)
@@ -252,8 +242,6 @@ extern "C" void* func_001A0548(void* self, int idx);
 extern "C" void func_00311A50(void* anim);
 extern "C" int cRiderAnimBase_play(void* anim, int id, int a2, float t);
 extern "C" void func_001A0358(void* rider);
-extern "C" void func_0019E538(void* self, int a1);
-extern void* D_004A28A8;
 
 struct sQuat_182EC0
 {
@@ -360,9 +348,7 @@ extern "C" void func_00182EC0(void* self_)
 //100%
 INCLUDE_ASM("fe/festatecharsetup", func_001831D0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" void* func_001A0548(void* self, int a1);
-extern "C" void func_0019E538(void* self, int a1);
 
 extern "C" void func_001831D0(void* self, int on)
 {
