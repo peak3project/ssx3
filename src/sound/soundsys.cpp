@@ -618,6 +618,9 @@ static inline int sndPlayRiderVoice(void* vself, void* obj, int a, int b, int ty
 extern "C" void* cBE_getBE();
 extern "C" void* cBE_getInterface__Fv(void* be, int kind);
 
+// func_00285D98 (int in its own unit) hands back a rider / object pointer; the callers here use this view.
+void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
+
 // ---- end of shared declarations ----
 
 //100%
@@ -907,8 +910,6 @@ INCLUDE_ASM("sound/soundsys", func_00290FD0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int func_0011FE98(void*);
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 extern "C" int func_00290FD0(void* self, int which)
 {
@@ -1974,8 +1975,6 @@ INCLUDE_ASM("sound/soundsys", func_00294678);
 extern "C" void func_00294880(void* self, int i, int v);
 extern "C" void func_0029FCC8(void* self, void* rider);
 extern "C" void func_002A7408(void* self, int i);
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 
 extern "C" void func_00294678(void* self, char* rider)
@@ -2412,8 +2411,6 @@ INCLUDE_ASM("sound/soundsys", func_002961F0);
 #ifdef SKIP_ASM
 extern "C" void func_002A73D8(void* self, int a1, int i);
 extern "C" void func_002A7438(void* self, int i);
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 // PORT: PS2-only inline asm (float absolute value).
 static inline float absf_961F0(float x)
@@ -3568,8 +3565,6 @@ INCLUDE_ASM("sound/soundsys", func_00299E28);
 
 
 extern "C" int func_002A4290(void* self);
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern "C" void func_002A0560(void* self, void* a, void* b);
 
 extern "C" void func_00299E28(void* self, void* obj, void* a, void* b, int lim, int n)
@@ -3613,8 +3608,6 @@ INCLUDE_ASM("sound/soundsys", func_0029A220);
 
 
 extern "C" void func_002992D8(void* self, void* obj);
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 extern "C" void func_0029A220(void* self, void* obj)
 {
@@ -5243,8 +5236,6 @@ INCLUDE_ASM("sound/soundsys", func_0029FCC8);
 extern "C" int func_002A3FE8(void* self);
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_00288B40(void* self, int which, float f);
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 
 extern "C" void func_0029FCC8(void* self, void* vrider)
@@ -5289,8 +5280,6 @@ INCLUDE_ASM("sound/soundsys", func_0029FF80);
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 
 extern "C" void func_0029FF80(void* self, sSndRider* rider, int alt)
@@ -5345,8 +5334,6 @@ extern "C" int func_002A3F90(void* self);
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 
 extern "C" void func_002A02D8(void* self, sSndRider* rider)
@@ -5390,7 +5377,6 @@ INCLUDE_ASM("sound/soundsys", func_002A0560);
 extern "C" int func_00288B40(void* self, int which, float f);
 int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int refresh) __asm__("func_002B1458");
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 unsigned func_002A1820_0560(void* self, void* a, void* b) __asm__("func_002A1820");
 void func_0031BE50_0560(float a, float* x, float* y) __asm__("func_0031BE50");
 
@@ -5486,7 +5472,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 // func_002B1458 with the float argument in its real position (same registers).
 int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int refresh) __asm__("func_002B1458");
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 extern "C" int func_002A1820(void* self, sSndRider* a, sSndRider* b);
 
@@ -5548,7 +5533,6 @@ INCLUDE_ASM("sound/soundsys", func_002A0E70);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 
 extern "C" void func_002A0E70(void* self, sSndRider* rider, int play)
@@ -6700,8 +6684,6 @@ extern "C" int func_002A3AA0(void* self, void* arg1) {
 INCLUDE_ASM("sound/soundsys", func_002A3B18);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// func_00285D98 returns an object pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 extern "C" void func_002A3B18(void* self, void* obj, int a2)
 {
@@ -6721,8 +6703,6 @@ extern "C" void func_002A3B18(void* self, void* obj, int a2)
 INCLUDE_ASM("sound/soundsys", func_002A3C00);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// func_00285D98 returns an object pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 extern "C" void func_002A3C00(void* self, void* obj, int a2)
 {
@@ -6744,8 +6724,6 @@ extern "C" void func_002A3C00(void* self, void* obj, int a2)
 INCLUDE_ASM("sound/soundsys", func_002A3CE8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// func_00285D98 returns a rider pointer here (the unit declares it int).
-void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
 extern "C" void func_002A3CE8(void* self, char* rider, int n)
 {
