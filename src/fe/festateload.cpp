@@ -1,14 +1,18 @@
 #include "common.h"
 
+// Declarations shared by the functions of this unit.
+struct cUIScreen;
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern void* D_0046B570[];
+
 //100%
 INCLUDE_ASM("fe/festateload", cFEStateEventSelect_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_004A14B0[];
 extern char D_0045DC50[];
 extern unsigned int D_004A2594;
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void cUITemplate_MAP_onCreateScreen(void* tmpl, void* screen, void* owner);
 
 extern "C" void cFEStateEventSelect_onCreateScreen(void* self)
@@ -81,10 +85,7 @@ extern "C" void func_00186778(void* self)
 //100%
 INCLUDE_ASM("fe/festateload", func_001867A8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIScreen;
 int cUIScreen_getFrameByLabel(cUIScreen* self, int hash);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" int func_002018A8(void* tmpl, void* obj, int msg);
 extern "C" void* func_0039F190(void* list, int a1);
 extern "C" void func_0039F400(void* list, void* item);
@@ -241,7 +242,6 @@ INCLUDE_ASM("fe/festateload", func_00186A08);
 extern "C" void* func_001D53B0(void* self, void* a1, int a2);
 extern "C" void* func_00227F80(void* p);
 extern void* D_004A28A8;
-extern void* D_0046B570[];
 // D_004A14B8 holds the active load state (the unit declares it as int elsewhere).
 extern void* D_004A14B8_K186A08 __asm__("D_004A14B8");
 extern int D_004A14B4;
@@ -337,7 +337,6 @@ extern "C" sFEStateLoadK186A08* func_00186A08(sFEStateLoadK186A08* self, void* e
 //100%
 INCLUDE_ASM("fe/festateload", func_00186B18);
 #ifdef SKIP_ASM
-extern void* D_0046B570[];
 extern int D_004A14B8;
 extern "C" void func_001D5428(void* self, int flags);
 
