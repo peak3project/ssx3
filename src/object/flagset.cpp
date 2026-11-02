@@ -39,6 +39,34 @@ struct sFsColor {
     sFsColor() {}
 };
 
+// A render-state record of the graphics manager's state stack (D_00501420 holds the default).
+struct sFsRenderState {
+    unsigned int f0_0 : 12;
+    unsigned int f0_12 : 8;
+    unsigned int f0_20 : 12;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 25;
+    int f8;
+    int fC;
+    int f10;
+};
+extern sFsRenderState D_00501420;
+
+// Four floats with an empty ctor and a const-reference ctor (16-byte aligned; not the POD t4Vector).
+struct sFsVec4 {
+    float x, y, z, w;
+    sFsVec4() {}
+    sFsVec4(const float& a, const float& b, const float& c, const float& d) : x(a), y(b), z(c), w(d) {}
+} __attribute__((aligned(16)));
+
+// A model's texture-page / slot reference (page 0xFF = always loaded).
+struct sFsModel {
+    char pad_0x0[0x7D];
+    unsigned char page;     // 0x7D
+    short slot;             // 0x7E
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -284,34 +312,12 @@ extern int D_004A4244;
 typedef int cQuad128_34B9B0 __attribute__((mode(TI)));
 extern char D_004FF1A0[];
 
-struct sRS_34B9B0 {
-    unsigned int f0_0 : 12;
-    unsigned int f0_12 : 8;
-    unsigned int f0_20 : 12;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-    int f8;
-    int fC;
-    int f10;
-};
-extern sRS_34B9B0 D_00501420;
-
-struct sVec4_34B9B0 {
-    float x, y, z, w;
-    sVec4_34B9B0() {}
-    sVec4_34B9B0(const float& a, const float& b, const float& c, const float& d) : x(a), y(b), z(c), w(d) {}
-} __attribute__((aligned(16)));
 
 
 
-struct sModel_34B9B0 {
-    char pad_0x0[0x7D];
-    unsigned char page;     // 0x7D
-    short slot;             // 0x7E
-};
 
-static inline int IsLoaded_34B9B0(sModel_34B9B0* m)
+
+static inline int IsLoaded_34B9B0(sFsModel* m)
 {
     char* wc = *(char**)D_004A47B8;
     if (m->page == 0xFF)
@@ -321,12 +327,12 @@ static inline int IsLoaded_34B9B0(sModel_34B9B0* m)
 }
 
 struct sVE43_34B9B0 { short delta; short index; t4Matrix (*fn)(void*); };
-struct sVE93_34B9B0 { short delta; short index; int (*fn)(void*, sVec4_34B9B0*, sVec4_34B9B0*, t4Matrix*); };
+struct sVE93_34B9B0 { short delta; short index; int (*fn)(void*, sFsVec4*, sFsVec4*, t4Matrix*); };
 struct sVE96_34B9B0 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
 struct sVE7_34B9B0 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
-static inline void SetF0_12_34B9B0(sRS_34B9B0* rs, int v) { rs->f0_12 = v; }
-static inline void SetF4_2_34B9B0(sRS_34B9B0* rs, int v) { rs->f4_2 = v; }
+static inline void SetF0_12_34B9B0(sFsRenderState* rs, int v) { rs->f0_12 = v; }
+static inline void SetF4_2_34B9B0(sFsRenderState* rs, int v) { rs->f4_2 = v; }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy).
 static inline void MatCopy_34B9B0(t4Matrix* d, const t4Matrix* s)
@@ -348,10 +354,10 @@ static inline void MatCopy_34B9B0(t4Matrix* d, const t4Matrix* s)
 struct sFlagSetEntry;
 struct sFSE_34B9B0 {
     char pad[0x94];
-    sModel_34B9B0* models[1];
+    sFsModel* models[1];
 };
 
-#define TOP_34B9B0(c) (*(sRS_34B9B0**)((c) + 0xE84))
+#define TOP_34B9B0(c) (*(sFsRenderState**)((c) + 0xE84))
 
 extern "C" void func_0034B9B0(sFlagSetEntry* e)
 {
@@ -369,16 +375,16 @@ extern "C" void func_0034B9B0(sFlagSetEntry* e)
         SetF4_2_34B9B0(TOP_34B9B0(ctx), 5);
     }
     for (int i = 0; i < *(int*)(self + 0x5C); i++) {
-        sModel_34B9B0* m = ((sFSE_34B9B0*)self)->models[i];
+        sFsModel* m = ((sFSE_34B9B0*)self)->models[i];
         if (!IsLoaded_34B9B0(m)) {
             continue;
         }
         {
             sVE93_34B9B0* vt = *(sVE93_34B9B0**)(ctx + 0x10D8);
             char* thisp = ctx + vt[93].delta;
-            sVec4_34B9B0 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
-            sVec4_34B9B0 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
-            sVec4_34B9B0* pb = &b;
+            sFsVec4 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
+            sFsVec4 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
+            sFsVec4* pb = &b;
             sVE43_34B9B0* vt43 = *(sVE43_34B9B0**)(ctx + 0x10D8);
             t4Matrix c = vt43[43].fn(ctx + vt43[43].delta);
             if (vt[93].fn(thisp, &a, pb, &c) == 1) {
@@ -1303,33 +1309,12 @@ extern "C" void func_0034D6F0(void* vself, float v)
 //100%
 INCLUDE_ASM("object/flagset", func_0034D778);
 #ifdef SKIP_ASM
-struct sRS_D778 {
-    unsigned int f0_0 : 12;
-    unsigned int f0_12 : 8;
-    unsigned int f0_20 : 12;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 25;
-    int f8;
-    int fC;
-    int f10;
-};
-
-struct sVec4_D778 {
-    float x, y, z, w;
-    sVec4_D778() {}
-    sVec4_D778(const float& a, const float& b, const float& c, const float& d) : x(a), y(b), z(c), w(d) {}
-} __attribute__((aligned(16)));
 
 
 
-struct sModel_D778 {
-    char pad_0x0[0x7D];
-    unsigned char page;     // 0x7D
-    short slot;             // 0x7E
-};
 
-static inline int IsLoaded_D778(sModel_D778* m)
+
+static inline int IsLoaded_D778(sFsModel* m)
 {
     char* wc = *(char**)D_004A47B8;
     if (m->page == 0xFF)
@@ -1339,29 +1324,29 @@ static inline int IsLoaded_D778(sModel_D778* m)
 }
 
 struct sVE43_D778 { short delta; short index; t4Matrix (*fn)(void*); };
-struct sVE93_D778 { short delta; short index; int (*fn)(void*, sVec4_D778*, sVec4_D778*, t4Matrix*); };
+struct sVE93_D778 { short delta; short index; int (*fn)(void*, sFsVec4*, sFsVec4*, t4Matrix*); };
 struct sVE96_D778 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
 struct sVE7_D778 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
-static inline void SetF0_12_D778(sRS_D778* rs, int v) { rs->f0_12 = v; }
-static inline void SetF4_2_D778(sRS_D778* rs, int v) { rs->f4_2 = v; }
+static inline void SetF0_12_D778(sFsRenderState* rs, int v) { rs->f0_12 = v; }
+static inline void SetF4_2_D778(sFsRenderState* rs, int v) { rs->f4_2 = v; }
 
-#define TOP_D778(c) (*(sRS_D778**)((c) + 0xE84))
+#define TOP_D778(c) (*(sFsRenderState**)((c) + 0xE84))
 
 extern "C" void func_0034D778(void* vself)
 {
     char* self = (char*)vself;
-    if (!IsLoaded_D778(*(sModel_D778**)(self + 0x18))) {
+    if (!IsLoaded_D778(*(sFsModel**)(self + 0x18))) {
         return;
     }
     char* ctx = D_004A5B80;
     {
-        sModel_D778* m = *(sModel_D778**)(self + 0x18);
+        sFsModel* m = *(sFsModel**)(self + 0x18);
         sVE93_D778* vt = *(sVE93_D778**)(ctx + 0x10D8);
         char* thisp = ctx + vt[93].delta;
-        sVec4_D778 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
-        sVec4_D778 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
-        sVec4_D778* pb = &b;
+        sFsVec4 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
+        sFsVec4 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
+        sFsVec4* pb = &b;
         sVE43_D778* vt43 = *(sVE43_D778**)(ctx + 0x10D8);
         t4Matrix c = vt43[43].fn(ctx + vt43[43].delta);
         if (vt[93].fn(thisp, &a, pb, &c) == 1) {
@@ -1369,10 +1354,10 @@ extern "C" void func_0034D778(void* vself)
         }
     }
     TOP_D778(ctx)[1] = TOP_D778(ctx)[0];
-    sRS_D778* t = TOP_D778(ctx);
+    sFsRenderState* t = TOP_D778(ctx);
     TOP_D778(ctx) = t + 1;
     t[1].f4_2 = 5;
-    sModel_D778* m = *(sModel_D778**)(self + 0x18);
+    sFsModel* m = *(sFsModel**)(self + 0x18);
     char* pos = (char*)m + 0x10;
     char* h = *(char**)(self + 0x40);
     if (h != 0) {
