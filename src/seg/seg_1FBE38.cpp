@@ -189,6 +189,20 @@ int* func_00226610(void*);
         *func_00226610(ret) = r_; \
     } while (0)
 
+// Reference ids: refs[slot] >> 8 is the object address >> 2 (0 = no object); the id -1 names the script manager's
+// current object.
+static inline char *refToPtr_1FBE38(unsigned i) { return (char*)(i << 2); }
+static inline char *refToObj_1FBE38(unsigned i) { if (i == 0) return 0; return refToPtr_1FBE38(i); }
+static inline char *lookupRef_1FBE38(unsigned id) {
+    if (~id == 0)
+        return D_004A3DD8->f290;
+    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
+    unsigned i;
+    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
+        return 0;
+    return (char*)(i << 2);
+}
+
 
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", checkActiveNode);
@@ -239,8 +253,6 @@ extern "C" int checkActiveNode(void *a, int type, void *buf) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB060);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_B060(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_B060(unsigned i) { if (i == 0) return 0; return refToPtr_B060(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00359228(void*, int, void*, void*);
@@ -291,7 +303,7 @@ extern "C" cLunoValue func_002FB060(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_B060(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -310,8 +322,6 @@ extern "C" cLunoValue func_002FB060(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB270);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_B270(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_B270(unsigned i) { if (i == 0) return 0; return refToPtr_B270(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void func_00358C80_B270(void*, int, void*, void*) __asm__("func_00358C80");
@@ -366,7 +376,7 @@ extern "C" cLunoValue func_002FB270(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_B270(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -385,8 +395,6 @@ extern "C" cLunoValue func_002FB270(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB498);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_B498(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_B498(unsigned i) { if (i == 0) return 0; return refToPtr_B498(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_003421A0(void*, int, void*, void*);
@@ -437,7 +445,7 @@ extern "C" cLunoValue func_002FB498(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_B498(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -456,8 +464,6 @@ extern "C" cLunoValue func_002FB498(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB6B8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_B6B8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_B6B8(unsigned i) { if (i == 0) return 0; return refToPtr_B6B8(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00343010(void*, int, void*, void*);
@@ -509,7 +515,7 @@ extern "C" cLunoValue func_002FB6B8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_B6B8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -528,8 +534,6 @@ extern "C" cLunoValue func_002FB6B8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FB8D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_B8D0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_B8D0(unsigned i) { if (i == 0) return 0; return refToPtr_B8D0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00343768(void*, int, void*, void*);
@@ -572,7 +576,7 @@ extern "C" cLunoValue func_002FB8D0(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_B8D0(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -591,8 +595,6 @@ extern "C" cLunoValue func_002FB8D0(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FBAB0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_BAB0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_BAB0(unsigned i) { if (i == 0) return 0; return refToPtr_BAB0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_0034EC58(void*, int, void*, void*);
@@ -640,7 +642,7 @@ extern "C" cLunoValue func_002FBAB0(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_BAB0(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -659,8 +661,6 @@ extern "C" cLunoValue func_002FBAB0(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FBCB8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_BCB8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_BCB8(unsigned i) { if (i == 0) return 0; return refToPtr_BCB8(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00341AA0(void*, int, int, void*, void*);
@@ -711,7 +711,7 @@ extern "C" cLunoValue func_002FBCB8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_BCB8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -730,8 +730,6 @@ extern "C" cLunoValue func_002FBCB8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FBEC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_BEC8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_BEC8(unsigned i) { if (i == 0) return 0; return refToPtr_BEC8(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void func_00341388_BEC8(void*, int, int, void*, void*) __asm__("func_00341388");
@@ -781,7 +779,7 @@ extern "C" cLunoValue func_002FBEC8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_BEC8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -800,8 +798,6 @@ extern "C" cLunoValue func_002FBEC8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC0D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_C0D0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_C0D0(unsigned i) { if (i == 0) return 0; return refToPtr_C0D0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00356DB0(void*, int, void*, int, bool);
@@ -845,7 +841,7 @@ extern "C" cLunoValue func_002FC0D0(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_C0D0(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -911,8 +907,6 @@ extern "C" void func_002FC2C0(char* self, char* ev) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC420);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_C420(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_C420(unsigned i) { if (i == 0) return 0; return refToPtr_C420(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void func_002FC2C0_C420(void*, void*) __asm__("func_002FC2C0");
 extern unsigned D_C420[] __asm__("D_004FB500");
@@ -952,7 +946,7 @@ extern "C" cLunoValue func_002FC420(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_C420(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -970,8 +964,6 @@ extern "C" cLunoValue func_002FC420(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC5D8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_C5D8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_C5D8(unsigned i) { if (i == 0) return 0; return refToPtr_C5D8(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void cDeadFadeNode_cDeadFadeNode_C5D8(void*, int, void*, void*, int) __asm__("cDeadFadeNode_cDeadFadeNode");
@@ -1016,7 +1008,7 @@ extern "C" cLunoValue func_002FC5D8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_C5D8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1035,8 +1027,6 @@ extern "C" cLunoValue func_002FC5D8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC7D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_C7D0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_C7D0(unsigned i) { if (i == 0) return 0; return refToPtr_C7D0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00342C08_C7D0(void*, int, void*, void*, void*) __asm__("func_00342C08");
@@ -1081,7 +1071,7 @@ extern "C" cLunoValue func_002FC7D0(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_C7D0(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1100,8 +1090,6 @@ extern "C" cLunoValue func_002FC7D0(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FC9C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_C9C8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_C9C8(unsigned i) { if (i == 0) return 0; return refToPtr_C9C8(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_0034ADD8(void*, int, void*, void*);
@@ -1169,7 +1157,7 @@ extern "C" cLunoValue func_002FC9C8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_C9C8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1248,8 +1236,6 @@ extern "C" cLunoValue* func_002FCC20(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_002FCDC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_CDC8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_CDC8(unsigned i) { if (i == 0) return 0; return refToPtr_CDC8(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00346350(void*, int, void*, void*);
@@ -1299,7 +1285,7 @@ extern "C" cLunoValue func_002FCDC8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_CDC8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1318,8 +1304,6 @@ extern "C" cLunoValue func_002FCDC8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FCFF0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_CFF0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_CFF0(unsigned i) { if (i == 0) return 0; return refToPtr_CFF0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void func_00351B40_CFF0(void*, int, void*, void*, void*, void*) __asm__("func_00351B40");
@@ -1374,7 +1358,7 @@ extern "C" cLunoValue func_002FCFF0(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_CFF0(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1447,8 +1431,6 @@ extern "C" cLunoValue func_002FD250(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FD420);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_D420(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_D420(unsigned i) { if (i == 0) return 0; return refToPtr_D420(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_003578A8_D420(void*, int, void*, void*, void*) __asm__("func_003578A8");
@@ -1512,7 +1494,7 @@ extern "C" cLunoValue func_002FD420(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_D420(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1643,8 +1625,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FD9F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355978(void*, int, int, sVec4_1FBE38*);
-static inline char *refToPtr_D9F8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_D9F8(unsigned i) { if (i == 0) return 0; return refToPtr_D9F8(i); }
 extern unsigned D_D9F8[] __asm__("D_004FB738");
 extern int D_004A560C;
 extern const int D_004461A8[];
@@ -1686,7 +1666,7 @@ extern "C" cLunoValue func_002FD9F8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_D9F8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1719,8 +1699,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FDC60);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355978(void*, int, int, sVec4_1FBE38*);
-static inline char *refToPtr_DC60(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_DC60(unsigned i) { if (i == 0) return 0; return refToPtr_DC60(i); }
 extern unsigned D_DC60[] __asm__("D_004FB758");
 extern int D_004A5610;
 extern const int D_004461C0[];
@@ -1762,7 +1740,7 @@ extern "C" cLunoValue func_002FDC60(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_DC60(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1795,8 +1773,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FDED0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_00355AD0_DED0(void*, void*) __asm__("func_00355AD0");
-static inline char *refToPtr_DED0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_DED0(unsigned i) { if (i == 0) return 0; return refToPtr_DED0(i); }
 extern unsigned D_DED0[] __asm__("D_004FB778");
 extern int D_004A5614;
 extern const int D_004461D8[];
@@ -1842,7 +1818,7 @@ extern "C" cLunoValue func_002FDED0(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_DED0(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -1863,8 +1839,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FE0C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void cMoveNode_addSpline_E0C0(void*, void*) __asm__("cMoveNode_addSpline");
-static inline char *refToPtr_E0C0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_E0C0(unsigned i) { if (i == 0) return 0; return refToPtr_E0C0(i); }
 extern unsigned D_E0C0[] __asm__("D_004FB7A8");
 extern int D_004A5618;
 extern const int D_00446208[];
@@ -1910,7 +1884,7 @@ extern "C" cLunoValue func_002FE0C0(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_E0C0(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -2098,8 +2072,6 @@ extern "C" cLunoValue func_002FE668(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", cViewer_addParticle);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_E840(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_E840(unsigned i) { if (i == 0) return 0; return refToPtr_E840(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_003578A8_E840(void*, int, void*, void*, void*) __asm__("func_003578A8");
@@ -2217,7 +2189,7 @@ extern "C" cLunoValue cViewer_addParticle(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_E840(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -2247,8 +2219,6 @@ extern "C" cLunoValue cViewer_addParticle(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FEE98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_EE98(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_EE98(unsigned i) { if (i == 0) return 0; return refToPtr_EE98(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void cMoveNode_addDynamicParticle_EE98(void*, void*, int, sVec4_1FBE38*) __asm__("cMoveNode_addDynamicParticle");
@@ -2388,8 +2358,6 @@ extern "C" cLunoValue func_002FF1C8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FF390);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_F390(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_F390(unsigned i) { if (i == 0) return 0; return refToPtr_F390(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00348D98(void*, void*, void*);
@@ -2459,7 +2427,7 @@ extern "C" cLunoValue func_002FF390(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_F390(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -2478,8 +2446,6 @@ extern "C" cLunoValue func_002FF390(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FF5E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_F5E8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_F5E8(unsigned i) { if (i == 0) return 0; return refToPtr_F5E8(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00349B48(void*, void*, void*);
@@ -2549,7 +2515,7 @@ extern "C" cLunoValue func_002FF5E8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_F5E8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -2609,15 +2575,6 @@ extern "C" cLunoValue func_002FF850(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FF9A8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *look_F9A8(unsigned id) {
-    if (~id == 0)
-        return D_004A3DD8->f290;
-    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
-    unsigned i;
-    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
-        return 0;
-    return (char*)(i << 2);
-}
 
 extern unsigned D_F9A8[] __asm__("D_004FBAF8");
 extern int D_004A5640;
@@ -2645,7 +2602,7 @@ extern "C" cLunoValue func_002FF9A8(int n, sBindArg_1FBE38 *e) {
         else
             *d = x->val;
     }
-    char *obj = look_F9A8(buf[0]);
+    char *obj = lookupRef_1FBE38(buf[0]);
     cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p)
         p->v36(buf[1], *(float*)&buf[2]);
@@ -2661,8 +2618,6 @@ extern unsigned D_004A5648_FB50 __asm__("D_004A5648");
 extern sBindEnd_1FBE38 D_004A564C_FB50 __asm__("D_004A564C");
 extern int D_004A5650_FB50 __asm__("D_004A5650");
 extern int D_004A3C10_FB50[2] __asm__("D_004A3C10");
-static inline char *refToPtr_FB50(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_FB50(unsigned i) { if (i == 0) return 0; return refToPtr_FB50(i); }
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00350E90(void*, void*);
 extern char D_004A3C18_FB50[] __asm__("D_004A3C18");
@@ -2700,7 +2655,7 @@ extern "C" cLunoValue func_002FFB50(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_FB50(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -2722,15 +2677,6 @@ extern "C" cLunoValue func_002FFB50(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FFD58);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *look_FD58(unsigned id) {
-    if (~id == 0)
-        return D_004A3DD8->f290;
-    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
-    unsigned i;
-    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
-        return 0;
-    return (char*)(i << 2);
-}
 
 extern unsigned D_FD58 __asm__("D_004A5658");
 extern sBindEnd_1FBE38 D_004A565C;
@@ -2757,7 +2703,7 @@ extern "C" cLunoValue func_002FFD58(int n, sBindArg_1FBE38 *e) {
         else
             *d = x->val;
     }
-    char *obj = look_FD58(buf[0]);
+    char *obj = lookupRef_1FBE38(buf[0]);
     if (obj) {
         cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
         if (p) {
@@ -2773,8 +2719,6 @@ extern "C" cLunoValue func_002FFD58(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FFF00);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_FF00(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_FF00(unsigned i) { if (i == 0) return 0; return refToPtr_FF00(i); }
 extern "C" void *func_0028B180(void);
 extern "C" void func_002974A0_FF00(void*, void*, int) __asm__("func_002974A0");
 extern unsigned D_FF00[] __asm__("D_004FBB08");
@@ -2814,7 +2758,7 @@ extern "C" cLunoValue func_002FFF00(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_FF00(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -2831,8 +2775,6 @@ extern "C" cLunoValue func_002FFF00(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003000A8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_00A8(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_00A8(unsigned i) { if (i == 0) return 0; return refToPtr_00A8(i); }
 extern "C" void *func_0028B180(void);
 extern "C" void func_00297950_00A8(void*, void*, int, int) __asm__("func_00297950");
 extern unsigned D_00A8[] __asm__("D_004FBB18");
@@ -2873,7 +2815,7 @@ extern "C" cLunoValue func_003000A8(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_00A8(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -2891,8 +2833,6 @@ extern "C" cLunoValue func_003000A8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00300260);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_0260(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_0260(unsigned i) { if (i == 0) return 0; return refToPtr_0260(i); }
 extern "C" void *func_0028B180(void);
 extern "C" void func_00297EB8_0260(void*, void*, int, int) __asm__("func_00297EB8");
 extern unsigned D_0260[] __asm__("D_004FBB28");
@@ -2933,7 +2873,7 @@ extern "C" cLunoValue func_00300260(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_0260(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -3056,8 +2996,6 @@ extern unsigned D_004A5688_0770 __asm__("D_004A5688");
 extern sBindEnd_1FBE38 D_004A568C_0770 __asm__("D_004A568C");
 extern int D_004A5690_0770 __asm__("D_004A5690");
 extern int D_004A3C40_0770[2] __asm__("D_004A3C40");
-static inline char *refToPtr_0770(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_0770(unsigned i) { if (i == 0) return 0; return refToPtr_0770(i); }
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00300770(int n, sBindArg_1FBE38 *e) {
     if (D_004A5690_0770 == 0) {
@@ -3092,7 +3030,7 @@ extern "C" cLunoValue func_00300770(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_0770(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -3118,8 +3056,6 @@ extern unsigned D_004A5698_0948 __asm__("D_004A5698");
 extern sBindEnd_1FBE38 D_004A569C_0948 __asm__("D_004A569C");
 extern int D_004A56A0_0948 __asm__("D_004A56A0");
 extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
-static inline char *refToPtr_0948(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_0948(unsigned i) { if (i == 0) return 0; return refToPtr_0948(i); }
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" cLunoValue func_00300948(int n, sBindArg_1FBE38 *e) {
     if (D_004A56A0_0948 == 0) {
@@ -3154,7 +3090,7 @@ extern "C" cLunoValue func_00300948(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_0948(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -3577,15 +3513,6 @@ extern "C" cLunoValue* func_00301560(cLunoValue* ret, int n, sBindArg_1FBE38* e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00301680);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *look_1680(unsigned id) {
-    if (~id == 0)
-        return D_004A3DD8->f290;
-    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
-    unsigned i;
-    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
-        return 0;
-    return (char*)(i << 2);
-}
 
 float *func_00226618_1680(void*) __asm__("func_00226618__FPv");
 extern unsigned D_1680 __asm__("D_004A56D0");
@@ -3613,7 +3540,7 @@ extern "C" cLunoValue* func_00301680(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
         else
             *d = x->val;
     }
-    char *obj = look_1680(buf[0]);
+    char *obj = lookupRef_1FBE38(buf[0]);
     float v;
     if (obj) {
         cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
@@ -3636,15 +3563,6 @@ extern "C" cLunoValue* func_00301680(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00301830);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *look_1830(unsigned id) {
-    if (~id == 0)
-        return D_004A3DD8->f290;
-    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
-    unsigned i;
-    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
-        return 0;
-    return (char*)(i << 2);
-}
 
 int *func_00226610(void*);
 extern unsigned D_1830 __asm__("D_004A56E0");
@@ -3849,8 +3767,6 @@ extern unsigned D_004A5710_1D78 __asm__("D_004A5710");
 extern sBindEnd_1FBE38 D_004A5714_1D78 __asm__("D_004A5714");
 extern int D_004A5718_1D78 __asm__("D_004A5718");
 extern int D_004A3CB0_1D78[2] __asm__("D_004A3CB0");
-static inline char *refToPtr_1D78(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_1D78(unsigned i) { if (i == 0) return 0; return refToPtr_1D78(i); }
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610_1D78(void*) __asm__("func_00226610__FPv");
 extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, sBindArg_1FBE38 *e) {
@@ -3886,7 +3802,7 @@ extern "C" cLunoValue* func_00301D78(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_1D78(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -4482,15 +4398,6 @@ extern "C" cLunoValue* func_00302EF8(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
 INCLUDE_ASM("seg/seg_1FBE38", func_00303130);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *look_3130(unsigned id) {
-    if (~id == 0)
-        return D_004A3DD8->f290;
-    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
-    unsigned i;
-    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
-        return 0;
-    return (char*)(i << 2);
-}
 
 int *func_00226610(void*);
 extern unsigned D_3130[] __asm__("D_004FBC50");
@@ -4518,7 +4425,7 @@ extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
         else
             *d = x->val;
     }
-    char *obj = look_3130(buf[0]);
+    char *obj = lookupRef_1FBE38(buf[0]);
     if (obj && *(int*)(obj + 0xC)) {
         ret->type = 1;
         *func_00226610(ret) = 1;
@@ -5121,8 +5028,6 @@ extern int D_004A3D58_4320[2] __asm__("D_004A3D58");
 // Inline accessor of the current script process (wscript/wscriptman func_0030D2D8 is its out-of-line copy). Calling it
 // at each use gives the shared copy of the pointer the target keeps (lw; move) instead of one cached local.
 static inline cWScriptMan *curProcess_4320() { return D_004A3DD8; }
-static inline char *refToPtr_4320(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_4320(unsigned i) { if (i == 0) return 0; return refToPtr_4320(i); }
 void func_0030B508(void*, int, void*);
 extern "C" cLunoValue func_00304320(int n, sBindArg_1FBE38* e) {
     if (D_004A57F8_4320 == 0) {
@@ -5158,7 +5063,7 @@ extern "C" cLunoValue func_00304320(int n, sBindArg_1FBE38* e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_4320(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -5571,8 +5476,6 @@ static inline float vLen_50F0(const t4Vector &v) {
 }
 // Translation row of a transform (by value).
 static inline t4Vector trans_50F0(const t4Matrix *m) { return m->row[3]; }
-static inline char *refToPtr_50F0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_50F0(unsigned i) { if (i == 0) return 0; return refToPtr_50F0(i); }
 extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
     if (D_004A583C == 0) {
         D_004FBD40_50F0.keyword = 0;
@@ -5608,7 +5511,7 @@ extern "C" cLunoValue func_003050F0(int n, sBindArg_1FBE38 *e) {
             if (!s)
                 r = 0;
             else
-                r = conv_50F0(s->refs[id >> 8] >> 8);
+                r = refToObj_1FBE38(s->refs[id >> 8] >> 8);
             obj = r;
         }
     }
@@ -5812,8 +5715,7 @@ struct Rec_59A0 { int head; unsigned id[8]; int cnt[8]; float f0[8]; float f1[8]
 extern Rec_59A0 D_004FBD90_59A0 __asm__("D_004FBD90");
 extern const int D_004466D8_59A0[] __asm__("D_004466D8");
 extern int D_004A5858_59A0 __asm__("D_004A5858");
-static inline char *refToPtr_59A0(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_59A0(unsigned i) { return i ? refToPtr_59A0(i) : 0; }
+static inline char *conv_59A0(unsigned i) { return i ? refToPtr_1FBE38(i) : 0; }
 extern "C" void cAvalanche_addAvalancheNode(int, void*, float, float, float, float, int);
 extern "C" cLunoValue func_003059A0(int n, sBindArg_1FBE38* e) {
     if (D_004A5858_59A0 == 0) {
@@ -5909,8 +5811,6 @@ extern "C" cLunoValue func_00305C88(int n, sBindArg_1FBE38* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00305D90);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *refToPtr_5D90(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_5D90(unsigned i) { if (i == 0) return 0; return refToPtr_5D90(i); }
 extern "C" void func_00355A78_5D90(void*, void*) __asm__("func_00355A78");
 extern unsigned D_5D90 __asm__("D_004A5870");
 extern sBindEnd_1FBE38 D_004A5874;
@@ -5949,7 +5849,7 @@ extern "C" cLunoValue func_00305D90(int n, sBindArg_1FBE38 *e) {
             r = 0;
         else {
             i = s->refs[id >> 8] >> 8;
-            char *t = conv_5D90(i);
+            char *t = refToObj_1FBE38(i);
             r = t;
         }
         obj = r;
@@ -5981,8 +5881,6 @@ extern int D_587C_5F40 __asm__("D_004A587C");
 extern const int D_004467A0_5F40[] __asm__("D_004467A0");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_002D9538_5F40(char*, Rec_5F40*) __asm__("func_002D9538");
-static inline char *refToPtr_5F40(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_5F40(unsigned i) { if (i == 0) return 0; return refToPtr_5F40(i); }
 extern "C" cLunoValue func_00305F40(int n, sBindArg_1FBE38 *e) {
     if (D_587C_5F40 == 0) {
         Rec_5F40 &r = D_4FBE58_5F40;
@@ -6033,7 +5931,7 @@ extern "C" cLunoValue func_00305F40(int n, sBindArg_1FBE38 *e) {
         if (!s)
             obj = 0;
         else
-            obj = conv_5F40(s->refs[id >> 8] >> 8);
+            obj = refToObj_1FBE38(s->refs[id >> 8] >> 8);
         func_002D9538_5F40(obj, buf);
     }
     return D_004C9098;
@@ -6193,15 +6091,6 @@ extern "C" cLunoValue func_00306438(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003065E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *look_65E8(unsigned id) {
-    if (~id == 0)
-        return D_004A3DD8->f290;
-    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
-    unsigned i;
-    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
-        return 0;
-    return (char*)(i << 2);
-}
 
 extern "C" void func_00101888_65E8(void*, void*) __asm__("func_00101888");
 extern unsigned D_65E8 __asm__("D_004A5898");
@@ -6229,7 +6118,7 @@ extern "C" cLunoValue func_003065E8(int n, sBindArg_1FBE38 *e) {
         else
             *d = x->val;
     }
-    char *obj = look_65E8(buf[0]);
+    char *obj = lookupRef_1FBE38(buf[0]);
     if (obj) {
         int tmp[1]; tmp[0] = *(int*)(obj + 0x78);
         func_00101888_65E8(D_004A28A8->game->race->fA8, tmp);
@@ -6242,15 +6131,6 @@ extern "C" cLunoValue func_003065E8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00306770);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-static inline char *look_6770(unsigned id) {
-    if (~id == 0)
-        return D_004A3DD8->f290;
-    sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
-    unsigned i;
-    if (!s || (i = s->refs[id >> 8] >> 8) == 0)
-        return 0;
-    return (char*)(i << 2);
-}
 
 extern "C" void func_00101900_6770(void*, void*, int) __asm__("func_00101900");
 extern unsigned D_6770[] __asm__("D_004FBF58");
@@ -6479,8 +6359,6 @@ extern "C" int func_0030BFC0_6E68(cWScriptMan*, int, int, int) __asm__("func_003
 extern "C" void *func_0028B180();
 extern "C" void func_002974A0_6E68(void*, void*, int) __asm__("func_002974A0");
 int *func_00226610(void*);
-static inline char *refToPtr_6E68(unsigned i) { return (char*)(i << 2); }
-static inline char *conv_6E68(unsigned i) { if (i == 0) return 0; return refToPtr_6E68(i); }
 extern unsigned D_6E68[] __asm__("D_004FC060");
 extern int D_004A58BC;
 extern const int D_00446980[];
@@ -6520,7 +6398,7 @@ extern "C" cLunoValue* func_00306E68(cLunoValue *ret, int n, sBindArg_1FBE38 *e)
             obj = 0;
         } else {
             unsigned i = s->refs[id >> 8] >> 8;
-            char *t = conv_6E68(i);
+            char *t = refToObj_1FBE38(i);
             obj = t;
         }
         if (obj)
