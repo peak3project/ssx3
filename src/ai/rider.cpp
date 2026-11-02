@@ -93,6 +93,15 @@ struct sItemRef {
     int flags;                  // 0x34
 };
 
+static inline sItemRec* lookupItem(sItemDb* d, int i)
+{
+    short k = d->map[i];
+    if (k >= 0) {
+        return &d->items[k];
+    }
+    return 0;
+}
+
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
 //100%
@@ -3747,15 +3756,6 @@ static inline void initTrack_3640(cRider* self, int off, float v, float z)
     *(float*)((char*)self + off + 4) = z;
 }
 
-static inline sItemRec* lookup_3640(sItemDb* d, int i)
-{
-    short k = d->map[i];
-    if (k >= 0) {
-        return &d->items[k];
-    }
-    return 0;
-}
-
 extern "C" void func_00123640(cRider* self)
 {
     int buf[12];
@@ -3838,7 +3838,7 @@ extern "C" void func_00123640(cRider* self)
         for (i = 0; i < n; i++, e++) {
             int id = e->id;
             if (id >= 0 && (e->flags & 0x40)) {
-                if (lookup_3640(db, e->item)->flags & 0x10) {
+                if (lookupItem(db, e->item)->flags & 0x10) {
                     func_0030EA80(self->mAnimModel, id, 0);
                     func_0030EA80(self->mAnimModel, id, 1);
                     func_0030EA80(self->mAnimModel, id, 2);
@@ -3868,15 +3868,6 @@ int func_0014D988(void* tbl, int g);
 extern "C" void* func_0014D998(void* tbl, int g);
 extern "C" void func_002AD5F0(void* bank, int id, int a, float f);
 
-static inline sItemRec* lookup_123B48(sItemDb* d, int i)
-{
-    short k = d->map[i];
-    if (k >= 0) {
-        return &d->items[k];
-    }
-    return 0;
-}
-
 static inline int entId_123B48(sItemRef* e)
 {
     return e->id;
@@ -3904,7 +3895,7 @@ static inline int entItem_123B48(sItemRef* e)
 
 static inline unsigned short itemFlags_123B48(sItemDb* db, sItemRef* e)
 {
-    return lookup_123B48(db, entItem_123B48(e))->flags;
+    return lookupItem(db, entItem_123B48(e))->flags;
 }
 
 extern "C" void func_00123B48(cRider* self)
