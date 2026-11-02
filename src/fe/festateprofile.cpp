@@ -397,7 +397,277 @@ extern "C" void func_0018F278(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateprofile", func_0018F2B8);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void func_001D8240();
+extern "C" void func_0018F9D8(void* self);
+extern "C" int func_001D97E0(void* self, void* mp, int dev, int a3);
+extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* mp, int dev, unsigned short* buf, int len);
+extern "C" void func_003A0D00(void* obj, unsigned short* s);
+extern "C" void func_003A0E90(void* obj, unsigned short* s);
+extern "C" void* func_00227F80(void* app);
+extern void* D_004A28A8;
+extern int D_004A15E8;
+extern char D_0045E1D8[];
+extern char D_0045E1E8[];
+extern char D_0045E260[];
+extern char D_0045E270[];
+extern char D_0045E280[];
+extern char D_004A15F0[];
+extern char D_004A15F8[];
+
+struct sColor_F2B8 {
+    int c[4];
+};
+extern sColor_F2B8 D_004C66C8;
+
+class cMCSub_F2B8 {
+public:
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual int v08();
+    virtual int v09();
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual void v14(int, void*);
+    virtual void v15(int, void*);
+    virtual void v16(int, void*);
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual int v25();
+    virtual int v26();
+    virtual int v27();
+    virtual int v28();
+    virtual int v29();
+    virtual int v30();
+    virtual int v31();
+    virtual int v32();
+    virtual int v33();
+    virtual int v34();
+    virtual int v35();
+    virtual int v36();
+    virtual int v37();
+    virtual int v38();
+    virtual int v39();
+    virtual int v40();
+    virtual int v41();
+    virtual int v42();
+    virtual int v43();
+    virtual int v44();
+    virtual int v45();
+    virtual int v46();
+    virtual int v47();
+    virtual int v48();
+    virtual int v49();
+    virtual int v50();
+    virtual int v51();
+    virtual int v52();
+    virtual int v53();
+    virtual int v54(int);
+    virtual int v55();
+    virtual int v56();
+    virtual int v57();
+    virtual int v58();
+    virtual int v59();
+    virtual int v60();
+    virtual int v61();
+    virtual int v62();
+    virtual int v63();
+    virtual int v64();
+    virtual int v65();
+    virtual int v66(int);
+    virtual int v67(int);
+};
+class cState_F2B8 {
+public:
+    int pad[2];
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual int v08();
+    virtual int v09();
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual int v14();
+    virtual int v15();
+    virtual int v16();
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual int v25();
+    virtual int v26();
+    virtual int v27();
+    virtual int v28();
+    virtual int v29();
+    virtual int v30();
+    virtual int v31();
+    virtual int v32();
+    virtual int v33();
+    virtual int v34();
+    virtual void v35(int);
+    virtual int v36();
+    virtual int v37();
+    virtual int v38();
+    virtual int v39();
+    virtual int v40();
+    virtual int v41();
+    virtual int v42();
+    virtual void v43();
+};
+class cUIObj_F2B8 {
+public:
+    int pad[2];
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual void v08(int);
+    virtual void v09(int);
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual int v14();
+    virtual int v15();
+    virtual int v16();
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual void v25(int);
+};
+
+static inline cUIObj_F2B8* getObj_F2B8(cState_F2B8* self, char* name)
+{
+    return (cUIObj_F2B8*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
+}
+
+extern "C" void func_0018F2B8_s(cState_F2B8* self) __asm__("func_0018F2B8");
+
+extern "C" void func_0018F2B8_s(cState_F2B8* self)
+{
+    unsigned short buf[0x320];
+    char name[0x40];
+    char* mp = (char*)func_00227F80(D_004A28A8);
+    if (self->v42()) {
+        if (!(*(cMCSub_F2B8**)(mp + 0x434))->v53()) {
+            func_001D8240();
+            func_0018F9D8(self);
+            return;
+        }
+        if (*(int*)((char*)self + 0x214) != 3) {
+            self->v35(3);
+        }
+    }
+    if (self->v42()) {
+        cMCOverlayManager_GetDeviceDisplayString(mp, *(int*)(mp + 0x428), buf, 0x320);
+        int sel = 0;
+        func_003A0D00(getObj_F2B8(self, D_0045E1E8), buf);
+        *(int*)((char*)self + 0x21C) = *(int*)(mp + 0x428);
+        self->v43();
+        cUIObj_F2B8* o = getObj_F2B8(self, D_0045E1D8);
+        o->v09(0);
+        for (int i = 1; i < 7; i++) {
+            sprintf(name, D_0045E260, i);
+            o = getObj_F2B8(self, name);
+            *(sColor_F2B8*)((char*)o + 0x88) = D_004C66C8;
+            if (!(*(cMCSub_F2B8**)(mp + 0x434))->v67(i - 1) && !(*(cMCSub_F2B8**)(mp + 0x434))->v66(i - 1)
+                && (*(cMCSub_F2B8**)(mp + 0x434))->v55()) {
+                (*(cMCSub_F2B8**)(mp + 0x434))->v14(i - 1, (char*)self + 0x238);
+                func_003A0E90(o, (unsigned short*)((char*)self + 0x238));
+                if (D_004A15E8 != 2 && sel == 0) {
+                    sel = 1;
+                    o->v08(0);
+                    o->v25(0);
+                } else {
+                    o->v25(1);
+                    o->v08(1);
+                }
+                sprintf(name, D_004A15F0, i);
+                o = getObj_F2B8(self, name);
+                o->v09(0);
+                sprintf(name, D_004A15F8, i);
+                o = getObj_F2B8(self, name);
+                o->v09(0);
+            } else if ((*(cMCSub_F2B8**)(mp + 0x434))->v54(*(int*)(mp + 0x428))) {
+                (*(cMCSub_F2B8**)(mp + 0x434))->v14(i - 1, (char*)self + 0x238);
+                func_003A0E90(o, (unsigned short*)((char*)self + 0x238));
+                if ((*(cMCSub_F2B8**)(mp + 0x434))->v66(i - 1)) {
+                    o->v08(1);
+                    o->v25(1);
+                } else {
+                    o->v08(0);
+                    o->v25(0);
+                }
+                sprintf(name, D_004A15F0, i);
+                o = getObj_F2B8(self, name);
+                (*(cMCSub_F2B8**)(mp + 0x434))->v15(i - 1, buf);
+                func_003A0E90(o, buf);
+                o->v09(1);
+                sprintf(name, D_004A15F8, i);
+                o = getObj_F2B8(self, name);
+                (*(cMCSub_F2B8**)(mp + 0x434))->v16(i - 1, buf);
+                func_003A0E90(o, buf);
+                o->v09(1);
+            } else {
+                (*(cMCSub_F2B8**)(mp + 0x434))->v14(i - 1, (char*)self + 0x238);
+                func_003A0E90(o, (unsigned short*)((char*)self + 0x238));
+                o->v25(1);
+                o->v08(1);
+                sprintf(name, D_004A15F0, i);
+                o = getObj_F2B8(self, name);
+                o->v09(0);
+                sprintf(name, D_004A15F8, i);
+                o = getObj_F2B8(self, name);
+                o->v09(0);
+            }
+        }
+        if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 1) == -1)
+            getObj_F2B8(self, D_0045E270)->v09(0);
+        else
+            getObj_F2B8(self, D_0045E270)->v09(1);
+        if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 0) == -1)
+            getObj_F2B8(self, D_0045E280)->v09(0);
+        else
+            getObj_F2B8(self, D_0045E280)->v09(1);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateprofile", func_0018F9D8);
