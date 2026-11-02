@@ -869,20 +869,11 @@ void func_003B58D8(void) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5910);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct S_5910 {
-    char pad0[0x174];
-    signed char f174;
-    char pad1[2];
-    signed char f177;
-    char pad2[0xC];
-    int q[1];
-};
-extern struct S_5910 D_0050A8E8_5910 __asm__("D_0050A8E8");
 
 void func_003B5910(int arg0) {
-    if (D_0050A8E8_5910.f174 != 0) {
-        D_0050A8E8_5910.q[D_0050A8E8_5910.f177] = arg0;
-        D_0050A8E8_5910.f177++;
+    if (D_0050A8E8.f174 != 0) {
+        D_0050A8E8.f184[D_0050A8E8.f177] = arg0;
+        D_0050A8E8.f177++;
     }
 }
 #endif
