@@ -5399,8 +5399,7 @@ int* func_00226610(void*);
 struct Ent_4B38 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D70_4B38[2] __asm__("D_004A3D70");
-extern "C" void func_002709D8(int, int, int);
-extern char* D_004A28A8_4B38 __asm__("D_004A28A8");
+extern "C" void func_002709D8(void*, int, int);
 extern int D_004A5820_4B38 __asm__("D_004A5820");
 extern int D_004A5818_4B38 __asm__("D_004A5818");
 extern sBindEnd_1FBE38 D_004A581C_4B38 __asm__("D_004A581C");
@@ -5423,7 +5422,7 @@ extern "C" cLunoValue func_00304B38(int n, Ent_4B38* e) {
         else
             *d = p->val;
     }
-    func_002709D8(*(int*)(*(char**)(D_004A28A8_4B38 + 0x84) + 0x28), D_004A3DD8->being, vp[0]);
+    func_002709D8(D_004A28A8->game->f28, D_004A3DD8->being, vp[0]);
     return D_004C9098;
 }
 #endif
