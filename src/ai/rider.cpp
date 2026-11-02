@@ -1337,7 +1337,213 @@ extern "C" void func_0011EB98_impl(cRider* self)
 
 INCLUDE_ASM("ai/rider", func_0011F3D8);
 
+//100%
 INCLUDE_ASM("ai/rider", cRider_doLeanPoseAdjust);
+#ifdef SKIP_ASM
+extern "C" void func_0031BE50(float* sout, float* cout, float x);
+
+struct sQ_LP {
+    float x, y, z, w;
+    sQ_LP() {}
+    sQ_LP(float a, float b, float c, float d) { x = a; w = d; y = b; z = c; }
+} __attribute__((aligned(16)));
+
+struct sXf_LP {
+    sQ_LP pos;
+    sQ_LP rot;
+};
+
+extern sQ_LP D_004FF130_LP __asm__("D_004FF130");
+extern sQ_LP D_004FF140_LP __asm__("D_004FF140");
+extern sQ_LP D_004FF150_LP __asm__("D_004FF150");
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQ_LP QuatMul_LP(const sQ_LP& a, const sQ_LP& b)
+{
+    sQ_LP r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b, constant b through a register).
+static inline sQ_LP SubO_LP(const sQ_LP& a, const sQ_LP& b)
+{
+    sQ_LP r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "o"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
+static inline sQ_LP Rot_LP(const sQ_LP& q, const sQ_LP& v)
+{
+    sQ_LP r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sQ_LP Scale_LP(const sQ_LP& v, float s)
+{
+    sQ_LP r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b, label keeps the store out of a following jal delay slot).
+static inline void AddToL_LP(sQ_LP& dst, const sQ_LP& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        "1:\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddTo_LP(sQ_LP& dst, const sQ_LP& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(dst)
+        : "m"(dst), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
+static inline float absf_LP(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline void SetAA_LP(sQ_LP& q, const sQ_LP& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    q.x = s * axis.x;
+    q.w = c;
+    q.y = s * axis.y;
+    q.z = s * axis.z;
+}
+
+static inline sQ_LP AxisAngle_LP(const sQ_LP& axis, float angle)
+{
+    sQ_LP q;
+    SetAA_LP(q, axis, angle);
+    return q;
+}
+
+static inline void QuatMulTo_LP(sQ_LP& a, sQ_LP b)
+{
+    a = QuatMul_LP(a, b);
+}
+
+// rot *= q (quaternion product). Declared to return the quaternion by value but has no return statement (the
+// classic forgotten return); the caller ignores the result, and that ignored by-value result is the unwritten
+// 16-byte temp the retail frame keeps during the first lean rotation. The other two sites use QuatMulTo_LP.
+static inline sQ_LP operator*=(sQ_LP& a, const sQ_LP& b)
+{
+    a = QuatMul_LP(a, b);
+}
+
+static inline float deadzone_LP(float v, float k)
+{
+    float d = absf_LP(v) - (absf_LP(k) + absf_LP(k));
+    if (d < 0.0f)
+        d = 0.0f;
+    else if (v < 0.0f)
+        d = -d;
+    return d;
+}
+
+static inline void LeanAbout_LP(char* self, sXf_LP* xf, float a, float b, float ka, float kb)
+{
+    char* trk = *(char**)(self + 0x780);
+    sQ_LP* n = (sQ_LP*)((*(int*)(self + 0x8A0) << 4) + *(int*)(trk + 0x24));
+    sQ_LP d = SubO_LP(sQ_LP(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
+                            n->z * *(float*)(trk + 0x148), n->w * *(float*)(trk + 0x14C)),
+                      D_004FF130_LP);
+    {
+        sQ_LP v = Rot_LP(xf->rot, d);
+        AddToL_LP(xf->pos, v);
+        xf->rot *= AxisAngle_LP(D_004FF140_LP, a * ka);
+    }
+    QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF150_LP, b * kb));
+    sQ_LP w = Scale_LP(d, -1.0f);
+    sQ_LP u = Rot_LP(xf->rot, w);
+    AddTo_LP(xf->pos, u);
+}
+
+extern "C" void cRider_doLeanPoseAdjust_x(char* self, sXf_LP* xf) __asm__("cRider_doLeanPoseAdjust");
+extern "C" void cRider_doLeanPoseAdjust_x(char* self, sXf_LP* xf)
+{
+    float a = deadzone_LP(*(float*)(self + 0x208), *(float*)(self + 0x214));
+    float b = deadzone_LP(*(float*)(self + 0x1F0), *(float*)(self + 0x214));
+    if (b != 0.0f || a != 0.0f)
+        LeanAbout_LP(self, xf, a, b, 0.523598849773407f, 0.7853982448577881f);
+    float k = *(float*)(self + 0x250);
+    if (k != 0.0f) {
+        QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF140_LP, k * 0.7853982448577881f));
+    }
+    sQ_LP g = Scale_LP(*(sQ_LP*)(self + 0x3B0), *(float*)(*(char**)(self + 0x780) + 0x140) * (*(float*)(self + 0x1F0) * 45.0f));
+    AddTo_LP(xf->pos, g);
+}
+#endif
 
 extern "C" void* func_001112B8(void* obj);
 
