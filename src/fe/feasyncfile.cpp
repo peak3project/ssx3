@@ -57,6 +57,10 @@ struct sRect {
     float x, y, w, h;
 };
 
+struct sColour {
+    float r, g, b, a;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -2302,10 +2306,6 @@ void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 extern "C" void* cBXString_cBXString2(void* self, const char* str);
 extern char D_00467E18[];
 
-struct sColor1A77A0 {
-    float r, g, b, a;
-};
-
 struct sScreen1A77A0 {
     char pad0[0x8];
     void* vt;               // 0x8
@@ -2318,7 +2318,7 @@ struct sScreen1A77A0 {
     int f6E0;               // 0x6E0
     int f6E4;               // 0x6E4
     int f6E8;               // 0x6E8
-    sColor1A77A0 color;     // 0x6EC
+    sColour color;     // 0x6EC
 };
 
 // PORT: the unit declares this as (void*, int, void*, int); the body uses typed arguments.
@@ -2337,7 +2337,7 @@ extern "C" void* func_001A77A0_impl(sScreen1A77A0* self, int a1, int a2, const c
     self->f6DC = 0;
     self->f6E0 = 0;
     self->f6E4 = 0;
-    sColor1A77A0 c;
+    sColour c;
     c.r = 1.0f;
     c.g = 1.0f;
     c.b = 1.0f;
@@ -8327,10 +8327,6 @@ extern "C" char* strcpy(char* dst, const char* src);
 extern void* D_0046AE58[];
 extern void* D_004A3028;
 
-struct sCol_001B1F88 {
-    float r, g, b, a;
-};
-
 struct sFEObj_001B1F88 {
     char pad0[0x8];
     void** vt;                     // 0x8
@@ -8343,7 +8339,7 @@ struct sFEObj_001B1F88 {
     int items[2];                  // 0x6FC
     int items2[2];                 // 0x704
     char name[0x20];               // 0x70C
-    sCol_001B1F88 color;           // 0x72C
+    sColour color;           // 0x72C
 };
 
 extern "C" sFEObj_001B1F88* func_001B1F88(sFEObj_001B1F88* self, int a1)
@@ -8359,7 +8355,7 @@ extern "C" sFEObj_001B1F88* func_001B1F88(sFEObj_001B1F88* self, int a1)
     self->f6EC = 0;
     self->f6F0 = 0;
     self->f6F4 = 0;
-    sCol_001B1F88 c;
+    sColour c;
     c.r = 1.0f;
     c.g = 1.0f;
     c.b = 1.0f;
@@ -10257,10 +10253,7 @@ INCLUDE_ASM("fe/feasyncfile", func_001B5068);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" void func_0039A670(void* self);
 
-struct sCol1B5068 {
-    float r, g, b, a;
-};
-extern sCol1B5068 D_004C66C8;
+extern sColour D_004C66C8;
 
 class cFEVObj_001B5068 {
 public:
@@ -10276,7 +10269,7 @@ public:
     virtual void setStatic(int on);
     virtual void setVisible(int on);
     virtual void v10();
-    virtual void setColour(const sCol1B5068& c);
+    virtual void setColour(const sColour& c);
 };
 
 extern "C" void func_001B5068(void* self, int a1)
@@ -18475,14 +18468,10 @@ extern const char D_00465AE0[];
 extern char D_00464860[];
 extern const char D_0045D698[];
 
-struct sColor_1C1EA8 {
-    float r, g, b, a;
-};
-
 struct sTextVE_1C1EA8 {
     short delta;
     short index;
-    void (*fn)(void*, sColor_1C1EA8*);
+    void (*fn)(void*, sColour*);
 };
 
 extern "C" void func_001C1EA8(char* self, char* msg, int ev)
@@ -18518,7 +18507,7 @@ extern "C" void func_001C1EA8(char* self, char* msg, int ev)
         func_001A8A40(self, func_001BFBB8(cMemMan_alloc(0x6D0, D_0045FF28, 0, 0), *(int*)(self + 0x10)));
         break;
     case 1: {
-        sColor_1C1EA8 c;
+        sColour c;
         sTextVE_1C1EA8* vt = *(sTextVE_1C1EA8**)(msg + 8);
         char* obj = msg + vt[11].delta;
         c.r = 1.0f;
@@ -18529,7 +18518,7 @@ extern "C" void func_001C1EA8(char* self, char* msg, int ev)
         break;
     }
     case 2: {
-        sColor_1C1EA8 c;
+        sColour c;
         sTextVE_1C1EA8* vt = *(sTextVE_1C1EA8**)(msg + 8);
         char* obj = msg + vt[11].delta;
         c.r = 1.0f;
