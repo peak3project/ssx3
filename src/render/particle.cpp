@@ -165,6 +165,20 @@ union uPtFloatBits {
     int i;
 };
 
+// A dynamic emitter as 00371380 / 00371688 see it (base, kind, frame; its render state at 0x1E4).
+struct sPtEmitter {
+    char pad_0x0[0x4];
+    int base;               // 0x4
+    int kind;               // 0x8
+    char pad_0xC[0x4];
+    float frame;            // 0x10
+    char pad_0x14[0x160];
+    int field_0x174;        // 0x174
+    char pad_0x178[0x68];
+    int field_0x1E0;        // 0x1E0
+    sPtRenderState rs;           // 0x1E4
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -517,20 +531,8 @@ extern char* D_004A5B80;
 extern sPtCtx1380* D_004A5B80_ctx __asm__("D_004A5B80");
 extern int D_0044B420[];
 
-struct sPtObj1380 {
-    char pad_0x0[0x4];
-    int base;               // 0x4
-    int kind;               // 0x8
-    char pad_0xC[0x4];
-    float frame;            // 0x10
-    char pad_0x14[0x160];
-    int field_0x174;        // 0x174
-    char pad_0x178[0x68];
-    int field_0x1E0;        // 0x1E0
-    sPtRenderState rs;           // 0x1E4
-};
 
-extern "C" void func_00371380(sPtObj1380* self, int blend)
+extern "C" void func_00371380(sPtEmitter* self, int blend)
 {
     if (self->field_0x174 == 0) {
         return;
@@ -669,20 +671,8 @@ extern char* D_004A5B80;
 extern sPtCtx1688* D_004A5B80_ctx1688 __asm__("D_004A5B80");
 extern int D_0044B420[];
 
-struct sPtObj1688 {
-    char pad_0x0[0x4];
-    int base;               // 0x4
-    int kind;               // 0x8
-    char pad_0xC[0x4];
-    float frame;            // 0x10
-    char pad_0x14[0x160];
-    int field_0x174;        // 0x174
-    char pad_0x178[0x68];
-    int field_0x1E0;        // 0x1E0
-    sPtRenderState rs;           // 0x1E4
-};
 
-extern "C" void func_00371688(sPtObj1688* self, int blend)
+extern "C" void func_00371688(sPtEmitter* self, int blend)
 {
     if (self->field_0x174 == 0) {
         return;
