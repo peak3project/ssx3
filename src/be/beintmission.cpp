@@ -106,6 +106,13 @@ struct sRaceSettings {
 };
 extern sRaceSettings D_005305B0;
 
+// vtable entry: this-adjust delta, slot index, function.
+struct sSerVEntry {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
 struct cBEMissionInterface {
     char pad_0x00[8];
     int field_0x8;
@@ -939,12 +946,6 @@ void func_001547E0(void* self)
 //100%
 INCLUDE_ASM("be/beintmission", func_001547E8);
 #ifdef SKIP_ASM
-struct sSerVEntry_001547E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern char D_004A6CAC[];
 
 extern "C" void func_001547E8(void* self, void* stream)
@@ -952,12 +953,12 @@ extern "C" void func_001547E8(void* self, void* stream)
     int c = cBELibrary_getCharacterID(0);
     char* base = D_004A6CAC;
     int off = c * 0xF88;
-    sSerVEntry_001547E8* e = &(*(sSerVEntry_001547E8**)stream)[1];
+    sSerVEntry* e = &(*(sSerVEntry**)stream)[1];
     e->fn((char*)stream + e->delta, base + off, 0x114);
-    e = &(*(sSerVEntry_001547E8**)stream)[1];
+    e = &(*(sSerVEntry**)stream)[1];
     char* base2 = base + 0x114;
     e->fn((char*)stream + e->delta, base2 + off, 0x160);
-    e = &(*(sSerVEntry_001547E8**)stream)[1];
+    e = &(*(sSerVEntry**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 8, 4);
 }
 #endif
@@ -965,12 +966,6 @@ extern "C" void func_001547E8(void* self, void* stream)
 //100%
 INCLUDE_ASM("be/beintmission", func_00154898);
 #ifdef SKIP_ASM
-struct sSerVEntry_00154898 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern char D_004A6CAC[];
 
 extern "C" void func_00154898(void* self, void* stream)
@@ -978,12 +973,12 @@ extern "C" void func_00154898(void* self, void* stream)
     int c = cBELibrary_getCharacterID(0);
     char* base = D_004A6CAC;
     int off = c * 0xF88;
-    sSerVEntry_00154898* e = &(*(sSerVEntry_00154898**)stream)[2];
+    sSerVEntry* e = &(*(sSerVEntry**)stream)[2];
     e->fn((char*)stream + e->delta, base + off, 0x114);
-    e = &(*(sSerVEntry_00154898**)stream)[2];
+    e = &(*(sSerVEntry**)stream)[2];
     char* base2 = base + 0x114;
     e->fn((char*)stream + e->delta, base2 + off, 0x160);
-    e = &(*(sSerVEntry_00154898**)stream)[2];
+    e = &(*(sSerVEntry**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 8, 4);
 }
 #endif
