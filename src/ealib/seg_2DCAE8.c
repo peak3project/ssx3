@@ -54,6 +54,13 @@ struct sDbgOut {                    /* 12 bytes, D_00451250[8]: a debug output *
 };
 extern struct sDbgChan D_00450E08[];
 extern struct sDbgOut D_00451250[];
+struct sSyncTask {                  /* 16 bytes, D_0051ED98[16]: a task SYNCTASK_run calls when it is due */
+    int (*f00)(int, int);
+    int f04;                        /* period */
+    int f08;                        /* due time (D_00450DD0) */
+    int f0C;                        /* running */
+};
+extern struct sSyncTask D_0051ED98[16];
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
@@ -6139,11 +6146,9 @@ void MUTEX_unlock_5760(void *arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", SYNCTASK_init);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0051ED98_57D0[] __asm__("D_0051ED98");
-void func_003E6448_57D0(char *, int, int) __asm__("func_003E6448");
+void func_003E6448_57D0(void *, int, int) __asm__("func_003E6448");
 void SYNCTASK_init(void) {
-    func_003E6448_57D0(D_0051ED98_57D0, 0, 0x100);
+    func_003E6448_57D0(D_0051ED98, 0, 0x100);
 }
 #endif
 
