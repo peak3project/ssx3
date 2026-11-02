@@ -441,10 +441,10 @@ void* func_0025FB80_9B10(void* self, const char* name, const void* reason) __asm
 extern "C" void func_0025AB40(char* self, const char* a, const char* b);
 
 // Simple tag message: kind word, then the vtable pointer.
-struct sTagMsg9B10 {
+struct sTagMsg {
     int kind;
     void** vt;
-    sTagMsg9B10(int k) { kind = k; vt = D_004812B0; }
+    sTagMsg(int k) { kind = k; vt = D_004812B0; }
 };
 
 // cBXString (one pointer): ctor/dtor are the out-of-line cBXString functions.
@@ -499,7 +499,7 @@ extern "C" void func_00259B10(char* self, sTagEvt9B10* msg)
             } else if (func_004165A8(cmd, D_004A2EF8) == 0) {
                 if (*(int*)self == 0x16)
                     *(int*)self = 1;
-                post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xED));
+                post(self, new (D_00480488, 0x20000000, 0) sTagMsg(0xED));
             } else if (func_004165A8(cmd, D_00480660) == 0) {
                 if (func_00263128((char*)Mgr(), name) != 0)
                     func_00263018(Mgr(), name);
@@ -519,15 +519,15 @@ extern "C" void func_00259B10(char* self, sTagEvt9B10* msg)
                     ok = 1;
                 }
                 if (ok)
-                    post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xEE));
+                    post(self, new (D_00480488, 0x20000000, 0) sTagMsg(0xEE));
             } else if (func_004165A8(cmd, D_004A2F00) == 0) {
                 if (*(int*)self == 0x16)
                     *(int*)self = 1;
-                post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF0));
+                post(self, new (D_00480488, 0x20000000, 0) sTagMsg(0xF0));
             } else if (func_004165A8(cmd, D_00480680) == 0) {
                 if (*(int*)self == 0x16)
                     *(int*)self = 1;
-                post(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF2));
+                post(self, new (D_00480488, 0x20000000, 0) sTagMsg(0xF2));
             }
         }
         }
@@ -990,12 +990,6 @@ struct sMsgListAC50 {
 };
 
 // Simple tag message: kind word, then the vtable pointer.
-struct sTagMsgAC50 {
-    int kind;
-    void** vt;
-    sTagMsgAC50(int k) { kind = k; vt = D_004812B0; }
-};
-
 // Error message: kind 0x102 with a reason code.
 struct sTagErrAC50 {
     int kind;
@@ -1075,7 +1069,7 @@ extern "C" void func_0025AC50(char* selfp)
         if (self->f10 != 0) {
             self->f10 = 0;
             func_0025B800(selfp);
-            post(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0x115));
+            post(selfp, new (D_00480488, 0x20000000, 0) sTagMsg(0x115));
         } else if (self->state == 2) {
             int r = self->op->poll(self->op);
             if (r > 0) {
@@ -1114,7 +1108,7 @@ extern "C" void func_0025AC50(char* selfp)
                 post(selfp, new (D_00480488, 0x20000000, 0) sTagUserAC50(*(int*)((char*)D_004A3328 + 0xD0)));
             } else if (func_00261460(D_004A3328) != 0) {
                 self->state = 1;
-                post(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xDA));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagMsg(0xDA));
             }
         } else if (self->state == 0x16) {
         } else if (self->state == 0x17) {
@@ -1135,7 +1129,7 @@ extern "C" void func_0025AC50(char* selfp)
             }
         } else if (self->state == 0x14) {
             if (timedOut_AC50(self)) {
-                post(selfp, new (D_00480488, 0x20000000, 0) sTagMsgAC50(0xE6));
+                post(selfp, new (D_00480488, 0x20000000, 0) sTagMsg(0xE6));
                 func_0025EED8(selfp);
             }
         } else if (self->state != 0x19) {
