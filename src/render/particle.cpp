@@ -258,6 +258,18 @@ struct cPS2GraphicsMan {
     int texReady;                   // 0x6B90
 };
 
+// Copies n packet quadwords to *pp and advances it.
+static inline void CopyQuads(unsigned long** pp, const void* srcp, int n)
+{
+    const sGifQuad* src = (const sGifQuad*)srcp;
+    sGifQuad* d = (sGifQuad*)*pp;
+    sGifQuad* end = d + n;
+    while (d != end) {
+        *d++ = *src++;
+    }
+    *pp = (unsigned long*)d;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5093,16 +5105,6 @@ extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 
-static inline void CopyQuads_0518(unsigned long** pp, const void* srcp, int n)
-{
-    const sGifQuad* src = (const sGifQuad*)srcp;
-    sGifQuad* d = (sGifQuad*)*pp;
-    sGifQuad* end = d + n;
-    while (d != end) {
-        *d++ = *src++;
-    }
-    *pp = (unsigned long*)d;
-}
 
 // Sends obj's 0x15 quads to the VU1 program at address 0 under a pushed render state.
 extern "C" void func_00380518(cPS2GraphicsMan* self, sGifQuad* obj)
@@ -5123,7 +5125,7 @@ extern "C" void func_00380518(cPS2GraphicsMan* self, sGifQuad* obj)
     p[2] = 0;
     p[3] = (unsigned long)0xD82B << 47;
     p += 4;
-    CopyQuads_0518(&p, obj, 0x15);
+    CopyQuads(&p, obj, 0x15);
     p[0] = (unsigned long)(((unsigned int)D_0 >> 3) | 0x14000000) << 32;
     p[1] = (unsigned long)0x8800 << 45;
     p += 2;
@@ -5182,16 +5184,6 @@ static inline int Wrap_07A0(int i, int start, int m)
     return (i + start) % m;
 }
 
-static inline void CopyQuads_07A0(unsigned long** pp, const void* srcp, int n)
-{
-    const sGifQuad* src = (const sGifQuad*)srcp;
-    sGifQuad* d = (sGifQuad*)*pp;
-    sGifQuad* end = d + n;
-    while (d != end) {
-        *d++ = *src++;
-    }
-    *pp = (unsigned long*)d;
-}
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_003807A0(cPS2GraphicsMan* self, sTrail_07A0* obj)
@@ -5222,8 +5214,8 @@ extern "C" void func_003807A0(cPS2GraphicsMan* self, sTrail_07A0* obj)
             seg = 0x40;
         hdr.seg = seg;
         p += 4;
-        CopyQuads_07A0(&p, obj->q, 0x15);
-        CopyQuads_07A0(&p, &hdr, 1);
+        CopyQuads(&p, obj->q, 0x15);
+        CopyQuads(&p, &hdr, 1);
         int wrap = obj->head + 1;
         int m = obj->count;
         int s = (done + wrap) % m;
@@ -5246,15 +5238,15 @@ extern "C" void func_003807A0(cPS2GraphicsMan* self, sTrail_07A0* obj)
             lastB = obj->posB + e;
             lastA = obj->posA + e;
         }
-        CopyQuads_07A0(&p, obj->posA + s, first);
+        CopyQuads(&p, obj->posA + s, first);
         if (over > 0)
-            CopyQuads_07A0(&p, obj->posA, over);
-        CopyQuads_07A0(&p, lastA, 1);
+            CopyQuads(&p, obj->posA, over);
+        CopyQuads(&p, lastA, 1);
         p = (unsigned long*)((sGifQuad*)p + pad);
-        CopyQuads_07A0(&p, obj->posB + s, first);
+        CopyQuads(&p, obj->posB + s, first);
         if (over > 0)
-            CopyQuads_07A0(&p, obj->posB, over);
-        CopyQuads_07A0(&p, lastB, 1);
+            CopyQuads(&p, obj->posB, over);
+        CopyQuads(&p, lastB, 1);
         p = (unsigned long*)((sGifQuad*)p + pad);
         p[0] = (unsigned long)(((unsigned int)D_510 >> 3) | 0x14000000) << 32;
         p[1] = (unsigned long)0x8800 << 45;
@@ -5323,16 +5315,6 @@ static inline int Wrap_0CE0(int i, int start, int m)
     return (i + start) % m;
 }
 
-static inline void CopyQuads_0CE0(unsigned long** pp, const void* srcp, int n)
-{
-    const sGifQuad* src = (const sGifQuad*)srcp;
-    sGifQuad* d = (sGifQuad*)*pp;
-    sGifQuad* end = d + n;
-    while (d != end) {
-        *d++ = *src++;
-    }
-    *pp = (unsigned long*)d;
-}
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
@@ -5364,8 +5346,8 @@ extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
             seg = 0x2B;
         hdr.seg = seg;
         p += 4;
-        CopyQuads_0CE0(&p, obj->q, 0x15);
-        CopyQuads_0CE0(&p, &hdr, 1);
+        CopyQuads(&p, obj->q, 0x15);
+        CopyQuads(&p, &hdr, 1);
         int wrap = obj->head + 1;
         int m = obj->count;
         int s = (done + wrap) % m;
@@ -5391,15 +5373,15 @@ extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
             lastB = obj->posB + e;
             lastC = obj->cols + e;
         }
-        CopyQuads_0CE0(&p, obj->posA + s, first);
+        CopyQuads(&p, obj->posA + s, first);
         if (over > 0)
-            CopyQuads_0CE0(&p, obj->posA, over);
-        CopyQuads_0CE0(&p, lastA, 1);
+            CopyQuads(&p, obj->posA, over);
+        CopyQuads(&p, lastA, 1);
         p = (unsigned long*)((sGifQuad*)p + pad);
-        CopyQuads_0CE0(&p, obj->posB + s, first);
+        CopyQuads(&p, obj->posB + s, first);
         if (over > 0)
-            CopyQuads_0CE0(&p, obj->posB, over);
-        CopyQuads_0CE0(&p, lastB, 1);
+            CopyQuads(&p, obj->posB, over);
+        CopyQuads(&p, lastB, 1);
         p = (unsigned long*)((sGifQuad*)p + pad);
         p[0] = 0;
         p[1] = (unsigned long)0x6E2CC06E << 32;
@@ -5409,7 +5391,7 @@ extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
         if (over > 0)
             func_003E6574(cols + first, obj->cols, over * 4);
         cols[first + over] = *lastC;
-        CopyQuads_0CE0(&p, cols, 11);
+        CopyQuads(&p, cols, 11);
         p[0] = (unsigned long)(prog | 0x14000000) << 32;
         p[1] = (unsigned long)0x8800 << 45;
         p += 2;
@@ -5490,16 +5472,6 @@ static inline sPtMatrixV MulMat_1310(const sPtMatrixV& a, const sPtMatrixV& b)
     return d;
 }
 
-static inline void CopyQuads_1310(unsigned long** pp, const void* srcp, int n)
-{
-    const sGifQuad* src = (const sGifQuad*)srcp;
-    sGifQuad* d = (sGifQuad*)*pp;
-    sGifQuad* end = d + n;
-    while (d != end) {
-        *d++ = *src++;
-    }
-    *pp = (unsigned long*)d;
-}
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_00381310(cPS2GraphicsMan* self, sPtMatPacket* obj)
@@ -5529,10 +5501,10 @@ extern "C" void func_00381310(cPS2GraphicsMan* self, sPtMatPacket* obj)
     v1.y = 1.0f;
     v1.z = 0.0f;
     v1.w = 0.0f;
-    CopyQuads_1310(&p, (const sGifQuad*)&m, 4);
-    CopyQuads_1310(&p, (const sGifQuad*)&v0, 1);
-    CopyQuads_1310(&p, (const sGifQuad*)&v1, 1);
-    CopyQuads_1310(&p, obj->q, 5);
+    CopyQuads(&p, (const sGifQuad*)&m, 4);
+    CopyQuads(&p, (const sGifQuad*)&v0, 1);
+    CopyQuads(&p, (const sGifQuad*)&v1, 1);
+    CopyQuads(&p, obj->q, 5);
     p[0] = (unsigned long)(((unsigned int)D_0 >> 3) | 0x14000000) << 32;
     p[1] = (unsigned long)0x8800 << 45;
     p += 2;
@@ -5614,16 +5586,6 @@ static inline sPtMatrixV MulMat_16F0(const sPtMatrixV& a, const sPtMatrixV& b)
     return d;
 }
 
-static inline void CopyQuads_16F0(unsigned long** pp, const void* srcp, int n)
-{
-    const sGifQuad* src = (const sGifQuad*)srcp;
-    sGifQuad* d = (sGifQuad*)*pp;
-    sGifQuad* end = d + n;
-    while (d != end) {
-        *d++ = *src++;
-    }
-    *pp = (unsigned long*)d;
-}
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
 extern "C" void func_003816F0(cPS2GraphicsMan* self, sPtMatPacket* obj)
@@ -5653,10 +5615,10 @@ extern "C" void func_003816F0(cPS2GraphicsMan* self, sPtMatPacket* obj)
     v1.y = 1.0f;
     v1.z = 0.0f;
     v1.w = 0.0f;
-    CopyQuads_16F0(&p, (const sGifQuad*)&m, 4);
-    CopyQuads_16F0(&p, (const sGifQuad*)&v0, 1);
-    CopyQuads_16F0(&p, (const sGifQuad*)&v1, 1);
-    CopyQuads_16F0(&p, obj->q, 5);
+    CopyQuads(&p, (const sGifQuad*)&m, 4);
+    CopyQuads(&p, (const sGifQuad*)&v0, 1);
+    CopyQuads(&p, (const sGifQuad*)&v1, 1);
+    CopyQuads(&p, obj->q, 5);
     p[0] = (unsigned long)(((unsigned int)D_408 >> 3) | 0x14000000) << 32;
     p[1] = (unsigned long)0x8800 << 45;
     p += 2;
