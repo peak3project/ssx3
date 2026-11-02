@@ -6,6 +6,13 @@
 // g++ 2.95 vtable entry with an untyped function slot (cast at the call).
 struct sWsVtSlot { short delta; short index; void* fn; };
 
+// g++ 2.95 vtable entry for a method taking (self, pointer, int).
+struct sWsVtVPI {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4238,17 +4245,12 @@ INCLUDE_ASM("intersect/worldsphtree", func_00341548);
 #ifdef SKIP_ASM
 extern "C" void* cInstanceNode_cInstanceNode(void* self, void* a1, void* stream);
 extern void* D_004914E0[];
-struct sVEntry_func_00341548 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void* func_00341548(void* self, void* a1, void* stream)
 {
     cInstanceNode_cInstanceNode(self, a1, stream);
     *(void***)((char*)self + 0xC) = D_004914E0;
-    sVEntry_func_00341548* vt = *(sVEntry_func_00341548**)stream;
+    sWsVtVPI* vt = *(sWsVtVPI**)stream;
     vt[2].fn((char*)stream + vt[2].delta, (char*)self + 0x20, 0x30);
     return self;
 }
@@ -4500,18 +4502,13 @@ extern "C" void func_00341A30(void* self, int a1)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341A50);
 #ifdef SKIP_ASM
-struct sSerVEntry_00341A50 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_0034FE90(void* self, void* stream);
 
 extern "C" void func_00341A50(void* self, void* stream)
 {
     func_0034FE90(self, stream);
-    sSerVEntry_00341A50* vt = *(sSerVEntry_00341A50**)stream;
+    sWsVtVPI* vt = *(sWsVtVPI**)stream;
     vt[1].fn((char*)stream + vt[1].delta, (char*)self + 0x20, 0x30);
 }
 #endif
@@ -4634,16 +4631,11 @@ extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341C80);
 #ifdef SKIP_ASM
-struct sVEntry00341C80 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void* func_0034DAC8(void* p, int a1, void* stream);
 extern void* D_00490B10[];
 
-extern "C" void* func_00341C80(void* self, int a1, sVEntry00341C80** stream)
+extern "C" void* func_00341C80(void* self, int a1, sWsVtVPI** stream)
 {
     func_0034DAC8((char*)self + 0x1C, a1, stream);
     *(void***)((char*)self + 0x3C) = D_00490B10;
@@ -4899,16 +4891,11 @@ extern "C" void func_00341FE8(sClampFloat_1F38* self, int msg, float v)
 INCLUDE_ASM("intersect/worldsphtree", func_00342150);
 #ifdef SKIP_ASM
 extern "C" void func_0034E3D8(void* p, void* stream);
-struct sVEntry_func_00342150 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00342150(void* self, void* stream)
 {
     func_0034E3D8((char*)self + 0x1C, stream);
-    sVEntry_func_00342150* vt = *(sVEntry_func_00342150**)stream;
+    sWsVtVPI* vt = *(sWsVtVPI**)stream;
     vt[1].fn((char*)stream + vt[1].delta, self, 0x1C);
 }
 #endif
@@ -4997,16 +4984,11 @@ extern "C" void* func_003421A0(sSphCtl_003421A0* self, int a1, char* obj, char* 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003422E8);
 #ifdef SKIP_ASM
-struct sVEntry003422E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void* func_0034DAC8(void* p, int a1, void* stream);
 extern void* D_004908F8[];
 
-extern "C" void* func_003422E8(void* self, int a1, sVEntry003422E8** stream)
+extern "C" void* func_003422E8(void* self, int a1, sWsVtVPI** stream)
 {
     func_0034DAC8((char*)self + 0x30, a1, stream);
     *(void***)((char*)self + 0x50) = D_004908F8;
@@ -5299,16 +5281,11 @@ extern "C" void func_00342538(sSelf_342538* self, sObj_342538* o, sVec4_342538* 
 INCLUDE_ASM("intersect/worldsphtree", func_00342718);
 #ifdef SKIP_ASM
 extern "C" void func_0034E3D8(void* p, void* stream);
-struct sVEntry_func_00342718 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00342718(void* self, void* stream)
 {
     func_0034E3D8((char*)self + 0x30, stream);
-    sVEntry_func_00342718* vt = *(sVEntry_func_00342718**)stream;
+    sWsVtVPI* vt = *(sWsVtVPI**)stream;
     vt[1].fn((char*)stream + vt[1].delta, self, 0x30);
 }
 #endif
@@ -5560,11 +5537,6 @@ extern "C" void func_00342B80(void* self, int a1)
 INCLUDE_ASM("intersect/worldsphtree", func_00342BA0);
 #ifdef SKIP_ASM
 extern "C" void func_003584B8(void* self, void* stream);
-struct sVEntry_func_00342BA0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 struct sVEntry1_func_00342BA0 {
     short delta;
     short index;
@@ -5574,7 +5546,7 @@ struct sVEntry1_func_00342BA0 {
 extern "C" void func_00342BA0(void* self, void* stream)
 {
     func_003584B8(self, stream);
-    sVEntry_func_00342BA0* vt = *(sVEntry_func_00342BA0**)stream;
+    sWsVtVPI* vt = *(sWsVtVPI**)stream;
     vt[1].fn((char*)stream + vt[1].delta, (char*)self + 0x10, 0x30);
     sVEntry1_func_00342BA0* vt1 = *(sVEntry1_func_00342BA0**)stream;
     vt1[5].fn((char*)stream + vt1[5].delta, *(int*)((char*)self + 0x40));
