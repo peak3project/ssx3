@@ -4030,7 +4030,6 @@ extern Defaults_2210 D_004FBC20_2210 __asm__("D_004FBC20");
 extern int D_004A5730_2210 __asm__("D_004A5730");
 extern const int D_004465C8_2210[] __asm__("D_004465C8");
 extern char* const D_00445E40_2210[] __asm__("D_00445E40");
-extern int* D_004A3DD8_2210 __asm__("D_004A3DD8");
 extern char* D_004A28A8_2210 __asm__("D_004A28A8");
 extern "C" void* cBE_getBE_2210() __asm__("cBE_getBE");
 extern "C" void* cBE_getInterface_2210(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -4073,7 +4072,7 @@ extern "C" cLunoValue func_00302210(int n, Ent_2210* e)
             *d = p->val;
     }
     int ok;
-    int cur = *D_004A3DD8_2210;
+    int cur = D_004A3DD8->being;
     if (cur != -1) {
         char* lvl = *(char**)(*(char**)(D_004A28A8_2210 + 0x84) + 0xC);
         char* q = *(char**)(lvl + (cur << 2) + 0x28);
