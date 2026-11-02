@@ -36,6 +36,14 @@ struct sBXString {
     sBXString(const sBXString& o);
 };
 
+extern char* D_004A3E90_p __asm__("D_004A3E90");
+// A cBXString whose default constructor points it at the shared empty string D_004A3E90.
+struct sBXStringInit {
+    char* p;
+    sBXStringInit() { p = D_004A3E90_p; }
+    sBXStringInit(const sBXStringInit& o);
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -8522,19 +8530,12 @@ extern "C" void func_003A0E90(cUIText* text, char* str);
 struct sFEObj_001BCB58;
 extern "C" sFEObj_001BCB58* func_001BCB58(sFEObj_001BCB58* self, int a1);
 extern void* D_004A3028;
-extern char* D_004A3E90_p __asm__("D_004A3E90");
 extern char D_00463A38[];
 extern char D_00463A60[];
 extern char D_00461B30[];
 extern char D_004A1390[];
 struct sName_001B2378 { char c[17]; };
 extern sName_001B2378 D_00463A48;
-
-struct sBXString_001B2378 {
-    char* p;
-    sBXString_001B2378() { p = D_004A3E90_p; }
-    sBXString_001B2378(const sBXString_001B2378& o);
-};
 
 struct sCol_001B2378 {
     float r, g, b, a;
@@ -8574,7 +8575,7 @@ extern "C" void func_001B2378(void* vself, int a1)
         *(int*)(self + 0x704) = 0;
     }
     sName_001B2378 name = D_00463A48;
-    sBXString_001B2378 s;
+    sBXStringInit s;
     int flag = 0;
     for (int i = 5; i >= 0; i--) {
         int idx = *(int*)(self + 0x704) + i;
@@ -16198,18 +16199,11 @@ extern "C" cBXString* func_00319028(void* ret, void* src, int n);
 extern "C" void func_0039A670(void* self);
 extern "C" int func_004165A8(const char* a, const char* b);
 extern void* D_004A3028;
-extern char* D_004A3E90_p __asm__("D_004A3E90");
 extern const char* D_004A1A60;
 extern const char* D_004A1A64;
 extern const char* D_004A1A68;
 extern const char* D_004A1A6C;
 extern char D_004651B0[];
-
-struct sBXStr_001BE0A8 {
-    char* p;
-    sBXStr_001BE0A8() { p = D_004A3E90_p; }
-    sBXStr_001BE0A8(const sBXStr_001BE0A8& o);
-};
 
 struct sBXTmp_001BE0A8 {
     char* p;
@@ -16223,9 +16217,9 @@ extern "C" void func_001BE0A8(void* self)
     void* mgr = D_004A3028;
     cUIThing** lists = (cUIThing**)(s + 0x708);
     int n = func_0025F120(mgr);
-    sBXStr_001BE0A8 name;
-    sBXStr_001BE0A8 base;
-    sBXStr_001BE0A8 ext;
+    sBXStringInit name;
+    sBXStringInit base;
+    sBXStringInit ext;
     int counts[4];
     for (int k = 0; k < 4; k++) {
         func_0039A670(lists[k]);
