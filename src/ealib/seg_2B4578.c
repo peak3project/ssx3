@@ -7541,14 +7541,7 @@ struct A_3500 {
     char pad1[0x1A9E - 0xCB4];
     short s;
 };
-struct B_3500 {
-    char pad0[0x224];
-    unsigned char a;
-    char pad1[3];
-    unsigned char b;
-};
 extern struct A_3500 D_0050AD00_3500 __asm__("D_0050AD00");
-extern struct B_3500 D_0050A8E8_3500 __asm__("D_0050A8E8");
 
 void func_003C3500(unsigned a) {
     unsigned v = a;
@@ -7575,8 +7568,8 @@ void func_003C3500(unsigned a) {
     }
     D_0050AD00_3500.s = (0x200000 - D_0044DD48_3500[v]) >> 6;
     D_0050AD00_3500.p[0x10] = v;
-    D_0050AD00_3500.p[0x11] = D_0050A8E8_3500.a;
-    D_0050AD00_3500.p[0x12] = D_0050A8E8_3500.b;
+    D_0050AD00_3500.p[0x11] = D_0050A8E8.f220[0].f04;
+    D_0050AD00_3500.p[0x12] = D_0050A8E8.f220[0].f08;
 }
 #endif
 
