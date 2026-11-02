@@ -24,29 +24,53 @@ public:
     virtual void setVisible(int on);
 };
 
-//100%
-INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUITemplate_MAP;
+struct cFEAsyncManager;
+struct cUIText;
 int GetHashValue32(char* str);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
 extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cOVStateManager_addPDATemplate();
 extern "C" void cUITemplate_MAP_setShowInfo(void* self, int show);
-extern "C" int func_001A3BF0(void* mgr);
-extern "C" void cUITemplate_MAP_setupPeakUnlock(void* self);
-struct cUITemplate_MAP;
-void cUITemplate_MAP_setupEventUnlock(cUITemplate_MAP* self);
 extern "C" void cUITemplate_MAP_setupLayout(void* self);
-extern "C" void cUITemplate_MAP_setupMapPic(void* self);
-extern "C" void cUITemplate_MAP_setupPopup(char* self);
 extern "C" void cUITemplate_MAP_setupPeakInfo(void* self);
 extern unsigned int D_004A2594;
-extern int D_004A2598;
 extern int D_004A259C;
 extern void* D_004A28A8;
-extern char D_004A25A8[];
 extern char D_004A25B0[];
+extern char D_00470518[];
+extern char D_00470588[];
+extern char D_00470598[];
+extern char D_004705A8[];
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* func_00144BC0(void* iface);
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
+extern char D_00470600[];
+extern "C" void cUITemplate_MAP_setupMenuFocus(void* self, int focus);
+extern "C" void func_00207430(void* self);
+extern "C" void* func_0028B180(void);
+extern "C" void cUITemplate_MAP_setupPeakGoals(void* self);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern int D_004A25A0;
+extern int D_004A25A4;
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern char D_00470A20[];
+extern char D_004706C8[];
+
+//100%
+INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_onCreateScreen);
+#ifdef SKIP_ASM
+extern "C" void cOVStateManager_addPDATemplate();
+extern "C" int func_001A3BF0(void* mgr);
+extern "C" void cUITemplate_MAP_setupPeakUnlock(void* self);
+void cUITemplate_MAP_setupEventUnlock(cUITemplate_MAP* self);
+extern "C" void cUITemplate_MAP_setupMapPic(void* self);
+extern "C" void cUITemplate_MAP_setupPopup(char* self);
+extern int D_004A2598;
+extern char D_004A25A8[];
 extern char D_004A25B8[];
 extern char D_004A25C0[];
 extern char D_004A25C8[];
@@ -57,16 +81,12 @@ extern char D_004704D8[];
 extern char D_004704E8[];
 extern char D_004704F8[];
 extern char D_00470508[];
-extern char D_00470518[];
 extern char D_00470528[];
 extern char D_00470538[];
 extern char D_00470548[];
 extern char D_00470558[];
 extern char D_00470568[];
 extern char D_00470578[];
-extern char D_00470588[];
-extern char D_00470598[];
-extern char D_004705A8[];
 extern char D_004705B8[];
 extern char D_004705C8[];
 extern char D_004705D8[];
@@ -151,14 +171,6 @@ extern "C" void cUITemplate_MAP_onCreateScreen(void* tmpl, void* screen, void* o
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_002009D0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_00144BC0(void* iface);
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-int GetHashValue32(char* str);
-extern char D_00470600[];
-extern unsigned int D_004A2594;
 static inline int isLabel2009D0(int id, char* s)
 {
     return id == GetHashValue32(s);
@@ -182,11 +194,7 @@ extern "C" void func_002009D0_r(void* self, void* menu)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00200A70);
 #ifdef SKIP_ASM
-extern "C" void cUITemplate_MAP_setupMenuFocus(void* self, int focus);
 extern "C" void cUITemplate_MAP_setupMenus(void* self);
-extern "C" void func_00207430(void* self);
-extern "C" void cUITemplate_MAP_setShowInfo(void* self, int show);
-extern int D_004A259C;
 // PORT: the unit declares func_00200A70(void*); the body also takes a flag in $5.
 extern "C" int func_00200A70_r(void* self, int on) __asm__("func_00200A70");
 
@@ -205,10 +213,7 @@ extern "C" int func_00200A70_r(void* self, int on)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00200AC0);
 #ifdef SKIP_ASM
-extern "C" void cUITemplate_MAP_setupMenuFocus(void* self, int focus);
-extern "C" void* func_0028B180(void);
 extern "C" void func_0028F5B8(void* mgr);
-extern int D_004A259C;
 
 extern "C" void func_00200AC0(void* self)
 {
@@ -222,10 +227,7 @@ INCLUDE_ASM("fe/uitemplatemap", func_00200AF0);
 #ifdef SKIP_ASM
 extern "C" void cFEAsyncManager_UnloadFEAsyncFile(void* mgr, int file);
 extern "C" void func_0020D190(void);
-extern "C" void* func_0028B180(void);
 extern "C" void func_0028F678(void* mgr, int a);
-extern void* D_004A28A8;
-extern unsigned int D_004A2594;
 
 extern "C" void func_00200AF0(void* self)
 {
@@ -242,9 +244,6 @@ INCLUDE_ASM("fe/uitemplatemap", func_00200B50);
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00200D00);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBELibrary_getCharacterID(int);
 extern "C" int func_001464D0(void* iface, int player, int charID, int x, int flag);
 extern "C" int func_00146A70(void* iface, int player, int charID, int x);
@@ -277,7 +276,6 @@ struct cUITemplate_MAP {
     int field_0x18;
     int field_0x1C;
 };
-extern unsigned int D_004A2594;
 
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupEventUnlock__FP15cUITemplate_MAP);
@@ -298,8 +296,6 @@ void cUITemplate_MAP_setupEventUnlock(cUITemplate_MAP* self)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupPeakUnlock);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 extern "C" int cBENewPlayerInterface_isPeakLocked(void* self, int a, int b, int peak);
 extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int peak);
@@ -381,12 +377,6 @@ int func_00202768(void* self)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00202770);
 #ifdef SKIP_ASM
-extern "C" void cUITemplate_MAP_setupPeakInfo(void* self);
-extern "C" void cUITemplate_MAP_setupPeakGoals(void* self);
-extern "C" void cUITemplate_MAP_setupLayout(void* self);
-extern "C" void func_00207430(void* self);
-extern int D_004A259C;
-
 // PORT: the unit declares func_00202770(void*); the body also takes the menu object in $5.
 extern "C" void func_00202770_r(void* self, void* menu) __asm__("func_00202770");
 
@@ -416,23 +406,9 @@ extern "C" void func_00202770_r(void* self, void* menu)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_onUpdate);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_00144BC0(void* iface);
-extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-struct cFEAsyncManager;
 int cFEAsyncManager_GetFileStatus(cFEAsyncManager* self, int index);
-extern char D_00470588[];
-extern char D_00470598[];
-extern char D_004705A8[];
 extern char D_004707A0[];
 extern char D_004707B0[];
-extern int D_004A259C;
-extern unsigned int D_004A2594;
-extern void* D_004A28A8;
 
 struct sColor_202828 {
     float a, r, g, b;
@@ -512,18 +488,7 @@ extern "C" void cUITemplate_MAP_onUpdate(void* vself)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupLayout);
 #ifdef SKIP_ASM
-extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* t, int id);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-int GetHashValue32(char* str);
-extern "C" void func_00207430(void* self);
-extern unsigned int D_004A2594;
-extern int D_004A259C;
-extern int D_004A25A0;
-extern int D_004A25A4;
 extern char D_0046F9E0[], D_00470600[], D_004706D8[], D_004707A0[], D_004707C0[], D_004707D8[], D_004707E8[], D_004707F8[];
 extern char D_00470808[], D_00470818[], D_00470828[], D_00470840[], D_00470850[], D_00470860[], D_00470870[], D_00470888[];
 extern char D_004708A0[], D_004708B8[], D_004708D0[], D_004708E0[], D_004708F8[], D_00470908[];
@@ -668,15 +633,6 @@ extern "C" void cUITemplate_MAP_setupLayout(void* vself)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupMenuFocus);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" void cUITemplate_MAP_setShowInfo(void* self, int show);
-extern "C" void cUITemplate_MAP_setupPeakInfo(void* self);
-extern "C" void cUITemplate_MAP_setupPeakGoals(void* self);
-extern char D_00470600[];
 extern char D_00470918[];
 extern char D_00470928[];
 extern char D_00470938[];
@@ -689,17 +645,10 @@ extern char D_004709C0[];
 extern char D_004709D8[];
 extern char D_004709F0[];
 extern char D_00470A08[];
-extern char D_00470A20[];
-extern char D_00470518[];
-extern char D_004706C8[];
 extern char D_004707C0[];
 extern char D_00470A30[];
 extern char D_00470A48[];
 extern char D_004A2610[];
-extern int D_004A259C;
-extern int D_004A25A0;
-extern int D_004A25A4;
-extern unsigned int D_004A2594;
 
 class cUIObj_MFocus : public cUIThing {
 public:
@@ -819,7 +768,6 @@ INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupMapPic);
 #ifdef SKIP_ASM
 extern "C" void cFEAsyncManager_Load3PeakPic(void* mgr, int file, int a);
 extern "C" void cFEAsyncManager_Load1PeakPic(void* mgr, int peak, int file, int a);
-extern int D_004A25A4;
 
 extern "C" void cUITemplate_MAP_setupMapPic(void* self)
 {
@@ -848,27 +796,16 @@ extern "C" void cUITemplate_MAP_setupMapPic(void* self)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupPopup);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_0046FAA0[];
 extern char D_004706B8[];
-extern char D_004706C8[];
 extern char D_00470700[];
-extern char D_00470A20[];
 extern char D_00470A60[];
 extern char D_00470A70[];
 extern char D_00470A80[];
 extern char D_00470A98[];
 extern char D_00470AA8[];
-extern char D_004A25B0[];
 extern char D_004A2638[];
 extern char D_004A2640[];
-extern int D_004A259C;
 
 extern "C" void cUITemplate_MAP_setupPopup(char* self)
 {
@@ -920,10 +857,6 @@ extern "C" void cUITemplate_MAP_setupPopup(char* self)
 //100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setShowInfo);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_00470AB8[];
 extern char D_00470AC8[];
 extern char D_00470AD8[];
@@ -945,8 +878,6 @@ INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupPeakInfo);
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_00204FF0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern void* D_004A28A8;
 extern char D_00470E10[];
 extern char D_00470E20[];
 extern char D_00470E30[];
@@ -1024,7 +955,6 @@ extern "C" void func_00208438(void* self, void* obj, int on)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/uitemplatemap", func_00208498);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void func_0020A380(void* self);
