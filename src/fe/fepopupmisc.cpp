@@ -8,6 +8,27 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Popup definition table D_00441630 (0x14 bytes each): a run of count items starting at item start.
+struct sPopupDef {
+    int type;
+    int start;                  // 0x04 first item index
+    int count;                  // 0x08
+    int kind;                   // 0x0C compared between defs, switched on
+    int enabled;                // 0x10
+};
+extern sPopupDef D_00441630[];
+
+// Popup item table D_004C6C08 (0x18 bytes each).
+struct sPopupItem {
+    int f0;
+    int def;                    // 0x04 index into D_00441630
+    int f8;                     // 0x08
+    int fC;                     // 0x0C string id (through func_001E2EA0)
+    int f10;                    // 0x10 string id
+    int f14;                    // 0x14 string id
+};
+extern sPopupItem D_004C6C08[];
+
 //100%
 INCLUDE_ASM("fe/fepopupmisc", cFEPopupVideoCalibration_onCreateScreen);
 #ifdef SKIP_ASM
@@ -3336,18 +3357,13 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E14C0);
 extern "C" int func_001E3A30(void* self);
 void func_001E1548(void* self);
 
-struct sEntry14_14C0 {
-    int type;
-    char pad_0x4[0x14 - 0x4];
-};
-extern sEntry14_14C0 D_00441630_14C0[] __asm__("D_00441630");
 
 extern "C" void func_001E14C0(int type)
 {
     int i;
     for (i = 0; i < 0x3D; i++) {
         if (func_001E3A30((void*)i) == 0) {
-            int t = D_00441630_14C0[i].type;
+            int t = D_00441630[i].type;
             if (t == type || t == 5) {
                 func_001E1548((void*)i);
             }
@@ -3479,29 +3495,15 @@ extern "C" int func_001E1A30(int kind, int arg);
 extern "C" int func_001E3388(int id);
 extern char D_0046DDF8[];
 
-struct sPopupEntry18_1AD0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-};
-extern sPopupEntry18_1AD0 D_004C6C08_1AD0[] __asm__("D_004C6C08");
 
-struct sRangeK1E1AD0 {
-    int f0;
-    int start;   // 0x4
-    int count;   // 0x8
-};
 
-extern "C" int func_001E1AD0(sRangeK1E1AD0* r, int arg)
+extern "C" int func_001E1AD0(sPopupDef* r, int arg)
 {
     int* list = (int*)operator_new__FUi(r->count * 4, D_0046DDF8, 0x100, 0);
     int n = 0;
     int i;
     for (i = r->start; i < r->count + r->start; i++) {
-        if (func_001E1A30(D_004C6C08_1AD0[i].fC, arg) == 0 && func_001E3388(i) == -1) {
+        if (func_001E1A30(D_004C6C08[i].fC, arg) == 0 && func_001E3388(i) == -1) {
             list[n++] = i;
         }
     }
@@ -3526,12 +3528,6 @@ int cBENewPlayerInterface_getRiderCharID(void* self, int player);
 extern "C" int func_001E3A30(void* self);
 extern "C" void func_001E2FE0(int a, unsigned char b);
 
-struct sEntry14_1C10 {
-    int type;
-    int f4;
-    char pad_0x8[0x14 - 0x8];
-};
-extern sEntry14_1C10 D_00441630_1C10[] __asm__("D_00441630");
 
 
 
@@ -3551,15 +3547,15 @@ extern "C" void func_001E1C10(int which)
             if (func_001E3A30((void*)0x1D) != 0) {
                 break;
             }
-            sEntry14_1C10* r;
+            sPopupDef* r;
             if (ch != 3) {
-                sEntry14_1C10* tbl = D_00441630_1C10;
+                sPopupDef* tbl = D_00441630;
                 r = &tbl[0x1C];
             } else {
-                sEntry14_1C10* tbl = D_00441630_1C10;
+                sPopupDef* tbl = D_00441630;
                 r = &tbl[0x1D];
             }
-            id = func_001E1AD0((sRangeK1E1AD0*)r, ch);
+            id = func_001E1AD0(r, ch);
             if (id != 0x100) {
                 func_001E2FE0(id, 0);
             }
@@ -3572,15 +3568,15 @@ extern "C" void func_001E1C10(int which)
             if (func_001E3A30((void*)0x1F) != 0) {
                 break;
             }
-            sEntry14_1C10* r;
+            sPopupDef* r;
             if (ch != 7) {
-                sEntry14_1C10* tbl = D_00441630_1C10;
+                sPopupDef* tbl = D_00441630;
                 r = &tbl[0x1E];
             } else {
-                sEntry14_1C10* tbl = D_00441630_1C10;
+                sPopupDef* tbl = D_00441630;
                 r = &tbl[0x1F];
             }
-            id = func_001E1AD0((sRangeK1E1AD0*)r, ch);
+            id = func_001E1AD0(r, ch);
             if (id != 0x100) {
                 func_001E2FE0(id, 0);
             }
@@ -3593,15 +3589,15 @@ extern "C" void func_001E1C10(int which)
             if (func_001E3A30((void*)0x21) != 0) {
                 break;
             }
-            sEntry14_1C10* r;
+            sPopupDef* r;
             if (ch != 8) {
-                sEntry14_1C10* tbl = D_00441630_1C10;
+                sPopupDef* tbl = D_00441630;
                 r = &tbl[0x20];
             } else {
-                sEntry14_1C10* tbl = D_00441630_1C10;
+                sPopupDef* tbl = D_00441630;
                 r = &tbl[0x21];
             }
-            id = func_001E1AD0((sRangeK1E1AD0*)r, ch);
+            id = func_001E1AD0(r, ch);
             if (id != 0x100) {
                 func_001E2FE0(id, 0);
             }
@@ -3712,12 +3708,6 @@ extern "C" int func_001E3A30(void* self);
 extern "C" void func_001E3A78(int a, int b);
 extern "C" void func_001E2FE0(int a, unsigned char b);
 
-struct sEntry14_20D0 {
-    int type;
-    int f4;
-    char pad_0x8[0x14 - 0x8];
-};
-extern sEntry14_20D0 D_00441630_20D0[] __asm__("D_00441630");
 
 extern "C" void func_001E20D0(int which, int flag)
 {
@@ -3727,34 +3717,34 @@ extern "C" void func_001E20D0(int which, int flag)
         switch (which) {
         case 0:
             if (func_001E3A30((void*)0x23) == 0) {
-                sEntry14_20D0* tbl = D_00441630_20D0;
+                sPopupDef* tbl = D_00441630;
                 if (flag) {
                     func_001E3A78(0x23, 1);
-                    func_001E2FE0(tbl[0x23].f4 + 1, 0);
+                    func_001E2FE0(tbl[0x23].start + 1, 0);
                 } else {
-                    func_001E2FE0(tbl[0x23].f4, 0);
+                    func_001E2FE0(tbl[0x23].start, 0);
                 }
             }
             break;
         case 1:
             if (func_001E3A30((void*)0x25) == 0) {
-                sEntry14_20D0* tbl = D_00441630_20D0;
+                sPopupDef* tbl = D_00441630;
                 if (flag) {
                     func_001E3A78(0x25, 1);
-                    func_001E2FE0(tbl[0x25].f4 + 1, 0);
+                    func_001E2FE0(tbl[0x25].start + 1, 0);
                 } else {
-                    func_001E2FE0(tbl[0x25].f4, 0);
+                    func_001E2FE0(tbl[0x25].start, 0);
                 }
             }
             break;
         case 2:
             if (func_001E3A30((void*)0x27) == 0) {
-                sEntry14_20D0* tbl = D_00441630_20D0;
+                sPopupDef* tbl = D_00441630;
                 if (flag) {
                     func_001E3A78(0x27, 1);
-                    func_001E2FE0(tbl[0x27].f4 + 1, 0);
+                    func_001E2FE0(tbl[0x27].start + 1, 0);
                 } else {
-                    func_001E2FE0(tbl[0x27].f4, 0);
+                    func_001E2FE0(tbl[0x27].start, 0);
                 }
             }
             break;
@@ -3772,12 +3762,6 @@ extern "C" int func_001E3A30(void* self);
 extern "C" void func_001E3A78(int a, int b);
 extern "C" void func_001E2FE0(int a, unsigned char b);
 
-struct sEntry14_2220 {
-    int type;
-    int f4;
-    char pad_0x8[0x14 - 0x8];
-};
-extern sEntry14_2220 D_00441630_2220[] __asm__("D_00441630");
 
 extern "C" void func_001E2220(int which, int flag)
 {
@@ -3787,34 +3771,34 @@ extern "C" void func_001E2220(int which, int flag)
         switch (which) {
         case 0:
             if (func_001E3A30((void*)0x22) == 0) {
-                sEntry14_2220* tbl = D_00441630_2220;
+                sPopupDef* tbl = D_00441630;
                 if (flag) {
                     func_001E3A78(0x22, 1);
-                    func_001E2FE0(tbl[0x22].f4 + 1, 0);
+                    func_001E2FE0(tbl[0x22].start + 1, 0);
                 } else {
-                    func_001E2FE0(tbl[0x22].f4, 0);
+                    func_001E2FE0(tbl[0x22].start, 0);
                 }
             }
             break;
         case 1:
             if (func_001E3A30((void*)0x24) == 0) {
-                sEntry14_2220* tbl = D_00441630_2220;
+                sPopupDef* tbl = D_00441630;
                 if (flag) {
                     func_001E3A78(0x24, 1);
-                    func_001E2FE0(tbl[0x24].f4 + 1, 0);
+                    func_001E2FE0(tbl[0x24].start + 1, 0);
                 } else {
-                    func_001E2FE0(tbl[0x24].f4, 0);
+                    func_001E2FE0(tbl[0x24].start, 0);
                 }
             }
             break;
         case 2:
             if (func_001E3A30((void*)0x26) == 0) {
-                sEntry14_2220* tbl = D_00441630_2220;
+                sPopupDef* tbl = D_00441630;
                 if (flag) {
                     func_001E3A78(0x26, 1);
-                    func_001E2FE0(tbl[0x26].f4 + 1, 0);
+                    func_001E2FE0(tbl[0x26].start + 1, 0);
                 } else {
-                    func_001E2FE0(tbl[0x26].f4, 0);
+                    func_001E2FE0(tbl[0x26].start, 0);
                 }
             }
             break;
@@ -4148,13 +4132,6 @@ extern "C" void func_001E3A78(int a, int b);
 extern "C" void func_001E2FE0(int a, unsigned char b);
 unsigned int BXrand();
 
-struct sEntry14_2A08 {
-    int type;
-    int start;   // 0x4
-    int count;   // 0x8
-    char pad_0xC[0x14 - 0xC];
-};
-extern sEntry14_2A08 D_00441630_2A08[] __asm__("D_00441630");
 
 extern "C" void func_001E2A08(int charID, int level)
 {
@@ -4166,7 +4143,7 @@ extern "C" void func_001E2A08(int charID, int level)
     if (cBENewPlayerInterface_getRiderCharID(iface, func_00146E98(iface, 0)) == charID)
         return;
     int id = func_001E2B38(charID);
-    sEntry14_2A08* e = &D_00441630_2A08[id];
+    sPopupDef* e = &D_00441630[id];
     if (func_001E3A30((void*)id)) {
         if (level < 5)
             func_001E3A78(id, 0);
@@ -4206,23 +4183,15 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E2BB8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_001E3A30(void* self);
 
-struct sEntry14_2BB8 {
-    int type;
-    int f4;
-    int count;
-    int fC;
-    int f10;
-};
-extern sEntry14_2BB8 D_00441630_2BB8[] __asm__("D_00441630");
 
 extern "C" int func_001E2BB8(int type, int all)
 {
     int total = 0;
     int i;
     for (i = 0; i < 0x3D; i++) {
-        sEntry14_2BB8* e = &D_00441630_2BB8[i];
+        sPopupDef* e = &D_00441630[i];
         if (e->type == type) {
-            if (all != 0 || (e->f10 != 0 && func_001E3A30((void*)i) != 0)) {
+            if (all != 0 || (e->enabled != 0 && func_001E3A30((void*)i) != 0)) {
                 total += e->count;
             } else {
                 total += 1;
@@ -4237,18 +4206,10 @@ extern "C" int func_001E2BB8(int type, int all)
 INCLUDE_ASM("fe/fepopupmisc", func_001E2C60);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sEntry14_2C60 {
-    int type;
-    int start;   // 0x4
-    int count;   // 0x8
-    int fC;
-    int f10;
-};
-extern sEntry14_2C60 D_00441630_2C60[] __asm__("D_00441630");
 
 extern "C" int func_001E2C60(int i)
 {
-    return D_00441630_2C60[i].count;
+    return D_00441630[i].count;
 }
 #endif
 
@@ -4258,14 +4219,6 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E2C80);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_001E3A30(void* self);
 
-struct sEntry14_2C80 {
-    int type;
-    int first;
-    int count;
-    int fC;
-    int f10;
-};
-extern sEntry14_2C80 D_00441630_2C80[] __asm__("D_00441630");
 
 extern "C" int func_001E2C80(int type, int idx, int mode)
 {
@@ -4273,17 +4226,17 @@ extern "C" int func_001E2C80(int type, int idx, int mode)
     int result = -1;
     int i;
     for (i = 0; i < 0x3D; i++) {
-        sEntry14_2C80* e = &D_00441630_2C80[i];
+        sPopupDef* e = &D_00441630[i];
         if (e->type == type) {
             int n;
-            if (mode == 0 || e->f10 == 0 || func_001E3A30((void*)i) != 0) {
+            if (mode == 0 || e->enabled == 0 || func_001E3A30((void*)i) != 0) {
                 n = e->count;
             } else {
                 n = 1;
             }
             n += base;
             if (idx < n) {
-                result = e->first + (idx - base);
+                result = e->start + (idx - base);
                 goto done;
             }
             base = n;
@@ -4297,25 +4250,13 @@ done:
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2D58);
 #ifdef SKIP_ASM
-struct sPopupEntry18 {
-    int field_0x0;
-    int field_0x4;
-    char pad_0x8[0x18 - 0x8];
-};
-extern sPopupEntry18 D_004C6C08[];
 
-struct sPopupEntry14 {
-    char pad_0x0[0xC];
-    int field_0xC;
-    int field_0x10;
-};
-extern sPopupEntry14 D_00441630[];
 
 extern "C" int func_001E2D58(int v, int i)
 {
-    sPopupEntry18* a = &D_004C6C08[i];
-    sPopupEntry14* b = &D_00441630[a->field_0x4];
-    return b->field_0xC == v;
+    sPopupItem* a = &D_004C6C08[i];
+    sPopupDef* b = &D_00441630[a->def];
+    return b->kind == v;
 }
 #endif
 
@@ -4323,11 +4264,10 @@ extern "C" int func_001E2D58(int v, int i)
 INCLUDE_ASM("fe/fepopupmisc", func_001E2D98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern sEntry14_2C60 D_00441630_2C60[] __asm__("D_00441630");
 
 extern "C" int func_001E2D98(int v, int i)
 {
-    int* p = (int*)&D_00441630_2C60[0] + i * 5;
+    int* p = (int*)&D_00441630[0] + i * 5;
     return p[3] == v;
 }
 #endif
@@ -4337,20 +4277,20 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E2DC0);
 #ifdef SKIP_ASM
 extern "C" int func_001E2DC0(int idx)
 {
-    sPopupEntry18* ta = &D_004C6C08[idx];
-    sPopupEntry14* target = &D_00441630[ta->field_0x4];
+    sPopupItem* ta = &D_004C6C08[idx];
+    sPopupDef* target = &D_00441630[ta->def];
     int r = 0;
     int i = 0;
     while (i <= idx) {
-        sPopupEntry18* a = &D_004C6C08[i];
-        sPopupEntry14* e = &D_00441630[a->field_0x4];
+        sPopupItem* a = &D_004C6C08[i];
+        sPopupDef* e = &D_00441630[a->def];
         int start = *(int*)((char*)e + 4);
         int count = *(int*)((char*)e + 8);
         if (start + count - 1 < idx) {
-            if (e->field_0xC == target->field_0xC) r += count;
+            if (e->kind == target->kind) r += count;
             i += count;
         } else {
-            if (e->field_0xC == target->field_0xC) r += idx - start + 1;
+            if (e->kind == target->kind) r += idx - start + 1;
             break;
         }
     }
@@ -4362,11 +4302,10 @@ extern "C" int func_001E2DC0(int idx)
 INCLUDE_ASM("fe/fepopupmisc", func_001E2E80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern sEntry14_2C60 D_00441630_2C60[] __asm__("D_00441630");
 
 extern "C" int func_001E2E80(int i, int n)
 {
-    return D_00441630_2C60[i].start + n;
+    return D_00441630[i].start + n;
 }
 #endif
 
@@ -4446,13 +4385,6 @@ struct sPopupList_2FE0 {
 // PORT: unit declares func_001E39F8(void*), but its body takes no arguments
 extern "C" sPopupList_2FE0* func_001E39F8_list2FE0() __asm__("func_001E39F8");
 
-struct sPopupEntry18_2FE0 {
-    int field_0x0;
-    int field_0x4;
-    int field_0x8;
-    char pad_0xC[0x18 - 0xC];
-};
-extern sPopupEntry18_2FE0 D_004C6C08_2FE0[] __asm__("D_004C6C08");
 
 
 extern "C" void func_001E2FE0(int id, unsigned char flag)
@@ -4460,7 +4392,7 @@ extern "C" void func_001E2FE0(int id, unsigned char flag)
     sPopupList_2FE0* t = func_001E39F8_list2FE0();
     if (t->count == 0x19)
         func_001E31B8(0);
-    if (D_004C6C08_2FE0[id].field_0x8 == 1)
+    if (D_004C6C08[id].f8 == 1)
         flag = func_001E3100(id);
     t->entries[t->count].id = id;
     t->entries[t->count].flag = flag;
@@ -4565,12 +4497,6 @@ extern "C" void func_001E3268(int id)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E32C8);
 #ifdef SKIP_ASM
-struct sPopupEntry18_32C8 {
-    int field_0x0;
-    int field_0x4;
-    char pad_0x8[0x18 - 0x8];
-};
-extern sPopupEntry18_32C8 D_004C6C08_32C8[] __asm__("D_004C6C08");
 struct sPopupListEntry_32C8 {
     int id;
     unsigned char field_0x4;
@@ -4591,8 +4517,8 @@ extern "C" void func_001E32C8(int type)
     int j = 0;
     sPopupList_32C8* t = func_001E39F8_list32C8();
     for (; n < t->count; n++) {
-        sPopupEntry18_32C8* a = &D_004C6C08_32C8[t->entries[j].id];
-        if (type == a->field_0x4) {
+        sPopupItem* a = &D_004C6C08[t->entries[j].id];
+        if (type == a->def) {
             func_001E31B8(j);
         } else {
             j++;
@@ -4679,11 +4605,11 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E34D8);
 #ifdef SKIP_ASM
 extern "C" int func_001E34D8(int i)
 {
-    sPopupEntry18* a = &D_004C6C08[i];
+    sPopupItem* a = &D_004C6C08[i];
     int n = i + 1;
-    sPopupEntry18* b = &D_004C6C08[n];
+    sPopupItem* b = &D_004C6C08[n];
     int r = -1;
-    if (b->field_0x4 == a->field_0x4) {
+    if (b->def == a->def) {
         r = n;
     }
     return r;
@@ -5258,21 +5184,7 @@ extern "C" void func_001E4168(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4200);
 #ifdef SKIP_ASM
-struct sPopupEntry18_4200 {
-    int field_0x0;
-    int id;                         // 0x4
-    char pad_0x8[0x10];
-};
-extern sPopupEntry18_4200 D_004C6C08_4200[] __asm__("D_004C6C08");
 
-struct sPopupEntry14_4200 {
-    int type;
-    int start;                      // 0x4
-    int count;                      // 0x8
-    int field_0xC;
-    int enabled;                    // 0x10
-};
-extern sPopupEntry14_4200 D_00441630_4200[] __asm__("D_00441630");
 
 
 struct cUIScreen;
@@ -5311,10 +5223,10 @@ extern "C" void func_001E4200(void* self, void* widget, unsigned int event)
                 func_001E50C8(self, id, k + 1);
             } else if (idx + n1 >= 0) {
                 int w = *(int*)((char*)widget + 0x18);
-                sPopupEntry18_4200* a = &D_004C6C08_4200[w];
-                sPopupEntry14_4200* e = &D_00441630_4200[a->id];
+                sPopupItem* a = &D_004C6C08[w];
+                sPopupDef* e = &D_00441630[a->def];
                 if (e->enabled != 0 && w == e->start) {
-                    func_001E3A78(a->id, !func_001E3A30_b(a->id));
+                    func_001E3A78(a->def, !func_001E3A30_b(a->def));
                     func_001E48B0(self);
                     func_001E4658(self);
                     func_001E4458(self);
@@ -5373,18 +5285,6 @@ extern char D_0046E060[];
 extern char D_0046E070[];
 extern char D_0046E080[];
 
-struct sEntry18_4458 {
-    int field_0x0;
-    int field_0x4;
-    char pad_0x8[0x18 - 0x8];
-};
-extern sEntry18_4458 D_004C6C08_4458[] __asm__("D_004C6C08");
-struct sEntry14_4458 {
-    int field_0x0;
-    int field_0x4;
-    char pad_0x8[0x14 - 0x8];
-};
-extern sEntry14_4458 D_00441630_4458[] __asm__("D_00441630");
 
 extern "C" void func_001E4458(void* self)
 {
@@ -5400,10 +5300,10 @@ extern "C" void func_001E4458(void* self)
         func_001E4840(self, *(void**)((char*)self + 0x150));
         if (*(cUIText**)((char*)self + 0x158) != 0) {
             int id = func_001E2C80(4, -diff, 1);
-            sEntry18_4458* a = &D_004C6C08_4458[id];
-            int t = a->field_0x4;
-            sEntry14_4458* b = &D_00441630_4458[t];
-            if (id == b->field_0x4) {
+            sPopupItem* a = &D_004C6C08[id];
+            int t = a->def;
+            sPopupDef* b = &D_00441630[t];
+            if (id == b->start) {
                 if (func_001E3A30((void*)t))
                     cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x158), GetHashValue32(D_0046E070));
                 else
@@ -5644,13 +5544,6 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E4B80);
 extern int D_004A20C4;
 extern "C" int func_001E2DC0(int idx);
 
-struct sPopupEntry18_4B80 {
-    int field_0x0;
-    int field_0x4;
-    int field_0x8;
-    char pad_0xC[0x18 - 0xC];
-};
-extern sPopupEntry18_4B80 D_004C6C08_4B80[] __asm__("D_004C6C08");
 
 extern "C" unsigned char func_001E4B80(void* self, int idx)
 {
@@ -5658,12 +5551,12 @@ extern "C" unsigned char func_001E4B80(void* self, int idx)
     if (D_004A20C4 == 0) {
         return 0xFF;
     }
-    sPopupEntry18_4B80* a = &D_004C6C08_4B80[idx];
-    if (a->field_0x8 == 1) {
+    sPopupItem* a = &D_004C6C08[idx];
+    if (a->f8 == 1) {
         int v = func_001E2DC0(idx);
         int div = 1;
-        sPopupEntry14* b = &D_00441630[a->field_0x4];
-        switch (b->field_0xC) {
+        sPopupDef* b = &D_00441630[a->def];
+        switch (b->kind) {
         case 3:
             div = 10;
             v = v / 2;
@@ -5698,24 +5591,7 @@ extern char D_004A2108[];
 extern char D_004A2110[];
 extern char D_004A2118[];
 
-struct sEnt18_4C78 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-};
-extern sEnt18_4C78 D_004C6C08_4C78[] __asm__("D_004C6C08");
 
-struct sEnt14_4C78 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-};
-extern sEnt14_4C78 D_00441630_4C78[] __asm__("D_00441630");
 
 
 struct sObj_4C78 {
@@ -5759,13 +5635,13 @@ extern "C" void func_001E4C78(void* self_, int idx, int slot, int id, unsigned c
 {
     sPopup_4C78* self = (sPopup_4C78*)self_;
     char buf[16];
-    sEnt18_4C78* a = &D_004C6C08_4C78[id];
-    sEnt14_4C78* b = &D_00441630_4C78[a->f4];
+    sPopupItem* a = &D_004C6C08[id];
+    sPopupDef* b = &D_00441630[a->def];
     char* p = (char*)func_001E39F8(self);
     if (idx == -1) {
-        if (b->f10 != 0) {
-            if (id == b->f4) {
-                if (func_001E3A30((void*)a->f4) == 0)
+        if (b->enabled != 0) {
+            if (id == b->start) {
+                if (func_001E3A30((void*)a->def) == 0)
                     setTint_4C78(self->aBC[slot], self->f164, idx);
                 else
                     setTint_4C78(self->aBC[slot], self->f168, idx);
@@ -5786,9 +5662,9 @@ extern "C" void func_001E4C78(void* self_, int idx, int slot, int id, unsigned c
         }
     }
     if (self->a11C[slot] != 0) {
-        if (b->f10 != 0) {
-            if (id == b->f4) {
-                if (func_001E3A30((void*)a->f4) == 0)
+        if (b->enabled != 0) {
+            if (id == b->start) {
+                if (func_001E3A30((void*)a->def) == 0)
                     sprintf(buf, D_004A2100);
                 else
                     sprintf(buf, D_004A2108);
@@ -6028,20 +5904,7 @@ extern "C" void func_001E52F8(void* self, void* widget)
 INCLUDE_ASM("fe/fepopupmisc", func_001E5428);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPopupEntry18_5428 {
-    int field_0x0;
-    int field_0x4;
-    char pad_0x8[0x4];
-    int field_0xC;
-    char pad_0x10[0x8];
-};
-extern sPopupEntry18_5428 D_004C6C08_5428[] __asm__("D_004C6C08");
 
-struct sPopupEntry14_5428 {
-    int type;
-    char pad_0x4[0x10];
-};
-extern sPopupEntry14_5428 D_00441630_5428[] __asm__("D_00441630");
 
 
 
@@ -6057,8 +5920,8 @@ extern "C" void func_001E5780(void* self, int idx);
 
 extern "C" void func_001E5428(void* self)
 {
-    sPopupEntry18_5428* a = &D_004C6C08_5428[*(int*)((char*)self + 0x68)];
-    sPopupEntry14_5428* e = &D_00441630_5428[a->field_0x4];
+    sPopupItem* a = &D_004C6C08[*(int*)((char*)self + 0x68)];
+    sPopupDef* e = &D_00441630[a->def];
     if (e->type == 4) {
         void* o = *(void**)((char*)self + 0x5C);
         if (o != 0) {
@@ -6089,7 +5952,7 @@ extern "C" void func_001E5428(void* self)
         }
     }
     if (*(cUIText**)((char*)self + 0x50) != 0) {
-        cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x50), func_001E2EA0(a->field_0xC));
+        cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x50), func_001E2EA0(a->fC));
     }
     func_001E55D0(self, *(int*)((char*)self + 0x68));
     func_001E5780(self, *(int*)((char*)self + 0x68));
@@ -6105,13 +5968,13 @@ extern "C" void func_001E5638(void* self, int idx);
 
 extern "C" void func_001E55D0(void* self, int idx)
 {
-    char* e = (char*)&D_004C6C08[idx];
-    if (*(int*)(e + 0x8) == 1) {
+    sPopupItem* e = &D_004C6C08[idx];
+    if (e->f8 == 1) {
         func_001E5638(self, idx);
     } else {
         cUIText* t = *(cUIText**)((char*)self + 0x54);
         if (t != 0) {
-            cUIText_setUnicodeStringByID(t, *(int*)(e + 0x10));
+            cUIText_setUnicodeStringByID(t, e->f10);
         }
     }
 }
@@ -6173,13 +6036,13 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E5780);
 
 extern "C" void func_001E5780(void* self, int idx)
 {
-    char* e = (char*)&D_004C6C08[idx];
-    int kind = *(int*)(e + 0x8);
+    sPopupItem* e = &D_004C6C08[idx];
+    int kind = e->f8;
     if (kind < 2) {
         if (kind >= 0) {
             char* t = *(char**)((char*)self + 0x58);
             *(int*)(t + 0x14) |= 0x80;
-            cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x58), *(int*)(e + 0x14));
+            cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x58), e->f14);
             void* obj = *(void**)((char*)self + 0x58);
             sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 8);
             vt[9].fn((char*)obj + vt[9].delta, 1);
@@ -6192,17 +6055,6 @@ extern "C" void func_001E5780(void* self, int idx)
 INCLUDE_ASM("fe/fepopupmisc", func_001E5800);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPopupEntry18_5800 {
-    int field_0x0;
-    int field_0x4;
-    char pad_0x8[0x18 - 0x8];
-};
-extern sPopupEntry18_5800 D_004C6C08_5800[] __asm__("D_004C6C08");
-struct sEntry14_5800 {
-    int type;
-    char pad_0x4[0x14 - 0x4];
-};
-extern sEntry14_5800 D_00441630_5800[] __asm__("D_00441630");
 extern "C" void func_001E3268(int id);
 
 extern "C" void func_001E5800(void* self, void* a1, unsigned int msg)
@@ -6210,8 +6062,8 @@ extern "C" void func_001E5800(void* self, void* a1, unsigned int msg)
     switch (msg) {
     case 7: {
         int id = *(int*)((char*)self + 0x68);
-        sPopupEntry18_5800* a = &D_004C6C08_5800[id];
-        sEntry14_5800* b = &D_00441630_5800[a->field_0x4];
+        sPopupItem* a = &D_004C6C08[id];
+        sPopupDef* b = &D_00441630[a->def];
         if (b->type == 4) {
             return;
         }
@@ -6242,8 +6094,8 @@ extern "C" int func_001E33E8_58E0() __asm__("func_001E33E8__FPv");
 extern "C" void func_001E58E0(void* self)
 {
     int id = *(int*)((char*)self + 0x68);
-    sPopupEntry18_5800* a = &D_004C6C08_5800[id];
-    sEntry14_5800* b = &D_00441630_5800[a->field_0x4];
+    sPopupItem* a = &D_004C6C08[id];
+    sPopupDef* b = &D_00441630[a->def];
     if (b->type == 4) {
         int next = func_001E34D8(id);
         if (next == -1) {
@@ -6282,9 +6134,9 @@ extern "C" int func_001E5A18(void* self, int a1, unsigned int a2)
     case 9:
         return 0;
     case 8: {
-        sPopupEntry18* a = &D_004C6C08[*(int*)((char*)self + 0x68)];
-        sPopupEntry14* b = &D_00441630[a->field_0x4];
-        return *(int*)b->pad_0x0 != 4;
+        sPopupItem* a = &D_004C6C08[*(int*)((char*)self + 0x68)];
+        sPopupDef* b = &D_00441630[a->def];
+        return b->type != 4;
     }
     }
     return 0x101;
@@ -6303,9 +6155,9 @@ extern "C" unsigned char func_001E5AA0(void* self, int idx)
     }
     int v = func_001E2DC0(idx);
     int div = 1;
-    sPopupEntry18* a = &D_004C6C08[idx];
-    sPopupEntry14* b = &D_00441630[a->field_0x4];
-    switch (b->field_0xC) {
+    sPopupItem* a = &D_004C6C08[idx];
+    sPopupDef* b = &D_00441630[a->def];
+    switch (b->kind) {
     case 3:
         div = 10;
         v = v / 2;
