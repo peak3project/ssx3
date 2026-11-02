@@ -1,4 +1,5 @@
 #include "common.h"
+#include "bx/math3d.h"
 
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", cScriptCameraController_cScriptCameraController);
@@ -197,9 +198,8 @@ INCLUDE_ASM("camera/script/scriptcontroller", func_00169418);
 extern void* D_0045BDE0[];
 extern void* D_0045C8B8[];
 extern void* D_004A28A8;
-struct sVec4K9418 { float x, y, z, w; } __attribute__((aligned(16)));
-// Same object as the unit's later `extern func_001694B8_sVec4 D_004FF130;` (that type is defined below this point).
-extern sVec4K9418 D_004FF130_K9418 __asm__("D_004FF130");
+// Same object as the unit's later `extern t4Vector D_004FF130;` (that type is defined below this point).
+extern t4Vector D_004FF130_K9418 __asm__("D_004FF130");
 extern "C" float func_00167E30(void* self);
 
 struct sCamCtlK9418 {
@@ -211,7 +211,7 @@ struct sCamCtlK9418 {
     int f14;        // 0x14
     int f18;        // 0x18
     int pad_1C;
-    sVec4K9418 v20; // 0x20
+    t4Vector v20; // 0x20
 };
 
 extern "C" void* func_00169418(void* p)
@@ -255,10 +255,8 @@ int func_001694B0(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("camera/script/scriptcontroller", func_001694B8);
 #ifdef SKIP_ASM
-struct func_001694B8_sVec4 { float x, y, z, w; } __attribute__((aligned(16)));
-
 extern void* D_0045C850[];
-extern func_001694B8_sVec4 D_004FF130;
+extern t4Vector D_004FF130;
 extern "C" void* func_00169418(void* self);
 extern "C" void* func_0015FFF0(void* self);
 
@@ -267,7 +265,7 @@ extern "C" void* func_001694B8(void* self)
     func_00169418(self);
     *(void***)((char*)self + 0x10) = D_0045C850;
     func_0015FFF0((char*)self + 0x74);
-    *(func_001694B8_sVec4*)((char*)self + 0x30) = D_004FF130;
+    *(t4Vector*)((char*)self + 0x30) = D_004FF130;
     *(int*)((char*)self + 0xC) = 0x56;
     *(int*)((char*)self + 0x44) = 0;
     *(int*)((char*)self + 0x48) = 0;
@@ -449,26 +447,22 @@ extern "C" void func_00169570(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169828);
 #ifdef SKIP_ASM
-struct sV_9828 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sM_9828 {
     float m[4][4];
 } __attribute__((aligned(16)));
 
 struct sPair_9828 {
-    sV_9828 a;
-    sV_9828 b;
+    t4Vector a;
+    t4Vector b;
 };
 
 extern sM_9828 D_004FF1A0_9828 __asm__("D_004FF1A0");
-extern sV_9828 D_004FF140_9828 __asm__("D_004FF140");
-extern sV_9828 D_004FF150_9828 __asm__("D_004FF150");
-extern sV_9828 D_004FF160_9828 __asm__("D_004FF160");
+extern t4Vector D_004FF140_9828 __asm__("D_004FF140");
+extern t4Vector D_004FF150_9828 __asm__("D_004FF150");
+extern t4Vector D_004FF160_9828 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" sPair_9828 func_0031B748_9828(sM_9828* m) __asm__("func_0031B748");
-extern "C" sV_9828 func_00160228_9828(char* p, float a, float b) __asm__("func_00160228");
+extern "C" t4Vector func_00160228_9828(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
@@ -530,7 +524,7 @@ static inline void vu0MulMtx_9828(sM_9828* dst, const sM_9828* a, const sM_9828*
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_9828(sM_9828* m, const sV_9828& v)
+static inline void vu0TransMtx_9828(sM_9828* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -551,9 +545,9 @@ static inline void vu0TransMtx_9828(sM_9828* m, const sV_9828& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sV_9828 Add_9828(const sV_9828& a, const sV_9828& b)
+static inline t4Vector Add_9828(const t4Vector& a, const t4Vector& b)
 {
-    sV_9828 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -570,7 +564,7 @@ static inline void SinCos_9828(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void RotAxis_9828(sM_9828* m, const sV_9828& axis, float angle)
+static inline void RotAxis_9828(sM_9828* m, const t4Vector& axis, float angle)
 {
     sM_9828 r;
     float s;
@@ -610,7 +604,7 @@ extern "C" sPair_9828 func_00169828(char* p)
 {
     sM_9828 m;
     vu0CopyMtx_9828(&m, &D_004FF1A0_9828);
-    vu0TransMtx_9828(&m, Add_9828(*(sV_9828*)(p + 0x30), func_00160228_9828(p + 0x74, *(float*)(p + 0x44), *(float*)(p + 0x48))));
+    vu0TransMtx_9828(&m, Add_9828(*(t4Vector*)(p + 0x30), func_00160228_9828(p + 0x74, *(float*)(p + 0x44), *(float*)(p + 0x48))));
     RotAxis_9828(&m, D_004FF140_9828, *(float*)(p + 0x40) + func_001603F0(p + 0x74));
     RotAxis_9828(&m, D_004FF150_9828, -*(float*)(p + 0x48));
     RotAxis_9828(&m, D_004FF160_9828, *(float*)(p + 0x44));
@@ -622,7 +616,7 @@ extern "C" sPair_9828 func_00169828(char* p)
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169CF8);
 #ifdef SKIP_ASM
 extern void* D_0045C7E8[];
-extern func_001694B8_sVec4 D_004FF130;
+extern t4Vector D_004FF130;
 extern "C" void* func_00169418(void* self);
 extern "C" void* func_0015FFF0(void* self);
 
@@ -631,7 +625,7 @@ extern "C" void* func_00169CF8(void* self)
     func_00169418(self);
     *(void***)((char*)self + 0x10) = D_0045C7E8;
     func_0015FFF0((char*)self + 0x74);
-    *(func_001694B8_sVec4*)((char*)self + 0x30) = D_004FF130;
+    *(t4Vector*)((char*)self + 0x30) = D_004FF130;
     *(int*)((char*)self + 0xC) = 0x57;
     *(int*)((char*)self + 0x40) = 0;
     *(int*)((char*)self + 0x44) = 0;
@@ -777,26 +771,22 @@ extern "C" void func_00169DB0(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_00169F88);
 #ifdef SKIP_ASM
-struct sV_9F88 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sM_9F88 {
     float m[4][4];
 } __attribute__((aligned(16)));
 
 struct sPair_9F88 {
-    sV_9F88 a;
-    sV_9F88 b;
+    t4Vector a;
+    t4Vector b;
 };
 
 extern sM_9F88 D_004FF1A0_9F88 __asm__("D_004FF1A0");
-extern sV_9F88 D_004FF140_9F88 __asm__("D_004FF140");
-extern sV_9F88 D_004FF150_9F88 __asm__("D_004FF150");
-extern sV_9F88 D_004FF160_9F88 __asm__("D_004FF160");
+extern t4Vector D_004FF140_9F88 __asm__("D_004FF140");
+extern t4Vector D_004FF150_9F88 __asm__("D_004FF150");
+extern t4Vector D_004FF160_9F88 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" sPair_9F88 func_0031B748_9F88(sM_9F88* m) __asm__("func_0031B748");
-extern "C" sV_9F88 func_00160228_9F88(char* p, float a, float b) __asm__("func_00160228");
+extern "C" t4Vector func_00160228_9F88(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
@@ -858,7 +848,7 @@ static inline void vu0MulMtx_9F88(sM_9F88* dst, const sM_9F88* a, const sM_9F88*
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_9F88(sM_9F88* m, const sV_9F88& v)
+static inline void vu0TransMtx_9F88(sM_9F88* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -879,9 +869,9 @@ static inline void vu0TransMtx_9F88(sM_9F88* m, const sV_9F88& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sV_9F88 Add_9F88(const sV_9F88& a, const sV_9F88& b)
+static inline t4Vector Add_9F88(const t4Vector& a, const t4Vector& b)
 {
-    sV_9F88 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -898,7 +888,7 @@ static inline void SinCos_9F88(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void RotAxis_9F88(sM_9F88* m, const sV_9F88& axis, float angle)
+static inline void RotAxis_9F88(sM_9F88* m, const t4Vector& axis, float angle)
 {
     sM_9F88 r;
     float s;
@@ -938,7 +928,7 @@ extern "C" sPair_9F88 func_00169F88(char* p)
 {
     sM_9F88 m;
     vu0CopyMtx_9F88(&m, &D_004FF1A0_9F88);
-    vu0TransMtx_9F88(&m, Add_9F88(*(sV_9F88*)(p + 0x30), func_00160228_9F88(p + 0x74, *(float*)(p + 0x44), *(float*)(p + 0x48))));
+    vu0TransMtx_9F88(&m, Add_9F88(*(t4Vector*)(p + 0x30), func_00160228_9F88(p + 0x74, *(float*)(p + 0x44), *(float*)(p + 0x48))));
     RotAxis_9F88(&m, D_004FF140_9F88, *(float*)(p + 0x40) + func_001603F0(p + 0x74));
     RotAxis_9F88(&m, D_004FF150_9F88, -*(float*)(p + 0x48));
     RotAxis_9F88(&m, D_004FF160_9F88, *(float*)(p + 0x44));
@@ -950,7 +940,7 @@ extern "C" sPair_9F88 func_00169F88(char* p)
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016A458);
 #ifdef SKIP_ASM
 extern void* D_0045C780[];
-extern func_001694B8_sVec4 D_004FF130;
+extern t4Vector D_004FF130;
 extern "C" void* func_00169418(void* self);
 extern "C" void* func_0015FFF0(void* self);
 
@@ -959,7 +949,7 @@ extern "C" void* func_0016A458(void* self)
     func_00169418(self);
     *(void***)((char*)self + 0x10) = D_0045C780;
     func_0015FFF0((char*)self + 0x70);
-    *(func_001694B8_sVec4*)((char*)self + 0x30) = D_004FF130;
+    *(t4Vector*)((char*)self + 0x30) = D_004FF130;
     *(int*)((char*)self + 0xC) = 0x58;
     *(int*)((char*)self + 0x40) = 0;
     *(int*)((char*)self + 0x44) = 0;
@@ -1172,26 +1162,22 @@ extern "C" void func_0016A510(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016A868);
 #ifdef SKIP_ASM
-struct sV_A868 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sM_A868 {
     float m[4][4];
 } __attribute__((aligned(16)));
 
 struct sPair_A868 {
-    sV_A868 a;
-    sV_A868 b;
+    t4Vector a;
+    t4Vector b;
 };
 
 extern sM_A868 D_004FF1A0_A868 __asm__("D_004FF1A0");
-extern sV_A868 D_004FF140_A868 __asm__("D_004FF140");
-extern sV_A868 D_004FF150_A868 __asm__("D_004FF150");
-extern sV_A868 D_004FF160_A868 __asm__("D_004FF160");
+extern t4Vector D_004FF140_A868 __asm__("D_004FF140");
+extern t4Vector D_004FF150_A868 __asm__("D_004FF150");
+extern t4Vector D_004FF160_A868 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" sPair_A868 func_0031B748_A868(sM_A868* m) __asm__("func_0031B748");
-extern "C" sV_A868 func_00160228_A868(char* p, float a, float b) __asm__("func_00160228");
+extern "C" t4Vector func_00160228_A868(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
@@ -1253,7 +1239,7 @@ static inline void vu0MulMtx_A868(sM_A868* dst, const sM_A868* a, const sM_A868*
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_A868(sM_A868* m, const sV_A868& v)
+static inline void vu0TransMtx_A868(sM_A868* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1274,9 +1260,9 @@ static inline void vu0TransMtx_A868(sM_A868* m, const sV_A868& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sV_A868 Add_A868(const sV_A868& a, const sV_A868& b)
+static inline t4Vector Add_A868(const t4Vector& a, const t4Vector& b)
 {
-    sV_A868 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1293,7 +1279,7 @@ static inline void SinCos_A868(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void RotAxis_A868(sM_A868* m, const sV_A868& axis, float angle)
+static inline void RotAxis_A868(sM_A868* m, const t4Vector& axis, float angle)
 {
     sM_A868 r;
     float s;
@@ -1333,7 +1319,7 @@ extern "C" sPair_A868 func_0016A868(char* p)
 {
     sM_A868 m;
     vu0CopyMtx_A868(&m, &D_004FF1A0_A868);
-    vu0TransMtx_A868(&m, Add_A868(*(sV_A868*)(p + 0x30), func_00160228_A868(p + 0x70, *(float*)(p + 0x44), *(float*)(p + 0x48))));
+    vu0TransMtx_A868(&m, Add_A868(*(t4Vector*)(p + 0x30), func_00160228_A868(p + 0x70, *(float*)(p + 0x44), *(float*)(p + 0x48))));
     RotAxis_A868(&m, D_004FF140_A868, *(float*)(p + 0x40) + func_001603F0(p + 0x70));
     RotAxis_A868(&m, D_004FF150_A868, -*(float*)(p + 0x48));
     RotAxis_A868(&m, D_004FF160_A868, *(float*)(p + 0x44));
@@ -1345,7 +1331,7 @@ extern "C" sPair_A868 func_0016A868(char* p)
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016AD38);
 #ifdef SKIP_ASM
 extern void* D_0045C718[];
-extern func_001694B8_sVec4 D_004FF130;
+extern t4Vector D_004FF130;
 extern "C" void* func_00169418(void* self);
 extern "C" void* func_0015FFF0(void* self);
 
@@ -1354,7 +1340,7 @@ extern "C" void* func_0016AD38(void* self)
     func_00169418(self);
     *(void***)((char*)self + 0x10) = D_0045C718;
     func_0015FFF0((char*)self + 0x70);
-    *(func_001694B8_sVec4*)((char*)self + 0x30) = D_004FF130;
+    *(t4Vector*)((char*)self + 0x30) = D_004FF130;
     *(int*)((char*)self + 0xC) = 0x59;
     *(int*)((char*)self + 0x40) = 0;
     *(int*)((char*)self + 0x44) = 0;
@@ -1822,26 +1808,22 @@ extern "C" void func_0016B180(char* p)
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", func_0016B7B8);
 #ifdef SKIP_ASM
-struct sV_B7B8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sM_B7B8 {
     float m[4][4];
 } __attribute__((aligned(16)));
 
 struct sPair_B7B8 {
-    sV_B7B8 a;
-    sV_B7B8 b;
+    t4Vector a;
+    t4Vector b;
 };
 
 extern sM_B7B8 D_004FF1A0_B7B8 __asm__("D_004FF1A0");
-extern sV_B7B8 D_004FF140_B7B8 __asm__("D_004FF140");
-extern sV_B7B8 D_004FF150_B7B8 __asm__("D_004FF150");
-extern sV_B7B8 D_004FF160_B7B8 __asm__("D_004FF160");
+extern t4Vector D_004FF140_B7B8 __asm__("D_004FF140");
+extern t4Vector D_004FF150_B7B8 __asm__("D_004FF150");
+extern t4Vector D_004FF160_B7B8 __asm__("D_004FF160");
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern "C" sPair_B7B8 func_0031B748_B7B8(sM_B7B8* m) __asm__("func_0031B748");
-extern "C" sV_B7B8 func_00160228_B7B8(char* p, float a, float b) __asm__("func_00160228");
+extern "C" t4Vector func_00160228_B7B8(char* p, float a, float b) __asm__("func_00160228");
 extern "C" float func_001603F0(void* self);
 
 // PORT: PS2-only VU0 inline asm (64-byte matrix copy).
@@ -1903,7 +1885,7 @@ static inline void vu0MulMtx_B7B8(sM_B7B8* dst, const sM_B7B8* a, const sM_B7B8*
 }
 
 // PORT: PS2-only VU0 inline asm (row 3 of m = m * v).
-static inline void vu0TransMtx_B7B8(sM_B7B8* m, const sV_B7B8& v)
+static inline void vu0TransMtx_B7B8(sM_B7B8* m, const t4Vector& v)
 {
     __asm__ __volatile__(
         ".set noreorder\n"
@@ -1924,9 +1906,9 @@ static inline void vu0TransMtx_B7B8(sM_B7B8* m, const sV_B7B8& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sV_B7B8 Add_B7B8(const sV_B7B8& a, const sV_B7B8& b)
+static inline t4Vector Add_B7B8(const t4Vector& a, const t4Vector& b)
 {
-    sV_B7B8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1943,7 +1925,7 @@ static inline void SinCos_B7B8(float* s, float* c, float angle)
     func_0031BE50(s, c, angle);
 }
 
-static inline void RotAxis_B7B8(sM_B7B8* m, const sV_B7B8& axis, float angle)
+static inline void RotAxis_B7B8(sM_B7B8* m, const t4Vector& axis, float angle)
 {
     sM_B7B8 r;
     float s;
@@ -1983,7 +1965,7 @@ extern "C" sPair_B7B8 func_0016B7B8(char* p)
 {
     sM_B7B8 m;
     vu0CopyMtx_B7B8(&m, &D_004FF1A0_B7B8);
-    vu0TransMtx_B7B8(&m, Add_B7B8(*(sV_B7B8*)(p + 0x30), func_00160228_B7B8(p + 0x70, *(float*)(p + 0x44), *(float*)(p + 0x48))));
+    vu0TransMtx_B7B8(&m, Add_B7B8(*(t4Vector*)(p + 0x30), func_00160228_B7B8(p + 0x70, *(float*)(p + 0x44), *(float*)(p + 0x48))));
     RotAxis_B7B8(&m, D_004FF140_B7B8, *(float*)(p + 0x40) + func_001603F0(p + 0x70));
     RotAxis_B7B8(&m, D_004FF150_B7B8, -*(float*)(p + 0x48));
     RotAxis_B7B8(&m, D_004FF160_B7B8, *(float*)(p + 0x44));
