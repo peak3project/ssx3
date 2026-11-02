@@ -56,6 +56,13 @@ typedef union {
 extern uLfCmd D_0052F080;
 
 
+/* fileio descriptor table: 32 entries of {IOP fd, open flags (0 = free), ...} */
+typedef struct { int f0; int f4; int f8; int fC; } sFioFile;
+extern sFioFile D_0052EC00[32];
+extern sFioFile *func_00427498(void);
+extern sFioFile *func_00427520(unsigned fd);
+
+
 /* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
 typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
 typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
@@ -2112,18 +2119,16 @@ void func_00427438(void) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427498);
 #ifdef SKIP_ASM
-struct E427498 { int f0; int f4; int f8; int fC; };
 extern int D_00455218;
-extern char D_0052EC00[];
 extern void func_00427438(void);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
 extern void func_00423DC0(int);
-struct E427498 *func_00427498(void) {
-    struct E427498 *p;
-    struct E427498 *end;
+sFioFile *func_00427498(void) {
+    sFioFile *p;
+    sFioFile *end;
     func_00427438();
     func_00423DE0_i(D_00455218);
-    p = (struct E427498 *)D_0052EC00;
+    p = D_0052EC00;
     end = p + 32;
     while (p < end) {
         if (p->f4 == 0) {
@@ -2142,19 +2147,18 @@ struct E427498 *func_00427498(void) {
 INCLUDE_ASM("seg/seg_325220", func_00427520);
 #ifdef SKIP_ASM
 extern int D_00455218;
-extern char D_0052EC00[];
 extern void func_00427438(void);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
 extern void func_00423DC0(int);
-char *func_00427520(unsigned a0) {
-    char *p;
+sFioFile *func_00427520(unsigned a0) {
+    sFioFile *p;
     func_00427438();
     func_00423DE0_i(D_00455218);
     if (a0 >= 0x20) {
         func_00423DC0(D_00455218);
         return 0;
     }
-    p = D_0052EC00 + a0 * 16;
+    p = &D_0052EC00[a0];
     func_00423DC0(D_00455218);
     return p;
 }
@@ -2332,10 +2336,8 @@ void func_00427A60(int a, int *p) {
 INCLUDE_ASM("seg/seg_325220", func_00427A90);
 #ifdef SKIP_ASM
 struct H4A90 { void (*fn)(int); int arg; };
-struct T4A90 { int f0; int f4; int f8; int fC; };
 extern struct H4A90 D_4A90_ee80 __asm__("D_0052EE80");
 extern char D_4A90_ee40[] __asm__("D_0052EE40");
-extern struct T4A90 D_4A90_ec00[] __asm__("D_0052EC00");
 extern int D_4A90_6c0[] __asm__("D_0052D6C0");
 extern char D_4A90_380[] __asm__("D_0052E380");
 extern char D_4A90_340[] __asm__("D_0052E340");
@@ -2355,7 +2357,7 @@ int func_00427A90_d(void) __asm__("func_00427A90");
 int func_00427A90_d(void) {
     int old;
     int v;
-    struct T4A90 *p;
+    sFioFile *p;
     struct H4A90 *q = &D_4A90_ee80;
     sRpcVer w;
     func_00426408_z(0);
@@ -2378,7 +2380,7 @@ int func_00427A90_d(void) {
     }
     func_00427438_z();
     func_00423DE0_z(D_00455218);
-    for (p = D_4A90_ec00; p < &D_4A90_ec00[32]; p++)
+    for (p = D_0052EC00; p < &D_0052EC00[32]; p++)
         p->f4 = 0;
     func_00423DC0_z(D_00455218);
     D_4A90_6c0[0] = (int)D_4A90_380;
@@ -2426,16 +2428,13 @@ int func_00427D28(void) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427D60);
 #ifdef SKIP_ASM
-struct E7D60 { int f0; int f4; };
 extern int D_0045520C;
 extern int D_00455218;
 extern char D_0052E340[];
-extern char D_0052EC00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
 extern int func_00427C98_z(void) __asm__("func_00427C98");
-extern struct E7D60 *func_00427498_z(void) __asm__("func_00427498");
 extern int func_00423DA0(int *p);
 extern int db0i(int) __asm__("func_00423DB0");
 extern void func_00423DC0(int);
@@ -2451,7 +2450,7 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
     char c;
     int mode;
     char *ap;
-    struct E7D60 *t;
+    sFioFile *t;
     sFioOpenCmd *p = &D_0052D700.open;
     func_00427988_b(0);
     if (D_0045520C == 0) {
@@ -2461,7 +2460,7 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
         func_004279B8();
         return 0xFFFEFFFC;
     }
-    t = func_00427498_z();
+    t = func_00427498();
     if (t == 0) {
         func_004279B8();
         return -0x13;
@@ -2481,7 +2480,7 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
     if (n == 0x400) {
         p->name[0x3FF] = 0;
     }
-    idx = ((char *)t - D_0052EC00) >> 4;
+    idx = t - D_0052EC00;
     p->fC = flags & 0x7FFFFFFF;
     p->f10 = mode;
     buf[1] = 1;
@@ -2525,8 +2524,6 @@ INCLUDE_ASM("seg/seg_325220", func_00427FE8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EC00[];
-extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2537,21 +2534,21 @@ int func_00427FE8(int a0) {
     int buf[12];
     int sem;
     int v;
-    int *t;
+    sFioFile *t;
     sFioFdCmd *p = &D_0052D700.close;
-    t = func_00427520_p(a0);
+    t = func_00427520(a0);
     func_00427988_b(1);
     if (D_0045520C == 0) {
         func_004279B8();
         return -1;
     }
-    if (t == 0 || t[1] == 0) {
+    if (t == 0 || t->f4 == 0) {
         func_004279B8();
         return -9;
     }
-    p->fC = t[0];
+    p->fC = t->f0;
     buf[1] = 1;
-    p->f10 = ((char *)t - D_0052EC00) >> 4;
+    p->f10 = t - D_0052EC00;
     buf[2] = 0;
     buf[5] = 0;
     sem = func_00423DA0(&buf[0]);
@@ -2563,7 +2560,7 @@ int func_00427FE8(int a0) {
         func_004279B8();
         return -0xB;
     }
-    t[1] = 0;
+    t->f4 = 0;
     v = *(int *)((int)D_0052E340 | 0x20000000);
     func_004279B8();
     if (v == 0) {
@@ -2588,8 +2585,6 @@ extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
-extern char D_0052EC00[];
-extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2604,26 +2599,26 @@ int func_00428168(int a0, int a1, int a2)
   int v;
   int i;
   short flags;
-  int *t;
+  sFioFile *t;
   unsigned fl;
   int *out;
   sFioLseekCmd *p = &D_0052D700.lseek;
-  t = func_00427520_p(a0);
+  t = func_00427520(a0);
   func_00427988_b(4);
   if (D_0045520C == 0)
   {
     func_004279B8();
     return -1;
   }
-  if ((t == 0) || ((fl = t[1]) == 0))
+  if ((t == 0) || ((fl = t->f4) == 0))
   {
     func_004279B8();
     return -9;
   }
-  p->fC = t[0];
+  p->fC = t->f0;
   p->f10 = a1;
   p->f14 = a2;
-  p->f18 = (((char *) t) - D_0052EC00) >> 4;
+  p->f18 = t - D_0052EC00;
   buf[1] = 1;
   buf[2] = 0;
   buf[5] = 0;
@@ -2679,8 +2674,6 @@ extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
-extern char D_0052EC00[];
-extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2694,26 +2687,26 @@ int func_004283A0(int a0, int a1, int a2)
   int v;
   int i;
   short flags;
-  int *t;
+  sFioFile *t;
   unsigned fl;
   int *out;
   sFioReadCmd *p = &D_0052D700.read;
-  t = func_00427520_p(a0);
+  t = func_00427520(a0);
   func_00427988_b(2);
   if (D_0045520C == 0)
   {
     func_004279B8();
     return -1;
   }
-  if ((t == 0) || ((fl = t[1]) == 0))
+  if ((t == 0) || ((fl = t->f4) == 0))
   {
     func_004279B8();
     return -9;
   }
-  p->fC = t[0];
+  p->fC = t->f0;
   p->f10 = a1;
   p->f14 = a2;
-  p->f1C = (((char *) t) - D_0052EC00) >> 4;
+  p->f1C = t - D_0052EC00;
   buf[1] = 1;
   buf[2] = 0;
   buf[5] = 0;
@@ -2772,8 +2765,6 @@ extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
-extern char D_0052EC00[];
-extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -2789,26 +2780,26 @@ int func_00428600(int a0, unsigned a1, int a2)
   int n;
   int j;
   short flags;
-  int *t;
+  sFioFile *t;
   unsigned fl;
   int *out;
   sFioWriteCmd *p = &D_0052D700.write;
-  t = func_00427520_p(a0);
+  t = func_00427520(a0);
   func_00427988_b(3);
   if (D_0045520C == 0)
   {
     func_004279B8();
     return -1;
   }
-  if ((t == 0) || ((fl = t[1]) == 0))
+  if ((t == 0) || ((fl = t->f4) == 0))
   {
     func_004279B8();
     return -9;
   }
-  p->fC = t[0];
+  p->fC = t->f0;
   p->f14 = a2;
   p->f10 = a1;
-  p->f2C = (((char *) t) - D_0052EC00) >> 4;
+  p->f2C = t - D_0052EC00;
   buf[1] = 1;
   buf[2] = 0;
   buf[5] = 0;
@@ -2879,7 +2870,6 @@ INCLUDE_ASM("seg/seg_325220", func_00428C38);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -2893,14 +2883,14 @@ int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a
     int buf[12];
     int sem;
     int v;
-    int *t;
+    sFioFile *t;
     sFioIoctl2Cmd *p = &D_0052D700.ioctl2;
-    t = func_00427520_p(a0);
+    t = func_00427520(a0);
     func_00427988_b(0x1A);
     if (D_0045520C == 0) {
         func_00427A90();
     }
-    if (t == 0 || t[1] == 0) {
+    if (t == 0 || t->f4 == 0) {
         func_004279B8();
         return -9;
     }
@@ -2913,7 +2903,7 @@ int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a
     } else {
         func_0041605C(p->data, data, len);
     }
-    p->fC = t[0];
+    p->fC = t->f0;
     p->f10 = a1;
     p->f41C = len;
     buf[1] = 1;
@@ -3218,26 +3208,23 @@ int func_00429540(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429560);
 #ifdef SKIP_ASM
-struct E429560 { int f0; int f4; int f8; int fC; };
 extern int D_00455218;
 extern int D_0045520C;
-extern char D_0052EC00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern void func_00427A90(void);
-extern struct E429560 *func_00427498_p(void) __asm__("func_00427498");
 extern int func_00428E18(int a0, int a1);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
 extern void func_00423DC0(int);
 int func_00429560(int a0) {
     int r;
-    struct E429560 *p;
+    sFioFile *p;
     func_00427988_b(9);
     if (D_0045520C == 0) {
         func_00427A90();
     }
     func_004279B8();
-    p = func_00427498_p();
+    p = func_00427498();
     if (p == 0) {
         return -0x13;
     }
@@ -3250,7 +3237,7 @@ int func_00429560(int a0) {
     } else {
         func_00423DE0_i(D_00455218);
         p->f0 = r;
-        r = ((char *)p - D_0052EC00) >> 4;
+        r = p - D_0052EC00;
         func_00423DC0(D_00455218);
         return r;
     }
@@ -3260,11 +3247,8 @@ int func_00429560(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00429628);
 #ifdef SKIP_ASM
-struct E9628 { int f0; int f4; };
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EC00[];
-extern struct E9628 *func_00427520_r(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -3274,9 +3258,9 @@ int func_00429628(int a0) {
     int buf[12];
     int sem;
     int v;
-    struct E9628 *e;
+    sFioFile *e;
     sFioFdCmd *p = &D_0052D700.dclose;
-    e = func_00427520_r(a0);
+    e = func_00427520(a0);
     func_00427988_b(0xA);
     if (D_0045520C == 0) {
         func_004279B8();
@@ -3322,7 +3306,6 @@ INCLUDE_ASM("seg/seg_325220", func_00429790);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -3333,19 +3316,19 @@ int func_00429790_d(int a0, int a1) {
     int buf[12];
     int sem;
     int v;
-    int *t;
+    sFioFile *t;
     sFioFdCmd *p = &D_0052D700.dread;
-    t = func_00427520_p(a0);
+    t = func_00427520(a0);
     func_00427988_b(0xB);
     if (D_0045520C == 0) {
         func_004279B8();
         return -1;
     }
-    if (t == 0 || t[1] == 0) {
+    if (t == 0 || t->f4 == 0) {
         func_004279B8();
         return -9;
     }
-    p->fC = t[0];
+    p->fC = t->f0;
     p->f10 = a1;
     buf[1] = 1;
     buf[2] = 0;
@@ -3731,8 +3714,6 @@ extern int D_0045520C;
 extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
-extern char D_0052EC00[];
-extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
@@ -3747,25 +3728,25 @@ long func_0042A300(int a0, long a1, int a2)
   int v;
   int i;
   short flags;
-  int *t;
+  sFioFile *t;
   unsigned fl;
   sFioLseek64Cmd *p = &D_0052D700.lseek64;
-  t = func_00427520_p(a0);
+  t = func_00427520(a0);
   func_00427988_b(0x16);
   if (D_0045520C == 0)
   {
     func_004279B8();
     return -1;
   }
-  if ((t == 0) || ((fl = t[1]) == 0))
+  if ((t == 0) || ((fl = t->f4) == 0))
   {
     func_004279B8();
     return -9;
   }
-  p->fC = t[0];
+  p->fC = t->f0;
   p->f10 = a1;
   p->f18 = a2;
-  p->f1C = (((char *) t) - D_0052EC00) >> 4;
+  p->f1C = t - D_0052EC00;
   buf[1] = 1;
   buf[2] = 0;
   buf[5] = 0;
