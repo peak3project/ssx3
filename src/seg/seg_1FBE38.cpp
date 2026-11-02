@@ -4625,13 +4625,12 @@ static inline char *look_3130(unsigned id) {
 }
 
 int *func_00226610(void*);
-struct V3_3130 { int w0, w1, w2; };
 extern unsigned D_3130[] __asm__("D_004FBC50");
 extern int D_004A57B4;
 extern int D_004A3D18;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_3130 { int idx; int val; int pad; int type; };
-extern "C" V3_3130* func_00303130(V3_3130 *ret, int n, Ent_3130 *e) {
+extern "C" cLunoValue* func_00303130(cLunoValue *ret, int n, Ent_3130 *e) {
     if (D_004A57B4 == 0) {
         D_3130[0] = 0xFFFFFFFF;
         D_3130[1] = 1;
@@ -4654,10 +4653,10 @@ extern "C" V3_3130* func_00303130(V3_3130 *ret, int n, Ent_3130 *e) {
     }
     char *obj = look_3130(buf[0]);
     if (obj && *(int*)(obj + 0xC)) {
-        ((int*)ret)[2] = 1;
+        ret->type = 1;
         *func_00226610(ret) = 1;
     } else {
-        ((int*)ret)[2] = 1;
+        ret->type = 1;
         *func_00226610(ret) = 0;
     }
     return ret;
