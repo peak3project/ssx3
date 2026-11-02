@@ -343,6 +343,10 @@ class cAiObj;
 typedef void (cAiObj::*tAiState)();
 extern "C" tAiState D_0043CF20[4];
 
+// Constant vectors (in .bss, set up at startup; ai/ai's names): D_004FF130 origin (w = 1), D_004FF160 the z axis.
+extern t4Vector D_004FF130;
+extern t4Vector D_004FF160;
+
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
 //100%
@@ -365,7 +369,6 @@ extern "C" float func_00100250(void* self, const t4Vector* v)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00100348);
 #ifdef SKIP_ASM
-extern t4Vector D_004FF160_v0348 __asm__("D_004FF160");
 extern "C" float func_0031C228(float);
 
 // PORT: PS2-only VU0 inline asm (cross product, w = 0).
@@ -411,7 +414,7 @@ extern "C" float func_00100348_0348(char* self, t4Vector* target)
 {
     t4Vector up = *(t4Vector*)(*(char**)(self + 0x18) + 0x1C0);
     if (up.z <= 0.0f)
-        up = D_004FF160_v0348;
+        up = D_004FF160;
     t4Vector fwd = *Obj_0348(self)->getVelocity();
     t4Vector side = Cross_0348(fwd, up);
     t4Vector d = SubM(*target, *Obj_0348(self)->getPosition());
@@ -2673,7 +2676,6 @@ extern "C" void func_0010E098(cRider* self, int a, float f);
 extern "C" void func_00115358(cRider* self);
 extern "C" void func_001326C8(void*, int);
 extern "C" void func_0013ADC0(void* p, t4Vector* n);
-extern t4Vector D_004FF130_6848 __asm__("D_004FF130");
 
 struct sLand_6848 {
     char pad0[0x10];
@@ -2687,7 +2689,6 @@ struct sLand_6848 {
 // The unit defines this later with its own vector type; bind it by asm label.
 extern "C" int func_00108A48_6848(cRider* self, sLand_6848* land) __asm__("func_00108A48");
 
-extern sVec4 D_004FF160_6848 __asm__("D_004FF160");
 
 struct sQuat_6848 {
     float x, y, z, w;
@@ -2753,7 +2754,7 @@ static inline sVec4 Up_6848(const sAnimModelBone* b)
                    0.0f);
 }
 
-static inline sQuat_6848 AxisAngle_6848(const sVec4& axis, float angle)
+static inline sQuat_6848 AxisAngle_6848(const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -2854,15 +2855,15 @@ extern "C" int func_00106848(cRider* self)
             cRiderAnimBase_changeHeadingOffset(self->mRiderAnim, 1.5707963705062866f);
             float yaw = 0.0f;
             char* ra = (char*)self->mRiderAnim;
-            *(t4Vector*)(ra + 0x30) = D_004FF130_6848;
-            *(sQuat_6848*)(ra + 0x40) = AxisAngle_6848(D_004FF160_6848, -yaw);
+            *(t4Vector*)(ra + 0x30) = D_004FF130;
+            *(sQuat_6848*)(ra + 0x40) = AxisAngle_6848(D_004FF160, -yaw);
         } else if (prev == 4) {
             func_0011DFE0(self, GetUp_6848(self), -1.5707963705062866f);
             cRiderAnimBase_changeHeadingOffset(self->mRiderAnim, -1.5707963705062866f);
             float yaw = 0.0f;
             char* ra = (char*)self->mRiderAnim;
-            *(t4Vector*)(ra + 0x30) = D_004FF130_6848;
-            *(sQuat_6848*)(ra + 0x40) = AxisAngle_6848(D_004FF160_6848, -yaw);
+            *(t4Vector*)(ra + 0x30) = D_004FF130;
+            *(sQuat_6848*)(ra + 0x40) = AxisAngle_6848(D_004FF160, -yaw);
         }
         func_00115358(self);
     }
@@ -3326,10 +3327,6 @@ __asm__(".globl func_00108C80\n.type func_00108C80,@function\nfunc_00108C80 = __
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00108E88);
 #ifdef SKIP_ASM
-struct sQ_8E88 {
-    int v[4];
-} __attribute__((aligned(16)));
-extern sQ_8E88 D_004FF130_8E88 __asm__("D_004FF130");
 extern "C" void func_0010CAB8(void* self);
 extern "C" void func_0010D170(void* self);
 extern "C" void* func_003E6448(void* dst, int value, int size);
@@ -3360,8 +3357,8 @@ void func_00108E88_self(char* self)
     *(short*)(self + 0xF38) = 0;
     *(int*)(self + 0xF30) = 0;
     *(int*)(self + 0xF34) = 0;
-    *(sQ_8E88*)(self + 0xE50) = D_004FF130_8E88;
-    *(sQ_8E88*)(self + 0xE60) = D_004FF130_8E88;
+    *(t4Vector*)(self + 0xE50) = D_004FF130;
+    *(t4Vector*)(self + 0xE60) = D_004FF130;
     *(int*)(self + 0xE40) = 0;
     func_0010CAB8(self);
     *(int*)(self + 0xE70) = -1;
