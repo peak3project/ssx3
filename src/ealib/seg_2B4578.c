@@ -4086,22 +4086,20 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BC6B8);
 extern int f_A6E8_C6B8() __asm__("func_003BA6E8");
 extern void f_A938_C6B8(int) __asm__("func_003BA938");
 extern int func_003C25E0(int);
-struct G_C6B8 { char pad[0x1F0]; char *tab; };
-extern struct G_C6B8 D_0050A8E8_C6B8[] __asm__("D_0050A8E8");
 
 int func_003BC6B8(int arg0, int arg1) {
     int sp0;
     int r = f_A6E8_C6B8();
-    char *e;
+    struct sA8E8Chan *e;
     if (r >= 0) {
         sp0 = -1;
         while (func_003BAA00(r, &sp0) != 0) {
-            e = D_0050A8E8_C6B8[0].tab + sp0 * 0x8C;
-            if (*(char *)(e + 0x64) == arg1)
+            e = &D_0050A8E8.f1F0[sp0];
+            if (e->f64 == arg1)
                 return 0;
-            if (*(short *)(e + 0x82) != 0) {
-                *(short *)(e + 0x86) = 0;
-                *(char *)(e + 0x64) = arg1;
+            if (e->f82 != 0) {
+                e->f86 = 0;
+                e->f64 = arg1;
                 f_A938_C6B8(sp0);
                 func_003C25E0(sp0);
             } else
