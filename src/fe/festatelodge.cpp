@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatelodge", cFEStateLodge_onCreateScreen);
 #ifdef SKIP_ASM
@@ -56,7 +64,6 @@ extern char D_0046EE60[];
 extern char D_0046EE78[];
 extern char D_0046EE90[];
 
-struct sWVt_3840 { short delta; short index; void (*fn)(void*, int); };
 
 extern "C" void cFEStateLodge_onWidgetCreate(void* self, void* w)
 {
@@ -79,9 +86,9 @@ extern "C" void cFEStateLodge_onWidgetCreate(void* self, void* w)
         *(int*)((char*)w + 0x18) = 6;
     } else if (h == GetHashValue32(D_0046EE40)) {
         *(int*)((char*)w + 0x18) = 7;
-        sWVt_3840* vt = *(sWVt_3840**)((char*)w + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)w + 8);
         vt[8].fn((char*)w + vt[8].delta, 1);
-        vt = *(sWVt_3840**)((char*)w + 8);
+        vt = *(sVEntry<void(void*, int)>**)((char*)w + 8);
         vt[9].fn((char*)w + vt[9].delta, 0);
     } else if (h == GetHashValue32(D_0046EE50)) {
         int lvl = func_00146D98(cBE_getInterface_Fv(cBE_getBE(), 1), 0);
@@ -121,17 +128,7 @@ extern char D_0046EED0[];
 extern char D_0046EEF0[];
 extern char D_0046E050[];
 
-struct sVE_1F3A38s {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
-struct sVE_1F3A38p {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 extern "C" void func_001F3A38(char* self, char* w, int event)
 {
@@ -147,7 +144,7 @@ extern "C" void func_001F3A38(char* self, char* w, int event)
     cBE_getInterface_Fv(cBE_getBE(), 4);
     if (*(int*)(w + 0x18) == 0 && *(int*)(self + 0x4C) == 0) {
         char* mgr = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVE_1F3A38s* vt = *(sVE_1F3A38s**)(mgr + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(mgr + 4);
         unsigned short* text = vt[4].fn(mgr + vt[4].delta, GetHashValue32(D_0046EEA8));
         void* p = cMemMan_alloc(0xBFC, D_0046EEC0, 0x100, 0);
         void* o = func_001D99C8(p, *(void**)(self + 0x10), self, text, 0, 0, 0, 0, 0);
@@ -158,7 +155,7 @@ extern "C" void func_001F3A38(char* self, char* w, int event)
     int k = *(int*)(w + 0x18);
     if (k == 6 && *(int*)(self + 0x4C) == 0) {
         char* mgr = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVE_1F3A38s* vt = *(sVE_1F3A38s**)(mgr + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(mgr + 4);
         unsigned short* text = vt[4].fn(mgr + vt[4].delta, GetHashValue32(D_0046EED0));
         void* p = cMemMan_alloc(0xBFC, D_0046EEC0, 0x100, 0);
         void* o = func_001D99C8(p, *(void**)(self + 0x10), self, text, 0, 0, 0, 0, 0);
@@ -175,7 +172,7 @@ extern "C" void func_001F3A38(char* self, char* w, int event)
     }
     cUIScreen_playFrame(*(void**)(self + 0x40), cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_0046E050)), 1);
     char* obj = **(char***)(self + 0x10);
-    sVE_1F3A38p* vt = *(sVE_1F3A38p**)(obj + 4);
+    sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(obj + 4);
     void* r = vt[4].fn(obj + vt[4].delta, self, *(int*)(w + 0x18));
     if (r != 0) {
         func_0039F400(*(char**)(self + 0x10) + 0x18, r);
@@ -221,23 +218,8 @@ extern char D_0046EEC0[];
 extern char D_0046EEF0[];
 extern char D_0046EF08[];
 
-struct sVE_1F3CF0s {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
-struct sVE_1F3CF0p {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
-struct sVE_1F3CF0o {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_001F3CF0(char* self, char* msg, unsigned int id)
 {
@@ -254,7 +236,7 @@ extern "C" void func_001F3CF0(char* self, char* msg, unsigned int id)
         switch (*(int*)(self + 0x50)) {
         case 0x10: {
             *(int*)(self + 0x4C) = 1;
-            sVE_1F3CF0o* vt = *(sVE_1F3CF0o**)(self + 8);
+            sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)(self + 8);
             vt[19].fn(self + vt[19].delta, cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0046EDC0)), 5);
             break;
         }
@@ -262,7 +244,7 @@ extern "C" void func_001F3CF0(char* self, char* msg, unsigned int id)
             *(int*)(self + 0x4C) = 1;
             cUIScreen_playFrame(*(void**)(self + 0x40), cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_0046E050)), 1);
             char* obj = **(char***)(self + 0x10);
-            sVE_1F3CF0p* vt = *(sVE_1F3CF0p**)(obj + 4);
+            sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(obj + 4);
             void* r = vt[4].fn(obj + vt[4].delta, self, 6);
             if (r != 0) {
                 func_0039F4C0(*(char**)(self + 0x10) + 0x18, r);
@@ -299,7 +281,7 @@ extern "C" void func_001F3CF0(char* self, char* msg, unsigned int id)
         }
         case 6: {
             char* mgr = *(char**)((char*)D_004A28A8 + 0x8C);
-            sVE_1F3CF0s* vt = *(sVE_1F3CF0s**)(mgr + 4);
+            sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(mgr + 4);
             unsigned short* text = vt[4].fn(mgr + vt[4].delta, GetHashValue32(D_0046EF08));
             void* p = cMemMan_alloc(0xBFC, D_0046EEC0, 0x100, 0);
             void* o = func_001D99C8(p, *(void**)(self + 0x10), self, text, 0, 0, 0, 0, 0);
@@ -372,11 +354,6 @@ extern "C" void func_001474A8(void* self, int a1, int a2);
 extern "C" int strlen(const char* s);
 extern char D_0046EF40[];
 
-struct sVEntryK1F4108 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 static inline int IsK1F4108(int id, char* s)
 {
@@ -385,7 +362,7 @@ static inline int IsK1F4108(int id, char* s)
 
 static inline void commitK1F4108(void* np)
 {
-    sVEntryK1F4108* vt = *(sVEntryK1F4108**)((char*)np + 0xC);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)np + 0xC);
     vt[1].fn((char*)np + vt[1].delta);
 }
 
@@ -522,11 +499,6 @@ extern char D_0046EFD0[];
 extern char D_0046EFE0[];
 extern char D_0046E050[];
 
-struct sVE_1F4400 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 extern "C" void func_001F4400(char* self, char* w, int event)
 {
@@ -573,7 +545,7 @@ extern "C" void func_001F4400(char* self, char* w, int event)
         }
         cUIScreen_playFrame(*(void**)(self + 0x40), cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_0046E050)), 1);
         char* obj = **(char***)(self + 0x10);
-        sVE_1F4400* vt = *(sVE_1F4400**)(obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(obj + 4);
         void* r = vt[4].fn(obj + vt[4].delta, self, *(int*)(w + 0x18));
         if (r != 0) {
             func_0039F400(*(char**)(self + 0x10) + 0x18, r);
@@ -582,7 +554,7 @@ extern "C" void func_001F4400(char* self, char* w, int event)
     }
     case 6: {
         char* obj = **(char***)(self + 0x10);
-        sVE_1F4400* vt = *(sVE_1F4400**)(obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(obj + 4);
         void* r = vt[5].fn(obj + vt[5].delta, self, 0);
         if (r != 0) {
             func_0039F400(*(char**)(self + 0x10) + 0x18, r);
