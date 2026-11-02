@@ -2495,26 +2495,23 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B8790);
 extern int func_003BA6E8_8790(void) __asm__("func_003BA6E8");
 extern void func_003BA938_8790(int, int) __asm__("func_003BA938");
 extern int func_003C25E0(int);
-extern char D_0050A8E8_8790[] __asm__("D_0050A8E8");
 int func_003B8790(int a0, int arg1);
 
 int func_003B8790(int a0, int arg1) {
     int sp0;
     int h;
-    char *e;
-    char *g;
+    struct sA8E8Chan *e;
     int i;
     h = func_003BA6E8_8790();
     if (h >= 0) {
         sp0 = -1;
-        g = D_0050A8E8_8790;
         while (func_003BAA00(h, &sp0) != 0) {
             i = sp0;
-            e = *(char **)(g + 0x1F0) + i * 0x8C;
-            if (*(unsigned short *)(e + 0x88) == arg1) {
+            e = &D_0050A8E8.f1F0[i];
+            if (e->f88 == arg1) {
                 return 0;
             }
-            *(unsigned short *)(e + 0x88) = arg1;
+            e->f88 = arg1;
             func_003BA938_8790(i, i);
             func_003C25E0(sp0);
         }
