@@ -1520,14 +1520,6 @@ void func_003DDF80(char *dst) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", iFILESYS_ExecCommand);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Hd_FX { int f0; int f4; int f8; int fC; char name[1]; };
-struct Cmd_FX { unsigned int w0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; struct Hd_FX *f24; int f28; struct Cmd_FX *next; };
-struct Arc_FX { int f0; int pad[2]; char *fC; int pad2; struct Arc_FX *next; };
-struct G_FX { int pad0[2]; int limit; int count; int busy; char pad14[0x24 - 0x14]; struct Cmd_FX *cur; char pad28[8]; struct Cmd_FX *head; struct Arc_FX *arc; };
-extern struct G_FX D_00519AB0_FX __asm__("D_00519AB0");
-struct Q_FX { char pad[0x1C]; struct Cmd_FX *head; };
-extern struct Q_FX D_00519AC4_FX __asm__("D_00519AC4");
 extern void MUTEX_lock_FX(void *) __asm__("MUTEX_lock");
 extern void MUTEX_unlock_FX(void *) __asm__("MUTEX_unlock");
 extern char *strchr_FX(char *, int) __asm__("strchr");
@@ -1542,136 +1534,136 @@ extern int BIG_locateentryz_FX(int, char *, int, int *, int *) __asm__("BIG_loca
 extern void func_003DE8C0_FX(void *) __asm__("func_003DE8C0");
 extern void iFILESYS_CommandCompleteCallback_FX(int) __asm__("iFILESYS_CommandCompleteCallback");
 
-void iFILESYS_ExecCommand_impl(struct Cmd_FX *c) __asm__("iFILESYS_ExecCommand");
-void iFILESYS_ExecCommand_impl(struct Cmd_FX *c) {
+void iFILESYS_ExecCommand_impl(struct sFsCmd *c) __asm__("iFILESYS_ExecCommand");
+void iFILESYS_ExecCommand_impl(struct sFsCmd *c) {
     char path[256];
     char file[256];
     int off;
     int x;
-    struct Arc_FX *n;
-    struct Hd_FX *hd;
+    struct sFsNode *n;
+    struct sFsHd *hd;
     int mode;
     int found;
-    MUTEX_lock_FX(&D_00519AC4_FX);
+    MUTEX_lock_FX(D_00519AC4.f00);
     if (c != 0) {
-        struct Cmd_FX *prev = 0;
-        c->next = D_00519AC4_FX.head;
-        while (c->next != 0 && !(c->f10 < c->next->f10)) {
-            prev = c->next;
-            c->next = prev->next;
+        struct sFsCmd *prev = 0;
+        c->f2C = D_00519AC4.f1C;
+        while (c->f2C != 0 && !(c->f10 < c->f2C->f10)) {
+            prev = c->f2C;
+            c->f2C = prev->f2C;
         }
         if (prev != 0) {
-            prev->next = c;
+            prev->f2C = c;
         } else {
-            D_00519AB0_FX.head = c;
+            D_00519AB0.f30 = c;
         }
-        D_00519AB0_FX.count++;
+        D_00519AB0.f0C++;
     }
-    if (D_00519AB0_FX.cur != 0 || D_00519AB0_FX.busy != 0) {
-        MUTEX_unlock_FX((char *)&D_00519AB0_FX + 0x14);
+    if (D_00519AB0.f24 != 0 || D_00519AB0.f10 != 0) {
+        MUTEX_unlock_FX(D_00519AB0.f14);
         return;
     }
-    c = D_00519AB0_FX.head;
-    if (c != 0 && c->f10 <= D_00519AB0_FX.limit) {
-        D_00519AB0_FX.head = c->next;
-        D_00519AB0_FX.count--;
+    c = D_00519AB0.f30;
+    if (c != 0 && c->f10 <= D_00519AB0.f08) {
+        D_00519AB0.f30 = c->f2C;
+        D_00519AB0.f0C--;
     } else {
         c = 0;
     }
-    D_00519AB0_FX.cur = c;
-    MUTEX_unlock_FX((char *)&D_00519AB0_FX + 0x14);
+    D_00519AB0.f24 = c;
+    MUTEX_unlock_FX(D_00519AB0.f14);
     if (c == 0) return;
-    if (c->f4 != 0) {
+    if (c->f04 != 0) {
         iFILESYS_CommandCompleteCallback_FX(0);
         return;
     }
-    switch ((c->w0 >> 20) & 0xF) {
+    switch ((c->f00.w >> 20) & 0xF) {
     case 2:
     case 8:
         file[0] = 0;
-        if (strchr_FX(c->f24->name, '|')) {
-            if (*c->f24->name == '|') {
+        if (strchr_FX(c->f24->f10, '|')) {
+            if (*c->f24->f10 == '|') {
                 mode = 2;
             } else {
                 int len;
-                char *bar = strchr_FX(c->f24->name, '|');
+                char *bar = strchr_FX(c->f24->f10, '|');
                 mode = 4;
-                len = bar - c->f24->name;
+                len = bar - c->f24->f10;
                 path[0] = 0;
-                strncpy(path, c->f24->name, len);
+                strncpy(path, c->f24->f10, len);
                 path[len] = 0;
             }
-            strcpy(file, strchr_FX(c->f24->name, '|') + 1);
+            strcpy(file, strchr_FX(c->f24->f10, '|') + 1);
         } else {
             mode = 1;
             if (c->f18 & 1) {
                 mode = 3;
-                strcpy(file, c->f24->name);
+                strcpy(file, c->f24->f10);
             }
         }
         found = 0;
-        if ((mode & 1) && func_003E3208_FX(c->f24->name, c->f18, c->f24)) {
+        if ((mode & 1) && func_003E3208_FX(c->f24->f10, c->f18, c->f24)) {
             found = 1;
-            if (((c->w0 >> 20) & 0xF) == 8) {
-                func_003E32F8_FX(c->f24->f0);
+            if (((c->f00.w >> 20) & 0xF) == 8) {
+                func_003E32F8_FX(c->f24->f00);
             } else {
-                c->f24->f4 = func_003E34E8_FX(c->f24->f0);
-                c->f24->fC = func_003E3538_FX(c->f24->f0);
+                c->f24->f04 = func_003E34E8_FX(c->f24->f00);
+                c->f24->f0C = func_003E3538_FX(c->f24->f00);
             }
         }
         if (!found && (mode & 6)) {
-            for (n = D_00519AB0_FX.arc; n != 0 && !found; n = n->next) {
-                if ((mode & 4) && func_004165A8_FX(n->fC + 0x10, path)) continue;
-                if (BIG_locateentryz_FX(n->f0, file, 0, &x, &off)) {
+            for (n = D_00519AB0.f34; n != 0 && !found; n = n->f14) {
+                if ((mode & 4) && func_004165A8_FX(n->f0C->f10, path)) continue;
+                if (BIG_locateentryz_FX(n->f00, file, 0, &x, &off)) {
                     found = 1;
-                    c->f24->f0 = (int)n;
-                    c->f24->f4 = off;
-                    c->f24->f8 = x;
+                    c->f24->f00 = (int)n;
+                    c->f24->f04 = off;
+                    c->f24->f08 = x;
                 }
             }
         }
-        if (((c->w0 >> 20) & 0xF) == 8) {
+        if (((c->f00.w >> 20) & 0xF) == 8) {
             func_003DE8C0_FX(c->f24);
             c->f18 = found;
         }
         iFILESYS_CommandCompleteCallback_FX(found);
         break;
     case 3:
-        c->fC = 1;
+        c->f0C = 1;
         hd = c->f24;
         if (hd != 0) {
-            if (hd->f8 == 0) {
-                c->fC = func_003E32F8_FX(hd->f0);
+            if (hd->f08 == 0) {
+                c->f0C = func_003E32F8_FX(hd->f00);
             } else {
-                c->fC = 0;
+                c->f0C = 0;
             }
             func_003DE8C0_FX(c->f24);
             c->f24 = 0;
         }
-        iFILESYS_CommandCompleteCallback_FX(c->fC == 0);
+        iFILESYS_CommandCompleteCallback_FX(c->f0C == 0);
         break;
     case 4:
         if (c->f1C > 0) {
-            if (c->f24->f8 != 0) {
-                func_003E3350_FX(*(int *)(((struct Arc_FX *)c->f24->f0)->fC), c->f20, c->f24->f8 + c->f18, c->f1C);
+            if (c->f24->f08 != 0) {
+                func_003E3350_FX(((struct sFsNode *)c->f24->f00)->f0C->f00, c->f20, c->f24->f08 + c->f18, c->f1C);
             } else {
-                func_003E3350_FX(c->f24->f0, c->f20, c->f18, c->f1C);
+                func_003E3350_FX(c->f24->f00, c->f20, c->f18, c->f1C);
             }
         } else {
             iFILESYS_CommandCompleteCallback_FX(1);
         }
         break;
     case 5:
-        func_003E3478_FX(c->f24->f0, c->f20, c->f18, c->f1C);
+        func_003E3478_FX(c->f24->f00, c->f20, c->f18, c->f1C);
         break;
     case 6:
-        c->f18 = c->f24->f4;
+        c->f18 = c->f24->f04;
         iFILESYS_CommandCompleteCallback_FX(1);
         break;
     case 7:
     case 9:
     case 10:
-        iFILESYS_CommandCompleteCallback_FX(c->fC == 0);
+        iFILESYS_CommandCompleteCallback_FX(c->f0C == 0);
         break;
     }
 }
