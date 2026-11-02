@@ -2239,41 +2239,32 @@ int func_003B70F8(struct sA0A0Strm *self) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B71D8);
 #ifdef SKIP_ASM
-typedef struct { char b[4]; } W4_71D8;
-struct P_71D8 { int f0; int p4; volatile int f8; int pC; volatile signed char b10; char pad11[3]; W4_71D8 f14; W4_71D8 f18; char pad1C[0x9C - 0x1C]; int f9C; char padA0[0x124 - 0xA0]; int f124; };
-
-extern struct P_71D8 *D_0050A0A0_71D8[] __asm__("D_0050A0A0");
-extern void func_003B58A0_71D8(void) __asm__("func_003B58A0");
-extern void func_003B58D8_71D8(void) __asm__("func_003B58D8");
-extern int func_003C6C98_71D8(int) __asm__("func_003C6C98");
-extern void func_003C6CE8_71D8(int) __asm__("func_003C6CE8");
-extern void func_003B68B8_71D8(void *) __asm__("func_003B68B8");
-extern int func_003B70F8_71D8(void *) __asm__("func_003B70F8");
-extern int func_003C6C28_71D8(int) __asm__("func_003C6C28");
-extern int func_003E12E0_71D8(int) __asm__("func_003E12E0");
-extern int func_003B7080_71D8(int, int) __asm__("func_003B7080");
+extern int func_003C6C98(int);
+extern int func_003C6CE8(int);
+extern int func_003C6C28(int);
+extern int *func_003E12E0(int);
 
 void func_003B71D8(void) {
     int i = 0;
-    struct P_71D8 *p;
+    struct sA0A0Strm *p;
     int n;
     int r;
-    int q;
-    func_003B58A0_71D8();
+    int *q;
+    func_003B58A0();
     for (; i < D_0050A8E8.setup.cfg.f26; i++) {
-        p = D_0050A0A0_71D8[i];
-        if (p == 0 || p->f124 == 0) continue;
-        if (p->b10 == 2) {
-            if (func_003C6C98_71D8(p->f8) > 0) continue;
+        p = D_0050A0A0[i];
+        if (p == 0 || p->f11C.f08 == 0) continue;
+        if (p->f10 == 2) {
+            if (func_003C6C98(p->f08) > 0) continue;
             p->f14 = p->f18;
-            __builtin_memcpy((char *)p + 0x1C, (char *)p + 0x84, 0x68);
-            p->f9C = 0;
-            func_003C6CE8_71D8(p->f8);
-            func_003B68B8_71D8(p);
+            __builtin_memcpy(&p->f1C, &p->f84, sizeof(p->f1C));
+            p->f84.f18[0] = 0;
+            func_003C6CE8(p->f08);
+            func_003B68B8(p);
         }
-        if (func_003B70F8_71D8(p) == 0) {
-            if (p->b10 == 1) {
-                n = func_003C6C28_71D8(p->f8);
+        if (func_003B70F8(p) == 0) {
+            if (p->f10 == 1) {
+                n = func_003C6C28(p->f08);
                 if (n <= 0) continue;
             } else {
                 n = 8;
@@ -2281,12 +2272,12 @@ void func_003B71D8(void) {
             r = 0;
             do {
                 n--;
-                q = func_003E12E0_71D8(p->f0);
-                if (q != 0) r = func_003B7080_71D8(i, q);
+                q = func_003E12E0(p->f00);
+                if (q != 0) r = func_003B7080(i, q);
             } while (r != 0 && n > 0);
         }
     }
-    func_003B58D8_71D8();
+    func_003B58D8();
 }
 #endif
 
