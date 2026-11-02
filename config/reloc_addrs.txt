@@ -107,3 +107,15 @@ rom:0xEF4DC reloc:MIPS_HI16 symbol:D_004C8768
 rom:0xEF4F4 reloc:MIPS_LO16 symbol:D_004C8768
 rom:0xEF6FC reloc:MIPS_HI16 symbol:D_004C8768
 rom:0xEF714 reloc:MIPS_LO16 symbol:D_004C8768
+// be/bedbreward func_0015B028: five raw `lui $r, (0x4A0000 >> 16)` / `addiu|swc1 0x66xx($r)` pairs to the reward tables
+// in .sdata (the function's other references to the same tables are relocated).
+rom:0x5C23C reloc:MIPS_HI16 symbol:D_004A6650
+rom:0x5C25C reloc:MIPS_LO16 symbol:D_004A6650
+rom:0x5C420 reloc:MIPS_HI16 symbol:D_004A6580
+rom:0x5C474 reloc:MIPS_LO16 symbol:D_004A6580
+rom:0x5C530 reloc:MIPS_HI16 symbol:D_004A6620
+rom:0x5C55C reloc:MIPS_LO16 symbol:D_004A6620
+rom:0x5C684 reloc:MIPS_HI16 symbol:D_004A6680
+rom:0x5C6A8 reloc:MIPS_LO16 symbol:D_004A6680
+rom:0x5C798 reloc:MIPS_HI16 symbol:D_004A6720
+rom:0x5C7FC reloc:MIPS_LO16 symbol:D_004A6720
