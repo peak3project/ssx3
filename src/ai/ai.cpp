@@ -5669,12 +5669,6 @@ extern "C" int func_00130DD0(void* self, void* in)
 //100%
 INCLUDE_ASM("ai/ai", func_00131200);
 #ifdef SKIP_ASM
-struct sAiStick_131200
-{
-    int pad0;
-    int x : 6;
-    int y : 6;
-};
 
 // PORT: PS2-only inline asm (float absolute value), as an SDK math-header fabsf would.
 static inline float aiAbs_131200(float x)
@@ -5686,8 +5680,8 @@ static inline float aiAbs_131200(float x)
 
 extern "C" int func_00131200(void* self, void* a1)
 {
-    float x = ((sAiStick_131200*)a1)->x * 0.032258063554763794f;
-    float y = ((sAiStick_131200*)a1)->y * 0.032258063554763794f;
+    float x = ((sPadIn*)a1)->x * 0.032258063554763794f;
+    float y = ((sPadIn*)a1)->y * 0.032258063554763794f;
     if (x == 0.0f && aiAbs_131200(y) < 0.5f)
     {
         *(float*)((char*)self + 0xC) += *(float*)(*(char**)((char*)self + 0x14) + 0x300) * 0.01666666753590107f;
