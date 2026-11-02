@@ -1,5 +1,20 @@
 #include "common.h"
 
+// ---- Shared declarations: one type per real thing, used by the functions below ----
+
+// A render-state record of cPS2GraphicsMan's state stack (top at 0xE84; D_00501420 holds the default). f4 bits
+// 2..6 = layer, f8 bits 5..9 = blend, bits 0..4 = key.
+struct sPtRenderState {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short pad;
+};
+
+// ---- end of shared declarations ----
+
 //100%
 INCLUDE_ASM("render/particle", cBaseClass_DynamicEmitter_Allocate);
 #ifdef SKIP_ASM
@@ -350,14 +365,6 @@ extern "C" void func_00371318(void* self, cStream00371318* stream)
 INCLUDE_ASM("render/particle", func_00371380);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPtRS1380 {
-    int field_0x0;          // 0x1E4
-    int flagsA;             // 0x1E8, bits 2..6 = layer
-    int flagsB;             // 0x1EC, bits 5..9 = blend
-    int field_0xC;          // 0x1F0
-    short tex;              // 0x1F4
-    short pad;
-};
 
 struct sPtVEntry1380 {
     short delta;
@@ -367,7 +374,7 @@ struct sPtVEntry1380 {
 
 struct sPtCtx1380 {
     char pad_0x0[0xE84];
-    sPtRS1380* top;             // 0xE84
+    sPtRenderState* top;             // 0xE84
     char pad_0xE88[0xF50 - 0xE88];
     int texIds[(0x10D8 - 0xF50) / 4];   // 0xF50
     sPtVEntry1380* vtable;      // 0x10D8
@@ -387,7 +394,7 @@ struct sPtObj1380 {
     int field_0x174;        // 0x174
     char pad_0x178[0x68];
     int field_0x1E0;        // 0x1E0
-    sPtRS1380 rs;           // 0x1E4
+    sPtRenderState rs;           // 0x1E4
 };
 
 extern "C" void func_00371380(sPtObj1380* self, int blend)
@@ -403,8 +410,8 @@ extern "C" void func_00371380(sPtObj1380* self, int blend)
     if (tex < 0) {
         return;
     }
-    self->rs.flagsA = (self->rs.flagsA & ~0x7C) | ((D_0044B420[self->kind] << 2) & 0x7C);
-    self->rs.flagsB = (self->rs.flagsB & ~0x3E0) | ((blend << 5) & 0x3E0);
+    self->rs.f4 = (self->rs.f4 & ~0x7C) | ((D_0044B420[self->kind] << 2) & 0x7C);
+    self->rs.f8 = (self->rs.f8 & ~0x3E0) | ((blend << 5) & 0x3E0);
     self->rs.tex = tex;
     ctx->top[1] = ctx->top[0];
     ctx->top++;
@@ -518,14 +525,6 @@ extern "C" void cDynamicColourEmitter_reset(void* self)
 INCLUDE_ASM("render/particle", func_00371688);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPtRS1688 {
-    int field_0x0;          // 0x1E4
-    int flagsA;             // 0x1E8, bits 2..6 = layer
-    int flagsB;             // 0x1EC, bits 5..9 = blend
-    int field_0xC;          // 0x1F0
-    short tex;              // 0x1F4
-    short pad;
-};
 
 struct sPtVEntry1688 {
     short delta;
@@ -535,7 +534,7 @@ struct sPtVEntry1688 {
 
 struct sPtCtx1688 {
     char pad_0x0[0xE84];
-    sPtRS1688* top;             // 0xE84
+    sPtRenderState* top;             // 0xE84
     char pad_0xE88[0xF50 - 0xE88];
     int texIds[(0x10D8 - 0xF50) / 4];   // 0xF50
     sPtVEntry1688* vtable;      // 0x10D8
@@ -555,7 +554,7 @@ struct sPtObj1688 {
     int field_0x174;        // 0x174
     char pad_0x178[0x68];
     int field_0x1E0;        // 0x1E0
-    sPtRS1688 rs;           // 0x1E4
+    sPtRenderState rs;           // 0x1E4
 };
 
 extern "C" void func_00371688(sPtObj1688* self, int blend)
@@ -571,8 +570,8 @@ extern "C" void func_00371688(sPtObj1688* self, int blend)
     if (tex < 0) {
         return;
     }
-    self->rs.flagsA = (self->rs.flagsA & ~0x7C) | ((D_0044B420[self->kind] << 2) & 0x7C);
-    self->rs.flagsB = (self->rs.flagsB & ~0x3E0) | ((blend << 5) & 0x3E0);
+    self->rs.f4 = (self->rs.f4 & ~0x7C) | ((D_0044B420[self->kind] << 2) & 0x7C);
+    self->rs.f8 = (self->rs.f8 & ~0x3E0) | ((blend << 5) & 0x3E0);
     self->rs.tex = tex;
     ctx->top[1] = ctx->top[0];
     ctx->top++;
@@ -2920,14 +2919,6 @@ extern "C" void func_003779E0(void* self, sPart20* src)
 //100%
 INCLUDE_ASM("render/particle", func_00377A10);
 #ifdef SKIP_ASM
-struct sPtRS_7A10 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sVE_7A10 {
     short delta;
@@ -2956,7 +2947,7 @@ struct sRect_7A10 {
 
 struct sGfx_7A10 {
     char pad0[0xE84];
-    sPtRS_7A10* top;            // 0xE84
+    sPtRenderState* top;            // 0xE84
     char pad1[0x10D8 - 0xE88];
     char* vt;                   // 0x10D8
     char pad2[0x18F0 - 0x10DC];
@@ -2988,7 +2979,7 @@ struct sGfx_7A10 {
     int f5ACC;
 };
 
-extern sPtRS_7A10 D_00501420_7A10 __asm__("D_00501420");
+extern sPtRenderState D_00501420_7A10 __asm__("D_00501420");
 extern char D_005059D8[];
 extern "C" void func_00363490(void* ring, void* a, void* b, void* c, void* d);
 extern "C" int func_00423DE0_i(int a) __asm__("func_00423DE0");
@@ -3056,17 +3047,9 @@ INCLUDE_ASM("render/particle", func_00377CF0);
 #ifdef SKIP_ASM
 typedef int cQuad128_CF0 __attribute__((mode(TI)));
 
-struct sRS_CF0 {
-    int f0;
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sEnt_CF0 {
-    sRS_CF0 rs;                     // 0x00
+    sPtRenderState rs;                     // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -3082,7 +3065,7 @@ struct sRing_CF0 {
 
 struct sPtGfx_CF0 {
     char pad_0x0[0xE84];
-    sRS_CF0* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sRing_CF0* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -3192,7 +3175,7 @@ extern "C" void func_00377CF0(sPtGfx_CF0* self, sPt7278* pos, float* size, int* 
         unsigned int next = (unsigned int)q & 0x0FFFFFFF;
         sRing_CF0* ring = self->ring;
         self->bufAddr = next;
-        sRS_CF0* rs = self->top;
+        sPtRenderState* rs = self->top;
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
@@ -3219,7 +3202,7 @@ struct sVE_81A0 {
 
 struct sGfx_81A0 {
     char pad_0x0[0xE84];
-    sRS_CF0* top;                   // 0xE84
+    sPtRenderState* top;                   // 0xE84
     char pad_0xE88[0x10D8 - 0xE88];
     sVE_81A0* vt;                   // 0x10D8
     char pad_0x10DC[0x13E4 - 0x10DC];
@@ -3309,7 +3292,7 @@ extern "C" void func_003781A0(sGfx_81A0* self, float ang, sPt7278* pos, float* s
     unsigned int next = (unsigned int)q & 0x0FFFFFFF;
     sRing_CF0* ring = self->ring;
     self->bufAddr = next;
-    sRS_CF0* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -3337,17 +3320,9 @@ INCLUDE_ASM("render/particle", func_0037A260);
 //100%
 INCLUDE_ASM("render/particle", func_0037A430);
 #ifdef SKIP_ASM
-struct sPtRS_A430 {
-    int f0;                         // bits 6..9 = layer
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_A430 {
-    sPtRS_A430 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -3363,7 +3338,7 @@ struct sPtRing_A430 {
 
 struct sPtGfx_A430 {
     char pad_0x0[0xE84];
-    sPtRS_A430* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_A430* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -3384,7 +3359,7 @@ extern "C" void func_0037A430(sPtGfx_A430* self)
     self->bufAddr = next;
     unsigned int buf = self->pendBuf;
     sPtRing_A430* ring = self->ring;
-    sPtRS_A430* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -4166,17 +4141,9 @@ INCLUDE_ASM("render/particle", func_0037CC98);
 typedef int cQuad128_CC98 __attribute__((mode(TI)));
 union uF_CC98 { float f; int i; };
 
-struct sPtRS_CC98 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_CC98 {
-    sPtRS_CC98 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -4202,7 +4169,7 @@ struct sPtTexTbl_CC98 {
 
 struct sPtGfxB_CC98 {
     char pad_0x0[0xE84];
-    sPtRS_CC98* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_CC98* ring;             // 0x18F0
     sPtTexTbl_CC98* tbl;            // 0x18F4
@@ -4290,7 +4257,7 @@ extern "C" void func_0037CC98(sPtGfxB_CC98* self, int* obj)
     unsigned int next = func_0038F668(D_004A4474, p, 4);
     self->bufAddr = next;
     sPtRing_CC98* ring = self->ring;
-    sPtRS_CC98* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -4438,17 +4405,9 @@ extern "C" void func_0037D318(char* self, int a1, int a2, int a3, int a4, int a5
 //100%
 INCLUDE_ASM("render/particle", func_0037D348);
 #ifdef SKIP_ASM
-struct sPtRS_D348 {
-    int f0;
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_D348 {
-    sPtRS_D348 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -4464,7 +4423,7 @@ struct sPtRing_D348 {
 
 struct sPtGfx_D348 {
     char pad_0x0[0xE84];
-    sPtRS_D348* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_D348* ring;             // 0x18F0
     void* texset;                   // 0x18F4
@@ -4484,7 +4443,7 @@ extern "C" int func_0037D348(sPtGfx_D348* self, int idx)
     unsigned int next = p & 0x0FFFFFFF;
     self->bufAddr = next;
     sPtRing_D348* ring = self->ring;
-    sPtRS_D348* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -4503,17 +4462,9 @@ extern "C" int func_0037D348(sPtGfx_D348* self, int idx)
 //100%
 INCLUDE_ASM("render/particle", func_0037D450);
 #ifdef SKIP_ASM
-struct sPtRS_D450 {
-    int f0;
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_D450 {
-    sPtRS_D450 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -4529,7 +4480,7 @@ struct sPtRing_D450 {
 
 struct sPtGfx_D450 {
     char pad_0x0[0xE84];
-    sPtRS_D450* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_D450* ring;             // 0x18F0
     char pad_0x18F4[0x5900 - 0x18F4];
@@ -4572,7 +4523,7 @@ extern "C" int func_0037D450(sPtGfx_D450* self)
     p += 14;
     unsigned int next = (unsigned int)p & 0x0FFFFFFF;
     sPtRing_D450* ring = self->ring;
-    sPtRS_D450* rs = self->top;
+    sPtRenderState* rs = self->top;
     self->bufAddr = next;
     int one = 1;
     if (ring->count < 0xA28) {
@@ -4698,17 +4649,9 @@ extern "C" void func_0037D758(sPartDrawList* self, sPartQ16* q, sPartMtx* m0, sP
 //100%
 INCLUDE_ASM("render/particle", func_0037D800);
 #ifdef SKIP_ASM
-struct sPtRS_D800 {
-    int f0;
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_D800 {
-    sPtRS_D800 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -4724,7 +4667,7 @@ struct sPtRing_D800 {
 
 struct sPtGfx_D800 {
     char pad_0x0[0xE84];
-    sPtRS_D800* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_D800* ring;             // 0x18F0
     void* texset;                   // 0x18F4
@@ -4747,7 +4690,7 @@ extern "C" void func_0037D800(sPtGfx_D800* self, int idx, float* color)
     unsigned int next = p & 0x0FFFFFFF;
     self->bufAddr = next;
     sPtRing_D800* ring = self->ring;
-    sPtRS_D800* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -5316,17 +5259,9 @@ extern "C" void func_00380380(void* self, char* obj, int idx, float* pos, float*
 //100%
 INCLUDE_ASM("render/particle", func_00380518);
 #ifdef SKIP_ASM
-struct sPtRS_0518 {
-    int f0;                         // bits 6..9 = layer
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_0518 {
-    sPtRS_0518 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -5346,7 +5281,7 @@ struct sQuad_0518 {
 
 struct sPtGfx_0518 {
     char pad_0x0[0xE84];
-    sPtRS_0518* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_0518* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -5402,7 +5337,7 @@ extern "C" void func_00380518(sPtGfx_0518* self, sQuad_0518* obj)
     }
     sPtRing_0518* ring = self->ring;
     unsigned int next = self->bufAddr;
-    sPtRS_0518* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -5421,17 +5356,9 @@ extern "C" void func_00380518(sPtGfx_0518* self, sQuad_0518* obj)
 //100%
 INCLUDE_ASM("render/particle", func_003807A0);
 #ifdef SKIP_ASM
-struct sPtRS_07A0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_07A0 {
-    sPtRS_07A0 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -5451,7 +5378,7 @@ struct sQuad_07A0 {
 
 struct sPtGfx_07A0 {
     char pad_0x0[0xE84];
-    sPtRS_07A0* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_07A0* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -5571,7 +5498,7 @@ extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
         unsigned int next = func_0038F668(D_004A4474, p, 4);
         self->bufAddr = next;
         sPtRing_07A0* ring = self->ring;
-        sPtRS_07A0* rs = self->top;
+        sPtRenderState* rs = self->top;
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
@@ -5592,17 +5519,9 @@ extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
 //100%
 INCLUDE_ASM("render/particle", func_00380CE0);
 #ifdef SKIP_ASM
-struct sPtRS_0CE0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_0CE0 {
-    sPtRS_0CE0 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -5627,7 +5546,7 @@ struct sCol_0CE0 {
 
 struct sPtGfx_0CE0 {
     char pad_0x0[0xE84];
-    sPtRS_0CE0* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_0CE0* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -5765,7 +5684,7 @@ extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
         unsigned int next = func_0038F668(D_004A4474, p, 4);
         self->bufAddr = next;
         sPtRing_0CE0* ring = self->ring;
-        sPtRS_0CE0* rs = self->top;
+        sPtRenderState* rs = self->top;
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
@@ -5786,17 +5705,9 @@ extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
 //100%
 INCLUDE_ASM("render/particle", func_00381310);
 #ifdef SKIP_ASM
-struct sPtRS_1310 {
-    int f0;                         // bits 6..9 = layer
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_1310 {
-    sPtRS_1310 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -5841,7 +5752,7 @@ struct sVec4_1310 {
 
 struct sPtGfx_1310 {
     char pad_0x0[0xE84];
-    sPtRS_1310* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_1310* ring;             // 0x18F0
     char pad_0x18F4[0x5860 - 0x18F4];
@@ -5951,7 +5862,7 @@ extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
     unsigned int next = func_0038F668(D_004A4474, p, 4);
     self->bufAddr = next;
     sPtRing_1310* ring = self->ring;
-    sPtRS_1310* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -5973,17 +5884,9 @@ extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
 //100%
 INCLUDE_ASM("render/particle", func_003816F0);
 #ifdef SKIP_ASM
-struct sPtRS_16F0 {
-    int f0;                         // bits 6..9 = layer
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_16F0 {
-    sPtRS_16F0 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -6028,7 +5931,7 @@ struct sVec4_16F0 {
 
 struct sPtGfx_16F0 {
     char pad_0x0[0xE84];
-    sPtRS_16F0* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_16F0* ring;             // 0x18F0
     char pad_0x18F4[0x5860 - 0x18F4];
@@ -6138,7 +6041,7 @@ extern "C" void func_003816F0(sPtGfx_16F0* self, sPtObj_16F0* obj)
     unsigned int next = func_0038F668(D_004A4474, p, 4);
     self->bufAddr = next;
     sPtRing_16F0* ring = self->ring;
-    sPtRS_16F0* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -6162,17 +6065,9 @@ INCLUDE_ASM("render/particle", func_00381AD0);
 //100%
 INCLUDE_ASM("render/particle", func_00381F10);
 #ifdef SKIP_ASM
-struct sPtRS_1F10 {
-    int f0;                         // bits 6..9 = layer
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_1F10 {
-    sPtRS_1F10 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -6188,7 +6083,7 @@ struct sPtRing_1F10 {
 
 struct sPtGfx_1F10 {
     char pad_0x0[0xE84];
-    sPtRS_1F10* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_1F10* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -6251,7 +6146,7 @@ extern "C" void func_00381F10(sPtGfx_1F10* self, sMat_1F10* m, float* col, int n
     self->bufAddr = (unsigned int)p & 0x0FFFFFFF;
     sPtRing_1F10* ring = self->ring;
     unsigned int next = self->bufAddr;
-    sPtRS_1F10* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
@@ -6285,14 +6180,6 @@ struct sVtx2170 {
     sVtx2170() {}
 };
 
-struct sRS2170 {
-    int field_0x0;
-    int flagsA;             // 0x4, bits 2..6 = layer
-    int flagsB;             // 0x8
-    int field_0xC;
-    short tex;              // 0x10
-    short pad;
-};
 
 struct cRMgr2170 {
     char pad_0x0[0x10D8];
@@ -6533,8 +6420,8 @@ extern "C" void func_00382170(cRMgr2170* mgr, sPt2170* pos, float* col, float ra
         D_004FFBC0[15].w = 0.0f;
         D_004A59A0 = 1;
     }
-    (*(sRS2170**)(self + 0xE84))->tex = -1;
-    (*(sRS2170**)(self + 0xE84))->flagsA = ((*(sRS2170**)(self + 0xE84))->flagsA & ~0x7C) | 4;
+    (*(sPtRenderState**)(self + 0xE84))->tex = -1;
+    (*(sPtRenderState**)(self + 0xE84))->f4 = ((*(sPtRenderState**)(self + 0xE84))->f4 & ~0x7C) | 4;
     mgr->v31();
     mgr->v37();
 
@@ -6557,7 +6444,7 @@ extern "C" void func_00382170(cRMgr2170* mgr, sPt2170* pos, float* col, float ra
     verts[i].pos = p;
     i++;
     mgr->v73(i, verts, 0);
-    (*(sRS2170**)(self + 0xE84))->flagsA = ((*(sRS2170**)(self + 0xE84))->flagsA & ~0x7C) | 4;
+    (*(sPtRenderState**)(self + 0xE84))->f4 = ((*(sPtRenderState**)(self + 0xE84))->f4 & ~0x7C) | 4;
     mgr->v32();
 }
 #endif
@@ -6819,17 +6706,9 @@ extern "C" void func_00384DC0(void* self)
 //100%
 INCLUDE_ASM("render/particle", func_00384E50);
 #ifdef SKIP_ASM
-struct sPtRS_4E50 {
-    int f0;
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_4E50 {
-    sPtRS_4E50 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -6845,7 +6724,7 @@ struct sPtRing_4E50 {
 
 struct sPtGfx_4E50 {
     char pad_0x0[0xE84];
-    sPtRS_4E50* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_4E50* ring;             // 0x18F0
 };
@@ -6881,7 +6760,7 @@ extern "C" void func_00384E50(sPktBuilder_4E50* self, int flags)
         self->start = buf;
         sPtGfx_4E50* g = D_004A5B80_4E50;
         sPtRing_4E50* ring = g->ring;
-        sPtRS_4E50* rs = g->top;
+        sPtRenderState* rs = g->top;
         if (ring->count < 0xA28) {
             rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
             int key = *(int*)((char*)ring + 0x69CC0);
@@ -7219,17 +7098,9 @@ extern "C" void func_00385BE0(cPartVirt* self, int a, void* b, int c)
 //100%
 INCLUDE_ASM("render/particle", func_00385C10);
 #ifdef SKIP_ASM
-struct sPtRS_5C10 {
-    int f0;                         // bits 6..9 = layer
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_5C10 {
-    sPtRS_5C10 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -7245,7 +7116,7 @@ struct sPtRing_5C10 {
 
 struct sPtGfx_5C10 {
     char pad_0x0[0xE84];
-    sPtRS_5C10* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_5C10* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -7350,7 +7221,7 @@ extern "C" void func_00385C10(sBez_5C10* self, sMat_5C10* mat, int tex, int flag
     p += 0x10;
     addr = func_0038F668(D_004A4474, (unsigned long*)p, 4);
     sPtRing_5C10* ring = self->gfx->ring;
-    sPtRS_5C10* rs = self->gfx->top;
+    sPtRenderState* rs = self->gfx->top;
     unsigned int cur = self->gfx->bufAddr;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
@@ -7782,17 +7653,9 @@ void func_00387EC0_impl(sPtGfx_7EC0* self, sVtx_7EC0** tbl, int start, int n, in
 //100%
 INCLUDE_ASM("render/particle", func_003883B8);
 #ifdef SKIP_ASM
-struct sPtRS_83B8 {
-    int f0;                         // bits 6..9 = layer
-    int f4;
-    int f8;                         // bits 0..4 = key
-    int fC;
-    short tex;
-    short pad;
-};
 
 struct sPtEnt_83B8 {
-    sPtRS_83B8 rs;                  // 0x00
+    sPtRenderState rs;                  // 0x00
     unsigned int buf;               // 0x14
     unsigned int next;              // 0x18
     short key;                      // 0x1C
@@ -7808,7 +7671,7 @@ struct sPtRing_83B8 {
 
 struct sPtGfx_83B8 {
     char pad_0x0[0xE84];
-    sPtRS_83B8* top;                // 0xE84
+    sPtRenderState* top;                // 0xE84
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing_83B8* ring;             // 0x18F0
     char pad_0x18F4[0x5A00 - 0x18F4];
@@ -7818,7 +7681,7 @@ struct sPtGfx_83B8 {
 };
 
 extern int D_004A5B84;
-extern sPtRS_83B8 D_00501420_rs __asm__("D_00501420");
+extern sPtRenderState D_00501420_rs __asm__("D_00501420");
 
 extern "C" void func_0037D968(void* self);
 extern "C" void func_003885E0(void* self, void* a, void* b, void* c, void* d, int i0, int i1, float f0, float f1);
@@ -7839,7 +7702,7 @@ extern "C" void func_003883B8(sPtGfx_83B8* self, void* a1, int n, void* a3, void
     }
     sPtRing_83B8* ring = self->ring;
     unsigned int next = self->bufAddr;
-    sPtRS_83B8* rs = self->top;
+    sPtRenderState* rs = self->top;
     if (ring->count < 0xA28) {
         rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
         int key = *(int*)((char*)ring + 0x69CC0);
