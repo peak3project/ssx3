@@ -86,6 +86,26 @@ struct sMissionDef {
 };
 extern sMissionDef D_0043EE10[];
 
+// Event table D_0043D950 (0x64-byte entries); 0x54 is the peak the event belongs to.
+struct sEventEntry {
+    char pad_0x0[0x54];
+    int peak;               // 0x54
+    char pad_0x58[0xC];
+};
+extern sEventEntry D_0043D950[];
+
+// Race settings (as in be/beintplayer): two rider -> player slot maps, the event and the race mode.
+struct sRaceSettings {
+    int playerID[6];            // 0x00
+    int playerID2[6];           // 0x18
+    char pad_0x30[0x40 - 0x30];
+    int event;                  // 0x40 (index into D_0043D950)
+    char pad_0x44[4];
+    signed char mode;           // 0x48
+    char pad_0x49[0x4C - 0x49];
+};
+extern sRaceSettings D_005305B0;
+
 struct cBEMissionInterface {
     char pad_0x00[8];
     int field_0x8;
@@ -153,14 +173,6 @@ extern "C" int func_00153350(void* self, int start)
 //100%
 INCLUDE_ASM("be/beintmission", func_00153390);
 #ifdef SKIP_ASM
-struct sMissionEntry_0043D950
-{
-    char pad_0x00[0x54];
-    int owner;          // 0x54
-    char pad_0x58[0xC];
-};
-
-extern sMissionEntry_0043D950 D_0043D950[];
 extern signed char D_0043FA70[];
 
 extern "C" int func_00153390(void* self, int owner)
@@ -170,7 +182,7 @@ extern "C" int func_00153390(void* self, int owner)
     {
         for (int j = 0; j < 22; j++)
         {
-            if (D_0043D950[j].owner == owner)
+            if (D_0043D950[j].peak == owner)
             {
                 sum += D_0043FA70[i + j];
             }
@@ -246,7 +258,6 @@ INCLUDE_ASM("be/beintmission", cBEMissionInterface_getCurrentCollectForPeak);
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 
-extern sMissionEntry_0043D950 D_0043D950[];
 
 extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int rider, int owner)
 {
@@ -257,7 +268,7 @@ extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int ride
     {
         for (int j = 0; j < 22; j++)
         {
-            if (D_0043D950[j].owner == owner)
+            if (D_0043D950[j].peak == owner)
             {
                 sum += D_004A6CA8[profile][character].missions[i + j].collected;
             }
@@ -270,7 +281,6 @@ extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int ride
 //100%
 INCLUDE_ASM("be/beintmission", func_00153688);
 #ifdef SKIP_ASM
-extern sMissionEntry_0043D950 D_0043D950[];
 
 extern "C" int func_00153688(void* self, int profile, int character, int owner)
 {
@@ -279,7 +289,7 @@ extern "C" int func_00153688(void* self, int profile, int character, int owner)
     {
         for (int j = 0; j < 22; j++)
         {
-            if (D_0043D950[j].owner == owner)
+            if (D_0043D950[j].peak == owner)
             {
                 sum += D_004A6CA8[profile][character].missions[i + j].collected;
             }
@@ -336,11 +346,6 @@ INCLUDE_ASM("be/beintmission", func_001539A8);
 int cBELibrary_getProfileIndex(int);
 int cBELibrary_getCharacterID(int);
 
-struct sRaceSettings_9A8 {
-    char pad_0x00[0x40];
-    int missionBase;    // 0x40
-};
-
 // D_004A6CB0 = D_004A6CA8 + 8 (the first mission record's bit words) is its own symbol in the target:
 // one slot per mission, indexed as missions[block].m[i].
 struct sMissionBits_9A8 {
@@ -361,20 +366,19 @@ struct sBitsProfile_9A8 {
 struct sMask8_9A8 { char b[8]; };
 
 extern sBitsProfile_9A8 D_004A6CB0_bits[][10] __asm__("D_004A6CB0");
-extern sRaceSettings_9A8 D_005305B0_9A8 __asm__("D_005305B0");
 
 extern "C" void func_001539A8(void* self, int rider, int idx, sMask8_9A8* mask)
 {
     int profile = cBELibrary_getProfileIndex(rider);
     int c = cBELibrary_getCharacterID(rider);
-    int off = profile * 0x9B50 + c * 0xF88 + D_005305B0_9A8.missionBase * 12;
+    int off = profile * 0x9B50 + c * 0xF88 + D_005305B0.event * 12;
     int count = 0;
     *(sMask8_9A8*)((char*)D_004A6CB0_bits + (idx * 12 + off)) = *mask;
     for (int k = 0; k < 64; k++) {
-        if (D_004A6CB0_bits[profile][c].missions[D_005305B0_9A8.missionBase].m[idx].bits.w[k / 32] & (1 << k))
+        if (D_004A6CB0_bits[profile][c].missions[D_005305B0.event].m[idx].bits.w[k / 32] & (1 << k))
             count++;
     }
-    D_004A6CA8[profile][c].missions[idx + D_005305B0_9A8.missionBase].collected = count;
+    D_004A6CA8[profile][c].missions[idx + D_005305B0.event].collected = count;
 }
 #endif
 
@@ -728,7 +732,6 @@ struct sMissionGroup_0043EE20
     char pad_0x04[0x20];
 };
 
-extern sMissionEntry_0043D950 D_0043D950[];
 extern sMissionGroup_0043EE20 D_0043EE20[];
 
 extern "C" int func_00154368(void* self, int owner)
@@ -738,7 +741,7 @@ extern "C" int func_00154368(void* self, int owner)
     {
         for (int j = 0; j < 22; j++)
         {
-            if (D_0043D950[j].owner == owner)
+            if (D_0043D950[j].peak == owner)
             {
                 if (D_0043EE20[i].group == j)
                 {
@@ -754,13 +757,6 @@ extern "C" int func_00154368(void* self, int owner)
 //100%
 INCLUDE_ASM("be/beintmission", func_001543E0);
 #ifdef SKIP_ASM
-struct sMissionEntry_43E0 {
-    char pad_0x00[0x54];
-    int owner;          // 0x54
-    char pad_0x58[0xC];
-};
-
-extern sMissionEntry_43E0 D_0043D950_43E0[] __asm__("D_0043D950");
 extern "C" int func_00153D78(void* self, int id);
 
 // Counts the completed missions whose slot belongs to the given owner.
@@ -769,7 +765,7 @@ extern "C" int func_001543E0(void* self, int owner)
     int count = 0;
     for (int i = 0; i < 88; i++) {
         for (int j = 0; j < 22; j++) {
-            if (D_0043EE10[i].group == j && D_0043D950_43E0[j].owner == owner) {
+            if (D_0043EE10[i].group == j && D_0043D950[j].peak == owner) {
                 if (func_00153D78(self, D_0043EE10[i].id)) {
                     count++;
                 }
@@ -786,10 +782,10 @@ INCLUDE_ASM("be/beintmission", func_001544D0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_001543E0(void* self, int owner);
 
-// View of D_0043D950[].owner (offset 0x54); splat labels that address D_0043D9A4.
+// View of D_0043D950[].peak (offset 0x54); splat labels that address D_0043D9A4.
 struct sMissionOwnerView_001544D0
 {
-    int owner;
+    int peak;
     char pad_0x04[0x60];
 };
 extern sMissionOwnerView_001544D0 D_0043D9A4[];
@@ -804,7 +800,7 @@ extern "C" int func_001544D0(void* self, int profile, int character, int owner)
     int n = 0;
     for (int i = 0; i < 88; i++)
     {
-        if (D_0043D9A4[D_0043EE10[i].group].owner == owner)
+        if (D_0043D9A4[D_0043EE10[i].group].peak == owner)
         {
             n += (D_004A6CA8[profile][character].missionFlags[i] >> 3) & 1;
         }
