@@ -11,6 +11,17 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A render-state record of cPS2GraphicsMan's state stack (top at 0xE84; D_00501420 holds the default). f4 bits
+// 2..6 = layer, f8 bits 5..9 = blend, bits 0..4 = key. (Same type as render/particle's sPtRenderState.)
+struct sPtRenderState {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short pad;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1874,14 +1885,6 @@ struct sV4_2868 { float x, y, z, w; sV4_2868(const float& a, const float& b, con
 struct sV2_2868 { float x, y; sV2_2868() { x = 0.0f; y = 0.0f; } sV2_2868(const float& a, const float& b) { x = a; y = b; } };
 struct sCol_2868 { float a; sV3_2868 d; };
 
-struct sRsState_2868 {
-    int f0;                 // 0x0
-    int flagsA;             // 0x4
-    int flagsB;             // 0x8
-    int fC;                 // 0xC
-    short tex;              // 0x10
-    short pad;
-};
 
 struct sRsVEnt_2868 {
     short delta;
@@ -1891,7 +1894,7 @@ struct sRsVEnt_2868 {
 
 struct sRsCtx_2868 {
     char pad0[0xE84];
-    sRsState_2868* top;         // 0xE84
+    sPtRenderState* top;         // 0xE84
     char pad1[0x1024 - 0xE88];
     int tex1024;                // 0x1024
     int tex1028;                // 0x1028
@@ -2017,7 +2020,7 @@ static inline int rsTex1028_2868(sRsCtx_2868* ctx)
 
 static inline void rsSetA_2868(sRsCtx_2868* ctx, int mask, int shift, int v)
 {
-    ctx->top->flagsA = (ctx->top->flagsA & ~mask) | ((v << shift) & mask);
+    ctx->top->f4 = (ctx->top->f4 & ~mask) | ((v << shift) & mask);
 }
 
 extern "C" void func_002E2868(sWake_2868* self, int idx)
@@ -2775,14 +2778,6 @@ extern "C" void func_002EB8F0(void);
 // PORT: cWorldPainterMan_reset is defined with an unused self param; this caller passes none.
 void cWorldPainterMan_reset_47E8() __asm__("cWorldPainterMan_reset__FPv");
 
-struct sRsState47E8 {
-    int f0;                     // 0x0
-    int flagsA;                 // 0x4
-    int flagsB;                 // 0x8
-    int fC;                     // 0xC
-    short tex;                  // 0x10
-    short pad;
-};
 
 struct sRsVt47E8 {
     short delta;
@@ -2804,7 +2799,7 @@ struct sRsVtV47E8 {
 
 struct sRsCtx47E8 {
     char pad0[0xE84];
-    sRsState47E8* top;          // 0xE84
+    sPtRenderState* top;          // 0xE84
     char pad1[0x10D8 - 0xE88];
     sRsVt47E8* vtable;          // 0x10D8
 };
@@ -2834,12 +2829,12 @@ struct sFade47E8 {
 
 static inline void rsSetA47E8(sRsCtx47E8* ctx, int mask, int shift, int v)
 {
-    ctx->top->flagsA = (ctx->top->flagsA & ~mask) | ((v << shift) & mask);
+    ctx->top->f4 = (ctx->top->f4 & ~mask) | ((v << shift) & mask);
 }
 
 static inline void rsSetB47E8(sRsCtx47E8* ctx, int mask, int shift, int v)
 {
-    ctx->top->flagsB = (ctx->top->flagsB & ~mask) | ((v << shift) & mask);
+    ctx->top->f8 = (ctx->top->f8 & ~mask) | ((v << shift) & mask);
 }
 
 static inline void rsSet047E8(sRsCtx47E8* ctx, int mask, int shift, int v)
@@ -3691,14 +3686,6 @@ struct sMat_6008 {
     }
 } __attribute__((aligned(16)));
 
-struct sRsState_6008 {
-    int f0;                 // 0x0
-    int flagsA;             // 0x4
-    int flagsB;             // 0x8
-    int fC;                 // 0xC
-    short tex;              // 0x10
-    short pad;
-};
 
 struct sRsVEnt_6008 {
     short delta;
@@ -3708,7 +3695,7 @@ struct sRsVEnt_6008 {
 
 struct sRsCtx_6008 {
     char pad0[0xE84];
-    sRsState_6008* top;         // 0xE84
+    sPtRenderState* top;         // 0xE84
     char pad1[0xF70 - 0xE88];
     int texF70;                 // 0xF70
     char pad2[0x10D8 - 0xF74];
@@ -3731,7 +3718,7 @@ extern int D_004A4524;
 extern int D_004A4760[1];
 extern void* D_004A28A8;
 extern sRsCtx_6008* D_004A5B80_6008 __asm__("D_004A5B80");
-extern sRsState_6008 D_00501420_6008[] __asm__("D_00501420");
+extern sPtRenderState D_00501420_6008[] __asm__("D_00501420");
 extern t4Vector D_004FF130;
 extern "C" void func_002E55D8(int* p, sMat_6008* m, float r, float g, float b);
 
@@ -3762,12 +3749,12 @@ static inline int rsTexF70_6008(sRsCtx_6008* ctx)
 
 static inline void rsSetA_6008(sRsCtx_6008* ctx, int mask, int shift, int v)
 {
-    ctx->top->flagsA = (ctx->top->flagsA & ~mask) | ((v << shift) & mask);
+    ctx->top->f4 = (ctx->top->f4 & ~mask) | ((v << shift) & mask);
 }
 
 static inline void rsSetB_6008(sRsCtx_6008* ctx, int mask, int shift, int v)
 {
-    ctx->top->flagsB = (ctx->top->flagsB & ~mask) | ((v << shift) & mask);
+    ctx->top->f8 = (ctx->top->f8 & ~mask) | ((v << shift) & mask);
 }
 
 extern "C" void func_002E6008(sWakeFx_6008* self)
