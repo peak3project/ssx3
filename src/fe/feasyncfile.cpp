@@ -67,6 +67,11 @@ struct sColourF {
     sColourF(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
 };
 
+struct cVec4 {
+    float x, y, z, w;
+    cVec4(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -673,17 +678,12 @@ extern char D_00461540[];
 extern char D_004615A0[];
 extern char D_004615B0[];
 
-struct cVec_4330 {
-    float x, y, z, w;
-    cVec_4330(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
-};
-
 class cObjV_4330 {
 public:
     int pad[2];
     virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
     virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
-    virtual void set(const cVec_4330& v);
+    virtual void set(const cVec4& v);
 };
 
 struct sObj_4330 {
@@ -757,7 +757,7 @@ extern "C" void func_001A4330(char* self, sObj_4330* w, int msg)
                 if (o != 0) {
                     o->vt[9].fn((char*)o + o->vt[9].delta, 0);
                 }
-                ((cObjV_4330*)w)->set(cVec_4330(1.0f, 0.0f, 0.0f, 0.0f));
+                ((cObjV_4330*)w)->set(cVec4(1.0f, 0.0f, 0.0f, 0.0f));
                 func_001A66A8_4330(self, i, 0);
                 break;
             }
@@ -19366,11 +19366,6 @@ extern char D_00465E10[];
 extern char D_00465E20[];
 extern char D_004A1C10[];
 
-struct cVec_3668 {
-    float x, y, z, w;
-    cVec_3668(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
-};
-
 class cObj_3668 {
 public:
     int pad[2];
@@ -19378,7 +19373,7 @@ public:
     virtual void v06(); virtual void v07(); virtual void v08();
     virtual void setVisible(int on);
     virtual void v10();
-    virtual void setColor(const cVec_3668& v);
+    virtual void setColor(const cVec4& v);
     virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16();
     virtual void v17(); virtual void v18(); virtual void v19();
     virtual void getSize(sVec3* out);
@@ -19442,7 +19437,7 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
         } else if (isButton_3668(w, D_00465D00)) {
             func_001C3EE8(self, 1);
         } else if (isButton_3668(w, D_00465C78)) {
-            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+            w->setColor(cVec4(1.0f, 1.0f, 1.0f, 1.0f));
             o = getObj_3668(self, D_00465CA8);
             o->setVisible(1);
             o = getObj_3668(self, D_00465C98);
@@ -19450,7 +19445,7 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
             o = getObj_3668(self, D_00465E10);
             o->setVisible(1);
         } else if (isButton_3668(w, D_00465C88)) {
-            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+            w->setColor(cVec4(1.0f, 1.0f, 1.0f, 1.0f));
             o = getObj_3668(self, D_00465CC8);
             o->setVisible(1);
             o = getObj_3668(self, D_00465CB8);
@@ -19482,19 +19477,19 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
             if (*(int*)(self + 0x6E0) != 0) {
                 break;
             }
-            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+            w->setColor(cVec4(1.0f, 1.0f, 1.0f, 1.0f));
         } else if (isButton_3668(w, D_00465D10)) {
             if (*(int*)(self + 0x6E0) != 2) {
                 break;
             }
-            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+            w->setColor(cVec4(1.0f, 1.0f, 1.0f, 1.0f));
         } else if (isButton_3668(w, D_00465D00)) {
             if (*(int*)(self + 0x6E0) != 1) {
                 break;
             }
-            w->setColor(cVec_3668(1.0f, 1.0f, 1.0f, 1.0f));
+            w->setColor(cVec4(1.0f, 1.0f, 1.0f, 1.0f));
         } else if (isButton_3668(w, D_00465C78)) {
-            w->setColor(cVec_3668(1.0f, 0.0f, 0.0f, 0.0f));
+            w->setColor(cVec4(1.0f, 0.0f, 0.0f, 0.0f));
             p = (cObjB_3668*)getObj_3668(self, D_00465CA8);
             p->setVisible(0);
             p = (cObjB_3668*)getObj_3668(self, D_00465C98);
@@ -19502,7 +19497,7 @@ extern "C" void func_001C3668(char* self, cObj_3668* w, int msg)
             p = (cObjB_3668*)getObj_3668(self, D_00465E10);
             p->setVisible(0);
         } else if (isButton_3668(w, D_00465C88)) {
-            w->setColor(cVec_3668(1.0f, 0.0f, 0.0f, 0.0f));
+            w->setColor(cVec4(1.0f, 0.0f, 0.0f, 0.0f));
             p = (cObjB_3668*)getObj_3668(self, D_00465CC8);
             ((cObjC_3668*)p)->setVisible(0);
             p = (cObjB_3668*)getObj_3668(self, D_00465CB8);
