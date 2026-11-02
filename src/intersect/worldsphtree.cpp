@@ -226,6 +226,17 @@ static inline int overlapBoundObj(const sWsBox* b, const sWsBoundObj* n)
     return r;
 }
 
+static inline int overlapNode(const sWsQueryBox* q, const sWsListNode* n)
+{
+    int r = 0;
+    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
+        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
+        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
+        r = 1;
+    }
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1101,16 +1112,6 @@ static inline int overlapTri_333EF8(const sWsQueryBox* q, const sWsTriObj* n)
     return r;
 }
 
-static inline int overlapNode_333EF8(const sWsQueryBox* q, const sWsListNode* n)
-{
-    int r = 0;
-    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
-        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
-        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline int overlapBox_333EF8(const sWsQueryBox* q, const sWsBox* o)
 {
@@ -1180,7 +1181,7 @@ extern "C" int func_00333EF8(void* vself, void* vq, sWsRayHit* vhits, int cap, i
         }
         int flags = node->flags;
         if (flags & 0x20) {
-            if (overlapNode_333EF8(q, node)) {
+            if (overlapNode(q, node)) {
                 n += func_00334888(q, node, (char*)hits + n * 0x80, cap - n, 2);
             }
         } else if (flags & 0x40) {
@@ -1269,16 +1270,6 @@ struct sList_334458 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_334458(const sWsQueryBox* q, const sWsListNode* n)
-{
-    int r = 0;
-    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
-        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
-        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline int overlapBox_334458(const sWsQueryBox* q, const sWsBox* o)
 {
@@ -1300,7 +1291,7 @@ extern "C" int func_00334458(sList_334458* self, sWsQueryBox* q, char* buf, int 
         sWsListNode* node = self->items[i];
         int flags = node->flags;
         if (flags & 0x20) {
-            if (overlapNode_334458(q, node)) {
+            if (overlapNode(q, node)) {
                 n += func_00334888(q, node, buf + n * 0x80, cap - n, mode);
             }
         } else if (flags & 0x40) {
@@ -1513,16 +1504,6 @@ struct sCtx_335B90 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_335B90(const sWsQueryBox* q, const sWsListNode* n)
-{
-    int r = 0;
-    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
-        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
-        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline int overlapBox_335B90(const sWsQueryBox* q, const sWsBox* o)
 {
@@ -1548,7 +1529,7 @@ extern "C" void func_00335B90(void* vctx, void* vnode)
     if (node->active == 0) return;
     int flags = node->flags;
     if (flags & 0x20) {
-        if (overlapNode_335B90(ctx->q, node)) {
+        if (overlapNode(ctx->q, node)) {
             collect_335B90(ctx, node);
         }
     } else if (flags & 0x40) {
@@ -1868,16 +1849,6 @@ struct sCtx_336D40 {
 
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapNode_336D40(const sWsQueryBox* q, const sWsListNode* n)
-{
-    int r = 0;
-    if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
-        q->max[1] > n->bmin[1] && q->min[1] < n->bmax[1] &&
-        q->max[2] > n->bmin[2] && q->min[2] < n->bmax[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline int overlapBox_336D40(const sWsQueryBox* q, const sWsBox* o)
 {
@@ -1903,7 +1874,7 @@ extern "C" void func_00336D40(void* vctx, void* vnode)
     int mode = ctx->full ? 3 : 1;
     int flags = node->flags;
     if (flags & 0x20) {
-        if (overlapNode_336D40(ctx->q, node)) {
+        if (overlapNode(ctx->q, node)) {
             collect_336D40(ctx, node, mode);
         }
     } else if (flags & 0x40) {
