@@ -8,6 +8,38 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual ~cUIThing();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25(int v);
+};
+
 //100%
 INCLUDE_ASM("fe/ovstateprofile", cOVState_PROFILE_onCreateScreen);
 #ifdef SKIP_ASM
@@ -164,35 +196,6 @@ struct cCard_11270 {
     virtual void v52();
     virtual int isPresent();
 };
-struct cUIObj_11270 {
-    int f0;
-    int f4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void setSelected(int v);
-};
 
 extern "C" void func_00211270(void* p)
 {
@@ -207,9 +210,9 @@ extern "C" void func_00211270(void* p)
     for (int i = 1; i < 7; i++) {
         char buf[64];
         sprintf(buf, D_00471D68, i);
-        cUIObj_11270* o = (cUIObj_11270*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
-        o->setSelected(0);
-        o->setEnabled(1);
+        cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
+        o->v25(0);
+        o->setStatic(1);
     }
 }
 #endif
@@ -366,7 +369,6 @@ public:
     virtual void v25(int);
 };
 
-
 class cG_1380 {
 public:
     int pad;
@@ -473,19 +475,6 @@ extern "C" void func_00211380(void* p)
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_00211850);
 #ifdef SKIP_ASM
-class cUIObj_211850 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void setVisible(int v);
-};
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char D_004A2090[];
@@ -501,13 +490,13 @@ extern "C" void func_00211850(void* self, bool show)
     }
     if (*(int*)((char*)self + 0x230) != on) {
         int off = !on;
-        cUIObj_211850* a = (cUIObj_211850*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2090));
+        cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2090));
         if (a != 0) {
             a->setVisible(off);
         }
-        ((cUIObj_211850*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2568)))->setVisible(off);
-        ((cUIObj_211850*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471DB0)))->setVisible(off);
-        cUIObj_211850* d = (cUIObj_211850*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A20A0));
+        ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2568)))->setVisible(off);
+        ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471DB0)))->setVisible(off);
+        cUIThing* d = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A20A0));
         if (d != 0) {
             d->setVisible(off);
         }
@@ -519,19 +508,6 @@ extern "C" void func_00211850(void* self, bool show)
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_00211970);
 #ifdef SKIP_ASM
-class cUIObj_211970 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void setVisible(int v);
-};
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char D_00471DB0[];
@@ -539,8 +515,8 @@ extern char D_004A20A0[];
 
 extern "C" void func_00211970(void* self, bool on)
 {
-    ((cUIObj_211970*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471DB0)))->setVisible(!on);
-    ((cUIObj_211970*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A20A0)))->setVisible(!on);
+    ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471DB0)))->setVisible(!on);
+    ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A20A0)))->setVisible(!on);
     *(int*)((char*)self + 0x220) = !on;
 }
 #endif
@@ -548,19 +524,6 @@ extern "C" void func_00211970(void* self, bool on)
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_00211A08);
 #ifdef SKIP_ASM
-class cUIObj_211A08 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void setVisible(int v);
-};
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char D_004A2090[];
@@ -568,8 +531,8 @@ extern char D_004A2568[];
 
 extern "C" void func_00211A08(void* self, int a1, bool on)
 {
-    cUIObj_211A08* a = (cUIObj_211A08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2090));
-    ((cUIObj_211A08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2568)))->setVisible(!on);
+    cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2090));
+    ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2568)))->setVisible(!on);
     *(int*)((char*)self + 0x224) = !on;
     a->setVisible(!on);
 }
@@ -716,12 +679,9 @@ extern char D_00471DC0[];
 extern char D_00471DD8[];
 extern char D_00471DE8[];
 
-
-
 #define VCALLV_K211BC8(obj, off, idx) (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
 
 #define VCALL_K211BC8(obj, off, idx) (*(sVEntry<void*(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void*(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
-
 
 struct sProfileK211BC8 {
     int f0;                  // 0x0
@@ -939,7 +899,6 @@ int func_002122E0(void* self)
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_002122E8);
 #ifdef SKIP_ASM
-
 struct sObj002122E8 {
     int pad[2];
     sVEntry<void(void*, int)>* vt;
@@ -977,20 +936,6 @@ extern char D_004A2770[];
 extern char D_00471E48[];
 extern char D_00471E58[];
 
-class cUIObj_2360 {
-public:
-    int pad[2];
-    virtual ~cUIObj_2360();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
 extern "C" void cOVState_AUTOSAVE_displayOn(void* self)
 {
     void* mp = func_00227F80(D_004A28A8);
@@ -1009,12 +954,12 @@ extern "C" void cOVState_AUTOSAVE_displayOn(void* self)
         if (anim != 0) {
             func_0039FCC8(obj, anim, 9, 0, 0);
         }
-        cUIObj_2360* t = (cUIObj_2360*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471E38));
+        cUIThing* t = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471E38));
         t->setVisible(1);
         cUIText_setUnicodeStringByID((cUIText*)t, GetHashValue32(D_00471E58));
     } else {
         func_0039FD38(obj);
-        ((cUIObj_2360*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471E38)))->setVisible(0);
+        ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471E38)))->setVisible(0);
     }
 }
 #endif
@@ -1056,7 +1001,6 @@ extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
 extern "C" int cBENewRaceInterface_setGameEvent(void* iface, int ev);
 extern "C" int func_00146D98(void* self, int index);
 extern "C" void func_0039F400(void* list, void* item);
-
 
 extern "C" void func_00212508(void* self)
 {
