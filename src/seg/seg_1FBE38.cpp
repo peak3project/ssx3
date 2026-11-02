@@ -5704,12 +5704,10 @@ extern int D_004A3D88_4FF0[2] __asm__("D_004A3D88");
 extern "C" void func_003E6574(void*, void*, int);
 
 struct Ent_4FF0 { int idx; int val; int pad; int kind; };
-struct R12_4FF0 { int a; int b; int c; };
 struct T12_4FF0 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4FF0 D_004FBD30_4FF0 __asm__("D_004FBD30");
-extern R12_4FF0 D_004C9098_4FF0 __asm__("D_004C9098");
 
-extern "C" R12_4FF0 func_00304FF0(int n, Ent_4FF0* e) {
+extern "C" cLunoValue func_00304FF0(int n, Ent_4FF0* e) {
     if (D_004A5838_4FF0 == 0) {
         D_004FBD30_4FF0.a = 0;
         D_004A5838_4FF0 = 1;
@@ -5729,7 +5727,7 @@ extern "C" R12_4FF0 func_00304FF0(int n, Ent_4FF0* e) {
         else
             *d = p->val;
     }
-    return D_004C9098_4FF0;
+    return D_004C9098;
 }
 #endif
 
