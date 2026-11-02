@@ -48,6 +48,11 @@ struct sVec3 {
     float x, y, z;
 };
 
+struct sVec2 {
+    float x, y;
+    sVec2(float x_, float y_) : x(x_), y(y_) {}
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -13291,11 +13296,6 @@ extern "C" char* func_003A04F0(void* text);
 extern "C" char* func_004162D0(char*, const char*);
 extern char D_004A1BD0[];
 
-struct sVec2_1B9950 {
-    float x, y;
-    sVec2_1B9950(float x_, float y_) : x(x_), y(y_) {}
-};
-
 struct sRect1B9950 {
     float x, y, w, h;
 };
@@ -18746,11 +18746,6 @@ extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, fl
 extern "C" char* func_003A04F0(void* text);
 extern "C" char* func_004162D0(char*, const char*);
 extern char D_004A1BD0[];
-
-struct sVec2_1C2578 {
-    float x, y;
-    sVec2_1C2578(float x_, float y_) : x(x_), y(y_) {}
-};
 
 struct sRect1C2578 {
     float x, y, w, h;
