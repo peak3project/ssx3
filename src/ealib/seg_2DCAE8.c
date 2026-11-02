@@ -1023,23 +1023,20 @@ void func_003DD148(struct H_D148 h) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DD1D8);
 #ifdef SKIP_ASM
-struct E_D1D8 { unsigned int w0; int f4; volatile int f8; };
-struct G_D1D8 { int f0; int f4; int f8; int fC; char pad10[0x28 - 0x10]; char *f28; };
-extern struct G_D1D8 D_00519AB0_D1D8 __asm__("D_00519AB0");
 extern int func_003E5440(char *);
 extern void func_003E5398(int);
 extern int SYNCTASK_run(int);
 
 static inline int hValid_D1D8(int h) {
-    return h != 0 && ((h & 0xFFFFF) == (*(unsigned int *)(((unsigned char *)&h)[3] * 0x30 + D_00519AB0_D1D8.f28) & 0xFFFFF));
+    return h != 0 && ((h & 0xFFFFF) == (D_00519AB0.f28[((unsigned char *)&h)[3]].f00.w & 0xFFFFF));
 }
 
 int func_003DD1D8(int h) {
-    struct E_D1D8 *e = (struct E_D1D8 *)(D_00519AB0_D1D8.f28 + ((unsigned char *)&h)[3] * 0x30);
+    struct sFsCmd *e = &D_00519AB0.f28[((unsigned char *)&h)[3]];
     if (!hValid_D1D8(h)) {
         return -3;
     }
-    while (e->f8 == 0) {
+    while (e->f08 == 0) {
         if (func_003E5440(0) != 0) {
             SYNCTASK_run(0);
         } else {
@@ -1049,7 +1046,7 @@ int func_003DD1D8(int h) {
             return -3;
         }
     }
-    return e->f8;
+    return e->f08;
 }
 #endif
 
