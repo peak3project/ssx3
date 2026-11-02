@@ -197,7 +197,8 @@ struct sA8E8 {
     struct sA8E8Heap *f234;
     char pad238[0x2E0 - 0x238];
     unsigned short f2E0[6][6];      /* also D_0050ABC8: row n - 1 = n channel angles */
-    char pad328[0x330 - 0x328];
+    void (*f328)(void);             /* sound thread hooks: before / after a tick */
+    void (*f32C)(void);
     volatile unsigned int f330;
     volatile unsigned short f334;
 };
@@ -16465,7 +16466,72 @@ int func_003D16E0(int arg0) {
 void func_003D16E8(void) {
 }
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D16F0);
+#ifdef SKIP_ASM
+extern unsigned char D_0044F42C_16F0 __asm__("D_0044F42C");
+extern int D_0044F430_16F0 __asm__("D_0044F430");
+extern int f5450_16F0(int) __asm__("func_003D5450");
+extern struct sPathEvent *fcopy_16F0(struct sPathEvent *) __asm__("PATHI_copyevent");
+extern unsigned int f_F370_16F0(void) __asm__("func_002AF370");
+
+int func_003D16F0(unsigned int mask, short id) {
+    int ret = 0;
+    unsigned int i;
+    unsigned int bit;
+    if (D_0044F42C_16F0 == 0) return -18;
+    if (D_0044F430_16F0 != 0) return -18;
+    if (f5450_16F0(-1) == 0) return -18;
+    bit = 0x1000000 << ((id & 0xF00) >> 8);
+    id &= 0xFF;
+    for (i = 0; i < 4; i++) {
+        unsigned int fl, t, u;
+        if (D_00517610[i].f34 == 0) continue;
+        fl = D_00517610[i].f30;
+        if ((fl & bit) == 0) continue;
+        u = fl & 0x0F000000;
+        if ((u & mask) == 0) continue;
+        t = fl & 0xF0000000;
+        if ((t & mask) == 0) continue;
+        if (f5450_16F0(i & 0xFF) != 0) {
+            unsigned int *data = D_0044F420->f34;
+            struct sPathEvent *ev;
+            unsigned int key;
+            int r;
+            int j;
+            if (id >= ((unsigned char *)data)[0xF]) {
+                ret = -13;
+                break;
+            }
+            ev = (struct sPathEvent *)(data + D_0044F420->f40[id]);
+            if (ev->f0C.w & 0x20000000) continue;
+            ev = fcopy_16F0(ev);
+            r = -8;
+            key = D_00517610[i].f30;
+            key &= 0xFF000000;
+            for (j = 0; j < 4; j++) {
+                if (D_00517610[j].f34 != 0 && (D_00517610[j].f30 & key) == key) {
+                    int n = D_00517610[j].f91C;
+                    if (n >= 16) {
+                        ret = -13;
+                        goto next;
+                    }
+                    r = 0;
+                    ev->f00 = ev->f08 = f_F370_16F0();
+                    D_00517610[j].f0DC[n] = ev;
+                    n++;
+                    D_00517610[j].f91C = n;
+                }
+            }
+            ret = r;
+        }
+    next:;
+    }
+    D_0044F430_16F0 = 0;
+    D_0044F420 = 0;
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1940);
