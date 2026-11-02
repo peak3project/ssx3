@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetCreate);
 
 //100%
@@ -32,11 +40,6 @@ extern char D_00460510[];
 extern char D_00460528[];
 extern char D_00460540[];
 
-struct sVE_AOWE {
-    short delta;
-    short index;
-    void* (*fn)(void*, ...);
-};
 
 struct sOption_AOWE {
     char pad_0x0[0x78];
@@ -46,7 +49,7 @@ struct sOption_AOWE {
 
 struct sToggle_AOWE {
     char pad_0x0[0x8];
-    sVE_AOWE* vt;                   // 0x8
+    sVEntry<void*(void*, ...)>* vt;                   // 0x8
 };
 
 struct sAudioOptions_AOWE {
@@ -96,7 +99,7 @@ static inline void applyMode_AOWE(sAudioOptions_AOWE* self)
 static inline void* vcall_AOWE(sAudioOptions_AOWE* self, int slot, sWidget_AOWE* w)
 {
     char* o = *(char**)self->owner;
-    sVE_AOWE* vt = *(sVE_AOWE**)(o + 4);
+    sVEntry<void*(void*, ...)>* vt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     return vt[slot].fn(o + vt[slot].delta, self, w->idx);
 }
 
@@ -364,11 +367,6 @@ extern char D_004A18A8[];
 extern char D_004A18B0[];
 extern char D_00460578[];
 
-struct sVEntry00196DB0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 extern "C" void func_00196DB0(void* self)
 {
@@ -378,7 +376,7 @@ extern "C" void func_00196DB0(void* self)
         void* list = *(char**)((char*)self + 0x10) + 0x18;
         char* obj = (char*)func_0039F9D8(list, GetHashValue32(D_004A18A8));
         if (obj != 0) {
-            sVEntry00196DB0* vt = *(sVEntry00196DB0**)(obj + 8);
+            sVEntry<int(void*, int, int)>* vt = *(sVEntry<int(void*, int, int)>**)(obj + 8);
             vt[24].fn(obj + vt[24].delta, 3, 0);
         }
     }
@@ -394,11 +392,6 @@ extern "C" void func_00196DB0(void* self)
 //100%
 INCLUDE_ASM("fe/festateaudiooptions", func_00196E80);
 #ifdef SKIP_ASM
-struct sVEntry00196E80 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 int GetHashValue32(char* str);
 void func_0039E4A0(void* self);
@@ -411,7 +404,7 @@ extern "C" void func_00196E80(void* self)
     if (*(int*)((char*)D_004A28A8 + 0x84) != 0) {
         void* obj = func_0039F9D8(*(char**)((char*)self + 0x10) + 0x18, GetHashValue32(D_004A18A8));
         if (obj != 0) {
-            sVEntry00196E80* e = &(*(sVEntry00196E80**)((char*)obj + 8))[24];
+            sVEntry<int(void*, int, int)>* e = &(*(sVEntry<int(void*, int, int)>**)((char*)obj + 8))[24];
             e->fn((char*)obj + e->delta, 4, 0);
         }
     }
