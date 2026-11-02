@@ -3245,7 +3245,7 @@ extern char D_00480E10[];
 extern char D_004A3320[];
 extern char D_00480E20[];
 
-struct sBXStr_00260E50 {
+struct sBXStr {
     char* p;
 };
 
@@ -3262,7 +3262,7 @@ extern "C" void* func_00260E50(void* ret, void* self, unsigned int tag)
         break;
     default:
     {
-        sBXStr_00260E50 s;
+        sBXStr s;
         s.p = (char*)D_004A3E90;
         func_003194A8(&s, D_00480E20, tag, tag >> 24, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);
         cBXString_cBXString1(ret, &s);
@@ -4589,10 +4589,6 @@ extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
 extern "C" void* func_0041AA88(void*, void*);
 extern "C" void func_00268F90(void* self, void* a1, int a2);
 
-struct sBXStr_262EC0 {
-    char* p;
-};
-
 struct sObjVec_262EC0 {
     void* alloc;
     void** mStart;
@@ -4612,7 +4608,7 @@ extern "C" void func_00262EC0(char* self, int idx)
     char* name = (char*)func_002625C8(self, idx);
     if (name == 0)
         return;
-    sBXStr_262EC0 s;
+    sBXStr s;
     cBXString_cBXString2(&s, name);
     func_003F11F8(*(void**)(self + 0xC8), name, (void*)func_00268F90, self, 600);
     if (func_00262A38(self, s.p))
