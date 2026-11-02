@@ -7915,8 +7915,6 @@ void func_003C2A50(int id) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2EC8);
 #ifdef SKIP_ASM
-struct A_2EC8 { char pad[0xCB0]; struct { char pad[8]; unsigned long mask; } *bits; };
-extern struct A_2EC8 D_0050AD00_2EC8 __asm__("D_0050AD00");
 extern void func_003C2A50(int);
 
 void func_003C2EC8(int id) {
@@ -7925,15 +7923,15 @@ void func_003C2EC8(int id) {
     if (ch->f24 & 8) {
         for (i = 0; i < ch->f23; i++) {
             if (ch->f5F) {
-                D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask | (1L << ch->f04[i]);
+                D_0050AD00.fCB0->f08 = D_0050AD00.fCB0->f08 | (1L << ch->f04[i]);
             } else {
-                D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask & ~(1L << ch->f04[i]);
+                D_0050AD00.fCB0->f08 = D_0050AD00.fCB0->f08 & ~(1L << ch->f04[i]);
             }
             if (D_0050A8E8.setup.cfg.f29 == 2) {
                 if (ch->f5F) {
-                    D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask | (1L << (ch->f04[i] + 0x18));
+                    D_0050AD00.fCB0->f08 = D_0050AD00.fCB0->f08 | (1L << (ch->f04[i] + 0x18));
                 } else {
-                    D_0050AD00_2EC8.bits->mask = D_0050AD00_2EC8.bits->mask & ~(1L << (ch->f04[i] + 0x18));
+                    D_0050AD00.fCB0->f08 = D_0050AD00.fCB0->f08 & ~(1L << (ch->f04[i] + 0x18));
                 }
             }
         }
