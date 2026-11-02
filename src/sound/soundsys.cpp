@@ -201,17 +201,26 @@ struct sSndVec4 {
     sSndVec4() {}
 } __attribute__((aligned(16)));
 
-// One 0x54-byte slot of the bank system at D_004A36F8 (from 0x1C): a random-pick list (func_002A4CA0)
-// followed by two floats the caller sums.
+
+// One 0x54-byte slot of the bank system at D_004A36F8 (three at 0x1C, built by func_002A69A0): three 0x18-byte
+// handle lists (func_002A4BA8 clears them; func_002A4CA0 picks from one) and their timing floats.
+extern "C" void* func_002A4BA8(void* self);
+struct sSndList5 {
+    char pad0[0x18];
+    sSndList5() { func_002A4BA8(this); }
+};
 struct sSndRandSlot {
-    char pad0[0x48];
-    float a;
-    float b;
-    char pad50[4];
+    sSndList5 a;
+    sSndList5 b;
+    sSndList5 c;
+    float f48;
+    float f4C;
+    int f50;
+    void* operator new[](unsigned int, void* p) { return p; }
 };
 struct sSndRandSys {
     char pad0[0x1C];
-    sSndRandSlot ent[1];
+    sSndRandSlot ent[3];
 };
 
 // ---- end of shared declarations ----
@@ -8966,7 +8975,7 @@ extern "C" void func_002A64A0(void* vself, int idx)
     if (*(int*)(self + 0xD4) == 0) return;
     sSndRandSlot* e = &((sSndRandSys*)D_004A36F8)->ent[idx];
     *(int*)(self + 0x184) = idx;
-    *(float*)(self + 0x188) = e->a + e->b;
+    *(float*)(self + 0x188) = e->f48 + e->f4C;
     int r = func_002A4CA0((sSndRandList*)e);
     if (r == 0) return;
     func_002A8450(D_004A36F8, *(int*)(self + 0xD8), r);
@@ -9005,7 +9014,7 @@ extern "C" void func_002A6648(void* vself, int idx)
     if (*(int*)(self + 0xD4) == 0) return;
     sSndRandSlot* e = &((sSndRandSys*)D_004A36F8)->ent[idx];
     *(int*)(self + 0x184) = idx;
-    *(float*)(self + 0x188) = e->a + e->b;
+    *(float*)(self + 0x188) = e->f48 + e->f4C;
     int r = func_002A4CA0((sSndRandList*)((char*)e + 0x18));
     if (r == 0) return;
     func_002A8450(D_004A36F8, *(int*)(self + 0xD8), r);
@@ -9109,22 +9118,8 @@ INCLUDE_ASM("sound/soundsys", func_002A69A0);
 extern "C" void* func_002ADE88(void* self, int heap);
 extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, int heap);
 extern "C" char* func_002A8140(char* self, int embedded, int count, int heap);
-extern "C" void* func_002A4BA8(void* self);
 
 
-struct sSnd69List {
-    char pad0[0x18];
-    sSnd69List() { func_002A4BA8(this); }
-};
-struct sSnd69Ent {
-    sSnd69List a;
-    sSnd69List b;
-    sSnd69List c;
-    float f48;
-    float f4C;
-    int f50;
-    void* operator new[](unsigned int, void* p) { return p; }
-};
 
 extern char D_004837F8[];
 extern char D_00483B48[];
@@ -9159,7 +9154,7 @@ extern "C" char* func_002A69A0(char* self, int embedded, int count, int unused, 
     *(void**)(self + 0xC) = D_004837F8;
     *(int*)(self + 0x14) = 0;
     *(int*)(self + 0x18) = 0;
-    new (self + 0x1C) sSnd69Ent[3];
+    new (self + 0x1C) sSndRandSlot[3];
     D_004A36F8 = (char**)self;
     return self;
 }
