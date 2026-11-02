@@ -61,7 +61,158 @@ extern "C" void cUIMenu_setSelected(char* self, char* item, int play)
 
 INCLUDE_ASM("ui/uimenu", func_0039AE98);
 
+//100%
 INCLUDE_ASM("ui/uimenu", func_0039B000);
+#ifdef SKIP_ASM
+struct cUIThing;
+unsigned short cUIThing_getKeyframerEvent(cUIThing* self, int x);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" unsigned char func_0039AB50(void* self);
+extern "C" unsigned char func_0039AC48(void* self);
+extern "C" int func_0039AE98(void* self, unsigned char prev);
+void* func_0039FF50(void* self);
+extern "C" int func_003A0318(void* self, int a);
+void* func_00397870_B000(void* list, int i) __asm__("func_00397870");
+extern char D_004A5A58[4];
+
+struct sVE_B000 { short delta; short index; int (*fn)(void*, ...); };
+struct sVEv_B000 { short delta; short index; void (*fn)(void*, ...); };
+
+static inline int keyDown_B000(void* in, int key)
+{
+    sVE_B000* vt = *(sVE_B000**)((char*)in + 8);
+    return vt[2].fn((char*)in + vt[2].delta, key);
+}
+
+static inline int inputIs_B000(void* in, int slot)
+{
+    sVE_B000* vt = *(sVE_B000**)((char*)in + 8);
+    return vt[slot].fn((char*)in + vt[slot].delta);
+}
+
+static inline int notFlipped_B000(char* self)
+{
+    return (*(int*)(self + 0x14) & 1) == 0;
+}
+
+static inline void itemNotify_B000(char* self, void* item, int what)
+{
+    char* o = *(char**)(*(char**)(self + 0x5C) + 0xD0);
+    sVEv_B000* vt = *(sVEv_B000**)(o + 8);
+    vt[19].fn(o + vt[19].delta, item, what);
+}
+
+static inline int focusMove_B000(char* self, int dir, int idx)
+{
+    char* o = *(char**)(*(char**)(self + 0x5C) + 0xD0);
+    sVE_B000* vt = *(sVE_B000**)(o + 8);
+    return vt[20].fn(o + vt[20].delta, self, dir, idx);
+}
+
+static inline void playEvent_B000(char* thing, unsigned char which)
+{
+    unsigned short ev = cUIThing_getKeyframerEvent((cUIThing*)thing, which);
+    if (ev != 0xFFFF) {
+        void* scr = *(void**)(thing + 0x5C);
+        if (scr != 0)
+            cUIScreen_playFrame(scr, ev, 1);
+    }
+}
+
+// Grid menu input: the two scroll keys step the selection (flipped by bit 0 of the flags), the four
+// direction inputs move the focus; the result goes to the owner's listener.
+extern "C" int func_0039B000(char* self, void* in)
+{
+    if (((*(int*)(self + 0x14) >> 5) & 1) || *(char**)(self + 0xA0) == 0)
+        return 0;
+    char* child = *(char**)(self + 0xA0);
+    if (((*(int*)(self + 0x14) >> 4) & 1) == 0)
+        return 0;
+    if (((*(int*)(child + 0x14) >> 3) & 1) && ((*(int*)(child + 0x14) >> 5) & 1) == 0) {
+        sVE_B000* vt = *(sVE_B000**)(child + 8);
+        if (vt[15].fn(child + vt[15].delta, in))
+            return 1;
+    }
+    int result = 0;
+    unsigned char prev = *(unsigned char*)(self + 0x95);
+    if ((keyDown_B000(in, *(signed char*)(self + 0x94)) && notFlipped_B000(self))
+        || (keyDown_B000(in, *(signed char*)(self + 0x92)) && (*(int*)(self + 0x14) & 1))) {
+        playEvent_B000(self, keyDown_B000(in, *(signed char*)(self + 0x94)) && notFlipped_B000(self) ? 9 : 7);
+        *(unsigned char*)(self + 0x95) = func_0039AB50(self);
+        int moved = func_0039AE98(self, prev);
+        if (((*(int*)(self + 0x90) >> 3) & 1) == 0) {
+            if (moved != 0)
+                result = 1;
+            else
+                result = func_003A0318(*(void**)(self + 0xA0), 0);
+        }
+    } else if ((keyDown_B000(in, *(signed char*)(self + 0x93)) && notFlipped_B000(self))
+               || (keyDown_B000(in, *(signed char*)(self + 0x91)) && (*(int*)(self + 0x14) & 1))) {
+        playEvent_B000(self, keyDown_B000(in, *(signed char*)(self + 0x93)) && notFlipped_B000(self) ? 8 : 6);
+        *(unsigned char*)(self + 0x95) = func_0039AC48(self);
+        int moved = func_0039AE98(self, prev);
+        if (((*(int*)(self + 0x90) >> 3) & 1) == 0) {
+            if (moved != 0)
+                result = 1;
+            else
+                result = func_003A0318(*(void**)(self + 0xA0), 0);
+        }
+    } else if (inputIs_B000(in, 5)) {
+        char* item = (char*)func_00397870_B000(self + 0x74, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        itemNotify_B000(self, item, 5);
+        int f = focusMove_B000(self, 6, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        if (f & 0x100)
+            playEvent_B000(item, 2);
+        if (f & 1)
+            result = func_003A0318(*(void**)(self + 0xA0), 1);
+        else if (f & 0x10)
+            result = func_003A0318(*(void**)(self + 0xA0), 0);
+    } else if (inputIs_B000(in, 6)) {
+        char* item = (char*)func_00397870_B000(self + 0x74, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        itemNotify_B000(self, item, 6);
+        int f = focusMove_B000(self, 7, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        if (f & 0x100)
+            playEvent_B000(item, 3);
+        if (f & 1)
+            result = func_003A0318(*(void**)(self + 0xA0), 1);
+        else if (f & 0x10)
+            result = func_003A0318(*(void**)(self + 0xA0), 0);
+    } else if (inputIs_B000(in, 8)) {
+        char* item = (char*)func_00397870_B000(self + 0x74, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        itemNotify_B000(self, item, 8);
+        int f = focusMove_B000(self, 9, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        if (f & 0x100)
+            playEvent_B000(item, 5);
+        if (f & 1)
+            result = func_003A0318(*(void**)(self + 0xA0), 1);
+        else if (f & 0x10)
+            result = func_003A0318(*(void**)(self + 0xA0), 0);
+    } else if (inputIs_B000(in, 7)) {
+        char* item = (char*)func_00397870_B000(self + 0x74, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        itemNotify_B000(self, item, 7);
+        int f = focusMove_B000(self, 8, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        if (f & 0x100)
+            playEvent_B000(item, 4);
+        if (f & 1)
+            result = func_003A0318(*(void**)(self + 0xA0), 1);
+        else if (f & 0x10)
+            result = func_003A0318(*(void**)(self + 0xA0), 0);
+    } else if (inputIs_B000(in, 4)) {
+        char* item = (char*)func_00397870_B000(self + 0x74, *(unsigned char*)(self + 0x95) - *(unsigned char*)(self + 0x98));
+        itemNotify_B000(self, item, 4);
+    } else {
+        return 0;
+    }
+    char* listener = *(char**)((char*)func_0039FF50(self) + 0x14);
+    if (listener == 0)
+        listener = D_004A5A58;
+    if (listener != 0) {
+        sVEv_B000* vt = *(sVEv_B000**)listener;
+        vt[2].fn(listener + vt[2].delta, result);
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uimenu", func_0039B6A0);
