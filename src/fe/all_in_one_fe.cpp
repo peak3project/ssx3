@@ -959,7 +959,233 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D9A0);
+#ifdef SKIP_ASM
+struct sV2_D9A0 { float x, y; };
+struct sV4_D9A0 {
+    float x, y, z, w;
+    sV4_D9A0() {}
+    sV4_D9A0(float ax, float ay, float az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+struct sCol_D9A0 { float r, g, b, a; };
+struct sVtx_D9A0 {
+    float u, v, q, pad;
+    int g, b, a, r;
+    sV4_D9A0 pos;
+};
+struct sVE71_D9A0 { short delta; short index; void (*fn)(void*, int, sVtx_D9A0*, int); };
+struct sCtx_D9A0 {
+    char pad[0xE84];
+    char* e84;              // 0xE84
+};
+struct sSprite_D9A0 {
+    int tex;                // 0x0
+    int pad[2];
+    float v0;               // 0xC
+    float u0;               // 0x10
+    float u1;               // 0x14
+    float v1;               // 0x18
+};
+struct sPlayerHud_D9A0 {
+    char pad[0x48];
+    int rider;              // 0x48
+    char pad4C[0x8C - 0x4C];
+};
+struct sHudRoot_D9A0 {
+    sPlayerHud_D9A0 players[2];     // 0x0
+    char pad118[0x494 - 0x118];
+    sSprite_D9A0* sprites[0x20];    // 0x494
+};
+struct sBar_D9A0 {
+    float scale;
+    int count;
+};
+extern sCtx_D9A0* D_004A289C_D9A0 __asm__("D_004A289C");
+extern int D_004A4E98;
+extern float D_004A5B28;
+extern float D_004A5B2C;
+extern sCol_D9A0 D_004C8668;
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_D9A0(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00147618(void* iface, int a1);
+extern "C" void func_001E91F8(void*, void*);
+extern "C" void func_001E9220(void*, void*, int);
+void func_001E9290_D9A0(void*, void*) __asm__("func_001E9290__FPvT0");
+void func_001E91A8_D9A0(void*, void*) __asm__("func_001E91A8__FPvT0");
+extern "C" void func_001E95A0(void*, void*, void*, void*, int, int);
+extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
+extern "C" void func_001F1338(void* self, void* pos, void* size, void* scale, void* col);
+
+static inline int texOf_D9A0(sSprite_D9A0* s)
+{
+    return s->tex;
+}
+
+static inline void setTex_D9A0(sSprite_D9A0* s)
+{
+    *(short*)(D_004A289C_D9A0->e84 + 0x10) = texOf_D9A0(s);
+}
+
+static inline void setUV_D9A0(sVtx_D9A0* v, sSprite_D9A0* s)
+{
+    v[0].u = s->u0;
+    v[0].v = s->v0;
+    v[1].u = s->u1;
+    v[1].v = s->v0;
+    v[2].u = s->u0;
+    v[2].v = s->v1;
+    v[3].u = s->u1;
+    v[3].v = s->v1;
+}
+
+static inline void setUVFlip_D9A0(sVtx_D9A0* v, sSprite_D9A0* s)
+{
+    v[0].u = s->u1;
+    v[0].v = s->v0;
+    v[1].u = s->u0;
+    v[1].v = s->v0;
+    v[2].u = s->u1;
+    v[2].v = s->v1;
+    v[3].u = s->u0;
+    v[3].v = s->v1;
+}
+
+static inline void draw_D9A0(sVtx_D9A0* v)
+{
+    char* ctx = (char*)D_004A289C_D9A0;
+    sVE71_D9A0* vt = *(sVE71_D9A0**)(ctx + 0x10D8);
+    vt[71].fn(ctx + vt[71].delta, 4, v, 0);
+}
+
+// Horizontal gauge: cap icon, start piece, middle, end piece, then the fill bar on top.
+extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, sBar_D9A0* bar, int idx,
+                              int icon, float* scale)
+{
+    int alt = func_00147618(cBE_getInterface_D9A0(cBE_getBE(), 1), ((sHudRoot_D9A0*)self)->players[idx].rider);
+    sV2_D9A0 a;
+    sV2_D9A0 sc;
+    sV4_D9A0 t;     // icon colour first, then reused for the bar size
+    sV2_D9A0 pos;
+    sV2_D9A0 p;
+    sV2_D9A0 v;
+    if (icon != 0) {
+        char* ie = elems + 0x7BC;
+        func_001E91F8(ie, &a);
+        func_001E9290_D9A0(ie, &sc);
+        func_001E91A8_D9A0(ie, &t);
+        if (alt == 0) {
+            pos = a;
+            func_001E95A0(self + 0x6AC, &pos, &sc, &t, elems[0x7DC], elems[0x7DD]);
+        } else {
+            pos = a;
+            func_001E95A0(self + 0x7F8, &pos, &sc, &t, elems[0x7DC], elems[0x7DD]);
+        }
+    }
+    char* e = elems + 0x798;
+    func_001E91F8(e, &a);
+    func_001E9220(e, &t, 0);
+    func_001E9290_D9A0(e, &sc);
+    sc.x *= scale[0];
+    sc.y *= scale[1];
+    t.x *= sc.x;
+    t.y *= sc.y;
+    v.x = 1.0f;
+    v.y = 1.0f;
+    func_001F10F8(self, &p, &a, &t, &v, elems[0x7B8], elems[0x7B9], idx);
+    int* w = (int*)(D_004A289C_D9A0->e84 + 8);
+    *w = (*w & ~0x3E0) | ((elems[0x7BA] << 5) & 0x3E0);
+    sVtx_D9A0 vtx[4];
+    sVtx_D9A0* verts = vtx;
+    for (int i = 0; i < 4; i++) {
+        int r = (int)(alpha * 128.0f);
+        vtx[i].r = r;
+        vtx[i].g = 0x80;
+        vtx[i].b = 0x80;
+        vtx[i].a = 0x80;
+        vtx[i].q = 1.0f;
+    }
+    {
+        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[alt == 0 ? 0x12 : 0x13];
+        v.x = sc.x * 20.0f;
+        v.y = sc.y * 20.0f;
+        sV2_D9A0 c;
+        c.x = p.x;
+        c.y = p.y + (t.y - v.y) * 0.5f;
+        setTex_D9A0(s);
+        setUV_D9A0(vtx, s);
+        vtx[0].pos = sV4_D9A0(c.x, c.y, 0.0f, 1.0f);
+        vtx[1].pos = sV4_D9A0(c.x + v.x, c.y, 0.0f, 1.0f);
+        vtx[2].pos = sV4_D9A0(c.x, c.y + v.y, 0.0f, 1.0f);
+        vtx[3].pos = sV4_D9A0(c.x + v.x, c.y + v.y, 0.0f, 1.0f);
+        draw_D9A0(verts);
+    }
+    float d = v.x + sc.x * 3.0f;
+    p.x += d;
+    t.x -= d;
+    v = p;
+    float segW = sc.x * (bar->scale * 9.0f);
+    {
+        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[0x10];
+        setTex_D9A0(s);
+        setUV_D9A0(vtx, s);
+        vtx[0].pos = sV4_D9A0(p.x, p.y, 0.0f, 1.0f);
+        vtx[1].pos = sV4_D9A0(p.x + segW, p.y, 0.0f, 1.0f);
+        vtx[2].pos = sV4_D9A0(p.x, p.y + t.y, 0.0f, 1.0f);
+        vtx[3].pos = sV4_D9A0(p.x + segW, p.y + t.y, 0.0f, 1.0f);
+        draw_D9A0(verts);
+        p.x += segW;
+    }
+    if (bar->count > 0) {
+        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[0x11];
+        setTex_D9A0(s);
+        float midW = t.x - (segW + segW);
+        setUV_D9A0(vtx, s);
+        vtx[0].pos = sV4_D9A0(p.x, p.y, 0.0f, 1.0f);
+        vtx[1].pos = sV4_D9A0(p.x + midW, p.y, 0.0f, 1.0f);
+        vtx[2].pos = sV4_D9A0(p.x, p.y + t.y, 0.0f, 1.0f);
+        vtx[3].pos = sV4_D9A0(p.x + midW, p.y + t.y, 0.0f, 1.0f);
+        draw_D9A0(verts);
+        p.x += midW;
+    }
+    {
+        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[0x10];
+        setTex_D9A0(s);
+        setUVFlip_D9A0(vtx, s);
+        vtx[0].pos = sV4_D9A0(p.x, p.y, 0.0f, 1.0f);
+        vtx[1].pos = sV4_D9A0(p.x + segW, p.y, 0.0f, 1.0f);
+        vtx[2].pos = sV4_D9A0(p.x, p.y + t.y, 0.0f, 1.0f);
+        vtx[3].pos = sV4_D9A0(p.x + segW, p.y + t.y, 0.0f, 1.0f);
+        draw_D9A0(verts);
+        p.x += segW;
+    }
+    if (fill <= 0.0f)
+        return;
+    {
+        if (D_004A4E98 == 0) {
+            D_004A4E98 = 1;
+            D_004A5B28 = 3.0f;
+            D_004A5B2C = 3.0f;
+        }
+        sV2_D9A0 m;
+        m.x = D_004A5B28 * sc.x;
+        m.y = D_004A5B2C * sc.y;
+        sV2_D9A0 fs;
+        fs.x = (t.x - (m.x + m.x)) * fill;
+        fs.y = t.y - (m.y + m.y);
+        sCol_D9A0 col = D_004C8668;
+        col.r *= alpha;
+        v.x += m.x;
+        v.y += m.y;
+        int* w2 = (int*)(D_004A289C_D9A0->e84 + 8);
+        *w2 = (*w2 & ~0x3E0) | (((elems[0x7BA] + 1) << 5) & 0x3E0);
+        sV2_D9A0 one;
+        one.x = 1.0f;
+        one.y = 1.0f;
+        func_001F1338(self, &v, &fs, &one, &col);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021E1B0);
