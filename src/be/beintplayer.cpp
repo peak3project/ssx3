@@ -492,9 +492,10 @@ extern "C" int func_001464D0(void* self, int index, int c, int kind, int flag)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001466A0);
 #ifdef SKIP_ASM
+// Event table D_0043D950 (0x64-byte entries); 0x54 is the peak the event belongs to.
 struct sEventEntry {
     char pad_0x0[0x54];
-    int kind;               // 0x54
+    int peak;               // 0x54
     char pad_0x58[0xC];
 };
 extern sEventEntry D_0043D950[];
@@ -504,7 +505,7 @@ extern "C" int func_001466A0(void* self, int index)
     int profile = cBELibrary_getProfileIndex(index);
     int id = cBENewPlayerInterface_getPlayerID(index);
     signed char c = D_00534FE0[id].mCharID;
-    int kind = D_0043D950[D_005305B0.event].kind;
+    int kind = D_0043D950[D_005305B0.event].peak;
     if (D_005305B0.mode == 5) {
         switch (kind) {
         case 0:
