@@ -270,6 +270,23 @@ static inline void CopyQuads(unsigned long** pp, const void* srcp, int n)
     *pp = (unsigned long*)d;
 }
 
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void vu0CopyMtx(sPtMatrix* dst, sPtMatrix* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%0)\n"
+        "lqc2      $vf2, 0x10(%0)\n"
+        "lqc2      $vf3, 0x20(%0)\n"
+        "lqc2      $vf4, 0x30(%0)\n"
+        "sqc2      $vf1, 0x0(%1)\n"
+        "sqc2      $vf2, 0x10(%1)\n"
+        "sqc2      $vf3, 0x20(%1)\n"
+        "sqc2      $vf4, 0x30(%1)\n"
+        :
+        : "r"(src), "r"(dst)
+        : "memory");
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2478,21 +2495,6 @@ struct sPtGfx65B8 {
 };
 
 // PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
-static inline void vu0CopyMtx65B8(sPtMatrix* dst, sPtMatrix* src)
-{
-    __asm__ __volatile__(
-        "lqc2      $vf1, 0x0(%0)\n"
-        "lqc2      $vf2, 0x10(%0)\n"
-        "lqc2      $vf3, 0x20(%0)\n"
-        "lqc2      $vf4, 0x30(%0)\n"
-        "sqc2      $vf1, 0x0(%1)\n"
-        "sqc2      $vf2, 0x10(%1)\n"
-        "sqc2      $vf3, 0x20(%1)\n"
-        "sqc2      $vf4, 0x30(%1)\n"
-        :
-        : "r"(src), "r"(dst)
-        : "memory");
-}
 
 extern "C" void func_003950C0(sPtView* dst, sPtView* src);
 
@@ -2503,16 +2505,16 @@ extern "C" void func_003765B8(sPtGfx65B8* self)
     v->key = *(int*)(self->keys + 0x69CC4);
     v->f24 = self->f590C;
     v->f28 = self->f5908;
-    vu0CopyMtx65B8(&v->m60, &self->m6AF0);
+    vu0CopyMtx(&v->m60, &self->m6AF0);
     v->q30 = self->q6B70;
     v->q40 = self->q6B80;
-    vu0CopyMtx65B8(&v->mA0, &self->m5780);
-    vu0CopyMtx65B8(&v->mE0, &self->m57C0);
-    vu0CopyMtx65B8(&v->m120, &self->m5800);
+    vu0CopyMtx(&v->mA0, &self->m5780);
+    vu0CopyMtx(&v->mE0, &self->m57C0);
+    vu0CopyMtx(&v->m120, &self->m5800);
     v->q160 = self->q5840;
     v->q170 = self->q5850;
-    vu0CopyMtx65B8(&v->m180, &self->m5860);
-    vu0CopyMtx65B8(&v->m1C0, &self->m58A0);
+    vu0CopyMtx(&v->m180, &self->m5860);
+    vu0CopyMtx(&v->m1C0, &self->m58A0);
     v->q200 = self->q58E0;
     v->q210 = self->q58F0;
     v->f2C = self->f5910;
@@ -2561,21 +2563,6 @@ struct sPtGfx6768 {
 };
 
 // PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
-static inline void vu0CopyMtx6768(sPtMatrix* dst, sPtMatrix* src)
-{
-    __asm__ __volatile__(
-        "lqc2      $vf1, 0x0(%0)\n"
-        "lqc2      $vf2, 0x10(%0)\n"
-        "lqc2      $vf3, 0x20(%0)\n"
-        "lqc2      $vf4, 0x30(%0)\n"
-        "sqc2      $vf1, 0x0(%1)\n"
-        "sqc2      $vf2, 0x10(%1)\n"
-        "sqc2      $vf3, 0x20(%1)\n"
-        "sqc2      $vf4, 0x30(%1)\n"
-        :
-        : "r"(src), "r"(dst)
-        : "memory");
-}
 
 extern "C" void func_00364B88(void* table, void* key);
 
@@ -2591,16 +2578,16 @@ extern "C" void func_00376768(sPtGfx6768* self)
     }
     self->f590C = v->f24;
     self->f5908 = v->f28;
-    vu0CopyMtx6768(&self->m6AF0, &v->m60);
+    vu0CopyMtx(&self->m6AF0, &v->m60);
     self->q6B70 = v->q30;
     self->q6B80 = v->q40;
-    vu0CopyMtx6768(&self->m5780, &v->mA0);
-    vu0CopyMtx6768(&self->m57C0, &v->mE0);
-    vu0CopyMtx6768(&self->m5800, &v->m120);
+    vu0CopyMtx(&self->m5780, &v->mA0);
+    vu0CopyMtx(&self->m57C0, &v->mE0);
+    vu0CopyMtx(&self->m5800, &v->m120);
     self->q5840 = v->q160;
     self->q5850 = v->q170;
-    vu0CopyMtx6768(&self->m5860, &v->m180);
-    vu0CopyMtx6768(&self->m58A0, &v->m1C0);
+    vu0CopyMtx(&self->m5860, &v->m180);
+    vu0CopyMtx(&self->m58A0, &v->m1C0);
     self->q58E0 = v->q200;
     self->q58F0 = v->q210;
     self->f5910 = v->f2C;
@@ -4493,27 +4480,12 @@ struct sPartDrawList {
 };
 
 // PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
-static inline void vu0CopyMtxP(sPtMatrix* dst, sPtMatrix* src)
-{
-    __asm__ __volatile__(
-        "lqc2      $vf1, 0x0(%0)\n"
-        "lqc2      $vf2, 0x10(%0)\n"
-        "lqc2      $vf3, 0x20(%0)\n"
-        "lqc2      $vf4, 0x30(%0)\n"
-        "sqc2      $vf1, 0x0(%1)\n"
-        "sqc2      $vf2, 0x10(%1)\n"
-        "sqc2      $vf3, 0x20(%1)\n"
-        "sqc2      $vf4, 0x30(%1)\n"
-        :
-        : "r"(src), "r"(dst)
-        : "memory");
-}
 
 extern "C" void func_0037D758(sPartDrawList* self, sPtQuadI* q, sPtMatrix* m0, sPtMatrix* m1, float f, int i)
 {
     self->entries[self->count].q = *q;
-    vu0CopyMtxP(&self->entries[self->count].m0, m0);
-    vu0CopyMtxP(&self->entries[self->count].m1, m1);
+    vu0CopyMtx(&self->entries[self->count].m0, m0);
+    vu0CopyMtx(&self->entries[self->count].m1, m1);
     self->entries[self->count].f = f;
     self->entries[self->count].i = i;
     self->count++;
