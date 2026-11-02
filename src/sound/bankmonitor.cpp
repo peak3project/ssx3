@@ -71,6 +71,43 @@ struct sSndPlayer {
     char vb[0x4];               // 0x8DC
 };
 
+extern "C" void* func_002AB9E0(void* self);
+
+struct sBmQuad {
+    int w[4];
+} __attribute__((aligned(16)));
+
+// One of a bank monitor's 64 voices (0xC0 bytes).
+struct sBmVoice {
+    int kind;                   // 0x00 (1 / 2: which sound system plays it)
+    int id;                     // 0x04
+    int valid;                  // 0x08
+    int handle;                 // 0x0C
+    char pad10[0x58 - 0x10];
+    int f58;                    // 0x58
+    float value;                // 0x5C
+    int f60;                    // 0x60
+    int vol;                    // 0x64
+    sBmQuad* tgt;               // 0x68
+    int f6C;                    // 0x6C
+    sBmQuad tgtCopy;            // 0x70
+    int f80;                    // 0x80
+    int f84;                    // 0x84
+    float f88;                  // 0x88
+    float f8C;                  // 0x8C
+    float f90;                  // 0x90
+    int f94;                    // 0x94
+    int f98;                    // 0x98
+    int f9C;                    // 0x9C
+    int fA0;                    // 0xA0
+    int fA4;                    // 0xA4
+    sSndCallback callback;      // 0xA8
+    char padB0[0xC0 - 0xB0];
+    sBmVoice() { func_002AB9E0(this); }
+    void operator delete[](void* p, unsigned int size);
+};
+
+
 // One of the 24 bank-slot records D_004D3EF8 (0x28 bytes): sound id, handle and bank index (-1 = free).
 struct sBankMonSlot28 {
     int id;         // 0x00
@@ -93,17 +130,10 @@ INCLUDE_ASM("sound/bankmonitor", cBankMonitor_cBankMonitor);
 #ifdef SKIP_ASM
 extern "C" sSndPlayer* func_002AD9C8(sSndPlayer* self, int inchrg, int heap);
 extern "C" void* func_002ADE88(void* self, int a);
-extern "C" void* func_002AB9E0(void* self);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern const char D_00483238[];
 
-
-struct sBmVoiceCD08 {
-    char pad_0x0[0xC0];
-    sBmVoiceCD08() { func_002AB9E0(this); }
-    void operator delete[](void* p, unsigned int size);
-};
 
 struct sBankMonitorCD08 {
     char* vbase;                // 0x0
@@ -113,7 +143,7 @@ struct sBankMonitorCD08 {
     int f8E0;                   // 0x8E0
     int f8E4;                   // 0x8E4
     int f8E8;                   // 0x8E8
-    sBmVoiceCD08* voices;       // 0x8EC
+    sBmVoice* voices;       // 0x8EC
     char vb[0x4];               // 0x8F0
 };
 
@@ -137,8 +167,8 @@ extern "C" sBankMonitorCD08* cBankMonitor_cBankMonitor(sBankMonitorCD08* self, i
     self->f8DC = 0;
     self->f8E0 = 1;
     self->f8E4 = 1;
-    sBmVoiceCD08** slot = &self->voices;
-    *slot = new (D_00483238, 0, 0) sBmVoiceCD08[64];
+    sBmVoice** slot = &self->voices;
+    *slot = new (D_00483238, 0, 0) sBmVoice[64];
     return self;
 }
 #endif
@@ -153,16 +183,12 @@ extern "C" void func_002ADAC8(sSndPlayer* self, int flags);
 extern "C" void func_002ADEE8(void* self, int flags);
 
 
-struct sBmVoiceE40 {
-    char pad_0x0[0xC0];
-};
-
 struct sBankMonitorE40 {
     char* vbase;                // 0x0
     char pad_0x4[0x8D8 - 0x4];
     void** vtbl;                // 0x8D8
     char pad_0x8DC[0x8EC - 0x8DC];
-    sBmVoiceE40* voices;        // 0x8EC
+    sBmVoice* voices;        // 0x8EC
 };
 
 extern "C" void func_002ACE40(sBankMonitorE40* self, int flags)
@@ -178,7 +204,7 @@ extern "C" void func_002ACE40(sBankMonitorE40* self, int flags)
         vt.e[1].delta = D_00483B88.e[1].delta + d;
     }
     if (self->voices != 0) {
-        sBmVoiceE40* q = self->voices + ((int*)self->voices)[-4];
+        sBmVoice* q = self->voices + ((int*)self->voices)[-4];
         while (self->voices != q) {
             q--;
             func_002ABA18(q, 0);
@@ -224,39 +250,11 @@ extern "C" void func_003B89E0(int h);
 extern "C" int func_003B9920(int h);
 extern char D_00483250[];
 
-struct sBmQuadCreate {
-    int w[4];
-} __attribute__((aligned(16)));
-struct sBmVoiceCreate {
-    int kind;                   // 0x00
-    int id;                     // 0x04
-    int valid;                  // 0x08
-    char pad0C[0x58 - 0xC];
-    int f58;                    // 0x58
-    int f5C;                    // 0x5C
-    int f60;                    // 0x60
-    int vol;                    // 0x64
-    sBmQuadCreate* tgt;         // 0x68
-    int f6C;                    // 0x6C
-    sBmQuadCreate tgtCopy;      // 0x70
-    int f80;                    // 0x80
-    int f84;                    // 0x84
-    float f88;                  // 0x88
-    float f8C;                  // 0x8C
-    float f90;                  // 0x90
-    int f94;                    // 0x94
-    int f98;                    // 0x98
-    int f9C;                    // 0x9C
-    int fA0;                    // 0xA0
-    int fA4;                    // 0xA4
-    sSndCallback callback;      // 0xA8
-    char padB0[0xC0 - 0xB0];
-};
 struct sBankMonitorCreate {
     char pad00[0x1C];
     volatile int cur;           // 0x1C
     void* ch;                   // 0x20
-    sBmQuadCreate* tgt[4];      // 0x24
+    sBmQuad* tgt[4];      // 0x24
     int* p34;                   // 0x34
     int* vals;                  // 0x38
     int* p3C;                   // 0x3C
@@ -274,7 +272,7 @@ struct sBankMonitorCreate {
     char pad88[0x8DC - 0x88];
     volatile int busy;          // 0x8DC
     char pad8E0[0x8EC - 0x8E0];
-    sBmVoiceCreate* voices;     // 0x8EC
+    sBmVoice* voices;     // 0x8EC
 };
 
 // cSndPlayOpts::OPTS_GetCallback (prototype name; out-of-line copy in bx is func_002B91C8)
@@ -283,14 +281,14 @@ static inline sSndCallback OPTS_GetCallback_Create(sBankMonitorCreate* s)
     return s->callbacks[s->cur];
 }
 
-static inline void setCallback_Create(sBmVoiceCreate* v, sSndCallback k)
+static inline void setCallback_Create(sBmVoice* v, sSndCallback k)
 {
     v->callback = k;
 }
 
-extern "C" sBmVoiceCreate* cBankMonitor_BANKMONITOR_Create(sBankMonitorCreate* self, int id, int vol, int kind)
+extern "C" sBmVoice* cBankMonitor_BANKMONITOR_Create(sBankMonitorCreate* self, int id, int vol, int kind)
 {
-    sBmVoiceCreate* v = 0;
+    sBmVoice* v = 0;
     self->busy++;
     int idx = func_002ACF60(self, self->busy);
     if (idx >= 0) {
@@ -410,13 +408,7 @@ INCLUDE_ASM("sound/bankmonitor", func_002AD410);
 #ifdef SKIP_ASM
 extern "C" void func_002ABB38(void*);
 
-struct sBmVoiceD410 {
-    char pad00[0xA8];
-    sSndCallback callback;   // 0xA8
-    char padB0[0xC0 - 0xB0];
-};
-
-static inline int func_002AD410_match(sBmVoiceD410* v, sSndCallback k)
+static inline int func_002AD410_match(sBmVoice* v, sSndCallback k)
 {
     return k == v->callback;
 }
@@ -425,7 +417,7 @@ static inline int func_002AD410_match(sBmVoiceD410* v, sSndCallback k)
 extern "C" void func_002AD410(void* self, sSndCallback key)
 {
     for (int i = 0; i < 64; i++) {
-        if (func_002AD410_match((sBmVoiceD410*)((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0), key)) {
+        if (func_002AD410_match((sBmVoice*)((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0), key)) {
             func_002ABB38((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0);
         }
     }
@@ -448,15 +440,13 @@ extern "C" void func_002AD4D8(void* self, int id)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD550);
 #ifdef SKIP_ASM
-struct sVoiceC0 { int key; int idx; char pad[0xC0 - 8]; };
-
 extern "C" void* func_002AD550(void* self, int idx, int key)
 {
     for (int i = 0; i < 64; i++) {
         if (func_002ABB80((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0) == 0
-            && (*(sVoiceC0**)((char*)self + 0x8EC))[i].key == key
-            && (*(sVoiceC0**)((char*)self + 0x8EC))[i].idx == idx) {
-            return &(*(sVoiceC0**)((char*)self + 0x8EC))[i];
+            && (*(sBmVoice**)((char*)self + 0x8EC))[i].kind == key
+            && (*(sBmVoice**)((char*)self + 0x8EC))[i].id == idx) {
+            return &(*(sBmVoice**)((char*)self + 0x8EC))[i];
         }
     }
     return 0;
@@ -492,20 +482,13 @@ extern "C" void func_002ABB38(void*);
 // the 2nd parameter in the original, which orders the argument moves.
 void func_002ACB80_f(void* voice, float v, int a, int b) __asm__("func_002ACB80");
 
-struct sVoiceD650 {
-    int state;      // 0x0
-    int pad_4[2];
-    int id;         // 0xC
-    char pad[0xC0 - 0x10];
-};
-
 extern "C" void func_002AD650(void* self, int id, float v)
 {
     for (int i = 0; i < 64; i++) {
         if (func_002ABB80((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0) == 0) {
             // PORT: pointer arithmetic through int
-            sVoiceD650* e = (sVoiceD650*)(i * 0xC0 + *(int*)((char*)self + 0x8EC));
-            if (e->state == 1 && e->id == id) {
+            sBmVoice* e = (sBmVoice*)(i * 0xC0 + *(int*)((char*)self + 0x8EC));
+            if (e->kind == 1 && e->handle == id) {
                 if (v != 0.0f) {
                     func_002ACB80_f(e, v, -1, 1);
                 } else {
@@ -522,20 +505,14 @@ INCLUDE_ASM("sound/bankmonitor", func_002AD730);
 #ifdef SKIP_ASM
 extern "C" int func_002ABB80(void*);
 
-struct sVoiceAD730 {
-    int pad_0[2];
-    int active;     // 0x8
-    char pad[0xC0 - 0xC];
-};
-
 extern "C" int func_002AD730(void* self)
 {
     int count = 0;
     for (int i = 0; i < 64; i++) {
         if (func_002ABB80((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0) == 0) {
             // PORT: pointer arithmetic through int
-            sVoiceAD730* e = (sVoiceAD730*)(i * 0xC0 + *(int*)((char*)self + 0x8EC));
-            if (e->active != 0) {
+            sBmVoice* e = (sBmVoice*)(i * 0xC0 + *(int*)((char*)self + 0x8EC));
+            if (e->valid != 0) {
                 count++;
             }
         }
@@ -563,16 +540,10 @@ extern "C" int func_002AD7A8(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD810);
 #ifdef SKIP_ASM
-struct sBankVoice {
-    char pad[0x5c];
-    float value;
-    char pad2[0xc0 - 0x60];
-};
-
 extern "C" void func_002AD810(void* self)
 {
     for (int i = 0; i < 64; i++) {
-        (*(sBankVoice**)((char*)self + 0x8ec))[i].value = -1.0f;
+        (*(sBmVoice**)((char*)self + 0x8ec))[i].value = -1.0f;
     }
 }
 #endif
