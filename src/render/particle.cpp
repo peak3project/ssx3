@@ -210,6 +210,54 @@ struct sPtMatPacket {
     sPtMatrixV mat;                  // 0x50
 };
 
+// cPS2GraphicsMan (prototype class) as the particle renderers see it: render-state stack top, texture ids, draw
+// ring, texture set, scissor, frame-buffer setup, bounds. Fields named by their users; the rest is padding.
+struct cPS2GraphicsMan {
+    char pad_0x0[0xE84];
+    sPtRenderState* top;            // 0xE84
+    char pad_0xE88[0xF50 - 0xE88];
+    int texIds[(0x10D8 - 0xF50) / 4];   // 0xF50
+    sPtVtVP* vtable;                // 0x10D8
+    char pad_0x10DC[0x18F0 - 0x10DC];
+    sPtRing* ring;                  // 0x18F0
+    void* texset;                   // 0x18F4
+    char pad_0x18F8[0x5860 - 0x18F8];
+    sPtMatrixV m5860;               // 0x5860
+    char pad_0x58A0[0x5900 - 0x58A0];
+    unsigned short scX;             // 0x5900
+    unsigned short scY;             // 0x5902
+    unsigned short scW;             // 0x5904
+    unsigned short scH;             // 0x5906
+    char pad_0x5908[0x5A00 - 0x5908];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x5A28 - 0x5A04];
+    unsigned int pendBuf;           // 0x5A28
+    unsigned long* pend;            // 0x5A2C
+    unsigned int width;             // 0x5A30
+    unsigned int height;            // 0x5A34
+    char pad_0x5A38[0x4];
+    unsigned int psm;               // 0x5A3C
+    char pad_0x5A40[0x5A50 - 0x5A40];
+    unsigned int fbw;               // 0x5A50
+    char pad_0x5A54[0x5A84 - 0x5A54];
+    unsigned int fbp;               // 0x5A84
+    char pad_0x5A88[0x6AF0 - 0x5A88];
+    float f6AF0;                    // 0x6AF0
+    char pad_0x6AF4[0x6B04 - 0x6AF4];
+    float f6B04;                    // 0x6B04
+    char pad_0x6B08[0x6B30 - 0x6B08];
+    sPtMatrix m6B30;                // 0x6B30
+    float xmin;                     // 0x6B70
+    float ymin;                     // 0x6B74
+    float zmin;                     // 0x6B78
+    char pad_0x6B7C[4];
+    float xmax;                     // 0x6B80
+    float ymax;                     // 0x6B84
+    float zmax;                     // 0x6B88
+    char pad_0x6B8C[4];
+    int texReady;                   // 0x6B90
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -550,16 +598,9 @@ INCLUDE_ASM("render/particle", func_00371380);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
 
-struct sPtCtx1380 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;             // 0xE84
-    char pad_0xE88[0xF50 - 0xE88];
-    int texIds[(0x10D8 - 0xF50) / 4];   // 0xF50
-    sPtVtVP* vtable;      // 0x10D8
-};
 
 extern char* D_004A5B80;
-extern sPtCtx1380* D_004A5B80_ctx __asm__("D_004A5B80");
+extern cPS2GraphicsMan* D_004A5B80_ctx __asm__("D_004A5B80");
 extern int D_0044B420[];
 
 
@@ -568,7 +609,7 @@ extern "C" void func_00371380(sPtEmitter* self, int blend)
     if (self->field_0x174 == 0) {
         return;
     }
-    sPtCtx1380* ctx = D_004A5B80_ctx;
+    cPS2GraphicsMan* ctx = D_004A5B80_ctx;
     if (self->field_0x1E0 == 0) {
         return;
     }
@@ -690,16 +731,9 @@ INCLUDE_ASM("render/particle", func_00371688);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
 
-struct sPtCtx1688 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;             // 0xE84
-    char pad_0xE88[0xF50 - 0xE88];
-    int texIds[(0x10D8 - 0xF50) / 4];   // 0xF50
-    sPtVtVP* vtable;      // 0x10D8
-};
 
 extern char* D_004A5B80;
-extern sPtCtx1688* D_004A5B80_ctx1688 __asm__("D_004A5B80");
+extern cPS2GraphicsMan* D_004A5B80_ctx1688 __asm__("D_004A5B80");
 extern int D_0044B420[];
 
 
@@ -708,7 +742,7 @@ extern "C" void func_00371688(sPtEmitter* self, int blend)
     if (self->field_0x174 == 0) {
         return;
     }
-    sPtCtx1688* ctx = D_004A5B80_ctx1688;
+    cPS2GraphicsMan* ctx = D_004A5B80_ctx1688;
     if (self->field_0x1E0 == 0) {
         return;
     }
@@ -3044,29 +3078,6 @@ typedef int cQuad128_CF0 __attribute__((mode(TI)));
 
 
 
-struct sPtGfx_CF0 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6AF0 - 0x5A04];
-    float f6AF0;                    // 0x6AF0
-    char pad_0x6AF4[0x6B04 - 0x6AF4];
-    float f6B04;                    // 0x6B04
-    char pad_0x6B08[0x6B30 - 0x6B08];
-    sPtMatrix m6B30;                 // 0x6B30
-    float xmin;                     // 0x6B70
-    float ymin;                     // 0x6B74
-    float zmin;                     // 0x6B78
-    char pad_0x6B7C[4];
-    float xmax;                     // 0x6B80
-    float ymax;                     // 0x6B84
-    float zmax;                     // 0x6B88
-    char pad_0x6B8C[4];
-    int texReady;                   // 0x6B90
-};
 
 // PORT: PS2-only VU0 inline asm (vector subtract); the PC port needs a C fallback.
 static inline sPt7278 Sub_CF0(const sPt7278& a, const sPt7278& b)
@@ -3091,7 +3102,7 @@ static inline int Bits_CF0(float f)
     return u.i;
 }
 
-static inline int Outcode_CF0(sPtGfx_CF0* self, const sPt7278& v)
+static inline int Outcode_CF0(cPS2GraphicsMan* self, const sPt7278& v)
 {
     int c = 0;
     if (v.x < self->xmin)
@@ -3114,7 +3125,7 @@ static inline int Outcode_CF0(sPtGfx_CF0* self, const sPt7278& v)
 }
 
 // PORT: PS2-only GS packet build and VU0 inline asm; uncached (0x30000000) pointers.
-extern "C" void func_00377CF0(sPtGfx_CF0* self, sPt7278* pos, float* size, int* uv0, int* uv1, float* color)
+extern "C" void func_00377CF0(cPS2GraphicsMan* self, sPt7278* pos, float* size, int* uv0, int* uv1, float* color)
 {
     if (self->texReady == 0) {
         func_0037D968(self);
@@ -3300,24 +3311,13 @@ INCLUDE_ASM("render/particle", func_0037A430);
 
 
 
-struct sPtGfx_A430 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x5A28 - 0x5A04];
-    unsigned int pendBuf;           // 0x5A28
-    unsigned long* pend;            // 0x5A2C
-};
 
 extern int D_004A4474;
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 
 // PORT: uncached (0x30000000) pointers held in int.
 // Flushes the pending packet into a ring entry and resets the render state's layer bits.
-extern "C" void func_0037A430(sPtGfx_A430* self)
+extern "C" void func_0037A430(cPS2GraphicsMan* self)
 {
     unsigned int next = func_0038F668(D_004A4474, self->pend, 4);
     self->bufAddr = next;
@@ -4333,21 +4333,12 @@ INCLUDE_ASM("render/particle", func_0037D348);
 
 
 
-struct sPtGfx_D348 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    void* texset;                   // 0x18F4
-    char pad_0x18F8[0x5A00 - 0x18F8];
-    unsigned int bufAddr;           // 0x5A00
-};
 
 extern "C" void func_00367DB8_D348(void* texset, int idx, unsigned int* buf) __asm__("func_00367DB8");
 
 // PORT: uncached (0x30000000) pointers held in int.
 // Uploads texture idx into the uncached buffer and queues a ring entry for it.
-extern "C" int func_0037D348(sPtGfx_D348* self, int idx)
+extern "C" int func_0037D348(cPS2GraphicsMan* self, int idx)
 {
     unsigned int buf = self->bufAddr;
     unsigned int p = buf | 0x30000000;
@@ -4377,31 +4368,9 @@ INCLUDE_ASM("render/particle", func_0037D450);
 
 
 
-struct sPtGfx_D450 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5900 - 0x18F4];
-    unsigned short scX;             // 0x5900
-    unsigned short scY;             // 0x5902
-    unsigned short scW;             // 0x5904
-    unsigned short scH;             // 0x5906
-    char pad_0x5908[0x5A00 - 0x5908];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x2C];
-    unsigned int width;             // 0x5A30
-    unsigned int height;            // 0x5A34
-    char pad_0x5A38[0x4];
-    unsigned int psm;               // 0x5A3C
-    char pad_0x5A40[0x10];
-    unsigned int fbw;               // 0x5A50
-    char pad_0x5A54[0x30];
-    unsigned int fbp;               // 0x5A84
-};
 
 // PORT: 64-bit `ulong` GS packet words; uncached (0x30000000) pointers held in int.
-extern "C" int func_0037D450(sPtGfx_D450* self)
+extern "C" int func_0037D450(cPS2GraphicsMan* self)
 {
     unsigned int buf = self->bufAddr;
     ulong* p = (ulong*)(buf | 0x30000000);
@@ -4545,15 +4514,6 @@ INCLUDE_ASM("render/particle", func_0037D800);
 
 
 
-struct sPtGfx_D800 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    void* texset;                   // 0x18F4
-    char pad_0x18F8[0x5A00 - 0x18F8];
-    unsigned int bufAddr;           // 0x5A00
-};
 
 extern "C" void func_00367F18_D800(void* texset, int idx, float* color, unsigned int* buf) __asm__("func_00367F18");
 
@@ -4562,7 +4522,7 @@ extern "C" void func_00367F18_D800(void* texset, int idx, float* color, unsigned
 
 // PORT: uncached (0x30000000) pointers held in int.
 // Like func_0037D348 for the two-argument upload; the queued entry is flagged.
-extern "C" void func_0037D800(sPtGfx_D800* self, int idx, float* color)
+extern "C" void func_0037D800(cPS2GraphicsMan* self, int idx, float* color)
 {
     unsigned int buf = self->bufAddr;
     unsigned int p = buf | 0x30000000;
@@ -5125,16 +5085,6 @@ INCLUDE_ASM("render/particle", func_00380518);
 
 
 
-struct sPtGfx_0518 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 extern int D_004A44F8;
 extern int D_004A4474;
@@ -5155,7 +5105,7 @@ static inline void CopyQuads_0518(unsigned long** pp, const void* srcp, int n)
 }
 
 // Sends obj's 0x15 quads to the VU1 program at address 0 under a pushed render state.
-extern "C" void func_00380518(sPtGfx_0518* self, sGifQuad* obj)
+extern "C" void func_00380518(cPS2GraphicsMan* self, sGifQuad* obj)
 {
     if (D_004A44F8 != 0)
         return;
@@ -5206,16 +5156,6 @@ INCLUDE_ASM("render/particle", func_003807A0);
 
 
 
-struct sPtGfx_07A0 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 struct sTrail_07A0 {
     char pad_0x0[0x20];
@@ -5254,7 +5194,7 @@ static inline void CopyQuads_07A0(unsigned long** pp, const void* srcp, int n)
 }
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
-extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
+extern "C" void func_003807A0(cPS2GraphicsMan* self, sTrail_07A0* obj)
 {
     if (D_004A44FC != 0)
         return;
@@ -5352,16 +5292,6 @@ struct sCol_0CE0 {
     sCol_0CE0() {}
 };
 
-struct sPtGfx_0CE0 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 struct sTrail_0CE0 {
     char pad_0x0[0x20];
@@ -5405,7 +5335,7 @@ static inline void CopyQuads_0CE0(unsigned long** pp, const void* srcp, int n)
 }
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
-extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
+extern "C" void func_00380CE0(cPS2GraphicsMan* self, sTrail_0CE0* obj)
 {
     if (D_004A44FC != 0)
         return;
@@ -5513,18 +5443,6 @@ INCLUDE_ASM("render/particle", func_00381310);
 
 
 
-struct sPtGfx_1310 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5860 - 0x18F4];
-    sPtMatrixV m5860;                // 0x5860
-    char pad_0x58A0[0x5A00 - 0x58A0];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 
 extern int D_004A4474;
@@ -5584,7 +5502,7 @@ static inline void CopyQuads_1310(unsigned long** pp, const void* srcp, int n)
 }
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
-extern "C" void func_00381310(sPtGfx_1310* self, sPtMatPacket* obj)
+extern "C" void func_00381310(cPS2GraphicsMan* self, sPtMatPacket* obj)
 {
     self->top->f0 = (self->top->f0 & ~0x3C0) | 0x140;
     self->top->fC &= 0xC0000000;
@@ -5649,18 +5567,6 @@ INCLUDE_ASM("render/particle", func_003816F0);
 
 
 
-struct sPtGfx_16F0 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5860 - 0x18F4];
-    sPtMatrixV m5860;                // 0x5860
-    char pad_0x58A0[0x5A00 - 0x58A0];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 
 extern int D_004A4474;
@@ -5720,7 +5626,7 @@ static inline void CopyQuads_16F0(unsigned long** pp, const void* srcp, int n)
 }
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
-extern "C" void func_003816F0(sPtGfx_16F0* self, sPtMatPacket* obj)
+extern "C" void func_003816F0(cPS2GraphicsMan* self, sPtMatPacket* obj)
 {
     self->top->f0 = (self->top->f0 & ~0x3C0) | 0x140;
     self->top->fC &= 0xC0000000;
@@ -5784,16 +5690,6 @@ INCLUDE_ASM("render/particle", func_00381F10);
 
 
 
-struct sPtGfx_1F10 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 
 extern char D_3BF0[];
@@ -5818,7 +5714,7 @@ static inline void CopyMat_1F10(sPtMatrix* dst, const sPtMatrix* src)
 extern "C" void func_0037D968(void* self);
 
 // PORT: uncached (0x30000000) pointers held in int; 64-bit GS words are `unsigned long`.
-extern "C" void func_00381F10(sPtGfx_1F10* self, sPtMatrix* m, float* col, int n)
+extern "C" void func_00381F10(cPS2GraphicsMan* self, sPtMatrix* m, float* col, int n)
 {
     self->top->f0 = (self->top->f0 & ~0x3C0) | 0xC0;
     self->top->fC &= 0xC0000000;
@@ -6406,12 +6302,6 @@ INCLUDE_ASM("render/particle", func_00384E50);
 
 
 
-struct sPtGfx_4E50 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-};
 
 struct sPktBuilder_4E50 {
     unsigned int* where;            // 0x0
@@ -6420,7 +6310,7 @@ struct sPktBuilder_4E50 {
     int open;                       // 0xC
 };
 
-extern sPtGfx_4E50* D_004A5B80_4E50 __asm__("D_004A5B80");
+extern cPS2GraphicsMan* D_004A5B80_4E50 __asm__("D_004A5B80");
 extern "C" void func_00384DC0(void* self);
 void operator_delete(int*);
 
@@ -6442,7 +6332,7 @@ extern "C" void func_00384E50(sPktBuilder_4E50* self, int flags)
         unsigned int next = self->cur & 0x0FFFFFFF;
         self->cur = next;
         self->start = buf;
-        sPtGfx_4E50* g = D_004A5B80_4E50;
+        cPS2GraphicsMan* g = D_004A5B80_4E50;
         sPtRing* ring = g->ring;
         sPtRenderState* rs = g->top;
         if (ring->count < 0xA28) {
@@ -6782,16 +6672,6 @@ INCLUDE_ASM("render/particle", func_00385C10);
 
 
 
-struct sPtGfx_5C10 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 
 
@@ -6804,7 +6684,7 @@ struct sBez_5C10 {
     char pad_0x1A8[0x4];
     unsigned int tags[2];           // 0x1AC
     char pad_0x1B4[0x1C4 - 0x1B4];
-    sPtGfx_5C10* gfx;               // 0x1C4
+    cPS2GraphicsMan* gfx;               // 0x1C4
 };
 
 // PORT: PS2-only VU0 inline asm (scale the rows of a 4x4 matrix by a vector).
@@ -6835,7 +6715,7 @@ extern int D_004A4474;
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
-extern "C" void func_0037E120_5C10(sPtGfx_5C10* gfx, sPtMatrixV* m, sPtMatrixV* hdr, t4Vector* scale, int flag, int a5, int prim, char** pp) __asm__("func_0037E120");
+extern "C" void func_0037E120_5C10(cPS2GraphicsMan* gfx, sPtMatrixV* m, sPtMatrixV* hdr, t4Vector* scale, int flag, int a5, int prim, char** pp) __asm__("func_0037E120");
 
 // PORT: uncached (0x30000000) pointers held in int; 64-bit GS words are `ulong`.
 extern "C" void func_00385C10(sBez_5C10* self, sPtMatrixV* mat, int tex, int flag)
@@ -7297,16 +7177,6 @@ INCLUDE_ASM("render/particle", func_003883B8);
 
 
 
-struct sPtGfx_83B8 {
-    char pad_0x0[0xE84];
-    sPtRenderState* top;                // 0xE84
-    char pad_0xE88[0x18F0 - 0xE88];
-    sPtRing* ring;             // 0x18F0
-    char pad_0x18F4[0x5A00 - 0x18F4];
-    unsigned int bufAddr;           // 0x5A00
-    char pad_0x5A04[0x6B90 - 0x5A04];
-    int texReady;                   // 0x6B90
-};
 
 extern int D_004A5B84;
 extern sPtRenderState D_00501420_rs __asm__("D_00501420");
@@ -7315,7 +7185,7 @@ extern "C" void func_0037D968(void* self);
 extern "C" void func_003885E0(void* self, void* a, void* b, void* c, void* d, int i0, int i1, float f0, float f1);
 
 // PORT: uncached (0x30000000) pointers held in int.
-extern "C" void func_003883B8(sPtGfx_83B8* self, void* a1, int n, void* a3, void* a4, void* a5, float f0, float f1)
+extern "C" void func_003883B8(cPS2GraphicsMan* self, void* a1, int n, void* a3, void* a4, void* a5, float f0, float f1)
 {
     self->top->f0 = (self->top->f0 & ~0x3C0) | 0xC0;
     self->top->fC &= 0xC0000000;
