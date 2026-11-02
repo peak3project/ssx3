@@ -3625,33 +3625,30 @@ int func_003B9A00(struct H_9A00 *hdr, unsigned char *data, int arg2, int arg3) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9B68);
 #ifdef SKIP_ASM
-struct E_9B68 { char pad0[0x22]; unsigned short f22; char pad24[4]; signed char f28; char pad29[0x47]; };
-struct V_9B68 { int id; signed char owner; signed char s5; signed char s6; signed char s7; };
-extern struct E_9B68 D_0050A120_9B68[] __asm__("D_0050A120");
 extern int func_003B8790(int, int);
 
 int func_003B9B68(int, int);
 int func_003B9B68(int arg0, int arg1) {
     int r = -1;
     int idx = func_003B8D98(arg0);
-    struct E_9B68 *e;
-    struct V_9B68 *vt;
+    struct sA120Song *e;
+    struct sA120Voice *vt;
     int i;
     if (idx < 0) {
         return idx;
     }
-    e = &D_0050A120_9B68[idx];
+    e = &D_0050A120.f000[idx];
     if (arg1 != e->f22) {
         if (e->f28 != 3) {
             goto out;
         }
         e->f22 = arg1;
-        vt = (struct V_9B68 *)&D_0050A120_9B68[16];
+        vt = D_0050A120.f700;
         i = 0x17;
         do {
-            if (vt->owner == idx) {
-                if (vt->id >= 0) {
-                    func_003B8790(vt->id, arg1);
+            if (vt->f04 == idx) {
+                if (vt->f00 >= 0) {
+                    func_003B8790(vt->f00, arg1);
                 }
             }
             i--;
