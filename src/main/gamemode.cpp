@@ -1,6 +1,14 @@
 #include "common.h"
 #include "ai/rider.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type).
+// Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_getGM);
 #ifdef SKIP_ASM
@@ -163,8 +171,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
 extern "C" void cGameModeMan_restartHeat(void* self);
 
-struct sVE_initGameMode { short delta; short index; void (*fn)(void*); };
-
 struct sGameModeMan {
     int f0;
     int mode;      // 0x4
@@ -178,7 +184,7 @@ extern "C" void cGameModeMan_initGameMode(sGameModeMan* self, unsigned int type)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
     char* gm = (char*)D_00536668[self->mode];
-    sVE_initGameMode* vt = *(sVE_initGameMode**)gm;
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)gm;
     vt[3].fn(gm + vt[3].delta);
     self->type = type;
     int net = D_00535C11[0];
@@ -233,12 +239,6 @@ extern "C" void func_002382B8(void* self, int idx)
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_restartHeat);
 #ifdef SKIP_ASM
-struct sVEntry_002382D8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern void* D_00536668[];
 extern int D_005366D0[];
 
@@ -246,7 +246,7 @@ extern "C" void cGameModeMan_restartHeat(void* self)
 {
     int i;
     void* obj = D_00536668[*(int*)((char*)self + 0x4)];
-    sVEntry_002382D8* vt = *(sVEntry_002382D8**)obj;
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)obj;
     vt[2].fn((char*)obj + vt[2].delta);
     for (i = 5; i >= 0; i--) {
         D_005366D0[i] = 0;
@@ -284,16 +284,10 @@ extern "C" void func_00159CD0(void* self, int a1, int a2, int bit);
 int cBELibrary_getProfileIndex(int);
 signed char cBELibrary_getCharacterID(int index);
 
-struct sVEntry_00238358 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 extern "C" void func_00238358(void* self, int idx, int a2)
 {
     void* obj = D_00536668[*(int*)((char*)self + 4)];
-    sVEntry_00238358* vt = *(sVEntry_00238358**)obj;
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)obj;
     vt[8].fn((char*)obj + vt[8].delta, idx);
     if (*func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)) < 0x11) {
         int n = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
@@ -323,18 +317,12 @@ extern "C" void func_00238358(void* self, int idx, int a2)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238510);
 #ifdef SKIP_ASM
-struct sVEntry_00238510 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
-
 extern void* D_00536668[];
 
 extern "C" int func_00238510(void* self, int a, int b)
 {
     void* obj = D_00536668[*(int*)((char*)self + 0x4)];
-    sVEntry_00238510* vt = *(sVEntry_00238510**)obj;
+    sVEntry<int(void*, int, int)>* vt = *(sVEntry<int(void*, int, int)>**)obj;
     return vt[6].fn((char*)obj + vt[6].delta, a, b);
 }
 #endif
@@ -342,18 +330,12 @@ extern "C" int func_00238510(void* self, int a, int b)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238550);
 #ifdef SKIP_ASM
-struct sVEntry_00238550 {
-    short delta;
-    short index;
-    void (*fn)(void*, int, int);
-};
-
 extern void* D_00536668[];
 
 extern "C" void func_00238550(void* self, int a, int b)
 {
     void* obj = D_00536668[*(int*)((char*)self + 0x4)];
-    sVEntry_00238550* vt = *(sVEntry_00238550**)obj;
+    sVEntry<void(void*, int, int)>* vt = *(sVEntry<void(void*, int, int)>**)obj;
     vt[7].fn((char*)obj + vt[7].delta, a, b);
 }
 #endif
@@ -361,18 +343,12 @@ extern "C" void func_00238550(void* self, int a, int b)
 //100%
 INCLUDE_ASM("main/gamemode", func_00238590);
 #ifdef SKIP_ASM
-struct sVEntry_00238590 {
-    short delta;
-    short index;
-    void (*fn)(void*, int, int);
-};
-
 extern void* D_00536668[];
 
 extern "C" void func_00238590(void* self, int a, int b)
 {
     void* obj = D_00536668[*(int*)((char*)self + 0x4)];
-    sVEntry_00238590* vt = *(sVEntry_00238590**)obj;
+    sVEntry<void(void*, int, int)>* vt = *(sVEntry<void(void*, int, int)>**)obj;
     vt[9].fn((char*)obj + vt[9].delta, a, b);
 }
 #endif
@@ -404,16 +380,6 @@ struct sGM002385D0 {
     int f98;
     int f9C;
 };
-struct sVEntry002385D0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-struct sVEntry2002385D0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern void* D_00536668[];
 extern int D_00536730[];
 extern int D_00536708[];
@@ -421,7 +387,7 @@ extern unsigned int D_00536640[];
 
 static inline void io002385D0(void* s, void* p, int n)
 {
-    sVEntry002385D0* vt = *(sVEntry002385D0**)s;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)s;
     vt[1].fn((char*)s + vt[1].delta, p, n);
 }
 
@@ -451,7 +417,7 @@ extern "C" void func_002385D0(void* self, void* s)
     io002385D0(s, &gm->f98, 4);
     io002385D0(s, &gm->f9C, 4);
     void* obj = D_00536668[gm->f4];
-    sVEntry2002385D0* vt = *(sVEntry2002385D0**)obj;
+    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)obj;
     vt[10].fn((char*)obj + vt[10].delta, s);
 }
 #endif
@@ -483,16 +449,6 @@ struct sGM002388A0 {
     int f98;
     int f9C;
 };
-struct sVEntry002388A0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-struct sVEntry2002388A0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern void* D_00536668[];
 extern int D_00536730[];
 extern int D_00536708[];
@@ -500,7 +456,7 @@ extern unsigned int D_00536640[];
 
 static inline void io002388A0(void* s, void* p, int n)
 {
-    sVEntry002388A0* vt = *(sVEntry002388A0**)s;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)s;
     vt[2].fn((char*)s + vt[2].delta, p, n);
 }
 
@@ -530,7 +486,7 @@ extern "C" void func_002388A0(void* self, void* s)
     io002388A0(s, &gm->f98, 4);
     io002388A0(s, &gm->f9C, 4);
     void* obj = D_00536668[gm->f4];
-    sVEntry2002388A0* vt = *(sVEntry2002388A0**)obj;
+    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)obj;
     vt[11].fn((char*)obj + vt[11].delta, s);
 }
 #endif
@@ -606,12 +562,6 @@ struct sGM00238C80 {
 };
 extern char* D_004A2C70;
 
-struct sVEntry00238C80 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_00238C80(void* self)
 {
     sGM00238C80* gm = (sGM00238C80*)D_004A2C70;
@@ -635,7 +585,7 @@ extern "C" void func_00238C80(void* self)
     gm->f94 = 0;
     func_00416210(gm->a18, 0, 0x28);
     func_00416210(((sGM00238C80*)D_004A2C70)->a40, 0, 0x28);
-    sVEntry00238C80* e = &(*(sVEntry00238C80**)self)[5];
+    sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[5];
     e->fn((char*)self + e->delta);
 }
 #endif
@@ -724,14 +674,8 @@ struct sGM_238E20 {
     int f9C;
 };
 
-struct sVEntry_238E20 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 struct sScore_238E20 {
-    sVEntry_238E20* vt;
+    sVEntry<void(void*)>* vt;
     int t[3][10];
 };
 
@@ -1234,12 +1178,6 @@ struct sGM_239D88 {
     int f9C;
 };
 
-struct sVEntry_239D88 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_00239D88(void* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -1265,7 +1203,7 @@ extern "C" void func_00239D88(void* self)
     gm2->f8C = 0;
     gm2->f78 = t * 60;
     func_00416210(gm2->a18, -1, 0x28);
-    sVEntry_239D88* e = &(*(sVEntry_239D88**)self)[4];
+    sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[4];
     e->fn((char*)self + e->delta);
     ((sGM_239D88*)D_004A2C70)->a18[0] = cBENewPlayerInterface_getPlayerCharID(player, 0);
     ((sGM_239D88*)D_004A2C70)->a18[1] = cBENewPlayerInterface_getPlayerCharID(player, 1);
@@ -1350,12 +1288,6 @@ struct sGM_23A108 {
     int f94;
     int f98;
     int f9C;
-};
-
-struct sVEntry_23A108 {
-    short delta;
-    short index;
-    void (*fn)(void*);
 };
 
 class cGameModeBase_23A108 {
@@ -1654,8 +1586,6 @@ struct sGM_23A760 {
     int f9C;
 };
 
-struct sVEnt_23A760 { short delta; short index; int (*fn)(void*); };
-
 // The race (*(D_004A28A8 + 0x84) + 0xC): rider list at 0x28, player objects at 0x40.
 struct sRace_23A760 {
     char pad_0x0[0x28];
@@ -1679,7 +1609,7 @@ static inline sRace_23A760* race_23A760()
 
 static inline int vcall_23A760(char* obj, int slot)
 {
-    sVEnt_23A760* vt = *(sVEnt_23A760**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     return vt[slot].fn(obj + vt[slot].delta);
 }
 
@@ -1833,12 +1763,6 @@ struct sGM_23AC88 {
     int f9C;
 };
 
-struct sVEntry_23AC88 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_0023AC88(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -1867,7 +1791,7 @@ extern "C" void func_0023AC88(void* self)
     gm2->f7C = 0;
     gm2->f8C = 0;
     func_00416210((char*)self + 4, 9, 0x28);
-    sVEntry_23AC88* e = &(*(sVEntry_23AC88**)self)[5];
+    sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[5];
     e->fn((char*)self + e->delta);
     ((sGM_23AC88*)D_004A2C70)->a18[0] = cBENewPlayerInterface_getPlayerCharID(player, 0);
     ((sGM_23AC88*)D_004A2C70)->a18[1] = cBENewPlayerInterface_getPlayerCharID(player, 1);
@@ -1892,8 +1816,6 @@ extern "C" int func_0012A250(void* race);
 extern "C" int func_00122D78(void* self);
 extern "C" void func_00238BF8(void* self, int n);
 
-struct sVEnt_23AE00 { short delta; short index; int (*fn)(void*); };
-
 struct sRider_23AE00 {
     char pad000[0x100];
     int f100;
@@ -1904,7 +1826,7 @@ struct sRider_23AE00 {
     int pad47C;
     int f480;
     char pad484[0x23C];
-    sVEnt_23AE00* subvt;
+    sVEntry<int(void*)>* subvt;
 };
 
 struct sRace_23AE00 {
@@ -1924,7 +1846,7 @@ static inline sRace_23AE00* race_23AE00()
 
 static inline int subActive_23AE00(char* obj)
 {
-    sVEnt_23AE00* vt = *(sVEnt_23AE00**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     return vt[9].fn(obj + vt[9].delta);
 }
 
@@ -2019,12 +1941,6 @@ struct sGM_23B170 {
     int f9C;
 };
 
-struct sVEntry_23B170 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_0023B170(void* self)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -2036,7 +1952,7 @@ extern "C" void func_0023B170(void* self)
     func_00416210(gm->a18, -1, 0x28);
     int p = func_00146E98(iface, 0);
     ((sGM_23B170*)D_004A2C70)->a18[p] = cBENewPlayerInterface_getRiderCharID(iface, func_00146E98(iface, 0));
-    sVEntry_23B170* e = &(*(sVEntry_23B170**)self)[4];
+    sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[4];
     e->fn((char*)self + e->delta);
     sGM_23B170* gm2 = (sGM_23B170*)D_004A2C70;
     gm2->f70 = 1;
@@ -2093,14 +2009,8 @@ struct sGM_23B268 {
     int f9C;
 };
 
-struct sVEntry_23B268 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 struct sMode_23B268 {
-    sVEntry_23B268* vt;
+    sVEntry<void(void*)>* vt;
     int f4;
     short f8;
     short fA;
@@ -2147,7 +2057,7 @@ extern "C" void func_0023B268(void* self)
     gm2->f7C = *(int*)((char*)self + 4);
     gm2->f70 = 2;
     gm2->f74 = 2;
-    sVEntry_23B268* vt = *(sVEntry_23B268**)self;
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[5].fn((char*)self + vt[5].delta);
     func_00416210(((sGM_23B268*)D_004A2C70)->a18, -1, 0x28);
     int p = func_00146E98(player, 0);
@@ -2313,12 +2223,6 @@ struct sGM_23B6C0 {
     int f9C;
 };
 
-struct sVEntry_23B6C0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_0023B6C0(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -2341,7 +2245,7 @@ extern "C" void func_0023B6C0(void* self)
     gm->f6C = -1;
     gm->f98 = 1;
     gm->f9C = 0;
-    sVEntry_23B6C0* vt = *(sVEntry_23B6C0**)self;
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[5].fn((char*)self + vt[5].delta);
     if (D_00535C11[0] == 2) {
         ((sGM_23B6C0*)D_004A2C70)->f10 = 0;
@@ -2522,12 +2426,6 @@ struct sGM_23BB98 {
     int f9C;
 };
 
-struct sVEntry_23BB98 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_0023BB98(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -2552,7 +2450,7 @@ extern "C" void func_0023BB98(void* self)
     gm2->f90 = 0;
     gm2->f94 = 0;
     gm2->f98 = 1;
-    sVEntry_23BB98* vt = *(sVEntry_23BB98**)self;
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[4].fn((char*)self + vt[4].delta);
     if (D_00535C11[0] == 2) {
         ((sGM_23BB98*)D_004A2C70)->f10 = 0;
@@ -2722,12 +2620,6 @@ struct sGM_23C0D0 {
     int f9C;
 };
 
-struct sVEntry_23C0D0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_0023C0D0(void* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -2769,7 +2661,7 @@ extern "C" void func_0023C0D0(void* self)
     gm3->f70 = 2;
     gm3->f74 = 2;
     gm3->f78 = u * 60;
-    sVEntry_23C0D0* vt = *(sVEntry_23C0D0**)self;
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[4].fn((char*)self + vt[4].delta);
     func_00416210(((sGM_23C0D0*)D_004A2C70)->a18, -1, 0x28);
     int p = func_00146E98(player, 0);
@@ -2944,12 +2836,6 @@ struct sGM_23C618 {
     int f9C;
 };
 
-struct sVEntry_23C618 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_0023C618(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
@@ -2981,7 +2867,7 @@ extern "C" void func_0023C618(void* self)
             ((sGM_23C618*)D_004A2C70)->a18[j] = ch;
         }
     }
-    sVEntry_23C618* e = &(*(sVEntry_23C618**)self)[4];
+    sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[4];
     e->fn((char*)self + e->delta);
     sGM_23C618* gm2 = (sGM_23C618*)D_004A2C70;
     gm2->f70 = 1;
