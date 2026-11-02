@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_setupMenu);
 #ifdef SKIP_ASM
@@ -55,15 +63,10 @@ extern char D_004A1708[] __attribute__((aligned(8)));
 
 struct sStr3_1388 { char c[3]; };
 
-struct sVE_1388 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void SetVisible_1388(char* o, int on)
 {
-    sVE_1388* vt = *(sVE_1388**)(o + 0x8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 0x8);
     vt[9].fn(o + vt[9].delta, on);
 }
 
@@ -213,15 +216,10 @@ struct sStr2_19188 { char c[2]; };
 extern char D_004A16A8[];
 extern char D_004A13A0[];
 
-struct sVE_19188 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sUIObj_19188 {
     char pad0[0x8];
-    sVE_19188* vt;                  // 0x8
+    sVEntry<void(void*, int)>* vt;                  // 0x8
     char padC[0x8];
     int flags;                      // 0x14
 };
@@ -346,11 +344,6 @@ extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045D698[];
 extern char D_005308B8[];
 
-struct sVE_1C68 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 struct sMsg_1C68 {
     char pad_0x0[0x18];
@@ -368,7 +361,7 @@ extern "C" void func_00191C68(char* self, sMsg_1C68* msg, unsigned int type)
     case 5:
         if (msg->info[6] == 0) {
             char* o = **(char***)(self + 0x10);
-            sVE_1C68* vt = *(sVE_1C68**)(o + 0x4);
+            sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(o + 0x4);
             void* st = vt[4].fn(o + vt[4].delta, self, msg->id);
             if (st) {
                 func_0039F400(*(char**)(self + 0x10) + 0x18, st);
@@ -377,7 +370,7 @@ extern "C" void func_00191C68(char* self, sMsg_1C68* msg, unsigned int type)
         break;
     case 6: {
         char* o = **(char***)(self + 0x10);
-        sVE_1C68* vt = *(sVE_1C68**)(o + 0x4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(o + 0x4);
         void* st = vt[5].fn(o + vt[5].delta, self, msg->id);
         if (st) {
             func_0039F400(*(char**)(self + 0x10) + 0x18, st);
@@ -435,15 +428,10 @@ extern char* D_00441058[];
 extern char D_0045FAD8[] __attribute__((aligned(8)));
 extern char D_004A1708[] __attribute__((aligned(8)));
 
-struct sVE_1E48 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void SetVisible_1E48(char* o, int on)
 {
-    sVE_1E48* vt = *(sVE_1E48**)(o + 0x8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 0x8);
     vt[9].fn(o + vt[9].delta, on);
 }
 
@@ -631,11 +619,6 @@ INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_updateMenuColor);
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 
-struct sVE_2488 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sQuad_2488 {
     int a, b, c, d;
@@ -644,7 +627,7 @@ extern sQuad_2488 D_004C66C8;
 
 struct sObj_2488 {
     char pad0[0x8];
-    sVE_2488* vt;
+    sVEntry<void(void*, int)>* vt;
     char padC[0x18 - 0xC];
     int idx;
     char pad1C[0x88 - 0x1C];
@@ -715,15 +698,10 @@ extern "C" void* func_001926F0(void* self)
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00192740);
 #ifdef SKIP_ASM
-struct sVEntry00192740 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sObj00192740 {
     int pad[2];
-    sVEntry00192740* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 
 extern "C" void func_00192740(void* self, int a1)
@@ -749,8 +727,7 @@ struct sColor_001927B0 {
     float r, g, b, a;
     sColor_001927B0(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
 };
-struct sVEnt_001927B0 { short delta; short index; void (*fn)(void*, const sColor_001927B0&); };
-struct sObj_001927B0 { int pad[2]; sVEnt_001927B0* vt; };
+struct sObj_001927B0 { int pad[2]; sVEntry<void(void*, const sColor_001927B0&)>* vt; };
 struct sRuleSel_001927B0 { void* owner; int f4; sObj_001927B0* items[8]; };
 
 extern "C" void func_001927B0(sRuleSel_001927B0* self)
@@ -769,15 +746,15 @@ extern "C" void func_001927B0(sRuleSel_001927B0* self)
         }
         if (i == sel) {
             sObj_001927B0* o = self->items[i];
-            sVEnt_001927B0* e = &o->vt[11];
+            sVEntry<void(void*, const sColor_001927B0&)>* e = &o->vt[11];
             e->fn((char*)o + e->delta, sColor_001927B0(1.0f, 1.0f, 1.0f, 1.0f));
         } else if (func_0039A738(self->items[i])) {
             sObj_001927B0* o = self->items[i];
-            sVEnt_001927B0* e = &o->vt[11];
+            sVEntry<void(void*, const sColor_001927B0&)>* e = &o->vt[11];
             e->fn((char*)o + e->delta, sColor_001927B0(1.0f, 0.5921568870544434f, 0.04313725605607033f, 0.0f));
         } else {
             sObj_001927B0* o = self->items[i];
-            sVEnt_001927B0* e = &o->vt[11];
+            sVEntry<void(void*, const sColor_001927B0&)>* e = &o->vt[11];
             e->fn((char*)o + e->delta, sColor_001927B0(1.0f, 0.14509804546833038f, 0.027450982481241226f, 0.019607843831181526f));
         }
     }
