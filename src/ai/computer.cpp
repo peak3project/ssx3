@@ -522,20 +522,16 @@ int func_0011FE98(void* self);
 int func_0011FEE8(void* self);
 extern "C" float func_0031C228(float x);
 
-struct sVec_0010D1A0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sRider_0010D1A0 {
     char pad0[0x1B0];
-    sVec_0010D1A0 vel;  // 0x1B0
+    t4Vector vel;  // 0x1B0
     char pad1C0[0x4C8 - 0x1C0];
     float speed;        // 0x4C8
     float heading;      // 0x4CC
     char pad4D0[0x788 - 0x4D0];
     char* board;        // 0x788
 
-    sVec_0010D1A0 getVel() { return vel; }
+    t4Vector getVel() { return vel; }
 };
 
 struct sComputer_0010D1A0 {
@@ -632,12 +628,8 @@ extern "C" float func_00112588(void* self, int arg1);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
 extern void* D_004A28A8;
 
-struct sVec4_10D410 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 // PORT: PS2-only VU0 inline asm (vector length).
-static inline float vu0Length_10D410(const sVec4_10D410& v)
+static inline float vu0Length_10D410(const t4Vector& v)
 {
     float r;
     int t;
@@ -658,9 +650,9 @@ static inline float vu0Length_10D410(const sVec4_10D410& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_10D410 vu0Scale_10D410(const sVec4_10D410& v, float s)
+static inline t4Vector vu0Scale_10D410(const t4Vector& v, float s)
 {
-    sVec4_10D410 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -675,9 +667,9 @@ static inline sVec4_10D410 vu0Scale_10D410(const sVec4_10D410& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec4_10D410 vu0Add_10D410(const sVec4_10D410& a, const sVec4_10D410& b)
+static inline t4Vector vu0Add_10D410(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_10D410 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -738,7 +730,7 @@ extern "C" float func_0010D410(char* self, char* tgt)
     if (*(int*)(self + 0xE04) == 0 && solo != 0) {
         return 0.0f;
     }
-    float speed = vu0Length_10D410(*(sVec4_10D410*)(*(char**)(self + 0x18) + 0x1E0)) * 0.035999998450279236f;
+    float speed = vu0Length_10D410(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0)) * 0.035999998450279236f;
     if (lvl == 0) {
         if ((float)speedLimit_10D410(kind) < speed) {
             return 0.0f;
@@ -749,11 +741,11 @@ extern "C" float func_0010D410(char* self, char* tgt)
         }
     }
     char* r = *(char**)(self + 0x18);
-    float len = vu0Length_10D410(*(sVec4_10D410*)(r + 0x1E0));
+    float len = vu0Length_10D410(*(t4Vector*)(r + 0x1E0));
     float total = 22.0f;
     float s = func_00112588(r, 1) / len;
-    sVec4_10D410 pos = vu0Add_10D410(*(sVec4_10D410*)(*(char**)(self + 0x18) + 0x110), vu0Scale_10D410(*(sVec4_10D410*)(*(char**)(self + 0x18) + 0x1E0), s));
-    sVec4_10D410 out;
+    t4Vector pos = vu0Add_10D410(*(t4Vector*)(*(char**)(self + 0x18) + 0x110), vu0Scale_10D410(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0), s));
+    t4Vector out;
     float t;
     func_0026A428(tgt, &pos, &out, &t, 1);
     float d = t;
@@ -975,14 +967,13 @@ extern "C" int func_00155B50(void* self, int a, int b);
 void* cBEAggressionInterface_getThis();
 
 struct sVE_0010DBF0 { short delta; short index; int (*fn)(void*); };
-struct sVec_0010DBF0 { float x, y, z, w; } __attribute__((aligned(16)));
 struct sEnt_0010DBF0 { int vis; int val; float dist; float angle; int d; int e; int f; int g; int h; };
 struct sRider_0010DBF0 {
     sEnt_0010DBF0 ent[6];           // 0x0
     char padD8[0xF4 - 0xD8];
     int lastTaunt;                  // 0xF4
     char padF8[0x1B0 - 0xF8];
-    sVec_0010DBF0 vel;              // 0x1B0
+    t4Vector vel;              // 0x1B0
 };
 struct sAI_0010DBF0 { char pad[0x28]; char* riders[20]; int count; };
 
@@ -1054,8 +1045,8 @@ extern "C" int func_0010DBF0(char* self, int* side)
         sRider_0010DBF0* r = *(sRider_0010DBF0**)(self + 0x18);
         if (!(r->ent[i].dist < 200.0f))
             continue;
-        sVec_0010DBF0 a = r->vel;
-        sVec_0010DBF0 b = r->vel;
+        t4Vector a = r->vel;
+        t4Vector b = r->vel;
         float ang = atan2_0010DBF0(a.y, b.x, pi);
         float d = wrap_0010DBF0(ang - (*(sRider_0010DBF0**)(self + 0x18))->ent[i].angle);
         float ad = __builtin_fabsf(d);
@@ -1700,14 +1691,10 @@ struct sComputer_0010F878;
 extern "C" void func_0010F878(sComputer_0010F878* self);
 extern "C" void func_0010F998(void* self);
 
-struct sVec_0010F560 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVEntry0010F560 {
     short delta;
     short index;
-    sVec_0010F560* (*fn)(void*);
+    t4Vector* (*fn)(void*);
 };
 
 struct sRiderInfo_0010F560 {
@@ -1726,7 +1713,7 @@ struct sRider_0010F560 {
     float minDist;                // 0xDC
     float maxDist;                // 0xE0
 
-    sVec_0010F560* getPos()
+    t4Vector* getPos()
     {
         char* o = (char*)this + 0x6C0;
         sVEntry0010F560* e = &(*(sVEntry0010F560**)o)[5];
@@ -1745,9 +1732,9 @@ struct sComputer_0010F560 {
 };
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec_0010F560 sub_0010F560(const sVec_0010F560& a, const sVec_0010F560& b)
+static inline t4Vector sub_0010F560(const t4Vector& a, const t4Vector& b)
 {
-    sVec_0010F560 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1814,7 +1801,7 @@ extern "C" void func_0010F560(sComputer_0010F560* self)
             if (self->riders[i]->info[j].active == 0) {
                 continue;
             }
-            sVec_0010F560 d = sub_0010F560(*self->riders[i]->getPos(), *self->riders[j]->getPos());
+            t4Vector d = sub_0010F560(*self->riders[i]->getPos(), *self->riders[j]->getPos());
             float dist;
             float dx = d.x;
             float dy = d.y;
@@ -2626,10 +2613,6 @@ struct sRef_00111D98 {
     }
 };
 
-struct sQuad_00111D98 {
-    int v[4];
-} __attribute__((aligned(16)));
-
 extern "C" void func_00111D98(char* self, char* s)
 {
     cStream_00111D98* st = (cStream_00111D98*)s;
@@ -2683,9 +2666,9 @@ extern "C" void func_00111D98(char* self, char* s)
     st->Read(ids, 8);
     *(void**)(*(char**)(self + 0x18) + 0xAB4) = func_0026AF70(D_004D33A0, ids[0]);
     *(void**)(*(char**)(self + 0x18) + 0xAB8) = func_0026AF88(D_004D33A0, ids[1]);
-    sQuad_00111D98* q = *(sQuad_00111D98**)(*(char**)(self + 0x18) + 0x78C);
+    t4Vector* q = *(t4Vector**)(*(char**)(self + 0x18) + 0x78C);
     if (q != 0) {
-        *q = *(sQuad_00111D98*)(*(char**)(self + 0x18) + 0x110);
+        *q = *(t4Vector*)(*(char**)(self + 0x18) + 0x110);
     }
     func_00312598(*(void**)(*(char**)(self + 0x18) + 0x784), 0);
     func_003103F0(*(void**)(*(char**)(self + 0x18) + 0x780));
@@ -2700,19 +2683,14 @@ extern "C" void* func_0026B5E0(void*, int, int);
 extern char D_004D33A0[];
 extern "C" float func_00115B08(void* self);
 
-struct sVec4_00112180
-{
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-void func_0011D660_112180(void* self, sVec4_00112180* a, sVec4_00112180* b, int n, float t) __asm__("func_0011D660");
+void func_0011D660_112180(void* self, t4Vector* a, t4Vector* b, int n, float t) __asm__("func_0011D660");
 extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
-sVec4_00112180 func_0026AB20_112180(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_112180(void* path, int* inRange, float t) __asm__("func_0026AB20");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_00112180 vu0Scale_112180(const sVec4_00112180& v, float s)
+static inline t4Vector vu0Scale_112180(const t4Vector& v, float s)
 {
-    sVec4_00112180 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -2726,7 +2704,7 @@ static inline sVec4_00112180 vu0Scale_112180(const sVec4_00112180& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add-assign).
-static inline void vu0AddEq_112180(sVec4_00112180& dst, sVec4_00112180 b)
+static inline void vu0AddEq_112180(t4Vector& dst, t4Vector b)
 {
     __asm__(
         ".set push\n"
@@ -2745,8 +2723,8 @@ extern "C" void func_00112180(char* self, int flag)
     float* p = (float*)func_0026B5E0(D_004D33A0, 1, *(int*)(self + 0x86C));
     if (flag)
     {
-        sVec4_00112180 dir;
-        sVec4_00112180 pos;
+        t4Vector dir;
+        t4Vector pos;
         dir.x = p[5];
         dir.y = p[6];
         dir.z = p[7];
@@ -2762,7 +2740,7 @@ extern "C" void func_00112180(char* self, int flag)
     *(int*)(*(char**)(self + 0xAC0) + 0x14) = -1;
     *(void**)(self + 0xAB4) = ((void**)p)[8];
     *(void**)(self + 0xAB8) = ((void**)p)[9];
-    sVec4_00112180 up;
+    t4Vector up;
     up.x = 0.0f;
     up.y = 0.0f;
     up.z = 0.0f;
@@ -2775,8 +2753,8 @@ extern "C" void func_00112180(char* self, int flag)
     *(float*)(self + 0x4D0) = *(float*)(self + 0x4D4) = t - res;
     res = func_0026A638(*(void**)(self + 0xAB8), self + 0x110, self + 0x490, self + 0x4C8, *(void**)(self + 0xABC), 1);
     *(float*)(self + 0x4C0) = *(float*)(self + 0x4C4) = res;
-    sVec4_00112180 pos2 = func_0026AB20_112180(*(void**)(self + 0xAB8), 0, res + 796.0f);
-    *(sVec4_00112180*)(self + 0x4A0) = pos2;
+    t4Vector pos2 = func_0026AB20_112180(*(void**)(self + 0xAB8), 0, res + 796.0f);
+    *(t4Vector*)(self + 0x4A0) = pos2;
 }
 #endif
 
@@ -2785,13 +2763,12 @@ INCLUDE_ASM("ai/computer", func_00112338);
 #ifdef SKIP_ASM
 struct sEnt_00112338 { int a; int b; int c; int d; };
 struct sComp_00112338 { char pad[0x4DC]; sEnt_00112338 ent[12]; int count; };
-struct sVec4_00112338 { float x, y, z, w; } __attribute__((aligned(16)));
 struct sVE_00112338 { short delta; short index; int (*fn)(void*, float, float); };
 
 extern sEnt_00112338 D_004A5D60[];
 extern void* D_004A28A8;
 extern "C" void func_003E6574(void*, void*, int);
-extern "C" void func_00112FB0(void* self, float* a, float* b, sVec4_00112338* c);
+extern "C" void func_00112FB0(void* self, float* a, float* b, t4Vector* c);
 extern "C" void func_001127F0(void* self, int a);
 extern "C" float func_0026AC48(void* self);
 extern "C" void func_0010E5D8(void* self, int* arg, int a2, int a3);
@@ -2801,7 +2778,7 @@ extern "C" void func_00112338(char* self)
     sComp_00112338* s = (sComp_00112338*)self;
     func_003E6574(D_004A5D60, s->ent, s->count << 4);
     int n = s->count;
-    sVec4_00112338 c;
+    t4Vector c;
     float a;
     float b;
     func_00112FB0(self, &a, &b, &c);
@@ -2887,11 +2864,6 @@ int func_001125B8(void* self)
 //100%
 INCLUDE_ASM("ai/computer", func_001125C0);
 #ifdef SKIP_ASM
-struct sVec4_001125C0
-{
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVE_001125C0 { short delta; short index; int (*fn)(void*, float, float); };
 
 // PORT: the unit defines func_001125B8 as int; here its result is used as a bool (xori 1).
@@ -2900,7 +2872,7 @@ bool func_001125B8_b(void* self) __asm__("func_001125B8__FPv");
 cQuad128 func_001125A8_2(void* self, int a) __asm__("func_001125A8");
 extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
-sVec4_001125C0 func_0026AB20_1125C0(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_1125C0(void* path, int* inRange, float t) __asm__("func_0026AB20");
 extern "C" float func_0026AC48(void* self);
 extern "C" void func_00112A50(void* self, int a);
 extern void* D_004A28A8;
@@ -2936,7 +2908,7 @@ extern "C" void func_001125C0(char* self)
     else
         *(float*)(self + 0x4C4) = func_0026A428(*(void**)(self + 0xAB8), self + 0x110, self + 0x490, self + 0x4C8, 0);
     float k = func_00112588(self, nf);
-    *(sVec4_001125C0*)(self + 0x4A0) = func_0026AB20_1125C0(*(void**)(self + 0xAB8), 0, *(float*)(self + 0x4C4) + k);
+    *(t4Vector*)(self + 0x4A0) = func_0026AB20_1125C0(*(void**)(self + 0xAB8), 0, *(float*)(self + 0x4C4) + k);
     func_001125A8_2(self, nf);
     if (0.0f < *(float*)(self + 0x4D4))
     {
@@ -2961,17 +2933,13 @@ extern "C" void func_001125C0(char* self)
 //100%
 INCLUDE_ASM("ai/computer", func_001127F0);
 #ifdef SKIP_ASM
-struct sVec4_1127F0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 extern char D_004D33A0[];
 extern "C" int func_0026B178(void* tree, void* pos, void** out, int maxOut);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
-sVec4_1127F0 func_0026AB20_1127F0(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_1127F0(void* path, int* inRange, float t) __asm__("func_0026AB20");
 
 // PORT: PS2-only VU0 inline asm (vector length).
-static inline float vu0Length_1127F0(const sVec4_1127F0& v)
+static inline float vu0Length_1127F0(const t4Vector& v)
 {
     float r;
     int t;
@@ -2992,9 +2960,9 @@ static inline float vu0Length_1127F0(const sVec4_1127F0& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_1127F0 vu0Scale_1127F0(const sVec4_1127F0& v, float s)
+static inline t4Vector vu0Scale_1127F0(const t4Vector& v, float s)
 {
-    sVec4_1127F0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -3008,9 +2976,9 @@ static inline sVec4_1127F0 vu0Scale_1127F0(const sVec4_1127F0& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec4_1127F0 vu0Add_1127F0(const sVec4_1127F0& a, const sVec4_1127F0& b)
+static inline t4Vector vu0Add_1127F0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1127F0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3022,9 +2990,9 @@ static inline sVec4_1127F0 vu0Add_1127F0(const sVec4_1127F0& a, const sVec4_1127
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec4_1127F0 vu0Sub_1127F0(const sVec4_1127F0& a, const sVec4_1127F0& b)
+static inline t4Vector vu0Sub_1127F0(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_1127F0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3036,7 +3004,7 @@ static inline sVec4_1127F0 vu0Sub_1127F0(const sVec4_1127F0& a, const sVec4_1127
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_1127F0(const sVec4_1127F0& a, const sVec4_1127F0& b)
+static inline float vu0Dot_1127F0(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -3059,16 +3027,16 @@ extern "C" void func_001127F0(void* vself, int skipCur)
 {
     char* self = (char*)vself;
     void* paths[3];
-    sVec4_1127F0 out;
-    sVec4_1127F0 pos;
-    float len = vu0Length_1127F0(*(sVec4_1127F0*)(self + 0x1E0));
+    t4Vector out;
+    t4Vector pos;
+    float len = vu0Length_1127F0(*(t4Vector*)(self + 0x1E0));
     void* best = *(void**)(self + 0xAB4);
     float bestD = 9.999999933815813e+36f;
     if (len == 0.0f) {
-        pos = *(sVec4_1127F0*)(self + 0x110);
+        pos = *(t4Vector*)(self + 0x110);
     } else {
         float s = func_00112588(self, 1) / len;
-        pos = vu0Add_1127F0(*(sVec4_1127F0*)(self + 0x110), vu0Scale_1127F0(*(sVec4_1127F0*)(self + 0x1E0), s));
+        pos = vu0Add_1127F0(*(t4Vector*)(self + 0x110), vu0Scale_1127F0(*(t4Vector*)(self + 0x1E0), s));
     }
     int n = func_0026B178(D_004D33A0, &pos, paths, 3);
     for (int i = 0; i < n; i++) {
@@ -3083,8 +3051,8 @@ extern "C" void func_001127F0(void* vself, int skipCur)
             }
         }
         t += 796.0f;
-        sVec4_1127F0 d1 = vu0Sub_1127F0(pos, func_0026AB20_1127F0(paths[i], 0, t));
-        sVec4_1127F0 d0 = vu0Sub_1127F0(*(sVec4_1127F0*)(self + 0x110), out);
+        t4Vector d1 = vu0Sub_1127F0(pos, func_0026AB20_1127F0(paths[i], 0, t));
+        t4Vector d0 = vu0Sub_1127F0(*(t4Vector*)(self + 0x110), out);
         float dist = vu0Dot_1127F0(d0, d0) + vu0Dot_1127F0(d1, d1);
         if (dist < bestD) {
             best = paths[i];
@@ -3098,19 +3066,15 @@ extern "C" void func_001127F0(void* vself, int skipCur)
 //100%
 INCLUDE_ASM("ai/computer", func_00112A50);
 #ifdef SKIP_ASM
-struct sVec4_112A50 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 extern char D_004D33A0[];
 extern "C" int func_0026AFB8(void* tree, void* pos, void** out, int maxOut, int a4);
 extern "C" float func_0026AC48(void* self);
 extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
-sVec4_112A50 func_0026AB20_112A50(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_112A50(void* path, int* inRange, float t) __asm__("func_0026AB20");
 
 // PORT: PS2-only VU0 inline asm (vector length).
-static inline float vu0Length_112A50(const sVec4_112A50& v)
+static inline float vu0Length_112A50(const t4Vector& v)
 {
     float r;
     int t;
@@ -3131,9 +3095,9 @@ static inline float vu0Length_112A50(const sVec4_112A50& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_112A50 vu0Scale_112A50(const sVec4_112A50& v, float s)
+static inline t4Vector vu0Scale_112A50(const t4Vector& v, float s)
 {
-    sVec4_112A50 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -3147,9 +3111,9 @@ static inline sVec4_112A50 vu0Scale_112A50(const sVec4_112A50& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sVec4_112A50 vu0Add_112A50(const sVec4_112A50& a, const sVec4_112A50& b)
+static inline t4Vector vu0Add_112A50(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_112A50 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3161,9 +3125,9 @@ static inline sVec4_112A50 vu0Add_112A50(const sVec4_112A50& a, const sVec4_112A
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec4_112A50 vu0Sub_112A50(const sVec4_112A50& a, const sVec4_112A50& b)
+static inline t4Vector vu0Sub_112A50(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_112A50 r;
+    t4Vector r;
     __asm__ __volatile__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3175,7 +3139,7 @@ static inline sVec4_112A50 vu0Sub_112A50(const sVec4_112A50& a, const sVec4_112A
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_112A50(const sVec4_112A50& a, const sVec4_112A50& b)
+static inline float vu0Dot_112A50(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -3201,16 +3165,16 @@ extern "C" void func_00112A50(void* vself, int keep)
 {
     char* self = (char*)vself;
     void* paths[6];
-    sVec4_112A50 out;
-    sVec4_112A50 pos;
-    float len = vu0Length_112A50(*(sVec4_112A50*)(self + 0x1E0));
+    t4Vector out;
+    t4Vector pos;
+    float len = vu0Length_112A50(*(t4Vector*)(self + 0x1E0));
     void* best = 0;
     float bestD = 9.999999933815813e+36f;
     float bestW = -1.0f;
     if (len == 0.0f) {
-        pos = *(sVec4_112A50*)(self + 0x110);
+        pos = *(t4Vector*)(self + 0x110);
     } else {
-        pos = vu0Add_112A50(*(sVec4_112A50*)(self + 0x110), vu0Scale_112A50(*(sVec4_112A50*)(self + 0x1E0), 796.0f / len));
+        pos = vu0Add_112A50(*(t4Vector*)(self + 0x110), vu0Scale_112A50(*(t4Vector*)(self + 0x1E0), 796.0f / len));
     }
     int n = func_0026AFB8(D_004D33A0, &pos, paths, 6, 0);
     for (int i = 0; i < n; i++) {
@@ -3222,8 +3186,8 @@ extern "C" void func_00112A50(void* vself, int keep)
         if (func_0026AC48(paths[i]) - 200.0f < t) {
             continue;
         }
-        sVec4_112A50 d1 = vu0Sub_112A50(pos, func_0026AB20_112A50(paths[i], 0, t + 796.0f));
-        sVec4_112A50 d0 = vu0Sub_112A50(*(sVec4_112A50*)(self + 0x110), out);
+        t4Vector d1 = vu0Sub_112A50(pos, func_0026AB20_112A50(paths[i], 0, t + 796.0f));
+        t4Vector d0 = vu0Sub_112A50(*(t4Vector*)(self + 0x110), out);
         float dist = vu0Dot_112A50(d0, d0) + vu0Dot_112A50(d1, d1);
         char* o = self + 0x6C0;
         sVEi_112A50* ve = &(*(sVEi_112A50**)o)[9];
@@ -3252,7 +3216,7 @@ extern "C" void func_00112A50(void* vself, int keep)
         *(int*)(*(char**)(self + 0xABC) + 0x14) = -1;
         float r = func_0026A638(*(void**)(self + 0xAB8), self + 0x110, self + 0x490, self + 0x4C8, *(void**)(self + 0xABC), 1);
         *(float*)(self + 0x4C4) = r;
-        *(sVec4_112A50*)(self + 0x4A0) = func_0026AB20_112A50(*(void**)(self + 0xAB8), 0, r + 796.0f);
+        *(t4Vector*)(self + 0x4A0) = func_0026AB20_112A50(*(void**)(self + 0xAB8), 0, r + 796.0f);
         *(float*)(self + 0x4C0) = *(float*)(self + 0x4C4);
     }
 }
@@ -3261,10 +3225,6 @@ extern "C" void func_00112A50(void* vself, int keep)
 //100%
 INCLUDE_ASM("ai/computer", func_00112D58);
 #ifdef SKIP_ASM
-struct sVec4_112D58 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
 struct sVE_112D58 { short delta; short index; int (*fn)(void*); };
 
 extern char D_004D33A0[];
@@ -3272,12 +3232,12 @@ int func_0026AF98_112D58(void* self, void* a1, void** out, int maxOut) __asm__("
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
 extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
 extern "C" float func_0026AC48(void* self);
-sVec4_112D58 func_00269F18_112D58(void* path, float* t) __asm__("func_00269F18");
+t4Vector func_00269F18_112D58(void* path, float* t) __asm__("func_00269F18");
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec4_112D58 vu0Sub_112D58(const sVec4_112D58& a, const sVec4_112D58& b)
+static inline t4Vector vu0Sub_112D58(const t4Vector& a, const t4Vector& b)
 {
-    sVec4_112D58 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3289,7 +3249,7 @@ static inline sVec4_112D58 vu0Sub_112D58(const sVec4_112D58& a, const sVec4_112D
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_112D58(const sVec4_112D58& a, const sVec4_112D58& b)
+static inline float vu0Dot_112D58(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -3311,7 +3271,7 @@ static inline float vu0Dot_112D58(const sVec4_112D58& a, const sVec4_112D58& b)
 extern "C" void func_00112D58(char* self)
 {
     void* paths[6];
-    sVec4_112D58 pos;
+    t4Vector pos;
     int n = func_0026AF98_112D58(D_004D33A0, self + 0x110, paths, 6);
     void* best = 0;
     float bestD = 9.999999933815813e+36f;
@@ -3326,8 +3286,8 @@ extern "C" void func_00112D58(char* self)
         if (ve->fn(o + ve->delta) == 0 && len - 200.0f < t)
             continue;
         float t2 = t + 796.0f;
-        sVec4_112D58 d1 = vu0Sub_112D58(*(sVec4_112D58*)(self + 0x110), func_00269F18_112D58(paths[i], &t2));
-        sVec4_112D58 d0 = vu0Sub_112D58(*(sVec4_112D58*)(self + 0x110), pos);
+        t4Vector d1 = vu0Sub_112D58(*(t4Vector*)(self + 0x110), func_00269F18_112D58(paths[i], &t2));
+        t4Vector d0 = vu0Sub_112D58(*(t4Vector*)(self + 0x110), pos);
         float dist = vu0Dot_112D58(d0, d0) + vu0Dot_112D58(d1, d1);
         if (dist < bestD)
         {
@@ -3343,9 +3303,9 @@ extern "C" void func_00112D58(char* self)
         *(void**)(self + 0xAB8) = best;
     *(int*)(*(char**)(self + 0xABC) + 0x14) = -1;
     *(float*)(self + 0x4C4) = func_0026A638(*(void**)(self + 0xAB8), self + 0x110, self + 0x490, self + 0x4C8, *(void**)(self + 0xABC), 1);
-    *(sVec4_112D58*)(self + 0x490) = func_00269F18_112D58(*(void**)(self + 0xAB8), (float*)(self + 0x4C4));
+    *(t4Vector*)(self + 0x490) = func_00269F18_112D58(*(void**)(self + 0xAB8), (float*)(self + 0x4C4));
     float t3 = *(float*)(self + 0x4C4) + 796.0f;
-    *(sVec4_112D58*)(self + 0x4A0) = func_00269F18_112D58(*(void**)(self + 0xAB8), &t3);
+    *(t4Vector*)(self + 0x4A0) = func_00269F18_112D58(*(void**)(self + 0xAB8), &t3);
     *(float*)(self + 0x4C0) = *(float*)(self + 0x4C4);
 }
 #endif
