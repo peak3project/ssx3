@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovstaterewardslist", cOVStateRewardsList_onCreateScreen);
 #ifdef SKIP_ASM
@@ -47,11 +55,6 @@ public:
     virtual int setColor(const sColor_200288& c);
 };
 
-struct sVEntry_200288 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00200288(void* self, cUIObj_200288* item, int msg)
 {
@@ -64,7 +67,7 @@ extern "C" void func_00200288(void* self, cUIObj_200288* item, int msg)
         void* r = 0;
         if (*(int*)((char*)item + 0x18) == 1) {
             void* obj = **(void***)((char*)self + 0x10);
-            sVEntry_200288* vt = *(sVEntry_200288**)((char*)obj + 4);
+            sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
             r = vt[4].fn((char*)obj + vt[4].delta, self, 1);
         }
         func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
@@ -72,7 +75,7 @@ extern "C" void func_00200288(void* self, cUIObj_200288* item, int msg)
     }
     case 6: {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry_200288* vt = *(sVEntry_200288**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[5].fn((char*)obj + vt[5].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
