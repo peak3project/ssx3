@@ -174,24 +174,97 @@ public:
 };
 #include "ai/rider.h"
 
-INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_OPTIONS_onCreateScreen);
-
-//100%
-INCLUDE_ASM("fe/ovstatepause", func_001FA100);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIScreen;
+struct cUIText;
 int GetHashValue32(char* str);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_00194498(void* obj);
 extern void* D_004A28A8;
-extern int D_00534B30[];
 extern char D_00535BC8[];
+extern char D_004A24E8[];
+extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
+extern "C" void func_0020E900(void* self);
+extern void* D_004A2EEC;
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void func_0020A380(void* self);
+extern "C" void func_001FAFF8(void* self, bool on);
+extern "C" void cOVState_PAUSE_ONLINE_ERROR_setContinueOptionVisible(void* self, int visible);
+extern char D_0046FA90[];
+extern char D_0046FAC8[];
+extern char D_0046FAD8[];
+extern char D_0046FAE8[];
+extern char D_0046FB00[];
+extern char D_0046FB18[];
+extern char D_004A2470[];
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, int index);
+extern char D_0046FB48[];
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F0[];
+extern "C" int func_00146E98(void* iface, int idx);
+extern "C" void func_0020A6F0(void* self, char* text, char* label);
+extern "C" void func_0039E4C0(void* self, int a1);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char D_0046E4E8[];
+extern signed char D_00535C11[];
+extern int D_004A26FC;
+extern "C" void* func_0028B180();
+extern "C" void func_00294F78(void*, int);
+void cUIText_setAsciiString(cUIText* text, const char* s);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" void func_003A0E90(void* obj, unsigned short* s);
+extern char D_0046E378[];
+extern char D_0046E398[];
+extern char D_0046E3A8[];
+extern char D_0046E3C0[];
+extern char D_0046E548[];
+extern char D_0046E888[];
+extern char D_004A2138[];
+extern "C" void func_003A0D00(void* obj, unsigned short* s);
+extern "C" void* func_001D5330(void* self, int a1, int a2, int a3);
+extern char D_004A2560[];
+extern char D_004700E0[];
+extern char D_004700F0[];
+extern char D_00470100[];
+extern char D_00470118[];
+extern char D_0046E9F8[];
+extern char D_00470130[];
+extern char D_00470148[];
+void* func_00270ED8(void* self);
+extern "C" void func_001D58B8(void* self);
+extern "C" void func_0039F718(void* self);
+extern "C" void func_001D8240();
+extern "C" int func_001D97E0(void* self, void* mp, int dev, int a3);
+extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* mp, int dev, unsigned short* buf, int len);
+extern "C" void* func_00227F80(void* self);
+extern char D_00470158[];
+extern char D_00470168[];
+extern char D_00470178[];
+extern char D_004A2090[];
+extern char D_004A2568[];
+extern char D_00470188[];
+extern char D_004A20A0[];
+extern "C" void func_0023CAE8(void* self, int a, int b);
+// PORT: the unit declares func_0023D570 as returning void*; this caller ignores the result (void view by asm label).
+extern "C" void func_0023D570_v(void* self, int mode) __asm__("func_0023D570");
+extern char D_004A2570[];
+extern char D_004A2578[];
+
+INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_OPTIONS_onCreateScreen);
+
+//100%
+INCLUDE_ASM("fe/ovstatepause", func_001FA100);
+#ifdef SKIP_ASM
+extern "C" void func_00194498(void* obj);
+extern int D_00534B30[];
 extern char D_004A24E0[];
 extern char D_0046F970[];
 extern char D_004A24A8[];
-extern char D_004A24E8[];
 
 static inline bool isField_FA100(signed char* g, int off, int v)
 {
@@ -230,13 +303,8 @@ INCLUDE_ASM("fe/ovstatepause", func_001FA238);
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FA9E0);
 #ifdef SKIP_ASM
-struct cUIScreen;
-int GetHashValue32(char* str);
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
-extern "C" void func_0020E900(void* self);
 extern "C" void* func_0039F190(void* self, int a1);
-extern void* D_004A2EEC;
 extern char D_0046E050[];
 
 extern "C" void func_001FA9E0(void* self)
@@ -259,9 +327,7 @@ extern "C" void func_001FA9E0(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FAA78);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* func_00397870(void* list, int index);
-extern char D_004A24E8[];
 
 // Pause-menu key filter: returns 0x100 for keys 8/9 and for key 6 unless the item is D_004A24E8, else 0x101.
 extern "C" int func_001FAA78(void* self, void* menu, unsigned int key, int index)
@@ -302,17 +368,7 @@ extern "C" int func_001FAB08(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_ONLINE_ERROR_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_0020A380(void* self);
-extern "C" void func_001FAFF8(void* self, bool on);
-extern "C" void cOVState_PAUSE_ONLINE_ERROR_setContinueOptionVisible(void* self, int visible);
 extern "C" void func_002583A8(void* self, int a1, int a2);
-extern void* D_004A2EEC;
 extern void* D_004A3028;
 extern void* D_004A5B64;
 extern char D_0046F9D0[];
@@ -323,14 +379,8 @@ extern char D_0046FA18[];
 extern char D_0046FA38[];
 extern char D_0046FA58[];
 extern char D_0046FA78[];
-extern char D_0046FA90[];
 extern char D_0046FAA0[];
 extern char D_0046FAB0[];
-extern char D_0046FAC8[];
-extern char D_0046FAD8[];
-extern char D_0046FAE8[];
-extern char D_0046FB00[];
-extern char D_0046FB18[];
 extern char D_0046FB28[];
 
 extern "C" void cOVState_PAUSE_ONLINE_ERROR_onCreateScreen(void* self)
@@ -440,14 +490,8 @@ int func_001FAF08(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FAF10);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_0020E900(void* self);
-extern "C" void func_001FAFF8(void* self, bool on);
 extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingTimedOut(void* self);
 extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingReceived(void* self);
-extern void* D_004A2EEC;
-extern char D_0046FB18[];
 
 extern "C" void func_001FAF10(void* self)
 {
@@ -478,12 +522,6 @@ extern "C" void func_001FAF10(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FAFF8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_0046FA90[];
-extern char D_004A2470[];
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, int index);
-
 extern "C" void func_001FAFF8(void* self, bool on)
 {
     cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046FA90));
@@ -500,12 +538,9 @@ extern "C" void func_001FAFF8(void* self, bool on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FB0C0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void func_001FB2B8(void* self, void* item, int msg);
 extern "C" void func_001FB458(void* self, int on);
 extern "C" void func_001FB588(void* self, int on);
-extern char D_0046FA90[];
-extern char D_0046FB48[];
 
 extern "C" void func_001FB0C0(void* self, void* item, int msg)
 {
@@ -537,11 +572,6 @@ extern "C" void func_001FB0C0(void* self, void* item, int msg)
 //100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_ONLINE_ERROR_displayPingTimedOut);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern char D_0046FB18[];
 extern char D_0046FB60[];
 
 extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingTimedOut(void* self)
@@ -560,12 +590,6 @@ extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingTimedOut(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_ONLINE_ERROR_displayPingReceived);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" void cOVState_PAUSE_ONLINE_ERROR_setContinueOptionVisible(void* self, int visible);
-extern char D_0046FB18[];
 extern char D_0046FB88[];
 
 extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingReceived(void* self)
@@ -590,11 +614,6 @@ extern "C" void cGame_exit(void* game, int a);
 extern "C" void func_0012B340(void* p);
 // func_0039F190 returns its last list node in $v0; the unit declares it void.
 void* func_0039F190_r(void* self, int a1) __asm__("func_0039F190");
-extern void* D_004A28A8;
-extern int D_004A2A50;
-extern int D_004A2A54;
-extern int D_005366E8[];
-extern int D_004428F0[];
 
 extern "C" void func_001FB2B8(void* self, void* item, int msg)
 {
@@ -616,10 +635,7 @@ extern "C" void func_001FB2B8(void* self, void* item, int msg)
 //100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_ONLINE_ERROR_setContinueOptionVisible);
 #ifdef SKIP_ASM
-extern char D_0046FB48[];
 extern char D_0046FBB0[];
-extern char D_004A2470[];
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, int index);
 
 extern "C" void cOVState_PAUSE_ONLINE_ERROR_setContinueOptionVisible(void* self, int visible)
 {
@@ -640,12 +656,6 @@ extern "C" void cOVState_PAUSE_ONLINE_ERROR_setContinueOptionVisible(void* self,
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FB458);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_0046FB48[];
-extern char D_0046FAD8[];
-extern char D_0046FB00[];
-
 extern "C" void func_001FB458(void* self, int on)
 {
     cUIThing* t = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046FB48));
@@ -664,12 +674,6 @@ extern "C" void func_001FB458(void* self, int on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FB588);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_0046FA90[];
-extern char D_0046FAC8[];
-extern char D_0046FAE8[];
-
 extern "C" void func_001FB588(void* self, int on)
 {
     cUIThing* t = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046FA90));
@@ -690,17 +694,7 @@ INCLUDE_ASM("fe/ovstatepause", func_001FB6B8);
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FBBD8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int idx);
-extern "C" void func_0020A6F0(void* self, char* text, char* label);
-extern "C" void func_0039E4C0(void* self, int a1);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char D_004A2170[];
-extern char D_0046E4E8[];
-extern signed char D_00535C11[];
-extern void* D_004A2EEC;
 
 extern "C" void func_001FBBD8(void* self, int a1)
 {
@@ -724,8 +718,6 @@ extern "C" void func_001FBBD8(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FBCC8);
 #ifdef SKIP_ASM
-extern void* D_004A2EEC;
-
 extern "C" void func_001FBCC8(void)
 {
     char* p = (char*)D_004A2EEC;
@@ -738,10 +730,6 @@ extern "C" void func_001FBCC8(void)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FBCE0);
 #ifdef SKIP_ASM
-extern void* D_004A2EEC;
-extern int D_004A26FC;
-extern "C" void func_0020E900(void* self);
-
 extern "C" void func_001FBCE0(void* self)
 {
     func_0020E900(self);
@@ -758,17 +746,7 @@ INCLUDE_ASM("fe/ovstatepause", func_001FBD20);
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FC768);
 #ifdef SKIP_ASM
-extern "C" void func_0039E4C0(void* self, int a1);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_0020A6F0(void* self, char* text, char* label);
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
 extern "C" void func_002A31C0(void* self);
-extern void* D_004A28A8;
-extern signed char D_00535C11[];
-extern char D_0046E4E8[];
 extern char D_004A2508[];
 extern char D_004A2510[];
 extern char D_004A2518[];
@@ -799,21 +777,8 @@ extern "C" void func_001FC768(void* self, int a1)
 INCLUDE_ASM("fe/ovstatepause", func_001FC878);
 #ifdef SKIP_ASM
 // self is a pause-menu UI state (no header yet): +0x10 its UI engine, +0x40 its screen.
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-void cUIText_setAsciiString(cUIText* text, const char* s);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
-extern "C" void func_0020A380(void* self);
 extern "C" char* func_00144BF0(void* iface);
-extern "C" int func_00146E98(void* iface, int idx);
 extern "C" char* func_00146F88(void* iface, int idx);
 extern "C" char* func_0014EE58(void* iface, int id);
 extern "C" void* func_00155130(void* iface, int idx);
@@ -821,20 +786,11 @@ extern "C" char* func_0020A1A8(void* p);
 extern "C" unsigned short* func_002C2540(unsigned short* dst, char* src);
 extern "C" int func_002C27C0(unsigned short* buf, unsigned short* fmt, ...);
 extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, ...);
-extern "C" void func_003A0E90(void* obj, unsigned short* s);
 extern "C" char* strcpy(char* dst, const char* src);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern void* D_004A28A8;
-extern char D_00535BC8[];
 extern char D_0046FE08[];
-extern char D_0046E378[];
 extern char D_004A21B0[];
 extern char D_0046FC08[];
 extern char D_004A21B8[];
-extern char D_0046E398[];
-extern char D_0046E3A8[];
-extern char D_0046E3C0[];
-extern char D_0046E548[];
 extern unsigned short D_0046E558[];
 extern unsigned short D_004A2140[];
 extern char D_004A2520[];
@@ -846,14 +802,12 @@ extern char D_0046FD58[];
 extern char D_0046FE18[];
 extern char D_004A2540[];
 extern char D_0046FE28[];
-extern char D_0046E888[];
 extern char D_0046FE38[];
 extern char D_0046FE50[];
 extern char D_0046FE70[];
 extern char D_0046FE80[];
 extern char D_0046FE98[];
 extern char D_0046FDE8[];
-extern char D_004A2138[];
 
 static inline unsigned short* lookupString_1FC878(char* name)
 {
@@ -994,13 +948,7 @@ extern "C" void func_001FC878(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FCEC0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern signed char D_00535C10[];
-extern char D_0046E888[];
 extern char D_004A2548[];
 extern char D_0046FEB0[];
 extern char D_0046FEC0[];
@@ -1044,11 +992,6 @@ extern "C" int func_001FCEC0(void* self, void* msg)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FD0D8);
 #ifdef SKIP_ASM
-extern void* D_004A2EEC;
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
-extern "C" void func_0039E4C0(void* self, int a1);
-
 extern "C" void func_001FD0D8(void* self, int a1)
 {
     func_0039E4C0(self, a1);
@@ -1063,8 +1006,6 @@ extern "C" void func_001FD0D8(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FD118);
 #ifdef SKIP_ASM
-extern void* D_004A2EEC;
-extern "C" void* func_0028B180();
 extern "C" void func_002872A8(void* self);
 
 extern "C" void func_001FD118(void)
@@ -1080,10 +1021,6 @@ extern "C" void func_001FD118(void)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FD150);
 #ifdef SKIP_ASM
-extern void* D_004A2EEC;
-extern int D_004A26FC;
-extern "C" void func_0020E900(void* self);
-
 extern "C" void func_001FD150(void* self)
 {
     func_0020E900(self);
@@ -1129,14 +1066,7 @@ extern "C" int func_001FD190(int id)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FD268);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
-extern "C" void func_0020A380(void* self);
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
 extern char D_0046FF58[];
-extern char D_0046E378[];
 
 extern "C" void func_001FD268(void* self)
 {
@@ -1167,7 +1097,6 @@ extern "C" char* func_0014EEC8(void* iface, int id, int a2);
 extern "C" int func_00146A70(void* iface, int a1, int charId, int item);
 extern "C" int func_00157B08(void* iface, int a1, int a2);
 extern "C" void* func_004139F8(float x);
-extern "C" void func_003A0D00(void* obj, unsigned short* s);
 extern char D_0046E5F0[];
 extern char D_0046FF68[];
 extern char D_0046FF80[];
@@ -1349,7 +1278,6 @@ struct sApp_DB88 {
     sGame_DB88* game;
 };
 
-extern void* D_004A28A8;
 extern "C" void func_002872A8(void* snd);
 
 extern "C" void func_001FDB88(void* self, int a1, int a2)
@@ -1366,7 +1294,6 @@ extern "C" void func_001FDB88(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDBF0);
 #ifdef SKIP_ASM
-extern "C" void* func_001D5330(void* self, int a1, int a2, int a3);
 extern void* D_00472440[];
 
 extern "C" void* func_001FDBF0(void* self, int a1, int a2)
@@ -1381,26 +1308,9 @@ extern "C" void* func_001FDBF0(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDC30);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
 void cUIText_setAsciiString(cUIText* self, const char* str);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame_DC30(void* self, unsigned short frame, int flag) __asm__("cUIScreen_playFrame");
 extern "C" void func_0020A380_DC30(void* self) __asm__("func_0020A380");
-extern int D_004A2A50;
-extern int D_004A2A54;
-extern int D_005366E8[];
-extern int D_004428F0[];
-extern char D_004A2560[];
-extern char D_004700E0[];
-extern char D_004700F0[];
-extern char D_00470100[];
-extern char D_00470118[];
-extern char D_0046E9F8[];
-extern char D_00470130[];
-extern char D_00470148[];
-extern char D_0046E378[];
 
 static inline cUIThing* getObj_DC30(char* self, char* name)
 {
@@ -1447,13 +1357,6 @@ extern "C" void func_001FDC30(char* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDE60);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern int D_004A2A54;
-extern int D_004A2A50;
-extern int D_005366E8[];
-extern int D_004428F0[];
-void* func_00270ED8(void* self);
-extern "C" void func_001D58B8(void* self);
 extern "C" void func_0026F8A0(void* self, void* a1, int a2, int a3);
 
 extern "C" void func_001FDE60(void* self)
@@ -1471,8 +1374,6 @@ extern "C" void func_001FDE60(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDF00);
 #ifdef SKIP_ASM
-extern "C" void func_0039F718(void* self);
-
 extern "C" void func_001FDF00(void* self)
 {
     if (*(int*)((char*)self + 0x1AC) == 0) {
@@ -1485,20 +1386,6 @@ extern "C" void func_001FDF00(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDF40);
 #ifdef SKIP_ASM
-extern "C" void func_001D8240();
-extern "C" int func_001D97E0(void* self, void* mp, int dev, int a3);
-extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* mp, int dev, unsigned short* buf, int len);
-extern "C" void func_003A0D00(void* obj, unsigned short* s);
-extern "C" void func_003A0E90(void* obj, unsigned short* s);
-extern "C" void* func_00227F80(void* self);
-extern void* D_004A28A8;
-extern char D_004700F0[];
-extern char D_00470130[];
-extern char D_00470148[];
-extern char D_00470158[];
-extern char D_00470168[];
-extern char D_00470178[];
-
 static inline cUIThing* getObj_DF40(cCardState* self, char* name)
 {
     return (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
@@ -1580,13 +1467,6 @@ extern "C" void func_001FDF40(cCardState* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FE4A8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A2090[];
-extern char D_004A2568[];
-extern char D_00470188[];
-extern char D_004A20A0[];
-
 extern "C" void func_001FE4A8(void* self, bool on)
 {
     if (*(int*)((char*)self + 0x22C) != on) {
@@ -1603,11 +1483,6 @@ extern "C" void func_001FE4A8(void* self, bool on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FE5B0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_00470188[];
-extern char D_004A20A0[];
-
 extern "C" void func_001FE5B0(void* self, bool on)
 {
     ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00470188)))->setVisible(!on);
@@ -1619,11 +1494,6 @@ extern "C" void func_001FE5B0(void* self, bool on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FE648);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A2090[];
-extern char D_004A2568[];
-
 extern "C" void func_001FE648(void* self, int a1, bool on)
 {
     cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2090));
@@ -1636,13 +1506,6 @@ extern "C" void func_001FE648(void* self, int a1, bool on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FE6E8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* func_00227F80(void* self);
-extern "C" void func_0023CAE8(void* self, int a, int b);
-void* func_00270ED8(void* self);
-// PORT: the unit declares func_0023D570 as returning void*; this caller ignores the result (void view by asm label).
-extern "C" void func_0023D570_v(void* self, int mode) __asm__("func_0023D570");
-
 extern "C" void func_001FE6E8(void* self, void* msg, unsigned int type)
 {
     if (msg == 0)
@@ -1718,8 +1581,6 @@ extern "C" void func_001FE6E8(void* self, void* msg, unsigned int type)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FE8F0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-void* func_00270ED8(void* self);
 extern "C" void func_001D8700(void* self, void* a1, int key);
 
 extern "C" void func_001FE8F0(void* self, void* a1, int key)
@@ -1737,7 +1598,6 @@ extern "C" void func_001FE8F0(void* self, void* a1, int key)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FE968);
 #ifdef SKIP_ASM
-extern "C" void* func_001D5330(void* self, int a1, int a2, int a3);
 extern void* D_004722B8[];
 
 extern "C" void* func_001FE968(void* self, int a1, int a2)
@@ -1752,25 +1612,6 @@ extern "C" void* func_001FE968(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FE9A8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
-struct cUIText;
-void cUIText_setAsciiString(cUIText* text, const char* s);
-extern "C" void func_0020A380(void* self);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern char D_0046E378[];
-extern char D_0046E9F8[];
-extern char D_004700E0[];
-extern char D_004700F0[];
-extern char D_00470100[];
-extern char D_00470118[];
-extern char D_00470130[];
-extern char D_00470148[];
-extern char D_004A2138[];
-extern char D_004A2560[];
-
 static inline void* engine_1FE9A8(char* self)
 {
     return *(void**)(self + 0x10);
@@ -1813,8 +1654,6 @@ extern "C" void func_001FE9A8(char* self)
 }
 #endif
 
-extern "C" void func_001D58B8(void* self);
-
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FEC40__FPv);
 #ifdef SKIP_ASM
@@ -1827,8 +1666,6 @@ void func_001FEC40(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FEC60);
 #ifdef SKIP_ASM
-extern "C" void func_0039F718(void* self);
-
 extern "C" void func_001FEC60(void* self)
 {
     if (*(int*)((char*)self + 0x1AC) == 0) {
@@ -1841,20 +1678,6 @@ extern "C" void func_001FEC60(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FECA0);
 #ifdef SKIP_ASM
-extern "C" void func_001D8240();
-extern "C" int func_001D97E0(void* self, void* mp, int dev, int a3);
-extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* mp, int dev, unsigned short* buf, int len);
-extern "C" void func_003A0D00(void* obj, unsigned short* s);
-extern "C" void func_003A0E90(void* obj, unsigned short* s);
-extern "C" void* func_00227F80(void* self);
-extern void* D_004A28A8;
-extern char D_004700F0[];
-extern char D_00470130[];
-extern char D_00470148[];
-extern char D_00470158[];
-extern char D_00470168[];
-extern char D_00470178[];
-
 static inline cUIThing* getObj_ECA0(cCardState* self, char* name)
 {
     return (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
@@ -1925,13 +1748,6 @@ extern "C" void func_001FECA0(cCardState* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FF170);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A2090[];
-extern char D_004A2568[];
-extern char D_00470188[];
-extern char D_004A20A0[];
-
 extern "C" void func_001FF170(void* self, bool on)
 {
     if (*(int*)((char*)self + 0x22C) != on) {
@@ -1948,11 +1764,6 @@ extern "C" void func_001FF170(void* self, bool on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FF278);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_00470188[];
-extern char D_004A20A0[];
-
 extern "C" void func_001FF278(void* self, bool on)
 {
     ((cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00470188)))->setVisible(!on);
@@ -1964,11 +1775,6 @@ extern "C" void func_001FF278(void* self, bool on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FF310);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A2090[];
-extern char D_004A2568[];
-
 extern "C" void func_001FF310(void* self, int a1, bool on)
 {
     cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2090));
@@ -1981,12 +1787,6 @@ extern "C" void func_001FF310(void* self, int a1, bool on)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FF3B0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* func_00227F80(void* self);
-extern "C" void func_0023CAE8(void* self, int a, int b);
-// PORT: the unit declares func_0023D570 as returning void*; this caller ignores the result (void view by asm label).
-extern "C" void func_0023D570_v(void* self, int mode) __asm__("func_0023D570");
-
 extern "C" void func_001FF3B0(void* self, void* msg, unsigned int type)
 {
     if (msg == 0)
@@ -2057,19 +1857,10 @@ extern "C" void func_001FF3B0(void* self, void* msg, unsigned int type)
 //100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_REWARDS_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_0020A380(void* self);
 extern "C" void func_001FF7B8(void* self, int a1, int a2);
 extern "C" void func_0039B760(void* self, unsigned char a1);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern char D_004703C8[];
-extern char D_0046E378[];
 extern char D_0046E818[];
-extern char D_004A2570[];
-extern char D_004A2578[];
 
 extern "C" void cOVState_REWARDS_onCreateScreen(void* self)
 {
@@ -2104,7 +1895,6 @@ extern "C" void cOVState_REWARDS_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FF6D0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E4C0(void* self, int a1);
 extern "C" void func_001FFD08(void* self, int a1);
 
 extern "C" void func_001FF6D0(void* self, int a1)
@@ -2117,10 +1907,6 @@ extern "C" void func_001FF6D0(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FF700);
 #ifdef SKIP_ASM
-extern int D_004A26FC;
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00158E30(void* iface);
 
 extern "C" void func_001FF700(void* self, void* a1, int key)
@@ -2164,12 +1950,8 @@ INCLUDE_ASM("fe/ovstatepause", func_001FF7B8);
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FFD08);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_003A0E90(void* text, unsigned short* str);
 extern "C" void func_001FF7B8_FD08(void* self, void* text, int idx) __asm__("func_001FF7B8");
-extern char D_004A2570[];
-extern char D_004A2578[];
 
 struct sColor_FD08 {
     float r, g, b, a;
@@ -2238,10 +2020,6 @@ extern "C" const char* func_00144BF0_m2718(void* iface) __asm__("func_00144BF0")
 extern "C" const char* func_0014EE58_m2719(void* iface, int a1) __asm__("func_0014EE58");
 extern char D_0046F520[];
 extern char D_004A2400[];
-extern char D_0046E548[];
-extern char D_0046E398[];
-extern char D_0046E3A8[];
-extern char D_0046E3C0[];
 extern char D_00470468[];
 extern char D_00470480[];
 extern char D_004A2588[];
