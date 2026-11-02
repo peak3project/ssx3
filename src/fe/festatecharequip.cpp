@@ -1,5 +1,11 @@
 #include "common.h"
 
+// Declarations shared by the functions of this unit.
+extern void* D_0046D878[];
+void operator_delete(int* p);
+extern void* D_0046BF98[];
+extern void* D_0046D848[];
+
 //100%
 INCLUDE_ASM("fe/festatecharequip", cFE_cFE);
 #ifdef SKIP_ASM
@@ -11,7 +17,6 @@ extern "C" void* func_001A03C0(void* self);
 extern "C" void* func_0019CDF0(void* self);
 // PORT: called with an extra int in $a1 here; func_0015D700's body is (self, x, y, z). Bound by asm label.
 void func_0015D700_i(void* self, int a1, float x, float y, float z) __asm__("func_0015D700");
-extern void* D_0046D878[];
 extern void* D_0046D8D8[];
 extern char D_004601F0[];
 extern char D_00460200[];
@@ -45,14 +50,12 @@ extern "C" void* cFE_cFE(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequip", func_001957D0);
 #ifdef SKIP_ASM
-void operator_delete(int* p);
 extern "C" void func_00397B70(void* p, int flags);
 extern "C" void func_0036A020(void* p);
 extern "C" void func_002DBEE0(void* p, int flags);
 extern "C" void func_0019CE20(void* p, int flags);
 extern "C" void func_001A0420(void* p, int flags);
 extern void* D_004A289C;
-extern void* D_0046D878[];
 extern void* D_0046D970[];
 extern void* D_0045B8B0[];
 
@@ -79,8 +82,6 @@ extern "C" void func_001957D0(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/festatecharequip", func_00195880);
 #ifdef SKIP_ASM
-extern void* D_0046BF98[];
-extern void* D_0046D848[];
 extern "C" void* func_001DCC40(void* p);
 extern "C" void func_00416210(void* dst, int value, int size);
 
@@ -102,10 +103,7 @@ extern "C" void* func_00195880(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharequip", func_001958F0);
 #ifdef SKIP_ASM
-extern void* D_0046BF98[];
-extern void* D_0046D848[];
 extern "C" void func_00195948(void* self);
-void operator_delete(int* p);
 
 extern "C" void func_001958F0(void* self, int flags)
 {
