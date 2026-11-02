@@ -306,6 +306,26 @@ static inline t4Vector wsDiv(const t4Vector& v, float s)
     return r;
 }
 
+static inline float wsLengthT(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -524,25 +544,6 @@ extern "C" int func_00330828(void* self, int a1, int a2, int a3, int a4, int a5,
 INCLUDE_ASM("intersect/worldsphtree", func_003308C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_3308C8(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
 static inline void wsDivEq_3308C8(t4Vector& v, float s)
@@ -567,7 +568,7 @@ extern "C" int func_0032CB58(void* self, void* other, void* a2, void* a3);
 extern "C" int func_003308C8(void* self, void* a1, sWsDirHit* hit)
 {
     if (func_0032CB58(*(void**)((char*)self + 0x60), a1, &hit->dir, hit) != 0) {
-        float len = wsLength_3308C8(hit->dir);
+        float len = wsLengthT(hit->dir);
         hit->len = len;
         wsDivEq_3308C8(hit->dir, len);
         return 1;
@@ -580,25 +581,6 @@ extern "C" int func_003308C8(void* self, void* a1, sWsDirHit* hit)
 INCLUDE_ASM("intersect/worldsphtree", func_00330950);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_330950(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 
 // PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
 static inline void wsDivEq_330950(t4Vector& v, float s)
@@ -623,7 +605,7 @@ extern "C" int func_0032C928(void* self, void* a1, void* a2, void* a3, void* a4)
 extern "C" int func_00330950(void* self, void* a1, void* a2, sWsDirHit* hit)
 {
     if (func_0032C928(*(void**)((char*)self + 0x60), a1, a2, &hit->dir, hit) != 0) {
-        float len = wsLength_330950(hit->dir);
+        float len = wsLengthT(hit->dir);
         hit->len = len;
         wsDivEq_330950(hit->dir, len);
         return 1;
