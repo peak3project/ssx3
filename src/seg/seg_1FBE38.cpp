@@ -4321,8 +4321,7 @@ int* func_00226610(void*);
 struct Ent_2AC0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3CF0_2AC0[2] __asm__("D_004A3CF0");
-extern "C" void func_0030A728(int, int, int);
-extern int D_004A3DD8_2AC0 __asm__("D_004A3DD8");
+extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A5774_2AC0 __asm__("D_004A5774");
 struct T12_2AC0 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12_2AC0 D_004FBC40_2AC0 __asm__("D_004FBC40");
@@ -4346,7 +4345,7 @@ extern "C" cLunoValue func_00302AC0(int n, Ent_2AC0* e) {
         else
             *d = p->val;
     }
-    func_0030A728(D_004A3DD8_2AC0, vp[0], vp[1]);
+    func_0030A728(D_004A3DD8, vp[0], vp[1]);
     return D_004C9098;
 }
 #endif
@@ -4397,8 +4396,7 @@ int* func_00226610(void*);
 struct Ent_2CE8 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D00_2CE8[2] __asm__("D_004A3D00");
-extern "C" void func_0030A728(int, int, int);
-extern int D_004A3DD8_2CE8 __asm__("D_004A3DD8");
+extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A5790_2CE8 __asm__("D_004A5790");
 extern unsigned D_004A5788_2CE8 __asm__("D_004A5788");
 extern sBindEnd_1FBE38 D_004A578C_2CE8 __asm__("D_004A578C");
@@ -4421,7 +4419,7 @@ extern "C" cLunoValue func_00302CE8(int n, Ent_2CE8* e) {
         else
             *d = p->val;
     }
-    func_0030A728(D_004A3DD8_2CE8, vp[0], 0);
+    func_0030A728(D_004A3DD8, vp[0], 0);
     return D_004C9098;
 }
 #endif
@@ -4435,8 +4433,7 @@ int* func_00226610(void*);
 struct Ent_2DF0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D08_2DF0[2] __asm__("D_004A3D08");
-extern "C" void func_0030A728(int, int, int);
-extern int D_004A3DD8_2DF0 __asm__("D_004A3DD8");
+extern "C" void func_0030A728(cWScriptMan*, int, int);
 extern int D_004A57A0_2DF0 __asm__("D_004A57A0");
 extern unsigned D_004A5798_2DF0 __asm__("D_004A5798");
 extern sBindEnd_1FBE38 D_004A579C_2DF0 __asm__("D_004A579C");
@@ -4459,7 +4456,7 @@ extern "C" cLunoValue func_00302DF0(int n, Ent_2DF0* e) {
         else
             *d = p->val;
     }
-    func_0030A728(D_004A3DD8_2DF0, vp[0], 2);
+    func_0030A728(D_004A3DD8, vp[0], 2);
     return D_004C9098;
 }
 #endif
