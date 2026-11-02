@@ -451,7 +451,23 @@ extern "C" void func_0014B1B0(void* self, int rider, int b, int c)
 
 INCLUDE_ASM("be/belibrary", func_0014B218);
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014B290);
+#ifdef SKIP_ASM
+extern "C" int func_0014B290(void* self, int a1, int a2, unsigned int mask)
+{
+    int count = D_004A6CA8_pc[a1][a2].getCount();
+    sBEFlagEntryPC* e = D_004A6CA8_pc[a1][a2].getEntries();
+    int n = 0;
+    int i;
+    for (i = 0; i < count; i++, e++) {
+        if ((e->flags & mask) == mask) {
+            n++;
+        }
+    }
+    return n;
+}
+#endif
 //100%
 INCLUDE_ASM("be/belibrary", func_0014B2F8);
 #ifdef SKIP_ASM
