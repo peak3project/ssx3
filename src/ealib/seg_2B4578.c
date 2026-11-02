@@ -7268,29 +7268,6 @@ int func_003C27E0(int id, int k) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2A50);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Ch_2A50 {
-    int pad0;
-    short ids[15];
-    char pad22;
-    unsigned char n;
-    unsigned short flags;
-    char pad26[0x48 - 0x26];
-    float vol;
-    char pad4C[0x5F - 0x4C];
-    signed char b5F;
-    char pad60[0x8C - 0x60];
-};
-struct G_2A50 {
-    char pad0[0x2F];
-    unsigned char base2;
-    unsigned char base;
-    char pad31[0x47 - 0x31];
-    unsigned char b47;
-    unsigned char b48;
-    unsigned char mode;
-    char pad4A[0x1F0 - 0x4A];
-    struct Ch_2A50 *chans;
-};
 struct W8_2A50 { char pad[6]; signed char l; signed char r; };
 struct W16_2A50 { char pad[6]; signed char c[10]; };
 struct T_2A50 {
@@ -7305,52 +7282,51 @@ struct A_2A50 {
     char padCB4[0xE98 - 0xCB4];
     struct Spk_2A50 spk[1];
 };
-extern struct G_2A50 D_0050A8E8_2A50 __asm__("D_0050A8E8");
 extern struct A_2A50 D_0050AD00_2A50 __asm__("D_0050AD00");
 extern struct Spk_2A50 D_0050BB98_2A50[] __asm__("D_0050BB98");
 extern void func_003C8560(int, int, float);
 
 void func_003C2A50(int id) {
-    struct Ch_2A50 *ch;
+    struct sA8E8Chan *ch;
     float sc;
     int i;
     int j;
     int m;
 
-    ch = (struct Ch_2A50 *)((char *)D_0050A8E8_2A50.chans + id * 0x8C);
-    if (ch->flags & 8) {
-        for (i = 0; i < ch->n; i++) {
-            if (D_0050A8E8_2A50.mode != 2) {
-                D_0050AD00_2A50.tbl->a[ch->ids[i]].l = D_0050AD00_2A50.spk[ch->ids[i]].p[1] * ch->vol * 127.0f;
-                D_0050AD00_2A50.tbl->a[ch->ids[i]].r = D_0050AD00_2A50.spk[ch->ids[i]].p[0] * ch->vol * 127.0f;
+    ch = &D_0050A8E8.f1F0[id];
+    if (ch->f24 & 8) {
+        for (i = 0; i < ch->f23; i++) {
+            if (D_0050A8E8.setup.cfg.f29 != 2) {
+                D_0050AD00_2A50.tbl->a[ch->f04[i]].l = D_0050AD00_2A50.spk[ch->f04[i]].p[1] * ch->f48 * 127.0f;
+                D_0050AD00_2A50.tbl->a[ch->f04[i]].r = D_0050AD00_2A50.spk[ch->f04[i]].p[0] * ch->f48 * 127.0f;
             } else {
-                if (D_0050A8E8_2A50.b47 == 4) {
-                    D_0050AD00_2A50.tbl->a[ch->ids[i]].l = D_0050AD00_2A50.spk[ch->ids[i]].p[3] * ch->vol * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->ids[i]].r = D_0050AD00_2A50.spk[ch->ids[i]].p[0] * ch->vol * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->ids[i] + 0x18].l = D_0050AD00_2A50.spk[ch->ids[i]].p[2] * ch->vol * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->ids[i] + 0x18].r = D_0050AD00_2A50.spk[ch->ids[i]].p[1] * ch->vol * 127.0f;
+                if (D_0050A8E8.setup.cfg.f27 == 4) {
+                    D_0050AD00_2A50.tbl->a[ch->f04[i]].l = D_0050AD00_2A50.spk[ch->f04[i]].p[3] * ch->f48 * 127.0f;
+                    D_0050AD00_2A50.tbl->a[ch->f04[i]].r = D_0050AD00_2A50.spk[ch->f04[i]].p[0] * ch->f48 * 127.0f;
+                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].l = D_0050AD00_2A50.spk[ch->f04[i]].p[2] * ch->f48 * 127.0f;
+                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].r = D_0050AD00_2A50.spk[ch->f04[i]].p[1] * ch->f48 * 127.0f;
                 } else {
-                    D_0050AD00_2A50.tbl->a[ch->ids[i]].l = D_0050AD00_2A50.spk[ch->ids[i]].p[4] * ch->vol * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->ids[i]].r = D_0050AD00_2A50.spk[ch->ids[i]].p[1] * ch->vol * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->ids[i] + 0x18].l = D_0050AD00_2A50.spk[ch->ids[i]].p[3] * ch->vol * 127.0f;
-                    D_0050AD00_2A50.tbl->a[ch->ids[i] + 0x18].r = D_0050AD00_2A50.spk[ch->ids[i]].p[2] * ch->vol * 127.0f;
+                    D_0050AD00_2A50.tbl->a[ch->f04[i]].l = D_0050AD00_2A50.spk[ch->f04[i]].p[4] * ch->f48 * 127.0f;
+                    D_0050AD00_2A50.tbl->a[ch->f04[i]].r = D_0050AD00_2A50.spk[ch->f04[i]].p[1] * ch->f48 * 127.0f;
+                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].l = D_0050AD00_2A50.spk[ch->f04[i]].p[3] * ch->f48 * 127.0f;
+                    D_0050AD00_2A50.tbl->a[ch->f04[i] + 0x18].r = D_0050AD00_2A50.spk[ch->f04[i]].p[2] * ch->f48 * 127.0f;
                 }
             }
         }
-    } else if (ch->flags & 0x100) {
-        m = D_0050A8E8_2A50.b47 + D_0050A8E8_2A50.b48;
-        sc = ch->vol * (float)ch->b5F * 0.0078740157186985016f;
-        for (i = 0; i < ch->n; i++) {
+    } else if (ch->f24 & 0x100) {
+        m = D_0050A8E8.setup.cfg.f27 + D_0050A8E8.setup.cfg.f28;
+        sc = ch->f48 * (float)ch->f5F * 0.0078740157186985016f;
+        for (i = 0; i < ch->f23; i++) {
             for (j = 0; j < m; j++) {
-                D_0050AD00_2A50.tbl->b[ch->ids[i] - D_0050A8E8_2A50.base].c[j] = sc * D_0050AD00_2A50.spk[ch->ids[i]].p[j] * 127.0f;
+                D_0050AD00_2A50.tbl->b[ch->f04[i] - D_0050A8E8.setup.cfg.f10].c[j] = sc * D_0050AD00_2A50.spk[ch->f04[i]].p[j] * 127.0f;
             }
         }
     } else {
-        m = D_0050A8E8_2A50.b47 + D_0050A8E8_2A50.b48;
-        sc = ch->vol * (float)ch->b5F * 0.0078740157186985016f;
-        for (i = 0; i < ch->n; i++) {
+        m = D_0050A8E8.setup.cfg.f27 + D_0050A8E8.setup.cfg.f28;
+        sc = ch->f48 * (float)ch->f5F * 0.0078740157186985016f;
+        for (i = 0; i < ch->f23; i++) {
             for (j = 0; j < m; j++) {
-                func_003C8560(ch->ids[i] - (D_0050A8E8_2A50.base + D_0050A8E8_2A50.base2), j, sc * D_0050BB98_2A50[ch->ids[i]].p[j]);
+                func_003C8560(ch->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F), j, sc * D_0050BB98_2A50[ch->f04[i]].p[j]);
             }
         }
     }
