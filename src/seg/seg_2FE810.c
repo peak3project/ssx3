@@ -238,6 +238,10 @@ typedef struct {
 } sPadFrame;
 extern sPadFrame *func_003FF9A8(int port, int slot);
 
+/* DMA controller environment (D_CTRL / PCR / SQWC / RBOR / RBSR settings, 20 bytes) */
+typedef struct { unsigned char sts, std, mfd, rcyc; unsigned short h4, h6, h8, hA; void *w0C; unsigned w10; } sDmaEnv;
+extern sDmaEnv D_005261D0;     /* copy of the last environment set by func_003FE090 */
+
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
 #ifdef SKIP_ASM
@@ -445,9 +449,9 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FDFB0);
 extern int D_00451590[];
 extern int D_004977F0[];
 extern void func_003FDF50(char *, int);
-extern int func_003FE090_i(char *) __asm__("func_003FE090");
+extern int func_003FE090(sDmaEnv *);
 int func_003FDFB0(int a) {
-    char buf[20];
+    sDmaEnv env;
     int i;
     int saved = *(volatile int *)0x1000E000 & 1;
     for (i = 0; i < 10; i++) {
@@ -463,8 +467,8 @@ int func_003FDFB0(int a) {
     }
     *(volatile int *)0x1000E010 = 0xFF1F;
     *(int *)0x1000E010 &= 0xFF1F0000;
-    func_003FDF50(buf, 20);
-    func_003FE090_i(buf);
+    func_003FDF50((char *)&env, 20);
+    func_003FE090(&env);
     if (a == 1)
         *(volatile int *)0x1000E000 |= 1;
     return saved;
@@ -476,12 +480,10 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FE090);
 #ifdef SKIP_ASM
 // DMA environment write: validate the table indices, merge them into D_CTRL, write PCR/SQWC/RBOR/RBSR, keep a copy.
 // The field at +0x0C is a pointer (the ring-buffer address), stored as its integer value.
-typedef struct { unsigned char sts, std, mfd, rcyc; unsigned short h4, h6, h8, hA; void *w0C; unsigned w10; } E3FE090;
 extern unsigned char D_00497818[];
 extern unsigned char D_00497828[];
 extern unsigned char D_00497838[];
-extern E3FE090 D_Env_3FE090 __asm__("D_005261D0");
-int func_003FE090(E3FE090 *p) {
+int func_003FE090(sDmaEnv *p) {
     unsigned c;
     unsigned pcr;
     unsigned sqwc;
@@ -514,7 +516,7 @@ int func_003FE090(E3FE090 *p) {
     *(volatile unsigned *)0x1000E030 = sqwc;
     *(volatile unsigned *)0x1000E050 = rbor;
     *(volatile unsigned *)0x1000E040 = rbsr;
-    D_Env_3FE090 = *p;
+    D_005261D0 = *p;
     return 0;
 }
 #endif
@@ -522,10 +524,8 @@ int func_003FE090(E3FE090 *p) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FE268);
 #ifdef SKIP_ASM
-struct S003FE268 { int c[5]; };
-extern struct S003FE268 D_005261D0[];
-struct S003FE268 *func_003FE268(struct S003FE268 *d) {
-    *d = D_005261D0[0];
+sDmaEnv *func_003FE268(sDmaEnv *d) {
+    *d = D_005261D0;
     return d;
 }
 #endif
