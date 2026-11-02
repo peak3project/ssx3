@@ -51,6 +51,24 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
+// The per-frame camera input record (0x70 bytes) that func_00162568 (camera/camera) fills from the target.
+struct sCamInfo {
+    t4Vector f00;               // 0x00
+    t4Vector pos;               // 0x10
+    t4Vector dir;               // 0x20
+    t4Vector out;               // 0x30
+    int mode;                   // 0x40
+    float speed;                // 0x44: length of dir
+    char pad48[4];
+    float f4C;                  // 0x4C
+    float f50;                  // 0x50
+    float f54;                  // 0x54
+    int f58;                    // 0x58
+    int f5C;                    // 0x5C
+    int f60;                    // 0x60
+    int f64;                    // 0x64
+};
+
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camaction);
 #ifdef SKIP_ASM
@@ -2880,8 +2898,7 @@ extern "C" void func_00176AE0(void* self, void* out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00176B10);
 #ifdef SKIP_ASM
-struct sCamInfo_00178BB0;
-extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
@@ -2900,15 +2917,10 @@ extern "C" void func_00163450(void* self, void* info, float a, float b, float c,
 extern "C" void func_001641C0(void* self, void* info, float a, float b, float c, float d);
 extern "C" void func_001643A8(void* self, void* info, float a, float b, float c);
 
-struct sCamInfo_176B10
-{
-    char data[0x68];
-} __attribute__((aligned(16)));
-
 extern "C" void func_00176B10(char* self)
 {
-    sCamInfo_176B10 info;
-    func_00162568(self, (sCamInfo_00178BB0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     func_00162998(self, &info);
@@ -3021,8 +3033,7 @@ extern "C" void func_00176DE0(void* self, void* out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00176E10);
 #ifdef SKIP_ASM
-struct sCamInfo_00178BB0;
-extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
@@ -3041,15 +3052,10 @@ extern "C" void func_00163450(void* self, void* info, float a, float b, float c,
 extern "C" void func_001641C0(void* self, void* info, float a, float b, float c, float d);
 extern "C" void func_001643A8(void* self, void* info, float a, float b, float c);
 
-struct sCamInfo_176E10
-{
-    char data[0x68];
-} __attribute__((aligned(16)));
-
 extern "C" void func_00176E10(char* self)
 {
-    sCamInfo_176E10 info;
-    func_00162568(self, (sCamInfo_00178BB0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     func_00162998(self, &info);
@@ -3142,8 +3148,7 @@ extern "C" void func_001770E0(void* self, void* out)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00177110);
 #ifdef SKIP_ASM
-struct sCamInfo_00178BB0;
-extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
@@ -3162,15 +3167,10 @@ extern "C" void func_00163450(void* self, void* info, float a, float b, float c,
 extern "C" void func_001641C0(void* self, void* info, float a, float b, float c, float d);
 extern "C" void func_001643A8(void* self, void* info, float a, float b, float c);
 
-struct sCamInfo_177110
-{
-    char data[0x68];
-} __attribute__((aligned(16)));
-
 extern "C" void func_00177110(char* self)
 {
-    sCamInfo_177110 info;
-    func_00162568(self, (sCamInfo_00178BB0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     func_00162998(self, &info);
@@ -3213,8 +3213,7 @@ extern "C" void func_001772E0(cCamCtrlK8940* self, int id)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00177368);
 #ifdef SKIP_ASM
-struct sCamInfo_00178BB0;
-extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 extern "C" void func_00162998(void* self, void* info);
 extern "C" void func_00162A20(void* self, void* info);
@@ -3229,15 +3228,10 @@ extern "C" void func_00164878(void* self, void* info, float a);
 extern "C" void func_001646A0(void* self, void* info, float a, float b);
 extern "C" void func_00165540(void* self, float ang);
 
-struct sCamInfo_177368
-{
-    char data[0x68];
-} __attribute__((aligned(16)));
-
 extern "C" void func_00177368(char* self)
 {
-    sCamInfo_177368 info;
-    func_00162568(self, (sCamInfo_00178BB0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     func_00162998(self, &info);
@@ -3860,8 +3854,7 @@ extern "C" t4Vector func_00177FC0(void* self, const t4Vector& in)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00178208);
 #ifdef SKIP_ASM
-struct sCamInfo_00178BB0;
-extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 
 // PORT: PS2-only VU0 inline asm (a - b).
@@ -3975,18 +3968,12 @@ extern "C" t4Vector f_177FC0_8208(void* self, const t4Vector& v) __asm__("func_0
 extern "C" t4Vector f_177EF8_8208(void* self) __asm__("func_00177EF8");
 extern "C" int func_0011FE98(void* self);
 
-struct sCamInfo_8208 {
-    char pad0[0x20];
-    t4Vector pos;   // 0x20
-    char pad30[0x38];
-} __attribute__((aligned(16)));
-
 extern "C" void func_00178208_v(char* self) __asm__("func_00178208");
 
 extern "C" void func_00178208_v(char* self)
 {
-    sCamInfo_8208 info;
-    func_00162568(self, (sCamInfo_00178BB0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     *(float*)self = 0.7853981852531433f;
@@ -4009,7 +3996,7 @@ extern "C" void func_00178208_v(char* self)
     {
         t4Vector s = Scale_8208(*(t4Vector*)(self + 0x40), f);
         float g = 1.0f - f;
-        AddD_8208(d, s, Scale_8208(f_177FC0_8208(self, info.pos), g));
+        AddD_8208(d, s, Scale_8208(f_177FC0_8208(self, info.dir), g));
         *(t4Vector*)(self + 0x40) = d;
     }
     AddD_8208(d, f_177EF8_8208(self), ScaleP_8208(&D_004FF160, 37.0f));
@@ -4312,11 +4299,7 @@ extern "C" t4Vector f_178758(char* self)
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001787E0);
 #ifdef SKIP_ASM
-struct sCamInfo_1787E0 {
-    char data[0x68];
-} __attribute__((aligned(16)));
-
-extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 extern "C" t4Vector f_1785F0_1787E0(void* self) __asm__("func_001785F0");
 extern "C" t4Vector f_178758_1787E0(void* self) __asm__("func_00178758");
@@ -4391,8 +4374,8 @@ static inline float Length_1787E0(const t4Vector& v)
 
 extern "C" void func_001787E0(char* self)
 {
-    sCamInfo_1787E0 info;
-    func_00162568(self, (sCamInfo_00178BB0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     *(float*)self = 0.7853981852531433f;
@@ -4648,11 +4631,7 @@ extern void* D_004A28A8;
 extern "C" float func_0031C040(float x);
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 
-struct sCamInfo_00178BB0 {
-    char data[0x68];
-} __attribute__((aligned(16)));
-
-extern "C" void func_00162568(void* self, sCamInfo_00178BB0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
@@ -4763,7 +4742,7 @@ static inline sVec4 getPos_00178BB0(char* self)
 
 extern "C" void func_00178BB0(char* self)
 {
-    sCamInfo_00178BB0 info;
+    sCamInfo info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
