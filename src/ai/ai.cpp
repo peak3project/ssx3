@@ -69,6 +69,26 @@ struct cPathSys {
 };
 extern cPathSys D_004D33A0;
 
+// Rider option flags (D_005308B8): one entry per player plus global option bits at 0x18.
+struct sOptEntry
+{
+    unsigned int f0;
+    int x;
+    int y;
+};
+
+struct sOptions
+{
+    sOptEntry e[2];
+    int f18;
+};
+extern sOptions D_005308B8;
+
+static inline int OptBit(sOptions* o, int b)
+{
+    return (o->f18 >> b) & 1;
+}
+
 // Constant vectors (in .bss, set up at startup); named by use: D_004FF120 zero, D_004FF130 origin (w = 1),
 // D_004FF140 / D_004FF150 / D_004FF160 the x / y / z axes.
 extern t4Vector D_004FF120;
@@ -1922,48 +1942,27 @@ struct sRider_12B498
     int fB30;
 };
 
-struct sOptEntry_12B498
-{
-    unsigned int f0;
-    int x;
-    int y;
-};
-
-struct sOptView_12B498
-{
-    sOptEntry_12B498 e[2];
-    int f18;
-};
-
-// The unit declares D_005308B8 later with its own type; bind this view by asm label.
-extern sOptView_12B498 D_005308B8_12B498 __asm__("D_005308B8");
-
-static inline int OptBit_12B498(sOptView_12B498* o, int b)
-{
-    return (o->f18 >> b) & 1;
-}
-
 extern "C" void func_0012B498(void* self, void* obj, int i)
 {
     int v = 1;
-    if (OptBit_12B498(&D_005308B8_12B498, 3))
+    if (OptBit(&D_005308B8, 3))
         v = 3;
-    else if (OptBit_12B498(&D_005308B8_12B498, 0))
+    else if (OptBit(&D_005308B8, 0))
         v = 0;
     else
-        if ((D_005308B8_12B498.e[i].f0 >> 5) & 1) v = 2;
+        if ((D_005308B8.e[i].f0 >> 5) & 1) v = 2;
     char* r = *(char**)((char*)obj + 0x18);
     *(int*)(r + 0x304) = v;
     func_00120D58(r);
-    if ((D_005308B8_12B498.e[i].f0 >> 3) & 1)
+    if ((D_005308B8.e[i].f0 >> 3) & 1)
         *(float*)(*(char**)((char*)obj + 0x18) + 0xB24) = 1.0f;
-    if (OptBit_12B498(&D_005308B8_12B498, 4))
+    if (OptBit(&D_005308B8, 4))
         *(int*)(*(char**)((char*)obj + 0x18) + 0xB28) = 2;
-    if ((D_005308B8_12B498.e[i].f0 >> 4) & 1)
+    if ((D_005308B8.e[i].f0 >> 4) & 1)
         func_00125958(*(void**)((char*)obj + 0x18), 0);
-    else if (OptBit_12B498(&D_005308B8_12B498, 1))
+    else if (OptBit(&D_005308B8, 1))
         func_00125958(*(void**)((char*)obj + 0x18), 1);
-    if (D_005308B8_12B498.e[i].f0 & 1)
+    if (D_005308B8.e[i].f0 & 1)
         *(int*)(*(char**)((char*)obj + 0x18) + 0xB20) = 2;
     (*(sRider_12B498**)((char*)obj + 0x18))->fB30 = func_0014F7A8(i);
     cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
@@ -1972,12 +1971,12 @@ extern "C" void func_0012B498(void* self, void* obj, int i)
         if (D_00534B30[1] != 0)
             *(int*)(*(char**)((char*)obj + 0x18) + 0xB34) = 8;
     }
-    else if ((D_005308B8_12B498.e[i].f0 >> 1) & 1)
+    else if ((D_005308B8.e[i].f0 >> 1) & 1)
         *(int*)(*(char**)((char*)obj + 0x18) + 0xB34) = 1;
     char* m = *(char**)(*(char**)((char*)obj + 0x18) + 0x790);
-    if ((D_005308B8_12B498.e[i].f0 >> 2) & 1)
+    if ((D_005308B8.e[i].f0 >> 2) & 1)
         *(float*)(m + 0x1C4) = 0.5f;
-    func_00117520(m, D_005308B8_12B498.e[i].x);
+    func_00117520(m, D_005308B8.e[i].x);
 }
 #endif
 
@@ -1988,36 +1987,23 @@ extern "C" void func_00120D58(void* self);
 extern "C" void func_00125958(void* self, int a1);
 extern "C" int func_0014F7E8();
 
-struct sOptFlags_0012B698
-{
-    unsigned int f0;
-    char pad4[0x14];
-    int f18;
-};
-extern sOptFlags_0012B698 D_005308B8;
-
-static inline int OptBit_0012B698(sOptFlags_0012B698* o, int b)
-{
-    return (o->f18 >> b) & 1;
-}
-
 extern "C" void func_0012B698(void* self, void* rider)
 {
     int v = 1;
-    if (OptBit_0012B698(&D_005308B8, 3))
+    if (OptBit(&D_005308B8, 3))
         v = 3;
-    else if (OptBit_0012B698(&D_005308B8, 0))
+    else if (OptBit(&D_005308B8, 0))
         v = 0;
     else
-        if ((D_005308B8.f0 >> 5) & 1) v = 2;
+        if ((D_005308B8.e[0].f0 >> 5) & 1) v = 2;
     char* r = *(char**)((char*)rider + 0x18);
     *(int*)(r + 0x304) = v;
     func_00120D58(r);
-    if ((D_005308B8.f0 >> 3) & 1)
+    if ((D_005308B8.e[0].f0 >> 3) & 1)
         *(float*)(*(char**)((char*)rider + 0x18) + 0xB24) = 1.0f;
-    if (OptBit_0012B698(&D_005308B8, 4))
+    if (OptBit(&D_005308B8, 4))
         *(int*)(*(char**)((char*)rider + 0x18) + 0xB28) = 2;
-    if (OptBit_0012B698(&D_005308B8, 1))
+    if (OptBit(&D_005308B8, 1))
         func_00125958(*(void**)((char*)rider + 0x18), 1);
     *(int*)(*(char**)((char*)rider + 0x18) + 0xB30) = func_0014F7E8();
 }
