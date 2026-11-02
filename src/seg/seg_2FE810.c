@@ -6094,7 +6094,36 @@ INCLUDE_ASM("seg/seg_2FE810", func_00408CA8);
 
 INCLUDE_ASM("seg/seg_2FE810", func_00408DF0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408FB0);
+#ifdef SKIP_ASM
+struct S408FB0 { unsigned f0; int f4; };
+int func_00408FB0(int a, struct S408FB0 *s) {
+    unsigned n;
+    *(volatile int *)0x1000E010 = 0x10;
+    n = s->f0;
+    if (n == 0) {
+        SYNC_0810();
+        EI_0810();
+        return 1;
+    }
+    if (n > 0xFFFF) {
+        *(volatile int *)0x1000B410 = s->f4;
+        *(volatile int *)0x1000B420 = 0xFFFF;
+        *(volatile int *)0x1000B400 = 0x101;
+        s->f4 = (s->f4 + 0xFFFF0) & 0xFFFFFFF;
+        s->f0 = s->f0 - 0xFFFF;
+    } else {
+        *(volatile int *)0x1000B410 = s->f4;
+        *(volatile int *)0x1000B420 = s->f0;
+        *(volatile int *)0x1000B400 = 0x101;
+        s->f0 = 0;
+    }
+    SYNC_0810();
+    EI_0810();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409088);
