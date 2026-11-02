@@ -86,12 +86,9 @@ struct sVecK_C0E8 : public t4Vector {
     }
 };
 
-struct sMat_C0E8 {
-    t4Vector r[4];
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
-static inline void vu0MulMat_C0E8(sMat_C0E8* d, const sMat_C0E8* a, const sMat_C0E8* b)
+static inline void vu0MulMat_C0E8(t4Matrix* d, const t4Matrix* a, const t4Matrix* b)
 {
     __asm__ __volatile__(
         "lqc2      $vf4, 0x0(%1)\n"
@@ -128,7 +125,7 @@ static inline void vu0MulMat_C0E8(sMat_C0E8* d, const sMat_C0E8* a, const sMat_C
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
-static inline void vu0CopyMat_C0E8(sMat_C0E8* d, const sMat_C0E8* s)
+static inline void vu0CopyMat_C0E8(t4Matrix* d, const t4Matrix* s)
 {
     __asm__ __volatile__(
         "lqc2      $vf1, 0x0(%1)\n"
@@ -145,7 +142,7 @@ static inline void vu0CopyMat_C0E8(sMat_C0E8* d, const sMat_C0E8* s)
 }
 
 // PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
-static inline t4Vector vu0MtxMul_C0E8(const sMat_C0E8* m, const t4Vector& v)
+static inline t4Vector vu0MtxMul_C0E8(const t4Matrix* m, const t4Vector& v)
 {
     t4Vector r;
     __asm__(
@@ -185,7 +182,7 @@ static inline t4Vector vu0Scale_C0E8(const t4Vector& v, float s)
 struct sLink_C0E8 {
     int next;               // 0x0
     char pad_0x4[0x8];
-    sMat_C0E8* mat;         // 0xC
+    t4Matrix* mat;         // 0xC
 };
 
 struct sLinkTbl_C0E8 {
@@ -195,7 +192,7 @@ struct sLinkTbl_C0E8 {
 
 struct sModel_C0E8 {
     char pad_0x0[0x10];
-    sMat_C0E8 mat;          // 0x10
+    t4Matrix mat;          // 0x10
     char pad_0x50[0x30];
     sLinkTbl_C0E8* tbl;     // 0x80
     float scale;            // 0x84
@@ -208,7 +205,7 @@ struct cRailModifier_C0E8 {
     sModel_C0E8* model;     // 0x40
     void* node;             // 0x44
     char pad_0x48[0x8];
-    sMat_C0E8 mat;          // 0x50
+    t4Matrix mat;          // 0x50
 };
 
 extern char D_0048EA60[];
@@ -219,18 +216,18 @@ static inline sVecK_C0E8 mulVec_C0E8(const t4Vector& a, const t4Vector& b)
     return sVecK_C0E8(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
 }
 
-static inline t4Vector row_C0E8(const sMat_C0E8* m, int i)
+static inline t4Vector row_C0E8(const t4Matrix* m, int i)
 {
-    return m->r[i];
+    return m->row[i];
 }
 
-static inline sMat_C0E8 scaled_C0E8(const sMat_C0E8* src, const t4Vector& s)
+static inline t4Matrix scaled_C0E8(const t4Matrix* src, const t4Vector& s)
 {
-    sMat_C0E8 r;
-    r.r[0] = row_C0E8(src, 0);
-    r.r[1] = row_C0E8(src, 1);
-    r.r[2] = row_C0E8(src, 2);
-    r.r[3] = mulVec_C0E8(row_C0E8(src, 3), s);
+    t4Matrix r;
+    r.row[0] = row_C0E8(src, 0);
+    r.row[1] = row_C0E8(src, 1);
+    r.row[2] = row_C0E8(src, 2);
+    r.row[3] = mulVec_C0E8(row_C0E8(src, 3), s);
     return r;
 }
 
@@ -238,9 +235,9 @@ extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
 {
     sModel_C0E8* model = self->model;
     sLink_C0E8* links = model->tbl->links;
-    sMat_C0E8* m;
+    t4Matrix* m;
     if (self->idx < 0) {
-        sMat_C0E8* p = &self->mat;
+        t4Matrix* p = &self->mat;
         vu0CopyMat_C0E8(p, &model->mat);
         m = p;
     } else {
@@ -250,71 +247,71 @@ extern "C" void cRailModifier_buildXform(cRailModifier_C0E8* self)
         scl.y = s;
         scl.z = s;
         scl.w = 1.0f;
-        sMat_C0E8* p = &self->mat;
+        t4Matrix* p = &self->mat;
         sLink_C0E8* l = (sLink_C0E8*)(self->idx * 16 + (int)links);
         vu0CopyMat_C0E8(p, l->mat);
         m = p;
         {
         t4Vector rr;
-        t4Vector r3 = self->mat.r[3];
+        t4Vector r3 = self->mat.row[3];
         rr.x = r3.x * scl.x;
         rr.y = r3.y * scl.y;
         rr.z = r3.z * scl.z;
         rr.w = r3.w * scl.w;
-        self->mat.r[3] = rr;
+        self->mat.row[3] = rr;
         int i = l->next;
         while (i != -1) {
             sLink_C0E8* l2 = (sLink_C0E8*)(i * 16 + (int)links);
-            sMat_C0E8* mm = m;
-            sMat_C0E8 t2;
-            sMat_C0E8 a;
+            t4Matrix* mm = m;
+            t4Matrix t2;
+            t4Matrix a;
             t4Vector res;
             t4Vector r3b;
-            sMat_C0E8* lm = l2->mat;
-            res = lm->r[0];
-            a.r[0] = res;
-            res = lm->r[1];
-            a.r[1] = res;
-            res = lm->r[2];
-            a.r[2] = res;
-            r3b = lm->r[3];
+            t4Matrix* lm = l2->mat;
+            res = lm->row[0];
+            a.row[0] = res;
+            res = lm->row[1];
+            a.row[1] = res;
+            res = lm->row[2];
+            a.row[2] = res;
+            r3b = lm->row[3];
             res.x = r3b.x * scl.x;
             res.y = r3b.y * scl.y;
             res.z = r3b.z * scl.z;
             res.w = r3b.w * scl.w;
-            a.r[3] = res;
-            sMat_C0E8 t;
-            sMat_C0E8* pt2 = &t2;
-            sMat_C0E8* pt = &t;
+            a.row[3] = res;
+            t4Matrix t;
+            t4Matrix* pt2 = &t2;
+            t4Matrix* pt = &t;
             vu0MulMat_C0E8(pt, &a, mm);
             vu0CopyMat_C0E8(pt2, pt);
             vu0CopyMat_C0E8(mm, pt2);
             i = l2->next;
         }
         }
-        sMat_C0E8 t4;
-        sMat_C0E8 t3;
-        sMat_C0E8* pt3 = &t3;
-        sMat_C0E8* pt4 = &t4;
+        t4Matrix t4;
+        t4Matrix t3;
+        t4Matrix* pt3 = &t3;
+        t4Matrix* pt4 = &t4;
         vu0MulMat_C0E8(pt3, &self->model->mat, m);
         vu0CopyMat_C0E8(pt4, &t3);
         vu0CopyMat_C0E8(m, pt4);
     }
     float f;
-    f = self->mat.r[0].y;
-    self->mat.r[0].y = self->mat.r[1].x;
-    self->mat.r[1].x = f;
-    f = self->mat.r[0].z;
-    self->mat.r[0].z = self->mat.r[2].x;
-    self->mat.r[2].x = f;
-    f = self->mat.r[1].z;
-    self->mat.r[1].z = self->mat.r[2].y;
-    self->mat.r[2].y = f;
+    f = self->mat.row[0].y;
+    self->mat.row[0].y = self->mat.row[1].x;
+    self->mat.row[1].x = f;
+    f = self->mat.row[0].z;
+    self->mat.row[0].z = self->mat.row[2].x;
+    self->mat.row[2].x = f;
+    f = self->mat.row[1].z;
+    self->mat.row[1].z = self->mat.row[2].y;
+    self->mat.row[2].y = f;
     t4Vector v = vu0Scale_C0E8(row_C0E8(&self->mat, 3), -1.0f);
     v.w = 0.0f;
     v = vu0MtxMul_C0E8(m, v);
     v.w = 1.0f;
-    self->mat.r[3] = v;
+    self->mat.row[3] = v;
     void* n = cMemMan_alloc(0x10, D_0048EA60, 0x20000000, 0);
     ((void**)n)[3] = self;
     ((int*)n)[2] = 2;
@@ -1120,12 +1117,9 @@ extern "C" void func_0035E1E0(void* self, func_0035E1E0_cObj* obj)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035E248);
 #ifdef SKIP_ASM
-struct sM44_E248 {
-    t4Vector r[4];
-};
 
 // PORT: PS2-only VU0 inline asm (unit quaternion -> 4x4 rotation matrix).
-static inline void QuatToMtx_E248(sM44_E248& m, const t4Vector& q)
+static inline void QuatToMtx_E248(t4Matrix& m, const t4Vector& q)
 {
     __asm__ __volatile__(
         "lqc2       $vf4, %4\n"
@@ -1160,23 +1154,23 @@ static inline void QuatToMtx_E248(sM44_E248& m, const t4Vector& q)
         "sqc2       $vf10, %0\n"
         "sqc2       $vf11, %1\n"
         "sqc2       $vf12, %2\n"
-        : "=m"(m.r[0]), "=m"(m.r[1]), "=m"(m.r[2]), "=m"(m.r[3])
+        : "=m"(m.row[0]), "=m"(m.row[1]), "=m"(m.row[2]), "=m"(m.row[3])
         : "m"(q)
         : "memory");
 }
 
-static inline sRmMat33 Rot33_E248(const sM44_E248& m)
+static inline sRmMat33 Rot33_E248(const t4Matrix& m)
 {
     sRmMat33 r;
-    r.m[0][0] = m.r[0].x;
-    r.m[0][1] = m.r[0].y;
-    r.m[0][2] = m.r[0].z;
-    r.m[1][0] = m.r[1].x;
-    r.m[1][1] = m.r[1].y;
-    r.m[1][2] = m.r[1].z;
-    r.m[2][0] = m.r[2].x;
-    r.m[2][1] = m.r[2].y;
-    r.m[2][2] = m.r[2].z;
+    r.m[0][0] = m.row[0].x;
+    r.m[0][1] = m.row[0].y;
+    r.m[0][2] = m.row[0].z;
+    r.m[1][0] = m.row[1].x;
+    r.m[1][1] = m.row[1].y;
+    r.m[1][2] = m.row[1].z;
+    r.m[2][0] = m.row[2].x;
+    r.m[2][1] = m.row[2].y;
+    r.m[2][2] = m.row[2].z;
     return r;
 }
 
@@ -1232,7 +1226,7 @@ static inline sRmMat33 MulIBody_E248(sRmObj_E248* o, const sRmMat33& a)
 extern "C" void func_0035E248(void* vself)
 {
     sRmObj_E248* self = (sRmObj_E248*)vself;
-    sM44_E248 m;
+    t4Matrix m;
     QuatToMtx_E248(m, self->quat);
     sRmMat33 rot;
     sRmMat33 rotT;
@@ -4261,9 +4255,6 @@ extern "C" int func_003615C0(void* self, int a1)
 INCLUDE_ASM("object/railmodifier", func_003615D8);
 #ifdef SKIP_ASM
 
-struct sSpM_15D8 {
-    t4Vector r[4];
-};
 
 // PORT: PS2-only VU0 inline asm (vector * 4x4 basis matrix, row-vector convention).
 static inline void vu0BasisMul_15D8(t4Vector& dst, const t4Vector& g, const float* b)
@@ -4285,7 +4276,7 @@ static inline void vu0BasisMul_15D8(t4Vector& dst, const t4Vector& g, const floa
 }
 
 // PORT: PS2-only MMI inline asm (4x4 transpose in place, as sceVu0TransposeMatrix).
-static inline void mmiTranspose_15D8(sSpM_15D8* m)
+static inline void mmiTranspose_15D8(t4Matrix* m)
 {
     __asm__ __volatile__(
         "lq      $11, 0x0(%0)\n"
@@ -4309,20 +4300,20 @@ static inline void mmiTranspose_15D8(sSpM_15D8* m)
         : "memory", "$2", "$3", "$4", "$7", "$8", "$9", "$10", "$11");
 }
 
-extern "C" void func_003615D8(void* self, sSpM_15D8* out, const float* a, const float* b, const float* c, const float* d)
+extern "C" void func_003615D8(void* self, t4Matrix* out, const float* a, const float* b, const float* c, const float* d)
 {
-    sSpM_15D8 L;
+    t4Matrix L;
     t4Vector v;
-    L.r[1].x = a[0]; L.r[1].y = b[0]; L.r[1].z = c[0]; L.r[1].w = d[0];
-    vu0BasisMul_15D8(L.r[2], L.r[1], D_004FFAC0);
-    L.r[0] = L.r[2];
-    L.r[2].x = a[1]; L.r[2].y = b[1]; L.r[2].z = c[1]; L.r[2].w = d[1];
-    vu0BasisMul_15D8(L.r[3], L.r[2], D_004FFAC0);
-    L.r[1] = L.r[3];
-    L.r[3].x = a[2]; L.r[3].y = b[2]; L.r[3].z = c[2]; L.r[3].w = d[2];
-    vu0BasisMul_15D8(v, L.r[3], D_004FFAC0);
-    L.r[2] = v;
-    L.r[3].x = 0.0f; L.r[3].y = 0.0f; L.r[3].z = 0.0f; L.r[3].w = 1.0f;
+    L.row[1].x = a[0]; L.row[1].y = b[0]; L.row[1].z = c[0]; L.row[1].w = d[0];
+    vu0BasisMul_15D8(L.row[2], L.row[1], D_004FFAC0);
+    L.row[0] = L.row[2];
+    L.row[2].x = a[1]; L.row[2].y = b[1]; L.row[2].z = c[1]; L.row[2].w = d[1];
+    vu0BasisMul_15D8(L.row[3], L.row[2], D_004FFAC0);
+    L.row[1] = L.row[3];
+    L.row[3].x = a[2]; L.row[3].y = b[2]; L.row[3].z = c[2]; L.row[3].w = d[2];
+    vu0BasisMul_15D8(v, L.row[3], D_004FFAC0);
+    L.row[2] = v;
+    L.row[3].x = 0.0f; L.row[3].y = 0.0f; L.row[3].z = 0.0f; L.row[3].w = 1.0f;
     *out = L;
     mmiTranspose_15D8(out);
 }
