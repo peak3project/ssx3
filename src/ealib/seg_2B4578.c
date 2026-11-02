@@ -403,6 +403,9 @@ struct sAD00 {
     int f1B38;
 };
 extern struct sAD00 D_0050AD00;
+extern struct sAD00Spu *D_0050B9B0;     /* D_0050AD00.fCB0 */
+extern struct sAD00Xfer D_0050B9C8[];   /* D_0050AD00.fCC8 */
+extern struct sAD00Spk D_0050BB98[];    /* D_0050AD00.fE98 */
 
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
 
@@ -7818,9 +7821,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C27E0);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V_27E0 { char pad[0x1AC]; char v[1][16]; };
-struct A_27E0 { char pad[0xCB0]; long *mask; };
-extern struct A_27E0 D_0050AD00_27E0 __asm__("D_0050AD00");
 extern void func_003C8598(int, int, float);
 
 int func_003C27E0(int id, int k) {
@@ -7832,22 +7832,22 @@ int func_003C27E0(int id, int k) {
     if (ch->f24 & 8) {
         for (i = 0; i < ch->f23; i++) {
             if (ch->f62[0] != 0) {
-                *D_0050AD00_27E0.mask |= 1L << ch->f04[i];
+                D_0050AD00.fCB0->f00 |= 1L << ch->f04[i];
             } else {
-                *D_0050AD00_27E0.mask &= ~(1L << ch->f04[i]);
+                D_0050AD00.fCB0->f00 &= ~(1L << ch->f04[i]);
             }
             if (D_0050A8E8.setup.cfg.f29 == 2) {
                 if (ch->f62[0] != 0) {
-                    *D_0050AD00_27E0.mask |= 1L << (ch->f04[i] + 0x18);
+                    D_0050AD00.fCB0->f00 |= 1L << (ch->f04[i] + 0x18);
                 } else {
-                    *D_0050AD00_27E0.mask &= ~(1L << (ch->f04[i] + 0x18));
+                    D_0050AD00.fCB0->f00 &= ~(1L << (ch->f04[i] + 0x18));
                 }
             }
         }
     } else if (ch->f24 & 0x100) {
         v = ch->f48 * ch->f62[k] * 0.003875850699841976f;
         for (i = 0; i < ch->f23; i++) {
-            ((struct V_27E0 *)D_0050AD00_27E0.mask)->v[ch->f04[i] - D_0050A8E8.setup.cfg.f10][k] = v;
+            D_0050AD00.fCB0->f1A0[ch->f04[i] - D_0050A8E8.setup.cfg.f10].f0C[k] = v;
         }
     } else {
         f = ch->f48 * ch->f62[k] / 32767.0f;
