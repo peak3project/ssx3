@@ -318,6 +318,40 @@ extern void (*D_0050AAD4)(void);        /* D_0050A8E8.f1EC */
 extern struct sA8E8Slot *D_0050AADC;    /* D_0050A8E8.f1F4 */
 extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 
+/* D_0050AC68 / D_0050AC6C: the ADPCM encoder's state and its work area (func_003BF0F0 sets them up). Layout from
+   every use in this unit; field names are their offsets. */
+struct sAC68Blk {                   /* one per channel */
+    int f00;                        /* input */
+    unsigned char f04[24];          /* scale factor per band */
+};
+struct sAC68 {
+    unsigned char f00;              /* mode */
+    unsigned char f01;              /* number of channels */
+    char pad02[0x4 - 0x2];
+    unsigned short f04;             /* frame size: 0xE0, 0x160 or 0x1E0 */
+    unsigned short f06;             /* output bit position */
+    unsigned char *f08;             /* output */
+    float f0C[24];                  /* band weights */
+    int f6C[6];
+    struct sAC68Blk *f84[6];
+};
+struct sAC6C {
+    float f000[24][16];             /* per band */
+    char f600[0x200];
+    char f800[0x200];
+    unsigned short fA00[16];
+    float *fA20;
+    char *fA24;
+    char *fA28;
+    char *fA2C;
+    char *fA30;
+    char *fA34;
+    char *fA38;
+    unsigned char fA3C;             /* the work area is in scratchpad memory */
+};
+extern struct sAC68 *D_0050AC68;
+extern struct sAC6C *D_0050AC6C;
+
 /* D_0050A0A0: the streams (one per stream slot, func_003B6A38 looks one up). Layout from every use in this unit;
    field names are their offsets. */
 struct sA0A0Node {                  /* 0x28: a queued stream request */
@@ -4884,10 +4918,6 @@ void func_003BCA28(int arg0, int arg1, int arg2, int arg3) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BCAE8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { char p0[6]; unsigned short pos; unsigned char *buf; } BW_CAE8;
-extern BW_CAE8 *D_0050AC68_CAE8[] __asm__("D_0050AC68");
-
 void func_003BCAE8(int arg0, int n) {
     unsigned int v = arg0 << (0x20 - n);
     int byte;
@@ -4896,19 +4926,19 @@ void func_003BCAE8(int arg0, int n) {
     int rem;
     v = v >> (0x20 - n);
     while (n > 0) {
-        byte = D_0050AC68_CAE8[0]->pos >> 3;
+        byte = D_0050AC68->f06 >> 3;
         if (byte & 1)
             byte = byte - 1;
         else
             byte = byte + 1;
-        room = 8 - (D_0050AC68_CAE8[0]->pos & 7);
+        room = 8 - (D_0050AC68->f06 & 7);
         if (room == 8)
-            D_0050AC68_CAE8[0]->buf[byte] = 0;
+            D_0050AC68->f08[byte] = 0;
         take = (room >= n) ? n : room;
         rem = n - take;
-        D_0050AC68_CAE8[0]->buf[byte] |= (v >> rem) << (room - take);
+        D_0050AC68->f08[byte] |= (v >> rem) << (room - take);
         n = rem;
-        D_0050AC68_CAE8[0]->pos += take;
+        D_0050AC68->f06 += take;
     }
 }
 #endif
@@ -4918,12 +4948,10 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BCBA0);
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BD078);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003C06B0_D078(int a0, float *buf, void *p, signed char *tbl) __asm__("func_003C06B0");
 extern signed char D_0044DD00_D078[] __asm__("D_0044DD00");
 extern int D_0044C760_D078[] __asm__("D_0044C760");
 extern signed char D_0044DD38_D078[] __asm__("D_0044DD38");
-extern void *D_0050AC68;
 
 void func_003BD078(int a0, signed char *out, signed char *out8) {
     float buf[8];
@@ -4936,7 +4964,7 @@ void func_003BD078(int a0, signed char *out, signed char *out8) {
 
     max = 0.0f;
     min = 0.0f;
-    func_003C06B0_D078(a0, buf, (char *)D_0050AC68 + 0x6C, D_0044DD00_D078);
+    func_003C06B0_D078(a0, buf, D_0050AC68->f6C, D_0044DD00_D078);
     for (i = 0; i < 8; i++) {
         if (max < buf[i]) {
             max = buf[i];
@@ -5164,74 +5192,58 @@ void func_003BD5B8(int ch) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BD9C0);
 #ifdef SKIP_ASM
-extern void *D_0050AC68;
-
 void func_003BD9C0(void) {
-    int temp_3;
-    int var_7;
-    int var_8;
-    void *temp_4;
-    void *temp_4_2;
-    void *temp_5;
-    void *temp_5_2;
-    void *var_6;
+    unsigned char *s;
+    unsigned char *out;
+    int i;
 
-    var_7 = 0;
-    var_6 = (*(int *)((char*)(D_0050AC68) + (8))) + 0x8D;
-    if ((*(unsigned char *)((char*)(D_0050AC68) + (1))) != 0) {
-        var_8 = 4;
-        do {
-            temp_3 = var_7 * 4;
-            var_7 += 2;
-            temp_4 = (*(void **)((char*)((D_0050AC68 + temp_3)) + (0x84)));
-            temp_5 = temp_4 + 4;
-            (*(signed char *)((char*)(var_6) + (-1))) = (signed char) (((*(unsigned char *)((char*)(temp_4) + (4))) * 2) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (1))) >> 6));
-            (*(signed char *)((char*)(var_6) + (2))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (1))) * 4) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (2))) >> 5));
-            (*(signed char *)((char*)(var_6) + (1))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (2))) * 8) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (3))) >> 4));
-            (*(signed char *)((char*)(var_6) + (4))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (3))) * 0x10) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (4))) >> 3));
-            (*(signed char *)((char*)(var_6) + (3))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (4))) << 5) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (5))) >> 2));
-            (*(signed char *)((char*)(var_6) + (6))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (5))) << 6) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (6))) >> 1));
-            (*(signed char *)((char*)(var_6) + (5))) = (signed char) ((*(unsigned char *)((char*)(temp_5) + (7))) | ((*(unsigned char *)((char*)(temp_5) + (6))) << 7));
-            (*(signed char *)((char*)(var_6) + (8))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (8))) * 2) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (9))) >> 6));
-            (*(signed char *)((char*)(var_6) + (7))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (9))) * 4) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0xA))) >> 5));
-            (*(signed char *)((char*)(var_6) + (0xA))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0xA))) * 8) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0xB))) >> 4));
-            (*(signed char *)((char*)(var_6) + (9))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0xB))) * 0x10) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0xC))) >> 3));
-            (*(signed char *)((char*)(var_6) + (0xC))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0xC))) << 5) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0xD))) >> 2));
-            (*(signed char *)((char*)(var_6) + (0xB))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0xD))) << 6) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0xE))) >> 1));
-            (*(signed char *)((char*)(var_6) + (0xE))) = (signed char) ((*(unsigned char *)((char*)(temp_5) + (0xF))) | ((*(unsigned char *)((char*)(temp_5) + (0xE))) << 7));
-            (*(signed char *)((char*)(var_6) + (0xD))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0x10))) * 2) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0x11))) >> 6));
-            (*(signed char *)((char*)(var_6) + (0x10))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0x11))) * 4) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0x12))) >> 5));
-            (*(signed char *)((char*)(var_6) + (0xF))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0x12))) * 8) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0x13))) >> 4));
-            (*(signed char *)((char*)(var_6) + (0x12))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0x13))) * 0x10) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0x14))) >> 3));
-            (*(signed char *)((char*)(var_6) + (0x11))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0x14))) << 5) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0x15))) >> 2));
-            (*(signed char *)((char*)(var_6) + (0x14))) = (signed char) (((*(unsigned char *)((char*)(temp_5) + (0x15))) << 6) | ((unsigned char) (*(unsigned char *)((char*)(temp_5) + (0x16))) >> 1));
-            (*(signed char *)((char*)(var_6) + (0x13))) = (signed char) ((*(unsigned char *)((char*)(temp_5) + (0x17))) | ((*(unsigned char *)((char*)(temp_5) + (0x16))) << 7));
-            temp_4_2 = (*(void **)((char*)((D_0050AC68 + var_8)) + (0x84)));
-            var_8 += 8;
-            temp_5_2 = temp_4_2 + 4;
-            (*(signed char *)((char*)(var_6) + (0x16))) = (signed char) (((*(unsigned char *)((char*)(temp_4_2) + (4))) * 2) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (1))) >> 6));
-            (*(signed char *)((char*)(var_6) + (0x15))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (1))) * 4) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (2))) >> 5));
-            (*(signed char *)((char*)(var_6) + (0x18))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (2))) * 8) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (3))) >> 4));
-            (*(signed char *)((char*)(var_6) + (0x17))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (3))) * 0x10) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (4))) >> 3));
-            (*(signed char *)((char*)(var_6) + (0x1A))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (4))) << 5) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (5))) >> 2));
-            (*(signed char *)((char*)(var_6) + (0x19))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (5))) << 6) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (6))) >> 1));
-            (*(signed char *)((char*)(var_6) + (0x1C))) = (signed char) ((*(unsigned char *)((char*)(temp_5_2) + (7))) | ((*(unsigned char *)((char*)(temp_5_2) + (6))) << 7));
-            (*(signed char *)((char*)(var_6) + (0x1B))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (8))) * 2) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (9))) >> 6));
-            (*(signed char *)((char*)(var_6) + (0x1E))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (9))) * 4) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0xA))) >> 5));
-            (*(signed char *)((char*)(var_6) + (0x1D))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0xA))) * 8) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0xB))) >> 4));
-            (*(signed char *)((char*)(var_6) + (0x20))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0xB))) * 0x10) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0xC))) >> 3));
-            (*(signed char *)((char*)(var_6) + (0x1F))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0xC))) << 5) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0xD))) >> 2));
-            (*(signed char *)((char*)(var_6) + (0x22))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0xD))) << 6) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0xE))) >> 1));
-            (*(signed char *)((char*)(var_6) + (0x21))) = (signed char) ((*(unsigned char *)((char*)(temp_5_2) + (0xF))) | ((*(unsigned char *)((char*)(temp_5_2) + (0xE))) << 7));
-            (*(signed char *)((char*)(var_6) + (0x24))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0x10))) * 2) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0x11))) >> 6));
-            (*(signed char *)((char*)(var_6) + (0x23))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0x11))) * 4) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0x12))) >> 5));
-            (*(signed char *)((char*)(var_6) + (0x26))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0x12))) * 8) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0x13))) >> 4));
-            (*(signed char *)((char*)(var_6) + (0x25))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0x13))) * 0x10) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0x14))) >> 3));
-            (*(signed char *)((char*)(var_6) + (0x28))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0x14))) << 5) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0x15))) >> 2));
-            (*(signed char *)((char*)(var_6) + (0x27))) = (signed char) (((*(unsigned char *)((char*)(temp_5_2) + (0x15))) << 6) | ((unsigned char) (*(unsigned char *)((char*)(temp_5_2) + (0x16))) >> 1));
-            (*(signed char *)((char*)(var_6) + (0x2A))) = (signed char) ((*(unsigned char *)((char*)(temp_5_2) + (0x17))) | ((*(unsigned char *)((char*)(temp_5_2) + (0x16))) << 7));
-            var_6 += 0x2A;
-        } while (var_7 < (int) (*(unsigned char *)((char*)(D_0050AC68) + (1))));
+    out = D_0050AC68->f08 + 0x8D;
+    for (i = 0; i < D_0050AC68->f01; i += 2) {
+        s = D_0050AC68->f84[i]->f04;
+        out[-1] = (s[0x0] * 2) | (s[0x1] >> 6);
+        out[0x2] = (s[0x1] * 4) | (s[0x2] >> 5);
+        out[0x1] = (s[0x2] * 8) | (s[0x3] >> 4);
+        out[0x4] = (s[0x3] * 0x10) | (s[0x4] >> 3);
+        out[0x3] = (s[0x4] << 5) | (s[0x5] >> 2);
+        out[0x6] = (s[0x5] << 6) | (s[0x6] >> 1);
+        out[0x5] = s[0x7] | (s[0x6] << 7);
+        out[0x8] = (s[0x8] * 2) | (s[0x9] >> 6);
+        out[0x7] = (s[0x9] * 4) | (s[0xa] >> 5);
+        out[0xa] = (s[0xa] * 8) | (s[0xb] >> 4);
+        out[0x9] = (s[0xb] * 0x10) | (s[0xc] >> 3);
+        out[0xc] = (s[0xc] << 5) | (s[0xd] >> 2);
+        out[0xb] = (s[0xd] << 6) | (s[0xe] >> 1);
+        out[0xe] = s[0xf] | (s[0xe] << 7);
+        out[0xd] = (s[0x10] * 2) | (s[0x11] >> 6);
+        out[0x10] = (s[0x11] * 4) | (s[0x12] >> 5);
+        out[0xf] = (s[0x12] * 8) | (s[0x13] >> 4);
+        out[0x12] = (s[0x13] * 0x10) | (s[0x14] >> 3);
+        out[0x11] = (s[0x14] << 5) | (s[0x15] >> 2);
+        out[0x14] = (s[0x15] << 6) | (s[0x16] >> 1);
+        out[0x13] = s[0x17] | (s[0x16] << 7);
+        s = D_0050AC68->f84[i + 1]->f04;
+        out[0x16] = (s[0x0] * 2) | (s[0x1] >> 6);
+        out[0x15] = (s[0x1] * 4) | (s[0x2] >> 5);
+        out[0x18] = (s[0x2] * 8) | (s[0x3] >> 4);
+        out[0x17] = (s[0x3] * 0x10) | (s[0x4] >> 3);
+        out[0x1a] = (s[0x4] << 5) | (s[0x5] >> 2);
+        out[0x19] = (s[0x5] << 6) | (s[0x6] >> 1);
+        out[0x1c] = s[0x7] | (s[0x6] << 7);
+        out[0x1b] = (s[0x8] * 2) | (s[0x9] >> 6);
+        out[0x1e] = (s[0x9] * 4) | (s[0xa] >> 5);
+        out[0x1d] = (s[0xa] * 8) | (s[0xb] >> 4);
+        out[0x20] = (s[0xb] * 0x10) | (s[0xc] >> 3);
+        out[0x1f] = (s[0xc] << 5) | (s[0xd] >> 2);
+        out[0x22] = (s[0xd] << 6) | (s[0xe] >> 1);
+        out[0x21] = s[0xf] | (s[0xe] << 7);
+        out[0x24] = (s[0x10] * 2) | (s[0x11] >> 6);
+        out[0x23] = (s[0x11] * 4) | (s[0x12] >> 5);
+        out[0x26] = (s[0x12] * 8) | (s[0x13] >> 4);
+        out[0x25] = (s[0x13] * 0x10) | (s[0x14] >> 3);
+        out[0x28] = (s[0x14] << 5) | (s[0x15] >> 2);
+        out[0x27] = (s[0x15] << 6) | (s[0x16] >> 1);
+        out[0x2a] = s[0x17] | (s[0x16] << 7);
+        out += 0x2A;
     }
 }
 #endif
