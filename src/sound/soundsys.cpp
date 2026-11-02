@@ -28,6 +28,32 @@ struct sSndOptsDelay {
     int fC;
 };
 
+// cSndPlayOpts (prototype class): the play-option stack; push = cur++ and copy def into mCurrent[cur]. The
+// allocation tags of its ctor (sound/ps2soundman) name the arrays: ch = mCurrent, p34 = mPosStatic,
+// vals = mBaseVol, p3C = mVolControl, p60 = mPtr, p64 = mViewport, p68 = mVanish, p6C = mRadius, p70 = mDelay,
+// p74 = mExternalVol, p78 = mMapToMaxVol, p7C = mCloseOnEnd, p80 = mTwoPlayerPan, p84 = mTwoPlayerSide.
+struct cSndPlayOpts {
+    void* vbase;             // 0x00 virtual-base pointer
+    sSndOptsRec def;         // 0x04
+    volatile int cur;        // 0x1C
+    sSndOptsRec* ch;         // 0x20
+    void* tgt[4];            // 0x24
+    int* p34;                // 0x34
+    int* vals;               // 0x38
+    int* p3C;                // 0x3C
+    sSndCallback callbacks[4]; // 0x40
+    int* p60;                // 0x60
+    int* p64;                // 0x64
+    int* p68;                // 0x68
+    int* p6C;                // 0x6C
+    sSndOptsDelay* p70;      // 0x70
+    int* p74;                // 0x74
+    int* p78;                // 0x78
+    int* p7C;                // 0x7C
+    int* p80;                // 0x80
+    int* p84;                // 0x84
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -154,30 +180,9 @@ INCLUDE_ASM("sound/soundsys", func_00290018);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0018Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd0018Mgr {
     char pad0[0x1D8];
-    sSnd0018Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd0018Sys {
     sSnd0018Mgr* mgr;
@@ -201,7 +206,7 @@ static inline void snd0018AddVoice(void* vself, int a, int b)
 {
     sSnd0018Sys* self = (sSnd0018Sys*)vself;
     sSnd0018Mgr* m = self->mgr;
-    sSnd0018Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -233,7 +238,7 @@ extern "C" int func_00290018(void* self, sSnd0018Req* req)
     sSnd0018Mgr* m1 = D_004A3664_0018->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
     sSnd0018Mgr* m2 = D_004A3664_0018->mgr;
-    sSnd0018Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
     s2->ch[m2->sub.cur].vol = SND_0018_MAX(0, SND_0018_MIN(s2->vals[s2->cur], 0x7F));
     func_002906B8(D_004A3664_0018);
@@ -247,30 +252,9 @@ INCLUDE_ASM("sound/soundsys", func_00290358);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0358Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd0358Mgr {
     char pad0[0x1D8];
-    sSnd0358Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd0358Sys {
     sSnd0358Mgr* mgr;
@@ -295,7 +279,7 @@ static inline void snd0358AddVoice(void* vself, int a, int b)
 {
     sSnd0358Sys* self = (sSnd0358Sys*)vself;
     sSnd0358Mgr* m = self->mgr;
-    sSnd0358Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -327,7 +311,7 @@ extern "C" int func_00290358(void* self, sSnd0358Req* req)
     sSnd0358Mgr* m1 = D_004A3664_0358->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
     sSnd0358Mgr* m2 = D_004A3664_0358->mgr;
-    sSnd0358Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = req->vol;
     s2->ch[m2->sub.cur].vol = SND_0358_MAX(0, SND_0358_MIN(s2->vals[s2->cur], 0x7F));
     sSnd0358Mgr* m3 = D_004A3664_0358->mgr;
@@ -441,30 +425,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd0CC0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd0CC0Mgr {
     char pad0[0x1D8];
-    sSnd0CC0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd0CC0Sys {
     sSnd0CC0Mgr* mgr;
@@ -478,7 +441,7 @@ extern "C" int func_00290CC0(void* vself, int a, int b)
 {
     sSnd0CC0Sys* self = (sSnd0CC0Sys*)vself;
     sSnd0CC0Mgr* m = self->mgr;
-    sSnd0CC0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -569,30 +532,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd10E0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSndCallback callbacks[4]; // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd10E0Mgr {
     char pad0[0x1D8];
-    sSnd10E0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd10E0Sys {
     sSnd10E0Mgr* mgr;
@@ -606,7 +548,7 @@ static inline void snd10E0Init(void* vself, int a, int b)
 {
     sSnd10E0Sys* self = (sSnd10E0Sys*)vself;
     sSnd10E0Mgr* m = self->mgr;
-    sSnd10E0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -637,7 +579,7 @@ extern sSndCallback D_004A3680[];
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_10E0(sSnd10E0Mgr* m, sSndCallback cb)
 {
-    sSnd10E0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
 }
 
@@ -693,30 +635,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd1438Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd1438Mgr {
     char pad0[0x1D8];
-    sSnd1438Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd1438Sys {
     sSnd1438Mgr* mgr;
@@ -730,7 +651,7 @@ static inline int snd1438AddVoice(void* vself, int a, int b, int type)
 {
     sSnd1438Sys* self = (sSnd1438Sys*)vself;
     sSnd1438Mgr* m = self->mgr;
-    sSnd1438Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -839,30 +760,9 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd17D0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSndCallback callbacks[4]; // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd17D0Mgr {
     char pad0[0x1D8];
-    sSnd17D0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd17D0Sys {
     sSnd17D0Mgr* mgr;
@@ -876,7 +776,7 @@ extern sSndCallback D_004A3688_17D0[] __asm__("D_004A3688");
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_17D0(sSnd17D0Mgr* m, sSndCallback cb)
 {
-    sSnd17D0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
 }
 
@@ -895,7 +795,7 @@ void func_002917D0_17D0(void* vself, void* obj)
     }
     int a = func_002917B8(self, 0);
     sSnd17D0Mgr* m = self->mgr;
-    sSnd17D0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -919,7 +819,7 @@ void func_002917D0_17D0(void* vself, void* obj)
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = 0;
     sSnd17D0Mgr* m3 = *self->p118;
-    sSnd17D0Sub* s3 = &m3->sub;
+    cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = 0;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
     sSnd17D0Mgr** pp = self->p118;
@@ -969,7 +869,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
         int a = func_002917B8(self, n);
         int v = n * 8 + 4;
         sSnd17D0Mgr* m = self->mgr;
-        sSnd17D0Sub* s = &m->sub;
+        cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
         s->ch[m->sub.cur] = m->sub.def;
         m->sub.tgt[m->sub.cur] = 0;
@@ -993,7 +893,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
         self->a4[self->mgr->sub.cur] = a;
         self->a8[self->mgr->sub.cur] = v;
         sSnd17D0Mgr* m3 = *self->p118;
-        sSnd17D0Sub* s3 = &m3->sub;
+        cSndPlayOpts* s3 = &m3->sub;
         s3->vals[m3->sub.cur] = 0;
         s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
         sSnd17D0Mgr** pp = self->p118;
@@ -1024,7 +924,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
         int a = func_002917B8(self, n);
         int v = n * 8 + 6;
         sSnd17D0Mgr* m = self->mgr;
-        sSnd17D0Sub* s = &m->sub;
+        cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
         s->ch[m->sub.cur] = m->sub.def;
         m->sub.tgt[m->sub.cur] = 0;
@@ -1048,7 +948,7 @@ void func_00291C88_impl(void* vself, void* obj, int n)
         self->a4[self->mgr->sub.cur] = a;
         self->a8[self->mgr->sub.cur] = v;
         sSnd17D0Mgr* m3 = *self->p118;
-        sSnd17D0Sub* s3 = &m3->sub;
+        cSndPlayOpts* s3 = &m3->sub;
         s3->vals[m3->sub.cur] = 0;
         s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
         sSnd17D0Mgr** pp = self->p118;
@@ -1087,30 +987,9 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_002917B8(void* self, int a1);
 extern signed char D_00535C11[];
 
-struct sSnd2508Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSndCallback callbacks[4]; // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd2508Mgr {
     char pad0[0x1D8];
-    sSnd2508Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd2508Sys {
     sSnd2508Mgr* mgr;
@@ -1124,7 +1003,7 @@ extern sSndCallback D_004A36A0_2508[] __asm__("D_004A36A0");
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_2508(sSnd2508Mgr* m, sSndCallback cb)
 {
-    sSnd2508Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
 }
 
@@ -1144,7 +1023,7 @@ void func_00292508_2508(void* vself, void* obj, int n)
     int a = func_002917B8(self, n);
     int b = n * 8 + 3;
     sSnd2508Mgr* m = self->mgr;
-    sSnd2508Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -1168,7 +1047,7 @@ void func_00292508_2508(void* vself, void* obj, int n)
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSnd2508Mgr* m3 = *self->p118;
-    sSnd2508Sub* s3 = &m3->sub;
+    cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = 0;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
     sSnd2508Mgr** pp = self->p118;
@@ -1976,30 +1855,9 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
 
-struct sSnd48D0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd48D0Mgr {
     char pad0[0x1D8];
-    sSnd48D0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd48D0Sys {
     sSnd48D0Mgr* mgr;
@@ -2035,7 +1893,7 @@ static inline int vcall_48D0(char* obj, int slot)
 static inline void snd48D0AddVoice(sSnd48D0Sys* self, int a, int b)
 {
     sSnd48D0Mgr* m = self->mgr;
-    sSnd48D0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -2120,7 +1978,7 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
     }
     snd48D0AddVoice(self, 10, b);
     sSnd48D0Mgr* m2 = *self->p118;
-    sSnd48D0Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = vol;
     s2->ch[m2->sub.cur].vol = SND_48D0_MAX(0, SND_48D0_MIN(s2->vals[s2->cur], 0x7F));
     sSnd48D0Mgr** pp = self->p118;
@@ -2561,30 +2419,9 @@ extern struct func_00290B58_sCurve D_00482DA0;
 }
 struct sVE_6310 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6310Sub {
-    void* rng;               // 0x00
-    struct sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    struct sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    struct sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd6310Mgr {
     char pad0[0x1D8];
-    struct sSnd6310Sub sub;         // 0x1D8
+    struct cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd6310Sys {
     struct sSnd6310Mgr* mgr;
@@ -2605,7 +2442,7 @@ static inline int vcall_6310(char* o, int slot)
 
 static inline void optsVol_6310(struct sSnd6310Mgr* m, int v)
 {
-    struct sSnd6310Sub* o = &m->sub;
+    struct cSndPlayOpts* o = &m->sub;
     o->vals[m->sub.cur] = v;
     o->ch[m->sub.cur].vol = SND_6310_MAX(0, SND_6310_MIN(o->vals[o->cur], 0x7F));
 }
@@ -2613,7 +2450,7 @@ static inline void optsVol_6310(struct sSnd6310Mgr* m, int v)
 static inline void sfxBegin_6310(struct sSnd6310Sys* self, int a, int b)
 {
     struct sSnd6310Mgr* m = self->mgr;
-    struct sSnd6310Sub* s = &m->sub;
+    struct cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -2664,7 +2501,7 @@ state23:
         a = 10;
         b = 9;
     } else {
-        b = (func_002ADF60((*self->p118)->sub.rng) & 0x7FFF) * 3 / 0x7FFF + 0x30;
+        b = (func_002ADF60((*self->p118)->sub.vbase) & 0x7FFF) * 3 / 0x7FFF + 0x30;
     }
     int flag = 0;
     int ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
@@ -2719,30 +2556,9 @@ extern func_00290B58_sCurve D_00482DA0_6868 __asm__("D_00482DA0");
 
 struct sVE_6868 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6868Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSndCallback callbacks[4]; // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd6868Mgr {
     char pad0[0x1D8];
-    sSnd6868Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd6868Sys {
     sSnd6868Mgr* mgr;
@@ -2761,7 +2577,7 @@ static inline int vcall_6868(char* o, int slot)
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_6868(sSnd6868Mgr* m, sSndCallback cb)
 {
-    sSnd6868Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
 }
 
@@ -2795,7 +2611,7 @@ extern "C" void func_00296868(void* vself, sSndOwner_6868* t)
         }
     }
     sSnd6868Mgr* m = self->mgr;
-    sSnd6868Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -2819,7 +2635,7 @@ extern "C" void func_00296868(void* vself, sSndOwner_6868* t)
     self->a4[self->mgr->sub.cur] = 0;
     self->a8[self->mgr->sub.cur] = b;
     sSnd6868Mgr* m3 = *self->p118;
-    sSnd6868Sub* s3 = &m3->sub;
+    cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
     sSnd6868Mgr** pp = self->p118;
@@ -2894,30 +2710,9 @@ extern func_00290B58_sCurve D_00482DA0_6E80 __asm__("D_00482DA0");
 
 struct sVE_6E80 { short delta; short index; int (*fn)(void*); };
 
-struct sSnd6E80Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSndCallback callbacks[4]; // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd6E80Mgr {
     char pad0[0x1D8];
-    sSnd6E80Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd6E80Sys {
     sSnd6E80Mgr* mgr;
@@ -2936,7 +2731,7 @@ static inline int vcall_6E80(char* o, int slot)
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_6E80(sSnd6E80Mgr* m, sSndCallback cb)
 {
-    sSnd6E80Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
 }
 
@@ -2970,7 +2765,7 @@ extern "C" void func_00296E80(void* vself, sSndOwner_6E80* t)
         }
     }
     sSnd6E80Mgr* m = self->mgr;
-    sSnd6E80Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -2994,7 +2789,7 @@ extern "C" void func_00296E80(void* vself, sSndOwner_6E80* t)
     self->a4[self->mgr->sub.cur] = 0;
     self->a8[self->mgr->sub.cur] = b;
     sSnd6E80Mgr* m3 = *self->p118;
-    sSnd6E80Sub* s3 = &m3->sub;
+    cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
     sSnd6E80Mgr** pp = self->p118;
@@ -3061,30 +2856,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd74A0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd74A0Mgr {
     char pad0[0x1D8];
-    sSnd74A0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd74A0Sys {
     sSnd74A0Mgr* mgr;
@@ -3106,7 +2880,7 @@ static inline void snd74A0AddVoice(void* vself, int a, int b, int type)
 {
     sSnd74A0Sys* self = (sSnd74A0Sys*)vself;
     sSnd74A0Mgr* m = self->mgr;
-    sSnd74A0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -3130,7 +2904,7 @@ static inline void snd74A0AddVoice(void* vself, int a, int b, int type)
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSnd74A0Mgr* m2 = *self->p118;
-    sSnd74A0Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_74A0_MAX(0, SND_74A0_MIN(s2->vals[s2->cur], 0x7F));
     sSnd74A0Mgr** pp = self->p118;
@@ -3406,30 +3180,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd8138Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd8138Mgr {
     char pad0[0x1D8];
-    sSnd8138Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd8138Sys {
     sSnd8138Mgr* mgr;
@@ -3452,7 +3205,7 @@ static inline int snd8138AddVoice(void* vself, void* obj, int a, int b, int type
 {
     sSnd8138Sys* self = (sSnd8138Sys*)vself;
     sSnd8138Mgr* m = self->mgr;
-    sSnd8138Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -3541,7 +3294,7 @@ static inline int snd8488AddVoice(void* vself, void* obj, int a, int b, int type
 {
     sSnd8138Sys* self = (sSnd8138Sys*)vself;
     sSnd8138Mgr* m = self->mgr;
-    sSnd8138Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -3565,7 +3318,7 @@ static inline int snd8488AddVoice(void* vself, void* obj, int a, int b, int type
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSnd8138Mgr* m3 = *self->p118;
-    sSnd8138Sub* s3 = &m3->sub;
+    cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = v;
     s3->ch[m3->sub.cur].vol = SND_8488_MAX(SND_8488_MIN(s3->vals[s3->cur], 127), 0);
     sSnd8138Mgr** pp = self->p118;
@@ -3602,30 +3355,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd89A8Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd89A8Mgr {
     char pad0[0x1D8];
-    sSnd89A8Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd89A8Sys {
     sSnd89A8Mgr* mgr;
@@ -3644,7 +3376,7 @@ static inline int snd89A8AddVoice(void* vself, void* obj, int a, int b, int type
 {
     sSnd89A8Sys* self = (sSnd89A8Sys*)vself;
     sSnd89A8Mgr* m = self->mgr;
-    sSnd89A8Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -3741,7 +3473,7 @@ static inline void snd8D90AddVoice(void* vself, int a, int b)
 {
     sSnd74A0Sys* self = (sSnd74A0Sys*)vself;
     sSnd74A0Mgr* m = self->mgr;
-    sSnd74A0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -3822,30 +3554,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9368Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd9368Mgr {
     char pad0[0x1D8];
-    sSnd9368Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd9368Sys {
     sSnd9368Mgr* mgr;
@@ -3867,7 +3578,7 @@ static inline int IsReady299368(char* obj)
 static inline void AddVoice299368(sSnd9368Sys* self, int a, int bb, int type)
 {
     sSnd9368Mgr* m = self->mgr;
-    sSnd9368Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -3968,30 +3679,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd97B8Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd97B8Mgr {
     char pad0[0x1D8];
-    sSnd97B8Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd97B8Sys {
     sSnd97B8Mgr* mgr;
@@ -4010,7 +3700,7 @@ static inline int snd97B8AddVoice(void* vself, int a, int b, int type)
 {
     sSnd97B8Sys* self = (sSnd97B8Sys*)vself;
     sSnd97B8Mgr* m = self->mgr;
-    sSnd97B8Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4034,7 +3724,7 @@ static inline int snd97B8AddVoice(void* vself, int a, int b, int type)
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSnd97B8Mgr* m2 = *self->p118;
-    sSnd97B8Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_97B8_MAX(0, SND_97B8_MIN(s2->vals[s2->cur], 0x7F));
     sSnd97B8Mgr** pp = self->p118;
@@ -4075,30 +3765,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9B70Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd9B70Mgr {
     char pad0[0x1D8];
-    sSnd9B70Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd9B70Sys {
     sSnd9B70Mgr* mgr;
@@ -4112,7 +3781,7 @@ static inline int snd9B70AddVoice(void* vself, int a, int b, int type)
 {
     sSnd9B70Sys* self = (sSnd9B70Sys*)vself;
     sSnd9B70Mgr* m = self->mgr;
-    sSnd9B70Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4162,30 +3831,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSnd9E28Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd9E28Mgr {
     char pad0[0x1D8];
-    sSnd9E28Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd9E28Sys {
     sSnd9E28Mgr* mgr;
@@ -4199,7 +3847,7 @@ static inline int snd9E28AddVoice(void* vself, int a, int b, int type)
 {
     sSnd9E28Sys* self = (sSnd9E28Sys*)vself;
     sSnd9E28Mgr* m = self->mgr;
-    sSnd9E28Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4283,30 +3931,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA220Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndA220Mgr {
     char pad0[0x1D8];
-    sSndA220Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndA220Sys {
     sSndA220Mgr* mgr;
@@ -4320,7 +3947,7 @@ static inline int sndA220AddVoice(void* vself, int a, int b, int type)
 {
     sSndA220Sys* self = (sSndA220Sys*)vself;
     sSndA220Mgr* m = self->mgr;
-    sSndA220Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4381,30 +4008,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA530Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndA530Mgr {
     char pad0[0x1D8];
-    sSndA530Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndA530Sys {
     sSndA530Mgr* mgr;
@@ -4418,7 +4024,7 @@ static inline int sndA530AddVoice(void* vself, int a, int b, int type)
 {
     sSndA530Sys* self = (sSndA530Sys*)vself;
     sSndA530Mgr* m = self->mgr;
-    sSndA530Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4463,30 +4069,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndA7D8Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndA7D8Mgr {
     char pad0[0x1D8];
-    sSndA7D8Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndA7D8Sys {
     sSndA7D8Mgr* mgr;
@@ -4500,7 +4085,7 @@ static inline int sndA7D8AddVoice(void* vself, int a, int b, int type)
 {
     sSndA7D8Sys* self = (sSndA7D8Sys*)vself;
     sSndA7D8Mgr* m = self->mgr;
-    sSndA7D8Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4629,7 +4214,7 @@ static inline bool sndAB40Active(sSndRiderAB40* r)
 static inline void sndAB40AddVoice(sSndSysAB40* self, int a, int b, int type, int vol)
 {
     sSnd17D0Mgr* m = self->mgr;
-    sSnd17D0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4653,7 +4238,7 @@ static inline void sndAB40AddVoice(sSndSysAB40* self, int a, int b, int type, in
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSnd17D0Mgr* m3 = *self->p118;
-    sSnd17D0Sub* s3 = &m3->sub;
+    cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = MAX_AB40(MIN_AB40(s3->vals[s3->cur], 127), 0);
     sSnd17D0Mgr** pp = self->p118;
@@ -4678,7 +4263,7 @@ extern "C" void func_0029AB40(sSndSysAB40* self)
             char* q = q0 ? q0 + 0x3A8 : 0;
             int v = floori_AB40(*(float*)(q + 8) / *(float*)(q + 4) * 10.0f);
             if (self->f5FE0[i] < v && v > 0) {
-                sSnd17D0Sub* o = &(*self->p118)->sub;
+                cSndPlayOpts* o = &(*self->p118)->sub;
                 int r = (int)func_00287968(self, 9, 0);
                 func_002ADCA0_AB40(o, 0x96, D_004A36C0_AB40[0], r, 0, 0x65, 0x7F, self->f5FE8[rider->f870]);
                 self->f5FE8[rider->f870] += 0x100;
@@ -4711,30 +4296,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB0E0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndB0E0Mgr {
     char pad0[0x1D8];
-    sSndB0E0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndB0E0Sys {
     sSndB0E0Mgr* mgr;
@@ -4748,7 +4312,7 @@ static inline int sndB0E0AddVoice(void* vself, int a, int b, int type)
 {
     sSndB0E0Sys* self = (sSndB0E0Sys*)vself;
     sSndB0E0Mgr* m = self->mgr;
-    sSndB0E0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4825,30 +4389,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB430Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndB430Mgr {
     char pad0[0x1D8];
-    sSndB430Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndB430Sys {
     sSndB430Mgr* mgr;
@@ -4862,7 +4405,7 @@ static inline int sndB430AddVoice(void* vself, int a, int b, int type)
 {
     sSndB430Sys* self = (sSndB430Sys*)vself;
     sSndB430Mgr* m = self->mgr;
-    sSndB430Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -4973,30 +4516,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndB968Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndB968Mgr {
     char pad0[0x1D8];
-    sSndB968Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndB968Sys {
     sSndB968Mgr* mgr;
@@ -5015,7 +4537,7 @@ static inline int sndB968AddVoice(void* vself, void* obj, int a, int b, int type
 {
     sSndB968Sys* self = (sSndB968Sys*)vself;
     sSndB968Mgr* m = self->mgr;
-    sSndB968Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -5039,7 +4561,7 @@ static inline int sndB968AddVoice(void* vself, void* obj, int a, int b, int type
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSndB968Mgr* m2 = *self->p118;
-    sSndB968Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_B968_MAX(0, SND_B968_MIN(s2->vals[s2->cur], 0x7F));
     sSndB968Mgr** pp = self->p118;
@@ -5069,30 +4591,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndBCF8Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndBCF8Mgr {
     char pad0[0x1D8];
-    sSndBCF8Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndBCF8Sys {
     sSndBCF8Mgr* mgr;
@@ -5111,7 +4612,7 @@ static inline int sndBCF8AddVoice(void* vself, void* obj, int a, int b, int type
 {
     sSndBCF8Sys* self = (sSndBCF8Sys*)vself;
     sSndBCF8Mgr* m = self->mgr;
-    sSndBCF8Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -5135,7 +4636,7 @@ static inline int sndBCF8AddVoice(void* vself, void* obj, int a, int b, int type
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSndBCF8Mgr* m2 = *self->p118;
-    sSndBCF8Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_BCF8_MAX(0, SND_BCF8_MIN(s2->vals[s2->cur], 0x7F));
     sSndBCF8Mgr** pp = self->p118;
@@ -5165,30 +4666,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC088Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndC088Mgr {
     char pad0[0x1D8];
-    sSndC088Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndC088Sys {
     sSndC088Mgr* mgr;
@@ -5207,7 +4687,7 @@ static inline int sndC088AddVoice(void* vself, void* obj, int a, int b, int type
 {
     sSndC088Sys* self = (sSndC088Sys*)vself;
     sSndC088Mgr* m = self->mgr;
-    sSndC088Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -5231,7 +4711,7 @@ static inline int sndC088AddVoice(void* vself, void* obj, int a, int b, int type
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSndC088Mgr* m2 = *self->p118;
-    sSndC088Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_C088_MAX(0, SND_C088_MIN(s2->vals[s2->cur], 0x7F));
     sSndC088Mgr** pp = self->p118;
@@ -5269,30 +4749,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndC420Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndC420Mgr {
     char pad0[0x1D8];
-    sSndC420Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndC420Sys {
     sSndC420Mgr* mgr;
@@ -5306,7 +4765,7 @@ static inline int sndC420AddVoice(void* vself, char* mon, int a, int b, int type
 {
     sSndC420Sys* self = (sSndC420Sys*)vself;
     sSndC420Mgr* m = self->mgr;
-    sSndC420Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -5394,30 +4853,9 @@ extern "C" void func_00295950(void* self, int a, int b, int c);
 extern signed char D_00535C11[];
 extern char* D_004A28A8;
 
-struct sSnd7B0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd7B0Mgr {
     char pad0[0x1D8];
-    sSnd7B0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd7B0Sys {
     sSnd7B0Mgr* mgr;
@@ -5444,7 +4882,7 @@ static inline int snd7B0Add(void* vself, int a, int b)
 {
     sSnd7B0Sys* self = (sSnd7B0Sys*)vself;
         sSnd7B0Mgr* m = self->mgr;
-        sSnd7B0Sub* s = &m->sub;
+        cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
         s->ch[m->sub.cur] = m->sub.def;
         m->sub.tgt[m->sub.cur] = 0;
@@ -5468,7 +4906,7 @@ static inline int snd7B0Add(void* vself, int a, int b)
         self->a4[self->mgr->sub.cur] = a;
         self->a8[self->mgr->sub.cur] = b;
         sSnd7B0Mgr* m3 = *self->p118;
-        sSnd7B0Sub* s3 = &m3->sub;
+        cSndPlayOpts* s3 = &m3->sub;
         s3->vals[m3->sub.cur] = 0x7F;
         s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
         sSnd7B0Mgr** pp = self->p118;
@@ -5620,30 +5058,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndCED8Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndCED8Mgr {
     char pad0[0x1D8];
-    sSndCED8Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndCED8Sys {
     sSndCED8Mgr* mgr;
@@ -5657,7 +5074,7 @@ static inline int sndCED8AddVoice(void* vself, int a, int b, int type)
 {
     sSndCED8Sys* self = (sSndCED8Sys*)vself;
     sSndCED8Mgr* m = self->mgr;
-    sSndCED8Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -5773,30 +5190,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD370Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndD370Mgr {
     char pad0[0x1D8];
-    sSndD370Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndD370Sys {
     sSndD370Mgr* mgr;
@@ -5810,7 +5206,7 @@ static inline int sndD370AddVoice(void* vself, int a, int b)
 {
     sSndD370Sys* self = (sSndD370Sys*)vself;
     sSndD370Mgr* m = self->mgr;
-    sSndD370Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -5981,30 +5377,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndD8E0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndD8E0Mgr {
     char pad0[0x1D8];
-    sSndD8E0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndD8E0Sys {
     sSndD8E0Mgr* mgr;
@@ -6018,7 +5393,7 @@ static inline int sndD8E0AddVoice(void* vself, int a, int b, int type)
 {
     sSndD8E0Sys* self = (sSndD8E0Sys*)vself;
     sSndD8E0Mgr* m = self->mgr;
-    sSndD8E0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -6101,30 +5476,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndDC48Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndDC48Mgr {
     char pad0[0x1D8];
-    sSndDC48Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndDC48Sys {
     sSndDC48Mgr* mgr;
@@ -6138,7 +5492,7 @@ static inline int sndDC48AddVoice(void* vself, int a, int b, int type)
 {
     sSndDC48Sys* self = (sSndDC48Sys*)vself;
     sSndDC48Mgr* m = self->mgr;
-    sSndDC48Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -6209,30 +5563,9 @@ static inline int vcall_DEF0(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-struct sSndDEF0Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSndCallback callbacks[4]; // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndDEF0Mgr {
     char pad0[0x1D8];
-    sSndDEF0Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndDEF0Sys {
     sSndDEF0Mgr* mgr;
@@ -6254,14 +5587,14 @@ struct sSndDEF0Sys {
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_DEF0(sSndDEF0Mgr* m, sSndCallback cb)
 {
-    sSndDEF0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
 }
 
 static inline void sndDEF0Init(sSndDEF0Sys* self, int a, int b)
 {
     sSndDEF0Mgr* m = self->mgr;
-    sSndDEF0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -6312,7 +5645,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
             sSndDEF0Mgr** p0 = self->p118;
             int v = func_0029E438(self, (char*)self->blk);
             sSndDEF0Mgr* m3 = *p0;
-            sSndDEF0Sub* s3 = &m3->sub;
+            cSndPlayOpts* s3 = &m3->sub;
             s3->vals[m3->sub.cur] = v;
             s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
             sSndDEF0Mgr** pp = self->p118;
@@ -6435,30 +5768,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE590Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndE590Mgr {
     char pad0[0x1D8];
-    sSndE590Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndE590Sys {
     sSndE590Mgr* mgr;
@@ -6477,7 +5789,7 @@ static inline int sndE590AddVoice(void* vself, int a, int b, int type, unsigned 
 {
     sSndE590Sys* self = (sSndE590Sys*)vself;
     sSndE590Mgr* m = self->mgr;
-    sSndE590Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -6501,7 +5813,7 @@ static inline int sndE590AddVoice(void* vself, int a, int b, int type, unsigned 
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSndE590Mgr* m2 = *self->p118;
-    sSndE590Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_E590_MAX(0, SND_E590_MIN(s2->vals[s2->cur], 0x7F));
     sSndE590Mgr** pp = self->p118;
@@ -6543,30 +5855,9 @@ extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 
-struct sSndE970Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    char e40[4][8];          // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSndE970Mgr {
     char pad0[0x1D8];
-    sSndE970Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSndE970Sys {
     sSndE970Mgr* mgr;
@@ -6585,7 +5876,7 @@ static inline int sndE970AddVoice(void* vself, int a, int b, int type)
 {
     sSndE970Sys* self = (sSndE970Sys*)vself;
     sSndE970Mgr* m = self->mgr;
-    sSndE970Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -6609,7 +5900,7 @@ static inline int sndE970AddVoice(void* vself, int a, int b, int type)
     self->a4[self->mgr->sub.cur] = a;
     self->a8[self->mgr->sub.cur] = b;
     sSndE970Mgr* m2 = *self->p118;
-    sSndE970Sub* s2 = &m2->sub;
+    cSndPlayOpts* s2 = &m2->sub;
     s2->vals[m2->sub.cur] = 0x7F;
     s2->ch[m2->sub.cur].vol = SND_E970_MAX(0, SND_E970_MIN(s2->vals[s2->cur], 0x7F));
     sSndE970Mgr** pp = self->p118;
@@ -7054,7 +6345,7 @@ extern "C" void func_0029F660(void* vself, void* vrider, int a, int b)
     }
     int vol = func_00290C40(self, rider);
     sSnd17D0Mgr* m = self->mgr;
-    sSnd17D0Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -7078,7 +6369,7 @@ extern "C" void func_0029F660(void* vself, void* vrider, int a, int b)
     self->a4[self->mgr->sub.cur] = kind;
     self->a8[self->mgr->sub.cur] = prio;
     sSnd17D0Mgr* m3 = *self->p118;
-    sSnd17D0Sub* s3 = &m3->sub;
+    cSndPlayOpts* s3 = &m3->sub;
     s3->vals[m3->sub.cur] = vol;
     s3->ch[m3->sub.cur].vol = (s3->vals[s3->cur] < 0x7F && s3->vals[s3->cur] < 0) ? 0 : (s3->vals[s3->cur] < 0x7F ? (unsigned char)s3->vals[s3->cur] : 0x7F);
     {
@@ -9997,30 +9288,9 @@ struct sPool5D08 {
     int f17C;
 };
 
-struct sSnd5D08Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    sVec4_5D08* tgt[4];      // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSndCallback callbacks[4]; // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd5D08Mgr {
     char pad0[0x1D8];
-    sSnd5D08Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd5D08Sys {
     sSnd5D08Mgr* mgr;
@@ -10036,12 +9306,12 @@ extern sSnd5D08Sys* D_004A36F8_5D08 __asm__("D_004A36F8");
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_5D08(sSnd5D08Mgr* m, sSndCallback cb)
 {
-    sSnd5D08Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
 }
 
-int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key) __asm__("func_002A5D08");
-int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key)
+int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key) __asm__("func_002A5D08");
+int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
 {
     int idx = -1;
     int cnt = self->count;
@@ -10057,7 +9327,7 @@ int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key)
         }
     }
     self->count++;
-    found->p = P->tgt[P->cur];
+    found->p = (sVec4_5D08*)P->tgt[P->cur];
     found->v4 = P->vals[P->cur];
     i = 0;
     do {
@@ -10089,7 +9359,7 @@ int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key)
         sSnd5D08Sys* sys = D_004A36F8_5D08;
         sSnd5D08Mgr* m = sys->mgr;
         int a = self->fD8;
-        sSnd5D08Sub* s = &m->sub;
+        cSndPlayOpts* s = &m->sub;
         m->sub.cur++;
         s->ch[m->sub.cur] = m->sub.def;
         m->sub.tgt[m->sub.cur] = 0;
@@ -10116,7 +9386,7 @@ int func_002A5D08_5D08(sPool5D08* self, sSnd5D08Sub* P, int key)
             sSnd5D08Sys* s2 = D_004A36F8_5D08;
             s2->mgr->sub.tgt[s2->mgr->sub.cur] = &found->grp->vec;
             sSnd5D08Mgr* m2 = s2->mgr;
-            sSnd5D08Sub* ss = &m2->sub;
+            cSndPlayOpts* ss = &m2->sub;
             ss->vals[m2->sub.cur] = found->v4;
             ss->ch[m2->sub.cur].vol = SND_5D08_MAX(0, SND_5D08_MIN(ss->vals[ss->cur], 0x7F));
         }
@@ -10886,46 +10156,15 @@ INCLUDE_ASM("sound/soundsys", func_002A7468);
 #ifdef SKIP_ASM
 extern "C" void* func_00416210(void* dst, int c, int n);
 
-struct sSnd7468Env {
-    int a;
-    int b;
-    int c;
-    int d;
-};
-struct sSnd7468Pair {
-    int a;
-    int b;
-};
-struct sSnd7468Sub {
-    char pad0[0x4];
-    sSndOptsRec def;         // 0x04
-    volatile int cur;       // 0x1C
-    sSndOptsRec* ch;         // 0x20
-    void* tgt[4];           // 0x24
-    int* p34;               // 0x34
-    int* vals;              // 0x38
-    int* p3C;               // 0x3C
-    sSnd7468Pair pr[4];     // 0x40
-    int* p60;               // 0x60
-    int* p64;               // 0x64
-    int* p68;               // 0x68
-    int* p6C;               // 0x6C
-    sSnd7468Env* env;       // 0x70
-    int* p74;               // 0x74
-    int* p78;               // 0x78
-    int* p7C;               // 0x7C
-    int* p80;               // 0x80
-    int* p84;               // 0x84
-};
 struct sSnd7468Mgr {
     char pad0[0x1D8];
-    sSnd7468Sub sub;        // 0x1D8
+    cSndPlayOpts sub;        // 0x1D8
 };
 
 extern "C" void func_002A7468(char** sys)
 {
     sSnd7468Mgr* m = *(sSnd7468Mgr**)sys;
-    sSnd7468Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = s->def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -10937,10 +10176,10 @@ extern "C" void func_002A7468(char** sys)
     s->p64[m->sub.cur] = 0;
     s->p68[m->sub.cur] = 0;
     s->p6C[m->sub.cur] = 0;
-    s->env[m->sub.cur].b = 0;
-    s->env[m->sub.cur].a = 100;
-    s->env[m->sub.cur].c = 90;
-    s->env[m->sub.cur].d = 50;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
     s->p74[m->sub.cur] = 0;
     s->p80[m->sub.cur] = 0;
     s->p84[m->sub.cur] = 0;
@@ -11558,30 +10797,9 @@ struct sSnd8450E8 {
     int a;
     int b;
 };
-struct sSnd8450Sub {
-    char pad0[4];
-    sSndOptsRec def;          // 0x04
-    volatile int cur;        // 0x1C
-    sSndOptsRec* ch;          // 0x20
-    void* tgt[4];            // 0x24
-    int* p34;                // 0x34
-    int* vals;               // 0x38
-    int* p3C;                // 0x3C
-    sSnd8450E8 e40[4];       // 0x40
-    int* p60;                // 0x60
-    int* p64;                // 0x64
-    int* p68;                // 0x68
-    int* p6C;                // 0x6C
-    sSndOptsDelay* p70;        // 0x70
-    int* p74;                // 0x74
-    int* p78;                // 0x78
-    int* p7C;                // 0x7C
-    int* p80;                // 0x80
-    int* p84;                // 0x84
-};
 struct sSnd8450Mgr {
     char pad0[0x1D8];
-    sSnd8450Sub sub;         // 0x1D8
+    cSndPlayOpts sub;         // 0x1D8
 };
 struct sSnd8450Sys {
     sSnd8450Mgr* mgr;
@@ -11593,7 +10811,7 @@ extern "C" void func_002A8450(char** sys, int a, int b)
 {
     sSnd8450Sys* self = (sSnd8450Sys*)sys;
     sSnd8450Mgr* m = self->mgr;
-    sSnd8450Sub* s = &m->sub;
+    cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
     s->ch[m->sub.cur] = m->sub.def;
     m->sub.tgt[m->sub.cur] = 0;
@@ -11634,7 +10852,7 @@ extern "C" int func_002A8B28(void* unused, char* obj)
     sSnd8450Mgr* m = D_004A3744_8B28->mgr;
     m->sub.p3C[m->sub.cur] = *(int*)(obj + 0x18);
     sSnd8450Mgr* m2 = D_004A3744_8B28->mgr;
-    sSnd8450Sub* s = &m2->sub;
+    cSndPlayOpts* s = &m2->sub;
     s->vals[m2->sub.cur] = *(int*)(obj + 0x24);
 #define SND_X (s->vals[s->cur])
 #define SND_MIN127 (SND_X < 0x7F ? SND_X : 0x7F)
