@@ -211,6 +211,15 @@ public:
     virtual void v07();
 };
 
+// An item that holds its own menu at 0x18 (cExpandMenuItem; cExpandMenuItem_addItem adds to it), the shown
+// sub-item at 0x14 and a rectangle per sub-item.
+struct cExpandMenuItem : cMenuItem {
+    cMenuItemV* cur;            // 0x14
+    cMenu menu;                 // 0x18 (its vtable pointer at 0x144)
+    int f148;                   // 0x148
+    sRect rects[70];            // 0x14C
+};
+
 // The menu stack a menu is open on (cMenu::stack): the open menus, the last pad input / key / character, the
 // font the items draw with, the pad.
 struct sMenuStack {
@@ -3198,11 +3207,10 @@ extern "C" void func_002CF928(int arg0) {
 //100%
 INCLUDE_ASM("util/menu", func_002CF948);
 #ifdef SKIP_ASM
-extern "C" void func_002CF948(void* self)
+extern "C" void func_002CF948(cExpandMenuItem* self)
 {
-    char* s = (char*)self;
-    func_002CBE10(s + 0x18);
-    void* item = *(void**)(s + 0x14);
+    func_002CBE10(&self->menu);
+    void* item = self->cur;
     if (item != 0) {
         cExpandMenuItem_addItem3(self, item, -1);
     }
@@ -3211,16 +3219,15 @@ extern "C" void func_002CF948(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CF988);
 #ifdef SKIP_ASM
-extern "C" void func_002CF988(void* self, void* item)
+extern "C" void func_002CF988(cExpandMenuItem* self, void* item)
 {
-    char* s = (char*)self;
-    for (int i = 0; i < ((cMenu*)(s + 0x18))->count; i++) {
-        if (((cMenu*)(s + 0x18))->items[i] == *(void**)(s + 0x14)) {
-            func_002CBD50_pi(s + 0x18, i);
+    for (int i = 0; i < self->menu.count; i++) {
+        if (self->menu.items[i] == self->cur) {
+            func_002CBD50_pi(&self->menu, i);
             break;
         }
     }
-    *(void**)(s + 0x14) = item;
+    self->cur = (cMenuItemV*)item;
     cExpandMenuItem_addItem3(self, item, 0);
 }
 #endif
@@ -3228,15 +3235,10 @@ extern "C" void func_002CF988(void* self, void* item)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("util/menu", func_002CFA08);
 #ifdef SKIP_ASM
-struct func_002CFA08_sOwner {
-    char pad[0x18];
-    cMenu menu;
-};
-
 // PORT: returns a key code (int) through the unit's void* declaration.
 extern "C" void* func_002CFA08(void* p)
 {
-    func_002CFA08_sOwner* self = (func_002CFA08_sOwner*)p;
+    cExpandMenuItem* self = (cExpandMenuItem*)p;
     func_002CAAB0(&self->menu);
     int prev = self->menu.selected;
     int key = ((cMenuItemV*)self->menu.items[prev])->v02();
@@ -3289,32 +3291,20 @@ struct sItem_2CFB58 {
     sVEntry<sRect(void*)>* vt;
 };
 
-struct sMenu_2CFB58 {
-    char* owner;
-    char pad04[0x10];
-    sItem_2CFB58* sel;
-    int count;
-    char pad1C[8];
-    sItem_2CFB58* items[70];
-    void* f13C;
-    char pad140[0xC];
-    sRect rects[1];
-};
-
-extern "C" sRect* func_002CFB58(sRect* ret, sMenu_2CFB58* self)
+extern "C" sRect* func_002CFB58(sRect* ret, cExpandMenuItem* self)
 {
     sRect r;
     r.x = r.y = r.w = r.h = 0.0f;
-    self->f13C = *(void**)(self->owner + 0x124);
-    for (int i = 0; i < self->count; i++) {
-        if (func_002CA378(self->items[i])) {
-            sVEntry<sRect(void*)>* vt = self->items[i]->vt;
-            self->rects[i] = vt[4].fn((char*)self->items[i] + vt[4].delta);
-            if (self == func_002CBF30(self->owner) || self->items[i] == self->sel) {
+    self->menu.stack = ((cMenu*)self->owner)->stack;
+    for (int i = 0; i < self->menu.count; i++) {
+        if (func_002CA378(self->menu.items[i])) {
+            sVEntry<sRect(void*)>* vt = ((sItem_2CFB58*)self->menu.items[i])->vt;
+            self->rects[i] = vt[4].fn((char*)self->menu.items[i] + vt[4].delta);
+            if (self == func_002CBF30(self->owner) || self->menu.items[i] == self->cur) {
                 r.h += self->rects[i].h;
             }
             float h = self->rects[i].w;
-            if (self->items[i] != self->sel) {
+            if (self->menu.items[i] != self->cur) {
                 h += 20.0f;
             }
             if (r.w < h) {
@@ -3337,32 +3327,19 @@ extern "C" sRect* func_002CFB58(sRect* ret, sMenu_2CFB58* self)
 //100%
 INCLUDE_ASM("util/menu", func_002CFD28);
 #ifdef SKIP_ASM
-struct func_002CFD28_sOwner {
-    void* menu;                         // 0x0
-    char pad4[0x10];
-    cMenuItemV* cur;           // 0x14
-    int count;                          // 0x18
-    int selected;                       // 0x1C
-    int unk20;                          // 0x20
-    cMenuItemV* items[70];     // 0x24
-    int wrap;                           // 0x13C
-    char pad140[0xC];
-    sRect rects[70];      // 0x14C
-};
-
-extern "C" void func_002CFD28(func_002CFD28_sOwner* self, sRect* r)
+extern "C" void func_002CFD28(cExpandMenuItem* self, sRect* r)
 {
     sRect pos = *r;
-    for (int i = 0; i < self->count; i++) {
-        if (func_002CA378(self->items[i]) == 0) {
+    for (int i = 0; i < self->menu.count; i++) {
+        if (func_002CA378(self->menu.items[i]) == 0) {
             continue;
         }
-        if ((void*)self == func_002CBF30(self->menu) || self->items[i] == self->cur) {
-            int off = self->items[i] == self->cur ? 0 : 20;
+        if ((void*)self == func_002CBF30(self->owner) || self->menu.items[i] == self->cur) {
+            int off = self->menu.items[i] == self->cur ? 0 : 20;
             self->rects[i].x = pos.x + (float)off;
             self->rects[i].y = pos.y;
             self->rects[i].w = pos.w - (float)off;
-            self->items[i]->v05(&self->rects[i]);
+            self->menu.items[i]->v05(&self->rects[i]);
             pos.y += self->rects[i].h;
         }
     }
