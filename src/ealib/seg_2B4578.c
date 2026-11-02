@@ -1217,43 +1217,21 @@ fail:
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6300);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_6300 {
-    void *p;
-    char pad04[0xE];
-    short f12;
-    char pad14[0x8C - 0x14];
-};
-struct R_6300 {
-    void *p0;
-    int p4;
-    int p8;
-    char fC;
-};
-struct G_6300 {
-    char pad000[0x28];
-    unsigned short f28;
-    char pad02A[0x17E - 0x2A];
-    short f17E;
-    char pad180[0x1F0 - 0x180];
-    struct E_6300 *f1F0;
-    struct R_6300 *f1F4;
-};
-extern struct G_6300 D_0050A8E8_6300 __asm__("D_0050A8E8");
 extern void func_003B5F98_6300(void *buf, int n) __asm__("func_003B5F98");
-extern void func_003B89E0_6300(void *p) __asm__("func_003B89E0");
+extern void func_003B89E0_6300(int h) __asm__("func_003B89E0");
 extern int func_003BAAC0_6300(char **pp, void *buf) __asm__("func_003BAAC0");
-extern void func_003C4D78_6300(int a, int p) __asm__("func_003C4D78");
-extern char *func_003C6540_6300(void *p, int i) __asm__("func_003C6540");
+extern void func_003C4D78_6300(int a, void *p) __asm__("func_003C4D78");
+extern char *func_003C6540_6300(struct sA8E8Bank *p, int i) __asm__("func_003C6540");
 
 int func_003B6300(int arg0) {
     char buf[0xD0];
     char *q;
-    void *obj;
+    struct sA8E8Bank *obj;
     int i;
     int r;
 
     if (arg0 == -1) {
-        for (i = 0; i < D_0050A8E8_6300.f28; i++) {
+        for (i = 0; i < D_0050A8E8.setup.cfg.f08; i++) {
             func_003B6300(i);
         }
         return 0;
@@ -1262,14 +1240,14 @@ int func_003B6300(int arg0) {
         return -8;
     }
     func_003B58A0();
-    obj = D_0050A8E8_6300.f1F4[arg0].p0;
-    for (i = 0; i < D_0050A8E8_6300.f17E; i++) {
-        struct E_6300 *e = &D_0050A8E8_6300.f1F0[i];
+    obj = D_0050A8E8.f1F4[arg0].f00;
+    for (i = 0; i < D_0050A8E8.f17E; i++) {
+        struct sA8E8Chan *e = &D_0050A8E8.f1F0[i];
         if (e->f12 == arg0) {
-            func_003B89E0_6300(e->p);
+            func_003B89E0_6300(e->f00);
         }
     }
-    for (i = 0; i < *(unsigned short *)((char *)obj + 6); i++) {
+    for (i = 0; i < obj->f06; i++) {
         q = func_003C6540_6300(obj, i);
         if (q != 0) {
             q += 4;
@@ -1279,14 +1257,14 @@ int func_003B6300(int arg0) {
             } while (r != 0);
         }
     }
-    if (D_0050A8E8_6300.f1F4[arg0].p4 != 0) {
-        func_003C4D78_6300(0x100, D_0050A8E8_6300.f1F4[arg0].p4);
+    if (D_0050A8E8.f1F4[arg0].f04 != 0) {
+        func_003C4D78_6300(0x100, D_0050A8E8.f1F4[arg0].f04);
     }
-    if (D_0050A8E8_6300.f1F4[arg0].p8 != 0) {
-        func_003C4D78_6300(8, D_0050A8E8_6300.f1F4[arg0].p8);
+    if (D_0050A8E8.f1F4[arg0].f08 != 0) {
+        func_003C4D78_6300(8, D_0050A8E8.f1F4[arg0].f08);
     }
-    D_0050A8E8_6300.f1F4[arg0].p0 = 0;
-    D_0050A8E8_6300.f1F4[arg0].fC = 0;
+    D_0050A8E8.f1F4[arg0].f00 = 0;
+    D_0050A8E8.f1F4[arg0].f0C = 0;
     func_003B58D8();
     return 0;
 }
