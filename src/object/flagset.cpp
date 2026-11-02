@@ -67,6 +67,42 @@ struct sFsModel {
     short slot;             // 0x7E
 };
 
+unsigned int BXrand();
+extern char* D_004A47B8;
+
+// Uniform float in [0, 1) built from the random mantissa bits.
+static inline float randf()
+{
+    union {
+        int i;
+        float f;
+    } u;
+    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
+    return u.f - 1.0f;
+}
+
+// PORT: SN abs.s asm helper (PS2 FPU).
+static inline float fsAbs(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// A model's texture page and slot are loaded (page 0xFF: nothing to load).
+static inline int IsLoaded(sFsModel* m)
+{
+    char* wc = *(char**)D_004A47B8;
+    if (m->page == 0xFF)
+        return 1;
+    int ok = *(int*)(wc + (m->page << 3) + 0x24) == 6;
+    return ok ? *(int*)(wc + m->slot * 0x18 + 0x3F0) == 3 : 0;
+}
+
+// Render-state bitfield setters.
+static inline void SetF0_12(sFsRenderState* rs, int v) { rs->f0_12 = v; }
+static inline void SetF4_2(sFsRenderState* rs, int v) { rs->f4_2 = v; }
+
 // ---- end of shared declarations ----
 
 //100%
@@ -74,7 +110,6 @@ INCLUDE_ASM("object/flagset", cFlagSet_CreateMesh);
 #ifdef SKIP_ASM
 extern char* D_004A5B80;
 extern char D_0048E850[];
-unsigned int BXrand();
 extern "C" void func_0034BCA0(void* self, void* verts);
 
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
@@ -84,16 +119,6 @@ void* operator new[](unsigned int size, const char* tag, unsigned int flags, int
 
 
 
-// Uniform float in [0, 1) built from the random mantissa bits.
-static inline float randf_CM()
-{
-    union {
-        int i;
-        float f;
-    } u;
-    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
-    return u.f - 1.0f;
-}
 
 struct sFsVE_CM {
     short delta;
@@ -139,7 +164,7 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     sFlagElem_CM* self = (sFlagElem_CM*)p;
     int i;
     for (i = 0; i < 4; i++) {
-        self->phase[i] = randf_CM();
+        self->phase[i] = randf();
     }
     self->u = 0.0f;
     self->v = 0.0f;
@@ -306,7 +331,6 @@ extern "C" void func_0034B818(void* elem)
 INCLUDE_ASM("object/flagset", func_0034B9B0);
 #ifdef SKIP_ASM
 extern char* D_004A5B80;
-extern char* D_004A47B8;
 extern int D_004A4244;
 // PORT: 128-bit integer mode for VU0 asm memory operands
 typedef int cQuad128_34B9B0 __attribute__((mode(TI)));
@@ -317,22 +341,12 @@ extern char D_004FF1A0[];
 
 
 
-static inline int IsLoaded_34B9B0(sFsModel* m)
-{
-    char* wc = *(char**)D_004A47B8;
-    if (m->page == 0xFF)
-        return 1;
-    int ok = *(int*)(wc + (m->page << 3) + 0x24) == 6;
-    return ok ? *(int*)(wc + m->slot * 0x18 + 0x3F0) == 3 : 0;
-}
 
 struct sVE43_34B9B0 { short delta; short index; t4Matrix (*fn)(void*); };
 struct sVE93_34B9B0 { short delta; short index; int (*fn)(void*, sFsVec4*, sFsVec4*, t4Matrix*); };
 struct sVE96_34B9B0 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
 struct sVE7_34B9B0 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
-static inline void SetF0_12_34B9B0(sFsRenderState* rs, int v) { rs->f0_12 = v; }
-static inline void SetF4_2_34B9B0(sFsRenderState* rs, int v) { rs->f4_2 = v; }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy).
 static inline void MatCopy_34B9B0(t4Matrix* d, const t4Matrix* s)
@@ -369,14 +383,14 @@ extern "C" void func_0034B9B0(sFlagSetEntry* e)
     TOP_34B9B0(ctx)[1] = TOP_34B9B0(ctx)[0];
     *++TOP_34B9B0(ctx) = D_00501420;
     if (*(signed char*)(self + 3) != 0) {
-        SetF0_12_34B9B0(TOP_34B9B0(D_004A5B80), 0xFF);
-        SetF4_2_34B9B0(TOP_34B9B0(D_004A5B80), 11);
+        SetF0_12(TOP_34B9B0(D_004A5B80), 0xFF);
+        SetF4_2(TOP_34B9B0(D_004A5B80), 11);
     } else {
-        SetF4_2_34B9B0(TOP_34B9B0(ctx), 5);
+        SetF4_2(TOP_34B9B0(ctx), 5);
     }
     for (int i = 0; i < *(int*)(self + 0x5C); i++) {
         sFsModel* m = ((sFSE_34B9B0*)self)->models[i];
-        if (!IsLoaded_34B9B0(m)) {
+        if (!IsLoaded(m)) {
             continue;
         }
         {
@@ -642,19 +656,8 @@ struct sFlagSet_C668 {
 
 extern "C" int func_002D1BA0();
 extern "C" void func_0034B818(void* elem);
-unsigned int BXrand();
 extern char* D_004A5B64;
 
-// Uniform float in [0, 1) built from the random mantissa bits.
-static inline float randf_34C668()
-{
-    union {
-        int i;
-        float f;
-    } u;
-    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
-    return u.f - 1.0f;
-}
 
 extern "C" void func_0034C668(sFlagSet_C668* self)
 {
@@ -674,7 +677,7 @@ extern "C" void func_0034C668(sFlagSet_C668* self)
         self->t -= 1.0f;
         self->base += self->delta;
         float lo = -amp;
-        self->delta = lo + (amp - lo) * randf_34C668();
+        self->delta = lo + (amp - lo) * randf();
         if (self->base + self->delta < 0.0f) {
             self->delta = -self->base;
         }
@@ -902,13 +905,6 @@ extern "C" void func_0034CAB8(void* self, int a1, void* obj, void* pos, int flag
 extern "C" void func_0034CDE8(void* self, int flag, float force);
 extern char D_004A4018[];
 
-// PORT: SN abs.s asm helper (PS2 FPU).
-static inline float fabs_34CC80(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 extern "C" void func_0034CC80(char* self, char* obj, int flag)
 {
@@ -929,7 +925,7 @@ extern "C" void func_0034CC80(char* self, char* obj, int flag)
         if (o->isA(9) == 0) {
             return;
         }
-        if (!(0.25f <= fabs_34CC80(force))) {
+        if (!(0.25f <= fsAbs(force))) {
             return;
         }
         if (flag != 0) {
@@ -953,7 +949,7 @@ extern "C" void func_0034CC80(char* self, char* obj, int flag)
             }
             func_0034CDE8(q, 0, force);
         }
-    } else if (0.25f <= fabs_34CC80(force)) {
+    } else if (0.25f <= fsAbs(force)) {
         void* m = cMemMan_alloc(0x10C, D_004A4018, 0x20000000, 0);
         func_0034CAB8(m, 1, obj, self + 0x1C, flag, force);
     }
@@ -992,13 +988,6 @@ struct sFlagVE_34CE48 {
     void (*fn)(void*, int);
 };
 
-// PORT: SN abs.s asm helper (PS2 FPU).
-static inline float fabs_34CE48(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 extern "C" void func_0034CE48(char* self)
 {
@@ -1014,7 +1003,7 @@ extern "C" void func_0034CE48(char* self)
     }
     char* osc = self + 0x1C;
     *(float*)(self + 0x2C) += *(float*)(self + 0x34);
-    if (*(float*)(self + 0x30) < 0.01f && fabs_34CE48(*(float*)(osc + 0x10)) < 0.01f) {
+    if (*(float*)(self + 0x30) < 0.01f && fsAbs(*(float*)(osc + 0x10)) < 0.01f) {
         sFlagVE_34CE48* vt = *(sFlagVE_34CE48**)(self + 0xC);
         vt[34].fn(self + vt[34].delta, 1);
         return;
@@ -1276,19 +1265,12 @@ struct sFlag34D6F0 {
     float speed;    // 0x34
 };
 
-// PORT: SN abs.s asm helper (PS2 FPU).
-static inline float fabs_34D6F0(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 // Accumulates wind strength on the flag set (clamped to 1) and sets the flap speed with the wind direction.
 extern "C" void func_0034D6F0(void* vself, float v)
 {
     sFlag34D6F0* self = (sFlag34D6F0*)vself;
-    self->wind += fabs_34D6F0(v);
+    self->wind += fsAbs(v);
     if (self->wind > 1.0f) {
         self->wind = 1.0f;
     }
@@ -1314,29 +1296,19 @@ INCLUDE_ASM("object/flagset", func_0034D778);
 
 
 
-static inline int IsLoaded_D778(sFsModel* m)
-{
-    char* wc = *(char**)D_004A47B8;
-    if (m->page == 0xFF)
-        return 1;
-    int ok = *(int*)(wc + (m->page << 3) + 0x24) == 6;
-    return ok ? *(int*)(wc + m->slot * 0x18 + 0x3F0) == 3 : 0;
-}
 
 struct sVE43_D778 { short delta; short index; t4Matrix (*fn)(void*); };
 struct sVE93_D778 { short delta; short index; int (*fn)(void*, sFsVec4*, sFsVec4*, t4Matrix*); };
 struct sVE96_D778 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
 struct sVE7_D778 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
-static inline void SetF0_12_D778(sFsRenderState* rs, int v) { rs->f0_12 = v; }
-static inline void SetF4_2_D778(sFsRenderState* rs, int v) { rs->f4_2 = v; }
 
 #define TOP_D778(c) (*(sFsRenderState**)((c) + 0xE84))
 
 extern "C" void func_0034D778(void* vself)
 {
     char* self = (char*)vself;
-    if (!IsLoaded_D778(*(sFsModel**)(self + 0x18))) {
+    if (!IsLoaded(*(sFsModel**)(self + 0x18))) {
         return;
     }
     char* ctx = D_004A5B80;
