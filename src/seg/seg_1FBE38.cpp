@@ -5013,15 +5013,15 @@ static inline bool isIdle_3EC8(int slot) {
     }
     return false;
 }
-extern "C" void* func_00303EC8(void* self) {
+extern "C" cLunoValue* func_00303EC8(cLunoValue* ret) {
     if (isIdle_3EC8(D_004A3DD8->being)) {
-        *(int*)((char*)self + 8) = 1;
-        *func_00226610(self) = 1;
+        ret->type = 1;
+        *func_00226610(ret) = 1;
     } else {
-        *(int*)((char*)self + 8) = 1;
-        *func_00226610(self) = 0;
+        ret->type = 1;
+        *func_00226610(ret) = 0;
     }
-    return self;
+    return ret;
 }
 #endif
 
