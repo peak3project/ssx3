@@ -17,6 +17,13 @@ struct sVec4
     sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
 } __attribute__((aligned(16)));
 
+// A bone transform read through sVec4 (cAnimModel::bones entries, 0x20 bytes): position, rotation quaternion.
+struct sXf
+{
+    sVec4 pos;
+    sVec4 rot;
+};
+
 // Controller input record handed to the AI input handlers: word 0 holds buttons and per-handler packed fields
 // (read through each handler's own bit view), word 1 the 6-bit signed stick axes (x / 31, y / 31).
 struct sPadIn
@@ -2968,18 +2975,12 @@ extern "C" void func_00136DE0(char* self, void* vel, void* angvel);
 extern "C" void func_00296868(void* mgr, void* self);
 extern "C" void func_00296E80(void* mgr, void* self);
 
-struct sVP_12CD20
-{
-    sVec4 a;
-    sVec4 b;
-};
-
 struct sAiObj12CD20
 {
     int f0;              // 0x00
     char pad4[0xC];
-    sVP_12CD20 m10;      // 0x10
-    sVP_12CD20 m30;      // 0x30
+    sXf m10;      // 0x10
+    sXf m30;      // 0x30
     float f50;           // 0x50
     char pad54[0x2C];
     char* mRider;        // 0x80
@@ -3040,13 +3041,13 @@ static inline sVec4 QuatMul_12CD20(const sVec4& a, const sVec4& b)
     return r;
 }
 
-static inline sVec4 Conj_12CD20(const sVP_12CD20& p)
+static inline sVec4 Conj_12CD20(const sXf& p)
 {
     sVec4 r;
-    r.w = p.b.w;
-    r.x = p.b.x;
-    r.y = p.b.y;
-    r.z = p.b.z;
+    r.w = p.rot.w;
+    r.x = p.rot.x;
+    r.y = p.rot.y;
+    r.z = p.rot.z;
     r.x = -r.x;
     r.y = -r.y;
     r.z = -r.z;
@@ -3056,25 +3057,25 @@ static inline sVec4 Conj_12CD20(const sVP_12CD20& p)
 extern "C" void func_0012CD20(sAiObj12CD20* self)
 {
     char* r = self->mRider;
-    sVP_12CD20* nodes = *(sVP_12CD20**)(*(char**)(r + 0x780) + 0x2C);
-    sVP_12CD20* p1 = &nodes[*(int*)(r + 0x89C)];
-    sVP_12CD20* p2 = &nodes[*(int*)(r + 0x8A4)];
+    sXf* nodes = *(sXf**)(*(char**)(r + 0x780) + 0x2C);
+    sXf* p1 = &nodes[*(int*)(r + 0x89C)];
+    sXf* p2 = &nodes[*(int*)(r + 0x8A4)];
     float t = func_00312AB0(*(void**)(r + 0x784), 2);
     if (func_00312AE8(*(void**)(self->mRider + 0x784), 2))
     {
         char* an = func_00311B20(*(void**)(self->mRider + 0x784), 2);
         float rate = *(float*)(an + 0x90);
         float s = rate / ((t - self->f50) * *(float*)(an + 0x10));
-        sVec4 vel = Scale_12CD20(Scale_12CD20(Sub_12CD20(p1->a, self->m10.a), *(float*)(*(char**)(self->mRider + 0x784) + 0x1C)), s);
+        sVec4 vel = Scale_12CD20(Scale_12CD20(Sub_12CD20(p1->pos, self->m10.pos), *(float*)(*(char**)(self->mRider + 0x784) + 0x1C)), s);
         float s2 = s + s;
-        sVec4 d = Sub_12CD20(p1->b, self->m10.b);
+        sVec4 d = Sub_12CD20(p1->rot, self->m10.rot);
         sVec4 q = QuatMul_12CD20(d, Conj_12CD20(*p1));
         sVec4 angvel = Scale_12CD20(sVec4(q.x, q.y, q.z, 0.0f), s2);
         func_00136DE0(*(char**)(self->mRider + 0x77C) + 0x30, self->mRider + 0x1E0, &angvel);
         if (func_00311AE8(*(void**)(self->mRider + 0x784), 2) == 0x17)
         {
-            vel = Scale_12CD20(Scale_12CD20(Sub_12CD20(p2->a, self->m30.a), *(float*)(*(char**)(self->mRider + 0x784) + 0x1C)), s);
-            d = Sub_12CD20(p2->b, self->m30.b);
+            vel = Scale_12CD20(Scale_12CD20(Sub_12CD20(p2->pos, self->m30.pos), *(float*)(*(char**)(self->mRider + 0x784) + 0x1C)), s);
+            d = Sub_12CD20(p2->rot, self->m30.rot);
             q = QuatMul_12CD20(d, Conj_12CD20(*p2));
             angvel = Scale_12CD20(sVec4(q.x, q.y, q.z, 0.0f), s2);
             func_00136D40(*(char**)(self->mRider + 0x77C) + 0x30, (t4Vector*)&vel, (t4Vector*)&angvel, (sAnimModelBone*)p2);
@@ -3750,12 +3751,6 @@ extern "C" void cRiderAnimBase_changeOrientationOffset(void* self, void* xf);
 extern int D_004A4C00;
 extern "C" void cRider_updateOrientationImplicit(void*);
 
-struct sXf_12E010
-{
-    sVec4 pos;
-    sVec4 rot;
-};
-
 // PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
 static inline sVec4 QuatMul_12E010(const sVec4& a, const sVec4& b)
 {
@@ -3850,7 +3845,7 @@ static inline sVec4 Scale_12E010(const sVec4& v, float s)
     return r;
 }
 
-static inline sVec4 Conj_12E010(const sXf_12E010& p)
+static inline sVec4 Conj_12E010(const sXf& p)
 {
     sVec4 r;
     r.w = p.rot.w;
@@ -3863,17 +3858,17 @@ static inline sVec4 Conj_12E010(const sXf_12E010& p)
     return r;
 }
 
-static inline sXf_12E010 Invert_12E010(const sXf_12E010& a)
+static inline sXf Invert_12E010(const sXf& a)
 {
-    sXf_12E010 r;
+    sXf r;
     r.rot = Conj_12E010(a);
     r.pos = Add_12E010(Scale_12E010(Rot_12E010(r.rot, Sub_12E010(a.pos, D_004FF130_12BE20)), -1.0f), D_004FF130_12BE20);
     return r;
 }
 
-static inline sXf_12E010 Combine_12E010(const sXf_12E010& a, const sXf_12E010& b)
+static inline sXf Combine_12E010(const sXf& a, const sXf& b)
 {
-    sXf_12E010 r;
+    sXf r;
     r.rot = QuatMul_12E010(a.rot, b.rot);
     r.pos = Add_12E010(Rot_12E010(a.rot, Sub_12E010(b.pos, D_004FF130_12BE20)), a.pos);
     return r;
@@ -3887,21 +3882,21 @@ extern "C" void func_0012E010(void* self)
         anim = 0x19A;
     char buf[0x50];
     func_00312660(buf, *(void**)(r + 0x784), anim, (&D_004A4C00)[2], 0.0f);
-    sXf_12E010 a;
+    sXf a;
     func_0030ECD8(&a, *(void**)(*(char**)((char*)self + 0x80) + 0x780), buf, 0);
     char* rd = *(char**)((char*)self + 0x80);
     char* trk = *(char**)(rd + 0x780);
     sVec4* n = (sVec4*)((*(int*)(rd + 0x89C) << 4) + *(int*)(trk + 0x24));
-    sXf_12E010 node;
+    sXf node;
     node.pos = sVec4(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
                             n->z * *(float*)(trk + 0x148), n->w * *(float*)(trk + 0x14C));
     node.rot = *(sVec4*)(*(char**)(*(char**)(rd + 0x780) + 0x28) + (*(int*)(rd + 0x89C) << 4));
-    sXf_12E010 y = Combine_12E010(node, Invert_12E010(a));
-    sXf_12E010* rx = (sXf_12E010*)(*(char**)((char*)self + 0x80) + 0x110);
+    sXf y = Combine_12E010(node, Invert_12E010(a));
+    sXf* rx = (sXf*)(*(char**)((char*)self + 0x80) + 0x110);
     *rx = Combine_12E010(*rx, y);
     cRider_updateOrientationImplicit(*(void**)((char*)self + 0x80));
     char* rd3 = *(char**)((char*)self + 0x80);
-    sXf_12E010 w = Invert_12E010(y);
+    sXf w = Invert_12E010(y);
     cRiderAnimBase_changeOrientationOffset(*(void**)(rd3 + 0x784), &w);
     cRiderAnimBase_play(*(void**)(*(char**)((char*)self + 0x80) + 0x784), anim, 0, -1.0f);
 }
@@ -6802,12 +6797,6 @@ extern "C" void func_0031BE50(float* s, float* c, float angle);
 extern sVec4 D_004FF140_134DD0 __asm__("D_004FF140");
 extern sVec4 D_004FF150_134DD0 __asm__("D_004FF150");
 
-struct sXf_134DD0
-{
-    sVec4 pos;
-    sVec4 rot;
-};
-
 // PORT: PS2-only VU0 inline asm (vector times scalar, constant vector through a register).
 static inline sVec4 ScaleO_134DD0(const sVec4& v, float s)
 {
@@ -6959,8 +6948,8 @@ static inline sVec4 operator*=(sVec4& a, const sVec4& b)
     a = QuatMul_12E010(a, b);
 }
 
-extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf) __asm__("func_00134DD0");
-extern "C" void func_00134DD0_x(void* self, sXf_134DD0* xf)
+extern "C" void func_00134DD0_x(void* self, sXf* xf) __asm__("func_00134DD0");
+extern "C" void func_00134DD0_x(void* self, sXf* xf)
 {
     char* rd = *(char**)((char*)self + 0x58);
     char* trk = *(char**)(rd + 0x780);
