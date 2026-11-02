@@ -15158,7 +15158,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D0CC8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003D32B8_0CC8(char *, int *) __asm__("func_003D32B8");
 extern int D_0044F438;
-extern char *D_0044F420_0CC8[] __asm__("D_0044F420");
 int func_003D0CC8_0CC8(char *arg0) __asm__("func_003D0CC8");
 
 int func_003D0CC8_0CC8(char *arg0) {
@@ -15182,7 +15181,7 @@ int func_003D0CC8_0CC8(char *arg0) {
         if (*(short *)(arg0 + 0x36) >= 0) {
             *(int *)(arg0 + 0x100) = 7;
             if (func_003D32B8_0CC8(arg0, buf) >= 0
-                && (unsigned int)(*(int *)(arg0 + 0x24) + *(int *)(D_0044F420_0CC8[0] + 0xC)) >= (unsigned int)buf[6]) {
+                && (unsigned int)(*(int *)(arg0 + 0x24) + D_0044F420->f0C) >= (unsigned int)buf[6]) {
                 *(int *)(arg0 + 0x100) = 5;
             }
         }
