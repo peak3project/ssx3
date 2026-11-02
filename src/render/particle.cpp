@@ -113,6 +113,19 @@ struct sPtRGBA {
     unsigned char r, g, b, a;
 };
 
+// Particle vertex record (position, int colour, 16 spare bytes).
+struct sPtVert {
+    float x;        // 0x0
+    float y;        // 0x4
+    float z;        // 0x8
+    int w;          // 0xC
+    int r;          // 0x10
+    int g;          // 0x14
+    int b;          // 0x18
+    int a;          // 0x1C
+    char pad[0x10];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1112,18 +1125,7 @@ extern int D_004A41E4;
 extern int D_004A41E8;
 extern void* D_00493068[];
 
-struct sPtVert_2520 {
-    float x;        // 0x0
-    float y;        // 0x4
-    float z;        // 0x8
-    int w;          // 0xC
-    int r;          // 0x10
-    int g;          // 0x14
-    int b;          // 0x18
-    int a;          // 0x1C
-    char pad[0x10];
-};
-extern sPtVert_2520 D_00501440[];
+extern sPtVert D_00501440[];
 
 struct sPtObj_2520 {
     void** vt;      // 0x0
@@ -1138,7 +1140,7 @@ extern "C" void* func_00372520(sPtObj_2520* self, void* owner)
     self->vt = D_00493068;
     self->f8 = 0;
     if (D_004A422C == 0) {
-        sPtVert_2520* v = D_00501440;
+        sPtVert* v = D_00501440;
         for (i = 0; i < 0x106; i++, v++) {
             v->a = 0xFF;
             v->r = D_004A41E0;
@@ -1171,7 +1173,7 @@ extern "C" void* func_003725B0(void* self)
     if (D_004A4230 != (float)D_004A41E0 || D_004A4234 != (float)D_004A41E4 || D_004A4238 != (float)D_004A41E8) {
         int i;
         for (i = 0; i < 0x106; i++) {
-            sPtVert_2520* v = &D_00501440[i];
+            sPtVert* v = &D_00501440[i];
             v->r = D_004A41E0;
             v->g = D_004A41E4;
             v->b = D_004A41E8;
@@ -1216,18 +1218,7 @@ extern int D_004A4210;
 extern int D_004A4214;
 extern void* D_00493038[];
 
-struct sPtVert_2AA0 {
-    float x;        // 0x0
-    float y;        // 0x4
-    float z;        // 0x8
-    int w;          // 0xC
-    int r;          // 0x10
-    int g;          // 0x14
-    int b;          // 0x18
-    int a;          // 0x1C
-    char pad[0x10];
-};
-extern sPtVert_2AA0 D_00504560[];
+extern sPtVert D_00504560[];
 
 struct sPtObj_2AA0 {
     void** vt;      // 0x0
