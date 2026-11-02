@@ -17,6 +17,11 @@ struct sRmXform {
     t4Vector quat;   // 0x10
 };
 
+// 4x4 float matrix indexed as m[row][col] (16-byte aligned; same bytes as t4Matrix).
+struct sRmMat44 {
+    float m[4][4];
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -324,12 +329,9 @@ extern "C" void func_0035C540(void* self, cStream0035C540* stream)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035C5A0);
 #ifdef SKIP_ASM
-struct sRmMat44C5A0 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
-static inline void vu0MulMatC5A0(sRmMat44C5A0* d, const sRmMat44C5A0* a, const sRmMat44C5A0* b)
+static inline void vu0MulMatC5A0(sRmMat44* d, const sRmMat44* a, const sRmMat44* b)
 {
     __asm__ __volatile__(
         "lqc2      $vf4, 0x0(%1)\n"
@@ -366,7 +368,7 @@ static inline void vu0MulMatC5A0(sRmMat44C5A0* d, const sRmMat44C5A0* a, const s
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
-static inline void vu0CopyMatC5A0(sRmMat44C5A0* d, const sRmMat44C5A0* s)
+static inline void vu0CopyMatC5A0(sRmMat44* d, const sRmMat44* s)
 {
     __asm__ __volatile__(
         "lqc2      $vf1, 0x0(%1)\n"
@@ -382,14 +384,14 @@ static inline void vu0CopyMatC5A0(sRmMat44C5A0* d, const sRmMat44C5A0* s)
         : "memory");
 }
 
-extern "C" void func_0034FED8(void* model, int bone, sRmMat44C5A0* out);
+extern "C" void func_0034FED8(void* model, int bone, sRmMat44* out);
 
-extern "C" void func_0035C5A0(void* self, sRmMat44C5A0* m)
+extern "C" void func_0035C5A0(void* self, sRmMat44* m)
 {
     func_0034FED8(*(void**)((char*)self + 0x40), *(int*)((char*)self + 0x34), m);
-    sRmMat44C5A0* src = (sRmMat44C5A0*)((char*)self + 0x50);
-    sRmMat44C5A0 t2;
-    sRmMat44C5A0 t;
+    sRmMat44* src = (sRmMat44*)((char*)self + 0x50);
+    sRmMat44 t2;
+    sRmMat44 t;
     vu0MulMatC5A0(&t, m, src);
     vu0CopyMatC5A0(&t2, &t);
     vu0CopyMatC5A0(m, &t2);
@@ -1804,13 +1806,10 @@ struct sRmAxisRot_35FC20 {
     float tx, ty;       // 0x30
 };
 
-struct sRmMtx_35FC20 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
-extern sRmMtx_35FC20 D_004FF1A0_35FC20[] __asm__("D_004FF1A0");
+extern sRmMat44 D_004FF1A0_35FC20[] __asm__("D_004FF1A0");
 
-extern "C" sRmMtx_35FC20* func_0035FC20(sRmAxisRot_35FC20* self, sRmMtx_35FC20* m)
+extern "C" sRmMat44* func_0035FC20(sRmAxisRot_35FC20* self, sRmMat44* m)
 {
     if (self->angle != 0.0f) {
         float s;
