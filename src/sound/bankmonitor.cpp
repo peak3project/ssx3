@@ -46,6 +46,49 @@ extern void* D_004838F8[];
 extern char D_00483C00[];
 extern char D_00483980[];
 
+struct sBmQuad {
+    int w[4];
+} __attribute__((aligned(16)));
+
+// One entry of cSndPlayOpts' option stack (mCurrent[], 0x18 bytes); byte 0 seeds mBaseVol.
+struct sSndOptsRec {
+    signed char vol;
+    char pad1[3];
+    int f4[5];
+};
+
+// One cSndPlayOpts mDelay[] entry (reset to 100 / 0 / 90 / 50 on every push).
+struct sSndOptsDelay {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+};
+
+// cSndPlayOpts (prototype class, as in sound/soundsys): the play-option stack; push = cur++ and copy def into
+// ch[cur]. Field names follow sound/soundsys (ch = mCurrent, vals = mBaseVol, p70 = mDelay, ...).
+struct cSndPlayOpts {
+    char* vbase;                // 0x00 virtual-base pointer
+    sSndOptsRec def;            // 0x04
+    volatile int cur;           // 0x1C
+    sSndOptsRec* ch;            // 0x20
+    sBmQuad* tgt[4];            // 0x24
+    int* p34;                   // 0x34
+    int* vals;                  // 0x38
+    int* p3C;                   // 0x3C
+    sSndCallback callbacks[4];  // 0x40
+    int* p60;                   // 0x60
+    int* p64;                   // 0x64
+    float* p68;                 // 0x68
+    float* p6C;                 // 0x6C
+    sSndOptsDelay* p70;         // 0x70
+    int* p74;                   // 0x74
+    int* p78;                   // 0x78
+    int* p7C;                   // 0x7C
+    int* p80;                   // 0x80
+    int* p84;                   // 0x84
+};
+
 // One of a sound player's 48 monitored-sound slots (0x2C bytes).
 struct sBmSlot {
     char pad00[0xC];
@@ -59,9 +102,7 @@ struct sBmSlot {
 };
 
 // Sound player: a cSndPlayOpts (0x88 bytes) plus 48 monitored-sound slots; virtual base at 0x8DC.
-struct sSndPlayer {
-    char* vbase;                // 0x0
-    char pad_0x4[0x88 - 0x4];
+struct sSndPlayer : public cSndPlayOpts {
     int f88;                    // 0x88
     int f8C;                    // 0x8C
     volatile int busy;          // 0x90
@@ -78,10 +119,6 @@ struct cBankManager {
 };
 
 extern "C" void* func_002AB9E0(void* self);
-
-struct sBmQuad {
-    int w[4];
-} __attribute__((aligned(16)));
 
 // One of a bank monitor's 64 voices (0xC0 bytes).
 struct sBmVoice {
@@ -115,26 +152,7 @@ struct sBmVoice {
 
 // cBankMonitor: a sound player (cSndPlayOpts part at 0x0, player part up to 0x8DC) plus 64 voices;
 // virtual base at 0x8F0.
-struct cBankMonitor {
-    char* vbase;                // 0x00
-    char pad04[0x1C - 0x4];
-    volatile int cur;           // 0x1C
-    void* ch;                   // 0x20
-    sBmQuad* tgt[4];            // 0x24
-    int* p34;                   // 0x34
-    int* vals;                  // 0x38
-    int* p3C;                   // 0x3C
-    sSndCallback callbacks[4];  // 0x40
-    int* p60;                   // 0x60
-    int* p64;                   // 0x64
-    float* p68;                 // 0x68
-    float* p6C;                 // 0x6C
-    void* p70;                  // 0x70
-    int* p74;                   // 0x74
-    int* p78;                   // 0x78
-    int* p7C;                   // 0x7C
-    int* p80;                   // 0x80
-    int* p84;                   // 0x84
+struct cBankMonitor : public cSndPlayOpts {
     char pad88[0x8D8 - 0x88];
     void** vtbl;                // 0x8D8
     volatile int busy;          // 0x8DC
@@ -3624,20 +3642,6 @@ extern "C" int func_002B27C0(void* self, void* other)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B2850);
 #ifdef SKIP_ASM
-struct sBMVec16 {
-    int x;
-    int y;
-    int z;
-    int w;
-};
-
-struct sBMTrack {
-    char pad0[0x1F4];
-    int cur;
-    char pad1F8[0x248 - 0x1F8];
-    sBMVec16* vecs;
-};
-
 struct sBMSrc {
     char pad0[0x78];
     int a;
@@ -3645,11 +3649,11 @@ struct sBMSrc {
     int c;
 };
 
-extern "C" void func_002B2850(sBMSrc** src, sBMTrack*** dst)
+extern "C" void func_002B2850(sBMSrc** src, cBankManager*** dst)
 {
-    (**dst)->vecs[(**dst)->cur].y = (*src)->a;
-    (**dst)->vecs[(**dst)->cur].z = (*src)->b;
-    (**dst)->vecs[(**dst)->cur].x = (*src)->c;
+    (**dst)->sub.p70[(**dst)->sub.cur].f4 = (*src)->a;
+    (**dst)->sub.p70[(**dst)->sub.cur].f8 = (*src)->b;
+    (**dst)->sub.p70[(**dst)->sub.cur].f0 = (*src)->c;
 }
 #endif
 
@@ -3710,60 +3714,15 @@ INCLUDE_ASM("sound/bankmonitor", func_002B35A0);
 #ifdef SKIP_ASM
 extern "C" void func_002B3838(void* self, int a1, int a2, int a3);
 
-struct sBmEnt35A0 {
-    signed char b0;
-    char pad1[3];
-    int f4[5];
-};
-
-struct sBmPair35A0 {
-    int a;
-    int b;
-};
-
-struct sBmV16_35A0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-};
-
-struct sBmSub35A0 {
-    int f0;
-    sBmEnt35A0 cfg;         // 0x04
-    volatile int cur;       // 0x1C (target re-reads it after every store and twice back-to-back: volatile)
-    sBmEnt35A0* ents;       // 0x20
-    int arr24[4];           // 0x24
-    int* p34;               // 0x34
-    int* p38;               // 0x38
-    int* p3C;               // 0x3C
-    sBmPair35A0 arr40[4];   // 0x40
-    int* p60;               // 0x60
-    int* p64;               // 0x64
-    int* p68;               // 0x68
-    int* p6C;               // 0x6C
-    sBmV16_35A0* p70;       // 0x70
-    int* p74;               // 0x74
-    int* p78;               // 0x78
-    int* p7C;               // 0x7C
-    int* p80;               // 0x80
-    int* p84;               // 0x84
-};
-
-struct sBmTrack35A0 {
-    char pad0[0x1D8];
-    sBmSub35A0 sub;         // 0x1D8
-};
-
-extern "C" void func_002B35A0(sBmTrack35A0*** self, int a1, int a2, int a3, int a4)
+extern "C" void func_002B35A0(cBankManager*** self, int a1, int a2, int a3, int a4)
 {
-    sBmTrack35A0* t = **self;
-    sBmSub35A0* s = &t->sub;
+    cBankManager* t = **self;
+    sSndPlayer* s = &t->sub;
     t->sub.cur++;
-    s->ents[t->sub.cur] = s->cfg;
-    t->sub.arr24[t->sub.cur] = 0;
+    s->ch[t->sub.cur] = s->def;
+    t->sub.tgt[t->sub.cur] = 0;
     s->p34[t->sub.cur] = 0;
-    s->p38[t->sub.cur] = s->ents[t->sub.cur].b0;
+    s->vals[t->sub.cur] = s->ch[t->sub.cur].vol;
     s->p3C[t->sub.cur] = 0;
     func_00416210((char*)s + t->sub.cur * 8 + 0x40, 0, 8);
     s->p60[t->sub.cur] = 0;
@@ -3779,10 +3738,10 @@ extern "C" void func_002B35A0(sBmTrack35A0*** self, int a1, int a2, int a3, int 
     s->p84[t->sub.cur] = 0;
     s->p78[t->sub.cur] = 0x7F;
     s->p7C[t->sub.cur] = 1;
-    sBmTrack35A0* t2 = **self;
+    cBankManager* t2 = **self;
     t2->sub.p3C[t2->sub.cur] = a3;
     func_002B3838(self, a1, a2, a4);
-    sBmTrack35A0* t3 = **self;
+    cBankManager* t3 = **self;
     t3->sub.cur--;
 }
 #endif
@@ -3796,7 +3755,7 @@ extern "C" void func_002B43D8(void* self);
 extern "C" void* func_002B1B98(int a0, int a1, int a2, int a3, char a4, int a5, int a6, int a7);
 
 struct sBMon3838 {
-    sBmTrack35A0** pp;          // 0x000
+    cBankManager** pp;          // 0x000
     int arr[64];                // 0x004
     char obj[0x20];             // 0x104
     char names[64][11];         // 0x124
@@ -3820,8 +3779,8 @@ static inline float bmMax3838(float a, float b)
 extern "C" void func_002B3838(void* self_, int a1, int a2, int a3)
 {
     sBMon3838* self = (sBMon3838*)self_;
-    sBmTrack35A0* t;
-    sBmSub35A0* sub;
+    cBankManager* t;
+    sSndPlayer* sub;
     float* pf;
     char c;
     int arg;
@@ -3830,17 +3789,17 @@ extern "C" void func_002B3838(void* self_, int a1, int a2, int a3)
     func_002B3AC0(self);
     t = *self->pp;
     sub = &t->sub;
-    c = sub->p38[sub->cur];
+    c = sub->vals[sub->cur];
     pf = (float*)sub->p3C[sub->cur];
     if (pf != 0) {
         float f = (float)c * *pf;
         f = bmMax3838(bmMin3838(f, 127.0f), 0.0f);
-        sub->p38[t->sub.cur] = (char)(int)f;
+        sub->vals[t->sub.cur] = (char)(int)f;
         {
-            signed char* d = &((sBmEnt35A0*)(t->sub.cur * 24 + (int)sub->ents))->b0;
+            signed char* d = &((sSndOptsRec*)(t->sub.cur * 24 + (int)sub->ch))->vol;
             unsigned char r;
-            if (sub->p38[sub->cur] > 0x7E || sub->p38[sub->cur] >= 0) {
-                r = sub->p38[sub->cur] < 0x7F ? (unsigned char)sub->p38[sub->cur] : 0x7F;
+            if (sub->vals[sub->cur] > 0x7E || sub->vals[sub->cur] >= 0) {
+                r = sub->vals[sub->cur] < 0x7F ? (unsigned char)sub->vals[sub->cur] : 0x7F;
             } else {
                 r = 0;
             }
