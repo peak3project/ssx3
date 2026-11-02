@@ -22,8 +22,7 @@ struct t3Vector {
 // their 4-float constructor stores the components; that order decides the float-register allocation of every
 // caller (merging them changes code), so they are kept apart.
 // sVec4 stores x, y, z, w.
-struct sVec4 {
-    float x, y, z, w;
+struct sVec4 : t4Vector {
     sVec4() {}
     sVec4(float ax, float ay, float az, float aw)
     {
@@ -35,8 +34,7 @@ struct sVec4 {
 } __attribute__((aligned(16)));
 
 // sVec4W stores w first, then x, y, z.
-struct sVec4W {
-    float x, y, z, w;
+struct sVec4W : t4Vector {
     sVec4W() {}
     sVec4W(float ax, float ay, float az, float aw)
     {
@@ -48,8 +46,7 @@ struct sVec4W {
 } __attribute__((aligned(16)));
 
 // sVec4XW stores x, w, y, z.
-struct sVec4XW {
-    float x, y, z, w;
+struct sVec4XW : t4Vector {
     sVec4XW() {}
     sVec4XW(float ax, float ay, float az, float aw) { x = ax; w = aw; y = ay; z = az; }
 } __attribute__((aligned(16)));
@@ -120,6 +117,15 @@ struct sHit {
     float f70;          // 0x70
     char pad74[0xC];
 } __attribute__((aligned(16)));
+
+// Constant vectors (in .bss, set up at startup); named by use: D_004FF120 zero, D_004FF130 origin (w = 1),
+// D_004FF140 / D_004FF150 / D_004FF160 the x / y / z axes, D_004FF220 the identity rotation.
+extern t4Vector D_004FF120;
+extern t4Vector D_004FF130;
+extern t4Vector D_004FF140;
+extern t4Vector D_004FF150;
+extern t4Vector D_004FF160;
+extern t4Vector D_004FF220;
 
 INCLUDE_ASM("ai/rider", cRider_cRider);
 
@@ -996,12 +1002,9 @@ struct sXf_EB98 {
     sVec4W rot;
 };
 
-extern sVec4W D_004FF130_EB98 __asm__("D_004FF130");
-extern sVec4W D_004FF160_EB98 __asm__("D_004FF160");
-extern sVec4W D_004FF220_EB98 __asm__("D_004FF220");
 
 // PORT: PS2-only VU0 inline asm (vector * scalar).
-static inline sVec4W Scale_EB98(const sVec4W& v, float s)
+static inline sVec4W Scale_EB98(const t4Vector& v, float s)
 {
     sVec4W r;
     int t;
@@ -1060,7 +1063,7 @@ static inline sVec4W operator+=(sVec4W& a, const sVec4W& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec4W Sub_EB98(const sVec4W& a, const sVec4W& b)
+static inline sVec4W Sub_EB98(const sVec4W& a, const t4Vector& b)
 {
     sVec4W r;
     __asm__(
@@ -1283,7 +1286,7 @@ static inline sXf_EB98 Combine_EB98(const sXf_EB98& a, const sXf_EB98& b)
 {
     sXf_EB98 r;
     r.rot = QuatMul_EB98(a.rot, b.rot);
-    r.pos = Add_EB98(Rot_EB98(a.rot, Sub_EB98(b.pos, D_004FF130_EB98)), a.pos);
+    r.pos = Add_EB98(Rot_EB98(a.rot, Sub_EB98(b.pos, D_004FF130)), a.pos);
     return r;
 }
 
@@ -1301,15 +1304,15 @@ extern "C" void func_0011EB98_impl(cRider* self)
     ab[0] = xf;
     if (func_0011FEE8(self) != 13 && self->unk_1F0[18].cur != 0.0f)
     {
-        sVec4W s = Scale_EB98(D_004FF160_EB98, self->unk_1F0[18].cur);
+        sVec4W s = Scale_EB98(D_004FF160, self->unk_1F0[18].cur);
         ab[0].pos += Rot_EB98(ab[0].rot, s);
     }
     if (self->unk_150 != 0)
     {
-        self->mAnimModel->localPos[self->unk_8A0] = *(t4Vector*)&D_004FF130_EB98;
-        self->mAnimModel->localRot[self->unk_8A0] = *(t4Vector*)&D_004FF220_EB98;
-        self->mAnimModel->localPos[(*(int*)&self->unk_8A4[0])] = *(t4Vector*)&D_004FF130_EB98;
-        self->mAnimModel->localRot[(*(int*)&self->unk_8A4[0])] = *(t4Vector*)&D_004FF220_EB98;
+        self->mAnimModel->localPos[self->unk_8A0] = D_004FF130;
+        self->mAnimModel->localRot[self->unk_8A0] = D_004FF220;
+        self->mAnimModel->localPos[(*(int*)&self->unk_8A4[0])] = D_004FF130;
+        self->mAnimModel->localRot[(*(int*)&self->unk_8A4[0])] = D_004FF220;
         ab[1].pos = *(sVec4W*)&self->unk_130[0];
         ab[1].rot = *(sVec4W*)&self->unk_130[0x10];
     }
@@ -1377,9 +1380,6 @@ struct sXf_LP {
     sVec4XW rot;
 };
 
-extern sVec4XW D_004FF130_LP __asm__("D_004FF130");
-extern sVec4XW D_004FF140_LP __asm__("D_004FF140");
-extern sVec4XW D_004FF150_LP __asm__("D_004FF150");
 
 // PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
 static inline sVec4XW QuatMul_LP(const sVec4XW& a, const sVec4XW& b)
@@ -1405,7 +1405,7 @@ static inline sVec4XW QuatMul_LP(const sVec4XW& a, const sVec4XW& b)
 }
 
 // PORT: PS2-only VU0 inline asm (a - b, constant b through a register).
-static inline sVec4XW SubO_LP(const sVec4XW& a, const sVec4XW& b)
+static inline sVec4XW SubO_LP(const sVec4XW& a, const t4Vector& b)
 {
     sVec4XW r;
     __asm__(
@@ -1495,7 +1495,7 @@ static inline float absf_LP(float x)
     return r;
 }
 
-static inline void SetAA_LP(sVec4XW& q, const sVec4XW& axis, float angle)
+static inline void SetAA_LP(sVec4XW& q, const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -1505,7 +1505,7 @@ static inline void SetAA_LP(sVec4XW& q, const sVec4XW& axis, float angle)
     q.z = s * axis.z;
 }
 
-static inline sVec4XW AxisAngle_LP(const sVec4XW& axis, float angle)
+static inline sVec4XW AxisAngle_LP(const t4Vector& axis, float angle)
 {
     sVec4XW q;
     SetAA_LP(q, axis, angle);
@@ -1541,13 +1541,13 @@ static inline void LeanAbout_LP(char* self, sXf_LP* xf, float a, float b, float 
     sVec4XW* n = (sVec4XW*)((*(int*)(self + 0x8A0) << 4) + *(int*)(trk + 0x24));
     sVec4XW d = SubO_LP(sVec4XW(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
                             n->z * *(float*)(trk + 0x148), n->w * *(float*)(trk + 0x14C)),
-                      D_004FF130_LP);
+                      D_004FF130);
     {
         sVec4XW v = Rot_LP(xf->rot, d);
         AddToL_LP(xf->pos, v);
-        xf->rot *= AxisAngle_LP(D_004FF140_LP, a * ka);
+        xf->rot *= AxisAngle_LP(D_004FF140, a * ka);
     }
-    QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF150_LP, b * kb));
+    QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF150, b * kb));
     sVec4XW w = Scale_LP(d, -1.0f);
     sVec4XW u = Rot_LP(xf->rot, w);
     AddTo_LP(xf->pos, u);
@@ -1562,7 +1562,7 @@ extern "C" void cRider_doLeanPoseAdjust_x(char* self, sXf_LP* xf)
         LeanAbout_LP(self, xf, a, b, 0.523598849773407f, 0.7853982448577881f);
     float k = *(float*)(self + 0x250);
     if (k != 0.0f) {
-        QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF140_LP, k * 0.7853982448577881f));
+        QuatMulTo_LP(xf->rot, AxisAngle_LP(D_004FF140, k * 0.7853982448577881f));
     }
     sVec4XW g = Scale_LP(*(sVec4XW*)(self + 0x3B0), *(float*)(*(char**)(self + 0x780) + 0x140) * (*(float*)(self + 0x1F0) * 45.0f));
     AddTo_LP(xf->pos, g);
@@ -2099,8 +2099,6 @@ extern "C" void func_001242B0(void* self, void* p);
 extern "C" void func_0011B3F8(void* self);
 extern void* D_004A28A8;
 
-// D_004FF120 is declared later in the unit as a 4-aligned sVec4; this view gives the lq/sq copy.
-extern t4Vector D_004FF120_q120F20 __asm__("D_004FF120");
 
 static inline int IsState1_120F20(void* obj)
 {
@@ -2135,7 +2133,7 @@ skip:
             p = (char*)self->mAnimModel->bones + (self->unk_8A0 << 5);
         func_001242B0(self, p);
     }
-    self->unk_9D0 = D_004FF120_q120F20;
+    self->unk_9D0 = D_004FF120;
     self->unk_A30 = 0;
     self->unk_5B8 = 0xFFFFFFFF;
     func_0011B3F8(self);
@@ -2292,7 +2290,6 @@ INCLUDE_ASM("ai/rider", func_00121750);
 extern "C" void func_001114A0(void* p);
 extern "C" void func_00310530(void* model, void* v);
 
-extern t4Vector D_004FF120;
 
 static inline int VecChanged_00121750(cRider* self, const t4Vector& b)
 {
@@ -2462,8 +2459,6 @@ extern "C" void func_0031BB30(void* q, const void* a, const void* b);
 extern "C" float func_0031C128(float x);
 extern "C" float func_0031BF60(float x);
 
-extern sVec4 D_004FF120_1AA0 __asm__("D_004FF120");
-extern sVec4 D_004FF140_1AA0 __asm__("D_004FF140");
 
 // PORT: PS2-only VU0 macro-mode asm (rotate v by the conjugate of quaternion q).
 static inline sVec4 QuatRot_1AA0(const sVec4W& q, const sVec4& v)
@@ -2531,7 +2526,7 @@ static inline sVec4 Div_1AA0(const sVec4& v, float s)
     return r;
 }
 
-static inline sVec4W AxisAngle_1AA0(const sVec4& axis, float angle)
+static inline sVec4W AxisAngle_1AA0(const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -2581,7 +2576,7 @@ static inline sVec4W Conj_1AA0(cRider* self)
     return r;
 }
 
-static inline int neq_1AA0(const sVec4* a, const sVec4& b)
+static inline int neq_1AA0(const sVec4* a, const t4Vector& b)
 {
     return a->x != b.x || a->y != b.y || a->z != b.z || a->w != b.w;
 }
@@ -2594,14 +2589,14 @@ extern "C" void func_00121AA0(cRider* self, const sVec4* up, const sVec4* fwd, f
                     1.0f - 2.0f * (ROT_1AA0.x * ROT_1AA0.x + ROT_1AA0.y * ROT_1AA0.y), 0.0f);
         func_0031BB30(&q, &cur, up);
     }
-    if (neq_1AA0(fwd, D_004FF120_1AA0)) {
+    if (neq_1AA0(fwd, D_004FF120)) {
         sVec4 v = QuatRot_1AA0(q, *fwd);
         float heading = -Atan2_1AA0(v.x, v.y);
         Rotate_1AA0(q, *up, heading);
     }
     sVec4W d = QuatMul_1AA0(q, Conj_1AA0(self));
     float angle;
-    sVec4 axis;
+    t4Vector axis;
     if (0.0f < d.w) {
         angle = 2.0f * Acos_1AA0(d.w <? 1.0f);
         if (9.999999747378752e-06f <= angle) {
@@ -2615,7 +2610,7 @@ extern "C" void func_00121AA0(cRider* self, const sVec4* up, const sVec4* fwd, f
             goto have_axis;
         }
     }
-    axis = D_004FF140_1AA0;
+    axis = D_004FF140;
 have_axis:
     angle = (maxRate <? angle * rate) * 0.01666666753590107f;
     d = AxisAngle_1AA0(axis, angle);
@@ -2868,7 +2863,6 @@ extern void* D_004A28A8;
 extern "C" void func_00121F30(cRider* self);
 extern "C" void func_00310640(void* model, int lod, int a, int b);
 
-extern t4Vector D_004FF120_v122448 __asm__("D_004FF120");
 
 
 extern "C" void func_00122448(cRider* self)
@@ -2895,7 +2889,7 @@ extern "C" void func_00122448(cRider* self)
         func_00310640(self->mAnimModel, self->mLOD, a, b);
         void* g3 = D_004A289C;
         sVEntry<void(void*, float, void*)>* vt3 = *(sVEntry<void(void*, float, void*)>**)((char*)g3 + 0x10D8);
-        vt3[27].fn((char*)g3 + vt3[27].delta, 0.0f, &D_004FF120_v122448);
+        vt3[27].fn((char*)g3 + vt3[27].delta, 0.0f, &D_004FF120);
     }
     if (*(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84) + 0x14) == 0 || self->unk_B1C)
     {
@@ -3487,10 +3481,9 @@ void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
 void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
 
 void func_0011D660_3210(void* self, sVec4* a, sVec4* b, int n, float t) __asm__("func_0011D660");
-extern sVec4 D_004FF140_3210 __asm__("D_004FF140");
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix times vector).
-static inline sVec4 MatMulV_3210(const char* m, const sVec4& v)
+static inline sVec4 MatMulV_3210(const char* m, const t4Vector& v)
 {
     sVec4 r;
     __asm__(
@@ -3592,7 +3585,7 @@ extern "C" void func_00123210_v(cRider* self, char* m)
     }
     off = Scale_3210(MatMulV_3210(m, off), 100.0f);
     AddEq_3210(pos, off);
-    sVec4 dir = MatMulV_3210(m, D_004FF140_3210);
+    sVec4 dir = MatMulV_3210(m, D_004FF140);
     func_00119368(self->mMetrix, 1);
     func_0011FE78_impl(self, 0);
     func_0011FEC8_impl(self, 0);
@@ -3605,7 +3598,7 @@ extern "C" void func_00123210_v(cRider* self, char* m)
     vtB[3].fn(objB, vtA[kRiderVt_getAIIndex].fn(sub + vtA[kRiderVt_getAIIndex].delta));
     float len = Length_3210(*(sVec4*)&self->mVelocity);
     SetPath_3210(self, &pos, &dir);
-    *(sVec4*)&self->mVelocity = Scale_3210(sVec4(*(sVec4*)&self->mMatrix.row[1]), len);
+    self->mVelocity = Scale_3210(sVec4(*(sVec4*)&self->mMatrix.row[1]), len);
     func_00111890(self->mRiderHandler);
     func_002F1A00(self->unk_88C);
 }
@@ -3621,7 +3614,6 @@ void func_0011FEC8_impl(void* self, int v) __asm__("func_0011FEC8__FPv");
 void func_0011FE78_impl(void* self, int v) __asm__("func_0011FE78__FPv");
 
 void func_0011D660_34D0(void* self, t4Vector* a, t4Vector* b, int n, float t) __asm__("func_0011D660");
-extern t4Vector D_004FF140_34D0 __asm__("D_004FF140");
 
 // PORT: PS2-only VU0 macro-mode asm (4x4 matrix times vector).
 // PORT: g++ named-return-value extension.
@@ -3650,7 +3642,7 @@ extern "C" void func_001234D0(cRider* self, char* m)
     t4Vector dir;
     func_00270970(*(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28), self->mAIIndex);
     pos = *(t4Vector*)(m + 0x30);
-    dir = MatMulV_34D0(m, D_004FF140_34D0);
+    dir = MatMulV_34D0(m, D_004FF140);
     func_00119368(self->mMetrix, 1);
     func_0011FE78_impl(self, 3);
     func_0011FEC8_impl(self, 0xD);
@@ -3708,10 +3700,8 @@ extern "C" void* func_0014D998(void* tbl, int g);
 extern "C" int func_00123128(cRider* self);
 extern "C" void func_00114130(void* rider, int a, int b);
 
-extern sVec4 D_004FF120_3640 __asm__("D_004FF120");
-extern sVec4 D_004FF160_3640 __asm__("D_004FF160");
 
-static inline sVec4 AxisAngle_3640(const sVec4& axis, float angle)
+static inline sVec4 AxisAngle_3640(const t4Vector& axis, float angle)
 {
     float s, c;
     func_0031BE50(&s, &c, angle * 0.5f);
@@ -3808,17 +3798,17 @@ extern "C" void func_00123640(cRider* self)
     *(float*)((char*)self + 0xAF8) = fb[11] * 0.01745329424738884f;
     *(sVec4*)((char*)self + 0xAE0) = q;
     q = MatMulV_3640((char*)self + 0x700, *(sVec4*)((char*)self + 0xAE0));
-    *(sVec4*)&self->mPosition = q;
+    self->mPosition = q;
     float ry = *(float*)((char*)self + 0x744);
     float rz = *(float*)((char*)self + 0x740);
     func_001241C0(self, (t4Vector*)&q, zero,
                   *(float*)((char*)self + 0xAF4) + ry,
                   *(float*)((char*)self + 0xAF0) + rz);
     float rx = *(float*)((char*)self + 0x748);
-    *(sVec4*)&self->mRotation = AxisAngle_3640(D_004FF160_3640, *(float*)((char*)self + 0xAF8) + rx - 1.5707963705062866f);
-    *(sVec4*)&self->mRotation = QuatMul_3640(q, *(sVec4*)&self->mRotation);
+    self->mRotation = AxisAngle_3640(D_004FF160, *(float*)((char*)self + 0xAF8) + rx - 1.5707963705062866f);
+    self->mRotation = QuatMul_3640(q, *(sVec4*)&self->mRotation);
     cRider_updateOrientationImplicit(self);
-    *(sVec4*)&self->mVelocity = D_004FF120_3640;
+    self->mVelocity = D_004FF120;
     *(float*)((char*)self + 0xB04) = zero;
     func_00111890(self->mRiderHandler);
     initTrack_3640(self, 0x1F0, zero, zero);
@@ -4048,7 +4038,6 @@ extern "C" void* func_0026B5E0(void*, int, int);
 extern char D_004D33A0[];
 char* func_0027C958(void* self);
 
-extern t4Vector D_004FF160_3F38 __asm__("D_004FF160");
 
 extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, int n, float t);
 extern "C" float func_00336850(void* self, sRay* ray, sHit* out, int a3);
@@ -4187,14 +4176,14 @@ extern "C" t4Vector func_00123F38(cRider* self)
         lift = 2999.942626953125f;
         break;
     }
-    t4Vector lo = Add_3F38(pos, Scale_3F38(D_004FF160_3F38, -7000.0f));
-    t4Vector hi = Add_3F38(pos, Scale_3F38(D_004FF160_3F38, 200.0f));
+    t4Vector lo = Add_3F38(pos, Scale_3F38(D_004FF160, -7000.0f));
+    t4Vector hi = Add_3F38(pos, Scale_3F38(D_004FF160, 200.0f));
     sHit hit;
     sRay ray;
     func_0032E100(&ray, lo, hi, 2, 0.9791666865348816f);
     if (func_00336850(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x20), &ray, &hit, 0) >= 0.0f)
         pos = hit.pos;
-    AddTo_3F38(pos, Scale_3F38(D_004FF160_3F38, lift));
+    AddTo_3F38(pos, Scale_3F38(D_004FF160, lift));
     return pos;
 }
 #endif
@@ -4225,8 +4214,6 @@ extern "C" void func_001241C0(cRider* self, t4Vector* out, float rx, float ry, f
 INCLUDE_ASM("ai/rider", func_001242B0);
 #ifdef SKIP_ASM
 
-extern t4Vector D_004FF120_42B0 __asm__("D_004FF120");
-extern t4Vector D_004FF160_42B0 __asm__("D_004FF160");
 
 
 extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, int n, float t);
@@ -4403,8 +4390,8 @@ extern "C" void func_001242B0_impl(cRider* self, void* p)
     }
     if (t < 0.0f) {
         self->unk_B00 = 0;
-        self->mGroundNormal = D_004FF160_42B0;
-        *(t4Vector*)((char*)self + 0x3D0) = D_004FF120_42B0;
+        self->mGroundNormal = D_004FF160;
+        *(t4Vector*)((char*)self + 0x3D0) = D_004FF120;
         *(t4Vector*)((char*)self + 0x3A0) = Normalize_42B0(SubV_42B0(self->mMatrix.row[1], Scale_42B0(self->mGroundNormal, DotV_42B0(self->mMatrix.row[1], self->mGroundNormal))));
         *(t4Vector*)((char*)self + 0x3B0) = Cross_42B0(self->mGroundNormal, *(t4Vector*)((char*)self + 0x3A0));
         *(int*)((char*)self + 0x438) = 0;
