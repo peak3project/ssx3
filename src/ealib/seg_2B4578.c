@@ -8534,7 +8534,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C4788);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003C45E8(int);
 extern int func_003C4668_4788(int, int, int, int, int) __asm__("func_003C4668");
-extern volatile unsigned char D_0050AD00_4788[] __asm__("D_0050AD00");
 
 int func_003C4788(int a0, int a1, int a2, int a3, int a4) {
     int r = 0;
@@ -8543,10 +8542,10 @@ int func_003C4788(int a0, int a1, int a2, int a3, int a4) {
     while (a3 > 0) {
         t = 0x1000;
         if (!(a3 > 0xFFF)) t = a3;
-        c = D_0050AD00_4788[0xCC0];
+        c = D_0050AD00.fCC0;
         while (0x1C - (signed char)c < 5) {
             func_003C45E8(0);
-            c = D_0050AD00_4788[0xCC0];
+            c = D_0050AD00.fCC0;
         }
         r = func_003C4668_4788(a0, a1, a2, t, a4);
         a1 += t;
