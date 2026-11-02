@@ -28,7 +28,7 @@ struct sReq {                       /* 0x30, a file request (D_00450C34[], D_005
     int f0C;
     int f10;
     unsigned int f14;
-    int f18;
+    void (*f18)(int);               /* done callback (func_003DF8E8) */
     volatile int f1C;               /* busy */
     int f20;
     int f24;
@@ -2205,25 +2205,24 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF028);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void MUTEX_unlock_F028(void *) __asm__("MUTEX_unlock");
-extern void releaserequest_F028(void *) __asm__("releaserequest");
 
-void func_003DF028(void *arg0) {
-    int (*temp_19)(int);
+void func_003DF028(struct sReq *arg0) {
+    void (*temp_19)(int);
     int temp_16;
     int temp_18;
 
     MUTEX_lock(D_00519C08);
-    (*(int *)((char*)(arg0) + (0x1C))) = 0;
-    temp_16 = (*(int *)((char*)(arg0) + (0x10)));
-    temp_19 = (*(int (**)(int))((char*)(arg0) + (0x18)));
-    temp_18 = (*(int *)((char*)(arg0) + (0xC)));
+    arg0->f1C = 0;
+    temp_16 = arg0->f10;
+    temp_19 = arg0->f18;
+    temp_18 = arg0->f0C;
     MUTEX_unlock_F028(D_00519C08);
     if (temp_16 != 0) {
         if (temp_18 == 0) {
-            releaserequest_F028(arg0);
+            releaserequest(arg0);
         }
     } else if (temp_19 != 0) {
-        temp_19((*(int *)((char*)(arg0) + (0))));
+        temp_19(arg0->f00);
     }
 }
 #endif
@@ -2232,12 +2231,11 @@ void func_003DF028(void *arg0) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF0B8);
 #ifdef SKIP_ASM
 extern void func_003DD310_F0B8(int) __asm__("func_003DD310");
-extern void func_003DF028(void *);
 
 /* Callback (third argument is the stream); later code takes its address as void (*)(void *). */
-void func_003DF0B8_impl(int arg0, int arg1, char *s) __asm__("func_003DF0B8");
-void func_003DF0B8_impl(int arg0, int arg1, char *s) {
-    func_003DD310_F0B8(*(volatile int *)(s + 0x1C));
+void func_003DF0B8_impl(int arg0, int arg1, struct sReq *s) __asm__("func_003DF0B8");
+void func_003DF0B8_impl(int arg0, int arg1, struct sReq *s) {
+    func_003DD310_F0B8(s->f1C);
     func_003DF028(s);
 }
 #endif
