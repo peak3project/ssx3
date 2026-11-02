@@ -171,6 +171,14 @@ struct sSndCurve {
 extern "C" float func_00290B58(sSndCurve* c, float x);
 extern sSndCurve D_00482DA0;
 
+// The vtable images of the classes whose hand-expanded ctors / dtors are in this unit.
+extern const sSndVtbl4 D_00483A60;
+extern const sSndVtbl7 D_00483A80;
+extern const sSndVtbl4 D_00483818;
+extern const sSndVtbl7 D_00483838;
+extern const sSndVtbl4 D_004839F0;
+extern const sSndVtbl7 D_00483A10;
+
 // ---- end of shared declarations ----
 
 //100%
@@ -186,8 +194,6 @@ extern char D_00483A48[];
 extern char D_00483B48[];
 extern const char D_004A3668[];
 extern const char D_004A3670[];
-extern const sSndVtbl4 D_00483A60_bs __asm__("D_00483A60");
-extern const sSndVtbl7 D_00483A80_bs __asm__("D_00483A80");
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
 extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap)
@@ -199,20 +205,20 @@ extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap
         func_002ADE88(mon, heap);
         cBankManager_cBankManager(*(void**)self, 0, count, heap);
     }
-    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_00483A60_bs;
+    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_00483A60;
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
-    *(const void**)(*(char**)self + 0x1D4) = &D_00483A80_bs;
+    *(const void**)(*(char**)self + 0x1D4) = &D_00483A80;
     if (!embedded) {
-        sSndVtbl4 t1 = D_00483A60_bs;
+        sSndVtbl4 t1 = D_00483A60;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x10;
         int adj1 = self - c1;
-        t1.e[1].delta = D_00483A60_bs.e[1].delta + adj1;
-        sSndVtbl7 t2 = D_00483A80_bs;
+        t1.e[1].delta = D_00483A60.e[1].delta + adj1;
+        sSndVtbl7 t2 = D_00483A80;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x18;
         int adj2 = self - c2;
-        t2.e[1].delta = D_00483A80_bs.e[1].delta + adj2;
+        t2.e[1].delta = D_00483A80.e[1].delta + adj2;
     }
     *(void**)(self + 0xC) = D_00483A48;
     D_004A3664 = (cBankSys*)self;
@@ -232,8 +238,6 @@ extern "C" void func_002ADEE8(void* self, int flags);
 
 
 extern char D_00483A48[];
-extern const sSndVtbl4 D_00483A60;
-extern const sSndVtbl7 D_00483A80;
 extern char D_00483B48[];
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
@@ -9181,8 +9185,6 @@ struct sSnd69Ent {
 
 extern char D_004837F8[];
 extern char D_00483B48[];
-extern const sSndVtbl4 D_00483818_69 __asm__("D_00483818");
-extern const sSndVtbl7 D_00483838_69 __asm__("D_00483838");
 
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
@@ -9196,20 +9198,20 @@ extern "C" char* func_002A69A0(char* self, int embedded, int count, int unused, 
         cBankManager_cBankManager(*(void**)self, 0, count, heap);
     }
     func_002A8140(self, 0, count, heap);
-    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_00483818_69;
+    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_00483818;
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
-    *(const void**)(*(char**)self + 0x1D4) = &D_00483838_69;
+    *(const void**)(*(char**)self + 0x1D4) = &D_00483838;
     if (!embedded) {
-        sSndVtbl4 t1 = D_00483818_69;
+        sSndVtbl4 t1 = D_00483818;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x118;
         int adj1 = self - c1;
-        t1.e[1].delta = D_00483818_69.e[1].delta + adj1;
-        sSndVtbl7 t2 = D_00483838_69;
+        t1.e[1].delta = D_00483818.e[1].delta + adj1;
+        sSndVtbl7 t2 = D_00483838;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x120;
         int adj2 = self - c2;
-        t2.e[1].delta = D_00483838_69.e[1].delta + adj2;
+        t2.e[1].delta = D_00483838.e[1].delta + adj2;
     }
     *(void**)(self + 0xC) = D_004837F8;
     *(int*)(self + 0x14) = 0;
@@ -9234,27 +9236,25 @@ extern "C" void func_002A82D8(char* self, int flags);
 
 extern char D_004837F8[];
 extern char D_00483B48[];
-extern const sSndVtbl4 D_00483818_6B __asm__("D_00483818");
-extern const sSndVtbl7 D_00483838_6B __asm__("D_00483838");
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
 extern "C" void func_002A6B50(char* self, int flags)
 {
     *(void**)(self + 0xC) = D_004837F8;
-    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_00483818_6B;
+    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_00483818;
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
-    *(const void**)(*(char**)self + 0x1D4) = &D_00483838_6B;
+    *(const void**)(*(char**)self + 0x1D4) = &D_00483838;
     if (flags == 0) {
-        sSndVtbl4 t1 = D_00483818_6B;
+        sSndVtbl4 t1 = D_00483818;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x118;
         int adj1 = self - c1;
-        t1.e[1].delta = D_00483818_6B.e[1].delta + adj1;
-        sSndVtbl7 t2 = D_00483838_6B;
+        t1.e[1].delta = D_00483818.e[1].delta + adj1;
+        sSndVtbl7 t2 = D_00483838;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x120;
         int adj2 = self - c2;
-        t2.e[1].delta = D_00483838_6B.e[1].delta + adj2;
+        t2.e[1].delta = D_00483838.e[1].delta + adj2;
     }
     func_002A6F38((sSsMgr6F38*)self);
     D_004A36F8 = 0;
@@ -10085,8 +10085,6 @@ void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm
 extern char D_00483A48[];
 extern char D_00483B48[];
 extern const char D_00483148[];
-extern const sSndVtbl4 D_004839F0_ct __asm__("D_004839F0");
-extern const sSndVtbl7 D_00483A10_ct __asm__("D_00483A10");
 extern int D_004A3744;
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
@@ -10100,20 +10098,20 @@ extern "C" char* func_002A8140(char* self, int embedded, int count, int heap)
         cBankManager_cBankManager(*(void**)self, 0, count, heap);
     }
     cBankSys_cBankSys(self, 0, count, heap);
-    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_004839F0_ct;
+    *(const void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &D_004839F0;
     *(void**)(*(char**)self + 0xAB0) = D_00483B48;
-    *(const void**)(*(char**)self + 0x1D4) = &D_00483A10_ct;
+    *(const void**)(*(char**)self + 0x1D4) = &D_00483A10;
     if (!embedded) {
-        sSndVtbl4 t1 = D_004839F0_ct;
+        sSndVtbl4 t1 = D_004839F0;
         *(void**)(*(char**)(*(char**)self + 0x1D8) + 4) = &t1;
         char* c1 = *(char**)(*(char**)self + 0x1D8) - 0x14;
         int adj1 = self - c1;
-        t1.e[1].delta = D_004839F0_ct.e[1].delta + adj1;
-        sSndVtbl7 t2 = D_00483A10_ct;
+        t1.e[1].delta = D_004839F0.e[1].delta + adj1;
+        sSndVtbl7 t2 = D_00483A10;
         *(void**)(*(char**)self + 0x1D4) = &t2;
         char* c2 = *(char**)self - 0x1C;
         int adj2 = self - c2;
-        t2.e[1].delta = D_00483A10_ct.e[1].delta + adj2;
+        t2.e[1].delta = D_00483A10.e[1].delta + adj2;
     }
     *(void**)(self + 0xC) = D_00483A48;
     func_003B97D8();
@@ -10135,8 +10133,6 @@ extern "C" int func_003B9880();
 
 
 extern char D_00483A48[];
-extern const sSndVtbl4 D_004839F0;
-extern const sSndVtbl7 D_00483A10;
 extern char D_00483B48[];
 extern int D_004A3744;
 
