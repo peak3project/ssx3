@@ -1273,28 +1273,14 @@ int func_003B6300(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B64D8);
 #ifdef SKIP_ASM
-struct R_64D8 {
-    void *p0;
-    int p4;
-    int p8;
-    signed char fC;
-};
-struct G_64D8 {
-    char pad000[0x28];
-    unsigned short f28;
-    char pad02A[0x1F4 - 0x2A];
-    int f1F4;
-};
-extern struct G_64D8 D_0050A8E8_64D8 __asm__("D_0050A8E8");
-
 int func_003B64D8(int arg0) {
-    struct R_64D8 *r;
-    if (arg0 < 0 || arg0 >= D_0050A8E8_64D8.f28) {
+    struct sA8E8Slot *r;
+    if (arg0 < 0 || arg0 >= D_0050A8E8.setup.cfg.f08) {
         return -8;
     }
-    r = (struct R_64D8 *)(arg0 * 16 + D_0050A8E8_64D8.f1F4);
-    if (r->p0 != 0) {
-        return r->fC ? -0x12 : 0;
+    r = (struct sA8E8Slot *)(arg0 * 16 + (int)D_0050A8E8.f1F4);
+    if (r->f00 != 0) {
+        return r->f0C ? -0x12 : 0;
     }
     return -8;
 }
