@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovstates", cFEStateTitle_onCreateScreen);
 #ifdef SKIP_ASM
@@ -157,18 +165,13 @@ extern "C" void func_00194988(void* self, void* item)
 //100%
 INCLUDE_ASM("fe/ovstates", func_001949E0);
 #ifdef SKIP_ASM
-struct sVEntry_func_001949E0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 extern "C" void func_0039F400(void* list, void* item);
 
 extern "C" void func_001949E0(void* self, void* msg, int type)
 {
     if (type == 5) {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry_func_001949E0* vt = *(sVEntry_func_001949E0**)((char*)obj + 0x4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 0x4);
         void* r = vt[4].fn((char*)obj + vt[4].delta, self, *(int*)((char*)msg + 0x18));
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
@@ -218,9 +221,6 @@ extern char D_00460030[];
 extern char D_005308B8[];
 extern int D_00534B30[];
 
-struct sVEnt0_00194AA8 { short delta; short index; void (*fn)(void*); };
-struct sVEnt1_00194AA8 { short delta; short index; void (*fn)(void*, unsigned char); };
-struct sVEnt2_00194AA8 { short delta; short index; int (*fn)(void*); };
 
 extern "C" void cFEStateMainMenu_onCreateScreen(void* self)
 {
@@ -240,15 +240,15 @@ extern "C" void cFEStateMainMenu_onCreateScreen(void* self)
     func_00255898();
     void* iface = cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
     D_00534B30[0] = 0;
-    sVEnt0_00194AA8* vt0 = *(sVEnt0_00194AA8**)((char*)iface + 0xC);
+    sVEntry<void(void*)>* vt0 = *(sVEntry<void(void*)>**)((char*)iface + 0xC);
     vt0[1].fn((char*)iface + vt0[1].delta);
     func_0028F140(func_0028B180(), 1);
     char* obj = *(char**)(*(char**)((char*)self + 0x10) + 0xC);
     *(unsigned char*)((char*)self + 0x55) = 0;
     for (int i = 0; i < 2; i++) {
-        sVEnt1_00194AA8* vt1 = *(sVEnt1_00194AA8**)(obj + 8);
+        sVEntry<void(void*, unsigned char)>* vt1 = *(sVEntry<void(void*, unsigned char)>**)(obj + 8);
         vt1[44].fn(obj + vt1[44].delta, i);
-        sVEnt2_00194AA8* vt2 = *(sVEnt2_00194AA8**)(obj + 8);
+        sVEntry<int(void*)>* vt2 = *(sVEntry<int(void*)>**)(obj + 8);
         if (vt2[45].fn(obj + vt2[45].delta) != 0) {
             (*(unsigned char*)((char*)self + 0x55))++;
         }
@@ -474,22 +474,17 @@ extern char D_004A1458[];
 extern char D_004A1460[];
 extern char D_004A17E0[];
 
-struct sVE_194EB0 {
-    short delta;
-    short index;
-    void* fn;
-};
 
 struct sObj_194EB0 {
     int pad0;
-    sVE_194EB0* vt;
+    sVEntry<void>* vt;
 };
 
 static inline void setWidgetHidden_194EB0(char* self, char* name)
 {
     char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
     if (o != 0) {
-        sVE_194EB0* vt = *(sVE_194EB0**)(o + 0x8);
+        sVEntry<void>* vt = *(sVEntry<void>**)(o + 0x8);
         ((void (*)(void*, int))vt[9].fn)(o + vt[9].delta, 0);
     }
 }
@@ -498,7 +493,7 @@ static inline void setWidgetVisible_194EB0(char* self, char* name)
 {
     char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(name));
     if (o != 0) {
-        sVE_194EB0* vt = *(sVE_194EB0**)(o + 0x8);
+        sVEntry<void>* vt = *(sVEntry<void>**)(o + 0x8);
         ((void (*)(void*, int))vt[8].fn)(o + vt[8].delta, 0);
     }
 }
@@ -539,7 +534,7 @@ extern "C" void cFEStateMainMenu_onWidgetEvent(void* self_, void* item_, unsigne
             *(int*)(self + 0x48) = 1;
             break;
         }
-        sVE_194EB0* ivt = *(sVE_194EB0**)(iface + 0xC);
+        sVEntry<void>* ivt = *(sVEntry<void>**)(iface + 0xC);
         ((void (*)(void*))ivt[1].fn)(iface + ivt[1].delta);
         if (*(int*)(item + 0x18) == 0x16 && *(int*)(self + 0x48) == 0) {
             *(int*)(self + 0x50) = *(signed char*)(self + 0x14);
@@ -614,23 +609,13 @@ extern char D_004600A0[];
 extern char D_004A1458[];
 extern char D_004A1460[];
 
-struct sVEi_195328 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
-struct sVEv_195328 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 static inline void Show195328(void* self, char* name)
 {
     char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
     if (o != 0) {
-        sVEv_195328* vt = *(sVEv_195328**)(o + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 1);
     }
 }
@@ -644,13 +629,13 @@ extern "C" void func_00195328(void* self, char* obj, int msg)
     if (msg != 0x16) {
         return;
     }
-    sVEi_195328* ovt = *(sVEi_195328**)(obj + 8);
+    sVEntry<int(void*, int)>* ovt = *(sVEntry<int(void*, int)>**)(obj + 8);
     if (ovt[23].fn(obj + ovt[23].delta, 0) != 0) {
         *(int*)((char*)self + 0x48) = 1;
         int v = *(signed char*)((char*)self + 0x50);
         *(char*)((char*)self + 0x14) = v;
         func_0039FFA0(*(void**)((char*)self + 0x4C), 2);
-        sVEv_195328* svt = *(sVEv_195328**)((char*)self + 8);
+        sVEntry<void(void*, ...)>* svt = *(sVEntry<void(void*, ...)>**)((char*)self + 8);
         svt[19].fn((char*)self + svt[19].delta, *(void**)((char*)self + 0x4C), 5);
     }
     Show195328(self, D_004A17E0);
