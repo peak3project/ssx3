@@ -37,7 +37,13 @@ struct sA8E8Cfg {                   /* 0xA0: the current setup (+0x20, D_0050A90
     int f48;
     char pad4C[0xA0 - 0x4C];
 };
-struct sA8E8Tail { int w[5]; };     /* +0xC0 (D_0050A9A8) */
+struct sA8E8Tail {                  /* +0xC0 (D_0050A9A8) */
+    int f00;
+    int f04;
+    void (*f08)(void);              /* D_0050A9B0 */
+    int f0C;
+    int f10;
+};
 struct sA8E8Setup {                 /* 0xD4: what func_003B4DD8 hands out */
     char pad00[0x4];
     unsigned char f04;
@@ -96,6 +102,7 @@ struct sA8E8 {
 extern struct sA8E8 D_0050A8E8;
 extern struct sA8E8Cfg D_0050A908;      /* D_0050A8E8.setup.cfg */
 extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
+extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
 
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
@@ -749,10 +756,9 @@ extern void func_003BC910(void);
 extern void SYNCTASK_add_5478(void *, int, int) __asm__("SYNCTASK_add");
 extern void func_003E4A30_5478(void *) __asm__("func_003E4A30");
 extern int D_0044C464;
-extern void (*D_0050A9B0_A9B0[])() __asm__("D_0050A9B0");
 
 int func_003B5478(void) {
-    D_0050A9B0_A9B0[0] = func_003B5470;
+    D_0050A9B0 = func_003B5470;
     if (D_0044C464 == 0) {
         SYNCTASK_add_5478(func_003B5450, 0, 1);
         D_0044C464 = 1;
