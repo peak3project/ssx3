@@ -7891,7 +7891,33 @@ void func_003C3358(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C3380);
+#ifdef SKIP_ASM
+struct G_3380 {
+    char pad[0x1B10];
+    volatile int f1B10;
+    volatile int f1B14;
+    volatile int f1B18;
+};
+extern struct G_3380 D_0050AD00_3380 __asm__("D_0050AD00");
+extern int func_00423C90(void);
+extern void func_00423DE0(int);
+
+/* Recursive lock (pairs with func_003C33E0). The owner's re-entry bumps the count and returns early; jump2
+   cross-jumps the two count increments into one copy, and the return label left behind keeps the epilogue
+   restores below the final store, as in the target. */
+void func_003C3380(void) {
+    int r = func_00423C90();
+    if (D_0050AD00_3380.f1B14 == r) {
+        D_0050AD00_3380.f1B18++;
+        return;
+    }
+    func_00423DE0(D_0050AD00_3380.f1B10);
+    D_0050AD00_3380.f1B14 = r;
+    D_0050AD00_3380.f1B18++;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C33E0);
