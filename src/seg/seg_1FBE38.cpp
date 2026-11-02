@@ -3821,7 +3821,7 @@ int* func_00226610(void*);
 
 struct Ent_1C80 { int idx; int val; int pad; int kind; };
 
-extern "C" void* func_00301C80(void* self, int n, Ent_1C80* e) {
+extern "C" cLunoValue* func_00301C80(cLunoValue* ret, int n, Ent_1C80* e) {
     if (D_004A5708_1C80 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A5704_1C80 = sBindEnd_1FBE38();
@@ -3841,9 +3841,9 @@ extern "C" void* func_00301C80(void* self, int n, Ent_1C80* e) {
             *d = p->val;
     }
     func_0030A700(D_004A3DD8, vp[0]);
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = 0;
-    return self;
+    ret->type = 1;
+    *func_00226610(ret) = 0;
+    return ret;
 }
 #endif
 
