@@ -5129,15 +5129,15 @@ extern float D_004A2F14;
 extern int D_00535610[];
 extern char D_00480EE0[];
 
-struct sVE_002639E0 {
+struct sVEntryV {
     short delta;
     short index;
     void (*fn)(void*);
 };
 
-struct sIf_002639E0 {
+struct sIf {
     char pad[0xC];
-    sVE_002639E0* vt;
+    sVEntryV* vt;
 };
 
 struct sNetCfg_002639E0 {
@@ -5154,14 +5154,14 @@ extern "C" void func_002639E0(int* self, unsigned int ip, int chan, int a3, int 
 {
     char buf[256];
     self[3] = a4;
-    sIf_002639E0* p = (sIf_002639E0*)cBE_getInterface_Fv(cBE_getBE(), 1);
-    sIf_002639E0* q = (sIf_002639E0*)cBE_getInterface_Fv(cBE_getBE(), 0);
+    sIf* p = (sIf*)cBE_getInterface_Fv(cBE_getBE(), 1);
+    sIf* q = (sIf*)cBE_getInterface_Fv(cBE_getBE(), 0);
     cBENewRaceInterface_setNumberHumans(q, 2);
     q->vt[1].fn((char*)q + q->vt[1].delta);
     func_001472C8(p, 0, a3);
     func_001472C8(p, 1, 0);
     p->vt[1].fn((char*)p + p->vt[1].delta);
-    sIf_002639E0* r = (sIf_002639E0*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    sIf* r = (sIf*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
     D_00534B30_002639E0[0].active = 1;
     D_00534B30_002639E0[0].rate = 0.01666666753590107f;
     D_00534B30_002639E0[0].port = 0xE4A;
@@ -5257,7 +5257,6 @@ extern int D_00534B34[];
 extern int D_00534E58[];
 extern char D_00480EF0[];
 
-struct sVEntry_263CF0 { short delta; short index; void (*fn)(void*); };
 
 static inline bool tsTimedOut_263CF0(int* self)
 {
@@ -5327,7 +5326,7 @@ extern "C" void func_00263CF0(int* self)
             void* bi7 = cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
             char* bi1 = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 1);
             cBENewPlayerInterface_setRiderCharID(bi1, 0, D_00534E58[0]);
-            sVEntry_263CF0* vt = *(sVEntry_263CF0**)(bi1 + 0xC);
+            sVEntryV* vt = *(sVEntryV**)(bi1 + 0xC);
             vt[1].fn(bi1 + vt[1].delta);
             func_0014EBF8(bi7, 0);
             if (D_004A2EEC != 0)
@@ -5885,23 +5884,12 @@ extern "C" void func_00147448(void* self, int a1, int charID);
 extern void* D_004A28A8;
 extern int D_00534E58[];
 
-struct sVE264CF0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
-struct sIf264CF0 {
-    char pad[0xC];
-    sVE264CF0* vt;
-};
-
 extern "C" void func_00264CF0(void* self, int charID)
 {
-    sIf264CF0* p = (sIf264CF0*)cBE_getInterface_Fv(cBE_getBE(), 1);
+    sIf* p = (sIf*)cBE_getInterface_Fv(cBE_getBE(), 1);
     func_00147448(p, 0, charID);
     p->vt[1].fn((char*)p + p->vt[1].delta);
-    sIf264CF0* q = (sIf264CF0*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    sIf* q = (sIf*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
     D_00534E58[0] = charID;
     q->vt[1].fn((char*)q + q->vt[1].delta);
 }
@@ -5915,17 +5903,6 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00147448(void* self, int a1, int charID);
 extern void* D_004A28A8;
-
-struct sVE_00264D80 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
-struct sIf_00264D80 {
-    char pad[0xC];
-    sVE_00264D80* vt;
-};
 
 struct sName7_00264D80 {
     char c[7];
@@ -5942,10 +5919,10 @@ extern sNetState_00264D80 D_00534B30_00264D80[] __asm__("D_00534B30");
 
 extern "C" void func_00264D80(void* self, int charID, sName7_00264D80* name)
 {
-    sIf_00264D80* p = (sIf_00264D80*)cBE_getInterface_Fv(cBE_getBE(), 1);
+    sIf* p = (sIf*)cBE_getInterface_Fv(cBE_getBE(), 1);
     func_00147448(p, 1, charID);
     p->vt[1].fn((char*)p + p->vt[1].delta);
-    sIf_00264D80* q = (sIf_00264D80*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    sIf* q = (sIf*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
     D_00534B30_00264D80[0].charID = charID;
     if (name != 0)
         D_00534B30_00264D80[0].name = *name;
