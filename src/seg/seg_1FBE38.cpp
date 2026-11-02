@@ -3962,10 +3962,9 @@ extern "C" cLunoValue func_00301F48(int n, Ent_1F48* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00302048);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_2048 __asm__("D_004A28A8");
 extern int D_00445E40_2048[] __asm__("D_00445E40");
 extern "C" void func_0030B7F8(cWScriptMan*);
-extern "C" void func_0022D6C8_2048(int, int) __asm__("func_0022D6C8");
+extern "C" void func_0022D6C8_2048(char*, int) __asm__("func_0022D6C8");
 struct Sh_2048 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual int v09(); };
 extern unsigned D_2048[] __asm__("D_004FBC10");
 extern int D_004A572C;
@@ -3995,9 +3994,8 @@ extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
     int r;
     int k = D_004A3DD8->being;
     if (k != -1) {
-        int k4 = k * 4;
-        char *lvl = *(char**)(*(char**)(D_004A28A8_2048 + 0x84) + 0xC);
-        char *q = *(char**)(lvl + k4 + 0x28);
+        sRace* lvl = D_004A28A8->game->race;
+        char *q = lvl->riders[k];
         char *a = q ? q + 0x6C0 : 0;
         char *b = a ? a - 0x6C0 : 0;
         Sh_2048 *sh = (Sh_2048*)(b + 0x6C0);
@@ -4009,7 +4007,7 @@ extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
         int v16 = 0;
         unsigned id = buf[0];
         int b1 = buf[1];
-        int w = *(int*)(*(char**)(D_004A28A8_2048 + 0x84) + 0x78);
+        char* w = D_004A28A8->game->f78;
         if (id < 8)
             v16 = D_00445E40_2048[id];
         if (b1 == 0) {
