@@ -5303,7 +5303,6 @@ struct IsoDir_4040 {
 };
 struct Pvd_4040 { char pad[0x9C]; struct IsoDir_4040 root; };
 struct Ent_4040 { char name[0x100]; int a; int b; };
-struct C_4040 { char *f0; int f4; int f8; int fC; };
 struct G_4040 {
     int f0;
     int f4;
@@ -5325,7 +5324,6 @@ struct Thr_4040 { int status; void (*entry)(void); void *stack; int stackSize; v
 struct Sem_4040 { int count; int max; int init; int wait; int attr; int option; };
 
 extern struct G_4040 D_00519C40_4040 __asm__("D_00519C40");
-extern struct C_4040 D_00450C58_4040 __asm__("D_00450C58");
 extern struct Ent_4040 *D_00450C68_4040 __asm__("D_00450C68");
 extern unsigned int D_00450C6C_4040 __asm__("D_00450C6C");
 extern int D_00450C70_4040 __asm__("D_00450C70");
@@ -5371,11 +5369,11 @@ int func_003E4040(unsigned int n, char *dst) {
     int th;
 
     func_003E6448_4040(&D_00519C40_4040, 0, 0x40);
-    func_003E6448_4040(dst, 0, (D_00450C58_4040.f4 + 0xC) * n);
+    func_003E6448_4040(dst, 0, (D_00450C58.f04 + 0xC) * n);
     if (func_00401718_4040(0) == 0) {
         return 0;
     }
-    func_00402450_4040(D_00450C58_4040.f8);
+    func_00402450_4040(D_00450C58.f08);
     func_00401BF0_4040(0);
     if (func_00402268_4040() == 0x12 || func_00402268_4040() == 0x14) {
         ok = 1;
@@ -5417,12 +5415,12 @@ int func_003E4040(unsigned int n, char *dst) {
         struct Pvd_4040 *pvd = (struct Pvd_4040 *)func_003E3618_4040();
         D_0051EC80_4040[1] = 0;
         D_0051EC80_4040[0] = 0x2F;
-        if (*D_00450C58_4040.f0 != 0) {
+        if (*D_00450C58.f00 != 0) {
             struct IsoDir_4040 *d;
             D_00519C40_4040.f2C = pvd->root.lba;
             for (d = (struct IsoDir_4040 *)func_003E3618_4040(); d <= (struct IsoDir_4040 *)D_0051A480_4040; d = (struct IsoDir_4040 *)((char *)d + d->len)) {
-                if (func_00416B18_4040(d->name, D_00450C58_4040.f0, d->namelen) == 0) {
-                    func_004162D0_4040(D_0051EC80_4040, D_00450C58_4040.f0);
+                if (func_00416B18_4040(d->name, D_00450C58.f00, d->namelen) == 0) {
+                    func_004162D0_4040(D_0051EC80_4040, D_00450C58.f00);
                     func_004162D0_4040(D_0051EC80_4040, D_00495DF0_4040);
                     func_003E3758_4040(d->lba, (d->size + 0x7FF) >> 11);
                     break;
