@@ -3101,10 +3101,8 @@ extern unsigned D_004A5698_0948 __asm__("D_004A5698");
 extern sBindEnd_1FBE38 D_004A569C_0948 __asm__("D_004A569C");
 extern int D_004A56A0_0948 __asm__("D_004A56A0");
 extern int D_004A3C48_0948[2] __asm__("D_004A3C48");
-extern char *D_004A28A8_0948 __asm__("D_004A28A8");
 struct O_0948 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void *v24(); };
 struct Sh_0948 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(void*); };
-struct Lvl_0948 { char pad[0x28]; char *sh[1]; };
 static inline char *refToPtr_0948(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_0948(unsigned i) { if (i == 0) return 0; return refToPtr_0948(i); }
 extern "C" void func_003E6574(void*, void*, int);
@@ -3153,8 +3151,8 @@ extern "C" cLunoValue func_00300948(int n, Ent_0948 *e) {
         void *v = obj + 0x10;
         if (p)
             v = p->v24();
-        Lvl_0948 *lvl = *(Lvl_0948**)(*(char**)(D_004A28A8_0948 + 0x84) + 0xC);
-        ((Sh_0948*)(lvl->sh[k] + 0x6C0))->v12(v);
+        sRace *lvl = D_004A28A8->game->race;
+        ((Sh_0948*)(lvl->riders[k] + 0x6C0))->v12(v);
     }
     return D_004C9098;
 }
