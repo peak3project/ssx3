@@ -1367,14 +1367,12 @@ extern "C" void* func_003578A8_D420(void*, int, void*, void*, void*) __asm__("fu
 void operator_delete(int*);
 extern char D_00489718_D420[] __asm__("D_00489718");
 extern char D_00489730_D420[] __asm__("D_00489730");
-struct V3_D420 { float x, y, z; };
-extern V3_D420 D_004C9098_D420 __asm__("D_004C9098");
 extern unsigned D_D420[] __asm__("D_004FB640");
 extern int D_004A5604;
 extern const int D_004460B0[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_D420 { int idx; int val; int pad; int type; };
-extern "C" V3_D420 func_002FD420(int n, Ent_D420 *e) {
+extern "C" cLunoValue func_002FD420(int n, Ent_D420 *e) {
     if (D_004A5604 == 0) {
         ((int*)D_D420)[0] = 1;
         ((int*)D_D420)[1] = 0;
@@ -1434,7 +1432,7 @@ extern "C" V3_D420 func_002FD420(int n, Ent_D420 *e) {
     }
     if (obj == 0) {
         operator_delete((int*)buf);
-        return D_004C9098_D420;
+        return D_004C9098;
     }
     void *p = *(void**)(obj + 0xC);
     if (p) {
@@ -1442,13 +1440,13 @@ extern "C" V3_D420 func_002FD420(int n, Ent_D420 *e) {
         if (r != 0) {
             if (r > 0)
                 operator_delete((int*)buf);
-            return D_004C9098_D420;
+            return D_004C9098;
         }
     }
     if (*(float*)&buf[7] > *(float*)&buf[5])
         *(float*)&buf[7] = *(float*)&buf[5];
     func_003578A8_D420(cMemMan_alloc(0x2C, D_00489730_D420, 0x20000000, 0), 1, obj, buf, 0);
-    return D_004C9098_D420;
+    return D_004C9098;
 }
 #endif
 
