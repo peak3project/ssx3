@@ -24,30 +24,52 @@ public:
     virtual void setVisible(int);
 };
 
-//100%
-INCLUDE_ASM("fe/ovtemplatepausemenu", cOVTemplate_PauseMenu_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
+class cUIScreen;
+struct cUIScreen;
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+void cUIText_setUnicodeStringByID(cUIText* self, int id);
+extern "C" int func_00231AB8(void* game);
+extern "C" void* func_0028B180();
+extern void* D_004A28A8;
+extern char D_004A2470[];
+extern unsigned char D_004A2468;
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char* D_00441C30[];
+extern char D_004C8AE8[];
+extern char D_004C8AF8[];
+extern char D_004C8B08[];
+extern char D_004C8B18[];
+unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
+extern "C" void func_00258790(void* self, int a1);
+extern "C" void func_0020D190(void);
+// func_0039F190 returns its last list node in $v0; the unit declares it void.
+void* func_0039F190_r(void* self, int a1) __asm__("func_0039F190");
+extern char* D_004A2EEC;
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F0[];
+extern char D_0046F850[];
+extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* self);
+
+//100%
+INCLUDE_ASM("fe/ovtemplatepausemenu", cOVTemplate_PauseMenu_onCreateScreen);
+#ifdef SKIP_ASM
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void cOVStateManager_addPDATemplate();
 extern "C" void func_0020A380(void* self);
 extern "C" void* func_00416210(void* dst, int c, int n);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* self, int id);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, int idx);
-extern "C" int func_00231AB8(void* game);
-extern "C" void* func_0028B180();
 extern "C" void func_00289B70(void* audio);
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern void* D_004A28A8;
 extern char D_0046F818[];
 extern char D_0046F830[];
 extern char* D_00441BC0[];
-extern char D_004A2470[];
-extern unsigned char D_004A2468;
 extern int D_00534B30[];
 
 struct sPauseMenu_PM {
@@ -134,10 +156,6 @@ extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
 //100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F8448);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern char* D_00441C30[];
 extern char D_0046F840[];
 
 struct sVec3_001F8448 {
@@ -180,16 +198,8 @@ extern "C" int func_001F8448(void* self)
 //100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F85C0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_0039E4C0(void* self, int a1);
-extern unsigned char D_004A2468;
 extern char D_004A2138[];
-extern char D_004C8AE8[];
-extern char D_004C8AF8[];
-extern char D_004C8B08[];
-extern char D_004C8B18[];
 
 static inline void setColor_001F85C0(char* obj, void* c)
 {
@@ -241,24 +251,9 @@ void func_001F8720(void* self)
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F8728);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-class cUIScreen;
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" int func_001E3408(void);
 extern "C" void func_0020E900(void* self);
-extern "C" void func_00258790(void* self, int a1);
-extern "C" void func_0020D190(void);
-// func_0039F190 returns its last list node in $v0; the unit declares it void.
-void* func_0039F190_r(void* self, int a1) __asm__("func_0039F190");
-extern char* D_004A2EEC;
-extern int D_004A2A50;
-extern int D_004A2A54;
-extern int D_005366E8[];
-extern int D_004428F0[];
 extern char D_004A2478[];
-extern char D_0046F850[];
 
 struct sColor_1F8728 { float r, g, b, a; };
 
@@ -341,42 +336,17 @@ extern "C" int func_001F8908(void* self, int a1, unsigned int a2)
 //100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", cOVTemplate_PauseMenu_onWidgetEvent);
 #ifdef SKIP_ASM
-struct cUIText;
-class cUIScreen;
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-void cUIText_setUnicodeStringByID(cUIText* self, int id);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
-extern "C" void func_00258790(void* self, int a1);
-extern "C" void func_0020D190(void);
-// func_0039F190 returns its last list node in $v0; the unit declares it void.
-void* func_0039F190_r(void* self, int a1) __asm__("func_0039F190");
 extern "C" void func_0020AB50(int cmd);
 extern "C" void* func_00195FF0(void* mem, void* owner, int a2, int a3);
-extern "C" void* func_0028B180();
 extern "C" void func_00289BB8(void* audio);
 extern "C" void func_001F8DF8(void* self, int idx, int on);
-extern char* D_004A2EEC;
-extern int D_004A2A50;
-extern int D_004A2A54;
-extern int D_005366E8[];
-extern int D_004428F0[];
-extern unsigned char D_004A2468;
 extern int D_004A2594;
 extern int D_004A2708;
-extern void* D_004A28A8;
-extern char D_004A2470[];
 extern char D_004A2480[];
-extern char D_0046F850[];
 extern char D_0046F860[];
 extern char* D_00441BF8[];
-extern char D_004C8AE8[];
-extern char D_004C8AF8[];
-extern char D_004C8B08[];
-extern char D_004C8B18[];
 
 struct sSnd_PMWE {
     sVEntry<void(void*, ...)>* vt;
@@ -538,12 +508,6 @@ int func_001F8DF0(void* self)
 //100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F8DF8);
 #ifdef SKIP_ASM
-struct cUIScreen;
-int GetHashValue32(char* str);
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern char* D_00441C30[];
 extern char D_004A2488[];
 extern char D_004A2490[];
 
@@ -571,7 +535,6 @@ extern "C" void func_001F8DF8(void* self, int idx, int on)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F8EE0);
 #ifdef SKIP_ASM
-extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* self);
 extern int D_00478160[];
 
 extern "C" void func_001F8EE0(void* self)
@@ -589,7 +552,6 @@ extern "C" void func_001F8EE0(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F8F48);
 #ifdef SKIP_ASM
-extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* self);
 extern int D_00478178[];
 
 extern "C" void func_001F8F48(void* self)
@@ -607,7 +569,6 @@ extern "C" void func_001F8F48(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F8FB0);
 #ifdef SKIP_ASM
-extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* self);
 extern int D_00478140[];
 
 extern "C" void func_001F8FB0(void* self)
@@ -625,7 +586,6 @@ extern "C" void func_001F8FB0(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F9018);
 #ifdef SKIP_ASM
-extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* self);
 extern int D_00478190[];
 
 extern "C" void func_001F9018(void* self)
@@ -643,7 +603,6 @@ extern "C" void func_001F9018(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F9080);
 #ifdef SKIP_ASM
-extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* self);
 extern int D_004781A8[];
 
 extern "C" void func_001F9080(void* self)
@@ -661,9 +620,6 @@ extern "C" void func_001F9080(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovtemplatepausemenu", func_001F90E8);
 #ifdef SKIP_ASM
-extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* self);
-extern "C" int func_00231AB8(void* game);
-extern void* D_004A28A8;
 extern int D_004781C0[];
 extern int D_004A2868[2];
 
