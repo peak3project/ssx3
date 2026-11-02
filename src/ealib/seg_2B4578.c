@@ -8559,18 +8559,15 @@ int func_003C4788(int a0, int a1, int a2, int a3, int a4) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C4898);
 #ifdef SKIP_ASM
-struct Ent_4898 { int key; int val; int pad[2]; };
-struct D_4898 { char pad[0xCC0]; volatile unsigned char count; char pad2[3]; int f4; struct Ent_4898 e[28]; };
-extern struct D_4898 D_0050AD00_4898 __asm__("D_0050AD00");
 extern void func_003C4450(int);
 
 int func_003C4898_4898(int) __asm__("func_003C4898");
 int func_003C4898_4898(int key) {
     int i;
-    if ((signed char)D_0050AD00_4898.count <= 0) return 1;
+    if ((signed char)D_0050AD00.fCC0 <= 0) return 1;
     for (i = 0; i < 28; i++) {
-        if (D_0050AD00_4898.e[i].key == key) {
-            if (D_0050AD00_4898.f4 + 500 < D_0050A8E8.f180) {
+        if (D_0050AD00.fCC8[i].key == key) {
+            if (D_0050AD00.fCC4 + 500 < D_0050A8E8.f180) {
                 func_003C4450(0);
             }
             return 0;
