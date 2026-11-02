@@ -180,6 +180,13 @@ extern struct sNetAcct *D_004A4BC4;
 struct sCrc { unsigned *table; int f04; int *f08; unsigned crc; int heap; };
 extern struct sCrc D_00451518;
 
+/* XOR key window (func_003FB650): D_004A4BE4 .. D_004A4BE8 is the key, D_004A4BEC the next key byte, D_004A4BF0
+   the cipher state (4 = idle). */
+extern unsigned char *D_004A4BE4;
+extern unsigned char *D_004A4BE8;
+extern unsigned char *D_004A4BEC;
+extern int D_004A4BF0;
+
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F31F8);
 #ifdef SKIP_ASM
@@ -3606,7 +3613,6 @@ char *func_003FB5E8(void) { return D_00497508; }
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB5F8);
 #ifdef SKIP_ASM
-extern int D_004A4BF0;
 int func_003FB5F8(void) {
     if (D_004A4BF0 != 4) return 3;
     D_004A4BF0 = 6;
@@ -3617,7 +3623,6 @@ int func_003FB5F8(void) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB620);
 #ifdef SKIP_ASM
-extern int D_004A4BE4, D_004A4BE8, D_004A4BEC, D_004A4BF0;
 int func_003FB620(void) {
     D_004A4BE4 = 0;
     D_004A4BE8 = 0;
@@ -3630,15 +3635,13 @@ int func_003FB620(void) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB640);
 #ifdef SKIP_ASM
-extern int D_004A4BF0;
 int func_003FB640(void) { return D_004A4BF0 != 4; }
 #endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB650);
 #ifdef SKIP_ASM
-extern int D_004A4BE4, D_004A4BE8, D_004A4BEC, D_004A4BF0;
-int func_003FB650(int a, int b) {
+int func_003FB650(unsigned char *a, int b) {
     if (a == 0 || b == 0) return 2;
     if (D_004A4BF0 == 4) return 4;
     D_004A4BE4 = a;
@@ -3652,18 +3655,14 @@ int func_003FB650(int a, int b) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB6A0);
 #ifdef SKIP_ASM
-extern int D_004A4BF0;
-extern unsigned char *pEC __asm__("D_004A4BEC");
-extern unsigned char *pE8 __asm__("D_004A4BE8");
-extern unsigned char *pE4 __asm__("D_004A4BE4");
 int func_003FB6A0(unsigned char *buf, unsigned n) {
     unsigned i;
     if (buf == 0 || n == 0) return 2;
     if (D_004A4BF0 != 5 && D_004A4BF0 != 7) return D_004A4BF0;
     for (i = 0; i < n; i++) {
-        buf[i] ^= *pEC;
-        if (pEC == pE8) pEC = pE4;
-        else pEC = pEC + 1;
+        buf[i] ^= *D_004A4BEC;
+        if (D_004A4BEC == D_004A4BE8) D_004A4BEC = D_004A4BE4;
+        else D_004A4BEC = D_004A4BEC + 1;
     }
     D_004A4BF0 = 7;
     return 0;
@@ -3673,18 +3672,14 @@ int func_003FB6A0(unsigned char *buf, unsigned n) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB730);
 #ifdef SKIP_ASM
-extern int D_004A4BF0;
-extern unsigned char *pEC __asm__("D_004A4BEC");
-extern unsigned char *pE8 __asm__("D_004A4BE8");
-extern unsigned char *pE4 __asm__("D_004A4BE4");
 int func_003FB730(unsigned char *buf, unsigned n) {
     unsigned i;
     if (buf == 0 || n == 0) return 2;
     if (D_004A4BF0 != 5 && D_004A4BF0 != 8) return D_004A4BF0;
     for (i = 0; i < n; i++) {
-        buf[i] ^= *pEC;
-        if (pEC == pE8) pEC = pE4;
-        else pEC = pEC + 1;
+        buf[i] ^= *D_004A4BEC;
+        if (D_004A4BEC == D_004A4BE8) D_004A4BEC = D_004A4BE4;
+        else D_004A4BEC = D_004A4BEC + 1;
     }
     D_004A4BF0 = 8;
     return 0;
@@ -3694,7 +3689,6 @@ int func_003FB730(unsigned char *buf, unsigned n) {
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FB7C0);
 #ifdef SKIP_ASM
-extern int D_004A4BE4, D_004A4BEC, D_004A4BF0;
 int func_003FB7C0(void) {
     if (D_004A4BF0 == 5 || D_004A4BF0 == 7 || D_004A4BF0 == 8) {
         D_004A4BF0 = 5;
