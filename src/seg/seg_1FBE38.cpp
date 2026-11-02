@@ -3812,9 +3812,8 @@ extern unsigned D_004A5700_1C80 __asm__("D_004A5700");
 extern sBindEnd_1FBE38 D_004A5704_1C80 __asm__("D_004A5704");
 extern int D_004A5708_1C80 __asm__("D_004A5708");
 extern int D_004A3CA8_1C80[2] __asm__("D_004A3CA8");
-extern int D_004A3DD8_1C80 __asm__("D_004A3DD8");
 extern "C" void func_003E6574(void*, void*, int);
-extern "C" void func_0030A700(int, int);
+extern "C" void func_0030A700(cWScriptMan*, int);
 int* func_00226610(void*);
 
 struct Ent_1C80 { int idx; int val; int pad; int kind; };
@@ -3838,7 +3837,7 @@ extern "C" void* func_00301C80(void* self, int n, Ent_1C80* e) {
         else
             *d = p->val;
     }
-    func_0030A700(D_004A3DD8_1C80, vp[0]);
+    func_0030A700(D_004A3DD8, vp[0]);
     *(int*)((char*)self + 8) = 1;
     *func_00226610(self) = 0;
     return self;
