@@ -11294,24 +11294,17 @@ int func_003C9188(int *a, int *b, int x, int y) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C9268);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct {
-    char pad0[0x18];
-    void *p18, *p1c, *p20;
-    char pad1[0x60 - 0x24];
-    int i60, i64, i68;
-} G_9268;
-extern G_9268 D_00515B40_9268 __asm__("D_00515B40");
-extern void f_9268_a(void) __asm__("func_003C9AC8");
-extern void f_9268_b(void) __asm__("func_003C9BC8");
-extern void f_9268_c(void) __asm__("func_003C9D28");
+extern void f_9268_a(struct sB40Node *, struct sB40Init *) __asm__("func_003C9AC8");
+extern void f_9268_b(struct sB40Node *, struct sB40Init *) __asm__("func_003C9BC8");
+extern void f_9268_c(struct sB40Node *, struct sB40Init *) __asm__("func_003C9D28");
 
 void func_003C9268(void) {
-D_00515B40_9268.p18 = f_9268_a;
-    D_00515B40_9268.i60 = 0x2C;
-    D_00515B40_9268.p1c = f_9268_b;
-    D_00515B40_9268.i64 = 0x30;
-    D_00515B40_9268.p20 = f_9268_c;
-    D_00515B40_9268.i68 = 0x34;
+    D_00515B40.f18[0][0] = f_9268_a;
+    D_00515B40.f60[0][0] = 0x2C;
+    D_00515B40.f18[0][1] = f_9268_b;
+    D_00515B40.f60[0][1] = 0x30;
+    D_00515B40.f18[0][2] = f_9268_c;
+    D_00515B40.f60[0][2] = 0x34;
 }
 #endif
 
