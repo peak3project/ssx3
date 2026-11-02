@@ -39,15 +39,28 @@ public:
     virtual void v24(int on);
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIText;
+struct cUIScreen;
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern int D_004A1A70;
+extern char D_0045FCD8[];
+extern char D_0045DCC8[];
+unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
+extern char D_004A1790[];
+extern char D_004A1798[];
+extern "C" void func_001927B0(void* p);
+extern void* D_004A33CC;
+extern "C" int func_001A97B8(void* self, void* a1, int a2);
+
 //100%
 INCLUDE_ASM("fe/festatebigradio", cFEStateBraggingRights_onCreateScreen);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 // PORT: several callees are declared with other parameter types elsewhere; bind local views by asm label
@@ -59,7 +72,6 @@ extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int id
 extern "C" unsigned char cUIListBox_addEntryByAsciiString(void* box, const char* str, int data);
 extern "C" int func_0039A768(void* item, int key, unsigned char* out);
 extern "C" void func_0039A7A8(void* item, int v);
-extern int D_004A1A70;
 extern signed char D_00535C12[];
 extern signed char D_004A1710[6];
 extern signed char D_004A1718[7];
@@ -70,8 +82,6 @@ extern signed char D_004A1738[7];
 extern char* D_00441108[];
 extern char D_0045FCC8[];
 extern char D_004A14F8[];
-extern char D_0045FCD8[];
-extern char D_0045DCC8[];
 extern char D_0045DF40[];
 extern char D_004A16E0[];
 extern char D_004A16D8[];
@@ -259,15 +269,7 @@ INCLUDE_ASM("fe/festatebigradio", func_00193338);
 INCLUDE_ASM("fe/festatebigradio", func_00193568);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct cUIScreen;
-int GetHashValue32(char* str);
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern char D_004A1790[];
-extern char D_004A1798[];
-extern int D_004A1A70;
 extern "C" void func_001A87D0(void* self, int a1);
-extern "C" void func_001927B0(void* p);
 // func_0039E4C0 returns nothing (ends in a void vcall).
 void func_0039E4C0_v(void* self) __asm__("func_0039E4C0");
 
@@ -304,11 +306,6 @@ extern "C" void func_00193568(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festatebigradio", cFEStateBraggingRights_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-struct cUIText;
 void cUIText_setAsciiString(cUIText* text, const char* s);
 extern "C" int func_00146E98(void* iface, int a1);
 extern "C" const char* func_0014EE58(void* iface, int a1);
@@ -373,10 +370,6 @@ extern "C" void cFEStateBraggingRights_onWidgetCreate(char* self, cUIThing* w)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_001938F8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern int D_004A1A70;
-extern void* D_004A33CC;
-extern "C" void func_001927B0(void* p);
 extern "C" void func_00194080(void* self);
 extern "C" void func_00193DE0(void* self, int player, int which, int value);
 extern "C" int func_00192918_38F8(void* panel, void* item) __asm__("func_00192918");
@@ -390,8 +383,6 @@ void func_001C57C0(void* self, int a1, int a2);
 extern "C" void func_001A8918(void* self, void* widget, int msg);
 extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045FD98[];
-extern char D_0045DCC8[];
-extern char D_0045FCD8[];
 extern char D_005308B8[];
 
 struct sVObj_38F8 {
@@ -491,7 +482,6 @@ extern "C" void func_001938F8(char* self, sWidget_38F8* w, int event)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00193C00);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 void func_001DA510(void* self, int i, int a, int b);
 void func_001DA528(void* self, int val);
 void func_001DA530(void* self, int i, int value);
@@ -519,9 +509,6 @@ extern "C" void func_00193C00(void* self, void* popup)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00193CF8);
 #ifdef SKIP_ASM
-extern int D_004A1A70;
-extern void* D_004A33CC;
-extern "C" void func_001927B0(void* p);
 extern "C" void func_00265458(void* snd, int id);
 static inline int isOn00193CF8()
 {
@@ -620,13 +607,6 @@ extern "C" int func_00193F38(void* self, int player, int which)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00194080);
 #ifdef SKIP_ASM
-struct cUIScreen;
-int GetHashValue32(char* str);
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern char D_004A1790[];
-extern char D_004A1798[];
-
 static inline int get6F8_4080(void* p) { return *(int*)((char*)p + 0x6F8); }
 extern "C" void func_00194080(void* self)
 {
@@ -647,7 +627,6 @@ extern "C" void func_00194080(void* self)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00194138);
 #ifdef SKIP_ASM
-extern int D_004A1A70;
 extern "C" void* func_001A8B88(void* self, int size, int a2);
 
 static inline int isOn00194138()
@@ -667,9 +646,7 @@ extern "C" void* func_00194138(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00194168);
 #ifdef SKIP_ASM
-extern int D_004A1A70;
 extern "C" void func_00194440(void* self, void* a1, int a2);
-extern "C" int func_001A97B8(void* self, void* a1, int a2);
 
 static inline int isOn00194168()
 {
@@ -778,10 +755,8 @@ extern "C" int func_001941B0(char* self, int msg, sRadioMsg_41B0* data)
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00194440);
 #ifdef SKIP_ASM
-extern void* D_004A33CC;
 extern "C" void func_00265768(void* snd, int id);
 void func_001A94D8(void* self);
-extern "C" int func_001A97B8(void* self, void* a1, int a2);
 
 extern "C" void func_00194440(void* self, void* a1, int a2)
 {
