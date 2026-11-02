@@ -3818,17 +3818,11 @@ struct sCtx_340DC0 {
     sSub_340DC0 all;
 };
 
-struct sObjNode_340DC0 {
-    sObjNode_340DC0* next;
-    int pad04[85];
-    float bmin[3];
-    float bmax[3];
-};
 
 struct sTree_340DC0 {
     sTree_340DC0* child[8];
     void* nodes;
-    sObjNode_340DC0* objs;
+    sWsBoundObj* objs;
     void** all;
 };
 
@@ -3840,7 +3834,7 @@ static inline void add_340DC0(sSub_340DC0* s, void* p)
     *cnt = n + 1;
 }
 
-static inline int overlap_340DC0(const sWsBox* b, const sObjNode_340DC0* n)
+static inline int overlap_340DC0(const sWsBox* b, const sWsBoundObj* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -3855,7 +3849,7 @@ extern "C" void func_00340DC0(sTree_340DC0* self, sCtx_340DC0* ctx)
 {
     func_003309D8((sCtx_3309D8*)ctx, self);
     sSub_340DC0* s = &ctx->objs;
-    for (sObjNode_340DC0* p = self->objs; p != 0; p = p->next) {
+    for (sWsBoundObj* p = self->objs; p != 0; p = p->next) {
         if (overlap_340DC0(s->box, p)) {
             add_340DC0(s, p);
         }
