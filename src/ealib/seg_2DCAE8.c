@@ -2309,30 +2309,29 @@ extern int func_003DD7E0_F2C0(int, int, void *) __asm__("func_003DD7E0");
 extern char func_003DF0B8_F2C0[] __asm__("func_003DF0B8");
 extern char func_003DF0F0_F2C0[] __asm__("func_003DF0F0");
 extern char func_003DF1E0_F2C0[] __asm__("func_003DF1E0");
-struct Q_F2C0 { int w0; int p1; int f8; int pc; int f10; int f14; int p18; volatile int h; int f20; int f24; int f28; int f2c; };
 
-void func_003DF2C0(int a, int b, struct Q_F2C0 *s) {
-    int n = func_003DD310_F2C0(s->h);
+void func_003DF2C0(int a, int b, struct sReq *s) {
+    int n = func_003DD310_F2C0(s->f1C);
     s->f20 = n;
     if (n == 0) {
         func_003DF028(s);
         return;
     }
     if (s->f10 != 0) {
-        s->h = func_003DD5A0(n, 0x63, s);
-        if (s->h != 0) {
-            func_003DCF70(s->h, func_003DF0B8_F2C0);
+        s->f1C = func_003DD5A0(n, 0x63, s);
+        if (s->f1C != 0) {
+            func_003DCF70(s->f1C, func_003DF0B8_F2C0);
         }
     } else if (s->f14 == 0) {
         int m = s->f28;
-        s->h = func_003DD648(n, s->f24, s->f2c, m <= 0x8000 ? m : 0x8000, 0x63, s);
-        if (s->h != 0) {
-            func_003DCF70(s->h, func_003DF0F0_F2C0);
+        s->f1C = func_003DD648(n, s->f24, s->f2C, m <= 0x8000 ? m : 0x8000, 0x63, s);
+        if (s->f1C != 0) {
+            func_003DCF70(s->f1C, func_003DF0F0_F2C0);
         }
     } else {
-        s->h = func_003DD7E0_F2C0(n, 0x63, s);
-        if (s->h != 0) {
-            func_003DCF70(s->h, func_003DF1E0_F2C0);
+        s->f1C = func_003DD7E0_F2C0(n, 0x63, s);
+        if (s->f1C != 0) {
+            func_003DCF70(s->f1C, func_003DF1E0_F2C0);
         }
     }
 }
