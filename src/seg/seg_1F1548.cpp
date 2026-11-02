@@ -1234,7 +1234,104 @@ extern "C" void func_002F2D70_2D70(sPart_2D70* p, const sV2_2D70& pos, int n)
 
 INCLUDE_ASM("seg/seg_1F1548", func_002F3030);
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F3418);
+#ifdef SKIP_ASM
+struct sV2_3418 {
+    float x, y;
+};
+struct sV3_3418 {
+    float x, y, z;
+};
+struct sV4_3418 {
+    float x, y, z, w;
+};
+struct sPos_3418 {
+    float x, y, z, w;
+    float u, v;
+    sPos_3418(float ax, float ay, const float& az = 0.0f, const float& aw = 1.0f) {
+        u = ax;
+        v = ay;
+        x = ax;
+        y = ay;
+        w = aw;
+        z = az;
+    }
+};
+
+class cGfx_3418 {
+public:
+    char pad[0x10D8];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8(); virtual void v9(); virtual void v10(); virtual void v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
+    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
+    virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23();
+    virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27();
+    virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31();
+    virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35();
+    virtual void v36(); virtual void v37(); virtual void v38(); virtual void v39();
+    virtual void v40(); virtual void v41(); virtual void v42(); virtual void v43();
+    virtual void v44(); virtual void v45(); virtual void v46(); virtual void v47();
+    virtual void v48(); virtual void v49(); virtual void v50(); virtual void v51();
+    virtual void v52(); virtual void v53(); virtual void v54(); virtual void v55();
+    virtual void v56(); virtual void v57(); virtual void v58(); virtual void v59();
+    virtual void v60(); virtual void v61(); virtual void v62(); virtual void v63();
+    virtual void v64(); virtual void v65(); virtual void v66(); virtual void v67();
+    virtual void v68(); virtual void v69(); virtual void v70(); virtual void v71();
+    virtual void v72(); virtual void v73(); virtual void v74(); virtual void v75();
+    virtual void v76(); virtual void v77();
+    virtual void DrawX(float, const sPos_3418&, const sV3_3418&, const sV2_3418&, const sV2_3418&, const sV4_3418&, int);
+};
+
+struct sWorld_3418 {
+    char pad[0xE84];
+    char* fE84;
+    char pad2[0x105C - 0xE88];
+    int f105C;
+    int GetFB() { return f105C; }
+};
+
+struct sEm_3418 {
+    int f0, f4;
+    float f8, fC;
+    sV3_3418 f10;
+    float pad1C_;
+    float f20, f24;
+    sV4_3418 col;
+    float f38, f3C;
+};
+
+extern sWorld_3418* D_004A289C_3418 __asm__("D_004A289C");
+extern cGfx_3418* D_004A5B80_3418 __asm__("D_004A5B80");
+extern float D_004A5510_3418 __asm__("D_004A5510");
+extern float D_004A5514_3418 __asm__("D_004A5514");
+extern int D_004A5518_3418 __asm__("D_004A5518");
+extern float D_004A5520_3418 __asm__("D_004A5520");
+extern float D_004A5524_3418 __asm__("D_004A5524");
+extern int D_004A5528_3418 __asm__("D_004A5528");
+
+extern "C" void func_002F3418(sEm_3418* self, const sV2_3418* off)
+{
+    if (D_004A5518_3418 == 0) {
+        D_004A5510_3418 = 0.0f;
+        D_004A5518_3418 = 1;
+        D_004A5514_3418 = 0.0f;
+    }
+    if (D_004A5528_3418 == 0) {
+        D_004A5528_3418 = 1;
+        D_004A5520_3418 = 1.0f;
+        D_004A5524_3418 = 1.0f;
+    }
+    float r = self->f20 / self->f24;
+    sV4_3418 col = self->col;
+    r = 1.0f - r * r;
+    col.x *= r;
+    *(short*)(D_004A289C_3418->fE84 + 0x10) = D_004A289C_3418->GetFB();
+    D_004A5B80_3418->DrawX((self->f38 + self->f20 / self->f24 * self->f3C) * 0.01745329424738884f, sPos_3418(self->f8 + off->x, self->fC + off->y), self->f10, *(sV2_3418*)&D_004A5510_3418, *(sV2_3418*)&D_004A5520_3418, col, 1);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F3550);
