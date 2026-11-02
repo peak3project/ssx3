@@ -8,6 +8,18 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Race settings (D_00535BC8; ai/ai's sRaceSettings). D_00535C10 / D_00535C11 are splat symbols for its
+// fields at 0x48 / 0x49.
+struct sRaceSettings {
+    char pad0[0x30];
+    int count;                  // 0x30
+    int numberOfHumanRiders;    // 0x34
+    char pad38[0x10];
+    signed char mode48;         // 0x48
+    signed char flag49;         // 0x49
+};
+extern sRaceSettings D_00535BC8;
+
 //100%
 INCLUDE_ASM("main/gamestate", cGFGateState_gainFocus);
 #ifdef SKIP_ASM
@@ -354,13 +366,6 @@ extern void* D_004A3DD8;
 extern void* D_004A28A8;
 extern void* D_004A28A4;
 
-struct sRace_2355C0 {
-    char pad0[0x48];
-    signed char mode48;
-    signed char flag49;
-};
-extern sRace_2355C0 D_00535BC8_r2355C0 __asm__("D_00535BC8");
-
 struct sRaceMan_2355C0 {
     char pad0[0x14];
     int f14;
@@ -383,7 +388,7 @@ extern "C" void func_002355C0(void* self)
         *(int*)((char*)self + 0x1C) = 1;
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     func_00158E30(cBE_getInterface_Fv(cBE_getBE(), 0xD));
-    sRace_2355C0* r = &D_00535BC8_r2355C0;
+    sRaceSettings* r = &D_00535BC8;
     int flag = r->flag49;
     int mode = r->mode48;
     if (flag == 0 && !inRange_2355C0(*(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x78) + 0x1BC))) {
@@ -454,13 +459,6 @@ extern "C" void func_0026F7B8(void* p);
 extern "C" void func_00145DD0(void* iface, int a1, int a2, int a3);
 extern "C" int func_00238510(void* gm, int a1, int a2);
 
-struct sRace_235868 {
-    char pad0[0x48];
-    signed char mode48;
-    signed char flag49;
-};
-extern sRace_235868 D_00535BC8_r235868 __asm__("D_00535BC8");
-
 struct sSlot_235868 {
     char pad[0x50];
 };
@@ -482,7 +480,7 @@ extern "C" void func_00235868(void* self)
     func_0026F228(*(void**)(D_004A2C68 + 0x28));
     func_0026F7B8(*(void**)(D_004A2C68 + 0x28));
     *(int*)((char*)self + 0x14) = 0;
-    sRace_235868* r = &D_00535BC8_r235868;
+    sRaceSettings* r = &D_00535BC8;
     if (r->flag49 == 0) {
         void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
         func_00145DD0(player, 0, 0, *func_00144BC0(race));
@@ -566,13 +564,6 @@ extern void* D_004A3DD8;
 extern void* D_004A28A8;
 extern void* D_004A28A4;
 
-struct sRace_235AA0 {
-    char pad0[0x48];
-    signed char mode48;
-    signed char flag49;
-};
-extern sRace_235AA0 D_00535BC8_r235AA0 __asm__("D_00535BC8");
-
 struct sGM_235AA0 {
     char pad0[0x10];
     int total;      // 0x10
@@ -590,7 +581,7 @@ extern "C" void func_00235AA0(void* self)
     sGM_235AA0* gm = *(sGM_235AA0**)((char*)D_004A28A8 + 0xC0);
     cGameModeMan_restartHeat(gm);
     func_00230180(*(void**)((char*)D_004A28A8 + 0x84));
-    sRace_235AA0* r = &D_00535BC8_r235AA0;
+    sRaceSettings* r = &D_00535BC8;
     int m = r->mode48;
     if (m == 5)
         goto bail;
@@ -621,7 +612,7 @@ extern "C" void func_00235AA0(void* self)
     if (n >= 2)
         func_0012AC48(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC));
     *(int*)((char*)self + 0x18) = 0;
-    sRace_235AA0* r2 = &D_00535BC8_r235AA0;
+    sRaceSettings* r2 = &D_00535BC8;
     if (r2->mode48 == 0) {
         void* sc = D_004A28A4;
         *(int*)((char*)self + 0x18) = 1;
@@ -1025,23 +1016,15 @@ extern "C" void func_0026F228(void* p);
 extern "C" void func_00145CB0(void* iface, int i, int a);
 extern char* D_004A2C68;
 
-struct sRace002368A0 {
-    char pad0[0x30];
-    int count;
-    char pad34[0x15];
-    signed char flag49;
-};
-extern sRace002368A0 D_00535BC8_r002368A0 __asm__("D_00535BC8");
-
 extern "C" void func_002368A0(void* self)
 {
     cBE_setState(0);
     func_0026F228(*(void**)(D_004A2C68 + 0x28));
     cBE_getInterface_Fv(cBE_getBE(), 0);
-    if (D_00535BC8_r002368A0.flag49 == 0) {
+    if (D_00535BC8.flag49 == 0) {
         int i = 0;
         void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
-        for (; i < D_00535BC8_r002368A0.count; i++) {
+        for (; i < D_00535BC8.count; i++) {
             func_00145CB0(iface, i, 0);
         }
     }
@@ -1334,21 +1317,13 @@ extern "C" void func_002790A0(void* a, int b);
 extern "C" void func_0020A8F8(int a);
 extern void* D_004A28A4;
 
-struct sRace00236DA0 {
-    char pad0[0x30];
-    int count;
-    char pad34[0x15];
-    signed char flag49;
-};
-extern sRace00236DA0 D_00535BC8_r00236DA0 __asm__("D_00535BC8");
-
 extern "C" void func_00236DA0(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
-    if (D_00535BC8_r00236DA0.flag49 == 0) {
+    if (D_00535BC8.flag49 == 0) {
         int i = 0;
         void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
-        for (; i < D_00535BC8_r00236DA0.count; i++) {
+        for (; i < D_00535BC8.count; i++) {
             func_00145CB0(iface, i, 0);
         }
     }
