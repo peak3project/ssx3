@@ -6151,7 +6151,6 @@ extern "C" cLunoValue func_00306438(int n, Ent_6438 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003065E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_65E8 __asm__("D_004A28A8");
 static inline char *look_65E8(unsigned id) {
     if (~id == 0)
         return D_004A3DD8->f290;
@@ -6192,7 +6191,7 @@ extern "C" cLunoValue func_003065E8(int n, Ent_65E8 *e) {
     char *obj = look_65E8(buf[0]);
     if (obj) {
         int tmp[1]; tmp[0] = *(int*)(obj + 0x78);
-        func_00101888_65E8(*(void**)(*(char**)(*(char**)(D_004A28A8_65E8 + 0x84) + 0xC) + 0xA8), tmp);
+        func_00101888_65E8(D_004A28A8->game->race->fA8, tmp);
     }
     return D_004C9098;
 }
