@@ -964,7 +964,158 @@ extern "C" int func_00116378(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", func_001163B0);
+#ifdef SKIP_ASM
+struct Q_63B0 {
+    float x, y, z, w;
+    Q_63B0() {}
+} __attribute__((aligned(16)));
+
+struct cAnimSequence;
+void cAnimSequence_fadeWeight(cAnimSequence* self, float weight, float target);
+int func_00312AA0(void* self, int i);
+extern "C" int func_00311AE8(void*, int);
+extern "C" char* func_00311B20(void*, int);
+extern "C" bool func_001446A0(void*, int);
+extern "C" bool func_001446B8(void*, int);
+extern "C" void func_00311E88(void*, int, float);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline Q_63B0 Scale_63B0(const Q_63B0& v, float s)
+{
+    Q_63B0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+static inline Q_63B0 Dir_63B0(char* self)
+{
+    return *(Q_63B0*)(self + 0x1A0);
+}
+
+// Starts a direction-change animation.
+static inline void PlayTurn_63B0(char* self, int anim)
+{
+    *(long*)(*(char**)(self + 0x784) + 0x20) = *(long*)(self + 0x8C0);
+    cRiderAnimBase_play(*(void**)(self + 0x784), anim, 1, -1.0f);
+    *(long*)(*(char**)(self + 0x784) + 0x20) = -1;
+    *(float*)(self + 0x350) = 0.0f;
+}
+
+extern "C" int func_001163B0(char* self, int a, int b)
+{
+    if (func_00311AE8(*(void**)(self + 0x784), 1) == 3) {
+        if (a != 0 && b != 0) {
+            int ok = 0;
+            char* seq = func_00311B20(*(void**)(self + 0x784), 1) + 0xB0;
+            if (func_001446A0(seq, 2) && func_001446B8(seq, 2)) {
+                ok = 1;
+            }
+            if (ok) {
+                *(int*)(func_00311B20(*(void**)(self + 0x784), 1) + 0x90) = 0;
+                *(long*)(*(char**)(self + 0x784) + 0x20) = *(long*)(self + 0x8C0);
+                cRiderAnimBase_play(*(void**)(self + 0x784), 0x145, 0, -1.0f);
+                float w = *(float*)(func_00311B20(*(void**)(self + 0x784), 1) + 0x94);
+                float weight = *(float*)(func_00311B20(*(void**)(self + 0x784), 1) + 0x98);
+                float target = *(float*)(func_00311B20(*(void**)(self + 0x784), 1) + 0x9C);
+                char* s = func_00311B20(*(void**)(self + 0x784), 0);
+                *(float*)(s + 0x98) = w;
+                *(float*)(s + 0x94) = w;
+                if (target != 0.0f) {
+                    cAnimSequence_fadeWeight((cAnimSequence*)func_00311B20(*(void**)(self + 0x784), 0), weight, target);
+                }
+                *(long*)(*(char**)(self + 0x784) + 0x20) = -1;
+            }
+        } else {
+            *(float*)(func_00311B20(*(void**)(self + 0x784), 1) + 0x90) = 1.0f;
+            func_00311E88(*(void**)(self + 0x784), 0, 0.1f);
+        }
+    }
+    if (func_00311AE8(*(void**)(self + 0x784), 1) == 13) {
+        int id = func_00312AA0(*(void**)(self + 0x784), 1);
+        int same = *(int*)(self + 0x320) ? id == 0x143 : id == 0x144;
+        if ((a != 0 && b == 0 && same) || (a == 0 && b != 0 && !same)) {
+            int ok = 0;
+            char* seq = func_00311B20(*(void**)(self + 0x784), 1) + 0xB0;
+            if (func_001446A0(seq, 2) && func_001446B8(seq, 2)) {
+                ok = 1;
+            }
+            if (ok) {
+                *(int*)(func_00311B20(*(void**)(self + 0x784), 1) + 0x90) = 0;
+                *(long*)(*(char**)(self + 0x784) + 0x20) = *(long*)(self + 0x8C0);
+                if (id == 0x143) {
+                    cRiderAnimBase_play(*(void**)(self + 0x784), 0x146, 0, -1.0f);
+                } else {
+                    cRiderAnimBase_play(*(void**)(self + 0x784), 0x147, 0, -1.0f);
+                }
+                *(long*)(*(char**)(self + 0x784) + 0x20) = -1;
+            }
+            if (func_00311AE8(*(void**)(self + 0x784), 0) == 13) {
+                float step = *(float*)(self + 0x300) * 0.01111111231148243f;
+                float cur = *(float*)(self + 0x350);
+                float v = 1.0f;
+                if (step + 1.0f < cur) {
+                    v = cur - step;
+                } else if (cur < 1.0f - step) {
+                    v = cur + step;
+                }
+                *(float*)(self + 0x350) = v;
+                char* s = func_00311B20(*(void**)(self + 0x784), 0);
+                *(float*)(s + 0x94) = *(float*)(s + 0x98) = *(float*)(self + 0x350);
+            }
+            if (same) {
+                *(Q_63B0*)(self + 0x340) = Scale_63B0(Dir_63B0(self), -1.0f);
+            } else {
+                *(Q_63B0*)(self + 0x340) = Dir_63B0(self);
+            }
+        } else {
+            *(float*)(func_00311B20(*(void**)(self + 0x784), 1) + 0x90) = 1.0f;
+            func_00311E88(*(void**)(self + 0x784), 0, 0.1f);
+        }
+    }
+    if (a != 0 && b != 0) {
+        if (func_00311AE8(*(void**)(self + 0x784), 1) == 13 && func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 0) && !func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 1)) {
+            return 1;
+        }
+        if (func_00311AE8(*(void**)(self + 0x784), 1) == 3 && !func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 1)) {
+            return 1;
+        }
+        PlayTurn_63B0(self, 0x142);
+    } else if (a != 0 || b != 0) {
+        int anim;
+        if (func_00311AE8(*(void**)(self + 0x784), 1) == 3 && func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 0) && !func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 1)) {
+            return 1;
+        }
+        if (func_00311AE8(*(void**)(self + 0x784), 1) == 13 && !func_001446A0(func_00311B20(*(void**)(self + 0x784), 1) + 0xB0, 1)) {
+            return 1;
+        }
+        if (a != 0) {
+            anim = *(int*)(self + 0x320) ? 0x143 : 0x144;
+            *(Q_63B0*)(self + 0x340) = Scale_63B0(Dir_63B0(self), -1.0f);
+        } else {
+            anim = *(int*)(self + 0x320) ? 0x144 : 0x143;
+            *(Q_63B0*)(self + 0x340) = Dir_63B0(self);
+        }
+        PlayTurn_63B0(self, anim);
+    }
+    int r = 0;
+    if (func_00311AE8(*(void**)(self + 0x784), 1) == 3 || func_00311AE8(*(void**)(self + 0x784), 1) == 13) {
+        r = 1;
+    }
+    return r;
+}
+#endif
 
 extern "C" void func_00116930(void* self) {
 }
