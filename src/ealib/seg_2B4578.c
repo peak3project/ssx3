@@ -2686,29 +2686,19 @@ int func_003B7F60(int arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7FB8);
 #ifdef SKIP_ASM
-int *func_003B6A38_7FB8(void) __asm__("func_003B6A38");
 int func_003B8790(int, int);
 
-static inline int body_7FB8(int *p, int arg1) {
-    if (arg1 > 0x4000) {
-        arg1 = 0x4000;
-    }
-    *(short *)((char *)p + 0xF8) = arg1;
-    func_003B8790(p[1], arg1);
-    return 0;
-}
-
 int func_003B7FB8(int arg0, int arg1) {
-    int *p;
-    p = func_003B6A38_7FB8();
+    struct sA0A0Strm *p;
+    p = func_003B6A38(arg0);
     if (p == 0) {
         return -8;
     }
     if (arg1 > 0x4000) {
         arg1 = 0x4000;
     }
-    *(short *)((char *)p + 0xF8) = arg1;
-    func_003B8790(p[1], arg1);
+    p->fEC.f0C = arg1;
+    func_003B8790(p->f04, arg1);
     return 0;
 }
 #endif
