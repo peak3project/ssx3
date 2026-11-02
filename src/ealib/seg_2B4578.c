@@ -16311,27 +16311,6 @@ struct E_3900 {
     unsigned int w8;
     unsigned int wC;
 };
-struct V_3900 {
-    char pad0[0x20];
-    unsigned int lo : 4;
-    int ch : 5;
-    unsigned int hi : 23;
-    char pad24[0x2C - 0x24];
-    short h2C;
-    char pad2E[2];
-    struct E_3900 *cur;
-};
-struct G_3900 {
-    char pad0[0x30];
-    unsigned int x30;
-    char *hdr;
-    short *a;
-    char pad3C[4];
-    short *b;
-    char pad44[0x54 - 0x44];
-    unsigned int *tab54;
-    struct V_3900 *voices[32];
-};
 struct Ev_3900 {
     int w0;
     int w4;
@@ -16353,7 +16332,6 @@ struct Q_3900 {
     unsigned long hi : 10;
 };
 struct P_3900 { char pad[0x30]; unsigned int x30; char pad2[0x928 - 0x34]; };
-extern struct G_3900 *D_0044F420_3900 __asm__("D_0044F420");
 extern void (*D_0044F424_3900)(int, int) __asm__("D_0044F424");
 extern int D_0044F430_3900 __asm__("D_0044F430");
 extern unsigned int D_0044F438_3900 __asm__("D_0044F438");
@@ -16368,7 +16346,7 @@ int func_003D3900(int id, int start, int vel) {
     struct Ev_3900 ev;
     struct Q_3900 q;
     struct E_3900 *e;
-    struct V_3900 *v;
+    struct sPathVoice *v;
     unsigned int t;
     unsigned int w;
     short k;
@@ -16377,16 +16355,16 @@ int func_003D3900(int id, int start, int vel) {
 
     save = vel;
     k = func_003D3C90(id, start);
-    e = (struct E_3900 *)(D_0044F420_3900->hdr + D_0044F420_3900->a[k] * 4);
-    v = D_0044F420_3900->voices[e->h2 & 0x1F];
+    e = (struct E_3900 *)(D_0044F420->f34 + D_0044F420->f38[k]);
+    v = D_0044F420->f58[e->h2 & 0x1F];
     while (e->type <= 0) {
         type = e->type;
         if (type == 0) {
-            v->cur = e;
+            v->f30 = (unsigned int *)e;
             if (e->w8 & 0x7C00) {
                 f6210_3900(&q, 0, 0x10);
                 f6210_3900(&ev, 0, 0x10);
-                t = D_0044F420_3900->tab54[((e->w8 >> 10) & 0x1F) - 1];
+                t = D_0044F420->f54[((e->w8 >> 10) & 0x1F) - 1];
                 if (t & 0x80) {
                     ev.bC = 100;
                 } else {
@@ -16413,20 +16391,20 @@ int func_003D3900(int id, int start, int vel) {
         } else if (type == -1) {
             w = *(unsigned int *)e;
             if (w & 0xF0000000) {
-                if (k != v->h2C) {
-                    v->h2C = k;
+                if (k != v->f2C) {
+                    v->f2C = k;
                     v->lo = w >> 28;
                 }
             }
         } else if (type == -2) {
             vel = (D_0044F438_3900 / 23) & 0x7F;
         } else if (type == -3) {
-            func_003D1F80(D_0044F420_3900->x30, (D_0044F420_3900->hdr + D_0044F420_3900->b[(e->wC >> 2) & 0xFFF] * 4));
+            func_003D1F80(D_0044F420->f30, (char *)(D_0044F420->f34 + D_0044F420->f40[(e->wC >> 2) & 0xFFF]));
         }
         t = f37A0_3900(k, vel);
         vel = save;
         k = func_003D3C90(id, t);
-        e = (struct E_3900 *)(D_0044F420_3900->hdr + D_0044F420_3900->a[k] * 4);
+        e = (struct E_3900 *)(D_0044F420->f34 + D_0044F420->f38[k]);
     }
     return (short)func_003D3C90(id, k);
 }
