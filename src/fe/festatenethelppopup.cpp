@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", cFEStateNetHelpPopup_onCreateScreen);
 #ifdef SKIP_ASM
@@ -22,18 +30,13 @@ extern "C" void cFEStateNetHelpPopup_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatenethelppopup", func_001D9E20);
 #ifdef SKIP_ASM
-struct sVEntry001D9E20 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 extern "C" int func_001D9E20(void* self, int a1, int a2)
 {
     if (*(int*)((char*)self + 0x50) != 0) {
         void* obj = *(void**)((char*)self + 0x20);
         if (obj != 0) {
-            sVEntry001D9E20* vt = *(sVEntry001D9E20**)((char*)obj + 8);
+            sVEntry<int(void*, int, int)>* vt = *(sVEntry<int(void*, int, int)>**)((char*)obj + 8);
             return vt[24].fn((char*)obj + vt[24].delta, a1, a2);
         }
     }
@@ -172,15 +175,10 @@ extern "C" unsigned short* func_002C2688(unsigned short* dst, unsigned short* sr
 extern "C" void func_003A0D00(void* text, unsigned short* str);
 extern char D_00461A70[];
 
-struct sVE_A110 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 struct sStrings_A110 {
     int pad0;
-    sVE_A110* vt;
+    sVEntry<unsigned short*(void*, int)>* vt;
 };
 
 // Joins up to three localised help strings into one buffer and shows it in the popup text.
@@ -226,12 +224,11 @@ void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void func_001DA110(void* self);
 extern char D_004A1408[];
 
-struct sVEnt_1DA238 { short delta; short index; void (*fn)(void*, int); };
 struct sVec3_1DA238 { float x, y, z; };
 
 struct sWidget_1DA238 {
     char pad00[8];
-    sVEnt_1DA238* vt;
+    sVEntry<void(void*, int)>* vt;
     char pad0C[0x38];
     sVec3_1DA238 pos;
 };
