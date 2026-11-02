@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", cFEStateCharEquip_cFEStateCharEquip);
 #ifdef SKIP_ASM
@@ -230,17 +238,12 @@ extern void* D_004A289C;
 extern void* D_0046A548[];
 extern void* D_0046D0D0[];
 
-struct sVEntryK199148 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void releaseK199148(int id)
 {
     if (id >= 0) {
         char* g = (char*)D_004A289C;
-        sVEntryK199148* vt = *(sVEntryK199148**)(g + 0x10D8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(g + 0x10D8);
         vt[50].fn(g + vt[50].delta, id);
     }
 }
@@ -399,15 +402,10 @@ extern char D_004A1938[];
 extern char D_004A1940[];
 extern char D_004A1948[];
 
-struct sVE_FE {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void hide_FE(void* w)
 {
-    sVE_FE* vt = *(sVE_FE**)((char*)w + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)w + 8);
     vt[9].fn((char*)w + vt[9].delta, 0);
 }
 
@@ -597,11 +595,6 @@ extern "C" void* func_001A0548(void* self, int a1);
 extern void* D_004A28A8;
 extern char D_004608A0[];
 
-struct sVEntryK199938 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void cFEStateCharEquip_onUpdate(void* self)
 {
@@ -625,7 +618,7 @@ extern "C" void cFEStateCharEquip_onUpdate(void* self)
             on = *(int*)(r + 0xCC8);
             on ^= 1;
         }
-        sVEntryK199938* vt = *(sVEntryK199938**)(obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 8);
         vt[9].fn(obj + vt[9].delta, on);
     }
     func_0019A638(self);
@@ -757,11 +750,6 @@ struct sItem_9C28 {
     int flags;          // 0x34
 };
 
-struct sVE_9C28 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 struct sCharEquip_9C28 {
     char pad0[0x10];
@@ -852,7 +840,7 @@ extern "C" void func_00199C28(void* selfv, char* w, unsigned int ev)
             *(int*)(r + 0xC20) = 0;
             *(int*)(r + 0xC1C) = 1;
             char* obj = *(char**)self->menu;
-            sVE_9C28* vt = *(sVE_9C28**)(obj + 4);
+            sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(obj + 4);
             void* x = vt[5].fn(obj + vt[5].delta, self, 0);
             if (x)
                 func_0039F400(self->menu + 0x18, x);
@@ -983,16 +971,6 @@ struct sPkgK19A098 {
     int f10;
     sPkgEntK19A098 ents[1];   // 0x14
 };
-struct sVEK19A098a {
-    short delta;
-    short index;
-    int (*fn)(void*, char*, char*, int, int, int);
-};
-struct sVEK19A098b {
-    short delta;
-    short index;
-    void (*fn)(void*, int, char*, int);
-};
 
 extern "C" int func_0019A098(void* self, const char* name)
 {
@@ -1013,11 +991,11 @@ extern "C" int func_0019A098(void* self, const char* name)
             int id = *(int*)((char*)self + 0xA68);
             if (id == -1) {
                 char* g = (char*)D_004A289C;
-                sVEK19A098a* vt = *(sVEK19A098a**)(g + 0x10D8);
+                sVEntry<int(void*, char*, char*, int, int, int)>* vt = *(sVEntry<int(void*, char*, char*, int, int, int)>**)(g + 0x10D8);
                 *(int*)((char*)self + 0xA68) = vt[46].fn(g + vt[46].delta, data, D_004A1950, 0, 1, -1);
             } else {
                 char* g = (char*)D_004A289C;
-                sVEK19A098b* vt = *(sVEK19A098b**)(g + 0x10D8);
+                sVEntry<void(void*, int, char*, int)>* vt = *(sVEntry<void(void*, int, char*, int)>**)(g + 0x10D8);
                 vt[48].fn(g + vt[48].delta, id, data, 1);
             }
             return *(int*)((char*)self + 0xA68);
@@ -1054,11 +1032,6 @@ int GetHashValue32(char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_00460820[];
 
-struct sVEntry0019A238 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_0019A238(void* self)
 {
@@ -1067,17 +1040,17 @@ extern "C" void func_0019A238(void* self)
     }
     char* o = *(char**)((char*)self + 0x60);
     if (o != 0) {
-        sVEntry0019A238* vt = *(sVEntry0019A238**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 0);
     }
     o = *(char**)((char*)self + 0x88);
     if (o != 0) {
-        sVEntry0019A238* vt = *(sVEntry0019A238**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 0);
     }
     o = *(char**)((char*)self + 0x80);
     if (o != 0) {
-        sVEntry0019A238* vt = *(sVEntry0019A238**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 1);
     }
     func_0019E538(func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)((char*)self + 0x44)), 1);
@@ -1093,11 +1066,6 @@ int GetHashValue32(char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_00460810[];
 
-struct sVEntry0019A308 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_0019A308(void* self)
 {
@@ -1106,18 +1074,18 @@ extern "C" void func_0019A308(void* self)
     }
     char* o = *(char**)((char*)self + 0x80);
     if (o != 0) {
-        sVEntry0019A308* vt = *(sVEntry0019A308**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 0);
     }
     o = *(char**)((char*)self + 0x6C);
     if (o != 0) {
-        sVEntry0019A308* vt = *(sVEntry0019A308**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 0);
     }
     func_0019E538(func_001A0548(*(char**)((char*)D_004A28A8 + 0x7C) + 0xB0, *(signed char*)((char*)self + 0x44)), 0);
     o = *(char**)((char*)self + 0x60);
     if (o != 0) {
-        sVEntry0019A308* vt = *(sVEntry0019A308**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 1);
     }
 }
@@ -1256,11 +1224,6 @@ extern void* D_004A28A8;
 extern void* D_004A289C;
 extern char D_004A1960[];
 
-struct sVEntryK19A638 {
-    short delta;
-    short index;
-    int (*fn)(void*, void*, char*, int, int, int);
-};
 
 extern "C" void func_0019A638(void* self)
 {
@@ -1279,7 +1242,7 @@ extern "C" void func_0019A638(void* self)
             char* e = (char*)func_0019E2B0((sEquipTable*)tbl, *(int*)((char*)self + 0xBC), *(int*)((char*)self + 0xA6C));
             if (e != 0) {
                 char* g = (char*)D_004A289C;
-                sVEntryK19A638* vt = *(sVEntryK19A638**)(g + 0x10D8);
+                sVEntry<int(void*, void*, char*, int, int, int)>* vt = *(sVEntry<int(void*, void*, char*, int, int, int)>**)(g + 0x10D8);
                 *(int*)((char*)self + 0xA70) = vt[46].fn(g + vt[46].delta, e + *(int*)(e + 0x14), D_004A1960, 0, 1, -1);
             } else {
                 *(int*)((char*)self + 0xA70) = -1;
@@ -1458,15 +1421,10 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019AA08);
 extern "C" int func_0019A098(void* self, const char* name);
 extern "C" void func_0019BD48(void* self, int a1);
 
-struct sVEK19AA08 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void showK19AA08(char* o, int on)
 {
-    sVEK19AA08* vt = *(sVEK19AA08**)(o + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
     vt[9].fn(o + vt[9].delta, on);
 }
 
@@ -1516,15 +1474,10 @@ void cUIText_setAsciiString(cUIText* self, const char* str);
 // PORT: the unit declares func_00198AF0(void*), but it formats an int price; bind an int view.
 extern "C" const char* func_00198AF0_price(int price) __asm__("func_00198AF0");
 
-struct sVEntryK19AB78 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void showK19AB78(void* o, int on)
 {
-    sVEntryK19AB78* vt = *(sVEntryK19AB78**)((char*)o + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)o + 8);
     vt[9].fn((char*)o + vt[9].delta, on);
 }
 
@@ -1587,15 +1540,10 @@ extern "C" void func_0019BA60(void* self, int idx);
 extern "C" int func_003A0C28(void* self);
 extern "C" void func_003A0E90(void* self, int str);
 
-struct sVE_AD18 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 struct sW_AD18 {
     char pad_0x0[0x8];
-    sVE_AD18* vt;                   // 0x8
+    sVEntry<void(void*, ...)>* vt;                   // 0x8
     char pad_0xC[0x8];
     int flags;                      // 0x14
 };
@@ -1616,7 +1564,7 @@ static inline int is_AD18(int m, int v)
 
 static inline void vcall_AD18(sW_AD18* o, int slot, int arg)
 {
-    sVE_AD18* vt = o->vt;
+    sVEntry<void(void*, ...)>* vt = o->vt;
     vt[slot].fn((char*)o + vt[slot].delta, arg);
 }
 
@@ -2056,15 +2004,10 @@ int GetHashValue32(char* str);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 
-struct sVEntryK19BA60 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void showK19BA60(void* o, int on)
 {
-    sVEntryK19BA60* vt = *(sVEntryK19BA60**)((char*)o + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)o + 8);
     vt[9].fn((char*)o + vt[9].delta, on);
 }
 
@@ -2184,11 +2127,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019BC90);
 #ifdef SKIP_ASM
 extern int D_004A18D8;
 
-struct sVEntry0019BC90 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sVec3K19BC90 {
     float x, y, z;
@@ -2203,7 +2141,7 @@ extern "C" void func_0019BC90(void* self)
         if (t < 0.0f) {
             t = 0.0f;
         }
-        sVEntry0019BC90* vt = *(sVEntry0019BC90**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 1);
         *(sVec3K19BC90*)(*(char**)((char*)self + 0x70) + 0x50) = sVec3K19BC90(1.0f, -t, 1.0f);
     }
@@ -2222,17 +2160,7 @@ struct sVec3K19BD48 {
     sVec3K19BD48(float a, float b, float c) : x(a), y(b), z(c) {}
 };
 
-struct sVEntryK19BD48 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
-struct sVEntryIK19BD48 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_0019BD48(void* self, int delta)
 {
@@ -2245,16 +2173,16 @@ extern "C" void func_0019BD48(void* self, int delta)
         t = 0.0f;
     if (D_004A18D8 < *(int*)((char*)self + 0xC4) + delta) {
         char* o = *(char**)((char*)self + 0x74);
-        sVEntryK19BD48* vt = *(sVEntryK19BD48**)(o + 8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
         vt[11].fn(o + vt[11].delta, D_004C66E8);
     } else {
         char* o = *(char**)((char*)self + 0x74);
-        sVEntryK19BD48* vt = *(sVEntryK19BD48**)(o + 8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
         vt[11].fn(o + vt[11].delta, D_004C66F8);
     }
     {
         char* o = *(char**)((char*)self + 0x74);
-        sVEntryIK19BD48* vt = *(sVEntryIK19BD48**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, 1);
     }
     *(sVec3K19BD48*)(*(char**)((char*)self + 0x74) + 0x50) = sVec3K19BD48(1.0f, -t, 1.0f);
@@ -3593,11 +3521,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019E3D0);
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E498);
 #ifdef SKIP_ASM
-struct sVEntry0019E498 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 struct sSlot0019E498 {
     int id;
     char flag;
@@ -3616,7 +3539,7 @@ extern "C" void func_0019E498(void* self, int flags)
     for (i = 0; i < 0x100; i++, s++) {
         if (s->id >= 0) {
             char* g = (char*)D_004A289C;
-            sVEntry0019E498* vt = *(sVEntry0019E498**)(g + 0x10D8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(g + 0x10D8);
             vt[50].fn(g + vt[50].delta, s->id);
         }
         s->id = -1;
@@ -3652,11 +3575,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019E588);
 #ifdef SKIP_ASM
 extern void* D_004A289C;
 
-struct sVE_E588 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 struct sRider_E588 {
     unsigned int item;  // 0x0
@@ -3701,7 +3619,7 @@ extern "C" void func_0019E588(sRider_E588* self, unsigned int item, int flag)
     }
     if (self->timer < 0) {
         char* w = (char*)D_004A289C;
-        sVE_E588* vt = *(sVE_E588**)(w + 0x10D8);
+        sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(w + 0x10D8);
         self->timer = vt[114].fn(w + vt[114].delta) + 4;
         self->fCC4 = self->fCC8;
         self->fCC8 = 0;
