@@ -1,6 +1,12 @@
 #include "common.h"
 
 extern int D_005305B0[];
+int cBELibrary_getProfileIndex(int);
+int cBELibrary_getCharacterID(int);
+int cBENewPlayerInterface_getPlayerID(int index);
+int cBENewPlayerInterface_isMissionMan(int index);
+extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
+extern char* D_004A28A8;
 
 // One player slot (0x1C bytes). D_00534FE0 is the live table, D_00535B20 its saved copy.
 struct sPlayerCharEntry {
@@ -133,7 +139,6 @@ void* cBENewPlayerInterface_getThis()
 //100%
 INCLUDE_ASM("be/beintplayer", func_001459B8);
 #ifdef SKIP_ASM
-extern void* D_004A11C0;
 // PORT: func_00145A98 takes no arguments; this caller passes its own self through untouched in $a0.
 extern "C" void func_00145A98(void* self);
 
@@ -151,8 +156,6 @@ extern "C" void func_001459B8(void* self)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145A98);
 #ifdef SKIP_ASM
-extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-
 extern "C" void func_00145A98(void* self)
 {
     for (int i = 0; i < 6; i++)
@@ -198,9 +201,6 @@ extern "C" void cBENewPlayerInterface_defaultCtrl(void* self)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145C38);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" int func_00145C38(void* self, int index)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -215,9 +215,6 @@ extern "C" int func_00145C38(void* self, int index)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145CB0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" void func_00145CB0(void* self, int index, int value)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -232,9 +229,6 @@ extern "C" void func_00145CB0(void* self, int index, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145D38);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" int func_00145D38(void* self, int index, int bit)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -250,8 +244,6 @@ extern "C" int func_00145D38(void* self, int index, int bit)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145DD0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
 extern "C" void func_00152430(void* self, int bit, int on);
 
 extern "C" void func_00145DD0(void* self, bool flag, int index, int bit)
@@ -266,8 +258,6 @@ extern "C" void func_00145DD0(void* self, bool flag, int index, int bit)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145E68);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
 extern "C" int func_001523E8(void* self, int kind);
 
 extern "C" int func_00145E68(void* self, int index, int kind)
@@ -282,8 +272,6 @@ extern "C" int func_00145E68(void* self, int index, int kind)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00145EF0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
 void* cBECharProfileDB_getScoreStats(void* self, int a, int b);
 
 extern "C" int func_00145EF0(void* self, int index, int a, int b)
@@ -299,7 +287,6 @@ extern "C" int func_00145EF0(void* self, int index, int a, int b)
 //100%
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_isPeakLocked);
 #ifdef SKIP_ASM
-
 // PORT: 64-bit ulong flag word (bit 12 = peak 1 locked, bit 13 = peak 2).
 extern "C" int cBENewPlayerInterface_isPeakLocked(void* self, int a, int b, int peak)
 {
@@ -329,9 +316,6 @@ extern "C" int cBENewPlayerInterface_isPeakLocked(void* self, int a, int b, int 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_isPeakLocked1);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int peak)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -342,9 +326,6 @@ extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int pe
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146070);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" void func_00146070(void* self, int index, int kind, int value)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -363,9 +344,6 @@ extern "C" void func_00146070(void* self, int index, int kind, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146150);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 // PORT: 64-bit `long` flag word (8 bytes on EE); use int64_t off-PS2.
 extern "C" int func_00146150(void* self, int index, int kind, int flag)
 {
@@ -408,9 +386,6 @@ extern "C" int func_00146150(void* self, int index, int kind, int flag)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146320);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" void func_00146320(void* self, int index, int kind, int flag, int value)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -445,8 +420,6 @@ extern "C" void func_00146320(void* self, int index, int kind, int flag, int val
 //100%
 INCLUDE_ASM("be/beintplayer", func_001464D0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-
 // PORT: 64-bit `long` flag word (8 bytes on EE); use int64_t off-PS2.
 extern "C" int func_001464D0(void* self, int index, int c, int kind, int flag)
 {
@@ -501,8 +474,6 @@ extern "C" int func_001464D0(void* self, int index, int c, int kind, int flag)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001466A0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
 struct sSel_66A0 {
     char pad_0x0[0x40];
     int idx;                // 0x40
@@ -572,8 +543,6 @@ extern "C" int func_001466A0(void* self, int index)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001468B0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-
 extern "C" void func_001468B0(void* self, int index, int c, int kind, int flag, int value)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -608,8 +577,6 @@ extern "C" void func_001468B0(void* self, int index, int c, int kind, int flag, 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146A70);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-
 // Returns one of the character's unlock flags (kinds 6-11, bits 14-19 of the 64-bit flag word).
 // PORT: 64-bit `long` flag word (8 bytes on EE); use int64_t off-PS2.
 extern "C" int func_00146A70(void* self, int index, int c, int kind)
@@ -682,9 +649,6 @@ extern "C" void func_00146C10(void* self, int arg1, int arg2, int arg3, int arg4
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146D98);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" int func_00146D98(void* self, int index)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -699,9 +663,6 @@ extern "C" int func_00146D98(void* self, int index)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146E10);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" void func_00146E10(void* self, int index, int value)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -716,8 +677,6 @@ extern "C" void func_00146E10(void* self, int index, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00146E98);
 #ifdef SKIP_ASM
-int cBENewPlayerInterface_getPlayerID(int index);
-
 struct sPlayerSlot_00146E98
 {
     int state;          // 0x0 (0xC in sPlayerCharEntry)
@@ -761,8 +720,6 @@ INCLUDE_ASM("be/beintplayer", func_00146F88);
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cBE_getBE();
 extern "C" int sprintf(char* buf, const char* fmt, ...);
-int cBENewPlayerInterface_getPlayerID(int index);
-extern char* D_004A28A8;
 extern char D_00534B30[];
 extern unsigned int D_00535610[];
 extern char D_0045A228[];
@@ -809,8 +766,6 @@ extern "C" char* func_00146F88(void* self, int idx)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147138);
 #ifdef SKIP_ASM
-extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
-
 extern "C" void func_00147138(void* self, int a1, const char* name)
 {
     strncpy(D_00534FE0[a1].name, name, 0xC);
@@ -832,7 +787,6 @@ struct sVtEntry_00147170 {
     unsigned short* (*fn)(void*, int);
 };
 
-extern char* D_004A28A8;
 
 extern "C" char* func_00147170(void* self, int idx)
 {
@@ -852,8 +806,6 @@ extern "C" char* func_00147170(void* self, int idx)
 //100%
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_setRiderCtrlID);
 #ifdef SKIP_ASM
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" void cBENewPlayerInterface_setRiderCtrlID(void* self, int index, int ctrl)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
@@ -868,8 +820,6 @@ extern "C" void cBENewPlayerInterface_setRiderCtrlID(void* self, int index, int 
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147290);
 #ifdef SKIP_ASM
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" int func_00147290(void* self, int index)
 {
     int id = cBENewPlayerInterface_getPlayerID(index);
@@ -922,7 +872,6 @@ extern "C" void cBENewPlayerInterface_setRiderCharID(void* self, int index, int 
 }
 #endif
 
-int cBENewPlayerInterface_getPlayerID(int index);
 
 //100%
 INCLUDE_ASM("be/beintplayer", cBENewPlayerInterface_getRiderCharID__FPvi);
@@ -1154,9 +1103,6 @@ extern "C" void cBENewPlayerInterface_resetFromMissionMan(void* self, int index)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147908);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" void* func_00147908(void* self, int index)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -1170,9 +1116,6 @@ extern "C" void* func_00147908(void* self, int index)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147980);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" int func_00147980(void* self, int index, int bit)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -1189,9 +1132,6 @@ extern "C" int func_00147980(void* self, int index, int bit)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147A30);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" void func_00147A30(void* self, int index, int bit, int on)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -1212,9 +1152,6 @@ extern "C" void func_00147A30(void* self, int index, int bit, int on)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147B20);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" int func_00147B20(void* self, int index, int slot)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -1227,9 +1164,6 @@ extern "C" int func_00147B20(void* self, int index, int slot)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147BB0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBENewPlayerInterface_getPlayerID(int index);
-
 extern "C" int func_00147BB0(void* self, int index, int slot)
 {
     int profile = cBELibrary_getProfileIndex(index);
@@ -1242,8 +1176,6 @@ extern "C" int func_00147BB0(void* self, int index, int slot)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147C40);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_00147C40(void* self, int value, int flag)
 {
     int c = cBELibrary_getCharacterID(0);
@@ -1262,8 +1194,6 @@ extern "C" void func_00147C40(void* self, int value, int flag)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147CB8);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-
 extern "C" short func_00147CB8(void* self, int which)
 {
     int c = cBELibrary_getCharacterID(0);
@@ -1283,8 +1213,6 @@ extern "C" short func_00147CB8(void* self, int which)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147D20);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_00147D20(void* self, int which)
 {
     int profile = 0;
@@ -1322,8 +1250,6 @@ extern "C" void func_00147D20(void* self, int which)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147E18);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_00147E18(void* self, int which)
 {
     int profile = 0;
@@ -1361,8 +1287,6 @@ extern "C" void func_00147E18(void* self, int which)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00147F10);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-
 extern "C" short func_00147F10(void* self, int flag)
 {
     int c = cBELibrary_getCharacterID(0);
@@ -1394,7 +1318,6 @@ struct cBEIface_00147F78
     int field_0x8;
     void* vtable;
 };
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern const char D_0045A280[];
 extern sVTablePlayer_00147F78 D_0045AD68;
 extern void* D_004A11C4;
@@ -1442,10 +1365,6 @@ extern "C" void func_00147FD8(void)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148098);
 #ifdef SKIP_ASM
-extern sPlayerSlot_00147FD8 D_004A7887[];
-extern sPlayerSlot_00147FD8 D_004B13D7[];
-extern sPlayerSlot_00147FD8 D_004BAF27[];
-
 extern "C" void func_00148098(void)
 {
     for (int i = 0; i < 10; i++)
@@ -1460,8 +1379,6 @@ extern "C" void func_00148098(void)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148158);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-
 // Returns one of a character's seven stat levels for the given profile, or -1.
 extern "C" int func_00148158(void* self, int profile, unsigned int stat)
 {
@@ -1519,8 +1436,6 @@ extern "C" sCharStat* func_001482D0(sCharStat* dst, int unused, int c)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148328);
 #ifdef SKIP_ASM
-int cBELibrary_getCharacterID(int);
-
 extern "C" sCharStat* func_00148328(sCharStat* dst, int unused, int rider)
 {
     int c = cBELibrary_getCharacterID(rider);
@@ -1532,9 +1447,6 @@ extern "C" sCharStat* func_00148328(sCharStat* dst, int unused, int rider)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001483A0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_001483A0(void* self, int rider, int value)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1546,9 +1458,6 @@ extern "C" void func_001483A0(void* self, int rider, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148410);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" signed char func_00148410(void* self, int rider)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1560,9 +1469,6 @@ extern "C" signed char func_00148410(void* self, int rider)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148470);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_00148470(void* self, int rider, int value)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1574,9 +1480,6 @@ extern "C" void func_00148470(void* self, int rider, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001484E0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" signed char func_001484E0(void* self, int rider)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1588,9 +1491,6 @@ extern "C" signed char func_001484E0(void* self, int rider)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148540);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_00148540(void* self, int rider, int value)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1602,9 +1502,6 @@ extern "C" void func_00148540(void* self, int rider, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001485B0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" signed char func_001485B0(void* self, int rider)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1616,9 +1513,6 @@ extern "C" signed char func_001485B0(void* self, int rider)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148610);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_00148610(void* self, int rider, int value)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1630,9 +1524,6 @@ extern "C" void func_00148610(void* self, int rider, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148680);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" signed char func_00148680(void* self, int rider)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1644,9 +1535,6 @@ extern "C" signed char func_00148680(void* self, int rider)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001486E0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_001486E0(void* self, int rider, int value)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1658,9 +1546,6 @@ extern "C" void func_001486E0(void* self, int rider, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148750);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" signed char func_00148750(void* self, int rider)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1672,9 +1557,6 @@ extern "C" signed char func_00148750(void* self, int rider)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001487B0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_001487B0(void* self, int rider, int value)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1686,9 +1568,6 @@ extern "C" void func_001487B0(void* self, int rider, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148820);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" signed char func_00148820(void* self, int rider)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1700,9 +1579,6 @@ extern "C" signed char func_00148820(void* self, int rider)
 //100%
 INCLUDE_ASM("be/beintplayer", func_00148880);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" void func_00148880(void* self, int rider, int value)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1714,9 +1590,6 @@ extern "C" void func_00148880(void* self, int rider, int value)
 //100%
 INCLUDE_ASM("be/beintplayer", func_001488F0);
 #ifdef SKIP_ASM
-int cBELibrary_getProfileIndex(int);
-int cBELibrary_getCharacterID(int);
-
 extern "C" signed char func_001488F0(void* self, int rider)
 {
     int a = cBELibrary_getProfileIndex(rider);
@@ -1905,8 +1778,6 @@ extern "C" signed char func_00148D58(void* self, int a1, int a2)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintplayer", func_00148D80);
 #ifdef SKIP_ASM
-int cBENewPlayerInterface_isMissionMan(int index);
-
 extern "C" float func_00148D80(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
@@ -1925,8 +1796,6 @@ extern "C" float func_00148D80(void* self, int rider, int value)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("be/beintplayer", func_00148E68);
 #ifdef SKIP_ASM
-int cBENewPlayerInterface_isMissionMan(int index);
-
 extern "C" float func_00148E68(void* self, int rider, int value)
 {
     int profile = cBELibrary_getProfileIndex(rider);
