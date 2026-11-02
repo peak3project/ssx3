@@ -3316,8 +3316,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300E28);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_0E28 { int idx; int val; int pad; int kind; };
-struct R12_0E28 { int a; int b; int c; };
-extern R12_0E28 D_004C9098_0E28 __asm__("D_004C9098");
 
 extern int D_004A3C60_0E28[2] __asm__("D_004A3C60");
 extern "C" void func_0030B928(int, unsigned, int);
@@ -3325,7 +3323,7 @@ extern int D_004A3DD8_0E28 __asm__("D_004A3DD8");
 extern int D_004A56AC_0E28 __asm__("D_004A56AC");
 struct T12u_0E28 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12u_0E28 D_004FBB68_0E28 __asm__("D_004FBB68");
-extern "C" R12_0E28 func_00300E28(int n, Ent_0E28* e) {
+extern "C" cLunoValue func_00300E28(int n, Ent_0E28* e) {
     if (D_004A56AC_0E28 == 0) {
         D_004FBB68_0E28.a = 0xFFFFFFFFu;
         D_004FBB68_0E28.b = 1;
@@ -3348,7 +3346,7 @@ extern "C" R12_0E28 func_00300E28(int n, Ent_0E28* e) {
     unsigned x = vp[0];
     if (x != 0xFFFFFFFFu)
         func_0030B928(D_004A3DD8_0E28, x, vp[1]);
-    return D_004C9098_0E28;
+    return D_004C9098;
 }
 #endif
 
