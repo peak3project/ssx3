@@ -142,6 +142,11 @@ struct sVtxF {
     sVtxF() {}
 };
 
+// EA's string class (cBXString): one pointer to its text.
+struct cBXString {
+    char* str;
+};
+
 // Base of the menu items; cMenu_addItem stores the owning menu in the first word.
 struct cMenuItem {
     void* owner;    // 0x0
@@ -2769,8 +2774,6 @@ extern char D_004A39B0[];
 extern char D_004A39B8[];
 extern char D_004A39C0[];
 
-struct sBXStrDFD8 { char* p; };
-
 // returns a cBXString by value (hidden result pointer in $4); the unit's later declaration says void.
 void* func_002CDFD8_impl(void* out, float v) __asm__("func_002CDFD8");
 
@@ -2796,8 +2799,8 @@ void* func_002CDFD8_impl(void* out, float v)
     } else {
         fmt = D_004A39C0;
     }
-    sBXStrDFD8 s;
-    s.p = (char*)D_004A3E90;
+    cBXString s;
+    s.str = (char*)D_004A3E90;
     func_003194A8(&s, fmt, func_00413AF8(v));
     cBXString_cBXString1(out, &s);
     cBXString__cBXString(&s, 2);
@@ -2812,16 +2815,12 @@ INCLUDE_ASM("util/menu", func_002CE100);
 void* func_002CA988_5(void*, int, int, int, void*) __asm__("func_002CA988");
 extern "C" void cBXString__cBXString(void* self, int flags);
 
-struct func_002CE100_sString {
-    char* str;
-};
-
 // returns a cBXString by value (hidden result pointer in $4)
-extern "C" void func_002CDFD8(func_002CE100_sString* out, float v);
+extern "C" void func_002CDFD8(cBXString* out, float v);
 
 extern "C" void func_002CE100(void* self, int a1)
 {
-    func_002CE100_sString s;
+    cBXString s;
     func_002CDFD8(&s, **(float**)((char*)self + 0x18) * *(float*)((char*)self + 0x24) + *(float*)((char*)self + 0x28));
     func_002CA988_5(self, a1, *(int*)((char*)self + 0x14), 0, s.str);
     cBXString__cBXString(&s, 2);
