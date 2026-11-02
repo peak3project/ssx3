@@ -2471,25 +2471,23 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF748);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003DF2C0_F748(void) __asm__("func_003DF2C0");
-extern int D_00519BF8_F748[] __asm__("D_00519BF8");
-struct Q_F748 { int w0; int p1[1]; int f8; int fc; int f10; int f14; int f18; volatile int h; int p2[1]; int f24; int f28; int f2c; };
 
 int func_003DF748(int a, int b, int c) {
-    struct Q_F748 *p = (struct Q_F748 *)func_003DEED8((void **)D_00519BF8_F748);
+    struct sReq *p = func_003DEED8(&D_00519BF8);
     if (p == 0) return 0;
     func_003DEF40(p);
     p->f28 = c;
-    p->f2c = b;
-    p->f8 = 0;
-    p->fc = 0;
+    p->f2C = b;
+    p->f08 = 0;
+    p->f0C = 0;
     p->f10 = 0;
     p->f14 = 0;
     p->f18 = 0;
     p->f24 = 0;
-    p->h = func_003DD4E8(a, 1, 100, p);
-    if (p->h == 0) return 0;
-    func_003DCF70(p->h, func_003DF2C0_F748);
-    return p->w0;
+    p->f1C = func_003DD4E8(a, 1, 100, p);
+    if (p->f1C == 0) return 0;
+    func_003DCF70(p->f1C, func_003DF2C0_F748);
+    return p->f00;
 }
 #endif
 
