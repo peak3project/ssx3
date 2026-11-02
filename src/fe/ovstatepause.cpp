@@ -7,6 +7,139 @@ template <class F> struct sVEntry {
     short index;
     F* fn;
 };
+
+struct sColour {
+    float r, g, b, a;
+    sColour(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
+};
+
+// The memory card object (cPS2MemCard in the RTTI list) at game + 0x434, as these functions call it.
+class cMemCard {
+public:
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual int v08();
+    virtual int v09();
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual void v14(int, void*);
+    virtual int v15();
+    virtual int v16();
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual int v25();
+    virtual int v26();
+    virtual int v27();
+    virtual int v28();
+    virtual int v29();
+    virtual int v30();
+    virtual int v31();
+    virtual int v32();
+    virtual int v33();
+    virtual int v34();
+    virtual int v35();
+    virtual int v36();
+    virtual int v37();
+    virtual int v38();
+    virtual int v39();
+    virtual int v40();
+    virtual int v41();
+    virtual int v42();
+    virtual int v43();
+    virtual int v44();
+    virtual int v45();
+    virtual int v46();
+    virtual int v47();
+    virtual int v48();
+    virtual int v49();
+    virtual int v50();
+    virtual int v51();
+    virtual int v52();
+    virtual int v53();
+    virtual int v54(int);
+    virtual int v55();
+    virtual int v56();
+    virtual int v57();
+    virtual int v58();
+    virtual int v59();
+    virtual int v60();
+    virtual int v61();
+    virtual int v62();
+    virtual int v63();
+    virtual void v64(void*);
+    virtual int v65();
+    virtual int v66(int);
+    virtual int v67(int);
+};
+
+// The game object func_00227F80 returns, as these functions call it: vptr at 0x748 (slot 1 posts a message).
+class cMoviePlayer {
+public:
+    char pad[0x748];
+    virtual void v01(int);
+};
+
+// The pause menu's memory-card states (func_001FDF40, func_001FECA0) as these functions call them.
+class cCardState {
+public:
+    int pad[2];
+    virtual int v01();
+    virtual int v02();
+    virtual int v03();
+    virtual int v04();
+    virtual int v05();
+    virtual int v06();
+    virtual int v07();
+    virtual int v08();
+    virtual int v09();
+    virtual int v10();
+    virtual int v11();
+    virtual int v12();
+    virtual int v13();
+    virtual int v14();
+    virtual int v15();
+    virtual int v16();
+    virtual int v17();
+    virtual int v18();
+    virtual int v19();
+    virtual int v20();
+    virtual int v21();
+    virtual int v22();
+    virtual int v23();
+    virtual int v24();
+    virtual int v25();
+    virtual int v26();
+    virtual int v27();
+    virtual int v28();
+    virtual int v29();
+    virtual int v30();
+    virtual int v31();
+    virtual int v32();
+    virtual int v33();
+    virtual int v34();
+    virtual void v35(int);
+    virtual int v36();
+    virtual int v37();
+    virtual int v38();
+    virtual int v39();
+    virtual int v40();
+    virtual int v41();
+    virtual int v42();
+    virtual void v43();
+};
 #include "ai/rider.h"
 
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_OPTIONS_onCreateScreen);
@@ -321,7 +454,7 @@ public:
     virtual void v04();
     virtual void v05();
     virtual void v06();
-    virtual void v07(int v);
+    virtual void setFocus(int v);
     virtual void setEnabled(int v);
     virtual void setVisible(int v);
 };
@@ -370,7 +503,7 @@ public:
     virtual void v04();
     virtual void v05();
     virtual void v06();
-    virtual void v07(int v);
+    virtual void setFocus(int v);
     virtual void setEnabled(int v);
     virtual void setVisible(int v);
 };
@@ -382,7 +515,7 @@ extern "C" void func_001FAFF8(void* self, bool on)
     o->setEnabled(!on);
     if (on) {
         cUIObj_1FAFF8* m = (cUIObj_1FAFF8*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2470));
-        m->v07(1);
+        m->setFocus(1);
         cUIMenu_setSelectedByIndex(m, 1);
     }
 }
@@ -551,11 +684,6 @@ extern char D_0046FB48[];
 extern char D_0046FAD8[];
 extern char D_0046FB00[];
 
-struct sColor_FB458 {
-    float r, g, b, a;
-    sColor_FB458(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
-};
-
 class cUIObj_FB458 {
 public:
     int pad[2];
@@ -569,7 +697,7 @@ public:
     virtual void setEnabled(int v);
     virtual void setVisible(int v);
     virtual void v10();
-    virtual int setColor(const sColor_FB458& c);
+    virtual int setColor(const sColour& c);
 };
 
 extern "C" void func_001FB458(void* self, int on)
@@ -578,9 +706,9 @@ extern "C" void func_001FB458(void* self, int on)
     cUIObj_FB458* a = (cUIObj_FB458*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046FAD8));
     cUIObj_FB458* b = (cUIObj_FB458*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046FB00));
     if (on) {
-        t->setColor(sColor_FB458(1.0f, 1.0f, 1.0f, 1.0f));
+        t->setColor(sColour(1.0f, 1.0f, 1.0f, 1.0f));
     } else {
-        t->setColor(sColor_FB458(1.0f, 0.0f, 0.0f, 0.0f));
+        t->setColor(sColour(1.0f, 0.0f, 0.0f, 0.0f));
     }
     a->setVisible(on);
     b->setVisible(on);
@@ -596,11 +724,6 @@ extern char D_0046FA90[];
 extern char D_0046FAC8[];
 extern char D_0046FAE8[];
 
-struct sColor_FB588 {
-    float r, g, b, a;
-    sColor_FB588(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
-};
-
 class cUIObj_FB588 {
 public:
     int pad[2];
@@ -614,7 +737,7 @@ public:
     virtual void setEnabled(int v);
     virtual void setVisible(int v);
     virtual void v10();
-    virtual int setColor(const sColor_FB588& c);
+    virtual int setColor(const sColour& c);
 };
 
 extern "C" void func_001FB588(void* self, int on)
@@ -623,9 +746,9 @@ extern "C" void func_001FB588(void* self, int on)
     cUIObj_FB588* a = (cUIObj_FB588*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046FAC8));
     cUIObj_FB588* b = (cUIObj_FB588*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046FAE8));
     if (on) {
-        t->setColor(sColor_FB588(1.0f, 1.0f, 1.0f, 1.0f));
+        t->setColor(sColour(1.0f, 1.0f, 1.0f, 1.0f));
     } else {
-        t->setColor(sColor_FB588(1.0f, 0.0f, 0.0f, 0.0f));
+        t->setColor(sColour(1.0f, 0.0f, 0.0f, 0.0f));
     }
     a->setVisible(on);
     b->setVisible(on);
@@ -801,7 +924,6 @@ extern char D_0046FE80[];
 extern char D_0046FE98[];
 extern char D_0046FDE8[];
 extern char D_004A2138[];
-
 
 static inline unsigned short* lookupString_1FC878(char* name)
 {
@@ -1135,7 +1257,6 @@ extern char D_00470068[];
 extern char D_00470080[];
 extern char D_00470098[];
 
-
 static inline unsigned short* lookupString_1FD320(char* name)
 {
     char* g = *(char**)((char*)D_004A28A8 + 0x8C);
@@ -1447,124 +1568,6 @@ extern "C" void func_001FDF00(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FDF40);
 #ifdef SKIP_ASM
-class cMCSub_DF40 {
-public:
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual int v04();
-    virtual int v05();
-    virtual int v06();
-    virtual int v07();
-    virtual int v08();
-    virtual int v09();
-    virtual int v10();
-    virtual int v11();
-    virtual int v12();
-    virtual int v13();
-    virtual void v14(int, void*);
-    virtual int v15();
-    virtual int v16();
-    virtual int v17();
-    virtual int v18();
-    virtual int v19();
-    virtual int v20();
-    virtual int v21();
-    virtual int v22();
-    virtual int v23();
-    virtual int v24();
-    virtual int v25();
-    virtual int v26();
-    virtual int v27();
-    virtual int v28();
-    virtual int v29();
-    virtual int v30();
-    virtual int v31();
-    virtual int v32();
-    virtual int v33();
-    virtual int v34();
-    virtual int v35();
-    virtual int v36();
-    virtual int v37();
-    virtual int v38();
-    virtual int v39();
-    virtual int v40();
-    virtual int v41();
-    virtual int v42();
-    virtual int v43();
-    virtual int v44();
-    virtual int v45();
-    virtual int v46();
-    virtual int v47();
-    virtual int v48();
-    virtual int v49();
-    virtual int v50();
-    virtual int v51();
-    virtual int v52();
-    virtual int v53();
-    virtual int v54(int);
-    virtual int v55();
-    virtual int v56();
-    virtual int v57();
-    virtual int v58();
-    virtual int v59();
-    virtual int v60();
-    virtual int v61();
-    virtual int v62();
-    virtual int v63();
-    virtual void v64(void*);
-    virtual int v65();
-    virtual int v66(int);
-    virtual int v67(int);
-};
-
-class cState_DF40 {
-public:
-    int pad[2];
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual int v04();
-    virtual int v05();
-    virtual int v06();
-    virtual int v07();
-    virtual int v08();
-    virtual int v09();
-    virtual int v10();
-    virtual int v11();
-    virtual int v12();
-    virtual int v13();
-    virtual int v14();
-    virtual int v15();
-    virtual int v16();
-    virtual int v17();
-    virtual int v18();
-    virtual int v19();
-    virtual int v20();
-    virtual int v21();
-    virtual int v22();
-    virtual int v23();
-    virtual int v24();
-    virtual int v25();
-    virtual int v26();
-    virtual int v27();
-    virtual int v28();
-    virtual int v29();
-    virtual int v30();
-    virtual int v31();
-    virtual int v32();
-    virtual int v33();
-    virtual int v34();
-    virtual void v35(int);
-    virtual int v36();
-    virtual int v37();
-    virtual int v38();
-    virtual int v39();
-    virtual int v40();
-    virtual int v41();
-    virtual int v42();
-    virtual void v43();
-};
 
 class cUIObj_DF40 {
 public:
@@ -1576,8 +1579,8 @@ public:
     virtual int v05();
     virtual int v06();
     virtual int v07();
-    virtual void v08(int);
-    virtual void v09(int);
+    virtual void setStatic(int);
+    virtual void setVisible(int);
     virtual int v10();
     virtual int v11();
     virtual int v12();
@@ -1596,16 +1599,6 @@ public:
     virtual void v25(int);
 };
 
-
-class cG_DF40 {
-public:
-    int pad;
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual void v04(int);
-};
-
 extern "C" void func_001D8240();
 extern "C" int func_001D97E0(void* self, void* mp, int dev, int a3);
 extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* mp, int dev, unsigned short* buf, int len);
@@ -1620,18 +1613,18 @@ extern char D_00470158[];
 extern char D_00470168[];
 extern char D_00470178[];
 
-static inline cUIObj_DF40* getObj_DF40(cState_DF40* self, char* name)
+static inline cUIObj_DF40* getObj_DF40(cCardState* self, char* name)
 {
     return (cUIObj_DF40*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
 }
 
-extern "C" void func_001FDF40(cState_DF40* self)
+extern "C" void func_001FDF40(cCardState* self)
 {
     unsigned short buf[0x320];
     char name[0x40];
     char* mp = (char*)func_00227F80(D_004A28A8);
     if (self->v42()) {
-        if (!(*(cMCSub_DF40**)(mp + 0x434))->v53()) {
+        if (!(*(cMemCard**)(mp + 0x434))->v53()) {
             func_001D8240();
         } else if (*(int*)((char*)self + 0x214) != 3) {
             self->v35(3);
@@ -1643,9 +1636,9 @@ extern "C" void func_001FDF40(cState_DF40* self)
         cMCOverlayManager_GetDeviceDisplayString(mp, *(int*)(mp + 0x428), buf, 0x320);
         func_003A0D00(getObj_DF40(self, D_00470130), buf);
         cUIObj_DF40* o = getObj_DF40(self, D_004700F0);
-        (*(cMCSub_DF40**)(mp + 0x434))->v64(buf);
+        (*(cMemCard**)(mp + 0x434))->v64(buf);
         func_003A0E90(o, buf);
-        o->v09(0);
+        o->setVisible(0);
         char* g = *(char**)((char*)D_004A28A8 + 0x8C);
         sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(g + 4);
         char* t = g + vt[4].delta;
@@ -1653,46 +1646,46 @@ extern "C" void func_001FDF40(cState_DF40* self)
         for (int i = 1; i < 5; i++) {
             sprintf(name, D_00470148, i);
             o = getObj_DF40(self, name);
-            (*(cMCSub_DF40**)(mp + 0x434))->v14(i - 1, (char*)self + 0x230);
+            (*(cMemCard**)(mp + 0x434))->v14(i - 1, (char*)self + 0x230);
             func_003A0E90(o, (unsigned short*)((char*)self + 0x230));
-            if (!(*(cMCSub_DF40**)(mp + 0x434))->v67(i - 1) && !(*(cMCSub_DF40**)(mp + 0x434))->v66(i - 1)
-                && (*(cMCSub_DF40**)(mp + 0x434))->v55()) {
+            if (!(*(cMemCard**)(mp + 0x434))->v67(i - 1) && !(*(cMemCard**)(mp + 0x434))->v66(i - 1)
+                && (*(cMemCard**)(mp + 0x434))->v55()) {
                 if (sel == 0) {
                     sel = 1;
                     o->v25(0);
-                    o->v08(0);
+                    o->setStatic(0);
                 } else {
                     o->v25(1);
-                    o->v08(1);
+                    o->setStatic(1);
                 }
-            } else if ((*(cMCSub_DF40**)(mp + 0x434))->v54(*(int*)(mp + 0x428))) {
-                if ((*(cMCSub_DF40**)(mp + 0x434))->v66(i - 1)) {
-                    o->v08(1);
+            } else if ((*(cMemCard**)(mp + 0x434))->v54(*(int*)(mp + 0x428))) {
+                if ((*(cMemCard**)(mp + 0x434))->v66(i - 1)) {
+                    o->setStatic(1);
                     o->v25(1);
                 } else {
-                    o->v08(0);
+                    o->setStatic(0);
                     o->v25(0);
                 }
             } else {
                 o->v25(1);
-                o->v08(1);
+                o->setStatic(1);
             }
         }
         if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 1) == -1)
-            getObj_DF40(self, D_00470168)->v09(0);
+            getObj_DF40(self, D_00470168)->setVisible(0);
         else
-            getObj_DF40(self, D_00470168)->v09(1);
+            getObj_DF40(self, D_00470168)->setVisible(1);
         if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 0) == -1)
-            getObj_DF40(self, D_00470178)->v09(0);
+            getObj_DF40(self, D_00470178)->setVisible(0);
         else
-            getObj_DF40(self, D_00470178)->v09(1);
+            getObj_DF40(self, D_00470178)->setVisible(1);
     }
     if (*(int*)((char*)self + 0x214) != 3) {
         for (int i = 1; i < 5; i++) {
             sprintf(name, D_00470148, i);
             cUIObj_DF40* o = getObj_DF40(self, name);
             o->v25(0);
-            o->v08(1);
+            o->setStatic(1);
         }
     }
 }
@@ -1803,83 +1796,6 @@ void* func_00270ED8(void* self);
 // PORT: the unit declares func_0023D570 as returning void*; this caller ignores the result (void view by asm label).
 extern "C" void func_0023D570_v(void* self, int mode) __asm__("func_0023D570");
 
-class cMovieSub434_1FE6E8 {
-public:
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual int v04();
-    virtual int v05();
-    virtual int v06();
-    virtual int v07();
-    virtual int v08();
-    virtual int v09();
-    virtual int v10();
-    virtual int v11();
-    virtual int v12();
-    virtual int v13();
-    virtual int v14();
-    virtual int v15();
-    virtual int v16();
-    virtual int v17();
-    virtual int v18();
-    virtual int v19();
-    virtual int v20();
-    virtual int v21();
-    virtual int v22();
-    virtual int v23();
-    virtual int v24();
-    virtual int v25();
-    virtual int v26();
-    virtual int v27();
-    virtual int v28();
-    virtual int v29();
-    virtual int v30();
-    virtual int v31();
-    virtual int v32();
-    virtual int v33();
-    virtual int v34();
-    virtual int v35();
-    virtual int v36();
-    virtual int v37();
-    virtual int v38();
-    virtual int v39();
-    virtual int v40();
-    virtual int v41();
-    virtual int v42();
-    virtual int v43();
-    virtual int v44();
-    virtual int v45();
-    virtual int v46();
-    virtual int v47();
-    virtual int v48();
-    virtual int v49();
-    virtual int v50();
-    virtual int v51();
-    virtual int v52();
-    virtual int v53();
-    virtual int v54(int);
-    virtual int v55();
-    virtual int v56();
-    virtual int v57();
-    virtual int v58();
-    virtual int v59();
-    virtual int v60();
-    virtual int v61();
-    virtual int v62();
-    virtual int v63();
-    virtual int v64();
-    virtual int v65();
-    virtual int v66();
-    virtual int v67(int);
-};
-
-class cMoviePlayer_1FE6E8 {
-public:
-    char pad[0x748];
-    virtual void v01(int);
-};
-
 extern "C" void func_001FE6E8(void* self, void* msg, unsigned int type)
 {
     if (msg == 0)
@@ -1922,7 +1838,7 @@ extern "C" void func_001FE6E8(void* self, void* msg, unsigned int type)
             return;
         *(int*)((char*)self + 0x1E4) = 1;
         if (s == 0 || s == 2 || s == 1)
-            ((cMoviePlayer_1FE6E8*)mp)->v01(0);
+            ((cMoviePlayer*)mp)->v01(0);
         *(int*)((char*)self + 0x1C0) = 6;
         break;
     }
@@ -1932,7 +1848,7 @@ extern "C" void func_001FE6E8(void* self, void* msg, unsigned int type)
         if (*(int*)((char*)self + 0x1C0) == 6)
             return;
         char* mp = (char*)func_00227F80(D_004A28A8);
-        if (!(*(cMovieSub434_1FE6E8**)(mp + 0x434))->v54(*(int*)(mp + 0x428)))
+        if (!(*(cMemCard**)(mp + 0x434))->v54(*(int*)(mp + 0x428)))
             return;
         int v = *(int*)((char*)msg + 0x18);
         *(int*)((char*)self + 0x1C4) = v;
@@ -1940,12 +1856,12 @@ extern "C" void func_001FE6E8(void* self, void* msg, unsigned int type)
         int s = *(int*)((char*)self + 0x1C0);
         if (s != one)
             return;
-        if (!(*(cMovieSub434_1FE6E8**)(mp + 0x434))->v67(*(int*)((char*)self + 0x1C4)))
+        if (!(*(cMemCard**)(mp + 0x434))->v67(*(int*)((char*)self + 0x1C4)))
             return;
         *(int*)((char*)self + 0x1A8) = s;
         *(int*)((char*)self + 0x1C0) = 4;
         func_0023D570_v(mp, 0);
-        ((cMoviePlayer_1FE6E8*)mp)->v01(0x18);
+        ((cMoviePlayer*)mp)->v01(0x18);
         break;
     }
     }
@@ -2018,8 +1934,8 @@ public:
     virtual void v05();
     virtual void v06();
     virtual void v07();
-    virtual void v08(int on);
-    virtual void v09(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
 };
 
 static inline void* engine_1FE9A8(char* self)
@@ -2035,11 +1951,11 @@ extern "C" void func_001FE9A8(char* self)
         cUIScreen_playFrame(scr, 0, 0);
         cUIText_setAsciiString((cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004700F0)), D_004A2560);
         cUIObj_1FE9A8* o = (cUIObj_1FE9A8*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00470100));
-        o->v09(0);
+        o->setVisible(0);
         o = (cUIObj_1FE9A8*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00470118));
-        o->v09(1);
+        o->setVisible(1);
         o = (cUIObj_1FE9A8*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_0046E9F8));
-        o->v09(1);
+        o->setVisible(1);
         cUIText_setAsciiString((cUIText*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00470130)), D_004A2560);
         for (int i = 1; i < 5; i++) {
             char buf[0x20];
@@ -2048,13 +1964,13 @@ extern "C" void func_001FE9A8(char* self)
             if (i == 1) {
                 *(int*)((char*)o + 0x18) = 0;
             } else {
-                o->v08(1);
-                o->v09(0);
+                o->setStatic(1);
+                o->setVisible(0);
             }
             sprintf(buf, D_004A2138, i);
             o = (cUIObj_1FE9A8*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(buf));
             if (i >= 2)
-                o->v09(0);
+                o->setVisible(0);
         }
     }
     void* s2 = cUIEngine_addScreenByHashName(engine_1FE9A8(self), self, GetHashValue32(D_0046E378), 0);
@@ -2092,124 +2008,6 @@ extern "C" void func_001FEC60(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FECA0);
 #ifdef SKIP_ASM
-class cMCSub_ECA0 {
-public:
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual int v04();
-    virtual int v05();
-    virtual int v06();
-    virtual int v07();
-    virtual int v08();
-    virtual int v09();
-    virtual int v10();
-    virtual int v11();
-    virtual int v12();
-    virtual int v13();
-    virtual void v14(int, void*);
-    virtual int v15();
-    virtual int v16();
-    virtual int v17();
-    virtual int v18();
-    virtual int v19();
-    virtual int v20();
-    virtual int v21();
-    virtual int v22();
-    virtual int v23();
-    virtual int v24();
-    virtual int v25();
-    virtual int v26();
-    virtual int v27();
-    virtual int v28();
-    virtual int v29();
-    virtual int v30();
-    virtual int v31();
-    virtual int v32();
-    virtual int v33();
-    virtual int v34();
-    virtual int v35();
-    virtual int v36();
-    virtual int v37();
-    virtual int v38();
-    virtual int v39();
-    virtual int v40();
-    virtual int v41();
-    virtual int v42();
-    virtual int v43();
-    virtual int v44();
-    virtual int v45();
-    virtual int v46();
-    virtual int v47();
-    virtual int v48();
-    virtual int v49();
-    virtual int v50();
-    virtual int v51();
-    virtual int v52();
-    virtual int v53();
-    virtual int v54(int);
-    virtual int v55();
-    virtual int v56();
-    virtual int v57();
-    virtual int v58();
-    virtual int v59();
-    virtual int v60();
-    virtual int v61();
-    virtual int v62();
-    virtual int v63();
-    virtual void v64(void*);
-    virtual int v65();
-    virtual int v66(int);
-    virtual int v67(int);
-};
-
-class cState_ECA0 {
-public:
-    int pad[2];
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual int v04();
-    virtual int v05();
-    virtual int v06();
-    virtual int v07();
-    virtual int v08();
-    virtual int v09();
-    virtual int v10();
-    virtual int v11();
-    virtual int v12();
-    virtual int v13();
-    virtual int v14();
-    virtual int v15();
-    virtual int v16();
-    virtual int v17();
-    virtual int v18();
-    virtual int v19();
-    virtual int v20();
-    virtual int v21();
-    virtual int v22();
-    virtual int v23();
-    virtual int v24();
-    virtual int v25();
-    virtual int v26();
-    virtual int v27();
-    virtual int v28();
-    virtual int v29();
-    virtual int v30();
-    virtual int v31();
-    virtual int v32();
-    virtual int v33();
-    virtual int v34();
-    virtual void v35(int);
-    virtual int v36();
-    virtual int v37();
-    virtual int v38();
-    virtual int v39();
-    virtual int v40();
-    virtual int v41();
-    virtual int v42();
-    virtual void v43();
-};
 
 class cUIObj_ECA0 {
 public:
@@ -2221,8 +2019,8 @@ public:
     virtual int v05();
     virtual int v06();
     virtual int v07();
-    virtual void v08(int);
-    virtual void v09(int);
+    virtual void setStatic(int);
+    virtual void setVisible(int);
     virtual int v10();
     virtual int v11();
     virtual int v12();
@@ -2241,16 +2039,6 @@ public:
     virtual void v25(int);
 };
 
-
-class cG_ECA0 {
-public:
-    int pad;
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual void v04(int);
-};
-
 extern "C" void func_001D8240();
 extern "C" int func_001D97E0(void* self, void* mp, int dev, int a3);
 extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* mp, int dev, unsigned short* buf, int len);
@@ -2265,18 +2053,18 @@ extern char D_00470158[];
 extern char D_00470168[];
 extern char D_00470178[];
 
-static inline cUIObj_ECA0* getObj_ECA0(cState_ECA0* self, char* name)
+static inline cUIObj_ECA0* getObj_ECA0(cCardState* self, char* name)
 {
     return (cUIObj_ECA0*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(name));
 }
 
-extern "C" void func_001FECA0(cState_ECA0* self)
+extern "C" void func_001FECA0(cCardState* self)
 {
     unsigned short buf[0x320];
     char name[0x40];
     char* mp = (char*)func_00227F80(D_004A28A8);
     if (self->v42()) {
-        if (!(*(cMCSub_ECA0**)(mp + 0x434))->v53()) {
+        if (!(*(cMemCard**)(mp + 0x434))->v53()) {
             func_001D8240();
         } else if (*(int*)((char*)self + 0x214) != 3) {
             self->v35(3);
@@ -2287,47 +2075,47 @@ extern "C" void func_001FECA0(cState_ECA0* self)
         cMCOverlayManager_GetDeviceDisplayString(mp, *(int*)(mp + 0x428), buf, 0x320);
         func_003A0D00(getObj_ECA0(self, D_00470130), buf);
         cUIObj_ECA0* o = getObj_ECA0(self, D_004700F0);
-        (*(cMCSub_ECA0**)(mp + 0x434))->v64(buf);
+        (*(cMemCard**)(mp + 0x434))->v64(buf);
         func_003A0E90(o, buf);
-        o->v09(0);
+        o->setVisible(0);
         char* g = *(char**)((char*)D_004A28A8 + 0x8C);
         sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(g + 4);
         char* t = g + vt[4].delta;
         vt[4].fn(t, GetHashValue32(D_00470158));
         sprintf(name, D_00470148, 1);
         o = getObj_ECA0(self, name);
-        (*(cMCSub_ECA0**)(mp + 0x434))->v14(0, (char*)self + 0x230);
+        (*(cMemCard**)(mp + 0x434))->v14(0, (char*)self + 0x230);
         func_003A0E90(o, (unsigned short*)((char*)self + 0x230));
-        if (!(*(cMCSub_ECA0**)(mp + 0x434))->v67(0) && !(*(cMCSub_ECA0**)(mp + 0x434))->v66(0)
-            && (*(cMCSub_ECA0**)(mp + 0x434))->v55()) {
+        if (!(*(cMemCard**)(mp + 0x434))->v67(0) && !(*(cMemCard**)(mp + 0x434))->v66(0)
+            && (*(cMemCard**)(mp + 0x434))->v55()) {
             o->v25(0);
-            o->v08(0);
-        } else if ((*(cMCSub_ECA0**)(mp + 0x434))->v54(*(int*)(mp + 0x428))) {
-            if ((*(cMCSub_ECA0**)(mp + 0x434))->v66(0)) {
-                o->v08(1);
+            o->setStatic(0);
+        } else if ((*(cMemCard**)(mp + 0x434))->v54(*(int*)(mp + 0x428))) {
+            if ((*(cMemCard**)(mp + 0x434))->v66(0)) {
+                o->setStatic(1);
                 o->v25(1);
             } else {
-                o->v08(0);
+                o->setStatic(0);
                 o->v25(0);
             }
         } else {
             o->v25(1);
-            o->v08(1);
+            o->setStatic(1);
         }
         if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 1) == -1)
-            getObj_ECA0(self, D_00470168)->v09(0);
+            getObj_ECA0(self, D_00470168)->setVisible(0);
         else
-            getObj_ECA0(self, D_00470168)->v09(1);
+            getObj_ECA0(self, D_00470168)->setVisible(1);
         if (func_001D97E0(self, mp, *(int*)(mp + 0x428), 0) == -1)
-            getObj_ECA0(self, D_00470178)->v09(0);
+            getObj_ECA0(self, D_00470178)->setVisible(0);
         else
-            getObj_ECA0(self, D_00470178)->v09(1);
+            getObj_ECA0(self, D_00470178)->setVisible(1);
     }
     if (*(int*)((char*)self + 0x214) != 3) {
         sprintf(name, D_00470148, 1);
         cUIObj_ECA0* o = getObj_ECA0(self, name);
         o->v25(0);
-        o->v08(1);
+        o->setStatic(1);
     }
 }
 #endif
@@ -2436,83 +2224,6 @@ extern "C" void func_0023CAE8(void* self, int a, int b);
 // PORT: the unit declares func_0023D570 as returning void*; this caller ignores the result (void view by asm label).
 extern "C" void func_0023D570_v(void* self, int mode) __asm__("func_0023D570");
 
-class cMovieSub434_1FF3B0 {
-public:
-    virtual int v01();
-    virtual int v02();
-    virtual int v03();
-    virtual int v04();
-    virtual int v05();
-    virtual int v06();
-    virtual int v07();
-    virtual int v08();
-    virtual int v09();
-    virtual int v10();
-    virtual int v11();
-    virtual int v12();
-    virtual int v13();
-    virtual int v14();
-    virtual int v15();
-    virtual int v16();
-    virtual int v17();
-    virtual int v18();
-    virtual int v19();
-    virtual int v20();
-    virtual int v21();
-    virtual int v22();
-    virtual int v23();
-    virtual int v24();
-    virtual int v25();
-    virtual int v26();
-    virtual int v27();
-    virtual int v28();
-    virtual int v29();
-    virtual int v30();
-    virtual int v31();
-    virtual int v32();
-    virtual int v33();
-    virtual int v34();
-    virtual int v35();
-    virtual int v36();
-    virtual int v37();
-    virtual int v38();
-    virtual int v39();
-    virtual int v40();
-    virtual int v41();
-    virtual int v42();
-    virtual int v43();
-    virtual int v44();
-    virtual int v45();
-    virtual int v46();
-    virtual int v47();
-    virtual int v48();
-    virtual int v49();
-    virtual int v50();
-    virtual int v51();
-    virtual int v52();
-    virtual int v53();
-    virtual int v54(int);
-    virtual int v55();
-    virtual int v56();
-    virtual int v57();
-    virtual int v58();
-    virtual int v59();
-    virtual int v60();
-    virtual int v61();
-    virtual int v62();
-    virtual int v63();
-    virtual int v64();
-    virtual int v65();
-    virtual int v66();
-    virtual int v67(int);
-};
-
-class cMoviePlayer_1FF3B0 {
-public:
-    char pad[0x748];
-    virtual void v01(int);
-};
-
 extern "C" void func_001FF3B0(void* self, void* msg, unsigned int type)
 {
     if (msg == 0)
@@ -2550,7 +2261,7 @@ extern "C" void func_001FF3B0(void* self, void* msg, unsigned int type)
             return;
         *(int*)((char*)self + 0x1E4) = 1;
         if (s == 0 || s == 2 || s == 1)
-            ((cMoviePlayer_1FF3B0*)mp)->v01(0);
+            ((cMoviePlayer*)mp)->v01(0);
         *(int*)((char*)self + 0x1C0) = 6;
         break;
     }
@@ -2560,7 +2271,7 @@ extern "C" void func_001FF3B0(void* self, void* msg, unsigned int type)
         if (*(int*)((char*)self + 0x1C0) == 6)
             return;
         char* mp = (char*)func_00227F80(D_004A28A8);
-        if (!(*(cMovieSub434_1FF3B0**)(mp + 0x434))->v54(*(int*)(mp + 0x428)))
+        if (!(*(cMemCard**)(mp + 0x434))->v54(*(int*)(mp + 0x428)))
             return;
         int v = *(int*)((char*)msg + 0x18);
         *(int*)((char*)self + 0x1C4) = v;
@@ -2568,12 +2279,12 @@ extern "C" void func_001FF3B0(void* self, void* msg, unsigned int type)
         int s = *(int*)((char*)self + 0x1C0);
         if (s != one)
             return;
-        if (!(*(cMovieSub434_1FF3B0**)(mp + 0x434))->v67(*(int*)((char*)self + 0x1C4)))
+        if (!(*(cMemCard**)(mp + 0x434))->v67(*(int*)((char*)self + 0x1C4)))
             return;
         *(int*)((char*)self + 0x1A8) = s;
         *(int*)((char*)self + 0x1C0) = 4;
         func_0023D570_v(mp, 0);
-        ((cMoviePlayer_1FF3B0*)mp)->v01(0x18);
+        ((cMoviePlayer*)mp)->v01(0x18);
         break;
     }
     }
@@ -2786,7 +2497,6 @@ extern char D_00470468[];
 extern char D_00470480[];
 extern char D_004A2588[];
 extern char D_004A2590[];
-
 
 // Looks up the localised string for a hashed name through the front end's text table.
 static inline unsigned short* getText_REWARDS(char* name)
