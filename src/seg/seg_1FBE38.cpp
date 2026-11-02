@@ -1211,7 +1211,6 @@ extern "C" cLunoValue func_002FCDC8(int n, Ent_CDC8 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FCFF0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A3DD8_CFF0 __asm__("D_004A3DD8");
 static inline char *refToPtr_CFF0(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_CFF0(unsigned i) { if (i == 0) return 0; return refToPtr_CFF0(i); }
 extern "C" int checkActiveNode(void*, int, void*);
@@ -1260,7 +1259,7 @@ extern "C" cLunoValue func_002FCFF0(int n, Ent_CFF0 *e) {
     unsigned id = buf[0];
     char *obj;
     if (~id == 0) {
-        obj = *(char**)(D_004A3DD8_CFF0 + 0x290);
+        obj = D_004A3DD8->f290;
     } else {
         sRefSet *s = (*D_004A47B8)->sets[id & 0xFF];
         unsigned i;
@@ -1279,7 +1278,7 @@ extern "C" cLunoValue func_002FCFF0(int n, Ent_CFF0 *e) {
     void *p = *(void**)(obj + 0xC);
     if (p && checkActiveNode(p, 11, buf))
         return D_004C9098;
-    func_00351B40_CFF0(cMemMan_alloc(0x6C0, D_00489708_CFF0, 0x20000000, 0), 1, obj, buf, *(void**)(D_004A3DD8_CFF0 + 0x294), 0);
+    func_00351B40_CFF0(cMemMan_alloc(0x6C0, D_00489708_CFF0, 0x20000000, 0), 1, obj, buf, D_004A3DD8->f294, 0);
     return D_004C9098;
 }
 #endif
