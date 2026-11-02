@@ -53,6 +53,12 @@ struct sRailElem40 {
     char data[0x40];
 };
 
+// A pair of ints.
+struct sRailPair {
+    int a;
+    int b;
+};
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -5237,10 +5243,6 @@ void* func_00361F40(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00361F60);
 #ifdef SKIP_ASM
-struct sRailPair {
-    int a;
-    int b;
-};
 
 struct sRailPairs {
     char pad_0x00[0x80];
@@ -6554,10 +6556,6 @@ extern void* D_004A5B84;
 extern char D_0053AB80[];
 extern char D_0053E9FF[];
 
-struct sRailPair66F8 {
-    int a;
-    int b;
-};
 
 // PORT: 128-bit fill pattern built through a union of two 64-bit halves.
 static inline cQuad128 makeFill66F8(ulong lo, ulong hi)
@@ -6593,7 +6591,7 @@ extern "C" void func_003666F8()
         if (left < chunk) {
             chunk = left;
         }
-        func_0038F738(&((sRailPair66F8*)D_0053AB80)[i], chunk * 8, 2);
+        func_0038F738(&((sRailPair*)D_0053AB80)[i], chunk * 8, 2);
     }
 }
 #endif
@@ -6685,7 +6683,7 @@ extern "C" int func_003668F8(sRailNodeMan* self, int size, int skipA, int skipB,
         if (owner == skipA || owner == skipB) {
             continue;
         }
-        sRailPair66F8* pr = &((sRailPair66F8*)D_0053AB80)[owner];
+        sRailPair* pr = &((sRailPair*)D_0053AB80)[owner];
         int cost = age < pr->a ? sz * pr->b : 0;
         if (cost < best) {
             best = cost;
