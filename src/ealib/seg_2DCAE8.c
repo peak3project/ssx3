@@ -4843,7 +4843,6 @@ extern int func_00416B18_3098(char *, char *, int) __asm__("func_00416B18");
 extern char *func_004162D0(char *, char *);
 extern char *D_00450C3C;
 extern int D_00450C44;
-extern char D_00519AF0_3098[] __asm__("D_00519AF0");
 
 void func_003E3098(char *path, char *out, int *kind) {
     int k;
@@ -4866,7 +4865,7 @@ void func_003E3098(char *path, char *out, int *kind) {
         func_004162D0(out, D_00450C50);
     }
     if (path[0] != 0x5C && path[0] != 0x2F && path[0] != 0x7E) {
-        func_004162D0(out, D_00519AF0_3098);
+        func_004162D0(out, D_00519AF0);
     }
     func_004162D0(out, path);
     for (; *out != 0; out++) {
