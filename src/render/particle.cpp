@@ -101,6 +101,13 @@ struct sPtVtVP {
     void (*fn)(void*, void*);
 };
 
+// g++ 2.95 vtable entry for a method taking (self, int, int, int), returning int.
+struct sPtVtIIII {
+    short delta;
+    short index;
+    int (*fn)(void*, int, int, int);
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2158,18 +2165,13 @@ INCLUDE_ASM("render/particle", func_00375990);
 #ifdef SKIP_ASM
 extern char* D_004A5B80;
 
-struct sPtVEntry_5990 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int, int);
-};
 
 extern "C" void func_00375990(void* self)
 {
     char* s = (char*)self;
     if (*(int*)(s + 0x170) < 0) {
         char* mgr = D_004A5B80;
-        sPtVEntry_5990* vt = *(sPtVEntry_5990**)(mgr + 0x10D8);
+        sPtVtIIII* vt = *(sPtVtIIII**)(mgr + 0x10D8);
         *(int*)(s + 0x170) = vt[52].fn(mgr + vt[52].delta, *(int*)(s + 0x174), *(int*)(s + 0x178), 2);
     }
 }
@@ -4071,15 +4073,10 @@ void* func_0037CBC8(void* self)
 //100%
 INCLUDE_ASM("render/particle", func_0037CBE8);
 #ifdef SKIP_ASM
-struct sPartVEntry52 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int, int);
-};
 
 extern "C" void func_0037CBE8(void* self, void* out, int a2, int a3)
 {
-    sPartVEntry52* vt = *(sPartVEntry52**)((char*)self + 0x10D8);
+    sPtVtIIII* vt = *(sPtVtIIII**)((char*)self + 0x10D8);
     *(int*)((char*)out + 4) = vt[52].fn((char*)self + vt[52].delta, a2, a3, 0);
 }
 #endif
