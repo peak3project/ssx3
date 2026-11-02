@@ -85,3 +85,25 @@ rom:0xF09FC reloc:MIPS_LO16 symbol:D_00504FB8
 // animation/gameanimmap func_00315A20: `lui $10, (0x500000 >> 16)` / `addiu $10, $10, -0x14F0` = D_004FEB10, left raw.
 rom:0x217034 reloc:MIPS_HI16 symbol:D_004FEB10
 rom:0x21703C reloc:MIPS_LO16 symbol:D_004FEB10
+// ealib/seg_2B4578 func_003CFC30: 14 more `lw -0xBE0($23)` loads of D_0044F420; $23 is a daddu copy of the %hi(D_0044F420) register.
+rom:0x2D0F1C reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D0F44 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D0F60 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D0FC8 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D1030 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D10F0 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D11DC reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D1210 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D1244 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D12B8 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D12E4 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D1318 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D13D8 reloc:MIPS_LO16 symbol:D_0044F420
+rom:0x2D14B0 reloc:MIPS_LO16 symbol:D_0044F420
+// camera/camera func_0015EE00: a third `lqc2 $vf5, -0xEA0($3)` of D_004FF160.
+rom:0x60000 reloc:MIPS_LO16 symbol:D_004FF160
+// fe/ovstatehud cOVStateHUD1P_onRender2D: two more raw `lui $2, 0x4D` / `addiu $1x, $2, -0x7898` pairs = D_004C8768.
+rom:0xEF4DC reloc:MIPS_HI16 symbol:D_004C8768
+rom:0xEF4F4 reloc:MIPS_LO16 symbol:D_004C8768
+rom:0xEF6FC reloc:MIPS_HI16 symbol:D_004C8768
+rom:0xEF714 reloc:MIPS_LO16 symbol:D_004C8768
