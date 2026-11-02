@@ -5,6 +5,13 @@
 // with an int->float conversion when the binding's type table says the slot is a float) and reports an int result
 // through the same two stores. Both are statement macros (do { } while (0)); the loop notes they leave weight the
 // register references inside them, which is why the bodies must stay macro expansions.
+// Script value (luno/lunovm.cpp layout); D_004C9098 is the nil value the bindings return.
+struct cLunoValue {
+    int word0;
+    int word1;
+    int type;
+};
+extern cLunoValue D_004C9098;
 struct sBindArg_1FBE38 { int idx; int val; int pad; int kind; };
 struct sBindEnd_1FBE38 {};  // empty trailing member of a defaults record; value-init copies its byte through a stack temp
 extern "C" void func_003E6574(void*, void*, int);
@@ -88,14 +95,12 @@ extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00359228(void*, int, void*, void*);
 extern char D_00489658_B060[] __asm__("D_00489658");
-struct V3_B060 { float x, y, z; };
-extern V3_B060 D_004C9098_B060 __asm__("D_004C9098");
 extern unsigned D_B060[] __asm__("D_004FB390");
 extern int D_004A55C0;
 extern const int D_00445E70[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_B060 { int idx; int val; int pad; int type; };
-extern "C" V3_B060 func_002FB060(int n, Ent_B060 *e) {
+extern "C" cLunoValue func_002FB060(int n, Ent_B060 *e) {
     if (D_004A55C0 == 0) {
         D_B060[0] = 0xFFFFFFFF;
         ((int*)D_B060)[1] = 1;
@@ -143,12 +148,12 @@ extern "C" V3_B060 func_002FB060(int n, Ent_B060 *e) {
         obj = r;
     }
     if (obj == 0)
-        return D_004C9098_B060;
+        return D_004C9098;
     void *p = *(void**)(obj + 0xC);
     if (p && checkActiveNode(p, 2, buf))
-        return D_004C9098_B060;
+        return D_004C9098;
     func_00359228(cMemMan_alloc(0x70, D_00489658_B060, 0x20000000, 0), 1, obj, buf);
-    return D_004C9098_B060;
+    return D_004C9098;
 }
 #endif
 
