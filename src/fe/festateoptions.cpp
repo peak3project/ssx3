@@ -7,6 +7,29 @@ template <class F> struct sVEntry {
     short index;
     F* fn;
 };
+
+// The game options record D_00535610 (0x288 bytes; the options interface, cBE_getInterface(be, 4), copies it by
+// value): a bitfield word of sound / HUD settings, then per-player bytes.
+struct sGameOptions {
+    unsigned int sfxVol : 4;        // bits 0-3
+    unsigned int musicVol : 4;      // bits 4-7
+    unsigned int speechVol : 4;     // bits 8-11
+    unsigned int output : 2;        // bits 12-13
+    unsigned int pad14 : 2;
+    unsigned int f16 : 1;           // bit 16
+    unsigned int f17 : 1;                    // bit 17
+    unsigned int f18 : 1;                    // bit 18
+    unsigned int showHud : 1;       // bit 19
+    unsigned int f20 : 2;           // bits 20-21
+    unsigned int mode : 3;          // bits 22-24
+    unsigned int pad25 : 5;
+    unsigned int f30 : 2;           // bits 30-31: index picked in the D_004A1398 menu
+    signed char f4;
+    signed char f5;                 // 0x5
+    signed char f6;                 // 0x6
+    char pad7[0x288 - 7];
+};
+extern sGameOptions D_00535610;
 #include "ai/rider.h"
 
 //100%
@@ -94,7 +117,6 @@ extern int D_004A14D8;
 extern int D_004A14DC;
 extern int D_004A14E0;
 extern char D_004A5A58;
-
 
 class cListener_188980 {
 public:
@@ -244,7 +266,6 @@ extern char D_0045DD50[];
 extern char D_0045DD20[];
 extern char D_004A1530[];
 
-
 static inline int IsK188D08(int id, char* s)
 {
     return id == GetHashValue32(s);
@@ -370,22 +391,10 @@ extern char* D_00440FE8[];
 extern char* D_00440FEC[];
 extern char* D_00440FF0[];
 
-struct sGameCfg_OGCS {
-    unsigned int pad0 : 19;
-    unsigned int showHud : 1;       // bit 19
-    unsigned int f20 : 2;           // bits 20-21
-    unsigned int mode : 3;          // bits 22-24
-    unsigned int pad25 : 7;
-    char rest[0x288 - 4];
-};
-// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
-extern sGameCfg_OGCS D_00535610_OGCS __asm__("D_00535610");
-
-static inline sGameCfg_OGCS getOptions_OGCS()
+static inline sGameOptions getOptions_OGCS()
 {
-    return D_00535610_OGCS;
+    return D_00535610;
 }
-
 
 struct sOptGame_OGCS {
     char pad0[0x10];
@@ -513,17 +522,6 @@ extern char D_0045DDD8[];
 extern int D_004A14D0;
 extern void* D_004A289C;
 
-struct sGameCfg_189610 {
-    unsigned int flags;     // 0x0
-    signed char f4;
-    signed char f5;         // 0x5
-    signed char f6;         // 0x6
-    char pad7[0x288 - 7];
-};
-// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
-extern sGameCfg_189610 D_00535610_189610 __asm__("D_00535610");
-
-
 static inline int Is_189610(int id, char* s)
 {
     return id == GetHashValue32(s);
@@ -535,9 +533,9 @@ static inline int GetOpt_189610(char* w, int i)
     return vt[23].fn(w + vt[23].delta, i);
 }
 
-static inline sGameCfg_189610 Cfg_189610()
+static inline sGameOptions Cfg_189610()
 {
-    return D_00535610_189610;
+    return D_00535610;
 }
 
 extern "C" void func_00189610(void* self, char* popup, int event)
@@ -558,7 +556,7 @@ extern "C" void func_00189610(void* self, char* popup, int event)
             if (GetOpt_189610(popup, 2)) {
                 int a = GetOpt_189610(popup, 0);
                 int b = GetOpt_189610(popup, 1);
-                sGameCfg_189610* c = &D_00535610_189610;
+                sGameOptions* c = &D_00535610;
                 D_004A14D0 = 1;
                 c->f6 = a;
                 c->f5 = b;
@@ -630,18 +628,6 @@ extern char* D_00440FD8[];
 extern int D_004A14D0;
 extern void* D_004A28A8;
 
-struct sGameCfg_189980 {
-    unsigned int pad0 : 19;
-    bool showHud : 1;           // bit 19
-    unsigned int f20 : 2;       // bits 20-21
-    unsigned int mode : 3;      // bits 22-24
-    unsigned int pad25 : 7;
-    char rest[0x288 - 4];
-};
-// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
-extern sGameCfg_189980 D_00535610_189980 __asm__("D_00535610");
-
-
 struct sOptGame_189980 {
     char pad0[0x10];
     char* engine;           // 0x10
@@ -705,7 +691,7 @@ extern "C" void cFEStateOptionsGame_onWidgetEvent(sOptGame_189980* self, char* w
         {
             char* o = *(char**)((char*)D_004A28A8 + 0x8C);
             sVEntry<void(void*, char)>* vt = *(sVEntry<void(void*, char)>**)(o + 4);
-            vt[3].fn(o + vt[3].delta, D_00535610_189980.mode);
+            vt[3].fn(o + vt[3].delta, D_00535610.mode);
         }
         Refresh_189980(self);
         char* eng = *(char**)self->engine;
@@ -718,7 +704,7 @@ extern "C" void cFEStateOptionsGame_onWidgetEvent(sOptGame_189980* self, char* w
     }
     case 9:
         if (self->item[0] >= 0 && Is_189980(*(int*)(widget + 0x38), D_00440FD8[self->item[0]])) {
-            D_00535610_189980.mode = func_0039A738(widget);
+            D_00535610.mode = func_0039A738(widget);
             char* o = *(char**)((char*)D_004A28A8 + 0x8C);
             sVEntry<void(void*, char)>* vt = *(sVEntry<void(void*, char)>**)(o + 4);
             char* thisp = o + vt[3].delta;
@@ -728,10 +714,10 @@ extern "C" void cFEStateOptionsGame_onWidgetEvent(sOptGame_189980* self, char* w
         }
         if (self->item[1] >= 0 && Is_189980(*(int*)(widget + 0x38), D_00440FD8[self->item[1]])) {
             bool on = *(unsigned char*)(widget + 0x319);
-            D_00535610_189980.showHud = on;
+            D_00535610.showHud = on;
         }
         if (self->item[2] >= 0 && Is_189980(*(int*)(widget + 0x38), D_00440FD8[self->item[2]])) {
-            D_00535610_189980.f20 = *(unsigned char*)(widget + 0x319);
+            D_00535610.f20 = *(unsigned char*)(widget + 0x319);
         }
         func_00228C08(D_004A28A8);
         D_004A14D0 = 1;
@@ -754,24 +740,9 @@ extern char* D_00440FD8[];
 extern void* D_004A28A8;
 extern void* D_004A289C;
 
-struct sGameCfg_189D60 {
-    unsigned int pad0 : 19;
-    unsigned int showHud : 1;       // bit 19
-    unsigned int f20 : 2;           // bits 20-21
-    unsigned int mode : 3;          // bits 22-24
-    unsigned int pad25 : 7;
-    signed char f4;
-    signed char f5;                 // 0x5
-    signed char f6;                 // 0x6
-    char pad7[0x288 - 7];
-};
-// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
-extern sGameCfg_189D60 D_00535610_189D60 __asm__("D_00535610");
-
 struct sOptionIface_189D60 {
-    sGameCfg_189D60 getOptions() { return D_00535610_189D60; }
+    sGameOptions getOptions() { return D_00535610; }
 };
-
 
 struct sOptGame_189D60 {
     char pad0[0x40];
@@ -911,21 +882,6 @@ extern "C" void cFEStateOptionsSound_updateWidget(void* self);
 extern char D_0045DD20[];
 extern int D_004A14D4;
 
-struct sSndCfg_18A3D8 {
-    unsigned int sfxVol : 4;        // bits 0-3
-    unsigned int musicVol : 4;      // bits 4-7
-    unsigned int speechVol : 4;     // bits 8-11
-    unsigned int output : 2;        // bits 12-13
-    unsigned int pad14 : 2;
-    int f16 : 1;                    // bit 16
-    int f17 : 1;                    // bit 17
-    int pad18 : 14;
-    char rest[0x288 - 4];
-};
-// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
-extern sSndCfg_18A3D8 D_00535610_18A3D8 __asm__("D_00535610");
-
-
 static inline int Is_18A3D8(int id, char* s)
 {
     return id == GetHashValue32(s);
@@ -937,9 +893,9 @@ static inline int GetOpt_18A3D8(char* w, int i)
     return vt[23].fn(w + vt[23].delta, i);
 }
 
-static inline sSndCfg_18A3D8 Cfg_18A3D8()
+static inline sGameOptions Cfg_18A3D8()
 {
-    return D_00535610_18A3D8;
+    return D_00535610;
 }
 
 extern "C" void func_0018A3D8(void* self, char* popup, int event)
@@ -952,7 +908,7 @@ extern "C" void func_0018A3D8(void* self, char* popup, int event)
         if (Is_18A3D8(*(int*)(popup + 0xC), D_0045DD20)) {
             if (GetOpt_18A3D8(popup, 2)) {
                 func_0014F458(iface);
-                func_0018BEF8(self, D_00535610_18A3D8.output);
+                func_0018BEF8(self, D_00535610.output);
                 func_00287410(func_0028B180(), Cfg_18A3D8().sfxVol);
                 func_00287488(func_0028B180(), Cfg_18A3D8().speechVol);
                 func_00287520(func_0028B180(), Cfg_18A3D8().musicVol);
@@ -1031,31 +987,14 @@ extern char D_004A15B8[];
 extern int D_004A1A70;
 extern int D_004A14D4;
 
-struct sSndCfg_18A8D0 {
-    unsigned int sfxVol : 4;        // bits 0-3
-    unsigned int musicVol : 4;      // bits 4-7
-    unsigned int speechVol : 4;     // bits 8-11
-    unsigned int output : 2;        // bits 12-13
-    unsigned int pad14 : 2;
-    int f16 : 1;                    // bit 16
-    int f17 : 1;                    // bit 17
-    int f18 : 1;                    // bit 18
-    int pad19 : 13;
-    char rest[0x288 - 4];
-};
-// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
-extern sSndCfg_18A8D0 D_00535610_18A8D0 __asm__("D_00535610");
-
-
-
 static inline int Is_18A8D0(int id, char* s)
 {
     return id == GetHashValue32(s);
 }
 
-static inline sSndCfg_18A8D0 Cfg_18A8D0()
+static inline sGameOptions Cfg_18A8D0()
 {
-    return D_00535610_18A8D0;
+    return D_00535610;
 }
 
 struct sOptSound_18A8D0 {
@@ -1099,35 +1038,35 @@ extern "C" void func_0018A8D0(sOptSound_18A8D0* self, char* widget, unsigned int
     }
     case 9:
         if (Is_18A8D0(*(int*)(widget + 0x38), D_004A1568)) {
-            D_00535610_18A8D0.output = func_0039A738(widget);
+            D_00535610.output = func_0039A738(widget);
             func_0018BEF8(self, func_0039A738(widget));
         }
         else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A1590)) {
             unsigned char vol = *(unsigned char*)(widget + 0x74);
-            D_00535610_18A8D0.sfxVol = vol;
+            D_00535610.sfxVol = vol;
             func_00287410(func_0028B180(), Cfg_18A8D0().sfxVol);
         }
         else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A1598)) {
             unsigned char vol = *(unsigned char*)(widget + 0x74);
-            D_00535610_18A8D0.speechVol = vol;
+            D_00535610.speechVol = vol;
             func_00287488(func_0028B180(), Cfg_18A8D0().speechVol);
         }
         else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A15A0)) {
             unsigned char vol = *(unsigned char*)(widget + 0x74);
-            D_00535610_18A8D0.musicVol = vol;
+            D_00535610.musicVol = vol;
             func_00287520(func_0028B180(), Cfg_18A8D0().musicVol);
         }
         else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A15A8)) {
-            D_00535610_18A8D0.f17 = func_0039A738(widget) != 0;
+            D_00535610.f17 = func_0039A738(widget) != 0;
             func_00287558(func_0028B180(), Cfg_18A8D0().f17 != 0);
         }
         else if (Is_18A8D0(*(int*)(widget + 0x38), D_004A15B0)) {
-            D_00535610_18A8D0.f16 = func_0039A738(widget) != 0;
+            D_00535610.f16 = func_0039A738(widget) != 0;
             func_002875D0(func_0028B180(), Cfg_18A8D0().f16 != 0);
         }
         bool on = D_004A1A70 == 1;
         if (on && Is_18A8D0(*(int*)(widget + 0x38), D_004A15B8))
-            D_00535610_18A8D0.f18 = func_0039A738(widget) != 0;
+            D_00535610.f18 = func_0039A738(widget) != 0;
         D_004A14D4 = 1;
         break;
     }
@@ -1167,24 +1106,9 @@ extern char D_0045DF40[];
 extern char D_0045E028[];
 extern int D_004A1A70;
 
-struct sSndCfg_18B380 {
-    unsigned int sfxVol : 4;        // bits 0-3
-    unsigned int musicVol : 4;      // bits 4-7
-    unsigned int speechVol : 4;     // bits 8-11
-    unsigned int output : 2;        // bits 12-13
-    unsigned int pad14 : 2;
-    int f16 : 1;                    // bit 16
-    unsigned int f17 : 1;           // bit 17
-    unsigned int f18 : 1;           // bit 18
-    int pad19 : 13;
-    char rest[0x288 - 4];
-};
-// PORT: D_00535610 is viewed with different types across the unit; view bound by asm label
-extern sSndCfg_18B380 D_00535610_18B380 __asm__("D_00535610");
-
-static inline sSndCfg_18B380 Cfg_18B380()
+static inline sGameOptions Cfg_18B380()
 {
-    return D_00535610_18B380;
+    return D_00535610;
 }
 
 struct sSlider_18B380 {
@@ -1288,8 +1212,6 @@ extern "C" void func_00287520(void* snd, int v);
 extern "C" void func_00287558(void* snd, int v);
 extern "C" void func_002875D0(void* snd, int v);
 extern "C" void func_00285FB0(void* snd);
-
-
 
 extern "C" void func_0018BEF8(void* self, unsigned int mode)
 {
@@ -1445,16 +1367,6 @@ extern char D_0045DD68[];
 extern void* D_0046B3D0[];
 extern int D_004A14D8;
 
-struct sOptions_C2A0 {
-    unsigned int pad0 : 30;
-    unsigned int mode : 2;
-    int data[(0x288 - 4) / 4];
-};
-extern sOptions_C2A0 D_00535610_C2A0 __asm__("D_00535610");
-
-
-
-
 static inline int Is_0018C2A0(int id, char* s) { return id == GetHashValue32(s); }
 
 extern "C" void func_0018C2A0(char* self, char* widget, unsigned int event)
@@ -1487,7 +1399,7 @@ extern "C" void func_0018C2A0(char* self, char* widget, unsigned int event)
         sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(widget + 8);
         vt[9].fn(widget + vt[9].delta, 1);
         D_004A14D8 = 1;
-        D_00535610_C2A0.mode = *(unsigned char*)(widget + 0x18);
+        D_00535610.f30 = *(unsigned char*)(widget + 0x18);
         break;
     }
     case 2:
@@ -1515,19 +1427,10 @@ struct sName_C478 {
 };
 extern char D_004A14F8[];
 
-struct sOptions_C478 {
-    unsigned int pad0 : 30;
-    unsigned int mode : 2;
-    int data[(0x288 - 4) / 4];
-};
-extern sOptions_C478 D_00535610_C478 __asm__("D_00535610");
-
-static inline int optMode_C478(sOptions_C478 o)
+static inline int optMode_C478(sGameOptions o)
 {
-    return o.mode;
+    return o.f30;
 }
-
-
 
 extern "C" void func_0018C478(void* vself)
 {
@@ -1543,7 +1446,7 @@ extern "C" void func_0018C478(void* vself)
             char* item = vt[14].fn(menu + vt[14].delta, GetHashValue32(name.s));
             if (item != 0) {
                 *(int*)(item + 0x18) = i;
-                if (i == optMode_C478(D_00535610_C478)) {
+                if (i == optMode_C478(D_00535610)) {
                     sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(item + 8);
                     vt2[9].fn(item + vt2[9].delta, 1);
                     cUIMenu_setSelectedByIndex(menu, i);
@@ -1732,8 +1635,6 @@ extern char D_004A1570[];
 extern char D_004A15C8[];
 extern char D_004A1578[];
 extern int D_004A14DC;
-
-
 
 static inline int Is_0018CA10(int id, char* s) { return id == GetHashValue32(s); }
 
@@ -2125,8 +2026,6 @@ extern void* D_004A28A8;
 extern char D_004A1408[];
 extern char D_0045DC60[];
 
-
-
 extern "C" void func_0018D460(char* self, char* widget, unsigned int event)
 {
     switch (event) {
@@ -2186,9 +2085,6 @@ extern "C" void* func_001D99C8(void* self, void* engine, void* owner, unsigned s
 extern void* D_004A28A8;
 extern char D_0045E110[];
 extern char D_0045E130[];
-
-
-
 
 extern "C" void cFEStateOptionsSaveLoad_onWidgetEvent(char* self, char* widget, int event)
 {
@@ -2304,7 +2200,6 @@ public:
     virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21();
     virtual void v22(); virtual void v23(); virtual void v24(int);
 };
-
 
 struct sDevSel_DS {
     char pad0[0x10];
@@ -2484,9 +2379,6 @@ extern "C" void func_0023CAE8(void* app, int a1, int a2);
 extern "C" void func_0023C8F0(void* app, int a1);
 extern "C" void func_0023D570(void* app, int a1);
 extern void* D_004A28A8;
-
-
-
 
 struct sDevSel_18DEA0 {
     char pad0[8];
@@ -2772,7 +2664,6 @@ extern "C" void func_0018E368(void* self, bool a, bool b)
 INCLUDE_ASM("fe/festateoptions", func_0018E478);
 #ifdef SKIP_ASM
 extern "C" void func_0039F4C0(void* list, void* item);
-
 
 extern "C" void func_0018E478(void* self)
 {
