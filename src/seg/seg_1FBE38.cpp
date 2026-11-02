@@ -5227,7 +5227,6 @@ struct Ent_44A8 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D60_44A8[2] __asm__("D_004A3D60");
 extern "C" void func_00238550(int, int, int);
-extern char* D_004A28A8_44A8 __asm__("D_004A28A8");
 extern int D_004A5808_44A8 __asm__("D_004A5808");
 extern int D_004A5800_44A8 __asm__("D_004A5800");
 extern sBindEnd_1FBE38 D_004A5804_44A8 __asm__("D_004A5804");
@@ -5251,7 +5250,7 @@ extern "C" cLunoValue func_003044A8(int n, Ent_44A8* e) {
             *d = p->val;
     }
     int b = D_004A3DD8->being;
-    func_00238550(*(int*)(D_004A28A8_44A8 + 0xC0), b, vp[0]);
+    func_00238550(D_004A28A8->fC0, b, vp[0]);
     return D_004C9098;
 }
 #endif
