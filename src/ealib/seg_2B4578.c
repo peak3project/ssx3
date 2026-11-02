@@ -16193,9 +16193,6 @@ struct S_11B8 {
     char name[0xFC - 0xDC];
     struct Ent_11B8 *tbl;
 };
-extern unsigned char D_0044F42C_11B8 __asm__("D_0044F42C");
-extern int D_0044F430_11B8 __asm__("D_0044F430");
-extern int D_0044F43C_11B8 __asm__("D_0044F43C");
 extern char D_00495B10_11B8[] __asm__("D_00495B10");
 extern int f_5450_11B8(int) __asm__("func_003D5450");
 extern struct S_11B8 *f_5290_11B8(unsigned int) __asm__("func_003D5290");
@@ -16216,7 +16213,7 @@ int func_003D11B8_impl(unsigned int id, struct Info_11B8 *info) {
     int len;
 
     ret = -8;
-    if (D_0044F42C_11B8 == 0 || D_0044F430_11B8 != 0 || f_5450_11B8(-1) == 0) {
+    if (D_0044F42C == 0 || D_0044F430 != 0 || f_5450_11B8(-1) == 0) {
         return -18;
     }
     info->a = -1;
@@ -16269,13 +16266,13 @@ int func_003D11B8_impl(unsigned int id, struct Info_11B8 *info) {
                     goto done;
                 }
             }
-            if (D_0044F43C_11B8 & 0x100) {
+            if (D_0044F43C & 0x100) {
                 f_1658_11B8(D_00495B10_11B8, s->name, ret);
             }
         }
     }
 done:
-    D_0044F430_11B8 = 0;
+    D_0044F430 = 0;
     D_0044F420 = 0;
     return ret;
 }
