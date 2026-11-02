@@ -92,6 +92,11 @@ struct sIntVec {
     int* mEnd;
 };
 
+// A 16-byte block copied as one struct (four words).
+struct sBlk16 {
+    int v[4];
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -2409,10 +2414,6 @@ extern char D_004619D8[];
 extern char D_004619E8[];
 extern char D_004619F8[];
 
-struct sBlk1A7970 {
-    int v[4];
-};
-
 class cFEVObj_001A7970 {
 public:
     int field_0x0;
@@ -2456,7 +2457,7 @@ extern "C" void func_001A7970(void* self)
         obj->setVisible(1);
         *(int*)(o + 0x14) |= 0x80;
         obj->setColour(sColourF(1.0f, 0.0f, 0.0f, 0.0f));
-        *(sBlk1A7970*)(o + 0xA8) = *(sBlk1A7970*)((char*)self + 0x6EC);
+        *(sBlk16*)(o + 0xA8) = *(sBlk16*)((char*)self + 0x6EC);
         *(char**)(o + 0xB8) = a;
     }
 }
@@ -8374,10 +8375,6 @@ extern char D_004A1B58[];
 extern char D_00463A18[];
 extern char D_00463A28[];
 
-struct sBlk1B2070 {
-    int v[4];
-};
-
 extern "C" void func_001B2070(void* self)
 {
     void* engine = *(void**)((char*)self + 0x10);
@@ -8391,7 +8388,7 @@ extern "C" void func_001B2070(void* self)
     func_001B3978(self, *(void**)((char*)D_004A3028 + 0x80));
     *(int*)(*(char**)((char*)self + 0x6F0) + 0x74) |= 1;
     func_003A1310(*(void**)((char*)self + 0x6F0), 1);
-    *(sBlk1B2070*)(*(char**)((char*)self + 0x6F0) + 0xA8) = *(sBlk1B2070*)((char*)self + 0x72C);
+    *(sBlk16*)(*(char**)((char*)self + 0x6F0) + 0xA8) = *(sBlk16*)((char*)self + 0x72C);
     *(void**)(*(char**)((char*)self + 0x6F0) + 0xB8) = *(void**)((char*)self + 0x6F4);
     cUIText* a = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004619C8));
     cUIText* b = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004619D8));
