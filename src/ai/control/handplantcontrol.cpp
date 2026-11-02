@@ -1,6 +1,19 @@
 #include "common.h"
 #include "bx/math3d.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
+// A whole vtable (N slots), for copying one and patching its this-adjustments (as in ai/ai).
+template <int N> struct sVtbl {
+    sVEntry<void> e[N];
+} __attribute__((aligned(8)));
+
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", cHandplantMotion_gainFocus);
 #ifdef SKIP_ASM
@@ -487,15 +500,9 @@ extern "C" int func_00139548_x(sHP_9548* s)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139970);
 #ifdef SKIP_ASM
-struct sVEntry00139970 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_00139970(void* self, void* obj)
 {
-    sVEntry00139970* vt = *(sVEntry00139970**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[1].fn((char*)obj + vt[1].delta, self, 0xA0);
 }
 #endif
@@ -503,15 +510,9 @@ extern "C" void func_00139970(void* self, void* obj)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001399A8);
 #ifdef SKIP_ASM
-struct sVEntry001399A8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_001399A8(void* self, void* obj)
 {
-    sVEntry001399A8* vt = *(sVEntry001399A8**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[2].fn((char*)obj + vt[2].delta, self, 0xA0);
 }
 #endif
@@ -706,8 +707,6 @@ static inline t4Vector vu0Sub_13A7B0(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
-struct sVEntry_13A7B0 { short delta; short index; void (*fn)(void*, void*); };
-
 extern "C" float func_0013A7B0(void* self, char* hit)
 {
     char* rider = *(char**)((char*)self + 0x4);
@@ -725,7 +724,7 @@ extern "C" float func_0013A7B0(void* self, char* hit)
             char* h = *(char**)(o + 0xC);
             if (h)
             {
-                sVEntry_13A7B0* vt = *(sVEntry_13A7B0**)(h + 0xC);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(h + 0xC);
                 vt[42].fn(h + vt[42].delta, hit);
             }
         }
@@ -785,15 +784,9 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_0013AA48);
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013ACB0);
 #ifdef SKIP_ASM
-struct sVEntry0013ACB0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_0013ACB0(void* self, void* obj)
 {
-    sVEntry0013ACB0* vt = *(sVEntry0013ACB0**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[1].fn((char*)obj + vt[1].delta, self, 0x4);
 }
 #endif
@@ -801,15 +794,9 @@ extern "C" void func_0013ACB0(void* self, void* obj)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013ACE8);
 #ifdef SKIP_ASM
-struct sVEntry0013ACE8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_0013ACE8(void* self, void* obj)
 {
-    sVEntry0013ACE8* vt = *(sVEntry0013ACE8**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[2].fn((char*)obj + vt[2].delta, self, 0x4);
 }
 #endif
@@ -1189,15 +1176,9 @@ extern "C" void func_0013C5A0(void* self)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C5E0);
 #ifdef SKIP_ASM
-struct sVEntry0013C5E0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_0013C5E0(void* self, void* obj)
 {
-    sVEntry0013C5E0* vt = *(sVEntry0013C5E0**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[1].fn((char*)obj + vt[1].delta, self, 0x50);
 }
 #endif
@@ -1205,15 +1186,9 @@ extern "C" void func_0013C5E0(void* self, void* obj)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C618);
 #ifdef SKIP_ASM
-struct sVEntry0013C618 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_0013C618(void* self, void* obj)
 {
-    sVEntry0013C618* vt = *(sVEntry0013C618**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[2].fn((char*)obj + vt[2].delta, self, 0x50);
 }
 #endif
@@ -1223,13 +1198,9 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_0013C650);
 #ifdef SKIP_ASM
 extern "C" void* cRider_cRider(void* self);
 
-struct sVEntry_13C650 { short delta; short index; void* fn; };
-struct sVtbl9_13C650 { sVEntry_13C650 e[9]; } __attribute__((aligned(8)));
-struct sVtbl22_13C650 { sVEntry_13C650 e[22]; } __attribute__((aligned(8)));
-
-extern const sVtbl9_13C650 D_00459A98;
+extern const sVtbl<9> D_00459A98;
 extern char D_00459B90[];
-extern const sVtbl22_13C650 D_00459AE0;
+extern const sVtbl<22> D_00459AE0;
 
 // PORT: g++ 2.95 virtual-base construction. The class derives virtually from cRider (vbase pointer at
 // +0x18, vbase at +0x20); when not most-derived, g++ copies cRider's overridden vtables to the stack and
@@ -1247,12 +1218,12 @@ extern "C" void* func_0013C650(void* self, int inChrg)
     *(void**)(*(char**)((char*)self + 0x18) + 0x6C0) = (void*)&D_00459AE0;
     if (!inChrg)
     {
-        sVtbl9_13C650 t1 = D_00459A98;
+        sVtbl<9> t1 = D_00459A98;
         *(void**)(*(char**)((char*)self + 0x18) + 0x6E8) = &t1;
         char* base = *(char**)((char*)self + 0x18) - 0x20;
         int d = (char*)self - base;
         t1.e[1].delta = D_00459A98.e[1].delta + d;
-        sVtbl22_13C650 t2 = D_00459AE0;
+        sVtbl<22> t2 = D_00459AE0;
         *(void**)(*(char**)((char*)self + 0x18) + 0x6C0) = &t2;
         t2.e[1].delta = D_00459AE0.e[1].delta + d;
     }
@@ -1732,8 +1703,6 @@ static inline int isBetter_13D1B8(sHit_13D1B8* a, sHit_13D1B8* b)
     return *(unsigned int*)(a->tri + 0x150) < *(unsigned int*)(b->tri + 0x150);
 }
 
-struct sVEnt_13D1B8 { short delta; short index; void (*fn)(void*, void*); };
-
 #define RIDER (*(char**)((char*)self + 0x18))
 #define RV(off) (*(t4Vector*)(RIDER + (off)))
 
@@ -1794,7 +1763,7 @@ extern "C" int func_0013D1B8(void* self, sHit_13D1B8* out, float* dist)
     if (out->obj != 0) {
         char* h = *(char**)(out->obj + 0xC);
         if (h) {
-            sVEnt_13D1B8* vt = *(sVEnt_13D1B8**)(h + 0xC);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(h + 0xC);
             vt[42].fn(h + vt[42].delta, out);
         }
     }
@@ -2069,9 +2038,6 @@ struct sInfo_13F488 {
     float depth;
 } __attribute__((aligned(16)));
 
-struct sVEnt_13F488 { short delta; short index; bool (*fn)(void*); };
-struct sVEntH_13F488 { short delta; short index; void (*fn)(void*, void*); };
-
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector vu0Scale_13F488(const t4Vector& v, float s)
 {
@@ -2168,7 +2134,7 @@ static inline float absf_13F488(float x)
 static inline bool riderFlag_13F488(char* r)
 {
     char* sub = r + 0x6C0;
-    sVEnt_13F488* vt = *(sVEnt_13F488**)sub;
+    sVEntry<bool(void*)>* vt = *(sVEntry<bool(void*)>**)sub;
     return vt[8].fn(sub + vt[8].delta);
 }
 
@@ -2196,7 +2162,7 @@ extern "C" void func_0013F488(void* self)
     if (hit.obj != 0) {
         char* h = *(char**)(hit.obj + 0xC);
         if (h) {
-            sVEntH_13F488* vt = *(sVEntH_13F488**)(h + 0xC);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(h + 0xC);
             vt[42].fn(h + vt[42].delta, &hit);
         }
     }
@@ -2238,15 +2204,9 @@ extern "C" void func_0013F488(void* self)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013F848);
 #ifdef SKIP_ASM
-struct sVEntry0013F848 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_0013F848(void* self, void* obj)
 {
-    sVEntry0013F848* vt = *(sVEntry0013F848**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[1].fn((char*)obj + vt[1].delta, self, 0x18);
 }
 #endif
@@ -2254,15 +2214,9 @@ extern "C" void func_0013F848(void* self, void* obj)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013F880);
 #ifdef SKIP_ASM
-struct sVEntry0013F880 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
-
 extern "C" void func_0013F880(void* self, void* obj)
 {
-    sVEntry0013F880* vt = *(sVEntry0013F880**)obj;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)obj;
     vt[2].fn((char*)obj + vt[2].delta, self, 0x18);
 }
 #endif
@@ -3536,13 +3490,9 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_00141480);
 #ifdef SKIP_ASM
 extern "C" void* cRider_cRider(void* self);
 
-struct sVEntry_00141480 { short delta; short index; void* fn; };
-struct sVtblA_00141480 { sVEntry_00141480 e[9]; } __attribute__((aligned(8)));
-struct sVtblB_00141480 { sVEntry_00141480 e[22]; } __attribute__((aligned(8)));
-
-extern const sVtblA_00141480 D_004595C0_00141480 __asm__("D_004595C0");
+extern const sVtbl<9> D_004595C0_00141480 __asm__("D_004595C0");
 extern char D_00459B90[];
-extern const sVtblB_00141480 D_00459608_00141480 __asm__("D_00459608");
+extern const sVtbl<22> D_00459608_00141480 __asm__("D_00459608");
 
 // PORT: g++ 2.95 virtual-base construction. The class derives virtually from cRider (vbase pointer at
 // +0xA0, vbase at +0xB0); when not most-derived, g++ copies cRider's overridden vtables to the stack
@@ -3560,12 +3510,12 @@ extern "C" void* func_00141480(void* self, int inChrg)
     *(void**)(*(char**)((char*)self + 0xA0) + 0x6C0) = (void*)&D_00459608_00141480;
     if (!inChrg)
     {
-        sVtblA_00141480 t1 = D_004595C0_00141480;
+        sVtbl<9> t1 = D_004595C0_00141480;
         *(void**)(*(char**)((char*)self + 0xA0) + 0x6E8) = &t1;
         char* base = *(char**)((char*)self + 0xA0) - 0xB0;
         int d = (char*)self - base;
         t1.e[1].delta = D_004595C0_00141480.e[1].delta + d;
-        sVtblB_00141480 t2 = D_00459608_00141480;
+        sVtbl<22> t2 = D_00459608_00141480;
         *(void**)(*(char**)((char*)self + 0xA0) + 0x6C0) = &t2;
         t2.e[1].delta = D_00459608_00141480.e[1].delta + d;
     }
@@ -3766,13 +3716,9 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_00142388);
 #ifdef SKIP_ASM
 extern "C" void* cRider_cRider(void* self);
 
-struct sVEntry_00142388 { short delta; short index; void* fn; };
-struct sVtblA_00142388 { sVEntry_00142388 e[9]; } __attribute__((aligned(8)));
-struct sVtblB_00142388 { sVEntry_00142388 e[22]; } __attribute__((aligned(8)));
-
-extern const sVtblA_00142388 D_00458C10_00142388 __asm__("D_00458C10");
+extern const sVtbl<9> D_00458C10_00142388 __asm__("D_00458C10");
 extern char D_00459B90[];
-extern const sVtblB_00142388 D_00458C58_00142388 __asm__("D_00458C58");
+extern const sVtbl<22> D_00458C58_00142388 __asm__("D_00458C58");
 
 // PORT: g++ 2.95 virtual-base construction. The class derives virtually from cRider (vbase pointer at
 // +0x80, vbase at +0x90); when not most-derived, g++ copies cRider's overridden vtables to the stack
@@ -3790,12 +3736,12 @@ extern "C" void* func_00142388(void* self, int inChrg)
     *(void**)(*(char**)((char*)self + 0x80) + 0x6C0) = (void*)&D_00458C58_00142388;
     if (!inChrg)
     {
-        sVtblA_00142388 t1 = D_00458C10_00142388;
+        sVtbl<9> t1 = D_00458C10_00142388;
         *(void**)(*(char**)((char*)self + 0x80) + 0x6E8) = &t1;
         char* base = *(char**)((char*)self + 0x80) - 0x90;
         int d = (char*)self - base;
         t1.e[1].delta = D_00458C10_00142388.e[1].delta + d;
-        sVtblB_00142388 t2 = D_00458C58_00142388;
+        sVtbl<22> t2 = D_00458C58_00142388;
         *(void**)(*(char**)((char*)self + 0x80) + 0x6C0) = &t2;
         t2.e[1].delta = D_00458C58_00142388.e[1].delta + d;
     }
@@ -4150,12 +4096,6 @@ int func_001441A0(void* self, void* a1)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001441B8);
 #ifdef SKIP_ASM
-struct sHpVE_41B8 {
-    short delta;
-    short index;
-    float* (*fn)(void*);
-};
-
 struct sHpVec3_41B8 {
     float x, y, z;
 };
@@ -4206,7 +4146,7 @@ extern "C" int func_001441B8(sHpCtl_41B8* self, int pl)
         return 0;
     }
     char* o = rider + 0x6C0;
-    sHpVE_41B8* vt = *(sHpVE_41B8**)o;
+    sVEntry<float*(void*)>* vt = *(sVEntry<float*(void*)>**)o;
     float* pos = vt[5].fn(o + vt[5].delta);
     if (self->useHeight != 0) {
         sHpGround_41B8 g;
