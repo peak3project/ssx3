@@ -180,6 +180,8 @@ extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
 extern unsigned char D_0050A92E;        /* D_0050A8E8.setup.cfg.f26 */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
+extern void (*D_0050AAD0)(void);        /* D_0050A8E8.f1E8 */
+extern void (*D_0050AAD4)(void);        /* D_0050A8E8.f1EC */
 extern struct sA8E8Slot *D_0050AADC;    /* D_0050A8E8.f1F4 */
 extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 
@@ -1754,7 +1756,6 @@ extern int func_003B78F8(int);
 extern void func_003C6040_7838(int *) __asm__("func_003C6040");
 extern int func_003C6DA0(int);
 extern void func_003E0A28(int);
-extern int D_0050AAD4_7838 __asm__("D_0050AAD4");
 extern int D_0050A0A0_7838[] __asm__("D_0050A0A0");
 
 int func_003B7838(int);
@@ -1766,7 +1767,7 @@ int func_003B7838(int h) {
     func_003B78F8(h);
     if (func_003B7410() == 1) {
         func_003C6040_7838(func_003B71D8_7838);
-        D_0050AAD4_7838 = 0;
+        D_0050AAD4 = 0;
     }
     func_003C6DA0(*(volatile int *)(o + 8));
     w = *(int *)o;
@@ -3116,10 +3117,8 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B97D8);
 #ifdef SKIP_ASM
 struct A_97D8 { int a; char pad; signed char b; signed char c; signed char d; };
 struct B_97D8 { char pad[0x10]; int v; char pad2[0x14]; signed char w; char pad3[0x47]; };
-struct G_97D8 { char pad[0x1E8]; void (*f1E8)(void); };
 extern struct A_97D8 D_0050A820_97D8[] __asm__("D_0050A820");
 extern struct B_97D8 D_0050A120_97D8[] __asm__("D_0050A120");
-extern struct G_97D8 D_0050A8E8_97D8 __asm__("D_0050A8E8");
 extern void func_003B58A0();
 extern void func_003B58D8();
 extern void f_5910_97D8(void (*)(void)) __asm__("func_003B5910");
@@ -3146,7 +3145,7 @@ int func_003B97D8(void) {
         b++;
     } while ((int)b < end);
     f_5910_97D8(func_003B96B8);
-    D_0050A8E8_97D8.f1E8 = f_9880_97D8;
+    D_0050A8E8.f1E8 = f_9880_97D8;
     func_003B58D8();
     return 0;
 }
@@ -3158,7 +3157,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B9880);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003B5948_9880(void (*)(void)) __asm__("func_003B5948");
 extern int func_003B98C0(void);
-extern int D_0050AAD0;
 
 int func_003B9880(void) {
     func_003B58A0();
