@@ -19,14 +19,25 @@ struct cOVStateHUDElem {
     float w; // 0x1c
 };
 
+// Declarations shared by the functions of this unit.
+struct sGlyphTable_1F14B0;
+int GetHashValue32(char* str);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" float func_003921F0(void* self, const unsigned short* str, void* out, int n, float sx, float sy);
+extern "C" void func_001E92A8(void* self);
+extern "C" unsigned short* func_002C2508(unsigned short* dst, unsigned short* src);
+extern "C" void* func_0039E2A0(void *, int);
+extern char* D_004A289C;
+extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
+extern "C" void func_00391E30(void* self, float x, float y, const unsigned short* str);
+
 //100%
 INCLUDE_ASM("fe/ovstatehud", cOVStateHiScoreList_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0020A380(void* self);
 extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
@@ -76,7 +87,6 @@ extern "C" void cOVStateHiScoreList_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001E9130);
 #ifdef SKIP_ASM
-
 struct sObj001E9130 {
     int field_0x0;
     sVEntry<void*(void*, void*, int)>* vt;
@@ -182,9 +192,6 @@ float func_001E9290(void* self, void* a1)
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001E92A8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" float func_003921F0(void* self, const unsigned short* str, void* out, int n, float sx, float sy);
-
 struct sFont_92A8 {
     char pad0[0x14];
     int lineCount;      // 0x14
@@ -304,7 +311,6 @@ extern "C" void func_001E92A8(void* vself)
 INCLUDE_ASM("fe/ovstatehud", func_001E94E0);
 #ifdef SKIP_ASM
 extern "C" unsigned short* func_002C2540(unsigned short* dst, char* src);
-extern "C" void func_001E92A8(void* self);
 struct sVec2f { float x, y; };
 
 extern "C" void func_001E94E0(void* self, char* str, int a2, sVec2f* pos)
@@ -319,8 +325,6 @@ extern "C" void func_001E94E0(void* self, char* str, int a2, sVec2f* pos)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/ovstatehud", func_001E9540);
 #ifdef SKIP_ASM
-extern "C" unsigned short* func_002C2508(unsigned short* dst, unsigned short* src);
-extern "C" void func_001E92A8(void* self);
 extern "C" void func_001E9540(void* self, unsigned short* str, int a2, sVec2f* pos)
 {
     func_002C2508((unsigned short*)((char*)self + 0x4C), str);
@@ -335,7 +339,6 @@ INCLUDE_ASM("fe/ovstatehud", func_001E95A0);
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001E9A30);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern "C" void* func_0020EAA0(void*);
 extern char D_00474160[];
 
@@ -373,7 +376,6 @@ INCLUDE_ASM("fe/ovstatehud", func_001EA930);
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001EC1F0);
 #ifdef SKIP_ASM
-extern "C" unsigned short* func_002C2508(unsigned short* dst, unsigned short* src);
 extern "C" void* func_002B40F0(void* self, int i);
 
 // HUD overlay message handler: flags, counters, the two message strings and the track-name hash.
@@ -491,8 +493,6 @@ struct sHudVert_001F1190 {
 
 static inline int texOf_001F1190(cOVStateHUDElem* e) { return e->field_0x0; }
 
-extern char* D_004A289C;
-
 extern "C" void func_001F1190(void* self, cOVStateHUDElem* e, float* pos, float* size, float* scale, float* color)
 {
     if (e != 0) {
@@ -562,8 +562,6 @@ struct sHudVert_001F1338 {
     sHudVert_001F1338() {}
 };
 
-extern char* D_004A289C;
-
 extern "C" void func_001F1338(void* self, float* pos, float* size, float* scale, float* color)
 {
     sHudVert_001F1338 v[4];
@@ -613,7 +611,6 @@ extern "C" void func_001F1338(void* self, float* pos, float* size, float* scale,
 INCLUDE_ASM("fe/ovstatehud", func_001F14B0);
 #ifdef SKIP_ASM
 extern "C" int strlen(const char* s);
-struct sGlyphTable_1F14B0;
 extern "C" void func_00391CB0(void* self, float x, float y, const char* str);
 
 struct sGlyph_1F14B0 {
@@ -822,8 +819,6 @@ extern "C" void cOVStateHUD1P_renderTime(void* self_, int a1, int a2, int a3, in
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F1B30);
 #ifdef SKIP_ASM
-extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
-
 struct sVec4_001F1B30 {
     float x, y, z, w;
     sVec4_001F1B30(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {}
@@ -909,7 +904,6 @@ INCLUDE_ASM("fe/ovstatehud", func_001F1E28);
 // Lessons: dead stores of dOutT/dOut land in the frame because arrays are written; col shares the slot of dOutT when
 // dOutT/dOut live in an inner block; nested by-value VU0 helper calls in ONE expression share one temp slot;
 // a 4-float ctor temp + struct copy gives the 'swc1 x4; ldl/ldr/sdl/sdr' colour build.
-extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 
 struct sV4_001F1E28 {
     float x, y, z, w;
@@ -1083,9 +1077,6 @@ extern "C" void func_001F1E28(void* ctx, float t, sFont_001F1E28* font, sHudElem
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F22E8);
 #ifdef SKIP_ASM
-extern "C" float func_003921F0(void* self, const unsigned short* str, void* out, int n, float sx, float sy);
-extern "C" void func_00391E30(void* self, float x, float y, const unsigned short* str);
-
 struct sVec4_001F22E8 {
     float x, y, z, w;
     sVec4_001F22E8(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {}
@@ -1163,8 +1154,6 @@ extern "C" void func_001F22E8(void* ctx, sFont_001F22E8* font, sHudElemDef_001F1
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F25E0);
 #ifdef SKIP_ASM
-extern "C" float func_003921F0(void* self, const unsigned short* str, void* out, int n, float sx, float sy);
-
 struct sV4_001F25E0 {
     float x, y, z, w;
 } __attribute__((aligned(16)));
@@ -1338,7 +1327,6 @@ extern "C" void func_001F25E0(void* ctx, float t, sFont_001F25E0* font, sHudElem
 INCLUDE_ASM("fe/ovstatehud", func_001F2AA0);
 #ifdef SKIP_ASM
 extern "C" char* func_00392430(void* f, const char* str, char* dst, int max, float sx, float width);
-extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 
 struct sFont_001F2AA0 {
     char pad0[0x14];
@@ -1433,8 +1421,6 @@ extern "C" void func_001F2AA0(void* self, sFont_001F2AA0* font, sHudElemDef_001F
 INCLUDE_ASM("fe/ovstatehud", func_001F2DB0);
 #ifdef SKIP_ASM
 extern "C" unsigned short* func_00392680(void* f, const unsigned short* str, unsigned short* dst, int max, float sx, float width);
-extern "C" float func_003921F0(void* self, const unsigned short* str, void* out, int n, float sx, float sy);
-extern "C" void func_00391E30(void* self, float x, float y, const unsigned short* str);
 
 struct sFont_001F2DB0 {
     char pad0[0x14];
@@ -1549,7 +1535,6 @@ struct sHudIds001F30D8 {
     int d;
 };
 
-int GetHashValue32(char* str);
 extern "C" int func_003983F0(void* self, int key);
 extern void* D_004A28A8;
 extern char D_0046ED78[];
@@ -1645,7 +1630,6 @@ extern char D_004FF1A0[];
 extern int D_004A4EB0;
 extern sV2_31E0 D_004A4EA8;
 extern "C" float func_003921F0(void* obj, const unsigned short* txt, void* a, int b, float x, float y);
-extern "C" void func_00391E30(void* self, float x, float y, const unsigned short* str);
 
 class cGfx_31E0 {
 public:
@@ -1709,7 +1693,6 @@ struct sHudTimer_001F31E0 {
     float t;                    // 0x8
     sFont_001F31E0* font;       // 0xC
 };
-
 
 extern "C" void func_001F31E0(sHudTimer_001F31E0* self)
 {
@@ -1790,10 +1773,6 @@ extern "C" void func_001F36D8(void* self, int bit)
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F3700);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00147318(void* self, int a1);
 extern "C" void func_001A1CB8(void* self, int a1, int val);
 extern void* D_00473AA8[];
