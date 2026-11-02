@@ -112,6 +112,17 @@ struct sFlagSetElem {
     sVEntry<void(void*, int)>* vt;      // 0x184
 };
 
+// The 15-element flag-set list: vtable at 0xC, the wave level state, then the elements.
+struct sFlagSetList {
+    char pad0[0xC];
+    void** vtable;                  // 0xC
+    float level;                    // 0x10
+    float base;                     // 0x14
+    float delta;                    // 0x18
+    float t;                        // 0x1C
+    sFlagSetElem elems[15];         // 0x20
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -462,17 +473,8 @@ extern "C" void* func_0034AF38(void* self);
 extern void* D_0048FB80[];
 
 
-struct sFlagSet_C428 {
-    char pad0[0xC];
-    void** vtable;                  // 0xC
-    int field_0x10;                 // 0x10
-    float field_0x14;               // 0x14
-    float field_0x18;               // 0x18
-    int field_0x1c;                 // 0x1C
-    sFlagSetElem elems[15];    // 0x20
-};
 
-extern "C" sFlagSet_C428* func_0034C428(sFlagSet_C428* self, void* a1)
+extern "C" sFlagSetList* func_0034C428(sFlagSetList* self, void* a1)
 {
     int i;
     sFlagSetElem* p = self->elems;
@@ -481,10 +483,10 @@ extern "C" sFlagSet_C428* func_0034C428(sFlagSet_C428* self, void* a1)
     for (i = 14; i != -1; i--, p++) {
         func_0034AF38(p);
     }
-    self->field_0x14 = 0.5f;
-    self->field_0x18 = 0.25f;
-    self->field_0x1c = 0;
-    self->field_0x10 = 0;
+    self->base = 0.5f;
+    self->delta = 0.25f;
+    self->t = 0;
+    self->level = 0;
     return self;
 }
 #endif
@@ -497,14 +499,8 @@ extern void* D_0048FB80[];
 
 
 
-struct sFlagSet_C4B8 {
-    char pad0[0xC];
-    void** vtable;                  // 0xC
-    char pad10[0x10];
-    sFlagSetElem elems[15];    // 0x20
-};
 
-extern "C" void func_0034C4B8(sFlagSet_C4B8* self, int flags)
+extern "C" void func_0034C4B8(sFlagSetList* self, int flags)
 {
     self->vtable = D_0048FB80;
     if (self->elems != 0) {
@@ -522,15 +518,11 @@ extern "C" void func_0034C4B8(sFlagSet_C4B8* self, int flags)
 INCLUDE_ASM("object/flagset", func_0034C548);
 #ifdef SKIP_ASM
 
-struct sFlagSet_C548 {
-    char pad0[0x20];
-    sFlagSetElem elems[15]; // 0x20
-};
 
 extern "C" int func_0034AFE8(void* self, void* data, void* ctx);
 extern "C" void func_0034B038(void* self, void* data, void* ctx);
 
-extern "C" void func_0034C548(sFlagSet_C548* self, void* node, void* desc)
+extern "C" void func_0034C548(sFlagSetList* self, void* node, void* desc)
 {
     int i;
     sFlagSetElem* e;
@@ -554,14 +546,10 @@ extern "C" void func_0034C548(sFlagSet_C548* self, void* node, void* desc)
 INCLUDE_ASM("object/flagset", func_0034C600);
 #ifdef SKIP_ASM
 
-struct sFlagSet_C600 {
-    char pad0[0x20];
-    sFlagSetElem elems[15]; // 0x20
-};
 
 extern "C" int func_0034B168(void* elem, void* arg);
 
-extern "C" void func_0034C600(sFlagSet_C600* self, void* arg)
+extern "C" void func_0034C600(sFlagSetList* self, void* arg)
 {
     int i;
     sFlagSetElem* e = self->elems;
@@ -577,21 +565,13 @@ extern "C" void func_0034C600(sFlagSet_C600* self, void* arg)
 INCLUDE_ASM("object/flagset", func_0034C668);
 #ifdef SKIP_ASM
 
-struct sFlagSet_C668 {
-    char pad0[0x10];
-    float level;    // 0x10
-    float base;     // 0x14
-    float delta;    // 0x18
-    float t;        // 0x1C
-    sFlagSetElem elems[15]; // 0x20
-};
 
 extern "C" int func_002D1BA0();
 extern "C" void func_0034B818(void* elem);
 extern char* D_004A5B64;
 
 
-extern "C" void func_0034C668(sFlagSet_C668* self)
+extern "C" void func_0034C668(sFlagSetList* self)
 {
     float amp = 0.15f;
     switch (func_002D1BA0()) {
@@ -632,18 +612,14 @@ extern "C" void func_0034C668(sFlagSet_C668* self)
 INCLUDE_ASM("object/flagset", func_0034C7F8);
 #ifdef SKIP_ASM
 
-struct sFlagSetOwner {
-    char pad_0x0[0x20];
-    sFlagSetElem entries[15]; // 0x20
-};
 
 extern "C" void func_0034B9B0(sFlagSetElem* e);
 
-extern "C" void func_0034C7F8(sFlagSetOwner* self)
+extern "C" void func_0034C7F8(sFlagSetList* self)
 {
     int i;
     for (i = 0; i < 15; i++) {
-        sFlagSetElem* e = &self->entries[i];
+        sFlagSetElem* e = &self->elems[i];
         if (e->active != 0) {
             func_0034B9B0(e);
         }
@@ -655,14 +631,10 @@ extern "C" void func_0034C7F8(sFlagSetOwner* self)
 INCLUDE_ASM("object/flagset", func_0034C848);
 #ifdef SKIP_ASM
 
-struct sFlagSet_C848 {
-    char pad0[0x20];
-    sFlagSetElem elems[15]; // 0x20
-};
 
 extern "C" void func_0034C2E0(void* elem, void* arg);
 
-extern "C" void func_0034C848(sFlagSet_C848* self, void* arg)
+extern "C" void func_0034C848(sFlagSetList* self, void* arg)
 {
     int i;
     for (i = 0; i < 15; i++) {
@@ -675,14 +647,10 @@ extern "C" void func_0034C848(sFlagSet_C848* self, void* arg)
 INCLUDE_ASM("object/flagset", func_0034C898);
 #ifdef SKIP_ASM
 
-struct sFlagSet_C898 {
-    char pad0[0x20];
-    sFlagSetElem elems[15]; // 0x20
-};
 
 extern "C" void func_0034C378(void* elem, void* arg);
 
-extern "C" void func_0034C898(sFlagSet_C898* self, void* arg)
+extern "C" void func_0034C898(sFlagSetList* self, void* arg)
 {
     int i;
     for (i = 0; i < 15; i++) {
