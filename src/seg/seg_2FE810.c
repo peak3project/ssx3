@@ -2114,26 +2114,14 @@ int func_004011E0(int a) {
         if (func_00426B48(D_004527D0, 0x80000595, 0) < 0) {
             if (D_00451610[0] > 0)
                 func_00425C60(D_00497AA0);
-            i = 0x100000;
-            do {
-                i--;
-                __asm__ volatile("nop");
-                __asm__ volatile("nop");
-                __asm__ volatile("nop");
-                __asm__ volatile("nop");
-            } while (i != -1);
+            for (i = 0x100000; i--; )
+                ;
             continue;
         }
         if (*(int *)(D_004527D0 + 0x24) != 0)
             break;
-        i = 0x100000;
-        do {
-            i--;
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-            __asm__ volatile("nop");
-        } while (i != -1);
+        for (i = 0x100000; i--; )
+            ;
     }
     D_0045163C[0] = 0;
     return 1;
