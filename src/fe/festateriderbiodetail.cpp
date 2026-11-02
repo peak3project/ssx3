@@ -8,19 +8,27 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/festateriderbiodetail", cFEStateRiderBio_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void func_00190A08(void* self);
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern char D_0045E438[];
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+
+//100%
+INCLUDE_ASM("fe/festateriderbiodetail", cFEStateRiderBio_onCreateScreen);
+#ifdef SKIP_ASM
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int a2);
-extern "C" void func_00190A08(void* self);
 extern "C" void func_00190CD8(void* self);
 extern char D_0045E398[];
 extern char D_0045E3A8[];
@@ -28,7 +36,6 @@ extern char D_0045E3B8[];
 extern char D_0045E3C8[];
 extern char D_0045E3D8[];
 extern char D_0045E3E8[];
-
 
 extern "C" void cFEStateRiderBio_onCreateScreen(void* self)
 {
@@ -58,8 +65,6 @@ extern "C" void cFEStateRiderBio_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", func_00190A08);
 #ifdef SKIP_ASM
-extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern "C" void cFEStateRiderBio_fillDNAInfo(void* self);
 extern "C" void cFEStateRiderBio_fillFavesInfo(void* self);
 extern "C" void cFEStateRiderBio_fillQnAInfo(void* self);
@@ -70,7 +75,6 @@ extern char D_0045E408[];
 extern char D_0045E418[];
 extern char D_0045E428[];
 extern char D_004A1618[];
-extern char D_0045E438[];
 extern char D_0045E450[];
 extern char D_0045E460[];
 
@@ -132,10 +136,6 @@ extern "C" void func_00190A08(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", func_00190CD8);
 #ifdef SKIP_ASM
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
-
 struct sNames_0CD8 {
     char* name[10];
 };
@@ -162,12 +162,6 @@ extern "C" void func_00190CD8(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", cFEStateRiderBio_fillDNAInfo);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-
 struct sDNANames {
     char* name[10][8];
 };
@@ -191,12 +185,6 @@ extern "C" void cFEStateRiderBio_fillDNAInfo(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", cFEStateRiderBio_fillFavesInfo);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-
 struct sFavesNames {
     char* name[10][12];
 };
@@ -220,12 +208,6 @@ extern "C" void cFEStateRiderBio_fillFavesInfo(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", cFEStateRiderBio_fillQnAInfo);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-
 struct sQnANames {
     char* name[10][4];
 };
@@ -249,16 +231,9 @@ extern "C" void cFEStateRiderBio_fillQnAInfo(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbiodetail", cFEStateRiderBio_fillBioInfo);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void* func_0014EEC8(void* self, int player, int index);
 extern "C" void func_003A18C0(void* self);
 extern "C" void func_003A1F18(void* self, int id);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern char D_0045E438[];
 extern char D_0045F7D0[];
 
 extern "C" void cFEStateRiderBio_fillBioInfo(void* self)
@@ -278,7 +253,6 @@ extern "C" void cFEStateRiderBio_fillBioInfo(void* self)
 INCLUDE_ASM("fe/festateriderbiodetail", func_001912D0);
 #ifdef SKIP_ASM
 extern "C" void func_0039F400(void* list, void* item);
-extern "C" void func_00190A08(void* self);
 
 extern "C" void func_001912D0(void* self, void* item, int msg)
 {
