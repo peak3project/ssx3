@@ -142,6 +142,23 @@ struct sVtxF {
     sVtxF() {}
 };
 
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float ffloor(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
+    if (x < t) {
+        t -= 1.0f;
+    }
+    return t;
+}
+
+// The font an item draws with (reached from its menu: + 0x124, then + 0x58).
+static inline char* MenuFont(char* item)
+{
+    return *(char**)(*(char**)(*(char**)item + 0x124) + 0x58);
+}
+
 // EA's string class (cBXString): one pointer to its text.
 struct cBXString {
     char* str;
@@ -371,11 +388,6 @@ INCLUDE_ASM("util/menu", func_002CA768);
 extern "C" void func_00391CB0(void* self, float x, float y, const char* str);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 
-static inline char* font_2CA768(char* item)
-{
-    return *(char**)(*(char**)(*(char**)item + 0x124) + 0x58);
-}
-
 // PORT: the unit's callers declare func_002CA768 as (void*, int, int, int, void*, char*, sColor*) returning void*;
 // the body takes (item, rect, left, center, right, style, color) and returns nothing. Bound by asm label.
 extern "C" void func_002CA768_impl(char* item, sRect* rect, const char* left, const char* center, const char* right, char* style, sColor* color) __asm__("func_002CA768");
@@ -385,24 +397,24 @@ extern "C" void func_002CA768_impl(char* item, sRect* rect, const char* left, co
     char* menu = *(char**)item;
     sVEntry<void(void*, sRect*, char*)>* vt = *(sVEntry<void(void*, sRect*, char*)>**)(menu + 0x12C);
     vt[8].fn(menu + vt[8].delta, rect, style);
-    *(sColor*)(font_2CA768(item) + 0x40) = *color;
-    char* f0 = font_2CA768(item);
+    *(sColor*)(MenuFont(item) + 0x40) = *color;
+    char* f0 = MenuFont(item);
     sVec2 sc(2.0f, 2.0f);
     *(sVec2*)(f0 + 0x28) = sc;
     if (left) {
-        func_00391CB0(font_2CA768(item), rect->x + 16.0f, rect->y + 6.0f - 1.0f, left);
+        func_00391CB0(MenuFont(item), rect->x + 16.0f, rect->y + 6.0f - 1.0f, left);
     }
     if (center) {
-        char* f = font_2CA768(item);
+        char* f = MenuFont(item);
         float w = func_00391FB0(f, center, 0, 0, *(float*)(f + 0x38), *(float*)(f + 0x3C));
-        func_00391CB0(font_2CA768(item), rect->x + (rect->w - w) * 0.5f, rect->y + 6.0f - 1.0f, center);
+        func_00391CB0(MenuFont(item), rect->x + (rect->w - w) * 0.5f, rect->y + 6.0f - 1.0f, center);
     }
     if (right) {
-        char* f = font_2CA768(item);
+        char* f = MenuFont(item);
         float w = func_00391FB0(f, right, 0, 0, *(float*)(f + 0x38), *(float*)(f + 0x3C));
-        func_00391CB0(font_2CA768(item), rect->x + (rect->w - w) - 16.0f, rect->y + 6.0f - 1.0f, right);
+        func_00391CB0(MenuFont(item), rect->x + (rect->w - w) - 16.0f, rect->y + 6.0f - 1.0f, right);
     }
-    *(sVec2*)(font_2CA768(item) + 0x28) = sVec2(0.0f, 0.0f);
+    *(sVec2*)(MenuFont(item) + 0x28) = sVec2(0.0f, 0.0f);
 }
 #endif
 
@@ -2280,17 +2292,6 @@ INCLUDE_ASM("util/menu", func_002CD5A0);
 float func_002CA408_f(void* self) __asm__("func_002CA408__FPv");
 float func_002CA428_f(void* self) __asm__("func_002CA428__FPv");
 
-// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
-static inline float ffloor_002CD5A0(float x)
-{
-    float t;
-    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
-    if (x < t) {
-        t -= 1.0f;
-    }
-    return t;
-}
-
 extern "C" int func_002CD5A0(void* self)
 {
     char* s = (char*)self;
@@ -2335,7 +2336,7 @@ extern "C" int func_002CD5A0(void* self)
         d = *(float*)(s + 0x28);
         signed char* p = *(signed char**)(s + 0x18);
         int cur = *p;
-        int v = (int)ffloor_002CD5A0((float)cur + d);
+        int v = (int)ffloor((float)cur + d);
         int lo = *(signed char*)(s + 0x1C);
         int hi = *(signed char*)(s + 0x1D);
         if (v < lo) {
@@ -2502,17 +2503,6 @@ INCLUDE_ASM("util/menu", func_002CD9D8);
 float func_002CA408_f(void* self) __asm__("func_002CA408__FPv");
 float func_002CA428_f(void* self) __asm__("func_002CA428__FPv");
 
-// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
-static inline float ffloor_002CD9D8(float x)
-{
-    float t;
-    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
-    if (x < t) {
-        t -= 1.0f;
-    }
-    return t;
-}
-
 extern "C" int func_002CD9D8(void* self)
 {
     char* s = (char*)self;
@@ -2557,7 +2547,7 @@ extern "C" int func_002CD9D8(void* self)
         d = *(float*)(s + 0x2C);
         int* p = *(int**)(s + 0x18);
         int cur = *p;
-        int v = (int)ffloor_002CD9D8((float)cur + d);
+        int v = (int)ffloor((float)cur + d);
         int lo = *(int*)(s + 0x1C);
         int hi = *(int*)(s + 0x20);
         if (v < lo) {
@@ -4311,11 +4301,6 @@ extern "C" void* func_002CBF30(void* self);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 extern char D_00486748[];
 
-static inline char* font_2D0D48(char* item)
-{
-    return *(char**)(*(char**)(*(char**)item + 0x124) + 0x58);
-}
-
 extern "C" sRect* func_002D0D48(sRect* ret, char* item)
 {
     int margin = 100;
@@ -4324,10 +4309,10 @@ extern "C" sRect* func_002D0D48(sRect* ret, char* item)
         focused = *(int*)(item + 0x40) != 0;
     }
     int pad = focused ? 0x50 : 0x14;
-    char* font = font_2D0D48(item);
+    char* font = MenuFont(item);
     float lh = (float)*(int*)(font + 0x14) * *(float*)(font + 0x34);
     float w = func_00391FB0(font, *(char**)(item + 0x14), 0, 0, *(float*)(font + 0x38), *(float*)(font + 0x3C));
-    char* font2 = font_2D0D48(item);
+    char* font2 = MenuFont(item);
     float w2 = func_00391FB0(font2, D_00486748, 0, 0, *(float*)(font2 + 0x38), *(float*)(font2 + 0x3C));
     if (w < w2) w = w2;
     sRect r;
@@ -4342,7 +4327,7 @@ extern "C" sRect* func_002D0D48(sRect* ret, char* item)
         }
         r.h = h;
     } else {
-        char* font3 = font_2D0D48(item);
+        char* font3 = MenuFont(item);
         r.h = (float)*(int*)(font3 + 0x14) * *(float*)(font3 + 0x34) + 12.0f;
     }
     r.w = (float)margin + w + 64.0f;
