@@ -939,64 +939,60 @@ void func_003DCF70_impl(int h, void (*fn)(int, int, int)) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCFC0);
 #ifdef SKIP_ASM
 struct H_CFC0 { unsigned int v; };
-struct E_CFC0 { unsigned int w0; int f4; int f8; int pad; int f10; char pad14[0x2C - 0x14]; struct E_CFC0 *next; };
-struct G_CFC0 { int f0; int f4; int f8; int fC; char pad10[0x24 - 0x10]; struct E_CFC0 *f24; struct E_CFC0 *f28; int f2C; struct E_CFC0 *head; };
-extern struct G_CFC0 D_00519AB0_CFC0 __asm__("D_00519AB0");
-extern char D_00519AC4_CFC0[] __asm__("D_00519AC4");
 extern void MUTEX_unlock_CFC0(void *) __asm__("MUTEX_unlock");
 
 void func_003DCFC0_impl(struct H_CFC0 h, int obj) __asm__("func_003DCFC0");
 void func_003DCFC0_impl(struct H_CFC0 h, int obj) {
     struct H_CFC0 c;
     unsigned int u = h.v;
-    struct E_CFC0 *e = (struct E_CFC0 *)((char *)D_00519AB0_CFC0.f28 + ((unsigned char *)&h)[3] * 0x30);
+    struct sFsCmd *e = &D_00519AB0.f28[((unsigned char *)&h)[3]];
     int ok = 0;
     c.v = u;
     if (u != 0) {
-        unsigned int t = (*(unsigned int *)(((unsigned char *)&c)[3] * 0x30 + (char *)D_00519AB0_CFC0.f28) ^ u) & 0xFFFFF;
+        unsigned int t = (D_00519AB0.f28[((unsigned char *)&c)[3]].f00.w ^ u) & 0xFFFFF;
         ok = t == 0;
     }
     if (ok != 0) {
         int old;
-        MUTEX_lock((char *)&D_00519AB0_CFC0 + 0x14);
+        MUTEX_lock(D_00519AB0.f14);
         old = e->f10;
         e->f10 = obj;
-        if (D_00519AB0_CFC0.fC > 1 && e != D_00519AB0_CFC0.f24 && e->f8 == 0 && old != obj) {
-            struct E_CFC0 *prev = 0;
-            struct E_CFC0 *p = D_00519AB0_CFC0.head;
-            struct E_CFC0 *nx = e->next;
+        if (D_00519AB0.f0C > 1 && e != D_00519AB0.f24 && e->f08 == 0 && old != obj) {
+            struct sFsCmd *prev = 0;
+            struct sFsCmd *p = D_00519AB0.f30;
+            struct sFsCmd *nx = e->f2C;
             if (p != 0 && p != e) {
                 prev = p;
-                while ((p = prev->next) != 0 && p != e) {
+                while ((p = prev->f2C) != 0 && p != e) {
                     prev = p;
                 }
             }
             if (prev != 0) {
-                prev->next = nx;
+                prev->f2C = nx;
             } else {
-                D_00519AB0_CFC0.head = nx;
+                D_00519AB0.f30 = nx;
             }
             prev = 0;
-            e->next = D_00519AB0_CFC0.head;
-            if (e->next != 0) {
-                int hk = e->next->f10;
+            e->f2C = D_00519AB0.f30;
+            if (e->f2C != 0) {
+                int hk = e->f2C->f10;
                 int k = e->f10;
                 if (k >= hk) {
                     while (1) {
-                        prev = e->next;
-                        e->next = prev->next;
-                        if (e->next == 0) break;
-                        if (k < e->next->f10) break;
+                        prev = e->f2C;
+                        e->f2C = prev->f2C;
+                        if (e->f2C == 0) break;
+                        if (k < e->f2C->f10) break;
                     }
                 }
             }
             if (prev != 0) {
-                prev->next = e;
+                prev->f2C = e;
             } else {
-                D_00519AB0_CFC0.head = e;
+                D_00519AB0.f30 = e;
             }
         }
-        MUTEX_unlock_CFC0(D_00519AC4_CFC0);
+        MUTEX_unlock_CFC0(D_00519AC4.f00);
     }
 }
 #endif
