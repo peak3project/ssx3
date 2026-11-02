@@ -130,6 +130,12 @@ struct sWsBoxV {
     t4Vector max;
 };
 
+// A polymorphic world object as the list walkers see it (vtable pointer at 0xC).
+struct sWsVObj {
+    int pad00[3];
+    sWsVtSlot* vt;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -538,16 +544,12 @@ typedef int (*Test_3309D8)(void*);
 
 struct sWsBox;
 typedef sWsBox* (*GetBox_3309D8)(void*);
-struct sObj_3309D8 {
-    int pad00[3];
-    sWsVtSlot* vt;
-};
 
 struct sNode_3309D8 {
     sNode_3309D8* next;
     int pad04;
     int flags;
-    sObj_3309D8* obj;
+    sWsVObj* obj;
     int pad10[20];
     float bmin[3];
     float bmax[3];
@@ -1038,16 +1040,12 @@ typedef int (*Test_333EF8)(void*);
 typedef sWsBox* (*GetBox_333EF8)(void*);
 
 
-struct sObj_333EF8 {
-    int pad00[3];
-    sWsVtSlot* vt;
-};
 
 struct sNode_333EF8 {
     void* next;
     int pad04;
     int flags;
-    sObj_333EF8* obj;
+    sWsVObj* obj;
     int pad10[20];
     float bmin[3];
     float bmax[3];
@@ -1250,16 +1248,12 @@ typedef sWsBox* (*GetBox_334458)(void*);
 
 
 
-struct sObj_334458 {
-    int pad00[3];
-    sWsVtSlot* vt;
-};
 
 struct sNode_334458 {
     void* next;
     int pad04;
     int flags;
-    sObj_334458* obj;
+    sWsVObj* obj;
     int pad10[20];
     float bmin[3];
     float bmax[3];
@@ -1526,16 +1520,12 @@ typedef sWsBox* (*GetBox_335B90)(void*);
 
 
 
-struct sObj_335B90 {
-    int pad00[3];
-    sWsVtSlot* vt;
-};
 
 struct sNode_335B90 {
     void* next;
     int pad04;
     int flags;
-    sObj_335B90* obj;
+    sWsVObj* obj;
     int pad10[20];
     float bmin[3];
     float bmax[3];
@@ -1909,16 +1899,12 @@ typedef sWsBox* (*GetBox_336D40)(void*);
 
 
 
-struct sObj_336D40 {
-    int pad00[3];
-    sWsVtSlot* vt;
-};
 
 struct sNode_336D40 {
     void* next;
     int pad04;
     int flags;
-    sObj_336D40* obj;
+    sWsVObj* obj;
     int pad10[20];
     float bmin[3];
     float bmax[3];
