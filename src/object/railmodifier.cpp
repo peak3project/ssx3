@@ -22,6 +22,11 @@ struct sRmMat44 {
     float m[4][4];
 } __attribute__((aligned(16)));
 
+// 3x3 float matrix.
+struct sRmMat33 {
+    float m[3][3];
+};
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -421,22 +426,19 @@ void* func_0035CFE8(void* self)
 INCLUDE_ASM("object/railmodifier", func_0035CFF0);
 #ifdef SKIP_ASM
 
-struct sMat33CFF0 {
-    float m[3][3];
-};
 
 struct sBodyCFF0 {
     char pad_0x00[0x30];
     t4Vector pos;      // 0x30
     char pad_0x40[0x10];
-    sMat33CFF0 rot;     // 0x50
+    sRmMat33 rot;     // 0x50
     char pad_0x74[0x1C];
     t4Vector outPos;   // 0x90
 };
 
-static inline sMat33CFF0 scaleCFF0(const sMat33CFF0& a, float s)
+static inline sRmMat33 scaleCFF0(const sRmMat33& a, float s)
 {
-    sMat33CFF0 r;
+    sRmMat33 r;
     r.m[0][0] = a.m[0][0] * s;
     r.m[0][1] = a.m[0][1] * s;
     r.m[0][2] = a.m[0][2] * s;
@@ -449,9 +451,9 @@ static inline sMat33CFF0 scaleCFF0(const sMat33CFF0& a, float s)
     return r;
 }
 
-static inline void invertCFF0(sMat33CFF0& a)
+static inline void invertCFF0(sRmMat33& a)
 {
-    sMat33CFF0 adj;
+    sRmMat33 adj;
     adj.m[0][0] = a.m[1][1] * a.m[2][2] - a.m[1][2] * a.m[2][1];
     adj.m[0][1] = a.m[2][1] * a.m[0][2] - a.m[2][2] * a.m[0][1];
     adj.m[0][2] = a.m[0][1] * a.m[1][2] - a.m[0][2] * a.m[1][1];
@@ -466,7 +468,7 @@ static inline void invertCFF0(sMat33CFF0& a)
     a = scaleCFF0(adj, inv);
 }
 
-static inline t4Vector xformCFF0(const sMat33CFF0& m, sBodyCFF0* b)
+static inline t4Vector xformCFF0(const sRmMat33& m, sBodyCFF0* b)
 {
     t4Vector r;
     float x = b->outPos.x;
@@ -482,7 +484,7 @@ static inline t4Vector xformCFF0(const sMat33CFF0& m, sBodyCFF0* b)
 extern "C" void func_0035CFF0(sBodyCFF0* self, const t4Vector* v)
 {
     self->outPos = *v;
-    sMat33CFF0 m = self->rot;
+    sRmMat33 m = self->rot;
     invertCFF0(m);
     self->pos = xformCFF0(m, self);
 }
@@ -492,9 +494,6 @@ extern "C" void func_0035CFF0(sBodyCFF0* self, const t4Vector* v)
 INCLUDE_ASM("object/railmodifier", func_0035D288);
 #ifdef SKIP_ASM
 
-struct sRmMat33 {
-    float m[3][3];
-};
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector vu0ScaleRM(const t4Vector& v, float s)
