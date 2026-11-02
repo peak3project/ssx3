@@ -429,14 +429,14 @@ extern int D_004A3DFC;
 extern "C" void func_003147F0(void*, cStream*);
 extern "C" void func_00314668(void*);
 extern "C" void func_00314880(void*, cStream*);
-extern sVec4 D_004FF120_4E70 __asm__("D_004FF120");
+extern sVec4 D_004FF120;
 int func_0011FEE8(void*);
 int func_0011FE98(void*);
 extern "C" void func_00106F78(void*);
 extern "C" int func_001231A8(void*);
 extern "C" void func_0016D320(void*, void*);
 extern "C" void func_0032F708(void* self, int flags);
-extern char D_004C5830_5398[] __asm__("D_004C5830");
+extern char D_004C5830[];
 // PORT: the project names this func_0011FEC8__FPv (one param); callers pass a state too.
 void func_0011FEC8_2(void* self, int v) __asm__("func_0011FEC8__FPv");
 int func_00312AA0(void* anim, int ch);
@@ -471,8 +471,8 @@ extern "C" void func_0010E468(void*, void*);
 extern "C" void func_0010E2E8(void*, void*);
 extern "C" void func_0010E3A8(void*, void*);
 extern "C" void func_0010E228(void*, void*);
-extern float D_004A4C84_7E70 __asm__("D_004A4C84");
-extern int D_005308D0_7E70[] __asm__("D_005308D0");
+extern float D_004A4C84;
+extern int D_005308D0[];
 extern "C" void func_00131348(void*);
 extern "C" void* func_0028B180();
 extern "C" void func_002A0E70(void*, void*, int);
@@ -2334,7 +2334,7 @@ extern "C" float func_00104E70(sSelf_4E70* self, cScope_4E70* scope, sContact_4E
     }
     *out = hits[best];
     if (n >= 2) {
-        sVec4 sum = D_004FF120_4E70;
+        sVec4 sum = D_004FF120;
         for (int k = 0; k < n; k++) {
             if (IsWall_4E70(&hits[k]))
                 AddTo_4E70(sum, hits[k].normal);
@@ -2484,7 +2484,7 @@ extern "C" void func_00105398(char* self, t4Vector* norm)
         if (!(c.surf->flags & 0x2000))
             func_00296088_5398(D_004A3500, self, c.surf, c.idx);
     }
-    func_0016D320(D_004C5830_5398, self);
+    func_0016D320(D_004C5830, self);
     func_0032F708(&sc, 2);
 }
 #endif
@@ -2894,7 +2894,7 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
     info.dir = Norm(*(t4Vector*)(self + 0x1E0));
     info.normal = *n;
     info.speed = s;
-    if ((D_005308D0_7E70[0] >> 5) & 1)
+    if ((D_005308D0[0] >> 5) & 1)
         absSpd = 599.9739990234375f;
     if (absSpd > 599.9739990234375f) {
         float dz = Dot(Get_7E70(self + 0x160), *n);
@@ -2904,7 +2904,7 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
         if (Abs(dz) < Abs(dy) && Abs(dx) < Abs(dy)) {
             if (dy < 0.0f) {
                 unsigned int k;
-                if (Len(*(t4Vector*)(self + 0x1E0)) > D_004A4C84_7E70)
+                if (Len(*(t4Vector*)(self + 0x1E0)) > D_004A4C84)
                     k = (unsigned int)AIrand() % 6;
                 else
                     k = (unsigned int)AIrand() % 3;
