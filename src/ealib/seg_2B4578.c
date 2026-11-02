@@ -15911,18 +15911,15 @@ extern unsigned char D_0044F42D_2290 __asm__("D_0044F42D");
 extern int D_0044F43C_2290 __asm__("D_0044F43C");
 
 int func_003D2290(void) {
-    int i, j, n;
+    int i, j;
     if (D_0044F430_2290 != 0) return -0x12;
-    i = 0;
-    do {
-        n = i + 1;
+    for (i = 0; i < 4; i++) {
         D_00517610[i].f34 = 0;
         D_00517610[i].f924 = 0;
-        for (j = 23; j >= 0; j--) {
+        for (j = 0; j < 24; j++) {
             D_00517610[i].f58[j] = 0;
         }
-        i = n;
-    } while (i < 4);
+    }
     D_0044F42C_2290 = 1;
     D_0044F43C_2290 = 0x100;
     D_0044F420 = 0;
@@ -17197,21 +17194,20 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D5968);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_002AF6C0(int, int);
 extern int func_002AF838(int);
-extern int D_0044F420_5968[] __asm__("D_0044F420");
 
 void func_003D5968(unsigned int mask) {
     int i;
     for (i = 0; i < 0x18; i++) {
-        char *o = *(char **)((char *)D_0044F420_5968[0] + (i << 2) + 0x58);
-        if (o != 0 && !(((mask >> i) ^ 1) & 1) && *(short *)(o + 0x36) >= 0) {
-            int t18 = *(signed char *)(o + 0x34) * *(signed char *)(o + 4) / 100;
-            signed char b = *(signed char *)(o + 0xE);
+        struct sPathVoice *o = D_0044F420->f58[i];
+        if (o != 0 && !(((mask >> i) ^ 1) & 1) && o->f36 >= 0) {
+            int t18 = o->f34 * o->f04 / 100;
+            signed char b = o->f0E;
             if (b >= 0) {
-                int t16 = b * *(signed char *)(o + 4) / 100;
-                if (t16 == func_002AF428(*(int *)(o + 0x54))) {
-                    if (*(signed char *)(o + 0xE) == 0) {
-                        func_002AF838(*(int *)(o + 0x54));
-                        *(short *)(o + 0x36) = -1;
+                int t16 = b * o->f04 / 100;
+                if (t16 == func_002AF428(o->f54)) {
+                    if (o->f0E == 0) {
+                        func_002AF838(o->f54);
+                        o->f36 = -1;
                     } else {
                         goto b8;
                     }
@@ -17220,10 +17216,10 @@ void func_003D5968(unsigned int mask) {
             } else {
 b8:
                 if (t18 >= 0) {
-                    func_002AF6C0(*(int *)(o + 0x54), t18);
+                    func_002AF6C0(o->f54, t18);
                 }
 b10:
-                *(signed char *)(o + 0xE) = -1;
+                o->f0E = -1;
             }
         }
     }
