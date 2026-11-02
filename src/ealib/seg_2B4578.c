@@ -2141,15 +2141,12 @@ void func_003B6AD8(void *arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6B10);
 #ifdef SKIP_ASM
-struct N_6B10 { char pad[0xC]; volatile int f0C; char pad2[4]; volatile unsigned f14; volatile unsigned f18; volatile unsigned f1C; };
-struct S_6B10 { char pad[0x11C]; struct N_6B10 *node; };
-
-void func_003B6B10(struct N_6B10 *node, unsigned n, struct S_6B10 *s) {
+void func_003B6B10(struct sA0A0Node *node, unsigned n, struct sA0A0Strm *s) {
     unsigned left = 0;
     int i = 0;
     for (;;) {
         i++;
-        node = s->node;
+        node = s->f11C.f00;
         if (i >= 0xC9) {
             func_003B6A70(node->f0C);
             return;
