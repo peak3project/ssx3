@@ -2616,16 +2616,13 @@ int func_003B89E0(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8A38);
 #ifdef SKIP_ASM
-struct E_8A38 { int f0; char pad[0x8C - 4]; };
-struct G_8A38 { char pad[0x17E]; short cnt; char pad2[0x1F0 - 0x180]; struct E_8A38 *tab; };
-extern struct G_8A38 D_0050A8E8_8A38 __asm__("D_0050A8E8");
 extern int f_89E0_8A38(int) __asm__("func_003B89E0");
 
 void func_003B8A38(void) {
     int i = 0;
     func_003B58A0();
-    for (i = 0; i < D_0050A8E8_8A38.cnt; i++) {
-        f_89E0_8A38(D_0050A8E8_8A38.tab[i].f0);
+    for (i = 0; i < D_0050A8E8.f17E; i++) {
+        f_89E0_8A38(D_0050A8E8.f1F0[i].f00);
     }
     func_003B58D8();
 }
