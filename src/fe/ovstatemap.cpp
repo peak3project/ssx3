@@ -24,21 +24,49 @@ public:
     virtual void setVisible(int v);
 };
 
+// Declarations shared by the functions of this unit.
+struct sSelf0020A380;
+struct cUIText;
+struct cFEAsyncManager;
+struct cList;
+struct cListNode;
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern void* D_004A28A8;
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int* func_00144BC0(void*);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void func_00209E78(void* self);
+extern char D_004C8B58[];
+void cUIText_setUnicodeStringByID(cUIText* t, int id);
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
+extern "C" void func_002C27C0(void* buf, const char* fmt, void* str, int n);
+extern "C" void func_003A0E90(void* t, void* str);
+extern char D_00471818[];
+extern char D_00471850[];
+extern char D_004706B8[];
+extern char D_004706C8[];
+extern char D_00470A20[];
+extern "C" void cFEAsyncManager_UnloadFEAsyncFile(void* mgr, int file);
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern char D_00470700[];
+extern char D_004A20D0[];
+extern "C" void* func_0039F9D8(void* list, int hash);
+
 //100%
 INCLUDE_ASM("fe/ovstatemap", cOVState_MAP_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct sSelf0020A380;
 extern "C" void func_0020A380(sSelf0020A380* self);
 extern "C" int func_001A3BF0(void* mgr);
 extern "C" void func_00208F10(void* self);
 extern "C" void cOVState_MAP_setupPopup(void* self);
 extern "C" void cOVState_MAP_setupPlayerIndicator(void* self);
 extern "C" void cOVState_MAP_setupLocalSessionList(void* self);
-extern void* D_004A28A8;
 extern char D_004717F8[];
 extern char D_004A25A8[];
 
@@ -148,28 +176,11 @@ typedef void (*VIntFn_87F0)(void*, int);
 typedef void (*VPtrFn_87F0)(void*, void*);
 typedef void* (*VGetFn_87F0)(void*, int);
 
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int* func_00144BC0(void*);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void func_00209E78(void* self);
-extern char D_004C8B58[];
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* t, int id);
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" int func_001545F8(void* iface, int id);
-extern "C" void func_002C27C0(void* buf, const char* fmt, void* str, int n);
-extern "C" void func_003A0E90(void* t, void* str);
 extern "C" int func_0026B680(void* tbl, sV3_87F0* pos);
-extern void* D_004A28A8;
 extern char D_00471808[];
-extern char D_00471818[];
 extern char D_00471828[];
 extern char D_00471838[];
-extern char D_00471850[];
-extern char D_004706B8[];
-extern char D_004706C8[];
 extern char D_004A2558[];
 extern char D_004D33A0[];
 
@@ -253,10 +264,7 @@ struct sObj00208B00 {
     sVEntry<void(void*, int)>* vt;
 };
 
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_0039E4C0(void* self, int a1);
-extern char D_00470A20[];
 
 extern "C" void func_00208B00(void* self, int a1)
 {
@@ -273,8 +281,6 @@ extern "C" void func_00208B00(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208B78);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void cFEAsyncManager_UnloadFEAsyncFile(void* mgr, int file);
 extern "C" void func_0020A088(void* self);
 extern "C" void func_0020A430(void* self);
 
@@ -319,15 +325,12 @@ extern "C" void func_00231250(void* self, int a, int b, int refresh);
 extern "C" void func_002095E8(void* self, void* obj, int on);
 extern "C" void func_00209648(void* self, void* obj, int on);
 void* func_0039F190_8C28(void* self, int a1) __asm__("func_0039F190");
-extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern int D_004A2A54;
 extern int D_004A2A50;
 extern int D_004A26FC;
 extern int D_005366E8[];
 extern int D_004428F0[];
 extern char D_004706E8[];
-extern char D_00470700[];
 extern char D_00470718[];
 extern char D_00470730[];
 extern char D_00470748[];
@@ -432,12 +435,6 @@ extern "C" int func_00208EF8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208F10);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cFEAsyncManager_UnloadFEAsyncFile(void* mgr, int file);
-extern "C" int* func_00144BC0(void*);
 extern "C" void func_001A37F8(void* mgr, int a1, int file, int a3);
 
 extern "C" void func_00208F10(void* self)
@@ -468,27 +465,12 @@ struct sStrMgr_9010 {
 typedef void (*VIntFn_9010)(void*, int);
 typedef void* (*VGetFn_9010)(void*, int);
 
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* t, int id);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 int cBELibrary_getCharacterID(int);
 extern "C" int func_00150928(void* self, int a, int b);
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-extern "C" void func_002C27C0(void* buf, const char* fmt, void* str, int n);
-extern "C" void func_003A0E90(void* t, void* str);
-extern "C" void cUIState_showObjSafe(void* self, char* name);
-extern "C" void cUIState_hideObjSafe(void* self, char* name);
-extern void* D_004A28A8;
-extern char D_00470A20[];
-extern char D_00471850[];
 extern char D_00470A60[];
 extern char D_004A2638[];
 extern char D_004A2640[];
-extern char D_00471818[];
 extern char D_004A26F0[];
 extern char D_00471890[];
 extern char D_004A26F8[];
@@ -496,9 +478,6 @@ extern char D_004718A0[];
 extern char D_004718B8[];
 extern char D_004718C8[];
 extern char D_004718D8[];
-extern char D_00470700[];
-extern char D_004706B8[];
-extern char D_004706C8[];
 extern char D_00470AA8[];
 
 extern "C" void cOVState_MAP_setupPopup(void* selfp)
@@ -580,8 +559,6 @@ struct sObj00209300 {
     sVEntry<int(void*)>* vt;
 };
 
-extern "C" void func_00209E78(void* self);
-
 extern "C" void func_00209300(void* self, sObj00209300* o)
 {
     if (o->vt[17].fn((char*)o + o->vt[17].delta) != 0 || o->vt[18].fn((char*)o + o->vt[18].delta) != 0) {
@@ -661,10 +638,8 @@ struct sMap_9370 {
     float bobVel;               // 0x1D0
 };
 
-struct cFEAsyncManager;
 int cFEAsyncManager_GetFileStatus(cFEAsyncManager* self, int index);
 extern "C" void func_0020E900(void* self);
-extern void* D_004A28A8;
 
 extern "C" void func_00209370(sMap_9370* self)
 {
@@ -741,7 +716,6 @@ extern "C" void func_002095E8(void* self, void* obj, int on)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00209648);
 #ifdef SKIP_ASM
-extern char D_004C8B58[];
 extern char D_004C8B48[];
 
 extern "C" void func_00209648(void* self, void* obj, int on)
@@ -829,15 +803,12 @@ struct sMapSt_96A8 {
     cFEObj_96A8* ind;           // 0xE0
 };
 
-struct cList;
-struct cListNode;
 void cList_addToEnd(cList* list, cListNode* node);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_00154678(sBounds_96A8* out, void* iface, int id);
 extern "C" void* func_0039FB30(void* self, void* parent, int a2);
 extern "C" unsigned char* func_0021CCC8(void* p);
 extern "C" void func_00399730(void* obj, int hash);
-extern void* D_004A28A8;
 extern char D_004718F0[];
 extern char D_00471908[];
 extern void* D_00494AA8[];
@@ -889,10 +860,6 @@ INCLUDE_ASM("fe/ovstatemap", cOVState_MAP_setupLocalSessionList);
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00209E78);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_00471850[];
-
 struct sMap_9E78 {
     char pad_0x0[0xC0];
     int count;              // 0xC0
@@ -1001,9 +968,6 @@ extern "C" void func_0020A088(void* p)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A1A8);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 // PORT: SN soft-float float->double conversion (the source passed floats to sprintf).
 extern "C" double func_00413AF8(float f);
 extern char D_004C6848[];
@@ -1040,11 +1004,7 @@ extern "C" char* func_0020A1A8(int secs)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A380);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_004A20D0[];
-extern void* D_004A28A8;
 extern "C" void func_002EA820(void* self);
-extern "C" void* func_0039F9D8(void* list, int hash);
 
 struct sSelf0020A380 {
     char pad[0x10];
@@ -1078,11 +1038,7 @@ extern "C" void func_0020A380(sSelf0020A380* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A430);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_004A20D0[];
-extern void* D_004A28A8;
 extern "C" void func_002EA860(void* self);
-extern "C" void* func_0039F9D8(void* list, int hash);
 extern "C" void func_0020D190();
 void func_0039E4A0(void* self);
 
@@ -1110,16 +1066,12 @@ extern "C" void func_0020A430(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A4E0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cBXString_cBXString2(void* self, const char* s);
 extern "C" void* cBXString_Concat(void* self, const char* str);
 extern "C" void cBXString__cBXString(void* self, int flags);
 extern "C" void func_003A19F8(void* text, char* str);
 extern "C" void func_001A83D8(void* list, int keep, unsigned int sel, int a3, int pos, int a5, int a6, int trim);
 extern "C" int func_00258160(int a, char* name, int len);
-extern void* D_004A28A8;
 extern int* D_004A2EEC_A4E0 __asm__("D_004A2EEC");
 extern char D_00534B30[];
 extern char D_0046E660[];
@@ -1180,8 +1132,6 @@ extern "C" int func_0020A4E0(char* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A6A8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-
 extern "C" void func_0020A6A8(void* self, int a1, int a2)
 {
     char* w = *(char**)((char*)D_004A28A8 + 0x84);
