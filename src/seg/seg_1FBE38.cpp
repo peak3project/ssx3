@@ -3267,14 +3267,12 @@ extern "C" void func_00278E50_0C78(int, int, int, int, int, int, int, int) __asm
 extern "C" void func_00278ED0_0C78(int, int, int, int, int, int, int) __asm__("func_00278ED0");
 extern "C" int func_00278F38(int, int);
 extern "C" int func_00278F68(int, int, int, int);
-struct V3_0C78 { float x, y, z; };
-extern V3_0C78 D_004C9098_0C78 __asm__("D_004C9098");
 extern unsigned D_0C78[] __asm__("D_004FBB58");
 extern int D_004A56A8;
 extern int D_004A3C58;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_0C78 { int idx; int val; int pad; int type; };
-extern "C" V3_0C78 func_00300C78(int n, Ent_0C78 *e) {
+extern "C" cLunoValue func_00300C78(int n, Ent_0C78 *e) {
     if (D_004A56A8 == 0) {
         D_0C78[0] = 0xFFFFFFFF;
         ((int*)D_0C78)[1] = 0;
@@ -3308,7 +3306,7 @@ extern "C" V3_0C78 func_00300C78(int n, Ent_0C78 *e) {
         func_00278F68(D_004A28A4_0C78, 0, 1, 0);
         break;
     }
-    return D_004C9098_0C78;
+    return D_004C9098;
 }
 #endif
 
