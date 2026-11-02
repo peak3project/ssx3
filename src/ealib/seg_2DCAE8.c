@@ -6,7 +6,7 @@ struct sC10File { char *name; int a; int b; char *path; };   /* built-in file ta
 struct sC10 {
     int f00;                        /* size */
     void *(*f04)(char *, int, int); /* alloc (name, size, flags) */
-    void (*f08)(void *);            /* free */
+    int (*f08)(void *);             /* free */
     int f0C;
     int f10;
     int f14;
@@ -16,7 +16,7 @@ struct sC10 {
 };
 extern struct sC10 D_00450C10;
 extern void *(*D_00450C14)(char *, int, int);   /* D_00450C10.f04 */
-extern void (*D_00450C18)(void *);              /* D_00450C10.f08 */
+extern int (*D_00450C18)(void *);               /* D_00450C10.f08 */
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DBAE8);
@@ -727,8 +727,6 @@ extern void func_003E44B0(void);
 extern int func_003DECA0(int, int);
 extern void func_003E56E0_CDE0(char *) __asm__("func_003E56E0");
 extern void func_003E6220_CDE0(char *, int) __asm__("func_003E6220");
-extern void (*D_00450C10_CDE0[])(int) __asm__("D_00450C10");
-extern void (*D_00450C18_CDE0[])(int) __asm__("D_00450C18");
 extern char D_00519AC4_CDE0[] __asm__("D_00519AC4");
 extern int *D_00519AE4_CDE0[] __asm__("D_00519AE4");
 extern int D_00519AE8;
@@ -737,13 +735,13 @@ void func_003DCDE0(void) {
     int *n;
     func_003E44B0();
     for (n = D_00519AE4_CDE0[0]; n != 0; n = (int *)n[5]) {
-        D_00450C10_CDE0[2](n[0]);
+        D_00450C10.f08((void *)n[0]);
         func_003DECA0(*(int *)n[3], 0);
     }
     func_003E56E0_CDE0(D_00519AC4_CDE0);
     func_003E6220_CDE0(D_00519AC4_CDE0 - 0x14, 0x38);
     if (D_00519AE8 != 0) {
-        D_00450C18_CDE0[0](D_00519AE8);
+        D_00450C18((void *)D_00519AE8);
         D_00519AE8 = 0;
     }
 }
