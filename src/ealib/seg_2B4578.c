@@ -180,6 +180,9 @@ extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
 extern unsigned char D_0050A92E;        /* D_0050A8E8.setup.cfg.f26 */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
+extern struct sA8E8Bus D_0050AAE0[];    /* D_0050A8E8.f1F8 */
+extern struct sA8E8Bus D_0050AAF4[];    /* D_0050A8E8.f20C */
+extern struct sA8E8Bus D_0050AB08[];    /* D_0050A8E8.f220 */
 extern void (*D_0050AAD0)(void);        /* D_0050A8E8.f1E8 */
 extern void (*D_0050AAD4)(void);        /* D_0050A8E8.f1EC */
 extern struct sA8E8Slot *D_0050AADC;    /* D_0050A8E8.f1F4 */
@@ -2274,18 +2277,15 @@ int func_003B8160(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8218);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0050AAE0_8218[] __asm__("D_0050AAE0");
-extern char D_0050AAF4_8218[] __asm__("D_0050AAF4");
-extern char D_0050AB08_8218[] __asm__("D_0050AB08");
 
-void *func_003B8218(int arg0, int arg1) {
+struct sA8E8Bus *func_003B8218(int arg0, int arg1) {
     switch (arg1 & 0x71C) {
     case 8:
-        return (arg0 * 0x14) + D_0050AB08_8218;
+        return &D_0050AB08[arg0];
     case 4:
-        return (arg0 * 0x14) + D_0050AAE0_8218;
+        return &D_0050AAE0[arg0];
     case 0x100:
-        return (arg0 * 0x14) + D_0050AAF4_8218;
+        return &D_0050AAF4[arg0];
     }
     return 0;
 }
@@ -2306,9 +2306,7 @@ int func_003B8290(unsigned long a) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B82B8);
 #ifdef SKIP_ASM
-struct Q_82B8 { short c; short pad2; int d; int e; };
 extern int f8290_82B8(int) __asm__("func_003B8290");
-extern struct Q_82B8 *f8218_82B8(int, int) __asm__("func_003B8218");
 extern int func_003C36A8(int, int);
 extern int func_003B83A0(int, int);
 
@@ -2321,10 +2319,10 @@ int func_003B82B8(int a, int b, int c, int d, int e) {
     id = a & ~0x1F8;
     while (m != 0) {
         if (bit & m) {
-            struct Q_82B8 *q = f8218_82B8(id, bit);
-            q->c = c;
-            q->d = d;
-            q->e = e;
+            struct sA8E8Bus *q = func_003B8218(id, bit);
+            q->f00 = c;
+            q->f04 = d;
+            q->f08 = e;
             func_003C36A8(id, bit);
             m &= ~bit;
         }
