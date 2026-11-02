@@ -1986,7 +1986,95 @@ int func_00400E30(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400EA8);
+#ifdef SKIP_ASM
+typedef struct { char b[0x24]; } R0EA8;
+struct S0EA8 { char hdr[0x24]; char name[0x100]; struct S0EA8 *self; int arg; };
+extern int D_00451610[];
+extern int D_00451628[];
+extern int D_0045161C[];
+extern int D_00451644[];
+extern int D_005264D8[];
+extern int D_005264E0[];
+extern struct S0EA8 D_00526540;
+extern char D_00526564[];
+extern char D_005266C0[];
+extern int D_00526680[];
+extern char D_00497A08[];
+extern char D_00497A28[];
+extern char D_00497A40[];
+extern char D_00497A50[];
+extern char D_00497A60[];
+extern void func_00400C00();
+extern int func_00423DF0(int);
+extern void func_00423DC0(int);
+extern void func_00423CA0(int, int *);
+extern void func_00425C60();
+extern int func_004013E8(int);
+extern void func_00426408(int);
+extern int func_00426B48(char *, unsigned, int);
+extern void func_00426358(int, int);
+extern int func_00426D18(char *, int, int, int *, int, int *, int, int, int);
+int f0EA8(char *out, char *name, int arg) __asm__("func_00400EA8");
+int f0EA8(char *out, char *name, int arg) {
+    int i;
+    int n;
+    int v;
+    func_00400C00();
+    if (D_00451628[0] != func_00423DF0(*(volatile int *)D_00451628))
+        return 0;
+    D_0045161C[0] = 1;
+    func_00423CA0(D_005264D8[0], D_005264E0);
+    if (func_004013E8(1) != 0) {
+        func_00423DC0(*(volatile int *)D_00451628);
+        return 0;
+    }
+    func_00426408(0);
+    if (D_00451644[0] < 0) {
+        for (;;) {
+            if (func_00426B48(D_005266C0, 0x80000597, 0) < 0) {
+                if (D_00451610[0] > 0)
+                    func_00425C60(D_00497A08);
+                for (i = 0x100000; i--; )
+                    ;
+                continue;
+            }
+            if (*(int *)(D_005266C0 + 0x24) != 0) {
+                D_00451644[0] = 0;
+                break;
+            }
+            for (i = 0x100000; i--; )
+                ;
+        }
+    }
+    for (n = 0; n < 0x100; n++) {
+        if ((D_00526540.name[n] = name[n]) == 0)
+            break;
+    }
+    if (n == 0x100)
+        D_00526540.name[0xFF] = 0;
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497A28, D_00526564);
+    D_00526540.arg = arg;
+    D_00526540.self = &D_00526540;
+    func_00426358((int)&D_00526540, 0x12C);
+    if (func_00426D18(D_005266C0, 0, 0, (int *)&D_00526540, 0x12C, D_00526680, 4, 0, 0) < 0) {
+        func_00423DC0(*(volatile int *)D_00451628);
+        return 0;
+    }
+    *(R0EA8 *)out = *(R0EA8 *)((int)&D_00526540 | 0x20000000);
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497A40, out + 8);
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497A50, ((int *)out)[1]);
+    if (D_00451610[0] > 0)
+        func_00425C60(D_00497A60, ((int *)out)[0]);
+    v = *(int *)((int)D_00526680 | 0x20000000);
+    func_00423DC0(*(volatile int *)D_00451628);
+    return v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004011C0);
