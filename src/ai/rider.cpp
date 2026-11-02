@@ -937,7 +937,403 @@ extern "C" void func_0011EB60(cRider* self, float value)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011EB98);
+#ifdef SKIP_ASM
+extern "C" void func_00134DD0(void* self, void* xf);
+extern "C" void cRider_doLeanPoseAdjust(void* self, void* xf);
+extern "C" void func_00310200(cAnimModel* self, void* roots);
+extern "C" void func_0011F3D8(void* self, void* obj, void* xf, float t);
+extern "C" void func_00106828(void* self);
+extern "C" float func_0031C128(float x);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+int func_0011FEE8(void* self);
+
+struct sQ_EB98 {
+    float x, y, z, w;
+    sQ_EB98() {}
+    sQ_EB98(float ax, float ay, float az, float aw)
+    {
+        w = aw;
+        x = ax;
+        y = ay;
+        z = az;
+    }
+} __attribute__((aligned(16)));
+
+struct sXf_EB98 {
+    sQ_EB98 pos;
+    sQ_EB98 rot;
+};
+
+extern sQ_EB98 D_004FF130_EB98 __asm__("D_004FF130");
+extern sQ_EB98 D_004FF160_EB98 __asm__("D_004FF160");
+extern sQ_EB98 D_004FF220_EB98 __asm__("D_004FF220");
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline sQ_EB98 Scale_EB98(const sQ_EB98& v, float s)
+{
+    sQ_EB98 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sQ_EB98 Add_EB98(const sQ_EB98& a, const sQ_EB98& b)
+{
+    sQ_EB98 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector add).
+static inline void AddTo_EB98(sQ_EB98& a, const sQ_EB98& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+// vector += vector through VU0. Declared to return the vector by value (as if for chaining) but there is no return
+// statement: g++ 2.95 accepts it, every caller ignores the result, and the ignored by-value result is the unwritten
+// 16-byte call temp the retail frame (and the July 2003 prototype's) has at 0x70.
+static inline sQ_EB98 operator+=(sQ_EB98& a, const sQ_EB98& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sQ_EB98 Sub_EB98(const sQ_EB98& a, const sQ_EB98& b)
+{
+    sQ_EB98 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "o"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sQ_EB98 Cross_EB98(const sQ_EB98& a, const sQ_EB98& b)
+{
+    sQ_EB98 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector length).
+static inline float Length_EB98(const sQ_EB98& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_EB98(const sQ_EB98& a, const sQ_EB98& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector / scalar via vdiv).
+static inline void DivEq_EB98(sQ_EB98& r, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(r), "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (v /= s, then the 4-component dot product of a and b).
+static inline float DivDot_EB98(sQ_EB98& v, float s, const sQ_EB98& a, const sQ_EB98& b)
+{
+    float r;
+    int t, u;
+    __asm__(
+        "mfc1      %3, %6\n"
+        "qmtc2.ni  %3, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %4\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        "lqc2      $vf3, %7\n"
+        "lqc2      $vf5, %8\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %2, $vf4\n"
+        "mtc1      %2, %1\n"
+        : "=m"(v), "=f"(r), "=&r"(t), "=&r"(u)
+        : "m"(v), "m"(v), "f"(s), "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQ_EB98 QuatMul_EB98(const sQ_EB98& a, const sQ_EB98& b)
+{
+    sQ_EB98 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
+static inline sQ_EB98 Rot_EB98(const sQ_EB98& q, const sQ_EB98& v)
+{
+    sQ_EB98 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion + position to a 4x4 matrix).
+static inline void QuatToMat_EB98(void* dst, const sQ_EB98* q, const sQ_EB98* p)
+{
+    __asm__ __volatile__(
+        "lqc2       $vf4, 0(%1)\n"
+        "lqc2       $vf3, 0(%2)\n"
+        "vaddw.xyz  $vf1, $vf0, $vf0w\n"
+        "vadd.xyz   $vf5, $vf4, $vf4\n"
+        "vsub.w     $vf10, $vf10, $vf10\n"
+        "vsub.w     $vf11, $vf11, $vf11\n"
+        "vsub.w     $vf12, $vf12, $vf12\n"
+        "vmul.xyz   $vf6, $vf5, $vf4\n"
+        "vmulw.xyz  $vf7, $vf5, $vf4w\n"
+        "vopmula.xyz ACC, $vf5, $vf4\n"
+        "vmadd.xyz  $vf8, $vf0, $vf0\n"
+        "vsubay.x   ACC, $vf1, $vf6y\n"
+        "vmsubz.x   $vf10, $vf1, $vf6z\n"
+        "vsubaz.y   ACC, $vf1, $vf6z\n"
+        "vmsubx.y   $vf11, $vf1, $vf6x\n"
+        "vsubax.z   ACC, $vf1, $vf6x\n"
+        "vmsuby.z   $vf12, $vf1, $vf6y\n"
+        "vaddaz.y   ACC, $vf0, $vf8z\n"
+        "vmaddz.y   $vf10, $vf1, $vf7z\n"
+        "vaddax.z   ACC, $vf0, $vf8x\n"
+        "vmaddx.z   $vf11, $vf1, $vf7x\n"
+        "vaddax.y   ACC, $vf0, $vf8x\n"
+        "vmsubx.y   $vf12, $vf1, $vf7x\n"
+        "vadday.z   ACC, $vf0, $vf8y\n"
+        "vmsuby.z   $vf10, $vf1, $vf7y\n"
+        "vaddaz.x   ACC, $vf0, $vf8z\n"
+        "vmsubz.x   $vf11, $vf1, $vf7z\n"
+        "vadday.x   ACC, $vf0, $vf8y\n"
+        "vmaddy.x   $vf12, $vf1, $vf7y\n"
+        "sqc2       $vf3, 0x30(%0)\n"
+        "sqc2       $vf10, 0x0(%0)\n"
+        "sqc2       $vf11, 0x10(%0)\n"
+        "sqc2       $vf12, 0x20(%0)\n"
+        :
+        : "r"(dst), "r"(q), "r"(p)
+        : "memory");
+}
+
+static inline sQ_EB98 AxisAngle_EB98(const sQ_EB98& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQ_EB98(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+static inline float Min_EB98(float a, float b)
+{
+    return a <? b;
+}
+
+// Child transform = parent transform a composed with local transform b.
+static inline sXf_EB98 Combine_EB98(const sXf_EB98& a, const sXf_EB98& b)
+{
+    sXf_EB98 r;
+    r.rot = QuatMul_EB98(a.rot, b.rot);
+    r.pos = Add_EB98(Rot_EB98(a.rot, Sub_EB98(b.pos, D_004FF130_EB98)), a.pos);
+    return r;
+}
+
+extern "C" void func_0011EB98_impl(cRider* self) __asm__("func_0011EB98");
+extern "C" void func_0011EB98_impl(cRider* self)
+{
+    sXf_EB98 xf;
+    xf.pos = *(sQ_EB98*)&self->mPosition;
+    xf.rot = *(sQ_EB98*)&self->mRotation;
+    if (func_0011FEE8(self) == 5)
+        func_00134DD0((char*)self->mRiderHandler + 0x230, &xf);
+    cRider_doLeanPoseAdjust(self, &xf);
+    sXf_EB98 ab[2];
+    ab[1] = xf;
+    ab[0] = xf;
+    if (func_0011FEE8(self) != 13 && self->unk_1F0[18].cur != 0.0f)
+    {
+        sQ_EB98 s = Scale_EB98(D_004FF160_EB98, self->unk_1F0[18].cur);
+        ab[0].pos += Rot_EB98(ab[0].rot, s);
+    }
+    if (self->unk_150 != 0)
+    {
+        self->mAnimModel->localPos[self->unk_8A0] = *(t4Vector*)&D_004FF130_EB98;
+        self->mAnimModel->localRot[self->unk_8A0] = *(t4Vector*)&D_004FF220_EB98;
+        self->mAnimModel->localPos[(*(int*)&self->unk_8A4[0])] = *(t4Vector*)&D_004FF130_EB98;
+        self->mAnimModel->localRot[(*(int*)&self->unk_8A4[0])] = *(t4Vector*)&D_004FF220_EB98;
+        ab[1].pos = *(sQ_EB98*)&self->unk_130[0];
+        ab[1].rot = *(sQ_EB98*)&self->unk_130[0x10];
+    }
+    func_00310200(self->mAnimModel, ab);
+    if (self->unk_1F0[17].cur != 0.0f)
+    {
+        sXf_EB98* b1 = (sXf_EB98*)(self->mAnimModel->bones + self->unk_8A0);
+        float qx = b1->rot.x, qy = b1->rot.y, qz = b1->rot.z, qw = b1->rot.w;
+        sQ_EB98 ax;
+        ax.w = 0.0f;
+        ax.x = 1.0f - 2.0f * (qy * qy + qz * qz);
+        ax.y = 2.0f * (qx * qy + qw * qz);
+        ax.z = 2.0f * (qx * qz - qw * qy);
+        sQ_EB98 c = Cross_EB98(*(sQ_EB98*)&self->unk_390[0], ax);
+        float len = Length_EB98(c);
+        if (len > 9.99999993922529e-09f)
+        {
+            float d = DivDot_EB98(c, len, *(sQ_EB98*)&self->unk_390[0], ax);
+            float m = Min_EB98(len, 1.0f);
+            sQ_EB98 q;
+            if (d < 0.0f)
+                q = AxisAngle_EB98(c, (func_0031C128(m) - 1.5707963705062866f) * self->unk_1F0[17].cur);
+            else
+                q = AxisAngle_EB98(c, (1.5707963705062866f - func_0031C128(m)) * self->unk_1F0[17].cur);
+            b1->rot = QuatMul_EB98(q, b1->rot);
+        }
+        if (0.0f < *(float*)((char*)self + 0x31C))
+            AddTo_EB98(b1->pos, Scale_EB98(Scale_EB98(*(sQ_EB98*)&self->mGroundNormal, *(float*)((char*)self + 0x31C)), self->unk_1F0[17].cur));
+        {
+            cAnimModel* am = self->mAnimModel;
+            sXf_EB98 local;
+            local.pos = sQ_EB98(am->localPos[(*(int*)&self->unk_8A4[0])].x * am->unk_140.x, am->localPos[(*(int*)&self->unk_8A4[0])].y * am->unk_140.y, am->localPos[(*(int*)&self->unk_8A4[0])].z * am->unk_140.z, am->localPos[(*(int*)&self->unk_8A4[0])].w * am->unk_140.w);
+            sQ_EB98* lr = (sQ_EB98*)&am->localRot[(*(int*)&self->unk_8A4[0])];
+            local.rot = *lr;
+            sXf_EB98* bn = (sXf_EB98*)&am->bones[(*(int*)&self->unk_8A4[0])];
+            *bn = Combine_EB98(*b1, local);
+        }
+    }
+    if (func_0011FEE8(self) != 13 && self->unk_318 != 0.0f)
+    {
+        sXf_EB98* bb = (sXf_EB98*)(self->mAnimModel->bones + (*(int*)&self->unk_8A4[0]));
+        {
+            sXf_EB98 xx = Combine_EB98(*bb, *(sXf_EB98*)((char*)self + 0x8F0));
+            func_0011F3D8(self, (char*)self + 0x8E0, &xx, self->unk_318);
+        }
+        {
+            sXf_EB98 xx = Combine_EB98(*bb, *(sXf_EB98*)((char*)self + 0x920));
+            func_0011F3D8(self, (char*)self + 0x910, &xx, self->unk_318);
+        }
+    }
+    QuatToMat_EB98((char*)self + 0x160, &xf.rot, &xf.pos);
+    func_00106828(self);
+}
+#endif
 
 INCLUDE_ASM("ai/rider", func_0011F3D8);
 
