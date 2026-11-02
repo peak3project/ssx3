@@ -69,6 +69,11 @@ struct sPtVec3 {
     float x, y, z;
 };
 
+// Unaligned four-float vector (not t4Vector: no 16-byte alignment).
+struct sPtVec4u {
+    float x, y, z, w;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1416,16 +1421,13 @@ extern "C" void func_00373C28(void* self, sPtVec3* p, sPtMtx_3C28* mt, float* w,
 //100%
 INCLUDE_ASM("render/particle", func_00373EA8);
 #ifdef SKIP_ASM
-struct sPtVec4_3EA8 {
-    float x, y, z, w;
-};
 
 // One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
 struct sPtMtx_3EA8 {
     float m[4][4];
 };
 
-static inline float ptBlend4_3EA8(sPtVec4_3EA8* p, sPtMtx_3EA8* mt, float* w, int j)
+static inline float ptBlend4_3EA8(sPtVec4u* p, sPtMtx_3EA8* mt, float* w, int j)
 {
     float x = p->x;
     float y = p->y;
@@ -1438,7 +1440,7 @@ static inline float ptBlend4_3EA8(sPtVec4_3EA8* p, sPtMtx_3EA8* mt, float* w, in
 }
 
 // Blends the homogeneous point p through four matrices weighted by w[0..3]; writes x, y, z.
-extern "C" void func_00373EA8(void* self, sPtVec4_3EA8* p, sPtMtx_3EA8* mt, float* w, float* out)
+extern "C" void func_00373EA8(void* self, sPtVec4u* p, sPtMtx_3EA8* mt, float* w, float* out)
 {
     out[0] = ptBlend4_3EA8(p, mt, w, 0);
     out[1] = ptBlend4_3EA8(p, mt, w, 1);
@@ -2699,11 +2701,8 @@ extern "C" void func_00376A70(sPtGfx6A70* self, float x, float y, float w, float
 //100%
 INCLUDE_ASM("render/particle", func_00376B90);
 #ifdef SKIP_ASM
-struct sPartVec4i {
-    float x, y, z, w;
-};
 
-extern "C" sPartVec4i* func_00376B90(sPartVec4i* r, void* self)
+extern "C" sPtVec4u* func_00376B90(sPtVec4u* r, void* self)
 {
     int i = *(int*)((char*)self + 0x10dc);
     float* p = (float*)((char*)self + (i * 0x230 + 0x6d20));
@@ -7596,12 +7595,9 @@ extern "C" void func_00389590(t4Vector* a, t4Vector* b, t4Vector* c, float s)
 //100%
 INCLUDE_ASM("render/particle", func_00389620);
 #ifdef SKIP_ASM
-struct sVec4_9620 {
-    float x, y, z, w;
-};
 
 // Integrates the w channel of ten particle vectors: dst.w += src.w * dt.
-extern "C" void func_00389620(sVec4_9620* dst, sVec4_9620* src, float dt)
+extern "C" void func_00389620(sPtVec4u* dst, sPtVec4u* src, float dt)
 {
     float* s = &src->w;
     float* d = &dst->w;
@@ -7616,9 +7612,8 @@ extern "C" void func_00389620(sVec4_9620* dst, sVec4_9620* src, float dt)
 //100%
 INCLUDE_ASM("render/particle", func_00389660);
 #ifdef SKIP_ASM
-struct sV4_9660 { float x, y, z, w; };
 
-extern "C" void func_00389660(sV4_9660* v, float* q)
+extern "C" void func_00389660(sPtVec4u* v, float* q)
 {
     for (int i = 0; i < 10; i++) {
         v[i].x *= q[1];
@@ -7631,9 +7626,8 @@ extern "C" void func_00389660(sV4_9660* v, float* q)
 //100%
 INCLUDE_ASM("render/particle", func_003896C0);
 #ifdef SKIP_ASM
-struct sV4_96C0 { float x, y, z, w; };
 
-extern "C" void func_003896C0(sV4_96C0* v, float* q, float s)
+extern "C" void func_003896C0(sPtVec4u* v, float* q, float s)
 {
     for (int i = 0; i < 10; i++) {
         v[i].x = v[i].x * s * q[1];
