@@ -16598,7 +16598,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1E80);
 #ifdef SKIP_ASM
 extern void f_1BA8_1E80(int, int) __asm__("func_003D1BA8");
 extern int f_1D28_1E80(int) __asm__("func_003D1D28");
-extern unsigned int D_0044F438_1E80 __asm__("D_0044F438");
 
 int func_003D1E80_impl(void) __asm__("func_003D1E80");
 int func_003D1E80_impl(void) {
@@ -16617,7 +16616,7 @@ int func_003D1E80_impl(void) {
         v = o->f0C.w;
         st = ((v >> 22) & 0x3F) < ((v >> 16) & 0x3F) ? 0 : 3;
         if (o->f04 != 0) {
-            if (o->f00 + o->f04 < D_0044F438_1E80) st = 1;
+            if (o->f00 + o->f04 < D_0044F438) st = 1;
         }
         if (st != 0) {
             f_1BA8_1E80(i, st);
