@@ -317,6 +317,49 @@ extern void (*D_0050AAD4)(void);        /* D_0050A8E8.f1EC */
 extern struct sA8E8Slot *D_0050AADC;    /* D_0050A8E8.f1F4 */
 extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 
+/* D_0050A120: the MIDI sequence player (16 songs, then 24 voices, also D_0050A820). Layout from every use in this
+   unit; field names are their offsets. */
+struct sA120Chan {                  /* 4 bytes, one per MIDI channel (sA120Song.f30[]) */
+    unsigned int b00 : 10;
+    unsigned int b10 : 7;           /* volume */
+    unsigned int b17 : 7;
+    int b24 : 8;                    /* program */
+};
+struct sA120Song {                  /* 0x70, D_0050A120.f000[] */
+    int f00;
+    unsigned int f04;
+    unsigned char *f08;             /* read position */
+    unsigned char *f0C;             /* loop start */
+    int f10;                        /* handle (sequence number | index) */
+    int f14;                        /* volume, 16.16 */
+    int f18;                        /* volume step */
+    int f1C;                        /* volume target */
+    unsigned short f20;
+    unsigned short f22;
+    unsigned short f24;             /* tempo, percent */
+    unsigned char f26;
+    unsigned char f27;              /* ticks to the next event */
+    signed char f28;                /* state */
+    char pad29[0x2C - 0x29];
+    short f2C;
+    short f2E;
+    struct sA120Chan f30[16];
+};
+struct sA120Voice {                 /* 8 bytes, D_0050A120.f700[] (also D_0050A820) */
+    int f00;                        /* voice id */
+    signed char f04;                /* owning song */
+    signed char f05;                /* channel */
+    signed char f06;
+    signed char f07;
+};
+struct sA120 {
+    struct sA120Song f000[16];
+    struct sA120Voice f700[24];
+    int f7C0;                       /* sequence counter */
+};
+extern struct sA120 D_0050A120;
+extern struct sA120Voice D_0050A820[];  /* D_0050A120.f700 */
+
 /* D_0050AD00: the IOP sound side's state (RPC buffers, the shared voice block func_003C1638 lays out, the transfer
    queue, speaker gains, sound-RAM segments, the recursive lock). Layout from every use in this unit; field names are
    their offsets. */
@@ -3117,8 +3160,6 @@ int func_003B8D30(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8D98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { char pad[0x10]; int key; char pad2[0x5C]; } E_8D98;
-extern E_8D98 D_0050A120_8D98[] __asm__("D_0050A120");
 
 int func_003B8D98(int arg0) {
     int idx;
@@ -3127,7 +3168,7 @@ int func_003B8D98(int arg0) {
         return -8;
     idx = v & 0x1F;
     if (idx < 0x10)
-        return (D_0050A120_8D98[idx].key ^ v) == 0 ? idx : -8;
+        return (D_0050A120.f000[idx].f10 ^ v) == 0 ? idx : -8;
     return -8;
 }
 #endif
