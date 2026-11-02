@@ -473,6 +473,36 @@ static inline int sndIsMode(int m)
     return *(int*)((char*)D_004A28A4 + 0x550) == m;
 }
 
+// Pushes a voice on the D_004A3664 bank system and records its a4 / a8 values.
+static inline void sndPushVoice(void* vself, int a, int b)
+{
+    cBankSys* self = (cBankSys*)vself;
+    cBankManager* m = self->mgr;
+    cSndPlayOpts* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = 1;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -573,39 +603,11 @@ struct sSnd0018Req {
 #define SND_0018_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_0018_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-static inline void snd0018AddVoice(void* vself, int a, int b)
-{
-    cBankSys* self = (cBankSys*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-}
 
 // Adds a voice on the global sound system for the request, sets its target and volume (clamped to 0..127), then commits.
 extern "C" int func_00290018(void* self, sSnd0018Req* req)
 {
-    snd0018AddVoice(D_004A3664, req->f1C, req->f20);
+    sndPushVoice(D_004A3664, req->f1C, req->f20);
     cBankManager* m1 = D_004A3664->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
     cBankManager* m2 = D_004A3664->mgr;
@@ -634,39 +636,11 @@ struct sSnd0358Req {
 #define SND_0358_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_0358_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-static inline void snd0358AddVoice(void* vself, int a, int b)
-{
-    cBankSys* self = (cBankSys*)vself;
-    cBankManager* m = self->mgr;
-    cSndPlayOpts* s = &m->sub;
-    m->sub.cur++;
-    s->ch[m->sub.cur] = m->sub.def;
-    m->sub.tgt[m->sub.cur] = 0;
-    s->p34[m->sub.cur] = 0;
-    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
-    s->p3C[m->sub.cur] = 0;
-    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
-    s->p60[m->sub.cur] = 0;
-    s->p64[m->sub.cur] = 0;
-    s->p68[m->sub.cur] = 0;
-    s->p6C[m->sub.cur] = 0;
-    s->p70[m->sub.cur].f4 = 0;
-    s->p70[m->sub.cur].f0 = 100;
-    s->p70[m->sub.cur].f8 = 90;
-    s->p70[m->sub.cur].fC = 50;
-    s->p74[m->sub.cur] = 0;
-    s->p80[m->sub.cur] = 0;
-    s->p84[m->sub.cur] = 0;
-    s->p78[m->sub.cur] = 0x7F;
-    s->p7C[m->sub.cur] = 1;
-    self->a4[self->mgr->sub.cur] = a;
-    self->a8[self->mgr->sub.cur] = b;
-}
 
 // Adds a voice on the global sound system for the request, sets its target and volume (clamped to 0..127), stores its 16-bit field, then commits.
 extern "C" int func_00290358(void* self, sSnd0358Req* req)
 {
-    snd0358AddVoice(D_004A3664, req->f1C, req->f20);
+    sndPushVoice(D_004A3664, req->f1C, req->f20);
     cBankManager* m1 = D_004A3664->mgr;
     m1->sub.p3C[m1->sub.cur] = req->f18;
     cBankManager* m2 = D_004A3664->mgr;
@@ -2959,7 +2933,7 @@ extern "C" void func_00297950(cSSXAudio* self, char* obj, int type, int id)
             pri = 0x32;
         }
     }
-    snd0018AddVoice(self, a, b);
+    sndPushVoice(self, a, b);
     cBankManager** pp = self->p118;
     int r = (int)func_00287968(self, 5, 0);
     (*pp)->sub.p3C[(*pp)->sub.cur] = r;
