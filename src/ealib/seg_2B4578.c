@@ -3825,18 +3825,16 @@ int func_003B9F38(int arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9FC8);
 #ifdef SKIP_ASM
-extern char D_0050A120_A120[] __asm__("D_0050A120");
-
 int func_003B9FC8(int arg0) {
     int var_5;
-    char *temp_2;
+    struct sA120Song *temp_2;
 
     var_5 = func_003B8D98(arg0);
     if (var_5 >= 0) {
-        temp_2 = D_0050A120_A120 + var_5 * 0x70;
-        var_5 = *(signed char *)(temp_2 + 0x28);
+        temp_2 = &D_0050A120.f000[var_5];
+        var_5 = temp_2->f28;
         if (var_5 == 3) {
-            var_5 = (*(int *)(temp_2 + 0x18) != 0) ? 6 : var_5;
+            var_5 = (temp_2->f18 != 0) ? 6 : var_5;
         }
     }
     return var_5;
