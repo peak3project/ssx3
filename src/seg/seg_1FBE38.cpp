@@ -89,10 +89,10 @@ int* func_00226610(void*);
                 *d_ = p_->val; \
         } \
     } while (0)
-#define BIND_SET_RESULT_1FBE38(self, value) do { \
+#define BIND_SET_RESULT_1FBE38(ret, value) do { \
         int r_ = (value); \
-        *(int*)((char*)(self) + 8) = 1; \
-        *func_00226610(self) = r_; \
+        (ret)->type = 1; \
+        *func_00226610(ret) = r_; \
     } while (0)
 
 
@@ -3542,7 +3542,7 @@ extern "C" int func_0030BA80(cWScriptMan*, unsigned);
 extern int D_004A56C8_1560 __asm__("D_004A56C8");
 extern unsigned D_004A56C0_1560 __asm__("D_004A56C0");
 extern sBindEnd_1FBE38 D_004A56C4_1560 __asm__("D_004A56C4");
-extern "C" void* func_00301560(void* self, int n, Ent_1560* e) {
+extern "C" cLunoValue* func_00301560(cLunoValue* ret, int n, Ent_1560* e) {
     if (D_004A56C8_1560 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A56C4_1560 = sBindEnd_1FBE38();
@@ -3563,11 +3563,11 @@ extern "C" void* func_00301560(void* self, int n, Ent_1560* e) {
     }
     unsigned x = vp[0];
     if (x != 0xFFFFFFFFu) {
-        BIND_SET_RESULT_1FBE38(self, func_0030BA80(D_004A3DD8, x));
+        BIND_SET_RESULT_1FBE38(ret, func_0030BA80(D_004A3DD8, x));
     } else {
-        BIND_SET_RESULT_1FBE38(self, 0);
+        BIND_SET_RESULT_1FBE38(ret, 0);
     }
-    return self;
+    return ret;
 }
 #endif
 
@@ -4201,7 +4201,7 @@ extern "C" int func_00303D90(unsigned);
 extern int D_004A5740_2680 __asm__("D_004A5740");
 extern int D_004A5738_2680 __asm__("D_004A5738");
 extern sBindEnd_1FBE38 D_004A573C_2680 __asm__("D_004A573C");
-extern "C" void* func_00302680(void* self, int n, sBindArg_1FBE38* e) {
+extern "C" cLunoValue* func_00302680(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A5740_2680 == 0) {
         // NOTE: guarded static-local init (defaults record = { int, sBindEnd_1FBE38 }).
         D_004A5738_2680 = -1;
@@ -4211,8 +4211,8 @@ extern "C" void* func_00302680(void* self, int n, sBindArg_1FBE38* e) {
     int v[4];
     int* vp;
     BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A5738_2680, 8, D_004A3CD0_2680, n, e);
-    BIND_SET_RESULT_1FBE38(self, func_00303D90(vp[0]));
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, func_00303D90(vp[0]));
+    return ret;
 }
 #endif
 
@@ -4225,7 +4225,7 @@ extern "C" int func_00303DF8(unsigned);
 extern int D_004A5750_2778 __asm__("D_004A5750");
 extern int D_004A5748_2778 __asm__("D_004A5748");
 extern sBindEnd_1FBE38 D_004A574C_2778 __asm__("D_004A574C");
-extern "C" void* func_00302778(void* self, int n, sBindArg_1FBE38* e) {
+extern "C" cLunoValue* func_00302778(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A5750_2778 == 0) {
         // NOTE: guarded static-local init (defaults record = { int, sBindEnd_1FBE38 }).
         D_004A5748_2778 = -1;
@@ -4235,8 +4235,8 @@ extern "C" void* func_00302778(void* self, int n, sBindArg_1FBE38* e) {
     int v[4];
     int* vp;
     BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A5748_2778, 8, D_004A3CD8_2778, n, e);
-    BIND_SET_RESULT_1FBE38(self, func_00303DF8(vp[0]));
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, func_00303DF8(vp[0]));
+    return ret;
 }
 #endif
 
@@ -4249,7 +4249,7 @@ extern "C" int func_00303E60(unsigned);
 extern int D_004A5760_2870 __asm__("D_004A5760");
 extern int D_004A5758_2870 __asm__("D_004A5758");
 extern sBindEnd_1FBE38 D_004A575C_2870 __asm__("D_004A575C");
-extern "C" void* func_00302870(void* self, int n, sBindArg_1FBE38* e) {
+extern "C" cLunoValue* func_00302870(cLunoValue* ret, int n, sBindArg_1FBE38* e) {
     if (D_004A5760_2870 == 0) {
         // NOTE: guarded static-local init (defaults record = { int, sBindEnd_1FBE38 }).
         D_004A5758_2870 = -1;
@@ -4259,8 +4259,8 @@ extern "C" void* func_00302870(void* self, int n, sBindArg_1FBE38* e) {
     int v[4];
     int* vp;
     BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A5758_2870, 8, D_004A3CE0_2870, n, e);
-    BIND_SET_RESULT_1FBE38(self, func_00303E60(vp[0]));
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, func_00303E60(vp[0]));
+    return ret;
 }
 #endif
 
@@ -4469,7 +4469,7 @@ extern int D_004A3D10_2EF8[2] __asm__("D_004A3D10");
 extern "C" int func_00122EE8(char* rider, int which);
 
 
-extern "C" void* func_00302EF8(void* self, int n, sBindArg_1FBE38 *e)
+extern "C" cLunoValue* func_00302EF8(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
 {
     if (D_004A57B0_2EF8 == 0) {
         D_004A57A8_2EF8 = 0;
@@ -4507,8 +4507,8 @@ extern "C" void* func_00302EF8(void* self, int n, sBindArg_1FBE38 *e)
     case 18: res = func_00122EE8(r, 18); break;
     default: res = 0; break;
     }
-    BIND_SET_RESULT_1FBE38(self, res);
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, res);
+    return ret;
 }
 #endif
 
@@ -4671,7 +4671,7 @@ struct A_34F8 { char pad[0x6C0]; };
 struct B_34F8 { virtual void v01(); };
 struct D_34F8 : A_34F8, B_34F8 { };
 extern "C" int func_00122EE8_34F8(D_34F8*, int) __asm__("func_00122EE8");
-extern "C" void* func_003034F8(void* self) {
+extern "C" cLunoValue* func_003034F8(cLunoValue* ret) {
     D_34F8 *r = (D_34F8*)D_004A28A8->game->race->riders[D_004A3DD8->being];
     B_34F8 *b = r;
     D_34F8 *d = (D_34F8*)b;
@@ -4680,8 +4680,8 @@ extern "C" void* func_003034F8(void* self) {
         v = *(unsigned*)(*(char**)((char*)d + 0x77C) + 0xD4);
     else
         v = 0xFFFFFFFF;
-    BIND_SET_RESULT_1FBE38(self, v);
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, v);
+    return ret;
 }
 #endif
 
@@ -4775,7 +4775,7 @@ extern int D_004A57D8_37B0 __asm__("D_004A57D8");
 extern int D_004A3D30_37B0[2] __asm__("D_004A3D30");
 
 
-extern "C" void* func_003037B0(void* self, int n, sBindArg_1FBE38 *e)
+extern "C" cLunoValue* func_003037B0(cLunoValue* ret, int n, sBindArg_1FBE38 *e)
 {
     if (D_004A57D8_37B0 == 0) {
         D_004A57D0_37B0 = -1;
@@ -4813,8 +4813,8 @@ extern "C" void* func_003037B0(void* self, int n, sBindArg_1FBE38 *e)
     case 18: res = func_00122EE8(r, 18); break;
     default: res = 0; break;
     }
-    BIND_SET_RESULT_1FBE38(self, res);
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, res);
+    return ret;
 }
 #endif
 
@@ -6006,7 +6006,7 @@ extern int D_005308D0_61B0[] __asm__("D_005308D0");
 extern int D_004A5888_61B0 __asm__("D_004A5888");
 extern int D_004A5880_61B0 __asm__("D_004A5880");
 extern sBindEnd_1FBE38 D_004A5884_61B0 __asm__("D_004A5884");
-extern "C" void* func_003061B0(void* self, int n, sBindArg_1FBE38 *e) {
+extern "C" cLunoValue* func_003061B0(cLunoValue* ret, int n, sBindArg_1FBE38 *e) {
     if (D_004A5888_61B0 == 0) {
         // NOTE: guarded static-local init; the trailing empty member's value-init copies its byte through a stack temp (lbu; sb 0(sp)).
         D_004A5880_61B0 = 0;
@@ -6043,8 +6043,8 @@ extern "C" void* func_003061B0(void* self, int n, sBindArg_1FBE38 *e) {
         r = 1;
         break;
     }
-    BIND_SET_RESULT_1FBE38(self, r);
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, r);
+    return ret;
 }
 #endif
 
@@ -6508,7 +6508,7 @@ extern "C" int func_001E3570(int, int);
 extern int D_004A58C0_7020 __asm__("D_004A58C0");
 struct T12_7020 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_7020 D_004FC070_7020 __asm__("D_004FC070");
-extern "C" void* func_00307020(void* self, int n, Ent_7020* e) {
+extern "C" cLunoValue* func_00307020(cLunoValue* ret, int n, Ent_7020* e) {
     if (D_004A58C0_7020 == 0) {
         D_004FC070_7020.a = 0;
         D_004A58C0_7020 = 1;
@@ -6528,8 +6528,8 @@ extern "C" void* func_00307020(void* self, int n, Ent_7020* e) {
         else
             *d = p->val;
     }
-    BIND_SET_RESULT_1FBE38(self, func_001E3570(vp[0], vp[1]) != 0);
-    return self;
+    BIND_SET_RESULT_1FBE38(ret, func_001E3570(vp[0], vp[1]) != 0);
+    return ret;
 }
 #endif
 
