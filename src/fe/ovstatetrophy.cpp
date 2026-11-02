@@ -8,6 +8,29 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+struct sColour {
+    float r, g, b, a;
+    sColour(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
+};
+
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+    virtual void v10();
+    virtual int v11(const sColour& c);
+};
+
 //100%
 INCLUDE_ASM("fe/ovstatetrophy", cOVStateTrophy_onCreateScreen);
 #ifdef SKIP_ASM
@@ -32,36 +55,14 @@ INCLUDE_ASM("fe/ovstatetrophy", func_0020E9A0);
 #ifdef SKIP_ASM
 extern "C" void func_0039F400(void* list, void* item);
 
-struct sColour {
-    float r, g, b, a;
-    sColour(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
-};
-
-class cUIObj_20E9A0 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-    virtual void v10();
-    virtual int setColor(const sColour& c);
-};
-
-
-extern "C" void func_0020E9A0(void* self, cUIObj_20E9A0* item, int msg)
+extern "C" void func_0020E9A0(void* self, cUIThing* item, int msg)
 {
     if (item == 0) {
         return;
     }
     switch (msg) {
     case 5: {
-        item->setColor(sColour(1.0f, 1.0f, 0.0f, 0.0f));
+        item->v11(sColour(1.0f, 1.0f, 0.0f, 0.0f));
         void* r = 0;
         if (*(int*)((char*)item + 0x18) == 1) {
             void* obj = **(void***)((char*)self + 0x10);
@@ -466,21 +467,6 @@ extern "C" void func_002108F8(void)
 INCLUDE_ASM("fe/ovstatetrophy", func_00210940);
 #ifdef SKIP_ASM
 class cUIText;
-class cUIObj_210940 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void setVisible(int v);
-    virtual void v10();
-    virtual int setColor(const sColour& c);
-};
 
 struct sRect_210940 { int a, b, c, d; };
 int GetHashValue32(char* str);
@@ -512,7 +498,7 @@ extern "C" void func_00210940(void* self)
     if (screen == 0)
         return;
     cUIScreen_playFrame(screen, 0, 0);
-    cUIObj_210940* t = (cUIObj_210940*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471D00));
+    cUIThing* t = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00471D00));
     if (t != 0)
     {
         t->setVisible(1);
@@ -528,14 +514,14 @@ extern "C" void func_00210940(void* self)
     *(void**)(a + 0x80) = c;
     *(void**)(a + 0x84) = d;
     *(int*)(a + 0x88) = 2;
-    cUIObj_210940* e = (cUIObj_210940*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E808));
+    cUIThing* e = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E808));
     if (e != 0)
     {
         *(int*)((char*)e + 0x74) |= 1;
         func_003A1310(e, 1);
         e->setVisible(1);
         *(int*)((char*)e + 0x14) |= 0x80;
-        e->setColor(sColour(1.0f, 0.0f, 0.0f, 0.0f));
+        e->v11(sColour(1.0f, 0.0f, 0.0f, 0.0f));
         *(sRect_210940*)((char*)e + 0xA8) = D_004C8D08;
         *(char**)((char*)e + 0xB8) = a;
     }
