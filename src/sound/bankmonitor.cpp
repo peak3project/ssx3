@@ -1,5 +1,11 @@
 #include "common.h"
 
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it
+// (same type as sound/soundsys).
+typedef void (cController::*sSndCallback)(cController*, cBankMonitorInstance*, float);
+
 //100%
 INCLUDE_ASM("sound/bankmonitor", cBankMonitor_cBankMonitor);
 #ifdef SKIP_ASM
@@ -158,10 +164,6 @@ extern "C" void func_003B89E0(int h);
 extern "C" int func_003B9920(int h);
 extern char D_00483250[];
 
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sBmCallbackCreate)(cController*, cBankMonitorInstance*, float);
 struct sBmQuadCreate {
     int w[4];
 } __attribute__((aligned(16)));
@@ -187,7 +189,7 @@ struct sBmVoiceCreate {
     int f9C;                    // 0x9C
     int fA0;                    // 0xA0
     int fA4;                    // 0xA4
-    sBmCallbackCreate callback;      // 0xA8
+    sSndCallback callback;      // 0xA8
     char padB0[0xC0 - 0xB0];
 };
 struct sBankMonitorCreate {
@@ -198,7 +200,7 @@ struct sBankMonitorCreate {
     int* p34;                   // 0x34
     int* vals;                  // 0x38
     int* p3C;                   // 0x3C
-    sBmCallbackCreate callbacks[4];  // 0x40
+    sSndCallback callbacks[4];  // 0x40
     int* p60;                   // 0x60
     int* p64;                   // 0x64
     float* p68;                 // 0x68
@@ -216,12 +218,12 @@ struct sBankMonitorCreate {
 };
 
 // cSndPlayOpts::OPTS_GetCallback (prototype name; out-of-line copy in bx is func_002B91C8)
-static inline sBmCallbackCreate OPTS_GetCallback_Create(sBankMonitorCreate* s)
+static inline sSndCallback OPTS_GetCallback_Create(sBankMonitorCreate* s)
 {
     return s->callbacks[s->cur];
 }
 
-static inline void setCallback_Create(sBmVoiceCreate* v, sBmCallbackCreate k)
+static inline void setCallback_Create(sBmVoiceCreate* v, sSndCallback k)
 {
     v->callback = k;
 }
@@ -348,23 +350,19 @@ INCLUDE_ASM("sound/bankmonitor", func_002AD410);
 #ifdef SKIP_ASM
 extern "C" void func_002ABB38(void*);
 
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sBmCallbackD410)(cController*, cBankMonitorInstance*, float);
 struct sBmVoiceD410 {
     char pad00[0xA8];
-    sBmCallbackD410 callback;   // 0xA8
+    sSndCallback callback;   // 0xA8
     char padB0[0xC0 - 0xB0];
 };
 
-static inline int func_002AD410_match(sBmVoiceD410* v, sBmCallbackD410 k)
+static inline int func_002AD410_match(sBmVoiceD410* v, sSndCallback k)
 {
     return k == v->callback;
 }
 
 // Stops every voice playing with the given callback.
-extern "C" void func_002AD410(void* self, sBmCallbackD410 key)
+extern "C" void func_002AD410(void* self, sSndCallback key)
 {
     for (int i = 0; i < 64; i++) {
         if (func_002AD410_match((sBmVoiceD410*)((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0), key)) {
@@ -550,13 +548,9 @@ extern "C" void func_002AD940(void*);
 void func_002AD970(void* self, int a1);
 void func_002AD980(void* self);
 
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sBmCallbackD888)(cController*, cBankMonitorInstance*, float);
 struct sBmSlotD888 {
     char pad00[0xC];
-    sBmCallbackD888 callback;   // 0x0C
+    sSndCallback callback;   // 0x0C
     char pad14[0x18 - 0x14];
     int f18;                    // 0x18
     int f1C;                    // 0x1C
@@ -565,7 +559,7 @@ struct sBmSlotD888 {
     int f28;                    // 0x28
 };
 
-extern "C" void func_002AD888(sBmSlotD888* self, int a1, sBmCallbackD888 key, int b, int c, int d, int e, int f)
+extern "C" void func_002AD888(sBmSlotD888* self, int a1, sSndCallback key, int b, int c, int d, int e, int f)
 {
     func_002AD940(self);
     func_002AD970(self, a1);
@@ -824,19 +818,15 @@ INCLUDE_ASM("sound/bankmonitor", func_002ADCA0);
 #ifdef SKIP_ASM
 extern "C" int func_002ADC30(void* self, int n);
 
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sBmCallbackDCA0)(cController*, cBankMonitorInstance*, float);
 
-void func_002AD888_cb(void* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f) __asm__("func_002AD888");
+void func_002AD888_cb(void* self, int a1, sSndCallback cb, int b, int c, int d, int e, int f) __asm__("func_002AD888");
 
 struct sSndPlayerDCA0 {
     char pad_0x00[0x90];
     volatile int busy;          // 0x90
 };
 
-extern "C" int func_002ADCA0(sSndPlayerDCA0* self, int a1, sBmCallbackDCA0 cb, int b, int c, int d, int e, int f)
+extern "C" int func_002ADCA0(sSndPlayerDCA0* self, int a1, sSndCallback cb, int b, int c, int d, int e, int f)
 {
     self->busy = self->busy + 1;
     int idx = func_002ADC30(self, self->busy);
@@ -879,23 +869,19 @@ INCLUDE_ASM("sound/bankmonitor", func_002ADDE0);
 #ifdef SKIP_ASM
 extern "C" void func_002AD940(void*);
 
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sBmCallbackDDE0)(cController*, cBankMonitorInstance*, float);
 struct sBmSlotDDE0 {
     char pad00[0xC];
-    sBmCallbackDDE0 callback;   // 0x0C
+    sSndCallback callback;   // 0x0C
     char pad14[0x2C - 0x14];
 };
 
-static inline int func_002ADDE0_match(sBmSlotDDE0* e, sBmCallbackDDE0 k)
+static inline int func_002ADDE0_match(sBmSlotDDE0* e, sSndCallback k)
 {
     return k == e->callback;
 }
 
 // Stops every one of the 48 monitored sounds that plays with the given callback.
-extern "C" void func_002ADDE0(void* self, sBmCallbackDDE0 key)
+extern "C" void func_002ADDE0(void* self, sSndCallback key)
 {
     for (int i = 0; i < 48; i++) {
         if (func_002ADDE0_match((sBmSlotDDE0*)((char*)self + 0x98 + i * 0x2C), key)) {
@@ -2630,12 +2616,8 @@ extern "C" int func_002B03B8(const char* name)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B04D8);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_04D8)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_04D8 D_004A37D8_04D8[] __asm__("D_004A37D8");
-extern sSndCallback_04D8 D_004A37E0_04D8[] __asm__("D_004A37E0");
+extern sSndCallback D_004A37D8_04D8[] __asm__("D_004A37D8");
+extern sSndCallback D_004A37E0_04D8[] __asm__("D_004A37E0");
 extern char* D_004A37B4;
 extern char D_004832F8[];
 extern char D_004A3590[];
@@ -2647,7 +2629,7 @@ extern "C" int func_002AAE08(void* self, int i);
 extern "C" float func_002AAE78(void* self, int i);
 extern "C" int func_002AB028(void* self, int i);
 extern "C" void func_002AB0D0(void* self, int i, int w);
-extern "C" int func_002ADCA0_04D8(void*, int, sSndCallback_04D8, void*, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_04D8(void*, int, sSndCallback, void*, int, int, int, int) __asm__("func_002ADCA0");
 
 typedef int (*Fn1_04D8)(void*, int, char*, int, int, int, int, float, int, int);
 
@@ -3165,14 +3147,10 @@ extern "C" int func_002B1248(int *arg0, void* arg1) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B1268);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_1268)(cController*, cBankMonitorInstance*, float);
-extern const sSndCallback_1268 D_004A37E0_2B1268[] __asm__("D_004A37E0");
+extern const sSndCallback D_004A37E0_2B1268[] __asm__("D_004A37E0");
 extern "C" int func_002AB150(void* self, int i);
 extern "C" void func_002AB0D0(void* self, int i, int val);
-extern "C" int func_002ADCA0_1268(int a, int b, sSndCallback_1268 t, void* c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_1268(int a, int b, sSndCallback t, void* c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 extern "C" int func_002B1248_pp(void* self, void* msg) __asm__("func_002B1248");
 struct sVE1268 { short delta; short index; int (*fn)(void*, int, int, int); };
 
@@ -3197,13 +3175,9 @@ extern "C" int func_002B1268(void* self, void* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B1348);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_1348)(cController*, cBankMonitorInstance*, float);
-extern const sSndCallback_1348 D_004A37D8_2B1348[] __asm__("D_004A37D8");
+extern const sSndCallback D_004A37D8_2B1348[] __asm__("D_004A37D8");
 extern "C" int func_002AB150(void* self, int i);
-extern "C" int func_002ADCA0_1348(int a, int b, sSndCallback_1348 t, void* c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_1348(int a, int b, sSndCallback t, void* c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 extern "C" int func_002B1268(void* self, void* msg);
 
 extern "C" int func_002B1348(void* self, void* msg)
@@ -4301,14 +4275,10 @@ extern "C" void func_002B3A98(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3AC0);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_3AC0)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_3AC0 D_004A3838_3AC0[] __asm__("D_004A3838");
-extern sSndCallback_3AC0 D_004A3840_3AC0[] __asm__("D_004A3840");
-extern sSndCallback_3AC0 D_004A3848_3AC0[] __asm__("D_004A3848");
-extern "C" void func_002ADDE0_3AC0(void* bank, sSndCallback_3AC0 key) __asm__("func_002ADDE0");
+extern sSndCallback D_004A3838_3AC0[] __asm__("D_004A3838");
+extern sSndCallback D_004A3840_3AC0[] __asm__("D_004A3840");
+extern sSndCallback D_004A3848_3AC0[] __asm__("D_004A3848");
+extern "C" void func_002ADDE0_3AC0(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 extern "C" void func_0028A728(void* self, int i);
 extern "C" void func_0028BCE8(void* self, int i);
 extern "C" void func_002B3A98(void* self);
@@ -4480,12 +4450,8 @@ extern "C" void func_002B3D48(void* self, float v)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B3D80);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_3D80)(cController*, cBankMonitorInstance*, float);
-extern const sSndCallback_3D80 D_004A3850_3D80[] __asm__("D_004A3850");
-extern int func_002ADCA0_3D80(int a, int b, sSndCallback_3D80 t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+extern const sSndCallback D_004A3850_3D80[] __asm__("D_004A3850");
+extern int func_002ADCA0_3D80(int a, int b, sSndCallback t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 
 extern "C" void func_002B3D80(void* self, signed char target, float duration)
 {
@@ -4823,12 +4789,8 @@ extern "C" void func_002B43D8(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B4470);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_4470)(cController*, cBankMonitorInstance*, float);
-extern const sSndCallback_4470 D_004A3838_4470[] __asm__("D_004A3838");
-extern int func_002ADCA0_4470(int a, int b, sSndCallback_4470 t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+extern const sSndCallback D_004A3838_4470[] __asm__("D_004A3838");
+extern int func_002ADCA0_4470(int a, int b, sSndCallback t, int c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 
 extern "C" void func_002B4470(void* self)
 {
@@ -4842,13 +4804,9 @@ extern "C" void func_002B4470(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B44D8);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_44D8)(cController*, cBankMonitorInstance*, float);
-extern const sSndCallback_44D8 D_004A3838_2B44D8[] __asm__("D_004A3838");
-extern const sSndCallback_44D8 D_004A3840_2B44D8[] __asm__("D_004A3840");
-extern "C" void func_002ADDE0_m4481(int a, sSndCallback_44D8 t) __asm__("func_002ADDE0");
+extern const sSndCallback D_004A3838_2B44D8[] __asm__("D_004A3838");
+extern const sSndCallback D_004A3840_2B44D8[] __asm__("D_004A3840");
+extern "C" void func_002ADDE0_m4481(int a, sSndCallback t) __asm__("func_002ADDE0");
 extern "C" void func_002B4708(void* self);
 
 extern "C" void func_002B44D8(void* self)
@@ -4879,14 +4837,10 @@ extern "C" void func_002B4540(func_002B4540_cObj* self, int a)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B4568);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_4568)(cController*, cBankMonitorInstance*, float);
-extern const sSndCallback_4568 D_004A3840_2B4568[] __asm__("D_004A3840");
+extern const sSndCallback D_004A3840_2B4568[] __asm__("D_004A3840");
 extern "C" int func_002B2778(void* ent);
 extern "C" int func_002B2500(void* ent);
-extern "C" int func_002ADCA0_4568(int a, int b, sSndCallback_4568 t, void* c, int d, int e, int f, int g) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_4568(int a, int b, sSndCallback t, void* c, int d, int e, int f, int g) __asm__("func_002ADCA0");
 
 extern "C" void func_002B4568(void* self, void* ent)
 {
