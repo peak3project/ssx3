@@ -4322,7 +4322,6 @@ int* func_00226610(void*);
 struct Ent_2968 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3CE8_2968[2] __asm__("D_004A3CE8");
-extern char** D_004A47B8_2968 __asm__("D_004A47B8");
 extern char* D_004A3DD8_2968 __asm__("D_004A3DD8");
 extern int D_004A5770_2968 __asm__("D_004A5770");
 extern unsigned D_004A5768_2968 __asm__("D_004A5768");
@@ -4349,11 +4348,10 @@ extern "C" cLunoValue func_00302968(int n, Ent_2968* e) {
     }
     char* g = D_004A3DD8_2968;
     unsigned x = vp[0];
-    char** tbl = *(char***)(*D_004A47B8_2968 + 8);
-    char* e0 = tbl[x & 0xFF];
+    sRefSet* e0 = (*D_004A47B8)->sets[x & 0xFF];
     unsigned w;
     int r;
-    if (e0 == 0 || (w = (*(unsigned**)(e0 + 0x1C))[x >> 8] >> 8) == 0)
+    if (e0 == 0 || (w = e0->refs[x >> 8] >> 8) == 0)
         r = 0;
     else
         r = w << 2;
