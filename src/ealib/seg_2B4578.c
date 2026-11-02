@@ -10146,87 +10146,61 @@ int func_003C6DA0(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6DE0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_6DE0 { int pad; int len:31; int flag:1; unsigned int val[6]; };
-struct Q_6DE0 {
-    int pad0[2];
-    volatile unsigned int wr;
-    volatile unsigned int rd;
-    volatile unsigned int pos[6];
-    volatile short ridx[6];
-    volatile short cnt[6];
-    volatile short size;
-    short pad42;
-    volatile short widx;
-    short pad46;
-    volatile int a;
-    volatile int b;
-    int pad50;
-    int flag;
-    char pad58[10];
-    unsigned char n;
-    char pad63[0x19];
-    struct E_6DE0 e[1];
-};
-struct Ev_6DE0 { short type; short id; int val; };
-struct G_6DE0 { int count; struct Ev_6DE0 ev[0x60]; struct Q_6DE0 *q[1]; };
-extern struct G_6DE0 D_005157B8_6DE0 __asm__("D_005157B8");
-
 unsigned int func_003C6DE0(int id, int r, int *len, int *flag) {
-    struct Q_6DE0 *q;
-    struct E_6DE0 *e;
-    struct Ev_6DE0 *ev;
+    struct s7B8Queue *q;
+    struct s7B8Rec *e;
+    struct s7B8Event *ev;
     int ok, ok2, i;
     unsigned int v;
 
     ok = 1;
-    q = D_005157B8_6DE0.q[id];
+    q = D_005157B8.f304[id];
     ok2 = 1;
-    for (i = 0; i < q->n; i++) {
-        if (q->pos[i] <= q->wr) {
+    for (i = 0; i < q->f62; i++) {
+        if (q->f10[i] <= q->f08) {
             ok = 0;
         }
     }
     if (ok) {
-        struct E_6DE0 *w = &q->e[q->widx];
-        if (q->flag) {
-            ev = &D_005157B8_6DE0.ev[D_005157B8_6DE0.count];
-            ev->type = 1;
-            ev->id = id;
-            ev->val = w->val[0];
-            D_005157B8_6DE0.count++;
+        struct s7B8Rec *w = &q->f7C[q->f44];
+        if (q->f54) {
+            ev = &D_005157B8.f004[D_005157B8.f000];
+            ev->f00 = 1;
+            ev->f02 = id;
+            ev->f04 = w->f08[0];
+            D_005157B8.f000++;
         }
-        q->widx++;
-        q->wr++;
-        if (q->widx >= q->size) {
-            q->widx = 0;
+        q->f44++;
+        q->f08++;
+        if (q->f44 >= q->f40) {
+            q->f44 = 0;
         }
     }
-    if (q->cnt[r] == 0) {
+    if (q->f34[r] == 0) {
         return 0;
     }
-    e = &q->e[q->ridx[r]];
+    e = &q->f7C[q->f28[r]];
     *len = e->len;
     *flag = e->flag;
-    q->ridx[r]++;
-    q->pos[r]++;
+    q->f28[r]++;
+    q->f10[r]++;
     i = 0;
     do {
-        if (q->pos[i] <= q->rd) {
+        if (q->f10[i] <= q->f0C) {
             ok2 = 0;
         }
         i++;
-    } while (ok2 == 1 && i < q->n);
+    } while (ok2 == 1 && i < q->f62);
     if (ok2) {
-        q->rd++;
-        q->a -= e->len;
-        q->b += e->len;
+        q->f0C++;
+        q->f48 -= e->len;
+        q->f4C += e->len;
     }
-    if (q->ridx[r] >= q->size) {
-        q->ridx[r] = 0;
+    if (q->f28[r] >= q->f40) {
+        q->f28[r] = 0;
     }
-    q->cnt[r]--;
-    v = e->val[r];
+    q->f34[r]--;
+    v = e->f08[r];
     return v ? v : 0xFFFFFFFF;
 }
 #endif
