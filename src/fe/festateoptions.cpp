@@ -183,13 +183,90 @@ public:
     virtual int v67(int a);
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIScreen;
+struct cUIText;
+int GetHashValue32(char* str);
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern char D_004A14F8[];
+extern char D_004A1500[];
+extern char D_004A1508[];
+extern char D_004A1520[];
+extern char D_004A1528[];
+extern char D_004A1530[];
+int cUIScreen_getFrameByLabel(cUIScreen* self, int label);
+extern "C" void func_0039F290(void* list, void* item);
+extern "C" void func_0039F400(void* list, void* item);
+extern char D_0045DC60[];
+extern char D_004A1408[];
+extern int D_004A14D0;
+extern int D_004A14D4;
+extern int D_004A14D8;
+extern int D_004A14DC;
+extern int D_004A14E0;
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern char D_0045DD20[];
+// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" void* func_0039E318(void* self, void* engine, void* owner);
+extern char D_0045DD68[];
+extern void* D_0046B3D0[];
+extern "C" void* func_0039E2A0(void *, int);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
+extern "C" void func_0039A7A8(void* self, int v);
+extern char D_004A1398[];
+extern char D_0045DF40[];
+extern char* D_00440FD8[];
+extern "C" void* func_0028B180();
+extern "C" void func_0029ED90(void* p, int a);
+extern void* D_004A289C;
+extern "C" void func_00228C08(void* p);
+extern "C" int func_0039A738(void* self);
+extern void* D_004A28A8;
+extern "C" void cFEStateOptionsSound_updateWidget(void* self);
+extern int D_004A1A70;
+extern "C" void func_0018BEF8(void* self, unsigned int mode);
+extern "C" void func_00287410(void* snd, int v);
+extern "C" void func_00287488(void* snd, int v);
+extern "C" void func_00287520(void* snd, int v);
+extern "C" void func_00287558(void* snd, int v);
+extern "C" void func_002875D0(void* snd, int v);
+extern char D_004A1568[];
+extern char D_004A1590[];
+extern char D_004A1598[];
+extern char D_004A15A0[];
+extern char D_004A15A8[];
+extern char D_004A15B0[];
+extern char D_004A15B8[];
+extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
+extern "C" int func_0039A768(void* self, int key, unsigned char* out);
+extern char D_0045E028[];
+extern "C" void func_0018C478(void* self);
+extern "C" void func_0018D108(void* self, int idx, float x, float y);
+extern "C" void func_0018CDC0(void* self);
+extern char D_004A1570[];
+extern char D_004A15C8[];
+extern char D_004A1578[];
+extern "C" int func_001474E8(void* iface, int a1);
+extern "C" void func_0018CF50(void* self, int on);
+extern char D_0045E0F0[];
+extern char D_0045E100[];
+extern "C" void* func_00227F80(void* app);
+extern char D_004A15D0[];
+extern char D_004A15D8[];
+extern char D_004A1460[];
+extern char D_004A1458[];
+extern char D_004A15E0[];
+
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptions_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0045DD30[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 extern "C" void cFEStateOptions_onCreateScreen(void* self)
 {
@@ -207,15 +284,8 @@ extern "C" void cFEStateOptions_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00188870);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_004A14F8[];
-extern char D_004A1500[];
-extern char D_004A1508[];
 extern char D_004A1510[];
 extern char D_004A1518[];
-extern char D_004A1520[];
-extern char D_004A1528[];
-extern char D_004A1530[];
 
 static inline int Is_00188870(int id, char* s) { return id == GetHashValue32(s); }
 
@@ -244,10 +314,6 @@ extern "C" void func_00188870(void* self, void* item)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00188980);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIScreen;
-int cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001CB030(void* self, void* engine, void* owner, int a3, int a4);
 extern "C" void func_001CB418(void* self, char* s);
@@ -255,18 +321,7 @@ extern "C" void func_001CCF00(void* self, char* s);
 extern "C" void func_001CE3C8(void* self, int a1, int a2, int a3);
 extern "C" int func_00187D38(void* self);
 extern "C" void func_00188E58(void* self);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
 extern char D_0045D8D8[];
-extern char D_0045DC60[];
-extern char D_004A1408[];
-extern char D_004A1520[];
-extern char D_004A1530[];
-extern int D_004A14D0;
-extern int D_004A14D4;
-extern int D_004A14D8;
-extern int D_004A14DC;
-extern int D_004A14E0;
 extern char D_004A5A58;
 
 class cListener_188980 {
@@ -376,9 +431,7 @@ extern "C" int func_00188C58(void* self, void* a1)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00188C68);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* func_00397870(void* list, int index);
-extern char D_004A1530[];
 
 extern "C" int func_00188C68(void* self, void* menu, unsigned int key, int index)
 {
@@ -408,14 +461,8 @@ extern "C" int func_00188C68(void* self, void* menu, unsigned int key, int index
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00188D08);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern char D_0045DD40[];
 extern char D_0045DD50[];
-extern char D_0045DD20[];
-extern char D_004A1530[];
 
 static inline int IsK188D08(int id, char* s)
 {
@@ -461,18 +508,6 @@ extern "C" void func_00188D08(void* self, char* popup, int event)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00188E58);
 #ifdef SKIP_ASM
-// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void* func_0039E318(void* self, void* engine, void* owner);
-extern "C" void func_0039F290(void* list, void* item);
-extern char D_0045DD68[];
-extern void* D_0046B3D0[];
-extern int D_004A14D0;
-extern int D_004A14D4;
-extern int D_004A14D8;
-extern int D_004A14DC;
-extern int D_004A14E0;
-
 extern "C" void func_00188E58(void* self)
 {
     char* p = (char*)operator new(0x4C, D_0045DD68, 0x100, 0);
@@ -492,7 +527,6 @@ extern "C" void func_00188E58(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00188EE8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C6F0[];
 
 extern "C" void* func_00188EE8(void* self, int a1)
@@ -507,32 +541,17 @@ extern "C" void* func_00188EE8(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsGame_onCreateScreen);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int a2);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" int func_0039A768_OGCS(void* item, int key, unsigned char* out) __asm__("func_0039A768");
-extern "C" void func_0039A7A8(void* self, int v);
 extern char D_0045DED0[];
-extern char D_004A14F8[];
-extern char D_004A1500[];
-extern char D_004A1398[];
 extern char D_0045DEE0[];
 extern char D_0045DEF0[];
 extern char D_0045DF00[];
 extern char D_0045DF10[];
 extern char D_0045DF20[];
 extern char D_0045DF30[];
-extern char D_0045DF40[];
 extern char D_0045DF50[];
 extern char D_0045DF68[];
-extern char* D_00440FD8[];
 extern char* D_00440FB8[];
 extern char* D_00440FC8[];
 extern char* D_00440FCC[];
@@ -652,17 +671,9 @@ void func_001895F0(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00189610);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0014F4F8(void* iface);
 extern "C" void func_00189D60(void* self);
-extern "C" void* func_0028B180();
-extern "C" void func_0029ED90(void* p, int a);
-extern char D_0045DD20[];
 extern char D_0045DDD8[];
-extern int D_004A14D0;
-extern void* D_004A289C;
 
 static inline int Is_189610(int id, char* s)
 {
@@ -746,29 +757,10 @@ extern "C" int func_00189970(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsGame_onWidgetEvent);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_00228C08(void* p);
-extern "C" void* func_0028B180();
-extern "C" void func_0029ED90(void* p, int a);
-extern "C" int func_0039A738(void* self);
-extern "C" void* func_0039E318(void* self, void* engine, void* owner);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
-extern char D_0045DD68[];
 extern char D_0045DF88[];
 extern char D_0045DFA0[];
 extern void* D_0046B230[];
 extern void* D_0046B300[];
-extern void* D_0046B3D0[];
-extern char D_004A1520[];
-extern char D_004A1528[];
-extern char* D_00440FD8[];
-extern int D_004A14D0;
-extern void* D_004A28A8;
 
 static inline int Is_189980(int id, char* s)
 {
@@ -862,17 +854,6 @@ extern "C" void cFEStateOptionsGame_onWidgetEvent(sOptGame* self, char* widget, 
 //100%
 INCLUDE_ASM("fe/festateoptions", func_00189D60);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_0039A7A8(void* self, int v);
-extern "C" int func_0039A738(void* self);
-extern "C" void func_00228C08(void* p);
-extern char* D_00440FD8[];
-extern void* D_004A28A8;
-extern void* D_004A289C;
-
 struct sOptionIface_189D60 {
     sGameOptions getOptions() { return D_00535610; }
 };
@@ -922,9 +903,7 @@ extern "C" void func_00189D60(void* self_)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018A258);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C620[];
-extern int D_004A14D4;
 
 extern "C" void* func_0018A258(void* self, int a1)
 {
@@ -939,16 +918,9 @@ extern "C" void* func_0018A258(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsSound_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void cFEStateOptionsSound_updateWidget(void* self);
 extern char D_0045DFC0[];
 extern char D_004A1580[];
 extern char D_004A1588[];
-extern char D_004A1528[];
-extern int D_004A1A70;
 
 extern "C" void cFEStateOptionsSound_onCreateScreen(void* self)
 {
@@ -979,20 +951,7 @@ extern "C" void cFEStateOptionsSound_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018A3D8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0014F458(void* iface);
-extern "C" void func_0018BEF8(void* self, unsigned int mode);
-extern "C" void* func_0028B180();
-extern "C" void func_00287410(void* snd, int v);
-extern "C" void func_00287488(void* snd, int v);
-extern "C" void func_00287520(void* snd, int v);
-extern "C" void func_00287558(void* snd, int v);
-extern "C" void func_002875D0(void* snd, int v);
-extern "C" void cFEStateOptionsSound_updateWidget(void* self);
-extern char D_0045DD20[];
-extern int D_004A14D4;
 
 static inline int Is_18A3D8(int id, char* s)
 {
@@ -1071,34 +1030,6 @@ extern "C" int func_0018A8C0(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018A8D0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void* func_0039E318(void* self, void* engine, void* owner);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
-extern "C" int func_0039A738(void* self);
-extern "C" void func_0018BEF8(void* self, unsigned int mode);
-extern "C" void* func_0028B180();
-extern "C" void func_00287410(void* snd, int v);
-extern "C" void func_00287488(void* snd, int v);
-extern "C" void func_00287520(void* snd, int v);
-extern "C" void func_00287558(void* snd, int v);
-extern "C" void func_002875D0(void* snd, int v);
-extern char D_0045DD68[];
-extern void* D_0046B3D0[];
-extern char D_004A1568[];
-extern char D_004A1590[];
-extern char D_004A1598[];
-extern char D_004A15A0[];
-extern char D_004A15A8[];
-extern char D_004A15B0[];
-extern char D_004A15B8[];
-extern int D_004A1A70;
-extern int D_004A14D4;
-
 static inline int Is_18A8D0(int id, char* s)
 {
     return id == GetHashValue32(s);
@@ -1183,35 +1114,12 @@ extern "C" void func_0018A8D0(sOptSound* self, char* widget, unsigned int event)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsSound_updateWidget);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
 extern "C" void func_0039A670(void* self);
-extern "C" int func_0039A768(void* self, int key, unsigned char* out);
-extern "C" void func_0039A7A8(void* self, int v);
 int func_00289DC0(void* snd);
-extern "C" void* func_0028B180();
-extern "C" void func_00287410(void* snd, int v);
-extern "C" void func_00287488(void* snd, int v);
-extern "C" void func_00287520(void* snd, int v);
-extern "C" void func_00287558(void* snd, int v);
-extern "C" void func_002875D0(void* snd, int v);
-extern char D_004A1568[];
-extern char D_004A1590[];
-extern char D_004A1598[];
-extern char D_004A15A0[];
-extern char D_004A15A8[];
-extern char D_004A15B0[];
-extern char D_004A15B8[];
 extern char D_0045DFD0[];
 extern char D_0045DFE8[];
 extern char D_0045E000[];
 extern char D_0045E018[];
-extern char D_0045DF40[];
-extern char D_0045E028[];
-extern int D_004A1A70;
 
 static inline sGameOptions Cfg_18B380()
 {
@@ -1301,18 +1209,12 @@ extern "C" void cFEStateOptionsSound_updateWidget(void* self_)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018BEF8);
 #ifdef SKIP_ASM
-extern "C" void* func_0028B180();
 extern "C" int func_00287670(void* snd);
 extern "C" int func_002876A0(void* snd);
 extern "C" int func_002876D0(void* snd);
 extern "C" void func_00286200(void* snd);
 extern "C" void func_00284C28();
 extern "C" void SSXAUDIO_Init(int mode);
-extern "C" void func_00287410(void* snd, int v);
-extern "C" void func_00287488(void* snd, int v);
-extern "C" void func_00287520(void* snd, int v);
-extern "C" void func_00287558(void* snd, int v);
-extern "C" void func_002875D0(void* snd, int v);
 extern "C" void func_00285FB0(void* snd);
 
 extern "C" void func_0018BEF8(void* self, unsigned int mode)
@@ -1362,9 +1264,7 @@ extern "C" void func_0018BEF8(void* self, unsigned int mode)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C0E8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C550[];
-extern int D_004A14D8;
 
 extern "C" void* func_0018C0E8(void* self, int a1)
 {
@@ -1379,11 +1279,7 @@ extern "C" void* func_0018C0E8(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C128);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0045E038[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_0018C478(void* self);
 
 extern "C" void func_0018C128(void* self)
 {
@@ -1409,14 +1305,7 @@ void func_0018C198(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C1B8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_0045DD20[];
-extern int D_004A14D8;
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0014F600(void* self);
-extern "C" void func_0018C478(void* self);
 
 extern "C" void func_0018C1B8(void* self, void* widget, int msg)
 {
@@ -1458,17 +1347,6 @@ extern "C" int func_0018C270(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C2A0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void* func_0039E318(void* self, void* engine, void* owner);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
-extern char D_0045DD68[];
-extern void* D_0046B3D0[];
-extern int D_004A14D8;
-
 static inline int Is_0018C2A0(int id, char* s) { return id == GetHashValue32(s); }
 
 extern "C" void func_0018C2A0(char* self, char* widget, unsigned int event)
@@ -1519,15 +1397,10 @@ extern "C" void func_0018C2A0(char* self, char* widget, unsigned int event)
 INCLUDE_ASM("fe/festateoptions", func_0018C478);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-extern char D_004A1398[];
 
 struct sName_C478 {
     char s[2];
 };
-extern char D_004A14F8[];
 
 static inline int optMode_C478(sGameOptions o)
 {
@@ -1566,9 +1439,7 @@ extern "C" void func_0018C478(void* vself)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C658);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C480[];
-extern int D_004A14DC;
 
 extern "C" void* func_0018C658(void* self, int a1)
 {
@@ -1584,16 +1455,7 @@ extern "C" void* func_0018C658(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsController_onCreateScreen);
 #ifdef SKIP_ASM
-extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
-extern "C" void func_0018D108(void* self, int idx, float x, float y);
-extern "C" void func_0018CDC0(void* self);
 extern char D_0045E068[];
-extern char D_004A1568[];
-extern char D_004A1570[];
-extern char D_004A15C8[];
-extern char D_004A1578[];
-extern char D_0045DF40[];
-extern char D_0045E028[];
 extern char D_0045E078[];
 extern char D_0045E090[];
 
@@ -1636,7 +1498,6 @@ extern "C" void cFEStateOptionsController_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C8B8);
 #ifdef SKIP_ASM
-extern "C" void func_0018D108(void* self, int idx, float x, float y);
 void func_0039E4A0(void* self);
 
 extern "C" void func_0018C8B8(void* self)
@@ -1650,15 +1511,7 @@ extern "C" void func_0018C8B8(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018C910);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void cBENewPlayerInterface_defaultCtrl(void* self);
-extern "C" void func_0018CDC0(void* self);
-extern "C" void func_0018D108(void* self, int idx, float x, float y);
-extern char D_0045DD20[];
-extern int D_004A14DC;
 
 static inline int Is_0018C910(int id, char* s) { return id == GetHashValue32(s); }
 
@@ -1687,28 +1540,8 @@ extern "C" void func_0018C910(void* self, cUIThing* obj, int msg)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018CA10);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void* func_0039E318(void* self, void* engine, void* owner);
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
-extern "C" int func_0039A738(void* self);
 extern "C" void func_00147528(void* self, int index, int value);
 extern "C" void func_00147658(void* self, int index, int value);
-extern "C" int func_001474E8(void* iface, int a1);
-extern "C" void func_0018CF50(void* self, int on);
-extern "C" void func_0018D108(void* self, int idx, float x, float y);
-extern char D_0045DD68[];
-extern void* D_0046B3D0[];
-extern char D_004A1568[];
-extern char D_004A1570[];
-extern char D_004A15C8[];
-extern char D_004A1578[];
-extern int D_004A14DC;
 
 static inline int Is_0018CA10(int id, char* s) { return id == GetHashValue32(s); }
 
@@ -1773,8 +1606,6 @@ extern "C" void func_0018CA10(char* self, char* widget, unsigned int event)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018CCE0);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00147618(void* player, int which);
 // func_0018CF50 returns void; declaring it int ($v0 set by the call) reproduces the original argument scheduling.
 extern "C" int func_0018CF50_CCE0(void* self, int on) __asm__("func_0018CF50");
@@ -1820,20 +1651,8 @@ extern "C" int func_0018CDB0(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018CDC0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_001474E8(void* iface, int a1);
 extern "C" int func_00147618(void* iface, int a1);
-extern "C" int func_0039A768(void* self, int key, unsigned char* out);
 extern "C" void func_0039A7A8(void* self, int a1);
-extern "C" void func_0018CF50(void* self, int on);
-extern char D_004A1568[];
-extern char D_004A1570[];
-extern char D_004A15C8[];
-extern char D_004A1578[];
 
 extern "C" void func_0018CDC0(void* self)
 {
@@ -1866,8 +1685,6 @@ extern "C" void func_0018CDC0(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018CF50);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char* D_004A15BC;
 extern char* D_004A15C0;
 extern char D_0045E0A0[];
@@ -1898,7 +1715,6 @@ extern "C" void func_0018CF50(void* self, int on)
 INCLUDE_ASM("fe/festateoptions", func_0018D058);
 #ifdef SKIP_ASM
 extern "C" void func_0039E510(void* self);
-extern "C" void func_0018D108(void* self, int idx, float x, float y);
 
 extern "C" void func_0018D058(void* self)
 {
@@ -1961,7 +1777,6 @@ extern "C" void func_0018D108(void* self, int idx, float x, float y)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018D240);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C3B0[];
 
 extern "C" void* func_0018D240(void* self, int a1)
@@ -1977,10 +1792,7 @@ extern "C" void* func_0018D240(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsSaveLoad_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0045E0C0[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 extern "C" void cFEStateOptionsSaveLoad_onCreateScreen(void* self)
 {
@@ -1996,13 +1808,8 @@ extern "C" void cFEStateOptionsSaveLoad_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsSaveLoad_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0045E0D0[];
 extern char D_0045E0E0[];
-extern char D_0045E0F0[];
-extern char D_0045E100[];
-extern char D_004A1508[];
-extern char D_004A1500[];
 
 static inline int IsHash_D2E8(int id, char* s) { return id == GetHashValue32(s); }
 
@@ -2027,12 +1834,8 @@ extern "C" void cFEStateOptionsSaveLoad_onWidgetCreate(void* self, void* widget)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018D3C0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_00194498(void* obj);
 extern int D_004A19D8;
-extern char D_0045E0F0[];
-extern char D_0045E100[];
 
 extern "C" void func_0018D3C0(void* self)
 {
@@ -2071,20 +1874,12 @@ extern "C" int func_0018D438(void* self, int a1, unsigned int key)
 INCLUDE_ASM("fe/festateoptions", func_0018D460);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* func_0039F190(void* list, int a1);
-extern "C" void func_0039F400(void* list, void* item);
 extern "C" void func_00147138(void* self, int a1, const char* name);
 extern "C" void func_0014DE28(void* self, int c);
 extern "C" void* func_001A0548(void* self, int a1);
 extern "C" void func_0019EBA0(void* self);
 extern "C" int cFERider_init(void* self, int a1, int a2, int a3);
-struct cUIScreen;
-int cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern void* D_004A28A8;
-extern char D_004A1408[];
-extern char D_0045DC60[];
 
 extern "C" void func_0018D460(char* self, char* widget, unsigned int event)
 {
@@ -2137,12 +1932,7 @@ extern "C" void func_0018D460(char* self, char* widget, unsigned int event)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsSaveLoad_onWidgetEvent);
 #ifdef SKIP_ASM
-// PORT: cMemMan_alloc bound as operator new so gcc treats it as malloc-like.
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-extern "C" void func_0039F290(void* list, void* item);
-extern "C" void func_0039F400(void* list, void* item);
 extern "C" void* func_001D99C8(void* self, void* engine, void* owner, unsigned short* text, int a4, int a5, int a6, int a7, int a8);
-extern void* D_004A28A8;
 extern char D_0045E110[];
 extern char D_0045E130[];
 
@@ -2196,9 +1986,7 @@ extern "C" void cFEStateOptionsSaveLoad_onWidgetEvent(char* self, char* widget, 
 INCLUDE_ASM("fe/festateoptions", func_0018D7F0);
 #ifdef SKIP_ASM
 extern "C" void* func_001D53B0(void* self, int a1, int a2);
-extern "C" void* func_00227F80(void* app);
 extern void* D_0046C228[];
-extern void* D_004A28A8;
 
 extern "C" void* func_0018D7F0(void* self, int a1, int a2, int a3, int a4)
 {
@@ -2219,21 +2007,12 @@ extern "C" void* func_0018D7F0(void* self, int a1, int a2, int a3, int a4)
 //100%
 INCLUDE_ASM("fe/festateoptions", cFEStateOptionsDeviceSelect_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_003A0E90(void* obj, void* v);
-struct cUIText;
 void cUIText_setAsciiString(cUIText* text, const char* str);
 extern char D_0045E140[];
-extern char D_004A15D0[];
-extern char D_004A15D8[];
 extern char D_0045E150[];
 extern char D_0045E168[];
-extern char D_004A1460[];
-extern char D_004A1458[];
 extern char D_0045E178[];
 extern char D_0045E190[];
 extern char D_0045E1A0[];
@@ -2244,8 +2023,6 @@ extern char D_0045E1E8[];
 extern char D_0045E200[];
 extern char D_0045E210[];
 extern char D_004A12C0[];
-extern char D_004A1408[];
-extern void* D_004A28A8;
 struct sBlob16_DS { char b[16]; };
 extern sBlob16_DS D_004C66C8;
 
@@ -2329,9 +2106,6 @@ extern "C" void cFEStateOptionsDeviceSelect_onCreateScreen(sDevSel* self)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018DDD0);
 #ifdef SKIP_ASM
-extern "C" void* func_00227F80(void* app);
-extern void* D_004A28A8;
-
 extern "C" int func_0018DDD0(void* self, void* widget, unsigned int msg)
 {
     char* app = (char*)func_00227F80(D_004A28A8);
@@ -2355,11 +2129,9 @@ extern "C" int func_0018DDD0(void* self, void* widget, unsigned int msg)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018DEA0);
 #ifdef SKIP_ASM
-extern "C" void* func_00227F80(void* app);
 extern "C" void func_0023CAE8(void* app, int a1, int a2);
 extern "C" void func_0023C8F0(void* app, int a1);
 extern "C" void func_0023D570(void* app, int a1);
-extern void* D_004A28A8;
 
 extern "C" void func_0018DEA0(sDevSel* self, char* widget, unsigned int event)
 {
@@ -2450,14 +2222,6 @@ extern "C" void func_0018DEA0(sDevSel* self, char* widget, unsigned int event)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018E178);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A15E0[];
-extern char D_004A15D0[];
-extern char D_004A15D8[];
-extern char D_004A1458[];
-extern char D_004A1460[];
-
 extern "C" void func_0018E178(void* self, int on)
 {
     if (*(int*)((char*)self + 0x234) == on)
@@ -2478,11 +2242,6 @@ extern "C" void func_0018E178(void* self, int on)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018E2C0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A1458[];
-extern char D_004A1460[];
-
 extern "C" void func_0018E2C0(void* self, bool on)
 {
     if (*(int*)((char*)self + 0x22C) != 0) {
@@ -2497,12 +2256,6 @@ extern "C" void func_0018E2C0(void* self, bool on)
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018E368);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A15D0[];
-extern char D_004A15D8[];
-extern char D_004A15E0[];
-
 extern "C" void func_0018E368(void* self, bool a, bool b)
 {
     cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A15E0));
@@ -2554,7 +2307,6 @@ INCLUDE_ASM("fe/festateoptions", func_0018E510);
 //100%
 INCLUDE_ASM("fe/festateoptions", func_0018EA98);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046C158[];
 
 extern "C" void* func_0018EA98(void* self, int a1)
