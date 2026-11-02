@@ -1400,54 +1400,49 @@ void func_003DDC00(int arg0, int arg1, int arg2) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDC30);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 typedef struct { unsigned int pad0 : 20; unsigned int f : 4; unsigned int pad1 : 8; int a; int b; int c; int d; int e; } R_DC30;
-typedef struct N_DC30 { int f0; int pad4[2]; char *key; int pad10; struct N_DC30 *next; } N_DC30;
-typedef struct { char *owner; int pad4; int f8; char pad[0x110 - 0xC]; } E_DC30;
-typedef struct { int f0; int count; char pad8[0x2C - 8]; E_DC30 *arr; int pad30; N_DC30 *head; } G_DC30;
 extern R_DC30 *func_003DE670_DC30(void) __asm__("func_003DE670");
 extern int func_003DD5A0_DC30(char *, int, R_DC30 *) __asm__("func_003DD5A0");
 extern void func_003DCF70_DC30(int, void *) __asm__("func_003DCF70");
 extern void func_003DDC00(int, int, int);
-extern G_DC30 D_00519AB0_DC30 __asm__("D_00519AB0");
 
 int func_003DDC30(char *a0, int a1, int a2) {
-    N_DC30 *prev;
-    N_DC30 *n;
+    struct sFsNode *prev;
+    struct sFsNode *n;
     R_DC30 *r;
-    E_DC30 *e;
+    struct sFsHd *e;
     int i;
 
     prev = 0;
-    n = D_00519AB0_DC30.head;
+    n = D_00519AB0.f34;
     r = func_003DE670_DC30();
-    e = D_00519AB0_DC30.arr;
+    e = D_00519AB0.f2C;
     r->e = a2;
     r->d = a1;
     r->f = 10;
     if (*(int *)(a0 + 8) != 0) {
         r->c = 7;
     }
-    for (i = 0; i < D_00519AB0_DC30.count; i++, e++) {
-        if (e != 0 && e->f8 != 0 && *(char **)(e->owner + 0xC) == a0) {
+    for (i = 0; i < D_00519AB0.f04; i++, e++) {
+        if (e != 0 && e->f08 != 0 && (char *)((struct sFsNode *)e->f00)->f0C == a0) {
             r->b = -2;
             r->c = 8;
             break;
         }
     }
-    while (n != 0 && n->key != a0) {
+    while (n != 0 && (char *)n->f0C != a0) {
         prev = n;
-        n = n->next;
+        n = n->f14;
     }
     if (n == 0) {
         r->c = 5;
     }
     if (prev != 0) {
-        prev->next = n->next;
+        prev->f14 = n->f14;
     } else {
-        D_00519AB0_DC30.head = D_00519AB0_DC30.head->next;
+        D_00519AB0.f34 = D_00519AB0.f34->f14;
     }
-    D_00450C10.f08((void *)n->f0);
+    D_00450C10.f08((void *)n->f00);
     D_00450C10.f08(n);
     func_003DCF70_DC30(func_003DD5A0_DC30(a0, a1, r), func_003DDC00);
     return *(int *)r;
