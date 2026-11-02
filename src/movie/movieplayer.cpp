@@ -13,6 +13,22 @@ extern "C" void* func_00242288(void* self);
 extern const char D_0047C128[];
 extern void* D_004A2C74;
 
+// The overlay manager's 0xE0-byte device records at 0x344 (cMCOverlayManager_GetDeviceTotalString and its
+// neighbours): status words, two counts and the device's name.
+struct sMCDev {
+    int f0;                     // 0x00
+    int f4;                     // 0x04
+    int f8;                     // 0x08
+    int fC;                     // 0x0C
+    int f10;                    // 0x10
+    int f14;                    // 0x14
+    char name[0xE0 - 0x18];     // 0x18
+};
+struct sMCOverlayMgr {
+    char pad[0x344];
+    sMCDev dev[1];              // 0x344
+};
+
 // The movie decoder the players hold at +0x434 (one vtable, 80 slots; the named slots follow their use).
 class cMovieDecoder {
 public:
@@ -2520,21 +2536,6 @@ extern char D_0047C360[];
 extern char D_0047C378[];
 extern char D_0047C390[];
 
-struct sMCDev_241710 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    char name[0xE0 - 0x18];
-};
-
-struct sMCOverlayMgr_241710 {
-    char pad[0x344];
-    sMCDev_241710 dev[1];
-};
-
 static inline void* Loc_241710(char* key)
 {
     char* loc = *(char**)((char*)D_004A28A8 + 0x8C);
@@ -2561,7 +2562,7 @@ extern "C" void cMCOverlayManager_GetDeviceDisplayString(void* self, int idx, ch
         else if ((*(cMovieDecoder**)((char*)self + 0x434))->v57(idx))
         {
             func_00241DC8(self, buf, idx);
-            char* name = ((sMCOverlayMgr_241710*)self)->dev[idx].name;
+            char* name = ((sMCOverlayMgr*)self)->dev[idx].name;
             if (func_002C24D0(name) == 0)
                 func_002C26D0_v(dst, Loc_241710(D_0047C390), buf);
             else
@@ -2583,26 +2584,14 @@ extern char D_004A2C90[];
 extern char D_004A2C98[];
 // PORT: this caller treats func_002C2540 (a string copy) as returning int.
 unsigned short* func_002C2540_i(void*, void*) __asm__("func_002C2540");
-struct sMovieItem1928 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    char pad[0xE0 - 0x14];
-};
-struct sMovie1928 {
-    char pad[0x344];
-    sMovieItem1928 items[1];
-};
-extern "C" void func_00241928(sMovie1928* self, int idx, void* dst)
+extern "C" void func_00241928(sMCOverlayMgr* self, int idx, void* dst)
 {
     char a[0x200];
     char b[0x200];
-    if (self->items[idx].fC != 0 && self->items[idx].f0 != 0 && self->items[idx].f4 != 0 && self->items[idx].f8 != 0) {
+    if (self->dev[idx].fC != 0 && self->dev[idx].f0 != 0 && self->dev[idx].f4 != 0 && self->dev[idx].f8 != 0) {
         func_002C2540_i(a, D_004A2C90);
         func_002C2540_i(b, D_004A2C98);
-        func_002C26D0_v(dst, b, self->items[idx].f10, a);
+        func_002C26D0_v(dst, b, self->dev[idx].f10, a);
     }
 }
 #endif
@@ -2610,10 +2599,9 @@ extern "C" void func_00241928(sMovie1928* self, int idx, void* dst)
 //100%
 INCLUDE_ASM("movie/movieplayer", func_002419D8);
 #ifdef SKIP_ASM
-extern "C" int func_002419D8(void* self, int a1)
+extern "C" int func_002419D8(sMCOverlayMgr* self, int a1)
 {
-    char* p = (char*)self + a1 * 0xe0;
-    return *(int*)(p + 0x354);
+    return self->dev[a1].f10;
 }
 #endif
 
@@ -2625,20 +2613,6 @@ extern "C" unsigned short* func_002C2540_r(void*, void*) __asm__("func_002C2540"
 extern "C" void func_002C26D0_v(void* dst, void* fmt, ...) __asm__("func_002C26D0");
 extern char D_004A2CA0[];
 extern char D_004A2C98[];
-
-struct sMCDev {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    char pad[0xE0 - 0x18];
-};
-struct sMCOverlayMgr {
-    char pad[0x344];
-    sMCDev dev[1];
-};
 
 extern "C" void cMCOverlayManager_GetDeviceTotalString(sMCOverlayMgr* self, int idx, void* dst)
 {
