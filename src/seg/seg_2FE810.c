@@ -6166,13 +6166,13 @@ INCLUDE_ASM("seg/seg_2FE810", func_00408988);
 #ifdef SKIP_ASM
 struct Ent_8988 { int f0; int f4; unsigned a[4]; unsigned b[69]; int cnt; int pad[4]; };
 struct P_8988 { char pad[0x590]; struct Ent_8988 e[2]; int idx; };
-extern char q8988_D[] __asm__("D_00526FC0");
+extern char D_00526FC0[];
 extern int q8988_C078() __asm__("func_0042C078");
 extern void q8988_C0C0(void) __asm__("func_0042C0C0");
 void q8988(struct P_8988 *p) __asm__("func_00408988");
 void q8988(struct P_8988 *p) {
     int i = 0;
-    unsigned long long *t = (unsigned long long *)(((unsigned)q8988_D & 0x0FFFFFFF) | 0x20000000);
+    unsigned long long *t = (unsigned long long *)(((unsigned)D_00526FC0 & 0x0FFFFFFF) | 0x20000000);
     int n = p->e[p->idx].cnt;
     int s;
     if (n > 0) {
@@ -6189,7 +6189,7 @@ void q8988(struct P_8988 *p) {
     s = q8988_C078();
     __asm__ volatile("sync");
     *(volatile int *)0x1000D480 = p->e[p->idx].f0;
-    *(volatile int *)0x1000D430 = (int)q8988_D;
+    *(volatile int *)0x1000D430 = (int)D_00526FC0;
     *(volatile int *)0x1000D420 = 0;
     *(volatile int *)0x1000D400 = 0x105;
     if (s)
@@ -6504,9 +6504,9 @@ void func_00409708(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409940);
 #ifdef SKIP_ASM
-extern char Q_4980F0[] __asm__("D_004980F0");
-extern char Q_498108[] __asm__("D_00498108");
-extern char Q_498130[] __asm__("D_00498130");
+extern char D_004980F0[];
+extern char D_00498108[];
+extern char D_00498130[];
 extern int Q_sema(int *) __asm__("func_00423DA0");
 extern void Q_sig(int) __asm__("func_00423DC0");
 extern void Q_log(char *) __asm__("func_00425C60");
@@ -6531,7 +6531,7 @@ int func_00409940(void) {
     Q_6408(0);
     for (;;) {
         if (func_00426B48(&D_005271C0, 0x80000400, 0) < 0) {
-            Q_log(Q_4980F0);
+            Q_log(D_004980F0);
             for (;;)
                 __asm__ volatile("nop");
             __asm__ volatile("nop");
@@ -6557,12 +6557,12 @@ int func_00409940(void) {
         return r - 100;
     }
     if (D_00528780[1] < 0x20A) {
-        Q_log(Q_498108);
+        Q_log(D_00498108);
         D_005271C0.server = 0;
         return -120;
     }
     if (D_00528780[2] < 0x20E) {
-        Q_log(Q_498130);
+        Q_log(D_00498130);
         D_005271C0.server = 0;
         return -121;
     }
@@ -7461,29 +7461,29 @@ extern struct N_B6D0 *al_B6D0(char *) __asm__("func_0040B208");
 extern void rl_B6D0(struct N_B6D0 *) __asm__("func_0040B2B0");
 extern void sz_B6D0(int, int) __asm__("func_00426358");
 extern int st_B6D0(unsigned, struct N_B6D0 *, int, int, int, int) __asm__("func_004261B0");
-extern char E_498178[] __asm__("D_00498178");
-extern char E_4981A0[] __asm__("D_004981A0");
-extern char E_4981D8[] __asm__("D_004981D8");
-extern char E_4981E8[] __asm__("D_004981E8");
-extern char E_528FC0[] __asm__("D_00528FC0");
+extern char D_00498178[];
+extern char D_004981A0[];
+extern char D_004981D8[];
+extern char D_004981E8[];
+extern char D_00528FC0[];
 int func_0040B6D0(struct N_B6D0 *c, int a, int flag, int d, int e, int f, int g, int h, int i) {
     int s[6];
     int sem;
     struct N_B6D0 *n;
     if (flag != 0) {
-        lg1_B6D0(E_498178);
+        lg1_B6D0(D_00498178);
         return -1;
     }
     wt_B6D0(c->f28);
     if (d & 0x3F) {
-        lg3_B6D0(E_4981A0, E_4981D8, d);
+        lg3_B6D0(D_004981A0, D_004981D8, d);
         return -1;
     }
     if (f & 0x3F) {
-        lg3_B6D0(E_4981E8, E_4981D8, f);
+        lg3_B6D0(D_004981E8, D_004981D8, f);
         return -1;
     }
-    n = al_B6D0(E_528FC0);
+    n = al_B6D0(D_00528FC0);
     if (n == 0)
         return -1;
     c->f4 = n->f18;
@@ -8542,10 +8542,10 @@ int func_0040D118(int idx, unsigned char b, unsigned char c, int n, unsigned sho
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040D268);
 #ifdef SKIP_ASM
-extern char T_4983B0[] __asm__("D_004983B0");
-extern char T_4983C8[] __asm__("D_004983C8");
-extern char T_4987C8[] __asm__("D_004987C8");
-extern char T_498BC8[] __asm__("D_00498BC8");
+extern char D_004983B0[];
+extern char D_004983C8[];
+extern char D_004987C8[];
+extern char D_00498BC8[];
 extern void u268_00425C60(char *) __asm__("func_00425C60");
 extern unsigned short u268_0040D3C0(int, int) __asm__("func_0040D3C0");
 unsigned short func_0040D268(int mode, int a, int b, unsigned short ch) {
@@ -8554,16 +8554,16 @@ unsigned short func_0040D268(int mode, int a, int b, unsigned short ch) {
     int up = (a & 0x22) != 0;
     switch (mode) {
     case 0:
-        tbl = (unsigned short *)(T_4983C8 + (up << 9));
+        tbl = (unsigned short *)(D_004983C8 + (up << 9));
         break;
     case 1:
-        tbl = (unsigned short *)(T_4987C8 + (up << 9));
+        tbl = (unsigned short *)(D_004987C8 + (up << 9));
         break;
     case 2:
-        tbl = (unsigned short *)(T_498BC8 + (up << 9));
+        tbl = (unsigned short *)(D_00498BC8 + (up << 9));
         break;
     default:
-        u268_00425C60(T_4983B0);
+        u268_00425C60(D_004983B0);
         break;
     }
     if (ch == 0)
