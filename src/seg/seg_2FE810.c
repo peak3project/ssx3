@@ -255,6 +255,12 @@ extern unsigned char D_004533FD[];
 extern unsigned char D_004533FE[];
 extern unsigned char D_004533FF[];
 
+/* other shared tables and buffers */
+extern int D_00451590[];        /* DMA channel register block addresses, 10 channels */
+extern int D_004532C0[];        /* table indexed by the top 4 bits of a command word (func_00406DF0..func_004072E8) */
+extern char D_00453400[];       /* 14 bytes read from the file D_00498220 names (func_0040B938) */
+extern char D_00528FC0[];       /* buffer shared by func_0040B400 / func_0040B5B0 / func_0040B6D0 */
+
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
 #ifdef SKIP_ASM
@@ -450,7 +456,6 @@ void func_003FDF50(char *p, int n) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDF88);
 #ifdef SKIP_ASM
-extern int D_00451590[];
 int func_003FDF88(unsigned n) {
     return n < 10 ? D_00451590[n] : 0;
 }
@@ -459,7 +464,6 @@ int func_003FDF88(unsigned n) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDFB0);
 #ifdef SKIP_ASM
-extern int D_00451590[];
 extern int D_004977F0[];
 extern void func_003FDF50(char *, int);
 extern int func_003FE090(sDmaEnv *);
@@ -5321,7 +5325,6 @@ void func_00406CA0(int p, int *x, int *out, int n0, int n1, int f1, int f2, int 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406DF0);
 #ifdef SKIP_ASM
-extern int D_004532C0[];
 void func_00406DF0(int *p, unsigned a) {
     volatile int *r = (volatile int *)0x10002000;
     *r = a;
@@ -5369,7 +5372,6 @@ long func_00406EC8(int p) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406F78);
 #ifdef SKIP_ASM
-extern int D_004532C0[];
 extern int func_00402C80(int *);
 int func_00406F78(int p, int cmd) {
     int m = 0;
@@ -5414,7 +5416,6 @@ int func_00406F78(int p, int cmd) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004070F0);
 #ifdef SKIP_ASM
-extern int D_004532C0[];
 extern int func_00402C80(int *);
 extern long func_00406EC8_k() __asm__("func_00406EC8");
 int func_004070F0(int p, int n) {
@@ -5444,7 +5445,6 @@ int func_004070F0(int p, int n) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004071F8);
 #ifdef SKIP_ASM
-extern int D_004532C0[];
 extern int func_00402C80(int *);
 extern long func_00406EC8_k() __asm__("func_00406EC8");
 void func_004071F8(int p, int v) {
@@ -5473,7 +5473,6 @@ void func_004071F8(int p, int v) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004072E8);
 #ifdef SKIP_ASM
-extern int D_004532C0[];
 extern int func_00402C80(int *);
 extern long func_00406EC8_k() __asm__("func_00406EC8");
 int func_004072E8(int p, int n) {
@@ -7337,7 +7336,6 @@ extern struct N_B400 *func_0040B208(char *);
 extern void rl_B400(struct N_B400 *) __asm__("func_0040B2B0");
 extern int func_004261B0(unsigned, struct N_B400 *, int, int, int, int);
 extern char D_00498178[];
-extern char D_00528FC0[];
 int func_0040B400(int cc, int a, int flag, int d, int e, int f) {
     struct C_B400 *c = (struct C_B400 *)cc;
     int s[6];
@@ -7401,7 +7399,6 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040B5B0);
 #ifdef SKIP_ASM
 struct O_B5B0 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; int f28; int f2C; };
 extern char D_00498178[];
-extern char D_00528FC0[];
 extern void b5_00425C60(char *, ...) __asm__("func_00425C60");
 extern int b5_00423DE0(int) __asm__("func_00423DE0");
 extern int b5_00423DB0(int) __asm__("func_00423DB0");
@@ -7465,7 +7462,6 @@ extern char D_00498178[];
 extern char D_004981A0[];
 extern char D_004981D8[];
 extern char D_004981E8[];
-extern char D_00528FC0[];
 int func_0040B6D0(struct N_B6D0 *c, int a, int flag, int d, int e, int f, int g, int h, int i) {
     int s[6];
     int sem;
@@ -7541,7 +7537,6 @@ int func_0040B6D0(struct N_B6D0 *c, int a, int flag, int d, int e, int f, int g,
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B938);
 #ifdef SKIP_ASM
-extern char D_00453400[];
 extern int func_00427D60(char *, int);
 extern void func_004283A0(int, char *, int);
 extern void func_00427FE8(int);
@@ -7562,7 +7557,6 @@ int func_0040B938(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B9A8);
 #ifdef SKIP_ASM
-extern char D_00453400[];
 extern int func_0040B938(void);
 int func_0040B9A8(void) {
     if (D_00453400[0] == 0)
