@@ -114,6 +114,12 @@ struct sFEObjB80 {
     char fB80[4];       // 0xB80 (string object)
 };
 
+// An object queued in an FE state item vector (vptr at 0xC; deleted through vtable slot 1).
+struct sQueueItem {
+    char pad[0xC];
+    sVEntryVoidArg* vt;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -2362,19 +2368,14 @@ void cMemMan_free(void* p);
 void operator_delete(int* ptr);
 extern char D_00467E18[];
 
-struct sObj1A7848 {
-    char pad[0xC];
-    sVEntryVoidArg* vt;
-};
-
 struct sObjVec1A7848 {
     int f0;
-    sObj1A7848** mBegin;
-    sObj1A7848** mEnd;
-    sObj1A7848** mCap;
+    sQueueItem** mBegin;
+    sQueueItem** mEnd;
+    sQueueItem** mCap;
 };
 
-static inline void Dealloc1A7848(sObj1A7848** p, int n)
+static inline void Dealloc1A7848(sQueueItem** p, int n)
 {
     if (p != 0) {
         if (n == 1) {
@@ -2398,16 +2399,16 @@ extern "C" void func_001A7848(sOwner1A7848* self, int flags)
     self->vt = D_00467E18;
     for (;;) {
         if (self->mVec.mBegin == self->mVec.mEnd) break;
-        sObj1A7848* p = self->mVec.mEnd[-1];
+        sQueueItem* p = self->mVec.mEnd[-1];
         self->mVec.mEnd--;
         if (p) {
             p->vt[1].fn((char*)p + p->vt[1].delta, 3);
         }
     }
     sObjVec1A7848* v = &self->mVec;
-    sObj1A7848** first = self->mVec.mBegin;
-    sObj1A7848** last = self->mVec.mEnd;
-    func_0041610C(first, last, (v->mEnd - last) * sizeof(sObj1A7848*));
+    sQueueItem** first = self->mVec.mBegin;
+    sQueueItem** last = self->mVec.mEnd;
+    func_0041610C(first, last, (v->mEnd - last) * sizeof(sQueueItem*));
     self->mVec.mEnd -= last - first;
     Dealloc1A7848(v->mBegin, self->mVec.mCap - self->mVec.mBegin);
     cBXString__cBXString(self->str, 2);
@@ -2633,23 +2634,18 @@ INCLUDE_ASM("fe/feasyncfile", func_001A7DD8);
 #ifdef SKIP_ASM
 extern "C" void* func_0041610C(void* dst, void* src, int n);
 
-struct sObj1A7DD8 {
-    char pad[0xC];
-    sVEntryVoidArg* vt;
-};
-
 struct sObjVec1A7DD8 {
     int f0;
-    sObj1A7DD8** mBegin;
-    sObj1A7DD8** mEnd;
-    sObj1A7DD8** mCap;
+    sQueueItem** mBegin;
+    sQueueItem** mEnd;
+    sQueueItem** mCap;
 };
 
-extern "C" void func_001DB918(sObjVec1A7DD8* vec, sObj1A7DD8** pos, sObj1A7DD8* const* x);
+extern "C" void func_001DB918(sObjVec1A7DD8* vec, sQueueItem** pos, sQueueItem* const* x);
 
-static inline sObj1A7DD8** Copy1A7DD8(sObj1A7DD8** first, sObj1A7DD8** last, sObj1A7DD8** result)
+static inline sQueueItem** Copy1A7DD8(sQueueItem** first, sQueueItem** last, sQueueItem** result)
 {
-    func_0041610C(result, first, (last - first) * sizeof(sObj1A7DD8*));
+    func_0041610C(result, first, (last - first) * sizeof(sQueueItem*));
     return result + (last - first);
 }
 
@@ -2661,12 +2657,12 @@ struct sOwner1A7DD8 {
 extern "C" void func_001A7DD8(void* selfp, void* item)
 {
     sOwner1A7DD8* self = (sOwner1A7DD8*)selfp;
-    sObj1A7DD8* x = (sObj1A7DD8*)item;
+    sQueueItem* x = (sQueueItem*)item;
     for (;;) {
         if ((unsigned int)(self->mVec.mEnd - self->mVec.mBegin) < 31) break;
         sObjVec1A7DD8* v = &self->mVec;
-        sObj1A7DD8** pos = self->mVec.mBegin;
-        sObj1A7DD8* p = *pos;
+        sQueueItem** pos = self->mVec.mBegin;
+        sQueueItem* p = *pos;
         if (p) {
             if (pos + 1 != self->mVec.mEnd) {
                 Copy1A7DD8(pos + 1, v->mEnd, pos);
@@ -2677,7 +2673,7 @@ extern "C" void func_001A7DD8(void* selfp, void* item)
     }
     sObjVec1A7DD8* v2 = &self->mVec;
     if (self->mVec.mEnd != self->mVec.mCap) {
-        sObj1A7DD8** e = v2->mEnd;
+        sQueueItem** e = v2->mEnd;
         if (e) *e = x;
         self->mVec.mEnd++;
     } else {
