@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatebigradio", cFEStateBraggingRights_onCreateScreen);
 #ifdef SKIP_ASM
@@ -398,15 +406,10 @@ extern char D_0045DCC8[];
 extern char D_0045FCD8[];
 extern char D_005308B8[];
 
-struct sVE_38F8 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 struct sVObj_38F8 {
     int f0;
-    sVE_38F8* vt;                   // 0x4
+    sVEntry<void*(void*, void*, int)>* vt;                   // 0x4
 };
 
 struct sWidget_38F8 {
@@ -813,26 +816,16 @@ struct sColor4_4498 {
     float x, y, z, w;
 };
 
-struct sVEntry00194498a {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
-struct sVEntry00194498b {
-    short delta;
-    short index;
-    void (*fn)(void*, sColor4_4498*);
-};
 
 extern "C" void func_00194498(void* self)
 {
-    sVEntry00194498a* vt = *(sVEntry00194498a**)((char*)self + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)self + 8);
     vt[8].fn((char*)self + vt[8].delta, 1);
     sColor4_4498 c = *(sColor4_4498*)((char*)self + 0x1C);
     if (c.x > 0.5f) {
         c.x = 0.5f;
-        sVEntry00194498b* vt2 = *(sVEntry00194498b**)((char*)self + 8);
+        sVEntry<void(void*, sColor4_4498*)>* vt2 = *(sVEntry<void(void*, sColor4_4498*)>**)((char*)self + 8);
         vt2[11].fn((char*)self + vt2[11].delta, &c);
     }
 }
