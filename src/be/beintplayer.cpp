@@ -1,12 +1,14 @@
 #include "common.h"
 
-// Race settings: the rider -> player slot map, the selected event and the race mode.
+// Race settings: two rider -> player slot maps, the selected event and the race mode.
 struct sRaceSettings {
     int playerID[6];            // 0x00
-    char pad_0x18[0x40 - 0x18];
+    int playerID2[6];           // 0x18
+    char pad_0x30[0x40 - 0x30];
     int event;                  // 0x40 (index into D_0043D950)
     char pad_0x44[4];
     signed char mode;           // 0x48
+    char pad_0x49[0x4C - 0x49];
 };
 extern sRaceSettings D_005305B0;
 int cBELibrary_getProfileIndex(int);
