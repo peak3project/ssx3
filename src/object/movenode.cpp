@@ -19,6 +19,11 @@ struct sBoundBox { t4Vector min, max; };
 extern "C" sBoundBox* func_00352B88_box(void* mb) __asm__("func_00352B88");
 extern "C" void func_003291E0(void* mgr, int a, void* obj, sBoundBox* box, sBoundBox* old);
 
+// Four floats as an aligned array (indexed access; same bytes as t4Vector): a node position.
+struct sMoveQuad {
+    float v[4];
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -327,7 +332,6 @@ extern "C" void func_00355888(void* self, void* a1)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_003558B8);
 #ifdef SKIP_ASM
-struct sMoveQuad;
 extern char D_0048E8F0[];
 extern "C" void* func_00356EB8(void* self, sMoveQuad* pos);
 extern "C" void func_003554B0(cMoveNode* self, void* mod);
@@ -354,7 +358,6 @@ extern "C" void func_00355918(cMoveNode* self, void* desc)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_00355978);
 #ifdef SKIP_ASM
-struct sMoveQuad;
 extern char D_0048E8E0[];
 extern "C" void* func_00357038(void* self, void* a1, void* a2, sMoveQuad* pos);
 extern "C" void func_003554B0(cMoveNode* self, void* mod);
@@ -717,7 +720,6 @@ extern "C" void func_00356198(void* selfv)
 INCLUDE_ASM("object/movenode", func_00356298);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sMoveQuad;
 extern sMoveQuad D_004FF1A0[];
 
 
@@ -1453,9 +1455,6 @@ void* func_00356E98(void* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00356EB8);
 #ifdef SKIP_ASM
-struct sMoveQuad {
-    float v[4];
-} __attribute__((aligned(16)));
 
 extern void* D_0048F5F0[];
 extern sMoveQuad D_004FF1A0[];
@@ -1488,17 +1487,14 @@ extern "C" void* func_00356EB8(void* self, sMoveQuad* pos)
 //100%
 INCLUDE_ASM("object/movenode", func_00356F10);
 #ifdef SKIP_ASM
-struct sMoveQuad2 {
-    float v[4];
-} __attribute__((aligned(16)));
 
 extern void* D_0048F5F0[];
 
 extern "C" void* func_00356F10(void* self, void* src)
 {
     *(void***)self = D_0048F5F0;
-    sMoveQuad2 v = *(sMoveQuad2*)((char*)src + 0x30);
-    *(sMoveQuad2*)((char*)self + 0x30) = v;
+    sMoveQuad v = *(sMoveQuad*)((char*)src + 0x30);
+    *(sMoveQuad*)((char*)self + 0x30) = v;
     // PORT: PS2-only VU0 inline asm (4x4 matrix copy, src -> self+0x50).
     __asm__ __volatile__(
         ".set noreorder\n"
