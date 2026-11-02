@@ -17715,7 +17715,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D5800);
 #ifdef SKIP_ASM
 extern int func_003D5450_5800(int) __asm__("func_003D5450");
 extern void func_003D6360_5800(struct sPathVoice *, int, int, int) __asm__("func_003D6360");
-extern char D_00517644_5800[] __asm__("D_00517644");
 
 static inline int isOff_5800(unsigned int m, int b) { return ((m >> b) & 1) == 0; }
 void func_003D5800(unsigned int mask, int a1, int a2) {
@@ -17727,8 +17726,8 @@ void func_003D5800(unsigned int mask, int a1, int a2) {
     if (D_0044F430 != 0) return;
     if (func_003D5450_5800(-1) == 0) return;
     for (i = 0; i < 4; i++) {
-        if (*(int *)(D_00517644_5800 + i * 0x928) != 0) {
-            fl = *(unsigned int *)(D_00517644_5800 + i * 0x928 - 4);
+        if (*(int *)(D_00517644 + i * 0x928) != 0) {
+            fl = *(unsigned int *)(D_00517644 + i * 0x928 - 4);
             t = fl & 0xF0000000;
             if ((t & mask) != 0) {
                 u = fl & 0x0F000000;
