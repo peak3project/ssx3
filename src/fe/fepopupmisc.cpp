@@ -65,18 +65,116 @@ public:
     virtual void setVisible(int on);
 };
 
-//100%
-INCLUDE_ASM("fe/fepopupmisc", cFEPopupVideoCalibration_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIText;
+struct cUIScreen;
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern char D_004A1548[];
 extern char* D_004A1540;
 extern char D_0045DD90[];
+extern "C" void func_0039E390(void *, int);
+// func_001DEDE8 is matched under the C++ symbol func_001DEDE8__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
+extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* func_0039F190(void* self, int a1);
+extern void* D_0046D0D0[];
+extern "C" void* func_0039E2A0(void* self, void* engine);
+void operator_delete(int* ptr);
+extern "C" void* func_001A8500(void*, int, int);
+extern void* D_0046AF68[];
+// PORT: unit declares func_001A85D0 with one arg; the body takes (self, flags)
+extern "C" void func_001A85D0_dtor(void* self, int flags) __asm__("func_001A85D0");
+extern "C" void* func_001A85D0(void*);
+extern void* D_0046A7F8[];
+extern int D_004A3E90;
+extern "C" void cBXString__cBXString(void* self, int flags);
+extern void* D_0046A6E8[];
+extern void* D_0046A618[];
+extern void* D_0046A3C8[];
+void func_001DFAC8(void* self);
+extern "C" void func_001D00C0(void* self);
+extern void* D_004696B8[];
+extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
+extern void* D_0046DD60[];
+extern void* D_00468E38[];
+extern void* D_00468D20[];
+extern void* D_004686C0[];
+extern void* D_00468050[];
+extern "C" void* func_001DBC98(int, int);
+extern int D_004A20C0;
+extern void* D_004A5B64;
+extern "C" int func_001E3A30(void* self);
+extern void* D_004A28A8;
+extern "C" int func_00146E98(void* iface, int a1);
+int cBENewPlayerInterface_getRiderCharID(void* self, int player);
+extern "C" void func_001E2FE0(int a, unsigned char b);
+extern "C" void func_001E3A78(int a, int b);
+unsigned int BXrand();
+extern "C" int func_001E3388(int id);
+extern "C" void func_001E32C8(int type);
+extern "C" void func_001E31B8(int idx);
+extern "C" int func_001E2D58(int v, int i);
+extern "C" int func_001E3620(int idx);
+extern int D_004A20CC;
+extern signed char D_00535C11[];
+extern signed char D_00535BC8[];
+// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
+unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
+extern int D_004A20C4;
+extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int peak);
+extern "C" void func_0020A380(void* self);
+extern "C" void func_001E48B0(void*);
+extern "C" void func_001E4758(void*);
+extern "C" void func_001E4458(void*);
+extern "C" void func_001E4658(void*);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern char* D_004A20A8;
+extern "C" void func_001E50C8(void* self, int a1, int a2);
+extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
+extern "C" void func_003A0E90(void* text, void* p);
+extern "C" unsigned char func_001E3650(int idx);
+void cUIText_setAsciiString(cUIText* text, const char* str);
+extern "C" int func_001E2EA0(int id);
+extern "C" unsigned char func_001E5AA0(void* self, int idx);
+extern char D_0046E140[];
+extern char D_0046E160[];
+extern char D_0046E180[];
+extern char D_0046E1A0[];
+extern char D_0046E1C0[];
+extern char D_004A2138[];
+// func_0039E4C0 returns nothing (ends in a void vcall); the unit's later void* declaration is a guess.
+void func_0039E4C0_v(void* self) __asm__("func_0039E4C0");
+extern "C" void* func_0028B180();
+extern "C" void func_00294F78(void*, int);
+extern "C" void func_0020A6F0(void* self, char* text, char* name);
+extern int D_00536730[];
+extern char D_0046E4E8[];
+extern char D_0046E510[];
+extern int D_004A26FC;
+extern int D_004A2700;
+extern char D_0046E378[];
+extern int* D_004A2EEC;
+extern int D_00534B30[];
+extern char D_0046E7C8[];
+extern char D_0046E7D8[];
+extern char D_0046E7E8[];
+extern char D_0046E7F8[];
+extern char D_0046E660[];
+extern "C" int func_004139F8(float f);
+extern "C" char* func_0020A1A8(int v);
+extern unsigned int D_00536640[];
+extern "C" void func_0039F840(void* list);
+extern "C" void func_00231320(void* self);
+
+//100%
+INCLUDE_ASM("fe/fepopupmisc", cFEPopupVideoCalibration_onCreateScreen);
+#ifdef SKIP_ASM
+extern char D_004A1548[];
 extern char D_0045DDA0[];
 
 extern "C" void cFEPopupVideoCalibration_onCreateScreen(void* self)
@@ -102,17 +200,11 @@ extern "C" void cFEPopupVideoCalibration_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DEC68);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
 void cUIText_setUnicodeStringByID(cUIText* t, int id);
-extern char* D_004A1540;
 // PORT: the target re-reads this name pointer without filling the call delay slot; volatile view.
 extern char* volatile D_004A1544;
-extern char D_0045DD90[];
 extern char D_0045DDB8[];
 extern char D_0045DDC8[];
-
-
 
 struct sWidget_EC68 {
     int pad[2];
@@ -123,7 +215,6 @@ struct sObj_EC68 {
     int pad[2];
     sVEntry<void(void*, int)>* vt;
 };
-
 
 static inline void show_EC68(char* self, char* name, int on)
 {
@@ -162,13 +253,10 @@ extern "C" int func_001DEC68(char* self, sWidget_EC68* w)
 #endif
 
 extern void* D_0046B230[];
-extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DEDE8__FPv);
 #ifdef SKIP_ASM
-// func_001DEDE8 is matched under the C++ symbol func_001DEDE8__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001DEDE8(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046B230;
@@ -180,8 +268,6 @@ void func_001DEDE8(void* self)
 INCLUDE_ASM("fe/fepopupmisc", func_001DEE10);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern char D_0045DDD8[];
 
 struct sOptions_EE10 {
@@ -240,21 +326,13 @@ extern "C" int func_001DF028(void* self, int i)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", cFEPopupScreenPos_onUpdate);
 #ifdef SKIP_ASM
-struct cUIScreen;
 // PORT: the unit declares cUIScreen_getFrameByLabel as returning int; the frame id is an unsigned short.
 unsigned short cUIScreen_getFrameByLabel_us(cUIScreen* screen, int hash) __asm__("cUIScreen_getFrameByLabel__FP9cUIScreeni");
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* func_0039F190(void* self, int a1);
 extern char* D_004A289C;
 extern char D_004A1550[];
 extern char D_004A1558[];
 extern char D_004A1560[];
 extern char D_0045DDF0[];
-
-
-
-
-
 
 struct sPopup_F050 {
     char pad0[0x10];
@@ -356,13 +434,9 @@ int func_001DF378(void* self)
 }
 #endif
 
-extern void* D_0046D0D0[];
-extern "C" void func_0039E390(void *, int);
-
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF380);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_0046B160[];
 
 extern "C" void* func_001DF380(void* self)
@@ -376,8 +450,6 @@ extern "C" void* func_001DF380(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF3B8__FPv);
 #ifdef SKIP_ASM
-// func_001DF3B8 is matched under the C++ symbol func_001DF3B8__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001DF3B8(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -385,12 +457,9 @@ void func_001DF3B8(void* self)
 }
 #endif
 
-extern "C" void func_0039E390(void *, int);
-
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF3E0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_0046B090[];
 
 extern "C" void* func_001DF3E0(void* self)
@@ -404,8 +473,6 @@ extern "C" void* func_001DF3E0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF418__FPv);
 #ifdef SKIP_ASM
-// func_001DF418 is matched under the C++ symbol func_001DF418__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001DF418(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -416,7 +483,6 @@ void func_001DF418(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF440);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
 extern void* D_0046B078[];
 
 extern "C" void func_001DF440(void* self, int flags)
@@ -433,9 +499,7 @@ INCLUDE_ASM("fe/fepopupmisc", func_001DF470);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 inline void* operator new[](unsigned int, void* p) { return p; }
-extern "C" void* func_001A8500(void*, int, int);
 extern "C" void* func_001926F0(void* self);
-extern void* D_0046AF68[];
 
 // Element type of an inline-constructed array (0x34 bytes, constructed by func_001926F0).
 struct sElem_F470 {
@@ -455,11 +519,6 @@ extern "C" void* func_001DF470(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF4E8);
 #ifdef SKIP_ASM
-extern void* D_0046AF68[];
-// PORT: unit declares func_001A85D0 with one arg; the body takes (self, flags)
-extern "C" void func_001A85D0_dtor(void* self, int flags) __asm__("func_001A85D0");
-
-
 extern "C" void func_001DF4E8(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046AF68;
@@ -486,7 +545,6 @@ void func_001DF578(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF580);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_0046AE58[];
 
 extern "C" void* func_001DF580(void* self)
@@ -507,13 +565,10 @@ void func_001DF5C0(void* self)
 #endif
 
 extern void* D_0046AD48[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF5C8);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001DF5C8(void *self) {
     func_001A8500(self, 0, 0);
     (*(void ***)((char*)(self) + (8))) = D_0046AD48;
@@ -541,13 +596,10 @@ int func_001DF630(void* self)
 #endif
 
 extern void* D_0046AB28[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF638);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001DF638(void *self) {
     func_001A8500(self, 0, 0);
     (*(int *)((char*)(self) + (0x6EC))) = 0;
@@ -576,13 +628,10 @@ int func_001DF6A0(void* self)
 #endif
 
 extern void* D_0046AA18[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF6A8);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001DF6A8(void *self) {
     func_001A8500(self, 0, 0);
     (*(void ***)((char*)(self) + (8))) = D_0046AA18;
@@ -601,13 +650,10 @@ void* func_001DF6E8(void* self)
 #endif
 
 extern void* D_0046A908[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF710);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001DF710(void *self) {
     func_001A8500(self, 0, 0);
     (*(void ***)((char*)(self) + (8))) = D_0046A908;
@@ -635,10 +681,6 @@ extern "C" int func_001DF778(void *arg0) {
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF780);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-extern void* D_0046A7F8[];
-extern int D_004A3E90;
-
 extern "C" void* func_001DF780(void* self)
 {
     func_001A8500(self, 0, 0);
@@ -653,11 +695,6 @@ extern "C" void* func_001DF780(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF7C8);
 #ifdef SKIP_ASM
-extern void* D_0046A7F8[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-// PORT: unit declares func_001A85D0 with one arg; the body takes (self, flags)
-extern "C" void func_001A85D0_dtor(void* self, int flags) __asm__("func_001A85D0");
-
 extern "C" void func_001DF7C8(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A7F8;
@@ -670,10 +707,6 @@ extern "C" void func_001DF7C8(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF828);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-extern void* D_0046A6E8[];
-extern int D_004A3E90;
-
 extern "C" void* func_001DF828(void* self)
 {
     func_001A8500(self, 0, 0);
@@ -689,11 +722,6 @@ extern "C" void* func_001DF828(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF878);
 #ifdef SKIP_ASM
-extern void* D_0046A6E8[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-// PORT: unit declares func_001A85D0 with one arg; the body takes (self, flags)
-extern "C" void func_001A85D0_dtor(void* self, int flags) __asm__("func_001A85D0");
-
 extern "C" void func_001DF878(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A6E8;
@@ -712,9 +740,6 @@ int func_001DF8E0(void* self)
     return 0x1;
 }
 #endif
-
-extern void* D_0046A618[];
-extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF8E8);
@@ -741,8 +766,6 @@ extern "C" int func_001DF8F8(void *arg0) {
 INCLUDE_ASM("fe/fepopupmisc", func_001DF900);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* func_0039E2A0(void* self, void* engine);
-extern void* D_0046A618[];
 
 // Element type of an inline-constructed array; its empty constructor leaves only the loop counters.
 struct sSlot_F900 {
@@ -762,8 +785,6 @@ extern "C" void* func_001DF900(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF960__FPv);
 #ifdef SKIP_ASM
-// func_001DF960 is matched under the C++ symbol func_001DF960__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001DF960(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046A618;
@@ -839,9 +860,6 @@ extern "C" int func_001DF9D0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DF9D8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
-extern void* D_0046A3C8[];
-
 extern "C" void* func_001DF9D8(void* self)
 {
     func_0039E2A0(self, 0);
@@ -853,12 +871,6 @@ extern "C" void* func_001DF9D8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFA10);
 #ifdef SKIP_ASM
-extern void* D_0046A3C8[];
-extern void* D_0046D0D0[];
-void func_001DFAC8(void* self);
-extern "C" void func_001D00C0(void* self);
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_001DFA10(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A3C8;
@@ -982,7 +994,6 @@ int func_001DFAE8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFAF0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_0046A248[];
 
 extern "C" void* func_001DFAF0(void* self)
@@ -996,12 +1007,6 @@ extern "C" void* func_001DFAF0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFB28);
 #ifdef SKIP_ASM
-extern void* D_0046A3C8[];
-extern void* D_0046D0D0[];
-void func_001DFAC8(void* self);
-extern "C" void func_001D00C0(void* self);
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_001DFB28(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A3C8;
@@ -1053,7 +1058,6 @@ int func_001DFBB8(void* self, void* other)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFBC0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_0046A0C8[];
 
 extern "C" void* func_001DFBC0(void* self)
@@ -1067,12 +1071,6 @@ extern "C" void* func_001DFBC0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFBF8);
 #ifdef SKIP_ASM
-extern void* D_0046A3C8[];
-extern void* D_0046D0D0[];
-void func_001DFAC8(void* self);
-extern "C" void func_001D00C0(void* self);
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_001DFBF8(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A3C8;
@@ -1124,7 +1122,6 @@ int func_001DFC88(void* self, void* other)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFC90);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469F48[];
 
 extern "C" void* func_001DFC90(void* self)
@@ -1138,12 +1135,6 @@ extern "C" void* func_001DFC90(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFCC8);
 #ifdef SKIP_ASM
-extern void* D_0046A3C8[];
-extern void* D_0046D0D0[];
-void func_001DFAC8(void* self);
-extern "C" void func_001D00C0(void* self);
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_001DFCC8(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A3C8;
@@ -1195,7 +1186,6 @@ int func_001DFD58(void* self, void* other)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFD60);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469DC8[];
 
 extern "C" void* func_001DFD60(void* self)
@@ -1209,12 +1199,6 @@ extern "C" void* func_001DFD60(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFD98);
 #ifdef SKIP_ASM
-extern void* D_0046A3C8[];
-extern void* D_0046D0D0[];
-void func_001DFAC8(void* self);
-extern "C" void func_001D00C0(void* self);
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_001DFD98(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A3C8;
@@ -1266,7 +1250,6 @@ int func_001DFE28(void* self, void* other)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFE30);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469C48[];
 
 extern "C" void* func_001DFE30(void* self)
@@ -1280,12 +1263,6 @@ extern "C" void* func_001DFE30(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFE68);
 #ifdef SKIP_ASM
-extern void* D_0046A3C8[];
-extern void* D_0046D0D0[];
-void func_001DFAC8(void* self);
-extern "C" void func_001D00C0(void* self);
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_001DFE68(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A3C8;
@@ -1337,7 +1314,6 @@ int func_001DFEF8(void* self, void* other)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFF00);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469AC8[];
 
 extern "C" void* func_001DFF00(void* self)
@@ -1351,12 +1327,6 @@ extern "C" void* func_001DFF00(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFF38);
 #ifdef SKIP_ASM
-extern void* D_0046A3C8[];
-extern void* D_0046D0D0[];
-void func_001DFAC8(void* self);
-extern "C" void func_001D00C0(void* self);
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_001DFF38(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_0046A3C8;
@@ -1408,7 +1378,6 @@ int func_001DFFC8(void* self, void* other)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001DFFD0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_004699F8[];
 
 extern "C" void* func_001DFFD0(void* self)
@@ -1494,7 +1463,6 @@ extern "C" void func_001E0048(void* self, void* src)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0098);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469858[];
 
 extern "C" void* func_001E0098(void* self)
@@ -1562,7 +1530,6 @@ extern "C" int func_001E0130(void *arg0) {
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0178);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469788[];
 
 extern "C" void* func_001E0178(void* self)
@@ -1576,8 +1543,6 @@ extern "C" void* func_001E0178(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E01B0__FPv);
 #ifdef SKIP_ASM
-// func_001E01B0 is matched under the C++ symbol func_001E01B0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001E01B0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -1588,9 +1553,6 @@ void func_001E01B0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E01D8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
-extern void* D_004696B8[];
-
 extern "C" void* func_001E01D8(void* self)
 {
     func_0039E2A0(self, 0);
@@ -1602,10 +1564,7 @@ extern "C" void* func_001E01D8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0210);
 #ifdef SKIP_ASM
-extern void* D_004696B8[];
-extern void* D_0046D0D0[];
 extern "C" void func_001D4B20(void* self);
-extern "C" void func_0039E390(void *, int);
 
 extern "C" void func_001E0210(void* self, int flags)
 {
@@ -1619,7 +1578,6 @@ extern "C" void func_001E0210(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0268);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_004695E8[];
 
 extern "C" void* func_001E0268(void* self)
@@ -1633,8 +1591,6 @@ extern "C" void* func_001E0268(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E02A0__FPv);
 #ifdef SKIP_ASM
-// func_001E02A0 is matched under the C++ symbol func_001E02A0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001E02A0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -1643,7 +1599,6 @@ void func_001E02A0(void* self)
 #endif
 
 extern void* D_00469518[];
-extern "C" void func_0039E390(void *, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E02C8);
@@ -1656,8 +1611,6 @@ extern "C" int func_001E02C8(void *arg0) {
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E02D0__FPv);
 #ifdef SKIP_ASM
-// func_001E02D0 is matched under the C++ symbol func_001E02D0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001E02D0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_00469518;
@@ -1668,10 +1621,7 @@ void func_001E02D0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", cFEPopupSelectMultiplayerMode_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_00460008[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 extern "C" void cFEPopupSelectMultiplayerMode_onCreateScreen(void* self)
 {
@@ -1688,7 +1638,6 @@ extern "C" void cFEPopupSelectMultiplayerMode_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", cFEPopupSelectMultiplayerMode_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void func_0039B760(void* self, int a1);
 extern char D_00460020[];
 extern char D_004A13A0[];
@@ -1719,7 +1668,6 @@ extern "C" void cFEPopupSelectMultiplayerMode_onWidgetCreate(void* self, void* i
 INCLUDE_ASM("fe/fepopupmisc", func_001E03F8);
 #ifdef SKIP_ASM
 extern int D_004A19D4;
-extern "C" void* func_0039F190(void* self, int a1);
 
 extern "C" void func_001E03F8(void* self, void* a1, int a2)
 {
@@ -1744,8 +1692,6 @@ extern "C" void func_001E03F8(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0470);
 #ifdef SKIP_ASM
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-
 extern "C" int func_001E0470(void* self, void* menu, unsigned int key, int idx)
 {
     switch (key) {
@@ -1799,7 +1745,6 @@ int func_001E0508(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0510);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469448[];
 
 extern "C" void* func_001E0510(void* self)
@@ -1813,8 +1758,6 @@ extern "C" void* func_001E0510(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0548__FPv);
 #ifdef SKIP_ASM
-// func_001E0548 is matched under the C++ symbol func_001E0548__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001E0548(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -1832,7 +1775,6 @@ extern "C" int func_001E0570(void *arg0) {
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0578);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469378[];
 
 extern "C" void* func_001E0578(void* self)
@@ -1846,8 +1788,6 @@ extern "C" void* func_001E0578(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E05B0__FPv);
 #ifdef SKIP_ASM
-// func_001E05B0 is matched under the C++ symbol func_001E05B0__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001E05B0(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -1985,9 +1925,6 @@ extern "C" int func_001E0708(void *arg0) {
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0740);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
-extern void* D_0046DD60[];
-
 extern "C" void func_001E0740(void* self, int flags)
 {
     *(void***)self = D_0046DD60;
@@ -2016,9 +1953,6 @@ void func_001E0778(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0780);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
-extern void* D_0046DD60[];
-
 extern "C" void func_001E0780(void* self, int flags)
 {
     *(void***)self = D_0046DD60;
@@ -2047,7 +1981,6 @@ void func_001E07B8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E07C0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469248[];
 
 extern "C" void* func_001E07C0(void* self)
@@ -2061,8 +1994,6 @@ extern "C" void* func_001E07C0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E07F8__FPv);
 #ifdef SKIP_ASM
-// func_001E07F8 is matched under the C++ symbol func_001E07F8__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001E07F8(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -2073,7 +2004,6 @@ void func_001E07F8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0820);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern void* D_00469178[];
 
 extern "C" void* func_001E0820(void* self)
@@ -2087,8 +2017,6 @@ extern "C" void* func_001E0820(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0858__FPv);
 #ifdef SKIP_ASM
-// func_001E0858 is matched under the C++ symbol func_001E0858__FPv, which fixes its parameters at (void*); the destructor flags pass through in $5.
-extern "C" void func_0039E390_noflags(void *) __asm__("func_0039E390");
 void func_001E0858(void* self)
 {
     *(int*)((char*)self + 0x8) = (int)(void*)D_0046D0D0;
@@ -2099,9 +2027,7 @@ void func_001E0858(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0880);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_00469068[];
-extern int D_004A3E90;
 
 extern "C" void* func_001E0880(void* self)
 {
@@ -2125,13 +2051,10 @@ int func_001E08D0(void* self)
 #endif
 
 extern void* D_00468F50[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E08D8);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001E08D8(void *self) {
     func_001A8500(self, 0, 0);
     (*(void ***)((char*)(self) + (8))) = D_00468F50;
@@ -2169,8 +2092,6 @@ void func_001E0948(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0950);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-extern void* D_00468E38[];
 extern int D_00441268[];
 
 extern "C" void* func_001E0950(void* self)
@@ -2186,11 +2107,6 @@ extern "C" void* func_001E0950(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E09A0);
 #ifdef SKIP_ASM
-
-extern void* D_00468E38[];
-// PORT: unit declares func_001A85D0 with one arg; the body takes (self, flags)
-extern "C" void func_001A85D0_dtor(void* self, int flags) __asm__("func_001A85D0");
-
 extern "C" void func_001E09A0(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_00468E38;
@@ -2213,10 +2129,6 @@ int func_001E0A00(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0A08);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-extern void* D_00468D20[];
-extern int D_004A3E90;
-
 extern "C" void* func_001E0A08(void* self)
 {
     func_001A8500(self, 0, 0);
@@ -2230,11 +2142,6 @@ extern "C" void* func_001E0A08(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0A50);
 #ifdef SKIP_ASM
-extern void* D_00468D20[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-// PORT: unit declares func_001A85D0 with one arg; the body takes (self, flags)
-extern "C" void func_001A85D0_dtor(void* self, int flags) __asm__("func_001A85D0");
-
 extern "C" void func_001E0A50(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_00468D20;
@@ -2256,13 +2163,10 @@ int func_001E0AB8(void* self)
 #endif
 
 extern void* D_00468C10[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0AC0);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001E0AC0(void *self) {
     func_001A8500(self, 0, 0);
     (*(int *)((char*)(self) + (0x6DC))) = 0;
@@ -2284,7 +2188,6 @@ void* func_001E0B00(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0B28);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_00468B00[];
 
 extern "C" void* func_001E0B28(void* self)
@@ -2330,7 +2233,6 @@ int func_001E0BA8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0BB0);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_004689F0[];
 
 extern "C" void* func_001E0BB0(void* self)
@@ -2385,7 +2287,6 @@ int func_001E0C28(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0C30);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_004688E0[];
 
 extern "C" void* func_001E0C30(void* self)
@@ -2446,10 +2347,6 @@ int func_001E0C98(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0CA0);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-extern void* D_004686C0[];
-extern int D_004A3E90;
-
 extern "C" void* func_001E0CA0(void* self)
 {
     func_001A8500(self, 0, 0);
@@ -2467,11 +2364,6 @@ extern "C" void* func_001E0CA0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0CF8);
 #ifdef SKIP_ASM
-extern void* D_004686C0[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-// PORT: unit declares func_001A85D0 with one arg; the body takes (self, flags)
-extern "C" void func_001A85D0_dtor(void* self, int flags) __asm__("func_001A85D0");
-
 extern "C" void func_001E0CF8(void* self, int flags)
 {
     *(void***)((char*)self + 0x8) = D_004686C0;
@@ -2492,13 +2384,10 @@ int func_001E0D60(void* self)
 #endif
 
 extern void* D_004685B0[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0D68);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001E0D68(void *self) {
     func_001A8500(self, 0, 0);
     (*(void ***)((char*)(self) + (8))) = D_004685B0;
@@ -2526,13 +2415,10 @@ int func_001E0DD0(void* self)
 #endif
 
 extern void* D_004684A0[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0DD8);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
-
 extern "C" void *func_001E0DD8(void *self) {
     func_001A8500(self, 0, 0);
     (*(void ***)((char*)(self) + (8))) = D_004684A0;
@@ -2562,7 +2448,6 @@ int func_001E0E40(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0E48);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_00468388[];
 
 extern "C" void* func_001E0E48(void* self)
@@ -2592,7 +2477,6 @@ int func_001E0E90(void* self)
 #endif
 
 extern void* D_00468278[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0E98__FPv);
@@ -2613,7 +2497,6 @@ void func_001E0EC0(void* self)
 #endif
 
 extern void* D_00468168[];
-extern "C" void* func_001A85D0(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0EC8__FPv);
@@ -2634,14 +2517,12 @@ int func_001E0EF0(void* self)
 }
 #endif
 
-extern void* D_00468050[];
 extern "C" void* func_001BEE78(void*);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0EF8);
 #ifdef SKIP_ASM
 extern "C" void* func_001BEE30(void* self, int);
-extern void* D_00468050[];
 
 extern "C" void* func_001E0EF8(void* self)
 {
@@ -2673,9 +2554,7 @@ int func_001E0F58(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0F60);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_00467F28[];
-extern int D_004A3E90;
 
 extern "C" void* func_001E0F60(void* self)
 {
@@ -2752,9 +2631,7 @@ extern "C" int func_001E0FC0(func_001E0FC0_cObj* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E0FF0);
 #ifdef SKIP_ASM
-extern "C" void* func_001A8500(void*, int, int);
 extern void* D_00467E18[];
-extern int D_004A3E90;
 
 extern "C" void* func_001E0FF0(void* self)
 {
@@ -2782,9 +2659,6 @@ int func_001E1040(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E1048);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
-extern void* D_0046DD60[];
-
 extern "C" void func_001E1048(void* self, int flags)
 {
     *(void***)self = D_0046DD60;
@@ -2835,7 +2709,6 @@ extern "C" void func_001E1090(void* self, int e)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E10B8);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
 extern void* D_0046DD28[];
 
 extern "C" void func_001E10B8(void* self, int flags)
@@ -2885,7 +2758,6 @@ int func_001E1100(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E1108);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
 extern void* D_0046DBA8[];
 
 extern "C" void func_001E1108(void* self, int flags)
@@ -3292,8 +3164,6 @@ void func_001E12A8(void* self)
 }
 #endif
 
-extern "C" void* func_001DBC98(int, int);
-
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E12B0__FPv);
 #ifdef SKIP_ASM
@@ -3302,8 +3172,6 @@ void* func_001E12B0(void* self)
     return func_001DBC98(1, 0xffff);
 }
 #endif
-
-extern "C" void* func_001DBC98(int, int);
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E12D0__FPv);
@@ -3327,10 +3195,8 @@ extern "C" void func_001E1450(void) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/fepopupmisc", func_001E1458);
 #ifdef SKIP_ASM
-extern int D_004A20C0;
 extern int D_004A20C8;
 extern int D_004A20BC;
-extern void* D_004A5B64;
 extern "C" void func_001E12F0(void);
 extern "C" void func_001E14C0(int type);
 
@@ -3354,9 +3220,7 @@ extern "C" void func_001E1458(void)
 INCLUDE_ASM("fe/fepopupmisc", func_001E14C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_001E3A30(void* self);
 void func_001E1548(void* self);
-
 
 extern "C" void func_001E14C0(int type)
 {
@@ -3384,17 +3248,8 @@ void func_001E1548(void* self)
 INCLUDE_ASM("fe/fepopupmisc", func_001E1550);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A28A8;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-int cBENewPlayerInterface_getRiderCharID(void* self, int player);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-extern "C" void func_001E3A78(int a, int b);
 extern "C" int func_001464D0(void* iface, int a, int ch, int b, int c);
 extern "C" int func_00145EF0(void* iface, int a, int b, int c);
-unsigned int BXrand();
 
 extern "C" void func_001E1550(void)
 {
@@ -3490,12 +3345,8 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E1AD0);
 // PORT: operator_new really takes (size, tag, flags, d); bound by asm label
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 void cMemMan_free(void* p);
-unsigned int BXrand();
 extern "C" int func_001E1A30(int kind, int arg);
-extern "C" int func_001E3388(int id);
 extern char D_0046DDF8[];
-
-
 
 extern "C" int func_001E1AD0(sPopupDef* r, int arg)
 {
@@ -3520,16 +3371,6 @@ extern "C" int func_001E1AD0(sPopupDef* r, int arg)
 INCLUDE_ASM("fe/fepopupmisc", func_001E1C10);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A28A8;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-int cBENewPlayerInterface_getRiderCharID(void* self, int player);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-
-
-
 
 extern "C" void func_001E1C10(int which)
 {
@@ -3611,8 +3452,6 @@ extern "C" void func_001E1C10(int which)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E1DD0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_001E3A30(void* self);
 extern "C" void func_001E3A78(int id, int a1);
 static inline int IsBusy001E1DD0()
 {
@@ -3642,9 +3481,6 @@ extern "C" void func_001E1DD0(void* self, int kind, int alt)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E1EB8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
 extern "C" void func_001E20D0(int which, int flag);
 extern "C" void func_001E2220(int which, int flag);
 
@@ -3703,11 +3539,6 @@ extern "C" void func_001E1EB8(void)
 INCLUDE_ASM("fe/fepopupmisc", func_001E20D0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A28A8;
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-
 
 extern "C" void func_001E20D0(int which, int flag)
 {
@@ -3757,11 +3588,6 @@ extern "C" void func_001E20D0(int which, int flag)
 INCLUDE_ASM("fe/fepopupmisc", func_001E2220);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A28A8;
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-
 
 extern "C" void func_001E2220(int which, int flag)
 {
@@ -3810,9 +3636,6 @@ extern "C" void func_001E2220(int which, int flag)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2370);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void func_001E3A78(int a, int b);
-
 extern "C" void func_001E2370(int which)
 {
     int n = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
@@ -3839,11 +3662,6 @@ extern "C" void func_001E2370(int which)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2428);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-
 extern "C" void func_001E2428(int which)
 {
     int n = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
@@ -3876,11 +3694,6 @@ extern "C" void func_001E2428(int which)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2518);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-
 extern "C" void func_001E2518(void)
 {
     int n = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
@@ -3895,11 +3708,6 @@ extern "C" void func_001E2518(void)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2578);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-
 extern "C" void func_001E2578(void)
 {
     int n = **(int**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28);
@@ -3914,7 +3722,6 @@ extern "C" void func_001E2578(void)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E25D8);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" void func_001E2648(void* a, int b);
 extern "C" void func_001E2828(void* a, int b);
 
@@ -3938,16 +3745,6 @@ extern "C" void func_001E25D8(int key, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2648);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-int cBENewPlayerInterface_getRiderCharID(void* self, int player);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-extern "C" void func_001E32C8(int type);
-
 // PORT: the unit declares func_001E2648(void*, int); the first arg is really an int id.
 extern "C" void func_001E2648_impl(int which, int flag) __asm__("func_001E2648");
 extern "C" void func_001E2648_impl(int which, int flag)
@@ -4029,16 +3826,6 @@ extern "C" void func_001E2648_impl(int which, int flag)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2828);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-int cBENewPlayerInterface_getRiderCharID(void* self, int player);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-extern "C" void func_001E32C8(int type);
-
 // PORT: the unit declares func_001E2828(void*, int); the first arg is really an int id.
 extern "C" void func_001E2828_impl(int which, int flag) __asm__("func_001E2828");
 extern "C" void func_001E2828_impl(int which, int flag)
@@ -4121,17 +3908,7 @@ extern "C" void func_001E2828_impl(int which, int flag)
 INCLUDE_ASM("fe/fepopupmisc", func_001E2A08);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A28A8;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-int cBENewPlayerInterface_getRiderCharID(void* self, int player);
 extern "C" int func_001E2B38(int charID);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
-unsigned int BXrand();
-
 
 extern "C" void func_001E2A08(int charID, int level)
 {
@@ -4181,8 +3958,6 @@ extern "C" int func_001E2B38(int x)
 INCLUDE_ASM("fe/fepopupmisc", func_001E2BB8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_001E3A30(void* self);
-
 
 extern "C" int func_001E2BB8(int type, int all)
 {
@@ -4217,8 +3992,6 @@ extern "C" int func_001E2C60(int i)
 INCLUDE_ASM("fe/fepopupmisc", func_001E2C80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_001E3A30(void* self);
-
 
 extern "C" int func_001E2C80(int type, int idx, int mode)
 {
@@ -4250,8 +4023,6 @@ done:
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2D58);
 #ifdef SKIP_ASM
-
-
 extern "C" int func_001E2D58(int v, int i)
 {
     sPopupItem* a = &D_004C6C08[i];
@@ -4312,7 +4083,6 @@ extern "C" int func_001E2E80(int i, int n)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2EA0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0046DE60[];
 extern char D_0046DE70[];
 extern char D_0046DE80[];
@@ -4365,15 +4135,9 @@ extern "C" int func_001E2EA0(int kind)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E2FE0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern void* D_004A28A8;
 extern char D_004A20D0[];
-extern "C" void func_001E31B8(int idx);
 extern "C" unsigned char func_001E3100(int i);
 extern "C" void* func_0039F9D8(void* list, int hash);
-
-
-
 
 extern "C" void func_001E2FE0(int id, unsigned char flag)
 {
@@ -4400,9 +4164,6 @@ extern "C" void func_001E2FE0(int id, unsigned char flag)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/fepopupmisc", func_001E3100);
 #ifdef SKIP_ASM
-extern "C" int func_001E2D58(int v, int i);
-unsigned int BXrand();
-
 extern "C" unsigned char func_001E3100(int i)
 {
     unsigned char r = 0xFF;
@@ -4422,7 +4183,6 @@ extern "C" unsigned char func_001E3100(int i)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E31B8);
 #ifdef SKIP_ASM
-
 extern "C" void func_001E31B8(int idx)
 {
     sPopupList* t = func_001E39F8();
@@ -4443,8 +4203,6 @@ extern "C" void func_001E31B8(int idx)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3268);
 #ifdef SKIP_ASM
-extern "C" void func_001E31B8(int idx);
-
 extern "C" void func_001E3268(int id)
 {
     sPopupList* t = func_001E39F8();
@@ -4461,8 +4219,6 @@ extern "C" void func_001E3268(int id)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E32C8);
 #ifdef SKIP_ASM
-extern "C" void func_001E31B8(int idx);
-
 extern "C" void func_001E32C8(int type)
 {
     int n = 0;
@@ -4482,7 +4238,6 @@ extern "C" void func_001E32C8(int type)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3388);
 #ifdef SKIP_ASM
-
 extern "C" int func_001E3388(int id)
 {
     sPopupList* t = func_001E39F8();
@@ -4496,7 +4251,6 @@ extern "C" int func_001E3388(int id)
 }
 #endif
 
-
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E33E8__FPv);
 #ifdef SKIP_ASM
@@ -4509,7 +4263,6 @@ unsigned char func_001E33E8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3408);
 #ifdef SKIP_ASM
-
 extern "C" int func_001E3408()
 {
     sPopupList* t = func_001E39F8();
@@ -4528,8 +4281,6 @@ extern "C" int func_001E3408()
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3460);
 #ifdef SKIP_ASM
-extern "C" int func_001E3620(int idx);
-
 extern "C" int func_001E3460(int* out)
 {
     sPopupList* t = func_001E39F8();
@@ -4563,12 +4314,7 @@ extern "C" int func_001E34D8(int i)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3510);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001475C0(void* iface, int a1, int a2);
-extern int D_004A20CC;
-extern signed char D_00535C11[];
 
 extern "C" void func_001E3510(void)
 {
@@ -4583,11 +4329,7 @@ extern "C" void func_001E3510(void)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3570);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00147580(void* iface, int a1);
-extern signed char D_00535BC8[];
 
 extern "C" int func_001E3570(void)
 {
@@ -4605,7 +4347,6 @@ extern "C" int func_001E3570(void)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E35F0);
 #ifdef SKIP_ASM
-
 extern "C" int func_001E35F0(void* self)
 {
     return (int)func_001E39F8() + ((int)self << 3);
@@ -4615,7 +4356,6 @@ extern "C" int func_001E35F0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3620);
 #ifdef SKIP_ASM
-
 extern "C" int func_001E3620(int idx)
 {
     return func_001E39F8()->entries[idx].id;
@@ -4625,7 +4365,6 @@ extern "C" int func_001E3620(int idx)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3650);
 #ifdef SKIP_ASM
-
 extern "C" unsigned char func_001E3650(int idx)
 {
     return func_001E39F8()->entries[idx].flag;
@@ -4635,10 +4374,6 @@ extern "C" unsigned char func_001E3650(int idx)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3680);
 #ifdef SKIP_ASM
-// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
-unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
-extern int D_004A20C4;
-
 extern "C" unsigned char func_001E3680(int id)
 {
     if (D_004A20C4 != 0) {
@@ -4667,15 +4402,8 @@ extern "C" unsigned char func_001E3680(int id)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3760);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int peak);
 extern "C" int func_001509F8(void* self, int rider);
 int func_001588B0(void* self, int a1);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
 
 extern "C" void func_001E3760(int rider, int amt)
 {
@@ -4702,16 +4430,7 @@ extern "C" void func_001E3760(int rider, int amt)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E38B8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind); bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-int cBENewPlayerInterface_getRiderCharID(void* self, int player);
-extern "C" int cBENewPlayerInterface_isPeakLocked1(void* self, int rider, int peak);
 extern "C" int func_00157BF0(void* self, int rider, int a, int b, int c);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E2FE0(int a, unsigned char b);
 
 extern "C" void func_001E38B8(int player)
 {
@@ -4738,9 +4457,6 @@ extern "C" void func_001E38B8(int player)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E39F8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* func_00147908(void* iface, int a1);
 
 extern "C" sPopupList* func_001E39F8()
@@ -4753,8 +4469,6 @@ extern "C" sPopupList* func_001E39F8()
 INCLUDE_ASM("fe/fepopupmisc", func_001E3A30);
 #ifdef SKIP_ASM
 extern "C" int func_00147980(void* iface, int a1, void* a2);
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 
 extern "C" int func_001E3A30(void* self)
 {
@@ -4765,9 +4479,6 @@ extern "C" int func_001E3A30(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3A78);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00147A30(void* iface, int a1, int a2, int a3);
 
 extern "C" void func_001E3A78(int a, int b)
@@ -4813,18 +4524,13 @@ extern "C" void func_001E3AC8(int idx, float x, float y)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3C00);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void* self, void* engine);
 extern "C" int func_00398380(void* self, int hash);
-extern "C" int func_001E3A30(void* self);
-extern "C" void func_001E3A78(int a, int b);
-int GetHashValue32(char* str);
 extern void* D_00474E08[];
 extern void* D_00474318[];
 extern unsigned short D_004A2088[];
 extern char D_004A20D8[];
 extern char D_0046DF68[];
 extern char D_0046DF78[];
-extern int D_004A20CC;
 
 struct sObj_3C00 {
     char pad_0x0[0x9C];
@@ -4898,14 +4604,7 @@ extern "C" void* func_001E3C00(void* self, void* engine, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3D58);
 #ifdef SKIP_ASM
-// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
-unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
-extern "C" void func_0020A380(void* self);
 extern "C" void cOVStateManager_addPDATemplate();
-extern "C" void func_001E48B0(void*);
-extern "C" void func_001E4758(void*);
-extern "C" void func_001E4458(void*);
-extern "C" void func_001E4658(void*);
 extern char D_0046DF88[];
 
 extern "C" void func_001E3D58(void* self)
@@ -4940,7 +4639,6 @@ extern "C" void func_001E3D58(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3E30);
 #ifdef SKIP_ASM
-extern "C" void func_001E3A78(int a, int b);
 extern "C" void func_0020D190(void);
 extern "C" void func_0020A430(void* self);
 extern int D_004A2A54;
@@ -4967,8 +4665,6 @@ extern "C" void func_001E3E30(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E3EC0);
 #ifdef SKIP_ASM
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern char* D_004A20A8;
 extern char* D_004A2098;
 extern char D_004A20E0[];
 extern char D_004A20E8[];
@@ -4984,7 +4680,6 @@ extern char D_0046E020[];
 extern char D_004A20F8[];
 extern char D_0046E030[];
 extern char D_0046E040[];
-
 
 struct sPopup_1E3EC0 {
     char pad0[0x9C];
@@ -5087,10 +4782,7 @@ extern "C" void func_001E3EC0(sPopup_1E3EC0* self, void* w)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/fepopupmisc", func_001E4168);
 #ifdef SKIP_ASM
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 extern "C" unsigned char func_001E3680(int id);
-extern "C" void func_001E50C8(void* self, int a1, int a2);
-
 
 extern "C" void func_001E4168(void* self)
 {
@@ -5116,24 +4808,11 @@ extern "C" void func_001E4168(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4200);
 #ifdef SKIP_ASM
-
-
-
-struct cUIScreen;
 int cUIScreen_getFrameByLabel(cUIScreen* screen, int hash);
 extern char D_0046E050[];
-extern int D_004A20C0;
 
-// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
-unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
 // PORT: func_001E3A30 is declared int; its result is used as a bool here
 extern "C" bool func_001E3A30_b(int id) __asm__("func_001E3A30");
-extern "C" int func_001E3620(int idx);
-extern "C" void func_001E3A78(int a, int b);
-extern "C" void func_001E48B0(void*);
-extern "C" void func_001E4458(void*);
-extern "C" void func_001E4658(void*);
-extern "C" void func_001E50C8(void* self, int a1, int a2);
 extern "C" void func_001E5148(void* self, int idx);
 
 extern "C" void func_001E4200(void* self, void* widget, unsigned int event)
@@ -5204,19 +4883,12 @@ extern "C" void func_001E4200(void* self, void* widget, unsigned int event)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4458);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
-unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
 extern "C" int func_001E2C80(int type, int idx, int mode);
-extern "C" int func_001E3A30(void* self);
 extern "C" void func_001E4840(void* self, void* obj);
 extern "C" void func_001E4878(void* self, void* obj);
 extern char D_0046E060[];
 extern char D_0046E070[];
 extern char D_0046E080[];
-
 
 extern "C" void func_001E4458(void* self)
 {
@@ -5253,10 +4925,6 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E4578);
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4610);
 #ifdef SKIP_ASM
-extern "C" void func_001E48B0(void*);
-extern "C" void func_001E4758(void*);
-extern "C" void* func_0039F190(void* self, int a1);
-
 extern "C" void func_001E4610(void* self, int a1, int a2)
 {
     if (a2 == 0x14) {
@@ -5270,11 +4938,7 @@ extern "C" void func_001E4610(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4658);
 #ifdef SKIP_ASM
-// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
-unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
 extern "C" int func_001E2BB8(int type, int all);
-extern int D_004A20C4;
-
 
 extern "C" void func_001E4658(void* self)
 {
@@ -5310,14 +4974,8 @@ extern "C" void func_001E4658(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4758);
 #ifdef SKIP_ASM
-// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
-unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern "C" void func_003A0E90(void* text, void* p);
-extern void* D_004A28A8;
 extern char D_0046E0A8[];
 extern char D_0046E0C0[];
-
 
 extern "C" void func_001E4758(void* self)
 {
@@ -5342,7 +5000,6 @@ extern "C" void func_001E4758(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4840);
 #ifdef SKIP_ASM
-
 extern "C" void func_001E4840(void* self, void* obj)
 {
     if (obj != 0) {
@@ -5355,7 +5012,6 @@ extern "C" void func_001E4840(void* self, void* obj)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4878);
 #ifdef SKIP_ASM
-
 extern "C" void func_001E4878(void* self, void* obj)
 {
     if (obj != 0) {
@@ -5373,11 +5029,9 @@ extern "C" void cUIState_hideObjSafe_48B0(void* self, char* name) __asm__("cUISt
 extern "C" int func_001E33E8_48B0() __asm__("func_001E33E8__FPv");
 extern "C" void func_001E4840_48B0(void* self, int obj) __asm__("func_001E4840");
 extern "C" void func_001E4878_48B0(void* self, int obj) __asm__("func_001E4878");
-extern "C" unsigned char func_001E3650(int idx);
 extern "C" void func_001E4C78_48B0(void* self, int idx, int row, int a3, int a4) __asm__("func_001E4C78");
 extern "C" int func_001E4B80_48B0(void* self, int entry) __asm__("func_001E4B80");
 extern "C" void func_0039B760_48B0(void* menu, unsigned char n) __asm__("func_0039B760");
-extern int D_004A20C4;
 extern char D_0046E0D0[];
 extern char D_0046E0E0[];
 extern char D_0046E0F0[];
@@ -5473,9 +5127,7 @@ extern "C" void func_001E48B0(void* selfp)
 INCLUDE_ASM("fe/fepopupmisc", func_001E4B80);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_004A20C4;
 extern "C" int func_001E2DC0(int idx);
-
 
 extern "C" unsigned char func_001E4B80(void* self, int idx)
 {
@@ -5513,18 +5165,11 @@ extern "C" unsigned char func_001E4B80(void* self, int idx)
 INCLUDE_ASM("fe/fepopupmisc", func_001E4C78);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-struct cUIText;
-void cUIText_setAsciiString(cUIText* text, const char* str);
-extern "C" int func_001E2EA0(int id);
 extern "C" void func_001E4F70(void* self, int slot, int id, unsigned char sub);
 extern char D_004A2100[];
 extern char D_004A2108[];
 extern char D_004A2110[];
 extern char D_004A2118[];
-
-
-
 
 struct sObj_4C78 {
     int f0;
@@ -5626,26 +5271,10 @@ extern "C" void func_001E4C78(void* self_, int idx, int slot, int id, unsigned c
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4F70);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" unsigned char func_001E5AA0(void* self, int idx);
-extern "C" int func_001E3388(int id);
-extern "C" unsigned char func_001E3650(int idx);
-extern "C" int func_001E2D58(int v, int i);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern int D_004A20C4;
-extern char D_0046E140[];
-extern char D_0046E160[];
-extern char D_0046E180[];
-extern char D_0046E1A0[];
-extern char D_0046E1C0[];
-
 struct sPopup1E4F70 {
     char pad0[0xFC];
     cUIText* texts[4];  // 0xFC
 };
-
 
 // Fills text slot `slot` with the "level N" string for the reward id and shows it.
 extern "C" void func_001E4F70(void* self, int slot, int id, unsigned char lvl)
@@ -5698,13 +5327,7 @@ extern "C" void func_001E50C8(void* self, int a1, int a2)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/fepopupmisc", func_001E5148);
 #ifdef SKIP_ASM
-extern "C" void func_001E31B8(int idx);
 extern "C" int func_001E2BB8(int a0, int a1);
-// PORT: func_001E33E8 is declared (void*) but never reads its argument; called here with none
-unsigned char func_001E33E8_noarg() __asm__("func_001E33E8__FPv");
-extern "C" void func_001E48B0(void*);
-extern "C" void func_001E4758(void*);
-extern "C" void func_001E4658(void*);
 
 extern "C" void func_001E5148(void* self, int idx)
 {
@@ -5749,10 +5372,7 @@ extern "C" void* func_001E51D0(void* self, void* engine, void* owner, int a3, in
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5248);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0046E258[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 extern "C" void func_001E5248(void* self)
 {
@@ -5793,17 +5413,14 @@ extern "C" int func_001E52D0(void* self, int on)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E52F8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_004A2120[];
 extern char D_004A2128[];
 extern char D_0046E268[];
 extern char D_004A2130[];
 extern char D_0046E278[];
-extern char* D_004A20A8;
 extern char D_0046E288[];
 extern char D_0046E2A0[];
 extern char D_0046E2B0[];
-
 
 extern "C" void func_001E52F8(void* self, void* widget)
 {
@@ -5837,16 +5454,9 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E5428);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-
-
-
 extern char D_0046E2C0[];
 extern char D_0046E2D0[];
-extern char D_004A2138[];
 
-void cUIText_setAsciiString(cUIText* text, const char* str);
-extern "C" int func_001E2EA0(int id);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_001E55D0(void* self, int idx);
 extern "C" void func_001E5780(void* self, int idx);
 
@@ -5894,8 +5504,6 @@ extern "C" void func_001E5428(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E55D0);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void func_001E5638(void* self, int idx);
 
 extern "C" void func_001E55D0(void* self, int idx)
@@ -5915,21 +5523,6 @@ extern "C" void func_001E55D0(void* self, int idx)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5638);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" unsigned char func_001E5AA0(void* self, int idx);
-extern "C" int func_001E3388(int id);
-extern "C" unsigned char func_001E3650(int idx);
-extern "C" int func_001E2D58(int v, int i);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern int D_004A20C4;
-extern char D_0046E140[];
-extern char D_0046E160[];
-extern char D_0046E180[];
-extern char D_0046E1A0[];
-extern char D_0046E1C0[];
-
 // Sets the popup text to the "level N" string matching the reward id's category.
 extern "C" void func_001E5638(void* self, int id)
 {
@@ -5965,7 +5558,6 @@ extern "C" void func_001E5638(void* self, int id)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5780);
 #ifdef SKIP_ASM
-
 extern "C" void func_001E5780(void* self, int idx)
 {
     sPopupItem* e = &D_004C6C08[idx];
@@ -6077,8 +5669,6 @@ extern "C" int func_001E5A18(void* self, int a1, unsigned int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5AA0);
 #ifdef SKIP_ASM
-extern int D_004A20C4;
-
 extern "C" unsigned char func_001E5AA0(void* self, int idx)
 {
     if (D_004A20C4 == 0) {
@@ -6123,20 +5713,7 @@ void func_001E64A8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E64C8);
 #ifdef SKIP_ASM
-// func_0039E4C0 returns nothing (ends in a void vcall); the unit's later void* declaration is a guess.
-void func_0039E4C0_v(void* self) __asm__("func_0039E4C0");
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_0020A6F0(void* self, char* text, char* name);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern void* D_004A28A8;
-extern int D_00536730[];
 extern char D_0046E418[];
-extern char D_0046E4E8[];
 extern char D_0046E500[];
 
 extern "C" void func_001E64C8(void* self)
@@ -6161,10 +5738,6 @@ extern "C" void func_001E64C8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E65B8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_0046E510[];
-extern void* D_004A28A8;
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void func_0026F898(void* self, int val);
 
 extern "C" int func_001E65B8(void* self, void* a1)
@@ -6191,9 +5764,6 @@ extern "C" int func_001E6630(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E6640);
 #ifdef SKIP_ASM
-extern int D_004A26FC;
-extern int D_004A2700;
-
 extern "C" void func_001E6640(void* self, void* a1, int a2)
 {
     if (a1 != 0 && a2 == 5) {
@@ -6207,12 +5777,7 @@ extern "C" void func_001E6640(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E6668);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0046E520[];
-extern char D_0046E378[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_0020A380(void* self);
 
 extern "C" void func_001E6668(void* self)
 {
@@ -6237,14 +5802,6 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E6718);
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E7558);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_0046E510[];
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-extern signed char D_00535C11[];
-
 extern "C" void func_001E7558(void* self, void* menu)
 {
     int hash = *(int*)((char*)menu + 0x38);
@@ -6260,31 +5817,9 @@ extern "C" void func_001E7558(void* self, void* menu)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E75D0);
 #ifdef SKIP_ASM
-// func_0039E4C0 returns nothing (ends in a void vcall); the unit's later void* declaration is a guess.
-void func_0039E4C0_v(void* self) __asm__("func_0039E4C0");
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_0020A6F0(void* self, char* text, char* name);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void func_003A1310(void* self, int a1);
-extern void* D_004A28A8;
-extern int* D_004A2EEC;
-extern int D_00534B30[];
-extern int D_00536730[];
-extern signed char D_00535BC8[];
 extern char D_004A2170[];
-extern char D_0046E4E8[];
 extern char D_0046E638[];
-extern char D_0046E7C8[];
-extern char D_0046E7D8[];
-extern char D_0046E7E8[];
-extern char D_0046E7F8[];
 extern char D_0046E808[];
 
 struct sRect_75D0 {
@@ -6356,16 +5891,7 @@ void func_001E7920(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E7928);
 #ifdef SKIP_ASM
-extern int* D_004A2EEC;
-extern void* D_004A5B64;
-extern int D_004A26FC;
-extern int D_004A2700;
 extern "C" int func_0020A4E0(void* self);
-extern char D_0046E660[];
-extern char D_0046E7F8[];
-extern char D_0046E7C8[];
-extern char D_0046E7D8[];
-extern char D_0046E7E8[];
 
 extern "C" void func_001E7928(void* self)
 {
@@ -6406,9 +5932,6 @@ extern "C" void func_001E7928(void* self)
 INCLUDE_ASM("fe/fepopupmisc", func_001E7AA8);
 #ifdef SKIP_ASM
 extern "C" void func_0020AB50(int state);
-extern int D_00534B30[];
-extern int* D_004A2EEC;
-
 
 extern "C" int func_001E7AA8(void* self, void* a1)
 {
@@ -6441,9 +5964,6 @@ extern "C" int func_001E7B78(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E7B88);
 #ifdef SKIP_ASM
-extern int D_004A26FC;
-extern int D_004A2700;
-
 extern "C" void func_001E7B88(void* self, void* a1, int a2)
 {
     if (a1 != 0 && a2 == 5) {
@@ -6458,28 +5978,9 @@ extern "C" void func_001E7B88(void* self, void* a1, int a2)
 INCLUDE_ASM("fe/fepopupmisc", func_001E7BB0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_0020A380(void* self);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
 extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
-void cUIText_setAsciiString(cUIText* text, const char* str);
-extern "C" int func_004139F8(float f);
-extern "C" char* func_0020A1A8(int v);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
-extern void* D_004A28A8;
-extern signed char D_00535BC8[];
 extern int D_004A213C;
-extern int D_00536730[];
-extern unsigned int D_00536640[];
 extern char D_0046E340[];
 extern char D_0046E818[];
 extern char D_0046E828[];
@@ -6582,10 +6083,6 @@ extern "C" void func_001E7BB0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8098);
 #ifdef SKIP_ASM
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_0039F840(void* list);
-extern "C" void func_00231320(void* self);
-
 extern "C" void func_001E8098(void* self)
 {
     float limit = 3.0f;
@@ -6607,10 +6104,6 @@ extern "C" void func_001E8098(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8160);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void func_0039F840(void* list);
-extern "C" void func_00231320(void* self);
-
 extern "C" void func_001E8160(void* self, void* a1, int a2)
 {
     if (a1 != 0) {
@@ -6660,11 +6153,8 @@ INCLUDE_ASM("fe/fepopupmisc", func_001E8200);
 #ifdef SKIP_ASM
 // Wide-string copy; returns dst.
 extern "C" unsigned short* func_002C2508(unsigned short* dst, const unsigned short* src);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern "C" void func_003A0E90(void* text, void* p);
 extern char D_0046E898[];
 extern char D_004A21A8[];
-
 
 extern "C" void func_001E8200(void* self)
 {
@@ -6777,10 +6267,6 @@ extern "C" void func_001E8200(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E87B8);
 #ifdef SKIP_ASM
-extern "C" int func_00146E98(void* iface, int a1);
-extern "C" void func_0039F840(void* list);
-extern "C" void func_00231320(void* self);
-
 extern "C" void func_001E87B8(void* self)
 {
     float limit = 3.0f;
@@ -6802,10 +6288,6 @@ extern "C" void func_001E87B8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8880);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern "C" void func_0039F840(void* list);
-extern "C" void func_00231320(void* self);
-
 extern "C" void func_001E8880(void* self, void* a1, int a2)
 {
     if (a1 != 0) {
@@ -6841,35 +6323,16 @@ extern "C" int func_001E88F0(void* self, int a1)
 INCLUDE_ASM("fe/fepopupmisc", func_001E8920);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct cUIText;
-int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_0020A380(void* self);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00146E98(void* iface, int a1);
-void cUIText_setAsciiString(cUIText* text, const char* str);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" int func_004139F8(float f);
-extern "C" char* func_0020A1A8(int v);
 extern "C" void* func_001FD190(int v);
-extern "C" void func_003A0E90(void* text, void* p);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern void* D_004A28A8;
 extern signed char D_00535C12[];
 extern int D_005366A8[];
-extern int D_00536730[];
 extern int D_005366D0[];
-extern unsigned int D_00536640[];
 extern char* D_00441D10[];
 struct sIdx3_8920 {
     int v[3];
 };
 extern sIdx3_8920 D_0046E9B0;
 extern char D_0046E8B0[];
-extern char D_0046E378[];
 extern char D_004A21B0[];
 extern char D_004A21B8[];
 extern char D_0046E5F0[];
@@ -6881,9 +6344,7 @@ extern char D_0046E918[];
 extern char D_0046E938[];
 extern char D_0046E950[];
 extern char D_0046E970[];
-extern char D_004A2138[];
 extern char D_004A2160[];
-extern char D_0046E660[];
 extern char D_0046E670[];
 extern char D_0046E980[];
 extern char D_0046E998[];
@@ -7012,9 +6473,6 @@ extern "C" int func_001E8E98(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8EA8);
 #ifdef SKIP_ASM
-extern int D_004A26FC;
-extern int D_004A2700;
-
 extern "C" void func_001E8EA8(void* self, void* a1, int a2)
 {
     if (a1 != 0 && a2 == 5) {
@@ -7029,8 +6487,6 @@ extern "C" void func_001E8EA8(void* self, void* a1, int a2)
 INCLUDE_ASM("fe/fepopupmisc", func_001E8ED0);
 #ifdef SKIP_ASM
 extern "C" void* func_0039E4C0(void* self);
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
 
 extern "C" void func_001E8ED0(void* self)
 {
@@ -7042,15 +6498,8 @@ extern "C" void func_001E8ED0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8F00);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0046E9C0[];
-extern char D_0046E378[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_0020A380(void* self);
 void func_001E8FC0(void* self);
-extern "C" void* func_0028B180();
-extern "C" void func_00294F78(void*, int);
 
 extern "C" void func_001E8F00(void* self)
 {
@@ -7082,9 +6531,6 @@ void func_001E8FC0(void* self)
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E8FC8);
 #ifdef SKIP_ASM
-extern int D_004A26FC;
-extern int D_004A2700;
-
 extern "C" void func_001E8FC8(void* self, void* a1, int a2)
 {
     if (a1 != 0 && a2 == 5) {
