@@ -44,10 +44,23 @@ public:
     virtual void v25(int v);
 };
 
+// Declarations shared by the functions of this unit.
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern char D_004A17D0[];
+extern "C" void func_0039E510(void* self);
+extern "C" void* func_0039E2A0(void *, int);
+extern char D_00460040[];
+extern char D_004A17D8[];
+extern char D_00460060[];
+extern char D_004600A0[];
+extern char D_004A1458[];
+extern char D_004A1460[];
+extern char D_004A17E0[];
+
 //100%
 INCLUDE_ASM("fe/ovstates", cFEStateTitle_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* screen, int a1, int a2);
 extern "C" void* func_0028B180();
@@ -72,10 +85,7 @@ extern "C" void cFEStateTitle_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/ovstates", func_001947F8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char D_0045DB90[];
-extern char D_004A17D0[];
 extern int D_004A17C0;
 
 extern "C" int func_001947F8(void* self)
@@ -98,7 +108,6 @@ extern "C" int func_001947F8(void* self)
 //100%
 INCLUDE_ASM("fe/ovstates", func_001948A8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E510(void* self);
 extern void* D_004A28A8;
 extern int D_004A19CC;
 
@@ -170,9 +179,7 @@ void func_00194980(void* self)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00194988);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern "C" void func_003A0330(void* self, int a1, int a2);
-extern char D_004A17D0[];
 
 extern "C" void func_00194988(void* self, void* item)
 {
@@ -214,7 +221,6 @@ extern "C" int func_00194A48(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00194A60);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern void* D_0046B9E8[];
 
 extern "C" void* func_00194A60(void* self, int a1)
@@ -280,12 +286,8 @@ extern "C" void cFEStateMainMenu_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00194BF0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_00194498(void* obj);
 extern int D_004A29EC;
-extern char D_00460040[];
-extern char D_004A17D8[];
 
 extern "C" void func_00194BF0(void* self)
 {
@@ -313,12 +315,8 @@ extern "C" void func_00194BF0(void* self)
 //100%
 INCLUDE_ASM("fe/ovstates", cFEStateMainMenu_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_00460050[];
-extern char D_00460060[];
-extern char D_00460040[];
 extern char D_00460070[];
-extern char D_004A17D8[];
 
 extern "C" void cFEStateMainMenu_onWidgetCreate(void* self, void* item)
 {
@@ -353,8 +351,6 @@ extern "C" void cFEStateMainMenu_onWidgetCreate(void* self, void* item)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00194DD0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E510(void* self);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, int index);
 extern char D_004A1398[];
 
@@ -454,12 +450,6 @@ extern void* D_00469518[];
 extern char D_00460080[];
 extern char D_0045D698[];
 extern char D_004A17E8[];
-extern char D_00460040[];
-extern char D_00460060[];
-extern char D_004600A0[];
-extern char D_004A1458[];
-extern char D_004A1460[];
-extern char D_004A17E0[];
 
 struct sObj_194EB0 {
     int pad0;
@@ -587,13 +577,7 @@ extern "C" int func_001952E8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00195328);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" int func_0039FFA0(void* self, int x);
-extern char D_004A17E0[];
-extern char D_004600A0[];
-extern char D_004A1458[];
-extern char D_004A1460[];
 
 static inline void Show195328(void* self, char* name)
 {
@@ -632,7 +616,6 @@ extern "C" void func_00195328(void* self, char* obj, int msg)
 //100%
 INCLUDE_ASM("fe/ovstates", func_00195498);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_0046B918[];
 
 extern "C" void* func_00195498(void* self, int a1)
