@@ -20,6 +20,9 @@ struct sAiRiderList
     int f80;                    // 0x80
 };
 
+// cRider's per-other-rider record (ai/rider.h sRiderPair, 6 of them at 0x0) with the fields func_0010F3B8 resets.
+struct sAiPair { int vis; int val; float dist; int c; int d; int e; int f; int g; int h; };
+
 //100%
 INCLUDE_ASM("ai/computer", cComputer_setIndividualRiderDifficulty);
 #ifdef SKIP_ASM
@@ -909,8 +912,7 @@ extern "C" int func_0010D9E8(void* self, int a1)
 //100%
 INCLUDE_ASM("ai/computer", func_0010DA10);
 #ifdef SKIP_ASM
-struct sEnt_0010DA10 { int vis; int val; float dist; int c; int d; int e; int f; int g; int h; };
-struct sRider_0010DA10 { sEnt_0010DA10 ent[6]; };
+struct sRider_0010DA10 { sAiPair ent[6]; };
 extern void* D_004A28A8;
 extern "C" int func_001298C8();
 extern "C" int func_00311AE8(void*, int);
@@ -1597,9 +1599,8 @@ void* func_0010F398(void* self)
 //100%
 INCLUDE_ASM("ai/computer", func_0010F3B8);
 #ifdef SKIP_ASM
-struct sEnt_0010F3B8 { int vis; int val; float dist; int c; int d; int e; int f; int g; int h; };
 struct sRider_0010F3B8 {
-    sEnt_0010F3B8 ent[6];
+    sAiPair ent[6];
     char pad[0x10];
     int fE8;
     char pad2[0x4D8 - 0xEC];
@@ -1620,7 +1621,7 @@ extern "C" void func_0010F3B8_impl(sAI_0010F3B8* self)
         int j;
         for (j = 0; j < 6; j++)
         {
-            sEnt_0010F3B8* e = &self->riders[i]->ent[j];
+            sAiPair* e = &self->riders[i]->ent[j];
             int v = 0;
             if (i != j && j < self->count)
                 v = func_0011D640(self->riders[i]) != 0;
