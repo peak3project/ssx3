@@ -6060,7 +6060,6 @@ extern int D_004A3DB0_6300[2] __asm__("D_004A3DB0");
 extern "C" void func_001E3510(int, int);
 extern int D_00534B30_6300[] __asm__("D_00534B30");
 extern "C" void* cBE_getInterface_6300(void*, int) __asm__("cBE_getInterface__Fv");
-extern char* D_004A28A8_6300 __asm__("D_004A28A8");
 extern int D_004A588C_6300 __asm__("D_004A588C");
 struct T12_6300 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_6300 D_004FBF38_6300 __asm__("D_004FBF38");
@@ -6086,7 +6085,7 @@ extern "C" cLunoValue func_00306300(int n, Ent_6300* e) {
     }
     int x = vp[0];
     int y = vp[1];
-    cBE_getInterface_6300(*(void**)(D_004A28A8_6300 + 0x78), 7);
+    cBE_getInterface_6300(D_004A28A8->f78, 7);
     if (D_00534B30_6300[0] == 0)
         func_001E3510(x, y);
     return D_004C9098;
