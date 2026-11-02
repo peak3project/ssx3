@@ -123,6 +123,12 @@ struct sFlagSetList {
     sFlagSetElem elems[15];         // 0x20
 };
 
+// The flag mesh as cFlagSet_CreateMesh / func_0034D1E8 use it (vtable slot 6 adds a vertex: position, colour, uv).
+struct sFsMesh {
+    int pad0;
+    sVEntry<void(void*, sFsVec3*, sFsColor*, sFsVec2*)>* vt;   // 0x4
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -143,17 +149,13 @@ void* operator new[](unsigned int size, const char* tag, unsigned int flags, int
 
 
 
-struct sFsMesh_CM {
-    int pad0;
-    sVEntry<void(void*, sFsVec3*, sFsColor*, sFsVec2*)>* vt;   // 0x4
-};
 
 struct sFlagElem_CM {
     char pad0[0x1C];
     float windX;            // 0x1C
     float windY;            // 0x20
     char pad24[0x3C];
-    sFsMesh_CM* mesh;       // 0x60
+    sFsMesh* mesh;       // 0x60
     int cols;               // 0x64
     int rows;               // 0x68
     float colScale;         // 0x6C
@@ -189,7 +191,7 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     self->colScale = (float)(self->cols - 1);
     self->rowScale = (float)(self->rows - 1);
     sVEntry<void*(void*, int, int, unsigned int)>* e = &(*(sVEntry<void*(void*, int, int, unsigned int)>**)(mgr + 0x10D8))[76];
-    self->mesh = (sFsMesh_CM*)e->fn(mgr + e->delta, self->cols, self->rows, 0x60000000u);
+    self->mesh = (sFsMesh*)e->fn(mgr + e->delta, self->cols, self->rows, 0x60000000u);
     if (self->mesh == 0) {
         return;
     }
@@ -214,7 +216,7 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     }
     sFsVec3 verts[50];
     func_0034BCA0(self, verts);
-    sFsMesh_CM* m = self->mesh;
+    sFsMesh* m = self->mesh;
     m->vt[6].fn((char*)m + m->vt[6].delta, verts, col, uv);
 }
 #endif
@@ -1014,10 +1016,6 @@ extern "C" void func_0034CF98(void* self);
 
 
 
-struct sFsMesh_D1E8 {
-    int pad0;
-    sVEntry<void(void*, sFsVec3*, sFsColor*, sFsVec2*)>* vt;   // 0x4
-};
 
 struct sFsNode_D1E8 {
     char pad0[0x8];
@@ -1028,7 +1026,7 @@ struct sFlagSet_D1E8 {
     char pad0[0x18];
     sFsNode_D1E8* node;     // 0x18
     char pad1C[0x24];
-    sFsMesh_D1E8* mesh;     // 0x40
+    sFsMesh* mesh;     // 0x40
     sFsVec3 top[8];      // 0x44
     sFsVec3 bottom[8];   // 0xA4
     void* obj104;           // 0x104
@@ -1043,7 +1041,7 @@ extern "C" void func_0034D1E8(void* p)
     self->node->flags = (self->node->flags & ~2u) | 4;
     char* mgr = D_004A5B80;
     sVEntry<void*(void*, int, int, unsigned int)>* e = &(*(sVEntry<void*(void*, int, int, unsigned int)>**)(mgr + 0x10D8))[76];
-    self->mesh = (sFsMesh_D1E8*)e->fn(mgr + e->delta, 8, 2, 0x60000000u);
+    self->mesh = (sFsMesh*)e->fn(mgr + e->delta, 8, 2, 0x60000000u);
     sFsVec3 pos[4];
     sFsVec2 quv[4];
     sFsColor qcol[4];
@@ -1066,7 +1064,7 @@ extern "C" void func_0034D1E8(void* p)
         col[i + 8].g = qcol[2].g + (qcol[3].g - qcol[2].g) * t * 0.1428571492433548f;
         col[i + 8].b = qcol[2].b + (qcol[3].b - qcol[2].b) * t * 0.1428571492433548f;
     }
-    sFsMesh_D1E8* m = self->mesh;
+    sFsMesh* m = self->mesh;
     m->vt[6].fn((char*)m + m->vt[6].delta, pos, col, uv);
     func_0034CF98(self);
 }
