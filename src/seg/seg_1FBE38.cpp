@@ -6228,14 +6228,39 @@ extern "C" void func_003071F0(void* self) {
 }
 #endif
 
+// The object whose methods sit at 0x307240..0x3074C0: a state word at 0x0 and its vptr at 0x5C (slots by position).
+struct sStateObj_1FBE38 {
+    int state;
+    char pad[0x58];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+};
+
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_00307240);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct P_7240 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); };
 int func_0030B898_7240(void*, void*) __asm__("func_0030B898__FPvT0");
 extern "C" void func_0029D8E0(void*);
-extern "C" void func_00307240(P_7240* self) {
+extern "C" void func_00307240(sStateObj_1FBE38* self) {
     if (func_0030B898_7240(*(void**)((char*)self + 0x10), self)) {
         self->v06();
         self->v18();
@@ -6247,8 +6272,7 @@ extern "C" void func_00307240(P_7240* self) {
 //100%
 INCLUDE_ASM("seg/seg_1FBE38", func_003072B0);
 #ifdef SKIP_ASM
-struct P_72B0 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); };
-extern "C" void func_003072B0(P_72B0* self) {
+extern "C" void func_003072B0(sStateObj_1FBE38* self) {
     if (self->state == 2)
         self->v06();
     self->v04();
@@ -6316,8 +6340,7 @@ extern "C" int cBE_getInterface__Fv(void* be, int kind);
 extern "C" int func_00153E80_74C0(int, int) __asm__("func_00153E80");
 extern "C" void func_001540F0_74C0(int, int, int) __asm__("func_001540F0");
 extern "C" void func_00307D78(void*);
-struct P_74C0 { int state; char pad[0x58]; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); };
-extern "C" void func_003074C0(P_74C0* self) {
+extern "C" void func_003074C0(sStateObj_1FBE38* self) {
     int iface = cBE_getInterface__Fv(cBE_getBE(), 10);
     if (!func_00153E80_74C0(iface, *(int*)((char*)self + 0x20)))
         func_001540F0_74C0(iface, *(int*)((char*)self + 0x20), 1);
