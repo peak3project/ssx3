@@ -23,6 +23,17 @@ struct sRefWorld {
     sRefSet** sets;         // 0x8
 };
 extern sRefWorld** D_004A47B8;
+// The script manager (cWScriptMan in the prototype, whose setBeing stores at 0x0); D_004A3DD8 points at the instance.
+struct cWScriptMan {
+    int being;              // 0x0: index of the current being (rider)
+    char pad_0x4[0x28C];
+    char* f290;             // 0x290: object of the reference id -1
+    void* f294;             // 0x294
+    int f298;               // 0x298
+    char pad_0x29C[0x8];
+    char* f2A4;             // 0x2A4
+};
+extern cWScriptMan* D_004A3DD8;
 struct sBindArg_1FBE38 { int idx; int val; int pad; int kind; };
 struct sBindEnd_1FBE38 {};  // empty trailing member of a defaults record; value-init copies its byte through a stack temp
 extern "C" void func_003E6574(void*, void*, int);
@@ -52,7 +63,6 @@ INCLUDE_ASM("seg/seg_1FBE38", checkActiveNode);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void* cMemMan_alloc(int, void*, int, int);
-extern char *D_004A3DD8_AE38 __asm__("D_004A3DD8");
 extern char D_00489618_AE38[] __asm__("D_00489618");
 extern char D_00489628_AE38[] __asm__("D_00489628");
 extern char D_00489638_AE38[] __asm__("D_00489638");
@@ -78,7 +88,7 @@ extern "C" int checkActiveNode(void *a, int type, void *buf) {
         return -1;
     case 11:
         *(int*)(o + 0xC) = 0;
-        func_00351B40_AE38(cMemMan_alloc(0x6C0, D_00489628_AE38, 0x20000000, 0), 1, o, buf, *(void**)(D_004A3DD8_AE38 + 0x294), n);
+        func_00351B40_AE38(cMemMan_alloc(0x6C0, D_00489628_AE38, 0x20000000, 0), 1, o, buf, D_004A3DD8->f294, n);
         return -1;
     case 0:
         *(int*)(o + 0xC) = 0;
