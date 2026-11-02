@@ -654,6 +654,11 @@ extern "C" void* func_001BCB58_v(void* mem, int a1) __asm__("func_001BCB58");
 // PORT: func_001BE510 is defined as (self) in this unit, but some callers pass a second arg.
 void func_001BE510_2(void* self, int a1) __asm__("func_001BE510");
 extern int D_00534B30_v[] __asm__("D_00534B30");
+// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
+void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_Load3PeakPic);
@@ -686,8 +691,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001A37F8);
 #ifdef SKIP_ASM
 extern char D_004A1A08[];
 extern char D_004A1A10[];
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* func_00154760(void* self, int id);
 
 extern "C" void func_001A37F8(cFEAsyncManager* self, int id, int slot, int param)
@@ -863,7 +866,6 @@ extern "C" void cFEAsyncManager_LoadDataFile(cFEAsyncManager* self, int idx)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A3DC8);
 #ifdef SKIP_ASM
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 extern void* D_004A3E90_v __asm__("D_004A3E90");
 
 // Constructor for the memory-card screen: base init, vtable and empty-string fields.
@@ -2454,8 +2456,6 @@ extern "C" void func_001A7390(void* self, const char* name, int mode)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A77A0);
 #ifdef SKIP_ASM
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 struct sScreen1A77A0 {
     char pad0[0x8];
     void* vt;               // 0x8
@@ -2768,7 +2768,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001A7F78);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_002635A8(void* self, int idx);
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
 
 static inline void* GetSession_001A7F78()
 {
@@ -3242,7 +3241,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001A8AE8);
 #ifdef SKIP_ASM
 // PORT: cMemMan_alloc is probably the game's overloaded operator new(size, tag, flags, align). Calling it as
 // operator new gives gcc's malloc-like (REG_NOALIAS) aliasing that the target shows. On PC use a real operator new.
-void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
 
 class cFEVObj_001A8AE8 {
 public:
@@ -4617,9 +4615,6 @@ extern "C" void* func_001ABFA8(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AC010);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001AC010(void* self, int a1)
 {
     func_001A8500_3(self, a1, 0);
@@ -5180,8 +5175,6 @@ extern "C" int func_001ACEF8(void* self, int id, int a2)
 INCLUDE_ASM("fe/feasyncfile", func_001AD130);
 #ifdef SKIP_ASM
 extern void* D_00468F50[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001AD130(void* self, int a1)
 {
@@ -5588,7 +5581,6 @@ extern "C" void func_001ADC30(void* self, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001ADDD0);
 #ifdef SKIP_ASM
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern void* D_00468E38[];
 
 class cRace_DDD0 {
@@ -5623,8 +5615,6 @@ extern "C" void* func_001ADDD0(void* self, void* engine, void* owner)
 INCLUDE_ASM("fe/feasyncfile", func_001ADE88);
 #ifdef SKIP_ASM
 struct cUIText;
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001AF728(void* self, void* iface, void* screen);
 extern int D_004A4E8C;
 extern char D_004630C8[];
@@ -5671,7 +5661,6 @@ extern "C" int func_001ADFB8(cUIState* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001ADFE8);
 #ifdef SKIP_ASM
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001AF098(void* self, int a1);
 extern char D_00441278[];
 extern char D_00441288[];
@@ -5744,8 +5733,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001AE128);
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AE680);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 // D_00534B34 is a splat label inside D_00534B30
 
 struct sOpts1AE680 {
@@ -5938,7 +5925,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001AEC60);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern char D_004632A8[];
 extern char D_004632B8[];
 extern char D_004632D0[];
@@ -6037,7 +6023,6 @@ extern "C" void func_001AEC60(void* self, int on)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AF098);
 #ifdef SKIP_ASM
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0039A7A8(void* item, int enable);
 extern signed char D_00535C12_1AF098[] __asm__("D_00535C12");
 // PORT: a volatile view keeps the flag load ahead of the item load.
@@ -6254,8 +6239,6 @@ extern "C" void func_001AF688(void* self)
 INCLUDE_ASM("fe/feasyncfile", func_001AF728);
 #ifdef SKIP_ASM
 struct cUIText;
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00144C98(void* track);
 extern char D_004634B8[];
 extern char D_004634C8[];
@@ -6425,8 +6408,6 @@ extern "C" void func_001AFD88(void* self, void* a1)
 INCLUDE_ASM("fe/feasyncfile", func_001AFE08);
 #ifdef SKIP_ASM
 extern void* D_00468D20[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001AFE08(void* self, int a1, int a2, const char* name)
 {
@@ -6558,7 +6539,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001B0150);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern char D_004A1A90[];
 extern char D_00463608[];
 extern char D_00463118[];
@@ -6713,9 +6693,6 @@ extern "C" int func_001B0628(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B0670);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-
 extern "C" int func_001B0670(cUIState* self, int a1)
 {
     self->v32();
@@ -6791,7 +6768,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001B0850);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern char D_00463798[];
 
 extern "C" void func_001B0850(void* self, void* iface, void* screen)
@@ -6995,8 +6971,6 @@ extern "C" int func_001B0F28(int c)
 INCLUDE_ASM("fe/feasyncfile", func_001B0F60);
 #ifdef SKIP_ASM
 extern void* D_00468C10[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001B0F60(void* self, int a1)
 {
@@ -7042,8 +7016,6 @@ void* func_001B1048(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B1068);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001B1808(void* self);
 extern char D_00534B30[];
 
@@ -7134,8 +7106,6 @@ extern "C" void func_001B10F8(void* self, cUIText* text)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B1280);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001474A8(void* iface, int a1, int a2);
 extern "C" void func_00264F88(void* self, int a1);
 extern "C" void func_00265018(void* self, int a1);
@@ -7252,7 +7222,6 @@ extern "C" bool func_001B1590(void* self, cFEVObj_001B1590* obj)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B15D8);
 #ifdef SKIP_ASM
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 struct sFEObj_001B1F88;
 extern "C" sFEObj_001B1F88* func_001B1F88(sFEObj_001B1F88* mem, int a1);
 extern "C" void* func_00192D00(void* mem, int a1);
@@ -7303,8 +7272,6 @@ extern "C" void* func_001B15D8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B1760);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 struct cUIText;
 
 extern "C" void func_001B1760(void* self, int player)
@@ -7389,7 +7356,6 @@ INCLUDE_ASM("fe/feasyncfile", func_001B1B98);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00148BC8(void* iface, int a1, int idx);
 extern "C" int func_00148C68(void* iface, int a1, int idx);
 extern "C" int func_00148B78(void* iface, int a1, int idx);
@@ -7516,9 +7482,6 @@ extern "C" void func_001B1F18(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B1F88);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 struct sFEObj_001B1F88 {
     char pad0[0x8];
     void** vt;                     // 0x8
@@ -8572,8 +8535,6 @@ public:
 
 extern cFEVObj_001B3F78* D_004A1B78;
 extern "C" cFEVObj_001B3F78* func_002C22C8();
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001B3F78(void* mem, int a1)
 {
@@ -9783,9 +9744,6 @@ extern "C" void func_001B60A8(void* self, int a1, unsigned int msg)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6288);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 struct sFEObj_001B6288 {
     char pad0[0x8];
     void** vt;          // 0x8
@@ -9854,8 +9812,6 @@ extern "C" void func_001B6368(void* self, int flags)
 INCLUDE_ASM("fe/feasyncfile", func_001B63E8);
 #ifdef SKIP_ASM
 struct cUIText;
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* func_002561B8(void* mem);
 extern "C" void func_00256258(void* self, int mode);
 extern char D_00464238[];
@@ -10077,9 +10033,6 @@ extern "C" int func_001B6A90(void* self, int a1, unsigned int key)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6AB8);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001B6AB8(void* self, int a1, int a2, int a3, int a4, int a5)
 {
     func_001A8500_3(self, a1, a2);
@@ -11296,8 +11249,6 @@ extern "C" int func_001B8890(void* self, int id)
 INCLUDE_ASM("fe/feasyncfile", func_001B88F0);
 #ifdef SKIP_ASM
 extern void* D_004686C0[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001B88F0(void* self, int a1, int a2)
 {
@@ -12174,8 +12125,6 @@ extern "C" void func_001BA358(void* self)
 INCLUDE_ASM("fe/feasyncfile", func_001BA3E0);
 #ifdef SKIP_ASM
 extern void* D_004685B0[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001BA3E0(void* self, int a1)
 {
@@ -12948,8 +12897,6 @@ extern "C" int func_001BBC40_r(void* self)
 INCLUDE_ASM("fe/feasyncfile", func_001BBD08);
 #ifdef SKIP_ASM
 extern void* D_004684A0[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001BBD08(void* self, int a1, int a2)
 {
@@ -13400,8 +13347,6 @@ extern "C" void func_001BC990(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BCB58);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 extern void* D_0046A7F8[];
 
 struct sFEObj_001BCB58 {
@@ -14435,8 +14380,6 @@ extern "C" void func_001BE720(void* self)
 INCLUDE_ASM("fe/feasyncfile", func_001BE7D8);
 #ifdef SKIP_ASM
 extern void* D_0046A6E8[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001BE7D8(void* self, int a1, int a2)
 {
@@ -14646,9 +14589,6 @@ extern "C" void func_001BED58(void* self, void* popup)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BEE30);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001BEE30(void* self, int a1)
 {
     func_001A8500_3(self, a1, 0);
@@ -15060,8 +15000,6 @@ extern "C" void func_001BFAE0(void* self, void* popup)
 INCLUDE_ASM("fe/feasyncfile", func_001BFBB8);
 #ifdef SKIP_ASM
 extern void* D_0046AD48[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001BFBB8(void* self, int a1)
 {
@@ -15359,8 +15297,6 @@ extern "C" void* func_001C0358(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C03D0);
 #ifdef SKIP_ASM
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001C03D0(void* self, int a1, int a2)
 {
     func_001A8500_3(self, a1, a2);
@@ -15375,9 +15311,6 @@ extern "C" void* func_001C03D0(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C0418);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001C0418(void* self, int a1)
 {
     func_001A8500_3(self, a1, 0);
@@ -15392,8 +15325,6 @@ extern "C" void* func_001C0418(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C0460);
 #ifdef SKIP_ASM
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001C0460(void* self)
 {
     func_001A8500_3(self, 0, 0);
@@ -15688,8 +15619,6 @@ extern "C" void func_001C0EA8(void* self, void* popup)
 INCLUDE_ASM("fe/feasyncfile", func_001C0F40);
 #ifdef SKIP_ASM
 extern void* D_0046AB28[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001C0F40(void* self, int a1, int a2)
 {
@@ -15871,8 +15800,6 @@ extern "C" void func_001C1488(void* self, void* popup)
 INCLUDE_ASM("fe/feasyncfile", func_001C1560);
 #ifdef SKIP_ASM
 struct cUIText;
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0025EE20(void* self, void* ids, int a2);
 extern "C" void func_0025EED8(void* self);
 // D_00534B34 is a splat label inside D_00534B30
@@ -16069,8 +15996,6 @@ extern "C" int func_001C1B88(void* self, void* a1, int a2)
 INCLUDE_ASM("fe/feasyncfile", func_001C1C50);
 #ifdef SKIP_ASM
 extern void* D_0046AA18[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001C1C50(void* self, int a1)
 {
@@ -16238,8 +16163,6 @@ extern "C" void func_001C1EA8(char* self, char* msg, int ev)
 INCLUDE_ASM("fe/feasyncfile", func_001C20F8);
 #ifdef SKIP_ASM
 extern void* D_0046A908[];
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
 
 extern "C" void* func_001C20F8(void* self, int a1)
 {
@@ -16362,8 +16285,6 @@ extern "C" void func_001C2418(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C2468);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBEOptionInterface_getDefaultQuickKeyMessageHashValue(void* self, int i);
 extern "C" char* func_0014F6A8(void* self, int i);
 extern "C" void func_003DCB20(char* dst, void* src);
@@ -16520,8 +16441,6 @@ extern "C" void func_001C2740(void* selfp, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C2A18);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0014F6E8(void* iface, int i);
 extern char D_00465C48[];
 extern char D_00535617[];
@@ -16588,8 +16507,6 @@ public:
     virtual void v01();
 };
 
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_0014F758(void* self);
 
 extern "C" void func_001C2BA8(void* self, void* a1, int a2)
@@ -16634,9 +16551,6 @@ extern "C" void func_001C2C50(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C2D18);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 struct sFEState1C2D18 {
     char pad[0x6D0];
     int slots[4];       // 0x6D0
@@ -17271,8 +17185,6 @@ extern "C" void func_001C4538(void* self, int on)
 INCLUDE_ASM("fe/feasyncfile", func_001C47A8);
 #ifdef SKIP_ASM
 struct cUIText;
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" const char* func_001453B8(void* iface, int id);
 extern "C" void func_001C49C8(void* self);
 extern char D_00465EE8[];
@@ -17325,8 +17237,6 @@ extern "C" void func_001C47A8(void* self)
 INCLUDE_ASM("fe/feasyncfile", func_001C49C8);
 #ifdef SKIP_ASM
 struct cUIText;
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" const char* func_00144C60(void* iface, int id);
 extern "C" void func_001C4B78(void* self, int idx);
 
@@ -17549,9 +17459,6 @@ extern "C" void func_001C4F58(void* self, char* buf, int frames)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C5018);
 #ifdef SKIP_ASM
-// PORT: func_001A8500 takes (self, a1, a2); the unit declares it with one arg
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001C5018(void* self, int a1)
 {
     func_001A8500_3(self, a1, 0);
@@ -17564,8 +17471,6 @@ extern "C" void* func_001C5018(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C5058);
 #ifdef SKIP_ASM
-void* func_001A8500_3(void* self, int a1, int a2) __asm__("func_001A8500");
-
 extern "C" void* func_001C5058(void* self)
 {
     func_001A8500_3(self, 0, 0);
