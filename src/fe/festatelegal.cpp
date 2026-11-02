@@ -1,12 +1,15 @@
 #include "common.h"
 
+// Declarations shared by the functions of this unit.
+struct cUIScreen;
+int GetHashValue32(char* str);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+
 //100%
 INCLUDE_ASM("fe/festatelegal", cFEStateLegal_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0045DD10[];
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 extern "C" void cFEStateLegal_onCreateScreen(void* self)
 {
@@ -23,11 +26,8 @@ extern "C" void cFEStateLegal_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatelegal", func_00187CB8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0045DC60[];
-struct cUIScreen;
 unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0039E510(void* self);
 extern "C" void* func_0039F190(void* list, int a1);
 
