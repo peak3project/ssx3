@@ -61,6 +61,11 @@ struct sSyncTask {                  /* 16 bytes, D_0051ED98[16]: a task SYNCTASK
     int f0C;                        /* running */
 };
 extern struct sSyncTask D_0051ED98[16];
+extern void (*D_00450C78[64])(void);     /* exit handlers (func_003E49B8 runs them) */
+extern int D_00450DCC;
+extern int D_00450DE8;                          /* timer deadline */
+extern int D_00450DF8[2];                       /* 'PS2T' and the timer thread */
+extern int D_0051ED88[4];                       /* timer mutex */
 /* D_00519AB0: the file system's command manager (func_003DCC88 sets it up). Layout from every use in this unit;
    field names are their offsets. Several fields are also reached through their own splat symbols (declared
    below), which the functions that address them directly must keep using. */
@@ -5489,17 +5494,14 @@ int func_003E4968(int a0) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E49B8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void (*D_00450C78_0C78[])(void) __asm__("D_00450C78");
-
 void func_003E49B8(void) {
     int i;
     for (i = 0x3F; i >= 0; i--) {
-        void (*fn)(void) = D_00450C78_0C78[i];
+        void (*fn)(void) = D_00450C78[i];
         if (fn != 0) {
             fn();
         }
-        D_00450C78_0C78[i] = 0;
+        D_00450C78[i] = 0;
     }
 }
 #endif
