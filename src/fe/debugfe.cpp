@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 INCLUDE_ASM("fe/debugfe", cDebugMenuScreen_draw);
 
 //100%
@@ -231,18 +239,13 @@ extern void* D_0046D350[];
 extern void* D_0046D948[];
 extern void* D_004A4E90;
 
-struct sVE_17D3B0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 #define DTOR_ARR_17D3B0(base, n)                                  \
     if ((base) != 0) {                                            \
         char* p = (base) + (n) * 0x24;                            \
         while ((base) != p) {                                     \
             p -= 0x24;                                            \
-            sVE_17D3B0* vt = *(sVE_17D3B0**)(p + 0x10);           \
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(p + 0x10);           \
             vt[1].fn(p + vt[1].delta, 0);                         \
         }                                                         \
     }
@@ -770,11 +773,10 @@ struct sNetCfg_17DE70 {
 };
 extern sNetCfg_17DE70 D_00534B30_cfg __asm__("D_00534B30");
 
-struct sVEnt_17DE70 { short delta; short index; void (*fn)(void*); };
 
 static inline void vcall1_17DE70(void* obj)
 {
-    sVEnt_17DE70* vt = *(sVEnt_17DE70**)((char*)obj + 0xC);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)obj + 0xC);
     vt[1].fn((char*)obj + vt[1].delta);
 }
 
@@ -1281,7 +1283,6 @@ extern "C" int* FILE_load(const char* name, int flags);
 extern "C" void* func_0017B1B0(void* self);
 extern "C" void* func_0017D298(char* self);
 
-struct sVEnt_17F868 { short delta; short index; void* fn; };
 typedef void (*Fn1_17F868)(void*, int);
 typedef int (*Load_17F868)(void*, void*, const char*, int, int, int);
 
@@ -1302,7 +1303,7 @@ struct sDebugFE_17F868 {
 extern "C" void func_0017F868(sDebugFE_17F868* self)
 {
     char* m = D_004A289C;
-    sVEnt_17F868* vt = *(sVEnt_17F868**)(m + 0x10D8);
+    sVEntry<void>* vt = *(sVEntry<void>**)(m + 0x10D8);
     ((Fn1_17F868)vt[44].fn)(m + vt[44].delta, 0);
     self->font = (char*)func_003915E8(cMemMan_alloc(0x84, D_0045D4B8, 0, 0), D_0045D4C8, 0);
     sVec2_17F868 sc(1.600000023841858f, 1.600000023841858f);
@@ -1314,14 +1315,14 @@ extern "C" void func_0017F868(sDebugFE_17F868* self)
         char* p = (char*)data + data[5];
         if (p) {
             char* g = D_004A5B80;
-            sVEnt_17F868* gvt = *(sVEnt_17F868**)(g + 0x10D8);
+            sVEntry<void>* gvt = *(sVEntry<void>**)(g + 0x10D8);
             self->snd1C = ((Load_17F868)gvt[46].fn)(g + gvt[46].delta, p, D_004A1340, 0, 1, -1);
         }
         cMemMan_free(data);
     }
     data = FILE_load(D_0045D4F8, 0x100);
     char* m2 = D_004A289C;
-    sVEnt_17F868* vt2 = *(sVEnt_17F868**)(m2 + 0x10D8);
+    sVEntry<void>* vt2 = *(sVEntry<void>**)(m2 + 0x10D8);
     self->snd20 = ((Load_17F868)vt2[46].fn)(m2 + vt2[46].delta, (char*)data + data[5], D_004A1348, 0, 1, -1);
     if (data) {
         cMemMan_free(data);
@@ -1391,11 +1392,6 @@ extern void* D_004A28A8;
 extern char* D_004A289C;
 extern "C" void func_003916C0(void* p, int flags);
 
-struct sVEi_0017FAD0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sDebugFE_0017FAD0 {
     char pad_0x00[0xC];
@@ -1413,7 +1409,7 @@ extern "C" void func_0017FAD0(sDebugFE_0017FAD0* self)
         char* o = self->objs[i];
         if (o != 0)
         {
-            sVEi_0017FAD0* vt = *(sVEi_0017FAD0**)o;
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)o;
             vt[1].fn(o + vt[1].delta, 3);
         }
     }
@@ -1423,13 +1419,13 @@ extern "C" void func_0017FAD0(sDebugFE_0017FAD0* self)
     if (self->snd20 >= 0)
     {
         char* m = D_004A289C;
-        sVEi_0017FAD0* vt = *(sVEi_0017FAD0**)(m + 0x10D8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(m + 0x10D8);
         vt[50].fn(m + vt[50].delta, self->snd20);
     }
     if (self->snd1C >= 0)
     {
         char* m = D_004A289C;
-        sVEi_0017FAD0* vt = *(sVEi_0017FAD0**)(m + 0x10D8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(m + 0x10D8);
         vt[50].fn(m + vt[50].delta, self->snd1C);
     }
     if (self->font != 0)
@@ -1466,7 +1462,6 @@ extern char D_004FF1A0[];
 extern "C" int func_00231D60(void* self);
 extern "C" void func_0017F500(void* self, int a1);
 
-struct sVEnt_17FBF0 { short delta; short index; void* fn; };
 typedef int (*FnI_17FBF0)(void*);
 typedef void (*FnV_17FBF0)(void*);
 typedef void (*FnP_17FBF0)(void*, void*);
@@ -1504,13 +1499,13 @@ static inline void setC5_17FBF0(sRS_17FBF0* r, int v) { r->c5 = v; }
 extern "C" int func_0017FBF0(char* self)
 {
     char* m = D_004A289C;
-    sVEnt_17FBF0* vt = *(sVEnt_17FBF0**)(m + 0x10D8);
+    sVEntry<void>* vt = *(sVEntry<void>**)(m + 0x10D8);
     if (!((FnI_17FBF0)vt[17].fn)(m + vt[17].delta)) {
         return 0;
     }
     if (func_00231D60(self) == 0) {
         char* m1 = D_004A289C;
-        sVEnt_17FBF0* vt1 = *(sVEnt_17FBF0**)(m1 + 0x10D8);
+        sVEntry<void>* vt1 = *(sVEntry<void>**)(m1 + 0x10D8);
         char* this1 = m1 + vt1[15].delta;
         sVec4_17FBF0 pos;
         sVec4_17FBF0 col(1.0f, 0.0f, 0.0f, 0.0f);
@@ -1520,10 +1515,10 @@ extern "C" int func_0017FBF0(char* self)
         pos.z = zero;
         ((FnP_17FBF0)vt1[15].fn)(this1, &pos);
         char* m2 = D_004A289C;
-        sVEnt_17FBF0* vt2 = *(sVEnt_17FBF0**)(m2 + 0x10D8);
+        sVEntry<void>* vt2 = *(sVEntry<void>**)(m2 + 0x10D8);
         ((FnView_17FBF0)vt2[26].fn)(m2 + vt2[26].delta, 0, 0, zero, zero, 640.0f, 480.0f, -1.0f, 1.0f);
         char* m3 = D_004A289C;
-        sVEnt_17FBF0* vt3 = *(sVEnt_17FBF0**)(m3 + 0x10D8);
+        sVEntry<void>* vt3 = *(sVEntry<void>**)(m3 + 0x10D8);
         ((FnP_17FBF0)vt3[34].fn)(m3 + vt3[34].delta, D_004FF1A0);
         char* m4 = D_004A289C;
         setB23_17FBF0(rs_17FBF0(m4), 2);
@@ -1534,11 +1529,11 @@ extern "C" int func_0017FBF0(char* self)
         func_0017F500(self + 0x24, *(int*)(self + 0x1C));
         setC5_17FBF0(rs_17FBF0(D_004A289C), 9);
         void* menu = *(void**)(self + 0x14);
-        sVEnt_17FBF0* mvt = *(sVEnt_17FBF0**)menu;
+        sVEntry<void>* mvt = *(sVEntry<void>**)menu;
         ((FnV_17FBF0)mvt[3].fn)((char*)menu + mvt[3].delta);
     }
     char* m5 = D_004A289C;
-    sVEnt_17FBF0* vt5 = *(sVEnt_17FBF0**)(m5 + 0x10D8);
+    sVEntry<void>* vt5 = *(sVEntry<void>**)(m5 + 0x10D8);
     ((FnV_17FBF0)vt5[20].fn)(m5 + vt5[20].delta);
     return 1;
 }
