@@ -1108,14 +1108,9 @@ INCLUDE_ASM("object/splinemodifier", func_0035A918);
 
 
 
-struct sSmVE_A918 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 struct cMultiSpline_A918 {
-    sSmVE_A918* vtable;     // 0x0
+    sVEntry<void(void*)>* vtable;     // 0x0
     int count;              // 0x4
     char pad_0x8[0x10];
     float radius;           // 0x18
@@ -1236,27 +1231,17 @@ void* func_0035AAE0(void* self)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035AAF0);
 #ifdef SKIP_ASM
-struct sSmVEntryV_AAF0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
-struct sSmVEntryP_AAF0 {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 
 extern "C" void* func_0035AAF0(void* self, void* item)
 {
     if (*(int*)((char*)self + 0x30) != 0) {
-        sSmVEntryV_AAF0* vt = *(sSmVEntryV_AAF0**)self;
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
         vt[3].fn((char*)self + vt[3].delta);
     }
     if (item == *(void**)((char*)self + 0x40)) {
         void* obj = *(void**)((char*)item + 0xC);
-        sSmVEntryP_AAF0* vt2 = *(sSmVEntryP_AAF0**)((char*)obj + 0xC);
+        sVEntry<void*(void*)>* vt2 = *(sVEntry<void*(void*)>**)((char*)obj + 0xC);
         return vt2[24].fn((char*)obj + vt2[24].delta);
     }
     return (char*)item + 0x10;
@@ -1266,33 +1251,23 @@ extern "C" void* func_0035AAF0(void* self, void* item)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035AB60);
 #ifdef SKIP_ASM
-struct sSmVEntryI_AB60 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
-struct sSmVEntryV_AB60 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" int func_0035AB60(void* self, void* item)
 {
     void* cur = *(void**)((char*)self + 0x40);
     if (item == cur) {
         void* obj = *(void**)((char*)item + 0xC);
-        sSmVEntryI_AB60* e = &(*(sSmVEntryI_AB60**)((char*)obj + 0xC))[26];
+        sVEntry<int(void*)>* e = &(*(sVEntry<int(void*)>**)((char*)obj + 0xC))[26];
         if (e->fn((char*)obj + e->delta) != 0) {
             obj = *(void**)(*(char**)((char*)self + 0x40) + 0xC);
-            e = &(*(sSmVEntryI_AB60**)((char*)obj + 0xC))[27];
+            e = &(*(sVEntry<int(void*)>**)((char*)obj + 0xC))[27];
             return e->fn((char*)obj + e->delta);
         }
         return 0;
     }
     void* obj = *(void**)((char*)cur + 0xC);
-    sSmVEntryV_AB60* vt = *(sSmVEntryV_AB60**)((char*)obj + 0xC);
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)((char*)obj + 0xC);
     vt[33].fn((char*)obj + vt[33].delta, (char*)item + 0x10, *(int*)((char*)self + 0x38));
     return *(int*)((char*)self + 0x38);
 }
@@ -1375,30 +1350,10 @@ INCLUDE_ASM("object/splinemodifier", func_0035B418);
 #ifdef SKIP_ASM
 
 
-struct sSmVE_35B418 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
-struct sSmVE43_35B418 {
-    short delta;
-    short index;
-    t4Matrix (*fn)(void*);
-};
-struct sSmVE93_35B418 {
-    short delta;
-    short index;
-    int (*fn)(void*, t4Vector*, t4Vector*, const t4Matrix&);
-};
-struct sSmVEModel_35B418 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 struct cMultiSpline_35B418 {
-    sSmVE_35B418* vtable;   // 0x0
+    sVEntry<void(void*)>* vtable;   // 0x0
     int count;              // 0x4
     char pad_0x8[0x14];
     int follow;             // 0x1C
@@ -1422,19 +1377,19 @@ extern "C" void func_0035B418(cMultiSpline_35B418* self)
     char* model = *(char**)(self->model + 0xC);
     char* w = D_004A5B80;
     for (int i = 1; i < self->count; i++) {
-        sSmVE93_35B418* vt = *(sSmVE93_35B418**)(w + 0x10D8);
+        sVEntry<int(void*, t4Vector*, t4Vector*, const t4Matrix&)>* vt = *(sVEntry<int(void*, t4Vector*, t4Vector*, const t4Matrix&)>**)(w + 0x10D8);
         char* thisp = w + vt[93].delta;
         sSmElem* box = &self->boxes[i];
-        sSmVE43_35B418* vt2 = *(sSmVE43_35B418**)(w + 0x10D8);
+        sVEntry<t4Matrix(void*)>* vt2 = *(sVEntry<t4Matrix(void*)>**)(w + 0x10D8);
         int hit = vt[93].fn(thisp, &box->box.min, &box->box.max, vt2[43].fn(w + vt2[43].delta));
         if (hit != 1) {
-            sSmVEModel_35B418* mvt = *(sSmVEModel_35B418**)(model + 0xC);
+            sVEntry<void(void*, void*, int)>* mvt = *(sVEntry<void(void*, void*, int)>**)(model + 0xC);
             mvt[33].fn(model + mvt[33].delta, self->insts[i] + 0x10, self->mode);
             if (hit != 0) {
-                sSmVEModel_35B418* mvt2 = *(sSmVEModel_35B418**)(model + 0xC);
+                sVEntry<void(void*, void*, int)>* mvt2 = *(sVEntry<void(void*, void*, int)>**)(model + 0xC);
                 mvt2[5].fn(model + mvt2[5].delta, (void*)self->mode, 0x420);
             } else {
-                sSmVEModel_35B418* mvt2 = *(sSmVEModel_35B418**)(model + 0xC);
+                sVEntry<void(void*, void*, int)>* mvt2 = *(sVEntry<void(void*, void*, int)>**)(model + 0xC);
                 mvt2[5].fn(model + mvt2[5].delta, (void*)self->mode, 0x400);
             }
         }
@@ -1575,14 +1530,9 @@ struct sSmWorld_B708 {
     char pad0[0x8];
     sSmSet_B708** sets;             // 0x8
 };
-struct sSmVEntry_B708 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 struct sSmModelObj_B708 {
     char pad0[0xC];
-    sSmVEntry_B708* vt;             // 0xC
+    sVEntry<int(void*)>* vt;             // 0xC
 };
 struct sSmModel_B708 {
     char pad0[0xC];
@@ -2047,22 +1997,12 @@ INCLUDE_ASM("object/splinemodifier", func_0035C040);
 #ifdef SKIP_ASM
 
 
-struct sSmVEntryI_C040 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
-struct sSmVEntryB_C040 {
-    short delta;
-    short index;
-    sBoundBox* (*fn)(void*);
-};
 
 struct sSmVtbl_C040 {
     char pad_0x0[0x160];
-    sSmVEntryI_C040 v44;    // 0x160
-    sSmVEntryB_C040 v45;    // 0x168
+    sVEntry<int(void*)> v44;    // 0x160
+    sVEntry<sBoundBox*(void*)> v45;    // 0x168
 };
 
 struct sSmObj_C040 {
