@@ -15920,7 +15920,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1038);
 #ifdef SKIP_ASM
 extern int func_003D5450_1038(int) __asm__("func_003D5450");
 extern void func_002AF7A0_1038(int, int) __asm__("func_002AF7A0");
-extern char D_00517644_1038[] __asm__("D_00517644");
 
 static inline int isOff_1038(unsigned int m, int b) { return ((m >> b) & 1) == 0; }
 void func_003D1038(unsigned int mask, unsigned char val) {
@@ -15935,8 +15934,8 @@ void func_003D1038(unsigned int mask, unsigned char val) {
         D_0044F42D = val;
     }
     for (i = 0; i < 4; i++) {
-        if (*(int *)(D_00517644_1038 + i * 0x928) != 0) {
-            fl = *(unsigned int *)(D_00517644_1038 + i * 0x928 - 4);
+        if (*(int *)(D_00517644 + i * 0x928) != 0) {
+            fl = *(unsigned int *)(D_00517644 + i * 0x928 - 4);
             t = fl & 0xF0000000;
             if ((t & mask) != 0) {
                 u = fl & 0x0F000000;
