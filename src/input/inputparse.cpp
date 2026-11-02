@@ -1579,7 +1579,241 @@ extern "C" float func_00325430(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputparse", func_00325450);
+#ifdef SKIP_ASM
+extern "C" float func_0040D758(float x);
+extern "C" float func_0040DA10(float x);
+extern "C" float func_0031C228(float x);
+extern "C" float func_0031BF60(float x);
+extern "C" float func_0031C040(float x);
+extern "C" float* func_003252E8_325450(void* self, int i) __asm__("func_003252E8");
+extern "C" float func_00325260_325450(void* self, unsigned int id) __asm__("func_00325260");
+
+union sInsn_325450 {
+    struct {
+        unsigned int op : 6;
+        unsigned int dst : 6;
+        unsigned int src : 10;
+        unsigned int arg : 10;
+    } r;
+    struct {
+        unsigned int op : 6;
+        unsigned int reg : 10;
+        unsigned int offset : 16;
+    } j;
+    float f;
+};
+
+struct sInputVM_325450 {
+    int f0;
+    int f4;
+};
+
+static inline float Pow_325450(float x, float y)
+{
+    return func_0040D758(func_0040DA10(x) * y);
+}
+
+static inline float Atan2_325450(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+#define REG_325450(n) func_003252E8_325450(self, (n))
+#define GET_325450(n) func_00325260_325450(self, (n))
+#define MAX_325450(a, b) ((a) > (b) ? (a) : (b))
+#define MIN_325450(a, b) ((a) < (b) ? (a) : (b))
+
+// Runs one compiled input-map program; register 0 holds the result.
+extern "C" float func_00325450(sInputVM_325450* self, int a1, sInsn_325450* code)
+{
+    int i = 0;
+    int done = 0;
+    self->f4 = a1;
+    do {
+        sInsn_325450* p = &code[i++];
+        switch (p->r.op) {
+        case 0: {
+            float* d = REG_325450(p->r.dst);
+            *d = code[i++].f;
+            break;
+        }
+        case 1: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src);
+            break;
+        }
+        case 2:
+            if (GET_325450(p->j.reg) != 0.0f)
+                break;
+            // jump-if-zero falls through into the jump
+        case 3:
+            i += p->j.offset;
+            break;
+        case 4: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) != 0.0f || GET_325450(p->r.arg) != 0.0f;
+            break;
+        }
+        case 5: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) != 0.0f && GET_325450(p->r.arg) != 0.0f;
+            break;
+        }
+        case 6: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) > GET_325450(p->r.arg) ? 1.0f : 0.0f;
+            break;
+        }
+        case 7: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) >= GET_325450(p->r.arg) ? 1.0f : 0.0f;
+            break;
+        }
+        case 8: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) < GET_325450(p->r.arg) ? 1.0f : 0.0f;
+            break;
+        }
+        case 9: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) <= GET_325450(p->r.arg) ? 1.0f : 0.0f;
+            break;
+        }
+        case 10: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) == GET_325450(p->r.arg) ? 1.0f : 0.0f;
+            break;
+        }
+        case 11: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) != GET_325450(p->r.arg) ? 1.0f : 0.0f;
+            break;
+        }
+        case 12: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) + GET_325450(p->r.arg);
+            break;
+        }
+        case 13: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) - GET_325450(p->r.arg);
+            break;
+        }
+        case 14: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) * GET_325450(p->r.arg);
+            break;
+        }
+        case 15: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) / GET_325450(p->r.arg);
+            break;
+        }
+        case 16: {
+            float* d = REG_325450(p->r.dst);
+            *d = MAX_325450(GET_325450(p->r.src), GET_325450(p->r.arg));
+            break;
+        }
+        case 17: {
+            float* d = REG_325450(p->r.dst);
+            *d = MIN_325450(GET_325450(p->r.src), GET_325450(p->r.arg));
+            break;
+        }
+        case 18: {
+            float* d = REG_325450(p->r.dst);
+            *d = Pow_325450(GET_325450(p->r.src), GET_325450(p->r.arg));
+            break;
+        }
+        case 19: {
+            float* d = REG_325450(p->r.dst);
+            *d = Atan2_325450(GET_325450(p->r.src), GET_325450(p->r.arg));
+            break;
+        }
+        case 20: {
+            float* d = REG_325450(p->r.dst);
+            *d = func_0031C228(GET_325450(p->r.src));
+            break;
+        }
+        case 21: {
+            float* d = REG_325450(p->r.dst);
+            *d = func_0031BF60(GET_325450(p->r.src));
+            break;
+        }
+        case 22: {
+            float* d = REG_325450(p->r.dst);
+            *d = func_0031C040(GET_325450(p->r.src));
+            break;
+        }
+        case 23: {
+            float* d = REG_325450(p->r.dst);
+            *d = func_0040D758(GET_325450(p->r.src));
+            break;
+        }
+        case 24: {
+            float* d = REG_325450(p->r.dst);
+            *d = func_0040DA10(GET_325450(p->r.src));
+            break;
+        }
+        case 25: {
+            float* d = REG_325450(p->r.dst);
+            *d = floor_43A0(GET_325450(p->r.src));
+            break;
+        }
+        case 26: {
+            float* d = REG_325450(p->r.dst);
+            *d = ceil_43A0(GET_325450(p->r.src));
+            break;
+        }
+        case 27: {
+            float* d = REG_325450(p->r.dst);
+            *d = abs_43A0(GET_325450(p->r.src));
+            break;
+        }
+        case 28: {
+            float* d = REG_325450(p->r.dst);
+            *d = sqrt_43A0(GET_325450(p->r.src));
+            break;
+        }
+        case 29: {
+            float* d = REG_325450(p->r.dst);
+            float x = GET_325450(p->r.src);
+            *d = x - floor_43A0(x * 0.159154937f + 0.5f) * 6.28318548f;
+            break;
+        }
+        case 30: {
+            float* d = REG_325450(p->r.dst);
+            *d = -GET_325450(p->r.src);
+            break;
+        }
+        case 31: {
+            float* d = REG_325450(p->r.dst);
+            *d = GET_325450(p->r.src) == 0.0f ? 1.0f : 0.0f;
+            break;
+        }
+        case 32:
+            done = 1;
+            break;
+        }
+    } while (!done);
+    return GET_325450(0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("input/inputparse", func_00325F48);
