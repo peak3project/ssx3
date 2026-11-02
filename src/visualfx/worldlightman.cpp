@@ -110,7 +110,288 @@ extern "C" void func_002F53B0(func_002F53B0_sMan* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F5400);
+#ifdef SKIP_ASM
+struct sV4_5400 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sV4c_5400 : sV4_5400 {
+    sV4c_5400(const float& ax, const float& ay, const float& az) { x = ax; y = ay; z = az; w = 0.0f; }
+};
+
+struct sM4_5400 {
+    sV4_5400 v[4];
+};
+
+struct sLightData_5400 {
+    sV4_5400 v[10];
+};
+
+struct sBox_5400 {
+    sV4_5400 lo;
+    sV4_5400 hi;
+    sBox_5400() {}
+    sBox_5400(const sV4_5400& a, const sV4_5400& b) : lo(a), hi(b) {}
+};
+
+struct sLight_5400 {
+    unsigned int id;        // 0x00
+    int priority;           // 0x04
+    char pad08[0x8];
+    sBox_5400 box;          // 0x10
+    void* cell;             // 0x30
+};
+
+struct sNode_5400 {
+    unsigned int id;        // 0x000
+    int priority;           // 0x004
+    char pad08[0x8];
+    sLightData_5400 data;   // 0x010
+    sV4_5400 pos;           // 0x0B0
+    sLight_5400* light;     // 0x0C0
+    char padC4[0xC];
+    sLightData_5400 base;   // 0x0D0
+    sNode_5400* next;       // 0x170
+    sNode_5400* prev;       // 0x174
+    char pad178[0x8];
+};
+
+struct sTexRef_5400 {
+    union {
+        signed char name[4];    // 0x0
+        int handle;             // 0x0 once resolved
+    };
+    int magic;                  // 0x4
+};
+
+struct sVE_5400 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+struct sScene_5400 {
+    int f0;
+    sVE_5400* vt;           // 0x4
+};
+
+struct sWorldObj_5400 {
+    sScene_5400* scene;     // 0x0
+    sVE_5400* vt;           // 0x4
+};
+
+struct sMan_5400 {
+    char pad000[0x4];
+    sWorldObj_5400* world;  // 0x004
+    char pad008[0x208];
+    sNode_5400 nodes[32];   // 0x210
+    sNode_5400* heads[32];  // 0x3210
+    unsigned int count;     // 0x3290
+};
+
+struct sObj_5400 {
+    char pad00[0xC];
+    void* model;            // 0x0C
+    char pad10[0x30];
+    sV4_5400 pos;           // 0x40
+    char pad50[0x28];
+    unsigned int id;        // 0x78
+};
+
+extern char* D_004A5B64;
+extern int D_004A3B64;
+extern int D_004A43C4;
+extern char D_005047F8[];
+extern "C" sNode_5400* func_002F59D0_5400(sMan_5400* self, int priority) __asm__("func_002F59D0");
+extern "C" sLight_5400* func_002F5A70(sMan_5400* self, int priority);
+extern "C" void func_002F5AF0_5400(sMan_5400* self, sV4_5400* pos, void* cell, sLightData_5400* out, int count) __asm__("func_002F5AF0");
+extern "C" void func_0034FED8_5400(void* model, int bone, sM4_5400* out) __asm__("func_0034FED8");
+extern "C" void func_00331450(void* cell, sBox_5400* box);
+extern "C" sLightData_5400* func_002EE2F8(void);
+extern "C" int func_0038AC50(void*, void*);
+extern "C" sLightData_5400* func_0038ABF8_5400(void* lib, int i) __asm__("func_0038ABF8");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sV4_5400 Sub_5400(const sV4_5400& a, const sV4_5400& b)
+{
+    sV4_5400 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sV4_5400 Add_5400(const sV4_5400& a, const sV4_5400& b)
+{
+    sV4_5400 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_5400(const sV4_5400& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+static inline sV4_5400 Trans_5400(const sM4_5400& m)
+{
+    return m.v[3];
+}
+
+static inline sV4_5400 Pos_5400(const sObj_5400* o)
+{
+    return o->pos;
+}
+
+static inline void ObjPos_5400(sObj_5400* o, sV4_5400& out)
+{
+    if (o->model != 0) {
+        sM4_5400 m;
+        func_0034FED8_5400(o, 0, &m);
+        out = Trans_5400(m);
+    } else {
+        out = Pos_5400(o);
+    }
+}
+
+static inline void Resolve_5400(sTexRef_5400* t)
+{
+    if (t->magic != 0x123400) {
+        t->handle = func_0038AC50(D_005047F8, t);
+        t->magic = 0x123400;
+    }
+}
+
+extern "C" sLightData_5400* func_002F5400(sMan_5400* self, sObj_5400* obj, int force)
+{
+    int found = 0;
+    int slot = (obj->id >> 8) & 0x1F;
+    sNode_5400* node = self->heads[slot];
+    while (node != 0) {
+        if (node->id == obj->id) {
+            found = 1;
+            break;
+        }
+        node = node->next;
+    }
+    int prio = *(int*)(D_004A5B64 + 0x18);
+    if (!found) {
+        if (self->count < 32) {
+            node = &self->nodes[self->count++];
+        } else {
+            node = func_002F59D0_5400(self, prio);
+        }
+        node->id = obj->id;
+        sNode_5400* h = self->heads[slot];
+        node->prev = 0;
+        node->next = h;
+        if (h != 0) {
+            h->prev = node;
+        }
+        self->heads[slot] = node;
+    }
+    node->priority = prio;
+    int update = 0;
+    int moved = 0;
+    sV4_5400 pos;
+    if (!found) {
+        update = 1;
+        moved = 1;
+        ObjPos_5400(obj, pos);
+    } else if (force) {
+        ObjPos_5400(obj, pos);
+        sV4_5400 d = Sub_5400(pos, node->pos);
+        float len = Len_5400(d);
+        if (10.0f < len) {
+            moved = 1;
+        }
+        if (500.0f < len) {
+            update = 1;
+        }
+    }
+    if (moved) {
+        node->pos = pos;
+        int fresh = 0;
+        sLight_5400* l = node->light;
+        if (l == 0 || l->id != node->id) {
+            node->light = func_002F5A70(self, node->priority);
+            node->light->id = node->id;
+            fresh = 1;
+        }
+        node->light->priority = node->priority;
+        if (!fresh) {
+            sLight_5400* b = node->light;
+            int inside = b->box.lo.x < node->pos.x && node->pos.x < b->box.hi.x && b->box.lo.y < node->pos.y &&
+                         node->pos.y < b->box.hi.y && b->box.lo.z < node->pos.z && node->pos.z < b->box.hi.z;
+            if (!inside) {
+                fresh = 1;
+            }
+        }
+        if (fresh) {
+            node->light->box = sBox_5400(Sub_5400(node->pos, sV4c_5400(1000.0f, 1000.0f, 1000.0f)),
+                                         Add_5400(node->pos, sV4c_5400(1000.0f, 1000.0f, 1000.0f)));
+            func_00331450(node->light->cell, &node->light->box);
+        }
+        if (update) {
+            if (D_004A3B64 != 0) {
+                node->base = *func_002EE2F8();
+            } else {
+                sWorldObj_5400* w = self->world;
+                ((int (*)(void*, float, float, float))w->vt[2].fn)((char*)w + w->vt[2].delta, node->pos.x, node->pos.y, -99999.0f);
+                sScene_5400* sc = self->world->scene;
+                sTexRef_5400* t = ((sTexRef_5400* (*)(void*))sc->vt[40].fn)((char*)sc + sc->vt[40].delta);
+                if (t->name[0] != 0) {
+                    Resolve_5400(t);
+                    node->base = *func_0038ABF8_5400(D_005047F8, t->handle);
+                } else {
+                    sScene_5400* sc2 = self->world->scene;
+                    sTexRef_5400* t2 = ((sTexRef_5400* (*)(void*))sc2->vt[37].fn)((char*)sc2 + sc2->vt[37].delta);
+                    if (t2->name[0] != 0) {
+                        Resolve_5400(t2);
+                        node->base = *func_0038ABF8_5400(D_005047F8, t2->handle);
+                    } else {
+                        node->base = *func_0038ABF8_5400(D_005047F8, D_004A43C4);
+                    }
+                }
+            }
+        }
+        node->data = node->base;
+        func_002F5AF0_5400(self, &node->pos, node->light->cell, &node->data, 4);
+    }
+    return &node->data;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/worldlightman", func_002F5998);
