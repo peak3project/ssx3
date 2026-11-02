@@ -1607,7 +1607,173 @@ extern "C" void func_001F3188(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatehud", func_001F31E0);
+#ifdef SKIP_ASM
+struct sVec4_31E0 {
+    float x, y, z, w;
+    sVec4_31E0() {}
+    sVec4_31E0(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+};
+struct sV2_31E0 {
+    float x, y;
+    sV2_31E0() {}
+    sV2_31E0(const float& ax, const float& ay) : x(ax), y(ay) {}
+};
+struct sCol_31E0 {
+    float r, g, b, a;
+    sCol_31E0(const float& ar, const float& ag, const float& ab, const float& aa) : r(ar), g(ag), b(ab), a(aa) {}
+};
+
+struct sGs_31E0 {
+    unsigned int w0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    unsigned int wC;
+    unsigned int f10 : 16;
+    unsigned int f10hi : 16;
+};
+
+extern sGs_31E0 D_00501420_31E0 __asm__("D_00501420");
+extern char D_004FF1A0[];
+extern int D_004A4EB0;
+extern sV2_31E0 D_004A4EA8;
+extern "C" float func_003921F0(void* obj, const unsigned short* txt, void* a, int b, float x, float y);
+extern "C" void func_00391E30(void* self, float x, float y, const unsigned short* str);
+
+class cGfx_31E0 {
+public:
+    char pad[0xE84];
+    sGs_31E0* stateTop;
+    char padE88[0x1068 - 0xE88];
+    int f1068;
+    int GetF1068() { return f1068; }
+    char pad106C[0x10D8 - 0x106C];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8();
+    virtual unsigned int GetWidth();
+    virtual unsigned int GetHeight();
+    virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14();
+    virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18();
+    virtual void v19();
+    virtual void BeginScene();
+    virtual void EndScene();
+    virtual void v22(float, float, float, float, int);
+    virtual void v23(); virtual void v24();
+    virtual void SetViewport(float, float, float, float, int, int, float, float);
+    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void Begin2D();
+    virtual void End2D();
+    virtual void v32();
+    virtual void SetTexture(void*);
+    virtual void v34(); virtual void v35(); virtual void v36(); virtual void v37();
+    virtual void v38(); virtual void v39(); virtual void v40(); virtual void v41();
+    virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45();
+    virtual void v46(); virtual void v47(); virtual void v48(); virtual void v49();
+    virtual void v50(); virtual void v51(); virtual void v52(); virtual void v53();
+    virtual void v54(); virtual void v55(); virtual void v56(); virtual void v57();
+    virtual void v58(); virtual void v59(); virtual void v60(); virtual void v61();
+    virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
+    virtual void v66(); virtual void v67(); virtual void v68(); virtual void v69();
+    virtual void v70(); virtual void v71(); virtual void v72(); virtual void v73();
+    virtual void v74(); virtual void v75(); virtual void v76();
+    virtual void DrawSprite(const sVec4_31E0&, const sV2_31E0&, const sV2_31E0&, const sV2_31E0&, const sCol_31E0&);
+};
+
+extern cGfx_31E0* D_004A289C_31E0 __asm__("D_004A289C");
+
+struct sFont_001F31E0 {
+    char pad0[0x14];
+    int count;          // 0x14
+    char pad18[0x10];
+    sV2_31E0 scale;     // 0x28
+    float f30;          // 0x30
+    float f34;          // 0x34
+    float f38;          // 0x38
+    float f3C;          // 0x3C
+    sVec4_31E0 color;   // 0x40
+    sVec4_31E0 color2;  // 0x50
+    void SetScale(float sx, float sy) { f38 = f30 * sx; f3C = f34 * sy; }
+};
+
+struct sHudTimer_001F31E0 {
+    const unsigned short* text; // 0x0
+    int active;                 // 0x4
+    float t;                    // 0x8
+    sFont_001F31E0* font;       // 0xC
+};
+
+struct sVE_31E0 {
+    short delta;
+    short index;
+    void (*fn)(void*, float, float, float, float, int);
+};
+
+extern "C" void func_001F31E0(sHudTimer_001F31E0* self)
+{
+    if (self->active == 0) {
+        return;
+    }
+    if (D_004A4EB0 == 0) {
+        D_004A4EB0 = 1;
+        D_004A4EA8.y = D_004A4EA8.x = 3.0f;
+    }
+    float f = self->t - 1.0f;
+    if (f < 0.0f) {
+        f = -f;
+    }
+    cGfx_31E0* g = D_004A289C_31E0;
+    g->stateTop[1] = g->stateTop[0];
+    g->stateTop++;
+    D_004A289C_31E0->BeginScene();
+    D_004A289C_31E0->Begin2D();
+    *D_004A289C_31E0->stateTop = D_00501420_31E0;
+    D_004A289C_31E0->stateTop->f4_23 = 2;
+    D_004A289C_31E0->stateTop->f4_20 = 0;
+    D_004A289C_31E0->stateTop->f4_12 = 0x14;
+    D_004A289C_31E0->stateTop->f4_2 = 5;
+    D_004A289C_31E0->SetTexture(D_004FF1A0);
+    {
+        sVE_31E0* vt = *(sVE_31E0**)((char*)D_004A289C_31E0 + 0x10D8);
+        char* thisp = (char*)D_004A289C_31E0 + vt[23].delta;
+        void (**pfn)(void*, float, float, float, float, int) = &vt[23].fn;
+        (*pfn)(thisp, 0.0f, 0.0f, (float)D_004A289C_31E0->GetWidth(), (float)D_004A289C_31E0->GetHeight(), 1);
+    }
+    D_004A289C_31E0->SetViewport(0.0f, 0.0f, 640.0f, 480.0f, 1, 0, 0.0f, 1.0f);
+    self->font->color = sVec4_31E0(1.0f, 1.0f, 1.0f, 0.0f);
+    self->font->SetScale(0.7f, 0.7f);
+    self->font->color2 = sVec4_31E0(1.0f, 0.0f, 0.0f, 0.0f);
+    self->font->scale = D_004A4EA8;
+    float w = func_003921F0(self->font, self->text, 0, 0, self->font->f38, self->font->f3C);
+    sVec4_31E0 pos(620.0f - w, 445.0f - (float)self->font->count * self->font->f34 * 0.35f, 0.0f, 1.0f);
+    D_004A289C_31E0->stateTop->f8_5 = 0x1F;
+    func_00391E30(self->font, pos.x, pos.y, self->text);
+    self->font->scale = sV2_31E0(2.0f, 2.0f);
+    pos.x = pos.x - 17.0f;
+    pos.y = 445.0f;
+    sV2_31E0 size;
+    sV2_31E0 uv0(0.0f, 0.0f);
+    sV2_31E0 uv1(1.0f, 1.0f);
+    size.x = f * 18.0f;
+    size.y = 18.0f;
+    *(short*)((char*)D_004A289C_31E0->stateTop + 0x10) = D_004A289C_31E0->GetF1068();
+    D_004A289C_31E0->DrawSprite(pos, size, uv0, uv1, sCol_31E0(1.0f, 1.0f, 1.0f, 1.0f));
+    D_004A289C_31E0->End2D();
+    D_004A289C_31E0->EndScene();
+    D_004A289C_31E0->stateTop--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001F36C0);
