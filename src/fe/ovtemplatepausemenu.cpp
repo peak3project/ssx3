@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovtemplatepausemenu", cOVTemplate_PauseMenu_onCreateScreen);
 #ifdef SKIP_ASM
@@ -26,11 +34,6 @@ extern char D_004A2470[];
 extern unsigned char D_004A2468;
 extern int D_00534B30[];
 
-struct sVE_PM {
-    short delta;
-    short index;
-    void* (*fn)(void*, int);
-};
 
 class cUIObj_PM {
 public:
@@ -77,7 +80,7 @@ extern "C" void cOVTemplate_PauseMenu_onCreateScreen(void* arg0)
             if (i < self->fBC) {
                 int h = GetHashValue32(D_00441BC0[self->a9C[i]]);
                 char* mgr = *(char**)((char*)self->engine + 0x10);
-                sVE_PM* vt = *(sVE_PM**)(mgr + 4);
+                sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(mgr + 4);
                 if (vt[4].fn(mgr + vt[4].delta, h) != 0) {
                     cUIText_setUnicodeStringByID((cUIText*)o, h);
                 } else {
@@ -133,7 +136,6 @@ extern char D_0046F840[];
 struct sVec3_001F8448 {
     float x, y, z;
 };
-struct sVEnt_001F8448 { short delta; short index; void (*fn)(void*, int); };
 
 extern "C" int func_001F8448(void* self)
 {
@@ -144,7 +146,7 @@ extern "C" int func_001F8448(void* self)
             sprintf(buf, D_0046F840, D_00441C30[i]);
             char* obj = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0xC0), GetHashValue32(buf));
             if (obj != 0) {
-                sVEnt_001F8448* vt = *(sVEnt_001F8448**)(obj + 8);
+                sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 8);
                 vt[9].fn(obj + vt[9].delta, 0);
             }
         }
@@ -153,7 +155,7 @@ extern "C" int func_001F8448(void* self)
                 sprintf(buf, D_0046F840, D_00441C30[((int*)((char*)self + 0x9C))[i]]);
                 char* obj = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0xC0), GetHashValue32(buf));
                 if (obj != 0) {
-                    sVEnt_001F8448* vt = *(sVEnt_001F8448**)(obj + 8);
+                    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 8);
                     vt[9].fn(obj + vt[9].delta, 1);
                     sVec3_001F8448 v;
                     v.x = 0.0f;
@@ -182,11 +184,10 @@ extern char D_004C8AF8[];
 extern char D_004C8B08[];
 extern char D_004C8B18[];
 
-struct sVEnt_001F85C0 { short delta; short index; void (*fn)(void*, void*); };
 
 static inline void setColor_001F85C0(char* obj, void* c)
 {
-    sVEnt_001F85C0* vt = *(sVEnt_001F85C0**)(obj + 8);
+    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(obj + 8);
     vt[11].fn(obj + vt[11].delta, c);
 }
 
@@ -254,7 +255,6 @@ extern char D_004A2478[];
 extern char D_0046F850[];
 
 struct sColor_1F8728 { float r, g, b, a; };
-struct sVEnt_1F8728 { short delta; short index; void (*fn)(void*, void*); };
 
 extern "C" void func_001F8728(void* self)
 {
@@ -278,7 +278,7 @@ extern "C" void func_001F8728(void* self)
         {
             sColor_1F8728 c = *(sColor_1F8728*)(o + 0x1C);
             c.r = *(float*)((char*)self + 0xC8);
-            sVEnt_1F8728* vt = *(sVEnt_1F8728**)(o + 8);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
             vt[11].fn(o + vt[11].delta, &c);
         }
     }
@@ -372,20 +372,15 @@ extern char D_004C8AF8[];
 extern char D_004C8B08[];
 extern char D_004C8B18[];
 
-struct sVE_PMWE {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 struct sSnd_PMWE {
-    sVE_PMWE* vt;
+    sVEntry<void(void*, ...)>* vt;
 };
 extern sSnd_PMWE D_004A5A58;
 
 struct sWidget_PMWE {
     char pad_0x0[0x8];
-    sVE_PMWE* vt;                   // 0x8
+    sVEntry<void(void*, ...)>* vt;                   // 0x8
     char pad_0xC[0xC];
     int idx;                        // 0x18
 };
