@@ -1086,8 +1086,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_002FCC20);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_004A3DD8_CC20 __asm__("D_004A3DD8");
 extern char **D_004A47B8_CC20 __asm__("D_004A47B8");
-struct V3_CC20 { float x, y, z; };
-extern V3_CC20 D_004C9098_CC20 __asm__("D_004C9098");
 extern unsigned D_CC20[] __asm__("D_004FB5B0");
 extern int D_004A55F4;
 extern const int D_00446028[];
@@ -1097,7 +1095,7 @@ extern "C" int checkActiveNode(void*, int, void*);
 #define ASSERT_CC20(c) do { } while (0)
 
 // PORT: struct return written with the hidden return pointer explicit.
-extern "C" V3_CC20* func_002FCC20(V3_CC20* ret, int n, Ent_CC20 *e) {
+extern "C" cLunoValue* func_002FCC20(cLunoValue* ret, int n, Ent_CC20 *e) {
     if (D_004A55F4 == 0) {
         D_CC20[0] = 0xFFFFFFFF;
         *(float*)&D_CC20[2] = 0.5f;
@@ -1138,7 +1136,7 @@ extern "C" V3_CC20* func_002FCC20(V3_CC20* ret, int n, Ent_CC20 *e) {
     }
     // compiled-out debug macros around the return; they shape the register allocation here
     do {
-        *ret = D_004C9098_CC20;
+        *ret = D_004C9098;
         ASSERT_CC20(ret);
         return ret;
     } while (0);
