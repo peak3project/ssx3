@@ -72,6 +72,73 @@ static inline void* Mgr()
     return D_004A3328;
 }
 
+void operator_delete(int*);
+
+// The tag message queue itself (list<void*>: allocator word, then the sentinel node).
+struct sMsgList {
+    int pad;
+    sMsgListNode* node;
+    sMsgListIter begin() { return node->next; }
+    void*& front() { return *begin(); }
+    sMsgListIter erase(sMsgListIter pos)
+    {
+        sMsgListNode* next = pos.node->next;
+        sMsgListNode* prev = pos.node->prev;
+        prev->next = next;
+        next->prev = prev;
+        operator_delete((int*)pos.node);
+        return next;
+    }
+    void pop_front() { erase(begin()); }
+    sMsgListNode* first() { return node->next; }
+};
+
+// An asynchronous dirtysock operation polled by the session.
+struct sAsyncOp {
+    int f0;
+    int result;                         // 0x4
+    int (*poll)(sAsyncOp* op);      // 0x8
+    void (*release)(sAsyncOp* op);  // 0xC
+};
+
+// The tag session object (D_004A3028): state, connection, async op, channels, names, timers, the message queue
+// at 0xEC, the slot limits and per-slot handles.
+struct sTagSess {
+    int state;                  // 0x000
+    int addr;                   // 0x004
+    int f8;                     // 0x008
+    int busy;                   // 0x00C
+    int f10;                    // 0x010
+    char pad_0x014[0x40 - 0x14];
+    int f40;                    // 0x040
+    int f44;                    // 0x044
+    char pad_0x048[0x50 - 0x48];
+    int index;                  // 0x050
+    void* conn;                 // 0x054
+    sAsyncOp* op;               // 0x058
+    void* chan[3];              // 0x05C
+    char pad_0x068[0x6C - 0x68];
+    int count;                  // 0x06C
+    char* names[8];             // 0x070 (cBXString)
+    char pad_0x090[0x98 - 0x90];
+    char* name;                 // 0x098
+    char pad_0x09C[0xE0 - 0x9C];
+    float timer;                // 0x0E0
+    float timer2;               // 0x0E4
+    char pad_0x0E8[0xEC - 0xE8];
+    sMsgList msgs;              // 0x0EC
+    char pad_0x0F4[0xF8 - 0xF4];
+    int slot;                   // 0x0F8
+    int pad_0x0FC;
+    void* slotTag;              // 0x100
+    unsigned int limitA[29];    // 0x104
+    unsigned int limitB[29];    // 0x178
+    void* handles[29];          // 0x1EC
+    char pad_0x260[0x274 - 0x260];
+    char* names2[4];            // 0x274 (cBXString)
+    int count2;                 // 0x284
+};
+
 // Queue a message on the session's tag message list (+0xF0).
 static inline void post(char* self, void* msg)
 {
@@ -768,27 +835,17 @@ extern "C" void func_00268A90(void* self, void* a1, int a2);
 extern "C" void func_00268AB8(void* self, void* a1, int a2);
 extern "C" void func_00268AE0(void* self, void* a1, int a2);
 
-struct sDsSessK2 {
-    char pad_0x00[0x54];
-    void* mgr;                   // 0x54
-    char pad_0x58[4];
-    void* chan[3];               // 0x5C
-    char pad_0x68[0x104 - 0x68];
-    unsigned int slotA[29];      // 0x104
-    unsigned int slotB[29];      // 0x178
-};
-
-extern "C" void func_0025A778(sDsSessK2* self)
+extern "C" void func_0025A778(sTagSess* self)
 {
     int i;
-    self->chan[0] = func_003E85B0(self->mgr, 0, (void*)func_00268A90, self);
+    self->chan[0] = func_003E85B0(self->conn, 0, (void*)func_00268A90, self);
     func_003EE5A0(self->chan[0], 0, 0, (void*)func_00259398);
-    self->chan[1] = func_003E85B0(self->mgr, 1, (void*)func_00268AB8, self);
+    self->chan[1] = func_003E85B0(self->conn, 1, (void*)func_00268AB8, self);
     func_003EE5A0(self->chan[1], 0, 0, (void*)func_002593B8);
-    self->chan[2] = func_003E85B0(self->mgr, 2, (void*)func_00268AE0, self);
+    self->chan[2] = func_003E85B0(self->conn, 2, (void*)func_00268AE0, self);
     for (i = 0; i < 29; i++) {
-        self->slotA[i] = 0xFFFFFFFF;
-        self->slotB[i] = 0xFFFFFFFF;
+        self->limitA[i] = 0xFFFFFFFF;
+        self->limitB[i] = 0xFFFFFFFF;
     }
 }
 #endif
@@ -882,7 +939,7 @@ extern "C" void func_0025A948(void* self_)
     func_003E8248(*(void**)(self + 0x54), 1, (void*)func_00268B30, self);
     func_003E8248(*(void**)(self + 0x54), 3, (void*)func_00268B58, self);
     func_003E8248(*(void**)(self + 0x54), 4, (void*)func_00268B80, self);
-    func_0025A778((sDsSessK2*)self);
+    func_0025A778((sTagSess*)self);
 }
 #endif
 
@@ -989,24 +1046,6 @@ extern "C" void func_00261490(void* self);
 extern "C" void func_0017D260(void* self, void* msg);
 void operator_delete(int* ptr);
 
-struct sMsgListAC50 {
-    int pad;
-    sMsgListNode* node;
-    sMsgListIter begin() { return node->next; }
-    void*& front() { return *begin(); }
-    sMsgListIter erase(sMsgListIter pos)
-    {
-        sMsgListNode* next = pos.node->next;
-        sMsgListNode* prev = pos.node->prev;
-        prev->next = next;
-        next->prev = prev;
-        operator_delete((int*)pos.node);
-        return next;
-    }
-    void pop_front() { erase(begin()); }
-    sMsgListNode* first() { return node->next; }
-};
-
 // Simple tag message: kind word, then the vtable pointer.
 // Error message: kind 0x102 with a reason code.
 struct sTagErrAC50 {
@@ -1024,52 +1063,23 @@ struct sTagUserAC50 {
     sTagUserAC50(int c) { kind = 0x103; vt = D_00481270; code = c; }
 };
 
-struct sAsyncOpAC50 {
-    int f0;
-    int result;                         // 0x4
-    int (*poll)(sAsyncOpAC50* op);      // 0x8
-    void (*release)(sAsyncOpAC50* op);  // 0xC
-};
-
 class cMsgAC50 {
 public:
     int type;
     virtual ~cMsgAC50();
 };
 
-struct sTagSessAC50 {
-    int state;              // 0x0
-    int addr;               // 0x4
-    int f8;
-    int fC;                 // 0xC
-    int f10;                // 0x10
-    char pad14[0x44 - 0x14];
-    int f44;                // 0x44
-    char pad48[0x54 - 0x48];
-    void* conn;             // 0x54
-    sAsyncOpAC50* op;       // 0x58
-    void* f5C;              // 0x5C
-    void* f60;              // 0x60
-    char pad64[0x98 - 0x64];
-    char* name;             // 0x98
-    char pad9C[0xE0 - 0x9C];
-    float timer;            // 0xE0
-    float timer2;           // 0xE4
-    char padE8[0xEC - 0xE8];
-    sMsgListAC50 msgs;      // 0xEC
-};
-
-static inline int inState_AC50(sTagSessAC50* self, int st)
+static inline int inState_AC50(sTagSess* self, int st)
 {
     return self->state == st;
 }
 
-static inline int timedOut_AC50(sTagSessAC50* self)
+static inline int timedOut_AC50(sTagSess* self)
 {
     return self->timer < 0.0f;
 }
 
-static inline void releaseOp_AC50(sTagSessAC50* self)
+static inline void releaseOp_AC50(sTagSess* self)
 {
     if (self->op != 0) {
         self->op->release(self->op);
@@ -1079,7 +1089,7 @@ static inline void releaseOp_AC50(sTagSessAC50* self)
 
 extern "C" void func_0025AC50(char* selfp)
 {
-    sTagSessAC50* self = (sTagSessAC50*)selfp;
+    sTagSess* self = (sTagSess*)selfp;
     if (self->conn != 0) {
         func_003E95C8(self->conn);
         int st = func_003E8FB8(self->conn);
@@ -1167,9 +1177,9 @@ extern "C" void func_0025AC50(char* selfp)
             else if (func_00255D38(D_004A2EB8, 0) != 0)
                 func_00255CC8(D_004A2EB8, 0);
         }
-        if (self->fC != 0) {
-            func_003EE620(self->f5C);
-            func_003EE620(self->f60);
+        if (self->busy != 0) {
+            func_003EE620(self->chan[0]);
+            func_003EE620(self->chan[1]);
         }
         self->timer -= *(float*)((char*)D_004A28A8 + 0x14);
         self->timer2 -= *(float*)((char*)D_004A28A8 + 0x14);
@@ -1373,28 +1383,22 @@ extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const cha
 extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
 
-struct sDsNameListK2 {
-    char pad_0x00[0x274];
-    char* names[4];   // 0x274 (cBXString)
-    int count;        // 0x284
-};
-
 // Splits a comma-separated tag field into up to 4 strings.
-extern "C" void func_0025BC48(sDsNameListK2* self, char* msg)
+extern "C" void func_0025BC48(sTagSess* self, char* msg)
 {
     char buf[256];
     char* p;
     char* start;
     cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3090), buf, 256, D_004A2F40);
-    self->count = 0;
+    self->count2 = 0;
     p = buf;
-    while ((*p != 0) && (self->count < 4)) {
+    while ((*p != 0) && (self->count2 < 4)) {
         start = p;
         while ((*p != 0) && (*p != ','))
             p++;
         if (*p != 0)
             *p++ = 0;
-        cBXString_cBXString4(&self->names[self->count++], start);
+        cBXString_cBXString4(&self->names2[self->count2++], start);
     }
 }
 #endif
@@ -1409,8 +1413,7 @@ extern void* D_004812B0[];
 extern void* D_00481290[];
 extern char D_004A3098[];
 extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-struct sDsNameListK2;
-extern "C" void func_0025BC48(sDsNameListK2* self, char* msg);
+extern "C" void func_0025BC48(sTagSess* self, char* msg);
 
 extern "C" void func_0025BD30(char* self, char* msg)
 {
@@ -1431,7 +1434,7 @@ extern "C" void func_0025BD30(char* self, char* msg)
         post(self, m);
     } else {
         if (err == 0x6475706C)
-            func_0025BC48((sDsNameListK2*)self, msg);
+            func_0025BC48((sTagSess*)self, msg);
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
@@ -1823,12 +1826,6 @@ extern char D_004A3108[];
 extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void func_00268CE8(void* self, void* a1, int a2);
 
-struct sDsNamesD1B8 {
-    char pad_0x00[0x6C];
-    int count;          // 0x6C
-    char* names[8];     // 0x70 (cBXString)
-};
-
 extern "C" void func_0025D1B8(char* self, const char* name)
 {
     if (*(int*)self != 0) {
@@ -1837,7 +1834,7 @@ extern "C" void func_0025D1B8(char* self, const char* name)
         cDirtysock_tag_TagFieldSetString(buf, 0x200, D_004A3108, name);
         // PORT: function pointer passed through func_0025B608's int parameter.
         func_0025B608(self, 0xA, 0x63706572, buf, (int)func_00268CE8, 20.0f);
-        sDsNamesD1B8* s = (sDsNamesD1B8*)self;
+        sTagSess* s = (sTagSess*)self;
         cBXString_cBXString4(&s->names[s->count], name);
         postMsg(self, 0xD5);
     }
@@ -1864,7 +1861,7 @@ extern "C" void func_0025D2D8(char* self, char* msg)
         post(self, m);
     } else {
         if (*(int*)(msg + 0x8) == 0x6475706C)
-            func_0025BC48((sDsNameListK2*)self, msg);
+            func_0025BC48((sTagSess*)self, msg);
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
         m[0] = 0x102;
         *(void***)((char*)m + 0x4) = D_00481290;
@@ -1905,19 +1902,11 @@ extern "C" void* cBXString_operatorE(void* self, void* other);
 extern void* D_004812B0[];
 extern void* D_00481290[];
 
-struct sDsNamesD538 {
-    char pad_0x00[0x50];
-    int index;          // 0x50
-    char pad_0x54[0x6C - 0x54];
-    int count;          // 0x6C
-    char* names[8];     // 0x70 (cBXString)
-};
-
 extern "C" void func_0025D538(char* self, char* msg)
 {
     *(int*)self = 1;
     if (*(int*)(msg + 0x8) == 0) {
-        sDsNamesD538* s = (sDsNamesD538*)self;
+        sTagSess* s = (sTagSess*)self;
         char* lst = self + 0xEC;
         s->count--;
         for (int i = s->index; i < s->count; i++)
@@ -2281,13 +2270,6 @@ extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
 extern "C" void* cBXString_cBXString2(void* self, const char* s);
 extern "C" void func_00261248(void* self, void* self2, int idx, void* a, void* b, int c);
 
-struct sStateE138 {
-    int active;     // 0x0
-    int f4;
-    int f8;
-    int busy;       // 0xC
-};
-
 struct sNetMgrE138 {
     char pad[0xA4];
     int timeout;    // 0xA4
@@ -2295,8 +2277,8 @@ struct sNetMgrE138 {
 
 extern "C" void func_0025E138(char* self, char* msg)
 {
-    sStateE138* st = (sStateE138*)self;
-    st->active = 1;
+    sTagSess* st = (sTagSess*)self;
+    st->state = 1;
     int type = *(int*)(msg + 0x8);
     if (type == 0x6E657731) {
         int* m = (int*)operator new(0xC, D_00480488, 0x20000000, 0);
@@ -2332,27 +2314,15 @@ extern "C" unsigned int func_0025F338(void* self);
 extern "C" void func_0025E420(void* self, int a1, int a2, int a3);
 extern "C" void func_00259A60(char* self, int unused);
 
-struct sDsSlotSessK2 {
-    int active;                  // 0x0
-    char pad_0x04[0x50];
-    void* ctx;                   // 0x54
-    char pad_0x58[0xF8 - 0x58];
-    int slot;                    // 0xF8
-    int pad_0xFC;
-    void* slotTag;               // 0x100
-    unsigned int limit[58];      // 0x104
-    void* handles[29];           // 0x1EC
-};
-
-extern "C" void func_0025E348(sDsSlotSessK2* self, int slot)
+extern "C" void func_0025E348(sTagSess* self, int slot)
 {
-    if (self->active != 0) {
+    if (self->state != 0) {
         int old = self->slot;
         self->slot = slot;
-        self->slotTag = func_003E8F08(self->ctx, 0x736C6F74);
-        if (func_0025F338(self) < self->limit[slot]) {
+        self->slotTag = func_003E8F08(self->conn, 0x736C6F74);
+        if (func_0025F338(self) < self->limitA[slot]) {
             if (self->handles[self->slot] != 0) {
-                func_003E8688(self->ctx, 4, self->handles[self->slot]);
+                func_003E8688(self->conn, 4, self->handles[self->slot]);
                 self->handles[self->slot] = 0;
             }
             func_0025E420(self, 0, 100, old);
@@ -2379,28 +2349,13 @@ extern char D_004A3198[];
 extern char D_004A31A0[];
 extern char D_004A31A8[];
 
-struct sDsSlotSessE420 {
-    int active;                  // 0x0
-    char pad_0x04[0x3C];
-    int f40;                     // 0x40
-    char pad_0x44[0x10];
-    void* ctx;                   // 0x54
-    char pad_0x58[0xF8 - 0x58];
-    int slot;                    // 0xF8
-    int pad_0xFC;
-    void* slotTag;               // 0x100
-    unsigned int limitA[29];     // 0x104
-    unsigned int limitB[29];     // 0x178
-    void* handles[29];           // 0x1EC
-};
-
 extern "C" void func_0025E420(void* self_, int a1, int a2, int a3)
 {
-    sDsSlotSessE420* self = (sDsSlotSessE420*)self_;
-    if (self->active == 0)
+    sTagSess* self = (sTagSess*)self_;
+    if (self->state == 0)
         return;
     if (self->handles[self->slot] == 0)
-        self->handles[self->slot] = func_003E85B0(self->ctx, 4, (void*)func_00268AE0, self);
+        self->handles[self->slot] = func_003E85B0(self->conn, 4, (void*)func_00268AE0, self);
     char buf[0x100];
     buf[0] = 0;
     cDirtysock_tag_TagFieldSetNumber(buf, 0x100, D_004A3188, self->slot);
@@ -2408,9 +2363,9 @@ extern "C" void func_0025E420(void* self_, int a1, int a2, int a3)
     cDirtysock_tag_TagFieldSetNumber(buf, 0x100, D_004A3198, a1);
     cDirtysock_tag_TagFieldSetNumber(buf, 0x100, D_004A31A0, a2);
     cDirtysock_tag_TagFieldSetNumber(buf, 0x100, D_004A31A8, self->slot);
-    func_003E8D70(self->ctx, self->limitB[a3]);
+    func_003E8D70(self->conn, self->limitB[a3]);
     // PORT: function pointer passed through func_0025B608's int parameter.
-    func_0025B608(self, self->active, 0x736E6170, buf, (int)func_00268E00, 20.0f);
+    func_0025B608(self, self->state, 0x736E6170, buf, (int)func_00268E00, 20.0f);
     self->limitB[self->slot] = self->f40;
 }
 #endif
@@ -2876,14 +2831,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_0025F338);
 #ifdef SKIP_ASM
 extern "C" int func_003EE550(void*);
 
-struct sDsSlotSessF338 {
-    int active;                  // 0x0
-    char pad_0x04[0xF8 - 0x4];
-    int slot;                    // 0xF8
-    char pad_0xFC[0x1EC - 0xFC];
-    void* handles[29];           // 0x1EC
-};
-
 static inline int handleCount_F338(void* h)
 {
     return h ? func_003EE550(h) : 0;
@@ -2891,8 +2838,8 @@ static inline int handleCount_F338(void* h)
 
 extern "C" unsigned int func_0025F338(void* self_)
 {
-    sDsSlotSessF338* self = (sDsSlotSessF338*)self_;
-    if (self->active == 0)
+    sTagSess* self = (sTagSess*)self_;
+    if (self->state == 0)
         return 0;
     return handleCount_F338(self->handles[self->slot]);
 }
@@ -2905,17 +2852,9 @@ extern char D_004A2F30[];
 extern "C" void* func_003EE560(void*, int);
 extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
 
-struct sDsSlotSessK2b {
-    int active;                  // 0x0
-    char pad_0x04[0xF8 - 0x4];
-    int slot;                    // 0xF8
-    char pad_0xFC[0x1EC - 0xFC];
-    void* handles[29];           // 0x1EC
-};
-
-extern "C" void* func_0025F388(sDsSlotSessK2b* self, int a1, int* outA, int* outB)
+extern "C" void* func_0025F388(sTagSess* self, int a1, int* outA, int* outB)
 {
-    if (self->active == 0)
+    if (self->state == 0)
         return 0;
     char* e = (char*)func_003EE560(self->handles[self->slot], a1);
     if (e != 0) {
