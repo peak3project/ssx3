@@ -2410,7 +2410,6 @@ void func_003DF488(int n, int arg1) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF570);
 #ifdef SKIP_ASM
 extern int D_00519BF0;
-extern char D_00519C08_F570[] __asm__("D_00519C08");
 extern int func_003DFAF0(int);
 extern int func_003E5440(char *);
 extern void func_003E5398(int);
@@ -2433,7 +2432,7 @@ void func_003DF570(void) {
             func_003E5398(0);
         }
         D_00450C10.f08(D_00450C34);
-        func_003E56E0_F570(D_00519C08_F570);
+        func_003E56E0_F570(D_00519C08);
         D_00450C34 = 0;
     }
 }
