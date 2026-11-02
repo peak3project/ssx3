@@ -81,6 +81,17 @@ struct sApp
 };
 extern sApp* D_004A28A8;
 
+// Race settings (D_00535BC8).
+struct sRaceSettings {
+    char pad[0x34];
+    int numberOfHumanRiders;    // 0x34
+    char pad38[0x10];
+    signed char f48;            // 0x48
+    char pad49;
+    signed char f4A;            // 0x4A
+};
+extern sRaceSettings D_00535BC8;
+
 // The path system (cPathSys, the name from cPathSys_resolvePaths); D_004D33A0 is the instance. Only the
 // count of its 0x3C-byte paths (items at 0x14) is read here.
 struct cPathSys {
@@ -742,9 +753,7 @@ extern "C" int func_001298C8()
 INCLUDE_ASM("ai/ai", cAI_InitPlayers);
 #ifdef SKIP_ASM
 struct sPadCacheIP { char pad0[0x2EEC]; int devices[2]; };
-extern sPadCacheIP* D_004A28A0_ip __asm__("D_004A28A0");
-struct sRaceSetIP { char pad[0x34]; int numberOfHumanRiders; };
-extern sRaceSetIP D_00535BC8_ip __asm__("D_00535BC8");
+extern sPadCacheIP* D_004A28A0;
 extern int D_00534B30[];
 extern char D_004A1108[];
 extern "C" void* cBE_getBE();
@@ -809,7 +818,7 @@ extern "C" void cAI_InitPlayers(void* p)
     char* rm = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
     char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
     cBE_getInterface_Fv(D_004A28A8->f78, 7);
-    sRaceSetIP* settings = &D_00535BC8_ip;
+    sRaceSettings* settings = &D_00535BC8;
     int numberOfHumanRiders = settings->numberOfHumanRiders;
     for (i = 0; i < numberOfHumanRiders; i++)
     {
@@ -824,7 +833,7 @@ extern "C" void cAI_InitPlayers(void* p)
             if (D_00534B30[2] != 0 ? i != 1 : i != 0)
             {
                 D_004A28A8->Inputs[ch]->map = D_004A28A8->InputMaps[t];
-                obj->setInput(func_00237140(*(void**)(D_004A28A8->f84 + 0x7C), D_004A28A8->Inputs[ch]), D_004A28A0_ip->devices[ch]);
+                obj->setInput(func_00237140(*(void**)(D_004A28A8->f84 + 0x7C), D_004A28A8->Inputs[ch]), D_004A28A0->devices[ch]);
             }
             else
             {
@@ -835,7 +844,7 @@ extern "C" void cAI_InitPlayers(void* p)
         else
         {
             D_004A28A8->Inputs[ch]->map = D_004A28A8->InputMaps[t];
-            obj->setInput(D_004A28A8->Inputs[ch], D_004A28A0_ip->devices[ch]);
+            obj->setInput(D_004A28A8->Inputs[ch], D_004A28A0->devices[ch]);
             self->mRiders[id]->mCtrl = id;
         }
         cRider_addFocusBox(obj->rider);
@@ -1202,7 +1211,6 @@ INCLUDE_ASM("ai/ai", func_0012A340);
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_0022E0E0(void* self);
-extern char D_00535BC8[];
 extern "C" void func_0026AF00(void* self);
 extern "C" int func_0026AD70(void* self, int v);
 extern "C" void func_00112180(void* rider, int v);
@@ -1213,14 +1221,13 @@ extern "C" int func_0012A340(sAiRiderList* self, int unused, int mode, int arg)
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if ((unsigned)(lvl - 0x11) < 5)
     {
-        signed char* g = (signed char*)D_00535BC8;
-        if (g[0x48] == 5 || g[0x4A] == 0xB)
+        if (D_00535BC8.f48 == 5 || D_00535BC8.f4A == 0xB)
         {
             if (mode != 1)
                 return 0;
             goto ok;
         }
-        if (g[0x48] == 6)
+        if (D_00535BC8.f48 == 6)
         {
             if (mode != 2)
                 return 0;
