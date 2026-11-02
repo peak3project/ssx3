@@ -190,6 +190,9 @@ struct sWsListNode {
     int active;
 };
 
+// Empty helper object the cell visitors keep on the stack (one byte; its address is passed as a flag pointer).
+struct sWsQH {};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -783,7 +786,6 @@ static inline void descend_1450(void** n, sCtx_3309D8* ctx)
     if (n[7] != 0) descRec_1450(n[7], ctx);
 }
 
-struct sQH_1450 {};
 
 static inline void** cellNode_1450(sCell_330BA8* c)
 {
@@ -795,7 +797,7 @@ static inline void visit_1450(sRoot_330BA8* t, int k, sCtx_3309D8* ctx, void* bo
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
         void** n = cellNode_1450(c);
-        sQH_1450 h;
+        sWsQH h;
         char* f = (char*)&h;
         int r = func_00328360(c, box);
         if (r == 0) {
@@ -879,14 +881,13 @@ static inline void reset_1E90(sCtx_3309D8* cb)
     *cb->count = 0;
 }
 
-struct sQH_1E90 {};
 
 static inline void visit_1E90(sRoot_330BA8* t, int k, sCtx2_1E90* ctx, void* box)
 {
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
         void** n = c->node;
-        sQH_1E90 h;
+        sWsQH h;
         char* f = (char*)&h;
         int r = func_00328360(c, box);
         if (r == 0) {
@@ -997,14 +998,13 @@ static inline void reset_2DB8(sCtx_3309D8* cb)
     *cb->count = 0;
 }
 
-struct sQH_2DB8 {};
 
 static inline void visit_2DB8(sRoot_330BA8* t, int k, sCtx2_2DB8* ctx, void* box)
 {
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
         void** n = c->node;
-        sQH_2DB8 h;
+        sWsQH h;
         char* f = (char*)&h;
         int r = func_00328360(c, box);
         if (r == 0) {
@@ -1590,8 +1590,6 @@ extern "C" void func_00335B90(void* vctx, void* vnode)
 INCLUDE_ASM("intersect/worldsphtree", func_00335D78);
 #ifdef SKIP_ASM
 
-struct sQH_5D78 {
-};
 
 struct sCb_5D78 {
     void* q;                        // 0x00
@@ -1641,7 +1639,7 @@ static inline void visit_5D78(sSelf_5D78* t, int k, sCb_5D78* cb, sWsBoxV* box)
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
         void** n = c->node;
-        sQH_5D78 h;
+        sWsQH h;
         char* f = (char*)&h;
         int r = func_00328360(c, box);
         if (r == 0) {
@@ -1958,8 +1956,6 @@ extern "C" void func_00336D40(void* vctx, void* vnode)
 INCLUDE_ASM("intersect/worldsphtree", func_00336F30);
 #ifdef SKIP_ASM
 
-struct sQH_6F30 {
-};
 
 struct sCb_6F30 {
     void* q;                        // 0x00
@@ -2002,7 +1998,7 @@ static inline void visit_6F30(sSelf_6F30* t, int k, sCb_6F30* cb, sWsBoxV* box)
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
         void** n = c->node;
-        sQH_6F30 h;
+        sWsQH h;
         char* f = (char*)&h;
         int r = func_00328360(c, box);
         if (r == 0) {
@@ -2128,7 +2124,7 @@ static inline void visit_7A48(sSelf_6F30* t, int k, sCb_7A48* cb, sWsBoxV* box)
     sCell_330BA8* c = (sCell_330BA8*)((char*)t + k * 0x14);
     if (t->cell[k].node) {
         void** n = c->node;
-        sQH_6F30 h;
+        sWsQH h;
         char* f = (char*)&h;
         int r = func_00328360(c, box);
         if (r == 0) {
