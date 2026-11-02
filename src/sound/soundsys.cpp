@@ -448,6 +448,11 @@ static inline float* sndLevels59B8(void* self) { return (float*)((char*)self + 0
 
 static inline float* sndLevels5990(void* self) { return (float*)((char*)self + 0x5990); }
 
+static inline char* sndTbl6080(void* self)
+{
+    return (char*)self + 0x6080;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4912,10 +4917,6 @@ static inline int sndE590AddVoice(void* vself, int a, int b, int type, unsigned 
 
 
 
-static inline char* sndE590Tbl(void* self)
-{
-    return (char*)self + 0x6080;
-}
 
 extern "C" void func_0029E590(void* self, void* obj, float x)
 {
@@ -4925,10 +4926,10 @@ extern "C" void func_0029E590(void* self, void* obj, float x)
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
         int idx = *(int*)((char*)obj + 0x870);
-        float prev = *(float*)(sndE590Tbl(self) + (idx << 2));
+        float prev = *(float*)(sndTbl6080(self) + (idx << 2));
         unsigned short pitch = (int)((x <? prev) * 5.0f) * 0x50 + 0x1000;
         sndE590AddVoice(self, 0, 0x5F, 9, pitch);
-        *(float*)(sndE590Tbl(self) + (idx << 2)) = x;
+        *(float*)(sndTbl6080(self) + (idx << 2)) = x;
     }
 }
 #endif
@@ -4980,10 +4981,6 @@ static inline int sndE970AddVoice(void* vself, int a, int b, int type)
 }
 
 
-static inline char* sndE970Tbl(void* self)
-{
-    return (char*)self + 0x6080;
-}
 
 extern "C" void func_0029E970(void* self, void* obj)
 {
@@ -4993,11 +4990,11 @@ extern "C" void func_0029E970(void* self, void* obj)
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
         int idx = *(int*)((char*)obj + 0x870);
-        if (*(float*)(sndE970Tbl(self) + (idx << 2)) == 1.0f) {
+        if (*(float*)(sndTbl6080(self) + (idx << 2)) == 1.0f) {
             return;
         }
         sndE970AddVoice(self, 0, 0x60, 9);
-        *(float*)(sndE970Tbl(self) + (idx << 2)) = 1.0f;
+        *(float*)(sndTbl6080(self) + (idx << 2)) = 1.0f;
     }
 }
 #endif
