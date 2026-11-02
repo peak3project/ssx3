@@ -6155,14 +6155,11 @@ void SYNCTASK_init(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", SYNCTASK_add);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct T_STA { int fn; int mode; int due; int fC; };
-extern struct T_STA D_0051ED98_STA[16] __asm__("D_0051ED98");
 extern int D_00450E00_STA __asm__("D_00450E00");
 extern int D_00450DD0_STA __asm__("D_00450DD0");
 
-void SYNCTASK_add_impl(int fn, int mode, int delay) __asm__("SYNCTASK_add");
-void SYNCTASK_add_impl(int fn, int mode, int delay) {
+void SYNCTASK_add_impl(int (*fn)(int, int), int mode, int delay) __asm__("SYNCTASK_add");
+void SYNCTASK_add_impl(int (*fn)(int, int), int mode, int delay) {
     int i;
     int idx;
     int skip;
@@ -6175,9 +6172,9 @@ void SYNCTASK_add_impl(int fn, int mode, int delay) {
     }
     skip = D_00450E00_STA++;
     for (i = 0; i < 16; i++) {
-        if (D_0051ED98_STA[i].fn == fn) {
+        if (D_0051ED98[i].f00 == fn) {
             idx = i;
-        } else if (D_0051ED98_STA[i].fn == 0 && idx == -1) {
+        } else if (D_0051ED98[i].f00 == 0 && idx == -1) {
             if (skip != 0) {
                 skip--;
             } else {
@@ -6186,10 +6183,10 @@ void SYNCTASK_add_impl(int fn, int mode, int delay) {
         }
     }
     if (idx != -1) {
-        D_0051ED98_STA[idx].fn = fn;
-        D_0051ED98_STA[idx].mode = mode;
-        D_0051ED98_STA[idx].due = D_00450DD0_STA + delay;
-        D_0051ED98_STA[idx].fC = 0;
+        D_0051ED98[idx].f00 = fn;
+        D_0051ED98[idx].f04 = mode;
+        D_0051ED98[idx].f08 = D_00450DD0_STA + delay;
+        D_0051ED98[idx].f0C = 0;
     }
     D_00450E00_STA--;
 }
