@@ -86,6 +86,9 @@ struct sSndOptsUser { sSoundSysView* o; int* vals; int* vals2; };
 // A 0x60-byte record of the array at +0xACC (a = state: 1 and 2 are tested; b is read when a == 1).
 struct sRec60 { int a; int b; char pad[0x58]; };
 
+// A current/target float pair of a world-painter item (blended toward the target each update).
+struct sBlendF { float cur; float tgt; };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3046,8 +3049,7 @@ extern "C" void func_002BCEA8(void *self, void *p, float f) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BCF38);
 #ifdef SKIP_ASM
-struct Pair_CF38 { float cur; float tgt; };
-struct Obj_CF38 { int pad0; char* vt; Pair_CF38 p[6]; };
+struct Obj_CF38 { int pad0; char* vt; sBlendF p[6]; };
 struct Src_CF38 { int pad0; float v[6]; };
 
 extern "C" void func_002BCF38(Obj_CF38* self, Src_CF38* src, float t) {
@@ -3077,8 +3079,7 @@ extern "C" void func_002BCF38(Obj_CF38* self, Src_CF38* src, float t) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BD068);
 #ifdef SKIP_ASM
-struct Pair_D068 { float cur; float tgt; };
-struct Obj_D068 { int pad0; char* vt; Pair_D068 p[7]; };
+struct Obj_D068 { int pad0; char* vt; sBlendF p[7]; };
 struct Src_D068 { int pad0; float v[7]; };
 
 extern "C" void func_002BD068(Obj_D068* self, Src_D068* src, float t) {
@@ -3112,8 +3113,7 @@ extern "C" void func_002BD068(Obj_D068* self, Src_D068* src, float t) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BD1B8);
 #ifdef SKIP_ASM
-struct Pair_D1B8 { float cur; float tgt; };
-struct Obj_D1B8 { int pad0; char* vt; Pair_D1B8 p[6]; };
+struct Obj_D1B8 { int pad0; char* vt; sBlendF p[6]; };
 struct Src_D1B8 { int pad0; float v[6]; };
 
 extern "C" void func_002BD1B8(Obj_D1B8* self, Src_D1B8* src, float t) {
@@ -3156,9 +3156,8 @@ extern "C" void func_002BD2E8(void *self, void *p, float f) {
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BD378);
 #ifdef SKIP_ASM
-struct Pair_D378 { float cur; float tgt; };
 struct IPair_D378 { int cur; int tgt; };
-struct Obj_D378 { int pad0; char* vt; Pair_D378 p[6]; IPair_D378 i6; Pair_D378 q[2]; };
+struct Obj_D378 { int pad0; char* vt; sBlendF p[6]; IPair_D378 i6; sBlendF q[2]; };
 struct Src_D378 { int pad0; float v[6]; int i6; float w[2]; };
 
 extern "C" void func_002BD378(Obj_D378* self, Src_D378* src, float t) {
