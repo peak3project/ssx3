@@ -113,6 +113,17 @@ struct sSerVEntry {
     void (*fn)(void*, void*, int);
 };
 
+// The text database at *(D_004A28A8 + 0x8C); slot 4 looks up a text id.
+class cMissionObj
+{
+public:
+    char pad_0x00[0x4];
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void* v4(int a);
+};
+
 struct cBEMissionInterface {
     char pad_0x00[8];
     int field_0x8;
@@ -397,20 +408,10 @@ INCLUDE_ASM("be/beintmission", func_00153C88);
 extern void* D_004A28A8;
 extern "C" int func_00154240(void* self, int id);
 
-class cMissionObj_00153C88
-{
-public:
-    char pad_0x00[0x4];
-    virtual void v1();
-    virtual void v2();
-    virtual void v3();
-    virtual void* v4(int a);
-};
-
 extern "C" void* func_00153C88(void* self, int id)
 {
     int i = func_00154240(self, id);
-    return ((cMissionObj_00153C88*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10[i].field_0x04);
+    return ((cMissionObj*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10[i].field_0x04);
 }
 #endif
 
@@ -420,20 +421,10 @@ INCLUDE_ASM("be/beintmission", func_00153CD8);
 extern void* D_004A28A8;
 extern "C" int func_00154240(void* self, int id);
 
-class cMissionObj_00153CD8
-{
-public:
-    char pad_0x00[0x4];
-    virtual void v1();
-    virtual void v2();
-    virtual void v3();
-    virtual void v4(int a);
-};
-
 extern "C" void func_00153CD8(void* self, int id)
 {
     int i = func_00154240(self, id);
-    ((cMissionObj_00153CD8*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10[i].field_0x08);
+    ((cMissionObj*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10[i].field_0x08);
 }
 #endif
 
@@ -443,20 +434,10 @@ INCLUDE_ASM("be/beintmission", func_00153D28);
 extern void* D_004A28A8;
 extern "C" int func_00154240(void* self, int id);
 
-class cMissionObj_00153D28
-{
-public:
-    char pad_0x00[0x4];
-    virtual void v1();
-    virtual void v2();
-    virtual void v3();
-    virtual void* v4(int a);
-};
-
 extern "C" void* func_00153D28(void* self, int id)
 {
     int i = func_00154240(self, id);
-    return ((cMissionObj_00153D28*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10[i].field_0x0C);
+    return ((cMissionObj*)*(void**)((char*)D_004A28A8 + 0x8C))->v4(D_0043EE10[i].field_0x0C);
 }
 #endif
 
