@@ -16853,8 +16853,6 @@ extern struct R_2DF8 *func_003D4A50_2DF8(int) __asm__("func_003D4A50");
 extern int func_003D3140_2DF8(int, int) __asm__("func_003D3140");
 extern int func_002AE3A8(int);
 extern int func_002AE298_2DF8(int, char *, int, int) __asm__("func_002AE298");
-extern unsigned char D_0044F42C;
-extern int D_0044F430_2DF8[] __asm__("D_0044F430");
 
 int func_003D2DF8(int h, int idx, int arg2) {
     int ret = 0;
@@ -16863,7 +16861,7 @@ int func_003D2DF8(int h, int idx, int arg2) {
     struct E_2DF8 *e;
 
     if (D_0044F42C != 0) {
-        if (D_0044F430_2DF8[0] != 0) {
+        if (D_0044F430 != 0) {
             return -0x12;
         }
         if (func_003D5450_2DF8(-1) != 0) {
@@ -16901,7 +16899,7 @@ ok:
         }
         ret = func_002AE298_2DF8(t->f54, t->f5C, idx, arg2);
     }
-    D_0044F430_2DF8[0] = 0;
+    D_0044F430 = 0;
     D_0044F420 = 0;
     return ret;
 }
