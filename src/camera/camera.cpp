@@ -5,6 +5,14 @@
 // single lq/sq pair instead of word-by-word.
 typedef int cQuad128 __attribute__((mode(TI)));
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("camera/camera", cCamera_resetChaseControllerSwitches);
 #ifdef SKIP_ASM
@@ -518,18 +526,6 @@ extern "C" void func_0015E360(char* self, int type, float amount, float dist)
 //100%
 INCLUDE_ASM("camera/camera", func_0015E460);
 #ifdef SKIP_ASM
-struct sVEF_15E460 {
-    short delta;
-    short index;
-    float (*fn)(void*);
-};
-
-struct sVEV_15E460 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 // PORT: PS2-only VU0 inline asm (4-component vector length).
 static inline float Length_15E460(const t4Vector& v)
 {
@@ -559,10 +555,10 @@ extern "C" void func_0015E360(char* self, int type, float amount, float dist);
 extern "C" void func_0015E460(char* self)
 {
     char* tgt = *(char**)(*(char**)(self + 0xA8) + 0x20);
-    sVEF_15E460* vf = *(sVEF_15E460**)tgt;
+    sVEntry<float(void*)>* vf = *(sVEntry<float(void*)>**)tgt;
     float spd = vf[0x11].fn(tgt + vf[0x11].delta);
     if (((D_004A2A50 & 1) ^ 1) != 0 && spd > 0.10000000149011612f) {
-        sVEV_15E460* vv = *(sVEV_15E460**)tgt;
+        sVEntry<t4Vector(void*)>* vv = *(sVEntry<t4Vector(void*)>**)tgt;
         t4Vector v = vv[3].fn(tgt + vv[3].delta);
         float a = Length_15E460(v) * 0.035999998450279236f;
         float k;
@@ -1767,26 +1763,15 @@ INCLUDE_ASM("camera/camera", func_001606D8);
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
 
-struct sCamVEntryIntA {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sCamVEntryVoidA {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_001606D8(void* self, int id)
 {
     char* obj = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sCamVEntryIntA* vt = *(sCamVEntryIntA**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
         func_00166C60(self, id);
         func_00166550(self, 100.0f, 100.0f);
-        sCamVEntryVoidA* vt2 = *(sCamVEntryVoidA**)((char*)self + 0x10);
+        sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)((char*)self + 0x10);
         vt2[5].fn((char*)self + vt2[5].delta);
     }
 }
@@ -1856,12 +1841,6 @@ extern t4Vector D_004FF140_v1607E0 __asm__("D_004FF140");
 extern t4Vector D_004FF160_v1607E0 __asm__("D_004FF160");
 extern "C" void func_00162568(void* self, sCamInfo_001607E0* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
-
-struct sVEv_001607E0 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector cmScale_001607E0(const t4Vector& v, float s)
@@ -1969,7 +1948,7 @@ static inline float ffloor_001607E0(float x)
 static inline t4Vector cmGet_001607E0(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEv_001607E0* e = &(*(sVEv_001607E0**)o)[slot];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -2013,12 +1992,12 @@ extern "C" void func_00166550(void* self, float a, float b);
 extern "C" void func_00160AE8(void* self, int id)
 {
     char* obj = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sCamVEntryIntA* vt = *(sCamVEntryIntA**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
         func_00166C60(self, id);
         func_00166550(self, 100.0f, 100.0f);
-        sCamVEntryVoidA* vt2 = *(sCamVEntryVoidA**)((char*)self + 0x10);
+        sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)((char*)self + 0x10);
         vt2[5].fn((char*)self + vt2[5].delta);
     }
 }
@@ -2139,13 +2118,13 @@ extern "C" void func_00166550(void* self, float a, float b);
 extern "C" void func_00160FD0(void* self, int id)
 {
     char* obj = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sCamVEntryIntA* vt = *(sCamVEntryIntA**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
         func_00166C60(self, id);
         func_00166550(self, 100.0f, 100.0f);
         *(int*)((char*)self + 0x394) = 0;
-        sCamVEntryVoidA* vt2 = *(sCamVEntryVoidA**)((char*)self + 0x10);
+        sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)((char*)self + 0x10);
         vt2[5].fn((char*)self + vt2[5].delta);
     }
 }
@@ -2300,12 +2279,6 @@ struct sVec_13F0 {
 
 extern sVec_13F0 D_004FF160_v13F0 __asm__("D_004FF160");
 
-struct sVEv_13F0 {
-    short delta;
-    short index;
-    sVec_13F0 (*fn)(void*);
-};
-
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline sVec_13F0 Sub_13F0(const sVec_13F0& a, const sVec_13F0& b)
 {
@@ -2394,7 +2367,7 @@ static inline sVec_13F0 Add_13F0(const sVec_13F0& a, const sVec_13F0& b)
 static inline sVec_13F0 Get_13F0(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEv_13F0* e = &(*(sVEv_13F0**)o)[slot];
+    sVEntry<sVec_13F0(void*)>* e = &(*(sVEntry<sVec_13F0(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -2427,25 +2400,14 @@ INCLUDE_ASM("camera/camera", func_00161630);
 #ifdef SKIP_ASM
 extern "C" void func_00166C60(void* self, int id);
 
-struct sCamVEntryInt {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sCamVEntryVoid {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_00161630(void* self, int id)
 {
     char* obj = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sCamVEntryInt* vt = *(sCamVEntryInt**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
         func_00166C60(self, id);
-        sCamVEntryVoid* vt2 = *(sCamVEntryVoid**)((char*)self + 0x10);
+        sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)((char*)self + 0x10);
         vt2[5].fn((char*)self + vt2[5].delta);
     }
 }
@@ -2542,17 +2504,6 @@ INCLUDE_ASM("camera/camera", func_00161848);
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
 
-struct sCamVEntryInt_1848 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sCamVEntryVoid_1848 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 // PORT: PS2-only VU0 inline asm (vector at pointer times scalar).
 static inline t4Vector cmScaleP_1848(const t4Vector* v, float s)
 {
@@ -2590,13 +2541,13 @@ extern "C" void func_00161848_v(char* self, int id) __asm__("func_00161848");
 extern "C" void func_00161848_v(char* self, int id)
 {
     char* obj = *(char**)(*(char**)(self + 0x30) + 0x4) + 0x6C0;
-    sCamVEntryInt_1848* vt = *(sCamVEntryInt_1848**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
         *(t4Vector*)(self + 0x40) = cmAddP_1848(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160_v1607E0, 100.05000305175781f)), &D_004FF140_v1607E0);
         func_00166C60(self, id);
         func_00166550(self, 559.7440185546875f, 300.0f);
-        sCamVEntryVoid_1848* vt2 = *(sCamVEntryVoid_1848**)(self + 0x10);
+        sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)(self + 0x10);
         vt2[5].fn(self + vt2[5].delta);
     }
 }
@@ -3210,26 +3161,15 @@ void func_00162458_dtor(void* self, int flags)
 //100%
 INCLUDE_ASM("camera/camera", func_001624E8);
 #ifdef SKIP_ASM
-struct sCamVE1624E8 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-struct sCamVE1624E8i {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 extern "C" void func_001624E8(void* self, int a1)
 {
     if (*(int*)((char*)self + 0x2F0) != 0) {
-        sCamVE1624E8* vt = *(sCamVE1624E8**)((char*)self + 0x10);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)self + 0x10);
         vt[4].fn((char*)self + vt[4].delta);
     }
-    sCamVE1624E8* vt = *(sCamVE1624E8**)((char*)self + 0x10);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)self + 0x10);
     vt[5].fn((char*)self + vt[5].delta);
-    sCamVE1624E8i* vt2 = *(sCamVE1624E8i**)((char*)self + 0x10);
+    sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)((char*)self + 0x10);
     vt2[8].fn((char*)self + vt2[8].delta, a1);
 }
 #endif
@@ -3247,18 +3187,6 @@ INCLUDE_ASM("camera/camera", func_00162568);
 #ifdef SKIP_ASM
 int func_0011FE98(void*);
 extern t4Vector D_004FF120_v162568 __asm__("D_004FF120");
-
-struct sVEi_162568 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
-struct sVEf_162568 {
-    short delta;
-    short index;
-    float (*fn)(void*);
-};
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
 static inline t4Vector cmSub_162568(const t4Vector& a, const t4Vector& b)
@@ -3319,14 +3247,14 @@ static inline t4Vector cmNormalized_162568(const t4Vector& v)
 static inline int cmGetI_162568(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEi_162568* e = &(*(sVEi_162568**)o)[slot];
+    sVEntry<int(void*)>* e = &(*(sVEntry<int(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
 static inline float cmGetF_162568(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEf_162568* e = &(*(sVEf_162568**)o)[slot];
+    sVEntry<float(void*)>* e = &(*(sVEntry<float(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -3339,7 +3267,7 @@ static inline t4Vector cmLerp_162568(const t4Vector& a, const t4Vector& b, float
 static inline t4Vector cmGetR_162568(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEv_001607E0* e = &(*(sVEv_001607E0**)o)[slot];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[slot];
     t4Vector r = e->fn(o + e->delta);
     return r;
 }
@@ -3449,7 +3377,6 @@ INCLUDE_ASM("camera/camera", func_00162A20);
 #ifdef SKIP_ASM
 extern "C" int func_001298C8();
 
-struct sVEntry_162A20 { short delta; short index; t4Vector (*fn)(void*); };
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
 static inline float Length_162A20(const t4Vector& v)
@@ -3507,7 +3434,7 @@ extern "C" void func_00162A20(char* self, char* trig)
                 if (dir.z > 0.8500000238418579f)
                 {
                     void* obj = *(void**)(self + 0x30);
-                    sVEntry_162A20* vt = *(sVEntry_162A20**)obj;
+                    sVEntry<t4Vector(void*)>* vt = *(sVEntry<t4Vector(void*)>**)obj;
                     t4Vector v = vt[9].fn((char*)obj + vt[9].delta);
                     if (v.z < 0.10000000149011612f)
                     {
@@ -3637,12 +3564,6 @@ extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCa
 //100%
 INCLUDE_ASM("camera/camera", func_00162C78);
 #ifdef SKIP_ASM
-struct sVE_162C78 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 struct sInfo_162C78 {
     char pad0[0x20];
     t4Vector dir;      // 0x20
@@ -3778,7 +3699,7 @@ static inline float Clamp_162C78(float v, float lo, float hi)
 static inline t4Vector Get_162C78(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVE_162C78* e = &(*(sVE_162C78**)o)[slot];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -4353,18 +4274,12 @@ static inline float Dot_41C0(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
-struct sCamVEntryInt_41C0 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-
 extern "C" void func_001641C0_v(char* self, float a, float b, float c, float ease) __asm__("func_001641C0");
 
 extern "C" void func_001641C0_v(char* self, float a, float b, float c, float ease)
 {
     char* o = *(char**)(self + 0x30);
-    sCamVEntryInt_41C0* vt = *(sCamVEntryInt_41C0**)o;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)o;
     int r = vt[24].fn(o + vt[24].delta);
     t4Vector d = Sub_41C0(*(t4Vector*)(self + 0x40), *(t4Vector*)(self + 0x20));
     float t = 0.0f;
@@ -4892,12 +4807,6 @@ struct sCamTarget166228 {
     int valid; // 0x10
 };
 
-struct sCamVE166228 {
-    short delta;
-    short index;
-    void (*fn)(void*, sCamTarget166228*);
-};
-
 extern "C" void func_00166640(void* self, int a1);
 extern "C" void func_001662A0(void* self, float x, float y, float z, float w);
 void* func_00166530(void* self);
@@ -4906,7 +4815,7 @@ extern "C" void func_00166F90(void* self);
 extern "C" void func_00166228(void* self)
 {
     sCamTarget166228 t;
-    sCamVE166228* vt = *(sCamVE166228**)((char*)self + 0x10);
+    sVEntry<void(void*, sCamTarget166228*)>* vt = *(sVEntry<void(void*, sCamTarget166228*)>**)((char*)self + 0x10);
     vt[7].fn((char*)self + vt[7].delta, &t);
     func_00166640(self, 0);
     if (t.valid != 0)
@@ -4920,12 +4829,6 @@ extern "C" void func_00166228(void* self)
 INCLUDE_ASM("camera/camera", func_001662A0);
 #ifdef SKIP_ASM
 extern "C" float func_0031C128(float x);
-
-struct sVEv_1662A0 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline t4Vector Sub_1662A0(const t4Vector& a, const t4Vector& b)
@@ -5020,7 +4923,7 @@ static inline float Angle_1662A0(const t4Vector& a, const t4Vector& b)
 static inline t4Vector Get_1662A0(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEv_1662A0* e = &(*(sVEv_1662A0**)o)[slot];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -5074,12 +4977,6 @@ void* func_00166530(void* self)
 //100%
 INCLUDE_ASM("camera/camera", func_00166550);
 #ifdef SKIP_ASM
-struct sVE_166550 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 extern t4Vector D_004FF160_166550 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
@@ -5155,7 +5052,7 @@ static inline void DivEq_166550(t4Vector& v, float s)
 static inline t4Vector Get_166550(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVE_166550* e = &(*(sVE_166550**)o)[slot];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
@@ -5514,12 +5411,6 @@ struct sVec_6C60 {
 
 extern sVec_6C60 D_004FF160_v6C60 __asm__("D_004FF160");
 
-struct sVE_6C60 {
-    short delta;
-    short index;
-    void* fn;
-};
-
 typedef long (*LongFn_6C60)(void*);
 typedef sVec_6C60 (*VecFn_6C60)(void*);
 typedef void (*VecFn2_6C60)(sVec_6C60*, void*);
@@ -5560,7 +5451,7 @@ static inline void Cross_6C60(sVec_6C60& r, const sVec_6C60& a, const sVec_6C60&
 static inline sVec_6C60 getVec_6C60(char* self, int slot)
 {
     char* cam = *(char**)(self + 0x30);
-    sVE_6C60* cvt = *(sVE_6C60**)cam;
+    sVEntry<void>* cvt = *(sVEntry<void>**)cam;
     return ((VecFn_6C60)cvt[slot].fn)(cam + cvt[slot].delta);
 }
 
@@ -5568,7 +5459,7 @@ extern "C" void f_6C60_def(void* p, long id)
 {
     char* self = (char*)p;
     char* mgr = *(char**)(*(char**)(self + 0x30) + 4) + 0x6C0;
-    sVE_6C60* mvt = *(sVE_6C60**)mgr;
+    sVEntry<void>* mvt = *(sVEntry<void>**)mgr;
     if (id == ((LongFn_6C60)mvt[7].fn)(mgr + mvt[7].delta)) {
         sVec_6C60 pos = getVec_6C60(self, 4);
         sVec_6C60 dir = getVec_6C60(self, 3);
@@ -5585,7 +5476,7 @@ extern "C" void f_6C60_def(void* p, long id)
         *(cQuad128*)(self + 0xD0) = D_004FF120;
         *(cQuad128*)(self + 0xE0) = D_004FF120;
         *(sVec_6C60*)(self + 0x80) = pos;
-        sVE_6C60* svt1 = *(sVE_6C60**)(self + 0x10);
+        sVEntry<void>* svt1 = *(sVEntry<void>**)(self + 0x10);
         *(float*)(self + 0x1D4) = ((FloatFn_6C60)svt1[13].fn)(self + svt1[13].delta);
         *(int*)(self + 0x1E8) = 0;
         *(int*)(self + 0x1EC) = 0;
@@ -5624,7 +5515,7 @@ extern "C" void f_6C60_def(void* p, long id)
         *(int*)(self + 0x250) = 0;
         {
             char* cam = *(char**)(self + 0x30);
-            sVE_6C60* cvt = *(sVE_6C60**)cam;
+            sVEntry<void>* cvt = *(sVEntry<void>**)cam;
             ((VecFn2_6C60)cvt[4].fn)(&v, cam + cvt[4].delta);
         }
         *(int*)(self + 0x2EC) = 0;
@@ -5643,7 +5534,7 @@ extern "C" void f_6C60_def(void* p, long id)
         }
         {
             char* cam = *(char**)(self + 0x30);
-            sVE_6C60* cvt = *(sVE_6C60**)cam;
+            sVEntry<void>* cvt = *(sVEntry<void>**)cam;
             ((VecFn2_6C60)cvt[4].fn)(&t, cam + cvt[4].delta);
         }
         Scale_6C60(u, t, 2.0f);
@@ -5651,9 +5542,9 @@ extern "C" void f_6C60_def(void* p, long id)
         *(sVec_6C60*)(self + 0x1C0) = u;
         *(sVec_6C60*)(self + 0x100) = dir;
         *(int*)(self + 0x108) = 0;
-        sVE_6C60* svt2 = *(sVE_6C60**)(self + 0x10);
+        sVEntry<void>* svt2 = *(sVEntry<void>**)(self + 0x10);
         ((VoidFn_6C60)svt2[5].fn)(self + svt2[5].delta);
-        sVE_6C60* svt3 = *(sVE_6C60**)(self + 0x10);
+        sVEntry<void>* svt3 = *(sVEntry<void>**)(self + 0x10);
         ((IntFn_6C60)svt3[8].fn)(self + svt3[8].delta, 1);
     }
 }
@@ -5662,23 +5553,11 @@ extern "C" void f_6C60_def(void* p, long id)
 //100%
 INCLUDE_ASM("camera/camera", func_00166F28);
 #ifdef SKIP_ASM
-struct sVE166F28a {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
-
-struct sVE166F28b {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*);
-};
-
 extern "C" void* func_00166F28(void* self)
 {
-    sVE166F28b* vt = *(sVE166F28b**)((char*)self + 0x10);
+    sVEntry<void*(void*, void*)>* vt = *(sVEntry<void*(void*, void*)>**)((char*)self + 0x10);
     char* o = *(char**)(*(char**)((char*)self + 0x30) + 0x4) + 0x6C0;
-    sVE166F28a* vt2 = *(sVE166F28a**)o;
+    sVEntry<void*(void*)>* vt2 = *(sVEntry<void*(void*)>**)o;
     return vt[3].fn((char*)self + vt[3].delta, vt2[7].fn(o + vt2[7].delta));
 }
 #endif
@@ -6751,12 +6630,6 @@ static inline float cmLength_168150(const t4Vector& v)
     return r;
 }
 
-struct sVTbl_168150 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
-
 // cLookAtChaseAlgorithm::verify(void): if the camera is closer to / farther from its target than the
 // allowed range, snap it back behind the target.
 extern "C" void func_00168150_def(char* self)
@@ -6766,7 +6639,7 @@ extern "C" void func_00168150_def(char* self)
     if (len < 20.0f || len > 1.0000000200408773e+20f) {
         char* o = *(char**)(self + 0x30);
         t4Vector x = *(t4Vector*)(*(char**)(o + 4) + 0x1B0);
-        sVTbl_168150* e = &(*(sVTbl_168150**)o)[1];
+        sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[1];
         t4Vector p = e->fn(o + e->delta);
         int one = 1;
         float k50 = 50.0f;
@@ -6896,30 +6769,19 @@ extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
 extern "C" void f_6C60_8508(void* self, long id) __asm__("func_00166C60");
 
-struct sCamVEntryInt_8508 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sCamVEntryVoid_8508 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-
 extern "C" void func_00168508_v(char* self, long id) __asm__("func_00168508");
 
 extern "C" void func_00168508_v(char* self, long id)
 {
     char* obj = *(char**)(*(char**)(self + 0x30) + 0x4) + 0x6C0;
-    sCamVEntryInt_8508* vt = *(sCamVEntryInt_8508**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (id == vt[7].fn(obj + vt[7].delta))
     {
         t4Vector nv = cmSub_168150(cmAdd_001607E0(cmGet_001607E0(self, 1), cmScaleP_1848(&D_004FF160_v1607E0, 100.0f)), cmScale_001607E0(cmGet_001607E0(self, 4), 200.0f));
         *(t4Vector*)(self + 0x40) = nv;
         f_6C60_8508(self, id);
         func_00166550(self, 100.0f, 100.0f);
-        sCamVEntryVoid_8508* vt2 = *(sCamVEntryVoid_8508**)(self + 0x10);
+        sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)(self + 0x10);
         vt2[5].fn(self + vt2[5].delta);
     }
 }
@@ -6980,12 +6842,6 @@ extern "C" void func_00163270(void* self, void* info, float a, float b, float c,
 extern "C" void func_00162B90(void* self, void* info, float a, float b, float c, float d, float e);
 extern "C" void func_001643A8(void* self, void* info, float a, float b, float c);
 extern "C" void func_00163158(void* self, void* info, float a, float b);
-
-struct sVEv_1686D0 {
-    short delta;
-    short index;
-    t4Vector (*fn)(void*);
-};
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline t4Vector Sub_1686D0(const t4Vector& a, const t4Vector& b)
@@ -7093,7 +6949,7 @@ static inline float Dot_1686D0(const t4Vector& a, const t4Vector& b)
 static inline t4Vector Get_1686D0(char* self, int slot)
 {
     char* o = *(char**)(self + 0x30);
-    sVEv_1686D0* e = &(*(sVEv_1686D0**)o)[slot];
+    sVEntry<t4Vector(void*)>* e = &(*(sVEntry<t4Vector(void*)>**)o)[slot];
     return e->fn(o + e->delta);
 }
 
