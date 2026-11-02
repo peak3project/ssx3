@@ -11006,24 +11006,28 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C8D00);
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8E28);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void *func_003B5C60_8E28(int) __asm__("func_003B5C60");
-extern void func_003C8F48_8E28(int, void *) __asm__("func_003C8F48");
-extern int D_00515D1C_8E28[] __asm__("D_00515D1C");
+struct Kind_8E28 {                  /* a filter kind: node size, order, init, process, release */
+    int f00;
+    int f04;
+    unsigned short f08;
+    int (*f0C)(struct sB40Node *, int, int);
+    int (*f10)(struct sB40Node *, int, int, float *, int);
+    void (*f14)(struct sB40Node *);
+};
+extern struct sB40Node *func_003B5C60_8E28(int) __asm__("func_003B5C60");
+extern void func_003C8F48_8E28(struct sB40Node **, struct sB40Node *) __asm__("func_003C8F48");
 
-void func_003C8E28(int arg0, int arg1, void *arg2) {
-    int temp_18;
-    int temp_7;
-    void *temp_2;
+void func_003C8E28(int arg0, int arg1, struct Kind_8E28 *arg2) {
+    struct sB40Ent *e = &D_00515D1C[arg0];
+    struct sB40Node *n;
 
-    temp_7 = arg0 * 0x60;
-    temp_18 = D_00515D1C_8E28[0] + temp_7;
-    temp_2 = func_003B5C60_8E28((*(int *)((char*)(arg2) + (4))));
-    (*(int (**)(void *, int, int))((char*)(arg2) + (0xC)))(temp_2, (*(int *)((char*)(arg2) + (0))), arg1);
-    (*(unsigned short *)((char*)(temp_2) + (0x18))) = (unsigned short) (*(unsigned short *)((char*)(arg2) + (8)));
-    (*(int *)((char*)(temp_2) + (0))) = (int) (*(int *)((char*)(arg2) + (0x10)));
-    (*(int *)((char*)(temp_2) + (4))) = (int) (*(int *)((char*)(arg2) + (0x14)));
-    (*(signed char *)((char*)(temp_2) + (0x1A))) = 0;
-    func_003C8F48_8E28(temp_18 + 0x40, temp_2);
+    n = func_003B5C60_8E28(arg2->f04);
+    arg2->f0C(n, arg2->f00, arg1);
+    n->f18 = arg2->f08;
+    n->f00 = arg2->f10;
+    n->f04 = arg2->f14;
+    n->f1A = 0;
+    func_003C8F48_8E28(&e->f40, n);
 }
 #endif
 
