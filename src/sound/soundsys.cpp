@@ -619,13 +619,14 @@ extern "C" void* cBE_getInterface__Fv(void* be, int kind);
 // func_00285D98 (int in its own unit) hands back a rider / object pointer; the callers here use this view.
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+
 // ---- end of shared declarations ----
 
 //100%
 INCLUDE_ASM("sound/soundsys", cBankSys_cBankSys);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
 extern const char D_004A3668[];
 extern const char D_004A3670[];
@@ -7827,8 +7828,6 @@ extern "C" void func_002A6D18(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A6D78);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 struct sSndFileBuf;
 extern "C" sSndFileBuf* func_002A77F8(sSndFileBuf* self, const char* name, int flags);
 extern "C" int func_002A7BF8(void* self, const char* name);
@@ -8573,8 +8572,6 @@ INCLUDE_ASM("sound/soundsys", func_002A8140);
 #ifdef SKIP_ASM
 extern "C" char* cBankSys_cBankSys(char* self, int embedded, int count, int heap);
 extern "C" int func_003B97D8();
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
 extern const char D_00483148[];
 
