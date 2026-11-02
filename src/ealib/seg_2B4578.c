@@ -13406,16 +13406,8 @@ struct Hdr_C630 {
     int cnt[6];
     int len[6];
 };
-struct G_C630 {
-    char pad00[0x5];
-    unsigned char n;
-    char pad06[0xF - 0x6];
-    signed char fF;
-    void *f10;
-};
 extern struct Hdr_C630 D_005175C0_C630 __asm__("D_005175C0");
 extern int D_005175C8_C630[] __asm__("D_005175C8");
-extern struct G_C630 D_00515B40_C630 __asm__("D_00515B40");
 extern int D_0044E870_C630[] __asm__("D_0044E870");
 extern int D_0044E898;
 extern int D_00515D54;
@@ -13436,9 +13428,9 @@ void func_003CC630(int a0, unsigned char *data) {
     func_003CC848();
     D_0044E898 = 1;
     func_003C51E8(&D_005175C0_C630, data, 0x38);
-    n = D_00515B40_C630.n - 1;
+    n = D_00515B40.f05 - 1;
     if (func_003C72F8_C630(&D_005175C0_C630.cnt[n], 4) != 0) {
-        D_00515D58 = D_00515B40_C630.n;
+        D_00515D58 = D_00515B40.f05;
     } else {
         while (func_003C72F8_C630(&D_005175C8_C630[n], 4) == 0) {
             n--;
@@ -13460,8 +13452,8 @@ void func_003CC630(int a0, unsigned char *data) {
     }
     D_005175FC = p;
     func_003CC070_C630(a0, data);
-    D_00515B40_C630.f10 = func_003CBC58;
-    D_00515B40_C630.fF = 1;
+    D_00515B40.f10 = func_003CBC58;
+    D_00515B40.f0F[0] = 1;
 }
 #endif
 
