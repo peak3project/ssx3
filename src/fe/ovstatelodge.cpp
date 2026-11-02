@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovstatelodge", cFEStateMountainRoom_cFEStateMountainRoom);
 #ifdef SKIP_ASM
@@ -100,11 +108,6 @@ extern "C" void* cFEStateMountainRoom_cFEStateMountainRoom(void* self, void* ui,
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D28F8);
 #ifdef SKIP_ASM
-struct sVEntry001D28F8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern void* D_00469858[];
 extern void* D_0046D0D0[];
@@ -124,7 +127,7 @@ extern "C" void func_001D28F8(void* self, int flags)
     int id = *(int*)((char*)self + 0xC4);
     if (id >= 0) {
         char* g = (char*)D_004A289C;
-        sVEntry001D28F8* vt = *(sVEntry001D28F8**)(g + 0x10D8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(g + 0x10D8);
         vt[50].fn(g + vt[50].delta, id);
     }
     *(void***)((char*)self + 8) = D_0046D0D0;
@@ -233,11 +236,10 @@ extern char D_004A1F30[];
 extern char D_004A1F38[];
 extern char D_00460488[];
 
-struct sWVEnt_2AD0 { short delta; short index; void (*fn)(void*, int); };
 
 struct sWidget_2AD0 {
     char pad0[8];
-    sWVEnt_2AD0* vt;    // 0x08
+    sVEntry<void(void*, int)>* vt;    // 0x08
     char padC[0x18 - 0xC];
     int index;          // 0x18
     char pad1C[0x38 - 0x1C];
@@ -396,8 +398,6 @@ extern "C" void cFEStateMountainRoom_onWidgetCreate(void* self, sWidget_2AD0* w)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D2EA0);
 #ifdef SKIP_ASM
-struct sVEi1D2EA0 { short delta; short index; int (*fn)(void*); };
-struct sVEv1D2EA0 { short delta; short index; void (*fn)(void*, int); };
 extern char D_004A5A58;
 
 static inline int IsShown1D2EA0(char* self)
@@ -410,16 +410,16 @@ static inline int IsShown1D2EA0(char* self)
 extern "C" int func_001D2EA0(char* self, char* widget)
 {
     if (IsShown1D2EA0(self)) {
-    sVEi1D2EA0* wvt = *(sVEi1D2EA0**)(widget + 8);
+    sVEntry<int(void*)>* wvt = *(sVEntry<int(void*)>**)(widget + 8);
     if (wvt[6].fn(widget + wvt[6].delta)) {
         char* snd = *(char**)(*(char**)(self + 0x10) + 0x14);
         if (snd == 0) {
             snd = &D_004A5A58;
         }
-        sVEv1D2EA0* svt = *(sVEv1D2EA0**)snd;
+        sVEntry<void(void*, int)>* svt = *(sVEntry<void(void*, int)>**)snd;
         svt[2].fn(snd + svt[2].delta, 3);
         char* w = *(char**)(self + 0x48);
-        sVEv1D2EA0* vt = *(sVEv1D2EA0**)(w + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(w + 8);
         vt[9].fn(w + vt[9].delta, 0);
     }
     return 1;
@@ -459,26 +459,16 @@ extern char D_00467460[];
 extern char D_00467478[];
 extern char D_00467490[];
 
-struct sVE_MR {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 struct sFactory_MR {
     int pad0;
-    sVE_MR* vt;
+    sVEntry<void*(void*, void*, int)>* vt;
 };
 
-struct sTVE_MR {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sText_MR {
     int pad[2];
-    sTVE_MR* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 
 // Widget events of the mountain-room menu: opens sub-screens and updates the description text.
@@ -584,11 +574,6 @@ extern "C" void* func_0019E2B0(void* mgr, int bank, int i);
 extern "C" void func_001D32E0(void* self);
 extern char D_004A1F40[];
 
-struct sVE_31C0 {
-    short delta;
-    short index;
-    int (*fn)(void*, void*, void*, int, int, int);
-};
 
 struct sWidget_31C0 {
     char pad0[0x14];
@@ -613,7 +598,7 @@ extern "C" void func_001D31C0(void* p)
     }
     char* e = (char*)func_0019E2B0(mgr, *(int*)(self + 0xB0), *(int*)(self + 0xBC));
     char* g = (char*)D_004A289C;
-    sVE_31C0* vt = *(sVE_31C0**)(g + 0x10D8);
+    sVEntry<int(void*, void*, void*, int, int, int)>* vt = *(sVEntry<int(void*, void*, void*, int, int, int)>**)(g + 0x10D8);
     int id = vt[46].fn(g + vt[46].delta, e + *(int*)(e + 0x14), D_004A1F40, 0, 1, -1);
     char* snd = *(char**)(self + 0x50);
     *(int*)(self + 0xC4) = id;
@@ -640,22 +625,17 @@ extern "C" void func_001D31C0(void* p)
 //100%
 INCLUDE_ASM("fe/ovstatelodge", func_001D32E0);
 #ifdef SKIP_ASM
-struct sVEntry_func_001D32E0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D32E0(void* self)
 {
     {
         void* obj = *(void**)((char*)self + 0x48);
-        sVEntry_func_001D32E0* vt = *(sVEntry_func_001D32E0**)((char*)obj + 0x8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 0x8);
         vt[9].fn((char*)obj + vt[9].delta, 1);
     }
     if (*(int*)((char*)self + 0xC4) >= 0) {
         void* obj = *(void**)((char*)self + 0x4C);
-        sVEntry_func_001D32E0* vt = *(sVEntry_func_001D32E0**)((char*)obj + 0x8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 0x8);
         vt[9].fn((char*)obj + vt[9].delta, 1);
     }
 }
@@ -758,11 +738,10 @@ extern char* D_00441588[];
 extern char* D_004415A0[];
 extern char* D_004415B8[];
 
-struct sWVEnt_38F8 { short delta; short index; void (*fn)(void*, int); };
 
 struct sWidget_38F8 {
     char pad0[8];
-    sWVEnt_38F8* vt;    // 0x08
+    sVEntry<void(void*, int)>* vt;    // 0x08
     char padC[0x18 - 0xC];
     int index;          // 0x18
     char pad1C[0x38 - 0x1C];
@@ -902,9 +881,7 @@ extern "C" void cFEStatePeakRoom_updateHelpText(void* self, int id);
 extern "C" void func_001D3F80(void* self, int id);
 extern "C" void func_0039F400(void* list, void* item);
 
-struct sVEntA_001D3C80 { short delta; short index; void* (*fn)(void*, void*, int); };
-struct sVEntB_001D3C80 { short delta; short index; void (*fn)(void*, int); };
-struct sItem_001D3C80 { int pad[2]; sVEntB_001D3C80* vt; };
+struct sItem_001D3C80 { int pad[2]; sVEntry<void(void*, int)>* vt; };
 
 extern "C" void func_001D3C80(void* self, void* item, unsigned int key)
 {
@@ -916,7 +893,7 @@ extern "C" void func_001D3C80(void* self, void* item, unsigned int key)
         if (func_00157BF0(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(signed char*)((char*)self + 0x44),
                           *(int*)((char*)self + 0xDC), *(int*)((char*)self + 0xE0), *(int*)((char*)item + 0x18)) != 0) {
             void* obj = **(void***)((char*)self + 0x10);
-            sVEntA_001D3C80* vt = *(sVEntA_001D3C80**)((char*)obj + 4);
+            sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
             void* r = vt[4].fn((char*)obj + vt[4].delta, self, (*(int*)((char*)self + 0xE0) << 16) | *(int*)((char*)item + 0x18));
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
         }
@@ -930,7 +907,7 @@ extern "C" void func_001D3C80(void* self, void* item, unsigned int key)
             }
         }
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntA_001D3C80* vt = *(sVEntA_001D3C80**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[5].fn((char*)obj + vt[5].delta, self, id);
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
@@ -1118,11 +1095,6 @@ int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 extern "C" void func_001D4918(void* self);
 extern void* D_004696B8[];
 
-struct sVE_4268 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 struct sTrophy_4268 {
     char pad_0x0[0x48];
@@ -1150,7 +1122,7 @@ extern "C" void* func_001D4268(void* self, int a1, int a2, int a3, int a4)
     s->f48 = 0;
     void* pi = cBE_getInterface_Fv(cBE_getBE(), 1);
     s->charID = cBENewPlayerInterface_getPlayerCharID(pi, *(signed char*)((char*)self + 0x44));
-    sVE_4268* vt = *(sVE_4268**)((char*)pi + 0xC);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)pi + 0xC);
     vt[2].fn((char*)pi + vt[2].delta);
     s->f54 = a3;
     s->bank = a4;
