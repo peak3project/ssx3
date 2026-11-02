@@ -311,7 +311,7 @@ extern struct sA8E8Heap *D_0050AB1C;    /* D_0050A8E8.f234 */
 /* D_0050AD00: the IOP sound side's state (RPC buffers, the shared voice block func_003C1638 lays out, the transfer
    queue, speaker gains, sound-RAM segments, the recursive lock). Layout from every use in this unit; field names are
    their offsets. */
-struct sAD00Voice { int key; unsigned int val; };
+struct sAD00Voice { int key; int val; };
 struct sAD00SpuVoice {              /* 8 bytes, sAD00Spu.f20[] */
     int key;
     short pitch;
@@ -7423,8 +7423,6 @@ void func_003C0A60(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C0B10);
 #ifdef SKIP_ASM
-struct S_0B10 { char pad[0xC80]; char buf[1]; };
-extern struct S_0B10 D_0050AD00_0B10 __asm__("D_0050AD00");
 extern void func_003C51E8(void *, void *, int);
 extern int func_00426F08(void *);
 extern void func_00426D18(void *, int, int, void *, int, int, int, int, int);
@@ -7433,13 +7431,13 @@ void func_003C0B10(int a0, void *a1, int a2) {
     volatile int i;
     int two = a0 == 2;
     if (a2) {
-        func_003C51E8(&D_0050AD00_0B10, a1, a2);
+        func_003C51E8(D_0050AD00.f000, a1, a2);
     }
-    while (func_00426F08(D_0050AD00_0B10.buf)) {
+    while (func_00426F08(D_0050AD00.fC80)) {
         for (i = 0; i < 10000; i++) {
         }
     }
-    func_00426D18(D_0050AD00_0B10.buf, a0, two, &D_0050AD00_0B10, a2, 0, 0, 0, 0);
+    func_00426D18(D_0050AD00.fC80, a0, two, D_0050AD00.f000, a2, 0, 0, 0, 0);
 }
 #endif
 
