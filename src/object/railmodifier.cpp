@@ -11,6 +11,12 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A rail transform: position and rotation quaternion.
+struct sRmXform {
+    t4Vector pos;    // 0x00
+    t4Vector quat;   // 0x10
+};
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -876,13 +882,9 @@ extern "C" void func_0035E248(void* self);
 
 extern "C" void* func_0035DDE8_DA70(void* self, void* a1, void* a2) __asm__("func_0035DDE8");
 
-struct sXf_DA70 {
-    t4Vector pos;
-    t4Vector quat;
-};
 
-extern "C" sXf_DA70 func_0031B748(void* m);
-extern "C" sXf_DA70 func_0035E770_DA70(void* self) __asm__("func_0035E770");
+extern "C" sRmXform func_0031B748(void* m);
+extern "C" sRmXform func_0035E770_DA70(void* self) __asm__("func_0035E770");
 
 struct sV4c_DA70 {
     float x, y, z, w;
@@ -1036,7 +1038,7 @@ extern "C" char* func_0035DA70(char* self, char* a1, char* a2, char* a3)
     ((sRmMat33*)(self + 0x280))->m[2][0] *= 0.5f;
     ((sRmMat33*)(self + 0x280))->m[2][1] *= 0.5f;
     ((sRmMat33*)(self + 0x280))->m[2][2] *= 0.5f;
-    sXf_DA70 x = func_0031B748(*(char**)(self + 0xD0) + 0x10);
+    sRmXform x = func_0031B748(*(char**)(self + 0xD0) + 0x10);
     {
         t4Vector r1;
         QuatRotTo_DA70(r1, x.quat, *(t4Vector*)(self + 0x2B0));
@@ -1047,8 +1049,8 @@ extern "C" char* func_0035DA70(char* self, char* a1, char* a2, char* a3)
         b = r2;
         AddTo_DA70(x.pos, b);
     }
-    *(sXf_DA70*)(self + 0x30) = x;
-    sXf_DA70 y = func_0035E770_DA70(self);
+    *(sRmXform*)(self + 0x30) = x;
+    sRmXform y = func_0035E770_DA70(self);
     QuatPosToMtx_DA70(self + 0x240, y.quat, y.pos);
     func_0035E248(self);
     func_0035D288((sRmBody*)(self + 0x30));
@@ -1218,10 +1220,6 @@ extern "C" void func_0035E248(void* vself)
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035E770);
 #ifdef SKIP_ASM
-struct sRmXform {
-    t4Vector pos;    // 0x00
-    t4Vector quat;   // 0x10
-};
 
 // PORT: PS2-only VU0 inline asm (dst = v * s).
 static inline void vu0ScaleToRM(t4Vector& dst, const t4Vector& v, float s)
