@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/fememcard", cFEStateMemCard_onCreateScreen);
 #ifdef SKIP_ASM
@@ -133,11 +141,6 @@ public:
 };
 extern cFEMemCardStateK186C98* D_004A14B8_K186C98 __asm__("D_004A14B8");
 
-struct sVtEntK186C98 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 struct sLocalK186C98 {
     int v[8];
@@ -150,7 +153,7 @@ extern "C" void func_00186C98(void)
     void* mp = func_00227F80(D_004A28A8);
     func_00241DC8(mp, &loc, *(int*)((char*)mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVtEntK186C98* vt = *(sVtEntK186C98**)(o + 4);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(o + 4);
     unsigned short* r = vt[4].fn(o + vt[4].delta, GetHashValue32(D_0045DC90));
     func_002C26D0(buf, r, &loc);
     cFEMemCardStateK186C98* st = D_004A14B8_K186C98;
@@ -174,11 +177,6 @@ extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ..
 // Typed view of D_004A14B8 (other functions in this unit declare it as void*).
 extern char* D_004A14B8_86D60 __asm__("D_004A14B8");
 
-struct sVtI_86D60 { short delta; short index; int (*fn)(void*, int); };
-struct sVtS_86D60 { short delta; short index; unsigned short* (*fn)(void*, int); };
-struct sVtB_86D60 { short delta; short index; void (*fn)(void*, void*, int, int, int, int, int); };
-struct sVtW_86D60 { short delta; short index; void (*fn)(void*, unsigned short*, int); };
-struct sVtV_86D60 { short delta; short index; void (*fn)(void*, int); };
 struct sLocal_86D60 { int v[8]; };
 
 extern "C" void func_00186D60(void)
@@ -189,25 +187,25 @@ extern "C" void func_00186D60(void)
     func_00241DC8(mp, &loc, *(int*)((char*)mp + 0x428));
     cBE_getInterface_Fv(cBE_getBE(), 5);
     char* o = *(char**)((char*)mp + 0x434);
-    sVtI_86D60* vt = *(sVtI_86D60**)o;
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)o;
     o += vt[22].delta;
     int need = vt[22].fn(o, func_00152BA8());
     unsigned short* b = buf;
     char* lo = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVtS_86D60* lvt = *(sVtS_86D60**)(lo + 4);
+    sVEntry<unsigned short*(void*, int)>* lvt = *(sVEntry<unsigned short*(void*, int)>**)(lo + 4);
     lo += lvt[4].delta;
     unsigned short* fmt = lvt[4].fn(lo, GetHashValue32(D_0045DCA8));
     func_002C26D0(b, fmt, &loc, need);
     char* st = D_004A14B8_86D60;
     *(int*)(st + 0x19C) = 9;
-    sVtB_86D60* svt = *(sVtB_86D60**)(st + 8);
+    sVEntry<void(void*, void*, int, int, int, int, int)>* svt = *(sVEntry<void(void*, void*, int, int, int, int, int)>**)(st + 8);
     svt[36].fn(st + svt[36].delta, b, 0, 0, 0, 0, 0);
 
     {
         char* w = *(char**)(D_004A14B8_86D60 + 0x218);
         char* lo2 = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVtW_86D60* wvt = *(sVtW_86D60**)(w + 8);
-        sVtS_86D60* lvt2 = *(sVtS_86D60**)(lo2 + 4);
+        sVEntry<void(void*, unsigned short*, int)>* wvt = *(sVEntry<void(void*, unsigned short*, int)>**)(w + 8);
+        sVEntry<unsigned short*(void*, int)>* lvt2 = *(sVEntry<unsigned short*(void*, int)>**)(lo2 + 4);
         w += wvt[26].delta;
         lo2 += lvt2[4].delta;
         wvt[26].fn(w, lvt2[4].fn(lo2, GetHashValue32(D_0045DCC8)), 0);
@@ -215,14 +213,14 @@ extern "C" void func_00186D60(void)
     {
         char* w = *(char**)(D_004A14B8_86D60 + 0x218);
         char* lo2 = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVtW_86D60* wvt = *(sVtW_86D60**)(w + 8);
-        sVtS_86D60* lvt2 = *(sVtS_86D60**)(lo2 + 4);
+        sVEntry<void(void*, unsigned short*, int)>* wvt = *(sVEntry<void(void*, unsigned short*, int)>**)(w + 8);
+        sVEntry<unsigned short*(void*, int)>* lvt2 = *(sVEntry<unsigned short*(void*, int)>**)(lo2 + 4);
         w += wvt[26].delta;
         lo2 += lvt2[4].delta;
         wvt[26].fn(w, lvt2[4].fn(lo2, GetHashValue32(D_0045DCD8)), 1);
     }
     char* w2 = *(char**)(D_004A14B8_86D60 + 0x218);
-    sVtV_86D60* vvt = *(sVtV_86D60**)(w2 + 8);
+    sVEntry<void(void*, int)>* vvt = *(sVEntry<void(void*, int)>**)(w2 + 8);
     vvt[25].fn(w2 + vvt[25].delta, 1);
 }
 #endif
@@ -264,10 +262,6 @@ extern void* D_004A28A8;
 extern char* D_004A14B8_86F90 __asm__("D_004A14B8");
 extern int D_004A14BC;
 
-struct sVtA_86F90 { short delta; short index; void (*fn)(void*, int, void*); };
-struct sVtI_86F90 { short delta; short index; int (*fn)(void*, int); };
-struct sVtV_86F90 { short delta; short index; void (*fn)(void*, int); };
-struct sVt0_86F90 { short delta; short index; int (*fn)(void*); };
 
 extern "C" void func_00186F90(void)
 {
@@ -276,7 +270,7 @@ extern "C" void func_00186F90(void)
             return;
         char* mp = (char*)func_00227F80(D_004A28A8);
         char* o = *(char**)(mp + 0x434);
-        sVtA_86F90* vt = *(sVtA_86F90**)o;
+        sVEntry<void(void*, int, void*)>* vt = *(sVEntry<void(void*, int, void*)>**)o;
         vt[14].fn(o + vt[14].delta, *(int*)(mp + 0xF8), D_004A14B8_86F90 + 0x9C);
         return;
     }
@@ -292,19 +286,19 @@ extern "C" void func_00186F90(void)
         if (flags & 1) {
             extra = 1;
             char* o = *(char**)(mp + 0x434);
-            sVtI_86F90* vt = *(sVtI_86F90**)o;
+            sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)o;
             char* thisp = o + vt[22].delta;
             int r = vt[22].fn(thisp, func_00152BA8());
             *(int*)(D_004A14B8_86F90 + 0x230) += r;
         }
         char* o;
         if (avail < *(int*)(D_004A14B8_86F90 + 0x230)
-            || ((o = *(char**)(mp + 0x434), (*(sVt0_86F90**)o)[25].fn(o + (*(sVt0_86F90**)o)[25].delta) != -1)
-                && (o = *(char**)(mp + 0x434), (*(sVt0_86F90**)o)[25].fn(o + (*(sVt0_86F90**)o)[25].delta) < extra)))
+            || ((o = *(char**)(mp + 0x434), (*(sVEntry<int(void*)>**)o)[25].fn(o + (*(sVEntry<int(void*)>**)o)[25].delta) != -1)
+                && (o = *(char**)(mp + 0x434), (*(sVEntry<int(void*)>**)o)[25].fn(o + (*(sVEntry<int(void*)>**)o)[25].delta) < extra)))
             fail = 1;
         if (fail) {
             *(int*)(D_004A14B8_86F90 + 0x234) = 1;
-            sVtV_86F90* vt = *(sVtV_86F90**)(mp + 0x748);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(mp + 0x748);
             vt[1].fn(mp + vt[1].delta, 0x17);
             return;
         }
@@ -516,29 +510,9 @@ extern "C" void* func_00227F80(void* p);
 extern "C" void func_00241DC8(void* mp, void* out, int a2);
 extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 
-struct sVtI_00187360 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
-struct sVtS_00187360 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
-struct sVtB_00187360 {
-    short delta;
-    short index;
-    void (*fn)(void*, int, int);
-};
 
-struct sVtV_00187360 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sLocal_00187360 {
     int v[8];
@@ -552,24 +526,24 @@ extern "C" void func_00187360(void)
     cBE_getInterface_Fv(cBE_getBE(), 5);
     *(int*)((char*)D_004A14B8 + 0x19C) = 0x14;
     char* sf = *(char**)((char*)mp + 0x434);
-    sVtI_00187360* sfvt = *(sVtI_00187360**)sf;
+    sVEntry<int(void*, int)>* sfvt = *(sVEntry<int(void*, int)>**)sf;
     int size = sfvt[22].fn(sf + sfvt[22].delta, func_00152BA8());
     func_00241DC8(mp, &loc, *(int*)((char*)mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVtS_00187360* vt = *(sVtS_00187360**)(o + 4);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(o + 4);
     unsigned short* fmt = vt[4].fn(o + vt[4].delta, GetHashValue32(D_0045DCE8));
     func_002C26D0(buf, fmt, &loc, size);
     D_004A14B8_K186C98->v36(buf, 0, 0, 0, 0, 0);
     char* box = *(char**)((char*)D_004A14B8 + 0x218);
-    sVtB_00187360* bvt = *(sVtB_00187360**)(box + 8);
+    sVEntry<void(void*, int, int)>* bvt = *(sVEntry<void(void*, int, int)>**)(box + 8);
     char* bthis = box + bvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVtI_00187360* vt2 = *(sVtI_00187360**)(o2 + 4);
+    sVEntry<int(void*, int)>* vt2 = *(sVEntry<int(void*, int)>**)(o2 + 4);
     char* o2this = o2 + vt2[4].delta;
     int id = vt2[4].fn(o2this, GetHashValue32(D_0045DCD8));
     bvt[26].fn(bthis, id, 1);
     char* box2 = *(char**)((char*)D_004A14B8 + 0x218);
-    sVtV_00187360* bvt2 = *(sVtV_00187360**)(box2 + 8);
+    sVEntry<void(void*, int)>* bvt2 = *(sVEntry<void(void*, int)>**)(box2 + 8);
     bvt2[25].fn(box2 + bvt2[25].delta, 1);
 }
 #endif
@@ -617,11 +591,6 @@ extern void* D_004A14B8;
 extern "C" void func_00241E18(void*, unsigned short*, int);
 extern "C" void func_003A0D00(void* self, unsigned short* str);
 
-struct sVtEntK1876A8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001876A8(void)
 {
@@ -634,10 +603,10 @@ extern "C" void func_001876A8(void)
         unsigned short buf[0x320];
         func_00241E18(mp, buf, 0x320);
         func_003A0D00(obj, buf);
-        sVtEntK1876A8* vt = *(sVtEntK1876A8**)((char*)obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 8);
         vt[9].fn((char*)obj + vt[9].delta, 1);
     } else {
-        sVtEntK1876A8* vt = *(sVtEntK1876A8**)((char*)obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 8);
         vt[9].fn((char*)obj + vt[9].delta, 0);
     }
 }
@@ -670,11 +639,6 @@ extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
 extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
 extern "C" void func_001D9308(void*, int);
 
-struct sVtEnt_001877B0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001877B0(void)
 {
@@ -694,7 +658,7 @@ extern "C" void func_001877B0(void)
     *(int*)((char*)mp + 0xF8) = t;
     *(int*)((char*)s1 + 0x1C4) = t;
     *(int*)((char*)s1 + 0x1BC) = 0;
-    sVtEnt_001877B0* vt = *(sVtEnt_001877B0**)((char*)mp + 0x748);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)mp + 0x748);
     vt[1].fn((char*)mp + vt[1].delta, 0x35);
     func_00241D40(mp, 1, name, 0x14);
     func_002C2540(fmt, D_004A14C8);
@@ -726,11 +690,6 @@ extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
 extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
 extern "C" void func_001D9308(void*, int);
 
-struct sVtEntK187920 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00187920(void)
 {
@@ -743,7 +702,7 @@ extern "C" void func_00187920(void)
     *(int*)((char*)s1 + 0x1C4) = 0;
     func_0023CAA0(mp, func_00152948_K187920());
     func_0023C8F0(mp, 2);
-    sVtEntK187920* vt = *(sVtEntK187920**)((char*)mp + 0x748);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)mp + 0x748);
     vt[1].fn((char*)mp + vt[1].delta, 0x35);
     void* st = D_004A14B8;
     *(int*)((char*)st + 0x1BC) = 2;
@@ -769,8 +728,6 @@ extern void* D_004A28A8;
 extern int D_004A14BC;
 extern int D_004A14B4;
 
-struct sVt0_87A38 { short delta; short index; int (*fn)(void*); };
-struct sVtV_87A38 { short delta; short index; void (*fn)(void*, int); };
 struct sMcFlags_87A38 { unsigned b0 : 1; unsigned b1 : 1; unsigned b2 : 1; unsigned rest : 29; };
 struct sMemCard_87A38 {
     char pad0[0x1BC];
@@ -784,13 +741,13 @@ struct sMemCard_87A38 {
 
 static inline int cardCall_87A38(char* o, int slot)
 {
-    sVt0_87A38* vt = *(sVt0_87A38**)o;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)o;
     return vt[slot].fn(o + vt[slot].delta);
 }
 
 static inline void mpNotify_87A38(char* mp, int msg)
 {
-    sVtV_87A38* vt = *(sVtV_87A38**)(mp + 0x748);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(mp + 0x748);
     vt[1].fn(mp + vt[1].delta, msg);
 }
 
