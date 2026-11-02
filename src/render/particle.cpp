@@ -136,6 +136,11 @@ struct sPtVec2 {
     float x, y;
 };
 
+// Four floats as an aligned array (indexed access; same bytes as t4Vector).
+struct sPtQuadF {
+    float v[4];
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2347,9 +2352,6 @@ extern "C" int func_00376578(void* self, int a1)
 //100%
 INCLUDE_ASM("render/particle", func_003765B8);
 #ifdef SKIP_ASM
-struct sPtQ65B8 {
-    float v[4];
-} __attribute__((aligned(16)));
 
 
 struct sPtScis65B8 {
@@ -2362,19 +2364,19 @@ struct sPtView65B8 {
     float f24;                      // 0x24
     float f28;                      // 0x28
     float f2C;                      // 0x2C
-    sPtQ65B8 q30;                   // 0x30
-    sPtQ65B8 q40;                   // 0x40
-    sPtQ65B8 q50;                   // 0x50
+    sPtQuadF q30;                   // 0x30
+    sPtQuadF q40;                   // 0x40
+    sPtQuadF q50;                   // 0x50
     sPtMatrix m60;                 // 0x60
     sPtMatrix mA0;                 // 0xA0
     sPtMatrix mE0;                 // 0xE0
     sPtMatrix m120;                // 0x120
-    sPtQ65B8 q160;                  // 0x160
-    sPtQ65B8 q170;                  // 0x170
+    sPtQuadF q160;                  // 0x160
+    sPtQuadF q170;                  // 0x170
     sPtMatrix m180;                // 0x180
     sPtMatrix m1C0;                // 0x1C0
-    sPtQ65B8 q200;                  // 0x200
-    sPtQ65B8 q210;                  // 0x210
+    sPtQuadF q200;                  // 0x200
+    sPtQuadF q210;                  // 0x210
     sPtScis65B8 scissor;            // 0x220
     int key;                        // 0x228
     int pad_0x22C;
@@ -2389,23 +2391,23 @@ struct sPtGfx65B8 {
     sPtMatrix m5780;               // 0x5780
     sPtMatrix m57C0;               // 0x57C0
     sPtMatrix m5800;               // 0x5800
-    sPtQ65B8 q5840;                 // 0x5840
-    sPtQ65B8 q5850;                 // 0x5850
+    sPtQuadF q5840;                 // 0x5840
+    sPtQuadF q5850;                 // 0x5850
     sPtMatrix m5860;               // 0x5860
     sPtMatrix m58A0;               // 0x58A0
-    sPtQ65B8 q58E0;                 // 0x58E0
-    sPtQ65B8 q58F0;                 // 0x58F0
+    sPtQuadF q58E0;                 // 0x58E0
+    sPtQuadF q58F0;                 // 0x58F0
     sPtScis65B8 scissor;            // 0x5900
     float f5908;                    // 0x5908
     float f590C;                    // 0x590C
     float f5910;                    // 0x5910
     char pad_0x5914[0xC];
-    sPtQ65B8 q5920;                 // 0x5920
+    sPtQuadF q5920;                 // 0x5920
     char pad_0x5930[0x6AF0 - 0x5930];
     sPtMatrix m6AF0;               // 0x6AF0
     char pad_0x6B30[0x40];
-    sPtQ65B8 q6B70;                 // 0x6B70
-    sPtQ65B8 q6B80;                 // 0x6B80
+    sPtQuadF q6B70;                 // 0x6B70
+    sPtQuadF q6B80;                 // 0x6B80
     char pad_0x6B90[0x6D20 - 0x6B90];
     sPtView65B8 views[1];           // 0x6D20
 };
@@ -2458,9 +2460,6 @@ extern "C" void func_003765B8(sPtGfx65B8* self)
 //100%
 INCLUDE_ASM("render/particle", func_00376768);
 #ifdef SKIP_ASM
-struct sPtQ6768 {
-    float v[4];
-} __attribute__((aligned(16)));
 
 
 struct sPtScis6768 {
@@ -2473,19 +2472,19 @@ struct sPtView6768 {
     float f24;                      // 0x24
     float f28;                      // 0x28
     float f2C;                      // 0x2C
-    sPtQ6768 q30;                   // 0x30
-    sPtQ6768 q40;                   // 0x40
-    sPtQ6768 q50;                   // 0x50
+    sPtQuadF q30;                   // 0x30
+    sPtQuadF q40;                   // 0x40
+    sPtQuadF q50;                   // 0x50
     sPtMatrix m60;                 // 0x60
     sPtMatrix mA0;                 // 0xA0
     sPtMatrix mE0;                 // 0xE0
     sPtMatrix m120;                // 0x120
-    sPtQ6768 q160;                  // 0x160
-    sPtQ6768 q170;                  // 0x170
+    sPtQuadF q160;                  // 0x160
+    sPtQuadF q170;                  // 0x170
     sPtMatrix m180;                // 0x180
     sPtMatrix m1C0;                // 0x1C0
-    sPtQ6768 q200;                  // 0x200
-    sPtQ6768 q210;                  // 0x210
+    sPtQuadF q200;                  // 0x200
+    sPtQuadF q210;                  // 0x210
     sPtScis6768 scissor;            // 0x220
     int key;                        // 0x228
     int pad_0x22C;
@@ -2500,23 +2499,23 @@ struct sPtGfx6768 {
     sPtMatrix m5780;               // 0x5780
     sPtMatrix m57C0;               // 0x57C0
     sPtMatrix m5800;               // 0x5800
-    sPtQ6768 q5840;                 // 0x5840
-    sPtQ6768 q5850;                 // 0x5850
+    sPtQuadF q5840;                 // 0x5840
+    sPtQuadF q5850;                 // 0x5850
     sPtMatrix m5860;               // 0x5860
     sPtMatrix m58A0;               // 0x58A0
-    sPtQ6768 q58E0;                 // 0x58E0
-    sPtQ6768 q58F0;                 // 0x58F0
+    sPtQuadF q58E0;                 // 0x58E0
+    sPtQuadF q58F0;                 // 0x58F0
     sPtScis6768 scissor;            // 0x5900
     float f5908;                    // 0x5908
     float f590C;                    // 0x590C
     float f5910;                    // 0x5910
     char pad_0x5914[0xC];
-    sPtQ6768 q5920;                 // 0x5920
+    sPtQuadF q5920;                 // 0x5920
     char pad_0x5930[0x6AF0 - 0x5930];
     sPtMatrix m6AF0;               // 0x6AF0
     char pad_0x6B30[0x40];
-    sPtQ6768 q6B70;                 // 0x6B70
-    sPtQ6768 q6B80;                 // 0x6B80
+    sPtQuadF q6B70;                 // 0x6B70
+    sPtQuadF q6B80;                 // 0x6B80
     int i6B90;                      // 0x6B90
     char pad_0x6B94[0x6D20 - 0x6B94];
     sPtView6768 views[1];           // 0x6D20
