@@ -2522,14 +2522,15 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003DB040);
 #ifdef SKIP_ASM
 
 
-struct Ev_B040 {
+/* A 3-byte sequence event, widened. */
+struct sEvent {
     int a;
     int b;
     int type;
 };
 
 void func_003DB040(unsigned char *ctx, unsigned char *data, int idx, int *tbl) {
-    struct Ev_B040 ev;
+    struct sEvent ev;
     int time;
     int count;
     int i;
@@ -2591,10 +2592,9 @@ void func_003DB040(unsigned char *ctx, unsigned char *data, int idx, int *tbl) {
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB208);
 #ifdef SKIP_ASM
 struct B_B208 { unsigned char a, b, c; };
-struct T_B208 { int a, b, c; };
 
 int func_003DB208(unsigned char *a0, struct sSeqHdr *h, int *vals, unsigned char *negmask) {
-    struct T_B208 t;
+    struct sEvent t;
     int out;
     int res = 0;
     unsigned char neg = 0;
@@ -2616,7 +2616,7 @@ int func_003DB208(unsigned char *a0, struct sSeqHdr *h, int *vals, unsigned char
             bit = 0;
             t.a = tbl[j].a;
             t.b = tbl[j].b;
-            t.c = tbl[j].c;
+            t.type = tbl[j].c;
             if (k == 20) {
                 if (t.b != 0) continue;
                 v = 0;
