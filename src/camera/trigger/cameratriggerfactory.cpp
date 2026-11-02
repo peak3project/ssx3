@@ -75,6 +75,19 @@ struct sCamInfo {
     int f64;                    // 0x64
 };
 
+// A camera algorithm (cCameraAlgorithm, camera/camera): the vptr follows the base's own data at 0x10; slots by
+// position.
+class cCameraAlgorithm {
+public:
+    char pad_0x00[0xC];
+    int type;                   // 0xC
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+};
+
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", get_camaction);
 #ifdef SKIP_ASM
@@ -2945,17 +2958,8 @@ public:
     virtual void v06();
     virtual int v07();
 };
-class cCamCtrlK8940 {
-public:
-    char pad_0x00[0x10];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
 
-extern "C" void func_00176CE0(cCamCtrlK8940* self, int id)
+extern "C" void func_00176CE0(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
@@ -3070,7 +3074,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00176FE0);
 #ifdef SKIP_ASM
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
-extern "C" void func_00176FE0(cCamCtrlK8940* self, int id)
+extern "C" void func_00176FE0(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
@@ -3185,7 +3189,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_001772E0);
 #ifdef SKIP_ASM
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
-extern "C" void func_001772E0(cCamCtrlK8940* self, int id)
+extern "C" void func_001772E0(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
@@ -3293,7 +3297,7 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_00177588);
 #ifdef SKIP_ASM
 extern "C" void func_00166C60(void* self, int id);
 extern "C" void func_00166550(void* self, float a, float b);
-extern "C" void func_00177588(cCamCtrlK8940* self, int id)
+extern "C" void func_00177588(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTargetK8940*)(rider + 0x6C0))->v07()) {
@@ -4007,15 +4011,6 @@ public:
     virtual void v06();
     virtual long v07();
 };
-class cCamCtrl_1783E0 {
-public:
-    char pad_0x00[0x10];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
 
 // PORT: PS2-only VU0 inline asm (a + b).
 static inline t4Vector Add_1783E0(const t4Vector& a, const t4Vector& b)
@@ -4049,7 +4044,7 @@ static inline t4Vector ScaleP_1783E0(const t4Vector* v, float s)
     return r;
 }
 
-extern "C" void func_001783E0(cCamCtrl_1783E0* self, long id)
+extern "C" void func_001783E0(cCameraAlgorithm* self, long id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTarget_1783E0*)(rider + 0x6C0))->v07()) {
@@ -4397,17 +4392,8 @@ public:
     virtual void v06();
     virtual int v07();
 };
-class cCamCtrl_00178938 {
-public:
-    char pad_0x00[0x10];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-};
 
-extern "C" void func_00178938(cCamCtrl_00178938* self, int id)
+extern "C" void func_00178938(cCameraAlgorithm* self, int id)
 {
     char* rider = *(char**)(*(char**)((char*)self + 0x30) + 4);
     if (id == ((cCamTarget_00178938*)(rider + 0x6C0))->v07()) {
