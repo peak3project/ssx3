@@ -72,6 +72,13 @@ struct cVec4 {
     cVec4(float a, float b, float c, float e) { x = a; y = b; z = c; w = e; }
 };
 
+// The online session (GetSession): a pointer vector at 0xBC.
+struct sSession {
+    char pad[0xBC];
+    void** mBegin;
+    void** mEnd;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -1280,13 +1287,7 @@ extern "C" int func_001A5800(sOwner1A5800* self, char** name);
 extern void* D_004A3328;
 extern void* D_004A3028;
 
-struct sSession1A52B0 {
-    char pad[0xBC];
-    void** mBegin;
-    void** mEnd;
-};
-
-static inline int Count1A52B0(sSession1A52B0* s) { return s->mEnd - s->mBegin; }
+static inline int Count1A52B0(sSession* s) { return s->mEnd - s->mBegin; }
 
 static inline void* GetSession_001A52B0()
 {
@@ -1305,7 +1306,7 @@ static inline void* GetSession_001A52B0()
 extern "C" void func_001A52B0(void* self)
 {
     void* name;
-    if ((Count1A52B0((sSession1A52B0*)GetSession_001A52B0()) != 0 && (name = func_00263308(GetSession_001A52B0(), 0)) != 0)
+    if ((Count1A52B0((sSession*)GetSession_001A52B0()) != 0 && (name = func_00263308(GetSession_001A52B0(), 0)) != 0)
         || (func_00262938(GetSession_001A52B0()) > 0 && (name = func_00263630(GetSession_001A52B0(), 0)) != 0)) {
         sBXString s;
         cBXString_cBXString1(&s, name);
@@ -1931,13 +1932,7 @@ extern char D_00461570[];
 extern char D_00461840[];
 extern char D_00461858[];
 
-struct sSession1A6CA0 {
-    char pad[0xBC];
-    void** mBegin;
-    void** mEnd;
-};
-
-static inline int Count1A6CA0(sSession1A6CA0* s) { return s->mEnd - s->mBegin; }
+static inline int Count1A6CA0(sSession* s) { return s->mEnd - s->mBegin; }
 
 static inline void* GetSession_001A6CA0()
 {
@@ -1974,7 +1969,7 @@ extern "C" void func_001A6CA0(void* self)
         if (!has) {
             a->setVisible(0);
             b->setVisible(0);
-        } else if (Count1A6CA0((sSession1A6CA0*)GetSession_001A6CA0()) != 0) {
+        } else if (Count1A6CA0((sSession*)GetSession_001A6CA0()) != 0) {
             a->setVisible(has);
             b->setVisible(0);
         } else {
@@ -4161,13 +4156,7 @@ extern char D_00462650[];
 extern char D_004A12C0[];
 extern char D_004A1390[];
 
-struct sSession1AAB68 {
-    char pad[0xBC];
-    void** mBegin;
-    void** mEnd;
-};
-
-static inline int Count1AAB68(sSession1AAB68* s) { return s->mEnd - s->mBegin; }
+static inline int Count1AAB68(sSession* s) { return s->mEnd - s->mBegin; }
 
 static inline void* GetSession_001AAB68()
 {
@@ -4215,7 +4204,7 @@ extern "C" void func_001AAB68(void* self)
             ((sSelf1AAB68*)self)->t50 = now;
         }
     }
-    int has = Count1AAB68((sSession1AAB68*)GetSession_001AAB68()) != 0;
+    int has = Count1AAB68((sSession*)GetSession_001AAB68()) != 0;
     if (((sSelf1AAB68*)self)->t54 != 0) {
         if (!has) {
             ((sSelf1AAB68*)self)->t54 = 0;
