@@ -4100,7 +4100,7 @@ INCLUDE_ASM("fe/fepopup", cKeyboardPopup_getObjName);
 struct sName8_1CD0E8 { char s[8]; };
 struct sName10_1CD0E8 { char s[10]; };
 extern char D_004A1368[];
-extern sName10_1CD0E8 D_0045D550_1CD0E8 __asm__("D_0045D550");
+extern sName10_1CD0E8 D_0045D550;
 extern char D_004A12A8[];
 extern char D_004A1C80[];
 extern char D_004A1C88[];
@@ -4122,7 +4122,7 @@ extern "C" int cKeyboardPopup_getObjName(void* self, int key, char* out, int shi
     if (shifted != 0) {
         *(sName8_1CD0E8*)out = *(sName8_1CD0E8*)D_004A1368;
     } else {
-        *(sName10_1CD0E8*)out = D_0045D550_1CD0E8;
+        *(sName10_1CD0E8*)out = D_0045D550;
     }
     switch (key) {
     case 27: func_004162D0(out, D_004A12A8); break;
