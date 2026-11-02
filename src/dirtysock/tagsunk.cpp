@@ -6705,7 +6705,269 @@ extern "C" void func_00264138(void* self_, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002642B8);
+#ifdef SKIP_ASM
+extern char D_00480488[];
+extern char D_004804A8[];
+extern void* D_004812B0[];
+extern void* D_004A3028;
+extern void* D_004A3328;
+extern void* D_004A28A8;
+extern "C" void func_00264A58(void* self);
+extern "C" void func_00264B20(void* p);
+extern "C" int func_00264BE8(void* self, void* msg, int size);
+int func_002649B0_42B8(void* self, void* dst, int size) __asm__("func_002649B0");
+extern "C" void func_00264F88(void* self, int a1);
+struct sName7_00264D80;
+extern "C" void func_00265190(void* self, int rider, sName7_00264D80* name);
+extern "C" void func_00265290(void* self, int rider);
+extern "C" void func_00265398(int* self);
+extern "C" void func_00269008(void* self, int a1, int a2);
+extern "C" void func_002690C8(void* self, int a1, int a2);
+extern "C" void func_00269188(void* self, int a1);
+extern "C" void func_00269240(void* self, int a1, int a2, void* a3);
+extern "C" void func_00269300(void* self, int a1, int a2);
+extern "C" void func_002693C0(void* self, int a1);
+extern "C" void func_00269478(void* self, int a1);
+extern "C" void func_00269538(void* self, int a1, int a2);
+extern "C" void func_00269608(void* self);
+extern "C" void func_002696F8(void* self);
+extern "C" void func_002697D0(void* self, int a1);
+extern "C" void func_00269890(void* self, int a1);
+extern "C" void func_00269948(void* self, int a1, int a2);
+extern "C" void func_00269A18(void* self, int a1, int a2);
+extern "C" void func_00269AE0(void* self, int a1);
+extern "C" void func_00269B90(void* self, int a1);
+extern "C" void func_00269C40(void* self, int a1);
+extern "C" void func_00269CF0(void* self, int a1);
+extern "C" void func_00260F80(void);
+extern "C" int func_00261460(void* p);
+extern "C" void func_002613C8(void* p);
+extern "C" void func_0025B800(void* self);
+extern "C" int func_00263128(char* self, char* name);
+extern "C" void func_00263018(void* self, void* name);
+extern "C" void func_0025F740(void* self, int type);
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+
+struct sMsgListNode42B8 {
+    sMsgListNode42B8* next;
+    sMsgListNode42B8* prev;
+    void* data;
+};
+
+struct sMsgListIter42B8 {
+    sMsgListNode42B8* node;
+    sMsgListIter42B8(sMsgListNode42B8* x) : node(x) {}
+    sMsgListIter42B8(const sMsgListIter42B8& x) : node(x.node) {}
+};
+
+static inline sMsgListIter42B8 sMsgList42B8_insert(sMsgListIter42B8 pos, void* const& x)
+{
+    sMsgListNode42B8* tmp = (sMsgListNode42B8*)operator new(0xC, D_004804A8, 0x20000000, 0);
+    void** data = &tmp->data;
+    if (data != 0)
+        *data = x;
+    tmp->next = pos.node;
+    tmp->prev = pos.node->prev;
+    pos.node->prev->next = tmp;
+    pos.node->prev = tmp;
+    return tmp;
+}
+
+static inline void postMsg_42B8(char* g, int type)
+{
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    void* mp = m;
+    sMsgList42B8_insert(*(sMsgListNode42B8**)(g + 0xF0), mp);
+}
+
+static inline void* Mgr_42B8()
+{
+    if (D_004A3328 == 0)
+        func_00260F80();
+    if (func_00261460(D_004A3328) == 0)
+        func_002613C8(D_004A3328);
+    if (D_004A3328 == 0)
+        func_0025B800(D_004A3028);
+    return D_004A3328;
+}
+
+struct sTagMsg42B8 {
+    unsigned int type;  // 0x0
+    int a;              // 0x4
+    int b;              // 0x8
+    int name[2];        // 0xC
+};
+
+struct sTagSess42B8 {
+    int state;          // 0x0
+    char pad[0x120];
+    int f124;           // 0x124
+    int f128;           // 0x128
+};
+
+struct sPeer42B8 {
+    int id;
+    int rest[4];
+};
+
+extern "C" void func_002642B8(void* selfp)
+{
+    sTagSess42B8* self = (sTagSess42B8*)selfp;
+    sTagMsg42B8 msg;
+    func_00264A58(self);
+    func_00264B20(self);
+    int st = self->state;
+    if (st == 5 || st == 10) {
+        if (self->f128 != 0 || st == 10) {
+            if (self->f124 != 0) {
+                self->state = 0xC;
+                msg.type = 0xF;
+                msg.a = 0;
+                msg.b = 0;
+                func_00264BE8(self, &msg, 0x14);
+            }
+        } else {
+            self->state = 7;
+            char* g = (char*)D_004A3028;
+            postMsg_42B8(g, 0xF6);
+        }
+    }
+    if (func_002649B0_42B8(self, &msg, 0x14) == 0)
+        return;
+    if (msg.type == 0xF) {
+        if (self->f124 == 0) {
+            sTagMsg42B8 r;
+            self->state = 0xC;
+            r.type = 0xF;
+            r.a = 0;
+            r.b = 0;
+            func_00264BE8(self, &r, 0x14);
+        }
+        self->state = 0xD;
+        return;
+    }
+    if (msg.type == 0x10) {
+        sPeer42B8 peer;
+        peer.id = msg.a;
+        *(sPeer42B8*)((char*)D_004A3028 + 0xCC) = peer;
+        func_00264F88(self, cBENewPlayerInterface_getPlayerCharID(cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 1), 0));
+        return;
+    }
+    if (self->f124 != 0) {
+        if (self->state < 7) {
+            switch (msg.type) {
+            case 1:
+                func_00265190(self, msg.a, (sName7_00264D80*)msg.name);
+                break;
+            case 3:
+                func_00265290(self, msg.a);
+                break;
+            case 5:
+                func_00265398((int*)self);
+                break;
+            case 0xF8:
+            case 0xFA:
+                self->state = 0xB;
+                if (func_00263128((char*)Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98)) != 0)
+                    func_00263018(Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98));
+                func_0025F740(D_004A3028, msg.type);
+                break;
+            }
+        } else {
+            switch (msg.type) {
+            case 7:
+                func_00269478(self, msg.a);
+                break;
+            case 9:
+                func_00269538(self, msg.a, msg.b);
+                break;
+            case 0xB:
+                func_00269608(self);
+                break;
+            case 0xD:
+                func_002696F8(self);
+                break;
+            case 0xF8:
+            case 0xFA:
+                self->state = 0xB;
+                if (func_00263128((char*)Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98)) != 0)
+                    func_00263018(Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98));
+                func_0025F740(D_004A3028, msg.type);
+                break;
+            }
+        }
+    } else {
+        if (self->state < 7) {
+            switch (msg.type) {
+            case 1:
+                func_00269008(self, msg.a, msg.b);
+                break;
+            case 3:
+                func_002690C8(self, msg.a, msg.b);
+                break;
+            case 5:
+                func_00269188(self, msg.b);
+                break;
+            case 0:
+                func_00269240(self, msg.a, msg.b, msg.name);
+                break;
+            case 2:
+                func_00269300(self, msg.a, msg.b);
+                break;
+            case 4:
+                func_002693C0(self, msg.b);
+                break;
+            case 0xF8:
+            case 0xFA:
+                self->state = 0xB;
+                if (func_00263128((char*)Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98)) != 0)
+                    func_00263018(Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98));
+                func_0025F740(D_004A3028, msg.type);
+                break;
+            }
+        } else {
+            switch (msg.type) {
+            case 6:
+                func_002697D0(self, msg.a);
+                break;
+            case 7:
+                func_00269890(self, msg.a);
+                break;
+            case 8:
+                func_00269948(self, msg.a, msg.b);
+                break;
+            case 9:
+                func_00269A18(self, msg.a, msg.b);
+                break;
+            case 0xA:
+                func_00269AE0(self, msg.a);
+                break;
+            case 0xB:
+                func_00269B90(self, msg.a);
+                break;
+            case 0xC:
+                func_00269C40(self, msg.a);
+                break;
+            case 0xD:
+                func_00269CF0(self, msg.a);
+                break;
+            case 0xF8:
+            case 0xFA:
+                self->state = 0xB;
+                if (func_00263128((char*)Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98)) != 0)
+                    func_00263018(Mgr_42B8(), *(char**)((char*)D_004A3028 + 0x98));
+                func_0025F740(D_004A3028, msg.type);
+                break;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264960);
