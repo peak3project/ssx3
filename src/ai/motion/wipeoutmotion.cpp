@@ -426,7 +426,220 @@ extern "C" void func_00136F30(sWipeout_6F30* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00137138);
+#ifdef SKIP_ASM
+struct sHit_137138 {
+    t4Vector pos;       // 0x00
+    t4Vector normal;    // 0x10
+    t4Vector v20;       // 0x20
+    float pad30[7];     // 0x30
+    int material;       // 0x4C
+    char* obj;          // 0x50
+    char pad54[0x2C];   // 0x54
+} __attribute__((aligned(16)));
+
+struct sSphere_137138 {
+    int state;          // 0x00
+    int f4;             // 0x04
+    int f8;             // 0x08
+    int padC;           // 0x0C
+    t4Vector dir;       // 0x10
+    t4Vector v20;       // 0x20
+    t4Vector v30;       // 0x30
+    char rest[0x320 - 0x40];
+} __attribute__((aligned(16)));
+
+struct sVEntH_137138 { short delta; short index; void (*fn)(void*, void*, const t4Vector&); };
+
+struct sBody_137138 {
+    char pad0[0x130];
+    t4Vector pos;       // 0x130
+    t4Vector quat;      // 0x140
+    int active;         // 0x150
+};
+
+struct sSeg_137138 {
+    t4Vector a, b;
+    sSeg_137138() {}
+    sSeg_137138(const t4Vector& pa, const t4Vector& pb) : a(pa), b(pb) {}
+};
+
+struct sWipe_137138 {
+    char pad0[0x10];
+    t4Vector vel;       // 0x10
+    t4Vector angVel;    // 0x20
+    char pad30[0x10];
+    sBody_137138* body; // 0x40
+    void* tree;         // 0x44
+    char pad48[8];
+    sSeg_137138 seg;    // 0x50
+};
+
+extern "C" void* func_0032F650(void* self, void* tree, int flag);
+extern "C" void func_0032F708(void* self, int flags);
+extern "C" float func_003342D0(void* world, void* seg, void* hit, int flags);
+extern "C" void func_00137550(char* self);
+extern "C" float func_00336850_137138(void* self, void* q, void* out, int a3) __asm__("func_00336850");
+extern "C" void func_00329B40_137138(void* tree, const t4Vector* d) __asm__("func_00329B40");
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+float AIrandf(float lo, float hi);
+extern char* D_004A28A8;
+extern t4Vector D_004FF120_137138 __asm__("D_004FF120");
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_137138(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_137138(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector vu0Scale_137138(const t4Vector& v, const float& s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void vu0AddEq_137138(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (v *= s).
+static inline void vu0ScaleEq_137138(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(v), "=&r"(t)
+        : "m"(v), "f"(s));
+}
+
+struct sVec4c_137138 : t4Vector {
+    sVec4c_137138(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+};
+
+extern "C" void func_00137138(void* vself)
+{
+    sWipe_137138* self = (sWipe_137138*)vself;
+    if (self->body->active == 0)
+        return;
+    func_00137550((char*)self);
+    sHit_137138 hit;
+    sSphere_137138 sph;
+    func_0032F650(&sph, self->tree, 1);
+    sSeg_137138 seg(sph.v30, sph.v20);
+    self->seg = seg;
+    float d = func_00336850_137138(*(void**)(*(char**)(D_004A28A8 + 0x84) + 0x20), &sph, &hit, 0);
+    if (d < 0.0f) {
+        func_0032F708(&sph, 2);
+        return;
+    }
+    t4Vector push = vu0Scale_137138(vu0Scale_137138(hit.normal, 1.100000023841858f), d);
+    vu0AddEq_137138(self->body->pos, push);
+    func_00329B40_137138(self->tree, &push);
+    // The binary copies the segment back into the local before moving it (the copy is never read).
+    seg = self->seg;
+    vu0AddEq_137138(self->seg.a, push);
+    vu0AddEq_137138(self->seg.b, push);
+    float v = vu0Dot_137138(vu0Scale_137138(hit.normal, -1.0f), self->vel);
+    if (555.5555419921875f <= v || hit.normal.z < 0.800000011920929f) {
+        float k = v * 0.5f;
+        if (k < 27.77777862548828f)
+            k = 27.77777862548828f;
+        t4Vector impulse = vu0Scale_137138(hit.normal, v + k);
+        vu0AddEq_137138(self->vel, impulse);
+        if (hit.obj != 0) {
+            char* o = *(char**)(hit.obj + 0xC);
+            if (o != 0) {
+                sVEntH_137138* vt = *(sVEntH_137138**)(o + 0xC);
+                vt[43].fn(o + vt[43].delta, &hit,
+                          vu0Scale_137138(impulse, (float)*(int*)(D_004A28A8 + 0x10) * -0.05000000074505806f));
+            }
+        }
+        vu0ScaleEq_137138(self->angVel, 0.8500000238418579f);
+        if (vu0Length_137138(self->angVel) < 12.56637191772461f) {
+            float pitch = AIrandf(-1.5707963705062866f, 1.5707963705062866f);
+            float yaw = AIrandf(-3.1415927410125732f, 3.1415927410125732f);
+            float sp, cp, sy, cy;
+            func_0031BE50(&sp, &cp, pitch);
+            func_0031BE50(&sy, &cy, yaw);
+            float deg = AIrandf(45.0f, 180.0f);
+            vu0AddEq_137138(self->angVel,
+                            vu0Scale_137138(sVec4c_137138(cp * sy, cp * cy, sp, 0.0f), deg * 0.01745329424738884f));
+        }
+    } else {
+        if (hit.obj != 0) {
+            char* o = *(char**)(hit.obj + 0xC);
+            if (o != 0) {
+                sVEntH_137138* vt = *(sVEntH_137138**)(o + 0xC);
+                vt[43].fn(o + vt[43].delta, &hit,
+                          vu0Scale_137138(self->vel, (float)*(int*)(D_004A28A8 + 0x10) * 0.05000000074505806f));
+            }
+        }
+        self->vel = D_004FF120_137138;
+        self->angVel = D_004FF120_137138;
+    }
+    func_0032F708(&sph, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00137550);
