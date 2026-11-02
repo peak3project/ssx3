@@ -16951,8 +16951,6 @@ struct Q_3900 {
     unsigned long idx : 6;
     unsigned long hi : 10;
 };
-struct P_3900 { char pad[0x30]; unsigned int x30; char pad2[0x928 - 0x34]; };
-extern struct P_3900 D_00517610_3900[4] __asm__("D_00517610");
 extern int func_003D3C90(int, int);
 extern int f37A0_3900(int, int) __asm__("func_003D37A0");
 extern void f6210_3900(void *, int, int) __asm__("func_00416210");
@@ -16997,7 +16995,7 @@ int func_003D3900(int id, int start, int vel) {
                 ev.w0 = 0x1F000001;
                 q.b = 0;
                 f0B18_3900(&q, &ev);
-                func_003D1F80(D_00517610_3900[0].x30, fcopy_3900(&q));
+                func_003D1F80(D_00517610[0].f30, fcopy_3900(&q));
             }
             if ((e->w4 & 0xE0000) == 0x20000) {
                 vel = (D_0044F438 / 23) & 0x7F;
