@@ -3942,14 +3942,13 @@ void func_003E1798(int arg0) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E17D8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00450C38_17D8[] __asm__("D_00450C38");
 
 void func_003E17D8(int arg0) {
     int buf[8];
 
     buf[0] = arg0;
     buf[3] = 0;
-    FILESYS_atomic(func_003E1728, 0, D_00450C38_17D8[0], buf);
+    FILESYS_atomic(func_003E1728, 0, D_00450C38, buf);
 }
 #endif
 
