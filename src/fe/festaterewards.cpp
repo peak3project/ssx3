@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festaterewards", cFEStateRewardGalleryBase_onCreateScreen);
 #ifdef SKIP_ASM
@@ -44,16 +52,6 @@ INCLUDE_ASM("fe/festaterewards", func_001CF168);
 #ifdef SKIP_ASM
 struct sVec3_F168 { float x, y, z; };
 extern "C" void func_003A0290(void* thing, sVec3_F168* out);
-struct sVE_F168a {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-struct sVE_F168b {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001CF168(void* self)
 {
@@ -75,9 +73,9 @@ extern "C" void func_001CF168(void* self)
         if (*(int*)((char*)self + 0x8FC) == 0) {
             *(int*)((char*)self + 0x8FC) = *(int*)((char*)self + 0x924);
         }
-        sVE_F168a* vt = *(sVE_F168a**)((char*)self + 8);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)self + 8);
         vt[40].fn((char*)self + vt[40].delta);
-        sVE_F168b* vt2 = *(sVE_F168b**)((char*)self + 8);
+        sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)((char*)self + 8);
         vt2[33].fn((char*)self + vt2[33].delta, 0);
     }
 }
@@ -146,20 +144,10 @@ extern char D_004A1408[];
 extern char* D_00441440[][8];
 extern char* D_004414C0[][8];
 
-struct sVEi_F820 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-struct sVEv_F820 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 struct sWidget_F820 {
     char pad0[0x8];
-    sVEi_F820* vt;              // 0x8
+    sVEntry<void(void*, int)>* vt;              // 0x8
     char padC[0x18 - 0xC];
     int index;                  // 0x18
     char pad1C[0x38 - 0x1C];
@@ -171,7 +159,7 @@ struct sWidget_F820 {
 
 struct sGallery_F820 {
     char pad0[0x8];
-    sVEv_F820* vt;              // 0x8
+    sVEntry<void(void*)>* vt;              // 0x8
     char padC[0x10 - 0xC];
     char* ui;                   // 0x10
     char pad14[0x4C - 0x14];
@@ -341,11 +329,6 @@ extern "C" void cFEStateRewardGalleryBase_onWidgetCreate(sGallery_F820* self, sW
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001CFD18);
 #ifdef SKIP_ASM
-struct sVE_FD18 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001CFD18(void* self, void* widget, int msg)
 {
@@ -360,7 +343,7 @@ extern "C" void func_001CFD18(void* self, void* widget, int msg)
             *(int*)((char*)self + 0x1C) |= 8;
         }
         if (*(int*)((char*)widget + 0xC) == 7 && *(int*)((char*)widget + 0x6C) != 0) {
-            sVE_FD18* vt = *(sVE_FD18**)((char*)self + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)self + 8);
             vt[30].fn((char*)self + vt[30].delta,
                       *(int*)((char*)self + 0x64) * *(int*)((char*)self + 0x5C) + *(int*)(*(char**)((char*)self + 0x8FC) + 0x18));
         }
@@ -405,18 +388,13 @@ INCLUDE_ASM("fe/festaterewards", func_001CFE60);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
 extern "C" int func_0019DA10(void* self, int bank, int id, int a3, int a4, int a5);
-struct sVE_FE60 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" void func_001CFE60(void* self)
 {
     char* mgr = *(char**)((char*)D_004A28A8 + 0x7C) + 0x1A70;
-    sVE_FE60* vt = *(sVE_FE60**)((char*)self + 8);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)self + 8);
     if (vt[25].fn((char*)self + vt[25].delta) != 0) {
-        sVE_FE60* e = &(*(sVE_FE60**)((char*)self + 8))[25];
+        sVEntry<int(void*)>* e = &(*(sVEntry<int(void*)>**)((char*)self + 8))[25];
         *(int*)((char*)self + 0x8EC) = func_0019DA10(mgr, *(int*)((char*)self + 0x50), e->fn((char*)self + e->delta), 9, 1, 0);
         *(int*)((char*)self + 0x48) = (*(int*)((char*)self + 0x48) & ~8) | 4;
     } else {
@@ -435,16 +413,6 @@ struct sSelf001CFFF8;
 struct sData001CFFF8;
 extern "C" sData001CFFF8* func_0019E2B0(void* self, int bank, int i);
 extern "C" void func_001CFFF8(sSelf001CFFF8* self, sData001CFFF8* data);
-struct sVE_FF10 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-struct sVE_FF10i {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001CFF10(void* self)
 {
@@ -457,9 +425,9 @@ extern "C" void func_001CFF10(void* self)
             *(int*)((char*)self + 0x48) = (*(int*)((char*)self + 0x48) & ~4) | 8;
             if ((*(int*)((char*)self + 0x48) >> 1) & 1) {
                 *(int*)((char*)self + 0x8FC) = *(int*)((char*)self + 0x924);
-                sVE_FF10* e = &(*(sVE_FF10**)((char*)self + 8))[40];
+                sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)((char*)self + 8))[40];
                 e->fn((char*)self + e->delta);
-                sVE_FF10i* e2 = &(*(sVE_FF10i**)((char*)self + 8))[33];
+                sVEntry<void(void*, int)>* e2 = &(*(sVEntry<void(void*, int)>**)((char*)self + 8))[33];
                 e2->fn((char*)self + e2->delta, 0);
             }
         }
@@ -657,11 +625,6 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00156A38(void* iface);
 extern "C" void func_00156A10(void* iface);
-struct sVE_0180 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" void func_001D0180(void* self)
 {
@@ -671,7 +634,7 @@ extern "C" void func_001D0180(void* self)
         func_00156A10(iface);
     } else {
         *(int*)((char*)self + 0x48) = (*(int*)((char*)self + 0x48) & ~1) | 2;
-        sVE_0180* vt = *(sVE_0180**)((char*)self + 8);
+        sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)self + 8);
         vt[28].fn((char*)self + vt[28].delta);
         *(int*)((char*)self + 0x60) = (*(int*)((char*)self + 0x68) + *(int*)((char*)self + 0x5C) - 1) / *(int*)((char*)self + 0x5C);
     }
@@ -685,35 +648,20 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00156A38(void* iface);
-struct sVE_0238a {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sVE_0238b {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-struct sVE_0238c {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D0238(void* self)
 {
     if (((*(int*)((char*)self + 0x48) >> 1) & 1) == 0) {
         if (func_00156A38(cBE_getInterface_Fv(cBE_getBE(), 0xD)) != 0) {
             *(int*)((char*)self + 0x48) = (*(int*)((char*)self + 0x48) & ~1) | 2;
-            sVE_0238a* vt = *(sVE_0238a**)((char*)self + 8);
+            sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)self + 8);
             vt[28].fn((char*)self + vt[28].delta);
             *(int*)((char*)self + 0x60) = (*(int*)((char*)self + 0x68) + *(int*)((char*)self + 0x5C) - 1) / *(int*)((char*)self + 0x5C);
             if ((*(int*)((char*)self + 0x48) >> 3) & 1) {
                 *(int*)((char*)self + 0x8FC) = *(int*)((char*)self + 0x924);
-                sVE_0238b* vt2 = *(sVE_0238b**)((char*)self + 8);
+                sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)((char*)self + 8);
                 vt2[40].fn((char*)self + vt2[40].delta);
-                sVE_0238c* vt3 = *(sVE_0238c**)((char*)self + 8);
+                sVEntry<void(void*, int)>* vt3 = *(sVEntry<void(void*, int)>**)((char*)self + 8);
                 vt3[33].fn((char*)self + vt3[33].delta, 0);
             }
         }
@@ -729,28 +677,18 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00157F20(void* iface, int player, int a2, int a3, int a4, int a5);
 extern "C" int func_00150928(void* iface, int a1, int charID);
-struct sVE_0320a {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-struct sVE_0320b {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D0320(void* self, int a1)
 {
     func_00157F20(cBE_getInterface_Fv(cBE_getBE(), 0xD), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0x50), *(int*)((char*)self + 0x4C), a1, 1);
     *(int*)((char*)self + 0x54) = func_00150928(cBE_getInterface_Fv(cBE_getBE(), 0xB), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0x50));
-    sVE_0320a* vt = *(sVE_0320a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt[42].fn((char*)self + vt[42].delta);
-    sVE_0320b* vt2 = *(sVE_0320b**)((char*)self + 8);
+    sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)((char*)self + 8);
     vt2[33].fn((char*)self + vt2[33].delta, a1);
-    sVE_0320a* vt3 = *(sVE_0320a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt3 = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt3[43].fn((char*)self + vt3[43].delta);
-    sVE_0320a* vt4 = *(sVE_0320a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt4 = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt4[45].fn((char*)self + vt4[45].delta);
 }
 #endif
@@ -767,16 +705,11 @@ extern "C" void func_0039F290(void* stack, void* state);
 extern char D_00466F78[];
 extern char D_004601D8[];
 
-struct sVE_03F8 {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 
 extern "C" void cFEStateRewardGalleryBase_showReward(void* self)
 {
     void* p = 0;
-    sVE_03F8* vt = *(sVE_03F8**)((char*)self + 8);
+    sVEntry<void*(void*)>* vt = *(sVEntry<void*(void*)>**)((char*)self + 8);
     void* data = vt[34].fn((char*)self + vt[34].delta);
     switch (*(int*)((char*)self + 0x4C)) {
     case 3:
@@ -807,26 +740,16 @@ extern "C" void* func_001CABA8(void* self, void* engine, void* owner, signed cha
 extern "C" void func_001CAA18(void* self, int a1, int a2, int a3, int a4);
 extern "C" void func_0039F290(void* stack, void* state);
 extern char D_00460790[];
-struct sVE_0510a {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sVE_0510b {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 extern "C" void func_001D0510(void* self)
 {
-    sVE_0510a* vt = *(sVE_0510a**)((char*)self + 8);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)self + 8);
     int sel = vt[34].fn((char*)self + vt[34].delta);
     char* popup = (char*)func_001CABA8(cMemMan_alloc(0x70, D_00460790, 0, 0), *(void**)((char*)self + 0x10), self,
                                        *(signed char*)((char*)self + 0x44));
-    sVE_0510b* vt2 = *(sVE_0510b**)((char*)self + 8);
+    sVEntry<int(void*, int)>* vt2 = *(sVEntry<int(void*, int)>**)((char*)self + 8);
     int a = vt2[37].fn((char*)self + vt2[37].delta, sel);
-    sVE_0510b* vt3 = *(sVE_0510b**)((char*)self + 8);
+    sVEntry<int(void*, int)>* vt3 = *(sVEntry<int(void*, int)>**)((char*)self + 8);
     int b = vt3[35].fn((char*)self + vt3[35].delta, sel);
     func_001CAA18(popup + 0x48, *(int*)((char*)self + 0x4C), a, b, *(int*)((char*)self + 0x54));
     func_0039F290((char*)*(void**)((char*)self + 0x10) + 0x18, popup);
@@ -862,25 +785,10 @@ extern char D_00467010[];
 extern char D_00467028[];
 extern char D_00460958[];
 
-struct sVE_0648v {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-struct sVE_0648i {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-struct sVE_0648p {
-    short delta;
-    short index;
-    char* (*fn)(void*, int);
-};
 
 static inline void setVis_0648(char* o, int on)
 {
-    sVE_0648v* vt = *(sVE_0648v**)(o + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
     vt[9].fn(o + vt[9].delta, on);
 }
 
@@ -896,15 +804,15 @@ extern "C" void cFEStateRewardGalleryBase_updateHelpText(char* self, int idx)
     if (txt == 0)
         return;
     setVis_0648(txt, 0);
-    sVE_0648p* vtp = *(sVE_0648p**)(self + 8);
+    sVEntry<char*(void*, int)>* vtp = *(sVEntry<char*(void*, int)>**)(self + 8);
     char* item = vtp[34].fn(self + vtp[34].delta, idx);
     if (item == 0)
         return;
-    sVE_0648i* vti = *(sVE_0648i**)(self + 8);
+    sVEntry<int(void*, int)>* vti = *(sVEntry<int(void*, int)>**)(self + 8);
     int state = vti[36].fn(self + vti[36].delta, (int)item);
     setVis_0648(*(char**)(self + 0x900), 1);
     if (*(int*)(self + 0x4C) == 8) {
-        sVE_0648i* vt = *(sVE_0648i**)(self + 8);
+        sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)(self + 8);
         if (vt[38].fn(self + vt[38].delta, idx)) {
             setHelp_0648(self, D_00466F90);
         } else if (state < 0) {
@@ -920,7 +828,7 @@ extern "C" void cFEStateRewardGalleryBase_updateHelpText(char* self, int idx)
                     else
                         setHelp_0648(self, D_00466FE0);
                 } else {
-                    sVE_0648i* v2 = *(sVE_0648i**)(self + 8);
+                    sVEntry<int(void*, int)>* v2 = *(sVEntry<int(void*, int)>**)(self + 8);
                     if (*(int*)(self + 0x54) < v2[35].fn(self + v2[35].delta, (int)item))
                         setHelp_0648(self, D_00460958);
                     else
@@ -931,7 +839,7 @@ extern "C" void cFEStateRewardGalleryBase_updateHelpText(char* self, int idx)
             }
         }
     } else {
-        sVE_0648i* vt = *(sVE_0648i**)(self + 8);
+        sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)(self + 8);
         if (vt[38].fn(self + vt[38].delta, idx)) {
             setHelp_0648(self, D_00467028);
         } else {
@@ -945,7 +853,7 @@ extern "C" void cFEStateRewardGalleryBase_updateHelpText(char* self, int idx)
                     else
                         setHelp_0648(self, D_00466FE0);
                 } else {
-                    sVE_0648i* v2 = *(sVE_0648i**)(self + 8);
+                    sVEntry<int(void*, int)>* v2 = *(sVEntry<int(void*, int)>**)(self + 8);
                     if (*(int*)(self + 0x54) < v2[35].fn(self + v2[35].delta, (int)item))
                         setHelp_0648(self, D_00460958);
                     else
@@ -968,21 +876,6 @@ extern char D_00467040[];
 extern char D_00467050[];
 extern char D_004C6818[];
 
-struct sVEv_08A0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-struct sVEp_08A0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
-struct sVEi_08A0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 struct sGalCell_08A0 {
     char pad0[0x8];
@@ -994,7 +887,7 @@ struct sGalCell_08A0 {
 
 struct sGallery_08A0 {
     char pad0[0x8];
-    sVEi_08A0* vt;              // 0x8
+    sVEntry<int(void*, int)>* vt;              // 0x8
     char padC[0x10 - 0xC];
     char* ui;                   // 0x10
     char pad14[0x5C - 0x14];
@@ -1011,7 +904,7 @@ struct sGallery_08A0 {
 
 static inline void show_08A0(sGalCell_08A0* c, int on)
 {
-    sVEv_08A0* vt = (sVEv_08A0*)c->vt;
+    sVEntry<void(void*, int)>* vt = (sVEntry<void(void*, int)>*)c->vt;
     vt[9].fn((char*)c + vt[9].delta, on);
 }
 
@@ -1053,7 +946,7 @@ extern "C" void cFEStateRewardGalleryBase_updateRow(sGallery_08A0* self, int row
                 cell->reward = -1;
             }
             sGalCell_08A0* cell = self->cells[row][col];
-            sVEp_08A0* vt = (sVEp_08A0*)cell->vt;
+            sVEntry<void(void*, void*)>* vt = (sVEntry<void(void*, void*)>*)cell->vt;
             vt[11].fn((char*)cell + vt[11].delta, D_004C6818);
         } else {
             show_08A0(self->cells[row][col], 0);
@@ -1066,33 +959,23 @@ extern "C" void cFEStateRewardGalleryBase_updateRow(sGallery_08A0* self, int row
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D0B00);
 #ifdef SKIP_ASM
-struct sVE_0B00a {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-struct sVE_0B00b {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D0B00(void* self)
 {
     int i;
     for (i = 0; i < *(int*)((char*)self + 0x58); i++) {
-        sVE_0B00b* vt = *(sVE_0B00b**)((char*)self + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)self + 8);
         vt[39].fn((char*)self + vt[39].delta, i);
     }
-    sVE_0B00a* vt1 = *(sVE_0B00a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt1 = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt1[46].fn((char*)self + vt1[46].delta);
-    sVE_0B00a* vt2 = *(sVE_0B00a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt2 = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt2[45].fn((char*)self + vt2[45].delta);
-    sVE_0B00a* vt3 = *(sVE_0B00a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt3 = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt3[44].fn((char*)self + vt3[44].delta);
-    sVE_0B00a* vt4 = *(sVE_0B00a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt4 = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt4[41].fn((char*)self + vt4[41].delta);
-    sVE_0B00a* vt5 = *(sVE_0B00a**)((char*)self + 8);
+    sVEntry<void(void*)>* vt5 = *(sVEntry<void(void*)>**)((char*)self + 8);
     vt5[42].fn((char*)self + vt5[42].delta);
 }
 #endif
@@ -1111,16 +994,6 @@ extern char D_004A1EF8[];
 extern char D_004A1F00[];
 extern char D_004A1408[];
 
-struct sVEK1D0BC8a {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
-struct sVEK1D0BC8b {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void cFEStateRewardGalleryBase_updatePageNumber(void* self)
 {
@@ -1128,7 +1001,7 @@ extern "C" void cFEStateRewardGalleryBase_updatePageNumber(void* self)
         return;
     char* obj = *(char**)(*(char**)(*(char**)(*(char**)((char*)self + 0x40) + 0xD0) + 0x10) + 0x10);
     if (obj != 0) {
-        sVEK1D0BC8a* vt = *(sVEK1D0BC8a**)(obj + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(obj + 4);
         char* thisp = obj + vt[4].delta;
         unsigned short* fmt = vt[4].fn(thisp, GetHashValue32(D_00467060));
         if (fmt != 0) {
@@ -1139,12 +1012,12 @@ extern "C" void cFEStateRewardGalleryBase_updatePageNumber(void* self)
             func_003A0E90(*(void**)((char*)self + 0x904), buf);
             char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A1EF8));
             if (o != 0) {
-                sVEK1D0BC8b* vt2 = *(sVEK1D0BC8b**)(o + 8);
+                sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(o + 8);
                 vt2[9].fn(o + vt2[9].delta, pages > 1);
             }
             o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A1F00));
             if (o != 0) {
-                sVEK1D0BC8b* vt2 = *(sVEK1D0BC8b**)(o + 8);
+                sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(o + 8);
                 vt2[9].fn(o + vt2[9].delta, pages > 1);
             }
             return;
@@ -1164,26 +1037,6 @@ extern "C" const char* func_00198AF0(void* a0);
 extern "C" const char* func_00198AF0_i(int v) __asm__("func_00198AF0");
 extern char D_004A1408[];
 
-struct sVEK1D0D30a {
-    short delta;
-    short index;
-    void* (*fn)(void*, int);
-};
-struct sVEK1D0D30b {
-    short delta;
-    short index;
-    const char* (*fn)(void*, void*);
-};
-struct sVEK1D0D30c {
-    short delta;
-    short index;
-    int (*fn)(void*, void*);
-};
-struct sVEK1D0D30d {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 extern "C" void func_001D0D30(void* self)
 {
@@ -1196,17 +1049,17 @@ extern "C" void func_001D0D30(void* self)
         return;
     }
     int idx = *(int*)((char*)self + 0x64) * *(int*)((char*)self + 0x5C) + *(int*)(grid + 0x18);
-    sVEK1D0D30a* vt = *(sVEK1D0D30a**)((char*)self + 8);
+    sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)((char*)self + 8);
     void* item = vt[34].fn((char*)self + vt[34].delta, idx);
     if (*(cUIText**)((char*)self + 0x908) != 0) {
-        sVEK1D0D30b* vt2 = *(sVEK1D0D30b**)((char*)self + 8);
+        sVEntry<const char*(void*, void*)>* vt2 = *(sVEntry<const char*(void*, void*)>**)((char*)self + 8);
         cUIText_setAsciiString(*(cUIText**)((char*)self + 0x908), vt2[37].fn((char*)self + vt2[37].delta, item));
     }
     if (*(cUIText**)((char*)self + 0x90C) != 0) {
-        sVEK1D0D30c* vt3 = *(sVEK1D0D30c**)((char*)self + 8);
+        sVEntry<int(void*, void*)>* vt3 = *(sVEntry<int(void*, void*)>**)((char*)self + 8);
         int price = vt3[35].fn((char*)self + vt3[35].delta, item);
         if (price > 0) {
-            sVEK1D0D30d* vt4 = *(sVEK1D0D30d**)((char*)self + 8);
+            sVEntry<int(void*, int)>* vt4 = *(sVEntry<int(void*, int)>**)((char*)self + 8);
             if (vt4[38].fn((char*)self + vt4[38].delta, idx) == 0) {
                 cUIText_setAsciiString(*(cUIText**)((char*)self + 0x90C), func_00198AF0_i(price));
                 return;
@@ -1259,21 +1112,6 @@ INCLUDE_ASM("fe/festaterewards", func_001D0F30);
 #ifdef SKIP_ASM
 extern char D_004C6808[];
 
-struct sVEK1D0F30a {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-struct sVEK1D0F30b {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-struct sVEK1D0F30c {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 extern "C" void func_001D0F30(void* self)
 {
@@ -1288,10 +1126,10 @@ extern "C" void func_001D0F30(void* self)
             b.x = a.x + *(float*)((char*)self + 0x70);
             *(sVec3_F168*)(*(char**)((char*)self + 0x8F8) + 0x44) = b;
             char* o = *(char**)((char*)self + 0x8F8);
-            sVEK1D0F30a* vt = *(sVEK1D0F30a**)(o + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
             vt[9].fn(o + vt[9].delta, 1);
         } else {
-            sVEK1D0F30a* vt = *(sVEK1D0F30a**)(icon + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(icon + 8);
             vt[9].fn(icon + vt[9].delta, 0);
         }
     }
@@ -1299,12 +1137,12 @@ extern "C" void func_001D0F30(void* self)
     if (grid == 0)
         return;
     int idx = *(int*)((char*)self + 0x64) * *(int*)((char*)self + 0x5C) + *(int*)(grid + 0x18);
-    sVEK1D0F30b* vt = *(sVEK1D0F30b**)((char*)self + 8);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)((char*)self + 8);
     if (vt[38].fn((char*)self + vt[38].delta, idx) != 0) {
-        sVEK1D0F30b* vt2 = *(sVEK1D0F30b**)((char*)self + 8);
+        sVEntry<int(void*, int)>* vt2 = *(sVEntry<int(void*, int)>**)((char*)self + 8);
         int r = vt2[26].fn((char*)self + vt2[26].delta, idx);
         if (r < 0) {
-            sVEK1D0F30b* vt3 = *(sVEK1D0F30b**)((char*)self + 8);
+            sVEntry<int(void*, int)>* vt3 = *(sVEntry<int(void*, int)>**)((char*)self + 8);
             int t = vt3[27].fn((char*)self + vt3[27].delta, idx);
             char* g = *(char**)((char*)self + 0x8FC);
             *(int*)(g + 0x78) = -1;
@@ -1316,7 +1154,7 @@ extern "C" void func_001D0F30(void* self)
         }
     }
     char* g = *(char**)((char*)self + 0x8FC);
-    sVEK1D0F30c* vt4 = *(sVEK1D0F30c**)(g + 8);
+    sVEntry<void(void*, void*)>* vt4 = *(sVEntry<void(void*, void*)>**)(g + 8);
     vt4[11].fn(g + vt4[11].delta, D_004C6808);
 }
 #endif
@@ -1324,22 +1162,17 @@ extern "C" void func_001D0F30(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D10A8);
 #ifdef SKIP_ASM
-struct sVEntry001D10A8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D10A8(void* self)
 {
     void* obj = *(void**)((char*)self + 0x91C);
     if (obj != 0) {
-        sVEntry001D10A8* vt = *(sVEntry001D10A8**)((char*)obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 8);
         vt[9].fn((char*)obj + vt[9].delta, *(int*)((char*)self + 0x64) > 0);
     }
     void* obj2 = *(void**)((char*)self + 0x920);
     if (obj2 != 0) {
-        sVEntry001D10A8* vt = *(sVEntry001D10A8**)((char*)obj2 + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj2 + 8);
         vt[9].fn((char*)obj2 + vt[9].delta,
                  *(int*)((char*)self + 0x64) + *(int*)((char*)self + 0x58) < *(int*)((char*)self + 0x60));
     }
@@ -1900,11 +1733,6 @@ extern "C" void* func_001D1AA0(void* self, void* engine, void* owner, int player
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D1B68);
 #ifdef SKIP_ASM
-struct sVEntry001D1B68 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern void* D_004699F8[];
 extern void* D_0046D0D0[];
@@ -1919,7 +1747,7 @@ extern "C" void func_001D1B68(void* self, int flags)
     int id = *(int*)((char*)self + 0x70);
     if (id >= 0) {
         char* g = (char*)D_004A289C;
-        sVEntry001D1B68* vt = *(sVEntry001D1B68**)(g + 0x10D8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(g + 0x10D8);
         vt[50].fn(g + vt[50].delta, id);
     }
     int slot = *(int*)((char*)self + 0x6C);
@@ -1980,15 +1808,10 @@ extern char D_00467198[];
 extern char D_004671A8[];
 extern char D_004671C0[];
 
-struct sVE_1C98 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sWidget_1C98 {
     char pad_0x0[8];
-    sVE_1C98* vt;       // 0x8
+    sVEntry<void(void*, int)>* vt;       // 0x8
     char pad_0xC[0x38 - 0xC];
     int hash;           // 0x38
     char pad_0x3C[0x78 - 0x3C];
@@ -2150,25 +1973,15 @@ unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void* func_0039F190(void* self, int a1);
 extern char D_0045DC60[];
-struct sVE_1FF0a {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sVE_1FF0b {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 struct sDefObj_1FF0 {
-    sVE_1FF0b* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 // $gp-relative default object (target has raw `addiu $3,$28,0x2968`, no symbol)
 extern sDefObj_1FF0 D_004A5A58;
 
 extern "C" int func_001D1FF0(void* self, void* obj)
 {
-    sVE_1FF0a* vt = *(sVE_1FF0a**)((char*)obj + 8);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)obj + 8);
     if (vt[6].fn((char*)obj + vt[6].delta) != 0) {
     sDefObj_1FF0* p = *(sDefObj_1FF0**)(*(char**)((char*)self + 0x10) + 0x14);
     if (p == 0) {
@@ -2181,7 +1994,7 @@ extern "C" int func_001D1FF0(void* self, void* obj)
     for (i = 0; i < 3; i++) {
         char* o = ((char**)((char*)self + 0x48))[i];
         if (o != 0) {
-            sVE_1FF0b* vt2 = *(sVE_1FF0b**)(o + 8);
+            sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(o + 8);
             vt2[9].fn(o + vt2[9].delta, 0);
         }
     }
@@ -2249,11 +2062,6 @@ struct sSelfK1D2198 {
     int handle;     // 0x70
     int kind;       // 0x74
 };
-struct sVEK1D2198 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D2198(void* self)
 {
@@ -2282,7 +2090,7 @@ extern "C" void func_001D2198(void* self)
         *(int*)(o + 0x78) = s->handle;
         *(int*)(o + 0x7C) = 0;
         char* o2 = s->a54[s->kind];
-        sVEK1D2198* vt = *(sVEK1D2198**)(o2 + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o2 + 8);
         vt[9].fn(o2 + vt[9].delta, 1);
     }
 }
@@ -2410,15 +2218,10 @@ extern "C" void func_001D24A8(void* self)
 //100%
 INCLUDE_ASM("fe/festaterewards", func_001D2518);
 #ifdef SKIP_ASM
-struct sVEntry001D2518 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 static inline int vcall001D2518(void* obj, int slot)
 {
-    sVEntry001D2518* vt = *(sVEntry001D2518**)((char*)obj + 8);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)obj + 8);
     return vt[slot].fn((char*)obj + vt[slot].delta);
 }
 
