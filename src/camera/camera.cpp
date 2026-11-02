@@ -2698,21 +2698,21 @@ INCLUDE_ASM("camera/camera", func_00161BB8);
 extern "C" void func_00162060(cChaseCameraController* self, int mode, int arg, float blend);
 extern int D_004A2A50;
 
-struct sAlgoNode_161BB8 {
+struct sAlgoNode {
     cCameraAlgorithm* algo;    // 0x0
     float weight;             // 0x4
     float rate;               // 0x8
     float blend;              // 0xC
-    sAlgoNode_161BB8* prev;   // 0x10
-    sAlgoNode_161BB8* next;   // 0x14
+    sAlgoNode* prev;   // 0x10
+    sAlgoNode* next;   // 0x14
 };
 
-struct sAlgoList_161BB8 {
-    sAlgoNode_161BB8* head;
+struct sAlgoList {
+    sAlgoNode* head;
     int count;
 };
 
-extern "C" sAlgoNode_161BB8* func_0015CA50(sAlgoList_161BB8* list, sAlgoNode_161BB8* n);
+extern "C" sAlgoNode* func_0015CA50(sAlgoList* list, sAlgoNode* n);
 
 static inline float Approach_161BB8(float cur, float target, float rate)
 {
@@ -2732,7 +2732,7 @@ static inline float ApproachZero_161BB8(float cur, float rate)
     return 0.0f;
 }
 
-static inline void Smooth_161BB8(sAlgoNode_161BB8* n, float u)
+static inline void Smooth_161BB8(sAlgoNode* n, float u)
 {
     float u2 = u * u;
     float s = u2 * 3.0f - (u2 + u2) * u;
@@ -2751,7 +2751,7 @@ extern "C" void func_00161BB8(char* self)
 {
     if ((D_004A2A50 & 1) == 0) {
         func_00161AB0(self);
-        sAlgoNode_161BB8* n = (*(sAlgoList_161BB8**)(self + 0x8))->head;
+        sAlgoNode* n = (*(sAlgoList**)(self + 0x8))->head;
         n->algo->v09(0);
         float rate = n->rate;
         Smooth_161BB8(n, Approach_161BB8(n->weight, 1.0f, rate));
@@ -2761,7 +2761,7 @@ extern "C" void func_00161BB8(char* self)
             if (n->algo->type == 0x4A)
                 n->weight = 0.0f;
             if (n->weight <= 0.0f || n->blend <= 0.0f) {
-                n = func_0015CA50(*(sAlgoList_161BB8**)(self + 0x8), n);
+                n = func_0015CA50(*(sAlgoList**)(self + 0x8), n);
             } else {
                 n->algo->v09(1);
                 n = n->next;
