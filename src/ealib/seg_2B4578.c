@@ -16334,11 +16334,10 @@ int func_003D15C8(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1608);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern unsigned int D_0044F430_1608[] __asm__("D_0044F430");
 extern void func_00411310_1608(int, ...) __asm__("func_00411310") __attribute__((noreturn));
 
 void func_003D1608(int a, ...) {
-    D_0044F430_1608[0] = 0xFFFFFFFF;
+    D_0044F430 = 0xFFFFFFFF;
     func_00411310_1608(0);
 }
 #endif
