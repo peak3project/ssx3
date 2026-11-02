@@ -122,14 +122,39 @@ public:
     virtual void v28(int, int, int, int, int, int);
 };
 
-//100%
-INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackSaveSuccess);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
+struct cUIScreen;
 int GetHashValue32(char* str);
 extern void* D_004A2028;
 extern void* D_004A28A8;
-extern char D_004677B8[];
 extern char D_0045F7E0[];
+extern "C" void func_001D9308(void*, int);
+// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
+void cMemMan_free(void* p);
+extern "C" void* func_00227F80(void* app);
+extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
+extern char D_0045E2A0[];
+extern "C" void* func_002C2508(void* dst, void* src);
+extern "C" void func_00241DC8(void* mp, void* out, int a2);
+extern char D_004644D8[];
+extern char D_0045DCD8[];
+extern char D_00462C88[];
+extern char D_00467848[];
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_003A0D00(void* self, unsigned short* str);
+extern char D_004678B0[];
+extern char D_004678C8[];
+unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
+extern "C" void func_00241E18(void*, unsigned short*, int);
+extern char D_004A1600[];
+// PORT: func_001C5DD8 takes only self; the unit's later (void*, int) declaration is a guess. Bound by asm label.
+void func_001C5DD8_self(void* self) __asm__("func_001C5DD8");
+
+//100%
+INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackSaveSuccess);
+#ifdef SKIP_ASM
+extern char D_004677B8[];
 void func_001D8C38(void* self);
 
 extern "C" void cFEMemCard_callbackSaveSuccess(void)
@@ -161,12 +186,7 @@ extern "C" void cFEMemCard_callbackSaveSuccess(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackReadSuccess);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern void* D_004A2028;
-extern void* D_004A28A8;
 extern char D_004677D0[];
-extern char D_0045F7E0[];
-extern "C" void func_001D9308(void*, int);
 
 extern "C" void cFEMemCard_callbackReadSuccess(void)
 {
@@ -198,15 +218,6 @@ extern "C" void cFEMemCard_callbackReadSuccess(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D68E8);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_004642F8[];
 
 extern "C" void func_001D68E8(void)
@@ -233,14 +244,6 @@ extern "C" void func_001D68E8(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D69E0);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_002C2508(void* dst, void* src);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_004641F0[];
 
 extern "C" void func_001D69E0(void)
@@ -265,18 +268,7 @@ extern "C" void func_001D69E0(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D6AD0);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_00464608[];
-extern char D_0045F7E0[];
 
 extern "C" void func_001D6AD0(void)
 {
@@ -308,18 +300,7 @@ extern "C" void func_001D6AD0(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D6C28);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_00464628[];
-extern char D_0045F7E0[];
 
 extern "C" void func_001D6C28(void)
 {
@@ -351,21 +332,6 @@ extern "C" void func_001D6C28(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D6D88);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
-extern char D_004644D8[];
-extern char D_0045DCD8[];
-extern char D_00462C88[];
-extern char D_0045F7E0[];
-
 static inline void* Str_1D6D88(char* key)
 {
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
@@ -417,18 +383,7 @@ extern "C" void func_001D6D88(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D7010);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_004677E8[];
-extern char D_0045F7E0[];
 
 struct sFEMC_001D7010 {
     char pad[0x19C];
@@ -469,9 +424,6 @@ extern "C" void func_001D7010(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D7190);
 #ifdef SKIP_ASM
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern char D_00467800[];
 
 extern "C" void func_001D7190(void)
@@ -500,10 +452,6 @@ extern "C" void func_001D7190(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D72A8);
 #ifdef SKIP_ASM
-
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern "C" void* func_00227F80(void* app);
 extern "C" void* func_0023D570(void*, int);
 
 extern "C" void func_001D72A8(void)
@@ -523,8 +471,6 @@ extern "C" void func_001D72A8(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D7318);
 #ifdef SKIP_ASM
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern char D_00464330[];
 
 extern "C" void func_001D7318(void)
@@ -553,7 +499,6 @@ extern "C" void func_001D7318(void)
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackConfirmFormatDone);
 #ifdef SKIP_ASM
 extern char D_00467818[];
-extern char D_0045F7E0[];
 
 extern "C" void cFEMemCard_callbackConfirmFormatDone(void)
 {
@@ -581,10 +526,7 @@ extern "C" void cFEMemCard_callbackConfirmFormatDone(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D7548);
 #ifdef SKIP_ASM
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern char D_004644F0[];
-extern char D_0045F7E0[];
 
 extern "C" void func_001D7548(void)
 {
@@ -614,15 +556,6 @@ extern "C" void func_001D7548(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackConfirmDelete);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_00467830[];
 
 extern "C" void cFEMemCard_callbackConfirmDelete(void)
@@ -662,10 +595,6 @@ extern "C" void cFEMemCard_callbackConfirmDelete(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D77E8);
 #ifdef SKIP_ASM
-extern char D_004644D8[];
-extern char D_0045DCD8[];
-extern char D_00462C88[];
-
 extern "C" void func_001D77E8(void)
 {
     unsigned short name[0x100];
@@ -704,19 +633,6 @@ extern "C" void func_001D77E8(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D7998);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
-extern char D_00467848[];
-extern char D_0045F7E0[];
-
 extern "C" void func_001D7998(void)
 {
     unsigned short name[0x100];
@@ -751,15 +667,6 @@ extern "C" void func_001D7998(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D7B18);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_00467848[];
-extern char D_0045F7E0[];
-
 struct sLocal_001D7B18 {
     int v[8];
 };
@@ -796,7 +703,6 @@ extern "C" void func_001D7B18(void)
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackFileExists);
 #ifdef SKIP_ASM
 extern char D_00467860[];
-extern char D_0045F7E0[];
 
 extern "C" void cFEMemCard_callbackFileExists(void)
 {
@@ -819,18 +725,7 @@ extern "C" void cFEMemCard_callbackFileExists(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D7D70);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_00467878[];
-extern char D_0045F7E0[];
 
 extern "C" void func_001D7D70(void)
 {
@@ -863,16 +758,7 @@ extern "C" void func_001D7D70(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackDeleteDone);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_002C2508(void* dst, void* src);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
 extern char D_00467898[];
-extern char D_0045F7E0[];
 
 extern "C" int cFEMemCard_callbackDeleteDone(void)
 {
@@ -906,10 +792,7 @@ extern "C" int cFEMemCard_callbackDeleteDone(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8020);
 #ifdef SKIP_ASM
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 extern char D_00464640[];
-extern char D_0045F7E0[];
 
 extern "C" int func_001D8020(void)
 {
@@ -977,11 +860,6 @@ extern "C" void func_001D8160(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8240);
 #ifdef SKIP_ASM
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_003A0D00(void* self, unsigned short* str);
-extern char D_004678B0[];
-extern char D_004678C8[];
-
 extern "C" void func_001D8240(void)
 {
     char* fe = (char*)D_004A2028;
@@ -1011,9 +889,6 @@ extern "C" void func_001D8240(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8358);
 #ifdef SKIP_ASM
-
-extern void* D_004A2028;
-
 extern "C" void func_001D8358(void)
 {
     char* fe = (char*)D_004A2028;
@@ -1028,20 +903,6 @@ extern "C" void func_001D8358(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D83A8);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void* func_002C2508(void* dst, void* src);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void func_003A0D00(void* self, unsigned short* str);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
-extern char D_004678B0[];
-extern char D_004678C8[];
-
 static inline void SetMode_001D83A8(char* fe, int mode)
 {
     if (*(int*)(fe + 0x214) != mode) {
@@ -1085,7 +946,6 @@ extern "C" void func_001D83A8(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8530);
 #ifdef SKIP_ASM
-extern void* D_004A2028;
 extern char D_0045E130[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001D99C8_8530(void* self, void* engine, void* owner, int a3, int a4, int a5, int a6, int a7, int a8) __asm__("func_001D99C8");
@@ -1117,8 +977,6 @@ extern "C" void func_001D8530(void* self_, int a1, int a2, int a3, int a4, int a
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8670);
 #ifdef SKIP_ASM
-extern void* D_004A2028;
-
 extern "C" void func_001D8670(void)
 {
     if (*(int*)((char*)D_004A2028 + 0x1C0) == 4) {
@@ -1142,9 +1000,6 @@ void func_001D86A0(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D86B0);
 #ifdef SKIP_ASM
-
-extern "C" void func_001D9308(void*, int);
-
 extern "C" void func_001D86B0(void* self)
 {
     func_001D9308(self, 1);
@@ -1158,10 +1013,6 @@ extern "C" void func_001D86B0(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8700);
 #ifdef SKIP_ASM
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_001D9308(void*, int);
 extern "C" void func_001D7190(void);
 extern "C" void* func_0039F190(void* list, int a1);
 
@@ -1343,8 +1194,6 @@ extern "C" void func_001D8700(void* self_, int a1, int button)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8BE0);
 #ifdef SKIP_ASM
-extern "C" void func_001D9308(void*, int);
-
 extern "C" void func_001D8BE0(void* self)
 {
     *(int*)((char*)self + 0x1A8) = 0;
@@ -1374,10 +1223,7 @@ void func_001D8C38(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_onInputBegin);
 #ifdef SKIP_ASM
-struct cUIScreen;
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-int GetHashValue32(char* str);
 extern char D_00467940[];
 extern char D_00467950[];
 
@@ -1414,11 +1260,6 @@ extern "C" int cFEMemCard_onInputBegin(void* self, void* input)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8D68);
 #ifdef SKIP_ASM
-
-extern void* D_004A28A8;
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241E18(void*, unsigned short*, int);
-
 extern "C" void func_001D8D68(void* self)
 {
     unsigned short buf[0x320];
@@ -1434,22 +1275,11 @@ extern "C" void func_001D8D68(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8DE0);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241E18(void*, unsigned short*, int);
 extern "C" void func_0020E900(void* self);
 extern "C" void func_0039E510(void*);
 extern "C" void func_00241380(void*);
 extern "C" int func_0023C898(void*);
 extern "C" void func_0023D618(void*);
-extern void* D_004A2028;
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
-extern char D_004A1600[];
 
 class cSubK1D8DE0 {
 public:
@@ -1570,9 +1400,6 @@ extern "C" void func_001D8DE0(cMemCardK1D8DE0* card)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9258);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004A1600[];
 extern "C" unsigned char func_0039B7B0(void* menu, unsigned char start);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
 
@@ -1599,10 +1426,6 @@ extern "C" void func_001D9258(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9308);
 #ifdef SKIP_ASM
-
-extern void* D_004A28A8;
-extern "C" void* func_00227F80(void* app);
-
 extern "C" void func_001D9308(void* self, int on)
 {
     *(int*)((char*)self + 0x1F4) = on;
@@ -1620,7 +1443,6 @@ extern "C" void func_001D9308(void* self, int on)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9368);
 #ifdef SKIP_ASM
-
 extern "C" void func_001D9368(void* self)
 {
     if (*(int*)((char*)self + 0x214) != 1) {
@@ -1684,8 +1506,6 @@ extern "C" int func_001D93D8(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D93E8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void* cUIAnimationBank_getAnimationByHashName(void* self, int hash);
 extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
 
@@ -1705,25 +1525,10 @@ extern "C" void func_001D93E8(void* self, char* objName, char* animName)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_triggerDisplayState);
 #ifdef SKIP_ASM
-struct cUIScreen;
-unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
 void cUIScreen_jumpToFrame(void* self, unsigned short frame);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
-int GetHashValue32(char* str);
-extern "C" void* func_00227F80(void* app);
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-extern "C" void func_003A0D00(void* self, unsigned short* str);
-extern void* D_004A28A8;
-extern char D_0045E2A0[];
-extern char D_004A1600[];
 extern char D_004A1608[];
 extern char D_004A2030[];
 extern char D_004A2038[];
-extern char D_004678B0[];
 extern char D_00467980[];
 extern char D_00463F58[];
 
@@ -1829,11 +1634,7 @@ extern "C" int func_001D97E0(void* self, void* list, int idx, int back)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9818);
 #ifdef SKIP_ASM
-
 extern "C" void func_0039E4C0(void* self, int a1);
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_004678B0[];
 
 extern "C" void func_001D9818(void* self, int a1)
 {
@@ -1857,7 +1658,6 @@ void func_001D9878(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9880);
 #ifdef SKIP_ASM
-
 static inline bool IsModeK1D9880(char* mp, int m) { return *(int*)(mp + 0x130) == m; }
 
 extern "C" int func_001D9880(void* self)
@@ -1881,9 +1681,6 @@ extern "C" int func_001D9880(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_createReadBuffer);
 #ifdef SKIP_ASM
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-void cMemMan_free(void* p);
 extern char D_00467990[];
 
 extern "C" void cFEMemCard_createReadBuffer(void* self, unsigned int size)
@@ -1938,11 +1735,7 @@ extern "C" sMemCardPopupK1D99C8* func_001D99C8(sMemCardPopupK1D99C8* self, void*
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9A80);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 void func_001C57C0(void* self, int a1, int a2);
-// PORT: func_001C5DD8 takes only self; the unit's later (void*, int) declaration is a guess. Bound by asm label.
-void func_001C5DD8_self(void* self) __asm__("func_001C5DD8");
-extern "C" void* func_002C2508(void* dst, void* src);
 extern "C" unsigned short* func_002C2540(void*, void*);
 extern char D_0045DCC8[];
 extern char D_0045FCD8[];
@@ -1993,10 +1786,7 @@ extern "C" void func_001D9A80(void* self, int a1, int a2, int a3, int a4, int a5
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9BD0);
 #ifdef SKIP_ASM
-extern "C" void* func_002C2508(void* dst, void* src);
 void func_001C57A0(void* slots, int idx, int data);
-// PORT: func_001C5DD8 takes only self; the unit's later (void*, int) declaration is a guess. Bound by asm label.
-void func_001C5DD8_self(void* self) __asm__("func_001C5DD8");
 
 extern "C" void func_001D9BD0(void* self, void* src, int mode)
 {
@@ -2028,9 +1818,6 @@ extern "C" void func_001D9BD0(void* self, void* src, int mode)
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9CA8);
 #ifdef SKIP_ASM
 extern "C" int func_002C24D0(void* p);
-extern "C" void* func_002C2508(void* dst, void* src);
-// PORT: func_001C5DD8 takes only self; the unit's later (void*, int) declaration is a guess. Bound by asm label.
-void func_001C5DD8_self(void* self) __asm__("func_001C5DD8");
 
 extern "C" void func_001D9CA8(void* self, void* src)
 {
