@@ -69,6 +69,46 @@ public:
     virtual void initForMission(const t4Matrix& m);
 };
 
+// Script value (luno/lunovm.cpp layout; as in seg/seg_1FBE38): a word or a pair, then the type (4 = table, 5 = pair).
+// D_004C9098 is the nil value.
+struct cLunoValue;
+extern "C" void func_00224DF0(cLunoValue*, int);
+extern "C" void func_00225068(cLunoValue*, const cLunoValue*);
+extern "C" void luno_cLunoVM_execute(cLunoValue**, char**, int);
+struct cLunoPair {
+    int a, b;
+};
+struct cLunoValue {
+    union {
+        int i;
+        cLunoPair pair;
+    } u;
+    int type;
+    cLunoValue() { type = 0; u.i = 0; }
+    ~cLunoValue() {}
+    void Release() { if (type == 4) func_00224DF0(this, 2); }
+    void Clear() { type = 0; u.i = 0; }
+    void SetTable(const cLunoValue* src) {
+        Release();
+        Clear();
+        func_00225068(this, src);
+        type = 4;
+    }
+    void Assign(const cLunoValue* src) {
+        Release();
+        Clear();
+        if (src->type == 4) {
+            func_00225068(this, src);
+        } else if (src->type == 5) {
+            u.pair = src->u.pair;
+        } else {
+            u.i = src->u.i;
+        }
+        type = src->type;
+    }
+};
+extern cLunoValue D_004C9098;
+
 // A HUD sprite: texture id and UV rectangle.
 struct sHudSprite {
     int tex;                // 0x0
@@ -3088,63 +3128,29 @@ INCLUDE_ASM("fe/all_in_one_fe", func_002224B8);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
-struct LV_24B8;
-extern "C" void func_00224DF0_24B8(LV_24B8*, int) __asm__("func_00224DF0");
-extern "C" void func_00225068_24B8(LV_24B8*, const LV_24B8*) __asm__("func_00225068");
-extern "C" void luno_cLunoVM_execute_24B8(LV_24B8**, char**, int) __asm__("luno_cLunoVM_execute");
 extern char D_00479780[];
 
-struct LVPair_24B8 { int a, b; };
-struct LV_24B8 {
-    union { int i; LVPair_24B8 pair; } u;
-    int type;
-    LV_24B8() { type = 0; u.i = 0; }
-    ~LV_24B8() {}
-    void Release() { if (type == 4) func_00224DF0_24B8(this, 2); }
-    void Clear() { type = 0; u.i = 0; }
-    void SetTable(const LV_24B8* src) {
-        Release();
-        Clear();
-        func_00225068_24B8(this, src);
-        type = 4;
-    }
-    void Assign(const LV_24B8* src) {
-        Release();
-        Clear();
-        if (src->type == 4) {
-            func_00225068_24B8(this, src);
-        } else if (src->type == 5) {
-            u.pair = src->u.pair;
-        } else {
-            u.i = src->u.i;
-        }
-        type = src->type;
-    }
-};
-
-extern LV_24B8 D_004C9098;
-
-extern "C" void func_002224B8(LV_24B8** out, char** state, LV_24B8* a, int c) {
+extern "C" void func_002224B8(cLunoValue** out, char** state, cLunoValue* a, int c) {
     char* s = *state;
     int n = *(int*)(s + *(int*)(s + 4) + 8);
-    LV_24B8* arr = new (D_00479780, 0x20000000, 0) LV_24B8[n];
+    cLunoValue* arr = new (D_00479780, 0x20000000, 0) cLunoValue[n];
     *out = arr;
     arr[0].SetTable(a);
-    LV_24B8* b = &D_004C9098;
-    LV_24B8* p = *out;
-    LV_24B8* q = &p[1];
-    if (p[1].type == 4) func_00224DF0_24B8(q, 2);
+    cLunoValue* b = &D_004C9098;
+    cLunoValue* p = *out;
+    cLunoValue* q = &p[1];
+    if (p[1].type == 4) func_00224DF0(q, 2);
     q->type = 0;
     p[1].u.i = 0;
     if (b->type == 4) {
-        func_00225068_24B8(q, b);
+        func_00225068(q, b);
     } else if (b->type == 5) {
         p[1].u.pair = b->u.pair;
     } else {
         p[1].u.i = b->u.i;
     }
     q->type = b->type;
-    luno_cLunoVM_execute_24B8(out, state, c);
+    luno_cLunoVM_execute(out, state, c);
 }
 #endif
 
@@ -3153,59 +3159,27 @@ INCLUDE_ASM("fe/all_in_one_fe", func_00222648);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
-struct LV_2648;
-extern "C" void func_00224DF0_2648(LV_2648*, int) __asm__("func_00224DF0");
-extern "C" void func_00225068_2648(LV_2648*, const LV_2648*) __asm__("func_00225068");
-extern "C" void luno_cLunoVM_execute_2648(LV_2648**, char**, int) __asm__("luno_cLunoVM_execute");
 extern char D_00479780[];
 
-struct LVPair_2648 { int a, b; };
-struct LV_2648 {
-    union { int i; LVPair_2648 pair; } u;
-    int type;
-    LV_2648() { type = 0; u.i = 0; }
-    ~LV_2648() {}
-    void Release() { if (type == 4) func_00224DF0_2648(this, 2); }
-    void Clear() { type = 0; u.i = 0; }
-    void SetTable(const LV_2648* src) {
-        Release();
-        Clear();
-        func_00225068_2648(this, src);
-        type = 4;
-    }
-    void Assign(const LV_2648* src) {
-        Release();
-        Clear();
-        if (src->type == 4) {
-            func_00225068_2648(this, src);
-        } else if (src->type == 5) {
-            u.pair = src->u.pair;
-        } else {
-            u.i = src->u.i;
-        }
-        type = src->type;
-    }
-};
-
-extern "C" void func_00222648(LV_2648** out, char** state, LV_2648* a, LV_2648* b, int c) {
+extern "C" void func_00222648(cLunoValue** out, char** state, cLunoValue* a, cLunoValue* b, int c) {
     char* s = *state;
     int n = *(int*)(s + *(int*)(s + 4) + 8);
-    LV_2648* arr = new (D_00479780, 0x20000000, 0) LV_2648[n];
+    cLunoValue* arr = new (D_00479780, 0x20000000, 0) cLunoValue[n];
     *out = arr;
     arr[0].SetTable(a);
-    LV_2648* p = *out;
-    LV_2648* q = &p[1];
-    if (p[1].type == 4) func_00224DF0_2648(q, 2);
+    cLunoValue* p = *out;
+    cLunoValue* q = &p[1];
+    if (p[1].type == 4) func_00224DF0(q, 2);
     q->type = 0;
     p[1].u.i = 0;
     if (b->type == 4) {
-        func_00225068_2648(q, b);
+        func_00225068(q, b);
     } else if (b->type == 5) {
         p[1].u.pair = b->u.pair;
     } else {
         p[1].u.i = b->u.i;
     }
     q->type = b->type;
-    luno_cLunoVM_execute_2648(out, state, c);
+    luno_cLunoVM_execute(out, state, c);
 }
 #endif
