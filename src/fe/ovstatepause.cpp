@@ -1,4 +1,12 @@
 #include "common.h"
+
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
 #include "ai/rider.h"
 
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_OPTIONS_onCreateScreen);
@@ -421,11 +429,6 @@ extern "C" void func_001FB0C0(void* self, void* item, int msg)
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_ONLINE_ERROR_displayPingTimedOut);
 #ifdef SKIP_ASM
 struct cUIText;
-struct sVE_FB180 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
@@ -439,7 +442,7 @@ extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingTimedOut(void* self)
         if (t != 0 && *(int*)((char*)self + 0xA0) != 0) {
             cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046FB60));
         }
-        sVE_FB180* vt = *(sVE_FB180**)((char*)t + 0x8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)t + 0x8);
         vt[9].fn((char*)t + vt[9].delta, *(int*)((char*)self + 0xA0));
     }
 }
@@ -449,11 +452,6 @@ extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingTimedOut(void* self)
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_ONLINE_ERROR_displayPingReceived);
 #ifdef SKIP_ASM
 struct cUIText;
-struct sVE_FB218 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 int GetHashValue32(char* str);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
@@ -468,7 +466,7 @@ extern "C" void cOVState_PAUSE_ONLINE_ERROR_displayPingReceived(void* self)
         if (t != 0 && *(int*)((char*)self + 0xA0) != 0) {
             cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046FB88));
         }
-        sVE_FB218* vt = *(sVE_FB218**)((char*)t + 0x8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)t + 0x8);
         vt[9].fn((char*)t + vt[9].delta, *(int*)((char*)self + 0xA0));
         cOVState_PAUSE_ONLINE_ERROR_setContinueOptionVisible(self, 1);
     }
@@ -804,12 +802,11 @@ extern char D_0046FE98[];
 extern char D_0046FDE8[];
 extern char D_004A2138[];
 
-struct sVE_1FC878 { short delta; short index; unsigned short* (*fn)(void*, int); };
 
 static inline unsigned short* lookupString_1FC878(char* name)
 {
     char* g = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVE_1FC878* vt = *(sVE_1FC878**)(g + 4);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(g + 4);
     char* t = g + vt[4].delta;
     return vt[4].fn(t, GetHashValue32(name));
 }
@@ -1055,13 +1052,12 @@ extern char D_0046FEF0[];
 extern char D_0046FF08[];
 extern char D_0046FF18[];
 extern char D_0046FF28[];
-struct sVEnt_1FD190 { short delta; short index; int (*fn)(void*, int); };
 
 // Sends the hash of the named pause-menu item to the front end's screen object.
 static inline int sendHash_1FD190(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEnt_1FD190* vt = *(sVEnt_1FD190**)(obj + 4);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 extern "C" int func_001FD190(int id)
@@ -1139,12 +1135,11 @@ extern char D_00470068[];
 extern char D_00470080[];
 extern char D_00470098[];
 
-struct sVE_1FD320 { short delta; short index; unsigned short* (*fn)(void*, int); };
 
 static inline unsigned short* lookupString_1FD320(char* name)
 {
     char* g = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVE_1FD320* vt = *(sVE_1FD320**)(g + 4);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(g + 4);
     char* t = g + vt[4].delta;
     return vt[4].fn(t, GetHashValue32(name));
 }
@@ -1601,11 +1596,6 @@ public:
     virtual void v25(int);
 };
 
-struct sVE_DF40 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 class cG_DF40 {
 public:
@@ -1657,7 +1647,7 @@ extern "C" void func_001FDF40(cState_DF40* self)
         func_003A0E90(o, buf);
         o->v09(0);
         char* g = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVE_DF40* vt = *(sVE_DF40**)(g + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(g + 4);
         char* t = g + vt[4].delta;
         vt[4].fn(t, GetHashValue32(D_00470158));
         for (int i = 1; i < 5; i++) {
@@ -2251,11 +2241,6 @@ public:
     virtual void v25(int);
 };
 
-struct sVE_ECA0 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 class cG_ECA0 {
 public:
@@ -2306,7 +2291,7 @@ extern "C" void func_001FECA0(cState_ECA0* self)
         func_003A0E90(o, buf);
         o->v09(0);
         char* g = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVE_ECA0* vt = *(sVE_ECA0**)(g + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(g + 4);
         char* t = g + vt[4].delta;
         vt[4].fn(t, GetHashValue32(D_00470158));
         sprintf(name, D_00470148, 1);
@@ -2802,17 +2787,12 @@ extern char D_00470480[];
 extern char D_004A2588[];
 extern char D_004A2590[];
 
-struct sVE_REWARDS {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void* self, int hash);
-};
 
 // Looks up the localised string for a hashed name through the front end's text table.
 static inline unsigned short* getText_REWARDS(char* name)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVE_REWARDS* vt = *(sVE_REWARDS**)(obj + 4);
+    sVEntry<unsigned short*(void* self, int hash)>* vt = *(sVEntry<unsigned short*(void* self, int hash)>**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
 }
 
