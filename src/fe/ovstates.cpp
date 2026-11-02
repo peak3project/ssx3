@@ -8,6 +8,42 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+struct sColor_194BF0 {
+    float r, g, b, a;
+};
+
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+    virtual void v10();
+    virtual void v11(const sColor_194BF0& c);
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25(int v);
+};
+
 //100%
 INCLUDE_ASM("fe/ovstates", cFEStateTitle_onCreateScreen);
 #ifdef SKIP_ASM
@@ -221,7 +257,6 @@ extern char D_00460030[];
 extern char D_005308B8[];
 extern int D_00534B30[];
 
-
 extern "C" void cFEStateMainMenu_onCreateScreen(void* self)
 {
     void* engine = *(void**)((char*)self + 0x10);
@@ -266,52 +301,18 @@ extern int D_004A29EC;
 extern char D_00460040[];
 extern char D_004A17D8[];
 
-struct sColor_194BF0 {
-    float r, g, b, a;
-};
-
-class cUIObj_194BF0 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-    virtual void v10();
-    virtual void setColor(const sColor_194BF0& c);
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void setSelected(int v);
-};
-
 extern "C" void func_00194BF0(void* self)
 {
-    cUIObj_194BF0* obj = (cUIObj_194BF0*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00460040));
+    cUIThing* obj = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00460040));
     if (obj != 0) {
         if (*(signed char*)((char*)self + 0x55) < 2) {
             func_00194498(obj);
         } else if ((*(unsigned char*)((char*)self + 0x1D) & 0x3F) == 5) {
-            obj->setSelected(0);
-            obj->setEnabled(0);
+            obj->v25(0);
+            obj->setStatic(0);
             sColor_194BF0 c = *(sColor_194BF0*)((char*)obj + 0x1C);
             c.r = 1.0f;
-            obj->setColor(c);
+            obj->v11(c);
         }
     }
     if (D_004A29EC == 0) {
@@ -474,7 +475,6 @@ extern char D_004A1458[];
 extern char D_004A1460[];
 extern char D_004A17E0[];
 
-
 struct sObj_194EB0 {
     int pad0;
     sVEntry<void>* vt;
@@ -608,8 +608,6 @@ extern char D_004A17E0[];
 extern char D_004600A0[];
 extern char D_004A1458[];
 extern char D_004A1460[];
-
-
 
 static inline void Show195328(void* self, char* name)
 {
