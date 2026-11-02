@@ -1,6 +1,12 @@
 #include "common.h"
 #include "ai/rider.h"
 
+// ---- Shared declarations: one type / one extern per real object, used by the functions below ----
+
+// D_004A482C: the sound-event post hook (set to ealib func_003D76F0, which takes a variadic list): the event from
+// func_003D8008, then the number of int arguments that follow.
+extern void (*D_004A482C)(void* event, int n, ...);
+
 //100%
 INCLUDE_ASM("sound/soundsys", cBankSys_cBankSys);
 #ifdef SKIP_ASM
@@ -7502,8 +7508,6 @@ extern "C" int func_00123128(void*);
 extern "C" int func_0029F330(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-// PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
 
 class cSsFCC8Obj {
@@ -7552,15 +7556,15 @@ extern "C" void func_0029FCC8(void* self, void* vrider)
     int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
         if (func_002B1458(snd, 0, 0x2084, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x2084), 2, r, 3);
+            D_004A482C(func_003D8008(1, 0, 0x2084), 2, r, 3);
         }
     } else if (sel == 2) {
         if (func_002B1458(snd, 0, 0x2083, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x2083), 2, r, 3);
+            D_004A482C(func_003D8008(1, 0, 0x2083), 2, r, 3);
         }
     } else {
         if (func_002B1458(snd, 0, 0x2091, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x2091), 2, r, 3);
+            D_004A482C(func_003D8008(1, 0, 0x2091), 2, r, 3);
         }
     }
 }
@@ -7582,7 +7586,6 @@ extern "C" int func_00123128(void*);
 extern "C" int func_0029F330(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-extern void (*D_004A482C)(void*, int, int);
 extern float D_004A36D8;
 
 class cSsFF80Obj {
@@ -7669,8 +7672,6 @@ extern "C" int func_00123128(void*);
 extern "C" int func_0029F330(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-// PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
 
 class cSs02D8Obj {
@@ -7716,15 +7717,15 @@ extern "C" void func_002A02D8(void* self, sSs02D8Rider* rider)
     int sel = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
     if (sel == 1) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x2088, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x2088), 2, r, mode);
+            D_004A482C(func_003D8008(1, 0, 0x2088), 2, r, mode);
         }
     } else if (sel == 2) {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20A0, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x20A0), 2, r, mode);
+            D_004A482C(func_003D8008(1, 0, 0x20A0), 2, r, mode);
         }
     } else {
         if (func_002B1458((char*)self + 0x5560, 0, 0x20A1, (int)rider, func_00123128(rider), 0, 0, 0.0f) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x20A1), 2, r, mode);
+            D_004A482C(func_003D8008(1, 0, 0x20A1), 2, r, mode);
         }
     }
 }
@@ -7748,9 +7749,6 @@ extern "C" int func_002A1D48(void* self, void* obj);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 unsigned func_002A1820_0560(void* self, void* a, void* b) __asm__("func_002A1820");
 void func_0031BE50_0560(float a, float* x, float* y) __asm__("func_0031BE50");
-// PORT: D_004A482C is called with 4 and 5 args here (the unit's later declaration has 3).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
 extern void* D_004A28A4;
 static inline int sndA30Mode0560(int m)
@@ -7851,19 +7849,19 @@ void func_002A0560_0560(void* self, sSs0560Rider* a, sSs0560Rider* b)
     if (sel == 2) {
         d = 0.0f;
         if (func_002B1458_f(snd, 0, 0x2081, (int)a, func_00123128(a), d, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x2081), 2, rA, mode);
+            D_004A482C(func_003D8008(1, 0, 0x2081), 2, rA, mode);
         }
         if (func_002B1458_f(snd, 0, 0x207F, (int)b, func_00123128(b), d, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x207F), 2, rB, mode);
+            D_004A482C(func_003D8008(1, 0, 0x207F), 2, rB, mode);
         }
     } else if (sel < 2) {
         d = 0.0f;
         if (func_002B1458_f(snd, 0, 0x2080, (int)a, func_00123128(a), d, 0, 0) != 0) {
             s |= 0x1000;
-            D_004A482C_5(func_003D8008(1, 0, 0x2080), 3, rA, mode, s);
+            D_004A482C(func_003D8008(1, 0, 0x2080), 3, rA, mode, s);
         }
         if (func_002B1458_f(snd, 0, 0x207D, (int)b, func_00123128(b), d, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x207D), 2, rB, mode);
+            D_004A482C(func_003D8008(1, 0, 0x207D), 2, rB, mode);
         }
     }
 }
@@ -7885,8 +7883,6 @@ extern "C" void func_0029F660(void* self, void* rider, int a, int b);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
 extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-// PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
 extern void* D_004A28A4;
 static inline int sndA30Mode(int m)
@@ -7948,24 +7944,24 @@ extern "C" void func_002A0A30(void* self, sSs0A30Rider* a, sSs0A30Rider* b, int 
     int sel = func_002A1820(self, (sSs1820Rider*)a, (sSs1820Rider*)b);
     if (sel == 2) {
         if (func_002B1458_f(snd, 0, 0x208F, (int)b, func_00123128(b), 0.0f, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x208F), 2, rB, 3);
+            D_004A482C(func_003D8008(1, 0, 0x208F), 2, rB, 3);
         }
         if (func_002B1458_f(snd, 0, 0x208A, (int)a, func_00123128(a), 0.0f, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x208A), 2, rA, 3);
+            D_004A482C(func_003D8008(1, 0, 0x208A), 2, rA, 3);
         }
     } else if (sel == 1) {
         if (func_002B1458_f(snd, 0, 0x207E, (int)b, func_00123128(b), 0.0f, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x207E), 2, rB, 3);
+            D_004A482C(func_003D8008(1, 0, 0x207E), 2, rB, 3);
         }
         if (func_002B1458_f(snd, 0, 0x208A, (int)a, func_00123128(a), 0.0f, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x208A), 2, rA, 3);
+            D_004A482C(func_003D8008(1, 0, 0x208A), 2, rA, 3);
         }
     } else if (sel == 0) {
         if (func_002B1458_f(snd, 0, 0x2078, (int)b, func_00123128(b), 0.0f, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x2078), 2, rB, 3);
+            D_004A482C(func_003D8008(1, 0, 0x2078), 2, rB, 3);
         }
         if (func_002B1458_f(snd, 0, 0x208E, (int)a, func_00123128(a), 0.0f, 0, 0) != 0) {
-            D_004A482C_4(func_003D8008(1, 0, 0x208E), 2, rA, 3);
+            D_004A482C(func_003D8008(1, 0, 0x208E), 2, rA, 3);
         }
     }
 }
@@ -7983,7 +7979,6 @@ extern "C" void func_0029F660(void* self, void* rider, int a, int b);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
 extern "C" int func_0029F330(void* self);
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-extern void (*D_004A482C)(void*, int, int);
 extern float D_004A36D8;
 
 class cSs0E70Obj {
@@ -8089,8 +8084,6 @@ extern "C" void* func_003D8008(int a, int b, int c);
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
 extern "C" int func_0029F330(void* self);
 extern "C" int func_002A1D48(void* self, void* obj);
-// PORT: D_004A482C is called with 5 args here (the unit's later declaration has 3).
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
 
 struct sSsVt1138 { short delta; short index; int (*fn)(void*); };
@@ -8111,7 +8104,7 @@ void func_002A1138_impl(void* self, char* rider, void* obj)
     if (func_002B1458((char*)self + 0x5560, 0, 0x20D3, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     int r = func_0029F330(rider);
     int s = func_002A1D48(self, obj);
-    D_004A482C_5(func_003D8008(1, 0, 0x20D3), 3, r, s, 4);
+    D_004A482C(func_003D8008(1, 0, 0x20D3), 3, r, s, 4);
 }
 #endif
 
@@ -8124,8 +8117,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
 extern "C" int func_0029F330(void* self);
 extern "C" int func_002A1D48(void* self, void* obj);
-// PORT: D_004A482C is called with 4 args here (the unit's later declaration has 3).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 extern float D_004A36D8;
 
 struct sSsVt1280 { short delta; short index; int (*fn)(void*); };
@@ -8143,7 +8134,7 @@ void func_002A1280_impl(void* self, char* rider, void* obj)
     if (func_002B1458((char*)self + 0x5560, 0, 0x20D4, (int)rider, func_00123128(rider), 0, 0, 0.0f) == 0) return;
     int r = func_0029F330(rider);
     int s = func_002A1D48(self, obj);
-    D_004A482C_4(func_003D8008(1, 0, 0x20D4), 2, r, s);
+    D_004A482C(func_003D8008(1, 0, 0x20D4), 2, r, s);
 }
 #endif
 
@@ -8201,7 +8192,7 @@ void func_002A1400_impl(void* self, char* rider)
     } else {
         v = 2;
     }
-    D_004A482C_4(func_003D8008(1, 0, 0x20B9), 2, r, v);
+    D_004A482C(func_003D8008(1, 0, 0x20B9), 2, r, v);
 }
 #endif
 
@@ -8209,7 +8200,6 @@ void func_002A1400_impl(void* self, char* rider)
 INCLUDE_ASM("sound/soundsys", func_002A1560);
 #ifdef SKIP_ASM
 extern "C" int func_002B0E28(void* self, int i);
-extern void (*D_004A482C)(void*, int, int);
 
 extern "C" void func_002A1560(void* self, char* rider)
 {
@@ -8242,7 +8232,6 @@ extern "C" int func_002B0E28(void* self, int i);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 // func_0029F2B0 returns a value (the unit's earlier declaration says void).
 extern "C" void* func_003D8008(int a, int b, int c);
-extern void (*D_004A482C)(void*, int, int);
 extern signed char D_00535C11[];
 
 extern "C" void func_002A16B0(void* self, int a1)
@@ -8272,7 +8261,6 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 // func_0029F2B0 returns a value (the unit's earlier declaration says void).
 extern "C" int func_0029F2B0(int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-extern void (*D_004A482C)(void*, int, int);
 
 extern "C" void func_002A1778(void* self, int a1)
 {
@@ -8584,8 +8572,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2018(void* self)
 {
@@ -8593,7 +8579,7 @@ extern "C" void func_002A2018(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C8, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_4(func_003D8008(1, 0, 0x20C8), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x20C8), 2, r, m);
         }
     }
 }
@@ -8611,8 +8597,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A20D0(void* self)
 {
@@ -8620,7 +8604,7 @@ extern "C" void func_002A20D0(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C9, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_4(func_003D8008(1, 0, 0x20C9), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x20C9), 2, r, m);
         }
     }
 }
@@ -8640,8 +8624,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 5-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2188(void* self)
 {
@@ -8650,7 +8632,7 @@ extern "C" void func_002A2188(void* self)
             int r = func_0029F198(self);
             int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_5(func_003D8008(1, 0, 0x20CA), 3, r, a, m);
+            D_004A482C(func_003D8008(1, 0, 0x20CA), 3, r, a, m);
         }
     }
 }
@@ -8668,8 +8650,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2260(void* self)
 {
@@ -8677,7 +8657,7 @@ extern "C" void func_002A2260(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20E7, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_4(func_003D8008(1, 0, 0x20E7), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x20E7), 2, r, m);
         }
     }
 }
@@ -8695,8 +8675,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2318(void* self)
 {
@@ -8704,7 +8682,7 @@ extern "C" void func_002A2318(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20E8, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_4(func_003D8008(1, 0, 0x20E8), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x20E8), 2, r, m);
         }
     }
 }
@@ -8722,8 +8700,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A23D0(void* self, int mode)
 {
@@ -8736,7 +8712,7 @@ extern "C" void func_002A23D0(void* self, int mode)
             } else {
                 m = func_002A1E20(self, mode);
             }
-            D_004A482C_4(func_003D8008(1, 0, 0x20E9), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x20E9), 2, r, m);
         }
     }
 }
@@ -8751,8 +8727,6 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" int func_0029F198(void* self);
 extern "C" int func_002A1BD8(void* self, int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 5-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A24B0(void* self, int a1)
 {
@@ -8760,7 +8734,7 @@ extern "C" void func_002A24B0(void* self, int a1)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20CC, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1BD8(self, a1, -1);
-            D_004A482C_5(func_003D8008(1, 0, 0x20CC), 3, r, m, 3);
+            D_004A482C(func_003D8008(1, 0, 0x20CC), 3, r, m, 3);
         }
     }
 }
@@ -8778,8 +8752,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1BD8(void* self, int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 5-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2568(void* self, int a1)
 {
@@ -8787,7 +8759,7 @@ extern "C" void func_002A2568(void* self, int a1)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20CC, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), a1);
-            D_004A482C_5(func_003D8008(1, 0, 0x20CC), 3, r, m, 3);
+            D_004A482C(func_003D8008(1, 0, 0x20CC), 3, r, m, 3);
         }
     }
 }
@@ -8805,8 +8777,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2638(void* self)
 {
@@ -8814,7 +8784,7 @@ extern "C" void func_002A2638(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20BA, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_4(func_003D8008(1, 0, 0x20BA), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x20BA), 2, r, m);
         }
     }
 }
@@ -8829,8 +8799,6 @@ extern "C" void func_002B11B0(void*, int);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 5-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A26F0(void* self, int a, int b)
 {
@@ -8846,7 +8814,7 @@ extern "C" void func_002A26F0(void* self, int a, int b)
             }
             int y = 2;
             if (!b) y = 1;
-            D_004A482C_5(func_003D8008(1, 0, 0x20E5), 3, r, x, y);
+            D_004A482C(func_003D8008(1, 0, 0x20E5), 3, r, x, y);
         }
     }
 }
@@ -8859,7 +8827,6 @@ extern "C" int func_0029F0D8(void* self);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_003D8008(int a, int b, int c);
-extern void (*D_004A482C)(void*, int, int);
 
 extern "C" void func_002A27D8(void* self)
 {
@@ -8880,8 +8847,6 @@ extern "C" int func_0029F0D8(void* self);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 6-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_6)(void*, int, int, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2860(void* self, int n)
 {
@@ -8898,7 +8863,7 @@ extern "C" void func_002A2860(void* self, int n)
                     hi = 1 << n;
                 }
             }
-            D_004A482C_6(func_003D8008(1, 0, 0x20CF), 4, r, 3, lo, hi);
+            D_004A482C(func_003D8008(1, 0, 0x20CF), 4, r, 3, lo, hi);
         }
     }
 }
@@ -8919,8 +8884,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 5-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2938(void* self)
 {
@@ -8929,7 +8892,7 @@ extern "C" void func_002A2938(void* self)
             int r = func_0029F198(self);
             int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_5(func_003D8008(1, 0, 0x2102), 3, r, a, m);
+            D_004A482C(func_003D8008(1, 0, 0x2102), 3, r, a, m);
         }
     }
 }
@@ -8946,8 +8909,6 @@ extern "C" void* func_0028B1E8();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00145750(void*);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2A10(void* self)
 {
@@ -8955,7 +8916,7 @@ extern "C" void func_002A2A10(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x210B, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1DA0(self, func_00145750(cBE_getInterface_Fv(func_0028B1E8(), 0)), 0);
-            D_004A482C_4(func_003D8008(1, 0, 0x210B), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x210B), 2, r, m);
         }
     }
 }
@@ -8973,8 +8934,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1E20(void* self, unsigned int a1);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2AD0(void* self)
 {
@@ -8982,7 +8941,7 @@ extern "C" void func_002A2AD0(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x212B, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1E20(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)));
-            D_004A482C_4(func_003D8008(1, 0, 0x212B), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x212B), 2, r, m);
         }
     }
 }
@@ -8996,8 +8955,6 @@ extern "C" int func_0029F0D8(void* self);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2B88(void* self)
 {
@@ -9005,7 +8962,7 @@ extern "C" void func_002A2B88(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x212C, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int v = *(int*)((char*)self + 0x5780);
-            D_004A482C_4(func_003D8008(1, 0, 0x212C), 2, r, v);
+            D_004A482C(func_003D8008(1, 0, 0x212C), 2, r, v);
         }
         *(int*)((char*)self + 0x5780) = 1;
     }
@@ -9024,8 +8981,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1BD8(void* self, int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2C30(void* self)
 {
@@ -9033,7 +8988,7 @@ extern "C" void func_002A2C30(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x212D, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), -1);
-            D_004A482C_4(func_003D8008(1, 0, 0x212D), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x212D), 2, r, m);
         }
     }
 }
@@ -9048,8 +9003,6 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" int func_0029F198(void* self);
 extern "C" int func_002A1BD8(void* self, int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2CF0(void* self, int a1)
 {
@@ -9057,7 +9010,7 @@ extern "C" void func_002A2CF0(void* self, int a1)
         if (func_002B1458((char*)self + 0x5560, 0, 0x212E, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1BD8(self, a1, -1);
-            D_004A482C_4(func_003D8008(1, 0, 0x212E), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x212E), 2, r, m);
         }
     }
 }
@@ -9072,8 +9025,6 @@ extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int 
 extern "C" int func_0029F198(void* self);
 extern "C" int func_002A1BD8(void* self, int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A2DA0(void* self, int a1)
 {
@@ -9081,7 +9032,7 @@ extern "C" void func_002A2DA0(void* self, int a1)
         if (func_002B1458((char*)self + 0x5560, 0, 0x212F, 0, 0xA, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1BD8(self, a1, -1);
-            D_004A482C_4(func_003D8008(1, 0, 0x212F), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x212F), 2, r, m);
         }
     }
 }
@@ -9221,8 +9172,6 @@ extern "C" int func_00295028(void* self, int a, int b);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" int func_0029F198(void* self);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A31C0(void* self)
 {
@@ -9234,7 +9183,7 @@ extern "C" void func_002A31C0(void* self)
         if (func_00295028(self, 0, 0) != 0) return;
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C0, 0, 0xB, 0, 0, 0.0f) == 0) return;
         int r = func_0029F198(self);
-        D_004A482C_4(func_003D8008(1, 0, 0x20C0), 2, r, 1);
+        D_004A482C(func_003D8008(1, 0, 0x20C0), 2, r, 1);
     }
 }
 #endif
@@ -9250,8 +9199,6 @@ extern "C" void* func_0028B1D8();
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
 extern "C" int func_002A1D48(void* self, void* obj);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A32B0(void* self)
 {
@@ -9259,7 +9206,7 @@ extern "C" void func_002A32B0(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C1, 0, 0xB, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
-            D_004A482C_4(func_003D8008(1, 0, 0x20C1), 2, r, a);
+            D_004A482C(func_003D8008(1, 0, 0x20C1), 2, r, a);
         }
     }
 }
@@ -9276,8 +9223,6 @@ extern "C" void* func_0028B1D8();
 // func_002A1D48 returns its tail call's value (the unit defines it as void).
 extern "C" int func_002A1D48(void* self, void* obj);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A3358(void* self)
 {
@@ -9285,7 +9230,7 @@ extern "C" void func_002A3358(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20C2, 0, 0xB, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int a = func_002A1D48(self, *(void**)((char*)func_0028B1D8() + 0x28));
-            D_004A482C_4(func_003D8008(1, 0, 0x20C2), 2, r, a);
+            D_004A482C(func_003D8008(1, 0, 0x20C2), 2, r, a);
         }
     }
 }
@@ -9304,8 +9249,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1BD8(void* self, int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A3400(void* self)
 {
@@ -9314,7 +9257,7 @@ extern "C" void func_002A3400(void* self)
     if (func_002B1458((char*)self + 0x5560, 0, 0x20C3, 0, 0xB, 0, 0, 0.0f) == 0) return;
     int r = func_0029F198(self);
     int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), -1);
-    D_004A482C_4(func_003D8008(1, 0, 0x20C3), 2, r, m);
+    D_004A482C(func_003D8008(1, 0, 0x20C3), 2, r, m);
 }
 #endif
 
@@ -9374,7 +9317,7 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
         default: v = 0; break;
         }
     }
-    D_004A482C_5(func_003D8008(1, 0, 0x20C4), 3, r, s, v);
+    D_004A482C(func_003D8008(1, 0, 0x20C4), 3, r, s, v);
     return 1;
 }
 #endif
@@ -9393,8 +9336,6 @@ extern "C" int func_0029F198(void* self);
 extern "C" int func_002A1E68(void* self, void* rider);
 // PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
 int func_002A4248_s(void* self) __asm__("func_002A4248");
-// PORT: D_004A482C is called with 5 args here (the unit's later declaration has 3).
-extern void (*D_004A482C_5)(void*, int, int, int, int) __asm__("D_004A482C");
 extern sSndCallback_3708 D_004A36E8_3708[] __asm__("D_004A36E8");
 
 extern "C" void func_002A3708(void* self, char* rider)
@@ -9415,7 +9356,7 @@ extern "C" void func_002A3708(void* self, char* rider)
     int a = func_0029F198(self);
     int b = func_002A1D48(self, rider);
     int c = func_002A1E68(self, rider);
-    D_004A482C_5(func_003D8008(1, 0, 0x20C5), 3, a, b, c);
+    D_004A482C(func_003D8008(1, 0, 0x20C5), 3, a, b, c);
 }
 #endif
 
@@ -9433,8 +9374,6 @@ void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A1BD8(void* self, int a, int b);
 extern "C" void* func_003D8008(int a, int b, int c);
-// 4-argument view of the D_004A482C callback (the unit declares a 3-argument one).
-extern void (*D_004A482C_4)(void*, int, int, int) __asm__("D_004A482C");
 
 extern "C" void func_002A39E0(void* self)
 {
@@ -9442,7 +9381,7 @@ extern "C" void func_002A39E0(void* self)
         if (func_002B1458((char*)self + 0x5560, 0, 0x20BB, 0, 0xB, 0, 0, 0.0f) != 0) {
             int r = func_0029F198(self);
             int m = func_002A1BD8(self, *func_00144BC0(cBE_getInterface_Fv(func_0028B1E8(), 0)), -1);
-            D_004A482C_4(func_003D8008(1, 0, 0x20BB), 2, r, m);
+            D_004A482C(func_003D8008(1, 0, 0x20BB), 2, r, m);
         }
     }
 }
@@ -9480,7 +9419,6 @@ void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern "C" int func_00288AE0(void* self);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" void* func_003D8008(int a, int b, int c);
-extern void (*D_004A482C)(void*, int, int);
 
 extern "C" void func_002A3B18(void* self, void* obj, int a2)
 {
@@ -9506,7 +9444,6 @@ void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 extern "C" int func_00288AE0(void* self);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" void* func_003D8008(int a, int b, int c);
-extern void (*D_004A482C)(void*, int, int);
 
 extern "C" void func_002A3C00(void* self, void* obj, int a2)
 {
@@ -9528,7 +9465,6 @@ extern "C" void func_002A3C00(void* self, void* obj, int a2)
 INCLUDE_ASM("sound/soundsys", func_002A3CE8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void (*D_004A482C)(void*, int, int);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 
@@ -9557,7 +9493,6 @@ extern "C" int func_0029F160(void* self);
 extern "C" int func_00288AE0(void* self);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" void* func_003D8008(int a, int b, int c);
-extern void (*D_004A482C)(void*, int, int);
 
 extern "C" void func_002A3DE0(void* self, void* obj, int ev)
 {
@@ -9579,7 +9514,6 @@ extern "C" int func_0029F160(void* self);
 extern "C" int func_00288AE0(void* self);
 extern "C" int func_002B1458(void* self, int a, int b, int c, int d, int e, int refresh, float f);
 extern "C" void* func_003D8008(int a, int b, int c);
-extern void (*D_004A482C)(void*, int, int);
 
 extern "C" void func_002A3EB8(void* self, void* obj, int ev)
 {
