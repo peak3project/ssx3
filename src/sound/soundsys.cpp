@@ -393,18 +393,15 @@ extern "C" float func_00290C10(int i, float v)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00290C40);
 #ifdef SKIP_ASM
-struct sSndVec4 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sSndVEntryVec {
     short delta;
     short index;
-    sSndVec4* (*fn)(void*);
+    t4Vector* (*fn)(void*);
 };
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float sndVu0Length(const sSndVec4& v)
+static inline float sndVu0Length(const t4Vector& v)
 {
     float r;
     __asm__(
@@ -430,7 +427,7 @@ extern "C" int func_00290C40(void* self, void* src)
 {
     char* obj = (char*)src + 0x6C0;
     sSndVEntryVec* vt = *(sSndVEntryVec**)obj;
-    sSndVec4* p = vt[2].fn(obj + vt[2].delta);
+    t4Vector* p = vt[2].fn(obj + vt[2].delta);
     int v = (int)func_00290C10(3, sndVu0Length(*p));
     if (v > 127) {
         v = 127;
@@ -2261,7 +2258,7 @@ extern "C" void func_00296088(void* self, char* rider, char* evt, int idx)
     if (func_00288B40(self, e->fn(obj + e->delta), 100.0f) < 0) return;
     if (func_00295028_p(self, evt, idx) != 0) return;
     sSndVEntryVec* vt = *(sSndVEntryVec**)obj;
-    sSndVec4* p = vt[2].fn(obj + vt[2].delta);
+    t4Vector* p = vt[2].fn(obj + vt[2].delta);
     int v = (int)func_00290C10(0, sndVu0Length(*p));
     if (v > 127) v = 127;
     if (v < 0) v = 0;
@@ -2756,7 +2753,7 @@ extern "C" int func_00288A20(void* self, void* obj);
 #define SND_74A0_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 extern "C" void func_002A9988(void* self, float a, float b);
-extern "C" int func_00288940(void* self, sSndVec4* pos);
+extern "C" int func_00288940(void* self, t4Vector* pos);
 
 static inline void snd74A0AddVoice(void* vself, int a, int b, int type)
 {
@@ -2809,7 +2806,7 @@ extern "C" void func_002974A0(void* self, char* evt, int n)
     if (*(int*)((char*)self + 0x62A8) >= 0) return;
     if (func_00295028(self, (int)evt, 0) != 0) return;
     int pri = 0x50;
-    sSndVec4 pos = *(sSndVec4*)(evt + 0x40);
+    t4Vector pos = *(t4Vector*)(evt + 0x40);
     int type = 2;
     int b;
     if (n < 100) {
@@ -3122,9 +3119,9 @@ extern "C" int func_00288C08(void* self, int which, float f);
 extern "C" void func_002A9988(void* self, float a, float b);
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sSndVec4 sndVu0Add(const sSndVec4& a, const sSndVec4& b)
+static inline t4Vector sndVu0Add(const t4Vector& a, const t4Vector& b)
 {
-    sSndVec4 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -3145,7 +3142,7 @@ static inline int vcall_8488(char* obj, int slot)
     return ((int (*)(void*))vt[slot].fn)(o + vt[slot].delta);
 }
 
-static inline sSndVec4* vcallv_8488(char* obj, int slot)
+static inline t4Vector* vcallv_8488(char* obj, int slot)
 {
     char* o = obj + 0x6C0;
     sSndVEntryVec* vt = *(sSndVEntryVec**)o;
@@ -3202,8 +3199,8 @@ extern "C" void func_00298488(void* vself, char* obj, char* obj2)
     if (func_00288C08(self, vcall_8488(obj, 5), 100.0f) == 0) return;
     if (!snd8138Active(obj) && !snd8138Active(obj2)) return;
     if (func_00295028(self, 7, 0) != 0) return;
-    sSndVec4* p1 = vcallv_8488(obj, 2);
-    sSndVec4* p2 = vcallv_8488(obj2, 2);
+    t4Vector* p1 = vcallv_8488(obj, 2);
+    t4Vector* p2 = vcallv_8488(obj2, 2);
     int v = (int)func_00290C10(1, (float)(int)sndVu0Length(sndVu0Add(*p1, *p2)));
     int h = snd8488AddVoice(self, obj, 0, 0x36, 5, v);
     func_00295628(self, (void*)7, h, *(int*)(**(char***)((char*)self + 0x118) + 0x260) + 50, 0, 0);
@@ -6269,12 +6266,9 @@ static inline int sndA30Mode0560(int m)
     return *(int*)((char*)D_004A28A4 + 0x550) == m;
 }
 
-struct sVec4_0560 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_0560(const sVec4_0560& a, const sVec4_0560& b)
+static inline float vu0Dot_0560(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -6296,7 +6290,7 @@ static inline float vu0Dot_0560(const sVec4_0560& a, const sVec4_0560& b)
 class cSs0560Obj {
 public:
     virtual void v01();
-    virtual sVec4_0560* v02();
+    virtual t4Vector* v02();
     virtual void v03();
     virtual void v04();
     virtual int v05();
@@ -6344,7 +6338,7 @@ void func_002A0560_0560(void* self, sSs0560Rider* a, sSs0560Rider* b)
     if (okA != okB) return;
     float t0, t1;
     func_0031BE50_0560(b->f4CC, &t0, &t1);
-    sVec4_0560 v;
+    t4Vector v;
     v.x = t1;
     v.y = t0;
     v.z = 0;
@@ -8853,26 +8847,23 @@ INCLUDE_ASM("sound/soundsys", func_002A5D08);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int func_002906B8(void* self);
 
-struct sVec4_5D08 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 struct sPoolGroup5D08 {
     int key;
     int handle;
     int cnt;
     int pad0C;
-    sVec4_5D08 vec;
+    t4Vector vec;
     char pad20[0x10];
 };
 struct sPoolSlot5D08 {
-    sVec4_5D08* p;
+    t4Vector* p;
     int v4;
     sPoolGroup5D08* grp;
 };
 struct sPool5D08 {
     int f0;
     char pad4[0xC];
-    sVec4_5D08 vec10;
+    t4Vector vec10;
     sPoolSlot5D08 slots[15];
     int count;
     int fD8;
@@ -8912,7 +8903,7 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
         }
     }
     self->count++;
-    found->p = (sVec4_5D08*)P->tgt[P->cur];
+    found->p = (t4Vector*)P->tgt[P->cur];
     found->v4 = P->vals[P->cur];
     i = 0;
     do {
