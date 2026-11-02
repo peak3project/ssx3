@@ -21,7 +21,9 @@ struct sA8E8Cfg {                   /* 0xA0: the current setup (+0x20, D_0050A90
     float f14;
     char pad18[0x1C - 0x18];
     unsigned char f1C;
-    char pad1D[0x20 - 0x1D];
+    char pad1D;
+    unsigned char f1E;
+    unsigned char f1F;
     unsigned char f20;
     unsigned char f21;
     unsigned char f22;
@@ -32,10 +34,16 @@ struct sA8E8Cfg {                   /* 0xA0: the current setup (+0x20, D_0050A90
     unsigned char f29;
     unsigned char f2A;
     char f2B;
-    char pad2C[0x44 - 0x2C];
+    unsigned char f2C;
+    char pad2D;
+    short f2E[3];
+    char pad34[0x44 - 0x34];
     unsigned int f44;
     int f48;
-    char pad4C[0xA0 - 0x4C];
+    char *f4C;                      /* also D_0050A954 */
+    char pad50[0x58 - 0x50];
+    unsigned short f58[5][6];       /* row n: n + 1 angles */
+    char pad94[0xA0 - 0x94];
 };
 struct sA8E8Tail {                  /* +0xC0 (D_0050A9A8) */
     int f00;
@@ -45,13 +53,19 @@ struct sA8E8Tail {                  /* +0xC0 (D_0050A9A8) */
     int f10;
 };
 struct sA8E8Setup {                 /* 0xD4: what func_003B4DD8 hands out */
-    char pad00[0x4];
+    unsigned short f00;
+    unsigned short f02;
     unsigned char f04;
     unsigned char f05;
     unsigned char f06;
     unsigned char f07;
     unsigned char f08;
-    char pad09[0x20 - 0x9];
+    char pad09[0xC - 0x9];
+    unsigned char f0C;
+    char pad0D[0x13 - 0xD];
+    unsigned char f13;
+    short f14[3];
+    short f1A[3];
     struct sA8E8Cfg cfg;
     struct sA8E8Tail tail;
 };
@@ -111,7 +125,8 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     int f44;
     float f48;
     unsigned short f4C;
-    char pad4E[0x5D - 0x4E];
+    char pad4E[0x5C - 0x4E];
+    signed char f5C;                /* number of f6C steps */
     signed char f5D;
     signed char f5E;
     signed char f5F;
@@ -119,14 +134,16 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     signed char f61[1];             /* indexed */
     short f62[1];                   /* indexed */
     signed char f64;
-    char pad65[0x68 - 0x65];
+    unsigned char f65;
+    unsigned char f66;
+    unsigned char f67;
     unsigned char f68;
     signed char f69;
     unsigned short f6A;
     struct sA8E8Env *f6C;
     char pad70[0x74 - 0x70];
     signed char *f74;
-    char pad78[0x7C - 0x78];
+    signed char *f78;
     signed char *f7C;
     short f80;
     short f82;
