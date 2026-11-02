@@ -97,6 +97,17 @@ struct sWsCollect {
     int* count;
 };
 
+// Sphere definition record (type, time, position).
+struct sWsSphDef {
+    int f00;
+    short type;
+    short pad06;
+    float time;
+    float f0C;
+    float f10;
+    float x, y, z;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4023,15 +4034,6 @@ struct sVec4_341388 {
     sVec4_341388(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
 } __attribute__((aligned(16)));
 
-struct sDef_341388 {
-    int f00;
-    short type;
-    short pad06;
-    float time;
-    float f0C;
-    float f10;
-    float x, y, z;
-};
 
 struct sObj_341388 {
     int pad00[3];
@@ -4112,7 +4114,7 @@ static inline sVec4_341388 vu0Xform_341388(const sVec4_341388& v, const char* m)
     return r;
 }
 
-extern "C" sObj_341388* func_00341388(sObj_341388* self, void* a1, int a2, void* a3, sDef_341388* def)
+extern "C" sObj_341388* func_00341388(sObj_341388* self, void* a1, int a2, void* a3, sWsSphDef* def)
 {
     func_0034FB00(self, a1, a2, a3);
     self->vt = D_004914E0;
@@ -5188,15 +5190,6 @@ extern "C" void func_00342718(void* self, void* stream)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342768);
 #ifdef SKIP_ASM
-struct sSphDef_342768 {
-    int f00;
-    short type;
-    short pad06;
-    float time;
-    float f0C;
-    float f10;
-    float x, y, z;
-};
 struct sSph_342768 {
     int refs;
     void** vt;
@@ -5213,7 +5206,7 @@ struct sSph_342768 {
 extern void* D_00490898[];
 extern char* D_004A5B64;
 
-extern "C" void* func_00342768(sSph_342768* self, sSphDef_342768* def, int a2)
+extern "C" void* func_00342768(sSph_342768* self, sWsSphDef* def, int a2)
 {
     self->refs = 1;
     self->vt = D_00490898;
