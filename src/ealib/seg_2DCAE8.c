@@ -2546,14 +2546,13 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF980);
 #ifdef SKIP_ASM
 extern void mlock_F980(char *) __asm__("MUTEX_lock");
 extern void munlock_F980(char *) __asm__("MUTEX_unlock");
-extern char *fEF70_F980(int) __asm__("func_003DEF70");
 
 int func_003DF980(int h) {
-    char *e;
+    struct sReq *e;
     int r;
     mlock_F980(D_00519C08);
-    e = fEF70_F980(h);
-    r = e ? *(int *)(e + 0x1C) == 0 : -1;
+    e = func_003DEF70(h);
+    r = e ? e->f1C == 0 : -1;
     munlock_F980(D_00519C08);
     return r;
 }
