@@ -552,6 +552,11 @@ extern signed char D_00515B4F;          /* D_00515B40.f0F[0] */
 extern void (*D_00515B50)(int);         /* D_00515B40.f10 */
 extern int *D_00515B54;                 /* D_00515B40.f14 */
 extern struct sB40Ent *D_00515D1C;      /* D_00515B40.f1DC */
+struct s5D80 {                      /* the effect send buffer */
+    float f0000[0x600];
+    int f1800;
+};
+extern struct s5D80 D_00515D80;
 
 /* D_0050AD00: the IOP sound side's state (RPC buffers, the shared voice block func_003C1638 lays out, the transfer
    queue, speaker gains, sound-RAM segments, the recursive lock). Layout from every use in this unit; field names are
@@ -10467,8 +10472,6 @@ void func_003C7AA8(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C7AB0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern float D_00515D80_7AB0[] __asm__("D_00515D80");
 extern void func_003C7828_7AB0(float *snd, float *name, float from, float to) __asm__("func_003C7828");
 
 int func_003C7AB0(struct sB40Ent *s) {
@@ -10487,10 +10490,10 @@ int func_003C7AB0(struct sB40Ent *s) {
     for (i = 0; i < 1; i++) {
         if (D_00515B40.f0F[i] != 0) {
             if (s->f34[i] != s->f38[i]) {
-                func_003C7828_7AB0(D_00515B40.fB4, D_00515D80_7AB0, s->f34[i], s->f38[i]);
+                func_003C7828_7AB0(D_00515B40.fB4, D_00515D80.f0000, s->f34[i], s->f38[i]);
                 s->f34[i] = s->f38[i];
             } else if (s->f38[i] != 0.0f) {
-                D_00515B40.f1E0(0x10, D_00515B40.fB4, D_00515D80_7AB0, s->f38[i]);
+                D_00515B40.f1E0(0x10, D_00515B40.fB4, D_00515D80.f0000, s->f38[i]);
             }
         }
     }
