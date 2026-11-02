@@ -1828,9 +1828,7 @@ int func_003DE928(int *arg0) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DE9B8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct A_E9B8 { int p0, p4, p8, pC, f10, f14, f18, f1C; };
 struct B_E9B8 { int f0, f4, f8, fC; };
-extern struct A_E9B8 D_00450C10_E9B8 __asm__("D_00450C10");
 extern struct B_E9B8 D_00450C58_E9B8 __asm__("D_00450C58");
 extern int D_00450C50_E9B8[] __asm__("D_00450C50");
 extern void func_003E6220_E9B8(void *, int) __asm__("func_003E6220");
@@ -1838,14 +1836,14 @@ extern void func_003E6574_E9B8(void *, int *, int) __asm__("func_003E6574");
 
 int func_003DE9B8(int *arg0) {
     if (*arg0 < 0x24) {
-        func_003E6220_E9B8(&D_00450C10_E9B8, 0x24);
+        func_003E6220_E9B8(&D_00450C10, 0x24);
     }
-    func_003E6574_E9B8(&D_00450C10_E9B8, arg0, *arg0);
-    D_00450C58_E9B8.f0 = D_00450C10_E9B8.f18;
-    D_00450C58_E9B8.f4 = D_00450C10_E9B8.f10;
-    D_00450C58_E9B8.f8 = D_00450C10_E9B8.pC;
-    D_00450C58_E9B8.fC = D_00450C10_E9B8.f14;
-    D_00450C50_E9B8[0] = D_00450C10_E9B8.f1C;
+    func_003E6574_E9B8(&D_00450C10, arg0, *arg0);
+    D_00450C58_E9B8.f0 = D_00450C10.f18;
+    D_00450C58_E9B8.f4 = D_00450C10.f10;
+    D_00450C58_E9B8.f8 = D_00450C10.f0C;
+    D_00450C58_E9B8.fC = D_00450C10.f14;
+    D_00450C50_E9B8[0] = D_00450C10.f1C;
     return 1;
 }
 #endif
