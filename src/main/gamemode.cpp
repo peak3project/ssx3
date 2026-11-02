@@ -9,13 +9,41 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// The game-mode manager (cGameModeMan, 0xA0 bytes; cGameModeMan_getGM creates it). D_004A2C6C owns it and
+// D_004A2C70 is the pointer the handlers read it through. iNumberAI is the prototype's name (assert
+// `iRider < (pManager->iNumberAI+1)` in func_0023A760); mode indexes the handler table D_00536668.
+struct cGameModeMan {
+    int f0;             // 0x00 current heat (1..3)
+    int mode;           // 0x04
+    int type;           // 0x08
+    int net;            // 0x0C
+    int iNumberAI;      // 0x10
+    int f14;            // 0x14
+    int a18[10];        // 0x18 rider character IDs
+    int a40[10];        // 0x40
+    int f68;            // 0x68
+    int f6C;            // 0x6C
+    int f70;            // 0x70
+    int f74;            // 0x74
+    int f78;            // 0x78
+    int f7C;            // 0x7C
+    int f80;            // 0x80
+    int f84;            // 0x84
+    int f88;            // 0x88
+    int f8C;            // 0x8C
+    int f90;            // 0x90
+    int f94;            // 0x94
+    int f98;            // 0x98
+    int f9C;            // 0x9C
+};
+extern cGameModeMan* D_004A2C6C;
+extern cGameModeMan* D_004A2C70;
+
 //100%
 INCLUDE_ASM("main/gamemode", cGameModeMan_getGM);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void* D_00536668[];
-extern int* D_004A2C6C;
-extern char* D_004A2C70;
 extern char D_0047C0A8[];
 extern char D_0047C0B8[];
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
@@ -66,10 +94,10 @@ struct sGMMode_D0 {
     sGMMode_D0(void** v) { vt = v; }
 };
 
-extern "C" int* cGameModeMan_getGM(void)
+extern "C" cGameModeMan* cGameModeMan_getGM(void)
 {
     if (D_004A2C6C == 0) {
-        D_004A2C6C = (int*)cMemMan_alloc(0xA0, D_0047C0A8, 0, 0);
+        D_004A2C6C = (cGameModeMan*)cMemMan_alloc(0xA0, D_0047C0A8, 0, 0);
         func_00416210(D_00536668, 0, 0x28);
         if (D_00536668[0] == 0) {
             D_00536668[0] = new (D_0047C0B8, 0, 0) sGMMode_7C(D_0047CFA0);
@@ -128,12 +156,12 @@ extern "C" int* cGameModeMan_getGM(void)
         if (D_00536668[6] == 0) {
             D_00536668[6] = new (D_0047C0B8, 0, 0) sGMMode_4(D_0047CCC8);
         }
-        int* gm = D_004A2C6C;
-        D_004A2C70 = (char*)gm;
-        gm[2] = -1;
-        gm[0] = 0;
-        gm[1] = 0;
-        gm[0x20] = 0;
+        cGameModeMan* gm = D_004A2C6C;
+        D_004A2C70 = gm;
+        gm->type = -1;
+        gm->f0 = 0;
+        gm->mode = 0;
+        gm->f80 = 0;
     }
     return D_004A2C6C;
 }
@@ -148,7 +176,6 @@ public:
 };
 void operator_delete(int*);
 extern void* D_00536668[];
-extern int* D_004A2C6C;
 
 extern "C" void func_002380E8(void* p)
 {
@@ -157,7 +184,7 @@ extern "C" void func_002380E8(void* p)
         delete (cMode2380E8*)D_00536668[i];
     }
     if (D_004A2C6C != 0) {
-        operator_delete(D_004A2C6C);
+        operator_delete((int*)D_004A2C6C);
     }
     D_004A2C6C = 0;
 }
@@ -169,18 +196,9 @@ INCLUDE_ASM("main/gamemode", cGameModeMan_initGameMode);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
-extern "C" void cGameModeMan_restartHeat(void* self);
+extern "C" void cGameModeMan_restartHeat(cGameModeMan* self);
 
-struct sGameModeMan {
-    int f0;
-    int mode;      // 0x4
-    unsigned int type;  // 0x8
-    int net;       // 0xC
-    char pad[0x84 - 0x10];
-    int f84;       // 0x84
-};
-
-extern "C" void cGameModeMan_initGameMode(sGameModeMan* self, unsigned int type)
+extern "C" void cGameModeMan_initGameMode(cGameModeMan* self, unsigned int type)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
     char* gm = (char*)D_00536668[self->mode];
@@ -242,10 +260,10 @@ INCLUDE_ASM("main/gamemode", cGameModeMan_restartHeat);
 extern void* D_00536668[];
 extern int D_005366D0[];
 
-extern "C" void cGameModeMan_restartHeat(void* self)
+extern "C" void cGameModeMan_restartHeat(cGameModeMan* self)
 {
     int i;
-    void* obj = D_00536668[*(int*)((char*)self + 0x4)];
+    void* obj = D_00536668[self->mode];
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)obj;
     vt[2].fn((char*)obj + vt[2].delta);
     for (i = 5; i >= 0; i--) {
@@ -284,9 +302,9 @@ extern "C" void func_00159CD0(void* self, int a1, int a2, int bit);
 int cBELibrary_getProfileIndex(int);
 signed char cBELibrary_getCharacterID(int index);
 
-extern "C" void func_00238358(void* self, int idx, int a2)
+extern "C" void func_00238358(cGameModeMan* self, int idx, int a2)
 {
-    void* obj = D_00536668[*(int*)((char*)self + 4)];
+    void* obj = D_00536668[self->mode];
     sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)obj;
     vt[8].fn((char*)obj + vt[8].delta, idx);
     if (*func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0)) < 0x11) {
@@ -306,7 +324,7 @@ extern "C" void func_00238358(void* self, int idx, int a2)
                     }
                 }
             }
-            if (*(int*)((char*)self + 0x9C)) {
+            if (self->f9C) {
                 func_00154EE8(score, idx, D_00536730[idx], v);
             }
         }
@@ -319,9 +337,9 @@ INCLUDE_ASM("main/gamemode", func_00238510);
 #ifdef SKIP_ASM
 extern void* D_00536668[];
 
-extern "C" int func_00238510(void* self, int a, int b)
+extern "C" int func_00238510(cGameModeMan* self, int a, int b)
 {
-    void* obj = D_00536668[*(int*)((char*)self + 0x4)];
+    void* obj = D_00536668[self->mode];
     sVEntry<int(void*, int, int)>* vt = *(sVEntry<int(void*, int, int)>**)obj;
     return vt[6].fn((char*)obj + vt[6].delta, a, b);
 }
@@ -332,9 +350,9 @@ INCLUDE_ASM("main/gamemode", func_00238550);
 #ifdef SKIP_ASM
 extern void* D_00536668[];
 
-extern "C" void func_00238550(void* self, int a, int b)
+extern "C" void func_00238550(cGameModeMan* self, int a, int b)
 {
-    void* obj = D_00536668[*(int*)((char*)self + 0x4)];
+    void* obj = D_00536668[self->mode];
     sVEntry<void(void*, int, int)>* vt = *(sVEntry<void(void*, int, int)>**)obj;
     vt[7].fn((char*)obj + vt[7].delta, a, b);
 }
@@ -345,9 +363,9 @@ INCLUDE_ASM("main/gamemode", func_00238590);
 #ifdef SKIP_ASM
 extern void* D_00536668[];
 
-extern "C" void func_00238590(void* self, int a, int b)
+extern "C" void func_00238590(cGameModeMan* self, int a, int b)
 {
-    void* obj = D_00536668[*(int*)((char*)self + 0x4)];
+    void* obj = D_00536668[self->mode];
     sVEntry<void(void*, int, int)>* vt = *(sVEntry<void(void*, int, int)>**)obj;
     vt[9].fn((char*)obj + vt[9].delta, a, b);
 }
@@ -356,30 +374,6 @@ extern "C" void func_00238590(void* self, int a, int b)
 //100%
 INCLUDE_ASM("main/gamemode", func_002385D0);
 #ifdef SKIP_ASM
-struct sGM002385D0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 extern void* D_00536668[];
 extern int D_00536730[];
 extern int D_00536708[];
@@ -391,13 +385,12 @@ static inline void io002385D0(void* s, void* p, int n)
     vt[1].fn((char*)s + vt[1].delta, p, n);
 }
 
-extern "C" void func_002385D0(void* self, void* s)
+extern "C" void func_002385D0(cGameModeMan* gm, void* s)
 {
-    sGM002385D0* gm = (sGM002385D0*)self;
-    io002385D0(s, &gm->f4, 4);
+    io002385D0(s, &gm->mode, 4);
     io002385D0(s, &gm->f0, 4);
-    io002385D0(s, &gm->f8, 4);
-    io002385D0(s, &gm->f10, 4);
+    io002385D0(s, &gm->type, 4);
+    io002385D0(s, &gm->iNumberAI, 4);
     io002385D0(s, &gm->f14, 4);
     io002385D0(s, gm->a18, 40);
     io002385D0(s, &gm->f68, 4);
@@ -416,7 +409,7 @@ extern "C" void func_002385D0(void* self, void* s)
     io002385D0(s, &gm->f94, 4);
     io002385D0(s, &gm->f98, 4);
     io002385D0(s, &gm->f9C, 4);
-    void* obj = D_00536668[gm->f4];
+    void* obj = D_00536668[gm->mode];
     sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)obj;
     vt[10].fn((char*)obj + vt[10].delta, s);
 }
@@ -425,30 +418,6 @@ extern "C" void func_002385D0(void* self, void* s)
 //100%
 INCLUDE_ASM("main/gamemode", func_002388A0);
 #ifdef SKIP_ASM
-struct sGM002388A0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 extern void* D_00536668[];
 extern int D_00536730[];
 extern int D_00536708[];
@@ -460,13 +429,12 @@ static inline void io002388A0(void* s, void* p, int n)
     vt[2].fn((char*)s + vt[2].delta, p, n);
 }
 
-extern "C" void func_002388A0(void* self, void* s)
+extern "C" void func_002388A0(cGameModeMan* gm, void* s)
 {
-    sGM002388A0* gm = (sGM002388A0*)self;
-    io002388A0(s, &gm->f4, 4);
+    io002388A0(s, &gm->mode, 4);
     io002388A0(s, &gm->f0, 4);
-    io002388A0(s, &gm->f8, 4);
-    io002388A0(s, &gm->f10, 4);
+    io002388A0(s, &gm->type, 4);
+    io002388A0(s, &gm->iNumberAI, 4);
     io002388A0(s, &gm->f14, 4);
     io002388A0(s, gm->a18, 40);
     io002388A0(s, &gm->f68, 4);
@@ -485,7 +453,7 @@ extern "C" void func_002388A0(void* self, void* s)
     io002388A0(s, &gm->f94, 4);
     io002388A0(s, &gm->f98, 4);
     io002388A0(s, &gm->f9C, 4);
-    void* obj = D_00536668[gm->f4];
+    void* obj = D_00536668[gm->mode];
     sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)obj;
     vt[11].fn((char*)obj + vt[11].delta, s);
 }
@@ -537,44 +505,20 @@ INCLUDE_ASM("main/gamemode", func_00238C80);
 #ifdef SKIP_ASM
 extern "C" void* func_00416210(void* dst, int c, int n);
 
-struct sGM00238C80 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-};
-extern char* D_004A2C70;
 
 extern "C" void func_00238C80(void* self)
 {
-    sGM00238C80* gm = (sGM00238C80*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f84 = 1;
-    gm->f4 = -1;
+    gm->mode = -1;
     gm->f68 = -1;
     gm->f6C = -1;
-    gm->f8 = -1;
+    gm->type = -1;
     gm->f98 = 0;
     gm->f0 = 0;
     gm->f70 = 0;
     gm->f74 = 0;
-    gm->f10 = 0;
+    gm->iNumberAI = 0;
     gm->f14 = 0;
     gm->f78 = 0;
     gm->f7C = 0;
@@ -584,7 +528,7 @@ extern "C" void func_00238C80(void* self)
     gm->f90 = 0;
     gm->f94 = 0;
     func_00416210(gm->a18, 0, 0x28);
-    func_00416210(((sGM00238C80*)D_004A2C70)->a40, 0, 0x28);
+    func_00416210(D_004A2C70->a40, 0, 0x28);
     sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[5];
     e->fn((char*)self + e->delta);
 }
@@ -644,35 +588,9 @@ struct sScore_239AA0;
 extern "C" void func_00239AA0(sScore_239AA0* self);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern void* D_004A28A8;
-extern char* D_004A2C70;
 extern signed char D_00535C11[];
 extern unsigned int D_00536640[];
 extern int D_00536708[];
-
-struct sGM_238E20 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 struct sScore_238E20 {
     sVEntry<void(void*)>* vt;
@@ -694,43 +612,43 @@ extern "C" void func_00238E20(sScore_238E20* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     int i;
-    sGM_238E20* gm = (sGM_238E20*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     int quick = D_00535C11[0];
     gm->f8C = 0;
     gm->f7C = 0;
     if (quick != 0) {
-        gm->f10 = 5;
-        if (gm->f8 == 1) {
+        gm->iNumberAI = 5;
+        if (gm->type == 1) {
             gm->f14 = 4;
         } else {
             gm->f14 = 5;
         }
-        sGM_238E20* g1 = (sGM_238E20*)D_004A2C70;
+        cGameModeMan* g1 = D_004A2C70;
         g1->f6C = -1;
         g1->f90 = 0;
-        if (g1->f8 == 1) {
-            g1->f94 = g1->f8;
+        if (g1->type == 1) {
+            g1->f94 = g1->type;
         } else {
             g1->f94 = 0;
         }
         func_00416210(self->t, 0, 0x78);
         self->vt[4].fn((char*)self + self->vt[4].delta);
-        if (((sGM_238E20*)D_004A2C70)->f84 == 1) {
+        if (D_004A2C70->f84 == 1) {
             func_00239938(self);
         }
-        sGM_238E20* g2 = (sGM_238E20*)D_004A2C70;
+        cGameModeMan* g2 = D_004A2C70;
         g2->f70 = 3;
         g2->f74 = 3;
         func_00239AA0((sScore_239AA0*)self);
     }
-    ((sGM_238E20*)D_004A2C70)->f78 = func_001454F8(race, ((sGM_238E20*)D_004A2C70)->f0) * 60;
-    sGM_238E20* g3 = (sGM_238E20*)D_004A2C70;
-    if (g3->f8 == 2) {
+    D_004A2C70->f78 = func_001454F8(race, D_004A2C70->f0) * 60;
+    cGameModeMan* g3 = D_004A2C70;
+    if (g3->type == 2) {
         g3->f94 = 0;
     } else {
         g3->f94 = 1;
     }
-    sGM_238E20* g = (sGM_238E20*)D_004A2C70;
+    cGameModeMan* g = D_004A2C70;
     int s = g->f70;
     g->f0 = s;
     switch (s) {
@@ -739,7 +657,7 @@ extern "C" void func_00238E20(sScore_238E20* self)
         g->f0 = 1;
         g->f70 = 1;
         g->f74 = 1;
-        g->f10 = 5;
+        g->iNumberAI = 5;
         g->f88 = 1;
         g->f90 = 0;
         g->f9C = 0;
@@ -758,20 +676,20 @@ extern "C" void func_00238E20(sScore_238E20* self)
             func_00239AA0((sScore_239AA0*)self);
         }
         D_00536640[0] = 0;
-        for (i = 1; i < ((sGM_238E20*)D_004A2C70)->f10 + 1; i++) {
+        for (i = 1; i < D_004A2C70->iNumberAI + 1; i++) {
             D_00536640[i] = self->t[2][i];
         }
-        func_00238B70(D_004A2C70, ((sGM_238E20*)D_004A2C70)->f10 + 1);
+        func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
         {
-            sGM_238E20* h = (sGM_238E20*)D_004A2C70;
+            cGameModeMan* h = D_004A2C70;
             race_238E20()->f20 = h->a18[D_00536708[0]];
             race_238E20()->f24 = h->a18[D_00536708[1]];
-            for (i = 1; i < ((sGM_238E20*)D_004A2C70)->f10 + 1; i++) {
+            for (i = 1; i < D_004A2C70->iNumberAI + 1; i++) {
                 D_00536640[i] = t0[i];
             }
         }
-        func_00238B70(D_004A2C70, ((sGM_238E20*)D_004A2C70)->f10 + 1);
-        ((sGM_238E20*)D_004A2C70)->f84 = 0;
+        func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
+        D_004A2C70->f84 = 0;
         break;
     }
     case 2:
@@ -780,10 +698,10 @@ extern "C" void func_00238E20(sScore_238E20* self)
         g->f74 = 1;
         g->f98 = 0;
         D_00536640[0] = 0;
-        for (i = 1; i < ((sGM_238E20*)D_004A2C70)->f10 + 1; i++) {
+        for (i = 1; i < D_004A2C70->iNumberAI + 1; i++) {
             D_00536640[i] = self->t[1][i] + self->t[0][i];
         }
-        func_00238B70(D_004A2C70, ((sGM_238E20*)D_004A2C70)->f10 + 1);
+        func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
         break;
     case 3:
         g->f98 = 1;
@@ -793,10 +711,10 @@ extern "C" void func_00238E20(sScore_238E20* self)
         g->f9C = 0;
         g->f84 = 0;
         D_00536640[0] = 0;
-        for (i = 1; i < ((sGM_238E20*)D_004A2C70)->f10 + 1; i++) {
+        for (i = 1; i < D_004A2C70->iNumberAI + 1; i++) {
             D_00536640[i] = self->t[2][i];
         }
-        func_00238B70(D_004A2C70, ((sGM_238E20*)D_004A2C70)->f10 + 1);
+        func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
         break;
     }
 }
@@ -814,37 +732,11 @@ extern "C" int func_00146E98(void* iface, int a1);
 extern "C" void func_00147D20(void* iface, int a1);
 extern "C" void func_00147E18(void* iface, int a1);
 extern "C" void func_00238B70(void* self, int n);
-extern char* D_004A2C70;
 extern void* D_004A28A8;
 extern unsigned int D_00536640[];
 extern int D_005366A8[];
 extern int D_00536730[];
 extern signed char D_00535C11[];
-
-struct sGM_239230 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 struct sScore_239230 {
     void* vt;
@@ -884,29 +776,29 @@ extern "C" void func_00239230(sScore_239230* self, int idx)
     int n = func_00146E98(player, 0);
     sStats_239230 st = *(sStats_239230*)((char*)Rider_239230(idx)->mMetrix + 0xFC);
     if (Rider_239230(idx)->mDidNotFinish != 0) {
-        self->t[((sGM_239230*)D_004A2C70)->f0 - 1][idx] = 0;
+        self->t[D_004A2C70->f0 - 1][idx] = 0;
         D_005366A8[idx] = 1;
     } else {
-        self->t[((sGM_239230*)D_004A2C70)->f0 - 1][idx] = st.time;
+        self->t[D_004A2C70->f0 - 1][idx] = st.time;
         D_005366A8[idx] = 0;
     }
     if (func_0012A250(Race_239230()) == 0)
         return;
-    sGM_239230* gm = (sGM_239230*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     switch (gm->f0) {
     case 1:
         gm->f74 = gm->f70;
-        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+        for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++)
             D_00536640[i] = self->t[0][i] + self->t[1][i];
-        func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
+        func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
         if (D_00536730[idx] < 3)
-            ((sGM_239230*)D_004A2C70)->f70 = 3;
+            D_004A2C70->f70 = 3;
         else
-            ((sGM_239230*)D_004A2C70)->f70 = ((sGM_239230*)D_004A2C70)->f0 + 1;
-        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+            D_004A2C70->f70 = D_004A2C70->f0 + 1;
+        for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++)
             D_00536640[i] = self->t[0][i];
         if (D_00536730[idx] >= 3) {
-            func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
+            func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
             if (D_00536730[idx] >= 3) {
                 Rider_239230(idx)->unk_100 = 0;
                 break;
@@ -915,12 +807,12 @@ extern "C" void func_00239230(sScore_239230* self, int idx)
         Rider_239230(idx)->unk_100 = 1;
         break;
     case 2:
-        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+        for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++)
             D_00536640[i] = self->t[0][i] + self->t[1][i];
-        func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
-        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+        func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
+        for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++)
             D_00536640[i] = self->t[1][i];
-        gm = (sGM_239230*)D_004A2C70;
+        gm = D_004A2C70;
         gm->f74 = gm->f70;
         if (D_00536730[idx] < 3) {
             gm->f70 = 3;
@@ -943,10 +835,10 @@ extern "C" void func_00239230(sScore_239230* self, int idx)
             if (!done)
                 self->t[2][i] = func_00122E50(r);
         }
-        for (int i = 0; i < ((sGM_239230*)D_004A2C70)->f10 + 1; i++)
+        for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++)
             D_00536640[i] = self->t[2][i];
-        func_00238B70(D_004A2C70, ((sGM_239230*)D_004A2C70)->f10 + 1);
-        gm = (sGM_239230*)D_004A2C70;
+        func_00238B70(D_004A2C70, D_004A2C70->iNumberAI + 1);
+        gm = D_004A2C70;
         gm->f74 = gm->f70;
         int lost = !(D_00536730[idx] < 3);
         if (quick == 0 && !lost) {
@@ -992,17 +884,6 @@ extern "C" int func_00147410(void* iface, int player);
 extern "C" void func_0023C770(int* arr, unsigned int n);
 extern signed char D_00535BC8[];
 
-struct sGM_239938 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-};
-
 extern "C" void func_00239938(void* self)
 {
     int n = 0;
@@ -1020,16 +901,16 @@ extern "C" void func_00239938(void* self)
         }
     }
     func_0023C770(list, n);
-    ((sGM_239938*)D_004A2C70)->a18[0] = charA;
-    ((sGM_239938*)D_004A2C70)->a40[0] = func_00147410(player, p);
-    ((sGM_239938*)D_004A2C70)->a18[1] = charB;
-    ((sGM_239938*)D_004A2C70)->a40[1] = 0;
+    D_004A2C70->a18[0] = charA;
+    D_004A2C70->a40[0] = func_00147410(player, p);
+    D_004A2C70->a18[1] = charB;
+    D_004A2C70->a40[1] = 0;
     for (int j = 0; j < n && j + 2 < 10; j++) {
-        ((sGM_239938*)D_004A2C70)->a18[j + 2] = list[j];
-        ((sGM_239938*)D_004A2C70)->a40[j + 2] = 0;
+        D_004A2C70->a18[j + 2] = list[j];
+        D_004A2C70->a40[j + 2] = 0;
     }
     if (D_00535BC8[0x49] != 0) {
-        ((sGM_239938*)D_004A2C70)->a18[1] = list[n - 1];
+        D_004A2C70->a18[1] = list[n - 1];
     }
 }
 #endif
@@ -1043,7 +924,6 @@ extern "C" void* cBE_getBE();
 extern "C" short func_00147CB8(void* self, int which);
 extern "C" int func_001453D0(void* self, int kind, int place, int mode);
 extern "C" void func_00238B70(void* self, int n);
-extern char* D_004A2C70;
 extern signed char D_00535BC8[];
 extern unsigned int D_00536640[];
 extern int D_00536730[];
@@ -1067,8 +947,8 @@ extern "C" void func_00239AA0(sScore_239AA0* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
-    int nB = *(int*)(D_004A2C70 + 0x14);
-    int d = *(int*)(D_004A2C70 + 0x10) - nB;
+    int nB = D_004A2C70->f14;
+    int d = D_004A2C70->iNumberAI - nB;
     int k = 0;
     for (int i = 0; i < d + 1; i++) {
         D_00536730[i] = 5 - i;
@@ -1106,11 +986,10 @@ struct sScoreTable239CE0 {
     int f0;
     int tbl[8][10];
 };
-extern char* D_004A2C70;
 
 extern "C" int func_00239CE0(sScoreTable239CE0* self, int col, int row)
 {
-    if (*(int*)D_004A2C70 < row) {
+    if (D_004A2C70->f0 < row) {
         return 0;
     }
     return self->tbl[row][col];
@@ -1153,42 +1032,17 @@ int cBENewPlayerInterface_getPlayerCharID(void* iface, int player);
 extern "C" int func_001454F8(void* iface, int a1);
 extern "C" int func_001474C8(void* iface, int player);
 
-struct sGM_239D88 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
-
 extern "C" void func_00239D88(void* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
-    sGM_239D88* gm = (sGM_239D88*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f80 = 0;
     gm->f84 = 0;
     gm->f94 = 0;
     gm->f90 = 0;
     gm->f9C = 0;
-    gm->f10 = 0;
+    gm->iNumberAI = 0;
     gm->f14 = 0;
     gm->f98 = 1;
     gm->f68 = -1;
@@ -1198,17 +1052,17 @@ extern "C" void func_00239D88(void* self)
     gm->f74 = 3;
     gm->f88 = 1;
     int t = func_001454F8(race, 3);
-    sGM_239D88* gm2 = (sGM_239D88*)D_004A2C70;
+    cGameModeMan* gm2 = D_004A2C70;
     gm2->f7C = 0;
     gm2->f8C = 0;
     gm2->f78 = t * 60;
     func_00416210(gm2->a18, -1, 0x28);
     sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[4];
     e->fn((char*)self + e->delta);
-    ((sGM_239D88*)D_004A2C70)->a18[0] = cBENewPlayerInterface_getPlayerCharID(player, 0);
-    ((sGM_239D88*)D_004A2C70)->a18[1] = cBENewPlayerInterface_getPlayerCharID(player, 1);
-    ((sGM_239D88*)D_004A2C70)->a40[0] = func_001474C8(player, 0);
-    ((sGM_239D88*)D_004A2C70)->a40[1] = func_001474C8(player, 1);
+    D_004A2C70->a18[0] = cBENewPlayerInterface_getPlayerCharID(player, 0);
+    D_004A2C70->a18[1] = cBENewPlayerInterface_getPlayerCharID(player, 1);
+    D_004A2C70->a40[0] = func_001474C8(player, 0);
+    D_004A2C70->a40[1] = func_001474C8(player, 1);
     *(short*)((char*)self + 0x4) = 0;
     *(short*)((char*)self + 0x6) = 0;
 }
@@ -1219,7 +1073,6 @@ INCLUDE_ASM("main/gamemode", func_00239EC8);
 //100%
 INCLUDE_ASM("main/gamemode", func_0023A070);
 #ifdef SKIP_ASM
-extern char* D_004A2C70;
 extern void* D_004A28A8;
 
 extern "C" int func_0023A070(char* self, int player, int secs)
@@ -1234,13 +1087,13 @@ extern "C" int func_0023A070(char* self, int player, int secs)
     if (*(short*)((char*)score + (other << 1)) >= s) {
         return 0;
     }
-    char* m = D_004A2C70;
-    if (*(int*)(m + 8) == 1) {
-        unsigned int t = *(unsigned int*)(m + 0x78);
+    cGameModeMan* m = D_004A2C70;
+    if (m->type == 1) {
+        unsigned int t = m->f78;
         if (t < *(unsigned int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 8)) {
             return 0;
         }
-        *(unsigned int*)(m + 0x78) = secs * 60 + t;
+        m->f78 = secs * 60 + t;
         return 1;
     }
     return 1;
@@ -1259,36 +1112,10 @@ extern "C" int func_00145750(void* iface);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void func_0023A4F0(void* self);
 extern "C" void func_0023A668(void* self);
-extern char* D_004A2C70;
 extern signed char D_00535C11[];
 extern unsigned int D_00536640[];
 extern int D_00536730[];
 extern int D_00536708[];
-
-struct sGM_23A108 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 class cGameModeBase_23A108 {
 public:
@@ -1317,7 +1144,7 @@ static inline void fillOthers_23A108(int* dst, int p)
     for (int i = 0; i < 3; i++) {
         int v = D_00536708[i];
         if (v != p) {
-            sGM_23A108* gm = (sGM_23A108*)D_004A2C70;
+            cGameModeMan* gm = D_004A2C70;
             int x = gm->a40[v];
             if (x == 0) {
                 *dst = gm->a18[v];
@@ -1331,17 +1158,17 @@ static inline void fillOthers_23A108(int* dst, int p)
 
 extern "C" void func_0023A108(sMode_23A108* self)
 {
-    sGM_23A108* g0 = (sGM_23A108*)D_004A2C70;
+    cGameModeMan* g0 = D_004A2C70;
     g0->f9C = 0;
     g0->f0 = g0->f70;
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     int quick = D_00535C11[0];
-    if (quick != 0 && ((sGM_23A108*)D_004A2C70)->f0 != 3) {
-        ((sGM_23A108*)D_004A2C70)->f0 = 3;
+    if (quick != 0 && D_004A2C70->f0 != 3) {
+        D_004A2C70->f0 = 3;
         self->fC = 0;
     }
-    sGM_23A108* gm = (sGM_23A108*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     int state = gm->f0;
     gm->f7C = 0;
     gm->f8C = 0;
@@ -1351,7 +1178,7 @@ extern "C" void func_0023A108(sMode_23A108* self)
         gm->f98 = 0;
         gm->f0 = 1;
         gm->f14 = 0;
-        gm->f10 = 5;
+        gm->iNumberAI = 5;
         if (gm->f84 == 1) {
             func_0023A4F0(self);
             func_0023A668(self);
@@ -1359,7 +1186,7 @@ extern "C" void func_0023A108(sMode_23A108* self)
         func_00416210(self->tbl, 9, 0x78);
         self->v05();
         {
-            sGM_23A108* g = (sGM_23A108*)D_004A2C70;
+            cGameModeMan* g = D_004A2C70;
             g->f6C = -1;
             g->f70 = 1;
             g->f74 = 1;
@@ -1375,7 +1202,7 @@ extern "C" void func_0023A108(sMode_23A108* self)
         break;
     case 2:
         gm->f98 = 0;
-        gm->f10 = 5;
+        gm->iNumberAI = 5;
         gm->f14 = 0;
         if (self->f8 == 0) {
             int p = func_00146E98(player, 0);
@@ -1384,7 +1211,7 @@ extern "C" void func_0023A108(sMode_23A108* self)
             func_0023A668(self);
         }
         {
-            sGM_23A108* g = (sGM_23A108*)D_004A2C70;
+            cGameModeMan* g = D_004A2C70;
             g->f6C = -1;
             g->f70 = 2;
             g->f74 = 2;
@@ -1393,7 +1220,7 @@ extern "C" void func_0023A108(sMode_23A108* self)
         func_00416210(D_00536730, 0, 0x28);
         func_00416210(self->tbl[1], 9, 0x28);
         {
-            sGM_23A108* g = (sGM_23A108*)D_004A2C70;
+            cGameModeMan* g = D_004A2C70;
             g->f78 = 0;
             g->f80 = 0;
             g->f84 = 0;
@@ -1405,15 +1232,15 @@ extern "C" void func_0023A108(sMode_23A108* self)
         self->fC = 0;
         break;
     case 3:
-        gm->f10 = 5;
+        gm->iNumberAI = 5;
         gm->f14 = 0;
         gm->f98 = 1;
         if (self->fC == 0) {
             if (quick != 0) {
                 func_0023A4F0(self);
-                ((sGM_23A108*)D_004A2C70)->f0 = 1;
+                D_004A2C70->f0 = 1;
                 func_0023A668(self);
-                ((sGM_23A108*)D_004A2C70)->f0 = state;
+                D_004A2C70->f0 = state;
                 func_00416210(self->tbl, 9, 0x78);
                 self->v05();
             } else {
@@ -1425,7 +1252,7 @@ extern "C" void func_0023A108(sMode_23A108* self)
             }
         }
         {
-            sGM_23A108* g = (sGM_23A108*)D_004A2C70;
+            cGameModeMan* g = D_004A2C70;
             g->f6C = -1;
             g->f70 = 3;
             g->f74 = 3;
@@ -1434,7 +1261,7 @@ extern "C" void func_0023A108(sMode_23A108* self)
         func_00416210(D_00536730, 9, 0x28);
         func_00416210(self->tbl[2], 9, 0x28);
         {
-            sGM_23A108* g = (sGM_23A108*)D_004A2C70;
+            cGameModeMan* g = D_004A2C70;
             g->f78 = 0;
             g->f80 = 0;
             g->f84 = 0;
@@ -1506,14 +1333,6 @@ extern int func_00146E98_668(void* iface, int a) __asm__("func_00146E98");
 extern int cBENewPlayerInterface_getRiderCharID_668(void* iface, int id) __asm__("cBENewPlayerInterface_getRiderCharID__FPvi");
 extern int func_00147410_668(void* iface, int id) __asm__("func_00147410");
 
-struct sGM_23A668 {
-    int count;          // 0x0
-    char pad_0x4[0x14];
-    int a18[6];         // 0x18
-    int pad_0x30[4];
-    int a40[6];         // 0x40
-};
-
 struct sSelf_23A668 {
     char pad_0x0[0x10];
     int rows[1][6];     // 0x10
@@ -1526,18 +1345,18 @@ extern "C" void func_0023A668(void* self_)
     int id = func_00146E98_668(iface, 0);
     int ch = cBENewPlayerInterface_getRiderCharID_668(iface, id);
     int r = func_00147410_668(iface, id);
-    int k = ((sGM_23A668*)D_004A2C70)->count - 1;
+    int k = D_004A2C70->f0 - 1;
     if (k < 0) k = 0;
     for (int i = 0; i < 6; i++) {
         int v = self->rows[k][i];
         if (v >= 10) {
-            ((sGM_23A668*)D_004A2C70)->a40[i] = v;
+            D_004A2C70->a40[i] = v;
             v = ch;
         } else {
-            ((sGM_23A668*)D_004A2C70)->a40[i] = 0;
+            D_004A2C70->a40[i] = 0;
         }
-        ((sGM_23A668*)D_004A2C70)->a18[i] = v;
-        if (i == id) ((sGM_23A668*)D_004A2C70)->a40[i] = r;
+        D_004A2C70->a18[i] = v;
+        if (i == id) D_004A2C70->a40[i] = r;
     }
 }
 #endif
@@ -1554,37 +1373,11 @@ extern "C" int func_00122D78(void* self);
 extern "C" void func_00238BF8(void* self, int n);
 extern "C" void func_00147D20(void* iface, int a1);
 extern "C" void func_00147E18(void* iface, int a1);
-extern char* D_004A2C70;
 extern void* D_004A28A8;
 extern unsigned int D_00536640[];
 extern int D_005366A8[];
 extern int D_00536730[];
 extern signed char D_00535BC8[];
-
-struct sGM_23A760 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 // The race (*(D_004A28A8 + 0x84) + 0xC): rider list at 0x28, player objects at 0x40.
 struct sRace_23A760 {
@@ -1624,7 +1417,7 @@ extern "C" void func_0023A760(sMode_23A760* self, int idx)
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     cBE_getInterface_Fv(cBE_getBE(), 0);
     int n = func_00146E98(player, 0);
-    int heat = ((sGM_23A760*)D_004A2C70)->f0 - 1;
+    int heat = D_004A2C70->f0 - 1;
     sRace_23A760* rc = race_23A760();
     if (func_0012A250(rc) == 0 || vcall_23A760((char*)race_23A760()->riders[idx] + 0x6C0, 9) == 0) {
         int tick = rc->riders[idx]->mFinishTick;
@@ -1642,14 +1435,14 @@ extern "C" void func_0023A760(sMode_23A760* self, int idx)
     if (vcall_23A760((char*)race_23A760()->riders[idx] + 0x6C0, 8) == 0) {
         return;
     }
-    for (int i = 0; i < ((sGM_23A760*)D_004A2C70)->f10 + 1; i++) {
+    for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++) {
         if (!finished_23A760(rc->riders[i])) {
             self->tbl[heat][i] = func_00122D78(rc->riders[i]);
         }
         D_00536640[i] = self->tbl[heat][i];
     }
     func_00238BF8(D_004A2C70, 10);
-    sGM_23A760* gm = (sGM_23A760*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f74 = gm->f70;
     if (D_00536730[n] < 3) {
         gm->f70 = gm->f0 + 1;
@@ -1660,15 +1453,15 @@ extern "C" void func_0023A760(sMode_23A760* self, int idx)
         }
         if (D_00535BC8[0x49] == 0) {
             if (D_00536730[n] == 0) {
-                if ((((sGM_23A760*)D_004A2C70)->f0 < 2 && D_00536640[1] - D_00536640[0] > 600) ||
-                    (((sGM_23A760*)D_004A2C70)->f0 == 2 && D_00536640[1] - D_00536640[0] > 300) ||
-                    (((sGM_23A760*)D_004A2C70)->f0 == 3 && D_00536640[1] - D_00536640[0] > 180)) {
+                if ((D_004A2C70->f0 < 2 && D_00536640[1] - D_00536640[0] > 600) ||
+                    (D_004A2C70->f0 == 2 && D_00536640[1] - D_00536640[0] > 300) ||
+                    (D_004A2C70->f0 == 3 && D_00536640[1] - D_00536640[0] > 180)) {
                     func_00147D20(player, 1);
                 }
             }
-            if (((sGM_23A760*)D_004A2C70)->f0 == 3) {
-                ((sGM_23A760*)D_004A2C70)->f70 = 0;
-                ((sGM_23A760*)D_004A2C70)->f74 = 0;
+            if (D_004A2C70->f0 == 3) {
+                D_004A2C70->f70 = 0;
+                D_004A2C70->f74 = 0;
             }
         }
     } else {
@@ -1677,15 +1470,15 @@ extern "C" void func_0023A760(sMode_23A760* self, int idx)
         self->fC = 1;
         race_23A760()->riders[idx]->unk_100 = 0;
         if (D_00535BC8[0x49] == 0) {
-            if (((sGM_23A760*)D_004A2C70)->f0 < 2 ||
-                (((sGM_23A760*)D_004A2C70)->f0 == 2 && D_00536730[n] >= 4) ||
-                (((sGM_23A760*)D_004A2C70)->f0 == 3 && D_00536730[n] == 5)) {
+            if (D_004A2C70->f0 < 2 ||
+                (D_004A2C70->f0 == 2 && D_00536730[n] >= 4) ||
+                (D_004A2C70->f0 == 3 && D_00536730[n] == 5)) {
                 func_00147E18(player, 1);
             }
         }
     }
-    if (((sGM_23A760*)D_004A2C70)->f0 == 3) {
-        ((sGM_23A760*)D_004A2C70)->f9C = 1;
+    if (D_004A2C70->f0 == 3) {
+        D_004A2C70->f9C = 1;
     }
     int place = D_00536730[n];
     if (place == 0)
@@ -1738,53 +1531,28 @@ extern void* D_004A28A8;
 extern int D_00534B30[];
 extern int D_00535C04[];
 
-struct sGM_23AC88 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
-
 extern "C" void func_0023AC88(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
-    sGM_23AC88* gm = (sGM_23AC88*)D_004A2C70;
-    gm->fC = 2;
+    cGameModeMan* gm = D_004A2C70;
+    gm->net = 2;
     gm->f94 = 0;
     gm->f90 = 0;
     gm->f9C = 0;
     gm->f98 = 1;
     gm->f88 = 0;
-    gm->f8 = 0;
+    gm->type = 0;
     gm->f0 = 3;
     gm->f70 = 3;
     gm->f74 = 3;
     gm->f6C = -1;
-    gm->f10 = 4;
+    gm->iNumberAI = 4;
     cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
     if (D_00534B30[0] != 0) {
         cBE_getInterface_Fv(cBE_getBE(), 0);
-        ((sGM_23AC88*)D_004A2C70)->f10 = D_00535C04[0];
+        D_004A2C70->iNumberAI = D_00535C04[0];
     }
-    sGM_23AC88* gm2 = (sGM_23AC88*)D_004A2C70;
+    cGameModeMan* gm2 = D_004A2C70;
     gm2->f14 = 0;
     gm2->f80 = 0;
     gm2->f78 = 0;
@@ -1793,14 +1561,14 @@ extern "C" void func_0023AC88(void* self)
     func_00416210((char*)self + 4, 9, 0x28);
     sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[5];
     e->fn((char*)self + e->delta);
-    ((sGM_23AC88*)D_004A2C70)->a18[0] = cBENewPlayerInterface_getPlayerCharID(player, 0);
-    ((sGM_23AC88*)D_004A2C70)->a18[1] = cBENewPlayerInterface_getPlayerCharID(player, 1);
-    ((sGM_23AC88*)D_004A2C70)->a40[0] = func_001474C8(player, 0);
-    ((sGM_23AC88*)D_004A2C70)->a40[1] = func_001474C8(player, 1);
-    if (((sGM_23AC88*)D_004A2C70)->f84 == 1) {
+    D_004A2C70->a18[0] = cBENewPlayerInterface_getPlayerCharID(player, 0);
+    D_004A2C70->a18[1] = cBENewPlayerInterface_getPlayerCharID(player, 1);
+    D_004A2C70->a40[0] = func_001474C8(player, 0);
+    D_004A2C70->a40[1] = func_001474C8(player, 1);
+    if (D_004A2C70->f84 == 1) {
         func_0023B0A8(self);
     }
-    ((sGM_23AC88*)D_004A2C70)->f84 = 0;
+    D_004A2C70->f84 = 0;
 }
 #endif
 
@@ -1808,7 +1576,6 @@ extern "C" void func_0023AC88(void* self)
 INCLUDE_ASM("main/gamemode", func_0023AE00);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
-extern char* D_004A2C70;
 extern unsigned int D_00536640[];
 extern int D_005366A8[];
 extern int D_00536730[];
@@ -1870,7 +1637,7 @@ extern "C" void func_0023AE00(sSelf_23AE00* self, int idx)
         }
     }
     if (func_0012A250(rc)) {
-        for (int i = 0; i < *(int*)(D_004A2C70 + 0x10) + 2; i++) {
+        for (int i = 0; i < D_004A2C70->iNumberAI + 2; i++) {
             if (!finished_23AE00(rc->riders[i]) && i != idx) {
                 self->times[i] = func_00122D78(rc->riders[i]);
             }
@@ -1880,7 +1647,7 @@ extern "C" void func_0023AE00(sSelf_23AE00* self, int idx)
         if (D_00536730[idx] >= 3) {
             race_23AE00()->riders[idx]->f100 = 0;
         }
-        *(int*)(D_004A2C70 + 0x9C) = 1;
+        D_004A2C70->f9C = 1;
     }
 }
 #endif
@@ -1916,45 +1683,20 @@ extern "C" void* cBE_getBE();
 int cBENewPlayerInterface_getRiderCharID(void* iface, int player);
 extern "C" int func_00146E98(void* iface, int a1);
 
-struct sGM_23B170 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
-
 extern "C" void func_0023B170(void* self)
 {
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
-    sGM_23B170* gm = (sGM_23B170*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f0 = 1;
     gm->f98 = 1;
-    gm->f10 = 0;
+    gm->iNumberAI = 0;
     gm->f14 = 0;
     func_00416210(gm->a18, -1, 0x28);
     int p = func_00146E98(iface, 0);
-    ((sGM_23B170*)D_004A2C70)->a18[p] = cBENewPlayerInterface_getRiderCharID(iface, func_00146E98(iface, 0));
+    D_004A2C70->a18[p] = cBENewPlayerInterface_getRiderCharID(iface, func_00146E98(iface, 0));
     sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[4];
     e->fn((char*)self + e->delta);
-    sGM_23B170* gm2 = (sGM_23B170*)D_004A2C70;
+    cGameModeMan* gm2 = D_004A2C70;
     gm2->f70 = 1;
     gm2->f74 = 1;
     gm2->f9C = 1;
@@ -1981,33 +1723,7 @@ extern "C" int func_00146E98(void* iface, int a1);
 extern "C" int func_001455D0(void* iface, int mode, int a2);
 extern "C" int func_001558F8(void* iface, int a1, int a2, int a3);
 extern "C" void* func_00416210(void* dst, int c, int n);
-extern char* D_004A2C70;
 extern signed char D_00535C12[];
-
-struct sGM_23B268 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 struct sMode_23B268 {
     sVEntry<void(void*)>* vt;
@@ -2021,11 +1737,11 @@ extern "C" void func_0023B268(void* self)
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* score = cBE_getInterface_Fv(cBE_getBE(), 8);
-    sGM_23B268* gm = (sGM_23B268*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f0 = 1;
     int mode = D_00535C12[0];
-    gm->f10 = 0;
-    gm->f8 = mode;
+    gm->iNumberAI = 0;
+    gm->type = mode;
     gm->f14 = 0;
     gm->f8C = 0;
     switch (mode) {
@@ -2042,15 +1758,15 @@ extern "C" void func_0023B268(void* self)
         gm->f6C = 4;
         break;
     }
-    int r = func_001558F8(score, 0, ((sGM_23B268*)D_004A2C70)->f68, ((sGM_23B268*)D_004A2C70)->f8);
+    int r = func_001558F8(score, 0, D_004A2C70->f68, D_004A2C70->type);
     *(short*)((char*)self + 0xA) = 0;
     if (r == 1 || r == 2) {
         *(short*)((char*)self + 0xA) = 2;
     } else if (r == 3) {
         *(short*)((char*)self + 0xA) = 1;
     }
-    int t = func_001455D0(race, ((sGM_23B268*)D_004A2C70)->f8, *(short*)((char*)self + 0xA));
-    sGM_23B268* gm2 = (sGM_23B268*)D_004A2C70;
+    int t = func_001455D0(race, D_004A2C70->type, *(short*)((char*)self + 0xA));
+    cGameModeMan* gm2 = D_004A2C70;
     *(int*)((char*)self + 4) = t * 60;
     gm2->f88 = 1;
     gm2->f78 = *(int*)((char*)self + 4);
@@ -2059,10 +1775,10 @@ extern "C" void func_0023B268(void* self)
     gm2->f74 = 2;
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[5].fn((char*)self + vt[5].delta);
-    func_00416210(((sGM_23B268*)D_004A2C70)->a18, -1, 0x28);
+    func_00416210(D_004A2C70->a18, -1, 0x28);
     int p = func_00146E98(player, 0);
-    ((sGM_23B268*)D_004A2C70)->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
-    sGM_23B268* gm3 = (sGM_23B268*)D_004A2C70;
+    D_004A2C70->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
+    cGameModeMan* gm3 = D_004A2C70;
     gm3->f80 = 0;
     gm3->f84 = 0;
     gm3->f90 = 0;
@@ -2085,31 +1801,6 @@ extern int D_00536730[];
 extern unsigned int D_00536640[];
 extern int D_005366A8[];
 
-struct sGM_23B468 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
-
 static inline char* rider_23B468(char* g, int off)
 {
     return *(char**)(*(char**)(*(char**)(g + 0x84) + 0xC) + off + 0x28);
@@ -2120,7 +1811,7 @@ extern "C" void func_0023B468(void* self, int p)
     int off = p << 2;
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     char* g = (char*)D_004A28A8;
-    sGM_23B468* gm = (sGM_23B468*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     unsigned int* t = &D_00536640[p];
     *t = *(unsigned int*)(rider_23B468(g, off) + 0x478);
     gm->f9C = 1;
@@ -2137,8 +1828,8 @@ extern "C" void func_0023B468(void* self, int p)
     } else {
         *(int*)(r + 0x100) = 1;
         gm->f84 = 1;
-        unsigned int a = func_001455D0(race, gm->f8, 2) * 60;
-        unsigned int b = func_001455D0(race, ((sGM_23B468*)D_004A2C70)->f8, 1) * 60;
+        unsigned int a = func_001455D0(race, gm->type, 2) * 60;
+        unsigned int b = func_001455D0(race, D_004A2C70->type, 1) * 60;
         if (a >= *t) {
             D_00536730[p] = 0;
         } else if (b >= *t) {
@@ -2195,41 +1886,15 @@ extern "C" int func_00146E98(void* iface, int a1);
 extern "C" int func_00145750(void* iface);
 extern "C" int func_00147410(void* iface, int player);
 extern "C" void* func_00416210(void* dst, int c, int n);
-extern char* D_004A2C70;
 extern signed char D_00535C11[];
-
-struct sGM_23B6C0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 extern "C" void func_0023B6C0(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
-    sGM_23B6C0* gm = (sGM_23B6C0*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f0 = 1;
-    gm->f10 = 1;
+    gm->iNumberAI = 1;
     gm->f14 = 0;
     gm->f68 = -1;
     gm->f70 = 1;
@@ -2248,19 +1913,19 @@ extern "C" void func_0023B6C0(void* self)
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[5].fn((char*)self + vt[5].delta);
     if (D_00535C11[0] == 2) {
-        ((sGM_23B6C0*)D_004A2C70)->f10 = 0;
+        D_004A2C70->iNumberAI = 0;
         int p0 = func_00146E98(player, 0);
         int p1 = func_00146E98(player, 1);
-        ((sGM_23B6C0*)D_004A2C70)->a18[p0] = cBENewPlayerInterface_getRiderCharID(player, p0);
-        ((sGM_23B6C0*)D_004A2C70)->a40[p0] = func_00147410(player, p0);
-        ((sGM_23B6C0*)D_004A2C70)->a18[p1] = cBENewPlayerInterface_getRiderCharID(player, p1);
-        ((sGM_23B6C0*)D_004A2C70)->a40[p1] = func_00147410(player, p1);
+        D_004A2C70->a18[p0] = cBENewPlayerInterface_getRiderCharID(player, p0);
+        D_004A2C70->a40[p0] = func_00147410(player, p0);
+        D_004A2C70->a18[p1] = cBENewPlayerInterface_getRiderCharID(player, p1);
+        D_004A2C70->a40[p1] = func_00147410(player, p1);
     } else {
-        func_00416210(((sGM_23B6C0*)D_004A2C70)->a18, -1, 0x28);
+        func_00416210(D_004A2C70->a18, -1, 0x28);
         int p = func_00146E98(player, 0);
-        ((sGM_23B6C0*)D_004A2C70)->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
-        ((sGM_23B6C0*)D_004A2C70)->a18[func_00146E98(player, 0) + 1] = func_00145750(race);
-        ((sGM_23B6C0*)D_004A2C70)->a40[func_00146E98(player, 0) + 1] = 0;
+        D_004A2C70->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
+        D_004A2C70->a18[func_00146E98(player, 0) + 1] = func_00145750(race);
+        D_004A2C70->a40[func_00146E98(player, 0) + 1] = 0;
     }
 }
 #endif
@@ -2275,37 +1940,11 @@ extern "C" int func_00122D78(void* self);
 extern "C" int func_0012A250(void* race);
 extern "C" int func_00146E98(void* iface, int a1);
 extern "C" void func_00238BF8(void* self, int n);
-extern char* D_004A2C70;
 extern void* D_004A28A8;
 extern unsigned int D_00536640[];
 extern int D_005366A8[];
 extern int D_00536730[];
 extern signed char D_00535C11[];
-
-struct sGM_23B8C8 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 class cRiderState_23B8C8 {
 public:
@@ -2352,7 +1991,7 @@ extern "C" void func_0023B8C8(void* self, int idx)
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (D_00535C11[0] == 2) {
         func_00238BF8(D_004A2C70, 10);
-        ((sGM_23B8C8*)D_004A2C70)->f9C = 1;
+        D_004A2C70->f9C = 1;
         int w = 1;
         if (D_00536640[0] < D_00536640[1]) {
             w = 0;
@@ -2361,7 +2000,7 @@ extern "C" void func_0023B8C8(void* self, int idx)
             return;
         }
     } else {
-        for (int i = 0; i < ((sGM_23B8C8*)D_004A2C70)->f10 + 1; i++) {
+        for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++) {
             char* r = Rider_23B8C8(i);
             int done = *(float*)(r + 0x470) >= 0.0f;
             if (!done) {
@@ -2370,12 +2009,12 @@ extern "C" void func_0023B8C8(void* self, int idx)
         }
         void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
         int n = func_00146E98(player, 0);
-        sGM_23B8C8* gm = (sGM_23B8C8*)D_004A2C70;
+        cGameModeMan* gm = D_004A2C70;
         gm->f9C = 1;
         func_00238BF8(gm, 10);
         if (D_00536730[n] == 0 && *(int*)(Rider_23B8C8(idx) + 0x480) == 0) {
             *(int*)(Rider_23B8C8(idx) + 0x100) = 1;
-            sGM_23B8C8* gm2 = (sGM_23B8C8*)D_004A2C70;
+            cGameModeMan* gm2 = D_004A2C70;
             gm2->f84 = 1;
             gm2->f74 = gm2->f70;
             gm2->f70 = 0;
@@ -2398,48 +2037,22 @@ extern "C" int func_00145750(void* iface);
 extern "C" int func_00147410(void* iface, int player);
 extern "C" int func_001454F8(void* iface, int a1);
 extern "C" void* func_00416210(void* dst, int c, int n);
-extern char* D_004A2C70;
 extern signed char D_00535C11[];
-
-struct sGM_23BB98 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 extern "C" void func_0023BB98(void* self)
 {
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
-    sGM_23BB98* gm = (sGM_23BB98*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f68 = -1;
     gm->f74 = 1;
     gm->f0 = 1;
-    gm->f10 = 1;
+    gm->iNumberAI = 1;
     gm->f14 = 0;
     gm->f70 = 1;
     gm->f6C = -1;
     int t = func_001454F8(race, 1);
-    sGM_23BB98* gm2 = (sGM_23BB98*)D_004A2C70;
+    cGameModeMan* gm2 = D_004A2C70;
     gm2->f9C = 0;
     gm2->f7C = 0;
     gm2->f78 = t * 60;
@@ -2453,19 +2066,19 @@ extern "C" void func_0023BB98(void* self)
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[4].fn((char*)self + vt[4].delta);
     if (D_00535C11[0] == 2) {
-        ((sGM_23BB98*)D_004A2C70)->f10 = 0;
+        D_004A2C70->iNumberAI = 0;
         int p0 = func_00146E98(player, 0);
         int p1 = func_00146E98(player, 1);
-        ((sGM_23BB98*)D_004A2C70)->a18[p0] = cBENewPlayerInterface_getRiderCharID(player, p0);
-        ((sGM_23BB98*)D_004A2C70)->a40[p0] = func_00147410(player, p0);
-        ((sGM_23BB98*)D_004A2C70)->a18[p1] = cBENewPlayerInterface_getRiderCharID(player, p1);
-        ((sGM_23BB98*)D_004A2C70)->a40[p1] = func_00147410(player, p1);
+        D_004A2C70->a18[p0] = cBENewPlayerInterface_getRiderCharID(player, p0);
+        D_004A2C70->a40[p0] = func_00147410(player, p0);
+        D_004A2C70->a18[p1] = cBENewPlayerInterface_getRiderCharID(player, p1);
+        D_004A2C70->a40[p1] = func_00147410(player, p1);
     } else {
-        func_00416210(((sGM_23BB98*)D_004A2C70)->a18, -1, 0x28);
+        func_00416210(D_004A2C70->a18, -1, 0x28);
         int p = func_00146E98(player, 0);
-        ((sGM_23BB98*)D_004A2C70)->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
-        ((sGM_23BB98*)D_004A2C70)->a18[func_00146E98(player, 0) + 1] = func_00145750(race);
-        ((sGM_23BB98*)D_004A2C70)->a40[func_00146E98(player, 0) + 1] = 0;
+        D_004A2C70->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
+        D_004A2C70->a18[func_00146E98(player, 0) + 1] = func_00145750(race);
+        D_004A2C70->a40[func_00146E98(player, 0) + 1] = 0;
     }
 }
 #endif
@@ -2480,37 +2093,11 @@ extern "C" int func_00122E50(void* self);
 extern "C" int func_0012A250(void* race);
 extern "C" int func_00146E98(void* iface, int a1);
 extern "C" void func_00238B70(void* self, int n);
-extern char* D_004A2C70;
 extern void* D_004A28A8;
 extern unsigned int D_00536640[];
 extern int D_005366A8[];
 extern int D_00536730[];
 extern signed char D_00535C11[];
-
-struct sGM_23BDB8 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 struct sStats_23BDB8 {
     int v[0x9C / 4];
@@ -2545,7 +2132,7 @@ extern "C" void func_0023BDB8(void* self, int idx)
     cBE_getInterface_Fv(cBE_getBE(), 0);
     if (D_00535C11[0] == 2) {
         func_00238B70(D_004A2C70, 2);
-        ((sGM_23BDB8*)D_004A2C70)->f9C = 1;
+        D_004A2C70->f9C = 1;
         int w = 1;
         if (D_00536640[0] > D_00536640[1]) {
             w = 0;
@@ -2555,7 +2142,7 @@ extern "C" void func_0023BDB8(void* self, int idx)
         }
         *(int*)(Rider_23BDB8(idx) + 0x100) = 0;
     } else {
-        for (int i = 0; i < ((sGM_23BDB8*)D_004A2C70)->f10 + 1; i++) {
+        for (int i = 0; i < D_004A2C70->iNumberAI + 1; i++) {
             char* r = Rider_23BDB8(i);
             int done = *(float*)(r + 0x470) >= 0.0f;
             if (!done) {
@@ -2564,12 +2151,12 @@ extern "C" void func_0023BDB8(void* self, int idx)
         }
         void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
         int n = func_00146E98(player, 0);
-        sGM_23BDB8* gm = (sGM_23BDB8*)D_004A2C70;
+        cGameModeMan* gm = D_004A2C70;
         gm->f9C = 1;
         func_00238B70(gm, 2);
         if (D_00536730[n] == 0 && *(int*)(Rider_23BDB8(idx) + 0x480) == 0) {
             *(int*)(Rider_23BDB8(idx) + 0x100) = 1;
-            sGM_23BDB8* gm2 = (sGM_23BDB8*)D_004A2C70;
+            cGameModeMan* gm2 = D_004A2C70;
             gm2->f84 = 1;
             gm2->f74 = gm2->f70;
             gm2->f70 = 0;
@@ -2592,44 +2179,18 @@ extern "C" int func_001455D0(void* iface, int mode, int a2);
 extern "C" int func_00145600(void* iface, int mode, int a2);
 extern "C" int func_001558F8(void* iface, int a1, int a2, int a3);
 extern "C" void* func_00416210(void* dst, int c, int n);
-extern char* D_004A2C70;
 extern signed char D_00535C12[];
-
-struct sGM_23C0D0 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 extern "C" void func_0023C0D0(void* self)
 {
     void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
     void* score = cBE_getInterface_Fv(cBE_getBE(), 8);
-    sGM_23C0D0* gm = (sGM_23C0D0*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f0 = 1;
     int mode = D_00535C12[0];
-    gm->f10 = 0;
-    gm->f8 = mode;
+    gm->iNumberAI = 0;
+    gm->type = mode;
     gm->f14 = 0;
     switch (mode) {
     case 9:
@@ -2645,28 +2206,28 @@ extern "C" void func_0023C0D0(void* self)
         gm->f6C = 4;
         break;
     }
-    unsigned int r = (unsigned int)func_001558F8(score, 0, ((sGM_23C0D0*)D_004A2C70)->f68, ((sGM_23C0D0*)D_004A2C70)->f8);
+    unsigned int r = (unsigned int)func_001558F8(score, 0, D_004A2C70->f68, D_004A2C70->type);
     *(short*)((char*)self + 0xA) = 0;
     if (r < 3) {
         *(short*)((char*)self + 0xA) = 2;
     } else if (r == 3) {
         *(short*)((char*)self + 0xA) = 1;
     }
-    int t = func_001455D0(race, ((sGM_23C0D0*)D_004A2C70)->f8, *(short*)((char*)self + 0xA)) * 100;
-    sGM_23C0D0* gm2 = (sGM_23C0D0*)D_004A2C70;
+    int t = func_001455D0(race, D_004A2C70->type, *(short*)((char*)self + 0xA)) * 100;
+    cGameModeMan* gm2 = D_004A2C70;
     *(int*)((char*)self + 4) = t;
     gm2->f7C = t;
-    int u = func_00145600(race, gm2->f8, *(short*)((char*)self + 0xA));
-    sGM_23C0D0* gm3 = (sGM_23C0D0*)D_004A2C70;
+    int u = func_00145600(race, gm2->type, *(short*)((char*)self + 0xA));
+    cGameModeMan* gm3 = D_004A2C70;
     gm3->f70 = 2;
     gm3->f74 = 2;
     gm3->f78 = u * 60;
     sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)self;
     vt[4].fn((char*)self + vt[4].delta);
-    func_00416210(((sGM_23C0D0*)D_004A2C70)->a18, -1, 0x28);
+    func_00416210(D_004A2C70->a18, -1, 0x28);
     int p = func_00146E98(player, 0);
-    ((sGM_23C0D0*)D_004A2C70)->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
-    sGM_23C0D0* gm4 = (sGM_23C0D0*)D_004A2C70;
+    D_004A2C70->a18[p] = cBENewPlayerInterface_getRiderCharID(player, func_00146E98(player, 0));
+    cGameModeMan* gm4 = D_004A2C70;
     gm4->f80 = 0;
     gm4->f84 = 0;
     gm4->f88 = 1;
@@ -2686,36 +2247,10 @@ INCLUDE_ASM("main/gamemode", func_0023C2D8);
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cBE_getBE();
 extern "C" int func_001455D0(void* iface, int mode, int a2);
-extern char* D_004A2C70;
 extern void* D_004A28A8;
 extern unsigned int D_00536640[];
 extern int D_005366A8[];
 extern int D_00536730[];
-
-struct sGM_23C2D8 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
 
 struct sStats_23C2D8 {
     int v[0x9C / 4];
@@ -2736,20 +2271,20 @@ extern "C" void func_0023C2D8(void* self, int idx)
     char* r = (*(sClk_23C2D8**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC))->riders[idx];
     if (*(int*)(r + 0x480) != 0) {
         D_00536640[idx] = 0;
-        ((sGM_23C2D8*)D_004A2C70)->f70 = 1;
+        D_004A2C70->f70 = 1;
         *(int*)((*(sClk_23C2D8**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC))->riders[idx] + 0x100) = 0;
         D_005366A8[idx] = 1;
     } else {
-        sGM_23C2D8* gm = (sGM_23C2D8*)D_004A2C70;
+        cGameModeMan* gm = D_004A2C70;
         if (st.time < gm->f7C) {
             *(int*)(r + 0x100) = 0;
             D_00536640[idx] = st.time;
             gm->f70 = 1;
             D_005366A8[idx] = 0;
         } else {
-            int a = func_001455D0(race, gm->f8, 2) * 100;
-            int b = func_001455D0(race, ((sGM_23C2D8*)D_004A2C70)->f8, 1) * 100;
-            sGM_23C2D8* gm2 = (sGM_23C2D8*)D_004A2C70;
+            int a = func_001455D0(race, gm->type, 2) * 100;
+            int b = func_001455D0(race, D_004A2C70->type, 1) * 100;
+            cGameModeMan* gm2 = D_004A2C70;
             *(int*)((*(sClk_23C2D8**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC))->riders[idx] + 0x100) = 1;
             D_00536640[idx] = st.time;
             gm2->f84 = 1;
@@ -2762,7 +2297,7 @@ extern "C" void func_0023C2D8(void* self, int idx)
             }
         }
     }
-    ((sGM_23C2D8*)D_004A2C70)->f9C = 1;
+    D_004A2C70->f9C = 1;
 }
 #endif
 
@@ -2811,39 +2346,14 @@ extern "C" int func_00146E98(void* iface, int a1);
 extern "C" void func_0023C770(int* arr, unsigned int n);
 extern int D_00535C04[];
 
-struct sGM_23C618 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int a18[10];
-    int a40[10];
-    int f68;
-    int f6C;
-    int f70;
-    int f74;
-    int f78;
-    int f7C;
-    int f80;
-    int f84;
-    int f88;
-    int f8C;
-    int f90;
-    int f94;
-    int f98;
-    int f9C;
-};
-
 extern "C" void func_0023C618(void* self)
 {
     cBE_getInterface_Fv(cBE_getBE(), 0);
     void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
-    sGM_23C618* gm = (sGM_23C618*)D_004A2C70;
+    cGameModeMan* gm = D_004A2C70;
     gm->f0 = 1;
     gm->f98 = 1;
-    gm->f10 = D_00535C04[0];
+    gm->iNumberAI = D_00535C04[0];
     gm->f14 = 0;
     int p = func_00146E98(player, 0);
     int ch = cBENewPlayerInterface_getRiderCharID(player, p);
@@ -2861,15 +2371,15 @@ extern "C" void func_0023C618(void* self)
                 src++;
                 v = *src;
             }
-            ((sGM_23C618*)D_004A2C70)->a18[j] = v;
+            D_004A2C70->a18[j] = v;
             src++;
         } else {
-            ((sGM_23C618*)D_004A2C70)->a18[j] = ch;
+            D_004A2C70->a18[j] = ch;
         }
     }
     sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)self)[4];
     e->fn((char*)self + e->delta);
-    sGM_23C618* gm2 = (sGM_23C618*)D_004A2C70;
+    cGameModeMan* gm2 = D_004A2C70;
     gm2->f70 = 1;
     gm2->f78 = 0;
     gm2->f7C = 0;
