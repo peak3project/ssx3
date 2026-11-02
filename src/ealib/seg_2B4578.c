@@ -16664,7 +16664,6 @@ INCLUDE_ASM("ealib/seg_2B4578", PATHI_copyevent);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_0044F420_2068[] __asm__("D_0044F420");
-extern int D_0044F43C;
 extern char D_00495B48_2068[] __asm__("D_00495B48");
 extern void func_0041605C_2068(unsigned int, void *, int) __asm__("func_0041605C");
 
