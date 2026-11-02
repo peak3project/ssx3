@@ -2579,7 +2579,6 @@ int func_003DF980(int h) {
 INCLUDE_ASM("ealib/seg_2DCAE8", ASYNCFILE_release);
 #ifdef SKIP_ASM
 extern void MUTEX_unlock_AR(void *) __asm__("MUTEX_unlock");
-extern char D_00519C08_AR[] __asm__("D_00519C08");
 extern char *func_003DEF70_AR(int) __asm__("func_003DEF70");
 extern int func_003DD1D8(int);
 extern void releaserequest_AR(void *) __asm__("releaserequest");
@@ -2589,7 +2588,7 @@ int ASYNCFILE_release(int h, int *a, int *b);
 int ASYNCFILE_release(int h, int *a, int *b) {
     struct AF_AR *f;
     int busy = 0;
-    MUTEX_lock(D_00519C08_AR);
+    MUTEX_lock(D_00519C08);
     f = (struct AF_AR *)func_003DEF70_AR(h);
     if (f != 0) {
         busy = f->w10;
@@ -2597,7 +2596,7 @@ int ASYNCFILE_release(int h, int *a, int *b) {
             f->wC = 1;
         }
     }
-    MUTEX_unlock_AR(D_00519C08_AR);
+    MUTEX_unlock_AR(D_00519C08);
     if (f == 0 || busy != 0) {
         return -1;
     }
