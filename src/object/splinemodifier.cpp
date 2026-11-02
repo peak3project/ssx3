@@ -24,6 +24,14 @@ struct sSmElem {
 // An octree hash-cell key: depth level and integer cell coordinates.
 struct sSmCell { int level; int x, y, z; };
 
+// Spline-follow state: track id, segment count, current node, track length.
+struct sSmFollow {
+    unsigned int id;        // 0xD8
+    int count;              // 0xDC
+    void* node;             // 0xE0
+    float length;           // 0xE4
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -40,12 +48,6 @@ struct sSmQuad_95D8 {
     float v[4];
 } __attribute__((aligned(16)));
 
-struct sSmFollow_95D8 {
-    unsigned int id;        // 0xD8
-    int count;              // 0xDC
-    void* node;             // 0xE0
-    float length;           // 0xE4
-};
 
 struct cSplineModifier_95D8 {
     void** vtable;          // 0x0
@@ -56,7 +58,7 @@ struct cSplineModifier_95D8 {
     sSmQuad_95D8 qC0;       // 0xC0
     int field_0xd0;         // 0xD0
     int field_0xd4;         // 0xD4
-    sSmFollow_95D8 follow;  // 0xD8
+    sSmFollow follow;  // 0xD8
 };
 
 extern void* D_0048F250[];
@@ -66,7 +68,7 @@ extern "C" void cSpline_readFromReplayFrame(void* self, cStream003595D8* stream)
 extern "C" cSplineModifier_95D8* cSplineModifier_cSplineModifier(cSplineModifier_95D8* self, cStream003595D8* stream)
 {
     self->vtable = D_0048F250;
-    sSmFollow_95D8* f = &self->follow;
+    sSmFollow* f = &self->follow;
     self->follow.id = 0xFFFFFFFF;
     self->follow.node = 0;
     self->follow.count = 0;
@@ -708,12 +710,6 @@ public:
     virtual int v03();
 };
 
-struct sSmFollow_A118 {
-    unsigned int id;        // 0x48
-    int count;              // 0x4C
-    void* node;             // 0x50
-    float length;           // 0x54
-};
 
 struct cMultiSplineModifier_A118 {
     void** vtable;          // 0x0
@@ -723,7 +719,7 @@ struct cMultiSplineModifier_A118 {
     char pad_0x34[0xC];
     int field_0x40;         // 0x40
     void** insts;           // 0x44
-    sSmFollow_A118 follow;  // 0x48
+    sSmFollow follow;  // 0x48
 };
 
 extern void* D_0048F168[];
@@ -738,7 +734,7 @@ extern "C" void* func_003511D0(void* man, unsigned int id);
 extern "C" cMultiSplineModifier_A118* func_0035A118(cMultiSplineModifier_A118* self, cStream0035A118* stream)
 {
     self->vtable = D_0048F168;
-    sSmFollow_A118* f = &self->follow;
+    sSmFollow* f = &self->follow;
     self->follow.id = 0xFFFFFFFF;
     self->follow.node = 0;
     self->follow.count = 0;
