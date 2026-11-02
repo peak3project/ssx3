@@ -6828,142 +6828,94 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C0C90);
 INCLUDE_ASM("ealib/seg_2B4578", func_003C0E28);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Sub_0E28 {
-    char pad00[0xA];
-    unsigned short hA;
-    unsigned short hC;
-    unsigned char bE;
-    unsigned char bF;
-    unsigned char b10;
-    char pad11[0x20 - 0x11];
-    unsigned char b20;
-    unsigned char b21;
-    char pad22[0x26 - 0x22];
-    unsigned char b26;
-    unsigned char b27;
-    unsigned char b28;
-    unsigned char b29;
-    unsigned char b2A;
-    char pad2B[0x44 - 0x2B];
-    unsigned int w44;
-    int w48;
-    char pad4C[0xA0 - 0x4C];
-};
-struct Ch_0E28 {
-    char pad0[0x28];
-    short h28;
-    char pad2A[0x69 - 0x2A];
-    signed char b69;
-    char pad6A[0x8C - 0x6A];
-};
-struct G_0E28 {
-    char pad0[4];
-    unsigned char b4;
-    unsigned char b5;
-    unsigned char b6;
-    unsigned char b7;
-    unsigned char b8;
-    char pad9[0x20 - 9];
-    struct Sub_0E28 sub;
-    char padC0[0xD4 - 0xC0];
-    struct Sub_0E28 saved;
-    char pad174[0x174 - 0x174];
-    signed char f174;
-    char pad175[0x17E - 0x175];
-    short h17E;
-    char pad180[0x1F0 - 0x180];
-    struct Ch_0E28 *chans;
-};
 struct O_0E28 { char pad[0x13]; unsigned char b13; };
-extern struct G_0E28 D_0050A8E8_0E28 __asm__("D_0050A8E8");
-extern struct Sub_0E28 D_0050A908_0E28 __asm__("D_0050A908");
 extern struct O_0E28 *D_0050B9B0_0E28 __asm__("D_0050B9B0");
 extern void f8148_0E28(int) __asm__("func_003C8148");
 extern void f38E0_0E28(int) __asm__("func_003C38E0");
 
 int func_003C0E28(void) {
-    struct Sub_0E28 s;
+    struct sA8E8Cfg s;
     int i;
 
-    s = D_0050A908_0E28;
-    if (D_0050A8E8_0E28.f174) {
-        D_0050A8E8_0E28.sub = D_0050A8E8_0E28.saved;
-        if (D_0050A8E8_0E28.saved.b29 != s.b29) {
+    s = D_0050A908;
+    if (D_0050A8E8.f174) {
+        D_0050A8E8.setup.cfg = D_0050A8E8.saved;
+        if (D_0050A8E8.saved.f29 != s.f29) {
             return 0;
         }
     }
-    if (s.hA <= 24000) {
-        s.hA = 24000;
-    } else if (s.hA <= 36000) {
-        s.hA = 36000;
+    if (s.f0A <= 24000) {
+        s.f0A = 24000;
+    } else if (s.f0A <= 36000) {
+        s.f0A = 36000;
     } else {
-        s.hA = 48000;
+        s.f0A = 48000;
     }
-    if (s.hC <= 24000) {
-        s.hC = 24000;
-    } else if (s.hC <= 36000) {
-        s.hC = 36000;
+    if (s.f0C <= 24000) {
+        s.f0C = 24000;
+    } else if (s.f0C <= 36000) {
+        s.f0C = 36000;
     } else {
-        s.hC = 48000;
+        s.f0C = 48000;
     }
-    if (s.b29 & 2) {
-        s.b10 = 0x18;
-        if (s.b27 < 4) {
-            s.b27 = 4;
+    if (s.f29 & 2) {
+        s.f10 = 0x18;
+        if (s.f27 < 4) {
+            s.f27 = 4;
         }
     }
-    if (s.b29 & 1) {
-        if (s.b27 > 2) {
-            s.b27 = 2;
+    if (s.f29 & 1) {
+        if (s.f27 > 2) {
+            s.f27 = 2;
         }
-        s.b28 = 0;
+        s.f28 = 0;
     }
-    if (s.b2A > 100) {
-        s.b2A = 100;
+    if (s.f2A > 100) {
+        s.f2A = 100;
     }
-    if (s.b27 < D_0050A8E8_0E28.b4) {
-        s.b27 = D_0050A8E8_0E28.b4;
-    } else if (s.b27 > D_0050A8E8_0E28.b5) {
-        s.b27 = D_0050A8E8_0E28.b5;
+    if (s.f27 < D_0050A8E8.setup.f04) {
+        s.f27 = D_0050A8E8.setup.f04;
+    } else if (s.f27 > D_0050A8E8.setup.f05) {
+        s.f27 = D_0050A8E8.setup.f05;
     }
-    if (s.b27 == 5) {
-        s.b28 = 1;
+    if (s.f27 == 5) {
+        s.f28 = 1;
     } else {
-        s.b28 = 0;
+        s.f28 = 0;
     }
-    if (s.bE > D_0050A8E8_0E28.b6) {
-        s.bE = D_0050A8E8_0E28.b6;
+    if (s.f0E > D_0050A8E8.setup.f06) {
+        s.f0E = D_0050A8E8.setup.f06;
     }
-    if (s.bF > D_0050A8E8_0E28.b7) {
-        s.bF = D_0050A8E8_0E28.b7;
+    if (s.f0F > D_0050A8E8.setup.f07) {
+        s.f0F = D_0050A8E8.setup.f07;
     }
-    if (s.b10 > D_0050A8E8_0E28.b8) {
-        s.b10 = D_0050A8E8_0E28.b8;
+    if (s.f10 > D_0050A8E8.setup.f08) {
+        s.f10 = D_0050A8E8.setup.f08;
     }
-    if (s.b26 > 0x20) {
-        s.b26 = 0x20;
+    if (s.f26 > 0x20) {
+        s.f26 = 0x20;
     }
-    f8148_0E28(s.b20);
-    if (D_0050A8E8_0E28.sub.w44 != 0 && (s.w44 & 0xF)) {
-        s.w44 = ((s.w44 + 0xF) >> 4) << 4;
-        s.w48 -= 0x10;
+    f8148_0E28(s.f20);
+    if (D_0050A8E8.setup.cfg.f44 != 0 && (s.f44 & 0xF)) {
+        s.f44 = ((s.f44 + 0xF) >> 4) << 4;
+        s.f48 -= 0x10;
     }
-    if (D_0050A8E8_0E28.f174) {
-        D_0050A8E8_0E28.sub.b20 = s.b20;
-        D_0050A8E8_0E28.sub.b21 = s.b21;
-        D_0050B9B0_0E28->b13 = s.b21;
-        if (D_0050A8E8_0E28.saved.b27 != s.b27) {
-            D_0050A8E8_0E28.sub.b27 = s.b27;
-            for (i = 0; i < D_0050A8E8_0E28.h17E; i++) {
-                if (D_0050A8E8_0E28.chans[i].b69 == 1 && D_0050A8E8_0E28.chans[i].h28 < 0) {
+    if (D_0050A8E8.f174) {
+        D_0050A8E8.setup.cfg.f20 = s.f20;
+        D_0050A8E8.setup.cfg.f21 = s.f21;
+        D_0050B9B0_0E28->b13 = s.f21;
+        if (D_0050A8E8.saved.f27 != s.f27) {
+            D_0050A8E8.setup.cfg.f27 = s.f27;
+            for (i = 0; i < D_0050A8E8.f17E; i++) {
+                if (D_0050A8E8.f1F0[i].f69 == 1 && D_0050A8E8.f1F0[i].f28 < 0) {
                     f38E0_0E28(i);
                 }
             }
         }
         return 0;
     }
-    D_0050A8E8_0E28.h17E = s.bE + s.bF + s.b10;
-    D_0050A8E8_0E28.sub = s;
+    D_0050A8E8.f17E = s.f0E + s.f0F + s.f10;
+    D_0050A8E8.setup.cfg = s;
     return 0;
 }
 #endif
