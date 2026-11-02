@@ -32,6 +32,11 @@ struct sPtRing {
     sPtRingEnt ents[1];      // 0x80
 };
 
+// 4x4 float matrix (POD, 16-byte aligned).
+struct sPtMatrix {
+    float m[4][4];
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2334,9 +2339,6 @@ struct sPtQ65B8 {
     float v[4];
 } __attribute__((aligned(16)));
 
-struct sPtMtx65B8 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 struct sPtScis65B8 {
     unsigned short v[4];
@@ -2351,14 +2353,14 @@ struct sPtView65B8 {
     sPtQ65B8 q30;                   // 0x30
     sPtQ65B8 q40;                   // 0x40
     sPtQ65B8 q50;                   // 0x50
-    sPtMtx65B8 m60;                 // 0x60
-    sPtMtx65B8 mA0;                 // 0xA0
-    sPtMtx65B8 mE0;                 // 0xE0
-    sPtMtx65B8 m120;                // 0x120
+    sPtMatrix m60;                 // 0x60
+    sPtMatrix mA0;                 // 0xA0
+    sPtMatrix mE0;                 // 0xE0
+    sPtMatrix m120;                // 0x120
     sPtQ65B8 q160;                  // 0x160
     sPtQ65B8 q170;                  // 0x170
-    sPtMtx65B8 m180;                // 0x180
-    sPtMtx65B8 m1C0;                // 0x1C0
+    sPtMatrix m180;                // 0x180
+    sPtMatrix m1C0;                // 0x1C0
     sPtQ65B8 q200;                  // 0x200
     sPtQ65B8 q210;                  // 0x210
     sPtScis65B8 scissor;            // 0x220
@@ -2372,13 +2374,13 @@ struct sPtGfx65B8 {
     char pad_0x10E0[0x18F0 - 0x10E0];
     char* keys;                     // 0x18F0
     char pad_0x18F4[0x5780 - 0x18F4];
-    sPtMtx65B8 m5780;               // 0x5780
-    sPtMtx65B8 m57C0;               // 0x57C0
-    sPtMtx65B8 m5800;               // 0x5800
+    sPtMatrix m5780;               // 0x5780
+    sPtMatrix m57C0;               // 0x57C0
+    sPtMatrix m5800;               // 0x5800
     sPtQ65B8 q5840;                 // 0x5840
     sPtQ65B8 q5850;                 // 0x5850
-    sPtMtx65B8 m5860;               // 0x5860
-    sPtMtx65B8 m58A0;               // 0x58A0
+    sPtMatrix m5860;               // 0x5860
+    sPtMatrix m58A0;               // 0x58A0
     sPtQ65B8 q58E0;                 // 0x58E0
     sPtQ65B8 q58F0;                 // 0x58F0
     sPtScis65B8 scissor;            // 0x5900
@@ -2388,7 +2390,7 @@ struct sPtGfx65B8 {
     char pad_0x5914[0xC];
     sPtQ65B8 q5920;                 // 0x5920
     char pad_0x5930[0x6AF0 - 0x5930];
-    sPtMtx65B8 m6AF0;               // 0x6AF0
+    sPtMatrix m6AF0;               // 0x6AF0
     char pad_0x6B30[0x40];
     sPtQ65B8 q6B70;                 // 0x6B70
     sPtQ65B8 q6B80;                 // 0x6B80
@@ -2397,7 +2399,7 @@ struct sPtGfx65B8 {
 };
 
 // PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
-static inline void vu0CopyMtx65B8(sPtMtx65B8* dst, sPtMtx65B8* src)
+static inline void vu0CopyMtx65B8(sPtMatrix* dst, sPtMatrix* src)
 {
     __asm__ __volatile__(
         "lqc2      $vf1, 0x0(%0)\n"
@@ -2448,9 +2450,6 @@ struct sPtQ6768 {
     float v[4];
 } __attribute__((aligned(16)));
 
-struct sPtMtx6768 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 struct sPtScis6768 {
     unsigned short v[4];
@@ -2465,14 +2464,14 @@ struct sPtView6768 {
     sPtQ6768 q30;                   // 0x30
     sPtQ6768 q40;                   // 0x40
     sPtQ6768 q50;                   // 0x50
-    sPtMtx6768 m60;                 // 0x60
-    sPtMtx6768 mA0;                 // 0xA0
-    sPtMtx6768 mE0;                 // 0xE0
-    sPtMtx6768 m120;                // 0x120
+    sPtMatrix m60;                 // 0x60
+    sPtMatrix mA0;                 // 0xA0
+    sPtMatrix mE0;                 // 0xE0
+    sPtMatrix m120;                // 0x120
     sPtQ6768 q160;                  // 0x160
     sPtQ6768 q170;                  // 0x170
-    sPtMtx6768 m180;                // 0x180
-    sPtMtx6768 m1C0;                // 0x1C0
+    sPtMatrix m180;                // 0x180
+    sPtMatrix m1C0;                // 0x1C0
     sPtQ6768 q200;                  // 0x200
     sPtQ6768 q210;                  // 0x210
     sPtScis6768 scissor;            // 0x220
@@ -2486,13 +2485,13 @@ struct sPtGfx6768 {
     char pad_0x10E0[0x18F0 - 0x10E0];
     char* keys;                     // 0x18F0
     char pad_0x18F4[0x5780 - 0x18F4];
-    sPtMtx6768 m5780;               // 0x5780
-    sPtMtx6768 m57C0;               // 0x57C0
-    sPtMtx6768 m5800;               // 0x5800
+    sPtMatrix m5780;               // 0x5780
+    sPtMatrix m57C0;               // 0x57C0
+    sPtMatrix m5800;               // 0x5800
     sPtQ6768 q5840;                 // 0x5840
     sPtQ6768 q5850;                 // 0x5850
-    sPtMtx6768 m5860;               // 0x5860
-    sPtMtx6768 m58A0;               // 0x58A0
+    sPtMatrix m5860;               // 0x5860
+    sPtMatrix m58A0;               // 0x58A0
     sPtQ6768 q58E0;                 // 0x58E0
     sPtQ6768 q58F0;                 // 0x58F0
     sPtScis6768 scissor;            // 0x5900
@@ -2502,7 +2501,7 @@ struct sPtGfx6768 {
     char pad_0x5914[0xC];
     sPtQ6768 q5920;                 // 0x5920
     char pad_0x5930[0x6AF0 - 0x5930];
-    sPtMtx6768 m6AF0;               // 0x6AF0
+    sPtMatrix m6AF0;               // 0x6AF0
     char pad_0x6B30[0x40];
     sPtQ6768 q6B70;                 // 0x6B70
     sPtQ6768 q6B80;                 // 0x6B80
@@ -2512,7 +2511,7 @@ struct sPtGfx6768 {
 };
 
 // PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
-static inline void vu0CopyMtx6768(sPtMtx6768* dst, sPtMtx6768* src)
+static inline void vu0CopyMtx6768(sPtMatrix* dst, sPtMatrix* src)
 {
     __asm__ __volatile__(
         "lqc2      $vf1, 0x0(%0)\n"
@@ -2749,9 +2748,6 @@ struct sPt7278 {
     sPt7278(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
 } __attribute__((aligned(16)));
 
-struct sMat7278 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 struct sPtView7278 {
     char pad_0x0[0x1C];
@@ -2776,7 +2772,7 @@ struct sPtGfx7278 {
     char pad_0x13E8[0x5858 - 0x13E8];
     float f5858;                    // 0x5858
     char pad_0x585C[0x58A0 - 0x585C];
-    sMat7278 m58A0;                 // 0x58A0
+    sPtMatrix m58A0;                 // 0x58A0
     char pad_0x58E0[0x8];
     float depthScale;               // 0x58E8
     char pad_0x58EC[0xC];
@@ -2790,7 +2786,7 @@ struct sPtGfx7278 {
 };
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix * vector); the PC port needs a C fallback.
-static inline sPt7278 MulMat7278(const sMat7278* m, const sPt7278& v)
+static inline sPt7278 MulMat7278(const sPtMatrix* m, const sPt7278& v)
 {
     sPt7278 r;
     __asm__(
@@ -3069,7 +3065,7 @@ struct sPtGfx_CF0 {
     char pad_0x6AF4[0x6B04 - 0x6AF4];
     float f6B04;                    // 0x6B04
     char pad_0x6B08[0x6B30 - 0x6B08];
-    sMat7278 m6B30;                 // 0x6B30
+    sPtMatrix m6B30;                 // 0x6B30
     float xmin;                     // 0x6B70
     float ymin;                     // 0x6B74
     float zmin;                     // 0x6B78
@@ -4542,14 +4538,11 @@ struct sPartQ16 {
     int w[4];
 } __attribute__((aligned(16)));
 
-struct sPartMtx {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 struct sPartDrawEntry {
     sPartQ16 q;          // 0x00
-    sPartMtx m0;         // 0x10
-    sPartMtx m1;         // 0x50
+    sPtMatrix m0;         // 0x10
+    sPtMatrix m1;         // 0x50
     float f;             // 0x90
     int i;               // 0x94
 };
@@ -4561,7 +4554,7 @@ struct sPartDrawList {
 };
 
 // PORT: PS2-only VU0 asm (lqc2/sqc2 4x4 matrix copy).
-static inline void vu0CopyMtxP(sPartMtx* dst, sPartMtx* src)
+static inline void vu0CopyMtxP(sPtMatrix* dst, sPtMatrix* src)
 {
     __asm__ __volatile__(
         "lqc2      $vf1, 0x0(%0)\n"
@@ -4577,7 +4570,7 @@ static inline void vu0CopyMtxP(sPartMtx* dst, sPartMtx* src)
         : "memory");
 }
 
-extern "C" void func_0037D758(sPartDrawList* self, sPartQ16* q, sPartMtx* m0, sPartMtx* m1, float f, int i)
+extern "C" void func_0037D758(sPartDrawList* self, sPartQ16* q, sPtMatrix* m0, sPtMatrix* m1, float f, int i)
 {
     self->entries[self->count].q = *q;
     vu0CopyMtxP(&self->entries[self->count].m0, m0);
@@ -4660,12 +4653,9 @@ extern "C" int func_0037D938(void* self, int idx)
 //100%
 INCLUDE_ASM("render/particle", func_0037D968);
 #ifdef SKIP_ASM
-struct sMat_D968 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
-static inline void vu0MulMat_D968(sMat_D968* d, const sMat_D968* a, const sMat_D968* b)
+static inline void vu0MulMat_D968(sPtMatrix* d, const sPtMatrix* a, const sPtMatrix* b)
 {
     __asm__ __volatile__(
         "lqc2      $vf4, 0x0(%1)\n"
@@ -4702,7 +4692,7 @@ static inline void vu0MulMat_D968(sMat_D968* d, const sMat_D968* a, const sMat_D
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
-static inline void vu0CopyMat_D968(sMat_D968* d, const sMat_D968* s)
+static inline void vu0CopyMat_D968(sPtMatrix* d, const sPtMatrix* s)
 {
     __asm__ __volatile__(
         "lqc2      $vf1, 0x0(%1)\n"
@@ -4718,25 +4708,25 @@ static inline void vu0CopyMat_D968(sMat_D968* d, const sMat_D968* s)
         : "memory");
 }
 
-extern "C" void func_003645B8(void* ring, sMat_D968* m);
+extern "C" void func_003645B8(void* ring, sPtMatrix* m);
 
 extern "C" void func_0037D968(void* selfp)
 {
     char* self = (char*)selfp;
     *(int*)(self + 0x6B90) = 1;
-    sMat_D968 t2;
-    sMat_D968 t;
-    vu0MulMat_D968(&t, (sMat_D968*)(self + 0x6AF0), *(sMat_D968**)(self + 0x13E4));
+    sPtMatrix t2;
+    sPtMatrix t;
+    vu0MulMat_D968(&t, (sPtMatrix*)(self + 0x6AF0), *(sPtMatrix**)(self + 0x13E4));
     vu0CopyMat_D968(&t2, &t);
-    vu0CopyMat_D968((sMat_D968*)(self + 0x6B30), &t2);
-    vu0CopyMat_D968((sMat_D968*)(self + 0x5780), *(sMat_D968**)(self + 0x13E4));
-    vu0MulMat_D968(&t, (sMat_D968*)(self + 0x57C0), (sMat_D968*)(self + 0x5780));
+    vu0CopyMat_D968((sPtMatrix*)(self + 0x6B30), &t2);
+    vu0CopyMat_D968((sPtMatrix*)(self + 0x5780), *(sPtMatrix**)(self + 0x13E4));
+    vu0MulMat_D968(&t, (sPtMatrix*)(self + 0x57C0), (sPtMatrix*)(self + 0x5780));
     vu0CopyMat_D968(&t2, &t);
-    vu0CopyMat_D968((sMat_D968*)(self + 0x5800), &t2);
-    vu0MulMat_D968(&t, (sMat_D968*)(self + 0x5860), (sMat_D968*)(self + 0x5780));
+    vu0CopyMat_D968((sPtMatrix*)(self + 0x5800), &t2);
+    vu0MulMat_D968(&t, (sPtMatrix*)(self + 0x5860), (sPtMatrix*)(self + 0x5780));
     vu0CopyMat_D968(&t2, &t);
-    vu0CopyMat_D968((sMat_D968*)(self + 0x58A0), &t2);
-    func_003645B8(*(void**)(self + 0x18F0), (sMat_D968*)(self + 0x5780));
+    vu0CopyMat_D968((sPtMatrix*)(self + 0x58A0), &t2);
+    func_003645B8(*(void**)(self + 0x18F0), (sPtMatrix*)(self + 0x5780));
 }
 #endif
 
@@ -5928,14 +5918,11 @@ struct sPtGfx_1F10 {
     int texReady;                   // 0x6B90
 };
 
-struct sMat_1F10 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 extern char D_3BF0[];
 
 // PORT: PS2-only VU0 inline asm (matrix copy); the PC port needs a C fallback.
-static inline void CopyMat_1F10(sMat_1F10* dst, const sMat_1F10* src)
+static inline void CopyMat_1F10(sPtMatrix* dst, const sPtMatrix* src)
 {
     __asm__(
         "lqc2      $vf1, 0x0(%1)\n"
@@ -5954,7 +5941,7 @@ static inline void CopyMat_1F10(sMat_1F10* dst, const sMat_1F10* src)
 extern "C" void func_0037D968(void* self);
 
 // PORT: uncached (0x30000000) pointers held in int; 64-bit GS words are `unsigned long`.
-extern "C" void func_00381F10(sPtGfx_1F10* self, sMat_1F10* m, float* col, int n)
+extern "C" void func_00381F10(sPtGfx_1F10* self, sPtMatrix* m, float* col, int n)
 {
     self->top->f0 = (self->top->f0 & ~0x3C0) | 0xC0;
     self->top->fC &= 0xC0000000;
@@ -5973,7 +5960,7 @@ extern "C" void func_00381F10(sPtGfx_1F10* self, sMat_1F10* m, float* col, int n
     p[7] = 1;
     p[8] = (unsigned long)(n | 0x8000) | ((unsigned long)0x800A << 45);
     p[9] = 4;
-    CopyMat_1F10((sMat_1F10*)(p + 10), m);
+    CopyMat_1F10((sPtMatrix*)(p + 10), m);
     p[18] = n;
     p[19] = 0;
     p[20] = 0;
@@ -6005,9 +5992,6 @@ struct sPt2170 {
     sPt2170() {}
 } __attribute__((aligned(16)));
 
-struct sMat2170 {
-    float m[4][4];
-} __attribute__((aligned(16)));
 
 struct sVtx2170 {
     float s, t, q, pad;     // 0x00
@@ -6053,7 +6037,7 @@ struct cRMgr2170 {
     virtual void v32();
     virtual void v33();
     virtual void v34();
-    virtual sMat2170* v35();
+    virtual sPtMatrix* v35();
     virtual void v36();
     virtual void v37();
     virtual void v38();
@@ -6098,7 +6082,7 @@ extern sPt2170 D_004FFBC0[];
 extern int D_004A59A0;
 
 // PORT: PS2-only VU0 inline asm (matrix copy); the PC port needs a C fallback.
-static inline void CopyMat2170(sMat2170* dst, const sMat2170* src)
+static inline void CopyMat2170(sPtMatrix* dst, const sPtMatrix* src)
 {
     __asm__(
         "lqc2      $vf1, 0x0(%1)\n"
@@ -6115,7 +6099,7 @@ static inline void CopyMat2170(sMat2170* dst, const sMat2170* src)
 }
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix * vector); the PC port needs a C fallback.
-static inline sPt2170 MulMat2170(const sMat2170* m, const sPt2170& v)
+static inline sPt2170 MulMat2170(const sPtMatrix* m, const sPt2170& v)
 {
     sPt2170 r;
     __asm__(
@@ -6170,7 +6154,7 @@ static inline sPt2170 Add2170(const sPt2170& a, const sPt2170& b)
 extern "C" void func_00382170(cRMgr2170* mgr, sPt2170* pos, float* col, float radius, int segs)
 {
     char* self = (char*)mgr;
-    sMat2170 m;
+    sPtMatrix m;
     int step;
     int i;
     int k;
