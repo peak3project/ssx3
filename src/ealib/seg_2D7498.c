@@ -85,6 +85,8 @@ struct sSelSet { struct sSel ent[12]; unsigned char n; unsigned char ntbl; unsig
 struct sTblEnt { unsigned short a; unsigned short b; };
 
 /* A layer condition: a[i] = 0xFE sets, 0xFF tests the flag word b[i] & 0x7F (when b[i] & 0x80). */
+/* Sequence data header: n entry offsets (in words) at ids[], then (f7 & 0xF) 3-byte events. */
+struct sSeqHdr { char pad[6]; unsigned char n; unsigned char f7; char pad8[4]; unsigned short ids[1]; };
 /* A layer header: cnt >> 2 conditions (low 2 bits: mode), each at word offset list[i]. */
 struct sLayer { char pad[4]; unsigned char cnt; unsigned char n5; unsigned char n6; char pad7; unsigned char list[1]; };
 struct sCond { unsigned short id; unsigned char idx; unsigned char mode; signed char n; char pad5[3]; unsigned char a[8]; unsigned char b[8]; };
@@ -1438,11 +1440,10 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D88C8);
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8CB0);
 #ifdef SKIP_ASM
-struct H_8CB0 { char pad[6]; unsigned char n; char pad2[5]; unsigned short ids[1]; };
 
 #define WEIGHT_8CB0(p) ((*(p) & 0x1F) * D_004506E0[*(p) >> 5])
 
-void func_003D8CB0(struct H_8CB0 *h, unsigned char *out) {
+void func_003D8CB0(struct sSeqHdr *h, unsigned char *out) {
     int w[100];
     int n = h->n;
     int total = 0;
@@ -2520,11 +2521,6 @@ int func_003DB008(unsigned char *arg0) {
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB040);
 #ifdef SKIP_ASM
 
-/* Sequence data header: +6 entry count, +7 low nibble = event count, +0xC entry offsets (in words). */
-struct Hdr_B040 {
-    unsigned char pad0[0xC];
-    unsigned short offs[1];
-};
 
 struct Ev_B040 {
     int a;
@@ -2542,7 +2538,7 @@ void func_003DB040(unsigned char *ctx, unsigned char *data, int idx, int *tbl) {
     if (D_0044FF90.f08 != 0) {
         func_003D8330(ctx, &time);
         count = data[7] & 0xF;
-        track = data + ((struct Hdr_B040 *)data)->offs[idx] * 4;
+        track = data + ((struct sSeqHdr *)data)->ids[idx] * 4;
         events = data + (((data[6] * 2 + 3) & 0x3FC) + 0xC);
         for (i = 0; i < count; i++) {
             /* PORT: pointer arithmetic through int (index-first addu); use uintptr_t off-PS2. */
@@ -2594,16 +2590,10 @@ void func_003DB040(unsigned char *ctx, unsigned char *data, int idx, int *tbl) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB208);
 #ifdef SKIP_ASM
-struct H_B208 {
-    char pad[6];
-    unsigned char n6;
-    unsigned char lo : 4;
-    unsigned char hi : 4;
-};
 struct B_B208 { unsigned char a, b, c; };
 struct T_B208 { int a, b, c; };
 
-int func_003DB208(unsigned char *a0, struct H_B208 *h, int *vals, unsigned char *negmask) {
+int func_003DB208(unsigned char *a0, struct sSeqHdr *h, int *vals, unsigned char *negmask) {
     struct T_B208 t;
     int out;
     int res = 0;
@@ -2619,8 +2609,8 @@ int func_003DB208(unsigned char *a0, struct H_B208 *h, int *vals, unsigned char 
     struct B_B208 *tbl;
 
     func_003D8330(a0, &out);
-    n = h->lo;
-    tbl = (struct B_B208 *)((unsigned char *)h + (((h->n6 * 2 + 3) & 0x3FC) + 0xC));
+    n = h->f7 & 0xF;
+    tbl = (struct B_B208 *)((unsigned char *)h + (((h->n * 2 + 3) & 0x3FC) + 0xC));
     for (; k < 21; k++) {
         for (j = 0; j < n; j++) {
             bit = 0;
@@ -2668,8 +2658,7 @@ int func_003DB3B8(unsigned char a, unsigned char b, unsigned char *p) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB3E0);
 #ifdef SKIP_ASM
-typedef struct { char pad[6]; unsigned char n; } H_B3E0;
-int func_003DB3E0(H_B3E0 *h, unsigned int idx) {
+int func_003DB3E0(struct sSeqHdr *h, unsigned int idx) {
     int c[3];
     int r = -1;
     unsigned char *tbl = (unsigned char *)h + (((h->n * 2 + 3) & 0x3FC) + 0xC);
