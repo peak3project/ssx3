@@ -2149,7 +2149,7 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DEF40);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_00519C00;
 
-void func_003DEF40(unsigned char *arg0) {
+void func_003DEF40(struct sReq *arg0) {
     int temp_2;
 
     temp_2 = D_00519C00 + 0x100;
@@ -2157,7 +2157,7 @@ void func_003DEF40(unsigned char *arg0) {
     if (temp_2 == 0) {
         D_00519C00 = 0x100;
     }
-    *(int *)arg0 = (int) (*arg0 | D_00519C00);
+    arg0->f00 = *(unsigned char *)&arg0->f00 | D_00519C00;   /* keep the slot index, new sequence */
 }
 #endif
 
