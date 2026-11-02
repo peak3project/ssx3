@@ -17678,40 +17678,35 @@ void func_003D4F10(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5128);
 #ifdef SKIP_ASM
-extern int func_002AF370_5128(void) __asm__("func_002AF370");
+extern unsigned int func_002AF370_5128(void) __asm__("func_002AF370");
 extern void func_002AEFA8_5128(int) __asm__("func_002AEFA8");
 extern void func_003D4B00_5128(void) __asm__("func_003D4B00");
 extern void func_003D4F10_5128(void) __asm__("func_003D4F10");
-extern unsigned char D_0044F42C_5128 __asm__("D_0044F42C");
-extern unsigned char D_0044F42D_5128 __asm__("D_0044F42D");
-extern unsigned int D_0044F430_5128 __asm__("D_0044F430");
-extern unsigned char D_0044F434_5128 __asm__("D_0044F434");
-extern int D_0044F438_5128 __asm__("D_0044F438");
 
 /* same body as func_003D5450 (also inlined in func_003D4BB0) */
 static inline int sel_5128(unsigned int idx) {
-    if (D_0044F430_5128 == 0)
-        D_0044F430_5128 = 0xFFFFFFFF;
+    if (D_0044F430 == 0)
+        D_0044F430 = 0xFFFFFFFF;
     if (idx < 4 && D_00517610[idx].f34 != 0) {
         int v = D_00517610[idx].f30;
         D_0044F420 = &D_00517610[idx];
-        D_0044F430_5128 = v;
+        D_0044F430 = v;
         return v;
     }
     if ((int)idx != -1)
-        D_0044F430_5128 = 0;
-    return D_0044F430_5128;
+        D_0044F430 = 0;
+    return D_0044F430;
 }
 
 void func_003D5128_impl(unsigned char arg) __asm__("func_003D5128");
 void func_003D5128_impl(unsigned char arg) {
     unsigned char i;
-    if (D_0044F42D_5128 != 0) return;
-    if (D_0044F42C_5128 == 0) return;
-    if (D_0044F430_5128 != 0) return;
-    D_0044F430_5128 = 0xFFFFFFFF;
-    D_0044F434_5128 = arg;
-    D_0044F438_5128 = func_002AF370_5128();
+    if (D_0044F42D != 0) return;
+    if (D_0044F42C == 0) return;
+    if (D_0044F430 != 0) return;
+    D_0044F430 = 0xFFFFFFFF;
+    D_0044F434 = arg;
+    D_0044F438 = func_002AF370_5128();
     func_002AEFA8_5128(0);
     i = 0;
     do {
@@ -17724,7 +17719,7 @@ void func_003D5128_impl(unsigned char arg) {
         i++;
     } while (i < 4);
     func_002AEFA8_5128(1);
-    D_0044F430_5128 = 0;
+    D_0044F430 = 0;
     D_0044F420 = 0;
 }
 #endif
