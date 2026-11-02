@@ -1278,7 +1278,55 @@ extern "C" int func_00231AB8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_00231B50);
+#ifdef SKIP_ASM
+struct sV4_231B50 {
+    float v[4];
+} __attribute__((aligned(16)));
+
+struct sVtx_231B50 {
+    float s;
+    float t;
+    float q;
+    int padC;
+    int col[4];
+    sV4_231B50 pos;
+    sVtx_231B50() {}
+};
+
+struct sVE_231B50 { short delta; short index; void* fn; };
+typedef void (*tDraw_231B50)(void*, int, void*, int);
+extern char* D_004A289C_231B50 __asm__("D_004A289C");
+
+extern "C" void func_00231B50(int unused, int fb)
+{
+    sVtx_231B50 vtx[4];
+    sV4_231B50 tt;
+    for (int i = 0; i < 4; i++) {
+        vtx[i].col[3] = 0x80;
+        vtx[i].col[0] = 0x80;
+        vtx[i].col[1] = 0x80;
+        vtx[i].col[2] = 0x80;
+        vtx[i].q = 1.0f;
+    }
+    tt.v[0] = 0.0f; tt.v[1] = 0.0f; tt.v[2] = 0.0f; tt.v[3] = 1.0f;
+    vtx[0].pos = tt;
+    tt.v[0] = 1.0f; tt.v[1] = 0.0f; tt.v[2] = 0.0f;
+    vtx[1].pos = tt;
+    tt.v[0] = 0.0f; tt.v[1] = 1.0f; tt.v[2] = 0.0f;
+    vtx[2].pos = tt;
+    tt.v[0] = 1.0f; tt.v[1] = 1.0f; tt.v[2] = 0.0f;
+    vtx[3].pos = tt;
+    vtx[0].s = 0.0f; vtx[0].t = 0.0f;
+    vtx[1].s = 1.0f; vtx[1].t = 0.0f;
+    vtx[2].s = 0.0f; vtx[2].t = 1.0f;
+    vtx[3].s = 1.0f; vtx[3].t = 1.0f;
+    *(short*)(*(char**)(D_004A289C_231B50 + 0xE84) + 0x10) = fb;
+    sVE_231B50* vt = *(sVE_231B50**)(D_004A289C_231B50 + 0x10D8);
+    ((tDraw_231B50)vt[71].fn)(D_004A289C_231B50 + vt[71].delta, 4, vtx, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_00231C70);
