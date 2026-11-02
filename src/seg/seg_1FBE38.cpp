@@ -3379,17 +3379,15 @@ int* func_00226610(void*);
 struct Ent_1120 { int idx; int val; int pad; int kind; };
 extern int D_004A3C68_1120[2] __asm__("D_004A3C68");
 extern "C" void func_0030B9A0(cWScriptMan*, int, unsigned, unsigned);
-extern char *D_004A28A8_1120 __asm__("D_004A28A8");
 extern int D_004A56B4_1120 __asm__("D_004A56B4");
 struct T12_1120 { unsigned a; unsigned b; sBindEnd_1FBE38 f; };
 extern T12_1120 D_004FBBD0_1120 __asm__("D_004FBBD0");
 struct A_1120 { char pad[0x6C0]; };
 struct B_1120 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual bool v09(); };
 struct D_1120 : A_1120, B_1120 { };
-struct Tab_1120 { char pad[0x28]; D_1120 *arr[1]; };
 static inline bool isIdle_1120(int slot) {
     if (slot != -1) {
-        D_1120 *r = (*(Tab_1120**)(*(char**)(D_004A28A8_1120 + 0x84) + 0xC))->arr[slot];
+        D_1120 *r = (D_1120*)D_004A28A8->game->race->riders[slot];
         B_1120 *b = r;
         D_1120 *d = (D_1120*)b;
         return !d->v09();
