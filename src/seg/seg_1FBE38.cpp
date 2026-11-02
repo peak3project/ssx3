@@ -3255,8 +3255,7 @@ extern "C" void func_003E6574(void*, void*, int);
 struct Ent_0E28 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3C60_0E28[2] __asm__("D_004A3C60");
-extern "C" void func_0030B928(int, unsigned, int);
-extern int D_004A3DD8_0E28 __asm__("D_004A3DD8");
+extern "C" void func_0030B928(cWScriptMan*, unsigned, int);
 extern int D_004A56AC_0E28 __asm__("D_004A56AC");
 struct T12u_0E28 { unsigned a; int b; sBindEnd_1FBE38 f; };
 extern T12u_0E28 D_004FBB68_0E28 __asm__("D_004FBB68");
@@ -3282,7 +3281,7 @@ extern "C" cLunoValue func_00300E28(int n, Ent_0E28* e) {
     }
     unsigned x = vp[0];
     if (x != 0xFFFFFFFFu)
-        func_0030B928(D_004A3DD8_0E28, x, vp[1]);
+        func_0030B928(D_004A3DD8, x, vp[1]);
     return D_004C9098;
 }
 #endif
