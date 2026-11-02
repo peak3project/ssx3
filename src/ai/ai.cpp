@@ -55,6 +55,13 @@ struct sRiderCtrl {
     void setCtrl(int c) { mCtrl = c; }
 };
 
+// Two-word AI state object: func_0012C5C8 decides mState, func_0012C678 switches on it.
+struct sAiState
+{
+    int mState;
+    char* mRider;
+};
+
 //100%
 INCLUDE_ASM("ai/ai", cAI_cAI);
 #ifdef SKIP_ASM
@@ -2606,32 +2613,26 @@ static inline float aiLength_12C5C8(const t4Vector& v)
     return r;
 }
 
-struct sAiObj12C5C8
-{
-    int m0;
-    char* mRider;
-};
-
-extern "C" void func_0012C5C8(sAiObj12C5C8* self)
+extern "C" void func_0012C5C8(sAiState* self)
 {
     func_00119368(*(void**)(self->mRider + 0x790), 1);
     char* r = self->mRider;
     if (D_004A4C8C < aiLength_12C5C8(*(t4Vector*)(r + 0x1E0)))
     {
-        self->m0 = 0;
+        self->mState = 0;
         return;
     }
     if (*(float*)(r + 0x2DC) != 0.0f)
     {
-        self->m0 = 0;
+        self->mState = 0;
         return;
     }
     if (*(float*)(r + 0x378) < 0.800000011920929f)
     {
-        self->m0 = 0;
+        self->mState = 0;
         return;
     }
-    self->m0 = 1;
+    self->mState = 1;
 }
 #endif
 
@@ -2694,13 +2695,7 @@ static inline float aiAbs_12C678(float x)
     return r;
 }
 
-struct sAiObj12C678
-{
-    int mState;
-    char* mRider;
-};
-
-extern "C" void func_0012C678(sAiObj12C678* self)
+extern "C" void func_0012C678(sAiState* self)
 {
     int anim = func_00312AA0(*(void**)(self->mRider + 0x784), 2);
     int prev = anim;
