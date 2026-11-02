@@ -90,6 +90,26 @@ extern int D_0052B7C0[];       /* storage of the console ring (func_00424E00) */
 extern sRing *func_00424E00(int size);
 
 
+/* SIF RPC library state D_0052D680 (implementation side) */
+typedef struct { char pad[0x10]; int f10; int f14; int f18; char pad2[0x24]; } sSifRpcPkt;    /* 0x40-byte packet */
+typedef struct sSifServer { int key; char pad[0x34]; struct sSifServer *next; } sSifServer;
+typedef struct sSifQueue { int f0; int f4; sSifServer *servers; int fC; int f10; struct sSifQueue *next; } sSifQueue;
+typedef struct {
+    int pid;                    /* last packet id */
+    sSifRpcPkt *pkt_table;
+    int pkt_table_len;
+    int fC;
+    int f10;
+    char *rbuf;                 /* 64-byte receive packets, used round robin */
+    int rbuf_len;
+    int rdata;                  /* 64-byte packets addressed by number */
+    int rdata_len;
+    int rbuf_idx;
+    sSifQueue *queues;          /* +0x28 */
+} sSifRpcState;
+extern sSifRpcState D_0052D680;
+
+
 /* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
 typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
 typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
@@ -1486,30 +1506,28 @@ void func_004265A8(void) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004265D0);
 #ifdef SKIP_ASM
-struct E65D0 { char pad[0x10]; int f10; int f14; int f18; char pad2[0x24]; };
-struct S65D0 { int f0; struct E65D0 *tab; int n; };
 extern int func_0042C078_rq(void) __asm__("func_0042C078");
 extern void func_0042C0C0(void);
-struct E65D0 *f65D0(struct S65D0 *s) __asm__("func_004265D0");
-struct E65D0 *f65D0(struct S65D0 *s) {
-    struct E65D0 *e;
+sSifRpcPkt *f65D0(sSifRpcState *s) __asm__("func_004265D0");
+sSifRpcPkt *f65D0(sSifRpcState *s) {
+    sSifRpcPkt *e;
     int i;
     int n;
     int c;
     int id;
     int seq;
     func_0042C078_rq();
-    n = s->n;
+    n = s->pkt_table_len;
     i = 0;
-    e = s->tab;
+    e = s->pkt_table;
     while (i < n) {
         if (!(e->f10 & 1)) {
             e->f10 = (i << 16) | 5;
-            c = s->f0;
+            c = s->pid;
             id = c + 1;
-            s->f0 = id;
+            s->pid = id;
             if (id == 1) {
-                s->f0 = c + 2;
+                s->pid = c + 2;
                 seq = 1;
             } else {
                 seq = id;
@@ -1540,12 +1558,11 @@ void func_00426678(unsigned int *a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426698);
 #ifdef SKIP_ASM
-struct S6698 { int p0[5]; char *base; int cnt; int p1[2]; int idx; };
-char *f6698(struct S6698 *a0) __asm__("func_00426698");
-char *f6698(struct S6698 *a0) {
-    int r = a0->idx % a0->cnt;
-    char *p = a0->base + r * 64;
-    a0->idx = r + 1;
+char *f6698(sSifRpcState *a0) __asm__("func_00426698");
+char *f6698(sSifRpcState *a0) {
+    int r = a0->rbuf_idx % a0->rbuf_len;
+    char *p = a0->rbuf + r * 64;
+    a0->rbuf_idx = r + 1;
     return p;
 }
 #endif
@@ -1553,12 +1570,12 @@ char *f6698(struct S6698 *a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_004266C8);
 #ifdef SKIP_ASM
-extern int func_00426698(int *a0);
-int func_004266C8(int *a0, int a1) {
-    if (a1 < 0 || a1 >= a0[8]) {
+extern int func_00426698(sSifRpcState *a0);
+int func_004266C8(sSifRpcState *a0, int a1) {
+    if (a1 < 0 || a1 >= a0->rdata_len) {
         return func_00426698(a0);
     }
-    return a0[7] + (a1 << 6);
+    return a0->rdata + (a1 << 6);
 }
 #endif
 
@@ -1612,13 +1629,13 @@ int func_004267C0(int a0, int a1, int *p) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426820);
 #ifdef SKIP_ASM
-extern int func_00426698(int *a0);
-extern int func_004266C8(int *a0, int a1);
+extern int func_00426698(sSifRpcState *a0);
+extern int func_004266C8(sSifRpcState *a0, int a1);
 extern int func_004261F0(int a0, int a1, int a2, int a3, int a4, int a5);
 extern void func_00423B80(int a0, int (*a1)(int, int, int *), int *a2);
 extern int func_004267C0(int a0, int a1, int *p);
-extern int func_004266C8_u(int *, unsigned) __asm__("func_004266C8");
-void func_00426820(int *a0, int *a1) {
+extern int func_004266C8_u(sSifRpcState *, unsigned) __asm__("func_004266C8");
+void func_00426820(int *a0, sSifRpcState *a1) {
     int *p;
     unsigned fl = a0[4];
     int t1;
@@ -1646,8 +1663,7 @@ void func_00426820(int *a0, int *a1) {
 INCLUDE_ASM("seg/seg_325220", func_004268F0);
 #ifdef SKIP_ASM
 struct S68F0 { struct S68F0 *f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; int f28; };
-extern char D_0052D680[];
-extern struct S68F0 *func_004265D0_p(char *) __asm__("func_004265D0");
+extern struct S68F0 *func_004265D0_p(sSifRpcState *) __asm__("func_004265D0");
 extern void func_00426678_j(struct S68F0 *) __asm__("func_00426678");
 extern int func_00423DA0_j(int *) __asm__("func_00423DA0");
 extern int func_00423DE0_j(int) __asm__("func_00423DE0");
@@ -1656,7 +1672,7 @@ int func_004268F0_d(struct S68F0 *, int, int, int, int) __asm__("func_004268F0")
 int func_004268F0_d(struct S68F0 *a0, int a1, int a2, int a3, int a4) {
     int buf[8];
     struct S68F0 *t;
-    t = func_004265D0_p(D_0052D680);
+    t = func_004265D0_p(&D_0052D680);
     if (t == 0) {
         return -1;
     }
@@ -1696,14 +1712,11 @@ int func_004268F0_d(struct S68F0 *a0, int a1, int a2, int a3, int a4) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426A48);
 #ifdef SKIP_ASM
-struct N426A48 { int key; char pad[0x34]; struct N426A48 *next; };
-struct O426A48 { char pad[8]; struct N426A48 *head; char pad2[8]; struct O426A48 *next; };
-struct P426A48 { char pad[0x28]; struct O426A48 *list; };
-struct N426A48 *func_00426A48(int a0, struct P426A48 *a1) {
-    struct O426A48 *o;
-    struct N426A48 *n;
-    for (o = a1->list; o != 0; o = o->next) {
-        for (n = o->head; n != 0; n = n->next) {
+sSifServer *func_00426A48(int a0, sSifRpcState *a1) {
+    sSifQueue *o;
+    sSifServer *n;
+    for (o = a1->queues; o != 0; o = o->next) {
+        for (n = o->servers; n != 0; n = n->next) {
             if (n->key == a0) {
                 return n;
             }
@@ -1716,10 +1729,10 @@ struct N426A48 *func_00426A48(int a0, struct P426A48 *a1) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426A98);
 #ifdef SKIP_ASM
-extern int func_00426698(int *a0);
-extern int *func_00426A48_p(int, int *) __asm__("func_00426A48");
+extern int func_00426698(sSifRpcState *a0);
+extern int *func_00426A48_p(int, sSifRpcState *) __asm__("func_00426A48");
 extern void func_004261F0_v(int, int *, int, int, int, int) __asm__("func_004261F0");
-void func_00426A98(int *a0, int *a1) {
+void func_00426A98(int *a0, sSifRpcState *a1) {
     int *q = (int *)func_00426698(a1);
     int *n;
     int t1 = a0[5];
@@ -1745,8 +1758,7 @@ void func_00426A98(int *a0, int *a1) {
 INCLUDE_ASM("seg/seg_325220", func_00426B48);
 #ifdef SKIP_ASM
 struct S6B48 { struct S6B48 *f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; };
-extern char D_0052D680[];
-extern struct S6B48 *func_004265D0(char *);
+extern struct S6B48 *func_004265D0(sSifRpcState *);
 extern void func_00426678_i(struct S6B48 *) __asm__("func_00426678");
 extern int func_00423DA0(int *);
 extern void func_00423DB0(int);
@@ -1757,7 +1769,7 @@ int func_00426B48_d(struct S6B48 *a0, int a1, int a2) {
     struct S6B48 *t;
     a0->f10 = 0;
     a0->f24 = 0;
-    t = func_004265D0(D_0052D680);
+    t = func_004265D0(&D_0052D680);
     if (t == 0) {
         return -1;
     }
@@ -1875,24 +1887,21 @@ int func_00426F08(int *a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426F48);
 #ifdef SKIP_ASM
-struct N6F48 { int f0; int f4; int f8; int fC; int f10; struct N6F48 *next; };
-struct D6F48 { char pad[0x28]; struct N6F48 *head; };
-extern struct D6F48 D_6F48 __asm__("D_0052D680");
 extern int func_0042C078_r(void) __asm__("func_0042C078");
 extern void func_0042C0C0(void);
-void func_00426F48(struct N6F48 *n, int a1) {
-    struct N6F48 *p;
-    struct N6F48 *h;
+void func_00426F48(sSifQueue *n, int a1) {
+    sSifQueue *p;
+    sSifQueue *h;
     func_0042C078_r();
     n->f0 = a1;
     n->f4 = 0;
-    n->f8 = 0;
+    n->servers = 0;
     n->fC = 0;
     n->f10 = 0;
-    h = D_6F48.head;
+    h = D_0052D680.queues;
     n->next = 0;
     if (h == 0) {
-        D_6F48.head = n;
+        D_0052D680.queues = n;
     } else {
         p = h;
         for (; p->next != 0; p = p->next)
@@ -1965,17 +1974,15 @@ struct N70B0 *func_004270B0(struct N70B0 *x, struct S70B0 *s) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427148);
 #ifdef SKIP_ASM
-struct N7148 { char pad[0x14]; struct N7148 *next; };
-extern struct { char pad[0x28]; struct N7148 *head; } D_7148 __asm__("D_0052D680");
 extern int f7148a(void) __asm__("func_0042C078");
 extern void f7148b(void) __asm__("func_0042C0C0");
-struct N7148 *f7148(struct N7148 *x) __asm__("func_00427148");
-struct N7148 *f7148(struct N7148 *x) {
-    struct N7148 *p;
+sSifQueue *f7148(sSifQueue *x) __asm__("func_00427148");
+sSifQueue *f7148(sSifQueue *x) {
+    sSifQueue *p;
     f7148a();
-    p = D_7148.head;
+    p = D_0052D680.queues;
     if (p == x) {
-        D_7148.head = p->next;
+        D_0052D680.queues = p->next;
     } else {
         for (; p != 0; p = p->next) {
             if (p->next == x) {
@@ -2019,12 +2026,11 @@ INCLUDE_ASM("seg/seg_325220", func_00427230);
 struct W7230 { int f0; int (*f4)(int, int, int); int f8; int fC; int f10; int f14; int f18; int f1C; int f20; int f24; int f28; int f2C; int f30; int f34; };
 struct E7230 { int a; int b; int c; int d; };
 struct R7230 { int f0; int f4; int f8; int fC; int f10; int f14; int f18; int f1C; int f20; };
-extern char D_0052D680[];
 extern void func_00426358(int, int);
 extern void func_0042C078_w(void) __asm__("func_0042C078");
 extern int func_0042C0C0_w(void) __asm__("func_0042C0C0");
-extern struct R7230 *func_004266C8_w(char *, unsigned) __asm__("func_004266C8");
-extern struct R7230 *func_00426698_w(char *, unsigned) __asm__("func_00426698");
+extern struct R7230 *func_004266C8_w(sSifRpcState *, unsigned) __asm__("func_004266C8");
+extern struct R7230 *func_00426698_w(sSifRpcState *, unsigned) __asm__("func_00426698");
 extern int func_004261B0_w(int, void *, int, int, int, int) __asm__("func_004261B0");
 extern int func_00424160_w(struct E7230 *, int) __asm__("func_00424160");
 void func_00427230_d(struct W7230 *) __asm__("func_00427230");
@@ -2055,9 +2061,9 @@ void func_00427230_d(struct W7230 *a0) {
     x4 = fl & 4;
     fl = (unsigned)fl >> 16;
     if (x4) {
-        e = func_004266C8_w(D_0052D680, fl);
+        e = func_004266C8_w(&D_0052D680, fl);
     } else {
-        e = func_00426698_w(D_0052D680, fl);
+        e = func_00426698_w(&D_0052D680, fl);
     }
     do {
         func_0042C0C0_w();
