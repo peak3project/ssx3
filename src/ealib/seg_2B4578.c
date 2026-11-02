@@ -9604,10 +9604,7 @@ int func_003C5E30(int a, int b, int c) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C5E58);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003C5DF0();
-extern int D_0044E1C0_5E58[] __asm__("D_0044E1C0");
-extern int D_005157B0_5E58[] __asm__("D_005157B0");
 
 int func_003C5E58(int arg0, int *arg1, int *arg2) {
     *arg1 = 0;
@@ -9616,8 +9613,8 @@ int func_003C5E58(int arg0, int *arg1, int *arg2) {
         if (func_003C5DF0() == 0) {
             return -4;
         }
-        *arg1 = D_0044E1C0_5E58[0];
-        *arg2 = D_005157B0_5E58[0];
+        *arg1 = D_0044E1C0;
+        *arg2 = D_005157B0;
     } else {
         return -5;
     }
