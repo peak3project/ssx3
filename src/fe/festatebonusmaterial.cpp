@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatebonusmaterial", cFEStateBonusMaterial_onCreateScreen);
 #ifdef SKIP_ASM
@@ -84,11 +92,6 @@ extern "C" void func_0039F400(void* list, void* item);
 extern char D_004601D8[];
 extern const char* D_00441128[];
 
-struct sVEntryK195600 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00195600(void* self, void* item, unsigned int event)
 {
@@ -106,7 +109,7 @@ extern "C" void func_00195600(void* self, void* item, unsigned int event)
     }
     case 6: {
         char* o = **(char***)((char*)self + 0x10);
-        sVEntryK195600* vt = *(sVEntryK195600**)(o + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)(o + 4);
         void* r = vt[5].fn(o + vt[5].delta, self, *(int*)((char*)item + 0x18));
         if (r != 0)
             func_0039F400(*(char**)((char*)self + 0x10) + 0x18, r);
