@@ -6323,15 +6323,13 @@ static inline char *look_65E8(unsigned id) {
 }
 
 extern "C" void func_00101888_65E8(void*, void*) __asm__("func_00101888");
-struct V3_65E8 { float x, y, z; };
-extern V3_65E8 D_004C9098_65E8 __asm__("D_004C9098");
 extern unsigned D_65E8 __asm__("D_004A5898");
 extern sBindEnd_1FBE38 D_004A589C;
 extern int D_004A58A0;
 extern int D_004A3DB8;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_65E8 { int idx; int val; int pad; int type; };
-extern "C" V3_65E8 func_003065E8(int n, Ent_65E8 *e) {
+extern "C" cLunoValue func_003065E8(int n, Ent_65E8 *e) {
     if (D_004A58A0 == 0) {
         D_65E8 = 0xFFFFFFFF;
         D_004A58A0 = 1;
@@ -6356,7 +6354,7 @@ extern "C" V3_65E8 func_003065E8(int n, Ent_65E8 *e) {
         int tmp[1]; tmp[0] = *(int*)(obj + 0x78);
         func_00101888_65E8(*(void**)(*(char**)(*(char**)(D_004A28A8_65E8 + 0x84) + 0xC) + 0xA8), tmp);
     }
-    return D_004C9098_65E8;
+    return D_004C9098;
 }
 #endif
 
