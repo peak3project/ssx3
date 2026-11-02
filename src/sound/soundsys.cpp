@@ -163,6 +163,14 @@ struct sSndRider : public sSndRiderData, public cBeing {
     int mIsLocal;            // 0x87C
 };
 
+// A 5-point piecewise-linear curve, evaluated by func_00290B58.
+struct sSndCurve {
+    float key[5];            // 0x00
+    float value[5];          // 0x14
+};
+extern "C" float func_00290B58(sSndCurve* c, float x);
+extern sSndCurve D_00482DA0;
+
 // ---- end of shared declarations ----
 
 //100%
@@ -390,15 +398,9 @@ INCLUDE_ASM("sound/soundsys", func_002906B8);
 //100%
 INCLUDE_ASM("sound/soundsys", func_00290B58);
 #ifdef SKIP_ASM
-struct sCurve_290B58 {
-    float key[5];       // 0x0
-    float value[5];     // 0x14
-};
 
 // Piecewise-linear lookup in a 5-point curve; 0 above the last key gap.
-// Named _impl: a later block declares func_00290B58 with its own curve struct.
-extern "C" float func_00290B58_impl(sCurve_290B58* c, float x) __asm__("func_00290B58");
-extern "C" float func_00290B58_impl(sCurve_290B58* c, float x)
+extern "C" float func_00290B58(sSndCurve* c, float x)
 {
     for (int i = 1; i < 5; i++) {
         if (c->key[i - 1] <= x && x < c->key[i]) {
@@ -417,13 +419,8 @@ extern "C" float func_00290B58_impl(sCurve_290B58* c, float x)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00290C10);
 #ifdef SKIP_ASM
-struct func_00290B58_sCurve {
-    float x[5];
-    float y[5];
-};
 
-extern "C" float func_00290B58(func_00290B58_sCurve* c, float v);
-extern func_00290B58_sCurve D_00445898[];
+extern sSndCurve D_00445898[];
 
 extern "C" float func_00290C10(int i, float v)
 {
@@ -1361,14 +1358,14 @@ extern "C" void func_00293018(void* self, void* obj) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00293168);
 #ifdef SKIP_ASM
-extern func_00290B58_sCurve D_00482AF8;
-extern func_00290B58_sCurve D_00482B20;
+extern sSndCurve D_00482AF8;
+extern sSndCurve D_00482B20;
 
 extern "C" void func_00293168(void* self, void* vrider, int* out1, int* out2) {
     cRider* rider = (cRider*)vrider;
     float spd = rider->mAudioSpeed;
-    func_00290B58_sCurve c1 = D_00482AF8;
-    func_00290B58_sCurve c2 = D_00482B20;
+    sSndCurve c1 = D_00482AF8;
+    sSndCurve c2 = D_00482B20;
     *out1 = (int)func_00290B58(&c1, spd);
     *out2 = (int)(func_00290B58(&c2, spd) * 4096.0f);
 }
@@ -1473,8 +1470,8 @@ extern "C" int func_002934D0(void *self, int kind, void *arg)
 INCLUDE_ASM("sound/soundsys", func_00293538);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern const func_00290B58_sCurve D_00482B78;
-extern const func_00290B58_sCurve D_00482BA0;
+extern const sSndCurve D_00482B78;
+extern const sSndCurve D_00482BA0;
 
 static inline float* getLevels_3538(void* self) { return (float*)((char*)self + 0x59B8); }
 
@@ -1499,9 +1496,9 @@ void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch)
             level = prev + (level - prev) * 0.25f;
         }
     }
-    func_00290B58_sCurve c1 = D_00482B78;
+    sSndCurve c1 = D_00482B78;
     *(float*)((char*)getLevels_3538(self) + (idx << 2)) = level;
-    func_00290B58_sCurve c2 = D_00482BA0;
+    sSndCurve c2 = D_00482BA0;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, level) * 4096.0f);
 }
@@ -1510,8 +1507,8 @@ void func_00293538_impl(void* self, cRider* rider, int* volume, int* pitch)
 INCLUDE_ASM("sound/soundsys", func_00293740);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern const func_00290B58_sCurve D_00482BC8;
-extern const func_00290B58_sCurve D_00482BF0;
+extern const sSndCurve D_00482BC8;
+extern const sSndCurve D_00482BF0;
 
 static inline float* getLevels_3740(void* self) { return (float*)((char*)self + 0x59B8); }
 
@@ -1536,9 +1533,9 @@ void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch)
             level = prev + (level - prev) * 0.25f;
         }
     }
-    func_00290B58_sCurve c1 = D_00482BC8;
+    sSndCurve c1 = D_00482BC8;
     *(float*)((char*)getLevels_3740(self) + (idx << 2)) = level;
-    func_00290B58_sCurve c2 = D_00482BF0;
+    sSndCurve c2 = D_00482BF0;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, level) * 4096.0f);
 }
@@ -1547,8 +1544,8 @@ void func_00293740_impl(void* self, cRider* rider, int* volume, int* pitch)
 INCLUDE_ASM("sound/soundsys", func_00293948);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern const func_00290B58_sCurve D_00482C18;
-extern const func_00290B58_sCurve D_00482C40;
+extern const sSndCurve D_00482C18;
+extern const sSndCurve D_00482C40;
 
 static inline float* getLevels_3948(void* self) { return (float*)((char*)self + 0x59B8); }
 
@@ -1573,9 +1570,9 @@ void func_00293948_impl(void* self, cRider* rider, int* volume, int* pitch)
             level = prev + (level - prev) * 0.25f;
         }
     }
-    func_00290B58_sCurve c1 = D_00482C18;
+    sSndCurve c1 = D_00482C18;
     *(float*)((char*)getLevels_3948(self) + (idx << 2)) = level;
-    func_00290B58_sCurve c2 = D_00482C40;
+    sSndCurve c2 = D_00482C40;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, level) * 4096.0f);
 }
@@ -1611,8 +1608,8 @@ extern "C" void func_00293B90(void) {
 //100%
 INCLUDE_ASM("sound/soundsys", func_00293BB0);
 #ifdef SKIP_ASM
-extern const func_00290B58_sCurve D_00482C68;
-extern const func_00290B58_sCurve D_00482C90;
+extern const sSndCurve D_00482C68;
+extern const sSndCurve D_00482C90;
 
 static inline float* getLevels_3BB0(void* self) { return (float*)((char*)self + 0x5990); }
 
@@ -1632,9 +1629,9 @@ extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch
             level = prev + (level - prev) * 0.125f;
         }
     }
-    func_00290B58_sCurve c1 = D_00482C68;
+    sSndCurve c1 = D_00482C68;
     *(float*)((char*)getLevels_3BB0(self) + (idx << 2)) = level;
-    func_00290B58_sCurve c2 = D_00482C90;
+    sSndCurve c2 = D_00482C90;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, pressure) * 4096.0f);
     float speed = rider->mAudioSpeed;
@@ -1646,8 +1643,8 @@ extern "C" void func_00293BB0(void* self, cRider* rider, int* volume, int* pitch
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00293DC0);
 #ifdef SKIP_ASM
-extern const func_00290B58_sCurve D_00482CB8;
-extern const func_00290B58_sCurve D_00482CE0;
+extern const sSndCurve D_00482CB8;
+extern const sSndCurve D_00482CE0;
 
 static inline float* getLevels_3DC0(void* self) { return (float*)((char*)self + 0x5990); }
 
@@ -1671,9 +1668,9 @@ extern "C" void func_00293DC0(void* self, cRider* rider, int* volume, int* pitch
             level = prev + (level - prev) * 0.125f;
         }
     }
-    func_00290B58_sCurve c1 = D_00482CB8;
+    sSndCurve c1 = D_00482CB8;
     *(float*)((char*)getLevels_3DC0(self) + (idx << 2)) = level;
-    func_00290B58_sCurve c2 = D_00482CE0;
+    sSndCurve c2 = D_00482CE0;
     *volume = (int)func_00290B58(&c1, level);
     *pitch = (int)(func_00290B58(&c2, pressure) * 4096.0f);
 }
@@ -1681,7 +1678,7 @@ extern "C" void func_00293DC0(void* self, cRider* rider, int* volume, int* pitch
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_00293FC8);
 #ifdef SKIP_ASM
-extern const func_00290B58_sCurve D_00482D08;
+extern const sSndCurve D_00482D08;
 
 extern "C" void func_00293FC8(void* self, cRider* rider, int* volume, int* pitch)
 {
@@ -1701,7 +1698,7 @@ extern "C" void func_00293FC8(void* self, cRider* rider, int* volume, int* pitch
     }
     *(float*)((char*)self + (idx << 2) + 0x5990) = level;
     *volume = 0x7F;
-    func_00290B58_sCurve c = D_00482D08;
+    sSndCurve c = D_00482D08;
     *pitch = (int)(func_00290B58(&c, pressure) * 4096.0f);
     float speed = rider->mAudioSpeed;
     if (speed < 0.1f) {
@@ -1850,13 +1847,7 @@ extern "C" void func_002A7438(void* self, int id);
 extern "C" void func_002A73A8(void* self, int level, int id);
 extern "C" int func_00288B40(void* self, int pos, float range);
 
-struct sCurve_48D0 {
-    float key[5];
-    float value[5];
-};
-extern sCurve_48D0 D_00482D30;
-// The unit declares func_00290B58 with other curve structs; bound by asm label.
-extern "C" float func_00290B58_48D0(sCurve_48D0* c, float x) __asm__("func_00290B58");
+extern sSndCurve D_00482D30;
 
 
 static inline int vcall_48D0(char* obj, int slot)
@@ -1927,8 +1918,8 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
             return;
         }
     }
-    sCurve_48D0 curve = D_00482D30;
-    int vol = (int)func_00290B58_48D0(&curve, *(float*)(obj + 0x770));
+    sSndCurve curve = D_00482D30;
+    int vol = (int)func_00290B58(&curve, *(float*)(obj + 0x770));
     vol = vol > 127 ? 127 : vol;
     vol = vol < 0 ? 0 : vol;
     int b;
@@ -2378,12 +2369,10 @@ int func_002906B8(void* self);
 int func_00288A20(void* self, void* obj);
 int func_00288AE0(void* self);
 int func_00288B40(void* self, int which, float f);
-float func_00290B58(struct func_00290B58_sCurve* c, float v);
 unsigned int func_002ADF60(void* rng);
 void* cBE_getBE(void);
 void* cBE_getInterface__Fv(void* be, int kind);
 extern signed char D_00535C11[];
-extern struct func_00290B58_sCurve D_00482DA0;
 
 }
 
@@ -2440,7 +2429,7 @@ extern "C" void func_00296310(void* vself, char* obj)
             return;
         }
     }
-    struct func_00290B58_sCurve curve = D_00482DA0;
+    struct sSndCurve curve = D_00482DA0;
     int vol = (int)func_00290B58(&curve, *(float*)(obj + 0x770));
     int a = 0;
     int b;
@@ -2499,7 +2488,6 @@ extern "C" int func_002906B8(void* self);
 extern "C" int func_00288A20(void* self, void* obj);
 extern "C" int func_00288AE0(void* self);
 extern "C" int func_00288B40(void* self, int which, float f);
-extern "C" float func_00290B58(func_00290B58_sCurve* c, float v);
 extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -2508,7 +2496,6 @@ struct sSndOwner_6868 {
     char pad0[0x80];
     char* rider;             // 0x80
 };
-extern func_00290B58_sCurve D_00482DA0_6868 __asm__("D_00482DA0");
 
 
 
@@ -2537,7 +2524,7 @@ extern "C" void func_00296868(void* vself, sSndOwner_6868* t)
             return;
         }
     }
-    func_00290B58_sCurve curve = D_00482DA0_6868;
+    sSndCurve curve = D_00482DA0;
     int vol = (int)func_00290B58(&curve, *(float*)(t->rider + 0x770));
     int b = 0x33;
     if (vol > 0x7F) {
@@ -2640,7 +2627,6 @@ extern "C" int func_002906B8(void* self);
 extern "C" int func_00288A20(void* self, void* obj);
 extern "C" int func_00288AE0(void* self);
 extern "C" int func_00288B40(void* self, int which, float f);
-extern "C" float func_00290B58(func_00290B58_sCurve* c, float v);
 extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
@@ -2649,7 +2635,6 @@ struct sSndOwner_6E80 {
     char pad0[0x80];
     char* rider;             // 0x80
 };
-extern func_00290B58_sCurve D_00482DA0_6E80 __asm__("D_00482DA0");
 
 
 
@@ -2678,7 +2663,7 @@ extern "C" void func_00296E80(void* vself, sSndOwner_6E80* t)
             return;
         }
     }
-    func_00290B58_sCurve curve = D_00482DA0_6E80;
+    sSndCurve curve = D_00482DA0;
     int vol = (int)func_00290B58(&curve, *(float*)(t->rider + 0x770));
     int b = 0x34;
     if (vol > 0x7F) {
