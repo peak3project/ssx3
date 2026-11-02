@@ -1511,11 +1511,9 @@ void func_003DDE78(char *a) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DDF80);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_00519AF0_DF80[] __asm__("D_00519AF0");
 void strncpy_DF80(char *, char *, int) __asm__("strncpy");
 void func_003DDF80(char *dst) {
-    strncpy_DF80(dst, D_00519AF0_DF80, 0x100);
+    strncpy_DF80(dst, D_00519AF0, 0x100);
 }
 #endif
 
