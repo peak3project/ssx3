@@ -16437,10 +16437,8 @@ unsigned int PATHI_copyevent(void *arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2138);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct I2138 { int w0; int w4; unsigned int w8; int wC; };
 struct E2138 { char pad[0xC]; unsigned char b; char padd; unsigned short h; struct I2138 items[1]; };
-extern struct E2138 **D_0044F420_2138[] __asm__("D_0044F420");
 
 int func_003D2138(char *arg0, int arg1) {
     int i;
@@ -16448,7 +16446,7 @@ int func_003D2138(char *arg0, int arg1) {
     struct E2138 *e;
     struct I2138 *it;
     for (i = 0; i < 16; i++) {
-        e = *(struct E2138 **)((char *)D_0044F420_2138[0] + 0xDC + i * 4);
+        e = (struct E2138 *)D_0044F420->f0DC[i];
         if (e != 0 && e->b == *(unsigned char *)(arg0 + 0xC)) {
             for (j = 0; j < (e->h & 0x3F); j++) {
                 it = &e->items[j];
