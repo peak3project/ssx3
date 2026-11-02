@@ -296,6 +296,11 @@ static inline float randUnit()
     return u.f - 1.0f;
 }
 
+static inline float clampPos(float x, float hi)
+{
+    return x >= 0.0f ? (x <? hi) : 0.0f;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3737,10 +3742,6 @@ INCLUDE_ASM("render/particle", func_0037C570);
 extern "C" int func_004139F8(float f);
 
 // PORT: g++ `<?` (min) operator; needs a macro / std::min on a modern compiler.
-static inline float clamp_C570(float x, float hi)
-{
-    return x >= 0.0f ? (x <? hi) : 0.0f;
-}
 
 struct sPartColour_C570 {
     float r, g, b;
@@ -3748,9 +3749,9 @@ struct sPartColour_C570 {
 
 extern "C" void func_0037C570(void* self, sPartColour_C570* c)
 {
-    *(int*)((char*)self + 0x59EC) = func_004139F8(clamp_C570(c->r, 1.0f) * 128.0f);
-    *(int*)((char*)self + 0x59F0) = func_004139F8(clamp_C570(c->g, 1.0f) * 128.0f);
-    *(int*)((char*)self + 0x59F4) = func_004139F8(clamp_C570(c->b, 1.0f) * 128.0f);
+    *(int*)((char*)self + 0x59EC) = func_004139F8(clampPos(c->r, 1.0f) * 128.0f);
+    *(int*)((char*)self + 0x59F0) = func_004139F8(clampPos(c->g, 1.0f) * 128.0f);
+    *(int*)((char*)self + 0x59F4) = func_004139F8(clampPos(c->b, 1.0f) * 128.0f);
 }
 #endif
 
@@ -3777,15 +3778,11 @@ extern "C" sRGB_C638 func_0037C638(void* self)
 INCLUDE_ASM("render/particle", func_0037C720);
 #ifdef SKIP_ASM
 // PORT: g++ `<?` (min) operator; needs a macro / std::min on a modern compiler.
-static inline float clamp_C720(float x, float hi)
-{
-    return x >= 0.0f ? (x <? hi) : 0.0f;
-}
 
 // Stores the inverted alpha (1 - clamped a) as a 0..128 value.
 extern "C" void func_0037C720(void* self, float a)
 {
-    *(int*)((char*)self + 0x59F8) = func_004139F8((1.0f - clamp_C720(a, 1.0f)) * 128.0f);
+    *(int*)((char*)self + 0x59F8) = func_004139F8((1.0f - clampPos(a, 1.0f)) * 128.0f);
 }
 #endif
 
