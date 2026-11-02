@@ -4570,12 +4570,10 @@ INCLUDE_ASM("seg/seg_1FBE38", func_003032C0);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (vector length).
 void* func_00226618(void*);
-extern char *D_004A28A8_32C0 __asm__("D_004A28A8");
 struct Vec_32C0 { float x, y, z, w; } __attribute__((aligned(16)));
 struct A_32C0 { char pad[0x6C0]; };
 struct B_32C0 { virtual void v01(); virtual Vec_32C0 *v02(); };
 struct D_32C0 : A_32C0, B_32C0 { };
-struct Tab_32C0 { char pad[0x28]; D_32C0 *arr[1]; };
 static inline float len_32C0(const Vec_32C0 &v) {
     float r;
     int t;
@@ -4595,11 +4593,11 @@ static inline float len_32C0(const Vec_32C0 &v) {
     return r;
 }
 extern "C" void* func_003032C0(void* self) {
-    D_32C0 *r = (*(Tab_32C0**)(*(char**)(D_004A28A8_32C0 + 0x84) + 0xC))->arr[D_004A3DD8->being];
+    D_32C0 *r = (D_32C0*)D_004A28A8->game->race->riders[D_004A3DD8->being];
     B_32C0 *b = r;
     D_32C0 *d = (D_32C0*)b;
     float len = len_32C0(*d->v02());
-    float res = len * *(float*)(D_004A28A8_32C0 + 0x14);
+    float res = len * D_004A28A8->f14;
     *(int*)((char*)self + 8) = 2;
     *(float*)func_00226618(self) = res;
     return self;
