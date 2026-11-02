@@ -6483,8 +6483,6 @@ extern "C" cLunoValue func_00306908(int n, Ent_6908 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00306A90);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V3_6A90 { float x, y, z; };
-extern V3_6A90 D_004C9098_6A90 __asm__("D_004C9098");
 struct Rec_6A90 {
     int a; int b; float c; float d; float e;
     float m[28];
@@ -6499,7 +6497,7 @@ extern "C" void func_003E6574(void*, void*, int);
 extern int D_004A4028_6A90 __asm__("D_004A4028");
 extern "C" void func_00357A78_6A90(int, int, Rec_6A90*, int) __asm__("func_00357A78");
 struct Ent_6A90 { int idx; int val; int pad; int type; };
-extern "C" V3_6A90 func_00306A90(int n, Ent_6A90 *e) {
+extern "C" cLunoValue func_00306A90(int n, Ent_6A90 *e) {
     if (D_58B4_6A90 == 0) {
         Rec_6A90 &r = D_4FBF68_6A90;
         r.a = 1;
@@ -6543,7 +6541,7 @@ extern "C" V3_6A90 func_00306A90(int n, Ent_6A90 *e) {
             *d = x->val;
     }
     func_00357A78_6A90(D_004A4028_6A90, buf->q, buf, buf->w);
-    return D_004C9098_6A90;
+    return D_004C9098;
 }
 #endif
 
