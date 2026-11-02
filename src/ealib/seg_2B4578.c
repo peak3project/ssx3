@@ -300,6 +300,7 @@ struct sPath {                      /* 0x928 */
 };
 extern struct sPath *D_0044F420;
 extern struct sPath D_00517610[4];
+extern char D_00517644[];               /* &D_00517610[0].f34: walked with stride 0x928 (f30 at -4) */
 extern void (*D_0044F424)(int, int);    /* event callback (func_003D3018) */
 extern void (*D_0044F428)(unsigned int, int);
 extern unsigned char D_0044F42C;
@@ -15822,7 +15823,6 @@ done:
 INCLUDE_ASM("ealib/seg_2B4578", func_003D0D70);
 #ifdef SKIP_ASM
 extern int func_003D5450_0D70(int) __asm__("func_003D5450");
-extern char D_00517644_0D70[] __asm__("D_00517644");
 
 int func_003D0D70(unsigned int mask, unsigned int val) {
     int i, j;
@@ -15838,8 +15838,8 @@ int func_003D0D70(unsigned int mask, unsigned int val) {
     }
     if (val < 0x80) {
         for (i = 0; i < 4; i++) {
-            if (*(int *)(D_00517644_0D70 + i * 0x928) != 0) {
-                fl = *(unsigned int *)(D_00517644_0D70 + i * 0x928 - 4);
+            if (*(int *)(D_00517644 + i * 0x928) != 0) {
+                fl = *(unsigned int *)(D_00517644 + i * 0x928 - 4);
                 t = fl & 0xF0000000;
                 if ((t & mask) != 0) {
                     u = fl & 0x0F000000;
