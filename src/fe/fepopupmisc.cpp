@@ -43,6 +43,12 @@ struct sPopupList {
 };
 extern "C" sPopupList* func_001E39F8();
 
+// A screen owner's UI sound player (owner + 0x14, defaulting to D_004A5A58); slot 2 plays a sound event.
+struct sUISound {
+    sVEntry<void(void*, int)>* vt;
+};
+extern sUISound D_004A5A58;
+
 // A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
 // _vt$8cUIThing (as in fe/feasyncfile).
 class cUIThing {
@@ -118,10 +124,6 @@ struct sObj_EC68 {
     sVEntry<void(void*, int)>* vt;
 };
 
-struct sSnd_EC68 {
-    sVEntry<void(void*, int)>* vt;
-};
-extern sSnd_EC68 D_004A5A58_EC68 __asm__("D_004A5A58");
 
 static inline void show_EC68(char* self, char* name, int on)
 {
@@ -147,9 +149,9 @@ extern "C" int func_001DEC68(char* self, sWidget_EC68* w)
         } else {
             *(int*)(self + 0x1C) = ((*(int*)(self + 0x1C) | 0x80) & ~0x3F00) | 0x700;
         }
-        sSnd_EC68* s = *(sSnd_EC68**)(*(char**)(self + 0x10) + 0x14);
+        sUISound* s = *(sUISound**)(*(char**)(self + 0x10) + 0x14);
         if (s == 0) {
-            s = &D_004A5A58_EC68;
+            s = &D_004A5A58;
         }
         if (s != 0) {
             s->vt[2].fn((char*)s + s->vt[2].delta, 6);
@@ -250,10 +252,6 @@ extern char D_004A1560[];
 extern char D_0045DDF0[];
 
 
-struct sDefObj_F050 {
-    sVEntry<void(void*, int)>* vt;
-};
-extern sDefObj_F050 D_004A5A58;
 
 
 
@@ -279,7 +277,7 @@ static inline int padCall_F050(char* in, int slot)
 
 static inline void sound_F050(sPopup_F050* s, int msg)
 {
-    sDefObj_F050* p = *(sDefObj_F050**)(s->owner + 0x14);
+    sUISound* p = *(sUISound**)(s->owner + 0x14);
     if (p == 0)
         p = &D_004A5A58;
     if (p != 0)
