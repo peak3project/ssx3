@@ -378,7 +378,34 @@ int func_003F3CC0(int tag, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F3F78);
+#ifdef SKIP_ASM
+extern char D_004512E8[];
+extern const char D_00497028[];
+extern void f3CC0(int, unsigned char *, int) __asm__("func_003F3CC0");
+char *func_003F3F78(void) {
+    unsigned char b[16];
+    if (D_004512E8[0] == 0) {
+        f3CC0(0x6d616378, b, 0x10);
+        D_004512E8[1] = D_00497028[b[0] >> 4];
+        D_004512E8[2] = D_00497028[b[0] & 0xF];
+        D_004512E8[3] = D_00497028[b[1] >> 4];
+        D_004512E8[4] = D_00497028[b[1] & 0xF];
+        D_004512E8[5] = D_00497028[b[2] >> 4];
+        D_004512E8[6] = D_00497028[b[2] & 0xF];
+        D_004512E8[7] = D_00497028[b[3] >> 4];
+        D_004512E8[8] = D_00497028[b[3] & 0xF];
+        D_004512E8[9] = D_00497028[b[4] >> 4];
+        D_004512E8[10] = D_00497028[b[4] & 0xF];
+        D_004512E8[11] = D_00497028[b[5] >> 4];
+        D_004512E8[12] = D_00497028[b[5] & 0xF];
+        D_004512E8[0] = '$';
+        D_004512E8[13] = 0;
+    }
+    return D_004512E8;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F40B8);
