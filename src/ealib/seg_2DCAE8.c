@@ -36,6 +36,7 @@ struct sReq {                       /* 0x30, a file request (D_00450C34[], D_005
     int f2C;
 };
 extern struct sReq *D_00450C34;
+extern char D_00519C08[];                       /* request list mutex */
 extern int D_00451008;                          /* debug output set up (func_003E5B60) */
 struct sDbgChan {                   /* 8 bytes, D_00450E08[64]: a debug message channel */
     int f00;
@@ -2104,10 +2105,9 @@ INCLUDE_ASM("ealib/seg_2DCAE8", queueadd);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void MUTEX_unlock_qa(void *) __asm__("MUTEX_unlock");
-extern char D_00519C08_9C08[] __asm__("D_00519C08");
 
 void queueadd(char *arg0, char *arg1) {
-    MUTEX_lock(D_00519C08_9C08);
+    MUTEX_lock(D_00519C08);
     if (*(char **)arg0 == 0) {
         *(char **)arg0 = arg1;
     } else {
@@ -2115,7 +2115,7 @@ void queueadd(char *arg0, char *arg1) {
     }
     *(char **)(arg0 + 4) = arg1;
     *(int *)(arg1 + 4) = 0;
-    MUTEX_unlock_qa(D_00519C08_9C08);
+    MUTEX_unlock_qa(D_00519C08);
 }
 #endif
 
