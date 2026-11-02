@@ -86,6 +86,12 @@ struct sOwner {
     char*** mEnd;
 };
 
+struct sIntVec {
+    int f0;
+    int* mBegin;
+    int* mEnd;
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -1811,17 +1817,11 @@ static inline void* GetSession_001A6978()
     return D_004A3328;
 }
 
-struct sIntVec_001A6978 {
-    int f0;
-    int* mBegin;
-    int* mEnd;
-};
-
 struct sOwner_001A6978 {
     char pad[0x40];
     void* screen;
     char pad44[0x6E4 - 0x44];
-    sIntVec_001A6978 mVec;
+    sIntVec mVec;
     char pad6F0[0x6F4 - 0x6F0];
     unsigned int mTop;
 };
@@ -1993,12 +1993,6 @@ static inline void* GetSession_001A6E70()
     return D_004A3328;
 }
 
-struct sIntVec1A6E70 {
-    int f0;
-    int* mBegin;
-    int* mEnd;
-};
-
 static inline int* Copy1A6E70(int* first, int* last, int* result)
 {
     func_0041610C(result, first, (last - first) * sizeof(int));
@@ -2007,14 +2001,14 @@ static inline int* Copy1A6E70(int* first, int* last, int* result)
 
 struct sOwner1A6E70 {
     char pad[0x6E4];
-    sIntVec1A6E70 mVec;
+    sIntVec mVec;
 };
 
 extern "C" void func_001A6E70(sOwner1A6E70* self)
 {
     int i;
     for (i = (self->mVec.mEnd - self->mVec.mBegin) - 1; i >= 0; i--) {
-        sIntVec1A6E70* v = &self->mVec;
+        sIntVec* v = &self->mVec;
         int id = *(int*)((char*)self->mVec.mBegin + (i << 2));
         if (func_002624F8(GetSession_001A6E70(), id) < 0) {
             // PORT: pointer arithmetic through int
