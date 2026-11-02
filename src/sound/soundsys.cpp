@@ -208,10 +208,6 @@ struct sSndRandSlot {
     int f50;
     void* operator new[](unsigned int, void* p) { return p; }
 };
-struct sSndRandSys {
-    char pad0[0x1C];
-    sSndRandSlot ent[3];
-};
 
 // The sound-system object, seen from offset 0 through its class chain. cBankSys (prototype class) is the
 // innermost base; the classes built by func_002A8140 and func_002A69A0 derive from it, and the handlers below run on
@@ -240,6 +236,11 @@ struct sSndSys69A0 : public sSndSys8140 {
 struct cSSXAudio : public sSndSys69A0 {
     cBankManager** p118;     // 0x118
 };
+
+extern sSndSys8140* D_004A3744;
+extern sSndSys69A0* D_004A36F8;
+extern "C" void func_002A8450(sSndSys8140* self, int a, int b);
+extern "C" int func_002A86B8(sSndSys8140* self);
 
 // ---- end of shared declarations ----
 
@@ -8785,7 +8786,6 @@ struct sPool5D08 {
     int f17C;
 };
 
-extern sSndSys69A0* D_004A36F8_5D08 __asm__("D_004A36F8");
 
 #define SND_5D08_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_5D08_MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -8843,7 +8843,7 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
             h++;
         } while (h < 3);
         found->grp->vec = *found->p;
-        sSndSys69A0* sys = D_004A36F8_5D08;
+        sSndSys69A0* sys = D_004A36F8;
         cBankManager* m = sys->mgr;
         int a = self->fD8;
         cSndPlayOpts* s = &m->sub;
@@ -8870,7 +8870,7 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
         sys->a4[sys->mgr->sub.cur] = a;
         sys->a8[sys->mgr->sub.cur] = key;
         {
-            sSndSys69A0* s2 = D_004A36F8_5D08;
+            sSndSys69A0* s2 = D_004A36F8;
             s2->mgr->sub.tgt[s2->mgr->sub.cur] = &found->grp->vec;
             cBankManager* m2 = s2->mgr;
             cSndPlayOpts* ss = &m2->sub;
@@ -8878,27 +8878,27 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
             ss->ch[m2->sub.cur].vol = SND_5D08_MAX(0, SND_5D08_MIN(ss->vals[ss->cur], 0x7F));
         }
         {
-            cBankManager* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8->mgr;
             m2->sub.p3C[m2->sub.cur] = self->f17C;
         }
         {
-            cBankManager* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8->mgr;
             m2->sub.p74[m2->sub.cur] = 1;
         }
         {
-            cBankManager* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8->mgr;
             m2->sub.p64[m2->sub.cur] = self->f0;
         }
-        OPTS_Callback_5D08(D_004A36F8_5D08->mgr, D_004A3700[0]);
+        OPTS_Callback_5D08(D_004A36F8->mgr, D_004A3700[0]);
         {
-            cBankManager* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8->mgr;
             m2->sub.p60[m2->sub.cur] = (int)self;
         }
         {
-            cBankManager* m2 = D_004A36F8_5D08->mgr;
+            cBankManager* m2 = D_004A36F8->mgr;
             m2->sub.p7C[m2->sub.cur] = 0;
         }
-        found->grp->handle = func_002906B8(D_004A36F8_5D08);
+        found->grp->handle = func_002906B8(D_004A36F8);
     }
     return idx;
 }
@@ -8907,7 +8907,6 @@ int func_002A5D08_5D08(sPool5D08* self, cSndPlayOpts* P, int key)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A62F0);
 #ifdef SKIP_ASM
-extern char** D_004A36F8;
 
 struct sSsVoice62F0 { int f0; int id; int refs; };
 struct sSsEnt62F0 { int active; int f4; sSsVoice62F0* v; };
@@ -8938,7 +8937,7 @@ extern "C" void func_002A62F0(void* vself, int idx, float fade)
     self->ent[idx].v = 0;
     if (--v->refs == 0) {
         if (v->id >= 0) {
-            func_002AD5F0(*D_004A36F8 + 0x1D8, v->id, 1, fade);
+            func_002AD5F0(&D_004A36F8->mgr->sub, v->id, 1, fade);
         }
         v->id = -1;
         v->f0 = -1;
@@ -8949,7 +8948,7 @@ extern "C" void func_002A62F0(void* vself, int idx, float fade)
     if (self->vol > 0.25f) self->vol = 0.25f;
     if (self->id >= 0) {
         if (fade == 0.0f) {
-            func_002AD5F0(*D_004A36F8 + 0x1D8, self->id, 2, fade);
+            func_002AD5F0(&D_004A36F8->mgr->sub, self->id, 2, fade);
         }
         self->id = -1;
         if (self->state == 2) self->state = 1;
@@ -8979,9 +8978,6 @@ INCLUDE_ASM("sound/soundsys", func_002A64A0);
 #ifdef SKIP_ASM
 extern "C" void func_002A6848(void* self);
 extern "C" int func_002A4CA0(sSndRandList* list);
-extern "C" void func_002A8450(char** sys, int a, int b);
-extern "C" int func_002A86B8(char** sys);
-extern char** D_004A36F8;
 
 
 
@@ -8991,22 +8987,22 @@ extern "C" void func_002A64A0(void* vself, int idx)
     char* self = (char*)vself;
     func_002A6848(self);
     if (*(int*)(self + 0xD4) == 0) return;
-    sSndRandSlot* e = &((sSndRandSys*)D_004A36F8)->ent[idx];
+    sSndRandSlot* e = &D_004A36F8->ent[idx];
     *(int*)(self + 0x184) = idx;
     *(float*)(self + 0x188) = e->f48 + e->f4C;
     int r = func_002A4CA0((sSndRandList*)e);
     if (r == 0) return;
     func_002A8450(D_004A36F8, *(int*)(self + 0xD8), r);
-    cBankManager* m1 = *(cBankManager**)D_004A36F8;
+    cBankManager* m1 = D_004A36F8->mgr;
     m1->sub.tgt[m1->sub.cur] = self + 0x10;
-    cBankManager* m2 = *(cBankManager**)D_004A36F8;
+    cBankManager* m2 = D_004A36F8->mgr;
     m2->sub.setVal(m2->sub.cur, *(int*)(self + 0x178));
     m2->sub.update(m2->sub.cur);
-    cBankManager* m3 = *(cBankManager**)D_004A36F8;
+    cBankManager* m3 = D_004A36F8->mgr;
     m3->sub.p3C[m3->sub.cur] = *(int*)(self + 0x17C);
-    cBankManager* m4 = *(cBankManager**)D_004A36F8;
+    cBankManager* m4 = D_004A36F8->mgr;
     m4->sub.p74[m4->sub.cur] = 1;
-    cBankManager* m5 = *(cBankManager**)D_004A36F8;
+    cBankManager* m5 = D_004A36F8->mgr;
     m5->sub.p64[m5->sub.cur] = *(int*)self;
     *(int*)(self + 0x174) = func_002A86B8(D_004A36F8);
     *(int*)(self + 0x18C) = idx + 1;
@@ -9018,9 +9014,6 @@ INCLUDE_ASM("sound/soundsys", func_002A6648);
 #ifdef SKIP_ASM
 extern "C" void func_002A6848(void* self);
 extern "C" int func_002A4CA0(sSndRandList* list);
-extern "C" void func_002A8450(char** sys, int a, int b);
-extern "C" int func_002A86B8(char** sys);
-extern char** D_004A36F8;
 
 
 
@@ -9030,22 +9023,22 @@ extern "C" void func_002A6648(void* vself, int idx)
     char* self = (char*)vself;
     func_002A6848(self);
     if (*(int*)(self + 0xD4) == 0) return;
-    sSndRandSlot* e = &((sSndRandSys*)D_004A36F8)->ent[idx];
+    sSndRandSlot* e = &D_004A36F8->ent[idx];
     *(int*)(self + 0x184) = idx;
     *(float*)(self + 0x188) = e->f48 + e->f4C;
     int r = func_002A4CA0((sSndRandList*)((char*)e + 0x18));
     if (r == 0) return;
     func_002A8450(D_004A36F8, *(int*)(self + 0xD8), r);
-    cBankManager* m1 = *(cBankManager**)D_004A36F8;
+    cBankManager* m1 = D_004A36F8->mgr;
     m1->sub.tgt[m1->sub.cur] = self + 0x10;
-    cBankManager* m2 = *(cBankManager**)D_004A36F8;
+    cBankManager* m2 = D_004A36F8->mgr;
     m2->sub.setVal(m2->sub.cur, *(int*)(self + 0x178));
     m2->sub.update(m2->sub.cur);
-    cBankManager* m3 = *(cBankManager**)D_004A36F8;
+    cBankManager* m3 = D_004A36F8->mgr;
     m3->sub.p3C[m3->sub.cur] = *(int*)(self + 0x17C);
-    cBankManager* m4 = *(cBankManager**)D_004A36F8;
+    cBankManager* m4 = D_004A36F8->mgr;
     m4->sub.p74[m4->sub.cur] = 1;
-    cBankManager* m5 = *(cBankManager**)D_004A36F8;
+    cBankManager* m5 = D_004A36F8->mgr;
     m5->sub.p64[m5->sub.cur] = *(int*)self;
     *(int*)(self + 0x174) = func_002A86B8(D_004A36F8);
     *(int*)(self + 0x18C) = ~idx;
@@ -9081,7 +9074,6 @@ extern "C" void func_002A6808(void* self)
 INCLUDE_ASM("sound/soundsys", func_002A6848);
 #ifdef SKIP_ASM
 extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
-extern char** D_004A36F8;
 
 extern "C" void func_002A6848(void* self)
 {
@@ -9090,7 +9082,7 @@ extern "C" void func_002A6848(void* self)
     }
     *(int*)((char*)self + 0x180) = 0;
     if (*(int*)((char*)self + 0x174) >= 0) {
-        func_002AD5F0(*D_004A36F8 + 0x1D8, *(int*)((char*)self + 0x174), 2, 0.0f);
+        func_002AD5F0(&D_004A36F8->mgr->sub, *(int*)((char*)self + 0x174), 2, 0.0f);
         *(int*)((char*)self + 0x174) = -1;
     }
 }
@@ -9173,7 +9165,7 @@ extern "C" char* func_002A69A0(char* self, int embedded, int count, int unused, 
     *(int*)(self + 0x14) = 0;
     *(int*)(self + 0x18) = 0;
     new (self + 0x1C) sSndRandSlot[3];
-    D_004A36F8 = (char**)self;
+    D_004A36F8 = (sSndSys69A0*)self;
     return self;
 }
 #endif
@@ -10041,7 +10033,6 @@ void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm
 extern char D_00483A48[];
 extern char D_00483B48[];
 extern const char D_00483148[];
-extern int D_004A3744;
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
 extern "C" char* func_002A8140(char* self, int embedded, int count, int heap)
@@ -10072,7 +10063,7 @@ extern "C" char* func_002A8140(char* self, int embedded, int count, int heap)
     *(void**)(self + 0xC) = D_00483A48;
     func_003B97D8();
     *(void**)(self + 0x10) = new (D_00483148, 0, 0) char[0x20] ;
-    D_004A3744 = (int)self;
+    D_004A3744 = (sSndSys8140*)self;
     return self;
 }
 #endif
@@ -10090,7 +10081,6 @@ extern "C" int func_003B9880();
 
 extern char D_00483A48[];
 extern char D_00483B48[];
-extern int D_004A3744;
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
 extern "C" void func_002A82D8(char* self, int flags)
@@ -10129,9 +10119,8 @@ INCLUDE_ASM("sound/soundsys", func_002A8450);
 extern "C" void* func_00416210(void* dst, int c, int n);
 
 
-extern "C" void func_002A8450(char** sys, int a, int b)
+extern "C" void func_002A8450(sSndSys8140* self, int a, int b)
 {
-    sSndSys8140* self = (sSndSys8140*)sys;
     cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
     m->sub.cur++;
@@ -10165,21 +10154,19 @@ INCLUDE_ASM("sound/soundsys", func_002A86B8);
 INCLUDE_ASM("sound/soundsys", func_002A8B28);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern sSndSys8140* D_004A3744_8B28 __asm__("D_004A3744");
-extern "C" int func_002A86B8(char** sys);
 
 extern "C" int func_002A8B28(void* unused, char* obj)
 {
-    func_002A8450((char**)D_004A3744_8B28, *(int*)(obj + 0x1C), *(int*)(obj + 0x20));
-    cBankManager* m = D_004A3744_8B28->mgr;
+    func_002A8450(D_004A3744, *(int*)(obj + 0x1C), *(int*)(obj + 0x20));
+    cBankManager* m = D_004A3744->mgr;
     m->sub.p3C[m->sub.cur] = *(int*)(obj + 0x18);
-    cBankManager* m2 = D_004A3744_8B28->mgr;
+    cBankManager* m2 = D_004A3744->mgr;
     cSndPlayOpts* s = &m2->sub;
     s->vals[m2->sub.cur] = *(int*)(obj + 0x24);
 #define SND_X (s->vals[s->cur])
 #define SND_MIN127 (SND_X < 0x7F ? SND_X : 0x7F)
     s->ch[m2->sub.cur].vol = SND_MIN127 < 0 ? 0 : SND_MIN127;
-    func_002A86B8((char**)D_004A3744_8B28);
+    func_002A86B8(D_004A3744);
     return 1;
 }
 #endif
