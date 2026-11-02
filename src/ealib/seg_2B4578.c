@@ -16520,7 +16520,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D1BA8);
 struct B16_1BA8 { char b[16]; };
 struct G_1BA8 { char pad[0xDC]; unsigned a[17]; char pad120[0x91C - 0x120]; int n; };
 extern struct G_1BA8 *D_0044F420_1BA8 __asm__("D_0044F420");
-extern void (*D_0044F428_1BA8)(unsigned, int) __asm__("D_0044F428");
 extern void func_0041605C_1BA8(unsigned, unsigned, unsigned) __asm__("func_0041605C");
 
 
@@ -16541,8 +16540,8 @@ void func_003D1BA8(int idx, int status) {
             }
         }
     } else {
-        if (D_0044F428_1BA8 != 0) {
-            D_0044F428_1BA8(e, status);
+        if (D_0044F428 != 0) {
+            D_0044F428(e, status);
         }
     }
     D_0044F420_1BA8->a[idx] = 0;
