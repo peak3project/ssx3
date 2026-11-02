@@ -616,7 +616,33 @@ extern "C" void func_00270AB0(void* self, int key, int bit)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00270B88);
+#ifdef SKIP_ASM
+extern "C" void func_0026E6E0_3(void* slot, void* rider, int src) __asm__("func_0026E6E0");
+
+struct sRcSlotB88 {
+    char pad[0xB0];
+    int busy;
+    bool isFree() { return busy == 0; }
+};
+
+struct sRcSlotsB88 {
+    int state;
+    char pad_0x004[0x3B4 - 4];
+    void* rider;
+    char pad_0x3B8[0x494 - 0x3B8];
+    sRcSlotB88 slots[1];
+};
+
+extern "C" void func_00270B88(void* p, int playerId, int id)
+{
+    sRcSlotsB88* self = (sRcSlotsB88*)p;
+    if (self->state == 0 && self->slots[playerId].isFree()) {
+        func_0026E6E0_3(&self->slots[playerId], self->rider, id);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_00270BD8);
