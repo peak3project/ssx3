@@ -2375,12 +2375,11 @@ int func_003B83A0(int arg0, int arg1) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B84E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V_84E0 { int a; int b; };
-struct E_84E0 { struct V_84E0 v; char pad[0xC]; };
-extern struct E_84E0 D_0050AB14_84E0[] __asm__("D_0050AB14");
+struct E_84E0 { struct sA8E8Pan v; char pad[0xC]; };
+extern struct E_84E0 D_0050AB14_84E0[] __asm__("D_0050AB14");  /* &D_0050AB08[0].f0C */
 extern void func_003C36C8(int, int);
 
-int func_003B84E0(int arg0, int flags, int arg2, struct V_84E0 *v) {
+int func_003B84E0(int arg0, int flags, int arg2, struct sA8E8Pan *v) {
     if (flags & 8) {
         D_0050AB14_84E0[arg0].v = *v;
     }
