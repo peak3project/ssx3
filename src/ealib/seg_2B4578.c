@@ -3176,17 +3176,13 @@ int func_003B8D98(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B8DE8);
 #ifdef SKIP_ASM
-struct E_8DE8 { char pad0[0x10]; int f10; int f14; int f18; int f1C; char pad20[0x50]; };
-struct V_8DE8 { int id; signed char owner; signed char slot; char pad[2]; };
-extern struct E_8DE8 D_0050A120_8DE8[] __asm__("D_0050A120");
-extern struct V_8DE8 D_0050A820_8DE8[] __asm__("D_0050A820");
 extern int func_003B9920(int);
 extern int f_85F0_8DE8(int, int) __asm__("func_003B85F0");
 
 int func_003B8DE8_impl(int) __asm__("func_003B8DE8");
 int func_003B8DE8_impl(int id) {
-    struct E_8DE8 *e = &D_0050A120_8DE8[id];
-    struct V_8DE8 *v;
+    struct sA120Song *e = &D_0050A120.f000[id];
+    struct sA120Voice *v;
     int i;
     e->f14 = e->f14 + e->f18;
     if (e->f18 < 0) {
@@ -3205,10 +3201,10 @@ int func_003B8DE8_impl(int id) {
         return 1;
     }
     i = 0x17;
-    v = D_0050A820_8DE8;
+    v = D_0050A820;
     do {
-        if (v->owner == id && v->id >= 0) {
-            f_85F0_8DE8(v->id, ((*(unsigned int *)((char *)e + (v->slot << 2) + 0x30) >> 10 & 0x7F) * *(short *)((char *)e + 0x16)) >> 7);
+        if (v->f04 == id && v->f00 >= 0) {
+            f_85F0_8DE8(v->f00, (unsigned int)(e->f30[v->f05].b10 * (e->f14 >> 16)) >> 7);
         }
         i--;
         v++;
