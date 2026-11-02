@@ -6154,8 +6154,6 @@ extern "C" cLunoValue func_00305F40(int n, Ent_5F40 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003061B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct R12_61B0 { int a; int b; int c; };
-extern R12_61B0 D_004C9098_61B0 __asm__("D_004C9098");
 
 extern int D_004A3DA8_61B0[2] __asm__("D_004A3DA8");
 extern int D_005308D0_61B0[] __asm__("D_005308D0");
