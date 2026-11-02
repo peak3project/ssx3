@@ -456,6 +456,9 @@ extern void* D_00490B10[];
 extern void* D_004914E0[];
 extern char* D_004A5B64;
 
+// Constant vector table (0x004FF120; 00341388 also reads it through its ctor vector type).
+extern t4Vector D_004FF120[];
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1103,7 +1106,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00333EF8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-extern t4Vector D_004FF120_333EF8[] __asm__("D_004FF120");
 
 struct sWsBox;
 typedef int (*Test_333EF8)(void*);
@@ -1136,8 +1138,8 @@ static inline void reset_333EF8(sWsTriHit* h)
     h->f60 = -1;
     h->f64 = -1;
     h->id = -1;
-    h->v20 = *D_004FF120_333EF8;
-    h->v30 = *D_004FF120_333EF8;
+    h->v20 = *D_004FF120;
+    h->v30 = *D_004FF120;
     h->f68 = 0;
     h->u = 0;
     h->v = 0;
@@ -1382,7 +1384,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00335128);
 INCLUDE_ASM("intersect/worldsphtree", func_00335960);
 #ifdef SKIP_ASM
 
-extern t4Vector D_004FF120[];
 
 struct sCtx_335960 {
     sWsQueryBox* q;
