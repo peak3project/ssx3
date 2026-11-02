@@ -62,6 +62,31 @@ struct sCameras {
     char* cam[3];               // 0x4
     int f10;                    // 0x10
 };
+// The game-mode manager (cGameModeMan, main/gamemode layout; D_004A28A8->gm).
+struct cGameModeMan {
+    int f0;             // 0x00 current heat (1..3)
+    int mode;           // 0x04
+    int type;           // 0x08
+    int net;            // 0x0C
+    int iNumberAI;      // 0x10
+    int f14;            // 0x14
+    int a18[10];        // 0x18 rider character IDs
+    int a40[10];        // 0x40
+    int f68;            // 0x68
+    int f6C;            // 0x6C
+    int f70;            // 0x70
+    int f74;            // 0x74
+    int f78;            // 0x78
+    int f7C;            // 0x7C
+    int f80;            // 0x80
+    int f84;            // 0x84
+    int f88;            // 0x88
+    int f8C;            // 0x8C
+    int f90;            // 0x90
+    int f94;            // 0x94
+    int f98;            // 0x98
+    int f9C;            // 0x9C
+};
 // The game (D_004A2C68, also D_004A28A8->game).
 struct sGame {
     char pad_0x0[0xC];
@@ -88,7 +113,7 @@ struct sApp {
     char pad_0x7C[0x8];
     sGame* game;                // 0x84
     char pad_0x88[0x38];
-    void* gm;                   // 0xC0 the game-mode manager
+    cGameModeMan* gm;           // 0xC0
 };
 extern sApp* D_004A28A8;
 
@@ -508,7 +533,7 @@ extern "C" void func_00308C60(void* a);
 extern "C" void func_0026F228(void* p);
 extern "C" void func_0026F7B8(void* p);
 extern "C" void func_00145DD0(void* iface, int a1, int a2, int a3);
-extern "C" int func_00238510(void* gm, int a1, int a2);
+extern "C" int func_00238510(cGameModeMan* gm, int a1, int a2);
 
 static inline int otherSide_235868(char* p)
 {
@@ -598,20 +623,12 @@ extern "C" void func_0027AAF8(void* a, int b);
 extern "C" int func_00278F38(void* self, int i);
 extern "C" void func_0027A860(void* a, int b, int c);
 extern "C" void func_001F36C0(void* a, int b);
-extern "C" void cGameModeMan_restartHeat(void* gm);
+extern "C" void cGameModeMan_restartHeat(cGameModeMan* gm);
 extern "C" int cBENewRaceInterface_setNumberAI(void* self, int count);
 extern "C" void cBENewPlayerInterface_setRiderCharID(void* player, int i, int id);
 extern "C" void func_001473D0(void* player, int i, int v);
 extern void* D_004A3DD8;
 extern void* D_004A28A4;
-
-struct sGM_235AA0 {
-    char pad0[0x10];
-    int total;      // 0x10
-    int humans;     // 0x14
-    int chars[10];  // 0x18
-    int boards[10]; // 0x40
-};
 
 extern "C" void func_00235AA0(void* self)
 {
@@ -619,7 +636,7 @@ extern "C" void func_00235AA0(void* self)
     func_0030B7F8(D_004A3DD8);
     char* race = (char*)cBE_getInterface_Fv(cBE_getBE(), 0);
     char* player = (char*)cBE_getInterface_Fv(cBE_getBE(), 1);
-    sGM_235AA0* gm = (sGM_235AA0*)D_004A28A8->gm;
+    cGameModeMan* gm = D_004A28A8->gm;
     cGameModeMan_restartHeat(gm);
     func_00230180(D_004A28A8->game);
     sRaceSettings* r = &D_00535BC8;
@@ -633,7 +650,7 @@ extern "C" void func_00235AA0(void* self)
         *(int*)((char*)self + 0x10) = 3;
         return;
     }
-    int n = gm->total - gm->humans;
+    int n = gm->iNumberAI - gm->f14;
     int base = D_004A2C68->race->numPlayers;
     int i = 0;
     cBENewRaceInterface_setNumberAI(race, n);
@@ -642,8 +659,8 @@ extern "C" void func_00235AA0(void* self)
         vt[1].fn(race + vt[1].delta);
     }
     for (; i < n; i++) {
-        cBENewPlayerInterface_setRiderCharID(player, i + base, gm->chars[base + i]);
-        func_001473D0(player, i + base, gm->boards[base + i]);
+        cBENewPlayerInterface_setRiderCharID(player, i + base, gm->a18[base + i]);
+        func_001473D0(player, i + base, gm->a40[base + i]);
     }
     {
         sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(player + 0xC);
@@ -660,7 +677,7 @@ extern "C" void func_00235AA0(void* self)
         func_0027A860(sc, 1, 0);
     }
     func_002790A0(D_004A28A4, 0);
-    func_0027AAF8(D_004A28A4, *(int*)((char*)gm + 0x98) ? 3 : 2);
+    func_0027AAF8(D_004A28A4, gm->f98 ? 3 : 2);
     func_00278F38(D_004A28A4, 0);
     func_001F36C0(D_004A28A8->game->f94, 3);
     *(int*)((char*)self + 0x14) = 0;
@@ -820,7 +837,7 @@ extern "C" void func_00235FD0(void* self, void* stream)
 INCLUDE_ASM("main/gamestate", func_00236058);
 #ifdef SKIP_ASM
 extern "C" void func_0030B7F8(void* self);
-extern "C" void cGameModeMan_initGameMode(void* gm, int mode);
+extern "C" void cGameModeMan_initGameMode(cGameModeMan* gm, int mode);
 extern "C" void func_00230180(void* self);
 extern "C" void func_0011DE60(void* self, int a1, int a2);
 extern "C" void func_0011DF18(void* self, int notify);
@@ -837,7 +854,7 @@ struct sColor_236058 {
 
 extern "C" void func_00236058(void* self)
 {
-    void* gm = D_004A28A8->gm;
+    cGameModeMan* gm = D_004A28A8->gm;
     func_0030B7F8(D_004A3DD8);
     cGameModeMan_initGameMode(gm, 0xC);
     char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 0xA);
