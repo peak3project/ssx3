@@ -1,13 +1,20 @@
 #include "common.h"
 
+// ---- Shared declarations: one type per real thing, used by the functions below ----
+
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
+// ---- end of shared declarations ----
+
 //100%
 INCLUDE_ASM("object/movenode", cMoveNode_cMoveNode);
 #ifdef SKIP_ASM
-struct sSerVEntry_55298 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 struct cMoveNode;
 void cMoveNode_addModifierBlock(cMoveNode* self);
@@ -26,13 +33,13 @@ void* cMoveNode_cMoveNode_3(void* self, void* a, void* stream)
     cInstanceNode_cInstanceNode(self, a, stream);
     *(int*)((char*)self + 0x1C) = 0;
     *(void**)((char*)self + 0xC) = D_00491028;
-    sSerVEntry_55298* e = &(*(sSerVEntry_55298**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x20, 4);
-    e = &(*(sSerVEntry_55298**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x24, 4);
-    e = &(*(sSerVEntry_55298**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x28, 4);
-    e = &(*(sSerVEntry_55298**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, &flag, 4);
     if (flag) {
         cMoveNode_addModifierBlock((cMoveNode*)self);
@@ -67,11 +74,6 @@ extern "C" void func_003553C0(void* self, int flags)
 //100%
 INCLUDE_ASM("object/movenode", func_00355420);
 #ifdef SKIP_ASM
-struct sMoveNodeVEntryI {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" int func_00355420(void* self)
 {
@@ -83,7 +85,7 @@ extern "C" int func_00355420(void* self)
     if (node == 0) {
         return 1;
     }
-    sMoveNodeVEntryI* vt = *(sMoveNodeVEntryI**)node;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)node;
     return vt[8].fn((char*)node + vt[8].delta);
 }
 #endif
@@ -111,17 +113,12 @@ void cMoveNode_addModifierBlock(cMoveNode* self)
 //100%
 INCLUDE_ASM("object/movenode", func_003554B0);
 #ifdef SKIP_ASM
-struct sMoveNodeVEntryV54B0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_003530D0(void* block);
 
 extern "C" void func_003554B0(cMoveNode* self, void* mod)
 {
-    sMoveNodeVEntryV54B0* e = &(*(sMoveNodeVEntryV54B0**)((char*)self + 0xC))[49];
+    sVEntry<void(void*)>* e = &(*(sVEntry<void(void*)>**)((char*)self + 0xC))[49];
     e->fn((char*)self + e->delta);
     if (self->field_0x1C == 0) {
         cMoveNode_addModifierBlock(self);
@@ -129,7 +126,7 @@ extern "C" void func_003554B0(cMoveNode* self, void* mod)
         func_003530D0(self->field_0x1C);
     }
     *(void**)self->field_0x1C = mod;
-    e = &(*(sMoveNodeVEntryV54B0**)((char*)self + 0xC))[48];
+    e = &(*(sVEntry<void(void*)>**)((char*)self + 0xC))[48];
     e->fn((char*)self + e->delta);
     unsigned int* f = (unsigned int*)(*(char**)((char*)self + 0x18) + 8);
     *f = (*f & ~0x20u) | 0x40;
@@ -263,11 +260,6 @@ struct cMN_355770_Obj {
     virtual int v10(int a, int b);
 };
 
-struct cMN_355770_VEnt {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 extern "C" void func_00355770(cMoveNode* self, int a1, int a2, int a3)
 {
@@ -277,7 +269,7 @@ extern "C" void func_00355770(cMoveNode* self, int a1, int a2, int a3)
         if (obj != 0) {
             obj->v10(a1, a2);
             char* o = *(char**)self->field_0x1C;
-            cMN_355770_VEnt* vt = *(cMN_355770_VEnt**)o;
+            sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)o;
             if (vt[9].fn(o + vt[9].delta, func_002D1B30(a3)) == 0) {
                 return;
             }
@@ -315,15 +307,10 @@ float func_00355878(void* self, void* a1)
 //100%
 INCLUDE_ASM("object/movenode", func_00355888);
 #ifdef SKIP_ASM
-struct sMnVEntryF {
-    short delta;
-    short index;
-    void (*fn)(void*, float);
-};
 
 extern "C" void func_00355888(void* self, void* a1)
 {
-    sMnVEntryF* vt = *(sMnVEntryF**)((char*)self + 0xC);
+    sVEntry<void(void*, float)>* vt = *(sVEntry<void(void*, float)>**)((char*)self + 0xC);
     vt[41].fn((char*)self + vt[41].delta, *(float*)((char*)a1 + 0x4));
 }
 #endif
@@ -568,26 +555,6 @@ static inline void vu0CopyMatrix_355F10(void* dst, void* src)
         : "memory");
 }
 
-struct sNodeVEntryI_355F10 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sNodeVEntryP_355F10 {
-    short delta;
-    short index;
-    char* (*fn)(void*);
-};
-struct sNodeVEntryD_355F10 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-struct sNodeVEntryV_355F10 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_00355F10(cMoveNode* self, void* srcv)
 {
@@ -595,26 +562,26 @@ extern "C" void func_00355F10(cMoveNode* self, void* srcv)
     if (src == 0) {
         return;
     }
-    sNodeVEntryI_355F10* vi = *(sNodeVEntryI_355F10**)(src + 0xC);
+    sVEntry<int(void*)>* vi = *(sVEntry<int(void*)>**)(src + 0xC);
     if (vi[16].fn(src + vi[16].delta) != 0) {
         func_00356020(self, (cMoveNode*)src);
     }
-    sNodeVEntryP_355F10* vp = *(sNodeVEntryP_355F10**)(src + 0xC);
+    sVEntry<char*(void*)>* vp = *(sVEntry<char*(void*)>**)(src + 0xC);
     char* m = vp[24].fn(src + vp[24].delta);
     if (m == *(char**)((char*)self + 0x18) + 0x10) {
-        sNodeVEntryD_355F10* vd = *(sNodeVEntryD_355F10**)(src + 0xC);
+        sVEntry<void(void*, int)>* vd = *(sVEntry<void(void*, int)>**)(src + 0xC);
         vd[1].fn(src + vd[1].delta, 3);
         return;
     }
     sMat44_355F10 copy;
     vu0CopyMatrix_355F10(&copy, m);
     int keep = *(int*)(*(char**)((char*)self + 0x18) + 8);
-    sNodeVEntryD_355F10* vd = *(sNodeVEntryD_355F10**)(src + 0xC);
+    sVEntry<void(void*, int)>* vd = *(sVEntry<void(void*, int)>**)(src + 0xC);
     vd[1].fn(src + vd[1].delta, 3);
     *(int*)(*(char**)((char*)self + 0x18) + 8) = keep;
     func_00355918(self, &copy);
     *(int*)((char*)self + 0x28) = 1;
-    sNodeVEntryV_355F10* vv = *(sNodeVEntryV_355F10**)((char*)self + 0xC);
+    sVEntry<void(void*)>* vv = *(sVEntry<void(void*)>**)((char*)self + 0xC);
     vv[50].fn((char*)self + vv[50].delta);
 }
 #endif
@@ -638,15 +605,10 @@ extern "C" void func_00356020(cMoveNode* self, cMoveNode* other)
 //100%
 INCLUDE_ASM("object/movenode", func_00356078);
 #ifdef SKIP_ASM
-struct sMnVEntryP_6078 {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 // Virtual call through the modifier object's vtable (slot 18); taking the object by reference matches the register allocation.
 static inline void* VCall18_6078(char*& o)
 {
-    sMnVEntryP_6078* vt = *(sMnVEntryP_6078**)o;
+    sVEntry<void*(void*)>* vt = *(sVEntry<void*(void*)>**)o;
     return vt[18].fn(o + vt[18].delta);
 }
 extern "C" void* func_00356078(char* self)
@@ -662,20 +624,10 @@ extern "C" void* func_00356078(char* self)
 //100%
 INCLUDE_ASM("object/movenode", func_003560C0);
 #ifdef SKIP_ASM
-struct sMnVEntryI2_60C0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
-struct sMnVEntryI_60C0 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 // Taking the object by reference matches the target's register allocation (see func_00356078).
 static inline int VCall23_60C0(char*& o, int a)
 {
-    sMnVEntryI2_60C0* vt = *(sMnVEntryI2_60C0**)o;
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)o;
     return vt[23].fn(o + vt[23].delta, a);
 }
 // Asks the modifier object (slot 23, passing a through), then falls back to the node's own slot 27.
@@ -687,7 +639,7 @@ extern "C" int func_003560C0(char* self, int a)
         int r = VCall23_60C0(o, a);
         if (r != 0) return r;
     }
-    sMnVEntryI_60C0* vs = *(sMnVEntryI_60C0**)(self + 0xC);
+    sVEntry<int(void*)>* vs = *(sVEntry<int(void*)>**)(self + 0xC);
     return vs[27].fn(self + vs[27].delta);
 }
 #endif
@@ -695,15 +647,10 @@ extern "C" int func_003560C0(char* self, int a)
 //100%
 INCLUDE_ASM("object/movenode", func_00356128);
 #ifdef SKIP_ASM
-struct sMnVEntryP_6128 {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 // Taking the object by reference matches the target's register allocation (see func_00356078).
 static inline void* VCall_6128(char*& o, int i)
 {
-    sMnVEntryP_6128* vt = *(sMnVEntryP_6128**)o;
+    sVEntry<void*(void*)>* vt = *(sVEntry<void*(void*)>**)o;
     return vt[i].fn(o + vt[i].delta);
 }
 // Returns the modifier object's slot-19 value, else its slot-18 value; without one, the node's object position.
@@ -727,21 +674,6 @@ void* func_0034FCE0(void* self);
 extern "C" int func_00352ED0(void* block);
 extern "C" void func_00352F08(void* block);
 
-struct sMnVEntryI_356198 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sMnVEntryV_356198 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
-struct sMnVEntryVi_356198 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00356198(void* selfv)
 {
@@ -750,22 +682,22 @@ extern "C" void func_00356198(void* selfv)
     if (*(int*)(s + 0x20) > 0) {
         *(int*)(s + 0x20) -= 1;
     }
-    sMnVEntryI_356198* vi = *(sMnVEntryI_356198**)(s + 0xC);
+    sVEntry<int(void*)>* vi = *(sVEntry<int(void*)>**)(s + 0xC);
     if (vi[20].fn(s + vi[20].delta) != 0) {
-        sMnVEntryI_356198* vi2 = *(sMnVEntryI_356198**)(s + 0xC);
+        sVEntry<int(void*)>* vi2 = *(sVEntry<int(void*)>**)(s + 0xC);
         if (vi2[23].fn(s + vi2[23].delta) <= 0 && func_0034FCE0(self) == 0) {
-            sMnVEntryV_356198* vv = *(sMnVEntryV_356198**)(s + 0xC);
+            sVEntry<void(void*)>* vv = *(sVEntry<void(void*)>**)(s + 0xC);
             vv[35].fn(s + vv[35].delta);
             return;
         }
     }
     func_003556F8(self);
-    sMnVEntryI_356198* vi3 = *(sMnVEntryI_356198**)(s + 0xC);
+    sVEntry<int(void*)>* vi3 = *(sVEntry<int(void*)>**)(s + 0xC);
     if (vi3[15].fn(s + vi3[15].delta) != 0) {
         func_00355748(self);
         if (self->field_0x1C != 0 && func_00352ED0(self->field_0x1C) != 0) {
             func_00352F08(self->field_0x1C);
-            sMnVEntryVi_356198* vw = *(sMnVEntryVi_356198**)(s + 0xC);
+            sVEntry<void(void*, int)>* vw = *(sVEntry<void(void*, int)>**)(s + 0xC);
             vw[34].fn(s + vw[34].delta, 1);
         }
     }
@@ -902,15 +834,10 @@ public:
 };
 
 extern sMnCam_6298** D_004A47B8_6298 __asm__("D_004A47B8");
-struct sMnGfxVt_6298 {
-    short delta;
-    short index;
-    void* fn;
-};
 
 struct cMnGfx_6298 {
     char pad_0x0[0x10D8];
-    sMnGfxVt_6298* vt;              // 0x10D8
+    sVEntry<void>* vt;              // 0x10D8
 };
 
 typedef sMnMat_6298 (*MnViewFn_6298)(void*);
@@ -1019,11 +946,11 @@ extern "C" void func_00356298(cMnNode_6298* self)
     int res;
     if (mat) {
         sMnVec_6298* m = self->v45();
-        sMnGfxVt_6298* vt = gfx->vt;
+        sVEntry<void>* vt = gfx->vt;
         char* thisp = (char*)gfx + vt[93].delta;
         res = ((MnCullFn_6298)vt[93].fn)(thisp, m, m + 1, ((MnViewFn_6298)gfx->vt[43].fn)((char*)gfx + gfx->vt[43].delta));
     } else {
-        sMnGfxVt_6298* vt = gfx->vt;
+        sVEntry<void>* vt = gfx->vt;
         char* thisp = (char*)gfx + vt[93].delta;
         sMnVec_6298 b[2];
         b[0].x = OBJ_6298(self)->pos[0];
@@ -1064,7 +991,7 @@ extern "C" void func_00356298(cMnNode_6298* self)
         flags |= 2;
     }
     void* light = HasLight_6298(MOD_6298(self)) ? LightOf_6298(self) : OBJ_6298(self)->light;
-    sMnGfxVt_6298* vt = gfx->vt;
+    sVEntry<void>* vt = gfx->vt;
     ((MnDrawFn_6298)vt[95].fn)((char*)gfx + vt[95].delta, OBJ_6298(self), light, xf, tex, rot, flags, *(float*)((char*)self + 0x24));
 }
 #endif
@@ -1088,7 +1015,7 @@ extern "C" void func_00356608(cMnNode_6298* self, void* tex, int flags)
         flags |= 2;
     }
     void* light = HasLight_6298(MOD_6298(self)) ? LightOf_6298(self) : OBJ_6298(self)->light;
-    sMnGfxVt_6298* vt = gfx->vt;
+    sVEntry<void>* vt = gfx->vt;
     ((MnDrawFn_6298)vt[95].fn)((char*)gfx + vt[95].delta, OBJ_6298(self), light, D_004FF1A0, tex, rot, flags, *(float*)((char*)self + 0x24));
 }
 #endif
@@ -1184,16 +1111,6 @@ struct sMnBox_68B0 {
     sMnVec4_68B0 min, max;
 };
 
-struct sMnVEntM_68B0 {
-    short delta;
-    short index;
-    sMnVec4_68B0* (*fn)(void*);
-};
-struct sMnVEnt_68B0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" sMnBox_68B0* func_00352B88_68B0(void* mb) __asm__("func_00352B88");
 extern "C" float func_00352BF8(void* mb);
@@ -1233,13 +1150,13 @@ static inline void vu0Add_68B0(sMnVec4_68B0& out, const sMnVec4_68B0& a, const s
 // World position: translation row of the node's transform (virtual slot 24).
 static inline sMnVec4_68B0 pos_68B0(char* self)
 {
-    sMnVEntM_68B0* vt = *(sMnVEntM_68B0**)(self + 0xC);
+    sVEntry<sMnVec4_68B0*(void*)>* vt = *(sVEntry<sMnVec4_68B0*(void*)>**)(self + 0xC);
     return vt[24].fn(self + vt[24].delta)[3];
 }
 
 static inline void VCall24_68B0(char*& o)
 {
-    sMnVEnt_68B0* vt = *(sMnVEnt_68B0**)o;
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)o;
     vt[24].fn(o + vt[24].delta);
 }
 
@@ -1301,11 +1218,6 @@ extern "C" int func_00356A00(cMoveNode* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00356A28);
 #ifdef SKIP_ASM
-struct sMoveNodeVEntryA28 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" int func_00356A28(void* self)
 {
@@ -1317,7 +1229,7 @@ extern "C" int func_00356A28(void* self)
     if (node == 0) {
         return 0;
     }
-    sMoveNodeVEntryA28* vt = *(sMoveNodeVEntryA28**)node;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)node;
     return vt[20].fn((char*)node + vt[20].delta);
 }
 #endif
@@ -1325,11 +1237,6 @@ extern "C" int func_00356A28(void* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00356A70);
 #ifdef SKIP_ASM
-struct sMoveNodeVEntryA70 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int, int, int);
-};
 
 extern "C" int func_00356A70(void* self, int a, int b, int c, int d)
 {
@@ -1341,7 +1248,7 @@ extern "C" int func_00356A70(void* self, int a, int b, int c, int d)
     if (node == 0) {
         return 0;
     }
-    sMoveNodeVEntryA70* vt = *(sMoveNodeVEntryA70**)node;
+    sVEntry<int(void*, int, int, int, int)>* vt = *(sVEntry<int(void*, int, int, int, int)>**)node;
     return vt[21].fn((char*)node + vt[21].delta, a, b, c, d);
 }
 #endif
@@ -1388,11 +1295,6 @@ extern "C" void func_00356B08(cMoveNode* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00356B30);
 #ifdef SKIP_ASM
-struct sSerVEntry_56B30 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_0034FE90(void* self, void* stream);
 extern "C" void func_00353448(void* block, void* stream);
@@ -1404,14 +1306,14 @@ void func_00356B30_2(void* self, void* stream) __asm__("func_00356B30");
 void func_00356B30_2(void* self, void* stream)
 {
     func_0034FE90(self, stream);
-    sSerVEntry_56B30* e = &(*(sSerVEntry_56B30**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x20, 4);
-    e = &(*(sSerVEntry_56B30**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x24, 4);
-    e = &(*(sSerVEntry_56B30**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x28, 4);
     int flag = *(void**)((char*)self + 0x1C) != 0;
-    e = &(*(sSerVEntry_56B30**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, &flag, 4);
     void* block = *(void**)((char*)self + 0x1C);
     if (block != 0) {
@@ -1423,14 +1325,9 @@ void func_00356B30_2(void* self, void* stream)
 //100%
 INCLUDE_ASM("object/movenode", func_00356BF0);
 #ifdef SKIP_ASM
-struct sMnVEntryI_6BF0 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 static inline int VCall_6BF0(char* o, int i)
 {
-    sMnVEntryI_6BF0* vt = *(sMnVEntryI_6BF0**)o;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)o;
     return vt[i].fn(o + vt[i].delta);
 }
 // Does the modifier object's virtual slot 26 report state 2?
@@ -1449,11 +1346,6 @@ extern "C" int func_00356BF0(char* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00356C48);
 #ifdef SKIP_ASM
-struct sMnVEntryI6C48 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 // PORT: func_0035AAD0 takes one argument, but this caller passes a second ($5 = a1);
 // the original declaration it was compiled against must have had two parameters.
@@ -1465,7 +1357,7 @@ extern "C" int func_00356C48(cMoveNode* self, void* a1)
     if (block != 0) {
         void* node = *(void**)block;
         if (node != 0) {
-            sMnVEntryI6C48* vt = *(sMnVEntryI6C48**)node;
+            sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)node;
             if (vt[26].fn((char*)node + vt[26].delta) == 2) {
                 return func_0035AAD0_2(*(void**)self->field_0x1C, a1);
             }
@@ -1479,11 +1371,6 @@ extern "C" int func_00356C48(cMoveNode* self, void* a1)
 //100%
 INCLUDE_ASM("object/movenode", func_00356CC8);
 #ifdef SKIP_ASM
-struct sMnVEntryI6CC8 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 // PORT: func_0035AAE0 takes one argument, but this caller passes a second ($5 = a1);
 // the original declaration it was compiled against must have had two parameters.
@@ -1495,7 +1382,7 @@ extern "C" int func_00356CC8(cMoveNode* self, void* a1)
     if (block != 0) {
         void* node = *(void**)block;
         if (node != 0) {
-            sMnVEntryI6CC8* vt = *(sMnVEntryI6CC8**)node;
+            sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)node;
             if (vt[26].fn((char*)node + vt[26].delta) == 2) {
                 return func_0035AAE0_2(*(void**)self->field_0x1C, a1);
             }
@@ -1519,7 +1406,7 @@ extern "C" int func_00356D48(void* self)
     if (node == 0) {
         return 0;
     }
-    sMoveNodeVEntryI* vt = *(sMoveNodeVEntryI**)node;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)node;
     if (vt[26].fn((char*)node + vt[26].delta) != 2) {
         return 0;
     }
@@ -1651,18 +1538,13 @@ extern "C" void* func_00356F10(void* self, void* src)
 //100%
 INCLUDE_ASM("object/movenode", func_00356F68);
 #ifdef SKIP_ASM
-struct sMnVEntrySer6F68 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 // PORT: callers declare this void; the body returns self, so bind it via an asm label.
 extern "C" void* func_00356F68(void* self, void* stream);
 extern "C" void* func_00356F68(void* self, void* stream)
 {
     *(void***)self = D_0048F5F0;
-    sMnVEntrySer6F68* vt = *(sMnVEntrySer6F68**)stream;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)stream;
     vt[2].fn((char*)stream + vt[2].delta, (char*)self + 0x10, 0x40);
     // PORT: PS2-only VU0 inline asm (4x4 matrix copy, D_004FF1A0 -> self+0x50).
     __asm__ __volatile__(
@@ -1730,17 +1612,7 @@ extern "C" void* func_00357038(void* self, void* a1, void* a2, sMoveQuad* pos)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_00357090);
 #ifdef SKIP_ASM
-struct sMnVEntrySer7090 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
-struct sMnVEntryRd7090 {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 
 extern "C" void* func_00356F68(void* self, void* stream);
 extern char D_0048F508[];
@@ -1749,9 +1621,9 @@ extern "C" void* func_00357090(void* self, void* stream)
 {
     func_00356F68(self, stream);
     *(void**)((char*)self + 0x0) = D_0048F508;
-    sMnVEntrySer7090* e = &(*(sMnVEntrySer7090**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x90, 4);
-    sMnVEntryRd7090* r = &(*(sMnVEntryRd7090**)stream)[3];
+    sVEntry<void*(void*)>* r = &(*(sVEntry<void*(void*)>**)stream)[3];
     *(void**)((char*)self + 0xA0) = r->fn((char*)stream + r->delta);
     return self;
 }
@@ -1831,24 +1703,14 @@ static inline sMnVec4_357108 vel_357108(char* self)
     return *(sMnVec4_357108*)(self + 0x80);
 }
 
-struct sMnVEntryI_357108 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
-struct sMnVEntryM_357108 {
-    short delta;
-    short index;
-    sMnMtx_357108* (*fn)(void*, int);
-};
 
 extern "C" void func_00357108(char* self)
 {
     char* o = *(char**)(*(char**)(self + 0xA0) + 0xC);
     if (o != 0) {
-        sMnVEntryI_357108* vi = *(sMnVEntryI_357108**)(o + 0xC);
+        sVEntry<int(void*)>* vi = *(sVEntry<int(void*)>**)(o + 0xC);
         if (vi[26].fn(o + vi[26].delta) != 0) {
-            sMnVEntryM_357108* vm = *(sMnVEntryM_357108**)(o + 0xC);
+            sVEntry<sMnMtx_357108*(void*, int)>* vm = *(sVEntry<sMnMtx_357108*(void*, int)>**)(o + 0xC);
             vu0CopyMtx_357108(self + 0x50, vm[29].fn(o + vm[29].delta, *(int*)(self + 0x90)));
         } else {
             func_0034FED8(*(void**)(self + 0xA0), *(int*)(self + 0x90), (sMnMtx_357108*)(self + 0x50));
@@ -1862,11 +1724,6 @@ extern "C" void func_00357108(char* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00357210);
 #ifdef SKIP_ASM
-struct sMnVEntry7210 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 extern "C" void func_00357210(void* self, void* obj)
 {
@@ -1880,7 +1737,7 @@ extern "C" void func_00357210(void* self, void* obj)
     }
     int saved = *(int*)((char*)obj + 0x5C);
     *(int*)((char*)obj + 0x5C) = *(int*)((char*)self + 0x90);
-    sMnVEntry7210* vt = *(sMnVEntry7210**)((char*)q + 0xC);
+    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)q + 0xC);
     vt[42].fn((char*)q + vt[42].delta, obj);
     *(int*)((char*)obj + 0x5C) = saved;
 }
@@ -1889,25 +1746,15 @@ extern "C" void func_00357210(void* self, void* obj)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_00357278);
 #ifdef SKIP_ASM
-struct sMnVEntry7278a {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
-struct sMnVEntry7278b {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 
 extern "C" void func_00357278(void* self, void* stream)
 {
     func_00357000(self, (func_00357000_cObj*)stream);
-    sMnVEntry7278a* vt1 = *(sMnVEntry7278a**)stream;
+    sVEntry<void(void*, void*, int)>* vt1 = *(sVEntry<void(void*, void*, int)>**)stream;
     vt1[1].fn((char*)stream + vt1[1].delta, (char*)self + 0x90, 4);
-    sMnVEntry7278b* vt2 = *(sMnVEntry7278b**)stream;
+    sVEntry<void(void*, void*)>* vt2 = *(sVEntry<void(void*, void*)>**)stream;
     vt2[5].fn((char*)stream + vt2[5].delta, *(void**)((char*)self + 0xA0));
 }
 #endif
@@ -1952,17 +1799,7 @@ extern "C" void* func_003572E0(void* self, void* a1, void* mat, float f40, float
 //100%
 INCLUDE_ASM("object/movenode", func_00357358);
 #ifdef SKIP_ASM
-struct sMnVEntrySer7358 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
-struct sMnVEntryRd7358 {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 
 extern char D_0048F420[];
 
@@ -1970,11 +1807,11 @@ extern "C" void* func_00357358(void* self, void* stream)
 {
     char* m = (char*)self + 0x10;
     *(void**)self = D_0048F420;
-    sMnVEntryRd7358* r = &(*(sMnVEntryRd7358**)stream)[3];
+    sVEntry<void*(void*)>* r = &(*(sVEntry<void*(void*)>**)stream)[3];
     *(void**)((char*)self + 0xA0) = r->fn((char*)stream + r->delta);
-    sMnVEntrySer7358* e = &(*(sMnVEntrySer7358**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, m, 0x50);
-    e = &(*(sMnVEntrySer7358**)stream)[2];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x60, 0x40);
     *(int*)((char*)self + 0x50) = 1;
     return self;
@@ -2103,11 +1940,6 @@ INCLUDE_ASM("object/movenode", func_00357538);
 //100%
 INCLUDE_ASM("object/movenode", func_00357660);
 #ifdef SKIP_ASM
-struct sMnVEntryI7660 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" void* func_002D1B08(int id);
 
@@ -2121,7 +1953,7 @@ extern "C" int func_00357660(void* self, int id)
         return 0;
     }
     void* obj = func_002D1B08(id);
-    sMnVEntryI7660* vt = *(sMnVEntryI7660**)obj;
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)obj;
     if (vt[8].fn((char*)obj + vt[8].delta) != 0) {
         *(int*)((char*)self + 0x44) = id;
     }
@@ -2132,25 +1964,15 @@ extern "C" int func_00357660(void* self, int id)
 //100%
 INCLUDE_ASM("object/movenode", func_003576D0);
 #ifdef SKIP_ASM
-struct sMnVEntryPtr76D0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
-struct sMnVEntrySer76D0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_003576D0(void* self, void* stream)
 {
-    sMnVEntryPtr76D0* p = &(*(sMnVEntryPtr76D0**)stream)[5];
+    sVEntry<void(void*, void*)>* p = &(*(sVEntry<void(void*, void*)>**)stream)[5];
     p->fn((char*)stream + p->delta, *(void**)((char*)self + 0xA0));
-    sMnVEntrySer76D0* e = &(*(sMnVEntrySer76D0**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x10, 0x50);
-    e = &(*(sMnVEntrySer76D0**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, (char*)self + 0x60, 0x40);
 }
 #endif
@@ -2188,17 +2010,7 @@ extern "C" void* func_00357750(void* self, void* src)
 //100%
 INCLUDE_ASM("object/movenode", func_00357798);
 #ifdef SKIP_ASM
-struct sMnVEntrySer7798 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
-struct sMnVEntryRd7798 {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 
 // PORT: the project names this func_002D1CF0__FPv (one void* arg), but it is a
 // pass-through wrapper and this caller passes two args (prototype mismatch).
@@ -2208,9 +2020,9 @@ extern "C" void* func_00357798(void* self, void* stream)
 {
     char* m = (char*)self + 0x10;
     *(void***)self = D_0048F338;
-    sMnVEntryRd7798* r = &(*(sMnVEntryRd7798**)stream)[3];
+    sVEntry<void*(void*)>* r = &(*(sVEntry<void*(void*)>**)stream)[3];
     *(void**)((char*)self + 0x80) = r->fn((char*)stream + r->delta);
-    sMnVEntrySer7798* e = &(*(sMnVEntrySer7798**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, m, 0x30);
     func_002D1CF0_2(*(void**)((char*)self + 0x80), (char*)self + 0x40);
     return self;
@@ -2233,23 +2045,13 @@ extern "C" void func_00357820(void* self)
 //100%
 INCLUDE_ASM("object/movenode", func_00357848);
 #ifdef SKIP_ASM
-struct sMnVEntry7848a {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
-struct sMnVEntry7848b {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00357848(void* self, void* stream)
 {
-    sMnVEntry7848a* vt1 = *(sMnVEntry7848a**)stream;
+    sVEntry<void(void*, void*)>* vt1 = *(sVEntry<void(void*, void*)>**)stream;
     vt1[5].fn((char*)stream + vt1[5].delta, *(void**)((char*)self + 0x80));
-    sMnVEntry7848b* vt2 = *(sMnVEntry7848b**)stream;
+    sVEntry<void(void*, void*, int)>* vt2 = *(sVEntry<void(void*, void*, int)>**)stream;
     vt2[1].fn((char*)stream + vt2[1].delta, (char*)self + 0x10, 0x30);
 }
 #endif
@@ -2288,11 +2090,6 @@ extern "C" void* func_00357918(void* self, void* bucket, void* stream)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_00357950);
 #ifdef SKIP_ASM
-struct sMnDtorVEntry7950 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_00356198(void* self);
 
@@ -2304,7 +2101,7 @@ extern "C" void func_00357950(void* self)
         return;
     }
     if (self != 0) {
-        sMnDtorVEntry7950* vt = *(sMnDtorVEntry7950**)((char*)self + 0xC);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)self + 0xC);
         vt[1].fn((char*)self + vt[1].delta, 3);
     }
 }
@@ -2463,11 +2260,6 @@ extern "C" void func_00357C50(void** self)
 //100%
 INCLUDE_ASM("object/movenode", func_00357CA8);
 #ifdef SKIP_ASM
-struct sMnVEntrySer7CA8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00358380(void* obj, void* stream);
 
@@ -2476,7 +2268,7 @@ extern "C" void func_00357CA8(void** self, void* stream)
     int i;
     for (i = 0; i < 4; i++) {
         int has = self[i] != 0;
-        sMnVEntrySer7CA8* e = &(*(sMnVEntrySer7CA8**)stream)[1];
+        sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
         e->fn((char*)stream + e->delta, &has, 4);
         if (has) {
             func_00358380(self[i], stream);
@@ -2488,11 +2280,6 @@ extern "C" void func_00357CA8(void** self, void* stream)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/movenode", func_00357D28);
 #ifdef SKIP_ASM
-struct sMnVEntrySer7D28 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void* func_00357E80(void* mem, void* stream);
 
@@ -2502,7 +2289,7 @@ extern "C" void func_00357D28(void** self, void* stream)
     func_00357B38(self);
     for (i = 0; i < 4; i++) {
         int has;
-        sMnVEntrySer7D28* e = &(*(sMnVEntrySer7D28**)stream)[2];
+        sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
         e->fn((char*)stream + e->delta, &has, 4);
         if (has) {
             self[i] = func_00357E80(cMemMan_alloc(0x50, D_0048EA00, 0x20000000, 0), stream);
@@ -2575,15 +2362,10 @@ INCLUDE_ASM("object/movenode", func_00357E80);
 #ifdef SKIP_ASM
 extern "C" void func_00370AF8(void* self, void* stream);
 
-struct sMnSerVEntry_357E80 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 static inline void read_357E80(void* stream, void* dst, int n)
 {
-    sMnSerVEntry_357E80* vt = *(sMnSerVEntry_357E80**)stream;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)stream;
     vt[2].fn((char*)stream + vt[2].delta, dst, n);
 }
 
@@ -2610,11 +2392,6 @@ extern "C" void* func_00357E80(void* mem, void* stream)
 //100%
 INCLUDE_ASM("object/movenode", func_00357FA0);
 #ifdef SKIP_ASM
-struct sMnDtorVEntry7FA0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 void operator_delete(int* ptr);
 void cMemMan_free(void*);
@@ -2628,7 +2405,7 @@ extern "C" void func_00357FA0(void* self, int flags)
     }
     void* obj = *(void**)((char*)self + 0x10);
     if (obj != 0) {
-        sMnDtorVEntry7FA0* vt = *(sMnDtorVEntry7FA0**)((char*)obj + 0x18C);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 0x18C);
         vt[1].fn((char*)obj + vt[1].delta, 3);
     }
     if (flags & 1) {
