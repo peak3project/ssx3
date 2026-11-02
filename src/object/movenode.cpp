@@ -1,4 +1,5 @@
 #include "common.h"
+#include "bx/math3d.h"
 
 // ---- Shared declarations: one type per real thing, used by the functions below ----
 
@@ -711,13 +712,7 @@ INCLUDE_ASM("object/movenode", func_00356298);
 struct sMoveQuad;
 extern sMoveQuad D_004FF1A0[];
 
-struct sMnVec_6298 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-struct sMnMat_6298 {
-    sMnVec_6298 r[4];
-};
 
 struct sMnSlot_6298 {
     int f0;
@@ -830,7 +825,7 @@ public:
     virtual void v42();
     virtual void v43();
     virtual void* v44();
-    virtual sMnVec_6298* v45();
+    virtual t4Vector* v45();
 };
 
 extern sMnCam_6298** D_004A47B8_6298 __asm__("D_004A47B8");
@@ -840,8 +835,8 @@ struct cMnGfx_6298 {
     sVEntry<void>* vt;              // 0x10D8
 };
 
-typedef sMnMat_6298 (*MnViewFn_6298)(void*);
-typedef int (*MnCullFn_6298)(void*, sMnVec_6298*, sMnVec_6298*, const sMnMat_6298&);
+typedef t4Matrix (*MnViewFn_6298)(void*);
+typedef int (*MnCullFn_6298)(void*, t4Vector*, t4Vector*, const t4Matrix&);
 typedef void (*MnDrawFn_6298)(void*, void*, void*, void*, void*, void*, int, float);
 
 extern cMnGfx_6298* D_004A5B80_6298 __asm__("D_004A5B80");
@@ -862,7 +857,7 @@ static inline int HasLight_6298(sMnMod_6298* m)
     return m != 0 && m->light != 0;
 }
 
-static inline void* Mat_6298(void* rot, sMnMat_6298* m)
+static inline void* Mat_6298(void* rot, t4Matrix* m)
 {
     void* r;
     if (rot) {
@@ -886,7 +881,7 @@ static inline void* Lm_6298(char* l)
     return LmSub_6298(l);
 }
 
-static inline void* RotOf_6298(cMnNode_6298* n, sMnMat_6298* m)
+static inline void* RotOf_6298(cMnNode_6298* n, t4Matrix* m)
 {
     if (HasRot_6298(MOD_6298(n))) {
         return Mat_6298(MOD_6298(n)->rot, m);
@@ -945,14 +940,14 @@ extern "C" void func_00356298(cMnNode_6298* self)
     void* mat = self->v44();
     int res;
     if (mat) {
-        sMnVec_6298* m = self->v45();
+        t4Vector* m = self->v45();
         sVEntry<void>* vt = gfx->vt;
         char* thisp = (char*)gfx + vt[93].delta;
         res = ((MnCullFn_6298)vt[93].fn)(thisp, m, m + 1, ((MnViewFn_6298)gfx->vt[43].fn)((char*)gfx + gfx->vt[43].delta));
     } else {
         sVEntry<void>* vt = gfx->vt;
         char* thisp = (char*)gfx + vt[93].delta;
-        sMnVec_6298 b[2];
+        t4Vector b[2];
         b[0].x = OBJ_6298(self)->pos[0];
         b[0].y = OBJ_6298(self)->pos[1];
         b[0].z = OBJ_6298(self)->pos[2];
@@ -985,7 +980,7 @@ extern "C" void func_00356298(cMnNode_6298* self)
         tex = 0;
         xf = self->v24();
     }
-    sMnMat_6298 rm;
+    t4Matrix rm;
     if (HasRot_6298(MOD_6298(self))) {
         rot = RotOf_6298(self, &rm);
         flags |= 2;
@@ -1009,7 +1004,7 @@ extern "C" void func_00356608(cMnNode_6298* self, void* tex, int flags)
     }
     void* rot = 0;
     cMnGfx_6298* gfx = D_004A5B80_6298;
-    sMnMat_6298 rm;
+    t4Matrix rm;
     if (HasRot_6298(MOD_6298(self))) {
         rot = RotOf_6298(self, &rm);
         flags |= 2;
@@ -1059,12 +1054,9 @@ INCLUDE_ASM("object/movenode", func_003567E0);
 #include "common.h"
 struct tModifierBlock;
 void tModifierBlock_setBoundBox_K(tModifierBlock* mb, void* box) __asm__("tModifierBlock_setBoundBox__FP14tModifierBlock");
-struct sMnVec4_67E0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sMnBox_67E0 {
-    sMnVec4_67E0 min, max;
+    t4Vector min, max;
 };
 
 extern "C" sMnBox_67E0* func_00352B88_67E0(void* mb) __asm__("func_00352B88");
@@ -1084,7 +1076,7 @@ extern "C" void func_003567E0(void* vself)
     sMnBox_67E0 box;
     sMnBox_67E0 old = *func_00352B88_67E0(*(void**)(self + 0x1C));
     char* n = *(char**)(self + 0x18);
-    sMnVec4_67E0 v;
+    t4Vector v;
     v.x = *(float*)(n + 0x60);
     v.y = *(float*)(n + 0x64);
     v.z = *(float*)(n + 0x68);
@@ -1103,12 +1095,9 @@ extern "C" void func_003567E0(void* vself)
 //100%
 INCLUDE_ASM("object/movenode", func_003568B0);
 #ifdef SKIP_ASM
-struct sMnVec4_68B0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sMnBox_68B0 {
-    sMnVec4_68B0 min, max;
+    t4Vector min, max;
 };
 
 
@@ -1118,9 +1107,9 @@ extern "C" void* func_002D1BE0(void);
 extern "C" void func_003291E0(void* mgr, int a, void* obj, sMnBox_68B0* box, sMnBox_68B0* old);
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline void vu0Sub_68B0(sMnVec4_68B0& out, const sMnVec4_68B0& a, const sMnVec4_68B0& b)
+static inline void vu0Sub_68B0(t4Vector& out, const t4Vector& a, const t4Vector& b)
 {
-    sMnVec4_68B0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1133,9 +1122,9 @@ static inline void vu0Sub_68B0(sMnVec4_68B0& out, const sMnVec4_68B0& a, const s
 }
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline void vu0Add_68B0(sMnVec4_68B0& out, const sMnVec4_68B0& a, const sMnVec4_68B0& b)
+static inline void vu0Add_68B0(t4Vector& out, const t4Vector& a, const t4Vector& b)
 {
-    sMnVec4_68B0 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1148,9 +1137,9 @@ static inline void vu0Add_68B0(sMnVec4_68B0& out, const sMnVec4_68B0& a, const s
 }
 
 // World position: translation row of the node's transform (virtual slot 24).
-static inline sMnVec4_68B0 pos_68B0(char* self)
+static inline t4Vector pos_68B0(char* self)
 {
-    sVEntry<sMnVec4_68B0*(void*)>* vt = *(sVEntry<sMnVec4_68B0*(void*)>**)(self + 0xC);
+    sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)(self + 0xC);
     return vt[24].fn(self + vt[24].delta)[3];
 }
 
@@ -1170,12 +1159,12 @@ extern "C" void func_003568B0(char* self)
     sMnBox_68B0 box;
     sMnBox_68B0 old = *func_00352B88_68B0(*(void**)(self + 0x1C));
     float r = func_00352BF8(*(void**)(self + 0x1C));
-    sMnVec4_68B0 rv;
+    t4Vector rv;
     rv.w = 0.0f;
     rv.x = r;
     rv.y = r;
     rv.z = r;
-    sMnVec4_68B0 v;
+    t4Vector v;
     vu0Sub_68B0(v, pos_68B0(self), rv);
     box.min = v;
     vu0Add_68B0(v, pos_68B0(self), rv);
@@ -1632,15 +1621,9 @@ extern "C" void* func_00357090(void* self, void* stream)
 //100%
 INCLUDE_ASM("object/movenode", func_00357108);
 #ifdef SKIP_ASM
-struct sMnVec4_357108 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-struct sMnMtx_357108 {
-    sMnVec4_357108 r[4];
-};
 
-extern "C" void func_0034FED8(void* model, int bone, sMnMtx_357108* out);
+extern "C" void func_0034FED8(void* model, int bone, t4Matrix* out);
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy).
 static inline void vu0CopyMtx_357108(void* dst, void* src)
@@ -1660,9 +1643,9 @@ static inline void vu0CopyMtx_357108(void* dst, void* src)
 }
 
 // PORT: PS2-only VU0 inline asm (matrix * vector).
-static inline sMnVec4_357108 vu0MtxApply_357108(sMnMtx_357108* m, sMnVec4_357108* v)
+static inline t4Vector vu0MtxApply_357108(t4Matrix* m, t4Vector* v)
 {
-    sMnVec4_357108 out;
+    t4Vector out;
     __asm__(
         ".set push\n"
         ".set noreorder\n"
@@ -1684,9 +1667,9 @@ static inline sMnVec4_357108 vu0MtxApply_357108(sMnMtx_357108* m, sMnVec4_357108
 }
 
 // PORT: PS2-only VU0 inline asm (a + b).
-static inline sMnVec4_357108 vu0Add_357108(const sMnVec4_357108& a, const sMnVec4_357108& b)
+static inline t4Vector vu0Add_357108(const t4Vector& a, const t4Vector& b)
 {
-    sMnVec4_357108 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1698,9 +1681,9 @@ static inline sMnVec4_357108 vu0Add_357108(const sMnVec4_357108& a, const sMnVec
     return r;
 }
 
-static inline sMnVec4_357108 vel_357108(char* self)
+static inline t4Vector vel_357108(char* self)
 {
-    return *(sMnVec4_357108*)(self + 0x80);
+    return *(t4Vector*)(self + 0x80);
 }
 
 
@@ -1710,12 +1693,12 @@ extern "C" void func_00357108(char* self)
     if (o != 0) {
         sVEntry<int(void*)>* vi = *(sVEntry<int(void*)>**)(o + 0xC);
         if (vi[26].fn(o + vi[26].delta) != 0) {
-            sVEntry<sMnMtx_357108*(void*, int)>* vm = *(sVEntry<sMnMtx_357108*(void*, int)>**)(o + 0xC);
+            sVEntry<t4Matrix*(void*, int)>* vm = *(sVEntry<t4Matrix*(void*, int)>**)(o + 0xC);
             vu0CopyMtx_357108(self + 0x50, vm[29].fn(o + vm[29].delta, *(int*)(self + 0x90)));
         } else {
-            func_0034FED8(*(void**)(self + 0xA0), *(int*)(self + 0x90), (sMnMtx_357108*)(self + 0x50));
+            func_0034FED8(*(void**)(self + 0xA0), *(int*)(self + 0x90), (t4Matrix*)(self + 0x50));
         }
-        *(sMnVec4_357108*)(self + 0x80) = vu0Add_357108(vel_357108(self), vu0MtxApply_357108((sMnMtx_357108*)(self + 0x50), (sMnVec4_357108*)(self + 0x30)));
+        *(t4Vector*)(self + 0x80) = vu0Add_357108(vel_357108(self), vu0MtxApply_357108((t4Matrix*)(self + 0x50), (t4Vector*)(self + 0x30)));
     }
     *(int*)(self + 0x44) = 0;
 }
@@ -1824,14 +1807,11 @@ INCLUDE_ASM("object/movenode", func_003573F8);
 extern "C" float func_002D1C70();
 extern "C" void* func_002D1B58(int id);
 
-struct sMnVec4_3573F8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (a - b).
-static inline sMnVec4_3573F8 vu0Sub_3573F8(const sMnVec4_3573F8& a, const sMnVec4_3573F8& b)
+static inline t4Vector vu0Sub_3573F8(const t4Vector& a, const t4Vector& b)
 {
-    sMnVec4_3573F8 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -1843,7 +1823,7 @@ static inline sMnVec4_3573F8 vu0Sub_3573F8(const sMnVec4_3573F8& a, const sMnVec
 }
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vu0Length_3573F8(const sMnVec4_3573F8& v)
+static inline float vu0Length_3573F8(const t4Vector& v)
 {
     float r;
     int t;
@@ -1864,9 +1844,9 @@ static inline float vu0Length_3573F8(const sMnVec4_3573F8& v)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sMnVec4_3573F8 vu0Scale_3573F8(const sMnVec4_3573F8& v, float s)
+static inline t4Vector vu0Scale_3573F8(const t4Vector& v, float s)
 {
-    sMnVec4_3573F8 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -1880,7 +1860,7 @@ static inline sMnVec4_3573F8 vu0Scale_3573F8(const sMnVec4_3573F8& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (dst += v).
-static inline void vu0AddTo_3573F8(sMnVec4_3573F8& dst, const sMnVec4_3573F8& v)
+static inline void vu0AddTo_3573F8(t4Vector& dst, const t4Vector& v)
 {
     __asm__(
         "lqc2      $vf3, %1\n"
@@ -1893,7 +1873,7 @@ static inline void vu0AddTo_3573F8(sMnVec4_3573F8& dst, const sMnVec4_3573F8& v)
 
 struct sMnMover_3573F8 {
     char pad0[0x10];
-    sMnVec4_3573F8 pos;
+    t4Vector pos;
     char pad20[0x24];
     int target;
     float speed;
@@ -1908,12 +1888,12 @@ extern "C" void func_003573F8(sMnMover_3573F8* self)
         return;
     }
     self->time += func_002D1C70();
-    sMnVec4_3573F8 d = vu0Sub_3573F8(*(sMnVec4_3573F8*)func_002D1B58(self->target), self->pos);
+    t4Vector d = vu0Sub_3573F8(*(t4Vector*)func_002D1B58(self->target), self->pos);
     float len = vu0Length_3573F8(d);
     if (len < 50.0f) {
         self->arrived = 1;
     } else {
-        sMnVec4_3573F8 step = vu0Scale_3573F8(d, self->speed / len * self->time);
+        t4Vector step = vu0Scale_3573F8(d, self->speed / len * self->time);
         if (len < vu0Length_3573F8(step)) {
             self->arrived = 1;
             step = d;
