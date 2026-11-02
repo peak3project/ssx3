@@ -3355,15 +3355,13 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00300F50);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_004A3DD8_0F50 __asm__("D_004A3DD8");
-struct V3_0F50 { float x, y, z; };
-extern V3_0F50 D_004C9098_0F50 __asm__("D_004C9098");
 extern unsigned D_0F50[] __asm__("D_004FBB78");
 extern int D_56B0_0F50 __asm__("D_004A56B0");
 extern const int D_00446570_0F50[] __asm__("D_00446570");
 extern "C" void func_003E6574(void*, void*, int);
 extern "C" void func_0030BAC8_0F50(void*, unsigned, unsigned*, int) __asm__("func_0030BAC8");
 struct Ent_0F50 { int idx; int val; int pad; int type; };
-extern "C" V3_0F50 func_00300F50(int n, Ent_0F50 *e) {
+extern "C" cLunoValue func_00300F50(int n, Ent_0F50 *e) {
     if (D_56B0_0F50 == 0) {
         D_0F50[0] = 0xFFFFFFFF;
         D_0F50[1] = 0xFFFFFFFF;
@@ -3425,7 +3423,7 @@ extern "C" V3_0F50 func_00300F50(int n, Ent_0F50 *e) {
     }
     if (buf[0] != 0xFFFFFFFF)
         func_0030BAC8_0F50(D_004A3DD8_0F50, buf[0], buf + 1, 20);
-    return D_004C9098_0F50;
+    return D_004C9098;
 }
 #endif
 
