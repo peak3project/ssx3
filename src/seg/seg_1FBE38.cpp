@@ -2665,11 +2665,9 @@ extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void* func_00350E90(void*, void*);
 extern char D_004A3C18_FB50[] __asm__("D_004A3C18");
 struct O_FB50 { int p0, p1, p2; virtual void v01(int); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual int v10(int); };
-struct V3_FB50 { float x, y, z; };
-extern V3_FB50 D_004C9098_FB50 __asm__("D_004C9098");
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_FB50 { int idx; int val; int pad; int type; };
-extern "C" V3_FB50 func_002FFB50(int n, Ent_FB50 *e) {
+extern "C" cLunoValue func_002FFB50(int n, Ent_FB50 *e) {
     if (D_004A5650_FB50 == 0) {
         D_004A5648_FB50 = 0xFFFFFFFF;
         D_004A5650_FB50 = 1;
@@ -2708,15 +2706,15 @@ extern "C" V3_FB50 func_002FFB50(int n, Ent_FB50 *e) {
         obj = r;
     }
     if (obj == 0)
-        return D_004C9098_FB50;
+        return D_004C9098;
     O_FB50 *p = *(O_FB50**)(obj + 0xC);
     if (p) {
         if (p->v10(16) || p->v10(6))
-            return D_004C9098_FB50;
+            return D_004C9098;
         p->v01(3);
     }
     func_00350E90(cMemMan_alloc(0x1C, D_004A3C18_FB50, 0x20000000, 0), obj);
-    return D_004C9098_FB50;
+    return D_004C9098;
 }
 #endif
 
