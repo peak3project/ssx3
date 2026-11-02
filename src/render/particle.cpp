@@ -204,6 +204,12 @@ struct sPtView {
     int pad_0x22C;
 };
 
+// Five packet quadwords followed by a VU0-copied matrix.
+struct sPtMatPacket {
+    sGifQuad q[5];                // 0x00
+    sPtMatrixV mat;                  // 0x50
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5520,10 +5526,6 @@ struct sPtGfx_1310 {
     int texReady;                   // 0x6B90
 };
 
-struct sPtObj_1310 {
-    sGifQuad q[5];                // 0x00
-    sPtMatrixV mat;                  // 0x50
-};
 
 extern int D_004A4474;
 extern char D_0[];
@@ -5582,7 +5584,7 @@ static inline void CopyQuads_1310(unsigned long** pp, const void* srcp, int n)
 }
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
-extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
+extern "C" void func_00381310(sPtGfx_1310* self, sPtMatPacket* obj)
 {
     self->top->f0 = (self->top->f0 & ~0x3C0) | 0x140;
     self->top->fC &= 0xC0000000;
@@ -5660,10 +5662,6 @@ struct sPtGfx_16F0 {
     int texReady;                   // 0x6B90
 };
 
-struct sPtObj_16F0 {
-    sGifQuad q[5];                // 0x00
-    sPtMatrixV mat;                  // 0x50
-};
 
 extern int D_004A4474;
 extern char D_408[];
@@ -5722,7 +5720,7 @@ static inline void CopyQuads_16F0(unsigned long** pp, const void* srcp, int n)
 }
 
 // PORT: uncached (0x30000000) pointers and VU microprogram addresses held in int; 64-bit GS words are `ulong`.
-extern "C" void func_003816F0(sPtGfx_16F0* self, sPtObj_16F0* obj)
+extern "C" void func_003816F0(sPtGfx_16F0* self, sPtMatPacket* obj)
 {
     self->top->f0 = (self->top->f0 & ~0x3C0) | 0x140;
     self->top->fC &= 0xC0000000;
