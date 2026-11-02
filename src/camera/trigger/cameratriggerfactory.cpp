@@ -5754,7 +5754,6 @@ extern "C" int func_0017A978(void* self, int n, void* names, char* tag);
 extern "C" int func_00179FC8(void* self, int id);
 extern "C" char* strcpy(char* d, const char* s);
 extern char* D_004A1290[];
-extern char* D_004A1290_v[] __asm__("D_004A1290");
 
 extern "C" void func_0017A638(sCamMgr_17A638* self)
 {
@@ -5767,14 +5766,14 @@ extern "C" void func_0017A638(sCamMgr_17A638* self)
     void* iface = cBE_getInterface_17A638(cBE_getBE(), 0);
     for (i = 0; i < 0x16; i++)
         names[i].name = func_00144C48(iface, i);
-    if (func_0017A978(self, 0x16, names, (char*)D_004A1290_v)) {
+    if (func_0017A978(self, 0x16, names, (char*)D_004A1290)) {
         int j;
         for (j = 0; j < 0x16 && self->count < 0x100; j++) {
             if (names[j].ok) {
                 int* ip = &self->entries[0].idx;
                 int* ap = &self->entries[0].active;
                 strcpy(self->entries[self->count].name, func_00144C48(iface, j));
-                *(char**)((char*)self + 0x44 + self->count * 0x8C) = D_004A1290_v[0];
+                *(char**)((char*)self + 0x44 + self->count * 0x8C) = D_004A1290[0];
                 ip[self->count * 35] = j;
                 ap[self->count * 35] = 1;
                 self->numActive++;
