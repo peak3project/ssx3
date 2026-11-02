@@ -3353,7 +3353,6 @@ extern "C" void func_002992D8(void* self, void* obj)
 INCLUDE_ASM("sound/soundsys", func_00299368);
 #ifdef SKIP_ASM
 
-
 static inline int IsReady299368(char* obj)
 {
     return *(int*)(obj + 0x874) != 0 && *(int*)(obj + 0x87C) != 0;
@@ -5336,7 +5335,6 @@ void func_002A0560_0560(void* self, sSndRider* a, sSndRider* b)
 INCLUDE_ASM("sound/soundsys", func_002A0A30);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
-// func_002B1458 with the float argument in its real position (same registers).
 
 extern "C" int func_002A1820(void* self, sSndRider* a, sSndRider* b);
 
@@ -5529,7 +5527,6 @@ extern "C" int func_002A1388(void* self, void* obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A1400);
 #ifdef SKIP_ASM
-// PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
 
 // PORT: callers declare func_002A1400 as (void*, int); the body takes (self, rider).
 void func_002A1400_impl(void* self, char* rider) __asm__("func_002A1400");
@@ -5588,7 +5585,6 @@ extern "C" void func_002A1560(void* self, char* rider)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/soundsys", func_002A16B0);
 #ifdef SKIP_ASM
-// func_0029F2B0 returns a value (the unit's earlier declaration says void).
 
 extern "C" void func_002A16B0(void* self, int a1)
 {
@@ -5611,7 +5607,6 @@ extern "C" void func_002A16B0(void* self, int a1)
 INCLUDE_ASM("sound/soundsys", func_002A1778);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-// func_0029F2B0 returns a value (the unit's earlier declaration says void).
 extern "C" int func_0029F2B0(int a, int b);
 
 extern "C" void func_002A1778(void* self, int a1)
@@ -6468,7 +6463,6 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A3708);
 #ifdef SKIP_ASM
-// PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
 
 extern "C" void func_002A3708(void* self, char* rider)
 {
@@ -8246,7 +8240,6 @@ INCLUDE_ASM("sound/soundsys", func_002A78F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 signed char func_002A78E0(void* self);
-
 
 int func_002A78F8(void* self)
 {
