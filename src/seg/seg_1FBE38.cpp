@@ -6655,8 +6655,8 @@ extern "C" void func_00307308(char* self)
         money = func_001511B0(cBE_getInterface_Fv(cBE_getBE(), 0xB), reward);
     }
     int pl = func_00144C98(cBE_getInterface_Fv(cBE_getBE(), 0));
-    sRace* game = D_004A28A8->game->race;
-    func_0010F2D8(game->riders[**(int**)(self + 0x10)], pl, money);
+    sRace* race = D_004A28A8->game->race;
+    func_0010F2D8(race->riders[**(int**)(self + 0x10)], pl, money);
     unsigned int next = func_00153FD8(missions, *(int*)(self + 0x20));
     if (next != 0xFFFFFFFF) {
         func_001541D0(missions, *(int*)(self + 0x20), 0);
