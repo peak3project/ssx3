@@ -1702,9 +1702,6 @@ void func_003DE4C8(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", FILESYS_bypassqueuefileinfo);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct N_E4D0 { int f0; int pad[2]; char *fC; int pad2; struct N_E4D0 *next; };
-extern struct N_E4D0 *D_00519AE4_E4D0[] __asm__("D_00519AE4");
 extern char *strchr_E4D0(char *, int) __asm__("strchr");
 extern int func_003E3208_E4D0(char *, int, int *) __asm__("func_003E3208");
 extern int func_003E34E8(int);
@@ -1719,7 +1716,7 @@ int FILESYS_bypassqueuefileinfo(char *name, int flags, int *out) {
     int off;
     int found = 0;
     int mode;
-    struct N_E4D0 *n;
+    struct sFsNode *n;
 
     *out = 0;
     file[0] = 0;
@@ -1746,9 +1743,9 @@ int FILESYS_bypassqueuefileinfo(char *name, int flags, int *out) {
         func_003E32F8(h);
     }
     if (!found && (mode & 6)) {
-        for (n = D_00519AE4_E4D0[0]; n != 0 && !found; n = n->next) {
-            if ((mode & 4) && func_004165A8_E4D0(n->fC + 0x10, path)) continue;
-            if (BIG_locateentryz_E4D0(n->f0, file, 0, &x, &off)) {
+        for (n = D_00519AE4; n != 0 && !found; n = n->f14) {
+            if ((mode & 4) && func_004165A8_E4D0(n->f0C->f10, path)) continue;
+            if (BIG_locateentryz_E4D0(n->f00, file, 0, &x, &off)) {
                 found = 1;
                 *out = off;
             }
