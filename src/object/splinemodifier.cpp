@@ -32,6 +32,126 @@ struct sSmFollow {
     float length;           // 0xE4
 };
 
+void operator_delete(int*);
+extern "C" void* func_002D1BD8();
+extern "C" void func_00328F28(void* out, const void* box);
+extern "C" void func_003284B8(void* node, int idx, void* item, const void* target, const void* cur);
+extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
+
+// An overlap-octree node: 2x2x2 children and three item lists.
+struct sSmNode {
+    sSmNode* child[2][2][2];        // 0x00
+    void* lists[3];                 // 0x20
+    int empty()
+    {
+        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
+            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
+            return 0;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (lists[i]) return 0;
+        }
+        return 1;
+    }
+};
+// One of the overlap world's eight octant roots: its cell key and node.
+struct sSmRoot {
+    sSmCell cell;                   // 0x00
+    sSmNode* node;                  // 0x10
+};
+// A track segment: next link and its bounds.
+struct sSmSeg {
+    char pad0[0x64];
+    sSmSeg* next;                   // 0x64
+    char pad68[4];
+    float minx, miny, minz;         // 0x6C
+    float maxx, maxy, maxz;         // 0x78
+};
+// A spline track: segment count and first segment.
+struct sSmTrack {
+    char pad0[0x20];
+    int count;                      // 0x20
+    sSmSeg* first;                  // 0x24
+};
+// A world resource set: its reference table at 0x44.
+struct sSmSet {
+    char pad0[0x44];
+    unsigned int* refs;             // 0x44
+};
+// The world (via func_002D1BD8): resource sets at 0x8.
+struct sSmWorld {
+    char pad0[0x8];
+    sSmSet** sets;                  // 0x8
+};
+
+// The octant root for a cell, chosen by the signs of its coordinates.
+static inline sSmRoot* findRoot(char* w, int x, int y, int z)
+{
+    sSmRoot* r = (sSmRoot*)w;
+    sSmRoot* rx = x >= 0 ? r : r + 4;
+    sSmRoot* ry = y >= 0 ? rx : rx + 2;
+    sSmRoot* rz = z >= 0 ? ry : ry + 1;
+    return rz;
+}
+
+// The same, taking the cell (gives different code from the x, y, z form; both are used).
+static inline sSmRoot* findRoot(char* w, const sSmCell& c)
+{
+    sSmRoot* r = (sSmRoot*)w;
+    sSmRoot* rx = c.x >= 0 ? r : r + 4;
+    sSmRoot* ry = c.y >= 0 ? rx : rx + 2;
+    sSmRoot* rz = c.z >= 0 ? ry : ry + 1;
+    return rz;
+}
+
+static inline void octRemove(char* w, void* item, const sBoundBox* box)
+{
+    (*(int*)(w + 0xA0))++;
+    sSmCell c;
+    func_00328F28(&c, box);
+    sSmRoot* r = findRoot(w, c);
+    func_003284B8(r->node, 2, item, &c, &r->cell);
+    if (r->node->empty()) {
+        operator_delete((int*)r->node);
+        r->node = 0;
+    }
+}
+
+static inline void octInsert(char* w, void* item, const sBoundBox* box)
+{
+    sSmCell c;
+    func_00328F28(&c, box);
+    func_00328C20(findRoot(w, c), 2, item, &c);
+}
+
+static inline sSmTrack* toTrack(unsigned int p)
+{
+    return (sSmTrack*)(p << 2);
+}
+
+static inline sSmTrack* refToTrack(unsigned int v)
+{
+    unsigned int p = v >> 8;
+    if (p == 0) {
+        return 0;
+    }
+    return toTrack(p);
+}
+
+// A track reference: set index in the low byte, entry index above it.
+struct sSmRef {
+    unsigned int id;
+
+    sSmTrack* get()
+    {
+        sSmSet* set = (*(sSmWorld**)func_002D1BD8())->sets[id & 0xFF];
+        if (set == 0) {
+            return 0;
+        }
+        return refToTrack(set->refs[id >> 8]);
+    }
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -759,7 +879,6 @@ extern "C" cMultiSplineModifier_A118* func_0035A118(cMultiSplineModifier_A118* s
 INCLUDE_ASM("object/splinemodifier", func_0035A250);
 #ifdef SKIP_ASM
 void cMemMan_free(void*);
-void operator_delete(int*);
 void* cObjectInterface_getInstanceMan();
 void func_00351260(void* man, void* inst);
 extern "C" void func_0035A780(void* self);
@@ -937,10 +1056,6 @@ INCLUDE_ASM("object/splinemodifier", cMultiSplineModifier_setupOverlapSystem);
 
 
 
-struct sSmRoot_A5F8 {
-    sSmCell cell;
-    void* node;
-};
 
 struct sSmInst_A5F8 {
     char pad_0x00[0x40];
@@ -964,8 +1079,6 @@ struct cMultiSpline_A5F8 {
 
 extern "C" void cInstanceNode_getBoundBoxInfo(void* self, void* box, float* radius);
 extern "C" void* func_002D1BE0();
-extern "C" void func_00328F28(void* out, const void* box);
-extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
 
 // PORT: PS2-only VU0 inline asm (a - b).
 static inline void vu0Sub_A5F8(t4Vector& out, const t4Vector& a, const t4Vector& b)
@@ -1000,20 +1113,12 @@ static inline t4Vector instPos_A5F8(cMultiSpline_A5F8* self, int i)
     return self->insts[i]->pos;
 }
 
-static inline sSmRoot_A5F8* findRoot_A5F8(char* w, int x, int y, int z)
-{
-    sSmRoot_A5F8* r = (sSmRoot_A5F8*)w;
-    sSmRoot_A5F8* rx = x >= 0 ? r : r + 4;
-    sSmRoot_A5F8* ry = y >= 0 ? rx : rx + 2;
-    sSmRoot_A5F8* rz = z >= 0 ? ry : ry + 1;
-    return rz;
-}
 
 static inline void insert_A5F8(char* w, void* item, const void* box)
 {
     sSmCell c;
     func_00328F28(&c, box);
-    func_00328C20(findRoot_A5F8(w, c.x, c.y, c.z), 0, item, &c);
+    func_00328C20(findRoot(w, c.x, c.y, c.z), 0, item, &c);
 }
 
 extern "C" void cMultiSplineModifier_setupOverlapSystem(void* vself)
@@ -1045,7 +1150,6 @@ extern "C" void cMultiSplineModifier_setupOverlapSystem(void* vself)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035A780);
 #ifdef SKIP_ASM
-void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
 
@@ -1480,56 +1584,12 @@ extern "C" void func_0035B6D0(sSplineLink* link)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035B708);
 #ifdef SKIP_ASM
-void operator_delete(int*);
 extern "C" void* func_002D1BE0();
-extern "C" void* func_002D1BD8();
-extern "C" void func_00328F28(void* out, const void* box);
-extern "C" void func_003284B8(void* node, int idx, void* item, const void* target, const void* cur);
-extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
 extern char D_004911D0[];
 extern "C" void cRailModifier_buildXform(void* self);
 struct sSmMod_C040;
 extern "C" void func_0035C040(sSmMod_C040* self);
 
-struct sSmNode_B708 {
-    sSmNode_B708* child[2][2][2];   // 0x00
-    void* lists[3];                 // 0x20
-    int empty()
-    {
-        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
-            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
-            return 0;
-        }
-        for (int i = 0; i < 3; i++) {
-            if (lists[i]) return 0;
-        }
-        return 1;
-    }
-};
-struct sSmRoot_B708 {
-    sSmCell cell;              // 0x00
-    sSmNode_B708* node;             // 0x10
-};
-struct sSmSeg_B708 {
-    char pad0[0x64];
-    sSmSeg_B708* next;              // 0x64
-    char pad68[4];
-    float minx, miny, minz;         // 0x6C
-    float maxx, maxy, maxz;         // 0x78
-};
-struct sSmTrack_B708 {
-    char pad0[0x20];
-    int count;                      // 0x20
-    sSmSeg_B708* first;             // 0x24
-};
-struct sSmSet_B708 {
-    char pad0[0x44];
-    unsigned int* refs;             // 0x44
-};
-struct sSmWorld_B708 {
-    char pad0[0x8];
-    sSmSet_B708** sets;             // 0x8
-};
 struct sSmModelObj_B708 {
     char pad0[0xC];
     sVEntry<int(void*)>* vt;             // 0xC
@@ -1547,21 +1607,13 @@ struct sSmDesc_B708 {
     int f8;                         // 0x8
 };
 
-static inline sSmRoot_B708* findRoot_B708(char* w, int x, int y, int z)
-{
-    sSmRoot_B708* r = (sSmRoot_B708*)w;
-    sSmRoot_B708* rx = x >= 0 ? r : r + 4;
-    sSmRoot_B708* ry = y >= 0 ? rx : rx + 2;
-    sSmRoot_B708* rz = z >= 0 ? ry : ry + 1;
-    return rz;
-}
 
 static inline void remove_B708(char* w, void* item, const sBoundBox* box)
 {
     (*(int*)(w + 0xA0))++;
     sSmCell c;
     func_00328F28(&c, box);
-    sSmRoot_B708* r = findRoot_B708(w, c.x, c.y, c.z);
+    sSmRoot* r = findRoot(w, c.x, c.y, c.z);
     func_003284B8(r->node, 2, item, &c, &r->cell);
     if (r->node->empty()) {
         operator_delete((int*)r->node);
@@ -1573,35 +1625,11 @@ static inline void insert_B708(char* w, void* item, const sBoundBox* box)
 {
     sSmCell c;
     func_00328F28(&c, box);
-    func_00328C20(findRoot_B708(w, c.x, c.y, c.z), 2, item, &c);
+    func_00328C20(findRoot(w, c.x, c.y, c.z), 2, item, &c);
 }
 
-static inline sSmTrack_B708* toTrack_B708(unsigned int p)
-{
-    return (sSmTrack_B708*)(p << 2);
-}
 
-static inline sSmTrack_B708* refToTrack_B708(unsigned int v)
-{
-    unsigned int p = v >> 8;
-    if (p == 0) {
-        return 0;
-    }
-    return toTrack_B708(p);
-}
 
-struct sSmRef_B708 {
-    unsigned int id;
-
-    sSmTrack_B708* get()
-    {
-        sSmSet_B708* set = (*(sSmWorld_B708**)func_002D1BD8())->sets[id & 0xFF];
-        if (set == 0) {
-            return 0;
-        }
-        return refToTrack_B708(set->refs[id >> 8]);
-    }
-};
 
 // PORT: PS2-only VU0 inline asm (a -= b).
 static inline void subEq_B708(t4Vector& a, const t4Vector& b)
@@ -1691,8 +1719,8 @@ extern "C" char* func_0035B708(char* self, sSmDesc_B708* desc, sSmModel_B708* mo
     cRailModifier_buildXform(self);
     func_0035C040((sSmMod_C040*)self);
     insert_B708((char*)func_002D1BE0(), *(void**)(self + 0x44), box);
-    sSmTrack_B708* t = ((sSmRef_B708*)(self + 0x30))->get();
-    sSmSeg_B708* seg = t->first;
+    sSmTrack* t = ((sSmRef*)(self + 0x30))->get();
+    sSmSeg* seg = t->first;
     for (int i = 0; i < t->count; i++) {
         sBoundBox b;
         b.min.x = seg->minx;
@@ -1713,53 +1741,9 @@ extern "C" char* func_0035B708(char* self, sSmDesc_B708* desc, sSmModel_B708* mo
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035BA88);
 #ifdef SKIP_ASM
-void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
-struct sSmNode_BA88 {
-    sSmNode_BA88* child[2][2][2];   // 0x00
-    void* lists[3];                 // 0x20
-    int empty()
-    {
-        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
-            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
-            return 0;
-        }
-        for (int i = 0; i < 3; i++) {
-            if (lists[i]) return 0;
-        }
-        return 1;
-    }
-};
-struct sSmRoot_BA88 {
-    sSmCell cell;              // 0x00
-    sSmNode_BA88* node;             // 0x10
-};
-struct sSmSeg_BA88 {
-    char pad0[0x64];
-    sSmSeg_BA88* next;              // 0x64
-    char pad68[4];
-    float minx, miny, minz;         // 0x6C
-    float maxx, maxy, maxz;         // 0x78
-};
-struct sSmTrack_BA88 {
-    char pad0[0x20];
-    int count;                      // 0x20
-    sSmSeg_BA88* first;             // 0x24
-};
-struct sSmSet_BA88 {
-    char pad0[0x44];
-    unsigned int* refs;             // 0x44
-};
-struct sSmWorld_BA88 {
-    char pad0[0x8];
-    sSmSet_BA88** sets;             // 0x8
-};
 
-extern "C" void* func_002D1BD8();
-extern "C" void func_00328F28(void* out, const void* box);
-extern "C" void func_003284B8(void* node, int idx, void* item, const void* target, const void* cur);
-extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
 extern char D_004911D0[];
 extern "C" void cRailModifier_buildXform(void* self);
 
@@ -1770,61 +1754,11 @@ public:
     virtual int v03();
 };
 
-static inline sSmRoot_BA88* findRoot_BA88(char* w, const sSmCell& c)
-{
-    sSmRoot_BA88* r = (sSmRoot_BA88*)w;
-    sSmRoot_BA88* rx = c.x >= 0 ? r : r + 4;
-    sSmRoot_BA88* ry = c.y >= 0 ? rx : rx + 2;
-    sSmRoot_BA88* rz = c.z >= 0 ? ry : ry + 1;
-    return rz;
-}
 
-static inline void remove_BA88(char* w, void* item, const sBoundBox* box)
-{
-    (*(int*)(w + 0xA0))++;
-    sSmCell c;
-    func_00328F28(&c, box);
-    sSmRoot_BA88* r = findRoot_BA88(w, c);
-    func_003284B8(r->node, 2, item, &c, &r->cell);
-    if (r->node->empty()) {
-        operator_delete((int*)r->node);
-        r->node = 0;
-    }
-}
 
-static inline void insert_BA88(char* w, void* item, const sBoundBox* box)
-{
-    sSmCell c;
-    func_00328F28(&c, box);
-    func_00328C20(findRoot_BA88(w, c), 2, item, &c);
-}
 
-static inline sSmTrack_BA88* toTrack_BA88(unsigned int p)
-{
-    return (sSmTrack_BA88*)(p << 2);
-}
 
-static inline sSmTrack_BA88* refToTrack_BA88(unsigned int v)
-{
-    unsigned int p = v >> 8;
-    if (p == 0) {
-        return 0;
-    }
-    return toTrack_BA88(p);
-}
 
-struct sSmRef_BA88 {
-    unsigned int id;
-
-    sSmTrack_BA88* get()
-    {
-        sSmSet_BA88* set = (*(sSmWorld_BA88**)func_002D1BD8())->sets[id & 0xFF];
-        if (set == 0) {
-            return 0;
-        }
-        return refToTrack_BA88(set->refs[id >> 8]);
-    }
-};
 
 extern "C" char* func_0035BA88(char* self, cSmStream_BA88* src)
 {
@@ -1835,9 +1769,9 @@ extern "C" char* func_0035BA88(char* self, cSmStream_BA88* src)
     src->v02(self + 0x10, 0x30);
     *(int*)(self + 0x40) = src->v03();
     cRailModifier_buildXform(self);
-    insert_BA88((char*)func_002D1BE0(), *(void**)(self + 0x44), (sBoundBox*)(self + 0x10));
-    sSmTrack_BA88* t = ((sSmRef_BA88*)(self + 0x30))->get();
-    sSmSeg_BA88* seg = t->first;
+    octInsert((char*)func_002D1BE0(), *(void**)(self + 0x44), (sBoundBox*)(self + 0x10));
+    sSmTrack* t = ((sSmRef*)(self + 0x30))->get();
+    sSmSeg* seg = t->first;
     for (int i = 0; i < t->count; i++) {
         sBoundBox b;
         b.min.x = seg->minx;
@@ -1848,7 +1782,7 @@ extern "C" char* func_0035BA88(char* self, cSmStream_BA88* src)
         b.max.y = seg->maxy;
         b.max.z = seg->maxz;
         b.max.w = 1.0f;
-        remove_BA88((char*)func_002D1BE0(), seg, &b);
+        octRemove((char*)func_002D1BE0(), seg, &b);
         seg = seg->next;
     }
     return self;
@@ -1858,119 +1792,25 @@ extern "C" char* func_0035BA88(char* self, cSmStream_BA88* src)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035BD70);
 #ifdef SKIP_ASM
-void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
-struct sSmNode_BD70 {
-    sSmNode_BD70* child[2][2][2];   // 0x00
-    void* lists[3];                 // 0x20
-    int empty()
-    {
-        if (child[0][0][0] || child[0][0][1] || child[0][1][0] || child[0][1][1] || child[1][0][0] ||
-            child[1][0][1] || child[1][1][0] || child[1][1][1]) {
-            return 0;
-        }
-        for (int i = 0; i < 3; i++) {
-            if (lists[i]) return 0;
-        }
-        return 1;
-    }
-};
-struct sSmRoot_BD70 {
-    sSmCell cell;              // 0x00
-    sSmNode_BD70* node;             // 0x10
-};
-struct sSmSeg_BD70 {
-    char pad0[0x64];
-    sSmSeg_BD70* next;              // 0x64
-    char pad68[4];
-    float minx, miny, minz;         // 0x6C
-    float maxx, maxy, maxz;         // 0x78
-};
-struct sSmTrack_BD70 {
-    char pad0[0x20];
-    int count;                      // 0x20
-    sSmSeg_BD70* first;             // 0x24
-};
-struct sSmSet_BD70 {
-    char pad0[0x44];
-    unsigned int* refs;             // 0x44
-};
-struct sSmWorld_BD70 {
-    char pad0[0x8];
-    sSmSet_BD70** sets;             // 0x8
-};
 
-extern "C" void* func_002D1BD8();
-extern "C" void func_00328F28(void* out, const void* box);
-extern "C" void func_003284B8(void* node, int idx, void* item, const void* target, const void* cur);
-extern "C" void func_00328C20(void* root, int idx, void* item, const void* target);
 extern char D_004911D0[];
 extern char D_00491200[];
 
-static inline sSmRoot_BD70* findRoot_BD70(char* w, const sSmCell& c)
-{
-    sSmRoot_BD70* r = (sSmRoot_BD70*)w;
-    sSmRoot_BD70* rx = c.x >= 0 ? r : r + 4;
-    sSmRoot_BD70* ry = c.y >= 0 ? rx : rx + 2;
-    sSmRoot_BD70* rz = c.z >= 0 ? ry : ry + 1;
-    return rz;
-}
 
-static inline void remove_BD70(char* w, void* item, const sBoundBox* box)
-{
-    (*(int*)(w + 0xA0))++;
-    sSmCell c;
-    func_00328F28(&c, box);
-    sSmRoot_BD70* r = findRoot_BD70(w, c);
-    func_003284B8(r->node, 2, item, &c, &r->cell);
-    if (r->node->empty()) {
-        operator_delete((int*)r->node);
-        r->node = 0;
-    }
-}
 
-static inline void insert_BD70(char* w, void* item, const sBoundBox* box)
-{
-    sSmCell c;
-    func_00328F28(&c, box);
-    func_00328C20(findRoot_BD70(w, c), 2, item, &c);
-}
 
-static inline sSmTrack_BD70* toTrack_BD70(unsigned int p)
-{
-    return (sSmTrack_BD70*)(p << 2);
-}
 
-static inline sSmTrack_BD70* refToTrack_BD70(unsigned int v)
-{
-    unsigned int p = v >> 8;
-    if (p == 0) {
-        return 0;
-    }
-    return toTrack_BD70(p);
-}
 
-struct sSmRef_BD70 {
-    unsigned int id;
-
-    sSmTrack_BD70* get()
-    {
-        sSmSet_BD70* set = (*(sSmWorld_BD70**)func_002D1BD8())->sets[id & 0xFF];
-        if (set == 0) {
-            return 0;
-        }
-        return refToTrack_BD70(set->refs[id >> 8]);
-    }
-};
 
 extern "C" void func_0035BD70(char* self, int flags)
 {
     *(void**)(self + 0x8) = D_004911D0;
-    remove_BD70((char*)func_002D1BE0(), *(void**)(self + 0x44), (sBoundBox*)(self + 0x10));
+    octRemove((char*)func_002D1BE0(), *(void**)(self + 0x44), (sBoundBox*)(self + 0x10));
     operator_delete(*(int**)(self + 0x44));
-    sSmTrack_BD70* t = ((sSmRef_BD70*)(self + 0x30))->get();
-    sSmSeg_BD70* seg = t->first;
+    sSmTrack* t = ((sSmRef*)(self + 0x30))->get();
+    sSmSeg* seg = t->first;
     for (int i = 0; i < t->count; i++) {
         sBoundBox b;
         b.min.x = seg->minx;
@@ -1981,7 +1821,7 @@ extern "C" void func_0035BD70(char* self, int flags)
         b.max.y = seg->maxy;
         b.max.z = seg->maxz;
         b.max.w = 1.0f;
-        insert_BD70((char*)func_002D1BE0(), seg, &b);
+        octInsert((char*)func_002D1BE0(), seg, &b);
         seg = seg->next;
     }
     *(void**)(self + 0x8) = D_00491200;
