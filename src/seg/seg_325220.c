@@ -36,6 +36,12 @@ extern sSifClient D_0052EEC0;
 extern sSifClient D_0052F280;
 
 
+/* 4-byte server version tags returned by the fileio and loadfile RPC servers */
+typedef struct { char b[4]; } sRpcVer;
+extern sRpcVer D_0052EE28;      /* fileio (follows D_0052EE00) */
+extern sRpcVer D_0052F2A8;      /* loadfile (follows D_0052F280) */
+
+
 /* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
 typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
 typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
@@ -2311,12 +2317,10 @@ void func_00427A60(int a, int *p) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00427A90);
 #ifdef SKIP_ASM
-struct W4A90 { char b[4]; };
 struct H4A90 { void (*fn)(int); int arg; };
 struct T4A90 { int f0; int f4; int f8; int fC; };
 extern struct H4A90 D_4A90_ee80 __asm__("D_0052EE80");
 extern char D_4A90_ee40[] __asm__("D_0052EE40");
-extern int D_4A90_ee28 __asm__("D_0052EE28");
 extern struct T4A90 D_4A90_ec00[] __asm__("D_0052EC00");
 extern int D_4A90_6c0[] __asm__("D_0052D6C0");
 extern char D_4A90_380[] __asm__("D_0052E380");
@@ -2339,7 +2343,7 @@ int func_00427A90_d(void) {
     int v;
     struct T4A90 *p;
     struct H4A90 *q = &D_4A90_ee80;
-    struct W4A90 w;
+    sRpcVer w;
     func_00426408_z(0);
     D_4A90_ee80.fn = 0;
     q->arg = 0;
@@ -2367,8 +2371,8 @@ int func_00427A90_d(void) {
     D_4A90_6c0[1] = D_4A90_6c0[0] + 0x440;
     if (func_00426D18(&D_0052EE00, 0xFF, 0, D_4A90_6c0, 8, D_4A90_340, 8, 0, 0) < 0)
         return 0xFFFEFFFF;
-    *(struct W4A90 *)&D_4A90_ee28 = *(struct W4A90 *)((int)D_4A90_340 | 0x20000000);
-    w = *(struct W4A90 *)((int)(D_4A90_340 + 4) | 0x20000000);
+    D_0052EE28 = *(sRpcVer *)((int)D_4A90_340 | 0x20000000);
+    w = *(sRpcVer *)((int)(D_4A90_340 + 4) | 0x20000000);
     D_00455210 = *(int *)&w == 2;
     D_0045520C = 1;
     return 0;
@@ -2379,12 +2383,11 @@ int func_00427A90_d(void) {
 INCLUDE_ASM("seg/seg_325220", func_00427C98);
 #ifdef SKIP_ASM
 extern char D_00455164[];
-extern char D_0052EE28[];
 extern char *D_00455220;
 extern int func_00415FC8(char *, char *, int);
 int func_00427C98(void) {
     char *a = D_00455164;
-    char *b = D_0052EE28;
+    char *b = D_0052EE28.b;
     int r = 0;
     if (func_00415FC8(b, a, 4) != 0 &&
         func_00415FC8(b, D_00455220, 4) != 0) {
@@ -2399,10 +2402,9 @@ INCLUDE_ASM("seg/seg_325220", func_00427D28);
 #ifdef SKIP_ASM
 extern void func_00416210(void *a0, int a1, int a2);
 extern int D_0045520C;
-extern char D_0052EE28[];
 int func_00427D28(void) {
     D_0045520C = 0;
-    func_00416210(D_0052EE28, 0, 4);
+    func_00416210(&D_0052EE28, 0, 4);
     return 0;
 }
 #endif
@@ -4212,10 +4214,8 @@ unsigned int func_0042AFE8(int a0) {
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042B068);
 #ifdef SKIP_ASM
-typedef struct { char b[4]; } K4;
 extern int D_00455228;
-extern K4 D_Gm __asm__("D_0052F2A8");
-extern K4 D_G68 __asm__("D_0052F080");
+extern sRpcVer D_G68 __asm__("D_0052F080");
 int func_0042B068(void) {
     int i;
     if (D_00455228 < 0) {
@@ -4228,7 +4228,7 @@ int func_0042B068(void) {
                 if (func_00426D18(&D_0052F280, 0xFF, 0, 0, 0, &D_G68, 4, 0, 0) < 0) {
                     return 0xFFFEFFFF;
                 }
-                D_Gm = D_G68;
+                D_0052F2A8 = D_G68;
                 return 0;
             }
             i = 0x100000;
@@ -4245,12 +4245,11 @@ int func_0042B068(void) {
 INCLUDE_ASM("seg/seg_325220", func_0042B168);
 #ifdef SKIP_ASM
 extern char D_00455164[];
-extern char D_0052F2A8[];
 extern char *D_0045522C;
 extern int func_00415FC8(char *, char *, int);
 int func_0042B168(void) {
     char *a = D_00455164;
-    char *b = D_0052F2A8;
+    char *b = D_0052F2A8.b;
     int r = 0;
     if (func_00415FC8(b, a, 4) != 0 &&
         func_00415FC8(b, D_0045522C, 4) != 0) {
@@ -4265,10 +4264,9 @@ INCLUDE_ASM("seg/seg_325220", func_0042B1F8);
 #ifdef SKIP_ASM
 extern void func_00416210(void *a0, int a1, int a2);
 extern int D_00455228;
-extern char D_0052F2A8[];
 int func_0042B1F8(void) {
     D_00455228 = -1;
-    func_00416210(D_0052F2A8, 0, 4);
+    func_00416210(&D_0052F2A8, 0, 4);
     return 0;
 }
 #endif
