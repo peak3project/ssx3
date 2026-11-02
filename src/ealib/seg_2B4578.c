@@ -8465,7 +8465,6 @@ void func_003C4450(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C45E8);
 #ifdef SKIP_ASM
-extern volatile unsigned char D_0050AD00_45E8[] __asm__("D_0050AD00");
 void func_003C45E8(int arg0) {
     int s;
     if (arg0 == 0) {
@@ -8475,7 +8474,7 @@ void func_003C45E8(int arg0) {
             MFC0_STATUS_2B45(s);
         } while (s & 0x10000);
     }
-    if (D_0050AD00_45E8[0xCC2] == 0 && (D_0050AD00_45E8[0xCC0] << 24) > 0) {
+    if (D_0050AD00.fCC2 == 0 && (signed char)D_0050AD00.fCC0 > 0) {
         func_003C4450(arg0);
     }
     if (arg0 == 0) {
