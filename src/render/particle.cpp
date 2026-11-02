@@ -382,6 +382,9 @@ extern "C" void func_00424950(int);
 // The graphics manager instance.
 extern cPS2GraphicsMan* D_004A5B80;
 
+// The default render state (00370DC8 reads the same object through its bit-field view sGsState_00370DC8).
+extern sPtRenderState D_00501420_rs __asm__("D_00501420");
+
 // ---- end of shared declarations ----
 
 //100%
@@ -3045,7 +3048,6 @@ struct sGfx_7A10 {
     int f5ACC;
 };
 
-extern sPtRenderState D_00501420_7A10 __asm__("D_00501420");
 extern char D_005059D8[];
 extern "C" void func_00363490(void* ring, void* a, void* b, void* c, void* d);
 extern "C" int func_00423DE0_i(int a) __asm__("func_00423DE0");
@@ -3100,7 +3102,7 @@ extern "C" void func_00377A10(sGfx_7A10* self)
     self->f5A14 = c;
     func_004247D8(b, b + 0xCCC80);
     func_004247D8(self->f5A14, self->f5A14 + 0x26600);
-    *self->top = D_00501420_7A10;
+    *self->top = D_00501420_rs;
     func_00362CC8(self->ring);
     func_003673D0(self->sys);
     setView_7A10(self);
@@ -6914,7 +6916,6 @@ INCLUDE_ASM("render/particle", func_003883B8);
 #ifdef SKIP_ASM
 
 extern int D_004A5B84;
-extern sPtRenderState D_00501420_rs __asm__("D_00501420");
 
 extern "C" void func_003885E0(void* self, void* a, void* b, void* c, void* d, int i0, int i1, float f0, float f1);
 
