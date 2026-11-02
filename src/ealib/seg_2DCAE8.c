@@ -2158,7 +2158,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", releaserequest);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void queueadd(char *, char *);
-extern void (*D_00450C18_0C18[])(unsigned int) __asm__("D_00450C18");
 extern char D_00519BF8_9BF8[] __asm__("D_00519BF8");
 
 void releaserequest(char *arg0) {
@@ -2167,7 +2166,7 @@ void releaserequest(char *arg0) {
     if (*(int *)(arg0 + 0x10) != 0) {
         temp_4 = *(unsigned int *)(arg0 + 0x14);
         if (temp_4 >= 2U) {
-            D_00450C18_0C18[0](temp_4);
+            D_00450C18((void *)temp_4);
         }
     }
     *(int *)(arg0 + 0x1C) = 0;
