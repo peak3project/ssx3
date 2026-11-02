@@ -13248,12 +13248,7 @@ struct Hdr_C070 {
     unsigned char cnt[6][4];
     unsigned char len[6][4];
 };
-struct G_C070 {
-    char pad00[0x5];
-    unsigned char n;
-};
 extern struct Hdr_C070 D_005175C0_C070 __asm__("D_005175C0");
-extern struct G_C070 D_00515B40_C070 __asm__("D_00515B40");
 extern struct Hdr_C070 *D_00515D40;
 extern void **D_00515D44;
 extern void **D_00515D48;
@@ -13379,8 +13374,8 @@ void func_003CC070(int a, unsigned char *data) {
         if (p[1] != 0) {
             if (*p == 9 && D_00515D40->f2 > 10) {
                 v = p[1];
-                D_00515D48[f_BC20_C070(D_00515D58, D_00515B40_C070.n, v & 0xF)] = D_00515D44[i];
-                D_00515D48[f_BC20_C070(D_00515D58, D_00515B40_C070.n, v >> 4)] = D_00515D44[i];
+                D_00515D48[f_BC20_C070(D_00515D58, D_00515B40.f05, v & 0xF)] = D_00515D44[i];
+                D_00515D48[f_BC20_C070(D_00515D58, D_00515B40.f05, v >> 4)] = D_00515D44[i];
             } else {
                 D_00515D48[f_BC20_C070(D_00515D58, D_00515B45, p[1])] = D_00515D44[i];
             }
