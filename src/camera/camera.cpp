@@ -138,7 +138,7 @@ public:
     int type;                   // 0xC
     virtual void v01();
     virtual void v02();
-    virtual void v03();
+    virtual void v03(int on);
     virtual void v04();
     virtual void v05();
     virtual void v06();
