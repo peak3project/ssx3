@@ -2069,7 +2069,56 @@ int func_003F7A30(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7A60);
+#ifdef SKIP_ASM
+typedef struct { unsigned mode; void *fDC; void *fE0; void *fE4; int w[7]; } P7A60;
+typedef struct { char pad[0xD8]; P7A60 cur; int pad104[2]; P7A60 saved; } S7A60;
+extern S7A60 *D_7A60 __asm__("D_004A4BC4");
+extern int func_003F6F68();
+extern int func_003F7218();
+extern int func_003F7C00(void);
+int func_003F7A60(int mode, unsigned char copy) {
+    int err = 0;
+    D_7A60->cur.mode = mode;
+    if (copy)
+        D_7A60->saved = D_7A60->cur;
+    if (D_7A60->cur.mode < 9)
+        D_7A60->cur.fDC = (void *)func_003F6F68;
+    else
+        err = 0xD;
+    if (err == 0) {
+        switch (D_7A60->cur.mode) {
+        case 0: case 1: case 2: case 3: case 4: case 5:
+            D_7A60->cur.fE0 = (void *)func_003F7218;
+            break;
+        case 6: case 8:
+            D_7A60->cur.fE0 = (void *)func_003F72C8;
+            break;
+        case 7:
+            D_7A60->cur.fE0 = (void *)func_003F72F8;
+            break;
+        default:
+            err = 0xD;
+            break;
+        }
+    }
+    if (err == 0) {
+        switch (D_7A60->cur.mode) {
+        case 0: case 1: case 2: case 3: case 4: case 5:
+            D_7A60->cur.fE4 = (void *)func_003F71B8;
+            break;
+        case 6: case 8:
+            D_7A60->cur.fE4 = (void *)func_003F71F8;
+            break;
+        case 7:
+            D_7A60->cur.fE4 = (void *)func_003F72F8;
+            break;
+        }
+    }
+    return func_003F7C00();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F7BD0);
