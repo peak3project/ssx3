@@ -10208,22 +10208,18 @@ unsigned int func_003C6DE0(int id, int r, int *len, int *flag) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C7010);
 #ifdef SKIP_ASM
-struct Ent_7010 { short z; short id; int v; };
-struct Obj_7010 { char p0[0x42]; volatile unsigned char f42; char p1[9]; volatile int f4C; char p2[8]; int f58; };
-struct G_7010 { int count; struct Ent_7010 list[1]; char pad[0x2F8]; struct Obj_7010* tbl[1]; };
-extern struct G_7010 D_005157B8_7010 __asm__("D_005157B8");
 void func_003C7010(int id, int b, int c)
 {
-    struct Obj_7010* o = D_005157B8_7010.tbl[id];
+    struct s7B8Queue* o = D_005157B8.f304[id];
     if (b == (signed char)o->f42) {
 
         o->f4C -= c;
         if (o->f58) {
-            struct Ent_7010* e = &D_005157B8_7010.list[D_005157B8_7010.count];
-            e->v = c;
-            e->id = id;
-            e->z = 0;
-            D_005157B8_7010.count++;
+            struct s7B8Event* e = &D_005157B8.f004[D_005157B8.f000];
+            e->f04 = c;
+            e->f02 = id;
+            e->f00 = 0;
+            D_005157B8.f000++;
         }
     }
 }
