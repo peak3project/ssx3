@@ -4724,7 +4724,113 @@ void func_00261A20(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261A28);
+#ifdef SKIP_ASM
+// PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, align).
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern char D_00480488[];
+extern char D_004804A8[];
+extern void* D_004812B0[];
+extern void* D_004A3028;
+
+struct sMsgListNode_261A28 {
+    sMsgListNode_261A28* next;
+    sMsgListNode_261A28* prev;
+    void* data;
+};
+
+struct sMsgListIter_261A28 {
+    sMsgListNode_261A28* node;
+    sMsgListIter_261A28(sMsgListNode_261A28* x) : node(x) {}
+    sMsgListIter_261A28(const sMsgListIter_261A28& x) : node(x.node) {}
+};
+
+static inline sMsgListIter_261A28 sMsgList_261A28_insert(sMsgListIter_261A28 pos, void* x)
+{
+    sMsgListNode_261A28* tmp = (sMsgListNode_261A28*)operator new(0xC, D_004804A8, 0x20000000, 0);
+    void** data = &tmp->data;
+    if (data != 0)
+        *data = x;
+    tmp->next = pos.node;
+    tmp->prev = pos.node->prev;
+    pos.node->prev->next = tmp;
+    pos.node->prev = tmp;
+    return tmp;
+}
+
+static inline void post_261A28(int type)
+{
+    char* g = (char*)D_004A3028;
+    int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
+    m[0] = type;
+    *(void***)((char*)m + 0x4) = D_004812B0;
+    sMsgList_261A28_insert(*(sMsgListNode_261A28**)(g + 0xF0), m);
+}
+
+extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
+extern "C" int func_002623B0_s(void* self, char* name) __asm__("func_002623B0");
+extern "C" int func_004162D0(char* dst, char* src);
+extern "C" int func_003EDD70(const char* tag, int* a, int* b, int* c, int* d, int* e, int* f, int g);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void func_00261CD0(char* self, char* name, char* a, char* b);
+extern "C" int func_00262A08_s(void* self, char* name) __asm__("func_00262A08");
+extern "C" void* func_00263630(void* self, unsigned int i);
+extern "C" int func_004165A8(void*, void*);
+extern "C" void func_002635A8_u(void* self, unsigned int i) __asm__("func_002635A8");
+extern char D_004A3358[];
+extern char D_004A3360[];
+extern char D_004A3368[];
+extern char D_004A3370[];
+extern char D_004A3378[];
+extern char D_00480E68[];
+extern char D_004A2ED0[];
+extern char D_00480E78[];
+
+static inline unsigned int vsize_261A28(void* self)
+{
+    return (unsigned int)((*(int*)((char*)self + 0xB0) - *(int*)((char*)self + 0xAC)) >> 2);
+}
+
+static inline void removeByName_261A28(void* self, char* name)
+{
+    unsigned int i;
+    for (i = 0; i < vsize_261A28(self); i++) {
+        void** e = (void**)func_00263630(self, i);
+        if (e != 0) {
+            if (func_004165A8(*e, name) == 0) {
+                func_002635A8_u(self, i);
+                return;
+            }
+        }
+    }
+}
+
+extern "C" void func_00261A28(char* self, char* msg)
+{
+    char big[0x800];
+    char path[0x8D0];
+    char name[0x40];
+    char buf[0x40];
+    char e0[0x10];
+    int v0, v1, v2, v3, v4;
+    int v5;
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3358), e0, 2, D_00480E68);
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3360), name, 0x40, D_00480E68);
+    if (func_002623B0_s(self, name) == 0) {
+        cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3368), path, 0x8CF, D_004A2ED0);
+        cDirtysock_tag_TagFieldGetUnk(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3370), big, 0x800, D_00480E68);
+        func_004162D0(path, big);
+        func_003EDD70(cDirtysock_tag_TagFieldFind(*(char**)(msg + 0xC), D_004A3378), &v0, &v1, &v2, &v3, &v4, &v5, 0);
+        sprintf(buf, D_00480E78, v1, v2, v0, v3, v4);
+        func_00261CD0(self, name, path, buf);
+        if (func_00262A08_s(self, name) > 0x1E) {
+            removeByName_261A28(self, name);
+        }
+        post_261A28(0x109);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261CD0);
