@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovstatemap", cOVState_MAP_onCreateScreen);
 #ifdef SKIP_ASM
@@ -108,22 +116,17 @@ struct sV4_87F0 {
     float x, y, z, w;
 } __attribute__((aligned(16)));
 
-struct sVE_87F0 {
-    short delta;
-    short index;
-    void* fn;
-};
 
 struct sUIObj_87F0 {
     int pad_0x0[2];
-    sVE_87F0* vt;               // 0x8
+    sVEntry<void>* vt;               // 0x8
     char pad_0xC[0xC];
     int f18;                    // 0x18
 };
 
 struct sStrMgr_87F0 {
     int pad_0x0;
-    sVE_87F0* vt;               // 0x4
+    sVEntry<void>* vt;               // 0x4
 };
 
 class cRiderSub_87F0 {
@@ -186,7 +189,7 @@ extern "C" int cOVState_MAP_onGainTransition(void* selfp, int on)
             if (i < n) {
                 ((sMapF_87F0*)self)->flags[i] = 1;
                 sStrMgr_87F0* g = *(sStrMgr_87F0**)((char*)D_004A28A8 + 0x8C);
-                sVE_87F0* vt = g->vt;
+                sVEntry<void>* vt = g->vt;
                 void* str = ((VGetFn_87F0)vt[4].fn)((char*)g + vt[4].delta, GetHashValue32(D_00471818));
                 if (str == 0) {
                     continue;
@@ -244,15 +247,10 @@ extern "C" int cOVState_MAP_onGainTransition(void* selfp, int on)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208B00);
 #ifdef SKIP_ASM
-struct sVEntry00208B00 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sObj00208B00 {
     int pad[2];
-    sVEntry00208B00* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 
 int GetHashValue32(char* str);
@@ -291,15 +289,10 @@ extern "C" void func_00208B78(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00208BB8);
 #ifdef SKIP_ASM
-struct sVEntry00208BB8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sObj00208BB8 {
     int pad[2];
-    sVEntry00208BB8* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 
 extern "C" void func_00208BB8(void* self)
@@ -461,22 +454,17 @@ extern "C" void func_00208F10(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", cOVState_MAP_setupPopup);
 #ifdef SKIP_ASM
-struct sVE_9010 {
-    short delta;
-    short index;
-    void* fn;
-};
 
 struct sUIObj_9010 {
     int pad_0x0[2];
-    sVE_9010* vt;               // 0x8
+    sVEntry<void>* vt;               // 0x8
     char pad_0xC[0x95 - 0xC];
     unsigned char f95;          // 0x95
 };
 
 struct sStrMgr_9010 {
     int pad_0x0;
-    sVE_9010* vt;               // 0x4
+    sVEntry<void>* vt;               // 0x4
 };
 
 typedef void (*VIntFn_9010)(void*, int);
@@ -539,7 +527,7 @@ extern "C" void cOVState_MAP_setupPopup(void* selfp)
             ((VIntFn_9010)menu->vt[9].fn)((char*)menu + menu->vt[9].delta, 1);
         }
         sStrMgr_9010* g = *(sStrMgr_9010**)((char*)D_004A28A8 + 0x8C);
-        sVE_9010* vt = g->vt;
+        sVEntry<void>* vt = g->vt;
         void* str = ((VGetFn_9010)vt[4].fn)((char*)g + vt[4].delta, GetHashValue32(D_00471818));
         if (str != 0) {
             func_002C27C0(text, D_004A26F0, str, n + 1);
@@ -589,15 +577,10 @@ extern "C" void cOVState_MAP_setupPopup(void* selfp)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00209300);
 #ifdef SKIP_ASM
-struct sVEntry00209300 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 struct sObj00209300 {
     int pad[2];
-    sVEntry00209300* vt;
+    sVEntry<int(void*)>* vt;
 };
 
 extern "C" void func_00209E78(void* self);
@@ -743,21 +726,16 @@ extern "C" void func_00209370(sMap_9370* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_002095E8);
 #ifdef SKIP_ASM
-struct sVEntry_func_002095E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern char D_004C8B38[];
 extern char D_004C8B28[];
 
 extern "C" void func_002095E8(void* self, void* obj, int on)
 {
     if (on != 0) {
-        sVEntry_func_002095E8* vt = *(sVEntry_func_002095E8**)((char*)obj + 0x8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
         vt[11].fn((char*)obj + vt[11].delta, D_004C8B38);
     } else {
-        sVEntry_func_002095E8* vt = *(sVEntry_func_002095E8**)((char*)obj + 0x8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
         vt[11].fn((char*)obj + vt[11].delta, D_004C8B28);
     }
 }
@@ -766,21 +744,16 @@ extern "C" void func_002095E8(void* self, void* obj, int on)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_00209648);
 #ifdef SKIP_ASM
-struct sVEntry_func_00209648 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern char D_004C8B58[];
 extern char D_004C8B48[];
 
 extern "C" void func_00209648(void* self, void* obj, int on)
 {
     if (on != 0) {
-        sVEntry_func_00209648* vt = *(sVEntry_func_00209648**)((char*)obj + 0x8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
         vt[11].fn((char*)obj + vt[11].delta, D_004C8B58);
     } else {
-        sVEntry_func_00209648* vt = *(sVEntry_func_00209648**)((char*)obj + 0x8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)obj + 0x8);
         vt[11].fn((char*)obj + vt[11].delta, D_004C8B48);
     }
 }
@@ -1115,11 +1088,6 @@ extern char D_004A20D0[];
 extern void* D_004A28A8;
 extern "C" void func_002EA820(void* self);
 extern "C" void* func_0039F9D8(void* list, int hash);
-struct sVEntry0020A380 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 struct sSelf0020A380 {
     char pad[0x10];
@@ -1144,7 +1112,7 @@ extern "C" void func_0020A380(sSelf0020A380* self)
     }
     char* obj = (char*)func_0039F9D8(self->mgr + 0x18, GetHashValue32(D_004A20D0));
     if (obj != 0) {
-        sVEntry0020A380* e = &(*(sVEntry0020A380**)(obj + 8))[24];
+        sVEntry<int(void*, int, int)>* e = &(*(sVEntry<int(void*, int, int)>**)(obj + 8))[24];
         e->fn(obj + e->delta, 3, 0);
     }
 }
@@ -1160,11 +1128,6 @@ extern "C" void func_002EA860(void* self);
 extern "C" void* func_0039F9D8(void* list, int hash);
 extern "C" void func_0020D190();
 void func_0039E4A0(void* self);
-struct sVEntry0020A430 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 extern "C" void func_0020A430(void* self)
 {
@@ -1177,7 +1140,7 @@ extern "C" void func_0020A430(void* self)
     }
     char* obj = (char*)func_0039F9D8(*(char**)((char*)self + 0x10) + 0x18, GetHashValue32(D_004A20D0));
     if (obj != 0) {
-        sVEntry0020A430* e = &(*(sVEntry0020A430**)(obj + 8))[24];
+        sVEntry<int(void*, int, int)>* e = &(*(sVEntry<int(void*, int, int)>**)(obj + 8))[24];
         e->fn(obj + e->delta, 4, 0);
     }
     if (*(int*)((char*)self + 0x54) != 0) {
@@ -1213,15 +1176,10 @@ struct sBXString_A4E0 {
     sBXString_A4E0(const sBXString_A4E0& o);
 };
 
-struct sVE_A4E0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void show_A4E0(char* o, int on)
 {
-    sVE_A4E0* vt = *(sVE_A4E0**)(o + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
     vt[9].fn(o + vt[9].delta, on);
 }
 
@@ -1266,11 +1224,6 @@ extern "C" int func_0020A4E0(char* self)
 //100%
 INCLUDE_ASM("fe/ovstatemap", func_0020A6A8);
 #ifdef SKIP_ASM
-struct sVEntry0020A6A8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int, int);
-};
 
 extern void* D_004A28A8;
 
@@ -1280,7 +1233,7 @@ extern "C" void func_0020A6A8(void* self, int a1, int a2)
     if (w != 0) {
         char* o = *(char**)(w + 0x200);
         if (o != 0) {
-            sVEntry0020A6A8* vt = *(sVEntry0020A6A8**)(o + 0xC);
+            sVEntry<void(void*, int, int)>* vt = *(sVEntry<void(void*, int, int)>**)(o + 0xC);
             vt[9].fn(o + vt[9].delta, a1, a2);
         }
     }
