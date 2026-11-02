@@ -24,22 +24,32 @@ public:
     virtual void setVisible(int v);
 };
 
-//100%
-INCLUDE_ASM("fe/festateriderbio", cFEStateRiderDetail_onCreateScreen);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
 int GetHashValue32(char* str);
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void func_00182DB8(void* self);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+extern "C" int func_001577A0(void* self, int a1, int a2);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern char D_0045D898[];
+extern "C" void func_001831D0(void* self, int a1);
+extern "C" unsigned char func_001A1CD0(void* self, int a1);
+extern char D_0045D900[];
+extern char D_0045D910[];
+extern char D_0045D920[];
+extern char D_0045D930[];
+
+//100%
+INCLUDE_ASM("fe/festateriderbio", cFEStateRiderDetail_onCreateScreen);
+#ifdef SKIP_ASM
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void func_00182DB8(void* self);
 extern "C" void func_001A0570(void* self, int a1, int a2);
 extern "C" void func_001A0508(void* self, int idx, int a2, int a3);
 extern "C" void* func_0028B180();
 extern "C" void func_0028F140(void* self, int a1);
-extern "C" int func_001577A0(void* self, int a1, int a2);
 extern void* D_004A28A8;
 extern char D_0045D870[];
 
@@ -69,11 +79,8 @@ extern "C" void cFEStateRiderDetail_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbio", func_001833D0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_00186518(void* self, int a1);
 extern char D_0045D888[];
-extern char D_0045D898[];
 extern char D_0045D8A8[];
 extern char D_0045D8B8[];
 extern char D_0045D8C8[];
@@ -102,10 +109,7 @@ extern "C" void func_001833D0(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festateriderbio", func_00183550);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void func_00194498(void* obj);
-extern char D_0045D898[];
 
 extern "C" void func_00183550(void* self)
 {
@@ -145,13 +149,8 @@ extern "C" void func_001835C8(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbio", func_001835F8);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_00147138(void* self, int a1, const char* name);
 extern "C" void func_001474A8(void* self, int a1, int a2);
-extern "C" void func_001831D0(void* self, int a1);
 extern "C" unsigned int strlen(const char* s);
 extern char D_0045D780[];
 
@@ -185,18 +184,11 @@ extern "C" void func_001835F8(void* self, void* item, int msg)
 //100%
 INCLUDE_ASM("fe/festateriderbio", func_00183710);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
 extern "C" char* func_00147170(void* iface, int rider);
-extern "C" int func_001577A0(void* self, int a1, int a2);
 extern "C" void* func_00182220(void* mem, void* engine, void* owner, int rider, int cid);
-extern "C" void func_001831D0(void* self, int a1);
 extern "C" void* func_001887A0(void* mem, void* engine, int a2);
-extern "C" unsigned char func_001A1CD0(void* self, int a1);
 extern "C" void* func_001CB030(void* self, void* engine, void* owner, int a3, unsigned char a4);
 extern "C" void func_001CB418(void* self, const char* str);
 extern "C" void func_001CD088(void* self, int v);
@@ -284,7 +276,6 @@ INCLUDE_ASM("fe/festateriderbio", func_00183A98);
 #ifdef SKIP_ASM
 extern void* D_0046CCC0[];
 extern "C" void* func_0039E2A0(void *, int);
-extern "C" unsigned char func_001A1CD0(void* self, int a1);
 
 extern "C" void* func_00183A98(void* self, int a1, int a2)
 {
@@ -304,13 +295,6 @@ extern "C" void* func_00183A98(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/festateriderbio", func_00183B08);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_0045D900[];
-extern char D_0045D910[];
-extern char D_0045D920[];
-extern char D_0045D930[];
-
 extern "C" void func_00183B08(void* self)
 {
     cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D900));
@@ -335,13 +319,6 @@ extern "C" void func_00183B08(void* self)
 //100%
 INCLUDE_ASM("fe/festateriderbio", func_00183C08);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern char D_0045D900[];
-extern char D_0045D910[];
-extern char D_0045D920[];
-extern char D_0045D930[];
-
 extern "C" void func_00183C08(void* self)
 {
     cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045D900));
