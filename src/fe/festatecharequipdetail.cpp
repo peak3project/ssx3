@@ -8,6 +8,71 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); slot 11 takes a colour.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
+    virtual void v10();
+    virtual void v11(void* colour);
+};
+
+// One item's flag entry in a character's profile flag table (be/belibrary.cpp's sBEFlagEntryPC; func_0019B7E0's local
+// copy of a table is built with this default ctor).
+struct sBEFlagEntryPC {
+    short id;
+    unsigned short flags;
+    sBEFlagEntryPC() : id(-1), flags(0) {}
+};
+
+// A character's flag table inside a profile record (be/belibrary.cpp; func_0014AD28 returns one).
+struct sBEProfileChar {
+    char pad_0x000[0x288];
+    short* index;                       // 0x288
+    int count;                          // 0x28C
+    sBEFlagEntryPC entries[0x20D];      // 0x290
+};
+
+static inline sBEFlagEntryPC* getEntry(sBEProfileChar* p, int id)
+{
+    short k = p->index[id];
+    if (k >= 0)
+        return &p->entries[k];
+    return 0;
+}
+
+// An equipment item record (the item lists func_0014D7E8 fills hold pointers to these; 0x38 bytes).
+struct sEquipItem {
+    short f0;
+    signed char slot;   // 0x2
+    char f3;
+    short id;           // 0x4
+    char pad_0x6[0xE - 0x6];
+    short cost;         // 0xE
+    char pad_0x10[0x14 - 0x10];
+    char* name;         // 0x14
+    char pad_0x18[0x34 - 0x18];
+    int flags;          // 0x34
+};
+
+// The item list widget at state + 0x5C: selected row, row count, first visible row.
+struct sEquipList {
+    char pad_0x0[0x95];
+    unsigned char sel;   // 0x95
+    unsigned char count; // 0x96
+    char pad_0x97;
+    unsigned char top;   // 0x98
+};
+
 // One node of the file index manager (D_004A1968, allocation tag "BoltFileIndexManager"): 400 16-byte nodes hashed by
 // key % 400, two flag sets (mask0 / val0 and mask1 / val1), prev / next as node indices.
 struct sIndexNode {
@@ -777,27 +842,13 @@ extern int D_004A11E0;
 extern int D_004A18D8;
 extern void* D_004A28A8;
 
-struct sList_9C28 {
-    char pad_0x0[0x98];
-    unsigned char top;   // 0x98
-};
-
-struct sItem_9C28 {
-    int f0;
-    short id;           // 0x4
-    char pad6[0xE - 0x6];
-    short cost;         // 0xE
-    char pad10[0x34 - 0x10];
-    int flags;          // 0x34
-};
-
 struct sCharEquip_9C28 {
     char pad0[0x10];
     char* menu;                     // 0x10
     char pad14[0x44 - 0x14];
     signed char team;               // 0x44
     char pad45[0x5C - 0x45];
-    sList_9C28* list;               // 0x5C
+    sEquipList* list;               // 0x5C
     char pad60[0xBC - 0x60];
     int slot;                       // 0xBC
     int money;                      // 0xC0
@@ -806,7 +857,7 @@ struct sCharEquip_9C28 {
     char padCC[0xD0 - 0xCC];
     int stack[(0x120 - 0xD0) / 4];  // 0xD0
     int depth;                      // 0x120
-    sItem_9C28* items[(0x958 - 0x124) / 4]; // 0x124
+    sEquipItem* items[(0x958 - 0x124) / 4]; // 0x124
     int count;                      // 0x958
     char pad95C[0xA78 - 0x95C];
     int vals[6];                    // 0xA78
@@ -831,7 +882,7 @@ extern "C" void func_00199C28(void* selfv, char* w, unsigned int ev)
         int idx = self->list->top + *(int*)(w + 0x18);
         if (idx >= self->count)
             return;
-        sItem_9C28* item = self->items[idx];
+        sEquipItem* item = self->items[idx];
         int id = item->id;
         if (item->flags & 0x20) {
             self->depth++;
@@ -902,13 +953,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_00199F20);
 extern "C" void func_0019A3D0(void* self);
 extern int D_004A18D8;
 
-struct sEquipItem_9F20 {
-    char pad0[0xE];
-    short cost;      // 0xE
-    char pad10[0x24];
-    int flags;       // 0x34
-};
-
 struct sEquipDetail_9F20 {
     char pad0[0x5C];
     char* sel;                    // 0x5C
@@ -918,7 +962,7 @@ struct sEquipDetail_9F20 {
     int fC8;                      // 0xC8
     char padCC[0x54];
     int f120;                     // 0x120
-    sEquipItem_9F20* items[0x20D]; // 0x124
+    sEquipItem* items[0x20D]; // 0x124
     int count;                    // 0x958
     char pad95C[0x11C];
     int prices[27];               // 0xA78
@@ -930,7 +974,7 @@ static inline bool isMode_9F20(int m, int v)
     return m == v;
 }
 
-static inline bool hasFlag_9F20(sEquipItem_9F20* item, int f)
+static inline bool hasFlag_9F20(sEquipItem* item, int f)
 {
     return (item->flags & f) != 0;
 }
@@ -955,7 +999,7 @@ extern "C" int func_00199F20(sEquipDetail_9F20* self, int a1, int kind, int idx)
         int v = *(unsigned char*)(p + 0x95);
         if (v < 0) return 0x110;
         if (v < self->count) {
-            sEquipItem_9F20* item = self->items[v];
+            sEquipItem* item = self->items[v];
             if (item->flags & 0x20) return 0x101;
             if (isMode_9F20(self->fC8, 1)) {
                 int cost = item->cost;
@@ -1308,46 +1352,6 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019A798);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct cUIText;
-class cUIObj_A798 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-struct sEquipEntry_A798 {
-    unsigned short f0;
-    unsigned short flags;
-};
-struct sEquipDb_A798 {
-    char pad_0x0[0x288];
-    short* map;     // 0x288
-    char pad_0x28c[4];
-    sEquipEntry_A798 entries[1];  // 0x290
-};
-struct sEquipItem_A798 {
-    short f0;
-    signed char slot;   // 0x2
-    char f3;
-    short id;       // 0x4
-    char pad_0x6[0xE - 0x6];
-    short cost;     // 0xE
-    char pad_0x10[0x34 - 0x10];
-    int flags;      // 0x34
-};
-struct sList_A798 {
-    char pad_0x0[0x95];
-    unsigned char sel;   // 0x95
-    unsigned char count; // 0x96
-    char pad_0x97;
-    unsigned char top;   // 0x98
-};
 int GetHashValue32(char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void* cBE_getBE();
@@ -1368,15 +1372,6 @@ static inline int isMode1_A798(void* self)
     return *(int*)((char*)self + 0xC8) == 1;
 }
 
-static inline sEquipEntry_A798* getEntry_A798(sEquipDb_A798* db, int id)
-{
-    short idx = db->map[id];
-    if (idx >= 0) {
-        return &db->entries[idx];
-    }
-    return 0;
-}
-
 static inline void setText_A798(void* self, char* s)
 {
     cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x4C), GetHashValue32(s));
@@ -1384,12 +1379,12 @@ static inline void setText_A798(void* self, char* s)
 
 extern "C" void func_0019A798(void* self)
 {
-    if (*(cUIObj_A798**)((char*)self + 0x4C) == 0)
+    if (*(cUIThing**)((char*)self + 0x4C) == 0)
         return;
-    (*(cUIObj_A798**)((char*)self + 0x4C))->setVisible(0);
-    int sel = (*(sList_A798**)((char*)self + 0x5C))->sel;
+    (*(cUIThing**)((char*)self + 0x4C))->setVisible(0);
+    int sel = (*(sEquipList**)((char*)self + 0x5C))->sel;
     if (sel < 0 || sel >= *(int*)((char*)self + 0x958)) {
-        (*(cUIObj_A798**)((char*)self + 0x4C))->setVisible(1);
+        (*(cUIThing**)((char*)self + 0x4C))->setVisible(1);
         if (!isMode1_A798(self)) {
             if (*(int*)((char*)self + 0xAE4) != 0)
                 setText_A798(self, D_004608D8);
@@ -1400,7 +1395,7 @@ extern "C" void func_0019A798(void* self)
         }
         return;
     }
-    sEquipItem_A798* item = *(sEquipItem_A798**)((char*)self + (sel << 2) + 0x124);
+    sEquipItem* item = *(sEquipItem**)((char*)self + (sel << 2) + 0x124);
     if (item->flags & 0x20) {
         setText_A798(self, D_00460920);
     } else if (isMode1_A798(self)) {
@@ -1412,9 +1407,9 @@ extern "C" void func_0019A798(void* self)
         else
             setText_A798(self, D_00460958);
     } else {
-        sEquipDb_A798* db = (sEquipDb_A798*)func_0014AD28(cBE_getInterface(cBE_getBE(), 9), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC));
-        sEquipEntry_A798* e = getEntry_A798(db, item->id);
-        int idx = sel - (*(sList_A798**)((char*)self + 0x5C))->top;
+        sBEProfileChar* db = (sBEProfileChar*)func_0014AD28(cBE_getInterface(cBE_getBE(), 9), *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC));
+        sBEFlagEntryPC* e = getEntry(db, item->id);
+        int idx = sel - (*(sEquipList**)((char*)self + 0x5C))->top;
         if (D_004A18D8 >= *(int*)((char*)self + 0xC4) + *(int*)((char*)self + (idx << 2) + 0xA78)) {
             if (e->flags & 4)
                 setText_A798(self, D_00460970);
@@ -1424,7 +1419,7 @@ extern "C" void func_0019A798(void* self)
             setText_A798(self, D_00460988);
         }
     }
-    (*(cUIObj_A798**)((char*)self + 0x4C))->setVisible(1);
+    (*(cUIThing**)((char*)self + 0x4C))->setVisible(1);
 }
 #endif
 
@@ -1641,42 +1636,17 @@ extern "C" void func_0019AD18(sEquip_AD18* self, int n)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019AFD0);
 #ifdef SKIP_ASM
-struct sEquipEntry_AFD0 {
-    unsigned short f0;
-    unsigned short flags;
-};
-struct sEquipDb_AFD0 {
-    char pad_0x0[0x288];
-    short* map;     // 0x288
-    char pad_0x28c[4];
-    sEquipEntry_AFD0 entries[1];  // 0x290
-};
-struct sEquipItem_AFD0 {
-    int f0;
-    short id;       // 0x4
-    char pad_0x6[0x34 - 0x6];
-    int flags;      // 0x34
-};
 extern "C" int func_0014D7E8(int a0, int a1, int a2, void* out, int a4, int a5);
 
-static inline sEquipEntry_AFD0* getEntry_AFD0(sEquipDb_AFD0* db, int id)
+extern "C" int func_0019AFD0(void* self, int a1, sBEProfileChar* db, int a3)
 {
-    short idx = db->map[id];
-    if (idx >= 0) {
-        return &db->entries[idx];
-    }
-    return 0;
-}
-
-extern "C" int func_0019AFD0(void* self, int a1, sEquipDb_AFD0* db, int a3)
-{
-    sEquipItem_AFD0* items[528];
+    sEquipItem* items[528];
     int n = func_0014D7E8(a1, *(int*)((char*)self + 0xBC), a3, items, -1, 1);
     int i;
     for (i = 0; i < n; i++) {
-        sEquipItem_AFD0* it = items[i];
+        sEquipItem* it = items[i];
         if (it->flags & 4) {
-            if (getEntry_AFD0(db, it->id)->flags & 2) {
+            if (getEntry(db, it->id)->flags & 2) {
                 if (!(it->flags & 0x20)) {
                     return 1;
                 }
@@ -1690,44 +1660,17 @@ extern "C" int func_0019AFD0(void* self, int a1, sEquipDb_AFD0* db, int a3)
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B098);
 #ifdef SKIP_ASM
-struct sEquipEntry_B098 {
-    unsigned short f0;
-    unsigned short flags;
-};
-struct sEquipDb_B098 {
-    char pad_0x0[0x288];
-    short* map;     // 0x288
-    char pad_0x28c[4];
-    sEquipEntry_B098 entries[1];  // 0x290
-};
-struct sEquipItem_B098 {
-    short f0;
-    signed char slot;   // 0x2
-    char f3;
-    short id;       // 0x4
-    char pad_0x6[0x34 - 0x6];
-    int flags;      // 0x34
-};
 extern "C" int func_0014D7E8(int a0, int a1, int a2, void* out, int a4, int a5);
 
-static inline sEquipEntry_B098* getEntry_B098(sEquipDb_B098* db, int id)
+extern "C" int func_0019B098(void* self, int a1, sBEProfileChar* db, int a3)
 {
-    short idx = db->map[id];
-    if (idx >= 0) {
-        return &db->entries[idx];
-    }
-    return 0;
-}
-
-extern "C" int func_0019B098(void* self, int a1, sEquipDb_B098* db, int a3)
-{
-    sEquipItem_B098* items[528];
+    sEquipItem* items[528];
     int n = func_0014D7E8(a1, *(int*)((char*)self + 0xBC), a3, items, -1, 1);
     int i;
     for (i = 0; i < n; i++) {
-        sEquipItem_B098* it = items[i];
+        sEquipItem* it = items[i];
         if (it->flags & 4) {
-            if (!(getEntry_B098(db, it->id)->flags & 2)) {
+            if (!(getEntry(db, it->id)->flags & 2)) {
                 if (it->slot == *(int*)((char*)self + 0xCC)) {
                     if (!(it->flags & 0x20)) {
                         return 0;
@@ -1745,16 +1688,9 @@ INCLUDE_ASM("fe/festatecharequipdetail", func_0019B180);
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B458);
 #ifdef SKIP_ASM
-struct sEquipListWidget {
-    char pad_0x0[0x95];
-    unsigned char sel;   // 0x95
-    char pad_0x96[2];
-    unsigned char top;   // 0x98
-};
-
 struct sEquipDetail {
     char pad_0x0[0x5C];
-    sEquipListWidget* list;   // 0x5C
+    sEquipList* list;   // 0x5C
     char pad_0x60[0x124 - 0x60];
     int items[(0x958 - 0x124) / 4];  // 0x124
     int count;   // 0x958
@@ -1832,28 +1768,6 @@ extern "C" int func_0019B598(void* self)
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019B618);
 #ifdef SKIP_ASM
 struct cUIText;
-class cUIObj_B618 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-    virtual void v10();
-    virtual void setColor(void* c);
-};
-struct sList_B618 {
-    char pad_0x0[0x95];
-    unsigned char sel;   // 0x95
-    unsigned char count; // 0x96
-    char pad_0x97;
-    unsigned char top;   // 0x98
-};
 int GetHashValue32(char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
@@ -1872,8 +1786,8 @@ extern "C" void func_0019B618(void* self, int reset, int select)
 {
     if (*(void**)((char*)self + 0x5C) == 0)
         return;
-    cUIObj_B618** a = (cUIObj_B618**)((char*)self + 0x8C);
-    cUIObj_B618** b = (cUIObj_B618**)((char*)self + 0xA4);
+    cUIThing** a = (cUIThing**)((char*)self + 0x8C);
+    cUIThing** b = (cUIThing**)((char*)self + 0xA4);
     for (int i = 0; i < 6; i++) {
         a[i]->setVisible(0);
         b[i]->setVisible(0);
@@ -1891,15 +1805,15 @@ extern "C" void func_0019B618(void* self, int reset, int select)
         n = func_0019B518(self);
     int v;
     if (n == 0) {
-        (*(cUIObj_B618**)((char*)self + 0x8C))->setVisible(1);
-        (*(cUIObj_B618**)((char*)self + 0x8C))->setColor(D_004C6708);
+        (*(cUIThing**)((char*)self + 0x8C))->setVisible(1);
+        (*(cUIThing**)((char*)self + 0x8C))->v11(D_004C6708);
         cUIText_setUnicodeStringByID(*(cUIText**)((char*)self + 0x8C), GetHashValue32(D_004609A0));
-        (*(sList_B618**)((char*)self + 0x5C))->count = 1;
-        (*(sList_B618**)((char*)self + 0x5C))->top = 0;
+        (*(sEquipList**)((char*)self + 0x5C))->count = 1;
+        (*(sEquipList**)((char*)self + 0x5C))->top = 0;
         v = 0;
         n = 1;
     } else {
-        sList_B618* l = *(sList_B618**)((char*)self + 0x5C);
+        sEquipList* l = *(sEquipList**)((char*)self + 0x5C);
         v = l->sel - l->top;
     }
     if (v >= n)
@@ -1909,7 +1823,7 @@ extern "C" void func_0019B618(void* self, int reset, int select)
     if (reset)
         v = 0;
     if (select) {
-        sList_B618* l = *(sList_B618**)((char*)self + 0x5C);
+        sEquipList* l = *(sEquipList**)((char*)self + 0x5C);
         cUIMenu_setSelectedByIndex(l, l->top + v);
     }
 }
@@ -1923,54 +1837,22 @@ extern "C" void func_003E6574(void* dst, void* src, int n);
 extern "C" void func_0014ACB0(void* self, int a1, int a2, void* src);
 extern "C" int func_0014B478(void* self, int a1, int a2);
 
-struct sFlagEntry_19B7E0
-{
-    short id;
-    unsigned short flags;
-    sFlagEntry_19B7E0() : id(-1), flags(0) {}
-};
-
-struct sProfile_19B7E0
-{
-    char pad[0x288];
-    short* index;
-    int count;
-    sFlagEntry_19B7E0 entries[0x20D];
-};
-
-static inline sFlagEntry_19B7E0* getEntry_19B7E0(sProfile_19B7E0* p, int idx)
-{
-    short k = p->index[idx];
-    if (k >= 0)
-        return &p->entries[k];
-    return 0;
-}
-
-static inline int IsSet_19B7E0(sFlagEntry_19B7E0* e)
+static inline int IsSet_19B7E0(sBEFlagEntryPC* e)
 {
     return e->flags & 4;
 }
-
-struct sItem_19B7E0 {
-    int f0;
-    short id;           // 0x4
-    char pad6[0x14 - 0x6];
-    char* name;         // 0x14
-    char pad18[0x34 - 0x18];
-    int flags;          // 0x34
-};
 
 struct sCharEquip_19B7E0 {
     char pad0[0x44];
     signed char team;               // 0x44
     char pad45[0x5C - 0x45];
-    sList_B618* list;               // 0x5C
+    sEquipList* list;               // 0x5C
     char pad60[0x8C - 0x60];
-    cUIObj_B618* texts[6];          // 0x8C
-    cUIObj_B618* icons[6];          // 0xA4
+    cUIThing* texts[6];          // 0x8C
+    cUIThing* icons[6];          // 0xA4
     int slot;                       // 0xBC
     char padC0[0x124 - 0xC0];
-    sItem_19B7E0* items[(0xA78 - 0x124) / 4]; // 0x124
+    sEquipItem* items[(0xA78 - 0x124) / 4]; // 0x124
     int vals[6];                    // 0xA78
     char padA90[0xA98 - 0xA90];
     int colLocked;                  // 0xA98
@@ -1981,20 +1863,20 @@ struct sCharEquip_19B7E0 {
 extern "C" void func_0019B7E0(void* selfv, int i)
 {
     sCharEquip_19B7E0* self = (sCharEquip_19B7E0*)selfv;
-    sList_B618* l = self->list;
+    sEquipList* l = self->list;
     int top = l ? l->top : 0;
-    sItem_19B7E0* item = self->items[top + i];
-    cUIObj_B618* text = self->texts[i];
-    cUIObj_B618* icon = self->icons[i];
+    sEquipItem* item = self->items[top + i];
+    cUIThing* text = self->texts[i];
+    cUIThing* icon = self->icons[i];
     self->vals[i] = 0xFFFE7961;
     int col = 0;
     if (item->flags & 0x20) {
         col = self->colOwned;
     } else {
         void* iface = cBE_getInterface(cBE_getBE(), 9);
-        sProfile_19B7E0* prof = (sProfile_19B7E0*)func_0014AD28(iface, self->team, self->slot);
-        sFlagEntry_19B7E0* e = getEntry_19B7E0(prof, item->id);
-        sFlagEntry_19B7E0 save[0x20D];
+        sBEProfileChar* prof = (sBEProfileChar*)func_0014AD28(iface, self->team, self->slot);
+        sBEFlagEntryPC* e = getEntry(prof, item->id);
+        sBEFlagEntryPC save[0x20D];
         func_003E6574(save, prof->entries, 0x834);
         int before = func_0014B478(iface, self->team, self->slot);
         if (func_0014AFB0(iface, self->team, self->slot, item->id, !IsSet_19B7E0(e))) {
@@ -2241,26 +2123,15 @@ extern "C" void* func_0014AD28(void* self, int a1, int a2);
 extern "C" int func_0014AFB0(void* self, int a1, int a2, int id, int locked);
 extern "C" void func_0014AEA8(void* self, int a1, int a2);
 
-struct sItemK19BEE8 {
-    short id;
-    unsigned short flags;
-};
-struct sItemListK19BEE8 {
-    char pad_0x0[0x288];
-    short* map;                 // 0x288
-    int count;                  // 0x28C
-    sItemK19BEE8 items[1];      // 0x290
-};
-
-static inline sItemK19BEE8* getItemK19BEE8(sItemListK19BEE8* l, int id)
+static inline sBEFlagEntryPC* getItemK19BEE8(sBEProfileChar* l, int id)
 {
-    int idx = l->map[id];
+    int idx = l->index[id];
     if (idx >= 0)
-        return &l->items[idx];
+        return &l->entries[idx];
     return 0;
 }
 
-static inline bool flagClear_19BEE8(const sItemK19BEE8* e, int mask)
+static inline bool flagClear_19BEE8(const sBEFlagEntryPC* e, int mask)
 {
     return (e->flags & mask) == 0;
 }
@@ -2273,9 +2144,9 @@ extern "C" int func_0019BEE8(void* self)
     if (!(*(int*)(item + 0x34) & 4))
         return 0;
     void* iface = cBE_getInterface_Fv(cBE_getBE(), 9);
-    sItemListK19BEE8* list = (sItemListK19BEE8*)func_0014AD28(iface, *(signed char*)((char*)self + 0x44),
+    sBEProfileChar* list = (sBEProfileChar*)func_0014AD28(iface, *(signed char*)((char*)self + 0x44),
                                                               *(int*)((char*)self + 0xBC));
-    sItemK19BEE8* e = getItemK19BEE8(list, *(short*)(item + 4));
+    sBEFlagEntryPC* e = getItemK19BEE8(list, *(short*)(item + 4));
     if (func_0014AFB0(iface, *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC), *(short*)(item + 4),
                       flagClear_19BEE8(e, 4))) {
         func_0014AEA8(iface, *(signed char*)((char*)self + 0x44), *(int*)((char*)self + 0xBC));
