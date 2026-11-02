@@ -266,6 +266,7 @@ struct sPath {                      /* 0x928 */
     int f924;
 };
 extern struct sPath *D_0044F420;
+extern struct sPath D_00517610[4];
 extern struct sA8E8Bus D_0050AAE0[];    /* D_0050A8E8.f1F8 */
 extern struct sA8E8Bus D_0050AAF4[];    /* D_0050A8E8.f20C */
 extern struct sA8E8Bus D_0050AB08[];    /* D_0050A8E8.f220 */
@@ -17456,24 +17457,21 @@ void func_003D5EE8_impl(struct sPathVoice *v) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D6108);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct P_6108 { char pad[0x30]; int m_a; int m_b; char pad2[0x928 - 0x38]; };
 extern int f5450_6108(int) __asm__("func_003D5450");
-extern int D_f420_6108[] __asm__("D_0044F420");
 extern unsigned char D_0044F42C;
 extern int D_f430_6108[] __asm__("D_0044F430");
-extern struct P_6108 D_7610_6108[4] __asm__("D_00517610");
 
 void func_003D6108(int a0, int a1) {
     int i;
     if (D_0044F42C != 0 && D_f430_6108[0] == 0 && f5450_6108(-1) != 0) {
         a0 &= 0x0F000000;
         for (i = 0; i < 4; i++) {
-            if (D_7610_6108[i].m_b != 0 && (D_7610_6108[i].m_a & a0) && f5450_6108(i & 0xFF) != 0) {
-                *(int *)(D_f420_6108[0] + 0x14) = a1;
+            if (D_00517610[i].f34 != 0 && (D_00517610[i].f30 & a0) && f5450_6108(i & 0xFF) != 0) {
+                D_0044F420->f14[0].dur = a1;
             }
         }
         D_f430_6108[0] = 0;
-        D_f420_6108[0] = 0;
+        D_0044F420 = 0;
     }
 }
 #endif
