@@ -2561,19 +2561,16 @@ int func_003B7C40(int h, int *out) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7D80);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void *func_003B7A70_7D80(int) __asm__("func_003B7A70");
-
 int func_003B7D80(int arg0, int arg1) {
     int var_18;
-    char *temp_2;
+    struct sA0A0Node *temp_2;
 
     var_18 = -8;
     func_003B58A0();
-    temp_2 = func_003B7A70_7D80(arg0);
+    temp_2 = func_003B7A70(arg0);
     if (temp_2 != 0) {
         var_18 = 0;
-        *(int *)(temp_2 + 0x20) = (short)arg1;
+        temp_2->f20 = (short)arg1;
     }
     func_003B58D8();
     return var_18;
