@@ -28,6 +28,9 @@ struct sSndOptsDelay {
     int fC;
 };
 
+#define SND_OPTS_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define SND_OPTS_MAX(a, b) ((a) >= (b) ? (a) : (b))
+
 // cSndPlayOpts (prototype class): the play-option stack; push = cur++ and copy def into mCurrent[cur]. The
 // allocation tags of its ctor (sound/ps2soundman) name the arrays: ch = mCurrent, p34 = mPosStatic,
 // vals = mBaseVol, p3C = mVolControl, p60 = mPtr, p64 = mViewport, p68 = mVanish, p6C = mRadius, p70 = mDelay,
@@ -52,6 +55,13 @@ struct cSndPlayOpts {
     int* p7C;                // 0x7C
     int* p80;                // 0x80
     int* p84;                // 0x84
+    void setVal(int i, int v) {
+        vals[i] = v;
+    }
+    // mCurrent[i].vol = the current base volume clamped to 0..127
+    void update(int i) {
+        ch[i].vol = SND_OPTS_MAX(SND_OPTS_MIN(vals[cur], 0x7F), 0);
+    }
 };
 
 // cBankManager as this unit sees it: only its cSndPlayOpts part at 0x1D8 is used here.
@@ -8943,36 +8953,8 @@ struct sSnd64A0Sys {
     char pad0[0x1C];
     sSnd64A0Ent ent[1];
 };
-struct sSnd64A0Ch {
-    unsigned char vol;
-    char pad1[0x17];
-};
 
-#define S64_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define S64_MAX(a, b) ((a) >= (b) ? (a) : (b))
 
-struct sSnd64A0Sub {
-    char pad0[0x1C];
-    volatile int cur;   // 0x1C
-    sSnd64A0Ch* ch;     // 0x20
-    void* tgt[5];       // 0x24
-    int* vals;          // 0x38
-    int* p3C;           // 0x3C
-    char pad40[0x64 - 0x40];
-    int* p64;           // 0x64
-    char pad68[0x74 - 0x68];
-    int* p74;           // 0x74
-    void setVal(int i, int v) {
-        vals[i] = v;
-    }
-    void update(int i) {
-        ch[i].vol = S64_MAX(S64_MIN(vals[cur], 0x7F), 0);
-    }
-};
-struct sSnd64A0Mgr {
-    char pad0[0x1D8];
-    sSnd64A0Sub sub;    // 0x1D8
-};
 
 extern "C" void func_002A64A0(void* vself, int idx)
 {
@@ -8985,16 +8967,16 @@ extern "C" void func_002A64A0(void* vself, int idx)
     int r = func_002A4CA0((sSndRandList*)e);
     if (r == 0) return;
     func_002A8450(D_004A36F8, *(int*)(self + 0xD8), r);
-    sSnd64A0Mgr* m1 = *(sSnd64A0Mgr**)D_004A36F8;
+    cBankManager* m1 = *(cBankManager**)D_004A36F8;
     m1->sub.tgt[m1->sub.cur] = self + 0x10;
-    sSnd64A0Mgr* m2 = *(sSnd64A0Mgr**)D_004A36F8;
+    cBankManager* m2 = *(cBankManager**)D_004A36F8;
     m2->sub.setVal(m2->sub.cur, *(int*)(self + 0x178));
     m2->sub.update(m2->sub.cur);
-    sSnd64A0Mgr* m3 = *(sSnd64A0Mgr**)D_004A36F8;
+    cBankManager* m3 = *(cBankManager**)D_004A36F8;
     m3->sub.p3C[m3->sub.cur] = *(int*)(self + 0x17C);
-    sSnd64A0Mgr* m4 = *(sSnd64A0Mgr**)D_004A36F8;
+    cBankManager* m4 = *(cBankManager**)D_004A36F8;
     m4->sub.p74[m4->sub.cur] = 1;
-    sSnd64A0Mgr* m5 = *(sSnd64A0Mgr**)D_004A36F8;
+    cBankManager* m5 = *(cBankManager**)D_004A36F8;
     m5->sub.p64[m5->sub.cur] = *(int*)self;
     *(int*)(self + 0x174) = func_002A86B8(D_004A36F8);
     *(int*)(self + 0x18C) = idx + 1;
@@ -9020,36 +9002,8 @@ struct sSnd6648Sys {
     char pad0[0x1C];
     sSnd6648Ent ent[1];
 };
-struct sSnd6648Ch {
-    unsigned char vol;
-    char pad1[0x17];
-};
 
-#define S66_MIN(a, b) ((a) < (b) ? (a) : (b))
-#define S66_MAX(a, b) ((a) >= (b) ? (a) : (b))
 
-struct sSnd6648Sub {
-    char pad0[0x1C];
-    volatile int cur;   // 0x1C
-    sSnd6648Ch* ch;     // 0x20
-    void* tgt[5];       // 0x24
-    int* vals;          // 0x38
-    int* p3C;           // 0x3C
-    char pad40[0x64 - 0x40];
-    int* p64;           // 0x64
-    char pad68[0x74 - 0x68];
-    int* p74;           // 0x74
-    void setVal(int i, int v) {
-        vals[i] = v;
-    }
-    void update(int i) {
-        ch[i].vol = S66_MAX(S66_MIN(vals[cur], 0x7F), 0);
-    }
-};
-struct sSnd6648Mgr {
-    char pad0[0x1D8];
-    sSnd6648Sub sub;    // 0x1D8
-};
 
 extern "C" void func_002A6648(void* vself, int idx)
 {
@@ -9062,16 +9016,16 @@ extern "C" void func_002A6648(void* vself, int idx)
     int r = func_002A4CA0((sSndRandList*)((char*)e + 0x18));
     if (r == 0) return;
     func_002A8450(D_004A36F8, *(int*)(self + 0xD8), r);
-    sSnd6648Mgr* m1 = *(sSnd6648Mgr**)D_004A36F8;
+    cBankManager* m1 = *(cBankManager**)D_004A36F8;
     m1->sub.tgt[m1->sub.cur] = self + 0x10;
-    sSnd6648Mgr* m2 = *(sSnd6648Mgr**)D_004A36F8;
+    cBankManager* m2 = *(cBankManager**)D_004A36F8;
     m2->sub.setVal(m2->sub.cur, *(int*)(self + 0x178));
     m2->sub.update(m2->sub.cur);
-    sSnd6648Mgr* m3 = *(sSnd6648Mgr**)D_004A36F8;
+    cBankManager* m3 = *(cBankManager**)D_004A36F8;
     m3->sub.p3C[m3->sub.cur] = *(int*)(self + 0x17C);
-    sSnd6648Mgr* m4 = *(sSnd6648Mgr**)D_004A36F8;
+    cBankManager* m4 = *(cBankManager**)D_004A36F8;
     m4->sub.p74[m4->sub.cur] = 1;
-    sSnd6648Mgr* m5 = *(sSnd6648Mgr**)D_004A36F8;
+    cBankManager* m5 = *(cBankManager**)D_004A36F8;
     m5->sub.p64[m5->sub.cur] = *(int*)self;
     *(int*)(self + 0x174) = func_002A86B8(D_004A36F8);
     *(int*)(self + 0x18C) = ~idx;
