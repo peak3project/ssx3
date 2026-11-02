@@ -78,6 +78,13 @@ struct sWsTriObj {
     float bmax[3];
 };
 
+// Octree node with eight children and two object lists.
+struct sWsOctNode2 {
+    void* child[8];                 // 0x00
+    void** listB;                   // 0x20
+    void** listA;                   // 0x24
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1559,11 +1566,6 @@ extern "C" void func_00335B90(void* vctx, void* vnode)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00335D78);
 #ifdef SKIP_ASM
-struct sOct_5D78 {
-    void* child[8];                 // 0x00
-    void** listB;                   // 0x20
-    void** listA;                   // 0x24
-};
 
 struct sQH_5D78 {
 };
@@ -1596,7 +1598,7 @@ extern "C" void helpX_5D78(char* flag, sCb_5D78* cb, sCb_5D78* cb2, sBox_5D78* b
 // nash::Cell::descend<TerrainCallback>
 static inline void descend_5D78(void** n, sCb_5D78* cb)
 {
-    sOct_5D78* o = (sOct_5D78*)n;
+    sWsOctNode2* o = (sWsOctNode2*)n;
     void** p;
     for (p = o->listA; p != 0; p = (void**)*p) {
         func_00335960(cb, p);
@@ -2818,11 +2820,6 @@ extern "C" void func_0033B748(char* self, sCb_B748* cb, sCb_B748* cb2, float* bo
 INCLUDE_ASM("intersect/worldsphtree", func_0033CCF8);
 #ifdef SKIP_ASM
 
-struct sOct_CCF8 {
-    void* child[8];                 // 0x00
-    void** listB;                   // 0x20
-    void** listA;                   // 0x24
-};
 extern "C" void func_00335960(void* ctx, void* obj);
 extern "C" void func_00335B90(void* ctx, void* obj);
 extern "C" void func_00340FA0(void* self, void* ctx);
@@ -2830,7 +2827,7 @@ extern "C" void func_00340FA0(void* self, void* ctx);
 // nash::Cell::descend<TerrainCallback>
 static inline void descend_CCF8(void** n, void* cb)
 {
-    sOct_CCF8* o = (sOct_CCF8*)n;
+    sWsOctNode2* o = (sWsOctNode2*)n;
     void** p;
     for (p = o->listA; p != 0; p = (void**)*p) {
         func_00335960(cb, p);
@@ -2852,7 +2849,7 @@ extern "C" void func_0033CCF8(char* self, void* cb, void* cb2, float* box, void*
 {
     {
         void** p;
-        sOct_CCF8* o = (sOct_CCF8*)node;
+        sWsOctNode2* o = (sWsOctNode2*)node;
         for (p = o->listA; p != 0; p = (void**)*p) {
             func_00335960(cb, p);
         }
