@@ -4275,7 +4275,6 @@ int* func_00226610(void*);
 struct Ent_2968 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3CE8_2968[2] __asm__("D_004A3CE8");
-extern char* D_004A3DD8_2968 __asm__("D_004A3DD8");
 extern int D_004A5770_2968 __asm__("D_004A5770");
 extern unsigned D_004A5768_2968 __asm__("D_004A5768");
 extern sBindEnd_1FBE38 D_004A576C_2968 __asm__("D_004A576C");
@@ -4299,16 +4298,16 @@ extern "C" cLunoValue func_00302968(int n, Ent_2968* e) {
         else
             *d = p->val;
     }
-    char* g = D_004A3DD8_2968;
+    cWScriptMan* g = D_004A3DD8;
     unsigned x = vp[0];
     sRefSet* e0 = (*D_004A47B8)->sets[x & 0xFF];
     unsigned w;
-    int r;
+    char* r;
     if (e0 == 0 || (w = e0->refs[x >> 8] >> 8) == 0)
         r = 0;
     else
-        r = w << 2;
-    *(int*)(g + 0x290) = r;
+        r = (char*)(w << 2);
+    g->f290 = r;
     return D_004C9098;
 }
 #endif
