@@ -16261,25 +16261,22 @@ int func_003D1A88_impl(unsigned int mask) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1BA8);
 #ifdef SKIP_ASM
 struct B16_1BA8 { char b[16]; };
-struct G_1BA8 { char pad[0xDC]; unsigned a[17]; char pad120[0x91C - 0x120]; int n; };
-extern struct G_1BA8 *D_0044F420_1BA8 __asm__("D_0044F420");
 extern void func_0041605C_1BA8(unsigned, unsigned, unsigned) __asm__("func_0041605C");
 
 
 void func_003D1BA8(int idx, int status) {
     struct B16_1BA8 hdr; /* copied but unused: its reader is compiled out in the release build */
-    unsigned e = D_0044F420_1BA8->a[idx];
-    unsigned end = (unsigned)D_0044F420_1BA8 + 0x91C;
+    unsigned e = (unsigned)D_0044F420->f0DC[idx];
+    unsigned end = (unsigned)D_0044F420 + 0x91C;
     int sz = (*(unsigned short *)(e + 0xE) & 0x3F) * 16 + 16;
     unsigned i;
-    int k;
     hdr = *(struct B16_1BA8 *)e;
-    if (e >= (unsigned)D_0044F420_1BA8 + 0x11C && e < end) {
+    if (e >= (unsigned)D_0044F420 + 0x11C && e < end) {
         func_0041605C_1BA8(e, e + sz, end - e);
         for (i = 0; i < 17; i++) {
-            unsigned p = D_0044F420_1BA8->a[i];
+            unsigned p = (unsigned)D_0044F420->f0DC[i];
             if (e < p && p < end) {
-                D_0044F420_1BA8->a[i] = p - sz;
+                D_0044F420->f0DC[i] = (struct sPathEvent *)(p - sz);
             }
         }
     } else {
@@ -16287,11 +16284,11 @@ void func_003D1BA8(int idx, int status) {
             D_0044F428(e, status);
         }
     }
-    D_0044F420_1BA8->a[idx] = 0;
+    D_0044F420->f0DC[idx] = 0;
     for (idx++; idx < 16; idx++) {
-        D_0044F420_1BA8->a[idx - 1] = D_0044F420_1BA8->a[idx];
+        D_0044F420->f0DC[idx - 1] = D_0044F420->f0DC[idx];
     }
-    D_0044F420_1BA8->n--;
+    D_0044F420->f91C--;
 }
 #endif
 
