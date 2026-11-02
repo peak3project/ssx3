@@ -68,6 +68,16 @@ struct sWsDirHit {
     float len;            // 0x40
 };
 
+// A triangle-mesh world object (id, flags, bounds at 0x158).
+struct sWsTriObj {
+    char pad00[8];
+    short id;
+    unsigned short flags;
+    char pad0C[0x14C];
+    float bmin[3];
+    float bmax[3];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -949,14 +959,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00333EF8);
 extern t4Vector D_004FF120_333EF8[] __asm__("D_004FF120");
 
 
-struct sTriObj_333EF8 {
-    char pad00[8];
-    short id;
-    unsigned short flags;
-    char pad0C[0x14C];
-    float bmin[3];
-    float bmax[3];
-};
 
 struct sHit_333EF8 {
     t4Vector pos;   // 0x00
@@ -1012,7 +1014,7 @@ struct sTree_333EF8 {
     unsigned int count;             // 0x8
     sNode_333EF8* items[0x40];      // 0xC
     unsigned int ntris;             // 0x10C
-    sTriObj_333EF8* tris[1];        // 0x110
+    sWsTriObj* tris[1];        // 0x110
 };
 
 extern "C" void func_003279D0(void* cache, void* src, void** out);
@@ -1021,7 +1023,7 @@ struct sWsRayHit;
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
-static inline int overlapTri_333EF8(const sWsQueryBox* q, const sTriObj_333EF8* n)
+static inline int overlapTri_333EF8(const sWsQueryBox* q, const sWsTriObj* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1078,7 +1080,7 @@ extern "C" int func_00333EF8(void* vself, void* vq, sWsRayHit* vhits, int cap, i
     sHit_333EF8* hits = (sHit_333EF8*)vhits;
     int n = 0;
     for (unsigned int i = 0; i < self->ntris; i++) {
-        sTriObj_333EF8* obj = self->tris[i];
+        sWsTriObj* obj = self->tris[i];
         if ((obj->flags & 0x41) != 0x41) {
             continue;
         }
@@ -1380,14 +1382,6 @@ INCLUDE_ASM("intersect/worldsphtree", func_00335960);
 extern t4Vector D_004FF120[];
 
 
-struct sTriObj_335960 {
-    char pad00[8];
-    short id;
-    unsigned short flags;
-    char pad0C[0x14C];
-    float bmin[3];
-    float bmax[3];
-};
 
 struct sHit_335960 {
     t4Vector pos;   // 0x00
@@ -1422,7 +1416,7 @@ struct sCtx_335960 {
 extern "C" void func_003279D0(void* cache, void* src, void** out);
 extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 
-static inline int overlap_335960(const sWsQueryBox* q, const sTriObj_335960* n)
+static inline int overlap_335960(const sWsQueryBox* q, const sWsTriObj* n)
 {
     int r = 0;
     if (q->max[0] > n->bmin[0] && q->min[0] < n->bmax[0] &&
@@ -1453,7 +1447,7 @@ static inline void reset_335960(sHit_335960* h)
 extern "C" void func_00335960(void* vctx, void* vobj)
 {
     sCtx_335960* ctx = (sCtx_335960*)vctx;
-    sTriObj_335960* obj = (sTriObj_335960*)vobj;
+    sWsTriObj* obj = (sWsTriObj*)vobj;
     t4Vector pos;
     t4Vector nrm;
     t4Vector uv;
