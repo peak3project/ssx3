@@ -5150,13 +5150,11 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303F80);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char *D_004A3DD8_3F80 __asm__("D_004A3DD8");
 extern char *D_004A28A8_3F80 __asm__("D_004A28A8");
-struct V3_3F80 { float x, y, z; };
-extern V3_3F80 D_004C9098_3F80 __asm__("D_004C9098");
 struct A_3F80 { char pad[0x6C0]; };
 struct B_3F80 { virtual void v01(); };
 struct D_3F80 : A_3F80, B_3F80 { };
 struct Tab_3F80 { char pad[0x28]; D_3F80 *arr[1]; };
-extern "C" V3_3F80 func_00303F80(void) {
+extern "C" cLunoValue func_00303F80(void) {
     int slot = *(int*)D_004A3DD8_3F80;
     if (slot != -1) {
         D_3F80 *r = (*(Tab_3F80**)(*(char**)(D_004A28A8_3F80 + 0x84) + 0xC))->arr[slot];
@@ -5164,7 +5162,7 @@ extern "C" V3_3F80 func_00303F80(void) {
         D_3F80 *d = (D_3F80*)b;
         *(int*)((char*)d + 0x3FC) = 1;
     }
-    return D_004C9098_3F80;
+    return D_004C9098;
 }
 #endif
 
