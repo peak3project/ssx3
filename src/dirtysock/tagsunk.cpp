@@ -3375,7 +3375,7 @@ void func_00261058(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261070);
 #ifdef SKIP_ASM
-struct sVE261070 {
+struct sVEntryVI {
     short delta;
     short index;
     void (*fn)(void*, int);
@@ -3383,7 +3383,7 @@ struct sVE261070 {
 
 struct sObj261070 {
     char pad[0xC];
-    sVE261070* vt;
+    sVEntryVI* vt;
 };
 
 struct sVec261070 {
@@ -3594,16 +3594,10 @@ void func_0025FC28_v(void* self, int a1) __asm__("func_0025FC28__FPvi");
 extern "C" void func_003F0BE0(void* p);
 extern "C" void func_003F07A0(void* p);
 
-struct sVE261530 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
-
 struct sObj261530 {
     int id;
     char pad[0x38];
-    sVE261530* vt;
+    sVEntryVI* vt;
 };
 
 struct sMgr261530 {
