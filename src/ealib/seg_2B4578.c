@@ -7165,28 +7165,6 @@ int func_003C2440(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C25E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_25E0 {
-    char pad00[0x4];
-    short h[14];
-    unsigned short f20;
-    char pad22;
-    unsigned char n;
-    unsigned short flags;
-    char pad26[0x8A - 0x26];
-    unsigned short f8A;
-};
-struct G_25E0 {
-    char pad000[0x2A];
-    unsigned short f2A;
-    unsigned short f2C;
-    char pad02E;
-    unsigned char f2F;
-    unsigned char f30;
-    char pad031[0x49 - 0x31];
-    unsigned char f49;
-    char pad04A[0x1F0 - 0x4A];
-    struct E_25E0 *f1F0;
-};
 struct A8_25E0 {
     int a;
     short v;
@@ -7206,35 +7184,34 @@ struct H_25E0 {
     char pad[0xCB0];
     struct T_25E0 *tbl;
 };
-extern struct G_25E0 D_0050A8E8_25E0 __asm__("D_0050A8E8");
 extern struct H_25E0 D_0050AD00_25E0 __asm__("D_0050AD00");
 extern void func_003C8A88_25E0(int a, unsigned int v) __asm__("func_003C8A88");
 
 int func_003C25E0(int idx) {
-    struct E_25E0 *e = &D_0050A8E8_25E0.f1F0[idx];
+    struct sA8E8Chan *e = &D_0050A8E8.f1F0[idx];
     unsigned int v;
     int i;
 
-    if (e->flags & 8) {
+    if (e->f24 & 8) {
         v = (unsigned int)((e->f20 << 12) / 48000 * e->f8A) >> 12;
         if (v >= 0x4000) {
             v = 0x3FFF;
         }
-        for (i = 0; i < e->n; i++) {
-            D_0050AD00_25E0.tbl->a[e->h[i]].v = v;
-            if (D_0050A8E8_25E0.f49 == 2) {
-                D_0050AD00_25E0.tbl->a[e->h[i] + 0x18].v = v;
+        for (i = 0; i < e->f23; i++) {
+            D_0050AD00_25E0.tbl->a[e->f04[i]].v = v;
+            if (D_0050A8E8.setup.cfg.f29 == 2) {
+                D_0050AD00_25E0.tbl->a[e->f04[i] + 0x18].v = v;
             }
         }
-    } else if (e->flags & 0x100) {
-        v = (unsigned int)((e->f20 << 12) / D_0050A8E8_25E0.f2C * e->f8A) >> 12;
-        for (i = 0; i < e->n; i++) {
-            D_0050AD00_25E0.tbl->b[e->h[i] - D_0050A8E8_25E0.f30].v = v;
+    } else if (e->f24 & 0x100) {
+        v = (unsigned int)((e->f20 << 12) / D_0050A8E8.setup.cfg.f0C * e->f8A) >> 12;
+        for (i = 0; i < e->f23; i++) {
+            D_0050AD00_25E0.tbl->b[e->f04[i] - D_0050A8E8.setup.cfg.f10].v = v;
         }
     } else {
-        v = (unsigned int)((e->f20 << 12) / D_0050A8E8_25E0.f2A * e->f8A) >> 8;
-        for (i = 0; i < e->n; i++) {
-            func_003C8A88_25E0(e->h[i] - (D_0050A8E8_25E0.f30 + D_0050A8E8_25E0.f2F), v);
+        v = (unsigned int)((e->f20 << 12) / D_0050A8E8.setup.cfg.f0A * e->f8A) >> 8;
+        for (i = 0; i < e->f23; i++) {
+            func_003C8A88_25E0(e->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F), v);
         }
     }
     return 0;
