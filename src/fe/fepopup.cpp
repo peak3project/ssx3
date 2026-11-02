@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/fepopup", cScreenPopup_cScreenPopup);
 #ifdef SKIP_ASM
@@ -118,11 +126,6 @@ void func_001C5B68(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C5B88);
 #ifdef SKIP_ASM
-struct sVE5B88 {
-    short delta;
-    short index;
-    void* fn;
-};
 extern "C" void func_001C5F20(void* self, float t);
 extern "C" void func_001C75C8(void* self, void* menu, int idx, int max);
 
@@ -132,17 +135,17 @@ extern "C" void func_001C5B88(void* self)
         func_001C5F20(self, 1.0f);
         {
             char* o = *(char**)((char*)self + 0x6C);
-            sVE5B88* vt = *(sVE5B88**)(o + 8);
+            sVEntry<void>* vt = *(sVEntry<void>**)(o + 8);
             ((void (*)(void*, int))vt[8].fn)(o + vt[8].delta, 0);
         }
         func_001C75C8(self, *(void**)((char*)self + 0x6C), *(int*)((char*)self + 0x2C4), *(int*)((char*)self + 0x30C));
         {
             char* o = *(char**)((char*)self + 0x6C);
-            sVE5B88* vt = *(sVE5B88**)(o + 8);
+            sVEntry<void>* vt = *(sVEntry<void>**)(o + 8);
             ((void (*)(void*, int))vt[7].fn)(o + vt[7].delta, 1);
         }
         {
-            sVE5B88* vt = *(sVE5B88**)((char*)self + 8);
+            sVEntry<void>* vt = *(sVEntry<void>**)((char*)self + 8);
             ((int (*)(void*, void*, int, int))vt[20].fn)((char*)self + vt[20].delta, *(void**)((char*)self + 0x6C), 5, 0);
         }
     }
@@ -219,11 +222,6 @@ INCLUDE_ASM("fe/fepopup", func_001C5DD8);
 #ifdef SKIP_ASM
 struct sColor_7738;
 struct sColor5DD8 { int r, g, b; };
-struct sVEntry001C5DD8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 extern "C" void func_001C8A38(void* self);
 extern "C" void func_001C6B08(void* self, void* p);
 extern "C" void func_001C7738(void* self, sColor_7738* color);
@@ -235,7 +233,7 @@ extern "C" void func_001C5DD8(void* self)
         func_001C6B08(self, (char*)self + 0xBC);
         sColor5DD8 c = *(sColor5DD8*)((char*)self + 0x278);
         func_001C7738(self, (sColor_7738*)&c);
-        sVEntry001C5DD8* vt = *(sVEntry001C5DD8**)((char*)self + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)self + 8);
         vt[6].fn((char*)self + vt[6].delta, 0);
     }
 }
@@ -244,16 +242,11 @@ extern "C" void func_001C5DD8(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C5E58);
 #ifdef SKIP_ASM
-struct sVEntry_5E58 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline void Call9_5E58(char* o, int a)
 {
     if (o != 0) {
-        sVEntry_5E58* vt = *(sVEntry_5E58**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[9].fn(o + vt[9].delta, a);
     }
 }
@@ -274,11 +267,6 @@ INCLUDE_ASM("fe/fepopup", func_001C5F20);
 #ifdef SKIP_ASM
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 struct sColor_5F20 { float a, r, g, b; };
-struct sVEntry_5F20 {
-    short delta;
-    short index;
-    void (*fn)(void*, sColor_5F20*);
-};
 extern char D_004A1C50[];
 extern char D_004A1C58[];
 extern char D_004A15E0[];
@@ -288,7 +276,7 @@ static inline void SetAlpha_5F20(char* o, float t)
     if (o != 0) {
         sColor_5F20 c = *(sColor_5F20*)(o + 0x1C);
         c.a = t;
-        sVEntry_5F20* vt = *(sVEntry_5F20**)(o + 8);
+        sVEntry<void(void*, sColor_5F20*)>* vt = *(sVEntry<void(void*, sColor_5F20*)>**)(o + 8);
         vt[11].fn(o + vt[11].delta, &c);
     }
 }
@@ -340,15 +328,10 @@ struct sV3_6260 {
     float x, y, z;
 };
 
-struct sVE_6260 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 struct sObj_6260 {
     char pad0[0x8];
-    sVE_6260* vt;                   // 0x8
+    sVEntry<void(void*, void*)>* vt;                   // 0x8
     char padC[0x44 - 0xC];
     sV3_6260 pos;                   // 0x44
     void GetRect(void* out) { vt[20].fn((char*)this + vt[20].delta, out); }
@@ -454,16 +437,11 @@ extern "C" void func_001CA488(void* self, void* obj);
 extern "C" void func_001CA4C0(void* self, void* obj);
 extern sQuad_58E8 D_004C67A8;
 
-struct sVEp_C66E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 static inline void SetColor_C66E8(char* o, sQuad_58E8* c)
 {
     if (o != 0) {
-        sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
         vt[11].fn(o + vt[11].delta, c);
     }
 }
@@ -485,28 +463,28 @@ extern "C" void func_001C66E8_impl(char* self)
         {
             char* o = *(char**)(self + 0x74);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
         {
             char* o = *(char**)(self + 0x78);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
         {
             char* o = *(char**)(self + 0x7C);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
         {
             char* o = *(char**)(self + 0x80);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
@@ -526,28 +504,28 @@ extern "C" void func_001C66E8_impl(char* self)
         {
             char* o = *(char**)(self + 0x74);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
         {
             char* o = *(char**)(self + 0x78);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
         {
             char* o = *(char**)(self + 0x7C);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
         {
             char* o = *(char**)(self + 0x80);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6798);
             }
         }
@@ -567,28 +545,28 @@ extern "C" void func_001C66E8_impl(char* self)
         {
             char* o = *(char**)(self + 0x74);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6788);
             }
         }
         {
             char* o = *(char**)(self + 0x78);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6788);
             }
         }
         {
             char* o = *(char**)(self + 0x7C);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6788);
             }
         }
         {
             char* o = *(char**)(self + 0x80);
             if (o != 0) {
-                sVEp_C66E8* vt = *(sVEp_C66E8**)(o + 8);
+                sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                 vt[11].fn(o + vt[11].delta, &D_004C6788);
             }
         }
@@ -1221,11 +1199,6 @@ INCLUDE_ASM("fe/fepopup", func_001C7EB0);
 #ifdef SKIP_ASM
 struct sVec3_7EB0 { float x, y, z; };
 struct sVec2_7EB0 { float x, y; };
-struct sVE_7EB0 {
-    short delta;
-    short index;
-    void (*fn)(void*, sVec2_7EB0*);
-};
 
 extern "C" void func_001C7EB0(void* self)
 {
@@ -1236,13 +1209,13 @@ extern "C" void func_001C7EB0(void* self)
     c = *(sVec3_7EB0*)(*(char**)((char*)self + 0x84) + 0x44);
     sVec2_7EB0 size;
     {
-        sVE_7EB0* vt = *(sVE_7EB0**)(o80 + 8);
+        sVEntry<void(void*, sVec2_7EB0*)>* vt = *(sVEntry<void(void*, sVec2_7EB0*)>**)(o80 + 8);
         vt[20].fn(o80 + vt[20].delta, &size);
     }
     size.x = *(float*)((char*)self + 0x260) - (a.x - c.x) - 10.0f;
     {
         char* o = *(char**)((char*)self + 0x80);
-        sVE_7EB0* vt = *(sVE_7EB0**)(o + 8);
+        sVEntry<void(void*, sVec2_7EB0*)>* vt = *(sVEntry<void(void*, sVec2_7EB0*)>**)(o + 8);
         vt[21].fn(o + vt[21].delta, &size);
     }
     sVec3_7EB0 scale;
@@ -1302,11 +1275,6 @@ extern char D_00466098[];
 extern char D_004660A8[];
 extern char D_004A1408[];
 
-struct sVEntry_80E8 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 extern "C" void func_001C80E8(void* self, void* dst, int* info)
 {
@@ -1326,7 +1294,7 @@ extern "C" void func_001C80E8(void* self, void* dst, int* info)
         break;
     case 3: {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry_80E8* vt = *(sVEntry_80E8**)(o + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(o + 4);
         unsigned short* str = vt[4].fn(o + vt[4].delta, info[1]);
         if (str) {
             char* buf = (char*)operator_new__FUi(USTR_length(str) + 1, D_00466098, 0x100, 0);
@@ -1397,11 +1365,6 @@ extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern void* D_004A28A8;
 extern char D_004660A8[];
 
-struct sVEntry_8320 {
-    short delta;
-    short index;
-    char* (*fn)(void*, int);
-};
 
 extern "C" void func_001C8320(void* self, cUIText* text, int* info, float* out)
 {
@@ -1423,7 +1386,7 @@ extern "C" void func_001C8320(void* self, cUIText* text, int* info, float* out)
         break;
     case 3: {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry_8320* vt = *(sVEntry_8320**)(o + 4);
+        sVEntry<char*(void*, int)>* vt = *(sVEntry<char*(void*, int)>**)(o + 4);
         char* str = vt[4].fn(o + vt[4].delta, info[1]);
         if (str) {
             f = (char*)func_003A04F0(text);
@@ -1493,16 +1456,11 @@ INCLUDE_ASM("fe/fepopup", func_001C8628);
 #ifdef SKIP_ASM
 struct sVec2_8628 { float x, y; };
 
-struct sVEntry001C8628 {
-    short delta;
-    short index;
-    void (*fn)(void*, sVec2_8628*);
-};
 
 extern "C" void func_001C8628(void* self, void* obj, void* out)
 {
     sVec2_8628 v;
-    sVEntry001C8628* vt = *(sVEntry001C8628**)((char*)obj + 8);
+    sVEntry<void(void*, sVec2_8628*)>* vt = *(sVEntry<void(void*, sVec2_8628*)>**)((char*)obj + 8);
     vt[20].fn((char*)obj + vt[20].delta, &v);
     *(float*)((char*)out + 0x8) = v.x;
     *(float*)((char*)out + 0xC) = v.y;
@@ -1513,11 +1471,6 @@ extern "C" void func_001C8628(void* self, void* obj, void* out)
 INCLUDE_ASM("fe/fepopup", func_001C8678);
 #ifdef SKIP_ASM
 struct cUIText;
-struct sVE8678 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 extern "C" void func_001C8050(void* self, cUIText* text, int* info);
 extern "C" void func_001C8320(void* self, cUIText* text, int* info, float* out);
 extern "C" void func_001C9B68(void* self, float* size, float* item);
@@ -1533,7 +1486,7 @@ extern "C" void func_001C8678(void* self, void* a1)
             func_001C8050(self, text, info);
             {
                 char* o = *(char**)((char*)self + 0x7C);
-                sVE8678* vt = *(sVE8678**)(o + 8);
+                sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
                 vt[9].fn(o + vt[9].delta, 1);
             }
             func_001C8320(self, *(cUIText**)((char*)self + 0x7C), info, item);
@@ -1543,7 +1496,7 @@ extern "C" void func_001C8678(void* self, void* a1)
                 func_001C8930(self, *(void**)((char*)self + 0x7C), 0x11, 0.0f);
             }
         } else {
-            sVE8678* vt = *(sVE8678**)((char*)text + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)text + 8);
             vt[9].fn((char*)text + vt[9].delta, 0);
         }
     }
@@ -1612,11 +1565,6 @@ struct sObjBitsK8930 {
 struct sVec2K8930 { float x, y; };
 struct sVec3K8930 { float x, y, z; };
 
-struct sVEntryK8930 {
-    short delta;
-    short index;
-    void (*fn)(void*, sVec2K8930*);
-};
 
 extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float t)
 {
@@ -1624,7 +1572,7 @@ extern "C" void func_001C8930(void* self, void* obj, unsigned char state, float 
     if (b->state == state)
         return;
     sVec2K8930 size;
-    sVEntryK8930* vt = *(sVEntryK8930**)((char*)obj + 8);
+    sVEntry<void(void*, sVec2K8930*)>* vt = *(sVEntry<void(void*, sVec2K8930*)>**)((char*)obj + 8);
     vt[20].fn((char*)obj + vt[20].delta, &size);
     sVec3K8930 pos = *(sVec3K8930*)((char*)obj + 0x44);
     b->state = state;
@@ -1718,11 +1666,6 @@ extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern void* D_004A28A8;
 extern char D_004660A8[];
 
-struct sVEntry_8EF0 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 extern "C" void func_001C8EF0(void* vself, int* item, float* size, int flag, float extra)
 {
@@ -1745,7 +1688,7 @@ extern "C" void func_001C8EF0(void* vself, int* item, float* size, int flag, flo
         goto add;
     case 3: {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry_8EF0* vt = *(sVEntry_8EF0**)(o + 4);
+        sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(o + 4);
         unsigned short* str = vt[4].fn(o + vt[4].delta, item[1]);
         if (str) {
             func_001C9038(self, text, str, size);
@@ -1882,11 +1825,6 @@ extern "C" void func_001C94B0(void* self, void* text, void* str, void* out);
 extern void* D_004A28A8;
 extern char D_004660A8[];
 
-struct sVEntryK93B0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, int);
-};
 
 extern "C" void func_001C93B0(void* self, int* msg, void* out)
 {
@@ -1903,7 +1841,7 @@ extern "C" void func_001C93B0(void* self, int* msg, void* out)
         break;
     case 3: {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntryK93B0* vt = *(sVEntryK93B0**)(o + 4);
+        sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(o + 4);
         void* str = vt[4].fn(o + vt[4].delta, msg[1]);
         if (str) {
             func_001C94B0(self, *(void**)((char*)self + 0x74), str, out);
@@ -1924,11 +1862,6 @@ INCLUDE_ASM("fe/fepopup", func_001C94B0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct sVec3_94B0 { float x, y, z; };
 struct sVec2_94B0 { float x, y; };
-struct sVEntry_94B0 {
-    short delta;
-    short index;
-    void (*fn)(void*, sVec2_94B0*);
-};
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00392C60(void* font, int c);
 extern "C" int USTR_length(unsigned short* s);
@@ -1954,7 +1887,7 @@ extern "C" void func_001C94B0(void* self, void* text, void* strp, void* outp)
     USTR_copy(buf, str);
     sVec3_94B0 v;
     sVec2_94B0 size;
-    sVEntry_94B0* vt = *(sVEntry_94B0**)((char*)text + 8);
+    sVEntry<void(void*, sVec2_94B0*)>* vt = *(sVEntry<void(void*, sVec2_94B0*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
     v = *(sVec3_94B0*)((char*)text + 0x50);
     while (i < n) {
@@ -1993,11 +1926,6 @@ extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern void* D_004A28A8;
 extern char D_004660A8[];
 
-struct sVEntry_97E0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, int);
-};
 
 extern "C" void func_001C97E0(void* self, void* a, void* b, int which, float t)
 {
@@ -2019,7 +1947,7 @@ extern "C" void func_001C97E0(void* self, void* a, void* b, int which, float t)
         break;
     case 3: {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry_97E0* vt = *(sVEntry_97E0**)(o + 4);
+        sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(o + 4);
         void* str = vt[4].fn(o + vt[4].delta, info[1]);
         if (str) {
             func_001C9938(self, text, str, out);
@@ -2046,11 +1974,6 @@ INCLUDE_ASM("fe/fepopup", func_001C9938);
 struct cUIText;
 struct sVec3_9938 { float x, y, z; };
 struct sVec2_9938 { float x, y; };
-struct sVEntry_9938 {
-    short delta;
-    short index;
-    void (*fn)(void*, sVec2_9938*);
-};
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00392C60(void* font, int c);
 extern "C" int USTR_length(unsigned short* s);
@@ -2077,7 +2000,7 @@ extern "C" void func_001C9938(void* self, cUIText* text, void* strp, float* out)
     USTR_copy(buf, str);
     sVec3_9938 v;
     sVec2_9938 size;
-    sVEntry_9938* vt = *(sVEntry_9938**)((char*)text + 8);
+    sVEntry<void(void*, sVec2_9938*)>* vt = *(sVEntry<void(void*, sVec2_9938*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
     v = *(sVec3_9938*)((char*)text + 0x50);
     while (i < n) {
@@ -2182,19 +2105,14 @@ INCLUDE_ASM("fe/fepopup", func_001C9CD0);
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA0F0);
 #ifdef SKIP_ASM
-struct sVEntry_A0F0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001CA0F0(void* self, int idx, int a)
 {
     char* o = *(char**)((char*)self + (idx << 2) + 0x90);
     if (o != 0) {
-        sVEntry_A0F0* vt = *(sVEntry_A0F0**)(o + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
         vt[8].fn(o + vt[8].delta, a);
-        sVEntry_A0F0* vt2 = *(sVEntry_A0F0**)(o + 8);
+        sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(o + 8);
         vt2[25].fn(o + vt2[25].delta, 1);
     }
 }
@@ -2222,15 +2140,10 @@ INCLUDE_ASM("fe/fepopup", func_001CA180);
 #ifdef SKIP_ASM
 extern "C" char* func_00397870(void* list, int idx);
 
-struct sVE1CA180 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 static inline void SetColour1CA180(char* obj, void* colour)
 {
-    sVE1CA180* vt = *(sVE1CA180**)(obj + 8);
+    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(obj + 8);
     vt[11].fn(obj + vt[11].delta, colour);
 }
 
@@ -2274,15 +2187,10 @@ extern "C" void func_001CD088(void* popup, int a1);
 extern "C" void func_0039F290(void* stack, void* item);
 extern char D_0045D8D8[];
 
-struct sPopupVE_1CA298 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 struct sPopupOwner_1CA298 {
     char pad0[8];
-    sPopupVE_1CA298* vt;   // 0x8
+    sVEntry<void(void*, void*, int)>* vt;   // 0x8
 };
 
 struct sBtn_1CA298 {
@@ -2359,16 +2267,11 @@ extern "C" void func_001CA298(char* self, int id, int ev)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA488);
 #ifdef SKIP_ASM
-struct sVEntry_func_001CA488 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001CA488(void* self, void* obj)
 {
     if (obj != 0) {
-        sVEntry_func_001CA488* vt = *(sVEntry_func_001CA488**)((char*)obj + 0x8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 0x8);
         vt[9].fn((char*)obj + vt[9].delta, 0);
     }
 }
@@ -2377,16 +2280,11 @@ extern "C" void func_001CA488(void* self, void* obj)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA4C0);
 #ifdef SKIP_ASM
-struct sVEntry_func_001CA4C0 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001CA4C0(void* self, void* obj)
 {
     if (obj != 0) {
-        sVEntry_func_001CA4C0* vt = *(sVEntry_func_001CA4C0**)((char*)obj + 0x8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 0x8);
         vt[9].fn((char*)obj + vt[9].delta, 1);
     }
 }
@@ -2433,11 +2331,6 @@ extern "C" int func_001CA4F8(void* self, int a1, int a2)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA528);
 #ifdef SKIP_ASM
-struct sVEntry001CA528 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_0039E510(void*);
 
@@ -2445,7 +2338,7 @@ extern "C" void func_001CA528(void* self)
 {
     if (*(int*)((char*)self + 0x2C0) != 0) {
         void* obj = *(void**)((char*)self + 0x20);
-        sVEntry001CA528* vt = *(sVEntry001CA528**)((char*)obj + 8);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)obj + 8);
         vt[12].fn((char*)obj + vt[12].delta);
     }
     func_0039E510(self);
@@ -2471,11 +2364,6 @@ extern "C" void func_001CCF00(void* popup, const char* a1);
 // PORT: the unit declares func_0039F190 as void; it returns a value this caller ignores.
 extern "C" void* func_0039F190_i(void* self, int a1) __asm__("func_0039F190");
 
-struct sVE1CA598 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 // Child-popup message handler: forwards results, plays sounds and closes the popup when done.
 extern "C" void func_001CA598(char* self, void* child, int msg)
@@ -2506,7 +2394,7 @@ extern "C" void func_001CA598(char* self, void* child, int msg)
             *(void**)(self + 0x2AC) = 0;
             if (*(int*)(self + 0x320) != -1) {
                 char* obj = *(char**)(self + 0x20);
-                sVE1CA598* vt = *(sVE1CA598**)(obj + 8);
+                sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)(obj + 8);
                 vt[17].fn(obj + vt[17].delta, self, *(int*)(self + 0x320));
             }
         }
@@ -2522,11 +2410,6 @@ INCLUDE_ASM("fe/fepopup", cScreenPopup_checkAndFixTextEntry);
 struct cUIText;
 struct sVec3_A6A0 { float x, y, z; };
 struct sVec2_A6A0 { float x, y; };
-struct sVEntry_A6A0 {
-    short delta;
-    short index;
-    void (*fn)(void*, sVec2_A6A0*);
-};
 extern "C" void* func_003A04F0(void* self);
 extern "C" float func_00391FB0(void* self, const char* str, void* out, int n, float sx, float sy);
 extern "C" char* func_004162D0(char* dst, const char* src);
@@ -2551,7 +2434,7 @@ extern "C" void cScreenPopup_checkAndFixTextEntry(void* self, cUIText* text, con
     sVec2_A6A0 size;
     float ext[4];
     float dots[4];
-    sVEntry_A6A0* vt = *(sVEntry_A6A0**)((char*)text + 8);
+    sVEntry<void(void*, sVec2_A6A0*)>* vt = *(sVEntry<void(void*, sVec2_A6A0*)>**)((char*)text + 8);
     vt[20].fn((char*)text + vt[20].delta, &size);
     char* f = (char*)func_003A04F0(text);
     float sx = *(float*)(f + 0x30) * scale.x;
@@ -3021,11 +2904,6 @@ extern "C" void cKeyboardPopup_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CB208);
 #ifdef SKIP_ASM
-struct sVEntry001CB208 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern void* D_004A2EEC;
 extern void* D_004A28A8;
@@ -3041,7 +2919,7 @@ extern "C" void func_001CB208(void* self)
     if (*(int*)((char*)self + 0x440) != 0) {
         void* obj = *(void**)((char*)self + 0x20);
         if (obj != 0) {
-            sVEntry001CB208* vt = *(sVEntry001CB208**)((char*)obj + 8);
+            sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)obj + 8);
             vt[12].fn((char*)obj + vt[12].delta);
         }
     }
@@ -3075,11 +2953,6 @@ extern char D_004663A8[];
 extern char D_004663B8[];
 extern char D_004663C8[];
 
-struct sVEntryK1CB2C8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 static inline int isOnK1CB2C8()
 {
@@ -3094,14 +2967,14 @@ static inline int IsK1CB2C8(int id, char* s)
 extern "C" void cKeyboardPopup_onWidgetCreate(void* self, void* widget)
 {
     if (IsK1CB2C8(*(int*)((char*)widget + 0x38), D_00466398)) {
-        sVEntryK1CB2C8* vt = *(sVEntryK1CB2C8**)((char*)widget + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)widget + 8);
         vt[9].fn((char*)widget + vt[9].delta, 0);
         if (isOnK1CB2C8()) {
-            sVEntryK1CB2C8* vt2 = *(sVEntryK1CB2C8**)((char*)widget + 8);
+            sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)((char*)widget + 8);
             vt2[9].fn((char*)widget + vt2[9].delta, 1);
         }
         if (*(int*)((char*)D_004A28A8 + 0x84) != 0) {
-            sVEntryK1CB2C8* vt3 = *(sVEntryK1CB2C8**)((char*)widget + 8);
+            sVEntry<void(void*, int)>* vt3 = *(sVEntry<void(void*, int)>**)((char*)widget + 8);
             vt3[9].fn((char*)widget + vt3[9].delta, 0);
         }
     } else if (IsK1CB2C8(*(int*)((char*)widget + 0x38), D_004663A8)) {
@@ -3117,18 +2990,13 @@ extern "C" void cKeyboardPopup_onWidgetCreate(void* self, void* widget)
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CB3D0);
 #ifdef SKIP_ASM
-struct sVEntry001CB3D0 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 extern "C" int func_001CB3D0(void* self, int a1, int a2)
 {
     if (*(int*)((char*)self + 0x438) != 0) {
         void* obj = *(void**)((char*)self + 0x20);
         if (obj != 0) {
-            sVEntry001CB3D0* vt = *(sVEntry001CB3D0**)((char*)obj + 8);
+            sVEntry<int(void*, int, int)>* vt = *(sVEntry<int(void*, int, int)>**)((char*)obj + 8);
             return vt[24].fn((char*)obj + vt[24].delta, a1, a2);
         }
     }
@@ -3776,15 +3644,10 @@ int func_001CE560_out(void* self, int idx, int* out) __asm__("func_001CE560");
 // func_0039F190 returns its last list node in $v0; the unit declares it void.
 void* func_0039F190_r(void* self, int a1) __asm__("func_0039F190");
 
-struct sVE_C1E0 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 struct sUIObj_C1E0 {
     char pad_0x0[0x8];
-    sVE_C1E0* vt;                   // 0x8
+    sVEntry<void(void*, ...)>* vt;                   // 0x8
 };
 
 struct sColor_C1E0 {
@@ -4085,11 +3948,6 @@ struct sRect_CC30 {
         func_00391FB0(f, str, this, flag, *(float*)(f + 0x38), *(float*)(f + 0x3C));
     }
 };
-struct sVEntry_CC30 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern "C" void func_001CE4C8(void* self, void* obj);
 extern "C" char* strncpy(char* dst, const char* src, int n);
 extern char D_00466570[];
@@ -4102,7 +3960,7 @@ extern "C" void func_001CCC30(void* self)
     void* text = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466530));
     char* t = (char*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466530));
     if (t != 0) {
-        sVEntry_CC30* vt = *(sVEntry_CC30**)(t + 8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(t + 8);
         vt[20].fn(t + vt[20].delta, s + 0x3F4);
         *(sVec3_CC30*)(s + 0x3E8) = *(sVec3_CC30*)(t + 0x44);
     }
@@ -4125,7 +3983,7 @@ extern "C" void func_001CCC30(void* self)
         pos.x = size.w;
     }
     t = (char*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466570));
-    sVEntry_CC30* vt = *(sVEntry_CC30**)(t + 8);
+    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(t + 8);
     vt[21].fn(t + vt[21].delta, &pos);
     char buf[0x40];
     if (*(int*)(s + 0x70) != 0) {
@@ -4387,17 +4245,7 @@ extern char D_004A1408[];
 
 struct sVec3_D348 { float x, y, z; };
 
-struct sVEi_D348 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
-struct sVEp_D348 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 struct sKbd_D348 {
     char pad_0x0[0x68];
@@ -4408,7 +4256,7 @@ struct sKbd_D348 {
 
 static inline void SetVis_D348(char* o, int on)
 {
-    sVEi_D348* vt = *(sVEi_D348**)(o + 8);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
     vt[9].fn(o + vt[9].delta, on);
 }
 
@@ -4465,13 +4313,13 @@ extern "C" int cKeyboardPopup_onGainTransition(char* s, int first)
         }
         char* o1 = (char*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466570));
         if (o1 != 0) {
-            sVEp_D348* vt = *(sVEp_D348**)(o1 + 8);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o1 + 8);
             vt[20].fn(o1 + vt[20].delta, s + 0x400);
             *(sVec3_D348*)(s + 0x40C) = *(sVec3_D348*)(o1 + 0x44);
         }
         char* o2 = (char*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00466530));
         if (o2 != 0) {
-            sVEp_D348* vt = *(sVEp_D348**)(o2 + 8);
+            sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o2 + 8);
             vt[20].fn(o2 + vt[20].delta, s + 0x3F4);
             *(sVec3_D348*)(s + 0x3E8) = *(sVec3_D348*)(o2 + 0x44);
             *(float*)(s + 0x410) = *(float*)(s + 0x3F8) + *(float*)(s + 0x3EC);
@@ -4524,11 +4372,6 @@ INCLUDE_ASM("fe/fepopup", cKeyboardPopup_redrawScreen);
 static inline bool Neg_D708(bool b) { return !b; }
 static inline bool Shift_D708(char* s) { return *(bool*)(s + 0x6C); }
 struct cUIText;
-struct sVEntry_D708 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 extern "C" int cKeyboardPopup_getObjName(void* self, int i, char* out, int mode);
 extern "C" void cKeyboardPopup_SetNameForKey(void* self, cUIText* text, int i);
 extern "C" void func_001CE520(void* self);
@@ -4575,10 +4418,10 @@ extern "C" void cKeyboardPopup_redrawScreen(void* self)
             if (text != 0) {
                 cUIText_setAsciiString(text, ch);
                 if (func_001CE560(self, i, 0) == 0) {
-                    sVEntry_D708* vt = *(sVEntry_D708**)((char*)text + 8);
+                    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)text + 8);
                     vt[11].fn((char*)text + vt[11].delta, D_004C67B8);
                 } else {
-                    sVEntry_D708* vt = *(sVEntry_D708**)((char*)text + 8);
+                    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)((char*)text + 8);
                     vt[11].fn((char*)text + vt[11].delta, D_004C67C8);
                 }
             }
@@ -4588,19 +4431,19 @@ extern "C" void cKeyboardPopup_redrawScreen(void* self)
         if (o != 0) {
             if (*(int*)(s + 0x43C) == 1) {
                 if (i >= 0 && i < 0xE) {
-                    sVEntry_D708* vt = *(sVEntry_D708**)(o + 8);
+                    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                     vt[9].fn(o + vt[9].delta, (void*)0);
                 } else {
-                    sVEntry_D708* vt = *(sVEntry_D708**)(o + 8);
+                    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                     vt[9].fn(o + vt[9].delta, (void*)1);
                 }
             } else {
                 {
-                    sVEntry_D708* vt = *(sVEntry_D708**)(o + 8);
+                    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                     vt[11].fn(o + vt[11].delta, D_004C67F8);
                 }
                 {
-                    sVEntry_D708* vt = *(sVEntry_D708**)(o + 8);
+                    sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
                     vt[9].fn(o + vt[9].delta, (void*)1);
                 }
             }
@@ -4609,7 +4452,7 @@ extern "C" void cKeyboardPopup_redrawScreen(void* self)
     cKeyboardPopup_getObjName(self, *(int*)(s + 0x140), name, 1);
     char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(name));
     if (o != 0) {
-        sVEntry_D708* vt = *(sVEntry_D708**)(o + 8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(o + 8);
         vt[11].fn(o + vt[11].delta, D_004C67E8);
     }
 }
@@ -4631,21 +4474,16 @@ extern char D_004667A8[];
 extern char D_004667C0[];
 extern char D_004667D8[];
 
-struct sTextVE_1CD9B8 {
-    short delta;
-    short index;
-    void* fn;
-};
 
 static inline void SetColor_1CD9B8(cUIText* text, void* col)
 {
-    sTextVE_1CD9B8* vt = *(sTextVE_1CD9B8**)((char*)text + 8);
+    sVEntry<void>* vt = *(sVEntry<void>**)((char*)text + 8);
     ((int (*)(void*, void*))vt[11].fn)((char*)text + vt[11].delta, col);
 }
 
 static inline void SetVisible_1CD9B8(cUIText* text, int on)
 {
-    sTextVE_1CD9B8* vt = *(sTextVE_1CD9B8**)((char*)text + 8);
+    sVEntry<void>* vt = *(sVEntry<void>**)((char*)text + 8);
     ((void (*)(void*, int))vt[9].fn)((char*)text + vt[9].delta, on);
 }
 
@@ -4743,11 +4581,6 @@ extern char D_004669A0[];
 extern char D_004669B8[];
 extern char D_004669D8[];
 
-struct sVEntryK1CDB98 {
-    short delta;
-    short index;
-    void* fn;
-};
 struct sColorK1CDB98 {
     float a, r, g, b;
     sColorK1CDB98(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
@@ -4768,7 +4601,7 @@ public:
     virtual void SetColor(const sColorK1CDB98& c);
 };
 struct sSndK1CDB98 {
-    sVEntryK1CDB98* vt;
+    sVEntry<void>* vt;
 };
 extern sSndK1CDB98 D_004A5A58;
 
@@ -4776,7 +4609,7 @@ typedef int (*FnIK1CDB98)(void*);
 
 static inline int InputK1CDB98(char* ev, int slot)
 {
-    sVEntryK1CDB98* vt = *(sVEntryK1CDB98**)(ev + 8);
+    sVEntry<void>* vt = *(sVEntry<void>**)(ev + 8);
     return ((FnIK1CDB98)vt[slot].fn)(ev + vt[slot].delta);
 }
 
@@ -4838,7 +4671,7 @@ extern "C" int func_001CDB98(void* self, char* ev)
             sound = 6;
             func_0039F190(*(char**)((char*)self + 0x10) + 0x18, 1);
             char* o = *(char**)((char*)self + 0x20);
-            sVEntryK1CDB98* vt = *(sVEntryK1CDB98**)(o + 8);
+            sVEntry<void>* vt = *(sVEntry<void>**)(o + 8);
             ((void (*)(void*, int, int))vt[19].fn)(o + vt[19].delta, 0, 0xE);
         } else if (InputK1CDB98(ev, 25)) {
             changed = 1;
@@ -5053,11 +4886,6 @@ extern "C" char* strcpy(char* dst, const char* src);
 extern "C" int strlen(const char* s);
 extern void* D_004A28A8;
 
-struct sVEntryK1CE5E0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, int);
-};
 
 extern "C" void func_001CE5E0(void* self, int key)
 {
@@ -5067,7 +4895,7 @@ extern "C" void func_001CE5E0(void* self, int key)
     char* msg = func_0014F6A8(opt, key);
     if (msg == 0) {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntryK1CE5E0* vt = *(sVEntryK1CE5E0**)(o + 4);
+        sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(o + 4);
         void* str = vt[4].fn(o + vt[4].delta, cBEOptionInterface_getDefaultQuickKeyMessageHashValue(opt, key));
         if (str)
             func_003DCB20(buf, str);
