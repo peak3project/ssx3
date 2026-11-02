@@ -5476,14 +5476,12 @@ extern char **D_004A47B8_4980 __asm__("D_004A47B8");
 extern char *D_004A28A8_4980 __asm__("D_004A28A8");
 void func_00355878(void*, void*);
 struct O_4980 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
-struct V3_4980 { float x, y, z; };
-extern V3_4980 D_004C9098_4980 __asm__("D_004C9098");
 extern unsigned D_4980[] __asm__("D_004FBD10");
 extern int D_004A5810;
 extern int D_004A3D68;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_4980 { int idx; int val; int pad; int type; };
-extern "C" V3_4980 func_00304980(int n, Ent_4980 *e) {
+extern "C" cLunoValue func_00304980(int n, Ent_4980 *e) {
     if (D_004A5810 == 0) {
         D_4980[0] = 0xFFFFFFFF;
         *(float*)&D_4980[1] = 1.0f;
@@ -5518,10 +5516,10 @@ extern "C" V3_4980 func_00304980(int n, Ent_4980 *e) {
     }
     O_4980 *p = *(O_4980**)(obj + 0xC);
     if (p == 0)
-        return D_004C9098_4980;
+        return D_004C9098;
     if (p->v16())
         func_00355878(p, buf);
-    return D_004C9098_4980;
+    return D_004C9098;
 }
 #endif
 
