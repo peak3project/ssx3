@@ -5001,14 +5001,12 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00303EC8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 int* func_00226610(void*);
-extern char *D_004A28A8_3EC8 __asm__("D_004A28A8");
 struct A_3EC8 { char pad[0x6C0]; };
 struct B_3EC8 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual bool v09(); };
 struct D_3EC8 : A_3EC8, B_3EC8 { };
-struct Tab_3EC8 { char pad[0x28]; D_3EC8 *arr[1]; };
 static inline bool isIdle_3EC8(int slot) {
     if (slot != -1) {
-        D_3EC8 *r = (*(Tab_3EC8**)(*(char**)(D_004A28A8_3EC8 + 0x84) + 0xC))->arr[slot];
+        D_3EC8 *r = (D_3EC8*)D_004A28A8->game->race->riders[slot];
         B_3EC8 *b = r;
         D_3EC8 *d = (D_3EC8*)b;
         return !d->v09();
