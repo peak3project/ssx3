@@ -3575,20 +3575,11 @@ int func_003B9920(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B9A00);
 #ifdef SKIP_ASM
-struct W_9A00 { unsigned int lo : 10; unsigned int vol : 7; unsigned int pan : 7; int flags : 8; };
-struct E_9A00 {
-    int f0; int f4; char *f8; int fC; int f10; int f14; int f18; int f1C;
-    unsigned short f20; unsigned short f22; short f24; unsigned char f26; unsigned char f27; unsigned char f28;
-    char pad29[3]; short f2C; short f2E; struct W_9A00 w[16];
-};
-struct V_9A00 { int id; signed char owner; signed char s5; signed char s6; signed char s7; };
-struct G_9A00 { struct E_9A00 e[16]; struct V_9A00 v[24]; int cnt; };
 struct H_9A00 { signed char f00; char pad01[7]; unsigned short f08; char pad0A[2]; unsigned short f0C; char pad0E[2]; unsigned short f10; };
-extern struct G_9A00 D_0050A120_9A00 __asm__("D_0050A120");
 
-int func_003B9A00(struct H_9A00 *hdr, char *data, int arg2, int arg3) {
+int func_003B9A00(struct H_9A00 *hdr, unsigned char *data, int arg2, int arg3) {
     int ret = -9;
-    struct E_9A00 *e;
+    struct sA120Song *e;
     int i;
     int j;
     if (*(short *)data == 0x444D) {
@@ -3596,32 +3587,32 @@ int func_003B9A00(struct H_9A00 *hdr, char *data, int arg2, int arg3) {
     } else if (*(int *)data == 0x7844494D) {
         data += 4;
     }
-    D_0050A120_9A00.cnt += 0x20;
-    if (D_0050A120_9A00.cnt < 0) D_0050A120_9A00.cnt = 0;
+    D_0050A120.f7C0 += 0x20;
+    if (D_0050A120.f7C0 < 0) D_0050A120.f7C0 = 0;
     for (i = 0; i < 16; i++) {
-        e = &D_0050A120_9A00.e[i];
+        e = &D_0050A120.f000[i];
         if (e->f10 < 0) {
-            e->f4 = 0;
-            e->f0 = 0;
+            e->f04 = 0;
+            e->f00 = 0;
             e->f24 = (hdr->f10 * 100) >> 12;
-            e->f10 = D_0050A120_9A00.cnt | i;
-            e->f8 = data;
+            e->f10 = D_0050A120.f7C0 | i;
+            e->f08 = data;
             e->f2C = arg2;
             e->f2E = arg3;
             e->f26 = 0xFF;
             e->f27 = 1;
             e->f18 = 0;
-            e->fC = 0;
+            e->f0C = 0;
             e->f14 = hdr->f00 << 16;
             e->f28 = 3;
             e->f20 = hdr->f08;
             e->f22 = hdr->f0C;
             for (j = 0; j < 16; j++) {
-                struct W_9A00 *q = &e->w[j];
-                q->lo = 0;
-                q->vol = 0x7F;
-                q->pan = 0x40;
-                q->flags = -1;
+                struct sA120Chan *q = &e->f30[j];
+                q->b00 = 0;
+                q->b10 = 0x7F;
+                q->b17 = 0x40;
+                q->b24 = -1;
             }
             ret = e->f10;
             break;
