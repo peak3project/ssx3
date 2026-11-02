@@ -2362,9 +2362,7 @@ void func_003DF3C0(int a, int b, struct Q_F3C0 *s) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF488);
 #ifdef SKIP_ASM
-struct E_F488 { int f0; struct E_F488 *f4; char pad8[0x14]; int f1C; char pad20[0x10]; };
-struct L_F488 { struct E_F488 *a; struct E_F488 *b; };
-extern struct E_F488 *D_00450C34_F488[] __asm__("D_00450C34");
+struct L_F488 { struct sReq *a; struct sReq *b; };
 extern char D_00495DB8_F488[] __asm__("D_00495DB8");
 extern int D_00519BF0;
 extern struct L_F488 D_00519BF8_F488 __asm__("D_00519BF8");
@@ -2372,30 +2370,30 @@ extern char D_00519C08_F488[] __asm__("D_00519C08");
 extern void func_003E5698_F488(void *) __asm__("func_003E5698");
 
 void func_003DF488(int n, int arg1) {
-    if (D_00450C34_F488[0] == 0 && n < 0x101) {
+    if (D_00450C34 == 0 && n < 0x101) {
         int size = n * 0x30;
-        struct E_F488 *base;
+        struct sReq *base;
         struct L_F488 *l;
         int i;
-        struct E_F488 *e;
+        struct sReq *e;
         D_00519BF0 = n;
         base = D_00450C14(D_00495DB8_F488, size, arg1);
         l = &D_00519BF8_F488;
-        l->b = (struct E_F488 *)((char *)base + (size - 0x30));
+        l->b = &base[n - 1];
         D_00519BF8_F488.a = base;
-        D_00450C34_F488[0] = base;
+        D_00450C34 = base;
         func_003E5698_F488(D_00519C08_F488);
         i = 0;
         if (n > i) {
-            e = D_00450C34_F488[0];
+            e = D_00450C34;
             do {
-                e[i].f0 = i;
-                e[i].f4 = &e[i + 1];
+                e[i].f00 = i;
+                e[i].f04 = &e[i + 1];
                 e[i].f1C = 0;
                 i++;
             } while (i < n);
         }
-        ((struct E_F488 *)((char *)D_00450C34_F488[0] + n * 0x30))[-1].f4 = 0;
+        D_00450C34[n - 1].f04 = 0;
     }
 }
 #endif
