@@ -215,6 +215,17 @@ static inline float absf(float x)
     return r;
 }
 
+static inline int overlapBoundObj(const sWsBox* b, const sWsBoundObj* n)
+{
+    int r = 0;
+    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
+        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
+        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
+        r = 1;
+    }
+    return r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -856,21 +867,11 @@ struct sSelf_1E90 {
 extern "C" void descendRec_1E90(void* self, sWsListCtx2* ctx) __asm__("func_00340C20");
 extern "C" void helpX_1E90(char* flag, sWsListCtx2* ctx, sWsListCtx2* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033A3D8");
 
-static inline int overlapPatch_1E90(const sWsBox* b, const sWsBoundObj* n)
-{
-    int r = 0;
-    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
-        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
-        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline void addPatches_1E90(sWsListCtx* cb, sWsBoundObj* first)
 {
     for (sWsBoundObj* p = first; p != 0; p = p->next) {
-        if (overlapPatch_1E90(cb->box, p)) {
+        if (overlapBoundObj(cb->box, p)) {
             int* cnt = cb->count;
             int idx = *cnt;
             cb->list[idx] = (sWsListNode*)p;
@@ -963,21 +964,11 @@ struct sCtx2_2DB8 {
 extern "C" void descendRec_2DB8(void* self, sCtx2_2DB8* ctx) __asm__("func_00340DC0");
 extern "C" void helpX_2DB8(char* flag, sCtx2_2DB8* ctx, sCtx2_2DB8* ctx2, void* box, void** node, sCell_330BA8* cell) __asm__("func_0033B748");
 
-static inline int overlapPatch_2DB8(const sWsBox* b, const sWsBoundObj* n)
-{
-    int r = 0;
-    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
-        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
-        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 static inline void addPatches_2DB8(sWsListCtx* cb, sWsBoundObj* first)
 {
     for (sWsBoundObj* p = first; p != 0; p = p->next) {
-        if (overlapPatch_2DB8(cb->box, p)) {
+        if (overlapBoundObj(cb->box, p)) {
             int* cnt = cb->count;
             int idx = *cnt;
             cb->list[idx] = (sWsListNode*)p;
@@ -3733,23 +3724,13 @@ struct sTree_340C20 {
     sWsBoundObj* objs;          // 0x24
 };
 
-static inline int overlapObj_340C20(const sWsBox* b, const sWsBoundObj* n)
-{
-    int r = 0;
-    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
-        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
-        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 extern "C" void func_00340C20(sTree_340C20* tree, sWsListCtx* ctx)
 {
     func_003309D8(ctx, tree);
     sWsListCtx* q = (sWsListCtx*)((char*)ctx + 0x10);
     for (sWsBoundObj* p = tree->objs; p != 0; p = p->next) {
-        if (overlapObj_340C20(q->box, p)) {
+        if (overlapBoundObj(q->box, p)) {
             int* cnt = q->count;
             int n = *cnt;
             q->list[n] = (sWsListNode*)p;
@@ -3803,23 +3784,13 @@ static inline void add_340DC0(sSub_340DC0* s, void* p)
     *cnt = n + 1;
 }
 
-static inline int overlap_340DC0(const sWsBox* b, const sWsBoundObj* n)
-{
-    int r = 0;
-    if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
-        b->min[1] <= n->bmax[1] && b->max[1] >= n->bmin[1] &&
-        b->min[2] <= n->bmax[2] && b->max[2] >= n->bmin[2]) {
-        r = 1;
-    }
-    return r;
-}
 
 extern "C" void func_00340DC0(sTree_340DC0* self, sCtx_340DC0* ctx)
 {
     func_003309D8((sWsListCtx*)ctx, self);
     sSub_340DC0* s = &ctx->objs;
     for (sWsBoundObj* p = self->objs; p != 0; p = p->next) {
-        if (overlap_340DC0(s->box, p)) {
+        if (overlapBoundObj(s->box, p)) {
             add_340DC0(s, p);
         }
     }
