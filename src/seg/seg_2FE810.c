@@ -32,6 +32,20 @@ extern int *D_005271E8; /* getInfo result pointers (filled by func_0040A440) */
 extern int *D_005271EC;
 extern int *D_005271F0;
 
+/* libmc RPC command block (48 bytes, sent with every call except the file-name ones) */
+typedef struct {
+    int fd;
+    int port;
+    int slot;
+    int size;
+    int offset;
+    int origin;
+    int buffer;
+    int param;
+    unsigned char data[16];
+} sMcCmd;
+extern sMcCmd D_00527240;
+
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
 #ifdef SKIP_ASM
@@ -6431,7 +6445,6 @@ void func_00409708(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409940);
 #ifdef SKIP_ASM
-extern int Q_527240[] __asm__("D_00527240");
 extern int Q_528780[] __asm__("D_00528780");
 extern char Q_4980F0[] __asm__("D_004980F0");
 extern char Q_498108[] __asm__("D_00498108");
@@ -6479,7 +6492,7 @@ int func_00409940(void) {
             __asm__ volatile("nop");
         } while (i != 0);
     }
-    r = func_00426D18(&D_005271C0, 0xFE, 0, Q_527240, 48, Q_528780, 12, 0, 0);
+    r = func_00426D18(&D_005271C0, 0xFE, 0, &D_00527240, 48, Q_528780, 12, 0, 0);
     Q_sig(D_004533C4);
     if (r < 0) {
         D_005271C0.server = 0;
@@ -6528,7 +6541,6 @@ sSifClient *func_00409B60(int *a, int *b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409B90);
 #ifdef SKIP_ASM
-extern int D_00527240[];
 extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -6538,8 +6550,8 @@ int func_00409B90(int a) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    D_00527240[5] = a;
-    r = func_00426D18(&D_005271C0, 20, 1, D_00527240, 48, D_00528780, 4, 0, 0);
+    D_00527240.origin = a;
+    r = func_00426D18(&D_005271C0, 20, 1, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 20;
     else
@@ -6551,7 +6563,6 @@ int func_00409B90(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409C48);
 #ifdef SKIP_ASM
-extern int D_00527240[];
 extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -6561,8 +6572,8 @@ int func_00409C48(int a) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    D_00527240[1] = a;
-    r = func_00426D18(&D_005271C0, 21, 0, D_00527240, 48, D_00528780, 4, 0, 0);
+    D_00527240.port = a;
+    r = func_00426D18(&D_005271C0, 21, 0, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r != 0) {
         func_00423DC0(D_004533C4);
         return r;
@@ -6621,7 +6632,6 @@ int func_00409E38(int a, int b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409E70);
 #ifdef SKIP_ASM
-extern int D_00527240[];
 extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -6631,8 +6641,8 @@ int func_00409E70(int a) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    D_00527240[0] = a;
-    r = func_00426D18(&D_005271C0, 3, 1, D_00527240, 48, D_00528780, 4, 0, 0);
+    D_00527240.fd = a;
+    r = func_00426D18(&D_005271C0, 3, 1, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 3;
     else
@@ -6644,7 +6654,6 @@ int func_00409E70(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409F28);
 #ifdef SKIP_ASM
-extern int A_527240[] __asm__("D_00527240");
 extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -6654,10 +6663,10 @@ int func_00409F28(int a, int b, int c) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    A_527240[0] = a;
-    A_527240[4] = b;
-    A_527240[5] = c;
-    r = func_00426D18(&D_005271C0, 4, 1, A_527240, 48, A_528780, 4, 0, 0);
+    D_00527240.fd = a;
+    D_00527240.offset = b;
+    D_00527240.origin = c;
+    r = func_00426D18(&D_005271C0, 4, 1, &D_00527240, 48, A_528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 4;
     else
@@ -6690,7 +6699,6 @@ void func_0040A000(void *a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A090);
 #ifdef SKIP_ASM
-extern int A_527240[] __asm__("D_00527240");
 extern int A_5276C0[] __asm__("D_005276C0");
 extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
@@ -6702,13 +6710,13 @@ int func_0040A090(int a, int b, int c) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    A_527240[0] = a;
-    A_527240[7] = (int)A_5276C0;
-    A_527240[6] = b;
-    A_527240[3] = c;
+    D_00527240.fd = a;
+    D_00527240.param = (int)A_5276C0;
+    D_00527240.buffer = b;
+    D_00527240.size = c;
     func_00426358(b, c);
     func_00426358((int)A_5276C0, 0xC0);
-    r = func_00426D18(&D_005271C0, 5, 1, A_527240, 48, A_528780, 4, func_0040A000, A_5276C0);
+    r = func_00426D18(&D_005271C0, 5, 1, &D_00527240, 48, A_528780, 4, func_0040A000, A_5276C0);
     if (r == 0)
         D_004533C0 = 5;
     else
@@ -6720,8 +6728,6 @@ int func_0040A090(int a, int b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A1A8);
 #ifdef SKIP_ASM
-struct S1A8 { int a; int p4; int p8; int c; int p10; int n; int ptr; int p1C; unsigned char buf[16]; };
-extern struct S1A8 S1A8_527240 __asm__("D_00527240");
 extern int S1A8_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -6733,21 +6739,21 @@ int func_0040A1A8(int a, unsigned char *p, int n) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    S1A8_527240.a = a;
+    D_00527240.fd = a;
     if (n < 17) {
-        S1A8_527240.n = n;
-        S1A8_527240.ptr = S1A8_527240.c = 0;
+        D_00527240.origin = n;
+        D_00527240.buffer = D_00527240.size = 0;
     } else {
         int q = (int)p - 16;
         int d = (((unsigned)p - 1) & 0xFFFFFFF0u) - q;
-        S1A8_527240.c = n - d;
-        S1A8_527240.n = d;
-        S1A8_527240.ptr = (int)p + d;
+        D_00527240.size = n - d;
+        D_00527240.origin = d;
+        D_00527240.buffer = (int)p + d;
     }
-    for (i = 0; i < S1A8_527240.n; i++)
-        S1A8_527240.buf[i] = p[i];
+    for (i = 0; i < D_00527240.origin; i++)
+        D_00527240.data[i] = p[i];
     func_00424020(0);
-    r = func_00426D18(&D_005271C0, 6, 1, &S1A8_527240, 48, S1A8_528780, 4, 0, 0);
+    r = func_00426D18(&D_005271C0, 6, 1, &D_00527240, 48, S1A8_528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 6;
     else
@@ -6823,7 +6829,6 @@ void func_0040A440(void *a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A498);
 #ifdef SKIP_ASM
-extern int P498_527240[] __asm__("D_00527240");
 extern int P498_5276C0[] __asm__("D_005276C0");
 extern int P498_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
@@ -6835,26 +6840,26 @@ int func_0040A498(int a, int b, int *c, int *d, int *e) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    P498_527240[1] = a;
-    P498_527240[2] = b;
-    P498_527240[7] = (int)P498_5276C0;
+    D_00527240.port = a;
+    D_00527240.slot = b;
+    D_00527240.param = (int)P498_5276C0;
     if (c != 0)
-        P498_527240[5] = 1;
+        D_00527240.origin = 1;
     else
-        P498_527240[5] = 0;
+        D_00527240.origin = 0;
     if (d != 0)
-        P498_527240[4] = 1;
+        D_00527240.offset = 1;
     else
-        P498_527240[4] = 0;
+        D_00527240.offset = 0;
     if (e != 0)
-        P498_527240[3] = 1;
+        D_00527240.size = 1;
     else
-        P498_527240[3] = 0;
+        D_00527240.size = 0;
     D_005271E8 = c;
     D_005271EC = d;
     D_005271F0 = e;
     func_00426358((int)P498_5276C0, 0xC0);
-    r = func_00426D18(&D_005271C0, 1, 1, P498_527240, 48, P498_528780, 4, func_0040A440, P498_5276C0);
+    r = func_00426D18(&D_005271C0, 1, 1, &D_00527240, 48, P498_528780, 4, func_0040A440, P498_5276C0);
     if (r == 0)
         D_004533C0 = 1;
     else
@@ -6868,10 +6873,9 @@ INCLUDE_ASM("seg/seg_2FE810", func_0040A618);
 #ifdef SKIP_ASM
 extern int D_00528780[];
 extern void func_0040A618_log(char *) __asm__("func_00425C60");
-extern int D_00527240[];
 extern char D_00498158[];
 int func_0040A618(void) {
-    if (func_00426D18(&D_005271C0, 53, 0, D_00527240, 48, D_00528780, 4, 0, 0)) {
+    if (func_00426D18(&D_005271C0, 53, 0, &D_00527240, 48, D_00528780, 4, 0, 0)) {
         func_0040A618_log(D_00498158);
         return -1;
     }
@@ -6975,7 +6979,6 @@ int func_0040A858(int a, int b, char *s, void *u) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A998);
 #ifdef SKIP_ASM
-extern int A_527240[] __asm__("D_00527240");
 extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -6985,9 +6988,9 @@ int func_0040A998(int a, int b) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    A_527240[1] = a;
-    A_527240[2] = b;
-    r = func_00426D18(&D_005271C0, 16, 1, A_527240, 48, A_528780, 4, 0, 0);
+    D_00527240.port = a;
+    D_00527240.slot = b;
+    r = func_00426D18(&D_005271C0, 16, 1, &D_00527240, 48, A_528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 16;
     else
@@ -7031,7 +7034,6 @@ int func_0040AA68(int a, int b, char *s) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AB80);
 #ifdef SKIP_ASM
-extern int D_00527240[];
 extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -7041,8 +7043,8 @@ int func_0040AB80(int a) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    D_00527240[0] = a;
-    r = func_00426D18(&D_005271C0, 10, 1, D_00527240, 48, D_00528780, 4, 0, 0);
+    D_00527240.fd = a;
+    r = func_00426D18(&D_005271C0, 10, 1, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 10;
     else
@@ -7134,7 +7136,6 @@ int func_0040AE00(int a, int b, char *s, char *t) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AF58);
 #ifdef SKIP_ASM
-extern int A_527240[] __asm__("D_00527240");
 extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
@@ -7144,9 +7145,9 @@ int func_0040AF58(int a, int b) {
         return -100;
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
-    A_527240[1] = a;
-    A_527240[2] = b;
-    r = func_00426D18(&D_005271C0, 17, 1, A_527240, 48, A_528780, 4, 0, 0);
+    D_00527240.port = a;
+    D_00527240.slot = b;
+    r = func_00426D18(&D_005271C0, 17, 1, &D_00527240, 48, A_528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 17;
     else
