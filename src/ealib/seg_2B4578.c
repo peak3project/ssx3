@@ -178,6 +178,7 @@ extern struct sA8E8 D_0050A8E8;
 extern struct sA8E8Cfg D_0050A908;      /* D_0050A8E8.setup.cfg */
 extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
+extern unsigned char D_0050A918;        /* D_0050A8E8.setup.cfg.f10 */
 extern unsigned char D_0050A92E;        /* D_0050A8E8.setup.cfg.f26 */
 extern unsigned int D_0050A94C[];       /* &D_0050A8E8.setup.cfg.f44 (an array, so reads are in-struct memory like the member's) */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
@@ -6802,25 +6803,21 @@ void func_003C0BE8(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C0C18);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0050A8E8_0C18[] __asm__("D_0050A8E8");
-extern unsigned char D_0050A918_0C18[] __asm__("D_0050A918");
 
 void func_003C0C18(int arg0, int *arg1, int *arg2) {
     if (arg0 & 8) {
         *arg1 = 0;
-        *arg2 = D_0050A918_0C18[0];
+        *arg2 = D_0050A918;
         return;
     }
     if (arg0 & 0x100) {
-        char *b = D_0050A8E8_0C18;
-        *arg1 = *(unsigned char *)(b + 0x30);
-        *arg2 = *(unsigned char *)(b + 0x30) + *(unsigned char *)(b + 0x2F);
+        *arg1 = D_0050A8E8.setup.cfg.f10;
+        *arg2 = D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F;
         return;
     }
     if (arg0 & 4) {
-        char *b = D_0050A8E8_0C18;
-        *arg1 = *(unsigned char *)(b + 0x30) + *(unsigned char *)(b + 0x2F);
-        *arg2 = *(short *)(b + 0x17E);
+        *arg1 = D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F;
+        *arg2 = D_0050A8E8.f17E;
     }
 }
 #endif
