@@ -27,6 +27,17 @@ struct sRmMat33 {
     float m[3][3];
 };
 
+// A rail link record: flags, then the previous / next rail indices.
+struct sRailLink {
+    int flags;      // 0x0
+    int f4;         // 0x4
+    int prev;       // 0x8
+    int fC;         // 0xC
+    int next;       // 0x10
+    int f14;        // 0x14
+    int f18;        // 0x18
+};
+
 // ---- end of shared declarations ----
 
 // R5900 128-bit GPR quadword, for functions that copy a 16-byte block via a
@@ -6185,15 +6196,6 @@ INCLUDE_ASM("object/railmodifier", func_00365E40);
 #ifdef SKIP_ASM
 extern "C" void func_003660A8(void* self, int idx);
 
-struct sRailLinkE40 {
-    int flags;      // 0x0
-    int f4;         // 0x4
-    int prev;       // 0x8
-    int fC;         // 0xC
-    int next;       // 0x10
-    int f14;        // 0x14
-    int f18;        // 0x18
-};
 
 struct sRailSlotE40 {
     char pad_0x0[0x14];
@@ -6202,8 +6204,8 @@ struct sRailSlotE40 {
 };
 
 struct sRailModE40 {
-    sRailLinkE40 store[0x124];  // 0x0
-    sRailLinkE40* links;        // 0x1FF0
+    sRailLink store[0x124];  // 0x0
+    sRailLink* links;        // 0x1FF0
     int f1FF4;                  // 0x1FF4
     sRailSlotE40 slotsA[17];    // 0x1FF8
     sRailSlotE40 slotsB[17];    // 0x21D4
@@ -6281,22 +6283,16 @@ extern "C" void func_00365FA8(void* self)
 }
 #endif
 
-// 0x1c-byte elements reached through a pointer at self+0x1ff0, indexed by
-// the cursor at self+0x23dc (which the function then advances)
-struct sRailLink {
-    char pad_0x00[0x10];
-    int field_0x10;
-    char pad_0x14[0x8];
-};
-
 //100%
 INCLUDE_ASM("object/railmodifier", func_00365FE8);
 #ifdef SKIP_ASM
+// The rail links are reached through a pointer at self+0x1ff0 and indexed by the free-list cursor at
+// self+0x23dc (which the function then advances).
 struct sRailSelf { char pad[0x1FF0]; sRailLink* links; char pad2[0x23DC-0x1FF4]; int cursor; };
 extern "C" int func_00365FE8(sRailSelf* self)
 {
     int i = self->cursor;
-    self->cursor = self->links[i].field_0x10;
+    self->cursor = self->links[i].next;
     return i;
 }
 #endif
@@ -6514,15 +6510,6 @@ extern "C" void func_003663D8(void* selfp, int idx)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00366548);
 #ifdef SKIP_ASM
-struct sRailLink6548 {
-    int flags;      // 0x0
-    int f4;
-    int prev;       // 0x8
-    int fC;
-    int next;       // 0x10
-    int f14;
-    int f18;
-};
 
 // Walks the rail's link list and calls func_003663D8 on every enabled link without flag bit 1.
 extern "C" void func_00366548(void* self)
@@ -6530,14 +6517,14 @@ extern "C" void func_00366548(void* self)
     char* s = (char*)self;
     int i = *(int*)(s + 0x23C0);
     while (i >= 0) {
-        sRailLink6548* links = *(sRailLink6548**)(s + 0x1FF0);
-        sRailLink6548* cur = &links[i];
+        sRailLink* links = *(sRailLink**)(s + 0x1FF0);
+        sRailLink* cur = &links[i];
         int next = cur->next;
         while (next >= 0) {
-            if ((*(sRailLink6548**)(s + 0x1FF0))[next].flags & 1) {
+            if ((*(sRailLink**)(s + 0x1FF0))[next].flags & 1) {
                 break;
             }
-            next = (*(sRailLink6548**)(s + 0x1FF0))[next].next;
+            next = (*(sRailLink**)(s + 0x1FF0))[next].next;
         }
         if (cur->flags & 1) {
             if (((cur->flags >> 1) & 1) == 0) {
@@ -6552,15 +6539,6 @@ extern "C" void func_00366548(void* self)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00366618);
 #ifdef SKIP_ASM
-struct sRailLink6618 {
-    int flags;      // 0x0
-    int f4;
-    int prev;       // 0x8
-    int fC;
-    int next;       // 0x10
-    int f14;
-    int f18;
-};
 
 // Walks the rail's link list, clearing flag bit 1 and calling func_003663D8 on every enabled link.
 extern "C" void func_00366618(void* self)
@@ -6568,14 +6546,14 @@ extern "C" void func_00366618(void* self)
     char* s = (char*)self;
     int i = *(int*)(s + 0x23C0);
     while (i >= 0) {
-        sRailLink6618* links = *(sRailLink6618**)(s + 0x1FF0);
-        sRailLink6618* cur = &links[i];
+        sRailLink* links = *(sRailLink**)(s + 0x1FF0);
+        sRailLink* cur = &links[i];
         int next = cur->next;
         while (next >= 0) {
-            if ((*(sRailLink6618**)(s + 0x1FF0))[next].flags & 1) {
+            if ((*(sRailLink**)(s + 0x1FF0))[next].flags & 1) {
                 break;
             }
-            next = (*(sRailLink6618**)(s + 0x1FF0))[next].next;
+            next = (*(sRailLink**)(s + 0x1FF0))[next].next;
         }
         if (cur->flags & 1) {
             if ((cur->flags >> 1) & 1) {
@@ -6669,15 +6647,6 @@ extern "C" int func_003667F8(sRailNodeMan* self, int size)
 //100%
 INCLUDE_ASM("object/railmodifier", func_00366888);
 #ifdef SKIP_ASM
-struct sRailLink6888 {
-    int flags;      // 0x0
-    int f4;
-    int prev;       // 0x8
-    int fC;
-    int next;       // 0x10
-    int f14;
-    int f18;
-};
 
 // Returns the index of the disabled link with the largest f4 (at least 0), or -1.
 extern "C" int func_00366888(void* self)
@@ -6687,7 +6656,7 @@ extern "C" int func_00366888(void* self)
     int best = 0;
     int idx = -1;
     while (i >= 0) {
-        sRailLink6888* links = *(sRailLink6888**)(s + 0x1FF0);
+        sRailLink* links = *(sRailLink**)(s + 0x1FF0);
         if (!(links[i].flags & 1)) {
             int v = links[i].f4;
             if (v >= best) {
@@ -6785,15 +6754,6 @@ extern "C" int func_00366CE0(sRailNodeMan* self, int size, int owner, int skipB,
 //100%
 INCLUDE_ASM("object/railmodifier", func_00366DD8);
 #ifdef SKIP_ASM
-struct sRailLinkDD8 {
-    int flags;      // 0x0
-    int f4;
-    int prev;       // 0x8
-    int fC;
-    int next;       // 0x10
-    int f14;
-    int f18;
-};
 
 // Finds the enabled link whose prev field equals `key`; returns its index or -1.
 extern "C" int func_00366DD8(void* self, int key)
@@ -6801,7 +6761,7 @@ extern "C" int func_00366DD8(void* self, int key)
     char* s = (char*)self;
     int i = *(int*)(s + 0x23C0);
     while (i >= 0) {
-        sRailLinkDD8* links = *(sRailLinkDD8**)(s + 0x1FF0);
+        sRailLink* links = *(sRailLink**)(s + 0x1FF0);
         if ((links[i].flags & 1) && links[i].prev == key) {
             return i;
         }
