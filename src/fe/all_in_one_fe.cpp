@@ -181,13 +181,56 @@ static inline void drawQuad(sHudVertex* v)
     vt[71].fn(ctx + vt[71].delta, 4, v, 0);
 }
 
+// Declarations shared by the functions of this unit.
+extern "C" void* func_0039E2A0(void *, int);
+extern char D_00474E08[];
+extern unsigned short D_004A2088[];
+extern "C" void func_0039E390(void *, int);
+extern char D_00474248[];
+extern int D_004A275C;
+extern char D_00474160[];
+int GetHashValue32(char*);
+extern char D_0046E340[];
+extern char D_00473B78[];
+extern "C" void func_001E91F8(void*, void*);
+extern "C" void func_001E9220(void*, void*, int);
+void func_001E9290(void*, void*);
+extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+void func_001E91A8(void*, void*);
+extern "C" void func_001E95A0(void*, void*, void*, void*, int, int);
+extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
+extern "C" int sprintf(char*, const char*, ...);
+extern char D_0046D0D0[];
+extern char D_00473688[];
+extern char D_004735B0[];
+extern char D_004733F8[];
+extern char D_00473320[];
+extern char D_00473248[];
+extern char D_00473170[];
+extern char D_00473098[];
+extern char D_00472FC0[];
+extern char D_00472EE8[];
+extern char D_00472E10[];
+extern char D_00472D38[];
+extern char D_00472C60[];
+extern char D_00472AB0[];
+extern "C" void func_001D5428(void*, int);
+extern char D_00472928[];
+extern "C" void* func_001D53B0(void* self, int a1, int a2);
+extern char D_00472440[];
+extern char D_004722B8[];
+extern char D_004721E0[];
+extern char D_00471F80[];
+extern char D_00471EA8[];
+extern char D_00479780[];
+
 INCLUDE_ASM("fe/all_in_one_fe", __sti__all_in_one_fe_cpp);
 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C640);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00474E08[];
 extern "C" void* func_0021C640(void *self) {
     func_0039E2A0(self, 0);
     *(char**)((char*)self + 8) = D_00474E08;
@@ -198,10 +241,6 @@ extern "C" void* func_0021C640(void *self) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C678);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_0021C678(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -218,9 +257,6 @@ extern "C" void *func_0021C678(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C6D8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C6D8(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -238,9 +274,6 @@ extern "C" int func_0021C700(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C708);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C708(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -250,10 +283,7 @@ extern "C" void func_0021C708(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C730);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00474D30[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021C730(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -272,9 +302,6 @@ extern "C" void *func_0021C730(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C798);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C798(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -284,10 +311,7 @@ extern "C" void func_0021C798(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C7C0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00474C58[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021C7C0(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -316,9 +340,6 @@ extern "C" void func_0021C828(void* self) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C848);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C848(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -328,9 +349,6 @@ extern "C" void func_0021C848(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C870);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C870(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -340,10 +358,7 @@ extern "C" void func_0021C870(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C898);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00474AA8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021C898(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -362,9 +377,6 @@ extern "C" void *func_0021C898(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C900);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C900(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -374,9 +386,6 @@ extern "C" void func_0021C900(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C928);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C928(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -386,10 +395,7 @@ extern "C" void func_0021C928(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C950);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_004748F8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021C950(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -409,9 +415,6 @@ extern "C" void *func_0021C950(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C9C0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C9C0(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -421,9 +424,6 @@ extern "C" void func_0021C9C0(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021C9E8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021C9E8(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -433,9 +433,6 @@ extern "C" void func_0021C9E8(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CA10);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CA10(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -445,9 +442,6 @@ extern "C" void func_0021CA10(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CA38);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CA38(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -457,9 +451,6 @@ extern "C" void func_0021CA38(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CA60);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CA60(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -469,8 +460,6 @@ extern "C" void func_0021CA60(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CA88);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-
 extern "C" void func_0021CA88(void *self, int flags) {
     func_0039E390(self, flags);
 }
@@ -479,7 +468,6 @@ extern "C" void func_0021CA88(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CAA8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_004743F0[];
 extern "C" void* func_0021CAA8(void *self, int a1) {
     func_0039E2A0(self, a1);
@@ -491,9 +479,6 @@ extern "C" void* func_0021CAA8(void *self, int a1) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CAE0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CAE0(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -503,8 +488,6 @@ extern "C" void func_0021CAE0(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CB08);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00474248[];
 extern "C" void* func_0021CB08(void *self) {
     func_0039E2A0(self, 0);
     *(char**)((char*)self + 8) = D_00474248;
@@ -515,9 +498,6 @@ extern "C" void* func_0021CB08(void *self) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CB40);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474248[];
-
 extern "C" void func_0021CB40(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474248;
     func_0039E390(arg0, flags);
@@ -548,8 +528,6 @@ extern "C" void func_0021CB70(int *p) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CB90);
 #ifdef SKIP_ASM
-extern int D_004A275C;
-
 extern "C" void func_0021CB90(int arg0) {
     D_004A275C = arg0;
 }
@@ -558,8 +536,6 @@ extern "C" void func_0021CB90(int arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CB98);
 #ifdef SKIP_ASM
-extern int D_004A275C;
-
 extern "C" int func_0021CB98(void) {
     return D_004A275C;
 }
@@ -568,9 +544,7 @@ extern "C" int func_0021CB98(void) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CBA0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern "C" void* func_0020EAA0(void*);
-extern char D_00474160[];
 struct sElem_CBA0 {
     void* operator new[](unsigned int, void* p) { return p; }
     char pad[8];
@@ -598,7 +572,6 @@ extern "C" void *func_0021CBA0(void *arg0) {
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CC40);
 #ifdef SKIP_ASM
 extern "C" void func_0020EB08(void *, int);
-extern char D_00474160[];
 
 extern "C" void func_0021CC40(void *arg0, int arg1) {
     (*(char **)((char*)(arg0) + (8))) = D_00474160;
@@ -625,9 +598,6 @@ extern "C" unsigned char *func_0021CCC8(unsigned char *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CCE0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CCE0(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -637,10 +607,7 @@ extern "C" void func_0021CCE0(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CD08);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00474088[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021CD08(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -659,9 +626,6 @@ extern "C" void *func_0021CD08(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CD70);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CD70(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -671,10 +635,7 @@ extern "C" void func_0021CD70(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CD98);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00473FB0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021CD98(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -693,9 +654,6 @@ extern "C" void *func_0021CD98(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CE00);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CE00(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -705,10 +663,7 @@ extern "C" void func_0021CE00(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CE28);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00473ED8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021CE28(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -727,9 +682,6 @@ extern "C" void *func_0021CE28(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CE90);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CE90(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -739,12 +691,7 @@ extern "C" void func_0021CE90(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CEB8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-int GetHashValue32(char*);
 extern char D_00473E00[];
-extern char D_00474E08[];
-extern char D_0046E340[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021CEB8(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -765,9 +712,6 @@ extern "C" void *func_0021CEB8(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CF38);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CF38(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -777,12 +721,7 @@ extern "C" void func_0021CF38(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CF60);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-int GetHashValue32(char*);
 extern char D_00473D28[];
-extern char D_00474E08[];
-extern char D_0046E340[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021CF60(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -803,9 +742,6 @@ extern "C" void *func_0021CF60(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021CFE0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021CFE0(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -815,10 +751,7 @@ extern "C" void func_0021CFE0(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D008);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00473C50[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_0021D008(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -837,11 +770,6 @@ extern "C" void *func_0021D008(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D070);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473B78[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_0021D070(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -859,11 +787,6 @@ extern "C" void *func_0021D070(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D0D0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473B78[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_0021D0D0(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -881,9 +804,6 @@ extern "C" void *func_0021D0D0(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D138);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_0021D138(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -909,11 +829,6 @@ extern "C" void func_0021D160(float x, float y, int c, int d, ...) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D1A0);
 #ifdef SKIP_ASM
-extern "C" void func_001E91F8(void*, void*);
-extern "C" void func_001E9220(void*, void*, int);
-void func_001E9290_D1A0(void*, void*) __asm__("func_001E9290__FPvT0");
-extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
-
 // Vertical gauge from three sprites (cap, repeated middle, base), filled from the bottom by `fill`.
 extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* elems, signed char sel, int idx,
                               sGaugeBar* bar, float* col, int x, float* rect)
@@ -927,7 +842,7 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
     char* e = elems + sel * 0x24;
     func_001E91F8(e, &a);
     func_001E9220(e, &size, 0);
-    func_001E9290_D1A0(e, &sc);
+    func_001E9290(e, &sc);
     sc.x *= sx;
     sc.y *= sy;
     size.x *= sc.x;
@@ -1085,22 +1000,14 @@ extern int D_004A4E98;
 extern float D_004A5B28;
 extern float D_004A5B2C;
 extern sColour D_004C8668;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_D9A0(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00147618(void* iface, int a1);
-extern "C" void func_001E91F8(void*, void*);
-extern "C" void func_001E9220(void*, void*, int);
-void func_001E9290_D9A0(void*, void*) __asm__("func_001E9290__FPvT0");
-void func_001E91A8_D9A0(void*, void*) __asm__("func_001E91A8__FPvT0");
-extern "C" void func_001E95A0(void*, void*, void*, void*, int, int);
-extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
 extern "C" void func_001F1338(void* self, void* pos, void* size, void* scale, void* col);
 
 // Horizontal gauge: cap icon, start piece, middle, end piece, then the fill bar on top.
 extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, sGaugeBar* bar, int idx,
                               int icon, float* scale)
 {
-    int alt = func_00147618(cBE_getInterface_D9A0(cBE_getBE(), 1), ((sHudRoot_D9A0*)self)->players[idx].rider);
+    int alt = func_00147618(cBE_getInterface_Fv(cBE_getBE(), 1), ((sHudRoot_D9A0*)self)->players[idx].rider);
     t2Vector a;
     t2Vector sc;
     sVtxPos t;     // icon colour first, then reused for the bar size
@@ -1110,8 +1017,8 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
     if (icon != 0) {
         char* ie = elems + 0x7BC;
         func_001E91F8(ie, &a);
-        func_001E9290_D9A0(ie, &sc);
-        func_001E91A8_D9A0(ie, &t);
+        func_001E9290(ie, &sc);
+        func_001E91A8(ie, &t);
         if (alt == 0) {
             pos = a;
             func_001E95A0(self + 0x6AC, &pos, &sc, &t, elems[0x7DC], elems[0x7DD]);
@@ -1123,7 +1030,7 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
     char* e = elems + 0x798;
     func_001E91F8(e, &a);
     func_001E9220(e, &t, 0);
-    func_001E9290_D9A0(e, &sc);
+    func_001E9290(e, &sc);
     sc.x *= scale[0];
     sc.y *= scale[1];
     t.x *= sc.x;
@@ -1230,14 +1137,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_0021E1B0);
 #ifdef SKIP_ASM
 extern char D_00477F30[];
 extern int D_00535BF8[];
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv_E1B0(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_001E91F8(void*, void*);
-extern "C" void func_001E9220(void*, void*, int);
-void func_001E9290_E1B0(void*, void*) __asm__("func_001E9290__FPvT0");
-void func_001E91A8_E1B0(void*, void*) __asm__("func_001E91A8__FPvT0");
-extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
-extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
 extern "C" void func_0021E7E0_E1B0(char* self, sColour* colp, t2Vector* pos, t2Vector* size,
                                    float t, float sx, float sy, float amin, float amax) __asm__("func_0021E7E0");
 
@@ -1261,7 +1160,7 @@ extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
     scale.y = 1.0f;
     float k = 1.0f;
     char* r = *(char**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + (rider[0] << 2) + 0x28);
-    func_001E91A8_E1B0(D_00477F30 + *(int*)(r + 0xEC) * 0x24, &col);
+    func_001E91A8(D_00477F30 + *(int*)(r + 0xEC) * 0x24, &col);
     float t = ((float*)rider)[0x12];
     if (t >= 0.0f) {
         if (*(int*)(r + 0xEC) == 0) {
@@ -1270,7 +1169,7 @@ extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
             col.r = col.r * (t * 0.5f + 0.5f);
         }
     }
-    func_001E9290_E1B0(obj + 0x360, &sc);
+    func_001E9290(obj + 0x360, &sc);
     int* tex = (int*)(self + 0x444);
     func_001E91F8(obj + 0x360, &a);
     func_001E9220(D_00477F30 + 0xD8, &size1, 0);
@@ -1287,15 +1186,15 @@ extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
     p.y += size1.y;
     int* w = (int*)(D_004A289C->e84 + 8);
     *w = (*w & ~0x3E0) | ((obj[0x382] << 5) & 0x3E0);
-    func_001E91A8_E1B0(D_00477F30 + 0xFC, &c2);
+    func_001E91A8(D_00477F30 + 0xFC, &c2);
     func_001E9220(D_00477F30 + 0xFC, &size3, 0);
     size3.x *= sc.x;
     size3.y *= sc.y;
     func_001F1190(self, *(int*)(self + 0x46C), &p, &size3, &scale, &c2);
     p.x += size3.x;
-    func_001E91A8_E1B0(D_00477F30 + 0x120, &c2);
+    func_001E91A8(D_00477F30 + 0x120, &c2);
     func_001E9220(D_00477F30 + 0x120, &size3, 0);
-    cBE_getInterface_Fv_E1B0(cBE_getBE(), 0);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
     int off3 = (D_00535BF8[0] - 1) << 2;
     func_001F1190(self, *(int*)((char*)tex + off3), &p, &size3, &sc, &c2);
     if (k != 1.0f) {
@@ -1365,7 +1264,7 @@ extern "C" float func_0021E7A8(int arg0, int mode, float a, float b, float c) {
 INCLUDE_ASM("fe/all_in_one_fe", func_0021E7E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_0021EA00_E7E0(void* self, sColour* col, float* pos, float w, float h, float u0, float v0, float u1, float v1) __asm__("func_0021EA00");
+extern "C" void func_0021EA00(void* self, sColour* col, float* pos, float w, float h, float u0, float v0, float u1, float v1);
 
 extern "C" void func_0021E7E0(char* self, sColour* colp, float* pos, float* size,
                               float t, float sx, float sy, float amin, float amax) {
@@ -1384,13 +1283,13 @@ extern "C" void func_0021E7E0(char* self, sColour* colp, float* pos, float* size
     *(short*)(D_004A289C->e84 + 0x10) = id;
     if (size[0] > 72.0f) {
         float mid = (*(float*)(self + 0x484) + *(float*)(self + 0x488)) * 0.5f;
-        func_0021EA00_E7E0(self, c, pos, 36.0f, size[1], *(float*)(self + 0x484), *(float*)(self + 0x480), mid, *(float*)(self + 0x48C));
+        func_0021EA00(self, c, pos, 36.0f, size[1], *(float*)(self + 0x484), *(float*)(self + 0x480), mid, *(float*)(self + 0x48C));
         pos[0] += 36.0f;
-        func_0021EA00_E7E0(self, c, pos, size[0] - 72.0f, size[1], mid, *(float*)(self + 0x480), mid, *(float*)(self + 0x48C));
+        func_0021EA00(self, c, pos, size[0] - 72.0f, size[1], mid, *(float*)(self + 0x480), mid, *(float*)(self + 0x48C));
         pos[0] += size[0] - 72.0f;
-        func_0021EA00_E7E0(self, c, pos, 36.0f, size[1], mid, *(float*)(self + 0x480), *(float*)(self + 0x488), *(float*)(self + 0x48C));
+        func_0021EA00(self, c, pos, 36.0f, size[1], mid, *(float*)(self + 0x480), *(float*)(self + 0x488), *(float*)(self + 0x48C));
     } else {
-        func_0021EA00_E7E0(self, c, pos, size[0], size[1], *(float*)(self + 0x484), *(float*)(self + 0x480), *(float*)(self + 0x488), *(float*)(self + 0x48C));
+        func_0021EA00(self, c, pos, size[0], size[1], *(float*)(self + 0x484), *(float*)(self + 0x480), *(float*)(self + 0x488), *(float*)(self + 0x48C));
     }
 }
 #endif
@@ -1478,11 +1377,6 @@ extern sColour D_004C8588;
 extern sColour D_004C85A8;
 extern sColour D_004C85C8;
 extern sColour D_004C85E8;
-extern "C" void func_001E91F8(void*, void*);
-extern "C" void func_001E9220(void*, void*, int);
-void func_001E9290(void*, void*);
-extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
-extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
 
 extern "C" void func_0021F338(char* self, char* obj, int n, int x, t2Vector* pos, t2Vector* scale, float alpha) {
     if (n > 0) {
@@ -1537,15 +1431,6 @@ extern int D_00536640[];
 extern char D_0046ED68[];
 extern char D_004A2138[];
 extern sColour D_004C8808;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_001E91F8(void*, void*);
-extern "C" void func_001E9220(void*, void*, int);
-void func_001E9290(void*, void*);
-void func_001E91A8(void*, void*);
-extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
-extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
-extern "C" int sprintf(char*, const char*, ...);
 extern "C" void func_00392908(void*, float, float, char*);
 
 extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag) {
@@ -1613,15 +1498,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_0021F9B0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern sColour D_004C8648;
 extern char D_004A2300[];
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_001E91F8(void*, void*);
-extern "C" void func_001E9220(void*, void*, int);
-void func_001E9290(void*, void*);
-void func_001E91A8(void*, void*);
-extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
-extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
-extern "C" int sprintf(char*, const char*, ...);
 extern "C" int func_0022D390(void*, int);
 extern "C" int func_00153520(void*, int, int);
 extern "C" int func_00153350(void*, int);
@@ -1698,12 +1574,6 @@ struct Bits_0AD0 { int a, b; unsigned int lo : 5; int v : 5; unsigned int hi : 2
 struct Glob_0AD0 { char pad[0x504]; int f504; };
 extern Big_0AD0 D_00535610;
 extern Glob_0AD0* D_004A28A4;
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_001E91F8(void*, void*);
-void func_001E9290(void*, void*);
-void func_001E91A8(void*, void*);
-extern "C" void func_001E95A0(void*, void*, void*, void*, int, int);
 
 extern "C" void func_00220AD0(char* self, char* obj, float t) {
     t2Vector a;
@@ -1740,7 +1610,6 @@ extern "C" void func_00220AD0(char* self, char* obj, float t) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220D38);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00473AA8[];
 extern "C" void* func_00220D38(void *self) {
     func_0039E2A0(self, 0);
@@ -1752,9 +1621,6 @@ extern "C" void* func_00220D38(void *self) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220D70);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_0046D0D0[];
-
 extern "C" void func_00220D70(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_0046D0D0;
     func_0039E390(arg0, flags);
@@ -1764,7 +1630,6 @@ extern "C" void func_00220D70(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220D98);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_004739D8[];
 extern "C" void* func_00220D98(void *self) {
     func_0039E2A0(self, 0);
@@ -1776,9 +1641,6 @@ extern "C" void* func_00220D98(void *self) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220DD0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_0046D0D0[];
-
 extern "C" void func_00220DD0(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_0046D0D0;
     func_0039E390(arg0, flags);
@@ -1788,7 +1650,6 @@ extern "C" void func_00220DD0(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220DF8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00473908[];
 extern "C" void* func_00220DF8(void *self) {
     func_0039E2A0(self, 0);
@@ -1800,9 +1661,6 @@ extern "C" void* func_00220DF8(void *self) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220E30);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_0046D0D0[];
-
 extern "C" void func_00220E30(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_0046D0D0;
     func_0039E390(arg0, flags);
@@ -1812,7 +1670,6 @@ extern "C" void func_00220E30(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220E58);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00473838[];
 
 extern "C" void *func_00220E58(void *arg0) {
@@ -1825,9 +1682,6 @@ extern "C" void *func_00220E58(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220E90);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_0046D0D0[];
-
 extern "C" void func_00220E90(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_0046D0D0;
     func_0039E390(arg0, flags);
@@ -1837,9 +1691,6 @@ extern "C" void func_00220E90(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220EB8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_00220EB8(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -1849,10 +1700,7 @@ extern "C" void func_00220EB8(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220EE0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00473760[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00220EE0(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -1871,11 +1719,6 @@ extern "C" void *func_00220EE0(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00220F48);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473688[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00220F48(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -1894,10 +1737,6 @@ extern "C" void *func_00220F48(void *arg0) {
 INCLUDE_ASM("fe/all_in_one_fe", func_00220FA8);
 #ifdef SKIP_ASM
 extern "C" void func_001F7548(void*);
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473688[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00220FA8(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -1917,9 +1756,6 @@ extern "C" void *func_00220FA8(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221018);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_00221018(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -1929,11 +1765,6 @@ extern "C" void func_00221018(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221040);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_004735B0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221040(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -1952,10 +1783,6 @@ extern "C" void *func_00221040(void *arg0) {
 INCLUDE_ASM("fe/all_in_one_fe", func_002210A0);
 #ifdef SKIP_ASM
 extern "C" void func_001F7738(void*);
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_004735B0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_002210A0(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -1975,9 +1802,6 @@ extern "C" void *func_002210A0(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221110);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_00221110(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -1987,9 +1811,6 @@ extern "C" void func_00221110(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221138);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
-
 extern "C" void func_00221138(void *arg0, int flags) {
     *(char **)((char*)arg0 + 8) = D_00474E08;
     func_0039E390(arg0, flags);
@@ -1999,10 +1820,7 @@ extern "C" void func_00221138(void *arg0, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221160);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_004734D0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00221160(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2021,11 +1839,6 @@ extern "C" void *func_00221160(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002211C8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_004733F8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002211C8(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2044,10 +1857,6 @@ extern "C" void *func_002211C8(void *arg0) {
 INCLUDE_ASM("fe/all_in_one_fe", func_00221228);
 #ifdef SKIP_ASM
 extern "C" void func_002006B8(void*);
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_004733F8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00221228(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2067,8 +1876,6 @@ extern "C" void *func_00221228(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221298);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221298(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2081,10 +1888,6 @@ extern "C" void func_002212C0(void) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002212C8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473320[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 inline void* operator new[](unsigned int, void* p) { return p; }
 struct Elem { Elem() {} };
 
@@ -2106,11 +1909,6 @@ extern "C" void *func_002212C8(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221350);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473320[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221350(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2129,8 +1927,6 @@ extern "C" void *func_00221350(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002213D8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002213D8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2143,11 +1939,6 @@ extern "C" void func_00221400(void) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221408);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473248[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221408(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2165,11 +1956,6 @@ extern "C" void *func_00221408(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221468);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473248[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221468(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2187,8 +1973,6 @@ extern "C" void *func_00221468(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002214D0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002214D0(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2198,11 +1982,6 @@ extern "C" void func_002214D0(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002214F8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473170[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002214F8(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2220,11 +1999,6 @@ extern "C" void *func_002214F8(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221558);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473170[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221558(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2243,8 +2017,6 @@ extern "C" void *func_00221558(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002215C8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002215C8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2254,11 +2026,6 @@ extern "C" void func_002215C8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002215F0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473098[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002215F0(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2277,11 +2044,6 @@ extern "C" void *func_002215F0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221658);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00473098[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221658(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2300,8 +2062,6 @@ extern "C" void *func_00221658(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002216C8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002216C8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2311,11 +2071,6 @@ extern "C" void func_002216C8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002216F0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472FC0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002216F0(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2334,11 +2089,6 @@ extern "C" void *func_002216F0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221758);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472FC0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221758(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2357,8 +2107,6 @@ extern "C" void *func_00221758(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002217C8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002217C8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2368,11 +2116,6 @@ extern "C" void func_002217C8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002217F0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472EE8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002217F0(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2391,11 +2134,6 @@ extern "C" void *func_002217F0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221858);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472EE8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221858(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2414,8 +2152,6 @@ extern "C" void *func_00221858(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002218C8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002218C8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2425,11 +2161,6 @@ extern "C" void func_002218C8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002218F0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472E10[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002218F0(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2448,11 +2179,6 @@ extern "C" void *func_002218F0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221958);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472E10[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221958(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2471,8 +2197,6 @@ extern "C" void *func_00221958(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002219C8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002219C8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2482,11 +2206,6 @@ extern "C" void func_002219C8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002219F0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472D38[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002219F0(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2505,11 +2224,6 @@ extern "C" void *func_002219F0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221A58);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472D38[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221A58(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2528,8 +2242,6 @@ extern "C" void *func_00221A58(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221AC8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221AC8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2539,11 +2251,6 @@ extern "C" void func_00221AC8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221AF0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472C60[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221AF0(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2562,11 +2269,6 @@ extern "C" void *func_00221AF0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221B58);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472C60[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221B58(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2585,8 +2287,6 @@ extern "C" void *func_00221B58(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221BC8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221BC8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2596,8 +2296,6 @@ extern "C" void func_00221BC8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221BF0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221BF0(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2607,10 +2305,7 @@ extern "C" void func_00221BF0(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221C18);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00472B88[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00221C18(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2629,11 +2324,6 @@ extern "C" void *func_00221C18(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221C80);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472AB0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221C80(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2651,11 +2341,6 @@ extern "C" void *func_00221C80(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221CE0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00472AB0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00221CE0(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2675,8 +2360,6 @@ extern "C" void *func_00221CE0(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221D58);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221D58(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2689,8 +2372,6 @@ extern "C" void func_00221D80(void) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221D88);
 #ifdef SKIP_ASM
-extern "C" void func_001D5428(void*, int);
-extern char D_00472928[];
 extern "C" void func_00221D88(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00472928;
     func_001D5428(self, flags);
@@ -2700,9 +2381,6 @@ extern "C" void func_00221D88(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221DB0);
 #ifdef SKIP_ASM
-extern "C" void* func_001D53B0(void* self, int a1, int a2);
-extern char D_00472928[];
-
 extern "C" void *func_00221DB0(void *arg0) {
     func_001D53B0(arg0, 0, 0);
     (*(char **)((char*)(arg0) + (8))) = D_00472928;
@@ -2713,8 +2391,6 @@ extern "C" void *func_00221DB0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221DF0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221DF0(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2724,10 +2400,7 @@ extern "C" void func_00221DF0(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221E18);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00472850[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00221E18(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2746,8 +2419,6 @@ extern "C" void *func_00221E18(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221E80);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221E80(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2757,10 +2428,7 @@ extern "C" void func_00221E80(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221EA8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00472778[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00221EA8(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2779,8 +2447,6 @@ extern "C" void *func_00221EA8(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221F10);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221F10(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2790,10 +2456,7 @@ extern "C" void func_00221F10(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221F38);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_004726A0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00221F38(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2812,8 +2475,6 @@ extern "C" void *func_00221F38(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221FA0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_00221FA0(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2823,10 +2484,7 @@ extern "C" void func_00221FA0(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00221FC8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_004725C8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00221FC8(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2845,8 +2503,6 @@ extern "C" void *func_00221FC8(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222030);
 #ifdef SKIP_ASM
-extern "C" void func_001D5428(void*, int);
-extern char D_00472440[];
 extern "C" void func_00222030(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00472440;
     func_001D5428(self, flags);
@@ -2856,9 +2512,6 @@ extern "C" void func_00222030(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222058);
 #ifdef SKIP_ASM
-extern "C" void* func_001D53B0(void* self, int a1, int a2);
-extern char D_00472440[];
-
 extern "C" void *func_00222058(void *arg0) {
     func_001D53B0(arg0, 0, 0);
     (*(char **)((char*)(arg0) + (8))) = D_00472440;
@@ -2869,8 +2522,6 @@ extern "C" void *func_00222058(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222098);
 #ifdef SKIP_ASM
-extern "C" void func_001D5428(void*, int);
-extern char D_004722B8[];
 extern "C" void func_00222098(void *self, int flags) {
     *(char**)((char*)self + 8) = D_004722B8;
     func_001D5428(self, flags);
@@ -2880,9 +2531,6 @@ extern "C" void func_00222098(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002220C0);
 #ifdef SKIP_ASM
-extern "C" void* func_001D53B0(void* self, int a1, int a2);
-extern char D_004722B8[];
-
 extern "C" void *func_002220C0(void *arg0) {
     func_001D53B0(arg0, 0, 0);
     (*(char **)((char*)(arg0) + (8))) = D_004722B8;
@@ -2893,11 +2541,6 @@ extern "C" void *func_002220C0(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222100);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_004721E0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00222100(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -2915,11 +2558,6 @@ extern "C" void *func_00222100(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222160);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_004721E0[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00222160(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -2937,8 +2575,6 @@ extern "C" void *func_00222160(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002221C8);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002221C8(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2948,8 +2584,6 @@ extern "C" void func_002221C8(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002221F0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002221F0(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -2959,10 +2593,7 @@ extern "C" void func_002221F0(void *self, int flags) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222218);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
 extern char D_00472108[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
 
 extern "C" void *func_00222218(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
@@ -2981,8 +2612,6 @@ extern "C" void *func_00222218(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222280);
 #ifdef SKIP_ASM
-extern "C" void func_001D5428(void*, int);
-extern char D_00471F80[];
 extern "C" void func_00222280(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00471F80;
     func_001D5428(self, flags);
@@ -2998,9 +2627,6 @@ extern "C" void func_002222B0(void) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002222B8);
 #ifdef SKIP_ASM
-extern "C" void* func_001D53B0(void* self, int a1, int a2);
-extern char D_00471F80[];
-
 extern "C" void *func_002222B8(void *arg0) {
     func_001D53B0(arg0, 0, 0);
     (*(char **)((char*)(arg0) + (8))) = D_00471F80;
@@ -3011,11 +2637,6 @@ extern "C" void *func_002222B8(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002222F8);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00471EA8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_002222F8(void *arg0) {
     func_0039E2A0(arg0, 0);
     (*(int *)((char*)(arg0) + (0x98))) = 0;
@@ -3033,11 +2654,6 @@ extern "C" void *func_002222F8(void *arg0) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_00222358);
 #ifdef SKIP_ASM
-extern "C" void* func_0039E2A0(void *, int);
-extern char D_00471EA8[];
-extern char D_00474E08[];
-extern unsigned short D_004A2088[];
-
 extern "C" void *func_00222358(void *arg0, int arg1, int arg2) {
     func_0039E2A0(arg0, arg1);
     (*(int *)((char*)(arg0) + (0x98))) = arg2;
@@ -3055,8 +2671,6 @@ extern "C" void *func_00222358(void *arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002223C0);
 #ifdef SKIP_ASM
-extern "C" void func_0039E390(void *, int);
-extern char D_00474E08[];
 extern "C" void func_002223C0(void *self, int flags) {
     *(char**)((char*)self + 8) = D_00474E08;
     func_0039E390(self, flags);
@@ -3128,7 +2742,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_002224B8);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
-extern char D_00479780[];
 
 extern "C" void func_002224B8(cLunoValue** out, char** state, cLunoValue* a, int c) {
     char* s = *state;
@@ -3159,7 +2772,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_00222648);
 #ifdef SKIP_ASM
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
-extern char D_00479780[];
 
 extern "C" void func_00222648(cLunoValue** out, char** state, cLunoValue* a, cLunoValue* b, int c) {
     char* s = *state;
