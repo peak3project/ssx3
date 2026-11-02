@@ -1830,14 +1830,12 @@ struct sFsHd *func_003DE800_impl(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DE8C0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00519AC4_9AC4[] __asm__("D_00519AC4");
 extern void MUTEX_unlock(int *);
 
 void func_003DE8C0(int a0) {
-    MUTEX_lock(D_00519AC4_9AC4);
+    MUTEX_lock(D_00519AC4.f00);
     func_003E6448(a0, 0, 0x110);
-    MUTEX_unlock(D_00519AC4_9AC4);
+    MUTEX_unlock(D_00519AC4.f00);
 }
 #endif
 
