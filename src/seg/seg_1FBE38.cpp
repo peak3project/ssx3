@@ -6555,14 +6555,12 @@ extern char *D_004A28A8_6CB0 __asm__("D_004A28A8");
 extern void *D_004A4028_6CB0 __asm__("D_004A4028");
 void func_00357AE8(void*, int, int);
 void func_00357B10(void*, int, int);
-struct V3_6CB0 { float x, y, z; };
-extern V3_6CB0 D_004C9098_6CB0 __asm__("D_004C9098");
 extern unsigned D_6CB0[] __asm__("D_004FC050");
 extern int D_004A58B8;
 extern const int D_00446970[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_6CB0 { int idx; int val; int pad; int type; };
-extern "C" V3_6CB0 func_00306CB0(int n, Ent_6CB0 *e) {
+extern "C" cLunoValue func_00306CB0(int n, Ent_6CB0 *e) {
     if (D_004A58B8 == 0) {
         ((int*)D_6CB0)[0] = 0;
         D_6CB0[1] = 0xFFFFFFFF;
@@ -6604,7 +6602,7 @@ extern "C" V3_6CB0 func_00306CB0(int n, Ent_6CB0 *e) {
         else
             func_00357B10(D_004A4028_6CB0, buf[0], *(int*)(obj + 0x78));
     }
-    return D_004C9098_6CB0;
+    return D_004C9098;
 }
 #endif
 
