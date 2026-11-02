@@ -8,13 +8,8 @@ struct sVec4 : t4Vector
     sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
 } __attribute__((aligned(16)));
 
-INCLUDE_ASM("seg/seg_1218", func_00100218);
-
-//100%
-INCLUDE_ASM("seg/seg_1218", func_00100250);
-#ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vDot_0250(const t4Vector& a, const t4Vector& b)
+static inline float Dot(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -34,7 +29,7 @@ static inline float vDot_0250(const t4Vector& a, const t4Vector& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector vScale_0250(const t4Vector& v, float s)
+static inline t4Vector Scale(const t4Vector& v, float s)
 {
     t4Vector r;
     int t;
@@ -49,8 +44,25 @@ static inline t4Vector vScale_0250(const t4Vector& v, float s)
     return r;
 }
 
+// PORT: PS2-only VU0 inline asm (vector times scalar; Scale with a "memory" clobber).
+static inline t4Vector ScaleM(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector vSub_0250(const t4Vector& a, const t4Vector& b)
+static inline t4Vector Sub(const t4Vector& a, const t4Vector& b)
 {
     t4Vector r;
     __asm__(
@@ -63,8 +75,37 @@ static inline t4Vector vSub_0250(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
+// PORT: PS2-only VU0 inline asm (vector subtract; Sub with a "memory" clobber).
+static inline t4Vector SubM(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract; sVec4 operands).
+static inline sVec4 SubV(const sVec4& a, const sVec4& b)
+{
+    sVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
 // PORT: PS2-only VU0 inline asm (normalize via rsqrt).
-static inline t4Vector vNorm_0250(const t4Vector& v)
+static inline t4Vector Norm(const t4Vector& v)
 {
     t4Vector r;
     __asm__(
@@ -84,13 +125,131 @@ static inline t4Vector vNorm_0250(const t4Vector& v)
     return r;
 }
 
+// PORT: PS2-only FPU asm (absolute value).
+static inline float Abs(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline t4Vector Add(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add; Add with a "memory" clobber).
+static inline t4Vector AddM(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: `<?` is the g++ minimum operator (EE min.s).
+static inline float Clamp(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo;
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar; sVec4 operands).
+static inline sVec4 DivV(const sVec4& v, float s)
+{
+    sVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector * scalar).
+static inline void ScaleEq(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+INCLUDE_ASM("seg/seg_1218", func_00100218);
+
+//100%
+INCLUDE_ASM("seg/seg_1218", func_00100250);
+#ifdef SKIP_ASM
 extern "C" float func_00100250(void* self, const t4Vector* v)
 {
     char* p = *(char**)((char*)self + 0x18);
     t4Vector a = *(t4Vector*)(p + 0x1A0);
     t4Vector b = *(t4Vector*)(p + 0x1C0);
-    t4Vector u = vSub_0250(*v, vScale_0250(a, vDot_0250(*v, a)));
-    float r = -vDot_0250(vNorm_0250(u), b);
+    t4Vector u = Sub(*v, Scale(a, Dot(*v, a)));
+    float r = -Dot(Norm(u), b);
     float f = *(float*)((char*)self + 0xDF4);
     if (f == 1.0f)
         return r;
@@ -130,87 +289,6 @@ static inline t4Vector Cross_0348(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector Sub_0348(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector Scale_0348(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
-static inline t4Vector Norm_0348(const t4Vector& v)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vrsqrt    Q, $vf0w, $vf4x\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf5, $vf3, Q\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(v)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_0348(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only FPU asm (absolute value).
-static inline float Abs_0348(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-
 static inline float Atan2_0348(float y, float x)
 {
     if (x == 0.0f) {
@@ -240,14 +318,14 @@ extern "C" float func_00100348_0348(char* self, t4Vector* target)
         up = D_004FF160_v0348;
     t4Vector fwd = *Obj_0348(self)->GetDir();
     t4Vector side = Cross_0348(fwd, up);
-    t4Vector d = Sub_0348(*target, *Obj_0348(self)->GetPos());
+    t4Vector d = SubM(*target, *Obj_0348(self)->GetPos());
     d.z = 0.0f;
-    d = Norm_0348(d);
-    d = Norm_0348(Sub_0348(d, Scale_0348(up, Dot_0348(d, up))));
-    float x = Dot_0348(d, fwd);
-    float y = Dot_0348(d, side);
+    d = Norm(d);
+    d = Norm(SubM(d, ScaleM(up, Dot(d, up))));
+    float x = Dot(d, fwd);
+    float y = Dot(d, side);
     float a = Atan2_0348(y, x);
-    float t = Abs_0348(a) * 6.289702415466309f;
+    float t = Abs(a) * 6.289702415466309f;
     if (t < 0.019999999552965164f) {
         t = 0.0f;
     } else {
@@ -263,51 +341,6 @@ extern "C" float func_00100348_0348(char* self, t4Vector* target)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00100610);
 #ifdef SKIP_ASM
-// PORT: PS2-only VU0 inline asm (vector add).
-static inline t4Vector Add_0610(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector Sub_0610(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector Scale_0610(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
-
 struct sCam_0610 {
     char pad0[0x110];
     t4Vector pos;       // 0x110
@@ -322,9 +355,9 @@ t4Vector func_00100610_0610(char* self) __asm__("func_00100610");
 
 t4Vector func_00100610_0610(char* self)
 {
-    t4Vector d = Sub_0610((*(sCam_0610**)(self + 0x18))->target, (*(sCam_0610**)(self + 0x18))->pos);
-    d = Scale_0610(d, 0.1f);
-    return Add_0610((*(sCam_0610**)(self + 0x18))->base, d);
+    t4Vector d = Sub((*(sCam_0610**)(self + 0x18))->target, (*(sCam_0610**)(self + 0x18))->pos);
+    d = ScaleM(d, 0.1f);
+    return Add((*(sCam_0610**)(self + 0x18))->base, d);
 }
 #endif
 
@@ -384,27 +417,6 @@ extern "C" int func_0010B980_0680(char* self, float* speed, int* below, int* o3,
 extern "C" int func_0010BD10_0680(char* self, int* out) __asm__("func_0010BD10");
 extern "C" void func_00100680_0680(char* self, sPad_0680* pad) __asm__("func_00100680");
 
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_0680(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
 extern "C" void func_00100680_0680(char* self, sPad_0680* pad)
 {
     t4Vector v;
@@ -416,7 +428,7 @@ extern "C" void func_00100680_0680(char* self, sPad_0680* pad)
     pad->b20 = (int)(func_00100348_0680(self, &v) * 31.0f);
     if (func_0010BB18_0680(self, (float*)(self + 0xDF0), &x)) {
         float sp = *(float*)(self + 0xDF0);
-        float len = Len_0680(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0));
+        float len = Len(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0));
         if (sp + 138.88890075683594f < len) {
             if (x)
                 pad->w0 = 0x1F;
@@ -490,35 +502,6 @@ extern "C" float func_00100348_09E0(void*, t4Vector*) __asm__("func_00100348");
 extern "C" void func_00100680(void*, void*);
 extern "C" void func_0010C140(void*, void*);
 
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_09E0(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2 abs.s helper (stands in for fabsf).
-static inline float vAbs_09E0(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-
 extern "C" void func_001009E0(char* self, sPad_09E0* pad)
 {
     int below, o3, o4, o5, o6;
@@ -533,8 +516,8 @@ extern "C" void func_001009E0(char* self, sPad_09E0* pad)
     float f = func_00100348_09E0(self, &v);
     pad->b20 = (int)(f * 31.0f);
     char* rider = *(char**)(self + 0x18);
-    float len = vLen_09E0(*(t4Vector*)(rider + 0x1E0));
-    if (below && *(float*)(rider + 0x4C8) < 10000.0f && vAbs_09E0(f) < 1.0f) {
+    float len = Len(*(t4Vector*)(rider + 0x1E0));
+    if (below && *(float*)(rider + 0x4C8) < 10000.0f && Abs(f) < 1.0f) {
         func_0010BFA8_09E0(self, o5, o6, o4, o3);
         pad->b14 = 3;
         return;
@@ -621,35 +604,6 @@ extern "C" int func_0010BD10_0F88(char* self, int* out) __asm__("func_0010BD10")
 extern "C" float func_0031C228(float);
 extern "C" void func_00112A50(void*, int);
 
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_0F88(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only FPU asm (absolute value).
-static inline float Abs_0F88(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-
 // PORT: PS2-only FPU asm (float -> int -> float truncation).
 static inline float Trunc_0F88(float x)
 {
@@ -678,10 +632,10 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
     cRider_0F88* tgt = D_004A28A8_0F88->game->list->riders[ctl->target];
     float diff = rec->angle - *(float*)(*(char**)(self + 0x18) + 0x4CC);
     float ang = diff - Floor_0F88(diff * 0.15915493667125702f + 0.5f) * 6.2831854820251465f;
-    float mySpd = Len_0F88(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0));
-    float hisSpd = Len_0F88(*tgt->GetVel());
+    float mySpd = Len(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0));
+    float hisSpd = Len(*tgt->GetVel());
     float steer = 0.0f;
-    if (Abs_0F88(ang) > 1.5707964897155762f) {
+    if (Abs(ang) > 1.5707964897155762f) {
         func_00100610_0F88(&v, self);
         steer = func_00100348_0F88(self, &v);
         if (mySpd < hisSpd)
@@ -698,7 +652,7 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
             if (d < 0.0f)
                 lim += 3.1415927410125732f;
         }
-        if (Abs_0F88(ang) > lim || mySpd <= hisSpd) {
+        if (Abs(ang) > lim || mySpd <= hisSpd) {
             func_00100610_0F88(&v, self);
             steer = func_00100348_0F88(self, &v);
             func_0010C0A8(self, pad);
@@ -1753,17 +1707,10 @@ extern "C" int func_001042E0(void *arg0, void *a1, int *arg2, float f12) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104358);
 #ifdef SKIP_ASM
-// PORT: PS2 abs.s helper (stands in for fabsf).
-static inline float vAbs_4358(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 extern "C" int func_00104358(char* self, void* x, char* anim, float dt) {
     char* p = *(char**)(self + 0x60);
-    float b = vAbs_4358(*(float*)(p + 0x2A4));
-    float a = vAbs_4358(*(float*)(p + 0x2B0));
+    float b = Abs(*(float*)(p + 0x2A4));
+    float a = Abs(*(float*)(p + 0x2B0));
     float m = (a < b) ? b : a;
     func_00313CF0(anim, 0, m * *(float*)(anim + 0x10));
     if (func_00313800(anim, dt * 0.01666666753590107f) != 0) {
@@ -1777,19 +1724,6 @@ extern "C" int func_00104358(char* self, void* x, char* anim, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001043F8);
 #ifdef SKIP_ASM
-// PORT: PS2 abs.s helper (stands in for fabsf).
-static inline float vAbs_43F8(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-// PORT: `<?` is the g++ minimum operator (EE min.s).
-static inline float clamp_43F8(float v, float lo, float hi)
-{
-    return (v >= lo) ? (v <? hi) : lo;
-}
-
 extern "C" int func_001043F8(char* self, void* x, char* anim, float dt)
 {
     int slot = 0xA5;
@@ -1806,10 +1740,10 @@ extern "C" int func_001043F8(char* self, void* x, char* anim, float dt)
     func_00313C50(anim, 1, *(int*)(D_004A3E7C + slot * 4 + 0x1030));
     func_00313D40(anim, 1, 1);
     char* rider = *(char**)(self + 0x60);
-    float b = vAbs_43F8(*(float*)(rider + 0x298));
-    float a = vAbs_43F8(*(float*)(rider + 0x28C));
+    float b = Abs(*(float*)(rider + 0x298));
+    float a = Abs(*(float*)(rider + 0x28C));
     float m = (a < b) ? b : a;
-    m = clamp_43F8(m, 0.0f, 1.0f);
+    m = Clamp(m, 0.0f, 1.0f);
     float w = m * 0.75f + 0.25f;
     func_00313D28(anim, 0, 1.0f - w);
     func_00313D28(anim, 1, w);
@@ -1893,16 +1827,11 @@ extern "C" int func_001046B0(char* self, void* x, int* anim, float dt)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104728);
 #ifdef SKIP_ASM
-// PORT: `<?` is the g++ minimum operator (EE min.s).
-static inline float clamp_4728(float v, float lo, float hi)
-{
-    return (v >= lo) ? (v <? hi) : lo;
-}
 extern "C" int func_00104728(char* self, void* x, char* anim, float dt) {
     float v;
     int s = *(int*)anim;
     if (s == 0x19 || s == 0x21) {
-        v = clamp_4728(1.0f - *(float*)(*(char**)(self + 0x60) + 0x268), 0.0f, 1.0f);
+        v = Clamp(1.0f - *(float*)(*(char**)(self + 0x60) + 0x268), 0.0f, 1.0f);
     } else {
         v = *(float*)(*(char**)(self + 0x60) + 0x268);
     }
@@ -1918,29 +1847,17 @@ extern "C" int func_00104728(char* self, void* x, char* anim, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001047F0);
 #ifdef SKIP_ASM
-// PORT: PS2 abs.s helper (stands in for fabsf).
-static inline float vAbs_47F0(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-// PORT: `<?` is the g++ minimum operator (EE min.s).
-static inline float clamp_47F0(float v, float lo, float hi)
-{
-    return (v >= lo) ? (v <? hi) : lo;
-}
 extern "C" int func_001047F0(char* self, void* x, char* anim, float dt) {
     float v;
     int s = *(int*)anim;
     if (s == 0x25) {
-        v = 1.0f - vAbs_47F0(*(float*)(*(char**)(self + 0x60) + 0x280));
+        v = 1.0f - Abs(*(float*)(*(char**)(self + 0x60) + 0x280));
     } else if (s == 0x26) {
-        v = 1.0f - vAbs_47F0(*(float*)(*(char**)(self + 0x60) + 0x280));
+        v = 1.0f - Abs(*(float*)(*(char**)(self + 0x60) + 0x280));
     } else {
-        v = vAbs_47F0(*(float*)(*(char**)(self + 0x60) + 0x280));
+        v = Abs(*(float*)(*(char**)(self + 0x60) + 0x280));
     }
-    func_00313CF0(anim, 0, clamp_47F0(v, 0.0f, 1.0f) * *(float*)(anim + 0x10));
+    func_00313CF0(anim, 0, Clamp(v, 0.0f, 1.0f) * *(float*)(anim + 0x10));
     if (func_00313800(anim, dt * 0.01666666753590107f) != 0) {
         func_003145F8(x, anim);
         return 1;
@@ -2343,61 +2260,6 @@ struct sSelf_4E70 {
 extern "C" int func_00334458_4E70(void*, cScope_4E70*, sContact_4E70*, int, int) __asm__("func_00334458");
 extern sVec4 D_004FF120_4E70 __asm__("D_004FF120");
 
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_4E70(const sVec4& a, const sVec4& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_4E70(const sVec4& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec4 Sub_4E70(const sVec4& a, const sVec4& b)
-{
-    sVec4 r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
 // PORT: PS2-only VU0 inline asm (vector add in place).
 static inline void AddTo_4E70(sVec4& a, const sVec4& b)
 {
@@ -2408,32 +2270,6 @@ static inline void AddTo_4E70(sVec4& a, const sVec4& b)
         "sqc2      $vf5, %0\n"
         : "=m"(a)
         : "m"(a), "m"(b));
-}
-
-// PORT: PS2-only VU0 inline asm (vector divided by scalar).
-static inline sVec4 Div_4E70(const sVec4& v, float s)
-{
-    sVec4 r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vdiv      Q, $vf0w, $vf3x\n"
-        "lqc2      $vf4, %2\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf4, $vf4, Q\n"
-        "sqc2      $vf4, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s));
-    return r;
-}
-
-// PORT: PS2-only FPU asm (absolute value).
-static inline float Abs_4E70(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
 }
 
 // PORT: the RID list is indexed as i * 4 + (int)base (pointer held in int) to get the target's addu operand order.
@@ -2447,8 +2283,8 @@ static inline int IsWall_4E70(sContact_4E70* c)
 
 static inline int IsBack_4E70(sSelf_4E70* self, sContact_4E70* c)
 {
-    sVec4 rel = Sub_4E70(c->pos, *(sVec4*)(self->body + 0x10));
-    return Dot_4E70(rel, c->normal) < 0.0f;
+    sVec4 rel = SubV(c->pos, *(sVec4*)(self->body + 0x10));
+    return Dot(rel, c->normal) < 0.0f;
 }
 
 static inline int Before_4E70(sContact_4E70* a, sContact_4E70* b)
@@ -2474,7 +2310,7 @@ extern "C" float func_00104E70(sSelf_4E70* self, cScope_4E70* scope, sContact_4E
         RID_4E70(count++) = hits[0].surf->id;
     int best = 0;
     float h = scope->Height();
-    float bestDist = Abs_4E70(hits[0].height - h);
+    float bestDist = Abs(hits[0].height - h);
     int bestWall = IsWall_4E70(&hits[0]);
     int bestBack = IsBack_4E70(self, &hits[0]);
     for (int i = 1; i < n; i++) {
@@ -2485,7 +2321,7 @@ extern "C" float func_00104E70(sSelf_4E70* self, cScope_4E70* scope, sContact_4E
             if (j >= count)
                 RID_4E70(count++) = hits[i].surf->id;
         }
-        float dist = Abs_4E70(hits[i].height - h);
+        float dist = Abs(hits[i].height - h);
         int wall = IsWall_4E70(&hits[i]);
         if (wall && !bestWall) {
             best = i;
@@ -2519,9 +2355,9 @@ extern "C" float func_00104E70(sSelf_4E70* self, cScope_4E70* scope, sContact_4E
             if (IsWall_4E70(&hits[k]))
                 AddTo_4E70(sum, hits[k].normal);
         }
-        float len = Len_4E70(sum);
+        float len = Len(sum);
         if (len > 0.0010000000474974513f) {
-            sVec4 nrm = Div_4E70(sum, len);
+            sVec4 nrm = DivV(sum, len);
             out->normal = nrm;
         }
     }
@@ -2593,77 +2429,6 @@ extern "C" void func_0032F708(void* self, int flags);
 extern char* D_004A3500_5398 __asm__("D_004A3500");
 extern char D_004C5830_5398[] __asm__("D_004C5830");
 
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_5398(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_5398(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector Sub_5398(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector Scale_5398(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s));
-    return r;
-}
-
 // PORT: PS2-only VU0 inline asm (vector divided by scalar).
 static inline t4Vector Div_5398(const t4Vector& v, float s)
 {
@@ -2721,21 +2486,21 @@ extern "C" void func_00105398(char* self, t4Vector* norm)
         if (func_001231A8(self))
             norm = (t4Vector*)(self + 0x370);
         if (norm) {
-            t4Vector t = Sub_5398(c.normal, Scale_5398(*norm, Dot_5398(c.normal, *norm)));
-            float len = Len_5398(t);
+            t4Vector t = Sub(c.normal, Scale(*norm, Dot(c.normal, *norm)));
+            float len = Len(t);
             if (len < 0.0010000000474974513f)
                 c.normal = *norm;
             else
                 c.normal = Div_5398(t, len);
         } else if (func_0011FE98(self) == 4) {
             t4Vector* up = (t4Vector*)(*(char**)(self + 0x77C) + 0xB0);
-            if (Dot_5398(c.normal, *up) > 0.0f)
+            if (Dot(c.normal, *up) > 0.0f)
                 c.normal = *up;
             else
-                c.normal = Scale_5398(*up, -1.0f);
+                c.normal = Scale(*up, -1.0f);
         }
-        float k = Dot_5398(Scale_5398(c.normal, -1.0f), Sub_5398(*(t4Vector*)(self + 0x1E0), c.vel)) >= 0.0f
-                      ? Dot_5398(Scale_5398(c.normal, -1.0f), Sub_5398(*(t4Vector*)(self + 0x1E0), c.vel))
+        float k = Dot(Scale(c.normal, -1.0f), Sub(*(t4Vector*)(self + 0x1E0), c.vel)) >= 0.0f
+                      ? Dot(Scale(c.normal, -1.0f), Sub(*(t4Vector*)(self + 0x1E0), c.vel))
                       : 0.0f;
         info.pos = c.pos;
         info.dir = Norm_5398(*(t4Vector*)(self + 0x1E0));
@@ -2791,94 +2556,6 @@ struct sVE_57B8 { short delta; short index; int (*fn)(void*); };
 struct sVEf_57B8 { short delta; short index; void (*fn)(void*, float); };
 struct sVEv_57B8 { short delta; short index; t4Vector* (*fn)(void*); };
 
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_57B8(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_57B8(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector * scalar).
-static inline t4Vector Scale_57B8(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (in-place vector * scalar).
-static inline void ScaleEq_57B8(t4Vector& v, float s)
-{
-    int t;
-    __asm__(
-        "mfc1      %1, %2\n"
-        "lqc2      $vf4, %0\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "+m"(v), "=&r"(t)
-        : "f"(s)
-        : "memory");
-}
-
-// PORT: PS2-only VU0 inline asm (vector add).
-static inline t4Vector Add_57B8(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
-
 // PORT: PS2-only VU0 inline asm (a += b).
 static inline void AddEq_57B8(t4Vector& a, const t4Vector& b)
 {
@@ -2892,24 +2569,9 @@ static inline void AddEq_57B8(t4Vector& a, const t4Vector& b)
         : "memory");
 }
 
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector Sub_57B8(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
-
 static inline float DotV_57B8(t4Vector a, const t4Vector& b)
 {
-    return Dot_57B8(a, b);
+    return Dot(a, b);
 }
 
 // PORT: g++ minimum operator.
@@ -2947,11 +2609,11 @@ extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* h
         func_00108388((char*)rider, info, 1);
         return;
     }
-    float vn = Dot_57B8(hit->n, Sub_57B8(hit->vel, rider->mVelocity)) >= 0.0f
-                   ? Dot_57B8(hit->n, Sub_57B8(hit->vel, rider->mVelocity)) : 0.0f;
+    float vn = Dot(hit->n, SubM(hit->vel, rider->mVelocity)) >= 0.0f
+                   ? Dot(hit->n, SubM(hit->vel, rider->mVelocity)) : 0.0f;
     char* h = *(char**)(obj + 0xC);
     if (h == 0 || (*(sVE_57B8**)(h + 0xC))[14].fn(h + (*(sVE_57B8**)(h + 0xC))[14].delta) != 0) {
-        func_00106538_m2537(rider, Scale_57B8(hit->n, depth * 1.100000023841858f));
+        func_00106538_m2537(rider, ScaleM(hit->n, depth * 1.100000023841858f));
         if (vn < 0.0f)
             vn = 0.0f;
         bounce = vn + Clamp_57B8(grip * vn, 55.55555725097656f, 1388.888916015625f);
@@ -2966,7 +2628,7 @@ extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* h
     }
     float facing = DotV_57B8(rider->unk_180, hit->n);
     if (func_0011FE98(rider) == 1 || (func_0011FE98(rider) == 2 && *(int*)((char*)rider->mRiderHandler + 0x30) == 1)) {
-        if (Len_57B8(rider->mVelocity) < 833.3333740234375f) {
+        if (Len(rider->mVelocity) < 833.3333740234375f) {
             float* acc = &rider->unk_3F4;
             *acc = *acc + (2.5f - facing) * (hit->n.z >= 0.20000000298023224f ? hit->n.z : 0.20000000298023224f);
         }
@@ -2974,16 +2636,16 @@ extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* h
     int anim = func_00311AE8(rider->mRiderAnim, 2);
     int state = func_0011FE98(rider);
     if (state == 1 && (anim == 9 || anim == 2 || anim == 0xB || anim == state) && facing > 0.30000001192092896f) {
-        t4Vector w = Add_57B8(Sub_57B8(rider->mVelocity, hit->vel), Scale_57B8(hit->n, vn));
-        float speed = Len_57B8(w);
+        t4Vector w = AddM(SubM(rider->mVelocity, hit->vel), ScaleM(hit->n, vn));
+        float speed = Len(w);
         float out = Max_57B8(bounce - vn, 277.77777099609375f);
         float f = (speed + 555.5555419921875f) * 0.5f;
         if (speed <= 27.77777862548828f)
             f = f / 27.77777862548828f;
         else
             f = f / speed;
-        ScaleEq_57B8(w, f);
-        rider->mVelocity = Add_57B8(w, Scale_57B8(hit->n, out));
+        ScaleEq(w, f);
+        rider->mVelocity = AddM(w, ScaleM(hit->n, out));
         sVEf_57B8* vt = *(sVEf_57B8**)&rider->mVtbl;
         vt[kRiderVt_vibrationBump].fn((char*)rider + vt[kRiderVt_vibrationBump].delta, vn);
         if (func_00312AA0(rider->mRiderAnim, 2) != 0x10C || func_00312AB0(rider->mRiderAnim, 2) > 0.20000000298023224f) {
@@ -3002,7 +2664,7 @@ extern "C" void func_001057B8(cRider* rider, char* obj, char* info, sHit_57B8* h
         cAirPredictor_startLaunchIntoAir_57B8(rider->mAirPredictor, pos, vel, rider->unk_2E4);
         return;
     }
-    AddEq_57B8(rider->mVelocity, Scale_57B8(hit->n, bounce));
+    AddEq_57B8(rider->mVelocity, ScaleM(hit->n, bounce));
     func_00105D98(rider, info, hit->mat);
 }
 #endif
@@ -3012,31 +2674,15 @@ INCLUDE_ASM("seg/seg_1218", func_00105D98);
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00106538);
 #ifdef SKIP_ASM
-// PORT: PS2-only VU0 inline asm (a += b).
-static inline void AddEq_6538(t4Vector& a, const t4Vector& b)
-{
-    __asm__(
-        ".set push\n"
-        ".set noreorder\n"
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        ".set pop\n"
-        : "=m"(a)
-        : "m"(a), "m"(b)
-        : "memory");
-}
-
 extern "C" void func_00329B40(void* p, const t4Vector* d);
 
 extern "C" void func_00106538(char* self, const t4Vector* d)
 {
-    AddEq_6538(*(t4Vector*)(self + 0x110), *d);
-    AddEq_6538(*(t4Vector*)(self + 0x9D0), *d);
+    AddEq(*(t4Vector*)(self + 0x110), *d);
+    AddEq(*(t4Vector*)(self + 0x9D0), *d);
     func_00329B40(*(void**)(self + 0xAA0), d);
-    AddEq_6538(*(t4Vector*)(self + 0x400), *d);
-    AddEq_6538(*(t4Vector*)(self + 0x410), *d);
+    AddEq(*(t4Vector*)(self + 0x400), *d);
+    AddEq(*(t4Vector*)(self + 0x410), *d);
 }
 #endif
 
@@ -3103,102 +2749,6 @@ struct sQuat_6848 {
 } __attribute__((aligned(16)));
 
 struct sVEH_6848 { short delta; short index; void (*fn)(void*, void*, const t4Vector&); };
-
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_6848(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_6848(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector * scalar).
-static inline t4Vector Scale_6848(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (in-place vector * scalar).
-static inline void ScaleEq_6848(t4Vector& v, float s)
-{
-    int t;
-    __asm__(
-        "mfc1      %1, %2\n"
-        "lqc2      $vf4, %0\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "+m"(v), "=&r"(t)
-        : "f"(s)
-        : "memory");
-}
-
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector Sub_6848(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
-static inline float Abs_6848(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
 
 static inline float Atan2_6848(float y, float x)
 {
@@ -3273,29 +2823,29 @@ extern "C" int func_00106848(cRider* self)
     sLand_6848 land;
     if (!func_00108A48_6848(self, &land))
         return 0;
-    float vn = Dot_6848(self->mVelocity, land.n);
+    float vn = Dot(self->mVelocity, land.n);
     if (vn < 0.0f) {
         vn = -vn;
-        ScaleEq_6848(land.n, -1.0f);
+        ScaleEq(land.n, -1.0f);
     }
     vn = AtLeast_6848(vn, 555.5555419921875f);
-    float imp = AtMost_6848(Len_6848(self->mVelocity), vn);
+    float imp = AtMost_6848(Len(self->mVelocity), vn);
     t4Vector dv = self->mVelocity;
-    self->mVelocity = Scale_6848(land.n, imp);
+    self->mVelocity = ScaleM(land.n, imp);
     self->mVelocity.z = self->mVelocity.z * 0.10000000149011612f;
-    dv = Sub_6848(self->mVelocity, dv);
+    dv = SubM(self->mVelocity, dv);
     if (land.obj != 0) {
         char* h = *(char**)(land.obj + 0xC);
         if (h != 0) {
             sVEH_6848* vt = *(sVEH_6848**)(h + 0xC);
-            vt[43].fn(h + vt[43].delta, &land, Scale_6848(dv, -1.0f));
+            vt[43].fn(h + vt[43].delta, &land, ScaleM(dv, -1.0f));
         }
     }
     sAnimModelBone* bone = &self->mAnimModel->bones[self->unk_8A0];
     sV_6848 side = Side_6848(bone);
     sV_6848 up = Up_6848(bone);
-    float a = Dot_6848(*(t4Vector*)&side, land.n);
-    float b = Dot_6848(*(t4Vector*)&up, land.n);
+    float a = Dot(*(t4Vector*)&side, land.n);
+    float b = Dot(*(t4Vector*)&up, land.n);
     float angle = Atan2_6848(b, a);
     int prev = LAND_STATE(self);
     if (func_0011FEE8_57B8(self) == 1) {
@@ -3304,7 +2854,7 @@ extern "C" int func_00106848(cRider* self)
         else
             LAND_STATE(self) = 2;
     } else if (LAND_KIND(self) != 0) {
-        if (Abs_6848(angle) > 1.5707964897155762f)
+        if (Abs(angle) > 1.5707964897155762f)
             LAND_STATE(self) = 2;
         else
             LAND_STATE(self) = 1;
@@ -3317,9 +2867,9 @@ extern "C" int func_00106848(cRider* self)
                 LAND_STATE(self) = 4;
             else
                 LAND_STATE(self) = 3;
-        } else if (Abs_6848(angle) > 2.6179940700531006f) {
+        } else if (Abs(angle) > 2.6179940700531006f) {
             LAND_STATE(self) = 2;
-        } else if (Abs_6848(angle) < 0.523598849773407f) {
+        } else if (Abs(angle) < 0.523598849773407f) {
             LAND_STATE(self) = 1;
         } else if (angle < -0.523598849773407f) {
             LAND_STATE(self) = 4;
@@ -3426,166 +2976,30 @@ extern "C" void func_0010E228(void*, void*);
 extern float D_004A4C84_7E70 __asm__("D_004A4C84");
 extern int D_005308D0_7E70[] __asm__("D_005308D0");
 
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_7E70(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_7E70(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector add).
-static inline t4Vector Add_7E70(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (a += b).
-static inline void AddEq_7E70(t4Vector& a, const t4Vector& b)
-{
-    __asm__(
-        ".set push\n"
-        ".set noreorder\n"
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        ".set pop\n"
-        : "=m"(a)
-        : "m"(a), "m"(b)
-        : "memory");
-}
-
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector Sub_7E70(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector Scale_7E70(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
-static inline t4Vector Norm_7E70(const t4Vector& v)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vrsqrt    Q, $vf0w, $vf4x\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf5, $vf3, Q\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(v)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2-only FPU asm (absolute value).
-static inline float Abs_7E70(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-
-// PORT: `<?` is the g++ minimum operator (EE min.s).
-static inline float Clamp_7E70(float v, float lo, float hi)
-{
-    return (v >= lo) ? (v <? hi) : lo;
-}
-
 static inline t4Vector Get_7E70(char* p) { return *(t4Vector*)p; }
 
 static inline float ClampAbs_7E70(float v, const float& lim)
 {
-    return Clamp_7E70(v, -lim, lim);
+    return Clamp(v, -lim, lim);
 }
 
 extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, float speed)
 {
     if (func_0011FEE8_7E70(self) == 10)
         return;
-    float absSpd = Abs_7E70(speed);
+    float absSpd = Abs(speed);
     float s = ClampAbs_7E70(speed, 555.5555419921875f);
-    t4Vector imp = Scale_7E70(*n, s);
+    t4Vector imp = Scale(*n, s);
     if (func_001231A8(self)) {
-        AddEq_7E70(*(t4Vector*)(self + 0x1E0),
-                   Sub_7E70(imp, Scale_7E70(*(t4Vector*)(self + 0x370), Dot_7E70(imp, *(t4Vector*)(self + 0x370)))));
+        AddEq(*(t4Vector*)(self + 0x1E0),
+                   Sub(imp, Scale(*(t4Vector*)(self + 0x370), Dot(imp, *(t4Vector*)(self + 0x370)))));
     } else {
-        AddEq_7E70(*(t4Vector*)(self + 0x1E0), imp);
+        AddEq(*(t4Vector*)(self + 0x1E0), imp);
         if (func_0011FE98(self) == 1 || (func_0011FE98(self) == 2 && *(int*)(*(char**)(self + 0x77C) + 0x30) == 1)) {
             cAI_7E70* ai = (cAI_7E70*)(self + 0x6C0);
             t4Vector* pos = ai->GetPos();
             cAirPredictor_startLaunchIntoAir(*(void**)(self + 0x788), pos, ai->GetDir(), *(float*)(self + 0x2E4));
-            if (Dot_7E70(*n, Get_7E70(self + 0x1C0)) * s > 0.0f)
+            if (Dot(*n, Get_7E70(self + 0x1C0)) * s > 0.0f)
                 absSpd = 0.0f;
         }
     }
@@ -3597,21 +3011,21 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
         return;
     float r = ((sRec_7E70*)self)[*(int*)(other + 0x86C)].dist;
     sInfo_7E70 info;
-    info.pos = Add_7E70(*(t4Vector*)(self + 0x110), Scale_7E70(*n, r));
-    info.dir = Norm_7E70(*(t4Vector*)(self + 0x1E0));
+    info.pos = Add(*(t4Vector*)(self + 0x110), Scale(*n, r));
+    info.dir = Norm(*(t4Vector*)(self + 0x1E0));
     info.normal = *n;
     info.speed = s;
     if ((D_005308D0_7E70[0] >> 5) & 1)
         absSpd = 599.9739990234375f;
     if (absSpd > 599.9739990234375f) {
-        float dz = Dot_7E70(Get_7E70(self + 0x160), *n);
-        float dy = Dot_7E70(Get_7E70(self + 0x170), *n);
-        float dx = Dot_7E70(Get_7E70(self + 0x180), *n);
+        float dz = Dot(Get_7E70(self + 0x160), *n);
+        float dy = Dot(Get_7E70(self + 0x170), *n);
+        float dx = Dot(Get_7E70(self + 0x180), *n);
         int anim;
-        if (Abs_7E70(dz) < Abs_7E70(dy) && Abs_7E70(dx) < Abs_7E70(dy)) {
+        if (Abs(dz) < Abs(dy) && Abs(dx) < Abs(dy)) {
             if (dy < 0.0f) {
                 unsigned int k;
-                if (Len_7E70(*(t4Vector*)(self + 0x1E0)) > D_004A4C84_7E70)
+                if (Len(*(t4Vector*)(self + 0x1E0)) > D_004A4C84_7E70)
                     k = (unsigned int)AIrand() % 6;
                 else
                     k = (unsigned int)AIrand() % 3;
@@ -3628,7 +3042,7 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
             } else {
                 anim = (AIrand() & 1) == 0 ? 0x14A : 0x14B;
             }
-        } else if (Abs_7E70(dz) < Abs_7E70(dx) && Abs_7E70(dy) < Abs_7E70(dx)) {
+        } else if (Abs(dz) < Abs(dx) && Abs(dy) < Abs(dx)) {
             anim = 0x14B;
         } else if (dz < 0.0f) {
             anim = 0x149;
@@ -3662,55 +3076,6 @@ extern "C" int cRiderAnimBase_play(void*, int, int, float);
 extern "C" void* func_0028B180();
 extern "C" void func_002A0E70(void*, void*, int);
 
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_8388(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_8388(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only FPU asm (absolute value).
-static inline float Abs_8388(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-
 static inline t4Vector Get_8388(char* p) { return *(t4Vector*)p; }
 
 extern "C" void func_00108388(char* self, char* info, int flag)
@@ -3723,19 +3088,19 @@ extern "C" void func_00108388(char* self, char* info, int flag)
         return;
     }
     int played = 0;
-    float d = Dot_8388(Get_8388(self + 0x1B0), *(t4Vector*)(info + 0x20));
+    float d = Dot(Get_8388(self + 0x1B0), *(t4Vector*)(info + 0x20));
     if (d > 0.7071067690849304f) {
         cRiderAnimBase_play(*(void**)(self + 0x784), 0x37, 0, -1.0f);
     } else if (d < -0.7071067690849304f) {
         cRiderAnimBase_play(*(void**)(self + 0x784), 0x38, 0, -1.0f);
     } else {
-        float side = Dot_8388(Get_8388(self + 0x1A0), *(t4Vector*)(info + 0x20));
+        float side = Dot(Get_8388(self + 0x1A0), *(t4Vector*)(info + 0x20));
         if (*(int*)(self + 0x320))
             side = -side;
-        if (*(float*)(info + 0x30) < 1111.111083984375f && Len_8388(*(t4Vector*)(self + 0x1E0)) > 1388.888916015625f &&
+        if (*(float*)(info + 0x30) < 1111.111083984375f && Len(*(t4Vector*)(self + 0x1E0)) > 1388.888916015625f &&
             func_0011FE98(self) != 4) {
             float a = *(float*)(self + 0x2DC);
-            if (Abs_8388(a) < 6.2831854820251465f) {
+            if (Abs(a) < 6.2831854820251465f) {
                 if (a < 0.0f)
                     *(float*)(self + 0x2DC) += (int)((unsigned int)AIrand() % 3) * -3.1415927410125732f;
                 else if (a > 0.0f)
@@ -3790,20 +3155,6 @@ static inline sVec4 Add_86B8(const sVec4& a, const sVec4& b)
     return r;
 }
 
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sVec4 Sub_86B8(const sVec4& a, const sVec4& b)
-{
-    sVec4 r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline sVec4 Scale_86B8(const sVec4& v, float s)
 {
@@ -3818,71 +3169,6 @@ static inline sVec4 Scale_86B8(const sVec4& v, float s)
         : "=m"(r), "=&r"(t)
         : "m"(v), "f"(s));
     return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector divided by scalar).
-static inline sVec4 Div_86B8(const sVec4& v, float s)
-{
-    sVec4 r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vdiv      Q, $vf0w, $vf3x\n"
-        "lqc2      $vf4, %2\n"
-        "vwaitq\n"
-        "vmulq.xyzw $vf4, $vf4, Q\n"
-        "sqc2      $vf4, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float Len_86B8(const sVec4& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float Dot_86B8(const sVec4& a, const sVec4& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: `<?` is the g++ minimum operator (EE min.s).
-static inline float Clamp_86B8(float v, float lo, float hi)
-{
-    return (v >= lo) ? (v <? hi) : lo;
 }
 
 static inline float Lerp_86B8(float a, float b, float t)
@@ -3911,24 +3197,24 @@ extern "C" int func_001086B8_86B8(char* self, sVec4* tgt, sVec4* dir)
         farR = Lerp_86B8(170.0f, 100.0f, t);
     else
         farR = Lerp_86B8(170.0f, 50.0f, t);
-    float proj = Dot_86B8(fwd, Sub_86B8(*tgt, pos));
+    float proj = Dot(fwd, SubV(*tgt, pos));
     float lo = nearR - farR;
     float hi = farR - nearR;
-    sVec4 d = Sub_86B8(Add_86B8(pos, Scale_86B8(fwd, Clamp_86B8(proj, lo, hi))), *tgt);
-    if (Len_86B8(d) <= nearR)
+    sVec4 d = SubV(Add_86B8(pos, Scale_86B8(fwd, Clamp(proj, lo, hi))), *tgt);
+    if (Len(d) <= nearR)
         return 1;
-    float dd = Dot_86B8(*dir, fwd);
+    float dd = Dot(*dir, fwd);
     float den = 1.0f - dd * dd;
     if (den < 0.0010000000474974513f)
         return 0;
-    sVec4 b = Div_86B8(Sub_86B8(pos, *tgt), den);
-    float u = Dot_86B8(b, Sub_86B8(Scale_86B8(*dir, dd), fwd));
-    sVec4 p = Add_86B8(pos, Scale_86B8(fwd, Clamp_86B8(u, lo, hi)));
+    sVec4 b = DivV(SubV(pos, *tgt), den);
+    float u = Dot(b, SubV(Scale_86B8(*dir, dd), fwd));
+    sVec4 p = Add_86B8(pos, Scale_86B8(fwd, Clamp(u, lo, hi)));
     sHit_86B8 hit;
     if (!func_00334680_86B8(*(void**)(self + 0x860), &p, &hit.pos, 1, 300.0f))
         return 0;
-    d = Sub_86B8(p, hit.pos);
-    return Len_86B8(d) <= nearR;
+    d = SubV(p, hit.pos);
+    return Len(d) <= nearR;
 }
 #endif
 
@@ -3945,76 +3231,6 @@ struct sPath_8A48 {
     sNode_8A48* nodes;
 };
 
-// PORT: PS2-only VU0 inline asm (vector add).
-static inline t4Vector vAdd_8A48(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vadd.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b)
-        : "memory");
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector vSub_8A48(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_8A48(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vDot_8A48(const t4Vector& a, const t4Vector& b)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "lqc2      $vf5, %3\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf5\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "qmfc2.ni  %1, $vf4\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(a), "m"(b));
-    return r;
-}
-
 int func_0011FE98(void*);
 extern "C" int func_00334680(void*, t4Vector*, t4Vector*, int, float);
 extern "C" int func_00311AE8(void*, int);
@@ -4026,14 +3242,14 @@ extern "C" int func_00108A48(char* self, t4Vector* tgt)
 {
     if (func_0011FE98(self) != 0 && func_0011FE98(self) != 1)
         return 0;
-    t4Vector p = vAdd_8A48(*(t4Vector*)((char*)(*(sPath_8A48**)(self + 0x780))->nodes + (*(int*)(self + 0x8A0) << 5)),
+    t4Vector p = AddM(*(t4Vector*)((char*)(*(sPath_8A48**)(self + 0x780))->nodes + (*(int*)(self + 0x8A0) << 5)),
                              *(t4Vector*)(self + 0x9D0));
     if (!func_00334680(*(void**)(self + 0x860), &p, tgt, 1, 300.0f))
         return 0;
-    float spd = vLen_8A48(*(t4Vector*)(self + 0x1E0));
+    float spd = Len(*(t4Vector*)(self + 0x1E0));
     if (0.001f < spd) {
-        t4Vector d = vSub_8A48(*tgt, p);
-        if (vDot_8A48(d, *(t4Vector*)(self + 0x1E0)) < spd * -0.20000000298023224f)
+        t4Vector d = Sub(*tgt, p);
+        if (Dot(d, *(t4Vector*)(self + 0x1E0)) < spd * -0.20000000298023224f)
             return 0;
     }
     if (func_00311AE8(*(void**)(self + 0x784), 2) == 0x12) {
@@ -4426,57 +3642,6 @@ struct sPad_AA70 {
 extern "C" t4Vector func_0026AB20_AA70(cTrack_AA70*, int, float) __asm__("func_0026AB20");
 extern "C" float func_00100348_AA70(void*, t4Vector*) __asm__("func_00100348");
 
-// PORT: PS2-only VU0 inline asm (vector length via vsqrt).
-static inline float Len_AA70(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector subtract).
-static inline t4Vector Sub_AA70(const t4Vector& a, const t4Vector& b)
-{
-    t4Vector r;
-    __asm__(
-        "lqc2      $vf3, %1\n"
-        "lqc2      $vf4, %2\n"
-        "vsub.xyzw $vf5, $vf3, $vf4\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r)
-        : "m"(a), "m"(b));
-    return r;
-}
-
-// PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline t4Vector Scale_AA70(const t4Vector& v, float s)
-{
-    t4Vector r;
-    int t;
-    __asm__(
-        "mfc1      %1, %3\n"
-        "lqc2      $vf4, %2\n"
-        "qmtc2.ni  %1, $vf3\n"
-        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
-        "sqc2      $vf5, %0\n"
-        : "=m"(r), "=&r"(t)
-        : "m"(v), "f"(s));
-    return r;
-}
-
 extern "C" void func_0010AA70(char* self, sPad_AA70* pad)
 {
     sRec_AA70 buf[12];
@@ -4484,12 +3649,12 @@ extern "C" void func_0010AA70(char* self, sPad_AA70* pad)
     cTrack_AA70* trk = *(cTrack_AA70**)(rider + 0xAB8);
     int n = trk->Query(buf, 12, *(float*)(rider + 0x4C0), *(float*)(rider + 0x4C4) + 50.0f);
     int sel = -1;
-    if (Len_AA70(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0)) < *(float*)(self + 0xDF0) - 138.88890075683594f)
+    if (Len(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0)) < *(float*)(self + 0xDF0) - 138.88890075683594f)
         pad->b14 = 1;
     if (*(int*)(self + 0xE1C)) {
-        t4Vector a = Sub_AA70(*(t4Vector*)(self + 0xE60), *(t4Vector*)(self + 0xE50));
-        t4Vector b = Sub_AA70(*(t4Vector*)(*(char**)(self + 0x18) + 0x110), *(t4Vector*)(self + 0xE50));
-        if (Len_AA70(b) < Len_AA70(a) - 50.0f)
+        t4Vector a = Sub(*(t4Vector*)(self + 0xE60), *(t4Vector*)(self + 0xE50));
+        t4Vector b = Sub(*(t4Vector*)(*(char**)(self + 0x18) + 0x110), *(t4Vector*)(self + 0xE50));
+        if (Len(b) < Len(a) - 50.0f)
             pad->b13 = 1;
         return;
     }
@@ -4503,10 +3668,10 @@ extern "C" void func_0010AA70(char* self, sPad_AA70* pad)
     float* ctl = (float*)(self + 0xDF0);
     if (sel != -1) {
         char* r = *(char**)(self + 0x18);
-        t4Vector half = Sub_AA70(*(t4Vector*)(r + 0x490), *(t4Vector*)(r + 0x110));
-        half = Scale_AA70(half, 0.5f);
+        t4Vector half = Sub(*(t4Vector*)(r + 0x490), *(t4Vector*)(r + 0x110));
+        half = Scale(half, 0.5f);
         t4Vector pos = func_0026AB20_AA70(trk, 0, buf[sel].b);
-        t4Vector d = Sub_AA70(pos, half);
+        t4Vector d = Sub(pos, half);
         pad->w0 = (int)(func_00100348_AA70(self, &d) * 31.0f);
     }
     pad->b15 = (int)(ctl[0x12] * 31.0f);
@@ -4529,20 +3694,6 @@ extern "C" int func_0010BBF8(void*, int*);
 extern "C" void func_00100610(t4Vector*, void*);
 extern "C" float func_00100348(void*, t4Vector*);
 
-// PORT: PS2 abs.s helper (stands in for fabsf).
-static inline float vAbs_AD78(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-
-// PORT: `<?` is the g++ minimum operator (EE min.s).
-static inline float clamp_AD78(float v, float lo, float hi)
-{
-    return (v >= lo) ? (v <? hi) : lo;
-}
-
 extern "C" void func_0010AD78(char* self, sPad_AD78* pad)
 {
     int flag;
@@ -4559,8 +3710,8 @@ extern "C" void func_0010AD78(char* self, sPad_AD78* pad)
         pad->w0 = (int)(s * 31.0f);
         t4Vector p = *(t4Vector*)(*(char**)(self + 0x18) + 0x1A0);
         float z = p.z + p.z;
-        float y = clamp_AD78(z, -1.0f, 1.0f);
-        if (vAbs_AD78(y) > 0.1f)
+        float y = Clamp(z, -1.0f, 1.0f);
+        if (Abs(y) > 0.1f)
             pad->b24 = (int)(y * 31.0f);
     } else {
         pad->w0 = 0;
@@ -4583,41 +3734,6 @@ extern "C" void func_0010BFA8_AED8(char*, int, int, int, int) __asm__("func_0010
 extern "C" int func_00311AE8(void*, int);
 extern "C" int func_0010BB18(void*, float*, int*);
 
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_AED8(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
-
-// PORT: PS2 abs.s helper (stands in for fabsf).
-static inline float vAbs_AED8(float x)
-{
-    float r;
-    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
-    return r;
-}
-
-// PORT: `<?` is the g++ minimum operator (EE min.s).
-static inline float clamp_AED8(float v, float lo, float hi)
-{
-    return (v >= lo) ? (v <? hi) : lo;
-}
-
 extern "C" void func_0010AED8(char* self, sPad_AED8* pad)
 {
     int below, o3, o4, o5, o6, ok;
@@ -4631,8 +3747,8 @@ extern "C" void func_0010AED8(char* self, sPad_AED8* pad)
     }
     t4Vector p = *(t4Vector*)(*(char**)(self + 0x18) + 0x1A0);
     float z = p.z + p.z;
-    float y = clamp_AED8(z, -1.0f, 1.0f);
-    if (vAbs_AED8(y) > 0.1f)
+    float y = Clamp(z, -1.0f, 1.0f);
+    if (Abs(y) > 0.1f)
         pad->b25 = (int)(y * 31.0f);
     char* rider = *(char**)(self + 0x18);
     if ((unsigned int)(*(int*)(rider + 0x328) - 3) >= 2 &&
@@ -4641,7 +3757,7 @@ extern "C" void func_0010AED8(char* self, sPad_AED8* pad)
         pad->w0 = (int)(s * 31.0f);
     }
     int r2 = func_0010BB18(self, (float*)(self + 0xDF0), &ok);
-    float len = vLen_AED8(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0));
+    float len = Len(*(t4Vector*)(*(char**)(self + 0x18) + 0x1E0));
     if (r2 && ok && len < *(float*)(self + 0xDF0) - 138.88890075683594f)
         *(unsigned int*)pad |= 0x10000;
 }
@@ -4961,30 +4077,10 @@ struct sPad_C0A8 {
     unsigned int pad18 : 8;
     int w0 : 6;
 };
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_C0A8(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 extern "C" void func_0010C0A8(void* self, void* padp)
 {
     sPad_C0A8* pad = (sPad_C0A8*)padp;
-    float len = vLen_C0A8(*(t4Vector*)(*(char**)((char*)self + 0x18) + 0x1E0));
+    float len = Len(*(t4Vector*)(*(char**)((char*)self + 0x18) + 0x1E0));
     float s = 0.97f;
     if (len < 833.3334350585938f)
         s = 1.0f;
@@ -5004,30 +4100,10 @@ struct sPad_C140 {
     unsigned int pad18 : 8;
     int w0 : 6;
 };
-// PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float vLen_C140(const t4Vector& v)
-{
-    float r;
-    int t;
-    __asm__(
-        "lqc2      $vf3, %2\n"
-        "vaddw.x   $vf6, $vf0, $vf0w\n"
-        "vmul.xyzw $vf4, $vf3, $vf3\n"
-        "vadday.x  ACC, $vf4, $vf4y\n"
-        "vmaddaz.x ACC, $vf6, $vf4z\n"
-        "vmaddw.x  $vf4, $vf6, $vf4w\n"
-        "vsqrt     Q, $vf4x\n"
-        "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
-        : "m"(v));
-    return r;
-}
 extern "C" void func_0010C140(void* self, void* padp)
 {
     sPad_C140* pad = (sPad_C140*)padp;
-    float len = vLen_C140(*(t4Vector*)(*(char**)((char*)self + 0x18) + 0x1E0));
+    float len = Len(*(t4Vector*)(*(char**)((char*)self + 0x18) + 0x1E0));
     float s = 0.97f;
     if (len < 833.3334350585938f)
         s = 1.0f;
