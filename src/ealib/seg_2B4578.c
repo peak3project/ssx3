@@ -7223,54 +7223,41 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C27E0);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Ch_27E0 {
-    int pad0;
-    short ids[15];
-    char pad22;
-    unsigned char n;
-    unsigned short flags;
-    char pad26[0x48 - 0x26];
-    float vol;
-    char pad4C[0x62 - 0x4C];
-    short vals[1];
-};
 struct V_27E0 { char pad[0x1AC]; char v[1][16]; };
-struct G_27E0 { char pad[0x2F]; unsigned char base2; unsigned char base; char pad31[0x49 - 0x31]; unsigned char mode; char pad4A[0x1F0 - 0x4A]; struct Ch_27E0 *chans; };
 struct A_27E0 { char pad[0xCB0]; long *mask; };
-extern struct G_27E0 D_0050A8E8_27E0 __asm__("D_0050A8E8");
 extern struct A_27E0 D_0050AD00_27E0 __asm__("D_0050AD00");
 extern void func_003C8598(int, int, float);
 
 int func_003C27E0(int id, int k) {
-    struct Ch_27E0 *ch;
+    struct sA8E8Chan *ch;
     int i, v;
     float f;
 
-    ch = (struct Ch_27E0 *)((char *)D_0050A8E8_27E0.chans + id * 0x8C);
-    if (ch->flags & 8) {
-        for (i = 0; i < ch->n; i++) {
-            if (ch->vals[0] != 0) {
-                *D_0050AD00_27E0.mask |= 1L << ch->ids[i];
+    ch = &D_0050A8E8.f1F0[id];
+    if (ch->f24 & 8) {
+        for (i = 0; i < ch->f23; i++) {
+            if (ch->f62[0] != 0) {
+                *D_0050AD00_27E0.mask |= 1L << ch->f04[i];
             } else {
-                *D_0050AD00_27E0.mask &= ~(1L << ch->ids[i]);
+                *D_0050AD00_27E0.mask &= ~(1L << ch->f04[i]);
             }
-            if (D_0050A8E8_27E0.mode == 2) {
-                if (ch->vals[0] != 0) {
-                    *D_0050AD00_27E0.mask |= 1L << (ch->ids[i] + 0x18);
+            if (D_0050A8E8.setup.cfg.f29 == 2) {
+                if (ch->f62[0] != 0) {
+                    *D_0050AD00_27E0.mask |= 1L << (ch->f04[i] + 0x18);
                 } else {
-                    *D_0050AD00_27E0.mask &= ~(1L << (ch->ids[i] + 0x18));
+                    *D_0050AD00_27E0.mask &= ~(1L << (ch->f04[i] + 0x18));
                 }
             }
         }
-    } else if (ch->flags & 0x100) {
-        v = ch->vol * ch->vals[k] * 0.003875850699841976f;
-        for (i = 0; i < ch->n; i++) {
-            ((struct V_27E0 *)D_0050AD00_27E0.mask)->v[ch->ids[i] - D_0050A8E8_27E0.base][k] = v;
+    } else if (ch->f24 & 0x100) {
+        v = ch->f48 * ch->f62[k] * 0.003875850699841976f;
+        for (i = 0; i < ch->f23; i++) {
+            ((struct V_27E0 *)D_0050AD00_27E0.mask)->v[ch->f04[i] - D_0050A8E8.setup.cfg.f10][k] = v;
         }
     } else {
-        f = ch->vol * ch->vals[k] / 32767.0f;
-        for (i = 0; i < ch->n; i++) {
-            func_003C8598(ch->ids[i] - (D_0050A8E8_27E0.base + D_0050A8E8_27E0.base2), k, f);
+        f = ch->f48 * ch->f62[k] / 32767.0f;
+        for (i = 0; i < ch->f23; i++) {
+            func_003C8598(ch->f04[i] - (D_0050A8E8.setup.cfg.f10 + D_0050A8E8.setup.cfg.f0F), k, f);
         }
     }
     return 0;
