@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `116ee60e`, generated 2026-11-02.
+Snapshot of commit `defaee77`, generated 2026-11-02.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `116ee60e`, generated 2026-11-02.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,585 | 96.49% |
+| Matching | 14,590 | 96.52% |
 | Partial | 3 | 0.02% |
-| Not started | 528 | 3.49% |
+| Not started | 523 | 3.46% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -55,13 +55,13 @@ Only files with at least one Matching or Partial function are listed here; files
 | `seg/seg_3249A0` | 136 | 0 | 0 | 136 |
 | `be/bedbreward` | 135 | 0 | 1 | 136 |
 | `visualfx/worldlightman` | 134 | 0 | 3 | 137 |
+| `seg/seg_1FBE38` | 125 | 0 | 0 | 125 |
 | `movie/movieplayer` | 124 | 0 | 3 | 127 |
-| `seg/seg_1FBE38` | 124 | 0 | 1 | 125 |
 | `ealib/seg_2AEDC0` | 122 | 0 | 2 | 124 |
 | `fe/fepopup` | 118 | 0 | 4 | 122 |
 | `be/beintreward` | 113 | 0 | 0 | 113 |
 | `seg/seg_1D3510` | 112 | 0 | 1 | 113 |
-| `ai/rider` | 107 | 0 | 8 | 115 |
+| `ai/rider` | 109 | 0 | 6 | 115 |
 | `be/beintplayer` | 104 | 0 | 0 | 104 |
 | `ealib/seg_2D7498` | 103 | 0 | 9 | 112 |
 | `seg/seg_156860` | 99 | 0 | 2 | 101 |
@@ -119,8 +119,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `replay/frameptr` | 38 | 0 | 1 | 39 |
 | `object/modifierblock` | 37 | 0 | 0 | 37 |
 | `fe/festatetrophyroom` | 36 | 0 | 0 | 36 |
+| `main/gameload` | 36 | 0 | 3 | 39 |
 | `dirtysock/tags` | 35 | 0 | 5 | 40 |
-| `main/gameload` | 35 | 0 | 4 | 39 |
 | `ui/uitext` | 35 | 0 | 3 | 38 |
 | `animation/rideranimbase` | 34 | 0 | 1 | 35 |
 | `main/loadscreens_prestart` | 34 | 0 | 0 | 34 |
@@ -129,11 +129,11 @@ Only files with at least one Matching or Partial function are listed here; files
 | `object/flexrailnode` | 33 | 0 | 1 | 34 |
 | `object/splinemodifier` | 33 | 0 | 2 | 35 |
 | `seg/seg_313F58` | 33 | 0 | 0 | 33 |
+| `fe/ovstatehud` | 32 | 0 | 4 | 36 |
 | `object/multiparticle` | 32 | 0 | 1 | 33 |
 | `animation/animmodel` | 31 | 0 | 3 | 34 |
 | `bx/execman` | 31 | 0 | 0 | 31 |
 | `fe/festatebuyattrib` | 31 | 0 | 0 | 31 |
-| `fe/ovstatehud` | 31 | 0 | 5 | 36 |
 | `fe/uitemplatemap` | 31 | 0 | 7 | 38 |
 | `render/ps2graphicsman` | 31 | 0 | 1 | 32 |
 | `be/beintecon` | 30 | 0 | 2 | 32 |
@@ -806,7 +806,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `ai/rider`
 
-107 matching, 0 partial, 8 not started (115 total)
+109 matching, 0 partial, 6 not started (115 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -897,6 +897,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00122898` | Matching | 99.96% | 912 |
 | `func_00125228` | Matching | 99.95% | 420 |
 | `func_001242B0` | Matching | 99.95% | 1240 |
+| `cRider_doLeanPoseAdjust` | Matching | 99.95% | 1128 |
 | `func_00120F20` | Matching | 99.94% | 328 |
 | `func_001234D0` | Matching | 99.93% | 296 |
 | `func_00121F30` | Matching | 99.93% | 276 |
@@ -905,6 +906,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0011DE60` | Matching | 99.89% | 180 |
 | `cRider_getMass` | Matching | 99.88% | 160 |
 | `func_001200D0` | Matching | 99.85% | 680 |
+| `func_00121AA0` | Matching | 99.85% | 1168 |
 | `func_001218D0` | Matching | 99.84% | 128 |
 | `func_001210B0` | Matching | 99.81% | 324 |
 | `func_0011DD98` | Matching | 99.80% | 196 |
@@ -7034,7 +7036,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `fe/ovstatehud`
 
-31 matching, 0 partial, 5 not started (36 total)
+32 matching, 0 partial, 4 not started (36 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -7068,6 +7070,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_001F36C0` | Matching | 100.00% | 24 |
 | `func_001F36D8` | Matching | 100.00% | 40 |
 | `func_001F3700` | Matching | 100.00% | 144 |
+| `func_001F31E0` | Matching | 99.95% | 1248 |
 | `func_001F3188` | Matching | 99.76% | 84 |
 
 ### `fe/ovstatelodge`
@@ -8156,7 +8159,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `main/gameload`
 
-35 matching, 0 partial, 4 not started (39 total)
+36 matching, 0 partial, 3 not started (39 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -8186,6 +8189,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_002314D0` | Matching | 100.00% | 876 |
 | `func_00231840` | Matching | 100.00% | 632 |
 | `func_00231AB8` | Matching | 100.00% | 152 |
+| `func_00231B50` | Matching | 100.00% | 284 |
 | `func_00231C70` | Matching | 100.00% | 60 |
 | `func_00231CB0(void*)` | Matching | 100.00% | 28 |
 | `func_00231D60` | Matching | 100.00% | 540 |
@@ -12017,7 +12021,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_1FBE38`
 
-124 matching, 0 partial, 1 not started (125 total)
+125 matching, 0 partial, 0 not started (125 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -12120,6 +12124,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00304C50` | Matching | 100.00% | 488 |
 | `func_00304E38` | Matching | 100.00% | 436 |
 | `func_00304FF0` | Matching | 100.00% | 256 |
+| `func_003050F0` | Matching | 100.00% | 904 |
 | `func_00305478` | Matching | 100.00% | 484 |
 | `func_00305660` | Matching | 100.00% | 352 |
 | `func_003057C0` | Matching | 100.00% | 476 |
