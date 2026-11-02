@@ -7072,14 +7072,14 @@ extern int D_004A33E4;
 extern "C" int func_003FA1D0(int code, void* out);
 void func_002C67E8(void* self, int a1);
 
-struct sDsErr266060 {
+struct sDsErrU {
     unsigned char a;
     unsigned char b;
 };
 
 extern "C" void func_00266060(int code)
 {
-    sDsErr266060 err;
+    sDsErrU err;
     func_003FA1D0(code, &err);
     D_004A33DC = err.a;
     D_004A33E4 = 9;
@@ -7112,14 +7112,9 @@ extern "C" int func_003FA1D0(int code, void* out);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_002C6968(void* obj, char* str, int a2);
 
-struct sDsErr2660C8 {
-    unsigned char a;
-    unsigned char b;
-};
-
 extern "C" void func_002660C8(const char* a0, const char* a1, int code, int a3)
 {
-    sDsErr2660C8 err;
+    sDsErrU err;
     char buf[80];
     func_003FA1D0(code, &err);
     sprintf(buf, D_004A33E8, a0, a1);
@@ -7150,14 +7145,9 @@ extern int D_004A33D4;
 extern "C" int func_003FA1D0(int code, void* out);
 extern "C" void func_002C6C50(void* obj, char* str, int a2);
 
-struct sDsErr266170 {
-    unsigned char a;
-    unsigned char b;
-};
-
 extern "C" void func_00266170(const char* name, int a1, int code)
 {
-    sDsErr266170 err;
+    sDsErrU err;
     char buf[80];
     func_003FA1D0(code, &err);
     strcpy(buf, name);
@@ -7176,14 +7166,9 @@ extern "C" int func_003FA1D0(int code, void* out);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_002C6CE0(void* obj, char* str);
 
-struct sDsErr2661D8 {
-    unsigned char a;
-    unsigned char b;
-};
-
 extern "C" void func_002661D8(const char* a0, const char* a1, int code)
 {
-    sDsErr2661D8 err;
+    sDsErrU err;
     char buf[80];
     func_003FA1D0(code, &err);
     sprintf(buf, D_004A33E8, a0, a1);
@@ -7200,14 +7185,9 @@ extern int D_004A33D4;
 extern "C" int func_003FA1D0(int code, void* out);
 extern "C" void func_002C6CE0(void* obj, char* str);
 
-struct sDsErr266240 {
-    unsigned char a;
-    unsigned char b;
-};
-
 extern "C" void func_00266240(const char* name, int code)
 {
-    sDsErr266240 err;
+    sDsErrU err;
     char buf[80];
     func_003FA1D0(code, &err);
     strcpy(buf, name);
