@@ -179,6 +179,12 @@ extern const sSndVtbl7 D_00483838;
 extern const sSndVtbl4 D_004839F0;
 extern const sSndVtbl7 D_00483A10;
 
+// The object whose rider (at 0x80) a sound handler reacts to.
+struct sSndOwner {
+    char pad0[0x80];
+    char* rider;             // 0x80
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2496,10 +2502,6 @@ extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
-struct sSndOwner_6868 {
-    char pad0[0x80];
-    char* rider;             // 0x80
-};
 
 
 
@@ -2517,7 +2519,7 @@ static inline void OPTS_Callback_6868(cBankManager* m, sSndCallback cb)
 }
 
 // Board slide sound of an owner's rider: started once per rider, volume from the speed curve.
-extern "C" void func_00296868(void* vself, sSndOwner_6868* t)
+extern "C" void func_00296868(void* vself, sSndOwner* t)
 {
     cBankSys* self = (cBankSys*)vself;
     if (*(int*)(t->rider + 0x774) >= 0) {
@@ -2635,10 +2637,6 @@ extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
-struct sSndOwner_6E80 {
-    char pad0[0x80];
-    char* rider;             // 0x80
-};
 
 
 
@@ -2656,7 +2654,7 @@ static inline void OPTS_Callback_6E80(cBankManager* m, sSndCallback cb)
 }
 
 // Board slide sound of an owner's rider: started once per rider, volume from the speed curve.
-extern "C" void func_00296E80(void* vself, sSndOwner_6E80* t)
+extern "C" void func_00296E80(void* vself, sSndOwner* t)
 {
     cBankSys* self = (cBankSys*)vself;
     if (*(int*)(t->rider + 0x778) >= 0) {
