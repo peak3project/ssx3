@@ -15247,7 +15247,6 @@ struct Q_0ED0 { int p[4]; };
 struct P_0ED0 { unsigned int x30; int x34; char pad2[0x928 - 8]; };
 extern unsigned char D_0044F42C_0ED0 __asm__("D_0044F42C");
 extern int D_0044F430_0ED0 __asm__("D_0044F430");
-extern int D_0044F420_0ED0 __asm__("D_0044F420");
 extern struct P_0ED0 D_00517610_0ED0[4] __asm__("D_00517610");
 extern int f5450_0ED0(int) __asm__("func_003D5450");
 extern void f6210_0ED0(void *, int, int) __asm__("func_00416210");
@@ -15289,7 +15288,7 @@ int func_003D0ED0(unsigned int arg0, int arg1) {
         p++;
     } while (i < 4);
     D_0044F430_0ED0 = 0;
-    D_0044F420_0ED0 = 0;
+    D_0044F420 = 0;
     return 0;
 }
 #endif
