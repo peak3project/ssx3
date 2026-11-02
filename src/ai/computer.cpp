@@ -37,6 +37,25 @@ struct sApp {
 };
 extern sApp* D_004A28A8;
 
+// The computer rider's AI (cComputer) as the animation pickers func_0010CBE0 / func_0010CD20 / func_0010CF68 see
+// it: its rider at 0x18, the pick's timing at 0xE24..0xE34 and three 15-entry use counters (cleared by
+// func_0010D170).
+struct cComputer
+{
+    char pad0[0x18];
+    char* mRider;               // 0x18
+    char pad1C[0xE24 - 0x1C];
+    int fE24;                   // 0xE24
+    int fE28;                   // 0xE28
+    float fE2C;                 // 0xE2C
+    float fE30;                 // 0xE30
+    float fE34;                 // 0xE34
+    char padE38[0xE7C - 0xE38];
+    int a[15];                  // 0xE7C
+    int b[15];                  // 0xEB8
+    int c[15];                  // 0xEF4
+};
+
 // cRider's per-other-rider record (ai/rider.h sRiderPair, 6 of them at 0x0) with the fields func_0010F3B8 resets.
 struct sAiPair { int vis; int val; float dist; int c; int d; int e; int f; int g; int h; };
 
@@ -337,23 +356,9 @@ static inline int riderV7_10CBE0(char* rider)
     return vt[7].fn(obj + vt[7].delta);
 }
 
-struct sComputer_0010CBE0
-{
-    char pad0[0x18];
-    char* mRider;       // 0x18
-    char pad1C[0xE24 - 0x1C];
-    int fE24;           // 0xE24
-    int fE28;           // 0xE28
-    float fE2C;         // 0xE2C
-    float fE30;         // 0xE30
-    float fE34;         // 0xE34
-    char padE38[0xE7C - 0xE38];
-    int a[15];          // 0xE7C
-};
-
 extern "C" int func_0010CBE0(void* p, float t)
 {
-    sComputer_0010CBE0* self = (sComputer_0010CBE0*)p;
+    cComputer* self = (cComputer*)p;
     self->fE24 = 0;
     self->fE28 = 0;
     self->fE30 = t;
@@ -393,23 +398,9 @@ static inline int riderV7_10CD20(char* rider)
     return vt[7].fn(obj + vt[7].delta);
 }
 
-struct sComputer_0010CD20
-{
-    char pad0[0x18];
-    char* mRider;       // 0x18
-    char pad1C[0xE24 - 0x1C];
-    int fE24;           // 0xE24
-    int fE28;           // 0xE28
-    float fE2C;         // 0xE2C
-    float fE30;         // 0xE30
-    float fE34;         // 0xE34
-    char padE38[0xEF4 - 0xE38];
-    int c[15];          // 0xEF4
-};
-
 extern "C" int func_0010CD20(void* p, float t)
 {
-    sComputer_0010CD20* self = (sComputer_0010CD20*)p;
+    cComputer* self = (cComputer*)p;
     self->fE24 = 0;
     self->fE30 = t;
     int found = -1;
@@ -465,23 +456,9 @@ static inline int riderV7_10CF68(char* rider)
     return vt[7].fn(obj + vt[7].delta);
 }
 
-struct sComputer_0010CF68
-{
-    char pad0[0x18];
-    char* mRider;       // 0x18
-    char pad1C[0xE24 - 0x1C];
-    int fE24;           // 0xE24
-    int fE28;           // 0xE28
-    float fE2C;         // 0xE2C
-    float fE30;         // 0xE30
-    float fE34;         // 0xE34
-    char padE38[0xEB8 - 0xE38];
-    int b[15];          // 0xEB8
-};
-
 extern "C" int func_0010CF68(void* p, float t)
 {
-    sComputer_0010CF68* self = (sComputer_0010CF68*)p;
+    cComputer* self = (cComputer*)p;
     self->fE28 = 0;
     if (*(float*)(self->mRider + 0x2F0) <= 0.0f)
         return -1;
@@ -521,15 +498,7 @@ extern "C" int func_0010CF68(void* p, float t)
 //100%
 INCLUDE_ASM("ai/computer", func_0010D170);
 #ifdef SKIP_ASM
-struct sComputer_0010D170
-{
-    char pad[0xE7C];
-    int a[15];
-    int b[15];
-    int c[15];
-};
-
-extern "C" void func_0010D170(sComputer_0010D170* self)
+extern "C" void func_0010D170(cComputer* self)
 {
     for (int i = 0; i < 15; i++)
     {
