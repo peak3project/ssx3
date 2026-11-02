@@ -396,6 +396,17 @@ static inline void setRate(sWsFloat* dst, float v, float dflt)
     dst->v = r;
 }
 
+static inline void setRateMax(sWsFloat* dst, float v, char* info)
+{
+    float r;
+    if (v < 0.0f) {
+        r = *(float*)(info + 0x14);
+    } else {
+        r = v * 0.03333333507180214f;
+    }
+    dst->v = r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4088,16 +4099,6 @@ struct sSphFloatDef_1AA0 {
 };
 
 
-static inline void setRateMax_1AA0(sWsFloat* dst, float v, char* info)
-{
-    float r;
-    if (v < 0.0f) {
-        r = *(float*)(info + 0x14);
-    } else {
-        r = v * 0.03333333507180214f;
-    }
-    dst->v = r;
-}
 
 // Animated float constructor: range and start value (frames -> seconds), optional random start and speed.
 extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, sSphFloatDef_1AA0* def)
@@ -4111,7 +4112,7 @@ extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, 
     }
     self->id = def->id;
     setRate((sWsFloat*)&self->min, def->min, v);
-    setRateMax_1AA0((sWsFloat*)&self->max, def->max, info);
+    setRateMax((sWsFloat*)&self->max, def->max, info);
     v = def->value;
     if (v < 0.0f) {
         v = self->min;
@@ -4423,16 +4424,6 @@ struct sSphCtl_003421A0 {
 };
 
 
-static inline void setRateMax_003421A0(sWsFloat* dst, float v, char* info)
-{
-    float r;
-    if (v < 0.0f) {
-        r = *(float*)(info + 0x14);
-    } else {
-        r = v * 0.03333333507180214f;
-    }
-    dst->v = r;
-}
 
 extern "C" void* func_003421A0(sSphCtl_003421A0* self, int a1, char* obj, char* def)
 {
@@ -4444,7 +4435,7 @@ extern "C" void* func_003421A0(sSphCtl_003421A0* self, int a1, char* obj, char* 
         t = func_00351508(self->inst);
     }
     setRate((sWsFloat*)&self->f10, *(float*)(def + 0x20), t);
-    setRateMax_003421A0((sWsFloat*)&self->f14, *(float*)(def + 0x24), info);
+    setRateMax((sWsFloat*)&self->f14, *(float*)(def + 0x24), info);
     self->f0C = *(float*)(def + 0x8);
     self->f08 = *(float*)(def + 0x4) * 9.999999974752427e-07f;
     self->f18 = *(float*)(def + 0xC) * 0.03333333507180214f / (float)*(int*)(D_004A5B64 + 0x10);
