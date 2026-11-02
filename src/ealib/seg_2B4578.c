@@ -10874,13 +10874,10 @@ void func_003C8968(int *src, int len) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8A40);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_00515D1C_8A40[] __asm__("D_00515D1C");
-
 int func_003C8A40(int idx) {
-    char *e = D_00515D1C_8A40[0] + idx * 0x60;
-    int (*fn)(int) = *(int (**)(int))(e + 0x44);
-    if (fn != 0) {
-        return fn(*(int *)(e + 0x48));
+    struct sB40Ent *e = &D_00515D1C[idx];
+    if (e->f44 != 0) {
+        return e->f44(e->f48);
     }
     return -1;
 }
