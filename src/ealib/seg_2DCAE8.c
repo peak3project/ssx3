@@ -6195,15 +6195,11 @@ void SYNCTASK_add_impl(int (*fn)(int, int), int mode, int delay) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", SYNCTASK_del);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct { int fn; int b; int c; int d; } STsk_5924;
-extern STsk_5924 D_0051ED98_ED98[] __asm__("D_0051ED98");
-
-void SYNCTASK_del(int arg0) {
+void SYNCTASK_del(int (*fn)(int, int)) {
     int i = 0;
 
-    while (i < 16 && D_0051ED98_ED98[i].fn != arg0) i++;
-    if (i < 16 && D_0051ED98_ED98[i].fn == arg0) D_0051ED98_ED98[i].fn = 0;
+    while (i < 16 && D_0051ED98[i].f00 != fn) i++;
+    if (i < 16 && D_0051ED98[i].f00 == fn) D_0051ED98[i].f00 = 0;
 }
 #endif
 
