@@ -145,6 +145,28 @@ public:
     virtual void setVelocity(t4Vector* v);
 };
 
+// Triangle hit record (position, normal, distance, type, object, uv).
+struct sWsTriHit {
+    t4Vector pos;   // 0x00
+    t4Vector nrm;   // 0x10
+    t4Vector v20;   // 0x20
+    t4Vector v30;   // 0x30
+    float dist;         // 0x40
+    int type;           // 0x44
+    int pad48;
+    int id;             // 0x4C
+    int f50;            // 0x50
+    void* obj;          // 0x54
+    int f58;            // 0x58
+    int f5C;            // 0x5C
+    int f60;            // 0x60
+    int f64;            // 0x64
+    int f68;            // 0x68
+    float u;            // 0x6C
+    float v;            // 0x70
+    int pad74[3];
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1023,26 +1045,6 @@ extern t4Vector D_004FF120_333EF8[] __asm__("D_004FF120");
 
 
 
-struct sHit_333EF8 {
-    t4Vector pos;   // 0x00
-    t4Vector nrm;   // 0x10
-    t4Vector v20;   // 0x20
-    t4Vector v30;   // 0x30
-    float dist;         // 0x40
-    int type;           // 0x44
-    int pad48;
-    int id;             // 0x4C
-    int f50;            // 0x50
-    void* obj;          // 0x54
-    int f58;            // 0x58
-    int f5C;            // 0x5C
-    int f60;            // 0x60
-    int f64;            // 0x64
-    int f68;            // 0x68
-    float u;            // 0x6C
-    float v;            // 0x70
-    int pad74[3];
-};
 
 struct sWsBox;
 typedef int (*Test_333EF8)(void*);
@@ -1115,7 +1117,7 @@ static inline int overlapBox_333EF8(const sWsQueryBox* q, const sWsBox* o)
     return r;
 }
 
-static inline void reset_333EF8(sHit_333EF8* h)
+static inline void reset_333EF8(sWsTriHit* h)
 {
     h->type = 2;
     h->obj = 0;
@@ -1136,7 +1138,7 @@ extern "C" int func_00333EF8(void* vself, void* vq, sWsRayHit* vhits, int cap, i
 {
     sTree_333EF8* self = (sTree_333EF8*)vself;
     sWsQueryBox* q = (sWsQueryBox*)vq;
-    sHit_333EF8* hits = (sHit_333EF8*)vhits;
+    sWsTriHit* hits = (sWsTriHit*)vhits;
     int n = 0;
     for (unsigned int i = 0; i < self->ntris; i++) {
         sWsTriObj* obj = self->tris[i];
@@ -1434,30 +1436,10 @@ extern t4Vector D_004FF120[];
 
 
 
-struct sHit_335960 {
-    t4Vector pos;   // 0x00
-    t4Vector nrm;   // 0x10
-    t4Vector v20;   // 0x20
-    t4Vector v30;   // 0x30
-    float dist;         // 0x40
-    int type;           // 0x44
-    int pad48;
-    int id;             // 0x4C
-    int f50;            // 0x50
-    void* obj;          // 0x54
-    int f58;            // 0x58
-    int f5C;            // 0x5C
-    int f60;            // 0x60
-    int f64;            // 0x64
-    int f68;            // 0x68
-    float u;            // 0x6C
-    float v;            // 0x70
-    int pad74[3];
-};
 
 struct sCtx_335960 {
     sWsQueryBox* q;
-    sHit_335960* hits;
+    sWsTriHit* hits;
     int cap;
     int* count;
     int arg;
@@ -1478,7 +1460,7 @@ static inline int overlap_335960(const sWsQueryBox* q, const sWsTriObj* n)
     return r;
 }
 
-static inline void reset_335960(sHit_335960* h)
+static inline void reset_335960(sWsTriHit* h)
 {
     h->type = 2;
     h->obj = 0;
