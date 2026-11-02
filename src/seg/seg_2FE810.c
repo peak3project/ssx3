@@ -194,6 +194,21 @@ extern int D_00526750[];
 extern char D_00526780[];
 extern int D_00453080[];
 
+/* libpad state */
+typedef struct {
+    int dmaBuf;                 /* 0x100-byte DMA area holding two 0x80-byte frames */
+    int actBuf;                 /* actuator command block (func_00400190) */
+    int f08;
+    int f0C;
+    int open;                   /* non-zero while the port/slot is open */
+    int f14;
+    int f18;
+} sPadSlot;                     /* 0x1C bytes */
+extern sPadSlot D_00526250[2][4];
+extern int D_00526440[];        /* RPC send / receive block (128 bytes) */
+extern int D_004515C8;
+extern int D_004515CC;
+
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
 #ifdef SKIP_ASM
@@ -1324,8 +1339,6 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FF390);
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF4A8);
 #ifdef SKIP_ASM
-extern int D_004515C8[];
-extern int D_004515CC[];
 extern char D_004978D0[];
 extern char D_004978F8[];
 extern int func_00400740(void);
@@ -1335,7 +1348,7 @@ int func_003FF4A8(int a) {
     int i;
     int v;
     int h;
-    D_004515C8[0] = 1;
+    D_004515C8 = 1;
     for (;;) {
         func_00426B48(&D_00526200[0], 0x80000100, 0);
         if (D_00526200[0].server != 0)
@@ -1353,7 +1366,7 @@ int func_003FF4A8(int a) {
     v = func_00400740();
     h = v >> 8;
     if (h != 4) {
-        if (D_004515CC[0] != 0) {
+        if (D_004515CC != 0) {
             func_00425C60(D_004978D0);
             func_00425C60(D_004978F8, 4, 0, h, v & 0xFF);
         }
@@ -1366,19 +1379,15 @@ int func_003FF4A8(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF5E8);
 #ifdef SKIP_ASM
-struct E_526250 { int pad[4]; int f10; int pad2[2]; };
-struct R_526250 { struct E_526250 e[4]; };
-extern struct R_526250 D_00526250[];
-extern int D_00526440[];
 int func_003FF5E8(void) {
     int i;
     for (i = 0; i < 4; i++) {
-        D_00526250[0].e[i].f10 = 0;
-        D_00526250[0].e[i].pad2[1] = 0;
-        D_00526250[0].e[i].pad2[0] = 0;
-        D_00526250[1].e[i].f10 = 0;
-        D_00526250[1].e[i].pad2[1] = 0;
-        D_00526250[1].e[i].pad2[0] = 0;
+        D_00526250[0][i].open = 0;
+        D_00526250[0][i].f18 = 0;
+        D_00526250[0][i].f14 = 0;
+        D_00526250[1][i].open = 0;
+        D_00526250[1][i].f18 = 0;
+        D_00526250[1][i].f14 = 0;
     }
     D_00526440[0] = 16;
     D_00526440[4] = 0;
@@ -1391,8 +1400,6 @@ int func_003FF5E8(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF688);
 #ifdef SKIP_ASM
-extern int D_00526440[];
-extern int D_004515C8[];
 int func_003FF688(void) {
     int v;
     D_00526440[0] = 15;
@@ -1400,7 +1407,7 @@ int func_003FF688(void) {
         return 0;
     v = D_00526440[3];
     if (v == 1)
-        D_004515C8[0] = 0;
+        D_004515C8 = 0;
     return v;
 }
 #endif
@@ -1410,9 +1417,8 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FF708);
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF8F0);
 #ifdef SKIP_ASM
-extern int D_00526440[];
 int func_003FF8F0(int a, int b) {
-    if (!D_00526250[a].e[b].f10)
+    if (!D_00526250[a][b].open)
         return 0;
     D_00526440[0] = 14;
     D_00526440[1] = a;
@@ -1420,7 +1426,7 @@ int func_003FF8F0(int a, int b) {
     D_00526440[4] = 1;
     if (func_00426D18(D_00526200, 1, 0, D_00526440, 128, D_00526440, 128, 0, 0) < 0)
         return 0;
-    D_00526250[a].e[b].f10 = 0;
+    D_00526250[a][b].open = 0;
     return D_00526440[3];
 }
 #endif
@@ -1431,7 +1437,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FF9A8);
 extern void func_00424698(int *, int *);
 int *func_003FF9A8(int a, int b) {
     int *p, c;
-    p = (int *)D_00526250[a].e[b].pad[0];
+    p = (int *)D_00526250[a][b].dmaBuf;
     func_00424698(p, (int *)((char *)p + 0xFF));
     c = (p[22] < p[54]) << 7;
     return (int *)((char *)p + c);
@@ -1443,7 +1449,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FFA08);
 #ifdef SKIP_ASM
 extern int * func_003FF9A8(int, int);
 int func_003FFA08(int a, int b) {
-    if (!D_00526250[a].e[b].f10) return 0;
+    if (!D_00526250[a][b].open) return 0;
     return func_003FF9A8(a, b)[22];
 }
 #endif
@@ -1460,7 +1466,7 @@ int func_003FFA58(int a, int b, int c) {
     struct B128 s;
     int *q;
     int r;
-    if (!D_00526250[a].e[b].f10)
+    if (!D_00526250[a][b].open)
         return 0;
     r = func_0042C078();
     q = (int *)&s;
@@ -1477,7 +1483,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FFBC0);
 #ifdef SKIP_ASM
 int func_003FFBC0(int a, int b) {
     unsigned char *p;
-    if (!D_00526250[a].e[b].f10)
+    if (!D_00526250[a][b].open)
         return 99;
     p = (unsigned char *)func_003FF9A8(a, b);
     if (p[0x70] == 6 && p[0x71] == 2)
@@ -1505,7 +1511,7 @@ void func_003FFC38(unsigned i, char *dst) {
 INCLUDE_ASM("seg/seg_2FE810", func_003FFC70);
 #ifdef SKIP_ASM
 int func_003FFC70(int a, int b, int c) {
-    if (!D_00526250[a].e[b].f10)
+    if (!D_00526250[a][b].open)
         return 0;
     ((char *)func_003FF9A8(a, b))[0x71] = c;
     return 1;
@@ -1516,7 +1522,7 @@ int func_003FFC70(int a, int b, int c) {
 INCLUDE_ASM("seg/seg_2FE810", func_003FFCD8);
 #ifdef SKIP_ASM
 int func_003FFCD8(int a, int b) {
-    if (!D_00526250[a].e[b].f10) return 0;
+    if (!D_00526250[a][b].open) return 0;
     return ((unsigned char *)func_003FF9A8(a, b))[0x71];
 }
 #endif
@@ -1542,7 +1548,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FFD60);
 struct Z_FD60 { unsigned char pad[0x30]; struct { unsigned char a, b, c, d; } e[8]; unsigned char pad2[0x14]; unsigned char f64; unsigned char pad3[5]; unsigned char f6A; unsigned char pad4[7]; unsigned char f72; };
 int func_003FFD60(int a, int b, int c, int d) {
     struct Z_FD60 *p;
-    if (!D_00526250[a].e[b].f10) return 0;
+    if (!D_00526250[a][b].open) return 0;
     p = (struct Z_FD60 *)func_003FF9A8(a, b);
     if (p->f72 != 1) return 0;
     if (p->f64 < 2) return 0;
@@ -1568,7 +1574,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_003FFE80);
 struct Z_FE80 { unsigned char pad[0x40]; struct { unsigned char a, b, c, d; } e[8]; unsigned char pad2[4]; unsigned char f64; unsigned char pad3[6]; unsigned char f6B; unsigned char pad4[6]; unsigned char f72; };
 int func_003FFE80(int a, int b, int c, int d) {
     struct Z_FE80 *p;
-    if (!D_00526250[a].e[b].f10) return 0;
+    if (!D_00526250[a][b].open) return 0;
     p = (struct Z_FE80 *)func_003FF9A8(a, b);
     if (p->f72 != 1) return 0;
     if (p->f64 < 2) return 0;
@@ -1596,7 +1602,7 @@ struct Z_FFA0 { unsigned char pad[0x50]; unsigned short t[8]; unsigned char pad2
 int func_003FFFA0(int port, int slot, int term, int offs) {
     struct Z_FFA0 *p;
     int t;
-    if (!D_00526250[port].e[slot].f10) return 0;
+    if (!D_00526250[port][slot].open) return 0;
     p = (struct Z_FFA0 *)func_003FF9A8(port, slot);
     if (p->f72 != 1) return 0;
     if (p->f71 == 2) return 0;
@@ -1624,7 +1630,6 @@ int func_003FFFA0(int port, int slot, int term, int offs) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004000D8);
 #ifdef SKIP_ASM
-extern int D_00526440[];
 extern int func_003FFC70(int, int, int);
 int func_004000D8(int a, int b, int c, int d) {
     int v;
@@ -1654,7 +1659,7 @@ int func_00400190(int a, int b, unsigned char *src) {
     char *d;
     if (((unsigned char *)func_003FF9A8(a, b))[0x72] != 1)
         return 0;
-    q = (int *)D_00526250[a].e[b].pad[1];
+    q = (int *)D_00526250[a][b].actBuf;
     d = (char *)q + 0xC;
     for (i = 0; i < 6; i++)
         d[i] = src[i];
@@ -1670,7 +1675,6 @@ int func_00400190(int a, int b, unsigned char *src) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400250);
 #ifdef SKIP_ASM
-extern int D_00526440[];
 extern int func_003FFC70(int, int, int);
 int func_00400250(int port, int slot, unsigned char *data) {
     int i;
@@ -1696,7 +1700,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_00400328);
 extern unsigned char *func_003FF9A8_c(int, int) __asm__("func_003FF9A8");
 int func_00400328(int a, int b) {
     unsigned char *p;
-    if (!D_00526250[a].e[b].f10)
+    if (!D_00526250[a][b].open)
         return 0;
     p = func_003FF9A8_c(a, b);
     if (p[0x72] != 1)
@@ -1712,7 +1716,6 @@ int func_00400328(int a, int b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004003E0);
 #ifdef SKIP_ASM
-extern int D_00526440[];
 extern int func_003FFC70(int, int, int);
 int func_004003E0(int a, int b, int c) {
     int v;
@@ -1734,7 +1737,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_00400490);
 #ifdef SKIP_ASM
 extern int func_00400328(int, int);
 int func_00400490(int a, int b) {
-    if (!D_00526250[a].e[b].f10) return 0;
+    if (!D_00526250[a][b].open) return 0;
     return func_00400328(a, b) == 0x3FFFF;
 }
 #endif
@@ -1744,7 +1747,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_004004F0);
 #ifdef SKIP_ASM
 extern int func_004003E0(int, int, int);
 int func_004004F0(int a, int b) {
-    if (!D_00526250[a].e[b].f10) return 0;
+    if (!D_00526250[a][b].open) return 0;
     return func_004003E0(a, b, 0xFFF);
 }
 #endif
@@ -1754,7 +1757,7 @@ INCLUDE_ASM("seg/seg_2FE810", func_00400548);
 #ifdef SKIP_ASM
 extern int func_004003E0(int, int, int);
 int func_00400548(int a, int b) {
-    if (!D_00526250[a].e[b].f10) return 0;
+    if (!D_00526250[a][b].open) return 0;
     return func_004003E0(a, b, 0);
 }
 #endif
@@ -1763,7 +1766,6 @@ int func_00400548(int a, int b) {
 INCLUDE_ASM("seg/seg_2FE810", func_004005A0);
 #ifdef SKIP_ASM
 struct P12 { char b[12]; } __attribute__((packed));
-extern int D_00526440[];
 extern int func_003FFC70(int, int, int);
 int func_004005A0(int a, int b, struct P12 *c) {
     D_00526440[1] = a;
@@ -1781,7 +1783,6 @@ int func_004005A0(int a, int b, struct P12 *c) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00400670);
 #ifdef SKIP_ASM
-extern int D_00526440[];
 int func_00400670(void) {
     D_00526440[0] = 12;
     if (func_00426D18(D_00526200, 1, 0, D_00526440, 128, D_00526440, 128, 0, 0) < 0)
