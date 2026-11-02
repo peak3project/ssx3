@@ -5073,7 +5073,6 @@ struct Ent_3FF0 { int idx; int val; int pad; int kind; };
 
 extern int D_004A3D40_3FF0[2] __asm__("D_004A3D40");
 void func_0030B4C0(void*, int, int);
-extern void* D_004A3DD8_3FF0 __asm__("D_004A3DD8");
 extern int D_004A57E4_3FF0 __asm__("D_004A57E4");
 struct T12_3FF0 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_3FF0 D_004FBC98_3FF0 __asm__("D_004FBC98");
@@ -5097,7 +5096,7 @@ extern "C" cLunoValue func_00303FF0(int n, Ent_3FF0* e) {
         else
             *d = p->val;
     }
-    func_0030B4C0(D_004A3DD8_3FF0, vp[0], vp[1]);
+    func_0030B4C0(D_004A3DD8, vp[0], vp[1]);
     return D_004C9098;
 }
 #endif
