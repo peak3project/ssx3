@@ -14447,14 +14447,11 @@ int func_003CE1B0(int arg0, int idx, int arg2, int arg3, int arg4, int arg5, A6_
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CE378);
 #ifdef SKIP_ASM
-struct S_E378 { char pad[0x304]; int *p[1]; };
-extern struct S_E378 D_005157B8_E378 __asm__("D_005157B8");
-
 int func_003CE378(int key) {
     int i;
     for (i = 0; i < D_0050A8E8.setup.cfg.f26; i++) {
-        int *q = D_005157B8_E378.p[i];
-        if (q != 0 && func_003BA6E8(*(volatile int *)q) == key) return i;
+        struct s7B8Queue *q = D_005157B8.f304[i];
+        if (q != 0 && func_003BA6E8(q->f00) == key) return i;
     }
     return -1;
 }
