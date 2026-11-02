@@ -1567,7 +1567,48 @@ extern "C" void func_0023A4F0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamemode", func_0023A668);
+#ifdef SKIP_ASM
+extern int func_00146E98_668(void* iface, int a) __asm__("func_00146E98");
+extern int cBENewPlayerInterface_getRiderCharID_668(void* iface, int id) __asm__("cBENewPlayerInterface_getRiderCharID__FPvi");
+extern int func_00147410_668(void* iface, int id) __asm__("func_00147410");
+
+struct sGM_23A668 {
+    int count;          // 0x0
+    char pad_0x4[0x14];
+    int a18[6];         // 0x18
+    int pad_0x30[4];
+    int a40[6];         // 0x40
+};
+
+struct sSelf_23A668 {
+    char pad_0x0[0x10];
+    int rows[1][6];     // 0x10
+};
+
+extern "C" void func_0023A668(void* self_)
+{
+    sSelf_23A668* self = (sSelf_23A668*)self_;
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
+    int id = func_00146E98_668(iface, 0);
+    int ch = cBENewPlayerInterface_getRiderCharID_668(iface, id);
+    int r = func_00147410_668(iface, id);
+    int k = ((sGM_23A668*)D_004A2C70)->count - 1;
+    if (k < 0) k = 0;
+    for (int i = 0; i < 6; i++) {
+        int v = self->rows[k][i];
+        if (v >= 10) {
+            ((sGM_23A668*)D_004A2C70)->a40[i] = v;
+            v = ch;
+        } else {
+            ((sGM_23A668*)D_004A2C70)->a40[i] = 0;
+        }
+        ((sGM_23A668*)D_004A2C70)->a18[i] = v;
+        if (i == id) ((sGM_23A668*)D_004A2C70)->a40[i] = r;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamemode", func_0023A760);
