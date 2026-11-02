@@ -8,14 +8,49 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Declarations shared by the functions of this unit.
+struct cAppMan;
+// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern void* D_004A28A8;
+extern "C" void func_00145108(void* iface, int idx);
+extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
+extern "C" int cCommSystem_openDSockChannel(void* comm, const char* addr, int port, int host);
+extern "C" void func_00256038(void* comm, int* info);
+extern "C" int func_00255D50(void* comm, int ch);
+extern "C" void cGameComm_construct(int ch, int host);
+extern "C" void func_00266D58(void* p, int ip);
+extern "C" void func_00266E30(void* p);
+extern void* D_004A2EB8;
+extern void* D_004A33F4;
+extern void* D_004A4E90;
+extern void* D_0046D350[];
+void operator_delete(int* ptr);
+extern void* D_004A3028;
+extern "C" void* cBXString_cBXString4(void* self, const char* str);
+extern "C" void func_002CC3B8(void* menu, void* items);
+extern "C" void func_002CC460(void* list);
+extern "C" void func_0025C610(void* net);
+extern "C" void func_001DB418(void* items, void* net);
+extern "C" void func_0025D800(void* a, int b, int c);
+void func_0025CD28(void* a, int b);
+void* func_0025FC28(void* a, int b);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_002CC3B8(void* list, void* item);
+extern char* D_004A289C;
+// PORT: the real function is C++ void* func_00320C48(void* self, int) (bx/execman); these thunks pass an int handle.
+void* func_00320C48(int, int) __asm__("func_00320C48__FPvi");
+extern char D_004A1350[];
+extern char D_0045D560[];
+extern char D_004A1358[];
+extern char D_004A1360[];
+extern "C" char* func_004162D0(char*, const char*);
+
 INCLUDE_ASM("fe/debugfe", cDebugMenuScreen_draw);
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D008);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern void* D_004A28A8;
 struct sDbgRaceSel17D008 {
     char pad_0x00[0x48];
     signed char mode;  // 0x48
@@ -31,8 +66,6 @@ struct sDbgFE17D008 {
     char pad_0x0000[0x8C38];
     int modes[8]; // 0x8C38
 };
-extern "C" void func_00145108(void* iface, int idx);
-extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
 
 extern "C" void func_0017D008(void* self, int idx)
 {
@@ -47,19 +80,9 @@ extern "C" void func_0017D008(void* self, int idx)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D0A8);
 #ifdef SKIP_ASM
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int cCommSystem_openDSockChannel(void* comm, const char* addr, int port, int host);
-extern "C" void func_00256038(void* comm, int* info);
-extern "C" int func_00255D50(void* comm, int ch);
 extern "C" void func_00255A20(void* comm);
 extern "C" int SYNCTASK_run(int a);
 extern "C" void THREAD_yieldticks(int n);
-extern "C" void cGameComm_construct(int ch, int host);
-extern "C" void func_00266D58(void* p, int ip);
-extern "C" void func_00266E30(void* p);
-extern void* D_004A28A8;
-extern void* D_004A2EB8;
-extern void* D_004A33F4;
 extern char D_0045D018[] __attribute__((aligned(8)));
 extern char D_0045D028[] __attribute__((aligned(8)));
 
@@ -143,7 +166,6 @@ extern "C" void* func_0017D200(void* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D260);
 #ifdef SKIP_ASM
-extern void* D_004A4E90;
 extern "C" void func_0017D6F0(void* self, void* ev);
 extern "C" void func_00259230(void* ev);
 
@@ -158,9 +180,7 @@ extern "C" void func_0017D260(void* self, void* ev)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D298);
 #ifdef SKIP_ASM
-extern void* D_0046D350[];
 extern int D_004A3E90;
-extern void* D_004A4E90;
 extern "C" void* func_002CC018(void* self);
 extern "C" void* func_001DA988(void* self, void* a, void* b);
 extern "C" void* func_001DACB8(void* self, void* a, void* b, void* c);
@@ -234,11 +254,7 @@ extern "C" void func_002CAA80(void* self, int flags);
 extern "C" void func_001DD0C8(void* self, int flags);
 extern "C" void func_001DCEA0(void* self, int flags);
 extern "C" void func_002CC048(void* self, int flags);
-void operator_delete(int* ptr);
-extern void* D_0046D350[];
 extern void* D_0046D948[];
-extern void* D_004A4E90;
-
 
 #define DTOR_ARR_17D3B0(base, n)                                  \
     if ((base) != 0) {                                            \
@@ -324,8 +340,6 @@ extern "C" void func_0017D3B0(char* self, int flags)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D688);
 #ifdef SKIP_ASM
-extern void* D_004A2EB8;
-extern void* D_004A3028;
 extern "C" void func_00255A20(void*);
 extern "C" void func_0025AC50(void*);
 extern "C" void func_002CC0C0(void* stack);
@@ -361,25 +375,14 @@ extern "C" void func_0017D688(sDebugFE17D688* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D6F0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern void* D_004A3028;
 extern char D_004A1320[];
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void* cBXString_operatorE(void* self, void* other);
-extern "C" void func_002CC3B8(void* menu, void* items);
-extern "C" void func_002CC460(void* list);
-extern "C" void func_0025C610(void* net);
 extern "C" void func_0017DA30(void* self, int a1);
 extern "C" void func_0017DE70(char* self);
-extern "C" void func_001DB418(void* items, void* net);
 extern "C" int func_0025F120(void* net);
 extern "C" char* func_0025F150(void* net, int i);
 extern "C" bool func_0025F430(void* net);
 extern "C" int func_004165A8(char* a, char* b);
-extern "C" void func_0025D800(void* a, int b, int c);
-void func_0025CD28(void* a, int b);
-void* func_0025FC28(void* a, int b);
-
 
 struct sDebugFE17D6F0 {
     int f0;                       // 0x0
@@ -524,11 +527,6 @@ extern "C" void func_0017D6F0(void* vself, void* ev)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017DA30);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern void* D_004A3028;
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
-extern "C" void func_002CC3B8(void* menu, void* items);
-extern "C" void func_0025C610(void* net);
 static inline void SetMode0017DA30(void* self, int mode)
 {
     *(int*)((char*)self + 0x4) = mode;
@@ -576,28 +574,14 @@ extern "C" void func_0017DA30(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017DB18);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern void* D_004A2EB8;
-extern void* D_004A3028;
-extern void* D_004A33F4;
 extern char D_0045CE60[];
-struct cAppMan;
-extern "C" void func_002CC3B8(void* menu, void* items);
 extern "C" int func_002CC098(void* menu);
 extern "C" void func_00255F50(void* comm, int a1);
 extern "C" void func_0025B6D8(void* net, int a1);
-extern "C" void func_001DB418(void* items, void* net);
 extern "C" void func_001DB528(void* items, void* net);
 extern "C" void func_001DB620(void* items, void* net);
-extern "C" void func_0025D800(void* a, int b, int c);
-extern "C" int func_00255D50(void* comm, int ch);
-extern "C" void cGameComm_construct(int ch, int host);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 void* func_00232720(void* mem);
 void cAppMan_setNextModule(cAppMan* app, unsigned int module);
-extern "C" void func_00256038(void* comm, int* info);
-extern "C" void func_00266D58(void* p, int ip);
-extern "C" void func_00266E30(void* p);
 
 struct sDebugFE17DB18 {
     int f0;                          // 0x0
@@ -747,20 +731,12 @@ extern "C" void func_0017DB18(void* vself)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017DE70);
 #ifdef SKIP_ASM
-// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cBE_getBE();
-extern "C" void func_00145108(void* iface, int idx);
-extern "C" int cBENewRaceInterface_setGameMode(void* iface, int mode);
 extern "C" int cBENewRaceInterface_setNumberAI(void* iface, int n);
 extern "C" void cBENewPlayerInterface_setRiderCtrlID(void* iface, int rider, int ctrl);
 extern "C" void cBENewPlayerInterface_setRiderCharID(void* iface, int rider, int id);
 extern "C" void func_001472C8(void* iface, int a1, int a2);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" int cCommSystem_openDSockChannel(void* comm, const char* addr, int port, int host);
-extern void* D_004A28A8;
-extern void* D_004A2EB8;
-extern void* D_004A3028;
 extern int D_004A11B8;
 extern int D_00535C08[];
 extern char D_0045CF98[];
@@ -772,7 +748,6 @@ struct sNetCfg_17DE70 {
     unsigned short port;
 };
 extern sNetCfg_17DE70 D_00534B30_cfg __asm__("D_00534B30");
-
 
 static inline void vcall1_17DE70(void* obj)
 {
@@ -818,9 +793,6 @@ extern "C" void func_0017DE70(char* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E030);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
-extern "C" void func_002CC460(void* list);
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void func_0025B9C8(void* mgr, void* req);
 extern char D_0045D248[];
 
@@ -872,9 +844,6 @@ extern "C" void func_0017E030(sDebugFEState17E030* self, const char* a, const ch
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E118);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
-extern "C" void func_002CC460(void* list);
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void func_0025C610(void* mgr);
 
 struct sDebugFEState17E118 {
@@ -904,13 +873,11 @@ extern "C" void func_0017E118(sDebugFEState17E118* self, const char* a, const ch
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E1C0);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E1C0 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
 extern "C" void func_0025D1B8(void* a, int b);
 
 extern "C" void func_0017E1C0(sDebugFEState17E1C0* self, int arg)
@@ -927,13 +894,11 @@ extern "C" void func_0017E1C0(sDebugFEState17E1C0* self, int arg)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E228);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E228 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
 extern "C" void func_0025D428(void* a, int b);
 
 extern "C" void func_0017E228(sDebugFEState17E228* self, int arg)
@@ -950,14 +915,11 @@ extern "C" void func_0017E228(sDebugFEState17E228* self, int arg)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E290);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E290 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
-void func_0025CD28(void* a, int b);
 
 extern "C" void func_0017E290(sDebugFEState17E290* self, int arg)
 {
@@ -973,14 +935,11 @@ extern "C" void func_0017E290(sDebugFEState17E290* self, int arg)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E2F8);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E2F8 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
-extern "C" void func_0025D800(void* a, int b, int c);
 
 extern "C" void func_0017E2F8(sDebugFEState17E2F8* self, int arg)
 {
@@ -996,8 +955,6 @@ extern "C" void func_0017E2F8(sDebugFEState17E2F8* self, int arg)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E368);
 #ifdef SKIP_ASM
-extern "C" void func_002CC460(void* list);
-
 extern "C" void func_0017E368(void* self)
 {
     int* list = (int*)((char*)self + 0x8);
@@ -1011,9 +968,6 @@ extern "C" void func_0017E368(void* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E3B8);
 #ifdef SKIP_ASM
-extern "C" void func_002CC460(void* list);
-extern "C" void func_002CC3B8(void* list, void* item);
-
 extern "C" void func_0017E3B8(void* self)
 {
     int* list = (int*)((char*)self + 0x8);
@@ -1028,14 +982,11 @@ extern "C" void func_0017E3B8(void* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E418);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E418 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
-extern "C" void func_002CC3B8(void* list, void* item);
 extern "C" void func_0025AAE0(void* a, int b);
 
 extern "C" void func_0017E418(sDebugFEState17E418* self, int arg)
@@ -1053,13 +1004,11 @@ extern "C" void func_0017E418(sDebugFEState17E418* self, int arg)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E490);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E490 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
 extern "C" void func_0025FB58(void* a, int b, int c);
 
 extern "C" void func_0017E490(sDebugFEState17E490* self)
@@ -1076,15 +1025,11 @@ extern "C" void func_0017E490(sDebugFEState17E490* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E4F0);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E4F0 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
-extern "C" void func_002CC3B8(void* list, void* item);
-void* func_0025FC28(void* a, int b);
 
 extern "C" void func_0017E4F0(sDebugFEState17E4F0* self)
 {
@@ -1101,14 +1046,11 @@ extern "C" void func_0017E4F0(sDebugFEState17E4F0* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017E558);
 #ifdef SKIP_ASM
-extern void* D_004A3028;
 struct sDebugFEState17E558 {
     int f0;
     int state; // 0x4
     int list;  // 0x8
 };
-extern "C" void func_002CC460(void* list);
-extern "C" void func_002CC3B8(void* list, void* item);
 extern "C" void func_0025F628(void* a, int b, int c);
 
 extern "C" void func_0017E558(sDebugFEState17E558* self)
@@ -1249,7 +1191,6 @@ extern "C" void* func_0017F7B8(void* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017F838);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
 extern char D_0046D970[];
 
 extern "C" void func_0017F838(void* self, int flags)
@@ -1264,8 +1205,6 @@ extern "C" void func_0017F838(void* self, int flags)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017F868);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern char* D_004A289C;
 extern char* D_004A5B80;
 extern char D_0045D4B8[];
 extern char D_0045D4C8[];
@@ -1275,7 +1214,6 @@ extern char D_0045D510[];
 extern char D_0045D520[];
 extern char D_004A1340[];
 extern char D_004A1348[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 void* cMemMan_free(void* ptr);
 extern "C" void* func_003915E8(void* self, const char* name, int a2);
 extern "C" int* func_003E1908(const char* name, int flags);
@@ -1388,10 +1326,7 @@ int func_0017FAB0(void* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017FAD0);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern char* D_004A289C;
 extern "C" void func_003916C0(void* p, int flags);
-
 
 struct sDebugFE_0017FAD0 {
     char pad_0x00[0xC];
@@ -1436,7 +1371,6 @@ extern "C" void func_0017FAD0(sDebugFE_0017FAD0* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/debugfe", func_0017FB98);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 class cFEObjK17FB98 {
 public:
     virtual void v01();
@@ -1457,7 +1391,6 @@ extern "C" void func_0017FB98(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/debugfe", func_0017FBF0);
 #ifdef SKIP_ASM
-extern char* D_004A289C;
 extern char D_004FF1A0[];
 extern "C" int func_00231D60(void* self);
 extern "C" void func_0017F500(void* self, int a1);
@@ -1542,8 +1475,6 @@ extern "C" int func_0017FBF0(char* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017FDF0);
 #ifdef SKIP_ASM
-void* func_00320C48(int, int) __asm__("func_00320C48__FPvi");
-
 extern "C" void func_0017FDF0(void* self, signed char k)
 {
     int id = 0;
@@ -1560,9 +1491,6 @@ extern "C" void func_0017FDF0(void* self, signed char k)
     func_00320C48(*(int*)((char*)self + 0x18), id);
 }
 #endif
-
-// PORT: the real function is C++ void* func_00320C48(void* self, int) (bx/execman); these thunks pass an int handle.
-void* func_00320C48(int, int) __asm__("func_00320C48__FPvi");
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017FE80__FPv);
@@ -1912,8 +1840,6 @@ extern "C" int func_00180300(void* self)
 //100%
 INCLUDE_ASM("fe/debugfe", func_00180478);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-
 extern "C" void func_00180478(void* self, unsigned char idx)
 {
     int v = *(int*)((char*)D_004A28A8 + (idx << 2) + 0xB0);
@@ -2180,11 +2106,6 @@ INCLUDE_ASM("fe/debugfe", func_001809B0);
 #ifdef SKIP_ASM
 struct sStr10 { char c[10]; };
 extern sStr10 D_0045D550;
-extern char D_004A1350[];
-extern char D_0045D560[];
-extern char D_004A1358[];
-extern char D_004A1360[];
-extern "C" char* func_004162D0(char*, const char*);
 
 extern "C" void func_001809B0(void* self, int c, char* dst)
 {
@@ -2215,11 +2136,6 @@ INCLUDE_ASM("fe/debugfe", func_00180A90);
 #ifdef SKIP_ASM
 struct sStr8 { char c[8]; };
 extern char D_004A1368[];
-extern char D_004A1350[];
-extern char D_0045D560[];
-extern char D_004A1358[];
-extern char D_004A1360[];
-extern "C" char* func_004162D0(char*, const char*);
 
 extern "C" void func_00180A90(void* self, int c, char* dst)
 {
