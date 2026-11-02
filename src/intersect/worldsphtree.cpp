@@ -385,6 +385,17 @@ static inline int overlapBoxB(const sWsQueryBox* q, const sWsBox* o)
     return r;
 }
 
+static inline void setRate(sWsFloat* dst, float v, float dflt)
+{
+    float r;
+    if (v >= 0.0f) {
+        r = v * 0.03333333507180214f;
+    } else {
+        r = dflt;
+    }
+    dst->v = r;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -4076,16 +4087,6 @@ struct sSphFloatDef_1AA0 {
     int f24;            // 0x24
 };
 
-static inline void setRate_1AA0(sWsFloat* dst, float v, float dflt)
-{
-    float r;
-    if (v >= 0.0f) {
-        r = v * 0.03333333507180214f;
-    } else {
-        r = dflt;
-    }
-    dst->v = r;
-}
 
 static inline void setRateMax_1AA0(sWsFloat* dst, float v, char* info)
 {
@@ -4109,7 +4110,7 @@ extern "C" void* func_00341AA0(sSphFloat_1AA0* self, int a1, int a2, char* obj, 
         v = func_00351508(self->inst);
     }
     self->id = def->id;
-    setRate_1AA0((sWsFloat*)&self->min, def->min, v);
+    setRate((sWsFloat*)&self->min, def->min, v);
     setRateMax_1AA0((sWsFloat*)&self->max, def->max, info);
     v = def->value;
     if (v < 0.0f) {
@@ -4421,16 +4422,6 @@ struct sSphCtl_003421A0 {
     void* inst;         // 0x78
 };
 
-static inline void setRate_003421A0(sWsFloat* dst, float v, float dflt)
-{
-    float r;
-    if (v >= 0.0f) {
-        r = v * 0.03333333507180214f;
-    } else {
-        r = dflt;
-    }
-    dst->v = r;
-}
 
 static inline void setRateMax_003421A0(sWsFloat* dst, float v, char* info)
 {
@@ -4452,7 +4443,7 @@ extern "C" void* func_003421A0(sSphCtl_003421A0* self, int a1, char* obj, char* 
     if (self->inst != 0) {
         t = func_00351508(self->inst);
     }
-    setRate_003421A0((sWsFloat*)&self->f10, *(float*)(def + 0x20), t);
+    setRate((sWsFloat*)&self->f10, *(float*)(def + 0x20), t);
     setRateMax_003421A0((sWsFloat*)&self->f14, *(float*)(def + 0x24), info);
     self->f0C = *(float*)(def + 0x8);
     self->f08 = *(float*)(def + 0x4) * 9.999999974752427e-07f;
