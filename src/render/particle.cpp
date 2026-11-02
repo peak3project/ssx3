@@ -151,6 +151,14 @@ struct sPtQuadI {
     int w[4];
 } __attribute__((aligned(16)));
 
+// Segment header (seg, step, fstep, v) of the 003807A0 / 00380CE0 strip packets.
+struct sPtSegHdr {
+    int seg;
+    int step;
+    float fstep;
+    float v;
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5245,12 +5253,6 @@ struct sTrail_07A0 {
     sGifQuad* posB;               // 0x1A4
 };
 
-struct sHdr_07A0 {
-    int seg;
-    int step;
-    float fstep;
-    float v;
-} __attribute__((aligned(16)));
 
 extern int D_004A44FC;
 extern int D_004A4474;
@@ -5286,7 +5288,7 @@ extern "C" void func_003807A0(sPtGfx_07A0* self, sTrail_07A0* obj)
         func_0037D968(self);
     }
     int n = obj->count;
-    sHdr_07A0 hdr;
+    sPtSegHdr hdr;
     int done = 0;
     hdr.step = *(int*)((char*)obj + 0x20) / n;
     hdr.fstep = (float)hdr.step;
@@ -5400,12 +5402,6 @@ struct sTrail_0CE0 {
     sCol_0CE0* cols;                // 0x204
 };
 
-struct sHdr_0CE0 {
-    int seg;
-    int step;
-    float fstep;
-    float v;
-} __attribute__((aligned(16)));
 
 extern int D_004A44FC;
 extern int D_004A4474;
@@ -5443,7 +5439,7 @@ extern "C" void func_00380CE0(sPtGfx_0CE0* self, sTrail_0CE0* obj)
         func_0037D968(self);
     }
     int n = obj->count;
-    sHdr_0CE0 hdr;
+    sPtSegHdr hdr;
     int done = 0;
     hdr.step = *(int*)((char*)obj + 0x20) / n;
     hdr.fstep = (float)hdr.step;
