@@ -3394,7 +3394,7 @@ static inline bool isIdle_1120(int slot) {
     }
     return false;
 }
-extern "C" void* func_00301120(void* self, int n, Ent_1120* e) {
+extern "C" cLunoValue* func_00301120(cLunoValue* ret, int n, Ent_1120* e) {
     int slot = D_004A3DD8->being;
     if (isIdle_1120(slot)) {
         if (D_004A56B4_1120 == 0) {
@@ -3424,14 +3424,14 @@ extern "C" void* func_00301120(void* self, int n, Ent_1120* e) {
             unsigned b1 = vp[1];
             unsigned b0 = vp[0];
             func_0030B9A0(D_004A3DD8, slot, b0, b1);
-            *(int*)((char*)self + 8) = 1;
-            *func_00226610(self) = 1;
-            return self;
+            ret->type = 1;
+            *func_00226610(ret) = 1;
+            return ret;
         }
     }
-    *(int*)((char*)self + 8) = 1;
-    *func_00226610(self) = 0;
-    return self;
+    ret->type = 1;
+    *func_00226610(ret) = 0;
+    return ret;
 }
 #endif
 
