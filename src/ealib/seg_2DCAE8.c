@@ -812,12 +812,10 @@ int func_003DCBD8(int arg0, int arg1, int arg2) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCC88);
 #ifdef SKIP_ASM
-struct G_CC88 { int f0; int f4; int f8; char pad[0x14 - 0xC]; char sub[0x28 - 0x14]; int f28; int f2C; };
-extern struct G_CC88 D_00519AB0_CC88 __asm__("D_00519AB0");
 extern int D_00450C60_CC88 __asm__("D_00450C60");
 extern int func_003E5698_CC88(void *) __asm__("func_003E5698");
-extern void func_003E6448_CC88(int, int, int) __asm__("func_003E6448");
-extern int func_003E4040_CC88(int, int) __asm__("func_003E4040");
+extern void func_003E6448_CC88(void *, int, int) __asm__("func_003E6448");
+extern int func_003E4040_CC88(int, struct sFsHd *) __asm__("func_003E4040");
 extern void func_003E3020(int, int);
 
 int func_003DCC88(int a, int b, int c, int d) {
@@ -825,16 +823,16 @@ int func_003DCC88(int a, int b, int c, int d) {
     int y = b ? b : 0x3E8;
     int z = c ? c : 0x20;
     int r;
-    if (D_00519AB0_CC88.f0 == 0) {
-        D_00519AB0_CC88.f8 = 0xFF;
-        D_00519AB0_CC88.f0 = z;
-        D_00519AB0_CC88.f4 = x;
-        func_003E5698_CC88(D_00519AB0_CC88.sub);
-        D_00519AB0_CC88.f28 = d;
-        func_003E6448_CC88(D_00519AB0_CC88.f28, 0, func_003DCD98(x, y, z));
-        { int e = D_00519AB0_CC88.f0 * 0x30; D_00519AB0_CC88.f2C = D_00519AB0_CC88.f28 + e; }
+    if (D_00519AB0.f00 == 0) {
+        D_00519AB0.f08 = 0xFF;
+        D_00519AB0.f00 = z;
+        D_00519AB0.f04 = x;
+        func_003E5698_CC88(D_00519AB0.f14);
+        D_00519AB0.f28 = (struct sFsCmd *)d;
+        func_003E6448_CC88(D_00519AB0.f28, 0, func_003DCD98(x, y, z));
+        D_00519AB0.f2C = (struct sFsHd *)(D_00519AB0.f28 + D_00519AB0.f00);
         if (D_00450C60_CC88 != 0) {
-            r = func_003E4040_CC88(y, D_00519AB0_CC88.f4 * 0x110 + D_00519AB0_CC88.f2C);
+            r = func_003E4040_CC88(y, D_00519AB0.f2C + D_00519AB0.f04);
         } else {
             r = 0;
         }
