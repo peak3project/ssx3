@@ -345,6 +345,23 @@ static inline sPtMatrixV MulMatV(const sPtMatrixV& a, const sPtMatrixV& b)
     return d;
 }
 
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy, non-volatile form).
+static inline void CopyMat(sPtMatrix* dst, const sPtMatrix* src)
+{
+    __asm__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5585,21 +5602,6 @@ INCLUDE_ASM("render/particle", func_00381F10);
 extern char D_3BF0[];
 
 // PORT: PS2-only VU0 inline asm (matrix copy); the PC port needs a C fallback.
-static inline void CopyMat_1F10(sPtMatrix* dst, const sPtMatrix* src)
-{
-    __asm__(
-        "lqc2      $vf1, 0x0(%1)\n"
-        "lqc2      $vf2, 0x10(%1)\n"
-        "lqc2      $vf3, 0x20(%1)\n"
-        "lqc2      $vf4, 0x30(%1)\n"
-        "sqc2      $vf1, 0x0(%0)\n"
-        "sqc2      $vf2, 0x10(%0)\n"
-        "sqc2      $vf3, 0x20(%0)\n"
-        "sqc2      $vf4, 0x30(%0)\n"
-        :
-        : "r"(dst), "r"(src)
-        : "memory");
-}
 
 extern "C" void func_0037D968(void* self);
 
@@ -5623,7 +5625,7 @@ extern "C" void func_00381F10(cPS2GraphicsMan* self, sPtMatrix* m, float* col, i
     p[7] = 1;
     p[8] = (unsigned long)(n | 0x8000) | ((unsigned long)0x800A << 45);
     p[9] = 4;
-    CopyMat_1F10((sPtMatrix*)(p + 10), m);
+    CopyMat((sPtMatrix*)(p + 10), m);
     p[18] = n;
     p[19] = 0;
     p[20] = 0;
@@ -5745,21 +5747,6 @@ extern sPt2170 D_004FFBC0[];
 extern int D_004A59A0;
 
 // PORT: PS2-only VU0 inline asm (matrix copy); the PC port needs a C fallback.
-static inline void CopyMat2170(sPtMatrix* dst, const sPtMatrix* src)
-{
-    __asm__(
-        "lqc2      $vf1, 0x0(%1)\n"
-        "lqc2      $vf2, 0x10(%1)\n"
-        "lqc2      $vf3, 0x20(%1)\n"
-        "lqc2      $vf4, 0x30(%1)\n"
-        "sqc2      $vf1, 0x0(%0)\n"
-        "sqc2      $vf2, 0x10(%0)\n"
-        "sqc2      $vf3, 0x20(%0)\n"
-        "sqc2      $vf4, 0x30(%0)\n"
-        :
-        : "r"(dst), "r"(src)
-        : "memory");
-}
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix * vector); the PC port needs a C fallback.
 static inline sPt2170 MulMat2170(const sPtMatrix* m, const sPt2170& v)
@@ -5822,7 +5809,7 @@ extern "C" void func_00382170(cRMgr2170* mgr, sPt2170* pos, float* col, float ra
     int i;
     int k;
 
-    CopyMat2170(&m, mgr->v35());
+    CopyMat(&m, mgr->v35());
     sPt2170 c = MulMat2170(&m, *pos);
     if (3000.0f < c.z) {
         return;
