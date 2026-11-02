@@ -1000,9 +1000,7 @@ void func_003DCFC0_impl(struct H_CFC0 h, int obj) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DD148);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct H_D148 { unsigned int v; };
-extern char *D_00519AD8_D148[] __asm__("D_00519AD8");
 
 void func_003DD148(struct H_D148 h) {
     struct H_D148 c;
@@ -1011,12 +1009,12 @@ void func_003DD148(struct H_D148 h) {
     int ok = 0;
     c.v = u;
     if (u != 0) {
-        ok = ((*(unsigned int *)(((unsigned char *)&c)[3] * 0x30 + D_00519AD8_D148[0]) ^ u) & 0xFFFFF) == 0;
+        ok = ((D_00519AD8[((unsigned char *)&c)[3]].f00.w ^ u) & 0xFFFFF) == 0;
     }
     if (ok != 0) {
         t = (u >> 20) & 0xF;
         if (t != 3 && t != 0xA) {
-            *(int *)(((unsigned char *)&h)[3] * 0x30 + D_00519AD8_D148[0] + 4) = 1;
+            D_00519AD8[((unsigned char *)&h)[3]].f04 = 1;
         }
     }
 }
