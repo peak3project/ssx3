@@ -449,6 +449,11 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
         description="cc $in ($ccdir)",
         command=f"python3 {ROOT}/tools/cc_native.py $ccdir -c {COMMON_INCLUDES} {ASM_INCLUDE_FLAG} {COMMON_CFLAGS} $in $cflags -o $out && {cross}strip $out -N dummy-symbol-name",
     )
+    ninja.rule(
+        "cc_native_jt",
+        description="cc $in ($ccdir, jtbl)",
+        command=f"python3 {ROOT}/tools/cc_native.py $ccdir -c {COMMON_INCLUDES} {ASM_INCLUDE_FLAG} {COMMON_CFLAGS} $in $cflags --jtbl-unit=$unit -o $out && {cross}strip $out -N dummy-symbol-name",
+    )
 
     ninja.rule(
         "cpp",
@@ -552,11 +557,10 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                 build(entry.object_path, entry.src_paths, task, out_dir="obj/target", collect_objdiff=True, orig_entry=entry,
                       extra_flags=unit_flags or None, variables=tvars)
                 flags, inc = current_c_flags(entry)
-                # (fork) tools/jtbl_cc.py drives the SN driver; the ee-gcc 2.9 wrapper isn't wired to it, so these units' switch
-                # functions keep their local jump tables (and stay below 100% in objdiff)
-                jt = task != "cc_native"
-                cur_task = task + "_jt" if jt else task
-                tools_dep = ["tools/jtbl_cc.py"] if jt else []
+                # (fork) jump tables that match retail are repointed at their jtbl_* symbols: tools/jtbl_cc.py wraps the SN
+                # driver; the ee-gcc 2.9 wrapper (tools/cc_native.py --jtbl-unit) calls the same repoint() after its fill pass
+                cur_task = task + "_jt"
+                tools_dep = ["tools/jtbl_cc.py"] + (["tools/cc_native.py"] if task == "cc_native" else [])
                 if seg.name in UNIT_PS2EEAS and task == "cc":
                     cur_task, tools_dep = "cc_ps2as", ["tools/jtbl_cc.py", "tools/ps2eeas_cc.py"]
                 build(entry.object_path, entry.src_paths, cur_task, out_dir="obj/current",

@@ -83,6 +83,11 @@ def expand_includes(text, dirs, depth=0):
 
 FILL_FLAG = "--fill-delay-slots"
 
+# Objects mode, obj/current only (configure.py passes it): point each switch jump table that matches the retail one
+# entry for entry at its jtbl_* symbol, as tools/jtbl_cc.py does for the SN driver. Runs after the fill pass, so the
+# table entries are compared on the final code layout.
+JTBL_FLAG = "--jtbl-unit="
+
 GPR_NAMES = {"zero": 0, "at": 1, "v0": 2, "v1": 3, "a0": 4, "a1": 5, "a2": 6, "a3": 7, "t0": 8, "t1": 9, "t2": 10,
              "t3": 11, "t4": 12, "t5": 13, "t6": 14, "t7": 15, "s0": 16, "s1": 17, "s2": 18, "s3": 19, "s4": 20,
              "s5": 21, "s6": 22, "s7": 23, "t8": 24, "t9": 25, "k0": 26, "k1": 27, "gp": 28, "sp": 29, "fp": 30,
@@ -266,10 +271,39 @@ def fill_delay_slots(text, log=None):
 
 
 
+def repoint_jump_tables(gcc, c_args, s_file, unit, cwd):
+    """Rewrite s_file with tools/jtbl_cc.py's repoint(), assembling check objects with this compiler's driver."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import jtbl_cc
+    from pathlib import Path
+
+    work = os.path.dirname(s_file)
+    failed = []
+
+    def assemble(text, extra):
+        path = os.path.join(work, "jtcheck.s")
+        obj = os.path.join(work, "jtcheck.o")
+        open(path, "w", encoding="latin-1").write(text)
+        cmd = [path if a == s_file else a for a in c_args]
+        cmd[cmd.index("-o") + 1] = obj
+        cmd[cmd.index("-c"):cmd.index("-c") + 1] = ["-c", *extra]
+        if subprocess.call([gcc] + cmd, cwd=cwd) != 0:
+            failed.append(1)
+        return Path(obj)
+
+    text = open(s_file, encoding="latin-1").read()
+    new, _log = jtbl_cc.repoint(text, unit, assemble)
+    if failed:
+        return 1
+    open(s_file, "w", encoding="latin-1").write(new)
+    return 0
+
+
 def compile_two_step(gcc, args, cwd):
     """gcc -S, inline the .include directives, then assemble the result with the same flags."""
     fill_slots = FILL_FLAG in args                  # configure.py UNIT_AS_SWAP, passed in the unit's cflags
-    args = [a for a in args if a != FILL_FLAG]
+    jtbl_unit = next((a[len(JTBL_FLAG):] for a in args if a.startswith(JTBL_FLAG)), None)
+    args = [a for a in args if a != FILL_FLAG and not a.startswith(JTBL_FLAG)]
     out_i = args.index("-o") + 1
     src = next(a for a in args if a.endswith((".c", ".cpp")))
     s_file = os.path.join(tempfile.mkdtemp(prefix="cc_native_s."), "unit.s")
@@ -284,6 +318,10 @@ def compile_two_step(gcc, args, cwd):
     if fill_slots:
         filled = fill_delay_slots(open(s_file, encoding="latin-1").read())
         open(s_file, "w", encoding="latin-1").write(filled)
+    if jtbl_unit:
+        rc = repoint_jump_tables(gcc, c_args, s_file, jtbl_unit, cwd)
+        if rc != 0:
+            return rc
     rc = subprocess.call([gcc] + c_args, cwd=cwd)
     shutil.rmtree(os.path.dirname(s_file), ignore_errors=True)
     return rc
