@@ -17800,20 +17800,19 @@ int func_003D53B8(int arg0, int arg1) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5450);
 #ifdef SKIP_ASM
-extern unsigned int D_0044F430_5450 __asm__("D_0044F430");
 
 int func_003D5450(unsigned int idx) {
-    if (D_0044F430_5450 == 0)
-        D_0044F430_5450 = 0xFFFFFFFF;
+    if (D_0044F430 == 0)
+        D_0044F430 = 0xFFFFFFFF;
     if (idx < 4 && D_00517610[idx].f34 != 0) {
         int v = D_00517610[idx].f30;
         D_0044F420 = &D_00517610[idx];
-        D_0044F430_5450 = v;
+        D_0044F430 = v;
         return v;
     }
     if ((int)idx != -1)
-        D_0044F430_5450 = 0;
-    return D_0044F430_5450;
+        D_0044F430 = 0;
+    return D_0044F430;
 }
 #endif
 
