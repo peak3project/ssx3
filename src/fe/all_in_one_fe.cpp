@@ -1,5 +1,114 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
+// EA's 2-float vector (prototype name, e.g. setTileUV__7cUIIconG8t2Vector).
+struct t2Vector {
+    float x, y;
+};
+
+// Vertex position of the HUD sprite quads: 16-byte aligned, with an empty default ctor (vertex arrays get a vec_new
+// loop) and the (x, y, z, const float& w) ctor the quad builders use.
+struct sVtxPos {
+    float x, y, z, w;
+    sVtxPos() {}
+    sVtxPos(float ax, float ay, float az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+    void setZW(float az, float aw) { z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+// One vertex as the render context's slot-71 draw call takes it: UV + q, integer colour, position.
+struct sHudVertex {
+    float u, v, q, pad;
+    int g, b, a, r;
+    sVtxPos pos;
+};
+
+// The render context D_004A289C as these functions use it: GS state block pointer at 0xE84, vptr at 0x10D8 (slot 71
+// draws a vertex list).
+struct sRenderCtx {
+    char pad[0xE84];
+    char* e84;              // 0xE84
+};
+extern sRenderCtx* D_004A289C;
+
+// A HUD sprite: texture id and UV rectangle.
+struct sHudSprite {
+    int tex;                // 0x0
+    int pad[2];
+    float v0;               // 0xC
+    float u0;               // 0x10
+    float u1;               // 0x14
+    float v1;               // 0x18
+};
+
+// Gauge layout: segment scale and number of middle segments.
+struct sGaugeBar {
+    float scale;
+    int count;
+};
+
+extern char* D_004A28A8;
+extern float D_00504FB8[];
+
+static inline int texOf(sHudSprite* s)
+{
+    return s->tex;
+}
+
+static inline void setTex(sHudSprite* s)
+{
+    *(short*)(D_004A289C->e84 + 0x10) = texOf(s);
+}
+
+static inline void setUV(sHudVertex* v, sHudSprite* s)
+{
+    v[0].u = s->u0;
+    v[0].v = s->v0;
+    v[1].u = s->u1;
+    v[1].v = s->v0;
+    v[2].u = s->u0;
+    v[2].v = s->v1;
+    v[3].u = s->u1;
+    v[3].v = s->v1;
+}
+
+static inline void setUVFlip(sHudVertex* v, sHudSprite* s)
+{
+    v[0].u = s->u1;
+    v[0].v = s->v0;
+    v[1].u = s->u0;
+    v[1].v = s->v0;
+    v[2].u = s->u1;
+    v[2].v = s->v1;
+    v[3].u = s->u0;
+    v[3].v = s->v1;
+}
+
+static inline void setPos(sHudVertex* v, float x0, float y0, float x1, float y1)
+{
+    v[0].pos.x = x0;
+    v[0].pos.y = y0;
+    v[1].pos.x = x1;
+    v[1].pos.y = y0;
+    v[2].pos.x = x0;
+    v[2].pos.y = y1;
+    v[3].pos.x = x1;
+    v[3].pos.y = y1;
+}
+
+static inline void drawQuad(sHudVertex* v)
+{
+    char* ctx = (char*)D_004A289C;
+    sVEntry<void(void*, int, sHudVertex*, int)>* vt = *(sVEntry<void(void*, int, sHudVertex*, int)>**)(ctx + 0x10D8);
+    vt[71].fn(ctx + vt[71].delta, 4, v, 0);
+}
+
 INCLUDE_ASM("fe/all_in_one_fe", __sti__all_in_one_fe_cpp);
 
 //100%
@@ -728,93 +837,21 @@ extern "C" void func_0021D160(float x, float y, int c, int d, ...) {
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D1A0);
 #ifdef SKIP_ASM
-struct sV2_D1A0 { float x, y; };
-struct sV4_D1A0 {
-    float x, y, z, w;
-    sV4_D1A0() {}
-    void setZW(float az, float aw) { z = az; w = aw; }
-} __attribute__((aligned(16)));
-struct sVtx_D1A0 {
-    float u, v, q, pad;
-    int g, b, a, r;
-    sV4_D1A0 pos;
-};
-struct sVE71_D1A0 { short delta; short index; void (*fn)(void*, int, sVtx_D1A0*, int); };
-struct sCtx_D1A0 {
-    char pad[0xE84];
-    char* e84;              // 0xE84
-    char pad2[0x10D8 - 0xE88];
-    sVE71_D1A0* vt;         // 0x10D8
-};
-struct sSprite_D1A0 {
-    int tex;                // 0x0
-    int pad[2];
-    float v0;               // 0xC
-    float u0;               // 0x10
-    float u1;               // 0x14
-    float v1;               // 0x18
-};
-struct sBar_D1A0 {
-    float scale;
-    int count;
-};
-extern sCtx_D1A0* D_004A289C_D1A0 __asm__("D_004A289C");
 extern "C" void func_001E91F8(void*, void*);
 extern "C" void func_001E9220(void*, void*, int);
 void func_001E9290_D1A0(void*, void*) __asm__("func_001E9290__FPvT0");
 extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
 
-static inline int texOf_D1A0(sSprite_D1A0* s)
-{
-    return s->tex;
-}
-
-static inline void setTex_D1A0(sSprite_D1A0* s)
-{
-    *(short*)(D_004A289C_D1A0->e84 + 0x10) = texOf_D1A0(s);
-}
-
-static inline void setUV_D1A0(sVtx_D1A0* v, sSprite_D1A0* s)
-{
-    v[0].u = s->u0;
-    v[0].v = s->v0;
-    v[1].u = s->u1;
-    v[1].v = s->v0;
-    v[2].u = s->u0;
-    v[2].v = s->v1;
-    v[3].u = s->u1;
-    v[3].v = s->v1;
-}
-
-static inline void setPos_D1A0(sVtx_D1A0* v, float x0, float y0, float x1, float y1)
-{
-    v[0].pos.x = x0;
-    v[0].pos.y = y0;
-    v[1].pos.x = x1;
-    v[1].pos.y = y0;
-    v[2].pos.x = x0;
-    v[2].pos.y = y1;
-    v[3].pos.x = x1;
-    v[3].pos.y = y1;
-}
-
-static inline void draw_D1A0(sVtx_D1A0* v)
-{
-    char* ctx = (char*)D_004A289C_D1A0;
-    sVE71_D1A0* vt = *(sVE71_D1A0**)(ctx + 0x10D8);
-    vt[71].fn(ctx + vt[71].delta, 4, v, 0);
-}
-
 // Vertical gauge from three sprites (cap, repeated middle, base), filled from the bottom by `fill`.
 extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* elems, signed char sel, int idx,
-                              sBar_D1A0* bar, float* col, int x, float* rect)
+                              sGaugeBar* bar, float* col, int x, float* rect)
 {
-    sV2_D1A0 a;
-    sV2_D1A0 p;
-    sV2_D1A0 size;
-    sV2_D1A0 sc;
-    sV2_D1A0 one;
-    sSprite_D1A0** sprites = (sSprite_D1A0**)(self + (idx * 0xC + 0x4FC));
+    t2Vector a;
+    t2Vector p;
+    t2Vector size;
+    t2Vector sc;
+    t2Vector one;
+    sHudSprite** sprites = (sHudSprite**)(self + (idx * 0xC + 0x4FC));
     char* e = elems + sel * 0x24;
     func_001E91F8(e, &a);
     func_001E9220(e, &size, 0);
@@ -827,10 +864,10 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
     one.x = 1.0f;
     one.y = 1.0f;
     func_001F10F8(self, &p, &a, &size, &one, e[0x20], e[0x21], x);
-    int* w = (int*)(D_004A289C_D1A0->e84 + 8);
+    int* w = (int*)(D_004A289C->e84 + 8);
     *w = (*w & ~0x3E0) | ((e[0x22] << 5) & 0x3E0);
-    sVtx_D1A0 vtx[4];
-    sVtx_D1A0* verts = vtx;
+    sHudVertex vtx[4];
+    sHudVertex* verts = vtx;
     for (int i = 0; i < 4; i++) {
         int r = (int)(col[0] * 128.0f);
         int g = (int)(col[1] * 128.0f);
@@ -852,31 +889,31 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
         }
         p.y += size.y;
         {
-            sSprite_D1A0* s = sprites[2];
-            setTex_D1A0(s);
+            sHudSprite* s = sprites[2];
+            setTex(s);
             float h = sc.y * 23.0f;
-            setUV_D1A0(vtx, s);
-            setPos_D1A0(vtx, p.x, p.y - h, p.x + size.x, p.y);
-            draw_D1A0(verts);
+            setUV(vtx, s);
+            setPos(vtx, p.x, p.y - h, p.x + size.x, p.y);
+            drawQuad(verts);
             p.y -= h;
         }
         {
-            sSprite_D1A0* s = sprites[1];
-            setTex_D1A0(s);
+            sHudSprite* s = sprites[1];
+            setTex(s);
             float h = sc.y * 23.0f;
-            setUV_D1A0(vtx, s);
+            setUV(vtx, s);
             for (int i = 0; i < bar->count; i++) {
-                setPos_D1A0(vtx, p.x, p.y - h, p.x + size.x, p.y);
-                draw_D1A0(verts);
+                setPos(vtx, p.x, p.y - h, p.x + size.x, p.y);
+                drawQuad(verts);
                 p.y -= h;
             }
         }
         {
-            sSprite_D1A0* s = sprites[0];
-            setTex_D1A0(s);
-            setUV_D1A0(vtx, s);
-            setPos_D1A0(vtx, p.x, p.y - sc.y * 31.0f, p.x + size.x, p.y);
-            draw_D1A0(verts);
+            sHudSprite* s = sprites[0];
+            setTex(s);
+            setUV(vtx, s);
+            setPos(vtx, p.x, p.y - sc.y * 31.0f, p.x + size.x, p.y);
+            drawQuad(verts);
         }
     } else {
         float bottom = p.y + size.y;
@@ -888,7 +925,7 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
             rect[1] = top;
         }
         {
-            sSprite_D1A0* s = sprites[2];
+            sHudSprite* s = sprites[2];
             float h = sc.y * 23.0f;
             float y = bottom - h;
             float tv = s->v0;
@@ -897,7 +934,7 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
                 tv = tv + (s->v1 - tv) * (top - y) / h;
                 y = top;
             }
-            setTex_D1A0(s);
+            setTex(s);
             vtx[0].u = s->u0;
             vtx[0].v = tv;
             vtx[1].u = s->u1;
@@ -906,17 +943,17 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
             vtx[2].v = s->v1;
             vtx[3].u = s->u1;
             vtx[3].v = s->v1;
-            setPos_D1A0(vtx, p.x, y, p.x + size.x, bottom);
-            draw_D1A0(verts);
+            setPos(vtx, p.x, y, p.x + size.x, bottom);
+            drawQuad(verts);
             bottom = y;
             if (clipped)
                 return;
         }
         {
-            sSprite_D1A0* s = sprites[1];
+            sHudSprite* s = sprites[1];
             float h = sc.y * 23.0f;
-            setTex_D1A0(s);
-            setUV_D1A0(vtx, s);
+            setTex(s);
+            setUV(vtx, s);
             for (int i = 0; i < bar->count; i++) {
                 float y = bottom - h;
                 int last = y <= top;
@@ -926,15 +963,15 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
                     vtx[1].v = tv;
                     y = top;
                 }
-                setPos_D1A0(vtx, p.x, y, p.x + size.x, bottom);
-                draw_D1A0(verts);
+                setPos(vtx, p.x, y, p.x + size.x, bottom);
+                drawQuad(verts);
                 bottom = y;
                 if (last)
                     return;
             }
         }
         {
-            sSprite_D1A0* s = sprites[0];
+            sHudSprite* s = sprites[0];
             float h = sc.y * 31.0f;
             float y = bottom - h;
             float tv = s->v0;
@@ -943,7 +980,7 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
                 tv = tv + (s->v1 - tv) * (top - y) / h;
                 y = top;
             }
-            setTex_D1A0(s);
+            setTex(s);
             vtx[0].u = s->u0;
             vtx[0].v = tv;
             vtx[1].u = s->u1;
@@ -952,8 +989,8 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
             vtx[2].v = s->v1;
             vtx[3].u = s->u1;
             vtx[3].v = s->v1;
-            setPos_D1A0(vtx, p.x, y, p.x + size.x, bottom);
-            draw_D1A0(verts);
+            setPos(vtx, p.x, y, p.x + size.x, bottom);
+            drawQuad(verts);
         }
     }
 }
@@ -962,31 +999,7 @@ extern "C" void func_0021D1A0(float fill, float sx, float sy, char* self, char* 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021D9A0);
 #ifdef SKIP_ASM
-struct sV2_D9A0 { float x, y; };
-struct sV4_D9A0 {
-    float x, y, z, w;
-    sV4_D9A0() {}
-    sV4_D9A0(float ax, float ay, float az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
-} __attribute__((aligned(16)));
 struct sCol_D9A0 { float r, g, b, a; };
-struct sVtx_D9A0 {
-    float u, v, q, pad;
-    int g, b, a, r;
-    sV4_D9A0 pos;
-};
-struct sVE71_D9A0 { short delta; short index; void (*fn)(void*, int, sVtx_D9A0*, int); };
-struct sCtx_D9A0 {
-    char pad[0xE84];
-    char* e84;              // 0xE84
-};
-struct sSprite_D9A0 {
-    int tex;                // 0x0
-    int pad[2];
-    float v0;               // 0xC
-    float u0;               // 0x10
-    float u1;               // 0x14
-    float v1;               // 0x18
-};
 struct sPlayerHud_D9A0 {
     char pad[0x48];
     int rider;              // 0x48
@@ -995,13 +1008,8 @@ struct sPlayerHud_D9A0 {
 struct sHudRoot_D9A0 {
     sPlayerHud_D9A0 players[2];     // 0x0
     char pad118[0x494 - 0x118];
-    sSprite_D9A0* sprites[0x20];    // 0x494
+    sHudSprite* sprites[0x20];    // 0x494
 };
-struct sBar_D9A0 {
-    float scale;
-    int count;
-};
-extern sCtx_D9A0* D_004A289C_D9A0 __asm__("D_004A289C");
 extern int D_004A4E98;
 extern float D_004A5B28;
 extern float D_004A5B2C;
@@ -1017,58 +1025,17 @@ extern "C" void func_001E95A0(void*, void*, void*, void*, int, int);
 extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
 extern "C" void func_001F1338(void* self, void* pos, void* size, void* scale, void* col);
 
-static inline int texOf_D9A0(sSprite_D9A0* s)
-{
-    return s->tex;
-}
-
-static inline void setTex_D9A0(sSprite_D9A0* s)
-{
-    *(short*)(D_004A289C_D9A0->e84 + 0x10) = texOf_D9A0(s);
-}
-
-static inline void setUV_D9A0(sVtx_D9A0* v, sSprite_D9A0* s)
-{
-    v[0].u = s->u0;
-    v[0].v = s->v0;
-    v[1].u = s->u1;
-    v[1].v = s->v0;
-    v[2].u = s->u0;
-    v[2].v = s->v1;
-    v[3].u = s->u1;
-    v[3].v = s->v1;
-}
-
-static inline void setUVFlip_D9A0(sVtx_D9A0* v, sSprite_D9A0* s)
-{
-    v[0].u = s->u1;
-    v[0].v = s->v0;
-    v[1].u = s->u0;
-    v[1].v = s->v0;
-    v[2].u = s->u1;
-    v[2].v = s->v1;
-    v[3].u = s->u0;
-    v[3].v = s->v1;
-}
-
-static inline void draw_D9A0(sVtx_D9A0* v)
-{
-    char* ctx = (char*)D_004A289C_D9A0;
-    sVE71_D9A0* vt = *(sVE71_D9A0**)(ctx + 0x10D8);
-    vt[71].fn(ctx + vt[71].delta, 4, v, 0);
-}
-
 // Horizontal gauge: cap icon, start piece, middle, end piece, then the fill bar on top.
-extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, sBar_D9A0* bar, int idx,
+extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, sGaugeBar* bar, int idx,
                               int icon, float* scale)
 {
     int alt = func_00147618(cBE_getInterface_D9A0(cBE_getBE(), 1), ((sHudRoot_D9A0*)self)->players[idx].rider);
-    sV2_D9A0 a;
-    sV2_D9A0 sc;
-    sV4_D9A0 t;     // icon colour first, then reused for the bar size
-    sV2_D9A0 pos;
-    sV2_D9A0 p;
-    sV2_D9A0 v;
+    t2Vector a;
+    t2Vector sc;
+    sVtxPos t;     // icon colour first, then reused for the bar size
+    t2Vector pos;
+    t2Vector p;
+    t2Vector v;
     if (icon != 0) {
         char* ie = elems + 0x7BC;
         func_001E91F8(ie, &a);
@@ -1093,10 +1060,10 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
     v.x = 1.0f;
     v.y = 1.0f;
     func_001F10F8(self, &p, &a, &t, &v, elems[0x7B8], elems[0x7B9], idx);
-    int* w = (int*)(D_004A289C_D9A0->e84 + 8);
+    int* w = (int*)(D_004A289C->e84 + 8);
     *w = (*w & ~0x3E0) | ((elems[0x7BA] << 5) & 0x3E0);
-    sVtx_D9A0 vtx[4];
-    sVtx_D9A0* verts = vtx;
+    sHudVertex vtx[4];
+    sHudVertex* verts = vtx;
     for (int i = 0; i < 4; i++) {
         int r = (int)(alpha * 128.0f);
         vtx[i].r = r;
@@ -1106,19 +1073,19 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
         vtx[i].q = 1.0f;
     }
     {
-        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[alt == 0 ? 0x12 : 0x13];
+        sHudSprite* s = ((sHudRoot_D9A0*)self)->sprites[alt == 0 ? 0x12 : 0x13];
         v.x = sc.x * 20.0f;
         v.y = sc.y * 20.0f;
-        sV2_D9A0 c;
+        t2Vector c;
         c.x = p.x;
         c.y = p.y + (t.y - v.y) * 0.5f;
-        setTex_D9A0(s);
-        setUV_D9A0(vtx, s);
-        vtx[0].pos = sV4_D9A0(c.x, c.y, 0.0f, 1.0f);
-        vtx[1].pos = sV4_D9A0(c.x + v.x, c.y, 0.0f, 1.0f);
-        vtx[2].pos = sV4_D9A0(c.x, c.y + v.y, 0.0f, 1.0f);
-        vtx[3].pos = sV4_D9A0(c.x + v.x, c.y + v.y, 0.0f, 1.0f);
-        draw_D9A0(verts);
+        setTex(s);
+        setUV(vtx, s);
+        vtx[0].pos = sVtxPos(c.x, c.y, 0.0f, 1.0f);
+        vtx[1].pos = sVtxPos(c.x + v.x, c.y, 0.0f, 1.0f);
+        vtx[2].pos = sVtxPos(c.x, c.y + v.y, 0.0f, 1.0f);
+        vtx[3].pos = sVtxPos(c.x + v.x, c.y + v.y, 0.0f, 1.0f);
+        drawQuad(verts);
     }
     float d = v.x + sc.x * 3.0f;
     p.x += d;
@@ -1126,37 +1093,37 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
     v = p;
     float segW = sc.x * (bar->scale * 9.0f);
     {
-        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[0x10];
-        setTex_D9A0(s);
-        setUV_D9A0(vtx, s);
-        vtx[0].pos = sV4_D9A0(p.x, p.y, 0.0f, 1.0f);
-        vtx[1].pos = sV4_D9A0(p.x + segW, p.y, 0.0f, 1.0f);
-        vtx[2].pos = sV4_D9A0(p.x, p.y + t.y, 0.0f, 1.0f);
-        vtx[3].pos = sV4_D9A0(p.x + segW, p.y + t.y, 0.0f, 1.0f);
-        draw_D9A0(verts);
+        sHudSprite* s = ((sHudRoot_D9A0*)self)->sprites[0x10];
+        setTex(s);
+        setUV(vtx, s);
+        vtx[0].pos = sVtxPos(p.x, p.y, 0.0f, 1.0f);
+        vtx[1].pos = sVtxPos(p.x + segW, p.y, 0.0f, 1.0f);
+        vtx[2].pos = sVtxPos(p.x, p.y + t.y, 0.0f, 1.0f);
+        vtx[3].pos = sVtxPos(p.x + segW, p.y + t.y, 0.0f, 1.0f);
+        drawQuad(verts);
         p.x += segW;
     }
     if (bar->count > 0) {
-        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[0x11];
-        setTex_D9A0(s);
+        sHudSprite* s = ((sHudRoot_D9A0*)self)->sprites[0x11];
+        setTex(s);
         float midW = t.x - (segW + segW);
-        setUV_D9A0(vtx, s);
-        vtx[0].pos = sV4_D9A0(p.x, p.y, 0.0f, 1.0f);
-        vtx[1].pos = sV4_D9A0(p.x + midW, p.y, 0.0f, 1.0f);
-        vtx[2].pos = sV4_D9A0(p.x, p.y + t.y, 0.0f, 1.0f);
-        vtx[3].pos = sV4_D9A0(p.x + midW, p.y + t.y, 0.0f, 1.0f);
-        draw_D9A0(verts);
+        setUV(vtx, s);
+        vtx[0].pos = sVtxPos(p.x, p.y, 0.0f, 1.0f);
+        vtx[1].pos = sVtxPos(p.x + midW, p.y, 0.0f, 1.0f);
+        vtx[2].pos = sVtxPos(p.x, p.y + t.y, 0.0f, 1.0f);
+        vtx[3].pos = sVtxPos(p.x + midW, p.y + t.y, 0.0f, 1.0f);
+        drawQuad(verts);
         p.x += midW;
     }
     {
-        sSprite_D9A0* s = ((sHudRoot_D9A0*)self)->sprites[0x10];
-        setTex_D9A0(s);
-        setUVFlip_D9A0(vtx, s);
-        vtx[0].pos = sV4_D9A0(p.x, p.y, 0.0f, 1.0f);
-        vtx[1].pos = sV4_D9A0(p.x + segW, p.y, 0.0f, 1.0f);
-        vtx[2].pos = sV4_D9A0(p.x, p.y + t.y, 0.0f, 1.0f);
-        vtx[3].pos = sV4_D9A0(p.x + segW, p.y + t.y, 0.0f, 1.0f);
-        draw_D9A0(verts);
+        sHudSprite* s = ((sHudRoot_D9A0*)self)->sprites[0x10];
+        setTex(s);
+        setUVFlip(vtx, s);
+        vtx[0].pos = sVtxPos(p.x, p.y, 0.0f, 1.0f);
+        vtx[1].pos = sVtxPos(p.x + segW, p.y, 0.0f, 1.0f);
+        vtx[2].pos = sVtxPos(p.x, p.y + t.y, 0.0f, 1.0f);
+        vtx[3].pos = sVtxPos(p.x + segW, p.y + t.y, 0.0f, 1.0f);
+        drawQuad(verts);
         p.x += segW;
     }
     if (fill <= 0.0f)
@@ -1167,19 +1134,19 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
             D_004A5B28 = 3.0f;
             D_004A5B2C = 3.0f;
         }
-        sV2_D9A0 m;
+        t2Vector m;
         m.x = D_004A5B28 * sc.x;
         m.y = D_004A5B2C * sc.y;
-        sV2_D9A0 fs;
+        t2Vector fs;
         fs.x = (t.x - (m.x + m.x)) * fill;
         fs.y = t.y - (m.y + m.y);
         sCol_D9A0 col = D_004C8668;
         col.r *= alpha;
         v.x += m.x;
         v.y += m.y;
-        int* w2 = (int*)(D_004A289C_D9A0->e84 + 8);
+        int* w2 = (int*)(D_004A289C->e84 + 8);
         *w2 = (*w2 & ~0x3E0) | (((elems[0x7BA] + 1) << 5) & 0x3E0);
-        sV2_D9A0 one;
+        t2Vector one;
         one.x = 1.0f;
         one.y = 1.0f;
         func_001F1338(self, &v, &fs, &one, &col);
@@ -1190,12 +1157,7 @@ extern "C" void func_0021D9A0(float fill, float alpha, char* self, char* elems, 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021E1B0);
 #ifdef SKIP_ASM
-struct V2_E1B0 { float x, y; };
 struct V4_E1B0 { float x, y, z, w; };
-struct Ctx_E1B0 { char pad[0xE84]; char* e84; };
-extern Ctx_E1B0* D_004A289C_E1B0 __asm__("D_004A289C");
-extern char* D_004A28A8_E1B0 __asm__("D_004A28A8");
-extern float D_00504FB8_E1B0[] __asm__("D_00504FB8");
 extern char D_00477F30[];
 extern int D_00535BF8[];
 extern "C" void* cBE_getBE();
@@ -1206,34 +1168,34 @@ void func_001E9290_E1B0(void*, void*) __asm__("func_001E9290__FPvT0");
 void func_001E91A8_E1B0(void*, void*) __asm__("func_001E91A8__FPvT0");
 extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
 extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
-extern "C" void func_0021E7E0_E1B0(char* self, V4_E1B0* colp, V2_E1B0* pos, V2_E1B0* size,
+extern "C" void func_0021E7E0_E1B0(char* self, V4_E1B0* colp, t2Vector* pos, t2Vector* size,
                                    float t, float sx, float sy, float amin, float amax) __asm__("func_0021E7E0");
 
 extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
 {
-    V2_E1B0 scale;
+    t2Vector scale;
     V4_E1B0 col;
-    V2_E1B0 sc;
+    t2Vector sc;
     V4_E1B0 a;
-    V2_E1B0 size1;
-    V2_E1B0 size2;
-    V2_E1B0 dim;
-    V2_E1B0 p;
+    t2Vector size1;
+    t2Vector size2;
+    t2Vector dim;
+    t2Vector p;
     V4_E1B0 c2;
-    V2_E1B0 size3;
-    V2_E1B0 tmp;
-    V2_E1B0 pa;
-    V2_E1B0 sa;
-    V2_E1B0 sb;
+    t2Vector size3;
+    t2Vector tmp;
+    t2Vector pa;
+    t2Vector sa;
+    t2Vector sb;
     scale.x = 1.0f;
     scale.y = 1.0f;
     float k = 1.0f;
-    char* r = *(char**)(*(char**)(*(char**)(D_004A28A8_E1B0 + 0x84) + 0xC) + (rider[0] << 2) + 0x28);
+    char* r = *(char**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + (rider[0] << 2) + 0x28);
     func_001E91A8_E1B0(D_00477F30 + *(int*)(r + 0xEC) * 0x24, &col);
     float t = ((float*)rider)[0x12];
     if (t >= 0.0f) {
         if (*(int*)(r + 0xEC) == 0) {
-            k = D_00504FB8_E1B0[(int)(t * 12.566370964050293f * 81.4873275756836f) & 0x1FF] * 0.199636310338974f * (1.0f - t * t) + k;
+            k = D_00504FB8[(int)(t * 12.566370964050293f * 81.4873275756836f) & 0x1FF] * 0.199636310338974f * (1.0f - t * t) + k;
         } else {
             col.x = col.x * (t * 0.5f + 0.5f);
         }
@@ -1253,7 +1215,7 @@ extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
     func_001F10F8(self, &p, &a, &dim, &scale, obj[0x380], obj[0x381], x);
     p.x += size2.x;
     p.y += size1.y;
-    int* w = (int*)(D_004A289C_E1B0->e84 + 8);
+    int* w = (int*)(D_004A289C->e84 + 8);
     *w = (*w & ~0x3E0) | ((obj[0x382] << 5) & 0x3E0);
     func_001E91A8_E1B0(D_00477F30 + 0xFC, &c2);
     func_001E9220(D_00477F30 + 0xFC, &size3, 0);
@@ -1275,7 +1237,7 @@ extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
         dim.y *= k;
     }
     func_001F10F8(self, &p, &a, &dim, &scale, obj[0x380], obj[0x381], x);
-    w = (int*)(D_004A289C_E1B0->e84 + 8);
+    w = (int*)(D_004A289C->e84 + 8);
     *w = (*w & ~0x3E0) | ((obj[0x382] << 5) & 0x3E0);
     int off4 = *(int*)(r + 0xEC) << 2;
     func_001F1190(self, *(int*)((char*)tex + off4), &p, &size2, &scale, &col);
@@ -1286,7 +1248,7 @@ extern "C" void func_0021E1B0(char* self, char* obj, int* rider, int x)
     tmp.x += size2.x;
     func_001F1190(self, tx, &tmp, &size1, &scale, &col);
     if (((float*)rider)[0x13] >= 0.0f) {
-        w = (int*)(D_004A289C_E1B0->e84 + 8);
+        w = (int*)(D_004A289C->e84 + 8);
         *w = (*w & ~0x3E0) | (((obj[0x382] - 1) << 5) & 0x3E0);
         pa = p;
         sa = size2;
@@ -1334,8 +1296,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_0021E7E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct Col_E7E0 { float r, g, b, a; };
-struct Ctx_E7E0 { char pad[0xE84]; char* e84; };
-extern Ctx_E7E0* D_004A289C;
 extern "C" void func_0021EA00_E7E0(void* self, Col_E7E0* col, float* pos, float w, float h, float u0, float v0, float u1, float v1) __asm__("func_0021EA00");
 
 extern "C" void func_0021E7E0(char* self, Col_E7E0* colp, float* pos, float* size,
@@ -1369,24 +1329,10 @@ extern "C" void func_0021E7E0(char* self, Col_E7E0* colp, float* pos, float* siz
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021EA00);
 #ifdef SKIP_ASM
-struct sVec4_EA00 {
-    float x, y, z, w;
-    sVec4_EA00() {}
-    sVec4_EA00(float ax, float ay, float az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
-} __attribute__((aligned(16)));
-
-struct sVtx_EA00 {
-    float u, v, q, pad;
-    int g, b, a, r;
-    sVec4_EA00 pos;
-};
-
-struct sVE71_EA00 { short delta; short index; void (*fn)(void*, int, sVtx_EA00*, int); };
-
 extern "C" void func_0021EA00(void* self, Col_E7E0* col, float* pos, float w, float h, float u0, float v0, float u1, float v1)
 {
     if (h > 72.0f) {
-        sVtx_EA00 vtx[8];
+        sHudVertex vtx[8];
         for (int i = 0; i < 8; i++) {
             int r = (int)(col->r * 128.0f);
             int g = (int)(col->g * 128.0f);
@@ -1410,19 +1356,19 @@ extern "C" void func_0021EA00(void* self, Col_E7E0* col, float* pos, float w, fl
         vtx[5].v = (v0 + v1) * 0.5f;
         vtx[6].v = v1;
         vtx[7].v = v1;
-        vtx[0].pos = sVec4_EA00(pos[0], pos[1], 0.0f, 1.0f);
-        vtx[1].pos = sVec4_EA00(pos[0] + w, pos[1], 0.0f, 1.0f);
-        vtx[2].pos = sVec4_EA00(pos[0], pos[1] + 36.0f, 0.0f, 1.0f);
-        vtx[3].pos = sVec4_EA00(pos[0] + w, pos[1] + 36.0f, 0.0f, 1.0f);
-        vtx[4].pos = sVec4_EA00(pos[0], pos[1] + h - 36.0f, 0.0f, 1.0f);
-        vtx[5].pos = sVec4_EA00(pos[0] + w, pos[1] + h - 36.0f, 0.0f, 1.0f);
-        vtx[6].pos = sVec4_EA00(pos[0], pos[1] + h, 0.0f, 1.0f);
-        vtx[7].pos = sVec4_EA00(pos[0] + w, pos[1] + h, 0.0f, 1.0f);
+        vtx[0].pos = sVtxPos(pos[0], pos[1], 0.0f, 1.0f);
+        vtx[1].pos = sVtxPos(pos[0] + w, pos[1], 0.0f, 1.0f);
+        vtx[2].pos = sVtxPos(pos[0], pos[1] + 36.0f, 0.0f, 1.0f);
+        vtx[3].pos = sVtxPos(pos[0] + w, pos[1] + 36.0f, 0.0f, 1.0f);
+        vtx[4].pos = sVtxPos(pos[0], pos[1] + h - 36.0f, 0.0f, 1.0f);
+        vtx[5].pos = sVtxPos(pos[0] + w, pos[1] + h - 36.0f, 0.0f, 1.0f);
+        vtx[6].pos = sVtxPos(pos[0], pos[1] + h, 0.0f, 1.0f);
+        vtx[7].pos = sVtxPos(pos[0] + w, pos[1] + h, 0.0f, 1.0f);
         char* ctx = (char*)D_004A289C;
-        sVE71_EA00* vt = *(sVE71_EA00**)(ctx + 0x10D8);
+        sVEntry<void(void*, int, sHudVertex*, int)>* vt = *(sVEntry<void(void*, int, sHudVertex*, int)>**)(ctx + 0x10D8);
         vt[71].fn(ctx + vt[71].delta, 8, vtx, 0);
     } else {
-        sVtx_EA00 vtx[4];
+        sHudVertex vtx[4];
         for (int i = 0; i < 4; i++) {
             int r = (int)(col->r * 128.0f);
             int g = (int)(col->g * 128.0f);
@@ -1442,12 +1388,12 @@ extern "C" void func_0021EA00(void* self, Col_E7E0* col, float* pos, float w, fl
         vtx[1].v = v0;
         vtx[2].v = v1;
         vtx[3].v = v1;
-        vtx[0].pos = sVec4_EA00(pos[0], pos[1], 0.0f, 1.0f);
-        vtx[1].pos = sVec4_EA00(pos[0] + w, pos[1], 0.0f, 1.0f);
-        vtx[2].pos = sVec4_EA00(pos[0], pos[1] + h, 0.0f, 1.0f);
-        vtx[3].pos = sVec4_EA00(pos[0] + w, pos[1] + h, 0.0f, 1.0f);
+        vtx[0].pos = sVtxPos(pos[0], pos[1], 0.0f, 1.0f);
+        vtx[1].pos = sVtxPos(pos[0] + w, pos[1], 0.0f, 1.0f);
+        vtx[2].pos = sVtxPos(pos[0], pos[1] + h, 0.0f, 1.0f);
+        vtx[3].pos = sVtxPos(pos[0] + w, pos[1] + h, 0.0f, 1.0f);
         char* ctx = (char*)D_004A289C;
-        sVE71_EA00* vt = *(sVE71_EA00**)(ctx + 0x10D8);
+        sVEntry<void(void*, int, sHudVertex*, int)>* vt = *(sVEntry<void(void*, int, sHudVertex*, int)>**)(ctx + 0x10D8);
         vt[71].fn(ctx + vt[71].delta, 4, vtx, 0);
     }
 }
@@ -1458,7 +1404,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_0021ED48);
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F338);
 #ifdef SKIP_ASM
-struct V2_F338 { float x, y; };
 struct V4_F338 { float x, y, z, w; };
 extern V4_F338 D_004C8568;
 extern V4_F338 D_004C8588;
@@ -1471,14 +1416,14 @@ void func_001E9290(void*, void*);
 extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
 extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
 
-extern "C" void func_0021F338(char* self, char* obj, int n, int x, V2_F338* pos, V2_F338* scale, float alpha) {
+extern "C" void func_0021F338(char* self, char* obj, int n, int x, t2Vector* pos, t2Vector* scale, float alpha) {
     if (n > 0) {
         V4_F338 cols[5];
         V4_F338 a;
-        V2_F338 p;
-        V2_F338 size;
-        V2_F338 sc;
-        V2_F338 dim;
+        t2Vector p;
+        t2Vector size;
+        t2Vector sc;
+        t2Vector dim;
         V4_F338 col;
         float step;
         int i;
@@ -1519,7 +1464,6 @@ extern "C" void func_0021F338(char* self, char* obj, int n, int x, V2_F338* pos,
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F660);
 #ifdef SKIP_ASM
-struct V2_F660 { float x, y; };
 struct V4_F660 { float x, y, z, w; };
 struct Obj_F660 {
     virtual void v01();
@@ -1530,7 +1474,6 @@ struct Obj_F660 {
     virtual void v06();
     virtual int v07();
 };
-extern char* D_004A28A8;
 extern signed char D_00535C10[];
 extern int D_00536640[];
 extern char D_0046ED68[];
@@ -1548,11 +1491,11 @@ extern "C" int sprintf(char*, const char*, ...);
 extern "C" void func_00392908(void*, float, float, char*);
 
 extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag) {
-    V2_F660 scale;
-    V2_F660 p;
+    t2Vector scale;
+    t2Vector p;
     V4_F660 a;
-    V2_F660 size;
-    V2_F660 sc;
+    t2Vector size;
+    t2Vector sc;
     V4_F660 c;
     char buf[64];
     V4_F660 col;
@@ -1610,7 +1553,6 @@ extern "C" void func_0021F660(char* self, int elems, int* rider, int x, int flag
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F9B0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V2_F9B0 { float x, y; };
 struct V4_F9B0 { float x, y, z, w; };
 struct Obj_F9B0 {
     virtual void v01();
@@ -1621,8 +1563,6 @@ struct Obj_F9B0 {
     virtual void v06();
     virtual int v07();
 };
-extern char* D_004A28A8;
-extern float D_00504FB8[];
 extern V4_F9B0 D_004C8648;
 extern char D_004A2300[];
 extern "C" void* cBE_getBE();
@@ -1640,11 +1580,11 @@ extern "C" int func_00153350(void*, int);
 extern "C" void func_00391CB0(void*, float, float, char*);
 
 extern "C" void func_0021F9B0(char* self, char* obj, char* rider, int x, float t) {
-    V2_F9B0 scale;
-    V2_F9B0 p;
+    t2Vector scale;
+    t2Vector p;
     V4_F9B0 a;
-    V2_F9B0 size;
-    V2_F9B0 sc;
+    t2Vector size;
+    t2Vector sc;
     V4_F9B0 col;
     char buf[64];
     char* m = *(char**)(*(char**)(D_004A28A8 + 0x84) + 0x78);
@@ -1705,7 +1645,6 @@ INCLUDE_ASM("fe/all_in_one_fe", func_002204A0);
 INCLUDE_ASM("fe/all_in_one_fe", func_00220AD0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V2_0AD0 { float x, y; };
 struct V4_0AD0 { float x, y, z, w; };
 struct Big_0AD0 { unsigned int pad0 : 20; unsigned int mode : 2; unsigned int pad1 : 10; int rest[0xA1]; };
 struct Bits_0AD0 { int a, b; unsigned int lo : 5; int v : 5; unsigned int hi : 22; };
@@ -1720,12 +1659,12 @@ void func_001E91A8(void*, void*);
 extern "C" void func_001E95A0(void*, void*, void*, void*, int, int);
 
 extern "C" void func_00220AD0(char* self, char* obj, float t) {
-    V2_0AD0 a;
+    t2Vector a;
     V4_0AD0 b;
     Big_0AD0 big;
     V4_0AD0 c;
-    V2_0AD0 d;
-    V2_0AD0 e;
+    t2Vector d;
+    t2Vector e;
     void* p = obj + 0xAD4;
     func_001E91F8(p, &a);
     func_001E9290(p, &b);
@@ -1743,7 +1682,7 @@ extern "C" void func_00220AD0(char* self, char* obj, float t) {
     }
     d.x = 2.0f;
     d.y = 2.0f;
-    *(V2_0AD0*)(*(char**)(self + 0xB50) + 0x28) = d;
+    *(t2Vector*)(*(char**)(self + 0xB50) + 0x28) = d;
     int* w = (int*)(D_004A289C->e84 + 8);
     *w = (*w & ~0x3E0) | ((obj[0xAF6] << 5) & 0x3E0);
     e = a;
