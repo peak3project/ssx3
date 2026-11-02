@@ -5422,6 +5422,27 @@ struct sCamMgr {
     int numValid;               // 0x8C08
 };
 
+// One name looked up in the bigfile by func_003A6948 (found flag written back).
+struct sCamName {
+    char* name;
+    int ok;
+};
+
+// Non-POD stand-ins for cBXString / cBigFile locals (user-declared copy ctor, never defined) so they get the
+// 16-byte slots g++ gives classes.
+struct sStr {
+    char* s;
+    sStr() {}
+    sStr(const sStr&);
+};
+
+struct sBigFile {
+    int f0;
+    int f4;
+    sBigFile() {}
+    sBigFile(const sBigFile&);
+};
+
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A028);
 #ifdef SKIP_ASM
@@ -5536,11 +5557,6 @@ INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A378);
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A638);
 #ifdef SKIP_ASM
-struct sCamName_17A638 {
-    char* name;
-    int ok;
-};
-
 extern "C" void* func_003E6448(void* dst, int v, int n);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
@@ -5553,7 +5569,7 @@ extern char* D_004A1290[];
 
 extern "C" void func_0017A638(sCamMgr* self)
 {
-    sCamName_17A638 names[0x18];
+    sCamName names[0x18];
     int i;
     self->count = 0;
     self->numActive = 0;
@@ -5601,25 +5617,6 @@ extern "C" int func_003A6948(const char* path, int n, void* names);
 extern char D_0045CE20[];
 extern char D_004A1298[];
 
-struct sCamName_A830 {
-    char* name;
-    int ok;
-};
-
-// Non-POD (user-declared copy ctor, never defined) so locals get the 16-byte slots g++ gives classes.
-struct sStr_A830 {
-    char* s;
-    sStr_A830() {}
-    sStr_A830(const sStr_A830&);
-};
-
-struct sBigFile_A830 {
-    int f0;
-    int f4;
-    sBigFile_A830() {}
-    sBigFile_A830(const sBigFile_A830&);
-};
-
 // Returns 0 when (name, tag) is already registered; otherwise looks the name up in the bigfile.
 extern "C" int func_0017A830(sCamMgr* self, char* name, char* tag)
 {
@@ -5630,10 +5627,10 @@ extern "C" int func_0017A830(sCamMgr* self, char* name, char* tag)
             return 0;
         }
     }
-    sStr_A830 base;
-    sStr_A830 s;
-    sBigFile_A830 bf;
-    sCamName_A830 nm;
+    sStr base;
+    sStr s;
+    sBigFile bf;
+    sCamName nm;
     char* pre = D_0045CE20;
     cBXString_cBXString2(&s, tag);
     func_003186D0((cBXString*)&base, pre, (cBXString*)&s);
@@ -5668,29 +5665,10 @@ extern "C" int func_003A6948(const char* path, int n, void* names);
 extern char D_0045CE20[];
 extern char D_004A1298[];
 
-struct sCamName_17A978 {
-    char* name;
-    int ok;
-};
-
-// Non-POD (user-declared copy ctor, never defined) so locals get the 16-byte slots g++ gives classes.
-struct sStr_17A978 {
-    char* s;
-    sStr_17A978() {}
-    sStr_17A978(const sStr_17A978&);
-};
-
-struct sBigFile_17A978 {
-    int f0;
-    int f4;
-    sBigFile_17A978() {}
-    sBigFile_17A978(const sBigFile_17A978&);
-};
-
 extern "C" int func_0017A978(void* selfp, int n, void* namesp, char* tag)
 {
     sCamMgr* self = (sCamMgr*)selfp;
-    sCamName_17A978* names = (sCamName_17A978*)namesp;
+    sCamName* names = (sCamName*)namesp;
     int fail = 0;
     int i;
     int j;
@@ -5711,9 +5689,9 @@ extern "C" int func_0017A978(void* selfp, int n, void* namesp, char* tag)
     if (!fail) {
         return 0;
     }
-    sStr_17A978 base;
-    sStr_17A978 s;
-    sBigFile_17A978 bf;
+    sStr base;
+    sStr s;
+    sBigFile bf;
     char* pre = D_0045CE20;
     cBXString_cBXString2(&s, tag);
     func_003186D0((cBXString*)&base, pre, (cBXString*)&s);
