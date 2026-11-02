@@ -59,6 +59,12 @@ extern struct s0660 D_00450660[8];
 extern int D_004506A0[];                /* one word per bucket (a mask table follows at +0x20) */
 extern unsigned int D_004506E0[8];      /* weight scale by the top 3 bits of a weight byte */
 
+/* Random generator (func_003DB790 seeds, func_003DB4D0 steps): D_00450B70 is the 192-bit state, D_00450B88 the
+   history of the last 32 results per key (head D_004A4858). */
+struct sRandHist { unsigned short a; unsigned short b; };
+extern unsigned int D_00450B70[6];
+extern struct sRandHist D_00450B88[32];
+
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6498);
 #ifdef SKIP_ASM
@@ -2800,36 +2806,34 @@ int func_003DB440(unsigned char *arg0, int arg1) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB4D0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern unsigned int D_00450B70_B4D0[6] __asm__("D_00450B70");
 
 unsigned int func_003DB4D0(void) {
     unsigned int s, c, n;
 
-    s = D_00450B70_B4D0[5] + D_00450B70_B4D0[4];
+    s = D_00450B70[5] + D_00450B70[4];
     c = 0;
-    if (s < D_00450B70_B4D0[5] || s < D_00450B70_B4D0[4]) {
+    if (s < D_00450B70[5] || s < D_00450B70[4]) {
         c = 1;
     }
-    D_00450B70_B4D0[4] = s;
-    s = s + D_00450B70_B4D0[3] + c;
-    c = s < D_00450B70_B4D0[3];
-    D_00450B70_B4D0[3] = s;
-    s = s + D_00450B70_B4D0[2] + c;
-    c = s < D_00450B70_B4D0[2];
-    D_00450B70_B4D0[2] = s;
-    n = ++D_00450B70_B4D0[5];
-    s = s + D_00450B70_B4D0[1] + c;
-    c = s < D_00450B70_B4D0[1];
-    D_00450B70_B4D0[1] = s;
-    s = s + D_00450B70_B4D0[0] + c;
-    D_00450B70_B4D0[0] = s;
+    D_00450B70[4] = s;
+    s = s + D_00450B70[3] + c;
+    c = s < D_00450B70[3];
+    D_00450B70[3] = s;
+    s = s + D_00450B70[2] + c;
+    c = s < D_00450B70[2];
+    D_00450B70[2] = s;
+    n = ++D_00450B70[5];
+    s = s + D_00450B70[1] + c;
+    c = s < D_00450B70[1];
+    D_00450B70[1] = s;
+    s = s + D_00450B70[0] + c;
+    D_00450B70[0] = s;
     if (n == 0) {
-        if (++D_00450B70_B4D0[4] == 0) {
-            if (++D_00450B70_B4D0[3] == 0) {
-                if (++D_00450B70_B4D0[2] == 0) {
-                    if (++D_00450B70_B4D0[1] == 0) {
-                        s = ++D_00450B70_B4D0[0];
+        if (++D_00450B70[4] == 0) {
+            if (++D_00450B70[3] == 0) {
+                if (++D_00450B70[2] == 0) {
+                    if (++D_00450B70[1] == 0) {
+                        s = ++D_00450B70[0];
                     }
                 }
             }
@@ -2842,9 +2846,6 @@ unsigned int func_003DB4D0(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB5C0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct P_B5C0 { unsigned short a; unsigned short b; };
-extern struct P_B5C0 D_00450B88_B5C0[32] __asm__("D_00450B88");
 extern unsigned int func_003DB4D0(void);
 
 int func_003DB5C0(int range, int key) {
@@ -2874,9 +2875,9 @@ int func_003DB5C0(int range, int key) {
         flag = 0;
         do {
             if (j < lim) {
-                if (D_00450B88_B5C0[head].b == k16) {
+                if (D_00450B88[head].b == k16) {
                     j++;
-                    if (D_00450B88_B5C0[head].a == cand) {
+                    if (D_00450B88[head].a == cand) {
                         flag = 1;
                         found = j - 1;
                     }
@@ -2901,8 +2902,8 @@ int func_003DB5C0(int range, int key) {
     } while (!done);
     D_004A4858++;
     if (D_004A4858 >= 32) D_004A4858 = 0;
-    D_00450B88_B5C0[D_004A4858].a = res;
-    D_00450B88_B5C0[D_004A4858].b = k16;
+    D_00450B88[D_004A4858].a = res;
+    D_00450B88[D_004A4858].b = k16;
     return cand;
 }
 #endif
@@ -2910,36 +2911,29 @@ int func_003DB5C0(int range, int key) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DB790);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct P_B790 {
-    unsigned short a;
-    unsigned short b;
-};
-extern struct P_B790 D_00450B88_B790[32] __asm__("D_00450B88");
-extern unsigned int D_00450B70_B790[6] __asm__("D_00450B70");
 
 void func_003DB790(int seed) {
     int i;
     unsigned int v;
 
     for (i = 0; i < 32; i++) {
-        D_00450B88_B790[i].a = 0xFFFF;
-        D_00450B88_B790[i].b = 0xFFFF;
+        D_00450B88[i].a = 0xFFFF;
+        D_00450B88[i].b = 0xFFFF;
     }
     seed += seed << 16;
     v = seed + 0xF22D0E56;
-    D_00450B70_B790[0] = v;
+    D_00450B70[0] = v;
     v += 0x96041893;
-    D_00450B70_B790[1] = v;
+    D_00450B70[1] = v;
     v += 0x3DF3B646;
-    D_00450B70_B790[2] = v;
+    D_00450B70[2] = v;
     v += 0x40DDE76D;
-    D_00450B70_B790[3] = v;
+    D_00450B70[3] = v;
     v += 0x97327AE1;
-    D_00450B70_B790[4] = v;
+    D_00450B70[4] = v;
     v += 0xD1A9FBE7;
     D_004A4858 = 0;
-    D_00450B70_B790[5] = v;
+    D_00450B70[5] = v;
 }
 #endif
 
