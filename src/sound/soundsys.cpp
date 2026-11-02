@@ -7,6 +7,11 @@
 // func_003D8008, then the number of int arguments that follow.
 extern void (*D_004A482C)(void* event, int n, ...);
 
+class cController;
+class cBankMonitorInstance;
+// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
+typedef void (cController::*sSndCallback)(cController*, cBankMonitorInstance*, float);
+
 //100%
 INCLUDE_ASM("sound/soundsys", cBankSys_cBankSys);
 #ifdef SKIP_ASM
@@ -588,10 +593,6 @@ struct sSnd10E0E16 {
     int f8;
     int fC;
 };
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_10E0)(cController*, cBankMonitorInstance*, float);
 struct sSnd10E0Sub {
     char pad0[4];
     sSnd10E0Ch def;          // 0x04
@@ -601,7 +602,7 @@ struct sSnd10E0Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    sSndCallback_10E0 callbacks[4]; // 0x40
+    sSndCallback callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -655,10 +656,10 @@ static inline void snd10E0Init(void* vself, int a, int b)
 }
 
 
-extern sSndCallback_10E0 D_004A3680[];
+extern sSndCallback D_004A3680[];
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_10E0(sSnd10E0Mgr* m, sSndCallback_10E0 cb)
+static inline void OPTS_Callback_10E0(sSnd10E0Mgr* m, sSndCallback cb)
 {
     sSnd10E0Sub* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -686,7 +687,7 @@ INCLUDE_ASM("sound/soundsys", func_002913D8);
 struct sVE_13D8 {
     short delta;
     short index;
-    void (*fn)(void*, sSndCallback_10E0);
+    void (*fn)(void*, sSndCallback);
 };
 
 extern "C" void func_002913D8(void* self)
@@ -882,10 +883,6 @@ struct sSnd17D0E16 {
     int f8;
     int fC;
 };
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_17D0)(cController*, cBankMonitorInstance*, float);
 struct sSnd17D0Sub {
     char pad0[4];
     sSnd17D0Ch def;          // 0x04
@@ -895,7 +892,7 @@ struct sSnd17D0Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    sSndCallback_17D0 callbacks[4]; // 0x40
+    sSndCallback callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -918,10 +915,10 @@ struct sSnd17D0Sys {
     char padC[0x118 - 0xC];
     sSnd17D0Mgr** p118;      // 0x118
 };
-extern sSndCallback_17D0 D_004A3688_17D0[] __asm__("D_004A3688");
+extern sSndCallback D_004A3688_17D0[] __asm__("D_004A3688");
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_17D0(sSnd17D0Mgr* m, sSndCallback_17D0 cb)
+static inline void OPTS_Callback_17D0(sSnd17D0Mgr* m, sSndCallback cb)
 {
     sSnd17D0Sub* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -999,8 +996,8 @@ void func_002917D0_17D0(void* vself, void* obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00291C88);
 #ifdef SKIP_ASM
-extern sSndCallback_17D0 D_004A3690_17D0[] __asm__("D_004A3690");
-extern sSndCallback_17D0 D_004A3698_17D0[] __asm__("D_004A3698");
+extern sSndCallback D_004A3690_17D0[] __asm__("D_004A3690");
+extern sSndCallback D_004A3698_17D0[] __asm__("D_004A3698");
 
 void func_00291C88_impl(void* vself, void* obj, int n) __asm__("func_00291C88");
 void func_00291C88_impl(void* vself, void* obj, int n)
@@ -1144,10 +1141,6 @@ struct sSnd2508E16 {
     int f8;
     int fC;
 };
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_2508)(cController*, cBankMonitorInstance*, float);
 struct sSnd2508Sub {
     char pad0[4];
     sSnd2508Ch def;          // 0x04
@@ -1157,7 +1150,7 @@ struct sSnd2508Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    sSndCallback_2508 callbacks[4]; // 0x40
+    sSndCallback callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -1180,10 +1173,10 @@ struct sSnd2508Sys {
     char padC[0x118 - 0xC];
     sSnd2508Mgr** p118;      // 0x118
 };
-extern sSndCallback_2508 D_004A36A0_2508[] __asm__("D_004A36A0");
+extern sSndCallback D_004A36A0_2508[] __asm__("D_004A36A0");
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_2508(sSnd2508Mgr* m, sSndCallback_2508 cb)
+static inline void OPTS_Callback_2508(sSnd2508Mgr* m, sSndCallback cb)
 {
     sSnd2508Sub* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -1303,12 +1296,8 @@ extern "C" void func_00292A50(void* self, int id)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00292AE8);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_2AE8)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_2AE8 D_004A36A8_2AE8[] __asm__("D_004A36A8");
-extern "C" void func_002ADDE0_2AE8(void* bank, sSndCallback_2AE8 key) __asm__("func_002ADDE0");
+extern sSndCallback D_004A36A8_2AE8[] __asm__("D_004A36A8");
+extern "C" void func_002ADDE0_2AE8(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 
 struct sVE292AE8 { short delta; short index; void (*fn)(void*, int); };
 
@@ -1335,7 +1324,7 @@ extern "C" void func_00292AE8(char* self, int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00292B48);
 #ifdef SKIP_ASM
-struct sVE292B48 { short delta; short index; void (*fn)(void*, sSndCallback_2AE8); };
+struct sVE292B48 { short delta; short index; void (*fn)(void*, sSndCallback); };
 
 struct sBank292B48 {
     char pad0[0x8D8];
@@ -1346,16 +1335,16 @@ struct sSys292B48 {
     sBank292B48 bank;   // 0x1D8
 };
 
-extern sSndCallback_2AE8 D_004A3688_2B48[] __asm__("D_004A3688");
-extern sSndCallback_2AE8 D_004A3690_2B48[] __asm__("D_004A3690");
-extern sSndCallback_2AE8 D_004A3698_2B48[] __asm__("D_004A3698");
-extern sSndCallback_2AE8 D_004A36A0_2B48[] __asm__("D_004A36A0");
-extern sSndCallback_2AE8 D_004A36B0_2B48[] __asm__("D_004A36B0");
-extern sSndCallback_2AE8 D_004A36B8_2B48[] __asm__("D_004A36B8");
+extern sSndCallback D_004A3688_2B48[] __asm__("D_004A3688");
+extern sSndCallback D_004A3690_2B48[] __asm__("D_004A3690");
+extern sSndCallback D_004A3698_2B48[] __asm__("D_004A3698");
+extern sSndCallback D_004A36A0_2B48[] __asm__("D_004A36A0");
+extern sSndCallback D_004A36B0_2B48[] __asm__("D_004A36B0");
+extern sSndCallback D_004A36B8_2B48[] __asm__("D_004A36B8");
 extern "C" void func_002AD5F0(void* p, int idx, int a2, float v);
 
 // Stops one bank sound (vtable slot 3 of the bank).
-static inline void bankStop292B48(char* self, const sSndCallback_2AE8& id)
+static inline void bankStop292B48(char* self, const sSndCallback& id)
 {
     sSys292B48* sys = **(sSys292B48***)(self + 0x118);
     sVE292B48* vt = sys->bank.vt;
@@ -2795,11 +2784,7 @@ extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_6868)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_6868 D_004A36B0_6868[] __asm__("D_004A36B0");
+extern sSndCallback D_004A36B0_6868[] __asm__("D_004A36B0");
 struct sSndOwner_6868 {
     char pad0[0x80];
     char* rider;             // 0x80
@@ -2827,7 +2812,7 @@ struct sSnd6868Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    sSndCallback_6868 callbacks[4]; // 0x40
+    sSndCallback callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -2858,7 +2843,7 @@ static inline int vcall_6868(char* o, int slot)
 }
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_6868(sSnd6868Mgr* m, sSndCallback_6868 cb)
+static inline void OPTS_Callback_6868(sSnd6868Mgr* m, sSndCallback cb)
 {
     sSnd6868Sub* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -2984,11 +2969,7 @@ extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_6E80)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_6E80 D_004A36B8_6E80[] __asm__("D_004A36B8");
+extern sSndCallback D_004A36B8_6E80[] __asm__("D_004A36B8");
 struct sSndOwner_6E80 {
     char pad0[0x80];
     char* rider;             // 0x80
@@ -3016,7 +2997,7 @@ struct sSnd6E80Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    sSndCallback_6E80 callbacks[4]; // 0x40
+    sSndCallback callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -3047,7 +3028,7 @@ static inline int vcall_6E80(char* o, int slot)
 }
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_6E80(sSnd6E80Mgr* m, sSndCallback_6E80 cb)
+static inline void OPTS_Callback_6E80(sSnd6E80Mgr* m, sSndCallback cb)
 {
     sSnd6E80Sub* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -3839,20 +3820,16 @@ extern "C" void func_002989A8(void* self, void* obj)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00298D00);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_8D00)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_8D00 D_004A3678_8D00[] __asm__("D_004A3678");
+extern sSndCallback D_004A3678_8D00[] __asm__("D_004A3678");
 extern "C" void* func_00287968(void* self, int a1, int a2);
-extern "C" int func_002ADCA0_8D00(void*, int, sSndCallback_8D00, int, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_8D00(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 
 extern "C" void func_00298D00(void* self, void* obj)
 {
     bool ok = *(int*)((char*)obj + 0x874) && *(int*)((char*)obj + 0x87C);
     if (ok) {
         char* p = **(char***)((char*)self + 0x118) + 0x1D8;
-        sSndCallback_8D00* key = D_004A3678_8D00;
+        sSndCallback* key = D_004A3678_8D00;
         int r = (int)func_00287968(self, 9, 0);
         func_002ADCA0_8D00(p, 0xFA, *key, r, 0, 0x72, 0x7F, 0);
     }
@@ -3870,16 +3847,12 @@ extern "C" int func_00298D88(void) {
 //100%
 INCLUDE_ASM("sound/soundsys", func_00298D90);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_8D90)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_8D90 D_004A36A8_8D90[] __asm__("D_004A36A8");
+extern sSndCallback D_004A36A8_8D90[] __asm__("D_004A36A8");
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" void* func_00287968(void* self, int a1, int a2);
 extern "C" int func_002906B8(void* self);
 extern "C" int func_00288AE0(void* self);
-extern "C" void func_002ADDE0_8D90(void* bank, sSndCallback_8D90 key) __asm__("func_002ADDE0");
+extern "C" void func_002ADDE0_8D90(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 
 struct sSnd8D90Self {
     sSnd74A0Sys sys;
@@ -4016,12 +3989,8 @@ struct sSnd9368Sys {
     sSnd9368Mgr** p118;      // 0x118
 };
 
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_9368)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_9368 D_004A36A8_9368[] __asm__("D_004A36A8");
-extern "C" void func_002ADDE0_9368(void* bank, sSndCallback_9368 id) __asm__("func_002ADDE0");
+extern sSndCallback D_004A36A8_9368[] __asm__("D_004A36A8");
+extern "C" void func_002ADDE0_9368(void* bank, sSndCallback id) __asm__("func_002ADDE0");
 extern "C" int func_00288AE0(void* self);
 
 static inline int IsReady299368(char* obj)
@@ -4799,11 +4768,8 @@ INCLUDE_ASM("sound/soundsys", func_0029AB40);
 #ifdef SKIP_ASM
 extern "C" void* func_0028B1D8();
 extern "C" void* func_00416210(void* dst, int c, int n);
-class cController;
-class cBankMonitorInstance;
-typedef void (cController::*sSndCallback_AB40)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_AB40 D_004A36C0_AB40[] __asm__("D_004A36C0");
-extern "C" int func_002ADCA0_AB40(void*, int, sSndCallback_AB40, int, int, int, int, int) __asm__("func_002ADCA0");
+extern sSndCallback D_004A36C0_AB40[] __asm__("D_004A36C0");
+extern "C" int func_002ADCA0_AB40(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 
 // PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
 static inline float truncf_AB40(float x)
@@ -5835,19 +5801,15 @@ extern "C" void func_0029C7B0(void* vself)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029CCA8);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_CCA8)(cController*, cBankMonitorInstance*, float);
 extern "C" int func_00288AE0(void* self);
 extern "C" void* func_0028B1D8();
 extern "C" void* func_00287968(void* self, int a1, int a2);
-extern "C" int func_002ADCA0_CCA8(void*, int, sSndCallback_CCA8, int, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_CCA8(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: func_004139F8 is libgcc's float -> unsigned conversion (__fixunssfsi).
 extern "C" int func_004139F8(float f);
 extern char* D_004A28A8;
 extern int D_005308D0[];
-extern sSndCallback_CCA8 D_004A3678_CCA8[] __asm__("D_004A3678");
+extern sSndCallback D_004A3678_CCA8[] __asm__("D_004A3678");
 
 extern "C" void func_0029CCA8(char* self)
 {
@@ -5872,7 +5834,7 @@ extern "C" void func_0029CCA8(char* self)
     }
     if (m != *(int*)(self + 0x607C) && m < 11 && (m == 10 || m == 8 || m == 6 || m < 5)) {
         char* p = **(char***)(self + 0x118) + 0x1D8;
-        sSndCallback_CCA8* key = D_004A3678_CCA8;
+        sSndCallback* key = D_004A3678_CCA8;
         int r = (int)func_00287968(self, 9, 0);
         func_002ADCA0_CCA8(p, 0x1C2, *key, r, 0, 0x4E, 0x7F, 0);
     }
@@ -6223,11 +6185,7 @@ void func_0029D6D0(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_0029D6E0);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_D6E0)(cController*, cBankMonitorInstance*, float);
-extern "C" void func_002ADDE0_D6E0(void* bank, sSndCallback_D6E0 key) __asm__("func_002ADDE0");
+extern "C" void func_002ADDE0_D6E0(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 extern "C" void func_00296E20(void* self, void* obj);
 extern "C" void func_00297438(void* self, void* obj);
 extern "C" void func_0029B3C0(void* self, void* obj);
@@ -6240,9 +6198,9 @@ extern "C" void func_0028CF98(void* self, int a1, int a2, int a3, int a4);
 extern "C" void func_0028D488(void* self);
 extern "C" int func_002B49E0(void*);
 extern "C" int func_0028DEF0_D6E0(void* self, int a1) __asm__("func_0028DEF0");
-extern sSndCallback_D6E0 D_004A3648_D6E0[] __asm__("D_004A3648");
-extern sSndCallback_D6E0 D_004A3650_D6E0[] __asm__("D_004A3650");
-extern sSndCallback_D6E0 D_004A3658_D6E0[] __asm__("D_004A3658");
+extern sSndCallback D_004A3648_D6E0[] __asm__("D_004A3648");
+extern sSndCallback D_004A3650_D6E0[] __asm__("D_004A3650");
+extern sSndCallback D_004A3658_D6E0[] __asm__("D_004A3658");
 
 struct sSndVE_D6E0 {
     short delta;
@@ -6544,14 +6502,10 @@ struct sOutDEF0 {
     sQDEF0 q[2];
 };
 extern "C" void func_002DA1C0(sOutDEF0* out, sV3DEF0* in);
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_DEF0)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_DEF0 D_004A36D0_DEF0[] __asm__("D_004A36D0");
+extern sSndCallback D_004A36D0_DEF0[] __asm__("D_004A36D0");
 
 struct sVE_DEF0 { short delta; short index; int (*fn)(void*); };
-struct sVEk_DEF0 { short delta; short index; void (*fn)(void*, sSndCallback_DEF0); };
+struct sVEk_DEF0 { short delta; short index; void (*fn)(void*, sSndCallback); };
 
 static inline int vcall_DEF0(char* o, int slot)
 {
@@ -6578,7 +6532,7 @@ struct sSndDEF0Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    sSndCallback_DEF0 callbacks[4]; // 0x40
+    sSndCallback callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -6612,7 +6566,7 @@ struct sSndDEF0Sys {
 };
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_DEF0(sSndDEF0Mgr* m, sSndCallback_DEF0 cb)
+static inline void OPTS_Callback_DEF0(sSndDEF0Mgr* m, sSndCallback cb)
 {
     sSndDEF0Sub* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -8327,11 +8281,7 @@ extern "C" int func_002A1820(void* self, sSs1820Rider* a, sSs1820Rider* b)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A19D8);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_19D8)(cController*, cBankMonitorInstance*, float);
-extern "C" int func_002ADCA0_19D8(void*, int, sSndCallback_19D8, int, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_19D8(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" void func_002A31C0(void* self);
 extern "C" void func_002A32B0(void* self);
 extern "C" void func_002A3358(void* self);
@@ -8342,7 +8292,7 @@ extern "C" void func_002A2568(void* self, int a1);
 extern "C" void func_002A2638(void* self);
 extern "C" void func_002A39E0(void* self);
 extern "C" void func_002A3708(void* self, char* rider);
-extern sSndCallback_19D8 D_004A3648_19D8[] __asm__("D_004A3648");
+extern sSndCallback D_004A3648_19D8[] __asm__("D_004A3648");
 
 // Front-end sound event dispatcher; returns 1 if the event was handled.
 extern "C" int func_002A19D8(void* self, int ev)
@@ -9264,15 +9214,11 @@ extern "C" void func_002A3400(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A34D0);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_34D0)(cController*, cBankMonitorInstance*, float);
-extern "C" int func_002ADCA0_34D0(void*, int, sSndCallback_34D0, int, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_34D0(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: callers pass self to func_002A42C8 (the unit's later definition takes no args).
 int func_002A42C8_s(void* self) __asm__("func_002A42C8");
 extern "C" int func_002A4040(void* self);
-extern sSndCallback_34D0 D_004A36E8_34D0[] __asm__("D_004A36E8");
+extern sSndCallback D_004A36E8_34D0[] __asm__("D_004A36E8");
 
 // Rider trick-landing cheer: queued with the rider's trick class (or the stored landing quality when looked up).
 extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
@@ -9280,7 +9226,7 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
     if (func_0029F128(self) == 0) return 1;
     if (func_00288AE0(self) != 0) return 1;
     if (func_002A4248_s(self) != 0 && rider != 0) {
-        sSndCallback_34D0* key = D_004A36E8_34D0;
+        sSndCallback* key = D_004A36E8_34D0;
         char* o = rider + 0x6C0;
         sSsVt1280* e = &(*(sSsVt1280**)o)[7];
         char* bank = **(char***)((char*)self + 0x118) + 0x1D8;
@@ -9325,18 +9271,14 @@ extern "C" int func_002A34D0(void* self, char* rider, int check, int which)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A3708);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_3708)(cController*, cBankMonitorInstance*, float);
-extern "C" int func_002ADCA0_3708(void*, int, sSndCallback_3708, int, int, int, int, int) __asm__("func_002ADCA0");
+extern "C" int func_002ADCA0_3708(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" int func_0029F128(void* self);
 extern "C" int func_00123168(void*);
 extern "C" int func_0029F198(void* self);
 extern "C" int func_002A1E68(void* self, void* rider);
 // PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
 int func_002A4248_s(void* self) __asm__("func_002A4248");
-extern sSndCallback_3708 D_004A36E8_3708[] __asm__("D_004A36E8");
+extern sSndCallback D_004A36E8_3708[] __asm__("D_004A36E8");
 
 extern "C" void func_002A3708(void* self, char* rider)
 {
@@ -9346,7 +9288,7 @@ extern "C" void func_002A3708(void* self, char* rider)
     if (func_002A4248_s(self) != 0) {
         char* o = rider + 0x6C0;
         char* p = **(char***)((char*)self + 0x118) + 0x1D8;
-        sSndCallback_3708* key = D_004A36E8_3708;
+        sSndCallback* key = D_004A36E8_3708;
         sSsVt1280* e = &(*(sSsVt1280**)o)[7];
         int v = e->fn(o + e->delta);
         func_002ADCA0_3708(p, 1000, *key, 0, v, 0, 0, 0);
@@ -10087,12 +10029,8 @@ extern "C" int func_002A4770(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A49E8);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_49E8)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_49E8 D_004A36F0_49E8[] __asm__("D_004A36F0");
-extern "C" int func_002ADCA0_49E8(void* bank, int a1, sSndCallback_49E8 id, int a3, int a4, int a5, int a6, int a7) __asm__("func_002ADCA0");
+extern sSndCallback D_004A36F0_49E8[] __asm__("D_004A36F0");
+extern "C" int func_002ADCA0_49E8(void* bank, int a1, sSndCallback id, int a3, int a4, int a5, int a6, int a7) __asm__("func_002ADCA0");
 
 // Flags the transition and fades the ambient stream back in.
 extern "C" void func_002A49E8(char* self)
@@ -10128,12 +10066,8 @@ extern "C" int func_002A4A68(void *arg0) {
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4A78);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_4A78)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_4A78 D_004A3650_4A78[] __asm__("D_004A3650");
-extern "C" int func_002ADCA0_4A78(void*, int, sSndCallback_4A78, int, int, int, int, int) __asm__("func_002ADCA0");
+extern sSndCallback D_004A3650_4A78[] __asm__("D_004A3650");
+extern "C" int func_002ADCA0_4A78(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 extern "C" int func_0028DEF0(void* self, int a1);
 
 extern "C" void func_002A4A78(void* self)
@@ -10145,7 +10079,7 @@ extern "C" void func_002A4A78(void* self)
             func_002ADCA0_4A78(**(char***)((char*)self + 0x118) + 0x1D8, 2, D_004A3650_4A78[0], 0, 2, 0, 0, 0);
         } else {
             char* p = **(char***)((char*)self + 0x118) + 0x1D8;
-            sSndCallback_4A78* key = D_004A3650_4A78;
+            sSndCallback* key = D_004A3650_4A78;
             int r = func_002B4908((char*)self + 0x118);
             func_002ADCA0_4A78(p, 2, *key, 0, 4, r, 0, 0);
         }
@@ -10407,10 +10341,6 @@ struct sSnd5D08E16 {
     int f8;
     int fC;
 };
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_5D08)(cController*, cBankMonitorInstance*, float);
 struct sSnd5D08Sub {
     char pad0[4];
     sSnd5D08Ch def;          // 0x04
@@ -10420,7 +10350,7 @@ struct sSnd5D08Sub {
     int* p34;                // 0x34
     int* vals;               // 0x38
     int* p3C;                // 0x3C
-    sSndCallback_5D08 callbacks[4]; // 0x40
+    sSndCallback callbacks[4]; // 0x40
     int* p60;                // 0x60
     int* p64;                // 0x64
     int* p68;                // 0x68
@@ -10441,14 +10371,14 @@ struct sSnd5D08Sys {
     int* a4;                 // 0x4
     int* a8;                 // 0x8
 };
-extern sSndCallback_5D08 D_004A3700_5D08[] __asm__("D_004A3700");
+extern sSndCallback D_004A3700_5D08[] __asm__("D_004A3700");
 extern sSnd5D08Sys* D_004A36F8_5D08 __asm__("D_004A36F8");
 
 #define SND_5D08_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define SND_5D08_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
-static inline void OPTS_Callback_5D08(sSnd5D08Mgr* m, sSndCallback_5D08 cb)
+static inline void OPTS_Callback_5D08(sSnd5D08Mgr* m, sSndCallback cb)
 {
     sSnd5D08Sub* s = &m->sub;
     s->callbacks[m->sub.cur] = cb;
@@ -11392,17 +11322,13 @@ extern "C" int func_002A7678(void* self, int a1)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A7718);
 #ifdef SKIP_ASM
-class cController;
-class cBankMonitorInstance;
-// Sound callback: a g++ 2.95 pointer to member function (8 bytes), as cSndPlayOpts::OPTS_Callback takes it.
-typedef void (cController::*sSndCallback_7718)(cController*, cBankMonitorInstance*, float);
-extern sSndCallback_7718 D_004A3700_7718[] __asm__("D_004A3700");
+extern sSndCallback D_004A3700_7718[] __asm__("D_004A3700");
 extern "C" void func_002A6430(void* voice, float a1);
 
 struct sVE_7718 {
     short delta;
     short index;
-    void (*fn)(void*, sSndCallback_7718);
+    void (*fn)(void*, sSndCallback);
 };
 
 extern "C" void func_002A7718(void* self)
