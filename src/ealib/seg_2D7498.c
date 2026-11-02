@@ -1479,10 +1479,8 @@ void func_003D8CB0(struct H_8CB0 *h, unsigned char *out) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8E58);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 
-int func_003D8E58_impl(struct sSelSet *h, struct sLayer *l) __asm__("func_003D8E58");
-int func_003D8E58_impl(struct sSelSet *h, struct sLayer *l) {
+int func_003D8E58(struct sSelSet *h, struct sLayer *l) {
     struct sShapeInfo o;
     int ok = 1;
     int i;
@@ -1699,7 +1697,6 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D93C0);
    wraps. The helpers are the inline bodies of func_003DA910 (usage percent) and
    func_003DAC20 (next combination); the retail TU keeps their out-of-line copies at the
    end of the file. */
-extern int func_003D8E58_93C0(struct sSelSet *, struct sLayer *) __asm__("func_003D8E58");
 
 /* same body as func_003DA910 */
 static inline int usage_93C0(unsigned char *a0, struct sSelSet *h) {
@@ -1746,8 +1743,7 @@ static inline int next_93C0(unsigned char *h, struct sSel *e) {
     return wrap;
 }
 
-int func_003D93C0_impl(struct sLayer *l, struct sSelSet *h, int thr) __asm__("func_003D93C0");
-int func_003D93C0_impl(struct sLayer *l, struct sSelSet *h, int thr) {
+int func_003D93C0(struct sLayer *l, struct sSelSet *h, int thr) {
     int ok = 0;
     int of = 0;
     int i;
@@ -1767,7 +1763,7 @@ int func_003D93C0_impl(struct sLayer *l, struct sSelSet *h, int thr) {
         }
         if (ok) {
             if (l->n5 != 0) {
-                if (func_003D8E58_93C0(h, l) == 0) ok = 0;
+                if (func_003D8E58(h, l) == 0) ok = 0;
             }
         }
         if (!ok) {
@@ -1781,9 +1777,6 @@ int func_003D93C0_impl(struct sLayer *l, struct sSelSet *h, int thr) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2D7498", func_003D95B8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int func_003D83B8_95B8(void *, unsigned char **) __asm__("func_003D83B8");
-extern int func_003D93C0_95B8(struct sLayer *, struct sSelSet *, int) __asm__("func_003D93C0");
 extern int func_003DB5C0(int, int);
 
 static __inline__ void shuffle_95B8(struct sLayer *l, struct sSelSet *h) {
@@ -1815,7 +1808,7 @@ static __inline__ void apply_95B8(void *a0, struct sSelSet *h, struct sLayer *l)
     int j;
     struct sCond *c;
 
-    if (func_003D83B8_95B8(a0, &out) != 0) {
+    if (func_003D83B8(a0, &out) != 0) {
         i = 0;
         n = l->cnt >> 2;
         for (; i < n; i++) {
@@ -1838,7 +1831,7 @@ int func_003D95B8(void *a0, struct sSelSet *h, struct sLayer *l, int mode, int t
 
     if (mode == 1 || l->n5 != 0) {
         shuffle_95B8(l, h);
-        ok = func_003D93C0_95B8(l, h, mode != 2 ? thr : 0);
+        ok = func_003D93C0(l, h, mode != 2 ? thr : 0);
     } else {
         ok = 1;
         n = l->cnt >> 2;
@@ -1859,9 +1852,6 @@ end:
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9830);
 #ifdef SKIP_ASM
-extern int func_003D8330_9830(struct sKey4 *, int *) __asm__("func_003D8330");
-extern int func_003D81F0_9830(struct sKey4 *, int *) __asm__("func_003D81F0");
-extern void func_003D6EE8_9830(unsigned char *, int) __asm__("func_003D6EE8");
 
 static __inline__ void clearBit_9830(unsigned char *s, int bit) {
     int n = s[4] & 0xF;
@@ -1870,8 +1860,7 @@ static __inline__ void clearBit_9830(unsigned char *s, int bit) {
     *p &= ~(1 << (bit - q * 8));
 }
 
-int func_003D9830_impl(unsigned char *h, struct sKey4 *k, int a2) __asm__("func_003D9830");
-int func_003D9830_impl(unsigned char *h, struct sKey4 *k, int a2) {
+int func_003D9830(unsigned char *h, struct sKey4 *k, int a2) {
     struct sShapeInfo o;
     struct sFF90Msg m;
     int w30;
@@ -1891,8 +1880,8 @@ int func_003D9830_impl(unsigned char *h, struct sKey4 *k, int a2) {
     r = 0;
     w34 = 0;
     if (D_0044FF90.f00 != 0) {
-        func_003D8330_9830(k, &w30);
-        func_003D81F0_9830(k, &w34);
+        func_003D8330(k->b, &w30);
+        func_003D81F0(k->b, &w34);
         n = h[4] >> 2;
         if (n != 0) {
             cnt = n;
@@ -1919,7 +1908,7 @@ int func_003D9830_impl(unsigned char *h, struct sKey4 *k, int a2) {
                     m.f10 = w34;
                     m.f14 = *(unsigned short *)(s + 2);
                     D_0044FF90.f00(&m);
-                    func_003D6EE8_9830(s, y);
+                    func_003D6EE8(s, y);
                 }
                 cnt--;
                 e++;
@@ -2435,8 +2424,6 @@ int func_003DACA8(void *arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DACE8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int func_003D83B8_ACE8(void *, unsigned char **) __asm__("func_003D83B8");
 
 void func_003DACE8(void *a0, struct sSelSet *h, struct sLayer *l) {
     struct sShapeInfo o;
@@ -2446,7 +2433,7 @@ void func_003DACE8(void *a0, struct sSelSet *h, struct sLayer *l) {
     int j;
     struct sCond *c;
 
-    if (func_003D83B8_ACE8(a0, &out) != 0) {
+    if (func_003D83B8(a0, &out) != 0) {
         i = 0;
         n = l->cnt >> 2;
         for (; i < n; i++) {
@@ -2468,7 +2455,6 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003DAE48);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int func_003D8330_AE48(void *, int *) __asm__("func_003D8330");
 extern int func_003DB3E0_AE48(int, int) __asm__("func_003DB3E0");
 
 void func_003DAE48(void *a0, int a1, struct sLayer *l, int a3) {
@@ -2485,7 +2471,7 @@ void func_003DAE48(void *a0, int a1, struct sLayer *l, int a3) {
     long m;
 
     if (D_0044FF90.f08 != 0) {
-        func_003D8330_AE48(a0, &out);
+        func_003D8330(a0, &out);
         cnt = l->cnt >> 2;
         for (i = 0; i < cnt; i++) {
             tbl = (unsigned char *)l + l->list[i] * 4 + 0xC;
