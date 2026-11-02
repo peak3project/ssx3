@@ -2819,13 +2819,7 @@ extern void* D_004A28A8;
 extern void* D_004A3DD8;
 extern char D_004FF120[];
 
-struct sVecPair_12CA30
-{
-    t4Vector a;
-    t4Vector b;
-};
-
-extern "C" void func_00136D40(char* self, t4Vector* a, t4Vector* b, sVecPair_12CA30* c);
+extern "C" void func_00136D40(char* self, t4Vector* a, t4Vector* b, sAnimModelBone* c);
 
 // PORT: PS2-only VU0 inline asm (vector add-assign).
 static inline void vu0AddEq_12CA30(t4Vector& dst, const t4Vector& b)
@@ -2843,8 +2837,8 @@ struct sAiObj12CA30
 {
     int f0;                 // 0x00
     char pad4[0xC];
-    sVecPair_12CA30 m10;    // 0x10
-    sVecPair_12CA30 m30;    // 0x30
+    sAnimModelBone m10;    // 0x10
+    sAnimModelBone m30;    // 0x30
     char pad50[0x4];
     int f54;                // 0x54
     char pad58[0x18];
@@ -2855,17 +2849,17 @@ struct sAiObj12CA30
 
 extern "C" void func_0012CA30(sAiObj12CA30* self)
 {
-    sVecPair_12CA30* p30 = &self->m30;
+    sAnimModelBone* p30 = &self->m30;
     *(int*)(self->mRider + 0x2EC) = 0;
     *(int*)(self->mRider + 0x2E8) = 0;
     self->f54 = 0;
     self->f70 = 0;
     func_0029E578(func_0028B180(), self->mRider);
     char* r = self->mRider;
-    self->m10 = (*(sVecPair_12CA30**)(*(char**)(r + 0x780) + 0x2C))[*(int*)(r + 0x89C)];
-    self->m30 = (*(sVecPair_12CA30**)(*(char**)(r + 0x780) + 0x2C))[*(int*)(r + 0x8A4)];
-    vu0AddEq_12CA30(self->m10.a, *(t4Vector*)(self->mRider + 0x9D0));
-    vu0AddEq_12CA30(self->m30.a, *(t4Vector*)(self->mRider + 0x9D0));
+    self->m10 = (*(sAnimModelBone**)(*(char**)(r + 0x780) + 0x2C))[*(int*)(r + 0x89C)];
+    self->m30 = (*(sAnimModelBone**)(*(char**)(r + 0x780) + 0x2C))[*(int*)(r + 0x8A4)];
+    vu0AddEq_12CA30(self->m10.pos, *(t4Vector*)(self->mRider + 0x9D0));
+    vu0AddEq_12CA30(self->m30.pos, *(t4Vector*)(self->mRider + 0x9D0));
     self->f0 = 0;
     if (func_00311AE8(*(void**)(self->mRider + 0x784), 2) == 0x16)
     {
@@ -3083,7 +3077,7 @@ extern "C" void func_0012CD20(sAiObj12CD20* self)
             d = Sub_12CD20(p2->b, self->m30.b);
             q = QuatMul_12CD20(d, Conj_12CD20(*p2));
             angvel = Scale_12CD20(sVec4(q.x, q.y, q.z, 0.0f), s2);
-            func_00136D40(*(char**)(self->mRider + 0x77C) + 0x30, (t4Vector*)&vel, (t4Vector*)&angvel, (sVecPair_12CA30*)p2);
+            func_00136D40(*(char**)(self->mRider + 0x77C) + 0x30, (t4Vector*)&vel, (t4Vector*)&angvel, (sAnimModelBone*)p2);
         }
         if (*(int*)(*(char**)(self->mRider + 0x77C) + 0x30) == 1)
         {
