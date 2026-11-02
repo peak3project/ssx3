@@ -5445,22 +5445,20 @@ int func_003E4040(unsigned int n, char *dst) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E44B0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void SYNCTASK_del_44B0(void (*)(void)) __asm__("SYNCTASK_del");
 extern void func_004008A0(int);
 extern void func_00401718(int);
 extern void func_00423BB0(int);
 extern void func_00423BF0(int);
 extern void func_00423DB0(int);
-extern int D_00519C40_9C40[] __asm__("D_00519C40");
 extern void func_003E4000_4000(void) __asm__("func_003E4000");
 
 void func_003E44B0(void) {
     SYNCTASK_del_44B0(func_003E4000_4000);
     func_004008A0(0);
-    func_00423BF0(D_00519C40_9C40[2]);
-    func_00423BB0(D_00519C40_9C40[2]);
-    func_00423DB0(D_00519C40_9C40[3]);
+    func_00423BF0(D_00519C40.f08);
+    func_00423BB0(D_00519C40.f08);
+    func_00423DB0(D_00519C40.f0C);
     func_00401718(5);
 }
 #endif
