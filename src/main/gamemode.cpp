@@ -1569,7 +1569,162 @@ extern "C" void func_0023A4F0(void* self)
 
 INCLUDE_ASM("main/gamemode", func_0023A668);
 
+//100%
 INCLUDE_ASM("main/gamemode", func_0023A760);
+#ifdef SKIP_ASM
+// PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" void* cBE_getBE();
+extern "C" int func_00146E98(void* iface, int a1);
+extern "C" int func_0012A250(void* race);
+extern "C" int func_00122D78(void* self);
+extern "C" void func_00238BF8(void* self, int n);
+extern "C" void func_00147D20(void* iface, int a1);
+extern "C" void func_00147E18(void* iface, int a1);
+extern char* D_004A2C70;
+extern void* D_004A28A8;
+extern unsigned int D_00536640[];
+extern int D_005366A8[];
+extern int D_00536730[];
+extern signed char D_00535BC8[];
+
+struct sGM_23A760 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+    int a18[10];
+    int a40[10];
+    int f68;
+    int f6C;
+    int f70;
+    int f74;
+    int f78;
+    int f7C;
+    int f80;
+    int f84;
+    int f88;
+    int f8C;
+    int f90;
+    int f94;
+    int f98;
+    int f9C;
+};
+
+struct sVEnt_23A760 { short delta; short index; int (*fn)(void*); };
+
+// The race (*(D_004A28A8 + 0x84) + 0xC): rider list at 0x28, player objects at 0x40.
+struct sRace_23A760 {
+    char pad_0x0[0x28];
+    cRider* riders[6];  // 0x28
+    char* players[16];  // 0x40: each holds its cRider virtual-base pointer at +0x18
+};
+
+struct sMode_23A760 {
+    void* vt;           // 0x00
+    int f4;             // 0x04
+    int f8;             // 0x08
+    int fC;             // 0x0C
+    char pad10[0x48];   // 0x10
+    int tbl[3][10];     // 0x58
+};
+
+static inline sRace_23A760* race_23A760()
+{
+    return *(sRace_23A760**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
+}
+
+static inline int vcall_23A760(char* obj, int slot)
+{
+    sVEnt_23A760* vt = *(sVEnt_23A760**)obj;
+    return vt[slot].fn(obj + vt[slot].delta);
+}
+
+static inline int finished_23A760(cRider* r)
+{
+    return r->mFinishTime >= 0.0f;
+}
+
+// cGMRaceHandler slot 7: records rider idx's heat time, ranks the heat and moves the heat state on.
+extern "C" void func_0023A760(sMode_23A760* self, int idx)
+{
+    void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    int n = func_00146E98(player, 0);
+    int heat = ((sGM_23A760*)D_004A2C70)->f0 - 1;
+    sRace_23A760* rc = race_23A760();
+    if (func_0012A250(rc) == 0 || vcall_23A760((char*)race_23A760()->riders[idx] + 0x6C0, 9) == 0) {
+        int tick = rc->riders[idx]->mFinishTick;
+        if (race_23A760()->riders[idx]->mDidNotFinish) {
+            self->tbl[heat][idx] = 360000;
+            D_005366A8[idx] = 1;
+        } else {
+            self->tbl[heat][idx] = tick;
+            D_005366A8[idx] = 0;
+        }
+    }
+    if (func_0012A250(rc) == 0) {
+        return;
+    }
+    if (vcall_23A760((char*)race_23A760()->riders[idx] + 0x6C0, 8) == 0) {
+        return;
+    }
+    for (int i = 0; i < ((sGM_23A760*)D_004A2C70)->f10 + 1; i++) {
+        if (!finished_23A760(rc->riders[i])) {
+            self->tbl[heat][i] = func_00122D78(rc->riders[i]);
+        }
+        D_00536640[i] = self->tbl[heat][i];
+    }
+    func_00238BF8(D_004A2C70, 10);
+    sGM_23A760* gm = (sGM_23A760*)D_004A2C70;
+    gm->f74 = gm->f70;
+    if (D_00536730[n] < 3) {
+        gm->f70 = gm->f0 + 1;
+        race_23A760()->riders[idx]->unk_100 = 1;
+        if (gm->f0 == 3) {
+            gm->f84 = 1;
+            gm->f70 = 3;
+        }
+        if (D_00535BC8[0x49] == 0) {
+            if (D_00536730[n] == 0) {
+                if ((((sGM_23A760*)D_004A2C70)->f0 < 2 && D_00536640[1] - D_00536640[0] > 600) ||
+                    (((sGM_23A760*)D_004A2C70)->f0 == 2 && D_00536640[1] - D_00536640[0] > 300) ||
+                    (((sGM_23A760*)D_004A2C70)->f0 == 3 && D_00536640[1] - D_00536640[0] > 180)) {
+                    func_00147D20(player, 1);
+                }
+            }
+            if (((sGM_23A760*)D_004A2C70)->f0 == 3) {
+                ((sGM_23A760*)D_004A2C70)->f70 = 0;
+                ((sGM_23A760*)D_004A2C70)->f74 = 0;
+            }
+        }
+    } else {
+        gm->f70 = gm->f0;
+        self->f8 = 1;
+        self->fC = 1;
+        race_23A760()->riders[idx]->unk_100 = 0;
+        if (D_00535BC8[0x49] == 0) {
+            if (((sGM_23A760*)D_004A2C70)->f0 < 2 ||
+                (((sGM_23A760*)D_004A2C70)->f0 == 2 && D_00536730[n] >= 4) ||
+                (((sGM_23A760*)D_004A2C70)->f0 == 3 && D_00536730[n] == 5)) {
+                func_00147E18(player, 1);
+            }
+        }
+    }
+    if (((sGM_23A760*)D_004A2C70)->f0 == 3) {
+        ((sGM_23A760*)D_004A2C70)->f9C = 1;
+    }
+    int place = D_00536730[n];
+    if (place == 0)
+        (*(cRider**)(race_23A760()->players[0] + 0x18))->unk_2F8 = 0.699999988079071f;
+    else if (place == 1)
+        (*(cRider**)(race_23A760()->players[0] + 0x18))->unk_2F8 = 0.3499999940395355f;
+    else
+        (*(cRider**)(race_23A760()->players[0] + 0x18))->unk_2F8 = 0.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamemode", func_0023AC10__FPv);
