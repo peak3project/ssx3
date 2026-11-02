@@ -35,6 +35,27 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Matrix D_004FF1A0;
 
+// A script camera algorithm's state as func_00169570 .. func_0016B180 see it (the object is passed as char*).
+struct sScrCam {
+    float roll;             // 0x0
+    float x4;               // 0x4
+    float x8;               // 0x8
+    char padC[0x14];
+    sVec4 pos;              // 0x20
+    sVec4 target;           // 0x30
+    float pitch;            // 0x40
+    float yaw;              // 0x44
+    float x48;              // 0x48
+    float ox, oy, oz;       // 0x4C
+    float dist;             // 0x58
+    float r5C;              // 0x5C
+    float r60;              // 0x60
+    float r64;              // 0x64
+    float r68;              // 0x68
+    float r6C;              // 0x6C
+    float r70;              // 0x70
+};
+
 //100%
 INCLUDE_ASM("camera/script/scriptcontroller", cScriptCameraController_cScriptCameraController);
 #ifdef SKIP_ASM
@@ -421,29 +442,9 @@ static inline float Length_169570(const sVec2& v)
     return Sqrt_169570(v.x * v.x + v.y * v.y);
 }
 
-struct sScrCam_169570 {
-    float roll;             // 0x0
-    float x4;               // 0x4
-    float x8;               // 0x8
-    char padC[0x14];
-    sVec4 pos;       // 0x20
-    sVec4 target;    // 0x30
-    float pitch;            // 0x40
-    float yaw;              // 0x44
-    float x48;              // 0x48
-    float ox, oy, oz;       // 0x4C
-    float dist;             // 0x58
-    float r5C;              // 0x5C
-    float r60;              // 0x60
-    float r64;              // 0x64
-    float r68;              // 0x68
-    float r6C;              // 0x6C
-    float r70;              // 0x70
-};
-
 extern "C" void func_00169570(char* p)
 {
-    sScrCam_169570* self = (sScrCam_169570*)p;
+    sScrCam* self = (sScrCam*)p;
     char* cam = *(char**)(*(char**)(*(char**)(p + 0x14) + 0x14) + 0x8);
     float* f = func_0027C098(cam);
     char* m = *(char**)(p + 0x14) + 0x30;
@@ -721,29 +722,9 @@ static inline sVec4 Sub_169DB0(const sVec4& a, const sVec4& b)
     return r;
 }
 
-struct sScrCam_169DB0 {
-    float roll;             // 0x0
-    float x4;               // 0x4
-    float x8;               // 0x8
-    char padC[0x14];
-    sVec4 pos;       // 0x20
-    sVec4 target;    // 0x30
-    float pitch;            // 0x40
-    float yaw;              // 0x44
-    float x48;              // 0x48
-    float ox, oy, oz;       // 0x4C
-    float dist;             // 0x58
-    float r5C;              // 0x5C
-    float r60;              // 0x60
-    float r64;              // 0x64
-    float r68;              // 0x68
-    float r6C;              // 0x6C
-    float r70;              // 0x70
-};
-
 extern "C" void func_00169DB0(char* p)
 {
-    sScrCam_169DB0* self = (sScrCam_169DB0*)p;
+    sScrCam* self = (sScrCam*)p;
     char* cam = *(char**)(*(char**)(*(char**)(p + 0x14) + 0x14) + 0x8);
     float* f = func_0027C2A8(cam);
     char* m = *(char**)(p + 0x14) + 0x30;
@@ -1077,28 +1058,9 @@ static inline float Length_16A510(const sVec2& v)
     return Sqrt_16A510(v.x * v.x + v.y * v.y);
 }
 
-struct sScrCam_16A510 {
-    float roll;             // 0x0
-    float x4;               // 0x4
-    float x8;               // 0x8
-    char padC[0x14];
-    sVec4 pos;       // 0x20
-    sVec4 target;    // 0x30
-    float pitch;            // 0x40
-    float yaw;              // 0x44
-    float x48;              // 0x48
-    float ox, oy, oz;       // 0x4C
-    float dist;             // 0x58
-    float r5C;              // 0x5C
-    float r60;              // 0x60
-    float r64;              // 0x64
-    float r68;              // 0x68
-    float r6C;              // 0x6C
-};
-
 extern "C" void func_0016A510(char* p)
 {
-    sScrCam_16A510* self = (sScrCam_16A510*)p;
+    sScrCam* self = (sScrCam*)p;
     char* cam = *(char**)(*(char**)(*(char**)(p + 0x14) + 0x14) + 0x8);
     float* f = func_0027C4B8(cam);
     char* m = *(char**)(p + 0x14) + 0x30;
@@ -1420,28 +1382,9 @@ static inline float Length_16AD98(const sVec2& v)
     return Sqrt_16AD98(v.x * v.x + v.y * v.y);
 }
 
-struct sScrCam_16AD98 {
-    float roll;             // 0x0
-    float x4;               // 0x4
-    float x8;               // 0x8
-    char padC[0x14];
-    sVec4 pos;       // 0x20
-    sVec4 target;    // 0x30
-    float pitch;            // 0x40
-    float yaw;              // 0x44
-    float x48;              // 0x48
-    float ox, oy, oz;       // 0x4C
-    float dist;             // 0x58
-    float r5C;              // 0x5C
-    float r60;              // 0x60
-    float r64;              // 0x64
-    float r68;              // 0x68
-    float r6C;              // 0x6C
-};
-
 extern "C" void func_0016AD98(char* p)
 {
-    sScrCam_16AD98* self = (sScrCam_16AD98*)p;
+    sScrCam* self = (sScrCam*)p;
     char* cam = *(char**)(*(char**)(*(char**)(p + 0x14) + 0x14) + 0x8);
     float* f = func_0027C6A0(cam);
     func_0027C6F8(cam, &self->ox);
@@ -1602,25 +1545,6 @@ static inline float Length_B180(const sVec2& v)
     return Sqrt_B180(v.x * v.x + v.y * v.y);
 }
 
-struct sScrCam_B180 {
-    float roll;             // 0x0
-    float x4;               // 0x4
-    float x8;               // 0x8
-    char padC[0x14];
-    sVec4 pos;       // 0x20
-    sVec4 target;    // 0x30
-    float pitch;            // 0x40
-    float yaw;              // 0x44
-    float x48;              // 0x48
-    float ox, oy, oz;       // 0x4C
-    float dist;             // 0x58
-    float r5C;              // 0x5C
-    float r60;              // 0x60
-    float r64;              // 0x64
-    float r68;              // 0x68
-    float r6C;              // 0x6C
-};
-
 // PORT: PS2-only VU0 inline asm (normalize via rsqrt).
 static inline sVec4 Normalize_B180(const sVec4& v)
 {
@@ -1665,7 +1589,7 @@ static inline float Length4_B180(const sVec4& v)
 
 extern "C" void func_0016B180(char* p)
 {
-    sScrCam_B180* self = (sScrCam_B180*)p;
+    sScrCam* self = (sScrCam*)p;
     char* cam = *(char**)(*(char**)(*(char**)(p + 0x14) + 0x14) + 0x8);
     float* f = func_0027C6A0(cam);
     char* rider = func_00279F18(D_004A28A4, ((signed char*)f)[0x1D], *(int*)(cam + 8));
