@@ -3443,27 +3443,25 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B96B8);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003B8DE8_96B8(int) __asm__("func_003B8DE8");
 extern void func_003B94B0_96B8(int) __asm__("func_003B94B0");
-struct E_96B8 { int f0; unsigned int f4; char pad[0x18 - 8]; int f18; char pad2[0x24 - 0x1C]; unsigned short u24; char pad4[2]; signed char st; char pad3[0x70 - 0x29]; };
-extern struct E_96B8 D_0050A120_96B8[] __asm__("D_0050A120");
 
 void func_003B96B8(void) {
     int i;
-    struct E_96B8 *e;
+    struct sA120Song *e;
     signed char st;
     unsigned int lim;
     int t;
     for (i = 0; i < 16; i++) {
-        e = &D_0050A120_96B8[i];
-        st = e->st;
+        e = &D_0050A120.f000[i];
+        st = e->f28;
         if (st == 3 && (e->f18 == 0 || func_003B8DE8_96B8(i) == 0)) {
-            t = e->f0;
-            lim = (unsigned int)(t * e->u24) / 100u;
-            e->f0 = t + 1;
-            if (lim >= e->f4 && e->st == st) {
+            t = e->f00;
+            lim = (unsigned int)(t * e->f24) / 100u;
+            e->f00 = t + 1;
+            if (lim >= e->f04 && e->f28 == st) {
                 do {
                     func_003B94B0_96B8(i);
-                    e->f4++;
-                } while (lim >= e->f4 && e->st == 3);
+                    e->f04++;
+                } while (lim >= e->f04 && e->f28 == 3);
             }
         }
     }
