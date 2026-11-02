@@ -16384,8 +16384,6 @@ void func_003D16E8(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D16F0);
 #ifdef SKIP_ASM
-extern unsigned char D_0044F42C_16F0 __asm__("D_0044F42C");
-extern int D_0044F430_16F0 __asm__("D_0044F430");
 extern int f5450_16F0(int) __asm__("func_003D5450");
 extern struct sPathEvent *fcopy_16F0(struct sPathEvent *) __asm__("PATHI_copyevent");
 extern unsigned int f_F370_16F0(void) __asm__("func_002AF370");
@@ -16394,8 +16392,8 @@ int func_003D16F0(unsigned int mask, short id) {
     int ret = 0;
     unsigned int i;
     unsigned int bit;
-    if (D_0044F42C_16F0 == 0) return -18;
-    if (D_0044F430_16F0 != 0) return -18;
+    if (D_0044F42C == 0) return -18;
+    if (D_0044F430 != 0) return -18;
     if (f5450_16F0(-1) == 0) return -18;
     bit = 0x1000000 << ((id & 0xF00) >> 8);
     id &= 0xFF;
@@ -16442,7 +16440,7 @@ int func_003D16F0(unsigned int mask, short id) {
         }
     next:;
     }
-    D_0044F430_16F0 = 0;
+    D_0044F430 = 0;
     D_0044F420 = 0;
     return ret;
 }
