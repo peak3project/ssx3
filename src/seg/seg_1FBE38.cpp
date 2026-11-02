@@ -865,14 +865,12 @@ extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
 extern "C" void cDeadFadeNode_cDeadFadeNode_C5D8(void*, int, void*, void*, int) __asm__("cDeadFadeNode_cDeadFadeNode");
 extern char D_004896D8_C5D8[] __asm__("D_004896D8");
-struct V3_C5D8 { float x, y, z; };
-extern V3_C5D8 D_004C9098_C5D8 __asm__("D_004C9098");
 extern unsigned D_C5D8[] __asm__("D_004FB510");
 extern int D_004A55E8;
 extern const int D_00445FA0[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_C5D8 { int idx; int val; int pad; int type; };
-extern "C" V3_C5D8 func_002FC5D8(int n, Ent_C5D8 *e) {
+extern "C" cLunoValue func_002FC5D8(int n, Ent_C5D8 *e) {
     if (D_004A55E8 == 0) {
         D_C5D8[0] = 0xFFFFFFFF;
         ((int*)D_C5D8)[1] = 0;
@@ -914,12 +912,12 @@ extern "C" V3_C5D8 func_002FC5D8(int n, Ent_C5D8 *e) {
         obj = r;
     }
     if (obj == 0)
-        return D_004C9098_C5D8;
+        return D_004C9098;
     void *p = *(void**)(obj + 0xC);
     if (p && checkActiveNode(p, 22, buf))
-        return D_004C9098_C5D8;
+        return D_004C9098;
     cDeadFadeNode_cDeadFadeNode_C5D8(cMemMan_alloc(0x3C, D_004896D8_C5D8, 0x20000000, 0), 1, obj, buf, 0);
-    return D_004C9098_C5D8;
+    return D_004C9098;
 }
 #endif
 
