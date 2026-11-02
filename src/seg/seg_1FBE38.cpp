@@ -1737,7 +1737,6 @@ extern "C" cLunoValue func_002FDC60(int n, Ent_DC60 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FDED0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_DED0 __asm__("D_004A28A8");
 extern "C" void func_00355AD0_DED0(void*, void*) __asm__("func_00355AD0");
 struct O_DED0 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
 static inline char *refToPtr_DED0(unsigned i) { return (char*)(i << 2); }
